@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLayerOr::plLayerOr()
 {
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
 
     fOwnedChannels = kState;

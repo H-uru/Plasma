@@ -765,7 +765,7 @@ void plNetMsgSDLState::ReadVersion(hsStream* s, hsResMgr* mgr)
     {
         uint32_t len;
         s->LogReadLE(&len,"SDLState StreamLen");
-        uint8_t* buf = TRACKED_NEW uint8_t[len];
+        uint8_t* buf = new uint8_t[len];
         s->LogRead(len, buf,"SDLState StreamData");
         
         StreamInfo()->SetStreamLen(len);

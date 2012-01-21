@@ -179,7 +179,7 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAvOneShotMsg* pMsg = TRACKED_NEW plAvOneShotMsg(
+        plAvOneShotMsg* pMsg = new plAvOneShotMsg(
             (plKey )fSender,
             nil,
             seekKey.getKey(),   // Mark D told me to do it ...paulg
@@ -226,7 +226,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
         if ( plOneShotMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
         {
             // create a message OneShotMessage
-            plOneShotMsg* pMsg = TRACKED_NEW plOneShotMsg;
+            plOneShotMsg* pMsg = new plOneShotMsg;
             // check if this needs to be network forced to all clients
             if (netProp)
             {
@@ -267,7 +267,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
         {
             // its a multistage thingy... need to send it a plNotifyMsg
             // create new notify message to do the actual send with
-            plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* pNMsg = new plNotifyMsg;
 
             // set whether this should be forced over the network (ignoring net-cascading)
             if (netProp)
@@ -320,7 +320,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netFor
     {
         // its a multistage thingy... need to send it a plNotifyMsg
         // create new notify message to do the actual send with
-        plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+        plNotifyMsg* pNMsg = new plNotifyMsg;
 
         // set whether this should be forced over the network (ignoring net-cascading)
         if (netProp)
@@ -385,7 +385,7 @@ void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float n
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kNextStage, 0, setTime, newTime,
                     setDirection, (bool)isForward, transTime);
 
@@ -424,7 +424,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, flo
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kPrevStage, 0, setTime, newTime,
                     setDirection, (bool)isForward, transTime);
 
@@ -464,7 +464,7 @@ void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool s
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kGotoStage, stage, setTime, newTime,
                     setDirection, isForward, transTime);
 
@@ -484,7 +484,7 @@ void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsB
     // if it is a Multistage guy
     if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
     {
-        plMultistageModMsg* pMsg = TRACKED_NEW plMultistageModMsg((plKey)nil, behKey.getKey());
+        plMultistageModMsg* pMsg = new plMultistageModMsg((plKey)nil, behKey.getKey());
         pMsg->SetCommand(plMultistageModMsg::kSetLoopCount);
         pMsg->fStageNum = (uint8_t)stage;
         pMsg->fNumLoops = (uint8_t)loopCount;
@@ -513,7 +513,7 @@ void cyAvatar::Seek(pyKey &seekKey, float duration, hsBool usePhysics)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAvSeekMsg* pMsg = TRACKED_NEW plAvSeekMsg(
+        plAvSeekMsg* pMsg = new plAvSeekMsg(
             (plKey)fSender,nil, seekKey.getKey(),duration,usePhysics);
 
         // check if this needs to be network forced to all clients
@@ -1546,7 +1546,7 @@ void cyAvatar::EnterSubWorld(pySceneObject& object)
                     plKey subWorldKey = SOkey;
                     plKey physKey = avatar->GetKey();
                     plKey nilKey;   // sorry
-                    plSubWorldMsg *swMsg = TRACKED_NEW plSubWorldMsg(nilKey, physKey, subWorldKey);
+                    plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
                     swMsg->Send();
                 }
             }
@@ -1573,7 +1573,7 @@ void cyAvatar::ExitSubWorld()
             plKey subWorldKey;      // we're going to the nil subworld
             plKey physKey = avatar->GetKey();
             plKey nilKey;   // sorry
-            plSubWorldMsg *swMsg = TRACKED_NEW plSubWorldMsg(nilKey, physKey, subWorldKey);
+            plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
             swMsg->Send();
         }
     }
@@ -1949,7 +1949,7 @@ bool IExitTopmostGenericMode()
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg(nil, avatar->GetKey(),
+    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nil, avatar->GetKey(),
         plAvBrainGenericMsg::kGotoStage, 2, false, 0.0,
         false, false, 0.0);
 

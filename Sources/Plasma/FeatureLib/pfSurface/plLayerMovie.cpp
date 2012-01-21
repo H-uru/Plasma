@@ -58,7 +58,7 @@ plLayerMovie::plLayerMovie()
     fHeight(32)
 {
     fOwnedChannels |= kTexture;
-    fTexture = TRACKED_NEW plBitmap*;
+    fTexture = new plBitmap*;
     *fTexture = nil;
     
 //  fTimeConvert.SetOwner(this);
@@ -111,7 +111,7 @@ hsBool plLayerMovie::ISetupBitmap()
 {
     if( !GetTexture() )
     {
-        plMipmap* b = TRACKED_NEW plMipmap( fWidth, fHeight, plMipmap::kARGB32Config, 1 );
+        plMipmap* b = new plMipmap( fWidth, fHeight, plMipmap::kARGB32Config, 1 );
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
@@ -188,7 +188,7 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     int len = s->ReadLE32();
     if( len )
     {
-        fMovieName = TRACKED_NEW char[len+1];
+        fMovieName = new char[len+1];
         s->Read(len, fMovieName);
         fMovieName[len] = 0;
     }

@@ -93,7 +93,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayerW, args, "Params: playerName, avat
     if (PyUnicode_Check(playerNameObj))
     {
         int strLen = PyUnicode_GetSize(playerNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)playerNameObj, text, strLen);
         text[strLen] = L'\0';
         playerName = text;
@@ -116,7 +116,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayerW, args, "Params: playerName, avat
     if (PyUnicode_Check(avatarShapeObj))
     {
         int strLen = PyUnicode_GetSize(avatarShapeObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)avatarShapeObj, text, strLen);
         text[strLen] = L'\0';
         avatarShape = text;
@@ -139,7 +139,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayerW, args, "Params: playerName, avat
     if (PyUnicode_Check(invitationObj))
     {
         int strLen = PyUnicode_GetSize(invitationObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)invitationObj, text, strLen);
         text[strLen] = L'\0';
         invitation = text;

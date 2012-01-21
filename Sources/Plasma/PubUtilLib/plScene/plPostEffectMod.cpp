@@ -93,7 +93,7 @@ void plPostEffectMod::ISetupRenderRequest()
     uint32_t zDepth = 0;
     uint32_t stencilDepth = 0;
 
-    fRenderRequest = TRACKED_NEW plRenderRequest;
+    fRenderRequest = new plRenderRequest;
     uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection
         | plPipeline::kRenderNoLights
@@ -107,7 +107,7 @@ void plPostEffectMod::ISetupRenderRequest()
 
     fRenderRequest->SetRenderTarget(fRenderTarget);
 
-    fPageMgr = TRACKED_NEW plPageTreeMgr;
+    fPageMgr = new plPageTreeMgr;
 
     fRenderRequest->SetPageTreeMgr(fPageMgr);
 
@@ -223,7 +223,7 @@ void plPostEffectMod::ISubmitRequest()
 
     IUpdateRenderRequest();
 
-    plRenderRequestMsg* req = TRACKED_NEW plRenderRequestMsg(GetKey(), fRenderRequest);
+    plRenderRequestMsg* req = new plRenderRequestMsg(GetKey(), fRenderRequest);
     plgDispatch::MsgSend(req);
 }
 
@@ -305,7 +305,7 @@ void plPostEffectMod::Read(hsStream* s, hsResMgr* mgr)
     fFovX = s->ReadLEScalar();
     fFovY = s->ReadLEScalar();
 
-    fNodeKey = mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
+    fNodeKey = mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
 
     fDefaultW2C.Read( s );
     fDefaultC2W.Read( s );

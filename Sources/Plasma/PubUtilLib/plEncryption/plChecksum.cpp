@@ -120,7 +120,7 @@ void plMD5Checksum::CalcFromStream( hsStream* stream )
     unsigned loadLen = 1024 * 1024;
     Start();
 
-    uint8_t *buf = TRACKED_NEW uint8_t[loadLen];
+    uint8_t *buf = new uint8_t[loadLen];
     
     while(int read = stream->Read(loadLen, buf))
         AddTo( read, buf );

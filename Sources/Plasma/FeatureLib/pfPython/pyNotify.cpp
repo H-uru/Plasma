@@ -191,7 +191,7 @@ void pyNotify::Send()
         return;
 
     // create new notify message to do the actual send with
-    plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+    plNotifyMsg* pNMsg = new plNotifyMsg;
 
     if ( fNetPropagate )
         pNMsg->SetBCastFlag(plMessage::kNetPropagate);

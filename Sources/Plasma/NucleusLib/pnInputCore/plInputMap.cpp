@@ -201,7 +201,7 @@ hsBool  plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
     if( IFindBinding( code ) != nil )
         return false;
 
-    fBindings.Append( TRACKED_NEW plKeyBinding( code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped ) );
+    fBindings.Append( new plKeyBinding( code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped ) );
     return true;
 }
 
@@ -214,7 +214,7 @@ hsBool  plKeyMap::AddConsoleCommand( const char *command )
     if( IFindConsoleBinding( command ) != nil )
         return false;
 
-    fBindings.Append( TRACKED_NEW plKeyBinding( B_CONTROL_CONSOLE_COMMAND, 
+    fBindings.Append( new plKeyBinding( B_CONTROL_CONSOLE_COMMAND, 
                                         kControlFlagDownEvent | kControlFlagNoRepeat | kControlFlagNoDeactivate,
                                         plKeyCombo::kUnmapped, plKeyCombo::kUnmapped, 
                                         command ) );

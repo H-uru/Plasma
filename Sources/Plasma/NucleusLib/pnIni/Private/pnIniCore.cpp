@@ -156,7 +156,7 @@ static IniValue * AddKeyValue (
     }
 
     // Add a new value holder for the key
-    return NEW(IniValue)(key, lineNum);
+    return new IniValue(key, lineNum);
 }
 
 
@@ -456,7 +456,7 @@ static bool ParseFile (
 Ini * IniOpen (
     const wchar_t fileName[]
 ) {
-    Ini * ini = NEW(Ini);
+    Ini * ini = new Ini;
     if (!ParseFile(ini, fileName)) {
         IniClose(ini);
         return nil;

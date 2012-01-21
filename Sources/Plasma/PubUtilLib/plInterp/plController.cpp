@@ -224,7 +224,7 @@ void plLeafController::Interp(float time, hsColorRGBA* result, plControllerCache
 
 plControllerCacheInfo *plLeafController::CreateCache() const
 {
-    plControllerCacheInfo *cache = TRACKED_NEW plControllerCacheInfo;
+    plControllerCacheInfo *cache = new plControllerCacheInfo;
     cache->fNumSubControllers = 0;
     return cache;
 }
@@ -413,51 +413,51 @@ void plLeafController::AllocKeys(uint32_t numKeys, uint8_t type)
     switch (fType)
     {
     case hsKeyFrame::kPoint3KeyFrame:
-        fKeys = TRACKED_NEW hsPoint3Key[fNumKeys];
+        fKeys = new hsPoint3Key[fNumKeys];
         break;
 
     case hsKeyFrame::kBezPoint3KeyFrame:
-        fKeys = TRACKED_NEW hsBezPoint3Key[fNumKeys];
+        fKeys = new hsBezPoint3Key[fNumKeys];
         break;
 
     case hsKeyFrame::kScalarKeyFrame:
-        fKeys = TRACKED_NEW hsScalarKey[fNumKeys];
+        fKeys = new hsScalarKey[fNumKeys];
         break;
 
     case hsKeyFrame::kBezScalarKeyFrame:
-        fKeys = TRACKED_NEW hsBezScalarKey[fNumKeys];
+        fKeys = new hsBezScalarKey[fNumKeys];
         break;
 
     case hsKeyFrame::kScaleKeyFrame:
-        fKeys = TRACKED_NEW hsScaleKey[fNumKeys];
+        fKeys = new hsScaleKey[fNumKeys];
         break;
 
     case hsKeyFrame::kBezScaleKeyFrame:
-        fKeys = TRACKED_NEW hsBezScaleKey[fNumKeys];
+        fKeys = new hsBezScaleKey[fNumKeys];
         break;
 
     case hsKeyFrame::kQuatKeyFrame:
-        fKeys = TRACKED_NEW hsQuatKey[fNumKeys];
+        fKeys = new hsQuatKey[fNumKeys];
         break;
 
     case hsKeyFrame::kCompressedQuatKeyFrame32:
-        fKeys = TRACKED_NEW hsCompressedQuatKey32[fNumKeys];
+        fKeys = new hsCompressedQuatKey32[fNumKeys];
         break;
 
     case hsKeyFrame::kCompressedQuatKeyFrame64:
-        fKeys = TRACKED_NEW hsCompressedQuatKey64[fNumKeys];
+        fKeys = new hsCompressedQuatKey64[fNumKeys];
         break;
 
     case hsKeyFrame::k3dsMaxKeyFrame:
-        fKeys = TRACKED_NEW hsG3DSMaxKeyFrame[fNumKeys];
+        fKeys = new hsG3DSMaxKeyFrame[fNumKeys];
         break;
 
     case hsKeyFrame::kMatrix33KeyFrame:
-        fKeys = TRACKED_NEW hsMatrix33Key[fNumKeys];
+        fKeys = new hsMatrix33Key[fNumKeys];
         break;
 
     case hsKeyFrame::kMatrix44KeyFrame:
-        fKeys = TRACKED_NEW hsMatrix44Key[fNumKeys];
+        fKeys = new hsMatrix44Key[fNumKeys];
         break;
 
     case hsKeyFrame::kUnknownKeyFrame:
@@ -879,9 +879,9 @@ hsBool plCompoundController::PurgeRedundantSubcontrollers()
 
 plControllerCacheInfo* plCompoundController::CreateCache() const
 {
-    plControllerCacheInfo* cache = TRACKED_NEW plControllerCacheInfo;
+    plControllerCacheInfo* cache = new plControllerCacheInfo;
     cache->fNumSubControllers = 3;
-    cache->fSubControllers = TRACKED_NEW plControllerCacheInfo*[cache->fNumSubControllers];
+    cache->fSubControllers = new plControllerCacheInfo*[cache->fNumSubControllers];
     int i;
     for (i = 0; i < cache->fNumSubControllers; i++)
         cache->fSubControllers[i] = (GetController(i) ? GetController(i)->CreateCache() : nil);

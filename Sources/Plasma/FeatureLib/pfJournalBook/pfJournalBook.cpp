@@ -589,10 +589,10 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
     hsAssert(templateDlg != nil, "Nil template in pfBookData::IInitTemplate()!");
 
     // Init and ref our fDialog pointer
-    hsgResMgr::ResMgr()->SendRef(templateDlg->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDialog), plRefFlags::kPassiveRef);  
+    hsgResMgr::ResMgr()->SendRef(templateDlg->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDialog), plRefFlags::kPassiveRef);  
 
     // Hijack the dialog proc with our own
-    templateDlg->SetHandlerForAll(TRACKED_NEW pfJournalDlgProc(this));
+    templateDlg->SetHandlerForAll(new pfJournalDlgProc(this));
 
     // Find our animation keys
                                                                 
@@ -620,7 +620,7 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
     // Grab and ref the default cover mipmap
     plLayer *lay = plLayer::ConvertNoRef(fCoverLayer);
     if((lay != nil)&&(lay->GetTexture() != nil))
-        hsgResMgr::ResMgr()->AddViaNotify(lay->GetTexture()->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDefaultCover), plRefFlags::kPassiveRef);  
+        hsgResMgr::ResMgr()->AddViaNotify(lay->GetTexture()->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDefaultCover), plRefFlags::kPassiveRef);  
 
     fLeftPageMap->SetFlag(pfGUIClickMapCtrl::kReportHovering);
     fRightPageMap->SetFlag(pfGUIClickMapCtrl::kReportHovering);
@@ -656,7 +656,7 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
     {
         fEditable = true;
         fLeftEditCtrl->SetNext(fRightEditCtrl);
-        fLeftEditCtrl->SetEventProc(TRACKED_NEW pfBookMultiLineEditProc(this));
+        fLeftEditCtrl->SetEventProc(new pfBookMultiLineEditProc(this));
         fTurnFrontEditCtrl->SetNext(fTurnBackEditCtrl); // these are always back to back
     }
 }
@@ -844,7 +844,7 @@ void pfBookData::IFillUncoveringPage(hsBool rightSide)
             }
             
             // create a timer so we can hide the old left or right turn page right before the animation finishes to prevent flicker
-            plTimerCallbackMsg* pTimerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey(),id);
+            plTimerCallbackMsg* pTimerMsg = new plTimerCallbackMsg(GetKey(),id);
             plgTimerCallbackMgr::NewTimer( .5, pTimerMsg ); // .5 found by trial and error
             return; // the gui controls render everything for us, so ignoring this request
         }
@@ -869,7 +869,7 @@ void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
     const hsTArray<plKey> &keys = fTurnPageButton->GetAnimationKeys();
     const char *animName = fTurnPageButton->GetAnimationName();
 
-    plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+    plAnimCmdMsg *msg = new plAnimCmdMsg();
     if (immediate)
     {
         msg->SetCmd(plAnimCmdMsg::kGoToEnd);
@@ -884,7 +884,7 @@ void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
     
     // Here's the whole reason why we're not just checking the checkbox: so we can attach a callback
     // so we know when the animation completes. Pretty sad, huh? Poor checkbox.
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(GetKey());
     eventMsg->fRepeats = 0;
     if (immediate)
@@ -905,7 +905,7 @@ void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
         // We want a second callback to tell us when, indeed, the page has started turning
         // and is thus visible and thus we can actually, really, honestly, safely fill in the
         // page behind it
-        eventMsg = TRACKED_NEW plEventCallbackMsg;
+        eventMsg = new plEventCallbackMsg;
         eventMsg->AddReceiver(GetKey());
         eventMsg->fRepeats = 0;
         eventMsg->fUser = !flipBackwards ? (0x04 | 0x01) : 0x04;
@@ -1140,7 +1140,7 @@ std::map<std::string,pfBookData*> pfJournalBook::fBookGUIs;
 
 void    pfJournalBook::SingletonInit( void )
 {
-    fBookGUIs["BkBook"] = TRACKED_NEW pfBookData(); // load the default book data object
+    fBookGUIs["BkBook"] = new pfBookData(); // load the default book data object
     hsgResMgr::ResMgr()->NewKey("BkBook",fBookGUIs["BkBook"],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
     fBookGUIs["BkBook"]->LoadGUI();
 }
@@ -1162,7 +1162,7 @@ void    pfJournalBook::LoadGUI( const char *guiName )
 {
     if (fBookGUIs.find(guiName) == fBookGUIs.end()) // is it already loaded?
     { // nope, load it
-        fBookGUIs[guiName] = TRACKED_NEW pfBookData(guiName);
+        fBookGUIs[guiName] = new pfBookData(guiName);
         hsgResMgr::ResMgr()->NewKey(guiName,fBookGUIs[guiName],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
         fBookGUIs[guiName]->LoadGUI();
     }
@@ -1210,7 +1210,7 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
         fCurBookGUI = "BkBook";
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
-        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI.c_str());
+        fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI.c_str());
         hsgResMgr::ResMgr()->NewKey(fCurBookGUI.c_str(),fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
         fBookGUIs[fCurBookGUI]->LoadGUI();
     }
@@ -1246,7 +1246,7 @@ pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, 
         fCurBookGUI = "BkBook";
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
-        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI.c_str());
+        fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI.c_str());
         hsgResMgr::ResMgr()->NewKey(fCurBookGUI.c_str(),fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
         fBookGUIs[fCurBookGUI]->LoadGUI();
     }
@@ -1329,7 +1329,7 @@ void    pfJournalBook::Show( hsBool startOpened /*= false */)
                 {
                     // it's a cover movie, not a decal, so we make a layer, thinking it's at 0,0 and a left map (which gives us the results we want)
                     plLayerBink *movieLayer = IMakeMovieLayer(fCoverDecals[i],0,0,mip,pfJournalDlgProc::kTagLeftDTMap,false);
-                    loadedMovie *movie = TRACKED_NEW loadedMovie;
+                    loadedMovie *movie = new loadedMovie;
                     movie->movieLayer = movieLayer;
                     movie->movieChunk = fCoverDecals[i];
                     fLoadedMovies.Append(movie);
@@ -1476,7 +1476,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool imme
     const hsTArray<plKey> &keys = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationKeys();
     const char *animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
 
-    plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+    plAnimCmdMsg *msg = new plAnimCmdMsg();
     if( !immediate )
     {
         msg->SetCmd( plAnimCmdMsg::kContinue );
@@ -1490,7 +1490,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool imme
     msg->SetAnimName( animName );
     msg->AddReceivers( keys );
     
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver( fBookGUIs[fCurBookGUI]->GetKey() );
     eventMsg->fRepeats = 0;
     eventMsg->fUser = 0x08 | ( closeNotOpen ? 0x00 : 0x01 );    // So we know which this is for
@@ -1817,7 +1817,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     IFreeSource();
 
 
-    pfEsHTMLChunk *chunk, *lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+    pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk( nil );
     const wchar_t   *c, *start;
     wchar_t name[ 128 ], option[ 256 ];
     float bookWidth=1.0, bookHeight=1.0;
@@ -1845,7 +1845,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
             {
                 uint32_t count = ((uint32_t)c - (uint32_t)start)/2; // wchar_t is 2 bytes
                 
-                wchar_t *temp = TRACKED_NEW wchar_t[ count + 1 ];
+                wchar_t *temp = new wchar_t[ count + 1 ];
                 wcsncpy( temp, start, count );
                 temp[count] = L'\0';
                 lastParChunk->fText = temp;
@@ -1863,7 +1863,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
             {
                 case pfEsHTMLChunk::kParagraph:
                     c += 2;
-                    chunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    chunk = new pfEsHTMLChunk( nil );
                     chunk->fFlags = IFindLastAlignment();
                     while( IGetNextOption( c, name, option ) )
                     {
@@ -1883,7 +1883,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
 
                 case pfEsHTMLChunk::kImage:
                     c += 4;
-                    chunk = TRACKED_NEW pfEsHTMLChunk( nil, 0 );
+                    chunk = new pfEsHTMLChunk( nil, 0 );
                     while( IGetNextOption( c, name, option ) )
                     {
                         if( wcsicmp( name, L"align" ) == 0 )
@@ -1994,7 +1994,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2026,25 +2026,25 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         }
                     }
                     // Still gotta create a new par chunk
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kPageBreak:
                     c += 3;
-                    chunk = TRACKED_NEW pfEsHTMLChunk();
+                    chunk = new pfEsHTMLChunk();
                     while( IGetNextOption( c, name, option ) )
                     {
                     }
                     fHTMLSource.Append( chunk );
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kFontChange:
                     c += 5;
-                    chunk = TRACKED_NEW pfEsHTMLChunk( nil, 0, 0 );
+                    chunk = new pfEsHTMLChunk( nil, 0, 0 );
                     while( IGetNextOption( c, name, option ) )
                     {
                         if( wcsicmp( name, L"style" ) == 0 )
@@ -2120,7 +2120,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     }
                     fHTMLSource.Append( chunk );
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2146,7 +2146,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetMargins(fPageTMargin,fPageLMargin,fPageBMargin,fPageRMargin);
                     }
                     // Start a new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk(nil);
+                    lastParChunk = new pfEsHTMLChunk(nil);
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2172,13 +2172,13 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     fWidthScale = 1.f - bookWidth;
                     
                     // Still gotta create a new par chunk
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kDecal:
                     c += 6;
-                    chunk = TRACKED_NEW pfEsHTMLChunk( nil, 0 );
+                    chunk = new pfEsHTMLChunk( nil, 0 );
                     chunk->fType = pfEsHTMLChunk::kDecal;
                     while( IGetNextOption( c, name, option ) )
                     {
@@ -2227,13 +2227,13 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kMovie:
                     c += 6;
-                    chunk = TRACKED_NEW pfEsHTMLChunk( nil, 0 );
+                    chunk = new pfEsHTMLChunk( nil, 0 );
                     chunk->fType = pfEsHTMLChunk::kMovie;
                     while( IGetNextOption( c, name, option ) )
                     {
@@ -2302,20 +2302,20 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                             delete chunk;
                     }
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
                     
                 case pfEsHTMLChunk::kEditable:
                     c += 9;
                     SetEditable(true);
-                    chunk = TRACKED_NEW pfEsHTMLChunk();
+                    chunk = new pfEsHTMLChunk();
                     while( IGetNextOption( c, name, option ) )
                     {
                     }
                     fHTMLSource.Append( chunk );
                     // Start new paragraph chunk after this one
-                    lastParChunk = TRACKED_NEW pfEsHTMLChunk( nil );
+                    lastParChunk = new pfEsHTMLChunk( nil );
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
             }
@@ -2340,7 +2340,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     {
         uint32_t count = (uint32_t)c - (uint32_t)start;
         
-        wchar_t *temp = TRACKED_NEW wchar_t[ count + 1 ];
+        wchar_t *temp = new wchar_t[ count + 1 ];
         wcsncpy( temp, start, count + 1 );
         lastParChunk->fText = temp;
         delete [] temp;
@@ -2603,7 +2603,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool s
             plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
             if (bink) // if it was a bink layer
             {
-                plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
+                plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(material->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
             }
         }
@@ -2681,12 +2681,12 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool s
                         // cache, but that's ok 'cause if we're doing this, it's probably invalid (or empty)
                         // anyway
                         int fTextLen = chunk->fText.length();
-                        wchar_t *s = TRACKED_NEW wchar_t[fTextLen+1];
+                        wchar_t *s = new wchar_t[fTextLen+1];
                         wcscpy(s,chunk->fText.c_str());
                         s[fTextLen] = L'\0';
 
                         // Note: Makes a copy of the string
-                        pfEsHTMLChunk *c2 = TRACKED_NEW pfEsHTMLChunk( &s[ lastChar ] );
+                        pfEsHTMLChunk *c2 = new pfEsHTMLChunk( &s[ lastChar ] );
                         c2->fFlags = chunk->fFlags;
                         fHTMLSource.Insert( idx + 1, c2 );
 
@@ -2825,7 +2825,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool s
                         }
                         if (!movieAlreadyLoaded) // if the movie wasn't already cached, cache it
                         {
-                            movie = TRACKED_NEW loadedMovie;
+                            movie = new loadedMovie;
                             movie->movieLayer = movieLayer; // save the layer and chunk data
                             movie->movieChunk = chunk;
                             fLoadedMovies.Append(movie);
@@ -2872,7 +2872,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
             plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
             if (bink) // if it was a bink layer
             {
-                plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(source->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
+                plMatRefMsg* refMsg = new plMatRefMsg(source->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(source->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
                 moviesOnPage.Append(bink);
             }
@@ -2884,7 +2884,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
             plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
             if (bink) // if it was a bink layer
             {
-                plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(dest->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
+                plMatRefMsg* refMsg = new plMatRefMsg(dest->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(dest->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
             }
         }
@@ -2900,7 +2900,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, hsBool dontRender )
 {
-    plMipmap *copy = TRACKED_NEW plMipmap();
+    plMipmap *copy = new plMipmap();
     copy->CopyFrom(mip);
     if (chunk->fNoResizeImg)
     {
@@ -3045,11 +3045,11 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, ui
         char buff[256];
 
         sprintf(buff, "%s_%d_ml", GetKey()->GetName(), uniqueSuffix);
-        layer = TRACKED_NEW plLayer;
+        layer = new plLayer;
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
         sprintf(buff, "%s_%d_m", GetKey()->GetName(), uniqueSuffix++);
-        movieLayer = TRACKED_NEW plLayerBink;
+        movieLayer = new plLayerBink;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
 
@@ -3194,7 +3194,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
     char buff[256];
     sprintf(buff, "%s_%d", GetKey()->GetName(), uniqueSuffix++);
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
     // Initialize it.
@@ -3234,7 +3234,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
     layer->SetTransform(xfm);
 
     // Set the texture (assumes mipmap is non-nil).
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(image->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return plLayerInterface::ConvertNoRef(layer);
@@ -3249,7 +3249,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
     char buff[256];
     sprintf(buff, "%s_%d_d", GetKey()->GetName(), uniqueSuffix++);
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
     // Initialize it.
@@ -3322,7 +3322,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
     layer->SetTransform(xfm);
 
     // Set the texture (assumes mipmap is non-nil).
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(decal->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return plLayerInterface::ConvertNoRef(layer);
@@ -3334,7 +3334,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterf
     int i;
     for( i = material->GetNumLayers()-1; i >= 0; i-- )
     {
-        plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
+        plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(material->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
     }
 
@@ -3478,7 +3478,7 @@ void    pfJournalBook::ISendNotify( uint32_t type, uint32_t linkID )
 {
     if( fCallbackKey != nil )
     {
-        plNotifyMsg *pMsg = TRACKED_NEW plNotifyMsg;
+        plNotifyMsg *pMsg = new plNotifyMsg;
         pMsg->AddBookEvent( type, linkID );
         pMsg->SetBCastFlag( plMessage::kNetPropagate, false ); // don't deliver networked!
         pMsg->Send( fCallbackKey );
@@ -3513,7 +3513,7 @@ void    pfJournalBook::ILoadAllImages( hsBool unload )
             fBookGUIs[fCurBookGUI]->GetKey()->Release( fCoverMipKey );
         else
         {
-            plGenRefMsg *ref = TRACKED_NEW plGenRefMsg( fBookGUIs[fCurBookGUI]->GetKey(), plRefMsg::kOnCreate, -1, kRefImage );
+            plGenRefMsg *ref = new plGenRefMsg( fBookGUIs[fCurBookGUI]->GetKey(), plRefMsg::kOnCreate, -1, kRefImage );
             hsgResMgr::ResMgr()->AddViaNotify( fCoverMipKey, ref, plRefFlags::kActiveRef );
         }
     }
@@ -3526,7 +3526,7 @@ void    pfJournalBook::ILoadAllImages( hsBool unload )
                 fBookGUIs[fCurBookGUI]->GetKey()->Release( fHTMLSource[ i ]->fImageKey );
             else
             {
-                plGenRefMsg *ref = TRACKED_NEW plGenRefMsg( fBookGUIs[fCurBookGUI]->GetKey(), plRefMsg::kOnCreate, -1, kRefImage );  
+                plGenRefMsg *ref = new plGenRefMsg( fBookGUIs[fCurBookGUI]->GetKey(), plRefMsg::kOnCreate, -1, kRefImage );  
                 hsgResMgr::ResMgr()->AddViaNotify( fHTMLSource[ i ]->fImageKey, ref, plRefFlags::kActiveRef );
             }
         }

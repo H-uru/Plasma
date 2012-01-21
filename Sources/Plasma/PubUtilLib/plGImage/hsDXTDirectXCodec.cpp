@@ -257,7 +257,7 @@ plMipmap *hsDXTDirectXCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
 
     /// Now set up the data structures
-    compressed = TRACKED_NEW plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
+    compressed = new plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
                                 uncompressed->GetNumLevels(), plMipmap::kDirectXCompression,
                                 ( compFormat == D3DTEXTURE_FMT_FOURCC_DXT1 ) ? 
                                         plMipmap::DirectXInfo::kDXT1 : plMipmap::DirectXInfo::kDXT5 );
@@ -364,12 +364,12 @@ plMipmap *hsDXTDirectXCodec::CreateUncompressedMipmap( plMipmap *compressed,
     /// Set up the uncompressed data structure
     if( compressed->fFlags & hsGMipmap::kMipMap )
     {
-        mmUncompressed = TRACKED_NEW hsGMipmapClass;
+        mmUncompressed = new hsGMipmapClass;
         uncompressed = mmUncompressed;
     }
     else
     {
-        uncompressed = TRACKED_NEW plMipmap;
+        uncompressed = new plMipmap;
         mmUncompressed = nil;
     }
 

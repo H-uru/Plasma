@@ -1333,7 +1333,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
         if (!s_perf[kPingDisabled])
             conn->AutoPing();
             
-        AuthConnectedNotifyTrans * trans = NEW(AuthConnectedNotifyTrans);
+        AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
         NetTransSend(trans);
     }
 
@@ -2055,7 +2055,7 @@ static bool Recv_VaultNodeChanged (
 ) {
     const Auth2Cli_VaultNodeChanged & notify = *(const Auth2Cli_VaultNodeChanged *)msg;
     
-    VaultNodeChangedTrans * trans = NEW(VaultNodeChangedTrans);
+    VaultNodeChangedTrans * trans = new VaultNodeChangedTrans;
     trans->m_nodeId     = notify.nodeId;
     trans->m_revId      = notify.revisionId;
     NetTransSend(trans);
@@ -2071,7 +2071,7 @@ static bool Recv_VaultNodeAdded (
 ) {
     const Auth2Cli_VaultNodeAdded & notify = *(const Auth2Cli_VaultNodeAdded *)msg;
     
-    VaultNodeAddedTrans * trans = NEW(VaultNodeAddedTrans);
+    VaultNodeAddedTrans * trans = new VaultNodeAddedTrans;
     trans->m_parentId   = notify.parentId;
     trans->m_childId    = notify.childId;
     trans->m_ownerId    = notify.ownerId;
@@ -2088,7 +2088,7 @@ static bool Recv_VaultNodeRemoved (
 ) {
     const Auth2Cli_VaultNodeRemoved & notify = *(const Auth2Cli_VaultNodeRemoved *)msg;
     
-    VaultNodeRemovedTrans * trans = NEW(VaultNodeRemovedTrans);
+    VaultNodeRemovedTrans * trans = new VaultNodeRemovedTrans;
     trans->m_parentId   = notify.parentId;
     trans->m_childId    = notify.childId;
     NetTransSend(trans);
@@ -2104,7 +2104,7 @@ static bool Recv_VaultNodeDeleted (
 ) {
     const Auth2Cli_VaultNodeDeleted & notify = *(const Auth2Cli_VaultNodeDeleted *)msg;
     
-    VaultNodeDeletedTrans * trans = NEW(VaultNodeDeletedTrans);
+    VaultNodeDeletedTrans * trans = new VaultNodeDeletedTrans;
     trans->m_nodeId     = notify.nodeId;
     NetTransSend(trans);
 
@@ -2229,7 +2229,7 @@ static bool Recv_NotifyNewBuild (
     unsigned    ,
     void *
 ) {
-    NotifyNewBuildTrans * trans = NEW(NotifyNewBuildTrans);
+    NotifyNewBuildTrans * trans = new NotifyNewBuildTrans;
     NetTransSend(trans);
 
     return true;
@@ -2618,7 +2618,7 @@ LoginRequestTrans::LoginRequestTrans (
 ,   m_accountFlags(0)
 ,   m_playerCount(0)
 {
-    ZERO(m_players);
+    memset(&m_players, 0, sizeof(m_players));
 }
 
 //============================================================================
@@ -2960,7 +2960,7 @@ PlayerCreateRequestTrans::PlayerCreateRequestTrans (
         StrCopy(m_friendInvite, friendInvite, arrsize(m_friendInvite));
     else
         m_friendInvite[0] = 0;
-    ZERO(m_playerInfo);
+    memset(&m_playerInfo, 0, sizeof(m_playerInfo));
 }
 
 //============================================================================
@@ -3630,7 +3630,7 @@ bool FileDownloadRequestTrans::Recv (
     // we have data to write, so queue it for write in the main thread (we're
     // currently in a net recv thread)
     if (reply.chunkSize) {
-        RcvdFileDownloadChunkTrans * writeTrans = NEW(RcvdFileDownloadChunkTrans);
+        RcvdFileDownloadChunkTrans * writeTrans = new RcvdFileDownloadChunkTrans;
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = reply.chunkSize;
         writeTrans->offset  = reply.chunkOffset;
@@ -4695,7 +4695,7 @@ bool ScoreGetScoresTrans::Recv (
 
     if (reply.scoreCount > 0) {
         m_scoreCount    = reply.scoreCount;
-        m_scores        = TRACKED_NEW NetGameScore[m_scoreCount];
+        m_scores        = new NetGameScore[m_scoreCount];
 
         uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
@@ -4971,7 +4971,7 @@ bool ScoreGetRanksTrans::Recv (
 
     if (reply.rankCount > 0) {
         m_rankCount = reply.rankCount;
-        m_ranks     = TRACKED_NEW NetGameRank[m_rankCount];
+        m_ranks     = new NetGameRank[m_rankCount];
 
         uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
@@ -5216,7 +5216,7 @@ void NetCliAuthPingRequest (
     FNetCliAuthPingRequestCallback  callback,
     void *                          param
 ) {
-    PingRequestTrans * trans = NEW(PingRequestTrans)(
+    PingRequestTrans * trans = new PingRequestTrans(
         callback,
         param,
         pingTimeMs,
@@ -5232,7 +5232,7 @@ void NetCliAuthAccountExistsRequest (
     FNetCliAuthAccountExistsRequestCallback     callback,
     void *                                      param
 ) {
-    AccountExistsRequestTrans * trans = NEW(AccountExistsRequestTrans)(
+    AccountExistsRequestTrans * trans = new AccountExistsRequestTrans(
         callback,
         param,
         accountName
@@ -5259,7 +5259,7 @@ void NetCliAuthLoginRequest (
     if (os)
         StrCopy(s_os, os, arrsize(s_os));
 
-    LoginRequestTrans * trans = NEW(LoginRequestTrans)(callback, param);
+    LoginRequestTrans * trans = new LoginRequestTrans(callback, param);
     NetTransSend(trans);
 }
 
@@ -5270,7 +5270,7 @@ void NetCliAuthAgeRequest (
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) {
-    AgeRequestTrans * trans = NEW(AgeRequestTrans)(
+    AgeRequestTrans * trans = new AgeRequestTrans(
         ageName,
         ageInstId,
         callback,
@@ -5298,7 +5298,7 @@ void NetCliAuthAccountCreateRequest (
     FNetCliAuthAccountCreateRequestCallback callback,
     void *                                  param
 ) {
-    AccountCreateRequestTrans * trans = NEW(AccountCreateRequestTrans)(
+    AccountCreateRequestTrans * trans = new AccountCreateRequestTrans(
         accountName,
         password,
         accountFlags,
@@ -5318,7 +5318,7 @@ void NetCliAuthAccountCreateFromKeyRequest (
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
     void *                                          param
 ) {
-    AccountCreateFromKeyRequestTrans * trans = NEW(AccountCreateFromKeyRequestTrans)(
+    AccountCreateFromKeyRequestTrans * trans = new AccountCreateFromKeyRequestTrans(
         accountName,
         password,
         key,
@@ -5345,7 +5345,7 @@ void NetCliAuthPlayerCreateRequest (
         callback(error, param, playerInfo);
     }
     else {
-        PlayerCreateRequestTrans * trans = NEW(PlayerCreateRequestTrans)(
+        PlayerCreateRequestTrans * trans = new PlayerCreateRequestTrans(
             name,
             avatarShape,
             friendInvite,
@@ -5362,7 +5362,7 @@ void NetCliAuthPlayerDeleteRequest (
     FNetCliAuthPlayerDeleteRequestCallback  callback,
     void *                                  param
 ) {
-    PlayerDeleteRequestTrans * trans = NEW(PlayerDeleteRequestTrans)(
+    PlayerDeleteRequestTrans * trans = new PlayerDeleteRequestTrans(
         playerId,
         callback,
         param
@@ -5376,7 +5376,7 @@ void NetCliAuthUpgradeVisitorRequest (
     FNetCliAuthUpgradeVisitorRequestCallback    callback,
     void *                                      param
 ) {
-    UpgradeVisitorRequestTrans * trans = NEW(UpgradeVisitorRequestTrans)(
+    UpgradeVisitorRequestTrans * trans = new UpgradeVisitorRequestTrans(
         playerId,
         callback,
         param
@@ -5407,7 +5407,7 @@ void NetCliAuthSetPlayerRequest (
     FNetCliAuthSetPlayerRequestCallback callback,
     void *                              param
 ) {
-    SetPlayerRequestTrans * trans = NEW(SetPlayerRequestTrans)(
+    SetPlayerRequestTrans * trans = new SetPlayerRequestTrans(
         playerInt,
         callback,
         param
@@ -5441,7 +5441,7 @@ void NetCliAuthGetPublicAgeList (
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) {
-    GetPublicAgeListTrans * trans = NEW(GetPublicAgeListTrans)(
+    GetPublicAgeListTrans * trans = new GetPublicAgeListTrans(
         ageName,
         callback,
         param
@@ -5456,7 +5456,7 @@ void NetCliAuthAccountChangePasswordRequest (
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) {
-    AccountChangePasswordRequestTrans * trans = NEW(AccountChangePasswordRequestTrans)(
+    AccountChangePasswordRequestTrans * trans = new AccountChangePasswordRequestTrans(
         accountName,
         password,
         callback,
@@ -5472,7 +5472,7 @@ void NetCliAuthAccountSetRolesRequest (
     FNetCliAuthAccountSetRolesRequestCallback   callback,
     void *                                      param
 ) {
-    AccountSetRolesRequestTrans * trans = NEW(AccountSetRolesRequestTrans)(
+    AccountSetRolesRequestTrans * trans = new AccountSetRolesRequestTrans(
         accountName,
         accountFlags,
         callback,
@@ -5488,7 +5488,7 @@ void NetCliAuthAccountSetBillingTypeRequest (
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
 ) {
-    AccountSetBillingTypeRequestTrans * trans = NEW(AccountSetBillingTypeRequestTrans)(
+    AccountSetBillingTypeRequestTrans * trans = new AccountSetBillingTypeRequestTrans(
         accountName,
         billingType,
         callback,
@@ -5503,7 +5503,7 @@ void NetCliAuthAccountActivateRequest (
     FNetCliAuthAccountActivateRequestCallback   callback,
     void *                                      param
 ) {
-    AccountActivateRequestTrans * trans = NEW(AccountActivateRequestTrans)(
+    AccountActivateRequestTrans * trans = new AccountActivateRequestTrans(
         activationKey,
         callback,
         param
@@ -5518,7 +5518,7 @@ void NetCliAuthFileListRequest (
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 ) {
-    FileListRequestTrans * trans = NEW(FileListRequestTrans)(
+    FileListRequestTrans * trans = new FileListRequestTrans(
         callback,
         param,
         dir,
@@ -5534,7 +5534,7 @@ void NetCliAuthFileRequest (
     FNetCliAuthFileRequestCallback  callback,
     void *                          param
 ) {
-    FileDownloadRequestTrans * trans = NEW(FileDownloadRequestTrans)(
+    FileDownloadRequestTrans * trans = new FileDownloadRequestTrans(
         callback,
         param,
         filename,
@@ -5884,7 +5884,7 @@ void NetCliAuthSetPlayerBanStatusRequest (
     FNetCliAuthSetPlayerBanStatusRequestCallback    callback,
     void *                                          param
 ) {
-    SetPlayerBanStatusRequestTrans * trans = NEW(SetPlayerBanStatusRequestTrans)(
+    SetPlayerBanStatusRequestTrans * trans = new SetPlayerBanStatusRequestTrans(
         playerId,
         banned,
         callback,
@@ -5917,7 +5917,7 @@ void NetCliAuthChangePlayerNameRequest (
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 ) {
-    ChangePlayerNameRequestTrans * trans = NEW(ChangePlayerNameRequestTrans)(
+    ChangePlayerNameRequestTrans * trans = new ChangePlayerNameRequestTrans(
         playerId,
         newName,
         callback,
@@ -5934,7 +5934,7 @@ void NetCliAuthSendFriendInvite (
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 ) {
-    SendFriendInviteTrans * trans = NEW(SendFriendInviteTrans)(
+    SendFriendInviteTrans * trans = new SendFriendInviteTrans(
         emailAddress,
         toName,
         inviteUuid,
@@ -5953,7 +5953,7 @@ void NetCliAuthScoreCreate (
     FNetCliAuthCreateScoreCallback  callback,
     void *                          param
 ) {
-    ScoreCreateTrans * trans = NEW(ScoreCreateTrans)(
+    ScoreCreateTrans * trans = new ScoreCreateTrans(
         ownerId,
         gameName,
         gameType,
@@ -5970,7 +5970,7 @@ void NetCliAuthScoreDelete(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreDeleteTrans * trans = NEW(ScoreDeleteTrans)(
+    ScoreDeleteTrans * trans = new ScoreDeleteTrans(
         scoreId,
         callback,
         param
@@ -5985,7 +5985,7 @@ void NetCliAuthScoreGetScores(
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) {
-    ScoreGetScoresTrans * trans = NEW(ScoreGetScoresTrans)(
+    ScoreGetScoresTrans * trans = new ScoreGetScoresTrans(
         ownerId,
         gameName,
         callback,
@@ -6001,7 +6001,7 @@ void NetCliAuthScoreAddPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreAddPointsTrans * trans = NEW(ScoreAddPointsTrans)(
+    ScoreAddPointsTrans * trans = new ScoreAddPointsTrans(
         scoreId,
         numPoints,
         callback,
@@ -6018,7 +6018,7 @@ void NetCliAuthScoreTransferPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreTransferPointsTrans * trans = NEW(ScoreTransferPointsTrans)(
+    ScoreTransferPointsTrans * trans = new ScoreTransferPointsTrans(
         srcScoreId,
         destScoreId,
         numPoints,
@@ -6035,7 +6035,7 @@ void NetCliAuthScoreSetPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreSetPointsTrans * trans = NEW(ScoreSetPointsTrans)(
+    ScoreSetPointsTrans * trans = new ScoreSetPointsTrans(
         scoreId,
         numPoints,
         callback,
@@ -6057,7 +6057,7 @@ void NetCliAuthScoreGetRankList(
     FNetCliAuthGetRanksCallback callback,
     void *                      param
 ) {
-    ScoreGetRanksTrans * trans = NEW(ScoreGetRanksTrans)(
+    ScoreGetRanksTrans * trans = new ScoreGetRanksTrans(
         ownerId,
         scoreGroup,
         parentFolderId,

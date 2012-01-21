@@ -261,14 +261,14 @@ static NetMsgChannel * FindChannel_CS (unsigned protocol, bool server) {
 //===========================================================================
 static NetMsgChannel * FindOrCreateChannel_CS (unsigned protocol, bool server) {
     if (!s_channels) {
-        s_channels = NEW(LIST(NetMsgChannel));
+        s_channels = new LIST(NetMsgChannel);
         s_channels->SetLinkOffset(offsetof(NetMsgChannel, m_link));
     }
 
     // find or create protocol
     NetMsgChannel * channel = FindChannel_CS(protocol, server);
     if (!channel) {
-        channel                 = NEW(NetMsgChannel);
+        channel                 = new NetMsgChannel();
         channel->m_protocol     = protocol;
         channel->m_server       = server;
         channel->m_largestRecv  = 0;

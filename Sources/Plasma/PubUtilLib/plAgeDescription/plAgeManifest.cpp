@@ -182,7 +182,7 @@ protected:
         if (hsCheckBits(flags, plManifestFile::kFlagZipped))
             zippedSize = atoi(tokenizer->next());
 
-        return TRACKED_NEW plManifestFile(name, "", sum, size, zippedSize, flags);
+        return new plManifestFile(name, "", sum, size, zippedSize, flags);
     }
 
     virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)

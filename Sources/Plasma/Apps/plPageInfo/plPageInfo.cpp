@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
     plResMgrSettings::Get().SetFilterNewerPageVersions(false);
     plResMgrSettings::Get().SetFilterOlderPageVersions(false);
     plResMgrSettings::Get().SetLoadPagesOnInit(false);
-    gResMgr = TRACKED_NEW plResManager;
+    gResMgr = new plResManager;
     hsgResMgr::Init(gResMgr);
     gResMgr->AddSinglePage(pageFile);
 

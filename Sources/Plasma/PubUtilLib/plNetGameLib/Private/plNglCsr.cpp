@@ -461,7 +461,7 @@ static bool Recv_RegisterReply (
     conn->serverChallenge   = reply.serverChallenge;
     conn->latestBuildId     = reply.csrBuildId;
 
-    ConnectedNotifyTrans * trans = NEW(ConnectedNotifyTrans)(
+    ConnectedNotifyTrans * trans = new ConnectedNotifyTrans(
         conn->connectParam,
         conn->latestBuildId
     );
@@ -842,7 +842,7 @@ void NetCliCsrStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                ConnectParam * cp = NEW(ConnectParam);
+                ConnectParam * cp = new ConnectParam;
                 cp->callback    = callback;
                 cp->param       = param;
 
@@ -861,7 +861,7 @@ void NetCliCsrStartConnect (
             NetAddress addr;
             NetAddressFromString(&addr, addrList[i], kNetDefaultClientPort);
             
-            ConnectParam * cp = NEW(ConnectParam);
+            ConnectParam * cp = new ConnectParam;
             cp->callback    = callback;
             cp->param       = param;
 
@@ -889,7 +889,7 @@ void NetCliCsrLoginRequest (
     FNetCliCsrLoginCallback callback,
     void *                  param
 ) {
-    LoginRequestTrans * trans = NEW(LoginRequestTrans)(
+    LoginRequestTrans * trans = new LoginRequestTrans(
         csrName,
         namePassHash,
         callback,

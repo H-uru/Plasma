@@ -98,7 +98,7 @@ void plParticleCollisionEffect::Read(hsStream *s, hsResMgr *mgr)
     hsKeyedObject::Read(s, mgr);
 
     plGenRefMsg* msg;
-    msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
+    msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
     mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
     fBounds = nil;
 }
@@ -812,8 +812,8 @@ void plParticleFlockEffect::SetMaxParticles(const uint16_t num)
 
     if (num > 0)
     {
-        fDistSq = TRACKED_NEW float[num * num];
-        fInfluences = TRACKED_NEW plParticleInfluenceInfo[num];
+        fDistSq = new float[num * num];
+        fInfluences = new plParticleInfluenceInfo[num];
     }
 }
 

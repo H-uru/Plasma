@@ -226,7 +226,7 @@ void plLoadAvatarMsg::SetUserStr(const char *userStr)
         return;
     }
 
-    fUserStr = TRACKED_NEW char[strlen(userStr) + 1];
+    fUserStr = new char[strlen(userStr) + 1];
     strcpy(fUserStr, userStr);
     fUserStr[strlen(userStr)] = '\0';
 }

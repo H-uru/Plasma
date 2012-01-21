@@ -60,7 +60,7 @@ public:
 
 void plAccMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
-    hsTArray<EdgeBin>*  bins = TRACKED_NEW hsTArray<EdgeBin>[maxVtxIdx+1];
+    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -161,8 +161,8 @@ void plAccMeshSmooth::FindEdges(hsTArray<plGeometrySpan*>& spans, hsTArray<uint1
 
 void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
 {
-    hsTArray<uint16_t>* shareVtx = TRACKED_NEW hsTArray<uint16_t>[spans.GetCount()];
-    hsTArray<uint16_t>* edgeVerts = TRACKED_NEW hsTArray<uint16_t>[spans.GetCount()];
+    hsTArray<uint16_t>* shareVtx = new hsTArray<uint16_t>[spans.GetCount()];
+    hsTArray<uint16_t>* edgeVerts = new hsTArray<uint16_t>[spans.GetCount()];
     FindEdges(spans, edgeVerts);
 
     int i;

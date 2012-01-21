@@ -56,7 +56,7 @@ hsFolderIterator::hsFolderIterator(const char path[], bool useCustomFilter)
 {
    fCustomFilter = useCustomFilter;
 
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
    fData->fSearchHandle = nil;
    fData->fValid = true;
    
@@ -191,7 +191,7 @@ hsWFolderIterator::hsWFolderIterator(const wchar_t path[], bool useCustomFilter)
 {
     fCustomFilter = useCustomFilter;
 
-    fData = TRACKED_NEW hsWFolderIterator_Data;
+    fData = new hsWFolderIterator_Data;
     fData->fSearchHandle = nil;
     fData->fValid = true;
 

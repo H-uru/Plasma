@@ -168,7 +168,7 @@ plMsgWrap* plDispatch::IDequeue(plMsgWrap** head, plMsgWrap** tail)
 
 hsBool plDispatch::ISortToDeferred(plMessage* msg)
 {
-    plMsgWrap* msgWrap = TRACKED_NEW plMsgWrap(msg);
+    plMsgWrap* msgWrap = new plMsgWrap(msg);
     if( !fFutureMsgQueue )
     {
         if( IGetOwner() )
@@ -463,7 +463,7 @@ hsBool plDispatch::MsgSend(plMessage* msg, hsBool async)
     else if((timeMsg = plTimeMsg::ConvertNoRef(msg)))
         ICheckDeferred(timeMsg->DSeconds());
 
-    plMsgWrap* msgWrap = TRACKED_NEW plMsgWrap(msg);
+    plMsgWrap* msgWrap = new plMsgWrap(msg);
     hsRefCnt_SafeUnRef(msg);
 
     // broadcast
@@ -554,7 +554,7 @@ void plDispatch::RegisterForExactType(uint16_t hClass, const plKey& receiver)
     plTypeFilter* filt = fRegisteredExactTypes[idx];
     if( !filt )
     {
-        filt = TRACKED_NEW plTypeFilter;
+        filt = new plTypeFilter;
         fRegisteredExactTypes[idx] = filt;
         filt->fHClass = hClass;
     }

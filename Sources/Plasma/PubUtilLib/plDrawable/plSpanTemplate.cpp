@@ -88,9 +88,9 @@ void plSpanTemplate::Alloc(uint16_t format, uint32_t numVerts, uint32_t numTris)
 
     fNumTris = (uint16_t)numTris;
 
-    fData = TRACKED_NEW uint8_t[VertSize()];
+    fData = new uint8_t[VertSize()];
 
-    fIndices = TRACKED_NEW uint16_t[NumIndices()];
+    fIndices = new uint16_t[NumIndices()];
 }
 
 void plSpanTemplate::DeAlloc()
@@ -139,8 +139,8 @@ void plSpanTemplateB::ComputeBounds()
 
 void plSpanTemplateB::AllocColors()
 {
-    fMultColors = TRACKED_NEW hsColorRGBA[NumVerts()];
-    fAddColors = TRACKED_NEW hsColorRGBA[NumVerts()];
+    fMultColors = new hsColorRGBA[NumVerts()];
+    fAddColors = new hsColorRGBA[NumVerts()];
 }
 
 void plSpanTemplateB::DeAllocColors()

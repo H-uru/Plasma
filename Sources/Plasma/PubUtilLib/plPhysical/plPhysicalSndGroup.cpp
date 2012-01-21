@@ -146,7 +146,7 @@ void plPhysicalSndGroup::PlaySlideSound(uint32_t against)
 {
     if(against >= fSlideSounds.Count())
         return;
-    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kContinue);
     animMsg->Send(fSlideSounds[against]);
     fPlayingSlideSound = true;
@@ -156,7 +156,7 @@ void plPhysicalSndGroup::StopSlideSound(uint32_t against)
 {
     if(against >= fSlideSounds.Count())
         return;
-    plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg *animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kStop);
     animMsg->Send(fSlideSounds[against]);
     fPlayingSlideSound = false;
@@ -166,7 +166,7 @@ void plPhysicalSndGroup::PlayImpactSound(uint32_t against)
 {
     if(against >= fImpactSounds.Count())
         return;
-    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kContinue);
     animMsg->Send(fImpactSounds[against]);
 }
@@ -175,7 +175,7 @@ void plPhysicalSndGroup::SetSlideSoundVolume(uint32_t against, float volume)
 {
     if(against >= fSlideSounds.Count())
         return;
-    plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
     animMsg->fSpeed = volume;
     animMsg->Send(fSlideSounds[against]);

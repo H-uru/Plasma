@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyDniCoordinates::pyDniCoordinates(plDniCoordinateInfo* coord)
 {
-    fCoords = TRACKED_NEW plDniCoordinateInfo;
+    fCoords = new plDniCoordinateInfo;
     if (coord) {
         // copy their coords into our copy
         fCoords->SetTorans(coord->GetTorans());
@@ -60,7 +60,7 @@ pyDniCoordinates::pyDniCoordinates(plDniCoordinateInfo* coord)
 
 pyDniCoordinates::pyDniCoordinates()
 {
-    fCoords = TRACKED_NEW plDniCoordinateInfo;
+    fCoords = new plDniCoordinateInfo;
     fCoords->SetTorans(0);
     fCoords->SetHSpans(0);
     fCoords->SetVSpans(0);

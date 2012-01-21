@@ -159,7 +159,7 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         
         // meshKey will be nil when dealing with non-sharedMesh data
         if (meshKey)
-            hsgResMgr::ResMgr()->AddViaNotify(meshKey, TRACKED_NEW plGenRefMsg(morphMod->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kPassiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(meshKey, new plGenRefMsg(morphMod->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kPassiveRef);
         
         plSimpleStateVariable *weights = morphSD->GetStateDataRecord(i)->FindVar(kStrWeights);
 

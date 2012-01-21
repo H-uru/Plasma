@@ -1297,7 +1297,7 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fFadeOutParams.Read( s );
 
     // Read in soft volume key
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftVolume ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftVolume ), plRefFlags::kActiveRef );
 
     // Read in the data buffer key
     fDataBufferKey = mgr->ReadKey( s );
@@ -1306,7 +1306,7 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fEAXSettings.Read( s );
 
     // EAX soft keys
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
 }
 
 void plSound::IWrite( hsStream *s, hsResMgr *mgr )

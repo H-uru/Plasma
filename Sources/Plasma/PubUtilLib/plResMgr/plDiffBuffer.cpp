@@ -86,7 +86,7 @@ plDiffBuffer::plDiffBuffer( uint32_t newLength, uint32_t oldLength )
         f16BitMode = false;
 
     fNewLength = newLength;
-    fStream = TRACKED_NEW hsRAMStream();
+    fStream = new hsRAMStream();
     fStream->WriteLE32( fNewLength );
     fStream->WriteBool( f16BitMode );
     fWriting = true;
@@ -109,12 +109,12 @@ plDiffBuffer::plDiffBuffer( void *buffer, uint32_t length )
          memcmp(buffer,"BSDIFF40",8)==0 )
     {
         // This is a bsdiff buffer. Use plBSDiffBuffer to handle it.
-        fBSDiffBuffer = TRACKED_NEW plBSDiffBuffer(buffer, length);
+        fBSDiffBuffer = new plBSDiffBuffer(buffer, length);
         fIsBSDiff = true;
     }
     else
     {
-        fStream = TRACKED_NEW hsRAMStream();
+        fStream = new hsRAMStream();
         fStream->Write( length, buffer );
         fStream->Rewind();
 
@@ -187,7 +187,7 @@ void    plDiffBuffer::GetBuffer( uint32_t &length, void *&bufferPtr )
     hsAssert( fWriting, "Trying to GetBuffer() on a difference buffer that's reading" );
 
     length = fStream->GetPosition();
-    bufferPtr = (void *)TRACKED_NEW uint8_t[ length ];
+    bufferPtr = (void *)new uint8_t[ length ];
 
     fStream->Rewind();
     fStream->Read( length, bufferPtr );
@@ -218,7 +218,7 @@ void    plDiffBuffer::Apply( uint32_t oldLength, void *oldBuffer, uint32_t &newL
 
     /// Step 1: Allocate the new buffer
     newLength = fNewLength;
-    uint8_t *new8Buffer = TRACKED_NEW uint8_t[ newLength ];
+    uint8_t *new8Buffer = new uint8_t[ newLength ];
     uint8_t *old8Buffer = (uint8_t *)oldBuffer;
     newBuffer = (void *)new8Buffer;
 

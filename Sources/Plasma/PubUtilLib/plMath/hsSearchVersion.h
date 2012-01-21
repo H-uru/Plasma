@@ -123,9 +123,9 @@ template <class T> hsSearchVersion<T>::hsSearchVersion(uint32_t len, uint32_t in
 { 
     fIncIndex = inc ? inc : len;
     fLength = len; 
-    fArray = TRACKED_NEW hsVersionNode<T>*[fLength]; 
+    fArray = new hsVersionNode<T>*[fLength]; 
     HSMemory::Clear(fArray, fLength*sizeof(*fArray)); 
-    fBackArray = TRACKED_NEW T*[fNumIndex = fLength];
+    fBackArray = new T*[fNumIndex = fLength];
 }
 
 template <class T> hsSearchVersion<T>::~hsSearchVersion()
@@ -141,7 +141,7 @@ template <class T> void hsSearchVersion<T>::ICheckBackArray()
 {
     if( fNextIndex >= fNumIndex )
     {
-        T** newBackArray = TRACKED_NEW T*[fNumIndex + fIncIndex];
+        T** newBackArray = new T*[fNumIndex + fIncIndex];
         HSMemory::BlockMove(fBackArray, newBackArray, fNextIndex*sizeof(T*));
         delete [] fBackArray;
         fBackArray = newBackArray;
@@ -157,7 +157,7 @@ template <class T> int32_t hsSearchVersion<T>::Find(int where, const T&what, hsB
 
     if( !curr )
     {
-        hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+        hsVersionNode<T>* next = new hsVersionNode<T>(fNextIndex, what);
         fArray[where] = next;
         fBackArray[fNextIndex] = &next->GetData();
         return fNextIndex++;
@@ -172,7 +172,7 @@ template <class T> int32_t hsSearchVersion<T>::Find(int where, const T&what, hsB
     if( curr->Next() )
         return curr->Next()->Index();
 
-    hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+    hsVersionNode<T>* next = new hsVersionNode<T>(fNextIndex, what);
     curr->Append(next);
     fBackArray[fNextIndex] = &next->GetData();
     return fNextIndex++;

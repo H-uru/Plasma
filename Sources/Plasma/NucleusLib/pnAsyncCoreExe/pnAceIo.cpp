@@ -504,7 +504,7 @@ void AsyncSocketRegisterNotifyProc (
     ASSERT(notifyProc);
 
     // Perform memory allocation outside lock
-    ISocketConnType * ct    = NEW(ISocketConnType);
+    ISocketConnType * ct    = new ISocketConnType;
     ct->notifyProc          = notifyProc;
     ct->connType            = connType;
     ct->buildId             = buildId;

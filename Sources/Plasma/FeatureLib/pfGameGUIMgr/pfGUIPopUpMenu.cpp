@@ -236,7 +236,7 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
     pfGUIDialogMod::Read( s, mgr );
 
     // In case we need it...
-    fKeyGen = TRACKED_NEW pfPopUpKeyGenerator( GetName(), GetKey()->GetUoid().GetLocation() );
+    fKeyGen = new pfPopUpKeyGenerator( GetName(), GetKey()->GetUoid().GetLocation() );
 
     fOriginX = fOriginY = -1.f;
 
@@ -254,12 +254,12 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
         
         fMenuItems[ i ].fHandler = pfGUICtrlProcWriteableObject::Read( s );
 
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefSubMenu ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefSubMenu ), plRefFlags::kActiveRef );
     }
 
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginAnchor ), plRefFlags::kPassiveRef );
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginContext ), plRefFlags::kPassiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginAnchor ), plRefFlags::kPassiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginContext ), plRefFlags::kPassiveRef );
 
     fAlignment = (Alignment)s->ReadByte();
 
@@ -306,8 +306,8 @@ void    pfGUIPopUpMenu::SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *
 {
     fOriginAnchor = anchor; 
     fOriginContext = context; 
-    hsgResMgr::ResMgr()->AddViaNotify( fOriginAnchor->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginAnchor ), plRefFlags::kPassiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( fOriginContext->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginContext ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fOriginAnchor->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginAnchor ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fOriginContext->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefOriginContext ), plRefFlags::kPassiveRef );
 }
 
 //// SetEnabled //////////////////////////////////////////////////////////////
@@ -438,7 +438,7 @@ hsBool  pfGUIPopUpMenu::IBuildMenu( void )
     if( fWaitingForSkin && fSkin == nil )
         return false;       // Still waiting to get our skin before building
 
-    pfGUIColorScheme *scheme = TRACKED_NEW pfGUIColorScheme();
+    pfGUIColorScheme *scheme = new pfGUIColorScheme();
     scheme->fForeColor.Set( 0, 0, 0, 1 );
     scheme->fBackColor.Set( 1, 1, 1, 1 );
 
@@ -473,7 +473,7 @@ hsBool  pfGUIPopUpMenu::IBuildMenu( void )
     // The PROBLEM is that we can't do that unless we have a friggin surface on
     // which to calculate the text extents! So sadly, we're going to have to create
     // a whole new DTMap and use it to calculate some stuff
-    plDynamicTextMap *scratch = TRACKED_NEW plDynamicTextMap( 8, 8, false );
+    plDynamicTextMap *scratch = new plDynamicTextMap( 8, 8, false );
     scratch->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, true );
     for( i = 0; i < fMenuItems.GetCount(); i++ )
     {
@@ -561,7 +561,7 @@ hsBool  pfGUIPopUpMenu::IBuildMenu( void )
         {
             button->SetColorScheme( scheme );
             button->SetName( fMenuItems[ i ].fName.c_str() );
-            button->SetHandler( TRACKED_NEW pfGUIMenuItemProc( this, i ) );
+            button->SetHandler( new pfGUIMenuItemProc( this, i ) );
             // make the tag ID the position in the menu list
             button->SetTagID(i);
             button->SetDynTextMap( mat->GetLayer( 0 ), plDynamicTextMap::ConvertNoRef( mat->GetLayer( 0 )->GetTexture() ) );
@@ -704,11 +704,11 @@ hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
 
     
     // Create the new dynTextMap
-    plDynamicTextMap    *textMap = TRACKED_NEW plDynamicTextMap();
+    plDynamicTextMap    *textMap = new plDynamicTextMap();
     fKeyGen->CreateKey( textMap );
 
     // Create the material
-    hsGMaterial *material = TRACKED_NEW hsGMaterial;
+    hsGMaterial *material = new hsGMaterial;
     fKeyGen->CreateKey( material );
 
     // Create the layer and attach
@@ -722,7 +722,7 @@ hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
     lay->SetClampFlags( hsGMatState::kClampTexture );
 
     // Do sendRef here, since we're going to need it set pretty darned quick
-    hsgResMgr::ResMgr()->SendRef( textMap->GetKey(), TRACKED_NEW plLayRefMsg( lay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->SendRef( textMap->GetKey(), new plLayRefMsg( lay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     return material;
 
@@ -739,8 +739,8 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     
 
     // Create the menu and give it a key gen
-    pfGUIPopUpMenu  *menu = TRACKED_NEW pfGUIPopUpMenu();
-    menu->fKeyGen = TRACKED_NEW pfPopUpKeyGenerator( name, destLoc );
+    pfGUIPopUpMenu  *menu = new pfGUIPopUpMenu();
+    menu->fKeyGen = new pfPopUpKeyGenerator( name, destLoc );
     menu->fKeyGen->CreateKey( menu );
 
     menu->fOriginX = x;
@@ -750,7 +750,7 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     if( parent != nil && ( (pfGUIPopUpMenu *)parent )->fSkin != nil )
     {
         menu->fWaitingForSkin = true;
-        hsgResMgr::ResMgr()->SendRef( ( (pfGUIPopUpMenu *)parent )->fSkin->GetKey(), TRACKED_NEW plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef( ( (pfGUIPopUpMenu *)parent )->fSkin->GetKey(), new plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
     }
 
     // HACK for now: create us a temp skin to use
@@ -761,12 +761,12 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
         loc.Set( 0x1425 );
         plKey skinKey = hsgResMgr::ResMgr()->FindKey( plUoid( loc, pfGUISkin::Index(), "GUISkin01_GUISkin" ) );
         menu->fWaitingForSkin = true;
-        hsgResMgr::ResMgr()->AddViaNotify( skinKey, TRACKED_NEW plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( skinKey, new plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
     }
 */
 
     // Create the rendermod
-    plPostEffectMod *renderMod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod *renderMod = new plPostEffectMod;
     menu->fKeyGen->CreateKey( renderMod );
 
     renderMod->SetHither( 0.5f );
@@ -782,22 +782,22 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     renderMod->SetFovY( fovY * 180.f / M_PI );
 
     // Create the sceneNode to go with it
-    menu->fParentNode= TRACKED_NEW plSceneNode;
+    menu->fParentNode= new plSceneNode;
     menu->fKeyGen->CreateKey( menu->fParentNode );
 //  menu->fParentNode->GetKey()->RefObject();
-    hsgResMgr::ResMgr()->SendRef( menu->fParentNode->GetKey(), TRACKED_NEW plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, 0, kRefParentNode ), plRefFlags::kActiveRef );     
+    hsgResMgr::ResMgr()->SendRef( menu->fParentNode->GetKey(), new plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, 0, kRefParentNode ), plRefFlags::kActiveRef );     
 
-    hsgResMgr::ResMgr()->AddViaNotify( menu->fParentNode->GetKey(), TRACKED_NEW plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );       
+    hsgResMgr::ResMgr()->AddViaNotify( menu->fParentNode->GetKey(), new plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );       
 
     menu->SetRenderMod( renderMod );
     menu->SetName( name );
 
     // Create the dummy scene object to hold the menu
-    plSceneObject   *newObj = TRACKED_NEW plSceneObject;
+    plSceneObject   *newObj = new plSceneObject;
     menu->fKeyGen->CreateKey( newObj );
 
     // *#&$(*@&#$ need a coordIface...
-    plCoordinateInterface *newCI = TRACKED_NEW plCoordinateInterface;
+    plCoordinateInterface *newCI = new plCoordinateInterface;
     menu->fKeyGen->CreateKey( newCI );
 
     hsMatrix44 l2w, w2l;
@@ -806,15 +806,15 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
 
     // Using SendRef here because AddViaNotify will queue the messages up, which doesn't do us any good
     // if we need these refs right away
-    hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );      
-    hsgResMgr::ResMgr()->SendRef( renderMod->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );       
+    hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );      
+    hsgResMgr::ResMgr()->SendRef( renderMod->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );       
     newObj->SetSceneNode( menu->fParentNode->GetKey() );
     newObj->SetTransform( l2w, w2l );
 
-    hsgResMgr::ResMgr()->SendRef( menu->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );        
+    hsgResMgr::ResMgr()->SendRef( menu->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );        
 
     // Add the menu to the GUI mgr
-    plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg( pfGameGUIMgr::GetInstance()->GetKey(), 
+    plGenRefMsg *refMsg = new plGenRefMsg( pfGameGUIMgr::GetInstance()->GetKey(), 
                                             plRefMsg::kOnCreate, 0, pfGameGUIMgr::kDlgModRef );
     hsgResMgr::ResMgr()->AddViaNotify( menu->GetKey(), refMsg, plRefFlags::kActiveRef );        
 
@@ -833,7 +833,7 @@ void    pfGUIPopUpMenu::SetSkin( pfGUISkin *skin )
 
     if( skin != nil )
     {
-        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
         fWaitingForSkin = true;
     }
     else
@@ -904,7 +904,7 @@ void    pfGUISkin::Read( hsStream *s, hsResMgr *mgr )
     for( ; i < kNumElements; i++ )
         fElements[ i ].Empty();
 
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefMipmap ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefMipmap ), plRefFlags::kActiveRef );
 }
 
 void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )

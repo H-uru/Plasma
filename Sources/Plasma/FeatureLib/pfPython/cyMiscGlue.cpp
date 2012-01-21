@@ -256,7 +256,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
     else if (PyUnicode_Check(message))
     {
         int size = PyUnicode_GetSize(message);
-        wchar_t* msg = TRACKED_NEW wchar_t[size + 1]; msg[size] = 0;
+        wchar_t* msg = new wchar_t[size + 1]; msg[size] = 0;
         PyUnicode_AsWideChar((PyUnicodeObject*)message, msg, size);
         uint32_t retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
         delete msg;
@@ -289,7 +289,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
     else if (PyUnicode_Check(val))
     {
         int len = PyUnicode_GetSize(val);
-        wchar_t* buffer = TRACKED_NEW wchar_t[len + 1];
+        wchar_t* buffer = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)val, buffer, len);
         buffer[len] = L'\0';
         cyMisc::SendKIMessageS(command, buffer);
@@ -352,7 +352,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spa
         if (PyUnicode_Check(userStrObj))
         {
             int len = PyUnicode_GetSize(userStrObj);
-            wchar_t* buffer = TRACKED_NEW wchar_t[len + 1];
+            wchar_t* buffer = new wchar_t[len + 1];
             PyUnicode_AsWideChar((PyUnicodeObject*)userStrObj, buffer, len);
             buffer[len] = L'\0';
             char* temp = hsWStringToString(buffer);
@@ -412,7 +412,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
     if (PyUnicode_Check(nameObj))
     {
         int len = PyUnicode_GetSize(nameObj);
-        wchar_t* buffer = TRACKED_NEW wchar_t[len + 1];
+        wchar_t* buffer = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, buffer, len);
         buffer[len] = L'\0';
         name = buffer;
@@ -450,7 +450,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
             else if (PyUnicode_Check(item))
             {
                 int strLen = PyUnicode_GetSize(item);
-                wchar_t* buffer = TRACKED_NEW wchar_t[strLen + 1];
+                wchar_t* buffer = new wchar_t[strLen + 1];
                 PyUnicode_AsWideChar((PyUnicodeObject*)item, buffer, strLen);
                 buffer[strLen] = L'\0';
                 arg = buffer;
@@ -485,7 +485,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
     if (PyUnicode_Check(folderObj))
     {
         int len = PyUnicode_GetSize(folderObj);
-        wchar_t* buffer = TRACKED_NEW wchar_t[len + 1];
+        wchar_t* buffer = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)folderObj, buffer, len);
         buffer[len] = L'\0';
         bool retVal = cyMisc::DumpLogs(buffer);

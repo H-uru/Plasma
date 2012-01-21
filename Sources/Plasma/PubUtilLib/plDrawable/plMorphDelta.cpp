@@ -282,7 +282,7 @@ void plMorphDelta::AllocDeltas(int iSpan, int nDel, int nUVW)
 
     int uvwCnt = nDel * nUVW;
     if( uvwCnt )
-        fSpans[iSpan].fUVWs = TRACKED_NEW hsPoint3[uvwCnt];
+        fSpans[iSpan].fUVWs = new hsPoint3[uvwCnt];
     else
         fSpans[iSpan].fUVWs = nil;
 }

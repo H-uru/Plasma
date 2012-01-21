@@ -789,7 +789,7 @@ bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
     
     char str[2048];
-    ZERO(str);
+    memset(&str, 0, sizeof(str));
     MemCopy(str, spawnPoints, min(spawnPointsLen, arrsize(str) - 1));
     
     char token1[ 1024 ];

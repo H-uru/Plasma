@@ -143,7 +143,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         /// JPEG stream into a separate buffer before we can decode it. Which means we ALSO
         /// have to write/read a length of said buffer. Such is life, I guess...
         jpegSourceSize = inStream->ReadLE32();
-        jpegSourceBuffer = TRACKED_NEW uint8_t[ jpegSourceSize ];
+        jpegSourceBuffer = new uint8_t[ jpegSourceSize ];
         if( jpegSourceBuffer == nil )
         {
             // waah.
@@ -183,7 +183,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         (void) jpeg_start_decompress( &cinfo );
 
         /// Construct a new mipmap to hold everything
-        newMipmap = TRACKED_NEW plMipmap( cinfo.output_width, cinfo.output_height, plMipmap::kRGB32Config, 1, plMipmap::kJPEGCompression );
+        newMipmap = new plMipmap( cinfo.output_width, cinfo.output_height, plMipmap::kRGB32Config, 1, plMipmap::kJPEGCompression );
 
         if( newMipmap == nil || newMipmap->GetImage() == nil )
         {
@@ -194,7 +194,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         JSAMPROW jbuffer;
         int row_stride = cinfo.output_width * cinfo.output_components;
         int out_stride = cinfo.output_width * 4;  // Decompress to RGBA
-        jbuffer = TRACKED_NEW JSAMPLE[row_stride];
+        jbuffer = new JSAMPLE[row_stride];
 
         uint8_t *destp = (uint8_t *)newMipmap->GetImage();
         while( cinfo.output_scanline < cinfo.output_height )
@@ -255,7 +255,7 @@ plMipmap*   plJPEG::ReadFromFile( const wchar_t *fileName )
     // so insert that into the stream before passing it on
     in.FastFwd();
     uint32_t fsize = in.GetPosition();
-    uint8_t *tempbuffer = TRACKED_NEW uint8_t[fsize];
+    uint8_t *tempbuffer = new uint8_t[fsize];
     in.Rewind();
     in.Read(fsize, tempbuffer);
     tempstream.WriteLE32(fsize);
@@ -292,7 +292,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 
         // Create a buffer to hold the data
         jpgBufferSize = source->GetWidth() * source->GetHeight() * 3;
-        jpgBuffer = TRACKED_NEW uint8_t[ jpgBufferSize ];
+        jpgBuffer = new uint8_t[ jpgBufferSize ];
         if( jpgBuffer == nil )
         {
             ERREXIT1( &cinfo, JERR_OUT_OF_MEMORY, 0 );
@@ -325,7 +325,7 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         JSAMPROW jbuffer;
         int in_stride = cinfo.image_width * 4;  // Input is always RGBA
         int row_stride = cinfo.image_width * cinfo.input_components;
-        jbuffer = TRACKED_NEW JSAMPLE[row_stride];
+        jbuffer = new JSAMPLE[row_stride];
 
         uint8_t *srcp = (uint8_t *)source->GetImage();
         while( cinfo.next_scanline < cinfo.image_height )
@@ -385,7 +385,7 @@ hsBool  plJPEG::WriteToFile( const wchar_t *fileName, plMipmap *sourceData )
         // so remove that from the stream before saving to a file
         tempstream.Rewind();
         uint32_t fsize = tempstream.ReadLE32();
-        uint8_t *tempbuffer = TRACKED_NEW uint8_t[fsize];
+        uint8_t *tempbuffer = new uint8_t[fsize];
         tempstream.Read(fsize, tempbuffer);
         out.Write(fsize, tempbuffer);
 

@@ -262,7 +262,7 @@ void hsSfxDistShade::Read(hsStream* s)
 
     if( cnt )
     {
-        hsSfxDfTableEntry* arr = TRACKED_NEW hsSfxDfTableEntry[cnt];
+        hsSfxDfTableEntry* arr = new hsSfxDfTableEntry[cnt];
         int i;
         for( i = 0; i < cnt; i++ )
         {

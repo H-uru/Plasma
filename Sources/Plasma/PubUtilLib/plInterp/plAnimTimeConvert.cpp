@@ -97,15 +97,15 @@ void plAnimTimeConvert::Init(plATCAnim *anim, plAGAnimInstance *instance, plAGMa
 {
         // Set up our eval callbacks
     plAGInstanceCallbackMsg *instMsg;
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kStart); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);    
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kStop); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
@@ -197,7 +197,7 @@ void plAnimTimeConvert::ResizeStates(int cnt)
 
     while (cnt>fStates.size())
     {
-        fStates.push_back(TRACKED_NEW plATCState);
+        fStates.push_back(new plATCState);
     }
 
     hsAssert(fStates.size()==cnt, "state resize mismatch");
@@ -358,7 +358,7 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, floa
         return *this; // Sorry... state saves only work in the forward direction
 
     fLastStateChange = worldTime;
-    plATCState *state = TRACKED_NEW plATCState;
+    plATCState *state = new plATCState;
 
     state->fStartWorldTime = fLastStateChange;
     state->fStartAnimTime = (animTime < 0 ? WorldToAnimTimeNoUpdate(fLastStateChange) : animTime);

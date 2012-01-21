@@ -324,7 +324,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         }
         if (!alreadyLoaded)
         {
-            pfDialogNameSetKey* pDNSK = TRACKED_NEW pfDialogNameSetKey(name,recvrKey);
+            pfDialogNameSetKey* pDNSK = new pfDialogNameSetKey(name,recvrKey);
             fDialogToSetKeyOf.Append(pDNSK);
         }
     }
@@ -333,13 +333,13 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
-    plClientMsg *msg = TRACKED_NEW plClientMsg( plClientMsg::kLoadRoomHold );
+    plClientMsg *msg = new plClientMsg( plClientMsg::kLoadRoomHold );
     msg->AddReceiver( clientKey );
     msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName ? ageName : "GUI", name));
     msg->Send();
 
     // Now add this dialog to a list of pending loads (will remove it once it's fully loaded)
-//  fDlgsPendingLoad.Append( TRACKED_NEW pfDialogNameSetKey( name, nil ) );
+//  fDlgsPendingLoad.Append( new pfDialogNameSetKey( name, nil ) );
 }
 
 //// IShowDialog /////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 //  IRemoveDlgFromList( dlg );
 
     // Add the name to our list of dialogs pending unload
-//  fDlgsPendingUnload.Append( TRACKED_NEW pfDialogNameSetKey( dlg->GetName(), nil ) );
+//  fDlgsPendingUnload.Append( new pfDialogNameSetKey( dlg->GetName(), nil ) );
 
     plKey       sceneNodeKey = dlg->GetSceneNodeKey();
     if( sceneNodeKey == nil )
@@ -448,7 +448,7 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
     {
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
-        plClientMsg *msg = TRACKED_NEW plClientMsg( plClientMsg::kUnloadRoom );
+        plClientMsg *msg = new plClientMsg( plClientMsg::kUnloadRoom );
         msg->AddReceiver( clientKey );
 //      msg->SetProgressBarSuppression( true );
         msg->AddRoomLoc(sceneNodeKey->GetUoid().GetLocation());
@@ -523,7 +523,7 @@ void pfGameGUIMgr::SetDialogToNotify(const char *name, plKey recvrKey)
 //
 void pfGameGUIMgr::SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey)
 {
-    pfGUIDialogNotifyProc* handler = TRACKED_NEW pfGUIDialogNotifyProc(recvrKey);
+    pfGUIDialogNotifyProc* handler = new pfGUIDialogNotifyProc(recvrKey);
     dlg->SetHandler(handler);
     handler->OnInit();
 }
@@ -540,14 +540,14 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 
     if( activate )
     {
-        fInputConfig = TRACKED_NEW pfGameUIInputInterface( this );
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+        fInputConfig = new pfGameUIInputInterface( this );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
         msg->SetIFace( fInputConfig );
         plgDispatch::MsgSend( msg );
     }
     else
     {
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputConfig );
         plgDispatch::MsgSend( msg );
 

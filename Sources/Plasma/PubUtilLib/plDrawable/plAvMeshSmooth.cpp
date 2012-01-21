@@ -60,7 +60,7 @@ public:
 
 void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
-    hsTArray<EdgeBin>*  bins = TRACKED_NEW hsTArray<EdgeBin>[maxVtxIdx+1];
+    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -171,10 +171,10 @@ void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edg
 // morph target mesh's local space. Whatever.
 void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans)
 {
-    hsTArray<uint16_t>* dstEdgeVerts = TRACKED_NEW hsTArray<uint16_t>[dstSpans.GetCount()];
+    hsTArray<uint16_t>* dstEdgeVerts = new hsTArray<uint16_t>[dstSpans.GetCount()];
     FindEdges(dstSpans, dstEdgeVerts);
 
-    hsTArray<uint16_t>* srcEdgeVerts = TRACKED_NEW hsTArray<uint16_t>[srcSpans.GetCount()];
+    hsTArray<uint16_t>* srcEdgeVerts = new hsTArray<uint16_t>[srcSpans.GetCount()];
     FindEdges(srcSpans, srcEdgeVerts);
 
     int i;

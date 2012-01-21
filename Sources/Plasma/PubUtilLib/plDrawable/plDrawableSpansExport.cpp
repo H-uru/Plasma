@@ -232,7 +232,7 @@ uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32
     {
         /// Create a lookup entry
         index = fDIIndices.GetCount();
-        fDIIndices.Append( TRACKED_NEW plDISpanIndex );
+        fDIIndices.Append( new plDISpanIndex );
         fDIIndices[ index ]->fFlags = plDISpanIndex::kNone;
     }
     plDISpanIndex   *spanLookup = fDIIndices[ index ];

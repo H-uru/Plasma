@@ -65,7 +65,7 @@ static plRandom sRand;
 int plDynaBulletMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
-    fDecals.Append(TRACKED_NEW plDynaSplot());
+    fDecals.Append(new plDynaSplot());
 
     return idx;
 }

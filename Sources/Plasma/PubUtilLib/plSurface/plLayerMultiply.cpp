@@ -60,14 +60,14 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
     fOwnedChannels = s->ReadLE32();
     if (fOwnedChannels & kOpacity)
     {
-        fOpacity = TRACKED_NEW float;
+        fOpacity = new float;
         *fOpacity = fSrcOpacity = s->ReadLEScalar();
         fDirtyChannels |= kOpacity;
     }
     
     if (fOwnedChannels & kPreshadeColor)
     {
-        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fPreshadeColor = new hsColorRGBA;
         fSrcPreshadeColor.Read(s);
         *fPreshadeColor = fSrcPreshadeColor;
         fDirtyChannels |= kPreshadeColor;
@@ -75,7 +75,7 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
 
     if (fOwnedChannels & kRuntimeColor)
     {
-        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fRuntimeColor = new hsColorRGBA;
         fSrcRuntimeColor.Read(s);
         *fRuntimeColor = fSrcRuntimeColor;
         fDirtyChannels |= kRuntimeColor;
@@ -83,7 +83,7 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
 
     if (fOwnedChannels & kAmbientColor)
     {
-        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fAmbientColor = new hsColorRGBA;
         fSrcAmbientColor.Read(s);
         *fAmbientColor = fSrcAmbientColor;
         fDirtyChannels |= kAmbientColor;
@@ -91,7 +91,7 @@ void plLayerMultiply::Read(hsStream* s, hsResMgr* mgr)
 
     if (fOwnedChannels & kTransform)
     {
-        fTransform = TRACKED_NEW hsMatrix44;
+        fTransform = new hsMatrix44;
         fSrcTransform.Read(s);
         *fTransform = fSrcTransform;
         fDirtyChannels |= kTransform;

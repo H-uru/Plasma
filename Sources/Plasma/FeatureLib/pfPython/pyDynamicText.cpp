@@ -120,7 +120,7 @@ plDynamicTextMsg* pyDynamicText::ICreateDTMsg()
     // must have a receiver!
     if ( fReceivers.Count() > 0 )
     {
-        plDynamicTextMsg* pMsg = TRACKED_NEW plDynamicTextMsg;
+        plDynamicTextMsg* pMsg = new plDynamicTextMsg;
         if ( fSenderKey )
             pMsg->SetSender(fSenderKey);
         if ( fNetPropagate )

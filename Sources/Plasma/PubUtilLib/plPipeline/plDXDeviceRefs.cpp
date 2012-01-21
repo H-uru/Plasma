@@ -194,7 +194,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
         fLevelSizes = lSz;
     else
     {
-        fLevelSizes = TRACKED_NEW uint32_t[1];
+        fLevelSizes = new uint32_t[1];
         fLevelSizes[0] = sz;
     }
     fData       = pd;

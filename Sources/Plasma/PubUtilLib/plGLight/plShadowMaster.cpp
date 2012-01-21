@@ -860,7 +860,7 @@ public:
         plShadowSlave* slave = fSlavePool[iSlave];
         if( !slave )
         {
-            fSlavePool[iSlave] = slave = TRACKED_NEW plShadowSlave;
+            fSlavePool[iSlave] = slave = new plShadowSlave;
             fISectPool[iSlave] = INewISect();
         }
 

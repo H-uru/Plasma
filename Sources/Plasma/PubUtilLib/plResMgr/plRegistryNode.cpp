@@ -186,7 +186,7 @@ void plRegistryPageNode::LoadKeys()
         plRegistryKeyList* keyList = IGetKeyList(classType);
         if (!keyList)
         {
-            keyList = TRACKED_NEW plRegistryKeyList(classType);
+            keyList = new plRegistryKeyList(classType);
             fKeyLists[classType] = keyList;
         }
         keyList->Read(stream);
@@ -333,7 +333,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
     plRegistryKeyList* keys = fKeyLists[classType];
     if (keys == nil)
     {
-        keys = TRACKED_NEW plRegistryKeyList(classType);
+        keys = new plRegistryKeyList(classType);
         fKeyLists[classType] = keys;
     }
 

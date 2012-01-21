@@ -70,7 +70,7 @@ void plSDLModifier::AddTarget(plSceneObject* so)
     if (so)
         plSingleModifier::AddTarget(so);
     if (!fStateCache)
-        fStateCache = TRACKED_NEW plStateDataRecord(GetSDLName());
+        fStateCache = new plStateDataRecord(GetSDLName());
 }
 
 uint32_t plSDLModifier::IApplyModFlags(uint32_t sendFlags)
@@ -161,7 +161,7 @@ void plSDLModifier::SendState(uint32_t sendFlags)
     bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
 
     // record current state
-    plStateDataRecord* curState = TRACKED_NEW plStateDataRecord(GetSDLName());
+    plStateDataRecord* curState = new plStateDataRecord(GetSDLName());
     IPutCurrentStateIn(curState);   // return sdl record which reflects current state of sceneObj, dirties curState
     if (!force)
     {

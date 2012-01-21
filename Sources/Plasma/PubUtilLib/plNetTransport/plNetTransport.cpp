@@ -361,7 +361,7 @@ int compare( const void* arg1, const void *arg2 )
 void plNetTransport::GetMemberListDistSorted(plNetTransportMember**& listIn) const
 {
     // copy members list
-    listIn = TRACKED_NEW plNetTransportMember* [fMembers.size()];
+    listIn = new plNetTransportMember* [fMembers.size()];
     int i;
     for (i=0; i<fMembers.size(); i++)
             listIn[i]=fMembers[i];

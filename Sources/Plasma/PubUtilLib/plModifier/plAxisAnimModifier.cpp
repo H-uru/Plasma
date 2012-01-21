@@ -88,7 +88,7 @@ class plAxisInputInterface : public plInputInterface
                 if( pMMsg->GetButton() == kLeftButtonUp )
                 {
                     // Remove ourselves from the stack
-                    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+                    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
                     msg->SetIFace( this );
                     plgDispatch::MsgSend( msg );
                     return true;
@@ -112,8 +112,8 @@ fYPos(0.0f),
 fIface(0), 
 fAllOrNothing(false)
 {
-    fNotify = TRACKED_NEW plNotifyMsg;
-    fInputIface = TRACKED_NEW plAxisInputInterface( this );
+    fNotify = new plNotifyMsg;
+    fInputIface = new plAxisInputInterface( this );
 }
 plAxisAnimModifier::~plAxisAnimModifier()
 {
@@ -172,7 +172,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                     fYPos = plMouseDevice::Instance()->GetCursorY();
 
                     // Insert our input interface onto the input stack
-                    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+                    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
                     msg->SetIFace( fInputIface );
                     plgDispatch::MsgSend( msg );
                 }
@@ -183,7 +183,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                         fActive = false;
 
                         // Remove our input interface from the input stack
-                        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+                        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
                         msg->SetIFace( fInputIface );
                         plgDispatch::MsgSend( msg );
                     }
@@ -201,7 +201,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
         {
             if (pMMsg->GetDX() > 0.05f)
                 return true;
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->AddReceiver(fXAnim);
             pMsg->SetAnimName(fAnimLabel.c_str());
         //  pMsg->SetAnimName()
@@ -221,7 +221,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
         
             if (pMMsg->GetDY() > 0.05f)
                 return true;
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->AddReceiver(fYAnim);
             pMsg->SetAnimName(fAnimLabel.c_str());
             if (fYPos > pMMsg->GetYPos())
@@ -233,7 +233,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                     fActive = false;
 
                     // Remove our input interface from the input stack
-                    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+                    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
                     msg->SetIFace( fInputIface );
                     plgDispatch::MsgSend( msg );
                     plInputManager::SetRecenterMouse(false);
@@ -252,7 +252,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                     fActive = false;
 
                     // Remove our input interface from the input stack
-                    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+                    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
                     msg->SetIFace( fInputIface );
                     plgDispatch::MsgSend( msg );
 
@@ -287,17 +287,17 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 fXAnim = pRefMsg->GetRef()->GetKey();
 
                 // add callbacks for beginning and end of animation
-                plEventCallbackMsg* pCall1 = TRACKED_NEW plEventCallbackMsg;
+                plEventCallbackMsg* pCall1 = new plEventCallbackMsg;
                 pCall1->fEvent = kBegin;
                 pCall1->fRepeats = -1;
                 pCall1->AddReceiver(GetKey());
                 
-                plEventCallbackMsg* pCall2 = TRACKED_NEW plEventCallbackMsg;
+                plEventCallbackMsg* pCall2 = new plEventCallbackMsg;
                 pCall2->fEvent = kEnd;
                 pCall2->fRepeats = -1;
                 pCall2->AddReceiver(GetKey());
 
-                plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg* pMsg = new plAnimCmdMsg;
                 pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
                 pMsg->AddCallback(pCall1);
                 pMsg->AddCallback(pCall2);
@@ -315,17 +315,17 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 fYAnim = pRefMsg->GetRef()->GetKey();
                 
                 // add callbacks for beginning and end of animation
-                plEventCallbackMsg* pCall1 = TRACKED_NEW plEventCallbackMsg;
+                plEventCallbackMsg* pCall1 = new plEventCallbackMsg;
                 pCall1->fEvent = kBegin;
                 pCall1->fRepeats = -1;
                 pCall1->AddReceiver(GetKey());
                 
-                plEventCallbackMsg* pCall2 = TRACKED_NEW plEventCallbackMsg;
+                plEventCallbackMsg* pCall2 = new plEventCallbackMsg;
                 pCall2->fEvent = kEnd;
                 pCall2->fRepeats = -1;
                 pCall2->AddReceiver(GetKey());
 
-                plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg* pMsg = new plAnimCmdMsg;
                 pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
                 pMsg->AddCallback(pCall1);
                 pMsg->AddCallback(pCall2);
@@ -365,9 +365,9 @@ void plAxisAnimModifier::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeX), plRefFlags::kPassiveRef);
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeY), plRefFlags::kPassiveRef);
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeLogic), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeX), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeY), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kTypeLogic), plRefFlags::kPassiveRef);
     
     fAllOrNothing = s->ReadBool();
     plNotifyMsg* pMsg = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(s));

@@ -237,7 +237,7 @@ PF_CONSOLE_CMD( Net,        // groupName
         text += (char*)params[i];
         text += " ";
     }
-    plConsoleMsg    *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
+    plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
     cMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
     cMsg->SetBCastFlag(plMessage::kLocalPropagate, 0);
     plgDispatch::MsgSend( cMsg );

@@ -299,7 +299,7 @@ void plAvatarSDLModifier::IPutClimbBrainIn(plArmatureMod *avMod, plAvBrainClimb 
 
 void plAvatarSDLModifier::ISetClimbBrainFrom(plArmatureMod *avMod, const plStateDataRecord* srcState)
 {
-    plAvBrainClimb *climbBrain = TRACKED_NEW plAvBrainClimb();
+    plAvBrainClimb *climbBrain = new plAvBrainClimb();
     avMod->PushBrain(climbBrain);
     climbBrain->LoadFromSDL(srcState);
 }
@@ -311,7 +311,7 @@ void plAvatarSDLModifier::IPutDriveBrainIn(plArmatureMod *avMod, plAvBrainDrive 
 
 void plAvatarSDLModifier::ISetDriveBrainFrom(plArmatureMod *avMod, const plStateDataRecord* src)
 {
-    plAvBrainDrive *driveBrain = TRACKED_NEW plAvBrainDrive();
+    plAvBrainDrive *driveBrain = new plAvBrainDrive();
     avMod->PushBrain(driveBrain);
 }
 
@@ -357,7 +357,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
             return false;
     }
     
-    plAnimStageVec * stages = TRACKED_NEW plAnimStageVec();
+    plAnimStageVec * stages = new plAnimStageVec();
     for (int j = 0; j < numStages; j++)
     {
         plStateDataRecord* stageState = stagesVar->GetStateDataRecord(j);
@@ -418,7 +418,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
     }
 
     plAvBrainGeneric *newBrain =
-        TRACKED_NEW plAvBrainGeneric(stages,
+        new plAvBrainGeneric(stages,
                              nil, nil,
                              callbackRcvr,
                              exitFlags,
@@ -499,7 +499,7 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     
     // ***!!! need to capture "advanceTo" and "regressTo" values!!!
     bool hackAdvanceToWrong = false, hackRegressToWrong = false;
-    plAnimStage *newStage = TRACKED_NEW plAnimStage(name,
+    plAnimStage *newStage = new plAnimStage(name,
                                             (uint8_t)notifyFlags,
                                             static_cast<plAnimStage::ForwardType>(fwd),
                                             static_cast<plAnimStage::BackType>(bwd),

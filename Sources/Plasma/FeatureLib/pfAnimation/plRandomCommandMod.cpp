@@ -300,7 +300,7 @@ void plRandomCommandMod::IRetry(float secs)
 
     double t = hsTimer::GetSysSeconds() + secs;
 
-    plAnimCmdMsg* msg = TRACKED_NEW plAnimCmdMsg(nil, GetKey(), &t);
+    plAnimCmdMsg* msg = new plAnimCmdMsg(nil, GetKey(), &t);
     msg->SetCmd(plAnimCmdMsg::kContinue);
     plgDispatch::MsgSend(msg);
 }

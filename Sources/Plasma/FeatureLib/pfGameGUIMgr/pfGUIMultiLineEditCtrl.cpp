@@ -649,9 +649,9 @@ void    pfGUIMultiLineEditCtrl::Read( hsStream *s, hsResMgr *mgr )
     fScrollControl = nil;
     if( s->ReadBool() )
     {
-        fScrollProc = TRACKED_NEW pfMLScrollProc( this );
+        fScrollProc = new pfMLScrollProc( this );
         fScrollProc->IncRef();
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
     }
 }
 
@@ -1460,7 +1460,7 @@ wchar_t *pfGUIMultiLineEditCtrl::ICopyRange( int32_t start, int32_t end ) const
     }
 
     // Our string...
-    string = TRACKED_NEW wchar_t[ stringSize + 1 ];
+    string = new wchar_t[ stringSize + 1 ];
 
     // Now actually copy the characters
     for( stringSize = 0, pos = start; pos < end; pos = pos + IOffsetToNextChar( fBuffer[ pos ] ) )
@@ -1508,7 +1508,7 @@ void    pfGUIMultiLineEditCtrl::SetBuffer( const wchar_t *asciiText )
 void    pfGUIMultiLineEditCtrl::SetBuffer( const uint8_t *codedText, uint32_t length )
 {
     // convert to uint16_t and set
-    uint16_t *convertedText = TRACKED_NEW uint16_t[ length ];
+    uint16_t *convertedText = new uint16_t[ length ];
     for( int32_t curChar = 0; curChar < length; curChar++ )
         convertedText[ curChar ] = (uint16_t)codedText[ curChar ];
     SetBuffer(convertedText,length);
@@ -1584,7 +1584,7 @@ uint8_t   *pfGUIMultiLineEditCtrl::GetCodedBuffer( uint32_t &length ) const
         length = fBuffer.GetCount() - 1;
 
         // convert to uint8_t and return
-        uint8_t *buffer = TRACKED_NEW uint8_t[ length ];
+        uint8_t *buffer = new uint8_t[ length ];
 
         for (int32_t curChar = 0; curChar < length; curChar++)
         {
@@ -1609,7 +1609,7 @@ uint16_t  *pfGUIMultiLineEditCtrl::GetCodedBufferW( uint32_t &length ) const
     {
         length = fBuffer.GetCount() - 1;
 
-        uint16_t *buffer = TRACKED_NEW uint16_t[ length ];
+        uint16_t *buffer = new uint16_t[ length ];
 
         // AcquireArray() isn't const...
         memcpy( buffer, &fBuffer[ 0 ], length * sizeof(uint16_t) );

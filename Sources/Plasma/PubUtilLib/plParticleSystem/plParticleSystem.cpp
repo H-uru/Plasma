@@ -113,7 +113,7 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
 
     fMaxTotalParticles = fMaxTotalParticlesLeft = maxTotalParticles;
     fMaxEmitters = maxEmitters;
-    fEmitters = TRACKED_NEW plParticleEmitter *[fMaxEmitters];
+    fEmitters = new plParticleEmitter *[fMaxEmitters];
     int i;
     for (i = 0; i < maxEmitters; i++)
         fEmitters[i] = nil; 
@@ -164,7 +164,7 @@ plParticleEmitter* plParticleSystem::GetAvailEmitter()
         {
             minTTL = 0;
             iMinTTL = fNumValidEmitters++;
-            fEmitters[iMinTTL] = TRACKED_NEW plParticleEmitter();
+            fEmitters[iMinTTL] = new plParticleEmitter();
             fEmitters[iMinTTL]->Clone(fEmitters[0], iMinTTL);
 
             fMaxTotalParticlesLeft -= fEmitters[iMinTTL]->fMaxParticles;
@@ -207,7 +207,7 @@ uint32_t plParticleSystem::AddEmitter(uint32_t maxParticles, plParticleGenerator
     if (maxParticles < 0)
         maxParticles = 0;
 
-    fEmitters[currEmitter] = TRACKED_NEW plParticleEmitter();
+    fEmitters[currEmitter] = new plParticleEmitter();
     fEmitters[currEmitter]->Init(this, maxParticles, fNextEmitterToGo, emitterFlags, gen);
 
     fMaxTotalParticlesLeft -= fEmitters[currEmitter]->fMaxParticles;
@@ -554,7 +554,7 @@ void plParticleSystem::AddTarget(plSceneObject *so)
     plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 
     delete fParticleSDLMod;
-    fParticleSDLMod = TRACKED_NEW plParticleSDLMod;
+    fParticleSDLMod = new plParticleSDLMod;
     fParticleSDLMod->SetAttachedToAvatar(fAttachedToAvatar);
     so->AddModifier(fParticleSDLMod);
 }
@@ -601,7 +601,7 @@ void plParticleSystem::IReadEffectsArray(hsTArray<plParticleEffect *> &effects, 
     int i;
     for (i = 0; i < count; i++)
     {
-        msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, (int8_t)type);
+        msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, (int8_t)type);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
     }
 }
@@ -611,7 +611,7 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     plModifier::Read(s, mgr);
 
     plGenRefMsg* msg;
-    msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // Material
+    msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // Material
     mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
 
     fAmbientCtl = plController::ConvertNoRef(mgr->ReadCreatable(s));    

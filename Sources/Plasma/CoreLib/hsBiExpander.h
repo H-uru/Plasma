@@ -127,7 +127,7 @@ void hsExpander<T>::IExpand(int newSize)
         newPostAlloc++;
     while( newPostAlloc <= newSize )
         newPostAlloc = fGrowBy ? newPostAlloc + fGrowBy : newPostAlloc << 1;
-    T* newArray = TRACKED_NEW T[newPostAlloc];
+    T* newArray = new T[newPostAlloc];
     int i;
     for( i = 0; i < fNumPost; i++ )
         newArray[i] = fArray[i];
@@ -145,7 +145,7 @@ hsExpander<T>::hsExpander(int32_t minSize, int32_t growBy)
     fMinSize = minSize+1;
     fGrowBy = growBy;
     
-    fArray  = TRACKED_NEW T[fMinSize];
+    fArray  = new T[fMinSize];
     fNumPostAlloc = fMinSize;
     
     fNumPost = 0;
@@ -339,7 +339,7 @@ void hsBiExpander<T>::IExpand(int newSize, hsBool towardEnd)
         while( newPreAlloc <= newSize )
             newPreAlloc = fGrowBy ? newPreAlloc + fGrowBy : newPreAlloc << 1;
     }
-    T* newArray = TRACKED_NEW T[newPreAlloc + newPostAlloc];
+    T* newArray = new T[newPreAlloc + newPostAlloc];
     newArray += newPreAlloc;
     int i;
     for( i = -fNumPre; i < fNumPost; i++ )
@@ -361,7 +361,7 @@ hsBiExpander<T>::hsBiExpander(int32_t minSize, int32_t growBy)
     fMinSize = minSize+1;
     fGrowBy = growBy;
     
-    fArray  = TRACKED_NEW T[fMinSize << 1];
+    fArray  = new T[fMinSize << 1];
     fNumPreAlloc = fNumPostAlloc = fMinSize;
     fArray += fNumPreAlloc;
     

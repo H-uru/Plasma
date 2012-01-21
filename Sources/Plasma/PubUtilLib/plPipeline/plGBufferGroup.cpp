@@ -395,7 +395,7 @@ void    plGBufferGroup::Read( hsStream *s )
             fVertBuffStarts.Append(0);
             fVertBuffEnds.Append(-1);
 
-            vData = TRACKED_NEW uint8_t[size];
+            vData = new uint8_t[size];
             fVertBuffStorage.Append( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
 
@@ -413,7 +413,7 @@ void    plGBufferGroup::Read( hsStream *s )
             fVertBuffStarts.Append(0);
             fVertBuffEnds.Append(-1);
             
-            vData = TRACKED_NEW uint8_t[ temp ];
+            vData = new uint8_t[ temp ];
             hsAssert( vData != nil, "Not enough memory to read in vertices" );
             s->Read( temp, (void *)vData );
             fVertBuffStorage.Append( vData );
@@ -424,7 +424,7 @@ void    plGBufferGroup::Read( hsStream *s )
             
             if( temp > 0 )
             {
-                cData = TRACKED_NEW plGBufferColor[ temp ];
+                cData = new plGBufferColor[ temp ];
                 s->Read( temp * sizeof( plGBufferColor ), (void *)cData );
                 plProfile_NewMem(MemBufGrpVertex, temp * sizeof(plGBufferColor));
             }
@@ -443,7 +443,7 @@ void    plGBufferGroup::Read( hsStream *s )
         fIdxBuffStarts.Append(0);
         fIdxBuffEnds.Append(-1);
 
-        iData = TRACKED_NEW uint16_t[ temp ];
+        iData = new uint16_t[ temp ];
         hsAssert( iData != nil, "Not enough memory to read in indices" );
         s->ReadLE16( temp, (uint16_t *)iData );
         fIdxBuffStorage.Append( iData );
@@ -455,7 +455,7 @@ void    plGBufferGroup::Read( hsStream *s )
     {
         temp = s->ReadLE32();
 
-        fCells.Append( TRACKED_NEW hsTArray<plGBufferCell> );
+        fCells.Append( new hsTArray<plGBufferCell> );
         fCells[ i ]->SetCount( temp );
 
         for( j = 0; j < temp; j++ )
@@ -758,7 +758,7 @@ hsBool  plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
         fColorBuffStorage.Append( nil );
         fColorBuffCounts.Append( 0 );
 
-        fCells.Append( TRACKED_NEW hsTArray<plGBufferCell> );
+        fCells.Append( new hsTArray<plGBufferCell> );
     }
 
     *vbIndex = i;
@@ -770,7 +770,7 @@ hsBool  plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
         {
             /// Increase the storage size
             vStartIdx = fVertBuffSizes[ i ];
-            storagePtr = TRACKED_NEW uint8_t[ fVertBuffSizes[ i ] + numVerts * fLiteStride ];
+            storagePtr = new uint8_t[ fVertBuffSizes[ i ] + numVerts * fLiteStride ];
             if( fVertBuffSizes[ i ] > 0 )
                 memcpy( storagePtr, fVertBuffStorage[ i ], fVertBuffSizes[ i ] );
             fVertBuffSizes[ i ] += numVerts * fLiteStride;
@@ -779,7 +779,7 @@ hsBool  plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
 
         /// Color too
         cStartIdx = fColorBuffCounts[ i ];
-        cStoragePtr = TRACKED_NEW plGBufferColor[ fColorBuffCounts[ i ] + numVerts ];
+        cStoragePtr = new plGBufferColor[ fColorBuffCounts[ i ] + numVerts ];
         if( fColorBuffCounts[ i ] > 0 )
             memcpy( cStoragePtr, fColorBuffStorage[ i ], fColorBuffCounts[ i ] * sizeof( plGBufferColor ) );
     }
@@ -789,7 +789,7 @@ hsBool  plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
 
         /// Increase the storage size
         vStartIdx = fVertBuffSizes[ i ];
-        storagePtr = TRACKED_NEW uint8_t[ fVertBuffSizes[ i ] + numVerts * fStride ];
+        storagePtr = new uint8_t[ fVertBuffSizes[ i ] + numVerts * fStride ];
         if( fVertBuffSizes[ i ] > 0 )
             memcpy( storagePtr, fVertBuffStorage[ i ], fVertBuffSizes[ i ] );
         fVertBuffSizes[ i ] += numVerts * fStride;
@@ -1065,7 +1065,7 @@ hsBool  plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIn
     *ibStart = fIdxBuffCounts[ i ];
 
     /// Increase the storage size
-    storagePtr = TRACKED_NEW uint16_t[ fIdxBuffCounts[ i ] + numIndices ];
+    storagePtr = new uint16_t[ fIdxBuffCounts[ i ] + numIndices ];
     if( fIdxBuffCounts[ i ] > 0 )
         memcpy( storagePtr, fIdxBuffStorage[ i ], fIdxBuffCounts[ i ] * sizeof( uint16_t ) );
 
@@ -1134,7 +1134,7 @@ plGBufferTriangle   *plGBufferGroup::ConvertToTriList( int16_t spanIndex, uint32
     hsAssert( whichCell < fCells[ whichVtx ]->GetCount(), "Invalid cell to ConvertToTriList()" );
 
     /// Create the array and fill it
-    array = TRACKED_NEW plGBufferTriangle[ numTriangles ];
+    array = new plGBufferTriangle[ numTriangles ];
     hsAssert( array != nil, "Not enough memory to create triangle data in ConvertToTriList()" );
 
     storagePtr = fIdxBuffStorage[ whichIdx ];

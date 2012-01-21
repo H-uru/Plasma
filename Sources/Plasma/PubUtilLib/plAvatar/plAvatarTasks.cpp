@@ -132,7 +132,7 @@ void plAvTask::ILimitPlayersInput(plArmatureMod *avatar)
     {
         plInputInterfaceMgr::GetInstance()->ForceCursorHidden(true);
         // tell the KI to be disabled while we are busy
-        pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kTempDisableKIandBB);
+        pfKIMsg* msg = new pfKIMsg(pfKIMsg::kTempDisableKIandBB);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -144,7 +144,7 @@ void plAvTask::IUndoLimitPlayersInput(plArmatureMod *avatar)
     {
         plInputInterfaceMgr::GetInstance()->ForceCursorHidden(false);
         // tell the KI to be re-enabled
-        pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kTempEnableKIandBB);
+        pfKIMsg* msg = new pfKIMsg(pfKIMsg::kTempEnableKIandBB);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -597,7 +597,7 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
         {
             // Must do the physics re-enable through a callback so that it happens before the "done" callback and we don't
             // step over some script's attempt to disable physics again.
-            plAvatarPhysicsEnableCallbackMsg *epMsg = TRACKED_NEW plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), kStop, 0, 0, 0, 0);
+            plAvatarPhysicsEnableCallbackMsg *epMsg = new plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), kStop, 0, 0, 0, 0);
             fAnimInstance->GetTimeConvert()->AddCallback(epMsg);
             hsRefCnt_SafeUnRef(epMsg);
         }   
@@ -633,7 +633,7 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
         if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar())
         {
             // create message
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
             pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
@@ -701,9 +701,9 @@ hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, d
                             avatar->GetPhysical()->CheckValidPosition(&overlaps);
                         if (overlaps)
                         {
-                            char *buffy = TRACKED_NEW char[64 + strlen(overlaps)];
+                            char *buffy = new char[64 + strlen(overlaps)];
                             sprintf(buffy, "Oneshot ends overlapping %s", overlaps);
-                            plConsoleMsg *showLine = TRACKED_NEW plConsoleMsg( plConsoleMsg::kAddLine, buffy );
+                            plConsoleMsg *showLine = new plConsoleMsg( plConsoleMsg::kAddLine, buffy );
                             showLine->Send();
                             delete[] overlaps;
                             delete[] buffy;
@@ -719,7 +719,7 @@ hsBool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, d
                 if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar())
                 {
                     // create message
-                    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                    plCameraMsg* pMsg = new plCameraMsg;
                     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
                     pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
                     pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);

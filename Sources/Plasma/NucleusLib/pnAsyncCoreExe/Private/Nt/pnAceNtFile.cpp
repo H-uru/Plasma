@@ -177,7 +177,7 @@ static void HandleFailedOp (
 
         // create sub-operations to read the rest of the buffer
         for (; position < op->rw.bytes; ++subOperations) {
-            NtOpFileReadWrite * childOp     = NEW(NtOpFileReadWrite);
+            NtOpFileReadWrite * childOp     = new NtOpFileReadWrite;
             childOp->overlapped.hEvent      = op->overlapped.hEvent ? CreateEvent(nil, true, false, nil) : nil;
             childOp->overlapped.Offset      = (uint32_t) ((op->rw.offset + position) & 0xffffffff);
             childOp->overlapped.OffsetHigh  = (uint32_t) ((op->rw.offset + position) >> 32);
@@ -654,7 +654,7 @@ AsyncId NtFileRead (
     // enable the sequential thread to perform a wait operation, we set the event field
     // into the Overlapped structure, because the event will be signaled prior to the
     // potentially deadlocking callback notification.
-    NtOpFileReadWrite * op      = NEW(NtOpFileReadWrite);
+    NtOpFileReadWrite * op      = new NtOpFileReadWrite;
     op->overlapped.Offset       = (uint32_t) (offset & 0xffffffff);
     op->overlapped.OffsetHigh   = (uint32_t) (offset >> 32);
     op->overlapped.hEvent       = (flags & kAsyncFileRwSync) ? CreateEvent(nil, true, false, nil) : nil;
@@ -708,7 +708,7 @@ AsyncId NtFileWrite (
     // enable the sequential thread to perform a wait operation, we set the event field
     // into the Overlapped structure, because the event will be signaled prior to the
     // potentially deadlocking callback notification.
-    NtOpFileReadWrite * op      = NEW(NtOpFileReadWrite);
+    NtOpFileReadWrite * op      = new NtOpFileReadWrite;
     op->overlapped.Offset       = (uint32_t) (offset & 0xffffffff);
     op->overlapped.OffsetHigh   = (uint32_t) (offset >> 32);
     op->overlapped.hEvent       = (flags & kAsyncFileRwSync) ? CreateEvent(nil, true, false, nil) : nil;
@@ -756,7 +756,7 @@ AsyncId NtFileFlushBuffers (
     ASSERT((truncateSize == kAsyncFileDontTruncate) || !(truncateSize & file->sectorSizeMask));
 
     // create new operation
-    NtOpFileFlush * op = NEW(NtOpFileFlush);
+    NtOpFileFlush * op = new NtOpFileFlush;
     file->critsect.Enter();
 
     // write operations cannot complete while a flush is in progress
@@ -887,7 +887,7 @@ AsyncId NtFileCreateSequence (
     ASSERT(file->ioType == kNtFile);
 
     // create new operation
-    NtOpFileSequence * op = NEW(NtOpFileSequence);
+    NtOpFileSequence * op = new NtOpFileSequence;
     file->critsect.Enter();
 
     // init Operation
@@ -968,7 +968,7 @@ bool NtFileWaitId (AsyncFile conn, AsyncId asyncId, unsigned  timeoutMs) {
 
         // create an object to wait on
         if (!op->signalComplete)
-            op->signalComplete = NEW(CNtWaitHandle);
+            op->signalComplete = new CNtWaitHandle;
         signalComplete = op->signalComplete;
         signalComplete->IncRef();
         break;

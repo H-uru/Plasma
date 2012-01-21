@@ -74,7 +74,7 @@ void plCluster::Read(hsStream* s, plClusterGroup* grp)
     int i;
     for( i = 0; i < numInst; i++ )
     {
-        fInsts[i] = TRACKED_NEW plSpanInstance;
+        fInsts[i] = new plSpanInstance;
         fInsts[i]->Read(s, fEncoding, numVerts);
     }
 

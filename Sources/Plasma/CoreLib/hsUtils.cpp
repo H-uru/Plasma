@@ -328,7 +328,7 @@ wchar_t *hsStringToWString( const char *str )
 {
     // convert the char string to a wchar_t string
     int len = strlen(str);
-    wchar_t *wideString = TRACKED_NEW wchar_t[len+1];
+    wchar_t *wideString = new wchar_t[len+1];
     for (int i=0; i<len; i++)
         wideString[i] = btowc(str[i]);
     wideString[len] = L'\0';
@@ -342,7 +342,7 @@ char    *hsWStringToString( const wchar_t *str )
 {
     // convert the wchar_t string to a char string
     int len = wcslen(str);
-    char *sStr = TRACKED_NEW char[len+1];
+    char *sStr = new char[len+1];
 
     int i;
     for (i = 0; i < len; i++)

@@ -72,7 +72,7 @@ void plObjInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plSynchedObject::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kOwner), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kOwner), plRefFlags::kPassiveRef);
 
     fProps.Read(s);
 }

@@ -72,7 +72,7 @@ static hsBool                       ICopySourceToTexture16(BITMAPINFO* bmi, plMi
 
 plLayerAVI::plLayerAVI()
 {
-    fAVIInfo = TRACKED_NEW plAVIFileInfo;
+    fAVIInfo = new plAVIFileInfo;
 }
 
 plLayerAVI::~plLayerAVI()

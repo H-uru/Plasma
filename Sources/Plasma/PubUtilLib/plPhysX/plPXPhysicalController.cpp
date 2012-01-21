@@ -91,7 +91,7 @@ plPhysicalController* plPhysicalController::Create(plKey ownerSO, hsScalar heigh
     hsScalar radius = width / 2.f;
     //hsScalar realHeight = height - width;
     hsScalar realHeight = height - radius + kPhysicalHeightFudge;
-    return TRACKED_NEW plPXPhysicalController(ownerSO, radius, realHeight);
+    return new plPXPhysicalController(ownerSO, radius, realHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ void plPXPhysicalController::IInformDetectors(bool entering)
                 plPXPhysical* physical = (plPXPhysical*)myactor->userData;
                 if (physical)
                 {
-                    plCollideMsg* msg = TRACKED_NEW plCollideMsg;
+                    plCollideMsg* msg = new plCollideMsg;
                     
                     msg->fOtherKey = fOwner;
                     msg->fEntering = entering;
@@ -321,7 +321,7 @@ public:
                     obj->SetNetGroupConstant(plNetGroup::kNetGroupLocalPhysicals);
 
                     // Tell all the other clients that we own this physical
-                    plSetNetGroupIDMsg* setNetGroupID = TRACKED_NEW plSetNetGroupIDMsg;
+                    plSetNetGroupIDMsg* setNetGroupID = new plSetNetGroupIDMsg;
                     setNetGroupID->fId = plNetGroup::kNetGroupRemotePhysicals;
                     setNetGroupID->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
                     setNetGroupID->SetBCastFlag(plMessage::kLocalPropagate, false);
@@ -1039,7 +1039,7 @@ void plPXPhysicalController::ISendUpdates(hsScalar delSecs)
                 fLastGlobalLoc = l2w * fLastGlobalLoc;
             }
 
-            plCorrectionMsg* corrMsg = TRACKED_NEW plCorrectionMsg;
+            plCorrectionMsg* corrMsg = new plCorrectionMsg;
             corrMsg->fLocalToWorld = fLastGlobalLoc;
             corrMsg->fLocalToWorld.GetInverse(&corrMsg->fWorldToLocal);
             corrMsg->fDirtySynch = true;
@@ -1197,7 +1197,7 @@ void plPXPhysicalController::ICreateController()
     opac = 0.8f;
 
     // the avatar proxy doesn't seem to work... not sure why?
-    fProxyGen = TRACKED_NEW plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
+    fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
     fProxyGen->Init(this);
 }
 

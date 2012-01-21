@@ -130,7 +130,7 @@ void pyAlarmMgr::Update( double secs )
 void pyAlarmMgr::SetAlarm( float secs, PyObject * cb, uint32_t cbContext )
 {
     double start = hsTimer::GetSysSeconds();
-    fAlarms.push_back( TRACKED_NEW pyAlarm( start, secs, cb, cbContext ) );
+    fAlarms.push_back( new pyAlarm( start, secs, cb, cbContext ) );
 }
 
 void pyAlarmMgr::Clear()

@@ -136,7 +136,7 @@ void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
     
     if( GetAck() )
     {
-        plRenderRequestAck* ack = TRACKED_NEW plRenderRequestAck( GetAck(), GetUserData() );
+        plRenderRequestAck* ack = new plRenderRequestAck( GetAck(), GetUserData() );
         ack->SetNumDrawn(numDrawn);
         plgDispatch::MsgSend( ack );
     }

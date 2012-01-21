@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plOneShotMsg::plOneShotMsg()
 {
-    fCallbacks = TRACKED_NEW plOneShotCallbacks;
+    fCallbacks = new plOneShotCallbacks;
 }
 
 plOneShotMsg::~plOneShotMsg()

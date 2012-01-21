@@ -116,7 +116,7 @@ fCollisionStep(step),
 fCollisionCount(0)
 {
     fItemList.SetCount(1);
-    fHashTable = TRACKED_NEW uint32_t[fSize];
+    fHashTable = new uint32_t[fSize];
     memset(fHashTable,0,fSize*sizeof(uint32_t));
 }
 

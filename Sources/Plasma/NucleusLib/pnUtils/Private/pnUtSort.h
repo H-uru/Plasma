@@ -200,7 +200,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   BSEARCH
 *
 *   This macro binary searches a sorted array to find an existing entry or
-*   the position where a TRACKED_NEW entry should be placed. It returns the index of
+*   the position where a new entry should be placed. It returns the index of
 *   the first entry for which the expression is false (zero or negative), or
 *   count if the expression is true (positive) for all entries.
 *

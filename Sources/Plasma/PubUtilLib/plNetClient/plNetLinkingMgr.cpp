@@ -461,7 +461,7 @@ bool plNetLinkingMgr::IProcessLinkingMgrMsg( plLinkingMgrMsg * msg )
     case kOfferLinkToPlayer:
         {
 //          // Notify the KI that we received an offer.
-//          plVaultNotifyMsg * notify = TRACKED_NEW plVaultNotifyMsg();
+//          plVaultNotifyMsg * notify = new plVaultNotifyMsg();
 //          notify->SetType( plVaultNotifyMsg::kPlayerOfferedLink );
 //          notify->GetArgs()->AddItem( 0, msg->GetArgs()->GetItem( 0 ), true );    // add to notify and have notify take over memory management of the item.
 //          msg->GetArgs()->RemoveItem( 0, true );  // msg to stop memory managing item, notify msg will delete it.
@@ -563,7 +563,7 @@ void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, u
         return;
     }
 
-    plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( link );
+    plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
     if (linkAnim)
         pMsg->SetLinkInAnimName(linkAnim);
     IDispatchMsg( pMsg, playerID );
@@ -580,7 +580,7 @@ void plNetLinkingMgr::LinkToPrevAge( uint32_t playerID )
 
     if (GetPrevAgeLink()->GetAgeInfo()->HasAgeFilename())
     {
-        plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( GetPrevAgeLink() );
+        plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( GetPrevAgeLink() );
         IDispatchMsg( pMsg, playerID );
     }
     else
@@ -606,7 +606,7 @@ void plNetLinkingMgr::LinkToMyPersonalAge( uint32_t playerID )
     hutSpawnPoint.SetName(kPersonalAgeLinkInPointCloset);
     link.SetSpawnPoint(hutSpawnPoint);
 
-    plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( &link );
+    plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
     IDispatchMsg( pMsg, playerID );
 }
 
@@ -625,7 +625,7 @@ void plNetLinkingMgr::LinkToMyNeighborhoodAge( uint32_t playerID )
         
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
 
-    plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( &link );
+    plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
     IDispatchMsg( pMsg, playerID );
 }
 
@@ -655,7 +655,7 @@ void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID
 
     // send the player the age link so they can link there.
     link->SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
-    plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( link );
+    plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
     IDispatchMsg( pMsg, playerID );
 }
 
@@ -673,7 +673,7 @@ void plNetLinkingMgr::LinkPlayerToPrevAge( uint32_t playerID )
     // Send the player a msg telling them to link to their last age
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
 
-    plLinkingMgrMsg* pMsg = TRACKED_NEW plLinkingMgrMsg();
+    plLinkingMgrMsg* pMsg = new plLinkingMgrMsg();
     pMsg->SetCmd( kLinkPlayerToPrevAge);
     IDispatchMsg( pMsg, playerID );
 }
@@ -688,7 +688,7 @@ void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
     // Send the player a msg telling them to send us a msg to link to them. isn't that fun? :)
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
 
-    plLinkingMgrMsg* pMsg = TRACKED_NEW plLinkingMgrMsg();
+    plLinkingMgrMsg* pMsg = new plLinkingMgrMsg();
     pMsg->SetCmd( kLinkPlayerHere );
     pMsg->GetArgs()->AddInt( 0, NetCommGetPlayer()->playerInt );    // send them our id.
     IDispatchMsg( pMsg, playerID );
@@ -701,7 +701,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 {
 
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = TRACKED_NEW plLinkToAgeMsg(inInfo);
+    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
     linkM->AddReceiver(mgr->GetKey());
 
     plKey host = mgr->GetLocalPlayerKey();
@@ -720,7 +720,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 {
 
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = TRACKED_NEW plLinkToAgeMsg(inInfo);
+    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
     linkM->AddReceiver(mgr->GetKey());
 
     plKey host = mgr->GetLocalPlayerKey();
@@ -738,7 +738,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 // for backwards compatibility
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, uint32_t playerID )
 {
-    plAgeLinkStruct *ageLink = TRACKED_NEW plAgeLinkStruct;
+    plAgeLinkStruct *ageLink = new plAgeLinkStruct;
 
     ageLink->GetAgeInfo()->CopyFrom(inInfo);
     ageLink->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);

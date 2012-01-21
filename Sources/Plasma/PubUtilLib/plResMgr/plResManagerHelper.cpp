@@ -174,8 +174,8 @@ void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
     hsAssert( GetKey() != nil, "Can't load and hold keys when we don't have a key for the helper" );
 
     // Create our msg
-    plResMgrHelperMsg   *refferMsg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kKeyRefList );
-    refferMsg->fKeyList = TRACKED_NEW plResPageKeyRefList;
+    plResMgrHelperMsg   *refferMsg = new plResMgrHelperMsg( plResMgrHelperMsg::kKeyRefList );
+    refferMsg->fKeyList = new plResPageKeyRefList;
 
     fResManager->LoadPageKeys(page);
     page->IterateKeys( refferMsg->fKeyList );
@@ -240,7 +240,7 @@ class plResMgrDebugInterface : public plInputInterface
                 }
                 else if( pKeyMsg->GetKeyCode() == KEY_ESCAPE )
                 {
-                    plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kDisableDebugScreen );
+                    plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kDisableDebugScreen );
                     msg->Send( fParent->GetKey() );
                     return true;
                 }
@@ -286,12 +286,12 @@ void    plResManagerHelper::EnableDebugScreen( hsBool enable )
             fDebugScreen = plStatusLogMgr::GetInstance().CreateStatusLog( kLogSize, "ResManager Status", plStatusLog::kFilledBackground | plStatusLog::kDontWriteFile );
             fRefreshing = true;
 
-            plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
+            plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
 //          msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
             msg->Send( GetKey() );
 
-            fDebugInput = TRACKED_NEW plResMgrDebugInterface( this );
-            plInputIfaceMgrMsg *imsg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+            fDebugInput = new plResMgrDebugInterface( this );
+            plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
         }
@@ -304,7 +304,7 @@ void    plResManagerHelper::EnableDebugScreen( hsBool enable )
             delete fDebugScreen;
             fDebugScreen = nil;
 
-            plInputIfaceMgrMsg *imsg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+            plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
 
@@ -507,7 +507,7 @@ void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
     // Repump our update
     if( !force )
     {
-        plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
+        plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
         msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
         msg->Send( GetKey() );
     }

@@ -457,14 +457,14 @@ void plResponderModifier::Restore()
 
                 if (plAnimCmdMsg* animMsg = plAnimCmdMsg::ConvertNoRef(callbackMsg))
                 {
-                    plAnimCmdMsg* newAnimMsg = TRACKED_NEW plAnimCmdMsg;
+                    plAnimCmdMsg* newAnimMsg = new plAnimCmdMsg;
                     newAnimMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
                     newCallbackMsg = newAnimMsg;
                     ResponderLog(ILog(plStatusLog::kGreen, "Restoring anim callback"));
                 }
                 else if (plSoundMsg* soundMsg = plSoundMsg::ConvertNoRef(callbackMsg))
                 {
-                    plSoundMsg* newSoundMsg = TRACKED_NEW plSoundMsg;
+                    plSoundMsg* newSoundMsg = new plSoundMsg;
                     newSoundMsg->SetCmd(plSoundMsg::kAddCallbacks);
                     newCallbackMsg = newSoundMsg;
                     ResponderLog(ILog(plStatusLog::kGreen, "Restoring sound callback"));
@@ -502,7 +502,7 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
         if (animMsg->Cmd(plAnimCmdMsg::kContinue) ||
             animMsg->Cmd(plAnimCmdMsg::kAddCallbacks))
         {
-            plAnimCmdMsg* newAnimMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* newAnimMsg = new plAnimCmdMsg;
             newAnimMsg->fCmd                = animMsg->fCmd;
             newAnimMsg->fBegin              = animMsg->fBegin;
             newAnimMsg->fEnd                = animMsg->fEnd;
@@ -544,7 +544,7 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
             soundMsg->Cmd(plSoundMsg::kToggleState)  ||
             soundMsg->Cmd(plAnimCmdMsg::kAddCallbacks))
         {
-            plSoundMsg *newSoundMsg = TRACKED_NEW plSoundMsg;
+            plSoundMsg *newSoundMsg = new plSoundMsg;
             newSoundMsg->fCmd = soundMsg->fCmd;
             newSoundMsg->fBegin = soundMsg->fBegin;
             newSoundMsg->fEnd = soundMsg->fEnd;
@@ -677,7 +677,7 @@ void plResponderModifier::Read(hsStream* stream, hsResMgr* mgr)
 
     // attach responderSDLMod
     delete fResponderSDLMod;
-    fResponderSDLMod = TRACKED_NEW plResponderSDLModifier;
+    fResponderSDLMod = new plResponderSDLModifier;
     fResponderSDLMod->SetResponder(this);
 }
 
@@ -740,7 +740,7 @@ void plResponderModifier::IDebugAnimBox(bool start)
 void plResponderModifier::IDebugPlayMsg(plAnimCmdMsg* msg)
 {
     // Create a stop callback so we can do a cue for that too
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(GetKey());
     eventMsg->fRepeats = 0;
     eventMsg->fUser = -1;

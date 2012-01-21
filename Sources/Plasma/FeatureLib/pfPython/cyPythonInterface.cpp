@@ -661,7 +661,7 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Write(text);
@@ -787,7 +787,7 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Write(text);
@@ -1164,7 +1164,7 @@ void PythonInterface::initPython()
         AddPlasmaMethods(methods);
 
         // now copy the data to our real method definition structure
-        plasmaMethods = TRACKED_NEW PyMethodDef[methods.size() + 1];
+        plasmaMethods = new PyMethodDef[methods.size() + 1];
         for (int curMethod = 0; curMethod < methods.size(); curMethod++)
             plasmaMethods[curMethod] = methods[curMethod];
         PyMethodDef terminator = {NULL};
@@ -1290,7 +1290,7 @@ void PythonInterface::initPython()
         AddPlasmaGameMethods(methods);
 
         // now copy the data to our real method definition structure
-        plasmaGameMethods = TRACKED_NEW PyMethodDef[methods.size() + 1];
+        plasmaGameMethods = new PyMethodDef[methods.size() + 1];
         for (int curMethod = 0; curMethod < methods.size(); curMethod++)
             plasmaGameMethods[curMethod] = methods[curMethod];
         plasmaGameMethods[methods.size()] = terminator; // add the terminator

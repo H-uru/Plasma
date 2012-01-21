@@ -304,7 +304,7 @@ void plGenericType::SetVar(Types t, unsigned int size, void* val)
     case kString :
         {
             delete [] fS;
-            fS = TRACKED_NEW char[size+1];
+            fS = new char[size+1];
             memcpy(fS,val,size);
             fS[size] = 0;
             break;

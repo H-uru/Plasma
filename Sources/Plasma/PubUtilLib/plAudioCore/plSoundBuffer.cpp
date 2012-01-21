@@ -237,7 +237,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
     fValid = false;
     if( !( fFlags & kIsExternal ) )
     {
-        fData = TRACKED_NEW uint8_t[ fDataLength ];
+        fData = new uint8_t[ fDataLength ];
         if( fData == nil )
             fFlags |= kIsExternal;
         else
@@ -360,7 +360,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
         fStreamType = type;
         if(fData == nil )
         {
-            fData = TRACKED_NEW uint8_t[ fAsyncLoadLength ? fAsyncLoadLength : fDataLength ];
+            fData = new uint8_t[ fAsyncLoadLength ? fAsyncLoadLength : fDataLength ];
             if( fData == nil )
                 return kError;
         }
@@ -465,7 +465,7 @@ void    plSoundBuffer::SetInternalData( plWAVHeader &header, uint32_t length, ui
     fFlags = 0;
 
     fDataLength = length;
-    fData = TRACKED_NEW uint8_t[ length ];
+    fData = new uint8_t[ length ];
     memcpy( fData, data, length );
     
     fValid = true;
@@ -477,7 +477,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
 {   
     if( fData == nil )
     {
-        fData = TRACKED_NEW uint8_t[fDataLength ];
+        fData = new uint8_t[fDataLength ];
         if( fData == nil )
             return kError;
     }

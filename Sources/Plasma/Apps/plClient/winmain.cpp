@@ -302,7 +302,7 @@ static bool TGRunLoginDialog (LoginDialogParam *pLoginParam)
                 if (pWStr)
                   Len += StrLen (pWStr) + 2;
 
-                pTmpStr = TRACKED_NEW char[Len];
+                pTmpStr = new char[Len];
                 StrCopy (pTmpStr, pStr1, StrLen (pStr1));
                 if (pStr2)
                   {
@@ -661,8 +661,8 @@ bool InitPhysX()
             // launch the PhysX installer
             STARTUPINFOW startupInfo;
             PROCESS_INFORMATION processInfo; 
-            ZERO(startupInfo);
-            ZERO(processInfo);
+            memset(&startupInfo, 0, sizeof(startupInfo));
+            memset(&processInfo, 0, sizeof(processInfo));
             startupInfo.cb = sizeof(startupInfo);
             if(!CreateProcessW(NULL, s_physXSetupExeName, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo))
             {
@@ -702,7 +702,7 @@ bool InitPhysX()
 
 bool    InitClient( HWND hWnd )
 {
-    plResManager *resMgr = TRACKED_NEW plResManager;
+    plResManager *resMgr = new plResManager;
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);
 
@@ -713,7 +713,7 @@ bool    InitClient( HWND hWnd )
     }
     plClientResMgr::Instance().ILoadResources("resource.dat");
 
-    gClient = TRACKED_NEW plClient;
+    gClient = new plClient;
     if( gClient == nil )
         return false;
 
@@ -939,7 +939,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 char* eulaData = NULL;
                 unsigned dataLen = stream.GetSizeLeft();
 
-                eulaData = TRACKED_NEW char[dataLen + 1];
+                eulaData = new char[dataLen + 1];
                 ZeroMemory(eulaData, dataLen + 1);
 
                 stream.Read(dataLen, eulaData);
@@ -1455,8 +1455,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // if the client was started directly, run the patcher, and shutdown
     STARTUPINFOW si;
     PROCESS_INFORMATION pi; 
-    ZERO(si);
-    ZERO(pi);
+    memset(&si, 0, sizeof(si));
+    memset(&pi, 0, sizeof(pi));
     si.cb = sizeof(si);
     wchar_t cmdLine[MAX_PATH];
     const wchar_t ** addrs;

@@ -48,9 +48,9 @@ plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, f
                                                 float startSpeed, float goalSpeed)
 {
     if (type == plAnimEaseTypes::kConstAccel)
-        return TRACKED_NEW plConstAccelEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
+        return new plConstAccelEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
     if (type == plAnimEaseTypes::kSpline)
-        return TRACKED_NEW plSplineEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
+        return new plSplineEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
 
     return nil;
 }
@@ -162,7 +162,7 @@ plConstAccelEaseCurve::plConstAccelEaseCurve(float minLength, float maxLength, f
 
 plATCEaseCurve *plConstAccelEaseCurve::Clone() const
 {
-    plConstAccelEaseCurve *curve = TRACKED_NEW plConstAccelEaseCurve;
+    plConstAccelEaseCurve *curve = new plConstAccelEaseCurve;
     curve->fStartSpeed = fStartSpeed;
     curve->fMinLength = fMinLength;
     curve->fMaxLength = fMaxLength;
@@ -217,7 +217,7 @@ plSplineEaseCurve::plSplineEaseCurve(float minLength, float maxLength, float len
 
 plATCEaseCurve *plSplineEaseCurve::Clone() const
 {
-    plSplineEaseCurve *curve = TRACKED_NEW plSplineEaseCurve;
+    plSplineEaseCurve *curve = new plSplineEaseCurve;
     curve->fStartSpeed = fStartSpeed;
     curve->fMinLength = fMinLength;
     curve->fMaxLength = fMaxLength;

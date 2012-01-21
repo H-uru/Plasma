@@ -157,8 +157,8 @@ hsBool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
     }
     else if (wcscmp(mode, L"wb") == 0)
     {
-        fRAMStream = TRACKED_NEW hsVectorStream;
-        fWriteFileName = TRACKED_NEW wchar_t[wcslen(name) + 1];
+        fRAMStream = new hsVectorStream;
+        fWriteFileName = new wchar_t[wcslen(name) + 1];
         wcscpy(fWriteFileName, name);
         fPosition = 0;
 
@@ -232,7 +232,7 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = TRACKED_NEW hsVectorStream;
+    fRAMStream = new hsVectorStream;
     char buf[1024];
     while (!AtEnd())
     {
@@ -560,11 +560,11 @@ hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, bool req
 
     hsStream* s = nil;
     if (isEncrypted)
-        s = TRACKED_NEW plEncryptedStream(cryptKey);
+        s = new plEncryptedStream(cryptKey);
     // If this isn't an external release, let them use unencrypted data
     else
         if (!requireEncrypted)
-            s = TRACKED_NEW hsUNIXStream;
+            s = new hsUNIXStream;
 
     if (s)
         s->Open(fileName, L"rb");
@@ -583,9 +583,9 @@ hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar_t* fileName, uin
 {
     hsStream* s = nil;
 #ifdef PLASMA_EXTERNAL_RELEASE
-    s = TRACKED_NEW plEncryptedStream(cryptKey);
+    s = new plEncryptedStream(cryptKey);
 #else
-    s = TRACKED_NEW hsUNIXStream;
+    s = new hsUNIXStream;
 #endif
 
     s->Open(fileName, L"wb");

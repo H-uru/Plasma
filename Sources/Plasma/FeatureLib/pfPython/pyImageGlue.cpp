@@ -152,7 +152,7 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsJPEG, args)
     if (PyUnicode_Check(filenameObj))
     {
         int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->SaveAsJPEG(text, quality);
@@ -187,7 +187,7 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsPNG, args)
     if (PyUnicode_Check(filenameObj))
     {
         int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->SaveAsPNG(text);
@@ -288,7 +288,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadJPEGFromDisk, args, "Params: filename,widt
     if (PyUnicode_Check(filenameObj))
     {
         int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
         text[strLen] = L'\0';
         PyObject* ret = pyImage::LoadJPEGFromDisk(text, width, height);

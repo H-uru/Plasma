@@ -71,7 +71,7 @@ static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
 
     hsgResMgr::ResMgr()->AddViaNotify(
         key,
-        NEW(plGenRefMsg)(
+        new plGenRefMsg(
             plNetClientMgr::GetInstance()->GetKey(),
             plRefMsg::kOnCreate,
             0,
@@ -233,7 +233,7 @@ void pyVaultImageNode::SetImageFromScrShot()
 
     if (cyMisc::GetPipeline()) {
         VaultImageNode access(fNode);
-        fMipmap = NEW(plMipmap);
+        fMipmap = new plMipmap();
         if (cyMisc::GetPipeline()->CaptureScreen(fMipmap, false, 800, 600)) {
             fMipmapKey = fMipmap->GetKey();
             if (!fMipmapKey)

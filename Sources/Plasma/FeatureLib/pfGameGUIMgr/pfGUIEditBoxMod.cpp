@@ -477,7 +477,7 @@ void    pfGUIEditBoxMod::SetBufferSize( uint32_t size )
     fBufferSize = size;
     if( size > 0 )
     {
-        fBuffer = TRACKED_NEW wchar_t[ size + 1 ];
+        fBuffer = new wchar_t[ size + 1 ];
         memset( fBuffer, 0, (size + 1) * sizeof(wchar_t) );
     }
     else

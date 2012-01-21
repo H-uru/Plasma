@@ -198,7 +198,7 @@ hsBool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
 
     if( fMaxOpacity > 0 )
     {
-        plShadowCastMsg* cast = TRACKED_NEW plShadowCastMsg(GetKey(), this, msg->Pipeline());
+        plShadowCastMsg* cast = new plShadowCastMsg(GetKey(), this, msg->Pipeline());
         cast->Send();
     }
 

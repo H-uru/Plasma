@@ -48,7 +48,7 @@ plFadeOpacityLay::plFadeOpacityLay()
 :   fOpScale(1.f)
 {
     fOwnedChannels |= kOpacity;
-    fOpacity = TRACKED_NEW float;
+    fOpacity = new float;
 }
 
 plFadeOpacityLay::~plFadeOpacityLay()

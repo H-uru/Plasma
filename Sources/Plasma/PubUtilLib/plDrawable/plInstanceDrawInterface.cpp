@@ -58,7 +58,7 @@ void plInstanceDrawInterface::Read(hsStream* stream, hsResMgr* mgr)
     plDrawInterface::Read(stream, mgr);
 
     fTargetID = stream->ReadLE32();
-    plSwapSpansRefMsg *sMsg = TRACKED_NEW plSwapSpansRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+    plSwapSpansRefMsg *sMsg = new plSwapSpansRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
     mgr->ReadKeyNotifyMe(stream, sMsg, plRefFlags::kActiveRef);
 }
 
@@ -148,12 +148,12 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
         fDrawables[iDraw]->SetProperty(fDrawableIndices[iDraw], kDisable, true);
 
 #ifdef HS_DEBUGGING
-    plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(fDrawable->GetKey(), plDISpansMsg::kAddingSpan, index, plDISpansMsg::kLeaveEmptyDrawable);
+    plDISpansMsg* diMsg = new plDISpansMsg(fDrawable->GetKey(), plDISpansMsg::kAddingSpan, index, plDISpansMsg::kLeaveEmptyDrawable);
     diMsg->SetSender(GetKey());
     diMsg->Send();
 #endif          
 
-    plSharedMeshBCMsg *smMsg = TRACKED_NEW plSharedMeshBCMsg;
+    plSharedMeshBCMsg *smMsg = new plSharedMeshBCMsg;
     smMsg->SetSender(GetKey());
     smMsg->fDraw = fDrawable;
     smMsg->fMesh = mesh;
@@ -165,7 +165,7 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
         plMorphSequence *morph = const_cast<plMorphSequence*>(plMorphSequence::ConvertNoRef(fOwner->GetModifierByType(plMorphSequence::Index())));
         if (morph)
         {
-            //hsgResMgr::ResMgr()->AddViaNotify(mesh->GetKey(), TRACKED_NEW plGenRefMsg(morph->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kPassiveRef);
+            //hsgResMgr::ResMgr()->AddViaNotify(mesh->GetKey(), new plGenRefMsg(morph->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kPassiveRef);
             morph->AddSharedMesh(mesh);
         }
     }
@@ -178,7 +178,7 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
     {
         IClearIndex((uint8_t)geoIndex);
                 
-        plSharedMeshBCMsg *smMsg = TRACKED_NEW plSharedMeshBCMsg;
+        plSharedMeshBCMsg *smMsg = new plSharedMeshBCMsg;
         smMsg->SetSender(GetKey());
         smMsg->fDraw = fDrawable;
         smMsg->fMesh = mesh;
@@ -225,7 +225,7 @@ void plInstanceDrawInterface::IClearIndex(uint8_t which)
     plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(fDrawables[which]);
     if (drawable != nil)
     {
-        plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(fDrawable->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[which], plDISpansMsg::kLeaveEmptyDrawable);
+        plDISpansMsg* diMsg = new plDISpansMsg(fDrawable->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[which], plDISpansMsg::kLeaveEmptyDrawable);
         diMsg->SetSender(GetKey());
         diMsg->Send();
     }

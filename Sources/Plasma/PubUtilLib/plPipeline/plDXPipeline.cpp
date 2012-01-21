@@ -1278,7 +1278,7 @@ hsBool plDXPipeline::ICreateDynDeviceObjects()
     IMakeRenderTargetPools();
 
     // Create device-specific stuff
-    fDebugTextMgr = TRACKED_NEW plDebugTextManager();
+    fDebugTextMgr = new plDebugTextManager();
     if( fDebugTextMgr == nil )
         return true;
 
@@ -1305,7 +1305,7 @@ hsBool  plDXPipeline::ICreateDeviceObjects()
     // PlateMgr is largely for debugging and performance stats,
     // but also gets used for some things like the cursor and 
     // linking fade to/from black.
-    fPlateMgr = TRACKED_NEW plDXPlateManager( this, fD3DDevice );
+    fPlateMgr = new plDXPlateManager( this, fD3DDevice );
     if( fPlateMgr == nil || !fPlateMgr->IsValid() )
         return true;
 
@@ -1326,15 +1326,15 @@ hsBool  plDXPipeline::ICreateDeviceObjects()
         return true;
 
     /// Log renderer
-    fLogDrawer = TRACKED_NEW plStatusLogDrawer( this );
+    fLogDrawer = new plStatusLogDrawer( this );
     plStatusLogMgr::GetInstance().SetDrawer( fLogDrawer );
 
     /// Ok, we're done now
 #if MCN_BOUNDS_SPANS
-    fBoundsSpans = TRACKED_NEW plDrawableSpans();
+    fBoundsSpans = new plDrawableSpans();
     hsgResMgr::ResMgr()->NewKey( "BoundsSpans", fBoundsSpans, plLocation::kGlobalFixedLoc );
     fBoundsSpans->SetNativeProperty( plDrawable::kPropVolatile, true );
-    fBoundsMat = TRACKED_NEW hsGMaterial();
+    fBoundsMat = new hsGMaterial();
     hsgResMgr::ResMgr()->NewKey( "BoundsMaterial", fBoundsMat, plLocation::kGlobalFixedLoc );
     plLayer *lay = fBoundsMat->MakeBaseLayer();
     lay->SetMiscFlags( hsGMatState::kMiscWireFrame | hsGMatState::kMiscTwoSided );
@@ -1357,7 +1357,7 @@ void    plDXPipeline::ISetCurrentDriver( D3DEnum_DriverInfo *driv )
     if( fCurrentDriver != nil )
         delete fCurrentDriver;
 
-    fCurrentDriver = TRACKED_NEW D3DEnum_DriverInfo;
+    fCurrentDriver = new D3DEnum_DriverInfo;
 
     fCurrentDriver->fGuid = driv->fGuid;
     hsStrncpy( fCurrentDriver->fStrDesc, driv->fStrDesc, 40 );
@@ -1390,7 +1390,7 @@ void    plDXPipeline::ISetCurrentDevice( D3DEnum_DeviceInfo *dev )
 {
     if( fCurrentDevice != nil )
         delete fCurrentDevice;
-    fCurrentDevice = TRACKED_NEW D3DEnum_DeviceInfo;
+    fCurrentDevice = new D3DEnum_DeviceInfo;
 
     hsStrncpy( fCurrentDevice->fStrName, dev->fStrName, 40 );
 
@@ -1429,7 +1429,7 @@ void    plDXPipeline::ISetCurrentMode( D3DEnum_ModeInfo *mode )
 {
     if( fCurrentMode != nil )
         delete fCurrentMode;
-    fCurrentMode = TRACKED_NEW D3DEnum_ModeInfo;
+    fCurrentMode = new D3DEnum_ModeInfo;
 
     *fCurrentMode = *mode;
 }
@@ -2219,7 +2219,7 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     
     // fire off a message to the client so we can write defaults to the ini file, and adjust the window size
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-    plClientMsg* clientMsg = TRACKED_NEW plClientMsg(plClientMsg::kSetGraphicsDefaults);
+    plClientMsg* clientMsg = new plClientMsg(plClientMsg::kSetGraphicsDefaults);
     clientMsg->Send(clientKey);
 
 }
@@ -2284,7 +2284,7 @@ hsBool plDXPipeline::IResetDevice()
 
             /// Broadcast a message letting everyone know that we were recreated and that
             /// all device-specific stuff needs to be recreated
-            plDeviceRecreateMsg* clean = TRACKED_NEW plDeviceRecreateMsg();
+            plDeviceRecreateMsg* clean = new plDeviceRecreateMsg();
             plgDispatch::MsgSend(clean);
 
             SetCapture(fSettings.fHWnd);
@@ -2560,7 +2560,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
     /// Broadcast a message letting everyone know that we were recreated and that
     /// all device-specific stuff needs to be recreated
-    plDeviceRecreateMsg* clean = TRACKED_NEW plDeviceRecreateMsg();
+    plDeviceRecreateMsg* clean = new plDeviceRecreateMsg();
     plgDispatch::MsgSend(clean);
 }
 
@@ -2576,7 +2576,7 @@ plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
     plTextFont  *font;
 
 
-    font = TRACKED_NEW plDXTextFont( this, fD3DDevice );
+    font = new plDXTextFont( this, fD3DDevice );
     if( font == nil )
         return nil;
     font->Create( face, size );
@@ -3720,7 +3720,7 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
     if( spanArray.GetCount() == 0 )
     {
         spanArray.Reset();
-        spanArray.Append( TRACKED_NEW plGeometrySpan() );
+        spanArray.Append( new plGeometrySpan() );
         identMatrix.Reset();
 
         // Make normals
@@ -3732,7 +3732,7 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
         }
     }
     else
-        spanArray[ 0 ] = TRACKED_NEW plGeometrySpan();
+        spanArray[ 0 ] = new plGeometrySpan();
 
     newSpan = spanArray[ 0 ];
 
@@ -3796,11 +3796,11 @@ void    plDXPipeline::IAddNormalsSpan( plDrawableSpans *ice, plIcicle *span, plD
     if( spanArray.GetCount() == 0 )
     {
         spanArray.Reset();
-        spanArray.Append( TRACKED_NEW plGeometrySpan() );
+        spanArray.Append( new plGeometrySpan() );
         identMatrix.Reset();
     }
     else
-        spanArray[ 0 ] = TRACKED_NEW plGeometrySpan();
+        spanArray[ 0 ] = new plGeometrySpan();
 
     newSpan = spanArray[ 0 ];
 
@@ -3842,7 +3842,7 @@ hsBool plDXPipeline::BeginRender()
     {
         /// Broadcast a message letting everyone know that we were recreated and that
         /// all device-specific stuff needs to be recreated
-//      plDeviceRecreateMsg* clean = TRACKED_NEW plDeviceRecreateMsg();
+//      plDeviceRecreateMsg* clean = new plDeviceRecreateMsg();
 //      plgDispatch::MsgSend(clean);
 
         fDevWasLost = false;
@@ -4182,7 +4182,7 @@ plMipmap* plDXPipeline::ExtractMipMap(plRenderTarget* targ)
     const int width = targ->GetWidth();
     const int height = targ->GetHeight();
 
-    plMipmap* mipMap = TRACKED_NEW plMipmap(width, height, plMipmap::kARGB32Config, 1);
+    plMipmap* mipMap = new plMipmap(width, height, plMipmap::kARGB32Config, 1);
 
     uint8_t* ptr = (uint8_t*)(rect.pBits);
     const int pitch = rect.Pitch;
@@ -4454,7 +4454,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
                                                         D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, NULL ) ) )
@@ -4474,7 +4474,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
                 }
                 else
                 {
-                    face->SetDeviceRef( TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, face, false ) );
+                    face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
                     hsRefCnt_SafeUnRef( face->GetDeviceRef() );
@@ -4500,7 +4500,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
                                                         D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, NULL ) ) )
@@ -4530,7 +4530,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         width = owner->GetWidth();
         height = owner->GetHeight();
@@ -4652,7 +4652,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
@@ -4674,7 +4674,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
                 }
                 else
                 {
-                    face->SetDeviceRef( TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, face, false ) );
+                    face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
                     hsRefCnt_SafeUnRef( face->GetDeviceRef() );
@@ -4699,7 +4699,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
@@ -4723,7 +4723,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         if( ref != nil )
             ref->Set( surfFormat, 0, owner );
         else
-            ref = TRACKED_NEW plDXRenderTargetRef( surfFormat, 0, owner );
+            ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         width = owner->GetWidth();
         height = owner->GetHeight();
@@ -5701,7 +5701,7 @@ hsBool  plDXPipeline::StencilGetCaps( plStencilCaps *caps )
 // as well as attached to the light.
 hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
 {
-    plDXLightRef    *lRef = TRACKED_NEW plDXLightRef();
+    plDXLightRef    *lRef = new plDXLightRef();
 
         
     /// Assign stuff and update
@@ -8445,7 +8445,7 @@ hsGDeviceRef    *plDXPipeline::MakeTextureRef( plLayerInterface* layer, plMipmap
     plDXTextureRef *ref = (plDXTextureRef *)b->GetDeviceRef();
     if( !ref )
     {
-        ref = TRACKED_NEW plDXTextureRef( formatType, 
+        ref = new plDXTextureRef( formatType, 
                                           mmlvs, b->GetWidth(), b->GetHeight(), 
                                           numPix, totalSize, totalSize, levelSizes,
                                           tData, externData );
@@ -8564,7 +8564,7 @@ hsGDeviceRef    *plDXPipeline::IMakeCubicTextureRef( plLayerInterface* layer, pl
     ref = (plDXCubeTextureRef *)cubic->GetDeviceRef();
     if( !ref )
     {
-        ref = TRACKED_NEW plDXCubeTextureRef( formatType, 
+        ref = new plDXCubeTextureRef( formatType, 
                                           numLevels, faces[ 0 ]->GetWidth(), faces[ 0 ]->GetHeight(), 
                                           numPixels, totalSize, totalSize * 6, levelSizes,
                                           textureData[ 0 ], externData );
@@ -8668,7 +8668,7 @@ hsBool  plDXPipeline::IProcessMipmapLevels( plMipmap *mipmap, uint32_t &numLevel
             mipmap->SetCurrLevel( 0 );
             totalSize = 0;
             numLevels = maxLevel + 1;
-            levelSizes = TRACKED_NEW uint32_t[ numLevels ];
+            levelSizes = new uint32_t[ numLevels ];
             int i;
             for( i = 0; i < numLevels; i++ )
             {
@@ -8692,7 +8692,7 @@ hsBool  plDXPipeline::IProcessMipmapLevels( plMipmap *mipmap, uint32_t &numLevel
             numPixels = mipmap->GetTotalSize() * 8 / mipmap->GetPixelSize();
             numLevels = mipmap->GetNumLevels();
 
-            levelSizes = TRACKED_NEW uint32_t[ numLevels ];
+            levelSizes = new uint32_t[ numLevels ];
 
             int     i;
             uint32_t w, h;
@@ -8734,7 +8734,7 @@ void    *plDXPipeline::IGetPixelScratch( uint32_t size )
             delete [] sPtr;
         
         if( size > 0 )
-            sPtr = TRACKED_NEW char[ sSize = size ];
+            sPtr = new char[ sSize = size ];
         else
             sPtr = nil;
     }
@@ -9365,7 +9365,7 @@ void plDXPipeline::IMakeOcclusionSnap()
         hsMatrix44 ident;
         ident.Reset();
 
-        hsGMaterial* mat = TRACKED_NEW hsGMaterial;
+        hsGMaterial* mat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey( "OcclusionSnapMat", mat, plLocation::kGlobalFixedLoc );
         plLayer *lay = mat->MakeBaseLayer();
         lay->SetZFlags(hsGMatState::kZNoZWrite);
@@ -10043,7 +10043,7 @@ void plDXPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
     if( !vRef )
     {
         // Make the blank ref
-        vRef = TRACKED_NEW plDXVertexBufferRef;
+        vRef = new plDXVertexBufferRef;
 
         ISetupVertexBufferRef(owner, idx, vRef);
 
@@ -10075,7 +10075,7 @@ void plDXPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
 
         if( !vRef->fData && (vRef->fFormat != owner->GetVertexFormat()) )
         {
-            vRef->fData = TRACKED_NEW uint8_t[vRef->fCount * vRef->fVertexSize];
+            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
         }
     }
 }
@@ -10089,7 +10089,7 @@ void plDXPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
     {
         // Create one from scratch.
 
-        iRef = TRACKED_NEW plDXIndexBufferRef;
+        iRef = new plDXIndexBufferRef;
 
         ISetupIndexBufferRef(owner, idx, iRef);
 
@@ -10468,7 +10468,7 @@ void plDXPipeline::LoadResources()
     IReleaseAvRTPool();
 
     // Create all RenderTargets
-    plPipeRTMakeMsg* rtMake = TRACKED_NEW plPipeRTMakeMsg(this);
+    plPipeRTMakeMsg* rtMake = new plPipeRTMakeMsg(this);
     rtMake->Send();
 
     // Create all our shadow render targets and pipeline specific POOL_DEFAULT vertex buffers.
@@ -10477,7 +10477,7 @@ void plDXPipeline::LoadResources()
     ICreateDynamicBuffers();
 
     // Create all POOL_DEFAULT (sorted) index buffers in the scene.
-    plPipeGeoMakeMsg* defMake = TRACKED_NEW plPipeGeoMakeMsg(this, true);
+    plPipeGeoMakeMsg* defMake = new plPipeGeoMakeMsg(this, true);
     defMake->Send();
 
     // This can be a bit of a mem hog and will use more mem if available, so keep it last in the
@@ -10490,7 +10490,7 @@ void plDXPipeline::LoadResources()
     // Force a create of all our static D3D vertex buffers.
 #define MF_PRELOAD_MANAGEDBUFFERS
 #ifdef MF_PRELOAD_MANAGEDBUFFERS
-    plPipeGeoMakeMsg* manMake = TRACKED_NEW plPipeGeoMakeMsg(this, false);
+    plPipeGeoMakeMsg* manMake = new plPipeGeoMakeMsg(this, false);
     manMake->Send();
 #endif // MF_PRELOAD_MANAGEDBUFFERS
 
@@ -10501,7 +10501,7 @@ void plDXPipeline::LoadResources()
 #define MF_PRELOAD_TEXTURES
 #endif // MF_TOSSER
 #ifdef MF_PRELOAD_TEXTURES
-    plPipeTexMakeMsg* texMake = TRACKED_NEW plPipeTexMakeMsg(this);
+    plPipeTexMakeMsg* texMake = new plPipeTexMakeMsg(this);
     texMake->Send();
 #endif // MF_PRELOAD_TEXTURES
 
@@ -11000,7 +11000,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         plDXVertexShader* vRef = (plDXVertexShader*)vShader->GetDeviceRef();
         if( !vRef )
         {
-            vRef = TRACKED_NEW plDXVertexShader(vShader);
+            vRef = new plDXVertexShader(vShader);
             hsRefCnt_SafeUnRef(vRef);
         }
         if( !vRef->IsLinked() )
@@ -11028,7 +11028,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         plDXPixelShader* pRef = (plDXPixelShader*)pShader->GetDeviceRef();
         if( !pRef )
         {
-            pRef = TRACKED_NEW plDXPixelShader(pShader);
+            pRef = new plDXPixelShader(pShader);
             hsRefCnt_SafeUnRef(pRef);
         }
         if( !pRef->IsLinked() )
@@ -12961,7 +12961,7 @@ plDXTextureRef* plDXPipeline::IGetULutTextureRef()
     const int height = 1;
     if( !fULutTextureRef )
     {
-        uint32_t* tData = TRACKED_NEW uint32_t[width * height];
+        uint32_t* tData = new uint32_t[width * height];
 
         uint32_t* pData = tData;
         int j;
@@ -12978,7 +12978,7 @@ plDXTextureRef* plDXPipeline::IGetULutTextureRef()
             }
         }
 
-        plDXTextureRef* ref = TRACKED_NEW plDXTextureRef( D3DFMT_A8R8G8B8, 
+        plDXTextureRef* ref = new plDXTextureRef( D3DFMT_A8R8G8B8, 
                                               1, // Num mip levels
                                               width, height, // width by height
                                               width * height, // numpix
@@ -13271,7 +13271,7 @@ plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
 
     if( !fLights.fShadowLights[fLights.fNextShadowLight] )
     {
-        plDXLightRef    *lRef = TRACKED_NEW plDXLightRef();
+        plDXLightRef    *lRef = new plDXLightRef();
             
         /// Assign stuff and update
         lRef->fD3DIndex = fLights.ReserveD3DIndex();
@@ -13382,7 +13382,7 @@ void plDXPipeline::IMakeRenderTargetPools()
                 int width = 1 << i;
                 int height = width; 
 
-                plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
+                plRenderTarget* rt = new plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
 
                 // If we've failed to create our render target ref, we're probably out of
                 // video memory. We'll return nil, and this guy just doesn't get a shadow
@@ -14131,7 +14131,7 @@ hsBool plDXPipeline::IFillAvRTPool(uint16_t numRTs, uint16_t width)
         uint8_t bitDepth = 32;
         uint8_t zDepth = 0;
         uint8_t stencilDepth = 0;
-        fAvRTPool[i] = TRACKED_NEW plRenderTarget(flags, width, width, bitDepth, zDepth, stencilDepth);
+        fAvRTPool[i] = new plRenderTarget(flags, width, width, bitDepth, zDepth, stencilDepth);
 
         // If anyone fails, release everyone we've created.
         if (!MakeRenderTargetRef(fAvRTPool[i]))
@@ -14409,7 +14409,7 @@ void plDXPipeline::IDrawClothingQuad(float x, float y, float w, float h,
 
 plPipeline  *plPipelineCreate::ICreateDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devMode )
 {
-    plDXPipeline    *pipe = TRACKED_NEW plDXPipeline( hWnd, devMode );
+    plDXPipeline    *pipe = new plDXPipeline( hWnd, devMode );
 
     // Taken out 8.1.2001 mcn - If we have an error, still return so the client can grab the string
 //  if( pipe->GetErrorString() != nil )

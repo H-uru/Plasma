@@ -107,15 +107,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //{
 //  if( fTarget && fTarget->IsLocallyOwned()==plSynchedObject::kYes )
 //  {
-//      plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+//      plCameraMsg* pMsg = new plCameraMsg;
 //      pMsg->SetCmd(plCameraMsg::kSetSubject);
 //      pMsg->SetSubject(nil);
 //      pMsg->SetBCastFlag( plMessage::kBCastByExactType );
 //      plgDispatch::MsgSend(pMsg);
 //
-//      plAudioSysMsg* pAudMsg1 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRefCamera);
-//      plAudioSysMsg* pAudMsg2 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRefCamera);
-//      plAudioSysMsg* pAudMsg3 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRefCamera);
+//      plAudioSysMsg* pAudMsg1 = new plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRefCamera);
+//      plAudioSysMsg* pAudMsg2 = new plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRefCamera);
+//      plAudioSysMsg* pAudMsg3 = new plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRefCamera);
 //      plgDispatch::MsgSend(pAudMsg1);
 //      plgDispatch::MsgSend(pAudMsg2);
 //      plgDispatch::MsgSend(pAudMsg3);
@@ -152,14 +152,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //void plPlayerModifier::IDoLocalSetup(plSceneObject* so)
 //{
-//  plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+//  plCameraMsg* pMsg = new plCameraMsg;
 //  pMsg->SetCmd(plCameraMsg::kSetSubject);
 //  pMsg->SetSubject(so);
 //  pMsg->SetBCastFlag( plMessage::kBCastByExactType );
 //  plgDispatch::MsgSend(pMsg);
 //
 //  // this is to solve the problem of physical vs nonphysical players...
-////    plCameraMsg* pMsg2 = TRACKED_NEW plCameraMsg;
+////    plCameraMsg* pMsg2 = new plCameraMsg;
 ////    pMsg2->SetBCastFlag(plMessage::kBCastByExactType);
 ////    pMsg2->SetCmd(plCameraMsg::kSetOffset);
 ////    pMsg2->SetCmd(plCameraMsg::kEntering);
@@ -172,11 +172,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //void  plPlayerModifier::IMakeUsListener( plSceneObject *so )
 //{
 //  // set the listener to use us...
-//  plAudioSysMsg* pAudMsg1 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRef);
+//  plAudioSysMsg* pAudMsg1 = new plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRef);
 //  pAudMsg1->SetSceneObject(so->GetKey());
-//  plAudioSysMsg* pAudMsg2 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRef);
+//  plAudioSysMsg* pAudMsg2 = new plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRef);
 //  pAudMsg2->SetSceneObject(so->GetKey());
-//  plAudioSysMsg* pAudMsg3 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRef);
+//  plAudioSysMsg* pAudMsg3 = new plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRef);
 //  pAudMsg3->SetSceneObject(so->GetKey());
 //  plgDispatch::MsgSend(pAudMsg1);
 //  plgDispatch::MsgSend(pAudMsg2);
@@ -209,7 +209,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  plSpawnModMsg* pSpawn = plSpawnModMsg::ConvertNoRef(msg);
 //  if (pSpawn && HasFlag(kWantsToSpawn))
 //  {
-//      spawnPt* pt = TRACKED_NEW spawnPt;
+//      spawnPt* pt = new spawnPt;
 //      pt->pt = pSpawn->fPos;
 //      
 //      hsVector3 temp(fTarget->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pt->pt);
@@ -260,7 +260,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //{
 //  if (b != bMoving)
 //  {
-//      plPlayerMsg* pMsg = TRACKED_NEW plPlayerMsg;
+//      plPlayerMsg* pMsg = new plPlayerMsg;
 //      
 //      if (b)
 //          pMsg->SetCmd( plPlayerMsg::kMovementStarted );
@@ -330,7 +330,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //              fSpawnPoints[fSpawnPoints.Count()-1]->pt : fSpawnPoints[netID]->pt;
 //#endif
 //          // Send msg for net synchronization
-//          plWarpMsg* warpMsg = TRACKED_NEW plWarpMsg;
+//          plWarpMsg* warpMsg = new plWarpMsg;
 //          warpMsg->fPos = warpPoint;
 //          warpMsg->AddReceiver( fTarget->GetKey() );
 //          warpMsg->SetWarpFlags(warpMsg->GetWarpFlags() | plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity );
@@ -350,7 +350,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      }
 //      else 
 //      {
-//          plSpawnRequestMsg* pMsg = TRACKED_NEW plSpawnRequestMsg;
+//          plSpawnRequestMsg* pMsg = new plSpawnRequestMsg;
 //          pMsg->SetSender(GetKey());
 //          plgDispatch::MsgSend( pMsg );
 //      }

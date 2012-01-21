@@ -587,7 +587,7 @@ bool SqlConn::GrowConnections_CS (unsigned attempts) {
             break;
 
         // Leave the critical section to perform connection
-        SqlStmt * stmt = NEW(SqlStmt)(this);
+        SqlStmt * stmt = new SqlStmt(this);
 
         // Ensure that the connection string is valid
         // for the duration of the initialization by
@@ -789,7 +789,7 @@ SqlConn * SqlConnCreate (
     LogErr(result, SQL_HANDLE_ENV, henv, L"SQLSetEnvAttr(version)", L"");
 
     // Allocate a connection record
-    SqlConn * conn = NEW(SqlConn)(connectStr, henv);
+    SqlConn * conn = new SqlConn(connectStr, henv);
 
     // Update configuration options
     conn->critsect.Enter();

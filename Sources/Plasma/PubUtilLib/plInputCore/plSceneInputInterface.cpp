@@ -149,7 +149,7 @@ void    plSceneInputInterface::Init( plInputInterfaceMgr *manager )
     fPendingLink = false;
 
     // register for control messages
-    plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
     pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg->SetSender(fManager->GetKey());
     pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -179,7 +179,7 @@ void plSceneInputInterface::ClearClickableMap()
 
 void plSceneInputInterface::IHalfFadeAvatar(hsBool out)
 {
-    plIfaceFadeAvatarMsg* pMsg = TRACKED_NEW plIfaceFadeAvatarMsg();
+    plIfaceFadeAvatarMsg* pMsg = new plIfaceFadeAvatarMsg();
     pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
@@ -224,7 +224,7 @@ hsBool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
     int i;
     for (i=0; i < fClickableMap.Count(); i++)
     {
-        plFakeOutMsg *pMsg = TRACKED_NEW plFakeOutMsg;
+        plFakeOutMsg *pMsg = new plFakeOutMsg;
         pMsg->SetSender( fManager->GetKey() );
         pMsg->AddReceiver( fClickableMap[i]->key );
         plgDispatch::MsgSend( pMsg );
@@ -295,7 +295,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                                     fCurrentClickableLogicMod = pLogicMod->GetKey();
                                     fCurrentClickPoint = pLOSMsg->fHitPoint;
                                     for (int x = 0; x < pMod->GetNumReferencedKeys(); x++)
-                                        fClickableMap.Append( TRACKED_NEW clickableTest(pMod->GetReferencedKey(x)));
+                                        fClickableMap.Append( new clickableTest(pMod->GetReferencedKey(x)));
                                 }
                                 else
                                 {
@@ -626,7 +626,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
             {
                 // tell them to ignore us
                 
-                plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
+                plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
                 pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
                 pMsg->SetBCastFlag(plMessage::kNetPropagate);
                 pMsg->SetBCastFlag(plMessage::kNetForce);
@@ -636,7 +636,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                 
                 // and tell them to ignore our victim
 
-                //plInputIfaceMgrMsg* pMsg2 = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
+                //plInputIfaceMgrMsg* pMsg2 = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
                 //pMsg2->SetAvKey(fOffereeKey);
                 //pMsg2->SetBCastFlag(plMessage::kNetPropagate);
                 //pMsg2->SetBCastFlag(plMessage::kNetForce);
@@ -650,7 +650,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
             {
                 if (fGUIIgnoredAvatars[x] == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
                 {
-                    plInputIfaceMgrMsg* pMsg3 = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
+                    plInputIfaceMgrMsg* pMsg3 = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
                     pMsg3->SetAvKey(fGUIIgnoredAvatars[x]);
                     pMsg3->SetBCastFlag(plMessage::kNetPropagate);
                     pMsg3->SetBCastFlag(plMessage::kNetForce);
@@ -916,14 +916,14 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
         // Send an "un-picked" message to it
         if( !fLastClickIsAvatar )
         {
-            plPickedMsg *pPickedMsg = TRACKED_NEW plPickedMsg;
+            plPickedMsg *pPickedMsg = new plPickedMsg;
             pPickedMsg->AddReceiver( fLastClicked );
             pPickedMsg->fPicked = false;
             plgDispatch::MsgSend( pPickedMsg );
         }
         else
         {
-            plRemoteAvatarInfoMsg *pMsg = TRACKED_NEW plRemoteAvatarInfoMsg;
+            plRemoteAvatarInfoMsg *pMsg = new plRemoteAvatarInfoMsg;
             pMsg->SetAvatarKey( nil );
             plgDispatch::MsgSend( pMsg );
         }
@@ -936,7 +936,7 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
     {
 #ifdef MATT_WAS_HERE
     // now we send pick messages to avatars as well...
-    plPickedMsg *pPickedMsg = TRACKED_NEW plPickedMsg;
+    plPickedMsg *pPickedMsg = new plPickedMsg;
     pPickedMsg->AddReceiver( fLastClicked );
     pPickedMsg->fHitPoint = hitPoint;
     plgDispatch::MsgSend( pPickedMsg );
@@ -944,7 +944,7 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
     // if it's an avatar, we also send this thing
     if(fLastClickIsAvatar)
     {                   
-        plRemoteAvatarInfoMsg *pMsg = TRACKED_NEW plRemoteAvatarInfoMsg;
+        plRemoteAvatarInfoMsg *pMsg = new plRemoteAvatarInfoMsg;
         pMsg->SetAvatarKey( fLastClicked );
         plgDispatch::MsgSend( pMsg );
     }
@@ -952,14 +952,14 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
     // Send a "picked" message to it
     if( !fLastClickIsAvatar )
     {
-        plPickedMsg *pPickedMsg = TRACKED_NEW plPickedMsg;
+        plPickedMsg *pPickedMsg = new plPickedMsg;
         pPickedMsg->AddReceiver( fLastClicked );
         pPickedMsg->fHitPoint = hitPoint;
         plgDispatch::MsgSend( pPickedMsg );
     }
     else
     {                   
-        plRemoteAvatarInfoMsg *pMsg = TRACKED_NEW plRemoteAvatarInfoMsg;
+        plRemoteAvatarInfoMsg *pMsg = new plRemoteAvatarInfoMsg;
         pMsg->SetAvatarKey( fLastClicked );
         plgDispatch::MsgSend( pMsg );
     }
@@ -1074,9 +1074,9 @@ void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, hsBool add)
     // tell everyone else to be able to / not to be able to select this avatar
     plInputIfaceMgrMsg* pMsg = 0;
     if (!add)
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
     pMsg->SetAvKey(offeree);
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
@@ -1112,7 +1112,7 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, hsBoo
         delete [] members;
 
     }
-    plNotifyMsg* pMsg = TRACKED_NEW plNotifyMsg;
+    plNotifyMsg* pMsg = new plNotifyMsg;
     pMsg->AddOfferBookEvent(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), ID, offereeID);
     pMsg->AddReceiver(fBookKey);
     if (net)
@@ -1135,9 +1135,9 @@ void plSceneInputInterface::ISendAvatarDisabledNotification(hsBool enabled)
 {
     plInputIfaceMgrMsg* pMsg = 0;
     if (enabled)
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
     pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
@@ -1170,12 +1170,12 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
     plLOSRequestMsg* pMsg;
     
     if(ID == ID_FIND_CLICKABLE) {
-        pMsg = TRACKED_NEW plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
+        pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
         pMsg->SetCullDB(plSimDefs::kLOSDBUIBlockers);
     } else if(ID == ID_FIND_WALKABLE_GROUND) {
-        pMsg = TRACKED_NEW plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBAvatarWalkable, plLOSRequestMsg::kTestClosest);
+        pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBAvatarWalkable, plLOSRequestMsg::kTestClosest);
     } else
-        pMsg = TRACKED_NEW plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBLocalAvatar, plLOSRequestMsg::kTestClosest);
+        pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBLocalAvatar, plLOSRequestMsg::kTestClosest);
     
     pMsg->SetReportType( plLOSRequestMsg::kReportHitOrMiss );
 

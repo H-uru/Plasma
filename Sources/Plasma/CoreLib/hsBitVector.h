@@ -102,7 +102,7 @@ public:
     // integer level access
     uint32_t GetNumBitVectors() const { return fNumBitVectors; }
     uint32_t GetBitVector(int i) const { return fBitVectors[i]; }
-    void SetNumBitVectors(uint32_t n) { Reset(); fNumBitVectors=n; fBitVectors = TRACKED_NEW uint32_t[n]; }
+    void SetNumBitVectors(uint32_t n) { Reset(); fNumBitVectors=n; fBitVectors = new uint32_t[n]; }
     void SetBitVector(int i, uint32_t val) { fBitVectors[i]=val; }
 
     // Do dst.SetCount(0), then add each set bit's index into dst, returning dst.
@@ -118,7 +118,7 @@ inline hsBitVector::hsBitVector(const hsBitVector& other)
 {
     if( 0 != (fNumBitVectors = other.fNumBitVectors) )
     {       
-        fBitVectors = TRACKED_NEW uint32_t[fNumBitVectors];
+        fBitVectors = new uint32_t[fNumBitVectors];
         int i;
         for( i = 0; i < fNumBitVectors; i++ )
             fBitVectors[i] = other.fBitVectors[i];
@@ -160,7 +160,7 @@ inline hsBitVector& hsBitVector::operator=(const hsBitVector& other)
         {
             Reset();
             fNumBitVectors = other.fNumBitVectors;
-            fBitVectors = TRACKED_NEW uint32_t[fNumBitVectors];
+            fBitVectors = new uint32_t[fNumBitVectors];
         }
         else
         {

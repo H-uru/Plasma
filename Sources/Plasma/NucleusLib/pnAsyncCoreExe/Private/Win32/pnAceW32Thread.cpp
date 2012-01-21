@@ -234,7 +234,7 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 //===========================================================================
 AsyncThreadTaskList * AsyncThreadTaskListCreate () {
     ASSERT(s_taskPort);
-    AsyncThreadTaskList * taskList = NEW(AsyncThreadTaskList);
+    AsyncThreadTaskList * taskList = new AsyncThreadTaskList;
     taskList->IncRef("TaskList");
     return taskList;
 }
@@ -266,7 +266,7 @@ void AsyncThreadTaskAdd (
     ASSERT(priority == kThreadTaskPriorityNormal);
 
     // Allocate a new task record
-    ThreadTask * task   = NEW(ThreadTask);
+    ThreadTask * task   = new ThreadTask;
     task->taskList      = taskList;
     task->callback      = callback;
     task->param         = param;

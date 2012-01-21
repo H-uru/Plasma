@@ -185,7 +185,7 @@ void plWin32Sound::IActuallyStop()
 
 plSoundMsg* plWin32Sound::GetStatus(plSoundMsg* pMsg)
 {
-    plSoundMsg* pReply = TRACKED_NEW plSoundMsg;
+    plSoundMsg* pReply = new plSoundMsg;
     pReply->AddReceiver( pMsg->GetSender() );
     pReply->SetCmd(plSoundMsg::kStatusReply);
     pReply->fLoop = IsPropertySet( kPropLooping );
@@ -334,7 +334,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
         if( event == nil )
         {
             // Add a new sound event for this guy
-            event = TRACKED_NEW plSoundEvent( type, byteTime, this );
+            event = new plSoundEvent( type, byteTime, this );
             //fDSoundBuffer->AddPosNotify( byteTime );
             fSoundEvents.Append( event );
         }
@@ -346,7 +346,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
         if( event == nil )
         {
             // Add a new sound event for this guy
-            event = TRACKED_NEW plSoundEvent( type, this );
+            event = new plSoundEvent( type, this );
             fSoundEvents.Append( event );
         }
     }

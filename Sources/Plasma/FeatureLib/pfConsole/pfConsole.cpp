@@ -185,7 +185,7 @@ pfConsole::~pfConsole()
 {
     if( fInputInterface != nil )
     {
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputInterface );
         plgDispatch::MsgSend( msg );
 
@@ -218,7 +218,7 @@ pfConsole * pfConsole::GetInstance () {
 
 void    pfConsole::Init( pfConsoleEngine *engine )
 {
-    fDisplayBuffer = TRACKED_NEW char[ fNumDisplayLines * kMaxCharsWide ];
+    fDisplayBuffer = new char[ fNumDisplayLines * kMaxCharsWide ];
     memset( fDisplayBuffer, 0, fNumDisplayLines * kMaxCharsWide );
 
     memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
@@ -239,8 +239,8 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     memset( fLastHelpMsg, 0, sizeof( fLastHelpMsg ) );
     fEngine = engine;
 
-    fInputInterface = TRACKED_NEW pfConsoleInputInterface( this );
-    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+    fInputInterface = new pfConsoleInputInterface( this );
+    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
     msg->SetIFace( fInputInterface );
     plgDispatch::MsgSend( msg );
 

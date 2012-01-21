@@ -169,7 +169,7 @@ HRESULT CWaveFile::Open(const char *strFileName, WAVEFORMATEX* pwfx, DWORD dwFla
             if( NULL == ( pvRes = LockResource( hResData ) ) )
                 return DXTRACE_ERR( TEXT("LockResource"), E_FAIL );
 
-            CHAR* pData = TRACKED_NEW CHAR[ dwSize ];
+            CHAR* pData = new CHAR[ dwSize ];
             memcpy( pData, pvRes, dwSize );
 
             MMIOINFO mmioInfo;
@@ -359,7 +359,7 @@ HRESULT CWaveFile::ReadMMIO()
     // uint16_t, and thats how many extra bytes to allocate.
     if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM )
     {
-        m_pwfx = (WAVEFORMATEX*)( TRACKED_NEW CHAR[ sizeof( WAVEFORMATEX ) ] );
+        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof( WAVEFORMATEX ) ] );
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("m_pwfx"), E_FAIL );
 
@@ -374,7 +374,7 @@ HRESULT CWaveFile::ReadMMIO()
         if( mmioRead( m_hmmio, (CHAR*)&cbExtraBytes, sizeof(WORD)) != sizeof(WORD) )
             return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
 
-        m_pwfx = (WAVEFORMATEX*)( TRACKED_NEW CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ] );
+        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ] );
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("new"), E_FAIL );
 
@@ -421,7 +421,7 @@ HRESULT CWaveFile::ReadMMIO()
          return DXTRACE_ERR( TEXT("sizeof(CueChunk)"), E_FAIL );
 #endif
 
-    DWORD* CueBuff = TRACKED_NEW DWORD[ckIn.cksize];
+    DWORD* CueBuff = new DWORD[ckIn.cksize];
     DWORD Results;
     Read((BYTE*)CueBuff, ckIn.cksize, &Results);
 
@@ -457,7 +457,7 @@ HRESULT CWaveFile::ReadMMIO()
 
     plSoundMarker *newMarker;
 
-    BYTE *labelBuf = TRACKED_NEW BYTE [ckIn.cksize];
+    BYTE *labelBuf = new BYTE [ckIn.cksize];
 
     // Read the entire lable chunk and then lets parse out the individual lables.
     Read(labelBuf, ckIn.cksize-4, &Results);
@@ -468,7 +468,7 @@ HRESULT CWaveFile::ReadMMIO()
     {
         DWORD size = *(DWORD*)(bp + 4);
         DWORD id = *(DWORD*)(bp + 8);
-        newMarker = TRACKED_NEW plSoundMarker; // Grab a new label
+        newMarker = new plSoundMarker; // Grab a new label
     
         int i;
 
@@ -484,7 +484,7 @@ HRESULT CWaveFile::ReadMMIO()
             }
         }   
         int stringSize = size - sizeof(DWORD); // text string is size of chunck - size of the size uint16_t
-        newMarker->fName = TRACKED_NEW char[ stringSize];
+        newMarker->fName = new char[ stringSize];
 
         strcpy(newMarker->fName, (char*)(bp + 12));
         
@@ -1053,7 +1053,7 @@ public:
         chunkSize = ChunkSize;
         dwCuePoints = (ChunkSize - (sizeof(DWORD)*1))/(sizeof(CuePoint));
         //points = NULL;
-        //points = TRACKED_NEW CuePoint[dwCuePoints];
+        //points = new CuePoint[dwCuePoints];
         
     }
     //Cue

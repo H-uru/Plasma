@@ -151,7 +151,7 @@ void    plTextGenerator::Attach( plMipmap *host, uint16_t width, uint16_t height
     }
 
     /// Send ourselves a passive ref of the mipmap, so we get notified if and when it goes away
-    hsgResMgr::ResMgr()->AddViaNotify( fHost->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fHost->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
 #endif
     /// All done!
 }

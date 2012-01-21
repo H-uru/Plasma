@@ -91,7 +91,7 @@ void plSwimCircularCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
     fPullNearVel = stream->ReadLEScalar();
     fPullFarDistSq = stream->ReadLEScalar();
     fPullFarVel = stream->ReadLEScalar();
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
 void plSwimCircularCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
@@ -208,7 +208,7 @@ void plSwimStraightCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
     fNearVel = stream->ReadLEScalar();
     fFarDist = stream->ReadLEScalar();
     fFarVel = stream->ReadLEScalar();
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
 void plSwimStraightCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)

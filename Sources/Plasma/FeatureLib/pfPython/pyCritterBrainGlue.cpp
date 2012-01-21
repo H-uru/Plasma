@@ -173,7 +173,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
     if (PyUnicode_Check(animNameObj))
     {
         int strLen = PyUnicode_GetSize(animNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)animNameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);
@@ -193,7 +193,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
     if (PyUnicode_Check(behNameObj))
     {
         int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);
@@ -228,7 +228,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
     if (PyUnicode_Check(behNameObj))
     {
         int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);
@@ -260,7 +260,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, runningBehavior, args)
     if (PyUnicode_Check(behNameObj))
     {
         int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);

@@ -79,7 +79,7 @@ hsBool plDecalEnableMod::MsgReceive(plMessage* msg)
         int i;
         for( i = 0; i < fDecalMgrs.GetCount(); i++ )
         {
-            plDynaDecalEnableMsg* ena = TRACKED_NEW plDynaDecalEnableMsg(fDecalMgrs[i], armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
+            plDynaDecalEnableMsg* ena = new plDynaDecalEnableMsg(fDecalMgrs[i], armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
 
             ena->Send();
         }

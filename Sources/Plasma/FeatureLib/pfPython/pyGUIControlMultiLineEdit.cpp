@@ -187,7 +187,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
             if ( daBuffer != nil )
             {
                 // don't alter the user's buffer... but into a copy of our own
-                uint8_t* altBuffer = TRACKED_NEW uint8_t[length];
+                uint8_t* altBuffer = new uint8_t[length];
 // =====> temp>> change 0xFEs back into '\0's
                 int i;
                 for ( i=0 ; i<length ; i++ )
@@ -223,7 +223,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
             if ( daBuffer != nil )
             {
                 // don't alter the user's buffer... but into a copy of our own
-                uint16_t* altBuffer = TRACKED_NEW uint16_t[length];
+                uint16_t* altBuffer = new uint16_t[length];
                 // =====> temp>> change 0xFFFEs back into '\0's
                 int i;
                 for ( i=0 ; i<length ; i++ )
@@ -256,7 +256,7 @@ const char* pyGUIControlMultiLineEdit::GetEncodedBuffer()
             uint8_t* daBuffer = pbmod->GetCodedBuffer( length );
             if ( daBuffer )
             {
-                uint8_t* altBuffer = TRACKED_NEW uint8_t[length+1];
+                uint8_t* altBuffer = new uint8_t[length+1];
 // =====> temp>> to get rid of '\0's (change into 0xFEs)
                 int i;
                 for ( i=0 ; i<length ; i++ )
@@ -292,7 +292,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
             uint16_t* daBuffer = pbmod->GetCodedBufferW( length );
             if ( daBuffer )
             {
-                uint16_t* altBuffer = TRACKED_NEW uint16_t[length+1];
+                uint16_t* altBuffer = new uint16_t[length+1];
                 // =====> temp>> to get rid of '\0's (change into 0xFFFEs)
                 int i;
                 for ( i=0 ; i<length ; i++ )

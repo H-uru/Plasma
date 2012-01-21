@@ -287,7 +287,7 @@ void    plWinFontCache::ILoadCustomFonts( void )
         if( numAdded > 0 )
         {
             plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Added custom font %s, %d fonts", fileName, numAdded );
-            fCustFonts.Append( TRACKED_NEW plCustFont( fileName ) );
+            fCustFonts.Append( new plCustFont( fileName ) );
         }
         else
         {

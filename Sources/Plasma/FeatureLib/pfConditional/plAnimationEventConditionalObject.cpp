@@ -69,11 +69,11 @@ hsBool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 
 void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float time)
 {
-    plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg* pMsg = new plAnimCmdMsg;
     pMsg->AddReceiver(fTarget);
     pMsg->SetSender( GetKey() );
 
-    plEventCallbackMsg* cb = TRACKED_NEW plEventCallbackMsg(GetKey(), b, 0, time);
+    plEventCallbackMsg* cb = new plEventCallbackMsg(GetKey(), b, 0, time);
 
     pMsg->AddCallback( cb );
     hsRefCnt_SafeUnRef(cb);

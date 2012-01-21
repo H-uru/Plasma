@@ -212,7 +212,7 @@ void AsyncCoreDestroy (unsigned waitMs) {
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
     
-    ZERO(g_api);
+    memset(&g_api, 0, sizeof(g_api));
 }
 
 //============================================================================

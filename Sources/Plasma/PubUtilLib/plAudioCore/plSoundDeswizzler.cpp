@@ -65,7 +65,7 @@ plSoundDeswizzler::plSoundDeswizzler( uint32_t srcLength, uint8_t numChannels, u
     fNumSamples = srcLength / sampleSize;
     fSampleSize = sampleSize;
     fStride = fSampleSize * numChannels;
-    fData = TRACKED_NEW uint8_t[ srcLength ];
+    fData = new uint8_t[ srcLength ];
     fOwnsData = true;
 }
 

@@ -94,7 +94,7 @@ plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
 
     /// Set up structure
-    compressed = TRACKED_NEW plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
+    compressed = new plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
                                 uncompressed->GetNumLevels(), plMipmap::kDirectXCompression, format );
 
     {
@@ -342,7 +342,7 @@ plMipmap    *hsDXTSoftwareCodec::ICreateUncompressedMipmap( plMipmap *compressed
             type = plMipmap::UncompressedInfo::kRGB1555;
     }
 
-    newMap = TRACKED_NEW plMipmap( compressed->GetWidth(), compressed->GetHeight(), bitDepth,
+    newMap = new plMipmap( compressed->GetWidth(), compressed->GetHeight(), bitDepth,
                             compressed->GetNumLevels(), plMipmap::kUncompressed, type );
     newMap->SetFlags( compressed->GetFlags() );                         
 

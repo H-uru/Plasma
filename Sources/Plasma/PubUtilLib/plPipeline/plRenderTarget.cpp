@@ -161,7 +161,7 @@ uint32_t  plCubicRenderTarget::Read( hsStream *s )
     for( i = 0; i < 6; i++ )
     {
         if( fFaces[ i ] == nil )
-            fFaces[ i ] = TRACKED_NEW plRenderTarget();
+            fFaces[ i ] = new plRenderTarget();
 
         fFaces[ i ]->fParent = this;
         total += fFaces[ i ]->Read( s );

@@ -124,17 +124,17 @@ void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
     count = s->ReadLE32();
     fTextMaps.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
 
     count = s->ReadLE32();
     fLayers.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
 
     count = s->ReadLE32();
     fMaterials.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
 }
 
 void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
@@ -163,7 +163,7 @@ void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
 {
     fTextMaps.Append( map );
-    hsgResMgr::ResMgr()->AddViaNotify( map->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fTextMaps.GetCount() - 1, kRefTextMap ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( map->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fTextMaps.GetCount() - 1, kRefTextMap ), plRefFlags::kActiveRef );
 }
 
 //// AddLayer ////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ void    pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
 void    pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
 {
     fLayers.Append( layer );
-    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fLayers.GetCount() - 1, kRefLayer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fLayers.GetCount() - 1, kRefLayer ), plRefFlags::kActiveRef );
 }
 
 //// AddMaterial /////////////////////////////////////////////////////////////
@@ -181,5 +181,5 @@ void    pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
 void    pfGUIDynDisplayCtrl::AddMaterial( hsGMaterial *material )
 {
     fMaterials.Append( material );
-    hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fMaterials.GetCount() - 1, kRefMaterial ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fMaterials.GetCount() - 1, kRefMaterial ), plRefFlags::kActiveRef );
 }

@@ -147,7 +147,7 @@ bool IParseForSubst (
         // We've found a variable, copy the current data to a new object
         if (current != src) {
             int strLen = (current - src) - 1;
-            SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+            SUBST_BLOCK * block = new SUBST_BLOCK;
             block->isVar    = false;
             block->strLen   = strLen;
             block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));
@@ -166,7 +166,7 @@ bool IParseForSubst (
 
         // Copy variable name excluding trailing '%'
         int strLen = (varEnd - varStart);
-        SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+        SUBST_BLOCK * block = new SUBST_BLOCK;
         block->isVar    = true;
         block->strLen   = strLen;
         block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));
@@ -180,7 +180,7 @@ bool IParseForSubst (
     // Check and see if there's any data remaining
     if (current != src) {
         int strLen = (current - src);
-        SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+        SUBST_BLOCK * block = new SUBST_BLOCK;
         block->isVar    = false;
         block->strLen   = strLen;
         block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));

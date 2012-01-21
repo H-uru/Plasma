@@ -181,7 +181,7 @@ char *hsReadOnlyLoggingStream::LogReadSafeString()
     numChars &= ~0xf000; // XXX: remove when hsStream no longer does this.
     if (numChars > 0)
     {       
-        char *name = TRACKED_NEW char[numChars+1];
+        char *name = new char[numChars+1];
         ILogEntryWaiting();
         uint32_t ret = Read(numChars, name);
         name[numChars] = '\0';
@@ -203,7 +203,7 @@ char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
     LogReadLE(&numChars,"NumChars");
     if (numChars > 0)
     {
-        char *name = TRACKED_NEW char[numChars+1];
+        char *name = new char[numChars+1];
         ILogEntryWaiting();
         uint32_t ret = Read(numChars, name);
         name[numChars] = '\0';

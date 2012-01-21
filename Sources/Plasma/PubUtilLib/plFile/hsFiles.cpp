@@ -121,7 +121,7 @@ hsStream* hsFile::OpenStream(const char mode[], hsBool throwIfFailure)
     FILE* file = this->OpenFILE(mode, throwIfFailure);
 
     if (file)
-    {   hsUNIXStream*   stream = TRACKED_NEW hsUNIXStream;
+    {   hsUNIXStream*   stream = new hsUNIXStream;
         stream->SetFILE(file);
         return stream;
     }

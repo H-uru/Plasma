@@ -108,13 +108,13 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     plATCAnim *atcAnim = plATCAnim::ConvertNoRef(anim);
     if (atcAnim)
     {
-        fTimeConvert = TRACKED_NEW plAnimTimeConvert();
+        fTimeConvert = new plAnimTimeConvert();
         fTimeConvert->Init(atcAnim, this, master);
-        timeChan = TRACKED_NEW plATCChannel(fTimeConvert);
+        timeChan = new plATCChannel(fTimeConvert);
     }
     else
     {
-        timeChan = TRACKED_NEW plScalarSDLChannel(anim->GetLength());
+        timeChan = new plScalarSDLChannel(anim->GetLength());
         fSDLChannels.push_back((plScalarSDLChannel *)timeChan);
     }
 
@@ -404,7 +404,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
         {
             plOneShotCallbacks::plOneShotCallback& cb = callbacks->GetCallback(i);
 
-            plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+            plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
             eventMsg->AddReceiver(cb.fReceiver);
             eventMsg->fRepeats = 0;
             eventMsg->fUser = cb.fUser;
@@ -567,7 +567,7 @@ static agAllocMap gAGAllocs;
 
 void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex)
 {
-    gAGAllocs[object] = TRACKED_NEW agAlloc(object, chanName, animName, classIndex);
+    gAGAllocs[object] = new agAlloc(object, chanName, animName, classIndex);
 }
 
 void DumpAGAllocs()

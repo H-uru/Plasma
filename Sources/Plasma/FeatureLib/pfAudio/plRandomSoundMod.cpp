@@ -66,7 +66,7 @@ void plRandomSoundModGroup::Read(hsStream *s)
 {
     fNumSounds = s->ReadLE16();
     fGroupedIdx = s->ReadLE16();
-    fIndices = TRACKED_NEW uint16_t[fNumSounds];
+    fIndices = new uint16_t[fNumSounds];
 
     int i;
     for (i = 0; i < fNumSounds; i++)
@@ -119,7 +119,7 @@ void plRandomSoundMod::IStop()
 
     if( fGroups != nil && fGroups[ fCurrentGroup ].fGroupedIdx != -1 )
     {
-        plSoundMsg *msg = TRACKED_NEW plSoundMsg();
+        plSoundMsg *msg = new plSoundMsg();
         msg->SetCmd(plSoundMsg::kStop);
         msg->fIndex = fGroups[ fCurrentGroup ].fIndices[ fCurrent ];
         plgDispatch::MsgSend(msg);
@@ -128,7 +128,7 @@ void plRandomSoundMod::IStop()
     {
         if(fCurrent == -1) return;
         uint16_t currentSndIdx = ( fGroups != nil ) ? fGroups[fCurrentGroup].fIndices[fCurrent] : fActiveList[fCurrent];
-        plSoundMsg* snd = TRACKED_NEW plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
+        plSoundMsg* snd = new plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
         snd->SetCmd(plSoundMsg::kStop);
         snd->fIndex = currentSndIdx;
         plgDispatch::MsgSend(snd);
@@ -188,7 +188,7 @@ void plRandomSoundMod::IPlayNext()
             float delay = IGetDelay(0);
             double t = hsTimer::GetSysSeconds() + delay;
 
-            plAnimCmdMsg* anim = TRACKED_NEW plAnimCmdMsg(GetKey(), GetKey(), &t);
+            plAnimCmdMsg* anim = new plAnimCmdMsg(GetKey(), GetKey(), &t);
             anim->SetCmd(plAnimCmdMsg::kContinue);
             plgDispatch::MsgSend(anim);
             return;
@@ -217,13 +217,13 @@ void plRandomSoundMod::IPlayNext()
         sound->SetLocalOnly(true);
 
         // Send msg to the grouped sound to switch sounds
-        plSoundMsg *snd = TRACKED_NEW plSoundMsg();
+        plSoundMsg *snd = new plSoundMsg();
         snd->SetCmd( plSoundMsg::kSelectFromGroup );
         snd->fIndex = currentSndIdx;
         snd->Send( sound->GetKey() );
 
         // Now tell the audio interface to play the sound (probably should change this....)
-        snd = TRACKED_NEW plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
+        snd = new plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
         snd->SetCmd(plSoundMsg::kGoToTime);
         snd->fTime = (0);
         snd->SetCmd(plSoundMsg::kStop);
@@ -266,7 +266,7 @@ void plRandomSoundMod::IPlayNext()
 
         double t = hsTimer::GetSysSeconds() + delay;
 
-        plAnimCmdMsg* anim = TRACKED_NEW plAnimCmdMsg(GetKey(), GetKey(), &t);
+        plAnimCmdMsg* anim = new plAnimCmdMsg(GetKey(), GetKey(), &t);
         anim->SetCmd(plAnimCmdMsg::kContinue);
         plgDispatch::MsgSend(anim);
     }
@@ -297,7 +297,7 @@ void plRandomSoundMod::Read(hsStream *s, hsResMgr *mgr)
     fNumGroups = s->ReadLE16();
     if (fNumGroups > 0)
     {
-        fGroups = TRACKED_NEW plRandomSoundModGroup[fNumGroups];
+        fGroups = new plRandomSoundModGroup[fNumGroups];
         int i;
         for (i = 0; i < fNumGroups; i++)
             fGroups[i].Read(s);

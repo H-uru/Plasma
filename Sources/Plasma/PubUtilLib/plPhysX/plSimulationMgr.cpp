@@ -209,7 +209,7 @@ class SensorReport : public NxUserTriggerReport
     {
         DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", receiver->GetName(), 
                           hitter ? hitter->GetName() : "(nil)" , entering ? "'enter'" : "'exit'");
-        plCollideMsg* msg = TRACKED_NEW plCollideMsg;
+        plCollideMsg* msg = new plCollideMsg;
         msg->fOtherKey = hitter;
         msg->fEntering = entering;
         msg->AddReceiver(receiver);
@@ -370,7 +370,7 @@ bool plSimulationMgr::fDoClampingOnStep=true;
 void plSimulationMgr::Init()
 {
     hsAssert(!gTheInstance, "Initializing the sim when it's already been done");
-    gTheInstance = TRACKED_NEW plSimulationMgr();
+    gTheInstance = new plSimulationMgr();
     if (gTheInstance->InitSimulation())
     {
         gTheInstance->RegisterAs(kSimulationMgr_KEY);
@@ -410,7 +410,7 @@ plSimulationMgr::plSimulationMgr()
     : fSuspended(true)
     , fMaxDelta(kDefaultMaxDelta)
     , fStepSize(kDefaultStepSize)
-    , fLOSDispatch(TRACKED_NEW plLOSDispatch())
+    , fLOSDispatch(new plLOSDispatch())
     , fSoundMgr(new plPhysicsSoundMgr)
     , fLog(nil)
 {
@@ -539,7 +539,7 @@ void plSimulationMgr::ISendCollisionMsg(plKey receiver, plKey hitter, hsBool ent
 {
     DetectorLogYellow("Collision: %s is inside %s. Sending an %s msg", hitter ? hitter->GetName() : "(nil)",
                       receiver->GetName(), entering ? "'enter'" : "'exit'");
-    plCollideMsg* msg = TRACKED_NEW plCollideMsg;
+    plCollideMsg* msg = new plCollideMsg;
     msg->fOtherKey = hitter;
     msg->fEntering = entering;
     msg->AddReceiver(receiver);

@@ -209,7 +209,7 @@ plVisMgr* plGlobalVisMgr::fInstance = nil;
 
 void plGlobalVisMgr::Init()
 {
-    fInstance = TRACKED_NEW plVisMgr;
+    fInstance = new plVisMgr;
     fInstance->RegisterAs(kGlobalVisMgr_KEY);
 }
 

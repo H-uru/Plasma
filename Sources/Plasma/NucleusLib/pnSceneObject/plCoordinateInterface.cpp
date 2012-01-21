@@ -561,7 +561,7 @@ void plCoordinateInterface::Read(hsStream* stream, hsResMgr* mgr)
     int i;
     for( i = 0; i < n; i++ )
     {
-        plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
+        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kPassiveRef);
     }
 }

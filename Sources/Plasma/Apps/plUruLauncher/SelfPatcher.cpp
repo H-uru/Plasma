@@ -263,8 +263,8 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
         // launch new patcher
         STARTUPINFOW        si;
         PROCESS_INFORMATION pi;
-        ZERO(si);
-        ZERO(pi);
+        memset(&si, 0, sizeof(si));
+        memset(&pi, 0, sizeof(pi));
         si.cb = sizeof(si);
 
         wchar_t cmdline[MAX_PATH];

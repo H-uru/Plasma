@@ -193,12 +193,12 @@ void plAvBrainCritter::Activate(plArmatureModBase* avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = TRACKED_NEW plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+        fCallbackAction = new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
         fCallbackAction->ActivateController();
     }
 
     // tell people that care that we are good to go
-    plAIBrainCreatedMsg* brainCreated = TRACKED_NEW plAIBrainCreatedMsg(fArmature->GetKey());
+    plAIBrainCreatedMsg* brainCreated = new plAIBrainCreatedMsg(fArmature->GetKey());
     plgDispatch::MsgSend(brainCreated);
 }
 
@@ -238,7 +238,7 @@ void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::
         return; // can't find it, die
 
     // create the behavior and set it up
-    CritterBehavior* behavior = TRACKED_NEW CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
+    CritterBehavior* behavior = new CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
     fBehaviors.Push(behavior);
     behavior->Init(anim, loop, this, fAvMod, fBehaviors.Count() - 1);
     fUserBehaviors[behaviorName].push_back(fBehaviors.Count() - 1);
@@ -459,14 +459,14 @@ hsBool plAvBrainCritter::IInitBaseAnimations()
     CritterBehavior* behavior;
     if (idle)
     {
-        fBehaviors[kIdle] = behavior = TRACKED_NEW CritterBehavior(kDefaultIdleBehName, true); // starts at a random start point each time
+        fBehaviors[kIdle] = behavior = new CritterBehavior(kDefaultIdleBehName, true); // starts at a random start point each time
         behavior->Init(idle, true, this, fAvMod, kIdle);
         fUserBehaviors[kDefaultIdleBehName].push_back(kIdle);
     }
 
     if (run)
     {
-        fBehaviors[kRun] = behavior = TRACKED_NEW CritterBehavior(kDefaultRunBehName);
+        fBehaviors[kRun] = behavior = new CritterBehavior(kDefaultRunBehName);
         behavior->Init(run, true, this, fAvMod, kRun);
         fUserBehaviors[kDefaultRunBehName].push_back(kRun);
     }
@@ -606,7 +606,7 @@ void plAvBrainCritter::IEvalGoal()
             // tell everyone who cares that we have arrived
             for (unsigned i = 0; i < fReceivers.size(); ++i)
             {
-                plAIArrivedAtGoalMsg* msg = TRACKED_NEW plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
+                plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
                 msg->Goal(fFinalGoalPos);
                 msg->Send();
             }

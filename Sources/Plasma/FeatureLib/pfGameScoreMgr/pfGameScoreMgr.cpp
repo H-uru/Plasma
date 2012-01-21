@@ -101,7 +101,7 @@ void pfGameScoreMgr::AddCachedScore(pfGameScore * score)
     GameScoreLink * scoreLink = fScores.Find(score->scoreId);
     if (scoreLink == nil)
     {
-        GameScoreLink * link = TRACKED_NEW GameScoreLink(score);
+        GameScoreLink * link = new GameScoreLink(score);
         fScores.Add(link);
     }
     else
@@ -240,11 +240,11 @@ static void GetScoresCallback(
     op->result = result;
 
     if (IS_NET_SUCCESS(result)) {
-        *(op->scores) = TRACKED_NEW pfGameScore*[scoreCount];
+        *(op->scores) = new pfGameScore*[scoreCount];
         *(op->scoreCount) = scoreCount;
 
         for (int i = 0; i < scoreCount; ++i) {
-            pfGameScore* score = TRACKED_NEW pfGameScore();
+            pfGameScore* score = new pfGameScore();
             score->IncRef();
 
             char tempGameName[kMaxGameScoreNameLength];
@@ -414,11 +414,11 @@ static void GetRanksCallback(
     op->result = result;
 
     if (IS_NET_SUCCESS(result)) {
-        *(op->ranks) = TRACKED_NEW NetGameRank*[rankCount];
+        *(op->ranks) = new NetGameRank*[rankCount];
         *(op->rankCount) = rankCount;
 
         for (int i = 0; i < rankCount; ++i) {
-            NetGameRank * rank = TRACKED_NEW NetGameRank;
+            NetGameRank * rank = new NetGameRank;
 
             rank->rank  = ranks[i].rank;
             rank->score = ranks[i].score;

@@ -67,7 +67,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtIsVarSyncGame, args, "Params: typeID\nReturns 
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         bool retVal = pyVarSyncGame::IsVarSyncGame(text);
@@ -121,7 +121,7 @@ PYTHON_METHOD_DEFINITION(ptVarSyncGame, setStringVar, args)
     if (PyUnicode_Check(valueObj))
     {
         int strLen = PyUnicode_GetSize(valueObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)valueObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->SetStringVar(id, text);
@@ -187,7 +187,7 @@ PYTHON_METHOD_DEFINITION(ptVarSyncGame, createStringVar, args)
     if (PyUnicode_Check(varNameObj))
     {
         int strLen = PyUnicode_GetSize(varNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)varNameObj, text, strLen);
         text[strLen] = L'\0';
         varName = text;
@@ -211,7 +211,7 @@ PYTHON_METHOD_DEFINITION(ptVarSyncGame, createStringVar, args)
     if (PyUnicode_Check(valueObj))
     {
         int strLen = PyUnicode_GetSize(valueObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)valueObj, text, strLen);
         text[strLen] = L'\0';
         val = text;
@@ -249,7 +249,7 @@ PYTHON_METHOD_DEFINITION(ptVarSyncGame, createNumericVar, args)
     if (PyUnicode_Check(varNameObj))
     {
         int strLen = PyUnicode_GetSize(varNameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)varNameObj, text, strLen);
         text[strLen] = L'\0';
         varName = text;

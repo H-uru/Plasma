@@ -111,18 +111,18 @@ plKey plCloneSpawnModifier::SpawnClone(const char* cloneName, const char* cloneA
 
     if (key)
     {
-        plLoadCloneMsg* cloneMsg = TRACKED_NEW plLoadCloneMsg(objUoid, requestor, 0);
+        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(objUoid, requestor, 0);
         cloneMsg->SetBCastFlag(plMessage::kMsgWatch);
         plKey cloneKey = cloneMsg->GetCloneKey();//resMgr->CloneKey(key);
         cloneMsg->Send();
 
         // Put the clone into the clone room, which also forces it to load.
         plKey cloneNodeKey = resMgr->FindKey(kNetClientCloneRoom_KEY);
-        plNodeRefMsg* nodeRefCloneMsg = TRACKED_NEW plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
+        plNodeRefMsg* nodeRefCloneMsg = new plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
         resMgr->AddViaNotify(cloneKey, nodeRefCloneMsg, plRefFlags::kActiveRef);
 
         // Warp it into position
-        plWarpMsg *warpMsg = TRACKED_NEW plWarpMsg;
+        plWarpMsg *warpMsg = new plWarpMsg;
         warpMsg->AddReceiver(cloneKey);
         warpMsg->SetTransform(pos);
         plgDispatch::MsgSend(warpMsg);

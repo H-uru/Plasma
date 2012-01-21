@@ -153,7 +153,7 @@ plDynaDecalMgr::plDynaDecalMgr()
     fScale(1.f, 1.f, 1.f),
     fPartyTime(1.f)
 {
-    fCutter = TRACKED_NEW plCutter;
+    fCutter = new plCutter;
 }
 
 plDynaDecalMgr::~plDynaDecalMgr()
@@ -194,21 +194,21 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSynchedObject::Read(stream, mgr);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatPreShade), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatPreShade), plRefFlags::kActiveRef);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
 
     int n = stream->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefTarget), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefTarget), plRefFlags::kPassiveRef);
     }
     // Associated slave particle systems. We read in the scene objects now, and find the associated systems on loaded message.
     n = stream->ReadLE32();
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
 
     fMaxNumVerts = (uint16_t)(stream->ReadLE32());
@@ -502,7 +502,7 @@ void plDynaDecalMgr::INotifyActive(plDynaDecalInfo& info, const plKey& armKey, u
         int i;
         for( i = 0; i < fNotifies.GetCount(); i++ )
         {
-            plDynaDecalEnableMsg* enaMsg = TRACKED_NEW plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, false, id);
+            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, false, id);
             enaMsg->Send();
         }
         info.fFlags |= plDynaDecalInfo::kActive;
@@ -517,7 +517,7 @@ void plDynaDecalMgr::INotifyInactive(plDynaDecalInfo& info, const plKey& armKey,
         int i;
         for( i = 0; i < fNotifies.GetCount(); i++ )
         {
-            plDynaDecalEnableMsg* enaMsg = TRACKED_NEW plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, true, id);
+            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, true, id);
             enaMsg->Send();
         }
         info.fFlags &= ~plDynaDecalInfo::kActive;
@@ -544,7 +544,7 @@ plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(uintptr_t id, const plKey& key)
     {
         plDynaDecalInfo decalInfo;
         decalInfo.Init(key);
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefAvatar);
+        plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefAvatar);
         hsgResMgr::ResMgr()->AddViaNotify(plKey(key), refMsg, plRefFlags::kPassiveRef);
 
         pair<plDynaDecalMap::iterator, bool> iterPair;
@@ -688,7 +688,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
 
 #ifdef MF_NEVER_RUN_OUT
     // Okay, nothing there. Let's get a new one.
-    plAuxSpan* aux = TRACKED_NEW plAuxSpan;
+    plAuxSpan* aux = new plAuxSpan;
     fAuxSpans.Append(aux);
 
     IAllocAuxSpan(aux, numVerts, numIdx);
@@ -712,7 +712,7 @@ void plDynaDecalMgr::InitAuxSpans()
     int i;
     for( i = 0; i < kInitAuxSpans; i++ )
     {
-        plAuxSpan* aux = TRACKED_NEW plAuxSpan;
+        plAuxSpan* aux = new plAuxSpan;
         fAuxSpans.Append(aux);
         IAllocAuxSpan(aux, fMaxNumVerts, fMaxNumIdx);
     }
@@ -721,7 +721,7 @@ void plDynaDecalMgr::InitAuxSpans()
 void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx)
 {
     int iGrp = fGroups.GetCount();
-    plGBufferGroup* grp = TRACKED_NEW plGBufferGroup(kDecalVtxFormat, true, false);
+    plGBufferGroup* grp = new plGBufferGroup(kDecalVtxFormat, true, false);
     fGroups.Append(grp);
 
     grp->ReserveVertStorage(maxNumVerts, 
@@ -1577,7 +1577,7 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
         return mat;
     oldMip->SetCurrLevel(0);
 
-    hsGMaterial* newMat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* newMat = new hsGMaterial;
     char buff[256];
     sprintf(buff, "%s_%s", GetKey()->GetName(), "EnvMat");
     hsgResMgr::ResMgr()->NewKey(buff, newMat, GetKey()->GetUoid().GetLocation());
@@ -1591,7 +1591,7 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
 
     bumpMap->SetFlags(bumpMap->GetFlags() | plMipmap::kBumpEnvMap | plMipmap::kForceNonCompressed);
 
-    plLayer* bumpLay = TRACKED_NEW plLayer;
+    plLayer* bumpLay = new plLayer;
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "BumpMap", 0);
     hsgResMgr::ResMgr()->NewKey(buff, bumpLay, GetKey()->GetUoid().GetLocation());
 
@@ -1608,12 +1608,12 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     bumpLay->SetRuntimeColor(oldLay->GetRuntimeColor());
     bumpLay->SetOpacity(1.f);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(bumpLay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(bumpLay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(bumpMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     newMat->AddLayerViaNotify(bumpLay);
 
-    plLayer* envLay = TRACKED_NEW plLayer;
+    plLayer* envLay = new plLayer;
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "EnvMap", 0);
     hsgResMgr::ResMgr()->NewKey(buff, envLay, GetKey()->GetUoid().GetLocation());
 
@@ -1628,7 +1628,7 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     envLay->SetRuntimeColor(oldLay->GetRuntimeColor());
     envLay->SetOpacity(1.f);
 
-    refMsg = TRACKED_NEW plLayRefMsg(envLay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    refMsg = new plLayRefMsg(envLay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(envMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     newMat->AddLayerViaNotify(envLay);
@@ -1640,11 +1640,11 @@ void plDynaDecalMgr::ConvertToEnvMap(plBitmap* envMap)
 {
     hsGMaterial* newPreShade = IConvertToEnvMap(fMatPreShade, envMap);
     if( newPreShade && (newPreShade != fMatPreShade) )
-        hsgResMgr::ResMgr()->SendRef(newPreShade->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatPreShade), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(newPreShade->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatPreShade), plRefFlags::kActiveRef);
     
     hsGMaterial* newRTShade = IConvertToEnvMap(fMatRTShade, envMap);
     if( newRTShade && (newRTShade != fMatRTShade) )
-        hsgResMgr::ResMgr()->SendRef(newRTShade->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(newRTShade->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
 }
 
 const plMipmap* plDynaDecalMgr::GetMipmap() const
@@ -1796,7 +1796,7 @@ void plDynaDecalMgr::IGetParticles()
             // const_cast here is just to see if it's in our list, make Find happy.
             if( sys && (fParticles.kMissingIndex == fParticles.Find(const_cast<plParticleSystem*>(sys))) )
             {
-                hsgResMgr::ResMgr()->AddViaNotify(sys->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefParticles), plRefFlags::kPassiveRef);
+                hsgResMgr::ResMgr()->AddViaNotify(sys->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefParticles), plRefFlags::kPassiveRef);
             }
         }
     }

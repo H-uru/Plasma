@@ -152,5 +152,5 @@ hsBool pfConsoleDirSrc::AlreadyProcessedFile(const std::wstring& path, const std
 
 void pfConsoleDirSrc::AddProcessedFile(const std::wstring& path, const std::wstring& file)
 {
-    fProcessedFiles.push_back(TRACKED_NEW FileName(path, file));    
+    fProcessedFiles.push_back(new FileName(path, file));    
 }

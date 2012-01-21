@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plEAXListenerMod::plEAXListenerMod()
 {
-    fListenerProps = TRACKED_NEW EAXREVERBPROPERTIES;
+    fListenerProps = new EAXREVERBPROPERTIES;
     fSoftRegion = nil;
     fRegistered = false;
     fGetsMessages = false;
@@ -102,7 +102,7 @@ void    plEAXListenerMod::IRegister( void )
     plKey sysKey = hsgResMgr::ResMgr()->FindKey( plUoid( kAudioSystem_KEY ) );
     if( sysKey != nil )
     {
-        plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg( sysKey, plRefMsg::kOnCreate, 0, plAudioSystem::kRefEAXRegion );
+        plGenRefMsg *refMsg = new plGenRefMsg( sysKey, plRefMsg::kOnCreate, 0, plAudioSystem::kRefEAXRegion );
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );
         fRegistered = true;
     }
@@ -170,7 +170,7 @@ void plEAXListenerMod::Read( hsStream* s, hsResMgr* mgr )
     plSingleModifier::Read( s, mgr );
 
     // Read in the soft region
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftRegion ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftRegion ), plRefFlags::kActiveRef );
 
     // Read the listener params
     fListenerProps->ulEnvironment = s->ReadLE32();

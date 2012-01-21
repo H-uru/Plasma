@@ -111,11 +111,11 @@ void plSharedMesh::Read(hsStream* s, hsResMgr* mgr)
     fSpans.SetCount(s->ReadLE32());
     for (i = 0; i < fSpans.GetCount(); i++)
     {
-        fSpans[i] = TRACKED_NEW plGeometrySpan;
+        fSpans[i] = new plGeometrySpan;
         fSpans[i]->Read(s);
     }
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
     fFlags = s->ReadByte();
 }
 

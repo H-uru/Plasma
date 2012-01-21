@@ -971,7 +971,7 @@ void INtSocketOpCompleteSocketConnect (NtOpConnAttempt * op) {
         failed.param      = op->param;
         failed.connType   = op->sendData[0];
         failed.remoteAddr = op->remoteAddr;
-        ZERO(failed.localAddr);
+        memset(&failed.localAddr, 0, sizeof(failed.localAddr));
         op->notifyProc(nil, kNotifySocketConnectFailed, &failed, nil);
     }
 
@@ -1399,7 +1399,7 @@ bool NtSocketWrite (
         }
 
         // init Operation
-        NtOpSocketWrite * op        = NEW(NtOpSocketWrite);
+        NtOpSocketWrite * op        = new NtOpSocketWrite;
         op->overlapped.Offset       = 0;
         op->overlapped.OffsetHigh   = 0;
         op->overlapped.hEvent       = nil;

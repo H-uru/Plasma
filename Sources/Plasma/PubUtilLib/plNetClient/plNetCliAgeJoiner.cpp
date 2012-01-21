@@ -340,7 +340,7 @@ void plNCAgeJoiner::ExecNextOp () {
         case kEnableClickables: {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kEnableClickables");
             // Enable scene clickables
-            (void)(TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables))->Send();
+            (void)(new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables))->Send();
 
             LogMsg(kLogPerf, L"AgeJoiner: Next:kNotifyAgeLoaded");
             nextOp = kNotifyAgeLoaded;

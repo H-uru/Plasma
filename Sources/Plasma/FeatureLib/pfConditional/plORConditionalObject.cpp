@@ -112,7 +112,7 @@ void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     fChildren.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
-        refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
+        refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }   
 }

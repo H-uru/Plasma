@@ -88,7 +88,7 @@ plAGAnim::plAGAnim(const char *name, double start, double end)
     if (name == nil)
         name = "";
 
-    fName = TRACKED_NEW char[strlen(name) + 1];
+    fName = new char[strlen(name) + 1];
     strcpy(fName, name);
 }
 

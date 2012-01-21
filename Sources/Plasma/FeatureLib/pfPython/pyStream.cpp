@@ -88,7 +88,7 @@ hsBool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
                 // force encryption?
                 if (encryptflag)
                 {
-                    fStream = TRACKED_NEW plEncryptedStream;
+                    fStream = new plEncryptedStream;
                     fStream->Open(fileName, L"wb");
                 }
                 else

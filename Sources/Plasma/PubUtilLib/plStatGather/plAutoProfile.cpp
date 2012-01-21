@@ -162,7 +162,7 @@ void plAutoProfileImp::IInit()
     plgDispatch::Dispatch()->RegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 
-    plConsoleMsg* consoleMsg = TRACKED_NEW plConsoleMsg(plConsoleMsg::kExecuteLine, "Camera.AlwaysCut true");
+    plConsoleMsg* consoleMsg = new plConsoleMsg(plConsoleMsg::kExecuteLine, "Camera.AlwaysCut true");
     consoleMsg->Send();
 }
 
@@ -201,7 +201,7 @@ void plAutoProfileImp::IShutdown()
     // Pump the queue so we get fully unregistered
     plgDispatch::Dispatch()->MsgQueueProcess();
 
-    plClientMsg* clientMsg = TRACKED_NEW plClientMsg(plClientMsg::kQuit);
+    plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
     clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
 }
 
@@ -326,7 +326,7 @@ bool plAutoProfileImp::INextSpawnPoint()
 
     fNextSpawnPoint++;
 
-    plTimerCallbackMsg* timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey());
+    plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());
     plgTimerCallbackMgr::NewTimer(30, timerMsg);
 
     return true;
@@ -372,7 +372,7 @@ hsBool plAutoProfileImp::MsgReceive(plMessage* msg)
         fStatusMessage = "Age loaded.  Preparing to profile.";
 
         // Age is loaded, start profiling in 5 seconds (to make sure the avatar is linked in all the way)
-        plTimerCallbackMsg* timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey());
+        plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());
         plgTimerCallbackMgr::NewTimer(5, timerMsg);
         return true;
     }

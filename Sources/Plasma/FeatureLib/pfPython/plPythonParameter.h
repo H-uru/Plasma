@@ -380,7 +380,7 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    datarecord.fString = TRACKED_NEW char[count+1];
+                    datarecord.fString = new char[count+1];
                     stream->ReadLE(count,datarecord.fString);
                 }
                 else

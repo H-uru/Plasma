@@ -293,7 +293,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     }
 
     // Actually create the buffer now (always looping)
-    fDSoundBuffer = TRACKED_NEW plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
+    fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
     if( !fDSoundBuffer->IsValid() )
     {
         fDataStream->Close();
@@ -369,7 +369,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     // Set up our deswizzler, if necessary
     delete fDeswizzler;
     if( fDataStream->GetHeader().fNumChannels != header.fNumChannels )
-        fDeswizzler = TRACKED_NEW plSoundDeswizzler( (uint32_t)(fBufferLengthInSecs * fDataStream->GetHeader().fAvgBytesPerSec), 
+        fDeswizzler = new plSoundDeswizzler( (uint32_t)(fBufferLengthInSecs * fDataStream->GetHeader().fAvgBytesPerSec), 
                                              (uint8_t)(fDataStream->GetHeader().fNumChannels), 
                                              header.fBitsPerSample / 8 );
     else

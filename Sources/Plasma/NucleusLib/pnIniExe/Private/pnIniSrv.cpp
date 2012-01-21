@@ -102,7 +102,7 @@ static EServerRights GetServerRightsFromString(const wchar_t string[]) {
 }
 
 static void IAddAddressBlock(ADDRESS_BLOCK_TABLE & addrList, NetAddressNode startAddr, NetAddressNode endAddr, EServerRights srvRights) {
-    PrivilegedAddressBlock* addrBlock = NEW(PrivilegedAddressBlock);
+    PrivilegedAddressBlock* addrBlock = new PrivilegedAddressBlock;
 
     addrBlock->startAddress = startAddr;
     addrBlock->serverRights = srvRights;

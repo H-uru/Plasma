@@ -124,7 +124,7 @@ class pfGroupProc : public pfGUICtrlProcObject
 
 pfGUIRadioGroupCtrl::pfGUIRadioGroupCtrl()
 {
-    fButtonProc = TRACKED_NEW pfGroupProc( this );
+    fButtonProc = new pfGroupProc( this );
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -180,7 +180,7 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
 
     for( i = 0; i < count; i++ )
     {
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
     }
 
     fValue = fDefaultValue = s->ReadLE16();

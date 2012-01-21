@@ -116,7 +116,7 @@ hsGMaterial* hsGMaterial::Clone()
 
 hsGMaterial* hsGMaterial::CloneNoLayers()
 {
-    hsGMaterial* clo = TRACKED_NEW hsGMaterial;
+    hsGMaterial* clo = new hsGMaterial;
 
     clo->fCompFlags = fCompFlags;
     clo->fLoadFlags = fLoadFlags;
@@ -126,7 +126,7 @@ hsGMaterial* hsGMaterial::CloneNoLayers()
 
 plLayer* hsGMaterial::MakeBaseLayer()
 {
-    plLayer* newLay = TRACKED_NEW plLayer;
+    plLayer* newLay = new plLayer;
     newLay->InitToDefault();
     IClearLayers();
     
@@ -150,7 +150,7 @@ uint32_t hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
     int idx = GetNumLayers();
 
     // Add via notify so we'll dispose of it properly later.
-    plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
+    plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
     hsgResMgr::ResMgr()->SendRef(layer->GetKey(), msg, plRefFlags::kActiveRef);
 
     fLayers.SetCount(idx+1);
@@ -266,12 +266,12 @@ void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
     // Assign texture(s)
     for (iLay = 0; iLay < GetNumLayers(); iLay++)
     {
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
+        plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
         plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
     for (iLay = 0; iLay < GetNumPiggyBacks(); iLay++)
     {
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
+        plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
         plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
 }

@@ -148,7 +148,7 @@ plVirtualCam1::plVirtualCam1()
     fThirdPersonCam = nil;
     fTransPos = POS_TRANS_OFF;
     fPrevCam = nil;
-    fTransitionCamera = TRACKED_NEW plCameraModifier1;
+    fTransitionCamera = new plCameraModifier1;
     fTransitionCamera->RegisterAs(kTransitionCamera_KEY);
     // set initial view position
     fOutputPos.Set(100,100,100);
@@ -164,8 +164,8 @@ plVirtualCam1::plVirtualCam1()
     fCameraDriveInterface = plDebugInputInterface::GetInstance();
     hsRefCnt_SafeRef( fCameraDriveInterface );
 
-    fDriveCamera = TRACKED_NEW plCameraModifier1;
-    plCameraBrain1* pDriveBrain = TRACKED_NEW plCameraBrain1_Drive(fDriveCamera);
+    fDriveCamera = new plCameraModifier1;
+    plCameraBrain1* pDriveBrain = new plCameraBrain1_Drive(fDriveCamera);
 
     PushCamera(fDriveCamera);
     fForceCutOnce=false;
@@ -262,7 +262,7 @@ void plVirtualCam1::RebuildStack(const plKey& key)
     }
     if (!HasFlags(kFirstPersonAtLinkOut))
     {
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         pMsg->SetSender(GetKey());
         pMsg->SetCmd(plEnableMsg::kEnable);
         pMsg->AddType(plEnableMsg::kDrawable);
@@ -824,7 +824,7 @@ void plVirtualCam1::Output()
         fFadeCounter-=1;
         if (fFadeCounter == 0 && fFirstPersonOverride == nil)
         {
-            plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+            plEnableMsg* pMsg = new plEnableMsg;
             pMsg->SetSender(GetKey());
             pMsg->SetCmd(plEnableMsg::kEnable);
             pMsg->AddType(plEnableMsg::kDrawable);
@@ -888,7 +888,7 @@ void plVirtualCam1::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
 
     // register for control messages
-    plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
     pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg->SetSender(GetKey());
     pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -1238,7 +1238,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
                 
                     fPythonOverride->Push(!HasFlags(kAvatarWalking));
                     
-                    CamTrans* pTrans = TRACKED_NEW CamTrans(fPythonOverride->GetKey());
+                    CamTrans* pTrans = new CamTrans(fPythonOverride->GetKey());
                     if (pCam->Cmd(plCameraMsg::kPythonOverridePushCut))
                         pTrans->fCutPOA = pTrans->fCutPos = true; 
                     StartTransition(pTrans);
@@ -1302,7 +1302,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
             if (HasFlags(kJustLinkedIn))
             {
                 ClearFlags(kJustLinkedIn);
-                plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                 pMsg->SetFadeOut(true);
                 pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1420,17 +1420,17 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         if (mod->GetSubject() == subject)
             return;
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
+        plGenRefMsg* msg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
         msg->SetOldRef(mod->GetSubject());
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
     }
     else
     {
-        plCameraModifier1* pMod = TRACKED_NEW plCameraModifier1;
-        plCameraBrain1_FirstPerson* pBrain = TRACKED_NEW plCameraBrain1_FirstPerson(pMod);
+        plCameraModifier1* pMod = new plCameraModifier1;
+        plCameraBrain1_FirstPerson* pBrain = new plCameraBrain1_FirstPerson(pMod);
         pMod->RegisterAs( kDefaultCameraMod1_KEY );
         //pBrain->SetSubject(subject);
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
+        plGenRefMsg* msg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
         
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pMod->GetKey());
@@ -1459,16 +1459,16 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         if (mod->GetSubject() == subject)
             return;
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
+        plGenRefMsg* msg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
         msg->SetOldRef(mod->GetSubject());
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
     }
     else
     {
-        plCameraModifier1* pModx = TRACKED_NEW plCameraModifier1;
-        plCameraBrain1_Avatar* pBrainx = TRACKED_NEW plCameraBrain1_Avatar(pModx);
+        plCameraModifier1* pModx = new plCameraModifier1;
+        plCameraBrain1_Avatar* pBrainx = new plCameraBrain1_Avatar(pModx);
         pModx->RegisterAs( kBuiltIn3rdPersonCamera_KEY );
-        plGenRefMsg* msgx = TRACKED_NEW plGenRefMsg(pModx->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
+        plGenRefMsg* msgx = new plGenRefMsg(pModx->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msgx, plRefFlags::kPassiveRef);
 
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pModx->GetKey());
@@ -1503,7 +1503,7 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
     }
 
     if (pCam->GetKey())
-        hsgResMgr::ResMgr()->AddViaNotify(pCam->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pCam->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
 }
 
 void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
@@ -1570,7 +1570,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
             if (!pCam->SetFaded(true))
             {
                 // new camera doesn't support fading, fade him back in
-                plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                 pMsg->SetFadeOut(false);
                 pMsg->SetSubjectKey(GetCurrentStackCamera()->GetBrain()->GetSubject()->GetKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1628,7 +1628,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
                 // do a track transition here;
                 fPrevCam = GetCurrentStackCamera();
                 AddCameraToStack(pCam);
-                pTrans = TRACKED_NEW CamTrans(pCam->GetKey());
+                pTrans = new CamTrans(pCam->GetKey());
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
@@ -1639,7 +1639,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
             {
                 // both fixed brains, cut between them
                 AddCameraToStack(pCam);
-                pTrans = TRACKED_NEW CamTrans(pCam->GetKey());
+                pTrans = new CamTrans(pCam->GetKey());
                 pTrans->fCutPOA = true;
                 pTrans->fCutPos = true;
                 StartTransition(pTrans);
@@ -1747,7 +1747,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
                 if (!GetCurrentStackCamera()->SetFaded(true))
                 {
                     // new camera doesn't support fading, fade him back in
-                    plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                    plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                     pMsg->SetFadeOut(false);
                     pMsg->SetSubjectKey(pCam->GetBrain()->GetSubject()->GetKey());
                     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1781,14 +1781,14 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
                 {
                     // do a track transition here;
                     fPrevCam = pCam;
-                    pTrans = TRACKED_NEW CamTrans(GetCurrentStackCamera()->GetKey());
+                    pTrans = new CamTrans(GetCurrentStackCamera()->GetKey());
                     StartTransition(pTrans);
                     delete(pTrans);
                 }
                 else
                 {
                     fPrevCam = pCam;
-                    pTrans = TRACKED_NEW CamTrans(GetCurrentStackCamera()->GetKey());
+                    pTrans = new CamTrans(GetCurrentStackCamera()->GetKey());
                     pTrans->fCutPOA = true;
                     pTrans->fCutPos = true;
                     StartTransition(pTrans);
@@ -1867,7 +1867,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     if ( (fPythonOverride && plCameraBrain1_Avatar::ConvertNoRef(fPythonOverride->GetBrain())) ||
          (plCameraBrain1_Avatar::ConvertNoRef(pCam->GetBrain()) && !fPythonOverride) )
     {   
-        plCameraBrain1_Avatar* pAvBrain = TRACKED_NEW plCameraBrain1_Avatar;
+        plCameraBrain1_Avatar* pAvBrain = new plCameraBrain1_Avatar;
         
         pAvBrain->SetOffset(((plCameraBrain1_Avatar*)pCam->GetBrain())->GetOffset());
         pAvBrain->SetPOAOffset(pCam->GetBrain()->GetPOAOffset());
@@ -1888,7 +1888,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     }
     else
     {
-        pBrain = TRACKED_NEW plCameraBrain1;
+        pBrain = new plCameraBrain1;
     }
     pBrain->SetFlags(plCameraBrain1::kIsTransitionCamera);
     

@@ -209,7 +209,7 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
     fNumDestBytesPerSample = (uint8_t)(header.fBlockAlign);
 
     // Create our DSound buffer (or rather, the wrapper around it)
-    fDSoundBuffer = TRACKED_NEW plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), true );
+    fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), true );
     if( !fDSoundBuffer->IsValid() )
     {
         char str[256];

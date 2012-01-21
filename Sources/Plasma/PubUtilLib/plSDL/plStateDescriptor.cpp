@@ -110,9 +110,9 @@ bool plStateDescriptor::Read(hsStream* s)
         uint8_t SDVar=s->ReadByte();      
         plVarDescriptor* var = nil;
         if (SDVar)
-            var = TRACKED_NEW plSDVarDescriptor;
+            var = new plSDVarDescriptor;
         else
-            var = TRACKED_NEW plSimpleVarDescriptor;
+            var = new plSimpleVarDescriptor;
         if (var->Read(s))
             fVarsList.push_back(var);
         else

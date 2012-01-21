@@ -127,7 +127,7 @@ void ReportNetErrorTrans::Post () {
 
 //============================================================================
 void ReportNetError (ENetProtocol protocol, ENetError error) {
-    ReportNetErrorTrans * trans = NEW(ReportNetErrorTrans)(protocol, error);
+    ReportNetErrorTrans * trans = new ReportNetErrorTrans(protocol, error);
     NetTransSend(trans);
 }
 

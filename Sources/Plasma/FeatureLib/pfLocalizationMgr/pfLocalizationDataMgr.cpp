@@ -993,7 +993,7 @@ void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const std::wstring 
 char *pfLocalizationDataMgr::IConvertToByteStream(const std::wstring & data, uint32_t &len)
 {
     len = data.length() * 2 + 2; // each wchar_t is two chars and add two bytes for the header
-    char *retVal = TRACKED_NEW char[len]; // we don't add an extra byte for the 0 because the parser doesn't need it
+    char *retVal = new char[len]; // we don't add an extra byte for the 0 because the parser doesn't need it
     char lowByte = 0, highByte = 0;
     retVal[0] = (char)0xFF; // insert FFFE for little-endian UTF-16 (big-endian would be FEFF)
     retVal[1] = (char)0xFE;
@@ -1080,7 +1080,7 @@ void pfLocalizationDataMgr::Initialize(const std::string & path)
     if (fInstance)
         return;
 
-    fInstance = TRACKED_NEW pfLocalizationDataMgr(path);
+    fInstance = new pfLocalizationDataMgr(path);
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "LocalizationDataMgr.log",
         plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp);
     fInstance->SetupData();
@@ -1110,7 +1110,7 @@ void pfLocalizationDataMgr::SetupData()
     if (fDatabase)
         delete fDatabase;
 
-    fDatabase = TRACKED_NEW LocalizationDatabase();
+    fDatabase = new LocalizationDatabase();
     fDatabase->Parse(fDataPath);
 
     char *temp = hsWStringToString(fDatabase->GetOutput().c_str());

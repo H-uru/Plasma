@@ -207,7 +207,7 @@ void plAvatarInputInterface::IDeactivateCommand(plMouseInfo *info)
     if (IHasControlFlag(info->fCode) && !(info->fControlFlags & (kControlFlagNoDeactivate | kControlFlagToggle)))
     {
         // The mapping is currently on, it's ok to deactivate, and it's not a toggle command                    
-        plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+        plCtrlCmd* pCmd = new plCtrlCmd( this );
         pCmd->fNetPropagateToPlayers = info->fControlFlags & kControlFlagNetPropagate;
         pCmd->fControlActivated = false;
         pCmd->fControlCode = info->fCode;
@@ -240,26 +240,26 @@ void plAvatarInputInterface::IChangeInputMaps( plAvatarInputMap *newMap )
 
 void plAvatarInputInterface::ISetSuspendMovementMode()
 {
-    IChangeInputMaps(TRACKED_NEW plSuspendedMovementMap());
+    IChangeInputMaps(new plSuspendedMovementMap());
     fCurrentCursor = kCursorUp;
 }
 
 void plAvatarInputInterface::ISetLadderMap()
 {
-    IChangeInputMaps(TRACKED_NEW plLadderControlMap());
+    IChangeInputMaps(new plLadderControlMap());
     fCurrentCursor = kCursorUp;
 }
 
 
 void plAvatarInputInterface::ISetPreLadderMap()
 {
-    IChangeInputMaps(TRACKED_NEW plLadderMountMap());
+    IChangeInputMaps(new plLadderMountMap());
     fCurrentCursor = kCursorUp;
 }
 
 void plAvatarInputInterface::ISetPostLadderMap()
 {
-    IChangeInputMaps(TRACKED_NEW plLadderDismountMap());
+    IChangeInputMaps(new plLadderDismountMap());
     fCurrentCursor = kCursorUp;
 }
 
@@ -267,9 +267,9 @@ void plAvatarInputInterface::ISetBasicMode()
 {
     plAvatarInputMap *map;
     if (!f3rdPerson)
-        map = TRACKED_NEW plBasicFirstPersonControlMap();
+        map = new plBasicFirstPersonControlMap();
     else
-        map = TRACKED_NEW plBasicThirdPersonControlMap();
+        map = new plBasicThirdPersonControlMap();
 
     IChangeInputMaps(map);
     fCurrentCursor = kCursorUp;
@@ -278,11 +278,11 @@ void plAvatarInputInterface::ISetBasicMode()
 void plAvatarInputInterface::ISetMouseWalkMode(ControlEventCode code)
 {
     if (code == S_SET_WALK_BACK_MODE)
-        IChangeInputMaps(TRACKED_NEW pl3rdWalkBackwardMap());
+        IChangeInputMaps(new pl3rdWalkBackwardMap());
     else if (code == S_SET_WALK_BACK_LB_MODE)
-        IChangeInputMaps(TRACKED_NEW pl3rdWalkBackwardLBMap());
+        IChangeInputMaps(new pl3rdWalkBackwardLBMap());
     else
-        IChangeInputMaps(TRACKED_NEW pl3rdWalkForwardMap());
+        IChangeInputMaps(new pl3rdWalkForwardMap());
 
     fCurrentCursor = kCursorHidden;
 }
@@ -413,7 +413,7 @@ void plAvatarInputInterface::EnableControl(hsBool val, ControlEventCode code)
 
 void plAvatarInputInterface::ForceAlwaysRun(hsBool val)
 {
-    plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+    plCtrlCmd *pCmd = new plCtrlCmd( this );
     pCmd->fControlCode = B_CONTROL_ALWAYS_RUN;
     pCmd->fControlActivated = val;
     pCmd->fNetPropagateToPlayers = false;
@@ -478,7 +478,7 @@ hsBool  plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
 #if 0
         case S_SET_FIRST_PERSON_MODE:
             if( cmd->fControlActivated )
-                IChangeInputMaps( TRACKED_NEW plFirstPersonControlMap() );
+                IChangeInputMaps( new plFirstPersonControlMap() );
             return true;
 #endif          
         case S_SET_BASIC_MODE:
@@ -486,7 +486,7 @@ hsBool  plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             {
                 ISetBasicMode();                
 #if 0
-plProxyDrawMsg* Dmsg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
+plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
 plgDispatch::MsgSend(Dmsg);
 plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 #endif
@@ -506,7 +506,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                         abort = true;
 #if 0                       
 
-                    plProxyDrawMsg* Dmsg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
+                    plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
                     plgDispatch::MsgSend(Dmsg);
                     plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 #endif
@@ -531,7 +531,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                         abort = true;
 #if 0                       
                         
-                        plProxyDrawMsg* Dmsg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
+                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
                         plgDispatch::MsgSend(Dmsg);
                         plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 #endif
@@ -556,7 +556,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                         abort = true;
 #if 0                       
                         
-                        plProxyDrawMsg* Dmsg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
+                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
                         plgDispatch::MsgSend(Dmsg);
                         plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 #endif
@@ -582,14 +582,14 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                 if (fMessageQueue[i]->fControlActivated)
                 {   
                     // send a 'picked' message to the picked object
-                    plPickedMsg* pPickedMsg = TRACKED_NEW plPickedMsg;
+                    plPickedMsg* pPickedMsg = new plPickedMsg;
                     pPickedMsg->AddReceiver(fCurrentClickable);
                     plgDispatch::MsgSend(pPickedMsg);
                 }
                 else
                 {
                     // send an 'unpicked message'
-                    plPickedMsg* pPickedMsg = TRACKED_NEW plPickedMsg;
+                    plPickedMsg* pPickedMsg = new plPickedMsg;
                     pPickedMsg->AddReceiver(fCurrentClickable);
                     pPickedMsg->fPicked = false;
                     plgDispatch::MsgSend(pPickedMsg);
@@ -668,7 +668,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
 
         if( IHasKeyControlFlag( binding.GetCode() ) && binding.GetCode() != B_CONTROL_ALWAYS_RUN )
         {
-            plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+            plCtrlCmd *pCmd = new plCtrlCmd( this );
             pCmd->fControlCode = binding.GetCode();
             pCmd->fControlActivated = false;
             pCmd->SetCmdString( binding.GetExtendedString() );
@@ -842,7 +842,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 
                 if ((mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos) || (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg))
                 {
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = mouseMap->fMap[i]->fCode;
                     float pct = 0.0f;
@@ -872,7 +872,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 }
                 if (mouseMap->fMap[i]->fControlFlags & kControlFlagDelta)
                 {
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = mouseMap->fMap[i]->fCode;
                     float pct = 0.0f;
@@ -896,7 +896,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             else // if it is an 'always if in box' command see if it's not in the box
             if ( (mouseMap->fMap[i]->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, mouseMap->fMap[i]->fBox)) )
             {   
-                plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                plCtrlCmd* pCmd = new plCtrlCmd( this );
                 pCmd->fControlActivated = false;
                 pCmd->fControlCode = mouseMap->fMap[i]->fCode;
                 pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
@@ -950,7 +950,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     if (!(mouseMap->fMap[i]->fControlFlags & kControlFlagInBox))
                         SetControlFlag(mouseMap->fMap[i]->fCode);
                     // issue the command
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = mouseMap->fMap[i]->fCode;
                     pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
@@ -1019,7 +1019,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 plAvatarInputMap::plAvatarInputMap()
 {
-    fMouseMap = TRACKED_NEW plMouseMap;
+    fMouseMap = new plMouseMap;
 
     fButtonState = 0;
     fInterface = plAvatarInputInterface::GetInstance();
@@ -1032,50 +1032,50 @@ plAvatarInputMap::~plAvatarInputMap()
         
 plSuspendedMovementMap::plSuspendedMovementMap() : plAvatarInputMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
 }
 
 plBasicControlMap::plBasicControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f,        "Rotate Player Right") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f,     "Rotate Player Left") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f,        "Rotate Player Right") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f,     "Rotate Player Left") );
     
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f,        "Turn to") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f,        "Set Walk Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f,        "Set Walk Back LB Mode") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f,     "Set Walk Back Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f,        "Turn to") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f,        "Set Walk Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f,        "Set Walk Back LB Mode") );
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f,     "Set Walk Back Mode") ); 
 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f,  "set cursor up") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f,  "set cursor down") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f,    "set cursor right") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f,    "set cursor left") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f,  "set cursor up") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f,  "set cursor down") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f,    "set cursor right") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f,    "set cursor left") ); 
 }
 
 plLadderControlMap::plLadderControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f,     "Set Walk Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f,     "Set Walk Back LB Mode") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f,     "Set Walk Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f,     "Set Walk Back LB Mode") );
 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f, "set cursor up") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f, "set cursor down") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f, "set cursor up") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f, "set cursor down") ); 
 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
 }
 
 
 plLadderMountMap::plLadderMountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
 }
 
 plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
 }
 
 
@@ -1083,22 +1083,22 @@ plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 
 plBasicThirdPersonControlMap::plBasicThirdPersonControlMap() : plBasicControlMap()
 {   
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f,     "Freelook Mode") );     
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f,     "Freelook Mode") );     
 }   
 
 plBasicFirstPersonControlMap::plBasicFirstPersonControlMap() : plBasicControlMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
 }
 
 // also used in 1st person walk mode    
 pl3rdWalkMap::pl3rdWalkMap() : plAvatarInputMap()
 {
     // control special to this mode.
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f, "Run Modifier"  ) );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f, "Run Modifier"  ) );
+    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") );
 
     plInputManager::SetRecenterMouse(true);     
     plMouseDevice::HideCursor();
@@ -1114,22 +1114,22 @@ pl3rdWalkMap::~pl3rdWalkMap()
 
 pl3rdWalkForwardMap::pl3rdWalkForwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk forward") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") );    
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk forward") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") );    
 }
 
 pl3rdWalkBackwardMap::pl3rdWalkBackwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Third Person") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Walk backward") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Third Person") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Walk backward") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Set Camera first-person z-axis panning") ); 
 }
 
 // same as the other backward walk map, but this one is triggered by the left mouse button.
 pl3rdWalkBackwardLBMap::pl3rdWalkBackwardLBMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk backward") );
-    fMouseMap->AddMapping( TRACKED_NEW plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk backward") );
+    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") ); 
 }

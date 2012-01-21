@@ -553,7 +553,7 @@ void    plAudioSystem::SetActive( hsBool b )
     if( fActive )
     {
         // Clear to send activate message (if listener not inited yet, delay until then)
-        plgDispatch::MsgSend( TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kActivate ) );
+        plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kActivate ) );
     }
 }
 
@@ -565,7 +565,7 @@ void    plAudioSystem::SetActive( hsBool b )
 //  need to be recalced, just resorted.
 void    plAudioSystem::RegisterSoftSound( const plKey soundKey )
 {
-    plSoftSoundNode *node = TRACKED_NEW plSoftSoundNode( soundKey );
+    plSoftSoundNode *node = new plSoftSoundNode( soundKey );
     node->Link( &fSoftRegionSounds );
 
     fCurrDebugSound = nil;
@@ -906,7 +906,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
     {
         if (pASMsg->GetAudFlag() == plAudioSysMsg::kPing && fListenerInit)
         {
-            plAudioSysMsg* pMsg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kActivate );
+            plAudioSysMsg* pMsg = new plAudioSysMsg( plAudioSysMsg::kActivate );
             pMsg->AddReceiver( pASMsg->GetSender() );
             pMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
             plgDispatch::MsgSend( pMsg );
@@ -1011,7 +1011,7 @@ hsBool          plgAudioSys::fMutedStateChange = false;
 
 void plgAudioSys::Init(hsWindowHndl hWnd)
 {
-    fSys = TRACKED_NEW plAudioSystem;
+    fSys = new plAudioSystem;
     fSys->RegisterAs( kAudioSystem_KEY );
     plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
@@ -1159,7 +1159,7 @@ void plgAudioSys::Activate(hsBool b)
         if( !IsMuted() )
         {
             SetMuted( true );
-            plAudioSysMsg *msg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kUnmuteAll );
+            plAudioSysMsg *msg = new plAudioSysMsg( plAudioSysMsg::kUnmuteAll );
             msg->SetTimeStamp( hsTimer::GetSysSeconds() );
             msg->AddReceiver( fSys->GetKey() );
             msg->SetBCastFlag( plMessage::kBCastByExactType, false );
@@ -1171,11 +1171,11 @@ void plgAudioSys::Activate(hsBool b)
     fSys->SetActive( false );
     
     plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Sending deactivate/destroy messages --" );
-    plgDispatch::MsgSend( TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
+    plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
 
     // Send ourselves a shutdown message, so that the deactivates get processed first
     fSys->fWaitingForShutdown = true;
-    plAudioSysMsg *msg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kDestroy );
+    plAudioSysMsg *msg = new plAudioSysMsg( plAudioSysMsg::kDestroy );
     msg->SetBCastFlag( plMessage::kBCastByExactType, false );
     msg->Send( fSys->GetKey() );
 //  fSys->Shutdown();

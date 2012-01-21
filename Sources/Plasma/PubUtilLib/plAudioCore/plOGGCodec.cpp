@@ -126,7 +126,7 @@ void    plOGGCodec::IOpen( const char *path, plAudioCore::ChannelSelect whichCha
     if( fFileHandle != nil )
     {
         /// Create the OGG data struct
-        fOggFile = TRACKED_NEW OggVorbis_File;
+        fOggFile = new OggVorbis_File;
 
         /// Open the OGG decompressor
         if( ov_open( fFileHandle, fOggFile, NULL, 0 ) < 0 )

@@ -83,7 +83,7 @@ const float plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
 // -----------------
 plAvBrainGeneric::plAvBrainGeneric()
 : fRecipient(nil),
-  fStages(TRACKED_NEW plAnimStageVec),
+  fStages(new plAnimStageVec),
   fCurStage(0),
   fType(kGeneric),
   fExitFlags(kExitNormal),
@@ -172,7 +172,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
 
     if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
     {
-        plInputIfaceMgrMsg* msg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables );
+        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables );
         plgDispatch::MsgSend(msg);
     }
 
@@ -208,7 +208,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
         if (plAvBrainGeneric::fForce3rdPerson && fAvMod->IsLocalAvatar())
         {
             // create message to force 3rd person mode
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
@@ -307,7 +307,7 @@ void plAvBrainGeneric::Deactivate()
     if (plAvBrainGeneric::fForce3rdPerson && fAvMod->IsLocalAvatar())
     {
         // create message to force 3rd person mode
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);
@@ -318,7 +318,7 @@ void plAvBrainGeneric::Deactivate()
 
     if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
     {
-        plInputIfaceMgrMsg* msg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables );
+        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables );
         plgDispatch::MsgSend(msg);
     }
 }
@@ -879,7 +879,7 @@ hsBool plAvBrainGeneric::LeaveAge()
 int plAvBrainGeneric::AddStage(plAnimStage *stage)
 {
     if(!fStages)
-        fStages = TRACKED_NEW plAnimStageVec;
+        fStages = new plAnimStageVec;
     fStages->push_back(stage);
     return fStages->size() - 1;
 }

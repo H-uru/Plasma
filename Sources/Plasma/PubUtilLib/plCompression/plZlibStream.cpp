@@ -76,7 +76,7 @@ hsBool plZlibStream::Open(const wchar_t* filename, const wchar_t* mode)
     fFilename = filename;
     fMode = mode;
 
-    fOutput = NEW(hsUNIXStream);
+    fOutput = new hsUNIXStream;
     return fOutput->Open(filename, L"wb");
 }
 
@@ -251,7 +251,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     uint32_t clipBuffer = headerSize - initCacheSize;
     
     // Initialize the zlib stream
-    z_streamp zstream = NEW(z_stream_s);
+    z_streamp zstream = new z_stream_s;
     memset(zstream, 0, sizeof(z_stream_s));
     zstream->zalloc = ZlibAlloc;
     zstream->zfree = ZlibFree;

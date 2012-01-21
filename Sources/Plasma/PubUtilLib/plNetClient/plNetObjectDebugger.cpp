@@ -224,7 +224,7 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
         flags |= kPageMatch;
     }
 
-    fDebugObjects.push_back(TRACKED_NEW DebugObject(tmpObjName, loc, flags));
+    fDebugObjects.push_back(new DebugObject(tmpObjName, loc, flags));
 
     ICreateStatusLog();
 

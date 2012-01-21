@@ -224,7 +224,7 @@ hsBool plAvTaskSeek::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
         if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar() && (fFlags & plAvSeekMsg::kSeekFlagForce3rdPersonOnStart))
         {
             // create message
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
             pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
@@ -281,7 +281,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
         if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar() && (fFlags & plAvSeekMsg::kSeekFlagUnForce3rdPersonOnFinish))
         {
             // create message
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
             pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);
@@ -293,7 +293,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
 
     if (fNotifyFinishedKey)
     {
-        plAvTaskSeekDoneMsg *msg = TRACKED_NEW plAvTaskSeekDoneMsg(avatar->GetKey(), fNotifyFinishedKey);
+        plAvTaskSeekDoneMsg *msg = new plAvTaskSeekDoneMsg(avatar->GetKey(), fNotifyFinishedKey);
         msg->fAborted = (fState == kSeekAbort);
         msg->Send();
     }

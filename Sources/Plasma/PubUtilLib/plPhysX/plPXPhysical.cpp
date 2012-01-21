@@ -265,7 +265,7 @@ void plPXPhysical::IMakeHull(NxConvexMesh* convexMesh, hsMatrix44 l2w)
         delete [] fSaveTriangles;
 
     fHullNumberPlanes = desc.numTriangles;
-    fSaveTriangles = TRACKED_NEW hsPoint3[fHullNumberPlanes*3];
+    fSaveTriangles = new hsPoint3[fHullNumberPlanes*3];
 
     for (int i = 0; i < desc.numTriangles; i++)
     {
@@ -288,7 +288,7 @@ void plPXPhysical::ISetHullToWorldWTriangles()
     // if we have a detector hull and the world hasn't been updated
     if (fWorldHull == nil)
     {
-        fWorldHull = TRACKED_NEW hsPlane3[fHullNumberPlanes];
+        fWorldHull = new hsPlane3[fHullNumberPlanes];
         // use the local2world from the physics engine so that it matches the transform of the positions from the triggerees
         hsMatrix44 l2w;
         plPXConvert::Matrix(fActor->getGlobalPose(), l2w);
@@ -546,12 +546,12 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
     if (GetProperty(plSimulationInterface::kSuppressed_DEAD))
         IEnable(false);
 
-    plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kPhysical); 
+    plNodeRefMsg* refMsg = new plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kPhysical); 
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kActiveRef);
 
     if (fWorldKey)
     {
-        plGenRefMsg* ref = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld);
+        plGenRefMsg* ref = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld);
         hsgResMgr::ResMgr()->AddViaNotify(fWorldKey, ref, plRefFlags::kActiveRef);
     }
 
@@ -563,7 +563,7 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
         hsAssert(sceneObj, "nil sceneObject, failed to create and attach SDL modifier");
 
         delete fSDLMod;
-        fSDLMod = TRACKED_NEW plPhysicalSDLModifier;
+        fSDLMod = new plPhysicalSDLModifier;
         sceneObj->AddModifier(fSDLMod);
     }
 
@@ -804,7 +804,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
 
                 hsMatrix44 w2l;
                 fCachedLocal2World.GetInverse(&w2l);
-                plCorrectionMsg *pCorrMsg = TRACKED_NEW plCorrectionMsg(GetObjectKey(), fCachedLocal2World, w2l, synchTransform);
+                plCorrectionMsg *pCorrMsg = new plCorrectionMsg(GetObjectKey(), fCachedLocal2World, w2l, synchTransform);
                 pCorrMsg->Send();
                 if (fProxyGen)
                     fProxyGen->SetTransform(fCachedLocal2World, w2l);
@@ -1035,7 +1035,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     recipe.sceneNode = mgr->ReadKey(stream);
     recipe.worldKey = mgr->ReadKey(stream);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefSndGroup), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefSndGroup), plRefFlags::kActiveRef);
 
     hsPoint3 pos;
     hsQuat rot;
@@ -1117,7 +1117,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
         physColor.Set(0.6f,0.6f,0.6f,1.f);
     }
 
-    fProxyGen = TRACKED_NEW plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
+    fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
     fProxyGen->Init(this);
 }
 

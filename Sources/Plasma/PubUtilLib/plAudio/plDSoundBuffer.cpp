@@ -103,7 +103,7 @@ plDSoundBuffer::~plDSoundBuffer()
 void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic )
 {
     // Create a DSound buffer description
-    fBufferDesc = TRACKED_NEW plWAVHeader;
+    fBufferDesc = new plWAVHeader;
     *fBufferDesc = bufferDesc;
 
     fBufferSize = size;

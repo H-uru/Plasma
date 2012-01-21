@@ -154,7 +154,7 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
     {
         fDrawableIndices[i] = s->ReadLE32();
 
-        plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
+        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
         mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     }
 
@@ -162,7 +162,7 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
     fRegions.SetCountAndZero(nReg);
     for( i = 0; i < nReg; i++ )
     {
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisRegion);
+        plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisRegion);
         mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 }
@@ -198,7 +198,7 @@ void    plDrawInterface::ReleaseData( void )
     {
         if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
-            plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(fDrawables[i]->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[i], 0);
+            plDISpansMsg* diMsg = new plDISpansMsg(fDrawables[i]->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[i], 0);
             diMsg->SetSender(GetKey());
             diMsg->Send();
         }
@@ -237,7 +237,7 @@ void plDrawInterface::ISetDrawable(uint8_t which, plDrawable* dr)
 #ifdef HS_DEBUGGING
     if( fDrawableIndices[which] != (uint32_t)-1 )
     {
-        plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(dr->GetKey(), plDISpansMsg::kAddingSpan, fDrawableIndices[which], 0);
+        plDISpansMsg* diMsg = new plDISpansMsg(dr->GetKey(), plDISpansMsg::kAddingSpan, fDrawableIndices[which], 0);
         diMsg->SetSender(GetKey());
         diMsg->Send();
     }
@@ -300,7 +300,7 @@ void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
     if( dr )
     {
         // This is a little convoluted, but it makes GCC happy and doesn't hurt anybody.
-        plIntRefMsg* intRefMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, which, plIntRefMsg::kDrawable);
+        plIntRefMsg* intRefMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, which, plIntRefMsg::kDrawable);
         plRefMsg* refMsg = intRefMsg;
 //      hsgResMgr::ResMgr()->SendRef(dr->GetKey(), intRefMsg, plRefFlags::kActiveRef); // THIS WON'T COMPILE UNDER GCC
         hsgResMgr::ResMgr()->SendRef(dr, refMsg, plRefFlags::kActiveRef);
@@ -366,7 +366,7 @@ void    plDrawInterface::SetUpForParticleSystem( uint32_t maxNumEmitters, uint32
     int i;
     for( i = 0; i < lights.GetCount(); i++ )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(lights[i], TRACKED_NEW plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(lights[i], new plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
     }
 
     ISetVisRegions(0);

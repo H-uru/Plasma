@@ -204,7 +204,7 @@ void    plDrawableSpans::SetSceneNode( plKey newNode )
         return;
     if( newNode )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kDrawable);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kDrawable);
         hsgResMgr::ResMgr()->SendRef(GetKey(), refMsg, plRefFlags::kActiveRef);
     }
     if( curNode )
@@ -943,7 +943,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     fMaterials.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
-        refMsg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgMaterial );
+        refMsg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgMaterial );
         mgr->ReadKeyNotifyMe( s, refMsg, plRefFlags::kActiveRef );
     }
 
@@ -991,7 +991,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     for( i = 0; i < count; i++ )
     {
         // Ref message for the fog environment
-        refMsg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgFogEnviron );
+        refMsg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgFogEnviron );
         mgr->ReadKeyNotifyMe( s, refMsg, plRefFlags::kActiveRef );
     }
 
@@ -1017,7 +1017,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
             int j;
             for( j = 0; j < lcnt; j++ )
             {
-                mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kMsgPermaLight), plRefFlags::kPassiveRef);
+                mgr->ReadKeyNotifyMe( s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kMsgPermaLight), plRefFlags::kPassiveRef);
             }
         }
         if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
@@ -1026,7 +1026,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
             int j;
             for( j = 0; j < lcnt; j++ )
             {
-                mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kMsgPermaProj), plRefFlags::kPassiveRef);
+                mgr->ReadKeyNotifyMe( s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kMsgPermaProj), plRefFlags::kPassiveRef);
             }
         }
     }
@@ -1038,7 +1038,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
         fSourceSpans.SetCount( count );
         for( i = 0; i < count; i++ )
         {
-            fSourceSpans[ i ] = TRACKED_NEW plGeometrySpan;
+            fSourceSpans[ i ] = new plGeometrySpan;
             fSourceSpans[ i ]->Read( s );
             fSourceSpans[ i ]->fMaterial = GetMaterial( fSpans[ i ]->fMaterialIdx );
             fSourceSpans[ i ]->fFogEnviron = fSpans[ i ]->fFogEnvironment;
@@ -1068,7 +1068,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     fDIIndices.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
     {
-        fDIIndices[ i ] = TRACKED_NEW plDISpanIndex;
+        fDIIndices[ i ] = new plDISpanIndex;
         
         fDIIndices[ i ]->fFlags = (uint8_t)(s->ReadLE32());
         count2 = s->ReadLE32();
@@ -1081,7 +1081,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     count = s->ReadLE32();
     while( count-- )
     {
-        group = TRACKED_NEW plGBufferGroup(0, fProps & kPropVolatile, fProps & kPropSortFaces);
+        group = new plGBufferGroup(0, fProps & kPropVolatile, fProps & kPropSortFaces);
         group->Read( s );
 
         fGroups.Append( group );
@@ -1098,7 +1098,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     fSpaceTree = plSpaceTree::ConvertNoRef(mgr->ReadCreatable(s));
     
     fSceneNode = mgr->ReadKey(s);
-    plNodeRefMsg* nRefMsg = TRACKED_NEW plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kDrawable); 
+    plNodeRefMsg* nRefMsg = new plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kDrawable); 
     mgr->AddViaNotify(GetKey(), nRefMsg, plRefFlags::kActiveRef);
 
     if( GetNativeProperty(plDrawable::kPropCharacter) )
@@ -2297,7 +2297,7 @@ uint32_t plDrawableSpans::NewDIMatrixIndex()
             break;
     }
     if( index == fDIIndices.GetCount() )
-        fDIIndices.Append( TRACKED_NEW plDISpanIndex );
+        fDIIndices.Append( new plDISpanIndex );
 
     fDIIndices[index]->Reset();
     fDIIndices[index]->fFlags = plDISpanIndex::kMatrixOnly;
@@ -2323,7 +2323,7 @@ plDISpanIndex   *plDrawableSpans::IFindDIIndices( uint32_t &index )
                 break;
         }
         if( index == fDIIndices.GetCount() )
-            fDIIndices.Append( TRACKED_NEW plDISpanIndex );
+            fDIIndices.Append( new plDISpanIndex );
 
         spanLookup = fDIIndices[ index ];
         spanLookup->fFlags = plDISpanIndex::kNone;
@@ -2503,7 +2503,7 @@ uint32_t  plDrawableSpans::IRefMaterial( uint32_t index )
     hsGMaterial     *material = fMaterials[ index ];
 
     if( GetKey() && material != nil && material->GetKey() != nil )
-        hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
 
     return index;
 }
@@ -2947,14 +2947,14 @@ void    plDrawableSpans::IRemoveGarbage( void )
     for( i = 0; i < fGroups.GetCount(); i++ )
     {
         hsAssert( fGroups[ i ]->GetNumVertexBuffers() == 1, "Cannot clean garbage on a non-volatile buffer group!" );
-        usedFlags[ i ] = TRACKED_NEW hsTArray<bool>;
+        usedFlags[ i ] = new hsTArray<bool>;
         usedFlags[ i ]->SetCountAndZero( fGroups[ i ]->GetVertBufferCount( 0 ) );
 
-        usedIdxFlags[ i ] = TRACKED_NEW hsTArray<hsTArray<bool> *>;
+        usedIdxFlags[ i ] = new hsTArray<hsTArray<bool> *>;
         usedIdxFlags[ i ]->SetCount( fGroups[ i ]->GetNumIndexBuffers() );
         for( j = 0; j < fGroups[ i ]->GetNumIndexBuffers(); j++ )
         {
-            (*usedIdxFlags[ i ])[ j ] = TRACKED_NEW hsTArray<bool>;
+            (*usedIdxFlags[ i ])[ j ] = new hsTArray<bool>;
             (*usedIdxFlags[ i ])[ j ]->SetCountAndZero( fGroups[ i ]->GetIndexBufferCount( j ) );
         }
     }
@@ -3327,7 +3327,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
         iStart = iEnd;
     }
     fMaterials.SetCountAndZero(1);
-    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kMsgMaterial);
+    plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kMsgMaterial);
     hsgResMgr::ResMgr()->SendRef(cluster->GetMaterial()->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     fRenderLevel = cluster->GetRenderLevel();
@@ -3361,7 +3361,7 @@ uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVerts
     }
 
     // Add a new one of the right format
-    fGroups.Append( TRACKED_NEW plGBufferGroup(vtxFormat, vertVolatile, idxVolatile, lod) );
+    fGroups.Append( new plGBufferGroup(vtxFormat, vertVolatile, idxVolatile, lod) );
     return i;
 }
 
@@ -3444,7 +3444,7 @@ uint32_t      plDrawableSpans::CreateParticleSystem( uint32_t maxNumSpans, uint3
 
 
     // Make a shiny new set
-    set = TRACKED_NEW plParticleSet;
+    set = new plParticleSet;
     set->fRefCount = 0;
 
     /// Fill out info
@@ -3666,7 +3666,7 @@ void    plDrawableSpans::AssignEmitterToParticleSystem( uint32_t setIndex, plPar
         if( icicle->fSortData == nil || icicle->fSortCount < ( numParticles << 1 ) )
         {
             delete [] icicle->fSortData;
-            icicle->fSortData = sortArray = TRACKED_NEW plGBufferTriangle[ numParticles << 1 ];
+            icicle->fSortData = sortArray = new plGBufferTriangle[ numParticles << 1 ];
             icicle->fSortCount = numParticles << 1;
         }
         else

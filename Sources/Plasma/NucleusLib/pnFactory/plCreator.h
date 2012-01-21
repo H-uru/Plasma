@@ -86,7 +86,7 @@ public:                                                                         
     virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
-    virtual plCreatable* Create() const { return TRACKED_NEW plClassName; }         \
+    virtual plCreatable* Create() const { return new plClassName; }         \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
@@ -145,7 +145,7 @@ public:                                                                         
     virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
-    virtual plCreatable* Create() const { return TRACKED_NEW plClassName; }         \
+    virtual plCreatable* Create() const { return new plClassName; }         \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \

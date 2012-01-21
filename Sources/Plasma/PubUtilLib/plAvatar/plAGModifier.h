@@ -103,7 +103,7 @@ public:
         channels attached to it that were intended for "Lamont." */
     void SetChannelName(char * name);
 
-    /** Attach a TRACKED_NEW applicator to our modifier. Will arbitrate with existing
+    /** Attach a new applicator to our modifier. Will arbitrate with existing
         modifiers if necessary, based on pin type. May destruct existing applicators. */
     plAGChannel *MergeChannel(plAGApplicator *app, plAGChannel *chan, plScalarChannel *blend,
                               plAGAnimInstance *anim, int priority);

@@ -137,7 +137,7 @@ void    plSoundEvent::SendCallbacks( void )
                 // Note: we get fancy here. We never want to remove the callback directly,
                 // because the sound won't know about it. So instead, send it a message to
                 // remove the callback for us
-                sMsg = TRACKED_NEW plSoundMsg();
+                sMsg = new plSoundMsg();
                 sMsg->SetBCastFlag( plMessage::kLocalPropagate, true );
                 sMsg->AddReceiver( fOwner->GetKey() );
                 sMsg->SetCmd( plSoundMsg::kRemoveCallbacks );

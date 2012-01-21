@@ -76,7 +76,7 @@ static PyObject *EnumValue_new(PyTypeObject *type, PyObject *args, PyObject *)
 
         if (nameTemp) // copy the value if it was passed
         {
-            self->name = TRACKED_NEW char[strlen(nameTemp) + 1];
+            self->name = new char[strlen(nameTemp) + 1];
             strcpy(self->name, nameTemp);
             self->name[strlen(nameTemp)] = '\0';
         }

@@ -127,8 +127,8 @@ void plVisRegion::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefRegion), plRefFlags::kActiveRef);
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisMgr), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefRegion), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisMgr), plRefFlags::kActiveRef);
 
     if( fMgr )
         fMgr->Register(this, GetProperty(kIsNot));

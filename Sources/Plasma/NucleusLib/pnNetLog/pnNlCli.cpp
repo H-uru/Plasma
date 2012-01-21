@@ -156,7 +156,7 @@ static void NetLogConnDisconnect () {
 
 //============================================================================
 static void AddEventNode (Srv2Log_LogMsg *msg) {
-    LogConnEventNode *node = NEW(LogConnEventNode)(msg, TimeGetMs() + kIssueSaveMs);
+    LogConnEventNode *node = new LogConnEventNode(msg, TimeGetMs() + kIssueSaveMs);
     s_critsect.Enter();
     {
         s_eventQueue.Link(node);

@@ -78,7 +78,7 @@ void pfLocalizationMgr::Initialize(const std::string & dataPath)
     if (fInstance)
         return;
 
-    fInstance = TRACKED_NEW pfLocalizationMgr();
+    fInstance = new pfLocalizationMgr();
     pfLocalizationDataMgr::Initialize(dataPath); // set up the data manager
 }
 

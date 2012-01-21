@@ -91,7 +91,7 @@ pfGUIListText::pfGUIListText( const char *text ) : pfGUIListElement( kText )
 
 pfGUIListText::pfGUIListText( const wchar_t *text ) : pfGUIListElement( kText )
 {
-    fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+    fText = new wchar_t[ wcslen( text ) + 1 ];
     wcscpy( fText, text );
     fJustify = kLeftJustify;
 }
@@ -173,7 +173,7 @@ void    pfGUIListText::SetText( const wchar_t *text )
     delete [] fText;
     if( text != nil )
     {
-        fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+        fText = new wchar_t[ wcslen( text ) + 1 ];
         wcscpy( fText, text );
     }
     else
@@ -309,7 +309,7 @@ pfGUIListTreeRoot::pfGUIListTreeRoot( const char *text ) : pfGUIListElement( kTr
 
 pfGUIListTreeRoot::pfGUIListTreeRoot( const wchar_t *text ) : pfGUIListElement( kTreeRoot )
 {
-    fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+    fText = new wchar_t[ wcslen( text ) + 1 ];
     wcscpy( fText, text );
 }
 
@@ -432,7 +432,7 @@ void    pfGUIListTreeRoot::SetTitle( const wchar_t *text )
     delete [] fText;
     if( text != nil )
     {
-        fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+        fText = new wchar_t[ wcslen( text ) + 1 ];
         wcscpy( fText, text );
     }
     else

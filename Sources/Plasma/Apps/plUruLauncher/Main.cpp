@@ -774,7 +774,7 @@ int __stdcall WinMain (
     TGDoCiderDetection ();
 
     s_hInstance = hInstance;
-    ZERO(s_launcherInfo);
+    memset(&s_launcherInfo, 0, sizeof(s_launcherInfo));
     StrPrintf(s_launcherInfo.cmdLine, arrsize(s_launcherInfo.cmdLine), appCmdLine);
     s_launcherInfo.returnCode = 0;
 
@@ -860,8 +860,8 @@ int __stdcall WinMain (
             // launch new patcher
             STARTUPINFOW        si;
             PROCESS_INFORMATION pi;
-            ZERO(si);
-            ZERO(pi);
+            memset(&si, 0, sizeof(si));
+            memset(&pi, 0, sizeof(pi));
             si.cb = sizeof(si);
 
             wchar_t cmdline[MAX_PATH];
@@ -990,7 +990,7 @@ void SetReturnCode (DWORD retCode) {
 
 //============================================================================
 void SetProgress (unsigned progress) {
-    SetProgressEvent *event = NEW(SetProgressEvent);
+    SetProgressEvent *event = new SetProgressEvent();
     event->type = kEventSetProgress;
     event->progress = progress;
     PostEvent(event);
@@ -998,7 +998,7 @@ void SetProgress (unsigned progress) {
 
 //============================================================================
 void SetText (const char text[]) {
-    SetTextEvent *event = NEW(SetTextEvent);
+    SetTextEvent *event = new SetTextEvent();
     event->type = kEventSetText;
     StrCopy(event->text, text, arrsize(event->text));
     PostEvent(event);
@@ -1006,7 +1006,7 @@ void SetText (const char text[]) {
 
 //============================================================================
 void SetStatusText (const char text[]) {
-    SetTextEvent *event = NEW(SetTextEvent);
+    SetTextEvent *event = new SetTextEvent();
     event->type = kEventSetStatusText;
     StrCopy(event->text, text, arrsize(event->text));
     PostEvent(event);

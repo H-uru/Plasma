@@ -152,9 +152,9 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             // Invert color byte-order as used by plMipmap for DirectX
             png_set_bgr(png_ptr);
             /// Construct a new mipmap to hold everything
-            newMipmap = TRACKED_NEW plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
+            newMipmap = new plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
             char* destp = (char*)newMipmap->GetImage();
-            png_bytep* row_ptrs = TRACKED_NEW png_bytep[imgHeight];
+            png_bytep* row_ptrs = new png_bytep[imgHeight];
             const unsigned int stride = imgWidth * bitdepth * channels / 8;
 
             //  Assign row pointers to the appropriate locations in the newly-created Mipmap
@@ -228,7 +228,7 @@ hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
         // Write out the image metadata
         png_write_info(png_ptr, info_ptr);
         char* srcp = (char*)source->GetImage();
-        png_bytep* row_ptrs = TRACKED_NEW png_bytep[source->GetHeight()];
+        png_bytep* row_ptrs = new png_bytep[source->GetHeight()];
         const unsigned int stride = source->GetWidth() * source->GetPixelSize() / 8;
 
         //  Assign row pointers to the appropriate locations in the newly-created Mipmap

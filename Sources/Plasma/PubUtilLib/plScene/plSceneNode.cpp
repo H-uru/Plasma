@@ -103,7 +103,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     fSceneObjects.Reset();
     for( i = 0; i < n; i++ )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, i, plNodeRefMsg::kObject);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, i, plNodeRefMsg::kObject);
         plKey key = mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 
@@ -111,7 +111,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     fGenericPool.Reset();
     for( i = 0; i < n; i++ )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
         mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 }

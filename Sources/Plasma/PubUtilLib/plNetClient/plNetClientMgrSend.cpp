@@ -180,7 +180,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
 //
 void plNetClientMgr::ISendCameraReset(hsBool bEnteringAge)
 {   
-    plCameraMsg* pCamMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pCamMsg = new plCameraMsg;
     if (bEnteringAge)
         pCamMsg->SetCmd(plCameraMsg::kResetOnEnter);
     else
@@ -272,7 +272,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     {
         plLoadAvatarMsg* lam=plLoadAvatarMsg::ConvertNoRef(msg);
 
-        netMsgWrap = TRACKED_NEW plNetMsgLoadClone;
+        netMsgWrap = new plNetMsgLoadClone;
         plNetMsgLoadClone* netLoadClone=plNetMsgLoadClone::ConvertNoRef(netMsgWrap);
         
         netLoadClone->SetIsPlayer(lam && lam->GetIsPlayer());
@@ -282,7 +282,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     else
     if (dstIDs)
     {
-        netMsgWrap = TRACKED_NEW plNetMsgGameMessageDirected;
+        netMsgWrap = new plNetMsgGameMessageDirected;
         int i;
         for(i=0;i<dstIDs->size();i++)
         {
@@ -294,7 +294,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
         }
     }
     else
-        netMsgWrap = TRACKED_NEW plNetMsgGameMessage;
+        netMsgWrap = new plNetMsgGameMessage;
 
     // check delivery timestamp
     if (msg->GetTimeStamp()<=hsTimer::GetSysSeconds())
