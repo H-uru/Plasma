@@ -384,7 +384,8 @@ inline void IVaultNodeSetBlob (
 ) {
     free(*pdst);
     if (src) {
-        *pdst = (uint8_t*)MEMDUP(src, srcLen);
+        *pdst = (uint8_t*)malloc(srcLen);
+        memcpy(*pdst, src, srcLen);
         *pdstLen = srcLen;
     }
     else {
