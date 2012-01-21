@@ -1,0 +1,268 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APPICON             ICON                    "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_APPMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open Data Directory...\tCtrl+O", 
+                                                ID_FILE_OPENDATADIRECTORY
+        MENUITEM SEPARATOR
+        MENUITEM "&Save to Current Directory\tCtrl+S", ID_FILE_SAVETOCUR
+        , GRAYED
+        MENUITEM "S&ave to Specified Directory...\tCtrl+Shift+S", 
+                                                ID_FILE_SAVETONEW, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...",                  ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 275, 40
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "About plLocalizationEditor"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,221,6,50,14
+    ICON            IDI_APPICON,IDC_STATIC,7,7,21,20
+    LTEXT           "plLocalizationEditor\nA basic editor for Plasma 21 localization resource files\nCopyright (C) 2004 Cyan Worlds, Inc.",
+                    IDC_STATIC,33,7,180,26
+END
+
+IDD_EDITDLG DIALOGEX 0, 0, 421, 280
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Add",IDC_ADD,72,20,138,14,WS_DISABLED
+    PUSHBUTTON      "Delete",IDC_DELETE,216,20,132,14,WS_DISABLED
+    GROUPBOX        "Localization Tree",IDC_STATIC,7,7,407,32
+    GROUPBOX        "Localization Information",IDC_STATIC,7,45,407,228
+    LTEXT           "Text:",IDC_LOCPATH,15,57,391,8
+    CONTROL         "",IDC_LOCALIZATIONTEXT,"RichEdit20A",ES_MULTILINE | 
+                    ES_AUTOHSCROLL | WS_DISABLED | WS_BORDER | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP,15,71,391,194
+END
+
+IDD_ADDELEMENT DIALOGEX 0, 0, 186, 91
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Add Element"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_PARENTAGE,57,19,122,51,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_PARENTSET,57,34,122,51,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_ELEMENTNAME,57,49,122,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,129,70,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,73,70,50,14
+    LTEXT           "Path:",IDC_PATH,7,7,172,8
+    LTEXT           "Parent Age:",IDC_STATIC,7,22,48,8
+    LTEXT           "Parent Set:",IDC_STATIC,7,37,38,8
+    LTEXT           "Element Name:",IDC_STATIC,7,52,49,8
+END
+
+IDD_ADDLOCALIZATION DIALOGEX 0, 0, 186, 59
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Add Localization"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_LANGUAGE,45,19,134,65,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,129,38,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,73,38,50,14
+    LTEXT           "Path:",IDC_PATH,7,7,172,8
+    LTEXT           "Language:",IDC_STATIC,7,21,35,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Cyan Worlds, Inc."
+            VALUE "FileDescription", "plLocalizationEditor"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "plLocalizationEditor"
+            VALUE "LegalCopyright", "Copyright © 2004"
+            VALUE "OriginalFilename", "plLocalizationEditor.exe"
+            VALUE "ProductName", "Cyan Worlds Localization Editor"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        RIGHTMARGIN, 252
+    END
+
+    IDD_EDITDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 414
+        VERTGUIDE, 15
+        VERTGUIDE, 72
+        VERTGUIDE, 210
+        VERTGUIDE, 216
+        VERTGUIDE, 348
+        VERTGUIDE, 406
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+        HORZGUIDE, 71
+        HORZGUIDE, 265
+    END
+
+    IDD_ADDELEMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 84
+    END
+
+    IDD_ADDLOCALIZATION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 52
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS 
+BEGIN
+    "O",            ID_FILE_OPENDATADIRECTORY, VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVETOCUR,      VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVETONEW,      VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
