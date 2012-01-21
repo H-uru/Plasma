@@ -260,7 +260,7 @@ void TBuffer<T>::SetCount (unsigned count) {
 template<class T>
 void TBuffer<T>::Zero () {
     if (m_data)
-        MemZero(m_data, Bytes());
+        memset(m_data, 0, Bytes());
 }
 
 typedef TBuffer<uint8_t> CBuffer;
@@ -678,7 +678,7 @@ const T * TFArray<T,C>::Top () const {
 template<class T, class C>
 void TFArray<T,C>::Zero () {
     C::Destruct(m_data, m_count);
-    MemZero(m_data, m_count * sizeof(T));
+    memset(m_data, 0, m_count * sizeof(T));
     C::Construct(m_data, m_count);
 }
 
@@ -694,7 +694,7 @@ template<class T, class C>
 void TFArray<T,C>::ZeroRange (unsigned index, unsigned count) {
     ASSERT(index + count <= m_count);
     C::Destruct(m_data + index, count);
-    MemZero(m_data + index, count * sizeof(T));
+    memset(m_data + index, 0, count * sizeof(T));
     C::Construct(m_data + index, count);
 }
 

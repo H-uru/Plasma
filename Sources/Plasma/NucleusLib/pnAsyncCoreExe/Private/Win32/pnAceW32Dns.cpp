@@ -110,7 +110,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
 
     // allocate a buffer large enough to hold all the addresses
     addrs = (NetAddress *)malloc(sizeof(*addrs) * count);
-    MemZero(addrs, sizeof(*addrs) * count);
+    memset(addrs, 0, sizeof(*addrs) * count);
 
     // fill in address data
     const uint16_t port = htons((uint16_t) lookup->port);

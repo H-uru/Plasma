@@ -178,7 +178,7 @@ ENetError pfGameScoreMgr::CreateScore(
     pfGameScore&    score
 ) {
     CreateScoreOp param;
-    MemZero(&param, sizeof(CreateScoreOp));
+    memset(&param, 0, sizeof(CreateScoreOp));
     param.score = &score;
 
     NetCliAuthScoreCreate(
@@ -205,7 +205,7 @@ ENetError pfGameScoreMgr::DeleteScore(
     unsigned scoreId
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreDelete(
         scoreId,
@@ -277,7 +277,7 @@ ENetError pfGameScoreMgr::GetScoresIncRef(
     int&            outScoreListCount
 ) {
     GetScoresOp param;
-    MemZero(&param, sizeof(GetScoresOp));
+    memset(&param, 0, sizeof(GetScoresOp));
     param.scores        = &outScoreList;
     param.scoreCount    = &outScoreListCount;
 
@@ -304,7 +304,7 @@ ENetError pfGameScoreMgr::AddPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreAddPoints(
         scoreId,
@@ -336,7 +336,7 @@ ENetError pfGameScoreMgr::TransferPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreTransferPoints(
         srcScoreId,
@@ -371,7 +371,7 @@ ENetError pfGameScoreMgr::SetPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreSetPoints(
         scoreId,
@@ -448,7 +448,7 @@ ENetError pfGameScoreMgr::GetRankList(
     int&            outRankListCount
 ) {
     GetRanksOp param;
-    MemZero(&param, sizeof(GetRanksOp));
+    memset(&param, 0, sizeof(GetRanksOp));
     param.ranks     = &outRankList;
     param.rankCount = &outRankListCount;
 
