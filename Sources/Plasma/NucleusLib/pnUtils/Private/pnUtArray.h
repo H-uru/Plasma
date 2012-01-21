@@ -217,7 +217,7 @@ T * TBuffer<T>::Detach () {
 template<class T>
 void TBuffer<T>::Fill (uint8_t value) {
     if (m_data)
-        MemSet(m_data, value, Bytes());
+        memset(m_data, value, Bytes());
 }
 
 //===========================================================================
@@ -610,7 +610,7 @@ T * TFArray<T,C>::Detach () {
 template<class T, class C>
 void TFArray<T,C>::Fill (uint8_t value) {
     C::Destruct(m_data, m_count);
-    MemSet(m_data, value, m_count * sizeof(T));
+    memset(m_data, value, m_count * sizeof(T));
     C::Construct(m_data, m_count);
 }
 

@@ -116,7 +116,7 @@ ITicTacToe::ITicTacToe (pfGmTicTacToe * gameCli)
 :   gameCli(gameCli)
 {
     // Fill the board with space chars
-    MemSet(board, ' ', sizeof(board));
+    memset(board, ' ', sizeof(board));
 }
 
 //============================================================================

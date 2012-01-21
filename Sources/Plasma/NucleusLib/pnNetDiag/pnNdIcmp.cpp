@@ -190,7 +190,7 @@ void IcmpStartup () {
         IcmpCreateFile = (FIcmpCreateFile)GetProcAddress(g_lib, "IcmpCreateFile");
         IcmpSendEcho = (FIcmpSendEcho)GetProcAddress(g_lib, "IcmpSendEcho");
     }
-    MemSet(s_payload, (uint8_t)((uintptr_t)&s_payload >> 4), arrsize(s_payload));
+    memset(s_payload, (uint8_t)((uintptr_t)&s_payload >> 4), arrsize(s_payload));
 }
 
 //============================================================================

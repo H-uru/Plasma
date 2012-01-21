@@ -605,7 +605,7 @@ static void StartAuthTcpTest (
     void *                  param
 ) {
     if (0 == AtomicSet(&s_authProtocolRegistered, 1)) {
-        MemSet(
+        memset(
             s_payload,
             (uint8_t)((uintptr_t)&s_payload >> 4),
             sizeof(s_payload)

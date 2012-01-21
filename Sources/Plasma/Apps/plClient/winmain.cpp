@@ -1218,7 +1218,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
                     SaveUserPass (pLoginParam, password);
 
-                    MemSet(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
+                    memset(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
                     bool cancelled = AuthenticateNetClientComm(&pLoginParam->authError, hwndDlg);
 
                     if (IS_NET_SUCCESS(pLoginParam->authError) && !cancelled)
@@ -1547,7 +1547,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     bool                needExit = false;
     LoginDialogParam    loginParam;
-    MemSet(&loginParam, 0, sizeof(loginParam));
+    memset(&loginParam, 0, sizeof(loginParam));
     LoadUserPass(&loginParam);
 
     if (!doIntroDialogs && loginParam.remember) {
