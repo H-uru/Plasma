@@ -193,7 +193,7 @@ void plAGMasterSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         {
             float animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
 
-            plAGCmdMsg *msg = TRACKED_NEW plAGCmdMsg();
+            plAGCmdMsg *msg = new plAGCmdMsg();
             msg->SetCmd(plAGCmdMsg::kSetAnimTime);
             msg->fAnimTime = animTimeFromWorldTime;
             msg->AddReceiver(objAGMaster->fMsgForwarder->GetKey());

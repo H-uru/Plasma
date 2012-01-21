@@ -565,7 +565,7 @@ void SimpleNetStartConnecting (
     ASSERT(s_running);
     ASSERT(onConnect);
     
-    ConnectParam * cp = NEW(ConnectParam);
+    ConnectParam * cp = new ConnectParam;
     cp->callback    = onConnect;
     cp->param       = param;
     

@@ -74,7 +74,7 @@ static const uint32_t kPrintIDs[kNumPrintIDs] =
 int plDynaFootMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
-    fDecals.Append(TRACKED_NEW plDynaSplot());
+    fDecals.Append(new plDynaSplot());
 
     return idx;
 }

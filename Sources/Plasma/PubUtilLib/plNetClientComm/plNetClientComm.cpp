@@ -253,7 +253,7 @@ static void INotifyNewBuildCallback () {
     if (!NetCommGetAge()->ageInstId)
         return;
 
-    pfKIMsg * msg = NEW(pfKIMsg)(pfKIMsg::kHACKChatMsg);
+    pfKIMsg * msg = new pfKIMsg(pfKIMsg::kHACKChatMsg);
     msg->SetString("Uru has been updated. Please quit the game and log back in.");
     msg->SetUser("Updater Service", plNetClientApp::GetInstance()->GetPlayerID());
     msg->SetFlags(pfKIMsg::kAdminMsg);
@@ -293,12 +293,12 @@ static void PlayerInitCallback (
         VaultProcessPlayerInbox();
     }
 
-    plNetCommActivePlayerMsg * msg = NEW(plNetCommActivePlayerMsg);
+    plNetCommActivePlayerMsg * msg = new plNetCommActivePlayerMsg;
     msg->result     = result;
     msg->param      = param;
     msg->Send();
     
-    plAccountUpdateMsg * updateMsg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kActivePlayer);
+    plAccountUpdateMsg * updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kActivePlayer);
     updateMsg->SetPlayerInt(NetCommGetPlayer()->playerInt);
     updateMsg->SetResult((unsigned)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -342,19 +342,19 @@ static void LoginPlayerInitCallback (
         VaultProcessPlayerInbox();
 
     {
-        plNetCommAuthMsg * msg  = NEW(plNetCommAuthMsg);
+        plNetCommAuthMsg * msg  = new plNetCommAuthMsg;
         msg->result             = result;
         msg->param              = param;
         msg->Send();
     }
     {   
-        plNetCommActivePlayerMsg * msg = NEW(plNetCommActivePlayerMsg);
+        plNetCommActivePlayerMsg * msg = new plNetCommActivePlayerMsg;
         msg->result     = result;
         msg->param      = param;
         msg->Send();
     }
     {   
-        plAccountUpdateMsg * msg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kActivePlayer);
+        plAccountUpdateMsg * msg = new plAccountUpdateMsg(plAccountUpdateMsg::kActivePlayer);
         msg->SetPlayerInt(NetCommGetPlayer()->playerInt);
         msg->SetResult((unsigned)result);
         msg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -370,7 +370,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
         s_player = nil;
         
-        plNetCommAuthMsg * msg  = NEW(plNetCommAuthMsg);
+        plNetCommAuthMsg * msg  = new plNetCommAuthMsg;
         msg->result             = result;
         msg->param              = param;
         msg->Send();
@@ -473,7 +473,7 @@ static void INetCliAuthCreatePlayerRequestCallback (
         }}
     }
 
-    plAccountUpdateMsg* updateMsg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kCreatePlayer);
+    plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kCreatePlayer);
     updateMsg->SetPlayerInt(playerInfo.playerInt);
     updateMsg->SetResult((unsigned)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -510,7 +510,7 @@ static void INetCliAuthDeletePlayerCallback (
         }}
     }
 
-    plAccountUpdateMsg* updateMsg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kDeletePlayer);
+    plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kDeletePlayer);
     updateMsg->SetPlayerInt(playerInt);
     updateMsg->SetResult((unsigned)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -529,7 +529,7 @@ static void INetCliAuthChangePasswordCallback (
         LogMsg(kLogDebug, L"Password changed!");
     }
 
-    plAccountUpdateMsg* updateMsg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kChangePassword);
+    plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kChangePassword);
     updateMsg->SetPlayerInt(0);
     updateMsg->SetResult((unsigned)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -561,7 +561,7 @@ static void INetAuthFileListRequestCallback (
     const NetCliAuthFileInfo    infoArr[],
     unsigned                    infoCount
 ) {
-    plNetCommFileListMsg * msg = NEW(plNetCommFileListMsg);
+    plNetCommFileListMsg * msg = new plNetCommFileListMsg;
     msg->result = result;
     msg->param  = param;
     msg->fileInfoArr.Set(infoArr, infoCount);
@@ -575,7 +575,7 @@ static void INetCliAuthFileRequestCallback (
     const wchar_t     filename[],
     hsStream *      writer
 ) {
-    plNetCommFileDownloadMsg * msg = NEW(plNetCommFileDownloadMsg);
+    plNetCommFileDownloadMsg * msg = new plNetCommFileDownloadMsg;
     msg->result = result;
     msg->writer = writer;
     StrCopy(msg->filename, filename, arrsize(filename));
@@ -587,7 +587,7 @@ static void INetCliGameJoinAgeRequestCallback (
     ENetError       result,
     void *          param
 ) {
-    plNetCommLinkToAgeMsg * msg = NEW(plNetCommLinkToAgeMsg);
+    plNetCommLinkToAgeMsg * msg = new plNetCommLinkToAgeMsg;
     msg->result     = result;
     msg->param      = param;
     msg->Send();
@@ -654,7 +654,7 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
         }}
     }
 
-    plAccountUpdateMsg* updateMsg = TRACKED_NEW plAccountUpdateMsg(plAccountUpdateMsg::kUpgradePlayer);
+    plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kUpgradePlayer);
     updateMsg->SetPlayerInt(playerInt);
     updateMsg->SetResult((unsigned)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -666,7 +666,7 @@ static void INetCliAuthSendFriendInviteCallback (
     ENetError       result,
     void *          param
 ) {
-    pfKIMsg* kiMsg = TRACKED_NEW pfKIMsg(pfKIMsg::kFriendInviteSent);
+    pfKIMsg* kiMsg = new pfKIMsg(pfKIMsg::kFriendInviteSent);
     kiMsg->SetIntValue((int32_t)result);
     kiMsg->Send();
 }
@@ -834,7 +834,7 @@ static void IReadNetIni() {
 #endif
 
     // Set startup age info
-    ZERO(s_startupAge);
+    memset(&s_startupAge, 0, sizeof(s_startupAge));
 
     if (StrLen(s_iniStartupAgeName) == 0)
         StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
@@ -1157,7 +1157,7 @@ void NetCommAddMsgHandlerForExactType (
     ASSERT(!state || (state && state != kNetCommAllUserStates));
 
     NetCommRemoveMsgHandler(msgClassIdx, proc, state);
-    NetCommMsgHandler * handler = NEW(NetCommMsgHandler)(msgClassIdx, proc, state);
+    NetCommMsgHandler * handler = new NetCommMsgHandler(msgClassIdx, proc, state);
 
     s_handlers.Add(handler);
 }
@@ -1272,7 +1272,7 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
     s_age = age;
 
     if (plNetClientMgr::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
-        plNetCommLinkToAgeMsg * msg = NEW(plNetCommLinkToAgeMsg);
+        plNetCommLinkToAgeMsg * msg = new plNetCommLinkToAgeMsg;
         msg->result     = kNetSuccess;
         msg->param      = nil;
         msg->Send();
@@ -1399,7 +1399,7 @@ void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype
 ) {
-    NetCommParam * cp = NEW(NetCommParam);
+    NetCommParam * cp = new NetCommParam;
     cp->param   = param;
     cp->type    = ptype;
     

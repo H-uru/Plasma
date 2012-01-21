@@ -206,7 +206,7 @@ void CThreadDispObject::Close () {
 //===========================================================================
 AsyncId CThreadDispObject::Queue (void * op) {
     AsyncId asyncId = 0;
-    NEW(CThreadDispRec)(this, op, &asyncId);
+    new CThreadDispRec(this, op, &asyncId);
     SetEvent(s_signalEvent);
     return asyncId;
 }

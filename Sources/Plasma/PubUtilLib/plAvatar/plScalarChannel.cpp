@@ -111,7 +111,7 @@ plAGChannel * plScalarChannel::MakeBlend(plAGChannel * channelB,
 
     if (chanB)
     {
-        result = TRACKED_NEW plScalarBlend(this, chanB, chanBias);
+        result = new plScalarBlend(this, chanB, chanBias);
     } else {
         hsStatusMessage("Blend operation failed.");
     }
@@ -122,14 +122,14 @@ plAGChannel * plScalarChannel::MakeBlend(plAGChannel * channelB,
 // --------------
 plAGChannel * plScalarChannel::MakeZeroState()
 {
-    return TRACKED_NEW plScalarConstant(Value(0));
+    return new plScalarConstant(Value(0));
 }
 
 // MakeTimeScale --------------------------------------------------------
 // --------------
 plAGChannel * plScalarChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plScalarTimeScale(this, timeSource);
+    return new plScalarTimeScale(this, timeSource);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +373,7 @@ plAGChannel *plScalarControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plScalarControllerCacheChannel(this, cache);
+    return new plScalarControllerCacheChannel(this, cache);
 }
 
 // Write -------------------------------------------------------------

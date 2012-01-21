@@ -250,7 +250,7 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
         newDraw = toAddTo;
     else
     {
-        newDraw = TRACKED_NEW plDrawableSpans;
+        newDraw = new plDrawableSpans;
 //      newDraw->SetNativeProperty( plDrawable::kPropVolatile, true );
         if( blended )
         {
@@ -266,7 +266,7 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
 
     // Create a temp plGeometrySpan
     spanArray.SetCount( 1 );
-    span = spanArray[ 0 ] = TRACKED_NEW plGeometrySpan;
+    span = spanArray[ 0 ] = new plGeometrySpan;
 
     IFillSpan( vertCount, positions, normals, 
                                 uvws, uvwsPerVtx, 

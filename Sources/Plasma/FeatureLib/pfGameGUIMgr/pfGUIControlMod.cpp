@@ -246,7 +246,7 @@ static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
     // Step 2: Sort all the in points by the angle to the X axis (vector <1,0>).
     //   Step A: Calculate all the angles
 
-    angles = TRACKED_NEW float[ numPoints ];
+    angles = new float[ numPoints ];
     hsPoint3    xAxisPoint( avgPoint.fX + 1, avgPoint.fY, avgPoint.fZ );
     for( i = 0; i < numPoints; i++ )
         angles[ i ] = GetVectorAngle( avgPoint, inPoints[ i ], xAxisPoint );
@@ -737,8 +737,8 @@ void    pfGUIControlMod::SetColorScheme( pfGUIColorScheme *newScheme )
 
 void    pfGUIControlMod::SetDynTextMap( plLayerInterface *layer, plDynamicTextMap *dynText )
 {
-    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefDynTextLayer ), plRefFlags::kActiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( dynText->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefDynTextMap ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefDynTextLayer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( dynText->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefDynTextMap ), plRefFlags::kActiveRef );
 }
 
 //// SetEnabled //////////////////////////////////////////////////////////////
@@ -788,7 +788,7 @@ void    pfGUIControlMod::SetVisible( hsBool vis )
     fVisible = vis;
     if (fTarget)
     {
-        plEnableMsg *msg = TRACKED_NEW plEnableMsg();
+        plEnableMsg *msg = new plEnableMsg();
         msg->SetCmd( fVisible ? plEnableMsg::kEnable : plEnableMsg::kDisable );
         msg->SetCmd( plEnableMsg::kDrawable );
         msg->AddReceiver( fTarget->GetKey() );
@@ -818,8 +818,8 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     // Read in the dynTextMap if there is one
     if( s->ReadBool() )
     {
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDynTextLayer ), plRefFlags::kActiveRef );
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDynTextMap ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDynTextLayer ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDynTextMap ), plRefFlags::kActiveRef );
     }
     else
     {
@@ -830,7 +830,7 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     if( s->ReadBool() )
     {
         SetColorScheme( nil );
-        fColorScheme = TRACKED_NEW pfGUIColorScheme();
+        fColorScheme = new pfGUIColorScheme();
         fColorScheme->Read( s );
     }
 
@@ -846,9 +846,9 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     }
 
     if( HasFlag( kHasProxy ) )
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefProxy ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefProxy ), plRefFlags::kActiveRef );
 
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
 }
 
 void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
@@ -984,7 +984,7 @@ void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, hsBool loop /* = fals
     if( GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
         return;
 
-    plSoundMsg  *msg = TRACKED_NEW plSoundMsg;
+    plSoundMsg  *msg = new plSoundMsg;
     msg->fIndex = fSoundIndices[ guiCtrlEvent ] - 1;
     msg->SetCmd( plSoundMsg::kGoToTime );
     msg->fTime = 0.f;
@@ -1005,7 +1005,7 @@ void    pfGUIControlMod::IStopSound(uint8_t guiCtrlEvent)
     if (GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
         return;
 
-    plSoundMsg *msg = TRACKED_NEW plSoundMsg;
+    plSoundMsg *msg = new plSoundMsg;
     msg->fIndex = fSoundIndices[guiCtrlEvent] - 1;
     msg->SetCmd(plSoundMsg::kStop);
     msg->Send(GetTarget()->GetAudioInterface()->GetKey());

@@ -56,7 +56,7 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&len);
     if (len)
     {
-        fAgeFilename=TRACKED_NEW char[len+1];
+        fAgeFilename=new char[len+1];
         stream->Read(len, fAgeFilename);
         fAgeFilename[len]=0;
     }

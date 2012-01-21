@@ -111,9 +111,9 @@ void    plDynSurfaceWriter::plWinSurface::Allocate( uint16_t w, uint16_t h )
 
     /// Initialize a bitmap info struct to describe our surface
     if( IBitsPerPixel() == 8 )
-        bmi = (BITMAPINFO *)( TRACKED_NEW uint8_t[ sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * 256 ] );
+        bmi = (BITMAPINFO *)( new uint8_t[ sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * 256 ] );
     else
-        bmi = TRACKED_NEW BITMAPINFO;
+        bmi = new BITMAPINFO;
 
     memset( &bmi->bmiHeader, 0, sizeof( BITMAPINFOHEADER ) );
     bmi->bmiHeader.biSize = sizeof( BITMAPINFOHEADER );

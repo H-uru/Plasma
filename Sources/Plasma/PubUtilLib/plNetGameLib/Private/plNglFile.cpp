@@ -1192,7 +1192,7 @@ bool DownloadRequestTrans::Recv (
     // we have data to write, so queue it for write in the main thread (we're
     // currently in a net recv thread)
     if (byteCount > 0) {
-        RcvdFileDownloadChunkTrans * writeTrans = NEW(RcvdFileDownloadChunkTrans);
+        RcvdFileDownloadChunkTrans * writeTrans = new RcvdFileDownloadChunkTrans;
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = byteCount;
         writeTrans->data    = (uint8_t *)malloc(byteCount);
@@ -1423,7 +1423,7 @@ void NetCliFileBuildIdRequest (
     FNetCliFileBuildIdRequestCallback   callback,
     void *                              param
 ) {
-    BuildIdRequestTrans * trans = NEW(BuildIdRequestTrans)(
+    BuildIdRequestTrans * trans = new BuildIdRequestTrans(
         callback,
         param
     );
@@ -1442,7 +1442,7 @@ void NetCliFileManifestRequest (
     const wchar_t                         group[],
     unsigned                            buildId /* = 0 */
 ) {
-    ManifestRequestTrans * trans = NEW(ManifestRequestTrans)(
+    ManifestRequestTrans * trans = new ManifestRequestTrans(
         callback,
         param,
         group,
@@ -1459,7 +1459,7 @@ void NetCliFileDownloadRequest (
     void *                              param,
     unsigned                            buildId /* = 0 */
 ) {
-    DownloadRequestTrans * trans = NEW(DownloadRequestTrans)(
+    DownloadRequestTrans * trans = new DownloadRequestTrans(
         callback,
         param,
         filename,

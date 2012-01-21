@@ -239,7 +239,7 @@ void plNetMsgStreamHelper::IAllocStream(uint32_t len)
     fStreamBuf=nil;
     fStreamLen=len;
     if (len)
-        fStreamBuf = TRACKED_NEW uint8_t[len];
+        fStreamBuf = new uint8_t[len];
 }
 
 void plNetMsgStreamHelper::CopyStream(hsStream* ssStream)
@@ -435,7 +435,7 @@ int plNetMsgObjectListHelper::Peek(hsStream* stream, const uint32_t peekOptions)
     int i;
     for( i=0 ;i<num  ;i++  )
     {
-        fObjects.push_back(TRACKED_NEW plNetMsgObjectHelper);
+        fObjects.push_back(new plNetMsgObjectHelper);
         GetObject(i)->Peek(stream, peekOptions);
     } // for         
     stream->LogSubStreamEnd();
@@ -489,7 +489,7 @@ int plNetMsgMemberListHelper::Peek(hsStream* stream, const uint32_t peekOptions)
     int i;
     for(i=0;i<numMembers;i++)
     {
-        plNetMsgMemberInfoHelper* addr=TRACKED_NEW plNetMsgMemberInfoHelper;
+        plNetMsgMemberInfoHelper* addr=new plNetMsgMemberInfoHelper;
         addr->Peek(stream, peekOptions);
         AddMember(addr);
     }

@@ -112,7 +112,7 @@ void plAGMasterMod::Read(hsStream * stream, hsResMgr *mgr)
 
     //////////////////////////////////////////
     int nameLength = stream->ReadLE32();  // Unused. Nuke next format change.
-    char *junk = TRACKED_NEW char[nameLength+1];    //
+    char *junk = new char[nameLength+1];    //
     stream->Read(nameLength, junk);         //
     junk[nameLength] = 0;                   //
     delete [] junk;                         //
@@ -123,14 +123,14 @@ void plAGMasterMod::Read(hsStream * stream, hsResMgr *mgr)
     int i;
     for (i = 0; i < numPrivateAnims; i++)
     {
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPrivateAnim);
+        plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPrivateAnim);
         mgr->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
     fIsGrouped = stream->Readbool();
     fIsGroupMaster = stream->Readbool();
     if (fIsGroupMaster)
     {
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0);
+        plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0);
         mgr->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
 
@@ -183,7 +183,7 @@ void plAGMasterMod::AddTarget(plSceneObject * object)
     {
         // add sdl modifier
         delete fAGMasterSDLMod;
-        fAGMasterSDLMod = TRACKED_NEW plAGMasterSDLModifier;
+        fAGMasterSDLMod = new plAGMasterSDLModifier;
         object->AddModifier(fAGMasterSDLMod);
     }
 }
@@ -347,7 +347,7 @@ plAGModifier * plAGMasterMod::GetChannelMod(const char * name, hsBool dontCache 
 // CACHECHANNELMOD
 plAGModifier * plAGMasterMod::ICacheChannelMod(plAGModifier *mod) const
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0);
     hsgResMgr::ResMgr()->SendRef(mod, msg, plRefFlags::kActiveRef);
     
     return mod;
@@ -403,10 +403,10 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
         }
         if (i == fPrivateAnims.end()) // Didn't find it. Ref it!
         {
-            plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPublicAnim);
+            plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPublicAnim);
             hsgResMgr::ResMgr()->SendRef(anim, msg, plRefFlags::kActiveRef);
         }
-        instance = TRACKED_NEW plAGAnimInstance(anim, this, blendFactor, blendPriority, cache, false);
+        instance = new plAGAnimInstance(anim, this, blendFactor, blendPriority, cache, false);
         fAnimInstances.push_back(instance);
 
         plATCAnim *atcAnim = plATCAnim::ConvertNoRef(anim);
@@ -450,7 +450,7 @@ void plAGMasterMod::PlaySimpleAnim(const char *name)
         instance->SetLoop(false);
         instance->Start();
 
-        plAGDetachCallbackMsg *msg = TRACKED_NEW plAGDetachCallbackMsg(GetKey(), kStop); 
+        plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), kStop); 
         msg->SetAnimName(name);
         instance->GetTimeConvert()->AddCallback(msg);
         hsRefCnt_SafeUnRef(msg);

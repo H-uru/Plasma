@@ -73,7 +73,7 @@ void hsBitVector::IGrow(uint32_t newNumBitVectors)
 {
     hsAssert(newNumBitVectors > fNumBitVectors, "Growing smaller");
     uint32_t *old = fBitVectors;
-    fBitVectors = TRACKED_NEW uint32_t[newNumBitVectors];
+    fBitVectors = new uint32_t[newNumBitVectors];
     int i;
     for( i = 0; i < fNumBitVectors; i++ )
         fBitVectors[i] = old[i];
@@ -96,7 +96,7 @@ hsBitVector& hsBitVector::Compact()
     if( hiVec >= 0 )
     {
         uint32_t *old = fBitVectors;
-        fBitVectors = TRACKED_NEW uint32_t[++hiVec];
+        fBitVectors = new uint32_t[++hiVec];
         int i;
         for( i = 0; i < hiVec; i++ )
             fBitVectors[i] = old[i];
@@ -119,7 +119,7 @@ void hsBitVector::Read(hsStream* s)
     if( fNumBitVectors )
     {
         delete [] fBitVectors;
-        fBitVectors = TRACKED_NEW uint32_t[fNumBitVectors];
+        fBitVectors = new uint32_t[fNumBitVectors];
         int i;
         for( i = 0; i < fNumBitVectors; i++ )
             s->LogReadLE(&fBitVectors[i],"BitVector");

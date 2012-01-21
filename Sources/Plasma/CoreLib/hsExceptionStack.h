@@ -83,7 +83,7 @@ inline hsExceptionStack& hsExceptionStack::Instance()
 {
     if (!fExceptionStack)
     {
-        fExceptionStack = TRACKED_NEW hsExceptionStack;
+        fExceptionStack = new hsExceptionStack;
     }
 
     return *fExceptionStack;

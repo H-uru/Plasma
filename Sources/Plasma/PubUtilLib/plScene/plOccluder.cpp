@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plOccluder::plOccluder()
 :   fSceneNode(nil)
 {
-    fProxyGen = TRACKED_NEW plOccluderProxy;
+    fProxyGen = new plOccluderProxy;
     fProxyGen->Init(this);
 
     fVisSet.SetBit(0);
@@ -271,7 +271,7 @@ void plOccluder::ISetSceneNode(plKey node)
     {
         if( node )
         {
-            plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kOccluder);
+            plNodeRefMsg* refMsg = new plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kOccluder);
             hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
         if( fSceneNode )
@@ -302,7 +302,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     n = s->ReadLE16();
     fVisRegions.SetCountAndZero(n);
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisRegion), plRefFlags::kActiveRef);
 }
 
 void plOccluder::Write(hsStream* s, hsResMgr* mgr)

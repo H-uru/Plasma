@@ -225,7 +225,7 @@ void plSimpleStateVariable::IDeAlloc()
 
 #define SDLALLOC(typeName, type, var)   \
     case typeName:  \
-        var = TRACKED_NEW type[cnt];    \
+        var = new type[cnt];    \
         break;
 
 void plSimpleStateVariable::Alloc(int listSize)
@@ -251,13 +251,13 @@ void plSimpleStateVariable::Alloc(int listSize)
         SDLALLOC(plVarDescriptor::kBool, bool, fB)
         SDLALLOC(plVarDescriptor::kCreatable, plCreatable*, fC)
         case plVarDescriptor::kTime:
-            fT = TRACKED_NEW plClientUnifiedTime[cnt];
+            fT = new plClientUnifiedTime[cnt];
             break;
         case plVarDescriptor::kKey:
-            fU = TRACKED_NEW plUoid[cnt];
+            fU = new plUoid[cnt];
             break;
         case plVarDescriptor::kString32:
-            fS32 = TRACKED_NEW plVarDescriptor::String32[cnt];
+            fS32 = new plVarDescriptor::String32[cnt];
             break;
         default:
             hsAssert(false, "undefined atomic type");
@@ -538,7 +538,7 @@ bool plSimpleStateVariable::IConvertFromRGB(plVarDescriptor::Type newType)
         {
             // rgb to rgba
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*4];     // make more space
+            float* newF = new float[fVar.GetCount()*4];     // make more space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -554,7 +554,7 @@ bool plSimpleStateVariable::IConvertFromRGB(plVarDescriptor::Type newType)
         {
             // rgb to rgba8
             int i,j;
-            uint8_t * newB = TRACKED_NEW uint8_t [fVar.GetCount()*4];     // make more space
+            uint8_t * newB = new uint8_t [fVar.GetCount()*4];     // make more space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -570,7 +570,7 @@ bool plSimpleStateVariable::IConvertFromRGB(plVarDescriptor::Type newType)
         {
             // rgb to rgb8
             int i,j;
-            uint8_t * newB = TRACKED_NEW uint8_t [fVar.GetCount()*3];     // make space
+            uint8_t * newB = new uint8_t [fVar.GetCount()*3];     // make space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -595,7 +595,7 @@ bool plSimpleStateVariable::IConvertFromRGB8(plVarDescriptor::Type newType)
         {
             // rgb8 to rgba
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*4];     // make more space
+            float* newF = new float[fVar.GetCount()*4];     // make more space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -611,7 +611,7 @@ bool plSimpleStateVariable::IConvertFromRGB8(plVarDescriptor::Type newType)
         {
             // rgb8 to rgb
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*3];     // make more space
+            float* newF = new float[fVar.GetCount()*3];     // make more space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -626,7 +626,7 @@ bool plSimpleStateVariable::IConvertFromRGB8(plVarDescriptor::Type newType)
         {
             // rgb8 to rgba8
             int i,j;
-            uint8_t * newB = TRACKED_NEW uint8_t [fVar.GetCount()*4];     // make more space
+            uint8_t * newB = new uint8_t [fVar.GetCount()*4];     // make more space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy with alpha=0 by default
@@ -655,7 +655,7 @@ bool plSimpleStateVariable::IConvertFromRGBA(plVarDescriptor::Type newType)
         {
             // rgba to rgb
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*3];     // make less space
+            float* newF = new float[fVar.GetCount()*3];     // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -670,7 +670,7 @@ bool plSimpleStateVariable::IConvertFromRGBA(plVarDescriptor::Type newType)
         {
             // rgba to rgb8
             int i,j;
-            uint8_t* newB = TRACKED_NEW uint8_t[fVar.GetCount()*3];       // make less space
+            uint8_t* newB = new uint8_t[fVar.GetCount()*3];       // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -685,7 +685,7 @@ bool plSimpleStateVariable::IConvertFromRGBA(plVarDescriptor::Type newType)
         {
             // rgba to rgba8
             int i,j;
-            uint8_t* newBy = TRACKED_NEW uint8_t [fVar.GetCount()*4];     // make less space
+            uint8_t* newBy = new uint8_t [fVar.GetCount()*4];     // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -713,7 +713,7 @@ bool plSimpleStateVariable::IConvertFromRGBA8(plVarDescriptor::Type newType)
         {
             // rgba8 to rgb
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*3];     // make less space
+            float* newF = new float[fVar.GetCount()*3];     // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -728,7 +728,7 @@ bool plSimpleStateVariable::IConvertFromRGBA8(plVarDescriptor::Type newType)
         {
             // rgba8 to rgb8
             int i,j;
-            uint8_t* newB = TRACKED_NEW uint8_t[fVar.GetCount()*3];       // make less space
+            uint8_t* newB = new uint8_t[fVar.GetCount()*3];       // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -743,7 +743,7 @@ bool plSimpleStateVariable::IConvertFromRGBA8(plVarDescriptor::Type newType)
         {
             // rgba8 to rgba
             int i,j;
-            float* newF = TRACKED_NEW float[fVar.GetCount()*4];     // make less space
+            float* newF = new float[fVar.GetCount()*4];     // make less space
             for(j=0;j<fVar.GetCount(); j++)
             {
                 // recopy and ignore alpha
@@ -771,7 +771,7 @@ bool plSimpleStateVariable::IConvertFromInt(plVarDescriptor::Type newType)
     case plVarDescriptor::kFloat:
         {
             // int to float
-            float* newF = TRACKED_NEW float[fVar.GetCount()];
+            float* newF = new float[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newF[j] = (float)(fI[j]);
             delete [] fI;
@@ -781,7 +781,7 @@ bool plSimpleStateVariable::IConvertFromInt(plVarDescriptor::Type newType)
     case plVarDescriptor::kShort:
         {
             // int to short
-            short* newS = TRACKED_NEW short[fVar.GetCount()];
+            short* newS = new short[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newS[j] = short(fI[j]);
             delete [] fI;
@@ -791,7 +791,7 @@ bool plSimpleStateVariable::IConvertFromInt(plVarDescriptor::Type newType)
     case plVarDescriptor::kByte:
         {
             // int to byte
-            uint8_t* newBy = TRACKED_NEW uint8_t[fVar.GetCount()];
+            uint8_t* newBy = new uint8_t[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newBy[j] = uint8_t(fI[j]);
             delete [] fI;
@@ -801,7 +801,7 @@ bool plSimpleStateVariable::IConvertFromInt(plVarDescriptor::Type newType)
     case plVarDescriptor::kDouble:
         {
             // int to double
-            double * newD = TRACKED_NEW double[fVar.GetCount()];
+            double * newD = new double[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newD[j] = fI[j];
             delete [] fI;
@@ -811,7 +811,7 @@ bool plSimpleStateVariable::IConvertFromInt(plVarDescriptor::Type newType)
     case plVarDescriptor::kBool:
         {
             // int to bool
-            bool * newB = TRACKED_NEW bool[fVar.GetCount()];
+            bool * newB = new bool[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newB[j] = (fI[j]!=0);
             delete [] fI;
@@ -834,7 +834,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
     {
     case plVarDescriptor::kFloat:
         {
-            float* newF = TRACKED_NEW float[fVar.GetCount()];
+            float* newF = new float[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newF[j] = fS[j];
             delete [] fS;
@@ -843,7 +843,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kInt:
         {
-            int* newI = TRACKED_NEW int[fVar.GetCount()];
+            int* newI = new int[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newI[j] = short(fS[j]);
             delete [] fS;
@@ -851,7 +851,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
         }
     case plVarDescriptor::kByte:
         {
-            uint8_t* newBy = TRACKED_NEW uint8_t[fVar.GetCount()];
+            uint8_t* newBy = new uint8_t[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newBy[j] = uint8_t(fS[j]);
             delete [] fS;
@@ -860,7 +860,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kDouble:
         {
-            double * newD = TRACKED_NEW double[fVar.GetCount()];
+            double * newD = new double[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newD[j] = fS[j];
             delete [] fS;
@@ -869,7 +869,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kBool:
         {
-            bool * newB = TRACKED_NEW bool[fVar.GetCount()];
+            bool * newB = new bool[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newB[j] = (fS[j]!=0);
             delete [] fS;
@@ -892,7 +892,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
     {
     case plVarDescriptor::kFloat:
         {
-            float* newF = TRACKED_NEW float[fVar.GetCount()];
+            float* newF = new float[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newF[j] = fBy[j];
             delete [] fBy;
@@ -901,7 +901,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kInt:
         {
-            int* newI = TRACKED_NEW int[fVar.GetCount()];
+            int* newI = new int[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newI[j] = short(fBy[j]);
             delete [] fBy;
@@ -909,7 +909,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
         }
     case plVarDescriptor::kShort:
         {
-            short* newS = TRACKED_NEW short[fVar.GetCount()];
+            short* newS = new short[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newS[j] = fBy[j];
             delete [] fBy;
@@ -918,7 +918,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kDouble:
         {
-            double * newD = TRACKED_NEW double[fVar.GetCount()];
+            double * newD = new double[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newD[j] = fBy[j];
             delete [] fBy;
@@ -927,7 +927,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kBool:
         {
-            bool * newB = TRACKED_NEW bool[fVar.GetCount()];
+            bool * newB = new bool[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newB[j] = (fBy[j]!=0);
             delete [] fBy;
@@ -950,7 +950,7 @@ bool plSimpleStateVariable::IConvertFromFloat(plVarDescriptor::Type newType)
     {
     case plVarDescriptor::kInt:
         {
-            int* newI = TRACKED_NEW int[fVar.GetCount()];
+            int* newI = new int[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newI[j] = (int)(fF[j]+.5f); // round to nearest int
             delete [] fF;
@@ -959,7 +959,7 @@ bool plSimpleStateVariable::IConvertFromFloat(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kShort:
         {
-            short* newS = TRACKED_NEW short[fVar.GetCount()];
+            short* newS = new short[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newS[j] = (short)(fF[j]+.5f);   // round to nearest int
             delete [] fF;
@@ -968,7 +968,7 @@ bool plSimpleStateVariable::IConvertFromFloat(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kByte:
         {
-            uint8_t* newBy = TRACKED_NEW uint8_t[fVar.GetCount()];
+            uint8_t* newBy = new uint8_t[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newBy[j] = (uint8_t)(fF[j]+.5f);   // round to nearest int
             delete [] fF;
@@ -977,7 +977,7 @@ bool plSimpleStateVariable::IConvertFromFloat(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kDouble:
         {
-            double* newD = TRACKED_NEW double[fVar.GetCount()];
+            double* newD = new double[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newD[j] = fF[j];
             delete [] fF;
@@ -986,7 +986,7 @@ bool plSimpleStateVariable::IConvertFromFloat(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kBool:
         {
-            bool* newB = TRACKED_NEW bool[fVar.GetCount()];
+            bool* newB = new bool[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newB[j] = (fF[j]!=0);
             delete [] fF;
@@ -1009,7 +1009,7 @@ bool plSimpleStateVariable::IConvertFromDouble(plVarDescriptor::Type newType)
     {
     case plVarDescriptor::kInt:
         {
-            int* newI = TRACKED_NEW int[fVar.GetCount()];
+            int* newI = new int[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newI[j] = (int)(fD[j]+.5f); // round to nearest int
             delete [] fD;
@@ -1018,7 +1018,7 @@ bool plSimpleStateVariable::IConvertFromDouble(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kShort:
         {
-            short* newS = TRACKED_NEW short[fVar.GetCount()];
+            short* newS = new short[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newS[j] = (short)(fD[j]+.5f);   // round to nearest int
             delete [] fD;
@@ -1027,7 +1027,7 @@ bool plSimpleStateVariable::IConvertFromDouble(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kByte:
         {
-            uint8_t* newBy = TRACKED_NEW uint8_t[fVar.GetCount()];
+            uint8_t* newBy = new uint8_t[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newBy[j] = (uint8_t)(fD[j]+.5f);   // round to nearest int
             delete [] fD;
@@ -1036,7 +1036,7 @@ bool plSimpleStateVariable::IConvertFromDouble(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kFloat:
         {
-            float* newF = TRACKED_NEW float[fVar.GetCount()];
+            float* newF = new float[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newF[j] = (float)(fD[j]);
             delete [] fD;
@@ -1045,7 +1045,7 @@ bool plSimpleStateVariable::IConvertFromDouble(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kBool:
         {
-            bool* newB = TRACKED_NEW bool[fVar.GetCount()];
+            bool* newB = new bool[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newB[j] = (fD[j]!=0);
             delete [] fD;
@@ -1068,7 +1068,7 @@ bool plSimpleStateVariable::IConvertFromBool(plVarDescriptor::Type newType)
     {
     case plVarDescriptor::kInt:
         {
-            int* newI = TRACKED_NEW int[fVar.GetCount()];
+            int* newI = new int[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newI[j] = (fB[j] == true ? 1 : 0);
             delete [] fB;
@@ -1077,7 +1077,7 @@ bool plSimpleStateVariable::IConvertFromBool(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kShort:
         {
-            short* newS = TRACKED_NEW short[fVar.GetCount()];
+            short* newS = new short[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newS[j] = (fB[j] == true ? 1 : 0);
             delete [] fB;
@@ -1086,7 +1086,7 @@ bool plSimpleStateVariable::IConvertFromBool(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kByte:
         {
-            uint8_t* newBy = TRACKED_NEW uint8_t[fVar.GetCount()];
+            uint8_t* newBy = new uint8_t[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newBy[j] = (fB[j] == true ? 1 : 0);
             delete [] fB;
@@ -1095,7 +1095,7 @@ bool plSimpleStateVariable::IConvertFromBool(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kFloat:
         {
-            float* newF = TRACKED_NEW float[fVar.GetCount()];
+            float* newF = new float[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newF[j] = (fB[j] == true ? 1.f : 0.f);
             delete [] fB;
@@ -1104,7 +1104,7 @@ bool plSimpleStateVariable::IConvertFromBool(plVarDescriptor::Type newType)
         break;
     case plVarDescriptor::kDouble:
         {
-            double* newD= TRACKED_NEW double[fVar.GetCount()];
+            double* newD= new double[fVar.GetCount()];
             for(j=0;j<fVar.GetCount(); j++)
                 newD[j] = (fB[j] == true ? 1.f : 0.f);
             delete [] fB;
@@ -1948,7 +1948,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, u
                 }
                 else
                 {
-                    plSDLCreatableStub* stub = TRACKED_NEW plSDLCreatableStub(hClass, len);
+                    plSDLCreatableStub* stub = new plSDLCreatableStub(hClass, len);
                     fC[j] = stub;
                 }
                 fC[j]->Read(s, hsgResMgr::ResMgr());    // data         
@@ -2419,7 +2419,7 @@ void plSDStateVariable::Resize(int cnt)
     {
         int i;
         for(i=origCnt;i<cnt;i++)
-            fDataRecList[i] = TRACKED_NEW plStateDataRecord(fVarDescriptor->GetStateDescriptor());
+            fDataRecList[i] = new plStateDataRecord(fVarDescriptor->GetStateDescriptor());
     }
 
     SetDirty(true);
@@ -2445,7 +2445,7 @@ void plSDStateVariable::Alloc(plSDVarDescriptor* sdvd, int listSize)
     {
         if (fVarDescriptor==nil)
         {
-            fVarDescriptor = TRACKED_NEW plSDVarDescriptor;
+            fVarDescriptor = new plSDVarDescriptor;
             fVarDescriptor->CopyFrom(sdvd);
         }
 
@@ -2453,7 +2453,7 @@ void plSDStateVariable::Alloc(plSDVarDescriptor* sdvd, int listSize)
         fDataRecList.resize(cnt); 
         int j;
         for (j=0;j<cnt; j++)
-            InsertStateDataRecord(TRACKED_NEW plStateDataRecord(sdvd->GetStateDescriptor()), j);
+            InsertStateDataRecord(new plStateDataRecord(sdvd->GetStateDescriptor()), j);
     }
 }
 

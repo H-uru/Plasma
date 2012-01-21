@@ -134,7 +134,7 @@ PyObject* pyKey::GetPySceneObject()
 void pyKey::IEnable(hsBool state)
 {
     // create message
-    plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+    plEnableMsg* pMsg = new plEnableMsg;
     if (fNetForce )
     {
         // set the network propagate flag to make sure it gets to the other clients

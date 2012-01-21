@@ -113,7 +113,7 @@ plWalkingController::plWalkingController(plSceneObject* rootObject, plAGApplicat
 {
     if (fController)
     {
-        fWalkingStrategy= TRACKED_NEW plWalkingStrategy(fController);
+        fWalkingStrategy= new plWalkingStrategy(fController);
         fController->SetMovementSimulationInterface(fWalkingStrategy);
     }
     else
@@ -178,7 +178,7 @@ void plWalkingController::Reset(bool newAge)
     }
     else
     {   
-        fWalkingStrategy= TRACKED_NEW plWalkingStrategy(fController);
+        fWalkingStrategy= new plWalkingStrategy(fController);
         fWalkingStrategy->RefreshConnectionToControllerCore();
 
     }
@@ -404,7 +404,7 @@ plSwimmingController::plSwimmingController(plSceneObject* rootObject, plAGApplic
 :plAnimatedController(rootObject,rootApp,controller)
 {
     if (controller)
-        fSwimmingStrategy= TRACKED_NEW plSwimStrategy(controller);
+        fSwimmingStrategy= new plSwimStrategy(controller);
     else
         fSwimmingStrategy = nil;
 }
@@ -417,7 +417,7 @@ plRidingAnimatedPhysicalController::plRidingAnimatedPhysicalController(plSceneOb
 : plWalkingController(rootObject, rootApp, controller)
 {
     if(controller)
-        fWalkingStrategy = TRACKED_NEW plRidingAnimatedPhysicalStrategy(controller);
+        fWalkingStrategy = new plRidingAnimatedPhysicalStrategy(controller);
     else
         fWalkingStrategy = nil;
 }

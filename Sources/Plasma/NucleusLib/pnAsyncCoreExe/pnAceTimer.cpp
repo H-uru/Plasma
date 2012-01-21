@@ -253,7 +253,7 @@ void AsyncTimerCreate (
     ASSERT(timerProc);
 
     // Allocate timer outside critical section
-    AsyncTimer * t  = NEW(AsyncTimer);
+    AsyncTimer * t  = new AsyncTimer;
     t->timerProc    = timerProc;
     t->destroyProc  = nil;
     t->param        = param;

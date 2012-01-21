@@ -86,7 +86,7 @@ void plViewFaceModifier::Read(hsStream* s, hsResMgr* mgr)
     fOrigParentToLocal.Read(s);
 
     if( HasFlag(kFaceObj) )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefFaceObj), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 
     fOffset.Read(s);
 
@@ -390,7 +390,7 @@ void plViewFaceModifier::IOnRemove(plGenRefMsg* refMsg)
 
 void plViewFaceModifier::ISetObject(plKey soKey)
 {
-    hsgResMgr::ResMgr()->SendRef(soKey, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(soKey, new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 }
 
 void plViewFaceModifier::SetFollowMode(FollowMode m, plKey soKey)

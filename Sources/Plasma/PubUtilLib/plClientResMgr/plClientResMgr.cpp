@@ -61,7 +61,7 @@ plClientResMgr& plClientResMgr::Instance(void)
 
 plClientResMgr::plClientResMgr()
 {
-    this->ClientResources = TRACKED_NEW std::map<std::string, plMipmap*>;
+    this->ClientResources = new std::map<std::string, plMipmap*>;
 }
 
 plClientResMgr::~plClientResMgr()

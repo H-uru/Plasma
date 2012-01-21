@@ -232,9 +232,9 @@ CryptKey * CryptKeyCreate (
     CryptKey * key = nil;
     switch (algorithm) {
         case kCryptRc4: {
-            RC4_KEY * rc4 = NEW(RC4_KEY);
+            RC4_KEY * rc4 = new RC4_KEY;
             RC4_set_key(rc4, bytes, (const unsigned char *)data);
-            key = NEW(CryptKey);
+            key = new CryptKey;
             key->algorithm = kCryptRc4;
             key->handle = rc4;
         }

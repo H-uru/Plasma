@@ -351,22 +351,22 @@ void hsG3DDeviceRecord::Read(hsStream* s)
     int len;
 
     len = s->ReadLE32();
-    fG3DDriverDesc = TRACKED_NEW char[len + 1];
+    fG3DDriverDesc = new char[len + 1];
     s->Read(len, fG3DDriverDesc);
     fG3DDriverDesc[len] = 0;
 
     len = s->ReadLE32();
-    fG3DDriverName = TRACKED_NEW char[len + 1];
+    fG3DDriverName = new char[len + 1];
     s->Read(len, fG3DDriverName);
     fG3DDriverName[len] = 0;
 
     len = s->ReadLE32();
-    fG3DDriverVersion = TRACKED_NEW char[len + 1];
+    fG3DDriverVersion = new char[len + 1];
     s->Read(len, fG3DDriverVersion);
     fG3DDriverVersion[len] = 0;
 
     len = s->ReadLE32();
-    fG3DDeviceDesc = TRACKED_NEW char[len + 1];
+    fG3DDeviceDesc = new char[len + 1];
     s->Read(len, fG3DDeviceDesc);
     fG3DDeviceDesc[len] = 0;
 

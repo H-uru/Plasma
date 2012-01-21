@@ -77,7 +77,7 @@ int plDynaRippleVSMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
 
-    plDynaRippleVS* rip = TRACKED_NEW plDynaRippleVS();
+    plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
     rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
@@ -103,7 +103,7 @@ void plDynaRippleVSMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDynaRippleMgr::Read(stream, mgr);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
 }
 
 void plDynaRippleVSMgr::Write(hsStream* stream, hsResMgr* mgr)

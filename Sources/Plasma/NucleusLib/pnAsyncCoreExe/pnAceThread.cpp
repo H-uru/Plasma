@@ -109,7 +109,7 @@ void * AsyncThreadCreate (
     void *              argument,
     const wchar_t         name[]
 ) {
-    AsyncThread * thread    = NEW(AsyncThread);
+    AsyncThread * thread    = new AsyncThread;
     thread->proc            = threadProc;
     thread->handle          = nil;
     thread->argument        = argument;

@@ -195,7 +195,7 @@ hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, int32_t
 //
 hsStringTable::Node* hsStringTable::AddRecur(Node* root, const char* str) 
 {
-    Node* node = TRACKED_NEW Node(*str);
+    Node* node = new Node(*str);
     node->sib = root->kid;
     root->kid = node;
     if (*(str+1)) return AddRecur(node,str+1);

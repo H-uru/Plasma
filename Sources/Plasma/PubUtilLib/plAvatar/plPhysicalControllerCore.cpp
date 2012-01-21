@@ -111,7 +111,7 @@ void plPhysicalControllerCore::Update(float delSecs)
 void plPhysicalControllerCore::SendCorrectionMessages()
 {
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
-    plCorrectionMsg* corrMsg = TRACKED_NEW plCorrectionMsg;
+    plCorrectionMsg* corrMsg = new plCorrectionMsg;
     corrMsg->fLocalToWorld = fLastGlobalLoc;
     corrMsg->fLocalToWorld.GetInverse(&corrMsg->fWorldToLocal);
     corrMsg->fDirtySynch = true;

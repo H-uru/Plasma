@@ -78,7 +78,7 @@ void hsTableNoise::SetTable(int len, float* arr)
         return;
     }
 
-    fTable = TRACKED_NEW float[len+2];
+    fTable = new float[len+2];
 
     int i;
     for( i = 0; i < len; i++ )

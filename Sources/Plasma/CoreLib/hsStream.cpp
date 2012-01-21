@@ -143,7 +143,7 @@ uint32_t hsStream::WriteSafeStringLong(const char *string)
     WriteLE32(len);
     if (len > 0)
     {   
-        char *buff = TRACKED_NEW char[len+1];
+        char *buff = new char[len+1];
         int i;
         for (i = 0; i < len; i++)
         {
@@ -181,7 +181,7 @@ char *hsStream::ReadSafeStringLong()
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        name = TRACKED_NEW char[numChars+1];
+        name = new char[numChars+1];
         Read(numChars, name);
         name[numChars] = '\0';
 
@@ -203,7 +203,7 @@ wchar_t *hsStream::ReadSafeWStringLong()
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        retVal = TRACKED_NEW wchar_t[numChars+1];
+        retVal = new wchar_t[numChars+1];
         int i;
         for (i=0; i<numChars; i++)
             retVal[i] = (wchar_t)ReadLE16();
@@ -229,7 +229,7 @@ uint32_t hsStream::WriteSafeString(const char *string)
     WriteLE16(len | 0xf000);
     if (len > 0)
     {
-        char *buff = TRACKED_NEW char[len+1];
+        char *buff = new char[len+1];
         int i;
         for (i = 0; i < len; i++)
         {
@@ -280,7 +280,7 @@ char *hsStream::ReadSafeString()
     hsAssert(numChars <= GetSizeLeft(), "Bad string");
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        name = TRACKED_NEW char[numChars+1];
+        name = new char[numChars+1];
         Read(numChars, name);
         name[numChars] = '\0';  
 
@@ -305,7 +305,7 @@ wchar_t *hsStream::ReadSafeWString()
     hsAssert(numChars <= GetSizeLeft()/2, "Bad string");
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        retVal = TRACKED_NEW wchar_t[numChars+1];
+        retVal = new wchar_t[numChars+1];
         int i;
         for (i=0; i<numChars; i++)
             retVal[i] = (wchar_t)ReadLE16();
@@ -1211,7 +1211,7 @@ hsQueueStream::hsQueueStream(int32_t size) :
     fReadCursor(0),
     fWriteCursor(0)
 {
-    fQueue = TRACKED_NEW char[fSize];
+    fQueue = new char[fSize];
 }
 
 hsQueueStream::~hsQueueStream()

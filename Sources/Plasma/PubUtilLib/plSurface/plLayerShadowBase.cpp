@@ -51,13 +51,13 @@ plLayerLightBase::plLayerLightBase()
                 | kAmbientColor
                 | kPreshadeColor;
 
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
     
-    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor = new hsColorRGBA;
     fAmbientColor->Set(0,0,0,1.f);
 
-    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor = new hsColorRGBA;
     fPreshadeColor->Set(0,0,0,1.f);
 }
 
@@ -114,13 +114,13 @@ plLayerShadowBase::plLayerShadowBase()
                 | kAmbientColor
                 | kPreshadeColor;
 
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
     
-    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor = new hsColorRGBA;
     fAmbientColor->Set(0,0,0,1.f);
 
-    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor = new hsColorRGBA;
     fPreshadeColor->Set(0,0,0,1.f);
 }
 

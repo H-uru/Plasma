@@ -268,7 +268,7 @@ void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else
@@ -353,7 +353,7 @@ void    pfGUIKnobCtrl::SetCurrValue( float v )
             else
                 newTime = ( ( fValue - fMin ) / ( fMax - fMin ) ) * tLength + fAnimBegin;
         }
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kGoToTime ); 
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;

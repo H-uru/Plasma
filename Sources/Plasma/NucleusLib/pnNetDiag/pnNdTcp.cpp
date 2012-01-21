@@ -237,7 +237,7 @@ static void AuthPingProc (void * param) {
 
         if (!conn->pingsInRoute) {
 
-            AuthTrans * trans = NEW(AuthTrans)(conn);
+            AuthTrans * trans = new AuthTrans(conn);
             trans->pingAtMs = TimeGetMs();
 
             s_critsect.Enter();
@@ -436,7 +436,7 @@ static void FilePingProc (void * param) {
 
         if (!conn->pingsInRoute) {
 
-            FileTrans * trans = NEW(FileTrans)(conn);
+            FileTrans * trans = new FileTrans(conn);
             trans->pingAtMs = TimeGetMs();
 
             s_critsect.Enter();

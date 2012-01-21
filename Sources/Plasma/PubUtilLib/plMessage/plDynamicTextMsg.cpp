@@ -123,7 +123,7 @@ void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const wchar_t *text 
     fCmd &= ~( kStringCmds | kPosCmds );
     fCmd |= kDrawString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;
@@ -143,7 +143,7 @@ void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clip
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawClippedString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;
@@ -168,7 +168,7 @@ void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrap
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawWrappedString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;

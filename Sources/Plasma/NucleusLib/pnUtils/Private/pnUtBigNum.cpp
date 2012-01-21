@@ -122,7 +122,7 @@ int BigNum::Compare (uint32_t a) const {
 //===========================================================================
 void BigNum::FromData_LE (unsigned bytes, const void * data)
 {
-    unsigned char * buffer = TRACKED_NEW unsigned char[bytes];
+    unsigned char * buffer = new unsigned char[bytes];
     memcpy(buffer, data, bytes);
     byteswap(bytes, buffer);
     BN_bin2bn(buffer, bytes, &m_number);
@@ -133,7 +133,7 @@ void BigNum::FromData_LE (unsigned bytes, const void * data)
 unsigned char * BigNum::GetData_BE (unsigned * bytes) const
 {
     *bytes = BN_num_bytes(&m_number);
-    unsigned char * data = TRACKED_NEW unsigned char[*bytes];
+    unsigned char * data = new unsigned char[*bytes];
     BN_bn2bin(&m_number, data);
     return data;
 }
@@ -142,7 +142,7 @@ unsigned char * BigNum::GetData_BE (unsigned * bytes) const
 unsigned char * BigNum::GetData_LE (unsigned * bytes) const
 {
     *bytes = BN_num_bytes(&m_number);
-    unsigned char * data = TRACKED_NEW unsigned char[*bytes];
+    unsigned char * data = new unsigned char[*bytes];
     BN_bn2bin(&m_number, data);
     byteswap(*bytes, data);
     return data;

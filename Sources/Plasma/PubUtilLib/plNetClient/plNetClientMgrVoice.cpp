@@ -337,7 +337,7 @@ hsBool plNetClientMgr::IUpdateListenList(double secs)
         SynchTalkList();
 #endif
         // notify KI, member distances have been updated
-        plMemberUpdateMsg* mu = TRACKED_NEW plMemberUpdateMsg;
+        plMemberUpdateMsg* mu = new plMemberUpdateMsg;
         mu->Send();
     }
 

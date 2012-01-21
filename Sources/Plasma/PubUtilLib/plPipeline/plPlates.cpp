@@ -166,7 +166,7 @@ void plPlate::SetTexture(plBitmap *texture)
     hsGMaterial     *material;
     char            keyName[ 128 ];
 
-    material = TRACKED_NEW hsGMaterial();
+    material = new hsGMaterial();
     sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
@@ -176,7 +176,7 @@ void plPlate::SetTexture(plBitmap *texture)
     layer->SetOpacity( fOpacity );
     layer->SetUVWSrc(plLayerInterface::kUVWPassThru);
 
-    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), TRACKED_NEW plGenRefMsg(layer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), new plGenRefMsg(layer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     SetMaterial(material);
 }
@@ -212,7 +212,7 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, hsBool wi
     else
     {
         /// Create a new bitmap
-        fMipmap = TRACKED_NEW plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
+        fMipmap = new plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
         memset( fMipmap->GetImage(), 0xff, height * fMipmap->GetRowBytes() );
         sprintf( keyName, "PlateBitmap#%d", fMagicUniqueKeyInt++ );
         hsgResMgr::ResMgr()->NewKey( keyName, fMipmap, plLocation::kGlobalFixedLoc );
@@ -220,7 +220,7 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, hsBool wi
     }
 
     /// NOW create a layer wrapper and a material for that layer
-    material = TRACKED_NEW hsGMaterial();
+    material = new hsGMaterial();
     sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
@@ -229,7 +229,7 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, hsBool wi
     layer->SetBlendFlags( layer->GetBlendFlags() | hsGMatState::kBlendAlpha );
     layer->SetOpacity( fOpacity );
 
-    hsgResMgr::ResMgr()->AddViaNotify( fMipmap->GetKey(), TRACKED_NEW plLayRefMsg( layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fMipmap->GetKey(), new plLayRefMsg( layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // Set up a ref to these. Since we don't have a key, we use the
     // generic RefObject() (and matching UnRefObject() when we're done).
@@ -249,7 +249,7 @@ void plPlate::CreateFromResource(const char *resName)
 {
     if (resName)
     {
-        plMipmap* resTexture = TRACKED_NEW plMipmap;
+        plMipmap* resTexture = new plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
 
         char keyName[128];
@@ -699,7 +699,7 @@ plPlateManager::~plPlateManager()
 
 void    plPlateManager::CreatePlate( plPlate **handle )
 {
-    plPlate     *plate = TRACKED_NEW plPlate( handle );
+    plPlate     *plate = new plPlate( handle );
 
 
     plate->ILink( &fPlates );
@@ -721,7 +721,7 @@ void    plPlateManager::CreatePlate( plPlate **handle, float x, float y, float w
 
 void    plPlateManager::CreateGraphPlate( plGraphPlate **handle )
 {
-    plGraphPlate    *plate = TRACKED_NEW plGraphPlate( (plPlate **)handle );
+    plGraphPlate    *plate = new plGraphPlate( (plPlate **)handle );
 
 
     plate->ILink( &fPlates );

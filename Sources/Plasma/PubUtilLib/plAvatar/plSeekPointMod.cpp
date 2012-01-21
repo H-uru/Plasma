@@ -90,7 +90,7 @@ void plSeekPointMod::Read(hsStream *stream, hsResMgr *mgr)
     int length = stream->ReadLE32();
     if(length > 0)
     {
-        fName = TRACKED_NEW char[length + 1];
+        fName = new char[length + 1];
         stream->Read(length, fName);
         fName[length] = 0;
     }

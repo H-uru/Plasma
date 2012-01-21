@@ -90,7 +90,7 @@ public:
         if (length > fLength)
         {   if (fMem != fMemBuffer)
                 delete[] fMem;
-            fMem = TRACKED_NEW uint8_t[length];
+            fMem = new uint8_t[length];
             fLength = length;
         }
         return fMem;

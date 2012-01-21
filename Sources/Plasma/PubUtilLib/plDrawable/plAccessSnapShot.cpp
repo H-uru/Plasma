@@ -154,7 +154,7 @@ void plAccessSnapShot::ICopyOldData(uint8_t* data, const uint16_t* const oldSize
 
 void plAccessSnapShot::ISetupPointers(uint16_t newStride)
 {
-    fData = TRACKED_NEW uint8_t[fNumVerts * newStride];
+    fData = new uint8_t[fNumVerts * newStride];
 
     int size = 0;
     int chan;

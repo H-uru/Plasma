@@ -53,7 +53,7 @@ plRelevanceMgr::plRelevanceMgr() : fEnabled(true)
 
 void plRelevanceMgr::Init()
 {
-    fInstance = TRACKED_NEW plRelevanceMgr;
+    fInstance = new plRelevanceMgr;
     fInstance->RegisterAs(kRelevanceMgr_KEY);
 }
 
@@ -219,7 +219,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 if (strcmp(buff, "") == 0)
                     continue; // ignore the initial blank one
 
-                plRegionInfo *info = TRACKED_NEW plRegionInfo;
+                plRegionInfo *info = new plRegionInfo;
                 regions.Append(info);
                 info->fName = hsStrcpy(buff);
                 info->fIndex = GetIndex(buff);

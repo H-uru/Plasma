@@ -128,7 +128,7 @@ void plNetListenList::AddMember(plNetTransportMember* e)
 #if 0   
         // call the new member's win audible and set talk icon parameters
 
-        plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
+        plSoundMsg* pMsg = new plSoundMsg;
         plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
         if (pMod)
             pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());
@@ -150,7 +150,7 @@ void plNetListenList::RemoveMember(plNetTransportMember* e)
 #if 0
         // call the new member's win audible and set talk icon parameters
 
-        plSoundMsg* pMsg = TRACKED_NEW plSoundMsg;
+        plSoundMsg* pMsg = new plSoundMsg;
         plArmatureMod* pMod = plArmatureMod::ConvertNoRef(e->GetAvatarKey()->GetObjectPtr());
         if (pMod)
             pMsg->AddReceiver(pMod->GetTarget(0)->GetKey());

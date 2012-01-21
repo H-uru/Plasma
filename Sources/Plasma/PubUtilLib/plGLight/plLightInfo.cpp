@@ -102,7 +102,7 @@ plLightInfo::plLightInfo()
     fNextDevPtr = nil;
     fPrevDevPtr = nil;
 
-    fProxyGen = TRACKED_NEW plLightProxy;
+    fProxyGen = new plLightProxy;
     fProxyGen->Init(this);
 
     fRegisteredForRenderMsg = false;
@@ -469,9 +469,9 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     fLocalToWorld = fLightToWorld * fLocalToLight;
     fWorldToLocal = fLightToLocal * fWorldToLight;
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kProjection), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kProjection), plRefFlags::kActiveRef);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSoftVolume), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSoftVolume), plRefFlags::kActiveRef);
 
     // Let our sceneNode know we're here.
     plKey nodeKey = mgr->ReadKey(s);
@@ -481,7 +481,7 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     fVisRegions.SetCountAndZero(n);
     int i;
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
 
     SetDirty(true);
 }
@@ -519,7 +519,7 @@ void plLightInfo::ISetSceneNode(plKey node)
     {
         if( node )
         {
-            plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kLight);
+            plNodeRefMsg* refMsg = new plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kLight);
             hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
         if( fSceneNode )
@@ -685,7 +685,7 @@ void plLimitedDirLightInfo::Write(hsStream* s, hsResMgr* mgr)
 void plLimitedDirLightInfo::IMakeIsect()
 {
     if( !fParPlanes )
-        fParPlanes = TRACKED_NEW plParallelIsect;
+        fParPlanes = new plParallelIsect;
 
     fParPlanes->SetNumPlanes(3);
     
@@ -752,7 +752,7 @@ plOmniLightInfo::~plOmniLightInfo()
 
 void plOmniLightInfo::IMakeIsect()
 {
-    fSphere = TRACKED_NEW plSphereIsect;
+    fSphere = new plSphereIsect;
     fSphere->SetTransform(fLightToWorld, fWorldToLight);
 }
 
@@ -925,7 +925,7 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& streng
 
 void plSpotLightInfo::IMakeIsect()
 {
-    fCone = TRACKED_NEW plConeIsect;
+    fCone = new plConeIsect;
     fCone->SetTransform(fLightToWorld, fWorldToLight);
 }
 

@@ -80,7 +80,7 @@ public:
     // setters
     void SetData(char *d)       
     {   
-        plNetCommonMessageData* n = d ? TRACKED_NEW plNetCommonMessageData(d) : nil;
+        plNetCommonMessageData* n = d ? new plNetCommonMessageData(d) : nil;
         hsRefCnt_SafeAssign(fMsgData, n);       
         hsRefCnt_SafeUnRef(n);
     }

@@ -193,7 +193,7 @@ void plNCAgeLeaver::ExecNextOp () {
 
         //====================================================================
         case kDisableClickables: {
-            (TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
+            (new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
             nextOp = kLinkOutFX;
         }
         break;

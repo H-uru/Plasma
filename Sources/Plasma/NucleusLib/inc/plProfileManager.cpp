@@ -507,7 +507,7 @@ plProfileVar::~plProfileVar()
 void plProfileVar::IBeginLap(const char* lapName)
 {
     if (!fLaps)
-        fLaps = TRACKED_NEW plProfileLaps;
+        fLaps = new plProfileLaps;
     fDisplayFlags |= kDisplayLaps;
     if(fLapsActive)
         fLaps->BeginLap(fValue, lapName);

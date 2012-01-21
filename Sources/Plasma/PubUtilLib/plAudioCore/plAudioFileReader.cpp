@@ -90,24 +90,24 @@ plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore
         {
             char cachedPath[256];
             IGetCachedPath(path, cachedPath, whichChan);
-            plAudioFileReader *r =  TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            plAudioFileReader *r =  new plCachedFileReader(cachedPath, plAudioCore::kAll);
             if (!r->IsValid()) {
                 // So we tried to play a cached file and it didn't exist
                 // Oops... we should cache it now
                 delete r;
                 ICacheFile(path, true, whichChan);
-                r = TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+                r = new plCachedFileReader(cachedPath, plAudioCore::kAll);
             }
             return r;
         }
         
-        plAudioFileReader *r =  TRACKED_NEW plFastWAV(path, whichChan);
+        plAudioFileReader *r =  new plFastWAV(path, whichChan);
         return r;
     }
     else if (type == kStreamRAM)
-        return TRACKED_NEW plBufferedFileReader(path, whichChan);
+        return new plBufferedFileReader(path, whichChan);
     else if (type == kStreamNative)
-        return TRACKED_NEW plOGGCodec(path, whichChan);
+        return new plOGGCodec(path, whichChan);
 
     return nil;
 }
@@ -116,7 +116,7 @@ plAudioFileReader* plAudioFileReader::CreateWriter(const char* path, plWAVHeader
 {
     const char* ext = plFileUtils::GetFileExt(path);
 
-    plAudioFileReader* writer = TRACKED_NEW plCachedFileReader(path, plAudioCore::kAll);
+    plAudioFileReader* writer = new plCachedFileReader(path, plAudioCore::kAll);
     writer->OpenForWriting(path, header);
     return writer;
 }

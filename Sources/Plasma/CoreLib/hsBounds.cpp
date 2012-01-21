@@ -554,7 +554,7 @@ hsBool hsBoundsOriented::IsInside(const hsPoint3* pos) const
 void hsBoundsOriented::SetNumberPlanes(uint32_t n)
 {
     delete [] fPlanes;
-    fPlanes = TRACKED_NEW hsPlane3[fNumPlanes = n];
+    fPlanes = new hsPlane3[fNumPlanes = n];
 }
 
 void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
@@ -562,7 +562,7 @@ void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
     fType = kBoundsNormal;
     if( i >= fNumPlanes )
     {
-        hsPlane3 *newPlanes = TRACKED_NEW hsPlane3[i+1];
+        hsPlane3 *newPlanes = new hsPlane3[i+1];
         if( fPlanes )
         {
             int k;
@@ -633,7 +633,7 @@ void hsBoundsOriented::Read(hsStream *stream)
     fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;
-    fPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
+    fPlanes = new hsPlane3[fNumPlanes];
     int i;
     for( i = 0; i < fNumPlanes; i++ )
     {

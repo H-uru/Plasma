@@ -87,7 +87,7 @@ plProgressMgr::plProgressMgr()
     // Fill array with pre-computed loading frame IDs
     for (int i=0; i < LOADING_RES_COUNT; i++)
     {
-        char* frameID = TRACKED_NEW char[128];
+        char* frameID = new char[128];
         sprintf(frameID, LOADING_RES, i);
         fImageRotation[i] = frameID;
     }
@@ -125,7 +125,7 @@ plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char 
         Activate();
     }
 
-    plOperationProgress *op = TRACKED_NEW plOperationProgress( length );
+    plOperationProgress *op = new plOperationProgress( length );
 
     op->SetTitle( title );
 

@@ -323,7 +323,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Read(stream, mgr);
     fBrain = nil;
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
     int count = stream->ReadLE32();
     int i;
     for (i = 0; i < count; i++)
@@ -340,7 +340,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         float pA = stream->ReadLEScalar();
         float pD = stream->ReadLEScalar();
 
-        CamTrans* camTrans = TRACKED_NEW CamTrans(key);
+        CamTrans* camTrans = new CamTrans(key);
         camTrans->fAccel = a;
         camTrans->fDecel = d;
         camTrans->fVelocity = v;
@@ -364,7 +364,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     }
     for(i = 0; i < n; i++ )
     {   
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
     }
 
     n = stream->ReadLE32();
@@ -430,7 +430,7 @@ void plCameraModifier1::Push(hsBool recenter)
     {
         if (fStartAnimOnPush)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kRunForward);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());
@@ -455,7 +455,7 @@ void plCameraModifier1::Pop()
     {
         if (fStopAnimOnPop)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kStop);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());
@@ -465,7 +465,7 @@ void plCameraModifier1::Pop()
         }
         if (fResetAnimOnPop)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());

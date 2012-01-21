@@ -59,7 +59,7 @@ hsBool plLightSpace::MsgReceive(plMessage* msg)
         plKey otherKey = nil;
         hsBool enter = true; 
         uint8_t ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
-        plLightRefMsg* liMsg = TRACKED_NEW plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
+        plLightRefMsg* liMsg = new plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
         plgDispatch::MsgSend(liMsg);
         return true;
     }
@@ -80,7 +80,7 @@ void plLightSpace::Read(hsStream* s, hsResMgr* mgr)
 {
     plMultiModifier::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, new plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
 }
 
 void plLightSpace::Write(hsStream* s, hsResMgr* mgr)

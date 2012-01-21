@@ -75,7 +75,7 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
     plArmatureBrain::Activate(avMod);
 
     IEnablePhysics(false, avMod->GetTarget(0)->GetKey());
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     pMsg->SetCmd(plCameraMsg::kNonPhysOn);
     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pMsg->Send();               
@@ -87,7 +87,7 @@ void plAvBrainDrive::Deactivate()
     if (fAvMod)
     {   
         IEnablePhysics(true, fAvMod->GetTarget(0)->GetKey());
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetCmd(plCameraMsg::kNonPhysOff);
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->Send();               

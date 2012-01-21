@@ -87,11 +87,11 @@ void plSpanInstance::Alloc(const plSpanEncoding& encoding, uint32_t numVerts)
     DeAlloc();
     uint32_t posStride = PosStrideFromEncoding(encoding);
     if( posStride )
-        fPosDelta = TRACKED_NEW uint8_t[numVerts * posStride];
+        fPosDelta = new uint8_t[numVerts * posStride];
 
     uint32_t colStride = ColStrideFromEncoding(encoding);
     if( colStride )
-        fCol = TRACKED_NEW uint8_t[numVerts * colStride];
+        fCol = new uint8_t[numVerts * colStride];
 }
 
 void plSpanInstance::Read(hsStream* stream, const plSpanEncoding& encoding, uint32_t numVerts)

@@ -174,7 +174,7 @@ void    plFontCache::ILoadCustomFonts( void )
     {
         iter2.GetPathAndName( fileName );
 
-        plFont *font = TRACKED_NEW plFont;
+        plFont *font = new plFont;
         if( !font->LoadFromP2FFile( fileName ) )
             delete font;
         else
@@ -187,7 +187,7 @@ void    plFontCache::ILoadCustomFonts( void )
             }
 
             hsgResMgr::ResMgr()->AddViaNotify( font->GetKey(), 
-                                                TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, -1 ), 
+                                                new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, -1 ), 
                                                 plRefFlags::kActiveRef );
 
             //plStatusLog::AddLineS( "pipeline.log", "FontCache: Added custom font %s", keyName );

@@ -189,7 +189,7 @@ void NetLogRegisterEvents (const NetLogEvent events[], unsigned count) {
     HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
 
     for(unsigned i = 0; i < count; ++i) {
-        hash = NEW(NetLogEventHash)(events[i].logEventType, events[i].srvType, &events[i]);
+        hash = new NetLogEventHash(events[i].logEventType, events[i].srvType, &events[i]);
         tempHashTable.Add(hash);
     }
     s_critsect.Enter();

@@ -247,7 +247,7 @@ void plNotifyMsg::AddCollisionEvent( hsBool enter, const plKey &other, const plK
     }
 
     // create the collision event record
-    proCollisionEventData* pED = TRACKED_NEW proCollisionEventData;
+    proCollisionEventData* pED = new proCollisionEventData;
     pED->fEnter = enter;
     pED->fHitter = other;
     pED->fHittee = self;
@@ -283,7 +283,7 @@ void plNotifyMsg::AddCallbackEvent( int32_t event )
     }
 
     // create the collision event record
-    proCallbackEventData* pED = TRACKED_NEW proCallbackEventData;
+    proCallbackEventData* pED = new proCallbackEventData;
     pED->fEventType = event;
     fEvents.Append(pED);    // then add it to the list of event records
 }
@@ -318,7 +318,7 @@ void plNotifyMsg::AddResponderStateEvent( int32_t state )
     }
 
     // create the collision event record
-    proResponderStateEventData* pED = TRACKED_NEW proResponderStateEventData;
+    proResponderStateEventData* pED = new proResponderStateEventData;
     pED->fState = state;
     fEvents.Append(pED);    // then add it to the list of event records
 }
@@ -335,7 +335,7 @@ void plNotifyMsg::AddMultiStageEvent( int32_t stage, int32_t event, const plKey&
 {
     // we can have multi events of this type
     // create the mutlistage event record
-    proMultiStageEventData* pED = TRACKED_NEW proMultiStageEventData;
+    proMultiStageEventData* pED = new proMultiStageEventData;
     pED->fStage = stage;
     pED->fEvent = event;
     pED->fAvatar = avatar;
@@ -344,7 +344,7 @@ void plNotifyMsg::AddMultiStageEvent( int32_t stage, int32_t event, const plKey&
 
 void plNotifyMsg::AddCoopEvent(uint32_t id, uint16_t serial)
 {
-    proCoopEventData *pED = TRACKED_NEW proCoopEventData;
+    proCoopEventData *pED = new proCoopEventData;
     pED->fID = id;
     pED->fSerial = serial;
     fEvents.Append(pED);
@@ -352,7 +352,7 @@ void plNotifyMsg::AddCoopEvent(uint32_t id, uint16_t serial)
 
 void plNotifyMsg::AddSpawnedEvent (const plKey &spawner, const plKey &spawnee)
 {
-    proSpawnedEventData* pED = TRACKED_NEW proSpawnedEventData();
+    proSpawnedEventData* pED = new proSpawnedEventData();
     pED->fSpawner = spawner;
     pED->fSpawnee = spawnee;
     fEvents.Append(pED);
@@ -393,7 +393,7 @@ void plNotifyMsg::AddActivateEvent( hsBool activate )
     }
 
     // create the collision event record
-    proActivateEventData* pED = TRACKED_NEW proActivateEventData;
+    proActivateEventData* pED = new proActivateEventData;
     pED->fActive = true;
     pED->fActivate = activate;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -435,7 +435,7 @@ void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, hsBool en
     }
 
     // create the pick event record
-    proPickedEventData* pED = TRACKED_NEW proPickedEventData;
+    proPickedEventData* pED = new proPickedEventData;
     pED->fPicker = other;
     pED->fPicked = self;
     pED->fEnabled = enabled;
@@ -480,7 +480,7 @@ void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contai
     }
 
     // create the pick event record
-    proContainedEventData* pED = TRACKED_NEW proContainedEventData;
+    proContainedEventData* pED = new proContainedEventData;
     pED->fContained = contained;
     pED->fContainer = container;
     pED->fEntering = entering;
@@ -526,7 +526,7 @@ void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float d
     }
 
     // create the pick event record
-    proFacingEventData* pED = TRACKED_NEW proFacingEventData;
+    proFacingEventData* pED = new proFacingEventData;
     pED->fFacer = other;
     pED->fFacee = self;
     pED->dot = dot;
@@ -569,7 +569,7 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, hsBool down )
     }
 
     // create the control key event record
-    proControlKeyEventData* pED = TRACKED_NEW proControlKeyEventData;
+    proControlKeyEventData* pED = new proControlKeyEventData;
     pED->fControlKey = key;
     pED->fDown = down;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -586,7 +586,7 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, hsBool down )
 void plNotifyMsg::AddVariableEvent( const char* name, float number )
 {
     // create the control key event record
-    proVariableEventData* pED = TRACKED_NEW proVariableEventData;
+    proVariableEventData* pED = new proVariableEventData;
     pED->fName = hsStrcpy(nil,name);
 //  pED->fName = (char*)name;
     pED->fDataType = proEventData::kNumber;
@@ -606,7 +606,7 @@ void plNotifyMsg::AddVariableEvent( const char* name, float number )
 void plNotifyMsg::AddVariableEvent( const char* name, const plKey &key )
 {
     // create the control key event record
-    proVariableEventData* pED = TRACKED_NEW proVariableEventData;
+    proVariableEventData* pED = new proVariableEventData;
     pED->fName = hsStrcpy(nil,name);
 //  pED->fName = (char*)name;
     pED->fDataType = proEventData::kKey;
@@ -651,7 +651,7 @@ void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, 
     }
 
     // create the control key event record
-    proClickDragEventData* pED = TRACKED_NEW proClickDragEventData;
+    proClickDragEventData* pED = new proClickDragEventData;
     pED->picked = dragee;
     pED->picker = dragger;
     pED->animPos = animPos;
@@ -694,7 +694,7 @@ void plNotifyMsg::AddOfferBookEvent(const plKey& offerer, int targetAge, int off
     }
 
     // create the control key event record
-    proOfferLinkingBookEventData* pED = TRACKED_NEW proOfferLinkingBookEventData;
+    proOfferLinkingBookEventData* pED = new proOfferLinkingBookEventData;
     pED->offerer = offerer;
     pED->targetAge = targetAge;
     pED->offeree = offeree;
@@ -736,7 +736,7 @@ void plNotifyMsg::AddBookEvent( uint32_t event, uint32_t linkID /*=0*/)
     }
 
     // create the control key event record
-    proBookEventData* pED = TRACKED_NEW proBookEventData;
+    proBookEventData* pED = new proBookEventData;
     pED->fEvent = event;
     pED->fLinkID = linkID;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -776,7 +776,7 @@ void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
     }
 
     // create the control key event record
-    proClimbingBlockerHitEventData* pED = TRACKED_NEW proClimbingBlockerHitEventData;
+    proClimbingBlockerHitEventData* pED = new proClimbingBlockerHitEventData;
     pED->fBlockerKey = blocker;
     fEvents.Append(pED);    // then add it to the list of event records
 }
@@ -1002,21 +1002,21 @@ proEventData* proEventData::ICreateEventDataType(int32_t type)
 {
     switch (type)
     {
-    case kCollision:        return TRACKED_NEW proCollisionEventData;
-    case kPicked:           return TRACKED_NEW proPickedEventData;
-    case kControlKey:       return TRACKED_NEW proControlKeyEventData;
-    case kVariable:         return TRACKED_NEW proVariableEventData;
-    case kFacing:           return TRACKED_NEW proFacingEventData;
-    case kContained:        return TRACKED_NEW proContainedEventData;
-    case kActivate:         return TRACKED_NEW proActivateEventData;
-    case kCallback:         return TRACKED_NEW proCallbackEventData;
-    case kResponderState:   return TRACKED_NEW proResponderStateEventData;
-    case kMultiStage:       return TRACKED_NEW proMultiStageEventData;
-    case kCoop:             return TRACKED_NEW proCoopEventData;
-    case kSpawned:          return TRACKED_NEW proSpawnedEventData;
-    case kOfferLinkingBook: return TRACKED_NEW proOfferLinkingBookEventData;
-    case kBook:             return TRACKED_NEW proBookEventData;
-    case kClimbingBlockerHit: return TRACKED_NEW proClimbingBlockerHitEventData;
+    case kCollision:        return new proCollisionEventData;
+    case kPicked:           return new proPickedEventData;
+    case kControlKey:       return new proControlKeyEventData;
+    case kVariable:         return new proVariableEventData;
+    case kFacing:           return new proFacingEventData;
+    case kContained:        return new proContainedEventData;
+    case kActivate:         return new proActivateEventData;
+    case kCallback:         return new proCallbackEventData;
+    case kResponderState:   return new proResponderStateEventData;
+    case kMultiStage:       return new proMultiStageEventData;
+    case kCoop:             return new proCoopEventData;
+    case kSpawned:          return new proSpawnedEventData;
+    case kOfferLinkingBook: return new proOfferLinkingBookEventData;
+    case kBook:             return new proBookEventData;
+    case kClimbingBlockerHit: return new proClimbingBlockerHitEventData;
     }
 
     return nil;

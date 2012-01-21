@@ -103,7 +103,7 @@ class plCubicRenderTarget : public plRenderTarget
 
             for( i = 0; i < 6; i++ )
             {
-                fFaces[i] = TRACKED_NEW plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
+                fFaces[i] = new plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
                 fFaces[i]->fParent = this;
                 fWorldToCameras[i].Reset();
                 fCameraToWorlds[i].Reset();

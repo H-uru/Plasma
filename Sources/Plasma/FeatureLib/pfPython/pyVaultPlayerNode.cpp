@@ -182,7 +182,7 @@ PyObject *pyVaultPlayerNode::GetPlayerInfo()
 
 PyObject *pyVaultPlayerNode::GetLinkToMyNeighborhood()
 {
-    plAgeLinkStruct * link = NEW(plAgeLinkStruct);
+    plAgeLinkStruct * link = new plAgeLinkStruct();
     
     if (VaultGetLinkToMyNeighborhood(link)) {
         PyObject * result = pyAgeLinkStruct::New(link);
@@ -195,7 +195,7 @@ PyObject *pyVaultPlayerNode::GetLinkToMyNeighborhood()
 
 PyObject *pyVaultPlayerNode::GetLinkToCity()
 {
-    plAgeLinkStruct * link = NEW(plAgeLinkStruct);
+    plAgeLinkStruct * link = new plAgeLinkStruct();
     
     if (VaultGetLinkToCity(link)) {
         PyObject * result = pyAgeLinkStruct::New(link);

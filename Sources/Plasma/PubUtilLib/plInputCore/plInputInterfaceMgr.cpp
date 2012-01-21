@@ -158,15 +158,15 @@ void    plInputInterfaceMgr::Init( void )
     plgDispatch::Dispatch()->RegisterForExactType( plClientMsg::Index(), GetKey() );
     
     /// Hacks (?) for now
-    plAvatarInputInterface *avatar = TRACKED_NEW plAvatarInputInterface();
+    plAvatarInputInterface *avatar = new plAvatarInputInterface();
     IAddInterface( avatar );
     hsRefCnt_SafeUnRef( avatar );
 
-    plSceneInputInterface *scene = TRACKED_NEW plSceneInputInterface();
+    plSceneInputInterface *scene = new plSceneInputInterface();
     IAddInterface( scene );
     hsRefCnt_SafeUnRef( scene );
 
-    plDebugInputInterface *camDrive = TRACKED_NEW plDebugInputInterface();
+    plDebugInputInterface *camDrive = new plDebugInputInterface();
     IAddInterface( camDrive );
     hsRefCnt_SafeUnRef( camDrive );
     
@@ -313,7 +313,7 @@ hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
         if( !fMessageQueue[ i ]->GetSource()->IHandleCtrlCmd( fMessageQueue[ i ] ) )
         {
             // Nope, just dispatch it like normal
-            plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+            plControlEventMsg* pMsg = new plControlEventMsg;
             for (int j = 0; j < fReceivers.Count(); j++)
                 pMsg->AddReceiver( fReceivers[ j ] );
             pMsg->SetControlActivated( fMessageQueue[i]->fControlActivated );
@@ -330,7 +330,7 @@ hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 
             if (fMessageQueue[i]->fNetPropagateToPlayers)
             {
-                pMsg = TRACKED_NEW plControlEventMsg;
+                pMsg = new plControlEventMsg;
                 for (int j = 0; j < fReceivers.Count(); j++)
                     if (fReceivers[j] == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                         pMsg->AddReceiver( fReceivers[j] );

@@ -432,7 +432,7 @@ void    plIcicle::Read( hsStream *stream )
         int     i;
 
 
-        fSortData = TRACKED_NEW plGBufferTriangle[ fILength / 3 ];
+        fSortData = new plGBufferTriangle[ fILength / 3 ];
         for( i = 0; i < fILength / 3; i++ )
             fSortData[ i ].Read( stream );
     }

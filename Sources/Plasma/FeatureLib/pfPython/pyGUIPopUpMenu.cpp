@@ -369,7 +369,7 @@ void    pyGUIPopUpMenu::AddConsoleCmdItem( const char *name, const char *console
 void    pyGUIPopUpMenu::AddConsoleCmdItemW( std::wstring name, const char *consoleCmd )
 {
     kGetMenuPtr( ; );
-    menu->AddItem( name.c_str(), TRACKED_NEW pfGUIConsoleCmdProc( consoleCmd ), nil );
+    menu->AddItem( name.c_str(), new pfGUIConsoleCmdProc( consoleCmd ), nil );
 }
 
 void    pyGUIPopUpMenu::AddNotifyItem( const char *name )

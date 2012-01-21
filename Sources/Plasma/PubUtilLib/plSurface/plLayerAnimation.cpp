@@ -98,32 +98,32 @@ void plLayerAnimationBase::Read(hsStream* s, hsResMgr* mgr)
     if( fOpacityCtl )
     {
         fOwnedChannels |= kOpacity;
-        fOpacity = TRACKED_NEW float;
+        fOpacity = new float;
     }
     if( fPreshadeColorCtl )
     {
         fOwnedChannels |= kPreshadeColor;
-        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fPreshadeColor = new hsColorRGBA;
     }
     if( fRuntimeColorCtl )
     {
         fOwnedChannels |= kRuntimeColor;
-        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fRuntimeColor = new hsColorRGBA;
     }
     if( fAmbientColorCtl )
     {
         fOwnedChannels |= kAmbientColor;
-        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fAmbientColor = new hsColorRGBA;
     }
     if( fSpecularColorCtl )
     {
         fOwnedChannels |= kSpecularColor;
-        fSpecularColor = TRACKED_NEW hsColorRGBA;
+        fSpecularColor = new hsColorRGBA;
     }
     if( fTransformCtl )
     {
         fOwnedChannels |= kTransform;
-        fTransform = TRACKED_NEW hsMatrix44;
+        fTransform = new hsMatrix44;
     }
     fLength = IMakeUniformLength();
 }
@@ -220,7 +220,7 @@ void plLayerAnimationBase::SetPreshadeColorCtl(plController* colCtl)
     if( fPreshadeColorCtl )
         delete fPreshadeColorCtl;
     else
-        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fPreshadeColor = new hsColorRGBA;
 
     fOwnedChannels |= kPreshadeColor;
     fPreshadeColorCtl = colCtl;
@@ -231,7 +231,7 @@ void plLayerAnimationBase::SetRuntimeColorCtl(plController* colCtl)
     if( fRuntimeColorCtl )
         delete fRuntimeColorCtl;
     else
-        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fRuntimeColor = new hsColorRGBA;
 
     fOwnedChannels |= kRuntimeColor;
     fRuntimeColorCtl = colCtl;
@@ -242,7 +242,7 @@ void plLayerAnimationBase::SetAmbientColorCtl(plController* ambCtl)
     if( fAmbientColorCtl )
         delete fAmbientColorCtl;
     else
-        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fAmbientColor = new hsColorRGBA;
 
     fOwnedChannels |= kAmbientColor;
     fAmbientColorCtl = ambCtl;
@@ -253,7 +253,7 @@ void plLayerAnimationBase::SetSpecularColorCtl(plController* ambCtl)
     if( fSpecularColorCtl )
         delete fSpecularColorCtl;
     else
-        fSpecularColor = TRACKED_NEW hsColorRGBA;
+        fSpecularColor = new hsColorRGBA;
 
     fOwnedChannels |= kSpecularColor;
     fSpecularColorCtl = ambCtl;
@@ -264,7 +264,7 @@ void plLayerAnimationBase::SetOpacityCtl(plController* opaCtl)
     if( fOpacityCtl )
         delete fOpacityCtl;
     else
-        fOpacity = TRACKED_NEW float;
+        fOpacity = new float;
 
     fOwnedChannels |= kOpacity;
     fOpacityCtl = opaCtl;
@@ -275,7 +275,7 @@ void plLayerAnimationBase::SetTransformCtl(plController* xfmCtl)
     if( fTransformCtl )
         delete fTransformCtl;
     else
-        fTransform = TRACKED_NEW hsMatrix44;
+        fTransform = new hsMatrix44;
 
     fOwnedChannels |= kTransform;
     fTransformCtl = xfmCtl;
@@ -330,7 +330,7 @@ void plLayerAnimation::Read(hsStream* s, hsResMgr* mgr)
 
     // add sdl modifier
     delete fLayerSDLMod;
-    fLayerSDLMod = TRACKED_NEW plLayerSDLModifier;
+    fLayerSDLMod = new plLayerSDLModifier;
     fLayerSDLMod->SetLayerAnimation(this);
 }
 
@@ -427,7 +427,7 @@ plLayerLinkAnimation::plLayerLinkAnimation() :
     fLastFadeFlag(0),
     fFadeFlagsDirty(false) 
 { 
-    fIFaceCallback = TRACKED_NEW plEventCallbackMsg();
+    fIFaceCallback = new plEventCallbackMsg();
     fIFaceCallback->fEvent = kTime;
     fIFaceCallback->fRepeats = 0;           
 }
@@ -527,7 +527,7 @@ uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignor
             {
                 // Either we're going opaque, or we were opaque and now we're fading.
                 // Tell the armature to re-eval its opacity settings.
-                plAvatarOpacityCallbackMsg *opacityMsg = TRACKED_NEW plAvatarOpacityCallbackMsg(fLinkKey, kStop);
+                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, kStop);
                 opacityMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
                 opacityMsg->Send();
             }               

@@ -136,7 +136,7 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
     int i;
     for( i = 0; i < 6; i++ )
     {
-        plGrabCubeRenderRequest* req = TRACKED_NEW plGrabCubeRenderRequest;
+        plGrabCubeRenderRequest* req = new plGrabCubeRenderRequest;
         req->SetRenderState(renderState);
 
         req->SetDrawableMask(plDrawable::kNormal);
@@ -159,7 +159,7 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
         req->fQuality = q;
         sprintf(req->fFileName, "%s_%s.jpg", pref, suff[i]);
 
-        plRenderRequestMsg* reqMsg = TRACKED_NEW plRenderRequestMsg(nil, req);
+        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nil, req);
         reqMsg->Send();
         hsRefCnt_SafeUnRef(req);
     }

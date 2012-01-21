@@ -81,7 +81,7 @@ public:
         {   
             fReceivers.Append(mgr->ReadKey(stream));
         }
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         fProxyKey = mgr->ReadKey(stream);
     }
 

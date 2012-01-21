@@ -126,7 +126,7 @@ public:
     virtual ~pfBasicProximityDatabase() {}
 
     // allocate a token to represent a given client object in this database
-    tokenType *MakeToken(T parentObject) {return TRACKED_NEW tokenType(parentObject, fGroup);}
+    tokenType *MakeToken(T parentObject) {return new tokenType(parentObject, fGroup);}
 
     // return the number of tokens currently in the database
     int Size(void) {return fGroup.size();}

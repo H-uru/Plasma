@@ -67,7 +67,7 @@ hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, uint32_t le
 
 void* HSMemory::New(uint32_t size)
 {
-    return TRACKED_NEW uint32_t[(size + 3) >> 2];
+    return new uint32_t[(size + 3) >> 2];
 }
 
 void HSMemory::Delete(void* block)
@@ -113,7 +113,7 @@ void HSMemory::Clear(void* m, uint32_t byteLen)
 template <class T> T* hsSoftNew(T*& obj)
 {
     try {
-        obj = TRACKED_NEW T;
+        obj = new T;
     }
     catch (...) {
         obj = nil;
@@ -124,7 +124,7 @@ template <class T> T* hsSoftNew(T*& obj)
 inline template <class T> T* hsSoftNew(T*& obj, unsigned count)
 {
     try {
-        obj = TRACKED_NEW T[count];
+        obj = new T[count];
     }
     catch (...) {
         obj = nil;
@@ -138,7 +138,7 @@ void* HSMemory::SoftNew(uint32_t size)
     uint32_t* p;
 
     hsTry {
-        p = TRACKED_NEW uint32_t[(size + 3) >> 2];
+        p = new uint32_t[(size + 3) >> 2];
     } hsCatch(...) {
         p = nil;
     }
@@ -736,7 +736,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
     long totsize= 0;        // Track Total Bytes
     long normsize = 0;      // Track total of NORMAL Blocks
 
-    looktbl *ltb = TRACKED_NEW looktbl[LTBLMAX];
+    looktbl *ltb = new looktbl[LTBLMAX];
     long tblEnd=1;          // first is "NULL";
 
     memset((void *)ltb,0,sizeof(looktbl) * LTBLMAX);        // clear table area

@@ -104,7 +104,7 @@ void plAccessGeometry::Init(plPipeline* pipe)
 {
     plAccessGeometry* oldAcc = fInstance;
 
-    fInstance = NEW(plAccessGeometry)(pipe);
+    fInstance = new plAccessGeometry(pipe);
 
     hsRefCnt_SafeUnRef(oldAcc);
 }
@@ -326,7 +326,7 @@ void plAccessGeometry::TakeSnapShot(plDrawable* drawable, uint32_t spanIdx, uint
     const plSpan* span = ds->GetSpan(spanIdx);
 
     if( !span->fSnapShot )
-        span->fSnapShot = NEW(plAccessSnapShot);
+        span->fSnapShot = new plAccessSnapShot;
 
     plAccessSpan tmp;
     OpenRO(drawable, spanIdx, tmp, false);

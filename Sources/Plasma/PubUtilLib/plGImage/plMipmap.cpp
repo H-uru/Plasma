@@ -156,7 +156,7 @@ void    plMipmap::Create( uint32_t width, uint32_t height, unsigned config, uint
     for( i = 0; i < fNumLevels; i++ )
         fTotalSize += fLevelSizes[ i ];
 
-    fImage = (void *)TRACKED_NEW uint8_t[ fTotalSize ];
+    fImage = (void *)new uint8_t[ fTotalSize ];
     memset(fImage, 0, fTotalSize);
 
     SetCurrLevel( 0 );
@@ -249,7 +249,7 @@ uint32_t  plMipmap::Read( hsStream *s )
             }
         }
 
-        fImage = (void *)TRACKED_NEW uint8_t[ fTotalSize ];
+        fImage = (void *)new uint8_t[ fTotalSize ];
 #ifdef MEMORY_LEAK_TRACER
         IAddToMemRecord( this, plRecord::kViaRead );
 #endif
@@ -389,7 +389,7 @@ void    plMipmap::IWriteRawImage( hsStream *stream )
 
 plMipmap *plMipmap::ISplitAlpha()
 {
-    plMipmap *retVal = TRACKED_NEW plMipmap();
+    plMipmap *retVal = new plMipmap();
     retVal->CopyFrom(this);
     memset( retVal->fImage, 0, fTotalSize );
 
@@ -451,7 +451,7 @@ plMipmap *plMipmap::IReadRLEImage( hsStream *stream )
     uint32_t count,color;
     bool done = false;
 
-    plMipmap *retVal = TRACKED_NEW plMipmap(fWidth,fHeight,plMipmap::kARGB32Config,1);
+    plMipmap *retVal = new plMipmap(fWidth,fHeight,plMipmap::kARGB32Config,1);
 
     uint32_t *curPos = (uint32_t*)retVal->fImage;
     uint32_t curLoc = 0;
@@ -548,12 +548,12 @@ void plMipmap::IWriteJPEGImage( hsStream *stream )
     plMipmap *alpha = ISplitAlpha();
     uint8_t flags = 0;
 
-    hsNullStream *nullStream = TRACKED_NEW hsNullStream();
+    hsNullStream *nullStream = new hsNullStream();
     IWriteRLEImage(nullStream,this);
     if (nullStream->GetBytesWritten() < 5120) // we use RLE if it can get the image size under 5k, otherwise we use JPEG
         flags |= kColorDataRLE;
     delete nullStream;
-    nullStream = TRACKED_NEW hsNullStream();
+    nullStream = new hsNullStream();
     IWriteRLEImage(nullStream,alpha);
     if (nullStream->GetBytesWritten() < 5120)
         flags |= kAlphaDataRLE;
@@ -598,7 +598,7 @@ void    plMipmap::IBuildLevelSizes()
 
 
     delete [] fLevelSizes;
-    fLevelSizes = TRACKED_NEW uint32_t[ fNumLevels ];
+    fLevelSizes = new uint32_t[ fNumLevels ];
     memset( fLevelSizes, 0, sizeof( uint32_t ) * fNumLevels );
 
     for( level = 0, width = fWidth, height = fHeight, rowBytes = fRowBytes; level < fNumLevels; level++ )
@@ -752,7 +752,7 @@ void    plMipmap::ClipToMaxSize( uint32_t maxDimension )
         return;
 
     /// Create a new image pointer
-    destData = TRACKED_NEW uint8_t[ newSize ];
+    destData = new uint8_t[ newSize ];
     hsAssert( destData != nil, "Out of memory in ClipToMaxSize()" );
     memcpy( destData, srcData, newSize );
 
@@ -783,7 +783,7 @@ void    plMipmap::RemoveMipping()
 
 
     /// Create a new image pointer
-    destData = TRACKED_NEW uint8_t[ fLevelSizes[ 0 ] ];
+    destData = new uint8_t[ fLevelSizes[ 0 ] ];
     hsAssert( destData != nil, "Out of memory in ClipToMaxSize()" );
     memcpy( destData, fImage, fLevelSizes[ 0 ] );
 
@@ -862,14 +862,14 @@ plFilterMask::plFilterMask( float sig )
     if( fExt < 1 )
         fExt = 1;
 
-    float **m = TRACKED_NEW float *[ ( fExt << 1 ) + 1 ];
+    float **m = new float *[ ( fExt << 1 ) + 1 ];
     m += fExt;
     int i, j;
     float ooSigSq = 1.f / ( sig * sig );
 
     for( i = -fExt; i <= fExt; i++ )
     {
-        m[ i ] = ( TRACKED_NEW float[ ( fExt << 1 ) + 1] ) + fExt;
+        m[ i ] = ( new float[ ( fExt << 1 ) + 1] ) + fExt;
         for( j = -fExt; j <= fExt; j++ )
         {
             m[ i ][ j ] = expf( -( i*i + j*j ) * ooSigSq );
@@ -923,7 +923,7 @@ plMipmap::plMipmap( plMipmap *bm, float sig, uint32_t createFlags,
         fTotalSize += fLevelSizes[ i ];
     fCurrLevel = 0;
 
-    fImage = (void *)TRACKED_NEW uint8_t[ fTotalSize ];
+    fImage = (void *)new uint8_t[ fTotalSize ];
     memset(fImage, 0, fTotalSize);
     memcpy( fImage, bm->fImage, bm->GetLevelSize( 0 ) );
 #ifdef MEMORY_LEAK_TRACER
@@ -1568,7 +1568,7 @@ void    plMipmap::CopyFrom( const plMipmap *source )
     fCompressionType = source->fCompressionType;
     fTotalSize = source->fTotalSize;
 
-    fImage = (void *)TRACKED_NEW uint8_t[ fTotalSize ];
+    fImage = (void *)new uint8_t[ fTotalSize ];
     memcpy( fImage, source->fImage, fTotalSize );
 #ifdef MEMORY_LEAK_TRACER
     IAddToMemRecord( this, plRecord::kViaCopyFrom );
@@ -1606,7 +1606,7 @@ void    plMipmap::CopyFrom( const plMipmap *source )
 
 plMipmap    *plMipmap::Clone() const
 {
-    plMipmap *newMap = TRACKED_NEW plMipmap;
+    plMipmap *newMap = new plMipmap;
 
     newMap->CopyFrom( this );
 
@@ -2090,7 +2090,7 @@ void    plMipmap::ScaleNicely( uint32_t *destPtr, uint16_t destWidth, uint16_t d
 hsBool  plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter )
 {
     // Make a temp buffer
-    uint32_t  *newData = TRACKED_NEW uint32_t[ newWidth * newHeight ];
+    uint32_t  *newData = new uint32_t[ newWidth * newHeight ];
     if( newData == nil )
         return false;
 
@@ -2125,7 +2125,7 @@ uint32_t              plMipmap::fNumMipmaps = 0;
 
 void    plMipmap::IAddToMemRecord( plMipmap *mip, plRecord::Method method )
 {
-    plRecord    *newRecord = TRACKED_NEW plRecord;
+    plRecord    *newRecord = new plRecord;
 
 
     newRecord->fCompressionType = mip->fCompressionType;

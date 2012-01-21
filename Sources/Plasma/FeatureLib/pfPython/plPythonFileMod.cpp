@@ -558,7 +558,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                     if (sceneObj)
                     {
                         hsAssert(!fSDLMod, "Python SDL modifier already created");
-                        fSDLMod = TRACKED_NEW plPythonSDLModifier(this);
+                        fSDLMod = new plPythonSDLModifier(this);
                         sceneObj->AddModifier(fSDLMod);
                     }
                 }
@@ -634,7 +634,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                             NamedComponent comp;
                                             comp.isActivator = (isNamedAttr == 1);
                                             comp.id = parameter.fID;
-                                            comp.name = TRACKED_NEW char[strlen(parameter.datarecord.fString) + 1];
+                                            comp.name = new char[strlen(parameter.datarecord.fString) + 1];
                                             strcpy(comp.name, parameter.datarecord.fString);
                                             
                                             fNamedCompQueue.Append(comp);
@@ -779,7 +779,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 {
                     // create the callback object
                     // Set the callback for the vault thingy
-                    fVaultCallback = TRACKED_NEW PythonVaultCallback( this, kfunc_VaultEvent );
+                    fVaultCallback = new PythonVaultCallback( this, kfunc_VaultEvent );
                     VaultRegisterCallback(fVaultCallback);
                 }
 
@@ -787,7 +787,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 if ( fPyFunctionInstances[kfunc_OnDefaultKeyCaught] != nil )
                 {
                     // Make us a key catcher
-                    fKeyCatcher = TRACKED_NEW pfPythonKeyCatcher( this );
+                    fKeyCatcher = new pfPythonKeyCatcher( this );
 
                     // Tell the input interface manager to use our catcher
                     plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher( fKeyCatcher );
@@ -1112,7 +1112,7 @@ void plPythonFileMod::IFindActivatorAndAdd(const char *activatorName, int32_t id
                 {
                     // setup a ref notify when it does get loaded
                     hsgResMgr::ResMgr()->AddViaNotify(keylist[i],
-                                                    TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
+                                                    new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
                                                     plRefFlags::kPassiveRef);
                 }
             }
@@ -2902,7 +2902,7 @@ void plPythonFileMod::EnableControlKeyEvents()
     if ( fPyFunctionInstances[kfunc_OnKeyEvent] != nil )
     {
         // register for key events
-        plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+        plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
         pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -2921,7 +2921,7 @@ void plPythonFileMod::EnableControlKeyEvents()
 void plPythonFileMod::DisableControlKeyEvents()
 {
     // unregister for key events
-    plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
     pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg->SetSender(GetKey());
     pModMsg->SetCmd(plCmdIfaceModMsg::kRemove);

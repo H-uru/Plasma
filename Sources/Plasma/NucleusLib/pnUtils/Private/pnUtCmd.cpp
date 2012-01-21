@@ -594,7 +594,7 @@ unsigned CCmdParser::GetUnsigned (const wchar_t name[]) const {
 
 //===========================================================================
 void CCmdParser::Initialize (const CmdArgDef def[], unsigned defCount) {
-    fParser = NEW(CICmdParser)(def, defCount);
+    fParser = new CICmdParser(def, defCount);
 }
 
 //===========================================================================

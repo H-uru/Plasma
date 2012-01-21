@@ -203,7 +203,7 @@ plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const cha
 plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
 {
     IEnsurePathExists( fBasePath );
-    plStatusLog *log = NEW(plStatusLog)( numDisplayLines, filename, flags );
+    plStatusLog *log = new plStatusLog( numDisplayLines, filename, flags );
 
     // Put the new log in its alphabetical position
     plStatusLog** nextLog = &fDisplays;
@@ -445,8 +445,8 @@ void    plStatusLog::IInit()
 
     fFlags = fOrigFlags;
 
-    fLines = TRACKED_NEW char *[ fMaxNumLines ];
-    fColors = TRACKED_NEW uint32_t[ fMaxNumLines ];
+    fLines = new char *[ fMaxNumLines ];
+    fColors = new uint32_t[ fMaxNumLines ];
     for( i = 0; i < fMaxNumLines; i++ )
     {
         fLines[ i ] = nil;
@@ -632,7 +632,7 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
         if (fMaxNumLines > 0)
         {
-            fLines[ i ] = TRACKED_NEW char[ count + 1 ];
+            fLines[ i ] = new char[ count + 1 ];
             hsStrncpy( fLines[ i ], line, count + 1 );
             fLines[ i ][ count ] = 0;
 

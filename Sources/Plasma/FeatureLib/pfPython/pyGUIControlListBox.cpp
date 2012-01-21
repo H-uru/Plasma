@@ -105,7 +105,7 @@ class pfColorListElement : public pfGUIListText
         {
             if ( string1 )
             {
-                fString1 = TRACKED_NEW wchar_t[wcslen(string1)+1];
+                fString1 = new wchar_t[wcslen(string1)+1];
                 wcscpy(fString1,string1);
                 fText = nil;
             }
@@ -117,7 +117,7 @@ class pfColorListElement : public pfGUIListText
             fTextColor1 = color1;
             if (string2)
             {
-                fString2 = TRACKED_NEW wchar_t[wcslen(string2)+1];
+                fString2 = new wchar_t[wcslen(string2)+1];
                 wcscpy(fString2,string2);
             }
             else
@@ -158,7 +158,7 @@ class pfColorListElement : public pfGUIListText
 
             if( text != nil )
             {
-                fString1 = TRACKED_NEW wchar_t[wcslen(text)+1];
+                fString1 = new wchar_t[wcslen(text)+1];
                 wcscpy(fString1,text);
             }
             else
@@ -249,7 +249,7 @@ class pfColorListElement : public pfGUIListText
             if ( fString1 && fString2 )
             {
                 size_t length = wcslen( fString1 ) + wcslen( fString2 ) + 3;
-                thestring = TRACKED_NEW wchar_t[ length ];
+                thestring = new wchar_t[ length ];
                 snwprintf( thestring, length, L"%s %s", fString1, fString2 );
                 wemade_string = true;
             }
@@ -617,7 +617,7 @@ int16_t pyGUIControlListBox::AddStringW( std::wstring string )
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfGUIListText *element = TRACKED_NEW pfGUIListText( string.c_str() );
+            pfGUIListText *element = new pfGUIListText( string.c_str() );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -634,7 +634,7 @@ int16_t   pyGUIControlListBox::AddImage( pyImage& image, hsBool respectAlpha )
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfGUIListPicture *element = TRACKED_NEW pfGUIListPicture(image.GetKey(),respectAlpha);
+            pfGUIListPicture *element = new pfGUIListPicture(image.GetKey(),respectAlpha);
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -680,7 +680,7 @@ int16_t pyGUIControlListBox::AddTextWColorW( std::wstring str, pyColor& textcolo
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = TRACKED_NEW pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha );
+            pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -705,7 +705,7 @@ int16_t pyGUIControlListBox::AddTextWColorWSizeW( std::wstring str, pyColor& tex
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = TRACKED_NEW pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha, fontsize );
+            pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha, fontsize );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -731,7 +731,7 @@ void pyGUIControlListBox::Add2TextWColorW( std::wstring str1, pyColor& textcolor
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = TRACKED_NEW pfColorListElement(str1.c_str(),textcolor1.getColor(),str2.c_str(),textcolor2.getColor(),inheritalpha );
+            pfColorListElement *element = new pfColorListElement(str1.c_str(),textcolor1.getColor(),str2.c_str(),textcolor2.getColor(),inheritalpha );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             plbmod->AddElement( element );
@@ -747,7 +747,7 @@ int16_t pyGUIControlListBox::AddStringInBox( const char *string, uint32_t min_wi
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfListTextInBox *element = TRACKED_NEW pfListTextInBox( string, min_width, min_height );
+            pfListTextInBox *element = new pfListTextInBox( string, min_width, min_height );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -764,7 +764,7 @@ int16_t pyGUIControlListBox::AddStringInBoxW( std::wstring string, uint32_t min_
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfListTextInBox *element = TRACKED_NEW pfListTextInBox( string.c_str(), min_width, min_height );
+            pfListTextInBox *element = new pfListTextInBox( string.c_str(), min_width, min_height );
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -781,7 +781,7 @@ int16_t   pyGUIControlListBox::AddImageInBox( pyImage& image, uint32_t x, uint32
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfListPictureInBox *element = TRACKED_NEW pfListPictureInBox(image.GetKey(),x,y,width,height,respectAlpha);
+            pfListPictureInBox *element = new pfListPictureInBox(image.GetKey(),x,y,width,height,respectAlpha);
             if( fBuildRoots.GetCount() > 0 )
                 fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
             return plbmod->AddElement( element );
@@ -799,7 +799,7 @@ int16_t   pyGUIControlListBox::AddImageAndSwatchesInBox( pyImage& image, uint32_
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfListPictureInBoxWithSwatches *element = TRACKED_NEW pfListPictureInBoxWithSwatches( image.GetKey(),x,y,
+            pfListPictureInBoxWithSwatches *element = new pfListPictureInBoxWithSwatches( image.GetKey(),x,y,
                                                                                         width,height,respectAlpha,
                                                                                         primary.getColor(), secondary.getColor() );
             if( fBuildRoots.GetCount() > 0 )
@@ -944,7 +944,7 @@ void    pyGUIControlListBox::AddBranchW( std::wstring name, hsBool initiallyOpen
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfGUIListTreeRoot *root = TRACKED_NEW pfGUIListTreeRoot( name.c_str() );
+            pfGUIListTreeRoot *root = new pfGUIListTreeRoot( name.c_str() );
             root->ShowChildren( initiallyOpen );
             
             if( fBuildRoots.GetCount() > 0 )

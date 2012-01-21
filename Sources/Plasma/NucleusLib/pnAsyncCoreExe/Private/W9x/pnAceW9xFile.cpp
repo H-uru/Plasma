@@ -322,7 +322,7 @@ AsyncId W9xFileCreateSequence (
     CFile * object = (CFile *)file;
 
     // Queue an operation
-    FileOp * op = NEW(FileOp);
+    FileOp * op = new FileOp;
     op->code             = kNotifyFileSequence;
     op->notify           = notify;
     op->data.flush.param = param;
@@ -342,7 +342,7 @@ AsyncId W9xFileFlushBuffers (
     CFile * object = (CFile *)file;
 
     // Queue an operation
-    FileOp * op = NEW(FileOp);
+    FileOp * op = new FileOp;
     op->code   = kNotifyFileFlush;
     op->notify = notify;
     op->data.flush.param        = param;
@@ -401,7 +401,7 @@ AsyncFile W9xFileOpen (
     GetFileTime(fileHandle, nil, nil, (FILETIME *) &lastWriteTime);
 
     // Create a file object
-    CFile * object = NEW(CFile)(
+    CFile * object = new CFile(
         fileHandle,
         notifyProc,
         userState
@@ -436,7 +436,7 @@ AsyncId W9xFileRead (
 
     // Queue asynchronous operations
     else {
-        FileOp * op = NEW(FileOp);
+        FileOp * op = new FileOp;
         op->code   = kNotifyFileRead;
         op->notify = (flags & kAsyncFileRwNotify) != 0;
         op->data.read.param  = param;
@@ -492,7 +492,7 @@ AsyncId W9xFileWrite (
 
     // Queue asynchronous operations
     else {
-        FileOp * op = NEW(FileOp);
+        FileOp * op = new FileOp;
         op->code   = kNotifyFileWrite;
         op->notify = (flags & kAsyncFileRwNotify) != 0;
         op->data.write.param  = param;

@@ -142,7 +142,7 @@ plAGChannel * plMatrixChannel::MakeBlend(plAGChannel * channelB,
 
     if (matChanB)
     {
-        result = TRACKED_NEW plMatrixBlend(this, matChanB, channelBias, blendPriority);
+        result = new plMatrixBlend(this, matChanB, channelBias, blendPriority);
     }
     return result;
 }
@@ -151,14 +151,14 @@ plAGChannel * plMatrixChannel::MakeBlend(plAGChannel * channelB,
 // --------------
 plAGChannel * plMatrixChannel::MakeZeroState()
 {
-    return TRACKED_NEW plMatrixConstant(Value(0));
+    return new plMatrixConstant(Value(0));
 }
 
 // MakeTimeScale --------------------------------------------------------
 // --------------
 plAGChannel * plMatrixChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plMatrixTimeScale(this, timeSource);
+    return new plMatrixTimeScale(this, timeSource);
 }
 
 // Dump -------------------------------------------
@@ -559,7 +559,7 @@ plAGChannel *plMatrixControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plMatrixControllerCacheChannel(this, cache);
+    return new plMatrixControllerCacheChannel(this, cache);
 }
 
 void plMatrixControllerChannel::Dump(int indent, bool optimized, double time)

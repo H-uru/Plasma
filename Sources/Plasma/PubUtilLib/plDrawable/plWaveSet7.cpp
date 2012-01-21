@@ -375,18 +375,18 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
     int i;
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
     }
     n = stream->ReadLE32();
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDecal), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDecal), plRefFlags::kPassiveRef);
     }
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
 
     if( HasFlag(kHasRefObject) )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
     }
 
     ISetupTextureWaves();
@@ -1076,7 +1076,7 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
 
     plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
-//  plImpulseMsg* iMsg = TRACKED_NEW plImpulseMsg(GetKey(), physKey, hsVector3(0, 0, 1.f) * forceMag * dt);
+//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0, 0, 1.f) * forceMag * dt);
 //  iMsg->Send();
 
 #if 0
@@ -1084,7 +1084,7 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
     hsVector3 rotAx = hsVector3(0, 0, 1.f) % surfNorm;
     rotAx *= kRotScale * dt * volume;
 
-    plAngularImpulseMsg* aMsg = TRACKED_NEW plAngularImpulseMsg(GetKey(), physKey, rotAx);
+    plAngularImpulseMsg* aMsg = new plAngularImpulseMsg(GetKey(), physKey, rotAx);
     aMsg->Send();
 #endif
 
@@ -1097,7 +1097,7 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
         damp *= kDampener;
         damp += kBaseDamp;
 
-//      plDampMsg* dMsg = TRACKED_NEW plDampMsg(GetKey(), physKey, damp);
+//      plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
 //      dMsg->Send();
     }
 }
@@ -1122,7 +1122,7 @@ void plWaveSet7::IShiftCenter(plSceneObject* so) const
         hsPoint3 center = so->GetDrawInterface()->GetWorldBounds().GetCenter();
         hsPoint3 pos = so->GetLocalToWorld().GetTranslate();
         hsVector3 offset(&pos, &center);
-//      plShiftMassMsg* msg = TRACKED_NEW plShiftMassMsg(GetKey(), so->GetSimulationInterface()->GetPhysical()->GetKey(), offset);
+//      plShiftMassMsg* msg = new plShiftMassMsg(GetKey(), so->GetSimulationInterface()->GetPhysical()->GetKey(), offset);
 //      msg->Send();
     }
 }
@@ -1186,13 +1186,13 @@ void plWaveSet7::ICheckTargetMaterials()
 
 void plWaveSet7::IAddTarget(const plKey& key)
 {
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(key, plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(key, plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
 void plWaveSet7::IRemoveTarget(const plKey& key)
 {
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(key, plRefMsg::kOnRemove, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(key, plRefMsg::kOnRemove, -1, plObjRefMsg::kModifier);
     refMsg->SetRef(this);
     refMsg->Send();
 }
@@ -1211,19 +1211,19 @@ void plWaveSet7::SetRefObject(plSceneObject* refObj)
 {
     fFlags.SetBit(kHasRefObject, refObj != nil);
 
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRefObj);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRefObj);
     hsgResMgr::ResMgr()->SendRef(refObj, msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::AddBuoy(plKey soKey)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBuoy);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBuoy);
     hsgResMgr::ResMgr()->AddViaNotify(soKey, msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::RemoveBuoy(plKey soKey)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefBuoy);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefBuoy);
     msg->SetRef(soKey->ObjectIsLoaded());
     msg->Send();
 }
@@ -1448,20 +1448,20 @@ void plWaveSet7::SetSceneNode(const plKey& key)
 
 void plWaveSet7::AddDynaDecalMgr(plKey& key)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefDynaDecalMgr);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefDynaDecalMgr);
     hsgResMgr::ResMgr()->AddViaNotify(key, msg, plRefFlags::kPassiveRef);
 
-    msg = TRACKED_NEW plGenRefMsg(key, plRefMsg::kOnRequest, 0, plDynaRippleVSMgr::kRefWaveSetBase);
+    msg = new plGenRefMsg(key, plRefMsg::kOnRequest, 0, plDynaRippleVSMgr::kRefWaveSetBase);
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::RemoveDynaDecalMgr(plKey& key)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefDynaDecalMgr);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefDynaDecalMgr);
     msg->SetRef(key->ObjectIsLoaded());
     msg->Send();
 
-    msg = TRACKED_NEW plGenRefMsg(key, plRefMsg::kOnRemove, 0, plDynaRippleVSMgr::kRefWaveSetBase);
+    msg = new plGenRefMsg(key, plRefMsg::kOnRemove, 0, plDynaRippleVSMgr::kRefWaveSetBase);
     msg->SetRef(this);
     msg->Send();
 }
@@ -1610,7 +1610,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersFFP()
 plMipmap* plWaveSet7::ICreateBiasNoiseMap()
 {
     const int size = kCompositeSize >> 2;
-    plMipmap* mipMap = TRACKED_NEW plMipmap(
+    plMipmap* mipMap = new plMipmap(
         size, size,
         plMipmap::kARGB32Config,
         1, 
@@ -1656,7 +1656,7 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
 
     if( !fCosineLUT )
     {
-        plMipmap* mipMap = TRACKED_NEW plMipmap(
+        plMipmap* mipMap = new plMipmap(
         kCompositeSize, sizeV,
         plMipmap::kARGB32Config,
         kNumLevels, 
@@ -1667,7 +1667,7 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
         sprintf(buff, "%s_%s", GetKey()->GetName(), "BumpBitPS");
         hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
-        hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefCosineLUT), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefCosineLUT), plRefFlags::kActiveRef);
     }
     hsAssert(fCosineLUT, "Failed to make cosine lookup table");
 
@@ -1715,7 +1715,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
         int i;
         for( i = 0; i < 2; i++ )
         {
-            plLayer* layer = TRACKED_NEW plLayer;
+            plLayer* layer = new plLayer;
             char buff[256];
             sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "Bias", i);
             hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -1735,7 +1735,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
 
             layer->SetUVWSrc(0);
 
-            plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+            plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
             hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
             IAddBumpBiasShaders(layer);
@@ -1751,7 +1751,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
 
 plLayer* plWaveSet7::ICreateBumpLayerPS(plMipmap* mipMap, hsGMaterial* bumpMat, int which)
 {
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "BumpLayerPS", which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -1786,7 +1786,7 @@ plLayer* plWaveSet7::ICreateBumpLayerPS(plMipmap* mipMap, hsGMaterial* bumpMat, 
 
     bumpMat->AddLayerViaNotify(layer);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return layer;
@@ -1809,7 +1809,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
     //
 
     // Create a blank material
-    hsGMaterial* bumpMat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* bumpMat = new hsGMaterial;
     char buff[256];
     sprintf(buff, "%s_%s", GetKey()->GetName(), "BumpMatPS");
     hsgResMgr::ResMgr()->NewKey(buff, bumpMat, GetKey()->GetUoid().GetLocation());
@@ -1839,7 +1839,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
 
 
     // Need to add this via notify to ourselves.
-    hsgResMgr::ResMgr()->SendRef(bumpMat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpMat), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(bumpMat->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpMat), plRefFlags::kActiveRef);
 
     ICreateBumpDrawable();
 
@@ -1850,7 +1850,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 {
     if( !fBiasVShader )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_BiasVS", GetKey()->GetName());
@@ -1902,19 +1902,19 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 //      vShader->SetDecl(&vDecl);
         vShader->SetDecl(plShaderTable::Decl(vs_BiasNormals));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasVShader), plRefFlags::kActiveRef);
 
 
         fBiasVShader = vShader;
     }
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
     hsgResMgr::ResMgr()->SendRef(fBiasVShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 
     if( !fBiasPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_BiasPS", GetKey()->GetName());
@@ -1930,12 +1930,12 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 //      pShader->SetDecl(&pDecl);
         pShader->SetDecl(plShaderTable::Decl(ps_BiasNormals));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasPShader), plRefFlags::kActiveRef);
 
         fBiasPShader = pShader;
     }
 
-    refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);   
+    refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);   
     hsgResMgr::ResMgr()->SendRef(fBiasPShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 }
@@ -1949,7 +1949,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* vShader = TRACKED_NEW plShader;
+            plShader* vShader = new plShader;
             char buff[256];
             sprintf(buff, "%s_BumpVS_%d", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -1975,7 +1975,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
 
             vShader->SetDecl(plShaderTable::Decl(vs_CompCosines));
 
-            hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpVShader), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpVShader), plRefFlags::kActiveRef);
 
             fBumpVShader[iShader] = vShader;
 
@@ -1995,7 +1995,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* pShader = TRACKED_NEW plShader;
+            plShader* pShader = new plShader;
             char buff[256];
             sprintf(buff, "%s_BumpPS_%d", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2025,7 +2025,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
 
             pShader->SetVector(plBumpPS::kHalfOne, 0.25f, 0.25f, 0.25f, 1.f);
 
-            hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpPShader), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpPShader), plRefFlags::kActiveRef);
 
             fBumpPShader[iShader] = pShader;
 
@@ -2038,14 +2038,14 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
 
 plDrawableSpans* plWaveSet7::ICreateBumpDrawable()
 {
-    fBumpDraw = TRACKED_NEW plDrawableSpans;
+    fBumpDraw = new plDrawableSpans;
     char buff[256];
     sprintf(buff, "%s_BumpDraw", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, fBumpDraw, GetKey()->GetUoid().GetLocation());
 
     ICreateClearDrawable(fBumpDraw, fBumpMat);
     
-    hsgResMgr::ResMgr()->SendRef(fBumpDraw->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpDraw), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(fBumpDraw->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpDraw), plRefFlags::kActiveRef);
 
     return fBumpDraw;
 }
@@ -2122,7 +2122,7 @@ plDrawableSpans* plWaveSet7::ICreateClearDrawable(plDrawableSpans* drawable, hsG
 
 plRenderRequest* plWaveSet7::ICreateRenderRequest(plRenderTarget* rt, plDrawableSpans* draw, float pri)
 {
-    plRenderRequest* req = TRACKED_NEW plRenderRequest;
+    plRenderRequest* req = new plRenderRequest;
 
     static plPageTreeMgr emptyMgr;
     req->SetPageTreeMgr(&emptyMgr);
@@ -2153,7 +2153,7 @@ plRenderTarget* plWaveSet7::ICreateTransferRenderTarget(const char* name, int si
     uint8_t zDepth = 0;
     uint8_t stencilDepth = 0;
     
-    plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
+    plRenderTarget* rt = new plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
 
     char buff[256];
     sprintf(buff, "%s_%s", GetKey()->GetName(), name);
@@ -2167,7 +2167,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
     plLayer* layer = mat->GetNumLayers() > which ? plLayer::ConvertNoRef(mat->GetLayer(which)->BottomOfStack()) : nil;
     if( !layer )
     {
-        layer = TRACKED_NEW plLayer;
+        layer = new plLayer;
         char buff[256];
         sprintf(buff, "%s_%sLayerPS_%d", GetKey()->GetName(), suff, which);
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -2194,7 +2194,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
 
     layer->SetTransform(xfm);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(bm->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return layer;
@@ -2202,7 +2202,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
 
 plLayer* plWaveSet7::ICreateTotalEnvLayer(plBitmap* envMap, hsGMaterial* mat, int which, const char* pref)
 {
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%s_%d", GetKey()->GetName(), pref, "EnvLayerPS", which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -2226,7 +2226,7 @@ plLayer* plWaveSet7::ICreateTotalEnvLayer(plBitmap* envMap, hsGMaterial* mat, in
 
     layer->SetTransform(xfm);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(envMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     mat->AddLayerViaNotify(layer);
@@ -2248,7 +2248,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
     int i;
     for( i = mat->GetNumLayers()-1; i > 0; i-- )
     {
-        plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
+        plMatRefMsg* refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(mat->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
     }
 
@@ -2266,7 +2266,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
 
 
     fBumpReq = ICreateRenderRequest(rt, fBumpDraw, -100.f);
-    fBumpReqMsg = TRACKED_NEW plRenderRequestMsg(GetKey(), fBumpReq);
+    fBumpReqMsg = new plRenderRequestMsg(GetKey(), fBumpReq);
 
     IAddFixedVertexShader(mat, numUVWs);
     IAddFixedPixelShader(mat);
@@ -2281,7 +2281,7 @@ void plWaveSet7::ICreateFixedMat(hsGMaterial* mat, const int numUVWs)
 
     if( !fEnvMap )
     {
-        plDynamicEnvMap* env = TRACKED_NEW plDynamicEnvMap((uint16_t)fEnvSize, (uint16_t)fEnvSize, 32);
+        plDynamicEnvMap* env = new plDynamicEnvMap((uint16_t)fEnvSize, (uint16_t)fEnvSize, 32);
         hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), env, GetKey()->GetUoid().GetLocation());
         fEnvMap = env;
         env->SetPosition(hsPoint3(0, 0, 50.f));
@@ -2302,7 +2302,7 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
     if( !fShoreVShader )
     {
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_ShoreVS", GetKey()->GetName());
@@ -2342,7 +2342,7 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
 //      vShader->SetDecl(&decl);
         vShader->SetDecl(plShaderTable::Decl(vs_ShoreLeave7));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShoreVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShoreVShader), plRefFlags::kActiveRef);
 
         fShoreVShader = vShader;
 
@@ -2356,7 +2356,7 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
 {
     if( !fShorePShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_ShorePS", GetKey()->GetName());
@@ -2367,7 +2367,7 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
 //      pShader->SetShaderFileName("sha/ps_ShoreLeave6.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_ShoreLeave6));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShorePShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShorePShader), plRefFlags::kActiveRef);
 
         fShorePShader = pShader;
     }
@@ -2380,7 +2380,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
     if( !fFixedVShader )
     {
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_FixedVS", GetKey()->GetName());
@@ -2414,7 +2414,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 //      vShader->SetShaderFileName("sha/vs_WaveFixedFin.inl");
 //      vShader->SetShaderFileName("sha/vs_TestPos.inl");
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedVShader), plRefFlags::kActiveRef);
 
         fFixedVShader = vShader;
 
@@ -2439,7 +2439,7 @@ void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uin
             && (layer->GetVertexShader() != shader) 
             && (layer->GetPixelShader() != shader) )
         {
-            plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, type);   
+            plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, type);   
             hsgResMgr::ResMgr()->SendRef(shader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 //          layer->SetShadeFlags(layer->GetShadeFlags() | hsGMatState::kShadeReallyNoFog);
@@ -2451,7 +2451,7 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
 {
     if( !fFixedPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_FixedPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2467,7 +2467,7 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
 //      pShader->SetShaderFileName("sha/ps_TestPos.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveFixed));
         
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedPShader), plRefFlags::kActiveRef);
         
         fFixedPShader = pShader;
     }
@@ -2480,7 +2480,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 {
     if( !fRipVShader )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_RipVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -2553,7 +2553,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 //      vShader->SetDecl(&decl);
         vShader->SetDecl(plShaderTable::Decl(vs_WaveRip7));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipVShader), plRefFlags::kActiveRef);
 
         hsAssert(vShader == fRipVShader, "Should have been set by SendRef");
     }
@@ -2566,7 +2566,7 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
 {
     if( !fRipPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_RipPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2580,7 +2580,7 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
 //      pShader->SetShaderFileName("sha/ps_WaveRip.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveRip));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipPShader), plRefFlags::kActiveRef);
 
         hsAssert(pShader == fRipPShader, "Should have been set by SendRef");
     }
@@ -2626,7 +2626,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
         };
 
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_%s", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -2688,7 +2688,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
 //      vShader->SetDecl(&shaderDecls[t]);
         vShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecVShader), plRefFlags::kActiveRef);
 
         hsAssert(vShader == fDecalVShaders[t], "Should have been set by SendRef");
     }
@@ -2754,7 +2754,7 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
             ps_WaveDecEnv
         };
 
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_%s", GetKey()->GetName(), fname[t]);
@@ -2765,7 +2765,7 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
 //      pShader->SetShaderFileName(buff);
         pShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecPShader), plRefFlags::kActiveRef);
 
         hsAssert(fDecalPShaders[t] == pShader, "Should have been set by SendRef");
     }
@@ -3532,14 +3532,14 @@ void plWaveSet7::ICheckDecalEnvLayers(hsGMaterial* mat)
             }
             else
             {
-                refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+1, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+                refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+1, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
                 hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
             }
 
-            refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+2, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+2, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
 
-            refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+3, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+3, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
         }
     }
@@ -3577,7 +3577,7 @@ void plWaveSet7::ISetupDecal(hsGMaterial* mat)
 
 void plWaveSet7::AddShoreTest(plKey& key)
 {
-    hsgResMgr::ResMgr()->SendRef(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
 
     plSceneObject* so = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
     ICheckShoreMaterial(so);
@@ -3697,32 +3697,32 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
 plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, uint32_t ref, int which)
 {
-    plDrawableSpans* drawable = TRACKED_NEW plDrawableSpans;
+    plDrawableSpans* drawable = new plDrawableSpans;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, drawable, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return drawable;
 }
 
 hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, uint32_t ref, int which)
 {
-    hsGMaterial* mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* mat = new hsGMaterial;
 
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, mat, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mat;
 }
 
 plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
 {
-    plLayer* lay = TRACKED_NEW plLayer;
+    plLayer* lay = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, suff);
     hsgResMgr::ResMgr()->NewKey(buff, lay, GetKey()->GetUoid().GetLocation());
@@ -3732,7 +3732,7 @@ plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
 
 plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, uint32_t ref)
 {
-    plMipmap* mipMap = TRACKED_NEW plMipmap(
+    plMipmap* mipMap = new plMipmap(
         width, height,
         plMipmap::kARGB32Config,
         1, 
@@ -3743,7 +3743,7 @@ plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, u
     sprintf(buff, "%s_%s", GetKey()->GetName(), name);
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (int8_t)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mipMap;
 }
@@ -3996,7 +3996,7 @@ plMipmap* plWaveSet7::ICreateEdgeShoreTex(int width, int height)
 void plWaveSet7::ISetAsTexture(plLayer* lay, plBitmap* tex)
 {
     hsAssert(lay && tex, "Trying to set nil texture or nil layer");
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(lay->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture);   
+    plLayRefMsg* refMsg = new plLayRefMsg(lay->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture);   
     hsgResMgr::ResMgr()->SendRef(tex->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
@@ -4145,7 +4145,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
 {
     if( !fGraphVShader[iPass] )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_GraphVS_%d", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -4168,7 +4168,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
 //      vShader->SetShaderFileName("sha/vs_WaveGraph2.inl");
         vShader->SetDecl(plShaderTable::Decl(vs_WaveGraph2));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphVShader), plRefFlags::kActiveRef);
 
         hsAssert(fGraphVShader[iPass] == vShader, "SendRef should have set shader");
     }
@@ -4180,7 +4180,7 @@ void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
 {
     if( !fGraphPShader[iPass] )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_GraphPS_%d", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -4194,7 +4194,7 @@ void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
 //      pShader->SetShaderFileName("sha/ps_WaveGraph.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveGraph));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphPShader), plRefFlags::kActiveRef);
 
         hsAssert(fGraphPShader[iPass] == pShader, "SendRef should have set shader");
     }
@@ -4209,10 +4209,10 @@ plRenderTarget* plWaveSet7::ISetupGraphShoreRenderReq(int which)
     sprintf(name, "Graph_%d", which);
     plRenderTarget* rt = ICreateTransferRenderTarget(name, kGraphSize);
     
-    hsgResMgr::ResMgr()->SendRef(rt->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, kRefGraphShoreRT), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(rt->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, kRefGraphShoreRT), plRefFlags::kActiveRef);
 
     fGraphReq[which] = ICreateRenderRequest(rt, fGraphShoreDraw[which], -100.f);
-    fGraphReqMsg[which] = TRACKED_NEW plRenderRequestMsg(GetKey(), fGraphReq[which]);
+    fGraphReqMsg[which] = new plRenderRequestMsg(GetKey(), fGraphReq[which]);
 
     return rt;
 }
@@ -4255,7 +4255,7 @@ void plWaveSet7::IMakeShoreLayer(hsGMaterial* mat, int which)
     char name[512];
     if( which >= mat->GetNumLayers() )
     {
-        plLayer* lay = TRACKED_NEW plLayer;
+        plLayer* lay = new plLayer;
         sprintf(name, "%s_lay_%d", mat->GetKey()->GetName(), which);
         hsgResMgr::ResMgr()->NewKey(name, lay, GetKey()->GetUoid().GetLocation());
 

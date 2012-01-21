@@ -86,7 +86,7 @@ plBufferedFileReader::plBufferedFileReader( const char *path, plAudioCore::Chann
     fHeader = reader->GetHeader();
 
     fBufferSize = reader->GetDataSize();
-    fBuffer = TRACKED_NEW uint8_t[ fBufferSize ];
+    fBuffer = new uint8_t[ fBufferSize ];
     //plProfile_NewMem( SndBufferedMem, fBufferSize );
     if( fBuffer == nil )
     {

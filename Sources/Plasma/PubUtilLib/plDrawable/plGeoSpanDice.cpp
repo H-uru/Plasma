@@ -299,7 +299,7 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
 
 plGeometrySpan* plGeoSpanDice::IAllocSpace(plGeometrySpan* src, int numVerts, int numTris) const
 {
-    plGeometrySpan* dst = TRACKED_NEW plGeometrySpan;
+    plGeometrySpan* dst = new plGeometrySpan;
     // Do a structure copy here. That's okay, because we're going to immediately 
     // fix up the pointers and counters that shouldn't have been copied. If
     // plGeometrySpan ever gets a copy constructor, this'll blow wide open.
@@ -308,26 +308,26 @@ plGeometrySpan* plGeoSpanDice::IAllocSpace(plGeometrySpan* src, int numVerts, in
     int stride = src->GetVertexSize(src->fFormat);
 
     dst->fNumIndices = numTris * 3;
-    dst->fIndexData = TRACKED_NEW uint16_t[dst->fNumIndices];
+    dst->fIndexData = new uint16_t[dst->fNumIndices];
 
     dst->fNumVerts = numVerts;
-    dst->fVertexData = TRACKED_NEW uint8_t[numVerts * stride];
+    dst->fVertexData = new uint8_t[numVerts * stride];
 
     if( src->fMultColor )
     {
-        dst->fMultColor = TRACKED_NEW hsColorRGBA[numVerts];
+        dst->fMultColor = new hsColorRGBA[numVerts];
     }
     if( src->fAddColor )
     {
-        dst->fAddColor = TRACKED_NEW hsColorRGBA[numVerts];
+        dst->fAddColor = new hsColorRGBA[numVerts];
     }
     if( src->fDiffuseRGBA )
     {
-        dst->fDiffuseRGBA = TRACKED_NEW uint32_t[numVerts];
+        dst->fDiffuseRGBA = new uint32_t[numVerts];
     }
     if( src->fSpecularRGBA )
     {
-        dst->fSpecularRGBA = TRACKED_NEW uint32_t[numVerts];
+        dst->fSpecularRGBA = new uint32_t[numVerts];
     }
 
     return dst;

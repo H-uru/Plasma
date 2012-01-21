@@ -72,11 +72,11 @@ plLODMipmap::plLODMipmap(plMipmap* mip)
 
     // Need some kind of reffing assignment for the mipmap here
     fBase = mip;
-    fLevelSizes = TRACKED_NEW uint32_t[fBase->GetNumLevels()];
+    fLevelSizes = new uint32_t[fBase->GetNumLevels()];
 
     ISetup();
 
-    hsgResMgr::ResMgr()->AddViaNotify(mip->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(mip->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef);
 
 }
 
@@ -152,7 +152,7 @@ void plLODMipmap::ISetup()
     fRowBytes = fBase->GetRowBytes();
 
     if( !fLevelSizes )
-        fLevelSizes = TRACKED_NEW uint32_t[fBase->GetNumLevels()];
+        fLevelSizes = new uint32_t[fBase->GetNumLevels()];
         
     fNumLevels = fBase->GetNumLevels() - GetLOD();
     fNumLevels = 1;
@@ -290,7 +290,7 @@ void plLODMipmap::Read(hsStream *s, hsResMgr *mgr)
 {
     INilify();
     hsKeyedObject::Read(s, mgr);
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef); // fBase
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef); // fBase
 }
 
 void plLODMipmap::Write(hsStream *s, hsResMgr *mgr)

@@ -361,7 +361,7 @@ MIXERLINE   *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type )
 {
     // A mixer or MUX is really a combination of MORE lines. And beautifully, you can't
     // just ask for a single one off of it, you have to ask for them all and search through yourself
-    MIXERCONTROLDETAILS_LISTTEXT *lineInfo = TRACKED_NEW MIXERCONTROLDETAILS_LISTTEXT[ mux->cMultipleItems ];
+    MIXERCONTROLDETAILS_LISTTEXT *lineInfo = new MIXERCONTROLDETAILS_LISTTEXT[ mux->cMultipleItems ];
     if( lineInfo == nil )
         return nil;
 

@@ -1465,7 +1465,7 @@ RelVaultNode * RelVaultNode::GetParentAgeLinkIncRef () {
 
 //============================================================================
 void VaultRegisterCallback (VaultCallback * cb) {
-    IVaultCallback * internal = NEW(IVaultCallback);
+    IVaultCallback * internal = new IVaultCallback;
     internal->cb = cb;
     cb->internal = internal;
     s_callbacks.Link(internal);
@@ -1733,7 +1733,7 @@ void VaultAddChildNodeAndWait (
     using namespace _VaultAddChildNodeAndWait;
     
     _AddChildNodeParam param;
-    ZERO(param);
+    memset(&param, 0, sizeof(param));
     
     VaultAddChildNode(
         parentId,
@@ -1916,7 +1916,7 @@ RelVaultNode * VaultCreateNodeAndWaitIncRef (
     using namespace _VaultCreateNodeAndWaitIncRef;
     
     _CreateNodeParam param;
-    ZERO(param);
+    memset(&param, 0, sizeof(param));
     
     VaultCreateNode(
         templateNode,
@@ -1977,7 +1977,7 @@ void VaultForceSaveNodeAndWait (
     using namespace _VaultForceSaveNodeAndWait;
     
     _SaveNodeParam param;
-    ZERO(param);
+    memset(&param, 0, sizeof(param));
     
     NetCliAuthVaultNodeSave(
         node,
@@ -2037,7 +2037,7 @@ void VaultFindNodesAndWait (
     using namespace _VaultFindNodesAndWait;
     
     _FindNodeParam  param;
-    ZERO(param);
+    memset(&param, 0, sizeof(param));
     
     NetCliAuthVaultNodeFind(
         templateNode,
@@ -2638,7 +2638,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
         
         {   // Init age vault
             _InitAgeParam   param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
 
             VaultInitAge(
                 link->GetAgeInfo(),
@@ -2664,7 +2664,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
         
         {   // Create age link
             _CreateNodeParam    param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
 
             VaultCreateNode(
                 plVault::kNodeType_AgeLink,
@@ -2689,7 +2689,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 
         {   // Fetch age info node tree
             _FetchVaultParam    param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
             
             VaultDownload(
                 L"RegisterOwnedAge",
@@ -2719,9 +2719,9 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             _AddChildNodeParam  param1;
             _AddChildNodeParam  param2;
             _AddChildNodeParam  param3;
-            ZERO(param1);
-            ZERO(param2);
-            ZERO(param3);
+            memset(&param1, 0, sizeof(param1));
+            memset(&param2, 0, sizeof(param2));
+            memset(&param3, 0, sizeof(param3));
 
             unsigned ageOwnersId = 0;       
             if (RelVaultNode * rvnAgeInfo = VaultGetNodeIncRef(ageInfoId)) {
@@ -2881,7 +2881,7 @@ namespace _VaultRegisterOwnedAge {
 
     void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoVaultId) {
         if (IS_NET_SUCCESS(result)) {
-            _Params* p = TRACKED_NEW _Params();
+            _Params* p = new _Params();
             p->fAgeInfoId = (void*)ageInfoVaultId;
             p->fSpawn = (plSpawnPointInfo*)param;
 
@@ -2916,7 +2916,7 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
         kNilGuid, 
         (FVaultInitAgeCallback)_InitAgeCallback, 
         nil,
-        TRACKED_NEW plSpawnPointInfo(link->SpawnPoint()));
+        new plSpawnPointInfo(link->SpawnPoint()));
 }
 
 //============================================================================
@@ -3012,7 +3012,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
         
         {   // Init age vault
             _InitAgeParam   param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
 
             VaultInitAge(
                 link->GetAgeInfo(),
@@ -3038,7 +3038,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
         
         {   // Create age link
             _CreateNodeParam    param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
 
             VaultCreateNode(
                 plVault::kNodeType_AgeLink,
@@ -3063,7 +3063,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
 
         {   // Fetch age info node tree
             _FetchVaultParam    param;
-            ZERO(param);
+            memset(&param, 0, sizeof(param));
             
             VaultDownload(
                 L"RegisterVisitAge",
@@ -3092,9 +3092,9 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             _AddChildNodeParam  param1;
             _AddChildNodeParam  param2;
             _AddChildNodeParam  param3;
-            ZERO(param1);
-            ZERO(param2);
-            ZERO(param3);
+            memset(&param1, 0, sizeof(param1));
+            memset(&param2, 0, sizeof(param2));
+            memset(&param3, 0, sizeof(param3));
 
             unsigned ageVisitorsId = 0;     
             if (RelVaultNode * rvnAgeInfo = VaultGetNodeIncRef(ageInfoId)) {
@@ -3269,8 +3269,8 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
         return;
 
     // Still here? We need to actually do some work, then.
-    _Params* p = TRACKED_NEW _Params;
-    p->fSpawn = TRACKED_NEW plSpawnPointInfo(link->SpawnPoint());
+    _Params* p = new _Params;
+    p->fSpawn = new plSpawnPointInfo(link->SpawnPoint());
 
     // This doesn't actually *create* a new age but rather fetches the
     // already existing age vault. Weird? Yes...
@@ -4284,7 +4284,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     
     {   // Init age vault
         _InitAgeParam   param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
         
         VaultInitAge(
             info,
@@ -4310,7 +4310,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     
     {   // Create age link
         _CreateNodeParam    param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
 
         VaultCreateNode(
             plVault::kNodeType_AgeLink,
@@ -4335,7 +4335,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
 
     {   // Fetch age info node tree
         _FetchVaultParam    param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
         
         VaultDownload(
             L"CreateSubAge",
@@ -4363,8 +4363,8 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         // ageInfo to ageLink
         _AddChildNodeParam  param1;
         _AddChildNodeParam  param2;
-        ZERO(param1);
-        ZERO(param2);
+        memset(&param1, 0, sizeof(param1));
+        memset(&param2, 0, sizeof(param2));
 
         VaultAddChildNode(
             subAgesId,
@@ -4635,10 +4635,10 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 
     {   // Init age vault
         _InitAgeParam   param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
 
         Uuid parentAgeInstId;
-        ZERO(parentAgeInstId);
+        memset(&parentAgeInstId, 0, sizeof(parentAgeInstId));
         if (RelVaultNode * rvnAge = VaultGetAgeNodeIncRef()) {
             VaultAgeNode access(rvnAge);
             parentAgeInstId = access.ageInstUuid;
@@ -4669,7 +4669,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     
     {   // Create age link
         _CreateNodeParam    param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
 
         VaultCreateNode(
             plVault::kNodeType_AgeLink,
@@ -4694,7 +4694,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 
     {   // Fetch age info node tree
         _FetchVaultParam    param;
-        ZERO(param);
+        memset(&param, 0, sizeof(param));
         
         VaultDownload(
             L"CreateChildAge",
@@ -4722,8 +4722,8 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         // ageInfo to ageLink
         _AddChildNodeParam  param1;
         _AddChildNodeParam  param2;
-        ZERO(param1);
-        ZERO(param2);
+        memset(&param1, 0, sizeof(param1));
+        memset(&param2, 0, sizeof(param2));
 
         VaultAddChildNode(
             childAgesId,
@@ -4890,7 +4890,7 @@ uint8_t VaultAgeFindOrCreateChildAgeLink(
 
             retval = TRUE;
         } else {
-            _Params* p = TRACKED_NEW _Params;
+            _Params* p = new _Params;
             p->fChildAgesFldr = (void*)rvnChildAges->nodeId;
 
             VaultAgeInfoNode accParentInfo(rvnParentInfo);
@@ -4975,7 +4975,7 @@ void VaultDownloadAndWait (
     void *                      cbProgressParam
 ) {
     _DownloadVaultParam param;
-    ZERO(param);
+    memset(&param, 0, sizeof(param));
     
     VaultDownload(
         tag,

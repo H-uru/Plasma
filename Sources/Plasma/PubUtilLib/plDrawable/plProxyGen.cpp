@@ -155,7 +155,7 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
     const hsColorRGBA& dif = fColor;
     float opac = fAmbient.a;
 
-    hsGMaterial* retVal = TRACKED_NEW hsGMaterial();
+    hsGMaterial* retVal = new hsGMaterial();
 
     char buff[256];
     if( GetKey()->GetName() )
@@ -247,11 +247,11 @@ void plProxyGen::IGenerateProxy()
 
         IApplyProxy(idx);
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, idx, 0);
+        plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, idx, 0);
         hsgResMgr::ResMgr()->AddViaNotify(mat->GetKey(), msg, plRefFlags::kActiveRef);
         fProxyMat = mat;
 
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg( GetKey(), plNodeRefMsg::kOnRequest, (int8_t)idx, plNodeRefMsg::kDrawable );
+        plNodeRefMsg* refMsg = new plNodeRefMsg( GetKey(), plNodeRefMsg::kOnRequest, (int8_t)idx, plNodeRefMsg::kDrawable );
         hsgResMgr::ResMgr()->AddViaNotify(fProxyDrawables[idx]->GetKey(), refMsg, plRefFlags::kActiveRef);
         fProxyDraw = fProxyDrawables[idx];
     }

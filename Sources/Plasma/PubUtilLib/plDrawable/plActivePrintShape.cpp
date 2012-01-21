@@ -125,6 +125,6 @@ hsBool plActivePrintShape::INotify()
 
 plRippleShapeMsg* plActivePrintShape::ISetupShapeMsg()
 {
-    fShapeMsg = TRACKED_NEW plRippleShapeMsg(nil, this);
+    fShapeMsg = new plRippleShapeMsg(nil, this);
     return fShapeMsg;
 }

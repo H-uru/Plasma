@@ -185,7 +185,7 @@ void plNPCSpawnMod::ISendNotify(plKey &avatarKey)
 {
     if(fNotify)
     {
-        proSpawnedEventData * event = TRACKED_NEW proSpawnedEventData;
+        proSpawnedEventData * event = new proSpawnedEventData;
         event->fSpawner = GetKey();
         event->fSpawnee = avatarKey;
         fNotify->ClearEvents();

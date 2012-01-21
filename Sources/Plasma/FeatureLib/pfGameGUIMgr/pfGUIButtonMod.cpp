@@ -142,7 +142,7 @@ void    pfGUIButtonMod::StartDragging( void )
 
     fOrigHandler = fDraggable->GetHandler();
     fDraggable->SetVisible( true );
-    fDraggable->SetHandler( TRACKED_NEW pfGUIButtonDragProc( this, fDraggable, fOrigHandler, fOrigReportedDrag ) );
+    fDraggable->SetHandler( new pfGUIButtonDragProc( this, fDraggable, fOrigHandler, fOrigReportedDrag ) );
     fDraggable->HandleMouseDown( fOrigMouseDownPt, 0 );
 }
 
@@ -213,7 +213,7 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
     fMouseOverAnimName = s->ReadSafeString();
 
     fNotifyType = s->ReadLE32();
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDraggable ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDraggable ), plRefFlags::kActiveRef );
 }
 
 void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
@@ -254,7 +254,7 @@ void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
     fClicking = true;
     if( fAnimationKeys.GetCount() > 0 )
     {
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
         msg->SetCmd( plAnimCmdMsg::kSetForewards );
         msg->SetCmd( plAnimCmdMsg::kGoToBegin );    
@@ -284,7 +284,7 @@ void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
     fClicking = false;
     if( fAnimationKeys.GetCount() > 0 )
     {
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
         msg->SetCmd( plAnimCmdMsg::kSetBackwards );
         msg->SetCmd( plAnimCmdMsg::kGoToEnd );  
@@ -351,7 +351,7 @@ void    pfGUIButtonMod::SetInteresting( hsBool i )
 
     if( fMouseOverAnimKeys.GetCount() )
     {
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
         msg->SetCmd( fInteresting ? plAnimCmdMsg::kSetForewards : plAnimCmdMsg::kSetBackwards );
         msg->SetAnimName( fMouseOverAnimName );
@@ -372,7 +372,7 @@ void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const char *nam
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else
@@ -385,7 +385,7 @@ void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const char 
     delete [] fMouseOverAnimName;
     if( name != nil )
     {
-        fMouseOverAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fMouseOverAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fMouseOverAnimName, name );
     }
     else

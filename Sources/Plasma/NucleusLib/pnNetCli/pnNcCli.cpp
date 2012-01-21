@@ -662,7 +662,7 @@ static void ClientConnect (NetCli * cli) {
 
     // Save client seed
     {
-        ZERO(cli->seed);
+        memset(&cli->seed, 0, sizeof(cli->seed));
         unsigned bytes;
         unsigned char * data = clientSeed.GetData_LE(&bytes);
         MemCopy(cli->seed, data, min(bytes, sizeof(cli->seed)));
@@ -724,7 +724,7 @@ static bool ServerRecvConnect (
                 &clientSeedValue
             );
 
-            ZERO(clientSeed);
+            memset(&clientSeed, 0, sizeof(clientSeed));
             unsigned bytes;
             unsigned char * data = clientSeedValue.GetData_LE(&bytes);
             MemCopy(clientSeed, data, min(bytes, sizeof(clientSeed)));

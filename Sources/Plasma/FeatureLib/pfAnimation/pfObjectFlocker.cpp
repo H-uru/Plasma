@@ -496,7 +496,7 @@ pfBoid::~pfBoid()
     // delete this boid's token in the proximity database
     delete fProximityToken;
 
-    plLoadCloneMsg* msg = TRACKED_NEW plLoadCloneMsg(fObjKey, fFlockerPtr->GetKey(), 0, false);
+    plLoadCloneMsg* msg = new plLoadCloneMsg(fObjKey, fFlockerPtr->GetKey(), 0, false);
     msg->Send();
 }
 
@@ -790,7 +790,7 @@ fMaxForce(10.0f),
 fMaxSpeed(5.0f),
 fMinSpeed(4.0f)
 {
-     fDatabase = TRACKED_NEW pfBasicProximityDatabase<pfVehicle*>();
+     fDatabase = new pfBasicProximityDatabase<pfVehicle*>();
 }
 
 pfFlock::~pfFlock()
@@ -886,7 +886,7 @@ void pfFlock::Update(plSceneObject *goal, float deltaTime)
 
 void pfFlock::AddBoid(pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos)
 {
-    pfBoid *newBoid = TRACKED_NEW pfBoid(*fDatabase, flocker, key, pos);
+    pfBoid *newBoid = new pfBoid(*fDatabase, flocker, key, pos);
 
     newBoid->SetGoalWeight(fGoalWeight);
     newBoid->SetWanderWeight(fRandomWeight);
@@ -934,7 +934,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     plInitialAgeStateLoadedMsg* loadMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if (loadMsg)
     {
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         pMsg->AddReceiver(fBoidKey);
         pMsg->SetCmd(plEnableMsg::kDrawable);
         pMsg->AddType(plEnableMsg::kDrawable);
@@ -945,7 +945,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
         hsPoint3 pos(fTarget->GetLocalToWorld().GetTranslate());
         for (int i = 0; i < fNumBoids; i++)
         {
-            plLoadCloneMsg* cloneMsg = TRACKED_NEW plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
+            plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
             plKey newKey = cloneMsg->GetCloneKey();
             cloneMsg->Send();
 
@@ -966,7 +966,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     {
         if (fRandomizeAnimationStart)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetSender(GetKey());
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers | plMessage::kPropagateToChildren);
             pMsg->AddReceiver( lcMsg->GetCloneKey() );

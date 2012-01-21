@@ -1186,7 +1186,7 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
         } *charEntries;
 
         int i, count = fntInfo.lastChar - fntInfo.firstChar + 2;
-        charEntries = TRACKED_NEW charEntry[ count ];
+        charEntries = new charEntry[ count ];
         for( i = 0; i < count; i++ )
         {
             charEntries[ i ].width = stream->ReadLE16();
@@ -1239,7 +1239,7 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
 
         // Allocate our bitmap now
         uint32_t size = widthInBytes * fHeight;
-        fBMapData = TRACKED_NEW uint8_t[ size ];
+        fBMapData = new uint8_t[ size ];
         memset( fBMapData, 0, size );
 
         fFirstChar = fntInfo.firstChar;
@@ -1542,7 +1542,7 @@ class plBDFCharsParser : public plBDFSectParser
                 if( ch == -1 )
                 {
                     // Nonstandard encoding, skip the character entirely
-                    return TRACKED_NEW plBDFLookForEndCharParser( fFont, fCallback );
+                    return new plBDFLookForEndCharParser( fFont, fCallback );
                 }
                 else
                 {
@@ -1633,7 +1633,7 @@ plBDFSectParser *plBDFLookForEndCharParser::ParseKeyword( const char *keyword, p
     if( strcmp( keyword, "ENDCHAR" ) == 0 )
     {
         // Horray!
-        return TRACKED_NEW plBDFCharsParser( fFont, fCallback );
+        return new plBDFCharsParser( fFont, fCallback );
     }
     // Just gobble lines until we find the endchar section
     return this;
@@ -1649,7 +1649,7 @@ class plBDFLookForCharParser : public plBDFSectParser
             if( strcmp( keyword, "CHARS" ) == 0 )
             {
                 // Horray!
-                return TRACKED_NEW plBDFCharsParser( fFont, fCallback );
+                return new plBDFCharsParser( fFont, fCallback );
             }
             // Just gobble lines until we find the chars section
             return this;
@@ -1677,7 +1677,7 @@ class plBDFPropertiesParser : public plBDFSectParser
             else if( strcmp( keyword, "ENDPROPERTIES" ) == 0 )
             {
                 // Switch to waiting for the chars section
-                return TRACKED_NEW plBDFLookForCharParser( fFont, fCallback );
+                return new plBDFLookForCharParser( fFont, fCallback );
             }
             // All tokens are technically valid, even if we don't recognize them
             return this;
@@ -1743,7 +1743,7 @@ class plBDFHeaderParser : public plBDFSectParser
                 fFont.fWidth = ( ( fFont.fWidth + 7 ) >> 3 ) << 3;
 
                 // Allocate our data now
-                fFont.fBMapData = TRACKED_NEW uint8_t[ ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 ];
+                fFont.fBMapData = new uint8_t[ ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 ];
                 memset( fFont.fBMapData, 0, ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 );
 
                 fFont.fMaxCharHeight = line.GetInt();
@@ -1755,7 +1755,7 @@ class plBDFHeaderParser : public plBDFSectParser
             else if( strcmp( keyword, "STARTPROPERTIES" ) == 0 )
             {
                 // Start of the properties section, switch to that
-                return TRACKED_NEW plBDFPropertiesParser( fFont, fCallback );
+                return new plBDFPropertiesParser( fFont, fCallback );
             }
             else if( strcmp( keyword, "CHARS" ) == 0 )
             {
@@ -1767,12 +1767,12 @@ class plBDFHeaderParser : public plBDFSectParser
                     fFont.fWidth = ( ( fFont.fWidth + 7 ) >> 3 ) << 3;
 
                     // Allocate our data now
-                    fFont.fBMapData = TRACKED_NEW uint8_t[ ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 ];
+                    fFont.fBMapData = new uint8_t[ ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 ];
                     memset( fFont.fBMapData, 0, ( fFont.fWidth * fFont.fHeight * fFont.fBPP ) >> 3 );
                 }
 
                 // Start of the char section
-                return TRACKED_NEW plBDFCharsParser( fFont, fCallback );
+                return new plBDFCharsParser( fFont, fCallback );
             }
             else
             {
@@ -1888,7 +1888,7 @@ hsBool  plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
         fseek( fp, 0, SEEK_SET );
 
         // Start with the header parser
-        plBDFSectParser *currParser = TRACKED_NEW plBDFHeaderParser( *this, callback );
+        plBDFSectParser *currParser = new plBDFHeaderParser( *this, callback );
 
         // Read from the stream one line at a time (don't want comments, and char #1 should be invalid for a BDF)
         while( fgets( line, sizeof( line ), fp ) && currParser != nil )
@@ -1937,7 +1937,7 @@ hsBool  plFont::ReadRaw( hsStream *s )
     uint32_t size = ( fWidth * fHeight * fBPP ) >> 3;
     if( size > 0 )
     {
-        fBMapData = TRACKED_NEW uint8_t[ size ];
+        fBMapData = new uint8_t[ size ];
         s->Read( size, fBMapData );
     }
     else

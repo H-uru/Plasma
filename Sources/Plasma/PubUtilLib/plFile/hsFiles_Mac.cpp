@@ -185,7 +185,7 @@ hsStream* hsMacFile::OpenStream(const char mode[], hsBool throwIfFailure)
         perm |= fsWrPerm;
     
     if (this->OpenDataFork(perm, &refnum))
-    {   hsFileStream*   stream = TRACKED_NEW hsFileStream;
+    {   hsFileStream*   stream = new hsFileStream;
         stream->SetFileRef(refnum);
         return stream;
     }
@@ -218,7 +218,7 @@ struct hsFolderIterator_Data {
 
 hsFolderIterator::hsFolderIterator(const char path[])
 {
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
 
     fData->fCurrIndex = 0;
     fData->fValid = false;
@@ -231,7 +231,7 @@ hsFolderIterator::hsFolderIterator(const char path[])
 
 hsFolderIterator::hsFolderIterator(const struct FSSpec* spec)       // Alt Constructor - pass in FSSpec from OpenDlg()
 {
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
 
     fData->fCurrIndex = 0;
     fData->fValid = false;

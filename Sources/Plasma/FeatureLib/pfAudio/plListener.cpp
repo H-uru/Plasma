@@ -170,7 +170,7 @@ hsBool plListener::IEval(double secs, float del, uint32_t dirty)
     }
 
     // Got the params, now construct and send out the message, as well as update the audio system
-    plListenerMsg* msg = TRACKED_NEW plListenerMsg;
+    plListenerMsg* msg = new plListenerMsg;
     msg->SetDirection( dir );
     msg->SetUp( up );
     msg->SetPosition( position );
@@ -207,7 +207,7 @@ hsBool plListener::IEval(double secs, float del, uint32_t dirty)
 void    plListener::ISetRef( const plKey &ref, hsBool binding, int type )
 {
     if( binding )
-        hsgResMgr::ResMgr()->AddViaNotify( ref, TRACKED_NEW plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, type ), plRefFlags::kPassiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( ref, new plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, type ), plRefFlags::kPassiveRef );
     else
         GetKey()->Release( ref );
 }
@@ -293,9 +293,9 @@ hsBool plListener::MsgReceive(plMessage* msg)
         if( fInitMe )
         {
             // By default, position and orientation are camera based
-            plSetListenerMsg *set = TRACKED_NEW plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kFacing, nil, true );
+            plSetListenerMsg *set = new plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kFacing, nil, true );
             set->Send();
-            set = TRACKED_NEW plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kPosition, nil, true );
+            set = new plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kPosition, nil, true );
             set->Send();
 
             fInitMe = false;

@@ -145,7 +145,6 @@ inline void CDECL operator delete (void * ptr, const char [], unsigned)
     { return MemFree(ptr, 0); }
 inline void CDECL operator delete [](void * ptr, const char [], unsigned)
     { return MemFree(ptr, 0); }
-#define TRACKED_NEW new(__FILE__, __LINE__)
 
 
 // placement new
@@ -165,11 +164,9 @@ inline void CDECL operator delete (void *, void *) {}
 ***/
 
 #define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
-#define ZERO(s)                 MemSet(&s, 0, sizeof(s))
 
 #ifdef __cplusplus
 
-#define NEW(t)                  new(MemAlloc(sizeof(t), 0, __FILE__, __LINE__)) t
 #define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
 
 #endif // __cplusplus

@@ -72,7 +72,7 @@ int plDynaWakeMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
 
-    plDynaWake* wake = TRACKED_NEW plDynaWake();
+    plDynaWake* wake = new plDynaWake();
     wake->fC1U = fInitUVW.fX;
     wake->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 

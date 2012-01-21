@@ -242,7 +242,7 @@ void OraConnPool::Initialize (
     const wchar_t connectString[],
     unsigned    stmtCacheSize
 ) {
-    data = NEW(OraInitData)(stmtCacheSize, username, password, connectString);
+    data = new OraInitData(stmtCacheSize, username, password, connectString);
 
     critsect.Enter();
     {

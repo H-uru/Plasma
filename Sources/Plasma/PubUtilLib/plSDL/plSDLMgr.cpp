@@ -183,7 +183,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
         int i;
         for(i=0;i<num;i++)
         {
-            plStateDescriptor* sd=TRACKED_NEW plStateDescriptor;
+            plStateDescriptor* sd=new plStateDescriptor;
             if (sd->Read(s))
                 dl->push_back(sd);
         }       

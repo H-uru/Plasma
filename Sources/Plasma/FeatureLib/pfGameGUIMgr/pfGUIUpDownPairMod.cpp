@@ -106,7 +106,7 @@ pfGUIUpDownPairMod::pfGUIUpDownPairMod()
     fDownControl = nil;
     fValue = fMin = fMax = fStep = 0.f;
 
-    fButtonProc = TRACKED_NEW pfUpDownBtnProc( nil, nil, this );
+    fButtonProc = new pfUpDownBtnProc( nil, nil, this );
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -205,8 +205,8 @@ void    pfGUIUpDownPairMod::Read( hsStream *s, hsResMgr *mgr )
 
     fUpControl = nil;
     fDownControl = nil;
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
 
     s->ReadLE( &fMin );
     s->ReadLE( &fMax );

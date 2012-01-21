@@ -107,7 +107,7 @@ plPointShadowMaster::~plPointShadowMaster()
 
 plShadowSlave* plPointShadowMaster::INewSlave(const plShadowCaster* caster)
 {
-    return TRACKED_NEW plPointShadowSlave;
+    return new plPointShadowSlave;
 }
 
 void plPointShadowMaster::IBeginRender()
@@ -175,7 +175,7 @@ void plPointShadowMaster::IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* 
     fIsectPool.ExpandAndZero(iIsect+1);
     if( !fIsectPool[iIsect] )
     {
-        fIsectPool[iIsect] = TRACKED_NEW plBoundsIsect;
+        fIsectPool[iIsect] = new plBoundsIsect;
     }
     plBoundsIsect* isect = fIsectPool[iIsect];
 

@@ -281,7 +281,7 @@ void plFollowMod::Read(hsStream* stream, hsResMgr* mgr)
     fLeaderType = FollowLeaderType(stream->ReadByte());
     fMode = stream->ReadByte();
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
 
     // If active?
     Activate();

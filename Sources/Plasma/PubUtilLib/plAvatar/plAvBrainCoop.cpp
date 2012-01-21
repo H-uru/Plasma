@@ -130,7 +130,7 @@ hsBool plAvBrainCoop::MsgReceive(plMessage *msg)
 
             if(localPlayer == fGuestKey)
             {
-                plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
+                plAvCoopMsg *coopM = new plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
                 coopM->SetBCastFlag(plMessage::kNetPropagate);
                 coopM->Send();
 

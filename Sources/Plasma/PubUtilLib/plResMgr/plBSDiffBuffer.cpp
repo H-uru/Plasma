@@ -91,7 +91,7 @@ plBSDiffBuffer::plBSDiffBuffer( void *buffer, uint32_t length )
     if (!buffer || length < 32)
         hsAssert(false, "Corrupt Patch Buffer!");
 
-    if((fPatchBuffer=TRACKED_NEW unsigned char[length+1])!=nil)
+    if((fPatchBuffer=new unsigned char[length+1])!=nil)
     {
         fPatchLength = length;
         memcpy(fPatchBuffer, buffer, fPatchLength);
@@ -142,8 +142,8 @@ uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t new
     oldbuf = (unsigned char *)oldBuffer;
     newbuf = (unsigned char *)newBuffer;
 
-    if(((I=TRACKED_NEW int32_t[oldLength+1])==nil) ||
-        ((V=TRACKED_NEW int32_t[oldLength+1])==nil))
+    if(((I=new int32_t[oldLength+1])==nil) ||
+        ((V=new int32_t[oldLength+1])==nil))
     {
         delete[] I;
         delete[] V;
@@ -157,9 +157,9 @@ uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t new
     /*
      *  These could probably be smaller, especially cb.
      */
-    if(((cb=TRACKED_NEW unsigned char[newLength+1])==nil) ||
-       ((db=TRACKED_NEW unsigned char[newLength+1])==nil) ||
-       ((eb=TRACKED_NEW unsigned char[newLength+1])==nil))
+    if(((cb=new unsigned char[newLength+1])==nil) ||
+       ((db=new unsigned char[newLength+1])==nil) ||
+       ((eb=new unsigned char[newLength+1])==nil))
     {
         delete[] I;
         delete[] cb;
@@ -263,7 +263,7 @@ uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t new
 
     fPatchLength = 32 + cblen + dblen + eblen;
     fPatchBuffer = nil;
-    if((fPatchBuffer=TRACKED_NEW unsigned char[fPatchLength])!=nil)
+    if((fPatchBuffer=new unsigned char[fPatchLength])!=nil)
     {
         memcpy(fPatchBuffer,header,32);
         memcpy(fPatchBuffer+32,cb,cblen);
@@ -390,7 +390,7 @@ uint32_t plBSDiffBuffer::Patch( uint32_t oldLength, void *oldBuffer, uint32_t &n
         extrapipe=diffpipe+datalen;
     };
 
-    if((newBuffer=(void *)TRACKED_NEW unsigned char[newLength+1])==nil) return(-1);
+    if((newBuffer=(void *)new unsigned char[newLength+1])==nil) return(-1);
     newpos = (unsigned char *)newBuffer;
     newend = (unsigned char *)newBuffer + newLength;
     oldpos = (unsigned char *)oldBuffer;

@@ -82,7 +82,7 @@ int plDynaRippleMgr::INewDecal()
     int idx = fDecals.GetCount();
 
 #if 1
-    plDynaRipple* rip = TRACKED_NEW plDynaRipple();
+    plDynaRipple* rip = new plDynaRipple();
     rip->fC1U = fInitUVW.fX;
     rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
@@ -91,7 +91,7 @@ int plDynaRippleMgr::INewDecal()
 
     fDecals.Append(rip);
 #else
-    plDynaWave* wave = TRACKED_NEW plDynaWave();
+    plDynaWave* wave = new plDynaWave();
     static float kDefScrollRate = 0.1f;
     wave->fScrollRate = kDefScrollRate;
     fDecals.Append(wave);

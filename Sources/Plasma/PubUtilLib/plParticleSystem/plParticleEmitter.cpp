@@ -131,8 +131,8 @@ void plParticleEmitter::ISetupParticleMem()
 {
     fNumValidParticles = 0;
 
-    fParticleCores = TRACKED_NEW plParticleCore[fMaxParticles];
-    fParticleExts = TRACKED_NEW plParticleExt[fMaxParticles];
+    fParticleCores = new plParticleCore[fMaxParticles];
+    fParticleExts = new plParticleExt[fMaxParticles];
 
     fTargetInfo.fPos = (uint8_t *)fParticleCores;
     fTargetInfo.fColor = (uint8_t *)fParticleCores + sizeof(hsPoint3);

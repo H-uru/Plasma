@@ -82,7 +82,7 @@ plDynamicEnvMap::plDynamicEnvMap()
     fColor.Set(0,0,0,1.f);
     int i;
     for( i = 0; i < 6; i++ )
-        fReqMsgs[i] = TRACKED_NEW plRenderRequestMsg(nil, &fReqs[i]);;
+        fReqMsgs[i] = new plRenderRequestMsg(nil, &fReqs[i]);;
 
     SetPosition(fPos);
 }
@@ -103,7 +103,7 @@ plDynamicEnvMap::plDynamicEnvMap(uint16_t width, uint16_t height, uint8_t bitDep
     fColor.Set(0,0,0,1.f);
     int i;
     for( i = 0; i < 6; i++ )
-        fReqMsgs[i] = TRACKED_NEW plRenderRequestMsg(nil, &fReqs[i]);;
+        fReqMsgs[i] = new plRenderRequestMsg(nil, &fReqs[i]);;
 
     SetPosition(fPos);
 }
@@ -408,7 +408,7 @@ void plDynamicEnvMap::SetIncludeCharacters(hsBool b)
 
 void plDynamicEnvMap::AddVisRegion(plVisRegion* reg)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefVisSet);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefVisSet);
     hsgResMgr::ResMgr()->AddViaNotify(reg->GetKey(), msg, plRefFlags::kActiveRef);
 }
 
@@ -434,7 +434,7 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     int nVis = s->ReadLE32();
     int i;
     for( i = 0; i < nVis; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
 
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
@@ -443,10 +443,10 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
         plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
         delete[] name;
         if (key)
-            hsgResMgr::ResMgr()->AddViaNotify(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRootNode), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRootNode), plRefFlags::kActiveRef);
 
     Init();
 }
@@ -499,7 +499,7 @@ fIncCharacters(false),
 fDisableTexture(nil)
 {
     fColor.Set(0,0,0,1.f);
-    fReqMsg = TRACKED_NEW plRenderRequestMsg(nil, &fReq);
+    fReqMsg = new plRenderRequestMsg(nil, &fReq);
 }
 
 plDynamicCamMap::plDynamicCamMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth, uint8_t sDepth) :
@@ -516,7 +516,7 @@ fDisableTexture(nil),
 plRenderTarget(plRenderTarget::kIsTexture, width, height, bitDepth, zDepth, sDepth)
 {
     fColor.Set(0,0,0,1.f);
-    fReqMsg = TRACKED_NEW plRenderRequestMsg(nil, &fReq);
+    fReqMsg = new plRenderRequestMsg(nil, &fReq);
 }
 
 plDynamicCamMap::~plDynamicCamMap()
@@ -735,13 +735,13 @@ void plDynamicCamMap::IPrepTextureLayers()
             {
                 fMatLayers[i]->SetUVWSrc(plLayerInterface::kUVWPosition);
                 fMatLayers[i]->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-                hsgResMgr::ResMgr()->SendRef(GetKey(), TRACKED_NEW plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->SendRef(GetKey(), new plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
             else
             {
                 fMatLayers[i]->SetUVWSrc(0);
                 fMatLayers[i]->SetMiscFlags(0);
-                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), TRACKED_NEW plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
         }
     }
@@ -863,7 +863,7 @@ void plDynamicCamMap::SetIncludeCharacters(hsBool b)
 
 void plDynamicCamMap::AddVisRegion(plVisRegion* reg)
 {
-    hsgResMgr::ResMgr()->AddViaNotify( reg->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, kRefVisSet ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( reg->GetKey(), new plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, kRefVisSet ), plRefFlags::kActiveRef );
 }
 
 void plDynamicCamMap::SetEnabled(hsBool enable)
@@ -895,17 +895,17 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     fRefreshRate = s->ReadLEScalar();
     fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefRootNode), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefRootNode), plRefFlags::kActiveRef);
 
     int numTargs = s->ReadByte();
     int i;
     for (i = 0; i < numTargs; i++)
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefTargetNode), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefTargetNode), plRefFlags::kPassiveRef);
 
     int nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisSet), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisSet), plRefFlags::kActiveRef);
 
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
@@ -914,15 +914,15 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
         plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
         delete[] name;
         if (key)
-            hsgResMgr::ResMgr()->AddViaNotify(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefDisableTexture), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefDisableTexture), plRefFlags::kActiveRef);
     
     uint8_t numLayers = s->ReadByte();
     for (i = 0; i < numLayers; i++)
     {
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatLayer), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatLayer), plRefFlags::kPassiveRef);
     }
 
     Init();

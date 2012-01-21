@@ -516,9 +516,9 @@ void    pfGUIListBoxMod::Read( hsStream *s, hsResMgr *mgr )
     fScrollControl = nil;
     if( s->ReadBool() )
     {
-        fScrollProc = TRACKED_NEW pfScrollProc( this );
+        fScrollProc = new pfScrollProc( this );
         fScrollProc->IncRef();
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
     }
 
     if( HasFlag( kDisableSelection ) )
@@ -1154,12 +1154,12 @@ void    pfGUIListBoxMod::ClearAllElements( void )
 
 uint16_t  pfGUIListBoxMod::AddString( const char *string )
 {
-    return AddElement( TRACKED_NEW pfGUIListText( string ) );
+    return AddElement( new pfGUIListText( string ) );
 }
 
 uint16_t  pfGUIListBoxMod::AddString( const wchar_t *string )
 {
-    return AddElement( TRACKED_NEW pfGUIListText( string ) );
+    return AddElement( new pfGUIListText( string ) );
 }
 
 int16_t   pfGUIListBoxMod::FindString( const char *toCompareTo )

@@ -430,8 +430,8 @@ void CSocket::OnConnect () {
 
     // Get addresses for the connection notification
     AsyncNotifySocketConnect notify;
-    ZERO(notify.localAddr);
-    ZERO(notify.remoteAddr);
+    memset(&notify.localAddr, 0, sizeof(notify.localAddr));
+    memset(&notify.remoteAddr, 0, sizeof(notify.remoteAddr));
     int nameLen = sizeof(notify.localAddr);
     if (getsockname(m_sock, (sockaddr *)&notify.localAddr, &nameLen))
         if (GetLastError() == WSAENOTCONN)
@@ -656,7 +656,7 @@ void CSocket::QueueConnect (
 ) {
     ASSERT(!IsConnected() && !IsDisconnected());
 
-    Command * command = NEW(Command);
+    Command * command = new Command;
     command->code             = command->CONNECT;
     command->param            = param;
     command->connect.connType = connType;
@@ -671,7 +671,7 @@ void CSocket::QueueWrite (
 ) {
     ASSERT(!IsDisconnected());
 
-    Command * command = NEW(Command);
+    Command * command = new Command;
     command->code        = command->CONNECT;
     command->param       = param;
     command->write.data  = data;
@@ -913,7 +913,7 @@ static unsigned THREADCALL W9xSocketThreadProc (AsyncThread *) {
     // Register the window class
     HINSTANCE instance = (HINSTANCE)GetModuleHandle(nil);
     WNDCLASS  wndClass;
-    ZERO(wndClass);
+    memset(&wndClass, 0, sizeof(wndClass));
     wndClass.lpfnWndProc   = WndProc;
     wndClass.hInstance     = instance;
     wndClass.lpszClassName = CLASS_NAME;
@@ -1027,7 +1027,7 @@ void W9xSocketConnect (
     UINT message = (s_message++ & 0x3fff) | WM_APP;  // range 0x8000 - 0xbfff
 
     // Create a socket object
-    CSocket * object = NEW(CSocket)(
+    CSocket * object = new CSocket(
         sequence,
         message,
         sock,

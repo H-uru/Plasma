@@ -241,7 +241,7 @@ public:
     void Reset();
     int GetNumObjects() const { return fObjects.size(); }
     plNetMsgObjectHelper* GetObject(int i) { return fObjects[i]; }
-    void AddObject(plKey key) { fObjects.push_back(TRACKED_NEW plNetMsgObjectHelper(key)); }
+    void AddObject(plKey key) { fObjects.push_back(new plNetMsgObjectHelper(key)); }
 };
 
 //

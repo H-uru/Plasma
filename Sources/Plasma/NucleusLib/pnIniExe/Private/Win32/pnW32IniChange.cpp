@@ -321,7 +321,7 @@ void IniChangeAdd (
     ASSERT(s_running);
 
     // Create a callback record
-    IniChangeReg * change   = NEW(IniChangeReg);
+    IniChangeReg * change   = new IniChangeReg;
     change->fNotify        = callback;
     change->fLastWriteTime = 0;
     PathAddFilename(

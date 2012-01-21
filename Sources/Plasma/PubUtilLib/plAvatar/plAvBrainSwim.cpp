@@ -241,7 +241,7 @@ plAvBrainSwim::plAvBrainSwim() :
     fMode(kWalking),
     fSurfaceDistance(0.f)
 {
-    fSurfaceProbeMsg = TRACKED_NEW plLOSRequestMsg();
+    fSurfaceProbeMsg = new plLOSRequestMsg();
     fSurfaceProbeMsg->SetReportType(plLOSRequestMsg::kReportHitOrMiss);
     fSurfaceProbeMsg->SetRequestType(plSimDefs::kLOSDBSwimRegion);
     fSurfaceProbeMsg->SetTestType(plLOSRequestMsg::kTestAny);
@@ -277,11 +277,11 @@ hsBool plAvBrainSwim::Apply(double time, float elapsed)
             if (huBrain && !huBrain->fCallbackAction->IsOnGround())
             {
                 // We're jumping in! Trigger splash effect (sound)              
-                plArmatureEffectMsg *msg = TRACKED_NEW plArmatureEffectMsg(fAvMod->GetArmatureEffects()->GetKey(), kTime);
+                plArmatureEffectMsg *msg = new plArmatureEffectMsg(fAvMod->GetArmatureEffects()->GetKey(), kTime);
                 msg->fEventTime = (float)time;
                 msg->fTriggerIdx = plArmatureMod::kImpact;
 
-                plEventCallbackInterceptMsg *iMsg = TRACKED_NEW plEventCallbackInterceptMsg;
+                plEventCallbackInterceptMsg *iMsg = new plEventCallbackInterceptMsg;
                 iMsg->AddReceiver(fAvMod->GetArmatureEffects()->GetKey());
                 iMsg->fEventTime = (float)time;
                 iMsg->fEvent = kTime;
@@ -381,7 +381,7 @@ hsBool plAvBrainSwim::MsgReceive(plMessage *msg)
         if (!seekM->fNoSeek)
         {
             // use dumb seek
-            plAvSeekTask *seek = TRACKED_NEW plAvSeekTask(seekM->fSeekPoint, seekM->fAlignType, seekM->fAnimName);
+            plAvSeekTask *seek = new plAvSeekTask(seekM->fSeekPoint, seekM->fAlignType, seekM->fAnimName);
             QueueTask(seek);
         }
         // else don't seek at all.
@@ -390,7 +390,7 @@ hsBool plAvBrainSwim::MsgReceive(plMessage *msg)
         if(oneshotM)
         {
             // if it's a oneshot, add the oneshot task as well
-            plAvOneShotTask *oneshot = TRACKED_NEW plAvOneShotTask(oneshotM, fAvMod, this);
+            plAvOneShotTask *oneshot = new plAvOneShotTask(oneshotM, fAvMod, this);
             QueueTask(oneshot);
         }
         return true;        
@@ -464,7 +464,7 @@ void plAvBrainSwim::IStartWading()
     
     if (fAvMod->IsLocalAvatar())
     {
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);
@@ -487,7 +487,7 @@ void plAvBrainSwim::IStartSwimming(bool is2D)
     
     if (fAvMod->IsLocalAvatar())
     {
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
@@ -535,34 +535,34 @@ hsBool plAvBrainSwim::IInitAnimations()
     static const float defaultFade = 2.0f;
     fBehaviors.SetCountAndZero(kSwimBehaviorMax);
     plSwimBehavior *behavior;
-    fBehaviors[kTreadWater] = behavior = TRACKED_NEW TreadWater;
+    fBehaviors[kTreadWater] = behavior = new TreadWater;
     behavior->Init(treadWater, true, this, fAvMod, kTreadWater);
 
-    fBehaviors[kSwimForward] = behavior = TRACKED_NEW SwimForward;
+    fBehaviors[kSwimForward] = behavior = new SwimForward;
     behavior->Init(swimForward, true, this, fAvMod, kSwimForward);
 
-    fBehaviors[kSwimForwardFast] = behavior = TRACKED_NEW SwimForwardFast;
+    fBehaviors[kSwimForwardFast] = behavior = new SwimForwardFast;
     behavior->Init(swimForwardFast, true, this, fAvMod, kSwimForwardFast);
 
-    fBehaviors[kSwimBack] = behavior = TRACKED_NEW SwimBack;        
+    fBehaviors[kSwimBack] = behavior = new SwimBack;        
     behavior->Init(swimBack, true, this, fAvMod, kSwimBack);
     
-    fBehaviors[kSwimLeft] = behavior = TRACKED_NEW SwimLeft;
+    fBehaviors[kSwimLeft] = behavior = new SwimLeft;
     behavior->Init(swimLeft, true, this, fAvMod, kSwimLeft);
     
-    fBehaviors[kSwimRight] = behavior = TRACKED_NEW SwimRight;      
+    fBehaviors[kSwimRight] = behavior = new SwimRight;      
     behavior->Init(swimRight, true, this, fAvMod, kSwimRight);
     
-    fBehaviors[kSwimTurnLeft] = behavior = TRACKED_NEW SwimTurnLeft;
+    fBehaviors[kSwimTurnLeft] = behavior = new SwimTurnLeft;
     behavior->Init(nil, true, this, fAvMod, kSwimTurnLeft);
     
-    fBehaviors[kSwimTurnRight] = behavior = TRACKED_NEW SwimTurnRight;
+    fBehaviors[kSwimTurnRight] = behavior = new SwimTurnRight;
     behavior->Init(nil, true, this, fAvMod, kSwimTurnRight);
     
-    fBehaviors[kTreadTurnLeft] = behavior = TRACKED_NEW TreadTurnLeft;
+    fBehaviors[kTreadTurnLeft] = behavior = new TreadTurnLeft;
     behavior->Init(treadWaterLeft, true, this, fAvMod, kTreadTurnLeft);
     
-    fBehaviors[kTreadTurnRight] = behavior = TRACKED_NEW TreadTurnRight;
+    fBehaviors[kTreadTurnRight] = behavior = new TreadTurnRight;
     behavior->Init(treadWaterRight, true, this, fAvMod, kTreadTurnRight);
     
     return true;
@@ -641,7 +641,7 @@ hsBool plAvBrainSwim::IHandleControlMsg(plControlEventMsg* msg)
         case B_CONTROL_TOGGLE_PHYSICAL:
             {
 #ifndef PLASMA_EXTERNAL_RELEASE     // external clients can't go non-physical
-                plAvBrainDrive *driver = TRACKED_NEW plAvBrainDrive(20, 1);
+                plAvBrainDrive *driver = new plAvBrainDrive(20, 1);
                 fAvMod->PushBrain(driver);
 #endif
                 return true;

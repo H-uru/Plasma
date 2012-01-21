@@ -382,7 +382,7 @@ void pfGameMgr::JoinGame (
     unsigned        gameId
 ) {
     Cli2Srv_GameMgr_JoinGame msg;
-    ZERO(msg);
+    memset(&msg, 0, sizeof(msg));
     
     msg.messageId       = kCli2Srv_GameMgr_JoinGame;
     msg.recvGameId      = 0;            // send to GameMgr on server
@@ -655,7 +655,7 @@ void GameMgrSend (GameMsgHeader * msg, void * param) {
 
     if (param) {
         msg->transId = INextTransId();
-        (void)NEW(TransState)(msg->transId, param);
+        (void)new TransState(msg->transId, param);
     }
     else {
         msg->transId = 0;

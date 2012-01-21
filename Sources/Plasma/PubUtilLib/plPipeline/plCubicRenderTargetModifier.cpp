@@ -97,7 +97,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
     
     
     if( rr == nil )
-        rr = fRequests[ face ] = TRACKED_NEW plRenderRequest;
+        rr = fRequests[ face ] = new plRenderRequest;
 
     uint32_t renderState 
         = plPipeline::kRenderNormal
@@ -156,7 +156,7 @@ hsBool  plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dir
         {
             fRequests[ i ]->SetCameraTransform(fCubic->GetWorldToCamera(i), fCubic->GetCameraToWorld(i));
 
-            msg = TRACKED_NEW plRenderRequestMsg( nil, fRequests[ i ] );
+            msg = new plRenderRequestMsg( nil, fRequests[ i ] );
             plgDispatch::MsgSend( msg );
         }
     }
@@ -241,10 +241,10 @@ void    plCubicRenderTargetModifier::Read( hsStream *s, hsResMgr *mgr )
     hsKeyedObject::Read( s, mgr );
 
     plGenRefMsg* msg;
-    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
+    msg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
     mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 
-    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
+    msg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
     mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 }
 

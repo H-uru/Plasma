@@ -301,7 +301,7 @@ public:
         \param type The "verb" for the command - next stage, previous stage, goto stage
         \param stage The stage we're going to, if this is a goto command
         \param setTime Do we want to manually set the time on the target stage?
-        \param newTime If setTime is true, this is the TRACKED_NEW (local) time used in the target stage
+        \param newTime If setTime is true, this is the new (local) time used in the target stage
         \param setDirection Do we want to set the overall brain direction?
         \param isForward If setDirection is true, then true = forward, false = backward
         \param transitionTime Time in seconds to transition between stages.

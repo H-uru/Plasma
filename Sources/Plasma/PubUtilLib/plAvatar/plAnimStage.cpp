@@ -296,7 +296,7 @@ hsBool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArma
         plKey avKey = armature->GetTarget(0)->GetKey();
         if (fMod)
             avKey = fMod->GetKey();
-        plNotifyMsg *msg = TRACKED_NEW plNotifyMsg();
+        plNotifyMsg *msg = new plNotifyMsg();
         msg->SetSender(avKey);
 
         if (fMod)

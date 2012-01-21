@@ -178,7 +178,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
     fCustomText = s->ReadSafeString();
     fDescription = s->ReadSafeString();
     if (s->ReadBool())
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // thumbnail
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // thumbnail
 
     int tileCount = s->ReadLE32();
     int i, j;
@@ -190,23 +190,23 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
         for (j = 0; j < layerCount; j++)
         {
             int layer = s->ReadByte();
-            mgr->ReadKeyNotifyMe(s, TRACKED_NEW plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, nil, layer), plRefFlags::kActiveRef); // texture
+            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, nil, layer), plRefFlags::kActiveRef); // texture
         }
     }
 
     for (i = 0; i < kMaxNumLODLevels; i++)
     {
         if (s->ReadBool())
-            mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1), plRefFlags::kActiveRef); // shared mesh
+            mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1), plRefFlags::kActiveRef); // shared mesh
     }
 
     fElements.SetCountAndZero(tileCount);
     if (plClothingMgr::GetClothingMgr())
     {
-        plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(plClothingMgr::GetClothingMgr()->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        plGenRefMsg *msg = new plGenRefMsg(plClothingMgr::GetClothingMgr()->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->AddViaNotify(GetKey(), msg, plRefFlags::kActiveRef); 
     }
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // forced accessory    
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // forced accessory    
 
     for (i = 0; i < 3; i++)
     {
@@ -313,7 +313,7 @@ hsBool plClothingItem::MsgReceive(plMessage* msg)
                     fElementNames.Set(eMsg->fWhich, hsStrcpy(eMsg->fElementName));
                 if (fTextures.Get(eMsg->fWhich) == nil)
                 {
-                    plMipmap **layers = TRACKED_NEW plMipmap*[plClothingElement::kLayerMax];
+                    plMipmap **layers = new plMipmap*[plClothingElement::kLayerMax];
                     int i;
                     for (i = 0; i < plClothingElement::kLayerMax; i++)
                         layers[i] = nil;
@@ -393,7 +393,7 @@ void plClothingBase::Read(hsStream* s, hsResMgr* mgr)
 
     fName = s->ReadSafeString();
     if (s->ReadBool())
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
     fLayoutName = s->ReadSafeString();
 }
 
@@ -456,7 +456,7 @@ void plClothingOutfit::AddItem(plClothingItem *item, hsBool update /* = true */,
     if (fItems.Find(item) != fItems.kMissingIndex)
         return;
 
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kAddItem);
     msg->fItemKey = item->GetKey();
@@ -477,7 +477,7 @@ void plClothingOutfit::AddItem(plClothingItem *item, hsBool update /* = true */,
 
 void plClothingOutfit::ForceUpdate(bool retry)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();   
+    plClothingMsg *msg = new plClothingMsg();   
     msg->AddCommand(plClothingMsg::kUpdateTexture);
     if (retry)
         msg->AddCommand(plClothingMsg::kRetry);     // force a resend
@@ -489,7 +489,7 @@ void plClothingOutfit::RemoveItem(plClothingItem *item, hsBool update /* = true 
     if (fItems.Find(item) == fItems.kMissingIndex)
         return;
 
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kRemoveItem);
     msg->SetBCastFlag(plMessage::kNetPropagate);
@@ -506,7 +506,7 @@ void plClothingOutfit::TintItem(plClothingItem *item, float red, float green, fl
                                 hsBool update /* = true */, hsBool broadcast /* = true */, hsBool netForce /* = false */,
                                 hsBool retry /* = true */, uint8_t layer /* = kLayerTint1 */)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kTintItem);
     msg->fItemKey = item->GetKey();
@@ -529,7 +529,7 @@ void plClothingOutfit::TintItem(plClothingItem *item, float red, float green, fl
 void plClothingOutfit::TintSkin(float red, float green, float blue,
                                 hsBool update /* = true */, hsBool broadcast /* = true */)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kTintSkin);
     msg->fColor.Set(red, green, blue, 1.f);
@@ -544,7 +544,7 @@ void plClothingOutfit::TintSkin(float red, float green, float blue,
 void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight,
                                  hsBool retry /* = true */)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kMorphItem);
     msg->fItemKey = item->GetKey();
@@ -563,7 +563,7 @@ void plClothingOutfit::SetAge(float age, hsBool update /* = true */, hsBool broa
 
 void plClothingOutfit::SetSkinBlend(float blend, uint8_t layer, hsBool update /* = true */, hsBool broadcast /* = true */)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kBlendSkin);
     msg->fLayer = layer;
@@ -618,7 +618,7 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
                 break;
         }
         fItems.Insert(i, item);
-        plClothingItemOptions *op = TRACKED_NEW plClothingItemOptions;
+        plClothingItemOptions *op = new plClothingItemOptions;
         fOptions.Insert(i, op);
         IInstanceSharedMeshes(item);
         fDirtyItems.SetBit(item->fTileset);
@@ -745,12 +745,12 @@ void plClothingOutfit::Read(hsStream* s, hsResMgr* mgr)
     plSynchedObject::Read(s, mgr);
 
     fGroup = s->ReadByte();
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plClothingBase  
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plClothingBase  
 
     if (fGroup != plClothingMgr::kClothingBaseNoOptions)
     {
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // target layer
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // material    
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // target layer
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // material    
     }
     plgDispatch::Dispatch()->RegisterForExactType(plPreResourceMsg::Index(), GetKey());
     //ReadItems(s, mgr, false);
@@ -827,7 +827,7 @@ void plClothingOutfit::ReadFromVault()
             plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion);
             plStateDescriptor * desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
             if (desc) {
-                plStateDataRecord * sdlDataRec = TRACKED_NEW plStateDataRecord(desc);
+                plStateDataRecord * sdlDataRec = new plStateDataRecord(desc);
                 if (sdlDataRec->Read(&ram, 0)) {
                     if (!strcmp(sdlRecName, kSDLMorphSequence))
                         IHandleMorphSDR(sdlDataRec);
@@ -849,7 +849,7 @@ void plClothingOutfit::ReadFromVault()
 
 void plClothingOutfit::SaveCustomizations(hsBool retry /* = true */)
 {
-    plClothingMsg *msg = TRACKED_NEW plClothingMsg();
+    plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
     msg->AddCommand(plClothingMsg::kSaveCustomizations);
     if (retry)
@@ -901,7 +901,7 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     for (unsigned i = 0; i < morphsSDRs.GetCount(); ++i) {
         for (unsigned j = 0; j < fAvatar->GetNumLOD(); j++) {
             if (fAvatar->GetClothingSO(j) == morphsSDRs[i]->GetTarget(0)) {
-                plStateDataRecord * morphSDR = TRACKED_NEW plStateDataRecord(kSDLMorphSequence);
+                plStateDataRecord * morphSDR = new plStateDataRecord(kSDLMorphSequence);
                 plSimpleStateVariable * lodVar = morphSDR->FindVar(plMorphSequenceSDLMod::kStrTargetID);
                 if (lodVar)
                     lodVar->Set((int)j);
@@ -997,7 +997,7 @@ void plClothingOutfit::IUpdate()
     if (avMod->GetClothingOutfit()==this)
     {
         // Let the GUI know we changed clothes
-        plClothingUpdateBCMsg *BCMsg = TRACKED_NEW plClothingUpdateBCMsg();
+        plClothingUpdateBCMsg *BCMsg = new plClothingUpdateBCMsg();
         BCMsg->SetSender(GetKey());
         plgDispatch::MsgSend(BCMsg);
     }
@@ -1311,12 +1311,12 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
     {
         if (cMsg->GetCommand(plClothingMsg::kAddItem))
         {
-            plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+            plGenRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
             hsgResMgr::ResMgr()->AddViaNotify(cMsg->fItemKey, msg, plRefFlags::kActiveRef);
             plClothingItem *accessory = plClothingItem::ConvertNoRef(cMsg->fItemKey->GetObjectPtr())->fAccessory;
             if (accessory)
             {
-                plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+                plGenRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(accessory->GetKey(), msg, plRefFlags::kActiveRef);
             }               
         }
@@ -1392,7 +1392,7 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
             // as a solo command, so that it happens after any other AddViaNotify messages
             if (cMsg->ResendUpdate())
             {
-                plClothingMsg *update = TRACKED_NEW plClothingMsg();
+                plClothingMsg *update = new plClothingMsg();
                 update->AddReceiver(GetKey());
                 update->AddCommand(plClothingMsg::kUpdateTexture);
                 plgDispatch::MsgSend(update);
@@ -1744,7 +1744,7 @@ hsBool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
 
 void plClothingMgr::Init()
 {
-    fInstance = TRACKED_NEW plClothingMgr;
+    fInstance = new plClothingMgr;
     fInstance->RegisterAs(kClothingMgr_KEY);
     fInstance->IInit();
 }
@@ -1752,7 +1752,7 @@ void plClothingMgr::Init()
 void plClothingMgr::IInit()
 {
     plClothingElement::GetElements(fElements);
-    plClothingLayout *layout = TRACKED_NEW plClothingLayout("BasicHuman", 1024);
+    plClothingLayout *layout = new plClothingLayout("BasicHuman", 1024);
     layout->fElements.Append(FindElementByName("shirt-chest"));
     layout->fElements.Append(FindElementByName("shirt-sleeve"));
     layout->fElements.Append(FindElementByName("face"));

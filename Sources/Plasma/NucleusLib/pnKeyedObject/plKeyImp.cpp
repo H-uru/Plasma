@@ -289,7 +289,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
         ClearNotifyCreated();
         
         plKey key=plKey::Make( this );  // for linux build
-        plSelfDestructMsg* nuke = TRACKED_NEW plSelfDestructMsg( key );
+        plSelfDestructMsg* nuke = new plSelfDestructMsg( key );
         plgDispatch::Dispatch()->MsgSend(nuke);
     }
 }
@@ -444,7 +444,7 @@ void plKeyImp::SatisfyPending() const
     if (!--fPendingRefs)
     {
 #ifdef PL_SEND_SATISFIED
-        plSatisfiedMsg* msg = TRACKED_NEW plSatisfiedMsg(this);
+        plSatisfiedMsg* msg = new plSatisfiedMsg(this);
         plgDispatch::MsgSend(msg);
 #endif // PL_SEND_SATISFIED
     }
@@ -645,7 +645,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
         iTargetKey->ClearNotifyCreated();
         
         plKey key = plKey::Make(iTargetKey);
-        plSelfDestructMsg* nuke = TRACKED_NEW plSelfDestructMsg(key);
+        plSelfDestructMsg* nuke = new plSelfDestructMsg(key);
         plgDispatch::Dispatch()->MsgSend(nuke);
     }
     else

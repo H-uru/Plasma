@@ -147,7 +147,7 @@ void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else
@@ -231,7 +231,7 @@ void    pfGUIProgressCtrl::SetCurrValue( float v )
         else
             newTime = ( ( fValue - fMin ) / ( fMax - fMin ) ) * tLength + fAnimBegin;
 
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kGoToTime ); 
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
@@ -249,7 +249,7 @@ void pfGUIProgressCtrl::AnimateToPercentage( float percent )
 
         if( fAnimationKeys.GetCount() > 0 )
         {
-            plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+            plAnimCmdMsg *msg = new plAnimCmdMsg();
             msg->SetCmd( plAnimCmdMsg::kPlayToPercentage ); 
             msg->SetAnimName( fAnimName );
             msg->fTime = percent;
@@ -263,7 +263,7 @@ void pfGUIProgressCtrl::AnimateToPercentage( float percent )
 
                 // setup a timer to call back when we finish animating
                 float elapsedTime = (fAnimEnd - fAnimBegin) * percent;
-                plTimerCallbackMsg *timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey(), fStopSoundTimer);
+                plTimerCallbackMsg *timerMsg = new plTimerCallbackMsg(GetKey(), fStopSoundTimer);
                 plgTimerCallbackMgr::NewTimer(elapsedTime, timerMsg);
             }
         }

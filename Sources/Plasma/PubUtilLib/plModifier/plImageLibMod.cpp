@@ -88,7 +88,7 @@ void plImageLibMod::Read(hsStream* stream, hsResMgr* mgr)
     uint32_t i, count = stream->ReadLE32();
     fImages.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
-        mgr->ReadKeyNotifyMe( stream, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefImage ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( stream, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefImage ), plRefFlags::kActiveRef );
 }
 
 void plImageLibMod::Write(hsStream* stream, hsResMgr* mgr)

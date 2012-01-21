@@ -156,7 +156,7 @@ hsBool  plInitFileReader::Parse( uint32_t userData )
     hsAssert( fStream != nil, "Nil stream in initFileReader::Parse(); file not yet open?" );
 
     if( fCurrLine == nil )
-        fCurrLine = TRACKED_NEW char[ fLineSize + 1 ];
+        fCurrLine = new char[ fLineSize + 1 ];
 
     // Start parsing lines
     while( fStream->ReadLn( fCurrLine, fLineSize ) )

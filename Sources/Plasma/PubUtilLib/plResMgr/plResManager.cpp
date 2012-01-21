@@ -139,7 +139,7 @@ hsBool plResManager::IInit()
             char fileName[kFolderIterator_MaxPath];
             pathIterator.GetPathAndName(fileName);
 
-            plRegistryPageNode* node = TRACKED_NEW plRegistryPageNode(fileName);
+            plRegistryPageNode* node = new plRegistryPageNode(fileName);
             fAllPages.insert(node);
         }
     }
@@ -148,12 +148,12 @@ hsBool plResManager::IInit()
     CreatePage(plLocation::kGlobalFixedLoc, "Global", "FixedKeys");
 
     hsAssert(!fDispatch, "Dispatch already set");
-    fDispatch = TRACKED_NEW plDispatch;
+    fDispatch = new plDispatch;
     
     plgTimerCallbackMgr::Init(); 
 
     // Init our helper
-    fMyHelper = TRACKED_NEW plResManagerHelper(this);
+    fMyHelper = new plResManagerHelper(this);
     fMyHelper->Init();
     hsAssert(fMyHelper->GetKey() != nil, "ResManager helper didn't init properly!" );
 
@@ -234,7 +234,7 @@ void plResManager::IShutdown()
 
 void plResManager::AddSinglePage(const char* pagePath)
 {
-    plRegistryPageNode* node = TRACKED_NEW plRegistryPageNode(pagePath);
+    plRegistryPageNode* node = new plRegistryPageNode(pagePath);
     AddPage(node);
 }
 
@@ -573,7 +573,7 @@ plKey plResManager::FindOriginalKey(const plUoid& uoid)
 
         // Note: startPos of -1 means we didn't read it from disk, but 0 length
         // is our special key that we're a passively created key
-        foundKey = TRACKED_NEW plKeyImp(uoid, uint32_t(-1), uint32_t(0));
+        foundKey = new plKeyImp(uoid, uint32_t(-1), uint32_t(0));
         key = plKey::Make(foundKey);
     }
 
@@ -755,7 +755,7 @@ plKey plResManager::NewKey(plUoid& newUoid, hsKeyedObject* object)
 {
     hsAssert(fInited, "Attempting to create a new key before we're inited!");
 
-    plKeyImp* newKey = TRACKED_NEW plKeyImp;
+    plKeyImp* newKey = new plKeyImp;
     newKey->SetUoid(newUoid);
     AddKey(newKey);
 
@@ -816,7 +816,7 @@ plKey plResManager::ReRegister(const char* nm, const plUoid& oid)
         }
     }
 
-    plKeyImp* pKey = TRACKED_NEW plKeyImp;
+    plKeyImp* pKey = new plKeyImp;
     if (canClone && pOrigKey)
     {   
         pKey->CopyForClone((plKeyImp*)pOrigKey, fCurClonePlayerID, fCurCloneID);
@@ -926,7 +926,7 @@ plKey plResManager::ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t
     fCurCloneID = 0;
 
     // Then notify NetClientMgr when object loads
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(plNetClientApp::GetInstance()->GetKey(), plRefMsg::kOnCreate, 0, 0);
+    plObjRefMsg* refMsg = new plObjRefMsg(plNetClientApp::GetInstance()->GetKey(), plRefMsg::kOnCreate, 0, 0);
     AddViaNotify(cloneKey, refMsg, plRefFlags::kPassiveRef);    
 
     return cloneKey;
@@ -1064,7 +1064,7 @@ void plResManager::LoadAgeKeys(const char* age)
         kResMgrLog(1, ILog(1, "Loading age keys for age %s", age));
         hsStatusMessageF("*** Loading age keys for age %s ***\n", age);
 
-        plResAgeHolder* holder = TRACKED_NEW plResAgeHolder(age);
+        plResAgeHolder* holder = new plResAgeHolder(age);
         fHeldAgeKeys[age] = holder;
         // Go find pages that match this age, load the keys, and ref them all
         plResHolderIterator iter(age, holder->fKeys, this);
@@ -1260,7 +1260,7 @@ public:
     plPageInAgeIter(plKey destKey, const char *ageName) : fDestKey(destKey), fAgeName(ageName) {}
     ~plPageInAgeIter()
     {
-        plClientMsg* pMsg1 = TRACKED_NEW plClientMsg(plClientMsg::kLoadRoomHold);
+        plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoomHold);
         for (int i = 0; i < fLocations.size(); i++)
         {
             pMsg1->AddRoomLoc(fLocations[i]);
@@ -1287,7 +1287,7 @@ void plResManager::PageInAge(const char *age)
     plKey clientKey = hsgResMgr::ResMgr()->FindKey(lu);
 
     // Tell the client to load all the keys for this age, to make the loading process work better
-    plClientMsg *loadAgeKeysMsg = TRACKED_NEW plClientMsg(plClientMsg::kLoadAgeKeys);
+    plClientMsg *loadAgeKeysMsg = new plClientMsg(plClientMsg::kLoadAgeKeys);
     loadAgeKeysMsg->SetAgeName(age);
     loadAgeKeysMsg->Send(clientKey);
 
@@ -1511,7 +1511,7 @@ void plResManager::DumpUnusedKeys(plRegistryPageNode* page) const
 
 plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const char* age, const char* page)
 {
-    plRegistryPageNode* pageNode = TRACKED_NEW plRegistryPageNode(location, age, page, fDataPath.c_str());
+    plRegistryPageNode* pageNode = new plRegistryPageNode(location, age, page, fDataPath.c_str());
     fAllPages.insert(pageNode);
 
     return pageNode;

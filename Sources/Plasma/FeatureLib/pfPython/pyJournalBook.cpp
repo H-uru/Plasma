@@ -72,47 +72,47 @@ pyJournalBook::pyJournalBook()
 
 pyJournalBook::pyJournalBook( const char *esHTMLSource )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource );
+    fBook = new pfJournalBook( esHTMLSource );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( std::wstring esHTMLSource )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource.c_str() );
+    fBook = new pfJournalBook( esHTMLSource.c_str() );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey, const char *guiName )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc, guiName );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey, const char *guiName )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc, guiName );
     IMakeNewKey();
 }
 
 pyJournalBook::pyJournalBook( const char *esHTMLSource, pyKey callbackKey )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource, nil, callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource, nil, callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     IMakeNewKey();
@@ -120,7 +120,7 @@ pyJournalBook::pyJournalBook( const char *esHTMLSource, pyKey callbackKey )
 
 pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyKey callbackKey )
 {
-    fBook = TRACKED_NEW pfJournalBook( esHTMLSource.c_str(), nil, callbackKey.getKey(), 
+    fBook = new pfJournalBook( esHTMLSource.c_str(), nil, callbackKey.getKey(), 
                                 callbackKey.getKey() != nil ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     IMakeNewKey();
@@ -144,7 +144,7 @@ void pyJournalBook::MakeBook(std::string esHTMLSource, plKey coverImageKey /* = 
     if (callbackKey != nil)
         loc = callbackKey->GetUoid().GetLocation();
 
-    fBook = TRACKED_NEW pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName.c_str());
+    fBook = new pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName.c_str());
     IMakeNewKey();
 }
 
@@ -157,7 +157,7 @@ void pyJournalBook::MakeBook(std::wstring esHTMLSource, plKey coverImageKey /* =
     if (callbackKey != nil)
         loc = callbackKey->GetUoid().GetLocation();
 
-    fBook = TRACKED_NEW pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName.c_str());
+    fBook = new pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName.c_str());
     IMakeNewKey();
 }
 

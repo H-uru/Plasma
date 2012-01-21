@@ -124,7 +124,7 @@ hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             hsAssert(event, "Message forwarder only supports event callback messages");
             if (event)
             {
-                plForwardCallback *fc = TRACKED_NEW plForwardCallback;
+                plForwardCallback *fc = new plForwardCallback;
                 fc->fNumCallbacks = fForwardKeys.Count();
 
                 // Turn off net propagate the callbacks to us will all be local.  Only the

@@ -453,7 +453,7 @@ static bool Recv_PropagateBuffer (
 ) {
     const Game2Cli_PropagateBuffer & reply = *(const Game2Cli_PropagateBuffer *)msg;
 
-    RcvdPropagatedBufferTrans * trans = NEW(RcvdPropagatedBufferTrans);
+    RcvdPropagatedBufferTrans * trans = new RcvdPropagatedBufferTrans;
     trans->bufferType   = reply.type;
     trans->bufferBytes  = reply.bytes;
     trans->bufferData   = (uint8_t *)malloc(reply.bytes);
@@ -471,7 +471,7 @@ static bool Recv_GameMgrMsg (
 ) {
     const Game2Cli_GameMgrMsg & reply = *(const Game2Cli_GameMgrMsg *)msg;
 
-    RcvdGameMgrMsgTrans * trans = NEW(RcvdGameMgrMsgTrans);
+    RcvdGameMgrMsgTrans * trans = new RcvdGameMgrMsgTrans;
     trans->bufferBytes  = reply.bytes;
     trans->bufferData   = (uint8_t *)malloc(reply.bytes);
     MemCopy(trans->bufferData, reply.buffer, reply.bytes);

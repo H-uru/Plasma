@@ -166,7 +166,7 @@ uint16_t  *plTextFont::IInitFontTexture( void )
     fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
 
     /// Now create the data block
-    uint16_t  *data = TRACKED_NEW uint16_t[ fTextureWidth * fTextureHeight ];
+    uint16_t  *data = new uint16_t[ fTextureWidth * fTextureHeight ];
     tBits = data;
     for( y = 0; y < fTextureHeight; y++ )
     {

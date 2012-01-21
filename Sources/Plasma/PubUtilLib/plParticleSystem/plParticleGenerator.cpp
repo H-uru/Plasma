@@ -301,9 +301,9 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
     float partLifeMax = s->ReadLEScalar();
     float pps = s->ReadLEScalar();
     uint32_t numSources = s->ReadLE32();
-    hsPoint3 *pos = TRACKED_NEW hsPoint3[numSources];
-    float *pitch = TRACKED_NEW float[numSources];
-    float *yaw = TRACKED_NEW float[numSources];
+    hsPoint3 *pos = new hsPoint3[numSources];
+    float *pitch = new float[numSources];
+    float *yaw = new float[numSources];
     int i;
     for (i = 0; i < numSources; i++)
     {
@@ -424,8 +424,8 @@ void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
     float scaleMax = s->ReadLEScalar();
     float radsPerSecRange = s->ReadLEScalar();
 
-    hsPoint3 *pos = TRACKED_NEW hsPoint3[count];
-    hsVector3 *dir = TRACKED_NEW hsVector3[count];
+    hsPoint3 *pos = new hsPoint3[count];
+    hsVector3 *dir = new hsVector3[count];
 
     int i;
     for (i = 0; i < count; i++)

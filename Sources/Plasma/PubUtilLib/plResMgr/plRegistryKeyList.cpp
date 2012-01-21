@@ -332,7 +332,7 @@ void plRegistryKeyList::Read(hsStream* s)
 
     for (int i = 0; i < numKeys; i++)
     {
-        plKeyImp* newKey = TRACKED_NEW plKeyImp;
+        plKeyImp* newKey = new plKeyImp;
         newKey->Read(s);
         fStaticKeys[i] = newKey;
     }

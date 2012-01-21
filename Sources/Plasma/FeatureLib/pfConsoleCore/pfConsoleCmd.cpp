@@ -106,7 +106,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup( void )
     if( fBaseCmdGroup == nil )
     {
         /// Initialize base group
-        fBaseCmdGroup = TRACKED_NEW pfConsoleCmdGroup( nil, nil );
+        fBaseCmdGroup = new pfConsoleCmdGroup( nil, nil );
     }
 
     return fBaseCmdGroup;
@@ -226,7 +226,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupRecurse( const char *name )
     static char         seps[] = " ._";
 
 
-    string = TRACKED_NEW char[ strlen( name ) + 1 ];
+    string = new char[ strlen( name ) + 1 ];
     hsAssert( string != nil, "Cannot allocate string in FindSubGroupRecurse()" );
     strcpy( string, name );
 

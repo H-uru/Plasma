@@ -487,10 +487,10 @@ void plCameraBrain1::Read(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Read(stream, mgr);
     fPOAOffset.Read(stream);
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg, plRefFlags::kActiveRef );
     
-    plGenRefMsg* msg2 = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kRailComponent ); // SceneObject
+    plGenRefMsg* msg2 = new plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kRailComponent ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg2, plRefFlags::kActiveRef );
 
     fFlags.Read(stream);
@@ -613,7 +613,7 @@ hsBool plCameraBrain1::MsgReceive(plMessage* msg)
             }
             else
             {
-                plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
+                plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
                 hsgResMgr::ResMgr()->AddViaNotify(pPMsg->fPlayer, msg, plRefFlags::kPassiveRef);
 
                 fFlags.SetBit(kCutPosOnce);
@@ -973,7 +973,7 @@ plCameraBrain1_Avatar::~plCameraBrain1_Avatar()
         
     if (fFaded)
     {
-        plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+        plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
         pMsg->SetFadeOut(false);
         pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1102,7 +1102,7 @@ void plCameraBrain1_Avatar::CalculatePosition()
     // check LOS
     if (GetCamera()->GetKey() && fFlags.IsBitSet(kMaintainLOS) && (plVirtualCam1::Instance()->GetCurrentStackCamera() == GetCamera()))
     {
-        plLOSRequestMsg* pMsg = TRACKED_NEW plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
+        plLOSRequestMsg* pMsg = new plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
             plLOSRequestMsg::kTestClosest, plLOSRequestMsg::kReportHitOrMiss);
         plgDispatch::MsgSend( pMsg );
     }
@@ -1148,7 +1148,7 @@ void plCameraBrain1_Avatar::ISendFadeMsg(hsBool fade)
         else
             plVirtualCam1::AddMsgToLog("current camera sending Fade In message to Avatar");
     
-        plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+        plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
         pMsg->SetFadeOut(fade);
         pMsg->SetSubjectKey(GetSubject()->GetKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1397,7 +1397,7 @@ void plCameraBrain1_FirstPerson::CalculatePosition()
     // check LOS
     if (GetCamera()->GetKey() && fFlags.IsBitSet(kMaintainLOS) && (plVirtualCam1::Instance()->GetCurrentStackCamera() == GetCamera()))
     {
-        plLOSRequestMsg* pMsg = TRACKED_NEW plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
+        plLOSRequestMsg* pMsg = new plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
             plLOSRequestMsg::kTestClosest, plLOSRequestMsg::kReportHitOrMiss);
         plgDispatch::MsgSend( pMsg );
     }
@@ -1436,7 +1436,7 @@ void plCameraBrain1_FirstPerson::Push(hsBool recenter)
     
     if (plCameraBrain1_FirstPerson::fDontFade)
         return;
-    plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+    plEnableMsg* pMsg = new plEnableMsg;
     pMsg->SetCmd(plEnableMsg::kDisable);
     pMsg->AddType(plEnableMsg::kDrawable);
     pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
@@ -1481,7 +1481,7 @@ plCameraBrain1_Fixed::~plCameraBrain1_Fixed()
 void plCameraBrain1_Fixed::Read(hsStream* stream, hsResMgr* mgr)
 {
     plCameraBrain1::Read(stream, mgr);
-    mgr->ReadKeyNotifyMe( stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, 99), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe( stream, new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, 99), plRefFlags::kPassiveRef);
 }
 
 void plCameraBrain1_Fixed::Write(hsStream* stream, hsResMgr* mgr)
@@ -1783,9 +1783,9 @@ void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
 
     fCenter.Read(stream);
     SetRadius(stream->ReadLEScalar());
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kCircleTarget ); // SceneObject
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kCircleTarget ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg, plRefFlags::kActiveRef );
-    plGenRefMsg* msg2 = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kPOAObject ); // SceneObject
+    plGenRefMsg* msg2 = new plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kPOAObject ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg2, plRefFlags::kActiveRef );
     fCirPerSec = stream->ReadLEScalar();
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
@@ -1842,7 +1842,7 @@ hsBool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
             }
             if (fFlags.IsBitSet(kFollowLocalAvatar))
             {
-                plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
+                plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kSubject ); // SceneObject
                 hsgResMgr::ResMgr()->AddViaNotify(pPMsg->fPlayer, msg, plRefFlags::kPassiveRef);
 
                 fFlags.SetBit(kCutPosOnce);

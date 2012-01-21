@@ -86,7 +86,7 @@ void plArmatureEffectsMgr::Read(hsStream *s, hsResMgr *mgr)
     int numEffects = s->ReadLE32();
     while (numEffects > 0)
     {
-        plRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+        plRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
         numEffects--;
     }
@@ -182,7 +182,7 @@ void plArmatureEffectsMgr::ResetEffects()
 
 plArmatureEffectFootSound::plArmatureEffectFootSound()
 {
-    plArmatureEffectFootSurface *surface = TRACKED_NEW plArmatureEffectFootSurface;
+    plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
     surface->fID = plArmatureEffectsMgr::kFootNoSurface;
     surface->fTrigger = nil;
     fSurfaces.Append(surface);
@@ -209,7 +209,7 @@ void plArmatureEffectFootSound::Read(hsStream* s, hsResMgr* mgr)
     int i;
     for (i = 0; i < count; i++)
     {
-        plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1);
+        plGenRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
     }
 }
@@ -272,7 +272,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
             if (plgAudioSys::Active() && fActiveSurfaces.IsBitSet(curSurfaceIndex))
             {
                 fMods[curSurfaceIndex]->SetCurrentGroup(eMsg->fTriggerIdx);
-                plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg *animMsg = new plAnimCmdMsg;
                 animMsg->AddReceiver(fMods[curSurfaceIndex]->GetKey());
                 animMsg->SetCmd(plAnimCmdMsg::kContinue);
                 plgDispatch::MsgSend(animMsg);
@@ -294,7 +294,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
             {
                 plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - %s", 
                                       plArmatureEffectsMgr::SurfaceStrings[sMsg->fSurface]);
-                plArmatureEffectFootSurface *surface = TRACKED_NEW plArmatureEffectFootSurface;
+                plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
                 surface->fID = sMsg->fSurface;
                 surface->fTrigger = sMsg->GetSender();
                 fSurfaces.Append(surface);

@@ -162,7 +162,7 @@ void    pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= fals
     fChecked = checked;
     if( fAnimationKeys.GetCount() > 0 )
     {
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         if( fChecked )
         {
             // Moving to true
@@ -203,7 +203,7 @@ void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else

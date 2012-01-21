@@ -98,7 +98,7 @@ bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = TRACKED_NEW hsUNIXStream;
+        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
@@ -125,7 +125,7 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = TRACKED_NEW hsUNIXStream;
+        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 

@@ -158,7 +158,7 @@ void cyMisc::Console(const char* command)
     if ( command != nil )
     {
         // create message to send to the console
-        plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg = new plControlEventMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByType);
         pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
         pMsg->SetControlActivated(true);
@@ -172,7 +172,7 @@ void cyMisc::ConsoleNet(const char* command, hsBool netForce)
     if ( command != nil )
     {
         // create message to send to the console
-        plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg = new plControlEventMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         if ( netForce )
@@ -250,13 +250,13 @@ void cyMisc::PopUpConsole(const char* command)
     if ( command != nil )
     {
         // create message to send to the console
-        plControlEventMsg* pMsg1 = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg1 = new plControlEventMsg;
         pMsg1->SetBCastFlag(plMessage::kBCastByType);
         pMsg1->SetControlCode(B_SET_CONSOLE_MODE);
         pMsg1->SetControlActivated(true);
         plgDispatch::MsgSend( pMsg1 );  // whoosh... off it goes
         // create message to send to the console
-        plControlEventMsg* pMsg2 = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg2 = new plControlEventMsg;
         pMsg2->SetBCastFlag(plMessage::kBCastByType);
         pMsg2->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
         pMsg2->SetControlActivated(true);
@@ -275,7 +275,7 @@ void cyMisc::PopUpConsole(const char* command)
 void cyMisc::TimerCallback(pyKey& selfkey, float time, uint32_t id)
 {
     // setup the message to come back to whoever the pyKey is pointing to
-    plTimerCallbackMsg* pTimerMsg = TRACKED_NEW plTimerCallbackMsg(selfkey.getKey(),id);
+    plTimerCallbackMsg* pTimerMsg = new plTimerCallbackMsg(selfkey.getKey(),id);
     plgTimerCallbackMgr::NewTimer( time, pTimerMsg );
 }
 
@@ -308,7 +308,7 @@ void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey)
     if ( childKey )
     {
         // create the attach message to attach the child
-        plAttachMsg* pMsg = TRACKED_NEW plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+        plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -321,7 +321,7 @@ void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     if ( childKey )
     {
         // create the attach message to attach the child
-        plAttachMsg* pMsg = TRACKED_NEW plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+        plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -344,7 +344,7 @@ void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey)
     if ( childKey )
     {
         // create the attach message to detach the child
-        plAttachMsg* pMsg = TRACKED_NEW plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+        plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -357,7 +357,7 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     if ( childKey )
     {
         // create the attach message to detach the child
-        plAttachMsg* pMsg = TRACKED_NEW plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+        plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -688,7 +688,7 @@ time_t cyMisc::ConvertGMTtoDni(time_t gtime)
 //
 void cyMisc::ExcludeRegionSet(pyKey& sender, pyKey& exKey, uint16_t state)
 {
-    plExcludeRegionMsg *msg = TRACKED_NEW plExcludeRegionMsg;
+    plExcludeRegionMsg *msg = new plExcludeRegionMsg;
 
     switch (state)
     {
@@ -706,7 +706,7 @@ void cyMisc::ExcludeRegionSet(pyKey& sender, pyKey& exKey, uint16_t state)
 
 void cyMisc::ExcludeRegionSetNow(pyKey& sender, pyKey& exKey, uint16_t state)
 {
-    plExcludeRegionMsg *msg = TRACKED_NEW plExcludeRegionMsg;
+    plExcludeRegionMsg *msg = new plExcludeRegionMsg;
 
     switch (state)
     {
@@ -1083,7 +1083,7 @@ float cyMisc::GetMaxListenDistSq()
 uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const char* message, uint32_t flags)
 {
     // create the messge that will contain the chat message
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kHACKChatMsg );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
     msg->SetString( message );
     msg->SetUser( from.GetPlayerName(), from.GetPlayerID() );
     msg->SetFlags( flags );
@@ -1117,7 +1117,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const wchar_t* message, uint32_t flags)
 {
     // create the messge that will contain the chat message
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kHACKChatMsg );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
     msg->SetString( message );
     msg->SetUser( from.GetPlayerName(), from.GetPlayerID() );
     msg->SetFlags( flags );
@@ -1160,7 +1160,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 void cyMisc::SendKIMessage(uint32_t command, float value)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( (uint8_t)command );
+    pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
     // check to see if the value makes any sense
     if ( command == pfKIMsg::kSetChatFadeDelay )
@@ -1188,7 +1188,7 @@ void cyMisc::SendKIMessage(uint32_t command, float value)
 void cyMisc::SendKIMessageS(uint32_t command, const wchar_t* value)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( (uint8_t)command );
+    pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
     msg->SetString( value );
 
@@ -1209,7 +1209,7 @@ void cyMisc::SendKIMessageS(uint32_t command, const wchar_t* value)
 void  cyMisc::SendKIMessageI(uint32_t command, int32_t value)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( (uint8_t)command );
+    pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
     msg->SetIntValue(value);
 
@@ -1230,7 +1230,7 @@ void  cyMisc::SendKIMessageI(uint32_t command, int32_t value)
 void  cyMisc::SendKIGZMarkerMsg(int32_t markerNumber, pyKey& sender)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kGZInRange );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kGZInRange );
 
     msg->SetIntValue(markerNumber);
     msg->SetSender(sender.getKey());
@@ -1241,7 +1241,7 @@ void  cyMisc::SendKIGZMarkerMsg(int32_t markerNumber, pyKey& sender)
 
 void cyMisc::SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender)
 {
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg(pfKIMsg::kRegisterImager);
+    pfKIMsg *msg = new pfKIMsg(pfKIMsg::kRegisterImager);
 
     msg->SetString(imagerName);
     msg->SetSender(sender.getKey());
@@ -1263,7 +1263,7 @@ void cyMisc::SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender)
 void cyMisc::YesNoDialog(pyKey& sender, const char* thestring)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kYesNoDialog );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kYesNoDialog );
 
     msg->SetSender(sender.getKey());
     msg->SetString(thestring);
@@ -1292,7 +1292,7 @@ void cyMisc::YesNoDialog(pyKey& sender, std::wstring thestring)
 void cyMisc::RateIt(const char* chronicleName, const char* thestring, hsBool onceFlag)
 {
     // create the mesage to send
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kRateIt );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kRateIt );
 
     msg->SetUser(chronicleName,0);
     msg->SetString(thestring);
@@ -1315,7 +1315,7 @@ void cyMisc::SetPrivateChatList(const std::vector<pyPlayer*> & tolist)
 {
     if (tolist.size() > 0)
     {
-        plNetVoiceListMsg* pMsg = TRACKED_NEW plNetVoiceListMsg(plNetVoiceListMsg::kForcedListenerMode);
+        plNetVoiceListMsg* pMsg = new plNetVoiceListMsg(plNetVoiceListMsg::kForcedListenerMode);
         for (int i=0 ; i<tolist.size() ; i++ )
             pMsg->GetClientList()->Append(tolist[i]->GetPlayerID());
         
@@ -1335,7 +1335,7 @@ void cyMisc::SetPrivateChatList(const std::vector<pyPlayer*> & tolist)
 //
 void cyMisc::ClearPrivateChatList(pyKey& member)
 {
-    plNetVoiceListMsg* pMsg = TRACKED_NEW plNetVoiceListMsg(plNetVoiceListMsg::kDistanceMode);
+    plNetVoiceListMsg* pMsg = new plNetVoiceListMsg(plNetVoiceListMsg::kDistanceMode);
     pMsg->SetRemovedKey( member.getKey() );
     pMsg->Send();
 }
@@ -1371,7 +1371,7 @@ void cyMisc::SendPetitionToCCR(const char* message)
 void cyMisc::SendPetitionToCCRI(const char* message, uint8_t reason,const char* title)
 {
     // create the mesage to send
-    plCCRPetitionMsg *msg = TRACKED_NEW plCCRPetitionMsg();
+    plCCRPetitionMsg *msg = new plCCRPetitionMsg();
     msg->SetNote(message);
     msg->SetType(reason);
     if (title)
@@ -1391,7 +1391,7 @@ void cyMisc::SendPetitionToCCRI(const char* message, uint8_t reason,const char* 
 void cyMisc::SendChatToCCR(const char* message,int32_t CCRPlayerID)
 {
     // create the mesage to send
-    plCCRCommunicationMsg *msg = TRACKED_NEW plCCRCommunicationMsg();
+    plCCRCommunicationMsg *msg = new plCCRCommunicationMsg();
     msg->SetMessage(message);
     msg->SetType(plCCRCommunicationMsg::kReturnChatMsg);
     msg->SetBCastFlag(plMessage::kNetAllowInterAge);
@@ -1426,7 +1426,7 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
     if (hsgResMgr::ResMgr())
     {
         plSynchEnabler ps(false);   // disable dirty tracking while paging in
-        plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kLoadRoom);
+        plClientMsg* msg = new plClientMsg(plClientMsg::kLoadRoom);
         plKey clientKey = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
         msg->AddReceiver(clientKey);
 
@@ -1443,7 +1443,7 @@ void cyMisc::PageOutNode(const char* nodeName)
     if ( hsgResMgr::ResMgr() )
     {
         plSynchEnabler ps(false);   // disable dirty tracking while paging out
-        plClientMsg* pMsg1 = TRACKED_NEW plClientMsg(plClientMsg::kUnloadRoom);
+        plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kUnloadRoom);
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
         pMsg1->AddReceiver( clientKey );
         pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation(nil, nodeName));
@@ -1526,7 +1526,7 @@ void cyMisc::SetClearColor(float red, float green, float blue)
     char command[256];
     sprintf(command,"Graphics.Renderer.SetClearColor %f %f %f",red,green,blue);
     // create message to send to the console
-    plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+    plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
     pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
     pMsg->SetControlActivated(true);
@@ -1547,7 +1547,7 @@ void cyMisc::EnableAvatarCursorFade()
     plNetClientMgr* nmgr = plNetClientMgr::GetInstance();
     if (nmgr)
     {
-        plIfaceFadeAvatarMsg* iMsg = TRACKED_NEW plIfaceFadeAvatarMsg;
+        plIfaceFadeAvatarMsg* iMsg = new plIfaceFadeAvatarMsg;
         iMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         iMsg->SetBCastFlag(plMessage::kBCastByExactType);
         iMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
@@ -1561,7 +1561,7 @@ void cyMisc::DisableAvatarCursorFade()
     plNetClientMgr* nmgr = plNetClientMgr::GetInstance();
     if (nmgr)
     {
-        plIfaceFadeAvatarMsg* iMsg = TRACKED_NEW plIfaceFadeAvatarMsg;
+        plIfaceFadeAvatarMsg* iMsg = new plIfaceFadeAvatarMsg;
         iMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         iMsg->SetBCastFlag(plMessage::kBCastByExactType);
         iMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
@@ -1575,7 +1575,7 @@ void cyMisc::FadeLocalPlayer(hsBool fade)
     plNetClientMgr* nmgr = plNetClientMgr::GetInstance();
     if (nmgr)
     {
-        plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+        plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
         pMsg->SetFadeOut(fade);
         pMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1595,7 +1595,7 @@ void cyMisc::FadeLocalPlayer(hsBool fade)
 
 void cyMisc::EnableOfferBookMode(pyKey& selfkey, const char* ageFilename, const char* ageInstanceName)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetOfferBookMode);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetOfferBookMode);
     pMsg->SetSender(selfkey.getKey());
     pMsg->SetAgeFileName(ageFilename);
     pMsg->SetAgeName(ageInstanceName);  
@@ -1604,13 +1604,13 @@ void cyMisc::EnableOfferBookMode(pyKey& selfkey, const char* ageFilename, const 
 
 void cyMisc::DisableOfferBookMode()
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kClearOfferBookMode);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kClearOfferBookMode);
     pMsg->Send();
 }
 
 void cyMisc::NotifyOffererPublicLinkCompleted(uint32_t offerer)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferCompleted, plNetClientMgr::GetInstance()->GetPlayerID());
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferCompleted, plNetClientMgr::GetInstance()->GetPlayerID());
     pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     if (offerer != plNetClientMgr::GetInstance()->GetPlayerID())
     {
@@ -1625,7 +1625,7 @@ void cyMisc::NotifyOffererPublicLinkCompleted(uint32_t offerer)
 
 void cyMisc::NotifyOffererPublicLinkRejected(uint32_t offerer)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferRejected);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferRejected);
     pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     if (offerer != plNetClientMgr::GetInstance()->GetPlayerID())
     {
@@ -1641,7 +1641,7 @@ void cyMisc::NotifyOffererPublicLinkRejected(uint32_t offerer)
 
 void cyMisc::NotifyOffererPublicLinkAccepted(uint32_t offerer)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferAccepted);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kNotifyOfferAccepted);
     pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     if (offerer != plNetClientMgr::GetInstance()->GetPlayerID())
     {
@@ -1658,9 +1658,9 @@ void cyMisc::ToggleAvatarClickability(hsBool on)
 {
     plInputIfaceMgrMsg* pMsg = 0;
     if (on)
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIEnableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIEnableAvatarClickable);
     else
-        pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
+        pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
     pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
@@ -1670,7 +1670,7 @@ void cyMisc::ToggleAvatarClickability(hsBool on)
 
 void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareSpawnPoint);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareSpawnPoint);
     pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetSpawnPoint(spawnPoint);
     pMsg->Send();
@@ -1678,7 +1678,7 @@ void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
 
 void cyMisc::SetShareAgeInstanceGuid(const Uuid& guid)
 {
-    plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareAgeInstanceGuid);
+    plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareAgeInstanceGuid);
     pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetAgeInstanceGuid(guid);
     pMsg->Send();
@@ -1778,7 +1778,7 @@ void cyMisc::TransferParticlesToKey(pyKey& fromKey, pyKey& toKey, int numParticl
     
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
-    plParticleTransferMsg* pMsg = TRACKED_NEW plParticleTransferMsg(nil, avMod->GetKey(), 0, frKey, numParticles);
+    plParticleTransferMsg* pMsg = new plParticleTransferMsg(nil, avMod->GetKey(), 0, frKey, numParticles);
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
     pMsg->Send();
@@ -1813,7 +1813,7 @@ void cyMisc::SetParticleDissentPoint(float x, float y, float z, pyKey& particles
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        (TRACKED_NEW plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, x, y, z))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, x, y, z))->Send();
     }
 }
 
@@ -1847,7 +1847,7 @@ void cyMisc::SetParticleOffset(float x, float y, float z, pyKey& particles)
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        (TRACKED_NEW plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, x, y, z))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, x, y, z))->Send();
     }
 }
 
@@ -1880,7 +1880,7 @@ void cyMisc::KillParticles(float time, float pct, pyKey& particles)
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        plParticleKillMsg* pMsg = TRACKED_NEW plParticleKillMsg(nil, frKey, 0, pct, time, plParticleKillMsg::kParticleKillPercentage | plParticleKillMsg::kParticleKillImmortalOnly);
+        plParticleKillMsg* pMsg = new plParticleKillMsg(nil, frKey, 0, pct, time, plParticleKillMsg::kParticleKillPercentage | plParticleKillMsg::kParticleKillImmortalOnly);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->SetBCastFlag(plMessage::kPropagateToChildren);
@@ -1997,12 +1997,12 @@ void cyMisc::SetLightAnimationOn(pyKey& light, std::string lightName, hsBool sta
     }
     if (pIface)
     {
-        plEnableMsg* enableMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* enableMsg = new plEnableMsg;
         enableMsg->AddReceiver(pIface->GetKey());
         enableMsg->SetBCastFlag(plMessage::kNetPropagate);
         enableMsg->SetBCastFlag(plMessage::kNetForce);
 
-        plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* animMsg = new plAnimCmdMsg;
         animMsg->AddReceiver(pIface->GetOwnerKey());
         animMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         animMsg->SetBCastFlag(plMessage::kNetPropagate);
@@ -2034,7 +2034,7 @@ void cyMisc::SetLightAnimationOn(pyKey& light, std::string lightName, hsBool sta
 
 void cyMisc::RegisterForControlEventMessages(hsBool on, pyKey& k)
 {
-    plCmdIfaceModMsg* pMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pMsg = new plCmdIfaceModMsg;
     pMsg->SetSender(k.getKey());
     if (on)
         pMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -2074,17 +2074,17 @@ bool cyMisc::RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos
         switch (what)
         {
             case kClickables:
-                pMsg = TRACKED_NEW plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
+                pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
                 pMsg->SetCullDB(plSimDefs::kLOSDBUIBlockers);
                 break;
             case kCameraBlockers:
-                pMsg = TRACKED_NEW plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCameraBlockers, plLOSRequestMsg::kTestClosest );
+                pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCameraBlockers, plLOSRequestMsg::kTestClosest );
                 break;
             case kCustom:
-                pMsg = TRACKED_NEW plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestClosest );
+                pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestClosest );
                 break;
             case kShootable:
-                pMsg = TRACKED_NEW plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBShootableItems, plLOSRequestMsg::kTestClosest );
+                pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBShootableItems, plLOSRequestMsg::kTestClosest );
                 break;
         }
 
@@ -2221,7 +2221,7 @@ void cyMisc::ShootBulletFromScreen(pyKey &selfkey, float xPos, float yPos, float
         view.Normalize();
         startPos = startPos + (view * 1.5f);
 
-        plBulletMsg* bull = TRACKED_NEW plBulletMsg( selfkey.getKey(), nil, nil );
+        plBulletMsg* bull = new plBulletMsg( selfkey.getKey(), nil, nil );
         bull->FireShot(startPos, view, radius, range);
         bull->Send();
     }
@@ -2246,7 +2246,7 @@ void cyMisc::ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float ra
         dir.Normalize();
         hsPoint3 pos = l2w.GetTranslate();
 
-        plBulletMsg* bull = TRACKED_NEW plBulletMsg(selfkey.getKey(), nil, nil);
+        plBulletMsg* bull = new plBulletMsg(selfkey.getKey(), nil, nil);
         bull->FireShot(pos, dir, radius, range);
 
         bull->Send();
@@ -2521,7 +2521,7 @@ void cyMisc::PyClearCameraStack()
 
 void cyMisc::RecenterCamera()
 {
-    plCameraMsg* pCam = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pCam = new plCameraMsg;
     pCam->SetBCastFlag(plMessage::kBCastByExactType);
     pCam->SetCmd(plCameraMsg::kResetPanning);
     pCam->Send();
@@ -2531,19 +2531,19 @@ void cyMisc::RecenterCamera()
 
 void cyMisc::FadeIn(float lenTime, bool holdFlag, bool noSound)
 {
-    plTransitionMsg *msg = TRACKED_NEW plTransitionMsg( noSound ? plTransitionMsg::kFadeInNoSound : plTransitionMsg::kFadeIn, lenTime, holdFlag );
+    plTransitionMsg *msg = new plTransitionMsg( noSound ? plTransitionMsg::kFadeInNoSound : plTransitionMsg::kFadeIn, lenTime, holdFlag );
     plgDispatch::MsgSend( msg );
 }
 
 void cyMisc::FadeOut(float lenTime, bool holdFlag, bool noSound)
 {
-    plTransitionMsg *msg = TRACKED_NEW plTransitionMsg( noSound ? plTransitionMsg::kFadeOutNoSound : plTransitionMsg::kFadeOut, lenTime, holdFlag );
+    plTransitionMsg *msg = new plTransitionMsg( noSound ? plTransitionMsg::kFadeOutNoSound : plTransitionMsg::kFadeOut, lenTime, holdFlag );
     plgDispatch::MsgSend( msg );
 }
 
 void cyMisc::SetClickability(hsBool b)
 {
-    plInputIfaceMgrMsg* msg = TRACKED_NEW plInputIfaceMgrMsg(b ? plInputIfaceMgrMsg::kEnableClickables : plInputIfaceMgrMsg::kDisableClickables );
+    plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(b ? plInputIfaceMgrMsg::kEnableClickables : plInputIfaceMgrMsg::kDisableClickables );
     plgDispatch::MsgSend(msg);
 }
 
@@ -2665,7 +2665,7 @@ void cyMisc::WearDefaultClothingType(pyKey& key, uint32_t type)
 
 void cyMisc::FakeLinkToObject(pyKey& avatar, pyKey& object)
 {
-    plPseudoLinkEffectMsg* msg = TRACKED_NEW plPseudoLinkEffectMsg;
+    plPseudoLinkEffectMsg* msg = new plPseudoLinkEffectMsg;
     msg->fAvatarKey = avatar.getKey();
     msg->fLinkObjKey = object.getKey();
     plgDispatch::MsgSend(msg);
@@ -2681,7 +2681,7 @@ void cyMisc::FakeLinkToObjectNamed(const char* name)
 
     if (!key)
         return;
-    plPseudoLinkEffectMsg* msg = TRACKED_NEW plPseudoLinkEffectMsg;
+    plPseudoLinkEffectMsg* msg = new plPseudoLinkEffectMsg;
     msg->fAvatarKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
     msg->fLinkObjKey = key;
     plgDispatch::MsgSend(msg);
@@ -2758,7 +2758,7 @@ void cyMisc::SetGraphicsOptions(int Width, int Height, int ColorDepth, hsBool Wi
     // This has to send a message to plClient because python is loaded in the max plugins
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-    plClientMsg* clientMsg = TRACKED_NEW plClientMsg(plClientMsg::kResetGraphicsDevice);
+    plClientMsg* clientMsg = new plClientMsg(plClientMsg::kResetGraphicsDevice);
     clientMsg->AddReceiver(clientKey);
     //clientMsg->SetBCastFlag(plMessage::kBCastByType);
     clientMsg->fGraphicsSettings.fWidth = Width;

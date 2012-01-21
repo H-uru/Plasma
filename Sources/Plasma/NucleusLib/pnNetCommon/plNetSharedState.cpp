@@ -75,7 +75,7 @@ void plNetSharedState::Copy(plNetSharedState *ss)
     int i;
     for(i=0;i<ss->GetNumVars();i++)
     {
-        plGenericVar* sv = TRACKED_NEW plGenericVar;
+        plGenericVar* sv = new plGenericVar;
         *sv = *(ss->GetVar(i));
         AddVar(sv);
     }
@@ -93,7 +93,7 @@ void plNetSharedState::Read(hsStream* stream)
     int i;
     for(i=0;i<num;i++)
     {
-        plGenericVar* v = TRACKED_NEW plGenericVar;
+        plGenericVar* v = new plGenericVar;
         v->Read(stream);
         AddVar(v);
     }

@@ -203,14 +203,14 @@ void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
 void plMessage::AddNetReceiver( uint32_t plrID )
 {
     if ( !fNetRcvrPlayerIDs )
-        fNetRcvrPlayerIDs = TRACKED_NEW std::vector<uint32_t>;
+        fNetRcvrPlayerIDs = new std::vector<uint32_t>;
     fNetRcvrPlayerIDs->push_back( plrID );
 }
 
 void plMessage::AddNetReceivers( const std::vector<uint32_t> & plrIDs )
 {
     if ( !fNetRcvrPlayerIDs )
-        fNetRcvrPlayerIDs = TRACKED_NEW std::vector<uint32_t>;
+        fNetRcvrPlayerIDs = new std::vector<uint32_t>;
     std::copy( plrIDs.begin(), plrIDs.end(), std::back_inserter( *fNetRcvrPlayerIDs ) );
 }
 
@@ -359,7 +359,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
     {
         if (strlen)
         {
-            str = TRACKED_NEW char[strlen+1];
+            str = new char[strlen+1];
             str[strlen] = '\0';
             if (strlen) {
                 stream->LogRead(strlen,str,"CString");

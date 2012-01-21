@@ -150,7 +150,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
             tryStatic = false;
 
         // Create our DSound buffer (or rather, the wrapper around it)
-        fDSoundBuffer = TRACKED_NEW plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
+        fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
             char str[256];

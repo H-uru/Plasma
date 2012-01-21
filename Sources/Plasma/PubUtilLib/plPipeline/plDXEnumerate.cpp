@@ -353,8 +353,8 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
     const TCHAR* strDeviceDescs[] = { "HAL", "REF" };
     const D3DDEVTYPE deviceTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
-    BOOL *formatWorks = TRACKED_NEW BOOL[kNumDisplayFormats + 1];       // One for each format
-    DWORD *behavior = TRACKED_NEW DWORD[kNumDisplayFormats + 1];
+    BOOL *formatWorks = new BOOL[kNumDisplayFormats + 1];       // One for each format
+    DWORD *behavior = new DWORD[kNumDisplayFormats + 1];
     UINT iDevice;
     for (iDevice = 0; iDevice < numDeviceTypes; iDevice++)
     {

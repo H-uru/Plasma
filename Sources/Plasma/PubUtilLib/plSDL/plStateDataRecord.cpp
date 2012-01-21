@@ -155,12 +155,12 @@ void plStateDataRecord::IInitDescriptor(const plStateDescriptor* sd)
             {
                 if (vd->GetAsSDVarDescriptor())
                 {   // it's a var which references another state descriptor.
-                    fSDVarsList.push_back(TRACKED_NEW plSDStateVariable(vd->GetAsSDVarDescriptor()));
+                    fSDVarsList.push_back(new plSDStateVariable(vd->GetAsSDVarDescriptor()));
                 }
                 else
                 {
                     hsAssert(vd->GetAsSimpleVarDescriptor(), "var class problem");
-                    fVarsList.push_back(TRACKED_NEW plSimpleStateVariable(vd->GetAsSimpleVarDescriptor()));
+                    fVarsList.push_back(new plSimpleStateVariable(vd->GetAsSimpleVarDescriptor()));
                 }
             }
         }
@@ -453,9 +453,9 @@ plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, uint32_t writ
     // fill in net msg
     plNetMsgSDLState* msg;  
     if (writeOptions & plSDL::kBroadcast)
-        msg = TRACKED_NEW plNetMsgSDLStateBCast;
+        msg = new plNetMsgSDLStateBCast;
     else
-        msg = TRACKED_NEW plNetMsgSDLState;
+        msg = new plNetMsgSDLState;
     
     msg->StreamInfo()->CopyStream(&stream);
     return msg;

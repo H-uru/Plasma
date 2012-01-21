@@ -212,7 +212,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
 
     StartTimer(kMakeFatTree);
 
-    plSpacePrepNode* subRoot = TRACKED_NEW plSpacePrepNode;
+    plSpacePrepNode* subRoot = new plSpacePrepNode;
     fTreeSize++;
 
     if( nodes.GetCount() == 1 )
@@ -310,7 +310,7 @@ void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float len
 
 plSpacePrepNode* plSpaceTreeMaker::INewSubRoot(const hsBounds3Ext& bnd)
 {
-    plSpacePrepNode* subRoot = TRACKED_NEW plSpacePrepNode;
+    plSpacePrepNode* subRoot = new plSpacePrepNode;
     subRoot->fDataIndex = int16_t(-1);
     fTreeSize++;
 
@@ -372,7 +372,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
 
 void plSpaceTreeMaker::IMakeTree()
 {
-    fSortScratch = TRACKED_NEW hsRadixSort::Elem[fLeaves.GetCount()];
+    fSortScratch = new hsRadixSort::Elem[fLeaves.GetCount()];
 
     fPrepTree = IMakeTreeRecur(fLeaves);
 
@@ -413,7 +413,7 @@ void plSpaceTreeMaker::Cleanup()
 
 int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
 {
-    plSpacePrepNode* leaf = TRACKED_NEW plSpacePrepNode;
+    plSpacePrepNode* leaf = new plSpacePrepNode;
     fLeaves.Append(leaf);
     leaf->fDataIndex = fLeaves.GetCount()-1;
     leaf->fChildren[0] = nil;
@@ -548,7 +548,7 @@ plSpaceTree* plSpaceTreeMaker::MakeTree()
 
 plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 {
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
 
     tree->fTree.SetCount(1);
     hsPoint3 zero(0, 0, 0);
@@ -564,7 +564,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 
 plSpaceTree* plSpaceTreeMaker::IMakeDegenerateTree()
 {
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
     
     tree->fTree.Push();
 
@@ -600,7 +600,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
 {
     StartTimer(kMakeSpaceTree);
 
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
 
     plSpacePrepNode* head = fPrepTree;
 

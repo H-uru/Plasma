@@ -225,7 +225,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 
                 if (disable)
                 {
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
                     pCmd->fControlActivated = false;
                     pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
@@ -238,7 +238,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 
                 if ((fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos) || (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangeNeg))
                 {
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
                     float pct = 0.0f;
@@ -270,7 +270,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             else // if it is an 'always if in box' command see if it's not in the box
             if ( (fMouseMap.fMap[i]->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, fMouseMap.fMap[i]->fBox)) )
             {   
-                plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                plCtrlCmd* pCmd = new plCtrlCmd( this );
                 pCmd->fControlActivated = false;
                 pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
                 pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
@@ -310,7 +310,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     if (!(fMouseMap.fMap[i]->fControlFlags & kControlFlagInBox))
                         fControlFlags.SetBit(fMouseMap.fMap[i]->fCode);
                     // issue the command
-                    plCtrlCmd* pCmd = TRACKED_NEW plCtrlCmd( this );
+                    plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
                     pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
                     pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;

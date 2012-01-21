@@ -65,7 +65,7 @@ hsBool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
             const hsBounds3Ext& targBnd = GetTarget(i)->GetDrawInterface()->GetWorldBounds();
             if( targBnd.GetType() == kBoundsNormal )
             {
-                plInterestingModMsg* pMsg = TRACKED_NEW plInterestingModMsg;
+                plInterestingModMsg* pMsg = new plInterestingModMsg;
                 pMsg->fPos= GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetCenter();
                 pMsg->fSize = GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetMaxDim();
                 pMsg->fRadius = fInterestRadius;

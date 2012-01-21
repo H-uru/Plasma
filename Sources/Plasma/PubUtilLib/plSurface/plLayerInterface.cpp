@@ -148,7 +148,7 @@ uint32_t plLayerInterface::Eval(double secs, uint32_t frame, uint32_t ignore)
 // Export Only
 void plLayerInterface::AttachViaNotify(plLayerInterface *prev)
 {
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);
+    plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);
     hsgResMgr::ResMgr()->AddViaNotify(prev->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
@@ -330,7 +330,7 @@ void plLayerInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plSynchedObject::Read(s, mgr);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);    
+    plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);    
     plKey key = mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     if( key && !fUnderLay )
         Attach(plLayer::DefaultLayer());

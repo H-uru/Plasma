@@ -158,7 +158,7 @@ static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
 static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     static const char WINDOW_CLASS[] = "AsyncLookupWnd";
     WNDCLASS wc;
-    ZERO(wc);
+    memset(&wc, 0, sizeof(wc));
     wc.lpfnWndProc      = DefWindowProc;
     wc.hInstance        = GetModuleHandle(0);
     wc.lpszClassName    = WINDOW_CLASS;
@@ -291,7 +291,7 @@ void AsyncAddressLookupName (
     }
 
     // Initialize lookup
-    Lookup * lookup         = NEW(Lookup);
+    Lookup * lookup         = new Lookup;
     lookup->lookupProc      = lookupProc;
     lookup->port            = port;
     lookup->param           = param;
@@ -336,7 +336,7 @@ void AsyncAddressLookupAddr (
     PerfAddCounter(kAsyncPerfNameLookupAttemptsTotal, 1);
 
     // Initialize lookup
-    Lookup * lookup         = NEW(Lookup);
+    Lookup * lookup         = new Lookup;
     lookup->lookupProc      = lookupProc;
     lookup->port            = 1;
     lookup->param           = param;

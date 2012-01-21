@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMipmap* plBumpMapGen::MakeCompatibleBlank(const plMipmap* src)
 {
-    return TRACKED_NEW plMipmap(src->GetWidth(), src->GetHeight(), plMipmap::kARGB32Config, 1, plMipmap::kUncompressed, plMipmap::UncompressedInfo::kRGB8888);
+    return new plMipmap(src->GetWidth(), src->GetHeight(), plMipmap::kARGB32Config, 1, plMipmap::kUncompressed, plMipmap::UncompressedInfo::kRGB8888);
 }
 
 plMipmap* plBumpMapGen::TwosCompToBias(plMipmap* dst)

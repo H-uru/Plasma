@@ -261,7 +261,7 @@ int   hsTArrayBase::GetSizeOf(void) { return 0; }
 
 hsTArrayBase::hsTArrayBase():fUseCount(0), fTotalCount(0)
 {
-    self = TRACKED_NEW hsDlistNode(this);
+    self = new hsDlistNode(this);
 }
 
 hsTArrayBase::~hsTArrayBase()
@@ -280,7 +280,7 @@ int   hsLargeArrayBase::GetSizeOf(void) { return 0; }
 
 hsLargeArrayBase::hsLargeArrayBase():fUseCount(0), fTotalCount(0)
 {
-    self = TRACKED_NEW hsDlistNode(this);
+    self = new hsDlistNode(this);
 }
 
 hsLargeArrayBase::~hsLargeArrayBase()

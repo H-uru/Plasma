@@ -84,7 +84,7 @@ hsBool plTimerCallbackManager::MsgReceive(plMessage* msg)
 
 plTimerCallback* plTimerCallbackManager::NewTimer(float time, plMessage* pMsg)
 {
-    plTimerCallback* t = TRACKED_NEW plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
+    plTimerCallback* t = new plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
     fCallbacks.Append(t); 
     // sort them
     for (int i = 0; i < fCallbacks.Count(); i++)
@@ -176,7 +176,7 @@ plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nil;
 
 void plgTimerCallbackMgr::Init()
 {
-    fMgr = TRACKED_NEW plTimerCallbackManager;
+    fMgr = new plTimerCallbackManager;
     fMgr->RegisterAs( kTimerCallbackManager_KEY );      // fixedKey from plFixedKey.h
     plgDispatch::Dispatch()->RegisterForExactType( plTimeMsg::Index(), fMgr->GetKey() );
 }

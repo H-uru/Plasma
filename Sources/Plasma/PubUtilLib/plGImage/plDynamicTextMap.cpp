@@ -237,7 +237,7 @@ void plDynamicTextMap::PurgeImage()
 
 uint32_t* plDynamicTextMap::IAllocateOSSurface( uint16_t width, uint16_t height )
 {
-    uint32_t* pixels = TRACKED_NEW uint32_t[ width * height ];
+    uint32_t* pixels = new uint32_t[ width * height ];
     return pixels;
 }
 
@@ -281,7 +281,7 @@ uint32_t  plDynamicTextMap::Read( hsStream *s )
     totalRead += 4;
     if( initSize > 0 )
     {
-        fInitBuffer = TRACKED_NEW uint32_t[ initSize ];
+        fInitBuffer = new uint32_t[ initSize ];
 
         s->ReadLE32( initSize, fInitBuffer );
         totalRead += initSize * 4;
@@ -334,7 +334,7 @@ void    plDynamicTextMap::SetInitBuffer( uint32_t *buffer )
         return;
     }
 
-    fInitBuffer = TRACKED_NEW uint32_t[ fVisWidth * fVisHeight ];
+    fInitBuffer = new uint32_t[ fVisWidth * fVisHeight ];
     memcpy( fInitBuffer, buffer, fVisWidth * fVisHeight * sizeof( uint32_t ) );
 }
 

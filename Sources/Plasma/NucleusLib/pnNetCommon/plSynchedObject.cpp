@@ -101,7 +101,7 @@ plSynchedValueBase* plSynchedObject::GetSynchedValue(int i) const
 void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueAddrOffset)
 {
     // copy to new larger array
-    AddrOffsetType* tmp = TRACKED_NEW AddrOffsetType[fNumSynchedValues+1];
+    AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues+1];
     int32_t i;
     for(i=0;i<fNumSynchedValues;i++)
         tmp[i] = fSynchedValueAddrOffsets[i];
@@ -117,7 +117,7 @@ void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueA
 void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
 {
     // copy to new larger array
-    plSynchedValueBase** tmp = TRACKED_NEW plSynchedValueBase*[fNumSynchedValueFriends+1];
+    plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends+1];
     int32_t i;
     for(i=0;i<fNumSynchedValueFriends;i++)
         tmp[i] = fSynchedValueFriends[i];
@@ -155,7 +155,7 @@ hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v)
     int idx=i;
     if (idx<fNumSynchedValues)
     {
-        AddrOffsetType* tmp = TRACKED_NEW AddrOffsetType[fNumSynchedValues-1];      
+        AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues-1];      
         for(i=0;i<idx;i++)
             tmp[i] = fSynchedValueAddrOffsets[i];
         for(i=idx+1;i<fNumSynchedValues;i++)
@@ -167,7 +167,7 @@ hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v)
     else
     {
         idx -= fNumSynchedValues;
-        plSynchedValueBase** tmp = TRACKED_NEW plSynchedValueBase*[fNumSynchedValueFriends-1];      
+        plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends-1];      
         for(i=0;i<idx;i++)
             tmp[i] = fSynchedValueFriends[i];
         for(i=idx+1;i<fNumSynchedValueFriends;i++)
@@ -192,7 +192,7 @@ void plSynchedObject::RegisterSynchedValueFriend(plSynchedValueBase* v)
 //
 void plSynchedObject::SendSDLStateMsg(const char* SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
-    plSDLModifierMsg* sdlMsg = TRACKED_NEW plSDLModifierMsg(SDLStateName,
+    plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(SDLStateName,
         (synchFlags & kBCastToClients) ? plSDLModifierMsg::kSendToServerAndClients : plSDLModifierMsg::kSendToServer /* action */);
     sdlMsg->SetFlags(synchFlags);
     hsAssert(GetKey(), "nil key on synchedObject?");

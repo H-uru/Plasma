@@ -111,16 +111,16 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
 
     // Interfaces will attach themselves to us on read.
     // DI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // SI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // CI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // AI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     int i;
 
@@ -128,7 +128,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     fGenerics.SetCount(0);
     for( i = 0; i < nGen; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
 
     plObjRefMsg* refMsg;
@@ -138,7 +138,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     fModifiers.ExpandAndZero(nOldMods+nNewMods);    // reserve space for new modifiers+existing modifiers
     for( i = nOldMods; i < nOldMods+nNewMods; i++ )
     {
-        refMsg = TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
+        refMsg = new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
 
@@ -425,7 +425,7 @@ void plSceneObject::SetSceneNode(plKey newNode)
 
     if( newNode )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
         plKey key = GetKey();   // for linux build
         hsgResMgr::ResMgr()->AddViaNotify(key, refMsg, plRefFlags::kActiveRef);
     }
@@ -520,7 +520,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
                     hsAssert(false, "Trying to attach a child who has no coordinateInterface");
                     return true;
                 }
-                plIntRefMsg* intRefMsg = TRACKED_NEW plIntRefMsg(fCoordinateInterface->GetKey(), att->GetContext(), -1, plIntRefMsg::kChildObject);
+                plIntRefMsg* intRefMsg = new plIntRefMsg(fCoordinateInterface->GetKey(), att->GetContext(), -1, plIntRefMsg::kChildObject);
                 intRefMsg->SetRef(child);
                 hsgResMgr::ResMgr()->AddViaNotify(intRefMsg, plRefFlags::kPassiveRef);
             }

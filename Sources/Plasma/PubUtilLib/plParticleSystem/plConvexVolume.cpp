@@ -79,9 +79,9 @@ hsBool plConvexVolume::AddPlane(const hsPlane3 &plane)
     }
     fNumPlanes++;
     //delete [] fFlags;
-    //fFlags = TRACKED_NEW uint32_t[fNumPlanes];
+    //fFlags = new uint32_t[fNumPlanes];
 
-    hsPlane3 *tempPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
+    hsPlane3 *tempPlanes = new hsPlane3[fNumPlanes];
     for (i = 0; i < fNumPlanes - 1; i++)
     {
         tempPlanes[i] = fLocalPlanes[i];
@@ -91,7 +91,7 @@ hsBool plConvexVolume::AddPlane(const hsPlane3 &plane)
     delete [] fLocalPlanes;
     fLocalPlanes = tempPlanes;
     delete [] fWorldPlanes;
-    fWorldPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
+    fWorldPlanes = new hsPlane3[fNumPlanes];
     
     return true;
 }
@@ -113,9 +113,9 @@ void plConvexVolume::Update(const hsMatrix44 &l2w)
 void plConvexVolume::SetNumPlanesAndClear(const uint32_t num)
 {
     IClear();
-    //fFlags = TRACKED_NEW uint32_t[num];
-    fLocalPlanes = TRACKED_NEW hsPlane3[num];
-    fWorldPlanes = TRACKED_NEW hsPlane3[num];
+    //fFlags = new uint32_t[num];
+    fLocalPlanes = new hsPlane3[num];
+    fWorldPlanes = new hsPlane3[num];
     fNumPlanes = num;
 }
 

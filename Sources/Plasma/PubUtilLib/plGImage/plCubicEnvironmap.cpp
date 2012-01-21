@@ -64,7 +64,7 @@ plCubicEnvironmap::plCubicEnvironmap()
     int     i;
 
     for( i = 0; i < 6; i++ )
-        fFaces[ i ] = TRACKED_NEW plMipmap;
+        fFaces[ i ] = new plMipmap;
 
     fInitialized = false;
 }

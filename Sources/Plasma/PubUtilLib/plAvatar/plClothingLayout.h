@@ -90,36 +90,36 @@ public:
     static void GetElements(hsTArray<plClothingElement *> &out)
     {
     /*
-        out.Append(TRACKED_NEW plClothingElement("shirt-chest", 768, 0, 256, 512));
-        out.Append(TRACKED_NEW plClothingElement("shirt-sleeve", 512, 192, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("face", 0, 0, 512, 512));
-        out.Append(TRACKED_NEW plClothingElement("eyeball", 64, 512, 64, 64));
-        out.Append(TRACKED_NEW plClothingElement("shoe-top", 0, 832, 128, 128));
-        out.Append(TRACKED_NEW plClothingElement("shoe-bottom", 0, 768, 128, 64));
-        out.Append(TRACKED_NEW plClothingElement("pants", 512, 512, 512, 512));
-        out.Append(TRACKED_NEW plClothingElement("hand-LOD", 64, 576, 64, 64));
-        out.Append(TRACKED_NEW plClothingElement("hand-square", 128, 512, 128, 128));
-        out.Append(TRACKED_NEW plClothingElement("hand-wide", 0, 640, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("playerbook", 512, 0, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("backpack", 512, 256, 256, 256));
-        out.Append(TRACKED_NEW plClothingElement("glasses-front", 256, 512, 256, 64));
-        out.Append(TRACKED_NEW plClothingElement("glasses-side", 256, 576, 256, 32));
-        out.Append(TRACKED_NEW plClothingElement("KI", 256, 640, 256, 128));
+        out.Append(new plClothingElement("shirt-chest", 768, 0, 256, 512));
+        out.Append(new plClothingElement("shirt-sleeve", 512, 192, 256, 128));
+        out.Append(new plClothingElement("face", 0, 0, 512, 512));
+        out.Append(new plClothingElement("eyeball", 64, 512, 64, 64));
+        out.Append(new plClothingElement("shoe-top", 0, 832, 128, 128));
+        out.Append(new plClothingElement("shoe-bottom", 0, 768, 128, 64));
+        out.Append(new plClothingElement("pants", 512, 512, 512, 512));
+        out.Append(new plClothingElement("hand-LOD", 64, 576, 64, 64));
+        out.Append(new plClothingElement("hand-square", 128, 512, 128, 128));
+        out.Append(new plClothingElement("hand-wide", 0, 640, 256, 128));
+        out.Append(new plClothingElement("playerbook", 512, 0, 256, 128));
+        out.Append(new plClothingElement("backpack", 512, 256, 256, 256));
+        out.Append(new plClothingElement("glasses-front", 256, 512, 256, 64));
+        out.Append(new plClothingElement("glasses-side", 256, 576, 256, 32));
+        out.Append(new plClothingElement("KI", 256, 640, 256, 128));
     */  
-        out.Append(TRACKED_NEW plClothingElement("Chest", 768, 0, 256, 512));
-        out.Append(TRACKED_NEW plClothingElement("Arm", 512, 192, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("Face", 0, 256, 512, 256));
-        out.Append(TRACKED_NEW plClothingElement("Eye", 64, 704, 64, 64));
-        out.Append(TRACKED_NEW plClothingElement("Extra Hair", 256, 0, 256, 256));
-        out.Append(TRACKED_NEW plClothingElement("Hat", 0, 0, 256, 256));
-        out.Append(TRACKED_NEW plClothingElement("Foot", 0, 768, 256, 256));
-        out.Append(TRACKED_NEW plClothingElement("Legs", 512, 512, 512, 512));
-        out.Append(TRACKED_NEW plClothingElement("LOD", 64, 640, 64, 64));
-        out.Append(TRACKED_NEW plClothingElement("Finger", 128, 640, 128, 128));
-        out.Append(TRACKED_NEW plClothingElement("Palm", 0, 512, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("Player Book", 256, 512, 256, 128));
-        out.Append(TRACKED_NEW plClothingElement("Glasses", 384, 640, 128, 128));
-        out.Append(TRACKED_NEW plClothingElement("KI", 256, 640, 128, 128));        
+        out.Append(new plClothingElement("Chest", 768, 0, 256, 512));
+        out.Append(new plClothingElement("Arm", 512, 192, 256, 128));
+        out.Append(new plClothingElement("Face", 0, 256, 512, 256));
+        out.Append(new plClothingElement("Eye", 64, 704, 64, 64));
+        out.Append(new plClothingElement("Extra Hair", 256, 0, 256, 256));
+        out.Append(new plClothingElement("Hat", 0, 0, 256, 256));
+        out.Append(new plClothingElement("Foot", 0, 768, 256, 256));
+        out.Append(new plClothingElement("Legs", 512, 512, 512, 512));
+        out.Append(new plClothingElement("LOD", 64, 640, 64, 64));
+        out.Append(new plClothingElement("Finger", 128, 640, 128, 128));
+        out.Append(new plClothingElement("Palm", 0, 512, 256, 128));
+        out.Append(new plClothingElement("Player Book", 256, 512, 256, 128));
+        out.Append(new plClothingElement("Glasses", 384, 640, 128, 128));
+        out.Append(new plClothingElement("KI", 256, 640, 128, 128));        
         
     }
 };

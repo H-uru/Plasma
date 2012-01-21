@@ -88,19 +88,19 @@ plAGChannel * plPointChannel::MakeCombine(plAGChannel *channelA)
 // MAKEBLEND
 plAGChannel * plPointChannel::MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority)
 {
-    return TRACKED_NEW plPointBlend(this, (plPointChannel *)channelB, channelBias);
+    return new plPointBlend(this, (plPointChannel *)channelB, channelBias);
 }
 
 // MAKEZEROSTATE
 plAGChannel * plPointChannel::MakeZeroState()
 {
-    return TRACKED_NEW plPointConstant(Value(0));
+    return new plPointConstant(Value(0));
 }
 
 // MAKETIMESCALE
 plAGChannel * plPointChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plPointTimeScale(this, timeSource);
+    return new plPointTimeScale(this, timeSource);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -368,7 +368,7 @@ plAGChannel *plPointControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plPointControllerCacheChannel(this, cache);
+    return new plPointControllerCacheChannel(this, cache);
 }
 
 // WRITE(stream, mgr)

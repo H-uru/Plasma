@@ -271,7 +271,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
         }
         s_critsect.Leave();
             
-    //  AuthConnectedNotifyTrans * trans = NEW(AuthConnectedNotifyTrans);
+    //  AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
     //  NetTransSend(trans);
     }
 
@@ -1114,7 +1114,7 @@ void NetCliGateKeeperPingRequest (
     FNetCliGateKeeperPingRequestCallback    callback,
     void *                                  param
 ) {
-    PingRequestTrans * trans = NEW(PingRequestTrans)(
+    PingRequestTrans * trans = new PingRequestTrans(
         callback,
         param,
         pingTimeMs, 
@@ -1130,7 +1130,7 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
     void *                                              param,
     bool                                                isPatcher
 ) {
-    FileSrvIpAddressRequestTrans * trans = NEW(FileSrvIpAddressRequestTrans)(callback, param, isPatcher);
+    FileSrvIpAddressRequestTrans * trans = new FileSrvIpAddressRequestTrans(callback, param, isPatcher);
     NetTransSend(trans);
 }
 
@@ -1139,6 +1139,6 @@ void NetCliGateKeeperAuthSrvIpAddressRequest (
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
     void *                                              param
 ) {
-    AuthSrvIpAddressRequestTrans * trans = NEW(AuthSrvIpAddressRequestTrans)(callback, param);
+    AuthSrvIpAddressRequestTrans * trans = new AuthSrvIpAddressRequestTrans(callback, param);
     NetTransSend(trans);
 }

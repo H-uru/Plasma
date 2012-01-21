@@ -462,7 +462,7 @@ void plMorphSequence::AddTarget(plSceneObject* so)
 
     if (!fMorphSDLMod)
     {
-        fMorphSDLMod = TRACKED_NEW plMorphSequenceSDLMod;
+        fMorphSDLMod = new plMorphSequenceSDLMod;
         so->AddModifier(fMorphSDLMod);
     }
 }
@@ -493,7 +493,7 @@ void plMorphSequence::Read(hsStream* s, hsResMgr* mgr)
     
     n = s->ReadLE32();
     for( i = 0; i < n; i++)
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 }
 
 void plMorphSequence::Write(hsStream* s, hsResMgr* mgr)

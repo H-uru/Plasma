@@ -88,7 +88,7 @@ pfGUIDialogMod::pfGUIDialogMod() : fRenderMod( nil ), fNext( nil ), fPrevPtr( ni
     fDragTarget = nil;
     fProcReceiver = nil;
 
-    fColorScheme = TRACKED_NEW pfGUIColorScheme();
+    fColorScheme = new pfGUIColorScheme();
 }
 
 pfGUIDialogMod::~pfGUIDialogMod()
@@ -102,7 +102,7 @@ pfGUIDialogMod::~pfGUIDialogMod()
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg( mgrKey, plRefMsg::kOnRemove, 0, pfGameGUIMgr::kDlgModRef );
+        plGenRefMsg *refMsg = new plGenRefMsg( mgrKey, plRefMsg::kOnRemove, 0, pfGameGUIMgr::kDlgModRef );
         refMsg->SetRef( this );
         plgDispatch::MsgSend( refMsg );
     }
@@ -163,14 +163,14 @@ hsBool  pfGUIDialogMod::MsgReceive( plMessage *msg )
 
                     if( fEnabled )
                     {
-                        plAnimCmdMsg    *animMsg = TRACKED_NEW plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+                        plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
                         animMsg->SetCmd( plAnimCmdMsg::kContinue );
                         plgDispatch::MsgSend( animMsg );
                     }
                 }
                 else if( ref->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
                 {
-                    plAnimCmdMsg    *animMsg = TRACKED_NEW plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+                    plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
                     animMsg->SetCmd( plAnimCmdMsg::kStop );
                     plgDispatch::MsgSend( animMsg );
 
@@ -235,7 +235,7 @@ void        pfGUIDialogMod::AddControl( pfGUIControlMod *ctrl )
 void        pfGUIDialogMod::AddControlOnExport( pfGUIControlMod *ctrl )
 {
     fControls.Append( ctrl );
-    hsgResMgr::ResMgr()->AddViaNotify( ctrl->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fControls.GetCount() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( ctrl->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fControls.GetCount() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
 }
 
 //// SetEnabled //////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ void    pfGUIDialogMod::SetEnabled( hsBool e )
 
     if( fRenderMod != nil )
     {
-        plAnimCmdMsg    *animMsg = TRACKED_NEW plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+        plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
         if( fEnabled )
         {
             animMsg->SetCmd( plAnimCmdMsg::kContinue );
@@ -292,21 +292,21 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 {
     plSingleModifier::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRenderModRef ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRenderModRef ), plRefFlags::kActiveRef );
 
     s->Read( sizeof( fName ), fName );
 
     uint32_t  i, count = s->ReadLE32();
     fControls.SetCountAndZero( count );
     for( i = 0; i < count; i++ )
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kControlRef ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kControlRef ), plRefFlags::kActiveRef );
 
     // Register us with the Game GUI manager
     plUoid lu( kGameGUIMgr_KEY );
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg( mgrKey, plRefMsg::kOnCreate, 0, pfGameGUIMgr::kDlgModRef );
+        plGenRefMsg *refMsg = new plGenRefMsg( mgrKey, plRefMsg::kOnCreate, 0, pfGameGUIMgr::kDlgModRef );
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );     
     }
 
@@ -314,7 +314,7 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
     fProcReceiver = mgr->ReadKey( s );
     if( fProcReceiver != nil )
-        SetHandler( TRACKED_NEW pfGUIDialogNotifyProc( fProcReceiver ) );
+        SetHandler( new pfGUIDialogNotifyProc( fProcReceiver ) );
 
     s->ReadLE( &fVersion );
 

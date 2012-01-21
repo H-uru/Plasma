@@ -154,7 +154,7 @@ public:
                     plSynchedObject* obj = plSynchedObject::ConvertNoRef(phys->GetObjectKey()->ObjectIsLoaded());
                     obj->SetNetGroupConstant(plNetGroup::kNetGroupLocalPhysicals);
                     // Tell all the other clients that we own this physical
-                    plSetNetGroupIDMsg* setNetGroupID = TRACKED_NEW plSetNetGroupIDMsg;
+                    plSetNetGroupIDMsg* setNetGroupID = new plSetNetGroupIDMsg;
                     setNetGroupID->fId = plNetGroup::kNetGroupRemotePhysicals;
                     setNetGroupID->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
                     setNetGroupID->SetBCastFlag(plMessage::kLocalPropagate, false);
@@ -230,7 +230,7 @@ plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float 
     {
         float radius = width / 2.f;
         float realHeight = height - width + kPhysicalHeightFudge;
-        return TRACKED_NEW plPXPhysicalControllerCore(ownerSO, realHeight,radius);
+        return new plPXPhysicalControllerCore(ownerSO, realHeight,radius);
     }
     return nil;
 }
@@ -576,7 +576,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
 
     /*
     // the avatar proxy doesn't seem to work... not sure why?
-    fProxyGen = TRACKED_NEW plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
+    fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
     fProxyGen->Init(this);
     */
 }
@@ -646,7 +646,7 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
 
     /*
     // the avatar proxy doesn't seem to work... not sure why?
-    fProxyGen = TRACKED_NEW plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
+    fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
     fProxyGen->Init(this);
     */
 
@@ -694,7 +694,7 @@ void plPXPhysicalControllerCore::IInformDetectors(bool entering,bool deferUntilN
                     bool doReport = physical->DoReportOn(plSimDefs::kGroupAvatar);
                     if(doReport)
                     {
-                        plCollideMsg* msg = TRACKED_NEW plCollideMsg;
+                        plCollideMsg* msg = new plCollideMsg;
                         msg->fOtherKey = fOwner;
                         msg->fEntering = entering;
                         msg->AddReceiver(physical->GetObjectKey());
@@ -990,7 +990,7 @@ void plPXPhysicalControllerCore::IHandleResize()
         collideFlags|=(1<<plSimDefs::kGroupExcludeRegion);
     }
     NxScene* myscene = plSimulationMgr::GetInstance()->GetScene(this->fWorldKey);
-//  NxShape** response=TRACKED_NEW NxShape*[2];
+//  NxShape** response=new NxShape*[2];
     
     NxVec3 center(fLocalPosition.fX,fLocalPosition.fY,fLocalPosition.fZ+fPreferedRadius);
     NxSegment Seg(center,center);

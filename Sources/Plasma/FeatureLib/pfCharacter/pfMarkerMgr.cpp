@@ -62,7 +62,7 @@ pfMarkerMgr* pfMarkerMgr::Instance()
 {
     if (!pfMarkerMgr::fInstance)
     {
-        pfMarkerMgr::fInstance = TRACKED_NEW pfMarkerMgr;
+        pfMarkerMgr::fInstance = new pfMarkerMgr;
         pfMarkerMgr::fInstance->IInit();
     }
 
@@ -153,7 +153,7 @@ void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
         return; // marker frozen, abort
 
     // tell people about it
-    pfMarkerMsg* msg = TRACKED_NEW pfMarkerMsg;
+    pfMarkerMsg* msg = new pfMarkerMsg;
     msg->fType = pfMarkerMsg::kMarkerCaptured;
     msg->fMarkerID = id;
     msg->Send();
@@ -169,7 +169,7 @@ void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool just
     }
 
     hsPoint3 pos((float)x, (float)y, (float)z);
-    fMarkers[id] = TRACKED_NEW pfMarkerInfo(pos, justCreated);
+    fMarkers[id] = new pfMarkerInfo(pos, justCreated);
     fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }
 

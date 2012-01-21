@@ -361,7 +361,7 @@ static void RequestNextManifestFile () {
     PathRemoveFilename(basePath, basePath, arrsize(basePath));
     PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
 
-    ProgressStream *writer = NEW(ProgressStream);   // optimization: dont delete and recreate. Doesn't seem to be working currently, ZLibStream is breaking
+    ProgressStream *writer = new ProgressStream();   // optimization: dont delete and recreate. Doesn't seem to be working currently, ZLibStream is breaking
     if(!writer->Open(path, "wb"))
     {
         writer->Close();
@@ -435,7 +435,7 @@ static void DownloadCallback (
 #endif // PLASMA_EXTERNAL_RELEASE
                 Shutdown(mf->info);
             }
-            writer = NEW(ProgressStream);
+            writer = new ProgressStream();
             if (!writer->Open(path, "wb")) {
 #ifdef PLASMA_EXTERNAL_RELEASE
                 MessageBox(nil, s_fileOpenError, "URU Launcher", MB_ICONERROR);
@@ -617,7 +617,7 @@ static void ProcessManifest (void * param) {
                     PathRemoveFilename(basePath, basePath, arrsize(basePath));
                     PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
 
-                    ManifestFile * mf = NEW(ManifestFile)(
+                    ManifestFile * mf = new ManifestFile(
                         manifest[index].clientName,
                         manifest[index].downloadName,
                         manifest[index].md5,
@@ -689,7 +689,7 @@ static void ManifestCallback (
         return;
     }
     
-    ManifestResult * mr = NEW(ManifestResult);
+    ManifestResult * mr = new ManifestResult();
     StrCopy(mr->group, group, arrsize(mr->group));
     mr->manifest.Set(manifest, entryCount);
     mr->info = info;
@@ -991,8 +991,8 @@ void  UruStartProc (void * param) {
     fprintf(stderr, "URUPlayer StartProc, running game process at dir:%ws, cmd:%ws for application:%ws\n", workDir, cmdLine, s_clientExeName);
 
     STARTUPINFOW si;
-    ZERO(si);
-    ZERO(s_pi);
+    memset(&si, 0, sizeof(si));
+    memset(&s_pi, 0, sizeof(s_pi));
     si.cb = sizeof(si);
 
     info->SetText("Launching URU...");

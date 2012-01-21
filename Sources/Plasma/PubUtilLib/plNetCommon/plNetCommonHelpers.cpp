@@ -173,7 +173,7 @@ bool plCreatableListHelper::ItemExists( uint16_t id ) const
 
 void plCreatableListHelper::AddString(uint16_t id, const char * value)
 {
-    plCreatableGenericValue * V = TRACKED_NEW plCreatableGenericValue();
+    plCreatableGenericValue * V = new plCreatableGenericValue();
     V->Value().SetString( (char*)value );
     AddItem( id, V, true );
 }
@@ -185,14 +185,14 @@ void plCreatableListHelper::AddString( uint16_t id, std::string & value )
 
 void plCreatableListHelper::AddInt( uint16_t id, int32_t value )
 {
-    plCreatableGenericValue * V = TRACKED_NEW plCreatableGenericValue();
+    plCreatableGenericValue * V = new plCreatableGenericValue();
     V->Value().SetInt(value);
     AddItem( id, V, true );
 }
 
 void plCreatableListHelper::AddDouble( uint16_t id, double value )
 {
-    plCreatableGenericValue * V = TRACKED_NEW plCreatableGenericValue();
+    plCreatableGenericValue * V = new plCreatableGenericValue();
     V->Value().SetDouble(value);
     AddItem( id, V, true );
 }

@@ -68,7 +68,7 @@ hsBool plFactory::ICreateTheFactory()
     if( theFactory )
         return true;
 
-    theFactory = TRACKED_NEW plFactory;
+    theFactory = new plFactory;
 
     return theFactory != nil;
 }

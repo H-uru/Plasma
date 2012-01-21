@@ -222,11 +222,11 @@ plClient::plClient()
 
     /// allow console commands to start working early
     // Create the console engine
-    fConsoleEngine = TRACKED_NEW pfConsoleEngine();
+    fConsoleEngine = new pfConsoleEngine();
     
     // create network mgr before console runs
-    plNetClientMgr::SetInstance(TRACKED_NEW plNetClientMgr);
-    plAgeLoader::SetInstance(TRACKED_NEW plAgeLoader);
+    plNetClientMgr::SetInstance(new plNetClientMgr);
+    plAgeLoader::SetInstance(new plAgeLoader);
 
     // Use it to parse the init directory
     wchar_t initFolder[MAX_PATH];
@@ -274,7 +274,7 @@ hsBool plClient::Shutdown()
     plBinkPlayer::DeInit();
     //
     // Get any proxies to commit suicide.
-    plProxyDrawMsg* nuke = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kAllTypes
+    plProxyDrawMsg* nuke = new plProxyDrawMsg(plProxyDrawMsg::kAllTypes
                                             | plProxyDrawMsg::kDestroy);
     plgDispatch::MsgSend(nuke);
 
@@ -447,17 +447,17 @@ void plClient::InitAuxInits()
 void plClient::InitInputs()
 {
     hsStatusMessage("InitInputs client\n");
-    fInputManager = TRACKED_NEW plInputManager( fWindowHndl );
+    fInputManager = new plInputManager( fWindowHndl );
     fInputManager->CreateInterfaceMod(fPipeline);
     fInputManager->RegisterAs( kInput_KEY );
     plgDispatch::Dispatch()->RegisterForExactType(plIMouseXEventMsg::Index(), fInputManager->GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plIMouseYEventMsg::Index(), fInputManager->GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plIMouseBEventMsg::Index(), fInputManager->GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), fInputManager->GetKey());
-    plInputDevice* pKeyboard = TRACKED_NEW plKeyboardDevice();
+    plInputDevice* pKeyboard = new plKeyboardDevice();
     fInputManager->AddInputDevice(pKeyboard);
     
-    plInputDevice* pMouse = TRACKED_NEW plMouseDevice();
+    plInputDevice* pMouse = new plMouseDevice();
     fInputManager->AddInputDevice(pMouse);
 
     if( fWindowActive )
@@ -792,7 +792,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
             plAudible* aud = plAudible::ConvertNoRef(callback->GetSender()->ObjectIsLoaded());
             if( simpMod )
             {
-                plAnimCmdMsg* cmd = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg* cmd = new plAnimCmdMsg;
                 cmd->AddReceiver(simpMod->GetKey());
                 cmd->SetCmd(plAnimCmdMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
@@ -801,7 +801,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
             }
             else if( aud )
             {
-                plSoundMsg* cmd = TRACKED_NEW plSoundMsg;
+                plSoundMsg* cmd = new plSoundMsg;
                 cmd->AddReceiver(aud->GetKey());
                 cmd->SetCmd(plSoundMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
@@ -891,7 +891,7 @@ hsBool plClient::IHandleMovieMsg(plMovieMsg* mov)
     if( i == fMovies.GetCount() )
     {
 
-        fMovies.Append(TRACKED_NEW plBinkPlayer);
+        fMovies.Append(new plBinkPlayer);
         fMovies[i]->SetFileName(mov->GetFileName());
     }
 
@@ -1010,7 +1010,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
             continue;
         }
 
-        fLoadRooms.push_back(TRACKED_NEW LoadRequest(loc, hold));
+        fLoadRooms.push_back(new LoadRequest(loc, hold));
 
         if (!lastAgeName || hsStrEQ(info->GetAge(), lastAgeName))
             lastAgeName = info->GetAge();
@@ -1050,7 +1050,7 @@ void plClient::ILoadNextRoom()
 
     if (req)
     {
-        plClientRefMsg* pRefMsg = TRACKED_NEW plClientRefMsg(GetKey(),
+        plClientRefMsg* pRefMsg = new plClientRefMsg(GetKey(),
             plRefMsg::kOnCreate, -1,
             req->hold ? plClientRefMsg::kLoadRoomHold : plClientRefMsg::kLoadRoom);
 
@@ -1062,7 +1062,7 @@ void plClient::ILoadNextRoom()
 
         delete req;
 
-        plClientMsg* nextRoom = TRACKED_NEW plClientMsg(plClientMsg::kLoadNextRoom);
+        plClientMsg* nextRoom = new plClientMsg(plClientMsg::kLoadNextRoom);
         nextRoom->Send(GetKey());
     }
 }
@@ -1236,7 +1236,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
     // now tell all those who are interested that a room was loaded
     if (!hold)
     {
-        plRoomLoadNotifyMsg* loadmsg = TRACKED_NEW plRoomLoadNotifyMsg;
+        plRoomLoadNotifyMsg* loadmsg = new plRoomLoadNotifyMsg;
         loadmsg->SetRoom(pRmKey);
         loadmsg->SetWhatHappen(plRoomLoadNotifyMsg::kLoaded);
         plgDispatch::MsgSend(loadmsg);
@@ -1272,7 +1272,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
         plAgeLoader::GetInstance()->FinishedPagingOutRoom(&pRmKey, 1);
 
     // tell all those who are interested that a room was unloaded
-    plRoomLoadNotifyMsg* loadmsg = TRACKED_NEW plRoomLoadNotifyMsg;
+    plRoomLoadNotifyMsg* loadmsg = new plRoomLoadNotifyMsg;
     loadmsg->SetRoom(pRmKey);
     loadmsg->SetWhatHappen(plRoomLoadNotifyMsg::kUnloaded);
     plgDispatch::MsgSend(loadmsg);
@@ -1472,7 +1472,7 @@ hsBool plClient::StartInit()
     InitDLLs();
     
     plGlobalVisMgr::Init();
-    fPageMgr = TRACKED_NEW plPageTreeMgr;
+    fPageMgr = new plPageTreeMgr;
 
     plVisLOSMgr::Init(fPipeline, fPageMgr);
 
@@ -1492,26 +1492,26 @@ hsBool plClient::StartInit()
     /// Note: this can be done last because the console engine was inited first, and
     /// everything in code that works with the console does so through the console engine
 
-    fConsole = TRACKED_NEW pfConsole();
+    fConsole = new pfConsole();
     pfConsole::SetPipeline( fPipeline );
     fConsole->RegisterAs( kConsoleObject_KEY );     // fixedKey from plFixedKey.h
     fConsole->Init( fConsoleEngine );
 
     /// Init the font cache
-    fFontCache = TRACKED_NEW plFontCache();
+    fFontCache = new plFontCache();
 
     /// Init the transition manager
-    fTransitionMgr = TRACKED_NEW plTransitionMgr();
+    fTransitionMgr = new plTransitionMgr();
     fTransitionMgr->RegisterAs( kTransitionMgr_KEY );       // fixedKey from plFixedKey.h
     fTransitionMgr->Init();
 
     // Init the Age Linking effects manager
-    fLinkEffectsMgr = TRACKED_NEW plLinkEffectsMgr();
+    fLinkEffectsMgr = new plLinkEffectsMgr();
     fLinkEffectsMgr->RegisterAs( kLinkEffectsMgr_KEY ); // fixedKey from plFixedKey.h
     fLinkEffectsMgr->Init();
     
     /// Init the in-game GUI manager
-    fGameGUIMgr = TRACKED_NEW pfGameGUIMgr();
+    fGameGUIMgr = new pfGameGUIMgr();
     fGameGUIMgr->RegisterAs( kGameGUIMgr_KEY );
     fGameGUIMgr->Init();
 
@@ -1533,14 +1533,14 @@ hsBool plClient::StartInit()
     plAgeLoader::GetInstance()->Init();
     pfSecurePreloader::GetInstance()->Init();
     
-    plCmdIfaceModMsg* pModMsg2 = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg2 = new plCmdIfaceModMsg;
     pModMsg2->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg2->SetSender(fConsole->GetKey());
     pModMsg2->SetCmd(plCmdIfaceModMsg::kAdd);
     plgDispatch::MsgSend(pModMsg2);
 
     // create new the virtual camera
-    fNewCamera = TRACKED_NEW plVirtualCam1;
+    fNewCamera = new plVirtualCam1;
     fNewCamera->RegisterAs( kVirtualCamera1_KEY ); 
     fNewCamera->Init();
     fNewCamera->SetPipeline( GetPipeline() );
@@ -1554,7 +1554,7 @@ hsBool plClient::StartInit()
     plInputManager::SetRecenterMouse(false);
 
     // create the listener for the audio system:
-    plListener* pLMod = TRACKED_NEW plListener;
+    plListener* pLMod = new plListener;
     pLMod->RegisterAs(kListenerMod_KEY );
 
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pLMod->GetKey());
@@ -1564,7 +1564,7 @@ hsBool plClient::StartInit()
 
     if (StrCmp(NetCommGetStartupAge()->ageDatasetName, "StartUp") == 0)
     {
-        plNetCommAuthMsg * msg  = NEW(plNetCommAuthMsg);
+        plNetCommAuthMsg * msg  = new plNetCommAuthMsg();
         msg->result             = kNetSuccess;
         msg->param              = nil;
         msg->Send();
@@ -1748,18 +1748,18 @@ hsBool plClient::IUpdate()
     // starting trouble during their update. So to get rid of this message, some
     // other way of flushing the dispatch after NegClientMgr's update is needed. mf 
     plProfile_BeginTiming(TimeMsg);
-    plTimeMsg* msg = TRACKED_NEW plTimeMsg(nil, nil, nil, nil);
+    plTimeMsg* msg = new plTimeMsg(nil, nil, nil, nil);
     plgDispatch::MsgSend(msg);
     plProfile_EndTiming(TimeMsg);
 
     plProfile_BeginTiming(EvalMsg);
-    plEvalMsg* eval = TRACKED_NEW plEvalMsg(nil, nil, nil, nil);
+    plEvalMsg* eval = new plEvalMsg(nil, nil, nil, nil);
     plgDispatch::MsgSend(eval);
     plProfile_EndTiming(EvalMsg);
 
     char *xFormLap1 = "Main";
     plProfile_BeginLap(TransformMsg, xFormLap1);
-    plTransformMsg* xform = TRACKED_NEW plTransformMsg(nil, nil, nil, nil);
+    plTransformMsg* xform = new plTransformMsg(nil, nil, nil, nil);
     plgDispatch::MsgSend(xform);
     plProfile_EndLap(TransformMsg, xFormLap1);
 
@@ -1777,7 +1777,7 @@ hsBool plClient::IUpdate()
     {
         char *xFormLap2 = "Simulation";
         plProfile_BeginLap(TransformMsg, xFormLap2);
-        xform = TRACKED_NEW plTransformMsg(nil, nil, nil, nil);
+        xform = new plTransformMsg(nil, nil, nil, nil);
         plgDispatch::MsgSend(xform);
         plProfile_EndLap(TransformMsg, xFormLap2);
     }
@@ -1785,7 +1785,7 @@ hsBool plClient::IUpdate()
     {
         char *xFormLap3 = "Delayed";
         plProfile_BeginLap(TransformMsg, xFormLap3);
-        xform = TRACKED_NEW plDelayedTransformMsg(nil, nil, nil, nil);
+        xform = new plDelayedTransformMsg(nil, nil, nil, nil);
         plgDispatch::MsgSend(xform);
         plProfile_EndLap(TransformMsg, xFormLap3);
     }
@@ -1793,7 +1793,7 @@ hsBool plClient::IUpdate()
     plCoordinateInterface::SetTransformPhase(plCoordinateInterface::kTransformPhaseNormal);
     
     plProfile_BeginTiming(CameraMsg);
-    plCameraMsg* cameras = TRACKED_NEW plCameraMsg;
+    plCameraMsg* cameras = new plCameraMsg;
     cameras->SetCmd(plCameraMsg::kUpdateCameras);
     cameras->SetBCastFlag(plMessage::kBCastByExactType);
     plgDispatch::MsgSend(cameras);
@@ -1866,11 +1866,11 @@ hsBool plClient::IDraw()
     plProfile_EndTiming(VisEval);
 
     plProfile_BeginTiming(RenderMsg);
-    plRenderMsg* rendMsg = TRACKED_NEW plRenderMsg(fPipeline);
+    plRenderMsg* rendMsg = new plRenderMsg(fPipeline);
     plgDispatch::MsgSend(rendMsg);
     plProfile_EndTiming(RenderMsg);
 
-    plPreResourceMsg* preMsg = TRACKED_NEW plPreResourceMsg(fPipeline);
+    plPreResourceMsg* preMsg = new plPreResourceMsg(fPipeline);
     plgDispatch::MsgSend(preMsg);
 
     // This might not be the ideal place for this, but it 
@@ -2444,7 +2444,7 @@ void plClient::IOnAsyncInitComplete () {
 
     pfMarkerMgr::Instance();
 
-    fAnimDebugList = TRACKED_NEW plAnimDebugList();
+    fAnimDebugList = new plAnimDebugList();
 
     /// Now parse final init files (*.fni). These are files just like ini files, only to be run
     /// after all hell has broken loose in the client.
@@ -2476,7 +2476,7 @@ void plClient::IOnAsyncInitComplete () {
 
     // Tell the transition manager to start faded out. This is so we don't
     // get a frame or two of non-faded drawing before we do our initial fade in
-    (void)(TRACKED_NEW plTransitionMsg( plTransitionMsg::kFadeOut, 0.0f, true ))->Send();
+    (void)(new plTransitionMsg( plTransitionMsg::kFadeOut, 0.0f, true ))->Send();
 
     fFlags.SetBit(kFlagAsyncInitComplete);
     if (fFlags.IsBitSet(kFlagGlobalDataLoaded))
@@ -2494,7 +2494,7 @@ void plClient::ICompleteInit () {
     hsStatusMessage("Client init complete.");
 
     // Tell everyone we're ready to rock.
-    plClientMsg* clientMsg = TRACKED_NEW plClientMsg(plClientMsg::kInitComplete);
+    plClientMsg* clientMsg = new plClientMsg(plClientMsg::kInitComplete);
     clientMsg->SetBCastFlag(plMessage::kBCastByType);
     clientMsg->Send();
 

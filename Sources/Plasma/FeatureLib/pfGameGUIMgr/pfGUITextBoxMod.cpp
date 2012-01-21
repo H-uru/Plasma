@@ -157,7 +157,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
     uint32_t len = s->ReadLE32();
     if( len > 0 )
     {
-        char *text = TRACKED_NEW char[ len + 1 ];
+        char *text = new char[ len + 1 ];
         s->Read( len, text );
         text[ len ] = 0;
 
@@ -232,7 +232,7 @@ void    pfGUITextBoxMod::SetText( const wchar_t *text )
     delete [] fText;
     if (text)
     {
-        fText = TRACKED_NEW wchar_t[wcslen(text)+1];
+        fText = new wchar_t[wcslen(text)+1];
         wcscpy(fText,text);
     }
     else

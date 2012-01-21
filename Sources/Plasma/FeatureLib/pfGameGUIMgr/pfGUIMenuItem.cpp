@@ -89,7 +89,7 @@ void    pfGUIMenuItem::SetName( const wchar_t *name )
     delete [] fName;
     if (name != nil)
     {
-        fName = TRACKED_NEW wchar_t[wcslen(name)+1];
+        fName = new wchar_t[wcslen(name)+1];
         wcscpy(fName,name);
     }
     else
@@ -107,7 +107,7 @@ void    pfGUIMenuItem::SetSkin( pfGUISkin *skin, HowToSkin s )
         GetKey()->Release( fSkin->GetKey() );
 
     if( skin != nil )
-        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
 
     fHowToSkin = s;
 

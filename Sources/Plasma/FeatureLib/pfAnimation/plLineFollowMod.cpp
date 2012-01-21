@@ -155,14 +155,14 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
 
     fPath = plAnimPath::ConvertNoRef(mgr->ReadCreatable(stream));
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefParent), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefParent), plRefFlags::kPassiveRef);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefObject), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefObject), plRefFlags::kPassiveRef);
 
     int n = stream->ReadLE32();
     while(n--)
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
     }
 
     uint32_t f = stream->ReadLE32();
@@ -616,12 +616,12 @@ void plLineFollowMod::RemoveTarget(plSceneObject* so)
 
 void plLineFollowMod::AddStereizer(const plKey& key)
 {
-    hsgResMgr::ResMgr()->SendRef(plKey(key), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(plKey(key), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefStereizer), plRefFlags::kPassiveRef);
 }
 
 void plLineFollowMod::RemoveStereizer(const plKey& key)
 {
-    hsgResMgr::ResMgr()->SendRef(plKey(key), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefStereizer), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(plKey(key), new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefStereizer), plRefFlags::kPassiveRef);
 }
 
 // derived version of this class for rail cameras

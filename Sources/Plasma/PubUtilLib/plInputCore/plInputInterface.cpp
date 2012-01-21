@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plInputInterface::plInputInterface()
 {
     fEnabled = false;
-    fControlMap = TRACKED_NEW plKeyMap;
+    fControlMap = new plKeyMap;
 }
 
 plInputInterface::~plInputInterface()
@@ -123,7 +123,7 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
 {
     if( !(binding->GetCodeFlags() & kControlFlagNoDeactivate) && !(binding->GetCodeFlags() & kControlFlagToggle) )
     {
-        plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+        plCtrlCmd *pCmd = new plCtrlCmd( this );
         pCmd->fControlCode = binding->GetCode();
         pCmd->fControlActivated = false;
         pCmd->SetCmdString( binding->GetExtendedString() );
@@ -293,7 +293,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
         return true;
 
     /// OK, generate the message to send
-    plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+    plCtrlCmd *pCmd = new plCtrlCmd( this );
     pCmd->fControlCode = binding->GetCode();
     pCmd->fControlActivated = activate;
 
