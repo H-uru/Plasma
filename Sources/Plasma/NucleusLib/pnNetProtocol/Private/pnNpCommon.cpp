@@ -90,7 +90,7 @@ static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, un
     *elems = bytes / sizeof(T);
     T * src = (T *)*buffer;
     delete *buf;
-    *buf = (T *)ALLOC(bytes);
+    *buf = (T *)malloc(bytes);
     MemCopy(*buf, src, bytes);
     *buffer += bytes;
     *bufsz -= bytes;
@@ -1100,7 +1100,7 @@ NetVaultNodeFieldArray::ESqlType NetVaultNodeFieldArray::GetSqlType_LCS (uint64_
 
 //============================================================================
 CSrvPackBuffer::CSrvPackBuffer (unsigned bytes) {
-    m_data = (uint8_t *)ALLOC(bytes);
+    m_data = (uint8_t *)malloc(bytes);
     m_pos  = m_data;
     m_end  = m_pos + bytes;
 }

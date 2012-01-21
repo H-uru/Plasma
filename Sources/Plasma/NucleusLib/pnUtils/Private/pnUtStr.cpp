@@ -75,7 +75,7 @@ static uint32_t s_hashValue[] = {
 template<class chartype>
 static chartype * IStrDup (const chartype str[]) {
     unsigned chars = IStrLen(str) + 1;
-    chartype * buffer = (chartype *)ALLOC(chars * sizeof(chartype));
+    chartype * buffer = (chartype *)malloc(chars * sizeof(chartype));
     IStrCopy(buffer, str, chars);
     return buffer;
 }
@@ -86,7 +86,7 @@ static chartype * IStrDupLen (const chartype str[], unsigned chars) {
     unsigned len = IStrLen(str) + 1;
     if (len > chars)
         len = chars;
-    chartype * buffer = (chartype *)ALLOC(len * sizeof(chartype));
+    chartype * buffer = (chartype *)malloc(len * sizeof(chartype));
     IStrCopy(buffer, str, len);
     return buffer;
 }
@@ -455,7 +455,7 @@ wchar_t * StrDupLen (const wchar_t str[], unsigned chars) {
 //============================================================================
 wchar_t * StrDupToUnicode (const char str[]) {
     unsigned bytes = StrBytes(str) * sizeof(wchar_t);
-    wchar_t * dst = (wchar_t*)ALLOC(bytes);
+    wchar_t * dst = (wchar_t*)malloc(bytes);
     StrToUnicode(dst, str, bytes / sizeof(wchar_t));
     return dst;
 }
@@ -463,7 +463,7 @@ wchar_t * StrDupToUnicode (const char str[]) {
 //============================================================================
 char * StrDupToAnsi (const wchar_t str[]) {
     unsigned bytes = StrBytes(str) / sizeof(wchar_t);
-    char * dst = (char*)ALLOC(bytes);
+    char * dst = (char*)malloc(bytes);
     StrToAnsi(dst, str, bytes);
     return dst;
 }

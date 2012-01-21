@@ -164,7 +164,6 @@ inline void CDECL operator delete (void *, void *) {}
 *
 ***/
 
-#define ALLOC(b)                MemAlloc(b, 0, __FILE__, __LINE__)
 #define ALLOCZERO(b)            MemAlloc(b, kMemZero, __FILE__, __LINE__)
 #define ZERO(s)                 MemSet(&s, 0, sizeof(s))
 #define ZEROPTR(p)              MemSet(p, 0, sizeof(*p))
@@ -173,7 +172,6 @@ inline void CDECL operator delete (void *, void *) {}
 #ifdef __cplusplus
 
 #define NEW(t)                  new(MemAlloc(sizeof(t), 0, __FILE__, __LINE__)) t
-#define NEWFLAGS(t, f)          new(MemAlloc(sizeof(t), (f), __FILE__, __LINE__)) t
 #define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
 
 #endif // __cplusplus

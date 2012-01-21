@@ -150,7 +150,7 @@ static IniValue * AddKeyValue (
     // Find or create the key
     IniKey * key = section->fKeys.Find(string);
     if (!key) {
-        key = new(ALLOC(
+        key = new(malloc(
             sizeof(*key) - sizeof(key->fName) + StrBytes(string)
         )) IniKey(section, string);
     }
@@ -194,7 +194,7 @@ static IniSection * AddSection (
     // Find or create the section
     IniSection * section = ini->fSections.Find(string);
     if (!section) {
-        section = new(ALLOC(
+        section = new(malloc(
             sizeof(*section) - sizeof(section->fName) + StrBytes(string)
         )) IniSection(string);
         ini->fSections.Add(section);
@@ -405,7 +405,7 @@ static bool ParseFile (
     }
     else {
         // Read entire file into memory and NULL terminate wchar_t
-        uint8_t * buffer = (uint8_t *) ALLOC((unsigned) fileSize + sizeof(wchar_t));
+        uint8_t * buffer = (uint8_t *) malloc((unsigned) fileSize + sizeof(wchar_t));
         AsyncFileRead(file, 0, buffer, (unsigned) fileSize, kAsyncFileRwSync, nil);
         * (wchar_t *) &buffer[fileSize] = 0;
 
@@ -416,7 +416,7 @@ static bool ParseFile (
             unsigned newBufferSize = ((unsigned) fileSize + 2) * sizeof(wchar_t);
 
             // Allocate new buffer
-            wchar_t * dst = (wchar_t *) ALLOC(newBufferSize);
+            wchar_t * dst = (wchar_t *) malloc(newBufferSize);
             
             // If it's UTF-8 file,convert to Unicode
             if (StrCmpI((char *)buffer, UTF8_BOM, StrLen(UTF8_BOM)) == 0) {

@@ -348,7 +348,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     // extra space in case more data needs to be queued later
     unsigned bytesAlloc = max(bytes, sock->backlogAlloc);
     bytesAlloc          = max(bytesAlloc, kMinBacklogBytes);
-    NtOpSocketWrite * op = new(ALLOC(sizeof(NtOpSocketWrite) + bytesAlloc)) NtOpSocketWrite;
+    NtOpSocketWrite * op = new(malloc(sizeof(NtOpSocketWrite) + bytesAlloc)) NtOpSocketWrite;
 
     // init Operation
     const AsyncId asyncId       = INtConnSequenceStart(sock);
@@ -1188,7 +1188,7 @@ void NtSocketConnect (
 
     // create async connection record with enough extra bytes for sendData
     NtOpConnAttempt * op = 
-     new(ALLOC(sizeof(NtOpConnAttempt) - sizeof(op->sendData) + sendBytes)) NtOpConnAttempt;
+     new(malloc(sizeof(NtOpConnAttempt) - sizeof(op->sendData) + sendBytes)) NtOpConnAttempt;
 
     // init Operation
     op->overlapped.Offset       = 0;
