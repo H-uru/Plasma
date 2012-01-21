@@ -166,7 +166,7 @@ template<class T, class K, unsigned keyOffset, class Cmp>
 typename TSkipList<T,K,keyOffset,Cmp>::Node* TSkipList<T,K,keyOffset,Cmp>::AllocNode (unsigned level) {
 
     unsigned size = offsetof(Node, next) + (level + 1) * sizeof(Node);
-    Node * node = (Node *)ALLOC(size);
+    Node * node = (Node *)malloc(size);
     node->level = level;
     return node;
 }

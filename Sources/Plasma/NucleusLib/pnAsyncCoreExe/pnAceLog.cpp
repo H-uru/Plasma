@@ -161,7 +161,7 @@ static void LogFileNotifyProc (
 //============================================================================
 static void AllocLogBuffer_CS (unsigned index) {
     ASSERT(!s_logBuf[index]);
-    s_logBuf[index] = (char *)ALLOC(s_logSize[index]);
+    s_logBuf[index] = (char *)malloc(s_logSize[index]);
     s_logPos[index] = 0;
 
     if (!s_logBuf[index])

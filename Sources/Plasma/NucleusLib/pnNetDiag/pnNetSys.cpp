@@ -158,7 +158,7 @@ void NetDiagSys (
 
         ULONG ulOutBufLen = 0;
         GetAdaptersInfo(nil, &ulOutBufLen);
-        PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)ALLOC(ulOutBufLen);
+        PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)malloc(ulOutBufLen);
         PIP_ADAPTER_INFO pAdapter;
         if (GetAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
             pAdapter = pInfo;

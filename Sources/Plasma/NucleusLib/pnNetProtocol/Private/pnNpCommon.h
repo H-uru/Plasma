@@ -456,7 +456,7 @@ struct NetVaultNodeRef {
 
 // Allocate a CSrvPackBuffer on the heap with one extra uint32_t to allow for padding
 #define SRV_ALLOC_BUFFER(bytes)                                     \
-    new(ALLOC(sizeof(CSrvPackBuffer) + (bytes) + sizeof(uint32_t)))    \
+    new(malloc(sizeof(CSrvPackBuffer) + (bytes) + sizeof(uint32_t)))    \
     CSrvPackBuffer(bytes + sizeof(uint32_t))
 
 // Allocate a CSrvPackBuffer on the stack with one extra uint32_t to allow for padding

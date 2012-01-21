@@ -192,7 +192,7 @@ void CICmdParser::Error (const CmdTokState * state, ECmdError errorCode, const w
     // don't want to compose their own text. Normally, an application would
     // compose error text using its own localized strings.)
     unsigned chars  = 256 + (arg ? StrLen(arg) : 0) + (value ? StrLen(value) : 0);
-    wchar_t *  buffer = (wchar_t *)ALLOC(chars * sizeof(wchar_t));
+    wchar_t *  buffer = (wchar_t *)malloc(chars * sizeof(wchar_t));
     switch (errorCode) {
 
         case kCmdErrorInvalidArg:

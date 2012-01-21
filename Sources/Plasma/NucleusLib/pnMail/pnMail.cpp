@@ -514,7 +514,7 @@ static void IMail (
 
     // Create a transaction record
     MailTransaction * transaction = new(
-        ALLOC(offsetof(MailTransaction, buffer) + bytes)
+        malloc(offsetof(MailTransaction, buffer) + bytes)
     ) MailTransaction;
     transaction->stepTable  = stepTable;
     transaction->sock       = nil;
