@@ -39,14 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
-
+#include "HeadSpin.h"
 // plInputManager.cpp
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#include "hsTypes.h"
 #include "plInputManager.h"
 #include "plPipeline.h"
 #include "plInputDevice.h"

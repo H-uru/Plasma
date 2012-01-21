@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef hsGDirect3DTnLEnumerate_h
 #define hsGDirect3DTnLEnumerate_h
-#include "hsConfig.h"
+#include "HeadSpin.h"
 
 #include "hsTemplates.h"
 //#include "plMemTrackerOff.h"

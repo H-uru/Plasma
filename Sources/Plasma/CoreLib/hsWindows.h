@@ -39,9 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
 
 #if HS_BUILD_FOR_WIN32
+
+// 4244: Conversion
+// 4305: Truncation
+// 4503: 'identifier' : decorated name length exceeded, name was truncated
+// 4018: signed/unsigned mismatch
+// 4786: 255 character debug limit
+// 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
+// 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+#ifdef _MSC_VER
+#   pragma warning( disable : 4305 4503 4018 4786 4284 4800)
+#endif
 
 #ifndef __AFX_H__   // MFC apps won't let us include windows from here. =(
 #ifndef MAXPLUGINCODE

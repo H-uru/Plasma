@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plInputDevice.cpp
 //#include "STRING"
 
-#include "hsConfig.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 #include "plInputDevice.h"
 #include "plInputManager.h"

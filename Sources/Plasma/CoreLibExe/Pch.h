@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(push, 3)
 
 #include "HeadSpin.h"
-#include "hsConfig.h"
 #include "hsTypes.h"
 #include "hsWindows.h"
 #include "hsMalloc.h"

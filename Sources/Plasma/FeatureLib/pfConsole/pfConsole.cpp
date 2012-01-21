@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "HeadSpin.h"
 #include "pfConsole.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "plPipeline/plDebugText.h"
@@ -60,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plPipeline.h"
-#include "hsConfig.h"
 
 #include "pfPython/cyPythonInterface.h"
 #include "plNetClient/plNetClientMgr.h"

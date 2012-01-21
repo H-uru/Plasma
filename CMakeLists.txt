@@ -1,6 +1,15 @@
 project(Plasma)
 cmake_minimum_required(VERSION 2.8)
 
+# HeadSpin Configuration
+if(WIN32 AND NOT CYGWIN)
+    add_definitions(-DHS_BUILD_FOR_WIN32)
+endif(WIN32 AND NOT CYGWIN)
+if(UNIX)
+    add_definitions(-DHS_BUILD_FOR_UNIX)
+endif(UNIX)
+# End HeadSpin Configuration
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 
@@ -41,6 +50,10 @@ set(PLASMA_TARGETS "Client"
     CACHE STRING "Which set of plasma targets to build and use")
 set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS
              "Client" "Server" "Patcher" "Ethereal" "NoAvMsgs")
+
+if(PLASMA_TARGETS STREQUAL "Client")
+    add_definitions(-DCLIENT)
+endif(PLASMA_TARGETS STREQUAL "Client")
 
 if(PLASMA_TARGETS STREQUAL "Patcher")
     add_definitions(-DPATCHER)

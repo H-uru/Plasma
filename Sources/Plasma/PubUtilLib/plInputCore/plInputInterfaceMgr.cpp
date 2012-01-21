@@ -49,9 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputInterfaceMgr.h"
 #include "plInputInterface.h"
 #include "plInputDevice.h"      // For mouse device stuff

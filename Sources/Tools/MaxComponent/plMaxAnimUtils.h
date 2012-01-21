@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLMAXANIMUTILS_H
 #define PLMAXANIMUTILS_H
 
-#include "hsConfig.h"
 #include <map>
 #include <vector>
 #include "hsStlSortUtils.h"

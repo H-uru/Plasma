@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNetCommon_h_inc
 #define pnNetCommon_h_inc
 
-#include "hsConfig.h"
 #include "hsTypes.h"
 #include "hsStlUtils.h"
 #include "hsRefCnt.h"

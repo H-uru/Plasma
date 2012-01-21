@@ -49,9 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define LIMIT_VOICE_CHAT 1
 #endif
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAvatarInputInterface.h"
 
 #include "pnInputCore/plKeyMap.h"
@@ -80,7 +78,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 
-#include "hsConfig.h"
 #include "hsMatrix44.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"

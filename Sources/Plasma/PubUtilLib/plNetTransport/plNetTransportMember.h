@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetTransportMember_h
 #define plNetTransportMember_h
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetMember.h"
 #include "pnKeyedObject/plKey.h" 
