@@ -1,5 +1,6 @@
 #add_subdirectory(Migration)
 #add_subdirectory(plDatMerger)
+add_subdirectory(plLocalizationEditor)
 add_subdirectory(plResBrowser)
 
 if(FREETYPE_FOUND)
