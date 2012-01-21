@@ -77,7 +77,7 @@ bool Srv2VaultValidateConnect (
     if (!(connect.srvType == kSrvTypeAuth || connect.srvType == kSrvTypeGame || connect.srvType == kSrvTypeMcp))
         return false;
 
-    ZEROPTR(connectPtr);
+    memset(connectPtr, 0, sizeof(*connectPtr));
     MemCopy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
 
     listen->bytesProcessed += connect.dataBytes;

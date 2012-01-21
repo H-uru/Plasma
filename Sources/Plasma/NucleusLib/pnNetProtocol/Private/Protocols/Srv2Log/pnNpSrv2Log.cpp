@@ -79,7 +79,7 @@ bool Srv2LogValidateConnect (
           connect.srvType == kSrvTypeMcp || connect.srvType == kSrvTypeState || connect.srvType == kSrvTypeFile || connect.srvType == kSrvTypeDll))
         return false;
 
-    ZEROPTR(connectPtr);
+    memset(connectPtr, 0, sizeof(*connectPtr));
     MemCopy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
 
     listen->bytesProcessed += connect.dataBytes;
