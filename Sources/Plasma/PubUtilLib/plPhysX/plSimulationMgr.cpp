@@ -300,7 +300,7 @@ public:
         return malloc(size);
     }
     void * mallocDEBUG (NxU32 size, const char * fileName, int line) {
-        return MemAlloc(size, 0, fileName, line);
+        return malloc(size);
     }
     void * realloc (void * memory, NxU32 size) {
         return realloc(memory, size);

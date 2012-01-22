@@ -62,16 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 extern "C" {
 #endif
 
-// MemAlloc flags
-extern const unsigned kMemReallocInPlaceOnly;   // use _expand when realloc'ing
-extern const unsigned kMemZero;                 // fill allocated memory with zeros
-extern const unsigned kMemIgnoreBlock;          // don't track this allocation
-
-
-void *   MemAlloc (unsigned bytes, unsigned flags, const char file[], int line);
 void *   MemDup (const void * ptr, unsigned bytes, unsigned flags, const char file[], int line);
-void     MemFree (void * ptr, unsigned flags);
-void *   MemRealloc (void * ptr, unsigned bytes, unsigned flags, const char file[], int line);
 unsigned MemSize (void * ptr);
 
 
@@ -108,62 +99,14 @@ void MemSetColor (unsigned short color);
 
 /****************************************************************************
 *
-*   C++ Operators
-*
-***/
-
-#ifdef __cplusplus
-
-#include <new>
-
-#ifndef _MSC_VER
-#define THROW(x) throw(x)
-#define THROW_EMPTY throw()
-#else
-#define THROW(x)
-#define THROW_EMPTY
-#endif
-
-// standard new and delete
-inline void* CDECL operator new (size_t bytes) THROW(std::bad_alloc)
-    { return MemAlloc((unsigned)bytes, 0, __FILE__, __LINE__); }
-inline void* CDECL operator new [](size_t bytes) THROW(std::bad_alloc)
-    { return MemAlloc((unsigned)bytes, 0, __FILE__, __LINE__); }
-inline void CDECL operator delete (void * ptr) THROW_EMPTY
-    { MemFree(ptr, 0); }
-inline void CDECL operator delete [](void * ptr) THROW_EMPTY
-    { MemFree(ptr, 0); }
-
-// memcheck-friendly new
-inline void* CDECL operator new (size_t bytes, const char file[], unsigned line)
-    { return MemAlloc((unsigned)bytes, 0, file, line); }
-inline void* CDECL operator new [](size_t bytes, const char file[], unsigned line)
-    { return MemAlloc((unsigned)bytes, 0, file, line); }
-inline void CDECL operator delete (void * ptr, const char [], unsigned)
-    { return MemFree(ptr, 0); }
-inline void CDECL operator delete [](void * ptr, const char [], unsigned)
-    { return MemFree(ptr, 0); }
-
-
-// placement new
-#if defined(_MSC_VER) && !defined(__PLACEMENT_NEW_INLINE)
-#define __PLACEMENT_NEW_INLINE
-inline void* CDECL operator new (size_t, void * ptr) { return ptr; }
-inline void CDECL operator delete (void *, void *) {}
-#endif  // ifndef __PLACEMENT_NEW_INLINE
-
-#endif // ifdef __cplusplus
-
-
-/****************************************************************************
-*
 *   Macros
 *
 ***/
 
 #ifdef __cplusplus
 
-#define NEWZERO(t)              new(MemAlloc(sizeof(t), kMemZero, __FILE__, __LINE__)) t
+#include <new>
+#define NEWZERO(t)              new(calloc(sizeof(t), 1)) t
 
 #endif // __cplusplus
 

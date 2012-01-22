@@ -116,11 +116,8 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 
     // allocate a block of memory to hold a bunch
     // of T-objects, but allocate them as "raw" memory
-    AllocNode * allocNode = (AllocNode *) MemAlloc(
-        sizeof(AllocNode) + objectSize * m_chunkSize,
-        0,          // flags
-        typeName,   // file
-        0           // line
+    AllocNode * allocNode = (AllocNode *) malloc(
+        sizeof(AllocNode) + objectSize * m_chunkSize
     );
 
     // link allocation onto head of allocation list
