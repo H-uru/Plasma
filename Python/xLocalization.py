@@ -73,9 +73,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     import xDynTextDefsEnglish
     xDynTextDefs = xDynTextDefsEnglish
 
-    import xOptionsEnglish
-    xOptions = xOptionsEnglish
-
 elif PtGetLanguage() == PtLanguage.kFrench:
     import xKIFrench
     xKI = xKIFrench
@@ -100,9 +97,6 @@ elif PtGetLanguage() == PtLanguage.kFrench:
     
     import xDynTextDefsFrench
     xDynTextDefs = xDynTextDefsFrench
-
-    import xOptionsFrench
-    xOptions = xOptionsFrench
 
 elif PtGetLanguage() == PtLanguage.kGerman:
     import xKIGerman
@@ -129,9 +123,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     import xDynTextDefsGerman
     xDynTextDefs = xDynTextDefsGerman
 
-    import xOptionsGerman
-    xOptions = xOptionsGerman
-
 elif PtGetLanguage() == PtLanguage.kSpanish:
     import xKISpanish
     xKI = xKISpanish
@@ -156,9 +147,6 @@ elif PtGetLanguage() == PtLanguage.kSpanish:
     
     import xDynTextDefsSpanish
     xDynTextDefs = xDynTextDefsSpanish
-    
-    import xOptionsSpanish
-    xOptions = xOptionsSpanish
 
 elif PtGetLanguage() == PtLanguage.kItalian:
     import xKIItalian
@@ -184,9 +172,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     
     import xDynTextDefsItalian
     xDynTextDefs = xDynTextDefsItalian
-    
-    import xOptionsItalian
-    xOptions = xOptionsItalian
 
 else:
     # default to english if we don't know the language
@@ -213,9 +198,6 @@ else:
     
     import xDynTextDefsEnglish
     xDynTextDefs = xDynTextDefsEnglish
-
-    import xOptionsEnglish
-    xOptions = xOptionsEnglish
 
 
 def FolderIDToFolderName(folderid):
