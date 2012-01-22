@@ -177,6 +177,7 @@ struct LoginDialogParam {
     ShaDigest   namePassHash;
     bool        remember;
     int         focus;
+    int         language;
 };
 
 static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
@@ -1033,6 +1034,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         stream->Writebool(pLoginParam->remember);
         if (pLoginParam->remember)
             stream->Write(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
+        stream->WriteBE32(pLoginParam->language);
         stream->Close();
         delete stream;
     }
@@ -1048,6 +1050,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     char* temp;
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
+    pLoginParam->language = plLocalization::kEnglish;
 
     wchar_t fileAndPath[MAX_PATH];
     PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
@@ -1086,6 +1089,8 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
             {
                 pLoginParam->focus = IDC_URULOGIN_PASSWORD;
             }
+
+            pLoginParam->language = stream->ReadBE32();
         }
 
         stream->Close();
@@ -1174,6 +1179,13 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             StrToAnsi(windowName, productString, arrsize(windowName));
             SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) windowName);
 
+            const char* languages[] = {"English", "Français", "Deutsch"};
+            for (int i = 0; i < arrsize(languages); i++)
+            {
+                SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)languages[i]);
+            }
+            SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)pLoginParam->language, 0);
+
             SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, NULL);
             return FALSE;
         }
@@ -1218,6 +1230,9 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     GetDlgItemText(hwndDlg, IDC_URULOGIN_USERNAME, pLoginParam->username, kMaxAccountNameLength);
                     GetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, password, kMaxPasswordLength);
                     pLoginParam->remember = (IsDlgButtonChecked(hwndDlg, IDC_URULOGIN_REMEMBERPASS) == BST_CHECKED);
+
+                    pLoginParam->language = SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_GETCURSEL, 0, 0L);
+                    plLocalization::SetLanguage((plLocalization::Language)pLoginParam->language);
 
                     SaveUserPass (pLoginParam, password);
 
