@@ -181,16 +181,12 @@ void OraConnPool::Initialize_CS () {
         const unsigned minConns = 0;
         const unsigned incConns = max(1, maxConns - 1);
         
-        // Some memory allocated by createEnvironment is leaked,
-        // so we disable memory tracking while calling it.
-        MemPushDisableTracking();
         oraEnv.occiEnv = occi::Environment::createEnvironment(
             "OCCIUTF16",
             "OCCIUTF16",
             occi::Environment::THREADED_MUTEXED,
             nil
         );
-        MemPopDisableTracking();
 
         // Create the connection pool       
         oraEnv.occiPool = oraEnv.occiEnv->createStatelessConnectionPool(
