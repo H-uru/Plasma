@@ -1196,7 +1196,7 @@ bool DownloadRequestTrans::Recv (
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = byteCount;
         writeTrans->data    = (uint8_t *)malloc(byteCount);
-        MemCopy(writeTrans->data, data, byteCount);
+        memcpy(writeTrans->data, data, byteCount);
         NetTransSend(writeTrans);
     }
     m_totalBytesReceived += byteCount;

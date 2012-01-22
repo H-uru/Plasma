@@ -158,7 +158,7 @@ TBuffer<T> & TBuffer<T>::operator= (const TBuffer<T> & source) {
 template<class T>
 bool TBuffer<T>::operator== (const TBuffer<T> & source) const {
     unsigned size = MemSize(m_data);
-    return (size == MemSize(source.m_data)) && !MemCmp(m_data, source.m_data, size);
+    return (size == MemSize(source.m_data)) && !memcmp(m_data, source.m_data, size);
 }
 
 //===========================================================================
@@ -300,7 +300,7 @@ public:
 //===========================================================================
 template<class T>
 void TArrayCopyBits<T>::Assign (T * dest, const T source[], unsigned count) {
-    MemMove(dest, source, count * sizeof(T));
+    memmove(dest, source, count * sizeof(T));
 }
 
 //===========================================================================

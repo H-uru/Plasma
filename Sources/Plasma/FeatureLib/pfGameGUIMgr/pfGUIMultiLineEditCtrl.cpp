@@ -1927,7 +1927,7 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                 hitEnd = false;
                 uint32_t newBufferStart = curChar + 1; // +1 so we eat the newline as well
                 uint32_t newBufferLen = bufferLen - newBufferStart;
-                MemCopy(buffer, buffer + newBufferStart, newBufferLen * sizeof(uint16_t)); // copy all bytes after the newline to the beginning
+                memcpy(buffer, buffer + newBufferStart, newBufferLen * sizeof(uint16_t)); // copy all bytes after the newline to the beginning
                 memset(buffer + newBufferLen, 0, (bufferLen - newBufferLen) * sizeof(uint16_t)); // fill out the rest of the buffer with null chars
                 bufferLen = newBufferLen;
                 break;

@@ -151,7 +151,7 @@ bool IParseForSubst (
             block->isVar    = false;
             block->strLen   = strLen;
             block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
-            MemCopy(block->data, src, strLen * sizeof(chartype));
+            memcpy(block->data, src, strLen * sizeof(chartype));
 
             dest->blocks.Add(block);
         }
@@ -170,7 +170,7 @@ bool IParseForSubst (
         block->isVar    = true;
         block->strLen   = strLen;
         block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
-        MemCopy(block->data, varStart, strLen * sizeof(chartype));
+        memcpy(block->data, varStart, strLen * sizeof(chartype));
 
         dest->blocks.Add(block);
 
@@ -184,7 +184,7 @@ bool IParseForSubst (
         block->isVar    = false;
         block->strLen   = strLen;
         block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
-        MemCopy(block->data, src, strLen * sizeof(chartype));
+        memcpy(block->data, src, strLen * sizeof(chartype));
 
         dest->blocks.Add(block);
     }

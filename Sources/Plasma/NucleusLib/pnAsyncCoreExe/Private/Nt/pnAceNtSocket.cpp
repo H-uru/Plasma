@@ -334,7 +334,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
             bytesLeft = min(bytesLeft, bytes);
             if (bytesLeft) {
                 PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
-                MemCopy(lastQueuedWrite->write.buffer + lastQueuedWrite->write.bytes, data, bytesLeft);
+                memcpy(lastQueuedWrite->write.buffer + lastQueuedWrite->write.bytes, data, bytesLeft);
                 lastQueuedWrite->write.bytes += bytesLeft;
                 data += bytesLeft;
                 if (0 == (bytes -= bytesLeft))
@@ -370,7 +370,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     op->write.buffer            = (uint8_t *) (op + 1);
     op->write.bytes             = bytes;
     op->write.bytesProcessed    = bytes;
-    MemCopy(op->write.buffer, data, bytes);
+    memcpy(op->write.buffer, data, bytes);
 
     InterlockedIncrement(&sock->ioCount);
     PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
@@ -1050,7 +1050,7 @@ void INtSocketOpCompleteSocketRead (
             }
 
             if (sock->opRead.read.bytesProcessed) {
-                MemMove(
+                memmove(
                     sock->buffer, 
                     sock->buffer + sock->opRead.read.bytesProcessed, 
                     sock->bytesLeft
@@ -1209,7 +1209,7 @@ void NtSocketConnect (
     op->hSocket                 = INVALID_SOCKET;
     op->failTimeMs              = connectMs ? connectMs : kConnectTimeMs;
     if (0 != (op->sendBytes = sendBytes))
-        MemCopy(op->sendData, sendData, sendBytes);
+        memcpy(op->sendData, sendData, sendBytes);
     else
         op->sendData[0] = kConnTypeNil;
 

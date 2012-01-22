@@ -287,7 +287,7 @@ pfGameMgrMsg::~pfGameMgrMsg () {
 void pfGameMgrMsg::Set (const GameMsgHeader & msg) {
 
     netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
-    MemCopy(netMsg, &msg, msg.messageBytes);
+    memcpy(netMsg, &msg, msg.messageBytes);
 }
 
 
@@ -314,7 +314,7 @@ pfGameCliMsg::~pfGameCliMsg () {
 void pfGameCliMsg::Set (pfGameCli * cli, const GameMsgHeader & msg) {
 
     netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
-    MemCopy(netMsg, &msg, msg.messageBytes);
+    memcpy(netMsg, &msg, msg.messageBytes);
     gameCli     = cli;
 }
 
@@ -423,7 +423,7 @@ void pfGameMgr::CreateGame (
     msg->createOptions      = createOptions;
     msg->messageBytes       = msgBytes;
     msg->createDataBytes    = initBytes;
-    MemCopy(msg->createData, initData, initBytes);
+    memcpy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
 
@@ -454,7 +454,7 @@ void pfGameMgr::JoinCommonGame (
     msg->createOptions      = kGameJoinCommon;
     msg->messageBytes       = msgBytes;
     msg->createDataBytes    = initBytes;
-    MemCopy(msg->createData, initData, initBytes);
+    memcpy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
 

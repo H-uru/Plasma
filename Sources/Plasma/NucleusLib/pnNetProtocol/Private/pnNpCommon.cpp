@@ -91,7 +91,7 @@ static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, un
     T * src = (T *)*buffer;
     delete *buf;
     *buf = (T *)malloc(bytes);
-    MemCopy(*buf, src, bytes);
+    memcpy(*buf, src, bytes);
     *buffer += bytes;
     *bufsz -= bytes;
 }
@@ -119,7 +119,7 @@ static inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * 
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
     T * dst = (T *) buffer->New(bytes);
-    MemCopy(dst, buf, bytes);
+    memcpy(dst, buf, bytes);
 }
 
 //============================================================================
@@ -1117,7 +1117,7 @@ void * CSrvPackBuffer::Alloc (unsigned bytes) {
 
 //============================================================================
 void CSrvPackBuffer::AddData (const void * ptr, unsigned bytes) {
-    MemCopy(Alloc(bytes), ptr, bytes);
+    memcpy(Alloc(bytes), ptr, bytes);
 }
 
 //============================================================================

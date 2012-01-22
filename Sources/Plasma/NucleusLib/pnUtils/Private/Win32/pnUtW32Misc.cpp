@@ -218,7 +218,7 @@ DONE:
 
     // If this is an AMD CPU, check for 3DNow support
     const char * vendorAmd = "AuthenticAMD";
-    if (!MemCmp(vendorAmd, cpuVendor, 12)) {
+    if (!memcmp(vendorAmd, cpuVendor, 12)) {
         if (extended & (1 << 31))
             *cpuCaps |= kCpuCap3dNow;
     }

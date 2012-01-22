@@ -100,6 +100,6 @@ const wchar_t * GuidToHex (const Uuid & uuid, wchar_t * dst, unsigned chars) {
 bool GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid) {
 
     ASSERT(length == msizeof(Uuid, data));
-    MemCopy(uuid->data, buf, msizeof(Uuid, data));
+    memcpy(uuid->data, buf, msizeof(Uuid, data));
     return true;
 }

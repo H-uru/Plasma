@@ -528,7 +528,7 @@ void CSocket::OnReadReady () {
         if (notify.bytesProcessed >= m_readBytes)
             m_readBytes = 0;
         else if (notify.bytesProcessed) {
-            MemMove(
+            memmove(
                 &m_readBuffer[0],
                 &m_readBuffer[notify.bytesProcessed],
                 m_readBytes - notify.bytesProcessed
@@ -578,7 +578,7 @@ void CSocket::OnWriteReady () {
         if ((unsigned)result == m_sendQueue.Bytes())
             m_sendQueue.Clear();
         else if (result) {
-            MemMove(
+            memmove(
                 &m_sendQueue[0],
                 &m_sendQueue[result],
                 m_sendQueue.Bytes() - result

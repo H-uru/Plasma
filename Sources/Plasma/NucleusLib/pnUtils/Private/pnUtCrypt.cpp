@@ -168,7 +168,7 @@ static void Rc4Codec (
     // RC4 uses the same algorithm to both encrypt and decrypt
     uint8_t * temp = (uint8_t *)malloc(bytes);
     RC4((RC4_KEY *)key->handle, bytes, (const unsigned char *)data, temp);
-    MemCopy(data, temp, bytes);
+    memcpy(data, temp, bytes);
 
     free(temp);
 }
