@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBufferedFileReader.h"
 //#include "plProfile.h"
 

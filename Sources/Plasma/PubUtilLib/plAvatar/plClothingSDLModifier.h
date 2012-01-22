@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // This modifier is responsible for sending and recving 

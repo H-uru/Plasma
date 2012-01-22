@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSoundBuffer.h"
 
 #include "hsStream.h"
-#include "hsUtils.h"
+
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"

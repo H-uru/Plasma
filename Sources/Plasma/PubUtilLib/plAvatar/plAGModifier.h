@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAGMODIFIER_H
 #define PLAGMODIFIER_H
 
-#include "hsTypes.h"                            // need for plSingleModifier
+#include "HeadSpin.h"                            // need for plSingleModifier
 #include "pnModifier/plSingleModifier.h"        // inherited
 
 // local

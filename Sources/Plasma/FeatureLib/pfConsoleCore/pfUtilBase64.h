@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfUtilBase64_inc
 #define pfUtilBase64_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 /*****************************************************************************
 *

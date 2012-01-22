@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
+
 
 static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
 

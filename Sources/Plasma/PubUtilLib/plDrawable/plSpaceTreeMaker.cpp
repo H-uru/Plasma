@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSpaceTreeMaker.h"
 #include "plMath/hsRadixSort.h"
 #include "plDrawable/plSpaceTree.h"
 
-#include "hsUtils.h" // for testing, get hsRand()
+ // for testing, get hsRand()
 #include "hsTimer.h"
 #include "plIntersect/plVolumeIsect.h"
 

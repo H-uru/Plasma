@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetMessage_h_inc
 #define plNetMessage_h_inc
 
-#include "hsUtils.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsStream.h"
 #include "hsBitVector.h"

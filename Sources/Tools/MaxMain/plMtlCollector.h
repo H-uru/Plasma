@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMtlCollector_h_inc
 #define plMtlCollector_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <set>
 #include "hsSTLSortUtils.h"
 

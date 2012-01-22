@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "iparamm2.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 
 extern TCHAR *GetString(int id);

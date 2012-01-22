@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysXCooking_h_inc
 #define plPhysXCooking_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include  "plMaxMeshExtractor.h"
 class hsStream;

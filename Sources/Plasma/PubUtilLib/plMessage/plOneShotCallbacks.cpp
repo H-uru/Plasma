@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plOneShotCallbacks.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 #include "hsResMgr.h"
 
 plOneShotCallbacks::plOneShotCallbacks()

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetCommonMessage_inc
 #define plNetCommonMessage_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsSafeRefCnt.h"
 
 //

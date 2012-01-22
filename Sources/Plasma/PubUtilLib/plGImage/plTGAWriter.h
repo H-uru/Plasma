@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTGAWriter_h
 #define _plTGAWriter_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class plMipmap;
 

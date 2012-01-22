@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsStringTokenizer_Included_
 #define _hsStringTokenizer_Included_
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #ifndef HS_BUILD_FOR_WIN32
 #include <wchar.h>

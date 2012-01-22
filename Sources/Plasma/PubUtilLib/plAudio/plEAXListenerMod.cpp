@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef EAX_SDK_AVAILABLE
 #include "plEAXStructures.h"
 #endif
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plEAXListenerMod.h"
 #include "plIntersect/plSoftVolume.h"
 #include "hsResMgr.h"

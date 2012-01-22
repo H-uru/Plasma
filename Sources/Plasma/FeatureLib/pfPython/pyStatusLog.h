@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  and interface to the ChatLog (ptChatStatusLog)
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"

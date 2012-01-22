@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plStencil_h
 #define _plStencil_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 //// Stencil Caps /////////////////////////////////////////////////////////////

@@ -39,11 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
 #include "hsFastMath.h"
-#include "hsUtils.h"
+
 #include "plParticle.h"
 #include "plParticleSystem.h"
 #include "plParticleEmitter.h"

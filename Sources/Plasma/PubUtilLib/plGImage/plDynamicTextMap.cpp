@@ -51,12 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynamicTextMap.h"
 
 #include "hsStream.h"
 #include "hsExceptions.h"
-#include "hsUtils.h"
+
 #include "hsMatrix44.h"
 #include "plPipeline/hsGDeviceRef.h"
 #include "plMessage/plDynamicTextMsg.h"

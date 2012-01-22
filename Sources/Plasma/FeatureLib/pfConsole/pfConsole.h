@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfConsole_h
 #define _pfConsole_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 

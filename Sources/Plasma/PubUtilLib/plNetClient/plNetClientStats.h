@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientStats_h
 #define plNetClientStats_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // Holds stats counters used by the Net Client

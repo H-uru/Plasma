@@ -40,25 +40,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifdef _HSWINDOWS_H
+#   error "Do not include hsWindows.h directly--use HeadSpin.h"
+#endif // _HSWINDOWS_H
+#define   _HSWINDOWS_H
+
 #if HS_BUILD_FOR_WIN32
 
-// 4244: Conversion
-// 4305: Truncation
-// 4503: 'identifier' : decorated name length exceeded, name was truncated
-// 4018: signed/unsigned mismatch
-// 4786: 255 character debug limit
-// 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
-// 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-#ifdef _MSC_VER
-#   pragma warning( disable : 4305 4503 4018 4786 4284 4800)
-#endif
+    // 4244: Conversion
+    // 4305: Truncation
+    // 4503: 'identifier' : decorated name length exceeded, name was truncated
+    // 4018: signed/unsigned mismatch
+    // 4786: 255 character debug limit
+    // 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
+    // 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+#   ifdef _MSC_VER
+#      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
+#   endif // _MSC_VER
 
-#ifndef __AFX_H__   // MFC apps won't let us include windows from here. =(
-#ifndef MAXPLUGINCODE
-#include <WinSock2.h>
-#endif // MAXPLUGINCODE
-
-#include <Windows.h>
-#endif  // __AFX_H__
-
+    // Windows.h includes winsock.h (winsocks 1), so we need to manually include winsock2 
+    // and tell Windows.h to only bring in modern headers
+#   ifndef MAXPLUGINCODE
+#      include <WinSock2.h>
+#      include <ws2tcpip.h>
+#   endif // MAXPLUGINCODE
+#   define WIN32_LEAN_AND_MEAN
+#   include <Windows.h>
+    
+    typedef HWND hsWindowHndl;
+#else
+    typedef int32_t* hsWindowHndl;
 #endif // HS_BUILD_FOR_WIN32

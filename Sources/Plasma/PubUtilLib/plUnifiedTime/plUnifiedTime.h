@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PL_UNIFIEDTIME_INC_
 #define _PL_UNIFIEDTIME_INC_
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #if HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
+
 #endif
 
 //

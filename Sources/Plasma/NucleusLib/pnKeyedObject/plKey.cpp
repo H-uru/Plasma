@@ -47,12 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plKey.h"
 #include "plUoid.h"
 #include <string.h>
 #include "hsResMgr.h"
-#include "hsTypes.h"
 
 #define TRACK_REFS 0 // MEMLEAKFISH
 

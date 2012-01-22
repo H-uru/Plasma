@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plResMgrSettings_h
 #define _plResMgrSettings_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class plResMgrSettings
 {

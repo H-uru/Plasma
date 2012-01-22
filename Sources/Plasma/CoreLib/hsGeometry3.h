@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsGGeometry3Defined
 
 #include "HeadSpin.h"
-#include "hsUtils.h"
+
 struct hsVector3;
 struct hsPoint3;
 struct hsScalarTriple;

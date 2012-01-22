@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLAVBRAIN_INC
 
 #include "plAGModifier.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"

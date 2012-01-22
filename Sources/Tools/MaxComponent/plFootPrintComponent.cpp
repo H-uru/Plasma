@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxConvert/hsMaterialConverter.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTweak.h"
 
 #include "hsResMgr.h"

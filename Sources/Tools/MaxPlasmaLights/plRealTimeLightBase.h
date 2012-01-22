@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamm2.h"
 
 // Our generic headers
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxMain/MaxCompat.h"
 

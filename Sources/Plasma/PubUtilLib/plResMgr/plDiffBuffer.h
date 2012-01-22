@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDiffBuffer_h
 #define _plDiffBuffer_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 //// Class Definition ////////////////////////////////////////////////////////

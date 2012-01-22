@@ -39,7 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
+
+#include "hsMaterialConverter.h"
 #include <commdlg.h>
 #include <math.h>
 #include <float.h>
@@ -50,13 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "istdplug.h"
 #include "texutil.h"
 
-#include "hsMaterialConverter.h"
 #include "plLayerConverter.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 #include "plResMgr/plKeyFinder.h"
 #include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
-#include "hsUtils.h"
+
 #include "hsMaxLayerBase.h"
 #include "MaxExport/plErrorMsg.h"
 #include "plSurface/hsGMaterial.h"

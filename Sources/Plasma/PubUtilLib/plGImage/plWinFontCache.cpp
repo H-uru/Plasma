@@ -58,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "plWinFontCache.h"
 
 #include "plStatusLog/plStatusLog.h"

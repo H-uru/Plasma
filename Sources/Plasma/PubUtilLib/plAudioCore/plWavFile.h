@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WAVEFILE_READ   1
 #define WAVEFILE_WRITE  2
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 #include <mmsystem.h>
 #include "plAudioFileReader.h"

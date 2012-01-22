@@ -51,16 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#include "hsConfig.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
 #include <ddraw.h>
 #include <d3d9.h>
 #endif
 
-#include "hsTypes.h"
 #include "hsDXTDirectXCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"

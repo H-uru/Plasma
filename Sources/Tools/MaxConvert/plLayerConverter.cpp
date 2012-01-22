@@ -58,14 +58,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
+
 #include "Max.h"
 #include "stdmat.h"
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
 
-#include "hsUtils.h"
+
 #include "hsExceptionStack.h"
 
 #include "plLayerConverter.h"

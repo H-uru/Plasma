@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSceneNode.h"
 #include "pnDispatch/plDispatch.h"
 #include "plMessage/plNodeCleanupMsg.h"

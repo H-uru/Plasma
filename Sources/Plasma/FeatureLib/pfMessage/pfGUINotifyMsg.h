@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plMessage.h"
 #include "hsResMgr.h"
 #include "pnModifier/plSingleModifier.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
 
 
 

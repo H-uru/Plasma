@@ -41,20 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsRefCnt.h"
-#include "hsUtils.h"
 #include "hsStlUtils.h"
 #include "hsExceptions.h"
 #include <math.h>
-
-
-#if HS_BUILD_FOR_WIN32
-#ifdef _MSC_VER
-# include <crtdbg.h>        /* for _RPT_BASE */
-#endif
-# define WIN32_LEAN_AND_MEAN
-# define WIN32_EXTRA_LEAN
-# include <windows.h>   // For OutputDebugString()
-#endif
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -89,16 +78,10 @@ void hsDebugMessage (const char message[], long val)
 {
     char    s[1024];
 
-#if HS_BUILD_FOR_WIN32
-    #define strfmt _snprintf
-#else
-    #define strfmt snprintf
-#endif
-
     if (val)
-        s[0] = strfmt(&s[1], 1022, "%s: %ld", message, val);
+        s[0] = snprintf(&s[1], 1022, "%s: %ld", message, val);
     else
-        s[0] = strfmt(&s[1], 1022, "%s", message);
+        s[0] = snprintf(&s[1], 1022, "%s", message);
 
     if (gHSDebugProc)
         gHSDebugProc(&s[1]);

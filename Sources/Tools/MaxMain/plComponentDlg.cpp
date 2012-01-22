@@ -960,7 +960,7 @@ bool plComponentDlg::IIsHidden(Class_ID& cid)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "hsUtils.h"
+
 
 class plCopyCompCallback : public HitByNameDlgCallback
 {

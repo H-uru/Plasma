@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <D3d9.h>
 #include <D3dx9core.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plDXVertexShader.h"
 

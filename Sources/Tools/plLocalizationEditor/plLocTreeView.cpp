@@ -42,9 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLocTreeView.h"
 #include "plEditDlg.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <WinSock2.h>
-#include <Windows.h>
+#include "HeadSpin.h"
 #include <commctrl.h>
 #include <shlwapi.h>
 #include "res\resource.h"
@@ -52,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <string>
 
-#include "hsUtils.h"
+
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 extern HINSTANCE gInstance;

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDispatchLogBase_inc
 #define plDispatchLogBase_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // For debugging messaging code.

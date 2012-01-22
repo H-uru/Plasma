@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // in to avoid multiple derivation by net messages.
 //
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStream.h"
 #include "hsStlUtils.h"
 #include "pnNetCommon/pnNetCommon.h"

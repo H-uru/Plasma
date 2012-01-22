@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsStlUtils_h_inc
 #define hsStlUtils_h_inc
 
-#include "hsUtils.h"
-//#include <xmemory>
+
+#include "HeadSpin.h"
 #include <functional>
 #include <algorithm>
 #include <string>

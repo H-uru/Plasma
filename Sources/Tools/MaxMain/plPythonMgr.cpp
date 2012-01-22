@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "pfPython/cyPythonInterface.h"
-#include "hsUtils.h"
+
 
 plPythonMgr::plPythonMgr()
 {
@@ -129,7 +129,7 @@ bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
 
 
 #include "MaxComponent/plPythonFileComponent.h"
-#include "hsUtils.h"
+
 
 enum ParamTypes
 {

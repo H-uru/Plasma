@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRefCnt_Defined
 #define plRefCnt_Defined
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // plRef count addes refcount abilities to any plCreatable
 

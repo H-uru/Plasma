@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPlasmaServers_h_inc
 #define plPlasmaServers_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <vector>
 
 class plPlasmaServers

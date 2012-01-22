@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"
-#include "hsUtils.h"
+
 
 ////////////////////////////////////////////////////////////////////
 // A msg which is sent to the networking system to cause the player to link

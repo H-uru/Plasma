@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plInputIfaceMgrMsg_h
 #define _plInputIfaceMgrMsg_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "pnMessage/plMessage.h"

@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAgeManifest.h"
-#include "hsUtils.h"
+
 
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"

@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plFont_h
 #define _plFont_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
 #include "pcSmallRect.h"

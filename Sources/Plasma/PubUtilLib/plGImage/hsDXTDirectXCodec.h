@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsDXTDirectXCodec_inc
 
 
-#include "hsWindows.h"
+
 #include "hsCodec.h"
 
 class plMipmap;

@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "plComponentBase.h"
 //#include "plComponentReg.h"
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include <vector>
 
 class ParamBlockDesc2;

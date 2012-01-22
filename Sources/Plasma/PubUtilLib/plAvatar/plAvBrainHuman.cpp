@@ -39,11 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
 
 #include "plAvCallbackAction.h"                 // subclasses a havok object; must be in first include section
-
+#include "HeadSpin.h"
 
 #include "plAvBrainHuman.h"
 #include "plAvBrainClimb.h"

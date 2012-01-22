@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other
 #include "pnNetCommon/plNetApp.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 

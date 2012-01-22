@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "plResTreeView.h"
 
 #include "plResMgr/plResManager.h"
@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnFactory/plFactory.h"
 
-#include <windows.h>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include "res\resource.h"

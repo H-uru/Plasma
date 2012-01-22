@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWaterComponent.h"
 #include "plSoftVolumeComponent.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTweak.h"
 
 #include "plDrawable/plWaveSetBase.h"

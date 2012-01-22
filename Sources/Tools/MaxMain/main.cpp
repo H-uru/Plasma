@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "istdplug.h"
 #include "custcont.h"
 
-#include "HeadSpin.h"
-
 #include "MaxExport/SimpleExport.h"
 #include "MaxMain/MaxCompat.h"
 

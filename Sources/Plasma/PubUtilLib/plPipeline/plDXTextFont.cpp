@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <d3dx9mesh.h>
 
 #include "hsWinRef.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDXTextFont.h"
 #include "plDXPipeline.h"
 

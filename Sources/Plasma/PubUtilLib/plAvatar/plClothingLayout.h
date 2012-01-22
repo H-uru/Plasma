@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLCLOTHINGLAYOUT_INC
 #define PLCLOTHINGLAYOUT_INC
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 
 // This file is intended to be an independent section so that plClothingMtl and plAvatarClothing
 // can both use these structures, without all the plCreatable/hsKeyedObject/plSynchedObject stuff

@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "plSDLDescriptor.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 
 #include "pnFactory/plCreatable.h"

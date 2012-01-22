@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plMaxCFGFile.h"
 #include "max.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFile/plBrowseFolder.h"
 
 const char *plMaxConfig::GetPluginIni()

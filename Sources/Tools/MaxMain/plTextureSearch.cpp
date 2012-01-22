@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plTextureSearch.h"
 #include "resource.h"
-#include "hsUtils.h"
+
 
 #define PB2Export __declspec( dllexport )   // Because I don't feel like including all the paramblock crap
 #include "pbbitmap.h"

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsBitVector_inc
 #define hsBitVector_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 template <class T> class hsTArray;
 class hsStream;

@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "hsStream.h"
 #include "resource.h"
-#include "hsUtils.h"
+
 
 #include "plAvatar/plAnimStage.h"
 

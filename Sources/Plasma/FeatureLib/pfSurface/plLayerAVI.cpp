@@ -40,19 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
-#define WIN32_EXTRA_LEAN
-#define WIN32_LEAN_AND_MEAN
-#ifndef _WINDOWS_H_ // redundant include guard to minimize compile times
-#define _WINDOWS_H_
-#include <windows.h>
-#endif // _WINDOWS_H_
 #include "vfw.h"
 #endif // HS_BUILD_FOR_WIN32
 
-#include "hsTypes.h"
 #include "plLayerAVI.h"
 #include "plGImage/plMipmap.h"
 

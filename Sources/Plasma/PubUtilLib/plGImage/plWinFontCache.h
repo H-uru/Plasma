@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsColorRGBA.h"
-#include "hsWindows.h"              // EVIL
+              // EVIL
 #include "hsTemplates.h"
 
 #if HS_BUILD_FOR_WIN32

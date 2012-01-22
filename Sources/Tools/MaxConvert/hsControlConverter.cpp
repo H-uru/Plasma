@@ -39,7 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
+
+#include "HeadSpin.h"
 #include <commdlg.h>
 #include <math.h>
 
@@ -52,8 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "modstack.h"
 #include "keyreduc.h"
-
-#include "HeadSpin.h"
 
 #include "hsMaxLayerBase.h"
 #include "plInterp/plController.h"

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plEncryptLogLine_h
 #define _plEncryptLogLine_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 namespace plStatusEncrypt
 {

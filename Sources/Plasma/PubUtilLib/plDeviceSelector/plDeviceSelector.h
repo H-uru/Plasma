@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef DEVICESELECTOR_H
 #define DEVICESELECTOR_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 //#include "plRender.h"
 #include "../../PubUtilLib/plPipeline/hsG3DDeviceSelector.h"
 

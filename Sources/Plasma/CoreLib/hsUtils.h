@@ -39,20 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef hsUtils_Defined
-#define hsUtils_Defined
+
+#ifdef _HSUTILS_H
+#   error "Do not include hsUtils.h directly--use HeadSpin.h"
+#endif // _HSUTILS_H
+#define   _HSUTILS_H
 
 #include "HeadSpin.h"
-
-#include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
 
 int     hsStrlen(const char src[]);
 char*   hsStrcpy(char dstOrNil[], const char src[]);
 void    hsStrcat(char dst[], const char src[]);
-hsBool  hsStrEQ(const char s1[], const char s2[]);
-hsBool  hsStrCaseEQ(const char* s1, const char* s2);
+bool    hsStrEQ(const char s1[], const char s2[]);
+bool    hsStrCaseEQ(const char* s1, const char* s2);
 char*   hsScalarToStr(float);
 int     hsRemove(const char* filename);
 void    hsCPathToMacPath(char* dst, char* fname);   
@@ -191,6 +192,3 @@ void hsRandSeed(int seed);
 #define hsFopen(name, mode) fopen(name, mode)
 
 char** DisplaySystemVersion();
-
-#endif // hsUtils_Defined
-

@@ -40,10 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsFiles.h"
+#include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
-
-#include <windows.h>
 
 #include "hsExceptions.h"
 

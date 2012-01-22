@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGDDrawDllLoad.h"
 #include "hsG3DDeviceSelector.h"
-#include "hsUtils.h"
+
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
 

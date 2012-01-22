@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plOSMsg_inc
 #define plOSMsg_inc
 
-#include "hsWindows.h"
+
 
 //
 // This enum wraps all of the OS messages

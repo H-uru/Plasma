@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDebugText_h
 #define _plDebugText_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 
 //// plDebugText Class Definition ////////////////////////////////////////////
 

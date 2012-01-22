@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plClientKey.h"
-#include "hsWindows.h"
 
 typedef const uint32_t* (*GETKEY)();
 

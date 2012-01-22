@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfConsoleContext_h
 #define _pfConsoleContext_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfConsoleCmd.h"
 
 

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define MF_NEW_RGC
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 #include "dummy.h"
 #include "notify.h"

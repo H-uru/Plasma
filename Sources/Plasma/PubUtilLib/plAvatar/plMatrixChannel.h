@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 
 // global
-#include "hsTypes.h"        // you need types to include Matrix
+#include "HeadSpin.h"        // you need types to include Matrix
 #include "hsMatrix44.h"
 #include "plTransform/hsAffineParts.h"
 

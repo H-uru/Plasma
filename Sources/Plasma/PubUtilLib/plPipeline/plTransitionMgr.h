@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTransitionMgr_h
 #define _plTransitionMgr_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsUtils.h"
+
 
 
 //// Class Definition ////////////////////////////////////////////////////////

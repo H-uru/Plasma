@@ -39,10 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLocalization.h"
 #include "plFile/plFileUtils.h"
-#include "hsUtils.h"
+
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
 

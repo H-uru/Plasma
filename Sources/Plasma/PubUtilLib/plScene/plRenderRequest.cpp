@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRenderRequest.h"
 #include "plPageTreeMgr.h"
 #include "plPipeline/plRenderTarget.h"

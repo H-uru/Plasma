@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "hsTimer.h"
 
-#include "hsUtils.h"
+
 
 static uint32_t gCyclesPerMS = 0;
 
@@ -79,7 +79,7 @@ forceinline uint32_t GetPentiumCounter()
 
 #pragma warning (pop)
 
-#include "hsWindows.h"
+
 
 static uint32_t GetProcSpeed()
 {

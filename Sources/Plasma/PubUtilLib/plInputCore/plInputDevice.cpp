@@ -49,14 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarInputInterface.h"
 #include "plMessage/plInputEventMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "hsUtils.h"
+
 #include "plgDispatch.h"
 
 #include "plPipeline/plPlates.h"
 #include "plPipeline/plDebugText.h"
 #include "plGImage/plMipmap.h"
 
-#include "hsWindows.h"
+
 #include "plPipeline.h"
 
 // The resolution that uses the base size of the cursor. 

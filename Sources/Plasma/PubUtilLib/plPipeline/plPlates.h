@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPlates_h
 #define _plPlates_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "hsMatrix44.h"
 
 

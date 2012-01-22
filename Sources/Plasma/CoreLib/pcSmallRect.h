@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pcSmallRect_h
 #define _pcSmallRect_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class hsStream;
 class pcSmallRect

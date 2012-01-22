@@ -46,19 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfConsoleDirSrc.h"
-
+#include "HeadSpin.h"
 #include "hsExceptions.h"
 
 #ifdef HS_BUILD_FOR_WIN32
-
-#define WIN32_EXTRA_LEAN
-#define WIN32_LEAN_AND_MEAN
-#ifndef _WINDOWS_H_ // redundant include guard to minimize compile times
-#define _WINDOWS_H_
-#include <windows.h>
-#endif // _WINDOWS_H_
-
-#include <winbase.h>
 
 #include <sstream>
 

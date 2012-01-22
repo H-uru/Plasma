@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoundDeswizzler_h
 #define _plSoundDeswizzler_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGApplicator.h"
 #include "plAGModifier.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 
 // ctor --------
 // -----

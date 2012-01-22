@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plStatusLog_h
 #define _plStatusLog_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsThread.h"
 
 #include <string>

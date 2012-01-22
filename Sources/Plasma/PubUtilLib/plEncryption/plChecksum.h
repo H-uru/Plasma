@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CHECKSUM_H
 #define PL_CHECKSUM_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <openssl/md5.h>
 
 class plChecksum

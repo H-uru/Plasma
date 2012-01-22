@@ -39,15 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#ifndef hsTypes_Defined
-#define hsTypes_Defined
+#ifdef _HSTYPES_H
+#   error "Do not include hsTypes.h directly--use HeadSpin.h"
+#endif // _HSTYPES_H
+#define   _HSTYPES_H
 
 
 /************************** Other Includes *****************************/
 #include <cstdlib>
 #include <cstdio>
+#include <cstddef>
 
 
 /************************** Basic Macros *****************************/
@@ -123,7 +125,6 @@ typedef uint32_t  hsGSeedValue;
 
 /************************** Swap Macros *****************************/
 
-#ifdef __cplusplus
     inline uint16_t hsSwapEndian16(uint16_t value)
     {
         return (value >> 8) | (value << 8);
@@ -203,7 +204,6 @@ typedef uint32_t  hsGSeedValue;
             a = b;
             b = c;
         }
-#endif
 
 /************************** Color32 Type *****************************/
 
@@ -211,7 +211,6 @@ struct hsColor32 {
 
     uint8_t   b, g, r, a;
 
-#ifdef __cplusplus
     void        SetARGB(uint8_t aa, uint8_t rr, uint8_t gg, uint8_t bb)
             {
                 this->a = aa; this->r = rr; this->g = gg; this->b = bb;
@@ -227,20 +226,11 @@ struct hsColor32 {
                 this->SetARGB(aa, rr, gg, bb);
             }
 
-#if 0
-    friend int  operator==(const hsColor32& a, const hsColor32& b)
-            {
-                return *(uint32_t*)&a == *(uint32_t*)&b;
-            }
-    friend int  operator!=(const hsColor32& a, const hsColor32& b) { return !(a == b); }
-#else
     int operator==(const hsColor32& aa) const
     {
             return *(uint32_t*)&aa == *(uint32_t*)this;
     }
     int operator!=(const hsColor32& aa) { return !(aa == *this); }
-#endif
-#endif
 };
 hsCTypeDefStruct(hsColor32)
 
@@ -259,7 +249,8 @@ typedef hsColor32 hsRGBAColor32;
 *
 ***/
 
-#if _MSC_VER >= 7
+
+#ifdef _MSC_VER
 # define  NULL_STMT  __noop
 #else
 # define  NULL_STMT  ((void)0)
@@ -388,20 +379,6 @@ void SWAP (T & a, T & b) {
 
 /****************************************************************************
 *
-*   Calculate the address to the base of a structure given its type, and the
-*   address of a field within the structure.
-*
-*   Example:
-*
-*   CONTAINING_STRUCT(trans, INetTrans, m_trans);
-*
-***/
-
-#define CONTAINING_STRUCT(a, t, f)  ((t *) ((uint8_t *)(a) - (uintptr_t)(&((t *)0)->f)))
-
-
-/****************************************************************************
-*
 *   arrsize/marrsize
 *   arrsize returns the number of elements in an array variable
 *   marrsize returns the number of elements in an array field in a structure
@@ -418,17 +395,9 @@ void SWAP (T & a, T & b) {
 
 /****************************************************************************
 *
-*   offsetof/moffsetof
-*   offsetof returns the offset in bytes of a field inside a structure based on a type
 *   moffsetof returns the offset in bytes of a field inside a structure based on a variable
 *
 ***/
-
-#include <stddef.h>
-
-#ifndef  offsetof
-#define  offsetof(s,m)  (size_t)&(((s *)0)->m)
-#endif   // ifndef offsetof
 
 #define  moffsetof(v,f)  (((uint8_t *) &((v)->f)) - ((uint8_t *) v))
 
@@ -473,10 +442,6 @@ void SWAP (T & a, T & b) {
 
 
 /************************ Debug/Error Macros **************************/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef void (*hsDebugMessageProc)(const char message[]);
 extern hsDebugMessageProc gHSDebugProc;
@@ -552,9 +517,3 @@ void DebugMsgV (const char fmt[], va_list args);
 
 #endif // PLASMA_EXTERNAL_RELEASE
 
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif

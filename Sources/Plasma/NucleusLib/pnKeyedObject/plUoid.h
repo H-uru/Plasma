@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plUoid_h_inc
 #define plUoid_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
 

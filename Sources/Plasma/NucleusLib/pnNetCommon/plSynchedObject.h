@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSYNCHOBJ_inc
 #define PLSYNCHOBJ_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsStlUtils.h"

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENTMGR_H
 #define PL_COMPONENTMGR_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "max.h"
 #include "utilapi.h"
 

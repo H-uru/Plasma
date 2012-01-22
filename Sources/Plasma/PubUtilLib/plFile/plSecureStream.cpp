@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSecureStream.h"
-#include "hsUtils.h"
+
 #include "plFileUtils.h"
 #include "hsSTLStream.h"
 

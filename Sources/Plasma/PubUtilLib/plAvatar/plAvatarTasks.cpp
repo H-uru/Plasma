@@ -39,8 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 // singular
 #include "plAvatarTasks.h"
@@ -57,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // global
-#include "hsUtils.h"
+
 
 // other
 #include "plgDispatch.h"

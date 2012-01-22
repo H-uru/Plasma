@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
+
 #include "HeadSpin.h"
 #include "plTextFont.h"
 #include "plDebugText.h"

@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //----------------------------
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
 #include "hsStlUtils.h"

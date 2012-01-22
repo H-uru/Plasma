@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plMsgForwarder.h"
 #include "hsResMgr.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnNetCommon/plNetApp.h"
