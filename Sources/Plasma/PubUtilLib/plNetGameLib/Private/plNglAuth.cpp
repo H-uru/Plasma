@@ -2716,7 +2716,7 @@ bool LoginRequestTrans::Recv (
 
             unsigned memSize = min(arrsize(s_encryptionKey), arrsize(reply.encryptionKey));
             memSize *= sizeof(uint32_t);
-            MemCopy(s_encryptionKey, reply.encryptionKey, memSize);
+            memcpy(s_encryptionKey, reply.encryptionKey, memSize);
         }
         break;
 
@@ -3635,7 +3635,7 @@ bool FileDownloadRequestTrans::Recv (
         writeTrans->bytes   = reply.chunkSize;
         writeTrans->offset  = reply.chunkOffset;
         writeTrans->data    = (uint8_t *)malloc(reply.chunkSize);
-        MemCopy(writeTrans->data, reply.chunkData, reply.chunkSize);
+        memcpy(writeTrans->data, reply.chunkData, reply.chunkSize);
         NetTransSend(writeTrans);
     }
 
@@ -5286,7 +5286,7 @@ void NetCliAuthGetEncryptionKey (
 ) {
     unsigned memSize = min(arrsize(s_encryptionKey), size);
     memSize *= sizeof(uint32_t);
-    MemCopy(key, s_encryptionKey, memSize);
+    memcpy(key, s_encryptionKey, memSize);
 }
 
 //============================================================================

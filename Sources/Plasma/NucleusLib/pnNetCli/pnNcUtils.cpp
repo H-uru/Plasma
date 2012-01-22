@@ -74,7 +74,7 @@ bool CInputAccumulator::Get (unsigned count, void * dest) {
     if (curr + count > buffer.Term())
         return false;
 //  LogMsg(kLogPerf, L"Removing %u bytes from accumulator %p", count, this);
-    MemCopy(dest, curr, count);
+    memcpy(dest, curr, count);
     curr += count;
     return true;
 }

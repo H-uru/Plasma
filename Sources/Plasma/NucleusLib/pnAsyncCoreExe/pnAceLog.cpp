@@ -453,7 +453,7 @@ void AsyncLogWriteMsg (
             AllocLogBuffer_CS(index);
 
         // Add new data to the log buffer
-        MemCopy(s_logBuf[index] + s_logPos[index], buffer, chars);
+        memcpy(s_logBuf[index] + s_logPos[index], buffer, chars);
         s_logPos[index] += chars;
 
         // Write, flush and close file immediately if this is a fatal error        

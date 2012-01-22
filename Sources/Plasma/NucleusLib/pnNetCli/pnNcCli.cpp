@@ -191,7 +191,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
     if (cli->mode == kNetCliModeEncrypted && cli->cryptOut) {
         temp = (uint8_t *)malloc(bytes);
 
-        MemCopy(temp, data, bytes);
+        memcpy(temp, data, bytes);
         CryptEncrypt(cli->cryptOut, bytes, temp);
         data = temp;
     }
@@ -222,7 +222,7 @@ static void AddToSendBuffer (
         // Let the OS fragment oversize buffers
         FlushSendBuffer(cli);
         void * heap = malloc(bytes);
-        MemCopy(heap, data, bytes);
+        memcpy(heap, data, bytes);
         PutBufferOnWire(cli, heap, bytes);
         free(heap);
     }
@@ -665,7 +665,7 @@ static void ClientConnect (NetCli * cli) {
         memset(&cli->seed, 0, sizeof(cli->seed));
         unsigned bytes;
         unsigned char * data = clientSeed.GetData_LE(&bytes);
-        MemCopy(cli->seed, data, min(bytes, sizeof(cli->seed)));
+        memcpy(cli->seed, data, min(bytes, sizeof(cli->seed)));
         delete [] data;
     }
 
@@ -677,7 +677,7 @@ static void ClientConnect (NetCli * cli) {
         ASSERTMSG(bytes <= sizeof(msg.dh_y_data), "4");
         msg.message    = kNetCliCli2SrvConnect;
         msg.length     = (uint8_t) (sizeof(msg) - sizeof(msg.dh_y_data) +  bytes);
-        MemCopy(msg.dh_y_data, data, bytes);
+        memcpy(msg.dh_y_data, data, bytes);
         AsyncSocketSend(cli->sock, &msg, msg.length);
         delete [] data;
     }
@@ -704,7 +704,7 @@ static bool ServerRecvConnect (
         NetCli_Srv2Cli_Encrypt reply;
         reply.message   = kNetCliSrv2CliEncrypt;
         reply.length    = seedLength == 0 ? 0 : sizeof(reply); // reply with empty seed if we got empty seed (this means: no encryption)
-        MemCopy(reply.serverSeed, cli->seed, sizeof(reply.serverSeed));
+        memcpy(reply.serverSeed, cli->seed, sizeof(reply.serverSeed));
         AsyncSocketSend(cli->sock, &reply, reply.length);
     }
 
@@ -727,7 +727,7 @@ static bool ServerRecvConnect (
             memset(&clientSeed, 0, sizeof(clientSeed));
             unsigned bytes;
             unsigned char * data = clientSeedValue.GetData_LE(&bytes);
-            MemCopy(clientSeed, data, min(bytes, sizeof(clientSeed)));
+            memcpy(clientSeed, data, min(bytes, sizeof(clientSeed)));
             delete [] data;
         }
 
@@ -952,7 +952,7 @@ static void SetConnSeed (
     const uint8_t      seedData[]
 ) {
     if (seedBytes)
-        MemCopy(cli->seed, seedData, min(sizeof(cli->seed), seedBytes));
+        memcpy(cli->seed, seedData, min(sizeof(cli->seed), seedBytes));
     else
         CryptCreateRandomSeed(sizeof(cli->seed), cli->seed);
 }
@@ -1113,7 +1113,7 @@ bool NetCliDispatch (
             if (cli->cryptIn) {
                 temp = (uint8_t *)malloc(bytes);
 
-                MemCopy(temp, data, bytes);
+                memcpy(temp, data, bytes);
                 CryptDecrypt(cli->cryptIn, bytes, temp);
                 data = temp;
             }

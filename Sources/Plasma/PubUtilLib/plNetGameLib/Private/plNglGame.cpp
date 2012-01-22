@@ -457,7 +457,7 @@ static bool Recv_PropagateBuffer (
     trans->bufferType   = reply.type;
     trans->bufferBytes  = reply.bytes;
     trans->bufferData   = (uint8_t *)malloc(reply.bytes);
-    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    memcpy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
     return true;
@@ -474,7 +474,7 @@ static bool Recv_GameMgrMsg (
     RcvdGameMgrMsgTrans * trans = new RcvdGameMgrMsgTrans;
     trans->bufferBytes  = reply.bytes;
     trans->bufferData   = (uint8_t *)malloc(reply.bytes);
-    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    memcpy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
     return true;

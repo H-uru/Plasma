@@ -337,7 +337,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrToUnicode(src, info.GetAgeFilename(), arrsize(src));
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -346,7 +346,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrToUnicode(src, info.GetAgeInstanceName(), arrsize(src));
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -355,7 +355,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrToUnicode(src, info.GetAgeUserDefinedName(), arrsize(src));
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -364,7 +364,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrToUnicode(src, info.GetAgeDescription(), arrsize(src));
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -374,7 +374,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 GuidToString(guid, src, arrsize(src));
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -383,7 +383,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrPrintf(src, arrsize(src), L"%u", info.GetAgeLanguage());
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
             
@@ -392,7 +392,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
                 StrPrintf(src, arrsize(src), L"%u", info.GetAgeSequenceNumber());
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
-                MemCopy(dst, src, len * sizeof(src[0]));
+                memcpy(dst, src, len * sizeof(src[0]));
             }
             break;
 
@@ -790,7 +790,7 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
     
     char str[2048];
     memset(&str, 0, sizeof(str));
-    MemCopy(str, spawnPoints, min(spawnPointsLen, arrsize(str) - 1));
+    memcpy(str, spawnPoints, min(spawnPointsLen, arrsize(str) - 1));
     
     char token1[ 1024 ];
     hsStringTokenizer izer1( str, ";" );

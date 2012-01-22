@@ -317,7 +317,7 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
         if(!size)
             break;  
 
-        MemCopy(bufferData, pData, size);
+        memcpy(bufferData, pData, size);
         pData += size;
         bytes-= size;
         numBuffersToQueue++;
