@@ -115,8 +115,6 @@ const char  *plJPEG::GetLastError( void )
 
 plMipmap    *plJPEG::IRead( hsStream *inStream )
 {
-    MemPushDisableTracking();
-
     plMipmap    *newMipmap = nil;
     uint8_t       *jpegSourceBuffer = nil;
     uint32_t      jpegSourceSize;
@@ -229,7 +227,6 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
 
     // Clean up the JPEG Library
     jpeg_destroy_decompress( &cinfo );
-    MemPopDisableTracking();
 
     // All done!
     return newMipmap;

@@ -649,55 +649,6 @@ PF_CONSOLE_CMD(Stats, ProfileAllAgeLoads, "", "Turns on Registry.LogReadTimes an
 
 
 //////////////////////////////////////////////////////////////////////////////
-//// Memory  Commands ////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-#ifndef LIMIT_CONSOLE_COMMANDS
-
-
-PF_CONSOLE_GROUP( Memory )
-
-#ifdef HS_FIND_MEM_LEAKS
-
-PF_CONSOLE_CMD( Memory, DumpAllocReport,    // Group name, Function name
-                "",         // Params
-                "Dump heap allocations to file." )  // Help string
-{
-    MemDumpAllocReport();
-}
-
-
-PF_CONSOLE_CMD(Memory,
-               ValidateNow,
-               "",
-               "Validate all heap allocations")
-{
-    MemValidateNow();
-}
-
-
-PF_CONSOLE_CMD(Memory,
-               SetValidation,
-               "bool on",
-               "Validate all heap allocations each time memory is alloced or freed.")
-{
-    MemSetValidation((bool)params[0]);
-}
-
-PF_CONSOLE_CMD(Memory,
-               DumpUsage,
-               "",
-               "Dump heap usage to file")
-{
-    MemDumpUsageReport();
-}
-
-
-#endif
-
-#endif // LIMIT_CONSOLE_COMMANDS
-
-//////////////////////////////////////////////////////////////////////////////
 //// Console Group Commands //////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 

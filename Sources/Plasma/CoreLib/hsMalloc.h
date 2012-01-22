@@ -62,35 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 extern "C" {
 #endif
 
-void *   MemDup (const void * ptr, unsigned bytes, unsigned flags, const char file[], int line);
 unsigned MemSize (void * ptr);
-
-
-/****************************************************************************
-*
-*   Manipulation functions
-*
-***/
-
-int  MemCmp (const void * buf1, const void * buf2, unsigned bytes);
-void MemCopy (void * dest, const void * source, unsigned bytes);
-void MemMove (void * dest, const void * source, unsigned bytes);
-
-
-/*****************************************************************************
-*
-*   Debugging functions
-*
-***/
-
-void MemDumpAllocReport ();
-void MemDumpUsageReport ();
-void MemValidateNow ();
-void MemSetValidation (unsigned on);
-void MemPushDisableTracking ();
-void MemPopDisableTracking ();
-void MemSetColor (unsigned short color);
-
 
 #ifdef __cplusplus
 }
@@ -109,20 +81,3 @@ void MemSetColor (unsigned short color);
 #define NEWZERO(t)              new(calloc(sizeof(t), 1)) t
 
 #endif // __cplusplus
-
-
-
-/****************************************************************************
-*
-*   TypeInfo
-*   (needed for memory leak reporting)
-*
-***/
-
-#ifdef __cplusplus
-
-#if !defined(HS_NO_TYPEINFO)
-#include <typeinfo>
-#endif
-
-#endif // ifdef __cplusplus

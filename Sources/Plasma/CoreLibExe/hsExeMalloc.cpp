@@ -62,10 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # define MEM_DEBUG
 #endif
 
-const unsigned kMemReallocInPlaceOnly   = 1<<0;
-const unsigned kMemZero                 = 1<<1;
-const unsigned kMemIgnoreBlock          = 1<<2; // don't track this allocation
-
 #ifndef MEM_DEBUG
 
 # define _malloc_dbg(s, t, f, l)        malloc(s)
@@ -466,27 +462,4 @@ unsigned MemSize (void * ptr) {
     result = (unsigned)_msize_dbg(ptr, block);
 #endif
     return result;
-}
-
-
-//===========================================================================
-int MemCmp (const void * buf1, const void * buf2, unsigned bytes) {
-    return memcmp(buf1, buf2, bytes);
-}
-
-//===========================================================================
-void MemCopy (void * dest, const void * source, unsigned bytes) {
-    memcpy(dest, source, bytes);
-}
-
-//===========================================================================
-void MemMove (void * dest, const void * source, unsigned bytes) {
-    memmove(dest, source, bytes);
-}
-
-//===========================================================================
-void * MemDup (const void * ptr, unsigned bytes, unsigned flags, const char file[], int line) {
-    void * dst = malloc(bytes);
-    MemCopy(dst, ptr, bytes);
-    return dst;
 }
