@@ -452,143 +452,7 @@ void MemSetColor (unsigned short color) {
 #endif // MEM_DEBUG
 }
 
-//===========================================================================
-void * MemAlloc (unsigned bytes, unsigned flags, const char file[], int line) {
-
-#ifdef MEM_DEBUG
-    unsigned block;
-    if (flags & kMemIgnoreBlock || s_memCheckOff)
-        block = _IGNORE_BLOCK;
-    else
-        block = _CLIENT_BLOCK | (s_memColor << 16);
-#endif // MEM_DEBUG
-
-#ifdef MEM_DEBUG
-    if (s_critsect)
-        s_critsect->Enter();
-    if (block == _IGNORE_BLOCK)
-        CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-#endif
-
-    void * ptr = (flags & kMemZero)
-        ? _calloc_dbg(bytes, 1, block, file, line)
-        : _malloc_dbg(bytes, block, file, line);
-
-#ifdef MEM_DEBUG
-    if (block == _IGNORE_BLOCK)
-        SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-    if (s_critsect)
-        s_critsect->Leave();
-#endif
-
-    if (!ptr)
-        ErrorFatal(__LINE__, __FILE__, "Out of memory");
-
-    // In debug mode ensure that memory is initialized to some freaky value
-    #ifdef HS_DEBUGGING
-        if (! (flags & kMemZero))
-            memset(ptr, (uint8_t) ((uintptr_t)ptr >> 4), bytes);
-    #endif
-
-#ifdef _MSC_VER
-    // Compiler specific:
-    // Adding this line causes MSVC to stop assuming that memory allocation
-    // can fail thus producing more efficient assembler code.
-    __assume(ptr);
-#endif
-
-    // return the allocated buffer
-    return ptr;
-}
-
 //============================================================================
-void MemFree (void * ptr, unsigned flags) {
-    if (!ptr)
-        return;
-
-#ifdef MEM_DEBUG
-    const _CrtMemBlockHeader * pHead = pHdr(ptr);
-    unsigned block = pHead->nBlockUse;
-#endif // MEM_DEBUG
-    
-    _free_dbg(ptr, block);
-}
-
-//===========================================================================
-void * MemRealloc (void * ptr, unsigned bytes, unsigned flags, const char file[], int line) {
-    #ifdef HS_DEBUGGING
-    unsigned oldBytes = ptr ? MemSize(ptr) : 0;
-    #endif
-
-#ifdef MEM_DEBUG
-    unsigned block;        
-    if (flags & kMemIgnoreBlock || s_memCheckOff)
-        block = _IGNORE_BLOCK;
-    else
-        block = _CLIENT_BLOCK | (s_memColor << 16);
-#endif
-
-    void * newPtr = nil;
-
-#ifdef MEM_DEBUG
-    if (s_critsect)
-        s_critsect->Enter();
-    if (block == _IGNORE_BLOCK)
-        CLEAR_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-#endif
-
-    for (;;) {
-        if (flags & kMemReallocInPlaceOnly) {
-#ifndef MEM_DEBUG
-            break;
-#else
-            newPtr = _expand_dbg(ptr, bytes, block, file, line);
-
-            // expand can succeed without making the block big enough -- check for this case!
-            if (!newPtr || _msize_dbg(newPtr, block) < bytes)
-                break;
-#endif  // MEM_DEBUG
-        }
-        else if (!bytes) {
-            newPtr = _malloc_dbg(0, block, file, line);
-            _free_dbg(ptr, block);
-        }
-        else {
-            newPtr = _realloc_dbg(ptr, bytes, block, file, line);
-        }
-
-        if (!newPtr)
-            ErrorFatal(__LINE__, __FILE__, "Out of memory");
-
-        break;
-    }
-
-#ifdef MEM_DEBUG
-    if (block == _IGNORE_BLOCK)
-        SET_CRT_DEBUG_FIELD(_CRTDBG_ALLOC_MEM_DF);
-    if (s_critsect)
-        s_critsect->Leave();
-#endif
-
-    /* This code doesn't work because the memory manager may have "rounded" the size
-     * of a previous allocation upward to keep it aligned. Therefore, the tail of 
-     * the memory block may be initialized with garbage instead of zeroes, and the
-     * realloc call actually copied that memory.
-    if ((bytes > oldBytes) && (flags & kMemZero))
-        MemZero((uint8_t *)newPtr + oldBytes, bytes - oldBytes);
-    */
-    ASSERT(!(flags & kMemZero));
-
-    // In debug mode ensure that memory is initialized to some freaky value
-    #ifdef HS_DEBUGGING
-    if ((bytes > oldBytes) && !(flags & kMemZero))
-        MemSet((uint8_t *)newPtr + oldBytes, (uint8_t) ((uintptr_t) newPtr >> 4), bytes - oldBytes);
-    #endif
-
-    return newPtr;
-}
-
-//===========================================================================
 unsigned MemSize (void * ptr) {
     ASSERT(ptr);
     unsigned result = 0;
@@ -622,7 +486,7 @@ void MemMove (void * dest, const void * source, unsigned bytes) {
 
 //===========================================================================
 void * MemDup (const void * ptr, unsigned bytes, unsigned flags, const char file[], int line) {
-    void * dst = MemAlloc(bytes, flags, file, line);
+    void * dst = malloc(bytes);
     MemCopy(dst, ptr, bytes);
     return dst;
 }

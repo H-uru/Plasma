@@ -557,11 +557,7 @@ inline T * TList<T>::New (ELinkType linkType, T * existingNode, const char file[
 //===========================================================================
 template<class T>
 inline T * TList<T>::NewFlags (unsigned flags, ELinkType linkType, T * existingNode, const char file[], int line) {
-    if (!file) {
-        file = __FILE__;
-        line = __LINE__;
-    }
-    T * node = new(MemAlloc(sizeof(T), flags, file, line)) T;
+    T * node = new T();
     if (linkType != kListUnlinked)
         Link(node, linkType, existingNode);
     return node;
