@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAgeManifest_h
 #define _plAgeManifest_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plFile/plInitFileReader.h"
 #include "plEncryption/plChecksum.h"

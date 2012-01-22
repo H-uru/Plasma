@@ -50,11 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 #include <string.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAudioFileReader.h"
 #include "plAudioCore.h"
 //#include "hsTimer.h"
-#include "hsUtils.h"
+
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"

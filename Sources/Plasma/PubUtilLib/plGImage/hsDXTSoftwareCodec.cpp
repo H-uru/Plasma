@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <memory.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsDXTSoftwareCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"

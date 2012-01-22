@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTransitionMsg_inc
 #define plTransitionMsg_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "pnMessage/plMessageWithCallbacks.h"
 

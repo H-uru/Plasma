@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsWinRef.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDXPipeline.h"
 #include "plPipelineCreate.h"
 #include "plDebugText.h"

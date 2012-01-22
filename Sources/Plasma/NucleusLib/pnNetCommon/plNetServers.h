@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  Server Declarations and Constants
 //
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // Windows Class Name for All Servers

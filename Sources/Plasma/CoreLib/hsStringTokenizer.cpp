@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // hsStringTokenizer.cpp
 
 #include "hsStringTokenizer.h"
-#include "hsUtils.h"
+
 
 // String Tokenizer routines
 hsStringTokenizer::hsStringTokenizer(const char *string, const char *seps) :

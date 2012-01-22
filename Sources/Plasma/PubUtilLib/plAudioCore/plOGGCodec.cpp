@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plOGGCodec.h"
 
 #include "hsTimer.h"

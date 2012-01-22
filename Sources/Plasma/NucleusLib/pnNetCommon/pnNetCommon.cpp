@@ -41,15 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pnNetCommon.h"
 #include "pnAddrInfo/pnAddrInfo.h"
-#ifdef HS_BUILD_FOR_WIN32
-# include "hsWindows.h"
-#elif HS_BUILD_FOR_UNIX
+#if HS_BUILD_FOR_UNIX
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <string.h>  // for memcpy
-#else
+#elif !defined(HS_BUILD_FOR_WIN32)
 #error "Not implemented for this platform"
 #endif
 

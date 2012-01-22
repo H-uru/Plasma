@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <math.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plStereizer.h"
 #include "plLineFollowMod.h"

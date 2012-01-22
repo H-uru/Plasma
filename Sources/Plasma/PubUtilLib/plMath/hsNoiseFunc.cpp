@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsNoiseFunc.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "hsGeometry3.h"
 

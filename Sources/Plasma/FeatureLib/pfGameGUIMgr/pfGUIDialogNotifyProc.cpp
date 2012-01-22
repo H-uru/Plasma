@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGUIDialogNotifyProc.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 #include "pfGUIControlMod.h"

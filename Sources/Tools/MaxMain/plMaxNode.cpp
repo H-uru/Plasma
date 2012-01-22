@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plPluginResManager.h"
 #include "plMaxNodeData.h"
-#include "hsUtils.h"
+
 
 #include "MaxConvert/plConvert.h"
 #include "hsTemplates.h"

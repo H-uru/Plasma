@@ -45,8 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_CORELIB_HSMALLOC_H
-#define PLASMA20_SOURCES_PLASMA_CORELIB_HSMALLOC_H
+#ifdef _HSMALLOC_H
+#   error "Do not include hsMalloc.h directly--use HeadSpin.h"
+#endif // _HSMALLOC_H
+#define   _HSMALLOC_H
+
+#include "HeadSpin.h"
 
 
 /****************************************************************************
@@ -201,5 +205,3 @@ inline void CDECL operator delete (void *, void *) {}
 #endif
 
 #endif // ifdef __cplusplus
-
-#endif // PLASMA20_SOURCES_PLASMA_CORELIB_HSMALLOC_H

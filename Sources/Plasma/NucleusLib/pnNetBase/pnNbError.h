@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNbError_inc
 #define pnNbError_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnNbConst.h"
 
 /*****************************************************************************

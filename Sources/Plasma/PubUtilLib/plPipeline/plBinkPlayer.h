@@ -43,9 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBinkPlayer_inc
 #define plBinkPlayer_inc
 
+#include "HeadSpin.h"
 #include "hsPoint2.h"
 #include "hsTemplates.h"
-#include "hsWindowHndl.h"
 #ifdef BINK_SDK_AVAILABLE
 #include <bink.h>
 #else

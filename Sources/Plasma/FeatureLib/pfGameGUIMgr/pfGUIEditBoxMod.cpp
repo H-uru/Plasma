@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define LIMIT_VOICE_CHAT 1
 #endif
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIEditBoxMod.h"
 #include "pfGameGUIMgr.h"
 

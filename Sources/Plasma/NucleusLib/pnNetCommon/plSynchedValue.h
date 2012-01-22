@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSynchedObject.h"
 
 #ifdef USE_SYNCHED_VALUES
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "hsBitVector.h"

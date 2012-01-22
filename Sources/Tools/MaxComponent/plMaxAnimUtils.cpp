@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Max.h"
 #include "notetrck.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
 #include "plMaxAnimUtils.h"

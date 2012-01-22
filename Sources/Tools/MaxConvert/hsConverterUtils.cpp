@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsConverterUtils.h"
 #include "hsResMgr.h"
 #include "MaxMain/MaxCompat.h"

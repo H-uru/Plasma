@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plLoadAgeMsg.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 #include "hsBitVector.h"
 
 void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)    

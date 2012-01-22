@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_INPUT_MAP_H
 #define PL_INPUT_MAP_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plControlDefinition.h"
 #include "hsTemplates.h"
 

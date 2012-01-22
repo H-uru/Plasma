@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <float.h>
 #include "plUnifiedTime.h"
 #include "hsStlUtils.h"
-#include "hsWindows.h"
+
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/time.h>
@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/timeb.h>  // for timeb
 #endif
 
-#include "hsUtils.h"
+
 
 #include <time.h>
 #include "hsStream.h"

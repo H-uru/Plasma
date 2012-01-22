@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsExceptionDefined
 #define hsExceptionDefined
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // #define HS_NO_EXCEPTIONS -- this will turn off execptions you might want 
 // to do it with -D or equivalent instead of here since who knows who includes this.

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plMaxWaveUtils.h"
 #include "plAudioCore/plWavFile.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
 {

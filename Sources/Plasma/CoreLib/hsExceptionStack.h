@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsExceptionStack_inc
 #define hsExceptionStack_inc
 
-#include "hsUtils.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
 class hsExceptionStackDestroyer;

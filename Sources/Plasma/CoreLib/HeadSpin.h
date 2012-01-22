@@ -46,9 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define HS_DEBUGGING
 #endif // defined(_DEBUG) || defined(UNIX_DENUG)
 
-// Winsock2 compatibility; winsock2.h must always be included before windows.h =(
+// Internal Headers
+// These are only ever included here :)
 #include "hsWindows.h"
 #include "hsTypes.h"
+#include "hsUtils.h"
 #include "hsMalloc.h"
 
 #endif

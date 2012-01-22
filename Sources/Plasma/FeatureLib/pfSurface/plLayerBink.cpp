@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "bink.h"
 #endif
 
-#include "hsTypes.h"
-#include "hsUtils.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
+
 
 #include "plLayerBink.h"
 #include "plGImage/plMipmap.h"
@@ -87,7 +87,7 @@ static BINKGOTO             fBinkGoto = nil;
 static int                  fBinkRef = 0;
 #endif /* BINK_SDK_AVAILABLE */
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerBink.h"
 
 #ifdef BINK_SDK_AVAILABLE

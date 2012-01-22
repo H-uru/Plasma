@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvTaskSeek.h"
 
 // global
-#include "hsUtils.h"
+
 
 // other
 #include "plMessage/plAvCoopMsg.h"

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
-#include "hsUtils.h"
+
 #include "plAutoUIBlock.h"
 #include "plAutoUIParams.h"
 #include "pnSceneObject/plSceneObject.h"

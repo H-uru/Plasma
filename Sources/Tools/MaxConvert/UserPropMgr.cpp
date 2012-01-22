@@ -41,10 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 // UserPropMgr.cpp
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsUtils.h"
+
 #include "hsHashTable.h"
 
 #define REFMSG_USERPROP  (REFMSG_USER + 1)

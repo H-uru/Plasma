@@ -45,8 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_INPUT_DEVICE_H
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "hsWindowHndl.h"
+
 //#include "pnInputCore/plControlDefinition.h"
 #include "pnInputCore/plOSMsg.h"
 #include "pnInputCore/plKeyDef.h"

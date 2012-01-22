@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyNetServerSessionInfo_h_inc
 #define pyNetServerSessionInfo_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "pnUUID/pnUUID.h"
 

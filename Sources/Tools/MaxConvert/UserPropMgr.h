@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _USERPROPMGR_H_
 
 #include "Max.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 template <class T> class hsHashTable;
 

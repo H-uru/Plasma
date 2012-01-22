@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Max.h"
 #include "iparamm2.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //// Derived Type Class IDs ///////////////////////////////////////////////////
 //  If you create a new Plasma layer type, add a define for the class ID here 

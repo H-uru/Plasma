@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPlasmaMAXLayer.h"
 
 #include "stdmat.h"
@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
 
-#include "hsUtils.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plRefMsg.h"
 #include "plSurface/plLayerInterface.h"

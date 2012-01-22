@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCompress_h
 #define plCompress_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // Abstract base class for compression code

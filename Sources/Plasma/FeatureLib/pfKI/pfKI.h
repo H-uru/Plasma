@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfKI_h
 #define _pfKI_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "../pnKeyedObject/hsKeyedObject.h"
 
 

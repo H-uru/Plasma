@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProgressBar_inc
 #define plProgressBar_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 // The progress bar displays an amount that's *fraction* of the distance between min and max.

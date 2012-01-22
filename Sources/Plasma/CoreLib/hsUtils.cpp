@@ -39,20 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
-#if HS_BUILD_FOR_WIN32
-extern "C" {
-#endif
-#include <stdio.h>
-#include <stdarg.h>
-#if HS_BUILD_FOR_WIN32
-};
-#endif
 
-#if HS_BUILD_FOR_WIN32
-#include <winsock2.h>
-#include <windows.h>
-#endif
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
 #include <math.h>
@@ -264,7 +252,7 @@ char* hsStrcpy(char dst[], const char src[])
     return dst;
 }
 
-hsBool hsStrEQ(const char s1[], const char s2[])
+bool hsStrEQ(const char s1[], const char s2[])
 {
     if (s1 && s2)
     {
@@ -277,7 +265,7 @@ hsBool hsStrEQ(const char s1[], const char s2[])
     return (!s1 && !s2);
 }
 
-hsBool hsStrCaseEQ(const char* s1, const char* s2)
+bool hsStrCaseEQ(const char* s1, const char* s2)
 {
     if (s1 && s2)
     {

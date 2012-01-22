@@ -42,15 +42,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define DYNAHEADER_CREATE_STORAGE
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <time.h>
 
-#include "hsWindows.h"
+
 
 #include "hsG3DDeviceSelector.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 #include "plPipeline.h"
 
 #ifdef HS_OPEN_GL

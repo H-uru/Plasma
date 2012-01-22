@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 
 class hsStream;
 class plAnimStage;

@@ -44,12 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetAddress_h_inc
 #define plNetAddress_h_inc
 
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "hsStream.h"
 
 #if defined(HS_BUILD_FOR_WIN32)
-#include "hsWindows.h"
+
 #elif defined( HS_BUILD_FOR_UNIX )
 #include <sys/socket.h>
 #include <netinet/in.h>

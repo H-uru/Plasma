@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "hsMatrix44.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plTextGenerator.h"

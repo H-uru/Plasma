@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plKeyMap_h
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 

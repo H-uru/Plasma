@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAutoUIParams.h"
 
 #include "MaxMain/plMaxAccelerators.h"
-#include "hsUtils.h"
+
 #include <algorithm>
 #include "MaxMain/plMaxNode.h"
 #include "plComponentBase.h"

@@ -42,14 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsThread_Defined
 #define hsThread_Defined
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 typedef uint32_t hsMilliseconds;
 
 
-#if HS_BUILD_FOR_WIN32
-    #include "hsWindows.h"
-#elif HS_BUILD_FOR_UNIX
+#ifdef HS_BUILD_FOR_UNIX
     #include <pthread.h>
     #include <semaphore.h>
     //  We can't wait with a timeout with semas

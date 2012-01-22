@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "plExportErrorMsg.h"
 #include "hsExceptions.h"
-#include "hsUtils.h"
+
 
 
 

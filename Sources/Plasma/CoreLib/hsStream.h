@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stdarg.h> // Included for GCC 3.2.2+
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsMemory.h"
 
 namespace hsPackFileSys {

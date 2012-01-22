@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsWideDefined
 #define hsWideDefined
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 struct hsWide {
     int32_t   fHi;

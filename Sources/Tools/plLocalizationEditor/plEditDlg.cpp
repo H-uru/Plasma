@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
 
-#include "hsUtils.h"
+
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include <map>

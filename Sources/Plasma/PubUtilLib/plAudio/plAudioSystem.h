@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAudioSystem_h
 #define plAudioSystem_h
 
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include "hsWindowHndl.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "pnKeyedObject/hsKeyedObject.h"

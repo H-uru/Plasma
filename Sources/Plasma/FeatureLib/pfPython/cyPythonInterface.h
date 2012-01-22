@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NOTE: Eventually, this will be made into a separate dll, because there should
 //       only be one instance of this interface. 
 //
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include <Python.h>
 

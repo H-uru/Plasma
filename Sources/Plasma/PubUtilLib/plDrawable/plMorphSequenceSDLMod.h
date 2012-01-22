@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier/plSDLModifier.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // This modifier is responsible for sending and recving 

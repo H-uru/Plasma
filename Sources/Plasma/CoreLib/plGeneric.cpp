@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
+
 #include "plGeneric.h"
 
 plGeneric::plGeneric(): fType(kNull), fBoolVal(false), fIntVal(0), fFloatVal(0.0) {}

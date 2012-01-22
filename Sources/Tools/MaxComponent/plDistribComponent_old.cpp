@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 
-#include "hsWindows.h"
+
 #include <commdlg.h>
 
 #include "max.h"
@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "MaxConvert/plDistributor.h"
 #include "MaxConvert/plDistTree.h" // FISH HACK - just testing

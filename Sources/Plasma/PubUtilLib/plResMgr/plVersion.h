@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVersion_h_inc
 #define plVersion_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // RULES:
 // Log your change

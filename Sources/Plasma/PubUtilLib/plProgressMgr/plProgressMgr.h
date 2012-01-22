@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plProgressMgr_h
 #define _plProgressMgr_h
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 
 class plPipeline;
 class plPlate;

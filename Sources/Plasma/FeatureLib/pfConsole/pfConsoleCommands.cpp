@@ -162,7 +162,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 
 #include "pfPython/cyPythonInterface.h"
 #include "pfPython/plPythonSDLModifier.h"

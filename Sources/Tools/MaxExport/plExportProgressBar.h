@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExportProgressBar_inc
 #define plExportProgressBar_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class INode;
 

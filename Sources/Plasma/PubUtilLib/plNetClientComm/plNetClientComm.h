@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENTCOMM_PLNETCLIENTCOMM_H
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "plNetCommon/plNetServerSessionInfo.h"

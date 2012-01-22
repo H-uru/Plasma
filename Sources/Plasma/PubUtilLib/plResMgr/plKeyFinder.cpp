@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plPageInfo.h"
 #include "pnFactory/plFactory.h"
-#include "hsUtils.h"
+
 #include "plCreatableIndex.h"
 
 plResManager* IGetResMgr() { return (plResManager*)hsgResMgr::ResMgr(); }

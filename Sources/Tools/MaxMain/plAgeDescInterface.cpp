@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "plMaxCFGFile.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 #ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif

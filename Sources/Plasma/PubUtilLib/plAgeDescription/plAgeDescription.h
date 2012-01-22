@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_AGE_DESCRIPTION_H
 #define PL_AGE_DESCRIPTION_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "pnKeyedObject/plUoid.h"
 #include "plFile/plInitFileReader.h"

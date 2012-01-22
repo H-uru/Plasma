@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "plGeometrySpan.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"

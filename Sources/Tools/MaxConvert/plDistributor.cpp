@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsWindows.h"
+#include "HeadSpin.h"
 #include <commdlg.h>
 
 #include "Max.h"
@@ -55,9 +55,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMaterialConverter.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsUtils.h"
+
 #include "plMath/plTriUtils.h"
 
 #include "plDistributor.h"

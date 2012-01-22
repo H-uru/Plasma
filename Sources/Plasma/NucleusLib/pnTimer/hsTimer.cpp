@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsTimer.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
 
 #include "plTweak.h"
 
@@ -206,8 +206,6 @@ void plTimerShare::SetRealTime(hsBool realTime)
 }
 
 #if HS_BUILD_FOR_WIN32
-
-#include <windows.h>
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {

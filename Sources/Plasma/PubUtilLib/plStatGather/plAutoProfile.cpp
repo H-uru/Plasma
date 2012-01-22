@@ -167,7 +167,7 @@ void plAutoProfileImp::IInit()
 }
 
 #ifdef HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
+
 #include <shellapi.h>
 #endif
 

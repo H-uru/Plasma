@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoadAvatarMsg_INC
 
 #include "plLoadCloneMsg.h"
-#include "hsUtils.h"
+
 #include "pnKeyedObject/plUoid.h"
 
 class plAvTask;

@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputMap.h"
 #include "plKeyMap.h"
-#include "hsUtils.h"
+
 #include "plResMgr/plLocalization.h"
 
 ControlEventCode plInputMap::ConvertCharToControlCode(const char* c)

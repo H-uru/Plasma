@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeBase_inc
 #define plMaxNodeBase_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "max.h"
 #include "hsMatrix44.h"

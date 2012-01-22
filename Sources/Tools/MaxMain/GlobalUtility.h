@@ -47,7 +47,7 @@ class Texmap;
 
 #include "max.h"
 #include "guplib.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <string>
 
 #define PLASMA_MAX_CLASSID Class_ID(0x3d494269, 0x103c5c5f)

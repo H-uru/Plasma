@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define NEW_CAMERA_CODE
 
-#include "hsWindowHndl.h"
+#include "HeadSpin.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"

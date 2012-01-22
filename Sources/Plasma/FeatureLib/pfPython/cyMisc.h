@@ -58,7 +58,7 @@ class pyAgeInfoStruct;
 class pyPoint3;
 
 #include <Python.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnUtils/pnUtils.h"
 

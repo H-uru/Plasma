@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClientKey_h_inc
 #define plClientKey_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // For getting the "SafeDisc protected" encryption key in single player mode

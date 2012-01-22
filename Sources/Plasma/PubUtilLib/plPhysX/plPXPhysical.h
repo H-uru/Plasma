@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plPhysical/plSimDefs.h"
 #include "hsBitVector.h"
-#include "hsUtils.h"
+
 
 class NxActor;
 class NxConvexMesh;

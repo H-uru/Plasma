@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultistageBehMod.h"
 
 // global
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"

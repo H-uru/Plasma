@@ -68,7 +68,6 @@ set(CoreLib_HEADERS
     hsTypes.h
     hsUtils.h
     hsWide.h
-    hsWindowHndl.h
     hsWindows.h
     pcSmallRect.h
     plGeneric.h

@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include <hkgeometry/geomdef.h>   // for havok Vertex
 //
 //
-//#include "hsTypes.h"
+//#include "HeadSpin.h"
 //#include "../plInterp/plController.h"
 //#include "plPlayerModifier.h"
 //#include "hsTimer.h"

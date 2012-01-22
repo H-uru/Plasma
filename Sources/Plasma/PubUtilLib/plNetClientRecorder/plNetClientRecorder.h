@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientRecorder_h_inc
 #define plNetClientRecorder_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class hsStream;
 class plNetMessage;

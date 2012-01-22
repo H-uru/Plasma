@@ -630,7 +630,7 @@ static void FindObsoleteComponents(plMaxNodeBase *node, std::vector<plComponentB
 static bool gUpdatingComponents = false;
 
 #include <set>
-#include "hsUtils.h"
+
 
 static void ComponentNotify(void *param, NotifyInfo *info)
 {

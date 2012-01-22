@@ -85,7 +85,7 @@ public:
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#include "hsWindows.h"
+
 
 class hsNamedPipeStream : public hsStream
 {

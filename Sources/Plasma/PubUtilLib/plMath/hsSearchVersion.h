@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsSearchVersion_inc
 #define hsSearchVersion_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 /*
 do a template of lists to search for a matching entry. basic idea is that

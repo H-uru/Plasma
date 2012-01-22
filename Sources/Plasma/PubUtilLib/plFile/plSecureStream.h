@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSecureStream_h_inc
 #define plSecureStream_h_inc
 
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 #if HS_BUILD_FOR_WIN32
-#    include <windows.h>
 #    define hsFD HANDLE
 #else
 #    define hsFD FILE*

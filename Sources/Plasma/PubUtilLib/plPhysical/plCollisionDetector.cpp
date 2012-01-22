@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plAvatar/plAvCallbackAction.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCollisionDetector.h"
 #include "plMessage/plCollideMsg.h"
 #include "plgDispatch.h"

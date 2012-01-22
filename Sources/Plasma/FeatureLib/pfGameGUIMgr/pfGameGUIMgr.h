@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGameGUIMgr_h
 #define _pfGameGUIMgr_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnInputCore/plKeyDef.h"
 #include "pnKeyedObject/hsKeyedObject.h"

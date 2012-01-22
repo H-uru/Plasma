@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plEffectTargetInfo_inc
 #define plEffectTargetInfo_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 struct hsPoint3;
 class plPipeline;

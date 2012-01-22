@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ctype.h>
 #include "hsStream.h"
 #include "hsMemory.h"
-#include "hsUtils.h"
+
 
 #include "hsTemplates.h"
 #include "hsStlUtils.h"
@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unistd.h>
 #endif
 
-#include "hsWindows.h"
+
 #if HS_BUILD_FOR_WIN32
 #include <io.h>
 #endif

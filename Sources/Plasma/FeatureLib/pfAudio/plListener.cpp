@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsMatrix44.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plListener.h"
 #include "plgDispatch.h"
 #include "plAudio/plAudioSystem.h"

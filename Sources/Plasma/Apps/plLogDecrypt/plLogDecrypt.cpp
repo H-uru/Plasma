@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstdio>
 #include <cstring>
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "plStatusLog/plEncryptLogLine.h"
 
 void IProcessFile(const char *path)

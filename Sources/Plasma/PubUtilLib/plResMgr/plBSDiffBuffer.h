@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plBSDiffBuffer_h
 #define _plBSDiffBuffer_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 //// Class Definition ////////////////////////////////////////////////////////

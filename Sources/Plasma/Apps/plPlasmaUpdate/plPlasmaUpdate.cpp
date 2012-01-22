@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plUnifiedTime/plUnifiedTime.h"
 #include "hsStream.h"
 #include "plManifest.h"
-#include "hsUtils.h"
 #include "../plStatusLog/plStatusLog.h"
 
 static plPlasmaUpdate* gInst = nil;

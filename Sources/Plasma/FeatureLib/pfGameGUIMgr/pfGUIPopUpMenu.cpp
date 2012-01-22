@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIPopUpMenu.h"
 #include "pfGUIMenuItem.h"
