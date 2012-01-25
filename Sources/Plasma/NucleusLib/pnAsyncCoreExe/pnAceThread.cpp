@@ -128,7 +128,7 @@ void * AsyncThreadCreate (
     );
     if (!handle) {
         LogMsg(kLogFatal, "%s (%u)", __FILE__, GetLastError());
-        ErrorFatal(__LINE__, __FILE__, "_beginthreadex failed");
+        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
     }
 
     thread->handle = handle;

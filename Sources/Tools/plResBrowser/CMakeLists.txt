@@ -34,7 +34,6 @@ set(plResBrowser_RESOURCES
 add_executable(plResBrowser WIN32 ${plResBrowser_SOURCES} ${plResBrowser_HEADERS} ${plResBrowser_RESOURCES})
 
 target_link_libraries(plResBrowser CoreLib)
-target_link_libraries(plResBrowser CoreLibExe)
 target_link_libraries(plResBrowser plFile)
 target_link_libraries(plResBrowser plMessage)
 target_link_libraries(plResBrowser plResMgr)

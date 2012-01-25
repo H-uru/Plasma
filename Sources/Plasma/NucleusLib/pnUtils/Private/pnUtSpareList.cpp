@@ -138,7 +138,7 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 void CBaseSpareList::CleanUp (const char typeName[]) {
     // warn of resource leaks
     #ifdef SPARELIST_TRACK_MEMORY
-    if (m_unfreedObjects && !ErrorGetOption(kErrOptDisableMemLeakChecking)) {
+    if (m_unfreedObjects) {
         #ifdef CLIENT
         {
             char buffer[256];

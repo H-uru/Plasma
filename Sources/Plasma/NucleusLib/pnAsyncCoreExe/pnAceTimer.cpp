@@ -187,7 +187,7 @@ static inline void InitializeTimer () {
             (LPCTSTR) nil
         );
         if (!s_timerEvent)
-            ErrorFatal(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
+            ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
         s_timerThread = (HANDLE) AsyncThreadCreate(
             TimerThreadProc,
@@ -230,7 +230,7 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     s_timerCrit.Leave();
 
     if (AsyncTimer * timer = s_timerProcs.Root())
-        ErrorFatal(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
+        ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
 }
 
 

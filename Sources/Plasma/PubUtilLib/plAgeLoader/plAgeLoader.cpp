@@ -212,7 +212,7 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     nc->DebugMsg( "Net: Loading age %s", fAgeName);
 
     if ((fFlags & kLoadMask) != 0)
-        ErrorFatal(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%S will now exit.", ProductShortName());
+        ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%S will now exit.", ProductShortName());
         
     fFlags |= kLoadingAge;
     

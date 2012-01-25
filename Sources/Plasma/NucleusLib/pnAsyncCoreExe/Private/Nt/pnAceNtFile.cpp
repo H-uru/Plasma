@@ -123,7 +123,7 @@ static void FatalOnNonRecoverableError (
     }
 
     ASSERT((op.opType == kOpFileRead) || (op.opType == kOpFileWrite));
-    ErrorFatal(
+    ErrorAssert(
         __LINE__, __FILE__, 
         "Disk %s failed, error: %u", 
         op.opType == kOpFileRead ? "read" : "write",
@@ -446,7 +446,7 @@ bool INtFileOpCompleteReadWrite (
     // adjust outstanding bytes
     if (bytes != op->win32Bytes) {
         if (!file->sectorSizeMask)
-            ErrorFatal(__LINE__, __FILE__, "Disk %s failed", op->opType == kOpFileRead ? "read" : "write");
+            ErrorAssert(__LINE__, __FILE__, "Disk %s failed", op->opType == kOpFileRead ? "read" : "write");
         if (op->opType == kOpFileRead)
             memset(op->rw.buffer + bytes, 0, op->win32Bytes - bytes);
     }
