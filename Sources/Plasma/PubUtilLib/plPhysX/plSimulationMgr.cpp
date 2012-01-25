@@ -293,23 +293,6 @@ class ErrorStream : public NxUserOutputStream
     }
 } gErrorStream;
 
-// This class allows PhysX to use our heap manager
-static class HeapAllocator : public NxUserAllocator {
-public:
-    void * malloc (NxU32 size) {
-        return malloc(size);
-    }
-    void * mallocDEBUG (NxU32 size, const char * fileName, int line) {
-        return malloc(size);
-    }
-    void * realloc (void * memory, NxU32 size) {
-        return realloc(memory, size);
-    }
-    void free (void * memory) {
-        free(memory);
-    }
-} gHeapAllocator;
-
 
 /////////////////////////////////////////////////////////////////
 //
@@ -419,7 +402,7 @@ plSimulationMgr::plSimulationMgr()
 
 bool plSimulationMgr::InitSimulation()
 {
-    fSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, &gHeapAllocator, &gErrorStream);
+    fSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &gErrorStream);
     if (!fSDK)
         return false; // client will handle this and ask user to install
 

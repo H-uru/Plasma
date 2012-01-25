@@ -193,7 +193,7 @@ static void ManifestCallback (
         StrToAnsi(ansi, s_newPatcherFile, arrsize(ansi));
         SelfPatcherStream * stream = NEWZERO(SelfPatcherStream);
         if (!stream->Open(ansi, "wb"))
-            ErrorFatal(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
+            ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
 
         NetCliFileDownloadRequest(manifest[0].downloadName, stream, DownloadCallback, nil);
     }

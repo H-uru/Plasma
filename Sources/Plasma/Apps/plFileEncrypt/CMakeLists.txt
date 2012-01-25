@@ -12,6 +12,6 @@ set(plFileEncrypt_SOURCES
 )
 
 add_executable(plFileEncrypt ${plFileEncrypt_SOURCES})
-target_link_libraries(plFileEncrypt CoreLib CoreLibExe pnProduct plFile)
+target_link_libraries(plFileEncrypt CoreLib pnProduct plFile)
 
 source_group("Source Files" FILES ${plFileEncrypt_SOURCES})

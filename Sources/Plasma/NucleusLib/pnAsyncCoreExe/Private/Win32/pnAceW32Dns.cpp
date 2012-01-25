@@ -175,7 +175,7 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
         0
     );
     if (!s_lookupWindow)
-        ErrorFatal(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
+        ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
 
     HANDLE lookupStartEvent = (HANDLE) thread->argument;
     SetEvent(lookupStartEvent);
@@ -228,7 +228,7 @@ static void StartLookupThread () {
         (LPCTSTR) 0     // name
     );
     if (!lookupStartEvent)
-        ErrorFatal(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
+        ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
 
     // create a thread to perform lookups
     s_lookupThread = (HANDLE) AsyncThreadCreate(

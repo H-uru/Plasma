@@ -157,8 +157,8 @@ TBuffer<T> & TBuffer<T>::operator= (const TBuffer<T> & source) {
 //===========================================================================
 template<class T>
 bool TBuffer<T>::operator== (const TBuffer<T> & source) const {
-    unsigned size = MemSize(m_data);
-    return (size == MemSize(source.m_data)) && !memcmp(m_data, source.m_data, size);
+    unsigned size = _m_size(m_data);
+    return (size == _m_size(source.m_data)) && !memcmp(m_data, source.m_data, size);
 }
 
 //===========================================================================
@@ -181,13 +181,13 @@ void TBuffer<T>::Attach (T * source, unsigned count) {
     if (m_data)
         free(m_data);
     m_data = source;
-    ASSERT(MemSize(source) >= count * sizeof(T));
+    ASSERT(_m_size(source) >= count * sizeof(T));
 }
 
 //===========================================================================
 template<class T>
 unsigned TBuffer<T>::Bytes () const {
-    return m_data ? MemSize(m_data) : 0;
+    return m_data ? _m_size(m_data) : 0;
 }
 
 //===========================================================================
@@ -202,7 +202,7 @@ void TBuffer<T>::Clear () {
 //===========================================================================
 template<class T>
 unsigned TBuffer<T>::Count () const {
-    return m_data ? (MemSize(m_data) / sizeof(T)) : 0;
+    return m_data ? (_m_size(m_data) / sizeof(T)) : 0;
 }
 
 //===========================================================================
@@ -558,7 +558,7 @@ void TFArray<T,C>::Attach (T * source, unsigned count) {
     if (m_data)
         free(m_data);
     m_data  = source;
-    m_alloc = MemSize(source) / sizeof(T);
+    m_alloc = _m_size(source) / sizeof(T);
     m_count = count;
     ASSERT(m_alloc >= m_count);
 }

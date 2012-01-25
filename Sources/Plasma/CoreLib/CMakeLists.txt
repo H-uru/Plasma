@@ -8,7 +8,6 @@ set(CoreLib_SOURCES
     hsExceptionStack.cpp
     hsFastMath.cpp
     hsGeometry3.cpp
-    hsMalloc.cpp
     hsMatrix33.cpp
     hsMatrix44.cpp
     hsMemory.cpp
@@ -51,7 +50,6 @@ set(CoreLib_HEADERS
     hsFastMath.h
     hsGeometry3.h
     hsHashTable.h
-    hsMalloc.h
     hsMatrix44.h
     hsMemory.h
     hsPoint2.h

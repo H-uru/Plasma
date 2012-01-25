@@ -170,6 +170,8 @@ inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }
 inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #define hsInvert(a) (1 / (a))
 
+#include <new>
+#define NEWZERO(t)              new(calloc(sizeof(t), 1)) t
 
 /////////////////////////////
 // Physical memory functions
@@ -192,3 +194,55 @@ void hsRandSeed(int seed);
 #define hsFopen(name, mode) fopen(name, mode)
 
 char** DisplaySystemVersion();
+
+/************************ Debug/Error Macros **************************/
+
+typedef void (*hsDebugMessageProc)(const char message[]);
+extern hsDebugMessageProc gHSDebugProc;
+#define HSDebugProc(m)  { if (gHSDebugProc) gHSDebugProc(m); }
+hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
+
+extern hsDebugMessageProc gHSStatusProc;
+hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
+
+void ErrorEnableGui (bool enabled);
+void ErrorAssert (int line, const char file[], const char fmt[], ...);
+void ErrorMinimizeAppWindow ();
+
+bool DebugIsDebuggerPresent ();
+void DebugBreakIfDebuggerPresent ();
+void DebugMsg(const char fmt[], ...);
+
+#ifdef HS_DEBUGGING
+    
+    void    hsDebugMessage(const char message[], long refcon);
+    #define hsDebugCode(code)                   code
+    #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
+    #define hsAssert(expr, msg)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
+    #define ASSERT(expr)                        (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
+    #define ASSERTMSG(expr, msg)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
+    #define FATAL(msg)                          ErrorAssert(__LINE__, __FILE__, msg)
+    #define DEBUG_MSG                           DebugMsg
+    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent
+    
+#else   /* Not debugging */
+
+    #define hsDebugMessage(message, refcon)     NULL_STMT
+    #define hsDebugCode(code)                   /* empty */
+    #define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
+    #define hsAssert(expr, msg)                 NULL_STMT
+    #define ASSERT(expr)                        NULL_STMT
+    #define ASSERTMSG(expr, msg)                NULL_STMT
+    #define FATAL(msg)                          NULL_STMT
+    #define DEBUG_MSG                           (void)
+    #define DEBUG_MSGV                          NULL_STMT
+    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
+
+#endif  // HS_DEBUGGING
+
+
+#ifdef _MSC_VER
+#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
+#else
+#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
+#endif
