@@ -379,9 +379,8 @@ void SWAP (T & a, T & b) {
 
 /****************************************************************************
 *
-*   arrsize/marrsize
+*   arrsize
 *   arrsize returns the number of elements in an array variable
-*   marrsize returns the number of elements in an array field in a structure
 *
 *   Example:
 *
@@ -390,46 +389,6 @@ void SWAP (T & a, T & b) {
 ***/
 
 #define  arrsize(a)     (sizeof(a) / sizeof((a)[0]))
-#define  marrsize(c,a)  (arrsize(((c *)0)->a))
-
-
-/****************************************************************************
-*
-*   moffsetof returns the offset in bytes of a field inside a structure based on a variable
-*
-***/
-
-#define  moffsetof(v,f)  (((uint8_t *) &((v)->f)) - ((uint8_t *) v))
-
-
-/****************************************************************************
-*
-*   msizeof
-*   Returns the size of a field in a structure
-*
-*   Example:
-*
-*   unsigned bufferSize = msizeof(CommandStruct, buffer);
-*
-***/
-
-#define  msizeof(c,a)  (sizeof(((c *)0)->a))
-
-
-/****************************************************************************
-*
-*   ONCE
-*   Shortcut to create a 'for' loop that executes only once
-*
-*   for (ONCE) {
-*       ...
-*   }
-*
-***/
-
-#ifndef  ONCE
-#define  ONCE  bool UNIQUE_SYMBOL(ONCE) = true; UNIQUE_SYMBOL(ONCE); UNIQUE_SYMBOL(ONCE) = false
-#endif
 
 
 /****************************************************************************
