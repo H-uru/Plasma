@@ -293,8 +293,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
         {
             // These are handled by KEYUP/KEYDOWN and should not be sent
             // We don't like garbage getting in string fields
-            if (Wparam == KEY_BACKSPACE || Wparam == KEY_ESCAPE || 
-                Wparam == KEY_TAB)
+            if (Wparam == KEY_BACKSPACE || Wparam == KEY_ESCAPE)
                 break;
 
             BYTE scan = Lparam >> 16;
