@@ -233,7 +233,14 @@ class plFont : public hsKeyedObject
         void    IRenderChar8To32Alpha( const plCharacter &c );
         void    IRenderChar8To32FullAlpha( const plCharacter &c );
         void    IRenderChar8To32AlphaPremultiplied( const plCharacter &c );
+        void    IRenderChar8To32AlphaPremShadow( const plCharacter &c );
         void    IRenderCharNull( const plCharacter &c );
+
+        uint32_t IGetCharPixel( const plCharacter &c, int32_t x, int32_t y )
+        {
+            // only for 8-bit characters
+            return (x < 0 || y < 0 || (uint32_t)x >= fWidth || (uint32_t)y >= c.fHeight) ? 0 : *(fBMapData + c.fBitmapOff + y*fWidth + x);
+        }
 
     public:
 

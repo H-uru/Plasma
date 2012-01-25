@@ -335,7 +335,12 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             if( fRenderInfo.fFlags & kRenderIntoAlpha )
             {
                 if( fRenderInfo.fFlags & kRenderAlphaPremultiplied )
-                    fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremultiplied;
+                {
+                    if (1)//( ( fRenderInfo.fColor & 0x00ffffff ) == 0x00ffffff ) //FIXME
+                        fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremShadow;
+                    else
+                        fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremultiplied;
+                }
                 else if( ( fRenderInfo.fColor & 0xff000000 ) != 0xff000000 )
                     fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32Alpha;
                 else
@@ -1079,6 +1084,81 @@ void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c
         }
         destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + fRenderInfo.fDestStride );
         src += fWidth;
+    }
+}
+
+void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
+{
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint8_t   srcA, srcR, srcG, srcB;
+
+
+    // Unfortunately for some fonts, their right kern value actually is
+    // farther left than the right edge of the bitmap (think of overlapping
+    // script fonts). Ideally, we should store the actual width of each char's
+    // bitmap and use that here. However, it really shouldn't make too big of a
+    // difference, especially since the dest pixels that we end up overlapping
+    // should already be in the cache. If it does, time to upgrade the font
+    // format (again)
+    thisWidth = fWidth + 2;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
+
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < -2 )
+        xstart = -2;
+
+    srcA = (uint8_t)(( fRenderInfo.fColor >> 24 ) & 0x000000ff);
+    srcR = (uint8_t)(( fRenderInfo.fColor >> 16 ) & 0x000000ff);
+    srcG = (uint8_t)(( fRenderInfo.fColor >> 8  ) & 0x000000ff);
+    srcB = (uint8_t)(( fRenderInfo.fColor       ) & 0x000000ff);
+
+    static const uint32_t kernel[5][5] = {
+        {1,  2,  2,  2, 1},
+        {1, 13, 13, 13, 1},
+        {1, 10, 10, 10, 1},
+        {1,  7,  7,  7, 1},
+        {1,  1,  1,  1, 1}
+    };
+
+    uint32_t clamp = 220 - ((2 * srcR + 4 * srcG + srcB) >> 4);
+
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < -2 )
+        y = -2;
+    destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight + 2 )
+        thisHeight = (int16_t)c.fHeight + 2;
+
+    for( ; y < thisHeight; y++ )
+    {
+        destPtr = destBasePtr;
+        for( x = xstart; x < thisWidth; x++ )
+        {
+            uint32_t sa = 0;
+            for (int32_t i = -2; i <= 2; i++) {
+                for (int32_t j = -2; j <= 2; j++) {
+                    uint32_t m = kernel[j+2][i+2];
+                    if (m != 0)
+                        sa += m * IGetCharPixel(c, x+i, y+j);
+                }
+            }
+            sa = (sa * clamp) >> 13;
+            if (sa > clamp)
+                sa = clamp;
+            uint32_t a = IGetCharPixel(c, x, y);
+            if (srcA != 0xff)
+                a = (srcA * a + 127) / 255;
+            uint32_t ta = a + sa - ((a*sa + 127) / 255);
+            if (ta > (destPtr[ x ] >> 24))
+                destPtr[ x ] = ( ta << 24 ) | (((srcR * a + 127) / 255) << 16) |
+                                              (((srcG * a + 127) / 255) <<  8) |
+                                              (((srcB * a + 127) / 255) <<  0);
+        }
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + fRenderInfo.fDestStride );
     }
 }
 
