@@ -296,7 +296,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             if (Wparam == KEY_BACKSPACE || Wparam == KEY_ESCAPE)
                 break;
 
-            BYTE scan = Lparam >> 16;
+            BYTE scan = (BYTE)(Lparam >> 16);
             UINT vkey = MapVirtualKey(scan, MAPVK_VSC_TO_VK);
 
             bExtended = Lparam >> 24 & 1;
