@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <rpc.h>
 
-COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
-
 plUUID::plUUID( const Uuid & uuid )
 {
     memcpy(fData, uuid.data, sizeof(fData));

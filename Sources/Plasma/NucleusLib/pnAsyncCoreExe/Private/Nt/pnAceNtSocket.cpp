@@ -517,7 +517,7 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         return INVALID_SOCKET;
     }
 
-    for (;;) { // actually for (ONCE)
+    do {
     /* this code was an attempt to enable the server to close and then re-open the same port
        for listening. It doesn't appear to work, and moreover, it causes the bind to signal
        success even though the port cannot be opened (for example, because another application
@@ -583,7 +583,7 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         // success!
         NetAddressSetPort(port, listenAddr);
         return s;
-    }
+    } while (false);
 
     // failure!
     closesocket(s);
@@ -620,7 +620,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
         return INVALID_SOCKET;
     }
 
-    for (;;) { // actually for (ONCE)
+    do {
         // make socket non-blocking
         u_long nonBlocking = true;
         if (ioctlsocket(s, FIONBIO, &nonBlocking))
@@ -648,7 +648,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
 
         // success!
         return s;
-    }
+    } while (false);
 
     // failure!
     closesocket(s);
@@ -992,7 +992,7 @@ void INtSocketOpCompleteSocketRead (
 ) {
     ASSERT(sock->ioType == kNtSocket);
 
-    for (ONCE) {
+    do {
         // a zero-byte read means the socket is going
         // to shutdown, so don't start another read
         if (!bytes)
@@ -1007,10 +1007,6 @@ void INtSocketOpCompleteSocketRead (
         sock->opRead.read.buffer            = sock->buffer;
         sock->opRead.read.bytes             = sock->bytesLeft;
         sock->opRead.read.bytesProcessed    = 0;
-
-        if (sock->connType == kConnTypeCliToAuth) {
-            int x = 0;
-        }
 
         if (!SocketDispatchRead(sock))
             break;
@@ -1063,7 +1059,7 @@ void INtSocketOpCompleteSocketRead (
         }
 
         SocketStartAsyncRead(sock);
-    }
+    } while(false);
 
     INtConnCompleteOperation(sock);
 }
