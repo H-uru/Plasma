@@ -117,15 +117,13 @@ void ErrorAssert(int line, const char file[], const char fmt[], ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, sizeof(msg), fmt, args);
-#ifdef _MSC_VER
-#ifndef PLASMA_EXTERNAL_RELEASE
+#ifdef HS_DEBUGGING
     if (s_GuiAsserts)
     {
         if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
             DebugBreak();
     } else 
-#endif // PLASMA_EXTERNAL_RELEASE
-#endif // _MSC_VER
+#endif // HS_DEBUGGING
       if (DebugIsDebuggerPresent()) {
         char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
         DebugMsg(str, file, line, msg);
