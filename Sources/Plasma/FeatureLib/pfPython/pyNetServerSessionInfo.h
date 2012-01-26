@@ -92,7 +92,7 @@ public:
     UInt8           GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
     UInt16          GetServerPort() const { return fInfo.GetServerPort(); }
-    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
+    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString().c_str(); }
 };
 
 
@@ -132,7 +132,7 @@ public:
     UInt8           GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
     UInt16          GetServerPort() const { return fInfo.GetServerPort(); }
-    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
+    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString().c_str(); }
 };
 
 

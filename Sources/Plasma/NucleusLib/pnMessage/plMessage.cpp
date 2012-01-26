@@ -256,6 +256,18 @@ int plMsgStdStringHelper::PokeBig(const char * buf, UInt32 bufsz, hsStream* stre
     return stream->GetPosition();
 }
 
+int plMsgStdStringHelper::Poke(const plString & stringref, hsStream* stream, const UInt32 peekOptions)
+{
+    std::string temp = stringref.c_str();
+    return Poke(temp, stream, peekOptions);
+}
+
+int plMsgStdStringHelper::PokeBig(const plString & stringref, hsStream* stream, const UInt32 peekOptions)
+{
+    std::string temp = stringref.c_str();
+    return PokeBig(temp, stream, peekOptions);
+}
+
 // STATIC
 int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const UInt32 peekOptions)
 {
@@ -299,6 +311,22 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
     }
     stream->LogSubStreamEnd();
     return stream->GetPosition();
+}
+
+int plMsgStdStringHelper::Peek(plString  & stringref, hsStream* stream, const UInt32 peekOptions)
+{
+    std::string temp;
+    int pos = Peek(temp, stream, peekOptions);
+    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    return pos;
+}
+
+int plMsgStdStringHelper::PeekBig(plString  & stringref, hsStream* stream, const UInt32 peekOptions)
+{
+    std::string temp;
+    int pos = PeekBig(temp, stream, peekOptions);
+    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    return pos;
 }
 
 /////////////////////////////////////////////////////////////////

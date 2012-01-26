@@ -64,6 +64,7 @@ public:
 
     plUUID();
     plUUID( const char * s );
+    plUUID( const plString & s );
     plUUID( const plUUID & other );
 #ifdef HS_BUILD_FOR_WIN32
     plUUID( const Uuid & uuid );
@@ -76,12 +77,12 @@ public:
     int     CompareTo( const plUUID * v ) const;
     bool    IsEqualTo( const plUUID * v ) const;
     bool    FromString( const char * str );
-    bool    ToStdString( std::string & out ) const;
-    inline std::string AsStdString() const { return AsString(); }
-    const char * AsString() const; // returns static buffer
+    bool    FromString( const plString & str );
+    bool    ToString( plString & out ) const;
+    plString AsString() const;
     void    Read( hsStream * s );
     void    Write( hsStream * s );
-    operator std::string ( void ) const { return AsStdString();}
+    operator plString ( void ) const { return AsString();}
     bool    operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
     bool    operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
     int     operator <( const plUUID & other ) const { return CompareTo( &other ); }

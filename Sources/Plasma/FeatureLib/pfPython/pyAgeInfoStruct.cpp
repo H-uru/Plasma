@@ -117,7 +117,7 @@ void pyAgeInfoStruct::SetAgeDescription( const char * v )
 
 const char * pyAgeInfoStruct::GetAgeInstanceGuid() const
 {
-    fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsStdString();
+    fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsString();
     return fAgeInstanceGuidStr.c_str();
 }
 
@@ -161,9 +161,9 @@ const char * pyAgeInfoStruct::GetDisplayName() const
 {
     Int32 seq = GetAgeSequenceNumber();
     if ( seq>0 )
-        xtl::format( fDisplayName, "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
     else
-        xtl::format( fDisplayName, "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
     return fDisplayName.c_str();
 }
 
@@ -214,7 +214,7 @@ void pyAgeInfoStructRef::SetAgeUserDefinedName( const char * v )
 
 const char * pyAgeInfoStructRef::GetAgeInstanceGuid() const
 {
-    fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsStdString();
+    fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsString();
     return fAgeInstanceGuidStr.c_str();
 }
 
@@ -237,8 +237,8 @@ const char * pyAgeInfoStructRef::GetDisplayName() const
 {
     Int32 seq = GetAgeSequenceNumber();
     if ( seq>0 )
-        xtl::format( fDisplayName, "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
     else
-        xtl::format( fDisplayName, "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
     return fDisplayName.c_str();
 }
