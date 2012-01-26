@@ -455,8 +455,7 @@ hsBool cyMisc::WasLocallyNotified(pyKey &selfkey)
 //
 const char* cyMisc::GetClientName(pyKey &avKey)
 {
-    const char* ret=plNetClientMgr::GetInstance()->GetPlayerName(avKey.getKey());
-    return (ret==nil) ? "" : ret;
+    return plNetClientMgr::GetInstance()->GetPlayerName(avKey.getKey()).s_str();
 }
 
 PyObject* cyMisc::GetAvatarKeyFromClientID(int clientID)
@@ -549,7 +548,7 @@ hsBool cyMisc::ValidateKey(pyKey& key)
 //
 const char* cyMisc::GetLocalClientName()
 {
-    return plNetClientMgr::GetInstance()->GetPlayerName();
+    return plNetClientMgr::GetInstance()->GetPlayerName().c_str();
 }
 
 
@@ -946,7 +945,7 @@ PyObject* cyMisc::GetLocalAvatar()
 PyObject* cyMisc::GetLocalPlayer()
 {
     return pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(),
-                        plNetClientMgr::GetInstance()->GetPlayerName(),
+                        plNetClientMgr::GetInstance()->GetPlayerName().c_str(),
                         plNetClientMgr::GetInstance()->GetPlayerID(),
                         0.0 );
 }
@@ -1003,7 +1002,7 @@ std::vector<PyObject*> cyMisc::GetPlayerList()
             // only non-ignored people in list and not in ignore list
             if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
             {
-                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                 pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
                 // modifies playerObj
@@ -1038,7 +1037,7 @@ std::vector<PyObject*> cyMisc::GetPlayerListDistanceSorted()
                 // only non-ignored people in list and not in ignore list
                 if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
                 {
-                    PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                    PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                     pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
                     // modifies playerObj

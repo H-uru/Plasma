@@ -314,8 +314,7 @@ hsBool plResManager::ReadObject(plKeyImp* key)
     // it will just inc/dec the open/close count during its read, and not actually 
     // close the stream, so we don't lose our place, lose our file handle, and thrash.
 
-    char locstr[64];
-    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze(locstr)));
+    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze().c_str()));
     plRegistryPageNode *pageNode = FindPage(key->GetUoid().GetLocation());
     if (!pageNode)
     {
@@ -1576,14 +1575,14 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (refsLeft == 0)
         return;
 
-    char tempStr[256], tempStr2[128];
+    char tempStr2[128];
     if (key->ObjectIsLoaded() == nil)
         sprintf(tempStr2, "(key only, %d refs left)", refsLeft);
     else
         sprintf(tempStr2, "- %d bytes - %d refs left", key->GetDataLen(), refsLeft);
 
     hsStatusMessageF("    %s: %s %s\n", plFactory::GetNameOfClass(key->GetUoid().GetClassType()), 
-                                                key->GetUoid().StringIze(tempStr), tempStr2);
+                                                key->GetUoid().StringIze().c_str(), tempStr2);
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////

@@ -103,7 +103,7 @@ void plNetClientMgr::IShowLists()
         sprintf(str, "%s%s %s p2p=%d dist=%.1f",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingVoice ? "V" : " ",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
-            mbr->AsStdString().c_str(),
+            mbr->AsString().c_str(),
             mbr->IsPeerToPeer(),
             mbr->GetDistSq() != hsScalarMax ? hsSquareRoot(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
@@ -121,7 +121,7 @@ void plNetClientMgr::IShowLists()
     y+=yOff;
     for(i=0;i<GetListenList()->GetNumMembers();i++)
     {
-        sprintf(str, "name=%s", GetListenList()->GetMember(i)->AsStdString().c_str());
+        sprintf(str, "name=%s", GetListenList()->GetMember(i)->AsString().c_str());
         txt.DrawString(x,y,str);
         y+=yOff;
     }
@@ -133,7 +133,7 @@ void plNetClientMgr::IShowLists()
     y+=yOff;
     for(i=0;i<GetTalkList()->GetNumMembers();i++)
     {
-        sprintf(str, "name=%s", GetTalkList()->GetMember(i)->AsStdString().c_str());
+        sprintf(str, "name=%s", GetTalkList()->GetMember(i)->AsString().c_str());
         txt.DrawString(x,y,str);
         y+=yOff;
     }
@@ -231,8 +231,8 @@ void plNetClientMgr::IShowRelevanceRegions()
     //
     UInt32 maxPlayerName = 0;
 
-    txt.DrawString(x, y, GetPlayerName());
-    maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(GetPlayerName()));
+    txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(GetPlayerName()));
+    maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(_TEMP_CONVERT_TO_CONST_CHAR(GetPlayerName())));
     y += yOff;
 
     int i;
@@ -243,9 +243,9 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (mbr->IsServer())
             continue;
 
-        const char* name = mbr->GetPlayerName();
-        txt.DrawString(x, y, name);
-        maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(name));
+        const plString& name = mbr->GetPlayerName();
+        txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(name));
+        maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(_TEMP_CONVERT_TO_CONST_CHAR(name)));
         y += yOff;
     }
 
@@ -359,7 +359,7 @@ void plNetClientMgr::IShowAvatars()
         ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
 
         sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                mbr->AsStdString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                mbr->AsString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
         txt.DrawString(x,y,str);
         y+=yOff;
     

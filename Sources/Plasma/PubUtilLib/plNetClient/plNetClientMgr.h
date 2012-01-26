@@ -288,9 +288,9 @@ public:
     
     // getters
     UInt32              GetPlayerID( void ) const;
-    const char *        GetPlayerName( const plKey avKey=nil ) const;
-    const char *        GetPlayerNameById (unsigned playerId) const;
-    unsigned            GetPlayerIdByName(const char name[]) const;
+    plString            GetPlayerName( const plKey avKey=nil ) const;
+    plString            GetPlayerNameById (unsigned playerId) const;
+    unsigned            GetPlayerIdByName(const plString & name) const;
 
     UInt8 GetJoinOrder()                const { return fJoinOrder; }    // only valid at join time
 

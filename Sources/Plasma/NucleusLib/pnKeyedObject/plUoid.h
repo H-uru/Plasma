@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLoadMask.h"
 
 class hsStream;
+class plString;
 
 //// plLocation //////////////////////////////////////////////////////////////
 
@@ -124,7 +125,7 @@ public:
     bool operator<(const plLocation& loc ) const { return fSequenceNumber < loc.fSequenceNumber; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    char* StringIze(char* str) const;  // Format to displayable string. Returns the same string for convenience
+    plString StringIze() const;  // Format to displayable string.
 
     static plLocation MakeReserved(UInt32 number);
     static plLocation MakeNormal(UInt32 number);
@@ -174,7 +175,7 @@ public:
     void SetObjectID(UInt32 id) { fObjectID = id; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    char* StringIze(char* str) const;  // Format to displayable string
+    plString StringIze() const;  // Format to displayable string
 
 protected:
     enum ContentsFlags  // for read/write functions

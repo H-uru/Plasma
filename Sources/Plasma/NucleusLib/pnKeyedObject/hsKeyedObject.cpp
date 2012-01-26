@@ -143,12 +143,9 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
         if (!(inUoid == myUoid))
         {
 #if !HS_BUILD_FOR_UNIX      // disable for unix servers
-            char inStr[255], myStr[255];
-            inUoid.StringIze(inStr);
-            myUoid.StringIze(myStr);
             hsAssert(false,
-                xtl::format("Request to Unregister wrong FixedKey, keyName=%s, inUoid=%s, myUoid=%s",
-                fpKey->GetName() ? fpKey->GetName() : "?", inStr, myStr).c_str());
+                plString::Format("Request to Unregister wrong FixedKey, keyName=%s, inUoid=%s, myUoid=%s",
+                fpKey->GetName() ? fpKey->GetName() : "?", inUoid.StringIze().c_str(), myUoid.StringIze().c_str()).c_str());
 #endif
         }
         ((plKeyImp*)fpKey)->UnRegister();

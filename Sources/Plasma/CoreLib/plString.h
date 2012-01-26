@@ -33,8 +33,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <functional>
 
-#define _TEMP_CONVERT_FROM_LITERAL(x)   plString::FromUtf8((x))
-#define _TEMP_CONVERT_FROM_WCHAR_T(x)   plString::FromWchar((x))
+/* NOTE & TODO:
+ *   These macros are intentionally annoyingly named, to mark what code
+ *   needs to be cleaned up after a larger portion of Plasma is converted
+ *   to plString.
+ */
+#define _TEMP_CONVERT_FROM_LITERAL(x)       plString::FromUtf8((x))
+#define _TEMP_CONVERT_FROM_WCHAR_T(x)       plString::FromWchar((x))
+#define _TEMP_CONVERT_TO_CONST_CHAR(x)      (x).c_str()
+#define _TEMP_CONVERT_TO_CONST_CHAR_S(x)    (x).s_str()
 
 typedef unsigned int UniChar;
 
@@ -176,7 +183,9 @@ public:
     }
 
     const char *c_str() const { return fUtf8Buffer.GetData(); }
-    const char *s_str() const { return c_str() ? c_str() : ""; }
+    const char *s_str(const char *safe = "") const { return c_str() ? c_str() : safe; }
+    char CharAt(size_t position) const { return c_str()[position]; }
+
     plStringBuffer<char> ToUtf8() const { return fUtf8Buffer; }
     plStringBuffer<UInt16> ToUtf16() const;
     plStringBuffer<wchar_t> ToWchar() const;

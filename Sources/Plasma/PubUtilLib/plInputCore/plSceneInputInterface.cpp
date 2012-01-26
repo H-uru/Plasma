@@ -837,8 +837,8 @@ void plSceneInputInterface::ILinkOffereeToAge()
         std::string title;
         std::string desc;
         
-        unsigned nameLen = StrLen(plNetClientMgr::GetInstance()->GetPlayerName());
-        if (plNetClientMgr::GetInstance()->GetPlayerName()[nameLen - 1] == 's' || plNetClientMgr::GetInstance()->GetPlayerName()[nameLen - 1] == 'S') {
+        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
+        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's' || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
             xtl::format( title, "%s'", plNetClientMgr::GetInstance()->GetPlayerName() );
             xtl::format( desc, "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName() );
         }
