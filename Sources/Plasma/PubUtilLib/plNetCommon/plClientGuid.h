@@ -55,11 +55,11 @@ class plClientGuid : public plCreatable
     UInt8   fCCRLevel;
     bool    fProtectedLogin;
     UInt8   fBuildType;     // see plNetCommon.h
-    std::string fPlayerName;
+    plString fPlayerName;
     UInt32  fSrcAddr;
     UInt16  fSrcPort;
     bool    fReserved;
-    std::string fClientKey;
+    plString fClientKey;
 
 public:
     enum Flags // 16 bits.
@@ -80,8 +80,8 @@ public:
     CLASSNAME_REGISTER( plClientGuid );
     GETINTERFACE_ANY( plClientGuid, plCreatable );
 
-    std::string AsStdString() const;
-    std::string AsLogString() const;
+    plString AsString() const;
+    plString AsLogString() const;
     void    Clear();
     void    CopyFrom(const plClientGuid * other);
     void    UpdateFrom(const plClientGuid * other);
@@ -94,7 +94,7 @@ public:
 
     bool    HasAccountUUID() const { return (fFlags&kAccountUUID&&!fAccountUUID.IsNull())?true:false;}
     bool    HasPlayerID() const { return (fFlags&kPlayerID&&fPlayerID>0)?true:false;}
-    bool    HasPlayerName() const { return (fFlags&kPlayerName&&fPlayerName.size())?true:false; }
+    bool    HasPlayerName() const { return (fFlags&kPlayerName&&!fPlayerName.IsEmpty())?true:false; }
     bool    HasCCRLevel() const { return (fFlags&kCCRLevel)?true:false;}
     bool    HasProtectedLogin() const { return (fFlags&kProtectedLogin)?true:false;}
     bool    HasBuildType() const { return (fFlags&kBuildType)?true:false;}
@@ -105,7 +105,7 @@ public:
     
     const plUUID * GetAccountUUID() const { return &fAccountUUID;}
     UInt32  GetPlayerID() const { return fPlayerID;}
-    const char * GetPlayerName() const { return fPlayerName.c_str(); }
+    const plString & GetPlayerName() const { return fPlayerName; }
     UInt8   GetCCRLevel() const { return fCCRLevel; }
     bool    GetProtectedLogin() const { return ( fProtectedLogin!=0 ); }
     UInt8   GetFlags() const { return (UInt8)fFlags;}
@@ -114,12 +114,12 @@ public:
     const char * GetSrcAddrStr() const;
     UInt16  GetSrcPort() const { return fSrcPort; }
     bool    IsReserved() const { return fReserved!=0; }
-    const std::string& GetClientKey() const { return fClientKey; }
+    const plString& GetClientKey() const { return fClientKey; }
 
     void    SetAccountUUID(const plUUID * v);
     void    SetAccountUUID(const plUUID & v);
     void    SetPlayerID(UInt32 v);
-    void    SetPlayerName( const char * v );
+    void    SetPlayerName( const plString & v );
     void    SetCCRLevel(UInt8 v);
     void    SetProtectedLogin(bool v);
     void    SetBuildType(UInt8 v);
@@ -127,7 +127,7 @@ public:
     void    SetSrcAddrFromStr( const char * s );
     void    SetSrcPort( UInt16 v );
     void    SetReserved( bool v );
-    void    SetClientKey( const std::string& key );
+    void    SetClientKey( const plString& key );
     // When a client hasn't selected a player yet,
     // we need to uniquely identify them in the lobby server.
     // We do this by stuffing a temp value into the fPlayerID

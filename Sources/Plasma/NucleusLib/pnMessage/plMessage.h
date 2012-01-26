@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plKey;
 class hsStream;
+class plString;
 
 // Base class for messages only has enough info to route it
 // and send it over the wire (Read/Write).
@@ -171,8 +172,12 @@ struct plMsgStdStringHelper
     static int PokeBig(const std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
     static int Poke(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
     static int PokeBig(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions=0);
+    static int Poke(const plString & stringref, hsStream* stream, const UInt32 peekOptions=0);
+    static int PokeBig(const plString & stringref, hsStream* stream, const UInt32 peekOptions=0);
     static int Peek(std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
     static int PeekBig(std::string & stringref, hsStream* stream, const UInt32 peekOptions=0);
+    static int Peek(plString & stringref, hsStream* stream, const UInt32 peekOptions=0);
+    static int PeekBig(plString & stringref, hsStream* stream, const UInt32 peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

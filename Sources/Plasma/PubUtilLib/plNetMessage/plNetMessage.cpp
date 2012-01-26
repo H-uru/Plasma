@@ -700,19 +700,12 @@ void plNetMsgStreamedObject::WriteVersion(hsStream* s, hsResMgr* mgr)
 
 ////////////////////////////////////////////////////////////////////
 // debug
-std::string plNetMsgSDLState::AsStdString() const
+plString plNetMsgSDLState::AsString() const
 {
-    std::string s;
-
     ISetDescName();     // set desc name for debug if necessary
 
-//  xtl::format(s,"object:%s, SDL:%s, initial:%d, %s",
-//      ObjectInfo()->GetObjectName(), fDescName.c_str(), fIsInitialState, plNetMsgStreamedObject::AsStdString().c_str() );
-
-    xtl::format(s,"object:%s, initial:%d, %s",
-        ObjectInfo()->GetObjectName(), fIsInitialState, plNetMsgStreamedObject::AsStdString().c_str() );
-
-    return s;
+    return plString::Format("object:%s, initial:%d, %s",
+        ObjectInfo()->GetObjectName(), fIsInitialState, plNetMsgStreamedObject::AsString().c_str() );
 }
 
 //
@@ -1119,7 +1112,7 @@ int plNetMsgMemberUpdate::IPokeBuffer(hsStream* stream, UInt32 peekOptions)
     if (bytes)
     {
         // FIX ME to something nice
-        fMemberInfo.GetClientGuid()->SetClientKey("");
+        fMemberInfo.GetClientGuid()->SetClientKey(_TEMP_CONVERT_FROM_LITERAL(""));
         fMemberInfo.GetClientGuid()->SetAccountUUID(plUUID());
         fMemberInfo.Poke(stream, peekOptions);
         stream->WriteByte(fAddMember);
