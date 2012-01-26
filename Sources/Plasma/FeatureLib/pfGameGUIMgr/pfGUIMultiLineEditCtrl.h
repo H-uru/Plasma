@@ -68,10 +68,10 @@ public:
     virtual ~pfGUIMultiLineEditProc() {}
 
     // we've hit the end of the control list (by moving the cursor)
-    virtual void OnEndOfControlList(Int32 cursorPos) {}
+    virtual void OnEndOfControlList(int32_t cursorPos) {}
 
     // we've hit the beginning of the control ist (by moving the cursor)
-    virtual void OnBeginningOfControlList(Int32 cursorPos) {}
+    virtual void OnBeginningOfControlList(int32_t cursorPos) {}
 };
 
 class pfGUIMultiLineEditCtrl : public pfGUIControlMod
@@ -97,32 +97,32 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         mutable hsTArray<wchar_t>   fBuffer;        // Because AcquireArray() isn't const
 
-        hsTArray<Int32> fLineStarts;
-        UInt16          fLineHeight, fCurrCursorX, fCurrCursorY;
-        Int32           fCursorPos, fLastCursorLine;
+        hsTArray<int32_t> fLineStarts;
+        uint16_t          fLineHeight, fCurrCursorX, fCurrCursorY;
+        int32_t           fCursorPos, fLastCursorLine;
         hsBool          fIgnoreNextKey, fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
-        Int8            fLockCount;
-        UInt8           fCalcedFontSize;    // The font size that we calced our line height at
+        int8_t            fLockCount;
+        uint8_t           fCalcedFontSize;    // The font size that we calced our line height at
 
-        UInt8           fLastKeyModifiers;
+        uint8_t           fLastKeyModifiers;
         wchar_t         fLastKeyPressed;
 
         static wchar_t  fColorCodeChar, fStyleCodeChar;
-        static UInt32   fColorCodeSize, fStyleCodeSize;
+        static uint32_t   fColorCodeSize, fStyleCodeSize;
 
-        virtual hsBool  IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
-        void            IUpdate( Int32 startLine, Int32 endLine );
+        void            IUpdate( int32_t startLine, int32_t endLine );
 
         friend class pfMLScrollProc;
 
         pfGUIValueCtrl  *fScrollControl;
         pfMLScrollProc  *fScrollProc;
-        Int32           fScrollPos;
-        Int32           fBufferLimit;
+        int32_t           fScrollPos;
+        int32_t           fBufferLimit;
 
         pfGUIMultiLineEditCtrl *fNextCtrl; // used for linking multiple controls together to share a buffer
         pfGUIMultiLineEditCtrl *fPrevCtrl;
@@ -131,8 +131,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         std::string fFontFace;
         hsColorRGBA fFontColor;
-        UInt8       fFontSize;
-        UInt8       fFontStyle;
+        uint8_t       fFontSize;
+        uint8_t       fFontStyle;
         enum flagsSet
         {
             kFontFaceSet = 1,
@@ -140,49 +140,49 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
             kFontSizeSet = 4,
             kFontStyleSet = 8
         };
-        UInt8       fFontFlagsSet;
+        uint8_t       fFontFlagsSet;
 
         int     fTopMargin,fLeftMargin,fBottomMargin,fRightMargin;
 
         void    IMoveCursor( Direction dir );
-        void    IMoveCursorTo( Int32 position );    // Updates selection
-        void    ISetCursor( Int32 newPosition );    // Doesn't update selection
+        void    IMoveCursorTo( int32_t position );    // Updates selection
+        void    ISetCursor( int32_t newPosition );    // Doesn't update selection
 
-        Int32   IRecalcLineStarts( Int32 startingLine, hsBool force, hsBool dontUpdate = false );
+        int32_t   IRecalcLineStarts( int32_t startingLine, hsBool force, hsBool dontUpdate = false );
         void    IRecalcFromCursor( hsBool forceUpdate = false );
-        Int32   IFindCursorLine( Int32 cursorPos = -1 ) const;
-        hsBool  IStoreLineStart( UInt32 line, Int32 start );
-        void    IOffsetLineStarts( UInt32 position, Int32 offset, hsBool offsetSelectionEnd = false );
-        Int32   IPointToPosition( Int16 x, Int16 y, hsBool searchOutsideBounds = false );
-        Int32   ICalcNumVisibleLines( void ) const;
+        int32_t   IFindCursorLine( int32_t cursorPos = -1 ) const;
+        hsBool  IStoreLineStart( uint32_t line, int32_t start );
+        void    IOffsetLineStarts( uint32_t position, int32_t offset, hsBool offsetSelectionEnd = false );
+        int32_t   IPointToPosition( int16_t x, int16_t y, hsBool searchOutsideBounds = false );
+        int32_t   ICalcNumVisibleLines( void ) const;
 
-        void    IReadColorCode( Int32 &pos, hsColorRGBA &color ) const;
-        void    IReadStyleCode( Int32 &pos, UInt8 &fontStyle ) const;
-        UInt32  IRenderLine( UInt16 x, UInt16 y, Int32 start, Int32 end, hsBool dontRender = false );
-        hsBool  IFindLastColorCode( Int32 pos, hsColorRGBA &color, hsBool ignoreFirstCharacter = false ) const;
-        hsBool  IFindLastStyleCode( Int32 pos, UInt8 &style, hsBool ignoreFirstCharacter = false ) const;
+        void    IReadColorCode( int32_t &pos, hsColorRGBA &color ) const;
+        void    IReadStyleCode( int32_t &pos, uint8_t &fontStyle ) const;
+        uint32_t  IRenderLine( uint16_t x, uint16_t y, int32_t start, int32_t end, hsBool dontRender = false );
+        hsBool  IFindLastColorCode( int32_t pos, hsColorRGBA &color, hsBool ignoreFirstCharacter = false ) const;
+        hsBool  IFindLastStyleCode( int32_t pos, uint8_t &style, hsBool ignoreFirstCharacter = false ) const;
 
         inline static bool  IIsCodeChar( const wchar_t c );
         inline static bool  IIsRenderable( const wchar_t c );
-        inline static Int32 IOffsetToNextChar( wchar_t stringChar );
-        inline Int32        IOffsetToNextCharFromPos( Int32 pos ) const;
+        inline static int32_t IOffsetToNextChar( wchar_t stringChar );
+        inline int32_t        IOffsetToNextCharFromPos( int32_t pos ) const;
 
-        void    IActuallyInsertColor( Int32 pos, hsColorRGBA &color );
-        void    IActuallyInsertStyle( Int32 pos, UInt8 style );
+        void    IActuallyInsertColor( int32_t pos, hsColorRGBA &color );
+        void    IActuallyInsertStyle( int32_t pos, uint8_t style );
 
         void    IUpdateScrollRange( void );
 
-        wchar_t *ICopyRange( Int32 start, Int32 end ) const;
+        wchar_t *ICopyRange( int32_t start, int32_t end ) const;
 
-        Int32   ICharPosToBufferPos( Int32 charPos ) const;
+        int32_t   ICharPosToBufferPos( int32_t charPos ) const;
 
         void    IUpdateBuffer();
         void    IUpdateLineStarts();
         void    ISetGlobalBuffer();
-        void    ISetLineStarts(hsTArray<Int32> lineStarts);
+        void    ISetLineStarts(hsTArray<int32_t> lineStarts);
 
-        void    IHitEndOfControlList(Int32 cursorPos);
-        void    IHitBeginningOfControlList(Int32 cursorPos);
+        void    IHitEndOfControlList(int32_t cursorPos);
+        void    IHitBeginningOfControlList(int32_t cursorPos);
 
     public:
 
@@ -202,12 +202,12 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual hsBool  HandleKeyPress( wchar_t key, UInt8 modifiers );
-        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers );
+        virtual hsBool  HandleKeyPress( wchar_t key, uint8_t modifiers );
+        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 
@@ -219,7 +219,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
             kKeyPressedEvent
         };
 
-        void    SetScrollPosition( Int32 topLine );
+        void    SetScrollPosition( int32_t topLine );
         void    MoveCursor( Direction dir );
 
         void    InsertChar( char c );
@@ -227,23 +227,23 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    InsertString( const char *string );
         void    InsertString( const wchar_t *string );
         void    InsertColor( hsColorRGBA &color );
-        void    InsertStyle( UInt8 fontStyle );
+        void    InsertStyle( uint8_t fontStyle );
         void    DeleteChar( void );
         void    ClearBuffer( void );
         void    SetBuffer( const char *asciiText );
         void    SetBuffer( const wchar_t *asciiText );
-        void    SetBuffer( const UInt8 *codedText, UInt32 length );
-        void    SetBuffer( const UInt16 *codedText, UInt32 length );
+        void    SetBuffer( const uint8_t *codedText, uint32_t length );
+        void    SetBuffer( const uint16_t *codedText, uint32_t length );
         char    *GetNonCodedBuffer( void ) const;
         wchar_t *GetNonCodedBufferW( void ) const;
-        UInt8   *GetCodedBuffer( UInt32 &length ) const;
-        UInt16  *GetCodedBufferW( UInt32 &length ) const;
-        UInt32  GetBufferSize();
+        uint8_t   *GetCodedBuffer( uint32_t &length ) const;
+        uint16_t  *GetCodedBufferW( uint32_t &length ) const;
+        uint32_t  GetBufferSize();
 
-        void    SetBufferLimit(Int32 limit) { fBufferLimit = limit; }
-        Int32   GetBufferLimit() { return fBufferLimit; }
+        void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }
+        int32_t   GetBufferLimit() { return fBufferLimit; }
 
-        void    GetThisKeyPressed( char &key, UInt8 &modifiers ) const { key = (char)fLastKeyPressed; modifiers = fLastKeyModifiers; }
+        void    GetThisKeyPressed( char &key, uint8_t &modifiers ) const { key = (char)fLastKeyPressed; modifiers = fLastKeyModifiers; }
 
         void    Lock( void );
         void    Unlock( void );
@@ -259,21 +259,21 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    ClearPrev();
         void    SetEventProc( pfGUIMultiLineEditProc *eventProc );
         void    ClearEventProc();
-        Int32   GetFirstVisibleLine();
-        Int32   GetLastVisibleLine();
-        Int32   GetNumVisibleLines() {return ICalcNumVisibleLines();}
-        void    SetGlobalStartLine(Int32 line);
+        int32_t   GetFirstVisibleLine();
+        int32_t   GetLastVisibleLine();
+        int32_t   GetNumVisibleLines() {return ICalcNumVisibleLines();}
+        void    SetGlobalStartLine(int32_t line);
 
-        void    SetCursorToLoc(Int32 loc) {ISetCursor(loc);}
+        void    SetCursorToLoc(int32_t loc) {ISetCursor(loc);}
 
         void    SetMargins(int top, int left, int bottom, int right);
 
-        UInt8   GetFontSize() {return fFontSize;} // because we're too cool to use the color scheme crap
+        uint8_t   GetFontSize() {return fFontSize;} // because we're too cool to use the color scheme crap
 
         void    SetFontFace(std::string fontFace);
         void    SetFontColor(hsColorRGBA fontColor) {fFontColor = fontColor; fFontFlagsSet |= kFontColorSet;}
-        void    SetFontSize(UInt8 fontSize);
-        void    SetFontStyle(UInt8 fontStyle) {fFontStyle = fontStyle; fFontFlagsSet |= kFontStyleSet;}
+        void    SetFontSize(uint8_t fontSize);
+        void    SetFontStyle(uint8_t fontStyle) {fFontStyle = fontStyle; fFontFlagsSet |= kFontStyleSet;}
 
         hsBool  ShowingBeginningOfBuffer();
         hsBool  ShowingEndOfBuffer();

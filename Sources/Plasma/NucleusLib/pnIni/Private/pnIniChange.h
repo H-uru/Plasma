@@ -59,15 +59,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct IniChangeReg;
 
-typedef void (* FIniFileChangeCallback)(const wchar fullPath[]);
+typedef void (* FIniFileChangeCallback)(const wchar_t fullPath[]);
 
 void IniChangeInitialize (
-    const wchar             dir[] = L"Config"
+    const wchar_t             dir[] = L"Config"
 );
 void IniChangeDestroy ();
 
 void IniChangeAdd (
-    const wchar             filename[],     // just filename, no path or extension
+    const wchar_t             filename[],     // just filename, no path or extension
     FIniFileChangeCallback  callback,
     IniChangeReg **         reg
 );

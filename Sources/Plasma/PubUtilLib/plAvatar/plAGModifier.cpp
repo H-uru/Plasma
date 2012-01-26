@@ -133,7 +133,7 @@ void plAGModifier::Apply(double time) const
 
 // IEVAL
 // Apply our channels to our scene object
-hsBool plAGModifier::IEval(double time, hsScalar delta, UInt32 dirty)
+hsBool plAGModifier::IEval(double time, float delta, uint32_t dirty)
 {
     if(fAutoApply) {
     //  Apply(time, delta);

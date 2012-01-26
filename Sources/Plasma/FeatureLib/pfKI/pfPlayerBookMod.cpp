@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfPlayerBookMod.h"
 #include "../pfGameGUIMgr/pfGameGUIMgr.h"
 #include "../pfGameGUIMgr/pfGUIButtonMod.h"
@@ -81,7 +81,7 @@ pfPlayerBookMod::~pfPlayerBookMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfPlayerBookMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfPlayerBookMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return false;
 }

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsDlistNode *hsDlistNode::fpFirst=0;
 hsDlistNode *hsDlistNode::fpLast=0;
-UInt32 hsDlistNode::fcreated=0;
-UInt32 hsDlistNode::fdestroyed=0;
+uint32_t hsDlistNode::fcreated=0;
+uint32_t hsDlistNode::fdestroyed=0;
 static int NodeKnt = 0;
 
 void RemoveNode(void *pthing)
@@ -261,7 +261,7 @@ int   hsTArrayBase::GetSizeOf(void) { return 0; }
 
 hsTArrayBase::hsTArrayBase():fUseCount(0), fTotalCount(0)
 {
-    self = TRACKED_NEW hsDlistNode(this);
+    self = new hsDlistNode(this);
 }
 
 hsTArrayBase::~hsTArrayBase()
@@ -280,7 +280,7 @@ int   hsLargeArrayBase::GetSizeOf(void) { return 0; }
 
 hsLargeArrayBase::hsLargeArrayBase():fUseCount(0), fTotalCount(0)
 {
-    self = TRACKED_NEW hsDlistNode(this);
+    self = new hsDlistNode(this);
 }
 
 hsLargeArrayBase::~hsLargeArrayBase()
@@ -302,7 +302,7 @@ void LargeArrayStats() {}
 
 
 
-void hsTArrayBase::GrowArraySize(UInt16 newCount)
+void hsTArrayBase::GrowArraySize(uint16_t newCount)
 {
 #if 1   
     if (newCount < 8)
@@ -321,7 +321,7 @@ void hsTArrayBase::GrowArraySize(UInt16 newCount)
 #endif
 }
 
-void hsLargeArrayBase::GrowArraySize(UInt32 newCount)
+void hsLargeArrayBase::GrowArraySize(uint32_t newCount)
 {
 #if 1   
     if (newCount < 8)

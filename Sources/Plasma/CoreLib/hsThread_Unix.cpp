@@ -79,9 +79,9 @@ extern "C" {
     }
 }
 
-#define kInvalidStackSize   UInt32(~0)
+#define kInvalidStackSize   uint32_t(~0)
 
-hsThread::hsThread(UInt32 stackSize) : fStackSize(stackSize), fQuit(false)
+hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false)
 {
     fIsValid = false;
     pthread_mutex_init(&fMutex,nil);
@@ -541,9 +541,9 @@ void hsEvent::Signal()
 
 #endif
 
-void hsSleep::Sleep(UInt32 millis)
+void hsSleep::Sleep(uint32_t millis)
 {
-    UInt32 secs = millis / 1000;
+    uint32_t secs = millis / 1000;
     if (secs > 0)
     {
         millis %= 1000;

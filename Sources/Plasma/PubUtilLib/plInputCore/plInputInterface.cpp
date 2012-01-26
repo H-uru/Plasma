@@ -49,9 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputInterface.h"
 #include "plInputInterfaceMgr.h"
 
@@ -67,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plInputInterface::plInputInterface()
 {
     fEnabled = false;
-    fControlMap = TRACKED_NEW plKeyMap;
+    fControlMap = new plKeyMap;
 }
 
 plInputInterface::~plInputInterface()
@@ -125,7 +123,7 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
 {
     if( !(binding->GetCodeFlags() & kControlFlagNoDeactivate) && !(binding->GetCodeFlags() & kControlFlagToggle) )
     {
-        plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+        plCtrlCmd *pCmd = new plCtrlCmd( this );
         pCmd->fControlCode = binding->GetCode();
         pCmd->fControlActivated = false;
         pCmd->SetCmdString( binding->GetExtendedString() );
@@ -153,7 +151,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     /// We might have controls that are currently enabled that are triggered in part by 
     /// modifiers (ctrl or shift)...if that is true, then we want to disable them if either
     /// of those modifiers are up, no matter what key this message is for
-    hsTArray<Int16> enabledCtrls;
+    hsTArray<int16_t> enabledCtrls;
     fKeyControlFlags.Enumerate( enabledCtrls );
 
     for( i = 0; i < enabledCtrls.GetCount(); i++ )
@@ -223,7 +221,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     if (!binding)
         return false;
 
-    UInt32 codeFlags = binding->GetCodeFlags();
+    uint32_t codeFlags = binding->GetCodeFlags();
 
     // Filter out no-repeat messages
     if( ( codeFlags & kControlFlagNoRepeat ) && keyMsg->GetRepeat() )
@@ -295,7 +293,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
         return true;
 
     /// OK, generate the message to send
-    plCtrlCmd *pCmd = TRACKED_NEW plCtrlCmd( this );
+    plCtrlCmd *pCmd = new plCtrlCmd( this );
     pCmd->fControlCode = binding->GetCode();
     pCmd->fControlActivated = activate;
 

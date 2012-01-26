@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "SceneWatcher.h"
 
@@ -123,7 +123,7 @@ RefResult SceneWatcher::NotifyRefChanged(Interval changeInt, RefTargetHandle hTa
         if (node->IsComponent())
         {
             plComponentBase *comp = node->ConvertToComponent();
-            for (UInt32 i = 0; i < comp->NumTargets(); i++)
+            for (uint32_t i = 0; i < comp->NumTargets(); i++)
             {
                 if (comp->GetTarget(i))
                     comp->GetTarget(i)->SetDirty(plMaxNode::kGeomDirty, true);

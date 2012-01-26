@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBumpMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
@@ -60,7 +60,7 @@ class plBumpMtlClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plBumpMtl(loading); }
+    void*           Create(BOOL loading) { return new plBumpMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_BUMP_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return BUMP_MTL_CLASS_ID; }
@@ -81,7 +81,7 @@ ParamBlockDesc2 *GetBumpLayersPB();
 plBumpMtl::plBumpMtl(BOOL loading) : plPassMtlBase( loading )
 {
     plBumpMtlDesc.MakeAutoParamBlocks( this );
-    fBasicPB->SetValue( kBumpBasLayer, 0, TRACKED_NEW plLayerTex );
+    fBasicPB->SetValue( kBumpBasLayer, 0, new plLayerTex );
 
     // If we do this later (like, when the dialog loads) something blows up,
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
@@ -260,7 +260,7 @@ TSTR plBumpMtl::GetSubTexmapTVName(int i)
 
 RefTargetHandle plBumpMtl::Clone(RemapDir &remap)
 {
-    plBumpMtl *mnew = TRACKED_NEW plBumpMtl(FALSE);
+    plBumpMtl *mnew = new plBumpMtl(FALSE);
     plPassMtlBase::ICloneBase( mnew, remap );
     return (RefTargetHandle)mnew;
 }

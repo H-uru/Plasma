@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLightProxy.h"
 #include "plLightInfo.h"
 #include "plDrawable/plDrawableSpans.h"
@@ -72,7 +72,7 @@ plKey plLightProxy::IGetNode() const
     return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
-plDrawableSpans* plLightProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plLightProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {

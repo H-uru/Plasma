@@ -142,7 +142,7 @@ plAGChannel * plMatrixChannel::MakeBlend(plAGChannel * channelB,
 
     if (matChanB)
     {
-        result = TRACKED_NEW plMatrixBlend(this, matChanB, channelBias, blendPriority);
+        result = new plMatrixBlend(this, matChanB, channelBias, blendPriority);
     }
     return result;
 }
@@ -151,14 +151,14 @@ plAGChannel * plMatrixChannel::MakeBlend(plAGChannel * channelB,
 // --------------
 plAGChannel * plMatrixChannel::MakeZeroState()
 {
-    return TRACKED_NEW plMatrixConstant(Value(0));
+    return new plMatrixConstant(Value(0));
 }
 
 // MakeTimeScale --------------------------------------------------------
 // --------------
 plAGChannel * plMatrixChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plMatrixTimeScale(this, timeSource);
+    return new plMatrixTimeScale(this, timeSource);
 }
 
 // Dump -------------------------------------------
@@ -370,13 +370,13 @@ plAGChannel * plMatrixBlend::MakeBlend(plAGChannel *newChannel,
     return result;
 }
 
-UInt16 plMatrixBlend::GetPriority() {
+uint16_t plMatrixBlend::GetPriority() {
     return fPriority;
 }
 
 hsBool plMatrixBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fChannelA->IsStoppedAt(time);
     if (blend == 1)
@@ -401,7 +401,7 @@ const hsMatrix44 & plMatrixBlend::Value(double time, bool peek)
 // ------------
 const hsAffineParts & plMatrixBlend::AffineValue(double time, bool peek)
 {
-    const hsScalar &blend = fChannelBias->Value(time);
+    const float &blend = fChannelBias->Value(time);
     if(blend == 0) {
         return fOptimizedA->AffineValue(time, peek);
     } else {
@@ -452,7 +452,7 @@ plAGChannel *plMatrixBlend::Optimize(double time)
 {
     fOptimizedA = (plMatrixChannel *)fChannelA->Optimize(time);
     fOptimizedB = (plMatrixChannel *)fChannelB->Optimize(time);
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if(blend == 0.0f)
         return fOptimizedA;
     if(blend == 1.0f)
@@ -526,7 +526,7 @@ const hsMatrix44 & plMatrixControllerChannel::Value(double time, bool peek,
                                                     plControllerCacheInfo *cache)
 {
     plProfile_BeginTiming(AffineInterp);
-    fController->Interp((hsScalar)time, &fAP, cache);
+    fController->Interp((float)time, &fAP, cache);
     plProfile_EndTiming(AffineInterp);
 
     plProfile_BeginTiming(AffineCompose);
@@ -548,7 +548,7 @@ const hsAffineParts & plMatrixControllerChannel::AffineValue(double time, bool p
                                                              plControllerCacheInfo *cache)
 {
     plProfile_BeginTiming(AffineInterp);
-    fController->Interp((hsScalar)time, &fAP, cache);
+    fController->Interp((float)time, &fAP, cache);
     plProfile_EndTiming(AffineInterp);
     return fAP;
 }
@@ -559,7 +559,7 @@ plAGChannel *plMatrixControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plMatrixControllerCacheChannel(this, cache);
+    return new plMatrixControllerCacheChannel(this, cache);
 }
 
 void plMatrixControllerChannel::Dump(int indent, bool optimized, double time)
@@ -764,7 +764,7 @@ void plMatrixChannelApplicator::IApply(const plAGModifier *mod, double time)
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-const hsScalar plMatrixDelayedCorrectionApplicator::fDelayLength = 1.f; // seconds
+const float plMatrixDelayedCorrectionApplicator::fDelayLength = 1.f; // seconds
 
 void plMatrixDelayedCorrectionApplicator::SetCorrection(hsMatrix44 &cor)
 {
@@ -822,7 +822,7 @@ void plMatrixDelayedCorrectionApplicator::IApply(const plAGModifier *mod, double
                 hsAffineParts interpAP;
                 hsMatrix44 interpResult;
 
-                hsScalar blend = (hsScalar)((time - fDelayStart) / fDelayLength);
+                float blend = (float)((time - fDelayStart) / fDelayLength);
                 hsInterp::LinInterp(&fCorAP, &identAP, blend, &interpAP);
                 interpAP.ComposeMatrix(&interpResult);
                 

@@ -99,7 +99,7 @@ void plSaveSelected()
         {
             plMaxNode *node = (plMaxNode*)ip->GetSelNode(i);
 
-            UInt32 compCount = node->NumAttachedComponents();
+            uint32_t compCount = node->NumAttachedComponents();
             for (int j = 0; j < compCount; j++)
             {
                 INode *compNode = node->GetAttachedComponent(j)->GetINode();//Node(j);
@@ -128,8 +128,8 @@ void plSaveSelected()
 
                 if (!IIsNodeInTab(selected, node))
                 {
-                    UInt32 idx = -1;
-                    for (UInt32 k = 0; k < out.size(); k++)
+                    uint32_t idx = -1;
+                    for (uint32_t k = 0; k < out.size(); k++)
                     {
                         if (out[k].comp == comp)
                             idx = k;
@@ -312,12 +312,12 @@ void plMerge()
 
     // Actually calculate the size of all the merged component names, because
     // a static buffer could be too small in large merges
-    UInt32 size = 0;
+    uint32_t size = 0;
     for (i = 0; i < nodeNames.Count(); i++)
         size += strlen(nodeNames[i]) + 1;
 
     // Put all the component names in a list and show it to the user
-    char *buf = TRACKED_NEW char[size+25];
+    char *buf = new char[size+25];
     strcpy(buf, "Components Merged:\n\n");
 
     for (i = 0; i < nodeNames.Count(); i++)

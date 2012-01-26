@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaWakeMgr.h"
 #include "plDynaDecal.h"
 
@@ -72,7 +72,7 @@ int plDynaWakeMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
 
-    plDynaWake* wake = TRACKED_NEW plDynaWake();
+    plDynaWake* wake = new plDynaWake();
     wake->fC1U = fInitUVW.fX;
     wake->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
@@ -140,7 +140,7 @@ hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoin
     {
         hsVector3 animDir;
         hsPoint3 p = pos;
-        hsScalar t = fAnimPath->GetExtremePoint(p);
+        float t = fAnimPath->GetExtremePoint(p);
         fAnimPath->SetCurTime(t, plAnimPath::kNone);
 
         fAnimPath->GetVelocity(&animDir);
@@ -151,8 +151,8 @@ hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoin
     }
 
     // Now if we want to factor in velocity, we can use (pos - info.fLastPos) / (hsTimer::GetSysSeconds() - info.fLastTime)
-    hsScalar dt = hsScalar(hsTimer::GetSysSeconds() - info.fLastTime);
-    const hsScalar kMinDt = 1.e-3f;
+    float dt = float(hsTimer::GetSysSeconds() - info.fLastTime);
+    const float kMinDt = 1.e-3f;
     if( (info.fFlags & plDynaDecalInfo::kImmersed) && (dt > kMinDt) )
     {
         hsVector3 velDir(&pos, &info.fLastPos);
@@ -173,14 +173,14 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
 
     hsBool retVal = false;
 
-    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 
-    static hsScalar kMinDist = 1.0f;
-    static hsScalar kMinTime = 0.25f;
+    static float kMinDist = 1.0f;
+    static float kMinTime = 0.25f;
     double t = hsTimer::GetSysSeconds();
-    hsScalar dt = hsScalar(t - info.fLastTime) * sRand.RandZeroToOne();
+    float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
     hsBool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
     hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
@@ -197,19 +197,19 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
         randPert.Normalize();
         if( !farEnough )
         {
-            static hsScalar kRandPert = 0.05f;
+            static float kRandPert = 0.05f;
             randPert *= kRandPert * shape->GetWidth();
         }
         else
         {
-            static hsScalar kRandPert = 0.05f;
+            static float kRandPert = 0.05f;
             randPert *= kRandPert * shape->GetWidth();
         }
         pos += randPert;
 
         hsVector3 up(0.f, 0.f, 1.f);
 
-        static hsScalar kHeightScale = 1.f;
+        static float kHeightScale = 1.f;
         pos.fZ += (shape->GetHeight() * fScale.fZ * kHeightScale) * 0.25f;
 
         pos += dir * shape->GetLength() * 0.5f * (1.f - fScale.fY);

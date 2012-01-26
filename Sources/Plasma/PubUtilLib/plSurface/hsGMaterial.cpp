@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGMaterial.h"
 #include <math.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsMemory.h"
 #include "hsResMgr.h"
 #include "plLayerInterface.h"
@@ -72,17 +72,17 @@ hsGMaterial::~hsGMaterial()
     IClearLayers();
 }
 
-plLayerInterface* hsGMaterial::GetPiggyBack(UInt32 which)
+plLayerInterface* hsGMaterial::GetPiggyBack(uint32_t which)
 {
     return fPiggyBacks[which];
 }
 
-plLayerInterface* hsGMaterial::GetLayer(UInt32 which)
+plLayerInterface* hsGMaterial::GetLayer(uint32_t which)
 {
     return fLayers[which];
 }
 
-UInt32 hsGMaterial::IMakeExtraLayer()
+uint32_t hsGMaterial::IMakeExtraLayer()
 {
     fLayers.ExpandAndZero(GetNumLayers()+1);
     return fLayers.GetCount();
@@ -116,7 +116,7 @@ hsGMaterial* hsGMaterial::Clone()
 
 hsGMaterial* hsGMaterial::CloneNoLayers()
 {
-    hsGMaterial* clo = TRACKED_NEW hsGMaterial;
+    hsGMaterial* clo = new hsGMaterial;
 
     clo->fCompFlags = fCompFlags;
     clo->fLoadFlags = fLoadFlags;
@@ -126,7 +126,7 @@ hsGMaterial* hsGMaterial::CloneNoLayers()
 
 plLayer* hsGMaterial::MakeBaseLayer()
 {
-    plLayer* newLay = TRACKED_NEW plLayer;
+    plLayer* newLay = new plLayer;
     newLay->InitToDefault();
     IClearLayers();
     
@@ -145,12 +145,12 @@ plLayer* hsGMaterial::MakeBaseLayer()
     return newLay;
 }
 
-UInt32 hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
+uint32_t hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
 {
     int idx = GetNumLayers();
 
     // Add via notify so we'll dispose of it properly later.
-    plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
+    plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnRequest, idx, plMatRefMsg::kLayer);
     hsgResMgr::ResMgr()->SendRef(layer->GetKey(), msg, plRefFlags::kActiveRef);
 
     fLayers.SetCount(idx+1);
@@ -190,14 +190,14 @@ void hsGMaterial::RemoveLayer(plLayerInterface* lay, hsBool piggyBack)
     layers.Remove(i);
 }
 
-void hsGMaterial::InsertLayer(plLayerInterface* layer, Int32 which, hsBool piggyBack)
+void hsGMaterial::InsertLayer(plLayerInterface* layer, int32_t which, hsBool piggyBack)
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
     layers.InsertAtIndex(which, layer);
 }
 
-void hsGMaterial::SetLayer(plLayerInterface* layer, Int32 which, hsBool insert, hsBool piggyBack)
+void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, hsBool insert, hsBool piggyBack)
 {
     if( insert )
     {
@@ -266,17 +266,17 @@ void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
     // Assign texture(s)
     for (iLay = 0; iLay < GetNumLayers(); iLay++)
     {
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
+        plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kLayer);
         plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
     for (iLay = 0; iLay < GetNumPiggyBacks(); iLay++)
     {
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
+        plMatRefMsg* msg = new plMatRefMsg(GetKey(), plRefMsg::kOnCreate, iLay, plMatRefMsg::kPiggyBack);
         plKey key = group->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
 }
 
-void hsGMaterial::Eval(double secs, UInt32 frame)
+void hsGMaterial::Eval(double secs, uint32_t frame)
 {
     plProfile_BeginLap(MaterialAnims, GetKeyName());
 

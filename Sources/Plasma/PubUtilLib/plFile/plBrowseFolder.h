@@ -42,10 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBrowseFolder_h_inc
 #define plBrowseFolder_h_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 
 #ifdef HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
 
 //
 // Gets a directory using the "Browse for Folder" dialog.

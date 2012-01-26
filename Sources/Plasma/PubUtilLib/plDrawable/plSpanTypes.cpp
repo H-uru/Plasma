@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSpanTypes.h"
 #include "hsStream.h"
 #include "pnKeyedObject/plKey.h"
@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plSpan::Read( hsStream *stream )
 {
-    fSubType = (UInt16)(stream->ReadLE32());
+    fSubType = (uint16_t)(stream->ReadLE32());
     fFogEnvironment = nil;
 
     fMaterialIdx = stream->ReadLE32();
@@ -78,7 +78,7 @@ void    plSpan::Read( hsStream *stream )
     fLocalBounds.Read( stream );
     fWorldBounds.Read( stream );
 
-    fNumMatrices = (UInt8)(stream->ReadLE32());
+    fNumMatrices = (uint8_t)(stream->ReadLE32());
     fBaseMatrix = stream->ReadLE32();
 
     fLocalUVWChans = stream->ReadLE16();
@@ -172,11 +172,11 @@ void plSpan::RemovePermaLight(plLightInfo* li, hsBool proj)
 //// AddLight ////////////////////////////////////////////////////////////////
 //  Smart function for maintaining the sorted list of lights for a plSpan.
 
-void    plSpan::AddLight( plLightInfo *li, hsScalar strength, hsScalar scale, hsBool proj ) const
+void    plSpan::AddLight( plLightInfo *li, float strength, float scale, hsBool proj ) const
 {
     hsTArray<plLightInfo*>& lights = proj ? fProjectors : fLights;
-    hsTArray<hsScalar>& strengths = proj ? fProjStrengths : fLightStrengths;
-    hsTArray<hsScalar>& scales = proj ? fProjScales : fLightScales;
+    hsTArray<float>& strengths = proj ? fProjStrengths : fLightStrengths;
+    hsTArray<float>& scales = proj ? fProjScales : fLightScales;
 
     int         i;
 
@@ -187,7 +187,7 @@ void    plSpan::AddLight( plLightInfo *li, hsScalar strength, hsScalar scale, hs
     }
     lights.Insert(i, li);
     strengths.Insert(i, strength);
-    scales.Insert(i, hsScalar(UInt32(scale * 127.9f)) / 127.f);
+    scales.Insert(i, float(uint32_t(scale * 127.9f)) / 127.f);
 }
 
 void    plSpan::ClearLights() const 
@@ -266,14 +266,14 @@ hsBool  plSpan::CanMergeInto( plSpan *other )
     {
         if( !HSMemory::EqualBlocks(fLights.AcquireArray(), other->fLights.AcquireArray(), fLights.GetCount() * sizeof(plLightInfo*)) )
             return false;
-        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(hsScalar)) )
+        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(float)) )
             return false;
     }
     if( fProjectors.GetCount() )
     {
         if( !HSMemory::EqualBlocks(fProjectors.AcquireArray(), other->fProjectors.AcquireArray(), fProjectors.GetCount() * sizeof(plLightInfo*)) )
             return false;
-        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(hsScalar)) )
+        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(float)) )
             return false;
     }
 
@@ -301,7 +301,7 @@ plSpan::plSpan()
 {
     fTypeMask = kSpan;
     fSubType = plDrawable::kSubNormal;
-    fMaterialIdx = (UInt32)-1;
+    fMaterialIdx = (uint32_t)-1;
     fFogEnvironment = nil;
     fProps = 0;
 
@@ -345,10 +345,10 @@ void plSpan::Destroy()
 plVertexSpan::plVertexSpan()
 {
     fTypeMask |= kVertexSpan;
-    fGroupIdx = (UInt32)-1;
-    fVBufferIdx = (UInt32)-1;
-    fCellIdx = (UInt32)-1;
-    fCellOffset = (UInt32)-1;
+    fGroupIdx = (uint32_t)-1;
+    fVBufferIdx = (uint32_t)-1;
+    fCellIdx = (uint32_t)-1;
+    fCellOffset = (uint32_t)-1;
 }
 
 void    plVertexSpan::Read( hsStream* stream )
@@ -432,7 +432,7 @@ void    plIcicle::Read( hsStream *stream )
         int     i;
 
 
-        fSortData = TRACKED_NEW plGBufferTriangle[ fILength / 3 ];
+        fSortData = new plGBufferTriangle[ fILength / 3 ];
         for( i = 0; i < fILength / 3; i++ )
             fSortData[ i ].Read( stream );
     }

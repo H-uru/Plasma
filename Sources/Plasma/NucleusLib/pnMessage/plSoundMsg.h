@@ -98,13 +98,13 @@ public:
     double   fBegin;
     double   fEnd;
     hsBool   fLoop;
-    hsScalar fSpeed;
+    float fSpeed;
     double   fTime;
     int      fIndex;
     int      fRepeats;
     hsBool   fPlaying;
-    UInt32   fNameStr;  
-    hsScalar fVolume;   // Range: 0 - silence, 1.f - loudest
+    uint32_t   fNameStr;  
+    float fVolume;   // Range: 0 - silence, 1.f - loudest
 
     enum FadeType
     {

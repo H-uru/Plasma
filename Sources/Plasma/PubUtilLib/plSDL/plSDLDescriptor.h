@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // These define a schema representing an object's saveState buffer.
 //
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 
 //
@@ -98,13 +98,13 @@ public:
         kVariableLength = 0x4   // Var is defined as int foo[], so it's length is variable, starting at 0
     };
 protected:
-    static const UInt8 kVersion;    // for Read/Write format
+    static const uint8_t kVersion;    // for Read/Write format
     char*   fDefault;               // set by .sdl
     char*   fName;                  // set by .sdl
     int     fCount;                 // set by .sdl
     Type    fType;                  // set by .sdl
     char*   fTypeString;            // string version of fType
-    UInt32  fFlags;
+    uint32_t  fFlags;
     std::string fDisplayOptions;    // set by .sdl
 public:
     plVarDescriptor();
@@ -221,7 +221,7 @@ class plKey;
 class plStateDescriptor
 {
 private:
-    static const UInt8 kVersion;        // for Read/Write format
+    static const uint8_t kVersion;        // for Read/Write format
     typedef std::vector<plVarDescriptor*> VarsList; 
     VarsList fVarsList;
     int fVersion;

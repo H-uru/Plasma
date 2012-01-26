@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputEventMsg.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
@@ -134,7 +134,7 @@ plControlEventMsg::~plControlEventMsg()
 void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Read(stream, mgr);
-    stream->ReadLE((Int32*)&fControlCode);
+    stream->ReadLE((int32_t*)&fControlCode);
     stream->ReadLE(&fControlActivated);
     stream->ReadLE(&fControlPct);
     fTurnToPt.Read(stream);
@@ -146,7 +146,7 @@ void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plControlEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Write(stream, mgr);
-    stream->WriteLE((Int32)fControlCode);
+    stream->WriteLE((int32_t)fControlCode);
     stream->WriteLE(fControlActivated);
     stream->WriteLE(fControlPct);
     fTurnToPt.Write(stream);
@@ -172,7 +172,7 @@ void plControlEventMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kControlEventMsgCode))
-        s->ReadLE((Int32*)&fControlCode);
+        s->ReadLE((int32_t*)&fControlCode);
 
     if (contentFlags.IsBitSet(kControlEventMsgActivated))
         s->ReadLE(&fControlActivated);
@@ -201,7 +201,7 @@ void plControlEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kControlEventMsgCode,    
-    s->WriteLE((Int32)fControlCode);
+    s->WriteLE((int32_t)fControlCode);
 
     // kControlEventMsgActivated,
     s->WriteLE(fControlActivated);
@@ -278,7 +278,7 @@ const ControlEventCode plAvatarInputStateMsg::fCodeMap[] =
     B_CONTROL_MODIFIER_STRAFE,
     B_CONTROL_LADDER_INVERTED,
 };
-const UInt8 plAvatarInputStateMsg::fMapSize = 12;
+const uint8_t plAvatarInputStateMsg::fMapSize = 12;
 
 void plAvatarInputStateMsg::Read(hsStream *s, hsResMgr *mgr)
 {

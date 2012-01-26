@@ -102,16 +102,16 @@ struct SimpleNet_Connect {
 
 struct SimpleNet_MsgHeader {
 private:
-    dword   channelId;
+    uint32_t   channelId;
 public:
-    dword   messageId;
-    dword   messageBytes;
+    uint32_t   messageId;
+    uint32_t   messageBytes;
     
-    SimpleNet_MsgHeader (dword channelId, dword messageId)
+    SimpleNet_MsgHeader (uint32_t channelId, uint32_t messageId)
     : channelId(channelId)
     , messageId(messageId)
     #ifdef HS_DEBUGGING
-    , messageBytes((dword)-1)
+    , messageBytes((uint32_t)-1)
     #endif
     { }
 };
@@ -168,7 +168,7 @@ void SimpleNetStopListening ();
 
 void SimpleNetStartConnecting (
     unsigned            channel,
-    const wchar         addr[],
+    const wchar_t         addr[],
     FSimpleNetOnConnect onConnect,
     void *              param
 );

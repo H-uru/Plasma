@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfConsoleContext.h"
 
 
@@ -76,7 +76,7 @@ pfConsoleContext::~pfConsoleContext()
 
 void    pfConsoleContext::Clear( void )
 {
-    Int32       idx;
+    int32_t       idx;
 
 
     for( idx = fVarValues.GetCount() - 1; idx >= 0; idx-- )
@@ -85,13 +85,13 @@ void    pfConsoleContext::Clear( void )
 
 //// Getters /////////////////////////////////////////////////////////////////
 
-UInt32  pfConsoleContext::GetNumVars( void ) const
+uint32_t  pfConsoleContext::GetNumVars( void ) const
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     return fVarValues.GetCount();
 }
 
-const char          *pfConsoleContext::GetVarName( UInt32 idx ) const
+const char          *pfConsoleContext::GetVarName( uint32_t idx ) const
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
 
@@ -104,7 +104,7 @@ const char          *pfConsoleContext::GetVarName( UInt32 idx ) const
     return fVarNames[ idx ];
 }
 
-pfConsoleCmdParam   &pfConsoleContext::GetVarValue( UInt32 idx ) const
+pfConsoleCmdParam   &pfConsoleContext::GetVarValue( uint32_t idx ) const
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     hsAssert( idx < fVarValues.GetCount(), "GetVarValue() index out of range for console context" );
@@ -115,9 +115,9 @@ pfConsoleCmdParam   &pfConsoleContext::GetVarValue( UInt32 idx ) const
 
 //// FindVar /////////////////////////////////////////////////////////////////
 
-Int32   pfConsoleContext::FindVar( const char *name ) const
+int32_t   pfConsoleContext::FindVar( const char *name ) const
 {
-    UInt32      idx;
+    uint32_t      idx;
 
 
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
@@ -126,7 +126,7 @@ Int32   pfConsoleContext::FindVar( const char *name ) const
     {
         if( stricmp( name, fVarNames[ idx ] ) == 0 )
         {
-            return (Int32)idx;
+            return (int32_t)idx;
         }
     }
 
@@ -135,7 +135,7 @@ Int32   pfConsoleContext::FindVar( const char *name ) const
 
 //// RemoveVar ///////////////////////////////////////////////////////////////
 
-void    pfConsoleContext::RemoveVar( UInt32 idx )
+void    pfConsoleContext::RemoveVar( uint32_t idx )
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
 
@@ -162,14 +162,14 @@ void    pfConsoleContext::IAddVar( const char *name, const pfConsoleCmdParam &va
     fVarValues.Append( value );
     
     // Remember, params won't know any better, since by default they don't own a copy of their string
-    UInt32 idx = fVarValues.GetCount() - 1;
+    uint32_t idx = fVarValues.GetCount() - 1;
     if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
         fVarValues[ idx ].SetString( hsStrcpy( fVarValues[ idx ] ) );
 }
 
 void    pfConsoleContext::AddVar( const char *name, const pfConsoleCmdParam &value )
 {
-    Int32 idx = FindVar( name );
+    int32_t idx = FindVar( name );
     if( idx != -1 )
     {
         hsAssert( false, "AddVar() failed because variable already in console context" );
@@ -216,7 +216,7 @@ void    pfConsoleContext::AddVar( const char *name, bool value )
 
 //// SetVar Variants /////////////////////////////////////////////////////////
 
-hsBool  pfConsoleContext::SetVar( UInt32 idx, const pfConsoleCmdParam &value )
+hsBool  pfConsoleContext::SetVar( uint32_t idx, const pfConsoleCmdParam &value )
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     if( idx >= fVarValues.GetCount() )
@@ -240,7 +240,7 @@ hsBool  pfConsoleContext::SetVar( UInt32 idx, const pfConsoleCmdParam &value )
 
 hsBool  pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &value )
 {
-    Int32 idx = FindVar( name );
+    int32_t idx = FindVar( name );
     if( idx == -1 )
     {
         if( fAddWhenNotFound )

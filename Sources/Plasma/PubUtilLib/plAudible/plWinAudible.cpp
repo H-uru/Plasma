@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "plWinAudible.h"
 #include "hsMatrix44.h"
@@ -98,7 +98,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plWinAudible::plWinAudible()
 :   fSceneNode(nil), fSceneObj(nil), fSDLMod(nil)
 {
-    fProxyGen = TRACKED_NEW plWinAudibleProxy;
+    fProxyGen = new plWinAudibleProxy;
     fProxyGen->Init(this);
 
     fLocalToWorld.Reset();
@@ -142,7 +142,7 @@ void plWinAudible::SetSceneObject(plKey obj)
     {
         so->RemoveModifier(fSDLMod);        
         delete fSDLMod;
-        fSDLMod=TRACKED_NEW plSoundSDLModifier;
+        fSDLMod=new plSoundSDLModifier;
         so->AddModifier(fSDLMod);
     }
 
@@ -152,7 +152,7 @@ void plWinAudible::SetSceneObject(plKey obj)
         {
             if( obj != nil )
             {
-                plGenRefMsg *replaceMsg = TRACKED_NEW plGenRefMsg( fSoundObjs[ i ]->GetKey(), plRefMsg::kOnReplace, 0, plSound::kRefParentSceneObject );
+                plGenRefMsg *replaceMsg = new plGenRefMsg( fSoundObjs[ i ]->GetKey(), plRefMsg::kOnReplace, 0, plSound::kRefParentSceneObject );
                 hsgResMgr::ResMgr()->AddViaNotify( obj, replaceMsg, plRefFlags::kPassiveRef );
             }
             else if( oldKey != nil )
@@ -172,7 +172,7 @@ void plWinAudible::SetSceneNode(plKey newNode)
 
     if( newNode )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kAudible);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kAudible);
         hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
 
     }
@@ -213,23 +213,23 @@ hsBool plWinAudible::AddSound( plSound *pSnd, int index, hsBool is3D )
     hsAssert(pSnd->GetKey() != nil, "Adding a new sound with no key.");
     if (plgAudioSys::Active())
     {
-        hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
         return true;
     }
 
     else
     {
         pSnd->SetProperty( plSound::kPropIs3DSound, is3D );
-        hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
         return true;
     }
 
 }
 
 /* Unused
-int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, Int32 size, hsBool is3D )
+int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, hsBool is3D )
 {
-    //plWin32Sound* pSnd = TRACKED_NEW plWin32Sound;
+    //plWin32Sound* pSnd = new plWin32Sound;
     //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", fSoundObjs.Count() - 1 );    
 
     if (plgAudioSys::Active())
@@ -328,12 +328,12 @@ void plWinAudible::Stop(int index)
     SND_APPLY_LOOP( index, Stop(), ; );
 }
 
-void plWinAudible::SetMin(const hsScalar m,int index)
+void plWinAudible::SetMin(const float m,int index)
 {
     SND_APPLY_LOOP( index, SetMin( (int)m ), ; );
 }
 
-void plWinAudible::SetMax(const hsScalar m,int index)
+void plWinAudible::SetMax(const float m,int index)
 {
     SND_APPLY_LOOP( index, SetMax( (int)m ), ; );
 }
@@ -367,14 +367,14 @@ void    plWinAudible::ToggleMuted( int index )
     }
 }
 
-hsScalar plWinAudible::GetMin(int index) const
+float plWinAudible::GetMin(int index) const
 {
-    return (hsScalar)(fSoundObjs[index]->GetMin());
+    return (float)(fSoundObjs[index]->GetMin());
 }
 
-hsScalar plWinAudible::GetMax(int index) const
+float plWinAudible::GetMax(int index) const
 {
-    return (hsScalar)(fSoundObjs[index]->GetMax());
+    return (float)(fSoundObjs[index]->GetMax());
 }
 
 void plWinAudible::SetVelocity(const hsVector3 vel,int index)
@@ -457,7 +457,7 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
     fSoundObjs.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, 0);
+        plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, 0);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
         //plSound* pSnd =  plSound::ConvertNoRef(mgr->ReadCreatable(s));
         //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", i );
@@ -467,11 +467,11 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
     }   
         
     plKey pSceneKey = mgr->ReadKey(s);
-    plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(pSceneKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kAudible); 
+    plNodeRefMsg* refMsg = new plNodeRefMsg(pSceneKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kAudible); 
     mgr->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
 }
 
-void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, UInt32 i )
+void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, uint32_t i )
 {
     char    keyName[ 256 ];
 
@@ -621,7 +621,7 @@ plSound* plWinAudible::GetSound(int i) const
 }
 
 // Visualization
-plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     int i;
@@ -677,13 +677,13 @@ void pl2WayWinAudible::Init(hsBool isLocal)
     if (!fVoicePlayer)
     {
         if(!isLocal)
-            fVoicePlayer = TRACKED_NEW plVoicePlayer;
+            fVoicePlayer = new plVoicePlayer;
     }
     if(!fVoiceRecorder)
     {
         if(isLocal)
         {
-            fVoiceRecorder = TRACKED_NEW plVoiceRecorder;
+            fVoiceRecorder = new plVoiceRecorder;
         }
     }
     Activate();
@@ -702,7 +702,7 @@ void pl2WayWinAudible::Activate()
     }
     if (fVoiceRecorder)
     {
-        plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+        plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
         pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -724,7 +724,7 @@ void pl2WayWinAudible::DeActivate()
     }
     if (fVoiceRecorder)
     {           
-        plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+        plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
         pModMsg->SetCmd(plCmdIfaceModMsg::kRemove);
@@ -739,14 +739,14 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, Int32 size, int numFrames, unsigned char flags)
+void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
     {
         if (!(flags & VOICE_ENCODED))
-            fVoicePlayer->PlaybackUncompressedVoiceMessage((UInt8*)addr, size);
+            fVoicePlayer->PlaybackUncompressedVoiceMessage((uint8_t*)addr, size);
         else
-            fVoicePlayer->PlaybackVoiceMessage((UInt8*)addr, size, numFrames);
+            fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames);
     }
 }
 
@@ -773,7 +773,7 @@ void pl2WayWinAudible::SetVelocity(const hsVector3 vel,int index)
         fVoicePlayer->SetVelocity( vel );
 }
 
-void pl2WayWinAudible::SetTalkIcon(int index, UInt32 str)
+void pl2WayWinAudible::SetTalkIcon(int index, uint32_t str)
 {
     if (fVoicePlayer)
         fVoicePlayer->SetTalkIcon(index,str);

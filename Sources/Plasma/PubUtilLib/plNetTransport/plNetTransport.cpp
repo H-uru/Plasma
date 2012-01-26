@@ -259,7 +259,7 @@ void plNetTransport::ClearMembers()
 //
 // return array index or -1
 //
-int plNetTransport::FindMember(UInt32 playerID) const
+int plNetTransport::FindMember(uint32_t playerID) const
 {
     int i;
     for( i=0 ;i<GetNumMembers() ;i++  )
@@ -349,8 +349,8 @@ int compare( const void* arg1, const void *arg2 )
 {
     plNetTransportMember** m1 = (plNetTransportMember**)arg1;
     plNetTransportMember** m2 = (plNetTransportMember**)arg2;
-    float d1=m1 ? (*m1)->GetDistSq() : hsScalarMax;
-    float d2=m2 ? (*m2)->GetDistSq() : hsScalarMax;
+    float d1=m1 ? (*m1)->GetDistSq() : FLT_MAX;
+    float d2=m2 ? (*m2)->GetDistSq() : FLT_MAX;
     return (int)(d1-d2);
 }
 
@@ -361,7 +361,7 @@ int compare( const void* arg1, const void *arg2 )
 void plNetTransport::GetMemberListDistSorted(plNetTransportMember**& listIn) const
 {
     // copy members list
-    listIn = TRACKED_NEW plNetTransportMember* [fMembers.size()];
+    listIn = new plNetTransportMember* [fMembers.size()];
     int i;
     for (i=0; i<fMembers.size(); i++)
             listIn[i]=fMembers[i];

@@ -73,13 +73,13 @@ void plClientGuid::SetAccountUUID(const plUUID & v )
     SetAccountUUID( &v );
 }
 
-void plClientGuid::SetBuildType(UInt8 type)
+void plClientGuid::SetBuildType(uint8_t type)
 {
     fBuildType=type;
     fFlags|=kBuildType;
 }
 
-void plClientGuid::SetPlayerID(UInt32 id)
+void plClientGuid::SetPlayerID(uint32_t id)
 {
     fPlayerID=id;
     if ( fPlayerID )
@@ -91,7 +91,7 @@ void plClientGuid::SetPlayerID(UInt32 id)
         fFlags&=~kPlayerID;
 }
 
-void plClientGuid::SetTempPlayerID(UInt32 id)
+void plClientGuid::SetTempPlayerID(uint32_t id)
 {
     fPlayerID=id;
     if ( fPlayerID )
@@ -114,7 +114,7 @@ void plClientGuid::SetPlayerName( const char * v )
         fFlags&=~kPlayerName;
 }
 
-void plClientGuid::SetCCRLevel(UInt8 v)
+void plClientGuid::SetCCRLevel(uint8_t v)
 {
     fCCRLevel=v;
     fFlags|=kCCRLevel;
@@ -126,7 +126,7 @@ void plClientGuid::SetProtectedLogin(bool b)
     fFlags |= kProtectedLogin;
 }
 
-void plClientGuid::SetSrcAddr( UInt32 v )
+void plClientGuid::SetSrcAddr( uint32_t v )
 {
     fSrcAddr = v;
     if ( fSrcAddr )
@@ -140,7 +140,7 @@ void plClientGuid::SetSrcAddrFromStr( const char * s )
     hsAssert(false, "eric, port me");
 }
 
-void plClientGuid::SetSrcPort( UInt16 v )
+void plClientGuid::SetSrcPort( uint16_t v )
 {
     fSrcPort = v;
     if ( fSrcPort )

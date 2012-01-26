@@ -250,7 +250,7 @@ plAvSeekMsg::plAvSeekMsg()
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
                          const plKey &seekKey, float duration, hsBool smartSeek,
                          plAvAlignment alignType, char *animName, hsBool noSeek, 
-                         UInt8 flags, plKey finishKey)
+                         uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
   fTargetPos(0, 0, 0),
@@ -321,7 +321,7 @@ void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEScalar(fDuration);
     stream->WriteBool(fSmartSeek);
     stream->WriteSafeString(fAnimName);
-    stream->WriteLE16(static_cast<UInt16>(fAlignType));
+    stream->WriteLE16(static_cast<uint16_t>(fAlignType));
     stream->WriteBool(fNoSeek);
     stream->WriteByte(fFlags);
     mgr->WriteKey(stream, fFinishKey);
@@ -416,7 +416,7 @@ plAvBrainGenericMsg::plAvBrainGenericMsg()
 
 // canonical CTOR sender receiver type stage rewind transitionTime
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                    plAvBrainGenericMsg::Type type, int stage, hsBool rewind, hsScalar transitionTime)
+                    plAvBrainGenericMsg::Type type, int stage, hsBool rewind, float transitionTime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),
@@ -430,8 +430,8 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
 }
 
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                                         Type type, int stage, hsBool setTime, hsScalar newTime,
-                                         hsBool setDirection, bool isForward, hsScalar transitiontime)
+                                         Type type, int stage, hsBool setTime, float newTime,
+                                         hsBool setDirection, bool isForward, float transitiontime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),

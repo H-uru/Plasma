@@ -65,7 +65,7 @@ public:
     // some reason, just stub this function out.
     //
     // Pass in the key to the root sceneobject for the avatar
-    static plPhysicalController* Create(plKey ownerSO, hsScalar height, hsScalar width);
+    static plPhysicalController* Create(plKey ownerSO, float height, float width);
 
     virtual ~plPhysicalController() {}
 
@@ -77,7 +77,7 @@ public:
     virtual void SetLOSDB(plSimDefs::plLOSDB losDB) = 0;
 
     // Call this once per frame with the velocities of the avatar in avatar space.
-    virtual void SetVelocities(const hsVector3& linearVel, hsScalar angVel) = 0;
+    virtual void SetVelocities(const hsVector3& linearVel, float angVel) = 0;
 
     // Gets the actual velocity we achieved in the last step (relative to our subworld)
     virtual const hsVector3& GetLinearVelocity() const = 0;
@@ -92,7 +92,7 @@ public:
     // cases like when the avatar spawns into a new age.
     virtual bool IsOnGround() const = 0;
     virtual bool IsOnFalseGround() const = 0;
-    virtual hsScalar GetAirTime() const = 0;
+    virtual float GetAirTime() const = 0;
     virtual void ResetAirTime() = 0;
 
     virtual plPhysical* GetPushingPhysical() const = 0;
@@ -133,16 +133,16 @@ public:
     plAnimatedController(plSceneObject* rootObject, plAGApplicator* rootApp, plPhysicalControllerCore* controller);
 
     virtual void RecalcVelocity(double timeNow, double timePrev, hsBool useAnim = true);
-    void SetTurnStrength(hsScalar val) { fTurnStr = val; }
-    hsScalar GetTurnStrength() { return fTurnStr; }
+    void SetTurnStrength(float val) { fTurnStr = val; }
+    float GetTurnStrength() { return fTurnStr; }
     virtual void ActivateController()=0;
 protected:
     plSceneObject* fRootObject;
     plPhysicalControllerCore* fController;
     plAGApplicator* fRootApp;
-    hsScalar fAnimAngVel;
+    float fAnimAngVel;
     hsVector3 fAnimPosVel;
-    hsScalar fTurnStr; // Explicit turning, separate from animations
+    float fTurnStr; // Explicit turning, separate from animations
 };
 
 class plWalkingController : public plAnimatedController
@@ -158,13 +158,13 @@ public:
     bool IsOnFalseGround() const { return fWalkingStrategy ? fWalkingStrategy->IsOnFalseGround() : true; }
     bool HitGroundInThisAge() const { return fHitGroundInThisAge; }
     bool EnableControlledFlight(bool status);
-    hsScalar GetAirTime() const { return fWalkingStrategy ? fWalkingStrategy->GetAirTime() : 0.f; }
+    float GetAirTime() const { return fWalkingStrategy ? fWalkingStrategy->GetAirTime() : 0.f; }
     void ResetAirTime() { if (fWalkingStrategy) fWalkingStrategy->ResetAirTime(); }
-    hsScalar GetForwardVelocity() const;
+    float GetForwardVelocity() const;
     void ActivateController();
     // Check these after the avatar the avatar hits the ground for his total
     // hangtime and impact velocity.
-    hsScalar GetImpactTime() const { return fImpactTime; }
+    float GetImpactTime() const { return fImpactTime; }
     const hsVector3& GetImpactVelocity() const { return fImpactVelocity; }
 
     plPhysical* GetPushingPhysical() const 
@@ -181,24 +181,24 @@ public:
 protected:
     bool        fHitGroundInThisAge;
     bool        fWaitingForGround;      // We've gone airborne. IsOnGround() returns false until we hit ground again.
-    hsScalar    fControlledFlightTime;
+    float    fControlledFlightTime;
     int         fControlledFlight; // Count of how many are currently forcing flight        
     plWalkingStrategy* fWalkingStrategy;
-    hsScalar fImpactTime;
+    float fImpactTime;
     hsVector3 fImpactVelocity;
     bool fClearImpact;
     bool fGroundLastFrame;//used for a test to pass the event of first getting air during a jump
-    static const hsScalar kControlledFlightThreshold;
+    static const float kControlledFlightThreshold;
 };
 class plSwimmingController: public plAnimatedController 
 {
 public :
     plSwimmingController(plSceneObject* rootObject, plAGApplicator* rootApp, plPhysicalControllerCore* controller);
     virtual ~plSwimmingController();
-    void SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight){
+    void SetSurface(plSwimRegionInterface *region, float surfaceHeight){
         fSwimmingStrategy->SetSurface(region,surfaceHeight);
     }
-    hsScalar GetBuoyancy() { return fSwimmingStrategy->GetBuoyancy(); }
+    float GetBuoyancy() { return fSwimmingStrategy->GetBuoyancy(); }
     hsBool IsOnGround() { return fSwimmingStrategy->IsOnGround(); }
     hsBool HadContacts() { return fSwimmingStrategy->HadContacts();}
     void Enable(bool en){if (fController) fController->Enable(en);}

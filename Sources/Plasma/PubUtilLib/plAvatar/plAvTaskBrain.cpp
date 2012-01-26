@@ -75,7 +75,7 @@ plAvTaskBrain::~plAvTaskBrain()
 
 // Start ------------------------------------------------------------------------------------------
 // ------
-hsBool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     if(fBrain)
         avatar->PushBrain(fBrain);
@@ -87,7 +87,7 @@ hsBool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
     return true;
 }
 
-void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
 }
 

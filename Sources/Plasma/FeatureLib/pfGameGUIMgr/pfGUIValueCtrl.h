@@ -55,7 +55,7 @@ class pfGUIValueCtrl : public pfGUIControlMod
 {
     protected:
 
-        hsScalar        fValue, fMin, fMax, fStep;
+        float        fValue, fMin, fMax, fStep;
 
 
     public:
@@ -69,15 +69,15 @@ class pfGUIValueCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual hsScalar    GetCurrValue( void ) { return fValue; }
-        virtual void        SetCurrValue( hsScalar v );
+        virtual float    GetCurrValue( void ) { return fValue; }
+        virtual void        SetCurrValue( float v );
 
-        virtual hsScalar    GetMin( void ) { return fMin; }
-        virtual hsScalar    GetMax( void ) { return fMax; }
-        virtual hsScalar    GetStep( void ) { return fStep; }
+        virtual float    GetMin( void ) { return fMin; }
+        virtual float    GetMax( void ) { return fMax; }
+        virtual float    GetStep( void ) { return fStep; }
 
-        virtual void    SetRange( hsScalar min, hsScalar max );
-        virtual void    SetStep( hsScalar step ) { fStep = step; }
+        virtual void    SetRange( float min, float max );
+        virtual void    SetStep( float step ) { fStep = step; }
 
 };
 

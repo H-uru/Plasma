@@ -56,12 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-unsigned StrToAnsi (char * dest, const wchar source[], unsigned destChars) {
+unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars) {
     return StrToAnsi(dest, source, destChars, CP_ACP);
 }
 
 //===========================================================================
-unsigned StrToAnsi (char * dest, const wchar source[], unsigned destChars, unsigned codePage) {
+unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars, unsigned codePage) {
     ASSERT(destChars != (unsigned)-1);
     ASSERT(dest      != nil);
 
@@ -77,12 +77,12 @@ unsigned StrToAnsi (char * dest, const wchar source[], unsigned destChars, unsig
 }
 
 //===========================================================================
-unsigned StrToUnicode (wchar * dest, const char source[], unsigned destChars) {
+unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars) {
     return StrToUnicode(dest, source, destChars, CP_ACP);
 }
 
 //===========================================================================
-unsigned StrToUnicode (wchar * dest, const char source[], unsigned destChars, unsigned codePage) {
+unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars, unsigned codePage) {
     ASSERT(destChars != (unsigned)-1);
     ASSERT(dest      != nil);
 

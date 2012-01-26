@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGModifier.h"
 
 // global
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsResMgr.h"
 
 #include "plAGAnimInstance.h"

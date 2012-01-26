@@ -62,7 +62,7 @@ class plRTProjDirLightDesc : public ClassDesc2
 {
     public:
         int             IsPublic()                      { return TRUE; }
-        void*           Create(BOOL loading)            { return TRACKED_NEW plRTProjDirLight; }
+        void*           Create(BOOL loading)            { return new plRTProjDirLight; }
         const TCHAR*    ClassName()                     { return GetString(IDS_DB_PROJDIR); }
         SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
         Class_ID        ClassID()                       { return RTPDIR_LIGHT_CLASSID; }

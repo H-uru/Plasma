@@ -53,7 +53,7 @@ plRelevanceMgr::plRelevanceMgr() : fEnabled(true)
 
 void plRelevanceMgr::Init()
 {
-    fInstance = TRACKED_NEW plRelevanceMgr;
+    fInstance = new plRelevanceMgr;
     fInstance->RegisterAs(kRelevanceMgr_KEY);
 }
 
@@ -119,7 +119,7 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
     }
 }
     
-UInt32 plRelevanceMgr::GetNumRegions() const
+uint32_t plRelevanceMgr::GetNumRegions() const
 {
     int i;
 
@@ -149,7 +149,7 @@ hsBool plRelevanceMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-UInt32 plRelevanceMgr::GetIndex(char *regionName)
+uint32_t plRelevanceMgr::GetIndex(char *regionName)
 {
     int i;
     for (i = 0; i < fRegions.GetCount(); i++)
@@ -161,9 +161,9 @@ UInt32 plRelevanceMgr::GetIndex(char *regionName)
     return -1;
 }
 
-void plRelevanceMgr::MarkRegion(UInt32 localIdx, UInt32 remoteIdx, hsBool doICare)
+void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, hsBool doICare)
 {
-    if (localIdx == (UInt32)-1 || remoteIdx == (UInt32)-1)
+    if (localIdx == (uint32_t)-1 || remoteIdx == (uint32_t)-1)
         return;
 
     if (localIdx - 1 >= fRegions.GetCount() || remoteIdx - 1 >= fRegions.GetCount() || fRegions[localIdx - 1] == nil)
@@ -219,7 +219,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 if (strcmp(buff, "") == 0)
                     continue; // ignore the initial blank one
 
-                plRegionInfo *info = TRACKED_NEW plRegionInfo;
+                plRegionInfo *info = new plRegionInfo;
                 regions.Append(info);
                 info->fName = hsStrcpy(buff);
                 info->fIndex = GetIndex(buff);

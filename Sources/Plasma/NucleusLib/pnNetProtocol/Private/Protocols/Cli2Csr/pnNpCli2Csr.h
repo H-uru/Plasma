@@ -75,7 +75,7 @@ enum {
 
     kNumCli2CsrMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Scr, kNumCli2CsrMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Scr, kNumCli2CsrMessages <= (uint16_t)-1);
 
 
 //============================================================================
@@ -93,7 +93,7 @@ enum {
     
     kNumCsr2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (uint16_t)-1);
 
 
 /*****************************************************************************
@@ -107,7 +107,7 @@ COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (word)-1);
 // Connect packet
 
 struct Cli2Csr_ConnData {
-    dword   dataBytes;
+    uint32_t   dataBytes;
 };
 struct Cli2Csr_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -118,8 +118,8 @@ struct Cli2Csr_Connect {
 // Message header
 
 struct Cli2Csr_MsgHeader {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
 };
 
 //============================================================================
@@ -128,9 +128,9 @@ struct Cli2Csr_MsgHeader {
 // PingRequest
 extern const NetMsg kNetMsg_Cli2Csr_PingRequest;
 struct Cli2Csr_PingRequest : Cli2Csr_MsgHeader {
-    dword       pingTimeMs;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       pingTimeMs;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // RegisterRequest
@@ -141,8 +141,8 @@ struct Cli2Csr_RegisterRequest : Cli2Csr_MsgHeader {
 // LoginRequest
 extern const NetMsg kNetMsg_Cli2Csr_LoginRequest;
 struct Cli2Csr_LoginRequest : Cli2Csr_MsgHeader {
-    dword       clientChallenge;
-    wchar       csrName[kMaxAccountNameLength];
+    uint32_t       clientChallenge;
+    wchar_t       csrName[kMaxAccountNameLength];
     ShaDigest   challengeHash;
 };
 
@@ -153,16 +153,16 @@ struct Cli2Csr_LoginRequest : Cli2Csr_MsgHeader {
 // PingReply
 extern const NetMsg kNetMsg_Csr2Cli_PingReply;
 struct Csr2Cli_PingReply : Cli2Csr_MsgHeader {
-    dword       pingTimeMs;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       pingTimeMs;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // RegisterReply
 extern const NetMsg kNetMsg_Csr2Cli_RegisterReply;
 struct Csr2Cli_RegisterReply : Cli2Csr_MsgHeader {
-    dword       serverChallenge;
-    dword       csrBuildId; // buildId of the latest csr client
+    uint32_t       serverChallenge;
+    uint32_t       csrBuildId; // buildId of the latest csr client
 };
 
 // LoginReply
@@ -170,7 +170,7 @@ extern const NetMsg kNetMsg_Csr2Cli_LoginReply;
 struct Csr2Cli_LoginReply : Cli2Csr_MsgHeader {
     ENetError   result;
     Uuid        csrId;
-    dword       csrFlags;
+    uint32_t       csrFlags;
 };
 
 

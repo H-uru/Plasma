@@ -56,13 +56,13 @@ protected:
     plStateDataRecord* fStateCache;
     bool    fSentOrRecvdState;
     
-    void ISendNetMsg(plStateDataRecord*& state, plKey senderKey, UInt32 sendFlags);     // transmit net msg 
+    void ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint32_t sendFlags);     // transmit net msg 
     virtual void IPutCurrentStateIn(plStateDataRecord* dstState) = 0;
     virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState) = 0;
     virtual void ISentState(const plStateDataRecord* sentState) {}
-    hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return false;}
+    hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
     
-    virtual UInt32 IApplyModFlags(UInt32 sendFlags);
+    virtual uint32_t IApplyModFlags(uint32_t sendFlags);
     
 public:
     CLASSNAME_REGISTER( plSDLModifier );
@@ -72,7 +72,7 @@ public:
     virtual ~plSDLModifier();
 
     hsBool MsgReceive(plMessage* msg);
-    void SendState(UInt32 sendFlags);       // send a state update
+    void SendState(uint32_t sendFlags);       // send a state update
     void ReceiveState(const plStateDataRecord* srcState);   // recv a state update
     virtual const char* GetSDLName() const = 0; // return the string name of the type of state descriptor you handle
     virtual plKey GetStateOwnerKey() const;

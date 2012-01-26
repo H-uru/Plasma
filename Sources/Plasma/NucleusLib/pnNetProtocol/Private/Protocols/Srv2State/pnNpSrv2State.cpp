@@ -68,7 +68,7 @@ bool Srv2StateValidateConnect (
     const Srv2State_ConnData & connect = * (const Srv2State_ConnData *) listen->buffer;
 
     // Validate message size
-    const unsigned kMinStructSize = sizeof(dword) * 3;
+    const unsigned kMinStructSize = sizeof(uint32_t) * 3;
     if (listen->bytes < kMinStructSize)
         return false;
     if (listen->bytes < connect.dataBytes)
@@ -78,8 +78,8 @@ bool Srv2StateValidateConnect (
     if (!(connect.srvType == kSrvTypeAuth || connect.srvType == kSrvTypeGame))
         return false;
 
-    ZEROPTR(connectPtr);
-    MemCopy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
+    memset(connectPtr, 0, sizeof(*connectPtr));
+    memcpy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
 
     listen->bytesProcessed += connect.dataBytes;
     return true;

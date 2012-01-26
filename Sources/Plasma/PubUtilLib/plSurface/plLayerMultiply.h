@@ -57,7 +57,7 @@ public:
     GETINTERFACE_ANY( plLayerMultiply, plLayerInterface );
 
     virtual plLayerInterface*   Attach(plLayerInterface* prev);
-    virtual UInt32              Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t              Eval(double secs, uint32_t frame, uint32_t ignore);
     virtual hsBool              MsgReceive(plMessage* msg);
     virtual void                Read(hsStream* s, hsResMgr* mgr);
     virtual void                Write(hsStream* s, hsResMgr* mgr);
@@ -65,15 +65,15 @@ public:
     void SetPreshadeColor(const hsColorRGBA& col);
     void SetRuntimeColor(const hsColorRGBA& col);
     void SetAmbientColor(const hsColorRGBA& col);
-    void SetOpacity(hsScalar a);
+    void SetOpacity(float a);
     void SetTransform(const hsMatrix44& xfm);
 
 protected:
-    UInt32          fDirtyChannels;
+    uint32_t          fDirtyChannels;
     hsColorRGBA     fSrcPreshadeColor;
     hsColorRGBA     fSrcRuntimeColor;
     hsColorRGBA     fSrcAmbientColor;
-    hsScalar        fSrcOpacity;
+    float        fSrcOpacity;
     hsMatrix44      fSrcTransform;
 };
 

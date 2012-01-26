@@ -105,41 +105,41 @@ typedef void (* FSleep) (unsigned sleepMs);
 
 // Files
 typedef AsyncFile (* FAsyncFileOpen) (
-    const wchar             fullPath[],
+    const wchar_t             fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,
     void *                  userState,
-    qword *                 fileSize,
-    qword *                 fileLastWriteTime
+    uint64_t *                 fileSize,
+    uint64_t *                 fileLastWriteTime
 );
 
 typedef void (* FAsyncFileClose) (
     AsyncFile   file,
-    qword       truncateSize
+    uint64_t       truncateSize
 );
 
 typedef void (* FAsyncFileSetLastWriteTime) (
     AsyncFile   file,
-    qword       lastWriteTime
+    uint64_t       lastWriteTime
 );
 
-typedef qword (* FAsyncFileGetLastWriteTime) (
-    const wchar fileName[]
+typedef uint64_t (* FAsyncFileGetLastWriteTime) (
+    const wchar_t fileName[]
 );
 
 typedef AsyncId (* FAsyncFileFlushBuffers) (
     AsyncFile   file, 
-    qword       truncateSize,
+    uint64_t       truncateSize,
     bool        notify,
     void *      param
 );
 
 typedef AsyncId (* FAsyncFileRead) (
     AsyncFile   file,
-    qword       offset,
+    uint64_t       offset,
     void *      buffer,
     unsigned    bytes,
     unsigned    flags,
@@ -148,7 +148,7 @@ typedef AsyncId (* FAsyncFileRead) (
 
 typedef AsyncId (* FAsyncFileWrite) (
     AsyncFile       file,
-    qword           offset,
+    uint64_t           offset,
     const void *    buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -163,7 +163,7 @@ typedef AsyncId (* FAsyncFileCreateSequence) (
 
 typedef bool (* FAsyncFileSeek) (
     AsyncFile       file,
-    qword           distance,
+    uint64_t           distance,
     EFileSeekFrom   from
 );
 

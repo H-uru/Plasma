@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDebugText_h
 #define _plDebugText_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 
 //// plDebugText Class Definition ////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ class plDebugText
         plDebugTextManager  *fManager;
 
         char            fFontFace[ 128 ];
-        UInt16          fFontSize;
+        uint16_t          fFontSize;
         hsBool          fEnabled, fLockEnable, fDrawOnTopMode;
 
     public:
@@ -97,56 +97,56 @@ class plDebugText
         
         static plDebugText  &Instance( void ) { return fInstance; }
 
-        UInt32  CalcStringWidth( const char *string );
+        uint32_t  CalcStringWidth( const char *string );
 
-        void    DrawString( UInt16 x, UInt16 y, const char *string, UInt32 hexColor, UInt8 style = 0 );
+        void    DrawString( uint16_t x, uint16_t y, const char *string, uint32_t hexColor, uint8_t style = 0 );
 
-        void    DrawString( UInt16 x, UInt16 y, const char *string, hsColorRGBA &color, UInt8 style = 0 )
+        void    DrawString( uint16_t x, uint16_t y, const char *string, hsColorRGBA &color, uint8_t style = 0 )
         {
-            UInt32  hex;
-            UInt8   r, g, b, a;
+            uint32_t  hex;
+            uint8_t   r, g, b, a;
 
 
-            r = (UInt8)( color.r * 255.0 );
-            g = (UInt8)( color.g * 255.0 );
-            b = (UInt8)( color.b * 255.0 );
-            a = (UInt8)( color.a * 255.0 );
+            r = (uint8_t)( color.r * 255.0 );
+            g = (uint8_t)( color.g * 255.0 );
+            b = (uint8_t)( color.b * 255.0 );
+            a = (uint8_t)( color.a * 255.0 );
             hex = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
 
             DrawString( x, y, string, hex, style );
         }
 
-        void    DrawString( UInt16 x, UInt16 y, const char *string, UInt8 r = 255, UInt8 g = 255, UInt8 b = 255, UInt8 a = 255, UInt8 style = 0 )
+        void    DrawString( uint16_t x, uint16_t y, const char *string, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255, uint8_t style = 0 )
         {
-            DrawString( x, y, string, (UInt32)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style );
+            DrawString( x, y, string, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style );
         }
 
         void    SetDrawOnTopMode( hsBool enable ) { fDrawOnTopMode = enable; }
 
         /// TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor );
+        void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor );
 
         /// TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt8 r, UInt8 g, UInt8 b, UInt8 a = 255 )
+        void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255 )
         {
-            DrawRect( left, top, right, bottom, (UInt32)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ) );
+            DrawRect( left, top, right, bottom, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ) );
         }
 
         /// EVEN MORE TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    Draw3DBorder( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor1, UInt32 hexColor2 );
+        void    Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2 );
 
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
-        void            SetFont(const char *face, UInt16 size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
+        void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
         const char      *GetFontFace( void ) { return fFontFace; }
-        const UInt16    GetFontSize( void ) { return fFontSize; }
-        UInt16          GetFontHeight();
+        const uint16_t    GetFontSize( void ) { return fFontSize; }
+        uint16_t          GetFontHeight();
         
         void            SetEnable( hsBool on ) { fEnabled = on; }
         void            DisablePermanently( void ) { fEnabled = false; fLockEnable = true; }
         const hsBool    IsEnabled( void ) { return fEnabled; }
 
-        void            GetScreenSize( UInt32 *width, UInt32 *height );
+        void            GetScreenSize( uint32_t *width, uint32_t *height );
 };
 
 //// plDebugTextManager Class Definition /////////////////////////////////////
@@ -160,14 +160,14 @@ class   plDebugTextManager
         struct plDebugTextNode
         {
             char    fText[ 256 ];
-            UInt32  fColor, fDarkColor;
-            UInt16  fX, fY, fRight, fBottom;    // Last 2 are for rects only
-            UInt8   fStyle;                     // 0xff means rectangle, 0xfe means 3d border
+            uint32_t  fColor, fDarkColor;
+            uint16_t  fX, fY, fRight, fBottom;    // Last 2 are for rects only
+            uint8_t   fStyle;                     // 0xff means rectangle, 0xfe means 3d border
 
             plDebugTextNode() { fText[ 0 ] = 0; fColor = 0; fX = fY = 0; fStyle = 0; }
-            plDebugTextNode( const char *s, UInt32 c, UInt16 x, UInt16 y, UInt8 style ); 
-            plDebugTextNode( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 c ); 
-            plDebugTextNode( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 c1, UInt32 c2 );
+            plDebugTextNode( const char *s, uint32_t c, uint16_t x, uint16_t y, uint8_t style ); 
+            plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c ); 
+            plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c1, uint32_t c2 );
             ~plDebugTextNode() {;}
         };
 
@@ -175,27 +175,27 @@ class   plDebugTextManager
         hsTArray<plDebugTextNode>   fDrawOnTopList;
 
         plTextFont                  *fFont;
-        UInt32                      fSWidth, fSHeight;
+        uint32_t                      fSWidth, fSHeight;
 
     public:
 
         plDebugTextManager() { plDebugText::Instance().SetManager( this ); fFont = nil; }
         ~plDebugTextManager();
 
-        void    AddString( UInt16 x, UInt16 y, const char *s, UInt32 hexColor, UInt8 style, hsBool drawOnTop = false );
-        UInt32  CalcStringWidth( const char *string );
+        void    AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, hsBool drawOnTop = false );
+        uint32_t  CalcStringWidth( const char *string );
 
         /// TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor, hsBool drawOnTop = false );
+        void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, hsBool drawOnTop = false );
 
         /// EVEN MORE TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    Draw3DBorder( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor1, UInt32 hexColor2, hsBool drawOnTop = false );
+        void    Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, hsBool drawOnTop = false );
 
         void    DrawToDevice( plPipeline *pipe );
 
-        void    GetScreenSize( UInt32 *width, UInt32 *height );
+        void    GetScreenSize( uint32_t *width, uint32_t *height );
 
-        UInt16  GetFontHeight();
+        uint16_t  GetFontHeight();
 };
 
 

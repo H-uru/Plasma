@@ -73,15 +73,15 @@ typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
 //============================================================================
 // Volatile Vault Node Fields
 //============================================================================
-qword GetNodeVolatileFields(NetVaultNode* node);
+uint64_t GetNodeVolatileFields(NetVaultNode* node);
 
 //============================================================================
 // NetVaultNodeAccess
 //============================================================================
 struct NetVaultNodeAccess {
     NetVaultNode *  base;
-    qword &         fieldFlags;
-    qword &         dirtyFlags;
+    uint64_t &         fieldFlags;
+    uint64_t &         dirtyFlags;
 
     NetVaultNodeAccess (NetVaultNode * node);
     NetVaultNodeAccess (const NetVaultNodeAccess &);                    // not implemented
@@ -93,18 +93,18 @@ struct NetVaultNodeAccess {
 // VaultPlayerNode
 //============================================================================
 struct VaultPlayerNode : NetVaultNodeAccess {
-    static const qword kPlayerName      = NetVaultNode::kIString64_1;
-    static const qword kAvatarShapeName = NetVaultNode::kString64_1;
-    static const qword kDisabled        = NetVaultNode::kInt32_1;
-    static const qword kExplorer        = NetVaultNode::kInt32_2;       // explorer = 1, visitor = 0
-    static const qword kOnlineTime      = NetVaultNode::kUInt32_1;
-    static const qword kAccountUuid     = NetVaultNode::kUuid_1;
-    static const qword kInviteUuid      = NetVaultNode::kUuid_2;
+    static const uint64_t kPlayerName      = NetVaultNode::kIString64_1;
+    static const uint64_t kAvatarShapeName = NetVaultNode::kString64_1;
+    static const uint64_t kDisabled        = NetVaultNode::kInt32_1;
+    static const uint64_t kExplorer        = NetVaultNode::kInt32_2;       // explorer = 1, visitor = 0
+    static const uint64_t kOnlineTime      = NetVaultNode::kUInt32_1;
+    static const uint64_t kAccountUuid     = NetVaultNode::kUuid_1;
+    static const uint64_t kInviteUuid      = NetVaultNode::kUuid_2;
 
     // Treat these as read-only or node flag fields will become invalid 
     // Threaded apps: Must be accessed with node->critsect locked   
-    wchar *&    playerName;
-    wchar *&    avatarShapeName;
+    wchar_t *&  playerName;
+    wchar_t *&  avatarShapeName;
     int &       disabled;
     unsigned &  onlineTime;
     Uuid &      accountUuid;
@@ -116,8 +116,8 @@ struct VaultPlayerNode : NetVaultNodeAccess {
     const VaultPlayerNode & operator= (const VaultPlayerNode &);    // not implemented
     
     // Threaded apps: Must be called with node->critsect locked 
-    void SetPlayerName (const wchar v[]);
-    void SetAvatarShapeName (const wchar v[]);
+    void SetPlayerName (const wchar_t v[]);
+    void SetAvatarShapeName (const wchar_t v[]);
     void SetDisabled (int v);
     void SetOnlineTime (unsigned v);
     void SetAccountUuid (const Uuid & v);
@@ -130,18 +130,18 @@ struct VaultPlayerNode : NetVaultNodeAccess {
 // VaultPlayerInfoNode
 //============================================================================
 struct VaultPlayerInfoNode : NetVaultNodeAccess {
-    static const qword kPlayerId        = NetVaultNode::kUInt32_1;
-    static const qword kPlayerName      = NetVaultNode::kIString64_1;
-    static const qword kAgeInstName     = NetVaultNode::kString64_1;    // name of age player is currently in
-    static const qword kAgeInstUuid     = NetVaultNode::kUuid_1;        // guid of age player is currently in
-    static const qword kOnline          = NetVaultNode::kInt32_1;       // whether or not player is online
-    static const qword kCCRLevel        = NetVaultNode::kInt32_2;
+    static const uint64_t kPlayerId        = NetVaultNode::kUInt32_1;
+    static const uint64_t kPlayerName      = NetVaultNode::kIString64_1;
+    static const uint64_t kAgeInstName     = NetVaultNode::kString64_1;    // name of age player is currently in
+    static const uint64_t kAgeInstUuid     = NetVaultNode::kUuid_1;        // guid of age player is currently in
+    static const uint64_t kOnline          = NetVaultNode::kInt32_1;       // whether or not player is online
+    static const uint64_t kCCRLevel        = NetVaultNode::kInt32_2;
     
     // Treat these as read-only or node flag fields will become invalid 
     // Threaded apps: Must be accessed with node->critsect locked   
     unsigned &  playerId;
-    wchar *&    playerName;
-    wchar *&    ageInstName;
+    wchar_t *&  playerName;
+    wchar_t *&  ageInstName;
     Uuid &      ageInstUuid;
     int &       online;
     int &       ccrLevel;
@@ -152,8 +152,8 @@ struct VaultPlayerInfoNode : NetVaultNodeAccess {
 
     // Threaded apps: Must be called with node->critsect locked 
     void SetPlayerId (unsigned v);
-    void SetPlayerName (const wchar v[]);
-    void SetAgeInstName (const wchar v[]);
+    void SetPlayerName (const wchar_t v[]);
+    void SetAgeInstName (const wchar_t v[]);
     void SetAgeInstUuid (const Uuid & v);
     void SetOnline (int v);
     void SetCCRLevel (int v);
@@ -164,20 +164,20 @@ struct VaultPlayerInfoNode : NetVaultNodeAccess {
 // VaultFolderNode
 //============================================================================
 struct VaultFolderNode : NetVaultNodeAccess {
-    static const qword kFolderType      = NetVaultNode::kInt32_1;
-    static const qword kFolderName      = NetVaultNode::kString64_1;
+    static const uint64_t kFolderType      = NetVaultNode::kInt32_1;
+    static const uint64_t kFolderName      = NetVaultNode::kString64_1;
     
     // Treat these as read-only or node flag fields will become invalid 
     // Threaded apps: Must be accessed with node->critsect locked   
     int &       folderType;
-    wchar *&    folderName;
+    wchar_t *&  folderName;
     
     VaultFolderNode (NetVaultNode * node);
     VaultFolderNode (const VaultFolderNode &);                      // not implemented
     const VaultFolderNode & operator= (const VaultFolderNode &);    // not implemented
 
     // Threaded apps: Must be called with node->critsect locked 
-    void SetFolderName (const wchar v[]);
+    void SetFolderName (const wchar_t v[]);
     void SetFolderType (int v);
 };
 
@@ -206,15 +206,15 @@ struct VaultAgeInfoListNode : VaultFolderNode {
 // VaultChronicleNode
 //============================================================================
 struct VaultChronicleNode : NetVaultNodeAccess {
-    static const qword kEntryType   = NetVaultNode::kInt32_1;
-    static const qword kEntryName   = NetVaultNode::kString64_1;
-    static const qword kEntryValue  = NetVaultNode::kText_1;
+    static const uint64_t kEntryType   = NetVaultNode::kInt32_1;
+    static const uint64_t kEntryName   = NetVaultNode::kString64_1;
+    static const uint64_t kEntryValue  = NetVaultNode::kText_1;
     
     // Treat these as read-only or node flag fields will become invalid 
     // Threaded apps: Must be accessed with node->critsect locked   
     int &       entryType;
-    wchar *&    entryName;
-    wchar *&    entryValue;
+    wchar_t *&  entryName;
+    wchar_t *&  entryValue;
 
     VaultChronicleNode (NetVaultNode * node);
     VaultChronicleNode (const VaultChronicleNode &);                    // not implemented
@@ -222,8 +222,8 @@ struct VaultChronicleNode : NetVaultNodeAccess {
 
     // Threaded apps: Must be called with node->critsect locked 
     void SetEntryType (int v);
-    void SetEntryName (const wchar v[]);
-    void SetEntryValue (const wchar v[]);
+    void SetEntryName (const wchar_t v[]);
+    void SetEntryValue (const wchar_t v[]);
 };
 
 
@@ -231,13 +231,13 @@ struct VaultChronicleNode : NetVaultNodeAccess {
 // VaultSDLNode
 //============================================================================
 struct VaultSDLNode : NetVaultNodeAccess {
-    static const qword kSDLName     = NetVaultNode::kString64_1;
-    static const qword kSDLIdent    = NetVaultNode::kInt32_1;
-    static const qword kSDLData     = NetVaultNode::kBlob_1;
+    static const uint64_t kSDLName     = NetVaultNode::kString64_1;
+    static const uint64_t kSDLIdent    = NetVaultNode::kInt32_1;
+    static const uint64_t kSDLData     = NetVaultNode::kBlob_1;
     
     int &       sdlIdent;
-    wchar *&    sdlName;
-    byte *&     sdlData;
+    wchar_t *&  sdlName;
+    uint8_t *&  sdlData;
     unsigned &  sdlDataLen;
     
     VaultSDLNode (NetVaultNode * node);
@@ -245,12 +245,12 @@ struct VaultSDLNode : NetVaultNodeAccess {
     const VaultSDLNode & operator= (const VaultSDLNode &);  // not implemented
     
     void SetSdlIdent (int v);
-    void SetSdlName (const wchar v[]);
+    void SetSdlName (const wchar_t v[]);
 
 #ifdef CLIENT
     bool GetStateDataRecord (class plStateDataRecord * out, unsigned readOptions = 0);
     void SetStateDataRecord (const class plStateDataRecord * rec, unsigned writeOptions = 0);
-    void InitStateDataRecord (const wchar sdlRecName[], unsigned writeOptions = 0);
+    void InitStateDataRecord (const wchar_t sdlRecName[], unsigned writeOptions = 0);
 #endif // def CLIENT
 };
 
@@ -258,13 +258,13 @@ struct VaultSDLNode : NetVaultNodeAccess {
 // VaultAgeLinkNode
 //============================================================================
 struct VaultAgeLinkNode : NetVaultNodeAccess {
-    static const qword kUnlocked    = NetVaultNode::kInt32_1;
-    static const qword kVolatile    = NetVaultNode::kInt32_2;
-    static const qword kSpawnPoints = NetVaultNode::kBlob_1;
+    static const uint64_t kUnlocked    = NetVaultNode::kInt32_1;
+    static const uint64_t kVolatile    = NetVaultNode::kInt32_2;
+    static const uint64_t kSpawnPoints = NetVaultNode::kBlob_1;
 
     int &       unlocked;
     int &       volat;
-    byte *&     spawnPoints;
+    uint8_t *&  spawnPoints;
     unsigned &  spawnPointsLen;
     
     VaultAgeLinkNode (NetVaultNode * node);
@@ -292,22 +292,22 @@ struct VaultImageNode : NetVaultNodeAccess {
 
     enum ImageTypes { kNone=0, kJPEG=1 };
 
-    static const qword kImageType       = NetVaultNode::kInt32_1;
-    static const qword kImageTitle      = NetVaultNode::kString64_1;
-    static const qword kImageData       = NetVaultNode::kBlob_1;
+    static const uint64_t kImageType       = NetVaultNode::kInt32_1;
+    static const uint64_t kImageTitle      = NetVaultNode::kString64_1;
+    static const uint64_t kImageData       = NetVaultNode::kBlob_1;
 
-    wchar *&    title;
+    wchar_t *&  title;
     int &       imgType;
-    byte *&     imgData;
+    uint8_t *&  imgData;
     unsigned &  imgDataLen;
 
     VaultImageNode (NetVaultNode * node);
     VaultImageNode (const VaultImageNode &);                    // not implemented
     const VaultImageNode & operator= (const VaultImageNode &);  // not implemented
     
-    void SetImageTitle (const wchar v[]);
+    void SetImageTitle (const wchar_t v[]);
     void SetImageType (int v);
-    void SetImageData (const byte buffer[], unsigned bytes);
+    void SetImageData (const uint8_t buffer[], unsigned bytes);
     
 #ifdef CLIENT
     void StuffImage (class plMipmap * src);
@@ -333,15 +333,15 @@ struct VaultCliImageNode : VaultImageNode {
 //============================================================================
 struct VaultTextNoteNode : NetVaultNodeAccess {
 
-    static const qword kNoteType    = NetVaultNode::kInt32_1;
-    static const qword kNoteSubType = NetVaultNode::kInt32_2;
-    static const qword kNoteTitle   = NetVaultNode::kString64_1;
-    static const qword kNoteText    = NetVaultNode::kText_1;
+    static const uint64_t kNoteType    = NetVaultNode::kInt32_1;
+    static const uint64_t kNoteSubType = NetVaultNode::kInt32_2;
+    static const uint64_t kNoteTitle   = NetVaultNode::kString64_1;
+    static const uint64_t kNoteText    = NetVaultNode::kText_1;
     
     int &       noteType;
     int &       noteSubType;
-    wchar *&    noteTitle;
-    wchar *&    noteText;
+    wchar_t *&  noteTitle;
+    wchar_t *&  noteText;
 
     VaultTextNoteNode (NetVaultNode * node);
     VaultTextNoteNode (const VaultTextNoteNode &);                      // not implemented
@@ -349,8 +349,8 @@ struct VaultTextNoteNode : NetVaultNodeAccess {
 
     void SetNoteType (int v);
     void SetNoteSubType (int v);
-    void SetNoteTitle (const wchar v[]);
-    void SetNoteText (const wchar v[]);
+    void SetNoteTitle (const wchar_t v[]);
+    void SetNoteText (const wchar_t v[]);
 
 #ifdef CLIENT   
     // for kNoteType_Visit/UnVisit
@@ -364,13 +364,13 @@ struct VaultTextNoteNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultAgeNode : NetVaultNodeAccess {
 
-    static const qword kAgeInstanceGuid         = NetVaultNode::kUuid_1;
-    static const qword kParentAgeInstanceGuid   = NetVaultNode::kUuid_2;
-    static const qword kAgeName                 = NetVaultNode::kString64_1;
+    static const uint64_t kAgeInstanceGuid         = NetVaultNode::kUuid_1;
+    static const uint64_t kParentAgeInstanceGuid   = NetVaultNode::kUuid_2;
+    static const uint64_t kAgeName                 = NetVaultNode::kString64_1;
     
     Uuid &          ageInstUuid;
     Uuid &          parentAgeInstUuid;
-    wchar *&        ageName;
+    wchar_t *&      ageName;
     
     VaultAgeNode (NetVaultNode * node);
     VaultAgeNode (const VaultAgeNode &);                            // not implemented
@@ -378,7 +378,7 @@ struct VaultAgeNode : NetVaultNodeAccess {
 
     void SetAgeInstGuid (const Uuid & v);
     void SetParentAgeInstGuid (const Uuid & v);
-    void SetAgeName (const wchar v[]);
+    void SetAgeName (const wchar_t v[]);
 };
 
 //============================================================================
@@ -386,22 +386,22 @@ struct VaultAgeNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultAgeInfoNode : NetVaultNodeAccess {
 
-    static const qword kAgeFilename             = NetVaultNode::kString64_2;    // "Garden"
-    static const qword kAgeInstanceName         = NetVaultNode::kString64_3;    // "Eder Kemo"
-    static const qword kAgeUserDefinedName      = NetVaultNode::kString64_4;    // "Joe's"
-    static const qword kAgeInstanceGuid         = NetVaultNode::kUuid_1;        // 6278b081-342a-4229-ac1b-a0b8a2658390
-    static const qword kParentAgeInstanceGuid   = NetVaultNode::kUuid_2;        // 9192be7f-89ef-41bc-83db-79afe451e399
-    static const qword kAgeDescription          = NetVaultNode::kText_1;        // "Stay out!"
-    static const qword kAgeSequenceNumber       = NetVaultNode::kInt32_1;
-    static const qword kIsPublic                = NetVaultNode::kInt32_2;
-    static const qword kAgeLanguage             = NetVaultNode::kInt32_3;       // The language of the client that made this age
-    static const qword kAgeId                   = NetVaultNode::kUInt32_1;
-    static const qword kAgeCzarId               = NetVaultNode::kUInt32_2;
-    static const qword kAgeInfoFlags            = NetVaultNode::kUInt32_3;
+    static const uint64_t kAgeFilename             = NetVaultNode::kString64_2;    // "Garden"
+    static const uint64_t kAgeInstanceName         = NetVaultNode::kString64_3;    // "Eder Kemo"
+    static const uint64_t kAgeUserDefinedName      = NetVaultNode::kString64_4;    // "Joe's"
+    static const uint64_t kAgeInstanceGuid         = NetVaultNode::kUuid_1;        // 6278b081-342a-4229-ac1b-a0b8a2658390
+    static const uint64_t kParentAgeInstanceGuid   = NetVaultNode::kUuid_2;        // 9192be7f-89ef-41bc-83db-79afe451e399
+    static const uint64_t kAgeDescription          = NetVaultNode::kText_1;        // "Stay out!"
+    static const uint64_t kAgeSequenceNumber       = NetVaultNode::kInt32_1;
+    static const uint64_t kIsPublic                = NetVaultNode::kInt32_2;
+    static const uint64_t kAgeLanguage             = NetVaultNode::kInt32_3;       // The language of the client that made this age
+    static const uint64_t kAgeId                   = NetVaultNode::kUInt32_1;
+    static const uint64_t kAgeCzarId               = NetVaultNode::kUInt32_2;
+    static const uint64_t kAgeInfoFlags            = NetVaultNode::kUInt32_3;
     
-    wchar *&        ageFilename;
-    wchar *&        ageInstName;
-    wchar *&        ageUserDefinedName;
+    wchar_t *&      ageFilename;
+    wchar_t *&      ageInstName;
+    wchar_t *&      ageUserDefinedName;
     Uuid &          ageInstUuid;
     Uuid &          parentAgeInstUuid;
     int &           ageSequenceNumber;
@@ -410,15 +410,15 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
     unsigned &      ageId;
     unsigned &      ageCzarId;
     unsigned &      ageInfoFlags;
-    wchar *&        ageDescription;
+    wchar_t *&        ageDescription;
 
     VaultAgeInfoNode (NetVaultNode * node);
     VaultAgeInfoNode (const VaultAgeInfoNode &);                    // not implemented
     const VaultAgeInfoNode & operator= (const VaultAgeInfoNode &);  // not implemented
 
-    void SetAgeFilename (const wchar v[]);
-    void SetAgeInstName (const wchar v[]);
-    void SetAgeUserDefinedName (const wchar v[]);
+    void SetAgeFilename (const wchar_t v[]);
+    void SetAgeInstName (const wchar_t v[]);
+    void SetAgeUserDefinedName (const wchar_t v[]);
     void SetAgeInstGuid (const Uuid & v);
     void SetParentAgeInstGuid (const Uuid & v);
     void SetAgeSequenceNumber (int v);
@@ -427,7 +427,7 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
     void SetAgeId (unsigned v);
     void SetAgeCzarId (unsigned v);
     void SetAgeInfoFlags (unsigned v);
-    void SetAgeDescription (const wchar v[]);
+    void SetAgeDescription (const wchar_t v[]);
     
 #ifdef CLIENT
     const class plUnifiedTime * GetAgeTime () const;
@@ -441,7 +441,7 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultSystemNode : NetVaultNodeAccess {
 
-    static const qword kCCRStatus   = NetVaultNode::kInt32_1;
+    static const uint64_t kCCRStatus   = NetVaultNode::kInt32_1;
     
     int &       ccrStatus;
 
@@ -458,16 +458,16 @@ struct VaultSystemNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultMarkerGameNode : NetVaultNodeAccess {
 
-    static const qword kGameName = NetVaultNode::kText_1;
-    static const qword kGameGuid = NetVaultNode::kUuid_1;
+    static const uint64_t kGameName = NetVaultNode::kText_1;
+    static const uint64_t kGameGuid = NetVaultNode::kUuid_1;
 
-    wchar *& gameName;
-    Uuid & gameGuid;
+    wchar_t *& gameName;
+    Uuid &     gameGuid;
     
     VaultMarkerGameNode (NetVaultNode * node);
     VaultMarkerGameNode (const VaultMarkerGameNode &);                      // not implemented
     const VaultMarkerGameNode & operator= (const VaultMarkerGameNode &);    // not implemented
     
-    void SetGameName (const wchar v[]);
+    void SetGameName (const wchar_t v[]);
     void SetGameGuid (const Uuid & v);
 };

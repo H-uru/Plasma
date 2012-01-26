@@ -50,7 +50,7 @@ private:
     char *seps;
     char *tok;
     hsBool isSep(char c);
-    Int32 numSeps;
+    int32_t numSeps;
     hsBool qAsTok;
     hsBool inQuote;
 public:

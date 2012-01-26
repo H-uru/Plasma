@@ -71,7 +71,7 @@ public:
     void Evaluate(){;}
     void Reset() { SetSatisfied(false); }
 
-    void SetEvent(const CallbackEvent b, hsScalar time = 0.0f);
+    void SetEvent(const CallbackEvent b, float time = 0.0f);
     
 };
 

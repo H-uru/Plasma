@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfConsole_h
 #define _pfConsole_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 
@@ -88,23 +88,23 @@ class pfConsole : public hsKeyedObject
         };
 
 
-        UInt32  fNumDisplayLines;
+        uint32_t  fNumDisplayLines;
 
-        Int32   fEffectCounter;
+        int32_t   fEffectCounter;
         float   fLastTime;
-        UInt32  fHelpTimer;
+        uint32_t  fHelpTimer;
         char    fLastHelpMsg[ kWorkingLineSize ];
-        UInt8   fMode;      // 0 - invisible, 1 - single line, 2 - full
+        uint8_t   fMode;      // 0 - invisible, 1 - single line, 2 - full
         hsBool  fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
-        UInt32  fPythonMultiLines;
+        uint32_t  fPythonMultiLines;
         short   fCursorTicks;
-        UInt32  fMsgTimeoutTimer;
+        uint32_t  fMsgTimeoutTimer;
 
         char    fHistory[ kNumHistoryItems ][ kMaxCharsWide ];
-        UInt32  fHistoryCursor, fHistoryRecallCursor;
+        uint32_t  fHistoryCursor, fHistoryRecallCursor;
         char    *fDisplayBuffer;
         char    fWorkingLine[ kWorkingLineSize ];
-        UInt32  fWorkingCursor;
+        uint32_t  fWorkingCursor;
 
         pfConsoleInputInterface *fInputInterface;
 
@@ -112,7 +112,7 @@ class pfConsole : public hsKeyedObject
 
         void    IHandleKey( plKeyEventMsg *msg );
 
-        static UInt32       fConsoleTextColor;
+        static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
         static void _cdecl IAddLineCallback( const char *string );
 
@@ -122,7 +122,7 @@ class pfConsole : public hsKeyedObject
         void    IAddParagraph( const char *string, short margin = 0 );
         void    IClear( void );
 
-        void    ISetMode( UInt8 mode );
+        void    ISetMode( uint8_t mode );
         void    IEnableFX( hsBool e ) { fFXEnabled = e; }
         hsBool  IFXEnabled( void ) { return fFXEnabled; }
 
@@ -151,8 +151,8 @@ class pfConsole : public hsKeyedObject
 
         static void EnableEffects( hsBool enable ) { fTheConsole->IEnableFX( enable ); }
         static hsBool AreEffectsEnabled( void ) { return fTheConsole->IFXEnabled(); }
-        static void SetTextColor( UInt32 color ) { fConsoleTextColor = color; }
-        static UInt32 GetTextColor() { return fConsoleTextColor; }
+        static void SetTextColor( uint32_t color ) { fConsoleTextColor = color; }
+        static uint32_t GetTextColor() { return fConsoleTextColor; }
 
         static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
         static plPipeline   *GetPipeline( void ) { return fPipeline; }

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 #include "MaxExport/plExportProgressBar.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plLODFadeComponent.h"
 
@@ -630,7 +630,7 @@ hsBool plLOSFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 hsBool plLOSFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
-    plFadeOpacityMod* fade = TRACKED_NEW plFadeOpacityMod;
+    plFadeOpacityMod* fade = new plFadeOpacityMod;
     
     if( fCompPB->GetInt(kBoundsCenter) )
         fade->SetFlag(plFadeOpacityMod::kBoundsCenter);
@@ -724,7 +724,7 @@ hsBool plGZFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 hsBool plGZFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
-    plDistOpacityMod* fade = TRACKED_NEW plDistOpacityMod;
+    plDistOpacityMod* fade = new plDistOpacityMod;
 
     float opaq = fCompPB->GetFloat(kOpaque);
     float transp = fCompPB->GetFloat(kTransp);

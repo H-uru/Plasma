@@ -99,7 +99,7 @@ public:
         kExitUnTrigger,
     };
 
-    UInt32  fTriggerType;
+    uint32_t  fTriggerType;
     plKey   fPickedObj;
     plKey   fHiteeObj;
     plKey   fHitterObj;

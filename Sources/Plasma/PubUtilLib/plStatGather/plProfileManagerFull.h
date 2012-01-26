@@ -72,15 +72,15 @@ protected:
     struct detailVar
     {
         plProfileVar* var;
-        Int32 min;
-        Int32 max;
+        int32_t min;
+        int32_t max;
     };
 
     std::vector<detailVar> fDetailVars; // the vars we want to show on the detail graph
 
     GroupSet fShowGroups;
     plProfileVar* fShowLaps;
-    UInt32 fMinLap; // For Display
+    uint32_t fMinLap; // For Display
 
     void IPrintGroup(hsStream* s, const char* groupName, bool printTitle=false);
     void ILogStats();
@@ -109,19 +109,19 @@ public:
     void PageDownLaps() { fMinLap += 40; }
     void PageUpLaps() { fMinLap = (fMinLap < 40) ? 0 : fMinLap - 40;}
 
-    void CreateGraph(const char* varName, UInt32 min, UInt32 max);
+    void CreateGraph(const char* varName, uint32_t min, uint32_t max);
 
     void ResetDefaultDetailVars();
     void ShowDetailGraph();
     void HideDetailGraph();
-    void AddDetailVar(const char* varName, UInt32 min, UInt32 max);
+    void AddDetailVar(const char* varName, uint32_t min, uint32_t max);
     void RemoveDetailVar(const char* varName);
     void UpdateDetailLabels();
 
     void ResetMax();
     
     void LogStats(const char* ageName, const char* spawnName);
-    const wchar* GetProfilePath();
+    const wchar_t* GetProfilePath();
 
     // If you're going to call LogStats, make sure to call this first so all stats will be evaluated before logging
     void ActivateAllStats();

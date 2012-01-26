@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsNoiseFunc_inc
 #define hsNoiseFunc_inc
 
+#include "HeadSpin.h"
 #include "hsRefCnt.h"
-#include "hsScalar.h"
 
 struct hsPoint3;
 
@@ -54,29 +54,29 @@ public:
     hsNoiseFunc();
     virtual ~hsNoiseFunc();
     
-    virtual void Seed(UInt32 s);
-    virtual hsScalar Noise(hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
+    virtual void Seed(uint32_t s);
+    virtual float Noise(float lo=0, float hi=1.f, float t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
 
-    virtual hsScalar NoisePoint(const hsPoint3& p, hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
+    virtual float NoisePoint(const hsPoint3& p, float lo=0, float hi=1.f, float t=0) = 0; // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
 };
 
 class hsTableNoise : public hsNoiseFunc // should inherit from keyed object
 {
 protected:
-    hsScalar*       fTable;
-    UInt32          fTableLen;
+    float*       fTable;
+    uint32_t          fTableLen;
     
     
 public:
     hsTableNoise();
     virtual ~hsTableNoise();
     
-    void SetTable(int len, hsScalar* arr); // copies. arr should be hsScalars in range [0..1]
-    hsScalar* GetTable(int& len) { len = fTableLen; return fTable; } // should be debug only, access through noise func
+    void SetTable(int len, float* arr); // copies. arr should be hsScalars in range [0..1]
+    float* GetTable(int& len) { len = fTableLen; return fTable; } // should be debug only, access through noise func
     
-    virtual hsScalar Noise(hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0); // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
+    virtual float Noise(float lo=0, float hi=1.f, float t=0); // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
 
-    virtual hsScalar NoisePoint(const hsPoint3& p, hsScalar lo=0, hsScalar hi=hsScalar1, hsScalar t=0); // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
+    virtual float NoisePoint(const hsPoint3& p, float lo=0, float hi=1.f, float t=0); // t = [0..1] - returns random num [lo..hi] scaled by fTable[t]
 };
 
 #endif // hsNoiseFunc_inc

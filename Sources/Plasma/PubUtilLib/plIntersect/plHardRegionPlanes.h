@@ -56,7 +56,7 @@ protected:
 
         hsVector3           fWorldNorm;
         hsPoint3            fWorldPos;
-        hsScalar            fWorldDist;
+        float            fWorldDist;
     };
     hsTArray<HardPlane>         fPlanes;
 
@@ -75,7 +75,7 @@ public:
 
     // Now Planes specifics
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    UInt32 GetNumPlanes() const { return fPlanes.GetCount(); }
+    uint32_t GetNumPlanes() const { return fPlanes.GetCount(); }
     void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
     void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
 

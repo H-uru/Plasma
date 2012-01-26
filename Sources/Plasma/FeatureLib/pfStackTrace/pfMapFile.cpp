@@ -6,9 +6,6 @@
 #include <algorithm>
 #include <string.h>
 #include <ctype.h>
-#ifdef WIN32
-#include <windows.h>
-#endif
 
 //-----------------------------------------------------------------------------
 
@@ -226,7 +223,7 @@ private:
 
 MapFile::MapFile( const char* filename )
 {
-    m_this = TRACKED_NEW MapFileImpl( filename );
+    m_this = new MapFileImpl( filename );
 }
 
 MapFile::~MapFile()

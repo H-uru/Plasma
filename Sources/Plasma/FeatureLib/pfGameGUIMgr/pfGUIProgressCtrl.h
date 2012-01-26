@@ -61,15 +61,15 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         char            *fAnimName;
 
                         // Computed once, once an anim is loaded that we can compute this with
-        hsScalar        fAnimBegin, fAnimEnd;
+        float        fAnimBegin, fAnimEnd;
         hsBool          fAnimTimesCalced;
         hsBool          fPlaySound;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         hsBool          ICalcAnimTimes( void );
 
-        const UInt32    fStopSoundTimer;
+        const uint32_t    fStopSoundTimer;
 
     public:
 
@@ -92,8 +92,8 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
 
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-        virtual void    SetCurrValue( hsScalar v );
-        virtual void    AnimateToPercentage( hsScalar percent );
+        virtual void    SetCurrValue( float v );
+        virtual void    AnimateToPercentage( float percent );
 
         enum SoundEvents
         {

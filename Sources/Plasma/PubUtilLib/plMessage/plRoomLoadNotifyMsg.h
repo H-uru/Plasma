@@ -57,7 +57,7 @@ class plRoomLoadNotifyMsg : public plMessage
 {
 protected:
     plKey   fRoomKey;
-    UInt8   fWhat;
+    uint8_t   fWhat;
 
 private:
     void IInit()
@@ -88,8 +88,8 @@ public:
 
     virtual void SetRoom(plKey &rkey) { fRoomKey = rkey; }
     virtual plKey GetRoom() { return fRoomKey; }
-    virtual void SetWhatHappen(UInt8 what) { fWhat = what; }
-    virtual UInt8 GetWhatHappen() { return fWhat; }
+    virtual void SetWhatHappen(uint8_t what) { fWhat = what; }
+    virtual uint8_t GetWhatHappen() { return fWhat; }
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr)

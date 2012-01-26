@@ -56,12 +56,12 @@ private:
    };
    
    plLocation fId;
-   UInt8 fFlags;
+   uint8_t fFlags;
    std::string  fDesc;      // description of room
 public:
 
    plNetGroupId() : fFlags(0) {}
-   plNetGroupId(const plLocation& id, const UInt8 flags) : fId(id), fFlags(flags) {  }
+   plNetGroupId(const plLocation& id, const uint8_t flags) : fId(id), fFlags(flags) {  }
    plNetGroupId(const plLocation& id) : fId(id), fFlags(0) {  }
    
    hsBool IsConstant() { return (fFlags & kNetGroupConstant) != 0; }

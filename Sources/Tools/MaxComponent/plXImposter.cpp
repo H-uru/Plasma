@@ -329,7 +329,7 @@ hsBool plFilterInheritComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         phys->SetProperty(plSimulationInterface::kPassive, true);
     }
 
-    UInt32 mask = plFilterCoordInterface::kNoRotation;
+    uint32_t mask = plFilterCoordInterface::kNoRotation;
     if( fCompPB->GetInt(kNoX) )
         mask |= plFilterCoordInterface::kNoTransX;
     if( fCompPB->GetInt(kNoY) )

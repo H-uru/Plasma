@@ -84,9 +84,9 @@ void plAntiGravAction::apply(Havok::Subspace &space, Havok::hkTime time)
     fAnimPosVel.fZ = vel.fZ;
     
     hsVector3 linCurrent(0.f, 0.f, 0.f);
-    hsScalar angCurrent = 0.f;
+    float angCurrent = 0.f;
     if (fCurrentRegion != nil)
-        fCurrentRegion->GetCurrent(fPhysical, linCurrent, angCurrent, (hsScalar)elapsed);
+        fCurrentRegion->GetCurrent(fPhysical, linCurrent, angCurrent, (float)elapsed);
     
     int numContacts = fPhysical->GetNumContacts();
     fHadContacts = (numContacts > 0);
@@ -97,7 +97,7 @@ void plAntiGravAction::apply(Havok::Subspace &space, Havok::hkTime time)
     for (i = 0; i < numContacts; i++)
     {
         const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i); 
-        hsScalar dotUp = straightUp.dot(contact->m_normal);
+        float dotUp = straightUp.dot(contact->m_normal);
         if (dotUp > .5)
         {
             fOnGround = true;
@@ -109,7 +109,7 @@ void plAntiGravAction::apply(Havok::Subspace &space, Havok::hkTime time)
     fPhysical->SetAngularVelocitySim(hsVector3(0.f, 0.f, fAnimAngVel + fTurnStr + angCurrent)); 
 }
 
-void plAntiGravAction::SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight)
+void plAntiGravAction::SetSurface(plSwimRegionInterface *region, float surfaceHeight)
 {
     fCurrentRegion = region;
     if (region != nil)

@@ -60,12 +60,12 @@ public:
     CLASSNAME_REGISTER( plInterestingModMsg );
     GETINTERFACE_ANY( plInterestingModMsg, plMessage );
     
-    hsScalar    fWeight;
-    hsScalar    fRadius;
-    hsScalar    fSize;
+    float    fWeight;
+    float    fRadius;
+    float    fSize;
     hsPoint3    fPos;
     plKey       fObj;
-    UInt8       fType;
+    uint8_t       fType;
 
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)

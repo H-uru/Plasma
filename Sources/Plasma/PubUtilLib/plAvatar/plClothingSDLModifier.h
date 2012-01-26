@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -66,7 +66,7 @@ protected:
     void IPutCurrentStateIn(plStateDataRecord* dstState);
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
     
-    UInt32 IApplyModFlags(UInt32 sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     // var labels 

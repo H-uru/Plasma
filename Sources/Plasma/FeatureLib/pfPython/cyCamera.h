@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to map camera functions to plasma2 message
 //
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "pnKeyedObject/plKey.h"
 class pyKey;
@@ -83,7 +83,7 @@ public:
     virtual void Pop(pyKey& oldCamKey);
 
     // Send controlKey commands to the virtual camera (should be like a pass thru)
-    virtual void ControlKey(Int32 controlKey, hsBool activated);
+    virtual void ControlKey(int32_t controlKey, hsBool activated);
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -102,8 +102,8 @@ public:
     
     virtual void UndoFirstPerson();
 
-    virtual hsScalar GetFOV();
-    virtual void SetFOV(hsScalar fov, double t);
+    virtual float GetFOV();
+    virtual void SetFOV(float fov, double t);
 
     virtual void SetSmootherCam(hsBool state);
     virtual hsBool IsSmootherCam();

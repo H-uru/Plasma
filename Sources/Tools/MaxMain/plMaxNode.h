@@ -168,7 +168,7 @@ public:
     plLightMapComponent* GetLightMapComponent();
     // Starting at 0, returns an incrementing index for each maxNode. Useful for assigning
     // indices to sound objects attached to the node
-    UInt32  GetNextSoundIdx( void );
+    uint32_t  GetNextSoundIdx( void );
 
     hsBool  IsPhysical( void );
 
@@ -179,7 +179,7 @@ public:
     plPhysicalProps *GetPhysicalProps();
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
-    plKey   FindPageKey( UInt16 classIdx, const char *name );
+    plKey   FindPageKey( uint16_t classIdx, const char *name );
     const char *GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);
@@ -206,7 +206,7 @@ protected:
     void            IGetRTLightColors(plLightInfo* liInfo, IParamBlock2* ProperPB);
     void            IGetRTLightAttenuation(plOmniLightInfo* liInfo, IParamBlock2* ProperPB);
     // RunTime Light animation builders
-    hsBool          IGetRTLightAttenValues(IParamBlock2* ProperPB, hsScalar& attenConst, hsScalar& attenLinear, hsScalar& attenQuadratic,hsScalar &attenCutoff);
+    hsBool          IGetRTLightAttenValues(IParamBlock2* ProperPB, float& attenConst, float& attenLinear, float& attenQuadratic,float &attenCutoff);
     void            IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* ProperPB);
     hsBool          IAttachRTLightModifier(plLightModifier* liMod);
 
@@ -215,7 +215,7 @@ protected:
     plSceneNode*    IGetDrawableSceneNode(plErrorMsg *pErrMsg);
     void            IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArray, plDrawInterface *di,
                                             plErrorMsg *pErrMsg, plConvertSettings *settings );
-    void            IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, UInt32 &index,
+    void            IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
                                  hsMatrix44 &l2w, hsMatrix44 &w2l,
                                  plErrorMsg *pErrMsg, plConvertSettings *settings );
     void            ISetupBones( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray,
@@ -225,7 +225,7 @@ protected:
 
     void            IWipeBranchDrawable(hsBool b);
 
-    UInt32          IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, hsBool beMoreAccurate = false );
+    uint32_t          IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, hsBool beMoreAccurate = false );
     hsBool          IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings );
     hsBool          IMaterialsMatch( plMaxNode *otherNode, hsBool beMoreAccurate );
@@ -239,22 +239,22 @@ friend class plLocationDlg;
 class plMaxBoneMap
 {
 protected:
-    typedef std::map<plMaxNodeBase*, UInt32> BoneMap;
+    typedef std::map<plMaxNodeBase*, uint32_t> BoneMap;
     BoneMap fBones;
-    typedef std::map<plDrawable*, UInt32> DrawableMap;
+    typedef std::map<plDrawable*, uint32_t> DrawableMap;
     DrawableMap fBaseMatrices;
     
 public:
-    UInt8 fNumBones;
+    uint8_t fNumBones;
     plMaxNodeBase *fOwner; // Make note of which node created us, so they can delete us.
 
     plMaxBoneMap() : fNumBones(0), fOwner(nil) {}
 
     void AddBone(plMaxNodeBase *bone);
-    UInt8 GetIndex(plMaxNodeBase *bone);
+    uint8_t GetIndex(plMaxNodeBase *bone);
     void FillBoneArray(plMaxNodeBase **boneArray);
-    UInt32 GetBaseMatrixIndex(plDrawable *draw);
-    void SetBaseMatrixIndex(plDrawable *draw, UInt32 idx);
+    uint32_t GetBaseMatrixIndex(plDrawable *draw);
+    void SetBaseMatrixIndex(plDrawable *draw, uint32_t idx);
     void SortBones();
 };
 

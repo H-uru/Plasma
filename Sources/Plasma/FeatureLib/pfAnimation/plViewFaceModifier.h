@@ -84,7 +84,7 @@ protected:
     hsBounds3Ext            fMaxBounds;
 
     virtual hsBool IFacePoint(plPipeline* pipe, const hsPoint3& at);
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
     enum RefType
     {

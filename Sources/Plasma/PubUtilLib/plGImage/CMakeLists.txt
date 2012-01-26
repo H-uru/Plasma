@@ -29,7 +29,6 @@ set(plGImage_HEADERS
     hsCodecManager.h
     hsDXTDirectXCodec.h
     hsDXTSoftwareCodec.h
-    hsRect.h
     plAVIWriter.h
     plBitmap.h
     plBumpMapGen.h

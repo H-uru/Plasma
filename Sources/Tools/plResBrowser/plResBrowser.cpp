@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WINDOWNAME  "plResBrowser"
 
 #include "HeadSpin.h"
-#include "hsTypes.h"
-#include <windows.h>
 #include "res/resource.h"
 
 #include "pnAllCreatables.h"
@@ -73,7 +71,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
     plResMgrSettings::Get().SetFilterOlderPageVersions( false );
 
     gCommandLine = (char *)lpCmdLine;
-    plResManager *rMgr = TRACKED_NEW plResManager;
+    plResManager *rMgr = new plResManager;
     hsgResMgr::Init( rMgr );
 
     if( !WinInit( hInstance, nCmdShow ) )

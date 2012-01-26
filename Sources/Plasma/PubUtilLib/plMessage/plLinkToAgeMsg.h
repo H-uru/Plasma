@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"
-#include "hsUtils.h"
+
 
 ////////////////////////////////////////////////////////////////////
 // A msg which is sent to the networking system to cause the player to link
@@ -90,7 +90,7 @@ public:
 
 class plLinkingMgrMsg : public plMessage
 {
-    UInt8                   fLinkingMgrCmd;
+    uint8_t                   fLinkingMgrCmd;
     plCreatableListHelper   fArgs;
 
 public:
@@ -100,8 +100,8 @@ public:
     CLASSNAME_REGISTER( plLinkingMgrMsg );
     GETINTERFACE_ANY( plLinkingMgrMsg, plMessage );
 
-    UInt8   GetCmd() const { return fLinkingMgrCmd; }
-    void    SetCmd( UInt8 v ) { fLinkingMgrCmd=v; }
+    uint8_t   GetCmd() const { return fLinkingMgrCmd; }
+    void    SetCmd( uint8_t v ) { fLinkingMgrCmd=v; }
     plCreatableListHelper * GetArgs() { return &fArgs; }
 
     void    Read( hsStream* stream, hsResMgr* mgr );
@@ -146,7 +146,7 @@ public:
     void ReadVersion(hsStream* s, hsResMgr* mgr);
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
-    Int32 fEffects;
+    int32_t fEffects;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ public:
 class plLinkEffectBCMsg : public plMessage
 {
 protected:
-    UInt32 fLinkFlags;
+    uint32_t fLinkFlags;
 
 public:
     enum // link flags
@@ -202,8 +202,8 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetLinkFlag(UInt32 flag, hsBool on = true);
-    hsBool HasLinkFlag(UInt32 flag);
+    void SetLinkFlag(uint32_t flag, hsBool on = true);
+    hsBool HasLinkFlag(uint32_t flag);
 
     plKey fLinkKey;
 };

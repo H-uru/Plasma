@@ -91,13 +91,13 @@ protected:
 
     // Set by the client in IUpdate(). This tells us where we are in the update loop so that we know
     // which transform message to register for when our transform is dirtied.
-    static UInt8                            fTransformPhase;
+    static uint8_t                            fTransformPhase;
     
     // Temp debugging tool, so we can quickly (dis/en)able delayed transforms at runtime.
     static hsBool                           fDelayedTransformsEnabled;
 
-    UInt16                                  fState;
-    UInt16                                  fReason;        // why we've changed position (if we have)
+    uint16_t                                  fState;
+    uint16_t                                  fReason;        // why we've changed position (if we have)
 
     hsTArray<plSceneObject*>                fChildren;
     plCoordinateInterface*                  fParent;    // if this changes, marks us as dirty
@@ -122,12 +122,12 @@ protected:
     virtual void IAddChild(plSceneObject* child); // sets parent on child
     virtual void IRemoveChild(plSceneObject* child); // removes this as parent of child
     virtual void IRemoveChild(int i); // removes this as parent of child
-    virtual void IAttachChild(plSceneObject* child, UInt8 flags); // physically attaches child to us
-    virtual void IDetachChild(plSceneObject* child, UInt8 flags); // physically detach this child from us
+    virtual void IAttachChild(plSceneObject* child, uint8_t flags); // physically attaches child to us
+    virtual void IDetachChild(plSceneObject* child, uint8_t flags); // physically detach this child from us
     virtual void IUpdateDelayProp(); // Called whenever a child is added/removed
 
     virtual void IRecalcTransforms(); // Called by ITransformChanged when we need to re-examine our relationship with our parent.
-    virtual void ITransformChanged(hsBool force, UInt16 reasons, hsBool checkForDelay); // called by SceneObject on TransformChanged messsage
+    virtual void ITransformChanged(hsBool force, uint16_t reasons, hsBool checkForDelay); // called by SceneObject on TransformChanged messsage
 
     void                    IDirtyTransform();
     void                    IRegisterForTransformMessage(hsBool delayed);
@@ -188,12 +188,12 @@ public:
 
     virtual hsBool MsgReceive(plMessage* msg);
 
-    UInt16 GetReasons();
+    uint16_t GetReasons();
     void ClearReasons();
 
-    Int32   GetNumProperties() const { return kNumProps; }
-    static UInt8    GetTransformPhase() { return fTransformPhase; }
-    static void     SetTransformPhase(UInt8 phase) { fTransformPhase = phase; }
+    int32_t   GetNumProperties() const { return kNumProps; }
+    static uint8_t    GetTransformPhase() { return fTransformPhase; }
+    static void     SetTransformPhase(uint8_t phase) { fTransformPhase = phase; }
 
     static hsBool   GetDelayedTransformsEnabled() { return fDelayedTransformsEnabled; }
     static void     SetDelayedTransformsEnabled(hsBool val) { fDelayedTransformsEnabled = val; }

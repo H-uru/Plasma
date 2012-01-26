@@ -121,12 +121,12 @@ public:
     virtual hsBool IsAttachedToClone();
     // (old style - Used in pyNotify)
     // get the notify list count
-    virtual Int32 NotifyListCount();
+    virtual int32_t NotifyListCount();
     // (old style - Used in pyNotify)
     // get a notify list item
-    virtual plKey GetNotifyListItem(Int32 i);
+    virtual plKey GetNotifyListItem(int32_t i);
     // Set the dirty state on the PythonModifier
-    virtual void DirtySynchState(const char* SDLStateName, UInt32 sendFlags);
+    virtual void DirtySynchState(const char* SDLStateName, uint32_t sendFlags);
 
     // register and unregister for control key envents
     virtual void EnableControlKeyEvents();

@@ -68,7 +68,7 @@ class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
     friend class PXControllerHitReportWalk;
 public:
-    plPXPhysicalControllerCore(plKey ownerSO, hsScalar height, hsScalar radius);
+    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius);
     ~plPXPhysicalControllerCore();
     //should actually be a 3 vector but everywhere else it is assumed to be just around  Z 
         
@@ -98,7 +98,7 @@ public:
     virtual void GetPositionSim(hsPoint3& pos){IGetPositionSim(pos);}
     virtual void MoveKinematicToController(hsPoint3& pos);
     virtual const hsPoint3& GetLocalPosition(){return fLocalPosition;}
-    virtual void SetControllerDimensions(hsScalar radius, hsScalar height);
+    virtual void SetControllerDimensions(float radius, float height);
     virtual void LeaveAge();
     virtual void UpdateControllerAndPhysicalRep();
 
@@ -113,24 +113,24 @@ public:
     static int GetControllersInThisSubWorld(plKey world, int maxToReturn, 
         plPXPhysicalControllerCore** bufferout);
     static int GetNumberOfControllersInThisSubWorld(plKey world);
-    static void UpdatePrestep(hsScalar delSecs);
-    static void UpdatePoststep(hsScalar delSecs);
-    static void UpdatePostSimStep(hsScalar delSecs);
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    static void UpdatePrestep(float delSecs);
+    static void UpdatePoststep(float delSecs);
+    static void UpdatePostSimStep(float delSecs);
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 #ifndef PLASMA_EXTERNAL_RELEASE
     static hsBool fDebugDisplay;
 #endif // PLASMA_EXTERNAL_RELEASE
     static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
     static int fPXControllersMax;
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
+    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
     virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys);
     virtual hsBool BehavingLikeAnAnimatedPhysical();
     virtual const hsVector3& GetLinearVelocity();
 
     virtual void SetLinearVelocity(const hsVector3& linearVel);
     //should actually be a 3 vector but everywhere else it is assumed to be just around  Z 
-    virtual void SetAngularVelocity(const hsScalar angvel);
-    virtual void SetVelocities(const hsVector3& linearVel, hsScalar angVel);
+    virtual void SetAngularVelocity(const float angvel);
+    virtual void SetVelocities(const hsVector3& linearVel, float angVel);
 
 protected:
     friend class PXControllerHitReport;
@@ -151,8 +151,8 @@ protected:
     void IDrawDebugDisplay();
 #endif
     void IHandleResize();
-    hsScalar fPreferedRadius;
-    hsScalar fPreferedHeight;
+    float fPreferedRadius;
+    float fPreferedHeight;
     // The global position and rotation of the avatar last time we set it (so we
     // can detect if someone else moves him)
     plPhysicalProxy* fProxyGen;     

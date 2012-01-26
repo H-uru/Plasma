@@ -71,8 +71,8 @@ public:
     virtual ~plAvTaskBrain();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
         
     /** dump descriptive stuff to the given debug text */
     virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);

@@ -78,8 +78,8 @@ public:
     static hsBool IsGUIControlDynamicText(pyKey& gckey);
 
     //specific interface functions
-    virtual UInt32  GetNumMaps();
-    virtual PyObject* GetMap(UInt32 i); // returns pyDynamicText
+    virtual uint32_t  GetNumMaps();
+    virtual PyObject* GetMap(uint32_t i); // returns pyDynamicText
 };
 
 #endif // _pyGUIControlButton_h_

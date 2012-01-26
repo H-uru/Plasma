@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "plResTreeView.h"
 
 #include "plResMgr/plResManager.h"
@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnFactory/plFactory.h"
 
-#include <windows.h>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include "res\resource.h"
@@ -107,7 +106,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
 
         HWND        fTree;
         HTREEITEM   fCurrItem, fCurrTypeItem;
-        UInt16      fCurrType;
+        uint16_t      fCurrType;
         bool        fFilter;
 
         plRegistryPageNode  *fCurrPage;
@@ -148,7 +147,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
             sprintf( str, "%s->%s", info.GetAge(), info.GetPage() );
             fCurrItem = AddLeaf( fTree, NULL, str, new plKeyInfo( nil, fCurrPage ) );
 
-            fCurrType = (UInt16)-1;
+            fCurrType = (uint16_t)-1;
             page->LoadKeys();
             page->IterateKeys( this );
             return true;
@@ -499,7 +498,7 @@ void plResTreeView::SaveSelectedObject(HWND treeCtrl)
             return;
 
         hsStream    *dataStream = stream->GetStream();
-        UInt8       *buffer = TRACKED_NEW UInt8[ keyImp->GetDataLen() ];
+        uint8_t       *buffer = new uint8_t[ keyImp->GetDataLen() ];
         if( buffer != nil )
         {
             dataStream->SetPosition( keyImp->GetStartPos() );

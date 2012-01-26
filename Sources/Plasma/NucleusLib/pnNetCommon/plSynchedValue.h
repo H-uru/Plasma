@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSynchedObject.h"
 
 #ifdef USE_SYNCHED_VALUES
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "hsBitVector.h"
@@ -78,17 +78,17 @@ public:
     };
 
 protected:
-    Int16   fSynchedObjectAddrOffset;   // this could represent dwords instead of byte offsets
-    UInt16  fFlags;     
+    int16_t   fSynchedObjectAddrOffset;   // this could represent uint32_ts instead of uint8_t offsets
+    uint16_t  fFlags;     
 
     void IConstruct()   // too bad this can't be virtual (because it's called from ctor)
     { 
         // The synchMgr for the class that owns us is constructed first and the staticMgr
         // is set to his address so we can automatically get at it during construction.
         fFlags=0;
-        Int32 off = (Int32)plSynchedObject::GetStaticSynchedObject() - (Int32)this; 
+        int32_t off = (int32_t)plSynchedObject::GetStaticSynchedObject() - (int32_t)this; 
         if ( hsABS(off) <  (1<<(sizeof(fSynchedObjectAddrOffset)<<3)) )
-            fSynchedObjectAddrOffset = (Int16)off;
+            fSynchedObjectAddrOffset = (int16_t)off;
         else
             fSynchedObjectAddrOffset=-1;
     }
@@ -106,11 +106,11 @@ protected:
     hsKeyedObject* ISaveOrLoad(hsKeyedObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     plSceneNode* ISaveOrLoad(plSceneNode* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     plSceneObject* ISaveOrLoad(plSceneObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    Int32 ISaveOrLoad(Int32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    UInt32 ISaveOrLoad(UInt32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
+    int32_t ISaveOrLoad(int32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
+    uint32_t ISaveOrLoad(uint32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     bool ISaveOrLoad(bool v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     int ISaveOrLoad(int v, hsBool32 save, hsStream* stream, hsResMgr* mgr);     // or hsBool32
-    hsScalar ISaveOrLoad(hsScalar v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
+    float ISaveOrLoad(float v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     double ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     hsBitVector ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
     plCoordinateInterface* ISaveOrLoad(const plCoordinateInterface* cInt, hsBool32 save, hsStream* stream, hsResMgr* mgr);
@@ -122,7 +122,7 @@ public:
     virtual plSynchedObject* GetSynchedObject() 
     { 
         hsAssert(fSynchedObjectAddrOffset!=-1, "invalid synchedObject address offset");
-        plSynchedObject* so = fSynchedObjectAddrOffset == -1 ? nil : (plSynchedObject*)((Int32)this+fSynchedObjectAddrOffset); 
+        plSynchedObject* so = fSynchedObjectAddrOffset == -1 ? nil : (plSynchedObject*)((int32_t)this+fSynchedObjectAddrOffset); 
         if (!(fFlags & kRegistered) && so)
         {
             so->RegisterSynchedValue(this);
@@ -130,10 +130,10 @@ public:
         }
         return so;
     }
-    UInt16 GetFlags() { return fFlags; }
+    uint16_t GetFlags() { return fFlags; }
     
     // setters
-    void SetFlags(UInt16 f) { fFlags=f; }
+    void SetFlags(uint16_t f) { fFlags=f; }
     
     void MakeDirty() { SetFlags(GetFlags() | kValueIsDirty); }
     void MakeClean() { SetFlags(GetFlags() & ~kValueIsDirty); }
@@ -226,8 +226,8 @@ public:
     const T&    GetValue() const { return fValue; }
 
     // for hsBitVector
-    hsBool32 IsBitSet(UInt32 which) const { return fValue.IsBitSet(which); }
-    hsBool32 SetBit(UInt32 which, hsBool32 on = true)
+    hsBool32 IsBitSet(uint32_t which) const { return fValue.IsBitSet(which); }
+    hsBool32 SetBit(uint32_t which, hsBool32 on = true)
     {   hsBool32 bitSet = IsBitSet(which);
         if ( (on && !bitSet) || (!on && bitSet) )
             DirtyIfNecessary();
@@ -236,10 +236,10 @@ public:
     void Read(hsStream* s) { fValue.Read(s); }
     void Write(hsStream* s) const { fValue.Write(s); }
     void Clear()    { DirtyIfNecessary();   fValue.Clear(); }
-    hsBool32 ClearBit(UInt32 which) {   if (fValue.IsBitSet(which)) DirtyIfNecessary(); return fValue.ClearBit(which); }
+    hsBool32 ClearBit(uint32_t which) {   if (fValue.IsBitSet(which)) DirtyIfNecessary(); return fValue.ClearBit(which); }
     void Reset() { if (fValue.GetSize()!=0) DirtyIfNecessary(); fValue.Reset(); }
-    hsBool32 ToggleBit(UInt32 which) {  DirtyIfNecessary(); return fValue.ToggleBit(which); }
-    UInt32 GetSize() { return fValue.GetSize(); }
+    hsBool32 ToggleBit(uint32_t which) {  DirtyIfNecessary(); return fValue.ToggleBit(which); }
+    uint32_t GetSize() { return fValue.GetSize(); }
 };
 
 //////////////////////////////////////
@@ -338,7 +338,7 @@ void plSynchedTArray<T>::ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* 
     if (save)
     {
         // write out size of array
-        Int32 i, num = fValueList.GetCount();
+        int32_t i, num = fValueList.GetCount();
         stream->WriteLE(num);
         for(i=0;i<num;i++)
         {
@@ -350,7 +350,7 @@ void plSynchedTArray<T>::ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* 
         // clear array
         fValueList.Reset();
         // read in size of array
-        Int32 i, num;
+        int32_t i, num;
         stream->ReadLE(&num);
 
         for(i=0;i<num;i++)

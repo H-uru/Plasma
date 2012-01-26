@@ -58,20 +58,20 @@ protected:
 
     enum Validate { kNeedMoreData, kInvalidHeader, kValidHeader };
     Validate fHeader;
-    std::vector<UInt8> fHeaderCache;
+    std::vector<uint8_t> fHeaderCache;
 
     std::wstring fFilename, fMode; // needed for rewind function
 
-    int IValidateGzHeader(UInt32 byteCount, const void* buffer);
+    int IValidateGzHeader(uint32_t byteCount, const void* buffer);
 
 public:
     plZlibStream();
     virtual ~plZlibStream();
 
     virtual hsBool  Open(const char* filename, const char* mode);
-    virtual hsBool  Open(const wchar* filename, const wchar* mode);
+    virtual hsBool  Open(const wchar_t* filename, const wchar_t* mode);
     virtual hsBool  Close();
-    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
 
     // Since most functions don't check the return value from Write, you can
     // call this after you've passed in all your data to determine if it
@@ -80,11 +80,11 @@ public:
 
     // You can't use these
     virtual hsBool  AtEnd();
-    virtual UInt32  Read(UInt32 byteCount, void* buffer);
-    virtual void    Skip(UInt32 deltaByteCount);
+    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
+    virtual void    Skip(uint32_t deltaByteCount);
     virtual void    Rewind();
     virtual void    FastFwd();
-    virtual UInt32  GetEOF();
+    virtual uint32_t  GetEOF();
 };
 
 #endif // plZlibStream_h_inc

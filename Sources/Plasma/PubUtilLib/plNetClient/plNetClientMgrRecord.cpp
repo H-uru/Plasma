@@ -55,15 +55,15 @@ bool plNetClientMgr::RecordMsgs(const char* recType, const char* recName)
     if (!fMsgRecorder)
     {
         if (stricmp(recType,"stream") == 0)
-            fMsgRecorder = TRACKED_NEW plNetClientStreamRecorder;
+            fMsgRecorder = new plNetClientStreamRecorder;
         if (stricmp(recType,"stressstream") == 0)
-            fMsgRecorder = TRACKED_NEW plNetClientStressStreamRecorder;
+            fMsgRecorder = new plNetClientStressStreamRecorder;
         if (stricmp(recType,"stats") == 0)
-            fMsgRecorder = TRACKED_NEW plNetClientStatsRecorder;
+            fMsgRecorder = new plNetClientStatsRecorder;
         if (stricmp(recType,"streamandstats") == 0)
-            fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
+            fMsgRecorder = new plNetClientStreamAndStatsRecorder(new plNetClientStreamRecorder(), new plNetClientStatsRecorder());
         if (stricmp(recType,"stressstreamandstats") == 0)
-            fMsgRecorder = TRACKED_NEW plNetClientStreamAndStatsRecorder(TRACKED_NEW plNetClientStressStreamRecorder(), TRACKED_NEW plNetClientStatsRecorder());
+            fMsgRecorder = new plNetClientStreamAndStatsRecorder(new plNetClientStressStreamRecorder(), new plNetClientStatsRecorder());
 
         if (!fMsgRecorder || !fMsgRecorder->BeginRecording(recName))
         {
@@ -85,7 +85,7 @@ bool plNetClientMgr::PlaybackMsgs(const char* recName)
 {
     hsLogEntry(DebugMsg("DEMO: Beginning Playback"));
 
-    plNetClientRecorder* player = TRACKED_NEW plNetClientStreamRecorder;
+    plNetClientRecorder* player = new plNetClientStreamRecorder;
 
     if (player->BeginPlayback(recName))
     {

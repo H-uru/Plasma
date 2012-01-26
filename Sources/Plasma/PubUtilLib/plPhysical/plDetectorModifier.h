@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDetectorModifier : public plSingleModifier
 {
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty){ return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty){ return true; }
 
     hsTArray<plKey>     fReceivers;
     plModifier*         fRemoteMod;
@@ -68,7 +68,7 @@ public:
     void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
     void SetRemote(plModifier* p) { fRemoteMod = p; }
     plModifier* RemoteMod() { return fRemoteMod; }
-    virtual void SetType(Int8 i) {;}
+    virtual void SetType(int8_t i) {;}
     int GetNumReceivers() const { return fReceivers.Count(); }
     plKey GetReceiver(int i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }
@@ -81,7 +81,7 @@ public:
         {   
             fReceivers.Append(mgr->ReadKey(stream));
         }
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         fProxyKey = mgr->ReadKey(stream);
     }
 

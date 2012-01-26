@@ -103,7 +103,7 @@ public:
         kPopUpMenu=14,
         kClickMap=15,
     };
-    static UInt32 WhatControlType(pyKey& gckey);
+    static uint32_t WhatControlType(pyKey& gckey);
     static void GUICursorOff();
     static void GUICursorOn();
     static void GUICursorDimmed();
@@ -117,36 +117,36 @@ public:
     virtual PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual UInt32  GetTagID();
+    virtual uint32_t  GetTagID();
 
     virtual void    SetEnabled( hsBool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
     virtual hsBool      IsEnabled( void );
     virtual const char  *GetName( void );
-    virtual UInt32      GetVersion(void);
+    virtual uint32_t      GetVersion(void);
 
-    virtual UInt32      GetNumControls( void );
-    virtual PyObject*   GetControl( UInt32 idx ); // returns pyKey
+    virtual uint32_t      GetNumControls( void );
+    virtual PyObject*   GetControl( uint32_t idx ); // returns pyKey
     virtual void        SetFocus( pyKey& gcKey );
     virtual void        NoFocus( );
     virtual void        Show( void );
     virtual void        ShowNoReset( void );
     virtual void        Hide( void );
-    virtual PyObject*   GetControlFromTag( UInt32 tagID );  // returns pyKey
+    virtual PyObject*   GetControlFromTag( uint32_t tagID );  // returns pyKey
 
     // get color schemes
     virtual PyObject*   GetForeColor(); // returns pyColor
     virtual PyObject*   GetSelColor(); // returns pyColor
     virtual PyObject*   GetBackColor(); // returns pyColor
     virtual PyObject*   GetBackSelColor(); // returns pyColor
-    virtual UInt32      GetFontSize();
+    virtual uint32_t      GetFontSize();
     // set color scheme
-    virtual void        SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetFontSize(UInt32 fontsize);
+    virtual void        SetForeColor( float r, float g, float b, float a );
+    virtual void        SetSelColor( float r, float g, float b, float a );
+    virtual void        SetBackColor( float r, float g, float b, float a );
+    virtual void        SetBackSelColor( float r, float g, float b, float a );
+    virtual void        SetFontSize(uint32_t fontsize);
 
     virtual void        UpdateAllBounds( void );
     virtual void        RefreshAllControls( void );

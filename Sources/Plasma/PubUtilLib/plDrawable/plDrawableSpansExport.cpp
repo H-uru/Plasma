@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDrawableSpans.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
@@ -79,7 +79,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 {
-    UInt32  i, j, count;
+    uint32_t  i, j, count;
     
     // Make sure we're optimized before we write (should be tho)
 //  Optimize();
@@ -115,8 +115,8 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
     {
-        UInt8   *icicle = (UInt8 *)fSpans[ i ], *base = (UInt8 *)fIcicles.AcquireArray();
-        j = (UInt32)( icicle - base ) / sizeof( plIcicle );
+        uint8_t   *icicle = (uint8_t *)fSpans[ i ], *base = (uint8_t *)fIcicles.AcquireArray();
+        j = (uint32_t)( icicle - base ) / sizeof( plIcicle );
         s->WriteLE32( j );
     }
 
@@ -139,7 +139,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     {
         if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
         {
-            UInt32 lcnt = fSpans[i]->fPermaLights.GetCount();
+            uint32_t lcnt = fSpans[i]->fPermaLights.GetCount();
             s->WriteLE32(lcnt);
             int j;
             for( j = 0; j < lcnt; j++ )
@@ -147,7 +147,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         }
         if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
         {
-            UInt32 lcnt = fSpans[i]->fPermaProjs.GetCount();
+            uint32_t lcnt = fSpans[i]->fPermaProjs.GetCount();
             s->WriteLE32(lcnt);
             int j;
             for( j = 0; j < lcnt; j++ )
@@ -216,10 +216,10 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 //  Adds a drawInterface's geometry spans to the list to be collapsed into 
 //  buffers.
 
-UInt32  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, UInt32 index )
+uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index )
 {
     int             i;
-    UInt32          spanIdx;
+    uint32_t          spanIdx;
     plSpan          *span;
     hsBounds3Ext    bounds;
 
@@ -228,11 +228,11 @@ UInt32  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, UInt32 i
     if( fNeedCleanup )
         IRemoveGarbage();
 
-    if (index == (UInt32)-1) // need a new one
+    if (index == (uint32_t)-1) // need a new one
     {
         /// Create a lookup entry
         index = fDIIndices.GetCount();
-        fDIIndices.Append( TRACKED_NEW plDISpanIndex );
+        fDIIndices.Append( new plDISpanIndex );
         fDIIndices[ index ]->fFlags = plDISpanIndex::kNone;
     }
     plDISpanIndex   *spanLookup = fDIIndices[ index ];
@@ -276,7 +276,7 @@ UInt32  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, UInt32 i
         span->fBaseMatrix = spans[ i ]->fBaseMatrix;
         span->fLocalUVWChans = spans[i]->fLocalUVWChans;
         span->fMaxBoneIdx = spans[i]->fMaxBoneIdx;
-        span->fPenBoneIdx = (UInt16)(spans[i]->fPenBoneIdx);
+        span->fPenBoneIdx = (uint16_t)(spans[i]->fPenBoneIdx);
 
         bounds = spans[ i ]->fLocalBounds;
         span->fLocalBounds = bounds;
@@ -382,13 +382,13 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         if( geo->fProps & plGeometrySpan::kFirstInstance )
         {
             plGBufferCell* cell = group->GetCell(span->fVBufferIdx, span->fCellIdx);
-            UInt32 stride = group->GetVertexSize();
-            UInt32 ptr = cell->fVtxStart + span->fCellOffset * stride;
+            uint32_t stride = group->GetVertexSize();
+            uint32_t ptr = cell->fVtxStart + span->fCellOffset * stride;
 
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d offset)",
                 geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
-                geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(UInt16) * geo->fNumIndices,
+                geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 ptr
                 );
@@ -425,7 +425,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d/%d/%d/%d/%d)",
                 geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
-                geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(UInt16) * geo->fNumIndices,
+                geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
@@ -611,10 +611,10 @@ void    plDrawableSpans::IPackSourceSpans( void )
 
 void    plDrawableSpans::ISortSourceSpans( void )
 {
-    hsTArray<UInt32>    spanReorderTable, spanInverseTable;
+    hsTArray<uint32_t>    spanReorderTable, spanInverseTable;
     int                 i, j, idx;
     plGeometrySpan      *tmpSpan;
-    UInt32              tmpIdx;
+    uint32_t              tmpIdx;
     plSpan              *tmpSpanPtr;
 
 

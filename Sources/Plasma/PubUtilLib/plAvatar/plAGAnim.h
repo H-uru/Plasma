@@ -144,22 +144,22 @@ public:
     virtual const char * GetName() const { return fName; }
 
     /** Return the length of the animation; end - start. */
-    virtual hsScalar GetLength() const { return fEnd - fStart; }
+    virtual float GetLength() const { return fEnd - fStart; }
 
     /** Hacky function to extend the length of the animation to some minimum
         length. Does nothing if the animation is already longer than this. */
-    void ExtendToLength(hsScalar length);
+    void ExtendToLength(float length);
 
     /** Return the start time for the beginning of the animation. The animation
        contains no data prior to this time.
        In practice, this always returns 0.0f and this function may be deprecated. */
-    virtual hsScalar GetStart() const { return fStart; }
-    void SetStart(hsScalar start) { fStart = start; }
+    virtual float GetStart() const { return fStart; }
+    void SetStart(float start) { fStart = start; }
 
     /** Return the end time of the animation. Since start is typically 0, this usually
        serves as the length of the animation as well. */
-    virtual hsScalar GetEnd() const { return fEnd; }
-    void SetEnd(hsScalar end) { fEnd = end; }
+    virtual float GetEnd() const { return fEnd; }
+    void SetEnd(float end) { fEnd = end; }
     
     
     /** Returns true if any applicator on the arg anim tries to use the
@@ -199,8 +199,8 @@ protected:
     ApplicatorVec fApps;        /// our animation channels
     float fBlend;               /// requested blend factor
 
-    hsScalar fStart;            /// the start time of the beginning of the animation (usually 0)
-    hsScalar fEnd;              /// the end time of the animation
+    float fStart;            /// the start time of the beginning of the animation (usually 0)
+    float fEnd;              /// the end time of the animation
 
     char *fName;                /// the name of our animation
 
@@ -238,8 +238,8 @@ public:
         Animations are not required to start at their actual beginning but can,
         for instance, start in the middle, play to the end, and then loop to the
         beginning or to their loop start point. */
-    virtual hsScalar GetInitial() const { return fInitial; }
-    void SetInitial(hsScalar initial) { fInitial = initial; }
+    virtual float GetInitial() const { return fInitial; }
+    void SetInitial(float initial) { fInitial = initial; }
     
     /** Does this animation start automatically when it's applied? */
     virtual bool GetAutoStart() const { return fAutoStart; }
@@ -247,13 +247,13 @@ public:
 
     /** If the animation loops, this is where it will restart the loop. Note that
         loops do not have to start at the beginning of the animation. */
-    virtual hsScalar GetLoopStart() const { return fLoopStart; }
-    void SetLoopStart(hsScalar start) { fLoopStart = start; }
+    virtual float GetLoopStart() const { return fLoopStart; }
+    void SetLoopStart(float start) { fLoopStart = start; }
 
     /** If the animation loops, this is the end point of the loop. After passing
         this point, the animation will cycle around to GetLoopStart */
-    virtual hsScalar GetLoopEnd() const { return fLoopEnd; }
-    void SetLoopEnd(hsScalar end) { fLoopEnd = end; }
+    virtual float GetLoopEnd() const { return fLoopEnd; }
+    void SetLoopEnd(float end) { fLoopEnd = end; }
 
     /** Does this animation loop?. Note that there may be multiple loop segments defined
         within a given animation. */
@@ -264,43 +264,43 @@ public:
         to make an animation slow down gradually when you stop it.
         The types are defined in plAnimEaseTypes.h
         */
-    virtual UInt8 GetEaseInType() const { return fEaseInType; }
-    void SetEaseInType(UInt8 type) { fEaseInType = type; }
+    virtual uint8_t GetEaseInType() const { return fEaseInType; }
+    void SetEaseInType(uint8_t type) { fEaseInType = type; }
 
     /** Set the length of time the ease-in should take. */
-    virtual hsScalar GetEaseInLength() const { return fEaseInLength; }
+    virtual float GetEaseInLength() const { return fEaseInLength; }
     /** Set the length of time the ease-in should take. */
-    void SetEaseInLength(hsScalar length) { fEaseInLength = length; }
+    void SetEaseInLength(float length) { fEaseInLength = length; }
 
     /** The minimum value used at the start of the ease in. */
-    virtual hsScalar GetEaseInMin() const { return fEaseInMin; }
+    virtual float GetEaseInMin() const { return fEaseInMin; }
     /** The minimum value used at the start of the ease in. */
-    void SetEaseInMin(hsScalar length) { fEaseInMin = length; }
+    void SetEaseInMin(float length) { fEaseInMin = length; }
     
     /** The maximum value reached at the end of the ease in. */
-    virtual hsScalar GetEaseInMax() const { return fEaseInMax; }
+    virtual float GetEaseInMax() const { return fEaseInMax; }
     /** The maximum value reached at the end of the ease in. */
-    void SetEaseInMax(hsScalar length) { fEaseInMax = length; }
+    void SetEaseInMax(float length) { fEaseInMax = length; }
 
     /** The curve type for the ease out. */
-    virtual UInt8 GetEaseOutType() const { return fEaseOutType; }
+    virtual uint8_t GetEaseOutType() const { return fEaseOutType; }
     /** The curve type for the ease out. */
-    void SetEaseOutType(UInt8 type) { fEaseOutType = type; }
+    void SetEaseOutType(uint8_t type) { fEaseOutType = type; }
     
     /** The length of time for the ease out. */
-    virtual hsScalar GetEaseOutLength() const { return fEaseOutLength; }
+    virtual float GetEaseOutLength() const { return fEaseOutLength; }
     /** The length of time for the ease out. */
-    void SetEaseOutLength(hsScalar length) { fEaseOutLength = length; }
+    void SetEaseOutLength(float length) { fEaseOutLength = length; }
 
     /** Minimum value reached in ease-out */
-    virtual hsScalar GetEaseOutMin() const { return fEaseOutMin; }
+    virtual float GetEaseOutMin() const { return fEaseOutMin; }
     /** Minimum value reached in ease-out */
-    void SetEaseOutMin(hsScalar length) { fEaseOutMin = length; }
+    void SetEaseOutMin(float length) { fEaseOutMin = length; }
 
     /** Maximum value reached in ease-in */
-    virtual hsScalar GetEaseOutMax() const { return fEaseOutMax; }
+    virtual float GetEaseOutMax() const { return fEaseOutMax; }
     /** Maximum value reached in ease-in */
-    void SetEaseOutMax(hsScalar length) { fEaseOutMax = length; }
+    void SetEaseOutMax(float length) { fEaseOutMax = length; }
 
     /** Animations can have multiple defined loop segments; these
         are selected using animation control messages.
@@ -311,9 +311,9 @@ public:
         \param end will hold the end time of the loop */
     bool GetLoop(const char *name, float &start, float &end) const;
     /** Lets you get a loop by index instead of name. */
-    bool GetLoop(UInt32 num, float &start, float &end) const;
+    bool GetLoop(uint32_t num, float &start, float &end) const;
     /** Returns the number of loops defined on this anim. */
-    UInt32 GetNumLoops() const;
+    uint32_t GetNumLoops() const;
 
     /** Add a marker to the animation. Markers can be used
         for callbacks or for goto comands. A marker is a simple
@@ -327,12 +327,12 @@ public:
         near a stop point and fading out, the stop point will
         override the fade, so that the animation stops precisely
         at the defined time. */
-    void AddStopPoint(hsScalar time);
+    void AddStopPoint(float time);
     /** Return the number of stop points defined for this animation. */
-    UInt32 NumStopPoints();
+    uint32_t NumStopPoints();
     /** Get the time corresponding to the given stop point. Stop points
         are numbered in the order they were added. */
-    hsScalar GetStopPoint(UInt32 i);
+    float GetStopPoint(uint32_t i);
     /** Function to check for a zero-length loop, and set it to
         the anim's start/end instead */
     void CheckLoop();
@@ -347,20 +347,20 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 protected:
-    hsScalar fInitial;          /// the position of the playback head 
+    float fInitial;          /// the position of the playback head 
     bool fAutoStart;            /// does the animation start automatically?
-    hsScalar fLoopStart;        /// when wrapping a loop, start here
-    hsScalar fLoopEnd;          /// when you reach this point, loop back
+    float fLoopStart;        /// when wrapping a loop, start here
+    float fLoopEnd;          /// when you reach this point, loop back
     bool fLoop;                 /// do we loop?
 
-    UInt8 fEaseInType;          /// the type (none/linear/spline) of our ease-in curve, if any
-    UInt8 fEaseOutType;         /// the type (none/linear/spline) of our ease-out curve, if any
-    hsScalar fEaseInLength;     /// the length of time our ease-in curve takes
-    hsScalar fEaseInMin;        /// minimum (initial) value of our ease-in
-    hsScalar fEaseInMax;        /// maximum (final) value of our ease-in 
-    hsScalar fEaseOutLength;    /// the length of time our ease-out curve takes
-    hsScalar fEaseOutMin;       /// minimum (final) value of our ease-out
-    hsScalar fEaseOutMax;       /// maximum (initial) value of our ease-out
+    uint8_t fEaseInType;          /// the type (none/linear/spline) of our ease-in curve, if any
+    uint8_t fEaseOutType;         /// the type (none/linear/spline) of our ease-out curve, if any
+    float fEaseInLength;     /// the length of time our ease-in curve takes
+    float fEaseInMin;        /// minimum (initial) value of our ease-in
+    float fEaseInMax;        /// maximum (final) value of our ease-in 
+    float fEaseOutLength;    /// the length of time our ease-out curve takes
+    float fEaseOutMin;       /// minimum (final) value of our ease-out
+    float fEaseOutMax;       /// maximum (initial) value of our ease-out
 
     // a map from segment names to times
     typedef std::map<const char *, float, stringSorter> MarkerMap;
@@ -369,7 +369,7 @@ protected:
     typedef std::map<const char *, std::pair<float,float>, stringSorter> LoopMap;
     LoopMap fLoops;
 
-    typedef std::vector<hsScalar> ScalarMap;
+    typedef std::vector<float> ScalarMap;
     ScalarMap fStopPoints;      /// vector of stop points
 };
 
@@ -387,8 +387,8 @@ public:
     plEmoteAnim(const char *animName, double begin, double end, float fadeIn, float fadeOut, BodyUsage bodyUsage);
 
     BodyUsage GetBodyUsage() const;
-    hsScalar GetFadeIn() const;
-    hsScalar GetFadeOut() const;
+    float GetFadeIn() const;
+    float GetFadeOut() const;
 
     CLASSNAME_REGISTER( plEmoteAnim );
     GETINTERFACE_ANY( plEmoteAnim, plATCAnim );
@@ -398,8 +398,8 @@ public:
 
 protected:
     BodyUsage   fBodyUsage;     // how much of the body is used by this emote?
-    hsScalar    fFadeIn;        // how fast to fade in the emote
-    hsScalar    fFadeOut;       // how fast to fade out the emote
+    float    fFadeIn;        // how fast to fade in the emote
+    float    fFadeOut;       // how fast to fade out the emote
 };
 
 //////////////////

@@ -184,7 +184,7 @@ public:
     void Animate();
     
     // return responder state (if responder modifier found)
-    Int8 GetResponderState();
+    int8_t GetResponderState();
     
     // some animation commands for s.o.'s w/ multiple animations attached
 

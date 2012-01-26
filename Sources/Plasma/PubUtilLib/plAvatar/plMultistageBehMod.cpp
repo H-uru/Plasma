@@ -136,14 +136,14 @@ hsBool plMultistageBehMod::MsgReceive(plMessage* msg)
                 if(avObj)
                 {
                     // Create a copy of our reference anim stages to give to the brain
-                    plAnimStageVec* stages = TRACKED_NEW plAnimStageVec;
+                    plAnimStageVec* stages = new plAnimStageVec;
                     int numStages = fStages->size();
                     stages->reserve(numStages);
                     // hack hack hack
                     hsBool ladder = false;
                     for (int i = 0; i < numStages; i++)
                     {
-                        plAnimStage* stage = TRACKED_NEW plAnimStage;
+                        plAnimStage* stage = new plAnimStage;
                         *stage = *((*fStages)[i]);
                         stages->push_back(stage);
                         if (strstr(stage->GetAnimName(),"adder") != nil)
@@ -164,14 +164,14 @@ hsBool plMultistageBehMod::MsgReceive(plMessage* msg)
                         sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName());
                         plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
-                        plAvSeekMsg *seeker = TRACKED_NEW plAvSeekMsg(nil, avModKey, seekKey, 1.0f, fSmartSeek);
+                        plAvSeekMsg *seeker = new plAvSeekMsg(nil, avModKey, seekKey, 1.0f, fSmartSeek);
                         seeker->Send();
 
                         // these (currently unused) callbacks are for the brain itself, not any of the stages
                         plMessage *exitCallback = nil, *enterCallback = nil;
-                        UInt32 exitFlags = plAvBrainGeneric::kExitNormal;
+                        uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
-                        plAvBrainGeneric *brain = TRACKED_NEW plAvBrainGeneric(stages, exitCallback, enterCallback, sender, exitFlags, 
+                        plAvBrainGeneric *brain = new plAvBrainGeneric(stages, exitCallback, enterCallback, sender, exitFlags, 
                                                                        plAvBrainGeneric::kDefaultFadeIn, plAvBrainGeneric::kDefaultFadeOut, 
                                                                        plAvBrainGeneric::kMoveRelative);
                         if (ladder)
@@ -179,7 +179,7 @@ hsBool plMultistageBehMod::MsgReceive(plMessage* msg)
                             brain->SetType(plAvBrainGeneric::kLadder);
                         }
                         brain->SetReverseFBControlsOnRelease(fReverseFBControlsOnRelease);
-                        plAvPushBrainMsg* pushBrain = TRACKED_NEW plAvPushBrainMsg(GetKey(), avModKey, brain);
+                        plAvPushBrainMsg* pushBrain = new plAvPushBrainMsg(GetKey(), avModKey, brain);
                         pushBrain->Send();
                     }
                 }
@@ -210,14 +210,14 @@ void plMultistageBehMod::Read(hsStream *stream, hsResMgr *mgr)
     fReverseFBControlsOnRelease = stream->Readbool();
 
     IDeleteStageVec();
-    fStages = TRACKED_NEW plAnimStageVec;
+    fStages = new plAnimStageVec;
     int numStages = stream->ReadLE32();
     fStages->reserve(numStages);
 
     int i;
     for (i = 0; i < numStages; i++)
     {
-        plAnimStage* stage = TRACKED_NEW plAnimStage;
+        plAnimStage* stage = new plAnimStage;
         stage->Read(stream, mgr);
         stage->SetMod(this);
         fStages->push_back(stage);

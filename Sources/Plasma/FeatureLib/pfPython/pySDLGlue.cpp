@@ -197,7 +197,7 @@ PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, funcName, args) \
     return pythonReturnFunc(self->fThis->cFuncName(idx)); \
 }
 
-STATEVAR_SET(setByte, SetByte, byte, char, b)
+STATEVAR_SET(setByte, SetByte, uint8_t, uint8_t, b)
 STATEVAR_SET(setShort, SetShort, short, short, h)
 STATEVAR_SET(setFloat, SetFloat, float, float, f)
 STATEVAR_SET(setDouble, SetDouble, double, double, d)

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plWaveSetBase.h"
 
 #include "hsResMgr.h"
@@ -56,11 +56,11 @@ plWaveSetBase::~plWaveSetBase()
 
 void plWaveSetBase::AddShore(plKey key)
 {
-    hsgResMgr::ResMgr()->SendRef(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IShoreRef()), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IShoreRef()), plRefFlags::kPassiveRef);
 }
 
 void plWaveSetBase::AddDecal(plKey key)
 {
-    hsgResMgr::ResMgr()->SendRef(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IDecalRef()), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IDecalRef()), plRefFlags::kPassiveRef);
 }
 

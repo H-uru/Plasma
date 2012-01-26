@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCubicRenderTargetModifier.h"
 #include "plCubicRenderTarget.h"
 #include "plgDispatch.h"
@@ -97,9 +97,9 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
     
     
     if( rr == nil )
-        rr = fRequests[ face ] = TRACKED_NEW plRenderRequest;
+        rr = fRequests[ face ] = new plRenderRequest;
 
-    UInt32 renderState 
+    uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -124,7 +124,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 
 //// IEval ////////////////////////////////////////////////////////////////////
 
-hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dirty )
 {
     hsPoint3    center;
     hsMatrix44  mtx, invMtx;
@@ -156,7 +156,7 @@ hsBool  plCubicRenderTargetModifier::IEval( double secs, hsScalar del, UInt32 di
         {
             fRequests[ i ]->SetCameraTransform(fCubic->GetWorldToCamera(i), fCubic->GetCameraToWorld(i));
 
-            msg = TRACKED_NEW plRenderRequestMsg( nil, fRequests[ i ] );
+            msg = new plRenderRequestMsg( nil, fRequests[ i ] );
             plgDispatch::MsgSend( msg );
         }
     }
@@ -178,7 +178,7 @@ hsBool  plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
     if( eval )
     {
         const double secs = eval->DSeconds();
-        const hsScalar del = eval->DelSeconds();
+        const float del = eval->DelSeconds();
         IEval( secs, del, 0 );
         return true;
     }
@@ -241,10 +241,10 @@ void    plCubicRenderTargetModifier::Read( hsStream *s, hsResMgr *mgr )
     hsKeyedObject::Read( s, mgr );
 
     plGenRefMsg* msg;
-    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
+    msg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // SceneObject
     mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 
-    msg = TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
+    msg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ); // cubicRT
     mgr->ReadKeyNotifyMe( s, msg, plRefFlags::kActiveRef );
 }
 

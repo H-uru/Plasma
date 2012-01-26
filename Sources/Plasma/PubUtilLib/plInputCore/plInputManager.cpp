@@ -39,14 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
-
+#include "HeadSpin.h"
 // plInputManager.cpp
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#include "hsTypes.h"
 #include "plInputManager.h"
 #include "plPipeline.h"
 #include "plInputDevice.h"
@@ -64,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plPlayerPageMsg.h"
 
 hsBool  plInputManager::fUseDInput = false;
-UInt8   plInputManager::bRecenterMouse = 0;
+uint8_t   plInputManager::bRecenterMouse = 0;
 HWND    plInputManager::fhWnd = nil;
 #define NUM_ACTIONS     17
 
@@ -177,7 +174,7 @@ void plInputManager::RecenterCursor()
 }
 void plInputManager::CreateInterfaceMod(plPipeline* p)
 {
-    fInterfaceMgr = TRACKED_NEW plInputInterfaceMgr();
+    fInterfaceMgr = new plInputInterfaceMgr();
     fInterfaceMgr->Init();
 }
 
@@ -185,7 +182,7 @@ void plInputManager::InitDInput(HINSTANCE hInst, HWND hWnd)
 {
     if (fUseDInput)
     {
-        fDInputMgr = TRACKED_NEW plDInputMgr;
+        fDInputMgr = new plDInputMgr;
         fDInputMgr->Init(hInst, hWnd);
     }
 }
@@ -208,7 +205,7 @@ void plInputManager::Update()
         fDInputMgr->Update();
 }
 
-void plInputManager::SetMouseScale( hsScalar s )
+void plInputManager::SetMouseScale( float s )
 {
 /*  RECT    rect;
     POINT   currPos;
@@ -312,7 +309,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
         break;
     case MOUSEWHEEL:
         {
-            plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+            plMouseEventMsg* pMsg = new plMouseEventMsg;
             int zDelta = GET_WHEEL_DELTA_WPARAM(Wparam);
             pMsg->SetWheelDelta((float)zDelta);
             if (zDelta < 0)
@@ -342,9 +339,9 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             RECT rect;
             GetClientRect(hWnd, &rect);
          
-            plIMouseXEventMsg* pXMsg = TRACKED_NEW plIMouseXEventMsg;
-            plIMouseYEventMsg* pYMsg = TRACKED_NEW plIMouseYEventMsg;
-            plIMouseBEventMsg* pBMsg = TRACKED_NEW plIMouseBEventMsg;
+            plIMouseXEventMsg* pXMsg = new plIMouseXEventMsg;
+            plIMouseYEventMsg* pYMsg = new plIMouseYEventMsg;
+            plIMouseBEventMsg* pBMsg = new plIMouseBEventMsg;
 
             pXMsg->fWx = LOWORD(Lparam);
             pXMsg->fX = (float)LOWORD(Lparam) / (float)rect.right;
@@ -469,7 +466,7 @@ void    plInputManager::AddInputDevice( plInputDevice *pDev )
 plDInputMgr::plDInputMgr() :
 fDI(nil)
 {
-    fDI = TRACKED_NEW plDInput;
+    fDI = new plDInput;
 }
 
 plDInputMgr::~plDInputMgr()
@@ -506,7 +503,7 @@ void plDInputMgr::Init(HINSTANCE hInst, HWND hWnd)
     
 
     // set up the action mapping
-    fDI->fActionFormat = TRACKED_NEW DIACTIONFORMAT;
+    fDI->fActionFormat = new DIACTIONFORMAT;
     fDI->fActionFormat->dwSize        = sizeof(DIACTIONFORMAT);
     fDI->fActionFormat->dwActionSize  = sizeof(DIACTION);
     fDI->fActionFormat->dwDataSize    = NUM_ACTIONS * sizeof(DWORD);
@@ -530,7 +527,7 @@ void plDInputMgr::Init(HINSTANCE hInst, HWND hWnd)
     
     for (i = 0; i < fDI->fSticks.Count(); i++)
     {
-        fDI->fSticks[i]->fCaps = TRACKED_NEW DIDEVCAPS; 
+        fDI->fSticks[i]->fCaps = new DIDEVCAPS; 
         fDI->fSticks[i]->fCaps->dwSize = sizeof(DIDEVCAPS);
         hr = fDI->fSticks[i]->fDevice->GetCapabilities(fDI->fSticks[i]->fCaps);
         hsAssert(!hr, "Unable to acquire devcaps in DInput Device!"); 
@@ -541,7 +538,7 @@ void plDInputMgr::Init(HINSTANCE hInst, HWND hWnd)
     fhWnd = hWnd;
     
     for (i = 0; i < fDI->fSticks.Count(); i++)
-        fInputDevice.Append( TRACKED_NEW plDInputDevice );
+        fInputDevice.Append( new plDInputDevice );
 }
 
 void plDInputMgr::Update()
@@ -635,7 +632,7 @@ int __stdcall plDInputMgr::EnumGamepadCallback(const DIDEVICEINSTANCE* device, v
     
     if(!FAILED(hr)) 
     {
-        pDI->fSticks.Append(TRACKED_NEW plDIDevice(fStick));
+        pDI->fSticks.Append(new plDIDevice(fStick));
         
         // the following code pertaining to the action map shouldn't be here.
         // in fact this shouldn't work at all according to MS, but this is 

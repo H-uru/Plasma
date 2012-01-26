@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "pnKeyedObject/plUoid.h"
 
@@ -139,15 +139,15 @@ public:
 
     plClientRefMsg(): fType(-1), fWhich(-1) {};
 
-    plClientRefMsg(const plKey &r, UInt8 refMsgFlags, Int8 which , Int8 type)
+    plClientRefMsg(const plKey &r, uint8_t refMsgFlags, int8_t which , int8_t type)
         : plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
 
 
     CLASSNAME_REGISTER( plClientRefMsg );
     GETINTERFACE_ANY( plClientRefMsg, plRefMsg );
 
-    Int8                    fType;
-    Int8                    fWhich;
+    int8_t                    fType;
+    int8_t                    fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
     void Read(hsStream* stream, hsResMgr* mgr)

@@ -96,15 +96,15 @@ enum ECmdError {
 
 struct CmdArgDef {
     unsigned        flags;
-    const wchar *   name;   // must be compile-time constant
+    const wchar_t *   name;   // must be compile-time constant
     unsigned        id;
 };
 
 class CCmdParser {
     class CICmdParser * fParser;
 
-    static void DispatchError (const wchar str[], ECmdError errorCode, const wchar arg[], const wchar value[], void * param);
-    static bool DispatchExtra (const wchar str[], void * param);
+    static void DispatchError (const wchar_t str[], ECmdError errorCode, const wchar_t arg[], const wchar_t value[], void * param);
+    static bool DispatchExtra (const wchar_t str[], void * param);
 
 protected:
     CCmdParser ();
@@ -115,22 +115,22 @@ public:
     virtual ~CCmdParser ();
 
     bool          GetBool (unsigned id) const;
-    bool          GetBool (const wchar name[]) const;
+    bool          GetBool (const wchar_t name[]) const;
     float         GetFloat (unsigned id) const;
-    float         GetFloat (const wchar name[]) const;
+    float         GetFloat (const wchar_t name[]) const;
     int           GetInt (unsigned id) const;
-    int           GetInt (const wchar name[]) const;
-    const wchar * GetString (unsigned id) const;
-    const wchar * GetString (const wchar name[]) const;
+    int           GetInt (const wchar_t name[]) const;
+    const wchar_t * GetString (unsigned id) const;
+    const wchar_t * GetString (const wchar_t name[]) const;
     unsigned      GetUnsigned (unsigned id) const;
-    unsigned      GetUnsigned (const wchar name[]) const;
+    unsigned      GetUnsigned (const wchar_t name[]) const;
     bool          IsSpecified (unsigned id) const;
-    bool          IsSpecified (const wchar name[]) const;
+    bool          IsSpecified (const wchar_t name[]) const;
 
-    virtual void  OnError (const wchar str[], ECmdError errorCode, const wchar arg[], const wchar value[]);
-    virtual bool  OnExtra (const wchar str[]);
+    virtual void  OnError (const wchar_t str[], ECmdError errorCode, const wchar_t arg[], const wchar_t value[]);
+    virtual bool  OnExtra (const wchar_t str[]);
 
-    bool          Parse (const wchar cmdLine[] = nil);
+    bool          Parse (const wchar_t cmdLine[] = nil);
 };
 
 class CCmdParserSimple : public CCmdParser {
@@ -138,7 +138,7 @@ public:
     CCmdParserSimple (
         unsigned    requiredStringCount,
         unsigned    optionalStringCount,
-        const wchar flaggedBoolNames[]  // double null terminated if used
+        const wchar_t flaggedBoolNames[]  // double null terminated if used
     );
 
 };

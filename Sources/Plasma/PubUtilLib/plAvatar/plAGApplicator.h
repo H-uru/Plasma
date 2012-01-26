@@ -159,7 +159,7 @@ protected:
     plCoordinateInterface * IGetCI(const plAGModifier *modifier) const;
     plDrawInterface * IGetDI(const plAGModifier *modifier) const;
     plSimulationInterface * IGetSI(const plAGModifier *modifier) const;
-    plObjInterface * IGetGI(const plAGModifier *modifier, UInt16 classIdx) const;
+    plObjInterface * IGetGI(const plAGModifier *modifier, uint16_t classIdx) const;
 
     // Allow plAGModifier to declare IGet?? as friends
     friend class plAGModifier;

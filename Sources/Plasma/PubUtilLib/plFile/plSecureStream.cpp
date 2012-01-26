@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSecureStream.h"
-#include "hsUtils.h"
+
 #include "plFileUtils.h"
 #include "hsSTLStream.h"
 
@@ -51,18 +51,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 // our default encryption key
-const UInt32 plSecureStream::kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
+const uint32_t plSecureStream::kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
 
 static const int kEncryptChunkSize = 8;
 
 static const char* kMagicString    = "notthedroids";
 static const int kMagicStringLen = 12;
 
-static const int kFileStartOffset = kMagicStringLen + sizeof(UInt32);
+static const int kFileStartOffset = kMagicStringLen + sizeof(uint32_t);
 
 static const int kMaxBufferedFileSize = 10*1024;
 
-plSecureStream::plSecureStream(hsBool deleteOnExit, UInt32* key) :
+plSecureStream::plSecureStream(hsBool deleteOnExit, uint32_t* key) :
 fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
@@ -77,7 +77,7 @@ fDeleteOnExit(deleteOnExit)
         memcpy(&fKey, &kDefaultKey, sizeof(kDefaultKey));
 }
 
-plSecureStream::plSecureStream(hsStream* base, UInt32* key) :
+plSecureStream::plSecureStream(hsStream* base, uint32_t* key) :
 fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
@@ -107,7 +107,7 @@ plSecureStream::~plSecureStream()
 
 #define MX (z>>5 ^ y<<2) + (y>>3 ^ z<<4) ^ (sum^y) + (fKey[p&3^e]^z)
 
-void plSecureStream::IEncipher(UInt32* const v, UInt32 n)
+void plSecureStream::IEncipher(uint32_t* const v, uint32_t n)
 {
     register unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
     register unsigned long q = 6 + 52/n, p, sum = 0;
@@ -128,7 +128,7 @@ void plSecureStream::IEncipher(UInt32* const v, UInt32 n)
     }
 }
 
-void plSecureStream::IDecipher(UInt32* const v, UInt32 n)
+void plSecureStream::IDecipher(uint32_t* const v, uint32_t n)
 {
     register unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
     register unsigned long q = 6 + 52/n, p, sum = q * delta;
@@ -151,15 +151,15 @@ void plSecureStream::IDecipher(UInt32* const v, UInt32 n)
 
 hsBool plSecureStream::Open(const char* name, const char* mode)
 {
-    wchar* wName = hsStringToWString(name);
-    wchar* wMode = hsStringToWString(mode);
+    wchar_t* wName = hsStringToWString(name);
+    wchar_t* wMode = hsStringToWString(mode);
     hsBool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
+hsBool plSecureStream::Open(const wchar_t* name, const wchar_t* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
@@ -199,7 +199,7 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
         }
 
         DWORD numBytesRead;
-        ReadFile(fRef, &fActualFileSize, sizeof(UInt32), &numBytesRead, NULL);
+        ReadFile(fRef, &fActualFileSize, sizeof(uint32_t), &numBytesRead, NULL);
 #elif HS_BUILD_FOR_UNIX
         const char* cname = hsWStringToString(name);
         fRef = fopen(cname, "rb");
@@ -230,8 +230,8 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
     }
     else if (wcscmp(mode, L"wb") == 0)
     {
-        fRAMStream = TRACKED_NEW hsVectorStream;
-        fWriteFileName = TRACKED_NEW wchar[wcslen(name) + 1];
+        fRAMStream = new hsVectorStream;
+        fWriteFileName = new wchar_t[wcslen(name) + 1];
         wcscpy(fWriteFileName, name);
         fPosition = 0;
 
@@ -250,26 +250,26 @@ hsBool plSecureStream::Open(const wchar* name, const wchar* mode)
 
 hsBool plSecureStream::Open(hsStream* stream)
 {
-    UInt32 pos = stream->GetPosition();
+    uint32_t pos = stream->GetPosition();
     stream->Rewind();
     if (!ICheckMagicString(stream))
         return false;
 
     fActualFileSize = stream->ReadLE32();
-    UInt32 trimSize = kMagicStringLen + sizeof(UInt32) + fActualFileSize;
+    uint32_t trimSize = kMagicStringLen + sizeof(uint32_t) + fActualFileSize;
     fRAMStream = new hsRAMStream;
     while (!stream->AtEnd())
     {
         // Don't write out any garbage
-        UInt32 size;
+        uint32_t size;
         if ((trimSize - stream->GetPosition()) < kEncryptChunkSize)
             size = (trimSize - stream->GetPosition());
         else
             size = kEncryptChunkSize;
 
-        UInt8 buf[kEncryptChunkSize];
+        uint8_t buf[kEncryptChunkSize];
         stream->Read(kEncryptChunkSize, &buf);
-        IDecipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        IDecipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
         fRAMStream->Write(size, &buf);
     }
 
@@ -319,11 +319,11 @@ hsBool plSecureStream::Close()
     return rtn;
 }
 
-UInt32 plSecureStream::IRead(UInt32 bytes, void* buffer)
+uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 {
     if (fRef == INVALID_HANDLE_VALUE)
         return 0;
-    UInt32 numItems;
+    uint32_t numItems;
 #if HS_BUILD_FOR_WIN32
     bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, NULL) != 0);
 #elif HS_BUILD_FOR_UNIX
@@ -351,11 +351,11 @@ UInt32 plSecureStream::IRead(UInt32 bytes, void* buffer)
 
 void plSecureStream::IBufferFile()
 {
-    fRAMStream = TRACKED_NEW hsVectorStream;
+    fRAMStream = new hsVectorStream;
     char buf[1024];
     while (!AtEnd())
     {
-        UInt32 numRead = Read(1024, buf);
+        uint32_t numRead = Read(1024, buf);
         fRAMStream->Write(numRead, buf);
     }
     fRAMStream->Rewind();
@@ -378,7 +378,7 @@ hsBool plSecureStream::AtEnd()
         return (GetPosition() == fActualFileSize);
 }
 
-void plSecureStream::Skip(UInt32 delta)
+void plSecureStream::Skip(uint32_t delta)
 {
     if (fBufferedStream)
     {
@@ -433,31 +433,31 @@ void plSecureStream::FastFwd()
     }
 }
 
-UInt32 plSecureStream::GetEOF()
+uint32_t plSecureStream::GetEOF()
 {
     return fActualFileSize;
 }
 
-UInt32 plSecureStream::Read(UInt32 bytes, void* buffer)
+uint32_t plSecureStream::Read(uint32_t bytes, void* buffer)
 {
     if (fBufferedStream)
     {
-        UInt32 numRead = fRAMStream->Read(bytes, buffer);
+        uint32_t numRead = fRAMStream->Read(bytes, buffer);
         fPosition = fRAMStream->GetPosition();
         return numRead;
     }
 
-    UInt32 startPos = fPosition;
+    uint32_t startPos = fPosition;
 
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
-    UInt32 startChunkPos = startPos % kEncryptChunkSize;
+    uint32_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    UInt32 startAmt = (startChunkPos != 0) ? hsMinimum(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    uint32_t startAmt = (startChunkPos != 0) ? hsMinimum(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
-    UInt32 totalNumRead = IRead(bytes, buffer);
+    uint32_t totalNumRead = IRead(bytes, buffer);
 
-    UInt32 numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
-    UInt32 endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
+    uint32_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
+    uint32_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
 
     // If the start position is in the middle of a chunk we need to rewind and
     // read that whole chunk in and decrypt it.
@@ -468,8 +468,8 @@ UInt32 plSecureStream::Read(UInt32 bytes, void* buffer)
 
         // Read in the chunk and decrypt it
         char buf[kEncryptChunkSize];
-        UInt32 numRead = IRead(kEncryptChunkSize, &buf);
-        IDecipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IDecipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
 
         // Copy the relevant portion to the output buffer
         memcpy(buffer, &buf[startChunkPos], startAmt);
@@ -479,12 +479,12 @@ UInt32 plSecureStream::Read(UInt32 bytes, void* buffer)
 
     if (numMidChunks != 0)
     {
-        UInt32* bufferPos = (UInt32*)(((char*)buffer)+startAmt);
+        uint32_t* bufferPos = (uint32_t*)(((char*)buffer)+startAmt);
         for (int i = 0; i < numMidChunks; i++)
         {
             // Decrypt chunk
-            IDecipher(bufferPos, kEncryptChunkSize / sizeof(UInt32));
-            bufferPos += (kEncryptChunkSize / sizeof(UInt32));
+            IDecipher(bufferPos, kEncryptChunkSize / sizeof(uint32_t));
+            bufferPos += (kEncryptChunkSize / sizeof(uint32_t));
         }
     }
 
@@ -493,8 +493,8 @@ UInt32 plSecureStream::Read(UInt32 bytes, void* buffer)
         // Read in the final chunk and decrypt it
         char buf[kEncryptChunkSize];
         SetPosition(startPos + startAmt + numMidChunks*kEncryptChunkSize);
-        UInt32 numRead = IRead(kEncryptChunkSize, &buf);
-        IDecipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IDecipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
 
         memcpy(((char*)buffer)+totalNumRead-endAmt, &buf, endAmt);
 
@@ -511,7 +511,7 @@ UInt32 plSecureStream::Read(UInt32 bytes, void* buffer)
     return totalNumRead;
 }
 
-UInt32 plSecureStream::Write(UInt32 bytes, const void* buffer)
+uint32_t plSecureStream::Write(uint32_t bytes, const void* buffer)
 {
     if (fOpenMode != kOpenWrite)
     {
@@ -522,7 +522,7 @@ UInt32 plSecureStream::Write(UInt32 bytes, const void* buffer)
     return fRAMStream->Write(bytes, buffer);
 }
 
-bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* outputFile)
+bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar_t* outputFile)
 {
     hsUNIXStream outputStream;
 
@@ -536,10 +536,10 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* output
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
-    UInt32 amtRead;
+    uint32_t amtRead;
     while ((amtRead = sourceStream->Read(kEncryptChunkSize, &buf)) == kEncryptChunkSize)
     {
-        IEncipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        IEncipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
         outputStream.Write(kEncryptChunkSize, &buf);
     }
 
@@ -556,13 +556,13 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* output
         for (int i = amtRead; i < kEncryptChunkSize; i++)
             buf[i] = rand();
 
-        IEncipher((UInt32*)&buf, kEncryptChunkSize / sizeof(UInt32));
+        IEncipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
 
         outputStream.Write(kEncryptChunkSize, &buf);
     }
 
     // Write the original file size at the start
-    UInt32 actualSize = sourceStream->GetPosition();
+    uint32_t actualSize = sourceStream->GetPosition();
     outputStream.Rewind();
     outputStream.Skip(kMagicStringLen);
     outputStream.WriteLE32(actualSize);
@@ -572,15 +572,15 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const wchar* output
     return true;
 }
 
-bool plSecureStream::FileEncrypt(const char* fileName, UInt32* key /* = nil */)
+bool plSecureStream::FileEncrypt(const char* fileName, uint32_t* key /* = nil */)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = FileEncrypt(wFilename, key);
     delete [] wFilename;
     return ret;
 }
 
-bool plSecureStream::FileEncrypt(const wchar* fileName, UInt32* key /* = nil */)
+bool plSecureStream::FileEncrypt(const wchar_t* fileName, uint32_t* key /* = nil */)
 {
     hsUNIXStream sIn;
     if (!sIn.Open(fileName))
@@ -609,15 +609,15 @@ bool plSecureStream::FileEncrypt(const wchar* fileName, UInt32* key /* = nil */)
     return true;
 }
 
-bool plSecureStream::FileDecrypt(const char* fileName, UInt32* key /* = nil */)
+bool plSecureStream::FileDecrypt(const char* fileName, uint32_t* key /* = nil */)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = FileDecrypt(wFilename, key);
     delete [] wFilename;
     return ret;
 }
 
-bool plSecureStream::FileDecrypt(const wchar* fileName, UInt32* key /* = nil */)
+bool plSecureStream::FileDecrypt(const wchar_t* fileName, uint32_t* key /* = nil */)
 {
     plSecureStream sIn(false, key);
     if (!sIn.Open(fileName))
@@ -634,7 +634,7 @@ bool plSecureStream::FileDecrypt(const wchar* fileName, UInt32* key /* = nil */)
 
     while (!sIn.AtEnd())
     {
-        UInt32 numRead = sIn.Read(sizeof(buf), buf);
+        uint32_t numRead = sIn.Read(sizeof(buf), buf);
         sOut.Write(numRead, buf);
     }
 
@@ -670,13 +670,13 @@ bool plSecureStream::ICheckMagicString(hsFD fp)
 
 bool plSecureStream::IsSecureFile(const char* fileName)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = IsSecureFile(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-bool plSecureStream::IsSecureFile(const wchar* fileName)
+bool plSecureStream::IsSecureFile(const wchar_t* fileName)
 {
     hsFD fp = INVALID_HANDLE_VALUE;
 
@@ -708,15 +708,15 @@ bool plSecureStream::IsSecureFile(const wchar* fileName)
     return isEncrypted;
 }
 
-hsStream* plSecureStream::OpenSecureFile(const char* fileName, const UInt32 flags /* = kRequireEncryption */, UInt32* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFile(const char* fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nil */)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsStream* ret = OpenSecureFile(wFilename, flags, key);
     delete [] wFilename;
     return ret;
 }
 
-hsStream* plSecureStream::OpenSecureFile(const wchar* fileName, const UInt32 flags /* = kRequireEncryption */, UInt32* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFile(const wchar_t* fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nil */)
 {
     bool requireEncryption = flags & kRequireEncryption;
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -728,30 +728,30 @@ hsStream* plSecureStream::OpenSecureFile(const wchar* fileName, const UInt32 fla
 
     hsStream* s = nil;
     if (isEncrypted)
-        s = TRACKED_NEW plSecureStream(deleteOnExit, key);
+        s = new plSecureStream(deleteOnExit, key);
     else if (!requireEncryption) // If this isn't an external release, let them use unencrypted data
-        s = TRACKED_NEW hsUNIXStream;
+        s = new hsUNIXStream;
 
     if (s)
         s->Open(fileName, L"rb");
     return s;
 }
 
-hsStream* plSecureStream::OpenSecureFileWrite(const char* fileName, UInt32* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFileWrite(const char* fileName, uint32_t* key /* = nil */)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsStream* ret = OpenSecureFileWrite(wFilename, key);
     delete [] wFilename;
     return ret;
 }
 
-hsStream* plSecureStream::OpenSecureFileWrite(const wchar* fileName, UInt32* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFileWrite(const wchar_t* fileName, uint32_t* key /* = nil */)
 {
     hsStream* s = nil;
 #ifdef PLASMA_EXTERNAL_RELEASE
-    s = TRACKED_NEW plSecureStream(false, key);
+    s = new plSecureStream(false, key);
 #else
-    s = TRACKED_NEW hsUNIXStream;
+    s = new hsUNIXStream;
 #endif
 
     s->Open(fileName, L"wb");

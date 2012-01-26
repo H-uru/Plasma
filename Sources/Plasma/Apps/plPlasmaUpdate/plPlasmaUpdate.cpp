@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plUnifiedTime/plUnifiedTime.h"
 #include "hsStream.h"
 #include "plManifest.h"
-#include "hsUtils.h"
 #include "../plStatusLog/plStatusLog.h"
 
 static plPlasmaUpdate* gInst = nil;
@@ -360,7 +359,7 @@ void plPlasmaUpdate::IUpdateServer()
     // Get the manifests
     //
     bool gotManifests = IGetManifests(serverRoot, external);
-    UInt32 dlSize = 0;
+    uint32_t dlSize = 0;
 
     fProgressType = kValidating;
 
@@ -368,7 +367,7 @@ void plPlasmaUpdate::IUpdateServer()
     {
         int i;
 
-        UInt32 numFiles = 0;
+        uint32_t numFiles = 0;
         for (i = 0; i < fManifests.size(); i++)
             numFiles += fManifests[i]->NumFiles();
 
@@ -413,7 +412,7 @@ void plPlasmaUpdate::IDownloadUpdates()
 
     int i;
 
-    UInt32 dlSize = 0;
+    uint32_t dlSize = 0;
     for (i = 0; i < fManifests.size(); i++)
         dlSize += fManifests[i]->DownloadSize();
 

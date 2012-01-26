@@ -50,13 +50,13 @@ class plAccessTriSpan : public plAccessVtxSpan
 public:
     hsGDeviceRef*   fIdxDeviceRef;
 
-    UInt16*         fTris; // array length fNumTris*3
+    uint16_t*         fTris; // array length fNumTris*3
     
-    UInt32          fNumTris;
+    uint32_t          fNumTris;
 
     void            ClearTris() { fTris = nil; fNumTris = 0; }
 
-    UInt32          TriCount() const { return fNumTris; }
+    uint32_t          TriCount() const { return fNumTris; }
 
     void            SetIdxDeviceRef(hsGDeviceRef* ref) { fIdxDeviceRef = ref; }
     hsGDeviceRef*   GetIdxDeviceRef() const { return fIdxDeviceRef; }
@@ -66,8 +66,8 @@ class plAccTriIterator
 {
 protected:
 
-    UInt16*                 fCurrIdx;
-    UInt16*                 fEndIdx;
+    uint16_t*                 fCurrIdx;
+    uint16_t*                 fEndIdx;
 
     plAccessTriSpan*        fAccess;
 public:
@@ -81,14 +81,14 @@ public:
     void            SetTri(int i);
     hsBool          More() const;
 
-    UInt32          NumTris() const { return fAccess->fNumTris; }
+    uint32_t          NumTris() const { return fAccess->fNumTris; }
 
-    UInt16&         RawIndex(int iVtx) const { return fCurrIdx[iVtx]; }
+    uint16_t&         RawIndex(int iVtx) const { return fCurrIdx[iVtx]; }
 
     hsPoint3&       Position(int iVtx) const { return fAccess->PositionOff(fCurrIdx[iVtx]); }
     hsVector3&      Normal(int iVtx) const { return fAccess->NormalOff(fCurrIdx[iVtx]); }
-    UInt32          Diffuse32(int iVtx) const { return fAccess->Diffuse32Off(fCurrIdx[iVtx]); }
-    UInt32          Specular32(int iVtx) const { return fAccess->Specular32Off(fCurrIdx[iVtx]); }
+    uint32_t          Diffuse32(int iVtx) const { return fAccess->Diffuse32Off(fCurrIdx[iVtx]); }
+    uint32_t          Specular32(int iVtx) const { return fAccess->Specular32Off(fCurrIdx[iVtx]); }
     hsColorRGBA     DiffuseRGBA(int iVtx) const { return fAccess->DiffuseRGBAOff(fCurrIdx[iVtx]); }
     hsColorRGBA     SpecularRGBA(int iVtx) const { return fAccess->SpecularRGBAOff(fCurrIdx[iVtx]); }
     hsPoint3*       UVWs(int iVtx) const { return fAccess->UVWsOff(fCurrIdx[iVtx]); }
@@ -96,8 +96,8 @@ public:
 
     hsPoint3        InterpPosition(const hsPoint3& bary) const;
     hsVector3       InterpNormal(const hsPoint3& bary) const;
-    UInt32          InterpDiffuse32(const hsPoint3& bary) const;
-    UInt32          InterpSpecular32(const hsPoint3& bary) const;
+    uint32_t          InterpDiffuse32(const hsPoint3& bary) const;
+    uint32_t          InterpSpecular32(const hsPoint3& bary) const;
     hsColorRGBA     InterpDiffuseRGBA(const hsPoint3& bary) const;
     hsColorRGBA     InterpSpecularRGBA(const hsPoint3& bary) const;
     hsPoint3        InterpUVW(const hsPoint3& bary, int i) const;
@@ -154,12 +154,12 @@ inline hsColorRGBA plAccTriIterator::InterpSpecularRGBA(const hsPoint3& bary) co
                 + SpecularRGBA(2) * bary[2];
 }
 
-inline UInt32 plAccTriIterator::InterpDiffuse32(const hsPoint3& bary) const
+inline uint32_t plAccTriIterator::InterpDiffuse32(const hsPoint3& bary) const
 {
     return InterpDiffuseRGBA(bary).ToARGB32();
 }
 
-inline UInt32 plAccTriIterator::InterpSpecular32(const hsPoint3& bary) const
+inline uint32_t plAccTriIterator::InterpSpecular32(const hsPoint3& bary) const
 {
     return InterpSpecularRGBA(bary).ToARGB32();
 }

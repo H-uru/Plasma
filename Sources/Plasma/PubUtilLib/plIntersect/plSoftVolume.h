@@ -67,19 +67,19 @@ protected:
     };
 
     hsPoint3                fListenPos;
-    mutable hsScalar        fListenStrength;
-    mutable UInt32          fListenState;
+    mutable float        fListenStrength;
+    mutable uint32_t          fListenState;
 
-    hsScalar                fInsideStrength;
-    hsScalar                fOutsideStrength;
+    float                fInsideStrength;
+    float                fOutsideStrength;
 
-    virtual hsScalar        IUpdateListenerStrength() const;
+    virtual float        IUpdateListenerStrength() const;
 
-    hsScalar                IRemapStrength(hsScalar s) const { return fOutsideStrength + s * (fInsideStrength - fOutsideStrength); }
+    float                IRemapStrength(float s) const { return fOutsideStrength + s * (fInsideStrength - fOutsideStrength); }
 
 private:
     // Don't call this, use public GetStrength().
-    virtual hsScalar        IGetStrength(const hsPoint3& pos) const = 0;
+    virtual float        IGetStrength(const hsPoint3& pos) const = 0;
 
 public:
     plSoftVolume();
@@ -88,14 +88,14 @@ public:
     CLASSNAME_REGISTER( plSoftVolume );
     GETINTERFACE_ANY( plSoftVolume, plRegionBase );
 
-    virtual hsScalar GetStrength(const hsPoint3& pos) const;
+    virtual float GetStrength(const hsPoint3& pos) const;
     virtual hsBool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-    virtual Int32   GetNumProperties() const { return 1; } // This is stupid.
+    virtual int32_t   GetNumProperties() const { return 1; } // This is stupid.
 
-    virtual hsScalar    GetListenerStrength() const;
+    virtual float    GetListenerStrength() const;
     virtual void        UpdateListenerPosition(const hsPoint3& p);
     virtual void        SetCheckListener(hsBool on=true);
     virtual hsBool      GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
@@ -105,11 +105,11 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetInsideStrength(hsScalar s);
-    void SetOutsideStrength(hsScalar s);
+    void SetInsideStrength(float s);
+    void SetOutsideStrength(float s);
 
-    hsScalar GetInsideStrength() const { return fInsideStrength; }
-    hsScalar GetOutsideStrength() const { return fOutsideStrength; }
+    float GetInsideStrength() const { return fInsideStrength; }
+    float GetOutsideStrength() const { return fOutsideStrength; }
 };
 
 #endif // plSoftVolume_inc

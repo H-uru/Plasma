@@ -84,19 +84,19 @@ public:
         \param loop Make the animation loop?
         \param attach Are we attaching or detaching the animation?
     */
-    plAvAnimTask(const char *animName, hsScalar initialBlend, hsScalar targetBlend, hsScalar fadeSpeed,
-                 hsScalar setTime, hsBool start, hsBool loop, hsBool attach);
+    plAvAnimTask(const char *animName, float initialBlend, float targetBlend, float fadeSpeed,
+                 float setTime, hsBool start, hsBool loop, hsBool attach);
 
     /** Canonical constructor form form for detaching
         \param animName The name of the animation we're detaching
         \param fadeSpeed How fast to fade it out. */
-    plAvAnimTask(const char *animName, hsScalar fadeSpeed, hsBool attach = false);
+    plAvAnimTask(const char *animName, float fadeSpeed, hsBool attach = false);
 
     virtual ~plAvAnimTask();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
 
     // plasma protocol
@@ -109,10 +109,10 @@ public:
 protected:
     // public members
     char* fAnimName;                    // the animation we're operating on
-    hsScalar fInitialBlend;             // the blend to establish (attaching only)
-    hsScalar fTargetBlend;              // the blend to achieve eventually (attaching only)
-    hsScalar fFadeSpeed;                // how fast to achieve the blend
-    hsScalar fSetTime;                  // set the animation to this time
+    float fInitialBlend;             // the blend to establish (attaching only)
+    float fTargetBlend;              // the blend to achieve eventually (attaching only)
+    float fFadeSpeed;                // how fast to achieve the blend
+    float fSetTime;                  // set the animation to this time
     hsBool fStart;                      // start the animation playing? (attaching only)
     hsBool fLoop;                       // turn on looping? (attaching only)
     hsBool fAttach;                     // attach? (otherwise detach)
@@ -137,8 +137,8 @@ public:
     plAvSeekTask(plKey target, plAvAlignment alignType, const char *animName);
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
     
     // plasma protocol
@@ -193,8 +193,8 @@ public:
     virtual ~plAvOneShotTask();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
     
     void SetAnimName(char *name);
@@ -246,8 +246,8 @@ public:
     virtual ~plAvOneShotLinkTask();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);   
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);   
 
     CLASSNAME_REGISTER( plAvOneShotLinkTask );
     GETINTERFACE_ANY( plAvOneShotLinkTask, plAvOneShotTask );   
@@ -262,7 +262,7 @@ public:
 protected:
     char *fMarkerName;
     double fStartTime;
-    hsScalar fMarkerTime;
+    float fMarkerTime;
     hsBool fLinkFired;
 };
 

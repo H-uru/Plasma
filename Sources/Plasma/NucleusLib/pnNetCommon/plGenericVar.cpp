@@ -70,11 +70,11 @@ void plGenericType::CopyFrom(const plGenericType& c)
 
 //// Conversion Functions ////////////////////////////////////////////////////
 
-const Int32 &   plGenericType::IToInt( void ) const
+const int32_t &   plGenericType::IToInt( void ) const
 {
     hsAssert( fType == kInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
-    static Int32 i;
+    static int32_t i;
     if( fType == kAny )
     {
         hsAssert( fS != nil, "Weird parameter during conversion" );
@@ -85,11 +85,11 @@ const Int32 &   plGenericType::IToInt( void ) const
     return fI;
 }
 
-const UInt32 &  plGenericType::IToUInt( void ) const
+const uint32_t &  plGenericType::IToUInt( void ) const
 {
     hsAssert( fType == kUInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
-    static UInt32 i;
+    static uint32_t i;
     if( fType == kAny )
     {
         hsAssert( fS != nil, "Weird parameter during conversion" );
@@ -183,7 +183,7 @@ void    plGenericType::Read(hsStream* s)
         fS=s->ReadSafeString();
         break;
     case kBool:
-        {Int8 b;
+        {int8_t b;
         s->ReadLE( &b );
         fB = b?true:false;}
         break;
@@ -218,7 +218,7 @@ void    plGenericType::Write(hsStream* s)
         s->WriteSafeString(fS);
         break;
     case kBool:
-        {Int8 b = fB?1:0;
+        {int8_t b = fB?1:0;
         s->WriteLE( b );}
         break;
     case kChar:
@@ -304,7 +304,7 @@ void plGenericType::SetVar(Types t, unsigned int size, void* val)
     case kString :
         {
             delete [] fS;
-            fS = TRACKED_NEW char[size+1];
+            fS = new char[size+1];
             memcpy(fS,val,size);
             fS[size] = 0;
             break;

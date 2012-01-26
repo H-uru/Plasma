@@ -42,30 +42,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsMemoryDefined
 #define hsMemoryDefined
 
-#include "hsTypes.h"
-#include "hsMalloc.h"
+#include "HeadSpin.h"
 //#include "hsTemplates.h"
 
 class HSMemory {
 public:
-    static void BlockMove(const void* src, void* dst, UInt32 length);
-    static void Clear(void *m, UInt32 byteLen);
-    static void ClearMemory(void *m, UInt32 byteLen) { HSMemory::Clear(m, byteLen); }
+    static void BlockMove(const void* src, void* dst, uint32_t length);
+    static void Clear(void *m, uint32_t byteLen);
+    static void ClearMemory(void *m, uint32_t byteLen) { HSMemory::Clear(m, byteLen); }
 
-    static hsBool   EqualBlocks(const void* block1, const void* block2, UInt32 length);
+    static hsBool   EqualBlocks(const void* block1, const void* block2, uint32_t length);
 
-    static void*    New(UInt32 size);
+    static void*    New(uint32_t size);
     static void Delete(void* block);
-    static void*    Copy(UInt32 length, const void* source);
+    static void*    Copy(uint32_t length, const void* source);
     
-    static void*    SoftNew(UInt32 size);   // returns nil if can't allocate
+    static void*    SoftNew(uint32_t size);   // returns nil if can't allocate
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class hsAllocator {
 public:
-    virtual void*   Alloc(UInt32 size) = 0;
+    virtual void*   Alloc(uint32_t size) = 0;
     virtual void    Free(void* addr) = 0;
 };
 
@@ -73,9 +72,9 @@ class hsScratchMem {
     enum {
         kBufferSize = 32
     };
-    UInt8*  fMem;
-    UInt8   fMemBuffer[kBufferSize];
-    UInt32  fLength;
+    uint8_t*  fMem;
+    uint8_t   fMemBuffer[kBufferSize];
+    uint32_t  fLength;
 public:
     hsScratchMem() : fLength(kBufferSize)
     {
@@ -86,12 +85,12 @@ public:
         if (fMem != fMemBuffer)
             delete[] fMem;
     }
-    UInt8* GetMem(UInt32 length)
+    uint8_t* GetMem(uint32_t length)
     {
         if (length > fLength)
         {   if (fMem != fMemBuffer)
                 delete[] fMem;
-            fMem = TRACKED_NEW UInt8[length];
+            fMem = new uint8_t[length];
             fLength = length;
         }
         return fMem;
@@ -102,36 +101,36 @@ class hsChunkAllocator {
     enum {
         kDefaultChunkSize = 4096
     };
-    UInt32              fChunkSize;
+    uint32_t              fChunkSize;
     struct hsPrivateChunk*  fChunk;
-    hsDebugCode(UInt32  fChunkCount;)
+    hsDebugCode(uint32_t  fChunkCount;)
 public:
-            hsChunkAllocator(UInt32 chunkSize = kDefaultChunkSize);
+            hsChunkAllocator(uint32_t chunkSize = kDefaultChunkSize);
             ~hsChunkAllocator();
 
     void        Reset();
-    void        SetChunkSize(UInt32 size);
-    void*   Allocate(UInt32 size, const void* data = nil);      // throws if fails
-    void*   SoftAllocate(UInt32 size, const void* data = nil);  // returns nil if fails
+    void        SetChunkSize(uint32_t size);
+    void*   Allocate(uint32_t size, const void* data = nil);      // throws if fails
+    void*   SoftAllocate(uint32_t size, const void* data = nil);  // returns nil if fails
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class hsAppender {
     struct hsAppenderHead*  fFirstBlock, *fLastBlock;
-    UInt32              fElemSize, fElemCount, fCount;
+    uint32_t              fElemSize, fElemCount, fCount;
     
     friend class hsAppenderIterator;
 public:
-            hsAppender(UInt32 elemSize, UInt32 minCount = 16);
+            hsAppender(uint32_t elemSize, uint32_t minCount = 16);
             ~hsAppender();
 
-    UInt32  ElemSize() const { return fElemSize; }
-    UInt32  Count() const { return fCount; }
+    uint32_t  ElemSize() const { return fElemSize; }
+    uint32_t  Count() const { return fCount; }
     hsBool  IsEmpty() const { return fCount == 0; }
     void    Reset();
 
-    UInt32  CopyInto(void* data = nil) const;   // return size of data array in bytes
+    uint32_t  CopyInto(void* data = nil) const;   // return size of data array in bytes
 
     void*   PushHead();
     void        PushHead(const void* data);
@@ -185,16 +184,16 @@ public:
 template <class T> class hsTAppender : hsAppender {
 public:
             hsTAppender() : hsAppender(sizeof(T)) {}
-            hsTAppender(UInt32 minCount) : hsAppender(sizeof(T), minCount) {}
+            hsTAppender(uint32_t minCount) : hsAppender(sizeof(T), minCount) {}
 
     hsAppender*     GetAppender() { return this; }
     const hsAppender*   GetAppender() const { return this; }
 
-    UInt32  Count() const { return hsAppender::Count(); }
+    uint32_t  Count() const { return hsAppender::Count(); }
     hsBool  IsEmpty() const { return hsAppender::IsEmpty(); }
     void    Reset() { hsAppender::Reset(); }
 
-    UInt32  CopyInto(T copy[]) const { return hsAppender::CopyInto(copy); }
+    uint32_t  CopyInto(T copy[]) const { return hsAppender::CopyInto(copy); }
 
     T*      PushHead() { return (T*)hsAppender::PushHead(); }
     void        PushHead(const T& item) { *this->PushHead() = item; }

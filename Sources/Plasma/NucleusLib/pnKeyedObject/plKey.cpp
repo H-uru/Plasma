@@ -47,12 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plKey.h"
 #include "plUoid.h"
 #include <string.h>
 #include "hsResMgr.h"
-#include "hsTypes.h"
 
 #define TRACK_REFS 0 // MEMLEAKFISH
 
@@ -64,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 int mlfTrack = 1;
 
 static const char* keyNameToLookFor = "AgeSDLHook";
-static const UInt16 CLASS_TO_TRACK = CLASS_INDEX_SCOPED(plSceneObject);
+static const uint16_t CLASS_TO_TRACK = CLASS_INDEX_SCOPED(plSceneObject);
 static const int kCloneID = 0;
 static const int kClonePlayerID = 0;
 static plKeyData* lastData = nil;
@@ -73,7 +72,7 @@ static const int kLocSeq = -1;
 class keyDataFriend : public plKeyData
 {
 public:
-    UInt16 RefCount() const { return fRefCount; }
+    uint16_t RefCount() const { return fRefCount; }
 };
 
 static int IsTracked(const plKeyData* keyData)
@@ -89,7 +88,7 @@ static int IsTracked(const plKeyData* keyData)
                 if( (kLocSeq < 0)
                     ||(kLocSeq == keyData->GetUoid().GetLocation().GetSequenceNumber()) )
                 {
-                    plConst(UInt16) kMinRefCount(0);
+                    plConst(uint16_t) kMinRefCount(0);
                     const keyDataFriend* kdf = (keyDataFriend*)keyData;
                     if( kdf->RefCount() > kMinRefCount )
                     {

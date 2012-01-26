@@ -63,7 +63,7 @@ class plCluster
 public:
     enum
     {
-        kNoIdx = UInt8(-1)
+        kNoIdx = uint8_t(-1)
     };
 protected:
     plClusterGroup*             fGroup;
@@ -83,10 +83,10 @@ public:
     void Read(hsStream* s, plClusterGroup* grp);
     void Write(hsStream* s) const;
 
-    UInt32 NumInsts() const { return fInsts.GetCount(); }
+    uint32_t NumInsts() const { return fInsts.GetCount(); }
     const plSpanInstance& GetInst(int i) const { return *fInsts[i]; }
 
-    void UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& wBnd) const;
+    void UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ext& wBnd) const;
 
     // Getters and setters, mostly for export construction.
     const plSpanTemplate* GetTemplate() const { return fGroup->GetTemplate(); }

@@ -78,7 +78,7 @@ public:
     void SetEnabled(bool enabled) { fEnabled = enabled; }
 
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
     bool IIsReadyToClimb();
     void ITriggerSelf(plKey avKey);
 

@@ -79,7 +79,7 @@ plArmatureBrain::~plArmatureBrain()
         delete fCurTask;    
 }
 
-hsBool plArmatureBrain::Apply(double timeNow, hsScalar elapsed)
+hsBool plArmatureBrain::Apply(double timeNow, float elapsed)
 {
     IProcessTasks(timeNow, elapsed);
     fArmature->ApplyAnimations(timeNow, elapsed);
@@ -167,7 +167,7 @@ hsBool plArmatureBrain::MsgReceive(plMessage * msg)
     return false;
 }
 
-void plArmatureBrain::IProcessTasks(double time, hsScalar elapsed)
+void plArmatureBrain::IProcessTasks(double time, float elapsed)
 {
     if (!fCurTask || !fCurTask->Process(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed))
     {

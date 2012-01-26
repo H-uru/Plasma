@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputMap.h"
 #include "plKeyMap.h"
-#include "hsUtils.h"
+
 #include "plResMgr/plLocalization.h"
 
 ControlEventCode plInputMap::ConvertCharToControlCode(const char* c)
@@ -125,7 +125,7 @@ plKeyBinding::plKeyBinding()
     fString = nil;
 }
 
-plKeyBinding::plKeyBinding( ControlEventCode code, UInt32 codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string /*= nil*/ )
+plKeyBinding::plKeyBinding( ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string /*= nil*/ )
 {
     fCode = code;
     fCodeFlags = codeFlags;
@@ -184,7 +184,7 @@ plKeyMap::~plKeyMap()
 
 void    plKeyMap::ClearAll( void )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < fBindings.GetCount(); i++ )
@@ -196,12 +196,12 @@ void    plKeyMap::ClearAll( void )
 //  Adds a given control code to the map. Once you add it, you can't change its flags. 
 //  Returns false if the code is already present
 
-hsBool  plKeyMap::AddCode( ControlEventCode code, UInt32 codeFlags )
+hsBool  plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
 {
     if( IFindBinding( code ) != nil )
         return false;
 
-    fBindings.Append( TRACKED_NEW plKeyBinding( code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped ) );
+    fBindings.Append( new plKeyBinding( code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped ) );
     return true;
 }
 
@@ -214,7 +214,7 @@ hsBool  plKeyMap::AddConsoleCommand( const char *command )
     if( IFindConsoleBinding( command ) != nil )
         return false;
 
-    fBindings.Append( TRACKED_NEW plKeyBinding( B_CONTROL_CONSOLE_COMMAND, 
+    fBindings.Append( new plKeyBinding( B_CONTROL_CONSOLE_COMMAND, 
                                         kControlFlagDownEvent | kControlFlagNoRepeat | kControlFlagNoDeactivate,
                                         plKeyCombo::kUnmapped, plKeyCombo::kUnmapped, 
                                         command ) );
@@ -226,7 +226,7 @@ hsBool  plKeyMap::AddConsoleCommand( const char *command )
 
 plKeyBinding    *plKeyMap::IFindBinding( ControlEventCode code ) const
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < fBindings.GetCount(); i++ )
@@ -243,7 +243,7 @@ plKeyBinding    *plKeyMap::IFindBinding( ControlEventCode code ) const
 
 plKeyBinding    *plKeyMap::IFindBindingByKey( const plKeyCombo &combo ) const
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < fBindings.GetCount(); i++ )
@@ -261,8 +261,8 @@ plKeyBinding    *plKeyMap::IFindBindingByKey( const plKeyCombo &combo ) const
 // We guarantee that the first binding in the result array is that one with priority.
 void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBinding*> &result) const
 {
-    UInt32 i;
-    UInt8 bestScore = 0;
+    uint32_t i;
+    uint8_t bestScore = 0;
     for (i = 0; i < fBindings.GetCount(); i++)
     {
         hsBool s1, s2;
@@ -270,7 +270,7 @@ void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBind
         s2 = fBindings[i]->GetKey2().IsSatisfiedBy(combo);
         if (s1 || s2)
         {
-            UInt8 myScore = 0;
+            uint8_t myScore = 0;
             if (s1)
                 myScore = fBindings[i]->GetKey1().fFlags;
             if (s2 && (fBindings[i]->GetKey2().fFlags > myScore))
@@ -289,7 +289,7 @@ void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBind
 
 plKeyBinding    *plKeyMap::IFindConsoleBinding( const char *command ) const
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < fBindings.GetCount(); i++ )
@@ -490,7 +490,7 @@ void    plKeyMap::UnmapBinding( ControlEventCode code )
 
 void    plKeyMap::UnmapAllBindings( void )
 {
-    UInt32  i;
+    uint32_t  i;
 
     for( i = 0; i < fBindings.GetCount(); i++ )
         fBindings[ i ]->ClearKeys();
@@ -502,7 +502,7 @@ void    plKeyMap::UnmapAllBindings( void )
 
 void    plKeyMap::EraseBinding( ControlEventCode code )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < fBindings.GetCount(); i++ )
@@ -517,7 +517,7 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 }
 
 
-const char* plKeyMap::ConvertVKeyToChar( UInt32 vk )
+const char* plKeyMap::ConvertVKeyToChar( uint32_t vk )
 {
     Win32keyConvert* keyConvert = &fKeyConversionEnglish[0];
     switch (plLocalization::GetLanguage())

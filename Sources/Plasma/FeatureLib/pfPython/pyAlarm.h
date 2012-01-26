@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAlarm_h_inc
 #define pyAlarm_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include <Python.h>
 
@@ -55,7 +55,7 @@ public:
     ~pyAlarmMgr();
     static pyAlarmMgr * GetInstance();
     void    Update( double secs );
-    void    SetAlarm( float secs, PyObject * cb, UInt32 cbContext );
+    void    SetAlarm( float secs, PyObject * cb, uint32_t cbContext );
     void    Clear();
 };
 

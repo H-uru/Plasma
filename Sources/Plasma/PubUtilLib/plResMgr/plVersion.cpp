@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // creatable that was changed.  Every time the minor version is reset (for a
 // major version change), delete all the entries.
 //
-static void GetChangedCreatables(int minorVersion, std::vector<UInt16>& creatables)
+static void GetChangedCreatables(int minorVersion, std::vector<uint16_t>& creatables)
 {
     ChangedCreatable(1, plLoadAvatarMsg); 
     ChangedCreatable(1, plArmatureMod);
@@ -72,18 +72,18 @@ static void CalcCreatableVersions()
 
     for (int minorVer = 1; minorVer <= PLASMA2_MINOR_VERSION; minorVer++)
     {
-        std::vector<UInt16> changedTypes;
+        std::vector<uint16_t> changedTypes;
         changedTypes.reserve(10);
 
         GetChangedCreatables(minorVer, changedTypes);
 
         for (int i = 0; i < changedTypes.size(); i++)
         {
-            UInt16 changedType = changedTypes[i];
+            uint16_t changedType = changedTypes[i];
             CreatableVersions[changedType] = minorVer;
 
             // Bump any classes that derive from this one
-            for (UInt16 toCheck = 0; toCheck < plFactory::GetNumClasses(); toCheck++)
+            for (uint16_t toCheck = 0; toCheck < plFactory::GetNumClasses(); toCheck++)
             {
                 if (plFactory::DerivesFrom(changedType, toCheck))
                     CreatableVersions[toCheck] = minorVer;
@@ -92,10 +92,10 @@ static void CalcCreatableVersions()
     }
 }
 
-UInt16 plVersion::GetMajorVersion() { return PLASMA2_MAJOR_VERSION; }
-UInt16 plVersion::GetMinorVersion() { return PLASMA2_MINOR_VERSION; }
+uint16_t plVersion::GetMajorVersion() { return PLASMA2_MAJOR_VERSION; }
+uint16_t plVersion::GetMinorVersion() { return PLASMA2_MINOR_VERSION; }
 
-int plVersion::GetCreatableVersion(UInt16 creatableIndex)
+int plVersion::GetCreatableVersion(uint16_t creatableIndex)
 {
     static bool calced = false;
     if (!calced)

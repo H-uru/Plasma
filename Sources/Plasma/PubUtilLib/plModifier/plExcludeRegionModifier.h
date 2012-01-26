@@ -63,8 +63,8 @@ protected:
     hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
     plExcludeRegionSDLModifier  *fSDLModifier;
     hsBool fSeek; // use smart seek or teleport?
-    hsScalar fSeekTime; // how long to seek for
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    float fSeekTime; // how long to seek for
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     void ISetPhysicalState(bool cleared);
 
@@ -91,7 +91,7 @@ public:
 
     void AddSafePoint(plKey& key);
     void UseSmartSeek() { fSeek = true; }
-    void SetSeekTime(hsScalar s) { fSeekTime = s; }
+    void SetSeekTime(float s) { fSeekTime = s; }
     void SetBlockCameras(bool block) { fFlags.SetBit(kBlockCameras, block); }
 };
 

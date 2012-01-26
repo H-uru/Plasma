@@ -229,7 +229,7 @@ void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * pa
     gameCliMsg->Send(gameCli->GetReceiver());
 
     if (!msg.failed)
-        DEL(gameCli);   // we're done
+        delete gameCli;   // we're done
 }
 
 //============================================================================
@@ -280,7 +280,7 @@ pfGmMarker::pfGmMarker (
 //============================================================================
 pfGmMarker::~pfGmMarker () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -372,7 +372,7 @@ void pfGmMarker::ResetGame () {
 }
 
 //============================================================================
-void pfGmMarker::ChangeGameName (const wchar name[]) {
+void pfGmMarker::ChangeGameName (const wchar_t name[]) {
 
     Cli2Srv_Marker_ChangeGameName msg;
     msg.messageId       = kCli2Srv_Marker_ChangeGameName;
@@ -410,7 +410,7 @@ void pfGmMarker::DeleteGame () {
 }
 
 //============================================================================
-void pfGmMarker::AddMarker (double x, double y, double z, const wchar name[], const wchar age[]) {
+void pfGmMarker::AddMarker (double x, double y, double z, const wchar_t name[], const wchar_t age[]) {
 
     Cli2Srv_Marker_AddMarker msg;
     msg.messageId       = kCli2Srv_Marker_AddMarker;
@@ -440,7 +440,7 @@ void pfGmMarker::DeleteMarker (unsigned long markerID) {
 }
 
 //============================================================================
-void pfGmMarker::ChangeMarkerName (unsigned long markerID, const wchar name[]) {
+void pfGmMarker::ChangeMarkerName (unsigned long markerID, const wchar_t name[]) {
 
     Cli2Srv_Marker_ChangeMarkerName msg;
     msg.messageId       = kCli2Srv_Marker_ChangeMarkerName;

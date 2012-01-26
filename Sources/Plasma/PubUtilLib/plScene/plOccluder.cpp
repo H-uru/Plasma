@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plOccluder.h"
 #include "hsStream.h"
 #include "plOccluderProxy.h"
@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plOccluder::plOccluder()
 :   fSceneNode(nil)
 {
-    fProxyGen = TRACKED_NEW plOccluderProxy;
+    fProxyGen = new plOccluderProxy;
     fProxyGen->Init(this);
 
     fVisSet.SetBit(0);
@@ -130,12 +130,12 @@ void plOccluder::IRemoveVisRegion(plVisRegion* reg)
     }
 }
 
-plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     hsTArray<hsPoint3>      pos;
     hsTArray<hsVector3>     norm;
     hsTArray<hsColorRGBA>   color;
-    hsTArray<UInt16>        tris;
+    hsTArray<uint16_t>        tris;
 
     plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(0)->BottomOfStack());
     if( lay )
@@ -238,9 +238,9 @@ void plOccluder::IComputeBounds()
     }
 }
 
-hsScalar plOccluder::IComputeSurfaceArea()
+float plOccluder::IComputeSurfaceArea()
 {
-    hsScalar area = 0;
+    float area = 0;
     const hsTArray<plCullPoly>& polys = GetLocalPolyList();
     int i;
     for( i =0 ; i < polys.GetCount(); i++ )
@@ -258,7 +258,7 @@ hsScalar plOccluder::IComputeSurfaceArea()
 
 void plOccluder::SetPolyList(const hsTArray<plCullPoly>& list)
 {
-    UInt16 n = list.GetCount();
+    uint16_t n = list.GetCount();
     fPolys.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -271,7 +271,7 @@ void plOccluder::ISetSceneNode(plKey node)
     {
         if( node )
         {
-            plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kOccluder);
+            plNodeRefMsg* refMsg = new plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kOccluder);
             hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
         if( fSceneNode )
@@ -290,7 +290,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     fPriority = s->ReadLEScalar();
 
     hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
-    UInt16 n = s->ReadLE16();
+    uint16_t n = s->ReadLE16();
     localPolys.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -302,7 +302,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     n = s->ReadLE16();
     fVisRegions.SetCountAndZero(n);
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefVisRegion), plRefFlags::kActiveRef);
 }
 
 void plOccluder::Write(hsStream* s, hsResMgr* mgr)
@@ -360,7 +360,7 @@ void plMobileOccluder::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l
 
 void plMobileOccluder::SetPolyList(const hsTArray<plCullPoly>& list)
 {
-    UInt16 n = list.GetCount();
+    uint16_t n = list.GetCount();
     fOrigPolys.SetCount(n);
     fPolys.SetCount(n);
 

@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetSharedState_inc
 #define plNetSharedState_inc
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 
 class hsStream;

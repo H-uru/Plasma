@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBinkBitmap.h"
 #include "iparamb2.h"
 
@@ -47,7 +47,7 @@ class BinkClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()                      { return 1; }
-    void*           Create(BOOL loading=FALSE)      { return TRACKED_NEW plBinkBitmapIO; }
+    void*           Create(BOOL loading=FALSE)      { return new plBinkBitmapIO; }
     const TCHAR*    ClassName()                     { return "Bink"; }
     SClass_ID       SuperClassID()                  { return BMM_IO_CLASS_ID; }
     Class_ID        ClassID()                       { return Class_ID(0x71c75c3c, 0x206f480e); }

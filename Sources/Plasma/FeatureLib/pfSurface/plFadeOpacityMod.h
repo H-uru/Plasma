@@ -65,8 +65,8 @@ protected:
     };
 
     // Input parameters
-    hsScalar        fFadeUp;
-    hsScalar        fFadeDown;
+    float        fFadeUp;
+    float        fFadeDown;
 
     // Internal fade state
     enum FadeState {
@@ -76,11 +76,11 @@ protected:
         kFadeDown   = 3,
         kImmediate  = 4
     };
-    hsScalar        fOpCurrent;
+    float        fOpCurrent;
 
     double          fStart;
     FadeState       fFade;
-    UInt8           fSetup;
+    uint8_t           fSetup;
 
     hsPoint3        fLastEye;
 
@@ -101,7 +101,7 @@ protected:
     void        ISetup(plSceneObject* so);
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plFadeOpacityMod();
@@ -123,11 +123,11 @@ public:
     void FadeDown();
     void Fade(hsBool up) { if( up ) FadeUp(); else FadeDown(); }
 
-    void SetFadeUp(hsScalar f) { fFadeUp = f; }
-    hsScalar GetFadeUp() const { return fFadeUp; }
+    void SetFadeUp(float f) { fFadeUp = f; }
+    float GetFadeUp() const { return fFadeUp; }
 
-    void SetFadeDown(hsScalar f) { fFadeDown = f; }
-    hsScalar GetFadeDown() const { return fFadeDown; }
+    void SetFadeDown(float f) { fFadeDown = f; }
+    float GetFadeDown() const { return fFadeDown; }
 
     static hsBool GetLOSCheckDisabled() { return fLOSCheckDisabled; }
     static void SetLOSCheckDisabled(hsBool on) { fLOSCheckDisabled = on; }

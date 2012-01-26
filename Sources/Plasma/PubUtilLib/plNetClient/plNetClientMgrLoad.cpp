@@ -126,7 +126,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
         plKey cloneNodeKey = hsgResMgr::ResMgr()->FindKey(kNetClientCloneRoom_KEY);
 
         // Put the clone into the room, which also forces it to load.
-        plNodeRefMsg* nodeRefCloneMsg = TRACKED_NEW plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
+        plNodeRefMsg* nodeRefCloneMsg = new plNodeRefMsg(cloneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
         hsgResMgr::ResMgr()->AddViaNotify(cloneKey, nodeRefCloneMsg, plRefFlags::kActiveRef);
 
         // Finally, pump the dispatch system so all the new refs get delivered. ?
@@ -146,7 +146,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
         GetKey()->Release(cloneKey);        // undo the active ref we took in ILoadClone
 
         // send message to scene object to remove him from the room
-        plNodeChangeMsg* nodeChange = TRACKED_NEW plNodeChangeMsg(GetKey(), cloneKey, nil);
+        plNodeChangeMsg* nodeChange = new plNodeChangeMsg(GetKey(), cloneKey, nil);
         plgDispatch::MsgSend(nodeChange);
     }
 
@@ -167,7 +167,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 // Cause a player to respawn. This is typically called on the local player when he links to a new age.
 // or for unspawn:
 //
-void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, Int32 spawnPt)
+void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, int32_t spawnPt)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     

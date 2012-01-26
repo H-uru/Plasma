@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Generic geom utils.
 hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
-void AngularVelocity(hsScalar &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
+void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
 float AngleRad2d (float x1, float y1, float x3, float y3);
 inline hsVector3 GetYAxis(hsMatrix44 &mat)
 {
@@ -98,7 +98,7 @@ void plAnimatedController::RecalcVelocity(double timeNow, double timePrev, hsBoo
 
 ///////////////////////////////////////////////////////////////////////////
 
-const hsScalar plWalkingController::kControlledFlightThreshold = 1.f; // seconds
+const float plWalkingController::kControlledFlightThreshold = 1.f; // seconds
 
 plWalkingController::plWalkingController(plSceneObject* rootObject, plAGApplicator* rootApp, plPhysicalControllerCore* controller)
     : plAnimatedController(rootObject, rootApp, controller)
@@ -113,7 +113,7 @@ plWalkingController::plWalkingController(plSceneObject* rootObject, plAGApplicat
 {
     if (fController)
     {
-        fWalkingStrategy= TRACKED_NEW plWalkingStrategy(fController);
+        fWalkingStrategy= new plWalkingStrategy(fController);
         fController->SetMovementSimulationInterface(fWalkingStrategy);
     }
     else
@@ -178,7 +178,7 @@ void plWalkingController::Reset(bool newAge)
     }
     else
     {   
-        fWalkingStrategy= TRACKED_NEW plWalkingStrategy(fController);
+        fWalkingStrategy= new plWalkingStrategy(fController);
         fWalkingStrategy->RefreshConnectionToControllerCore();
 
     }
@@ -227,7 +227,7 @@ void plWalkingController::Update()
             continue; // Physical no longer exists. Skip it.
 
         const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i);
-        hsScalar dotUp = straightUp.dot(contact->m_normal);
+        float dotUp = straightUp.dot(contact->m_normal);
         if (dotUp > .5)
             ground = true;
         else if (contactPhys->GetProperty(plSimulationInterface::kAvAnimPushable))
@@ -258,7 +258,7 @@ void plWalkingController::Update()
     // has to overcome friction). I deal with that by making the threshold (360 - (180 - 60) = 240). I've
     // seen up to 220 reached in actual gameplay in a situation where we'd want this to take effect. 
     // This is the same running into 2 walls where the angle between them is 60.
-    const hsScalar threshold = hsScalarDegToRad(240);
+    const float threshold = hsDegreesToRadians(240);
     if (!ground && numContacts >= 2)
     {
         // Can probably do a special case for exactly 2 contacts. Not sure if it's worth it...
@@ -267,7 +267,7 @@ void plWalkingController::Update()
         for (i = 0; i < numContacts; i++)
         {
             const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i);
-            fCollisionAngles[i] = hsATan2(contact->m_normal.y, contact->m_normal.x);
+            fCollisionAngles[i] = atan2(contact->m_normal.y, contact->m_normal.x);
         }
 
         // numContacts is rarely larger than 6, so let's do a simple bubble sort.
@@ -277,7 +277,7 @@ void plWalkingController::Update()
             {
                 if (fCollisionAngles[i] > fCollisionAngles[j])
                 {
-                    hsScalar tempAngle = fCollisionAngles[i];
+                    float tempAngle = fCollisionAngles[i];
                     fCollisionAngles[i] = fCollisionAngles[j];
                     fCollisionAngles[j] = tempAngle;
                 }
@@ -294,7 +294,7 @@ void plWalkingController::Update()
         if (i == numContacts)
         {
             // We got to the end. Check the last with the first and make your decision.
-            if (!(fCollisionAngles[0] - fCollisionAngles[numContacts - 1] >= (threshold - 2 * hsScalarPI)))
+            if (!(fCollisionAngles[0] - fCollisionAngles[numContacts - 1] >= (threshold - 2 * M_PI)))
                 ground = true;
         }
     }
@@ -307,7 +307,7 @@ void plWalkingController::Update()
         fHitGroundInThisAge = true; // if we're not pinned and we're not in an age yet, we are now.
     
     if (IsControlledFlight())
-        fControlledFlightTime += (hsScalar)elapsed;
+        fControlledFlightTime += (float)elapsed;
     if (fControlledFlightTime > kControlledFlightThreshold && numContacts > 0)
         EnableControlledFlight(false);
     
@@ -321,7 +321,7 @@ void plWalkingController::Update()
 //              hsVector3 vel;
 //              fPhysical->GetLinearVelocitySim(vel);
 //              fImpactVel = vel.fZ;
-//              fTimeInAirPeak = (hsScalar)(fTimeInAir + elapsed);
+//              fTimeInAirPeak = (float)(fTimeInAir + elapsed);
 //          }
             
             fWaitingForGround = false;              
@@ -334,7 +334,7 @@ void plWalkingController::Update()
         // collisions, which could trick us into thinking we've just gone a long
         // time without hitting ground. So we only count the time if this wasn't
         // the case.
-        fTimeInAir += (hsScalar)elapsed;
+        fTimeInAir += (float)elapsed;
     }
     
     
@@ -385,7 +385,7 @@ void plHorizontalFreezeAction::apply(Havok::Subspace &s, Havok::hkTime time)
     for(i = 0; i < numContacts; i++)
     {
         const Havok::ContactPoint *contact = fPhysical->GetContactPoint(i);
-        hsScalar dotUp = straightUp.dot(contact->m_normal);
+        float dotUp = straightUp.dot(contact->m_normal);
         if (dotUp > .5)
             ground = true;
     }
@@ -404,7 +404,7 @@ plSwimmingController::plSwimmingController(plSceneObject* rootObject, plAGApplic
 :plAnimatedController(rootObject,rootApp,controller)
 {
     if (controller)
-        fSwimmingStrategy= TRACKED_NEW plSwimStrategy(controller);
+        fSwimmingStrategy= new plSwimStrategy(controller);
     else
         fSwimmingStrategy = nil;
 }
@@ -417,7 +417,7 @@ plRidingAnimatedPhysicalController::plRidingAnimatedPhysicalController(plSceneOb
 : plWalkingController(rootObject, rootApp, controller)
 {
     if(controller)
-        fWalkingStrategy = TRACKED_NEW plRidingAnimatedPhysicalStrategy(controller);
+        fWalkingStrategy = new plRidingAnimatedPhysicalStrategy(controller);
     else
         fWalkingStrategy = nil;
 }
@@ -540,22 +540,22 @@ static hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prev
     return result;
 }
 
-static void AngularVelocity(hsScalar &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat)
+static void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat)
 {
     outputV = 0.f;
-    hsScalar appliedVelocity = 0.0f;
+    float appliedVelocity = 0.0f;
     hsVector3 prevForward = GetYAxis(prevMat);
     hsVector3 curForward = GetYAxis(curMat);
 
-    hsScalar angleSincePrev = AngleRad2d(curForward.fX, curForward.fY, prevForward.fX, prevForward.fY);
+    float angleSincePrev = AngleRad2d(curForward.fX, curForward.fY, prevForward.fX, prevForward.fY);
     hsBool sincePrevSign = angleSincePrev > 0.0f;
-    if (angleSincePrev > hsScalarPI)
+    if (angleSincePrev > M_PI)
         angleSincePrev = angleSincePrev - TWO_PI;
 
     const hsVector3 startForward = hsVector3(0, -1.0, 0);   // the Y orientation of a "resting" armature....
-    hsScalar angleSinceStart = AngleRad2d(curForward.fX, curForward.fY, startForward.fX, startForward.fY);
+    float angleSinceStart = AngleRad2d(curForward.fX, curForward.fY, startForward.fX, startForward.fY);
     hsBool sinceStartSign = angleSinceStart > 0.0f;
-    if (angleSinceStart > hsScalarPI)
+    if (angleSinceStart > M_PI)
         angleSinceStart = angleSinceStart - TWO_PI;
 
     // HANDLING ANIMATION WRAPPING:

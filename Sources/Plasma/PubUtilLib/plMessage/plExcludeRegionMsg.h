@@ -58,7 +58,7 @@ public:
     };
 
 protected:
-    UInt8 fCmd;
+    uint8_t fCmd;
 
 public:
     plExcludeRegionMsg() : fCmd(kClear), fSynchFlags(0) {}
@@ -69,9 +69,9 @@ public:
     GETINTERFACE_ANY(plExcludeRegionMsg, plMessage);
     
     void SetCmd(CmdType cmd) { fCmd = cmd; }
-    UInt8 GetCmd() { return fCmd; }
+    uint8_t GetCmd() { return fCmd; }
 
-    UInt32 fSynchFlags;
+    uint32_t fSynchFlags;
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)
     {

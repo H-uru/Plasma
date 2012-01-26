@@ -146,7 +146,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* title = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* title = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, title, strLen);
         title[strLen] = L'\0';
         self->fThis->Note_SetTitleW(title);
@@ -198,7 +198,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Note_SetTextW(text);

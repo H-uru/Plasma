@@ -67,9 +67,9 @@ class pfGUIDialogMod : public plSingleModifier
 
     protected:
 
-        UInt32      fTagID;     // 0 if none
+        uint32_t      fTagID;     // 0 if none
 
-        UInt32      fVersion;   // Nice for syncing to C++ code
+        uint32_t      fVersion;   // Nice for syncing to C++ code
 
         plPostEffectMod             *fRenderMod;
         hsBool                      fEnabled;
@@ -91,9 +91,9 @@ class pfGUIDialogMod : public plSingleModifier
         plKey           fSceneNodeKey;
 
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        void    IHandleDrag( hsPoint3 &mousePt, pfGameGUIMgr::EventType event, UInt8 modifiers );
+        void    IHandleDrag( hsPoint3 &mousePt, pfGameGUIMgr::EventType event, uint8_t modifiers );
 
     public:
 
@@ -130,25 +130,25 @@ class pfGUIDialogMod : public plSingleModifier
 
         const char  *GetName( void ) { return fName; }
 
-        void        ScreenToWorldPoint( hsScalar x, hsScalar y, hsScalar z, hsPoint3 &outPt );
+        void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
 
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers );
-        hsBool          HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers );
-        hsBool          HandleKeyPress( wchar_t key, UInt8 modifiers );
-        void            UpdateInterestingThings( hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, hsBool modalPreset );
+        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        hsBool          HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        hsBool          HandleKeyPress( wchar_t key, uint8_t modifiers );
+        void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, hsBool modalPreset );
 
         void            SetControlOfInterest( pfGUIControlMod *c );
         pfGUIControlMod *GetControlOfInterest( void ) const { return fControlOfInterest; }
-        UInt32          GetDesiredCursor( void ) const;
+        uint32_t          GetDesiredCursor( void ) const;
 
         void        UpdateAspectRatio( void );
         void        UpdateAllBounds( void );
         void        RefreshAllControls( void );
 
         void            AddControl( pfGUIControlMod *ctrl );
-        UInt32          GetNumControls( void ) { return fControls.GetCount(); }
-        pfGUIControlMod *GetControl( UInt32 idx ) { return fControls[ idx ]; }
+        uint32_t          GetNumControls( void ) { return fControls.GetCount(); }
+        pfGUIControlMod *GetControl( uint32_t idx ) { return fControls[ idx ]; }
 
         pfGUIColorScheme    *GetColorScheme( void ) const { return fColorScheme; }
 
@@ -180,8 +180,8 @@ class pfGUIDialogMod : public plSingleModifier
         pfGUIControlMod *GetFocus( void ) { return fFocusCtrl; }
 
         pfGUIDialogMod  *GetNext( void ) { return fNext; }
-        UInt32          GetTagID( void ) { return fTagID; }
-        pfGUIControlMod *GetControlFromTag( UInt32 tagID );
+        uint32_t          GetTagID( void ) { return fTagID; }
+        pfGUIControlMod *GetControlFromTag( uint32_t tagID );
 
         void            SetHandler( pfGUIDialogProc *hdlr );
         pfGUIDialogProc *GetHandler( void ) const { return fHandler; }
@@ -192,7 +192,7 @@ class pfGUIDialogMod : public plSingleModifier
         void            SetHandlerForAll( pfGUIDialogProc *hdlr );
 
         // Just a little macro-type thing here
-        void            SetControlHandler( UInt32 tagID, pfGUIDialogProc *hdlr );
+        void            SetControlHandler( uint32_t tagID, pfGUIDialogProc *hdlr );
 
         /// Methods for doing drag & drop of listElements
 
@@ -200,15 +200,15 @@ class pfGUIDialogMod : public plSingleModifier
         void    AddToDragList( pfGUIListElement *e );
         void    EnterDragMode( pfGUIControlMod *source );
 
-        UInt32  GetVersion( void ) const { return fVersion; }
+        uint32_t  GetVersion( void ) const { return fVersion; }
 
         // Export only
         void        SetRenderMod( plPostEffectMod *mod ) { fRenderMod = mod; }
         void        SetName( const char *name ) { hsStrncpy( fName, name, sizeof( fName ) - 1 ); }
         void        AddControlOnExport( pfGUIControlMod *ctrl );
-        void        SetTagID( UInt32 id ) { fTagID = id; }
+        void        SetTagID( uint32_t id ) { fTagID = id; }
         void        SetProcReceiver( plKey key ) { fProcReceiver = key; }
-        void        SetVersion( UInt32 version ) { fVersion = version; }
+        void        SetVersion( uint32_t version ) { fVersion = version; }
 };
 
 #endif // _pfGUIDialogMod_h

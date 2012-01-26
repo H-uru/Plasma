@@ -95,7 +95,7 @@ public:
     virtual PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual UInt32  GetTagID();
+    virtual uint32_t  GetTagID();
     virtual void    SetEnabled( hsBool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
@@ -120,13 +120,13 @@ public:
     virtual PyObject*   GetSelColor(); // returns pyColor
     virtual PyObject*   GetBackColor(); // returns pyColor
     virtual PyObject*   GetBackSelColor(); // returns pyColor
-    virtual UInt32      GetFontSize();
+    virtual uint32_t      GetFontSize();
     // set color scheme
-    virtual void        SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetFontSize(UInt32 fontsize);
+    virtual void        SetForeColor( float r, float g, float b, float a );
+    virtual void        SetSelColor( float r, float g, float b, float a );
+    virtual void        SetBackColor( float r, float g, float b, float a );
+    virtual void        SetBackSelColor( float r, float g, float b, float a );
+    virtual void        SetFontSize(uint32_t fontsize);
 
 };
 

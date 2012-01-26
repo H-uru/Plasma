@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKeysAndValues_h_inc
 #define plKeysAndValues_h_inc
 
-#include "hsConfig.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 #include "hsStream.h"
 
@@ -96,7 +96,7 @@ public:
     bool SetValue(const std::string & key, double value);
     // get single value
     std::string GetValue(const std::string & key, const std::string & defval="", bool * outFound=nil) const;
-    UInt32 GetValue(const std::string & key, UInt32 defval, bool * outFound=nil) const;
+    uint32_t GetValue(const std::string & key, uint32_t defval, bool * outFound=nil) const;
     int GetValue(const std::string & key, int defval, bool * outFound=nil) const;
     double GetValue(const std::string & key, double defval, bool * outFound=nil) const;
     std::vector<std::string> GetAllValues(const std::string & key);
@@ -108,7 +108,7 @@ public:
     void Read(hsStream * s);
     void Write(hsStream * s);
     // TODO:
-    UInt32 GetStreamSize() { return 0;}
+    uint32_t GetStreamSize() { return 0;}
 };
 
 

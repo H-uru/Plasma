@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCutter.h"
 #include "plAccessSpan.h"
 #include "hsFastMath.h"
@@ -134,7 +134,7 @@ void plCutter::Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& o
 }
 
 
-inline void plCutter::ISetPosNorm(hsScalar parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
+inline void plCutter::ISetPosNorm(float parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
     dst.fPos = outVtx.fPos;
     dst.fPos += parm * (inVtx.fPos - outVtx.fPos);
@@ -161,7 +161,7 @@ inline void plCutter::ISetPosNorm(hsScalar parm, const plCutoutVtx& inVtx, const
 
 inline void plCutter::ICutoutVtxLoU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = outVtx.fUVW.fX / (outVtx.fUVW.fX - inVtx.fUVW.fX);
+    float parm = outVtx.fUVW.fX / (outVtx.fUVW.fX - inVtx.fUVW.fX);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -172,7 +172,7 @@ inline void plCutter::ICutoutVtxLoU(const plCutoutVtx& inVtx, const plCutoutVtx&
 
 inline void plCutter::ICutoutVtxLoV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = outVtx.fUVW.fY / (outVtx.fUVW.fY - inVtx.fUVW.fY);
+    float parm = outVtx.fUVW.fY / (outVtx.fUVW.fY - inVtx.fUVW.fY);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -183,7 +183,7 @@ inline void plCutter::ICutoutVtxLoV(const plCutoutVtx& inVtx, const plCutoutVtx&
 
 inline void plCutter::ICutoutVtxLoW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = outVtx.fUVW.fZ / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
+    float parm = outVtx.fUVW.fZ / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -198,7 +198,7 @@ inline void plCutter::ICutoutVtxLoW(const plCutoutVtx& inVtx, const plCutoutVtx&
 // parm = (outVtx.fUVW - 1.f) / (outVtx.fUVW - inVtx.fUVW)
 inline void plCutter::ICutoutVtxHiU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fX - 1.f) / (outVtx.fUVW.fX - inVtx.fUVW.fX);
+    float parm = (outVtx.fUVW.fX - 1.f) / (outVtx.fUVW.fX - inVtx.fUVW.fX);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -209,7 +209,7 @@ inline void plCutter::ICutoutVtxHiU(const plCutoutVtx& inVtx, const plCutoutVtx&
 
 inline void plCutter::ICutoutVtxHiV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fY - 1.f) / (outVtx.fUVW.fY - inVtx.fUVW.fY);
+    float parm = (outVtx.fUVW.fY - 1.f) / (outVtx.fUVW.fY - inVtx.fUVW.fY);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -220,7 +220,7 @@ inline void plCutter::ICutoutVtxHiV(const plCutoutVtx& inVtx, const plCutoutVtx&
 
 inline void plCutter::ICutoutVtxHiW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fZ - 1.f) / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
+    float parm = (outVtx.fUVW.fZ - 1.f) / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -236,7 +236,7 @@ inline void plCutter::ICutoutVtxHiW(const plCutoutVtx& inVtx, const plCutoutVtx&
 // parm = (outVtx.fUVW - 0.5f) / (outVtx.fUVW - inVtx.fUVW)
 inline void plCutter::ICutoutVtxMidU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fX - 0.5f) / (outVtx.fUVW.fX - inVtx.fUVW.fX);
+    float parm = (outVtx.fUVW.fX - 0.5f) / (outVtx.fUVW.fX - inVtx.fUVW.fX);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -249,7 +249,7 @@ inline void plCutter::ICutoutVtxMidU(const plCutoutVtx& inVtx, const plCutoutVtx
 
 inline void plCutter::ICutoutVtxMidV(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fY - 0.5f) / (outVtx.fUVW.fY - inVtx.fUVW.fY);
+    float parm = (outVtx.fUVW.fY - 0.5f) / (outVtx.fUVW.fY - inVtx.fUVW.fY);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -262,7 +262,7 @@ inline void plCutter::ICutoutVtxMidV(const plCutoutVtx& inVtx, const plCutoutVtx
 
 inline void plCutter::ICutoutVtxMidW(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const
 {
-    hsScalar parm = (outVtx.fUVW.fZ - 0.5f) / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
+    float parm = (outVtx.fUVW.fZ - 0.5f) / (outVtx.fUVW.fZ - inVtx.fUVW.fZ);
 
     ISetPosNorm(parm, inVtx, outVtx, dst);
 
@@ -721,7 +721,7 @@ hsBool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCut
     return hits.GetCount() > 0;
 }
 
-hsBool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, hsScalar height) const
+hsBool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const
 {
     if( FindHitPoints(src, hits) )
     {
@@ -933,14 +933,14 @@ hsBool plCutter::MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVe
     corner += -dux;
     corner += -dvx;
 
-    hsScalar sWid = 1.f / hsScalar(nWid-1);
-    hsScalar sLen = 1.f / hsScalar(nLen-1);
+    float sWid = 1.f / float(nWid-1);
+    float sLen = 1.f / float(nLen-1);
 
     dux *= 2.f * sWid;
     dvx *= 2.f * sLen;
 
-    hsScalar du = sWid;
-    hsScalar dv = sLen;
+    float du = sWid;
+    float dv = sLen;
     int j;
     for( j = 0; j < nLen; j++ )
     {
@@ -950,8 +950,8 @@ hsBool plCutter::MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVe
             plCutoutMiniVtx& vtx = grid.fVerts[j * nWid + i];
 
             vtx.fPos = corner;
-            vtx.fPos += dux * (hsScalar)i;
-            vtx.fPos += dvx * (hsScalar)j;
+            vtx.fPos += dux * (float)i;
+            vtx.fPos += dvx * (float)j;
 
             vtx.fUVW.fX = du * i;
             vtx.fUVW.fY = dv * j;
@@ -1043,7 +1043,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
     hsBool newDrawable = !drawable;
     hsBool haveNormal = true;
 
-    hsTArray<UInt32> retIndex;
+    hsTArray<uint32_t> retIndex;
 
     hsTArray<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
@@ -1168,7 +1168,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
             uvw[iv] = dst[iPoly].fVerts[iVert].fUVW;
             col[iv] = dst[iPoly].fVerts[iVert].fColor;
 
-            hsScalar opac = uvw[iv].fZ < 0.25f 
+            float opac = uvw[iv].fZ < 0.25f 
                 ? uvw[iv].fZ * 4.f
                 : uvw[iv].fZ > 0.75f
                     ? (1.f - uvw[iv].fZ) * 4.f
@@ -1190,12 +1190,12 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
             }
         }
 
-        hsTArray<UInt16> idx;
+        hsTArray<uint16_t> idx;
 
-        UInt16 base = 0;
+        uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
         {
-            UInt16 next = base+1;
+            uint16_t next = base+1;
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {
@@ -1249,7 +1249,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
     hsBool newDrawable = !drawable;
     hsBool haveNormal = true;
 
-    hsTArray<UInt32> retIndex;
+    hsTArray<uint32_t> retIndex;
 
     hsTArray<plDrawVisList> drawVis;
     node->Harvest(&cutter.GetIsect(), drawVis);
@@ -1322,7 +1322,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
             uvw[iv] = dst[iPoly].fVerts[iVert].fUVW;
             col[iv] = dst[iPoly].fVerts[iVert].fColor;
 
-            hsScalar opac = uvw[iv].fZ < 0.25f 
+            float opac = uvw[iv].fZ < 0.25f 
                 ? uvw[iv].fZ * 4.f
                 : uvw[iv].fZ > 0.75f
                     ? (1.f - uvw[iv].fZ) * 4.f
@@ -1345,12 +1345,12 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
             }
         }
 
-        hsTArray<UInt16> idx;
+        hsTArray<uint16_t> idx;
 
-        UInt16 base = 0;
+        uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
         {
-            UInt16 next = base+1;
+            uint16_t next = base+1;
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {

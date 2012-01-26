@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const UInt32 ps_WaveGridByteLen = 84;
+static const uint32_t ps_WaveGridbyteLen = 84;
 
-static const UInt8 ps_WaveGridCodes[] = {
+static const uint8_t ps_WaveGridCodes[] = {
     0x1,    0x1,    0xff,   0xff,
     0x42,   0x0,    0x0,    0x0,
     0x0,    0x0,    0xf,    0xb0,
@@ -67,7 +67,7 @@ static const UInt8 ps_WaveGridCodes[] = {
     0xff,   0xff,   0x0,    0x0
     };
 
-static const plShaderDecl ps_WaveGridDecl("sha/ps_WaveGrid.inl", ps_WaveGrid, ps_WaveGridByteLen, ps_WaveGridCodes);
+static const plShaderDecl ps_WaveGridDecl("sha/ps_WaveGrid.inl", ps_WaveGrid, ps_WaveGridbyteLen, ps_WaveGridCodes);
 
 static const plShaderRegister ps_WaveGridRegister(&ps_WaveGridDecl);
 

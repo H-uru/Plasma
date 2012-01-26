@@ -113,7 +113,7 @@ hsBool plStartingPointComponent::SetupProperties(plMaxNode* node, plErrorMsg* pE
 }
 hsBool plStartingPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plSpawnModifier* pSpawn = TRACKED_NEW plSpawnModifier;
+    plSpawnModifier* pSpawn = new plSpawnModifier;
     node->AddModifier(pSpawn, IGetUniqueName(node));
     return true;
 }
@@ -332,7 +332,7 @@ hsBool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     if (!IIsValid())
         return false;
 
-    fMod = TRACKED_NEW plVehicleModifier;
+    fMod = new plVehicleModifier;
     plKey modKey = pNode->AddModifier(fMod, IGetUniqueName(pNode));
 
     plMaxNode* detectorNode = (plMaxNode*)fCompPB->GetINode(kVehicleDriveDet);
@@ -459,7 +459,7 @@ hsBool plMaintainersMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg
 }
 hsBool plMaintainersMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plMaintainersMarkerModifier* pSpawn = TRACKED_NEW plMaintainersMarkerModifier;
+    plMaintainersMarkerModifier* pSpawn = new plMaintainersMarkerModifier;
     pSpawn->SetCalibrated(fCompPB->GetInt(kCalibrated));
     node->AddModifier(pSpawn, IGetUniqueName(node));
     return true;
@@ -735,7 +735,7 @@ plKey plGameMarkerComponent::IGetAnimKey(int nodeID, int compID)
 
 hsBool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plGameMarkerModifier* markerMod = TRACKED_NEW plGameMarkerModifier;
+    plGameMarkerModifier* markerMod = new plGameMarkerModifier;
 
     plKey greenKey  = IGetMtlAnimKey(kMarkerGreenAnim, node);
     plKey redKey    = IGetMtlAnimKey(kMarkerRedAnim, node);

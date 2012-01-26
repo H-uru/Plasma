@@ -55,23 +55,23 @@ public:
 
 protected:
 
-    UInt16      fRefCnt;
+    uint16_t      fRefCnt;
 
-    UInt8*      fData;
+    uint8_t*      fData;
 
-    UInt16      fChanSize[kNumValidChans];
+    uint16_t      fChanSize[kNumValidChans];
 
-    void            ICopyOldData(UInt8* data, const UInt16* const oldSizes, UInt16 oldStride, UInt16 newStride);
-    UInt16          IComputeStride() const;
-    void            IRecordSizes(UInt16 sizes[]) const;
-    UInt32          ICheckAlloc(const plAccessVtxSpan& src, UInt32 chanMask, UInt32 chan, UInt16 chanSize);
+    void            ICopyOldData(uint8_t* data, const uint16_t* const oldSizes, uint16_t oldStride, uint16_t newStride);
+    uint16_t          IComputeStride() const;
+    void            IRecordSizes(uint16_t sizes[]) const;
+    uint32_t          ICheckAlloc(const plAccessVtxSpan& src, uint32_t chanMask, uint32_t chan, uint16_t chanSize);
 
-    void            ISetupPointers(UInt16 newStride);
+    void            ISetupPointers(uint16_t newStride);
 
     void            SetupChannels(plAccessVtxSpan& dst) const;
 
-    UInt32          CopyTo(const plAccessVtxSpan& dst, UInt32 chanMask);
-    UInt32          CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask);
+    uint32_t          CopyTo(const plAccessVtxSpan& dst, uint32_t chanMask);
+    uint32_t          CopyFrom(const plAccessVtxSpan& src, uint32_t chanMask);
     void            Release(); // Decrements refcnt, calls Destroy on zero
     void            Clear(); // Initialize to zeros
 

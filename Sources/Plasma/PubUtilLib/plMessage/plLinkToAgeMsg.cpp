@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plLinkToAgeMsg.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 #include "plgDispatch.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"
@@ -68,11 +68,11 @@ plLinkToAgeMsg::~plLinkToAgeMsg()
 }
 
 // StreamVersion needed for back compatibility.
-UInt8   plLinkToAgeInfo_StreamVersion = 0;
+uint8_t   plLinkToAgeInfo_StreamVersion = 0;
 void plLinkToAgeMsg::Read(hsStream* stream, hsResMgr* mgr)  
 {
     plMessage::IMsgRead( stream, mgr );
-    UInt8 ltaVer = stream->ReadByte();
+    uint8_t ltaVer = stream->ReadByte();
     fAgeLink.Read( stream, mgr );
     fLinkInAnimName = stream->ReadSafeString();
 }
@@ -314,7 +314,7 @@ void plLinkEffectBCMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(fLinkFlags);
 }
 
-void plLinkEffectBCMsg::SetLinkFlag(UInt32 flag, hsBool on /* = true */)
+void plLinkEffectBCMsg::SetLinkFlag(uint32_t flag, hsBool on /* = true */)
 {
     if (on)
         fLinkFlags |= flag;
@@ -322,7 +322,7 @@ void plLinkEffectBCMsg::SetLinkFlag(UInt32 flag, hsBool on /* = true */)
         fLinkFlags &= ~flag;
 }
 
-hsBool plLinkEffectBCMsg::HasLinkFlag(UInt32 flag)
+hsBool plLinkEffectBCMsg::HasLinkFlag(uint32_t flag)
 {
     return fLinkFlags & flag;
 }

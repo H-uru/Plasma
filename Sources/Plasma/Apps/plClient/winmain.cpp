@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "plNetClient/plNetClientMgr.h"
@@ -133,14 +133,14 @@ static const unsigned   AUTH_FAILED_TIMER   = 2;
 //============================================================================
 #ifdef PLASMA_EXTERNAL_RELEASE
 
-static wchar s_patcherExeName[] = L"UruLauncher.exe";
+static wchar_t s_patcherExeName[] = L"UruLauncher.exe";
 
 #endif // PLASMA_EXTERNAL_RELEASE
 
 //============================================================================
 // PhysX installer
 //============================================================================
-static wchar s_physXSetupExeName[] = L"PhysX_Setup.exe";
+static wchar_t s_physXSetupExeName[] = L"PhysX_Setup.exe";
 
 //============================================================================
 // TRANSGAMING detection  & dialog replacement
@@ -178,12 +178,12 @@ struct LoginDialogParam {
 };
 
 static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
-static void GetCryptKey(UInt32* cryptKey, unsigned size);
+static void GetCryptKey(uint32_t* cryptKey, unsigned size);
 static void SaveUserPass (LoginDialogParam *pLoginParam, char *password);
 static void LoadUserPass (LoginDialogParam *pLoginParam);
 static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
-                                         const wchar **ppWStr);
+                                         const wchar_t **ppWStr);
 
 
 // Detect whether we're running under TRANSGAMING Cider
@@ -290,7 +290,7 @@ static bool TGRunLoginDialog (LoginDialogParam *pLoginParam)
         if (!cancelled)
           {
                 const char *pStr1, *pStr2;
-                const wchar *pWStr;
+                const wchar_t *pWStr;
                 unsigned int Len;
                 char *pTmpStr;
 
@@ -302,7 +302,7 @@ static bool TGRunLoginDialog (LoginDialogParam *pLoginParam)
                 if (pWStr)
                   Len += StrLen (pWStr) + 2;
 
-                pTmpStr = TRACKED_NEW char[Len];
+                pTmpStr = new char[Len];
                 StrCopy (pTmpStr, pStr1, StrLen (pStr1));
                 if (pStr2)
                   {
@@ -361,7 +361,7 @@ void DebugMsgF(const char* format, ...);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {   
     static bool gDragging = false;
-    static UInt32 keyState=0;
+    static uint32_t keyState=0;
 
     // Handle messages
     switch (message) {      
@@ -661,8 +661,8 @@ bool InitPhysX()
             // launch the PhysX installer
             STARTUPINFOW startupInfo;
             PROCESS_INFORMATION processInfo; 
-            ZERO(startupInfo);
-            ZERO(processInfo);
+            memset(&startupInfo, 0, sizeof(startupInfo));
+            memset(&processInfo, 0, sizeof(processInfo));
             startupInfo.cb = sizeof(startupInfo);
             if(!CreateProcessW(NULL, s_physXSetupExeName, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo))
             {
@@ -702,7 +702,7 @@ bool InitPhysX()
 
 bool    InitClient( HWND hWnd )
 {
-    plResManager *resMgr = TRACKED_NEW plResManager;
+    plResManager *resMgr = new plResManager;
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);
 
@@ -713,7 +713,7 @@ bool    InitClient( HWND hWnd )
     }
     plClientResMgr::Instance().ILoadResources("resource.dat");
 
-    gClient = TRACKED_NEW plClient;
+    gClient = new plClient;
     if( gClient == nil )
         return false;
 
@@ -773,7 +773,7 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
     /// else, use our normal styles
 
     char windowName[256];
-    wchar productString[256];
+    wchar_t productString[256];
     StrCopy(productString, ProductLongName(), arrsize(productString));
     StrToAnsi(windowName, productString, arrsize(windowName));
     
@@ -837,7 +837,7 @@ void DebugMsgF(const char* format, ...)
 
 static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
-                                         const wchar **ppWStr)
+                                         const wchar_t **ppWStr)
 {
   *ppStr1 = NULL;
   *ppStr2 = NULL;
@@ -895,7 +895,7 @@ BOOL CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
             {
                 LoginDialogParam* loginParam = (LoginDialogParam*)lParam;
                 const char *pStr1, *pStr2;
-                const wchar *pWStr;
+                const wchar_t *pWStr;
 
                 AuthFailedStrings (loginParam->authError,
                                          &pStr1, &pStr2, &pWStr);
@@ -939,7 +939,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 char* eulaData = NULL;
                 unsigned dataLen = stream.GetSizeLeft();
 
-                eulaData = TRACKED_NEW char[dataLen + 1];
+                eulaData = new char[dataLen + 1];
                 ZeroMemory(eulaData, dataLen + 1);
 
                 stream.Read(dataLen, eulaData);
@@ -970,12 +970,12 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
 {
-    UInt32 cryptKey[4];
+    uint32_t cryptKey[4];
     ZeroMemory(cryptKey, sizeof(cryptKey));
     GetCryptKey(cryptKey, arrsize(cryptKey));
 
-    wchar wusername[kMaxAccountNameLength];
-    wchar wpassword[kMaxPasswordLength];
+    wchar_t wusername[kMaxAccountNameLength];
+    wchar_t wpassword[kMaxPasswordLength];
 
     StrToUnicode(wusername, pLoginParam->username, arrsize(wusername));
 
@@ -985,7 +985,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     {
         StrToUnicode(wpassword, password, arrsize(wpassword));
 
-        wchar domain[15];
+        wchar_t domain[15];
         PathSplitEmail(wusername, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
@@ -1012,12 +1012,12 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     else
         NetCommSetAuthTokenAndOS(nil, L"win");
 
-    wchar fileAndPath[MAX_PATH];
+    wchar_t fileAndPath[MAX_PATH];
     PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
     PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory
-    wchar localFileAndPath[MAX_PATH];
+    wchar_t localFileAndPath[MAX_PATH];
     StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
     if (PathDoesFileExist(localFileAndPath))
         StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
@@ -1038,7 +1038,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
 
 static void LoadUserPass (LoginDialogParam *pLoginParam)
 {
-    UInt32 cryptKey[4];
+    uint32_t cryptKey[4];
     ZeroMemory(cryptKey, sizeof(cryptKey));
     GetCryptKey(cryptKey, arrsize(cryptKey));
 
@@ -1046,12 +1046,12 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
 
-    wchar fileAndPath[MAX_PATH];
+    wchar_t fileAndPath[MAX_PATH];
     PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
     PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory
-    wchar localFileAndPath[MAX_PATH];
+    wchar_t localFileAndPath[MAX_PATH];
     StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
     if (PathDoesFileExist(localFileAndPath))
         StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
@@ -1059,7 +1059,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, true, cryptKey);
     if (stream && !stream->AtEnd())
     {
-        UInt32 savedKey[4];
+        uint32_t savedKey[4];
         stream->Read(sizeof(savedKey), savedKey);
 
         if (memcmp(cryptKey, savedKey, sizeof(savedKey)) == 0)
@@ -1166,7 +1166,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
 
             char windowName[256];
-            wchar productString[256];
+            wchar_t productString[256];
             ProductString(productString, arrsize(productString));
             StrToAnsi(windowName, productString, arrsize(windowName));
             SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) windowName);
@@ -1218,7 +1218,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
                     SaveUserPass (pLoginParam, password);
 
-                    MemSet(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
+                    memset(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
                     bool cancelled = AuthenticateNetClientComm(&pLoginParam->authError, hwndDlg);
 
                     if (IS_NET_SUCCESS(pLoginParam->authError) && !cancelled)
@@ -1251,7 +1251,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_GAMETAPLINK)
             {
-                const wchar *signupurl = GetServerSignupUrl();
+                const wchar_t *signupurl = GetServerSignupUrl();
                 ShellExecuteW(NULL, L"open", signupurl, NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
@@ -1380,7 +1380,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     }
 
     char prodName[256];
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     StrToAnsi(prodName, productString, arrsize(prodName));
 
@@ -1390,7 +1390,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 
     /// Print the info out to a log file as well
     hsUNIXStream    log;
-    wchar fileAndPath[MAX_PATH];
+    wchar_t fileAndPath[MAX_PATH];
     PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
     PathAddFilename(fileAndPath, fileAndPath, L"stackDump.log", arrsize(fileAndPath));
     if( log.Open( fileAndPath, L"wt" ) )
@@ -1430,7 +1430,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         gDataServerLocal = true;
 #endif
 
-    const wchar *serverIni = L"server.ini";
+    const wchar_t *serverIni = L"server.ini";
     if (cmdParser.IsSpecified(kArgServerIni))
         serverIni = cmdParser.GetString(kArgServerIni);
 
@@ -1455,11 +1455,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // if the client was started directly, run the patcher, and shutdown
     STARTUPINFOW si;
     PROCESS_INFORMATION pi; 
-    ZERO(si);
-    ZERO(pi);
+    memset(&si, 0, sizeof(si));
+    memset(&pi, 0, sizeof(pi));
     si.cb = sizeof(si);
-    wchar cmdLine[MAX_PATH];
-    const wchar ** addrs;
+    wchar_t cmdLine[MAX_PATH];
+    const wchar_t ** addrs;
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
@@ -1487,7 +1487,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #endif
 
     // Load an optional general.ini
-    wchar gipath[MAX_PATH];
+    wchar_t gipath[MAX_PATH];
     PathGetInitDirectory(gipath, arrsize(gipath));
     PathAddFilename(gipath, gipath, L"general.ini", arrsize(gipath));
     FILE *generalini = _wfopen(gipath, L"rb");
@@ -1547,13 +1547,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     bool                needExit = false;
     LoginDialogParam    loginParam;
-    MemSet(&loginParam, 0, sizeof(loginParam));
+    memset(&loginParam, 0, sizeof(loginParam));
     LoadUserPass(&loginParam);
 
     if (!doIntroDialogs && loginParam.remember) {
         ENetError auth;
 
-        wchar wusername[kMaxAccountNameLength];
+        wchar_t wusername[kMaxAccountNameLength];
         StrToUnicode(wusername, loginParam.username, arrsize(wusername));
         NetCommSetAccountUsernamePassword(wusername, loginParam.namePassHash);
         bool cancelled = AuthenticateNetClientComm(&auth, NULL);
@@ -1616,7 +1616,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     gDebugFile = NULL;
     if ( !plStatusLog::fLoggingOff )
     {
-        wchar fileAndPath[MAX_PATH];
+        wchar_t fileAndPath[MAX_PATH];
         PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
         PathAddFilename(fileAndPath, fileAndPath, L"plasmalog.txt", arrsize(fileAndPath));
         gDebugFile = _wfopen(fileAndPath, L"wt");
@@ -1625,7 +1625,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         if (gDebugFile != NULL)
         {
             char prdName[256];
-            wchar prdString[256];
+            wchar_t prdString[256];
             ProductString(prdString, arrsize(prdString));
             StrToAnsi(prdName, prdString, arrsize(prdName));
             fprintf(gDebugFile, "%s\n", prdName);
@@ -1635,10 +1635,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     // log stackdump.log text if the log exists
     char stackDumpText[1024];
-    wchar stackDumpTextW[1024]; 
+    wchar_t stackDumpTextW[1024]; 
     memset(stackDumpText, 0, arrsize(stackDumpText));
-    memset(stackDumpTextW, 0, arrsize(stackDumpTextW) * sizeof(wchar));
-    wchar fileAndPath[MAX_PATH];
+    memset(stackDumpTextW, 0, arrsize(stackDumpTextW) * sizeof(wchar_t));
+    wchar_t fileAndPath[MAX_PATH];
     PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
     PathAddFilename(fileAndPath, fileAndPath, L"stackDump.log", arrsize(fileAndPath));
     FILE *stackDumpLog = _wfopen(fileAndPath, L"r");
@@ -1758,7 +1758,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     return PARABLE_NORMAL_EXIT;
 }
 
-static void GetCryptKey(UInt32* cryptKey, unsigned numElements)
+static void GetCryptKey(uint32_t* cryptKey, unsigned numElements)
 {
     char volName[] = "C:\\";
     int index = 0;

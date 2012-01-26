@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfLocalizedString_h
 #define _pfLocalizedString_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 
@@ -67,7 +67,7 @@ protected:
     {
         bool        fIsParam; // if true, then this is a parameter, not a string
         std::wstring    fText;
-        UInt8       fParamIndex;
+        uint8_t       fParamIndex;
 
         textBlock() : fIsParam(false), fParamIndex(0) {}
     };
@@ -75,7 +75,7 @@ protected:
     std::vector<textBlock>  fText; // the individual text elements that make up this string
     std::wstring            fXMLRep; // the XML representation of this string
     std::wstring            fPlainTextRep; // the plain text representation of this string
-    UInt16              fNumArguments; // number of arguments this string has
+    uint16_t              fNumArguments; // number of arguments this string has
 
     void IConvertFromPlainText(const std::wstring & plainText);
     void IUpdatePlainText(); // from the internal representation
@@ -91,7 +91,7 @@ public:
     void FromXML(const std::wstring & xml);
     std::wstring ToXML() {return fXMLRep;}
 
-    UInt16 GetArgumentCount() {return fNumArguments;}
+    uint16_t GetArgumentCount() {return fNumArguments;}
 
     // Various operators, they all work pretty much the same as the standard string or wstring operators
     // but note that the all work on the plain text representation (not the XML representation)

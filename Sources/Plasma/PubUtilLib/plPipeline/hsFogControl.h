@@ -62,14 +62,14 @@ protected:
     hsDynamicArray<plKey>   fFogNodes;
 //  hsGEnvironment::FogState            fAvgFog;
 
-    virtual hsScalar    IGetStrength(hsSceneNode* node) = 0;
+    virtual float    IGetStrength(hsSceneNode* node) = 0;
 
     void                IPopNodes();
     void                IPushNodes();
 
     void                IZeroAvgFog();
     void                IAverageNodes();
-//  void                IAccumFog(hsGEnvironment* env, hsScalar wgt);
+//  void                IAccumFog(hsGEnvironment* env, float wgt);
 
 public:
     hsFogControl() {}
@@ -78,7 +78,7 @@ public:
     CLASSNAME_REGISTER( hsFogControl );
     GETINTERFACE_ANY( hsFogControl, plCreatable );
 
-    virtual UInt32      GetType() = 0;
+    virtual uint32_t      GetType() = 0;
 
 //  virtual hsGEnvironment* GetHomeEnv() = 0;
     virtual void Init(hsSceneNode* node);
@@ -120,21 +120,21 @@ protected:
     };
 
     hsDynamicArray<plKey>       fPortals;
-    hsScalar                                fDefRadius;
+    float                                fDefRadius;
 
-    UInt32                                  fStatus;
+    uint32_t                                  fStatus;
 
     void                    IFindFogNodes();
-    virtual hsScalar        IGetStrength(hsSceneNode* node);
+    virtual float        IGetStrength(hsSceneNode* node);
 public:
     hsPortalFogControl();
 
-    void SetDefaultRadius(hsScalar r) { fDefRadius = r; }
-    hsScalar GetDefaultRadius() { return fDefRadius; }
+    void SetDefaultRadius(float r) { fDefRadius = r; }
+    float GetDefaultRadius() { return fDefRadius; }
 
     hsPortal* GetPortal(int i);
 
-    virtual UInt32      GetType() { return kFogCtlPortal; }
+    virtual uint32_t      GetType() { return kFogCtlPortal; }
 
     virtual void Init(hsSceneNode* node);
     virtual void Blend();

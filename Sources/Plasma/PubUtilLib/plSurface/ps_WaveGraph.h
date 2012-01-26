@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const UInt32 ps_WaveGraphByteLen = 80;
+static const uint32_t ps_WaveGraphbyteLen = 80;
 
-static const UInt8 ps_WaveGraphCodes[] = {
+static const uint8_t ps_WaveGraphCodes[] = {
     0x1,    0x1,    0xff,   0xff,
     0x42,   0x0,    0x0,    0x0,
     0x0,    0x0,    0xf,    0xb0,
@@ -66,7 +66,7 @@ static const UInt8 ps_WaveGraphCodes[] = {
     0xff,   0xff,   0x0,    0x0
     };
 
-static const plShaderDecl ps_WaveGraphDecl("sha/ps_WaveGraph.inl", ps_WaveGraph, ps_WaveGraphByteLen, ps_WaveGraphCodes);
+static const plShaderDecl ps_WaveGraphDecl("sha/ps_WaveGraph.inl", ps_WaveGraph, ps_WaveGraphbyteLen, ps_WaveGraphCodes);
 
 static const plShaderRegister ps_WaveGraphRegister(&ps_WaveGraphDecl);
 

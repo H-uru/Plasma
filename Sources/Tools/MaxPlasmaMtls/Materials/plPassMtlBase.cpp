@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsBitVector.h"
 
 #include "Max.h"
@@ -126,7 +126,7 @@ bool plPostLoadHandler::fLoading = false;
 plPassMtlBase::plPassMtlBase( BOOL loading ) : fNTWatcher( nil ), fBasicPB(NULL), fAdvPB(NULL), fLayersPB(NULL), fAnimPB(NULL),
                                  fLoading( loading )
 {
-    fNTWatcher = TRACKED_NEW plNoteTrackWatcher( this );
+    fNTWatcher = new plNoteTrackWatcher( this );
     Reset();
 }
 
@@ -536,14 +536,14 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
                             (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) );
-            myNew->SetEaseIn( (UInt8)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMax ) );
-            myNew->SetEaseOut( (UInt8)fAnimPB->GetInt( (ParamID)kPBAnimEaseOutType ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
-                                (hsScalar)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
+            myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMax ) );
+            myNew->SetEaseOut( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseOutType ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
+                                (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
 #pragma warning( pop )
         }               
     }

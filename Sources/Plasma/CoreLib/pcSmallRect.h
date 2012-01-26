@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-//  pcSmallRect - A tiny Int16-based 2D rectangle class                      //
+//  pcSmallRect - A tiny int16_t-based 2D rectangle class                      //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -53,27 +53,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pcSmallRect_h
 #define _pcSmallRect_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class hsStream;
 class pcSmallRect
 {
     public:
-        Int16   fX, fY, fWidth, fHeight;
+        int16_t   fX, fY, fWidth, fHeight;
 
         pcSmallRect() { Empty(); }
-        pcSmallRect( Int16 x, Int16 y, Int16 w, Int16 h ) { Set( x, y, w, h ); }
+        pcSmallRect( int16_t x, int16_t y, int16_t w, int16_t h ) { Set( x, y, w, h ); }
         
-        void    Set( Int16 x, Int16 y, Int16 w, Int16 h ) { fX = x; fY = y; fWidth = w; fHeight = h; }
+        void    Set( int16_t x, int16_t y, int16_t w, int16_t h ) { fX = x; fY = y; fWidth = w; fHeight = h; }
         void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
 
-        Int16   GetRight( void ) const { return fX + fWidth; }
-        Int16   GetBottom( void ) const { return fY + fHeight; }
+        int16_t   GetRight( void ) const { return fX + fWidth; }
+        int16_t   GetBottom( void ) const { return fY + fHeight; }
 
         void    Read( hsStream *s );
         void    Write( hsStream *s );
 
-        hsBool  Contains( Int16 x, Int16 y ) { if( x >= fX && x <= fX + fWidth && y >= fY && y <= fY + fHeight ) return true; return false; }
+        hsBool  Contains( int16_t x, int16_t y ) { if( x >= fX && x <= fX + fWidth && y >= fY && y <= fY + fHeight ) return true; return false; }
 };
 
 

@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plDynaDecal.h"
 #include "plAuxSpan.h"
 
-hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
+hsBool plDynaSplot::Age(double t, float ramp, float decay, float life)
 {
-    hsScalar age = hsScalar(t - fBirth);
+    float age = float(t - fBirth);
     if( age >= life )
         return true;
 
@@ -55,7 +55,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     if( !n )
         return true;
 
-    hsScalar atten = fInitAtten;
+    float atten = fInitAtten;
     if( age < ramp )
     {
         atten *= age / ramp;
@@ -83,7 +83,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -98,13 +98,13 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     {
         const int stride = sizeof(plDecalVtxFormat);
 
-        hsScalar* sPtr = &origUVW->fZ;
+        float* sPtr = &origUVW->fZ;
 
         unsigned char* alpha = (unsigned char*)&fVtxBase->fDiffuse;
         alpha += 3;
         while( n-- )
         {
-            hsScalar initOpac = *sPtr;
+            float initOpac = *sPtr;
             *alpha = (unsigned char)(initOpac * atten * 255.99f);
 
             alpha += stride;
@@ -113,7 +113,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     }
     else
     {
-        hsScalar* sPtr = &origUVW->fZ;
+        float* sPtr = &origUVW->fZ;
 
         char* oPtr = (char*)&fVtxBase->fUVW[1].fX;
 
@@ -121,7 +121,7 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            (*(hsScalar*)oPtr) = *sPtr * atten;
+            (*(float*)oPtr) = *sPtr * atten;
 
             oPtr += stride;
             sPtr += 3;
@@ -130,9 +130,9 @@ hsBool plDynaSplot::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     return false;
 }
 
-hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
+hsBool plDynaRipple::Age(double t, float ramp, float decay, float life)
 {
-    hsScalar age = hsScalar(t - fBirth);
+    float age = float(t - fBirth);
     if( age >= life )
         return true;
 
@@ -140,7 +140,7 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     if( !n )
         return true;
 
-    hsScalar atten = fInitAtten;
+    float atten = fInitAtten;
     if( age < ramp )
     {
         atten *= age / ramp;
@@ -150,8 +150,8 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         atten *= (life - age) / (life - decay);
     }
 
-    hsScalar scaleU = fC1U / (age*fC2U + 1.f);
-    hsScalar scaleV = fC1V / (age*fC2V + 1.f);
+    float scaleU = fC1U / (age*fC2U + 1.f);
+    float scaleV = fC1V / (age*fC2V + 1.f);
 
     hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
@@ -161,7 +161,7 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -210,9 +210,9 @@ hsBool plDynaRipple::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     return false;
 }
 
-hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
+hsBool plDynaWake::Age(double t, float ramp, float decay, float life)
 {
-    hsScalar age = hsScalar(t - fBirth);
+    float age = float(t - fBirth);
     if( age >= life )
         return true;
 
@@ -220,7 +220,7 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     if( !n )
         return true;
 
-    hsScalar atten = fInitAtten;
+    float atten = fInitAtten;
     if( age < ramp )
     {
         atten *= age / ramp;
@@ -230,8 +230,8 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         atten *= (life - age) / (life - decay);
     }
 
-    hsScalar scaleU = fC1U / (age*fC2U + 1.f);
-    hsScalar scaleV = fC1V / (age*fC2V + 1.f);
+    float scaleU = fC1U / (age*fC2U + 1.f);
+    float scaleV = fC1V / (age*fC2V + 1.f);
 
     hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
@@ -241,7 +241,7 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -290,9 +290,9 @@ hsBool plDynaWake::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     return false;
 }
 
-hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
+hsBool plDynaWave::Age(double t, float ramp, float decay, float life)
 {
-    hsScalar age = hsScalar(t - fBirth);
+    float age = float(t - fBirth);
     if( age >= life )
         return true;
 
@@ -300,7 +300,7 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     if( !n )
         return true;
 
-    hsScalar atten = fInitAtten;
+    float atten = fInitAtten;
     if( age < ramp )
     {
         atten *= age / ramp;
@@ -310,8 +310,8 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
         atten *= (life - age) / (life - decay);
     }
 
-    hsScalar scale = 1.f + life * fScrollRate;
-    hsScalar scroll = -fScrollRate * age;
+    float scale = 1.f + life * fScrollRate;
+    float scroll = -fScrollRate * age;
 
     hsPoint3* origUVW = &fAuxSpan->fOrigUVW[fStartVtx];
 
@@ -321,7 +321,7 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
 
         while( n-- )
         {
-            UInt32 diff = UInt32(origUVW->fZ * atten * 255.99f);
+            uint32_t diff = uint32_t(origUVW->fZ * atten * 255.99f);
             vtx->fDiffuse = 0xff000000 
                 | (diff << 16)
                 | (diff << 8)
@@ -370,9 +370,9 @@ hsBool plDynaWave::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
     return false;
 }
 
-hsBool plDynaRippleVS::Age(double t, hsScalar ramp, hsScalar decay, hsScalar life)
+hsBool plDynaRippleVS::Age(double t, float ramp, float decay, float life)
 {
-    hsScalar age = hsScalar(t - fBirth);
+    float age = float(t - fBirth);
     if( age >= life )
         return true;
 

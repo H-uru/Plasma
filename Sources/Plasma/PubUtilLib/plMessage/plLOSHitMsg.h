@@ -58,8 +58,8 @@ public:
     plKey               fObj;
     hsPoint3            fHitPoint;
     hsBool              fNoHit;
-    UInt32              fRequestID;
-    UInt32              fHitFlags;
+    uint32_t              fRequestID;
+    uint32_t              fHitFlags;
     hsVector3           fNormal;
     float               fDistance;
 

@@ -69,17 +69,17 @@ public:
     };
 
     plSoundEvent( Types type, plSound *owner );
-    plSoundEvent( Types type, UInt32 bytePos, plSound *owner );
+    plSoundEvent( Types type, uint32_t bytePos, plSound *owner );
     plSoundEvent();
     ~plSoundEvent();
 
     void    AddCallback( plEventCallbackMsg *msg );
     hsBool  RemoveCallback( plEventCallbackMsg *msg );
 
-    UInt32  GetNumCallbacks( void ) const;
+    uint32_t  GetNumCallbacks( void ) const;
     int     GetType( void ) const;
     void    SetType( Types type );
-    UInt32  GetTime( void ) const;
+    uint32_t  GetTime( void ) const;
 
     void    SendCallbacks( void );
 
@@ -88,11 +88,11 @@ public:
 protected:
 
     Types       fType;
-    UInt32      fBytePosTime;
+    uint32_t      fBytePosTime;
     plSound     *fOwner;
 
     hsTArray<plEventCallbackMsg *>  fCallbacks;
-    hsTArray<UInt8>                 fCallbackEndingFlags;
+    hsTArray<uint8_t>                 fCallbackEndingFlags;
 };
 
 

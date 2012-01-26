@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsResMgr.h"
 #include "hsTimer.h"
 #include "hsGeometry3.h"
@@ -168,10 +168,10 @@ void plSound::IUpdateDebugPlate( void )
         }
 
         fDebugPlate->SetVisible( true );
-        fDebugPlate->AddData( (Int32)( fDesiredVol * 100.f ), 
-                              (Int32)( fCurrVolume * 100.f ),
-                              (Int32)( fSoftVolume * 100.f ),
-                              (Int32)( fDistAttenuation * 100.f ) );
+        fDebugPlate->AddData( (int32_t)( fDesiredVol * 100.f ), 
+                              (int32_t)( fCurrVolume * 100.f ),
+                              (int32_t)( fSoftVolume * 100.f ),
+                              (int32_t)( fDistAttenuation * 100.f ) );
     }
 }
 
@@ -311,7 +311,7 @@ void plSound::SynchedPlay(unsigned bytes )
 //  we're given, NOT the current time, 'cause, well, duh, that should be our
 //  start time!
 //  So think of it as "Play() but act as if you started at *this* time"...
-void plSound::SynchedPlay( hsScalar virtualStartTime )
+void plSound::SynchedPlay( float virtualStartTime )
 {
     if( fFading )
         IStopFade();
@@ -432,7 +432,7 @@ void plSound::SetOuterVolume(const int v)
     fOuterVol = v;
 }
 
-void plSound::SetConeOrientation( hsScalar x, hsScalar y, hsScalar z )
+void plSound::SetConeOrientation( float x, float y, float z )
 {
     fConeOrientation.Set( x, y, z );
 }
@@ -561,9 +561,9 @@ void plSound::Update()
     }
 }
 
-hsScalar plSound::IGetChannelVolume( void ) const
+float plSound::IGetChannelVolume( void ) const
 {
-    hsScalar channelVol = plgAudioSys::GetChannelVolume( (plgAudioSys::ASChannel)fType );
+    float channelVol = plgAudioSys::GetChannelVolume( (plgAudioSys::ASChannel)fType );
 
     // if not using hardware acceleration then apply 2D/3D bias to non 3D sounds
     if( !plgAudioSys::Hardware() && !IsPropertySet( kPropIs3DSound ) )
@@ -575,7 +575,7 @@ hsScalar plSound::IGetChannelVolume( void ) const
     return channelVol * plgAudioSys::GetGlobalFadeVolume();
 }
 
-void plSound::IStartFade( plFadeParams *params, hsScalar offsetIntoFade )
+void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
 {
     fFading = true;
 
@@ -924,27 +924,27 @@ void plSound::ISetSoftOcclusionRegion( plSoftVolume *region )
 /////////////////////////////////////////////////////////////////////////
 //  This function calculates our new softVolume value. Used both to update the
 //  said value and so the audio system can rank us in importance.
-hsScalar plSound::CalcSoftVolume( hsBool enable, hsScalar distToListenerSquared )
+float plSound::CalcSoftVolume( hsBool enable, float distToListenerSquared )
 {
     // Do distance-based attenuation ourselves
 #if MCN_HACK_OUR_ATTEN
     if( IsPropertySet( kPropIs3DSound ) )
     {
-        hsScalar    minDist = (hsScalar)GetMin();
+        float    minDist = (float)GetMin();
         if( distToListenerSquared <= minDist * minDist )
         {
             fDistAttenuation = 1.f;
         }
         else
         {
-            hsScalar    maxDist = (hsScalar)GetMax();
+            float    maxDist = (float)GetMax();
             if( distToListenerSquared >= maxDist * maxDist )
             {
                 fDistAttenuation = 0.f;
             }
             else
             {
-                hsScalar d = (hsScalar)sqrt( distToListenerSquared );
+                float d = (float)sqrt( distToListenerSquared );
                 fDistAttenuation = minDist / d;
 
                 // The following line ramps it to 0 at the maxDistance. Kinda klunky, but good for now I guess...
@@ -959,8 +959,8 @@ hsScalar plSound::CalcSoftVolume( hsBool enable, hsScalar distToListenerSquared 
     // ramp down to 0 so we don't get annoying popping when we stop stuff
     if( IsPropertySet( kPropIs3DSound ) )
     {
-        hsScalar    maxDistSquared = (hsScalar)( GetMax() * GetMax() );
-        hsScalar    distToStartSquared = (hsScalar)(maxDistSquared * 0.50);
+        float    maxDistSquared = (float)( GetMax() * GetMax() );
+        float    distToStartSquared = (float)(maxDistSquared * 0.50);
 
         if( maxDistSquared < 0.f )  // Happens when the max distance is REALLY big
         {
@@ -999,21 +999,21 @@ hsScalar plSound::CalcSoftVolume( hsBool enable, hsScalar distToListenerSquared 
 //  Wee function for the audio system. This basically returns the effective
 //  current volume of this sound. Useful for doing things like ranking all
 //  sounds based on volume.
-hsScalar plSound::GetVolumeRank( void )
+float plSound::GetVolumeRank( void )
 {
     if( !IsPlaying() && !this->IActuallyPlaying() )
         return 0.f;
 
-    hsScalar    rank = fSoftVolume * fDesiredVol;
+    float    rank = fSoftVolume * fDesiredVol;
 
     if( IsPropertySet( kPropIs3DSound ) )
     {
-        hsScalar minDistSquared = (hsScalar)( GetMin() * GetMin() );
-        hsScalar maxDistSquared = (hsScalar) (GetMax() * GetMax());
+        float minDistSquared = (float)( GetMin() * GetMin() );
+        float maxDistSquared = (float) (GetMax() * GetMax());
         hsPoint3 listenerPos = plgAudioSys::Sys()->GetCurrListenerPos();
         if( fDistToListenerSquared > minDistSquared )
         {
-            hsScalar diff = maxDistSquared - minDistSquared;
+            float diff = maxDistSquared - minDistSquared;
             rank *= fabs((fDistToListenerSquared - maxDistSquared)) / diff;  
         }
     }
@@ -1036,7 +1036,7 @@ hsBool plSound::IWillBeAbleToPlay( void )
 /////////////////////////////////////////////////////////////////////////
 //  Tests to see whether this sound is within range of the position given,
 //  ignoring soft volumes.
-hsBool plSound::IsWithinRange( const hsPoint3 &listenerPos, hsScalar *distSquared )
+hsBool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
 {
     if( !IsPropertySet( plSound::kPropIs3DSound ) )
     {
@@ -1056,7 +1056,7 @@ hsBool plSound::IsWithinRange( const hsPoint3 &listenerPos, hsScalar *distSquare
     if( GetMax() == 1000000000 )
         return true;
 
-    hsScalar    soundRadius = (hsScalar)( GetMax() * GetMax() );
+    float    soundRadius = (float)( GetMax() * GetMax() );
 
     return ( distance.MagnitudeSquared() <= soundRadius ) ? true : false;
 }
@@ -1107,7 +1107,7 @@ void plSound::UpdateSoftVolume( hsBool enable, hsBool firstTime )
 
             // Note: we just do it as a fade because it makes it easier on us that way!
             fCoolSoftVolumeTrickParams.fCurrTime = 0.f;
-            fCoolSoftVolumeTrickParams.fLengthInSecs = firstTime ? 0.f : (hsScalar)fLength + ( (hsScalar)fLength - (hsScalar)GetTime() );
+            fCoolSoftVolumeTrickParams.fLengthInSecs = firstTime ? 0.f : (float)fLength + ( (float)fLength - (float)GetTime() );
             fCoolSoftVolumeTrickParams.fStopWhenDone = true;
             fCoolSoftVolumeTrickParams.fFadeSoftVol = true;
             fCoolSoftVolumeTrickParams.fType = plFadeParams::kLinear;
@@ -1125,7 +1125,7 @@ void plSound::UpdateSoftVolume( hsBool enable, hsBool firstTime )
 
 /////////////////////////////////////////////////////////////////////////
 // Returns the current volume, attenuated
-hsScalar plSound::QueryCurrVolume( void ) const
+float plSound::QueryCurrVolume( void ) const
 {
     return IAttenuateActualVolume( fCurrVolume ) * IGetChannelVolume();
 }
@@ -1133,7 +1133,7 @@ hsScalar plSound::QueryCurrVolume( void ) const
 /////////////////////////////////////////////////////////////////////////
 //  Used by ISetActualVolume(). Does the final attenuation on a volume before
 //  sending it to the sound processing. Only does soft regions for now.
-hsScalar plSound::IAttenuateActualVolume( hsScalar volume ) const
+float plSound::IAttenuateActualVolume( float volume ) const
 {
     if( fNotHighEnoughPriority )
         return 0.f;
@@ -1297,7 +1297,7 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fFadeOutParams.Read( s );
 
     // Read in soft volume key
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftVolume ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftVolume ), plRefFlags::kActiveRef );
 
     // Read in the data buffer key
     fDataBufferKey = mgr->ReadKey( s );
@@ -1306,7 +1306,7 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fEAXSettings.Read( s );
 
     // EAX soft keys
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
 }
 
 void plSound::IWrite( hsStream *s, hsResMgr *mgr )
@@ -1367,9 +1367,9 @@ void plSound::plFadeParams::Write( hsStream *s )
     s->WriteLE( fFadeSoftVol );
 }
 
-hsScalar plSound::plFadeParams::InterpValue( void )
+float plSound::plFadeParams::InterpValue( void )
 {
-    hsScalar    val;
+    float    val;
 
     switch( fType )
     {
@@ -1382,7 +1382,7 @@ hsScalar plSound::plFadeParams::InterpValue( void )
             break;
         case kExponential:
             val = fCurrTime / fLengthInSecs;
-            val = ( (hsScalar)sqrt( val ) * ( fVolEnd - fVolStart ) ) + fVolStart;
+            val = ( (float)sqrt( val ) * ( fVolEnd - fVolStart ) ) + fVolStart;
             break;
         default:
             val = 0.f;
@@ -1390,7 +1390,7 @@ hsScalar plSound::plFadeParams::InterpValue( void )
     return val;
 }
 
-void plSound::SetFadeInEffect( plSound::plFadeParams::Type type, hsScalar length )
+void plSound::SetFadeInEffect( plSound::plFadeParams::Type type, float length )
 {
     fFadeInParams.fLengthInSecs = length;
     fFadeInParams.fType = type;
@@ -1406,7 +1406,7 @@ void plSound::SetFadeInEffect( plSound::plFadeParams::Type type, hsScalar length
         fFading = false;
 }
 
-void plSound::SetFadeOutEffect( plSound::plFadeParams::Type type, hsScalar length )
+void plSound::SetFadeOutEffect( plSound::plFadeParams::Type type, float length )
 {
     fFadeOutParams.fLengthInSecs = length;
     fFadeOutParams.fType = type;
@@ -1416,15 +1416,15 @@ void plSound::SetFadeOutEffect( plSound::plFadeParams::Type type, hsScalar lengt
     fFadeOutParams.fStopWhenDone = true;
 }
 
-plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
 
     if( fOuterCone < 360 )
     {
-        hsScalar len = (hsScalar)GetMax();
-        hsScalar halfAng = hsScalarDegToRad(hsScalar(fInnerCone) * 0.5f);
-        hsScalar radius = len * tanf(halfAng);
+        float len = (float)GetMax();
+        float halfAng = hsDegreesToRadians(float(fInnerCone) * 0.5f);
+        float radius = len * tanf(halfAng);
         if( fInnerCone < 180 )
             len = -len;
         myDraw = plDrawableGenerator::GenerateConicalDrawable(
@@ -1437,8 +1437,8 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
             &idx,
             myDraw);
 
-        len = (hsScalar)GetMin();
-        halfAng = hsScalarDegToRad(hsScalar(fOuterCone) * 0.5f);
+        len = (float)GetMin();
+        halfAng = hsDegreesToRadians(float(fOuterCone) * 0.5f);
         radius = len * tanf(halfAng);
         if( fOuterCone < 180 )
             len = -len;
@@ -1457,7 +1457,7 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
     {
         myDraw = plDrawableGenerator::GenerateSphericalDrawable(
             hsPoint3(0,0,0), 
-            (hsScalar)GetMin(), 
+            (float)GetMin(), 
             mat, 
             l2w, 
             true,
@@ -1467,7 +1467,7 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
 
         myDraw = plDrawableGenerator::GenerateSphericalDrawable(
             hsPoint3(0,0,0), 
-            (hsScalar)GetMax(), 
+            (float)GetMax(), 
             mat, 
             l2w, 
             true,
@@ -1480,7 +1480,7 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
 
 
 // call when state has changed
-hsBool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, UInt32 sendFlags)
+hsBool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, uint32_t sendFlags)
 {
     /*
     if( sdlName == nil )
@@ -1502,9 +1502,9 @@ void plSoundVolumeApplicator::IApply( const plAGModifier *mod, double time )
     plScalarChannel *chan = plScalarChannel::ConvertNoRef( fChannel );
     if(chan)
     {
-        hsScalar volume = chan->Value( time );
+        float volume = chan->Value( time );
 
-        hsScalar digitalVolume = (float)pow( 10.f, volume / 20.f );
+        float digitalVolume = (float)pow( 10.f, volume / 20.f );
 
         // Find the audio interface and thus the plSound from it
         plSceneObject *so = mod->GetTarget( 0 );

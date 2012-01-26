@@ -211,7 +211,7 @@ void NetTransSend (NetTrans * trans) {
 }
 
 //============================================================================
-bool NetTransRecv (unsigned transId, const byte msg[], unsigned bytes) {
+bool NetTransRecv (unsigned transId, const uint8_t msg[], unsigned bytes) {
     NetTrans * trans = FindTransIncRef(transId, "Recv");
 
     if (!trans)

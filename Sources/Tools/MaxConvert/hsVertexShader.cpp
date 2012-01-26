@@ -184,8 +184,8 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
     if( span->fNumVerts == 0 )
         return;
 
-    fShadeColorTable = TRACKED_NEW hsColorRGBA[ span->fNumVerts ];  
-    fIllumColorTable = TRACKED_NEW hsColorRGBA[ span->fNumVerts ];  
+    fShadeColorTable = new hsColorRGBA[ span->fNumVerts ];  
+    fIllumColorTable = new hsColorRGBA[ span->fNumVerts ];  
     
     translucent = IsTranslucent( span->fMaterial );
 
@@ -372,7 +372,7 @@ void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVec
 
 
     /// Allocate temp vertex array
-    vertices = TRACKED_NEW plTmpVertex3[ span->fNumVerts ];
+    vertices = new plTmpVertex3[ span->fNumVerts ];
     for( index = 0; index < span->fNumVerts; index++ )
     {
         span->ExtractVertex( index, &position, &normal, &color, &illum );

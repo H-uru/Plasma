@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLNETMEMBER_inc
 #define PLNETMEMBER_inc
 
-#include "hsConfig.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
@@ -71,8 +71,8 @@ protected:
     friend class plNetClientMsgHandler;
     friend class plNetClientGamePlayMsgHandler;
 
-    Int32   fPeerID;            // low-level netPlayer object for msg send/recv
-    UInt32  fFlags;
+    int32_t   fPeerID;            // low-level netPlayer object for msg send/recv
+    uint32_t  fFlags;
     plNetApp* fNetApp;
 
     // these calls should be made by the client/server app only, 
@@ -90,15 +90,15 @@ public:
     virtual bool IsEqualTo(const plNetMember * other) const = 0;
 
     // getters
-    Int32 GetPeerID() const { return fPeerID; }
-    UInt32 GetFlags() const { return fFlags; }
+    int32_t GetPeerID() const { return fPeerID; }
+    uint32_t GetFlags() const { return fFlags; }
     plNetApp* GetNetApp() { return fNetApp; }
     virtual std::string AsStdString() const = 0;
 
     // setters
-    void SetFlags(UInt32 f) { fFlags=f; }
+    void SetFlags(uint32_t f) { fFlags=f; }
     void SetNetApp(plNetApp* n) { fNetApp=n; }
-    void SetPeerID(Int32 p) { fPeerID=p; }
+    void SetPeerID(int32_t p) { fPeerID=p; }
 };
 
 #endif  // PLNETMEMBER_inc

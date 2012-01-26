@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -114,16 +114,16 @@ public:
     const char * GetAgeDescription() const;
     void    SetAgeDescription( const char * v );
 
-    Int32   GetSequenceNumber() const;
-    void    SetSequenceNumber( Int32 v );
+    int32_t   GetSequenceNumber() const;
+    void    SetSequenceNumber( int32_t v );
     
-    Int32   GetAgeLanguage() const;
-    void    SetAgeLanguage( Int32 v );
+    int32_t   GetAgeLanguage() const;
+    void    SetAgeLanguage( int32_t v );
 
-    UInt32  GetAgeID() const;
-    void    SetAgeID( UInt32 v );
+    uint32_t  GetAgeID() const;
+    void    SetAgeID( uint32_t v );
 
-    UInt32  GetCzarID() const;
+    uint32_t  GetCzarID() const;
 
     bool    IsPublic() const;
 

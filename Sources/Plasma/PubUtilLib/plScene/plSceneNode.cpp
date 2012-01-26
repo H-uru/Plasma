@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSceneNode.h"
 #include "pnDispatch/plDispatch.h"
 #include "plMessage/plNodeCleanupMsg.h"
@@ -96,14 +96,14 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    UInt32 n;
+    uint32_t n;
     int i;
 
     n = s->ReadLE32();
     fSceneObjects.Reset();
     for( i = 0; i < n; i++ )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, i, plNodeRefMsg::kObject);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, i, plNodeRefMsg::kObject);
         plKey key = mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 
@@ -111,7 +111,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     fGenericPool.Reset();
     for( i = 0; i < n; i++ )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
         mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 }
@@ -133,10 +133,10 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 
 void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
 {
-    static hsTArray<Int16> visList;
+    static hsTArray<int16_t> visList;
     visList.SetCount(0);
     GetSpaceTree()->HarvestLeaves(isect, visList);
-    static hsTArray<Int16> visSpans;
+    static hsTArray<int16_t> visSpans;
     visSpans.SetCount(0);
 
     int i;
@@ -155,10 +155,10 @@ void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList
 
 void plSceneNode::CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr)
 {
-    static hsTArray<Int16> visList;
+    static hsTArray<int16_t> visList;
     visList.SetCount(0);
     pipe->HarvestVisible(GetSpaceTree(), visList);
-    static hsTArray<Int16> visSpans;
+    static hsTArray<int16_t> visSpans;
     visSpans.SetCount(0);
 
     int i;

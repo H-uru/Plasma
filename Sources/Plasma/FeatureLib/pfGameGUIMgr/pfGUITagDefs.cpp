@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Tag List ////////////////////////////////////////////////////////////////
 //  Here's the actual list of tags. It's basically a list of konstants, but
 //  they get translated into two things:
-//          1. An enum, to send as a UInt32 to the GetDialogFromTag() and
+//          1. An enum, to send as a uint32_t to the GetDialogFromTag() and
 //             GetControlFromTag() functions.
 //          2. A string, which gets put in a dropdown box in the appropriate
 //             MAX component, which sets the given control's tag ID to the

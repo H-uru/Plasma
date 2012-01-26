@@ -186,7 +186,7 @@ hsBool plNPCSpawnComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         const char *accountName = fCompPB->GetStr(kAccountName);
         bool autoSpawn = fCompPB->GetInt(kAutoSpawn) ? true : false;
 
-        plNPCSpawnMod *mod = TRACKED_NEW plNPCSpawnMod(modelName, accountName, autoSpawn);
+        plNPCSpawnMod *mod = new plNPCSpawnMod(modelName, accountName, autoSpawn);
         fMods[node] = mod;
 
         // this is used by the python file modifier to figure out which component we're coming from
@@ -210,7 +210,7 @@ hsBool plNPCSpawnComp::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 
         // let's make a notification message that we'll use to notify interested parties
         // when we actually do our spawn.
-        plNotifyMsg *notify = TRACKED_NEW plNotifyMsg();
+        plNotifyMsg *notify = new plNotifyMsg();
         hsTArray<plKey> receivers;
         IGetReceivers(node, receivers);
         notify->SetSender(mod->GetKey());

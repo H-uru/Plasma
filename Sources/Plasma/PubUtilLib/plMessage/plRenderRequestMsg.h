@@ -92,19 +92,19 @@ public:
 class plRenderRequestAck: public plMessage
 {
 protected:
-    UInt32          fUserData;
-    UInt32          fNumDrawn; // number of objects drawn.
+    uint32_t          fUserData;
+    uint32_t          fNumDrawn; // number of objects drawn.
 public:
     // Argumentless constructor useless (except for compiling).
     plRenderRequestAck();
-    plRenderRequestAck(plKey r, UInt32 userData=0);
+    plRenderRequestAck(plKey r, uint32_t userData=0);
     ~plRenderRequestAck() {}
 
     CLASSNAME_REGISTER( plRenderRequestAck );
     GETINTERFACE_ANY( plRenderRequestAck, plMessage );
 
-    void        SetNumDrawn(UInt32 n) { fNumDrawn = n; }
-    UInt32      GetNumDrawn() const { return fNumDrawn; }
+    void        SetNumDrawn(uint32_t n) { fNumDrawn = n; }
+    uint32_t      GetNumDrawn() const { return fNumDrawn; }
 
     // These aren't really implemented. Read/Write/Transmission of
     // these messages doesn't currently make sense.

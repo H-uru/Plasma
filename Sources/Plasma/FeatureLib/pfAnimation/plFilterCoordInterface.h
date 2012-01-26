@@ -58,7 +58,7 @@ public:
         kNoNothing  = kNoRotation | kNoMove
     };
 protected:
-    UInt32              fFilterMask;
+    uint32_t              fFilterMask;
     hsMatrix44          fRefParentLocalToWorld;
 
     virtual void IRecalcTransforms(); 
@@ -73,8 +73,8 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 
-    void SetFilterMask(UInt32 f) { fFilterMask = f; }
-    UInt32 GetFilterMask() const { return fFilterMask; }
+    void SetFilterMask(uint32_t f) { fFilterMask = f; }
+    uint32_t GetFilterMask() const { return fFilterMask; }
 
     void SetRefLocalToWorld(const hsMatrix44& m) { fRefParentLocalToWorld = m; }
     const hsMatrix44& GetRefLocalToWorld() const { return fRefParentLocalToWorld; }

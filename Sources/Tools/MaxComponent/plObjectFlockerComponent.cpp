@@ -229,7 +229,7 @@ hsBool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     if (fFlocker)
         delete fFlocker;
 
-    fFlocker = TRACKED_NEW pfObjectFlocker;
+    fFlocker = new pfObjectFlocker;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fFlocker, node->GetLocation(), node->GetLoadMask());
 
     fFlocker->SetGoalWeight(fCompPB->GetFloat(ParamID(kGoalStrength)));

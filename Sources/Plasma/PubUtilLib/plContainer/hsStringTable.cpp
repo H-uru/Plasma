@@ -78,7 +78,7 @@ hsStringTable::Node* hsStringTable::Find(const char* str)
 // at the first point where a unique path can not be determined
 // char* str is filled out with the matching path
 //
-hsStringTable::Node* hsStringTable::FindPartial(char* str, Int32 len) const
+hsStringTable::Node* hsStringTable::FindPartial(char* str, int32_t len) const
 {
     return (str && *str) ? FindPartialRecur(root.kid, str, len) : nil;
 }
@@ -135,7 +135,7 @@ hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, hsBoo
 //
 // Recursively find the unique partial match
 //
-hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, Int32 len) const
+hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, int32_t len) const
 {
     if (!root || !str) 
     {
@@ -169,7 +169,7 @@ hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, Int3
 //
 // Follow the current node as far as possible towards a unique leaf
 //
-hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, Int32 len) const
+hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, int32_t len) const
 {
     if (root->data || !root->kid || root->kid->sib) 
     {
@@ -195,7 +195,7 @@ hsStringTable::Node* hsStringTable::FindLeafRecur(Node* root, char* str, Int32 l
 //
 hsStringTable::Node* hsStringTable::AddRecur(Node* root, const char* str) 
 {
-    Node* node = TRACKED_NEW Node(*str);
+    Node* node = new Node(*str);
     node->sib = root->kid;
     root->kid = node;
     if (*(str+1)) return AddRecur(node,str+1);

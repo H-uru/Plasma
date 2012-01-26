@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTimeMsg.h"
 #include "hsTimer.h"
 
@@ -51,7 +51,7 @@ plTimeMsg::plTimeMsg()
 
 plTimeMsg::plTimeMsg(const plKey &s, 
                 const plKey &r, 
-                const double* t, const hsScalar* d)
+                const double* t, const float* d)
 : plMessage(s, r, t)
 {
     fSeconds = t ? *t : hsTimer::GetSysSeconds();
@@ -70,7 +70,7 @@ plEvalMsg::plEvalMsg()
 
 plEvalMsg::plEvalMsg(const plKey &s, 
                 const plKey &r, 
-                const double* t, const hsScalar* d)
+                const double* t, const float* d)
 : plTimeMsg(s, r, t, d)
 {
 }
@@ -85,7 +85,7 @@ plTransformMsg::plTransformMsg()
 
 plTransformMsg::plTransformMsg(const plKey &s, 
                 const plKey &r, 
-                const double* t, const hsScalar* d)
+                const double* t, const float* d)
 : plTimeMsg(s, r, t, d)
 {
     SetBCastFlag(plMessage::kClearAfterBCast);

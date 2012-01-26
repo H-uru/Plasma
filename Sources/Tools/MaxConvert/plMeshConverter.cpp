@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 #include "iparamb2.h"
 #include "modstack.h"
@@ -115,7 +115,7 @@ class TempWeightInfo
 {
     public:
         float   fWeights[ 4 ];
-        UInt32  fIndices;
+        uint32_t  fIndices;
 };
 
 
@@ -125,13 +125,13 @@ class plMAXVertexAccNode
         hsPoint3    fPoint; // Inefficient space-wise, I know, but it makes this a lot simpler...
         hsVector3   fNormal;
         hsColorRGBA fColor, fIllum;
-        UInt32      fIndex;
+        uint32_t      fIndex;
         hsPoint3    fUVs[ plGeometrySpan::kMaxNumUVChannels ];
-        UInt32      fNumChannels;
+        uint32_t      fNumChannels;
 
         plMAXVertexAccNode  *fNext;
 
-        plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, int numChannels, const hsPoint3 *uvs, UInt32 index );
+        plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, int numChannels, const hsPoint3 *uvs, uint32_t index );
 
         hsBool      IsEqual( const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, const hsPoint3 *uvs );
 };
@@ -145,11 +145,11 @@ class plMAXVertexAccumulator
         int                 fNumPoints, fNumChannels, fNumVertices;
         plMAXVertexAccNode  **fPointList;
 
-        hsTArray<UInt32>    fIndices;
-        hsTArray<UInt32>    fInverseVertTable;
+        hsTArray<uint32_t>    fIndices;
+        hsTArray<uint32_t>    fInverseVertTable;
 
-        void    IFindSkinWeights( ISkinContextData *skinData, int vertex, float *weights, UInt32 *indices );
-        void    IFindUserSkinWeights( plMaxNode* node, Mesh* mesh, int vertex, float *weights, UInt32 *indices );
+        void    IFindSkinWeights( ISkinContextData *skinData, int vertex, float *weights, uint32_t *indices );
+        void    IFindUserSkinWeights( plMaxNode* node, Mesh* mesh, int vertex, float *weights, uint32_t *indices );
         void    IFindAllUserSkinWeights( plMaxNode* node, Mesh* mesh, TempWeightInfo weights[]);
     public:
 
@@ -161,7 +161,7 @@ class plMAXVertexAccumulator
         void        StuffMyData( plMaxNode* node, plGeometrySpan *span, Mesh* mesh, ISkinContextData* skinData );
 
         int         GetVertexCount();
-        UInt32      GetIndexCount( void ) { return fIndices.GetCount(); }
+        uint32_t      GetIndexCount( void ) { return fIndices.GetCount(); }
 };
 
 class plMAXVertNormal
@@ -188,7 +188,7 @@ class plMAXVertNormal
                 if( fNext )
                     fNext->AddNormal( n, s );
                 else
-                    fNext = TRACKED_NEW plMAXVertNormal( ::Normalize(n), s );
+                    fNext = new plMAXVertNormal( ::Normalize(n), s );
             }
             else
             {
@@ -299,7 +299,7 @@ void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint
 
     const char* dbgNodeName = node->GetName();
     Mesh            *mesh;
-    Int32           numVerts;
+    int32_t           numVerts;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
 
     /// Get da mesh
@@ -346,7 +346,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
 
     const char* dbgNodeName = node->GetName();
     Mesh            *mesh;
-    Int32           numFaces, i, j, numVerts;
+    int32_t           numFaces, i, j, numVerts;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
     hsBool          flipOrder, checkForOverflow = false;
 
@@ -358,7 +358,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
     numFaces = mesh->getNumFaces();
     numVerts = mesh->getNumVerts();
 
-    plConvexVolume *bounds = TRACKED_NEW plConvexVolume();
+    plConvexVolume *bounds = new plConvexVolume();
 
     /// Get transforms
     l2wMatrix = node->GetLocalToWorld44();
@@ -379,7 +379,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
         hsPoint3    pos[ 3 ];
         hsPoint3    testPt1, testPt2, testPt3;
         hsVector3   normal;
-        UInt32      vertIdx[ 3 ];
+        uint32_t      vertIdx[ 3 ];
 
         /// Add the 3 vertices to the correct vertex accumulator object
 
@@ -458,7 +458,7 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
     // Cache the original UV verts
     int numVerts = mesh->getNumMapVerts(1);
     int vertBufSize = sizeof(UVVert)*numVerts;
-    UVVert* origVerts = TRACKED_NEW UVVert[vertBufSize];
+    UVVert* origVerts = new UVVert[vertBufSize];
     memcpy(origVerts, mesh->mapVerts(1), vertBufSize);
 
     IDeleteTempGeometry();
@@ -520,15 +520,15 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
     const char* dbgNodeName = node->GetName();
     Mesh            *mesh;
-    Int32           numFaces, i, j, k, numVerts, maxNumBones, maxUVWSrc;
-    Int32           numMaterials = 1, numSubMaterials = 1;
+    int32_t           numFaces, i, j, k, numVerts, maxNumBones, maxUVWSrc;
+    int32_t           numMaterials = 1, numSubMaterials = 1;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
     Mtl             *maxMaterial = nil;
     hsBool          isComposite, isMultiMat, flipOrder, checkForOverflow = false, includesComp;
-    UInt8           ourFormat, numChannels, maxBlendChannels;
+    uint8_t           ourFormat, numChannels, maxBlendChannels;
     hsColorRGBA     *colorArray = nil;
     hsColorRGBA     *illumArray = nil;
-    UInt32          sharedSpanProps = 0;
+    uint32_t          sharedSpanProps = 0;
     hsBitVector     usedSubMtls;
     hsBool          makeAlphaLayer = node->VtxAlphaNotAvailable();
 
@@ -621,7 +621,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         {
             sharedSpanProps |= plGeometrySpan::kPropNoPreShade;
         }
-        hsScalar waterHeight = 0;
+        float waterHeight = 0;
         if( node->GetHasWaterHeight() )
         {
             sharedSpanProps |= plGeometrySpan::kWaterHeight;
@@ -646,7 +646,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         {
             if (mesh->vertCol != nil)
             {
-                colorArray = TRACKED_NEW hsColorRGBA[ mesh->numCVerts ];
+                colorArray = new hsColorRGBA[ mesh->numCVerts ];
                 for( i = 0; i < mesh->numCVerts; i++ )  
                 {   
                     colorArray[i].Set(mesh->vertCol[ i ].x, mesh->vertCol[ i ].y, mesh->vertCol[ i ].z, 1.f);
@@ -666,7 +666,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         if (illumMap != nil)
         {
             // MF_HORSE CARNAGE
-            illumArray = TRACKED_NEW hsColorRGBA[numIllumVerts];
+            illumArray = new hsColorRGBA[numIllumVerts];
             for( i = 0; i < numIllumVerts; i++ )
             {
                 illumArray[i].Set(illumMap[ i ].x, illumMap[ i ].y, illumMap[ i ].z, 1.f);
@@ -783,7 +783,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 continue;
             }
 
-            hsTArray<plMAXVertexAccumulator *> *currAccum = TRACKED_NEW hsTArray<plMAXVertexAccumulator *>;
+            hsTArray<plMAXVertexAccumulator *> *currAccum = new hsTArray<plMAXVertexAccumulator *>;
             int currNumSubMtls = ourMaterials[i]->GetCount();
             currAccum->Reset();
             ourAccumulators[i] = currAccum;
@@ -860,7 +860,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             Face        *maxFace = &mesh->faces[ i ];
             Point3      v0, v1, v2, norm;
 
-            UInt32 smGroup = smoothAll ? 1 : maxFace->getSmGroup();
+            uint32_t smGroup = smoothAll ? 1 : maxFace->getSmGroup();
 
             v0 = mesh->verts[ maxFace->v[ 0 ] ];
             v1 = mesh->verts[ maxFace->v[ 1 ] ];
@@ -873,13 +873,13 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         for( i = 0; i < vertNormalCache.GetCount(); i++ )
             vertNormalCache[ i ].Normalize();
 
-        vertDPosDuCache = TRACKED_NEW hsTArray<plMAXVertNormal>[numMaterials];
-        vertDPosDvCache = TRACKED_NEW hsTArray<plMAXVertNormal>[numMaterials];
+        vertDPosDuCache = new hsTArray<plMAXVertNormal>[numMaterials];
+        vertDPosDvCache = new hsTArray<plMAXVertNormal>[numMaterials];
 
-        hsTArray<Int16>                 bumpLayIdx;
-        hsTArray<Int16>                 bumpLayChan;
-        hsTArray<Int16>                 bumpDuChan;
-        hsTArray<Int16>                 bumpDvChan;
+        hsTArray<int16_t>                 bumpLayIdx;
+        hsTArray<int16_t>                 bumpLayChan;
+        hsTArray<int16_t>                 bumpDuChan;
+        hsTArray<int16_t>                 bumpDvChan;
         ISetBumpUvSrcs(ourMaterials, bumpLayIdx, bumpLayChan, bumpDuChan, bumpDvChan);
         if( node->GetWaterDecEnv() )
             ISetWaterDecEnvUvSrcs(ourMaterials, bumpLayIdx, bumpLayChan, bumpDuChan, bumpDvChan);
@@ -901,7 +901,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             hsPoint3    testPt1, testPt2, testPt3;
             hsVector3   normals[ 3 ];
             hsColorRGBA colors[ 3 ], illums[ 3 ];
-            UInt32      smGroup, vertIdx[ 3 ];
+            uint32_t      smGroup, vertIdx[ 3 ];
             hsPoint3    uvs1[ plGeometrySpan::kMaxNumUVChannels + 1];
             hsPoint3    uvs2[ plGeometrySpan::kMaxNumUVChannels + 1];
             hsPoint3    uvs3[ plGeometrySpan::kMaxNumUVChannels + 1];
@@ -1189,7 +1189,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 if (accum->GetVertexCount() == 0)
                     continue;
 
-                plGeometrySpan      *span = TRACKED_NEW plGeometrySpan;
+                plGeometrySpan      *span = new plGeometrySpan;
 
                 span->BeginCreate( subMats->Get(j).fMaterial, l2wMatrix, ourFormat );
                 span->fLocalToOBB = node->GetLocalToOBB44();
@@ -1214,7 +1214,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
                 span->EndCreate();
 
-                hsScalar minDist, maxDist;
+                float minDist, maxDist;
                 if( hsMaterialConverter::HasVisDists(node, i, minDist, maxDist) )
                 {
                     span->fMinDist = (minDist);
@@ -1345,9 +1345,9 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
 //// ICreateHexColor /////////////////////////////////////////////////////////
 
-UInt32  plMeshConverter::ICreateHexColor( float r, float g, float b )
+uint32_t  plMeshConverter::ICreateHexColor( float r, float g, float b )
 {
-    UInt32      ru, gu, bu, au;
+    uint32_t      ru, gu, bu, au;
 
 
     au = 0xff000000;
@@ -1357,9 +1357,9 @@ UInt32  plMeshConverter::ICreateHexColor( float r, float g, float b )
     return au | ( ru << 16 ) | ( gu << 8 ) | ( bu );
 }
 
-UInt32  plMeshConverter::ISetHexAlpha( UInt32 color, float alpha)
+uint32_t  plMeshConverter::ISetHexAlpha( uint32_t color, float alpha)
 {
-    UInt32 alphaBits = alpha * 255;
+    uint32_t alphaBits = alpha * 255;
     alphaBits <<= 24;
     return color & 0x00ffffff | alphaBits;
 }
@@ -1429,7 +1429,7 @@ Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
 
 Mesh* plMeshConverter::IDuplicate2Sided(plMaxNode* node, Mesh* mesh)
 {
-    mesh = TRACKED_NEW Mesh(*mesh);
+    mesh = new Mesh(*mesh);
 
     Mtl* mtl = node->GetMtl();
 
@@ -1624,10 +1624,10 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
 }
 
 void plMeshConverter::ISetWaterDecEnvUvSrcs(hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                     hsTArray<Int16>& bumpLayIdx, 
-                                     hsTArray<Int16>& bumpLayChan,
-                                     hsTArray<Int16>& bumpDuChan, 
-                                     hsTArray<Int16>& bumpDvChan)
+                                     hsTArray<int16_t>& bumpLayIdx, 
+                                     hsTArray<int16_t>& bumpLayChan,
+                                     hsTArray<int16_t>& bumpDuChan, 
+                                     hsTArray<int16_t>& bumpDvChan)
 {
     bumpLayIdx.SetCount(ourMaterials.GetCount());
     bumpLayChan.SetCount(ourMaterials.GetCount());
@@ -1645,10 +1645,10 @@ void plMeshConverter::ISetWaterDecEnvUvSrcs(hsTArray<hsTArray<plExportMaterialDa
 }
 
 void plMeshConverter::ISetBumpUvSrcs(hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                     hsTArray<Int16>& bumpLayIdx, 
-                                     hsTArray<Int16>& bumpLayChan,
-                                     hsTArray<Int16>& bumpDuChan, 
-                                     hsTArray<Int16>& bumpDvChan)
+                                     hsTArray<int16_t>& bumpLayIdx, 
+                                     hsTArray<int16_t>& bumpLayChan,
+                                     hsTArray<int16_t>& bumpDuChan, 
+                                     hsTArray<int16_t>& bumpDvChan)
 {
     bumpLayIdx.SetCount(ourMaterials.GetCount());
     bumpLayChan.SetCount(ourMaterials.GetCount());
@@ -1690,7 +1690,7 @@ void plMeshConverter::ISetBumpUvSrcs(hsTArray<hsTArray<plExportMaterialData> *>&
     }
 }
 
-void plMeshConverter::ISetBumpUvs(Int16 uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, UInt32 smGroup, 
+void plMeshConverter::ISetBumpUvs(int16_t uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup, 
                                   hsPoint3* uvs1, hsPoint3* uvs2, hsPoint3* uvs3)
 {
     if( uvChan < 0 )
@@ -1708,7 +1708,7 @@ void plMeshConverter::ISetBumpUvs(Int16 uvChan, hsTArray<plMAXVertNormal>& vertD
 // If we decided we needed them, they are in the output arrays, otherwise the output arrays are made empty.
 void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh, 
                                          hsTArray<hsTArray<plExportMaterialData> *>& ourMaterials, 
-                                         hsTArray<Int16>& bumpLayIdx, hsTArray<Int16>& bumpLayChan,
+                                         hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan,
                                          hsTArray<plMAXVertNormal>* vertDPosDuCache, hsTArray<plMAXVertNormal>* vertDPosDvCache)
 {
     const char* dbgNodeName = node->GetName();
@@ -1724,7 +1724,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
         {
             if( bumpLayIdx[matIdx] >= 0 )
             {
-                UInt32 uvwSrc = bumpLayChan[matIdx];
+                uint32_t uvwSrc = bumpLayChan[matIdx];
                 if( mesh->getNumMapVerts(uvwSrc+1) && mesh->mapVerts(uvwSrc+1) )
                 {
                     vertDPosDuCache[matIdx].SetCount(mesh->getNumMapVerts(uvwSrc+1));
@@ -1823,7 +1823,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
 
 // Get dPos/du into uvws[0], and dPos/dv into uvws[1]. dPos should be in the object's local space.
 Point3 plMeshConverter::IGetUvGradient(plMaxNode* node, 
-                                        const hsMatrix44& uvXform44, Int16 bmpUvwSrc, // Transform and uvwSrc of layer to gradient
+                                        const hsMatrix44& uvXform44, int16_t bmpUvwSrc, // Transform and uvwSrc of layer to gradient
                                         Mesh *mesh, int faceIdx, 
                                         int iUV) // 0 = uvw.x, 1 = uv2.y
 {
@@ -1988,7 +1988,7 @@ void    plMeshConverter::IGetUVTransform( plMaxNode *node, Mtl *mtl, Matrix3 *uv
 
 //// plMAXVertexAccNode Constructor //////////////////////////////////////////
 
-plMAXVertexAccNode::plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, int numChannels, const hsPoint3 *uvs, UInt32 index )
+plMAXVertexAccNode::plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, int numChannels, const hsPoint3 *uvs, uint32_t index )
 {
     int     i;
 
@@ -2032,7 +2032,7 @@ plMAXVertexAccumulator::plMAXVertexAccumulator( int numOrigPoints, int numChanne
     fNumPoints = numOrigPoints;
     fNumChannels = numChannels;
 
-    fPointList = TRACKED_NEW plMAXVertexAccNodePtr[ fNumPoints ];
+    fPointList = new plMAXVertexAccNodePtr[ fNumPoints ];
     memset( fPointList, 0, sizeof( plMAXVertexAccNode * ) * fNumPoints );
 
     fIndices.Reset();
@@ -2084,7 +2084,7 @@ void    plMAXVertexAccumulator::AddVertex( int index, hsPoint3 *point, hsVector3
 
 
     /// Adding new
-    node = TRACKED_NEW plMAXVertexAccNode( point, normal, color, illum, fNumChannels, uvs, fNumVertices );
+    node = new plMAXVertexAccNode( point, normal, color, illum, fNumChannels, uvs, fNumVertices );
     fInverseVertTable.Append( index );
     fIndices.Append( fNumVertices++ );
 
@@ -2106,7 +2106,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     TempWeightInfo          *weights = nil;
 
     /// Precalculate the weights if necessary
-    weights = TRACKED_NEW TempWeightInfo[ fNumPoints ];
+    weights = new TempWeightInfo[ fNumPoints ];
     if( skinData != nil )
     {
         for( i = 0; i < fNumPoints; i++ )
@@ -2152,7 +2152,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     {
         for (i = 0; i < fNumPoints; i++)
         {
-            UInt8 indices[4];
+            uint8_t indices[4];
             indices[0] = (weights[i].fIndices) & 0xff;
             indices[1] = (weights[i].fIndices >> 8) & 0xff;
             indices[2] = (weights[i].fIndices >> 16) & 0xff;
@@ -2177,10 +2177,10 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
         }
     }
     
-    hsScalar maxWgt = 0;
-    hsScalar penWgt = 0;
-    Int16 maxIdx = -1;
-    Int16 penIdx = -1;
+    float maxWgt = 0;
+    float penWgt = 0;
+    int16_t maxIdx = -1;
+    int16_t penIdx = -1;
     // Find the highest two weighted bones. We'll use just these two to calculate our bounds.
     for( i = 0; i < fNumPoints; i++ )
     {
@@ -2310,14 +2310,14 @@ void plMAXVertexAccumulator::IFindAllUserSkinWeights( plMaxNode* node, Mesh* mes
 
 //// IFindSkinWeights ////////////////////////////////////////////////////////
 //  Finds the biggest weights (up to 4) for the given vertex index and returns
-//  them, along with a dword specifying the indices for each.
+//  them, along with a uint32_t specifying the indices for each.
 
 void    plMAXVertexAccumulator::IFindSkinWeights( ISkinContextData *skinData, 
                                                   int vertex, 
-                                                  float *weights, UInt32 *indices )
+                                                  float *weights, uint32_t *indices )
 {
     float   tempWs[ 4 ], tempW, t;
-    UInt32  idxs[ 4 ], tempIdx, tI;
+    uint32_t  idxs[ 4 ], tempIdx, tI;
     int     i, j;
 
     tempWs[ 0 ] = tempWs[ 1 ] = tempWs[ 2 ] = tempWs[ 3 ] = 0;
@@ -2327,7 +2327,7 @@ void    plMAXVertexAccumulator::IFindSkinWeights( ISkinContextData *skinData,
 
     if( boneCount )
     {
-        hsScalar defWgt = 1.f;
+        float defWgt = 1.f;
         for( i = 0; i < boneCount; i++ )
         {
             /// Grab the weight and index for this bone
@@ -2444,12 +2444,12 @@ void SetWaterColor(plGeometrySpan* span)
 
     const int nVerts = tri.VertCount();
     // Now, set up our accumulators
-    hsTArray<hsScalar> lens;
+    hsTArray<float> lens;
     lens.SetCount(nVerts);
-    memset(lens.AcquireArray(), 0, nVerts * sizeof(hsScalar));
-    hsTArray<hsScalar> wgts;
+    memset(lens.AcquireArray(), 0, nVerts * sizeof(float));
+    hsTArray<float> wgts;
     wgts.SetCount(nVerts);
-    memset(wgts.AcquireArray(), 0, nVerts * sizeof(hsScalar));
+    memset(wgts.AcquireArray(), 0, nVerts * sizeof(float));
 
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
@@ -2461,15 +2461,15 @@ void SetWaterColor(plGeometrySpan* span)
         // Actually, I just realized that the area way kind of sucks, because, 
         // as a parallelogram gets less and less rectangular, the area goes down
         // even as the longest edge (the diagonal) gets longer.
-        hsScalar lenSq20 = hsVector3(&triIter.Position(2), &triIter.Position(0)).MagnitudeSquared();
-        hsScalar lenSq10 = hsVector3(&triIter.Position(1), &triIter.Position(0)).MagnitudeSquared();
-        hsScalar lenSq21 = hsVector3(&triIter.Position(2), &triIter.Position(1)).MagnitudeSquared();
-        hsScalar len = lenSq20;
+        float lenSq20 = hsVector3(&triIter.Position(2), &triIter.Position(0)).MagnitudeSquared();
+        float lenSq10 = hsVector3(&triIter.Position(1), &triIter.Position(0)).MagnitudeSquared();
+        float lenSq21 = hsVector3(&triIter.Position(2), &triIter.Position(1)).MagnitudeSquared();
+        float len = lenSq20;
         if( len < lenSq10 )
             len = lenSq10;
         if( len < lenSq21 )
             len = lenSq21;
-        len = hsSquareRoot(len);
+        len = sqrt(len);
 
         lens[triIter.RawIndex(0)] += len;
         wgts[triIter.RawIndex(0)] += 1.f;
@@ -2492,9 +2492,9 @@ void SetWaterColor(plGeometrySpan* span)
     }
     // Now we might want to smooth this out some
     // This can be repeated for any degree of smoothing
-    hsTArray<hsScalar> smLens;
+    hsTArray<float> smLens;
     smLens.SetCount(nVerts);
-    memset(smLens.AcquireArray(), 0, nVerts * sizeof(hsScalar));
+    memset(smLens.AcquireArray(), 0, nVerts * sizeof(float));
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
     {
@@ -2508,7 +2508,7 @@ void SetWaterColor(plGeometrySpan* span)
             smLens[iVert] += lens[iVert];
             wgts[iVert] += 1.f;
 
-            const hsScalar kSmooth(8.f);
+            const float kSmooth(8.f);
             smLens[iVertNext] += lens[iVert] * kSmooth;
             wgts[iVertNext] += kSmooth;
 
@@ -2526,7 +2526,7 @@ void SetWaterColor(plGeometrySpan* span)
         wgts[iVert] = 0.f; // We'll use them again on smoothing.
     }
 
-    plConst(hsScalar) kNumLens(4.f);
+    plConst(float) kNumLens(4.f);
     // Okay, we have smoothed lengths. We just need to 
     // iterate over the vertices and stuff 1/len into the alpha channel
     // For each vert

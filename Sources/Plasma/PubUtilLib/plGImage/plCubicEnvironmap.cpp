@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCubicEnvironmap.h"
 #include "plMipmap.h"
 
@@ -64,7 +64,7 @@ plCubicEnvironmap::plCubicEnvironmap()
     int     i;
 
     for( i = 0; i < 6; i++ )
-        fFaces[ i ] = TRACKED_NEW plMipmap;
+        fFaces[ i ] = new plMipmap;
 
     fInitialized = false;
 }
@@ -80,9 +80,9 @@ plCubicEnvironmap::~plCubicEnvironmap()
 //// GetTotalSize /////////////////////////////////////////////////////////////
 //  Get the total size in bytes
 
-UInt32  plCubicEnvironmap::GetTotalSize( void ) const
+uint32_t  plCubicEnvironmap::GetTotalSize( void ) const
 {
-    UInt32  size, i;
+    uint32_t  size, i;
 
 
     for( size = 0, i = 0; i < 6; i++ )
@@ -96,9 +96,9 @@ UInt32  plCubicEnvironmap::GetTotalSize( void ) const
 
 //// Read /////////////////////////////////////////////////////////////////////
 
-UInt32  plCubicEnvironmap::Read( hsStream *s )
+uint32_t  plCubicEnvironmap::Read( hsStream *s )
 {
-    UInt32  i, tr = plBitmap::Read( s );
+    uint32_t  i, tr = plBitmap::Read( s );
 
 
     for( i = 0; i < 6; i++ )
@@ -111,9 +111,9 @@ UInt32  plCubicEnvironmap::Read( hsStream *s )
 
 //// Write ////////////////////////////////////////////////////////////////////
 
-UInt32  plCubicEnvironmap::Write( hsStream *s )
+uint32_t  plCubicEnvironmap::Write( hsStream *s )
 {
-    UInt32  i, tw = plBitmap::Write( s );
+    uint32_t  i, tw = plBitmap::Write( s );
 
 
     for( i = 0; i < 6; i++ )
@@ -125,7 +125,7 @@ UInt32  plCubicEnvironmap::Write( hsStream *s )
 //// CopyToFace ///////////////////////////////////////////////////////////////
 //  Export-only: Copy the mipmap given into a face
 
-void    plCubicEnvironmap::CopyToFace( plMipmap *mip, UInt8 face )
+void    plCubicEnvironmap::CopyToFace( plMipmap *mip, uint8_t face )
 {
     hsAssert( face < 6, "Invalid face index in CopyToFace()" );
     hsAssert( fFaces[ face ] != nil, "nil face in CopyToFace()" );

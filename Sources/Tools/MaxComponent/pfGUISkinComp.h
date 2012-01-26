@@ -65,8 +65,8 @@ public:
 
     plLayerTex  *GetSkinBitmap( void );
 
-    virtual UInt32  GetNumMtls( void ) const;
-    virtual Texmap  *GetMtl( UInt32 idx );
+    virtual uint32_t  GetNumMtls( void ) const;
+    virtual Texmap  *GetMtl( uint32_t idx );
 
     enum
     {
@@ -119,7 +119,7 @@ class pfGUISkinEditProc
         HPEN            fDefPen, fOtherPen;
 
         bool            fDragging;
-        UInt8           fDragType;
+        uint8_t           fDragType;
         int             fDragTimer;
         int             fDragOffsetX, fDragOffsetY;
         HCURSOR         fOrigCursor;
@@ -152,7 +152,7 @@ class pfGUISkinEditProc
             kDragAll = kLeft | kTop | kRight | kBottom
         };
 
-        UInt8   IGetDragTypeFlags( int x, int y );
+        uint8_t   IGetDragTypeFlags( int x, int y );
 
         void    IJustDrawOneRect( int whichElement, IParamBlock2 *pb, HDC hDC, HPEN whichPen, int refToIgnore );
 

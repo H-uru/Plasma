@@ -56,10 +56,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDiffBuffer.h"
 #include "plBSDiffBuffer.h"
-#include "hsUtils.h"
+
 #include "hsStream.h"
 
 
@@ -73,7 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  buffer, but if you do, it'll help this class do some internal space 
 //  optimization.
 
-plDiffBuffer::plDiffBuffer( UInt32 newLength, UInt32 oldLength )
+plDiffBuffer::plDiffBuffer( uint32_t newLength, uint32_t oldLength )
 : fBSDiffBuffer( nil )
 , fIsBSDiff( false )
 {
@@ -86,7 +86,7 @@ plDiffBuffer::plDiffBuffer( UInt32 newLength, UInt32 oldLength )
         f16BitMode = false;
 
     fNewLength = newLength;
-    fStream = TRACKED_NEW hsRAMStream();
+    fStream = new hsRAMStream();
     fStream->WriteLE32( fNewLength );
     fStream->WriteBool( f16BitMode );
     fWriting = true;
@@ -98,7 +98,7 @@ plDiffBuffer::plDiffBuffer( UInt32 newLength, UInt32 oldLength )
 //  will be copied, so you don't need to keep it around after you construct
 //  this object.
 
-plDiffBuffer::plDiffBuffer( void *buffer, UInt32 length )
+plDiffBuffer::plDiffBuffer( void *buffer, uint32_t length )
 : fBSDiffBuffer( nil )
 , fStream( nil )
 , fIsBSDiff( false )
@@ -109,12 +109,12 @@ plDiffBuffer::plDiffBuffer( void *buffer, UInt32 length )
          memcmp(buffer,"BSDIFF40",8)==0 )
     {
         // This is a bsdiff buffer. Use plBSDiffBuffer to handle it.
-        fBSDiffBuffer = TRACKED_NEW plBSDiffBuffer(buffer, length);
+        fBSDiffBuffer = new plBSDiffBuffer(buffer, length);
         fIsBSDiff = true;
     }
     else
     {
-        fStream = TRACKED_NEW hsRAMStream();
+        fStream = new hsRAMStream();
         fStream->Write( length, buffer );
         fStream->Rewind();
 
@@ -141,14 +141,14 @@ plDiffBuffer::~plDiffBuffer()
 //  supplied will be copied internally, so you can discard it after you call
 //  this function. 
 
-void    plDiffBuffer::Add( Int32 length, void *newData )
+void    plDiffBuffer::Add( int32_t length, void *newData )
 {
     hsAssert( fWriting, "Trying to Add() to a difference buffer that's reading" );
 
     // We flag our two different op types by the sign of the length. Negative
     // lengths are an add operation, positive ones are copy ops.
     if( f16BitMode )
-        fStream->WriteLE16( -( (Int16)length ) );
+        fStream->WriteLE16( -( (int16_t)length ) );
     else
         fStream->WriteLE32( -length );
     fStream->Write( length, newData );
@@ -157,7 +157,7 @@ void    plDiffBuffer::Add( Int32 length, void *newData )
 //// Copy ////////////////////////////////////////////////////////////////////
 //  Copy() appends a Copy-Data-From-Old operation to the diff buffer. 
 
-void    plDiffBuffer::Copy( Int32 length, UInt32 oldOffset )
+void    plDiffBuffer::Copy( int32_t length, uint32_t oldOffset )
 {
     hsAssert( fWriting, "Trying to Copy() to a difference buffer that's reading" );
 
@@ -165,8 +165,8 @@ void    plDiffBuffer::Copy( Int32 length, UInt32 oldOffset )
     // lengths are an add operation, positive ones are copy ops.
     if( f16BitMode )
     {
-        fStream->WriteLE16( (Int16)length );
-        fStream->WriteLE16( (UInt16)oldOffset );
+        fStream->WriteLE16( (int16_t)length );
+        fStream->WriteLE16( (uint16_t)oldOffset );
     }
     else
     {
@@ -182,12 +182,12 @@ void    plDiffBuffer::Copy( Int32 length, UInt32 oldOffset )
 //  function will rewind the diff stream, so once you call it, you can't do
 //  anything else on the object.
 
-void    plDiffBuffer::GetBuffer( UInt32 &length, void *&bufferPtr )
+void    plDiffBuffer::GetBuffer( uint32_t &length, void *&bufferPtr )
 {
     hsAssert( fWriting, "Trying to GetBuffer() on a difference buffer that's reading" );
 
     length = fStream->GetPosition();
-    bufferPtr = (void *)TRACKED_NEW UInt8[ length ];
+    bufferPtr = (void *)new uint8_t[ length ];
 
     fStream->Rewind();
     fStream->Read( length, bufferPtr );
@@ -205,7 +205,7 @@ void    plDiffBuffer::GetBuffer( UInt32 &length, void *&bufferPtr )
 
 #define hsAssertAndBreak( cond, msg ) { if( cond ) { hsAssert( false, msg ); break; } }
 
-void    plDiffBuffer::Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLength, void *&newBuffer )
+void    plDiffBuffer::Apply( uint32_t oldLength, void *oldBuffer, uint32_t &newLength, void *&newBuffer )
 {
     hsAssert( !fWriting, "Trying to Apply() a difference buffer that's writing" );
 
@@ -218,24 +218,24 @@ void    plDiffBuffer::Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLengt
 
     /// Step 1: Allocate the new buffer
     newLength = fNewLength;
-    UInt8 *new8Buffer = TRACKED_NEW UInt8[ newLength ];
-    UInt8 *old8Buffer = (UInt8 *)oldBuffer;
+    uint8_t *new8Buffer = new uint8_t[ newLength ];
+    uint8_t *old8Buffer = (uint8_t *)oldBuffer;
     newBuffer = (void *)new8Buffer;
 
 
     /// Step 2: Loop through the difference stream
-    Int32   opLength;
-    UInt32  newBufferPos = 0;
+    int32_t   opLength;
+    uint32_t  newBufferPos = 0;
     while( newBufferPos < newLength )
     {
         // Read in the op length
         if( f16BitMode )
         {
-            Int16 opLen16 = fStream->ReadLE16();
+            int16_t opLen16 = fStream->ReadLE16();
             if( opLen16 < 0 )
-                opLength = -( (Int32)( -opLen16 ) );
+                opLength = -( (int32_t)( -opLen16 ) );
             else
-                opLength = (UInt32)opLen16;
+                opLength = (uint32_t)opLen16;
         }
         else
             opLength = fStream->ReadLE32();
@@ -252,7 +252,7 @@ void    plDiffBuffer::Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLengt
         else
         {
             // Copy op, so get the old offset and copy from there
-            UInt32 oldOffset = f16BitMode ? fStream->ReadLE16() : fStream->ReadLE32();
+            uint32_t oldOffset = f16BitMode ? fStream->ReadLE16() : fStream->ReadLE32();
 
             hsAssertAndBreak( newBufferPos + opLength > newLength, "Destination buffer offset in plDiffBuffer() is out of range!" );
             hsAssertAndBreak( oldOffset + opLength > oldLength, "Difference buffer offset in plDiffBuffer() is out of range of the old buffer!" );

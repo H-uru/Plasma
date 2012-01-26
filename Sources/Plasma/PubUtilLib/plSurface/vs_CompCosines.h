@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const UInt32 vs_CompCosinesByteLen = 168;
+static const uint32_t vs_CompCosinesbyteLen = 168;
 
-static const UInt8 vs_CompCosinesCodes[] = {
+static const uint8_t vs_CompCosinesCodes[] = {
     0x1,    0x1,    0xfe,   0xff,
     0x1f,   0x0,    0x0,    0x0,
     0x0,    0x0,    0x0,    0x80,
@@ -88,7 +88,7 @@ static const UInt8 vs_CompCosinesCodes[] = {
     0xff,   0xff,   0x0,    0x0
     };
 
-static const plShaderDecl vs_CompCosinesDecl("sha/vs_CompCosines.inl", vs_CompCosines, vs_CompCosinesByteLen, vs_CompCosinesCodes);
+static const plShaderDecl vs_CompCosinesDecl("sha/vs_CompCosines.inl", vs_CompCosines, vs_CompCosinesbyteLen, vs_CompCosinesCodes);
 
 static const plShaderRegister vs_CompCosinesRegister(&vs_CompCosinesDecl);
 

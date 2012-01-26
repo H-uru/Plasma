@@ -40,24 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsFiles.h"
+#include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
-
-#include <windows.h>
 
 #include "hsExceptions.h"
 
 struct hsFolderIterator_Data {
     HANDLE          fSearchHandle;
     WIN32_FIND_DATA fFindData;
-    Boolean         fValid;
+    bool         fValid;
 };
 
 hsFolderIterator::hsFolderIterator(const char path[], bool useCustomFilter)
 {
    fCustomFilter = useCustomFilter;
 
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
    fData->fSearchHandle = nil;
    fData->fValid = true;
    
@@ -185,14 +184,14 @@ const char* hsFolderIterator::GetFileName() const
 struct hsWFolderIterator_Data {
     HANDLE              fSearchHandle;
     WIN32_FIND_DATAW    fFindData;
-    Boolean             fValid;
+    bool             fValid;
 };
 
-hsWFolderIterator::hsWFolderIterator(const wchar path[], bool useCustomFilter)
+hsWFolderIterator::hsWFolderIterator(const wchar_t path[], bool useCustomFilter)
 {
     fCustomFilter = useCustomFilter;
 
-    fData = TRACKED_NEW hsWFolderIterator_Data;
+    fData = new hsWFolderIterator_Data;
     fData->fSearchHandle = nil;
     fData->fValid = true;
 
@@ -207,7 +206,7 @@ hsWFolderIterator::~hsWFolderIterator()
     delete fData;
 }
 
-void hsWFolderIterator::SetPath(const wchar path[])
+void hsWFolderIterator::SetPath(const wchar_t path[])
 {
     fCustomFilter = false;
     fPath[0] = 0;
@@ -216,7 +215,7 @@ void hsWFolderIterator::SetPath(const wchar path[])
         wcscpy(fPath, path);
 
         // Make sure the dir ends with a slash
-        wchar lastchar = fPath[wcslen(fPath)-1];
+        wchar_t lastchar = fPath[wcslen(fPath)-1];
         if (lastchar != L'\\' && lastchar != L'/')
             wcscat(fPath, L"\\");
     }
@@ -224,7 +223,7 @@ void hsWFolderIterator::SetPath(const wchar path[])
     Reset();
 }
 
-void hsWFolderIterator::SetWinSystemDir(const wchar subdir[])
+void hsWFolderIterator::SetWinSystemDir(const wchar_t subdir[])
 {
     int ret = GetWindowsDirectoryW(fPath, _MAX_PATH);
     hsAssert(ret != 0, "Error getting windows directory in UseWindowsFontsPath");
@@ -238,7 +237,7 @@ void hsWFolderIterator::SetWinSystemDir(const wchar subdir[])
     Reset();
 }
 
-void hsWFolderIterator::SetFileFilterStr(const wchar filterStr[])
+void hsWFolderIterator::SetFileFilterStr(const wchar_t filterStr[])
 {
     fPath[0] = 0;
     if (filterStr)
@@ -309,7 +308,7 @@ hsBool  hsWFolderIterator::IsDirectory( void ) const
     return false;
 }
 
-const wchar* hsWFolderIterator::GetFileName() const
+const wchar_t* hsWFolderIterator::GetFileName() const
 {
     if (fData->fValid == false)
         hsThrow( "end of folder");

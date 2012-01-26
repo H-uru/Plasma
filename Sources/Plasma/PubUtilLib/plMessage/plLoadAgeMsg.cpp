@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plLoadAgeMsg.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 #include "hsBitVector.h"
 
 void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)    
@@ -52,11 +52,11 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     delete [] fAgeFilename;
     
     // read agename
-    UInt8 len;
+    uint8_t len;
     stream->ReadLE(&len);
     if (len)
     {
-        fAgeFilename=TRACKED_NEW char[len+1];
+        fAgeFilename=new char[len+1];
         stream->Read(len, fAgeFilename);
         fAgeFilename[len]=0;
     }
@@ -70,7 +70,7 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);  
 
     // write agename
-    UInt8 len=fAgeFilename?hsStrlen(fAgeFilename):0;
+    uint8_t len=fAgeFilename?hsStrlen(fAgeFilename):0;
     stream->WriteLE(len);
     if (len)
     {

@@ -71,8 +71,8 @@ class plSceneInputInterface : public plInputInterface
     protected:
         static plSceneInputInterface        *fInstance;
         
-        UInt32  fCurrentCursor;
-        UInt8   fButtonState;
+        uint32_t  fCurrentCursor;
+        uint8_t   fButtonState;
         hsBool  fClickability;      
         plKey   fCurrentClickable, fLastClicked, fCurrentClickableLogicMod;
         hsPoint3 fCurrentClickPoint;
@@ -82,7 +82,7 @@ class plSceneInputInterface : public plInputInterface
         int     fBookMode; // are we in offer book mode?
         plKey   fBookKey;  // key for the python file modifier for the book we are offering
         plKey   fOffereeKey;
-        UInt32  fOffereeID; // ID for the guy who's accepted our link offer
+        uint32_t  fOffereeID; // ID for the guy who's accepted our link offer
         const char* fOfferedAgeFile;
         const char* fOfferedAgeInstance;
         const char* fSpawnPoint;
@@ -106,10 +106,10 @@ class plSceneInputInterface : public plInputInterface
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         
-        void    IRequestLOSCheck( hsScalar xPos, hsScalar yPos, int ID );
+        void    IRequestLOSCheck( float xPos, float yPos, int ID );
         void    ISetLastClicked( plKey obj, hsPoint3 hitPoint );
         void    IHalfFadeAvatar(hsBool out);
 
@@ -128,9 +128,9 @@ class plSceneInputInterface : public plInputInterface
 
         // Always return true, since the cursor should be representing how we control the avatar
         virtual hsBool  HasInterestingCursorID( void ) const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
-        virtual UInt32  GetPriorityLevel( void ) const { return kSceneInteractionPriority; }
-        virtual UInt32  GetCurrentCursorID( void ) const {return fCurrentCursor;}
-        UInt32          SetCurrentCursorID(UInt32 id);
+        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority; }
+        virtual uint32_t  GetCurrentCursorID( void ) const {return fCurrentCursor;}
+        uint32_t          SetCurrentCursorID(uint32_t id);
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
         void            RequestAvatarTurnToPointLOS();
 

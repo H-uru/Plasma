@@ -148,7 +148,7 @@ static ARRAYOBJ(plKey)  s_receivers;
 static void ShutdownFactories () {
 
     while (Factory * factory = s_factories.Head())
-        DEL(factory);
+        delete factory;
 }
 
 //============================================================================
@@ -200,7 +200,7 @@ void IGameMgr::RecvGameInstance (const Srv2Cli_GameMgr_GameInstance & msg, void 
             cli = internal->gameCli;
     }
 
-    DEL(state);
+    delete state;
 }
 
 //============================================================================
@@ -228,7 +228,7 @@ void IGameMgr::Recv (GameMsgHeader * msg) {
     void * param;
     if (TransState * trans = s_trans.Find(msg->transId)) {
         param       = trans->param;
-        DEL(trans);
+        delete trans;
     }
     else {
         param       = nil;
@@ -280,14 +280,14 @@ pfGameMgrMsg::pfGameMgrMsg () {
 //============================================================================
 pfGameMgrMsg::~pfGameMgrMsg () {
 
-    FREE(netMsg);
+    free(netMsg);
 }
 
 //============================================================================
 void pfGameMgrMsg::Set (const GameMsgHeader & msg) {
 
-    netMsg = (GameMsgHeader *)ALLOC(msg.messageBytes);
-    MemCopy(netMsg, &msg, msg.messageBytes);
+    netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
+    memcpy(netMsg, &msg, msg.messageBytes);
 }
 
 
@@ -307,14 +307,14 @@ pfGameCliMsg::pfGameCliMsg () {
 //============================================================================
 pfGameCliMsg::~pfGameCliMsg () {
 
-    FREE(netMsg);
+    free(netMsg);
 }
 
 //============================================================================
 void pfGameCliMsg::Set (pfGameCli * cli, const GameMsgHeader & msg) {
 
-    netMsg = (GameMsgHeader *)ALLOC(msg.messageBytes);
-    MemCopy(netMsg, &msg, msg.messageBytes);
+    netMsg = (GameMsgHeader *)malloc(msg.messageBytes);
+    memcpy(netMsg, &msg, msg.messageBytes);
     gameCli     = cli;
 }
 
@@ -351,7 +351,7 @@ pfGameCli * pfGameMgr::GetGameCli (unsigned gameId) const {
 }
 
 //============================================================================
-const wchar * pfGameMgr::GetGameNameByTypeId (const Uuid & gameTypeId) const {
+const wchar_t * pfGameMgr::GetGameNameByTypeId (const Uuid & gameTypeId) const {
 
     if (Factory * factory = s_factories.Find(gameTypeId))
         return factory->reg.name;
@@ -382,7 +382,7 @@ void pfGameMgr::JoinGame (
     unsigned        gameId
 ) {
     Cli2Srv_GameMgr_JoinGame msg;
-    ZERO(msg);
+    memset(&msg, 0, sizeof(msg));
     
     msg.messageId       = kCli2Srv_GameMgr_JoinGame;
     msg.recvGameId      = 0;            // send to GameMgr on server
@@ -415,7 +415,7 @@ void pfGameMgr::CreateGame (
         - sizeof(msg->createData)
         + initBytes;
         
-    msg = (Cli2Srv_GameMgr_CreateGame *)_alloca(msgBytes);
+    msg = (Cli2Srv_GameMgr_CreateGame *)malloc(msgBytes);
         
     msg->messageId          = kCli2Srv_GameMgr_CreateGame;
     msg->recvGameId         = 0;            // send to GameMgr on server
@@ -423,9 +423,11 @@ void pfGameMgr::CreateGame (
     msg->createOptions      = createOptions;
     msg->messageBytes       = msgBytes;
     msg->createDataBytes    = initBytes;
-    MemCopy(msg->createData, initData, initBytes);
+    memcpy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+
+    free(msg);
 }
 
 //============================================================================
@@ -443,7 +445,7 @@ void pfGameMgr::JoinCommonGame (
         - sizeof(msg->createData)
         + initBytes;
         
-    msg = (Cli2Srv_GameMgr_JoinGame *)_alloca(msgBytes);
+    msg = (Cli2Srv_GameMgr_JoinGame *)malloc(msgBytes);
         
     msg->messageId          = kCli2Srv_GameMgr_JoinGame;
     msg->recvGameId         = 0;            // send to GameMgr on server
@@ -452,9 +454,11 @@ void pfGameMgr::JoinCommonGame (
     msg->createOptions      = kGameJoinCommon;
     msg->messageBytes       = msgBytes;
     msg->createDataBytes    = initBytes;
-    MemCopy(msg->createData, initData, initBytes);
+    memcpy(msg->createData, initData, initBytes);
 
     GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+
+    free(msg);
 }
 
 
@@ -475,7 +479,7 @@ pfGameCli::pfGameCli (
 //============================================================================
 pfGameCli::~pfGameCli () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -491,7 +495,7 @@ const Uuid & pfGameCli::GetGameTypeId () const {
 }
 
 //============================================================================
-const wchar * pfGameCli::GetName () const {
+const wchar_t * pfGameCli::GetName () const {
 
     return internal->factory->reg.name;
 }
@@ -651,7 +655,7 @@ void GameMgrSend (GameMsgHeader * msg, void * param) {
 
     if (param) {
         msg->transId = INextTransId();
-        (void)NEW(TransState)(msg->transId, param);
+        (void)new TransState(msg->transId, param);
     }
     else {
         msg->transId = 0;

@@ -84,7 +84,7 @@ public:
 
     hsRadixSort();
 
-    Elem*   Sort(Elem* inList, UInt32 flags = 0);
+    Elem*   Sort(Elem* inList, uint32_t flags = 0);
 
 };
 

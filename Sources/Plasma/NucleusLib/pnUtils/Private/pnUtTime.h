@@ -77,19 +77,19 @@ struct TimeElapsedDesc {
 };
 
 void TimeGetDesc (
-    qword             time,
+    uint64_t             time,
     TimeDesc *        desc
 );
 
 void TimeGetElapsedDesc (
-    dword             minutesElapsed,
+    uint32_t             minutesElapsed,
     TimeElapsedDesc * desc
 );
 
 void TimePrettyPrint (
-    qword       time,
+    uint64_t       time,
     unsigned    chars,
-    wchar *     buffer
+    wchar_t *     buffer
 );
 
 
@@ -99,31 +99,31 @@ void TimePrettyPrint (
 *
 ***/
 
-const qword kTimeIntervalsPerMs         = 10000;
-const qword kTimeIntervalsPerSecond     = 1000 * kTimeIntervalsPerMs;
-const qword kTimeIntervalsPerMinute     = 60 * kTimeIntervalsPerSecond;
-const qword kTimeIntervalsPerHour       = 60 * kTimeIntervalsPerMinute;
-const qword kTimeIntervalsPerDay        = 24 * kTimeIntervalsPerHour;
+const uint64_t kTimeIntervalsPerMs         = 10000;
+const uint64_t kTimeIntervalsPerSecond     = 1000 * kTimeIntervalsPerMs;
+const uint64_t kTimeIntervalsPerMinute     = 60 * kTimeIntervalsPerSecond;
+const uint64_t kTimeIntervalsPerHour       = 60 * kTimeIntervalsPerMinute;
+const uint64_t kTimeIntervalsPerDay        = 24 * kTimeIntervalsPerHour;
 
 // millisecond timer; wraps ~49 days
-dword TimeGetMs ();
+uint32_t TimeGetMs ();
 
 // 100 nanosecond intervals; won't wrap in our lifetimes
-qword TimeGetTime ();
-qword TimeGetLocalTime ();
+uint64_t TimeGetTime ();
+uint64_t TimeGetLocalTime ();
 
 // Minutes elapsed since 2001 UTC
-dword TimeGetMinutes ();
+uint32_t TimeGetMinutes ();
 
 // Seconds elapsed since 00:00:00 January 1, 2001 UTC
-dword TimeGetSecondsSince2001Utc ();
+uint32_t TimeGetSecondsSince2001Utc ();
 
 // Seconds elapsed since 00:00:00 January 1, 1970 UTC (the Unix Epoch)
-dword TimeGetSecondsSince1970Utc ();
+uint32_t TimeGetSecondsSince1970Utc ();
 
 
 // These magic numbers taken from Microsoft's "Shared Source CLI implementation" source code.
 // http://msdn.microsoft.com/library/en-us/Dndotnet/html/mssharsourcecli.asp
 
-static const qword kTime1601To1970  = 11644473600 * kTimeIntervalsPerSecond;
-static const qword kTime1601To2001  = 12622780800 * kTimeIntervalsPerSecond;
+static const uint64_t kTime1601To1970  = 11644473600 * kTimeIntervalsPerSecond;
+static const uint64_t kTime1601To2001  = 12622780800 * kTimeIntervalsPerSecond;

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKey_h_inc
 #define plKey_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRefFlags.h"
 
 class hsKeyedObject;
@@ -117,9 +117,9 @@ public:
     //----------------------
     virtual void Release(plKey targetKey)=0;
 
-    virtual UInt16      GetActiveRefs() const = 0;
+    virtual uint16_t      GetActiveRefs() const = 0;
 
-    virtual UInt16      GetNumNotifyCreated() const = 0;
+    virtual uint16_t      GetNumNotifyCreated() const = 0;
     virtual plRefMsg*   GetNotifyCreated(int i) const = 0;
     virtual const hsBitVector& GetActiveBits() const = 0;
 
@@ -151,7 +151,7 @@ protected:
     friend class plKey;
 
     // Refcount--the number of plKeys that have pointers to us.
-    UInt16 fRefCount;
+    uint16_t fRefCount;
 };
 
 #endif // plKey_h_inc

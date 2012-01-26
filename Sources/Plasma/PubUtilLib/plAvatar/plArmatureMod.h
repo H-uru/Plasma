@@ -112,7 +112,7 @@ public:
     virtual hsBool  MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);   
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
     
@@ -134,7 +134,7 @@ public:
     void    RefreshTree();              // Resend an LOD update to all our nodes (for when geometry changes)
     int     AppendMeshKey(plKey meshKey);
     int     AppendBoneVec(plKeyVector *boneVec);
-    UInt8   GetNumLOD() const;
+    uint8_t   GetNumLOD() const;
     
     // A collection of reasons (flags) that things might be disabled. When all flags are gone
     // The object is re-enabled.
@@ -147,9 +147,9 @@ public:
         kDisableReasonVehicle   = 0x0010,
         kDisableReasonGenericBrain  = 0x0020,
     };  
-    void EnablePhysics(hsBool status, UInt16 reason = kDisableReasonUnknown);
+    void EnablePhysics(hsBool status, uint16_t reason = kDisableReasonUnknown);
     void EnablePhysicsKinematic(hsBool status);
-    void EnableDrawing(hsBool status, UInt16 reason = kDisableReasonUnknown);   
+    void EnableDrawing(hsBool status, uint16_t reason = kDisableReasonUnknown);   
     hsBool IsPhysicsEnabled() { return fDisabledPhysics == 0; }
     hsBool IsDrawEnabled() { return fDisabledDraw == 0; }
 
@@ -177,7 +177,7 @@ protected:
         kNeedApplicator         = 0x20,
         kNeedBrainActivation    = 0x40,
     };
-    UInt16 fWaitFlags;  
+    uint16_t fWaitFlags;  
     
     int fCurLOD;
     plPhysicalControllerCore* fController;
@@ -185,8 +185,8 @@ protected:
     plBrainStack fBrains;   
     plMatrixDifferenceApp *fRootAnimator;
     std::vector<plKeyVector*> fUnusedBones;
-    UInt16 fDisabledPhysics;
-    UInt16 fDisabledDraw;
+    uint16_t fDisabledPhysics;
+    uint16_t fDisabledDraw;
 };
 
 class plArmatureMod : public plArmatureModBase
@@ -207,7 +207,7 @@ public:
     virtual hsBool  MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
 
@@ -222,8 +222,8 @@ public:
     hsBool IsLocalAvatar();
     hsBool IsLocalAI();
     virtual const plSceneObject *FindBone(const char * name) const;
-    virtual const plSceneObject *FindBone(UInt32 id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
-    virtual void AddBoneMapping(UInt32 id, const plSceneObject *bone);
+    virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
+    virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);
     plAGModifier *GetRootAGMod();
     plAGAnim *FindCustomAnim(const char *baseName) const;
 
@@ -239,13 +239,13 @@ public:
     int GetBrainCount();
     plArmatureBrain *GetNextBrain(plArmatureBrain *brain);
     plArmatureBrain *GetBrain(int index) { if(index <= fBrains.size()) return fBrains.at(index); else return nil; }
-    plArmatureBrain *FindBrainByClass(UInt32 classID) const;
+    plArmatureBrain *FindBrainByClass(uint32_t classID) const;
 
     void TurnToPoint(hsPoint3 &point);
     void SuspendInput();
     void ResumeInput();
     
-    UInt8       IsInputSuspended() { return fSuspendInputCount; }
+    uint8_t       IsInputSuspended() { return fSuspendInputCount; }
     void        IProcessQueuedInput();
     void        PreserveInputState();
     void        RestoreInputState();
@@ -253,9 +253,9 @@ public:
     void        SetInputFlag(int which, hsBool status);
     void        ClearInputFlags(bool saveAlwaysRun, bool clearBackup);
     hsBool      HasMovementFlag() const; // Is any *movement* input flag on?
-    hsScalar    GetTurnStrength() const;
-    hsScalar    GetKeyTurnStrength() const;
-    hsScalar    GetAnalogTurnStrength() const;
+    float    GetTurnStrength() const;
+    float    GetKeyTurnStrength() const;
+    float    GetAnalogTurnStrength() const;
     void        SetReverseFBOnIdle(bool val);
     hsBool      IsFBReversed();
 
@@ -281,12 +281,12 @@ public:
     void GetMoveKeyString(char *buff);
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
-    void SynchInputState(UInt32 rcvID = kInvalidPlayerID);  
-    hsBool DirtySynchState(const char* SDLStateName, UInt32 synchFlags );
-    hsBool DirtyPhysicalSynchState(UInt32 synchFlags);
+    void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
+    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
+    hsBool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
     plClothingSDLModifier *GetClothingSDLMod() const { return fClothingSDLMod; }
-    const plSceneObject *GetClothingSO(UInt8 lod) const;
+    const plSceneObject *GetClothingSO(uint8_t lod) const;
     plArmatureEffectsMgr *GetArmatureEffects() const { return fEffects; }
 
     enum
@@ -299,7 +299,7 @@ public:
     };
 
     const char *GetAnimRootName(const char *name);
-    Int8 AnimNameToIndex(const char *name);
+    int8_t AnimNameToIndex(const char *name);
     void SetBodyType(int type) { fBodyType = type; }
     int  GetBodyType(int type) { return fBodyType; }
     int  GetCurrentGenericType();
@@ -321,11 +321,11 @@ public:
     bool    IsMidLink();
     hsBool  ConsumeJump(); // returns true if the jump keypress was available to consume
 
-    void SendBehaviorNotify(UInt32 type, hsBool start = true) { IFireBehaviorNotify(type,start); }
+    void SendBehaviorNotify(uint32_t type, hsBool start = true) { IFireBehaviorNotify(type,start); }
     // Discovered a bug which makes these values horribly out of scale. So we do the rescale
     // in the Get/Set functions for backwards compatability.
-    static void     SetMouseTurnSensitivity(hsScalar val) { fMouseTurnSensitivity = val / 150.f; }
-    static hsScalar GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
+    static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
+    static float GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
     
     static void SetSpawnPointOverride( const char *overrideObjName );
     static void WindowActivate(bool active);
@@ -361,11 +361,11 @@ public:
     };
     plMatrixDelayedCorrectionApplicator *fBoneRootAnimator;
 
-    static const hsScalar kAvatarInputSynchThreshold;
+    static const float kAvatarInputSynchThreshold;
     static hsBool fClickToTurn;
     static const char *BoneStrings[];
     
-    void SetPhysicalDims(hsScalar height, hsScalar width) { fPhysHeight = height; fPhysWidth = width; }
+    void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
 
     void SetBodyAgeName(const char* ageName) {if (ageName) fBodyAgeName = ageName; else fBodyAgeName = "";}
     void SetBodyFootstepSoundPage(const char* pageName) {if (pageName) fBodyFootstepSoundPage = pageName; else fBodyFootstepSoundPage = "";}
@@ -381,7 +381,7 @@ protected:
     
     void    NetworkSynch(double timeNow, int force = 0);
     hsBool  IHandleControlMsg(plControlEventMsg* pMsg);
-    void    IFireBehaviorNotify(UInt32 type, hsBool behaviorStart = true);
+    void    IFireBehaviorNotify(uint32_t type, hsBool behaviorStart = true);
     void    IHandleInputStateMsg(plAvatarInputStateMsg *msg);
     void    ILinkToPersonalAge();
     int     IFindSpawnOverride(void);
@@ -393,14 +393,14 @@ protected:
     hsBitVector         fMoveFlagsBackup;   // a copy of fMoveFlags
     typedef std::vector<plControlEventMsg*> CtrlMessageVec;
     CtrlMessageVec      fQueuedCtrlMessages;    // input messages we haven't processed
-    hsScalar            fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
+    float            fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
     plKey               fFootSoundSOKey;    // The Scene Object we attach to targets for footstep sounds
     plKey               fLinkSoundSOKey;    // Same thing for linking... wwwwawAWAWAwawa...
     plKey               fLinkInAnimKey;     // Set when we link out, this is the anim to play (backwards) when we link in.
-    static hsScalar     fMouseTurnSensitivity;
+    static float     fMouseTurnSensitivity;
     plArmatureUpdateMsg *fUpdateMsg;    
     
-    // Trying to be a good lad here and align all our bools and UInt8s...
+    // Trying to be a good lad here and align all our bools and bytes...
     bool fMidLink;          // We're in between a LeaveAge and an EnterAge
     bool fAlreadyPanicLinking;  // Cleared when you enter an age. Prevents spamming the server with panic link requests.
     bool fUnconsumedJump;   // We've pressed the jump key, but haven't jumped yet
@@ -408,8 +408,8 @@ protected:
     bool fPendingSynch;
     bool fDebugOn;
     bool fOpaque;
-    UInt8 fSuspendInputCount;   
-    UInt8 fStealthMode;
+    uint8_t fSuspendInputCount;   
+    uint8_t fStealthMode;
     int fStealthLevel;  // you are invisible to other players/CCRs of lower stealthLevel
     
     double      fLastInputSynch;
@@ -473,14 +473,14 @@ public:
     plAvBoneMap();
     virtual ~plAvBoneMap();
 
-    const plSceneObject * FindBone(UInt32 boneID);          // you probably want to use plAvBrainHuman::BoneID;
-    void AddBoneMapping(UInt32 boneID, const plSceneObject *SO);
+    const plSceneObject * FindBone(uint32_t boneID);          // you probably want to use plAvBrainHuman::BoneID;
+    void AddBoneMapping(uint32_t boneID, const plSceneObject *SO);
 
 protected:
     class BoneMapImp;       // forward declaration to keep the header clean: see .cpp for implementation
     BoneMapImp *fImp;       // the thing that actually holds our map
 };
 
-#define TWO_PI (hsScalarPI * 2)
+#define TWO_PI (M_PI * 2)
 
 #endif //plArmatureMod_inc

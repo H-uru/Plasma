@@ -50,7 +50,7 @@ class plNetVoiceListMsg : public plMessage
 {
 protected:
 
-    hsTArray<UInt32>    fClientIDs;
+    hsTArray<uint32_t>    fClientIDs;
     int                 fCmd;
     plKey               fRemoved;
 
@@ -63,7 +63,7 @@ public:
     };
 
     plNetVoiceListMsg() : plMessage(nil, nil, nil), fCmd( 0 ) { SetBCastFlag(kBCastByExactType); }
-    plNetVoiceListMsg( UInt32 cmd ) : 
+    plNetVoiceListMsg( uint32_t cmd ) : 
                 plMessage(nil, nil, nil), fCmd( cmd )
                 { SetBCastFlag( kBCastByExactType ); }
     
@@ -72,8 +72,8 @@ public:
     CLASSNAME_REGISTER( plNetVoiceListMsg );
     GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );
 
-    UInt32      GetCmd( void ) { return fCmd; }
-    hsTArray<UInt32>* GetClientList( void ) { return &fClientIDs; };
+    uint32_t      GetCmd( void ) { return fCmd; }
+    hsTArray<uint32_t>* GetClientList( void ) { return &fClientIDs; };
     plKey GetRemovedKey() { return fRemoved; }
     void SetRemovedKey(plKey& k) { fRemoved = k; }
     virtual void Read(hsStream* s, hsResMgr* mgr); 

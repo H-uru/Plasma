@@ -107,14 +107,14 @@ class TBaseHashTable;
 
 class CHashValue {
 private:
-    static const dword s_hashTable[];
+    static const uint32_t s_hashTable[];
 
-    dword m_result;
+    uint32_t m_result;
 
     inline void Construct () { m_result = 0x325d1eae; }
 
 public:
-    static dword LookupHashBits (unsigned value) { ASSERT(value < 0x100); return s_hashTable[value]; }
+    static uint32_t LookupHashBits (unsigned value) { ASSERT(value < 0x100); return s_hashTable[value]; }
 
     inline CHashValue () { Construct() ; }
     inline CHashValue (const CHashValue & source) { m_result = source.m_result; }
@@ -122,7 +122,7 @@ public:
     inline CHashValue & operator= (const CHashValue & source) { m_result = source.m_result; return *this; }
     inline bool operator== (const CHashValue & source) const { return (m_result == source.m_result); }
 
-    inline dword GetHash () const { return m_result; }
+    inline uint32_t GetHash () const { return m_result; }
 
     forceinline void Hash   (const void * data, unsigned bytes);
     forceinline void Hash8  (unsigned data);
@@ -133,7 +133,7 @@ public:
 
 //===========================================================================
 void CHashValue::Hash (const void * data, unsigned bytes) {
-    for (const byte * curr = (const byte *)data, * term = curr + bytes; curr != term; ++curr)
+    for (const uint8_t * curr = (const uint8_t *)data, * term = curr + bytes; curr != term; ++curr)
         Hash8(*curr);
 }
 
@@ -341,7 +341,7 @@ void TBaseHashTable<T>::Clear () {
 //===========================================================================
 template<class T>
 void TBaseHashTable<T>::Delete (T * object) {
-    DEL(object);
+    delete object;
 }
 
 //===========================================================================
@@ -359,13 +359,13 @@ unsigned & TBaseHashTable<T>::GetHash (T * object) {
 //===========================================================================
 template<class T>
 const THashLink<T> & TBaseHashTable<T>::GetLink (const T * object) const {
-    return *(const THashLink<T> *)((const byte *)object + m_linkOffset);
+    return *(const THashLink<T> *)((const uint8_t *)object + m_linkOffset);
 }
 
 //===========================================================================
 template<class T>
 THashLink<T> & TBaseHashTable<T>::GetLink (T * object) {
-    return *(THashLink<T> *)((byte *)object + m_linkOffset);
+    return *(THashLink<T> *)((uint8_t *)object + m_linkOffset);
 }
 
 //===========================================================================
@@ -555,7 +555,7 @@ template<class T, class K>
 T * THashTable<T,K>::Unduplicate (T * object, const K & key) {
     T * existing = Find(key);
     if (existing) {
-        DEL(object);
+        delete object;
         return existing;
     }
     else {
@@ -706,8 +706,8 @@ public:
     }
 };
 
-typedef THashKeyStrPtr< wchar, THashKeyStrCmp<wchar> >  CHashKeyStrPtr;
-typedef THashKeyStrPtr< wchar, THashKeyStrCmpI<wchar> > CHashKeyStrPtrI;
+typedef THashKeyStrPtr< wchar_t, THashKeyStrCmp<wchar_t> >  CHashKeyStrPtr;
+typedef THashKeyStrPtr< wchar_t, THashKeyStrCmpI<wchar_t> > CHashKeyStrPtrI;
 typedef THashKeyStrPtr< char, THashKeyStrCmp<char> >    CHashKeyStrPtrChar;
 typedef THashKeyStrPtr< char, THashKeyStrCmpI<char> >   CHashKeyStrPtrCharI;
 
@@ -730,7 +730,7 @@ public:
     }
     void SetString (const C str[]) {  // deprecated
         if (this->m_str)
-            FREE(const_cast<C *>(this->m_str));
+            free(const_cast<C *>(this->m_str));
         if (str)
             this->m_str = StrDup(str);
         else
@@ -738,7 +738,7 @@ public:
     }
 };
 
-typedef THashKeyStr< wchar, THashKeyStrCmp<wchar> >  CHashKeyStr;
-typedef THashKeyStr< wchar, THashKeyStrCmpI<wchar> > CHashKeyStrI;
+typedef THashKeyStr< wchar_t, THashKeyStrCmp<wchar_t> >  CHashKeyStr;
+typedef THashKeyStr< wchar_t, THashKeyStrCmpI<wchar_t> > CHashKeyStrI;
 typedef THashKeyStr< char, THashKeyStrCmp<char> >    CHashKeyStrChar;
 typedef THashKeyStr< char, THashKeyStrCmpI<char> >   CHashKeyStrCharI;

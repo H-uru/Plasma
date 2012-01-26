@@ -40,28 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "plClosest.h"
 #include "hsFastMath.h"
 
 
-static const hsScalar kRealSmall = 1.e-5f;
+static const float kRealSmall = 1.e-5f;
 
 // Find the closest point on a line (or segment) to a point.
-UInt32 plClosest::PointOnLine(const hsPoint3& p0,
+uint32_t plClosest::PointOnLine(const hsPoint3& p0,
                   const hsPoint3& p1, const hsVector3& v1,
                   hsPoint3& cp,
-                  UInt32 clamp)
+                  uint32_t clamp)
 {
-    hsScalar invV1Sq = v1.MagnitudeSquared();
+    float invV1Sq = v1.MagnitudeSquared();
     // v1 is also zero length. The two input points are the only options for output.
     if( invV1Sq < kRealSmall )
     {
         cp = p1;
         return kClamp;
     }
-    hsScalar t = v1.InnerProduct(p0 - p1) / invV1Sq;
+    float t = v1.InnerProduct(p0 - p1) / invV1Sq;
     cp = p1;
     // clamp to the ends of segment v1.
     if( (clamp & kClampLower1) && (t < 0) )
@@ -79,12 +79,12 @@ UInt32 plClosest::PointOnLine(const hsPoint3& p0,
 }
 
 // Find closest points to each other from two lines (or segments).
-UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0, 
+uint32_t plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0, 
                   const hsPoint3& p1, const hsVector3& v1,
                   hsPoint3& cp0, hsPoint3& cp1,
-                  UInt32 clamp)
+                  uint32_t clamp)
 {
-    hsScalar invV0Sq = v0.MagnitudeSquared();
+    float invV0Sq = v0.MagnitudeSquared();
     // First handle degenerate cases.
     // v0 is zero length. Resolves to finding closest point on p1+v1 to p0
     if( invV0Sq < kRealSmall )
@@ -139,7 +139,7 @@ UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
     
     // Check for the vectors v0 and v1 being parallel, in which case
     // following the lines won't get us to any closer point.
-    hsScalar DV0dotDV0 = DV0.InnerProduct(DV0);
+    float DV0dotDV0 = DV0.InnerProduct(DV0);
     if( DV0dotDV0 < kRealSmall )
     {
         // If neither is clamped, return any two corresponding points.
@@ -147,14 +147,14 @@ UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
         // If both are clamped, well, both are clamped. The distance between
         //      points will no longer be the distance between lines.
         // In any case, the distance between the points should be correct.
-        UInt32 clamp1 = PointOnLine(p0, p1, v1, cp1, clamp);
-        UInt32 clamp0 = PointOnLine(cp1, p0, v0, cp0, clamp >> 1);
+        uint32_t clamp1 = PointOnLine(p0, p1, v1, cp1, clamp);
+        uint32_t clamp0 = PointOnLine(cp1, p0, v0, cp0, clamp >> 1);
         return clamp1 | (clamp0 << 1);
     }
 
-    UInt32 retVal = 0;
+    uint32_t retVal = 0;
 
-    hsScalar t1 = - (CV0.InnerProduct(DV0)) / DV0dotDV0;
+    float t1 = - (CV0.InnerProduct(DV0)) / DV0dotDV0;
     if( (clamp & kClampLower1) && (t1 <= 0) )
     {
         t1 = 0;
@@ -166,7 +166,7 @@ UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
         retVal |= kClampUpper1;
     }
 
-    hsScalar t0 = v0.InnerProduct(p0subp1 - v1 * t1) * -invV0Sq;
+    float t0 = v0.InnerProduct(p0subp1 - v1 * t1) * -invV0Sq;
     cp0 = p0;
     if( (clamp & kClampUpper0) && (t0 >= 1.f) )
     {
@@ -207,11 +207,11 @@ UInt32 plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
 }
 
 hsBool plClosest::PointOnSphere(const hsPoint3& p0,
-                                const hsPoint3& center, hsScalar rad,
+                                const hsPoint3& center, float rad,
                                 hsPoint3& cp)
 {
     hsVector3 del(&p0, &center);
-    hsScalar dist = hsFastMath::InvSqrtAppr(del.MagnitudeSquared());
+    float dist = hsFastMath::InvSqrtAppr(del.MagnitudeSquared());
     dist *= rad;
     del *= dist;
     cp = center;
@@ -226,7 +226,7 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0,
                              const hsVector3& axis2,
                              hsPoint3& cp)
 {
-    UInt32 clamps = 0;
+    uint32_t clamps = 0;
     hsPoint3 currPt = corner;
     clamps |= PointOnLine(p0, currPt, axis0, cp, kClamp);
     currPt = cp;
@@ -238,9 +238,9 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0,
 }
 
 hsBool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
-                            const hsPoint3& center, hsScalar rad,
+                            const hsPoint3& center, float rad,
                             hsPoint3& cp,
-                            UInt32 clamp)
+                            uint32_t clamp)
 {
     // Does the line hit the sphere? If it does, we return the entry point in cp,
     // otherwise we find the closest point on the sphere to the line.
@@ -261,22 +261,22 @@ hsBool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
     to the center of the sphere, and return the intersection of the segment
     connecting that point and the center with the sphere.
     */
-    hsScalar termA = v0.InnerProduct(v0);
+    float termA = v0.InnerProduct(v0);
     if( termA < kRealSmall )
     {
         return PointOnSphere(p0, center, rad, cp);
     }
     hsVector3 p0Subc(&p0, &center);
-    hsScalar termB = v0.InnerProduct(p0Subc);
-    hsScalar termC = p0Subc.InnerProduct(p0Subc) - rad;
-    hsScalar disc = termB * termB - 4 * termA * termC;
+    float termB = v0.InnerProduct(p0Subc);
+    float termC = p0Subc.InnerProduct(p0Subc) - rad;
+    float disc = termB * termB - 4 * termA * termC;
     if( disc >= 0 )
     {
-        disc = hsSquareRoot(disc);
-        hsScalar t = (-termB - disc) / (2.f * termA);
+        disc = sqrt(disc);
+        float t = (-termB - disc) / (2.f * termA);
         if( (t < 0) && (clamp & kClampLower0) )
         {
-            hsScalar tOut = (-termB + disc) / (2.f * termA);
+            float tOut = (-termB + disc) / (2.f * termA);
             if( tOut < 0 )
             {
                 // Both isects are before beginning of clamped line.
@@ -327,9 +327,9 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0, const hsVector3& v0,
                             const hsVector3& axis1,
                             const hsVector3& axis2,
                             hsPoint3& cp,
-                            UInt32 clamp)
+                            uint32_t clamp)
 {
-    UInt32 clampRes = 0;
+    uint32_t clampRes = 0;
 
     hsPoint3 cp0, cp1;
     hsPoint3 currPt = corner;
@@ -354,9 +354,9 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0,
         p' = p - ((p-pPln)*n)/|n| * n/|n|
         p' = p + ((pPln-p)*n) * n / |n|^2
     */
-    hsScalar invNLen = hsFastMath::InvSqrt(n.MagnitudeSquared());
+    float invNLen = hsFastMath::InvSqrt(n.MagnitudeSquared());
 
-    hsScalar nDotp = n.InnerProduct(pPln - p0);
+    float nDotp = n.InnerProduct(pPln - p0);
     cp = p0 + n * (nDotp * invNLen);
 
     return nDotp >= 0;
@@ -365,7 +365,7 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0,
 hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
                                const hsPoint3& pPln, const hsVector3& n,
                                hsPoint3& cp,
-                               UInt32 clamp)
+                               uint32_t clamp)
 {
     /*
         p0 + v0*t is on plane, i.e.
@@ -378,11 +378,11 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
         Then clamp appropriately, garnish, and serve with wild rice.
     */
     hsBool retVal = true;
-    hsScalar pDotn = n.InnerProduct(pPln - p0);
-    hsScalar v0Dotn = n.InnerProduct(v0);
+    float pDotn = n.InnerProduct(pPln - p0);
+    float v0Dotn = n.InnerProduct(v0);
     if( (v0Dotn < -kRealSmall) || (v0Dotn > kRealSmall) )
     {
-        hsScalar t = pDotn / v0Dotn;
+        float t = pDotn / v0Dotn;
 
         if( (clamp & kClampLower) && (t < 0) )
         {
@@ -443,7 +443,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
         hsPoint3 aBestPt;
         hsPoint3 bBestPt;
 
-        hsScalar minDistSq = 1.e33f;
+        float minDistSq = 1.e33f;
         for( j = 0; j < 3; j++ )
         {
             hsPoint3 aNextPt, bNextPt;
@@ -452,7 +452,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                         aNextPt, bNextPt,
                                         plClosest::kClamp);
 
-            hsScalar distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
+            float distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
             if( distSq < minDistSq )
             {
                 aBestPt = aNextPt;
@@ -501,7 +501,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
     int bIdx2 = 2;
 
     hsPoint3 aBestPt, bBestPt;
-    hsScalar minDistSq = 1.e33f;
+    float minDistSq = 1.e33f;
 
     hsBool retVal = false;
 
@@ -534,7 +534,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     plClosest::kClamp);
 
 
-        hsScalar distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
+        float distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
         if( distSq < minDistSq )
         {
             aBestPt = aNextPt;
@@ -647,7 +647,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
     }
 
     hsPoint3 aBestPt, bBestPt;
-    hsScalar minDistSq = 1.e33f;
+    float minDistSq = 1.e33f;
 
     hsBool retVal = false;
 
@@ -680,7 +680,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     plClosest::kClamp);
 
 
-        hsScalar distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
+        float distSq = hsVector3(&aNextPt, &bNextPt).MagnitudeSquared();
         if( distSq < minDistSq )
         {
             aBestPt = aNextPt;

@@ -60,9 +60,9 @@ protected:
 
     hsPoint3    fFrom;
     hsVector3   fDir;
-    hsScalar    fRange;
-    hsScalar    fRadius;
-    hsScalar    fPartyTime;
+    float    fRange;
+    float    fRadius;
+    float    fPartyTime;
 public:
     plBulletMsg() { SetBCastFlag(kNetPropagate | kBCastByType, true); }
     plBulletMsg(const plKey &s,
@@ -81,17 +81,17 @@ public:
     hsBool Spray() const { return fCmd == kSpray; }
     hsBool Stop() const { return fCmd == kStop; }
 
-    void FireShot(const hsPoint3& from, const hsVector3& dir, hsScalar radius, hsScalar range, hsScalar psecs=-1.f);
-    void FireShot(const hsPoint3& from, const hsPoint3& at, hsScalar radius, hsScalar psecs=-1.f);
+    void FireShot(const hsPoint3& from, const hsVector3& dir, float radius, float range, float psecs=-1.f);
+    void FireShot(const hsPoint3& from, const hsPoint3& at, float radius, float psecs=-1.f);
 
     Cmd GetCmd() const { return fCmd; }
     void SetCmd(Cmd c) { fCmd = c; }
 
     const hsPoint3& From() const { return fFrom; }
     const hsVector3& Dir() const { return fDir; }
-    hsScalar Range() const { return fRange; }
-    hsScalar Radius() const { return fRadius; }
-    hsScalar PartyTime() const { return fPartyTime; }
+    float Range() const { return fRange; }
+    float Radius() const { return fRadius; }
+    float PartyTime() const { return fPartyTime; }
 };
 
 #endif // plBulletMsg_inc

@@ -83,24 +83,24 @@ class plInputInterfaceMgr : public plSingleModifier
 
 #ifdef MCN_DISABLE_OLD_WITH_NEW_HACK
         hsTArray<ControlEventCode>      fDisabledCodes;
-        hsTArray<UInt32>                fDisabledKeys;
+        hsTArray<uint32_t>                fDisabledKeys;
 #endif
 
         hsBool      fClickEnabled;
-        Int32       fCurrentCursor;
-        hsScalar    fCursorOpacity;
+        int32_t       fCurrentCursor;
+        float    fCursorOpacity;
         hsBool      fForceCursorHidden;
-        Int32       fForceCursorHiddenCount;
+        int32_t       fForceCursorHiddenCount;
         plInputInterface        *fCurrentFocus;
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         void    IAddInterface( plInputInterface *iface );
         void    IRemoveInterface( plInputInterface *iface );
 
-        void    IUpdateCursor( Int32 newCursor );
+        void    IUpdateCursor( int32_t newCursor );
         hsBool  ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
             
         void    IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
@@ -170,7 +170,7 @@ class plCtrlCmd
         ControlEventCode    fControlCode;
         hsBool              fControlActivated;
         hsPoint3            fPt;
-        hsScalar            fPct;
+        float            fPct;
 
         hsBool              fNetPropagateToPlayers;
 

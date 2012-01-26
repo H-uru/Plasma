@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIDraggableMod.h"
 #include "pfGameGUIMgr.h"
 
@@ -72,7 +72,7 @@ pfGUIDraggableMod::~pfGUIDraggableMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDraggableMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIDraggableMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -106,7 +106,7 @@ void    pfGUIDraggableMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool forc
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIDraggableMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDraggableMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( !fDragging )
     {
@@ -122,7 +122,7 @@ void    pfGUIDraggableMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIDraggableMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDraggableMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( fDragging )
     {
@@ -137,7 +137,7 @@ void    pfGUIDraggableMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIDraggableMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDraggableMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( fDragging )
     {
@@ -152,7 +152,7 @@ void    pfGUIDraggableMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIDraggableMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIDraggableMod::IGetDesiredCursor( void ) const
 {
     // if we are anchored, then no cursors that say we can move
     if( fDragging )

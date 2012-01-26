@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plPointShadowMaster.h"
 #include "plShadowSlave.h"
@@ -53,11 +53,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsFastMath.h"
 
-static const hsScalar kMinMinZ = 1.f; // totally random arbitrary number (has to be > 0).
+static const float kMinMinZ = 1.f; // totally random arbitrary number (has to be > 0).
 
-static inline void QuickNorm( hsVector3& a, hsScalar& b ) 
+static inline void QuickNorm( hsVector3& a, float& b ) 
 { 
-    hsScalar len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); 
+    float len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); 
     a *= len; 
     b *= len; 
 }
@@ -107,7 +107,7 @@ plPointShadowMaster::~plPointShadowMaster()
 
 plShadowSlave* plPointShadowMaster::INewSlave(const plShadowCaster* caster)
 {
-    return TRACKED_NEW plPointShadowSlave;
+    return new plPointShadowSlave;
 }
 
 void plPointShadowMaster::IBeginRender()
@@ -119,22 +119,22 @@ void plPointShadowMaster::IBeginRender()
 
 void plPointShadowMaster::IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const
 {
-    const hsScalar kMinMag = 0.5f;
+    const float kMinMag = 0.5f;
     hsPoint3 from = fLightInfo->GetLightToWorld().GetTranslate();
     hsPoint3 at = bnd.GetCenter();
 
     hsVector3 atToFrom(&from, &at);
-    hsScalar distSq = atToFrom.MagnitudeSquared();
+    float distSq = atToFrom.MagnitudeSquared();
     atToFrom *= hsFastMath::InvSqrtAppr(distSq);
 
     hsPoint2 depth;
     bnd.TestPlane(atToFrom, depth);
 
-    hsScalar fromDepth = atToFrom.InnerProduct(from);
+    float fromDepth = atToFrom.InnerProduct(from);
 
-    hsScalar dist = fromDepth - depth.fY;
+    float dist = fromDepth - depth.fY;
 
-    static hsScalar kMinDist = 3.f;
+    static float kMinDist = 3.f;
     if( dist < kMinDist )
     {
         atToFrom *= kMinDist - dist;
@@ -175,7 +175,7 @@ void plPointShadowMaster::IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* 
     fIsectPool.ExpandAndZero(iIsect+1);
     if( !fIsectPool[iIsect] )
     {
-        fIsectPool[iIsect] = TRACKED_NEW plBoundsIsect;
+        fIsectPool[iIsect] = new plBoundsIsect;
     }
     plBoundsIsect* isect = fIsectPool[iIsect];
 
@@ -199,10 +199,10 @@ void plPointShadowMaster::IComputeBounds(const hsBounds3Ext& wBnd, plShadowSlave
 
     hsBounds3Ext bnd = sBnd;
 
-    hsScalar dist = sBnd.GetCenter().fZ;
+    float dist = sBnd.GetCenter().fZ;
     dist += slave->fAttenDist;
 
-    hsScalar minZ = sBnd.GetMaxs().fZ;
+    float minZ = sBnd.GetMaxs().fZ;
 
     hsPoint3 p(sBnd.GetMins().fX * dist / minZ, sBnd.GetMins().fY * dist / minZ, dist);
     bnd.Union(&p);

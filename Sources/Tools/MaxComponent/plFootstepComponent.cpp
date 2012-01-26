@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "max.h"
 #include "resource.h"
-#include "hsConfig.h"
 #include <map>
 #include "hsResMgr.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -113,7 +112,7 @@ extern const plArmatureMod * FindArmatureMod(const plSceneObject *obj);
 hsBool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plGenRefMsg *msg;
-    plArmatureEffectFootSound *effect = TRACKED_NEW plArmatureEffectFootSound();
+    plArmatureEffectFootSound *effect = new plArmatureEffectFootSound();
     
     // Note: MUST be a hard-coded keyname, since we search for same name in plArmatureMod.cpp
     hsgResMgr::ResMgr()->NewKey( "FootstepSounds", effect, node->GetLocation());
@@ -130,7 +129,7 @@ hsBool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 plRandomSoundMod *mod = rsComp->fSoundMods[node];
                 if (mod != nil)
                 {
-                    msg = TRACKED_NEW plGenRefMsg(effect->GetKey(), plRefMsg::kOnCreate, i, -1);
+                    msg = new plGenRefMsg(effect->GetKey(), plRefMsg::kOnCreate, i, -1);
                     hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), msg, plRefFlags::kActiveRef);
                 }
             }
@@ -138,7 +137,7 @@ hsBool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
 
     // Add it to the scene node's generic list, so that all avatars can access it.
-    plNodeRefMsg* nodeRefMsg = TRACKED_NEW plNodeRefMsg(node->GetRoomKey(), plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kGeneric);
+    plNodeRefMsg* nodeRefMsg = new plNodeRefMsg(node->GetRoomKey(), plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kGeneric);
     hsgResMgr::ResMgr()->AddViaNotify(effect->GetKey(), nodeRefMsg, plRefFlags::kActiveRef);
     
     return true;

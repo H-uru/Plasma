@@ -147,7 +147,7 @@ hsBool plAnimEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     if (!fCanExport)
         return false;
 
-    plAnimEventModifier* mod = TRACKED_NEW plAnimEventModifier;
+    plAnimEventModifier* mod = new plAnimEventModifier;
     plKey modKey = node->AddModifier(mod, IGetUniqueName(node));
 
     fLogicModKeys[node] = modKey;
@@ -157,7 +157,7 @@ hsBool plAnimEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 plEventCallbackMsg* CreateCallbackMsg(plAnimCmdMsg* animMsg, plKey modKey)
 {
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(modKey);
     eventMsg->fRepeats = -1;
 
@@ -185,7 +185,7 @@ hsBool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plKey animKey = animComp->GetModKey(animNode);
     const char* animName = animComp->GetAnimName();
 
-    plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg *animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     animMsg->SetSender(modKey);
     animMsg->SetAnimName(animName);
@@ -459,7 +459,7 @@ hsBool plMtlEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     if (!fCanExport)
         return false;
 
-    plAnimEventModifier* mod = TRACKED_NEW plAnimEventModifier;
+    plAnimEventModifier* mod = new plAnimEventModifier;
     plKey modKey = node->AddModifier(mod, IGetUniqueName(node));
 
     fLogicModKeys[node] = modKey;
@@ -488,7 +488,7 @@ hsBool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     hsTArray<plKey> animKeys;
     GetMatAnimModKey(mtl, mtlNode, mtlAnim, animKeys);
 
-    plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg *animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     animMsg->SetSender(modKey);
     animMsg->SetAnimName(mtlAnim);

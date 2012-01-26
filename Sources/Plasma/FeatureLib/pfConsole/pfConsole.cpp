@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "HeadSpin.h"
 #include "pfConsole.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "plPipeline/plDebugText.h"
@@ -60,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plPipeline.h"
-#include "hsConfig.h"
 
 #include "pfPython/cyPythonInterface.h"
 #include "plNetClient/plNetClientMgr.h"
@@ -73,7 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Static Class Stuff //////////////////////////////////////////////////////
 
 pfConsole   *pfConsole::fTheConsole = nil;
-UInt32      pfConsole::fConsoleTextColor = 0xff00ff00;
+uint32_t      pfConsole::fConsoleTextColor = 0xff00ff00;
 plPipeline  *pfConsole::fPipeline = nil;
 
 
@@ -136,8 +136,8 @@ class pfConsoleInputInterface : public plInputInterface
             // RestoreDefaultKeyMappings()!!!!
         }
 
-        virtual UInt32  GetPriorityLevel( void ) const          { return kConsolePriority; }
-        virtual UInt32  GetCurrentCursorID( void ) const        { return kCursorHidden; }
+        virtual uint32_t  GetPriorityLevel( void ) const          { return kConsolePriority; }
+        virtual uint32_t  GetCurrentCursorID( void ) const        { return kCursorHidden; }
         virtual hsBool  HasInterestingCursorID( void ) const    { return false; }
 
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
@@ -185,7 +185,7 @@ pfConsole::~pfConsole()
 {
     if( fInputInterface != nil )
     {
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputInterface );
         plgDispatch::MsgSend( msg );
 
@@ -218,7 +218,7 @@ pfConsole * pfConsole::GetInstance () {
 
 void    pfConsole::Init( pfConsoleEngine *engine )
 {
-    fDisplayBuffer = TRACKED_NEW char[ fNumDisplayLines * kMaxCharsWide ];
+    fDisplayBuffer = new char[ fNumDisplayLines * kMaxCharsWide ];
     memset( fDisplayBuffer, 0, fNumDisplayLines * kMaxCharsWide );
 
     memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
@@ -239,8 +239,8 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     memset( fLastHelpMsg, 0, sizeof( fLastHelpMsg ) );
     fEngine = engine;
 
-    fInputInterface = TRACKED_NEW pfConsoleInputInterface( this );
-    plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+    fInputInterface = new pfConsoleInputInterface( this );
+    plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
     msg->SetIFace( fInputInterface );
     plgDispatch::MsgSend( msg );
 
@@ -255,7 +255,7 @@ void    pfConsole::Init( pfConsoleEngine *engine )
 
 //// ISetMode ////////////////////////////////////////////////////////////////
 
-void    pfConsole::ISetMode( UInt8 mode )
+void    pfConsole::ISetMode( uint8_t mode )
 {
     fMode = mode; 
     fEffectCounter = ( fFXEnabled ? kEffectDivisions : 0 ); 
@@ -538,7 +538,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     wchar_t         key;
     int             i,eol;
     static hsBool   findAgain = false;
-    static UInt32   findCounter = 0;
+    static uint32_t   findCounter = 0;
 
 
     if( !msg->GetKeyDown() )
@@ -1089,7 +1089,7 @@ void    pfConsole::Draw( plPipeline *p )
                 HGLOBAL hdl = LoadResource( nil, rsrc );
                 if( hdl != nil )
                 {
-                    UInt8 *ptr = (UInt8 *)LockResource( hdl );
+                    uint8_t *ptr = (uint8_t *)LockResource( hdl );
                     if( ptr != nil )
                     {
                         for( i = 0; i < SizeofResource( nil, rsrc ); i++ )

@@ -59,8 +59,8 @@ public:
     /** Called by Havok at substep frequency. */
     void apply(Havok::Subspace &s, Havok::hkTime time);
 
-    void SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight);
-    hsScalar GetBuoyancy() { return fBuoyancy; }
+    void SetSurface(plSwimRegionInterface *region, float surfaceHeight);
+    float GetBuoyancy() { return fBuoyancy; }
     hsBool IsOnGround() { return fOnGround; }
     hsBool HadContacts() { return fHadContacts; }
         
@@ -69,8 +69,8 @@ protected:
 
     hsBool fOnGround;
     hsBool fHadContacts;
-    hsScalar fBuoyancy;
-    hsScalar fSurfaceHeight;
+    float fBuoyancy;
+    float fSurfaceHeight;
     plSwimRegionInterface *fCurrentRegion;
 };
 

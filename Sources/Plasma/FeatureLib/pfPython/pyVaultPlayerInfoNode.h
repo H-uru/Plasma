@@ -80,8 +80,8 @@ public:
 //==================================================================
 // class plVaultPlayerInfoNode : public plVaultNode
 //
-    void    Player_SetPlayerID( UInt32 plyrid );
-    UInt32  Player_GetPlayerID( void );
+    void    Player_SetPlayerID( uint32_t plyrid );
+    uint32_t  Player_GetPlayerID( void );
     void    Player_SetPlayerName( const char * name );
     const char * Player_GetPlayerName( void );
 

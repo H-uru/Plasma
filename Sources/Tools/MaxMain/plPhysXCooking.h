@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysXCooking_h_inc
 #define plPhysXCooking_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include  "plMaxMeshExtractor.h"
 class hsStream;
@@ -58,13 +58,13 @@ public:
     static void Init();
     static void Shutdown();
 
-    static hsVectorStream* CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, UInt16* faces);
+    static hsVectorStream* CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, uint16_t* faces);
     static bool TestIfConvex(NxConvexMesh* convexMesh, int nVerts, hsPoint3* verts);
     static hsVectorStream* CookHull(int nVerts, hsPoint3* verts,bool inflate);
     static bool IsPointInsideHull(hsPlane3* hull, int nPlanes, const hsPoint3& pos);
     static inline bool ITestPlane(const hsPoint3 &pos, const hsPlane3 &plane)
     {
-        hsScalar dis = plane.fN.InnerProduct(pos);
+        float dis = plane.fN.InnerProduct(pos);
         dis += plane.fD;
         if( dis > 0.f ) 
             return false;   

@@ -69,8 +69,8 @@ typedef void (*setTimeRemainingCallback)(unsigned seconds);
 typedef void (*setBytesRemainingCallback)(unsigned bytes);
 
 struct plLauncherInfo {
-    wchar path[MAX_PATH];
-    wchar cmdLine[512];
+    wchar_t path[MAX_PATH];
+    wchar_t cmdLine[512];
     unsigned buildId;               // buildId override
     launcherCallback prepCallback;
     launcherCallback initCallback;

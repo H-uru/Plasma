@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// hardcoded byte ordering -- Intel only
+// hardcoded uint8_t ordering -- Intel only
 #ifdef _M_IX86
 
     const unsigned kHostClassALoopbackAddr  = 0x7f000001; // 127.0.0.1
@@ -136,17 +136,17 @@ static int NetAddressNodeSortValueHostOrder (NetAddressNode addr) {
 }
 
 //===========================================================================
-static NetAddressNode NodeFromString (const wchar * string[]) {
+static NetAddressNode NodeFromString (const wchar_t * string[]) {
     // skip leading whitespace
-    const wchar * str = *string;
+    const wchar_t * str = *string;
     while (iswspace(*str))
         ++str;
 
     // This function handles partial ip addresses (61.33)
     // as well as full dotted quads. The address can be
     // terminated by whitespace or ':' as well as '\0'
-    byte data[4];
-    * (dword *) data = 0;
+    uint8_t data[4];
+    * (uint32_t *) data = 0;
     for (unsigned i = sizeof(data); i--; ) {
         if (!iswdigit(*str))
             return (unsigned)-1;
@@ -154,12 +154,12 @@ static NetAddressNode NodeFromString (const wchar * string[]) {
         unsigned value = StrToUnsigned(str, &str, 10);
         if (value >= 256)
             return (unsigned)-1;
-        data[i] = (byte) value;
+        data[i] = (uint8_t) value;
 
         if (!*str || (*str == ':') || iswspace(*str))
             break;
 
-        static const wchar s_separator[] = L"\0...";
+        static const wchar_t s_separator[] = L"\0...";
         if (*str++ != s_separator[i])
             return (unsigned)-1;
     }
@@ -202,13 +202,13 @@ unsigned NetAddressHash (const NetAddress & addr) {
 //===========================================================================
 void NetAddressToString (
     const NetAddress &  addr, 
-    wchar *             str, 
+    wchar_t *             str, 
     unsigned            chars, 
     ENetAddressFormat   format
 ) {
     ASSERT(str);
 
-    static const wchar * s_fmts[] = {
+    static const wchar_t * s_fmts[] = {
         L"%S",      // kNetAddressFormatNodeNumber
         L"%S:%u",   // kNetAddressFormatAll
     };
@@ -224,12 +224,12 @@ void NetAddressToString (
 }
 
 //===========================================================================
-bool NetAddressFromString (NetAddress * addr, const wchar str[], unsigned defaultPort) {
+bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defaultPort) {
     ASSERT(addr);
     ASSERT(str);
 
     // NetAddress is bigger than sockaddr_in so start by zeroing the whole thing
-    ZEROPTR(addr);
+    memset(addr, 0, sizeof(*addr));
     
     for (;;) {
         NetAddressNode node = NodeFromString(&str);
@@ -241,7 +241,7 @@ bool NetAddressFromString (NetAddress * addr, const wchar str[], unsigned defaul
    
         sockaddr_in * inetaddr          = (sockaddr_in *) addr;
         inetaddr->sin_family            = AF_INET;
-        inetaddr->sin_port              = htons((word) defaultPort);
+        inetaddr->sin_port              = htons((uint16_t) defaultPort);
         inetaddr->sin_addr.S_un.S_addr  = htonl(node);
         // inetaddr->sin_zero already zeroed
 
@@ -264,7 +264,7 @@ void NetAddressSetPort (
     unsigned        port,
     NetAddress *    addr
 ) {
-    ((sockaddr_in *) addr)->sin_port = htons((word) port);
+    ((sockaddr_in *) addr)->sin_port = htons((uint16_t) port);
 }
 
 //============================================================================
@@ -278,17 +278,17 @@ void NetAddressFromNode (
     unsigned        port,
     NetAddress *    addr
 ) {
-    ZEROPTR(addr);
+    memset(addr, 0, sizeof(*addr));
     sockaddr_in * inetaddr          = (sockaddr_in *) addr;
     inetaddr->sin_family            = AF_INET;
     inetaddr->sin_addr.S_un.S_addr  = htonl(node);
-    inetaddr->sin_port              = htons((word) port);
+    inetaddr->sin_port              = htons((uint16_t) port);
 }
 
 //===========================================================================
 void NetAddressNodeToString (
     NetAddressNode  node,
-    wchar *         str,
+    wchar_t *         str,
     unsigned        chars
 ) {
     in_addr addr;
@@ -298,8 +298,8 @@ void NetAddressNodeToString (
 
 //===========================================================================
 NetAddressNode NetAddressNodeFromString (
-    const wchar     string[],
-    const wchar *   endPtr[]
+    const wchar_t     string[],
+    const wchar_t *   endPtr[]
 ) {
     if (!endPtr)
         endPtr = &string;
@@ -341,12 +341,12 @@ unsigned NetAddressGetLocal (
         host = gethostbyname(host->h_name);
         if (!host)
             break;
-        if (host->h_length != sizeof(dword))
+        if (host->h_length != sizeof(uint32_t))
             break;
 
         // Count total number of addresses
         unsigned found = 0;
-        const dword ** addr = (const dword **) host->h_addr_list;
+        const uint32_t ** addr = (const uint32_t **) host->h_addr_list;
         for (; *addr; ++addr)
             ++found;
         if (!found)
@@ -355,12 +355,12 @@ unsigned NetAddressGetLocal (
         // Create a buffer to sort the addresses
         NetAddressNode * dst;
         if (found > count)
-            dst = ALLOCA(NetAddressNode, found);
+            dst = (NetAddressNode*)_alloca(found * sizeof(NetAddressNode));
         else
             dst = addresses;
 
         // Fill address buffer
-        const dword * src = * (const dword **) host->h_addr_list;
+        const uint32_t * src = * (const uint32_t **) host->h_addr_list;
         for (unsigned index = 0; index < found; ++index)
             dst[index] = ntohl(src[index]);
 

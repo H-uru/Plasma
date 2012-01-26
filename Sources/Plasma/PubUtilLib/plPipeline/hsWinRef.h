@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#include "hsWindows.h"
+
 typedef HWND hsWinRef;
 
 #else // Whatever

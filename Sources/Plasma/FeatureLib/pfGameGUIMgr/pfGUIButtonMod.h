@@ -74,11 +74,11 @@ class pfGUIButtonMod : public pfGUIControlMod
         hsBool              fOrigReportedDrag;
 
 
-        Int32           fNotifyType;
+        int32_t           fNotifyType;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
     public:
 
@@ -96,14 +96,14 @@ class pfGUIButtonMod : public pfGUIControlMod
 
         virtual void    SetInteresting( hsBool i );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
 
-        virtual void    SetNotifyType(Int32 kind);
-        virtual Int32   GetNotifyType();
+        virtual void    SetNotifyType(int32_t kind);
+        virtual int32_t   GetNotifyType();
         virtual hsBool  IsButtonDown();
         virtual hsBool  IsTriggering() { return fTriggering; }
         enum SoundEvents

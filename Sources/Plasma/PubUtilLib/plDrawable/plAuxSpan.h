@@ -68,43 +68,43 @@ public:
     void*                       fOwner;
 
     plDrawableSpans*            fDrawable;
-    UInt32                      fBaseSpanIdx;
+    uint32_t                      fBaseSpanIdx;
     hsGMaterial*                fMaterial;
-    UInt32                      fFlags;
+    uint32_t                      fFlags;
 
     hsTArray<hsPoint3>          fOrigPos;
     hsTArray<hsPoint3>          fOrigUVW;
 
     plGBufferGroup* fGroup;     // Which buffer group, i.e. which vertex format
 
-    UInt32          fVBufferIdx;    // Which vertex buffer in group
-    UInt32          fCellIdx;       // Cell index inside the vertex buffer
-    UInt32          fCellOffset;    // Offset inside the cell
-    UInt32          fVStartIdx;     // Start vertex # in the actual interlaced buffer
-    UInt32          fVLength;       // Length of this span in the buffer
+    uint32_t          fVBufferIdx;    // Which vertex buffer in group
+    uint32_t          fCellIdx;       // Cell index inside the vertex buffer
+    uint32_t          fCellOffset;    // Offset inside the cell
+    uint32_t          fVStartIdx;     // Start vertex # in the actual interlaced buffer
+    uint32_t          fVLength;       // Length of this span in the buffer
 
-    UInt32          fVBufferInit;
-    UInt32          fVBufferLimit;
+    uint32_t          fVBufferInit;
+    uint32_t          fVBufferLimit;
 
-    UInt32          fIBufferIdx;    // Which index buffer in group
-    UInt32          fIStartIdx;     // Redundant, since all spans are contiguous. Here for debugging
-    UInt32          fILength;       // Length of this span in the buffer
+    uint32_t          fIBufferIdx;    // Which index buffer in group
+    uint32_t          fIStartIdx;     // Redundant, since all spans are contiguous. Here for debugging
+    uint32_t          fILength;       // Length of this span in the buffer
 
-    UInt32          fIBufferInit;
-    UInt32          fIBufferLimit;
+    uint32_t          fIBufferInit;
+    uint32_t          fIBufferLimit;
 
     plDecalVtxFormat* GetBaseVtxPtr() const
     {
         plGBufferGroup* grp = fGroup;
         plGBufferCell* cell = grp->GetCell(fVBufferIdx, fCellIdx);
 
-        UInt8* ptr = grp->GetVertBufferData(fVBufferIdx);
+        uint8_t* ptr = grp->GetVertBufferData(fVBufferIdx);
         
         ptr += cell->fVtxStart + fCellOffset;
 
         return (plDecalVtxFormat*)ptr;
     }
-    UInt16* GetBaseIdxPtr() const
+    uint16_t* GetBaseIdxPtr() const
     {
         plGBufferGroup* grp = fGroup;
 

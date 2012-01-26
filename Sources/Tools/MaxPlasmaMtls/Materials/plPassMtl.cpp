@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPassMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
@@ -64,7 +64,7 @@ class plPassMtlClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plPassMtl(loading); }
+    void*           Create(BOOL loading) { return new plPassMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_PASS_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return PASS_MTL_CLASS_ID; }
@@ -90,8 +90,8 @@ ParamBlockDesc2 *GetPassLayersPB();
 plPassMtl::plPassMtl(BOOL loading) : plPassMtlBase( loading )
 {
     plPassMtlDesc.MakeAutoParamBlocks( this );
-    fLayersPB->SetValue( kPassLayBase, 0, TRACKED_NEW plLayerTex );
-    fLayersPB->SetValue( kPassLayTop, 0, TRACKED_NEW plLayerTex );
+    fLayersPB->SetValue( kPassLayBase, 0, new plLayerTex );
+    fLayersPB->SetValue( kPassLayTop, 0, new plLayerTex );
 
     // If we do this later (like, when the dialog loads) something blows up,
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
@@ -312,7 +312,7 @@ int plPassMtl::SubTexmapOn(int i)
 
 RefTargetHandle plPassMtl::Clone(RemapDir &remap)
 {
-    plPassMtl *mnew = TRACKED_NEW plPassMtl(FALSE);
+    plPassMtl *mnew = new plPassMtl(FALSE);
     plPassMtlBase::ICloneBase( mnew, remap );
     return (RefTargetHandle)mnew;
 }

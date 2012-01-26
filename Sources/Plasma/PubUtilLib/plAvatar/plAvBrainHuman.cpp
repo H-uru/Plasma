@@ -39,11 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
 
 #include "plAvCallbackAction.h"                 // subclasses a havok object; must be in first include section
-
+#include "HeadSpin.h"
 
 #include "plAvBrainHuman.h"
 #include "plAvBrainClimb.h"
@@ -64,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTimer.h"
 #include "hsGeometry3.h"
-#include "float.h"
+
 #include "plPipeline.h"
 #include "plgDispatch.h"
 #include "hsQuat.h"
@@ -98,7 +96,7 @@ float plAvBrainHuman::fRunMaxTurnSpeed = 1.7;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fWalkTurnCurve = plAvBrainHuman::kTurnExponential;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fRunTurnCurve = plAvBrainHuman::kTurnExponential;
 
-const hsScalar plAvBrainHuman::kAirTimePanicThreshold = 10; // seconds
+const float plAvBrainHuman::kAirTimePanicThreshold = 10; // seconds
 
 void plAvBrainHuman::SetTimeToMaxTurn(float time, hsBool walk)
 {
@@ -148,7 +146,7 @@ plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) :
 {
 }
 
-hsBool plAvBrainHuman::Apply(double timeNow, hsScalar elapsed)
+hsBool plAvBrainHuman::Apply(double timeNow, float elapsed)
 {
 #ifndef _DEBUG
     try
@@ -184,7 +182,7 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = TRACKED_NEW plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+        fCallbackAction = new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
         fCallbackAction->ActivateController();
     }
     
@@ -380,7 +378,7 @@ hsBool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
         case B_CONTROL_TOGGLE_PHYSICAL:
             {
 #ifndef PLASMA_EXTERNAL_RELEASE     // external clients can't go non-physical
-                plAvBrainDrive *driver = TRACKED_NEW plAvBrainDrive(20, 1);
+                plAvBrainDrive *driver = new plAvBrainDrive(20, 1);
                 fAvMod->PushBrain(driver);
 #endif
                 return true;
@@ -453,7 +451,7 @@ hsBool plAvBrainHuman::MsgReceive(plMessage * msg)
     {
         if (swim->GetIsEntering())
         {
-            plAvBrainSwim *swimBrain = TRACKED_NEW plAvBrainSwim();
+            plAvBrainSwim *swimBrain = new plAvBrainSwim();
             swimBrain->MsgReceive(swim);
             fAvMod->PushBrain(swimBrain);
         } 
@@ -468,13 +466,13 @@ hsBool plAvBrainHuman::MsgReceive(plMessage * msg)
     {
         if(ride->Entering())
         {
-            //plAvBrainRideAnimatedPhysical *rideBrain = TRACKED_NEW plAvBrainRideAnimatedPhysical();
+            //plAvBrainRideAnimatedPhysical *rideBrain = new plAvBrainRideAnimatedPhysical();
             //fAvMod->PushBrain(rideBrain);
             delete fCallbackAction;
             plSceneObject* avObj = fArmature->GetTarget(0);
             plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
             plPhysicalControllerCore* controller = fAvMod->GetController();
-            fCallbackAction= TRACKED_NEW plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+            fCallbackAction= new plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
             fCallbackAction->ActivateController();
         
         }
@@ -484,7 +482,7 @@ hsBool plAvBrainHuman::MsgReceive(plMessage * msg)
             plSceneObject* avObj = fArmature->GetTarget(0);
             plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
             plPhysicalControllerCore* controller = fAvMod->GetController();
-            fCallbackAction= TRACKED_NEW plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+            fCallbackAction= new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
             fCallbackAction->ActivateController();
             //hsStatusMessage("Got an exiting  ride animated physical message");
         }
@@ -500,7 +498,7 @@ hsBool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
     {
         // let's build a seek task to get us to the attach point
         plKey seekTarget = msg->fTarget;
-        plAvTaskSeek *seekTask = TRACKED_NEW plAvTaskSeek(seekTarget);
+        plAvTaskSeek *seekTask = new plAvTaskSeek(seekTarget);
         QueueTask(seekTask);
 
         // now a brain task to start the actual climb.
@@ -520,8 +518,8 @@ hsBool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
             startMode = plAvBrainClimb::kMountingRight;
             break;
         }
-        plAvBrainClimb *brain = TRACKED_NEW plAvBrainClimb(startMode);
-        plAvTaskBrain *brainTask = TRACKED_NEW plAvTaskBrain(brain);
+        plAvBrainClimb *brain = new plAvBrainClimb(startMode);
+        plAvTaskBrain *brainTask = new plAvTaskBrain(brain);
         QueueTask(brainTask);
     }
     // ** potentially controversial:
@@ -532,7 +530,7 @@ hsBool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
     return true;
 }
 
-hsScalar plAvBrainHuman::IGetTurnStrength(double timeNow)
+float plAvBrainHuman::IGetTurnStrength(double timeNow)
 {
     float result = 0.f;
     float timeToMaxTurn, maxTurnSpeed;
@@ -553,8 +551,8 @@ hsScalar plAvBrainHuman::IGetTurnStrength(double timeNow)
     plArmatureBehavior * turnLeft  = fBehaviors.Count() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nil;
     plArmatureBehavior * turnRight = fBehaviors.Count() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nil;
     
-    hsScalar turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
-    hsScalar turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
+    float turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
+    float turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
     
     
     // Turning based on keypress
@@ -607,14 +605,14 @@ hsBool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
         if(seekM->fSmartSeek)
         {
             // use smart seek
-            plAvTaskSeek * seek = TRACKED_NEW plAvTaskSeek(seekM);
+            plAvTaskSeek * seek = new plAvTaskSeek(seekM);
             QueueTask(seek);
         }
         else
         if (!seekM->fNoSeek)
         {
             // use dumb seek
-            plAvSeekTask *seek = TRACKED_NEW plAvSeekTask(seekM->fSeekPoint, seekM->fAlignType, seekM->fAnimName);
+            plAvSeekTask *seek = new plAvSeekTask(seekM->fSeekPoint, seekM->fAlignType, seekM->fAnimName);
             QueueTask(seek);
         }
         // else don't seek at all.
@@ -623,14 +621,14 @@ hsBool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
         if(oneshotM)
         {
             // if it's a oneshot, add the oneshot task as well
-            plAvOneShotTask *oneshot = TRACKED_NEW plAvOneShotTask(oneshotM, fAvMod, this);
+            plAvOneShotTask *oneshot = new plAvOneShotTask(oneshotM, fAvMod, this);
             QueueTask(oneshot);
         }
     } else if (plAvPushBrainMsg *pushM = plAvPushBrainMsg::ConvertNoRef(msg)) {
-        plAvTaskBrain * push = TRACKED_NEW plAvTaskBrain(pushM->fBrain);
+        plAvTaskBrain * push = new plAvTaskBrain(pushM->fBrain);
         QueueTask(push);
     } else if (plAvPopBrainMsg *popM = plAvPopBrainMsg::ConvertNoRef(msg)) {
-        plAvTaskBrain * pop = TRACKED_NEW plAvTaskBrain();
+        plAvTaskBrain * pop = new plAvTaskBrain();
         QueueTask(pop);
     } else if (plAvTaskMsg *taskM = plAvTaskMsg::ConvertNoRef(msg)) {
         plAvTask *task = taskM->GetTask();
@@ -653,7 +651,7 @@ void plAvBrainHuman::IdleOnly(bool instantOff)
     if (!fCallbackAction)
         return;
 
-    hsScalar rate = instantOff ? 0.f : 1.f;
+    float rate = instantOff ? 0.f : 1.f;
 
     int i;
     for (i = kWalk; i < fBehaviors.GetCount(); i++)
@@ -690,7 +688,7 @@ void plAvBrainHuman::TurnToPoint(hsPoint3 point)
         avPos = subworldCI->GetWorldToLocal() * avPos;
     }
     
-    plAvSeekMsg *msg = TRACKED_NEW plAvSeekMsg(nil, fAvMod->GetKey(), nil, 1.f, true);
+    plAvSeekMsg *msg = new plAvSeekMsg(nil, fAvMod->GetKey(), nil, 1.f, true);
     hsClearBits(msg->fFlags, plAvSeekMsg::kSeekFlagForce3rdPersonOnStart);
     hsSetBits(msg->fFlags, plAvSeekMsg::kSeekFlagNoWarpOnTimeout | plAvSeekMsg::kSeekFlagRotationOnly);
     msg->fTargetLookAt = point;
@@ -707,10 +705,10 @@ void plAvBrainHuman::IChatOn()
     if (!fAvMod->FindAnimInstance(chatAnimName))
     {
         plKey avKey = fAvMod->GetKey();
-        plAvAnimTask *animTask = TRACKED_NEW plAvAnimTask(chatAnimName, 0.0, 1.0, 1.0, 0.0, true, true, true);
+        plAvAnimTask *animTask = new plAvAnimTask(chatAnimName, 0.0, 1.0, 1.0, 0.0, true, true, true);
         if (animTask)
         {
-            plAvTaskMsg *taskMsg = TRACKED_NEW plAvTaskMsg(avKey, avKey, animTask);
+            plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
             taskMsg->SetBCastFlag(plMessage::kNetPropagate);
             taskMsg->Send();
         }
@@ -723,10 +721,10 @@ void plAvBrainHuman::IChatOff()
 {
     char *chatAnimName = fAvMod->MakeAnimationName("Talk");
     plKey avKey = fAvMod->GetKey();
-    plAvAnimTask *animTask = TRACKED_NEW plAvAnimTask(chatAnimName, -1.0);
+    plAvAnimTask *animTask = new plAvAnimTask(chatAnimName, -1.0);
     if (animTask)
     {
-        plAvTaskMsg *taskMsg = TRACKED_NEW plAvTaskMsg(avKey, avKey, animTask);
+        plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);
         taskMsg->Send();
     }
@@ -763,62 +761,62 @@ hsBool plAvBrainHuman::IInitAnimations()
     {
         plHBehavior *behavior;
         fBehaviors.SetCountAndZero(kHuBehaviorMax);
-        fBehaviors[kIdle] = behavior = TRACKED_NEW Idle;
+        fBehaviors[kIdle] = behavior = new Idle;
         behavior->Init(idle, true, this, fAvMod, kDefaultFade, kDefaultFade, kIdle, plHBehavior::kBehaviorTypeIdle);
         behavior->SetStrength(1.f, 0.f);
         
-        fBehaviors[kWalk] = behavior = TRACKED_NEW Walk;
+        fBehaviors[kWalk] = behavior = new Walk;
         behavior->Init(walk, true, this, fAvMod, kDefaultFade, 5.f, kWalk, plHBehavior::kBehaviorTypeWalk);
         
-        fBehaviors[kRun] = behavior = TRACKED_NEW Run;
+        fBehaviors[kRun] = behavior = new Run;
         behavior->Init(run, true, this, fAvMod, kDefaultFade, 2.0, kRun, plHBehavior::kBehaviorTypeRun);
 
-        fBehaviors[kWalkBack] = behavior = TRACKED_NEW WalkBack;
+        fBehaviors[kWalkBack] = behavior = new WalkBack;
         behavior->Init(walkBack, true, this, fAvMod, kDefaultFade, kDefaultFade, kWalkBack, plHBehavior::kBehaviorTypeWalkBack);
 
-        fBehaviors[kStandingTurnLeft] = behavior = TRACKED_NEW StandingTurnLeft;
+        fBehaviors[kStandingTurnLeft] = behavior = new StandingTurnLeft;
         behavior->Init(standingLeft, true, this, fAvMod, 3.0f, 6.0f, kStandingTurnLeft, plHBehavior::kBehaviorTypeTurnLeft);
 
-        fBehaviors[kStandingTurnRight] = behavior = TRACKED_NEW StandingTurnRight;
+        fBehaviors[kStandingTurnRight] = behavior = new StandingTurnRight;
         behavior->Init(standingRight, true, this, fAvMod, 3.0f, 6.0f, kStandingTurnRight, plHBehavior::kBehaviorTypeTurnRight);
 
-        fBehaviors[kStepLeft] = behavior = TRACKED_NEW StepLeft;
+        fBehaviors[kStepLeft] = behavior = new StepLeft;
         behavior->Init(stepLeft, true, this, fAvMod, kDefaultFade, kDefaultFade, kStepLeft, plHBehavior::kBehaviorTypeSidestepLeft);
 
-        fBehaviors[kStepRight] = behavior = TRACKED_NEW StepRight;
+        fBehaviors[kStepRight] = behavior = new StepRight;
         behavior->Init(stepRight, true, this, fAvMod, kDefaultFade, kDefaultFade, kStepRight, plHBehavior::kBehaviorTypeSidestepRight);
 
         // Warning: Changing the blend times of the jump animations will affect the path you take, because until we're fully blended,
         // we won't be using the full motion defined in the animation. This isn't an issue for standing jump, but you need to be
         // aware of it for the walk/run jumps.
-        fBehaviors[kFall] = behavior = TRACKED_NEW Fall;
+        fBehaviors[kFall] = behavior = new Fall;
         behavior->Init(fall, true, this, fAvMod, 1.0f, 10, kFall, plHBehavior::kBehaviorTypeFall);
 
-        fBehaviors[kStandingJump] = behavior = TRACKED_NEW StandingJump;
+        fBehaviors[kStandingJump] = behavior = new StandingJump;
         behavior->Init(standJump, false, this, fAvMod, kDefaultFade, kDefaultFade, kStandingJump, plHBehavior::kBehaviorTypeStandingJump);
 
-        fBehaviors[kWalkingJump] = behavior = TRACKED_NEW WalkingJump;
+        fBehaviors[kWalkingJump] = behavior = new WalkingJump;
         behavior->Init(walkJump, false, this, fAvMod, 10, 3.0, kWalkingJump, plHBehavior::kBehaviorTypeWalkingJump);
 
-        fBehaviors[kRunningJump] = behavior = TRACKED_NEW RunningJump;
+        fBehaviors[kRunningJump] = behavior = new RunningJump;
         behavior->Init(runJump, false, this, fAvMod, 10, 2.0, kRunningJump, plHBehavior::kBehaviorTypeRunningJump);
         
-        fBehaviors[kGroundImpact] = behavior = TRACKED_NEW GroundImpact;
+        fBehaviors[kGroundImpact] = behavior = new GroundImpact;
         behavior->Init(groundImpact, false, this, fAvMod, 6.0f, kDefaultFade, kGroundImpact, plHBehavior::kBehaviorTypeGroundImpact);
         
-        fBehaviors[kRunningImpact] = behavior = TRACKED_NEW RunningImpact;
+        fBehaviors[kRunningImpact] = behavior = new RunningImpact;
         behavior->Init(runningImpact, false, this, fAvMod, 6.0f, kDefaultFade, kRunningImpact, plHBehavior::kBehaviorTypeRunningImpact);
         
-        fBehaviors[kMovingTurnLeft] = behavior = TRACKED_NEW MovingTurnLeft;
+        fBehaviors[kMovingTurnLeft] = behavior = new MovingTurnLeft;
         behavior->Init(movingLeft, true, this, fAvMod, kDefaultFade, kDefaultFade, kMovingTurnLeft, plHBehavior::kBehaviorTypeMovingTurnLeft);
 
-        fBehaviors[kMovingTurnRight] = behavior = TRACKED_NEW MovingTurnRight;
+        fBehaviors[kMovingTurnRight] = behavior = new MovingTurnRight;
         behavior->Init(movingRight, true, this, fAvMod, kDefaultFade, kDefaultFade, kMovingTurnRight, plHBehavior::kBehaviorTypeMovingTurnRight);
 
-        fBehaviors[kPushWalk] = behavior = TRACKED_NEW PushWalk;
+        fBehaviors[kPushWalk] = behavior = new PushWalk;
         behavior->Init(pushWalk, true, this, fAvMod, kDefaultFade, kDefaultFade, kPushWalk, plHBehavior::kBehaviorTypePushWalk);
         
-        //fBehaviors[kPushIdle] = behavior = TRACKED_NEW PushIdle;
+        //fBehaviors[kPushIdle] = behavior = new PushIdle;
         //behavior->Init(pushIdle, true, this, fAvMod, kDefaultFade, kDefaultFade, kPushIdle, plHBehavior::kBehaviorTypePushIdle);
 
         result = true;
@@ -881,7 +879,7 @@ hsBool plAvBrainHuman::LeaveAge()
         delete fCallbackAction;
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
-        fCallbackAction= TRACKED_NEW plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+        fCallbackAction= new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
         fCallbackAction->ActivateController();
     }
     plArmatureBrain::LeaveAge();
@@ -966,7 +964,7 @@ plHBehavior::~plHBehavior()
 
 void plHBehavior::Init(plAGAnim *anim, hsBool loop, plAvBrainHuman *brain,
                        plArmatureMod *body, float fadeIn, float fadeOut,
-                       UInt8 index, UInt32 type /* = 0 */)
+                       uint8_t index, uint32_t type /* = 0 */)
 {
     plArmatureBehavior::Init(anim, loop, brain, body, index);
     fAvMod = body;
@@ -1009,7 +1007,7 @@ void Idle::IStart()
     plHBehavior::IStart();
     if (fAnim)
     {       
-        hsScalar newStart = sRandom.RandZeroToOne() * fAnim->GetAnimation()->GetLength();
+        float newStart = sRandom.RandZeroToOne() * fAnim->GetAnimation()->GetLength();
         fAnim->SetCurrentTime(newStart, true);
     }
 }
@@ -1329,12 +1327,12 @@ void Push::Process(double time, float elapsed)
     hsPoint3 lookAt;
     fHuBrain->fCallbackAction->GetPushingPhysical()->GetPositionSim(lookAt);
     hsVector3 up(0.f, 0.f, 1.f);
-    hsScalar angle = hsATan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsScalarPI / 2;
+    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
     hsQuat targRot(angle, &up);
     
-    const hsScalar kTurnSpeed = 3.f;
-    hsScalar angDiff = QuatAngleDiff(rot, targRot);
-    hsScalar turnSpeed = (angDiff > elapsed * kTurnSpeed ? kTurnSpeed : angDiff / elapsed);
+    const float kTurnSpeed = 3.f;
+    float angDiff = QuatAngleDiff(rot, targRot);
+    float turnSpeed = (angDiff > elapsed * kTurnSpeed ? kTurnSpeed : angDiff / elapsed);
 
     hsQuat invRot = targRot.Conjugate();
     hsPoint3 globFwd = invRot.Rotate(&kAvatarForward);
@@ -1388,32 +1386,32 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
     // key. otherwise, we'll loop until someone sends a message telling us explicitly to advance
     plAnimStage::AdvanceType idleAdvance = autoExit ? plAnimStage::kAdvanceOnMove : plAnimStage::kAdvanceNone;
 
-    plAnimStageVec *v = TRACKED_NEW plAnimStageVec;
-    plAnimStage *s1 = TRACKED_NEW plAnimStage(enterAnim,
+    plAnimStageVec *v = new plAnimStageVec;
+    plAnimStage *s1 = new plAnimStage(enterAnim,
                                       0,
                                       plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                       plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                                       0);
     v->push_back(s1);
-    plAnimStage *s2 = TRACKED_NEW plAnimStage(idleAnim, 0,
+    plAnimStage *s2 = new plAnimStage(idleAnim, 0,
                                       plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                       idleAdvance, plAnimStage::kRegressNone,
                                       -1);
     v->push_back(s2);
-    plAnimStage *s3 = TRACKED_NEW plAnimStage(exitAnim, 0,
+    plAnimStage *s3 = new plAnimStage(exitAnim, 0,
                                       plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                       plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                                       0);
     v->push_back(s3);
 
-    plAvBrainGeneric *b = TRACKED_NEW plAvBrainGeneric(v, nil, nil, nil, plAvBrainGeneric::kExitAnyTask | plAvBrainGeneric::kExitNewBrain,
+    plAvBrainGeneric *b = new plAvBrainGeneric(v, nil, nil, nil, plAvBrainGeneric::kExitAnyTask | plAvBrainGeneric::kExitNewBrain,
                                                2.0f, 2.0f, plAvBrainGeneric::kMoveStandstill);
 
     b->SetBodyUsage(bodyUsage);
     b->SetType(type);
 
-    plAvTaskBrain *bt = TRACKED_NEW plAvTaskBrain(b);
-    plAvTaskMsg *btm = TRACKED_NEW plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avatar->GetKey(), bt);
+    plAvTaskBrain *bt = new plAvTaskBrain(b);
+    plAvTaskMsg *btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avatar->GetKey(), bt);
     if(netPropagate)
         btm->SetBCastFlag(plMessage::kNetPropagate);
     btm->Send();
@@ -1442,23 +1440,23 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
         plKey avKey = avatar->GetKey();
         float fadeIn = emote->GetFadeIn();
         float fadeOut = emote->GetFadeOut();
-        plAnimStage *s1 = TRACKED_NEW plAnimStage(emoteName,
+        plAnimStage *s1 = new plAnimStage(emoteName,
                                           0,
                                           plAnimStage::kForwardAuto,
                                           plAnimStage::kBackNone,
                                           plAnimStage::kAdvanceOnMove,
                                           plAnimStage::kRegressNone,
                                           0);
-        plAnimStageVec *v = TRACKED_NEW plAnimStageVec;
+        plAnimStageVec *v = new plAnimStageVec;
         v->push_back(s1);
 
-        plAvBrainGeneric *b = TRACKED_NEW plAvBrainGeneric(v, nil, nil, nil, 
+        plAvBrainGeneric *b = new plAvBrainGeneric(v, nil, nil, nil, 
                                                    plAvBrainGeneric::kExitAnyInput | plAvBrainGeneric::kExitNewBrain | plAvBrainGeneric::kExitAnyTask, 
                                                    2.0f, 2.0f, huBrain->IsActor() ? plAvBrainGeneric::kMoveRelative : plAvBrainGeneric::kMoveStandstill);
         b->SetType(plAvBrainGeneric::kEmote);
         b->SetBodyUsage(emote->GetBodyUsage());
-        plAvTaskBrain *bt = TRACKED_NEW plAvTaskBrain(b);
-        plAvTaskMsg *btm = TRACKED_NEW plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avKey, bt);
+        plAvTaskBrain *bt = new plAvTaskBrain(b);
+        plAvTaskMsg *btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avKey, bt);
         btm->SetBCastFlag(plMessage::kNetPropagate);
         btm->Send();
 

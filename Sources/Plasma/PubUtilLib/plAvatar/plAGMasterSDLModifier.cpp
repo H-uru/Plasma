@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 char plAGMasterSDLModifier::AGMasterVarNames::kStrAtcs[]="atcs";
 char plAGMasterSDLModifier::AGMasterVarNames::kStrBlends[]="blends";
 
-UInt32 plAGMasterSDLModifier::IApplyModFlags(UInt32 sendFlags)
+uint32_t plAGMasterSDLModifier::IApplyModFlags(uint32_t sendFlags)
 {
     // ugly hack so bug light animation state isn't stored on the server
     if (stricmp(GetTarget()->GetKeyName(), "RTOmni-BugLightTest") == 0)
@@ -80,7 +80,7 @@ void plAGMasterSDLModifier::IPutBlends(plStateDataRecord* state, plAGMasterMod* 
     int i;
     for(i=0;i<numBlends; i++)
     {
-        blendsVar->Set((UInt8)(agMaster->GetAnimInstance(i)->GetBlend() * 255), i);
+        blendsVar->Set((uint8_t)(agMaster->GetAnimInstance(i)->GetBlend() * 255), i);
     }
 }
 
@@ -149,7 +149,7 @@ void plAGMasterSDLModifier::ISetCurrentBlends(const plStateDataRecord* state, pl
 
         for (i=0;i<blendsVar->GetCount();i++)
         {
-            UInt8 blend;
+            uint8_t blend;
             blendsVar->Get(&blend, i);
             objAGMaster->GetAnimInstance(i)->SetBlend(blend / 255.f);
         }
@@ -191,9 +191,9 @@ void plAGMasterSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
 
         if (objAGMaster->fIsGrouped && objAGMaster->fMsgForwarder)
         {
-            hsScalar animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
+            float animTimeFromWorldTime = (objAGMaster->GetNumATCAnimations() > 0) ? objAGMaster->GetATCAnimInstance(0)->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) : 0.0f;
 
-            plAGCmdMsg *msg = TRACKED_NEW plAGCmdMsg();
+            plAGCmdMsg *msg = new plAGCmdMsg();
             msg->SetCmd(plAGCmdMsg::kSetAnimTime);
             msg->fAnimTime = animTimeFromWorldTime;
             msg->AddReceiver(objAGMaster->fMsgForwarder->GetKey());

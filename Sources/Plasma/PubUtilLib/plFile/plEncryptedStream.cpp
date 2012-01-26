@@ -40,24 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plEncryptedStream.h"
-#include "hsUtils.h"
+
 #include "plFileUtils.h"
 #include "hsSTLStream.h"
 
 #include <time.h>
 
-static const UInt32 kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
+static const uint32_t kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
 static const int kEncryptChunkSize = 8;
 
 static const char* kOldMagicString = "BriceIsSmart";
 static const char* kMagicString    = "whatdoyousee";
 static const int kMagicStringLen = 12;
 
-static const int kFileStartOffset = kMagicStringLen + sizeof(UInt32);
+static const int kFileStartOffset = kMagicStringLen + sizeof(uint32_t);
 
 static const int kMaxBufferedFileSize = 10*1024;
 
-plEncryptedStream::plEncryptedStream(UInt32* key) :
+plEncryptedStream::plEncryptedStream(uint32_t* key) :
     fRef(nil),
     fActualFileSize(0),
     fBufferedStream(false),
@@ -86,9 +86,9 @@ plEncryptedStream::~plEncryptedStream()
 // but frankly, who cares.  No one is going to break the encryption, they'll just get the
 // key out of the exe or memory.
 //
-void plEncryptedStream::IEncipher(UInt32* const v)
+void plEncryptedStream::IEncipher(uint32_t* const v)
 {
-    register UInt32 y=v[0], z=v[1], sum=0, delta=0x9E3779B9, n=32;
+    register uint32_t y=v[0], z=v[1], sum=0, delta=0x9E3779B9, n=32;
 
     while (n-- > 0)
     {
@@ -100,9 +100,9 @@ void plEncryptedStream::IEncipher(UInt32* const v)
    v[0]=y; v[1]=z;
 }
 
-void plEncryptedStream::IDecipher(UInt32* const v)
+void plEncryptedStream::IDecipher(uint32_t* const v)
 {
-    register UInt32 y=v[0], z=v[1], sum=0xC6EF3720, delta=0x9E3779B9, n=32;
+    register uint32_t y=v[0], z=v[1], sum=0xC6EF3720, delta=0x9E3779B9, n=32;
 
     // sum = delta<<5, in general sum = delta * n
 
@@ -118,15 +118,15 @@ void plEncryptedStream::IDecipher(UInt32* const v)
 
 hsBool plEncryptedStream::Open(const char* name, const char* mode)
 {
-    wchar* wName = hsStringToWString(name);
-    wchar* wMode = hsStringToWString(mode);
+    wchar_t* wName = hsStringToWString(name);
+    wchar_t* wMode = hsStringToWString(mode);
     hsBool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool plEncryptedStream::Open(const wchar* name, const wchar* mode)
+hsBool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
@@ -143,7 +143,7 @@ hsBool plEncryptedStream::Open(const wchar* name, const wchar* mode)
             return false;
         }
 
-        fread(&fActualFileSize, sizeof(UInt32), 1, fRef);
+        fread(&fActualFileSize, sizeof(uint32_t), 1, fRef);
 
         // The encrypted stream is inefficient if you do reads smaller than
         // 8 bytes.  Since we do a lot of those, any file under a size threshold
@@ -157,8 +157,8 @@ hsBool plEncryptedStream::Open(const wchar* name, const wchar* mode)
     }
     else if (wcscmp(mode, L"wb") == 0)
     {
-        fRAMStream = TRACKED_NEW hsVectorStream;
-        fWriteFileName = TRACKED_NEW wchar[wcslen(name) + 1];
+        fRAMStream = new hsVectorStream;
+        fWriteFileName = new wchar_t[wcslen(name) + 1];
         wcscpy(fWriteFileName, name);
         fPosition = 0;
 
@@ -209,7 +209,7 @@ hsBool plEncryptedStream::Close()
     return rtn;
 }
 
-UInt32 plEncryptedStream::IRead(UInt32 bytes, void* buffer)
+uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 {
     if (!fRef)
         return 0;
@@ -232,11 +232,11 @@ UInt32 plEncryptedStream::IRead(UInt32 bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = TRACKED_NEW hsVectorStream;
+    fRAMStream = new hsVectorStream;
     char buf[1024];
     while (!AtEnd())
     {
-        UInt32 numRead = Read(1024, buf);
+        uint32_t numRead = Read(1024, buf);
         fRAMStream->Write(numRead, buf);
     }
     fRAMStream->Rewind();
@@ -255,7 +255,7 @@ hsBool plEncryptedStream::AtEnd()
         return (GetPosition() == fActualFileSize);
 }
 
-void plEncryptedStream::Skip(UInt32 delta)
+void plEncryptedStream::Skip(uint32_t delta)
 {
     if (fBufferedStream)
     {
@@ -299,31 +299,31 @@ void plEncryptedStream::FastFwd()
     }
 }
 
-UInt32 plEncryptedStream::GetEOF()
+uint32_t plEncryptedStream::GetEOF()
 {
     return fActualFileSize;
 }
 
-UInt32 plEncryptedStream::Read(UInt32 bytes, void* buffer)
+uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
 {
     if (fBufferedStream)
     {
-        UInt32 numRead = fRAMStream->Read(bytes, buffer);
+        uint32_t numRead = fRAMStream->Read(bytes, buffer);
         fPosition = fRAMStream->GetPosition();
         return numRead;
     }
 
-    UInt32 startPos = fPosition;
+    uint32_t startPos = fPosition;
 
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
-    UInt32 startChunkPos = startPos % kEncryptChunkSize;
+    uint32_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    UInt32 startAmt = (startChunkPos != 0) ? hsMinimum(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    uint32_t startAmt = (startChunkPos != 0) ? hsMinimum(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
-    UInt32 totalNumRead = IRead(bytes, buffer);
+    uint32_t totalNumRead = IRead(bytes, buffer);
 
-    UInt32 numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
-    UInt32 endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
+    uint32_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
+    uint32_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
 
     // If the start position is in the middle of a chunk we need to rewind and
     // read that whole chunk in and decrypt it.
@@ -334,8 +334,8 @@ UInt32 plEncryptedStream::Read(UInt32 bytes, void* buffer)
 
         // Read in the chunk and decrypt it
         char buf[kEncryptChunkSize];
-        UInt32 numRead = IRead(kEncryptChunkSize, &buf);
-        IDecipher((UInt32*)&buf);
+        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IDecipher((uint32_t*)&buf);
 
         // Copy the relevant portion to the output buffer
         memcpy(buffer, &buf[startChunkPos], startAmt);
@@ -345,12 +345,12 @@ UInt32 plEncryptedStream::Read(UInt32 bytes, void* buffer)
 
     if (numMidChunks != 0)
     {
-        UInt32* bufferPos = (UInt32*)(((char*)buffer)+startAmt);
+        uint32_t* bufferPos = (uint32_t*)(((char*)buffer)+startAmt);
         for (int i = 0; i < numMidChunks; i++)
         {
             // Decrypt chunk
             IDecipher(bufferPos);
-            bufferPos += (kEncryptChunkSize / sizeof(UInt32));
+            bufferPos += (kEncryptChunkSize / sizeof(uint32_t));
         }
     }
 
@@ -359,8 +359,8 @@ UInt32 plEncryptedStream::Read(UInt32 bytes, void* buffer)
         // Read in the final chunk and decrypt it
         char buf[kEncryptChunkSize];
         SetPosition(startPos + startAmt + numMidChunks*kEncryptChunkSize);
-        UInt32 numRead = IRead(kEncryptChunkSize, &buf);
-        IDecipher((UInt32*)&buf);
+        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IDecipher((uint32_t*)&buf);
 
         memcpy(((char*)buffer)+totalNumRead-endAmt, &buf, endAmt);
         
@@ -377,7 +377,7 @@ UInt32 plEncryptedStream::Read(UInt32 bytes, void* buffer)
     return totalNumRead;
 }
 
-UInt32 plEncryptedStream::Write(UInt32 bytes, const void* buffer)
+uint32_t plEncryptedStream::Write(uint32_t bytes, const void* buffer)
 {
     if (fOpenMode != kOpenWrite)
     {
@@ -388,7 +388,7 @@ UInt32 plEncryptedStream::Write(UInt32 bytes, const void* buffer)
     return fRAMStream->Write(bytes, buffer);
 }
 
-bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar* outputFile)
+bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar_t* outputFile)
 {
     hsUNIXStream outputStream;
 
@@ -402,10 +402,10 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar* outp
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
-    UInt32 amtRead;
+    uint32_t amtRead;
     while ((amtRead = sourceStream->Read(kEncryptChunkSize, &buf)) == kEncryptChunkSize)
     {
-        IEncipher((UInt32*)&buf);
+        IEncipher((uint32_t*)&buf);
         outputStream.Write(kEncryptChunkSize, &buf);
     }
 
@@ -422,13 +422,13 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar* outp
         for (int i = amtRead; i < kEncryptChunkSize; i++)
             buf[i] = rand();
 
-        IEncipher((UInt32*)&buf);
+        IEncipher((uint32_t*)&buf);
 
         outputStream.Write(kEncryptChunkSize, &buf);
     }
 
     // Write the original file size at the start
-    UInt32 actualSize = sourceStream->GetPosition();
+    uint32_t actualSize = sourceStream->GetPosition();
     outputStream.Rewind();
     outputStream.Skip(kMagicStringLen);
     outputStream.WriteLE32(actualSize);
@@ -440,13 +440,13 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar* outp
 
 bool plEncryptedStream::FileEncrypt(const char* fileName)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = FileEncrypt(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-bool plEncryptedStream::FileEncrypt(const wchar* fileName)
+bool plEncryptedStream::FileEncrypt(const wchar_t* fileName)
 {
     hsUNIXStream sIn;
     if (!sIn.Open(fileName))
@@ -477,13 +477,13 @@ bool plEncryptedStream::FileEncrypt(const wchar* fileName)
 
 bool plEncryptedStream::FileDecrypt(const char* fileName)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = FileDecrypt(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-bool plEncryptedStream::FileDecrypt(const wchar* fileName)
+bool plEncryptedStream::FileDecrypt(const wchar_t* fileName)
 {
     plEncryptedStream sIn;
     if (!sIn.Open(fileName))
@@ -500,7 +500,7 @@ bool plEncryptedStream::FileDecrypt(const wchar* fileName)
 
     while (!sIn.AtEnd())
     {
-        UInt32 numRead = sIn.Read(sizeof(buf), buf);
+        uint32_t numRead = sIn.Read(sizeof(buf), buf);
         sOut.Write(numRead, buf);
     }
 
@@ -523,13 +523,13 @@ bool plEncryptedStream::ICheckMagicString(FILE* fp)
 
 bool plEncryptedStream::IsEncryptedFile(const char* fileName)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     bool ret = IsEncryptedFile(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-bool plEncryptedStream::IsEncryptedFile(const wchar* fileName)
+bool plEncryptedStream::IsEncryptedFile(const wchar_t* fileName)
 {
     FILE* fp = hsWFopen(fileName, L"rb");
     if (!fp)
@@ -542,15 +542,15 @@ bool plEncryptedStream::IsEncryptedFile(const wchar* fileName)
     return isEncrypted;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const char* fileName, bool requireEncrypted, UInt32* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFile(const char* fileName, bool requireEncrypted, uint32_t* cryptKey)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsStream* ret = OpenEncryptedFile(wFilename, requireEncrypted, cryptKey);
     delete [] wFilename;
     return ret;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const wchar* fileName, bool requireEncrypted, UInt32* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, bool requireEncrypted, uint32_t* cryptKey)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
     requireEncrypted = false;
@@ -560,32 +560,32 @@ hsStream* plEncryptedStream::OpenEncryptedFile(const wchar* fileName, bool requi
 
     hsStream* s = nil;
     if (isEncrypted)
-        s = TRACKED_NEW plEncryptedStream(cryptKey);
+        s = new plEncryptedStream(cryptKey);
     // If this isn't an external release, let them use unencrypted data
     else
         if (!requireEncrypted)
-            s = TRACKED_NEW hsUNIXStream;
+            s = new hsUNIXStream;
 
     if (s)
         s->Open(fileName, L"rb");
     return s;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const char* fileName, UInt32* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFileWrite(const char* fileName, uint32_t* cryptKey)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsStream* ret = OpenEncryptedFileWrite(wFilename, cryptKey);
     delete [] wFilename;
     return ret;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar* fileName, UInt32* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey)
 {
     hsStream* s = nil;
 #ifdef PLASMA_EXTERNAL_RELEASE
-    s = TRACKED_NEW plEncryptedStream(cryptKey);
+    s = new plEncryptedStream(cryptKey);
 #else
-    s = TRACKED_NEW hsUNIXStream;
+    s = new hsUNIXStream;
 #endif
 
     s->Open(fileName, L"wb");

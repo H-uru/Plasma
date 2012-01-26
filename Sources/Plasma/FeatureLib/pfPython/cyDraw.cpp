@@ -78,7 +78,7 @@ void cyDraw::EnableT(hsBool state)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsQuat.h"
 #define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1
-#define kSLOPELIMIT (cosf(hsScalarDegToRad(55.f)))
+#define kSLOPELIMIT (cosf(hsDegreesToRadians(55.f)))
 
 class plCoordinateInterface;
 class plPhysical;
@@ -72,12 +72,12 @@ class plMovementStrategySimulationInterface
 {
 public:
 
-    virtual void Apply(hsScalar delSecs)=0;
-    virtual void Update(hsScalar delSecs)=0;
+    virtual void Apply(float delSecs)=0;
+    virtual void Update(float delSecs)=0;
     //most strategies don't require this. Only the ones that require behavior like a physical or need
     //something after the sim step. this used to be taken care of by Update, but this was moved to take care of
     //some of the frame lag
-    virtual void PostStep(hsScalar delSecs){};
+    virtual void PostStep(float delSecs){};
     virtual void IAddContactNormals(hsVector3& vec){fContactNormals.Append(vec);}
     virtual void AddOnTopOfObject(plPhysical* phys){ fOnTopOf.Append(phys);}
     virtual void LeaveAge()
@@ -95,7 +95,7 @@ class plControllerSweepRecord
 public:
     plPhysical *ObjHit;
     hsPoint3 locHit;//World space
-    hsScalar TimeHit;//Normalized between 0 and 1
+    float TimeHit;//Normalized between 0 and 1
     hsVector3 Norm;
 };
 bool operator<(const plControllerSweepRecord left, const plControllerSweepRecord right);
@@ -105,9 +105,9 @@ public:
     virtual ~plPhysicalControllerCore();
     virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults)=0;
     virtual void SetMovementSimulationInterface(plMovementStrategySimulationInterface* strat){fMovementInterface=strat;}
-    virtual void Apply(hsScalar delSecs);
-    virtual void Update(hsScalar delSecs);
-    virtual void PostStep(hsScalar delSecs);
+    virtual void Apply(float delSecs);
+    virtual void Update(float delSecs);
+    virtual void PostStep(float delSecs);
     // A disabled avatar doesn't move or accumulate air time if he's off the ground.
     virtual void Enable(bool enable) = 0;
     virtual bool IsEnabled() {return fEnabled;}
@@ -125,9 +125,9 @@ public:
     //when seeking no longer want to interact with exclusion regions
     virtual void SetSeek(bool seek){fSeeking=seek;}
     virtual bool IsSeeking(){return fSeeking;}
-    static plPhysicalControllerCore* Create(plKey ownerSO, hsScalar height, hsScalar radius);
+    static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius);
     virtual plMovementStrategySimulationInterface* GetMovementInterface(){return fMovementInterface;}
-    plPhysicalControllerCore(plKey ownerSceneObject, hsScalar height, hsScalar radius);
+    plPhysicalControllerCore(plKey ownerSceneObject, float height, float radius);
     virtual plKey GetOwner(){return fOwner;};
     // Set the LOS DB this avatar will be in (only one)
     virtual void SetLOSDB(plSimDefs::plLOSDB losDB) { fLOSDB = losDB; } ;
@@ -162,36 +162,36 @@ public:
         return vel/fSimLength;
     }
     void SendCorrectionMessages();
-    void IncrementAngle(hsScalar deltaAngle);
+    void IncrementAngle(float deltaAngle);
     void UpdateWorldRelativePos();
     virtual void SetLinearVelocity(const hsVector3& linearVel){fLinearVelocity=linearVel;}
     //should actually be a 3 vector but everywhere else it is assumed to be just around  Z 
-    virtual void SetAngularVelocity(const hsScalar angvel){ fAngularVelocity=angvel;}
-    virtual void SetVelocities(const hsVector3& linearVel, hsScalar angVel)
+    virtual void SetAngularVelocity(const float angvel){ fAngularVelocity=angvel;}
+    virtual void SetVelocities(const hsVector3& linearVel, float angVel)
     {
         fLinearVelocity=linearVel;
         fAngularVelocity=angVel;
     }
     
     virtual const hsVector3& GetLinearVelocity()  ;
-    virtual hsScalar GetAngularVelocity(){return fAngularVelocity;}
+    virtual float GetAngularVelocity(){return fAngularVelocity;}
     virtual const hsVector3& GetAchievedLinearVelocity()const {return fAchievedLinearVelocity;}
     plPhysical* GetPushingPhysical();
     bool GetFacingPushingPhysical();
     virtual void SetPushingPhysical(plPhysical* pl){fPushingPhysical=pl;}
     virtual void SetFacingPushingPhysical(bool ans){fFacingPushingPhysical=ans;}
     //To be Used during runtime conversions, say to switch a tall controller to a ball for swimming
-    virtual void SetControllerDimensions(hsScalar radius, hsScalar height)=0;
-    virtual hsScalar GetControllerWidth(){return fRadius;}
-    virtual hsScalar GetControllerHeight(){return fHeight;}
+    virtual void SetControllerDimensions(float radius, float height)=0;
+    virtual float GetControllerWidth(){return fRadius;}
+    virtual float GetControllerHeight(){return fHeight;}
     virtual void ResetAchievedLinearVelocity()
     {
         fAchievedLinearVelocity.Set(0.f,0.f,0.f);
     }
-    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, UInt32& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
+    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
     //this should only be used to force a move it could place your head into a wall and that would be good
-    virtual hsScalar GetHeight() {return fHeight;}
-    virtual hsScalar GetRadius() {return fRadius;}
+    virtual float GetHeight() {return fHeight;}
+    virtual float GetRadius() {return fRadius;}
     //Wether the avatar thing has mass and forces things down or not, and changes the way things move
     //This is an attempt fix things like riding on an animated physical
     virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys)=0;
@@ -199,8 +199,8 @@ public:
 protected:
     
     plKey fOwner;
-    hsScalar fHeight;
-    hsScalar fRadius;
+    float fHeight;
+    float fRadius;
     plKey fWorldKey;
     plSimDefs::plLOSDB fLOSDB;
     bool fSeeking;
@@ -215,11 +215,11 @@ protected:
     hsQuat fLocalRotation;
     hsMatrix44 fPrevSubworldW2L;
     hsVector3 fDisplacementThisStep;
-    hsScalar fSimLength;
+    float fSimLength;
     
     //physical properties
     hsVector3 fLinearVelocity;
-    hsScalar fAngularVelocity;
+    float fAngularVelocity;
     hsVector3 fAchievedLinearVelocity;
     plPhysical* fPushingPhysical;
     bool fFacingPushingPhysical;
@@ -251,7 +251,7 @@ public:
         if(fCore)fCore->OverrideAchievedVelocity(AchievedLinearVelocity);
     }
 //proxy functions for Controller Core
-    virtual hsScalar GetAirTime() const { return fTimeInAir; }
+    virtual float GetAirTime() const { return fTimeInAir; }
     virtual void ResetAirTime() { fTimeInAir = 0.f; }   
     
 protected:
@@ -259,12 +259,12 @@ protected:
     virtual void IApplyKinematic();
     plPhysicalControllerCore* fCore;
     hsVector3 fLinearAcceleration;
-    hsScalar fAngularAcceleration;
+    float fAngularAcceleration;
     plKey fOwner;
-    static const hsScalar kAirTimeThreshold;
-    hsScalar fTimeInAir;
-    hsScalar fPreferedControllerWidth;
-    hsScalar fPreferedControllerHeight;
+    static const float kAirTimeThreshold;
+    float fTimeInAir;
+    float fPreferedControllerWidth;
+    float fPreferedControllerHeight;
     
 
 };
@@ -283,8 +283,8 @@ public:
         fOnTopOfAnimatedPhysLastFrame=false;
     }
     virtual ~plWalkingStrategy(){};
-    virtual void Apply(hsScalar delSecs);
-    virtual void Update(hsScalar delSecs);      
+    virtual void Apply(float delSecs);
+    virtual void Update(float delSecs);      
 
     bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fFalseGround; }
     bool IsOnFalseGround() const { return fFalseGround && !fGroundHit; }
@@ -309,10 +309,10 @@ class plSwimStrategy: public plMovementStrategy
 public:
     plSwimStrategy(plPhysicalControllerCore *core);
     virtual ~plSwimStrategy(){};
-    void SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight);
-    virtual void Apply(hsScalar delSecs);
-    virtual void Update(hsScalar delSecs);      
-    hsScalar GetBuoyancy() { return fBuoyancy; }
+    void SetSurface(plSwimRegionInterface *region, float surfaceHeight);
+    virtual void Apply(float delSecs);
+    virtual void Update(float delSecs);      
+    float GetBuoyancy() { return fBuoyancy; }
     hsBool IsOnGround() { return fOnGround; }
     hsBool HadContacts() { return fHadContacts; }
     virtual void IAddContactNormals(hsVector3& vec);
@@ -320,10 +320,10 @@ protected:
     virtual hsBool IRequireBehaviourLikeAnAnimatedPhysical(){return true;}
 private:
     void IAdjustBuoyancy();
-    hsScalar fBuoyancy;
+    float fBuoyancy;
     hsBool fOnGround;
     hsBool fHadContacts;
-    hsScalar fSurfaceHeight;
+    float fSurfaceHeight;
     plSwimRegionInterface *fCurrentRegion;
 };
 class plRidingAnimatedPhysicalStrategy : public plWalkingStrategy
@@ -332,9 +332,9 @@ public:
     plRidingAnimatedPhysicalStrategy(plPhysicalControllerCore *core ) : 
         fNeedVelocityOverride(false),fStartJump(false),plWalkingStrategy(core){};
     virtual ~plRidingAnimatedPhysicalStrategy(){};
-    virtual void Apply(hsScalar delSecs);
-    virtual void Update(hsScalar delSecs);  
-    virtual void PostStep(hsScalar delSecs);
+    virtual void Apply(float delSecs);
+    virtual void Update(float delSecs);  
+    virtual void PostStep(float delSecs);
     bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fFalseGround; }
     bool IsOnFalseGround() const { return fFalseGround && !fGroundHit; }
     void GroundHit() { fGroundHit = true; }

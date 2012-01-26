@@ -68,14 +68,14 @@ protected:
 
     bool fShowingLocalMarkers;
     bool fMarkersRespawn;
-    UInt32 fSelectedMarker;
-    static const UInt32 kNoMarkerSelected;
-    std::map<UInt32, pfMarkerInfo*> fMarkers; // key is marker id number
+    uint32_t fSelectedMarker;
+    static const uint32_t kNoMarkerSelected;
+    std::map<uint32_t, pfMarkerInfo*> fMarkers; // key is marker id number
 
     void IInit();
     void IShutdown();
 
-    pfMarkerInfo* IFindMarker(plKey markerKey, UInt32& id);
+    pfMarkerInfo* IFindMarker(plKey markerKey, uint32_t& id);
     void IUpdate();
     void IMarkerHit(plKey markerKey, plKey playerKey);
 
@@ -91,19 +91,19 @@ public:
 
     hsBool MsgReceive(plMessage* msg);
 
-    void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
-    void RemoveMarker(UInt32 id);
+    void AddMarker(double x, double y, double z, uint32_t id, bool justCreated);
+    void RemoveMarker(uint32_t id);
     void RemoveAllMarkers();
 
     void ClearSelectedMarker();
-    void SetSelectedMarker(UInt32 id);
-    UInt32 GetSelectedMarker();
+    void SetSelectedMarker(uint32_t id);
+    uint32_t GetSelectedMarker();
 
     void SetMarkersRespawn(bool respawn) {fMarkersRespawn = respawn;}
     bool GetMarkersRespawn() {return fMarkersRespawn;}
 
-    void CaptureMarker(UInt32 id, bool captured); // for QUEST games (no teams)
-    void CaptureMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
+    void CaptureMarker(uint32_t id, bool captured); // for QUEST games (no teams)
+    void CaptureMarker(uint32_t id, int team); // for TEAM games (0 = not captured)
 
     // Shows your markers locally, so you can see where they are
     void LocalShowMarkers(bool show = true);

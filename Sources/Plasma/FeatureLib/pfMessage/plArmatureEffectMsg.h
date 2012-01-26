@@ -48,7 +48,7 @@ class plArmatureEffectMsg : public plEventCallbackMsg
 {
 public:
     plArmatureEffectMsg() : plEventCallbackMsg(), fTriggerIdx(-1) {}
-    plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plArmatureEffectMsg(const plKey &receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
         plEventCallbackMsg(receiver, e, idx, t, repeats, user), fTriggerIdx(-1) {}
 
     CLASSNAME_REGISTER( plArmatureEffectMsg );
@@ -58,7 +58,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) {}
     void Write(hsStream* stream, hsResMgr* mgr) {}
 
-    Int8 fTriggerIdx;
+    int8_t fTriggerIdx;
 };
 
 class plArmatureEffectStateMsg : public plMessage
@@ -73,7 +73,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr); 
     virtual void Write(hsStream* stream, hsResMgr* mgr); 
 
-    Int8 fSurface;
+    int8_t fSurface;
     hsBool fAddSurface;
 };
     

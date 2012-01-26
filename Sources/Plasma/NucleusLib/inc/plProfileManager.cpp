@@ -43,9 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "hsTimer.h"
 
-#include "hsUtils.h"
 
-static UInt32 gCyclesPerMS = 0;
+
+static uint32_t gCyclesPerMS = 0;
 
 #ifdef HS_BUILD_FOR_WIN32
 #define USE_FAST_TIMER
@@ -62,7 +62,7 @@ static UInt32 gCyclesPerMS = 0;
 #define forceinline inline
 #endif
 
-forceinline UInt32 GetPentiumCounter()
+forceinline uint32_t GetPentiumCounter()
 {
 #ifdef _MSC_VER
     __asm {
@@ -79,9 +79,9 @@ forceinline UInt32 GetPentiumCounter()
 
 #pragma warning (pop)
 
-#include "hsWindows.h"
 
-static UInt32 GetProcSpeed()
+
+static uint32_t GetProcSpeed()
 {
     const char* keypath[] =
     {
@@ -114,16 +114,16 @@ static UInt32 GetProcSpeed()
     return value*1000000;
 }
 
-UInt32 GetProcSpeedAlt()
+uint32_t GetProcSpeedAlt()
 {
-    const UInt32 kSamplePeriodMS = 250;
+    const uint32_t kSamplePeriodMS = 250;
 
     // Raise priority to avoid interference from other threads.
     int priority = GetThreadPriority(GetCurrentThread());
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
-    UInt32 startTicks, endTicks;
-    UInt64 pcStart, pcEnd;
+    uint32_t startTicks, endTicks;
+    uint64_t pcStart, pcEnd;
 
     // Count number of processor cycles inside the specified interval
     QueryPerformanceCounter((LARGE_INTEGER*)&pcStart);
@@ -136,17 +136,17 @@ UInt32 GetProcSpeedAlt()
     SetThreadPriority(GetCurrentThread(), priority);
 
     // Calculate Rdtsc/PerformanceCounter ratio;
-    UInt32 numTicks = endTicks - startTicks;
-    UInt64 pcDiff = pcEnd - pcStart;
+    uint32_t numTicks = endTicks - startTicks;
+    uint64_t pcDiff = pcEnd - pcStart;
 
     double ratio = double(numTicks) / double(pcDiff);
-    UInt64 pcFreq;
+    uint64_t pcFreq;
     QueryPerformanceFrequency((LARGE_INTEGER*)&pcFreq);
 
     // Calculate CPU frequency.
-    UInt64 cpuFreq = UInt64(pcFreq * ratio);
+    uint64_t cpuFreq = uint64_t(pcFreq * ratio);
 
-    return (UInt32)cpuFreq;
+    return (uint32_t)cpuFreq;
 }
 
 #define GetProfileTicks() GetPentiumCounter()
@@ -189,9 +189,9 @@ void plProfileManager::AddTimer(plProfileVar* var)
     fVars.push_back(var);
 }
 
-static UInt32 kAvgMilliseconds = 1000;
+static uint32_t kAvgMilliseconds = 1000;
 
-void plProfileManager::SetAvgTime(UInt32 avgMS)
+void plProfileManager::SetAvgTime(uint32_t avgMS)
 {
     kAvgMilliseconds = avgMS;
 }
@@ -251,7 +251,7 @@ void plProfileManager::EndFrame()
     }
 }
 
-UInt32 plProfileManager::GetTime()
+uint32_t plProfileManager::GetTime()
 {
     return GetProfileTicks();
 }
@@ -294,16 +294,16 @@ void plProfileBase::UpdateAvg()
 {
     if (fAvgCount > 0)
     {
-        fLastAvg = (UInt32)(fAvgTotal / fAvgCount);
+        fLastAvg = (uint32_t)(fAvgTotal / fAvgCount);
         fAvgCount = 0;
         fAvgTotal = 0;
     }
 }
 
-UInt32 plProfileBase::GetValue()
+uint32_t plProfileBase::GetValue()
 {
     if (hsCheckBits(fDisplayFlags, kDisplayTime))
-        return (UInt32)TicksToMSec(fValue);
+        return (uint32_t)TicksToMSec(fValue);
     else
         return fValue;
 }
@@ -334,7 +334,7 @@ static  const char  *insertCommas(unsigned int value)
     return str;
 }
 
-void plProfileBase::IPrintValue(UInt32 value, char* buf, hsBool printType)
+void plProfileBase::IPrintValue(uint32_t value, char* buf, hsBool printType)
 {
     if (hsCheckBits(fDisplayFlags, kDisplayCount))
     {
@@ -416,7 +416,7 @@ plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
     return nil;
 }
 
-void plProfileLaps::BeginLap(UInt32 curValue, const char* name)
+void plProfileLaps::BeginLap(uint32_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
     if (!lap)
@@ -432,7 +432,7 @@ void plProfileLaps::BeginLap(UInt32 curValue, const char* name)
     lap->BeginTiming(curValue);
 }
 
-void plProfileLaps::EndLap(UInt32 curValue, const char* name)
+void plProfileLaps::EndLap(uint32_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
 
@@ -489,7 +489,7 @@ plProfileBase* plProfileLaps::GetLap(int i)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-plProfileVar::plProfileVar(const char *name, const char* group, UInt8 flags) :
+plProfileVar::plProfileVar(const char *name, const char* group, uint8_t flags) :
     fGroup(group),
     fLaps(nil)
 {
@@ -507,7 +507,7 @@ plProfileVar::~plProfileVar()
 void plProfileVar::IBeginLap(const char* lapName)
 {
     if (!fLaps)
-        fLaps = TRACKED_NEW plProfileLaps;
+        fLaps = new plProfileLaps;
     fDisplayFlags |= kDisplayLaps;
     if(fLapsActive)
         fLaps->BeginLap(fValue, lapName);

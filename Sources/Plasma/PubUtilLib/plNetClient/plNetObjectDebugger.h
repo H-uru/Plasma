@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetObjectDebugger_inc
 #define plNetObjectDebugger_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
@@ -65,11 +65,11 @@ private:
     {
         std::string fObjName;
         plLocation fLoc;
-        UInt32 fFlags;
+        uint32_t fFlags;
         bool StringMatches(const char* str) const;  // return true if string matches objName according to flags
         bool ObjectMatches(const hsKeyedObject* obj);
         bool ObjectMatches(const char* objName, const char* pageName);
-        DebugObject(const char* objName, plLocation& loc, UInt32 flags);
+        DebugObject(const char* objName, plLocation& loc, uint32_t flags);
     };
     typedef std::vector<DebugObject*> DebugObjectList;
     DebugObjectList fDebugObjects;

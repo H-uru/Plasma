@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRefMsg.h"
 #include "hsStream.h"
 
@@ -53,7 +53,7 @@ plRefMsg::plRefMsg()
 {
 }
 
-plRefMsg::plRefMsg(const plKey &r, UInt8 c)
+plRefMsg::plRefMsg(const plKey &r, uint8_t c)
 : plMessage(nil, r, nil), fRef(nil), fOldRef(nil), fContext(c)
 {
     if( !fContext )

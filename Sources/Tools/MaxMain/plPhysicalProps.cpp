@@ -113,12 +113,12 @@ plPhysicalProps::plPhysicalProps() :
 {
 }
 
-bool plPhysicalProps::SetGroup(UInt32 group, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore)
+bool plPhysicalProps::SetGroup(uint32_t group, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore)
 {
     return ISetParam(fGroup, group, kMemberGroup, canIgnore, node, errMsg);
 }
 
-bool plPhysicalProps::SetReportGroup(UInt32 notifyGroup, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore)
+bool plPhysicalProps::SetReportGroup(uint32_t notifyGroup, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore)
 {
     return ISetParam(fReportGroup, notifyGroup, kReportGroup, canIgnore, node, errMsg);
 }
@@ -300,7 +300,7 @@ bool plPhysicalProps::GetPhysAnim()
     return IGetFlagParam(kFlagPhysAnim);
 }
 
-void plPhysicalProps::SetCanIgnore(UInt32 type, bool canIgnore)
+void plPhysicalProps::SetCanIgnore(uint32_t type, bool canIgnore)
 {
     if (canIgnore)
         fCanIgnore |= type;
@@ -308,7 +308,7 @@ void plPhysicalProps::SetCanIgnore(UInt32 type, bool canIgnore)
         fCanIgnore &= ~type;
 }
 
-bool plPhysicalProps::CanIgnore(UInt32 type)
+bool plPhysicalProps::CanIgnore(uint32_t type)
 {
     return ((fCanIgnore & type) != 0);
 }

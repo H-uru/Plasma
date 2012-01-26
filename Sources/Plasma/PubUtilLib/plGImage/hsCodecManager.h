@@ -67,11 +67,11 @@ public:
     ~hsCodecManager()       { }
     static hsCodecManager& Instance();
 
-    plMipmap    *CreateCompressedMipmap( UInt32 compressionFormat, plMipmap *uncompressed );
-    plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, UInt8 bitDepth = 0 );
-    hsBool      ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
+    plMipmap    *CreateCompressedMipmap( uint32_t compressionFormat, plMipmap *uncompressed );
+    plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, uint8_t bitDepth = 0 );
+    hsBool      ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
-    hsBool      Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority);
+    hsBool      Register(hsCodec *codec, uint32_t compressionFormat, float priority);
 
     /// Decompression flags
     enum {
@@ -83,7 +83,7 @@ public:
         k16BitDepth = 0x0001,
         k32BitDepth = 0x0002
     };
-    enum {  /// Byte orders
+    enum {  /// uint8_t orders
         kNormalCompOrder = 0x0000,      // DirectX, Glide
         kWeirdCompOrder = 0x0004        // OpenGL
     };
@@ -92,18 +92,18 @@ private:
     struct hsCodecEntry
     {
         hsCodecEntry() : fPriority(0), fCodec(nil) { }
-        hsCodecEntry(hsScalar p, hsCodec *c) : fPriority(p), fCodec(c) { }
+        hsCodecEntry(float p, hsCodec *c) : fPriority(p), fCodec(c) { }
 
-        hsScalar                fPriority;
+        float                fPriority;
         hsCodec                 *fCodec;
     };
 
     struct hsCodecList
     {
         hsCodecList() : fCompressionFormat(0) { }
-        hsCodecList(UInt32 f) : fCompressionFormat(f) { }
+        hsCodecList(uint32_t f) : fCompressionFormat(f) { }
 
-        UInt32                  fCompressionFormat;
+        uint32_t                  fCompressionFormat;
         hsTArray<hsCodecEntry>  fCodecList;
     };
 

@@ -110,10 +110,10 @@ int plNetClientMsgHandler::PeekMsg(plNetMessage * netMsg)
 void plNetClientMsgHandler::IFillInTransportMember(const plNetMsgMemberInfoHelper* mbi, plNetTransportMember* mbr)
 {
     const plNetClientMgr* nc=IGetNetClientMgr();
-    UInt16 port = mbi->GetClientGuid()->GetSrcPort();
-    UInt32 addr = mbi->GetClientGuid()->GetSrcAddr();       
-    UInt32 flags = mbi->GetFlags();
-    UInt32 plrID = mbi->GetClientGuid()->GetPlayerID();
+    uint16_t port = mbi->GetClientGuid()->GetSrcPort();
+    uint32_t addr = mbi->GetClientGuid()->GetSrcAddr();       
+    uint32_t flags = mbi->GetFlags();
+    uint32_t plrID = mbi->GetClientGuid()->GetPlayerID();
     plUoid avUoid = mbi->GetAvatarUoid();
     plKey avKey=hsgResMgr::ResMgr()->FindKey(avUoid);
 
@@ -176,7 +176,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
 */
 
     /*
-    plNetOwnershipMsg* netOwnMsg = TRACKED_NEW plNetOwnershipMsg;
+    plNetOwnershipMsg* netOwnMsg = new plNetOwnershipMsg;
 
     int i;
     for(i=0;i<m->GetNumGroups();i++)
@@ -211,7 +211,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
 */
 
-    UInt32 rwFlags = 0;
+    uint32_t rwFlags = 0;
 
     if ( m->IsInitialState() )
     {
@@ -247,7 +247,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     //
     // ERROR CHECK SDL FILE
     //
-    plStateDataRecord* sdRec  = des ? TRACKED_NEW plStateDataRecord(des) : nil;
+    plStateDataRecord* sdRec  = des ? new plStateDataRecord(des) : nil;
     if (!sdRec || sdRec->GetDescriptor()->GetVersion()!=ver)
     {
         std::string err;
@@ -269,7 +269,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         plStateDataRecord* stateRec = nil;
         if (m->IsInitialState())
         {
-            stateRec = TRACKED_NEW plStateDataRecord(des);
+            stateRec = new plStateDataRecord(des);
             stateRec->SetFromDefaults(false);
             stateRec->UpdateFrom(*sdRec, rwFlags);
 
@@ -278,7 +278,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         else
             stateRec = sdRec;
 
-        plNetClientMgr::PendingLoad* pl = TRACKED_NEW plNetClientMgr::PendingLoad();
+        plNetClientMgr::PendingLoad* pl = new plNetClientMgr::PendingLoad();
         pl->fSDRec = stateRec;      // will be deleted when PendingLoad is processed
         if (m->GetHasPlayerID())
             pl->fPlayerID = m->GetPlayerID();       // copy originating playerID if we have it
@@ -334,7 +334,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                     plLoadAvatarMsg* unloadClone = plLoadAvatarMsg::ConvertNoRef(gameMsg);
                     if (unloadClone)
                     {
-                        plLoadAvatarMsg* unloadMsg = TRACKED_NEW plLoadAvatarMsg(unloadClone->GetCloneKey(), unloadClone->GetRequestorKey(), unloadClone->GetUserData(), unloadClone->GetIsPlayer(), false);
+                        plLoadAvatarMsg* unloadMsg = new plLoadAvatarMsg(unloadClone->GetCloneKey(), unloadClone->GetRequestorKey(), unloadClone->GetUserData(), unloadClone->GetIsPlayer(), false);
                         unloadMsg->SetOriginatingPlayerID(unloadClone->GetOriginatingPlayerID());
                         gameMsg = unloadMsg;
                     }
@@ -485,7 +485,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     // this app is not one of the members in the msg
     for( i=0 ;i<m->MemberListInfo()->GetNumMembers() ;i++  )
     {
-        plNetTransportMember* mbr = TRACKED_NEW plNetTransportMember(nc);
+        plNetTransportMember* mbr = new plNetTransportMember(nc);
         IFillInTransportMember(m->MemberListInfo()->GetMember(i), mbr);
         hsLogEntry(nc->DebugMsg("\tAdding transport member, name=%s, p2p=%d, plrID=%d\n", mbr->AsStdString().c_str(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
         int idx=nc->fTransport.AddMember(mbr);
@@ -494,7 +494,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     } // for         
 
     // new player has been aded send local MembersUpdate msg
-    plMemberUpdateMsg* mu = TRACKED_NEW plMemberUpdateMsg;
+    plMemberUpdateMsg* mu = new plMemberUpdateMsg;
     mu->Send();
 
     return hsOK;
@@ -518,7 +518,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
         if ( idx>=0 )
             mbr = nc->fTransport.GetMember(idx);
         else
-            mbr = TRACKED_NEW plNetTransportMember(nc);
+            mbr = new plNetTransportMember(nc);
         hsAssert(mbr, "nil xport member");
         IFillInTransportMember(m->MemberInfo(), mbr);
         
@@ -542,7 +542,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     }
 
     // new player has been aded send local MembersUpdate msg
-    plMemberUpdateMsg* mu = TRACKED_NEW plMemberUpdateMsg;
+    plMemberUpdateMsg* mu = new plMemberUpdateMsg;
     mu->Send();
 
     return hsOK;
@@ -564,7 +564,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
     if(!tm)
     {
 #if 0
-      tm = TRACKED_NEW plNetTransportMember(nc);
+      tm = new plNetTransportMember(nc);
       tm->SetClientNum(m->GetSenderClientNum());
       int idx=nc->fTransport.AddMember(tm);
       hsAssert(idx>=0, "Failed adding member?");

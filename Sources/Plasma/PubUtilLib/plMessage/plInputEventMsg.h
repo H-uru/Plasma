@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plControlDefinition.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 
 class plKeyEventMsg;
 class plMouseEventMsg;
@@ -89,7 +89,7 @@ protected:
     ControlEventCode    fControlCode;
     hsBool              fControlActivated;
     hsPoint3            fTurnToPt;
-    hsScalar            fControlPct;
+    float            fControlPct;
 public:
 
     plControlEventMsg();
@@ -105,12 +105,12 @@ public:
     void SetControlCode(ControlEventCode c) { fControlCode = c; }
     void SetControlActivated(hsBool b)      { fControlActivated = b; }
     void SetTurnToPt(hsPoint3 pt)           { fTurnToPt = pt; }
-    void SetControlPct(hsScalar p)          { fControlPct = p; }
+    void SetControlPct(float p)          { fControlPct = p; }
 
     ControlEventCode    GetControlCode()    const { return fControlCode; }
     hsBool              ControlActivated()  { return fControlActivated; }
     hsPoint3            GetTurnToPt()       { return fTurnToPt; }
-    hsScalar            GetPct()            { return fControlPct; }
+    float            GetPct()            { return fControlPct; }
     char*               GetCmdString()      { return fCmd; }
 
     // IO
@@ -165,7 +165,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE((int32_t*)&fKeyCode);
         stream->ReadLE(&fKeyDown);
         stream->ReadLE(&fCapsLockKeyDown);
         stream->ReadLE(&fShiftKeyDown);
@@ -176,7 +176,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE((int32_t)fKeyCode);
         stream->WriteLE(fKeyDown);
         stream->WriteLE(fCapsLockKeyDown);
         stream->WriteLE(fShiftKeyDown);
@@ -224,7 +224,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
-        stream->ReadLE((Int32*)&fKeyCode);
+        stream->ReadLE((int32_t*)&fKeyCode);
         stream->ReadLE(&fKeyDown);
         stream->ReadLE(&fCapsLockKeyDown);
         stream->ReadLE(&fShiftKeyDown);
@@ -234,7 +234,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteLE((Int32)fKeyCode);
+        stream->WriteLE((int32_t)fKeyCode);
         stream->WriteLE(fKeyDown);
         stream->WriteLE(fCapsLockKeyDown);
         stream->WriteLE(fShiftKeyDown);
@@ -402,7 +402,7 @@ public:
 class plAvatarInputStateMsg : public plMessage
 {
 public:
-    UInt16 fState;
+    uint16_t fState;
 
     plAvatarInputStateMsg() : plMessage(), fState(0) {}
     ~plAvatarInputStateMsg() {}
@@ -418,7 +418,7 @@ public:
 
     // Mapping of bits to the control events we care about
     static const ControlEventCode fCodeMap[];
-    static const UInt8 fMapSize;
+    static const uint8_t fMapSize;
 
     static hsBool IsCodeInMap(ControlEventCode code);
 };

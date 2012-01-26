@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_AGE_DESCRIPTION_H
 #define PL_AGE_DESCRIPTION_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "pnKeyedObject/plUoid.h"
 #include "plFile/plInitFileReader.h"
@@ -58,12 +58,12 @@ class plAgePage
 {
     protected:
         char    *fName;
-        UInt32  fSeqSuffix;
-        Byte    fFlags;
+        uint32_t  fSeqSuffix;
+        uint8_t    fFlags;
 
     public:
 
-        static const UInt32 kInvalidSeqSuffix;
+        static const uint32_t kInvalidSeqSuffix;
 
         enum Flags
         {
@@ -73,18 +73,18 @@ class plAgePage
             kIsVolatile         = 0x08,
         };
 
-        plAgePage( const char *name, UInt32 seqSuffix, Byte flags );
+        plAgePage( const char *name, uint32_t seqSuffix, uint8_t flags );
         plAgePage( char *stringFrom );
         plAgePage( const plAgePage &src );
         plAgePage();
         ~plAgePage();
 
         const char  *GetName( void ) const { return fName; }
-        UInt32      GetSeqSuffix( void ) const { return fSeqSuffix; }
-        Byte        GetFlags( void ) const { return fFlags; }
+        uint32_t      GetSeqSuffix( void ) const { return fSeqSuffix; }
+        uint8_t        GetFlags( void ) const { return fFlags; }
 
-        void        SetSeqSuffix( UInt32 s ) { fSeqSuffix = s; }
-        void        SetFlags(Byte f, bool on=true);
+        void        SetSeqSuffix( uint32_t s ) { fSeqSuffix = s; }
+        void        SetFlags(uint8_t f, bool on=true);
 
         hsBool      SetFromString( const char *string );
         char        *GetAsString( void ) const;
@@ -100,7 +100,7 @@ private:
 
     char    *fName;
 
-    Int32               fPageIterator;
+    int32_t               fPageIterator;
     hsTArray<plAgePage> fPages;
 
     plUnifiedTime fStart;
@@ -109,8 +109,8 @@ private:
     short fMaxCapacity;
     short   fLingerTime;        // seconds game instance should linger after last player leaves. -1 means never exit.
 
-    Int32   fSeqPrefix;
-    UInt32  fReleaseVersion;    // 0 for pre-release, 1+ for actual released ages
+    int32_t   fSeqPrefix;
+    uint32_t  fReleaseVersion;    // 0 for pre-release, 1+ for actual released ages
     
     static const char* fCommonPages[];
 
@@ -118,7 +118,7 @@ private:
     void    IDeInit( void );
 
     // Overload for plInitSectionTokenReader
-    virtual hsBool      IParseToken( const char *token, hsStringTokenizer *tokenizer, UInt32 userData );
+    virtual hsBool      IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData );
 
 public:
     static char kAgeDescPath[];
@@ -146,7 +146,7 @@ public:
     // Page list
     void    ClearPageList();
     void    RemovePage( const char *page );
-    void    AppendPage( const char *name, int seqSuffix = -1, Byte flags = 0 );
+    void    AppendPage( const char *name, int seqSuffix = -1, uint8_t flags = 0 );
 
     void        SeekFirstPage( void );
     plAgePage   *GetNextPage( void );
@@ -167,8 +167,8 @@ public:
 
     float   GetDayLength() const { return fDayLength; }
 
-    Int32   GetSequencePrefix( void ) const { return fSeqPrefix; }
-    UInt32  GetReleaseVersion( void ) const { return fReleaseVersion; }
+    int32_t   GetSequencePrefix( void ) const { return fSeqPrefix; }
+    uint32_t  GetReleaseVersion( void ) const { return fReleaseVersion; }
     hsBool  IsGlobalAge( void ) const { return ( fSeqPrefix < 0 ) ? true : false; }
 
     // Setters
@@ -178,8 +178,8 @@ public:
     void SetDayLength(const float l) { fDayLength = l; }
     void SetMaxCapacity(const short m) { fMaxCapacity=m; }
     void SetLingerTime(const short v) { fLingerTime=v;}
-    void SetSequencePrefix( Int32 p ) { fSeqPrefix = p; }
-    void SetReleaseVersion( UInt32 v ) { fReleaseVersion = v; }
+    void SetSequencePrefix( int32_t p ) { fSeqPrefix = p; }
+    void SetReleaseVersion( uint32_t v ) { fReleaseVersion = v; }
 
     // calculations
     double GetAgeElapsedDays(plUnifiedTime earthCurrentTime) const;

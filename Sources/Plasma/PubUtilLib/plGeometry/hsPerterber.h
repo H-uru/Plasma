@@ -81,7 +81,7 @@ public:
 
     virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const = 0;
 
-    virtual UInt32 GetType() const = 0;
+    virtual uint32_t GetType() const = 0;
 
     virtual void Write(hsStream* s) = 0;
     virtual void Read(hsStream* s) = 0;
@@ -95,7 +95,7 @@ public:
     void LabelAndWrite(hsStream* s);
     static hsPerterber* CreateAndRead(hsStream* s);
 
-    virtual void Init(Int32 nParams, hsScalar* params) = 0;
+    virtual void Init(int32_t nParams, hsScalar* params) = 0;
 
 #if 0   // Used Registry...need to change paulg
     static void InitSystem(plResMgr* reg);

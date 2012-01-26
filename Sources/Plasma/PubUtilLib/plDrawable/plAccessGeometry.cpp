@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plAccessGeometry.h"
 
@@ -104,7 +104,7 @@ void plAccessGeometry::Init(plPipeline* pipe)
 {
     plAccessGeometry* oldAcc = fInstance;
 
-    fInstance = NEW(plAccessGeometry)(pipe);
+    fInstance = new plAccessGeometry(pipe);
 
     hsRefCnt_SafeUnRef(oldAcc);
 }
@@ -194,7 +194,7 @@ void plAccessGeometry::Close(hsTArray<plAccessSpan>& accs) const
         Close(accs[i]);
 }
 
-void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, UInt32 channels) const
+void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
     int j;
     for( j = 0; j < di->GetNumDrawables(); j++ )
@@ -216,7 +216,7 @@ void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, UInt32 channels) 
     }
 }
 
-void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, UInt32 channels) const
+void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
     int j;
     for( j = 0; j < di->GetNumDrawables(); j++ )
@@ -271,7 +271,7 @@ void plAccessGeometry::Close(plAccessSpan& acc) const
     fPipe->CloseAccess(acc);
 }
 
-void plAccessGeometry::IOpen(plDrawable* d, UInt32 spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo) const
+void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo) const
 {
     acc.SetType(plAccessSpan::kUndefined);
 
@@ -304,12 +304,12 @@ void plAccessGeometry::IOpen(plDrawable* d, UInt32 spanIdx, plAccessSpan& acc, h
     }
 }
 
-void plAccessGeometry::OpenRO(plDrawable* d, UInt32 spanIdx, plAccessSpan& acc, hsBool useSnap) const
+void plAccessGeometry::OpenRO(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap) const
 {
     IOpen(d, spanIdx, acc, useSnap, true);
 }
 
-void plAccessGeometry::OpenRW(plDrawable* drawable, UInt32 spanIdx, plAccessSpan& acc, hsBool idxToo) const
+void plAccessGeometry::OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool idxToo) const
 {
     IOpen(drawable, spanIdx, acc, false, false, idxToo);
 
@@ -318,7 +318,7 @@ void plAccessGeometry::OpenRW(plDrawable* drawable, UInt32 spanIdx, plAccessSpan
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-void plAccessGeometry::TakeSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32 channels) const
+void plAccessGeometry::TakeSnapShot(plDrawable* drawable, uint32_t spanIdx, uint32_t channels) const
 {
     plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
@@ -326,7 +326,7 @@ void plAccessGeometry::TakeSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32
     const plSpan* span = ds->GetSpan(spanIdx);
 
     if( !span->fSnapShot )
-        span->fSnapShot = NEW(plAccessSnapShot);
+        span->fSnapShot = new plAccessSnapShot;
 
     plAccessSpan tmp;
     OpenRO(drawable, spanIdx, tmp, false);
@@ -338,7 +338,7 @@ void plAccessGeometry::TakeSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32
     }
 }
 
-void plAccessGeometry::RestoreSnapShot(plDrawable* drawable, UInt32 spanIdx, UInt32 channels) const
+void plAccessGeometry::RestoreSnapShot(plDrawable* drawable, uint32_t spanIdx, uint32_t channels) const
 {
     plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
@@ -355,7 +355,7 @@ void plAccessGeometry::RestoreSnapShot(plDrawable* drawable, UInt32 spanIdx, UIn
         span->fSnapShot->CopyTo(tmp.AccessVtx(), channels);
 }
 
-void plAccessGeometry::ReleaseSnapShot(plDrawable* drawable, UInt32 spanIdx) const
+void plAccessGeometry::ReleaseSnapShot(plDrawable* drawable, uint32_t spanIdx) const
 {
     plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
@@ -384,16 +384,16 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     dst.SetMaterial(src->fMaterial);
 
     plAccessVtxSpan& acc = dst.AccessVtx();
-    acc.fNumVerts = (UInt16)(src->fNumVerts);
-    UInt32 sz = src->GetVertexSize(src->fFormat);
-    UInt8* ptr = src->fVertexData;
-    acc.PositionStream(ptr, (UInt16)sz, 0);
+    acc.fNumVerts = (uint16_t)(src->fNumVerts);
+    uint32_t sz = src->GetVertexSize(src->fFormat);
+    uint8_t* ptr = src->fVertexData;
+    acc.PositionStream(ptr, (uint16_t)sz, 0);
     ptr += sizeof(hsPoint3);
-    acc.NormalStream(ptr, (UInt16)sz, 0);
+    acc.NormalStream(ptr, (uint16_t)sz, 0);
     ptr += sizeof(hsVector3);
-    acc.DiffuseStream(src->fDiffuseRGBA, sizeof(UInt32), 0);
-    acc.SpecularStream(src->fSpecularRGBA, sizeof(UInt32), 0);
-    acc.UVWStream(ptr, (UInt16)sz, 0);
+    acc.DiffuseStream(src->fDiffuseRGBA, sizeof(uint32_t), 0);
+    acc.SpecularStream(src->fSpecularRGBA, sizeof(uint32_t), 0);
+    acc.UVWStream(ptr, (uint16_t)sz, 0);
     acc.SetNumUVWs(src->CalcNumUVs(src->fFormat));
 
     acc.fVtxDeviceRef = nil;
@@ -446,33 +446,33 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
         return;
     }
 
-    acc.fNumVerts = (UInt16)(span->fVLength);
+    acc.fNumVerts = (uint16_t)(span->fVLength);
 
     plGBufferCell* cell = grp->GetCell(span->fVBufferIdx, span->fCellIdx);
 
-    UInt8* ptr = grp->GetVertBufferData(span->fVBufferIdx);
+    uint8_t* ptr = grp->GetVertBufferData(span->fVBufferIdx);
 
     // Interleaved
-    if( cell->fColorStart == UInt32(-1) )
+    if( cell->fColorStart == uint32_t(-1) )
     {
-        UInt32 stride = grp->GetVertexSize();
+        uint32_t stride = grp->GetVertexSize();
 
         ptr += cell->fVtxStart + span->fCellOffset * stride;
-        Int32 offset = (-(Int32)(span->fVStartIdx)) * (Int32)stride;
+        int32_t offset = (-(int32_t)(span->fVStartIdx)) * (int32_t)stride;
 
-        acc.PositionStream(ptr, (UInt16)stride, offset);
+        acc.PositionStream(ptr, (uint16_t)stride, offset);
         ptr += sizeof(hsPoint3);
 
         int numWgts = grp->GetNumWeights();
         if( numWgts )
         {
             acc.SetNumWeights(numWgts);
-            acc.WeightStream(ptr, (UInt16)stride, offset);
-            ptr += numWgts * sizeof(hsScalar);
+            acc.WeightStream(ptr, (uint16_t)stride, offset);
+            ptr += numWgts * sizeof(float);
             if( grp->GetVertexFormat() & plGBufferGroup::kSkinIndices )
             {
-                acc.WgtIndexStream(ptr, (UInt16)stride, offset);
-                ptr += sizeof(UInt32);
+                acc.WgtIndexStream(ptr, (uint16_t)stride, offset);
+                ptr += sizeof(uint32_t);
             }
             else
             {
@@ -484,40 +484,40 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             acc.SetNumWeights(0);
         }
 
-        acc.NormalStream(ptr, (UInt16)stride, offset);
+        acc.NormalStream(ptr, (uint16_t)stride, offset);
         ptr += sizeof(hsVector3);
 
-        acc.DiffuseStream(ptr, (UInt16)stride, offset);
-        ptr += sizeof(UInt32);
+        acc.DiffuseStream(ptr, (uint16_t)stride, offset);
+        ptr += sizeof(uint32_t);
 
-        acc.SpecularStream(ptr, (UInt16)stride, offset);
-        ptr += sizeof(UInt32);
+        acc.SpecularStream(ptr, (uint16_t)stride, offset);
+        ptr += sizeof(uint32_t);
 
-        acc.UVWStream(ptr, (UInt16)stride, offset);
+        acc.UVWStream(ptr, (uint16_t)stride, offset);
 
         acc.SetNumUVWs(grp->GetNumUVs());
 
     }
     else
     {
-        UInt32 stride = grp->GetVertexLiteStride();
+        uint32_t stride = grp->GetVertexLiteStride();
 
         ptr += cell->fVtxStart + span->fCellOffset * stride;
-        Int32 posOffset = (-(Int32)(span->fVStartIdx)) * (Int32)stride;
+        int32_t posOffset = (-(int32_t)(span->fVStartIdx)) * (int32_t)stride;
 
-        acc.PositionStream(ptr, (UInt16)stride, posOffset);
+        acc.PositionStream(ptr, (uint16_t)stride, posOffset);
         ptr += sizeof(hsPoint3);
 
         int numWgts = grp->GetNumWeights();
         if( numWgts )
         {
             acc.SetNumWeights(numWgts);
-            acc.WeightStream(ptr, (UInt16)stride, posOffset);
-            ptr += numWgts * sizeof(hsScalar);
+            acc.WeightStream(ptr, (uint16_t)stride, posOffset);
+            ptr += numWgts * sizeof(float);
             if( grp->GetVertexFormat() & plGBufferGroup::kSkinIndices )
             {
-                acc.WgtIndexStream(ptr, (UInt16)stride, posOffset);
-                ptr += sizeof(UInt32);
+                acc.WgtIndexStream(ptr, (uint16_t)stride, posOffset);
+                ptr += sizeof(uint32_t);
             }
             else
             {
@@ -529,19 +529,19 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             acc.SetNumWeights(0);
         }
 
-        acc.NormalStream(ptr, (UInt16)stride, posOffset);
+        acc.NormalStream(ptr, (uint16_t)stride, posOffset);
         ptr += sizeof(hsVector3);
 
         plGBufferColor* col = grp->GetColorBufferData(span->fVBufferIdx) + cell->fColorStart;
 
-        Int16 colOffset = (Int16)((-(Int32)(span->fVStartIdx)) * (Int32)stride);
-        colOffset = (Int16)((-(Int32)(span->fVStartIdx)) * sizeof(*col));
+        int16_t colOffset = (int16_t)((-(int32_t)(span->fVStartIdx)) * (int32_t)stride);
+        colOffset = (int16_t)((-(int32_t)(span->fVStartIdx)) * sizeof(*col));
 
         acc.DiffuseStream(&col->fDiffuse, sizeof(*col), colOffset);
 
         acc.SpecularStream(&col->fSpecular, sizeof(*col), colOffset);
 
-        acc.UVWStream(ptr, (UInt16)stride, posOffset);
+        acc.UVWStream(ptr, (uint16_t)stride, posOffset);
 
         acc.SetNumUVWs(grp->GetNumUVs());
     }

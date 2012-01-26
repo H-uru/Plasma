@@ -223,10 +223,10 @@ void plNetClientMgr::IClearPendingLoads()
 //
 void plNetClientMgr::IAddCloneRoom()
 {
-    plSceneNode *cloneRoom = TRACKED_NEW plSceneNode();
+    plSceneNode *cloneRoom = new plSceneNode();
     cloneRoom->RegisterAs(kNetClientCloneRoom_KEY);
     plKey clientKey=hsgResMgr::ResMgr()->FindKey(kClient_KEY);
-    plClientRefMsg *pMsg1 = TRACKED_NEW plClientRefMsg(clientKey, plRefMsg::kOnCreate, -1, plClientRefMsg::kManualRoom);
+    plClientRefMsg *pMsg1 = new plClientRefMsg(clientKey, plRefMsg::kOnCreate, -1, plClientRefMsg::kManualRoom);
     hsgResMgr::ResMgr()->AddViaNotify(cloneRoom->GetKey(), pMsg1, plRefFlags::kPassiveRef);
 }
 
@@ -439,7 +439,7 @@ void plNetClientMgr::StartLinkOutFX()
     {
         plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
 
-        plLinkEffectsTriggerMsg* lem = TRACKED_NEW plLinkEffectsTriggerMsg();
+        plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
         lem->SetLeavingAge(true);
         lem->SetLinkKey(fLocalPlayerKey);
         lem->SetBCastFlag(plMessage::kNetPropagate);
@@ -458,7 +458,7 @@ void plNetClientMgr::StartLinkInFX()
     {
         const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-        plLinkEffectsTriggerMsg* lem = TRACKED_NEW plLinkEffectsTriggerMsg();
+        plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
         lem->SetLeavingAge(false);  // linking in
         lem->SetLinkKey(fLocalPlayerKey);
         lem->SetLinkInAnimKey(avMod->GetLinkInAnimKey());
@@ -635,7 +635,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
             plSynchedObject*so = pl->fKey ? plSynchedObject::ConvertNoRef(pl->fKey->ObjectIsLoaded()) : nil;
             if (so && so->IsFinal())
             {               
-                plSDLModifierMsg* sdlMsg = TRACKED_NEW plSDLModifierMsg(pl->fSDRec->GetDescriptor()->GetName(), 
+                plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(pl->fSDRec->GetDescriptor()->GetName(), 
                     plSDLModifierMsg::kRecv);
                 sdlMsg->SetState( pl->fSDRec, true/*delete pl->fSDRec for us*/ );
                 sdlMsg->SetPlayerID( pl->fPlayerID );
@@ -917,7 +917,7 @@ hsBool plNetClientMgr::MsgReceive( plMessage* msg )
         if ( GetFlagsBit( kNeedToSendInitialAgeStateLoadedMsg ) )
         {
             SetFlagsBit(kNeedToSendInitialAgeStateLoadedMsg, false);
-            plInitialAgeStateLoadedMsg* m = TRACKED_NEW plInitialAgeStateLoadedMsg;
+            plInitialAgeStateLoadedMsg* m = new plInitialAgeStateLoadedMsg;
             m->Send();
         }
 
@@ -1111,7 +1111,7 @@ void plNetClientMgr::IncNumInitialSDLStates()
 
 void plNetClientMgr::NotifyRcvdAllSDLStates() {
     DebugMsg( "Got all initial SDL states" );
-    plNetClientMgrMsg * msg = TRACKED_NEW plNetClientMgrMsg();
+    plNetClientMgrMsg * msg = new plNetClientMgrMsg();
     msg->type = plNetClientMgrMsg::kNotifyRcvdAllSDLStates;
     msg->SetBCastFlag(plMessage::kBCastByType);
     msg->Send();
@@ -1181,7 +1181,7 @@ unsigned plNetClientMgr::GetPlayerIdByName (const char name[]) const {
     return 0;
 }
 
-UInt32 plNetClientMgr::GetPlayerID() const
+uint32_t plNetClientMgr::GetPlayerID() const
 {
     return NetCommGetPlayer()->playerInt;
 }
@@ -1246,7 +1246,7 @@ void plNetClientMgr::MakeCCRInvisible(plKey avKey, int level)
         return;
     }
     
-    plAvatarStealthModeMsg *msg = TRACKED_NEW plAvatarStealthModeMsg();
+    plAvatarStealthModeMsg *msg = new plAvatarStealthModeMsg();
     msg->SetSender(avKey);
     msg->fLevel = level;
 
@@ -1308,12 +1308,12 @@ void plNetClientMgr::IDisableNet () {
                 char title[256];
                 StrPrintf(title, arrsize(title), "%S Error", ProductCoreName());
                 hsMessageBox(fDisableMsg->str, title, hsMessageBoxNormal, hsMessageBoxIconError );
-                plClientMsg *quitMsg = NEW(plClientMsg)(plClientMsg::kQuit);
+                plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
             }
             else
             {
-                pfKIMsg *msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIOKDialog);
+                pfKIMsg *msg = new pfKIMsg(pfKIMsg::kKIOKDialog);
                 msg->SetString(fDisableMsg->str);
                 msg->Send();
             }
@@ -1412,7 +1412,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
 }
 
 // for debugging purposes
-bool plNetClientMgr::IFindModifier(plSynchedObject* obj, Int16 classIdx)
+bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
 {
     plLayerAnimation* layer = plLayerAnimation::ConvertNoRef(obj);
     if (layer)

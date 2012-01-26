@@ -41,15 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 // UserPropMgr.cpp
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsUtils.h"
+
 #include "hsHashTable.h"
 
 #define REFMSG_USERPROP  (REFMSG_USER + 1)
 
-const UInt32 UserPropMgr::kQuickSize = 150001;//199999;
+const uint32_t UserPropMgr::kQuickSize = 150001;//199999;
 
 UserPropMgr gUserPropMgr(GetCOREInterface());
 
@@ -69,13 +69,13 @@ UserPropMgr::~UserPropMgr()
     CloseQuickTable();
 }
 
-void UserPropMgr::SetUserPropFlag(INode *node, const char *name, const BOOL setFlag, const Int32 hFlag) 
+void UserPropMgr::SetUserPropFlag(INode *node, const char *name, const BOOL setFlag, const int32_t hFlag) 
 {
     if (setFlag) SetUserProp(node,name,NULL,hFlag);
     else ClearUserProp(node,name,hFlag);
 }
 
-void UserPropMgr::ClearUserPropALL(const char *name, const Int32 hFlag) 
+void UserPropMgr::ClearUserPropALL(const char *name, const int32_t hFlag) 
 {
     for (int i=0; i<GetSelNodeCount(); i++) 
     {
@@ -304,14 +304,14 @@ void UserPropMgr::SetUserPropBuffer(INode *node, const TSTR &buf)
     }
 }
 
-void UserPropMgr::SetUserPropFlagALL(const char *name, const BOOL setFlag, const Int32 hFlag) 
+void UserPropMgr::SetUserPropFlagALL(const char *name, const BOOL setFlag, const int32_t hFlag) 
 {
     for (int i=0; i<GetSelNodeCount();i++) 
     {
         SetUserPropFlag(GetSelNode(i),name,setFlag,hFlag);
     }
 }
-BOOL UserPropMgr::GetUserPropFlagALL(const char *name, BOOL &isSet, const Int32 hFlag)
+BOOL UserPropMgr::GetUserPropFlagALL(const char *name, BOOL &isSet, const int32_t hFlag)
  {
     isSet = UserPropMgr::UserPropExists(GetSelNode(0),name,hFlag);
 
@@ -321,7 +321,7 @@ BOOL UserPropMgr::GetUserPropFlagALL(const char *name, BOOL &isSet, const Int32 
     return TRUE;
 }
 
-INode* UserPropMgr::GetAncestorIfNeeded(INode* node, const Int32 hFlag)
+INode* UserPropMgr::GetAncestorIfNeeded(INode* node, const int32_t hFlag)
 {
     if (hFlag == kParent)
     {
@@ -338,7 +338,7 @@ INode* UserPropMgr::GetAncestorIfNeeded(INode* node, const Int32 hFlag)
 }
 
 
-void UserPropMgr::ClearUserProp(INode *node, const char *name, const Int32 hFlag) 
+void UserPropMgr::ClearUserProp(INode *node, const char *name, const int32_t hFlag) 
 {
     node = GetAncestorIfNeeded(node,hFlag);
 
@@ -419,7 +419,7 @@ void UserPropMgr::ClearUserProp(INode *node, const char *name, const Int32 hFlag
     }
 };
 
-BOOL UserPropMgr::GetUserProp(INode *node, const char *name, TSTR &value, const Int32 hFlag)
+BOOL UserPropMgr::GetUserProp(INode *node, const char *name, TSTR &value, const int32_t hFlag)
 {
     node = GetAncestorIfNeeded(node,hFlag);
 
@@ -472,7 +472,7 @@ BOOL UserPropMgr::GetUserProp(INode *node, const char *name, TSTR &value, const 
     return false;
 }
 
-void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, const Int32 hFlag) 
+void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, const int32_t hFlag) 
 {
     node = GetAncestorIfNeeded(node,hFlag);
 
@@ -575,15 +575,15 @@ void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, 
 }
 
 
-BOOL UserPropMgr::GetUserPropString(INode *node, const char *name, TSTR &value, const Int32 hFlag)
+BOOL UserPropMgr::GetUserPropString(INode *node, const char *name, TSTR &value, const int32_t hFlag)
 {
      return GetUserProp(node,name,value,hFlag);
 }
-void UserPropMgr::SetUserPropString(INode *node, const char *name, const char *value, const Int32 hFlag) 
+void UserPropMgr::SetUserPropString(INode *node, const char *name, const char *value, const int32_t hFlag) 
 {
     SetUserProp(node,name,value,hFlag);
 }
-BOOL UserPropMgr::GetUserPropFloat(INode *node, const char *name, float &value, const Int32 hFlag)
+BOOL UserPropMgr::GetUserPropFloat(INode *node, const char *name, float &value, const int32_t hFlag)
 {
     TSTR valStr;
     if (GetUserProp(node,name,valStr,hFlag)) 
@@ -593,12 +593,12 @@ BOOL UserPropMgr::GetUserPropFloat(INode *node, const char *name, float &value, 
     }
     return FALSE;
 }
-void UserPropMgr::SetUserPropFloat(INode *node, const char *name, const float value, const Int32 hFlag) 
+void UserPropMgr::SetUserPropFloat(INode *node, const char *name, const float value, const int32_t hFlag) 
 {
     char valStr[50];
     if (sprintf(valStr,"%g",value)) SetUserProp(node,name,valStr,hFlag);
 }
-BOOL UserPropMgr::GetUserPropInt(INode *node, const char *name, int &value, const Int32 hFlag)
+BOOL UserPropMgr::GetUserPropInt(INode *node, const char *name, int &value, const int32_t hFlag)
 {
     TSTR valStr;
     if (GetUserProp(node,name,valStr,hFlag)) {
@@ -607,13 +607,13 @@ BOOL UserPropMgr::GetUserPropInt(INode *node, const char *name, int &value, cons
     }
     return FALSE;
 }
-void UserPropMgr::SetUserPropInt(INode *node, const char *name, const int value, const Int32 hFlag) 
+void UserPropMgr::SetUserPropInt(INode *node, const char *name, const int value, const int32_t hFlag) 
 {
     char valStr[50];
     if (sprintf(valStr,"%d",value)) SetUserProp(node,name,valStr,hFlag);
 }
 
-BOOL UserPropMgr::UserPropExists(INode *node, const char *name, const Int32 hFlag) 
+BOOL UserPropMgr::UserPropExists(INode *node, const char *name, const int32_t hFlag) 
 {
     TSTR value;
     return GetUserProp(node,name,value,hFlag);
@@ -661,7 +661,7 @@ BOOL UserPropMgr::GetUserPropFloatList(INode *node, const char *name, int &num, 
     } else return false;
 }
 
-BOOL UserPropMgr::GetUserPropStringALL(const char *name, TSTR &value, const Int32 hFlag)
+BOOL UserPropMgr::GetUserPropStringALL(const char *name, TSTR &value, const int32_t hFlag)
 {
     BOOL propSet  = UserPropMgr::GetUserPropString(GetSelNode(0),name,value,hFlag);
 
@@ -676,7 +676,7 @@ BOOL UserPropMgr::GetUserPropStringALL(const char *name, TSTR &value, const Int3
 
     return (!propMixed);
 }
-void UserPropMgr::SetUserPropStringALL(const char *name, const char *value, const Int32 hFlag) 
+void UserPropMgr::SetUserPropStringALL(const char *name, const char *value, const int32_t hFlag) 
 {
     for (int i=0; i<GetSelNodeCount(); i++) {
         UserPropMgr::SetUserPropString(GetSelNode(i),name,value,hFlag);
@@ -754,7 +754,7 @@ void UserPropMgr::OpenQuickTable()
 {
         if (!fQuickTable)
         {
-        fQuickTable = TRACKED_NEW hsHashTable<QuickPair>(kQuickSize);
+        fQuickTable = new hsHashTable<QuickPair>(kQuickSize);
         }
     fQuickNode = nil;
 }
@@ -854,7 +854,7 @@ void UserPropMgr::QuickPair::SetBuffer(char* buf)
     fBuffer = buf;
     }
 
-UInt32 UserPropMgr::QuickPair::GetHash() const
+uint32_t UserPropMgr::QuickPair::GetHash() const
 {
     const char * k = fKey;
     int len = k ? strlen(k) : 0;

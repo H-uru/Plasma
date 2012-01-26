@@ -112,7 +112,7 @@ enum {
     // Cli2Srv
     struct Cli2Srv_VarSync_SetStringVar : GameMsgHeader {
         unsigned long   varID;
-        wchar           varValue[256];
+        wchar_t           varValue[256];
     };
     struct Cli2Srv_VarSync_SetNumericVar : GameMsgHeader {
         unsigned long   varID;
@@ -121,18 +121,18 @@ enum {
     struct Cli2Srv_VarSync_RequestAllVars : GameMsgHeader {
     };
     struct Cli2Srv_VarSync_CreateStringVar : GameMsgHeader {
-        wchar       varName[256];
-        wchar       varValue[256];
+        wchar_t       varName[256];
+        wchar_t       varValue[256];
     };
     struct Cli2Srv_VarSync_CreateNumericVar : GameMsgHeader {
-        wchar       varName[256];
+        wchar_t       varName[256];
         double      varValue;
     };
 
     // Srv2Cli
     struct Srv2Cli_VarSync_StringVarChanged : GameMsgHeader {
         unsigned long   varID;
-        wchar           varValue[256];
+        wchar_t           varValue[256];
     };
     struct Srv2Cli_VarSync_NumericVarChanged : GameMsgHeader {
         unsigned long   varID;
@@ -141,12 +141,12 @@ enum {
     struct Srv2Cli_VarSync_AllVarsSent : GameMsgHeader {
     };
     struct Srv2Cli_VarSync_StringVarCreated : GameMsgHeader {
-        wchar           varName[256];
+        wchar_t           varName[256];
         unsigned long   varID;
-        wchar           varValue[256];
+        wchar_t           varValue[256];
     };
     struct Srv2Cli_VarSync_NumericVarCreated : GameMsgHeader {
-        wchar           varName[256];
+        wchar_t           varName[256];
         unsigned long   varID;
         double          varValue;
     };

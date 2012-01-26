@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-void CBaseList::Link (CBaseList * list, byte * afterNode, byte * beforeNode, ELinkType linkType, byte * existingNode) {
+void CBaseList::Link (CBaseList * list, uint8_t * afterNode, uint8_t * beforeNode, ELinkType linkType, uint8_t * existingNode) {
 
     // Verify that the two lists share a common link offset
     ASSERT(m_linkOffset != LINK_OFFSET_UNINIT);
@@ -76,8 +76,8 @@ void CBaseList::Link (CBaseList * list, byte * afterNode, byte * beforeNode, ELi
     ASSERT(firstLink != beforeLink);
 
     // Store nodes for later use in linking
-    byte * firstNode    = afterLink->m_next;
-    byte * lastNextNode = lastLink->m_next;
+    uint8_t * firstNode    = afterLink->m_next;
+    uint8_t * lastNextNode = lastLink->m_next;
     ASSERT(firstNode);
     ASSERT(lastNextNode);
 

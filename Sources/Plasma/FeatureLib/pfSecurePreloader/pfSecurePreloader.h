@@ -63,7 +63,7 @@ private:
     std::queue<const wchar_t*>    fManifestEntries;
     std::queue<const wchar_t*>    fDownloadEntries;
     plOperationProgress*          fProgress;
-    UInt32                        fEncryptionKey[4];
+    uint32_t                        fEncryptionKey[4];
     bool                          fLegacyMode;
 
     hsRAMStream* LoadToMemory(const wchar_t* file) const;
@@ -83,8 +83,8 @@ public:
     void Finish();
     void Shutdown();
 
-    void PreloadManifest(const NetCliFileManifestEntry manifestEntries[], UInt32 entryCount);
-    void PreloadManifest(const NetCliAuthFileInfo manifestEntries[], UInt32 entryCount);
+    void PreloadManifest(const NetCliFileManifestEntry manifestEntries[], uint32_t entryCount);
+    void PreloadManifest(const NetCliAuthFileInfo manifestEntries[], uint32_t entryCount);
     void PreloadNextFile();
     void FilePreloaded(const wchar_t* filename, hsStream* stream);
    

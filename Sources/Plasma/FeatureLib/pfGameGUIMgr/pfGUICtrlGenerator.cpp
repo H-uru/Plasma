@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUICtrlGenerator.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIControlMod.h"
@@ -124,7 +124,7 @@ pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance( void )
 
 void    pfGUICtrlGenerator::IGetNextKeyName( char *name, const char *prefix )
 {
-    static UInt32 keyCount = 0;
+    static uint32_t keyCount = 0;
 
 
     sprintf( name, "%s%d", prefix, keyCount++ );
@@ -143,7 +143,7 @@ plKey pfGUICtrlGenerator::IAddKey( hsKeyedObject *ko, const char *prefix )
 
 //// SetFont /////////////////////////////////////////////////////////////////
 
-void    pfGUICtrlGenerator::SetFont( const char *face, UInt16 size )
+void    pfGUICtrlGenerator::SetFont( const char *face, uint16_t size )
 {
     strcpy( fFontFace, face );
     fFontSize = size;
@@ -158,7 +158,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateSolidMaterial( hsColorRGBA &color )
 
 
     // Create a material with a simple blank layer, fully ambient
-    hsGMaterial *material = TRACKED_NEW hsGMaterial;
+    hsGMaterial *material = new hsGMaterial;
     IAddKey( material, "GUIMaterial" );
 
     plLayer *lay = material->MakeBaseLayer();
@@ -177,22 +177,22 @@ hsGMaterial *pfGUICtrlGenerator::ICreateSolidMaterial( hsColorRGBA &color )
 hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorRGBA &bgColor, 
                                                      hsColorRGBA &textColor, float objWidth, float objHeight )
 {
-    UInt16          pixWidth, pixHeight, strWidth, strHeight;
+    uint16_t          pixWidth, pixHeight, strWidth, strHeight;
     hsColorRGBA     black, white;
 
 
     // Guess at some pixel width and heights we want. We're guessing b/c we want it to look reasonably
     // good on the screen, but we don't know exactly how big is big, so we guess
-    pixWidth = (UInt16)(objWidth * 64.f);
-    pixHeight = (UInt16)(objHeight * 64.f);
+    pixWidth = (uint16_t)(objWidth * 64.f);
+    pixHeight = (uint16_t)(objHeight * 64.f);
 
     // Create blank mipmap
-    plMipmap *bitmap = TRACKED_NEW plMipmap( 1, 1, plMipmap::kRGB32Config, 1 );
+    plMipmap *bitmap = new plMipmap( 1, 1, plMipmap::kRGB32Config, 1 );
     IAddKey( bitmap, "GUIMipmap" );
 
     // Create textGen to write string with
-    plTextGenerator *textGen = TRACKED_NEW plTextGenerator( bitmap, pixWidth, pixHeight );
-    textGen->SetFont( fFontFace, (UInt16)fFontSize );
+    plTextGenerator *textGen = new plTextGenerator( bitmap, pixWidth, pixHeight );
+    textGen->SetFont( fFontFace, (uint16_t)fFontSize );
     textGen->ClearToColor( bgColor );
     textGen->SetTextColor( textColor );
     strWidth = textGen->CalcStringWidth( text, &strHeight );
@@ -201,7 +201,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
     fTextGens.Append( textGen );
 
     // Create a material with a simple blank layer, fully ambient
-    hsGMaterial *material = TRACKED_NEW hsGMaterial;
+    hsGMaterial *material = new hsGMaterial;
     IAddKey( material, "GUIMaterial" );
 
     plLayer *lay = material->MakeBaseLayer();
@@ -212,7 +212,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
     lay->SetPreshadeColor( black );
     lay->SetAmbientColor( white );
 
-    hsgResMgr::ResMgr()->AddViaNotify( bitmap->GetKey(), TRACKED_NEW plLayRefMsg( lay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( bitmap->GetKey(), new plLayRefMsg( lay->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 //  lay->SetTexture( bitmap );
     lay->SetTransform( textGen->GetLayerTransform() );
 
@@ -235,20 +235,20 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     if( snKey == nil )
         snKey = fDynDlgNodes.Peek()->GetKey();
 
-    hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), TRACKED_NEW plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
+    hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
 
-    plDrawInterface *newDI = TRACKED_NEW plDrawInterface;
+    plDrawInterface *newDI = new plDrawInterface;
     IAddKey( newDI, "GUIDrawIFace" );
 
-    plSceneObject   *newObj = TRACKED_NEW plSceneObject;
+    plSceneObject   *newObj = new plSceneObject;
     IAddKey( newObj, "GUISceneObject" );
 
-    plCoordinateInterface *newCI = TRACKED_NEW plCoordinateInterface;
+    plCoordinateInterface *newCI = new plCoordinateInterface;
     IAddKey( newCI, "GUICoordIFace" );
 
-    hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
-    hsgResMgr::ResMgr()->SendRef( newDI->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
-    hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), TRACKED_NEW plIntRefMsg( newDI->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kDrawable ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->SendRef( newDI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plIntRefMsg( newDI->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kDrawable ), plRefFlags::kActiveRef );
 
     if( parent == nil )
     {
@@ -258,8 +258,8 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     }
 
     if( parent != nil )
-//      hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), TRACKED_NEW plIntRefMsg( parent->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kChild ), plRefFlags::kActiveRef );
-        hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), TRACKED_NEW plAttachMsg( parent->GetKey(), nil, plRefMsg::kOnRequest ), plRefFlags::kActiveRef );
+//      hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plIntRefMsg( parent->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kChild ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plAttachMsg( parent->GetKey(), nil, plRefMsg::kOnRequest ), plRefFlags::kActiveRef );
     
     newObj->SetSceneNode( snKey );
 
@@ -289,7 +289,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
 
     pfGUIButtonMod *but = CreateRectButton( dlgToAddTo, title, x, y, width, height, material );
     if( but != nil )
-        but->SetHandler( TRACKED_NEW pfGUIConsoleCmdProc( consoleCmd ) );
+        but->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
 
     return but;
 }
@@ -329,11 +329,11 @@ pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, c
 
     plSceneObject *newObj = IGenSceneObject( parent, myDraw );
 
-    pfGUIButtonMod *newBtn = asMenuItem ? TRACKED_NEW pfGUIMenuItem : TRACKED_NEW pfGUIButtonMod;
+    pfGUIButtonMod *newBtn = asMenuItem ? new pfGUIMenuItem : new pfGUIButtonMod;
     IAddKey( newBtn, "GUIButton" );
-    hsgResMgr::ResMgr()->SendRef( newBtn->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->SendRef( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     parent->AddControl( newBtn );
-    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), TRACKED_NEW plGenRefMsg( parent->GetKey(), plRefMsg::kOnCreate, parent->GetNumControls() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plGenRefMsg( parent->GetKey(), plRefMsg::kOnCreate, parent->GetNumControls() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
 
     return newBtn;
 }
@@ -373,10 +373,10 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateSphereButton( float x, float y, flo
 
     plSceneObject *newObj = IGenSceneObject( dlgToAddTo, myDraw );//, nil, &l2w, &w2l );
 
-    pfGUIButtonMod *newBtn = TRACKED_NEW pfGUIButtonMod;
+    pfGUIButtonMod *newBtn = new pfGUIButtonMod;
     IAddKey( newBtn, "GUIButton" );
-    newBtn->SetHandler( TRACKED_NEW pfGUIConsoleCmdProc( consoleCmd ) );
-    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    newBtn->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
+    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     dlgToAddTo->AddControl( newBtn );
 
     return newBtn;
@@ -420,9 +420,9 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
 
     fDynDragBars[ fDynDragBars.GetCount() - 1 ] = newObj;
 
-    pfGUIDragBarCtrl *newBtn = TRACKED_NEW pfGUIDragBarCtrl;
+    pfGUIDragBarCtrl *newBtn = new pfGUIDragBarCtrl;
     IAddKey( newBtn, "GUIDragBar" );
-    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     dlgToAddTo->AddControl( newBtn );
 
 /*  vec.Set( -x, y, 100 );
@@ -456,7 +456,7 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
 
 
     // Create the rendermod
-    plPostEffectMod *renderMod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod *renderMod = new plPostEffectMod;
     IAddKey( renderMod, "GUIRenderMod" );
 
     renderMod->SetHither( 0.5f );
@@ -466,31 +466,31 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
     fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / hsScalarPI );
-    renderMod->SetFovY( fovY * 180.f / hsScalarPI );
+    renderMod->SetFovX( fovX * 180.f / M_PI );
+    renderMod->SetFovY( fovY * 180.f / M_PI );
 
     // Create the sceneNode to go with it
-    node = TRACKED_NEW plSceneNode;
+    node = new plSceneNode;
     IAddKey( node, "GUISceneNode" );
     node->GetKey()->RefObject();
     fDynDlgNodes.Append( node );
     fDynDragBars.Append( nil );
 
-    hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), TRACKED_NEW plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );        
+    hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), new plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );        
 
     // Create the dialog
-    dialog = TRACKED_NEW pfGUIDialogMod;
+    dialog = new pfGUIDialogMod;
     IAddKey( dialog, "GUIDialog" );
 
     dialog->SetRenderMod( renderMod );
     dialog->SetName( name );
 
     // Create the dummy scene object to hold the dialog
-    plSceneObject   *newObj = TRACKED_NEW plSceneObject;
+    plSceneObject   *newObj = new plSceneObject;
     IAddKey( newObj, "GUISceneObject" );
 
     // *#&$(*@&#$ need a coordIface...
-    plCoordinateInterface *newCI = TRACKED_NEW plCoordinateInterface;
+    plCoordinateInterface *newCI = new plCoordinateInterface;
     IAddKey( newCI, "GUICoordIFace" );
 
     hsMatrix44 l2w, w2l;
@@ -501,13 +501,13 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
 
     // Using SendRef here because AddViaNotify will queue the messages up, which doesn't do us any good
     // if we need these refs right away
-    hsgResMgr::ResMgr()->SendRef( dialog->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
+    hsgResMgr::ResMgr()->SendRef( dialog->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
 
-    hsgResMgr::ResMgr()->AddViaNotify( newCI->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );     
-    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
+    hsgResMgr::ResMgr()->AddViaNotify( newCI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );     
+    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
 
     // Add the dialog to the GUI mgr
-    plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg( pfGameGUIMgr::GetInstance()->GetKey(), 
+    plGenRefMsg *refMsg = new plGenRefMsg( pfGameGUIMgr::GetInstance()->GetKey(), 
                                             plRefMsg::kOnCreate, 0, pfGameGUIMgr::kDlgModRef );
     hsgResMgr::ResMgr()->AddViaNotify( dialog->GetKey(), refMsg, plRefFlags::kActiveRef );      
 

@@ -112,7 +112,7 @@ enum
 
 struct Win32keyConvert
 {
-    UInt32  fVKey;
+    uint32_t  fVKey;
     const char*   fKeyName;
 };
 
@@ -125,14 +125,14 @@ struct CommandConvert
 
 struct plMouseInfo
 {
-    plMouseInfo(ControlEventCode _code, UInt32 _flags, hsPoint4 _box, char* _desc)
+    plMouseInfo(ControlEventCode _code, uint32_t _flags, hsPoint4 _box, char* _desc)
     {
         fCode = _code;
         fControlFlags = _flags;
         fBox = _box;
         fControlDescription = _desc;
     }
-    plMouseInfo(ControlEventCode _code, UInt32 _flags, hsScalar pt1, hsScalar pt2, hsScalar pt3, hsScalar pt4, char* _desc)
+    plMouseInfo(ControlEventCode _code, uint32_t _flags, float pt1, float pt2, float pt3, float pt4, char* _desc)
     {
         fCode = _code;
         fControlFlags = _flags;
@@ -140,7 +140,7 @@ struct plMouseInfo
         fControlDescription = _desc;
     }
     ControlEventCode    fCode;
-    UInt32              fControlFlags;
+    uint32_t              fControlFlags;
     hsPoint4            fBox;
     char*               fControlDescription;
 };

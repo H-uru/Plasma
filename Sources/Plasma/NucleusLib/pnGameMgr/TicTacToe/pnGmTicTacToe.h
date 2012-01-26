@@ -103,7 +103,7 @@ enum {
     // Message parameters
     //========================================================================
     struct TTT_CreateParam {
-        byte        playerCount;    // 1 or 2
+        uint8_t        playerCount;    // 1 or 2
     };
 
     //========================================================================
@@ -112,8 +112,8 @@ enum {
 
     // Cli2Srv
     struct Cli2Srv_TTT_MakeMove : GameMsgHeader {
-        byte        row;            // 1..3
-        byte        col;            // 1..3
+        uint8_t        row;            // 1..3
+        uint8_t        col;            // 1..3
     };
 
     // Srv2Cli
@@ -122,12 +122,12 @@ enum {
     };
     struct Srv2Cli_TTT_GameOver : GameMsgHeader {
         ETTTGameResult  result;
-        dword           winnerId;
+        uint32_t           winnerId;
     };
     struct Srv2Cli_TTT_MoveMade : GameMsgHeader {
-        dword           playerId;
-        byte            row;            // 1..3
-        byte            col;            // 1..3
+        uint32_t           playerId;
+        uint8_t            row;            // 1..3
+        uint8_t            col;            // 1..3
     };
 
 //============================================================================

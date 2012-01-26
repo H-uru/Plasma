@@ -67,34 +67,34 @@ class plParticleEmitter : public plCreatable
 public:
     plParticleEmitter();
     ~plParticleEmitter();
-    void Init(plParticleSystem *system, UInt32 maxParticles, UInt32 spanIndex, UInt32 miscFlags,
+    void Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,
               plParticleGenerator *gen = nil);
-    void Clone(plParticleEmitter* src, UInt32 spanIndex);
+    void Clone(plParticleEmitter* src, uint32_t spanIndex);
 
     plParticleCore *GetParticleArray() const { return fParticleCores; }
-    UInt32 GetParticleCount() const { return fNumValidParticles; }
-    UInt32 GetNumTiles() const;
+    uint32_t GetParticleCount() const { return fNumValidParticles; }
+    uint32_t GetNumTiles() const;
     const hsBounds3Ext &GetBoundingBox() const { return fBoundBox; }
-    UInt32 GetSpanIndex() const { return fSpanIndex; }
+    uint32_t GetSpanIndex() const { return fSpanIndex; }
     const hsMatrix44 &GetLocalToWorld() const;
 
-    void AddParticle(hsPoint3 &pos, hsVector3 &velocity, UInt32 tileIndex, 
-                     hsScalar hSize, hsScalar vSize, hsScalar scale, hsScalar invMass, hsScalar life,
-                     hsPoint3 &orientation, UInt32 miscFlags, hsScalar radsPerSec=0);
+    void AddParticle(hsPoint3 &pos, hsVector3 &velocity, uint32_t tileIndex, 
+                     float hSize, float vSize, float scale, float invMass, float life,
+                     hsPoint3 &orientation, uint32_t miscFlags, float radsPerSec=0);
     void WipeExistingParticles();
-    void KillParticles(hsScalar num, hsScalar timeToDie, UInt8 flags);  
-    UInt16 StealParticlesFrom(plParticleEmitter *victim, UInt16 num); // returns the number actually stolen
+    void KillParticles(float num, float timeToDie, uint8_t flags);  
+    uint16_t StealParticlesFrom(plParticleEmitter *victim, uint16_t num); // returns the number actually stolen
     void TranslateAllParticles(hsPoint3 &amount); // Used to recenter the system when linking between ages. 
-    void UpdateGenerator(UInt32 paramID, hsScalar paramValue);
+    void UpdateGenerator(uint32_t paramID, float paramValue);
 
-    static UInt32 CreateHexColor(const hsColorRGBA &color);
-    static UInt32 CreateHexColor(const hsScalar r, const hsScalar g, const hsScalar b, const hsScalar a);
+    static uint32_t CreateHexColor(const hsColorRGBA &color);
+    static uint32_t CreateHexColor(const float r, const float g, const float b, const float a);
 
     void OverrideLocalToWorld(const hsMatrix44& l2w);
     void UnOverrideLocalToWorld() { fMiscFlags &= ~kOverrideLocalToWorld; }
     hsBool LocalToWorldOverridden() const { return 0 != (fMiscFlags & kOverrideLocalToWorld); }
-    void SetTimeToLive(hsScalar dt) { fTimeToLive = dt; }
-    hsScalar GetTimeToLive() const { return fTimeToLive; } // 0 time to live is never turn off.
+    void SetTimeToLive(float dt) { fTimeToLive = dt; }
+    float GetTimeToLive() const { return fTimeToLive; } // 0 time to live is never turn off.
 
     CLASSNAME_REGISTER( plParticleEmitter );
     GETINTERFACE_ANY( plParticleEmitter, plCreatable);
@@ -127,7 +127,7 @@ public:
         kOrientationVelocityMask    = kOrientationVelocityBased | kOrientationVelocityStretch | kOrientationVelocityFlow, // Velocity dependent
         kOrientationMask            = kOrientationUp | kOrientationVelocityMask,
     };
-    UInt32 fMiscFlags;
+    uint32_t fMiscFlags;
 
 protected:
 
@@ -137,23 +137,23 @@ protected:
                                         // doesn't need.
 
     plParticleGenerator *fGenerator;    // Optional auto generator (have this be nil if you don't want auto-generation)
-    UInt32 fSpanIndex;                  // Index of the span that this emitter uses.
-    UInt32 fNumValidParticles;          
-    UInt32 fMaxParticles;
+    uint32_t fSpanIndex;                  // Index of the span that this emitter uses.
+    uint32_t fNumValidParticles;          
+    uint32_t fMaxParticles;
     hsBounds3Ext fBoundBox;
     plEffectTargetInfo fTargetInfo;     // A collection of pointers and strides that plParticleEffects will manipulate.
     hsColorRGBA fColor;
 
     hsMatrix44 fLocalToWorld;
-    hsScalar fTimeToLive;
+    float fTimeToLive;
 
     void IClear();
     void ISetupParticleMem();
     void ISetSystem(plParticleSystem *sys) { fSystem = sys; }
-    hsBool IUpdate(hsScalar delta);
-    void IUpdateParticles(hsScalar delta);
-    void IUpdateBoundsAndNormals(hsScalar delta);
-    void IRemoveParticle(UInt32 index);
+    hsBool IUpdate(float delta);
+    void IUpdateParticles(float delta);
+    void IUpdateBoundsAndNormals(float delta);
+    void IRemoveParticle(uint32_t index);
 };
 
 #endif

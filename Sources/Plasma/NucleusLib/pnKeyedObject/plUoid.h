@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plUoid_h_inc
 #define plUoid_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
 
@@ -75,8 +75,8 @@ public:
     };
 
 protected:
-    UInt32 fSequenceNumber;
-    UInt16 fFlags;
+    uint32_t fSequenceNumber;
+    uint16_t fFlags;
 
     enum 
     {
@@ -97,7 +97,7 @@ protected:
         kInvalidLocIdx = 0xffffffff
     };
 
-    plLocation(UInt32 seqNum, UInt16 flags=0) : fFlags(flags) { Set(seqNum); }
+    plLocation(uint32_t seqNum, uint16_t flags=0) : fFlags(flags) { Set(seqNum); }
 
 public:
     plLocation() { Invalidate(); }
@@ -108,12 +108,12 @@ public:
     hsBool  IsValid() const;
     hsBool  IsReserved() const;
     hsBool  IsItinerant() const;
-    void    Set(UInt32 seqNum);
-    UInt32  GetSequenceNumber() const { return fSequenceNumber; }
+    void    Set(uint32_t seqNum);
+    uint32_t  GetSequenceNumber() const { return fSequenceNumber; }
     hsBool  IsVirtual() const;
 
-    void    SetFlags(UInt16 flags) { fFlags |= flags; }
-    UInt16  GetFlags() const { return fFlags; }
+    void    SetFlags(uint16_t flags) { fFlags |= flags; }
+    uint16_t  GetFlags() const { return fFlags; }
 
     void    Read(hsStream* s);
     void    Write(hsStream* s) const;
@@ -126,8 +126,8 @@ public:
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
     char* StringIze(char* str) const;  // Format to displayable string. Returns the same string for convenience
 
-    static plLocation MakeReserved(UInt32 number);
-    static plLocation MakeNormal(UInt32 number);
+    static plLocation MakeReserved(uint32_t number);
+    static plLocation MakeNormal(uint32_t number);
 
     static const plLocation kGlobalFixedLoc;
     static const plLocation kSceneViewerLoc;
@@ -144,13 +144,13 @@ class plUoid
 {
 public:
     plUoid() { fObjectName = nil; Invalidate(); }
-    plUoid(const plLocation& location, UInt16 classType, const char* objectName, const plLoadMask& m=plLoadMask::kAlways);
+    plUoid(const plLocation& location, uint16_t classType, const char* objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
     plUoid(const plUoid& src);
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
-    UInt16              GetClassType() const { return fClassType; }
+    uint16_t              GetClassType() const { return fClassType; }
     const char*         GetObjectName() const { return fObjectName; }
     const plLoadMask&   GetLoadMask() const { return fLoadMask; }
 
@@ -165,13 +165,13 @@ public:
     hsBool  operator!=(const plUoid& u) const { return !operator==(u); }
 
     hsBool  IsClone() const             { return fCloneID != 0; }
-    UInt32  GetClonePlayerID() const    { return fClonePlayerID; }
-    UInt32  GetCloneID() const          { return fCloneID; }
-    void    SetClone(UInt32 playerID, UInt32 cloneID) { hsAssert(cloneID < 0xffff, "Clone id too high"); fCloneID = UInt16(cloneID); fClonePlayerID = playerID; }
+    uint32_t  GetClonePlayerID() const    { return fClonePlayerID; }
+    uint32_t  GetCloneID() const          { return fCloneID; }
+    void    SetClone(uint32_t playerID, uint32_t cloneID) { hsAssert(cloneID < 0xffff, "Clone id too high"); fCloneID = uint16_t(cloneID); fClonePlayerID = playerID; }
 
-    UInt32 GetObjectID() const { return fObjectID; }
+    uint32_t GetObjectID() const { return fObjectID; }
     // Export time only.  Only plRegistryKeyList should call this.
-    void SetObjectID(UInt32 id) { fObjectID = id; }
+    void SetObjectID(uint32_t id) { fObjectID = id; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
     char* StringIze(char* str) const;  // Format to displayable string
@@ -183,10 +183,10 @@ protected:
         kHasLoadMask    = 0x2,
     };
 
-    UInt32      fObjectID;
-    UInt32      fClonePlayerID; // The ID of the player who made this clone
-    UInt16      fCloneID;       // The ID of this clone (unique per client)
-    UInt16      fClassType;
+    uint32_t      fObjectID;
+    uint32_t      fClonePlayerID; // The ID of the player who made this clone
+    uint16_t      fCloneID;       // The ID of this clone (unique per client)
+    uint16_t      fClassType;
     char*       fObjectName;
     plLocation  fLocation;
     plLoadMask  fLoadMask;

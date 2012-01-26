@@ -117,13 +117,13 @@ public:
     void SetLoopName(const char *name);
     const char *GetLoopName();
 
-    hsScalar fBegin;
-    hsScalar fEnd;
-    hsScalar fLoopEnd;
-    hsScalar fLoopBegin;
-    hsScalar fSpeed;
-    hsScalar fSpeedChangeRate;
-    hsScalar fTime;
+    float fBegin;
+    float fEnd;
+    float fLoopEnd;
+    float fLoopBegin;
+    float fSpeed;
+    float fSpeedChangeRate;
+    float fTime;
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr);
@@ -168,11 +168,11 @@ public:
     void SetAnimName(const char *name);
     const char *GetAnimName();
 
-    hsScalar fBlend;
-    hsScalar fBlendRate;
-    hsScalar fAmp;
-    hsScalar fAmpRate;
-    hsScalar fAnimTime;
+    float fBlend;
+    float fBlendRate;
+    float fAmp;
+    float fAmpRate;
+    float fAnimTime;
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr);
@@ -183,7 +183,7 @@ class plAGInstanceCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance(nil) {}
-    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
       plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance(nil) {}
 
     CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
@@ -203,7 +203,7 @@ protected:
 
 public:
     plAGDetachCallbackMsg() : plEventCallbackMsg(), fAnimName(nil) {}
-    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                           plEventCallbackMsg(receiver, e, idx, t, repeats, user), fAnimName(nil) {}
     virtual ~plAGDetachCallbackMsg();
 

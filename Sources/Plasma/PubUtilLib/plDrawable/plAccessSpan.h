@@ -80,7 +80,7 @@ private:
     hsBounds3Ext*       fLocalBounds;
     hsBounds3Ext*       fWorldBounds;
 
-    hsScalar*           fWaterHeight;
+    float*           fWaterHeight;
 
     hsGMaterial*        fMaterial;
 
@@ -119,7 +119,7 @@ public:
     void SetWorldBounds(const hsBounds3Ext& wBnd) { *fWorldBounds = wBnd; }
 
     hsBool HasWaterHeight() const { return nil != fWaterHeight; }
-    hsScalar GetWaterHeight() const { hsAssert(HasWaterHeight(), "Check before asking"); return *fWaterHeight; }
+    float GetWaterHeight() const { hsAssert(HasWaterHeight(), "Check before asking"); return *fWaterHeight; }
 };
 
 inline plAccessVtxSpan& plAccessSpan::AccessVtx()

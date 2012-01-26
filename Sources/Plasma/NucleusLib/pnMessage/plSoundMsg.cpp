@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSoundMsg.h"
 #include "hsStream.h"
 
@@ -90,5 +90,5 @@ void plSoundMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE(fRepeats);
     stream->WriteLE(fNameStr);
     stream->WriteLE(fVolume);
-    stream->WriteByte( (UInt8)fFadeType );
+    stream->WriteByte( (uint8_t)fFadeType );
 }

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoggable_inc
 
 #include <stdio.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // An abstract base class which contains a status log and simple functions 

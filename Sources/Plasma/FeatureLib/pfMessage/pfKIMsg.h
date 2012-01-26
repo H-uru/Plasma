@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfKIMsg_h
 #define _pfKIMsg_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
@@ -61,19 +61,19 @@ class pfKIMsg : public plMessage
 #ifndef KI_CONSTANTS_ONLY
     protected:
 
-        UInt8   fCommand;
-        UInt32  fFlags;
+        uint8_t   fCommand;
+        uint32_t  fFlags;
 
         // for the hack chat message thingy
         char    *fUser;
-        UInt32  fPlayerID;
+        uint32_t  fPlayerID;
         std::wstring    fString;
 
         // for the SetChatFadeDelay
-        hsScalar fDelay;
+        float fDelay;
 
         // other values
-        Int32   fValue;
+        int32_t   fValue;
 
         void IInit()
         {
@@ -179,8 +179,8 @@ class pfKIMsg : public plMessage
 #ifndef KI_CONSTANTS_ONLY
 
         pfKIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); }
-        pfKIMsg( UInt8 command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); fCommand = command; }
-        pfKIMsg( plKey &receiver, UInt8 command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); IInit(); fCommand = command; }
+        pfKIMsg( uint8_t command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); fCommand = command; }
+        pfKIMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); IInit(); fCommand = command; }
         ~pfKIMsg() { delete [] fUser; }
 
         CLASSNAME_REGISTER( pfKIMsg );
@@ -217,25 +217,25 @@ class pfKIMsg : public plMessage
             s->WriteLE32( fValue );
         }
 
-        UInt8       GetCommand( void ) const { return fCommand; }
+        uint8_t       GetCommand( void ) const { return fCommand; }
 
         void        SetString( const char *str );
         void        SetString( const wchar_t *str ) { fString = str; }
         std::string GetString( void );
         std::wstring GetStringU( void ) { return fString; }
 
-        void        SetUser( const char *str, UInt32 pid=0 ) { fUser = hsStrcpy( str ); fPlayerID = pid; }
+        void        SetUser( const char *str, uint32_t pid=0 ) { fUser = hsStrcpy( str ); fPlayerID = pid; }
         const char  *GetUser( void ) { return fUser; }
-        UInt32      GetPlayerID( void ) { return fPlayerID; }
+        uint32_t      GetPlayerID( void ) { return fPlayerID; }
 
-        void        SetFlags( UInt32 flags ) { fFlags = flags; }
-        UInt32      GetFlags( void ) const { return fFlags; }
+        void        SetFlags( uint32_t flags ) { fFlags = flags; }
+        uint32_t      GetFlags( void ) const { return fFlags; }
 
-        void        SetDelay( hsScalar delay ) { fDelay = delay; }
-        hsScalar    GetDelay( void ) { return fDelay; }
+        void        SetDelay( float delay ) { fDelay = delay; }
+        float    GetDelay( void ) { return fDelay; }
 
-        void        SetIntValue( Int32 value ) { fValue = value; }
-        Int32       GetIntValue( void ) { return fValue; }
+        void        SetIntValue( int32_t value ) { fValue = value; }
+        int32_t       GetIntValue( void ) { return fValue; }
 
 #endif // def KI_CONSTANTS_ONLY
 };

@@ -43,11 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsTimer_Defined
 
 #include "hsWide.h"
-#include "hsScalar.h"
-
-#if !HS_CAN_USE_FLOAT
-#error "Unsupported without double's"
-#endif // !HS_CAN_USE_FLOAT
 
 class plTimerShare
 {
@@ -62,14 +57,14 @@ protected:
     double              fSmoothBuff[kSmoothBuffLen];
     int                 fCurrSlot;
 
-    hsScalar            fSysTimeScale;
+    float            fSysTimeScale;
     double              fRealSeconds;
     double              fSysSeconds;
-    hsScalar            fDelSysSeconds;
-    hsScalar            fFrameTimeInc;
+    float            fDelSysSeconds;
+    float            fFrameTimeInc;
     hsBool              fRunningFrameTime;
-    hsScalar            fTimeClampSecs;
-    hsScalar            fSmoothingClampSecs;
+    float            fTimeClampSecs;
+    float            fSmoothingClampSecs;
     hsBool              fClamping;
 
     hsWide*             FactorInTimeZero(hsWide* ticks) const;
@@ -82,21 +77,21 @@ protected:
     double              RawTicksToDSeconds(const hsWide& ticks);
     hsWide              DSecondsToRawTicks(double secs);
 
-    hsScalar            GetDelSysSeconds() const { return fDelSysSeconds; }
+    float            GetDelSysSeconds() const { return fDelSysSeconds; }
     double              GetSysSeconds() const { return fSysSeconds; }
     double              IncSysSeconds();
 
     void                SetRealTime(hsBool realTime);
     hsBool              IsRealTime() const { return !fRunningFrameTime; }
 
-    void                SetFrameTimeInc(hsScalar inc) { fFrameTimeInc = inc; }
+    void                SetFrameTimeInc(float inc) { fFrameTimeInc = inc; }
 
-    void                SetTimeScale(hsScalar s) { fSysTimeScale = s; }
-    hsScalar            GetTimeScale() const { return fSysTimeScale; }
+    void                SetTimeScale(float s) { fSysTimeScale = s; }
+    float            GetTimeScale() const { return fSysTimeScale; }
 
-    void                SetTimeClamp(hsScalar secs) { fTimeClampSecs = secs; }
-    void                SetSmoothingCap(hsScalar secs) { fSmoothingClampSecs = secs; }
-    hsScalar            GetTimeClamp() const { return fTimeClampSecs; }
+    void                SetTimeClamp(float secs) { fTimeClampSecs = secs; }
+    void                SetSmoothingCap(float secs) { fSmoothingClampSecs = secs; }
+    float            GetTimeClamp() const { return fTimeClampSecs; }
     hsBool              IsClamping() const { return fClamping; }
 
     friend class hsTimer;
@@ -127,7 +122,7 @@ public:
     static double       RawTicksToDSeconds(const hsWide& ticks) { return fTimer->RawTicksToDSeconds(ticks); }
     static hsWide       DSecondsToRawTicks(double secs) { return fTimer->DSecondsToRawTicks(secs); }
 
-    static hsScalar     GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
+    static float     GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
     static double       GetSysSeconds() { return fTimer->GetSysSeconds(); }
 
     static double       IncSysSeconds() { return fTimer->IncSysSeconds(); }
@@ -135,29 +130,29 @@ public:
     static void         SetRealTime(hsBool realTime) { fTimer->SetRealTime(realTime); }
     static hsBool       IsRealTime() { return fTimer->IsRealTime(); }
 
-    static void         SetFrameTimeInc(hsScalar inc) { fTimer->SetFrameTimeInc(inc); }
+    static void         SetFrameTimeInc(float inc) { fTimer->SetFrameTimeInc(inc); }
 
-    static void         SetTimeScale(hsScalar s) { fTimer->SetTimeScale(s); }
-    static hsScalar     GetTimeScale() { return fTimer->GetTimeScale(); }
+    static void         SetTimeScale(float s) { fTimer->SetTimeScale(s); }
+    static float     GetTimeScale() { return fTimer->GetTimeScale(); }
 
-    static void         SetTimeClamp(hsScalar secs) { fTimer->SetTimeClamp(secs); }
-    static void         SetTimeSmoothingClamp(hsScalar secs) { fTimer->SetSmoothingCap(secs); }
-    static hsScalar     GetTimeClamp() { return fTimer->GetTimeClamp(); }
+    static void         SetTimeClamp(float secs) { fTimer->SetTimeClamp(secs); }
+    static void         SetTimeSmoothingClamp(float secs) { fTimer->SetSmoothingCap(secs); }
+    static float     GetTimeClamp() { return fTimer->GetTimeClamp(); }
     static hsBool       IsClamping() { return fTimer->IsClamping(); }
 
     ///////////////////////////
     // Precision timer routines - these are stateless and implemented as statics.
     ///////////////////////////
-    static UInt32   GetPrecTickCount();
+    static uint32_t   GetPrecTickCount();
     static double   GetPrecTicksPerSec();
-    static UInt32   PrecSecsToTicks(hsScalar secs);
-    static double   PrecTicksToSecs(UInt32 ticks);
-    static double   PrecTicksToHz(UInt32 ticks);
+    static uint32_t   PrecSecsToTicks(float secs);
+    static double   PrecTicksToSecs(uint32_t ticks);
+    static double   PrecTicksToHz(uint32_t ticks);
 
     // If you need to time something longer than 20 seconds, use this instead of
     // the precision timer.  It works the same, it just gives you full resolution.
-    static UInt64   GetFullTickCount();
-    static float    FullTicksToMs(UInt64 ticks);
+    static uint64_t   GetFullTickCount();
+    static float    FullTicksToMs(uint64_t ticks);
 
     //
     // Pass GetTheTimer() into other process space, and then call SetTheTimer() on it.

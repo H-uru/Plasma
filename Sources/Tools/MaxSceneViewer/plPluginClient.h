@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plUpdatableClient_h_inc
 #define plUpdatableClient_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plClient/plClient.h"
 
 class hsSemaphore;

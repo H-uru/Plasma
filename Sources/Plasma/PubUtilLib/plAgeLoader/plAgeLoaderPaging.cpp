@@ -97,7 +97,7 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
     plNetClientApp* nc = plNetClientApp::GetInstance();
 
     // Send a msg to the server indicating that we have this room paged in
-    plNetMsgPagingRoom * pagingMsg = TRACKED_NEW plNetMsgPagingRoom;
+    plNetMsgPagingRoom * pagingMsg = new plNetMsgPagingRoom;
     pagingMsg->SetNetProtocol(kNetProtocolCli2Game);
     int i;
     for(i=0;i<numRms;i++)
@@ -126,7 +126,7 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
         bool ageLoaded = (PendingPageIns().size()==0) && (fFlags & kLoadingAge);
         if (ageLoaded)
         {
-            plAgeLoaded2Msg * msg = TRACKED_NEW plAgeLoaded2Msg;
+            plAgeLoaded2Msg * msg = new plAgeLoaded2Msg;
             msg->Send();
             // join task will call NotifyAgeLoaded for us later
         }

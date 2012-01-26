@@ -175,7 +175,7 @@ void plNPCSpawnMod::Write(hsStream *stream, hsResMgr *mgr)
 
 // IEVAL
 // attack of the bogons
-hsBool plNPCSpawnMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plNPCSpawnMod::IEval(double secs, float del, uint32_t dirty)
 {
     return true;
 }
@@ -185,7 +185,7 @@ void plNPCSpawnMod::ISendNotify(plKey &avatarKey)
 {
     if(fNotify)
     {
-        proSpawnedEventData * event = TRACKED_NEW proSpawnedEventData;
+        proSpawnedEventData * event = new proSpawnedEventData;
         event->fSpawner = GetKey();
         event->fSpawnee = avatarKey;
         fNotify->ClearEvents();

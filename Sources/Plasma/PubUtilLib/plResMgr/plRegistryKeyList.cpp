@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include <algorithm>
 
-plRegistryKeyList::plRegistryKeyList(UInt16 classType)
+plRegistryKeyList::plRegistryKeyList(uint16_t classType)
 {
     fClassType = classType;
     fReffedStaticKeys = 0;
@@ -108,7 +108,7 @@ plKeyImp* plRegistryKeyList::FindKey(const char* keyName)
 
 plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid)
 {
-    UInt32 objectID = uoid.GetObjectID();
+    uint32_t objectID = uoid.GetObjectID();
 
     // Key is dynamic or doesn't know it's index.  Do a find by name.
     if (objectID == 0)
@@ -202,7 +202,7 @@ void plRegistryKeyList::AddKey(plKeyImp* key, LoadStatus& loadStatusChange)
 void plRegistryKeyList::SetKeyUsed(plKeyImp* key)
 {
     // If this is a static key, mark that we used it.  Otherwise, just ignore it.
-    UInt32 id = key->GetUoid().GetObjectID();
+    uint32_t id = key->GetUoid().GetObjectID();
     if (id > 0)
         fReffedStaticKeys++;
 }
@@ -220,7 +220,7 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     }
 
     // Check if it's a static key
-    UInt32 id = key->GetUoid().GetObjectID();
+    uint32_t id = key->GetUoid().GetObjectID();
     hsAssert(id <= fStaticKeys.size(), "Bad static key id");
     if (id != 0 && id <= fStaticKeys.size())
     {
@@ -293,7 +293,7 @@ void plRegistryKeyList::PrepForWrite()
     }
 
     // Start our new object id's after any already created ones
-    UInt32 objectID = fStaticKeys.size()+1;
+    uint32_t objectID = fStaticKeys.size()+1;
     // Make room for our new keys
     fStaticKeys.resize(fStaticKeys.size()+numDynKeys);
 
@@ -318,7 +318,7 @@ void plRegistryKeyList::PrepForWrite()
 
 void plRegistryKeyList::Read(hsStream* s)
 {
-    UInt32 keyListLen = s->ReadLE32();
+    uint32_t keyListLen = s->ReadLE32();
     if (!fStaticKeys.empty())
     {
         s->Skip(keyListLen);
@@ -327,12 +327,12 @@ void plRegistryKeyList::Read(hsStream* s)
 
     fFlags = s->ReadByte();
 
-    UInt32 numKeys = s->ReadLE32();
+    uint32_t numKeys = s->ReadLE32();
     fStaticKeys.resize(numKeys);
 
     for (int i = 0; i < numKeys; i++)
     {
-        plKeyImp* newKey = TRACKED_NEW plKeyImp;
+        plKeyImp* newKey = new plKeyImp;
         newKey->Read(s);
         fStaticKeys[i] = newKey;
     }
@@ -341,7 +341,7 @@ void plRegistryKeyList::Read(hsStream* s)
 void plRegistryKeyList::Write(hsStream* s)
 {
     // Save space for the length of our data
-    UInt32 beginPos = s->GetPosition();
+    uint32_t beginPos = s->GetPosition();
     s->WriteLE32(0);
     s->WriteByte(fFlags);
 
@@ -356,8 +356,8 @@ void plRegistryKeyList::Write(hsStream* s)
     }
 
     // Go back to the start and write the length of our data
-    UInt32 endPos = s->GetPosition();
+    uint32_t endPos = s->GetPosition();
     s->SetPosition(beginPos);
-    s->WriteLE32(endPos-beginPos-sizeof(UInt32));
+    s->WriteLE32(endPos-beginPos-sizeof(uint32_t));
     s->SetPosition(endPos);
 }

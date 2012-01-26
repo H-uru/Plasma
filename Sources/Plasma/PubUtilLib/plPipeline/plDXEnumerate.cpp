@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGDDrawDllLoad.h"
 #include "hsG3DDeviceSelector.h"
-#include "hsUtils.h"
+
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
 
 typedef LPDIRECT3D9 (WINAPI * Direct3DCreateProc)( UINT sdkVersion );
 
-const UInt8 hsGDirect3DTnLEnumerate::kNumDisplayFormats = 6;
+const uint8_t hsGDirect3DTnLEnumerate::kNumDisplayFormats = 6;
 const D3DFORMAT hsGDirect3DTnLEnumerate::kDisplayFormats[] = 
 {
     D3DFMT_A1R5G5B5,
@@ -353,8 +353,8 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
     const TCHAR* strDeviceDescs[] = { "HAL", "REF" };
     const D3DDEVTYPE deviceTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
-    BOOL *formatWorks = TRACKED_NEW BOOL[kNumDisplayFormats + 1];       // One for each format
-    DWORD *behavior = TRACKED_NEW DWORD[kNumDisplayFormats + 1];
+    BOOL *formatWorks = new BOOL[kNumDisplayFormats + 1];       // One for each format
+    DWORD *behavior = new DWORD[kNumDisplayFormats + 1];
     UINT iDevice;
     for (iDevice = 0; iDevice < numDeviceTypes; iDevice++)
     {
@@ -368,7 +368,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
 
         /// Loop through the formats, checking each against this device to see
         /// if it will work. If so, add all modes matching that format
-        UInt8 iFormat;
+        uint8_t iFormat;
         for (iFormat = 0; iFormat < kNumDisplayFormats + 1; iFormat++ )
         {
             // the desktop format gets to be first, everything else is nudged over one.
@@ -666,8 +666,8 @@ hsBool  hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
     plDemoDebugFile::Write( "DeviceSelector detected DX Direct3D device. Info:" );
     plDemoDebugFile::Write( "   Driver Description", (char *)adapterInfo->Description );
     plDemoDebugFile::Write( "   Driver Name", (char *)adapterInfo->Driver );
-    plDemoDebugFile::Write( "   Vendor ID", (Int32)adapterInfo->VendorId );
-    plDemoDebugFile::Write( "   Device ID", (Int32)adapterInfo->DeviceId );
+    plDemoDebugFile::Write( "   Vendor ID", (int32_t)adapterInfo->VendorId );
+    plDemoDebugFile::Write( "   Device ID", (int32_t)adapterInfo->DeviceId );
     plDemoDebugFile::Write( "   Version", (char *)record.GetDriverVersion() );
     plDemoDebugFile::Write( "   Memory size (in MB)", record.GetMemoryBytes() / ( 1024 * 1024 ) );
     plDemoDebugFile::Write( "   Memory size (in bytes)", record.GetMemoryBytes() );
@@ -843,7 +843,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG
     if( devInfo->fDDCaps.MaxAnisotropy <= 1 )
         devRec.SetMaxAnisotropicSamples( 0 );
     else
-        devRec.SetMaxAnisotropicSamples( (UInt8)devInfo->fDDCaps.MaxAnisotropy );
+        devRec.SetMaxAnisotropicSamples( (uint8_t)devInfo->fDDCaps.MaxAnisotropy );
 
     if (D3DSHADER_VERSION_MAJOR(devInfo->fDDCaps.PixelShaderVersion) > 0)
         devRec.SetCap(kCapsPixelShader);
@@ -862,7 +862,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG
 
     const struct 
     {
-        D3DFORMAT fmt; UInt16 depth; 
+        D3DFORMAT fmt; uint16_t depth; 
     } depths[] = { { D3DFMT_D16, 0x0010 }, { D3DFMT_D24X8, 0x0018 }, { D3DFMT_D32, 0x0020 },
     { D3DFMT_D15S1, 0x010f }, { D3DFMT_D24X4S4, 0x0418 }, { D3DFMT_D24S8, 0x0818 }, { D3DFMT_UNKNOWN, 0 } };
 

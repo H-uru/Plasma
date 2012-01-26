@@ -69,16 +69,16 @@ struct CmdArgData {
         bool          boolVal;
         float         floatVal;
         int           intVal;
-        const wchar * strVal;
+        const wchar_t * strVal;
         unsigned      unsignedVal;
     } val;
-    wchar *  buffer;
+    wchar_t *  buffer;
     unsigned nameChars;
     bool     isSpecified;
 
     ~CmdArgData () {
         if (buffer)
-            FREE(buffer);
+            free(buffer);
     }
 };
 
@@ -96,18 +96,18 @@ private:
     FARRAY(unsigned)        m_unflaggedArray;
 
     inline bool CheckFlag (unsigned flags, unsigned flag, unsigned mask) const;
-    void Error (const CmdTokState * state, ECmdError errorCode, const wchar arg[], const wchar value[]) const;
-    bool LookupFlagged (const wchar ** name, unsigned * lastIndex) const;
-    bool ProcessValue (CmdTokState * state, unsigned index, const wchar str[]);
+    void Error (const CmdTokState * state, ECmdError errorCode, const wchar_t arg[], const wchar_t value[]) const;
+    bool LookupFlagged (const wchar_t ** name, unsigned * lastIndex) const;
+    bool ProcessValue (CmdTokState * state, unsigned index, const wchar_t str[]);
     void SetDefaultValue (CmdArgData & arg);
-    bool TokenizeFlags (CmdTokState * state, const wchar str[]);
+    bool TokenizeFlags (CmdTokState * state, const wchar_t str[]);
 
 public:
     CICmdParser (const CmdArgDef def[], unsigned defCount);
     bool CheckAllRequiredArguments (CmdTokState * state);
     const CmdArgData * FindArgById (unsigned id) const;
-    const CmdArgData * FindArgByName (const wchar name[]) const;
-    bool Tokenize (CmdTokState * state, const wchar str[]);
+    const CmdArgData * FindArgByName (const wchar_t name[]) const;
+    bool Tokenize (CmdTokState * state, const wchar_t str[]);
     
 };
 
@@ -185,14 +185,14 @@ CICmdParser::CICmdParser (const CmdArgDef def[], unsigned defCount) {
 }
 
 //===========================================================================
-void CICmdParser::Error (const CmdTokState * state, ECmdError errorCode, const wchar arg[], const wchar value[]) const {
+void CICmdParser::Error (const CmdTokState * state, ECmdError errorCode, const wchar_t arg[], const wchar_t value[]) const {
 
     // Compose the error text
     // (This text is only provided as a shortcut for trivial applications that
     // don't want to compose their own text. Normally, an application would
     // compose error text using its own localized strings.)
     unsigned chars  = 256 + (arg ? StrLen(arg) : 0) + (value ? StrLen(value) : 0);
-    wchar *  buffer = (wchar *)ALLOC(chars * sizeof(wchar));
+    wchar_t *  buffer = (wchar_t *)malloc(chars * sizeof(wchar_t));
     switch (errorCode) {
 
         case kCmdErrorInvalidArg:
@@ -218,7 +218,7 @@ void CICmdParser::Error (const CmdTokState * state, ECmdError errorCode, const w
     state->parser->OnError(buffer, errorCode, arg, value);
 
     // Free memory
-    FREE(buffer);
+    free(buffer);
 
 }
 
@@ -245,7 +245,7 @@ const CmdArgData * CICmdParser::FindArgById (unsigned id) const {
 }
 
 //===========================================================================
-const CmdArgData * CICmdParser::FindArgByName (const wchar name[]) const {
+const CmdArgData * CICmdParser::FindArgByName (const wchar_t name[]) const {
 
     // Search for an argument with this name
     unsigned index = (unsigned)-1;
@@ -258,7 +258,7 @@ const CmdArgData * CICmdParser::FindArgByName (const wchar name[]) const {
 }
 
 //===========================================================================
-bool CICmdParser::LookupFlagged (const wchar ** name, unsigned * lastIndex) const {
+bool CICmdParser::LookupFlagged (const wchar_t ** name, unsigned * lastIndex) const {
     unsigned argCount  = m_argArray.Count();
     unsigned chars     = StrLen(*name);
     unsigned bestIndex = (unsigned)-1;
@@ -313,7 +313,7 @@ bool CICmdParser::LookupFlagged (const wchar ** name, unsigned * lastIndex) cons
 }
 
 //===========================================================================
-bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar str[]) {
+bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar_t str[]) {
     CmdArgData & arg = m_argArray[index];
     arg.isSpecified = true;
     unsigned argType = arg.def.flags & kCmdMaskType;
@@ -332,7 +332,7 @@ bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar
 
         case kCmdTypeFloat:
             {
-                const wchar * endPtr;
+                const wchar_t * endPtr;
                 arg.val.floatVal = StrToFloat(str, &endPtr);
                 if (*endPtr)
                     Error(state, kCmdErrorInvalidValue, arg.def.name, str);
@@ -341,7 +341,7 @@ bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar
 
         case kCmdTypeInt:
             {
-                const wchar * endPtr;
+                const wchar_t * endPtr;
                 arg.val.intVal = StrToInt(str, &endPtr);
                 if (*endPtr)
                     Error(state, kCmdErrorInvalidValue, arg.def.name, str);
@@ -350,14 +350,14 @@ bool CICmdParser::ProcessValue (CmdTokState * state, unsigned index, const wchar
 
         case kCmdTypeString:
             if (arg.buffer)
-                FREE(arg.buffer);
+                free(arg.buffer);
             arg.buffer = StrDup(str);
             arg.val.strVal = arg.buffer;
         break;
 
         case kCmdTypeUnsigned:
             {
-                const wchar * endPtr;
+                const wchar_t * endPtr;
                 arg.val.unsignedVal = StrToUnsigned(str, &endPtr, 10);
                 if (*endPtr)
                     Error(state, kCmdErrorInvalidValue, arg.def.name, str);
@@ -401,8 +401,8 @@ void CICmdParser::SetDefaultValue (CmdArgData & arg) {
 }
 
 //===========================================================================
-bool CICmdParser::Tokenize (CmdTokState * state, const wchar str[]) {
-    wchar buffer[kMaxTokenLength];
+bool CICmdParser::Tokenize (CmdTokState * state, const wchar_t str[]) {
+    wchar_t buffer[kMaxTokenLength];
     bool  result = true;
     while (result && StrTokenize(&str, buffer, arrsize(buffer), WHITESPACE)) {
 
@@ -438,10 +438,10 @@ bool CICmdParser::Tokenize (CmdTokState * state, const wchar str[]) {
 }
 
 //===========================================================================
-bool CICmdParser::TokenizeFlags (CmdTokState * state, const wchar str[]) {
+bool CICmdParser::TokenizeFlags (CmdTokState * state, const wchar_t str[]) {
 
     // Process each separately flagged token within the string
-    wchar buffer[kMaxTokenLength];
+    wchar_t buffer[kMaxTokenLength];
     bool  result = true;
     while (result && StrTokenize(&str, buffer, arrsize(buffer), ALL)) {
         if (!buffer[0])
@@ -449,7 +449,7 @@ bool CICmdParser::TokenizeFlags (CmdTokState * state, const wchar str[]) {
 
         // Process each flag within the token
         unsigned      lastIndex = (unsigned)-1;
-        const wchar * bufferPtr = buffer;
+        const wchar_t * bufferPtr = buffer;
         while (result) {
 
             // Lookup the argument name
@@ -485,7 +485,7 @@ bool CICmdParser::TokenizeFlags (CmdTokState * state, const wchar str[]) {
 
             // Check for a value provided with a toggle
             if (*str && StrChr(TOGGLES, *str)) {
-                wchar tempStr[] = {*str, 0};
+                wchar_t tempStr[] = {*str, 0};
                 result = ProcessValue(state, lastIndex, tempStr);
                 ++str;
                 continue;
@@ -539,7 +539,7 @@ CCmdParser::CCmdParser (const CmdArgDef def[], unsigned defCount) {
 
 //===========================================================================
 CCmdParser::~CCmdParser () {
-    DEL(fParser);
+    delete fParser;
 }
 
 //===========================================================================
@@ -548,7 +548,7 @@ bool CCmdParser::GetBool (unsigned id) const {
 }
 
 //===========================================================================
-bool CCmdParser::GetBool (const wchar name[]) const {
+bool CCmdParser::GetBool (const wchar_t name[]) const {
     return fParser->FindArgByName(name)->val.boolVal;
 }
 
@@ -558,7 +558,7 @@ float CCmdParser::GetFloat (unsigned id) const {
 }
 
 //===========================================================================
-float CCmdParser::GetFloat (const wchar name[]) const {
+float CCmdParser::GetFloat (const wchar_t name[]) const {
     return fParser->FindArgByName(name)->val.floatVal;
 }
 
@@ -568,17 +568,17 @@ int CCmdParser::GetInt (unsigned id) const {
 }
 
 //===========================================================================
-int CCmdParser::GetInt (const wchar name[]) const {
+int CCmdParser::GetInt (const wchar_t name[]) const {
     return fParser->FindArgByName(name)->val.intVal;
 }
 
 //===========================================================================
-const wchar * CCmdParser::GetString (unsigned id) const {
+const wchar_t * CCmdParser::GetString (unsigned id) const {
     return fParser->FindArgById(id)->val.strVal;
 }
 
 //===========================================================================
-const wchar * CCmdParser::GetString (const wchar name[]) const {
+const wchar_t * CCmdParser::GetString (const wchar_t name[]) const {
     return fParser->FindArgByName(name)->val.strVal;
 }
 
@@ -588,13 +588,13 @@ unsigned CCmdParser::GetUnsigned (unsigned id) const {
 }
 
 //===========================================================================
-unsigned CCmdParser::GetUnsigned (const wchar name[]) const {
+unsigned CCmdParser::GetUnsigned (const wchar_t name[]) const {
     return fParser->FindArgByName(name)->val.unsignedVal;
 }
 
 //===========================================================================
 void CCmdParser::Initialize (const CmdArgDef def[], unsigned defCount) {
-    fParser = NEW(CICmdParser)(def, defCount);
+    fParser = new CICmdParser(def, defCount);
 }
 
 //===========================================================================
@@ -605,23 +605,23 @@ bool CCmdParser::IsSpecified (unsigned id) const {
 }
 
 //===========================================================================
-bool CCmdParser::IsSpecified (const wchar name[]) const {
+bool CCmdParser::IsSpecified (const wchar_t name[]) const {
     if (const CmdArgData * data = fParser->FindArgByName(name))
         return data->isSpecified;
     return false;
 }
 
 //===========================================================================
-void CCmdParser::OnError (const wchar str[], ECmdError errorCode, const wchar arg[], const wchar value[]) {
+void CCmdParser::OnError (const wchar_t str[], ECmdError errorCode, const wchar_t arg[], const wchar_t value[]) {
 }
 
 //===========================================================================
-bool CCmdParser::OnExtra (const wchar str[]) {
+bool CCmdParser::OnExtra (const wchar_t str[]) {
     return false;
 }
 
 //===========================================================================
-bool CCmdParser::Parse (const wchar cmdLine[]) {
+bool CCmdParser::Parse (const wchar_t cmdLine[]) {
     // If no command line was passed, use the application's command line,
     // skipping past the program name
     if (!cmdLine) {
@@ -657,12 +657,12 @@ bool CCmdParser::Parse (const wchar cmdLine[]) {
 CCmdParserSimple::CCmdParserSimple (
     unsigned    requiredStringCount,
     unsigned    optionalStringCount,
-    const wchar flaggedBoolNames[]  // double null terminated if used
+    const wchar_t flaggedBoolNames[]  // double null terminated if used
 ) {
 
     // Count the number of flagged arguments
     unsigned      flaggedBoolCount = 0;
-    const wchar * curr;
+    const wchar_t * curr;
     if (flaggedBoolNames)
         for (curr = flaggedBoolNames; *curr; curr += StrLen(curr) + 1)
             ++flaggedBoolCount;

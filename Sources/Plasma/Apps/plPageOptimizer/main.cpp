@@ -63,12 +63,12 @@ int main(int argc, char* argv[])
     try
     {
 #endif
-        plResManager* resMgr = TRACKED_NEW plResManager;
+        plResManager* resMgr = new plResManager;
         hsgResMgr::Init(resMgr);
 
         // Setup all the crap that needs to be around to load
         plSimulationMgr::Init();
-        fontCache = TRACKED_NEW plFontCache;
+        fontCache = new plFontCache;
         plPythonFileMod::SetAtConvertTime();
 #ifndef _DEBUG
     } catch (...)

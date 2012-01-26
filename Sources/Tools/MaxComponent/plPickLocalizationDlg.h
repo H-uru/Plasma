@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickLocalizationDlg_h
 #define plPickLocalizationDlg_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "max.h"
 #include <string>
 

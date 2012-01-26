@@ -39,7 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
+
+#include "HeadSpin.h"
 #include <commdlg.h>
 #include <math.h>
 
@@ -52,8 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "modstack.h"
 #include "keyreduc.h"
-
-#include "HeadSpin.h"
 
 #include "hsMaxLayerBase.h"
 #include "plInterp/plController.h"
@@ -121,7 +120,7 @@ class KRStatus : public KeyReduceStatus
     int Progress(int p) { return KEYREDUCE_CONTINUE; }
 };
 
-void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
+void hsControlConverter::ReduceKeys(Control *control, float threshold)
 {
     if (control == nil || threshold <= 0)
         return;
@@ -134,8 +133,8 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
             IKeyControl *keyCont = GetKeyControlInterface(control);
             if (keyCont->GetNumKeys() > 2)
             {
-                IKey *key1 = (IKey*)TRACKED_NEW UInt8[keyCont->GetKeySize()];
-                IKey *key2 = (IKey*)TRACKED_NEW UInt8[keyCont->GetKeySize()];
+                IKey *key1 = (IKey*)new uint8_t[keyCont->GetKeySize()];
+                IKey *key2 = (IKey*)new uint8_t[keyCont->GetKeySize()];
                 keyCont->GetKey(0, key1);
                 keyCont->GetKey(keyCont->GetNumKeys() - 1, key2);
 
@@ -158,8 +157,8 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
                     Interval interval(start, end);
                     ApplyKeyReduction(control, interval, threshold, GetTicksPerFrame(), &status);
                 }
-                delete [] (UInt8*)key1;
-                delete [] (UInt8*)key2;
+                delete [] (uint8_t*)key1;
+                delete [] (uint8_t*)key2;
             }
         }
     }
@@ -172,7 +171,7 @@ void hsControlConverter::ReduceKeys(Control *control, hsScalar threshold)
 }
 
 plController *hsControlConverter::ConvertTMAnim(plSceneObject *obj, plMaxNode *node, hsAffineParts *parts, 
-                                                hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                float start /* = -1 */, float end /* = -1 */)
 {
     Control* maxTm = node->GetTMController();
     plController *tmc = hsControlConverter::Instance().MakeTransformController(maxTm, node, start, end);
@@ -249,7 +248,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     CompositeKeyTimes(vAngCtl, kTimes);
     CompositeKeyTimes(wAngCtl, kTimes);
 
-    const float kMaxRads = 30.f * hsScalarPI / 180.f;
+    const float kMaxRads = 30.f * M_PI / 180.f;
     MaxSampleAngles(nodeName, uAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, vAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, wAngCtl, kTimes, kMaxRads);
@@ -259,7 +258,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
         return nil;
     }
 
-    plLeafController* ctrl = TRACKED_NEW plLeafController;
+    plLeafController* ctrl = new plLeafController;
     ctrl->AllocKeys(kTimes.Count(), hsKeyFrame::kMatrix44KeyFrame);
     TimeValue resetTime = fConverterUtils.GetTime(fInterface);
     for( i=0; i < kTimes.Count(); i++)
@@ -310,7 +309,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
         return nil;
     }
 
-    plLeafController* ctrl = TRACKED_NEW plLeafController;
+    plLeafController* ctrl = new plLeafController;
     ctrl->AllocKeys(kTimes.Count(), hsKeyFrame::kMatrix44KeyFrame);
     TimeValue resetTime = fConverterUtils.GetTime(fInterface);;
     for( i=0; i < kTimes.Count(); i++)
@@ -339,7 +338,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
 // Create a plScalarController and store the nodes parm behavior in it.
 //
 plLeafController* hsControlConverter::MakeScalarController(Control* control, plMaxNode* node, 
-                                                           hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                           float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakeScalarController");
 
@@ -354,7 +353,7 @@ plLeafController* hsControlConverter::MakeScalarController(Control* control, plM
 }
 
 plController* hsControlConverter::MakeColorController(Control* control, plMaxNode* node, 
-                                                      hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                      float start /* = -1 */, float end /* = -1 */)
 {
     return MakePosController(control, node, start, end);
 }
@@ -362,7 +361,7 @@ plController* hsControlConverter::MakeColorController(Control* control, plMaxNod
 // Create a plPosController and store the nodes parm behavior in it.
 //
 plController* hsControlConverter::MakePosController(Control* control, plMaxNode* node, 
-                                                    hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                    float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakePosController");
 
@@ -379,7 +378,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
     }
     else
     {
-        hsCont = TRACKED_NEW plCompoundController;
+        hsCont = new plCompoundController;
         fErrorMsg->Set(control->NumSubs()!=3, node->GetName(), "compound should have 3 subs").Check();
 
         if (control->ClassID() == Class_ID(POSITIONNOISE_CONTROL_CLASS_ID,0) )
@@ -412,7 +411,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
 }
 
 plController *hsControlConverter::MakeScaleController(Control *control, plMaxNode* node, 
-                                                      hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                      float start /* = -1 */, float end /* = -1 */)
 {
     ISetSegRange(start, end);
 
@@ -435,7 +434,7 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
 }
 
 plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, hsBool camRot /* = false */, 
-                                                    hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                    float start /* = -1 */, float end /* = -1 */)
 {
     ISetSegRange(start, end);
 
@@ -463,7 +462,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
             if (fErrorMsg->Set(control->NumSubs() != 3, node->GetName(), "Rot compound controller should have 3 subcontrollers").CheckAndAsk())
                 return nil;
 
-            plCompoundController* rc = TRACKED_NEW plCompoundController;
+            plCompoundController* rc = new plCompoundController;
             int i;
             for (i=0; i<3; i++)
             {
@@ -532,7 +531,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
     return NULL;
 }
 
-void hsControlConverter::ScalePositionController(plController* ctl, hsScalar scale)
+void hsControlConverter::ScalePositionController(plController* ctl, float scale)
 {
     plLeafController* simp = plLeafController::ConvertNoRef(ctl);
     plCompoundController* comp;
@@ -565,7 +564,7 @@ void hsControlConverter::ScalePositionController(plController* ctl, hsScalar sca
     }
 }
 
-void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, hsScalar maxRads)
+void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads)
 {
     hsGuardBegin("hsControlConverter::MaxSampleAngles");
 
@@ -596,7 +595,7 @@ void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab
 }
 
 plCompoundController *hsControlConverter::MakeTransformController(Control *control, plMaxNode *node, 
-                                                                  hsScalar start /* = -1 */, hsScalar end /* = -1 */)
+                                                                  float start /* = -1 */, float end /* = -1 */)
 {
     hsGuardBegin("hsControlConverter::MakeTransformController");
 
@@ -617,7 +616,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
             return NULL;
         }
 
-        plCompoundController *tmc = TRACKED_NEW plCompoundController;
+        plCompoundController *tmc = new plCompoundController;
         for (int i=0; i<n; i++)
         {
             Control* sub = (Control*)control->SubAnim(i);
@@ -658,7 +657,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
     hsGuardEnd;
 }
 
-void hsControlConverter::ISetSegRange(hsScalar start, hsScalar end)
+void hsControlConverter::ISetSegRange(float start, float end)
 {
     fSegStart = (start >= 0 ? fTicksPerSec * start : fInterface->GetAnimRange().Start());
     fSegEnd = (end >= 0 ? fTicksPerSec * end : fInterface->GetAnimRange().End());
@@ -666,7 +665,7 @@ void hsControlConverter::ISetSegRange(hsScalar start, hsScalar end)
 
 
 void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc,
-                                              hsScalar start, hsScalar end)
+                                              float start, float end)
 {
     if (control)
     {
@@ -748,7 +747,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
 {
     hsGuardBegin("hsControlConverter::ICreateQuatController");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -759,11 +758,11 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte[ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        IKey* key=(IKey*)(new uint8_t[ikeys->GetKeySize()]);
+        plLeafController* pc = new plLeafController;
 
-        UInt8 compressLevel = node->GetAnimCompress();
-        UInt8 keyType;
+        uint8_t compressLevel = node->GetAnimCompress();
+        uint8_t keyType;
         if (compressLevel == plAnimCompressComp::kCompressionHigh)
             keyType = hsKeyFrame::kCompressedQuatKeyFrame32;
         else if (compressLevel == plAnimCompressComp::kCompressionLow)
@@ -776,7 +775,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         {
             // Get key
             ikeys->GetKey(i, key);
-            const float kMaxRads = hsScalarPI*  0.5f;
+            const float kMaxRads = M_PI*  0.5f;
             Tab<TimeValue> kTimes;
             kTimes.ZeroCount();
             if( rotation )
@@ -828,7 +827,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
     hsGuardBegin("hsControlConverter::ICreateScaleValueController");
 
     //plMaxNode* xformParent = GetXformParent(node);
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -839,8 +838,8 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -869,7 +868,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
 {
     hsGuardBegin("hsControlConverter::ICreateScalarController");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
@@ -880,8 +879,8 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -912,7 +911,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
     hsGuardBegin("hsControlConverter::ICreateSimplePosController");
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
     {
         if(!(control->IsKeyable()))
@@ -922,8 +921,8 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
             return NULL;
         }
 
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
-        plLeafController* pc = TRACKED_NEW plLeafController;
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
@@ -955,7 +954,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
 {
     hsGuardBegin("hsControlConverter::IAddPartsKeys");
 
-    Int32 startIdx, endIdx;
+    int32_t startIdx, endIdx;
     if (control->IsLeaf())
     {
         IKeyControl* ikeys = GetKeyControlInterface(control);
@@ -978,14 +977,14 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         //
         // Traverse all keys of controller
         //
-        IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
+        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
         hsBool mb=false;
         plMaxNode* xformParent = GetXformParent(node);
         for(i = startIdx; i <= endIdx; i++)
         {
             // Get key
             ikeys->GetKey(i, key);
-            hsScalar frameTime = key->time / GetTicksPerSec();
+            float frameTime = key->time / GetTicksPerSec();
             int frameNum = key->time / GetTicksPerFrame();
             hsAssert(frameNum <= hsKeyFrame::kMaxFrameNumber, "Anim is too long.");
 
@@ -1067,7 +1066,7 @@ bool hsControlConverter::StdUVGenToHsMatrix44(hsMatrix44* hsMat, StdUVGen* uvGen
         for( i = 0; i < 2; i++ )
         {
             if( fabsf(hsMat->fMap[i][3]) > 1.f )
-                hsMat->fMap[i][3] -= hsScalar(int(hsMat->fMap[i][3]));
+                hsMat->fMap[i][3] -= float(int(hsMat->fMap[i][3]));
         }
     }
 
@@ -1098,8 +1097,8 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    IKey* key=(IKey*)(new byte [ikeys->GetKeySize()]);
-    IKey* lastKey=(IKey*)(new byte [ikeys->GetKeySize()]);
+    IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+    IKey* lastKey=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
 
     int i;
     for( i = iLo; i < iHi; i++ )
@@ -1244,7 +1243,7 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 //
 // Create an hsKeyFrame from a 3DSMax key
 //
-Int32 hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, hsBool rotQuat)
+int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, hsBool rotQuat)
 {
     hsGuardBegin("hsControlConverter::ICreateHSInterpKey");
 
@@ -1371,7 +1370,7 @@ Int32 hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeV
     hsGuardEnd;
 }
 
-UInt8 hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
+uint8_t hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
 {
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
@@ -1428,7 +1427,7 @@ UInt8 hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
 //
 //
 //
-Int32 hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont, Int32 &start, Int32 &end)
+int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end)
 {
     hsGuardBegin("hsControlConverter::IGetRangeCoverKeyIndices");
 
@@ -1442,7 +1441,7 @@ Int32 hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont
     if (numKeys == 0)
         return 0;
 
-    IKey* key=(IKey*)(new byte [keys->GetKeySize()]);
+    IKey* key=(IKey*)(new uint8_t [keys->GetKeySize()]);
 
     start = numKeys;
     for (int i=0; i<numKeys; i++)
@@ -2089,14 +2088,14 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
             break;
             
     }
-    plCameraMsg* pCamMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pCamMsg = new plCameraMsg;
     pCamMsg->SetCmd(plCameraMsg::kSetAnimated);
     pCamMsg->AddReceiver(pCamMod->GetKey());
     plConvert::Instance().AddMessageToQueue(pCamMsg);
     Object* obj = node->EvalWorldState(hsConverterUtils::Instance().GetTime(node->GetInterface())).obj;
     GenCamera* theCam;
-    hsTArray<hsScalar> fovW;
-    hsTArray<hsScalar> fovH;
+    hsTArray<float> fovW;
+    hsTArray<float> fovH;
     for (i=0; i < kfArray->Count(); i++)
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
@@ -2107,7 +2106,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         // convert
         FOVvalue = FOVvalue*(180/3.141592);
         int FOVType = theCam->GetFOVType();
-        hsScalar wDeg, hDeg;
+        float wDeg, hDeg;
         switch(FOVType)
         {
         case 0: // FOV_W
@@ -2130,7 +2129,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     for (i=0; i < kfArray->Count(); i++)
     {
         
-        plCameraMsg* pFOVMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pFOVMsg = new plCameraMsg;
         plCameraConfig* pCfg = pFOVMsg->GetConfig();
 
         if (i == kfArray->Count() - 1)
@@ -2150,12 +2149,12 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         pFOVMsg->SetCmd(plCameraMsg::kAddFOVKeyframe);
         pFOVMsg->AddReceiver(pCamMod->GetKey());
         
-        plEventCallbackMsg* pCall = TRACKED_NEW plEventCallbackMsg;
+        plEventCallbackMsg* pCall = new plEventCallbackMsg;
         pCall->fEvent = kTime;
         pCall->fEventTime = kfArray[0][i].fFrame / MAX_FRAMES_PER_SEC;
         pCall->fIndex = i;
         pCall->AddReceiver(pCamMod->GetKey());
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(pCamMod->GetKey());
         pMsg->SetSender(pAnim->GetModKey(node));
         pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include <Python.h>
 #include "pyGlueHelpers.h"
@@ -90,14 +90,14 @@ public:
     void Note_SetTextW( const wchar_t * text );
     std::string Note_GetText( void );
     std::wstring Note_GetTextW( void );
-    void Note_SetType( Int32 type );
-    Int32 Note_GetType( void );
+    void Note_SetType( int32_t type );
+    int32_t Note_GetType( void );
 
-    void Note_SetSubType( Int32 type );
-    Int32 Note_GetSubType( void );
+    void Note_SetSubType( int32_t type );
+    int32_t Note_GetSubType( void );
 
     PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
-    void SetDeviceInbox( const char * devName, PyObject * cb=nil, UInt32 cbContext=0 );
+    void SetDeviceInbox( const char * devName, PyObject * cb=nil, uint32_t cbContext=0 );
 };
 
 #endif // _pyVaultTextNoteNode_h_

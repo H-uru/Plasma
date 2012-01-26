@@ -80,8 +80,8 @@ class plPublicKeyImp : public plKeyImp
 
         void    SetAsEmpty( void )
         {
-            fStartPos = (UInt32)-1;
-            fDataLen = (UInt32)-1;
+            fStartPos = (uint32_t)-1;
+            fDataLen = (uint32_t)-1;
         }
 
         void    SetStartPosFromStream( hsStream *stream )
@@ -104,7 +104,7 @@ plRawKeyedObject::plRawKeyedObject()
     fBufferSize = 0;
 }
 
-plRawKeyedObject::plRawKeyedObject( const plKey &key, UInt32 size, UInt8 *data )
+plRawKeyedObject::plRawKeyedObject( const plKey &key, uint32_t size, uint8_t *data )
 {
     fSrcKey = key;
     ( (plPublicKeyImp *)(plKeyImp *)key )->SetObjectPtrDirect( this );
@@ -126,7 +126,7 @@ plRawKeyedObject::~plRawKeyedObject()
     delete [] fBuffer;
 }
 
-void    plRawKeyedObject::SetBuffer( UInt32 size, UInt8 *data )
+void    plRawKeyedObject::SetBuffer( uint32_t size, uint8_t *data )
 {
     delete [] fBuffer;
 
@@ -138,7 +138,7 @@ void    plRawKeyedObject::SetBuffer( UInt32 size, UInt8 *data )
     }
 
     fBufferSize = size;
-    fBuffer = new UInt8[ size ];
+    fBuffer = new uint8_t[ size ];
     memcpy( fBuffer, data, size );
 }
 
@@ -173,9 +173,9 @@ void    plRawKeyedObject::Write( hsStream *stream )
         hsWriteOnlyStream   replaceStream( fBufferSize, fBuffer );
 
         // Here's the part that REALLY sucks, 'cause it assumes our written format will never change!!!!
-        // It ALSO assumes, VERY dangerously, that ReadSwap16() will ALWAYS read a size UInt16
+        // It ALSO assumes, VERY dangerously, that ReadSwap16() will ALWAYS read a size uint16_t
 
-        replaceStream.SetPosition( sizeof( UInt16 ) );  // Get past creatable class that resManager writes out
+        replaceStream.SetPosition( sizeof( uint16_t ) );  // Get past creatable class that resManager writes out
 
         hsgResMgr::ResMgr()->WriteKey( &replaceStream, fSrcKey, hsResMgr::kWriteNoCheck );
     }

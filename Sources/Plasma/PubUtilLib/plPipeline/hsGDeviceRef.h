@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsGDeviceRef : public hsRefCnt
 {
 protected:
-    UInt32      fFlags;
+    uint32_t      fFlags;
 
 public:
     // Note, derived classes define more flags. Take care if adding flags here.
@@ -65,7 +65,7 @@ public:
         kDirty          = 0x1
     };
 
-    UInt32                  fUseTime;       // time stamp when last used - stat gather only
+    uint32_t                  fUseTime;       // time stamp when last used - stat gather only
 
     hsBool IsDirty() const { return (fFlags & kDirty); }
     void SetDirty(hsBool on) { if(on)fFlags |= kDirty; else fFlags &= ~kDirty; }

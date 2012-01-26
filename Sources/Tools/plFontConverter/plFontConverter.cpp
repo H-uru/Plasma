@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WINDOWNAME  "plFontConverter"
 
 #include "HeadSpin.h"
-#include "hsTypes.h"
-#include <windows.h>
 #include "res/resource.h"
 
 #include "pnAllCreatables.h"

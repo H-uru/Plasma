@@ -45,7 +45,7 @@ hsVectorStream::hsVectorStream() : fEnd(0)
 {
 }
 
-hsVectorStream::hsVectorStream(UInt32 chunkSize)
+hsVectorStream::hsVectorStream(uint32_t chunkSize)
 {   
     fVector.reserve(chunkSize);
 }
@@ -59,7 +59,7 @@ hsBool hsVectorStream::AtEnd()
     return (fBytesRead >= fEnd);
 }
 
-UInt32 hsVectorStream::Read(UInt32 byteCount, void *buffer)
+uint32_t hsVectorStream::Read(uint32_t byteCount, void *buffer)
 {
     if (fBytesRead + byteCount > fEnd)
     {
@@ -75,18 +75,18 @@ UInt32 hsVectorStream::Read(UInt32 byteCount, void *buffer)
     return byteCount;
 }
 
-UInt32 hsVectorStream::Write(UInt32 byteCount, const void* buffer)
+uint32_t hsVectorStream::Write(uint32_t byteCount, const void* buffer)
 {
     // If we are at the end of the vector, we can just do a block insert of the data
     if (fPosition == fVector.size())
-        fVector.insert(fVector.end(), (Byte*)buffer, (Byte*)buffer+byteCount);
+        fVector.insert(fVector.end(), (uint8_t*)buffer, (uint8_t*)buffer+byteCount);
     // If we are in the middle, I don't know how to just overwrite a block of the vector.
     // So, we make sure there is enough space and copy the elements one by one
     else
     {
         fVector.reserve(fPosition+byteCount);
-        for (UInt32 i = 0; i < byteCount; i++)
-            fVector[fPosition+i] = ((Byte*)buffer)[i];
+        for (uint32_t i = 0; i < byteCount; i++)
+            fVector[fPosition+i] = ((uint8_t*)buffer)[i];
     }
 
     fPosition += byteCount;
@@ -97,7 +97,7 @@ UInt32 hsVectorStream::Write(UInt32 byteCount, const void* buffer)
     return byteCount;
 }
 
-void hsVectorStream::Skip(UInt32 deltaByteCount)
+void hsVectorStream::Skip(uint32_t deltaByteCount)
 {
     fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
@@ -120,7 +120,7 @@ void hsVectorStream::Truncate()
     fEnd = fPosition-1;
 }
 
-UInt32 hsVectorStream::GetEOF()
+uint32_t hsVectorStream::GetEOF()
 {
     return fEnd;
 }
@@ -130,7 +130,7 @@ void hsVectorStream::CopyToMem(void* mem)
     memcpy(mem, &fVector[0], fEnd);
 }
 
-void hsVectorStream::Erase(UInt32 bytes)
+void hsVectorStream::Erase(uint32_t bytes)
 {
     hsAssert(fPosition+bytes <= fEnd, "Erasing past end of stream");
 
@@ -158,7 +158,7 @@ const void *hsVectorStream::GetData()
 
 #ifdef HS_BUILD_FOR_WIN32
 
-hsNamedPipeStream::hsNamedPipeStream(UInt8 flags, UInt32 timeout) :
+hsNamedPipeStream::hsNamedPipeStream(uint8_t flags, uint32_t timeout) :
     fFlags(flags),
     fPipe(INVALID_HANDLE_VALUE),
     fReadMode(false),
@@ -203,15 +203,15 @@ hsBool hsNamedPipeStream::WaitForClientConnect()
 
 hsBool hsNamedPipeStream::Open(const char *name, const char *mode)
 {
-    wchar* wName = hsStringToWString(name);
-    wchar* wMode = hsStringToWString(mode);
+    wchar_t* wName = hsStringToWString(name);
+    wchar_t* wMode = hsStringToWString(mode);
     hsBool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool hsNamedPipeStream::Open(const wchar *name, const wchar *mode)
+hsBool hsNamedPipeStream::Open(const wchar_t *name, const wchar_t *mode)
 {
     if (wcschr(mode, L'w'))
     {
@@ -270,7 +270,7 @@ hsBool hsNamedPipeStream::Close()
     return true;
 }
 
-hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, UInt32 &numTransferred)
+hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, uint32_t &numTransferred)
 {
     // Read/Write succeeded, return now
     if (result)
@@ -294,7 +294,7 @@ hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, UInt32 &numTransfe
     return false;
 }
 
-hsBool hsNamedPipeStream::IRead(UInt32 byteCount, void *buffer, UInt32 &numRead)
+hsBool hsNamedPipeStream::IRead(uint32_t byteCount, void *buffer, uint32_t &numRead)
 {
     numRead = 0;
 
@@ -312,7 +312,7 @@ hsBool hsNamedPipeStream::IRead(UInt32 byteCount, void *buffer, UInt32 &numRead)
     return false;
 }
 
-hsBool hsNamedPipeStream::IWrite(UInt32 byteCount, const void *buffer, UInt32 &numWritten)
+hsBool hsNamedPipeStream::IWrite(uint32_t byteCount, const void *buffer, uint32_t &numWritten)
 {
     numWritten = 0;
 
@@ -330,13 +330,13 @@ hsBool hsNamedPipeStream::IWrite(UInt32 byteCount, const void *buffer, UInt32 &n
     return false;
 }
 
-UInt32 hsNamedPipeStream::Read(UInt32 byteCount, void *buffer)
+uint32_t hsNamedPipeStream::Read(uint32_t byteCount, void *buffer)
 {
-    UInt32 totalRead = 0;
+    uint32_t totalRead = 0;
 
     // Read until we get all our data or an error
-    UInt32 numRead = 0;
-    while (IRead(byteCount-totalRead, (void*)((UInt32)buffer+totalRead), numRead))
+    uint32_t numRead = 0;
+    while (IRead(byteCount-totalRead, (void*)((uint32_t)buffer+totalRead), numRead))
     {
         totalRead += numRead;
 
@@ -347,13 +347,13 @@ UInt32 hsNamedPipeStream::Read(UInt32 byteCount, void *buffer)
     return totalRead;
 }
 
-UInt32 hsNamedPipeStream::Write(UInt32 byteCount, const void *buffer)
+uint32_t hsNamedPipeStream::Write(uint32_t byteCount, const void *buffer)
 {
-    UInt32 totalWritten = 0;
+    uint32_t totalWritten = 0;
 
     // Write until we get all our data or an error
-    UInt32 numWritten = 0;
-    while (IWrite(byteCount-totalWritten, (const void*)((UInt32)buffer+totalWritten), numWritten))
+    uint32_t numWritten = 0;
+    while (IWrite(byteCount-totalWritten, (const void*)((uint32_t)buffer+totalWritten), numWritten))
     {
         totalWritten += numWritten;
 
@@ -368,14 +368,14 @@ UInt32 hsNamedPipeStream::Write(UInt32 byteCount, const void *buffer)
 using std::min;
 #endif
 
-void hsNamedPipeStream::Skip(UInt32 deltaByteCount)
+void hsNamedPipeStream::Skip(uint32_t deltaByteCount)
 {
     char buf[256];
 
     // Read until we get all our data or an error
-    UInt32 totalRead = 0;
-    UInt32 numRead = 0;
-    while (IRead(min((UInt32)256L, deltaByteCount-totalRead), buf, numRead))
+    uint32_t totalRead = 0;
+    uint32_t numRead = 0;
+    while (IRead(min((uint32_t)256L, deltaByteCount-totalRead), buf, numRead))
     {
         totalRead += numRead;
 

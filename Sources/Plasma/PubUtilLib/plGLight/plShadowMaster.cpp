@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plShadowMaster.h"
 #include "plShadowSlave.h"
 
@@ -62,12 +62,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-UInt32 plShadowMaster::fGlobalMaxSize = 512;
-hsScalar plShadowMaster::fGlobalMaxDist = 160.f; // PERSPTEST
-// hsScalar plShadowMaster::fGlobalMaxDist = 100000.f; // PERSPTEST
-hsScalar plShadowMaster::fGlobalVisParm = 1.f;
+uint32_t plShadowMaster::fGlobalMaxSize = 512;
+float plShadowMaster::fGlobalMaxDist = 160.f; // PERSPTEST
+// float plShadowMaster::fGlobalMaxDist = 100000.f; // PERSPTEST
+float plShadowMaster::fGlobalVisParm = 1.f;
 
-void plShadowMaster::SetGlobalShadowQuality(hsScalar s) 
+void plShadowMaster::SetGlobalShadowQuality(float s) 
 { 
     if( s < 0 )
         s = 0;
@@ -76,10 +76,10 @@ void plShadowMaster::SetGlobalShadowQuality(hsScalar s)
     fGlobalVisParm = s;
 }
 
-void plShadowMaster::SetGlobalMaxSize(UInt32 s) 
+void plShadowMaster::SetGlobalMaxSize(uint32_t s) 
 { 
-    const UInt32 kMaxMaxGlobalSize = 512;
-    const UInt32 kMinMaxGlobalSize = 32;
+    const uint32_t kMaxMaxGlobalSize = 512;
+    const uint32_t kMinMaxGlobalSize = 32;
 
     // Make sure it's a power of two.
     if( ((s-1) & ~s) != (s-1) )
@@ -166,7 +166,7 @@ void plShadowMaster::Deactivate() const
     plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
-void plShadowMaster::SetMaxDist(hsScalar f)
+void plShadowMaster::SetMaxDist(float f)
 {
     fMaxDist = f;
     fMinDist = f * 0.75f;
@@ -215,7 +215,7 @@ hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
         || fLightInfo->InVisNot(plGlobalVisMgr::Instance()->GetVisNot()) )
         return false;
 
-    const UInt8 shadowQuality = UInt8(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
+    const uint8_t shadowQuality = uint8_t(plShadowMaster::GetGlobalShadowQuality() * 3.9f);
     if( !GetKey()->GetUoid().GetLoadMask().MatchesQuality(shadowQuality) )
         return false;
 
@@ -227,11 +227,11 @@ hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
     hsBounds3Ext casterBnd;
     IComputeCasterBounds(caster, casterBnd);
 
-    hsScalar power = IComputePower(caster, casterBnd);
+    float power = IComputePower(caster, casterBnd);
 
-    static hsScalar kVisShadowPower = 1.e-1f;
-    static hsScalar kMinShadowPower = 2.e-1f;
-    static hsScalar kKneeShadowPower = 3.e-1f;
+    static float kVisShadowPower = 1.e-1f;
+    static float kMinShadowPower = 2.e-1f;
+    static float kKneeShadowPower = 3.e-1f;
     if( power < kMinShadowPower )
         return false;
     if( power < kKneeShadowPower )
@@ -258,10 +258,10 @@ hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
     //      That's the distance used for culling ShadowReceivers
     // The ShadowSlaveYon is used directly in the 
 
-    slave->fIndex = UInt32(-1);
+    slave->fIndex = uint32_t(-1);
     castMsg->Pipeline()->SubmitShadowSlave(slave);
     
-    if( slave->fIndex == UInt32(-1) )
+    if( slave->fIndex == uint32_t(-1) )
     {
         IRecycleSlave(slave);
         return false;
@@ -294,7 +294,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
     for( i = 0; i < castSpans.GetCount(); i++ )
     {
         plDrawableSpans* dr = castSpans[i].fDraw;
-        UInt32 index = castSpans[i].fIndex;
+        uint32_t index = castSpans[i].fIndex;
 
         // Right now, the generic world bounds seems close enough, even when skinned.
         // It gets a little off on the lower LODs, but, hey, they're the lower LODs.
@@ -318,7 +318,7 @@ plShadowSlave* plShadowMaster::INextSlave(const plShadowCaster* caster)
     return slave;
 }
 
-plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, hsScalar power)
+plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power)
 {
     const plShadowCaster* caster = castMsg->Caster();
 
@@ -371,13 +371,13 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     if( !castMsg->Pipeline()->TestVisibleWorld(wBnd) )
         return IRecycleSlave(slave);
 
-    hsScalar maxDist = fMaxDist > 0
+    float maxDist = fMaxDist > 0
         ? (fGlobalMaxDist > 0
             ? hsMinimum(fMaxDist, fGlobalMaxDist)
             : fMaxDist)
         : fGlobalMaxDist;
 
-    plConst(hsScalar) kMinFrac(0.6f);
+    plConst(float) kMinFrac(0.6f);
     maxDist *= kMinFrac + GetGlobalShadowQuality() * (1.f - kMinFrac);
 
     // If we haven't got a max distance at which the shadow stays visible
@@ -385,10 +385,10 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     if( maxDist <= 0 )
         return slave;
 
-    plConst(hsScalar) kMinFadeFrac(0.90f);
-    plConst(hsScalar) kMaxFadeFrac(0.75f);
-    const hsScalar fadeFrac = kMinFadeFrac + GetGlobalShadowQuality() * (kMaxFadeFrac - kMinFadeFrac);
-    hsScalar minDist = maxDist * fadeFrac;
+    plConst(float) kMinFadeFrac(0.90f);
+    plConst(float) kMaxFadeFrac(0.75f);
+    const float fadeFrac = kMinFadeFrac + GetGlobalShadowQuality() * (kMaxFadeFrac - kMinFadeFrac);
+    float minDist = maxDist * fadeFrac;
 
     // So we want to fade out the shadow as it gets farther away, hopefully
     // pitching it in the distance when we couldn't see it anyway. 
@@ -400,16 +400,16 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     // but at least nothing will change when you swing the camera around.
 #if 0
     wBnd.TestPlane(castMsg->Pipeline()->GetViewDirWorld(), depth);
-    hsScalar eyeDist = castMsg->Pipeline()->GetViewDirWorld().InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
+    float eyeDist = castMsg->Pipeline()->GetViewDirWorld().InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
 #else
     hsPoint3 centre = wBnd.GetCenter();
     hsPoint3 vpos = castMsg->Pipeline()->GetViewPositionWorld();
     hsVector3 dir(&centre, &vpos);
     hsFastMath::NormalizeAppr(dir);
     wBnd.TestPlane(dir, depth);
-    hsScalar eyeDist = dir.InnerProduct(vpos);
+    float eyeDist = dir.InnerProduct(vpos);
 #endif
-    hsScalar dist = depth.fX - eyeDist;
+    float dist = depth.fX - eyeDist;
 
     // If it's not far enough to be fading, just go with it as is.
     dist -= minDist;
@@ -429,13 +429,13 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
 }
 
 // compute ShadowSlave power influenced by SoftRegion, current light intensity, and ShadowCaster.fMaxOpacity;
-hsScalar plShadowMaster::IComputePower(const plShadowCaster* caster, const hsBounds3Ext& casterBnd) const
+float plShadowMaster::IComputePower(const plShadowCaster* caster, const hsBounds3Ext& casterBnd) const
 {
-    hsScalar power = 0;
+    float power = 0;
     if( fLightInfo && !fLightInfo->IsIdle() )
     {
         power = caster->fMaxOpacity;
-        hsScalar strength, scale;
+        float strength, scale;
         fLightInfo->GetStrengthAndScale(casterBnd, strength, scale);
         power *= strength;
     }
@@ -465,15 +465,15 @@ void plShadowMaster::IComputeWidthAndHeight(plShadowCastMsg* castMsg, plShadowSl
 
     hsPoint2 depth;
     wBnd.TestPlane(castMsg->Pipeline()->GetViewDirWorld(), depth);
-    hsScalar eyeDist = castMsg->Pipeline()->GetViewDirWorld().InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
-    hsScalar dist = depth.fX - eyeDist;
+    float eyeDist = castMsg->Pipeline()->GetViewDirWorld().InnerProduct(castMsg->Pipeline()->GetViewPositionWorld());
+    float dist = depth.fX - eyeDist;
     if( dist < 0 )
         dist = 0;
 
     slave->fPriority = dist; // Might want to boost the local players priority.
 
-    plConst(hsScalar) kShiftDist = 50.f; // PERSPTEST
-//  plConst(hsScalar) kShiftDist = 5000.f; // PERSPTEST
+    plConst(float) kShiftDist = 50.f; // PERSPTEST
+//  plConst(float) kShiftDist = 5000.f; // PERSPTEST
     int iShift = int(dist / kShiftDist);
     slave->fWidth >>= iShift;
     slave->fHeight >>= iShift;
@@ -507,8 +507,8 @@ void plShadowMaster::IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave)
 
     hsBounds3Ext bnd = slave->fCasterWorldBounds;
     bnd.Transform(&slave->fWorldToLight);
-    hsScalar farthest = bnd.GetCenter().fZ + slave->fAttenDist;
-    hsScalar closest = bnd.GetMins().fZ;
+    float farthest = bnd.GetCenter().fZ + slave->fAttenDist;
+    float closest = bnd.GetMins().fZ;
 
     // Shouldn't this always be negated?
     static hsMatrix44 lightToLut; // Static ensures initialized to all zeros.
@@ -524,8 +524,8 @@ void plShadowMaster::IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave)
     // bias to ShadowSlave.LUTXfm.fMap[0][3]. Bias magnitude would probably be at
     // least 0.5f/256.f to compensate for quantization.
 
-    plConst(hsScalar) kSelfBias = 2.f / 256.f;
-    plConst(hsScalar) kOtherBias = -0.5 / 256.f;
+    plConst(float) kSelfBias = 2.f / 256.f;
+    plConst(float) kOtherBias = -0.5 / 256.f;
 #if 0 // MF_NOSELF
     lightToLut.fMap[0][3] += slave->HasFlag(plShadowSlave::kSelfShadow) ? kSelfBias : kOtherBias;
 #else // MF_NOSELF
@@ -716,13 +716,13 @@ protected:
     public:
         plDrawableSpans*    fDraw;
         plSpan*             fSpan;
-        UInt32              fIndex;
+        uint32_t              fIndex;
     };
 
     hsTArray<plDrawSpan> fSpans;
 
     hsBounds3Ext        fTotalWorldBounds;
-    hsScalar            fMaxOpacity;
+    float            fMaxOpacity;
 
 
     On RenderMsg
@@ -741,7 +741,7 @@ protected:
 
         //find max opacity of all spans
         //clear shadowBits of all spans
-        hsScalar fMaxOpacity = 0.f;
+        float fMaxOpacity = 0.f;
         int i;
         for( i = 0; i < fSpans.GetCount(); i++ )
         {
@@ -803,7 +803,7 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {}
 
     virtual hsBool MsgReceive(plMessage* msg);
 
@@ -818,7 +818,7 @@ protected:
 
     plVolumeIsect*                  fIsect;
 
-    hsScalar                        fAttenDist;
+    float                        fAttenDist;
 
     plSoftVolume*                   fSoftVolume;
 
@@ -831,7 +831,7 @@ protected:
 
     // Override if you want to attenuate (e.g. dist for omni, cone angle for spot).
     // But make sure you factor in base class power.
-    virtual hsScalar IComputePower(const plShadowCaster* caster);
+    virtual float IComputePower(const plShadowCaster* caster);
 
 public:
     plVolumeIsect* GetIsect() const { return fIsect; }
@@ -853,14 +853,14 @@ public:
         }
     }
 
-    virtual void CreateShadowSlave(const hsBounds3Ext& bnd, hsScalar power)
+    virtual void CreateShadowSlave(const hsBounds3Ext& bnd, float power)
     {
         int iSlave = fSlavePool.GetCount();
         fSlavePool.ExpandAndZero(iSlave+1);
         plShadowSlave* slave = fSlavePool[iSlave];
         if( !slave )
         {
-            fSlavePool[iSlave] = slave = TRACKED_NEW plShadowSlave;
+            fSlavePool[iSlave] = slave = new plShadowSlave;
             fISectPool[iSlave] = INewISect();
         }
 
@@ -883,9 +883,9 @@ public:
 };
 
 // compute ShadowSlave power influenced by SoftRegion and ShadowCaster.fMaxOpacity;
-hsScalar plShadowMaster::ComputePower(const plShadowCaster* caster)
+float plShadowMaster::ComputePower(const plShadowCaster* caster)
 {
-    hsScalar power = caster->fMaxOpacity;
+    float power = caster->fMaxOpacity;
     if( fSoftVolume )
     {
         power *= fSoftVolume->GetStrength(caster->fTotalWorldBounds.GetCenter());
@@ -928,13 +928,13 @@ void plOmniShadowMaster::IComputeProjections(const hsBounds3Ext& wBnd, plShadowS
     hsBounds3Ext bnd = wBnd;
     bnd.Transform(slave->fWorldToLight);
 
-    hsScalar minZ = bnd.GetMins().fZ;
-    hsScalar maxZ = bnd.GetCenter().fZ + fAttenDist;
+    float minZ = bnd.GetMins().fZ;
+    float maxZ = bnd.GetCenter().fZ + fAttenDist;
 
     if( minZ < kMinMinZ )
         minZ = kMinMinZ;
 
-    hsScalar cotX, cotY;
+    float cotX, cotY;
     if( -bnd.GetMins().fX > bnd.GetMaxs().fX )
     {
         hsAssert(bnd.GetMins().fX < 0, "Empty shadow caster bounds?");
@@ -1011,12 +1011,12 @@ public:
     hsMatrix44          fCastLUT;
     hsMatrix44          fRcvLUT;
 
-    hsScalar            fPower;
+    float            fPower;
 
     plVolumeIsect*      fISect;
 
-    UInt32              fWidth;
-    UInt32              fHeight;
+    uint32_t              fWidth;
+    uint32_t              fHeight;
 };
 
 BeginScene (on EvalMsg?)
@@ -1038,7 +1038,7 @@ Harvest
         if( !ShadowMaster.CanSee(ShadowCaster.fTotalWorldBounds) )
             forget it;
 
-        hsScalar power = ComputePower(ShadowCaster);
+        float power = ComputePower(ShadowCaster);
 
         if( power == 0 )
             forget it;

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSceneObject.h"
 #include "plDrawInterface.h"
 #include "plSimulationInterface.h"
@@ -111,16 +111,16 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
 
     // Interfaces will attach themselves to us on read.
     // DI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // SI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // CI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     // AI
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     int i;
 
@@ -128,7 +128,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     fGenerics.SetCount(0);
     for( i = 0; i < nGen; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
 
     plObjRefMsg* refMsg;
@@ -138,7 +138,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     fModifiers.ExpandAndZero(nOldMods+nNewMods);    // reserve space for new modifiers+existing modifiers
     for( i = nOldMods; i < nOldMods+nNewMods; i++ )
     {
-        refMsg = TRACKED_NEW plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
+        refMsg = new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
 
@@ -226,7 +226,7 @@ void plSceneObject::ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     {
         if(fCoordinateInterface)
         {
-            UInt16 whyTransformed = fCoordinateInterface->GetReasons();
+            uint16_t whyTransformed = fCoordinateInterface->GetReasons();
             if(whyTransformed != plCoordinateInterface::kReasonPhysics)
             {
                 // if we were transformed by anything but physics, let physics know
@@ -357,7 +357,7 @@ void plSceneObject::ISetInterface(plObjInterface* iface)
         iface->ISetSceneNode(GetSceneNode());
 }
 
-void plSceneObject::IRemoveInterface(Int16 idx, plObjInterface* who)
+void plSceneObject::IRemoveInterface(int16_t idx, plObjInterface* who)
 {
     if( plFactory::DerivesFrom(plDrawInterface::Index(), idx) )
         ISetDrawInterface(nil);
@@ -389,9 +389,9 @@ hsBool plSceneObject::IPropagateToModifiers(plMessage* msg)
     return retVal;
 }
 
-hsBool plSceneObject::Eval(double secs, hsScalar delSecs)
+hsBool plSceneObject::Eval(double secs, float delSecs)
 {
-    UInt32 dirty = ~0L;
+    uint32_t dirty = ~0L;
     hsBool retVal = false;
     int i;
     for( i = 0; i < fModifiers.GetCount(); i++ )
@@ -425,7 +425,7 @@ void plSceneObject::SetSceneNode(plKey newNode)
 
     if( newNode )
     {
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kObject);
         plKey key = GetKey();   // for linux build
         hsgResMgr::ResMgr()->AddViaNotify(key, refMsg, plRefFlags::kActiveRef);
     }
@@ -449,7 +449,7 @@ void plSceneObject::SetNetGroup(plNetGroupId netGroup)
         fCoordinateInterface->ISetNetGroupRecur(netGroup);
 }
 
-const plModifier* plSceneObject::GetModifierByType(UInt16 classIdx) const
+const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
 {
     int i;
     for (i = 0; i < fModifiers.GetCount(); i++)
@@ -520,7 +520,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
                     hsAssert(false, "Trying to attach a child who has no coordinateInterface");
                     return true;
                 }
-                plIntRefMsg* intRefMsg = TRACKED_NEW plIntRefMsg(fCoordinateInterface->GetKey(), att->GetContext(), -1, plIntRefMsg::kChildObject);
+                plIntRefMsg* intRefMsg = new plIntRefMsg(fCoordinateInterface->GetKey(), att->GetContext(), -1, plIntRefMsg::kChildObject);
                 intRefMsg->SetRef(child);
                 hsgResMgr::ResMgr()->AddViaNotify(intRefMsg, plRefFlags::kPassiveRef);
             }
@@ -740,7 +740,7 @@ void plSceneObject::IPropagateToGenerics(plMessage* msg)
     }
 }
 
-plObjInterface* plSceneObject::GetVolatileGenericInterface(UInt16 classIdx) const
+plObjInterface* plSceneObject::GetVolatileGenericInterface(uint16_t classIdx) const
 {
     int i;
     for( i = 0; i < fGenerics.GetCount(); i++ )

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "plPythonSDLModifier.h"
 #include "cyPythonInterface.h"
 
@@ -341,7 +341,7 @@ void plPythonSDLModifier::IDirtySynchState(const char* name, hsBool sendImmediat
     SDLMap::iterator it = fMap.find(name);
     if (it != fMap.end())
     {
-        UInt32 flags = 0;
+        uint32_t flags = 0;
         if (it->second.sendToClients)
             flags |= kBCastToClients;
         if (it->second.sendImmediate)

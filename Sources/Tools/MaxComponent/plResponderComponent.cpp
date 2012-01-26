@@ -338,9 +338,9 @@ hsBool plResponderComponent::PreConvert(plMaxNode *node,plErrorMsg *pErrMsg)
     plLocation loc = node->GetLocation();
 
     // Create and register the RESPONDER's logic component
-    plResponderModifier *responder = TRACKED_NEW plResponderModifier;
+    plResponderModifier *responder = new plResponderModifier;
     plKey responderKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), responder, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(responderKey, TRACKED_NEW plObjRefMsg(rObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(responderKey, new plObjRefMsg(rObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     // Tell all the activators to notify us
     for (int i = 0; i < fCompPB->Count(kResponderActivators); i++)

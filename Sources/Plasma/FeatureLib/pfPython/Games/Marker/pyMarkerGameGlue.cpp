@@ -67,7 +67,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtIsMarkerGame, args, "Params: typeID\nReturns t
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         bool retVal = pyMarkerGame::IsMarkerGame(text);
@@ -117,7 +117,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtCreateMarkerGame, args, keywords, "Params
         if (PyUnicode_Check(gameNameObj))
         {
             int strLen = PyUnicode_GetSize(gameNameObj);
-            wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+            wchar_t* text = new wchar_t[strLen + 1];
             PyUnicode_AsWideChar((PyUnicodeObject*)gameNameObj, text, strLen);
             text[strLen] = L'\0';
             name = text;
@@ -142,7 +142,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtCreateMarkerGame, args, keywords, "Params
         if (PyUnicode_Check(templateIdObj))
         {
             int strLen = PyUnicode_GetSize(templateIdObj);
-            wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+            wchar_t* text = new wchar_t[strLen + 1];
             PyUnicode_AsWideChar((PyUnicodeObject*)templateIdObj, text, strLen);
             text[strLen] = L'\0';
             templateId = text;
@@ -181,7 +181,7 @@ PYTHON_METHOD_DEFINITION(ptMarkerGame, changeGameName, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->ChangeGameName(text);
@@ -236,7 +236,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptMarkerGame, addMarker, args, keywords)
         if (PyUnicode_Check(nameObj))
         {
             int strLen = PyUnicode_GetSize(nameObj);
-            wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+            wchar_t* text = new wchar_t[strLen + 1];
             PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
             text[strLen] = L'\0';
             name = text;
@@ -261,7 +261,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptMarkerGame, addMarker, args, keywords)
         if (PyUnicode_Check(ageObj))
         {
             int strLen = PyUnicode_GetSize(ageObj);
-            wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+            wchar_t* text = new wchar_t[strLen + 1];
             PyUnicode_AsWideChar((PyUnicodeObject*)ageObj, text, strLen);
             text[strLen] = L'\0';
             age = text;
@@ -309,7 +309,7 @@ PYTHON_METHOD_DEFINITION(ptMarkerGame, changeMarkerName, args)
     if (PyUnicode_Check(nameObj))
     {
         int strLen = PyUnicode_GetSize(nameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->ChangeMarkerName(markerId, text);

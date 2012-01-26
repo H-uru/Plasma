@@ -110,15 +110,15 @@ public:
     virtual void RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netForce, hsBool netProp);
 
     // for the multistage behaviors
-    virtual void NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
+    virtual void GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce);
 
     // static behavior functions:
-    static void SetLoopCount(pyKey &behKey, Int32 stage, Int32 loopCount, hsBool netForce);
+    static void SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsBool netForce);
 
     virtual void SetSenderKey(pyKey &pKey);
 
@@ -132,7 +132,7 @@ public:
     //
     //  PURPOSE    : Return what clothing group the avatar is in
     //
-    virtual Int32 GetAvatarClothingGroup();
+    virtual int32_t GetAvatarClothingGroup();
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -141,7 +141,7 @@ public:
     //
     //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
     //
-    virtual std::vector<std::string> GetEntireClothingList(Int32 clothing_type);
+    virtual std::vector<std::string> GetEntireClothingList(int32_t clothing_type);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -150,7 +150,7 @@ public:
     //
     //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
     //
-    virtual std::vector<PyObject*> GetClosetClothingList(Int32 clothing_type);
+    virtual std::vector<PyObject*> GetClosetClothingList(int32_t clothing_type);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -189,7 +189,7 @@ public:
     //  PURPOSE    : Return a list of unique clothing items (each has a different mesh)
     //             : that belong to the specific type
     //
-    virtual std::vector<PyObject*> GetUniqueMeshList(Int32 clothing_type);
+    virtual std::vector<PyObject*> GetUniqueMeshList(int32_t clothing_type);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -248,7 +248,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItemLayer(const char* clothing_name, pyColor& tint, UInt8 layer);
+    virtual hsBool TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -288,7 +288,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItemLayerU(const char* clothing_name, pyColor& tint, UInt8 layer, hsBool update);
+    virtual hsBool TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, hsBool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -315,7 +315,7 @@ public:
     //
     //  PURPOSE    : Get the tint a clothing item, i.e. change the color of it
     //
-    virtual PyObject* GetTintClothingItemL(const char* clothing_name, UInt8 layer);
+    virtual PyObject* GetTintClothingItemL(const char* clothing_name, uint8_t layer);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -354,7 +354,7 @@ public:
     //
     //  PURPOSE    : Set the morph value of a specific layer of clothing
     //
-    virtual void SetMorph(const char* clothing_name, UInt8 layer, float value);
+    virtual void SetMorph(const char* clothing_name, uint8_t layer, float value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -364,7 +364,7 @@ public:
     //
     //  PURPOSE    : Returns the current morph value of the specific layer of clothing
     //
-    virtual float GetMorph(const char* clothing_name, UInt8 layer);
+    virtual float GetMorph(const char* clothing_name, uint8_t layer);
     
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -374,7 +374,7 @@ public:
     //
     //  PURPOSE    : Set the skin blend for the specified layer
     //
-    virtual void SetSkinBlend(UInt8 layer, float value);
+    virtual void SetSkinBlend(uint8_t layer, float value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -383,7 +383,7 @@ public:
     //
     //  PURPOSE    : Returns the current layer's skin blend
     //
-    virtual float GetSkinBlend(UInt8 layer);
+    virtual float GetSkinBlend(uint8_t layer);
     
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -542,8 +542,8 @@ public:
     static bool LocalAvatarRunKeyDown();
     static bool LocalAvatarIsMoving();
     
-    static void SetMouseTurnSensitivity(hsScalar val);
-    static hsScalar GetMouseTurnSensitivity();
+    static void SetMouseTurnSensitivity(float val);
+    static float GetMouseTurnSensitivity();
 
     static void SpawnNext();
     /////////////////////////////////////////////////////////////////////////////

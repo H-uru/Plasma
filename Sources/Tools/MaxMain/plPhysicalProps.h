@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalProps_h_inc
 #define plPhysicalProps_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "..\..\NucleusLib\pnKeyedObject\plKey.h"
 
 class plMaxNode;
@@ -55,8 +55,8 @@ public:
     // Set canIgnore to true if it is OK for someone else's setting to override yours
     // If any of the Set functions return false, there was a conflict and the export will be aborted.
     //
-    bool SetGroup(UInt32 group, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
-    bool SetReportGroup(UInt32 notifyGroup, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
+    bool SetGroup(uint32_t group, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
+    bool SetReportGroup(uint32_t notifyGroup, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
     bool SetMass(float mass, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
     bool SetFriction(float friction, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
     bool SetRestitution(float restitution, plMaxNode *node, plErrorMsg *errMsg, bool canIgnore=false);
@@ -95,8 +95,8 @@ public:
 
     bool IsUsed() { return fUsed; }
 
-    UInt32      GetGroup()          { return fGroup; }
-    UInt32      GetReportGroup()    { return fReportGroup; }
+    uint32_t      GetGroup()          { return fGroup; }
+    uint32_t      GetReportGroup()    { return fReportGroup; }
     float       GetMass()           { return fMass; }
     float       GetFriction()       { return fFriction; }
     float       GetRestitution()    { return fRestitution; }
@@ -124,16 +124,16 @@ public:
 
 protected:
     bool fUsed;
-    UInt32 fCanIgnore;
+    uint32_t fCanIgnore;
 
-    UInt32 fGroup;
-    UInt32 fReportGroup;
+    uint32_t fGroup;
+    uint32_t fReportGroup;
     float fMass;
     float fFriction;
     float fRestitution;
     int fBoundsType;
     plMaxNode *fProxyNode;
-    UInt32 fFlags;
+    uint32_t fFlags;
     plMaxNode* fSubworld;
     int fStartInactive;
     int fNoSynchronize;
@@ -166,8 +166,8 @@ protected:
         return true;
     }
 
-    void SetCanIgnore(UInt32 type, bool canIgnore);
-    bool CanIgnore(UInt32 type);
+    void SetCanIgnore(uint32_t type, bool canIgnore);
+    bool CanIgnore(uint32_t type);
 
     void IDisplayErrorMsg(plMaxNode *node, plErrorMsg *errMsg);
 

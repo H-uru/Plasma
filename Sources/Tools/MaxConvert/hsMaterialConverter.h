@@ -90,7 +90,7 @@ class hsBitVector;
 class plExportMaterialData
 {
 public:
-    UInt32 fNumBlendChannels;
+    uint32_t fNumBlendChannels;
     hsGMaterial *fMaterial;
 };
 
@@ -138,10 +138,10 @@ public:
     static int GetCoordMapping(StdUVGen *uvgen);
     static void GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out);
 
-    static UInt32       VertexChannelsRequestMask(plMaxNode* node, int iSubMtl, Mtl* mtl);
-    static UInt32       VertexChannelsRequiredMask(plMaxNode* node, int iSubMtl);
+    static uint32_t       VertexChannelsRequestMask(plMaxNode* node, int iSubMtl, Mtl* mtl);
+    static uint32_t       VertexChannelsRequiredMask(plMaxNode* node, int iSubMtl);
     static int          NumVertexOpacityChannelsRequired(plMaxNode* node, int iSubMtl);
-    static UInt32       ColorChannelsUseMask(plMaxNode* node, int iSubMtl);
+    static uint32_t       ColorChannelsUseMask(plMaxNode* node, int iSubMtl);
     static int          MaxUsedUVWSrc(plMaxNode* node, Mtl* mtl);
 
 
@@ -150,8 +150,8 @@ public:
     static hsBool       HasBumpLayer(plMaxNode* node, Mtl* mtl);
     static BitmapTex*   GetBumpLayer(plMaxNode* node, Mtl* mtl);
 
-    static hsBool       HasVisDists(plMaxNode* node, Mtl* subMtl, hsScalar& minDist, hsScalar& maxDist);
-    static hsBool       HasVisDists(plMaxNode* node, int iSubMtl, hsScalar& minDist, hsScalar& maxDist);
+    static hsBool       HasVisDists(plMaxNode* node, Mtl* subMtl, float& minDist, float& maxDist);
+    static hsBool       HasVisDists(plMaxNode* node, int iSubMtl, float& minDist, float& maxDist);
 
     static hsBool   IMustBeUniqueMaterial( Mtl *mtl );
     static hsBool   IMustBeUniqueLayer( Texmap *layer );
@@ -159,7 +159,7 @@ public:
     static Mtl* FindSubMtlByName(TSTR& name, Animatable* anim);
     Mtl* FindSceneMtlByName(TSTR& name);
 
-    hsTArray<plExportMaterialData> *CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, UInt32 multiIndex);
+    hsTArray<plExportMaterialData> *CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex);
 
     // true if last material creation changed MAX time, invalidating current mesh
     hsBool ChangedTimes() { return fChangedTimes; }
@@ -168,15 +168,15 @@ public:
 
     hsBool ClearDoneMaterials(plMaxNode* node);
 
-    int GetMaterialArray(Mtl *mtl, plMaxNode* node, hsTArray<hsGMaterial*>& out, UInt32 multiIndex = 0 );
-    int GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, UInt32 multiIndex = 0);
+    int GetMaterialArray(Mtl *mtl, plMaxNode* node, hsTArray<hsGMaterial*>& out, uint32_t multiIndex = 0 );
+    int GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, uint32_t multiIndex = 0);
     void CollectConvertedMaterials(Mtl *mtl, hsTArray<hsGMaterial *> &out);
 
     plClothingItem *GenerateClothingItem(plClothingMtl *mtl, const plLocation &loc);
     hsGMaterial*    AlphaHackVersion(plMaxNode* node, Mtl* mtl, int subIndex); // used by DynamicDecals
     hsGMaterial*    NonAlphaHackVersion(plMaxNode* node, Mtl* mtl, int subIndex);
-    hsGMaterial*    AlphaHackPrint(plMaxNode* node, Texmap* baseTex, UInt32 blendFlags);
-    hsGMaterial*    NonAlphaHackPrint(plMaxNode* node, Texmap* baseTex, UInt32 blendFlags);
+    hsGMaterial*    AlphaHackPrint(plMaxNode* node, Texmap* baseTex, uint32_t blendFlags);
+    hsGMaterial*    NonAlphaHackPrint(plMaxNode* node, Texmap* baseTex, uint32_t blendFlags);
 
     plMipmap* GetStaticColorTexture(Color c, plLocation &loc); // Creates a 4x4 texture of the specified solid color;
 
@@ -235,7 +235,7 @@ enum {
         hsBool              fSubMultiMat;
         hsBool              fOwnedCopy;
         hsBool              fRuntimeLit;
-        UInt32              fSubMtlFlags;
+        uint32_t              fSubMtlFlags;
         int                 fNumUVChannels;
         hsBool              fMakeAlphaLayer;
     };
@@ -275,11 +275,11 @@ private:
     hsBool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const char* namePrefix);
 
     hsGMaterial* IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, hsBool isMultiMat, 
-                             hsBool forceCopy, hsBool runtimeLit, UInt32 subMtlFlags, int numUVChannels, hsBool makeAlphaLayer);
+                             hsBool forceCopy, hsBool runtimeLit, uint32_t subMtlFlags, int numUVChannels, hsBool makeAlphaLayer);
 
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, int bumpLayerIdx);
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat);
-    plLayer*    IMakeBumpLayer(plMaxNode* node, const char* nameBase, hsGMaterial* mat, UInt32 miscFlag);
+    plLayer*    IMakeBumpLayer(plMaxNode* node, const char* nameBase, hsGMaterial* mat, uint32_t miscFlag);
     plMipmap*   IGetBumpLutTexture(plMaxNode* node);
 
     hsBool      IHasSubMtl(Mtl* base, Mtl* sub);
@@ -303,7 +303,7 @@ private:
 #endif
     // ... and so forth
     hsBool IUVGenHasDynamicScale(plMaxNode* node, StdUVGen *uvGen);
-    void IScaleLayerOpacity(plLayer* hLay, hsScalar scale);
+    void IScaleLayerOpacity(plLayer* hLay, float scale);
 
     hsGMaterial *ICheckForProjectedTexture(plMaxNode *node);
     hsGMaterial *IWrapTextureInMaterial(Texmap *texMap, plMaxNode *node);
@@ -311,43 +311,43 @@ private:
     BMM_Color_64 ICubeSample(Bitmap *bitmap[6], double phi, double theta);
     void IBuildSphereMap(Bitmap *bitmap[6], Bitmap *bm);
 #if 0 // DEFER_ANIM_MAT
-    void IProcessAnimMaterial(BitmapTex *bitmapTex, hsGAnimLayer* at, UInt32 texFlags, UInt32 procFlags);
+    void IProcessAnimMaterial(BitmapTex *bitmapTex, hsGAnimLayer* at, uint32_t texFlags, uint32_t procFlags);
 #endif // DEFER_ANIM_MAT
     static hsBool ITextureTransformIsAnimated(Texmap *texmap);
     static hsBool IHasAnimatedControllers(Animatable* anim);
     static hsBool IIsAnimatedTexmap(Texmap* texmap);
 
-    static UInt32       ICheckPoints(const Point3& p0, const Point3& p1, const Point3& p2, const Point3& p3,
+    static uint32_t       ICheckPoints(const Point3& p0, const Point3& p1, const Point3& p2, const Point3& p3,
                                              int chan,
-                                             UInt32 mBlack, UInt32 mGrey, UInt32 mWhite);
-    static UInt32       ICheckPoints(const Point3& p0, const Point3& p1, const Point3& p2,
+                                             uint32_t mBlack, uint32_t mGrey, uint32_t mWhite);
+    static uint32_t       ICheckPoints(const Point3& p0, const Point3& p1, const Point3& p2,
                                              int chan,
-                                             UInt32 mBlack, UInt32 mGrey, UInt32 mWhite);
+                                             uint32_t mBlack, uint32_t mGrey, uint32_t mWhite);
 
     void                    IAppendWetLayer(plMaxNode* node, hsGMaterial* mat);
-    static plBitmap*        IGetFunkyRamp(plMaxNode* node, UInt32 funkyType);
+    static plBitmap*        IGetFunkyRamp(plMaxNode* node, uint32_t funkyType);
     static void             IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsGMaterial* mat);
     static hsBool           IHasFunkyOpacity(plMaxNode* node, Texmap* texMap);
-    static UInt32           IGetFunkyType(Texmap* texMap);
-    static UInt32           IGetOpacityRanges(plMaxNode* node, Texmap* texMap, hsScalar& tr0, hsScalar& op0, hsScalar& op1, hsScalar& tr1);
+    static uint32_t           IGetFunkyType(Texmap* texMap);
+    static uint32_t           IGetOpacityRanges(plMaxNode* node, Texmap* texMap, float& tr0, float& op0, float& op1, float& tr1);
 
     Interface           *fInterface;
     hsConverterUtils&   fConverterUtils;
     hsBool              fSave;
     plErrorMsg          *fErrorMsg;
 
-    Int32               fSubIndex;
+    int32_t               fSubIndex;
     hsBool              fChangedTimes;
 
     char                *fNodeName;
-    UInt32              fWarned;
+    uint32_t              fWarned;
 
 
     DoneMaterialData            fLastMaterial;
     hsTArray<DoneMaterialData>  fDoneMaterials;
 
     hsBool IsMatchingDoneMaterial(DoneMaterialData *dmd, 
-                                  Mtl *mtl, hsBool isMultiMat, UInt32 subMtlFlags, hsBool forceCopy, hsBool runtimeLit,
+                                  Mtl *mtl, hsBool isMultiMat, uint32_t subMtlFlags, hsBool forceCopy, hsBool runtimeLit,
                                   plMaxNode *node, int numUVChannels, hsBool makeAlphaLayer);
 
     void        ISortDoneMaterials(hsTArray<DoneMaterialData*>& doneMats);

@@ -70,30 +70,30 @@ public:
     
     virtual hsBool  LoadSound( hsBool is3D );
     virtual hsBool  MsgReceive( plMessage *pMsg );
-    void            SetPositionArray( UInt16 numSounds, UInt32 *posArray, hsScalar *volumeArray );
-    hsScalar        GetSoundLength( Int16 soundIndex );
+    void            SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray );
+    float        GetSoundLength( int16_t soundIndex );
     virtual double  GetLength() { return GetSoundLength( fCurrentSound ); }
 
 protected:
-    UInt16              fCurrentSound;
-    UInt32              fCurrentSoundLength;
-    hsTArray<UInt32>    fStartPositions;    // In bytes
-    hsTArray<hsScalar>  fVolumes;
+    uint16_t              fCurrentSound;
+    uint32_t              fCurrentSoundLength;
+    hsTArray<uint32_t>    fStartPositions;    // In bytes
+    hsTArray<float>  fVolumes;
 
     // Some extra handy info for us
-    UInt8               fNumDestChannels, fNumDestBytesPerSample;
+    uint8_t               fNumDestChannels, fNumDestBytesPerSample;
 
     virtual void    IDerivedActuallyPlay( void );
 
     virtual void    IRead( hsStream *s, hsResMgr *mgr );
     virtual void    IWrite( hsStream *s, hsResMgr *mgr );
 
-    UInt32          IGetSoundByteLength( Int16 soundIndex );
-    void            IFillCurrentSound( Int16 newCurrent = -1 );
+    uint32_t          IGetSoundbyteLength( int16_t soundIndex );
+    void            IFillCurrentSound( int16_t newCurrent = -1 );
     
     // Abstracting a few things here for the incidentalMgr
     virtual void *  IGetDataPointer( void ) const; 
-    virtual UInt32  IGetDataLength( void ) const;
+    virtual uint32_t  IGetDataLength( void ) const;
 };
 
 #endif //plWin32GroupedSound_h

@@ -126,7 +126,7 @@ public:
     virtual ~pfBasicProximityDatabase() {}
 
     // allocate a token to represent a given client object in this database
-    tokenType *MakeToken(T parentObject) {return TRACKED_NEW tokenType(parentObject, fGroup);}
+    tokenType *MakeToken(T parentObject) {return new tokenType(parentObject, fGroup);}
 
     // return the number of tokens currently in the database
     int Size(void) {return fGroup.size();}
@@ -408,7 +408,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetNumBoids(UInt8 val);
+    void SetNumBoids(uint8_t val);
     void SetBoidKey(plKey key) { fBoidKey = key; }
 
     float GoalWeight() const {return fFlock.GoalWeight();}
@@ -448,7 +448,7 @@ protected:
     hsBool fUseTargetRotation;
     hsBool fRandomizeAnimationStart;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 };
 
 #endif

@@ -69,8 +69,8 @@ class plDXLightRef : public plDXDeviceRef
         plLightInfo         *fOwner;
 
         D3DLIGHT9   fD3DInfo;
-        UInt32      fD3DIndex;
-        hsScalar    fScale;
+        uint32_t      fD3DIndex;
+        float    fScale;
 
         plDXLightSettings   *fParentSettings;
         IDirect3DDevice9    *fD3DDevice;

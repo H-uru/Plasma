@@ -48,8 +48,8 @@ class hsCodec
 {
 public:
     virtual plMipmap    *CreateCompressedMipmap( plMipmap *uncompressed ) = 0;
-    virtual plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, UInt8 bitDepth = 0 ) = 0;
-    virtual hsBool      ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask ) = 0;
+    virtual plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, uint8_t bitDepth = 0 ) = 0;
+    virtual hsBool      ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask ) = 0;
 };
 
 #endif // hsCodec_inc

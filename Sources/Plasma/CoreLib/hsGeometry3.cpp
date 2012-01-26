@@ -41,14 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsGeometry3.h"
 #include "hsStream.h"
+#include <math.h>
 
 hsVector3 operator%(const hsVector3& t, const hsVector3& s)
 {
     hsVector3       result;
 
-    return *result.Set( hsScalarMul(t.fY, s.fZ) - hsScalarMul(s.fY, t.fZ),
-                    -hsScalarMul(t.fX, s.fZ) + hsScalarMul(s.fX, t.fZ),
-                    hsScalarMul(t.fX, s.fY) - hsScalarMul(s.fX, t.fY));
+    return *result.Set((t.fY * s.fZ) - (s.fY * t.fZ),
+                      -(t.fX * s.fZ) + (s.fX * t.fZ),
+                       (t.fX * s.fY) - (s.fX * t.fY));
 }
 
 
@@ -56,33 +57,10 @@ hsVector3 operator%(const hsVector3& t, const hsVector3& s)
 
 //////////////////////////////////
 /////////////////////////////////
-#if HS_SCALAR_IS_FIXED
-hsScalar hsScalarTriple::Magnitude() const
+float hsScalarTriple::Magnitude() const
 {
-    hsWide  result, temp;
-
-    result.Mul(fCoord[0], fCoord[0]);
-    temp.Mul(fCoord[1], fCoord[1]);
-    result.Add(&temp);
-    temp.Mul(fCoord[2], fCoord[2]);
-    result.Add(&temp);
-    
-    return result.Sqrt();
+    return sqrt(MagnitudeSquared());
 }
-
-hsScalar hsScalarTriple::MagnitudeSquared() const
-{
-    hsWide  result, temp;
-
-    result.Mul(fCoord[0], fCoord[0]);
-    temp.Mul(fCoord[1], fCoord[1]);
-    result.Add(&temp);
-    temp.Mul(fCoord[2], fCoord[2]);
-    result.Add(&temp);
-    
-    return result.AsFixed();
-}
-#endif
 
 void hsScalarTriple::Read(hsStream *stream)
 {

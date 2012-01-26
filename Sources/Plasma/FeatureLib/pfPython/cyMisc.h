@@ -58,7 +58,7 @@ class pyAgeInfoStruct;
 class pyPoint3;
 
 #include <Python.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnUtils/pnUtils.h"
 
@@ -74,8 +74,8 @@ class cyMisc
     // this is only for the C++ side
     // The pipeline is set in the plClient
     static plPipeline* fPipeline;
-    static UInt32   fUniqueNumber;
-    static UInt32   fPythonLoggingLevel;
+    static uint32_t   fUniqueNumber;
+    static uint32_t   fPythonLoggingLevel;
 
 public:
     // periodically do things
@@ -119,8 +119,8 @@ public:
         kShootable
     };
 
-    static UInt32 GetPythonLoggingLevel();
-    static void SetPythonLoggingLevel(UInt32 new_level);
+    static uint32_t GetPythonLoggingLevel();
+    static void SetPythonLoggingLevel(uint32_t new_level);
     
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -161,7 +161,7 @@ public:
     //
     //  PURPOSE    : Execute a console command from a python script
     //
-    static void TimerCallback(pyKey& selfkey, hsScalar time, UInt32 id);
+    static void TimerCallback(pyKey& selfkey, float time, uint32_t id);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -212,7 +212,7 @@ public:
     //
     //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
     //
-    static void SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, UInt32 sendFlags);
+    static void SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -222,7 +222,7 @@ public:
     //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
     //                  specifies that state should be sent to other clients as well as server
     //
-    static void SetDirtySyncStateWithClients(pyKey &selfkey, const char* SDLStateName, UInt32 sendFlags);
+    static void SetDirtySyncStateWithClients(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -289,7 +289,7 @@ public:
     static const char* GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
     // current time in current age
-    static UInt32 GetAgeTime( void );
+    static uint32_t GetAgeTime( void );
     static time_t GetDniTime(void);
     static time_t ConvertGMTtoDni(time_t time);
     static time_t GetServerTime( void ); // returns the current server time in GMT
@@ -308,8 +308,8 @@ public:
         kExRegRelease = 0,
         kExRegClear = 1,
     };
-    static void ExcludeRegionSet(pyKey& sender, pyKey& exKey, UInt16 state);
-    static void ExcludeRegionSetNow(pyKey& sender, pyKey& exKey, UInt16 state);
+    static void ExcludeRegionSet(pyKey& sender, pyKey& exKey, uint16_t state);
+    static void ExcludeRegionSetNow(pyKey& sender, pyKey& exKey, uint16_t state);
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -335,7 +335,7 @@ public:
     //
     //  PURPOSE    : Return the frame delta seconds
     //
-    static hsScalar GetDelSysSeconds();
+    static float GetDelSysSeconds();
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ public:
     //
     //  PURPOSE    : Return the frame delta seconds
     //
-    static PyObject* GetDialogFromTagID(UInt32 tag); // returns pyGUIDialog
+    static PyObject* GetDialogFromTagID(uint32_t tag); // returns pyGUIDialog
     static PyObject* GetDialogFromString(const char* name); // returns pyGUIDialog
 
     /////////////////////////////////////////////////////////////////////////////
@@ -423,8 +423,8 @@ public:
     static std::vector<PyObject*> GetPlayerList(); // list of pyPlayer
     static std::vector<PyObject*> GetPlayerListDistanceSorted(); // list of pyPlayer
 
-    static UInt32 GetMaxListenListSize();
-    static hsScalar GetMaxListenDistSq();
+    static uint32_t GetMaxListenListSize();
+    static float GetMaxListenDistSq();
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -439,8 +439,8 @@ public:
     //
     //  RETURNS    : the flags that were sent with the message (may be modified)
     //
-    static UInt32 SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const char* message, UInt32 flags);
-    static UInt32 SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const wchar_t* message, UInt32 flags);
+    static uint32_t SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const char* message, uint32_t flags);
+    static uint32_t SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const wchar_t* message, uint32_t flags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -452,7 +452,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void SendKIMessage(UInt32 command, hsScalar value);
+    static void SendKIMessage(uint32_t command, float value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -464,20 +464,20 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void SendKIMessageS(UInt32 command, const wchar_t* value);
+    static void SendKIMessageS(uint32_t command, const wchar_t* value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : SendKIMessageI
     //  PARAMETERS : command   - the command type
-    //             : value     - extra value as an Int32
+    //             : value     - extra value as an int32_t
     //
     //  PURPOSE    : Send message to the KI, to tell it things to do
     //
     //  RETURNS    : nothing
     //
-    static void SendKIMessageI(UInt32 command, Int32 value);
-    static void SendKIGZMarkerMsg(Int32 markerNumber, pyKey& sender);
+    static void SendKIMessageI(uint32_t command, int32_t value);
+    static void SendKIGZMarkerMsg(int32_t markerNumber, pyKey& sender);
     static void SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender);
 
     /////////////////////////////////////////////////////////////////////////////
@@ -545,7 +545,7 @@ public:
     //  PURPOSE    : Send a petition to the CCR for help or questions
     //
     static void SendPetitionToCCR(const char* message);
-    static void SendPetitionToCCRI(const char* message, UInt8 reason,const char* title);
+    static void SendPetitionToCCRI(const char* message, uint8_t reason,const char* title);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -554,7 +554,7 @@ public:
     //
     //  PURPOSE    : Send a petition to the CCR for help or questions
     //
-    static void SendChatToCCR(const char* message,Int32 CCRPlayerID);
+    static void SendChatToCCR(const char* message,int32_t CCRPlayerID);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -617,9 +617,9 @@ public:
     //
     static void EnableOfferBookMode(pyKey& selfkey, const char* ageFileName, const char* ageInstanceName);
     static void DisableOfferBookMode();
-    static void NotifyOffererPublicLinkAccepted(UInt32 offerer);
-    static void NotifyOffererPublicLinkRejected(UInt32 offerer);
-    static void NotifyOffererPublicLinkCompleted(UInt32 offerer);
+    static void NotifyOffererPublicLinkAccepted(uint32_t offerer);
+    static void NotifyOffererPublicLinkRejected(uint32_t offerer);
+    static void NotifyOffererPublicLinkCompleted(uint32_t offerer);
     static void ToggleAvatarClickability(hsBool on);
     static void SetShareSpawnPoint(const char* spawnPoint);
     static void SetShareAgeInstanceGuid(const Uuid& guid);
@@ -676,7 +676,7 @@ public:
     //
     // PURPOSE    : To request an LOS from a point on the screen
     //
-    static bool RequestLOSScreen(pyKey &selfkey, Int32 ID, hsScalar xPos, hsScalar yPos, hsScalar distance, int what, int reportType);
+    static bool RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos, float distance, int what, int reportType);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -697,7 +697,7 @@ public:
     static void SetParticleOffset(float x, float y, float z, pyKey& particles);
     static void KillParticles(float time, float pct, pyKey& particles);
     static int  GetNumParticles(pyKey& host);
-    static void SetLightColorValue(pyKey& light, std::string lightName, hsScalar r, hsScalar g, hsScalar b, hsScalar a);
+    static void SetLightColorValue(pyKey& light, std::string lightName, float r, float g, float b, float a);
     static void SetLightAnimationOn(pyKey& light, std::string lightName, hsBool start);
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -745,7 +745,7 @@ public:
     //
     // PURPOSE    : Shoots from screen coordinates, a bullet and makes a mark on objects that know about bullet holes
     //
-    static void ShootBulletFromScreen(pyKey &selfkey, hsScalar xPos, hsScalar yPos, hsScalar radius, hsScalar range);
+    static void ShootBulletFromScreen(pyKey &selfkey, float xPos, float yPos, float radius, float range);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -754,7 +754,7 @@ public:
     //
     // PURPOSE    : Shoots from an object, a bullet and makes a mark on objects that know about bullet holes
     //
-    static void ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, hsScalar radius, hsScalar range);
+    static void ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float radius, float range);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -839,7 +839,7 @@ public:
     //
     // PURPOSE    : script can trigger itself over time w/o having to specify it in the dataset.
     //
-    static void SetAlarm( float secs, PyObject * cb, UInt32 cbContext );
+    static void SetAlarm( float secs, PyObject * cb, uint32_t cbContext );
     
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -857,7 +857,7 @@ public:
     //              update and a plCaptureRenderMsg when its ready
     //
     static void StartScreenCapture(pyKey& selfkey);
-    static void StartScreenCaptureWH(pyKey& selfkey, UInt16 width, UInt16 height);
+    static void StartScreenCaptureWH(pyKey& selfkey, uint16_t width, uint16_t height);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -868,7 +868,7 @@ public:
     static void WearMaintainerSuit(pyKey& key, hsBool wear);
     
     static void WearDefaultClothing(pyKey& key);
-    static void WearDefaultClothingType(pyKey& key, UInt32 type);
+    static void WearDefaultClothingType(pyKey& key, uint32_t type);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -927,7 +927,7 @@ public:
     static std::wstring GetInitPath();
 
     static void SetBehaviorNetFlags(pyKey & behKey, hsBool netForce, hsBool netProp);
-    static void SendFriendInvite(const wchar email[], const wchar toName[]);
+    static void SendFriendInvite(const wchar_t email[], const wchar_t toName[]);
     static PyObject* PyGuidGenerate();
     static PyObject* GetAIAvatarsByModelName(const char* name);
     static void ForceVaultNodeUpdate(unsigned nodeId);

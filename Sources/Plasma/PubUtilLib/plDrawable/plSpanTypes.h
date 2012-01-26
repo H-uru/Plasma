@@ -121,26 +121,26 @@ class plSpan
             kParticleSet        = 0x10
         };
 
-        UInt16              fTypeMask; // For safe casting. Or it with the type you want to cast to, don't check equality
-        UInt16              fSubType; // Or'ed from plDrawable::plDrawableSubType
-        UInt32              fMaterialIdx;       // Index into drawable's material array
+        uint16_t              fTypeMask; // For safe casting. Or it with the type you want to cast to, don't check equality
+        uint16_t              fSubType; // Or'ed from plDrawable::plDrawableSubType
+        uint32_t              fMaterialIdx;       // Index into drawable's material array
         hsMatrix44          fLocalToWorld;
         hsMatrix44          fWorldToLocal;
-        UInt32              fBaseMatrix;
-        UInt8               fNumMatrices;
-        UInt16              fLocalUVWChans;
-        UInt16              fMaxBoneIdx;
-        UInt16              fPenBoneIdx;
-        UInt32              fProps;
+        uint32_t              fBaseMatrix;
+        uint8_t               fNumMatrices;
+        uint16_t              fLocalUVWChans;
+        uint16_t              fMaxBoneIdx;
+        uint16_t              fPenBoneIdx;
+        uint32_t              fProps;
         hsBounds3Ext        fLocalBounds;
         hsBounds3Ext        fWorldBounds;
         plFogEnvironment    *fFogEnvironment;
 
         // Use setter/getters below.
-        hsScalar            fMinDist;
-        hsScalar            fMaxDist;
+        float            fMinDist;
+        float            fMaxDist;
 
-        hsScalar            fWaterHeight;
+        float            fWaterHeight;
 
         hsBitVector         fVisSet;
         hsBitVector         fVisNot;
@@ -149,11 +149,11 @@ class plSpan
 
 //      mutable hsBitVector                 fLightBits;
         mutable hsTArray<plLightInfo*>      fLights;
-        mutable hsTArray<hsScalar>          fLightStrengths;
-        mutable hsTArray<hsScalar>          fLightScales;
+        mutable hsTArray<float>          fLightStrengths;
+        mutable hsTArray<float>          fLightScales;
         mutable hsTArray<plLightInfo*>      fProjectors;
-        mutable hsTArray<hsScalar>          fProjStrengths;
-        mutable hsTArray<hsScalar>          fProjScales;
+        mutable hsTArray<float>          fProjStrengths;
+        mutable hsTArray<float>          fProjScales;
 
         mutable hsBitVector                 fShadowBits;
         mutable hsBitVector                 fShadowSlaveBits;
@@ -172,27 +172,27 @@ class plSpan
         const hsBitVector& GetShadowSlaves() const { return fShadowSlaveBits; }
         void            AddShadowSlave(int iSlave) const { fShadowSlaveBits.SetBit(iSlave); }
 
-        void            SetShadowBit(UInt32 idx) const { fShadowBits.SetBit(idx); }
+        void            SetShadowBit(uint32_t idx) const { fShadowBits.SetBit(idx); }
         void            ClearShadowBits() const { fShadowBits.Clear(); }
-        hsBool          IsShadowBitSet(UInt32 idx) const { return fShadowBits.IsBitSet(idx); }
+        hsBool          IsShadowBitSet(uint32_t idx) const { return fShadowBits.IsBitSet(idx); }
         void            ClearLights() const;
 
-        void            AddLight( plLightInfo* li, hsScalar strength, hsScalar scale, hsBool proj ) const;
+        void            AddLight( plLightInfo* li, float strength, float scale, hsBool proj ) const;
 
         hsTArray<plLightInfo*>& GetLightList(hsBool proj) const { return proj ? fProjectors : fLights; }
 
-        UInt32          GetNumLights(hsBool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
+        uint32_t          GetNumLights(hsBool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
         plLightInfo*    GetLight(int i, hsBool proj) const { return proj ? fProjectors[i] : fLights[i]; }
-        hsScalar        GetLightStrength(int i, hsBool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
-        hsScalar        GetLightScale(int i, hsBool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
+        float        GetLightStrength(int i, hsBool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
+        float        GetLightScale(int i, hsBool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
         
         void            AddPermaLight(plLightInfo* li, hsBool proj);
         void            RemovePermaLight(plLightInfo* li, hsBool proj);
 
         const hsBitVector& GetVisSet() const { return fVisSet; }
         const hsBitVector& GetVisNot() const { return fVisNot; }
-        void            SetVisBit(UInt32 w, hsBool on) { fVisSet.SetBit(w, on); }
-        void            SetVisNot(UInt32 w, hsBool on) { fVisNot.SetBit(w, on); }
+        void            SetVisBit(uint32_t w, hsBool on) { fVisSet.SetBit(w, on); }
+        void            SetVisNot(uint32_t w, hsBool on) { fVisNot.SetBit(w, on); }
 
         void            RemoveAuxSpan(plAuxSpan* aux);
         void            AddAuxSpan(plAuxSpan* aux);
@@ -206,10 +206,10 @@ class plSpan
         virtual void    MergeInto( plSpan* other );
         virtual void    Destroy( void );
 
-        void            SetMinDist(hsScalar minDist) { fMinDist = minDist; }
-        void            SetMaxDist(hsScalar maxDist) { fMaxDist = maxDist; }
-        hsScalar        GetMinDist() const { return fMinDist; }
-        hsScalar        GetMaxDist() const { return fMaxDist; }
+        void            SetMinDist(float minDist) { fMinDist = minDist; }
+        void            SetMaxDist(float maxDist) { fMaxDist = maxDist; }
+        float        GetMinDist() const { return fMinDist; }
+        float        GetMaxDist() const { return fMaxDist; }
 };
 
 //// plVertexSpan Definition
@@ -220,13 +220,13 @@ class plVertexSpan : public plSpan
 public:
 
         // Stuff internal
-        UInt32          fGroupIdx;      // Which buffer group, i.e. which vertex format
+        uint32_t          fGroupIdx;      // Which buffer group, i.e. which vertex format
 
-        UInt32          fVBufferIdx;    // Which vertex buffer in group
-        UInt32          fCellIdx;       // Cell index inside the vertex buffer
-        UInt32          fCellOffset;    // Offset inside the cell
-        UInt32          fVStartIdx;     // Start vertex # in the actual interlaced buffer
-        UInt32          fVLength;       // Length of this span in the buffer
+        uint32_t          fVBufferIdx;    // Which vertex buffer in group
+        uint32_t          fCellIdx;       // Cell index inside the vertex buffer
+        uint32_t          fCellOffset;    // Offset inside the cell
+        uint32_t          fVStartIdx;     // Start vertex # in the actual interlaced buffer
+        uint32_t          fVLength;       // Length of this span in the buffer
 
         plVertexSpan();
 
@@ -244,13 +244,13 @@ class plIcicle : public plVertexSpan
 {
     public:
 
-        UInt32          fIBufferIdx;    // Which index buffer in group
-        UInt32          fIStartIdx;     // Redundant, since all spans are contiguous. Here for debugging
-        UInt32          fILength;       // Length of this span in the buffer
+        uint32_t          fIBufferIdx;    // Which index buffer in group
+        uint32_t          fIStartIdx;     // Redundant, since all spans are contiguous. Here for debugging
+        uint32_t          fILength;       // Length of this span in the buffer
         // The index into the indexbuffer ref. This can be different from fIStartIdx if spans get
         // culled, then we pack the non-culled index spans into the beginning of the index buffer ref,
         // so we can still put them all out with a single DIP call.
-        mutable UInt32  fIPackedIdx;    
+        mutable uint32_t  fIPackedIdx;    
 
         // Run-time-only stuff
         plGBufferTriangle   *fSortData; // Indices & center points for sorting tris in this span (optional)
@@ -277,9 +277,9 @@ class plParticleSpan : public plIcicle
     public:
 
         plParticleEmitter*  fSource;    // Source emitter, used to get array of plParticleCores
-        UInt32              fNumParticles;
-        UInt32              fSortCount;
-        UInt32              fSrcSpanIdx;
+        uint32_t              fNumParticles;
+        uint32_t              fSortCount;
+        uint32_t              fSrcSpanIdx;
 
         plParticleSet*      fParentSet;
 
@@ -301,27 +301,27 @@ class plParticleSet
 {
     public:
 
-        UInt32      fRefCount;      // Delete if this gets to 0
-        UInt32      fDIEntry;       // Our false DIIndices entry index
+        uint32_t      fRefCount;      // Delete if this gets to 0
+        uint32_t      fDIEntry;       // Our false DIIndices entry index
 
-        UInt32      fGroupIdx;      // Which buffer group, i.e. which vertex format
-        UInt8       fFormat;
+        uint32_t      fGroupIdx;      // Which buffer group, i.e. which vertex format
+        uint8_t       fFormat;
 
-        UInt32      fVBufferIdx;
-        UInt32      fCellIdx;
-        UInt32      fCellOffset;
-        UInt32      fVStartIdx;
-        UInt32      fVLength;       // Total v.b. length that all the icicles can take up       UInt32      fIBufferIdx;
-        UInt32      fIBufferIdx;
-        UInt32      fIStartIdx;     // Start index buffer position
-        UInt32      fILength;       // Total i.b. length that all the icicles can take up
+        uint32_t      fVBufferIdx;
+        uint32_t      fCellIdx;
+        uint32_t      fCellOffset;
+        uint32_t      fVStartIdx;
+        uint32_t      fVLength;       // Total v.b. length that all the icicles can take up       uint32_t      fIBufferIdx;
+        uint32_t      fIBufferIdx;
+        uint32_t      fIStartIdx;     // Start index buffer position
+        uint32_t      fILength;       // Total i.b. length that all the icicles can take up
 
-        UInt32          fNumSpans;
+        uint32_t          fNumSpans;
         hsGMaterial*    fMaterial;
 
-        UInt32      fNextVStartIdx;
-        UInt32      fNextCellOffset;
-        UInt32      fNextIStartIdx;
+        uint32_t      fNextVStartIdx;
+        uint32_t      fNextCellOffset;
+        uint32_t      fNextIStartIdx;
 
         plParticleSet();
         ~plParticleSet();

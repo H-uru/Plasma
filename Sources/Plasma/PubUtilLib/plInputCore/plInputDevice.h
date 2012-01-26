@@ -45,8 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_INPUT_DEVICE_H
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "hsWindowHndl.h"
+
 //#include "pnInputCore/plControlDefinition.h"
 #include "pnInputCore/plOSMsg.h"
 #include "pnInputCore/plKeyDef.h"
@@ -64,7 +63,7 @@ public:
         kDisabled    = 0x1
     };
 protected:
-    UInt32 fFlags;
+    uint32_t fFlags;
 public:
     
     plInputDevice() {;}
@@ -72,8 +71,8 @@ public:
 
     virtual const char* GetInputName() = 0;
 
-    UInt32 GetFlags() { return fFlags; }
-    void SetFlags(UInt32 f) { fFlags = f; }
+    uint32_t GetFlags() { return fFlags; }
+    void SetFlags(uint32_t f) { fFlags = f; }
     virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) {;}
@@ -168,13 +167,13 @@ public:
         fControlFlags.SetBit(f); 
     }
     void    ClearControlFlag(int which) { fControlFlags.ClearBit( which ); }
-    void    SetCursorX(hsScalar x);
-    void    SetCursorY(hsScalar y);
-    hsScalar GetCursorX() { return fXPos; }
-    hsScalar GetCursorY() { return fYPos; }
-    UInt32  GetButtonState() { return fButtonState; }
-    hsScalar GetCursorOpacity() { return fOpacity; }
-    void SetDisplayResolution(hsScalar Width, hsScalar Height);
+    void    SetCursorX(float x);
+    void    SetCursorY(float y);
+    float GetCursorX() { return fXPos; }
+    float GetCursorY() { return fYPos; }
+    uint32_t  GetButtonState() { return fButtonState; }
+    float GetCursorOpacity() { return fOpacity; }
+    void SetDisplayResolution(float Width, float Height);
     
     virtual hsBool MsgReceive(plMessage* msg);
     
@@ -185,11 +184,11 @@ public:
     static void NewCursor(char* cursor);
     static void HideCursor(hsBool override = false);
     static bool GetHideCursor() { return plMouseDevice::bCursorHidden; }
-    static void SetCursorOpacity( hsScalar opacity = 1.f );
+    static void SetCursorOpacity( float opacity = 1.f );
     static bool GetInverted() { return plMouseDevice::bInverted; }
     static void SetInverted(bool inverted) { plMouseDevice::bInverted = inverted; }
     static void AddNameToCursor(const char* name);
-    static void AddIDNumToCursor(UInt32 idNum);
+    static void AddIDNumToCursor(uint32_t idNum);
     static void AddCCRToCursor();
     
 protected:
@@ -202,12 +201,12 @@ protected:
     plInputEventMsg*    fRightBMsg[2];
     plInputEventMsg*    fMiddleBMsg[2];
 
-    hsScalar fXPos;
-    hsScalar fYPos;
+    float fXPos;
+    float fYPos;
     int      fWXPos; // the windows coordinates of the cursor
     int      fWYPos;
-    UInt32   fButtonState;
-    hsScalar fOpacity;
+    uint32_t   fButtonState;
+    float fOpacity;
     hsBitVector     fControlFlags;
     
     
@@ -222,7 +221,7 @@ protected:
     static bool bCursorHidden;
     static bool bCursorOverride;
     static bool bInverted;
-    static hsScalar fWidth, fHeight;
+    static float fWidth, fHeight;
 };
 
 

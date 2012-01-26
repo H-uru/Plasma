@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDL.h"
 #include "pnNetCommon/plNetApp.h"
 
-const UInt8 plStateDescriptor::kVersion=1;      // for Read/Write format
+const uint8_t plStateDescriptor::kVersion=1;      // for Read/Write format
 
 /////////////////////////////////////////////////////////////////////////////////
 // STATE DESC
@@ -85,7 +85,7 @@ plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
 // 
 bool plStateDescriptor::Read(hsStream* s)
 {
-    UInt8 rwVersion;
+    uint8_t rwVersion;
     s->ReadLE(&rwVersion);
     if (rwVersion != kVersion)
     {
@@ -98,21 +98,21 @@ bool plStateDescriptor::Read(hsStream* s)
     delete [] fName;
     fName = s->ReadSafeString();
 
-    UInt16 version=s->ReadLE16();
+    uint16_t version=s->ReadLE16();
     fVersion=version;
 
-    UInt16 numVars=s->ReadLE16();
+    uint16_t numVars=s->ReadLE16();
     fVarsList.reserve(numVars);
 
     int i;
     for(i=0;i<numVars; i++)
     {
-        UInt8 SDVar=s->ReadByte();      
+        uint8_t SDVar=s->ReadByte();      
         plVarDescriptor* var = nil;
         if (SDVar)
-            var = TRACKED_NEW plSDVarDescriptor;
+            var = new plSDVarDescriptor;
         else
-            var = TRACKED_NEW plSimpleVarDescriptor;
+            var = new plSimpleVarDescriptor;
         if (var->Read(s))
             fVarsList.push_back(var);
         else
@@ -130,16 +130,16 @@ void plStateDescriptor::Write(hsStream* s) const
     
     s->WriteSafeString(fName);
 
-    UInt16 version=fVersion;
+    uint16_t version=fVersion;
     s->WriteLE(version);
 
-    UInt16 numVars=fVarsList.size();
+    uint16_t numVars=fVarsList.size();
     s->WriteLE(numVars);
 
     VarsList::const_iterator it;
     for(it=fVarsList.begin(); it!=fVarsList.end(); it++)
     {
-        UInt8 SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
+        uint8_t SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
         s->WriteByte(SDVar);
         (*it)->Write(s);
     }

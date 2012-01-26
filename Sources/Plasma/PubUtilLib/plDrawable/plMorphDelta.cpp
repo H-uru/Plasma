@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plMorphDelta.h"
 
 #include "hsStream.h"
@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-static const hsScalar kMinWeight = 1.e-2f;
+static const float kMinWeight = 1.e-2f;
 
 plMorphSpan::plMorphSpan()
 :   fUVWs(nil),
@@ -91,7 +91,7 @@ plMorphDelta& plMorphDelta::operator=(const plMorphDelta& src)
     return *this;
 }
 
-void plMorphDelta::Apply(hsTArray<plAccessSpan>& dst, hsScalar weight /* = -1.f */) const
+void plMorphDelta::Apply(hsTArray<plAccessSpan>& dst, float weight /* = -1.f */) const
 {
     if( weight == -1.f)
         weight = fWeight; // None passed in, use our stored value
@@ -189,7 +189,7 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
 
         plMorphSpan& dst = fSpans[iSpan];
 
-        const UInt16 numUVWs = baseAcc.AccessVtx().NumUVWs();
+        const uint16_t numUVWs = baseAcc.AccessVtx().NumUVWs();
 
         hsTArray<plVertDelta> deltas;
         hsTArray<hsPoint3> uvws;
@@ -213,12 +213,12 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
             hsBool nonZero = false;
 
             // These are actually min del SQUARED.
-            plConst(hsScalar) kMinDelPos(1.e-4f); // From Budtpueller's Handbook of Constants
-            plConst(hsScalar) kMinDelNorm(3.e-2f); // About 10 degrees
-            plConst(hsScalar) kMinDelUVW(1.e-4f); // From BHC
+            plConst(float) kMinDelPos(1.e-4f); // From Budtpueller's Handbook of Constants
+            plConst(float) kMinDelNorm(3.e-2f); // About 10 degrees
+            plConst(float) kMinDelUVW(1.e-4f); // From BHC
             hsPoint3 mPos = d2b * *movedIter.Position();
             hsVector3 delPos( &mPos, baseIter.Position());
-            hsScalar delPosSq = delPos.MagnitudeSquared();
+            float delPosSq = delPos.MagnitudeSquared();
             if( delPosSq > kMinDelPos )
                 nonZero = true;
             else
@@ -226,7 +226,7 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
 
 
             hsVector3 delNorm = (d2bTInv * *movedIter.Normal()) - *baseIter.Normal();
-            hsScalar delNormSq = delNorm.MagnitudeSquared();
+            float delNormSq = delNorm.MagnitudeSquared();
             if( delNormSq > kMinDelNorm )
                 nonZero = true;
             else
@@ -236,7 +236,7 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
             for( i = 0; i < numUVWs; i++ )
             {
                 delUVWs[i] = *movedIter.UVW(i) - *baseIter.UVW(i);
-                hsScalar delUVWSq = delUVWs[i].MagnitudeSquared();
+                float delUVWSq = delUVWs[i].MagnitudeSquared();
                 if( delUVWSq > kMinDelUVW )
                     nonZero = true;
                 else
@@ -282,7 +282,7 @@ void plMorphDelta::AllocDeltas(int iSpan, int nDel, int nUVW)
 
     int uvwCnt = nDel * nUVW;
     if( uvwCnt )
-        fSpans[iSpan].fUVWs = TRACKED_NEW hsPoint3[uvwCnt];
+        fSpans[iSpan].fUVWs = new hsPoint3[uvwCnt];
     else
         fSpans[iSpan].fUVWs = nil;
 }

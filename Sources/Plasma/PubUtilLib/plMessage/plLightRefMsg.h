@@ -51,7 +51,7 @@ class plLightRefMsg : public plRefMsg
 {
 public:
     plLightRefMsg() {}
-    plLightRefMsg(const plKey& s, const plKey &r, hsKeyedObject* l, UInt8 c) : plRefMsg(r, c) { SetRef(l); SetSender(s); }
+    plLightRefMsg(const plKey& s, const plKey &r, hsKeyedObject* l, uint8_t c) : plRefMsg(r, c) { SetRef(l); SetSender(s); }
 
     CLASSNAME_REGISTER( plLightRefMsg );
     GETINTERFACE_ANY( plLightRefMsg, plRefMsg );

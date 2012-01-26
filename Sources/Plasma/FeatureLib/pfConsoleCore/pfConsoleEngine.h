@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfConsoleEngine_h
 #define _pfConsoleEngine_h
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
@@ -67,9 +67,9 @@ class pfConsoleEngine
 {
     private:
 
-        static const Int32      fMaxNumParams;
+        static const int32_t      fMaxNumParams;
 
-        hsBool  IConvertToParam( UInt8 type, char *string, pfConsoleCmdParam *param );
+        hsBool  IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param );
 
         char    fErrorMsg[ 128 ];
         char    fLastErrorLine[ 512 ];
@@ -95,7 +95,7 @@ class pfConsoleEngine
 
         // Executes the given file as a sequence of console commands
         hsBool  ExecuteFile( const char *fileName );
-        hsBool  ExecuteFile( const wchar *fileName );
+        hsBool  ExecuteFile( const wchar_t *fileName );
 
         // Get the last reported error
         const char  *GetErrorMsg( void ) { return fErrorMsg; }
@@ -107,7 +107,7 @@ class pfConsoleEngine
         hsBool      FindPartialCmd( char *line, hsBool findAgain = false, hsBool perserveParams = false );
 
         // Does command completion without restrictions to any group, skipping the number of matches given
-        hsBool      FindNestedPartialCmd( char *line, UInt32 numToSkip, hsBool perserveParams = false );
+        hsBool      FindNestedPartialCmd( char *line, uint32_t numToSkip, hsBool perserveParams = false );
 };
 
 

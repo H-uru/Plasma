@@ -156,7 +156,7 @@ public:
     // Return interface to the specified game   
     pfGameCli *     GetGameCli (unsigned gameId)                    const;
     // Get the name of a game by its typeid
-    const wchar *   GetGameNameByTypeId (const Uuid & gameTypeId)   const;
+    const wchar_t *   GetGameNameByTypeId (const Uuid & gameTypeId)   const;
     //========================================================================
 
     //========================================================================
@@ -228,7 +228,7 @@ public:
     //-----------------------
     unsigned        GetGameId ()        const;
     const Uuid &    GetGameTypeId ()    const;
-    const wchar *   GetName ()          const;
+    const wchar_t *   GetName ()          const;
     plKey           GetReceiver ()      const;
     unsigned        GetPlayerCount ()   const;
     //========================================================================
@@ -250,7 +250,7 @@ public:
     // @@@: FUTURE WORK
     //-----------------
     // "Publish" this game, adding it to the age's the matchmaking service.
-    // void PublishGame (const wchar desc[]);
+    // void PublishGame (const wchar_t desc[]);
     // void UnpublishGame ();
     //========================================================================
 };

@@ -177,7 +177,7 @@ hsBool plExcludeRegionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
         return false;
     }
 
-    plExcludeRegionModifier *mod = TRACKED_NEW plExcludeRegionModifier;
+    plExcludeRegionModifier *mod = new plExcludeRegionModifier;
     plKey key = node->AddModifier(mod, IGetUniqueName(node));
     fXRegionKeys[node] = key;
 

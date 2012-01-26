@@ -155,7 +155,7 @@ hsBool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pEr
         bool hasRightApproach = fCompPB->GetInt(ParamID(kApproachRight)) ? true : false;
 
         // Create our key here and give it to the detector so it will notify us
-        plSittingModifier *sitMod = TRACKED_NEW plSittingModifier(hasFrontApproach, hasLeftApproach, hasRightApproach);
+        plSittingModifier *sitMod = new plSittingModifier(hasFrontApproach, hasLeftApproach, hasRightApproach);
         if (fCompPB->GetInt(ParamID(kDisableForward)))
             sitMod->fMiscFlags |= plSittingModifier::kDisableForward;
         
