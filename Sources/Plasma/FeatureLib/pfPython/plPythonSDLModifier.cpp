@@ -609,9 +609,8 @@ const plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
             }
             else
             {
-                char str[256];
                 if (!key)
-                    plNetClientApp::StaticErrorMsg("nil key %s for age sdl %s", ageName, oid.StringIze(str));
+                    plNetClientApp::StaticErrorMsg("nil key %s for age sdl %s", ageName, oid.StringIze().c_str());
                 else
                 if (!key->ObjectIsLoaded())
                     plNetClientApp::StaticErrorMsg("key %s not loaded for age sdl %s", 

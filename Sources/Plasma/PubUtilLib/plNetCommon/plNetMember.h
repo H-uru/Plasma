@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plNetApp;
 class plNetGenericServer;
+class plString;
 ////////////////////////////////
 // A participant (peer) who we can send and recv messages from/to
 ////////////////////////////////
@@ -93,7 +94,7 @@ public:
     Int32 GetPeerID() const { return fPeerID; }
     UInt32 GetFlags() const { return fFlags; }
     plNetApp* GetNetApp() { return fNetApp; }
-    virtual std::string AsStdString() const = 0;
+    virtual plString AsString() const = 0;
 
     // setters
     void SetFlags(UInt32 f) { fFlags=f; }

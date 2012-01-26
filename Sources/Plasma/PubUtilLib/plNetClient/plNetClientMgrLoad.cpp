@@ -107,8 +107,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
     {
         if (cloneKey->ObjectIsLoaded())
         {
-            char tmp[256];
-            DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze(tmp));
+            DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze().c_str());
             return cloneKey;
         }
 

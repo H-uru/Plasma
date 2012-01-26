@@ -229,13 +229,13 @@ PF_CONSOLE_CMD( Net,        // groupName
                "broadcast chat msg" )   // helpString
 {
     // send chat text
-    std::string text=plNetClientMgr::GetInstance()->GetPlayerName();
-    text += ":";
+    plString text=plNetClientMgr::GetInstance()->GetPlayerName();
+    text += _TEMP_CONVERT_FROM_LITERAL(":");
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += (char*)params[i];
-        text += " ";
+        text += plString::FromUtf8( (char*)params[i] );
+        text += _TEMP_CONVERT_FROM_LITERAL(" ");
     }
     plConsoleMsg    *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
     cMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
@@ -1014,7 +1014,7 @@ PF_CONSOLE_CMD(
         return;
     }
 
-    if (unsigned playerId = plNetClientMgr::GetInstance()->GetPlayerIdByName((const char *)params[1])) {
+    if (unsigned playerId = plNetClientMgr::GetInstance()->GetPlayerIdByName(plString::FromUtf8((const char *)params[1]))) {
         ttt->InvitePlayer(playerId);
         PrintStringF(PrintString, "Sent invite to playerId %u", playerId);
     }

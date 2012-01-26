@@ -396,7 +396,7 @@ void    plResTreeView::UpdateInfoDlg( HWND treeCtrl )
                 SetDlgItemText( fInfoDlg, IDC_AGE, pageInfo.GetAge() );
                 SetDlgItemText( fInfoDlg, IDC_PAGE, pageInfo.GetPage() );
 
-                SetDlgItemText( fInfoDlg, IDC_LOCATION, pageInfo.GetLocation().StringIze( tempStr ) );
+                SetDlgItemText( fInfoDlg, IDC_LOCATION, pageInfo.GetLocation().StringIze().c_str() );
 
                 CheckDlgButton(fInfoDlg, IDC_RESERVED,   (pageInfo.GetLocation().GetFlags() & plLocation::kReserved) ? BST_CHECKED : BST_UNCHECKED);
                 CheckDlgButton(fInfoDlg, IDC_BUILTIN,    (pageInfo.GetLocation().GetFlags() & plLocation::kBuiltIn) ? BST_CHECKED : BST_UNCHECKED);

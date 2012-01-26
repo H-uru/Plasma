@@ -331,8 +331,7 @@ public:
     // debug
     plString AsString() const
     {
-        char tmp[256];
-        return plString::Format("object=%s, %s",fObjectHelper.GetUoid().StringIze(tmp), plNetMessage::AsString().c_str());
+        return plString::Format("object=%s, %s",fObjectHelper.GetUoid().StringIze().c_str(), plNetMessage::AsString().c_str());
     }
 
 };
@@ -558,8 +557,7 @@ public:
     // debug
     plString AsString() const
     {
-        char tmp[256];
-        return plString::Format("object=%s initial=%d, %s",fObjectHelper.GetUoid().StringIze(tmp), fIsInitialState,
+        return plString::Format("object=%s initial=%d, %s",fObjectHelper.GetUoid().StringIze().c_str(), fIsInitialState,
             plNetMsgGameMessage::AsString().c_str());
     }
 };

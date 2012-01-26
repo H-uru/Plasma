@@ -1965,7 +1965,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 if ( mbrIndex != -1 )
                 {
                     plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
-                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                 }
                 else
                 {
