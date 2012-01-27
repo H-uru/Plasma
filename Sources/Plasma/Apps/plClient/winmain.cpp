@@ -1179,10 +1179,9 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             StrToAnsi(windowName, productString, arrsize(windowName));
             SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) windowName);
 
-            const char* languages[] = {"English", "Français", "Deutsch"};
-            for (int i = 0; i < arrsize(languages); i++)
+            for (int i = 0; i < plLocalization::GetNumLocales(); i++)
             {
-                SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)languages[i]);
+                SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)plLocalization::GetLanguageName((plLocalization::Language)i));
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)pLoginParam->language, 0);
 
