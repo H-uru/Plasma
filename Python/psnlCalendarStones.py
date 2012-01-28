@@ -100,7 +100,11 @@ class psnlCalendarStones(ptResponder):
 
     def OnServerInitComplete(self):
         global fireworks
-        ageSDL = PtGetAgeSDL()
+        ageSDL = ptAgeVault().getAgeSDL()
+        if not ageSDL:
+            PtDebugPrint("psnlCalendarStones.OnServerInitComplete():\tAgeVaultSDL nil. Bad things have happened!")
+            respCalStoneFire.run(self.key,state="off",fastforward=1)
+            return
         
         # FIRE for completion of the Calendar Stones...
         fire = 1
@@ -108,34 +112,30 @@ class psnlCalendarStones(ptResponder):
             #ageSDL.setFlags(sdl,1,1)
             #ageSDL.sendToClients(sdl)
             #ageSDL.setNotify(self.key,sdl,0.0)
-            val = ageSDL[sdl][0]
-            if not val:
+            if not ageSDL.findVar(sdl).getBool():
                 fire = 0
                 break
         if fire:
-            ageVault = ptAgeVault()
-            if type(ageVault) != type(None): #is the Vault online?
-                ageSDL = ageVault.getAgeSDL()
-                if ageSDL:
-                    try:
-                        SDLVar = ageSDL.findVar("YeeshaPage20")
-                        CurrentValue = SDLVar.getInt()
-                    except:
-                        PtDebugPrint("psnlCalendarStones.OnServerInitComplete():\tERROR reading age SDLVar for YeeshaPage20. Assuming value = 0")
-                        CurrentValue = 0
-                    if CurrentValue in [0, 2, 4]:
-                        print "psnlCalendarStones.OnServerInitComplete():  don't have YeeshaPage20 on, no FIRE for you!"
-                        respCalStoneFire.run(self.key,state="off",fastforward=1)
-                    else:
-                        print "psnlCalendarStones.OnServerInitComplete():  have all 12 calendar stones AND YeeshaPage20 is on, will give you FIRE!"
-                        fireworks = 1
-                        respCalStoneFire.run(self.key,state="on",fastforward=1)
-                        if not self.sceneobject.isLocallyOwned():
-                            return
-                        if not fireworksTestMode:
-                            self.DoFireworks(1,1)
-                            self.DoFireworks(3,1)
-                            self.DoFireworks(5,1)
+            if ageSDL:
+                try:
+                    SDLVar = ageSDL.findVar("YeeshaPage20")
+                    CurrentValue = SDLVar.getInt()
+                except:
+                    PtDebugPrint("psnlCalendarStones.OnServerInitComplete():\tERROR reading age SDLVar for YeeshaPage20. Assuming value = 0")
+                    CurrentValue = 0
+                if CurrentValue in [0, 2, 4]:
+                    print "psnlCalendarStones.OnServerInitComplete():  don't have YeeshaPage20 on, no FIRE for you!"
+                    respCalStoneFire.run(self.key,state="off",fastforward=1)
+                else:
+                    print "psnlCalendarStones.OnServerInitComplete():  have all 12 calendar stones AND YeeshaPage20 is on, will give you FIRE!"
+                    fireworks = 1
+                    respCalStoneFire.run(self.key,state="on",fastforward=1)
+                    if not self.sceneobject.isLocallyOwned():
+                        return
+                    if not fireworksTestMode:
+                        self.DoFireworks(1,1)
+                        self.DoFireworks(3,1)
+                        self.DoFireworks(5,1)
         else:
             print "psnlCalendarStones.OnServerInitComplete():  don't have all 12 calendar stones, no FIRE for you!"
             respCalStoneFire.run(self.key,state="off",fastforward=1)
