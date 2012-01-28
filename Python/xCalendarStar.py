@@ -72,7 +72,6 @@ boolFirstUpdate = ptAttribBoolean(5,"Eval On First Update?",0)
 
 boolCalStar = false
 AgeStartedIn = None
-LocalAvatar = None
 
 
 class xCalendarStar(ptResponder):
@@ -104,9 +103,6 @@ class xCalendarStar(ptResponder):
 
     def OnServerInitComplete(self):
         global boolCalStar
-        global LocalAvatar
-        
-        LocalAvatar = PtGetLocalAvatar()
 
         if not boolFirstUpdate.value:
             if AgeStartedIn == PtGetAgeName():
@@ -126,7 +122,7 @@ class xCalendarStar(ptResponder):
         if not state or id != rgnCalStar.id:
             return
         #if not PtWasLocallyNotified(self.key):
-        if PtFindAvatar(events) != LocalAvatar:
+        if PtFindAvatar(events) != PtGetLocalAvatar():
             PtDebugPrint("DEBUG: xCalendarStar.OnNotify():\t received notify from non-local player, ignoring...")
             return
         else:
