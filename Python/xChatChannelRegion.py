@@ -73,7 +73,7 @@ class xChatChannelRegion(ptResponder):
         
         version = 3
         self.version = version
-        PtDebugPrint("__init__xChatChannelRegion v%d.%d" % (version,2),level=kWarningLevel)
+        PtDebugPrint("__init__xChatChannelRegion v%d.%d" % (version,3),level=kWarningLevel)
 
     def __del__(self):
         "the destructor"
@@ -176,6 +176,8 @@ class xChatChannelRegion(ptResponder):
                 PtDebugPrint("xChatChannel:removed %s  id # %d   from listen list" % (memberName,memberID),level=kDebugDumpLevel)
 
     def ISendChatList(self):
+        # missing global statement added so that it actually updates the global variable
+        global AreWeInRoom
         memberList = []
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
@@ -197,6 +199,8 @@ class xChatChannelRegion(ptResponder):
         return
 
     def IUnSendChatList(self):
+        # missing global statement added so that it actually updates the global variable
+        global AreWeInRoom
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
         localIncluded = false
