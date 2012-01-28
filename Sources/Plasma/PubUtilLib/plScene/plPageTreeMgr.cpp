@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPageTreeMgr.h"
 #include "plDrawable/plSpaceTreeMaker.h"
 #include "plDrawable/plSpaceTree.h"
@@ -116,7 +116,7 @@ hsBool plPageTreeMgr::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& lev
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
         return false;
 
-    static hsTArray<Int16> list;
+    static hsTArray<int16_t> list;
 
     GetSpaceTree()->HarvestLeaves(isect, list);
 
@@ -139,7 +139,7 @@ int plPageTreeMgr::Render(plPipeline* pipe)
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
         return 0;
 
-    static hsTArray<Int16> list;
+    static hsTArray<int16_t> list;
     list.SetCount(0);
 
     plProfile_BeginTiming(RenderScene);
@@ -276,7 +276,7 @@ hsBool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& dr
 // Returns the index of the last one drawn.
 int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList>& drawVis, int& iDrawStart)
 {
-    UInt32 renderLevel = drawVis[iDrawStart].fDrawable->GetRenderLevel().Level();
+    uint32_t renderLevel = drawVis[iDrawStart].fDrawable->GetRenderLevel().Level();
 
     int i;
 
@@ -308,7 +308,7 @@ int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawV
         iDraw++ )
     {
         plDrawable* drawable = drawVis[iDraw].fDrawable;
-        hsTArray<Int16>& visList = drawVis[iDraw].fVisList;
+        hsTArray<int16_t>& visList = drawVis[iDraw].fVisList;
         for( i = 0; i < visList.GetCount(); i++ )
         {
             plDrawSpanPair* pair = pairs.Push();
@@ -354,14 +354,14 @@ hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisLi
         plDrawable* drawable = drawList[pairs[i].fDrawable]->fDrawable;
 
         listTrav = &scratchList[iSort++];
-        listTrav->fBody = (void*)*(UInt32*)&pairs[i];
+        listTrav->fBody = (void*)*(uint32_t*)&pairs[i];
         listTrav->fNext = listTrav + 1;
 
         if( drawable->GetNativeProperty(plDrawable::kPropSortAsOne) )
         {
             const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(drawable->GetSpaceTree()->GetRoot()).fWorldBounds;
-            plConst(hsScalar) kDistFudge(1.e-1f);
-            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + hsScalar(pairs[i].fSpan) * kDistFudge;
+            plConst(float) kDistFudge(1.e-1f);
+            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + float(pairs[i].fSpan) * kDistFudge;
         }
         else
         {
@@ -381,7 +381,7 @@ hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisLi
 
     plProfile_EndTiming(DrawObjSort);
 
-    static hsTArray<Int16> visList;
+    static hsTArray<int16_t> visList;
     visList.SetCount(0);
 
     plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
@@ -449,7 +449,7 @@ hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisLi
     int curDraw = curPair.fDrawable;
     listTrav = listTrav->fNext;
 
-    static hsTArray<UInt32> numDrawn;
+    static hsTArray<uint32_t> numDrawn;
     numDrawn.SetCountAndZero(drawList.GetCount());
 
     visList.Append(drawList[curDraw]->fVisList[numDrawn[curDraw]++]);
@@ -632,7 +632,7 @@ hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     {
         if( pipe->TestVisibleWorld(fOccluders[i]->GetWorldBounds()) )
         {
-            hsScalar invDist = -hsFastMath::InvSqrtAppr((viewPos - fOccluders[i]->GetWorldBounds().GetCenter()).MagnitudeSquared());
+            float invDist = -hsFastMath::InvSqrtAppr((viewPos - fOccluders[i]->GetWorldBounds().GetCenter()).MagnitudeSquared());
             listTrav = &scratchList[numSubmit++];
             listTrav->fBody = (void*)fOccluders[i];
             listTrav->fNext = listTrav+1;
@@ -653,7 +653,7 @@ hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
     listTrav = sortedList;
 
-    const UInt32 kMaxOccluders = 1000;
+    const uint32_t kMaxOccluders = 1000;
     if( numSubmit > kMaxOccluders )
         numSubmit = kMaxOccluders;
 
@@ -673,7 +673,7 @@ hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     return fCullPolys.GetCount() > 0;
 }
 
-hsBool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<Int16>& list)
+hsBool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
 {
     plProfile_BeginTiming(DrawOccBuild);
 

@@ -104,11 +104,11 @@ void ProcessBipedNodeRecurse(INode *bipNode, INode *newParent, Interface *theInt
 void ProcessNonBipedNodeRecurse(INode *node, INode *parent, Interface *theInterface);
 
 int LimitTransform(INode* node, Matrix3* nodeTM);
-void GetParts(Int32 i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts);
+void GetParts(int32_t i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts);
 
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
-Point3 GetPosKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
-ScaleValue GetScaleKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+Point3 GetPosKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
+ScaleValue GetScaleKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts);
 
 Quat MakeRotKey(INode *node, INode *parent, TimeValue t);
 Point3 MakePosKey(INode *node, INode *parent, TimeValue t);
@@ -118,7 +118,7 @@ AffineParts GetLocalNodeParts(INode *node, INode *parent, TimeValue t);
 
 bool ExportableAnimationController(INode* node);
 bool HasBipController(INode* node);
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array);
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array);
 
 
 plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Interface *theInterface);
@@ -448,7 +448,7 @@ plSampleVec * SampleNodeMotion(INode* node, INode* parent, int sampleRate, Inter
 // intended for use in the context of a full tree traversal
 plSampleVec * SampleNodeMotion(INode * node, INode* parent, int sampleRate, TimeValue start, TimeValue end)
 {
-    plSampleVec *result = TRACKED_NEW plSampleVec;
+    plSampleVec *result = new plSampleVec;
 
     bool done = false;
     
@@ -462,7 +462,7 @@ plSampleVec * SampleNodeMotion(INode * node, INode* parent, int sampleRate, Time
         int frameNum= keyTime / GetTicksPerFrame();
 
         // get localTM
-        nodeTMInfo * nti = TRACKED_NEW nodeTMInfo;
+        nodeTMInfo * nti = new nodeTMInfo;
         nti->fTime = keyTime;
         Matrix3 localTM = node->GetNodeTM(keyTime);
 
@@ -564,7 +564,7 @@ plSampleVecMap *SampleTreeMotion(INode* node, INode* parent, int sampleRate, Int
     Interval interval = theInterface->GetAnimRange();
     TimeValue start = interval.Start();             // in ticks
     TimeValue end = interval.End();
-    plSampleVecMap *ourMap = TRACKED_NEW plSampleVecMap();
+    plSampleVecMap *ourMap = new plSampleVecMap();
 
     sampleRate *= GetTicksPerFrame();                   // convert sample rate to ticks
 
@@ -581,7 +581,7 @@ void SampleTreeMotionRecurse(INode * node, INode* parent, int sampleRate,
     if(!HasBipController(node))
     {
         char *nodeName = node->GetName();
-        char *nameCopy = TRACKED_NEW char[strlen(nodeName) + 1];
+        char *nameCopy = new char[strlen(nodeName) + 1];
         strcpy(nameCopy, nodeName);
 
         plSampleVec *branch = SampleNodeMotion(node, parent, sampleRate, start, end);
@@ -597,7 +597,7 @@ void SampleTreeMotionRecurse(INode * node, INode* parent, int sampleRate,
 }
 
 // GETPARTS
-void GetParts(Int32 i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts)
+void GetParts(int32_t i, std::vector<nodeTMInfo *>& mat3Array,  hsAffineParts* parts)
 {
     hsAssert(parts, "nil parts");
 
@@ -627,7 +627,7 @@ Quat MakeRotKey(INode *node, INode *parent, TimeValue t)
     return q;
 }
 
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array)
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array)
 {
     Matrix3 m = mat3Array[i]->fMat3;
     AffineParts parts;
@@ -641,7 +641,7 @@ Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array)
 
 
 // GETROTKEY
-Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+Quat GetRotKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)
@@ -660,7 +660,7 @@ Quat GetRotKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* par
             Point3 ax;
             float ang;
             AngAxisFromQ(q, &ang, ax);
-            //ang -= hsScalarPI;
+            //ang -= M_PI;
             ax = -ax;
             q = QFromAngAxis(ang, ax);
         }
@@ -684,7 +684,7 @@ Point3 MakePosKey(INode *node, INode *parent, TimeValue t)
 
 
 // GETPOSKEY
-Point3 GetPosKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+Point3 GetPosKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)
@@ -729,7 +729,7 @@ ScaleValue MakeScaleKey(INode *node, INode *parent, TimeValue t)
 }
 
 // GETSCALEKEY
-ScaleValue GetScaleKey(Int32 i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
+ScaleValue GetScaleKey(int32_t i, std::vector<nodeTMInfo *>& mat3Array, hsAffineParts* parts)
 {
     hsAffineParts myParts;
     if (!parts)

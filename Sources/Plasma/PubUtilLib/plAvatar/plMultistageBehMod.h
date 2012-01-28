@@ -61,7 +61,7 @@ protected:
     std::vector<plKey> fReceivers;
 
     void IDeleteStageVec();
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
 public:
     plMultistageBehMod();

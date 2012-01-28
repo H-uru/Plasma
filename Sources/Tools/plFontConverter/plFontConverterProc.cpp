@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsTypes.h"
-#include <windows.h>
 #include "res/resource.h"
 #include <shlwapi.h>
 #include <shlobj.h>
@@ -179,9 +177,9 @@ void    IUpdateInfo( HWND hDlg )
 
     gFont->SetRenderColor( 0xff000000 );
     gFont->SetRenderFlag( plFont::kRenderClip, true );
-    gFont->SetRenderClipRect( 0, 0, (Int16)(r.right - r.left), (Int16)(r.bottom - r.top) );
-    UInt16 w, h, a, lastX, lastY;
-    UInt32 firstCC;
+    gFont->SetRenderClipRect( 0, 0, (int16_t)(r.right - r.left), (int16_t)(r.bottom - r.top) );
+    uint16_t w, h, a, lastX, lastY;
+    uint32_t firstCC;
     gFont->CalcStringExtents( testString, w, h, a, firstCC, lastX, lastY );
 
     int cY = ( ( ( r.bottom - r.top ) - h ) >> 1 ) + a;
@@ -200,7 +198,7 @@ void    IUpdateInfo( HWND hDlg )
     {
         for( x = 0; x < r.right - r.left; x++ )
         {
-            UInt32 color = *mip->GetAddr32( x, y );
+            uint32_t color = *mip->GetAddr32( x, y );
             hsColorRGBA   rgba;
             rgba.FromARGB32( color );
 
@@ -229,7 +227,7 @@ class plMyBDFCallback : public plBDFConvertCallback
     protected:
         HWND    fDlg;
         clock_t fLastTime;
-        UInt16  fPoint;
+        uint16_t  fPoint;
 
         void    IPumpMessageQueue( void )
         {
@@ -244,7 +242,7 @@ class plMyBDFCallback : public plBDFConvertCallback
     public:
         plMyBDFCallback( HWND dlg ) : fDlg( dlg ) {}
 
-        virtual void    NumChars( UInt16 chars )
+        virtual void    NumChars( uint16_t chars )
         {
             ::SendDlgItemMessage( fDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM( 0, chars ) );
             IPumpMessageQueue();
@@ -332,7 +330,7 @@ BOOL CALLBACK ResListWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             {
                 SendDlgItemMessage( hWnd, IDC_RESLIST, LB_RESETCONTENT, 0, 0 );
                 hsTArray<ResRecord *> *array = (hsTArray<ResRecord *> *)lParam;
-                for( UInt32 i = 0; i < array->GetCount(); i++ )
+                for( uint32_t i = 0; i < array->GetCount(); i++ )
                 {
                     ResRecord *rec = array->Get( i );
                     int idx = SendDlgItemMessage( hWnd, IDC_RESLIST, LB_ADDSTRING, 0, (LPARAM)rec->fName );
@@ -418,7 +416,7 @@ void    IImportFON( HWND hWnd, const char *path )
             MessageBox( hWnd, msg2, "Error", MB_OK | MB_ICONEXCLAMATION );
         }
 
-        UInt32 i;
+        uint32_t i;
         for( i = 0; i < resList.GetCount(); i++ )
             delete resList[ i ];
         resList.Reset();
@@ -493,8 +491,8 @@ void    IImportFreeType( HWND hWnd, const char *path )
     IUpdateInfo( hWnd );
 }
 
-static UInt8    sNumSizes = 0;
-static UInt8    sSizeArray[ 256 ];
+static uint8_t    sNumSizes = 0;
+static uint8_t    sSizeArray[ 256 ];
 static char     sFontName[ 256 ]; // desired font name for FreeType conversions
 
 BOOL CALLBACK FreeTypeBatchDlgProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
@@ -582,7 +580,7 @@ void    IBatchFreeType( HWND hWnd, const char *path )
     plMyBDFCallback callback( dialog );
 
     callback.NumChars( sNumSizes );
-    UInt8 i;
+    uint8_t i;
     for( i = 0; i < sNumSizes; i++ )
     {
         IMakeNewFont();

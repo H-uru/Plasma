@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRegistryNode_h_inc
 #define plRegistryNode_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "plPageInfo.h"
 
@@ -71,7 +71,7 @@ protected:
     friend class plKeyFinder;
 
     // Map from class type to a list of keys of that type
-    typedef std::map<UInt16, plRegistryKeyList*> KeyMap;
+    typedef std::map<uint16_t, plRegistryKeyList*> KeyMap;
     KeyMap fKeyLists;
     int fDynLoadedTypes;    // The number of key types that have dynamic keys loaded
     int fStaticLoadedTypes; // The number of key types that have all their keys loaded
@@ -81,13 +81,13 @@ protected:
     plPageInfo  fPageInfo;      // Info about this page
 
     hsBufferedStream fStream;   // Stream for reading/writing our page
-    UInt8 fOpenRequests;        // How many handles there are to fStream (or
+    uint8_t fOpenRequests;        // How many handles there are to fStream (or
                                 // zero if it's closed)
     hsBool fIsNewPage;          // True if this page is new (not read off disk)
 
     plRegistryPageNode() {}
 
-    plRegistryKeyList* IGetKeyList(UInt16 classType) const;
+    plRegistryKeyList* IGetKeyList(uint16_t classType) const;
     PageCond IVerify();
 
 public:
@@ -118,7 +118,7 @@ public:
     void UnloadKeys();  // Frees all our keys
 
     // Find a key by type and name
-    plKeyImp* FindKey(UInt16 classType, const char* name) const;
+    plKeyImp* FindKey(uint16_t classType, const char* name) const;
     // Find a key by direct uoid lookup (or fallback to name lookup if that doesn't work)
     plKeyImp* FindKey(const plUoid& uoid) const;
     
@@ -131,7 +131,7 @@ public:
     hsBool SetKeyUnused(plKeyImp* key);
 
     hsBool IterateKeys(plRegistryKeyIterator* iterator) const;
-    hsBool IterateKeys(plRegistryKeyIterator* iterator, UInt16 classToRestrictTo) const;
+    hsBool IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const;
 
     // Call this to get a read stream for the page.  If a valid pointer is
     // returned, make sure to call CloseStream when you're done using it.

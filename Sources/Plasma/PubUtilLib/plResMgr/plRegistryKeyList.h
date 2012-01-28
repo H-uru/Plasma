@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRegistryKeyList_h_inc
 #define plRegistryKeyList_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include <vector>
 #include <set>
@@ -67,19 +67,19 @@ class plRegistryKeyList
 protected:
     friend class plKeyFinder;
 
-    UInt16 fClassType;
+    uint16_t fClassType;
     // Lock counter for iterating. If this is >0, don't do any ops that
     // can change key positions in the array (instead, just leave holes)
-    UInt16 fLocked;
+    uint16_t fLocked;
 
     enum Flags { kStaticUnsorted = 0x1 };
-    UInt8 fFlags;
+    uint8_t fFlags;
 
     // Static keys are one's we read off disk.  These don't change and are
     // assumed to be already sorted when they're read in.
     typedef std::vector<plKeyImp*> StaticVec;
     StaticVec fStaticKeys;
-    UInt32 fReffedStaticKeys;   // Number of static keys that are loaded
+    uint32_t fReffedStaticKeys;   // Number of static keys that are loaded
 
     // Dynamic keys are anything created at runtime.  They are put in the
     // correct sorted position when they are added
@@ -94,10 +94,10 @@ protected:
     void IRepack();
 
 public:
-    plRegistryKeyList(UInt16 classType);
+    plRegistryKeyList(uint16_t classType);
     ~plRegistryKeyList();
 
-    UInt16 GetClassType() const { return fClassType; }
+    uint16_t GetClassType() const { return fClassType; }
 
     // Find a key by name (case-insensitive)
     plKeyImp* FindKey(const char* keyName);

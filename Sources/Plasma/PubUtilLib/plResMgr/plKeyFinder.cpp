@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plPageInfo.h"
 #include "pnFactory/plFactory.h"
-#include "hsUtils.h"
+
 #include "plCreatableIndex.h"
 
 plResManager* IGetResMgr() { return (plResManager*)hsgResMgr::ResMgr(); }
@@ -124,14 +124,14 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
                                  const char *className, const char *obName, hsBool subString)
 {
-    UInt16 ty = plFactory::FindClassIndex(className);
+    uint16_t ty = plFactory::FindClassIndex(className);
     return StupidSearch(age, rm, ty, obName, subString);
 }
 
 class plKeyFinderIter : public plRegistryKeyIterator, public plRegistryPageIterator
 {
 protected:
-    UInt16      fClassType;
+    uint16_t      fClassType;
     const char  *fObjName;
     hsBool      fSubstr;
     plKey       fFoundKey;
@@ -140,10 +140,10 @@ protected:
 public:
     plKey   GetFoundKey( void ) const { return fFoundKey; }
 
-    plKeyFinderIter( UInt16 classType, const char *obName, hsBool substr ) 
+    plKeyFinderIter( uint16_t classType, const char *obName, hsBool substr ) 
             : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ) { }
 
-    plKeyFinderIter( UInt16 classType, const char *obName, hsBool substr, const char *ageName ) 
+    plKeyFinderIter( uint16_t classType, const char *obName, hsBool substr, const char *ageName ) 
         : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ),
             fAgeName( ageName ) {}
 
@@ -187,7 +187,7 @@ public:
 };
 
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
-                                 UInt16 classType, const char *obName, hsBool subString)
+                                 uint16_t classType, const char *obName, hsBool subString)
 {
     if (!obName)
         return nil;
@@ -196,9 +196,9 @@ plKey plKeyFinder::StupidSearch(const char * age, const char * rm,
 
     fLastError = kOk;
 
-    UInt16 maxClasses = plFactory::GetNumClasses();
+    uint16_t maxClasses = plFactory::GetNumClasses();
 
-    UInt16 ty = classType;
+    uint16_t ty = classType;
     if (ty == maxClasses)   // error
     {   fLastError = kInvalidClass;
         return nil;
@@ -281,14 +281,14 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
 {
     protected:
 
-        UInt16      fClassType;
+        uint16_t      fClassType;
         const char  *fObjName;
 
         std::vector<plKey>  &fFoundKeys;
 
     public:
     
-        plKeyFinderIterator( UInt16 classType, const char *obName, std::vector<plKey>& foundKeys ) 
+        plKeyFinderIterator( uint16_t classType, const char *obName, std::vector<plKey>& foundKeys ) 
                 : fClassType( classType ), fObjName( obName ), fFoundKeys( foundKeys ) { }
 
         virtual hsBool  EatKey( const plKey& key )
@@ -309,7 +309,7 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
         }
 };
 
-void plKeyFinder::ReallyStupidSubstringSearch(const char *name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
+void plKeyFinder::ReallyStupidSubstringSearch(const char *name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
     if (!name)
         return;

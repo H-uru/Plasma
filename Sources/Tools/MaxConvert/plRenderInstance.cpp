@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 
 #include "plRenderInstance.h"
@@ -55,7 +55,7 @@ public:
     plNilView() 
     {       
         projType = 1;
-        fov = hsScalarPI * 0.25f;
+        fov = M_PI * 0.25f;
         pixelSize = 1.f;
         affineTM.IdentityMatrix();
         worldToView.IdentityMatrix();

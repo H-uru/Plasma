@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsUtils.h"
 #include "plManifest.h"
 
 #include "../plEncryption/plChecksum.h"
@@ -55,9 +54,9 @@ public:
     char* fFilename;
     plMD5Checksum fSum;
     plMD5Checksum fLocalSum;
-    UInt32 fSize;
-    UInt32 fCompressedSize;
-    UInt32 fFlags;
+    uint32_t fSize;
+    uint32_t fCompressedSize;
+    uint32_t fFlags;
 };
 
 plManifest::plManifest(LogFunc log) :
@@ -175,8 +174,8 @@ void plManifest::DownloadUpdates(ProgressFunc progress, plFileGrabber* grabber)
                 if (localStream.Open(file->fFilename, "wb"))
                 {
                     char dataBuf[1024];
-                    UInt32 sizeLeft = serverStream.GetSizeLeft();
-                    while (UInt32 amtRead = serverStream.Read( (sizeof(dataBuf) > sizeLeft) ? sizeLeft : sizeof(dataBuf), dataBuf))
+                    uint32_t sizeLeft = serverStream.GetSizeLeft();
+                    while (uint32_t amtRead = serverStream.Read( (sizeof(dataBuf) > sizeLeft) ? sizeLeft : sizeof(dataBuf), dataBuf))
                     {
                         progress(file->fFilename, amtRead);
 
@@ -228,7 +227,7 @@ void plManifest::IWriteCache()
 
     bool openedFile = false;
 
-    UInt32 numFiles = 0;
+    uint32_t numFiles = 0;
     for (int i = 0; i < fFiles.size(); i++)
     {
         plManifestFile* file = fFiles[i];
@@ -278,8 +277,8 @@ void plManifest::IReadCache(ProgressFunc progress)
 
     if (s)
     {
-        UInt32 numCached = s->ReadSwap32();
-        UInt32 cacheFileVersion = s->ReadSwap32();
+        uint32_t numCached = s->ReadSwap32();
+        uint32_t cacheFileVersion = s->ReadSwap32();
 
         if (cacheFileVersion != kCacheFileVersion)
         {
@@ -294,7 +293,7 @@ void plManifest::IReadCache(ProgressFunc progress)
         {
             char* name = s->ReadSafeString();
 
-            UInt8 checksumBuf[MD5_DIGEST_LENGTH];
+            uint8_t checksumBuf[MD5_DIGEST_LENGTH];
             s->Read(sizeof(checksumBuf), checksumBuf);
             plMD5Checksum checksum;
             checksum.SetValue(checksumBuf);
@@ -349,7 +348,7 @@ bool plManifest::IDecompressSound(plManifestFile* file)
         plAudioFileReader* reader = plAudioFileReader::CreateReader(file->fFilename, plAudioCore::kAll, plAudioFileReader::kStreamNative);
         if (!reader)
             return false;
-        UInt32 size = reader->GetDataSize();
+        uint32_t size = reader->GetDataSize();
         delete reader;
 
         if (hsCheckBits(file->fFlags, kSndFlagCacheSplit))

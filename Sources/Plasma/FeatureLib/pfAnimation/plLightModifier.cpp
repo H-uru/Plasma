@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLightModifier.h"
 #include "plGLight/plLightInfo.h"
 #include "plInterp/plController.h"
@@ -141,7 +141,7 @@ void plLightModifier::IApplyDynamic()
 
 void plLightModifier::DefaultAnimation()
 {
-    hsScalar len = MaxAnimLength(0);
+    float len = MaxAnimLength(0);
     fTimeConvert.SetBegin(0);
     fTimeConvert.SetEnd(len);
     fTimeConvert.SetLoopPoints(0, len);
@@ -149,7 +149,7 @@ void plLightModifier::DefaultAnimation()
     fTimeConvert.Start();
 }
 
-hsScalar plLightModifier::MaxAnimLength(hsScalar len) const
+float plLightModifier::MaxAnimLength(float len) const
 {
     if( fColorCtl && (fColorCtl->GetLength() > len) )
         len = fColorCtl->GetLength();
@@ -229,7 +229,7 @@ void plOmniModifier::IApplyDynamic()
     }
 }
 
-hsScalar plOmniModifier::MaxAnimLength(hsScalar len) const
+float plOmniModifier::MaxAnimLength(float len) const
 {
     len = plLightModifier::MaxAnimLength(len);
     if( fAttenCtl && (fAttenCtl->GetLength() > len) )
@@ -302,20 +302,20 @@ void plSpotModifier::IApplyDynamic()
 {
     plOmniModifier::IApplyDynamic();
 
-    hsScalar f;
+    float f;
     if( fInnerCtl )
     {
         fInnerCtl->Interp(fCurrentTime, &f);
-        fSpot->SetSpotInner(hsScalarDegToRad(f)*0.5f);
+        fSpot->SetSpotInner(hsDegreesToRadians(f)*0.5f);
     }
     if( fOuterCtl )
     {
         fOuterCtl->Interp(fCurrentTime, &f);
-        fSpot->SetSpotOuter(hsScalarDegToRad(f)*0.5f);
+        fSpot->SetSpotOuter(hsDegreesToRadians(f)*0.5f);
     }
 }
 
-hsScalar plSpotModifier::MaxAnimLength(hsScalar len) const
+float plSpotModifier::MaxAnimLength(float len) const
 {
     len = plOmniModifier::MaxAnimLength(len);
     if( fInnerCtl && (fInnerCtl->GetLength() > len) )
@@ -397,7 +397,7 @@ void plLtdDirModifier::IApplyDynamic()
 {
     plLightModifier::IApplyDynamic();
 
-    hsScalar f;
+    float f;
     if( fWidthCtl )
     {
         fWidthCtl->Interp(fCurrentTime, &f);
@@ -415,7 +415,7 @@ void plLtdDirModifier::IApplyDynamic()
     }
 }
 
-hsScalar plLtdDirModifier::MaxAnimLength(hsScalar len) const
+float plLtdDirModifier::MaxAnimLength(float len) const
 {
     len = plLightModifier::MaxAnimLength(len);
     if( fWidthCtl && (fWidthCtl->GetLength() > len) )

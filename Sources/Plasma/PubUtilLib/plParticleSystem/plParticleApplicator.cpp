@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {
-    UInt32 numMods = so->GetNumModifiers();
+    uint32_t numMods = so->GetNumModifiers();
     int i;
     for (i = 0; i < numMods; i++)
     {
@@ -88,7 +88,7 @@ void plParticleAngleApplicator::IApply(const plAGModifier *mod, double time)
 {
     plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
     IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamInitPitchRange,
-                                                    (hsScalar)(chan->Value(time) * PI / 180.f));
+                                                    (float)(chan->Value(time) * PI / 180.f));
 }
 
 void plParticleVelMinApplicator::IApply(const plAGModifier *mod, double time)

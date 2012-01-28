@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/plMaxNode.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plDrawable/plDrawableSpans.h"
 
@@ -166,8 +166,8 @@ hsBool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
 {
     spans.SetCount(0);
 
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
@@ -182,7 +182,7 @@ hsBool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
         if( !di )
             continue;
 
-        UInt8 iDraw;
+        uint8_t iDraw;
         for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
         {
             plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
@@ -221,8 +221,8 @@ hsBool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
 
 hsBool plSmoothComponent::IReShade(plErrorMsg* pErrMsg)
 {
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
@@ -333,8 +333,8 @@ hsBool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySp
 {
     spans.SetCount(0);
 
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
@@ -374,8 +374,8 @@ hsBool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySp
 
 hsBool plSmoothAvComponent::IReShade(plErrorMsg* pErrMsg)
 {
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
@@ -496,8 +496,8 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* p
 {
     if( !fSpans.GetCount() )
     {
-        UInt32 count = NumTargets();
-        UInt32 i;
+        uint32_t count = NumTargets();
+        uint32_t i;
         hsTArray<plGeometrySpan*> spans;
 
         for( i = 0; i < count; i++ )
@@ -720,8 +720,8 @@ hsBool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMes
     hsTArray<plGeometrySpan*> geoSpans;
     spans.SetCount(0);
 
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
@@ -792,8 +792,8 @@ hsBool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSm
 
 hsBool plSmoothSnapComponent::IReShade(plErrorMsg* pErrMsg)
 {
-    UInt32 count = NumTargets();
-    UInt32 i;
+    uint32_t count = NumTargets();
+    uint32_t i;
     for( i = 0; i < count; i++ )
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);

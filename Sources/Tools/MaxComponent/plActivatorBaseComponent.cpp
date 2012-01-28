@@ -96,9 +96,9 @@ hsBool plActivatorBaseComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     plSceneObject *obj = node->GetSceneObject();
 
     // Create and register the VolumeGadget's logic component
-    plLogicModifier *logic = TRACKED_NEW plLogicModifier;
+    plLogicModifier *logic = new plLogicModifier;
     plKey logicKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), logic, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     fLogicModKeys[node] = logicKey;
 

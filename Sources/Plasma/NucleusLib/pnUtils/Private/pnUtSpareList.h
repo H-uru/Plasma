@@ -80,7 +80,7 @@ protected:
 private:
     union AllocNode {
         AllocNode * allocNext;
-        qword       align;
+        uint64_t       align;
     };
     AllocNode * m_allocHead;
     unsigned    m_chunkSize;

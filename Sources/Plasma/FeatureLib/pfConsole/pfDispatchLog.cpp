@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
+
 
 static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
 
@@ -79,7 +79,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
     memset(&mbi, 0, sizeof(MEMORY_BASIC_INFORMATION));
 
     // Note: this will return shared mem too on Win9x.  There's a way to catch that, but it's too slow -Colin
-    UInt32 processMemUsed = 0;
+    uint32_t processMemUsed = 0;
     void* curAddress = 0;
     while (VirtualQuery(curAddress, &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
     {
@@ -97,7 +97,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 #endif // HS_BUILD_FOR_WIN32
 }
 
-void plDispatchLog::LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms)
+void plDispatchLog::LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)
 {
     std::string info;
     if (DumpSpecificMsgInfo(msg, info))
@@ -106,7 +106,7 @@ void plDispatchLog::LogLongReceive(const char* keyname, const char* className, U
         fLog->AddLineF("%-30s[%7u](%-20s) took %6.1f ms to receive %s\n", keyname, clonePlayerID, className, ms, msg->ClassName());
 }
 
-void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, Int32 indent)
+void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent)
 {
     if (!msg)
         return;
@@ -119,8 +119,8 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, In
         // it's an include list and we didn't find it
         return;
 
-    static hsScalar lastTime=0;
-    hsScalar curTime = (hsScalar)hsTimer::GetSysSeconds();
+    static float lastTime=0;
+    float curTime = (float)hsTimer::GetSysSeconds();
 
     if (lastTime!=curTime)
     {
@@ -145,7 +145,7 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, In
     lastTime=curTime;
 }
 
-void plDispatchLog::AddFilterType(UInt16 hClass)
+void plDispatchLog::AddFilterType(uint16_t hClass)
 {
     if (hClass>=plFactory::GetNumClasses())
         return; 
@@ -158,13 +158,13 @@ void plDispatchLog::AddFilterType(UInt16 hClass)
     }
 }
 
-void plDispatchLog::AddFilterExactType(UInt16 type)
+void plDispatchLog::AddFilterExactType(uint16_t type)
 {
     if (type<plFactory::GetNumClasses())
         fIncludeTypes.SetBit(type);
 }
 
-void plDispatchLog::RemoveFilterType(UInt16 hClass)
+void plDispatchLog::RemoveFilterType(uint16_t hClass)
 {
     if (hClass>=plFactory::GetNumClasses())
         return; 
@@ -177,7 +177,7 @@ void plDispatchLog::RemoveFilterType(UInt16 hClass)
     }
 }
 
-void plDispatchLog::RemoveFilterExactType(UInt16 type)
+void plDispatchLog::RemoveFilterExactType(uint16_t type)
 {
     if (type<plFactory::GetNumClasses())
         fIncludeTypes.ClearBit(type);

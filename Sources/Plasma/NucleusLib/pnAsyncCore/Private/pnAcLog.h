@@ -77,32 +77,32 @@ enum ELogSeverity {
 };
 
 void LogMsg  (ELogSeverity severity, const char  format[], ...);
-void LogMsg  (ELogSeverity severity, const wchar format[], ...);
+void LogMsg  (ELogSeverity severity, const wchar_t format[], ...);
 void LogMsgV (ELogSeverity severity, const char  format[], va_list args);
-void LogMsgV (ELogSeverity severity, const wchar format[], va_list args);
+void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args);
 
 void LogBreakOnErrors (bool breakOnErrors);
 
 void AsyncLogInitialize (
-    const wchar logDirName[],
+    const wchar_t logDirName[],
     bool        breakOnErrors
 );
 void AsyncLogDestroy ();
 void AsyncLogFlush ();
 
-void AsyncLogGetDirectory (wchar * dest, unsigned destChars);
+void AsyncLogGetDirectory (wchar_t * dest, unsigned destChars);
 
 
 // Low(er) level log API; call this from your LogHander function
 // if you want to use the asynchronous log facility.
 void AsyncLogWriteMsg (
-    const wchar     facility[],
+    const wchar_t     facility[],
     ELogSeverity    severity,
-    const wchar     msg[]
+    const wchar_t     msg[]
 );
 
 // FLogHandler must be capable of handling multiple threads and re-entrancy
-typedef void (* FLogHandler) (ELogSeverity severity, const wchar msg[]);
+typedef void (* FLogHandler) (ELogSeverity severity, const wchar_t msg[]);
 
 void LogRegisterHandler   (FLogHandler callback);
 void LogUnregisterHandler (FLogHandler callback);
@@ -117,11 +117,11 @@ void LogUnregisterHandler (FLogHandler callback);
 #ifdef HS_DEBUGGING
 
     void LogMsgDebug (const char  format[], ...);
-    void LogMsgDebug (const wchar format[], ...);
+    void LogMsgDebug (const wchar_t format[], ...);
 
 #else
 
     inline void LogMsgDebug (const char  *, ...) { }
-    inline void LogMsgDebug (const wchar *, ...) { }
+    inline void LogMsgDebug (const wchar_t *, ...) { }
 
 #endif

@@ -133,7 +133,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
             fFailed = true;
             return false;
         }
-        UInt32 bufferSize = buffer->GetDataLength();
+        uint32_t bufferSize = buffer->GetDataLength();
 
         if( header.fNumChannels > 1 && is3D )
         {
@@ -150,7 +150,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
             tryStatic = false;
 
         // Create our DSound buffer (or rather, the wrapper around it)
-        fDSoundBuffer = TRACKED_NEW plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
+        fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
             char str[256];
@@ -182,7 +182,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
         plProfile_NewMem(MemSounds, fTotalBytes);
 
         // get pertinent info
-        hsScalar length = (hsScalar)bufferSize / (hsScalar)header.fAvgBytesPerSec;
+        float length = (float)bufferSize / (float)header.fAvgBytesPerSec;
         SetLength(length);
 
         if( fLoadFromDiskOnDemand && !IsPropertySet( kPropLoadOnlyOnCall ) )

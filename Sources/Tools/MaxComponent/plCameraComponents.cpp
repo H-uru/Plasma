@@ -125,12 +125,12 @@ struct PreTrans
     hsBool  fCutPos;
     hsBool  fCutPOA;
     hsBool  fIgnore;
-    hsScalar fAccel;
-    hsScalar fDecel;
-    hsScalar fVelocity;
-    hsScalar fPOAAccel;
-    hsScalar fPOADecel;
-    hsScalar fPOAVelocity;
+    float fAccel;
+    float fDecel;
+    float fVelocity;
+    float fPOAAccel;
+    float fPOADecel;
+    float fPOAVelocity;
 
     
 };
@@ -440,9 +440,9 @@ hsBool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMs
             
     PreTrans* pTrans = nil;
     if (pCamNode)
-        pTrans = TRACKED_NEW PreTrans(((plMaxNode*)pCamNode)->GetSceneObject());
+        pTrans = new PreTrans(((plMaxNode*)pCamNode)->GetSceneObject());
     else
-        pTrans = TRACKED_NEW PreTrans(nil);
+        pTrans = new PreTrans(nil);
 
     if (fCompPB->GetInt(kIgnoreTrans))
     {
@@ -767,7 +767,7 @@ hsBool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // check for overriden transitions and special animation commands
     int count = node->NumAttachedComponents();
-    for (UInt32 x = 0; x < count; x++)
+    for (uint32_t x = 0; x < count; x++)
     {
         plComponentBase *comp = node->GetAttachedComponent(x);
         if (comp->ClassID() == TRANSCAM_CID)
@@ -794,9 +794,9 @@ hsBool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 }
                 CamTrans* camTrans = nil;
                 if (!pCamMod)
-                    camTrans = TRACKED_NEW CamTrans(nil);
+                    camTrans = new CamTrans(nil);
                 else
-                    camTrans = TRACKED_NEW CamTrans(pCamMod->GetKey());
+                    camTrans = new CamTrans(pCamMod->GetKey());
 
                 camTrans->fAccel = trans->fAccel;
                 camTrans->fDecel = trans->fDecel;
@@ -837,10 +837,10 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
     // create run-time objects
     
-    plCameraModifier1* pMod = TRACKED_NEW plCameraModifier1;
+    plCameraModifier1* pMod = new plCameraModifier1;
 
     plKey modifierKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pMod, pNode->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(modifierKey, TRACKED_NEW plObjRefMsg(pNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(pNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     
     obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
@@ -853,7 +853,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
     // convert
     FOVvalue = FOVvalue*(180/3.141592);
     int FOVType = theCam->GetFOVType();
-    hsScalar wDeg, hDeg;
+    float wDeg, hDeg;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -881,7 +881,7 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
 {
     plComponentBase* LimitPanComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == LIMITPAN_CID)
@@ -893,14 +893,14 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
         IParamBlock2* pBlk = LimitPanComp->GetParamBlock(plComponentBase::kRefComp);
         if ( pBlk && pBlk->GetInt(kLimitPanX) )
         {
-            hsScalar deg = pBlk->GetFloat(kPanZDeg);
-            hsScalar rad = hsScalarDegToRad(deg);
+            float deg = pBlk->GetFloat(kPanZDeg);
+            float rad = hsDegreesToRadians(deg);
             pBrain->SetXPanLimit( rad * 0.5f );
         }
         if ( pBlk && pBlk->GetInt(kLimitPanZ) )
         {
-            hsScalar deg = pBlk->GetFloat(kPanXDeg);
-            hsScalar rad = hsScalarDegToRad(deg);
+            float deg = pBlk->GetFloat(kPanXDeg);
+            float rad = hsDegreesToRadians(deg);
             pBrain->SetZPanLimit( rad * 0.5f );
         }
     }
@@ -910,7 +910,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
 {
     plComponentBase* LimitZoomComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == CAMERAZOOM_CID)
@@ -920,9 +920,9 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
     {
         // set this camera to limit panning x degrees
         IParamBlock2* pBlk = LimitZoomComp->GetParamBlock(plComponentBase::kRefComp);
-        hsScalar max = pBlk->GetFloat(kZoomMaxDeg);
-        hsScalar min = pBlk->GetFloat(kZoomMinDeg);
-        hsScalar rate = pBlk->GetFloat(kZoomRate);
+        float max = pBlk->GetFloat(kZoomMaxDeg);
+        float min = pBlk->GetFloat(kZoomMinDeg);
+        float rate = pBlk->GetFloat(kZoomRate);
         pBrain->SetZoomParams(max / 1.33333333, min / 1.33333333, rate);
     }
 }
@@ -931,7 +931,7 @@ void plCameraBaseComponent::ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1*
 {
     plComponentBase* subComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == CAM_IGNORE_SUB_CID)
@@ -950,17 +950,17 @@ plCameraModifier1* plCameraBaseComponent::ICreateFocalPointObject(plMaxNode* pNo
 {
     plMaxNode* node = ((plMaxNode*)pNode->GetTarget());
 
-    plCameraModifier1* pPOAMod = TRACKED_NEW plCameraModifier1;
+    plCameraModifier1* pPOAMod = new plCameraModifier1;
 
     plKey poaModifierKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pPOAMod, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(poaModifierKey, TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(poaModifierKey, new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
 
-    plCameraBrain1* pPOABrain = TRACKED_NEW plCameraBrain1(pPOAMod);
+    plCameraBrain1* pPOABrain = new plCameraBrain1(pPOAMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pPOABrain, pNode->GetLocation());
 
-    plGenRefMsg* pGRMsg = TRACKED_NEW plGenRefMsg(pPOAMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pGRMsg = new plGenRefMsg(pPOAMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pGRMsg->SetRef( (hsKeyedObject*)pPOABrain );
     plConvert::Instance().AddMessageToQueue(pGRMsg);
     
@@ -977,7 +977,7 @@ hsBool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, 
     hsBool bPOAObject = false;
     plComponentBase* objPOAComp = 0;
 
-    for (UInt32 x = 0; x < pNode->NumAttachedComponents(); x++)
+    for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == OBJECT_POA_CID)
@@ -1104,11 +1104,11 @@ hsBool plCamera1Component::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
         return false;
     
     //this is a fixed camera using the built-in target
-    plCameraBrain1_Fixed* pBrain = TRACKED_NEW plCameraBrain1_Fixed(pMod);
+    plCameraBrain1_Fixed* pBrain = new plCameraBrain1_Fixed(pMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
 
-    plGenRefMsg* pMsg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
 
@@ -1347,11 +1347,11 @@ hsBool plAutoCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     if (!pMod)
         return false;
 
-    plCameraBrain1_Avatar* pBrain = TRACKED_NEW plCameraBrain1_Avatar(pMod);
+    plCameraBrain1_Avatar* pBrain = new plCameraBrain1_Avatar(pMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
 
-    plGenRefMsg* pMsg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
     hsVector3 pt;
@@ -1509,11 +1509,11 @@ hsBool plFPCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     if (!pMod)
         return false;
 
-    plCameraBrain1_FirstPerson* pBrain = TRACKED_NEW plCameraBrain1_FirstPerson(pMod);
+    plCameraBrain1_FirstPerson* pBrain = new plCameraBrain1_FirstPerson(pMod);
     
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
-    plGenRefMsg* pMsg2 = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg2 = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg2->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg2);
 
@@ -1648,7 +1648,7 @@ plRailCameraComponent::plRailCameraComponent()
 hsBool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
 
-    plRailCameraMod* lineMod = TRACKED_NEW plRailCameraMod;
+    plRailCameraMod* lineMod = new plRailCameraMod;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), lineMod, pNode->GetLocation());
 
     lineMod->SetFollowMode(plLineFollowMod::kFollowLocalAvatar);
@@ -1686,7 +1686,7 @@ hsBool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
     hsAffineParts initParts;
     AP_SET(initParts, ap);
 
-    plAnimPath* animPath = TRACKED_NEW plAnimPath;
+    plAnimPath* animPath = new plAnimPath;
     animPath->SetController(tmc);
     animPath->InitParts(initParts);
     animPath->SetFarthest(fCompPB->GetInt(kRailFarthest));
@@ -1699,7 +1699,7 @@ hsBool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
         plSceneObject* parObj = parNode->GetSceneObject();
         if( parObj )
         {
-            plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefParent);
+            plGenRefMsg* refMsg = new plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefParent);
             hsgResMgr::ResMgr()->AddViaNotify(parObj->GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
     }
@@ -1756,7 +1756,7 @@ hsBool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
         return false;
     
     //this is a fixed camera using the built-in target
-    plCameraBrain1_Fixed* pBrain = TRACKED_NEW plCameraBrain1_Fixed(pMod);
+    plCameraBrain1_Fixed* pBrain = new plCameraBrain1_Fixed(pMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
 
@@ -1764,7 +1764,7 @@ hsBool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     pBrain->SetAccel(5.0f);
     pBrain->SetDecel(5.0f);
     
-    plGenRefMsg* pMsg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
 
@@ -1910,7 +1910,7 @@ hsBool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg
         return false;
     
     //this is a circle camera using the built-in target
-    plCameraBrain1_Circle* pBrain = TRACKED_NEW plCameraBrain1_Circle(pMod);
+    plCameraBrain1_Circle* pBrain = new plCameraBrain1_Circle(pMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
 
@@ -1924,7 +1924,7 @@ hsBool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg
     if (fCompPB->GetInt(kCircleFarthest))
         pBrain->SetFarCircleCam(true);
 
-    plGenRefMsg* pMsg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
 
@@ -2077,14 +2077,14 @@ hsBool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
     
-    plCameraRegionDetector *detector = TRACKED_NEW plCameraRegionDetector;
+    plCameraRegionDetector *detector = new plCameraRegionDetector;
     
     // Register the detector
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
 
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
         
     // need to get the key for the camera here...
@@ -2097,7 +2097,7 @@ hsBool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             pMsg->SetNewCam(((plMaxNode*)pCamNode)->GetSceneObject()->GetKey());
 
             int count = ((plMaxNode*)pCamNode)->NumAttachedComponents();
-            for (UInt32 x = 0; x < count; x++)
+            for (uint32_t x = 0; x < count; x++)
             {
                 plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
                 if (comp->ClassID() == DEFAULTCAM_CID)
@@ -2301,11 +2301,11 @@ hsBool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     if (!pMod)
         return false;
 
-    plCameraBrain1_Avatar* pBrain = TRACKED_NEW plCameraBrain1_Avatar(pMod);
+    plCameraBrain1_Avatar* pBrain = new plCameraBrain1_Avatar(pMod);
     // Give the brain a key
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), pBrain, pNode->GetLocation());
 
-    plGenRefMsg* pMsg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
+    plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
     hsVector3 pt;

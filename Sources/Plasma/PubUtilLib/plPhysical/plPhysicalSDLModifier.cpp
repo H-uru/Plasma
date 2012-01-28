@@ -194,7 +194,7 @@ static void IGetVars(plStateDataRecord::SimpleVarsList& vars,
     }
 }
 
-void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, UInt32 color)
+void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, uint32_t color)
 {
     hsPoint3 pos;
     bool isPosSet;

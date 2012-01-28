@@ -54,13 +54,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "plDynSurfaceWriter.h"
 
 #include "plDynamicTextMap.h"
 #include "hsExceptions.h"
-#include "hsUtils.h"
+
 #include "hsMatrix44.h"
 #include "plMessage/plDynamicTextMsg.h"
 #include "pnKeyedObject/plKey.h"
@@ -73,8 +73,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if HS_BUILD_FOR_WIN32
 
-static UInt32       sNumDCsAllocated;
-static UInt32       sNumBitmapsAllocated;
+static uint32_t       sNumDCsAllocated;
+static uint32_t       sNumBitmapsAllocated;
 
 plDynSurfaceWriter::plWinSurface::plWinSurface()
 {
@@ -98,7 +98,7 @@ plDynSurfaceWriter::plWinSurface::~plWinSurface()
     Release();
 }
 
-void    plDynSurfaceWriter::plWinSurface::Allocate( UInt16 w, UInt16 h )
+void    plDynSurfaceWriter::plWinSurface::Allocate( uint16_t w, uint16_t h )
 {
     int         i;
     BITMAPINFO  *bmi;
@@ -111,9 +111,9 @@ void    plDynSurfaceWriter::plWinSurface::Allocate( UInt16 w, UInt16 h )
 
     /// Initialize a bitmap info struct to describe our surface
     if( IBitsPerPixel() == 8 )
-        bmi = (BITMAPINFO *)( TRACKED_NEW UInt8[ sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * 256 ] );
+        bmi = (BITMAPINFO *)( new uint8_t[ sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * 256 ] );
     else
-        bmi = TRACKED_NEW BITMAPINFO;
+        bmi = new BITMAPINFO;
 
     memset( &bmi->bmiHeader, 0, sizeof( BITMAPINFOHEADER ) );
     bmi->bmiHeader.biSize = sizeof( BITMAPINFOHEADER );
@@ -215,7 +215,7 @@ void    plDynSurfaceWriter::plWinSurface::Release( void )
     fFontBlockedRGB = false;
 }
 
-hsBool  plDynSurfaceWriter::plWinSurface::WillFit( UInt16 w, UInt16 h )
+hsBool  plDynSurfaceWriter::plWinSurface::WillFit( uint16_t w, uint16_t h )
 {
     if( fWidth >= w && fHeight >= h )
         return true;
@@ -231,7 +231,7 @@ static int      SafeStrCmp( const char *str1, const char *str2 )
     return -1;
 }
 
-hsBool  plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, UInt16 size, UInt8 flags, hsBool aaRGB )
+hsBool  plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB )
 {
     if( SafeStrCmp( face, fFontFace ) == 0 && fFontSize == size && 
         fFontFlags == flags && fFontAntiAliasRGB == aaRGB )
@@ -240,7 +240,7 @@ hsBool  plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, UInt16 
     return false;
 }
 
-void    plDynSurfaceWriter::plWinSurface::SetFont( const char *face, UInt16 size, UInt8 flags, hsBool aaRGB )
+void    plDynSurfaceWriter::plWinSurface::SetFont( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB )
 {
     delete [] fFontFace;
     fFontFace = ( face != nil ) ? hsStrcpy( face ) : nil;
@@ -372,7 +372,7 @@ plDynSurfaceWriter::~plDynSurfaceWriter()
     Reset();
 }
 
-plDynSurfaceWriter::plDynSurfaceWriter( plDynamicTextMap *target, UInt32 flags )
+plDynSurfaceWriter::plDynSurfaceWriter( plDynamicTextMap *target, uint32_t flags )
 {
     IInit();
     fFlags = flags;
@@ -425,20 +425,20 @@ void    plDynSurfaceWriter::FlushToTarget( void )
         // Flush the GDI so we can grab the bits
         GdiFlush();
 
-        UInt32 *destBits = (UInt32 *)fCurrTarget->GetImage();
+        uint32_t *destBits = (uint32_t *)fCurrTarget->GetImage();
 
         // Are we merging in the alpha bits?
         if( fFlags & kSupportAlpha )
         {
             // Yup, munge 'em
-            UInt32  *srcRGBBits = fRGBSurface.GetBits();
-            UInt8   *srcAlphaBits = fAlphaSurface.GetBits();
-            UInt32  destWidth = fCurrTarget->GetWidth();
+            uint32_t  *srcRGBBits = fRGBSurface.GetBits();
+            uint8_t   *srcAlphaBits = fAlphaSurface.GetBits();
+            uint32_t  destWidth = fCurrTarget->GetWidth();
 
             for( y = 0; y < fCurrTarget->GetHeight(); y++ )
             {
                 for( x = 0; x < destWidth; x++ )
-                    destBits[ x ] = ( srcRGBBits[ x ] & 0x00ffffff ) | ( (UInt32)srcAlphaBits[ x ] << 24 );
+                    destBits[ x ] = ( srcRGBBits[ x ] & 0x00ffffff ) | ( (uint32_t)srcAlphaBits[ x ] << 24 );
 
                 destBits += destWidth;
                 srcRGBBits += fRGBSurface.fWidth;
@@ -448,12 +448,12 @@ void    plDynSurfaceWriter::FlushToTarget( void )
         else
         {
             // Nope, just a 24-bit copy and set alphas to ff
-            UInt32  *srcBits = fRGBSurface.GetBits();
-            UInt32  destWidth = fCurrTarget->GetWidth();
+            uint32_t  *srcBits = fRGBSurface.GetBits();
+            uint32_t  destWidth = fCurrTarget->GetWidth();
 
             for( y = 0; y < fCurrTarget->GetHeight(); y++ )
             {
-                memcpy( destBits, srcBits, destWidth * sizeof( UInt32 ) );
+                memcpy( destBits, srcBits, destWidth * sizeof( uint32_t ) );
 
                 // Fill in 0xff
                 for( x = 0; x < destWidth; x++ )
@@ -489,17 +489,17 @@ void    plDynSurfaceWriter::SwitchTarget( plDynamicTextMap *target )
 #if HS_BUILD_FOR_WIN32
     if( target != nil )
     {
-        if( !fRGBSurface.WillFit( (UInt16)(target->GetWidth()), (UInt16)(target->GetHeight()) ) )
+        if( !fRGBSurface.WillFit( (uint16_t)(target->GetWidth()), (uint16_t)(target->GetHeight()) ) )
         {
-            fRGBSurface.Allocate( (UInt16)(target->GetWidth()), (UInt16)(target->GetHeight()) );
+            fRGBSurface.Allocate( (uint16_t)(target->GetWidth()), (uint16_t)(target->GetHeight()) );
             hadToAllocate = true;
         }
 
         if( fFlags & kSupportAlpha )
         {
-            if( !fAlphaSurface.WillFit( (UInt16)(target->GetWidth()), (UInt16)(target->GetHeight()) ) ) 
+            if( !fAlphaSurface.WillFit( (uint16_t)(target->GetWidth()), (uint16_t)(target->GetHeight()) ) ) 
             {
-                fAlphaSurface.Allocate( (UInt16)(target->GetWidth()), (UInt16)(target->GetHeight()) );
+                fAlphaSurface.Allocate( (uint16_t)(target->GetWidth()), (uint16_t)(target->GetHeight()) );
                 hadToAllocate = true;
             }
         }
@@ -526,7 +526,7 @@ void    plDynSurfaceWriter::SwitchTarget( plDynamicTextMap *target )
 
 void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
 {
-    UInt32  x, y;
+    uint32_t  x, y;
 
 
     // If we're flushed, then we haven't drawn since the last flush,
@@ -535,23 +535,23 @@ void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
     // to be copying over what we've already drawn
     if( fCurrTarget != nil && fFlushed )
     {
-        UInt32 *srcBits = (UInt32 *)fCurrTarget->GetImage();
+        uint32_t *srcBits = (uint32_t *)fCurrTarget->GetImage();
 
 #if HS_BUILD_FOR_WIN32
         // Are we merging in the alpha bits?
         if( fFlags & kSupportAlpha )
         {
             // Yup, de-munge 'em
-            UInt32  *destRGBBits = fRGBSurface.GetBits();
-            UInt8   *destAlphaBits = fAlphaSurface.GetBits();
-            UInt32  srcWidth = fCurrTarget->GetWidth();
+            uint32_t  *destRGBBits = fRGBSurface.GetBits();
+            uint8_t   *destAlphaBits = fAlphaSurface.GetBits();
+            uint32_t  srcWidth = fCurrTarget->GetWidth();
 
             for( y = 0; y < fCurrTarget->GetHeight(); y++ )
             {
                 for( x = 0; x < srcWidth; x++ )
                 {
                     destRGBBits[ x ] = srcBits[ x ];    // Windows GDI probably doesn't care about the alpha bits here. Hopefully...
-                    destAlphaBits[ x ] = (UInt8)(srcBits[ x ] >> 24);
+                    destAlphaBits[ x ] = (uint8_t)(srcBits[ x ] >> 24);
                 }
 
                 srcBits += srcWidth;
@@ -562,12 +562,12 @@ void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
         else
         {
             // Nope, just do a straight memcopy
-            UInt32  *destBits = fRGBSurface.GetBits();
-            UInt32  srcWidth = fCurrTarget->GetWidth();
+            uint32_t  *destBits = fRGBSurface.GetBits();
+            uint32_t  srcWidth = fCurrTarget->GetWidth();
 
             for( y = 0; y < fCurrTarget->GetHeight(); y++ )
             {
-                memcpy( destBits, srcBits, srcWidth * sizeof( UInt32 ) );
+                memcpy( destBits, srcBits, srcWidth * sizeof( uint32_t ) );
 
                 srcBits += srcWidth;
                 destBits += fRGBSurface.fWidth;
@@ -609,11 +609,11 @@ hsBool  plDynSurfaceWriter::IsValid( void ) const
 //// SetBitsFromBuffer ////////////////////////////////////////////////////////
 
 /*
-void    plDynSurfaceWriter::SetBitsFromBuffer( UInt32 *clearBuffer, UInt16 width, UInt16 height )
+void    plDynSurfaceWriter::SetBitsFromBuffer( uint32_t *clearBuffer, uint16_t width, uint16_t height )
 {
     int         x, y;
-    UInt32      *data = (UInt32 *)fImage, *srcData = clearBuffer;
-    UInt8       *destAlpha = nil;
+    uint32_t      *data = (uint32_t *)fImage, *srcData = clearBuffer;
+    uint8_t       *destAlpha = nil;
 
 
     if( !IsValid() )
@@ -624,7 +624,7 @@ void    plDynSurfaceWriter::SetBitsFromBuffer( UInt32 *clearBuffer, UInt16 width
 #endif
 
     // Clear *all* to zero
-    memset( data, 0, fWidth * fHeight * sizeof( UInt32 ) );
+    memset( data, 0, fWidth * fHeight * sizeof( uint32_t ) );
     if( fHasAlpha )
     {
 #if HS_BUILD_FOR_WIN32
@@ -666,19 +666,19 @@ void    plDynSurfaceWriter::ClearToColor( hsColorRGBA &color )
 
 #if HS_BUILD_FOR_WIN32
 
-    UInt32      i, hexColor = color.ToARGB32();
+    uint32_t      i, hexColor = color.ToARGB32();
 
 
     // Flush the GDI first, so it doesn't decide to overwrite us later
     GdiFlush();
 
-    UInt32 *rgbBits = fRGBSurface.GetBits();
+    uint32_t *rgbBits = fRGBSurface.GetBits();
     for( i = 0; i < fRGBSurface.fWidth * fRGBSurface.fHeight; i++ )
         rgbBits[ i ] = hexColor;
 
     if( fFlags & kSupportAlpha )
     {
-        UInt8 *alphaBits = fAlphaSurface.GetBits(), alpha = (UInt8)(hexColor >> 24);
+        uint8_t *alphaBits = fAlphaSurface.GetBits(), alpha = (uint8_t)(hexColor >> 24);
 
         for( i = 0; i < fAlphaSurface.fWidth * fAlphaSurface.fHeight; i++ )
             alphaBits[ i ] = alpha;
@@ -689,7 +689,7 @@ void    plDynSurfaceWriter::ClearToColor( hsColorRGBA &color )
 //// SetFont //////////////////////////////////////////////////////////////////
 //  OS-specific. Load the given font for drawing the text with.
 
-void    plDynSurfaceWriter::SetFont( const char *face, UInt16 size, UInt8 fontFlags, hsBool antiAliasRGB )
+void    plDynSurfaceWriter::SetFont( const char *face, uint16_t size, uint8_t fontFlags, hsBool antiAliasRGB )
 {
     if( !IsValid() )
         return;
@@ -701,7 +701,7 @@ void    plDynSurfaceWriter::SetFont( const char *face, UInt16 size, UInt8 fontFl
 
 //// ISetFont /////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::ISetFont( const char *face, UInt16 size, UInt8 fontFlags, hsBool antiAliasRGB )
+void    plDynSurfaceWriter::ISetFont( const char *face, uint16_t size, uint8_t fontFlags, hsBool antiAliasRGB )
 {
     fFlags = ( fFlags & ~kFontShadowed ) | ( fontFlags & kFontShadowed );
 
@@ -782,7 +782,7 @@ void    plDynSurfaceWriter::IRefreshOSJustify( void )
         return;
 
 #if HS_BUILD_FOR_WIN32
-    UInt32 justMode;
+    uint32_t justMode;
     switch( fJustify )
     {
         case kLeftJustify:  justMode = TA_LEFT; break;
@@ -797,7 +797,7 @@ void    plDynSurfaceWriter::IRefreshOSJustify( void )
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawString( UInt16 x, UInt16 y, const char *text )
+void    plDynSurfaceWriter::DrawString( uint16_t x, uint16_t y, const char *text )
 {
     if( !IsValid() )
         return;
@@ -833,7 +833,7 @@ void    plDynSurfaceWriter::DrawString( UInt16 x, UInt16 y, const char *text )
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height )
+void    plDynSurfaceWriter::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height )
 {
     if( !IsValid() )
         return;
@@ -874,7 +874,7 @@ void    plDynSurfaceWriter::DrawClippedString( Int16 x, Int16 y, const char *tex
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height )
+void    plDynSurfaceWriter::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
 {
     if( !IsValid() )
         return;
@@ -910,7 +910,7 @@ void    plDynSurfaceWriter::DrawClippedString( Int16 x, Int16 y, const char *tex
 
 //// DrawWrappedString ////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height )
+void    plDynSurfaceWriter::DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height )
 {
     if( !IsValid() )
         return;
@@ -952,7 +952,7 @@ void    plDynSurfaceWriter::DrawWrappedString( UInt16 x, UInt16 y, const char *t
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-UInt16      plDynSurfaceWriter::CalcStringWidth( const char *text, UInt16 *height )
+uint16_t      plDynSurfaceWriter::CalcStringWidth( const char *text, uint16_t *height )
 {
     if( !IsValid() )
         return 0;
@@ -965,15 +965,15 @@ UInt16      plDynSurfaceWriter::CalcStringWidth( const char *text, UInt16 *heigh
     ::GetTextExtentPoint32( fRGBSurface.fDC, text, strlen( text ), &size );
 
     if( height != nil )
-        *height = (UInt16)size.cy;
+        *height = (uint16_t)size.cy;
 
-    return (UInt16)size.cx;
+    return (uint16_t)size.cx;
 #endif
 }
 
 //// CalcWrappedStringSize ////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height )
+void    plDynSurfaceWriter::CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height )
 {
     if( !IsValid() )
         return;
@@ -995,15 +995,15 @@ void    plDynSurfaceWriter::CalcWrappedStringSize( const char *text, UInt16 *wid
 
     ::DrawText( fRGBSurface.fDC, text, strlen( text ), &r, format );
 
-    *width = (UInt16)(r.right);
+    *width = (uint16_t)(r.right);
     if( height != nil )
-        *height = (UInt16)r.bottom;
+        *height = (uint16_t)r.bottom;
 #endif
 }
 
 //// FillRect /////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color )
+void    plDynSurfaceWriter::FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color )
 {
     if( !IsValid() )
         return;
@@ -1036,7 +1036,7 @@ void    plDynSurfaceWriter::FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 h
 
 //// FrameRect ////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color )
+void    plDynSurfaceWriter::FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color )
 {
     if( !IsValid() )
         return;
@@ -1070,7 +1070,7 @@ void    plDynSurfaceWriter::FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 
 /*
 //// DrawImage ////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawImage( UInt16 x, UInt16 y, plMipmap *image, hsBool respectAlpha )
+void    plDynSurfaceWriter::DrawImage( uint16_t x, uint16_t y, plMipmap *image, hsBool respectAlpha )
 {
     if( !IsValid() )
         return;
@@ -1100,9 +1100,9 @@ void    plDynSurfaceWriter::DrawImage( UInt16 x, UInt16 y, plMipmap *image, hsBo
 
 //// DrawClippedImage /////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawClippedImage( UInt16 x, UInt16 y, plMipmap *image, 
-                                            UInt16 srcClipX, UInt16 srcClipY, 
-                                            UInt16 srcClipWidth, UInt16 srcClipHeight, 
+void    plDynSurfaceWriter::DrawClippedImage( uint16_t x, uint16_t y, plMipmap *image, 
+                                            uint16_t srcClipX, uint16_t srcClipY, 
+                                            uint16_t srcClipWidth, uint16_t srcClipHeight, 
                                             hsBool respectAlpha )
 {
     if( !IsValid() )

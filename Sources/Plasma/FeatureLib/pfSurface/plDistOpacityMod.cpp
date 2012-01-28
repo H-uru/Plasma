@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plDistOpacityMod.h"
 
@@ -89,9 +89,9 @@ void plDistOpacityMod::SetKey(plKey k)
 }
 
 
-hsScalar plDistOpacityMod::ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const
+float plDistOpacityMod::ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const
 {
-    hsScalar dist = hsVector3(&targPos, &refPos).Magnitude();
+    float dist = hsVector3(&targPos, &refPos).Magnitude();
 
     if( dist > fDists[kFarTrans] )
         return 0;
@@ -129,7 +129,7 @@ void plDistOpacityMod::ISetOpacity()
     if( !fSetup )
         ISetup();
 
-    hsScalar opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
+    float opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
 
     const int num = fFadeLays.GetCount();
     int i;
@@ -209,7 +209,7 @@ void plDistOpacityMod::SetTarget(plSceneObject* so)
     fSetup = false;
 }
 
-void plDistOpacityMod::SetFarDist(hsScalar opaque, hsScalar transparent)
+void plDistOpacityMod::SetFarDist(float opaque, float transparent)
 {
     fDists[kFarOpaq] = opaque;
     fDists[kFarTrans] = transparent;
@@ -217,7 +217,7 @@ void plDistOpacityMod::SetFarDist(hsScalar opaque, hsScalar transparent)
     ICheckDists();
 }
 
-void plDistOpacityMod::SetNearDist(hsScalar transparent, hsScalar opaque)
+void plDistOpacityMod::SetNearDist(float transparent, float opaque)
 {
     fDists[kNearOpaq] = opaque;
     fDists[kNearTrans] = transparent;
@@ -291,7 +291,7 @@ void plDistOpacityMod::ISetup()
         hsGMaterial* mat = todo[i].fMat;
         plLayerInterface* lay = todo[i].fLay;
 
-        plFadeOpacityLay* fade = TRACKED_NEW plFadeOpacityLay;
+        plFadeOpacityLay* fade = new plFadeOpacityLay;
 
         hsgResMgr::ResMgr()->NewKey(lay->GetKey()->GetName(), fade, lay->GetKey()->GetUoid().GetLocation());
 
@@ -300,11 +300,11 @@ void plDistOpacityMod::ISetup()
         // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
         fFadeLays.Append(fade);
 
-        plMatRefMsg* msg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
+        plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
         msg->SetOldRef(lay);
         hsgResMgr::ResMgr()->SendRef(fade, msg, plRefFlags::kActiveRef);
 
-        plGenRefMsg* toMe = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFadeLay);
+        plGenRefMsg* toMe = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFadeLay);
         hsgResMgr::ResMgr()->SendRef(fade, toMe, plRefFlags::kPassiveRef);
     }
 

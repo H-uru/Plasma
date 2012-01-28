@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
 
-#include "hsUtils.h"
+
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include <map>
@@ -103,7 +103,7 @@ void SaveLocalizationText()
     if (gCurrentPath == L"")
         return; // no path to save
 
-    UInt32 textLen = (UInt32)SendMessage(GetDlgItem(gEditDlg, IDC_LOCALIZATIONTEXT), WM_GETTEXTLENGTH, (WPARAM)0, (LPARAM)0);
+    uint32_t textLen = (uint32_t)SendMessage(GetDlgItem(gEditDlg, IDC_LOCALIZATIONTEXT), WM_GETTEXTLENGTH, (WPARAM)0, (LPARAM)0);
     wchar_t *buffer = new wchar_t[textLen + 2];
     GetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, buffer, textLen + 1);
     buffer[textLen + 1] = 0;

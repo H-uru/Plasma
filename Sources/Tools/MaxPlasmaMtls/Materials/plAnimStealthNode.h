@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "iparamm2.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "MaxComponent/plAnimObjInterface.h"
 #include "MaxComponent/plMaxAnimUtils.h"
@@ -206,24 +206,24 @@ public:
     const char  *GetLoopName( void ) const;
     void        SetLoop( bool b, const char *name );
 
-    UInt8       GetEaseInType( void ) const;
-    hsScalar    GetEaseInLength( void ) const;
-    hsScalar    GetEaseInMin( void ) const;
-    hsScalar    GetEaseInMax( void ) const;
-    void        SetEaseIn( UInt8 type, hsScalar length, hsScalar min, hsScalar max );
+    uint8_t       GetEaseInType( void ) const;
+    float    GetEaseInLength( void ) const;
+    float    GetEaseInMin( void ) const;
+    float    GetEaseInMax( void ) const;
+    void        SetEaseIn( uint8_t type, float length, float min, float max );
 
-    UInt8       GetEaseOutType( void ) const;
-    hsScalar    GetEaseOutLength( void ) const;
-    hsScalar    GetEaseOutMin( void ) const;
-    hsScalar    GetEaseOutMax( void ) const;
-    void        SetEaseOut( UInt8 type, hsScalar length, hsScalar min, hsScalar max );
+    uint8_t       GetEaseOutType( void ) const;
+    float    GetEaseOutLength( void ) const;
+    float    GetEaseOutMin( void ) const;
+    float    GetEaseOutMax( void ) const;
+    void        SetEaseOut( uint8_t type, float length, float min, float max );
 
     // Conversion stuff
-    void        GetAllStopPoints( hsTArray<hsScalar> &out );
-    hsScalar    GetSegStart( void ) const;
-    hsScalar    GetSegEnd( void ) const;
-    void        GetLoopPoints( hsScalar &start, hsScalar &end ) const;
-    void        StuffToTimeConvert( plAnimTimeConvert &convert, hsScalar maxLength );
+    void        GetAllStopPoints( hsTArray<float> &out );
+    float    GetSegStart( void ) const;
+    float    GetSegEnd( void ) const;
+    void        GetLoopPoints( float &start, float &end ) const;
+    void        StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength );
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );

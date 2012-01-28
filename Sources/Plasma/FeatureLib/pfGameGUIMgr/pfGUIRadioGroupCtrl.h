@@ -70,9 +70,9 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         hsTArray<pfGUICheckBoxCtrl *>   fControls;
         pfGroupProc                     *fButtonProc;
 
-        Int32                           fValue, fDefaultValue;
+        int32_t                           fValue, fDefaultValue;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
     public:
 
@@ -92,8 +92,8 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        Int32   GetValue( void ) { return fValue; }
-        void    SetValue( Int32 value );
+        int32_t   GetValue( void ) { return fValue; }
+        void    SetValue( int32_t value );
 
         virtual void    SetEnabled( hsBool e );
         virtual void    SetInteresting( hsBool e );
@@ -104,7 +104,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         /// Export ONLY
         void    ClearControlList( void );
         void    AddControl( pfGUICheckBoxCtrl *ctrl );
-        void    SetDefaultValue( Int32 value ) { fDefaultValue = value; }
+        void    SetDefaultValue( int32_t value ) { fDefaultValue = value; }
 };
 
 #endif // _pfGUIRadioGroupCtrl_h

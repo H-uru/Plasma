@@ -135,7 +135,7 @@ protected:
     plLayerInterface*   IMakeLightMapLayer(plMaxNode* node, plGeometrySpan& span);
     int                 IGetUVWSrc() const { return fUVWSrc; }
 
-    UInt32      IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n);
+    uint32_t      IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n);
     hsBool      IShadeVerts(plMaxLightContext& ctx, const Color& amb, const hsPoint3 pt[3], const hsVector3 norm[3], const hsPoint3 uv[3], plMipmap* bitmap);
     hsBool      IShadeFace(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span, int iFace, plMipmap* bitmap);
     hsBool      IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& spans);

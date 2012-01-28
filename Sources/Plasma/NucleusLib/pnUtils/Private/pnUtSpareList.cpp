@@ -81,7 +81,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (byte) ((unsigned) object >> 4), objectSize);
+    memset(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     return object;
@@ -91,7 +91,7 @@ void * CBaseSpareList::Alloc (unsigned objectSize, const char typeName[]) {
 void CBaseSpareList::Free (void * object, unsigned objectSize) {
     // initialize memory to a freaky value in debug mode
     #ifdef HS_DEBUGGING
-    MemSet(object, (byte) ((unsigned) object >> 4), objectSize);
+    memset(object, (uint8_t) ((unsigned) object >> 4), objectSize);
     #endif
 
     // link memory block onto head of spare list
@@ -116,11 +116,8 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 
     // allocate a block of memory to hold a bunch
     // of T-objects, but allocate them as "raw" memory
-    AllocNode * allocNode = (AllocNode *) MemAlloc(
-        sizeof(AllocNode) + objectSize * m_chunkSize,
-        0,          // flags
-        typeName,   // file
-        0           // line
+    AllocNode * allocNode = (AllocNode *) malloc(
+        sizeof(AllocNode) + objectSize * m_chunkSize
     );
 
     // link allocation onto head of allocation list
@@ -129,11 +126,11 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 
     // chain newly created raw memory units together onto the spare list
     SpareNode * spareCurr = (SpareNode *) (allocNode + 1);
-    SpareNode * spareEnd  = (SpareNode *) ((byte *) spareCurr + objectSize * m_chunkSize);
+    SpareNode * spareEnd  = (SpareNode *) ((uint8_t *) spareCurr + objectSize * m_chunkSize);
     do {
         spareCurr->spareNext = m_spareHead;
         m_spareHead = spareCurr;
-        spareCurr = (SpareNode *) ((byte *) spareCurr + objectSize);
+        spareCurr = (SpareNode *) ((uint8_t *) spareCurr + objectSize);
     } while (spareCurr < spareEnd);
 }
 
@@ -141,7 +138,7 @@ void CBaseSpareList::GrowSpareList (unsigned objectSize, const char typeName[]) 
 void CBaseSpareList::CleanUp (const char typeName[]) {
     // warn of resource leaks
     #ifdef SPARELIST_TRACK_MEMORY
-    if (m_unfreedObjects && !ErrorGetOption(kErrOptDisableMemLeakChecking)) {
+    if (m_unfreedObjects) {
         #ifdef CLIENT
         {
             char buffer[256];
@@ -159,7 +156,7 @@ void CBaseSpareList::CleanUp (const char typeName[]) {
     // walk chain of AllocNodes and free each of them
     while (m_allocHead) {
         AllocNode * allocNext = m_allocHead->allocNext;
-        FREE(m_allocHead);
+        free(m_allocHead);
         m_allocHead = allocNext;
     }
 

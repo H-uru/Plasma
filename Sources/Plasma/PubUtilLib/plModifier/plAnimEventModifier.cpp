@@ -77,7 +77,7 @@ void plAnimEventModifier::Read(hsStream* stream, hsResMgr* mgr)
     //
     plKey animKey = fCallback->GetReceiver(0);
     hsgResMgr::ResMgr()->AddViaNotify(animKey,
-                                    TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0),
+                                    new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0),
                                     plRefFlags::kPassiveRef);
 }
 
@@ -128,7 +128,7 @@ void plAnimEventModifier::ISendNotify(bool triggered)
 {
     if (fDisabled)
         return;
-    plNotifyMsg* notify = TRACKED_NEW plNotifyMsg;
+    plNotifyMsg* notify = new plNotifyMsg;
     
     // Setup the event data in case this is a OneShot responder that needs it
     plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();

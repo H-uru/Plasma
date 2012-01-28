@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvTaskSeek.h"
 
 // global
-#include "hsUtils.h"
+
 
 // other
 #include "plMessage/plAvCoopMsg.h"
@@ -95,7 +95,7 @@ plCoopCoordinator::plCoopCoordinator()
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
                                      const char *synchBone,
-                                     UInt32 hostOfferStage, UInt32 guestAcceptStage,
+                                     uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
 : fHostKey(host),
@@ -117,7 +117,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
     int len = strlen(hostName) + strlen(guestName) + 3 /* serial num */ + 1;
 
-    char *newName = TRACKED_NEW char[len];
+    char *newName = new char[len];
 
     serial = serial % 999;
 
@@ -136,7 +136,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
     // disable our clickability here if we are the guest
     if (plNetClientMgr::GetInstance()->GetLocalPlayerKey() == guest)
     {
-        plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
+        plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
         pMsg->SetAvKey(guest);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         pMsg->SetBCastFlag(plMessage::kNetForce);
@@ -168,7 +168,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         if(mtevt)
         {
             int stageNum = mtevt->fStage;
-            UInt32 stageState = mtevt->fEvent;
+            uint32_t stageState = mtevt->fEvent;
 
             plKey noteSender = notify->GetSender();
             bool isFromHost = (noteSender == fHostKey);
@@ -253,7 +253,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         DebugMsg("COOP: Received avatar seek finished msg: aborted = %d", seekDone->fAborted ? 1 : 0);
         if ( seekDone->fAborted )
         {
-            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeekAbort,fInitiatorID,(UInt16)fInitiatorSerial);
+            plAvCoopMsg *coopM = new plAvCoopMsg(plAvCoopMsg::kGuestSeekAbort,fInitiatorID,(uint16_t)fInitiatorSerial);
             coopM->SetBCastFlag(plMessage::kNetPropagate);
             coopM->SetBCastFlag(plMessage::kNetForce);
             coopM->AddReceiver(GetKey());
@@ -262,7 +262,7 @@ hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
         }
         else
         {
-            plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestSeeked,fInitiatorID,(UInt16)fInitiatorSerial);
+            plAvCoopMsg *coopM = new plAvCoopMsg(plAvCoopMsg::kGuestSeeked,fInitiatorID,(uint16_t)fInitiatorSerial);
             coopM->SetBCastFlag(plMessage::kNetPropagate);
             coopM->SetBCastFlag(plMessage::kNetForce);
             coopM->AddReceiver(GetKey());
@@ -293,15 +293,15 @@ bool plCoopCoordinator::IsActiveForReal()
 
 // GetInitiatorID ------------------------
 // ---------------
-UInt32 plCoopCoordinator::GetInitiatorID()
+uint32_t plCoopCoordinator::GetInitiatorID()
 {
     return fInitiatorID;
 }
 
 // GetInitiatorSerial ------------------------
-UInt16 plCoopCoordinator::GetInitiatorSerial()
+uint16_t plCoopCoordinator::GetInitiatorSerial()
 {
-    return (UInt16)fInitiatorSerial;
+    return (uint16_t)fInitiatorSerial;
 }
 
 // IStartHost ----------------------
@@ -313,7 +313,7 @@ void plCoopCoordinator::IStartHost()
     plArmatureMod *hostAv = plAvatarMgr::FindAvatar(fHostKey);
     if (guestAv && hostAv)
     {
-        plAvSeekMsg *msg = TRACKED_NEW plAvSeekMsg(nil, hostAv->GetKey(), nil, 1.f, true);
+        plAvSeekMsg *msg = new plAvSeekMsg(nil, hostAv->GetKey(), nil, 1.f, true);
         hsClearBits(msg->fFlags, plAvSeekMsg::kSeekFlagForce3rdPersonOnStart);
         guestAv->GetPositionAndRotationSim(&msg->fTargetLookAt, nil);
         hostAv->GetPositionAndRotationSim(&msg->fTargetPos, nil);
@@ -321,8 +321,8 @@ void plCoopCoordinator::IStartHost()
     }   
 
     // now tell the host to initiate the thing.
-    plAvTaskBrain *brainT = TRACKED_NEW plAvTaskBrain(fHostBrain);
-    plAvTaskMsg *brainM = TRACKED_NEW plAvTaskMsg(GetKey(), fHostKey, brainT);
+    plAvTaskBrain *brainT = new plAvTaskBrain(fHostBrain);
+    plAvTaskMsg *brainM = new plAvTaskMsg(GetKey(), fHostKey, brainT);
     brainM->SetBCastFlag(plMessage::kPropagateToModifiers);
     brainM->Send();
 }
@@ -342,9 +342,9 @@ void plCoopCoordinator::IStartGuest()
         const plSceneObject *targetBone = hostAv->FindBone(fSynchBone);
         if(targetBone)
         {
-            plAvSeekMsg *seekMsg = TRACKED_NEW plAvSeekMsg( nil, nil,targetBone->GetKey(), 0, true, kAlignHandle, nil, false, plAvSeekMsg::kSeekFlagNoWarpOnTimeout, GetKey());
-            plAvTaskSeek *seekT = TRACKED_NEW plAvTaskSeek(seekMsg);
-            plAvTaskMsg *seekM = TRACKED_NEW plAvTaskMsg(GetKey(), fGuestKey, seekT);
+            plAvSeekMsg *seekMsg = new plAvSeekMsg( nil, nil,targetBone->GetKey(), 0, true, kAlignHandle, nil, false, plAvSeekMsg::kSeekFlagNoWarpOnTimeout, GetKey());
+            plAvTaskSeek *seekT = new plAvTaskSeek(seekMsg);
+            plAvTaskMsg *seekM = new plAvTaskMsg(GetKey(), fGuestKey, seekT);
             seekM->SetBCastFlag(plMessage::kPropagateToModifiers);
             seekM->Send();
         }
@@ -356,8 +356,8 @@ void plCoopCoordinator::IStartGuest()
 void plCoopCoordinator::IContinueGuest()
 {
     DebugMsg("COOP: IContinueGuest()");
-    plAvTaskBrain *brainT = TRACKED_NEW plAvTaskBrain(fGuestBrain);
-    plAvTaskMsg *brainM = TRACKED_NEW plAvTaskMsg(GetKey(), fGuestKey, brainT);
+    plAvTaskBrain *brainT = new plAvTaskBrain(fGuestBrain);
+    plAvTaskMsg *brainM = new plAvTaskMsg(GetKey(), fGuestKey, brainT);
     brainM->SetBCastFlag(plMessage::kPropagateToModifiers);
     brainM->Send();
     fGuestBrain = nil;          // the armature will destroy the brain when done.
@@ -370,7 +370,7 @@ void plCoopCoordinator::IAdvanceParticipant(bool host)
     DebugMsg("COOP: IAdvanceParticipant(%d)", host ? 1 : 0);
     plKey &who = host ? fHostKey : fGuestKey;
 
-    plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg(nil, who,
+    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nil, who,
         plAvBrainGenericMsg::kNextStage, 0, false, 0.0,
         false, false, 0.0);
 
@@ -383,7 +383,7 @@ void plCoopCoordinator::IAdvanceParticipant(bool host)
 // --------------
 void plCoopCoordinator::IStartTimeout()
 {
-    plTimerCallbackMsg* timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey(), kAbortTimer);
+    plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey(), kAbortTimer);
     plgTimerCallbackMgr::NewTimer(kAbortTimerDuration, timerMsg);
 }
 
@@ -430,8 +430,8 @@ void plCoopCoordinator::Write(hsStream *stream, hsResMgr *mgr)
     mgr->WriteCreatable(stream, fHostBrain);
     mgr->WriteCreatable(stream, fGuestBrain);
 
-    stream->WriteByte((UInt8)fHostOfferStage);
-    stream->WriteByte((UInt8)fGuestAcceptStage);
+    stream->WriteByte((uint8_t)fHostOfferStage);
+    stream->WriteByte((uint8_t)fGuestAcceptStage);
 
     stream->Writebool(fGuestAcceptMsg != nil);
     if(fGuestAcceptMsg)

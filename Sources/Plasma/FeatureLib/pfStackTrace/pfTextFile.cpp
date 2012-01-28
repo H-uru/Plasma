@@ -192,7 +192,7 @@ private:
 
 TextFile::TextFile( const char* filename )
 {
-    m_this = TRACKED_NEW TextFileImpl( filename );
+    m_this = new TextFileImpl( filename );
 }
 
 TextFile::~TextFile()

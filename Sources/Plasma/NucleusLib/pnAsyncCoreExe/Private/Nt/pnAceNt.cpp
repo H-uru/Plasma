@@ -102,7 +102,7 @@ void CNtWaitHandle::IncRef () {
 //===========================================================================
 void CNtWaitHandle::DecRef () {
     if (!InterlockedDecrement(&m_refCount))
-        DEL(this);
+        delete this;
 }
 
 //===========================================================================
@@ -126,7 +126,7 @@ void CNtWaitHandle::SignalObject () const {
 static void INtOpDispatch (
     NtObject *  ntObj,
     Operation * op,
-    dword       bytes
+    uint32_t    bytes
 ) {
     for (;;) {
         switch (op->opType) {
@@ -143,12 +143,12 @@ static void INtOpDispatch (
             return;
 
             case kOpSocketRead:
-                ASSERT(bytes != (dword) -1);
+                ASSERT(bytes != (uint32_t) -1);
                 INtSocketOpCompleteSocketRead((NtSock *) ntObj, bytes);
             return;
 
             case kOpSocketWrite:
-                ASSERT(bytes != (dword) -1);
+                ASSERT(bytes != (uint32_t) -1);
                 INtSocketOpCompleteSocketWrite((NtSock *) ntObj, (NtOpSocketWrite *) op);
             break;
 
@@ -161,7 +161,7 @@ static void INtOpDispatch (
 
             case kOpFileRead:
             case kOpFileWrite:
-                ASSERT(bytes != (dword) -1);
+                ASSERT(bytes != (uint32_t) -1);
                 if (!INtFileOpCompleteReadWrite((NtFile *) ntObj, (NtOpFileReadWrite *) op, bytes))
                     return;
             break;
@@ -238,7 +238,7 @@ static void INtOpDispatch (
         // can only be dispatched when they are completed normally. To ensure that
         // we're not accidentally processing an operation that shouldn't be executed,
         // set the bytes field to an invalid value.
-        bytes = (dword) -1;
+        bytes = (uint32_t) -1;
     }
 }
 
@@ -374,11 +374,11 @@ void NtInitialize () {
         (LPCTSTR) nil   // name
     );
     if (!s_waitEvent)
-        ErrorFatal(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());        
+        ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());        
 
     // create IO completion port
     if (0 == (s_ioPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)))
-        ErrorFatal(__LINE__, __FILE__, "CreateIoCompletionPort %#x", GetLastError());        
+        ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort %#x", GetLastError());        
 
     // calculate number of IO worker threads to create
     if (!s_pageSizeMask) {

@@ -72,7 +72,7 @@ protected:
 
     plPythonSDLModifier* fSDLMod;
 
-    hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    hsBool IEval(double secs, float del, uint32_t dirty);
 
     void IMakeModuleName(char* modulename,plSceneObject* sobj);
 
@@ -105,15 +105,15 @@ protected:
     struct NamedComponent
     {
         char*   name;
-        Int32   id;
+        int32_t   id;
         bool    isActivator;
     };
 
     hsTArray<NamedComponent> fNamedCompQueue;
 
-    virtual void IFindResponderAndAdd(const char *responderName, Int32 id);
-    virtual void IFindActivatorAndAdd(const char *activatorName, Int32 id);
-    void ISetKeyValue(const plKey& key, Int32 id);
+    virtual void IFindResponderAndAdd(const char *responderName, int32_t id);
+    virtual void IFindActivatorAndAdd(const char *activatorName, int32_t id);
+    void ISetKeyValue(const plKey& key, int32_t id);
 
     bool ILoadPythonCode();
 
@@ -142,12 +142,12 @@ public:
     virtual hsBool AmIAttachedToClone() { return fAmIAttachedToClone; }
 
     virtual void AddToNotifyList(plKey pKey) { fReceivers.Append(pKey); }
-    virtual Int32 NotifyListCount() { return fReceivers.Count(); }
-    virtual plKey GetNotifyListItem(Int32 i) { return fReceivers[i]; }
+    virtual int32_t NotifyListCount() { return fReceivers.Count(); }
+    virtual plKey GetNotifyListItem(int32_t i) { return fReceivers[i]; }
 
     virtual void AddParameter(plPythonParameter param) { fParameters.Append(param); }
-    virtual Int32 GetParameterListCount() { return fParameters.Count(); }
-    virtual plPythonParameter GetParameterItem(Int32 i) { return fParameters[i]; }
+    virtual int32_t GetParameterListCount() { return fParameters.Count(); }
+    virtual plPythonParameter GetParameterItem(int32_t i) { return fParameters[i]; }
     
     virtual void AddTarget(plSceneObject* sobj);
     virtual void RemoveTarget(plSceneObject* so); 

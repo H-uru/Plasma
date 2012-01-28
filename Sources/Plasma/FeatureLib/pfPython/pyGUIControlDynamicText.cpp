@@ -70,7 +70,7 @@ hsBool pyGUIControlDynamicText::IsGUIControlDynamicText(pyKey& gckey)
 
 
     //specific interface functions
-UInt32 pyGUIControlDynamicText::GetNumMaps()
+uint32_t pyGUIControlDynamicText::GetNumMaps()
 {
     if ( fGCkey )
     {
@@ -83,7 +83,7 @@ UInt32 pyGUIControlDynamicText::GetNumMaps()
 }
 
 
-PyObject* pyGUIControlDynamicText::GetMap(UInt32 i)
+PyObject* pyGUIControlDynamicText::GetMap(uint32_t i)
 {
     if ( fGCkey )
     {

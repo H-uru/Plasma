@@ -447,7 +447,7 @@ TSTR plRTLightBase::SubAnimName(int i)
 #if 0 
 RefTargetHandle plRTSpotLight::Clone(RemapDir &remap)
 {
-    plRTLightBase *obj = TRACKED_NEW plRTSpotLight;
+    plRTLightBase *obj = new plRTSpotLight;
 
     obj->GetParamBlock2->SetValue(kLightOn, t, fLightPB->GetInt(kLightOn, t));
 //  obj->fLightPB->SetValue(kLightType, t, fLightPB->GetInt(kLightType, t));
@@ -475,7 +475,7 @@ RefTargetHandle plRTSpotLight::Clone(RemapDir &remap)
     }
     obj->ReplaceReference(kRefSpotLight,fLightPB->Clone(remap));
     /*
-        GeneralLight* newob = TRACKED_NEW GeneralLight(type);
+        GeneralLight* newob = new GeneralLight(type);
     newob->enable = enable;
     newob->coneDisplay = coneDisplay;
     newob->useLight = useLight;
@@ -841,7 +841,7 @@ void plRTLightBase::GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box
 RefTargetHandle Clone(RemapDir &remap = NoRemap())
 {
 
-    plRTLightBase* newOb = TRACKED_NEW plRTLightBase;
+    plRTLightBase* newOb = new plRTLightBase;
     newOb->fLightPB->SetValue(kLightOn, 0, this->fLightPB->GetInt(kLightOn, 0));
     newOb->fLightPB->SetValue(kLightColor, 0, this->fLightPB->GetValue(kLightColor, 0));
     newOb->fLightPB->SetValue(kLightExclude, 0, this->fLightPB->GetValue(kLightExclude, 0));
@@ -927,7 +927,7 @@ RefTargetHandle Clone(RemapDir &remap = NoRemap())
         kUseProjectorBool,  //Inserted in v1
         kProjMapTexButton2, //Inserted in v1
         kTargetDist         //Inserted in v1
-    GeneralLight* newob = TRACKED_NEW GeneralLight(type);
+    GeneralLight* newob = new GeneralLight(type);
     newob->enable = enable;
     newob->coneDisplay = coneDisplay;
     newob->useLight = useLight;
@@ -1673,9 +1673,9 @@ BOOL plRTLightBase::GetConeDisplay(void)
 
 void plRTLightBase::SetProjMap(BitmapInfo* pmap)
 {
-    //plLayerTex* MyMap = TRACKED_NEW plLayerTex;
+    //plLayerTex* MyMap = new plLayerTex;
     if(!fTex)
-        fTex = TRACKED_NEW plLayerTex;
+        fTex = new plLayerTex;
     fTex->SetBitmap(pmap);
     ReplaceReference(kRefProjMap,fTex);
 
@@ -1979,7 +1979,7 @@ int TSpotCreationManager::proc(
             createInterface->SelectNode( lgtNode );
                     
             // Create target object and node
-            targObject = TRACKED_NEW TargetObject;
+            targObject = new TargetObject;
             assert(targObject);
             targNode = createInterface->CreateObjectNode( targObject);
             assert(targNode);

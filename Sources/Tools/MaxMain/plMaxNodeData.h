@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeData_inc
 #define plMaxNodeData_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
 #include "plRenderLevel.h"
@@ -129,7 +129,7 @@ public:
 
     DataBF()                                            
     { 
-        fBitVector = TRACKED_NEW hsBitVector;   
+        fBitVector = new hsBitVector;   
         fBitVector->SetBit(kDrawable); 
         fBitVector->SetBit(kPhysical); 
     }
@@ -142,13 +142,13 @@ public:
     }
     DataBF(const DataBF& ot)
     {
-        fBitVector = TRACKED_NEW hsBitVector;
+        fBitVector = new hsBitVector;
         *fBitVector = *ot.fBitVector;
     }
 
     void Init()                                         
     { 
-        fBitVector = TRACKED_NEW hsBitVector; 
+        fBitVector = new hsBitVector; 
         fBitVector->SetBit(kDrawable); 
         fBitVector->SetBit(kPhysical); 
     }
@@ -175,7 +175,7 @@ public:
         fWaterHeight(0),
         fGDMaxFaces(0), fGDMaxSize(0), fGDMinFaces(0),
         fSwapMesh(nil),
-        fSwapTargetID((UInt32)-1),
+        fSwapTargetID((uint32_t)-1),
         fCachedAlphaHackLayerCounts(nil),
         fBoneMap(nil),
         fAnimCompression(1), // Should be plAnimCompressComp::kCompressionLow,
@@ -305,8 +305,8 @@ public:
 
     hsBool          GetHasWaterHeight()                 { return MaxDatBF.CanBF(MaxDatBF.kWaterHeight); }
     void            SetHasWaterHeight(hsBool b)         { MaxDatBF.SetBF(b, MaxDatBF.kWaterHeight); }
-    hsScalar        GetWaterHeight()                    { return fWaterHeight; }
-    void            SetWaterHeight(hsScalar f)          { SetHasWaterHeight(true); fWaterHeight = f; }
+    float        GetWaterHeight()                    { return fWaterHeight; }
+    void            SetWaterHeight(float f)          { SetHasWaterHeight(true); fWaterHeight = f; }
 
     hsBool          GetSmoothAll()                      {return MaxDatBF.CanBF(MaxDatBF.kSmoothAll);    }
     void            SetSmoothAll(hsBool b)              { MaxDatBF.SetBF(b, MaxDatBF.kSmoothAll);       }
@@ -350,8 +350,8 @@ public:
     plSharedMesh*   GetSwappableGeom()                  { return fSwapMesh;}
     void            SetSwappableGeom(plSharedMesh *sm)  { fSwapMesh = sm;   }
 
-    UInt32          GetSwappableGeomTarget()            { return fSwapTargetID;}
-    void            SetSwappableGeomTarget(UInt32 id)   { fSwapTargetID = id;}
+    uint32_t          GetSwappableGeomTarget()            { return fSwapTargetID;}
+    void            SetSwappableGeomTarget(uint32_t id)   { fSwapTargetID = id;}
 
     plMaxBoneMap*   GetBoneMap()                        { return fBoneMap;}
     void            SetBoneMap(plMaxBoneMap *bones)     { fBoneMap = bones;}
@@ -368,11 +368,11 @@ public:
     plKey           GetRoomKey()                        { return fpRoomKey; }
     void            SetRoomKey(plKey p)                 { fpRoomKey = p; }
     
-    UInt32          GetDecalLevel()                     { return fDecalLevel; }
-    void            SetDecalLevel(UInt32 i)             { fDecalLevel = i; }
+    uint32_t          GetDecalLevel()                     { return fDecalLevel; }
+    void            SetDecalLevel(uint32_t i)             { fDecalLevel = i; }
 
-    UInt32          GetSoundIdxCounter()                { return fSoundIdxCounter; }
-    void            SetSoundIdxCounter( UInt32 i )      { fSoundIdxCounter = i; }
+    uint32_t          GetSoundIdxCounter()                { return fSoundIdxCounter; }
+    void            SetSoundIdxCounter( uint32_t i )      { fSoundIdxCounter = i; }
 
     plSceneObject * GetAvatarSO()                       { return fAvatarSO; }
     void            SetAvatarSO(plSceneObject *so)      { fAvatarSO = so; }
@@ -412,10 +412,10 @@ public:
     void            SetAlphaHackLayersCache( hsTArray<int> *cache )         { fCachedAlphaHackLayerCounts = cache; }
     hsBool          GetOverrideHighLevelSDL()           { return MaxDatBF.CanBF(MaxDatBF.kOverrideHighLevelSDL); }
     void            SetOverrideHighLevelSDL(hsBool b)   { MaxDatBF.SetBF(b, MaxDatBF.kOverrideHighLevelSDL); }
-    UInt8           GetAnimCompress()                   { return fAnimCompression; }
-    void            SetAnimCompress(UInt8 v)            { fAnimCompression = v; }
-    hsScalar        GetKeyReduceThreshold()             { return fKeyReduceThreshold; }
-    void            SetKeyReduceThreshold(hsScalar v)   { fKeyReduceThreshold = v; }
+    uint8_t           GetAnimCompress()                   { return fAnimCompression; }
+    void            SetAnimCompress(uint8_t v)            { fAnimCompression = v; }
+    float        GetKeyReduceThreshold()             { return fKeyReduceThreshold; }
+    void            SetKeyReduceThreshold(float v)   { fKeyReduceThreshold = v; }
 
 protected:
     plKey           fpKey;
@@ -423,9 +423,9 @@ protected:
     // hacking this in here temporarily because everything's about to change in the mesh world...
     hsGMesh*        fpMesh;
     plKey           fpRoomKey;
-    UInt32          fDecalLevel;
-    Int32           fNormalChan;
-    UInt32          fSoundIdxCounter;
+    uint32_t          fDecalLevel;
+    int32_t           fNormalChan;
+    uint32_t          fSoundIdxCounter;
     plSceneObject * fAvatarSO;
     plMaxNodeBaseTab    fRenderDependencies;
     plMaxNodeBaseTab    fBones;
@@ -436,14 +436,14 @@ protected:
     plRenderLevel   fBlendLevel;
     plRenderLevel   fOpaqueLevel;
     plPhysicalProps fPhysicalProps;
-    UInt32          fSwapTargetID;
+    uint32_t          fSwapTargetID;
     hsTArray<int>   *fCachedAlphaHackLayerCounts;
     plSharedMesh    *fSwapMesh;
     plMaxBoneMap    *fBoneMap;
     plLoadMask      fLoadMask;
-    hsScalar        fWaterHeight;
-    UInt8           fAnimCompression;
-    hsScalar        fKeyReduceThreshold;
+    float        fWaterHeight;
+    uint8_t           fAnimCompression;
+    float        fKeyReduceThreshold;
     DataBF  MaxDatBF;
 };
 

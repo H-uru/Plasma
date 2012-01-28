@@ -70,10 +70,10 @@ void plSDLModifier::AddTarget(plSceneObject* so)
     if (so)
         plSingleModifier::AddTarget(so);
     if (!fStateCache)
-        fStateCache = TRACKED_NEW plStateDataRecord(GetSDLName());
+        fStateCache = new plStateDataRecord(GetSDLName());
 }
 
-UInt32 plSDLModifier::IApplyModFlags(UInt32 sendFlags)
+uint32_t plSDLModifier::IApplyModFlags(uint32_t sendFlags)
 {
     return sendFlags;
 }
@@ -81,7 +81,7 @@ UInt32 plSDLModifier::IApplyModFlags(UInt32 sendFlags)
 //
 // write to net msg and send to server
 //
-void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, UInt32 sendFlags)
+void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint32_t sendFlags)
 {
     hsAssert(senderKey, "nil senderKey?");
 
@@ -112,7 +112,7 @@ hsBool plSDLModifier::MsgReceive(plMessage* msg)
     plSDLModifierMsg* sdlMsg = plSDLModifierMsg::ConvertNoRef(msg);
     if (sdlMsg && !stricmp(sdlMsg->GetSDLName(),GetSDLName()))
     {       
-        UInt32 sendFlags = IApplyModFlags(sdlMsg->GetFlags());
+        uint32_t sendFlags = IApplyModFlags(sdlMsg->GetFlags());
 
         if (!fSentOrRecvdState)
             sendFlags |= plSynchedObject::kNewState;
@@ -150,7 +150,7 @@ hsBool plSDLModifier::MsgReceive(plMessage* msg)
 // send a state update
 //
 bool gMooseDump=false;
-void plSDLModifier::SendState(UInt32 sendFlags)
+void plSDLModifier::SendState(uint32_t sendFlags)
 {
     hsAssert(fStateCache, "nil stateCache");
 
@@ -161,7 +161,7 @@ void plSDLModifier::SendState(UInt32 sendFlags)
     bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
 
     // record current state
-    plStateDataRecord* curState = TRACKED_NEW plStateDataRecord(GetSDLName());
+    plStateDataRecord* curState = new plStateDataRecord(GetSDLName());
     IPutCurrentStateIn(curState);   // return sdl record which reflects current state of sceneObj, dirties curState
     if (!force)
     {

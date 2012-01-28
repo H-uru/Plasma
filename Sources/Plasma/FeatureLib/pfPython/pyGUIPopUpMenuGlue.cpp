@@ -417,14 +417,14 @@ PyObject *pyGUIPopUpMenu::New(plKey objkey)
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
+PyObject *pyGUIPopUpMenu::New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
     newObj->fThis->setup(name, screenOriginX, screenOriginY, destLoc);
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY)
+PyObject *pyGUIPopUpMenu::New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
     newObj->fThis->setup(name, parent, screenOriginX, screenOriginY);

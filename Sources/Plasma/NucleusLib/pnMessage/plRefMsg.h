@@ -63,10 +63,10 @@ protected:
     hsKeyedObject*          fRef;
     hsKeyedObject*          fOldRef; // on replace
 
-    UInt8                   fContext;
+    uint8_t                   fContext;
 public:
     plRefMsg();
-    plRefMsg(const plKey &r, UInt8 c);
+    plRefMsg(const plKey &r, uint8_t c);
 
     virtual ~plRefMsg();
 
@@ -79,8 +79,8 @@ public:
     plRefMsg&       SetOldRef(hsKeyedObject* oldRef);
     hsKeyedObject*  GetOldRef() { return fOldRef; }
 
-    plRefMsg&   SetContext(UInt8 c) { fContext = c; return *this; }
-    UInt8       GetContext() { return fContext; }
+    plRefMsg&   SetContext(uint8_t c) { fContext = c; return *this; }
+    uint8_t       GetContext() { return fContext; }
 
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
@@ -91,7 +91,7 @@ class plGenRefMsg : public plRefMsg
 {
 public:
     plGenRefMsg() : fType(-1), fWhich(-1) {}
-    plGenRefMsg(const plKey &r, UInt8 c, Int32 which, Int8 type) : plRefMsg(r, c), fWhich(which), fType(type) {}
+    plGenRefMsg(const plKey &r, uint8_t c, int32_t which, int8_t type) : plRefMsg(r, c), fWhich(which), fType(type) {}
 
     CLASSNAME_REGISTER(plGenRefMsg);
     GETINTERFACE_ANY(plGenRefMsg, plRefMsg);
@@ -99,8 +99,8 @@ public:
     // User variables.  You can put anything here, but the standard convention
     // is an enum telling what type of ref it is in fType, and an index in
     // fWhich, for keeping track of multiple refs of the same type.
-    Int8    fType;
-    Int32   fWhich;
+    int8_t    fType;
+    int32_t   fWhich;
 
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLODMipmap.h"
 
 #include "hsResMgr.h"
@@ -72,11 +72,11 @@ plLODMipmap::plLODMipmap(plMipmap* mip)
 
     // Need some kind of reffing assignment for the mipmap here
     fBase = mip;
-    fLevelSizes = TRACKED_NEW UInt32[fBase->GetNumLevels()];
+    fLevelSizes = new uint32_t[fBase->GetNumLevels()];
 
     ISetup();
 
-    hsgResMgr::ResMgr()->AddViaNotify(mip->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(mip->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef);
 
 }
 
@@ -152,7 +152,7 @@ void plLODMipmap::ISetup()
     fRowBytes = fBase->GetRowBytes();
 
     if( !fLevelSizes )
-        fLevelSizes = TRACKED_NEW UInt32[fBase->GetNumLevels()];
+        fLevelSizes = new uint32_t[fBase->GetNumLevels()];
         
     fNumLevels = fBase->GetNumLevels() - GetLOD();
     fNumLevels = 1;
@@ -173,7 +173,7 @@ void plLODMipmap::ISetup()
 void plLODMipmap::ISetupCurrLevel()
 {
     fCurrLevelPtr = fBase->GetCurrLevelPtr();
-    fCurrLevel = (UInt8)(fBase->GetCurrLevel());
+    fCurrLevel = (uint8_t)(fBase->GetCurrLevel());
     fCurrLevelWidth = fBase->GetCurrWidth();
     fCurrLevelHeight = fBase->GetCurrHeight();
     fCurrLevelRowBytes = fBase->GetRowBytes();
@@ -227,7 +227,7 @@ void plLODMipmap::IMarkDirty()
     }
 }
 
-void plLODMipmap::SetCurrLevel(UInt8 level)
+void plLODMipmap::SetCurrLevel(uint8_t level)
 {
     fBase->SetCurrLevel(level + GetLOD());
 
@@ -240,13 +240,13 @@ void plLODMipmap::Reset()
     ISetup();
 }
 
-void plLODMipmap::ScaleNicely(UInt32 *destPtr, UInt16 destWidth, UInt16 destHeight,
-                            UInt16 destStride, plMipmap::ScaleFilter filter) const
+void plLODMipmap::ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
+                            uint16_t destStride, plMipmap::ScaleFilter filter) const
 {
     fBase->ScaleNicely(destPtr, destWidth, destHeight, destStride, filter);
 }
 
-hsBool plLODMipmap::ResizeNicely(UInt16 newWidth, UInt16 newHeight, plMipmap::ScaleFilter filter)
+hsBool plLODMipmap::ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter)
 {
     hsBool retVal = fBase->ResizeNicely(newWidth, newHeight, filter);
     ISetup();
@@ -259,7 +259,7 @@ void plLODMipmap::CopyFrom(const plMipmap *source)
     ISetup();
 }
 
-void plLODMipmap::Composite(plMipmap *source, UInt16 x, UInt16 y, CompositeOptions *options) 
+void plLODMipmap::Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options) 
 { 
     fBase->Composite(source, x, y, options); 
     IMarkDirty();
@@ -290,7 +290,7 @@ void plLODMipmap::Read(hsStream *s, hsResMgr *mgr)
 {
     INilify();
     hsKeyedObject::Read(s, mgr);
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef); // fBase
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBase), plRefFlags::kActiveRef); // fBase
 }
 
 void plLODMipmap::Write(hsStream *s, hsResMgr *mgr)

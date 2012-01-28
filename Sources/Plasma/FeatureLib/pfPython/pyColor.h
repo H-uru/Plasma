@@ -59,14 +59,14 @@ private:
     hsColorRGBA     fColor;
 
 protected:
-    pyColor(hsScalar r=0.0f, hsScalar g=0.0f, hsScalar b=0.0f, hsScalar a=0.0f);
+    pyColor(float r=0.0f, float g=0.0f, float b=0.0f, float a=0.0f);
     pyColor(hsColorRGBA color);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptColor);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(hsScalar red, hsScalar green, hsScalar blue, hsScalar alpha = 0.0f);
+    static PyObject *New(float red, float green, float blue, float alpha = 0.0f);
     static PyObject *New(const hsColorRGBA & color);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyColor object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyColor); // converts a PyObject to a pyColor (throws error if not correct type)
@@ -78,16 +78,16 @@ public:
     void setColor(hsColorRGBA color) { fColor = color; }
     
     // python get attributes helpers
-    hsScalar    getRed() const { return fColor.r; }
-    hsScalar    getGreen() const { return fColor.g; }
-    hsScalar    getBlue() const { return fColor.b; }
-    hsScalar    getAlpha() const { return fColor.a; }
+    float    getRed() const { return fColor.r; }
+    float    getGreen() const { return fColor.g; }
+    float    getBlue() const { return fColor.b; }
+    float    getAlpha() const { return fColor.a; }
 
     // python set attributes helpers
-    void    setRed(hsScalar red) { fColor.r = red; }
-    void    setGreen(hsScalar green) { fColor.g = green; }
-    void    setBlue(hsScalar blue) { fColor.b = blue; }
-    void    setAlpha(hsScalar alpha) { fColor.a = alpha; }
+    void    setRed(float red) { fColor.r = red; }
+    void    setGreen(float green) { fColor.g = green; }
+    void    setBlue(float blue) { fColor.b = blue; }
+    void    setAlpha(float alpha) { fColor.a = alpha; }
 
     // override the equals to operator
     hsBool operator==(const pyColor &color) const

@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSpaceTreeMaker.h"
 #include "plMath/hsRadixSort.h"
 #include "plDrawable/plSpaceTree.h"
 
-#include "hsUtils.h" // for testing, get hsRand()
+ // for testing, get hsRand()
 #include "hsTimer.h"
 #include "plIntersect/plVolumeIsect.h"
 
@@ -129,7 +129,7 @@ void plSpaceTreeMaker::ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVect
 
     hsRadixSort::Elem*  list = fSortScratch;
     hsRadixSort::Elem* listTrav = list;
-    Int32 n = nodes.GetCount();
+    int32_t n = nodes.GetCount();
     while( n-- )
     {
         listTrav->fKey.fFloat = axis.InnerProduct(nodes[n]->fWorldBounds.GetCenter());
@@ -138,7 +138,7 @@ void plSpaceTreeMaker::ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVect
         listTrav++;
     }
     list[nodes.GetCount()-1].fNext = nil;
-    UInt32 sortFlags = 0;
+    uint32_t sortFlags = 0;
     hsRadixSort rad;
     hsRadixSort::Elem* sortedList = rad.Sort(list, sortFlags);
     listTrav = sortedList;
@@ -172,7 +172,7 @@ void plSpaceTreeMaker::ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVec
         upper[i] = nodes[i + lowerCount];
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
@@ -189,14 +189,14 @@ hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>&
     {
         hsVector3 sep;
         sep.Set(&bnd.GetCenter(), &nodes[i]->fWorldBounds.GetCenter());
-        hsScalar len = sep.MagnitudeSquared();
+        float len = sep.MagnitudeSquared();
         if( len > length )
         {
             axis = sep;
             length = len;
         }
     }
-    length = hsSquareRoot(length);
+    length = sqrt(length);
     if( length > 1.e-3f )
         axis /= length;
     else
@@ -212,7 +212,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
 
     StartTimer(kMakeFatTree);
 
-    plSpacePrepNode* subRoot = TRACKED_NEW plSpacePrepNode;
+    plSpacePrepNode* subRoot = new plSpacePrepNode;
     fTreeSize++;
 
     if( nodes.GetCount() == 1 )
@@ -231,7 +231,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     
     // Find the maximum length vector from nodes[i] center to list center.
     // If that length is zero, just use the maximum dimension of overall bounds.
-    hsScalar length;
+    float length;
     hsVector3 axis;
     hsBounds3Ext bnd = IFindDistToCenterAxis(nodes, length, axis);
 
@@ -249,7 +249,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     return subRoot;
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
@@ -258,7 +258,7 @@ hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes,
     {
         bnd.Union(&nodes[i]->fWorldBounds);
     }
-    hsScalar maxLen = bnd.GetMaxs()[0] - bnd.GetMins()[0];
+    float maxLen = bnd.GetMaxs()[0] - bnd.GetMins()[0];
     int maxAxis = 0;
 
     if( bnd.GetMaxs()[1] - bnd.GetMins()[1] > maxLen )
@@ -290,9 +290,9 @@ hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes,
     return bnd;
 }
 
-void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimps)
+void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimps)
 {
-    const hsScalar kCutoffFrac = 0.5f;
+    const float kCutoffFrac = 0.5f;
 
     giants.SetCount(0);
     strimps.SetCount(0);
@@ -310,8 +310,8 @@ void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar 
 
 plSpacePrepNode* plSpaceTreeMaker::INewSubRoot(const hsBounds3Ext& bnd)
 {
-    plSpacePrepNode* subRoot = TRACKED_NEW plSpacePrepNode;
-    subRoot->fDataIndex = Int16(-1);
+    plSpacePrepNode* subRoot = new plSpacePrepNode;
+    subRoot->fDataIndex = int16_t(-1);
     fTreeSize++;
 
     subRoot->fWorldBounds = bnd;
@@ -332,7 +332,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
     StartTimer(kMakeTree);
 
     // Find the maximum bounds dimension
-    hsScalar length;
+    float length;
     hsVector3 axis;
     hsBounds3Ext bnd = IFindSplitAxis(nodes, length, axis);
 
@@ -372,7 +372,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
 
 void plSpaceTreeMaker::IMakeTree()
 {
-    fSortScratch = TRACKED_NEW hsRadixSort::Elem[fLeaves.GetCount()];
+    fSortScratch = new hsRadixSort::Elem[fLeaves.GetCount()];
 
     fPrepTree = IMakeTreeRecur(fLeaves);
 
@@ -411,9 +411,9 @@ void plSpaceTreeMaker::Cleanup()
     fDisabled.Reset();
 }
 
-Int32 plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
+int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
 {
-    plSpacePrepNode* leaf = TRACKED_NEW plSpacePrepNode;
+    plSpacePrepNode* leaf = new plSpacePrepNode;
     fLeaves.Append(leaf);
     leaf->fDataIndex = fLeaves.GetCount()-1;
     leaf->fChildren[0] = nil;
@@ -487,7 +487,7 @@ void plSpaceTreeMaker::TestTree()
     tree->SetViewPos(*hsPoint3().Set(0,0,0));
 
     plConeIsect cone;
-    cone.SetAngle(hsScalarPI*0.25f);
+    cone.SetAngle(M_PI*0.25f);
     cone.SetTransform(liX, invLiX);
 
     StartTimer(kHarvestCone);
@@ -498,7 +498,7 @@ void plSpaceTreeMaker::TestTree()
     StopTimer(kHarvestCone);
 
     plConeIsect capped;
-    capped.SetAngle(hsScalarPI*0.25f);
+    capped.SetAngle(M_PI*0.25f);
     capped.SetLength(0.5f);
     capped.SetTransform(liX, invLiX);
 
@@ -548,7 +548,7 @@ plSpaceTree* plSpaceTreeMaker::MakeTree()
 
 plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 {
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
 
     tree->fTree.SetCount(1);
     hsPoint3 zero(0, 0, 0);
@@ -564,7 +564,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 
 plSpaceTree* plSpaceTreeMaker::IMakeDegenerateTree()
 {
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
     
     tree->fTree.Push();
 
@@ -600,7 +600,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
 {
     StartTimer(kMakeSpaceTree);
 
-    plSpaceTree* tree = TRACKED_NEW plSpaceTree;
+    plSpaceTree* tree = new plSpaceTree;
 
     plSpacePrepNode* head = fPrepTree;
 
@@ -631,11 +631,11 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
 // The following goofy cache-friendly tree set up slows down the tree build by 10%, but speeds up the runtime by 9%. 
 // Sounds fair.
 #if 0 // Leaves first
-Int16 plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* tree, const int targetLevel, int currLevel)
+int16_t plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* tree, const int targetLevel, int currLevel)
 {
     if( currLevel == targetLevel )
     {
-        Int16 nodeIdx = tree->fTree.GetCount();
+        int16_t nodeIdx = tree->fTree.GetCount();
         tree->fTree.Push();
 
         tree->fTree[nodeIdx].fWorldBounds = sub->fWorldBounds;
@@ -659,7 +659,7 @@ Int16 plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* t
         return nodeIdx;
     }
 
-    Int16 nodeIdx = sub->fIndex;
+    int16_t nodeIdx = sub->fIndex;
 
     if( !sub->fChildren[0] )
     {
@@ -686,7 +686,7 @@ void plSpaceTreeMaker::IGatherLeavesRecur(plSpacePrepNode* sub, plSpaceTree* tre
         hsAssert(!sub->fChildren[1], "Unsupported unbalance of tree");
         
         plSpaceTreeNode& leaf = tree->fTree[sub->fDataIndex];
-        Int16 nodeIdx = sub->fDataIndex;
+        int16_t nodeIdx = sub->fDataIndex;
         leaf.fWorldBounds = sub->fWorldBounds;
         sub->fIndex = nodeIdx;
         leaf.fFlags = plSpaceTreeNode::kIsLeaf;
@@ -713,7 +713,7 @@ void plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* tr
 
     if( currLevel == targetLevel )
     {
-        Int16 nodeIdx = tree->fTree.GetCount();
+        int16_t nodeIdx = tree->fTree.GetCount();
         tree->fTree.Push();
 
         tree->fTree[nodeIdx].fWorldBounds = sub->fWorldBounds;

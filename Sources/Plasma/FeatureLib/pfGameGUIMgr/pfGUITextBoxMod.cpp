@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pfGUITextBoxMod.h"
 #include "pfGameGUIMgr.h"
@@ -80,7 +80,7 @@ pfGUITextBoxMod::~pfGUITextBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUITextBoxMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUITextBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -154,10 +154,10 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    UInt32 len = s->ReadLE32();
+    uint32_t len = s->ReadLE32();
     if( len > 0 )
     {
-        char *text = TRACKED_NEW char[ len + 1 ];
+        char *text = new char[ len + 1 ];
         s->Read( len, text );
         text[ len ] = 0;
 
@@ -201,15 +201,15 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-void    pfGUITextBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-void    pfGUITextBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUITextBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
@@ -232,7 +232,7 @@ void    pfGUITextBoxMod::SetText( const wchar_t *text )
     delete [] fText;
     if (text)
     {
-        fText = TRACKED_NEW wchar_t[wcslen(text)+1];
+        fText = new wchar_t[wcslen(text)+1];
         wcscpy(fText,text);
     }
     else

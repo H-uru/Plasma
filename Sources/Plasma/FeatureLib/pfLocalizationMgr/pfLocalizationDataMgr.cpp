@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "plResMgr/plLocalization.h"
 
 #include "plFile/hsFiles.h"
@@ -155,15 +155,15 @@ struct LocAgeInfo
 //////////////////////////////////////////////////////////////////////
 
 static void * XMLCALL XmlMalloc (size_t size) {
-    return ALLOC(size);
+    return malloc(size);
 }
 
 static void * XMLCALL XmlRealloc (void * ptr, size_t size) {
-    return REALLOC(ptr, size);
+    return realloc(ptr, size);
 }
 
 static void XMLCALL XmlFree (void * ptr) {
-    FREE(ptr);
+    free(ptr);
 }
 
 XML_Memory_Handling_Suite gHeapAllocator = {
@@ -939,13 +939,13 @@ std::vector<std::wstring> pfLocalizationDataMgr::IGetAllLanguageNames()
 void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const std::wstring & curPath)
 {
     pfLocalizationDataMgr::localizedElement newElement;
-    Int16 numArgs = -1;
+    int16_t numArgs = -1;
 
     LocalizationXMLFile::element::iterator curTranslation;
     for (curTranslation = elementInfo->fElement.begin(); curTranslation != elementInfo->fElement.end(); curTranslation++)
     {
         newElement[curTranslation->first].FromXML(curTranslation->second);
-        UInt16 argCount = newElement[curTranslation->first].GetArgumentCount();
+        uint16_t argCount = newElement[curTranslation->first].GetArgumentCount();
         if (numArgs == -1) // just started
             numArgs = argCount;
         else if (argCount != numArgs)
@@ -990,24 +990,24 @@ void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const std::wstring 
 
 //// IConvertToByteStream ////////////////////////////////////////////
 
-char *pfLocalizationDataMgr::IConvertToByteStream(const std::wstring & data, UInt32 &len)
+char *pfLocalizationDataMgr::IConvertToByteStream(const std::wstring & data, uint32_t &len)
 {
     len = data.length() * 2 + 2; // each wchar_t is two chars and add two bytes for the header
-    char *retVal = TRACKED_NEW char[len]; // we don't add an extra byte for the 0 because the parser doesn't need it
-    char lowbyte = 0, highbyte = 0;
+    char *retVal = new char[len]; // we don't add an extra byte for the 0 because the parser doesn't need it
+    char lowByte = 0, highByte = 0;
     retVal[0] = (char)0xFF; // insert FFFE for little-endian UTF-16 (big-endian would be FEFF)
     retVal[1] = (char)0xFE;
     int curByteStreamPos = 2;
     for (int curLoc = 0; curLoc < data.length(); curLoc++)
     {
         wchar_t curChar = data[curLoc];
-        lowbyte = (char)(curChar & 0x00FF);
-        highbyte = (char)((curChar & 0xFF00) >> 8);
+        lowByte = (char)(curChar & 0x00FF);
+        highByte = (char)((curChar & 0xFF00) >> 8);
 
-        // since the data is AABBCCDD, we need to put in in our byte stream as BBAADDCC
+        // since the data is AABBCCDD, we need to put in in our uint8_t stream as BBAADDCC
         // (so it kinda looks backward because we're storing this as little-endian)
-        retVal[curByteStreamPos + 1] = highbyte;
-        retVal[curByteStreamPos] = lowbyte;
+        retVal[curByteStreamPos + 1] = highByte;
+        retVal[curByteStreamPos] = lowByte;
         curByteStreamPos += 2;
     }
     return retVal;
@@ -1063,7 +1063,7 @@ void pfLocalizationDataMgr::IWriteText(const std::string & filename, const std::
     if (weWroteData)
     {
         // now spit the results out to the file
-        UInt32 numBytes;
+        uint32_t numBytes;
         char *byteStream = IConvertToByteStream(fileData, numBytes);
         hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename.c_str());
         xmlStream->Write(numBytes, byteStream);
@@ -1080,7 +1080,7 @@ void pfLocalizationDataMgr::Initialize(const std::string & path)
     if (fInstance)
         return;
 
-    fInstance = TRACKED_NEW pfLocalizationDataMgr(path);
+    fInstance = new pfLocalizationDataMgr(path);
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "LocalizationDataMgr.log",
         plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp);
     fInstance->SetupData();
@@ -1110,7 +1110,7 @@ void pfLocalizationDataMgr::SetupData()
     if (fDatabase)
         delete fDatabase;
 
-    fDatabase = TRACKED_NEW LocalizationDatabase();
+    fDatabase = new LocalizationDatabase();
     fDatabase->Parse(fDataPath);
 
     char *temp = hsWStringToString(fDatabase->GetOutput().c_str());

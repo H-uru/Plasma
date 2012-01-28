@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTimerCallbackManager_Defined
 #define plTimerCallbackManager_Defined
 
-#include "hsScalar.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTemplates.h"
 
@@ -72,7 +72,7 @@ public:
     CLASSNAME_REGISTER( plTimerCallbackManager );
     GETINTERFACE_ANY( plTimerCallbackManager, hsKeyedObject );
 
-    virtual plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg);
+    virtual plTimerCallback* NewTimer(float time, plMessage* pMsg);
     hsBool CancelCallback(plTimerCallback* pTimer);
     hsBool CancelCallbacksToKey(const plKey& key);
 
@@ -100,7 +100,7 @@ public:
     // External modifier use only
     static void SetTheTimerCallbackMgr(plTimerCallbackManager *mgr) { fMgr = mgr; }
 
-    static plTimerCallback* NewTimer(hsScalar time, plMessage* pMsg) { return (fMgr->NewTimer(time, pMsg)); }
+    static plTimerCallback* NewTimer(float time, plMessage* pMsg) { return (fMgr->NewTimer(time, pMsg)); }
     static hsBool CancelCallback(plTimerCallback* pTimer);
     static hsBool CancelCallbacksToKey(const plKey& key);
 };

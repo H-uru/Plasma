@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsSearchVersion_inc
 #define hsSearchVersion_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 /*
 do a template of lists to search for a matching entry. basic idea is that
@@ -59,15 +59,15 @@ set from 0 to max forever index.
 template <class T> class hsVersionNode {
 protected:
     T                                       fData;
-    Int32                                   fIndex;
+    int32_t                                   fIndex;
     hsVersionNode<T>*       fNext;
 public:
-    hsVersionNode(const UInt32 idx, const T &data) : fIndex(idx), fNext(nil) { fData = data; }
+    hsVersionNode(const uint32_t idx, const T &data) : fIndex(idx), fNext(nil) { fData = data; }
     ~hsVersionNode() { delete fNext; }
 
     hsVersionNode<T>*   Next() const { return fNext; }
 
-    Int32               Index() const { return fIndex; }
+    int32_t               Index() const { return fIndex; }
 
     inline void Append(hsVersionNode<T>* next);
     inline int operator==(const T& o) const;
@@ -92,40 +92,40 @@ template <class T> void hsVersionNode<T>::Append(hsVersionNode<T>* next)
 
 template <class T> class hsSearchVersion {
 protected:
-    UInt32              fLength;
+    uint32_t              fLength;
     hsVersionNode<T>**  fArray;
-    UInt32              fNextIndex;
-    UInt32              fNumIndex;
-    UInt32              fIncIndex;
+    uint32_t              fNextIndex;
+    uint32_t              fNumIndex;
+    uint32_t              fIncIndex;
     T**                 fBackArray;
 
     void                ICheckBackArray();
 public:
-    hsSearchVersion(UInt32 len, UInt32 inc = 0);
+    hsSearchVersion(uint32_t len, uint32_t inc = 0);
     ~hsSearchVersion();
 
-    T&          operator[]( Int32 index );
+    T&          operator[]( int32_t index );
 
-    Int32               Find(int where, const T& what, hsBool forceUnique=false);
+    int32_t               Find(int where, const T& what, hsBool forceUnique=false);
 
-    UInt32              GetCount() const { return fNextIndex; }
+    uint32_t              GetCount() const { return fNextIndex; }
 };
 
-template <class T> T& hsSearchVersion<T>::operator[]( Int32 index )
+template <class T> T& hsSearchVersion<T>::operator[]( int32_t index )
 {
-    hsDebugCode(hsThrowIfBadParam((UInt32)index >= (UInt32)fNextIndex);)
+    hsDebugCode(hsThrowIfBadParam((uint32_t)index >= (uint32_t)fNextIndex);)
 
     return *fBackArray[index];
 }
 
-template <class T> hsSearchVersion<T>::hsSearchVersion(UInt32 len, UInt32 inc)
+template <class T> hsSearchVersion<T>::hsSearchVersion(uint32_t len, uint32_t inc)
     : fNextIndex(0)
 { 
     fIncIndex = inc ? inc : len;
     fLength = len; 
-    fArray = TRACKED_NEW hsVersionNode<T>*[fLength]; 
+    fArray = new hsVersionNode<T>*[fLength]; 
     HSMemory::Clear(fArray, fLength*sizeof(*fArray)); 
-    fBackArray = TRACKED_NEW T*[fNumIndex = fLength];
+    fBackArray = new T*[fNumIndex = fLength];
 }
 
 template <class T> hsSearchVersion<T>::~hsSearchVersion()
@@ -141,7 +141,7 @@ template <class T> void hsSearchVersion<T>::ICheckBackArray()
 {
     if( fNextIndex >= fNumIndex )
     {
-        T** newBackArray = TRACKED_NEW T*[fNumIndex + fIncIndex];
+        T** newBackArray = new T*[fNumIndex + fIncIndex];
         HSMemory::BlockMove(fBackArray, newBackArray, fNextIndex*sizeof(T*));
         delete [] fBackArray;
         fBackArray = newBackArray;
@@ -149,7 +149,7 @@ template <class T> void hsSearchVersion<T>::ICheckBackArray()
     }
 }
 
-template <class T> Int32 hsSearchVersion<T>::Find(int where, const T&what, hsBool forceUnique)
+template <class T> int32_t hsSearchVersion<T>::Find(int where, const T&what, hsBool forceUnique)
 {
     hsVersionNode<T>* curr = fArray[where];
 
@@ -157,7 +157,7 @@ template <class T> Int32 hsSearchVersion<T>::Find(int where, const T&what, hsBoo
 
     if( !curr )
     {
-        hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+        hsVersionNode<T>* next = new hsVersionNode<T>(fNextIndex, what);
         fArray[where] = next;
         fBackArray[fNextIndex] = &next->GetData();
         return fNextIndex++;
@@ -172,7 +172,7 @@ template <class T> Int32 hsSearchVersion<T>::Find(int where, const T&what, hsBoo
     if( curr->Next() )
         return curr->Next()->Index();
 
-    hsVersionNode<T>* next = TRACKED_NEW hsVersionNode<T>(fNextIndex, what);
+    hsVersionNode<T>* next = new hsVersionNode<T>(fNextIndex, what);
     curr->Append(next);
     fBackArray[fNextIndex] = &next->GetData();
     return fNextIndex++;

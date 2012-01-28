@@ -96,7 +96,7 @@ hsPerterber* hsPerterber::CreateAndRead(hsStream* s)
 {
     hsPerterber* retVal = nil;
 
-    UInt32 t = s->ReadSwap32();
+    uint32_t t = s->ReadSwap32();
     switch( t )
     {
     case kTypeOscillator:
@@ -203,8 +203,8 @@ struct hsPertDesc
 {
 
     char        fName[256];
-    UInt32      fType;
-    UInt32      fNumParams;
+    uint32_t      fType;
+    uint32_t      fNumParams;
     hsScalar    fParams[kMaxPertParams];
 };
 

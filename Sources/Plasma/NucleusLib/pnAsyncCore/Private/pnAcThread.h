@@ -83,7 +83,7 @@ struct AsyncThread {
     void *              handle;
     void *              argument;
     unsigned            workTimeMs;
-    wchar               name[16];
+    wchar_t               name[16];
 };
 
 /*****************************************************************************
@@ -95,7 +95,7 @@ struct AsyncThread {
 void * AsyncThreadCreate (
     FAsyncThreadProc    proc,
     void *              argument,
-    const wchar         name[]
+    const wchar_t         name[]
 );
 
 // This function should ONLY be called during shutdown while waiting for things to expire
@@ -141,6 +141,6 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-    const wchar             debugStr[],
+    const wchar_t             debugStr[],
     EThreadTaskPriority     priority = kThreadTaskPriorityNormal
 );

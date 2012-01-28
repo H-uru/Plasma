@@ -42,9 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLocTreeView_h
 #define _plLocTreeView_h
 
-#define WIN32_LEAN_AND_MEAN
-#include <WinSock2.h>
-#include <Windows.h>
+#include "HeadSpin.h"
 #include <string>
 
 class plLocTreeView

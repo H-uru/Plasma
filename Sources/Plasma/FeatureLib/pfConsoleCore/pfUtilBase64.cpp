@@ -93,7 +93,7 @@ static const char kFillchar = '=';
 //============================================================================
 unsigned Base64Encode (
     unsigned    srcChars,
-    const byte  srcData[],
+    const uint8_t  srcData[],
     unsigned    dstChars,
     char *      dstData
 ) {
@@ -102,7 +102,7 @@ unsigned Base64Encode (
     ASSERT(dstData);
     
     const char * dstBase = dstData;
-    const byte * srcTerm = srcData + srcChars;
+    const uint8_t * srcTerm = srcData + srcChars;
     for (;;) switch (srcTerm - srcData) {
         case 0:
             *dstData++ = 0;
@@ -139,17 +139,17 @@ unsigned Base64Decode (
     unsigned    srcChars,
     const char  srcData[],
     unsigned    dstChars,
-    byte *      dstData
+    uint8_t *      dstData
 ) {
     ASSERT(srcData);
     ASSERT(dstChars >= Base64DecodeSize(srcChars, srcData));
     ASSERT(dstData);
 
-    const byte * dstBase = dstData;
+    const uint8_t * dstBase = dstData;
     const char * srcTerm = srcData + srcChars;
     while (srcTerm - srcData >= 4) {
 
-        *dstData++ = (byte) (
+        *dstData++ = (uint8_t) (
             (kDecode64[srcData[0]] << 2 & 0xfc)
            +(kDecode64[srcData[1]] >> 4 & 0x03)
         );
@@ -157,7 +157,7 @@ unsigned Base64Decode (
         if (kDecode64[srcData[2]] == kTerminator)
             break;
 
-        *dstData++ = (byte) (
+        *dstData++ = (uint8_t) (
             (kDecode64[srcData[1]] << 4 & 0xf0)
            +(kDecode64[srcData[2]] >> 2 & 0x0f)
         );
@@ -165,7 +165,7 @@ unsigned Base64Decode (
         if (kDecode64[srcData[3]] == kTerminator)
             break;
 
-        *dstData++ = (byte) (
+        *dstData++ = (uint8_t) (
             (kDecode64[srcData[2]] << 6 & 0xc0)
            +(kDecode64[srcData[3]])
         );

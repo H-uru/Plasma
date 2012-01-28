@@ -134,7 +134,7 @@ PyObject* pyKey::GetPySceneObject()
 void pyKey::IEnable(hsBool state)
 {
     // create message
-    plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+    plEnableMsg* pMsg = new plEnableMsg;
     if (fNetForce )
     {
         // set the network propagate flag to make sure it gets to the other clients
@@ -198,7 +198,7 @@ plPipeline* pyKey::GetPipeline()
 }
 
 // get the notify list count
-Int32 pyKey::NotifyListCount()
+int32_t pyKey::NotifyListCount()
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )
@@ -208,7 +208,7 @@ Int32 pyKey::NotifyListCount()
 }
 
 // get a notify list item
-plKey pyKey::GetNotifyListItem(Int32 i)
+plKey pyKey::GetNotifyListItem(int32_t i)
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )
@@ -219,7 +219,7 @@ plKey pyKey::GetNotifyListItem(Int32 i)
 
 
 // Set the dirty state on the PythonModifier
-void pyKey::DirtySynchState(const char* SDLStateName, UInt32 sendFlags)
+void pyKey::DirtySynchState(const char* SDLStateName, uint32_t sendFlags)
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )

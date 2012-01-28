@@ -50,12 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plFileUtils.h"
 #include "hsFiles.h"
 #include "hsStringTokenizer.h"
-#include "hsWindows.h"
+
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
@@ -97,7 +97,7 @@ hsBool  plFileUtils::CreateDir( const char *path )
 #endif
 }
 
-hsBool  plFileUtils::CreateDir( const wchar *path )
+hsBool  plFileUtils::CreateDir( const wchar_t *path )
 {
     // Create our directory
 #if HS_BUILD_FOR_WIN32
@@ -150,7 +150,7 @@ bool plFileUtils::RemoveFile(const char* filename, bool delReadOnly)
     return (unlink(filename) == 0);
 }
 
-bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
+bool plFileUtils::RemoveFile(const wchar_t* filename, bool delReadOnly)
 {
 #ifdef HS_BUILD_FOR_WIN32
     if (delReadOnly)
@@ -167,15 +167,15 @@ bool plFileUtils::RemoveFile(const wchar* filename, bool delReadOnly)
 
 bool plFileUtils::FileCopy(const char* existingFile, const char* newFile)
 {
-    wchar* wExisting = hsStringToWString(existingFile);
-    wchar* wNew = hsStringToWString(newFile);
+    wchar_t* wExisting = hsStringToWString(existingFile);
+    wchar_t* wNew = hsStringToWString(newFile);
     bool ret = FileCopy(wExisting, wNew);
     delete [] wExisting;
     delete [] wNew;
     return ret;
 }
 
-bool plFileUtils::FileCopy(const wchar* existingFile, const wchar* newFile)
+bool plFileUtils::FileCopy(const wchar_t* existingFile, const wchar_t* newFile)
 {
 #if HS_BUILD_FOR_WIN32
     return (::CopyFileW(existingFile, newFile, FALSE) != 0);
@@ -223,7 +223,7 @@ bool plFileUtils::FileMove(const char* existingFile, const char* newFile)
 #endif
 }
 
-bool plFileUtils::FileMove(const wchar* existingFile, const wchar* newFile)
+bool plFileUtils::FileMove(const wchar_t* existingFile, const wchar_t* newFile)
 {
 #if HS_BUILD_FOR_WIN32
     return (::MoveFileW(existingFile, newFile) != 0);
@@ -236,7 +236,7 @@ bool plFileUtils::FileMove(const wchar* existingFile, const wchar* newFile)
 #endif
 }
 
-bool plFileUtils::FileExists(const wchar* file)
+bool plFileUtils::FileExists(const wchar_t* file)
 {
     FILE* fp = hsWFopen(file, L"rb");
     bool retVal = (fp != nil);
@@ -259,18 +259,18 @@ bool plFileUtils::FileExists(const char* file)
 
 hsBool  plFileUtils::EnsureFilePathExists( const char *filename )
 {
-    wchar* wFilename = hsStringToWString(filename);
+    wchar_t* wFilename = hsStringToWString(filename);
     hsBool ret = EnsureFilePathExists(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-hsBool  plFileUtils::EnsureFilePathExists( const wchar *filename )
+hsBool  plFileUtils::EnsureFilePathExists( const wchar_t *filename )
 {
     hsWStringTokenizer  izer( filename, L"\\/" );
 
     hsBool  lastWorked = false;
-    wchar   token[ kFolderIterator_MaxPath ];
+    wchar_t   token[ kFolderIterator_MaxPath ];
 
 
     while( izer.Next( token, arrsize( token ) ) && izer.HasMoreTokens() )
@@ -378,9 +378,9 @@ const char* plFileUtils::GetFileName(const char* path)
     return c;
 }
 
-const wchar* plFileUtils::GetFileName(const wchar* path)
+const wchar_t* plFileUtils::GetFileName(const wchar_t* path)
 {
-    const wchar* c = wcsrchr(path, L'/');
+    const wchar_t* c = wcsrchr(path, L'/');
     if (c == nil)
         c = wcsrchr(path, L'\\');
 
@@ -399,9 +399,9 @@ void plFileUtils::StripFile(char* pathAndName)
         *fileName = '\0';
 }
 
-void plFileUtils::StripFile(wchar* pathAndName)
+void plFileUtils::StripFile(wchar_t* pathAndName)
 {
-    wchar* fileName = (wchar*)GetFileName(pathAndName);
+    wchar_t* fileName = (wchar_t*)GetFileName(pathAndName);
     if (fileName != pathAndName)
         *fileName = L'\0';
 }
@@ -413,9 +413,9 @@ void plFileUtils::StripExt(char* fileName)
         *(ext-1) = '\0';
 }
 
-void plFileUtils::StripExt(wchar* fileName)
+void plFileUtils::StripExt(wchar_t* fileName)
 {
-    wchar* ext = (wchar*)GetFileExt(fileName);
+    wchar_t* ext = (wchar_t*)GetFileExt(fileName);
     if (ext)
         *(ext-1) = L'\0';
 }
@@ -433,12 +433,12 @@ const char* plFileUtils::GetFileExt(const char* pathAndName)
     return nil;
 }
 
-const wchar* plFileUtils::GetFileExt(const wchar* pathAndName)
+const wchar_t* plFileUtils::GetFileExt(const wchar_t* pathAndName)
 {
-    const wchar* fileName = GetFileName(pathAndName);
+    const wchar_t* fileName = GetFileName(pathAndName);
     if (fileName)
     {
-        const wchar* ext = wcsrchr(fileName, L'.');
+        const wchar_t* ext = wcsrchr(fileName, L'.');
         if (ext)
             return ext+1;
     }
@@ -457,9 +457,9 @@ void plFileUtils::AddSlash(char* path)
 #endif
 }
 
-void plFileUtils::AddSlash(wchar* path)
+void plFileUtils::AddSlash(wchar_t* path)
 {
-    wchar lastChar = path[wcslen(path)-1];
+    wchar_t lastChar = path[wcslen(path)-1];
     if (lastChar != L'\\' && lastChar != L'/')
 #if HS_BUILD_FOR_WIN32
         wcscat(path, L"\\");
@@ -474,7 +474,7 @@ void plFileUtils::ConcatFileName(char* path, const char* fileName)
     strcat(path, fileName);
 }
 
-void plFileUtils::ConcatFileName(wchar* path, const wchar* fileName)
+void plFileUtils::ConcatFileName(wchar_t* path, const wchar_t* fileName)
 {
     AddSlash(path);
     wcscat(path, fileName);
@@ -482,17 +482,17 @@ void plFileUtils::ConcatFileName(wchar* path, const wchar* fileName)
 
 //// GetFileSize /////////////////////////////////////////////////////////////
 
-UInt32  plFileUtils::GetFileSize( const char *path )
+uint32_t  plFileUtils::GetFileSize( const char *path )
 {
-    wchar* wPath = hsStringToWString(path);
-    UInt32 ret = GetFileSize(wPath);
+    wchar_t* wPath = hsStringToWString(path);
+    uint32_t ret = GetFileSize(wPath);
     delete [] wPath;
     return ret;
 }
 
-UInt32  plFileUtils::GetFileSize( const wchar *path )
+uint32_t  plFileUtils::GetFileSize( const wchar_t *path )
 {
-    UInt32 len = 0;
+    uint32_t len = 0;
 
     hsUNIXStream str;
     if (str.Open(path, L"rb"))
@@ -506,15 +506,15 @@ UInt32  plFileUtils::GetFileSize( const wchar *path )
 
 //// GetSecureEncryptionKey //////////////////////////////////////////////////
 
-bool plFileUtils::GetSecureEncryptionKey(const char* filename, UInt32* key, unsigned length)
+bool plFileUtils::GetSecureEncryptionKey(const char* filename, uint32_t* key, unsigned length)
 {
-    wchar* wFilename = hsStringToWString(filename);
+    wchar_t* wFilename = hsStringToWString(filename);
     bool ret = GetSecureEncryptionKey(wFilename, key, length);
     delete [] wFilename;
     return ret;
 }
 
-bool plFileUtils::GetSecureEncryptionKey(const wchar* filename, UInt32* key, unsigned length)
+bool plFileUtils::GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key, unsigned length)
 {
     // looks for an encryption key file in the same directory, and reads it
     std::wstring sFilename = filename;
@@ -541,22 +541,22 @@ bool plFileUtils::GetSecureEncryptionKey(const wchar* filename, UInt32* key, uns
         hsUNIXStream file;
         file.Open(keyFile.c_str(), L"rb");
 
-        unsigned bytesToRead = length * sizeof(UInt32);
-        byte* buffer = (byte*)ALLOC(bytesToRead);
+        unsigned bytesToRead = length * sizeof(uint32_t);
+        uint8_t* buffer = (uint8_t*)malloc(bytesToRead);
         unsigned bytesRead = file.Read(bytesToRead, buffer);
 
         file.Close();
 
         unsigned memSize = min(bytesToRead, bytesRead);
         memcpy(key, buffer, memSize);
-        FREE(buffer);
+        free(buffer);
 
         return true;
     }
 
     // file doesn't exist, use default key
     unsigned memSize = min(length, arrsize(plSecureStream::kDefaultKey));
-    memSize *= sizeof(UInt32);
+    memSize *= sizeof(uint32_t);
     memcpy(key, plSecureStream::kDefaultKey, memSize);
 
     return false;

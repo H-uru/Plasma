@@ -88,7 +88,7 @@ plUpdatableClient::~plUpdatableClient()
 
 void plUpdatableClient::InitUpdate(const char *semaphoreName, const char *pipeName, const char *dir)
 {
-    fUpdateSignal = TRACKED_NEW hsSemaphore(0, semaphoreName);
+    fUpdateSignal = new hsSemaphore(0, semaphoreName);
     fPipeName = pipeName;
     fDataPath = dir;
 }
@@ -123,7 +123,7 @@ void plUpdatableClient::IGetUpdate()
         fLog->AddLineF(plStatusLog::kBlue, "SceneViewer Update #%d", numUpdates);
 #endif // LOG_SCENEVIWER
 
-        UInt8 type = s.ReadByte();
+        uint8_t type = s.ReadByte();
 
         if (type == ClientUpdate::kShutdown)
         {
@@ -270,29 +270,29 @@ void plUpdatableClient::IEnableProxies(bool enable)
         // switch back on any drawable proxies
         if (fPipeline->GetDrawableTypeMask() & plDrawableSpans::kAudibleProxy)
         {   
-            plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kAudible | plProxyDrawMsg::kCreate);
+            plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kAudible | plProxyDrawMsg::kCreate);
             plgDispatch::MsgSend(msg);
         }
         if (fPipeline->GetDrawableTypeMask() & plDrawableSpans::kOccluderProxy)
         {   
-            plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kOccluder | plProxyDrawMsg::kCreate);
+            plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kOccluder | plProxyDrawMsg::kCreate);
             plgDispatch::MsgSend(msg);
         }
         if (fPipeline->GetDrawableTypeMask() & plDrawableSpans::kPhysicalProxy)
         {   
-            plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kPhysical | plProxyDrawMsg::kCreate);
+            plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kPhysical | plProxyDrawMsg::kCreate);
             plgDispatch::MsgSend(msg);
         }
         if (fPipeline->GetDrawableTypeMask() & plDrawableSpans::kLightProxy)
         {   
-            plProxyDrawMsg* msg = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kLight | plProxyDrawMsg::kCreate);
+            plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kLight | plProxyDrawMsg::kCreate);
             plgDispatch::MsgSend(msg);
         }
     }
     else
     {
         // notify any and all drawable proxies to stop drawing...
-        plProxyDrawMsg* nuke = TRACKED_NEW plProxyDrawMsg(plProxyDrawMsg::kAudible
+        plProxyDrawMsg* nuke = new plProxyDrawMsg(plProxyDrawMsg::kAudible
                                                 | plProxyDrawMsg::kOccluder
                                                 | plProxyDrawMsg::kPhysical
                                                 | plProxyDrawMsg::kLight

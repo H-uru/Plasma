@@ -175,7 +175,7 @@ plOccNode* plOccTree::IAddPolyRecur(plOccNode* node, plOccPoly* poly)
     plOccPoly* outPoly = nil;
 
 
-    UInt32 test = ITestPoly(node->fPlane, poly, inPoly, outPoly);
+    uint32_t test = ITestPoly(node->fPlane, poly, inPoly, outPoly);
 
     switch( test )
     {

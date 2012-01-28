@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_NET_CLIENT_inc
 #define PL_NET_CLIENT_inc
 
-#include "hsConfig.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include "plNetClientGroup.h"
@@ -126,7 +125,7 @@ public:
         // must be set by user
         plStateDataRecord* fSDRec;  // the sdl data record
         plUoid  fUoid;              // the object it's meant for
-        UInt32  fPlayerID;          // the player that originally sent the state
+        uint32_t  fPlayerID;          // the player that originally sent the state
 
         // set by NetClient
         plKey fKey;                 // the key of the object it's meant for
@@ -163,15 +162,15 @@ private:
     std::string         fIniAccountName;
     std::string         fIniAccountPass;
     std::string         fIniAuthServer;
-    UInt32              fIniPlayerID;   // the player we want to load from vault.
+    uint32_t              fIniPlayerID;   // the player we want to load from vault.
     std::string         fSPDesiredPlayerName;   // SP: the player we want to load from vault.
     
     // server info
     double              fServerTimeOffset;      // diff between our unified time and server's unified time
-    UInt32              fTimeSamples;
+    uint32_t              fTimeSamples;
     double              fLastTimeUpdate;
 
-    UInt8               fJoinOrder;         // returned by the server
+    uint8_t               fJoinOrder;         // returned by the server
     
     // voice lists
     int     fListenListMode;            // how we are generating our listen list    
@@ -186,9 +185,9 @@ private:
     std::vector<plNetClientRecorder*> fMsgPlayers;
 
     plKey   fAgeSDLObjectKey;
-    UInt8 fExperimentalLevel;
+    uint8_t fExperimentalLevel;
     plNetClientStats fNetClientStats;
-    UInt8   fPingServerType;        // non-zero if we're pinging someone
+    uint8_t   fPingServerType;        // non-zero if we're pinging someone
     float   fOverrideAgeTimeOfDayPercent;   // for console debugging
 
     int fNumInitialSDLStates;
@@ -219,7 +218,7 @@ private:
     void IHandleNetVoiceListMsg(plNetVoiceListMsg* msg);
     hsBool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, hsBool forceSynch);
     int IPrepMsg(plNetMessage* msg);
-    void IPlayerChangeAge(hsBool exiting, Int32 spawnPt);   
+    void IPlayerChangeAge(hsBool exiting, int32_t spawnPt);   
     
     void IAddCloneRoom();
     void IRemoveCloneRoom();
@@ -228,7 +227,7 @@ private:
     
     plKey ILoadClone(plLoadCloneMsg *cloneMsg);
 
-    bool IFindModifier(plSynchedObject* obj, Int16 classIdx);
+    bool IFindModifier(plSynchedObject* obj, int16_t classIdx);
     void IClearPendingLoads();
 
     // recorder
@@ -277,22 +276,22 @@ public:
     void SetIniAuthServer(const char * value)  { fIniAuthServer=value;}
     void SetIniAccountName(const char * value) { fIniAccountName=value;}
     void SetIniAccountPass(const char * value) { fIniAccountPass=value;}
-    void SetIniPlayerID(UInt32 value)          { fIniPlayerID=value;}
+    void SetIniPlayerID(uint32_t value)          { fIniPlayerID=value;}
 
     void SetSPDesiredPlayerName( const char * value ) { fSPDesiredPlayerName=value;}
     const char * GetSPDesiredPlayerName() const { return fSPDesiredPlayerName.c_str(); }
 
     void SetLocalPlayerKey(plKey l, hsBool pageOut=false);
     void SetNullSend(hsBool on);        // turn null send on/off
-    void SetPingServer(UInt8 serverType) { fPingServerType = serverType; }
+    void SetPingServer(uint8_t serverType) { fPingServerType = serverType; }
     
     // getters
-    UInt32              GetPlayerID( void ) const;
+    uint32_t              GetPlayerID( void ) const;
     const char *        GetPlayerName( const plKey avKey=nil ) const;
     const char *        GetPlayerNameById (unsigned playerId) const;
     unsigned            GetPlayerIdByName(const char name[]) const;
 
-    UInt8 GetJoinOrder()                const { return fJoinOrder; }    // only valid at join time
+    uint8_t GetJoinOrder()                const { return fJoinOrder; }    // only valid at join time
 
     plKey GetLocalPlayerKey()           const { return fLocalPlayerKey; }
     plSynchedObject* GetLocalPlayer(hsBool forceLoad=false) const;
@@ -311,7 +310,7 @@ public:
     void    IncTaskProgress( const char *msg );
 
     // avatar vault actions
-    int UploadPlayerVault(UInt32 vaultFlags);
+    int UploadPlayerVault(uint32_t vaultFlags);
     
     // remote players
     const std::vector<plKey>& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
@@ -354,7 +353,7 @@ public:
     void MakeCCRInvisible(plKey avKey, int level);
     bool CCRVaultConnected() const { return GetFlagsBit(kCCRVaultConnected); }
 
-    UInt8 GetExperimentalLevel() const { return fExperimentalLevel; }
+    uint8_t GetExperimentalLevel() const { return fExperimentalLevel; }
 
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
@@ -381,7 +380,7 @@ public:
     bool IsObjectOwner();
     void SetObjectOwner(bool own);
 
-    void StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, UInt32 sendFlags, UInt32 writeOptions);
+    void StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, uint32_t sendFlags, uint32_t writeOptions);
 
     void UpdateServerTimeOffset(plNetMessage* msg);
     void ResetServerTimeOffset();
@@ -392,8 +391,8 @@ private:
     
     int IInitNetClientComm();
     int IDeInitNetClientComm();
-    void INetClientCommOpStarted(UInt32 context);
-    void INetClientCommOpComplete(UInt32 context, int resultCode);
+    void INetClientCommOpStarted(uint32_t context);
+    void INetClientCommOpComplete(uint32_t context, int resultCode);
 
     friend struct plNCAgeJoiner;
     friend struct plNCAgeLeaver;

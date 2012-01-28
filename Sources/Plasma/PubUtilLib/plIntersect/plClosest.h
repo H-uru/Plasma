@@ -65,21 +65,21 @@ enum plClosestClampFlags
 
 
     // Return clamp flags for where clamped
-    static UInt32 PointOnLine(const hsPoint3& p0,                       // Point
+    static uint32_t PointOnLine(const hsPoint3& p0,                       // Point
                             const hsPoint3& p1, const hsVector3& v1,    // Line
                             hsPoint3& cp,                               // Output closest point on line to p0
-                            UInt32 clamp);                              // Clamp on ends of segment (use Lower1/Upper1)
+                            uint32_t clamp);                              // Clamp on ends of segment (use Lower1/Upper1)
 
     // Return clamp flags for where clamped
-    static UInt32 PointsOnLines(const hsPoint3& p0, const hsVector3& v0,// First line
+    static uint32_t PointsOnLines(const hsPoint3& p0, const hsVector3& v0,// First line
                               const hsPoint3& p1, const hsVector3& v1,  // Second line
                               hsPoint3& cp0,                            // Output closest on line0 to line1
                               hsPoint3& cp1,                            // Output closest on line1 to line0
-                              UInt32 clamp);                            // Clamp on ends
+                              uint32_t clamp);                            // Clamp on ends
 
     //  Return true if p0 is inside or on sphere.
     static hsBool PointOnSphere(const hsPoint3& p0,                     // Point
-                            const hsPoint3& center, hsScalar rad,       // Sphere
+                            const hsPoint3& center, float rad,       // Sphere
                             hsPoint3& cp);                              // Output closest on sphere to p0
 
     // Return true if p0 is inside box.
@@ -92,9 +92,9 @@ enum plClosestClampFlags
 
     // Return true if line intersects or is inside sphere.
     static hsBool PointOnSphere(const hsPoint3& p0, const hsVector3& v0,    // Line
-                            const hsPoint3& center, hsScalar rad,           // Sphere
+                            const hsPoint3& center, float rad,           // Sphere
                             hsPoint3& cp,                                   // Output closest on sphere to p0, or entry point if line hits sphere
-                            UInt32 clamp);
+                            uint32_t clamp);
 
     // Return true if line intersects or is inside box.
     static hsBool PointOnBox(const hsPoint3& p0, const hsVector3& v0,   // Line
@@ -103,7 +103,7 @@ enum plClosestClampFlags
                             const hsVector3& axis1,
                             const hsVector3& axis2,
                             hsPoint3& cp,
-                            UInt32 clamp);
+                            uint32_t clamp);
 
     // Return true if point inside (negative side) of plane
     static hsBool PointOnPlane(const hsPoint3& p0,
@@ -114,7 +114,7 @@ enum plClosestClampFlags
     static hsBool PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
                             const hsPoint3& pPln, const hsVector3& n,
                             hsPoint3& cp,
-                            UInt32 clamp);
+                            uint32_t clamp);
 
     // Two identical functions, just different wrapping. First version repacks
     // parameters and calls second.

@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_PNNPCLI2AUTH_H
 
 
-// kNetProtocolCli2Auth messages (must be <= (word)-1)
+// kNetProtocolCli2Auth messages (must be <= (uint16_t)-1)
 enum {
     // Global
     kCli2Auth_PingRequest,
@@ -133,7 +133,7 @@ enum {
 
     kNumCli2AuthMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Auth, kNumCli2AuthMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Auth, kNumCli2AuthMessages <= (uint16_t)-1);
 
 enum {
     // Global
@@ -212,7 +212,7 @@ enum {
 
     kNumAuth2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Auth, kNumAuth2CliMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Auth, kNumAuth2CliMessages <= (uint16_t)-1);
 
 
 //============================================================================
@@ -228,7 +228,7 @@ COMPILER_ASSERT_HEADER(Cli2Auth, kNumAuth2CliMessages <= (word)-1);
 ***/
 
 struct Cli2Auth_ConnData {
-    dword       dataBytes;
+    uint32_t       dataBytes;
     Uuid        token;
 };
 struct Cli2Auth_Connect {
@@ -246,399 +246,399 @@ struct Cli2Auth_Connect {
 // PingRequest
 extern const NetMsg kNetMsg_Cli2Auth_PingRequest;
 struct Cli2Auth_PingRequest {
-    dword       messageId;
-    dword       pingTimeMs;
-    dword       transId;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       messageId;
+    uint32_t       pingTimeMs;
+    uint32_t       transId;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // ClientRegisterRequest
 extern const NetMsg kNetMsg_Cli2Auth_ClientRegisterRequest;
 struct Cli2Auth_ClientRegisterRequest {
-    dword       messageId;
-    dword       buildId;
+    uint32_t       messageId;
+    uint32_t       buildId;
 };
 
 // AccountExists
 extern const NetMsg kNetMsg_Cli2Auth_AccountExistsRequest;
 struct Cli2Auth_AccountExistsRequest {
-    dword messageId;
-    dword transId;
-    wchar accountName[kMaxAccountNameLength];
+    uint32_t messageId;
+    uint32_t transId;
+    wchar_t accountName[kMaxAccountNameLength];
 };
 
 // LoginRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctLoginRequest;
 struct Cli2Auth_AcctLoginRequest {
-    dword       messageId;
-    dword       transId;
-    dword       clientChallenge;
-    wchar       acctName[kMaxAccountNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       clientChallenge;
+    wchar_t       acctName[kMaxAccountNameLength];
     ShaDigest   challengeHash;
-    wchar       authToken[kMaxPublisherAuthKeyLength];
-    wchar       os[kMaxGTOSIdLength];
+    wchar_t       authToken[kMaxPublisherAuthKeyLength];
+    wchar_t       os[kMaxGTOSIdLength];
 };
 
 // AgeRequest
 extern const NetMsg kNetMsg_Cli2Auth_AgeRequest;
 struct Cli2Auth_AgeRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       ageName[kMaxAgeNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       ageName[kMaxAgeNameLength];
     Uuid        ageUuid;
 };
 
 // AcctCreateRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctCreateRequest;
 struct Cli2Auth_AcctCreateRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       accountName[kMaxAccountNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
-    dword       accountFlags;
-    dword       billingType;
+    uint32_t       accountFlags;
+    uint32_t       billingType;
 };
 
 // AcctCreateFromKeyRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctCreateFromKeyRequest;
 struct Cli2Auth_AcctCreateFromKeyRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       accountName[kMaxAccountNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
     Uuid        key;
-    dword       billingType;
+    uint32_t       billingType;
 };
 
 // CreatePlayerRequest
 extern const NetMsg kNetMsg_Cli2Auth_PlayerCreateRequest;
 struct Cli2Auth_PlayerCreateRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       playerName[kMaxPlayerNameLength];
-    wchar       avatarShape[MAX_PATH];
-    wchar       friendInvite[MAX_PATH];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       playerName[kMaxPlayerNameLength];
+    wchar_t       avatarShape[MAX_PATH];
+    wchar_t       friendInvite[MAX_PATH];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_PlayerDeleteRequest;
 struct Cli2Auth_PlayerDeleteRequest {
-    dword       messageId;
-    dword       transId;
-    dword       playerId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       playerId;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_UpgradeVisitorRequest;
 struct Cli2Auth_UpgradeVisitorRequest {
-    dword       messageId;
-    dword       transId;
-    dword       playerId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       playerId;
 };
 
 // SetPlayerRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctSetPlayerRequest;
 struct Cli2Auth_AcctSetPlayerRequest {
-    dword       messageId;
-    dword       transId;
-    dword       playerInt;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       playerInt;
 };
 
 // ChangePasswordRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctChangePasswordRequest;
 struct Cli2Auth_AcctChangePasswordRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       accountName[kMaxAccountNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
 };
 
 // AcctSetRolesRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctSetRolesRequest;
 struct Cli2Auth_AcctSetRolesRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       accountName[kMaxAccountNameLength];
-    dword       accountFlags;
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       accountName[kMaxAccountNameLength];
+    uint32_t       accountFlags;
 };
 
 // AcctSetBillingTypeRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctSetBillingTypeRequest;
 struct Cli2Auth_AcctSetBillingTypeRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       accountName[kMaxAccountNameLength];
-    dword       billingType;
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       accountName[kMaxAccountNameLength];
+    uint32_t       billingType;
 };
 
 // AcctActivateRequest
 extern const NetMsg kNetMsg_Cli2Auth_AcctActivateRequest;
 struct Cli2Auth_AcctActivateRequest {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
     Uuid        activationKey;
 };
 
 // FileListRequest
 extern const NetMsg kNetMsg_Cli2Auth_FileListRequest;
 struct Cli2Auth_FileListRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       directory[MAX_PATH];
-    wchar       ext[MAX_EXT];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       directory[MAX_PATH];
+    wchar_t       ext[MAX_EXT];
 };
 
 // FileDownloadRequest
 extern const NetMsg kNetMsg_Cli2Auth_FileDownloadRequest;
 struct Cli2Auth_FileDownloadRequest {
-    dword       messageId;
-    dword       transId;
-    wchar       filename[MAX_PATH];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       filename[MAX_PATH];
 };
 
 // FileDownloadChunkAck
 extern const NetMsg kNetMsg_Cli2Auth_FileDownloadChunkAck;
 struct Cli2Auth_FileDownloadChunkAck {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
 };
 
 // VaultFetchNodeRefs
 extern const NetMsg kNetMsg_Cli2Auth_VaultFetchNodeRefs;
 struct Cli2Auth_VaultFetchNodeRefs {
-    dword       messageId;
-    dword       transId;
-    dword       nodeId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       nodeId;
 };
 
 // VaultNodeAdd
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeAdd;
 struct Cli2Auth_VaultNodeAdd {
-    dword       messageId;
-    dword       transId;
-    dword       parentId;
-    dword       childId;
-    dword       ownerId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       parentId;
+    uint32_t       childId;
+    uint32_t       ownerId;
 };
 
 // VaultNodeRemove
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeRemove;
 struct Cli2Auth_VaultNodeRemove {
-    dword       messageId;
-    dword       transId;
-    dword       parentId;
-    dword       childId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       parentId;
+    uint32_t       childId;
 };
 
 // VaultNodeSave
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeSave;
 struct Cli2Auth_VaultNodeSave {
-    dword       messageId;
-    dword       transId;
-    dword       nodeId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       nodeId;
     Uuid        revisionId;
-    dword       nodeBytes;
-    byte        nodeBuffer[1];
+    uint32_t       nodeBytes;
+    uint8_t        nodeBuffer[1];
 };
 
 // VaultNodeCreate
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeCreate;
 struct Cli2Auth_VaultNodeCreate {
-    dword       messageId;
-    dword       transId;
-    dword       nodeBytes;
-    byte        nodeBuffer[1];
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       nodeBytes;
+    uint8_t        nodeBuffer[1];
 };
 
 // VaultNodeFetch
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeFetch;
 struct Cli2Auth_VaultNodeFetch {
-    dword       messageId;
-    dword       transId;
-    dword       nodeId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       nodeId;
 };
 
 // VaultInitAgeRequest
 extern const NetMsg kNetMsg_Cli2Auth_VaultInitAgeRequest;
 struct Cli2Auth_VaultInitAgeRequest {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
     Uuid        ageInstId;
     Uuid        parentAgeInstId;
-    wchar       ageFilename[MAX_PATH];
-    wchar       ageInstName[MAX_PATH];
-    wchar       ageUserName[MAX_PATH];
-    wchar       ageDesc[1024];
-    dword       ageSequenceNumber;
-    dword       ageLanguage;
+    wchar_t       ageFilename[MAX_PATH];
+    wchar_t       ageInstName[MAX_PATH];
+    wchar_t       ageUserName[MAX_PATH];
+    wchar_t       ageDesc[1024];
+    uint32_t       ageSequenceNumber;
+    uint32_t       ageLanguage;
 };
 
 // VaultNodeFind
 extern const NetMsg kNetMsg_Cli2Auth_VaultNodeFind;
 struct Cli2Auth_VaultNodeFind {
-    dword       messageId;
-    dword       transId;
-    dword       nodeBytes;
-    byte        nodeBuffer[1];
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       nodeBytes;
+    uint8_t        nodeBuffer[1];
 };
 
 // VaultSetSeen
 extern const NetMsg kNetMsg_Cli2Auth_VaultSetSeen;
 struct Cli2Auth_VaultSetSeen {
-    dword       messageId;
-    dword       parentId;
-    dword       childId;
-    byte        seen;
+    uint32_t       messageId;
+    uint32_t       parentId;
+    uint32_t       childId;
+    uint8_t        seen;
 };
 
 // VaultSendNode
 extern const NetMsg kNetMsg_Cli2Auth_VaultSendNode;
 struct Cli2Auth_VaultSendNode {
-    dword       messageId;
-    dword       srcNodeId;
-    dword       dstPlayerId;
+    uint32_t       messageId;
+    uint32_t       srcNodeId;
+    uint32_t       dstPlayerId;
 };
 
 // GetPublicAgeList
 extern const NetMsg kNetMsg_Cli2Auth_GetPublicAgeList;
 struct Cli2Auth_GetPublicAgeList {
-    dword       messageId;
-    dword       transId;
-    wchar       ageFilename[kMaxAgeNameLength];
+    uint32_t       messageId;
+    uint32_t       transId;
+    wchar_t       ageFilename[kMaxAgeNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_SetAgePublic;
 struct Cli2Auth_SetAgePublic {
-    dword       messageId;
-    dword       ageInfoId;
-    byte        publicOrNot;
+    uint32_t       messageId;
+    uint32_t       ageInfoId;
+    uint8_t        publicOrNot;
 };
 
 // PropagateBuffer
 extern const NetMsg kNetMsg_Cli2Auth_PropagateBuffer;
 struct Cli2Auth_PropagateBuffer {
-    dword       messageId;
-    dword       type;
-    dword       bytes;
-    byte        buffer[1];  // [bytes], actually
+    uint32_t       messageId;
+    uint32_t       type;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // [bytes], actually
     // no more fields
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ClientSetCCRLevel;
 struct Cli2Auth_ClientSetCCRLevel {
-    dword       messageId;
-    dword       ccrLevel;
+    uint32_t       messageId;
+    uint32_t       ccrLevel;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_LogPythonTraceback;
 struct Cli2Auth_LogPythonTraceback {
-    dword messageId;
-    wchar traceback[1024];
+    uint32_t messageId;
+    wchar_t traceback[1024];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_LogStackDump;
 struct Cli2Auth_LogStackDump {
-    dword messageId;
-    wchar stackdump[1024];
+    uint32_t messageId;
+    wchar_t stackdump[1024];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_LogClientDebuggerConnect;
 struct Cli2Auth_LogClientDebuggerConnect {
-    dword   messageId;
+    uint32_t   messageId;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_SetPlayerBanStatusRequest;
 struct Cli2Auth_SetPlayerBanStatusRequest {
-    dword messageId;
-    dword transId;
-    dword playerId;
-    dword banned;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t playerId;
+    uint32_t banned;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_KickPlayer;
 struct Cli2Auth_KickPlayer {
-    dword messageId;
-    dword playerId;
+    uint32_t messageId;
+    uint32_t playerId;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ChangePlayerNameRequest;
 struct Cli2Auth_ChangePlayerNameRequest {
-    dword messageId;
-    dword transId;
-    dword playerId;
-    wchar newName[kMaxPlayerNameLength];
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t playerId;
+    wchar_t newName[kMaxPlayerNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_SendFriendInviteRequest;
 struct Cli2Auth_SendFriendInviteRequest {
-    dword   messageId;
-    dword   transId;
+    uint32_t   messageId;
+    uint32_t   transId;
     Uuid    inviteUuid;
-    wchar   emailAddress[kMaxEmailAddressLength];
-    wchar   toName[kMaxPlayerNameLength];
+    wchar_t   emailAddress[kMaxEmailAddressLength];
+    wchar_t   toName[kMaxPlayerNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreCreate;
 struct Cli2Auth_ScoreCreate {
-    dword messageId;
-    dword transId;
-    dword ownerId;
-    wchar gameName[kMaxGameScoreNameLength];
-    dword gameType;
-    dword scoreValue;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t ownerId;
+    wchar_t gameName[kMaxGameScoreNameLength];
+    uint32_t gameType;
+    uint32_t scoreValue;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreDelete;
 struct Cli2Auth_ScoreDelete {
-    dword messageId;
-    dword transId;
-    dword scoreId;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t scoreId;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreGetScores;
 struct Cli2Auth_ScoreGetScores {
-    dword messageId;
-    dword transId;
-    dword ownerId;
-    wchar gameName[kMaxGameScoreNameLength];
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t ownerId;
+    wchar_t gameName[kMaxGameScoreNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreAddPoints;
 struct Cli2Auth_ScoreAddPoints {
-    dword messageId;
-    dword transId;
-    dword scoreId;
-    dword numPoints;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t scoreId;
+    uint32_t numPoints;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreTransferPoints;
 struct Cli2Auth_ScoreTransferPoints {
-    dword messageId;
-    dword transId;
-    dword srcScoreId;
-    dword destScoreId;
-    dword numPoints;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t srcScoreId;
+    uint32_t destScoreId;
+    uint32_t numPoints;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreSetPoints;
 struct Cli2Auth_ScoreSetPoints {
-    dword messageId;
-    dword transId;
-    dword scoreId;
-    dword numPoints;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t scoreId;
+    uint32_t numPoints;
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreGetRanks;
 struct Cli2Auth_ScoreGetRanks {
-    dword messageId;
-    dword transId;
-    dword ownerId;
-    dword scoreGroup;
-    dword parentFolderId;
-    wchar gameName[kMaxGameScoreNameLength];
-    dword timePeriod;
-    dword numResults;
-    dword pageNumber;
-    dword sortDesc;
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t ownerId;
+    uint32_t scoreGroup;
+    uint32_t parentFolderId;
+    wchar_t gameName[kMaxGameScoreNameLength];
+    uint32_t timePeriod;
+    uint32_t numResults;
+    uint32_t pageNumber;
+    uint32_t sortDesc;
 };
 
 
@@ -651,82 +651,82 @@ struct Cli2Auth_ScoreGetRanks {
 // PingReply
 extern const NetMsg kNetMsg_Auth2Cli_PingReply;
 struct Auth2Cli_PingReply {
-    dword       messageId;
-    dword       pingTimeMs;
-    dword       transId;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       messageId;
+    uint32_t       pingTimeMs;
+    uint32_t       transId;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // ClientRegisterReply
 extern const NetMsg kNetMsg_Auth2Cli_ClientRegisterReply;
 struct Auth2Cli_ClientRegisterReply {
-    dword       messageId;
-    dword       serverChallenge;
+    uint32_t       messageId;
+    uint32_t       serverChallenge;
 };
 
 // AccountExists
 extern const NetMsg kNetMsg_Auth2Cli_AccountExistsReply;
 struct Auth2Cli_AccountExistsReply {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
     ENetError   result;
-    byte        exists;
+    uint8_t        exists;
 };
 
 // ServerAddr
 extern const NetMsg kNetMsg_Auth2Cli_ServerAddr;
 struct Auth2Cli_ServerAddr {
-    dword           messageId;
+    uint32_t           messageId;
     NetAddressNode  srvAddr;
     Uuid            token;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_NotifyNewBuild;
 struct Auth2Cli_NotifyNewBuild {
-    dword           foo;        // msgs must have at least one field
+    uint32_t           foo;        // msgs must have at least one field
 };
 
 // AcctPlayerInfo
 extern const NetMsg kNetMsg_Auth2Cli_AcctPlayerInfo;
 struct Auth2Cli_AcctPlayerInfo {
-    dword       messageId;
-    dword       transId;
-    dword       playerInt;
-    wchar       playerName[kMaxPlayerNameLength];
-    wchar       avatarShape[kMaxVaultNodeStringLength];
-    dword       explorer;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       playerInt;
+    wchar_t       playerName[kMaxPlayerNameLength];
+    wchar_t       avatarShape[kMaxVaultNodeStringLength];
+    uint32_t       explorer;
 };
 
 // LoginReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctLoginReply;
 struct Auth2Cli_AcctLoginReply {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
     ENetError   result;
     Uuid        accountId;
-    dword       accountFlags;
-    dword       billingType;
-    dword       encryptionKey[4];
+    uint32_t       accountFlags;
+    uint32_t       billingType;
+    uint32_t       encryptionKey[4];
 };
 
 // AgeReply
 extern const NetMsg kNetMsg_Auth2Cli_AgeReply;
 struct Auth2Cli_AgeReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           ageMcpId;
+    uint32_t           ageMcpId;
     Uuid            ageInstId;
-    dword           ageVaultId;
+    uint32_t           ageVaultId;
     NetAddressNode  gameSrvNode;
 };
 
 // AcctCreateReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctCreateReply;
 struct Auth2Cli_AcctCreateReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
     Uuid            accountId;
 };
@@ -734,8 +734,8 @@ struct Auth2Cli_AcctCreateReply {
 // AcctCreateFromKeyReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctCreateFromKeyReply;
 struct Auth2Cli_AcctCreateFromKeyReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
     Uuid            accountId;
     Uuid            activationKey;
@@ -744,302 +744,302 @@ struct Auth2Cli_AcctCreateFromKeyReply {
 // CreatePlayerReply
 extern const NetMsg kNetMsg_Auth2Cli_PlayerCreateReply;
 struct Auth2Cli_PlayerCreateReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           playerInt;
-    dword           explorer;
-    wchar           playerName[kMaxPlayerNameLength];
-    wchar           avatarShape[kMaxVaultNodeStringLength];
+    uint32_t           playerInt;
+    uint32_t           explorer;
+    wchar_t           playerName[kMaxPlayerNameLength];
+    wchar_t           avatarShape[kMaxVaultNodeStringLength];
 };
 
 // DeletePlayerReply
 extern const NetMsg kNetMsg_Auth2Cli_PlayerDeleteReply;
 struct Auth2Cli_PlayerDeleteReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // DeletePlayerReply
 extern const NetMsg kNetMsg_Auth2Cli_UpgradeVisitorReply;
 struct Auth2Cli_UpgradeVisitorReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // SetPlayerReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctSetPlayerReply;
 struct Auth2Cli_AcctSetPlayerReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // AcctChangePasswordReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctChangePasswordReply;
 struct Auth2Cli_AcctChangePasswordReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // AcctSetRolesReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctSetRolesReply;
 struct Auth2Cli_AcctSetRolesReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // AcctSetBillingTypeReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctSetBillingTypeReply;
 struct Auth2Cli_AcctSetBillingTypeReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // AcctActivateReply
 extern const NetMsg kNetMsg_Auth2Cli_AcctActivateReply;
 struct Auth2Cli_AcctActivateReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // FileListReply
 extern const NetMsg kNetMsg_Auth2Cli_FileListReply;
 struct Auth2Cli_FileListReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           wcharCount;
-    wchar           fileData[1];        // [wcharCount], actually
+    uint32_t           wchar_tCount;
+    wchar_t           fileData[1];        // [wchar_tCount], actually
     // no more fields
 };
 
 // FileDownloadChunk
 extern const NetMsg kNetMsg_Auth2Cli_FileDownloadChunk;
 struct Auth2Cli_FileDownloadChunk {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           fileSize;
-    dword           chunkOffset;
-    dword           chunkSize;
-    byte            chunkData[1];       // [chunkSize], actually
+    uint32_t           fileSize;
+    uint32_t           chunkOffset;
+    uint32_t           chunkSize;
+    uint8_t            chunkData[1];       // [chunkSize], actually
     // no more fields
 };
 
 // KickedOff
 extern const NetMsg kNetMsg_Auth2Cli_KickedOff;
 struct Auth2Cli_KickedOff {
-    dword           messageId;
+    uint32_t           messageId;
     ENetError       reason;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeRefsFetched;
 struct Auth2Cli_VaultNodeRefsFetched {
-    dword                   messageId;
-    dword                   transId;
+    uint32_t                   messageId;
+    uint32_t                   transId;
     ENetError               result;
-    dword                   refCount;
+    uint32_t                   refCount;
     NetVaultNodeRef         refs[1];
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeCreated;
 struct Auth2Cli_VaultNodeCreated {
-    dword                   messageId;
-    dword                   transId;
+    uint32_t                   messageId;
+    uint32_t                   transId;
     ENetError               result;
-    dword                   nodeId;
+    uint32_t                   nodeId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeFetched;
 struct Auth2Cli_VaultNodeFetched {
-    dword                   messageId;
-    dword                   transId;
+    uint32_t                   messageId;
+    uint32_t                   transId;
     ENetError               result;
-    dword                   nodeBytes;
-    byte                    nodeBuffer[1];
+    uint32_t                   nodeBytes;
+    uint8_t                    nodeBuffer[1];
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeChanged;
 struct Auth2Cli_VaultNodeChanged {
-    dword                   messageId;
-    dword                   nodeId;
+    uint32_t                   messageId;
+    uint32_t                   nodeId;
     Uuid                    revisionId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeAdded;
 struct Auth2Cli_VaultNodeAdded {
-    dword                   messageId;
-    dword                   parentId;
-    dword                   childId;
-    dword                   ownerId;
+    uint32_t                   messageId;
+    uint32_t                   parentId;
+    uint32_t                   childId;
+    uint32_t                   ownerId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeRemoved;
 struct Auth2Cli_VaultNodeRemoved {
-    dword                   messageId;
-    dword                   parentId;
-    dword                   childId;
+    uint32_t                   messageId;
+    uint32_t                   parentId;
+    uint32_t                   childId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeDeleted;
 struct Auth2Cli_VaultNodeDeleted {
-    dword                   messageId;
-    dword                   nodeId;
+    uint32_t                   messageId;
+    uint32_t                   nodeId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultSaveNodeReply;
 struct Auth2Cli_VaultSaveNodeReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultAddNodeReply;
 struct Auth2Cli_VaultAddNodeReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultRemoveNodeReply;
 struct Auth2Cli_VaultRemoveNodeReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultInitAgeReply;
 struct Auth2Cli_VaultInitAgeReply {
-    dword                   messageId;
-    dword                   transId;
+    uint32_t                   messageId;
+    uint32_t                   transId;
     ENetError               result;
-    dword                   ageVaultId;
-    dword                   ageInfoVaultId;
+    uint32_t                   ageVaultId;
+    uint32_t                   ageInfoVaultId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeFindReply;
 struct Auth2Cli_VaultNodeFindReply {
-    dword                   messageId;
-    dword                   transId;
+    uint32_t                   messageId;
+    uint32_t                   transId;
     ENetError               result;
-    dword                   nodeIdCount;
-    dword                   nodeIds[1];
+    uint32_t                   nodeIdCount;
+    uint32_t                   nodeIds[1];
 };
 
 // PublicAgeList
 extern const NetMsg kNetMsg_Auth2Cli_PublicAgeList;
 struct Auth2Cli_PublicAgeList {
-    dword               messageId;
-    dword               transId;
+    uint32_t               messageId;
+    uint32_t               transId;
     ENetError           result;
-    dword               ageCount;
+    uint32_t               ageCount;
     NetAgeInfo          ages[1];    // [ageCount], actually
 };
 
 // PropagateBuffer
 extern const NetMsg kNetMsg_Auth2Cli_PropagateBuffer;
 struct Auth2Cli_PropagateBuffer {
-    dword       messageId;
-    dword       type;
-    dword       bytes;
-    byte        buffer[1];  // [bytes], actually
+    uint32_t       messageId;
+    uint32_t       type;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // [bytes], actually
     // no more fields
 };
 
 // SetPlayerBanStatusReply
 extern const NetMsg kNetMsg_Auth2Cli_SetPlayerBanStatusReply;
 struct Auth2Cli_SetPlayerBanStatusReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ChangePlayerNameReply
 extern const NetMsg kNetMsg_Auth2Cli_ChangePlayerNameReply;
 struct Auth2Cli_ChangePlayerNameReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // SendFriendInviteReply
 extern const NetMsg kNetMsg_Auth2Cli_SendFriendInviteReply;
 struct Auth2Cli_SendFriendInviteReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ScoreCreateReply
 extern const NetMsg kNetMsg_Auth2Cli_ScoreCreateReply;
 struct Auth2Cli_ScoreCreateReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           scoreId;
-    dword           createdTime;
+    uint32_t           scoreId;
+    uint32_t           createdTime;
 };
 
 // ScoreDeleteReply
 extern const NetMsg kNetMsg_Auth2Cli_ScoreDeleteReply;
 struct Auth2Cli_ScoreDeleteReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ScoreGetScoresReply
 extern const NetMsg kNetMsg_Auth2Cli_ScoreGetScoresReply;
 struct Auth2Cli_ScoreGetScoresReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           scoreCount;
-    dword           byteCount;
-    byte            buffer[1];  // [byteCount], actually
+    uint32_t           scoreCount;
+    uint32_t           byteCount;
+    uint8_t            buffer[1];  // [byteCount], actually
     // no more fields
 };
 
 // ScoreAddPoints
 extern const NetMsg kNetMsg_Auth2Cli_ScoreAddPointsReply;
 struct Auth2Cli_ScoreAddPointsReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ScoreTransferPoints
 extern const NetMsg kNetMsg_Auth2Cli_ScoreTransferPointsReply;
 struct Auth2Cli_ScoreTransferPointsReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ScoreSetPoints
 extern const NetMsg kNetMsg_Auth2Cli_ScoreSetPointsReply;
 struct Auth2Cli_ScoreSetPointsReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
 };
 
 // ScoreGetRanksReply
 extern const NetMsg kNetMsg_Auth2Cli_ScoreGetRanksReply;
 struct Auth2Cli_ScoreGetRanksReply {
-    dword           messageId;
-    dword           transId;
+    uint32_t           messageId;
+    uint32_t           transId;
     ENetError       result;
-    dword           rankCount;
-    dword           byteCount;
-    byte            buffer[1];  // [byteCount], actually
+    uint32_t           rankCount;
+    uint32_t           byteCount;
+    uint8_t            buffer[1];  // [byteCount], actually
     // no more fields
 };
 

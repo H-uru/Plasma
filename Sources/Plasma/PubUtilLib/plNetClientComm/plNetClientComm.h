@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   $/Plasma20/Sources/Plasma/PubUtilLib/plNetClientComm/plNetClientComm.h
 *
 *   This module is the translation layer between simple network types
-*   such as byte arrays, and higher-level Plasma-specific types such
+*   such as uint8_t arrays, and higher-level Plasma-specific types such
 *   as the plFactory-managed types.
 *   
 ***/
@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENTCOMM_PLNETCLIENTCOMM_H
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
@@ -72,7 +72,7 @@ class plNetMessage;
 
 struct NetCommPlayer {
     unsigned    playerInt;
-    wchar       playerName[kMaxPlayerNameLength];
+    wchar_t       playerName[kMaxPlayerNameLength];
     char        playerNameAnsi[kMaxPlayerNameLength];
     char        avatarDatasetName[64];
     unsigned    explorer;
@@ -80,7 +80,7 @@ struct NetCommPlayer {
 
 struct NetCommAccount {
     Uuid        accountUuid;
-    wchar       accountName[kMaxAccountNameLength];
+    wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   accountNamePassHash;
     char        accountNameAnsi[kMaxAccountNameLength];
     unsigned    accountFlags;
@@ -102,13 +102,13 @@ const ARRAY(NetCommPlayer) &        NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();
 void                                NetCommSetReadIniAccountInfo (bool readFromIni);
-void                                NetCommSetAccountUsernamePassword (wchar username[], const ShaDigest &  namePassHash);
-void                                NetCommSetAuthTokenAndOS (wchar authToken[], wchar os[]);
+void                                NetCommSetAccountUsernamePassword (wchar_t username[], const ShaDigest &  namePassHash);
+void                                NetCommSetAuthTokenAndOS (wchar_t authToken[], wchar_t os[]);
 ENetError                           NetCommGetAuthResult ();
 
 bool                                NetCommNeedToLoadAvatar ();
 void                                NetCommSetAvatarLoaded (bool loaded = true);
-void                                NetCommChangeMyPassword (const wchar password[]);
+void                                NetCommChangeMyPassword (const wchar_t password[]);
 
 void NetCommStartup ();
 void NetCommShutdown ();
@@ -186,12 +186,12 @@ void NetCommAuthenticate (  // --> plNetCommAuthMsg
     void *                  param
 );
 void NetCommGetFileList (   // --> plNetCommFileListMsg
-    const wchar             dir[],
-    const wchar             ext[],
+    const wchar_t             dir[],
+    const wchar_t             ext[],
     void *                  param
 );
 void NetCommGetFile (       // --> plNetCommFileDownloadMsg
-    const wchar             filename[],
+    const wchar_t             filename[],
     hsStream *              writer,
     void *                  param
 );
@@ -211,9 +211,9 @@ void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
     void *                  param
 );
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const wchar             playerName[],
-    const wchar             avatarShape[],
-    const wchar             friendInvite[],
+    const wchar_t             playerName[],
+    const wchar_t             avatarShape[],
+    const wchar_t             friendInvite[],
     unsigned                createFlags,
     void *                  param
 );
@@ -278,8 +278,8 @@ void NetCommSetCCRLevel (
     unsigned                ccrLevel
 );
 void NetCommSendFriendInvite (
-    const wchar     emailAddress[],
-    const wchar     toName[],
+    const wchar_t     emailAddress[],
+    const wchar_t     toName[],
     const Uuid&     inviteUuid
 );
 
@@ -349,14 +349,14 @@ public:
         plCreatableListHelper   fCbArgs;
         //-------------------------------
         virtual ~Callback(){}
-        virtual void OperationStarted( UInt32 context ) = 0;
-        virtual void OperationComplete( UInt32 context, int resultCode ) = 0;
+        virtual void OperationStarted( uint32_t context ) = 0;
+        virtual void OperationComplete( uint32_t context, int resultCode ) = 0;
     };
     class StubbedCallback : public Callback
     {
     public:
-        void OperationStarted( UInt32 context ) {}
-        void OperationComplete( UInt32 context, int resultCode ) {}
+        void OperationStarted( uint32_t context ) {}
+        void OperationComplete( uint32_t context, int resultCode ) {}
     };
 
     // Message handler for unsolicited msgs or registered for specific msg types.
@@ -375,10 +375,10 @@ public:
     ////////////////////////////////////////////////////////////////
 
     // Adds a msg handler for a msg that is convertable to specified type.
-    void    AddMsgHandlerForType( UInt16 msgClassIdx, MsgHandler* handler );
+    void    AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler );
 
     // Adds a msg handler for a specific msg type.
-    void    AddMsgHandlerForExactType( UInt16 msgClassIdx, MsgHandler* handler );
+    void    AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler );
 
     bool    RemoveMsgHandler( MsgHandler* handler );
 

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /////////////////////////////////////////////////////////////////////////
 
-inline hsBool OverflowAdd(UInt32* sum, UInt32 a, UInt32 b)
+inline hsBool OverflowAdd(uint32_t* sum, uint32_t a, uint32_t b)
 {
     *sum = a + b;
 
@@ -55,19 +55,19 @@ inline hsBool OverflowAdd(UInt32* sum, UInt32 a, UInt32 b)
     
     wide = (high << 32) + (middle << 16) + low
 */
-inline hsBool SetWide3(hsWide* target, Int32 high, UInt32 middle, UInt32 low)
+inline hsBool SetWide3(hsWide* target, int32_t high, uint32_t middle, uint32_t low)
 {
     hsAssert(high >= 0, "high is neg");
 
     target->fLo = low + (middle << 16);
-    target->fHi = high + (middle >> 16) + (((low >> 16) + (UInt16)middle) >> 16);
+    target->fHi = high + (middle >> 16) + (((low >> 16) + (uint16_t)middle) >> 16);
 
     return target->fHi < 0; // true if overflow
 }
 
 /////////////////////////////////////////////////////////////////////////
 
-hsWide* hsWide::Mul(Int32 src1, Int32 src2)
+hsWide* hsWide::Mul(int32_t src1, int32_t src2)
 {
     int neg = 0;
     
@@ -80,10 +80,10 @@ hsWide* hsWide::Mul(Int32 src1, Int32 src2)
         neg = ~neg;
     }
     
-    UInt32  a = src1 >> 16;
-    UInt32  b = (UInt16)src1;
-    UInt32  c = src2 >> 16;
-    UInt32  d = (UInt16)src2;
+    uint32_t  a = src1 >> 16;
+    uint32_t  b = (uint16_t)src1;
+    uint32_t  c = src2 >> 16;
+    uint32_t  d = (uint16_t)src2;
     
     (void)SetWide3(this, a * c, a * d + c * b, b * d);
 
@@ -92,13 +92,13 @@ hsWide* hsWide::Mul(Int32 src1, Int32 src2)
     return this;
 }
 
-hsWide* hsWide::Mul(Int32 A)
+hsWide* hsWide::Mul(int32_t A)
 {
     int     neg = 0;
-    UInt32  B = fLo;
-    Int32   C = fHi;
-    Int32   tmp;
-    UInt32  clo,blo,bhi,alo;
+    uint32_t  B = fLo;
+    int32_t   C = fHi;
+    int32_t   tmp;
+    uint32_t  clo,blo,bhi,alo;
 
     if (A < 0)
     {   A = -A;
@@ -109,37 +109,37 @@ hsWide* hsWide::Mul(Int32 A)
         neg = ~neg;
     }
 
-    UInt32  ahi = A >> 16;
-    UInt32  chi = C >> 16;
+    uint32_t  ahi = A >> 16;
+    uint32_t  chi = C >> 16;
     if (ahi != 0 && chi != 0)
         goto OVER_FLOW;
 
-    alo = (UInt16)A;
+    alo = (uint16_t)A;
     bhi = B >> 16;
-    blo = (UInt16)B;
-    clo = (UInt16)C;
+    blo = (uint16_t)B;
+    clo = (uint16_t)C;
 
     tmp = alo * clo;
     if (tmp < 0 || SetWide3(this, tmp, alo * bhi, alo * blo))
         goto OVER_FLOW;
 
     if (chi != 0)
-    {   UInt32  Vh = alo * chi;
+    {   uint32_t  Vh = alo * chi;
         if (Vh >> 15)
             goto OVER_FLOW;
-        if (((this->fHi >> 16) + (UInt16)Vh) >> 15)
+        if (((this->fHi >> 16) + (uint16_t)Vh) >> 15)
             goto OVER_FLOW;
         this->fHi += Vh << 16;
     }
     else                            // ahi != 0 && chi == 0
     {   hsWide  w;
-        UInt32  Vh = ahi * clo;
+        uint32_t  Vh = ahi * clo;
         if (Vh >> 16)
             goto OVER_FLOW;
         tmp = ahi * bhi;
         if (tmp < 0 || SetWide3(&w, tmp, ahi * blo, 0))
             goto OVER_FLOW;
-        if (((w.fHi >> 16) + (UInt16)Vh) >> 15)
+        if (((w.fHi >> 16) + (uint16_t)Vh) >> 15)
             goto OVER_FLOW;
         w.fHi += Vh << 16;
         this->Add(&w);
@@ -154,7 +154,7 @@ OVER_FLOW:
     return this;
 }
 
-hsWide* hsWide::Div(Int32 denom)
+hsWide* hsWide::Div(int32_t denom)
 {
     if (denom == 0)
     {   if (this->IsNeg())
@@ -169,10 +169,10 @@ hsWide* hsWide::Div(Int32 denom)
     }
 
     int     neg = 0;
-    Int32   resultH = 0;
-    UInt32  resultL = 0;
-    Int32   numerH = this->fHi;
-    UInt32  numerL = this->fLo;
+    int32_t   resultH = 0;
+    uint32_t  resultL = 0;
+    int32_t   numerH = this->fHi;
+    uint32_t  numerL = this->fLo;
 
     if (denom < 0)
     {   denom = -denom;
@@ -185,18 +185,18 @@ hsWide* hsWide::Div(Int32 denom)
     
     WIDE_ADDPOS(numerH, numerL, denom >> 1);    // add denom/2 to get a round result
 
-    UInt32  curr = (UInt32)numerH >> 31;
+    uint32_t  curr = (uint32_t)numerH >> 31;
 
     for (int i = 0; i < 64; i++)
     {
         WIDE_SHIFTLEFT(resultH, resultL, resultH, resultL, 1);
-        if (UInt32(denom) <= curr)
+        if (uint32_t(denom) <= curr)
         {
             resultL |= 1;
             curr -= denom;
         }
         WIDE_SHIFTLEFT(numerH, numerL, numerH, numerL, 1);
-        curr = (curr << 1) | ((UInt32)numerH >> 31);
+        curr = (curr << 1) | ((uint32_t)numerH >> 31);
     }
 
     if (neg)
@@ -223,7 +223,7 @@ hsWide* hsWide::Div(const hsWide* denom)
 
 inline int MaxLeftShift(const hsWide* w)
 {
-    Int32 hi = w->fHi;
+    int32_t hi = w->fHi;
 
     if (hi == 0)
         return 31;
@@ -240,7 +240,7 @@ inline int MaxLeftShift(const hsWide* w)
     }
 }
 
-hsFixed hsWide::FixDiv(const hsWide* denom) const
+int32_t hsWide::FixDiv(const hsWide* denom) const
 {
     hsWide  num = *this;
     hsWide  den = *denom;
@@ -256,7 +256,7 @@ hsFixed hsWide::FixDiv(const hsWide* denom) const
     return num.Div(&den)->AsLong();
 }
 
-hsFract hsWide::FracDiv(const hsWide* denom) const
+int32_t hsWide::FracDiv(const hsWide* denom) const
 {
     hsWide  num = *this;
     hsWide  den = *denom;
@@ -274,15 +274,15 @@ hsFract hsWide::FracDiv(const hsWide* denom) const
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-Int32 hsWide::Sqrt() const
+int32_t hsWide::Sqrt() const
 {
     int     bits = 32;
-    UInt32  root = 0;
-    UInt32  valueH = (UInt32)fHi;
-    UInt32  valueL = fLo;
-    UInt32  currH = 0;
-    UInt32  currL = 0;
-    UInt32  guessH, guessL;
+    uint32_t  root = 0;
+    uint32_t  valueH = (uint32_t)fHi;
+    uint32_t  valueL = fLo;
+    uint32_t  currH = 0;
+    uint32_t  currL = 0;
+    uint32_t  guessH, guessL;
     
     do {
         WIDE_SHIFTLEFT(currH, currL, currH, currL, 2);
@@ -297,21 +297,17 @@ Int32 hsWide::Sqrt() const
         }
     } while (--bits);
 
-#if HS_PIN_MATH_OVERFLOW
-    if ((Int32)root < 0)
-        return kPosInfinity32;
-#endif
-    return (Int32)root;
+    return (int32_t)root;
 }
 
-Int32 hsWide::CubeRoot() const
+int32_t hsWide::CubeRoot() const
 {
     int     bits = 21;
-    UInt32  root = 0;
-    UInt32  valueH = (UInt32)fHi;
-    UInt32  valueL = fLo;
-    UInt32  currH, currL;
-    UInt32  guessH, guessL;
+    uint32_t  root = 0;
+    uint32_t  valueH = (uint32_t)fHi;
+    uint32_t  valueL = fLo;
+    uint32_t  currH, currL;
+    uint32_t  guessH, guessL;
     hsBool  neg = false;
 
     if (WIDE_ISNEG(valueH, valueL))
@@ -336,7 +332,7 @@ Int32 hsWide::CubeRoot() const
         hsWide w2 = w;
         w.ShiftLeft(1)->Add(&w2);
     #endif
-        guessH = (UInt32)w.fHi;
+        guessH = (uint32_t)w.fHi;
         guessL = w.fLo;
 
         if (WIDE_LESSTHAN(guessH, guessL, currH, currL))
@@ -347,7 +343,7 @@ Int32 hsWide::CubeRoot() const
     } while (--bits);
 
     if (neg)
-        root = -Int32(root);
-    return (Int32)root;
+        root = -int32_t(root);
+    return (int32_t)root;
 }
 

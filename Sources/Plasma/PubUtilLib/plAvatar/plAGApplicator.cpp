@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGApplicator.h"
 #include "plAGModifier.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 
 // ctor --------
 // -----
@@ -117,8 +117,8 @@ plAGApplicator *plAGApplicator::CloneWithChannel(plAGChannel *channel)
 
 hsBool plAGApplicator::CanBlend(plAGApplicator *app)
 {
-    UInt16 ourClass = ClassIndex();
-    UInt16 theirClass = app->ClassIndex();
+    uint16_t ourClass = ClassIndex();
+    uint16_t theirClass = app->ClassIndex();
 
     return(ourClass == theirClass);
 
@@ -175,7 +175,7 @@ plSimulationInterface * plAGApplicator::IGetSI(const plAGModifier * modifier) co
     return modifier->LeakSI();
 }
 
-plObjInterface * plAGApplicator::IGetGI(const plAGModifier * modifier, UInt16 classIdx) const
+plObjInterface * plAGApplicator::IGetGI(const plAGModifier * modifier, uint16_t classIdx) const
 {
     return modifier->LeakGI(classIdx);
 }

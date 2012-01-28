@@ -63,7 +63,7 @@ class pfGUIDialogNotifyProc : public pfGUIDialogProc
         
         plKey   fReceiver;
 
-        void    ISendNotify( plKey ctrlKey, UInt32 event );
+        void    ISendNotify( plKey ctrlKey, uint32_t event );
 
     public:
 

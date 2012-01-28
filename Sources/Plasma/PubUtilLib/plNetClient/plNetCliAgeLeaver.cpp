@@ -139,7 +139,7 @@ void plNCAgeLeaver::Complete (bool success, const char msg[]) {
         notify.msg      = msg;
         
         callback(this, kAgeLeaveComplete, &notify, userState);
-        DEL(this);
+        delete this;
     }
 }
 
@@ -193,7 +193,7 @@ void plNCAgeLeaver::ExecNextOp () {
 
         //====================================================================
         case kDisableClickables: {
-            (TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
+            (new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables))->Send();
             nextOp = kLinkOutFX;
         }
         break;

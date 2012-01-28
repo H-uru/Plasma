@@ -70,8 +70,8 @@ protected:
     pyGUIPopUpMenu(plKey objkey);
     pyGUIPopUpMenu();
     // For creating new menus on the fly
-    pyGUIPopUpMenu( const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
-    pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY );
+    pyGUIPopUpMenu( const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+    pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY );
 
 public:
     virtual ~pyGUIPopUpMenu();
@@ -81,8 +81,8 @@ public:
     PYTHON_CLASS_NEW_DEFINITION;
     static PyObject *New(pyKey& gckey);
     static PyObject *New(plKey objkey);
-    static PyObject *New(const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
-    static PyObject *New(const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY);
+    static PyObject *New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
+    static PyObject *New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIPopUpMenu object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIPopUpMenu); // converts a PyObject to a pyGUIPopUpMenu (throws error if not correct type)
 
@@ -90,8 +90,8 @@ public:
 
     // these three are for the python glue only, do NOT call
     void setup(plKey objkey);
-    void setup(const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
-    void setup(const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY);
+    void setup(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
+    void setup(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
 
     static hsBool IsGUIPopUpMenu(pyKey& gckey);
 
@@ -104,14 +104,14 @@ public:
     virtual PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual UInt32  GetTagID();
+    virtual uint32_t  GetTagID();
 
     virtual void    SetEnabled( hsBool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
     virtual hsBool      IsEnabled( void );
     virtual const char  *GetName( void );
-    virtual UInt32      GetVersion(void);
+    virtual uint32_t      GetVersion(void);
 
     virtual void        Show( void );
     virtual void        Hide( void );
@@ -122,10 +122,10 @@ public:
     virtual PyObject*   GetBackColor(); // returns pyColor
     virtual PyObject*   GetBackSelColor(); // returns pyColor
     // set color scheme
-    virtual void        SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
-    virtual void        SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a );
+    virtual void        SetForeColor( float r, float g, float b, float a );
+    virtual void        SetSelColor( float r, float g, float b, float a );
+    virtual void        SetBackColor( float r, float g, float b, float a );
+    virtual void        SetBackSelColor( float r, float g, float b, float a );
 
     // Menu item functions
     virtual void        AddConsoleCmdItem( const char *name, const char *consoleCmd );

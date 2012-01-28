@@ -73,7 +73,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtYesNoDialog, args, "Params: selfkey,dialogMess
     if (PyUnicode_Check(dialogMsgObj))
     {
         int len = PyUnicode_GetSize(dialogMsgObj);
-        wchar_t* text = TRACKED_NEW wchar_t[len + 1];
+        wchar_t* text = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)dialogMsgObj, text, len);
         text[len] = L'\0';
         cyMisc::YesNoDialog(*key, text);

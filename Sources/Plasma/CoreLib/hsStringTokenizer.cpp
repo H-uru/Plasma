@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // hsStringTokenizer.cpp
 
 #include "hsStringTokenizer.h"
-#include "hsUtils.h"
+
 
 // String Tokenizer routines
 hsStringTokenizer::hsStringTokenizer(const char *string, const char *seps) :
@@ -72,7 +72,7 @@ inline hsBool hsStringTokenizer::IsSep(char c)
     {
         if ( fCheckAlphaNum || !isalnum(c) )
         {
-            for (Int32 i=0; i<fNumSeps; i++) 
+            for (int32_t i=0; i<fNumSeps; i++) 
             {
                 if (fSeps[i] == c) 
                     return true;
@@ -111,7 +111,7 @@ char *hsStringTokenizer::next()
 }
 
 // Slightly more loop-friendly version of next
-hsBool  hsStringTokenizer::Next( char *token, UInt32 maxTokLen )
+hsBool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
 {
     char *t = next();
     if( t == nil )
@@ -142,7 +142,7 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
     fSeps = seps ? hsStrcpy(seps) : nil;
     fNumSeps = fSeps ? strlen(fSeps) : 0;
     fCheckAlphaNum = false;
-    for (Int32 i=0; i<fNumSeps; i++)
+    for (int32_t i=0; i<fNumSeps; i++)
     {
         if (isalnum(fSeps[i]))
         {
@@ -169,7 +169,7 @@ void hsStringTokenizer::ParseQuotes(hsBool qAsTok)
 ///////////////////////////////////////////////////////////////////////////////
 
 // String Tokenizer routines
-hsWStringTokenizer::hsWStringTokenizer(const wchar *string, const wchar *seps) :
+hsWStringTokenizer::hsWStringTokenizer(const wchar_t *string, const wchar_t *seps) :
     fQAsTok(true),
     fInQuote(false),
     fString(nil),
@@ -190,13 +190,13 @@ hsBool hsWStringTokenizer::HasMoreTokens()
     return (*fTok != L'\0');
 }
 
-inline hsBool hsWStringTokenizer::IsSep(wchar c) 
+inline hsBool hsWStringTokenizer::IsSep(wchar_t c) 
 {
     if (!fQAsTok || !fInQuote) 
     {
         if ( fCheckAlphaNum || !iswalnum(c) )
         {
-            for (Int32 i=0; i<fNumSeps; i++) 
+            for (int32_t i=0; i<fNumSeps; i++) 
             {
                 if (fSeps[i] == c) 
                     return true;
@@ -211,12 +211,12 @@ inline hsBool hsWStringTokenizer::IsSep(wchar c)
     return false;
 }
 
-wchar *hsWStringTokenizer::next() 
+wchar_t *hsWStringTokenizer::next() 
 {
     if (*fTok == L'\0') 
         return nil;
 
-    wchar *cur = fTok;
+    wchar_t *cur = fTok;
     while (*fTok != L'\0' && !IsSep(*fTok)) 
         fTok++;
 
@@ -235,9 +235,9 @@ wchar *hsWStringTokenizer::next()
 }
 
 // Slightly more loop-friendly version of next
-hsBool  hsWStringTokenizer::Next( wchar *token, UInt32 maxTokLen )
+hsBool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
 {
-    wchar *t = next();
+    wchar_t *t = next();
     if( t == nil )
         return false;
 
@@ -256,14 +256,14 @@ void    hsWStringTokenizer::RestoreLastTerminator( void )
     }
 }
 
-void hsWStringTokenizer::Reset(const wchar *string, const wchar *seps) 
+void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps) 
 {
     if (fString)
         delete[] fString;
     if (string)
     {
         int count = wcslen(string);
-        fString = new wchar[count + 1];
+        fString = new wchar_t[count + 1];
         wcscpy(fString, string);
         fString[count] = L'\0';
     }
@@ -275,7 +275,7 @@ void hsWStringTokenizer::Reset(const wchar *string, const wchar *seps)
     if (seps)
     {
         int count = wcslen(seps);
-        fSeps = new wchar[count + 1];
+        fSeps = new wchar_t[count + 1];
         wcscpy(fSeps, seps);
         fSeps[count] = L'\0';
     }
@@ -284,7 +284,7 @@ void hsWStringTokenizer::Reset(const wchar *string, const wchar *seps)
 
     fNumSeps = fSeps ? wcslen(fSeps) : 0;
     fCheckAlphaNum = false;
-    for (Int32 i=0; i<fNumSeps; i++)
+    for (int32_t i=0; i<fNumSeps; i++)
     {
         if (iswalnum(fSeps[i]))
         {

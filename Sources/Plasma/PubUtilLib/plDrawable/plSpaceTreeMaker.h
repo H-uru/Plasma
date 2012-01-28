@@ -55,8 +55,8 @@ class plSpacePrepNode
 public:
     hsBounds3Ext        fWorldBounds;
 
-    Int16               fIndex;
-    Int16               fDataIndex;
+    int16_t               fIndex;
+    int16_t               fDataIndex;
 
     plSpacePrepNode*    fChildren[2];
 };
@@ -71,15 +71,15 @@ protected:
     hsBitVector                     fDisabled;
 
     plSpacePrepNode*                fPrepTree;
-    Int16                           fTreeSize;
+    int16_t                           fTreeSize;
 
     plSpacePrepNode*                INewSubRoot(const hsBounds3Ext& bnd);
-    void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, hsScalar length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
+    void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
     void                            ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis);
     void                            ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis, hsTArray<plSpacePrepNode*>& lower, hsTArray<plSpacePrepNode*>& upper);
-    hsBounds3Ext                    IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis);
+    hsBounds3Ext                    IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
     plSpacePrepNode*                IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
-    hsBounds3Ext                    IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, hsScalar& length, hsVector3& axis);
+    hsBounds3Ext                    IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
     plSpacePrepNode*                IMakeTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
 
     void                            IMakeTree();
@@ -98,7 +98,7 @@ public:
     void                            Cleanup();
 
     void                            Reset();
-    Int32                           AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable=false);
+    int32_t                           AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable=false);
     plSpaceTree*                    MakeTree();
 
     void                            TestTree(); // development only - NUKE ME mf horse

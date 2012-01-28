@@ -166,7 +166,7 @@ template<class T, class K, unsigned keyOffset, class Cmp>
 typename TSkipList<T,K,keyOffset,Cmp>::Node* TSkipList<T,K,keyOffset,Cmp>::AllocNode (unsigned level) {
 
     unsigned size = offsetof(Node, next) + (level + 1) * sizeof(Node);
-    Node * node = (Node *)ALLOC(size);
+    Node * node = (Node *)malloc(size);
     node->level = level;
     return node;
 }
@@ -175,7 +175,7 @@ typename TSkipList<T,K,keyOffset,Cmp>::Node* TSkipList<T,K,keyOffset,Cmp>::Alloc
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::FreeNode (TNode<T,K> * node) {
 
-    FREE(node);
+    free(node);
 }
 
 //============================================================================
@@ -243,7 +243,7 @@ void TSkipList<T,K,keyOffset,Cmp>::Clear () {
     Node * ptr = m_head->next[0];
     while (ptr != m_stop) {
         Node * next = ptr->next[0];
-        DEL(ptr->object);
+        delete ptr->object;
         FreeNode(ptr);
         ptr = next;
     }
@@ -259,7 +259,7 @@ template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Delete (T * object) {
 
     Unlink(object);
-    DEL(object);
+    delete object;
 }
 
 //============================================================================
@@ -374,7 +374,7 @@ T * TSkipList<T,K,keyOffset,Cmp>::Tail (SkipListTag * tag) const {
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Link (T * object) {
 
-    const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const uint8_t *)object + keyOffset);
 
     // Find the node's insertion point
     m_stop->key = key;
@@ -418,7 +418,7 @@ void TSkipList<T,K,keyOffset,Cmp>::Link (T * object) {
 template<class T, class K, unsigned keyOffset, class Cmp>
 void TSkipList<T,K,keyOffset,Cmp>::Unlink (T * object) {
 
-    const K * key = (const K *)((const byte *)object + keyOffset);
+    const K * key = (const K *)((const uint8_t *)object + keyOffset);
 
     Node * node = m_head;
     Node * update[kMaxLevels];

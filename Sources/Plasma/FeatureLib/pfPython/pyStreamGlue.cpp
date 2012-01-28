@@ -68,7 +68,7 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
     if (PyUnicode_Check(filenameObj))
     {
         int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
         text[strLen] = L'\0';
         filename = text;
@@ -92,7 +92,7 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
     if (PyUnicode_Check(flagsObj))
     {
         int strLen = PyUnicode_GetSize(flagsObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)flagsObj, text, strLen);
         text[strLen] = L'\0';
         flags = text;

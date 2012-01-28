@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
@@ -72,20 +72,20 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 {
     pfGUICtrlProcWriteableObject    *obj;
 
-    UInt32 type = s->ReadLE32();
+    uint32_t type = s->ReadLE32();
 
     switch( type )
     {
         case kConsoleCmd:
-            obj = TRACKED_NEW pfGUIConsoleCmdProc;
+            obj = new pfGUIConsoleCmdProc;
             break;
 
         case kPythonScript:
-            obj = TRACKED_NEW pfGUIPythonScriptProc;
+            obj = new pfGUIPythonScriptProc;
             break;
 
         case kCloseDlg:
-            obj = TRACKED_NEW pfGUICloseDlgProc;
+            obj = new pfGUICloseDlgProc;
             break;
 
         case kNull:
@@ -128,7 +128,7 @@ void    pfGUIConsoleCmdProc::IRead( hsStream *s )
     int i = s->ReadLE32();
     if( i > 0 )
     {
-        fCommand = TRACKED_NEW char[ i + 1 ];
+        fCommand = new char[ i + 1 ];
         memset( fCommand, 0, i + 1 );
         s->Read( i, fCommand );
     }
@@ -151,7 +151,7 @@ void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
 {
     if( fCommand != nil )
     {
-        plConsoleMsg *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
+        plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
         plgDispatch::MsgSend( cMsg );
     }
 }
@@ -164,7 +164,7 @@ void    pfGUIConsoleCmdProc::SetCommand( const char *cmd )
         fCommand = nil;
     else
     {
-        fCommand = TRACKED_NEW char[ strlen( cmd ) + 1 ];
+        fCommand = new char[ strlen( cmd ) + 1 ];
         memset( fCommand, 0, strlen( cmd ) + 1 );
         strcpy( fCommand, cmd );
     }

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "plParticle.h"
 #include "plParticleEffect.h"
@@ -98,7 +98,7 @@ void plParticleCollisionEffect::Read(hsStream *s, hsResMgr *mgr)
     hsKeyedObject::Read(s, mgr);
 
     plGenRefMsg* msg;
-    msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
+    msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
     mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
     fBounds = nil;
 }
@@ -118,7 +118,7 @@ plParticleCollisionEffectBeat::plParticleCollisionEffectBeat()
 {
 }
 
-hsBool plParticleCollisionEffectBeat::ApplyEffect(const plEffectTargetInfo &target, Int32 i)
+hsBool plParticleCollisionEffectBeat::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -137,7 +137,7 @@ plParticleCollisionEffectDie::plParticleCollisionEffectDie()
 {
 }
 
-hsBool plParticleCollisionEffectDie::ApplyEffect(const plEffectTargetInfo &target, Int32 i)
+hsBool plParticleCollisionEffectDie::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -156,7 +156,7 @@ plParticleCollisionEffectBounce::plParticleCollisionEffectBounce()
 {
 }
 
-hsBool plParticleCollisionEffectBounce::ApplyEffect(const plEffectTargetInfo &target, Int32 i)
+hsBool plParticleCollisionEffectBounce::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -234,9 +234,9 @@ plParticleFadeVolumeEffect::~plParticleFadeVolumeEffect()
 // The shorter the distance, the more noticable the fade out.
 // Note the wierdness between the fractions, because kFadeFrac is fraction
 // of fLength, but kFadeParm and kInvFadeFrac are fraction of 2.f*fLength. Sorry.
-const hsScalar kFadeFrac = 0.5f;
-const hsScalar kFadeParm = 1.f - kFadeFrac * 0.5f;
-const hsScalar kInvFadeFrac = 1.f / (kFadeFrac * 0.5f);
+const float kFadeFrac = 0.5f;
+const float kFadeParm = 1.f - kFadeFrac * 0.5f;
+const float kInvFadeFrac = 1.f / (kFadeFrac * 0.5f);
 
 void plParticleFadeVolumeEffect::PrepareEffect(const plEffectTargetInfo &target)
 {
@@ -265,13 +265,13 @@ void plParticleFadeVolumeEffect::PrepareEffect(const plEffectTargetInfo &target)
     fNorm.fZ = 1.f / (fMax.fZ - fMin.fZ);
 }
 
-hsBool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target, Int32 i)
+hsBool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     hsPoint3 *currPos = (hsPoint3 *)(target.fPos + i * target.fPosStride);
 
-    hsScalar parm;
+    float parm;
 
-    hsScalar fade = 1.f;
+    float fade = 1.f;
 
     parm = (currPos->fX - fMin.fX) * fNorm.fX;
     if( parm < 0 )
@@ -338,8 +338,8 @@ hsBool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target,
 
     if( fade < 1.f )
     {
-        UInt32 *color = (UInt32 *)(target.fColor + i * target.fColorStride);
-        UInt32 alpha = (UInt32)((*color >> 24) * fade);
+        uint32_t *color = (uint32_t *)(target.fColor + i * target.fColorStride);
+        uint32_t alpha = (uint32_t)((*color >> 24) * fade);
         *color = (*color & 0x00ffffff) | (alpha << 24);
     }
 
@@ -409,7 +409,7 @@ void plParticleWindEffect::Write(hsStream *s, hsResMgr *mgr)
 void plParticleWindEffect::SetRefDirection(const hsVector3& v)
 {
     fRefDir = v;
-    hsScalar lenSq = fRefDir.MagnitudeSquared();
+    float lenSq = fRefDir.MagnitudeSquared();
     if( lenSq > 1.e-1f )
     {
         fDir = fRefDir * hsFastMath::InvSqrtAppr(lenSq);
@@ -484,12 +484,12 @@ void plParticleLocalWind::PrepareEffect(const plEffectTargetInfo& target)
 }
 
 
-hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, Int32 i)
+hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     const hsPoint3& pos = *(hsPoint3 *)(target.fPos + i * target.fPosStride);
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
 
-    const hsScalar kMinToBother = 0;
+    const float kMinToBother = 0;
 
     float strength = 1.f / ( (1.f + fConstancy) * (1.f + fConstancy) );
     float s, c, t;
@@ -516,7 +516,7 @@ hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, Int32 
     strength *= c;
 #endif
 
-    const hsScalar& invMass = *(hsScalar*)(target.fInvMass + i * target.fInvMassStride);
+    const float& invMass = *(float*)(target.fInvMass + i * target.fInvMassStride);
     strength *= invMass;
 
     vel += fWindVec * strength;
@@ -569,9 +569,9 @@ void plParticleUniformWind::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLEScalar(fFreqRate);
 }
 
-void plParticleUniformWind::SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar maxSecsPerCycle)
+void plParticleUniformWind::SetFrequencyRange(float minSecsPerCycle, float maxSecsPerCycle)
 {
-    const hsScalar kMinSecsPerCycle = 1.f;
+    const float kMinSecsPerCycle = 1.f;
     if( minSecsPerCycle < kMinSecsPerCycle )
         minSecsPerCycle = kMinSecsPerCycle;
     if( minSecsPerCycle < kMinSecsPerCycle )
@@ -589,9 +589,9 @@ void plParticleUniformWind::SetFrequencyRange(hsScalar minSecsPerCycle, hsScalar
     }
 }
 
-void plParticleUniformWind::SetFrequencyRate(hsScalar secsPerCycle)
+void plParticleUniformWind::SetFrequencyRate(float secsPerCycle)
 {
-    const hsScalar kMinSecsPerCycle = 1.f;
+    const float kMinSecsPerCycle = 1.f;
     if( secsPerCycle < kMinSecsPerCycle )
         secsPerCycle = kMinSecsPerCycle;
     fFreqRate = 1.f / secsPerCycle;
@@ -606,9 +606,9 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
     {
         static plRandom random;
 
-        const double kTwoPi = hsScalarPI * 2.0;
+        const double kTwoPi = M_PI * 2.0;
         double t0 = fFreqCurr * fLastFreqSecs + fCurrPhase;
-        hsScalar t1 = (hsScalar)fmod(t0, kTwoPi);
+        float t1 = (float)fmod(t0, kTwoPi);
         fCurrPhase -= t0 - t1;
 
         fFreqCurr += fFreqRate * target.fContext.fDelSecs * random.RandZeroToOne();
@@ -624,11 +624,11 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
             fFreqRate = -fFreqRate;
         }
         
-        hsScalar phaseDel = (hsScalar)(t1 - (fFreqCurr * fLastFreqSecs + fCurrPhase));
+        float phaseDel = (float)(t1 - (fFreqCurr * fLastFreqSecs + fCurrPhase));
         fCurrPhase += phaseDel;
         
-        hsScalar t = hsScalar(fFreqCurr * target.fContext.fSecs + fCurrPhase);
-        hsScalar s;
+        float t = float(fFreqCurr * target.fContext.fSecs + fCurrPhase);
+        float s;
         hsFastMath::SinCosAppr(t, s, fCurrentStrength);
         fCurrentStrength += fConstancy;
         fCurrentStrength /= (1.f + fConstancy);
@@ -641,11 +641,11 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
 }
 
 
-hsBool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, Int32 i)
+hsBool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
     
-    const hsScalar& invMass = *(hsScalar*)(target.fInvMass + i * target.fInvMassStride);
+    const float& invMass = *(float*)(target.fInvMass + i * target.fInvMassStride);
     
     vel += fWindVec * (invMass * fCurrentStrength);
     
@@ -729,9 +729,9 @@ void plParticleFlockEffect::IUpdateInfluences(const plEffectTargetInfo &target)
         }
 
         if (numAvg > 0)
-            fInfluences[i].fAvgVel /= (hsScalar)numAvg;
+            fInfluences[i].fAvgVel /= (float)numAvg;
         if (numRep > 0)
-            fInfluences[i].fRepDir /= (hsScalar)numRep;
+            fInfluences[i].fRepDir /= (float)numRep;
     }
 }
 
@@ -743,7 +743,7 @@ void plParticleFlockEffect::PrepareEffect(const plEffectTargetInfo& target)
 
 // Some of this is the same for every particle and should be cached in PrepareEffect().
 // Holding off on that until I like the behavior.
-hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int32 i)
+hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     if (i >= fMaxParticles)
         return false; // Don't have the memory to deal with you. Good luck kid...
@@ -751,9 +751,9 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int3
     const hsPoint3 &pos = *(hsPoint3*)(target.fPos + i * target.fPosStride);
     hsVector3 &vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
     
-    hsScalar curSpeed = vel.Magnitude();
+    float curSpeed = vel.Magnitude();
     hsPoint3 goal;
-    if (*(UInt32*)(target.fMiscFlags + i * target.fMiscFlagsStride) & plParticleExt::kImmortal)
+    if (*(uint32_t*)(target.fMiscFlags + i * target.fMiscFlagsStride) & plParticleExt::kImmortal)
         goal = target.fContext.fSystem->GetTarget(0)->GetLocalToWorld().GetTranslate() + fTargetOffset;
     else
         goal = fDissenterTarget;
@@ -761,13 +761,13 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int3
     hsVector3 goalDir;
     hsPoint3 tmp = goal - pos;
     goalDir.Set(&tmp);
-    hsScalar distSq = goalDir.MagnitudeSquared();
+    float distSq = goalDir.MagnitudeSquared();
     
     goalDir.Normalize();
     
-    hsScalar goalStr;
-    hsScalar maxSpeed;
-    hsScalar maxSpeedSq;
+    float goalStr;
+    float maxSpeed;
+    float maxSpeedSq;
     if (distSq <= fGoalDistSq)
     {       
         goalStr = fGoalOrbitStr;
@@ -785,7 +785,7 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int3
     }
     else
     {
-        hsScalar pct = (distSq - fGoalDistSq) / (fFullChaseDistSq - fGoalDistSq);
+        float pct = (distSq - fGoalDistSq) / (fFullChaseDistSq - fGoalDistSq);
         goalStr = fGoalOrbitStr + (fGoalChaseStr - fGoalOrbitStr) * pct;
         maxSpeed = fMaxOrbitSpeed + (fMaxChaseSpeed - fMaxOrbitSpeed) * pct;
     }
@@ -804,7 +804,7 @@ hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, Int3
     return false;
 }
 
-void plParticleFlockEffect::SetMaxParticles(const UInt16 num)
+void plParticleFlockEffect::SetMaxParticles(const uint16_t num)
 {
     delete [] fDistSq;
     delete [] fInfluences;
@@ -812,8 +812,8 @@ void plParticleFlockEffect::SetMaxParticles(const UInt16 num)
 
     if (num > 0)
     {
-        fDistSq = TRACKED_NEW hsScalar[num * num];
-        fInfluences = TRACKED_NEW plParticleInfluenceInfo[num];
+        fDistSq = new float[num * num];
+        fInfluences = new plParticleInfluenceInfo[num];
     }
 }
 
@@ -833,7 +833,7 @@ void plParticleFlockEffect::Read(hsStream *s, hsResMgr *mgr)
     fGoalChaseStr = s->ReadLEScalar();
     SetMaxOrbitSpeed(s->ReadLEScalar());
     SetMaxChaseSpeed(s->ReadLEScalar());
-    SetMaxParticles((UInt16)s->ReadLEScalar());
+    SetMaxParticles((uint16_t)s->ReadLEScalar());
 }
 
 void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
@@ -889,7 +889,7 @@ void plParticleFollowSystemEffect::PrepareEffect(const plEffectTargetInfo& targe
     fEvalThisFrame = (fOldW2L != target.fContext.fSystem->GetTarget(0)->GetWorldToLocal());
 }
 
-hsBool plParticleFollowSystemEffect::ApplyEffect(const plEffectTargetInfo& target, Int32 i)
+hsBool plParticleFollowSystemEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     if (fEvalThisFrame)
     {

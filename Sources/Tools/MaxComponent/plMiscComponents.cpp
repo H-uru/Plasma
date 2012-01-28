@@ -174,9 +174,9 @@ plInterestingComponent::plInterestingComponent()
 hsBool plInterestingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
-    plInterestingModifier* pMod = TRACKED_NEW plInterestingModifier;
+    plInterestingModifier* pMod = new plInterestingModifier;
     
-    hsScalar loader = fCompPB->GetFloat(kCamInterestRadius);
+    float loader = fCompPB->GetFloat(kCamInterestRadius);
     pMod->SetInterestRadius(loader);
     loader = fCompPB->GetFloat(kCamInterestWeight);
     pMod->SetInterestWeight(loader);
@@ -440,7 +440,7 @@ hsBool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMs
     fItinerant = fCompPB->GetInt(kItinerant);
 
     // Build our sequence number
-    Int32 newNum, seqNum;
+    int32_t newNum, seqNum;
     seqNum = plPageInfoUtils::CombineSeqNum( fCompPB->GetInt( kInfoSeqPrefix ), fCompPB->GetInt( kInfoSeqSuffix ) );
     newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, age, room );
     if( newNum != seqNum )
@@ -734,7 +734,7 @@ const char *plPageInfoUtils::GetAgeFolder()
         return nil;
 }
 
-Int32   plPageInfoUtils::CombineSeqNum( int prefix, int suffix )
+int32_t   plPageInfoUtils::CombineSeqNum( int prefix, int suffix )
 {
     hsAssert(abs(prefix) < 0xFF, "Sequence prefix must be less then the max 8-bit number");
     hsAssert(suffix <= 0xFFFF, "Sequence suffix must be less then the max 16-bit number");
@@ -745,7 +745,7 @@ Int32   plPageInfoUtils::CombineSeqNum( int prefix, int suffix )
         return ( prefix << 16 ) + suffix;
 }
 
-Int32   plPageInfoUtils::GetCommonSeqNumFromNormal( Int32 normalSeqNumber, int whichCommonPage )
+int32_t   plPageInfoUtils::GetCommonSeqNumFromNormal( int32_t normalSeqNumber, int whichCommonPage )
 {
     int     prefix;
     const int kFirstCommonSeqSuffix = 0xffff;
@@ -762,7 +762,7 @@ Int32   plPageInfoUtils::GetCommonSeqNumFromNormal( Int32 normalSeqNumber, int w
     return CombineSeqNum( prefix, kFirstCommonSeqSuffix - whichCommonPage );
 }
 
-Int32   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char *pageName )
+int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char *pageName )
 {
     int             seqPrefix, seqSuffix = 0;
     plAgeDescription *aged = GetAgeDesc( ageName );
@@ -806,7 +806,7 @@ plAgeDescription    *plPageInfoUtils::GetAgeDesc( const char *ageName )
         return nil;
 
     // Create and read the age desc
-    plAgeDescription *aged = TRACKED_NEW plAgeDescription;
+    plAgeDescription *aged = new plAgeDescription;
     aged->Read( &s );
     s.Close();
 
@@ -1109,7 +1109,7 @@ static hsBool FindMaxBounds(plMaxNode* node, hsBounds3Ext& bnd)
 hsBool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
-    plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+    plViewFaceModifier* pMod = new plViewFaceModifier;
 
     hsBounds3Ext maxBnd;
     if( FindMaxBounds(node, maxBnd) )
@@ -1201,7 +1201,7 @@ plSpriteComponent::plSpriteComponent()
 
 hsBool plSpriteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+    plViewFaceModifier* pMod = new plViewFaceModifier;
 
     hsBounds3Ext maxBnd;
     if( FindMaxBounds(node, maxBnd) )
@@ -1385,7 +1385,7 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;
     }
 
-    plPostEffectMod* mod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod* mod = new plPostEffectMod;
 
     float hither = cam->GetEnvRange(timeVal, ENV_NEAR_RANGE); 
     if( hither < 0.5f )
@@ -1398,7 +1398,7 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fov = cam->GetFOV(timeVal);
     // convert
     int FOVType = cam->GetFOVType();
-    hsScalar fovX, fovY;
+    float fovX, fovY;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -1414,8 +1414,8 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / hsScalarPI;
-    fovY *= 180.f / hsScalarPI;
+    fovX *= 180.f / M_PI;
+    fovY *= 180.f / M_PI;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 
@@ -1527,7 +1527,7 @@ public:
             {
                     IParamBlock2 *pb = map->GetParamBlock();
                     map->SetTooltip(kLeaderObjectSel, TRUE, "Press the button, & select the object to follow in one of the Viewports" );
-                    if( pb->GetInt(kLeaderTypeRadio) == Int32(plFollowMod::kObject) )
+                    if( pb->GetInt(kLeaderTypeRadio) == int32_t(plFollowMod::kObject) )
                         map->Enable(kLeaderObjectSel, TRUE);
                     else
                         map->Enable(kLeaderObjectSel, FALSE);
@@ -1543,7 +1543,7 @@ public:
                     || (LOWORD(wParam) == IDC_F_RADIO_OBJECT) )
                 {
                     IParamBlock2 *pb = map->GetParamBlock();
-                    if( pb->GetInt(kLeaderTypeRadio) == Int32(plFollowMod::kObject) )
+                    if( pb->GetInt(kLeaderTypeRadio) == int32_t(plFollowMod::kObject) )
                         map->Enable(kLeaderObjectSel, TRUE);
                     else
                         map->Enable(kLeaderObjectSel, FALSE);
@@ -1635,7 +1635,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
 {
     plFollowMod::FollowLeaderType lType = plFollowMod::FollowLeaderType(fCompPB->GetInt(kLeaderTypeRadio));
 
-    plFollowMod* follow = TRACKED_NEW plFollowMod;
+    plFollowMod* follow = new plFollowMod;
 
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), follow, pNode->GetLocation());
 
@@ -1650,7 +1650,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
                 plSceneObject* targObj = targNode->GetSceneObject();
                 if( targObj )
                 {
-                    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(follow->GetKey(), plRefMsg::kOnCreate, 0, plFollowMod::kRefLeader);
+                    plGenRefMsg* refMsg = new plGenRefMsg(follow->GetKey(), plRefMsg::kOnCreate, 0, plFollowMod::kRefLeader);
                     hsgResMgr::ResMgr()->AddViaNotify(targObj->GetKey(), refMsg, plRefFlags::kPassiveRef);
 
                     follow->SetType(plFollowMod::kObject);
@@ -1663,7 +1663,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
         follow->SetType(lType);
     }
 
-    UInt32 mode = 0;
+    uint32_t mode = 0;
     if( fCompPB->GetInt(kAffectX) )
         mode |= plFollowMod::kPositionX;
     if( fCompPB->GetInt(kAffectY) )
@@ -2398,7 +2398,7 @@ public:
             case WM_COMMAND:
                 if( LOWORD( wParam ) == IDC_IMAGE_ADD )
                 {
-                    plLayerTex *newLayer = TRACKED_NEW plLayerTex;
+                    plLayerTex *newLayer = new plLayerTex;
 
                     if( newLayer->HandleBitmapSelection() )
                     {
@@ -2497,7 +2497,7 @@ plLayerTex  *pfImageLibComponent::GetBitmap( int idx )
     plLayerTex  *layer = (plLayerTex *)fCompPB->GetTexmap( (ParamID)kRefImageList, 0, idx );
     if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
     {
-        layer = TRACKED_NEW plLayerTex;
+        layer = new plLayerTex;
         fCompPB->SetValue( (ParamID)kRefImageList, 0, (Texmap *)layer, idx );
     }
 
@@ -2539,7 +2539,7 @@ hsBool pfImageLibComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
 
 hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plImageLibMod *lib = TRACKED_NEW plImageLibMod;
+    plImageLibMod *lib = new plImageLibMod;
     node->AddModifier( lib, IGetUniqueName(node) );
 
     int i;
@@ -2551,7 +2551,7 @@ hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             PBBitmap *texture = layer->GetPBBitmap();
             if( texture != nil )
             {
-                UInt32 flags = plBitmap::kAlphaChannelFlag;
+                uint32_t flags = plBitmap::kAlphaChannelFlag;
 
                 plBitmap *bMap;
                 if (fCompPB->GetInt(kCompressImage, 0, i) == 0)
@@ -2563,7 +2563,7 @@ hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if( bMap != nil )
                 {
-                    hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), TRACKED_NEW plGenRefMsg( lib->GetKey(), 
+                    hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 
                                             plRefMsg::kOnCreate, lib->GetNumImages(), plImageLibMod::kRefImage ), plRefFlags::kActiveRef );
                 }
             }

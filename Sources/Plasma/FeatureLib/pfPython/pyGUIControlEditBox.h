@@ -78,7 +78,7 @@ public:
 
     static hsBool IsGUIControlEditBox(pyKey& gckey);
 
-    virtual void    SetBufferSize( UInt32 size );
+    virtual void    SetBufferSize( uint32_t size );
     virtual std::string GetBuffer( void );
     virtual std::wstring GetBufferW( void );
     virtual void    ClearBuffer( void );
@@ -92,9 +92,9 @@ public:
     virtual hsBool  WasEscaped();
 
     virtual void    SetSpecialCaptureKeyMode(hsBool state);
-    virtual UInt32  GetLastKeyCaptured();
-    virtual UInt32  GetLastModifiersCaptured();
-    virtual void    SetLastKeyCapture(UInt32 key, UInt32 modifiers);
+    virtual uint32_t  GetLastKeyCaptured();
+    virtual uint32_t  GetLastModifiersCaptured();
+    virtual void    SetLastKeyCapture(uint32_t key, uint32_t modifiers);
 
     virtual void    SetChatMode(hsBool state);
 

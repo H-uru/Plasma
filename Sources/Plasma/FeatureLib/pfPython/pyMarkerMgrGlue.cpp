@@ -60,7 +60,7 @@ PYTHON_METHOD_DEFINITION(ptMarkerMgr, addMarker, args)
 {
     double x, y, z;
     unsigned long id;
-    byte justCreated;
+    uint8_t justCreated;
     if (!PyArg_ParseTuple(args, "dddlb", &x, &y, &z, &id, &justCreated))
     {
         PyErr_SetString(PyExc_TypeError, "addMarker expects three doubles, an unsigned long, and a bool");
@@ -105,7 +105,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptMarkerMgr, clearSelectedMarker, ClearSelectedMa
 
 PYTHON_METHOD_DEFINITION(ptMarkerMgr, setMarkersRespawn, args)
 {
-    byte respawn;
+    uint8_t respawn;
     if (!PyArg_ParseTuple(args, "b", &respawn))
     {
         PyErr_SetString(PyExc_TypeError, "setMarkersRespawn expects a boolean");
@@ -123,7 +123,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMarkerMgr, getMarkersRespawn)
 PYTHON_METHOD_DEFINITION(ptMarkerMgr, captureQuestMarker, args)
 {
     unsigned long id;
-    byte captured;
+    uint8_t captured;
     if (!PyArg_ParseTuple(args, "lb", &id, &captured))
     {
         PyErr_SetString(PyExc_TypeError, "captureQuestMarker expects an unsigned long and a bool");

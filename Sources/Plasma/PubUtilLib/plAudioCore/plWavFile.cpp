@@ -169,7 +169,7 @@ HRESULT CWaveFile::Open(const char *strFileName, WAVEFORMATEX* pwfx, DWORD dwFla
             if( NULL == ( pvRes = LockResource( hResData ) ) )
                 return DXTRACE_ERR( TEXT("LockResource"), E_FAIL );
 
-            CHAR* pData = TRACKED_NEW CHAR[ dwSize ];
+            CHAR* pData = new CHAR[ dwSize ];
             memcpy( pData, pvRes, dwSize );
 
             MMIOINFO mmioInfo;
@@ -273,18 +273,18 @@ HRESULT CWaveFile::OpenFromMemory( BYTE* pbData, ULONG ulDataSize,
     (Actually, in the latter case, dwChunkStart is also set to 0, and only dwBlockStart is used). Again, I want to emphasize that you can avoid
     all of this unnecessary crap if you avoid hassling with compressed files, or Wave Lists, and instead stick to the sensible basics.
 
-    The dwChunkStart field specifies the byte offset of the start of the 'data' or 'slnt' chunk which actually contains the waveform data to
-    which this CuePoint refers. This offset is relative to the start of the first chunk within the Wave List. (ie, It's the byte offset, within
+    The dwChunkStart field specifies the uint8_t offset of the start of the 'data' or 'slnt' chunk which actually contains the waveform data to
+    which this CuePoint refers. This offset is relative to the start of the first chunk within the Wave List. (ie, It's the uint8_t offset, within
     the Wave List, of where the 'data' or 'slnt' chunk of interest appears. The first chunk within the List would be at an offset of 0).
 
-    The dwBlockStart field specifies the byte offset of the start of the block containing the position. This offset is relative to the start of
+    The dwBlockStart field specifies the uint8_t offset of the start of the block containing the position. This offset is relative to the start of
     the waveform data within the 'data' or 'slnt' chunk.
 
     The dwSampleOffset field specifies the sample offset of the cue point relative to the start of the block. In an uncompressed file, this 
     equates to simply being the offset within the waveformData array. Unfortunately, the WAVE documentation is much too ambiguous, and doesn't
-    define what it means by the term "sample offset". This could mean a byte offset, or it could mean counting the sample points (for example,
+    define what it means by the term "sample offset". This could mean a uint8_t offset, or it could mean counting the sample points (for example,
     in a 16-bit wave, every 2 bytes would be 1 sample point), or it could even mean sample frames (as the loop offsets in AIFF are specified).
-    Who knows? The guy who conjured up the Cue chunk certainly isn't saying. I'm assuming that it's a byte offset, like the above 2 fields.
+    Who knows? The guy who conjured up the Cue chunk certainly isn't saying. I'm assuming that it's a uint8_t offset, like the above 2 fields.
 */
 
 class CuePoint 
@@ -356,10 +356,10 @@ HRESULT CWaveFile::ReadMMIO()
         return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
 
     // Allocate the waveformatex, but if its not pcm format, read the next
-    // word, and thats how many extra bytes to allocate.
+    // uint16_t, and thats how many extra bytes to allocate.
     if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM )
     {
-        m_pwfx = (WAVEFORMATEX*)( TRACKED_NEW CHAR[ sizeof( WAVEFORMATEX ) ] );
+        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof( WAVEFORMATEX ) ] );
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("m_pwfx"), E_FAIL );
 
@@ -374,7 +374,7 @@ HRESULT CWaveFile::ReadMMIO()
         if( mmioRead( m_hmmio, (CHAR*)&cbExtraBytes, sizeof(WORD)) != sizeof(WORD) )
             return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
 
-        m_pwfx = (WAVEFORMATEX*)( TRACKED_NEW CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ] );
+        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ] );
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("new"), E_FAIL );
 
@@ -421,7 +421,7 @@ HRESULT CWaveFile::ReadMMIO()
          return DXTRACE_ERR( TEXT("sizeof(CueChunk)"), E_FAIL );
 #endif
 
-    DWORD* CueBuff = TRACKED_NEW DWORD[ckIn.cksize];
+    DWORD* CueBuff = new DWORD[ckIn.cksize];
     DWORD Results;
     Read((BYTE*)CueBuff, ckIn.cksize, &Results);
 
@@ -457,7 +457,7 @@ HRESULT CWaveFile::ReadMMIO()
 
     plSoundMarker *newMarker;
 
-    BYTE *labelBuf = TRACKED_NEW BYTE [ckIn.cksize];
+    BYTE *labelBuf = new BYTE [ckIn.cksize];
 
     // Read the entire lable chunk and then lets parse out the individual lables.
     Read(labelBuf, ckIn.cksize-4, &Results);
@@ -468,7 +468,7 @@ HRESULT CWaveFile::ReadMMIO()
     {
         DWORD size = *(DWORD*)(bp + 4);
         DWORD id = *(DWORD*)(bp + 8);
-        newMarker = TRACKED_NEW plSoundMarker; // Grab a new label
+        newMarker = new plSoundMarker; // Grab a new label
     
         int i;
 
@@ -483,8 +483,8 @@ HRESULT CWaveFile::ReadMMIO()
                 newMarker->fOffset = myCueList[i].fOffset * fSecsPerSample;
             }
         }   
-        int stringSize = size - sizeof(DWORD); // text string is size of chunck - size of the size word
-        newMarker->fName = TRACKED_NEW char[ stringSize];
+        int stringSize = size - sizeof(DWORD); // text string is size of chunck - size of the size uint16_t
+        newMarker->fName = new char[ stringSize];
 
         strcpy(newMarker->fName, (char*)(bp + 12));
         
@@ -979,7 +979,7 @@ void    CWaveFile::Close( void )
     IClose();
 }
 
-UInt32  CWaveFile::GetDataSize( void )
+uint32_t  CWaveFile::GetDataSize( void )
 {
     hsAssert( false, "Unsupported" );
     return 0;
@@ -991,29 +991,29 @@ float   CWaveFile::GetLengthInSecs( void )
     return 0.f;
 }
 
-hsBool  CWaveFile::SetPosition( UInt32 numBytes )
+hsBool  CWaveFile::SetPosition( uint32_t numBytes )
 {
     hsAssert( false, "Unsupported" );
     return false;
 }
 
-hsBool  CWaveFile::Read( UInt32 numBytes, void *buffer )
+hsBool  CWaveFile::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( false, "Unsupported" );
     return false;
 }
 
-UInt32  CWaveFile::NumBytesLeft( void )
+uint32_t  CWaveFile::NumBytesLeft( void )
 {
     hsAssert( false, "Unsupported" );
     return 0;
 }
 
-UInt32  CWaveFile::Write( UInt32 bytes, void *buffer )
+uint32_t  CWaveFile::Write( uint32_t bytes, void *buffer )
 {
     UINT written;
     Write( (DWORD)bytes, (BYTE *)buffer, &written );
-    return (UInt32)written;
+    return (uint32_t)written;
 }
 
 hsBool  CWaveFile::IsValid( void )
@@ -1053,7 +1053,7 @@ public:
         chunkSize = ChunkSize;
         dwCuePoints = (ChunkSize - (sizeof(DWORD)*1))/(sizeof(CuePoint));
         //points = NULL;
-        //points = TRACKED_NEW CuePoint[dwCuePoints];
+        //points = new CuePoint[dwCuePoints];
         
     }
     //Cue
@@ -1066,14 +1066,14 @@ public:
     LabelChunk--
 
     The ID is always 'labl'. chunkSize is the number of bytes in the chunk, not counting the 8 bytes used by ID and Size fields nor any possible 
-    pad byte needed to make the chunk an even size (ie, chunkSize is the number of remaining bytes in the chunk after the chunkSize field, not
+    pad uint8_t needed to make the chunk an even size (ie, chunkSize is the number of remaining bytes in the chunk after the chunkSize field, not
     counting any trailing pad byte). 
     The dwIdentifier field contains a unique number (ie, different than the ID number of any other Label chunk). This field should correspond 
     with the dwIndentifier field of some CuePoint stored in the Cue chunk. In other words, this Label chunk contains the text label associated
     with that CuePoint structure with the same ID number.
 
-    The dwText array contains the text label. It should be a null-terminated string. (The null byte is included in the chunkSize, therefore the 
-    length of the string, including the null byte, is chunkSize - 4).
+    The dwText array contains the text label. It should be a null-terminated string. (The null uint8_t is included in the chunkSize, therefore the 
+    length of the string, including the null uint8_t, is chunkSize - 4).
 */
 
 

@@ -181,7 +181,7 @@ float plLightMapComponent::GetScale() const
     return res;
 }
 
-UInt32 plLightMapComponent::GetUVWSrc() const
+uint32_t plLightMapComponent::GetUVWSrc() const
 {
     return fCompPB->GetInt(kMapChannel)-1;
 }

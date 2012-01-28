@@ -60,9 +60,9 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         hsBool      fDragging;
         hsBool      fAnchored;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
     public:
 
@@ -78,9 +78,9 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual void    SetAnchored( hsBool anchored ) { fAnchored = anchored; }
         virtual hsBool  IsAnchored(void) { return fAnchored; }

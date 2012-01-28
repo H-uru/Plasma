@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plParticleMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
@@ -60,7 +60,7 @@ class plParticleMtlClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plParticleMtl(loading); }
+    void*           Create(BOOL loading) { return new plParticleMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_PARTICLE_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return PARTICLE_MTL_CLASS_ID; }
@@ -102,7 +102,7 @@ plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen
 //  if (!loading)
     {
         Reset();
-        plLayerTex *tex = TRACKED_NEW plLayerTex;
+        plLayerTex *tex = new plLayerTex;
         //tex->GetParamBlockByID(kBlkBasic)->SetValue(kBmpUseBitmap, 0, 1);
         fBasicPB->SetValue(kTexmap, 0, tex);
 
@@ -330,7 +330,7 @@ IOResult plParticleMtl::Load(ILoad *iload)
 
 RefTargetHandle plParticleMtl::Clone(RemapDir &remap)
 {
-    plParticleMtl *mnew = TRACKED_NEW plParticleMtl(FALSE);
+    plParticleMtl *mnew = new plParticleMtl(FALSE);
     *((MtlBase*)mnew) = *((MtlBase*)this); 
     mnew->ReplaceReference(kRefBasic, remap.CloneRef(fBasicPB));
 

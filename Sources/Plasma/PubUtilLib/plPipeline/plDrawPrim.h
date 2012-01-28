@@ -60,9 +60,9 @@ public:
         kTypeSplatList          = 0x2
     };
 protected:
-    UInt32          fPrimType;
+    uint32_t          fPrimType;
 
-    UInt32          fDrawProps;
+    uint32_t          fDrawProps;
 
     hsGMaterial*    fMaterial;
 
@@ -73,8 +73,8 @@ public:
     virtual const hsBounds3Ext& GetLocalBounds() const = 0;
 
     hsGMaterial*    GetMaterial() { return fMaterial; }
-    UInt32          GetPrimType() { return fPrimType; }
-    UInt32          GetDrawProps() { return fDrawProps; }
+    uint32_t          GetPrimType() { return fPrimType; }
+    uint32_t          GetDrawProps() { return fDrawProps; }
 };
 
 class plTriListPrim : public plDrawPrim

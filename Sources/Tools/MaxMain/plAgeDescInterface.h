@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include <comutil.h>
 #include <vector>
@@ -122,8 +122,8 @@ protected:
     void INewPage();
 
 
-    UInt32  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
-    UInt32  IGetFreePageSeqSuffix( HWND pageCombo );
+    uint32_t  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
+    uint32_t  IGetFreePageSeqSuffix( HWND pageCombo );
 
     void    ICheckOutCurrentAge( void );
     void    ICheckInCurrentAge( void );

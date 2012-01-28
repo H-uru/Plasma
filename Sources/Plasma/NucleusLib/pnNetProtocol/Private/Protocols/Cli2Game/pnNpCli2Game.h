@@ -65,7 +65,7 @@ enum {
     
     kNumCli2GameMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Game, kNumCli2GameMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Game, kNumCli2GameMessages <= (uint16_t)-1);
 
 enum {
     // Global
@@ -80,7 +80,7 @@ enum {
     
     kNumGame2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Game, kNumGame2CliMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2Game, kNumGame2CliMessages <= (uint16_t)-1);
 
 
 //============================================================================
@@ -96,7 +96,7 @@ COMPILER_ASSERT_HEADER(Cli2Game, kNumGame2CliMessages <= (word)-1);
 ***/
 
 struct Cli2Game_ConnData {
-    dword   dataBytes;
+    uint32_t   dataBytes;
     Uuid    accountUuid;
     Uuid    ageUuid;
 };
@@ -115,36 +115,36 @@ struct Cli2Game_Connect {
 // PingRequest
 extern const NetMsg kNetMsg_Cli2Game_PingRequest;
 struct Cli2Game_PingRequest {
-    dword messageId;
-    dword pingTimeMs;
+    uint32_t messageId;
+    uint32_t pingTimeMs;
 };
 
 // JoinAgeRequest
 extern const NetMsg kNetMsg_Cli2Game_JoinAgeRequest;
 struct Cli2Game_JoinAgeRequest {
-    dword       messageId;
-    dword       transId;
-    dword       ageMcpId;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       ageMcpId;
     Uuid        accountUuid;
-    dword       playerInt;
+    uint32_t       playerInt;
 };
 
 // PropagateBuffer
 extern const NetMsg kNetMsg_Cli2Game_PropagateBuffer;
 struct Cli2Game_PropagateBuffer {
-    dword       messageId;
-    dword       type;
-    dword       bytes;
-    byte        buffer[1];  // actually, buffer[bytes]
+    uint32_t       messageId;
+    uint32_t       type;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // actually, buffer[bytes]
     // no more fields
 };
 
 // GameMgrMsg
 extern const NetMsg kNetMsg_Cli2Game_GameMgrMsg;
 struct Cli2Game_GameMgrMsg {
-    dword       messageId;
-    dword       bytes;
-    byte        buffer[1];  // actually: buffer[bytes]
+    uint32_t       messageId;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // actually: buffer[bytes]
 };
 
 
@@ -157,34 +157,34 @@ struct Cli2Game_GameMgrMsg {
 // PingReply
 extern const NetMsg kNetMsg_Game2Cli_PingReply;
 struct Game2Cli_PingReply{
-    dword       messageId;
-    dword       pingTimeMs;
+    uint32_t       messageId;
+    uint32_t       pingTimeMs;
 };
 
 // JoinAgeReply
 extern const NetMsg kNetMsg_Game2Cli_JoinAgeReply;
 struct Game2Cli_JoinAgeReply {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
     ENetError   result;
 };
 
 // PropagateBuffer
 extern const NetMsg kNetMsg_Game2Cli_PropagateBuffer;
 struct Game2Cli_PropagateBuffer {
-    dword       messageId;
-    dword       type;
-    dword       bytes;
-    byte        buffer[1];  // actually, buffer[bytes]
+    uint32_t       messageId;
+    uint32_t       type;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // actually, buffer[bytes]
     // no more fields
 };
 
 // GameMgrMsg
 extern const NetMsg kNetMsg_Game2Cli_GameMgrMsg;
 struct Game2Cli_GameMgrMsg {
-    dword       messageId;
-    dword       bytes;
-    byte        buffer[1];  // actually: buffer[bytes]
+    uint32_t       messageId;
+    uint32_t       bytes;
+    uint8_t        buffer[1];  // actually: buffer[bytes]
 };
 
 

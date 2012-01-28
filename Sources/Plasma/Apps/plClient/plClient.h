@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define NEW_CAMERA_CODE
 
-#include "hsWindowHndl.h"
+#include "HeadSpin.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
@@ -94,10 +94,10 @@ protected:
     {
         public:
             plSceneNode *fNode;
-            UInt32      fFlags;
+            uint32_t      fFlags;
 
             plRoomRec() { fNode = nil; fFlags = 0; }
-            plRoomRec( plSceneNode *n, UInt32 f ) : fNode( n ), fFlags( f ) {}
+            plRoomRec( plSceneNode *n, uint32_t f ) : fNode( n ), fFlags( f ) {}
 
             enum Flags
             {
@@ -189,13 +189,13 @@ protected:
     void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
     void                    IAddRenderRequest(plRenderRequest* req);
 
-    hsBool                  IPlayIntroBink(const char* movieName, hsScalar endDelay, hsScalar posX, hsScalar posY, hsScalar scaleX, hsScalar scaleY, hsScalar volume = 1.0);
+    hsBool                  IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
     hsBool                  IHandleMovieMsg(plMovieMsg* mov);
     void                    IKillMovies();
     void                    IServiceMovies();
 
-    void    IStartProgress( const char *title, hsScalar len );
-    void    IIncProgress( hsScalar byHowMuch, const char *text );
+    void    IStartProgress( const char *title, float len );
+    void    IIncProgress( float byHowMuch, const char *text );
     void    IStopProgress( void );
 
     static void IDispatchMsgReceiveCallback();
@@ -293,7 +293,7 @@ public:
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);
     void IDetectAudioVideoSettings();
-    void IWriteDefaultGraphicsSettings(const wchar* destFile);
+    void IWriteDefaultGraphicsSettings(const wchar_t* destFile);
 
     plAnimDebugList *fAnimDebugList;
 

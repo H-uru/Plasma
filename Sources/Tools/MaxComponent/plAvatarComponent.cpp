@@ -124,7 +124,7 @@ class plCritterCommands;
 
 plArmatureMod* plArmatureComponent::IGenerateMyArmMod(plHKPhysical* myHKPhys, plMaxNode* node)
 {
-    plArmatureMod *avMod = TRACKED_NEW plArmatureMod();
+    plArmatureMod *avMod = new plArmatureMod();
     avMod->SetRootName(node->GetKey()->GetName());
     return avMod;
 }
@@ -216,17 +216,17 @@ void plArmatureComponent::ISetArmatureSORecurse(plMaxNode *node, plSceneObject *
 hsBool plArmatureComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // add audio interface and record/playback component
-    pl2WayWinAudible* pAudible = TRACKED_NEW pl2WayWinAudible;
+    pl2WayWinAudible* pAudible = new pl2WayWinAudible;
 
     // Add a key for it
     plKey key = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pAudible, node->GetLocation() );
 
-    plAudioInterface* ai = TRACKED_NEW plAudioInterface;
+    plAudioInterface* ai = new plAudioInterface;
     plKey pAiKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), (hsKeyedObject*)ai,node->GetLocation());
         
-    hsgResMgr::ResMgr()->AddViaNotify(pAiKey, TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(pAiKey, new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
         
-    plIntRefMsg* pMsg = TRACKED_NEW plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
+    plIntRefMsg* pMsg = new plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
     hsgResMgr::ResMgr()->AddViaNotify(pAudible->GetKey(), pMsg, plRefFlags::kActiveRef );
 
     ISetArmatureSORecurse(node, node->GetSceneObject());
@@ -248,9 +248,9 @@ hsBool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     ISetupClothes(node, fArmMod, pErrMsg);
 
     // ArmatureEffects
-    plArmatureEffectsMgr *effects = TRACKED_NEW plArmatureEffectsMgr();
+    plArmatureEffectsMgr *effects = new plArmatureEffectsMgr();
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effects, node->GetLocation());
-    plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
+    plGenRefMsg *msg = new plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
     hsgResMgr::ResMgr()->AddViaNotify(effects->GetKey(), msg, plRefFlags::kActiveRef); // Attach effects
 
     plSceneObject *obj = node->GetSceneObject();
@@ -264,7 +264,7 @@ hsBool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     {
         // MakeCharacterHierarchy will attach agmodifiers to all the bones in the hierarchy;
         // have to manually add any for non-bone objects...
-        agMod = TRACKED_NEW plAGModifier("Handle");     // the player root is known as the handle
+        agMod = new plAGModifier("Handle");     // the player root is known as the handle
         node->AddModifier(agMod, IGetUniqueName(node));
     }
 
@@ -462,7 +462,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
             
     plSceneObject * bodySO = node->GetSceneObject();
 
-    plArmatureMod* avMod = TRACKED_NEW plArmatureMod();
+    plArmatureMod* avMod = new plArmatureMod();
     avMod->SetRootName(name);
     avMod->AppendMeshKey(meshKey);
     int skeletonType = fCompPB->GetInt(ParamID(kSkeleton));
@@ -470,9 +470,9 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // only make a human brain if we're a human
     if (skeletonType == plArmatureMod::kBoneBaseCritter)
-        avMod->PushBrain(TRACKED_NEW plAvBrainCritter());
+        avMod->PushBrain(new plAvBrainCritter());
     else
-        avMod->PushBrain(TRACKED_NEW plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
+        avMod->PushBrain(new plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
@@ -481,7 +481,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
 
     plKey avKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), avMod, node->GetLocation());
-    plObjRefMsg *objRefMsg = TRACKED_NEW plObjRefMsg(bodySO->GetKey(), plRefMsg::kOnCreate,-1, plObjRefMsg::kModifier);
+    plObjRefMsg *objRefMsg = new plObjRefMsg(bodySO->GetKey(), plRefMsg::kOnCreate,-1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(avKey, objRefMsg, plRefFlags::kActiveRef);
 
     fArmMod = avMod;
@@ -501,7 +501,7 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
         return;
     }
 
-    plClothingBase *base = TRACKED_NEW plClothingBase();
+    plClothingBase *base = new plClothingBase();
     if (node->GetUserPropString("layout", sdata))
     {
         toker.Reset(sdata, hsConverterUtils::fTagSeps);
@@ -511,14 +511,14 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
         base->SetLayoutName("BasicHuman");
     sprintf(keyName, "%s_ClothingBase", node->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, base, node->GetLocation());
-    plClothingOutfit *outfit = TRACKED_NEW plClothingOutfit();
+    plClothingOutfit *outfit = new plClothingOutfit();
     outfit->fGroup = group;
     sprintf(keyName, "%s_outfit", mod->GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, outfit, node->GetLocation());
     
-    msg = TRACKED_NEW plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
+    msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
     hsgResMgr::ResMgr()->AddViaNotify(base->GetKey(), msg, plRefFlags::kActiveRef); // Add clothing base to outfit
-    msg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, -1, -1);
+    msg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, -1, -1);
     hsgResMgr::ResMgr()->AddViaNotify(outfit->GetKey(), msg, plRefFlags::kActiveRef); // Attach outfit
     
     
@@ -542,14 +542,14 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
         
         // The tex is what the outfit and the material hold onto. It's what
         // gets rendered. The base will hang onto the original baseTex.
-        msg = TRACKED_NEW plGenRefMsg(base->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        msg = new plGenRefMsg(base->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->SendRef(baseTex->GetKey(), msg, plRefFlags::kActiveRef); // Set base texture of avatar
-        plLayRefMsg* layRef = TRACKED_NEW plLayRefMsg(li->GetKey(), plRefMsg::kOnRemove, 0, plLayRefMsg::kTexture);
+        plLayRefMsg* layRef = new plLayRefMsg(li->GetKey(), plRefMsg::kOnRemove, 0, plLayRefMsg::kTexture);
         hsgResMgr::ResMgr()->SendRef(baseTex->GetKey(), layRef, plRefFlags::kActiveRef); // Remove it from the material
 
-        msg = TRACKED_NEW plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->AddViaNotify(li->GetKey(), msg, plRefFlags::kActiveRef); // Set outfit's target layer interface
-        msg = TRACKED_NEW plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->AddViaNotify(mat->GetKey(), msg, plRefFlags::kActiveRef); // Outfit needs the material
     }
     else
@@ -689,7 +689,7 @@ hsBool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 
 
     // create and register the player modifier
-    plAGMasterMod *agMaster = TRACKED_NEW plAGMasterMod();
+    plAGMasterMod *agMaster = new plAGMasterMod();
     node->AddModifier(agMaster, IGetUniqueName(node));
 
     return true;
@@ -1055,14 +1055,14 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
     const char *avatarName = node->GetKey()->GetName();
     plMaxNode *animRoot = (plMaxNode *)fCompPB->GetINode(plLODAvatarComponent::kRootNodeAddBtn);
     plKey animRootKey = animRoot->GetSceneObject()->GetKey();
-    plArmatureLODMod* avMod = TRACKED_NEW plArmatureLODMod(avatarName);
+    plArmatureLODMod* avMod = new plArmatureLODMod(avatarName);
 
     int skeletonType = fCompPB->GetInt(ParamID(kSkeleton));
     avMod->SetBodyType( skeletonType );
     if (skeletonType == plArmatureLODMod::kBoneBaseCritter)
-        avMod->PushBrain(TRACKED_NEW plAvBrainCritter());
+        avMod->PushBrain(new plAvBrainCritter());
     else
-        avMod->PushBrain(TRACKED_NEW plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
+        avMod->PushBrain(new plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
@@ -1136,7 +1136,7 @@ hsBool plLODAvatarComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     for (i = 0; i < kMaxNumLODLevels; i++)
     {
         int numBones = fCompPB->GetInt(ParamID(kGroupTotals), 0, i);
-        plKeyVector *keyVec = TRACKED_NEW plKeyVector;
+        plKeyVector *keyVec = new plKeyVector;
 
         int j;
         for (j = 0; j < numBones; j++)
@@ -1176,7 +1176,7 @@ void plLODAvatarComponent::IAttachShadowCastModifiersRecur(plMaxNode* node, plSh
 
 void plLODAvatarComponent::IAttachShadowCastToLODs(plMaxNode* rootNode)
 {
-    plShadowCaster* caster = TRACKED_NEW plShadowCaster;
+    plShadowCaster* caster = new plShadowCaster;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(rootNode), caster, rootNode->GetLocation());
     caster->SetSelfShadow(true);
 

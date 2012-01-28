@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 
 class hsStream;
 class plAnimStage;
@@ -95,18 +95,18 @@ protected:
     static HWND fDlg;
 
     char *fAnimName;
-    UInt32 fNumLoops;
+    uint32_t fNumLoops;
     bool fLoopForever;
-    UInt8 fForward;
-    UInt8 fBackward;
-    UInt8 fStageAdvance;
-    UInt8 fStageRegress;
-    UInt8 fNotify;
+    uint8_t fForward;
+    uint8_t fBackward;
+    uint8_t fStageAdvance;
+    uint8_t fStageRegress;
+    uint8_t fNotify;
     bool fUseGlobalCoord;
     bool fDoAdvanceTo;
-    UInt32 fAdvanceTo;
+    uint32_t fAdvanceTo;
     bool fDoRegressTo;
-    UInt32 fRegressTo;
+    uint32_t fRegressTo;
 
     BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     void IInitDlg();

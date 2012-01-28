@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCompositeMtl.h"
 #include "plPassMtl.h"
 //#include "plCompositeMtlPB.h"
@@ -49,7 +49,7 @@ class plCompositeClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plCompositeMtl(loading); }
+    void*           Create(BOOL loading) { return new plCompositeMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_COMP_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return COMP_MTL_CLASS_ID; }
@@ -84,7 +84,7 @@ plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB(NULL)
     int i;
     for (i = 0; i < NSUBMTLS; i++)
     {
-        plPassMtl *newMtl = TRACKED_NEW plPassMtl(false);
+        plPassMtl *newMtl = new plPassMtl(false);
         fPassesPB->SetValue(kCompPasses, 0, newMtl, i);
         GetCOREInterface()->AssignNewName(fPassesPB->GetMtl(kCompPasses, 0, i));
     }
@@ -97,7 +97,7 @@ void plCompositeMtl::Reset()
 
 ParamDlg* plCompositeMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 
 {
-    fMtlDlg = TRACKED_NEW plCompositeMtlDlg(hwMtlEdit, imp, this);
+    fMtlDlg = new plCompositeMtlDlg(hwMtlEdit, imp, this);
 
     return fMtlDlg; 
 }
@@ -360,7 +360,7 @@ IOResult plCompositeMtl::Load(ILoad *iload)
 
 RefTargetHandle plCompositeMtl::Clone(RemapDir &remap)
 {
-    plCompositeMtl *mnew = TRACKED_NEW plCompositeMtl(FALSE);
+    plCompositeMtl *mnew = new plCompositeMtl(FALSE);
     *((MtlBase*)mnew) = *((MtlBase*)this); 
     mnew->ReplaceReference(kRefPasses, remap.CloneRef(fPassesPB));
 
@@ -504,7 +504,7 @@ void plCompositeMtl::SetNumSubMtls(int num)
 
     for (int i = curNum; i < num; i++)
     {
-        plPassMtl *newMtl = TRACKED_NEW plPassMtl(false);
+        plPassMtl *newMtl = new plPassMtl(false);
         fPassesPB->SetValue(kMultPasses, t, newMtl, i);
         fPassesPB->SetValue(kMultOn, t, TRUE, i);
         GetCOREInterface()->AssignNewName(fPassesPB->GetMtl(kMultPasses, t, i));

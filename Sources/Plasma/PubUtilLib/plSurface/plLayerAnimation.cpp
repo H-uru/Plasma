@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTimer.h"
 #include "plLayerAnimation.h"
 #include "pnKeyedObject/plKey.h"
@@ -98,32 +98,32 @@ void plLayerAnimationBase::Read(hsStream* s, hsResMgr* mgr)
     if( fOpacityCtl )
     {
         fOwnedChannels |= kOpacity;
-        fOpacity = TRACKED_NEW hsScalar;
+        fOpacity = new float;
     }
     if( fPreshadeColorCtl )
     {
         fOwnedChannels |= kPreshadeColor;
-        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fPreshadeColor = new hsColorRGBA;
     }
     if( fRuntimeColorCtl )
     {
         fOwnedChannels |= kRuntimeColor;
-        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fRuntimeColor = new hsColorRGBA;
     }
     if( fAmbientColorCtl )
     {
         fOwnedChannels |= kAmbientColor;
-        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fAmbientColor = new hsColorRGBA;
     }
     if( fSpecularColorCtl )
     {
         fOwnedChannels |= kSpecularColor;
-        fSpecularColor = TRACKED_NEW hsColorRGBA;
+        fSpecularColor = new hsColorRGBA;
     }
     if( fTransformCtl )
     {
         fOwnedChannels |= kTransform;
-        fTransform = TRACKED_NEW hsMatrix44;
+        fTransform = new hsMatrix44;
     }
     fLength = IMakeUniformLength();
 }
@@ -145,7 +145,7 @@ plLayerInterface* plLayerAnimationBase::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-void plLayerAnimationBase::IEvalConvertedTime(hsScalar secs, UInt32 passChans, UInt32 evalChans, UInt32 &dirty)
+void plLayerAnimationBase::IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty)
 {
     if( evalChans & kPreshadeColor )
     {
@@ -220,7 +220,7 @@ void plLayerAnimationBase::SetPreshadeColorCtl(plController* colCtl)
     if( fPreshadeColorCtl )
         delete fPreshadeColorCtl;
     else
-        fPreshadeColor = TRACKED_NEW hsColorRGBA;
+        fPreshadeColor = new hsColorRGBA;
 
     fOwnedChannels |= kPreshadeColor;
     fPreshadeColorCtl = colCtl;
@@ -231,7 +231,7 @@ void plLayerAnimationBase::SetRuntimeColorCtl(plController* colCtl)
     if( fRuntimeColorCtl )
         delete fRuntimeColorCtl;
     else
-        fRuntimeColor = TRACKED_NEW hsColorRGBA;
+        fRuntimeColor = new hsColorRGBA;
 
     fOwnedChannels |= kRuntimeColor;
     fRuntimeColorCtl = colCtl;
@@ -242,7 +242,7 @@ void plLayerAnimationBase::SetAmbientColorCtl(plController* ambCtl)
     if( fAmbientColorCtl )
         delete fAmbientColorCtl;
     else
-        fAmbientColor = TRACKED_NEW hsColorRGBA;
+        fAmbientColor = new hsColorRGBA;
 
     fOwnedChannels |= kAmbientColor;
     fAmbientColorCtl = ambCtl;
@@ -253,7 +253,7 @@ void plLayerAnimationBase::SetSpecularColorCtl(plController* ambCtl)
     if( fSpecularColorCtl )
         delete fSpecularColorCtl;
     else
-        fSpecularColor = TRACKED_NEW hsColorRGBA;
+        fSpecularColor = new hsColorRGBA;
 
     fOwnedChannels |= kSpecularColor;
     fSpecularColorCtl = ambCtl;
@@ -264,7 +264,7 @@ void plLayerAnimationBase::SetOpacityCtl(plController* opaCtl)
     if( fOpacityCtl )
         delete fOpacityCtl;
     else
-        fOpacity = TRACKED_NEW hsScalar;
+        fOpacity = new float;
 
     fOwnedChannels |= kOpacity;
     fOpacityCtl = opaCtl;
@@ -275,13 +275,13 @@ void plLayerAnimationBase::SetTransformCtl(plController* xfmCtl)
     if( fTransformCtl )
         delete fTransformCtl;
     else
-        fTransform = TRACKED_NEW hsMatrix44;
+        fTransform = new hsMatrix44;
 
     fOwnedChannels |= kTransform;
     fTransformCtl = xfmCtl;
 }
 
-hsScalar plLayerAnimationBase::IMakeUniformLength()
+float plLayerAnimationBase::IMakeUniformLength()
 {
     fLength = 0;
     if( fPreshadeColorCtl && (fPreshadeColorCtl->GetLength() > fLength) )
@@ -330,7 +330,7 @@ void plLayerAnimation::Read(hsStream* s, hsResMgr* mgr)
 
     // add sdl modifier
     delete fLayerSDLMod;
-    fLayerSDLMod = TRACKED_NEW plLayerSDLModifier;
+    fLayerSDLMod = new plLayerSDLModifier;
     fLayerSDLMod->SetLayerAnimation(this);
 }
 
@@ -349,14 +349,14 @@ plLayerInterface* plLayerAnimation::Attach(plLayerInterface* prev)
     return plLayerAnimationBase::Attach(prev);
 }
 
-UInt32 plLayerAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if( wSecs != fEvalTime )
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
-        hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
+        float secs = fTimeConvert.WorldToAnimTime(wSecs);
         if( secs != fCurrentTime )
         {
             evalChans = fOwnedChannels & ~ignore & ~fPassThruChannels;
@@ -427,7 +427,7 @@ plLayerLinkAnimation::plLayerLinkAnimation() :
     fLastFadeFlag(0),
     fFadeFlagsDirty(false) 
 { 
-    fIFaceCallback = TRACKED_NEW plEventCallbackMsg();
+    fIFaceCallback = new plEventCallbackMsg();
     fIFaceCallback->fEvent = kTime;
     fIFaceCallback->fRepeats = 0;           
 }
@@ -463,26 +463,26 @@ void plLayerLinkAnimation::Write(hsStream* s, hsResMgr* mgr)
     s->WriteBool(fLeavingAge);
 }
 
-UInt32 plLayerLinkAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if (wSecs != fEvalTime)
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
-        hsScalar oldAnimTime = fTimeConvert.CurrentAnimTime();
-        hsScalar secs = oldAnimTime;
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
+        float oldAnimTime = fTimeConvert.CurrentAnimTime();
+        float secs = oldAnimTime;
         
         if (fFadeFlagsDirty)
         {
-            hsScalar goal = 0.f;
+            float goal = 0.f;
 
             if (fFadeFlags & kFadeLinkPrep)
                 secs = goal = fLength;
             else
             {
-                hsScalar rate = 0.f;
-                hsScalar delta = (hsScalar)(wSecs - fEvalTime);
+                float rate = 0.f;
+                float delta = (float)(wSecs - fEvalTime);
                 
                 if (fFadeFlags & kFadeLinking)
                 {
@@ -527,7 +527,7 @@ UInt32 plLayerLinkAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
             {
                 // Either we're going opaque, or we were opaque and now we're fading.
                 // Tell the armature to re-eval its opacity settings.
-                plAvatarOpacityCallbackMsg *opacityMsg = TRACKED_NEW plAvatarOpacityCallbackMsg(fLinkKey, kStop);
+                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, kStop);
                 opacityMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
                 opacityMsg->Send();
             }               
@@ -540,7 +540,7 @@ UInt32 plLayerLinkAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
     return dirty;
 }
 
-void plLayerLinkAnimation::SetFadeFlag(UInt8 flag, hsBool val)
+void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, hsBool val)
 {
     if (val)
         fFadeFlags |= flag;
@@ -681,13 +681,13 @@ plLayerSDLAnimation::~plLayerSDLAnimation()
     delete [] fVarName;
 }
 
-UInt32 plLayerSDLAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerInterface::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerInterface::Eval(wSecs, frame, ignore);
     if( wSecs != fEvalTime )
     {
-        UInt32 evalChans = 0;
-        UInt32 passChans = dirty | fPassThruChannels;
+        uint32_t evalChans = 0;
+        uint32_t passChans = dirty | fPassThruChannels;
 
         if (fEvalTime < 0)
         {
@@ -703,7 +703,7 @@ UInt32 plLayerSDLAnimation::Eval(double wSecs, UInt32 frame, UInt32 ignore)
                 }
             }
         }
-        hsScalar secs;
+        float secs;
         if (fVar)
             fVar->Get(&secs);
         else

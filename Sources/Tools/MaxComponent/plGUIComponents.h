@@ -77,7 +77,7 @@ class plGUIDialogComponent : public plComponent
         virtual pfGUIDialogMod  *IMakeDialog( void );
 
     public:
-        // I believe booleans should always default to false, hence why this is dontInit instead of init. Byte me.
+        // I believe booleans should always default to false, hence why this is dontInit instead of init. uint8_t me.
         plGUIDialogComponent( hsBool dontInit = false );
         void DeleteThis() { delete this; }
 
@@ -133,7 +133,7 @@ class plGUIControlBase : public plComponent
         virtual bool            INeedsDynamicText( void ) { return false; }
         virtual bool            ICanHaveProxy( void ) { return false; }
 
-        const char              *ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, UInt8 guiCtrlEvent, plMaxNode *node );
+        const char              *ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, uint8_t guiCtrlEvent, plMaxNode *node );
 
 
         // When converting, since we get a new instance per component but not per node,
@@ -153,8 +153,8 @@ class plGUIControlBase : public plComponent
 
         virtual void    CollectNonDrawables( INodeTab &nonDrawables );
 
-        virtual UInt32  GetNumMtls( void ) const { return 0; }
-        virtual Texmap  *GetMtl( UInt32 idx ) { return nil; }
+        virtual uint32_t  GetNumMtls( void ) const { return 0; }
+        virtual Texmap  *GetMtl( uint32_t idx ) { return nil; }
 
         // Given a maxNode that is really a component, will return a pointer to the GUI control modifier
         // created for it at export time. Only valid after PreConvert. If you think the control component 

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plPythonPack.h"
 #include "hsStream.h"
@@ -53,8 +53,8 @@ static const char* kPackFilePath = ".\\Python\\";
 
 struct plPackOffsetInfo
 {
-    UInt32 fOffset;
-    UInt32 fStreamIndex; // index of the stream object in the plPythonPack object that the file resides in
+    uint32_t fOffset;
+    uint32_t fStreamIndex; // index of the stream object in the plPythonPack object that the file resides in
 };
 
 class plPythonPack
@@ -145,14 +145,14 @@ bool plPythonPack::Open()
 
             // read the index data
             int numFiles = fPackStream->ReadLE32();
-            UInt32 streamIndex = (UInt32)(fPackStreams.size());
+            uint32_t streamIndex = (uint32_t)(fPackStreams.size());
             for (int i = 0; i < numFiles; i++)
             {
                 // and pack the index into our own data structure
                 char* buf = fPackStream->ReadSafeString();
                 std::string pythonName = buf; // reading a "string" from a hsStream directly into a stl string causes memory loss
                 delete [] buf;
-                UInt32 offset = fPackStream->ReadLE32();
+                uint32_t offset = fPackStream->ReadLE32();
 
                 plPackOffsetInfo offsetInfo;
                 offsetInfo.fOffset = offset;
@@ -160,7 +160,7 @@ bool plPythonPack::Open()
 
                 if (fFileOffsets.find(pythonName) != fFileOffsets.end())
                 {
-                    UInt32 index = fFileOffsets[pythonName].fStreamIndex;
+                    uint32_t index = fFileOffsets[pythonName].fStreamIndex;
                     if (modTimes[index] < curModTime) // is the existing file older then the new one?
                         fFileOffsets[pythonName] = offsetInfo; // yup, so replace it with the new info
                 }
@@ -209,11 +209,11 @@ PyObject* plPythonPack::OpenPacked(const char* fileName)
         
         fPackStream->SetPosition(offsetInfo.fOffset);
 
-        Int32 size = fPackStream->ReadLE32();
+        int32_t size = fPackStream->ReadLE32();
         if (size > 0)
         {
-            char *buf = TRACKED_NEW char[size];
-            UInt32 readSize = fPackStream->Read(size, buf);
+            char *buf = new char[size];
+            uint32_t readSize = fPackStream->Read(size, buf);
             hsAssert(readSize <= size, xtl::format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
                 fileName, readSize, size).c_str());
 

@@ -145,7 +145,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
     if (PyUnicode_Check(nameObj))
     {
         int strLen = PyUnicode_GetSize(nameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);
@@ -188,7 +188,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,sta
     if (PyUnicode_Check(nameObj))
     {
         int strLen = PyUnicode_GetSize(nameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
         text[strLen] = L'\0';
         char* cText = hsWStringToString(text);
@@ -678,11 +678,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress,
         PYTHON_RETURN_ERROR;
     }
 
-    wchar emailAddr[kMaxEmailAddressLength];
-    MemSet(emailAddr, 0, sizeof(emailAddr));
+    wchar_t emailAddr[kMaxEmailAddressLength];
+    memset(emailAddr, 0, sizeof(emailAddr));
 
-    wchar toName[kMaxPlayerNameLength];
-    MemSet(toName, 0, sizeof(toName));
+    wchar_t toName[kMaxPlayerNameLength];
+    memset(toName, 0, sizeof(toName));
 
     // Check and see if the email address is ok
     int origStrLen = 0;

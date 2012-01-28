@@ -67,7 +67,7 @@ protected:
     
     pfJournalBook   *fBook;
 
-    static UInt32   fNextKeyID;
+    static uint32_t   fNextKeyID;
 
     void    IMakeNewKey( void );
 
@@ -104,18 +104,18 @@ public:
     // Interface functions per book
     virtual void    Show( hsBool startOpened );
     virtual void    Hide( void );
-    virtual void    Open( UInt32 startingPage );
+    virtual void    Open( uint32_t startingPage );
     virtual void    Close( void );
     virtual void    CloseAndHide( void );
 
     virtual void    NextPage( void );
     virtual void    PreviousPage( void );
-    virtual void    GoToPage( UInt32 page );
-    virtual UInt32  GetCurrentPage( void ) const;
-    virtual void    SetPageMargin( UInt32 margin );
+    virtual void    GoToPage( uint32_t page );
+    virtual uint32_t  GetCurrentPage( void ) const;
+    virtual void    SetPageMargin( uint32_t margin );
     virtual void    AllowPageTurning( bool allow );
 
-    virtual void    SetSize( hsScalar width, hsScalar height );
+    virtual void    SetSize( float width, float height );
 
     virtual void    SetGUI( const char *guiName );
 
@@ -123,7 +123,7 @@ public:
     static void     UnloadGUI( const char *guiName );
     static void     UnloadAllGUIs();
 
-    virtual PyObject *GetMovie( UInt8 index ); // returns cyAnimation
+    virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation
     
     virtual void    SetEditable( hsBool editable );
     virtual std::string GetEditableText( void ) const;

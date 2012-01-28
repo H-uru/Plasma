@@ -70,16 +70,16 @@ hsBitVector plSynchedValueBase::ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStr
     return v;
 }
 
-hsScalar plSynchedValueBase::ISaveOrLoad(hsScalar v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
+float plSynchedValueBase::ISaveOrLoad(float v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
     ISaveOrLoadSimpleType();
 
 double plSynchedValueBase::ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
     ISaveOrLoadSimpleType();
 
-Int32 plSynchedValueBase::ISaveOrLoad(Int32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
+int32_t plSynchedValueBase::ISaveOrLoad(int32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
     ISaveOrLoadSimpleType();
 
-UInt32 plSynchedValueBase::ISaveOrLoad(UInt32 v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
+uint32_t plSynchedValueBase::ISaveOrLoad(uint32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
     ISaveOrLoadSimpleType();
 
 int plSynchedValueBase::ISaveOrLoad(int v, hsBool32 save, hsStream* stream, hsResMgr* mgr) 
@@ -100,7 +100,7 @@ const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, hsBool32 save, hsSt
             stream->WriteByte(1);
             // I need to write a key to MY stream...
 #if 0       // DEBUG
-            Int32 len = hsStrlen(key->GetName());
+            int32_t len = hsStrlen(key->GetName());
             stream->WriteLE32(len);
             stream->Write(len, key->GetName());
 #endif
@@ -114,12 +114,12 @@ const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, hsBool32 save, hsSt
     }
     else
     {   
-        Int32 has=stream->ReadByte();
+        int32_t has=stream->ReadByte();
         if (has)
         {
             // read a key from MY stream
 #if 0       // DEBUG
-            Int32 len = stream->ReadLE32();
+            int32_t len = stream->ReadLE32();
             char tmp[256];
             hsAssert(len<256, "key name overflow");
             stream->Read(len, tmp);

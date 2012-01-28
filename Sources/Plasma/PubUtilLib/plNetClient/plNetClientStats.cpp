@@ -67,7 +67,7 @@ float plNetClientStats::GetAgeStatsULBitsPerSec() const
 //
 // return the acks that were conpressed so far
 //
-UInt32 plNetClientStats::GetRecvdMultipleAcks() const
+uint32_t plNetClientStats::GetRecvdMultipleAcks() const
 {
     return fRecvdMultipleAcks;
 }

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Implementation for CCR commands
 //
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // Error constants and conversion are outside of the CCR_RELEASE define,
 // So that non-CCR code can report CCR errors, and the plCCRMgr can

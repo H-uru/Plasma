@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIMenuItem.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIControlHandlers.h"
@@ -89,7 +89,7 @@ void    pfGUIMenuItem::SetName( const wchar_t *name )
     delete [] fName;
     if (name != nil)
     {
-        fName = TRACKED_NEW wchar_t[wcslen(name)+1];
+        fName = new wchar_t[wcslen(name)+1];
         wcscpy(fName,name);
     }
     else
@@ -107,7 +107,7 @@ void    pfGUIMenuItem::SetSkin( pfGUISkin *skin, HowToSkin s )
         GetKey()->Release( fSkin->GetKey() );
 
     if( skin != nil )
-        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef( skin->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
 
     fHowToSkin = s;
 
@@ -126,7 +126,7 @@ void    pfGUIMenuItem::IPostSetUpDynTextMap( void )
 //  Overridden so we can enlarge our DTMap by 3 vertically, to use the extra
 //  space as basically a double buffer for our skinning
 
-void    pfGUIMenuItem::IGrowDTMDimsToDesiredSize( UInt16 &width, UInt16 &height )
+void    pfGUIMenuItem::IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height )
 {
     height *= 3;
 }
@@ -147,7 +147,7 @@ void    pfGUIMenuItem::IUpdateSkinBuffers( void )
     if( fSkin->GetTexture() == nil )
         return;
 
-    UInt16 y = fDynTextMap->GetVisibleHeight();
+    uint16_t y = fDynTextMap->GetVisibleHeight();
 
     IUpdateSingleSkinBuffer( y, false );
     IUpdateSingleSkinBuffer( y << 1, true );
@@ -158,14 +158,14 @@ void    pfGUIMenuItem::IUpdateSkinBuffers( void )
 //// IUpdateSingleSkinBuffer /////////////////////////////////////////////////
 //  Broken down functionality for the above function
 
-void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
+void    pfGUIMenuItem::IUpdateSingleSkinBuffer( uint16_t y, hsBool sel )
 {
     hsAssert( fSkin != nil && fDynTextMap != nil, "Invalid pointers in IUpdateSingleSkinBuffer()" );
 
 
     // Note: add 1 to the visible height so we get enough overlap to take care of mipmapping issues
-    UInt16              x = 0, totWidth = fDynTextMap->GetVisibleWidth();
-    UInt16              totHeight = y + fDynTextMap->GetVisibleHeight();
+    uint16_t              x = 0, totWidth = fDynTextMap->GetVisibleWidth();
+    uint16_t              totHeight = y + fDynTextMap->GetVisibleHeight();
     pfGUISkin::pfSRect  element;
 
 
@@ -180,7 +180,7 @@ void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
         element = fSkin->GetElement( pfGUISkin::kTopSpan );
         for( ; x < totWidth; )
         {
-            UInt16 wid = element.fWidth;
+            uint16_t wid = element.fWidth;
             if( x + wid > totWidth )
                 wid = totWidth - x;
             fDynTextMap->DrawClippedImage( x, y, fSkin->GetTexture(), element.fX, element.fY, wid, element.fHeight, plDynamicTextMap::kImgSprite );
@@ -199,12 +199,12 @@ void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
     }
     
     // Group drawing by skin elements for caching performance
-    UInt16 startY = y;
+    uint16_t startY = y;
     x = 0;
     element = fSkin->GetElement( pfGUISkin::kLeftSpan );
     for( ; y < totHeight; )
     {
-        UInt16 ht = element.fHeight;
+        uint16_t ht = element.fHeight;
         if( y + ht > totHeight )
             ht = totHeight - y;
         fDynTextMap->DrawClippedImage( x, y, fSkin->GetTexture(), element.fX, element.fY, element.fWidth, ht, plDynamicTextMap::kImgSprite );
@@ -218,13 +218,13 @@ void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
         element = fSkin->GetElement( pfGUISkin::kMiddleFill );
     for( ; x < totWidth; )
     {
-        UInt16 wid = element.fWidth;
+        uint16_t wid = element.fWidth;
         if( x + wid > totWidth )
             wid = totWidth - x;
 
         for( y = startY; y < totHeight; )
         {
-            UInt16 ht = element.fHeight;
+            uint16_t ht = element.fHeight;
             if( y + ht > totHeight )
                 ht = totHeight - y;
             fDynTextMap->DrawClippedImage( x, y, fSkin->GetTexture(), element.fX, element.fY, wid, ht, plDynamicTextMap::kImgSprite );
@@ -237,7 +237,7 @@ void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
     element = fSkin->GetElement( pfGUISkin::kRightSpan );
     for( y = startY; y < totHeight; )
     {
-        UInt16 ht = element.fHeight;
+        uint16_t ht = element.fHeight;
         if( y + ht > totHeight )
             ht = totHeight - y;
         fDynTextMap->DrawClippedImage( x, y, fSkin->GetTexture(), element.fX, element.fY, element.fWidth, ht, plDynamicTextMap::kImgSprite );
@@ -256,7 +256,7 @@ void    pfGUIMenuItem::IUpdateSingleSkinBuffer( UInt16 y, hsBool sel )
         element = fSkin->GetElement( pfGUISkin::kBottomSpan );
         for( ; x < totWidth; )
         {
-            UInt16 wid = element.fWidth;
+            uint16_t wid = element.fWidth;
             if( x + wid > totWidth )
                 wid = totWidth - x;
             fDynTextMap->DrawClippedImage( x, y, fSkin->GetTexture(), element.fX, element.fY, wid, element.fHeight, plDynamicTextMap::kImgSprite );
@@ -285,7 +285,7 @@ void    pfGUIMenuItem::IUpdate( void )
             return;
 
         // Copy now from our skin buffer, plus set our text color
-        UInt16 y = fDynTextMap->GetVisibleHeight();
+        uint16_t y = fDynTextMap->GetVisibleHeight();
 
         if( IsInteresting() )
         {
@@ -316,10 +316,10 @@ void    pfGUIMenuItem::IUpdate( void )
 
     if( fName != nil )
     {
-        UInt16 ht;
+        uint16_t ht;
         fDynTextMap->CalcStringWidth( fName, &ht );
 
-        Int16 x = 0, y = ( fDynTextMap->GetVisibleHeight() - ht ) >> 1;
+        int16_t x = 0, y = ( fDynTextMap->GetVisibleHeight() - ht ) >> 1;
         if( fHowToSkin == kTop && fSkin != nil )
             y += fSkin->GetElement( pfGUISkin::kTopSpan ).fHeight >> 1;
         else if( fHowToSkin == kBottom && fSkin != nil )
@@ -376,7 +376,7 @@ void pfGUIMenuItem::PurgeDynaTextMapImage()
 //// GetTextExtents //////////////////////////////////////////////////////////
 //  Calculate the size of the drawn text.
 
-void    pfGUIMenuItem::GetTextExtents( UInt16 &width, UInt16 &height )
+void    pfGUIMenuItem::GetTextExtents( uint16_t &width, uint16_t &height )
 {
     if( fName == nil )
         width = height = 0;
@@ -405,19 +405,19 @@ void    pfGUIMenuItem::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIMenuItem::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIMenuItem::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     pfGUIButtonMod::HandleMouseDown( mousePt, modifiers );
     IUpdate();
 }
 
-void    pfGUIMenuItem::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIMenuItem::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     pfGUIButtonMod::HandleMouseUp( mousePt, modifiers );
     IUpdate();
 }
 
-void    pfGUIMenuItem::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIMenuItem::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
 /*  if( !fClicking )
         return;
@@ -441,7 +441,7 @@ void    pfGUIMenuItem::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
     pfGUIButtonMod::HandleMouseDrag( mousePt, modifiers );
 }
 
-void    pfGUIMenuItem::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIMenuItem::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers )
 {
     pfGUIButtonMod::HandleMouseHover( mousePt, modifiers );
     if( HasFlag( kReportHovers ) )

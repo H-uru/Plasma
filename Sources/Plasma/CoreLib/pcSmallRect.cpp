@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-//  pcSmallRect - A tiny Int16-based 2D rectangle class                      //
+//  pcSmallRect - A tiny int16_t-based 2D rectangle class                      //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 

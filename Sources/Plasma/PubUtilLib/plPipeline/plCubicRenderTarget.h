@@ -95,7 +95,7 @@ class plCubicRenderTarget : public plRenderTarget
             fFaces[0] = fFaces[1] = fFaces[2] = fFaces[3] = fFaces[4] = fFaces[5] = nil;
         }
 
-        plCubicRenderTarget( UInt16 flags, UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1 ) 
+        plCubicRenderTarget( uint16_t flags, uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1 ) 
             : plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth )
         {
             int     i;
@@ -103,7 +103,7 @@ class plCubicRenderTarget : public plRenderTarget
 
             for( i = 0; i < 6; i++ )
             {
-                fFaces[i] = TRACKED_NEW plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
+                fFaces[i] = new plRenderTarget( flags, width, height, bitDepth, zDepth, sDepth );
                 fFaces[i]->fParent = this;
                 fWorldToCameras[i].Reset();
                 fCameraToWorlds[i].Reset();
@@ -120,16 +120,16 @@ class plCubicRenderTarget : public plRenderTarget
         }
 
         // Get the total size in bytes
-        virtual UInt32  GetTotalSize( void ) const;
+        virtual uint32_t  GetTotalSize( void ) const;
 
         virtual void                SetCameraMatrix(const hsPoint3& pos);
-        virtual const hsMatrix44&   GetWorldToCamera(UInt8 face) const { return fWorldToCameras[face]; }
-        virtual const hsMatrix44&   GetCameraToWorld(UInt8 face) const { return fCameraToWorlds[face]; }
+        virtual const hsMatrix44&   GetWorldToCamera(uint8_t face) const { return fWorldToCameras[face]; }
+        virtual const hsMatrix44&   GetCameraToWorld(uint8_t face) const { return fCameraToWorlds[face]; }
 
-        plRenderTarget  *GetFace(UInt8 face) const { return fFaces[face]; }
+        plRenderTarget  *GetFace(uint8_t face) const { return fFaces[face]; }
 
-        virtual UInt32  Read(hsStream *s);
-        virtual UInt32  Write(hsStream *s);
+        virtual uint32_t  Read(hsStream *s);
+        virtual uint32_t  Write(hsStream *s);
 
 };
 

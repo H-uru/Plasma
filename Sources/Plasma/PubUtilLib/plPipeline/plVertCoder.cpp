@@ -40,23 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plVertCoder.h"
 
 #include "hsStream.h"
-
+#include <math.h>
 #include "plGBufferGroup.h"
 
-const hsScalar kPosQuantum = 1.f / hsScalar(1 << 10);
-const hsScalar kWeightQuantum = 1.f / hsScalar(1 << 15);
-const hsScalar kUVWQuantum = 1.f / hsScalar(1 << 16);
+const float kPosQuantum = 1.f / float(1 << 10);
+const float kWeightQuantum = 1.f / float(1 << 15);
+const float kUVWQuantum = 1.f / float(1 << 16);
 
-UInt32  plVertCoder::fCodedVerts = 0;
-UInt32  plVertCoder::fCodedBytes = 0;
-UInt32  plVertCoder::fRawBytes = 0;
-UInt32  plVertCoder::fSkippedBytes = 0;
+uint32_t  plVertCoder::fCodedVerts = 0;
+uint32_t  plVertCoder::fCodedBytes = 0;
+uint32_t  plVertCoder::fRawBytes = 0;
+uint32_t  plVertCoder::fSkippedBytes = 0;
 
-static const hsScalar kQuanta[plVertCoder::kNumFloatFields] =
+static const float kQuanta[plVertCoder::kNumFloatFields] =
 {
     kPosQuantum,
     kWeightQuantum,
@@ -73,24 +73,24 @@ static const hsScalar kQuanta[plVertCoder::kNumFloatFields] =
 };
 
 
-inline void plVertCoder::ICountFloats(const UInt8* src, UInt16 maxCnt, const hsScalar quant, const UInt32 stride, 
-                                      hsScalar& lo, hsBool &allSame, UInt16& count)
+inline void plVertCoder::ICountFloats(const uint8_t* src, uint16_t maxCnt, const float quant, const uint32_t stride, 
+                                      float& lo, hsBool &allSame, uint16_t& count)
 {
-    lo = *(hsScalar*)src;
+    lo = *(float*)src;
     lo = floor(lo / quant + 0.5f) * quant;
     allSame = false;
-    hsScalar hi = lo;
+    float hi = lo;
     
     count = 1;
 
-    const hsScalar maxRange = hsScalar(UInt16(0xffff)) * quant;
+    const float maxRange = float(uint16_t(0xffff)) * quant;
 
     src += stride;
     maxCnt--;
 
     while( maxCnt-- )
     {
-        hsScalar val = *(hsScalar*)src;
+        float val = *(float*)src;
         val = floor(val / quant + 0.5f) * quant;
         if( val < lo )
         {
@@ -110,36 +110,36 @@ inline void plVertCoder::ICountFloats(const UInt8* src, UInt16 maxCnt, const hsS
     allSame = (lo == hi);
 }
 
-static inline void IWriteFloat(hsStream* s, const UInt8*& src, const hsScalar offset, const hsScalar quantum)
+static inline void IWriteFloat(hsStream* s, const uint8_t*& src, const float offset, const float quantum)
 {
     float fval = *(float*)src;
     fval -= offset;
     fval /= quantum;
-//  hsAssert(fval < hsScalar(UInt16(0xffff)), "Bad offset?");
+//  hsAssert(fval < float(uint16_t(0xffff)), "Bad offset?");
 
-    const UInt16 ival = UInt16(floor(fval + 0.5f));
+    const uint16_t ival = uint16_t(floor(fval + 0.5f));
     s->WriteLE16(ival);
 
     src += 4;
 }
 
-static inline void IReadFloat(hsStream* s, UInt8*& dst, const hsScalar offset, const hsScalar quantum)
+static inline void IReadFloat(hsStream* s, uint8_t*& dst, const float offset, const float quantum)
 {
-    const UInt16 ival = s->ReadLE16();
+    const uint16_t ival = s->ReadLE16();
     float fval = float(ival) * quantum;
     fval += offset;
 
-    hsScalar* val = (hsScalar*)dst;
+    float* val = (float*)dst;
     *val = fval;
 
     dst += 4;
 }
 
-inline void plVertCoder::IEncodeFloat(hsStream* s, const UInt32 vertsLeft, const int field, const int chan, const UInt8*& src, const UInt32 stride)
+inline void plVertCoder::IEncodeFloat(hsStream* s, const uint32_t vertsLeft, const int field, const int chan, const uint8_t*& src, const uint32_t stride)
 {
     if( !fFloats[field][chan].fCount )
     {
-        ICountFloats(src, (UInt16)vertsLeft, kQuanta[field], stride, fFloats[field][chan].fOffset, fFloats[field][chan].fAllSame, fFloats[field][chan].fCount);
+        ICountFloats(src, (uint16_t)vertsLeft, kQuanta[field], stride, fFloats[field][chan].fOffset, fFloats[field][chan].fAllSame, fFloats[field][chan].fCount);
 
         s->WriteLEScalar(fFloats[field][chan].fOffset);
         s->WriteBool(fFloats[field][chan].fAllSame);
@@ -154,7 +154,7 @@ inline void plVertCoder::IEncodeFloat(hsStream* s, const UInt32 vertsLeft, const
     fFloats[field][chan].fCount--;
 }
 
-inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int chan, UInt8*& dst, const UInt32 stride)
+inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int chan, uint8_t*& dst, const uint32_t stride)
 {
     if( !fFloats[field][chan].fCount )
     {
@@ -167,57 +167,57 @@ inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int ch
         IReadFloat(s, dst, fFloats[field][chan].fOffset, kQuanta[field]);
     else
     {
-        *((hsScalar*)dst) = fFloats[field][chan].fOffset;
+        *((float*)dst) = fFloats[field][chan].fOffset;
         dst += 4;
     }
 
     fFloats[field][chan].fCount--;
 }
 
-static inline int INumWeights(const UInt8 format)
+static inline int INumWeights(const uint8_t format)
 {
     return (format & plGBufferGroup::kSkinWeightMask) >> 4;
 }
 
-static const hsScalar kNormalScale(Int16(0x7fff));
-static const hsScalar kInvNormalScale(1.f / kNormalScale);
+static const float kNormalScale(int16_t(0x7fff));
+static const float kInvNormalScale(1.f / kNormalScale);
 
-inline void plVertCoder::IEncodeNormal(hsStream* s, const UInt8*& src, const UInt32 stride)
+inline void plVertCoder::IEncodeNormal(hsStream* s, const uint8_t*& src, const uint32_t stride)
 {
 
-    hsScalar x = *(hsScalar*)src;
-    s->WriteByte((UInt8)((x / 2.f + .5f) * 255.9f));
+    float x = *(float*)src;
+    s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 
-    x = *(hsScalar*)src;
-    s->WriteByte((UInt8)((x / 2.f + .5f) * 255.9f));
+    x = *(float*)src;
+    s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 
-    x = *(hsScalar*)src;
-    s->WriteByte((UInt8)((x / 2.f + .5f) * 255.9f));
+    x = *(float*)src;
+    s->WriteByte((uint8_t)((x / 2.f + .5f) * 255.9f));
     src += 4;
 }
 
-inline void plVertCoder::IDecodeNormal(hsStream* s, UInt8*& dst, const UInt32 stride)
+inline void plVertCoder::IDecodeNormal(hsStream* s, uint8_t*& dst, const uint32_t stride)
 {
 
-    UInt8 ix = s->ReadByte();
-    hsScalar* x = (hsScalar*)dst;
+    uint8_t ix = s->ReadByte();
+    float* x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 
     ix = s->ReadByte();
-    x = (hsScalar*)dst;
+    x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 
     ix = s->ReadByte();
-    x = (hsScalar*)dst;
+    x = (float*)dst;
     *x = (ix / 255.9f - .5f) * 2.f;
     dst += 4;
 }
 
-inline void plVertCoder::ICountBytes(const UInt32 vertsLeft, const UInt8* src, const UInt32 stride, UInt16& len, UInt8& same)
+inline void plVertCoder::ICountBytes(const uint32_t vertsLeft, const uint8_t* src, const uint32_t stride, uint16_t& len, uint8_t& same)
 {
     // We want to run length encode this. So we're looking here for either
     // the number of consecutive bytes of the same value,
@@ -228,7 +228,7 @@ inline void plVertCoder::ICountBytes(const UInt32 vertsLeft, const UInt8* src, c
 
     if( vertsLeft < 4 )
     {
-        len = (UInt16)vertsLeft;
+        len = (uint16_t)vertsLeft;
         same = false;
         
         return;
@@ -268,19 +268,19 @@ inline void plVertCoder::ICountBytes(const UInt32 vertsLeft, const UInt8* src, c
         return;
     }
 
-    len = (UInt16)vertsLeft;
+    len = (uint16_t)vertsLeft;
     return;
 }
 
-static const UInt16 kSameMask(0x8000);
+static const uint16_t kSameMask(0x8000);
 
-inline void plVertCoder::IEncodeByte(hsStream* s, const int chan, const UInt32 vertsLeft, const UInt8*& src, const UInt32 stride)
+inline void plVertCoder::IEncodeByte(hsStream* s, const int chan, const uint32_t vertsLeft, const uint8_t*& src, const uint32_t stride)
 {
     if( !fColors[chan].fCount )
     {
         ICountBytes(vertsLeft, src, stride, fColors[chan].fCount, fColors[chan].fSame);
 
-        UInt16 cnt = fColors[chan].fCount;
+        uint16_t cnt = fColors[chan].fCount;
         if( fColors[chan].fSame )
             cnt |= kSameMask;
         s->WriteLE16(cnt);
@@ -296,11 +296,11 @@ inline void plVertCoder::IEncodeByte(hsStream* s, const int chan, const UInt32 v
     fColors[chan].fCount--;
 }
 
-inline void plVertCoder::IDecodeByte(hsStream* s, const int chan, UInt8*& dst, const UInt32 stride)
+inline void plVertCoder::IDecodeByte(hsStream* s, const int chan, uint8_t*& dst, const uint32_t stride)
 {
     if( !fColors[chan].fCount )
     {
-        UInt16 cnt = s->ReadLE16();
+        uint16_t cnt = s->ReadLE16();
         if( cnt & kSameMask )
         {
             fColors[chan].fSame = true;
@@ -323,7 +323,7 @@ inline void plVertCoder::IDecodeByte(hsStream* s, const int chan, UInt8*& dst, c
     fColors[chan].fCount--;
 }
 
-inline void plVertCoder::IEncodeColor(hsStream* s, const UInt32 vertsLeft, const UInt8*& src, const UInt32 stride)
+inline void plVertCoder::IEncodeColor(hsStream* s, const uint32_t vertsLeft, const uint8_t*& src, const uint32_t stride)
 {
     IEncodeByte(s, 0, vertsLeft, src, stride);
     IEncodeByte(s, 1, vertsLeft, src, stride);
@@ -331,7 +331,7 @@ inline void plVertCoder::IEncodeColor(hsStream* s, const UInt32 vertsLeft, const
     IEncodeByte(s, 3, vertsLeft, src, stride);
 }
 
-inline void plVertCoder::IDecodeColor(hsStream* s, UInt8*& dst, const UInt32 stride)
+inline void plVertCoder::IDecodeColor(hsStream* s, uint8_t*& dst, const uint32_t stride)
 {
     IDecodeByte(s, 0, dst, stride);
     IDecodeByte(s, 1, dst, stride);
@@ -339,7 +339,7 @@ inline void plVertCoder::IDecodeColor(hsStream* s, UInt8*& dst, const UInt32 str
     IDecodeByte(s, 3, dst, stride);
 }
 
-inline void plVertCoder::IEncode(hsStream* s, const UInt32 vertsLeft, const UInt8*& src, const UInt32 stride, const UInt8 format)
+inline void plVertCoder::IEncode(hsStream* s, const uint32_t vertsLeft, const uint8_t*& src, const uint32_t stride, const uint8_t format)
 {
     IEncodeFloat(s, vertsLeft, kPosition, 0, src, stride);
     IEncodeFloat(s, vertsLeft, kPosition, 1, src, stride);
@@ -355,7 +355,7 @@ inline void plVertCoder::IEncode(hsStream* s, const UInt32 vertsLeft, const UInt
 
         if( format & plGBufferGroup::kSkinIndices )
         {
-            const UInt32 idx = *(UInt32*)src;
+            const uint32_t idx = *(uint32_t*)src;
             s->WriteLE32(idx);
             src += 4;
         }
@@ -378,7 +378,7 @@ inline void plVertCoder::IEncode(hsStream* s, const UInt32 vertsLeft, const UInt
     }
 }
 
-inline void plVertCoder::IDecode(hsStream* s, UInt8*& dst, const UInt32 stride, const UInt8 format)
+inline void plVertCoder::IDecode(hsStream* s, uint8_t*& dst, const uint32_t stride, const uint8_t format)
 {
     IDecodeFloat(s, kPosition, 0, dst, stride);
     IDecodeFloat(s, kPosition, 1, dst, stride);
@@ -394,7 +394,7 @@ inline void plVertCoder::IDecode(hsStream* s, UInt8*& dst, const UInt32 stride, 
 
         if( format & plGBufferGroup::kSkinIndices )
         {
-            UInt32* idx = (UInt32*)dst;
+            uint32_t* idx = (uint32_t*)dst;
             *idx = s->ReadLE32();
             dst += 4;
         }
@@ -405,7 +405,7 @@ inline void plVertCoder::IDecode(hsStream* s, UInt8*& dst, const UInt32 stride, 
     IDecodeColor(s, dst, stride);
 
     // COLOR2
-    UInt32* trash = (UInt32*)dst;
+    uint32_t* trash = (uint32_t*)dst;
     *trash = 0;
     dst += 4;
 
@@ -419,7 +419,7 @@ inline void plVertCoder::IDecode(hsStream* s, UInt8*& dst, const UInt32 stride, 
     }
 }
 
-void plVertCoder::Read(hsStream* s, UInt8* dst, const UInt8 format, const UInt32 stride, const UInt16 numVerts)
+void plVertCoder::Read(hsStream* s, uint8_t* dst, const uint8_t format, const uint32_t stride, const uint16_t numVerts)
 {
     Clear();
 
@@ -429,11 +429,11 @@ void plVertCoder::Read(hsStream* s, UInt8* dst, const UInt8 format, const UInt32
 }
 
 
-void plVertCoder::Write(hsStream* s, const UInt8* src, const UInt8 format, const UInt32 stride, const UInt16 numVerts)
+void plVertCoder::Write(hsStream* s, const uint8_t* src, const uint8_t format, const uint32_t stride, const uint16_t numVerts)
 {
     Clear();
 
-    UInt32 streamStart = s->GetPosition();
+    uint32_t streamStart = s->GetPosition();
 
     int numLeft = numVerts;
     while( numLeft )

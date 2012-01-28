@@ -66,7 +66,7 @@ plSDLMgr::~plSDLMgr()
     DeInit();
 }
 
-bool plSDLMgr::Init( UInt32 behaviorFlags )
+bool plSDLMgr::Init( uint32_t behaviorFlags )
 {
     fBehaviorFlags = behaviorFlags;
     plSDLParser parser;
@@ -145,7 +145,7 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
     if (dl==nil)
         dl=&fDescriptors;
 
-    UInt16 num=dl->size();
+    uint16_t num=dl->size();
     s->WriteLE(num);
 
     plSDL::DescriptorList::const_iterator it;
@@ -174,7 +174,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
     // clear dl
     IDeleteDescriptors(dl);
 
-    UInt16 num;
+    uint16_t num;
     try
     {       
         // read dtor list
@@ -183,7 +183,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
         int i;
         for(i=0;i<num;i++)
         {
-            plStateDescriptor* sd=TRACKED_NEW plStateDescriptor;
+            plStateDescriptor* sd=new plStateDescriptor;
             if (sd->Read(s))
                 dl->push_back(sd);
         }       

@@ -48,13 +48,13 @@ void plRelevanceRegion::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
     
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0), plRefFlags::kActiveRef);
     
     // Added to the manager when read in.
     // Removed when paged out, due to passive ref.
     if (plRelevanceMgr::Instance())
     {
-        plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(plRelevanceMgr::Instance()->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        plGenRefMsg *msg = new plGenRefMsg(plRelevanceMgr::Instance()->GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->AddViaNotify(GetKey(), msg, plRefFlags::kPassiveRef);
     }
 }
@@ -87,9 +87,9 @@ hsBool plRelevanceRegion::MsgReceive(plMessage* msg)
 }
 
 
-void plRelevanceRegion::SetMgrIndex(UInt32 index)
+void plRelevanceRegion::SetMgrIndex(uint32_t index)
 {
-    if (fMgrIdx != (UInt32)-1)
+    if (fMgrIdx != (uint32_t)-1)
         fRegionsICareAbout.SetBit(fMgrIdx, false);
 
     fMgrIdx = index;

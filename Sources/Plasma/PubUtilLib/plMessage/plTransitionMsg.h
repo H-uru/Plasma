@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTransitionMsg_inc
 #define plTransitionMsg_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "pnMessage/plMessageWithCallbacks.h"
 
@@ -51,8 +51,8 @@ class plTransitionMsg : public plMessageWithCallbacks
 {
 protected:
 
-    UInt32      fEffect;
-    hsScalar    fLengthInSecs;
+    uint32_t      fEffect;
+    float    fLengthInSecs;
     hsBool      fHoldUntilNext;
 public:
     enum 
@@ -64,7 +64,7 @@ public:
     };
 
     plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
-    plTransitionMsg( UInt32 type, hsScalar lengthInSecs, hsBool holdUntilNext = false ) : 
+    plTransitionMsg( uint32_t type, float lengthInSecs, hsBool holdUntilNext = false ) : 
                 plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
                 { SetBCastFlag( kBCastByExactType );  }
     
@@ -73,8 +73,8 @@ public:
     CLASSNAME_REGISTER( plTransitionMsg );
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-    UInt32      GetEffect( void ) const { return fEffect; }
-    hsScalar    GetLengthInSecs( void ) const { return fLengthInSecs; }
+    uint32_t      GetEffect( void ) const { return fEffect; }
+    float    GetLengthInSecs( void ) const { return fLengthInSecs; }
     hsBool      GetHoldState( void ) const { return fHoldUntilNext; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 

@@ -64,7 +64,7 @@ hsBool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
     return false;
 }
 
-void    pyGUIControlButton::SetNotifyType(Int32 kind)
+void    pyGUIControlButton::SetNotifyType(int32_t kind)
 {
     if ( fGCkey )
     {
@@ -75,7 +75,7 @@ void    pyGUIControlButton::SetNotifyType(Int32 kind)
     }
 }
 
-Int32   pyGUIControlButton::GetNotifyType()
+int32_t   pyGUIControlButton::GetNotifyType()
 {
     if ( fGCkey )
     {

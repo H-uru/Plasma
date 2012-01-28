@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stdlib.h>
 #include "hsTimer.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 #include "pfGUIDialogHandlers.h"
@@ -87,10 +87,10 @@ class pfGameUIInputInterface : public plInputInterface
     protected:
         pfGameGUIMgr    * const fGUIManager;
 
-        UInt8   fModifiers;
-        UInt8   fButtonState;
+        uint8_t   fModifiers;
+        uint8_t   fButtonState;
         hsBool  fHaveInterestingCursor;
-        UInt32  fCurrentCursor;
+        uint32_t  fCurrentCursor;
 
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
         virtual hsBool  IControlCodeEnabled( ControlEventCode code );
@@ -99,10 +99,10 @@ class pfGameUIInputInterface : public plInputInterface
 
         pfGameUIInputInterface( pfGameGUIMgr * const mgr );
 
-        virtual UInt32  GetPriorityLevel( void ) const { return kGUISystemPriority; }
+        virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
-        virtual UInt32  GetCurrentCursorID( void ) const;
-        virtual hsScalar GetCurrentCursorOpacity( void ) const;
+        virtual uint32_t  GetCurrentCursorID( void ) const;
+        virtual float GetCurrentCursorOpacity( void ) const;
         virtual hsBool  HasInterestingCursorID( void ) const { return fHaveInterestingCursor; }
         virtual hsBool  SwitchInterpretOrder( void ) const { return true; }
 
@@ -324,7 +324,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         }
         if (!alreadyLoaded)
         {
-            pfDialogNameSetKey* pDNSK = TRACKED_NEW pfDialogNameSetKey(name,recvrKey);
+            pfDialogNameSetKey* pDNSK = new pfDialogNameSetKey(name,recvrKey);
             fDialogToSetKeyOf.Append(pDNSK);
         }
     }
@@ -333,13 +333,13 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
-    plClientMsg *msg = TRACKED_NEW plClientMsg( plClientMsg::kLoadRoomHold );
+    plClientMsg *msg = new plClientMsg( plClientMsg::kLoadRoomHold );
     msg->AddReceiver( clientKey );
     msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName ? ageName : "GUI", name));
     msg->Send();
 
     // Now add this dialog to a list of pending loads (will remove it once it's fully loaded)
-//  fDlgsPendingLoad.Append( TRACKED_NEW pfDialogNameSetKey( name, nil ) );
+//  fDlgsPendingLoad.Append( new pfDialogNameSetKey( name, nil ) );
 }
 
 //// IShowDialog /////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 //  IRemoveDlgFromList( dlg );
 
     // Add the name to our list of dialogs pending unload
-//  fDlgsPendingUnload.Append( TRACKED_NEW pfDialogNameSetKey( dlg->GetName(), nil ) );
+//  fDlgsPendingUnload.Append( new pfDialogNameSetKey( dlg->GetName(), nil ) );
 
     plKey       sceneNodeKey = dlg->GetSceneNodeKey();
     if( sceneNodeKey == nil )
@@ -448,7 +448,7 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
     {
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
-        plClientMsg *msg = TRACKED_NEW plClientMsg( plClientMsg::kUnloadRoom );
+        plClientMsg *msg = new plClientMsg( plClientMsg::kUnloadRoom );
         msg->AddReceiver( clientKey );
 //      msg->SetProgressBarSuppression( true );
         msg->AddRoomLoc(sceneNodeKey->GetUoid().GetLocation());
@@ -523,7 +523,7 @@ void pfGameGUIMgr::SetDialogToNotify(const char *name, plKey recvrKey)
 //
 void pfGameGUIMgr::SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey)
 {
-    pfGUIDialogNotifyProc* handler = TRACKED_NEW pfGUIDialogNotifyProc(recvrKey);
+    pfGUIDialogNotifyProc* handler = new pfGUIDialogNotifyProc(recvrKey);
     dlg->SetHandler(handler);
     handler->OnInit();
 }
@@ -540,14 +540,14 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 
     if( activate )
     {
-        fInputConfig = TRACKED_NEW pfGameUIInputInterface( this );
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+        fInputConfig = new pfGameUIInputInterface( this );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
         msg->SetIFace( fInputConfig );
         plgDispatch::MsgSend( msg );
     }
     else
     {
-        plInputIfaceMgrMsg *msg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+        plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputConfig );
         plgDispatch::MsgSend( msg );
 
@@ -561,7 +561,7 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 //// IHandleMouse ////////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers, UInt32 *desiredCursor ) 
+hsBool  pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -592,7 +592,7 @@ hsBool  pfGameGUIMgr::IHandleMouse( EventType event, hsScalar mouseX, hsScalar m
 //// IHandleKeyEvt ///////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifiers ) 
+hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -610,7 +610,7 @@ hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, UInt8 modifi
 //  Like IHandleKeyPress, but takes in a char for distributing actual 
 //  characters typed.
 
-hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, UInt8 modifiers ) 
+hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -837,7 +837,7 @@ hsBool  pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     return false;
 }   
 
-UInt32  pfGameUIInputInterface::GetCurrentCursorID( void ) const
+uint32_t  pfGameUIInputInterface::GetCurrentCursorID( void ) const
 {
     if( fCurrentCursor == 0 )
     {
@@ -850,7 +850,7 @@ UInt32  pfGameUIInputInterface::GetCurrentCursorID( void ) const
     return fCurrentCursor;
 }
 
-hsScalar pfGameUIInputInterface::GetCurrentCursorOpacity( void ) const
+float pfGameUIInputInterface::GetCurrentCursorOpacity( void ) const
 {
     if ( pfGameGUIMgr::GetInstance() )
         return pfGameGUIMgr::GetInstance()->GetCursorOpacity();
@@ -866,7 +866,7 @@ extern pfGUITag gGUITags[];     // From pfGUITagDefs.cpp
 
 //// GetDialogFromTag ////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( UInt32 tagID )
+pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
 {
     int     i;
 
@@ -898,16 +898,16 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const char *name )
 
 //// GetControlFromTag ///////////////////////////////////////////////////////
 
-pfGUIControlMod *pfGameGUIMgr::GetControlFromTag( pfGUIDialogMod *dlg, UInt32 tagID )
+pfGUIControlMod *pfGameGUIMgr::GetControlFromTag( pfGUIDialogMod *dlg, uint32_t tagID )
 {
     return dlg->GetControlFromTag( tagID );
 }
 
 //// GetNumTags //////////////////////////////////////////////////////////////
 
-UInt32          pfGameGUIMgr::GetNumTags( void )
+uint32_t          pfGameGUIMgr::GetNumTags( void )
 {
-    UInt32      count;
+    uint32_t      count;
 
 
     for( count = 0; gGUITags[ count ].fID != 0; count++ );
@@ -916,9 +916,9 @@ UInt32          pfGameGUIMgr::GetNumTags( void )
 
 //// GetTag //////////////////////////////////////////////////////////////////
 
-pfGUITag        *pfGameGUIMgr::GetTag( UInt32 tagIndex )
+pfGUITag        *pfGameGUIMgr::GetTag( uint32_t tagIndex )
 {
-    UInt32      count;
+    uint32_t      count;
 
     
     for( count = 0; gGUITags[ count ].fID != 0; count++ );
@@ -927,9 +927,9 @@ pfGUITag        *pfGameGUIMgr::GetTag( UInt32 tagIndex )
     return &gGUITags[ tagIndex ];
 }
 
-UInt32      pfGameGUIMgr::GetHighestTag( void )
+uint32_t      pfGameGUIMgr::GetHighestTag( void )
 {
-    UInt32  i, id = 1;
+    uint32_t  i, id = 1;
 
 
     for( i = 0; gGUITags[ i ].fID != 0; i++ )
@@ -942,12 +942,12 @@ UInt32      pfGameGUIMgr::GetHighestTag( void )
 }
 
 
-void pfGameGUIMgr::SetAspectRatio(hsScalar aspectratio)
+void pfGameGUIMgr::SetAspectRatio(float aspectratio)
 {
-    hsScalar oldAspectRatio = fAspectRatio;
+    float oldAspectRatio = fAspectRatio;
 
     // don't allow the aspectratio below 4:3
-    hsScalar fourThree = 4.0f/3.0f;
+    float fourThree = 4.0f/3.0f;
     fAspectRatio = aspectratio < fourThree ? fourThree : aspectratio;
 
     if (fAspectRatio != oldAspectRatio)

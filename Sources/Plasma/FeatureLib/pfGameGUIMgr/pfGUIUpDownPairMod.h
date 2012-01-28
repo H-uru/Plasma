@@ -70,7 +70,7 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         pfUpDownBtnProc *fButtonProc;
 
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
         virtual void    IUpdate( void );
 
     public:
@@ -89,8 +89,8 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    SetRange( hsScalar min, hsScalar max );
-        virtual void    SetCurrValue( hsScalar v );
+        virtual void    SetRange( float min, float max );
+        virtual void    SetCurrValue( float v );
 
         /// Export ONLY
 

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExportProgressBar_inc
 #define plExportProgressBar_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class INode;
 
@@ -52,18 +52,18 @@ public:
     plExportProgressBar();
     ~plExportProgressBar();
 
-    void Start(char *name, UInt32 steps=CountNodes());
-    bool Update(char *name=nil, UInt32 inc=1);
+    void Start(char *name, uint32_t steps=CountNodes());
+    bool Update(char *name=nil, uint32_t inc=1);
     
-    static UInt32 CountNodes();
+    static uint32_t CountNodes();
 
 private:
-    static UInt32 INodeCount(INode *node);
+    static uint32_t INodeCount(INode *node);
     
     Interface*  fInterface;
     
-    UInt32 fTotalSteps;
-    UInt32 fCurStep;
+    uint32_t fTotalSteps;
+    uint32_t fCurStep;
 };
 
 #endif // plExportProgressBar_inc

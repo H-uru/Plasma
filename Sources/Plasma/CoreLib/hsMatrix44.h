@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HSMATRIX44_inc
 #define  HSMATRIX44_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 
 class hsQuat;
@@ -59,8 +59,8 @@ struct hsMatrix44 {
         kUp,
         kView
     };
-    hsScalar            fMap[4][4];
-    UInt32              fFlags;
+    float            fMap[4][4];
+    uint32_t              fFlags;
 
     hsMatrix44() : fFlags(0) {}
     hsMatrix44(const hsScalarTriple &translate, const hsQuat &rotate);
@@ -76,7 +76,7 @@ struct hsMatrix44 {
     // Concat transform
     hsMatrix44&     Translate(const hsVector3 *);
     hsMatrix44&     Scale(const hsVector3 *);
-    hsMatrix44&     Rotate(int axis, hsScalar radians);
+    hsMatrix44&     Rotate(int axis, float radians);
 
     hsMatrix44&     Reset(hsBool asIdent=true) 
     {
@@ -92,7 +92,7 @@ struct hsMatrix44 {
     // Create matrix from scratch
     hsMatrix44&     MakeTranslateMat(const hsVector3 *trans);
     hsMatrix44&     MakeScaleMat(const hsVector3 *scale);
-    hsMatrix44&     MakeRotateMat(int axis, hsScalar radians);
+    hsMatrix44&     MakeRotateMat(int axis, float radians);
     hsMatrix44&     Make(const hsPoint3* from, const hsPoint3* at, 
                         const hsVector3* up);   // Not a camera matrix
     hsMatrix44&     MakeUpPreserving(const hsPoint3* from, const hsPoint3* at, 
@@ -104,7 +104,7 @@ struct hsMatrix44 {
                         const hsVector3* up);
 
     hsBool          GetParity() const;
-    hsScalar        GetDeterminant() const;
+    float        GetDeterminant() const;
     hsMatrix44*     GetInverse(hsMatrix44* inverse) const;
     hsMatrix44*     GetTranspose(hsMatrix44* inverse) const;
     hsMatrix44*     GetAdjoint(hsMatrix44* adjoint) const;
@@ -120,67 +120,39 @@ struct hsMatrix44 {
     // Change component of matrix
     hsMatrix44&     SetTranslate(const hsScalarTriple *);
     hsMatrix44&     SetScale(const hsVector3 *);
-    hsMatrix44&     SetRotate(int axis, hsScalar radians);
+    hsMatrix44&     SetRotate(int axis, float radians);
 
     hsVector3       RemoveScale();      // returns old scale
-    void MakeXRotation(hsScalar radians);
-    void MakeYRotation(hsScalar radians);
-    void MakeZRotation(hsScalar radians);
+    void MakeXRotation(float radians);
+    void MakeYRotation(float radians);
+    void MakeZRotation(float radians);
 
 
-#if 0 // Havok reeks
-    friend hsPoint3     operator*(const hsMatrix44& m, const hsPoint3& p)
-                    {   
-                        if( m.fFlags & hsMatrix44::kIsIdent )
-                            return p;
-
-                        hsPoint3 rVal;
-                        rVal.fX = hsScalarMul(p.fX, m.fMap[0][0]) + hsScalarMul(p.fY, m.fMap[0][1]) + hsScalarMul(p.fZ, m.fMap[0][2]) + m.fMap[0][3];
-                        rVal.fY = hsScalarMul(p.fX, m.fMap[1][0]) + hsScalarMul(p.fY, m.fMap[1][1]) + hsScalarMul(p.fZ, m.fMap[1][2])  + m.fMap[1][3];
-                        rVal.fZ = hsScalarMul(p.fX, m.fMap[2][0]) + hsScalarMul(p.fY, m.fMap[2][1]) + hsScalarMul(p.fZ, m.fMap[2][2])  + m.fMap[2][3];
-                        return rVal;
-                    }
-    friend  hsVector3 operator*(const hsMatrix44& m, const hsVector3& p);
-    friend hsMatrix44   operator*(const hsMatrix44& a, const hsMatrix44& b);
-#else // Havok reeks
     hsPoint3        operator*(const hsPoint3& p) const
                     {   
                         if( fFlags & hsMatrix44::kIsIdent )
                             return p;
 
                         hsPoint3 rVal;
-                        rVal.fX = hsScalarMul(p.fX, fMap[0][0]) + hsScalarMul(p.fY, fMap[0][1]) + hsScalarMul(p.fZ, fMap[0][2]) + fMap[0][3];
-                        rVal.fY = hsScalarMul(p.fX, fMap[1][0]) + hsScalarMul(p.fY, fMap[1][1]) + hsScalarMul(p.fZ, fMap[1][2])  + fMap[1][3];
-                        rVal.fZ = hsScalarMul(p.fX, fMap[2][0]) + hsScalarMul(p.fY, fMap[2][1]) + hsScalarMul(p.fZ, fMap[2][2])  + fMap[2][3];
+                        rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3];
+                        rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2])  + fMap[1][3];
+                        rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2])  + fMap[2][3];
                         return rVal;
                     }
     hsVector3 operator*(const hsVector3& p) const;
     hsMatrix44  operator*(const hsMatrix44& b) const;
-#endif // Havok reeks
     
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
     
     hsBool          IsIdentity(void);
     void            NotIdentity() { fFlags &= ~kIsIdent; }
 
-#if 0 // Havok reeks
-    friend int operator==(const hsMatrix44& s, const hsMatrix44& t);
-    friend int operator!=(const hsMatrix44& s, const hsMatrix44& t);
-#else // Havok reeks
     hsBool operator==(const hsMatrix44& ss) const;
     hsBool operator!=(const hsMatrix44& ss) const { return !(ss == *this); }
-#endif // Havok reeks
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 };
-
-#if 0 // Havok reeks
-inline int operator!=(const hsMatrix44& s, const hsMatrix44& t)
-{
-    return (!(s==t));
-}
-#endif // Havok reeks
 
 ////////////////////////////////////////////////////////////////////////////
 #endif

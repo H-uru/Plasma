@@ -75,12 +75,12 @@ struct CamTrans
     hsBool  fCutPos;
     hsBool  fCutPOA;
     hsBool  fIgnore;
-    hsScalar fAccel;
-    hsScalar fDecel;
-    hsScalar fVelocity;
-    hsScalar fPOAAccel;
-    hsScalar fPOADecel;
-    hsScalar fPOAVelocity;
+    float fAccel;
+    float fDecel;
+    float fVelocity;
+    float fPOAAccel;
+    float fPOADecel;
+    float fPOAVelocity;
 
 };
 
@@ -96,7 +96,7 @@ class plCameraModifier1 : public plSingleModifier
 protected:
 
     void Output();
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
         
 public:
     
@@ -128,10 +128,10 @@ public:
     void            SetTargetPOA(hsPoint3 pos) { fAt = pos; }
     void            SetSubworldPos(hsPoint3 pos) { fLastSubPos = pos; }
     void            SetSubworldPOA(hsPoint3 pos) { fLastSubPOA = pos; }
-    hsScalar        GetFOVw() { return fFOVw; }
-    hsScalar        GetFOVh() { return fFOVh; }
-    void            SetFOVw(hsScalar f, hsBool fUpdateVCam = true); 
-    void            SetFOVh(hsScalar f, hsBool fUpdateVCam = true); 
+    float        GetFOVw() { return fFOVw; }
+    float        GetFOVh() { return fFOVh; }
+    void            SetFOVw(float f, hsBool fUpdateVCam = true); 
+    void            SetFOVh(float f, hsBool fUpdateVCam = true); 
     hsBool          GetInSubworld() { return fInSubLastUpdate; }
     void            InSubworld(hsBool b) { fInSubLastUpdate = b; }
     virtual void Read(hsStream* stream, hsResMgr* mgr);
@@ -157,8 +157,8 @@ private:
     plCameraBrain1*         fBrain; // the 'logic' portion of the camera
     hsTArray<CamTrans*>     fTrans;
     plSceneObject*          fSubObj;
-    hsScalar                fFOVw;
-    hsScalar                fFOVh;
+    float                fFOVw;
+    float                fFOVh;
     hsTArray<plMessage*>    fMessageQueue;
     hsTArray<plCameraMsg*>  fFOVInstructions;
     hsBool                  fAnimated, fStartAnimOnPush, fStopAnimOnPop, fResetAnimOnPop;

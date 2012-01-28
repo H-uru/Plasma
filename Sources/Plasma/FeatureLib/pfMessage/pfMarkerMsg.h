@@ -56,7 +56,7 @@ public:
     };
     Type fType;
 
-    UInt32 fMarkerID;
+    uint32_t fMarkerID;
     
     pfMarkerMsg();
     virtual ~pfMarkerMsg();

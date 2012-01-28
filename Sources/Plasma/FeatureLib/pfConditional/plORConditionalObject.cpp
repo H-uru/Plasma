@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plORConditionalObject.h"
 #include "plPhysical/plDetectorModifier.h"
 #include "hsResMgr.h"
@@ -112,7 +112,7 @@ void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     fChildren.SetCountAndZero(n);
     for(int i = 0; i < n; i++ )
     {   
-        refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
+        refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }   
 }

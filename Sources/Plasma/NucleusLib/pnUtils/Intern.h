@@ -63,7 +63,7 @@ namespace Crypt {
 //============================================================================
 class KeyBase {
 public:
-    virtual void Codec (bool encrypt, ARRAY(byte) * dest, unsigned sourceBytes, const void * sourceData) = 0;
+    virtual void Codec (bool encrypt, ARRAY(uint8_t) * dest, unsigned sourceBytes, const void * sourceData) = 0;
     virtual unsigned GetBlockSize () const = 0;
 };
 

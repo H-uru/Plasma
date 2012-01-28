@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pnMessage/plMessage.h"
-// #include "hsUtils.h"
+// 
 #include "pnKeyedObject/plUoid.h"
 
 /** \class plLoadCloneMsg
@@ -80,7 +80,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor after cloning.
                         
     */
-    plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData);
+    plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData);
 
     /** This constructor form is for when you want to send a clone message based on
         an existing cloned object. The two primary uses of this are:
@@ -92,7 +92,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor.
         \param isLoading - Are we loading or unloading?
         */
-    plLoadCloneMsg(const plKey &existing, const plKey &requestor, UInt32 userData, hsBool isLoading);
+    plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, hsBool isLoading);
 
     virtual ~plLoadCloneMsg();
 
@@ -109,9 +109,9 @@ public:
     plKey   GetCloneKey();
     plKey   GetRequestorKey();
     hsBool  IsValidMessage();
-    UInt32  GetUserData();
-    UInt32  GetOriginatingPlayerID();
-    void    SetOriginatingPlayerID(UInt32 playerId);
+    uint32_t  GetUserData();
+    uint32_t  GetOriginatingPlayerID();
+    void    SetOriginatingPlayerID(uint32_t playerId);
     hsBool  GetIsLoading();
     void    SetTriggerMsg(plMessage *msg);
     plMessage *GetTriggerMsg();
@@ -121,8 +121,8 @@ protected:
     plKey   fCloneKey;              // the key that will be loaded
     plKey   fRequestorKey;          // forward the message to this guy after the clone is created
     hsBool  fValidMsg;              // only gets set if the message built successfully
-    UInt32  fUserData;              // let requestors send some data to their remote versions
-    UInt32  fOriginatingPlayerID;   // network / player id of the client initiating the request
+    uint32_t  fUserData;              // let requestors send some data to their remote versions
+    uint32_t  fOriginatingPlayerID;   // network / player id of the client initiating the request
     hsBool  fIsLoading;             // true if we're loading; false if we're unloading
     plMessage *fTriggerMsg;         // Handy place to store a message that caused you to request a clone,
                                     // so you can see it and continue processing once your clone is loaded.

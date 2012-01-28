@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+
 #include "plDeviceSelector.h"
 #include "hsStream.h"
 #include "hsUtils.h"
@@ -80,7 +80,7 @@ hsBool DeviceSelector::Enumerate(HWND hWnd, hsBool expertMode )
 
     // Sort the modes
     hsTArray<hsG3DDeviceRecord> &recs = fSelector.GetDeviceRecords();
-    for (Int32 i = 0; i < recs.Count(); i++)
+    for (int32_t i = 0; i < recs.Count(); i++)
     {
         hsTArray<hsG3DDeviceMode> &modes = recs[i].GetModes();
         std::sort(modes.FirstIter(), modes.StopIter());
@@ -163,11 +163,11 @@ int     DeviceSelector::IFindFiltered( int realIndex )
     return idx;
 }
 
-hsBool DeviceSelector::CheckDeviceType(UInt32 type)
+hsBool DeviceSelector::CheckDeviceType(uint32_t type)
 {
     hsTArray<hsG3DDeviceRecord>& records = fSelector.GetDeviceRecords();
 
-    for (Int32 i = 0; i < records.Count(); i++)
+    for (int32_t i = 0; i < records.Count(); i++)
     {
         if (type == records[i].GetG3DDeviceType())
             return true;
@@ -216,9 +216,9 @@ void DeviceSelector::SetOpenGL()
     SetDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
 }
 
-void DeviceSelector::SetDeviceType (UInt32 type)
+void DeviceSelector::SetDeviceType (uint32_t type)
 {
-    Int32 i;
+    int32_t i;
     for(i = 0; i < fRecords.GetCount(); i++)
         fRecords[i].Clear();
     fRecords.Reset();
@@ -267,7 +267,7 @@ hsBool DeviceSelector::IsOpenGL()
         return false;
 }
 
-hsBool DeviceSelector::SetDevice(UInt32 index)
+hsBool DeviceSelector::SetDevice(uint32_t index)
 {
     if (index < fRecords.Count())
     {
@@ -283,7 +283,7 @@ hsBool DeviceSelector::SetDevice(UInt32 index)
     return false;
 }
 
-hsBool DeviceSelector::SetMode(UInt32 index)
+hsBool DeviceSelector::SetMode(uint32_t index)
 {
     if (fSelDev >= fRecords.Count())
         return false;
@@ -332,12 +332,12 @@ char* DeviceSelector::GetModeDescription( void )
     return fStr;
 }
 
-UInt32 DeviceSelector::GetNumModes()
+uint32_t DeviceSelector::GetNumModes()
 {
     return fFilteredModes.GetCount();
 }
 
-void DeviceSelector::GetMode(UInt32 i, int& width, int& height, int& depth)
+void DeviceSelector::GetMode(uint32_t i, int& width, int& height, int& depth)
 {
     if (i >= fFilteredModes.GetCount())
         return;
@@ -515,38 +515,38 @@ int DeviceSelector::GetModeNum(const hsG3DDeviceMode *pLoadMode)
     return -1;
 }
 
-UInt8   DeviceSelector::CanAntiAlias()
+uint8_t   DeviceSelector::CanAntiAlias()
 {
     hsG3DDeviceMode *mode = fRecords[ fSelDev ].GetMode( fFilteredModes[ fSelMode ] );
 
     return mode->GetNumFSAATypes();
 }
 
-UInt8 DeviceSelector::IsAntiAliased()
+uint8_t DeviceSelector::IsAntiAliased()
 {
     return fSelRec.GetAASetting();
 }
 
-void DeviceSelector::SetAntiAlias(UInt8 numSamples)
+void DeviceSelector::SetAntiAlias(uint8_t numSamples)
 {
     fSelRec.SetAASetting( numSamples );
 }
 
-UInt8   DeviceSelector::CanAnisotropicFilter()
+uint8_t   DeviceSelector::CanAnisotropicFilter()
 {
-    UInt8   hi = fRecords[ fSelDev ].GetMaxAnisotropicSamples();
+    uint8_t   hi = fRecords[ fSelDev ].GetMaxAnisotropicSamples();
     if( hi > 1 )
         return hi;
 
     return 0;
 }
 
-UInt8   DeviceSelector::GetAnisotropicLevel()
+uint8_t   DeviceSelector::GetAnisotropicLevel()
 {
     return fSelRec.GetMaxAnisotropicSamples();
 }
 
-void    DeviceSelector::SetAnisotropicLevel( UInt8 level )
+void    DeviceSelector::SetAnisotropicLevel( uint8_t level )
 {
     fSelRec.SetMaxAnisotropicSamples( level );
 }
@@ -581,7 +581,7 @@ void DeviceSelector::SetCompressed(hsBool state)
     fSelRec.SetCap(hsG3DDeviceSelector::kCapsCompressTextures, state);
 }
 
-bool DeviceSelector::GetCap(UInt32 cap)
+bool DeviceSelector::GetCap(uint32_t cap)
 {
     return fSelRec.GetCap(cap) != 0;
 }

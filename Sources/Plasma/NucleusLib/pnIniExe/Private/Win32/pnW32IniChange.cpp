@@ -62,8 +62,8 @@ struct IniChangeFile;
 struct IniChangeReg {
     LINK(IniChangeReg)      fLink;
     FIniFileChangeCallback  fNotify;
-    qword                   fLastWriteTime;
-    wchar                   fFileName[MAX_PATH];
+    uint64_t                   fLastWriteTime;
+    wchar_t                   fFileName[MAX_PATH];
 };
 
 static CLock                            s_lock;
@@ -73,7 +73,7 @@ static HANDLE                           s_thread;
 static HANDLE                           s_change;
 static bool                             s_running;
 static IniChangeReg *                   s_dispatch;
-static wchar                            s_directory[MAX_PATH];
+static wchar_t                            s_directory[MAX_PATH];
 static LISTDECL(IniChangeReg, fLink)    s_callbacks;
 
 
@@ -84,13 +84,13 @@ static LISTDECL(IniChangeReg, fLink)    s_callbacks;
 ***/
 
 //===========================================================================
-static qword GetFileTimestamp (const wchar fileName[]) {
+static uint64_t GetFileTimestamp (const wchar_t fileName[]) {
     HANDLE find;
     WIN32_FIND_DATAW fd;
-    qword lastWriteTime;
+    uint64_t lastWriteTime;
     if (INVALID_HANDLE_VALUE != (find = FindFirstFileW(fileName, &fd))) {
         COMPILER_ASSERT(sizeof(lastWriteTime) == sizeof(fd.ftLastWriteTime));
-        lastWriteTime = * (const qword *) &fd.ftLastWriteTime;
+        lastWriteTime = * (const uint64_t *) &fd.ftLastWriteTime;
         FindClose(find);
     }
     else {
@@ -109,7 +109,7 @@ static void ChangeDispatch_WL (IniChangeReg * marker) {
 
         // If the file record time matches the file data time
         // then there's no need to reprocess the callbacks
-        qword lastWriteTime = GetFileTimestamp(s_dispatch->fFileName);
+        uint64_t lastWriteTime = GetFileTimestamp(s_dispatch->fFileName);
         if (s_dispatch->fLastWriteTime == lastWriteTime)
             continue;
         s_dispatch->fLastWriteTime = lastWriteTime;
@@ -212,7 +212,7 @@ static unsigned THREADCALL IniSrvThreadProc (AsyncThread * thread) {
 ***/
 
 //===========================================================================
-void IniChangeInitialize (const wchar dir[]) {
+void IniChangeInitialize (const wchar_t dir[]) {
     ASSERT(!s_running);
     s_running = true;
 
@@ -311,7 +311,7 @@ void IniChangeDestroy () {
 
 //===========================================================================
 void IniChangeAdd (
-    const wchar             fileName[],
+    const wchar_t             fileName[],
     FIniFileChangeCallback  callback,
     IniChangeReg **         changePtr
 ) {
@@ -321,7 +321,7 @@ void IniChangeAdd (
     ASSERT(s_running);
 
     // Create a callback record
-    IniChangeReg * change   = NEW(IniChangeReg);
+    IniChangeReg * change   = new IniChangeReg;
     change->fNotify        = callback;
     change->fLastWriteTime = 0;
     PathAddFilename(
@@ -366,7 +366,7 @@ void IniChangeRemove (
     s_lock.LeaveWrite();
 
     // Delete object outside critical section
-    DEL(change);
+    delete change;
 }
 
 //===========================================================================

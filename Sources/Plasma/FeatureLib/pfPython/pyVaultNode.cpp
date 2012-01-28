@@ -84,7 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static void __cdecl LogDumpProc (
     void *              ,
-    const wchar         fmt[],
+    const wchar_t         fmt[],
     ...
 ) {
     va_list args;
@@ -106,7 +106,7 @@ pyVaultNode::pyVaultNodeOperationCallback::~pyVaultNodeOperationCallback()
     Py_XDECREF( fCbObject );
 }
 
-void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( UInt32 context )
+void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t context )
 {
     fContext = context;
     if ( fCbObject )
@@ -129,7 +129,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( UInt32 co
 }
 
 
-void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( UInt32 context, int resultCode )
+void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t context, int resultCode )
 {
     if ( fCbObject )
     {
@@ -154,7 +154,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( UInt32 c
         }
     }
 
-    DEL(this);  // commit hara-kiri
+    delete this;  // commit hara-kiri
 }
 
 void pyVaultNode::pyVaultNodeOperationCallback::SetNode (RelVaultNode * rvn) {
@@ -191,8 +191,8 @@ pyVaultNode::~pyVaultNode()
 {
     if (fNode)
         fNode->DecRef("pyVaultNode");
-    FREE(fCreateAgeGuid);
-    FREE(fCreateAgeName);
+    free(fCreateAgeGuid);
+    free(fCreateAgeName);
 }
 
 
@@ -217,21 +217,21 @@ bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
 }
 
 // public getters
-UInt32  pyVaultNode::GetID( void )
+uint32_t  pyVaultNode::GetID( void )
 {
     if (fNode)
         return fNode->nodeId;
     return 0;
 }
 
-UInt32  pyVaultNode::GetType( void )
+uint32_t  pyVaultNode::GetType( void )
 {
     if (fNode)
         return fNode->nodeType;
     return 0;
 }
 
-UInt32  pyVaultNode::GetOwnerNodeID( void )
+uint32_t  pyVaultNode::GetOwnerNodeID( void )
 {
     hsAssert(false, "eric, port?");
 //  if (fNode)
@@ -254,14 +254,14 @@ PyObject* pyVaultNode::GetOwnerNode( void )
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyVaultNode::GetModifyTime( void )
+uint32_t pyVaultNode::GetModifyTime( void )
 {
     if (fNode)
         return fNode->modifyTime;
     return 0;
 }
 
-UInt32 pyVaultNode::GetCreatorNodeID( void )
+uint32_t pyVaultNode::GetCreatorNodeID( void )
 {
     if (fNode)
         return fNode->creatorId;
@@ -293,14 +293,14 @@ PyObject* pyVaultNode::GetCreatorNode( void )
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyVaultNode::GetCreateTime( void )
+uint32_t pyVaultNode::GetCreateTime( void )
 {
     if (fNode)
         return fNode->createTime;
     return 0;
 }
 
-UInt32 pyVaultNode::GetCreateAgeTime( void )
+uint32_t pyVaultNode::GetCreateAgeTime( void )
 {
     hsAssert(false, "eric, port?");
 
@@ -335,7 +335,7 @@ const char * pyVaultNode::GetCreateAgeGuid( void )
         return fCreateAgeGuid;
         
     if (fNode) {
-        fCreateAgeGuid = (char*)ALLOC(64);
+        fCreateAgeGuid = (char*)malloc(64);
         GuidToString(fNode->createAgeUuid, fCreateAgeGuid, 64);
     }
     
@@ -349,7 +349,7 @@ PyObject* pyVaultNode::GetCreateAgeCoords () {
     return pyDniCoordinates::New(nil);      
 }
 
-void pyVaultNode::SetID( UInt32 v )
+void pyVaultNode::SetID( uint32_t v )
 {
     hsAssert(false, "Why are you changing the node id?");
 }
@@ -365,12 +365,12 @@ void pyVaultNode::SetType( int v )
     fNode->SetNodeType(v);
 }
 
-void pyVaultNode::SetOwnerNodeID( UInt32 v )
+void pyVaultNode::SetOwnerNodeID( uint32_t v )
 {
     hsAssert(false, "eric, implement me.");
 }
 
-void pyVaultNode::SetCreatorNodeID( UInt32 v )
+void pyVaultNode::SetCreatorNodeID( uint32_t v )
 {
     ASSERT(fNode);
     if (fNode->nodeId) {
@@ -383,18 +383,18 @@ void pyVaultNode::SetCreatorNodeID( UInt32 v )
 
 void pyVaultNode::SetCreateAgeName( const char * v )
 {
-    FREE(fCreateAgeName);
+    free(fCreateAgeName);
     fCreateAgeName = nil;
 
     ASSERT(fNode);
-    wchar str[MAX_PATH];
+    wchar_t str[MAX_PATH];
     StrToUnicode(str, v, arrsize(str));
     fNode->SetCreateAgeName(str);
 }
 
 void pyVaultNode::SetCreateAgeGuid( const char * v )
 {
-    FREE(fCreateAgeGuid);
+    free(fCreateAgeGuid);
     fCreateAgeGuid = nil;
     
     ASSERT(fNode);
@@ -416,7 +416,7 @@ void _AddNodeCallback(ENetError result, void* param) {
         cb->VaultOperationComplete(hsFail);
 }
 
-PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 cbContext)
+PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t cbContext)
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)(cbObject);
 
@@ -473,7 +473,7 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, UInt32 c
 }
 
 // Link a node to this one
-void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, UInt32 cbContext)
+void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, uint32_t cbContext)
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)( cbObject );
 
@@ -504,7 +504,7 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, UInt32 cbContext)
 }
 
 // Remove child node
-hsBool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, UInt32 cbContext )
+hsBool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t cbContext )
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)( cbObject );
 
@@ -543,7 +543,7 @@ void pyVaultNode::RemoveAllNodes( void )
 }
 
 // Add/Save this node to vault
-void pyVaultNode::Save(PyObject* cbObject, UInt32 cbContext)
+void pyVaultNode::Save(PyObject* cbObject, uint32_t cbContext)
 {
     // If the node doesn't have an id, then use it as a template to create the node in the vault,
     // otherwise just ignore the save request since vault nodes are now auto-saved.
@@ -561,7 +561,7 @@ void pyVaultNode::Save(PyObject* cbObject, UInt32 cbContext)
 }
 
 // Save this node and all child nodes that need saving.
-void pyVaultNode::SaveAll(PyObject* cbObject, UInt32 cbContext)
+void pyVaultNode::SaveAll(PyObject* cbObject, uint32_t cbContext)
 {
     // Nodes are now auto-saved
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)( cbObject );
@@ -583,7 +583,7 @@ void pyVaultNode::ForceSave()
 }
 
 // Send this node to the destination client node. will be received in it's inbox folder.
-void pyVaultNode::SendTo(UInt32 destClientNodeID, PyObject* cbObject, UInt32 cbContext )
+void pyVaultNode::SendTo(uint32_t destClientNodeID, PyObject* cbObject, uint32_t cbContext )
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)( cbObject );
 
@@ -651,21 +651,21 @@ int pyVaultNode::GetChildNodeCount()
 }
 
 // Get the client ID from my Vault client.
-UInt32  pyVaultNode::GetClientID()
+uint32_t  pyVaultNode::GetClientID()
 {
     hsAssert(false, "eric, port me");
     return 0;
 }
 
 
-bool pyVaultNode::HasNode( UInt32 nodeID )
+bool pyVaultNode::HasNode( uint32_t nodeID )
 {
     if ( fNode )
         return fNode->IsParentOf( nodeID, 1 );
     return false;
 }
 
-PyObject * pyVaultNode::GetNode2( UInt32 nodeID ) const
+PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
 {
     PyObject * result = nil;
     if ( fNode )

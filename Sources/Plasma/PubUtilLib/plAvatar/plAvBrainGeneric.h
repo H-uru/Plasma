@@ -118,8 +118,8 @@ public:
         kModeSize   = 0xff
     } fMode;
 
-    static const hsScalar kDefaultFadeIn;
-    static const hsScalar kDefaultFadeOut;
+    static const float kDefaultFadeIn;
+    static const float kDefaultFadeOut;
 
     /** Default constructor for the class factory and descendants. */
     plAvBrainGeneric();
@@ -133,14 +133,14 @@ public:
         \param recipient Callbacks from the brain *and* the stages is sent to this key.
         \param exitFlags A combination of exit conditions from the ExitFlag enum */
     plAvBrainGeneric(plAnimStageVec *stages, plMessage *enterMessage, plMessage *exitMessage,
-                     plKey recipient, UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode);
+                     plKey recipient, uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode);
 
     /** Simplified constructor
         \param exitFlags Indicates which conditions will cause the brain to exit.
         \param fadeIn Rate (in blend units per second) of initial animation fade in.
         \param fadeOut Rate (in blend units per second) of final animation fade out.
         */
-    plAvBrainGeneric(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode); 
+    plAvBrainGeneric(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode); 
 
     /** Virtual destructor */
     virtual ~plAvBrainGeneric();
@@ -154,7 +154,7 @@ public:
     virtual void Activate(plArmatureModBase *avMod);
 
     /** Advance the current stage and swap in a new stage if necessary. */
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
 
     /** Remove all our stages and release control of the armature. */
     virtual void Deactivate();
@@ -239,7 +239,7 @@ public:
 
     /** Returns the bitvector holding our exit conditions.
         /sa plAvBrainGeneric::ExitFlags */
-    UInt32 GetExitFlags() const { return fExitFlags; }
+    uint32_t GetExitFlags() const { return fExitFlags; }
 
     plAGAnim::BodyUsage GetBodyUsage();
     void SetBodyUsage(plAGAnim::BodyUsage bodyUsage);
@@ -283,8 +283,8 @@ protected:
     hsBool IProcessFadeIn(double time, float elapsed);
     hsBool IProcessFadeOut(double time, float elapsed);
 
-    hsBool ISwitchStages(int oldStage, int newStage, float delta, hsBool setTime, hsScalar newTime,
-                         float fadeNew, hsScalar fadeOld, double worldTime);
+    hsBool ISwitchStages(int oldStage, int newStage, float delta, hsBool setTime, float newTime,
+                         float fadeNew, float fadeOld, double worldTime);
 
     void IEnterMoveMode(double time);       // we've just entered and we're about to begin animating.
     void IExitMoveMode();                   // we're done animating; clean up
@@ -299,7 +299,7 @@ protected:
     plAnimStageVec *fStages;        // all the stages in our animation
     int fCurStage;                  // which stage are we playing? (zero-based)
     BrainType fType;                // what type of brain are we?
-    UInt32 fExitFlags;              // what will cause us to exit?
+    uint32_t fExitFlags;              // what will cause us to exit?
     plHorizontalFreezeAction *fCallbackAction;
 
     bool fForward;                  // are we currently moving forward or backward through the stages?

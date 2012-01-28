@@ -77,8 +77,8 @@ public:
 
     virtual hsBool MsgReceive(plMessage* msg);
 
-    UInt32 GetNumEffects();
-    plArmatureEffect *GetEffect(UInt32 num);
+    uint32_t GetNumEffects();
+    plArmatureEffect *GetEffect(uint32_t num);
     void ResetEffects();
 
     plArmatureMod *fArmature;
@@ -126,7 +126,7 @@ public:
 class plArmatureEffectFootSurface
 {
 public:
-    UInt8 fID;
+    uint8_t fID;
     plKey fTrigger;
 };
 
@@ -137,7 +137,7 @@ protected:
     hsBitVector fActiveSurfaces;
     plRandomSoundMod *fMods[plArmatureEffectsMgr::kMaxSurface];
 
-    UInt32 IFindSurfaceByTrigger(plKey trigger);
+    uint32_t IFindSurfaceByTrigger(plKey trigger);
 
 public:
     plArmatureEffectFootSound();
@@ -152,7 +152,7 @@ public:
     virtual hsBool MsgReceive(plMessage* msg);
     virtual hsBool HandleTrigger(plMessage* msg);
     virtual void Reset();
-    void SetFootType(UInt8);
+    void SetFootType(uint8_t);
 
     enum
     {

@@ -59,7 +59,7 @@ namespace pnUtilsExe {
 ***/
 
 //============================================================================
-dword TimeGetTickCount () {
+uint32_t TimeGetTickCount () {
     return GetTickCount();
 }
 

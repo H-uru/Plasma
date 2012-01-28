@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "plSDLDescriptor.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 
 #include "pnFactory/plCreatable.h"
@@ -112,8 +112,8 @@ public:
     void SetHintString(const char* c) { fHintString=c;  }
     const char* GetHintString() const { return fHintString.c_str(); }
 
-    void Read(hsStream* s, UInt32 readOptions);
-    void Write(hsStream* s, UInt32 writeOptions) const;
+    void Read(hsStream* s, uint32_t readOptions);
+    void Write(hsStream* s, uint32_t writeOptions) const;
 };
 
 //
@@ -131,7 +131,7 @@ public:
         kUsed   = 0x2   // true when it contains some value (either by Set(...) or Read() ) 
     };
 protected:
-    UInt32 fFlags;
+    uint32_t fFlags;
     plStateVarNotificationInfo fNotificationInfo;
 public:
     plStateVariable() : fFlags(0) {}
@@ -164,8 +164,8 @@ public:
     virtual void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const {}
 
     // IO
-    virtual bool ReadData(hsStream* s, float timeConvert, UInt32 readOptions);
-    virtual bool WriteData(hsStream* s, float timeConvert, UInt32 writeOptions) const;
+    virtual bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions);
+    virtual bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const;
 };
 
 //
@@ -180,7 +180,7 @@ private:
     float fDelta;
     typedef std::vector<plKey> KeyList;
     KeyList fKeys;      // the objects to notify on change>delta
-    static UInt32 fCurrentPlayerID;
+    static uint32_t fCurrentPlayerID;
 
     void IAddKey(plKey k);
     int IRemoveKey(plKey k);
@@ -198,8 +198,8 @@ public:
     bool GetValue(float* i) const;
     bool SetValue(float i);
 
-    static UInt32 GetCurrentPlayerID() { return fCurrentPlayerID;   }
-    static void SetCurrentPlayerID(UInt32 p) { fCurrentPlayerID=p;  }
+    static uint32_t GetCurrentPlayerID() { return fCurrentPlayerID;   }
+    static void SetCurrentPlayerID(uint32_t p) { fCurrentPlayerID=p;  }
 
     bool operator==(const plStateChangeNotifier &) const;
 };
@@ -210,7 +210,6 @@ public:
 class plUoid;
 class plKey;
 class plClientUnifiedTime;
-typedef unsigned char byte;
 class plSimpleStateVariable : public plStateVariable
 {
 protected:
@@ -218,7 +217,7 @@ protected:
     {
         int*    fI;     // array of int
         short*  fS;     // array of short
-        byte*   fBy;    // array of byte
+        uint8_t* fBy;    // array of byte
         float*  fF;     // array of float
         double* fD;     // array of double
         bool*   fB;     // array of bool
@@ -250,8 +249,8 @@ protected:
     bool IConvertFromRGB8(plVarDescriptor::Type newType);
     bool IConvertFromRGBA8(plVarDescriptor::Type newType);
 
-    bool IReadData(hsStream* s, float timeConvert, int idx, UInt32 readOptions);    
-    bool IWriteData(hsStream* s, float timeConvert, int idx, UInt32 writeOptions) const;
+    bool IReadData(hsStream* s, float timeConvert, int idx, uint32_t readOptions);    
+    bool IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const;
 
 public:
 
@@ -266,7 +265,7 @@ public:
 
     void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrentTime() );
     void CopyFrom(plVarDescriptor* v);
-    void CopyData(const plSimpleStateVariable* other, UInt32 writeOptions=0);
+    void CopyData(const plSimpleStateVariable* other, uint32_t writeOptions=0);
     bool SetFromString(const char* value, int idx, bool timeStampNow);      // set value from string, type.  return false on err
     char* GetAsString(int idx) const;
     bool ConvertTo(plSimpleVarDescriptor* toVar, bool force=false);         // return false on err
@@ -280,8 +279,8 @@ public:
     bool Set(double* v, int idx=0);                         // doubleVector
     bool Set(int v, int idx=0);
     bool Set(int* v, int idx=0) { return Set(*v, idx);  }   // helper since there is no int vec type
-    bool Set(byte v, int idx=0);
-    bool Set(byte* v, int idx=0);                           // byteVector
+    bool Set(uint8_t v, int idx=0);
+    bool Set(uint8_t* v, int idx=0);                           // uint8_tVector
     bool Set(short v, int idx=0);
     bool Set(short* v, int idx=0) { return Set(*v, idx); }  // helper since there is no short vec type
     bool Set(bool v, int idx=0);
@@ -294,7 +293,7 @@ public:
     // getters
     bool Get(int* value, int idx=0) const;
     bool Get(short* value, int idx=0) const;
-    bool Get(byte* value, int idx=0) const;             // returns byte or byteVector
+    bool Get(uint8_t* value, int idx=0) const;             // returns uint8_t or uint8_tVector
     bool Get(float* value, int idx=0) const;            // returns float or floatVector
     bool Get(double* value, int idx=0) const;           // returns double or doubleVector
     bool Get(bool* value, int idx=0) const;
@@ -322,8 +321,8 @@ public:
     void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const;
 
     // IO
-    bool ReadData(hsStream* s, float timeConvert, UInt32 readOptions);  
-    bool WriteData(hsStream* s, float timeConvert, UInt32 writeOptions) const;
+    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions);  
+    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const;
 };
 
 //
@@ -351,8 +350,8 @@ public:
     bool operator==(const plSDStateVariable &other) const;  // assumes matching var descriptors
 
     void ConvertTo(plSDStateVariable* otherSDVar, bool force=false);
-    void CopyFrom(plSDStateVariable* other, UInt32 writeOptions=0);
-    void UpdateFrom(plSDStateVariable* other, UInt32 writeOptions=0);
+    void CopyFrom(plSDStateVariable* other, uint32_t writeOptions=0);
+    void UpdateFrom(plSDStateVariable* other, uint32_t writeOptions=0);
     void AddStateDataRecord(plStateDataRecord *sdr) { fDataRecList.push_back(sdr); SetDirty(true); SetUsed(true); }
     void InsertStateDataRecord(plStateDataRecord *sdr, int i) { fDataRecList[i] = sdr; SetDirty(true); SetUsed(true);}
     void SetFromDefaults(bool timeStampNow);
@@ -384,8 +383,8 @@ public:
     void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const;
     
     // IO
-    bool ReadData(hsStream* s, float timeConvert, UInt32 readOptions);  
-    bool WriteData(hsStream* s, float timeConvert, UInt32 writeOptions) const;
+    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions);  
+    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const;
 };
 
 //
@@ -408,8 +407,8 @@ protected:
     plUoid      fAssocObject;       // optional
     VarsList    fVarsList;          // list of variables
     VarsList    fSDVarsList;        // list of nested data records
-    UInt32      fFlags;
-    static const UInt8 kIOVersion;  // I/O Version
+    uint32_t      fFlags;
+    static const uint8_t kIOVersion;  // I/O Version
     
     void IDeleteVarsList(VarsList& vars);
     void IInitDescriptor(const char* name, int version);    // or plSDL::kLatestVersion
@@ -433,22 +432,22 @@ public:
 
     plStateDataRecord(const char* sdName, int version=plSDL::kLatestVersion);
     plStateDataRecord(plStateDescriptor* sd);
-    plStateDataRecord(const plStateDataRecord &other, UInt32 writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
+    plStateDataRecord(const plStateDataRecord &other, uint32_t writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
     plStateDataRecord():fFlags(0) {}
     ~plStateDataRecord();
     
     bool ConvertTo(plStateDescriptor* other, bool force=false );
     bool operator==(const plStateDataRecord &other) const;  // assumes matching state descriptors
 
-    UInt32 GetFlags() const { return fFlags;    }
-    void SetFlags(UInt32 f) { fFlags =f;    }
+    uint32_t GetFlags() const { return fFlags;    }
+    void SetFlags(uint32_t f) { fFlags =f;    }
     
     plSimpleStateVariable* FindVar(const char* name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
     plSDStateVariable* FindSDVar(const char* name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
     
     plStateDataRecord& operator=(const plStateDataRecord& other) { CopyFrom(other); return *this; }
-    void CopyFrom(const plStateDataRecord& other, UInt32 writeOptions=0);
-    void UpdateFrom(const plStateDataRecord& other, UInt32 writeOptions=0);
+    void CopyFrom(const plStateDataRecord& other, uint32_t writeOptions=0);
+    void UpdateFrom(const plStateDataRecord& other, uint32_t writeOptions=0);
     void SetFromDefaults(bool timeStampNow);
     void TimeStampDirtyVars();
     
@@ -482,7 +481,7 @@ public:
     const plStateDescriptor* GetDescriptor() const { return fDescriptor; }
     void SetDescriptor(const char* sdName, int version);
     
-    plNetMsgSDLState* PrepNetMsg(float timeConvert, UInt32 writeOptions) const; // create/prep a net msg with this data
+    plNetMsgSDLState* PrepNetMsg(float timeConvert, uint32_t writeOptions) const; // create/prep a net msg with this data
     
     void SetAssocObject(const plUoid& u) { fAssocObject=u; }        // optional 
     plUoid* GetAssocObject() { return &fAssocObject; }      // optional
@@ -496,8 +495,8 @@ public:
     void DumpToStream(hsStream* stream, const char* msg, bool dirtyOnly=false, int level=0) const;
 
     // IO
-    bool Read(hsStream* s, float timeConvert, UInt32 readOptions=0);
-    void Write(hsStream* s, float timeConvert, UInt32 writeOptions=0) const;
+    bool Read(hsStream* s, float timeConvert, uint32_t readOptions=0);
+    void Write(hsStream* s, float timeConvert, uint32_t writeOptions=0) const;
 
     static bool ReadStreamHeader(hsStream* s, char** name, int* version, plUoid* objUoid=nil);
     void WriteStreamHeader(hsStream* s, plUoid* objUoid=nil) const;
@@ -536,7 +535,7 @@ private:
     std::string fSDLDir;
     plSDL::DescriptorList fDescriptors;
     plNetApp*   fNetApp;
-    UInt32      fBehaviorFlags;
+    uint32_t      fBehaviorFlags;
 
     void IDeleteDescriptors(plSDL::DescriptorList* dl);
 public:
@@ -554,10 +553,10 @@ public:
     void SetNetApp(plNetApp* a) { fNetApp=a; }
     plNetApp* GetNetApp() const { return fNetApp; }
     
-    bool Init( UInt32 behaviorFlags=0 );    // parse sdl folder
+    bool Init( uint32_t behaviorFlags=0 );    // parse sdl folder
     void DeInit();
-    UInt32 GetBehaviorFlags() const { return fBehaviorFlags; }
-    void SetBehaviorFlags(UInt32 v) { fBehaviorFlags=v; }
+    uint32_t GetBehaviorFlags() const { return fBehaviorFlags; }
+    void SetBehaviorFlags(uint32_t v) { fBehaviorFlags=v; }
     bool AllowTimeStamping() const { return ! ( fBehaviorFlags&plSDL::kDisallowTimeStamping ); }
 
     // I/O - return # of bytes read/written

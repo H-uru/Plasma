@@ -69,11 +69,11 @@ protected:
 
     hsBitVector             fState;
 
-    hsScalar                fHither;
-    hsScalar                fYon;
+    float                fHither;
+    float                fYon;
 
-    hsScalar                fFovX;
-    hsScalar                fFovY;
+    float                fFovX;
+    float                fFovY;
 
     plKey                   fNodeKey;
     plPageTreeMgr*          fPageMgr;
@@ -84,7 +84,7 @@ protected:
     hsMatrix44              fDefaultW2C, fDefaultC2W;
 
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty); // called only by owner object's Eval()
+    virtual hsBool IEval(double secs, float del, uint32_t dirty); // called only by owner object's Eval()
 
     void            ISetupRenderRequest();
     void            IDestroyRenderRequest();
@@ -118,15 +118,15 @@ public:
     void        SetNodeKey(plKey key) { fNodeKey = key; }
     plKey       GetNodeKey() const { return fNodeKey; }
 
-    void        SetHither(hsScalar h) { fHither = h; }
-    void        SetYon(hsScalar y) { fYon = y; }
-    void        SetFovX(hsScalar f) { fFovX = f; }
-    void        SetFovY(hsScalar f) { fFovY = f; }
+    void        SetHither(float h) { fHither = h; }
+    void        SetYon(float y) { fYon = y; }
+    void        SetFovX(float f) { fFovX = f; }
+    void        SetFovY(float f) { fFovY = f; }
 
-    hsScalar    GetHither() const { return fHither; }
-    hsScalar    GetYon() const { return fYon; }
-    hsScalar    GetFovX() const { return fFovX; }
-    hsScalar    GetFovY() const { return fFovY; }
+    float    GetHither() const { return fHither; }
+    float    GetYon() const { return fYon; }
+    float    GetFovX() const { return fFovX; }
+    float    GetFovY() const { return fFovY; }
 
     plPageTreeMgr* GetPageMgr() const { return fPageMgr; }
 

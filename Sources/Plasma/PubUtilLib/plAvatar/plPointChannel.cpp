@@ -88,19 +88,19 @@ plAGChannel * plPointChannel::MakeCombine(plAGChannel *channelA)
 // MAKEBLEND
 plAGChannel * plPointChannel::MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority)
 {
-    return TRACKED_NEW plPointBlend(this, (plPointChannel *)channelB, channelBias);
+    return new plPointBlend(this, (plPointChannel *)channelB, channelBias);
 }
 
 // MAKEZEROSTATE
 plAGChannel * plPointChannel::MakeZeroState()
 {
-    return TRACKED_NEW plPointConstant(Value(0));
+    return new plPointConstant(Value(0));
 }
 
 // MAKETIMESCALE
 plAGChannel * plPointChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plPointTimeScale(this, timeSource);
+    return new plPointTimeScale(this, timeSource);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ plPointBlend::~plPointBlend()
 // ------------
 hsBool plPointBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fPointA->IsStoppedAt(time);
     if (blend == 1)
@@ -257,7 +257,7 @@ const hsPoint3 &plPointBlend::Value(double time)
 {
     if (fPointA && fPointB)
     {
-        hsScalar curBlend = fChannelBias->Value(time);
+        float curBlend = fChannelBias->Value(time);
         if(curBlend == 0) {
             fPointA->Value(fResult, time);
         } else {
@@ -360,7 +360,7 @@ const hsPoint3 & plPointControllerChannel::Value(double time)
 // VALUE(time)
 const hsPoint3 & plPointControllerChannel::Value(double time, plControllerCacheInfo *cache)
 {
-    fController->Interp((hsScalar)time, &fResult, cache);
+    fController->Interp((float)time, &fResult, cache);
     return fResult;
 }
 
@@ -368,7 +368,7 @@ plAGChannel *plPointControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plPointControllerCacheChannel(this, cache);
+    return new plPointControllerCacheChannel(this, cache);
 }
 
 // WRITE(stream, mgr)

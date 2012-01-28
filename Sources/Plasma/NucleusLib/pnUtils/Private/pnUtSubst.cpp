@@ -147,11 +147,11 @@ bool IParseForSubst (
         // We've found a variable, copy the current data to a new object
         if (current != src) {
             int strLen = (current - src) - 1;
-            SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+            SUBST_BLOCK * block = new SUBST_BLOCK;
             block->isVar    = false;
             block->strLen   = strLen;
-            block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));
-            MemCopy(block->data, src, strLen * sizeof(chartype));
+            block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
+            memcpy(block->data, src, strLen * sizeof(chartype));
 
             dest->blocks.Add(block);
         }
@@ -166,11 +166,11 @@ bool IParseForSubst (
 
         // Copy variable name excluding trailing '%'
         int strLen = (varEnd - varStart);
-        SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+        SUBST_BLOCK * block = new SUBST_BLOCK;
         block->isVar    = true;
         block->strLen   = strLen;
-        block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));
-        MemCopy(block->data, varStart, strLen * sizeof(chartype));
+        block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
+        memcpy(block->data, varStart, strLen * sizeof(chartype));
 
         dest->blocks.Add(block);
 
@@ -180,11 +180,11 @@ bool IParseForSubst (
     // Check and see if there's any data remaining
     if (current != src) {
         int strLen = (current - src);
-        SUBST_BLOCK * block = NEW(SUBST_BLOCK);
+        SUBST_BLOCK * block = new SUBST_BLOCK;
         block->isVar    = false;
         block->strLen   = strLen;
-        block->data     = (chartype*)ALLOCZERO((strLen + 1) * sizeof(chartype));
-        MemCopy(block->data, src, strLen * sizeof(chartype));
+        block->data     = (chartype*)calloc((strLen + 1), sizeof(chartype));
+        memcpy(block->data, src, strLen * sizeof(chartype));
 
         dest->blocks.Add(block);
     }
@@ -243,8 +243,8 @@ bool IVarSubstPreParsed (
 
 //============================================================================
 bool ParseForSubst (
-    SubstParsedData<wchar> *    dest,
-    const wchar                 src[]
+    SubstParsedData<wchar_t> *    dest,
+    const wchar_t                 src[]
 ) {
     return IParseForSubst(dest, src);
 }
@@ -259,11 +259,11 @@ bool ParseForSubst (
 
 //============================================================================
 bool VarSubstitute (
-    ARRAY(wchar) *  dst,
-    const wchar     src[],
+    ARRAY(wchar_t) *  dst,
+    const wchar_t     src[],
     unsigned        varCount,
-    const wchar *   varNames[],   // [varCount]
-    const wchar *   varValues[]   // [varCount]
+    const wchar_t *   varNames[],   // [varCount]
+    const wchar_t *   varValues[]   // [varCount]
 ) {
     return IVarSubstitute(dst, src, varCount, varNames, varValues);
 }
@@ -281,11 +281,11 @@ bool VarSubstitute (
 
 //============================================================================
 bool VarSubstitute (
-    ARRAY(wchar) *                      dst,
-    const SubstParsedData<wchar> *      src,
+    ARRAY(wchar_t) *                      dst,
+    const SubstParsedData<wchar_t> *      src,
     unsigned                            varCount,
-    const wchar *                       varNames[],   // [varCount]
-    const wchar *                       varValues[]   // [varCount]
+    const wchar_t *                       varNames[],   // [varCount]
+    const wchar_t *                       varValues[]   // [varCount]
 ) {
     return IVarSubstPreParsed(dst, src, varCount, varNames, varValues);
 }

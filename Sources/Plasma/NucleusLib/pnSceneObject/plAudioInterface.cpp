@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAudioInterface.h"
 #include "plAudible.h"
 #include "pnMessage/plAudioSysMsg.h"
@@ -159,7 +159,7 @@ void plAudioInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
+    plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
     mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
 }
 
@@ -180,7 +180,7 @@ void plAudioInterface::ISetAudible(plAudible* aud)
             fAudible->SetSceneObject(fOwner->GetKey());
     }
 
-    plAudioSysMsg* pMsg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kPing );
+    plAudioSysMsg* pMsg = new plAudioSysMsg( plAudioSysMsg::kPing );
     pMsg->SetSender(GetKey());
 //  pMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
     plgDispatch::MsgSend( pMsg );
@@ -248,7 +248,7 @@ hsBool plAudioInterface::MsgReceive(plMessage* msg)
         }
         if (pSoundMsg->Cmd( plSoundMsg::kGetNumSounds ) )
         {
-            plSoundMsg* pReply = TRACKED_NEW plSoundMsg;
+            plSoundMsg* pReply = new plSoundMsg;
             pReply->fIndex = fAudible->GetNumSounds();
             pReply->AddReceiver(pSoundMsg->GetSender());
             pReply->SetCmd( plSoundMsg::kGetNumSounds );
@@ -303,7 +303,7 @@ hsBool plAudioInterface::MsgReceive(plMessage* msg)
                 if( !fAudibleInited )
                 {
                     // Arrgh, can't activate yet, so attempt to re-activate some time in the near future
-                    pASMsg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kActivate );
+                    pASMsg = new plAudioSysMsg( plAudioSysMsg::kActivate );
                     pASMsg->SetBCastFlag( plMessage::kBCastByExactType, false );
                     pASMsg->SetBCastFlag( plMessage::kNetPropagate, false );
                     pASMsg->SetTimeStamp( hsTimer::GetSysSeconds() + 1.f );

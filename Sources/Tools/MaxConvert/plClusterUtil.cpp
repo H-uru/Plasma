@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsWindows.h"
+#include "HeadSpin.h"
 #include <commdlg.h>
 
 #include "Max.h"
@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 #include "meshdlib.h" 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <vector>
 #include <algorithm>
@@ -85,7 +85,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plConst(int) kDefMinFaces(200);
 plConst(int) kDefMaxFaces(1000);
-plConst(hsScalar) kDefMinSize(50.f);
+plConst(float) kDefMinSize(50.f);
 
 plClusterUtil::plClusterUtil()
 :   fGroup(nil),
@@ -104,7 +104,7 @@ plClusterUtil::~plClusterUtil()
 
 plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* name)
 {
-    plClusterGroup* retVal = TRACKED_NEW plClusterGroup;
+    plClusterGroup* retVal = new plClusterGroup;
     
     char buff[256];
     sprintf(buff, "%s_%s_%d", name, templNode->GetName(), fIdx++);
@@ -113,7 +113,7 @@ plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* nam
     plKey sceneNode = templNode->GetRoomKey();
     retVal->SetSceneNode(sceneNode);
 
-    plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(sceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
+    plNodeRefMsg* refMsg = new plNodeRefMsg(sceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
     hsgResMgr::ResMgr()->AddViaNotify(retVal->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return retVal;
@@ -159,11 +159,11 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
     }
     if( templ->HasFade() )
     {
-        hsScalar maxDist = 0;
-        hsScalar minDist = 0;
+        float maxDist = 0;
+        float minDist = 0;
 
         Box3 fade = templ->GetFade();
-        const hsScalar kMaxMaxDist = 1.e10f;
+        const float kMaxMaxDist = 1.e10f;
         if( fade.Min()[2] < 0 )
         {
             minDist = fade.Min()[0];
@@ -194,13 +194,13 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
 class sortData
 {
 public:
-    UInt16          fIdx0;
-    UInt16          fIdx1;
-    UInt16          fIdx2;
-    hsScalar        fDist;
+    uint16_t          fIdx0;
+    uint16_t          fIdx1;
+    uint16_t          fIdx2;
+    float        fDist;
 
     sortData() {}
-    sortData(UInt16 idx0, UInt16 idx1, UInt16 idx2, hsScalar dist)
+    sortData(uint16_t idx0, uint16_t idx1, uint16_t idx2, float dist)
         : fIdx0(idx0), fIdx1(idx1), fIdx2(idx2), fDist(dist)
     {
     }
@@ -213,7 +213,7 @@ public:
 
 void plClusterUtil::ISortTemplate(plSpanTemplateB* templ) const
 {
-    UInt16* indexData = templ->fIndices;
+    uint16_t* indexData = templ->fIndices;
     const int numTris = templ->NumTris();
     typedef std::vector<sortData> sortVec;
     sortVec vec;
@@ -258,7 +258,7 @@ void plClusterUtil::ISortTemplate(plSpanTemplateB* templ) const
 
 void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo)
 {
-    UInt16 format = plSpanTemplate::MakeFormat(
+    uint16_t format = plSpanTemplate::MakeFormat(
         true, // hasColor
         geo->GetNumUVs(), // UVW count
         geo->fFormat & plGeometrySpan::kSkinIndices, // hasWgtIdx
@@ -268,20 +268,20 @@ void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo
         );
     
 
-    UInt32 numVerts = geo->fNumVerts;
-    UInt32 numTris = geo->fNumIndices / 3;
+    uint32_t numVerts = geo->fNumVerts;
+    uint32_t numTris = geo->fNumIndices / 3;
     
     // Alloc it.
     templ->Alloc(format, numVerts, numTris);
     templ->AllocColors();
 
-    UInt32 numPos = templ->NumPos();
-    UInt32 numNorm = templ->NumNorm();
-    UInt32 numUVWs = templ->NumUVWs();
-    UInt32 numWeights = templ->NumWeights();
-    UInt32 numColor = templ->NumColor();
-    UInt32 numColor2 = templ->NumColor2();
-    UInt32 numWgtIdx = templ->NumWgtIdx();
+    uint32_t numPos = templ->NumPos();
+    uint32_t numNorm = templ->NumNorm();
+    uint32_t numUVWs = templ->NumUVWs();
+    uint32_t numWeights = templ->NumWeights();
+    uint32_t numColor = templ->NumColor();
+    uint32_t numColor2 = templ->NumColor2();
+    uint32_t numWgtIdx = templ->NumWgtIdx();
 
     // Fill in the data.
     memcpy(templ->fIndices, geo->fIndexData, templ->IndexSize());
@@ -290,7 +290,7 @@ void plClusterUtil::ITemplateFromGeo(plSpanTemplateB* templ, plGeometrySpan* geo
     for( i = 0; i < templ->NumVerts(); i++ )
     {
         float wgt[4];
-        UInt32 wgtIdx;
+        uint32_t wgtIdx;
 
         geo->ExtractInitColor(i, templ->MultColor(i), templ->AddColor(i));
 
@@ -331,7 +331,7 @@ plSpanTemplateB* plClusterUtil::IAddTemplate(plMaxNode* templNode, plGeometrySpa
     // STUB
 
     // Create our blank template
-    plSpanTemplateB* templ = TRACKED_NEW plSpanTemplateB(templNode);
+    plSpanTemplateB* templ = new plSpanTemplateB(templNode);
 
     templ->fRenderLevel = templNode->GetRenderLevel(!templNode->GetNoDeferDraw());
 
@@ -508,7 +508,7 @@ void plClusterUtil::IFindClustersRecur(plSpanTemplateB* templ, plL2WTab& src, pl
     }
     else
     {
-        plL2WTab* tab = TRACKED_NEW plL2WTab(src);
+        plL2WTab* tab = new plL2WTab(src);
         dst.Append(1, &tab);
     }
 }
@@ -520,19 +520,19 @@ void plClusterUtil::IFreeClustersRecur(plL2WTabTab& dst) const
         delete dst[i];
 }
 
-inline hsScalar inlGetAlpha(UInt32* color)
+inline float inlGetAlpha(uint32_t* color)
 {
-    return hsScalar(*color >> 24) / 255.99f;
+    return float(*color >> 24) / 255.99f;
 }
 
 plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColorTabTab& colorsTab)
 {
     hsBool hasColor = false;
     hsBool hasAlpha = false;
-    hsScalar maxLenSq = 0;
-    hsScalar maxX = 0;
-    hsScalar maxY = 0;
-    hsScalar maxZ = 0;
+    float maxLenSq = 0;
+    float maxX = 0;
+    float maxY = 0;
+    float maxZ = 0;
     int i;
     for( i = 0; i < delPosTab.Count(); i++ )
     {
@@ -542,10 +542,10 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             plPoint3Tab& delPos = *delPosTab[i];
             for( j = 0; j < delPos.Count(); j++ )
             {
-                hsScalar lenSq = delPos[j].MagnitudeSquared();
+                float lenSq = delPos[j].MagnitudeSquared();
                 if( lenSq > maxLenSq )
                     maxLenSq = lenSq;
-                hsScalar d = fabs(delPos[j].fX);
+                float d = fabs(delPos[j].fX);
                 if( d > maxX )
                     maxX = d;
                 d = fabs(delPos[j].fY);
@@ -563,7 +563,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             plColorTab& color = *colorsTab[i];
             for( j = 0; j < color.Count(); j++ )
             {
-                UInt32 col = color[j];
+                uint32_t col = color[j];
                 if( (col & 0x00ffffff) != 0x00ffffff )
                     hasColor = true;
                 if( (col & 0xff000000) != 0xff000000 )
@@ -572,8 +572,8 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
         }
     }
 
-    UInt32 code = 0;
-    hsScalar posScale = 1.f;
+    uint32_t code = 0;
+    float posScale = 1.f;
 
     if( hasColor && hasAlpha )
         code |= plSpanEncoding::kColAI88;
@@ -582,8 +582,8 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     else if( hasAlpha )
         code |= plSpanEncoding::kColA8;
 
-    plConst(hsScalar) kPosQuantum(0.5 / 12.f); // 1/2 inch.
-    hsScalar maxLen = hsSquareRoot(maxLenSq);
+    plConst(float) kPosQuantum(0.5 / 12.f); // 1/2 inch.
+    float maxLen = sqrt(maxLenSq);
     if( maxLen > kPosQuantum )
     {
         if( (maxX < kPosQuantum) && (maxY < kPosQuantum) )
@@ -596,15 +596,15 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
             code |= plSpanEncoding::kPos888;
             posScale = maxLen / 255.9f;
         }
-        else if( (maxLen / hsScalar(1 << 10)) < kPosQuantum )
+        else if( (maxLen / float(1 << 10)) < kPosQuantum )
         {
             code |= plSpanEncoding::kPos101010;
-            posScale = maxLen / hsScalar(1 << 10);
+            posScale = maxLen / float(1 << 10);
         }
         else
         {
             code |= plSpanEncoding::kPos161616;
-            posScale = maxLen / hsScalar(1 << 16);
+            posScale = maxLen / float(1 << 16);
         }
     }
     return plSpanEncoding(code, posScale);
@@ -615,8 +615,8 @@ static int CompTemplates(const void *elem1, const void *elem2)
     plSpanTemplateB* templA = *((plSpanTemplateB**)elem1);
     plSpanTemplateB* templB = *((plSpanTemplateB**)elem2);
 
-    hsScalar hA = templA->GetLocalBounds().GetMaxs().fZ;
-    hsScalar hB = templB->GetLocalBounds().GetMaxs().fZ;
+    float hA = templA->GetLocalBounds().GetMaxs().fZ;
+    float hB = templB->GetLocalBounds().GetMaxs().fZ;
 
     if( hA < hB )
         return -1;
@@ -692,7 +692,7 @@ void plClusterUtil::IAddInstsToCluster(plCluster* cluster, plSpanTemplateB* temp
     int i;
     for( i = 0; i < insts.Count(); i++ )
     {
-        plSpanInstance* span = TRACKED_NEW plSpanInstance;
+        plSpanInstance* span = new plSpanInstance;
         span->Alloc(cluster->GetEncoding(), templ->NumVerts());
 
         span->SetLocalToWorld(plMaxNodeBase::Matrix3ToMatrix44(insts[i]));
@@ -754,7 +754,7 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
         {
             def->Begin(templ->GetSrcNode(), wBnd);
 
-            delPos[i] = TRACKED_NEW plPoint3Tab;
+            delPos[i] = new plPoint3Tab;
             delPos[i]->SetCount(templ->NumVerts());
             int j;
             for( j = 0; j < templ->NumVerts(); j++ )
@@ -770,13 +770,13 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
 
 
 
-        // Make the stored colors the actual output UInt32.
+        // Make the stored colors the actual output uint32_t.
         // templ has the mult and add colors, apply them here.
         if( doCol )
         {
             shade->Begin(templ->GetSrcNode(), wBnd);
 
-            colors[i] = TRACKED_NEW plColorTab;
+            colors[i] = new plColorTab;
             colors[i]->SetCount(templ->NumVerts());
             int j;
             for( j = 0; j < templ->NumVerts(); j++ )

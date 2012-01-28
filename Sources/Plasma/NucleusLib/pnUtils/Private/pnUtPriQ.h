@@ -143,7 +143,7 @@ inline void TPriorityQueue<C,P>::Clear () {
     // Deleting an object could cause other objects in the queue to be deleted
     // so we can't make any assumptions about indices or counts of items in the array
     while (C * head = Dequeue())
-        DEL(head);
+        delete head;
 
     m_array.Clear();
 }
@@ -164,7 +164,7 @@ C * TPriorityQueue<C,P>::Delete (C * object) {
     unsigned index = priority->GetIndex();
 
     // delete the object
-    DEL(object);
+    delete object;
 
     // return the next object in that queue
     if (queue && (index < queue->Count()))
@@ -234,14 +234,14 @@ inline void TPriorityQueue<C,P>::Link (unsigned index) {
 template<class C, class P>
 inline P * TPriorityQueue<C,P>::Priority (C * object) {
     ASSERT(m_linkOffset != LINK_OFFSET_UNINIT);
-    return (P *)((byte *)object + m_linkOffset);
+    return (P *)((uint8_t *)object + m_linkOffset);
 }
 
 //===========================================================================
 template<class C, class P>
 inline P const * TPriorityQueue<C,P>::Priority (C const * object) const {
     ASSERT(m_linkOffset != LINK_OFFSET_UNINIT);
-    return (P const *)((byte const *)object + m_linkOffset);
+    return (P const *)((uint8_t const *)object + m_linkOffset);
 }
 
 //===========================================================================

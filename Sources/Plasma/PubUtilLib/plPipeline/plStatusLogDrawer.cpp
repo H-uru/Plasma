@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plStatusLogDrawer.h"
 #include "plPipeline.h"
 #include "plDebugText.h"
@@ -57,7 +57,7 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
 {
     plDebugText& drawText = plDebugText::Instance();
 
-    UInt32 width = 0, numLogs = 0;
+    uint32_t width = 0, numLogs = 0;
 
     plStatusLog* iLog = firstLog;
     while (iLog)
@@ -67,17 +67,17 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
         numLogs++;
     }
 
-    UInt32 height = drawText.GetFontHeight() + 2;
-    drawText.DrawRect(0, 0, (UInt16)width, (UInt16)(height*numLogs), 0, 0, 0);
+    uint32_t height = drawText.GetFontHeight() + 2;
+    drawText.DrawRect(0, 0, (uint16_t)width, (uint16_t)(height*numLogs), 0, 0, 0);
 
-    UInt32 yPos = 0;
+    uint32_t yPos = 0;
     iLog = firstLog;
     while (iLog)
     {
         if (iLog == curLog)
-            drawText.DrawString(2, (UInt16)yPos, iLog->GetFileName(), 0, 255, 0);
+            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName(), 0, 255, 0);
         else
-            drawText.DrawString(2, (UInt16)yPos, iLog->GetFileName());
+            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName());
 
         iLog = iLog->fNext;
         yPos += height;

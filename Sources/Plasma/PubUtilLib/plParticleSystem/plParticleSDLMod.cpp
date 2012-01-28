@@ -55,7 +55,7 @@ void plParticleSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     if (!sobj)
         return;
 
-    UInt32 flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
+    uint32_t flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
 
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index()));
     if (!sys)
@@ -84,7 +84,7 @@ void plParticleSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcState)
     sys->GenerateParticles(num);
 }
 
-UInt32 plParticleSDLMod::IApplyModFlags(UInt32 sendFlags)
+uint32_t plParticleSDLMod::IApplyModFlags(uint32_t sendFlags)
 {
     if (fAttachedToAvatar)
         return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "plSoftVolume.h"
@@ -83,12 +83,12 @@ void plSoftVolume::Write(hsStream* s, hsResMgr* mgr)
     s->WriteLEScalar(fOutsideStrength);
 }
 
-hsScalar plSoftVolume::GetStrength(const hsPoint3& pos) const 
+float plSoftVolume::GetStrength(const hsPoint3& pos) const 
 { 
     return IRemapStrength(IGetStrength(pos));
 }
 
-hsScalar plSoftVolume::GetListenerStrength() const
+float plSoftVolume::GetListenerStrength() const
 {
     if( !(fListenState & kListenPosSet) )
     {
@@ -135,12 +135,12 @@ hsBool plSoftVolume::MsgReceive(plMessage* msg)
     return plRegionBase::MsgReceive(msg);
 }
 
-hsScalar plSoftVolume::IUpdateListenerStrength() const
+float plSoftVolume::IUpdateListenerStrength() const
 {
     return fListenStrength = GetStrength(fListenPos);
 }
 
-void plSoftVolume::SetInsideStrength(hsScalar s)
+void plSoftVolume::SetInsideStrength(float s)
 {
     if( s < 0 )
         s = 0;
@@ -149,7 +149,7 @@ void plSoftVolume::SetInsideStrength(hsScalar s)
     fInsideStrength = s;
 }
 
-void plSoftVolume::SetOutsideStrength(hsScalar s)
+void plSoftVolume::SetOutsideStrength(float s)
 {
     if( s < 0 )
         s = 0;

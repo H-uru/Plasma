@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plHardRegionTypes.h"
 #include "hsStream.h"
@@ -65,7 +65,7 @@ void plHardRegionComplex::Read(hsStream* s, hsResMgr* mgr)
     int n = s->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubRegion), plRefFlags::kActiveRef);
 }
 
 void plHardRegionComplex::Write(hsStream* s, hsResMgr* mgr)
@@ -102,7 +102,7 @@ hsBool plHardRegionComplex::MsgReceive(plMessage* msg)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Booleans follow
+// bools follow
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Union

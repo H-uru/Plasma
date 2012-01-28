@@ -124,7 +124,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setStringW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* temp = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* temp = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->SetTextW(temp);
@@ -230,7 +230,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertCharW, args)
             PYTHON_RETURN_ERROR;
         }
 
-        wchar_t* temp = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* temp = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->InsertCharW(temp[0]);
@@ -279,7 +279,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStringW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* temp = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* temp = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->InsertStringW(temp);

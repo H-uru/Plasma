@@ -125,19 +125,19 @@ enum {
         int         amountToAdjust;     // + or - value to adjust the number of blockers by
     };
     struct Cli2Srv_ClimbingWall_Ready : GameMsgHeader {
-        byte        readyType;          // the type of ready this message represents (EClimbingWallReadyType)
-        byte        teamNumber;         // the team that you are saying is ready (1 or 2)
+        uint8_t        readyType;          // the type of ready this message represents (EClimbingWallReadyType)
+        uint8_t        teamNumber;         // the team that you are saying is ready (1 or 2)
     };
     struct Cli2Srv_ClimbingWall_BlockerChanged : GameMsgHeader {
-        byte        teamNumber;         // the team that is adjusting their blockers
-        byte        blockerNumber;      // the number of the blocker that was added/removed
+        uint8_t        teamNumber;         // the team that is adjusting their blockers
+        uint8_t        blockerNumber;      // the number of the blocker that was added/removed
         bool        added;              // was the blocker added, or removed?
     };
     struct Cli2Srv_ClimbingWall_Reset : GameMsgHeader {
         // <no data>
     };
     struct Cli2Srv_ClimbingWall_PlayerEntered : GameMsgHeader {
-        byte        teamNumber;         // the team this player is playing for
+        uint8_t        teamNumber;         // the team this player is playing for
     };
     struct Cli2Srv_ClimbingWall_FinishedGame : GameMsgHeader {
         // <no data>
@@ -148,17 +148,17 @@ enum {
 
     // Srv2Cli
     struct Srv2Cli_ClimbingWall_NumBlockersChanged : GameMsgHeader {
-        byte        newBlockerCount;    // the new number of blocker we are playing with
+        uint8_t        newBlockerCount;    // the new number of blocker we are playing with
         bool        localOnly;          // only adjust your local display, don't net prop
     };
     struct Srv2Cli_ClimbingWall_Ready : GameMsgHeader {
-        byte        readyType;          // the type of ready this message represents (EClimbingWallReadyType)
+        uint8_t        readyType;          // the type of ready this message represents (EClimbingWallReadyType)
         bool        team1Ready;
         bool        team2Ready;
         bool        localOnly;          // only adjust your local display, don't net prop
     };
     struct Srv2Cli_ClimbingWall_BlockersChanged : GameMsgHeader {
-        byte        teamNumber;         // the team this set of blockers is for
+        uint8_t        teamNumber;         // the team this set of blockers is for
         int         blockersSet[kClimbingWallMaxBlockers];  // which blockers are set
         bool        localOnly;          // only adjust your local display, don't net prop
     };
@@ -171,7 +171,7 @@ enum {
         bool        localOnly;          // only adjust your local display, don't net prop
     };
     struct Srv2Cli_ClimbingWall_GameOver : GameMsgHeader {
-        byte        teamWon;            // which team won the game
+        uint8_t        teamWon;            // which team won the game
         int         team1Blockers[kClimbingWallMaxBlockers];
         int         team2Blockers[kClimbingWallMaxBlockers];
         bool        localOnly;          // only adjust your local display, don't net prop

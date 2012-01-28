@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plGBufferTriangle
 {
     public:
-        UInt16      fIndex1, fIndex2, fIndex3, fSpanIndex;
+        uint16_t      fIndex1, fIndex2, fIndex3, fSpanIndex;
         hsPoint3    fCenter;
 
         void    Read( hsStream *s );
@@ -78,11 +78,11 @@ class plGBufferTriangle
 class plGBufferCell 
 {
     public:
-        UInt32  fVtxStart;      // In bytes
-        UInt32  fColorStart;    // In bytes
-        UInt32  fLength;
+        uint32_t  fVtxStart;      // In bytes
+        uint32_t  fColorStart;    // In bytes
+        uint32_t  fLength;
 
-        plGBufferCell( UInt32 vStart, UInt32 cStart, UInt32 len )
+        plGBufferCell( uint32_t vStart, uint32_t cStart, uint32_t len )
         {
             fVtxStart = vStart; fColorStart = cStart; fLength = len;
         }
@@ -96,7 +96,7 @@ class plGBufferCell
 class plGBufferColor
 {
     public:
-        UInt32  fDiffuse, fSpecular;
+        uint32_t  fDiffuse, fSpecular;
 };
 
 //// plGBufferGroup Class Definition //////////////////////////////////////////
@@ -112,12 +112,12 @@ class plGeometrySpan;
 class plGBufferGroup
 {
     protected:
-        UInt8   fFormat;
-        UInt8   fStride;
-        UInt8   fLiteStride;
-        UInt8   fNumSkinWeights;
-        UInt32  fNumVerts;
-        UInt32  fNumIndices;
+        uint8_t   fFormat;
+        uint8_t   fStride;
+        uint8_t   fLiteStride;
+        uint8_t   fNumSkinWeights;
+        uint32_t  fNumVerts;
+        uint32_t  fNumIndices;
         hsBool  fVertsVolatile;
         hsBool  fIdxVolatile;
         int     fLOD;
@@ -125,16 +125,16 @@ class plGBufferGroup
         hsTArray<hsGDeviceRef *>        fVertexBufferRefs;
         hsTArray<hsGDeviceRef *>        fIndexBufferRefs;
 
-        hsTArray<UInt32>    fVertBuffSizes;
-        hsTArray<UInt32>    fIdxBuffCounts;
-        hsTArray<UInt32>    fColorBuffCounts;
-        hsTArray<UInt8 *>   fVertBuffStorage;
-        hsTArray<UInt16 *>  fIdxBuffStorage;
+        hsTArray<uint32_t>    fVertBuffSizes;
+        hsTArray<uint32_t>    fIdxBuffCounts;
+        hsTArray<uint32_t>    fColorBuffCounts;
+        hsTArray<uint8_t *>   fVertBuffStorage;
+        hsTArray<uint16_t *>  fIdxBuffStorage;
 
-        hsTArray<UInt32>    fVertBuffStarts;
-        hsTArray<Int32>     fVertBuffEnds;
-        hsTArray<UInt32>    fIdxBuffStarts;
-        hsTArray<Int32>     fIdxBuffEnds;
+        hsTArray<uint32_t>    fVertBuffStarts;
+        hsTArray<int32_t>     fVertBuffEnds;
+        hsTArray<uint32_t>    fIdxBuffStarts;
+        hsTArray<int32_t>     fIdxBuffEnds;
 
         hsTArray<plGBufferColor *>  fColorBuffStorage;
 
@@ -142,17 +142,17 @@ class plGBufferGroup
 
         virtual void    ISendStorageToBuffers( plPipeline *pipe, hsBool adjustForNvidiaLighting );
 
-        UInt8           ICalcVertexSize( UInt8 &liteStride );
+        uint8_t           ICalcVertexSize( uint8_t &liteStride );
 
-        UInt8* IVertBuffStorage(int iBuff, int iVtx) const { return fVertBuffStorage[iBuff] + iVtx*fStride; }
+        uint8_t* IVertBuffStorage(int iBuff, int iVtx) const { return fVertBuffStorage[iBuff] + iVtx*fStride; }
 
-        UInt32  IMakeCell( UInt32 vbIndex, UInt8 flags, UInt32 vStart, UInt32 cStart, UInt32 len, UInt32 *offset );
-        void    IGetStartVtxPointer( UInt32 vbIndex, UInt32 cell, UInt32 offset, UInt8 *&tempPtr, plGBufferColor *&cPtr );
+        uint32_t  IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t vStart, uint32_t cStart, uint32_t len, uint32_t *offset );
+        void    IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t *&tempPtr, plGBufferColor *&cPtr );
 
     public:
 
-        static const UInt32     kMaxNumVertsPerBuffer;
-        static const UInt32     kMaxNumIndicesPerBuffer;
+        static const uint32_t     kMaxNumVertsPerBuffer;
+        static const uint32_t     kMaxNumIndicesPerBuffer;
 
         enum Formats
         {
@@ -179,37 +179,37 @@ class plGBufferGroup
             kReserveIsolate     = 0x10
         };
 
-        plGBufferGroup(UInt8 format, hsBool vertsVolatile, hsBool idxVolatile, int LOD = 0);
+        plGBufferGroup(uint8_t format, hsBool vertsVolatile, hsBool idxVolatile, int LOD = 0);
         ~plGBufferGroup();
 
-        UInt8   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
-        UInt8   GetNumWeights() const { return (fFormat & kSkinWeightMask) >> 4; }
+        uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
+        uint8_t   GetNumWeights() const { return (fFormat & kSkinWeightMask) >> 4; }
 
-        static UInt8    CalcNumUVs( UInt8 format ) { return ( format & kUVCountMask ); }
-        static UInt8    UVCountToFormat( UInt8 numUVs ) { return numUVs & kUVCountMask; }
+        static uint8_t    CalcNumUVs( uint8_t format ) { return ( format & kUVCountMask ); }
+        static uint8_t    UVCountToFormat( uint8_t numUVs ) { return numUVs & kUVCountMask; }
 
         void    DirtyVertexBuffer(int i);
         void    DirtyIndexBuffer(int i);
         hsBool  VertexReady(int i) const { return (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i]; }
         hsBool  IndexReady(int i) const { return  (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i]; }
-        UInt8   GetVertexSize( void ) const { return fStride; }
-        UInt8   GetVertexLiteStride( void ) const { return fLiteStride; }
-        UInt8   GetVertexFormat( void ) const { return fFormat; }
-        UInt32  GetMemUsage( void ) const { return ( fNumVerts * GetVertexSize() ) + ( fNumIndices * sizeof( UInt16 ) ); }
-        UInt32  GetNumVerts( void ) const { return fNumVerts; }
-        UInt32  GetNumIndices( void ) const { return fNumIndices; }
-        UInt32  GetNumPrimaryVertsLeft( void ) const;
-        UInt32  GetNumVertsLeft( UInt32 idx ) const;
+        uint8_t   GetVertexSize( void ) const { return fStride; }
+        uint8_t   GetVertexLiteStride( void ) const { return fLiteStride; }
+        uint8_t   GetVertexFormat( void ) const { return fFormat; }
+        uint32_t  GetMemUsage( void ) const { return ( fNumVerts * GetVertexSize() ) + ( fNumIndices * sizeof( uint16_t ) ); }
+        uint32_t  GetNumVerts( void ) const { return fNumVerts; }
+        uint32_t  GetNumIndices( void ) const { return fNumIndices; }
+        uint32_t  GetNumPrimaryVertsLeft( void ) const;
+        uint32_t  GetNumVertsLeft( uint32_t idx ) const;
 
-        UInt32  GetVertBufferSize(UInt32 idx) const { return fVertBuffSizes[idx]; }
-        UInt32  GetVertBufferCount(UInt32 idx) const;
-        UInt32  GetIndexBufferCount(UInt32 idx) const { return fIdxBuffCounts[idx]; }
-        UInt32  GetVertStartFromCell(UInt32 idx, UInt32 cell, UInt32 offset) const;
+        uint32_t  GetVertBufferSize(uint32_t idx) const { return fVertBuffSizes[idx]; }
+        uint32_t  GetVertBufferCount(uint32_t idx) const;
+        uint32_t  GetIndexBufferCount(uint32_t idx) const { return fIdxBuffCounts[idx]; }
+        uint32_t  GetVertStartFromCell(uint32_t idx, uint32_t cell, uint32_t offset) const;
 
         // These should only be called by the pipeline, because only it knows when it's safe.
         // If the data is volatile, these are no-ops
-        void PurgeVertBuffer(UInt32 idx);
-        void PurgeIndexBuffer(UInt32 idx);
+        void PurgeVertBuffer(uint32_t idx);
+        void PurgeIndexBuffer(uint32_t idx);
 
         ///////////////////////////////////////////////////////////////////////////////
         // The following group of functions is an advanced optimization, and a pretty 
@@ -220,43 +220,43 @@ class plGBufferGroup
         // things may work faster. If you set them incorrectly, be sure to save
         // all files before running.
         // All of these are indices, not bytes. from the beginning of the buffer. 
-        UInt32  GetVertBufferStart(UInt32 idx) const { return fVertBuffStarts[idx]; }
-        UInt32  GetVertBufferEnd(UInt32 idx) const { return fVertBuffEnds[idx] >= 0 ? UInt32(fVertBuffEnds[idx]) : GetVertBufferCount(idx); }
-        UInt32  GetIndexBufferStart(UInt32 idx) const { return fIdxBuffStarts[idx]; }
-        UInt32  GetIndexBufferEnd(UInt32 idx) const { return fIdxBuffEnds[idx] >= 0 ? UInt32(fIdxBuffEnds[idx]) : GetIndexBufferCount(idx); }
+        uint32_t  GetVertBufferStart(uint32_t idx) const { return fVertBuffStarts[idx]; }
+        uint32_t  GetVertBufferEnd(uint32_t idx) const { return fVertBuffEnds[idx] >= 0 ? uint32_t(fVertBuffEnds[idx]) : GetVertBufferCount(idx); }
+        uint32_t  GetIndexBufferStart(uint32_t idx) const { return fIdxBuffStarts[idx]; }
+        uint32_t  GetIndexBufferEnd(uint32_t idx) const { return fIdxBuffEnds[idx] >= 0 ? uint32_t(fIdxBuffEnds[idx]) : GetIndexBufferCount(idx); }
 
-        void    SetVertBufferStart(UInt32 idx, UInt32 s) { fVertBuffStarts[idx] = s; }
-        void    SetVertBufferEnd(UInt32 idx, UInt32 e) { fVertBuffEnds[idx] = e; }
-        void    SetIndexBufferStart(UInt32 idx, UInt32 s) { fIdxBuffStarts[idx] = s; }
-        void    SetIndexBufferEnd(UInt32 idx, UInt32 e) { fIdxBuffEnds[idx] = e; }
+        void    SetVertBufferStart(uint32_t idx, uint32_t s) { fVertBuffStarts[idx] = s; }
+        void    SetVertBufferEnd(uint32_t idx, uint32_t e) { fVertBuffEnds[idx] = e; }
+        void    SetIndexBufferStart(uint32_t idx, uint32_t s) { fIdxBuffStarts[idx] = s; }
+        void    SetIndexBufferEnd(uint32_t idx, uint32_t e) { fIdxBuffEnds[idx] = e; }
         ///////////////////////////////////////////////////////////////////////////////
 
-        UInt32  GetNumVertexBuffers( void ) const { return fVertBuffStorage.GetCount(); }
-        UInt32  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.GetCount(); }
+        uint32_t  GetNumVertexBuffers( void ) const { return fVertBuffStorage.GetCount(); }
+        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.GetCount(); }
 
-        UInt8           *GetVertBufferData( UInt32 idx ) { return fVertBuffStorage[ idx ]; }
-        UInt16          *GetIndexBufferData( UInt32 idx ) { return fIdxBuffStorage[ idx ]; }
-        plGBufferColor  *GetColorBufferData( UInt32 idx ) { return fColorBuffStorage[ idx ]; }
+        uint8_t           *GetVertBufferData( uint32_t idx ) { return fVertBuffStorage[ idx ]; }
+        uint16_t          *GetIndexBufferData( uint32_t idx ) { return fIdxBuffStorage[ idx ]; }
+        plGBufferColor  *GetColorBufferData( uint32_t idx ) { return fColorBuffStorage[ idx ]; }
 
-        hsGDeviceRef    *GetVertexBufferRef( UInt32 i );
-        hsGDeviceRef    *GetIndexBufferRef( UInt32 i );
+        hsGDeviceRef    *GetVertexBufferRef( uint32_t i );
+        hsGDeviceRef    *GetIndexBufferRef( uint32_t i );
 
-        UInt32          GetNumCells( UInt32 idx ) const { return fCells[ idx ]->GetCount(); }
-        plGBufferCell   *GetCell( UInt32 idx, UInt32 cell ) { return &( (*fCells[ idx ])[ cell ] ); }
+        uint32_t          GetNumCells( uint32_t idx ) const { return fCells[ idx ]->GetCount(); }
+        plGBufferCell   *GetCell( uint32_t idx, uint32_t cell ) { return &( (*fCells[ idx ])[ cell ] ); }
 
-        void    SetVertexBufferRef( UInt32 index, hsGDeviceRef *vb );
-        void    SetIndexBufferRef( UInt32 index, hsGDeviceRef *ib );
+        void    SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb );
+        void    SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib );
 
         virtual void Read( hsStream* s );
         virtual void Write( hsStream* s );
 
         // Accessor functions
-        hsPoint3    &Position( int iBuff, UInt32 cell, int iVtx );
-        hsVector3   &Normal( int iBuff, UInt32 cell, int iVtx );
-        UInt32      &Color( int iBuff, UInt32 cell, int iVtx );
-        UInt32      &Specular( int iBuff, UInt32 cell, int iVtx );
-        hsPoint3    &UV( int iBuff, UInt32 cell, int iVtx, int channel );
-        UInt32      Format() const { return fFormat; }
+        hsPoint3    &Position( int iBuff, uint32_t cell, int iVtx );
+        hsVector3   &Normal( int iBuff, uint32_t cell, int iVtx );
+        uint32_t      &Color( int iBuff, uint32_t cell, int iVtx );
+        uint32_t      &Specular( int iBuff, uint32_t cell, int iVtx );
+        hsPoint3    &UV( int iBuff, uint32_t cell, int iVtx, int channel );
+        uint32_t      Format() const { return fFormat; }
 
         // Take temp accumulators and actually build buffer data from them
         void    TidyUp( void );
@@ -268,34 +268,34 @@ class plGBufferGroup
         void    PrepForRendering( plPipeline *pipe, hsBool adjustForNvidiaLighting );
 
         // Reserves space in a vertex buffer
-        hsBool  ReserveVertStorage( UInt32 numVerts, UInt32 *vbIndex, UInt32 *cell, UInt32 *offset, UInt8 flags );
+        hsBool  ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint8_t flags );
 
         // Append vertex data to the first available storage buffer
-        void    AppendToVertStorage( plGeometrySpan *srcSpan, UInt32 *vbIndex, UInt32 *cell, UInt32 *offset );
-        void    AppendToVertAndColorStorage( plGeometrySpan *srcSpan, UInt32 *vbIndex, UInt32 *cell, UInt32 *offset );
-        void    AppendToColorStorage( plGeometrySpan *srcSpan, UInt32 *vbIndex, UInt32 *cell, UInt32 *offset, UInt32 origCell );
+        void    AppendToVertStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset );
+        void    AppendToVertAndColorStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset );
+        void    AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint32_t origCell );
 
         // Reserves space in an index buffer
-        hsBool  ReserveIndexStorage( UInt32 numIndices, UInt32 *ibIndex, UInt32 *ibStart, UInt16 **dataPtr = nil );
+        hsBool  ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr = nil );
 
         // Append index data to the first available storage buffer
-        void    AppendToIndexStorage( UInt32 numIndices, UInt16 *data, UInt32 addToAll, UInt32 *ibIndex, UInt32 *ibStart );
+        void    AppendToIndexStorage( uint32_t numIndices, uint16_t *data, uint32_t addToAll, uint32_t *ibIndex, uint32_t *ibStart );
 
 
         /// Dynamic functions (addition/deletion of raw data)
-        void    DeleteVertsFromStorage( UInt32 which, UInt32 start, UInt32 length );
-        void    AdjustIndicesInStorage( UInt32 which, UInt16 threshhold, Int16 delta );
-        void    DeleteIndicesFromStorage( UInt32 which, UInt32 start, UInt32 length );
+        void    DeleteVertsFromStorage( uint32_t which, uint32_t start, uint32_t length );
+        void    AdjustIndicesInStorage( uint32_t which, uint16_t threshhold, int16_t delta );
+        void    DeleteIndicesFromStorage( uint32_t which, uint32_t start, uint32_t length );
 
         // Returns an array of plGBufferTriangles representing the span of indices specified
-        plGBufferTriangle   *ConvertToTriList( Int16 spanIndex, UInt32 whichIdx, UInt32 whichVtx, UInt32 whichCell, UInt32 start, UInt32 numTriangles );
+        plGBufferTriangle   *ConvertToTriList( int16_t spanIndex, uint32_t whichIdx, uint32_t whichVtx, uint32_t whichCell, uint32_t start, uint32_t numTriangles );
 
         // Stuffs the indices from an array of plGBufferTriangles into the index storage
-        void    StuffFromTriList( UInt32 which, UInt32 start, UInt32 numTriangles, UInt16 *data );
-        void    StuffTri( UInt32 iBuff, UInt32 iTri, UInt16 idx0, UInt16 idx1, UInt16 idx2 );
+        void    StuffFromTriList( uint32_t which, uint32_t start, uint32_t numTriangles, uint16_t *data );
+        void    StuffTri( uint32_t iBuff, uint32_t iTri, uint16_t idx0, uint16_t idx1, uint16_t idx2 );
 
         // Stuff the data from a geometry span into vertex storage
-        void    StuffToVertStorage( plGeometrySpan *srcSpan, UInt32 vbIndex, UInt32 cell, UInt32 offset, UInt8 flags );
+        void    StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t flags );
 
         // Are our verts volatile?
         hsBool  AreVertsVolatile() const { return fVertsVolatile; }

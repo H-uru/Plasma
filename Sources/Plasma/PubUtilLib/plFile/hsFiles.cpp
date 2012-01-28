@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsFiles.h"
 #include <string.h>
-#include "hsUtils.h"
+
 
 #include "hsExceptions.h"
 
@@ -121,7 +121,7 @@ hsStream* hsFile::OpenStream(const char mode[], hsBool throwIfFailure)
     FILE* file = this->OpenFILE(mode, throwIfFailure);
 
     if (file)
-    {   hsUNIXStream*   stream = TRACKED_NEW hsUNIXStream;
+    {   hsUNIXStream*   stream = new hsUNIXStream;
         stream->SetFILE(file);
         return stream;
     }

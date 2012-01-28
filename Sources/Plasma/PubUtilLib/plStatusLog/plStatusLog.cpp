@@ -81,7 +81,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// plStatusLogMgr Stuff ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-wchar       plStatusLogMgr::fBasePath[ MAX_PATH ] = L"";
+wchar_t       plStatusLogMgr::fBasePath[ MAX_PATH ] = L"";
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
@@ -99,7 +99,7 @@ plStatusLogMgr::plStatusLogMgr()
 #else
     const char* home = getenv("HOME");
     if (!home) home = "";
-    wchar* temp = hsStringToWString(home);
+    wchar_t* temp = hsStringToWString(home);
     swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
     delete[] temp;
 #endif
@@ -119,7 +119,7 @@ plStatusLogMgr::~plStatusLogMgr()
         fDisplays->IUnlink();
 
         if( log->fFlags & plStatusLog::kDeleteForMe )
-            DEL(log);
+            delete log;
     }
 }
 
@@ -131,7 +131,7 @@ plStatusLogMgr  &plStatusLogMgr::GetInstance( void )
 
 //// IEnsurePathExists ///////////////////////////////////////////////////////
 
-void    plStatusLogMgr::IEnsurePathExists( const wchar *dirName )
+void    plStatusLogMgr::IEnsurePathExists( const wchar_t *dirName )
 {
     // Note: this creates the directory if it doesn't exist, or if it does,
     // returns false
@@ -140,7 +140,7 @@ void    plStatusLogMgr::IEnsurePathExists( const wchar *dirName )
 
 //// IPathAppend /////////////////////////////////////////////////////////////
 
-void    plStatusLogMgr::IPathAppend( wchar *base, const wchar *extra, unsigned maxLen )
+void    plStatusLogMgr::IPathAppend( wchar_t *base, const wchar_t *extra, unsigned maxLen )
 {
     if (!base || !extra)
         return;
@@ -192,18 +192,18 @@ void    plStatusLogMgr::Draw( void )
 
 //// CreateStatusLog /////////////////////////////////////////////////////////
 
-plStatusLog *plStatusLogMgr::CreateStatusLog( UInt8 numDisplayLines, const char *filename, UInt32 flags )
+plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const char *filename, uint32_t flags )
 {
-    wchar* wFilename = hsStringToWString(filename);
+    wchar_t* wFilename = hsStringToWString(filename);
     plStatusLog* ret = CreateStatusLog(numDisplayLines, wFilename, flags);
     delete [] wFilename;
     return ret;
 }
 
-plStatusLog *plStatusLogMgr::CreateStatusLog( UInt8 numDisplayLines, const wchar *filename, UInt32 flags )
+plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
 {
     IEnsurePathExists( fBasePath );
-    plStatusLog *log = NEW(plStatusLog)( numDisplayLines, filename, flags );
+    plStatusLog *log = new plStatusLog( numDisplayLines, filename, flags );
 
     // Put the new log in its alphabetical position
     plStatusLog** nextLog = &fDisplays;
@@ -236,12 +236,12 @@ void    plStatusLogMgr::ToggleStatusLog( plStatusLog *logToDisplay )
 
 void plStatusLogMgr::SetCurrStatusLog(const char* logName)
 {
-    wchar* wLogName = hsStringToWString(logName);
+    wchar_t* wLogName = hsStringToWString(logName);
     SetCurrStatusLog(wLogName);
     delete [] wLogName;
 }
 
-void plStatusLogMgr::SetCurrStatusLog(const wchar* logName)
+void plStatusLogMgr::SetCurrStatusLog(const wchar_t* logName)
 {
     plStatusLog* log = FindLog(logName, false);
     if (log != nil)
@@ -284,13 +284,13 @@ void    plStatusLogMgr::PrevStatusLog( void )
 
 plStatusLog *plStatusLogMgr::FindLog( const char *filename, hsBool createIfNotFound )
 {
-    wchar* wFilename = hsStringToWString(filename);
+    wchar_t* wFilename = hsStringToWString(filename);
     plStatusLog* ret = FindLog(wFilename, createIfNotFound);
     delete [] wFilename;
     return ret;
 }
 
-plStatusLog *plStatusLogMgr::FindLog( const wchar *filename, hsBool createIfNotFound )
+plStatusLog *plStatusLogMgr::FindLog( const wchar_t *filename, hsBool createIfNotFound )
 {
     plStatusLog *log = fDisplays;
 
@@ -316,12 +316,12 @@ plStatusLog *plStatusLogMgr::FindLog( const wchar *filename, hsBool createIfNotF
 
 void plStatusLogMgr::SetBasePath( const char * path )
 {
-    wchar* wPath = hsStringToWString(path);
+    wchar_t* wPath = hsStringToWString(path);
     SetBasePath(wPath);
     delete [] wPath;
 }
 
-void plStatusLogMgr::SetBasePath( const wchar * path )
+void plStatusLogMgr::SetBasePath( const wchar_t * path )
 {
     wcscpy( fBasePath, path );
 }
@@ -345,17 +345,17 @@ void plStatusLogMgr::BounceLogs()
 
 bool plStatusLogMgr::DumpLogs( const char *newFolderName )
 {
-    wchar* wFolderName = hsStringToWString(newFolderName);
+    wchar_t* wFolderName = hsStringToWString(newFolderName);
     bool ret = DumpLogs(wFolderName);
     delete [] wFolderName;
     return ret;
 }
 
-bool plStatusLogMgr::DumpLogs( const wchar *newFolderName )
+bool plStatusLogMgr::DumpLogs( const wchar_t *newFolderName )
 {
     bool retVal = true; // assume success
     // create root path and make sure it exists
-    wchar temp[MAX_PATH];
+    wchar_t temp[MAX_PATH];
     std::wstring newPath = L"";
     if (fBasePath)
     {
@@ -406,9 +406,9 @@ bool plStatusLogMgr::DumpLogs( const wchar *newFolderName )
 //// plStatusLog ////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-UInt32 plStatusLog::fLoggingOff = false;
+uint32_t plStatusLog::fLoggingOff = false;
 
-plStatusLog::plStatusLog( UInt8 numDisplayLines, const wchar *filename, UInt32 flags )
+plStatusLog::plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
 {
     fFileHandle = nil;
     fSize = 0;
@@ -445,8 +445,8 @@ void    plStatusLog::IInit()
 
     fFlags = fOrigFlags;
 
-    fLines = TRACKED_NEW char *[ fMaxNumLines ];
-    fColors = TRACKED_NEW UInt32[ fMaxNumLines ];
+    fLines = new char *[ fMaxNumLines ];
+    fColors = new uint32_t[ fMaxNumLines ];
     for( i = 0; i < fMaxNumLines; i++ )
     {
         fLines[ i ] = nil;
@@ -469,9 +469,9 @@ bool plStatusLog::IReOpen( void )
     // Open the file, clearing it, if necessary
     if(!(fFlags & kDontWriteFile))
     {
-        wchar file[ MAX_PATH ];
-        wchar fileNoExt[MAX_PATH];
-        wchar* ext=nil;
+        wchar_t file[ MAX_PATH ];
+        wchar_t fileNoExt[MAX_PATH];
+        wchar_t* ext=nil;
         IParseFileName(file, MAX_PATH, fileNoExt, &ext);
         fEncryptMe = false;
 #ifdef PLASMA_EXTERNAL_RELEASE
@@ -479,11 +479,11 @@ bool plStatusLog::IReOpen( void )
         if( fEncryptMe )
             ext = L".elf";
 #endif
-        wchar fileToOpen[MAX_PATH];
+        wchar_t fileToOpen[MAX_PATH];
         swprintf(fileToOpen, MAX_PATH, L"%s.0%s", fileNoExt, ext);
         if (!(fFlags & kDontRotateLogs))
         {
-            wchar work[MAX_PATH], work2[MAX_PATH];
+            wchar_t work[MAX_PATH], work2[MAX_PATH];
             swprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
             plFileUtils::RemoveFile(work);
             swprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
@@ -537,9 +537,9 @@ void    plStatusLog::IFini( void )
 }
 
 
-void plStatusLog::IParseFileName(wchar* file, size_t fnsize, wchar* fileNoExt, wchar** ext) const
+void plStatusLog::IParseFileName(wchar_t* file, size_t fnsize, wchar_t* fileNoExt, wchar_t** ext) const
 {
-    const wchar *base = plStatusLogMgr::IGetBasePath();
+    const wchar_t *base = plStatusLogMgr::IGetBasePath();
     if( wcslen( base ) != nil )
         swprintf( file, fnsize, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
     else
@@ -593,7 +593,7 @@ void    plStatusLog::ILink( plStatusLog **back )
 //// IAddLine ////////////////////////////////////////////////////////////////
 //  Actually add a stinking line.
 
-bool plStatusLog::IAddLine( const char *line, Int32 count, UInt32 color )
+bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 {
     int     i;
 
@@ -632,7 +632,7 @@ bool plStatusLog::IAddLine( const char *line, Int32 count, UInt32 color )
 
         if (fMaxNumLines > 0)
         {
-            fLines[ i ] = TRACKED_NEW char[ count + 1 ];
+            fLines[ i ] = new char[ count + 1 ];
             hsStrncpy( fLines[ i ], line, count + 1 );
             fLines[ i ][ count ] = 0;
 
@@ -654,7 +654,7 @@ bool plStatusLog::IAddLine( const char *line, Int32 count, UInt32 color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine( const char *line, UInt32 color )
+bool plStatusLog::AddLine( const char *line, uint32_t color )
 {
     char    *c, *str;
     if(fLoggingOff && !fForceLog)
@@ -666,7 +666,7 @@ bool plStatusLog::AddLine( const char *line, UInt32 color )
     for( str = (char *)line; ( c = strchr( str, '\n' ) ) != nil; str = c + 1 )
     {
         // So if we got here, c points to a carriage return...
-        ret = IAddLine( str, (unsigned_ptr)c - (unsigned_ptr)str, color );
+        ret = IAddLine( str, (uintptr_t)c - (uintptr_t)str, color );
     }
 
     /// We might have some left over
@@ -687,7 +687,7 @@ bool plStatusLog::AddLineV( const char *format, va_list arguments )
     return AddLineV( kWhite, format, arguments );
 }
 
-bool plStatusLog::AddLineV( UInt32 color, const char *format, va_list arguments )
+bool plStatusLog::AddLineV( uint32_t color, const char *format, va_list arguments )
 {
     if(fLoggingOff && !fForceLog)
         return true;
@@ -706,7 +706,7 @@ bool plStatusLog::AddLineF( const char *format, ... )
     return AddLineV( kWhite, format, arguments );
 }
 
-bool plStatusLog::AddLineF( UInt32 color, const char *format, ... )
+bool plStatusLog::AddLineF( uint32_t color, const char *format, ... )
 {
     if(fLoggingOff && !fForceLog)
         return true;
@@ -731,7 +731,7 @@ bool plStatusLog::AddLineS( const char *filename, const char *format, ... )
     return log->AddLineV( format, arguments );
 }
 
-bool plStatusLog::AddLineS( const char *filename, UInt32 color, const char *format, ... )
+bool plStatusLog::AddLineS( const char *filename, uint32_t color, const char *format, ... )
 {
     plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
 
@@ -761,7 +761,7 @@ void    plStatusLog::Clear( void )
 
 //// Bounce //////////////////////////////////////////////////////////////////
 
-void    plStatusLog::Bounce( UInt32 flags)
+void    plStatusLog::Bounce( uint32_t flags)
 {
     if (flags)
         fOrigFlags=flags;
@@ -776,16 +776,16 @@ void    plStatusLog::Bounce( UInt32 flags)
 
 //// IPrintLineToFile ////////////////////////////////////////////////////////
 
-bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
+bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 {
     if( fFlags & kDontWriteFile )
         return true;
 
 #ifdef PLASMA_EXTERNAL_RELEASE
-    UInt8 hint = 0;
+    uint8_t hint = 0;
     if( fFlags & kAppendToLast )
     {
-        hint = (UInt8)fSize;
+        hint = (uint8_t)fSize;
     }
 #endif
 
@@ -856,10 +856,10 @@ bool plStatusLog::IPrintLineToFile( const char *line, UInt32 count )
         if( fEncryptMe )
         {
             // Encrypt!
-            plStatusEncrypt::Encrypt( (UInt8 *)buf, hint );
+            plStatusEncrypt::Encrypt( (uint8_t *)buf, hint );
 
             // xor the line length, then write it out, then the line, no terminating character
-            UInt16 encrySize = length ^ ((UInt16)fSize);
+            uint16_t encrySize = length ^ ((uint16_t)fSize);
 
             // try the first write, if it fails reopen and try again
             int err;

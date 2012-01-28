@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsGColorizer_inc
 #define hsGColorizer_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 
 class plPipeline;

@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoundDeswizzler_h
 #define _plSoundDeswizzler_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -57,16 +57,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSoundDeswizzler
 {
 public:
-    plSoundDeswizzler( void *srcPtr, UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
-    plSoundDeswizzler( UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize );
+    plSoundDeswizzler( void *srcPtr, uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize );
+    plSoundDeswizzler( uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize );
     ~plSoundDeswizzler();
 
     void    *GetSourceBuffer( void ) const { return fData; }
-    void    Extract( UInt8 channelSelect, void *destPtr, UInt32 numBytesToProcess = 0 );
+    void    Extract( uint8_t channelSelect, void *destPtr, uint32_t numBytesToProcess = 0 );
 
 protected:
-    UInt8   *fData;
-    UInt32  fNumSamples, fSampleSize, fStride;
+    uint8_t   *fData;
+    uint32_t  fNumSamples, fSampleSize, fStride;
     hsBool  fOwnsData;
 };
 

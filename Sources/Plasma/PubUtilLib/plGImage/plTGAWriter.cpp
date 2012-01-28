@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTGAWriter.h"
 #include "plMipmap.h"
 #include "hsStream.h"
@@ -87,8 +87,8 @@ void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
     stream.WriteLE16( 0 );    // xOrigin
     stream.WriteLE16( 0 );    // yOrigin
 
-    stream.WriteLE16( (UInt16)mipmap->GetWidth() );
-    stream.WriteLE16( (UInt16)mipmap->GetHeight() );
+    stream.WriteLE16( (uint16_t)mipmap->GetWidth() );
+    stream.WriteLE16( (uint16_t)mipmap->GetHeight() );
 
     stream.WriteByte( 24 );
     stream.WriteByte( 0 );

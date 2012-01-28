@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynamicTextLayer.h"
 
 #include "iparamb2.h"
@@ -53,7 +53,7 @@ class plDynamicTextLayerClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plDynamicTextLayer(); }
+    void*           Create(BOOL loading = FALSE) { return new plDynamicTextLayer(); }
     const TCHAR*    ClassName()     { return GetString(IDS_DYN_TEXT_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return DYN_TEXT_LAYER_CLASS_ID; }
@@ -216,7 +216,7 @@ IParamBlock2* plDynamicTextLayer::GetParamBlockByID(BlockID id)
 //From ReferenceTarget 
 RefTargetHandle plDynamicTextLayer::Clone(RemapDir &remap) 
 {
-    plDynamicTextLayer *mnew = TRACKED_NEW plDynamicTextLayer();
+    plDynamicTextLayer *mnew = new plDynamicTextLayer();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefBitmap, remap.CloneRef(fBitmapPB));
     mnew->ReplaceReference(kRefUVGen, remap.CloneRef(fUVGen));

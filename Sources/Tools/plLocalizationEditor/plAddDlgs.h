@@ -43,10 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plAddDlgs_h__
 #define __plAddDlgs_h__
 
+#include "HeadSpin.h"
 #include <string>
-#define WIN32_LEAN_AND_MEAN
-#include <WinSock2.h>
-#include <Windows.h>
 
 class plAddElementDlg
 {

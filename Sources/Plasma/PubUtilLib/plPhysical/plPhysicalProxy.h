@@ -53,7 +53,7 @@ class plPhysicalProxy : public plProxyGen
 {
 public:
     plPhysicalProxy();
-    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
     virtual ~plPhysicalProxy();
 
     bool Init(plPhysical* phys);
@@ -63,7 +63,7 @@ protected:
     plPhysical* fOwner;
     plPXPhysicalControllerCore* fController;
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
     virtual plKey               IGetNode() const;
 };
 

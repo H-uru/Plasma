@@ -50,15 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 #include <d3d9.h>
 #include <ddraw.h>
 #include <d3dx9mesh.h>
 
 #include "hsWinRef.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDXTextFont.h"
 #include "plDXPipeline.h"
 
@@ -77,14 +76,14 @@ static D3DXMATRIX d3dIdentityMatrix( 1.0f, 0.0f, 0.0f, 0.0f,
 //                                      * 4 primitives per char max (for bold text)
 //                                      * 3 verts per primitive
 
-//const UInt32  kNumVertsInBuffer(32768);
-const UInt32    kNumVertsInBuffer(4608);
+//const uint32_t  kNumVertsInBuffer(32768);
+const uint32_t    kNumVertsInBuffer(4608);
 
 // See the declaration for plFontVertex in plTextFont.h for info
 const DWORD plDXTextFont::kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
 IDirect3DVertexBuffer9*     plDXTextFont::fBuffer = nil;
-UInt32                      plDXTextFont::fBufferCursor = 0;
+uint32_t                      plDXTextFont::fBufferCursor = 0;
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
@@ -103,7 +102,7 @@ plDXTextFont::~plDXTextFont()
 
 //// ICreateTexture ///////////////////////////////////////////////////////////
 
-void    plDXTextFont::ICreateTexture( UInt16 *data )
+void    plDXTextFont::ICreateTexture( uint16_t *data )
 {
     HRESULT         hr;
     D3DLOCKED_RECT  lockInfo;
@@ -120,7 +119,7 @@ void    plDXTextFont::ICreateTexture( UInt16 *data )
 
     // Lock the texture and write our values out
     fD3DTexture->LockRect( 0, &lockInfo, 0, 0 );
-    memcpy( lockInfo.pBits, data, fTextureWidth * fTextureHeight * sizeof( UInt16 ) );
+    memcpy( lockInfo.pBits, data, fTextureWidth * fTextureHeight * sizeof( uint16_t ) );
     fD3DTexture->UnlockRect( nil );
 }
 
@@ -203,7 +202,7 @@ void    plDXTextFont::DestroyObjects()
 
 //// IDrawPrimitive ///////////////////////////////////////////////////////////
 
-void    plDXTextFont::IDrawPrimitive( UInt32 count, plFontVertex *array )
+void    plDXTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
 {
     plFontVertex        *v;
 
@@ -248,7 +247,7 @@ void    plDXTextFont::IDrawPrimitive( UInt32 count, plFontVertex *array )
 
 //// IDrawLines ///////////////////////////////////////////////////////////////
 
-void    plDXTextFont::IDrawLines( UInt32 count, plFontVertex *array )
+void    plDXTextFont::IDrawLines( uint32_t count, plFontVertex *array )
 {
     if( !fBuffer )
         return;

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsBitVector_inc
 #define hsBitVector_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 template <class T> class hsTArray;
 class hsStream;
@@ -51,17 +51,17 @@ class hsStream;
 class hsBitVector {
 
 protected:
-    UInt32*                 fBitVectors;
-    UInt32                  fNumBitVectors;
+    uint32_t*                 fBitVectors;
+    uint32_t                  fNumBitVectors;
 
-    void        IGrow(UInt32 newNumBitVectors);
+    void        IGrow(uint32_t newNumBitVectors);
 
     friend      class hsBitIterator;
 public:
     hsBitVector(const hsBitVector& other);
-    hsBitVector(UInt32 which) : fBitVectors(nil), fNumBitVectors(0) { SetBit(which); }
+    hsBitVector(uint32_t which) : fBitVectors(nil), fNumBitVectors(0) { SetBit(which); }
     hsBitVector(int b, ...); // list of one or more integer bits to set. -1 (or any negative) terminates the list (e.g. hsBitVector(0,1,4,-1);
-    hsBitVector(const hsTArray<Int16>& list); // sets bit for each int in list
+    hsBitVector(const hsTArray<int16_t>& list); // sets bit for each int in list
     hsBitVector() : fBitVectors(nil), fNumBitVectors(0) {}
     virtual ~hsBitVector() { Reset(); }
 
@@ -73,17 +73,17 @@ public:
     int operator!=(const hsBitVector& other) const { return !(*this == other); }
     hsBitVector& operator=(const hsBitVector& other); // will wind up identical
 
-    hsBool ClearBit(UInt32 which) { return SetBit(which, 0); } // returns previous state
-    hsBool SetBit(UInt32 which, hsBool on = true); // returns previous state
-    hsBool IsBitSet(UInt32 which) const; // returns current state
-    hsBool ToggleBit(UInt32 which); // returns previous state
-    hsBitVector& RemoveBit(UInt32 which); // removes bit, sliding higher bits down to fill the gap.
+    hsBool ClearBit(uint32_t which) { return SetBit(which, 0); } // returns previous state
+    hsBool SetBit(uint32_t which, hsBool on = true); // returns previous state
+    hsBool IsBitSet(uint32_t which) const; // returns current state
+    hsBool ToggleBit(uint32_t which); // returns previous state
+    hsBitVector& RemoveBit(uint32_t which); // removes bit, sliding higher bits down to fill the gap.
 
     friend inline int Overlap(const hsBitVector& lhs, const hsBitVector& rhs) { return lhs.Overlap(rhs); }
     hsBool Overlap(const hsBitVector& other) const;
     hsBool Empty() const;
 
-    hsBool operator[](UInt32 which) const { return IsBitSet(which); }
+    hsBool operator[](uint32_t which) const { return IsBitSet(which); }
 
     friend inline hsBitVector operator&(const hsBitVector& lhs, const hsBitVector& rhs); // See Overlap()
     friend inline hsBitVector operator|(const hsBitVector& lhs, const hsBitVector& rhs);
@@ -96,19 +96,19 @@ public:
     hsBitVector& operator-=(const hsBitVector& other); // return me w/ other's bits turned off
 
     hsBitVector& Compact();
-    hsBitVector& SetSize(UInt32 numBits) { ClearBit(numBits+1); return *this; }
-    UInt32 GetSize() { return fNumBitVectors << 5; }
+    hsBitVector& SetSize(uint32_t numBits) { ClearBit(numBits+1); return *this; }
+    uint32_t GetSize() { return fNumBitVectors << 5; }
 
     // integer level access
-    UInt32 GetNumBitVectors() const { return fNumBitVectors; }
-    UInt32 GetBitVector(int i) const { return fBitVectors[i]; }
-    void SetNumBitVectors(UInt32 n) { Reset(); fNumBitVectors=n; fBitVectors = TRACKED_NEW UInt32[n]; }
-    void SetBitVector(int i, UInt32 val) { fBitVectors[i]=val; }
+    uint32_t GetNumBitVectors() const { return fNumBitVectors; }
+    uint32_t GetBitVector(int i) const { return fBitVectors[i]; }
+    void SetNumBitVectors(uint32_t n) { Reset(); fNumBitVectors=n; fBitVectors = new uint32_t[n]; }
+    void SetBitVector(int i, uint32_t val) { fBitVectors[i]=val; }
 
     // Do dst.SetCount(0), then add each set bit's index into dst, returning dst.
-    hsTArray<Int16>& Enumerate(hsTArray<Int16>& dst) const;
+    hsTArray<int16_t>& Enumerate(hsTArray<int16_t>& dst) const;
     // this->Clear(), then set all bits listed in src, returning *this.
-    hsBitVector& FromList(const hsTArray<Int16>& src);
+    hsBitVector& FromList(const hsTArray<int16_t>& src);
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -118,7 +118,7 @@ inline hsBitVector::hsBitVector(const hsBitVector& other)
 {
     if( 0 != (fNumBitVectors = other.fNumBitVectors) )
     {       
-        fBitVectors = TRACKED_NEW UInt32[fNumBitVectors];
+        fBitVectors = new uint32_t[fNumBitVectors];
         int i;
         for( i = 0; i < fNumBitVectors; i++ )
             fBitVectors[i] = other.fBitVectors[i];
@@ -160,7 +160,7 @@ inline hsBitVector& hsBitVector::operator=(const hsBitVector& other)
         {
             Reset();
             fNumBitVectors = other.fNumBitVectors;
-            fBitVectors = TRACKED_NEW UInt32[fNumBitVectors];
+            fBitVectors = new uint32_t[fNumBitVectors];
         }
         else
         {
@@ -295,12 +295,12 @@ inline hsBitVector& hsBitVector::Set(int upToBit)
 {
     if( upToBit >= 0 )
     {
-        UInt32 major = upToBit >> 5;
-        UInt32 minor = 1 << (upToBit & 0x1f);
+        uint32_t major = upToBit >> 5;
+        uint32_t minor = 1 << (upToBit & 0x1f);
         if( major >= fNumBitVectors )
             IGrow(major+1);
 
-        UInt32 i;
+        uint32_t i;
         for( i = 0; i < major; i++ )
             fBitVectors[i] = 0xffffffff;
         for( i = 1; i <= minor && i > 0; i <<= 1 )
@@ -315,18 +315,18 @@ inline hsBitVector& hsBitVector::Set(int upToBit)
     return *this;
 }
 
-inline hsBool hsBitVector::IsBitSet(UInt32 which) const
+inline hsBool hsBitVector::IsBitSet(uint32_t which) const
 {
-    UInt32 major = which >> 5;
+    uint32_t major = which >> 5;
     return 
         (major < fNumBitVectors)
         && (0 != (fBitVectors[major] & 1 << (which & 0x1f)));
 }
 
-inline hsBool hsBitVector::SetBit(UInt32 which, hsBool on)
+inline hsBool hsBitVector::SetBit(uint32_t which, hsBool on)
 {
-    UInt32 major = which >> 5;
-    UInt32 minor = 1 << (which & 0x1f);
+    uint32_t major = which >> 5;
+    uint32_t minor = 1 << (which & 0x1f);
     if( major >= fNumBitVectors )
         IGrow(major+1);
     hsBool ret = 0 != (fBitVectors[major] & minor);
@@ -341,10 +341,10 @@ inline hsBool hsBitVector::SetBit(UInt32 which, hsBool on)
     return ret;
 }
 
-inline hsBool hsBitVector::ToggleBit(UInt32 which)
+inline hsBool hsBitVector::ToggleBit(uint32_t which)
 {
-    UInt32 major = which >> 5;
-    UInt32 minor = 1 << (which & 0x1f);
+    uint32_t major = which >> 5;
+    uint32_t minor = 1 << (which & 0x1f);
     if( major >= fNumBitVectors )
         IGrow(major);
     hsBool ret = 0 != (fBitVectors[major] & minor);
@@ -355,14 +355,14 @@ inline hsBool hsBitVector::ToggleBit(UInt32 which)
     return ret;
 }
 
-inline hsBitVector& hsBitVector::RemoveBit(UInt32 which)
+inline hsBitVector& hsBitVector::RemoveBit(uint32_t which)
 {
-    UInt32 major = which >> 5;
+    uint32_t major = which >> 5;
     if( major >= fNumBitVectors )
         return *this;
-    UInt32 minor = 1 << (which & 0x1f);
-    UInt32 lowMask = minor-1;
-    UInt32 hiMask = ~(lowMask);
+    uint32_t minor = 1 << (which & 0x1f);
+    uint32_t lowMask = minor-1;
+    uint32_t hiMask = ~(lowMask);
 
     fBitVectors[major] = (fBitVectors[major] & lowMask)
         | ((fBitVectors[major] >> 1) & hiMask);

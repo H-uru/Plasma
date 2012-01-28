@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plUoid.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 
 //// plLocation //////////////////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ hsBool plLocation::operator==(const plLocation& u) const
     return (fSequenceNumber == u.fSequenceNumber) && ((fFlags & ~kItinerant) == (u.fFlags & ~kItinerant));
 }
 
-void plLocation::Set(UInt32 seqNum)
+void plLocation::Set(uint32_t seqNum)
 {
     fSequenceNumber = seqNum;
 }
@@ -124,19 +124,19 @@ char* plLocation::StringIze(char* str)  const // Format to displayable string
     return str;
 }
 
-plLocation plLocation::MakeReserved(UInt32 number)
+plLocation plLocation::MakeReserved(uint32_t number)
 {
     return plLocation(kReservedLocAvailableStart + number, kReserved);
 }
 
-plLocation plLocation::MakeNormal(UInt32 number)
+plLocation plLocation::MakeNormal(uint32_t number)
 {
     return plLocation(kNormalLocStartIdx + number);
 }
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
-plUoid::plUoid(const plLocation& location, UInt16 classType, const char* objectName, const plLoadMask& m)
+plUoid::plUoid(const plLocation& location, uint16_t classType, const char* objectName, const plLoadMask& m)
 {
     fObjectName = nil;
     Invalidate();
@@ -165,7 +165,7 @@ void plUoid::Read(hsStream* s)
     hsAssert(fObjectName == nil, "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
-    UInt8 contents = s->ReadByte();
+    uint8_t contents = s->ReadByte();
 
     fLocation.Read(s);
 
@@ -184,7 +184,7 @@ void plUoid::Read(hsStream* s)
     if (contents & kHasCloneIDs)
     {       
         s->LogReadLE( &fCloneID ,"CloneID");
-        UInt16 dummy;
+        uint16_t dummy;
         s->LogReadLE(&dummy, "dummy"); // To avoid breaking format
         s->LogReadLE( &fClonePlayerID ,"ClonePlayerID");
     }
@@ -198,7 +198,7 @@ void plUoid::Read(hsStream* s)
 void plUoid::Write(hsStream* s) const
 {
     // first write contents byte
-    UInt8 contents = IsClone() ? kHasCloneIDs : 0;
+    uint8_t contents = IsClone() ? kHasCloneIDs : 0;
     if (fLoadMask.IsUsed())
         contents |= kHasLoadMask;
     s->WriteByte(contents);
@@ -217,7 +217,7 @@ void plUoid::Write(hsStream* s) const
     if (contents & kHasCloneIDs)
     {
         s->WriteLE(fCloneID);
-        UInt16 dummy = 0;
+        uint16_t dummy = 0;
         s->WriteLE(dummy); // to avoid breaking format
         s->WriteLE(fClonePlayerID);
     }

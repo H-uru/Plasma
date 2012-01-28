@@ -90,7 +90,7 @@ public:
 private:
     // Base class private stuff for managing the Queue of Procs on the device.
 
-    UInt32                      fLinkCount;
+    uint32_t                      fLinkCount;
     hsGRenderProcs*             fNext;
     hsGRenderProcs**            fBack;
     
@@ -100,7 +100,7 @@ private:
 
 protected:
 
-    UInt32                      fFlags;
+    uint32_t                      fFlags;
 
     hsGColorizer                fColorizer;
 
@@ -189,7 +189,7 @@ public:
 
     // External object references. Individual RenderProc type responsible for what they're used for.
     void            SetNumObjectRefs(int n);
-    UInt32          GetNumObjectRefs() { return fObjectRefs.GetCount(); }
+    uint32_t          GetNumObjectRefs() { return fObjectRefs.GetCount(); }
     void            AddObjectRef(plKey* key) { fObjectRefs.Append(key); fFlags |= kObjectRefs; }
     void            SetObjectRef(plKey* key, int i=0);
     void            InsertObjectRef(int i, plKey* key) { fObjectRefs.InsertAtIndex(i, key); fFlags |= kObjectRefs; }
@@ -208,8 +208,8 @@ public:
     virtual const char* GetLabel() const = 0;
     virtual ProcType GetType() const = 0;
 
-    UInt32  GetFlags() { return fFlags; }
-    void SetFlags(UInt32 f) { fFlags = f; }
+    uint32_t  GetFlags() { return fFlags; }
+    void SetFlags(uint32_t f) { fFlags = f; }
 
     CLASSNAME_REGISTER( hsGRenderProcs );
     GETINTERFACE_ANY( hsGRenderProcs, plCreatable );

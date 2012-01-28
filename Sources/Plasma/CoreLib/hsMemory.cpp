@@ -49,15 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-void HSMemory::BlockMove(const void* src, void* dst, UInt32 length)
+void HSMemory::BlockMove(const void* src, void* dst, uint32_t length)
 {
     memmove(dst, src, length);
 }
 
-hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, UInt32 length)
+hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, uint32_t length)
 {
-    const Byte* byte1 = (Byte*)block1;
-    const Byte* byte2 = (Byte*)block2;
+    const uint8_t* byte1 = (uint8_t*)block1;
+    const uint8_t* byte2 = (uint8_t*)block2;
 
     while (length--)
         if (*byte1++ != *byte2++)
@@ -65,17 +65,17 @@ hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, UInt32 leng
     return true;
 }
 
-void* HSMemory::New(UInt32 size)
+void* HSMemory::New(uint32_t size)
 {
-    return TRACKED_NEW UInt32[(size + 3) >> 2];
+    return new uint32_t[(size + 3) >> 2];
 }
 
 void HSMemory::Delete(void* block)
 {
-    delete[] (UInt32*)block;
+    delete[] (uint32_t*)block;
 }
 
-void* HSMemory::Copy(UInt32 length, const void* source)
+void* HSMemory::Copy(uint32_t length, const void* source)
 {
     void* destination = HSMemory::New(length);
 
@@ -83,22 +83,22 @@ void* HSMemory::Copy(UInt32 length, const void* source)
     return destination;
 }
 
-void HSMemory::Clear(void* m, UInt32 byteLen)
+void HSMemory::Clear(void* m, uint32_t byteLen)
 {
-    UInt8*  mem = (UInt8*)m;
-    UInt8*  memStop = mem + byteLen;
+    uint8_t*  mem = (uint8_t*)m;
+    uint8_t*  memStop = mem + byteLen;
 
     if (byteLen > 8)
-    {   while (unsigned_ptr(mem) & 3)
+    {   while (uintptr_t(mem) & 3)
             *mem++ = 0;
         
-        UInt32* mem32 = (UInt32*)mem;
-        UInt32* mem32Stop = (UInt32*)(unsigned_ptr(memStop) & ~3);
+        uint32_t* mem32 = (uint32_t*)mem;
+        uint32_t* mem32Stop = (uint32_t*)(uintptr_t(memStop) & ~3);
         do {
             *mem32++ = 0;
         } while (mem32 < mem32Stop);
         
-        mem = (UInt8*)mem32;
+        mem = (uint8_t*)mem32;
         // fall through to finish any remaining bytes (0..3)
     }
     while (mem < memStop)
@@ -113,7 +113,7 @@ void HSMemory::Clear(void* m, UInt32 byteLen)
 template <class T> T* hsSoftNew(T*& obj)
 {
     try {
-        obj = TRACKED_NEW T;
+        obj = new T;
     }
     catch (...) {
         obj = nil;
@@ -124,7 +124,7 @@ template <class T> T* hsSoftNew(T*& obj)
 inline template <class T> T* hsSoftNew(T*& obj, unsigned count)
 {
     try {
-        obj = TRACKED_NEW T[count];
+        obj = new T[count];
     }
     catch (...) {
         obj = nil;
@@ -133,12 +133,12 @@ inline template <class T> T* hsSoftNew(T*& obj, unsigned count)
 }
 #endif
 
-void* HSMemory::SoftNew(UInt32 size)
+void* HSMemory::SoftNew(uint32_t size)
 {
-    UInt32* p;
+    uint32_t* p;
 
     hsTry {
-        p = TRACKED_NEW UInt32[(size + 3) >> 2];
+        p = new uint32_t[(size + 3) >> 2];
     } hsCatch(...) {
         p = nil;
     }
@@ -150,15 +150,15 @@ void* HSMemory::SoftNew(UInt32 size)
 struct hsPrivateChunk {
     hsPrivateChunk* fNext;
     char*           fAvailableAddr;
-    UInt32          fAvailableSize;
+    uint32_t          fAvailableSize;
 
-    hsDebugCode(UInt32  fSize;)
-    hsDebugCode(UInt32  fCount;)
+    hsDebugCode(uint32_t  fSize;)
+    hsDebugCode(uint32_t  fCount;)
 
-    static hsPrivateChunk* NewPrivateChunk(hsPrivateChunk* next, UInt32 chunkSize);
+    static hsPrivateChunk* NewPrivateChunk(hsPrivateChunk* next, uint32_t chunkSize);
 };
 
-hsPrivateChunk* hsPrivateChunk::NewPrivateChunk(hsPrivateChunk* next, UInt32 chunkSize)
+hsPrivateChunk* hsPrivateChunk::NewPrivateChunk(hsPrivateChunk* next, uint32_t chunkSize)
 {
     hsPrivateChunk* chunk = (hsPrivateChunk*)HSMemory::New(sizeof(hsPrivateChunk) + chunkSize);
 
@@ -171,7 +171,7 @@ hsPrivateChunk* hsPrivateChunk::NewPrivateChunk(hsPrivateChunk* next, UInt32 chu
     return chunk;
 }
 
-hsChunkAllocator::hsChunkAllocator(UInt32 chunkSize) : fChunkSize(chunkSize), fChunk(nil)
+hsChunkAllocator::hsChunkAllocator(uint32_t chunkSize) : fChunkSize(chunkSize), fChunk(nil)
 {
     hsDebugCode(fChunkCount = 0;)
 }
@@ -194,12 +194,12 @@ void hsChunkAllocator::Reset()
     hsDebugCode(fChunkCount = 0;)
 }
 
-void hsChunkAllocator::SetChunkSize(UInt32 chunkSize)
+void hsChunkAllocator::SetChunkSize(uint32_t chunkSize)
 {
     fChunkSize = chunkSize;
 }
 
-void* hsChunkAllocator::Allocate(UInt32 size, const void* data)
+void* hsChunkAllocator::Allocate(uint32_t size, const void* data)
 {
     void*   addr;
 
@@ -221,7 +221,7 @@ void* hsChunkAllocator::Allocate(UInt32 size, const void* data)
     return addr;
 }
 
-void* hsChunkAllocator::SoftAllocate(UInt32 size, const void* data)
+void* hsChunkAllocator::SoftAllocate(uint32_t size, const void* data)
 {
     void*   addr;
 
@@ -248,22 +248,22 @@ struct hsAppenderHead {
     void*   GetStop() const { return fStop; }
 
     void*   GetFirst() const { return fFirst; }
-    void*   GetLast(UInt32 elemSize) const { return (char*)fStop - elemSize; }
-    UInt32  GetSize() const { return (char*)fStop - (char*)fFirst; }
+    void*   GetLast(uint32_t elemSize) const { return (char*)fStop - elemSize; }
+    uint32_t  GetSize() const { return (char*)fStop - (char*)fFirst; }
 
     hsBool  CanPrepend() const { return fFirst != this->GetTop(); }
     int     PrependSize() const { return (char*)fFirst - (char*)this->GetTop(); }
     hsBool  CanAppend() const { return fStop != this->GetBottom(); }
     int     AppendSize() const { return (char*)this->GetBottom() - (char*)fStop; }
     
-    void* Prepend(UInt32 elemSize)
+    void* Prepend(uint32_t elemSize)
     {
         hsAssert(this->CanPrepend(), "bad prepend");
         fFirst = (char*)fFirst - elemSize;
         hsAssert((char*)fFirst >= (char*)this->GetTop(), "bad elemSize");
         return fFirst;
     }
-    void* Append(UInt32 elemSize)
+    void* Append(uint32_t elemSize)
     {
         hsAssert(this->CanAppend(), "bad append");
         void* data = fStop;
@@ -271,7 +271,7 @@ struct hsAppenderHead {
         hsAssert((char*)fStop <= (char*)fBottom, "bad elemSize");
         return data;
     }
-    hsBool PopHead(UInt32 elemSize, void* data)
+    hsBool PopHead(uint32_t elemSize, void* data)
     {
         hsAssert(fFirst != fStop, "Empty");
         if( data )
@@ -279,7 +279,7 @@ struct hsAppenderHead {
         fFirst = (char*)fFirst + elemSize;
         return fFirst == fStop;
     }
-    hsBool PopTail(UInt32 elemSize, void* data)
+    hsBool PopTail(uint32_t elemSize, void* data)
     {
         hsAssert(fFirst != fStop, "Empty");
         fStop = (char*)fStop - elemSize;
@@ -288,9 +288,9 @@ struct hsAppenderHead {
         return fFirst == fStop;
     }
 
-    static hsAppenderHead* NewAppend(UInt32 elemSize, UInt32 elemCount, hsAppenderHead* prev)
+    static hsAppenderHead* NewAppend(uint32_t elemSize, uint32_t elemCount, hsAppenderHead* prev)
     {
-        UInt32          dataSize = elemSize * elemCount;
+        uint32_t          dataSize = elemSize * elemCount;
          hsAppenderHead*    head = (hsAppenderHead*)HSMemory::New(sizeof(hsAppenderHead) + dataSize);
 
         head->fNext = nil;
@@ -300,9 +300,9 @@ struct hsAppenderHead {
         head->fBottom   = (char*)head->fFirst + dataSize;
         return head;
     }
-    static hsAppenderHead* NewPrepend(UInt32 elemSize, UInt32 elemCount, hsAppenderHead* next)
+    static hsAppenderHead* NewPrepend(uint32_t elemSize, uint32_t elemCount, hsAppenderHead* next)
     {
-        UInt32          dataSize = elemSize * elemCount;
+        uint32_t          dataSize = elemSize * elemCount;
          hsAppenderHead*    head = (hsAppenderHead*)HSMemory::New(sizeof(hsAppenderHead) + dataSize);
 
         head->fNext = next;
@@ -316,7 +316,7 @@ struct hsAppenderHead {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-hsAppender::hsAppender(UInt32 elemSize, UInt32 elemCount)
+hsAppender::hsAppender(uint32_t elemSize, uint32_t elemCount)
         : fFirstBlock(nil), fElemSize(elemSize), fElemCount(elemCount), fCount(0)
 {
 }
@@ -326,14 +326,14 @@ hsAppender::~hsAppender()
     this->Reset();
 }
 
-UInt32 hsAppender::CopyInto(void* data) const
+uint32_t hsAppender::CopyInto(void* data) const
 {
     if (data)
     {   const hsAppenderHead*   head = fFirstBlock;
-        hsDebugCode(UInt32 totalSize = 0;)
+        hsDebugCode(uint32_t totalSize = 0;)
 
         while (head != nil)
-        {   UInt32  size = head->GetSize();
+        {   uint32_t  size = head->GetSize();
             HSMemory::BlockMove(head->GetFirst(), data, size);
             
             data = (char*)data + size;
@@ -721,7 +721,7 @@ void SortNDumpUnfreedMemory(const char *nm, bool full) // file name base, and FU
 
 
     _CrtMemState heap_state;
-static  UInt32 GrandTotal =0;
+static  uint32_t GrandTotal =0;
 static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next incremental check DANGER this 
                         // could break if this is freed...(gives bad report)
     _CrtMemBlockHeader *cmbh_last_good;
@@ -736,7 +736,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
     long totsize= 0;        // Track Total Bytes
     long normsize = 0;      // Track total of NORMAL Blocks
 
-    looktbl *ltb = TRACKED_NEW looktbl[LTBLMAX];
+    looktbl *ltb = new looktbl[LTBLMAX];
     long tblEnd=1;          // first is "NULL";
 
     memset((void *)ltb,0,sizeof(looktbl) * LTBLMAX);        // clear table area
@@ -821,7 +821,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
 
                 for(int x=len; x < 25; x++)
                     fputc(' ',DumpLogFile);             // make even columns
-                fprintf(DumpLogFile,"%5ld K\n",(UInt32)( ltb[i].fBytes+500)/1000);//,ltb[i].fAllocs);
+                fprintf(DumpLogFile,"%5ld K\n",(uint32_t)( ltb[i].fBytes+500)/1000);//,ltb[i].fAllocs);
                 
                 //allocs += ltb[i].fAllocs;
             }
@@ -847,11 +847,11 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
             if( DumpLogFile)
             {   fprintf(DumpLogFile,"%s ",nm);
                 int len = strlen(nm);
-                GrandTotal += (UInt32)(normsize+500)/1000;
+                GrandTotal += (uint32_t)(normsize+500)/1000;
 
                 for(int x=len; x < 25; x++)
                     fputc(' ',DumpLogFile);                 // make even columns
-                fprintf(DumpLogFile,"%5ld K           %5ld  %s\n",(UInt32)(normsize+500)/1000,GrandTotal,errStr);//, allocs);
+                fprintf(DumpLogFile,"%5ld K           %5ld  %s\n",(uint32_t)(normsize+500)/1000,GrandTotal,errStr);//, allocs);
                 fclose(DumpLogFile);
             }
         }

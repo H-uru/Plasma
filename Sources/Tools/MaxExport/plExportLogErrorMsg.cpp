@@ -44,11 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <commdlg.h>
 #include <bmmlib.h>
 #include <guplib.h>
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "plExportLogErrorMsg.h"
 #include "hsExceptions.h"
-#include "hsUtils.h"
+
 
 //
 // On our way out, be sure to close the error file

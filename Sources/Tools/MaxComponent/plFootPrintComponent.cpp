@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxConvert/hsMaterialConverter.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTweak.h"
 
 #include "hsResMgr.h"
@@ -318,7 +318,7 @@ hsBool plFootPrintComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        ISetupDecalMgr(node, pErrMsg, TRACKED_NEW plDynaFootMgr);
+        ISetupDecalMgr(node, pErrMsg, new plDynaFootMgr);
     }
 
     return true;
@@ -333,7 +333,7 @@ hsBool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         ISetupNotifies(node, pErrMsg);
 
     // Add this node's object to our DynaDecalMgr.
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -377,7 +377,7 @@ hsBool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg
     float intensity = fCompPB->GetFloat(kIntensity) * 1.e-2f;
     float partyTime = fCompPB->GetFloat(kPartyTime);
 
-    const hsScalar kHeightHack = 1.f;
+    const float kHeightHack = 1.f;
     fDecalMgr->SetScale(hsVector3(width, length, kHeightHack));
 
     const float kMinFadeOut = 1.e-2f;
@@ -400,7 +400,7 @@ hsBool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg
         return fValid = false;
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(mgrKey, TRACKED_NEW plNodeRefMsg(node->GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(mgrKey, new plNodeRefMsg(node->GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric), plRefFlags::kActiveRef);
 
     ISetupParticles(node, pErrMsg);
 
@@ -473,18 +473,18 @@ hsBool plFootPrintComponent::ICreateDecalMaterials(plMaxNode* node, plErrorMsg* 
     if( !matRTShade )
         return fValid = false;
 
-    hsgResMgr::ResMgr()->AddViaNotify(matRTShade->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatRTShade), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(matRTShade->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatRTShade), plRefFlags::kActiveRef);
 
     hsGMaterial* matPreShade = hsMaterialConverter::Instance().AlphaHackPrint(node, fCompPB->GetTexmap(kLayer), hsGMatState::kBlendAlpha);
 
-    hsgResMgr::ResMgr()->AddViaNotify(matPreShade->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatPreShade), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(matPreShade->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatPreShade), plRefFlags::kActiveRef);
 
     return true;
 }
 
 hsBool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    UInt32 blendFlags = 0;
+    uint32_t blendFlags = 0;
     switch( fCompPB->GetInt(kBlend) )
     {
     case kMADD:
@@ -512,7 +512,7 @@ hsBool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorM
         layer->SetBlendFlags(layer->GetBlendFlags() | hsGMatState::kBlendInvertFinalColor);
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(matRTShade->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatRTShade), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(matRTShade->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefMatRTShade), plRefFlags::kActiveRef);
 
     return true;
 }
@@ -691,11 +691,11 @@ hsBool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
         plDynaRippleMgr* ripple = nil;
         if( node->GetVS() || node->UserPropExists("XXXWaterColor") )
         {
-            ripple = TRACKED_NEW plDynaRippleVSMgr;
+            ripple = new plDynaRippleVSMgr;
         }
         else
         {
-            ripple = TRACKED_NEW plDynaRippleMgr;
+            ripple = new plDynaRippleMgr;
         }
         ISetupDecalMgr(node, pErrMsg, ripple);
         if( fValid )
@@ -717,7 +717,7 @@ hsBool plRippleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         plWaveSetBase* waveSet = plWaterComponent::GetWaveSetFromNode(node);
         if( waveSet )
         {
-            plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaRippleVSMgr::kRefWaveSetBase);
+            plGenRefMsg* refMsg = new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaRippleVSMgr::kRefWaveSetBase);
             hsgResMgr::ResMgr()->AddViaNotify(waveSet->GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
 
@@ -725,7 +725,7 @@ hsBool plRippleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     }
 
     // Add this node's object to our DynaDecalMgr.
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -863,7 +863,7 @@ hsBool plPuddleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        plDynaRippleMgr* puddle = TRACKED_NEW plDynaPuddleMgr;
+        plDynaRippleMgr* puddle = new plDynaPuddleMgr;
 
         ISetupDecalMgr(node, pErrMsg, puddle);
         if( fValid )
@@ -883,7 +883,7 @@ hsBool plPuddleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         ISetupNotifies(node, pErrMsg);
 
     // Add this node's object to our DynaDecalMgr.
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -1028,7 +1028,7 @@ hsBool plBulletComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        plDynaBulletMgr* bullet = TRACKED_NEW plDynaBulletMgr;
+        plDynaBulletMgr* bullet = new plDynaBulletMgr;
 
         ISetupDecalMgr(node, pErrMsg, bullet);
     }
@@ -1044,7 +1044,7 @@ hsBool plBulletComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         ISetupNotifies(node, pErrMsg);
 
     // Add this node's object to our DynaDecalMgr.
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -1193,9 +1193,9 @@ hsBool plTorpedoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     {
         plDynaRippleMgr* torpedo;
         if( node->GetVS() )
-            torpedo = TRACKED_NEW plDynaTorpedoVSMgr;
+            torpedo = new plDynaTorpedoVSMgr;
         else
-            torpedo = TRACKED_NEW plDynaTorpedoMgr;
+            torpedo = new plDynaTorpedoMgr;
 
         ISetupDecalMgr(node, pErrMsg, torpedo);
         if( fValid )
@@ -1351,7 +1351,7 @@ hsBool plWakeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        plDynaWakeMgr* wake = TRACKED_NEW plDynaWakeMgr;
+        plDynaWakeMgr* wake = new plDynaWakeMgr;
         ISetupDecalMgr(node, pErrMsg, wake);
         if( fValid )
         {
@@ -1371,7 +1371,7 @@ hsBool plWakeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         ISetupNotifies(node, pErrMsg);
 
     // Add this node's object to our DynaDecalMgr.
-    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), TRACKED_NEW plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(node->GetKey(), new plGenRefMsg(fDecalMgr->GetKey(), plRefMsg::kOnCreate, 0, plDynaDecalMgr::kRefTarget), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -1498,7 +1498,7 @@ hsBool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     }
 
 
-    plDecalEnableMod* enable = TRACKED_NEW plDecalEnableMod;
+    plDecalEnableMod* enable = new plDecalEnableMod;
     plKey modKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), enable, node->GetLocation());
 
     int numDecals = fCompPB->Count(kDecals);
@@ -1516,7 +1516,7 @@ hsBool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         }
     }
     enable->SetWetLength(fCompPB->GetFloat(kDirtyTime));
-    hsgResMgr::ResMgr()->AddViaNotify(modKey, TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(modKey, new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -1620,14 +1620,14 @@ hsBool plPrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     if( !obj )
         return true;
 
-    plPrintShape* shape = TRACKED_NEW plPrintShape();
+    plPrintShape* shape = new plPrintShape();
     plKey shapeKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), shape, node->GetLocation());
 
     shape->SetWidth(fCompPB->GetFloat(kWidth));
     shape->SetLength(fCompPB->GetFloat(kLength));
     shape->SetHeight(fCompPB->GetFloat(kHeight));
 
-    hsgResMgr::ResMgr()->AddViaNotify(shapeKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(shapeKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     return true; 
 }
@@ -1770,7 +1770,7 @@ hsBool plActivePrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg
     if( !obj )
         return true;
 
-    plActivePrintShape* shape = TRACKED_NEW plActivePrintShape();
+    plActivePrintShape* shape = new plActivePrintShape();
     plKey shapeKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), shape, node->GetLocation());
 
     shape->SetWidth(fCompPB->GetFloat(kWidth));
@@ -1789,7 +1789,7 @@ hsBool plActivePrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg
     }
 
 
-    hsgResMgr::ResMgr()->AddViaNotify(shapeKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(shapeKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     return true; 
 }

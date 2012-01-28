@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
+
 #include "plClothingMtl.h"
 #include "../resource.h"
 #include "../Shaders.h"
@@ -59,7 +59,7 @@ class plClothingMtlClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plClothingMtl(loading); }
+    void*           Create(BOOL loading) { return new plClothingMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_CLOTHING_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return CLOTHING_MTL_CLASS_ID; }
@@ -108,7 +108,7 @@ const char *plClothingMtl::LayerStrings[] =
     "Tint 2"
 };
 
-const UInt8 plClothingMtl::LayerToPBIdx[] =
+const uint8_t plClothingMtl::LayerToPBIdx[] =
 {
     kTexmapBase,
     kTexmapSkin,
@@ -130,10 +130,10 @@ plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB(NULL)
     int i;
     for (i = 0; i < plClothingMtl::kMaxTiles; i++)
     {
-        plLayerTex *tex = TRACKED_NEW plLayerTex;
+        plLayerTex *tex = new plLayerTex;
         fBasicPB->SetValue(ParamID(kTexmap), 0, tex, i);
     }
-    fBasicPB->SetValue(ParamID(kThumbnail), 0, TRACKED_NEW plLayerTex);
+    fBasicPB->SetValue(ParamID(kThumbnail), 0, new plLayerTex);
 }
 
 void plClothingMtl::Reset() 
@@ -352,7 +352,7 @@ IOResult plClothingMtl::Load(ILoad *iload)
 
 RefTargetHandle plClothingMtl::Clone(RemapDir &remap)
 {
-    plClothingMtl *mnew = TRACKED_NEW plClothingMtl(FALSE);
+    plClothingMtl *mnew = new plClothingMtl(FALSE);
     *((MtlBase*)mnew) = *((MtlBase*)this); 
     mnew->ReplaceReference(kRefBasic, remap.CloneRef(fBasicPB));
 
@@ -573,68 +573,68 @@ void plClothingMtl::InitTilesets()
 
     plClothingElement::GetElements(fElements);
 /*
-    plClothingTileset *tileset = TRACKED_NEW plClothingTileset();
+    plClothingTileset *tileset = new plClothingTileset();
     tileset->SetName("shirt");
     tileset->AddElement(FindElementByName("shirt-chest"));
     tileset->AddElement(FindElementByName("shirt-sleeve"));
     fTilesets[plClothingLayout::kSetShirt] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("face");
     tileset->AddElement(FindElementByName("face"));
     fTilesets[plClothingLayout::kSetFace] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("eye");
     tileset->AddElement(FindElementByName("eyeball"));
     fTilesets[plClothingLayout::kSetEye] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("shoe");
     tileset->AddElement(FindElementByName("shoe-top"));
     tileset->AddElement(FindElementByName("shoe-bottom"));
     fTilesets[plClothingLayout::kSetShoe] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("pants");
     tileset->AddElement(FindElementByName("pants"));
     fTilesets[plClothingLayout::kSetPants] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("hand");
     tileset->AddElement(FindElementByName("hand-LOD"));
     tileset->AddElement(FindElementByName("hand-square"));
     tileset->AddElement(FindElementByName("hand-wide"));
     fTilesets[plClothingLayout::kSetHand] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("playerbook");
     tileset->AddElement(FindElementByName("playerbook"));
     fTilesets[plClothingLayout::kSetPlayerBook] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("backpack");
     tileset->AddElement(FindElementByName("backpack"));
     fTilesets[plClothingLayout::kSetBackpack] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("glasses");
     tileset->AddElement(FindElementByName("glasses-front"));
     tileset->AddElement(FindElementByName("glasses-side"));
     fTilesets[plClothingLayout::kSetGlasses] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("KI");
     tileset->AddElement(FindElementByName("KI"));
     fTilesets[plClothingLayout::kSetKI] = tileset;
     */
-    plClothingTileset *tileset = TRACKED_NEW plClothingTileset();
+    plClothingTileset *tileset = new plClothingTileset();
     tileset->SetName("Torso");
     tileset->AddElement(FindElementByName("Chest"));
     tileset->AddElement(FindElementByName("Arm"));
     fTilesets[plClothingLayout::kSetShirt] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Head");
     tileset->AddElement(FindElementByName("Eye"));  
     tileset->AddElement(FindElementByName("Extra Hair"));
@@ -642,43 +642,43 @@ void plClothingMtl::InitTilesets()
     tileset->AddElement(FindElementByName("Hat"));
     fTilesets[plClothingLayout::kSetFace] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Foot");
     tileset->AddElement(FindElementByName("Foot"));
     fTilesets[plClothingLayout::kSetShoe] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Legs");
     tileset->AddElement(FindElementByName("Legs"));
     fTilesets[plClothingLayout::kSetPants] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Hand");
     tileset->AddElement(FindElementByName("Finger"));
     tileset->AddElement(FindElementByName("LOD"));
     tileset->AddElement(FindElementByName("Palm"));
     fTilesets[plClothingLayout::kSetHand] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Player Book");
     tileset->AddElement(FindElementByName("Player Book"));
     fTilesets[plClothingLayout::kSetPlayerBook] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("Glasses");
     tileset->AddElement(FindElementByName("Glasses"));
     fTilesets[plClothingLayout::kSetGlasses] = tileset;
     
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("KI");
     tileset->AddElement(FindElementByName("KI"));
     fTilesets[plClothingLayout::kSetKI] = tileset;  
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("(unused)");
     fTilesets[plClothingLayout::kSetEye] = tileset;
 
-    tileset = TRACKED_NEW plClothingTileset();
+    tileset = new plClothingTileset();
     tileset->SetName("(unused)");
     fTilesets[plClothingLayout::kSetBackpack] = tileset;    
 }

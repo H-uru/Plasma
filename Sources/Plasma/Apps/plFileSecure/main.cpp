@@ -43,13 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plFileUtils.h"
 #include "plFile/plSecureStream.h"
 #include "pnProduct/pnProduct.h"
-#include "hsUtils.h"
+
 
 #include <time.h>
 #include <string>
 
 void print_version() {
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     printf("%S\n\n", productString);
 }
@@ -75,40 +75,40 @@ void print_help() {
 
 void GenerateKey(bool useDefault)
 {
-    UInt32 key[4];
+    uint32_t key[4];
     if (useDefault)
     {
         unsigned memSize = min(arrsize(key), arrsize(plSecureStream::kDefaultKey));
-        memSize *= sizeof(UInt32);
+        memSize *= sizeof(uint32_t);
         memcpy(key, plSecureStream::kDefaultKey, memSize);
     }
     else
     {
         srand((unsigned)time(nil));
         double randNum = (double)rand() / (double)RAND_MAX; // converts to 0..1
-        UInt32 keyNum = (UInt32)(randNum * (double)0xFFFFFFFF); // multiply it by the max unsigned 32-bit int
+        uint32_t keyNum = (uint32_t)(randNum * (double)0xFFFFFFFF); // multiply it by the max unsigned 32-bit int
         key[0] = keyNum;
 
         randNum = (double)rand() / (double)RAND_MAX;
-        keyNum = (UInt32)(randNum * (double)0xFFFFFFFF);
+        keyNum = (uint32_t)(randNum * (double)0xFFFFFFFF);
         key[1] = keyNum;
 
         randNum = (double)rand() / (double)RAND_MAX;
-        keyNum = (UInt32)(randNum * (double)0xFFFFFFFF);
+        keyNum = (uint32_t)(randNum * (double)0xFFFFFFFF);
         key[2] = keyNum;
 
         randNum = (double)rand() / (double)RAND_MAX;
-        keyNum = (UInt32)(randNum * (double)0xFFFFFFFF);
+        keyNum = (uint32_t)(randNum * (double)0xFFFFFFFF);
         key[3] = keyNum;
     }
 
     hsUNIXStream out;
     out.Open(plFileUtils::kKeyFilename, "wb");
-    out.Write(sizeof(UInt32) * arrsize(key), (void*)key);
+    out.Write(sizeof(uint32_t) * arrsize(key), (void*)key);
     out.Close();
 }
 
-void SecureFiles(std::string dir, std::string ext, UInt32* key)
+void SecureFiles(std::string dir, std::string ext, uint32_t* key)
 {
     char filePath[256];
 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
         SecureFiles(directory, ext, nil);
     else
     {
-        UInt32 key[4];
+        uint32_t key[4];
         plFileUtils::GetSecureEncryptionKey(plFileUtils::kKeyFilename, key, arrsize(key));
         SecureFiles(directory, ext, key);
     }

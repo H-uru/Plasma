@@ -403,14 +403,14 @@ hsBool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         if( fCompPB->GetInt(kAffectDraw) )
         {
-            plEnableMsg* eMsg = TRACKED_NEW plEnableMsg(nil, plEnableMsg::kDisable, plEnableMsg::kDrawable);
+            plEnableMsg* eMsg = new plEnableMsg(nil, plEnableMsg::kDisable, plEnableMsg::kDrawable);
             eMsg->AddReceiver(obj->GetKey());
             eMsg->Send();
         }
         if( fCompPB->GetInt(kAffectPhys) )
         {
             hsAssert(0, "Who uses this?");
-//          plEventGroupEnableMsg* pMsg = TRACKED_NEW plEventGroupEnableMsg;
+//          plEventGroupEnableMsg* pMsg = new plEventGroupEnableMsg;
 //          pMsg->SetFlags(plEventGroupEnableMsg::kCollideOff | plEventGroupEnableMsg::kReportOff);
 //          pMsg->AddReceiver(obj->GetKey());
 //          pMsg->Send();

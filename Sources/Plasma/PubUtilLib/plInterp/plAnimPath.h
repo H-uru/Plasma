@@ -70,12 +70,12 @@ protected:
     hsPoint3                    fPos;
     hsVector3                   fVel;
     hsVector3                   fAccel;
-    hsScalar                    fTime; // presumably seconds
+    float                    fTime; // presumably seconds
 
     // The paramters (and options) for this curve.
-    UInt32                      fAnimPathFlags;     // currently set at runtime only
-    hsScalar                    fMinDistSq;
-    hsScalar                    fLength; // presumably seconds
+    uint32_t                      fAnimPathFlags;     // currently set at runtime only
+    float                    fMinDistSq;
+    float                    fLength; // presumably seconds
 
     // Controller stuff only works in local space.
     hsMatrix44                  fLocalToWorld;
@@ -83,31 +83,31 @@ protected:
 
     // Bounding sphere available for ignoring out of range
     hsPoint3                    fCenter;
-    hsScalar                    fRadius;
+    float                    fRadius;
 
     plCompoundController*       fController;
 
     hsAffineParts               fParts;
 
     // These are temps during a search. They're here to avoid recalc.
-    mutable hsScalar                    fLastTime;
-    mutable hsScalar                    fLastDistSq;
-    mutable hsScalar                    fThisTime;
-    mutable hsScalar                    fThisDistSq;
-    mutable hsScalar                    fNextTime;
-    mutable hsScalar                    fNextDistSq;
-    mutable hsScalar                    fDelTime;
+    mutable float                    fLastTime;
+    mutable float                    fLastDistSq;
+    mutable float                    fThisTime;
+    mutable float                    fThisDistSq;
+    mutable float                    fNextTime;
+    mutable float                    fNextDistSq;
+    mutable float                    fDelTime;
     mutable hsPoint3                    fPrevPos, fCurPos;
 
     void                        ICalcBounds();
-    hsScalar                    ICalcTotalLength();
-    hsScalar                    IShiftFore(hsPoint3 &pt) const;
-    hsScalar                    IShiftBack(hsPoint3 &pt) const;
-    hsScalar                    ISubDivFore(hsPoint3 &pt) const;
-    hsScalar                    ISubDivBack(hsPoint3 &pt) const;
-    void                        IInitInterval(hsScalar time, hsScalar delTime, hsPoint3 &pt) const;
-    hsScalar                    ICheckInterval(hsPoint3 &pt) const;
-    hsScalar                    IBestTime() const { return fLastDistSq < fThisDistSq 
+    float                    ICalcTotalLength();
+    float                    IShiftFore(hsPoint3 &pt) const;
+    float                    IShiftBack(hsPoint3 &pt) const;
+    float                    ISubDivFore(hsPoint3 &pt) const;
+    float                    ISubDivBack(hsPoint3 &pt) const;
+    void                        IInitInterval(float time, float delTime, hsPoint3 &pt) const;
+    float                    ICheckInterval(hsPoint3 &pt) const;
+    float                    IBestTime() const { return fLastDistSq < fThisDistSq 
                                                         ? (fLastDistSq < fNextDistSq 
                                                             ? fLastTime
                                                             : fNextTime)
@@ -116,15 +116,15 @@ protected:
                                                             : fNextTime); }
 
     // Visualization helper
-    void IMakeSegment(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos,
+    void IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
                                   hsPoint3& p1, hsPoint3& p2);
     
     // For computing arclen
     struct ArcLenDeltaInfo
     {
-        hsScalar    fT;
-        hsScalar    fArcLenDelta;   // arc len distance from prev sample point (array entry)
-        ArcLenDeltaInfo(hsScalar t, hsScalar del) : fT(t),fArcLenDelta(del) {}
+        float    fT;
+        float    fArcLenDelta;   // arc len distance from prev sample point (array entry)
+        ArcLenDeltaInfo(float t, float del) : fT(t),fArcLenDelta(del) {}
         ArcLenDeltaInfo() : fT(0),fArcLenDelta(0) {}
     };
     hsTArray<ArcLenDeltaInfo>   fArcLenDeltas;
@@ -142,10 +142,10 @@ public:
     const hsMatrix44& GetWorldToLocal() const { return fWorldToLocal; }
 
     // Visualization helper
-    void MakeDrawList(hsTArray<UInt16>& idx, hsTArray<hsPoint3>& pos);
+    void MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos);
 
-    void SetAnimPathFlags(UInt32 f) { fAnimPathFlags=f; }
-    UInt32 GetAnimPathFlags() const { return fAnimPathFlags; }
+    void SetAnimPathFlags(uint32_t f) { fAnimPathFlags=f; }
+    uint32_t GetAnimPathFlags() const { return fAnimPathFlags; }
 
     void SetWrap(hsBool on) { if(on)fAnimPathFlags |= kWrap; else fAnimPathFlags &= ~kWrap; }
     hsBool GetWrap() const { return 0 != (fAnimPathFlags & kWrap); }
@@ -153,15 +153,15 @@ public:
     void SetFarthest(hsBool on) { if(on)fAnimPathFlags |= kFarthest; else fAnimPathFlags &= ~kFarthest; }
     hsBool GetFarthest() const { return 0 != (fAnimPathFlags & kFarthest); }
 
-    void SetCurTime(hsScalar t, UInt32 calcFlags=0);
-    hsScalar GetCurTime() const { return fTime; }
+    void SetCurTime(float t, uint32_t calcFlags=0);
+    float GetCurTime() const { return fTime; }
 
     void SetController(plCompoundController* tmc);
     plCompoundController* GetController() const { return fController; }
-    hsScalar GetLength() const { return fLength; } // seconds
+    float GetLength() const { return fLength; } // seconds
 
-    void SetMinDistance(hsScalar d) { fMinDistSq = d*d; }
-    hsScalar GetMinDistance() const { return hsSquareRoot(fMinDistSq); }
+    void SetMinDistance(float d) { fMinDistSq = d*d; }
+    float GetMinDistance() const;
 
     hsMatrix44* GetMatrix44(hsMatrix44* xOut) const { *xOut = fXform; return xOut; }
     hsPoint3*   GetPosition(hsPoint3* pOut) const { *pOut = fPos; return pOut; }
@@ -170,16 +170,16 @@ public:
     hsVector3*  GetUp(hsVector3* uOut) const { uOut->Set(fXform.fMap[0][1], fXform.fMap[1][1], fXform.fMap[2][1]); return uOut; }
     hsVector3*  GetAcceleration(hsVector3* aOut) const { *aOut = fAccel; return aOut; }
     
-    hsBool OutOfRange(hsPoint3 &pt, hsScalar range) const;
+    hsBool OutOfRange(hsPoint3 &pt, float range) const;
     const hsAffineParts* Parts() const { return &fParts; }
     void InitParts(const hsAffineParts& p) { fParts = p; }
 
-    hsScalar GetExtremePoint(hsPoint3 &worldPt) const; // Exhaustive search
-    hsScalar GetExtremePoint(hsScalar lastTime, hsScalar delTime, hsPoint3 &worldPt) const; // Incremental search
+    float GetExtremePoint(hsPoint3 &worldPt) const; // Exhaustive search
+    float GetExtremePoint(float lastTime, float delTime, hsPoint3 &worldPt) const; // Incremental search
 
     // for arclen usage
-    void ComputeArcLenDeltas(Int32 numSamples=256);
-    hsScalar GetLookAheadTime(hsScalar startTime, hsScalar arcLength, hsBool bwd, Int32* startSrchIdx);
+    void ComputeArcLenDeltas(int32_t numSamples=256);
+    float GetLookAheadTime(float startTime, float arcLength, hsBool bwd, int32_t* startSrchIdx);
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

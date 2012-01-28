@@ -64,7 +64,7 @@ public:
 
 
 protected:
-    Bary IComputeBarycentric(const hsVector3& v12, hsScalar invLenSq12, const hsVector3& v0, const hsVector3& v1, hsPoint3& out);
+    Bary IComputeBarycentric(const hsVector3& v12, float invLenSq12, const hsVector3& v0, const hsVector3& v1, hsPoint3& out);
 
     int ISelectAxis(const hsVector3& norm);
     hsBool IFastBarycentric(int iAx, const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out);
@@ -77,9 +77,9 @@ public:
     hsBool FastBarycentricProjection(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3&p, hsPoint3& out);
     hsBool FastBarycentric(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out);
 
-    hsBool ProjectOntoPlane(const hsVector3& norm, hsScalar dist, hsPoint3& p);
+    hsBool ProjectOntoPlane(const hsVector3& norm, float dist, hsPoint3& p);
     hsBool ProjectOntoPlane(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3& p);
-    hsBool ProjectOntoPlaneAlongVector(const hsVector3& norm, hsScalar dist, const hsVector3& vec, hsPoint3& p);
+    hsBool ProjectOntoPlaneAlongVector(const hsVector3& norm, float dist, const hsVector3& vec, hsPoint3& p);
     hsBool ProjectOntoPlaneAlongVector(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsVector3& vec, hsPoint3& p);
 
 };

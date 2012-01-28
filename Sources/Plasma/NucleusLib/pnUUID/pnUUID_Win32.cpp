@@ -43,15 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#include "hsUtils.h"
-#include "hsWindows.h"
-#include <rpc.h>
 
-COMPILER_ASSERT(msizeof(Uuid, data) == msizeof(plUUID, fData));
+
+#include <rpc.h>
 
 plUUID::plUUID( const Uuid & uuid )
 {
-    MemCopy(fData, uuid.data, sizeof(fData));
+    memcpy(fData, uuid.data, sizeof(fData));
 }
 
 void plUUID::Clear()
@@ -84,12 +82,12 @@ void plUUID::CopyFrom( const plUUID * v ) {
 }
 
 void plUUID::CopyFrom( const plUUID & v ) {
-    MemCopy(fData, v.fData, sizeof(fData));
+    memcpy(fData, v.fData, sizeof(fData));
 }
 
 plUUID::operator Uuid () const {
     Uuid uuid;
-    MemCopy(uuid.data, fData, sizeof(uuid.data));
+    memcpy(uuid.data, fData, sizeof(uuid.data));
     return uuid;
 }
 

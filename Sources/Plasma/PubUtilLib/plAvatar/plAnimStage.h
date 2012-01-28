@@ -159,7 +159,7 @@ public:
                         channel attached to the avatar's handle.
     */
     plAnimStage(const char *animName,
-                UInt8 notify,
+                uint8_t notify,
                 ForwardType forward,
                 BackType backward,
                 AdvanceType advance,
@@ -173,7 +173,7 @@ public:
         moving.
     */
     plAnimStage(const char *animName,
-                UInt8 notify,
+                uint8_t notify,
                 ForwardType forward,
                 BackType back,
                 AdvanceType advance,
@@ -189,7 +189,7 @@ public:
         \param animName The name of the animation controlled by this stage.
         \param notify Flags for when to send notify messages
         */
-    plAnimStage(const char *animName, UInt8 notify);
+    plAnimStage(const char *animName, uint8_t notify);
     virtual ~plAnimStage();
     const plAnimStage& operator=(const plAnimStage& src);
 
@@ -210,8 +210,8 @@ public:
     void SetAdvanceType(AdvanceType t);
     RegressType GetRegressType();
     void SetRegresstype(RegressType t);
-    UInt32 GetNotifyFlags();
-    void SetNotifyFlags(UInt32 newFlags);
+    uint32_t GetNotifyFlags();
+    void SetNotifyFlags(uint32_t newFlags);
     int GetNumLoops();
     void SetNumLoops(int loops);
     int GetLoopValue();
@@ -252,16 +252,16 @@ protected:
     bool ITryAdvance(plArmatureMod *avMod);
     bool ITryRegress(plArmatureMod *avMod);
 
-    hsBool ISendNotify(UInt32 notifyMask, UInt32 notifyType, plArmatureMod *armature, plArmatureBrain *brain);
+    hsBool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
 
     char *fAnimName;            // the name of our animation
-    UInt8 fNotify;              // flags for which events will cause notification events
+    uint8_t fNotify;              // flags for which events will cause notification events
     int fLoops;                 // how many times will this animation loop (after initial playthrough?)
 
     bool fDoAdvanceTo;          // advance to a specific stage instead of n + 1
-    UInt32 fAdvanceTo;          // the stage to advance to, provided fDoAdvanceTo is true
+    uint32_t fAdvanceTo;          // the stage to advance to, provided fDoAdvanceTo is true
     bool fDoRegressTo;          // regress to a specific stage instaed of n - 1
-    UInt32 fRegressTo;          // the stage to regress true, provided fDoRegressTo is true
+    uint32_t fRegressTo;          // the stage to regress true, provided fDoRegressTo is true
 
     // --- these are derived & kept for bookkeeping
     plAGAnimInstance *fAnimInstance;
@@ -273,7 +273,7 @@ protected:
     int fCurLoop;                       // which loop are we currently in?
     bool fAttached;                     // in the middle of reloading
     bool fAnimatedHandle;               // this animation moves the handle
-    UInt8 fSentNotifies;                // which notifies have we sent?
+    uint8_t fSentNotifies;                // which notifies have we sent?
     bool fReverseOnIdle;                // reverse our key interpretation if we stop. this is a special
                                         // case for down ladders, for which the forward button means "keep going down"
                                         // if you hold it down the whole time, but means "go up" if you press it 

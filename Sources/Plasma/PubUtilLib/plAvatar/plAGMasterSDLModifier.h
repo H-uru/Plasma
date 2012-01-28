@@ -70,7 +70,7 @@ protected:
     void IPutCurrentStateIn(plStateDataRecord* dstState);
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 
-    UInt32 IApplyModFlags(UInt32 sendFlags);
+    uint32_t IApplyModFlags(uint32_t sendFlags);
 
 public:
     CLASSNAME_REGISTER( plAGMasterSDLModifier);

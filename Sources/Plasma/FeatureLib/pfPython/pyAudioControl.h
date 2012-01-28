@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"
@@ -71,18 +71,18 @@ public:
     // Audio settings
 
     // Sets the master volume of a given audio channel
-    virtual void SetSoundFXVolume( hsScalar volume );
-    virtual void SetMusicVolume( hsScalar volume );
-    virtual void SetVoiceVolume( hsScalar volume );
-    virtual void SetAmbienceVolume( hsScalar volume );
-    virtual void SetGUIVolume( hsScalar volume );
-    virtual void SetNPCVoiceVolume( hsScalar volume );
-    virtual hsScalar GetSoundFXVolume();
-    virtual hsScalar GetMusicVolume();
-    virtual hsScalar GetVoiceVolume();
-    virtual hsScalar GetAmbienceVolume();
-    virtual hsScalar GetGUIVolume();
-    virtual hsScalar GetNPCVoiceVolume();
+    virtual void SetSoundFXVolume( float volume );
+    virtual void SetMusicVolume( float volume );
+    virtual void SetVoiceVolume( float volume );
+    virtual void SetAmbienceVolume( float volume );
+    virtual void SetGUIVolume( float volume );
+    virtual void SetNPCVoiceVolume( float volume );
+    virtual float GetSoundFXVolume();
+    virtual float GetMusicVolume();
+    virtual float GetVoiceVolume();
+    virtual float GetAmbienceVolume();
+    virtual float GetGUIVolume();
+    virtual float GetNPCVoiceVolume();
 
     // Switch DirectX Audio on or off at runtime
     virtual void Enable();
@@ -124,8 +124,8 @@ public:
 
     // Sets the microphone volume, in the range of 0 to 1
     virtual hsBool CanSetMicLevel();
-    virtual void SetMicLevel( hsScalar level );
-    virtual hsScalar GetMicLevel();
+    virtual void SetMicLevel( float level );
+    virtual float GetMicLevel();
 
     // turn voice recording on or off
     virtual void EnableVoiceRecording( hsBool state );
@@ -149,16 +149,16 @@ public:
     virtual void PushToTalk( hsBool state );
 
     // Set the squelch level
-    virtual void SquelchLevel( hsScalar level );
+    virtual void SquelchLevel( float level );
 
     // Adjust voice packet frame size
-    virtual void RecordFrame( Int32 size );
+    virtual void RecordFrame( int32_t size );
 
     // Set the sample rate for recording
-    virtual void RecordSampleRate( Int32 sample_rate );
+    virtual void RecordSampleRate( int32_t sample_rate );
 
-    virtual UInt8 GetPriorityCutoff( void );
-    virtual void  SetPriorityCutoff( UInt8 cut );
+    virtual uint8_t GetPriorityCutoff( void );
+    virtual void  SetPriorityCutoff( uint8_t cut );
 
     // does the device specified support EAX
     virtual hsBool SupportEAX(const char *deviceName);

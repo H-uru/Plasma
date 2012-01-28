@@ -95,7 +95,7 @@ hsBool pyGUIDialog::IsGUIDialog(pyKey& gckey)
 }
 
 
-UInt32 pyGUIDialog::WhatControlType(pyKey& gckey)
+uint32_t pyGUIDialog::WhatControlType(pyKey& gckey)
 {
     // Do the pop-up menu test first, since it's derived from dialog
     if ( pyGUIPopUpMenu::IsGUIPopUpMenu(gckey) )
@@ -163,7 +163,7 @@ PyObject* pyGUIDialog::getObjPyKey()
 
 
 // interface functions
-UInt32  pyGUIDialog::GetTagID()
+uint32_t  pyGUIDialog::GetTagID()
 {
     if ( fGCkey )
     {
@@ -208,7 +208,7 @@ const char* pyGUIDialog::GetName( void )
 }
 
 
-UInt32 pyGUIDialog::GetVersion(void)
+uint32_t pyGUIDialog::GetVersion(void)
 {
     if ( fGCkey )
     {
@@ -220,7 +220,7 @@ UInt32 pyGUIDialog::GetVersion(void)
 }
 
 
-UInt32 pyGUIDialog::GetNumControls( void )
+uint32_t pyGUIDialog::GetNumControls( void )
 {
     if ( fGCkey )
     {
@@ -231,7 +231,7 @@ UInt32 pyGUIDialog::GetNumControls( void )
     return 0;
 }
 
-PyObject* pyGUIDialog::GetControl( UInt32 idx )
+PyObject* pyGUIDialog::GetControl( uint32_t idx )
 {
     if ( fGCkey )
     {
@@ -298,7 +298,7 @@ void pyGUIDialog::Hide( void )
     }
 }
 
-PyObject* pyGUIDialog::GetControlFromTag( UInt32 tagID )
+PyObject* pyGUIDialog::GetControlFromTag( uint32_t tagID )
 {
     if ( fGCkey )
     {
@@ -375,7 +375,7 @@ PyObject* pyGUIDialog::GetBackSelColor()
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyGUIDialog::GetFontSize()
+uint32_t pyGUIDialog::GetFontSize()
 {
     if ( fGCkey )
     {
@@ -392,7 +392,7 @@ UInt32 pyGUIDialog::GetFontSize()
 
 
     // set color scheme
-void pyGUIDialog::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetForeColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -412,7 +412,7 @@ void pyGUIDialog::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -432,7 +432,7 @@ void pyGUIDialog::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetBackColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -452,7 +452,7 @@ void pyGUIDialog::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIDialog::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIDialog::SetBackSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -473,7 +473,7 @@ void pyGUIDialog::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar 
 }
 
 
-void pyGUIDialog::SetFontSize(UInt32 fontsize)
+void pyGUIDialog::SetFontSize(uint32_t fontsize)
 {
     if ( fGCkey )
     {
@@ -481,7 +481,7 @@ void pyGUIDialog::SetFontSize(UInt32 fontsize)
         if ( pdmod )
         {
             pfGUIColorScheme* color = pdmod->GetColorScheme();
-            color->fFontSize = (UInt8)fontsize;
+            color->fFontSize = (uint8_t)fontsize;
         }
     }
 }

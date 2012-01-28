@@ -492,7 +492,7 @@ void hsOscillator::SetNumWaves(int n)
         fWaves[i].Kill();
 }
 
-void hsOscillator::Init(Int32 nParams, hsScalar* params)
+void hsOscillator::Init(int32_t nParams, hsScalar* params)
 {
 // NumWaves             = 1
 // AttenScale           = 2

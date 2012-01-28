@@ -51,27 +51,27 @@ protected:
     static const hsPoint2* fCosSinTable;
 
 public:
-    static const hsScalar kSqrtTwo;
-    static const hsScalar kInvSqrtTwo;
-    static const hsScalar kTwoPI;
+    static const float kSqrtTwo;
+    static const float kInvSqrtTwo;
+    static const float kTwoPI;
 
-    static hsScalar IATan2OverTwoPi(hsScalar y, hsScalar x);
+    static float IATan2OverTwoPi(float y, float x);
 
-    static inline hsScalar InvSqrtAppr(hsScalar x);
-    static inline hsScalar InvSqrt(hsScalar x);
+    static inline float InvSqrtAppr(float x);
+    static inline float InvSqrt(float x);
     static inline hsVector3& Normalize(hsVector3& v) { return (v *= InvSqrt(v.MagnitudeSquared())); }
     static inline hsVector3& NormalizeAppr(hsVector3& v) { return (v *= InvSqrtAppr(v.MagnitudeSquared())); }
 
-    static inline void SinCosAppr(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads);
-    static inline void SinCosInRangeAppr(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads);
+    static inline void SinCosAppr(float rads, float& sinRads, float& cosRads);
+    static inline void SinCosInRangeAppr(float rads, float& sinRads, float& cosRads);
 
-    static inline void SinCos(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads);
-    static inline void SinCosInRange(hsScalar ang, hsScalar& sinRads, hsScalar& cosRads);
+    static inline void SinCos(float rads, float& sinRads, float& cosRads);
+    static inline void SinCosInRange(float ang, float& sinRads, float& cosRads);
 
-    static inline hsScalar Sin(hsScalar rads);
-    static inline hsScalar Cos(hsScalar rads);
-    static inline hsScalar SinInRange(hsScalar rads);
-    static inline hsScalar CosInRange(hsScalar rads);
+    static inline float Sin(float rads);
+    static inline float Cos(float rads);
+    static inline float SinInRange(float rads);
+    static inline float CosInRange(float rads);
 };
 
 
@@ -104,7 +104,7 @@ public:
 
 #define SET_MANTSEED(a) (((unsigned long) (a)) << SEED_POS)
 
-inline hsScalar hsFastMath::InvSqrtAppr(hsScalar x)
+inline float hsFastMath::InvSqrtAppr(float x)
 {
     register unsigned long a = *(long*)&x;
     register float arg = x;
@@ -131,7 +131,7 @@ inline hsScalar hsFastMath::InvSqrtAppr(hsScalar x)
     return r;
 }
 
-inline hsScalar hsFastMath::InvSqrt(hsScalar x)
+inline float hsFastMath::InvSqrt(float x)
 {
     register unsigned long a = *(long*)&x;
     register float arg = x;
@@ -155,7 +155,7 @@ inline hsScalar hsFastMath::InvSqrt(hsScalar x)
 }
 
 
-inline void hsFastMath::SinCosAppr(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads)
+inline void hsFastMath::SinCosAppr(float rads, float& sinRads, float& cosRads)
 {
     rads = fmodf(rads, kTwoPI);
     if( rads < 0 )
@@ -163,11 +163,11 @@ inline void hsFastMath::SinCosAppr(hsScalar rads, hsScalar& sinRads, hsScalar& c
     SinCosInRangeAppr(rads, sinRads, cosRads);
 }
 
-inline void hsFastMath::SinCosInRangeAppr(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads)
+inline void hsFastMath::SinCosInRangeAppr(float rads, float& sinRads, float& cosRads)
 {
     const int kNumSinCosEntries = 8;
-    const hsScalar kNumEntriesOverTwoPI = kNumSinCosEntries * 0.5f / hsScalarPI;
-    hsScalar t = rads * kNumEntriesOverTwoPI;
+    const float kNumEntriesOverTwoPI = kNumSinCosEntries * 0.5f / M_PI;
+    float t = rads * kNumEntriesOverTwoPI;
     int iLo = (int)t;
     t -= iLo;
 
@@ -184,7 +184,7 @@ inline void hsFastMath::SinCosInRangeAppr(hsScalar rads, hsScalar& sinRads, hsSc
 
 }
 
-inline hsScalar hsFastMath::Sin(hsScalar rads)
+inline float hsFastMath::Sin(float rads)
 {
     rads = fmodf(rads, kTwoPI);
     if( rads < 0 )
@@ -193,7 +193,7 @@ inline hsScalar hsFastMath::Sin(hsScalar rads)
     return SinInRange(rads);
 }
 
-inline hsScalar hsFastMath::Cos(hsScalar rads)
+inline float hsFastMath::Cos(float rads)
 {
     rads = fmodf(rads, kTwoPI);
     if( rads < 0 )
@@ -202,7 +202,7 @@ inline hsScalar hsFastMath::Cos(hsScalar rads)
     return CosInRange(rads);
 }
 
-inline hsScalar hsFastMath::SinInRange(hsScalar ang)
+inline float hsFastMath::SinInRange(float ang)
 {
     float sgn = 1.f;
 
@@ -217,7 +217,7 @@ inline hsScalar hsFastMath::SinInRange(hsScalar ang)
     return (ang - (ang*ang*ang) * (1.0f/6.0f) + (ang*ang*ang*ang*ang) / 120.0f) * sgn;
 }
 
-inline hsScalar hsFastMath::CosInRange(hsScalar ang)
+inline float hsFastMath::CosInRange(float ang)
 {
     float sgn = 1.f;
     
@@ -232,7 +232,7 @@ inline hsScalar hsFastMath::CosInRange(hsScalar ang)
     return (1.0f - (ang*ang / 2.0f) + (ang*ang*ang*ang) / 24.0f) *sgn;
 }
 
-inline void hsFastMath::SinCos(hsScalar rads, hsScalar& sinRads, hsScalar& cosRads)
+inline void hsFastMath::SinCos(float rads, float& sinRads, float& cosRads)
 {
     rads = fmodf(rads, kTwoPI);
     if( rads < 0 )
@@ -240,7 +240,7 @@ inline void hsFastMath::SinCos(hsScalar rads, hsScalar& sinRads, hsScalar& cosRa
     SinCosInRange(rads, sinRads, cosRads);
 }
 
-inline void hsFastMath::SinCosInRange(hsScalar ang, hsScalar& sinRads, hsScalar& cosRads)
+inline void hsFastMath::SinCosInRange(float ang, float& sinRads, float& cosRads)
 {
     float sgn = 1.f;
     

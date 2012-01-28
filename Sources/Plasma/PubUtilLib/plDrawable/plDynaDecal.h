@@ -54,14 +54,14 @@ class plDecalVtxFormat
 public:
     hsPoint3    fPos;
     hsVector3   fNorm;
-    UInt32      fDiffuse;
-    UInt32      fSpecular; // Not used anywhere, carried around everywhere.
+    uint32_t      fDiffuse;
+    uint32_t      fSpecular; // Not used anywhere, carried around everywhere.
     hsPoint3    fUVW[2];
 };
 
 // UVW[0] is the currently used UVW.
 // UVW[1] is for the alpha hack (when necessary).
-const UInt8 kDecalVtxFormat = 0x2; // Two UVW's, otherwise vanilla.
+const uint8_t kDecalVtxFormat = 0x2; // Two UVW's, otherwise vanilla.
 
 
 class plDynaDecal
@@ -78,14 +78,14 @@ protected:
     // StartVtx and StartIdx are relative to the start of the data
     // owned by this decal's span, not relative to the start of the
     // underlying buffers.
-    UInt16      fStartVtx;
-    UInt16      fNumVerts;
+    uint16_t      fStartVtx;
+    uint16_t      fNumVerts;
 
-    UInt16      fStartIdx;
-    UInt16      fNumIdx;
+    uint16_t      fStartIdx;
+    uint16_t      fNumIdx;
 
     double      fBirth;
-    hsScalar    fInitAtten;
+    float    fInitAtten;
     hsBool      fFlags;
 
     plDecalVtxFormat*   fVtxBase; // Safe pointer, the buffer data will outlive this decal
@@ -95,7 +95,7 @@ protected:
     friend class plDynaDecalMgr;
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life) = 0;
+    virtual hsBool      Age(double t, float ramp, float decay, float life) = 0;
 };
 
 // No expansion
@@ -105,7 +105,7 @@ protected:
 
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 };
 
 // Expands radially from center
@@ -113,13 +113,13 @@ class plDynaRipple : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fC1U;
-    hsScalar fC2U;
+    float fC1U;
+    float fC2U;
 
-    hsScalar fC1V;
-    hsScalar fC2V;
+    float fC1V;
+    float fC2V;
 
 };
 
@@ -128,13 +128,13 @@ class plDynaWake : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fC1U;
-    hsScalar fC2U;
+    float fC1U;
+    float fC2U;
 
-    hsScalar fC1V;
-    hsScalar fC2V;
+    float fC1V;
+    float fC2V;
 
 };
 
@@ -143,9 +143,9 @@ class plDynaWave : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 
-    hsScalar fScrollRate;
+    float fScrollRate;
 };
 
 // About the same as a DynaRipple, but implemented with vertex/pixel shaders.
@@ -154,7 +154,7 @@ class plDynaRippleVS : public plDynaRipple
 {
 public:
 
-    virtual hsBool      Age(double t, hsScalar ramp, hsScalar decay, hsScalar life);
+    virtual hsBool      Age(double t, float ramp, float decay, float life);
 };
 
 #endif // plDynaDecal_inc

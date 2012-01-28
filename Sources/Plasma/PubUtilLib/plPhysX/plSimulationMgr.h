@@ -97,7 +97,7 @@ public:
     // the scene
     void ReleaseScene(plKey world);
 
-    int GetMaterialIdx(NxScene* scene, hsScalar friction, hsScalar restitution);
+    int GetMaterialIdx(NxScene* scene, float friction, float restitution);
 
     // PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
     void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);

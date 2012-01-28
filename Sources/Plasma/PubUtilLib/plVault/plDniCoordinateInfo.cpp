@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef CLIENT
 ///////////////////////////////////////////////////////////////////
 
-const UInt8 plDniCoordinateInfo::StreamVersion = 1;
+const uint8_t plDniCoordinateInfo::StreamVersion = 1;
 
 
 plDniCoordinateInfo::plDniCoordinateInfo()
@@ -73,7 +73,7 @@ void plDniCoordinateInfo::CopyFrom( const plDniCoordinateInfo * other )
 
 void plDniCoordinateInfo::Read( hsStream* s, hsResMgr* mgr )
 {
-    UInt8 streamVer;
+    uint8_t streamVer;
     s->ReadLE( &streamVer );
     if ( streamVer==StreamVersion )
     {

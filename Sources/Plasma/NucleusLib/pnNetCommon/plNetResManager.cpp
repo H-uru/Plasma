@@ -78,7 +78,7 @@ plNetResManager::~plNetResManager()
 
 plCreatable* plNetResManager::IReadCreatable(hsStream* s) const
 {
-    UInt16 hClass = s->ReadLE16();
+    uint16_t hClass = s->ReadLE16();
     if (plFactory::CanCreate(hClass))
     {
         plCreatable *pCre = plFactory::Create(hClass);

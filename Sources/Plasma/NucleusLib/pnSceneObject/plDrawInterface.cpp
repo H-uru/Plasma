@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDrawInterface.h"
 #include "plDrawable.h"
 #include "hsBounds.h"
@@ -61,7 +61,7 @@ plDrawInterface::~plDrawInterface()
 
 }
 
-void plDrawInterface::SetDrawableMeshIndex( UInt8 which, UInt32 index ) 
+void plDrawInterface::SetDrawableMeshIndex( uint8_t which, uint32_t index ) 
 {
     ICheckDrawableIndex(which);
 
@@ -154,7 +154,7 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
     {
         fDrawableIndices[i] = s->ReadLE32();
 
-        plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
+        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
         mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     }
 
@@ -162,7 +162,7 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
     fRegions.SetCountAndZero(nReg);
     for( i = 0; i < nReg; i++ )
     {
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisRegion);
+        plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisRegion);
         mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
     }
 }
@@ -196,19 +196,19 @@ void    plDrawInterface::ReleaseData( void )
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        if( fDrawables[i] && (fDrawableIndices[i] != UInt32(-1)) )
+        if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
-            plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(fDrawables[i]->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[i], 0);
+            plDISpansMsg* diMsg = new plDISpansMsg(fDrawables[i]->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[i], 0);
             diMsg->SetSender(GetKey());
             diMsg->Send();
         }
-        //fDrawableIndices[i] = UInt32(-1);
+        //fDrawableIndices[i] = uint32_t(-1);
         fDrawables.Reset();
         fDrawableIndices.Reset();
     }
 }
 
-void plDrawInterface::ICheckDrawableIndex(UInt8 which)
+void plDrawInterface::ICheckDrawableIndex(uint8_t which)
 {
     if( which >= fDrawableIndices.GetCount() )
     {
@@ -218,11 +218,11 @@ void plDrawInterface::ICheckDrawableIndex(UInt8 which)
         fDrawableIndices.ExpandAndZero(which+1);
         int i;
         for( i = n; i <= which; i++ )
-            fDrawableIndices[i] = UInt32(-1);
+            fDrawableIndices[i] = uint32_t(-1);
     }
 }
 
-void plDrawInterface::ISetDrawable(UInt8 which, plDrawable* dr)
+void plDrawInterface::ISetDrawable(uint8_t which, plDrawable* dr)
 {
     ICheckDrawableIndex(which);
     fDrawables[which] = dr;
@@ -235,9 +235,9 @@ void plDrawInterface::ISetDrawable(UInt8 which, plDrawable* dr)
     ISetVisRegions(which);
     
 #ifdef HS_DEBUGGING
-    if( fDrawableIndices[which] != (UInt32)-1 )
+    if( fDrawableIndices[which] != (uint32_t)-1 )
     {
-        plDISpansMsg* diMsg = TRACKED_NEW plDISpansMsg(dr->GetKey(), plDISpansMsg::kAddingSpan, fDrawableIndices[which], 0);
+        plDISpansMsg* diMsg = new plDISpansMsg(dr->GetKey(), plDISpansMsg::kAddingSpan, fDrawableIndices[which], 0);
         diMsg->SetSender(GetKey());
         diMsg->Send();
     }
@@ -250,7 +250,7 @@ void plDrawInterface::IRemoveDrawable(plDrawable *dr)
     if( fDrawables.kMissingIndex != idx )
     {
         fDrawables[idx] = nil;
-        fDrawableIndices[idx] = UInt32(-1);
+        fDrawableIndices[idx] = uint32_t(-1);
     }
     else
     {
@@ -263,7 +263,7 @@ void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, hsBool on)
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
     {
-        if( fDrawables[i] && (fDrawableIndices[i] != UInt32(-1)) )
+        if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
             fDrawables[i]->SetDISpanVisSet(fDrawableIndices[i], reg, on);
         }
@@ -284,7 +284,7 @@ void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, hsBool on)
 
 void plDrawInterface::ISetVisRegions(int iDraw)
 {
-    if( fDrawables[iDraw] && (fDrawableIndices[iDraw] != UInt32(-1)) )
+    if( fDrawables[iDraw] && (fDrawableIndices[iDraw] != uint32_t(-1)) )
     {
         int i;
         for( i = 0; i < fRegions.GetCount(); i++ )
@@ -295,12 +295,12 @@ void plDrawInterface::ISetVisRegions(int iDraw)
 }
 
 // Export only. Use messages for runtime
-void plDrawInterface::SetDrawable(UInt8 which, plDrawable *dr)
+void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
 {
     if( dr )
     {
         // This is a little convoluted, but it makes GCC happy and doesn't hurt anybody.
-        plIntRefMsg* intRefMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, which, plIntRefMsg::kDrawable);
+        plIntRefMsg* intRefMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, which, plIntRefMsg::kDrawable);
         plRefMsg* refMsg = intRefMsg;
 //      hsgResMgr::ResMgr()->SendRef(dr->GetKey(), intRefMsg, plRefFlags::kActiveRef); // THIS WON'T COMPILE UNDER GCC
         hsgResMgr::ResMgr()->SendRef(dr, refMsg, plRefFlags::kActiveRef);
@@ -325,7 +325,7 @@ hsBool plDrawInterface::MsgReceive(plMessage* msg)
             }
             else
             {
-                ISetDrawable((UInt8)intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
+                ISetDrawable((uint8_t)intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
             }
             return true;
         default:
@@ -359,14 +359,14 @@ hsBool plDrawInterface::MsgReceive(plMessage* msg)
     return plObjInterface::MsgReceive(msg);
 }
 
-void    plDrawInterface::SetUpForParticleSystem( UInt32 maxNumEmitters, UInt32 maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights )
+void    plDrawInterface::SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights )
 {
     hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
     SetDrawableMeshIndex( 0, fDrawables[0]->CreateParticleSystem( maxNumEmitters, maxNumParticles, material ) );
     int i;
     for( i = 0; i < lights.GetCount(); i++ )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(lights[i], TRACKED_NEW plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(lights[i], new plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
     }
 
     ISetVisRegions(0);

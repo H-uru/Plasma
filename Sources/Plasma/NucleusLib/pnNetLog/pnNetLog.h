@@ -72,28 +72,28 @@ enum ELogParamType {
     kLogParamUnsigned,  // (unsigned)
     kLogParamFloat,     // (float)
     kLogParamUuid,      // Uuid
-    kLogParamStringW,   // (const wchar *)
-    kLogParamLong,      // (long) or (dword)
-    kLogParamLongLong,  // (long long) or (qword)
+    kLogParamStringW,   // (const wchar_t *)
+    kLogParamLong,      // (long) or (uint32_t)
+    kLogParamLongLong,  // (long long) or (uint64_t)
     kNumLogParamTypes
 };
 
 struct NetLogField {
     ELogParamType       type;   // element type
-    wchar               name[MAX_PATH];
+    wchar_t               name[MAX_PATH];
 };
 
 struct NetLogEvent {
     ESrvType                srvType;
     unsigned                logEventType;
-    const wchar *           eventName;
+    const wchar_t *           eventName;
     const NetLogField *     fields;
     unsigned                numFields;
 };
 
 struct NetLogSrvField {
-    const wchar *name;
-    const wchar *data;
+    const wchar_t *name;
+    const wchar_t *data;
 };
 
 #define NET_LOG_FIELD_INT(name)         { kLogParamInt, name }
@@ -157,7 +157,7 @@ enum {
     kNlSrvNumPerf
 };
 
-typedef void (*NlSrvCallback)(const NetLogEvent *event, const ARRAY(wchar) &, unsigned, NetAddressNode &, qword, unsigned, unsigned);
+typedef void (*NlSrvCallback)(const NetLogEvent *event, const ARRAY(wchar_t) &, unsigned, NetAddressNode &, uint64_t, unsigned, unsigned);
 long NetLogSrvGetPerf (unsigned index);
 void NetLogSrvRegisterCallback(NlSrvCallback callback);
 void LogConnIncRef (LogConn * conn);

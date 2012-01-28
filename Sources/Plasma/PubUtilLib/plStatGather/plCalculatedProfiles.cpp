@@ -87,8 +87,8 @@ plProfile_CreateCounter("Polys Per Material", "General", PolysPerMat);
 void CalculateProfiles()
 {
     // KLUDGE - do timing that overlaps the beginframe / endframe (where timing is normally reset)
-    static UInt32 lastTicks = plProfileManager::GetTime();
-    UInt32 curTicks = plProfileManager::GetTime();
+    static uint32_t lastTicks = plProfileManager::GetTime();
+    uint32_t curTicks = plProfileManager::GetTime();
     gVarRFPS.Set(curTicks - lastTicks);
     lastTicks = curTicks;
 
@@ -111,18 +111,18 @@ void CalculateProfiles()
         hsAssert(nc->GetNetCore(), "nil net core in stats?");
         plNetCoreStats* ns = nc->GetNetCore()->GetStats();
 
-        plProfile_Set(UploadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsULBitsPerSec());
+        plProfile_Set(UploadAgeBitsPerSec, (uint32_t)nc->GetNetClientStats().GetAgeStatsULBitsPerSec());
         plProfile_Set(UploadBW, ns->GetULBits()/8);
         plProfile_Set(UploadPPS, ns->GetULPackets());
-        plProfile_Set(UploadAPS, (UInt32)ns->GetULAvgPacketBytes());
-        plProfile_Set(UploadPQ, (UInt32)ns->GetULAvgNumPacketsQueued());
+        plProfile_Set(UploadAPS, (uint32_t)ns->GetULAvgPacketBytes());
+        plProfile_Set(UploadPQ, (uint32_t)ns->GetULAvgNumPacketsQueued());
         plProfile_Set(RMultAcksPQ, nc->GetNetClientStats().GetRecvdMultipleAcks());
 
-        plProfile_Set(DownloadAgeBitsPerSec, (UInt32)nc->GetNetClientStats().GetAgeStatsDLBitsPerSec());
+        plProfile_Set(DownloadAgeBitsPerSec, (uint32_t)nc->GetNetClientStats().GetAgeStatsDLBitsPerSec());
         plProfile_Set(DownloadBW, ns->GetDLBits()/8);
         plProfile_Set(DownloadPPS, ns->GetDLPackets());
-        plProfile_Set(DownloadAPS, (UInt32)ns->GetDLAvgPacketBytes());
-        plProfile_Set(DownloadPQ, (UInt32)ns->GetDLAvgNumPacketsQueued());
+        plProfile_Set(DownloadAPS, (uint32_t)ns->GetDLAvgPacketBytes());
+        plProfile_Set(DownloadPQ, (uint32_t)ns->GetDLAvgNumPacketsQueued());
         plProfile_Set(DownloadDP, ns->GetDLDroppedPackets());
 
         plProfile_Set(RemotePlayers, nc->RemotePlayerKeys().size());
@@ -269,8 +269,8 @@ void UpdateStandardGraphs(float xPos, float yPos)
     if (fNetBWPlate)
     {
         fNetBWPlate->AddData(
-            (UInt32)(ns->GetULBits()/8.f),
-            (UInt32)(ns->GetDLBits()/8.f));
+            (uint32_t)(ns->GetULBits()/8.f),
+            (uint32_t)(ns->GetDLBits()/8.f));
         PositionPlate(fNetBWPlate);
     }
 
@@ -294,24 +294,24 @@ void UpdateStandardGraphs(float xPos, float yPos)
     if (fNetAvgBWPlate)
     {
         fNetAvgBWPlate->AddData(
-            (UInt32)(ns->GetULBitsPS()/8.f),
-            (UInt32)(ns->GetDLBitsPS()/8.f));
+            (uint32_t)(ns->GetULBitsPS()/8.f),
+            (uint32_t)(ns->GetDLBitsPS()/8.f));
         PositionPlate(fNetAvgBWPlate);
     }
 
     if (fNetAvgPPSPlate)
     {
         fNetAvgPPSPlate->AddData(
-            (Int32)ns->GetULNumPacketsPS(),
-            (Int32)ns->GetDLNumPacketsPS());
+            (int32_t)ns->GetULNumPacketsPS(),
+            (int32_t)ns->GetDLNumPacketsPS());
         PositionPlate(fNetAvgPPSPlate);
     }
 
     if (fNetAvgQueuesPlate)
     {
         fNetAvgQueuesPlate->AddData(
-            (Int32)ns->GetULAvgNumPacketsQueued(),
-            (Int32)ns->GetDLAvgNumPacketsQueued());
+            (int32_t)ns->GetULAvgNumPacketsQueued(),
+            (int32_t)ns->GetDLAvgNumPacketsQueued());
         PositionPlate(fNetAvgQueuesPlate);
     }
 #endif

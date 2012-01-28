@@ -120,7 +120,7 @@ plDynamicTextMsg* pyDynamicText::ICreateDTMsg()
     // must have a receiver!
     if ( fReceivers.Count() > 0 )
     {
-        plDynamicTextMsg* pMsg = TRACKED_NEW plDynamicTextMsg;
+        plDynamicTextMsg* pMsg = new plDynamicTextMsg;
         if ( fSenderKey )
             pMsg->SetSender(fSenderKey);
         if ( fNetPropagate )
@@ -198,7 +198,7 @@ void pyDynamicText::SetTextColor2( pyColor& color, bool blockRGB )
     }
 }
 
-void pyDynamicText::SetFont( const char *facename, Int16 size )
+void pyDynamicText::SetFont( const char *facename, int16_t size )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -209,7 +209,7 @@ void pyDynamicText::SetFont( const char *facename, Int16 size )
     }
 }
 
-void pyDynamicText::FillRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, pyColor& color )
+void pyDynamicText::FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -220,7 +220,7 @@ void pyDynamicText::FillRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bott
     }
 }
 
-void pyDynamicText::FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, pyColor& color )
+void pyDynamicText::FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -231,7 +231,7 @@ void pyDynamicText::FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bot
     }
 }
 
-void pyDynamicText::SetClipping( UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom)
+void pyDynamicText::SetClipping( uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom)
 {
     fClip = true;
     fClipLeft = clipLeft;
@@ -245,7 +245,7 @@ void pyDynamicText::UnsetClipping()
     fClip = false;
 }
 
-void pyDynamicText::SetWrapping( UInt16 wrapWidth, UInt16 wrapHeight )
+void pyDynamicText::SetWrapping( uint16_t wrapWidth, uint16_t wrapHeight )
 {
     fWrap = true;
     fWrapWidth = wrapWidth;
@@ -260,7 +260,7 @@ void pyDynamicText::UnsetWrapping()
 //
 // Draw text paying attention to Clipping and Wrapping if user wanted it
 //
-void pyDynamicText::DrawText( Int16 x, Int16 y, const char *text )
+void pyDynamicText::DrawText( int16_t x, int16_t y, const char *text )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -281,7 +281,7 @@ void pyDynamicText::DrawText( Int16 x, Int16 y, const char *text )
     }
 }
 
-void pyDynamicText::DrawTextW( Int16 x, Int16 y, std::wstring text )
+void pyDynamicText::DrawTextW( int16_t x, int16_t y, std::wstring text )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -305,7 +305,7 @@ void pyDynamicText::DrawTextW( Int16 x, Int16 y, std::wstring text )
 //
 // Draw an image on the DynamicMap
 //
-void pyDynamicText::DrawImage( UInt16 x, UInt16 y, pyImage& image, hsBool respectAlpha )
+void pyDynamicText::DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool respectAlpha )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -319,7 +319,7 @@ void pyDynamicText::DrawImage( UInt16 x, UInt16 y, pyImage& image, hsBool respec
 //
 // Draw an image on the DynamicMap
 //
-void pyDynamicText::DrawImageClipped( UInt16 x, UInt16 y, pyImage& image, UInt16 cx, UInt16 cy, UInt16 cw, UInt16 ch,
+void pyDynamicText::DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy, uint16_t cw, uint16_t ch,
                                         hsBool respectAlpha )
 {
     // create message
@@ -332,7 +332,7 @@ void pyDynamicText::DrawImageClipped( UInt16 x, UInt16 y, pyImage& image, UInt16
 }
 
 
-UInt16  pyDynamicText::GetWidth( void )
+uint16_t  pyDynamicText::GetWidth( void )
 {
     // We better just pick our first key. Note that the ONLY time we should be getting multiple receivers
     // is if the export process ends up creating multiple copies of the material. Now, WHY you'd be wanting
@@ -344,10 +344,10 @@ UInt16  pyDynamicText::GetWidth( void )
     if( dtMap == nil )
         return 0;
 
-    return (UInt16)dtMap->GetWidth();
+    return (uint16_t)dtMap->GetWidth();
 }
 
-UInt16  pyDynamicText::GetHeight( void )
+uint16_t  pyDynamicText::GetHeight( void )
 {
     // We better just pick our first key. Note that the ONLY time we should be getting multiple receivers
     // is if the export process ends up creating multiple copies of the material. Now, WHY you'd be wanting
@@ -359,7 +359,7 @@ UInt16  pyDynamicText::GetHeight( void )
     if( dtMap == nil )
         return 0;
 
-    return (UInt16)dtMap->GetHeight();
+    return (uint16_t)dtMap->GetHeight();
 }
 
 void pyDynamicText::CalcTextExtents( std::wstring text, unsigned &width, unsigned &height )
@@ -374,10 +374,10 @@ void pyDynamicText::CalcTextExtents( std::wstring text, unsigned &width, unsigne
     if (!dtMap)
         return;
 
-    width = dtMap->CalcStringWidth(text.c_str(), (UInt16*)&height);
+    width = dtMap->CalcStringWidth(text.c_str(), (uint16_t*)&height);
 }
 
-void pyDynamicText::SetJustify(UInt8 justify)
+void pyDynamicText::SetJustify(uint8_t justify)
 {
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if (pMsg)
@@ -387,7 +387,7 @@ void pyDynamicText::SetJustify(UInt8 justify)
     }
 }
 
-void pyDynamicText::SetLineSpacing(Int16 spacing)
+void pyDynamicText::SetLineSpacing(int16_t spacing)
 {
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if (pMsg)

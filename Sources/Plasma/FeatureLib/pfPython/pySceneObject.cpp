@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h" // TEMP, for STL warnings
+#include "HeadSpin.h" // TEMP, for STL warnings
 #include "pySceneObject.h"
 
 #include "pnKeyedObject/plKey.h"
@@ -632,7 +632,7 @@ void pySceneObject::PushCutsceneCamera(hsBool cut, pyKey& avKey)
                 const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
                 if (pCam)
                 {
-                    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                    plCameraMsg* pMsg = new plCameraMsg;
                     pMsg->SetSender(pCam->GetKey());
                     pMsg->SetBCastFlag(plMessage::kBCastByType);
                     // set command to do the transition
@@ -666,7 +666,7 @@ void pySceneObject::PopCutsceneCamera(pyKey& avKey)
                 const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
                 if (pCam)
                 {
-                    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                    plCameraMsg* pMsg = new plCameraMsg;
                     pMsg->SetSender(pCam->GetKey());
                     pMsg->SetBCastFlag(plMessage::kBCastByType);
                     // set command to do the transition
@@ -695,7 +695,7 @@ void pySceneObject::PushCamera(pyKey& avKey)
             {
                                     
                 // create message
-                plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pMsg = new plCameraMsg;
                 pMsg->SetSender(pCam->GetKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByType);
 
@@ -724,7 +724,7 @@ void pySceneObject::PushCameraCut(pyKey& avKey)
             {
                                     
                 // create message
-                plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pMsg = new plCameraMsg;
                 pMsg->SetSender(pCam->GetKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByType);
 
@@ -762,7 +762,7 @@ void pySceneObject::PopCamera(pyKey& avKey)
             {
                                     
                 // create message
-                plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pMsg = new plCameraMsg;
                 pMsg->SetSender(pCam->GetKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByType);
 
@@ -832,7 +832,7 @@ void pySceneObject::Animate()
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(obj->GetKey());
         pMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
         pMsg->SetCmd(plAnimCmdMsg::kContinue);
@@ -841,7 +841,7 @@ void pySceneObject::Animate()
     }
 }
 
-Int8 pySceneObject::GetResponderState()
+int8_t pySceneObject::GetResponderState()
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -861,7 +861,7 @@ void pySceneObject::RewindAnim(const char* animName)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {   
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(obj->GetKey());
         pMsg->SetAnimName(animName);
         pMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
@@ -875,7 +875,7 @@ void pySceneObject::PlayAnim(const char* animName)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(obj->GetKey());
         pMsg->SetAnimName(animName);
         pMsg->SetCmd(plAnimCmdMsg::kContinue);
@@ -889,7 +889,7 @@ void pySceneObject::StopAnim(const char* animName)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         pMsg->AddReceiver(obj->GetKey());
         pMsg->SetAnimName(animName);
         pMsg->SetCmd(plAnimCmdMsg::kStop);
@@ -906,13 +906,13 @@ void pySceneObject::RunResponder(int state)
         const plModifier* pMod = obj->GetModifierByType(plResponderModifier::Index());
         if (pMod)
         {
-            plNotifyMsg* pMsg = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* pMsg = new plNotifyMsg;
             pMsg->fType = plNotifyMsg::kResponderChangeState;
             pMsg->AddResponderStateEvent(state);
             pMsg->AddReceiver(pMod->GetKey());
             pMsg->Send();
         
-            plNotifyMsg* pMsg0 = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* pMsg0 = new plNotifyMsg;
             pMsg0->fState = true;
             pMsg0->AddReceiver(pMod->GetKey());
             pMsg0->Send();
@@ -929,7 +929,7 @@ void pySceneObject::FFResponder(int state)
         const plModifier* pMod = obj->GetModifierByType(plResponderModifier::Index());
         if (pMod)
         {
-            plNotifyMsg* pMsg = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* pMsg = new plNotifyMsg;
             pMsg->fType = plNotifyMsg::kResponderFF;
             pMsg->AddResponderStateEvent(state);
             pMsg->AddReceiver(pMod->GetKey());

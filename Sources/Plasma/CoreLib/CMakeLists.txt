@@ -8,11 +8,9 @@ set(CoreLib_SOURCES
     hsExceptionStack.cpp
     hsFastMath.cpp
     hsGeometry3.cpp
-    hsMalloc.cpp
     hsMatrix33.cpp
     hsMatrix44.cpp
     hsMemory.cpp
-    hsMMIOStream.cpp
     hsQuat.cpp
     hsSafeRefCnt.cpp
     hsSTLStream.cpp
@@ -47,35 +45,27 @@ set(CoreLib_HEADERS
     hsBitVector.h
     hsBounds.h
     hsColorRGBA.h
-    hsConfig.h
     hsCritSect.h
     hsExceptions.h
     hsFastMath.h
-    hsFixedTypes.h
     hsGeometry3.h
     hsHashTable.h
-    hsMalloc.h
     hsMatrix44.h
     hsMemory.h
-    hsMMIOStream.h
     hsPoint2.h
     hsQuat.h
-    hsQueue.h
     hsRefCnt.h
     hsSafeRefCnt.h
-    hsScalar.h
     hsStlSortUtils.h
     hsSTLStream.h
     hsStlUtils.h
     hsStream.h
     hsStringTokenizer.h
     hsTemplates.h
-    hsTempPointer.h
     hsThread.h
     hsTypes.h
     hsUtils.h
     hsWide.h
-    hsWindowHndl.h
     hsWindows.h
     pcSmallRect.h
     plGeneric.h

@@ -106,7 +106,7 @@ plRegistryPageNode::~plRegistryPageNode()
 PageCond plRegistryPageNode::IVerify()
 {
     // Check the checksum values first, to make sure the files aren't corrupt
-    UInt32 ourChecksum = 0;
+    uint32_t ourChecksum = 0;
     hsStream* stream = OpenStream();
     if (stream)
     {
@@ -127,7 +127,7 @@ PageCond plRegistryPageNode::IVerify()
     for (int i = 0; i < classVersions.size(); i++)
     {
         const plPageInfo::ClassVersion& cv = classVersions[i];
-        UInt16 curVersion = plVersion::GetCreatableVersion(cv.Class);
+        uint16_t curVersion = plVersion::GetCreatableVersion(cv.Class);
 
         if (curVersion > cv.Version)
             return kPageOutOfDate;
@@ -175,18 +175,18 @@ void plRegistryPageNode::LoadKeys()
 
     // If we're loading keys in the middle of a read because FindKey() failed, we'd better
     // make note of our stream position and restore it when we're done.
-    UInt32 oldPos = stream->GetPosition();
+    uint32_t oldPos = stream->GetPosition();
     stream->SetPosition(GetPageInfo().GetIndexStart());
 
     // Read in the number of key types
-    UInt32 numTypes = stream->ReadLE32();
-    for (UInt32 i = 0; i < numTypes; i++)
+    uint32_t numTypes = stream->ReadLE32();
+    for (uint32_t i = 0; i < numTypes; i++)
     {
-        UInt16 classType = stream->ReadLE16();
+        uint16_t classType = stream->ReadLE16();
         plRegistryKeyList* keyList = IGetKeyList(classType);
         if (!keyList)
         {
-            keyList = TRACKED_NEW plRegistryKeyList(classType);
+            keyList = new plRegistryKeyList(classType);
             fKeyLists[classType] = keyList;
         }
         keyList->Read(stream);
@@ -300,7 +300,7 @@ hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator) const
 //  Restricted version that only iterates through the keys of a given class
 //  type.
 
-hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, UInt16 classToRestrictTo) const
+hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const
 {
     plRegistryKeyList* keyList = IGetKeyList(classToRestrictTo);
     if (keyList != nil)
@@ -309,7 +309,7 @@ hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, UInt16 c
     return true;
 }
 
-plKeyImp* plRegistryPageNode::FindKey(UInt16 classType, const char* name) const
+plKeyImp* plRegistryPageNode::FindKey(uint16_t classType, const char* name) const
 {
     plRegistryKeyList* keys = IGetKeyList(classType);
     if (keys == nil)
@@ -329,11 +329,11 @@ plKeyImp* plRegistryPageNode::FindKey(const plUoid& uoid) const
 
 void plRegistryPageNode::AddKey(plKeyImp* key)
 {
-    UInt16 classType = key->GetUoid().GetClassType();
+    uint16_t classType = key->GetUoid().GetClassType();
     plRegistryKeyList* keys = fKeyLists[classType];
     if (keys == nil)
     {
-        keys = TRACKED_NEW plRegistryKeyList(classType);
+        keys = new plRegistryKeyList(classType);
         fKeyLists[classType] = keys;
     }
 
@@ -402,7 +402,7 @@ hsBool plRegistryPageNode::SetKeyUnused(plKeyImp* key)
     return removed;
 }
 
-plRegistryKeyList* plRegistryPageNode::IGetKeyList(UInt16 classType) const
+plRegistryKeyList* plRegistryPageNode::IGetKeyList(uint16_t classType) const
 {
     KeyMap::const_iterator it = fKeyLists.find(classType);
     if (it != fKeyLists.end())

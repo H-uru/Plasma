@@ -113,7 +113,7 @@ void plNetClientApp::InheritNetMsgFlags(const plMessage* parentMsg, plMessage* c
 {
     if (childMsg)
     {
-        UInt32 childMsgFlags = childMsg->GetAllBCastFlags();
+        uint32_t childMsgFlags = childMsg->GetAllBCastFlags();
         InheritNetMsgFlags(parentMsg ? parentMsg->GetAllBCastFlags() : 0, &childMsgFlags, startCascade);
         childMsg->SetAllBCastFlags(childMsgFlags);
     }
@@ -125,7 +125,7 @@ void plNetClientApp::InheritNetMsgFlags(const plMessage* parentMsg, plMessage* c
 // Set startCasCascade=true if called from outside the dispatcher, so that 
 // the dispatcher won't mess with the flags when it goes to send out the msg.
 //
-void plNetClientApp::InheritNetMsgFlags(UInt32 parentMsgFlags, UInt32* childMsgFlags, bool startCascade)
+void plNetClientApp::InheritNetMsgFlags(uint32_t parentMsgFlags, uint32_t* childMsgFlags, bool startCascade)
 {
     if (!(*childMsgFlags & plMessage::kNetStartCascade))
     {

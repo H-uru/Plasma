@@ -239,7 +239,7 @@ hsBool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plClimbMsg *enterMsg = nil;
     if(enterCommand != plClimbMsg::kNoCommand)
     {
-        enterMsg = TRACKED_NEW plClimbMsg(nilKey, nilKey, enterCommand, direction, enterStatus, target);
+        enterMsg = new plClimbMsg(nilKey, nilKey, enterCommand, direction, enterStatus, target);
         enterMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         enterMsg->SetBCastFlag(plMessage::kNetPropagate);
         enterMsg->SetBCastFlag(plMessage::kNetForce);
@@ -248,13 +248,13 @@ hsBool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plClimbMsg *exitMsg = nil;
     if(exitCommand != nil)
     {
-        exitMsg = TRACKED_NEW plClimbMsg(nilKey, nilKey, exitCommand, direction, exitStatus, target);
+        exitMsg = new plClimbMsg(nilKey, nilKey, exitCommand, direction, exitStatus, target);
         exitMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         exitMsg->SetBCastFlag(plMessage::kNetPropagate);
         exitMsg->SetBCastFlag(plMessage::kNetForce);
     }
 
-    plSimpleRegionSensor *sensMod = TRACKED_NEW plSimpleRegionSensor(enterMsg, exitMsg);
+    plSimpleRegionSensor *sensMod = new plSimpleRegionSensor(enterMsg, exitMsg);
     node->AddModifier(sensMod, IGetUniqueName(node));
     
     return true;

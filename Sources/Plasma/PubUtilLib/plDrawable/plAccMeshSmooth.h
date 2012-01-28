@@ -69,10 +69,10 @@ protected:
         hsColorRGBA     fDiffuse;
     };
 
-    UInt32          fFlags;
+    uint32_t          fFlags;
 
-    hsScalar        fMinNormDot;
-    hsScalar        fDistTolSq;
+    float        fMinNormDot;
+    float        fDistTolSq;
 
     plAccessGeometry            fAccGeom;
     hsTArray<plAccessSpan>      fSpans;
@@ -82,26 +82,26 @@ protected:
     hsPoint3        IPositionToLocal(plAccessSpan& span, const hsPoint3& wPos) const;
     hsVector3       INormalToLocal(plAccessSpan& span, const hsVector3& wNorm) const;
 
-    void            FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts);
-    void            FindEdges(hsTArray<plGeometrySpan*>& sets, hsTArray<UInt16>* edgeVerts);
-    void            FindSharedVerts(plAccessSpan& span, int numEdgeVerts, hsTArray<UInt16>& edgeVerts, hsTArray<UInt16>& shareVtx, VtxAccum& accum);
-    void            SetNormals(plAccessSpan& span, hsTArray<UInt16>& shareVtx, const hsVector3& norm) const;
-    void            SetPositions(plAccessSpan& span, hsTArray<UInt16>& shareVtx, const hsPoint3& pos) const;
-    void            SetDiffuse(plAccessSpan& span, hsTArray<UInt16>& shareVtx, const hsColorRGBA& diff) const;
+    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
+    void            FindEdges(hsTArray<plGeometrySpan*>& sets, hsTArray<uint16_t>* edgeVerts);
+    void            FindSharedVerts(plAccessSpan& span, int numEdgeVerts, hsTArray<uint16_t>& edgeVerts, hsTArray<uint16_t>& shareVtx, VtxAccum& accum);
+    void            SetNormals(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsVector3& norm) const;
+    void            SetPositions(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsPoint3& pos) const;
+    void            SetDiffuse(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsColorRGBA& diff) const;
 
 public:
     plAccMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
 
-    void        SetAngle(hsScalar degs);
-    hsScalar    GetAngle() const; // returns degrees
+    void        SetAngle(float degs);
+    float    GetAngle() const; // returns degrees
 
-    void        SetDistTol(hsScalar dist);
-    hsScalar    GetDistTol() const;
+    void        SetDistTol(float dist);
+    float    GetDistTol() const;
 
     void        Smooth(hsTArray<plGeometrySpan*>& sets);
 
-    void        SetFlags(UInt32 f) { fFlags = f; }
-    UInt32      GetFlags() const { return fFlags; }
+    void        SetFlags(uint32_t f) { fFlags = f; }
+    uint32_t      GetFlags() const { return fFlags; }
 };
 
 #endif // plAccMeshSmooth_inc

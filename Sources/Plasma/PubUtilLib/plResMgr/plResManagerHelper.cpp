@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plResManagerHelper.h"
 #include "plResManager.h"
 #include "plRegistryNode.h"
@@ -174,8 +174,8 @@ void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
     hsAssert( GetKey() != nil, "Can't load and hold keys when we don't have a key for the helper" );
 
     // Create our msg
-    plResMgrHelperMsg   *refferMsg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kKeyRefList );
-    refferMsg->fKeyList = TRACKED_NEW plResPageKeyRefList;
+    plResMgrHelperMsg   *refferMsg = new plResMgrHelperMsg( plResMgrHelperMsg::kKeyRefList );
+    refferMsg->fKeyList = new plResPageKeyRefList;
 
     fResManager->LoadPageKeys(page);
     page->IterateKeys( refferMsg->fKeyList );
@@ -214,7 +214,7 @@ class plResMgrDebugInterface : public plInputInterface
 
         plResMgrDebugInterface( plResManagerHelper * const mgr ) : fParent( mgr ) { SetEnabled( true ); }
 
-        virtual UInt32  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
+        virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
         virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg *pKeyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
@@ -240,7 +240,7 @@ class plResMgrDebugInterface : public plInputInterface
                 }
                 else if( pKeyMsg->GetKeyCode() == KEY_ESCAPE )
                 {
-                    plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kDisableDebugScreen );
+                    plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kDisableDebugScreen );
                     msg->Send( fParent->GetKey() );
                     return true;
                 }
@@ -268,7 +268,7 @@ class plResMgrDebugInterface : public plInputInterface
             return false;
         }
 
-        virtual UInt32  GetCurrentCursorID( void ) const { return 0; }
+        virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
         virtual hsBool  HasInterestingCursorID( void ) const { return false; }
 };
 
@@ -286,12 +286,12 @@ void    plResManagerHelper::EnableDebugScreen( hsBool enable )
             fDebugScreen = plStatusLogMgr::GetInstance().CreateStatusLog( kLogSize, "ResManager Status", plStatusLog::kFilledBackground | plStatusLog::kDontWriteFile );
             fRefreshing = true;
 
-            plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
+            plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
 //          msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
             msg->Send( GetKey() );
 
-            fDebugInput = TRACKED_NEW plResMgrDebugInterface( this );
-            plInputIfaceMgrMsg *imsg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
+            fDebugInput = new plResMgrDebugInterface( this );
+            plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
         }
@@ -304,7 +304,7 @@ void    plResManagerHelper::EnableDebugScreen( hsBool enable )
             delete fDebugScreen;
             fDebugScreen = nil;
 
-            plInputIfaceMgrMsg *imsg = TRACKED_NEW plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
+            plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
 
@@ -322,14 +322,14 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
 {   
     public:
         plStatusLog *fLog;
-        UInt8       fStep, fLines;
-        UInt32      &fLoadedCount, &fHoldingCount, fPageCount, fAgeIndex;
+        uint8_t       fStep, fLines;
+        uint32_t      &fLoadedCount, &fHoldingCount, fPageCount, fAgeIndex;
         char        fCurrAge[ 128 ];
-        UInt32      fLoadedKeys, fTotalKeys, fTotalSize, fLoadedSize;
+        uint32_t      fLoadedKeys, fTotalKeys, fTotalSize, fLoadedSize;
 
         plResManagerHelper  *fParent;
 
-        plDebugPrintIterator( plResManagerHelper *parent, plStatusLog *log, UInt32 &loadedCount, UInt32 &holdingCount ) 
+        plDebugPrintIterator( plResManagerHelper *parent, plStatusLog *log, uint32_t &loadedCount, uint32_t &holdingCount ) 
                     : fParent( parent ), fLog( log ), fStep( 0 ), fLines( 0 ), fLoadedCount( loadedCount ), fHoldingCount( holdingCount )
         {
             fLoadedCount = fHoldingCount = 0;
@@ -368,7 +368,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                     {
                         if( fLines < kLogSize - 4 )
                         {
-                            UInt32 color = plStatusLog::kWhite;
+                            uint32_t color = plStatusLog::kWhite;
                             if( fParent->fCurrAge == fAgeIndex )
                                 color = plStatusLog::kYellow;
 
@@ -491,7 +491,7 @@ void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
         return;
 
     plRegistry *reg = fResManager->IGetRegistry();
-    UInt32      loadedCnt, holdingCnt;
+    uint32_t      loadedCnt, holdingCnt;
 
     fDebugScreen->Clear();
 
@@ -507,7 +507,7 @@ void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
     // Repump our update
     if( !force )
     {
-        plResMgrHelperMsg *msg = TRACKED_NEW plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
+        plResMgrHelperMsg *msg = new plResMgrHelperMsg( plResMgrHelperMsg::kUpdateDebugScreen );
         msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
         msg->Send( GetKey() );
     }

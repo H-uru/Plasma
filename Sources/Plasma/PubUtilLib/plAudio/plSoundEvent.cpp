@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSoundEvent.h"
 
 #include "plgDispatch.h"
@@ -66,7 +66,7 @@ plSoundEvent::plSoundEvent( Types type, plSound *owner )
     fCallbackEndingFlags.Reset();
 }
 
-plSoundEvent::plSoundEvent( Types type, UInt32 bytePos, plSound *owner )
+plSoundEvent::plSoundEvent( Types type, uint32_t bytePos, plSound *owner )
 {
     fType = type;
     fBytePosTime = bytePos;
@@ -137,7 +137,7 @@ void    plSoundEvent::SendCallbacks( void )
                 // Note: we get fancy here. We never want to remove the callback directly,
                 // because the sound won't know about it. So instead, send it a message to
                 // remove the callback for us
-                sMsg = TRACKED_NEW plSoundMsg();
+                sMsg = new plSoundMsg();
                 sMsg->SetBCastFlag( plMessage::kLocalPropagate, true );
                 sMsg->AddReceiver( fOwner->GetKey() );
                 sMsg->SetCmd( plSoundMsg::kRemoveCallbacks );
@@ -165,7 +165,7 @@ void    plSoundEvent::SendCallbacks( void )
     }
 }
 
-UInt32  plSoundEvent::GetNumCallbacks( void ) const
+uint32_t  plSoundEvent::GetNumCallbacks( void ) const
 {
     return fCallbacks.GetCount();
 }
@@ -180,7 +180,7 @@ void    plSoundEvent::SetType( Types type )
     fType = type;
 }
 
-UInt32  plSoundEvent::GetTime( void ) const
+uint32_t  plSoundEvent::GetTime( void ) const
 {
     return fBytePosTime;
 }

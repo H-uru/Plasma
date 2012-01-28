@@ -59,13 +59,13 @@ class plDynamicTextMsg : public plMessage
     friend class plDynamicTextMap;
 
 protected:
-    UInt16      fCmd;
+    uint16_t      fCmd;
 
     // Position (fX is also used for font size)
-    Int16       fX, fY; 
+    int16_t       fX, fY; 
 
     // A rectangle
-    UInt16      fLeft, fTop, fRight, fBottom;
+    uint16_t      fLeft, fTop, fRight, fBottom;
 
     // Colors
     hsColorRGBA fClearColor;
@@ -78,10 +78,10 @@ protected:
     plKey       fImageKey;
 
     // Misc flags field
-    UInt32      fFlags;
+    uint32_t      fFlags;
     
     hsBool      fBlockRGB;
-    Int16       fLineSpacing;
+    int16_t       fLineSpacing;
 
 public:
     plDynamicTextMsg() : plMessage( nil, nil, nil ) { fCmd = 0; fString = nil; fImageKey = nil; fFlags = 0; fBlockRGB = false; }
@@ -122,19 +122,19 @@ public:
 
     // The following are mutually exclusive commands 'cause they share some parameters
     void    SetTextColor( hsColorRGBA &c, hsBool blockRGB = false );
-    void    SetFont( const char *face, Int16 size, hsBool isBold = false );
-    void    SetLineSpacing( Int16 spacing );
-    void    FillRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, hsColorRGBA &c );
-    void    FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, hsColorRGBA &c );
-    void    DrawString( Int16 x, Int16 y, const char *text );
-    void    DrawString( Int16 x, Int16 y, const wchar_t *text );
-    void    DrawClippedString( Int16 x, Int16 y, UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom, const char *text );
-    void    DrawClippedString( Int16 x, Int16 y, UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom, const wchar_t *text );
-    void    DrawWrappedString( Int16 x, Int16 y, UInt16 wrapWidth, UInt16 wrapHeight, const char *text );
-    void    DrawWrappedString( Int16 x, Int16 y, UInt16 wrapWidth, UInt16 wrapHeight, const wchar_t *text );
-    void    DrawImage( Int16 x, Int16 y, plKey &image, hsBool respectAlpha = false );
-    void    DrawClippedImage( Int16 x, Int16 y, plKey &image, UInt16 clipX, UInt16 clipY, UInt16 clipWidth, UInt16 clipHeight, hsBool respectAlpha = false );
-    void    SetJustify( UInt8 justifyFlags );
+    void    SetFont( const char *face, int16_t size, hsBool isBold = false );
+    void    SetLineSpacing( int16_t spacing );
+    void    FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c );
+    void    FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c );
+    void    DrawString( int16_t x, int16_t y, const char *text );
+    void    DrawString( int16_t x, int16_t y, const wchar_t *text );
+    void    DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const char *text );
+    void    DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const wchar_t *text );
+    void    DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const char *text );
+    void    DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const wchar_t *text );
+    void    DrawImage( int16_t x, int16_t y, plKey &image, hsBool respectAlpha = false );
+    void    DrawClippedImage( int16_t x, int16_t y, plKey &image, uint16_t clipX, uint16_t clipY, uint16_t clipWidth, uint16_t clipHeight, hsBool respectAlpha = false );
+    void    SetJustify( uint8_t justifyFlags );
     // IO
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);

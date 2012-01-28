@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
-#include "hsUtils.h"
+
 #include "plAutoUIBlock.h"
 #include "plAutoUIParams.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -265,7 +265,7 @@ hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // if this is a multi-modifier python file component then is this the main (or first) maxnode
     bool    mainMultiModierNode = false;
 
-    plPythonFileMod *mod = TRACKED_NEW plPythonFileMod;
+    plPythonFileMod *mod = new plPythonFileMod;
 
     // create the modifier key ourselves so that we can get the name of the modifier in the name
     plSceneObject *obj = node->GetSceneObject();
@@ -316,7 +316,7 @@ hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
 
         // Create us a new sceneObject to attach to
-        obj = TRACKED_NEW plSceneObject;
+        obj = new plSceneObject;
 
         const plLocation &globalLoc = plPluginResManager::ResMgr()->GetCommonPage( node->GetLocation(), plAgeDescription::kGlobal );
         hsAssert( globalLoc.IsValid(), "Invalid common page location!!!" );
@@ -355,7 +355,7 @@ hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             modKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
         }
     }
-    hsgResMgr::ResMgr()->AddViaNotify(modKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(modKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     fModKeys[node] = modKey;
 
     // only let non-multimodifier or multimodifier then only the main node register for notifies
@@ -442,7 +442,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         switch (param->GetParamType())
         {
         case plAutoUIParam::kTypeBool:
-            pyParam.SetToBoolean(param->GetBool(pb));
+            pyParam.SetTobool(param->GetBool(pb));
             mod->AddParameter(pyParam);
             break;
 

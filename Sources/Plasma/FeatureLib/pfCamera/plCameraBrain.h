@@ -94,12 +94,12 @@ public:
 
     void SetCamera(plCameraModifier1* pMod) { fCamera = pMod; }
     
-    void SetAccel       (hsScalar f) { fAccel = f; }
-    void SetDecel       (hsScalar f) { fDecel = f; }
-    void SetVelocity    (hsScalar f) { fVelocity = f; }
-    void SetPOAAccel    (hsScalar f) { fPOAAccel = f; }
-    void SetPOADecel    (hsScalar f) { fPOADecel = f; }
-    void SetPOAVelocity (hsScalar f) { fPOAVelocity = f; }
+    void SetAccel       (float f) { fAccel = f; }
+    void SetDecel       (float f) { fDecel = f; }
+    void SetVelocity    (float f) { fVelocity = f; }
+    void SetPOAAccel    (float f) { fPOAAccel = f; }
+    void SetPOADecel    (float f) { fPOADecel = f; }
+    void SetPOAVelocity (float f) { fPOAVelocity = f; }
 
     const plCameraModifier1* GetCamera() { return fCamera; }
 
@@ -128,13 +128,13 @@ public:
 
     void    SetGoal(hsPoint3 pt) { fGoal = pt; }
     void    SetPOAGoal(hsPoint3 pt) { fPOAGoal = pt; }
-    void    SetFOVGoal(hsScalar h, double t);
-    void    SetZoomParams(hsScalar max, hsScalar min, hsScalar rate);
+    void    SetFOVGoal(float h, double t);
+    void    SetZoomParams(float max, float min, float rate);
     
-    void    SetXPanLimit(hsScalar x) {fXPanLimit = x;}
-    void    SetZPanLimit(hsScalar y) {fZPanLimit = y;}
-    hsScalar    GetXPanLimit() {return fXPanLimit;}
-    hsScalar    GetZPanLimit() {return fZPanLimit;}
+    void    SetXPanLimit(float x) {fXPanLimit = x;}
+    void    SetZPanLimit(float y) {fZPanLimit = y;}
+    float    GetXPanLimit() {return fXPanLimit;}
+    float    GetZPanLimit() {return fZPanLimit;}
 
     void    SetRail(plRailCameraMod* m) { fRail = m; }
 
@@ -144,28 +144,28 @@ public:
     virtual void Push(hsBool recenter = true);
     virtual void Pop();
     
-    hsScalar GetVelocity()      { return fVelocity; }
-    hsScalar GetAccel()         { return fAccel; }
-    hsScalar GetDecel()         { return fDecel; }
-    hsScalar GetPOAAccel()      { return fPOAAccel; }
-    hsScalar GetPOAVelocity()   { return fPOAVelocity; }
-    hsScalar GetPOADecel()      { return fPOADecel; }
+    float GetVelocity()      { return fVelocity; }
+    float GetAccel()         { return fAccel; }
+    float GetDecel()         { return fDecel; }
+    float GetPOAAccel()      { return fPOAAccel; }
+    float GetPOAVelocity()   { return fPOAVelocity; }
+    float GetPOADecel()      { return fPOADecel; }
 
-    hsScalar GetCurrentCamSpeed() { return fCurCamSpeed; }
-    hsScalar GetCurrentViewSpeed() { return fCurViewSpeed; }
+    float GetCurrentCamSpeed() { return fCurCamSpeed; }
+    float GetCurrentViewSpeed() { return fCurViewSpeed; }
 
-    void SetCurrentCamSpeed(hsScalar s) { fCurCamSpeed = s; }
-    void SetCurrentViewSpeed(hsScalar s) { fCurViewSpeed = s;   }
+    void SetCurrentCamSpeed(float s) { fCurCamSpeed = s; }
+    void SetCurrentViewSpeed(float s) { fCurViewSpeed = s;   }
     
     hsMatrix44 GetTargetMatrix() { return fTargetMatrix; }
 
-    static hsScalar fFallVelocity;
-    static hsScalar fFallAccel;
-    static hsScalar fFallDecel;
+    static float fFallVelocity;
+    static float fFallAccel;
+    static float fFallDecel;
 
-    static hsScalar fFallPOAVelocity;
-    static hsScalar fFallPOAAccel;
-    static hsScalar fFallPOADecel;
+    static float fFallPOAVelocity;
+    static float fFallPOAAccel;
+    static float fFallPOADecel;
 
 protected:
         
@@ -173,48 +173,48 @@ protected:
     void IMoveTowardGoal(double time);
     void IPointTowardGoal(double time);
     void IAnimateFOV(double time);
-    void IAdjustVelocity(hsScalar adjAccelRate, 
-                         hsScalar adjDecelRate, 
+    void IAdjustVelocity(float adjAccelRate, 
+                         float adjDecelRate, 
                          hsVector3* dir, 
                          hsVector3* vel, 
-                         hsScalar maxSpeed, 
-                         hsScalar distToGoal,
+                         float maxSpeed, 
+                         float distToGoal,
                          double elapsedTime);
 
-    hsScalar IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime);
-    hsBool   IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal);
+    float IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime);
+    hsBool   IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
 
     plCameraModifier1*  fCamera;
     plKey               fSubjectKey;
     plRailCameraMod*    fRail;
-    hsScalar            fCurCamSpeed;
-    hsScalar            fCurViewSpeed;
+    float            fCurCamSpeed;
+    float            fCurViewSpeed;
     double              fLastTime;
 
-    hsScalar            fVelocity;
-    hsScalar            fAccel;
-    hsScalar            fDecel;
-    hsScalar            fPOAVelocity;
-    hsScalar            fPOAAccel;
-    hsScalar            fPOADecel;
+    float            fVelocity;
+    float            fAccel;
+    float            fDecel;
+    float            fPOAVelocity;
+    float            fPOAAccel;
+    float            fPOADecel;
     hsVector3           fPOAOffset;
     hsPoint3            fGoal;
     hsPoint3            fPOAGoal;
-    hsScalar            fXPanLimit;
-    hsScalar            fZPanLimit;
-    hsScalar            fPanSpeed;
-    hsScalar            fFOVGoal;
+    float            fXPanLimit;
+    float            fZPanLimit;
+    float            fPanSpeed;
+    float            fFOVGoal;
     double              fFOVStartTime;
     double              fFOVEndTime;
-    hsScalar            fFOVAnimRate; 
-    hsScalar            fZoomRate;
-    hsScalar            fZoomMax;
-    hsScalar            fZoomMin;
+    float            fFOVAnimRate; 
+    float            fZoomRate;
+    float            fZoomMax;
+    float            fZoomMin;
     hsBitVector         fMoveFlags;
     hsBitVector         fFlags;
     hsMatrix44          fTargetMatrix;
-    hsScalar            fOffsetLength;
-    hsScalar            fOffsetPct;
+    float            fOffsetLength;
+    float            fOffsetPct;
     double              fFallTimer;
 };
 
@@ -226,8 +226,8 @@ protected:
     hsPoint3    fDesiredPosition;
     hsPoint3    fFacingTarget;
     hsBool      bUseDesiredFacing;
-    hsScalar    deltaX;
-    hsScalar    deltaY;
+    float    deltaX;
+    float    deltaY;
     hsBool      bDisregardY; // these are here to prevent
     hsBool      bDisregardX; // the camera from jumping when the mouse cursor recenters / wraps around.
     hsVector3   fUp;
@@ -238,7 +238,7 @@ public:
     plCameraBrain1_Drive(plCameraModifier1* pMod);
     ~plCameraBrain1_Drive();
 
-    static void SetSensitivity(hsScalar f) { fTurnRate = f; }
+    static void SetSensitivity(float f) { fTurnRate = f; }
     
     CLASSNAME_REGISTER( plCameraBrain1_Drive );
     GETINTERFACE_ANY( plCameraBrain1_Drive, plCameraBrain1 );
@@ -248,10 +248,10 @@ public:
     virtual void Push(hsBool recenter = true);
     virtual void Pop();
 
-    static hsScalar fAcceleration;
-    static hsScalar fDeceleration;
-    static hsScalar fMaxVelocity;
-    static hsScalar fTurnRate;
+    static float fAcceleration;
+    static float fDeceleration;
+    static float fMaxVelocity;
+    static float fTurnRate;
 };
 
 
@@ -362,13 +362,13 @@ public:
         kCircleLocalAvatar = 0x40,
     };
 protected:
-    UInt32          fCircleFlags;
+    uint32_t          fCircleFlags;
     hsPoint3        fCenter;
     plSceneObject*  fCenterObject;  // optional, use instead of fCenter
-    hsScalar        fRadius;
-    hsScalar        fCurRad, fGoalRad;  // Radians
+    float        fRadius;
+    float        fCurRad, fGoalRad;  // Radians
     plSceneObject*  fPOAObj; // in this case the subject is who we stay close to/away from
-    hsScalar        fCirPerSec;
+    float        fCirPerSec;
 
     hsPoint3    IGetClosestPointOnCircle(const hsPoint3* toThisPt);
 public:
@@ -386,16 +386,16 @@ public:
     virtual void        Update(hsBool forced = false);
     virtual hsBool      MsgReceive(plMessage* msg);
     
-    UInt32 GetCircleFlags() { return fCircleFlags; }
+    uint32_t GetCircleFlags() { return fCircleFlags; }
     hsPoint3* GetCenter() { return &fCenter; }      // use GetCenterPoint
     hsPoint3  GetCenterPoint();
-    hsScalar GetRadius() { return fRadius; }
+    float GetRadius() { return fRadius; }
     plSceneObject* GetCenterObject() { return fCenterObject; }
 
-    void SetCircumferencePerSec(hsScalar h) { fCirPerSec = h; }
-    void SetCircleFlags(UInt32 f) { fCircleFlags|=f; }
+    void SetCircumferencePerSec(float h) { fCirPerSec = h; }
+    void SetCircleFlags(uint32_t f) { fCircleFlags|=f; }
     void SetCenter(hsPoint3* ctr) { fCenter = *ctr; }       // Circle lies in the plane z = ctr->z
-    void SetRadius(hsScalar radius) {   fRadius = radius; }
+    void SetRadius(float radius) {   fRadius = radius; }
     void SetFarCircleCam(hsBool farType) { if (farType) fCircleFlags |= kFarthest; else fCircleFlags &= ~kFarthest; }
     void SetCenterObjectKey(plKey k);
     void SetPOAObject(plSceneObject* pObj) { fPOAObj = pObj; }

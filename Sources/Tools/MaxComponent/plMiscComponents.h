@@ -61,9 +61,9 @@ const char* LocCompGetPage(plComponentBase* comp);
 namespace plPageInfoUtils
 {
     const char *GetAgeFolder();
-    Int32       GetSeqNumFromAgeDesc( const char *ageName, const char *pageName );
-    Int32       CombineSeqNum( int prefix, int suffix );
-    Int32       GetCommonSeqNumFromNormal( Int32 normalSeqNumber, int whichCommonPage );
+    int32_t       GetSeqNumFromAgeDesc( const char *ageName, const char *pageName );
+    int32_t       CombineSeqNum( int prefix, int suffix );
+    int32_t       GetCommonSeqNumFromNormal( int32_t normalSeqNumber, int whichCommonPage );
 
     plAgeDescription    *GetAgeDesc( const char *ageName );
 };

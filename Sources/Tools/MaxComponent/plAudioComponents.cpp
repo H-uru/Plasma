@@ -229,10 +229,10 @@ enum
     kSndFadeTypeExponential
 };
 
-UInt32  plBaseSoundEmitterComponent::fWarningFlags = 0;
+uint32_t  plBaseSoundEmitterComponent::fWarningFlags = 0;
 //bool  plBaseSoundEmitterComponent::fAllowUnhide = false;
 
-void    plBaseSoundEmitterComponent::IShowError( UInt32 type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg )
+void    plBaseSoundEmitterComponent::IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg )
 {
     if( !( fWarningFlags & (1 << type) ) )
     {
@@ -310,7 +310,7 @@ IOResult plBaseSoundEmitterComponent::Save(ISave *isave)
     isave->BeginChunk(MAX_ASS_CHUNK);
     ULONG nwrite;
 
-    UInt64 id = fSoundAssetId;
+    uint64_t id = fSoundAssetId;
     res = isave->Write(&id, sizeof(id), &nwrite);
     if (res != IO_OK)
         return res;
@@ -346,7 +346,7 @@ IOResult plBaseSoundEmitterComponent::Load(ILoad *iload)
         else if (iload->CurChunkID() == MAX_ASS_CHUNK)
         {
             ULONG nread;
-            UInt64 id;
+            uint64_t id;
             res = iload->Read(&id, sizeof(id), &nread);
             fSoundAssetId = id;
             res = iload->Read(&id, sizeof(id), &nread);
@@ -480,17 +480,17 @@ hsBool plBaseSoundEmitterComponent::PreConvert( plMaxNode *node, plErrorMsg *pEr
     const plAudioInterface *ai = node->GetSceneObject()->GetAudioInterface();
     if (!ai)
     {
-        ai = TRACKED_NEW plAudioInterface;
+        ai = new plAudioInterface;
         plKey pAiKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), (hsKeyedObject*)ai,node->GetKey()->GetUoid().GetLocation(), node->GetLoadMask());
-        hsgResMgr::ResMgr()->AddViaNotify(pAiKey, TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pAiKey, new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
     if (!ai->GetAudible())
     {
-        plAudible *pAudible = TRACKED_NEW plWinAudible;
+        plAudible *pAudible = new plWinAudible;
         // Add a key for it
         plKey key = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pAudible, node->GetKey()->GetUoid().GetLocation(), node->GetLoadMask());
         
-        plIntRefMsg* pMsg = TRACKED_NEW plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
+        plIntRefMsg* pMsg = new plIntRefMsg(node->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kAudible);
         hsgResMgr::ResMgr()->AddViaNotify(pAudible->GetKey(), pMsg, plRefFlags::kActiveRef );
 
         pAudible->SetSceneNode(node->GetRoomKey());
@@ -509,7 +509,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         // Fade in is enabled; set the params
         plSound::plFadeParams::Type     type;
 
-        hsScalar len = (hsScalar)fCompPB->GetFloat( (ParamID)kSndFadeInLength, 0 );
+        float len = (float)fCompPB->GetFloat( (ParamID)kSndFadeInLength, 0 );
 
         switch( fCompPB->GetInt( (ParamID)kSndFadeInType, 0 ) )
         {
@@ -526,7 +526,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         // Fade out is enabled; set the params
         plSound::plFadeParams::Type     type;
 
-        hsScalar len = (hsScalar)fCompPB->GetFloat( (ParamID)kSndFadeOutLength, 0 );
+        float len = (float)fCompPB->GetFloat( (ParamID)kSndFadeOutLength, 0 );
 
         switch( fCompPB->GetInt( (ParamID)kSndFadeOutType, 0 ) )
         {
@@ -538,7 +538,7 @@ void    plBaseSoundEmitterComponent::IGrabFadeValues( plSound *sound )
         sound->SetFadeOutEffect( type, len );
     }
 
-//  sound->SetFadedVolume( (hsScalar)fCompPB->GetFloat( kSndFadedVolume, 0 ) );
+//  sound->SetFadedVolume( (float)fCompPB->GetFloat( kSndFadedVolume, 0 ) );
 }
 
 void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg *pErrMsg )
@@ -557,7 +557,7 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
                 if( vol != nil )
                 {
                     vol->SetCheckListener();
-                    hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kSoftRegion ), plRefFlags::kActiveRef );
+                    hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kSoftRegion ), plRefFlags::kActiveRef );
                 }
             }
         }
@@ -569,9 +569,9 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
     }
 }
 
-UInt32  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
+uint32_t  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
 {
-    UInt32 bufferFlags = 0;
+    uint32_t bufferFlags = 0;
 
     if( IHasWaveformProps() )
     {
@@ -587,7 +587,7 @@ UInt32  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
     return bufferFlags;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileName, plMaxNode *srcNode, UInt32 srcBufferFlags )
+plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plSoundBuffer* sb = IGetSourceBuffer(fileName, srcNode, srcBufferFlags);
 
@@ -611,7 +611,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileN
     return sb;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, UInt32 srcBufferFlags )
+plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plKey       key;
     char        keyName[ MAX_PATH ];
@@ -673,7 +673,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
         return plSoundBuffer::ConvertNoRef( key->GetObjectPtr() );
 
     // Not yet created, so make a new one
-    plSoundBuffer   *buffer = TRACKED_NEW plSoundBuffer( fileName, srcBufferFlags );
+    plSoundBuffer   *buffer = new plSoundBuffer( fileName, srcBufferFlags );
     if( !buffer->IsValid() )
     {
         // Invalid, so delete and return nil
@@ -767,7 +767,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
         }
         else
         {
-            baseBuffer = TRACKED_NEW plSoundBuffer( GetSoundFileName( kBaseSound ) );
+            baseBuffer = new plSoundBuffer( GetSoundFileName( kBaseSound ) );
             if( baseBuffer != nil && baseBuffer->IsValid() )
             {
                 // Update our stereo channel selection if necessary
@@ -790,7 +790,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
         delete baseBuffer;
 }
 
-hsScalar    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
+float    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
 {
     return IGetDigitalVolume();
 }
@@ -914,7 +914,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
     plController *ctl;
     hsControlConverter& cc = hsControlConverter::Instance();
 
-    hsScalar start, end;
+    float start, end;
     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
@@ -936,7 +936,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
         }
 
         std::map<plMaxNode*, int>::iterator i = fIndices.begin();
-        plSoundVolumeApplicator *app = TRACKED_NEW plSoundVolumeApplicator( (*i).second );
+        plSoundVolumeApplicator *app = new plSoundVolumeApplicator( (*i).second );
         app->SetChannelName(node->GetName());
         plAnimComponentBase::SetupCtl( anim, ctl, app, node );
         result = true;      
@@ -1391,7 +1391,7 @@ class plEAXPropsDlgProc : public plSingleCompSelProc
     {
         public:
             char    *fName;
-            Int16   fOcc;
+            int16_t   fOcc;
             float   fLFRatio;
             float   fRoomRatio;
     };
@@ -1426,13 +1426,13 @@ public:
         // Annoyingly, the EAX headers don't have a convenient array, just some #defines
         static char occNames[][ 64 ] = { "Single window", "Double window", "Thin door", "Thick door",
                                     "Wood wall", "Brick wall", "Stone wall", "Curtain" };
-        Int16   occValues[] = { EAX_MATERIAL_SINGLEWINDOW, EAX_MATERIAL_DOUBLEWINDOW, EAX_MATERIAL_THINDOOR,
+        int16_t   occValues[] = { EAX_MATERIAL_SINGLEWINDOW, EAX_MATERIAL_DOUBLEWINDOW, EAX_MATERIAL_THINDOOR,
                                 EAX_MATERIAL_THICKDOOR, EAX_MATERIAL_WOODWALL, EAX_MATERIAL_BRICKWALL,
                                 EAX_MATERIAL_STONEWALL, EAX_MATERIAL_CURTAIN };
         float   occLFValues[] = { EAX_MATERIAL_SINGLEWINDOWLF, EAX_MATERIAL_DOUBLEWINDOWLF, EAX_MATERIAL_THINDOORLF,
                                 EAX_MATERIAL_THICKDOORLF, EAX_MATERIAL_WOODWALLLF, EAX_MATERIAL_BRICKWALLLF,
                                 EAX_MATERIAL_STONEWALLLF, EAX_MATERIAL_CURTAINLF };
-        Int16   occRoomValues[] = { EAX_MATERIAL_SINGLEWINDOWROOMRATIO, EAX_MATERIAL_DOUBLEWINDOWROOMRATIO, EAX_MATERIAL_THINDOORROOMRATIO,
+        int16_t   occRoomValues[] = { EAX_MATERIAL_SINGLEWINDOWROOMRATIO, EAX_MATERIAL_DOUBLEWINDOWROOMRATIO, EAX_MATERIAL_THINDOORROOMRATIO,
                                 EAX_MATERIAL_THICKDOORROOMRATIO, EAX_MATERIAL_WOODWALLROOMRATIO, EAX_MATERIAL_BRICKWALLROOMRATIO,
                                 EAX_MATERIAL_STONEWALLROOMRATIO, EAX_MATERIAL_CURTAINROOMRATIO };
 
@@ -1699,7 +1699,7 @@ void    plBaseSoundEmitterComponent::IGrabEAXParams( plSound *sound, plErrorMsg 
                     if( vol != nil )
                     {
                         vol->SetCheckListener();
-                        hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
+                        hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, 0, plSound::kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
                     }
                 }
             }
@@ -2191,22 +2191,22 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWin32Sound *sound = nil;
 
     if (!strcmp(node->GetName(), "LinkSoundSource"))
-        sound = TRACKED_NEW plWin32LinkSound;
+        sound = new plWin32LinkSound;
     else
     {
 #if 0
-        sound = TRACKED_NEW plWin32StaticSound;
+        sound = new plWin32StaticSound;
 #else
         /// New method, still in testing: any sounds over 4 seconds get made into streaming sounds
         if( srcBuffer->GetDataLengthInSecs() > 4.f )
-            sound = TRACKED_NEW plWin32StreamingSound;
+            sound = new plWin32StreamingSound;
         else
-            sound = TRACKED_NEW plWin32StaticSound;
+            sound = new plWin32StaticSound;
     }
 #endif
 
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if( pAudible->AddSound( sound, fIndex, true ) )
     {
@@ -2232,9 +2232,9 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     // allocate it here).
     // Also also also build up a volume array parallel to startPoses that represents the individual volume
     // setting for each sound in the group
-    hsTArray<UInt32>        startPoses;
-    hsTArray<hsScalar>      volumes;
-    hsLargeArray<UInt8>     mergedData;
+    hsTArray<uint32_t>        startPoses;
+    hsTArray<float>      volumes;
+    hsLargeArray<uint8_t>     mergedData;
     int                     i;
     plWAVHeader             mergedHeader;
 
@@ -2257,7 +2257,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         // Grab the buffer for this sound directly from the original source
         const char *fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
 
-        plSoundBuffer   *buffer = TRACKED_NEW plSoundBuffer( fileName );
+        plSoundBuffer   *buffer = new plSoundBuffer( fileName );
         if( !buffer->IsValid() || !buffer->EnsureInternal() )
         {
             // OK, because some *cough* machines are completely stupid and don't load AssetMan scenes with 
@@ -2281,7 +2281,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
 
                 // Got a path to try, so try it!
                 delete buffer;
-                buffer = TRACKED_NEW plSoundBuffer( newPath );
+                buffer = new plSoundBuffer( newPath );
                 if( buffer->IsValid() && buffer->EnsureInternal() )
                     worked = true;
             }
@@ -2323,7 +2323,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         // Grab the data from this buffer and merge it
         // HACK: SetCount() won't copy the old data over, Expand() won't up the use count, so do
         // an expand-and-setCount combo.
-        UInt32 pos = mergedData.GetCount();
+        uint32_t pos = mergedData.GetCount();
         startPoses.Append( pos );
         mergedData.Expand( pos + buffer->GetDataLength() );
         mergedData.SetCount( pos + buffer->GetDataLength() );
@@ -2347,7 +2347,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         plPluginResManager::ResMgr()->NukeKeyAndObject( buffKey );
 
     // Create a new one...
-    plSoundBuffer   *mergedBuffer = TRACKED_NEW plSoundBuffer();
+    plSoundBuffer   *mergedBuffer = new plSoundBuffer();
     mergedBuffer->SetInternalData( mergedHeader, mergedData.GetCount(), mergedData.AcquireArray() );
     mergedData.Reset();
     // The buffer may be shared across multiple sources. We could or together the LoadMasks of all
@@ -2362,12 +2362,12 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
     sprintf( keyName, "%s", GetINode()->GetName());
-    plWin32GroupedSound *sound = TRACKED_NEW plWin32GroupedSound;
+    plWin32GroupedSound *sound = new plWin32GroupedSound;
     sound->SetPositionArray( startPoses.GetCount(), startPoses.AcquireArray(), volumes.AcquireArray() );
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
 
     hsgResMgr::ResMgr()->NewKey( keyName, sound, baseNode->GetLocation(), baseNode->GetLoadMask() );
-    hsgResMgr::ResMgr()->AddViaNotify( mergedBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( mergedBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if( pAudible->AddSound( sound, index, true ) )
     {
@@ -2402,7 +2402,7 @@ public:
     virtual hsBool  IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 protected:
-    virtual UInt32 ICalcSourceBufferFlags() const;
+    virtual uint32_t ICalcSourceBufferFlags() const;
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
     virtual hsBool  IGetCategoryList( char **&catList, int *&catKonstantList );
@@ -2471,9 +2471,9 @@ hsBool plBackgroundMusicComponent::SetupProperties(plMaxNode *pNode, plErrorMsg 
     return plBaseSoundEmitterComponent::SetupProperties( pNode, pErrMsg );
 }
 
-UInt32 plBackgroundMusicComponent::ICalcSourceBufferFlags() const
+uint32_t plBackgroundMusicComponent::ICalcSourceBufferFlags() const
 {
-    UInt32 ourFlags = 0;
+    uint32_t ourFlags = 0;
     if (fCompPB->GetInt(kSndStreamCompressed))
         ourFlags |= plSoundBuffer::kStreamCompressed;
 
@@ -2513,14 +2513,14 @@ hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWin32Sound *sound = nil;
 
     if( srcBuffer->GetDataLengthInSecs() > 4.f )
-        sound = TRACKED_NEW plWin32StreamingSound;
+        sound = new plWin32StreamingSound;
     else
-        sound = TRACKED_NEW plWin32StaticSound;
+        sound = new plWin32StaticSound;
 
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
 
     srcBuffer->SetFlag( plSoundBuffer::kAlwaysExternal );
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if (pAudible->AddSound( sound, fIndex, false))
     {
@@ -2670,10 +2670,10 @@ hsBool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     char    keyName[ 256 ];
     sprintf( keyName, "%s_Win32GUISound", GetINode()->GetName() );
 
-    plWin32StaticSound *sound = TRACKED_NEW plWin32StaticSound;
+    plWin32StaticSound *sound = new plWin32StaticSound;
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());
 
-    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), TRACKED_NEW plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( srcBuffer->GetKey(), new plGenRefMsg( sound->GetKey(), plRefMsg::kOnCreate, -1, plSound::kRefDataBuffer ), plRefFlags::kActiveRef );
     
     if (pAudible->AddSound( sound, fIndex, false))
     {
@@ -2959,11 +2959,11 @@ hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         return true;
 
     // Create a listener mod to handle these things
-    plEAXListenerMod *listener = TRACKED_NEW plEAXListenerMod();
+    plEAXListenerMod *listener = new plEAXListenerMod();
     node->AddModifier( listener, IGetUniqueName(node) );
 
     // Add the soft region
-    hsgResMgr::ResMgr()->AddViaNotify( softKey, TRACKED_NEW plGenRefMsg( listener->GetKey(), plRefMsg::kOnCreate, 0, plEAXListenerMod::kRefSoftRegion ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( softKey, new plGenRefMsg( listener->GetKey(), plRefMsg::kOnCreate, 0, plEAXListenerMod::kRefSoftRegion ), plRefFlags::kActiveRef );
 
 #ifdef EAX_SDK_AVAILABLE
     // Set up the parameters of the listener mod
@@ -3035,7 +3035,7 @@ void    plEAXListenerComponent::SetCustFile( const char *path )
     {
         char    *fKeyword;
         ParamID fParamID;
-        UInt8   fType;  // 0 is int, 1 is float for now
+        uint8_t   fType;  // 0 is int, 1 is float for now
     } myMap[] = { 
         { "flEnvironmentSize", kRefEnvironmentSize, 1 },
         { "flEnvironmentDiffusion", kRefEnvironmentDiffusion, 1 },
@@ -3379,7 +3379,7 @@ hsBool plRandomSoundComponent::ICheckForSounds(plMaxNode* node)
         return false;
 
     int nSounds = 0;
-    UInt32 numComp = node->NumAttachedComponents(false);
+    uint32_t numComp = node->NumAttachedComponents(false);
     for(int i = 0; i < numComp; i++)
     {
         plComponentBase* comp = node->GetAttachedComponent(i);
@@ -3409,7 +3409,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     else
         mod->SetState(plRandomSoundMod::kStopped);
 
-    UInt8 mode = plRandomSoundMod::kNormal;
+    uint8_t mode = plRandomSoundMod::kNormal;
     switch( fCompPB->GetInt((ParamID)kSelectMode) )
     {
     // random, repeats okay, play until stopped             - Normal
@@ -3468,7 +3468,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pAudible = (plWinAudible*)ai->GetAudible();
         hsTArray<plBaseSoundEmitterComponent *> comps;
 
-        plRandomSoundModGroup *groups = TRACKED_NEW plRandomSoundModGroup[kMaxGroups];
+        plRandomSoundModGroup *groups = new plRandomSoundModGroup[kMaxGroups];
         int i;
         int numSoFar = 0;
         for (i = 0; i < kMaxGroups; i++)
@@ -3482,9 +3482,9 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 continue;
             }
 
-            groups[i].fIndices = TRACKED_NEW UInt16[numSounds];
+            groups[i].fIndices = new uint16_t[numSounds];
 
-            hsTArray<UInt16> indices;
+            hsTArray<uint16_t> indices;
             int j;
 
             if( !fCompPB->GetInt( (ParamID)kCombineSounds ) )
@@ -3584,7 +3584,7 @@ hsBool plRandomSoundComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg
 {
     if (ICheckForSounds(pNode))
     {
-        plRandomSoundMod* mod = TRACKED_NEW plRandomSoundMod;
+        plRandomSoundMod* mod = new plRandomSoundMod;
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), mod, pNode->GetLocation());
         fSoundMods[pNode] = mod;
     }
@@ -3942,7 +3942,7 @@ hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
         if (si)
         {
             // Create a new sound group
-            plPhysicalSndGroup *grp = TRACKED_NEW plPhysicalSndGroup( fCompPB->GetInt( (ParamID)kRefGroup ) );
+            plPhysicalSndGroup *grp = new plPhysicalSndGroup( fCompPB->GetInt( (ParamID)kRefGroup ) );
             hsgResMgr::ResMgr()->NewKey( IGetUniqueName( node ), grp, node->GetLocation(), node->GetLoadMask() );
 
             // Convert each sound into a plWin32StaticSound and store onto the sound group
@@ -4006,7 +4006,7 @@ hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
             }
 
             // Attach the sound group to the physical
-            hsgResMgr::ResMgr()->AddViaNotify( grp->GetKey(), TRACKED_NEW plGenRefMsg( si->GetPhysical()->GetKey(), plRefMsg::kOnCreate, 0, plPXPhysical::kPhysRefSndGroup ), plRefFlags::kActiveRef );
+            hsgResMgr::ResMgr()->AddViaNotify( grp->GetKey(), new plGenRefMsg( si->GetPhysical()->GetKey(), plRefMsg::kOnCreate, 0, plPXPhysical::kPhysRefSndGroup ), plRefFlags::kActiveRef );
         }
     }
 

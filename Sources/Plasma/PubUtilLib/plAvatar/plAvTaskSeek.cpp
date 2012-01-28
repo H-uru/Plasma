@@ -197,13 +197,13 @@ void plAvTaskSeek::SetTarget(hsPoint3 &pos, hsPoint3 &lookAt)
 {
     fSeekPos = pos;
     hsVector3 up(0.f, 0.f, 1.f);
-    hsScalar angle = hsATan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsScalarPI / 2;
+    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
     fSeekRot.SetAngleAxis(angle, up);
 }
 
 // Start -----------------------------------------------------------------------------------------
 // ------
-hsBool plAvTaskSeek::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvTaskSeek::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(brain);
     hsAssert(huBrain, "Seek task only works on human brains");
@@ -224,7 +224,7 @@ hsBool plAvTaskSeek::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
         if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar() && (fFlags & plAvSeekMsg::kSeekFlagForce3rdPersonOnStart))
         {
             // create message
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
             pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
@@ -243,7 +243,7 @@ hsBool plAvTaskSeek::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
 
 // Process -------------------------------------------------------------------------------------------
 // --------
-hsBool plAvTaskSeek::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+hsBool plAvTaskSeek::Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     if (fState == kSeekAbort)
         return false;
@@ -268,7 +268,7 @@ hsBool plAvTaskSeek::Process(plArmatureMod *avatar, plArmatureBrain *brain, doub
 
 // Finish ---------------------------------------------------------------------------------------
 // -------
-void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed)
+void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
 {
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(brain);
     
@@ -281,7 +281,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
         if (plAvOneShotTask::fForce3rdPerson && avatar->IsLocalAvatar() && (fFlags & plAvSeekMsg::kSeekFlagUnForce3rdPersonOnFinish))
         {
             // create message
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
             pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);
@@ -293,7 +293,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
 
     if (fNotifyFinishedKey)
     {
-        plAvTaskSeekDoneMsg *msg = TRACKED_NEW plAvTaskSeekDoneMsg(avatar->GetKey(), fNotifyFinishedKey);
+        plAvTaskSeekDoneMsg *msg = new plAvTaskSeekDoneMsg(avatar->GetKey(), fNotifyFinishedKey);
         msg->fAborted = (fState == kSeekAbort);
         msg->Send();
     }
@@ -318,7 +318,7 @@ hsBool plAvTaskSeek::IAnalyze(plArmatureMod *avatar)
     hsVector3 normalizedGoalVec(fGoalVec);
     normalizedGoalVec.Normalize();
 
-    fDistance = hsSquareRoot(fGoalVec.fX * fGoalVec.fX + fGoalVec.fY * fGoalVec.fY);
+    fDistance = sqrt(fGoalVec.fX * fGoalVec.fX + fGoalVec.fY * fGoalVec.fY);
 
     if(fDistance < 3.0f)
     {
@@ -350,7 +350,7 @@ hsBool plAvTaskSeek::IAnalyze(plArmatureMod *avatar)
 // IMoveTowardsGoal --------------------------------------------------------------
 // -----------------
 hsBool plAvTaskSeek::IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain,
-                                      double time, hsScalar elapsed)
+                                      double time, float elapsed)
 {
     bool stillRunning = true;
     avatar->ClearInputFlags(false, false);
@@ -435,7 +435,7 @@ hsBool plAvTaskSeek::IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *bra
 
 
 // ITRYFINISH
-bool plAvTaskSeek::ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, double time, hsScalar elapsed)
+bool plAvTaskSeek::ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed)
 {
     hsBool animsDone = brain->IsMovementZeroBlend();
 
@@ -458,7 +458,7 @@ bool plAvTaskSeek::ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, doub
 
 hsBool plAvTaskSeek::IFinishPosition(hsPoint3 &newPosition,
                                      plArmatureMod *avatar, plAvBrainHuman *brain,
-                                     double time, hsScalar elapsed)
+                                     double time, float elapsed)
 {
     // While warping, we might be hovering just above the ground. Don't want that to
     // trigger any falling behavior.
@@ -494,7 +494,7 @@ hsBool plAvTaskSeek::IFinishPosition(hsPoint3 &newPosition,
 // ----------------
 hsBool plAvTaskSeek::IFinishRotation(hsQuat &newRotation,
                                      plArmatureMod *avatar, plAvBrainHuman *brain,
-                                     double time, hsScalar elapsed)
+                                     double time, float elapsed)
 {
     // we're pretty much done; just hop the rest of the way
     newRotation = fSeekRot;
@@ -603,8 +603,8 @@ void plAvTaskSeek::DumpToAvatarLog(plArmatureMod *avatar)
 // --------------
 float QuatAngleDiff(const hsQuat &a, const hsQuat &b)
 {
-    hsScalar theta;     /* angle between A and B */
-    hsScalar cos_t;     /* sine, cosine of theta */
+    float theta;     /* angle between A and B */
+    float cos_t;     /* sine, cosine of theta */
 
     /* cosine theta = dot product of A and B */
     cos_t = a.Dot(b);
@@ -616,11 +616,11 @@ float QuatAngleDiff(const hsQuat &a, const hsQuat &b)
     } 
 
     // Calling acos on 1.0 is returning an undefined value. Need to check for it.
-    hsScalar epsilon = 0.00001;
+    float epsilon = 0.00001;
     if (hsABS(cos_t - 1.f) < epsilon)
         return 0;
 
-    theta   = hsACosine(cos_t);
+    theta   = acos(cos_t);
     return theta;
 }
 

@@ -74,7 +74,7 @@ public:
 protected:
     hsBool                              fFilterGenerics; // Export only
 
-    Int16                               fDepth;
+    int16_t                               fDepth;
 
     hsTArray<plSceneObject*>            fSceneObjects;
     
@@ -133,9 +133,9 @@ public:
 
     virtual hsBool MsgReceive(plMessage* msg);
 
-    Int16 GetDepth() { return fDepth; }
-    Int16 IncDepth() { return ++fDepth; }
-    Int16 DecDepth() { return --fDepth; }
+    int16_t GetDepth() { return fDepth; }
+    int16_t IncDepth() { return ++fDepth; }
+    int16_t DecDepth() { return --fDepth; }
 
     void    Init( void );
 

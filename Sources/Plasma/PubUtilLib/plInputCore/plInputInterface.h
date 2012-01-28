@@ -125,7 +125,7 @@ class plInputInterface : public hsRefCnt
 
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ) { return false; }
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ) { return false; }
 
         // Override to handle special-cased control messages of your own (same as receiving them via a message, but if you process them, nobody else gets them). Return false if you don't handle it.
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd ) { return false; }
@@ -175,16 +175,16 @@ class plInputInterface : public hsRefCnt
         virtual void    Write( hsStream* s, hsResMgr* mgr );
 
         // Returns the priority of this interface layer, based on the Priorities enum
-        virtual UInt32      GetPriorityLevel( void ) const = 0;
+        virtual uint32_t      GetPriorityLevel( void ) const = 0;
 
         // Returns true if the message was handled, false if not and we want to pass it on to others in the stack
         virtual hsBool      InterpretInputEvent( plInputEventMsg *pMsg ) = 0;
 
         // Returns the currently active mouse cursor for this layer, as defined in pnMessage/plCursorChangeMsg.h
-        virtual UInt32      GetCurrentCursorID( void ) const = 0;
+        virtual uint32_t      GetCurrentCursorID( void ) const = 0;
 
         // Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
-        virtual hsScalar    GetCurrentCursorOpacity( void ) const { return 1.f; }
+        virtual float    GetCurrentCursorOpacity( void ) const { return 1.f; }
 
         // Returns true if this layer is wanting to change the mouse, false if it isn't interested
         virtual hsBool      HasInterestingCursorID( void ) const = 0;

@@ -64,7 +64,7 @@ struct hsFolderIterator_Data {
 
 hsFolderIterator::hsFolderIterator(const char path[], bool)
 {
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
 
     this->SetPath(path);
 }

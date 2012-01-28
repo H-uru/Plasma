@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -85,13 +85,13 @@ public:
         PyObject *          fCbObject;
         RelVaultNode *      fNode;
         PyObject *          fPyNodeRef;
-        UInt32              fContext;
+        uint32_t              fContext;
 
         pyVaultNodeOperationCallback(PyObject * cbObject);
         ~pyVaultNodeOperationCallback();
 
-        void VaultOperationStarted(UInt32 context);
-        void VaultOperationComplete(UInt32 context, int resultCode);
+        void VaultOperationStarted(uint32_t context);
+        void VaultOperationComplete(uint32_t context, int resultCode);
         void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
         
         void SetNode (RelVaultNode * rvn);
@@ -127,27 +127,27 @@ public:
     bool operator!=(const pyVaultNode &vaultNode) const { return !(vaultNode == *this); }
 
     // public getters
-    UInt32  GetID( void );
-    virtual UInt32  GetType( void );
-    UInt32  GetPermissions( void );
-    UInt32  GetOwnerNodeID( void );
+    uint32_t  GetID( void );
+    virtual uint32_t  GetType( void );
+    uint32_t  GetPermissions( void );
+    uint32_t  GetOwnerNodeID( void );
     PyObject* GetOwnerNode( void ); // returns pyVaultPlayerInfoNode
-    UInt32  GetGroupNodeID( void );
+    uint32_t  GetGroupNodeID( void );
     PyObject* GetGroupNode( void ); // returns pyVaultNode
-    UInt32 GetModifyTime( void );
-    UInt32 GetCreatorNodeID( void );
+    uint32_t GetModifyTime( void );
+    uint32_t GetCreatorNodeID( void );
     PyObject* GetCreatorNode( void ); // returns pyVaultPlayerInfoNode
-    UInt32 GetCreateTime( void );
-    UInt32 GetCreateAgeTime( void );
+    uint32_t GetCreateTime( void );
+    uint32_t GetCreateAgeTime( void );
     const char * GetCreateAgeName( void );
     const char * GetCreateAgeGuid( void );
     PyObject* GetCreateAgeCoords ();
 
     // public setters
-    void SetID( UInt32 v );
+    void SetID( uint32_t v );
     void SetType( int v );
-    void SetOwnerNodeID( UInt32 v );
-    void SetCreatorNodeID( UInt32 v );
+    void SetOwnerNodeID( uint32_t v );
+    void SetCreatorNodeID( uint32_t v );
     void SetCreateAgeName( const char * v );
     void SetCreateAgeGuid( const char * v );
 
@@ -156,28 +156,28 @@ public:
     // Vault Node API
 
     // Add child node
-    PyObject* AddNode(pyVaultNode* pynode, PyObject* cbObject=nil, UInt32 cbContext=0 );
+    PyObject* AddNode(pyVaultNode* pynode, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Link node to this one
-    void LinkToNode(int nodeID, PyObject* cbObject=nil, UInt32 cbContext=0 );
+    void LinkToNode(int nodeID, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Remove child node
-    hsBool RemoveNode( pyVaultNode& pynode, PyObject* cbObject=nil, UInt32 cbContext=0 );
+    hsBool RemoveNode( pyVaultNode& pynode, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Remove all child nodes
     void RemoveAllNodes( void );
     // Add/Save this node to vault
-    void Save( PyObject* cbObject=nil, UInt32 cbContext=0 );
+    void Save( PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Save this node and all child nodes that need saving.
     // NOTE: Currently, the cb object is called back for
     // each node saved.
-    void SaveAll( PyObject* cbObject=nil, UInt32 cbContext=0 );
+    void SaveAll( PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Force a save on this node because currently Save doesn't do anything because dirty
     // nodes are periodically saved automatically - call this to force a save immediately
     void ForceSave();
     // Send this node to the destination client node. will be received in it's inbox folder.
-    void SendTo(UInt32 destClientNodeID, PyObject* cbObject=nil, UInt32 cbContext=0 );
+    void SendTo(uint32_t destClientNodeID, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Returns true if is a child node of ours.
-    bool HasNode( UInt32 nodeID );
+    bool HasNode( uint32_t nodeID );
     //  Returns a ptVaultNodeRef or nil
-    PyObject* GetNode2( UInt32 nodeID ) const;          // returns pyVaultNodeRef, for legacy compatibility
+    PyObject* GetNode2( uint32_t nodeID ) const;          // returns pyVaultNodeRef, for legacy compatibility
     // Get child node matching template node
     PyObject* FindNode( pyVaultNode * templateNode );   // returns pyVaultNode
     
@@ -188,7 +188,7 @@ public:
     virtual int GetChildNodeCount();
 
     // Get the client ID from my Vault client.
-    UInt32  GetClientID( void );
+    uint32_t  GetClientID( void );
 
     // all the upcasting stuff...
     PyObject* UpcastToFolderNode(); // returns pyVaultFolderNode

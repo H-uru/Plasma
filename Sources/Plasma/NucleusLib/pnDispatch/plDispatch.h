@@ -59,7 +59,7 @@ class plTypeFilter
 public:
     plTypeFilter() : fHClass(0) {}
 
-    UInt16              fHClass;
+    uint16_t              fHClass;
     hsTArray<plKey>     fReceivers;
 };
 
@@ -74,7 +74,7 @@ protected:
     hsKeyedObject*                  fOwner;
 
     plMsgWrap*                      fFutureMsgQueue;
-    static Int32                    fNumBufferReq;
+    static int32_t                    fNumBufferReq;
     static plMsgWrap*               fMsgCurrent;
     static hsMutex                  fMsgCurrentMutex; // mutex for above
     static hsMutex                  fMsgDispatchLock;   // mutex for IMsgDispatch
@@ -91,7 +91,7 @@ protected:
 
     hsKeyedObject*                  IGetOwner() { return fOwner; }
     plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
-    int                             IFindType(UInt16 hClass);
+    int                             IFindType(uint16_t hClass);
     int                             IFindSender(const plKey& sender);
     hsBool                          IUnRegisterForExactType(int idx, const plKey& receiver);
 
@@ -105,7 +105,7 @@ protected:
 
     hsBool                          ISortToDeferred(plMessage* msg);
     void                            ICheckDeferred(double stamp);
-    hsBool                          IListeningForExactType(UInt16 hClass);
+    hsBool                          IListeningForExactType(uint16_t hClass);
 
     void                            ITrashUndelivered(); // Just pitches them, doesn't try to deliver.
 
@@ -116,11 +116,11 @@ public:
     CLASSNAME_REGISTER( plDispatch );
     GETINTERFACE_ANY( plDispatch, plCreatable );
 
-    virtual void RegisterForType(UInt16 hClass, const plKey& receiver);
-    virtual void RegisterForExactType(UInt16 hClass, const plKey& receiver);
+    virtual void RegisterForType(uint16_t hClass, const plKey& receiver);
+    virtual void RegisterForExactType(uint16_t hClass, const plKey& receiver);
 
-    virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver);
-    virtual void UnRegisterForExactType(UInt16 hClass, const plKey& receiver);
+    virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver);
+    virtual void UnRegisterForExactType(uint16_t hClass, const plKey& receiver);
 
     virtual void UnRegisterAll(const plKey& receiver);
 
@@ -138,11 +138,11 @@ class plNullDispatch : public plDispatch
 {
 public:
 
-    virtual void RegisterForExactType(UInt16 hClass, const plKey& receiver) {}
-    virtual void RegisterForType(UInt16 hClass, const plKey& receiver) {}
+    virtual void RegisterForExactType(uint16_t hClass, const plKey& receiver) {}
+    virtual void RegisterForType(uint16_t hClass, const plKey& receiver) {}
 
-    virtual void UnRegisterForExactType(UInt16 hClass, const plKey& receiver) {}
-    virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver) {}
+    virtual void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) {}
+    virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver) {}
 
 
     virtual hsBool MsgSend(plMessage* msg) { return true; }

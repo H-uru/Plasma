@@ -41,15 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pnNetCommon.h"
 #include "pnAddrInfo/pnAddrInfo.h"
-#ifdef HS_BUILD_FOR_WIN32
-# include "hsWindows.h"
-#elif HS_BUILD_FOR_UNIX
+#if HS_BUILD_FOR_UNIX
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <string.h>  // for memcpy
-#else
+#elif !defined(HS_BUILD_FOR_WIN32)
 #error "Not implemented for this platform"
 #endif
 
@@ -59,7 +57,7 @@ namespace pnNetCommon
 #ifndef SERVER
 
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
-const char * GetTextAddr(UInt32 binAddr)
+const char * GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
     memcpy(&in,&binAddr,sizeof(binAddr));
@@ -67,9 +65,9 @@ const char * GetTextAddr(UInt32 binAddr)
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
-UInt32 GetBinAddr(const char * textAddr)
+uint32_t GetBinAddr(const char * textAddr)
 {
-    UInt32 addr = 0;
+    uint32_t addr = 0;
     
     if (!textAddr)
         return addr;
@@ -100,7 +98,7 @@ void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
     std::string buf;
-    UInt32 len = fStream.GetEOF();
+    uint32_t len = fStream.GetEOF();
     stream->WriteLE( len );
     buf.resize( len );
     fStream.Read( len, (void*)buf.data() );
@@ -112,7 +110,7 @@ void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
     std::string buf;
-    UInt32 len;
+    uint32_t len;
     stream->LogReadLE( &len,"CreatableStream Len");
     buf.resize( len );
     stream->LogRead( len, (void*)buf.data(),"CreatableStream Data");

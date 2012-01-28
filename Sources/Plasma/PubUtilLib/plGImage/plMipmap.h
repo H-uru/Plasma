@@ -91,73 +91,73 @@ class plMipmap : public plBitmap
 
 
         plMipmap();
-        plMipmap( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels = 0, UInt8 compType = kUncompressed, UInt8 format = UncompressedInfo::kRGB8888 );
-        plMipmap( plMipmap *bm, hsScalar sig, UInt32 createFlags, 
-                            hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                            hsScalar detailMax, hsScalar detailMin );
+        plMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels = 0, uint8_t compType = kUncompressed, uint8_t format = UncompressedInfo::kRGB8888 );
+        plMipmap( plMipmap *bm, float sig, uint32_t createFlags, 
+                            float detailDropoffStart, float detailDropoffStop, 
+                            float detailMax, float detailMin );
         virtual ~plMipmap();
 
         CLASSNAME_REGISTER( plMipmap );
         GETINTERFACE_ANY( plMipmap, plBitmap );
 
 
-        void            Create( UInt32 width, UInt32 height, unsigned config, UInt8 numLevels, UInt8 compType = kUncompressed, UInt8 format = UncompressedInfo::kRGB8888 );
+        void            Create( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, uint8_t compType = kUncompressed, uint8_t format = UncompressedInfo::kRGB8888 );
 
         virtual void    Reset();
 
         // Get the total size in bytes
-        virtual UInt32  GetTotalSize() const;
+        virtual uint32_t  GetTotalSize() const;
 
         virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
         virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-        virtual UInt8   GetNumLevels() const { return fNumLevels; }
-        virtual UInt32  GetLevelSize( UInt8 level );        // 0 is the largest
+        virtual uint8_t   GetNumLevels() const { return fNumLevels; }
+        virtual uint32_t  GetLevelSize( uint8_t level );        // 0 is the largest
 
         virtual void        Colorize();
         virtual plMipmap    *Clone() const;
         virtual void        CopyFrom( const plMipmap *source );
 
-        inline UInt32   GetWidth() const { return fWidth; }
-        inline UInt32   GetHeight() const { return fHeight; }
-        inline UInt32   GetRowBytes() const { return fRowBytes; }
+        inline uint32_t   GetWidth() const { return fWidth; }
+        inline uint32_t   GetHeight() const { return fHeight; }
+        inline uint32_t   GetRowBytes() const { return fRowBytes; }
 
         void            *GetImage() const { return fImage; }
         void            SetImagePtr( void *ptr ) { fImage = ptr; }
-        UInt8           *GetLevelPtr( UInt8 level, UInt32 *width = nil, UInt32 *height = nil, UInt32 *rowBytes = nil );
+        uint8_t           *GetLevelPtr( uint8_t level, uint32_t *width = nil, uint32_t *height = nil, uint32_t *rowBytes = nil );
 
         // Sets the current level pointer for use with GetAddr*
-        virtual void    SetCurrLevel(UInt8 level);
+        virtual void    SetCurrLevel(uint8_t level);
         void            *GetCurrLevelPtr() const { return fCurrLevelPtr; }
-        UInt32          GetCurrWidth() const { return fCurrLevelWidth; }
-        UInt32          GetCurrHeight() const { return fCurrLevelHeight; }
-        UInt32          GetCurrLevelSize() const { return fLevelSizes[ fCurrLevel ]; }
-        UInt32          GetCurrLevel() const { return fCurrLevel; }
+        uint32_t          GetCurrWidth() const { return fCurrLevelWidth; }
+        uint32_t          GetCurrHeight() const { return fCurrLevelHeight; }
+        uint32_t          GetCurrLevelSize() const { return fLevelSizes[ fCurrLevel ]; }
+        uint32_t          GetCurrLevel() const { return fCurrLevel; }
 
         //  These methods return the address of the pixel specified by x and y
         //  They are meant to be fast, therefore they are inlined and do not check
         //  the fPixelSize field at runtime (except when debugging)
 
-        UInt8*  GetAddr8(unsigned x, unsigned y) const
+        uint8_t*  GetAddr8(unsigned x, unsigned y) const
                 {
                     ASSERT_PIXELSIZE(this, 8);
                     ASSERT_XY(this, x, y);
                     ASSERT_UNCOMPRESSED();
-                    return (UInt8*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + x);
+                    return (uint8_t*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + x);
                 }
-        UInt16* GetAddr16(unsigned x, unsigned y) const
+        uint16_t* GetAddr16(unsigned x, unsigned y) const
                 {
                     ASSERT_PIXELSIZE(this, 16);
                     ASSERT_XY(this, x, y);
                     ASSERT_UNCOMPRESSED();
-                    return (UInt16*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + (x << 1));
+                    return (uint16_t*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + (x << 1));
                 }
-        UInt32* GetAddr32(unsigned x, unsigned y) const
+        uint32_t* GetAddr32(unsigned x, unsigned y) const
                 {
                     ASSERT_PIXELSIZE(this, 32);
                     ASSERT_XY(this, x, y);
                     ASSERT_UNCOMPRESSED();
-                    return (UInt32*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + (x << 2));
+                    return (uint32_t*)((char*)fCurrLevelPtr + y * fCurrLevelRowBytes + (x << 2));
                 }
         void*   GetAddr64(unsigned x, unsigned y) const
                 {
@@ -210,23 +210,23 @@ class plMipmap : public plBitmap
             kAlphaDataRLE   = 0x2
         };
 
-        void    SetBitmapAsLevel(UInt8 iDst, plMipmap *bm, hsScalar sig, UInt32 createFlags, 
-                                              hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                              hsScalar detailMax, hsScalar detailMin);
-        void    ICreateLevelNoDetail(UInt8 iDst, const plFilterMask& mask);
-        void    IBlendLevelDetailAlpha(UInt8 iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
-        void    IBlendLevelDetailAdd(UInt8 iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
-        void    IBlendLevelDetailMult(UInt8 iDst, const plFilterMask& mask, 
-                                          hsScalar detailDropoffStart, hsScalar detailDropoffStop, 
-                                          hsScalar detailMax, hsScalar detailMin);
-        void    Filter(hsScalar sig);
-        UInt32  CopyOutPixels(UInt32 destXSize, UInt32 destYSize, UInt32 dstFormat, void *destPixels, UInt32 copyOptions);
+        void    SetBitmapAsLevel(uint8_t iDst, plMipmap *bm, float sig, uint32_t createFlags, 
+                                              float detailDropoffStart, float detailDropoffStop, 
+                                              float detailMax, float detailMin);
+        void    ICreateLevelNoDetail(uint8_t iDst, const plFilterMask& mask);
+        void    IBlendLevelDetailAlpha(uint8_t iDst, const plFilterMask& mask, 
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
+        void    IBlendLevelDetailAdd(uint8_t iDst, const plFilterMask& mask, 
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
+        void    IBlendLevelDetailMult(uint8_t iDst, const plFilterMask& mask, 
+                                          float detailDropoffStart, float detailDropoffStop, 
+                                          float detailMax, float detailMin);
+        void    Filter(float sig);
+        uint32_t  CopyOutPixels(uint32_t destXSize, uint32_t destYSize, uint32_t dstFormat, void *destPixels, uint32_t copyOptions);
 
-        void    ClipToMaxSize( UInt32 maxDimension );
+        void    ClipToMaxSize( uint32_t maxDimension );
         void    RemoveMipping();
 
         void    EnsureKonstantBorder( hsBool clampU, hsBool clampV );
@@ -244,19 +244,19 @@ class plMipmap : public plBitmap
         {
             // Helper class for specifying options to Composite()
             public:
-                UInt16      fFlags;
-                UInt8       fSrcLevelsToSkip;
-                UInt8       fOpacity;
-                hsScalar    fRedTint, fGreenTint, fBlueTint;
-                UInt16      fSrcClipX, fSrcClipY;           // Clipping is applied AFTER levelSkip
-                UInt16      fSrcClipWidth, fSrcClipHeight;  // 0 means max width/height
+                uint16_t      fFlags;
+                uint8_t       fSrcLevelsToSkip;
+                uint8_t       fOpacity;
+                float    fRedTint, fGreenTint, fBlueTint;
+                uint16_t      fSrcClipX, fSrcClipY;           // Clipping is applied AFTER levelSkip
+                uint16_t      fSrcClipWidth, fSrcClipHeight;  // 0 means max width/height
 
                 CompositeOptions() { fFlags = 0; fSrcLevelsToSkip = 0; fRedTint = fGreenTint = fBlueTint = 1.f;
                                     fSrcClipX = fSrcClipY = fSrcClipWidth = fSrcClipHeight = 0; fOpacity = 255;}
 
-                CompositeOptions( UInt16 flags, UInt8 srcLevelsToSkip = 0, hsScalar red = 1.f, hsScalar green = 1.f,
-                                    hsScalar blue = 1.f, UInt16 srcClipX = 0, UInt16 srcClipY = 0, 
-                                    UInt16 srcClipWidth = 0, UInt16 srcClipHeight = 0, UInt8 opacity = 255 ) 
+                CompositeOptions( uint16_t flags, uint8_t srcLevelsToSkip = 0, float red = 1.f, float green = 1.f,
+                                    float blue = 1.f, uint16_t srcClipX = 0, uint16_t srcClipY = 0, 
+                                    uint16_t srcClipWidth = 0, uint16_t srcClipHeight = 0, uint8_t opacity = 255 ) 
                 {
                     fFlags = flags;
                     fSrcLevelsToSkip = srcLevelsToSkip;
@@ -272,7 +272,7 @@ class plMipmap : public plBitmap
         };
 
         // Compositing function. Take a (smaller) mipmap and composite it onto this one at the given location. Nil options means use default
-        virtual void    Composite( plMipmap *source, UInt16 x, UInt16 y, CompositeOptions *options = nil );
+        virtual void    Composite( plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil );
 
         // Scaling function
         enum ScaleFilter
@@ -281,23 +281,23 @@ class plMipmap : public plBitmap
             kDefaultFilter = kBoxFilter
         };
 
-        virtual void    ScaleNicely( UInt32 *destPtr, UInt16 destWidth, UInt16 destHeight,
-                                UInt16 destStride, plMipmap::ScaleFilter filter ) const;
+        virtual void    ScaleNicely( uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
+                                uint16_t destStride, plMipmap::ScaleFilter filter ) const;
 
-        virtual hsBool  ResizeNicely( UInt16 newWidth, UInt16 newHeight, plMipmap::ScaleFilter filter );
+        virtual hsBool  ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter );
 
     protected:
 
         //// Protected Members ////
 
         void        *fImage;
-        UInt32      fWidth, fHeight, fRowBytes, fTotalSize;
-        UInt8       fNumLevels;
-        UInt32      *fLevelSizes;
+        uint32_t      fWidth, fHeight, fRowBytes, fTotalSize;
+        uint8_t       fNumLevels;
+        uint32_t      *fLevelSizes;
 
         void        *fCurrLevelPtr;
-        UInt8       fCurrLevel;
-        UInt32      fCurrLevelWidth, fCurrLevelHeight, fCurrLevelRowBytes;
+        uint8_t       fCurrLevel;
+        uint32_t      fCurrLevelWidth, fCurrLevelHeight, fCurrLevelRowBytes;
 
         void    IReadRawImage( hsStream *stream );
         void    IWriteRawImage( hsStream *stream );
@@ -309,19 +309,19 @@ class plMipmap : public plBitmap
         void    IWriteJPEGImage( hsStream *stream );
         void    IBuildLevelSizes();
 
-        void    IColorLevel( UInt8 level, const UInt8 *colorMask );
+        void    IColorLevel( uint8_t level, const uint8_t *colorMask );
 
-        hsScalar    IGetDetailLevelAlpha( UInt8 level, hsScalar dropStart, hsScalar dropStop, hsScalar min, hsScalar max );
+        float    IGetDetailLevelAlpha( uint8_t level, float dropStart, float dropStop, float min, float max );
 
-        void        ICarryZeroAlpha(UInt8 iDst);
-        void        ICarryColor(UInt8 iDst, UInt32 col);
+        void        ICarryZeroAlpha(uint8_t iDst);
+        void        ICarryColor(uint8_t iDst, uint32_t col);
 
-        hsBool      IGrabBorderColor( hsBool grabVNotU, UInt32 *color );
-        void        ISetCurrLevelUBorder( UInt32 color );
-        void        ISetCurrLevelVBorder( UInt32 color );
+        hsBool      IGrabBorderColor( hsBool grabVNotU, uint32_t *color );
+        void        ISetCurrLevelUBorder( uint32_t color );
+        void        ISetCurrLevelVBorder( uint32_t color );
 
-        virtual UInt32  Read( hsStream *s );
-        virtual UInt32  Write( hsStream *s );
+        virtual uint32_t  Read( hsStream *s );
+        virtual uint32_t  Write( hsStream *s );
 
         friend class plCubicEnvironmap;
 
@@ -337,9 +337,9 @@ class plMipmap : public plBitmap
 
                 char        fKeyName[ 256 ];
                 void        *fImage;
-                UInt32      fWidth, fHeight, fRowBytes;
-                UInt8       fNumLevels; 
-                UInt8       fCompressionType;
+                uint32_t      fWidth, fHeight, fRowBytes;
+                uint8_t       fNumLevels; 
+                uint8_t       fCompressionType;
                 union 
                 {
                     DirectXInfo         fDirectXInfo;
@@ -373,10 +373,10 @@ class plMipmap : public plBitmap
         };
 
         static plRecord *fRecords;
-        static UInt32   fNumMipmaps;
+        static uint32_t   fNumMipmaps;
 
         static void IAddToMemRecord( plMipmap *mip, plRecord::Method method );
-        static void IRemoveFromMemRecord( UInt8 *image );
+        static void IRemoveFromMemRecord( uint8_t *image );
         static void IReportLeaks();
 
 #endif

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynamicTextMsg.h"
 #include "hsResMgr.h"
 #include "hsBitVector.h"
@@ -60,31 +60,31 @@ void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, hsBool blockRGB )
     fBlockRGB = blockRGB;
 }
 
-void    plDynamicTextMsg::SetFont( const char *face, Int16 size, hsBool isBold )
+void    plDynamicTextMsg::SetFont( const char *face, int16_t size, hsBool isBold )
 {
     hsAssert( ( fCmd & ( kPosCmds | kStringCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kStringCmds | kFlagCmds );
     fCmd |= kSetFont; 
     fString = hsStringToWString( face );
     fX = size;
-    fFlags = (UInt32)isBold;
+    fFlags = (uint32_t)isBold;
 }
 
-void    plDynamicTextMsg::SetLineSpacing( Int16 spacing )
+void    plDynamicTextMsg::SetLineSpacing( int16_t spacing )
 {
     fCmd |= kSetLineSpacing;
     fLineSpacing = spacing;
 }
 
-void    plDynamicTextMsg::SetJustify( UInt8 justifyFlags )
+void    plDynamicTextMsg::SetJustify( uint8_t justifyFlags )
 {
     hsAssert( ( fCmd & ( kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kFlagCmds );
     fCmd |= kSetJustify; 
-    fFlags = (UInt32)justifyFlags;
+    fFlags = (uint32_t)justifyFlags;
 }
 
-void    plDynamicTextMsg::FillRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, hsColorRGBA &c )
+void    plDynamicTextMsg::FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c )
 {
     hsAssert( ( fCmd & ( kRectCmds | kColorCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kRectCmds | kColorCmds );
@@ -97,7 +97,7 @@ void    plDynamicTextMsg::FillRect( UInt16 left, UInt16 top, UInt16 right, UInt1
     fColor = c;
 }
 
-void    plDynamicTextMsg::FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, hsColorRGBA &c )
+void    plDynamicTextMsg::FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c )
 {
     hsAssert( ( fCmd & ( kRectCmds | kColorCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kRectCmds | kColorCmds );
@@ -110,40 +110,40 @@ void    plDynamicTextMsg::FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt
     fColor = c;
 }
 
-void    plDynamicTextMsg::DrawString( Int16 x, Int16 y, const char *text )
+void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const char *text )
 {
     wchar_t *wString = hsStringToWString(text);
     DrawString(x,y,wString);
     delete [] wString;
 }
 
-void    plDynamicTextMsg::DrawString( Int16 x, Int16 y, const wchar_t *text )
+void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const wchar_t *text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds );
     fCmd |= kDrawString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;
     fY = y;
 }
 
-void    plDynamicTextMsg::DrawClippedString( Int16 x, Int16 y, UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom, const char *text )
+void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const char *text )
 {
     wchar_t *wString = hsStringToWString(text);
     DrawClippedString(x,y,clipLeft,clipTop,clipRight,clipBottom,wString);
     delete [] wString;
 }
 
-void    plDynamicTextMsg::DrawClippedString( Int16 x, Int16 y, UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom, const wchar_t *text )
+void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const wchar_t *text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawClippedString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;
@@ -155,20 +155,20 @@ void    plDynamicTextMsg::DrawClippedString( Int16 x, Int16 y, UInt16 clipLeft, 
     fBottom = clipBottom;
 }
 
-void    plDynamicTextMsg::DrawWrappedString( Int16 x, Int16 y, UInt16 wrapWidth, UInt16 wrapHeight, const char *text )
+void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const char *text )
 {
     wchar_t *wString = hsStringToWString(text);
     DrawWrappedString(x,y,wrapWidth,wrapHeight,wString);
     delete [] wString;
 }
 
-void    plDynamicTextMsg::DrawWrappedString( Int16 x, Int16 y, UInt16 wrapWidth, UInt16 wrapHeight, const wchar_t *text )
+void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const wchar_t *text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawWrappedString; 
 
-    fString = TRACKED_NEW wchar_t[wcslen(text)+1];
+    fString = new wchar_t[wcslen(text)+1];
     wcscpy( fString, text );
     fString[wcslen(text)] = L'\0';
     fX = x;
@@ -178,7 +178,7 @@ void    plDynamicTextMsg::DrawWrappedString( Int16 x, Int16 y, UInt16 wrapWidth,
     fBottom = wrapHeight;
 }
 
-void    plDynamicTextMsg::DrawImage( Int16 x, Int16 y, plKey &image, hsBool respectAlpha )
+void    plDynamicTextMsg::DrawImage( int16_t x, int16_t y, plKey &image, hsBool respectAlpha )
 {
     hsAssert( ( fCmd & ( kPosCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kFlagCmds );
@@ -187,10 +187,10 @@ void    plDynamicTextMsg::DrawImage( Int16 x, Int16 y, plKey &image, hsBool resp
     fImageKey = image;
     fX = x;
     fY = y;
-    fFlags = (UInt32)respectAlpha;
+    fFlags = (uint32_t)respectAlpha;
 }
 
-void    plDynamicTextMsg::DrawClippedImage( Int16 x, Int16 y, plKey &image, UInt16 clipX, UInt16 clipY, UInt16 clipWidth, UInt16 clipHeight, hsBool respectAlpha )
+void    plDynamicTextMsg::DrawClippedImage( int16_t x, int16_t y, plKey &image, uint16_t clipX, uint16_t clipY, uint16_t clipWidth, uint16_t clipHeight, hsBool respectAlpha )
 {
     hsAssert( ( fCmd & ( kPosCmds | kFlagCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kFlagCmds | kRectCmds );
@@ -203,7 +203,7 @@ void    plDynamicTextMsg::DrawClippedImage( Int16 x, Int16 y, plKey &image, UInt
     fTop = clipY;
     fRight = clipWidth;
     fBottom = clipHeight;
-    fFlags = (UInt32)respectAlpha;
+    fFlags = (uint32_t)respectAlpha;
 }
 
 void    plDynamicTextMsg::Read( hsStream *s, hsResMgr *mgr ) 

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMemberUpdateMsg_INC
 
 #include "pnMessage/plMessage.h"
-#include "hsUtils.h"
+
 
 //
 // A msg sent locally when remote players have joined or left the game

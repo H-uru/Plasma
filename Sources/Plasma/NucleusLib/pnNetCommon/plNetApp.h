@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetApp_h
 #define plNetApp_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsBitVector.h"
 #include "plNetGroup.h"
@@ -75,7 +75,7 @@ class plKey;
 class plNetMessage;
 
 typedef std::vector<plNetMember*>       plNetMemberList;
-typedef std::vector<UInt32>             plNetPlayerIDList;
+typedef std::vector<uint32_t>             plNetPlayerIDList;
 
 // 
 // Common baseclasses for client and server net apps
@@ -172,18 +172,18 @@ public:
     static plNetClientApp* GetInstance() { return plNetClientApp::ConvertNoRef(fInstance); }
     static const plNetClientApp* GetConstInstance() { return plNetClientApp::ConvertNoRef(fInstance); }
     static void InheritNetMsgFlags(const plMessage* parentMsg, plMessage* childMsg, bool startCascade);
-    static void InheritNetMsgFlags(UInt32 parentMsgFlags, UInt32* childMsgFlags, bool startCascade);
+    static void InheritNetMsgFlags(uint32_t parentMsgFlags, uint32_t* childMsgFlags, bool startCascade);
     static void UnInheritNetMsgFlags(plMessage* msg);
 
     // functions that all net client apps should implement
     virtual int SendMsg(plNetMessage* msg) = 0;
-    virtual UInt32 GetPlayerID() const = 0;
+    virtual uint32_t GetPlayerID() const = 0;
     virtual const char * GetPlayerName( const plKey avKey=nil ) const = 0;
 
     // commonly used net client app functions
     virtual float GetCurrentAgeTimeOfDayPercent() const { hsAssert(false, "stub"); return 0.; }
     virtual bool ObjectInLocalAge(const plSynchedObject* obj) const { hsAssert(false, "stub"); return false; }
-    virtual UInt8 GetJoinOrder() const { hsAssert(false, "stub"); return 0; }
+    virtual uint8_t GetJoinOrder() const { hsAssert(false, "stub"); return 0; }
     virtual hsBool IsRemotePlayerKey(const plKey p, int* idx=nil) { hsAssert(false, "stub"); return false; }
     virtual plKey GetLocalPlayerKey()   const { hsAssert(false, "stub"); return nil; }
     virtual plSynchedObject* GetLocalPlayer(hsBool forceLoad=false) const { hsAssert(false, "stub"); return nil; }

@@ -78,7 +78,7 @@ public:
     float           GetStrength( void );
 
     EAXREVERBPROPERTIES *   GetListenerProps( void ) { return fListenerProps; }
-    void                    SetFromPreset( UInt32 preset );
+    void                    SetFromPreset( uint32_t preset );
 
 protected:
     plSoftVolume    *fSoftRegion;
@@ -87,7 +87,7 @@ protected:
 
     void            IRegister( void );
     void            IUnRegister( void );
-    virtual hsBool  IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+    virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 };
 
 #endif // _plEAXListenerMod_h

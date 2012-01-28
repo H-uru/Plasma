@@ -169,10 +169,10 @@ enum {
 //============================================================================
 
     struct GameMsgHeader {
-        dword       messageId;
-        dword       transId;
-        dword       recvGameId; // 0 --> GameMgr, non-zero --> GameSrv
-        dword       messageBytes;
+        uint32_t       messageId;
+        uint32_t       transId;
+        uint32_t       recvGameId; // 0 --> GameMgr, non-zero --> GameSrv
+        uint32_t       messageBytes;
     };
 
     //========================================================================
@@ -182,35 +182,35 @@ enum {
     // Cli2Srv
     struct Cli2Srv_GameMgr_CreateGame : GameMsgHeader {
         Uuid                gameTypeId;
-        dword               createOptions;
-        dword               createDataBytes;
-        byte                createData[1];  // [createDataBytes]
+        uint32_t               createOptions;
+        uint32_t               createDataBytes;
+        uint8_t                createData[1];  // [createDataBytes]
     };
     struct Cli2Srv_GameMgr_JoinGame : GameMsgHeader {
         // Field ordering here is vitally important, see pfGameMgr::JoinGame for explanation
-        dword               newGameId;
-        dword               createOptions;
+        uint32_t               newGameId;
+        uint32_t               createOptions;
         Uuid                gameTypeId;
-        dword               createDataBytes;
-        byte                createData[1];  // [createDataBytes]
+        uint32_t               createDataBytes;
+        uint8_t                createData[1];  // [createDataBytes]
     };
 
     // Srv2Cli
     struct Srv2Cli_GameMgr_GameInstance : GameMsgHeader {
         EGameJoinError      result;
-        dword               ownerId;
+        uint32_t               ownerId;
         Uuid                gameTypeId;
-        dword               newGameId;
+        uint32_t               newGameId;
     };
     struct Srv2Cli_GameMgr_InviteReceived : GameMsgHeader {
-        dword               inviterId;
+        uint32_t               inviterId;
         Uuid                gameTypeId;
-        dword               newGameId;
+        uint32_t               newGameId;
     };
     struct Srv2Cli_GameMgr_InviteRevoked : GameMsgHeader {
-        dword               inviterId;
+        uint32_t               inviterId;
         Uuid                gameTypeId;
-        dword               newGameId;
+        uint32_t               newGameId;
     };
 
 
@@ -222,26 +222,26 @@ enum {
     struct Cli2Srv_Game_LeaveGame : GameMsgHeader {
     };
     struct Cli2Srv_Game_Invite : GameMsgHeader {
-        dword       playerId;
+        uint32_t       playerId;
     };
     struct Cli2Srv_Game_Uninvite : GameMsgHeader {
-        dword       playerId;
+        uint32_t       playerId;
     };
 
     // Srv2Cli
     struct Srv2Cli_Game_PlayerJoined : GameMsgHeader {
-        dword       playerId;
+        uint32_t       playerId;
     };
     struct Srv2Cli_Game_PlayerLeft : GameMsgHeader {
-        dword       playerId;
+        uint32_t       playerId;
     };
     struct Srv2Cli_Game_InviteFailed : GameMsgHeader {
-        dword               inviteeId;
-        dword               operationId;
+        uint32_t               inviteeId;
+        uint32_t               operationId;
         EGameInviteError    error;
     };
     struct Srv2Cli_Game_OwnerChange : GameMsgHeader {
-        dword       ownerId;
+        uint32_t       ownerId;
     };
     
 

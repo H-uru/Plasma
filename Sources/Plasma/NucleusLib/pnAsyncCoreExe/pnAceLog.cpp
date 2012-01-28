@@ -76,11 +76,11 @@ enum ELogType {
 };
 
 static bool         s_breakOnErrors;
-static wchar        s_directory[MAX_PATH];
+static wchar_t        s_directory[MAX_PATH];
 static CCritSect    s_logCrit[kNumLogTypes];
 static char *       s_logBuf[kNumLogTypes];
 static unsigned     s_logPos[kNumLogTypes];
-static qword        s_logWritePos[kNumLogTypes];
+static uint64_t        s_logWritePos[kNumLogTypes];
 static TimeDesc     s_logTime[kNumLogTypes];
 static unsigned     s_logWriteMs[kNumLogTypes];
 static AsyncFile    s_logFile[kNumLogTypes];
@@ -98,7 +98,7 @@ static unsigned s_logSize[kNumLogTypes] = {
 #endif
 };
 
-static const wchar * s_logNameFmt[kNumLogTypes] = {
+static const wchar_t * s_logNameFmt[kNumLogTypes] = {
 #ifdef SERVER
     L"Dbg%02u%02u%02u.log",
     L"Inf%02u%02u%02u.log",
@@ -145,7 +145,7 @@ static void LogFileNotifyProc (
 ) {
     switch (code) {
         case kNotifyFileWrite:
-            FREE(notify->param);
+            free(notify->param);
             AtomicAdd(&s_opsPending, -1);
         break;
 
@@ -161,7 +161,7 @@ static void LogFileNotifyProc (
 //============================================================================
 static void AllocLogBuffer_CS (unsigned index) {
     ASSERT(!s_logBuf[index]);
-    s_logBuf[index] = (char *)ALLOC(s_logSize[index]);
+    s_logBuf[index] = (char *)malloc(s_logSize[index]);
     s_logPos[index] = 0;
 
     if (!s_logBuf[index])
@@ -171,7 +171,7 @@ static void AllocLogBuffer_CS (unsigned index) {
 //============================================================================
 static void FreeLogBuffer_CS (unsigned index) {
     if (s_logBuf[index]) {
-        FREE(s_logBuf[index]);
+        free(s_logBuf[index]);
         s_logBuf[index] = nil;
     }
 }
@@ -180,7 +180,7 @@ static void FreeLogBuffer_CS (unsigned index) {
 static void GetLogFilename (
     unsigned    index,
     TimeDesc    timeDesc,
-    wchar *     filename,
+    wchar_t *     filename,
     unsigned    chars
 ) {
     StrPrintf(
@@ -203,7 +203,7 @@ static bool OpenLogFile_CS (unsigned index) {
         return true;
         
     // Build filename
-    wchar filename[MAX_PATH];
+    wchar_t filename[MAX_PATH];
     GetLogFilename(
         index,
         s_logTime[index],
@@ -212,7 +212,7 @@ static bool OpenLogFile_CS (unsigned index) {
     );
     
     // Open file
-    qword       fileTime;
+    uint64_t       fileTime;
     EFileError  fileError;
     bool fileExist = PathDoesFileExist(filename);
     s_logFile[index] = AsyncFileOpen(
@@ -236,7 +236,7 @@ static bool OpenLogFile_CS (unsigned index) {
     // Seek to end of file
     AsyncFileSeek(s_logFile[index], s_logWritePos[index], kFileSeekFromBegin);
 
-    // If this is a new file, write Byte Order Mark
+    // If this is a new file, write uint8_t Order Mark
     if (!fileExist) {
         static const char s_bom[] = "\xEF\xBB\xBF";
         AsyncFileWrite(
@@ -279,7 +279,7 @@ static void WriteLogFile_CS (unsigned index, bool close) {
                 s_logBuf[index]
             );
             if (flags == kAsyncFileRwSync)
-                DEL(s_logBuf[index]);
+                delete s_logBuf[index];
             else
                 AtomicAdd(&s_opsPending, 1);
             s_logWritePos[index] += s_logPos[index];
@@ -338,7 +338,7 @@ static unsigned FlushLogsTimerCallback (void *) {
 
 //============================================================================
 void AsyncLogInitialize (
-    const wchar logDirName[],
+    const wchar_t logDirName[],
     bool        breakOnErrors
 ) {
     s_running = true;
@@ -411,9 +411,9 @@ void LogBreakOnErrors (bool breakOnErrors) {
 
 //============================================================================
 void AsyncLogWriteMsg (
-    const wchar     facility[],
+    const wchar_t     facility[],
     ELogSeverity    severity,
-    const wchar     msg[]
+    const wchar_t     msg[]
 ) {
     if (!s_running)
         return;
@@ -453,7 +453,7 @@ void AsyncLogWriteMsg (
             AllocLogBuffer_CS(index);
 
         // Add new data to the log buffer
-        MemCopy(s_logBuf[index] + s_logPos[index], buffer, chars);
+        memcpy(s_logBuf[index] + s_logPos[index], buffer, chars);
         s_logPos[index] += chars;
 
         // Write, flush and close file immediately if this is a fatal error        
@@ -472,7 +472,7 @@ void AsyncLogWriteMsg (
 }
 
 //============================================================================
-void AsyncLogGetDirectory (wchar * dest, unsigned destChars) {
+void AsyncLogGetDirectory (wchar_t * dest, unsigned destChars) {
     ASSERT(dest);
     StrCopy(dest, s_directory, destChars);
 }

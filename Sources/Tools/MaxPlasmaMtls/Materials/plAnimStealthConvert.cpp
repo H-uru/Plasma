@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
 #include "../resource.h"
@@ -144,7 +144,7 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
 }
 
 
-hsScalar    plAnimStealthNode::GetSegStart( void ) const
+float    plAnimStealthNode::GetSegStart( void ) const
 {
     SegmentSpec *spec = IGetSegmentSpec();
     if( spec != nil )
@@ -153,7 +153,7 @@ hsScalar    plAnimStealthNode::GetSegStart( void ) const
     return 0.f;
 }
 
-hsScalar    plAnimStealthNode::GetSegEnd( void ) const
+float    plAnimStealthNode::GetSegEnd( void ) const
 {
     SegmentSpec *spec = IGetSegmentSpec();
     if( spec != nil )
@@ -162,7 +162,7 @@ hsScalar    plAnimStealthNode::GetSegEnd( void ) const
     return 0.f;
 }
 
-void    plAnimStealthNode::GetLoopPoints( hsScalar &start, hsScalar &end ) const
+void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
 {
     start = GetSegStart();
     end = GetSegEnd();
@@ -172,7 +172,7 @@ void    plAnimStealthNode::GetLoopPoints( hsScalar &start, hsScalar &end ) const
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
-void    plAnimStealthNode::GetAllStopPoints( hsTArray<hsScalar> &out )
+void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
 {
     if( fCachedSegMap == nil )
         return;
@@ -191,7 +191,7 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<hsScalar> &out )
 //  Handles converting all the settings we have that are applicable for an
 //  animTimeConvert and stuffing it into said ATC.
 
-void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, hsScalar maxLength )
+void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength )
 {
     const char *segName = GetSegmentName();
     bool isEntire = ( segName == nil || strcmp( segName, ENTIRE_ANIMATION_NAME ) == 0 ) ? true : false;
@@ -214,7 +214,7 @@ void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, hsSca
         convert.SetLoopPoints( 0, maxLength );
     else
     {
-        hsScalar loopStart, loopEnd;
+        float loopStart, loopEnd;
         GetLoopPoints( loopStart, loopEnd );
         convert.SetLoopPoints( loopStart, loopEnd );
     }   

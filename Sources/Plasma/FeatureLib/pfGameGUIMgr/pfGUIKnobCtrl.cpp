@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIKnobCtrl.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
@@ -90,7 +90,7 @@ pfGUIKnobCtrl::~pfGUIKnobCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIKnobCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIKnobCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -109,7 +109,7 @@ void    pfGUIKnobCtrl::Read( hsStream *s, hsResMgr *mgr )
     pfGUIValueCtrl::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
     fAnimName = s->ReadSafeString();
@@ -124,7 +124,7 @@ void    pfGUIKnobCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    UInt32 i, count = fAnimationKeys.GetCount();
+    uint32_t i, count = fAnimationKeys.GetCount();
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
@@ -145,7 +145,7 @@ void    pfGUIKnobCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fDragStart = mousePt;
     fDragValue = fValue;
@@ -202,15 +202,15 @@ void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
         fDragRangeMin = -1;
 }
 
-void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fDragging = false;
     HandleMouseDrag( mousePt, modifiers );
 }
 
-void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    hsScalar oldValue = fValue, newValue = fDragValue;
+    float oldValue = fValue, newValue = fDragValue;
 
     if( fDragRangeMin != -1 )
     {
@@ -242,7 +242,7 @@ void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
     }
     else
     {
-        hsScalar diff;
+        float diff;
         if( HasFlag( kLeftRightOrientation ) )
             diff = ( mousePt.fX - fDragStart.fX ) * 20.f;
         else
@@ -268,7 +268,7 @@ void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else
@@ -284,7 +284,7 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
     if( fAnimTimesCalced )
         return true;
 
-    hsScalar tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30, tEnd = -1e30;
     bool     foundOne = false;
 
     for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
@@ -295,8 +295,8 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
-                hsScalar begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
-                hsScalar end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
+                float begin = mod->GetAnimInstance( j )->GetTimeConvert()->GetBegin();
+                float end = mod->GetAnimInstance( j )->GetTimeConvert()->GetEnd();
                 if( begin < tBegin )
                     tBegin = begin;
                 if( end > tEnd )
@@ -308,8 +308,8 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
         plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
         if( layer != nil )
         {
-            hsScalar begin = layer->GetTimeConvert().GetBegin();
-            hsScalar end = layer->GetTimeConvert().GetEnd();
+            float begin = layer->GetTimeConvert().GetBegin();
+            float end = layer->GetTimeConvert().GetEnd();
             if( begin < tBegin )
                 tBegin = begin;
             if( end > tEnd )
@@ -331,7 +331,7 @@ hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
 
 //// SetCurrValue ////////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
+void    pfGUIKnobCtrl::SetCurrValue( float v )
 {
     int old = (int)fValue;
     pfGUIValueCtrl::SetCurrValue( v );
@@ -343,8 +343,8 @@ void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
     {
         ICalcAnimTimes();
 
-        hsScalar tLength = fAnimEnd - fAnimBegin;
-        hsScalar newTime = fMin;
+        float tLength = fAnimEnd - fAnimBegin;
+        float newTime = fMin;
 
         if (fMin != fMax) // Protect against div by zero
         {
@@ -353,7 +353,7 @@ void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
             else
                 newTime = ( ( fValue - fMin ) / ( fMax - fMin ) ) * tLength + fAnimBegin;
         }
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kGoToTime ); 
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
@@ -364,7 +364,7 @@ void    pfGUIKnobCtrl::SetCurrValue( hsScalar v )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
 {
     if( HasFlag( kLeftRightOrientation ) )
     {

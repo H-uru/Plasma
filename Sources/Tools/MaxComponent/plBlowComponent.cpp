@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/plMaxNode.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plBlowComponent.h"
 
@@ -128,7 +128,7 @@ hsBool plBlowComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 hsBool plBlowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plBlower* pMod = TRACKED_NEW plBlower;
+    plBlower* pMod = new plBlower;
 
     float strength = fCompPB->GetFloat(kStrength) * 0.01f;
     float speed = fCompPB->GetFloat(kSpeed) * 0.01f;

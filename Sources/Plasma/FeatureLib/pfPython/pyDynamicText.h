@@ -72,15 +72,15 @@ private:
 
     // clipping
     hsBool          fClip;
-    UInt16          fClipLeft;
-    UInt16          fClipTop;
-    UInt16          fClipRight;
-    UInt16          fClipBottom;
+    uint16_t          fClipLeft;
+    uint16_t          fClipTop;
+    uint16_t          fClipRight;
+    uint16_t          fClipBottom;
 
     // wrapping
     hsBool          fWrap;
-    UInt16          fWrapWidth;
-    UInt16          fWrapHeight;
+    uint16_t          fWrapWidth;
+    uint16_t          fWrapHeight;
 
     virtual plDynamicTextMsg* ICreateDTMsg();
     virtual void IInit();
@@ -115,27 +115,27 @@ public:
     virtual void Flush( void );
     virtual void SetTextColor( pyColor& color );
     virtual void SetTextColor2( pyColor& color, bool blockRGB );
-    virtual void SetFont( const char *facename, Int16 size );
-    virtual void FillRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, pyColor& color );
-    virtual void FrameRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, pyColor& color );
-    virtual void SetClipping( UInt16 clipLeft, UInt16 clipTop, UInt16 clipRight, UInt16 clipBottom);
+    virtual void SetFont( const char *facename, int16_t size );
+    virtual void FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
+    virtual void FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
+    virtual void SetClipping( uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom);
     virtual void UnsetClipping();
-    virtual void SetWrapping( UInt16 wrapWidth, UInt16 wrapHeight );
+    virtual void SetWrapping( uint16_t wrapWidth, uint16_t wrapHeight );
     virtual void UnsetWrapping();
-    virtual void DrawText( Int16 x, Int16 y, const char *text );
-    virtual void DrawTextW( Int16 x, Int16 y, std::wstring text );
-    virtual void DrawImage( UInt16 x, UInt16 y, pyImage& image, hsBool respectAlpha );
-    virtual void DrawImageClipped( UInt16 x, UInt16 y, pyImage& image, UInt16 cx, UInt16 cy, UInt16 cw, UInt16 ch,
+    virtual void DrawText( int16_t x, int16_t y, const char *text );
+    virtual void DrawTextW( int16_t x, int16_t y, std::wstring text );
+    virtual void DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool respectAlpha );
+    virtual void DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy, uint16_t cw, uint16_t ch,
                                         hsBool respectAlpha );
     virtual void PurgeImage( void );
 
     // Actually return the visible width and height, since that's what you want to be drawing to
-    virtual UInt16  GetWidth( void );
-    virtual UInt16  GetHeight( void );
+    virtual uint16_t  GetWidth( void );
+    virtual uint16_t  GetHeight( void );
     virtual void CalcTextExtents( std::wstring text, unsigned &width, unsigned &height );
     
-    virtual void SetJustify(UInt8 justify);
-    virtual void SetLineSpacing(Int16 spacing);
+    virtual void SetJustify(uint8_t justify);
+    virtual void SetLineSpacing(int16_t spacing);
 
     virtual plKey GetImage();
 };

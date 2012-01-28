@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WAVEFILE_READ   1
 #define WAVEFILE_WRITE  2
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 #include <mmsystem.h>
 #include "plAudioFileReader.h"
@@ -96,13 +96,13 @@ public:
     virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header );
     virtual plWAVHeader &GetHeader( void );
     virtual void    Close( void );
-    virtual UInt32  GetDataSize( void );
+    virtual uint32_t  GetDataSize( void );
     virtual float   GetLengthInSecs( void );
 
-    virtual hsBool  SetPosition( UInt32 numBytes );
-    virtual hsBool  Read( UInt32 numBytes, void *buffer );
-    virtual UInt32  NumBytesLeft( void );
-    virtual UInt32  Write( UInt32 bytes, void *buffer );
+    virtual hsBool  SetPosition( uint32_t numBytes );
+    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual uint32_t  NumBytesLeft( void );
+    virtual uint32_t  Write( uint32_t bytes, void *buffer );
 
     virtual hsBool  IsValid( void );
     WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure

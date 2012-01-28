@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInterMeshSmooth.h"
 
 #include "plDrawableSpans.h"
@@ -48,15 +48,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class EdgeBin
 {
 public:
-    UInt16  fVtx;
-    UInt16  fCount;
+    uint16_t  fVtx;
+    uint16_t  fCount;
 
     EdgeBin() : fVtx(0), fCount(0) {}
 };
 
-void plInterMeshSmooth::FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts)
+void plInterMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
-    hsTArray<EdgeBin>*  bins = TRACKED_NEW hsTArray<EdgeBin>[maxVtxIdx+1];
+    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -134,7 +134,7 @@ void plInterMeshSmooth::FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxLis
     delete [] bins;
 }
 
-void plInterMeshSmooth::FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<UInt16>* edgeVerts)
+void plInterMeshSmooth::FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<uint16_t>* edgeVerts)
 {
     int i;
     for( i = 0; i < sets.GetCount(); i++ )
@@ -143,9 +143,9 @@ void plInterMeshSmooth::FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<UInt16>
         if( !(span->fTypeMask & plSpan::kIcicleSpan) )
             continue;
 
-        UInt32 nTris = sets[i].fDrawable->CvtGetNumTris(sets[i].fSpanIdx);
-        UInt16* idxList = sets[i].fDrawable->CvtGetIndexList(sets[i].fSpanIdx);
-        UInt32 maxVertIdx = sets[i].fDrawable->CvtGetNumVerts(sets[i].fSpanIdx)-1;
+        uint32_t nTris = sets[i].fDrawable->CvtGetNumTris(sets[i].fSpanIdx);
+        uint16_t* idxList = sets[i].fDrawable->CvtGetIndexList(sets[i].fSpanIdx);
+        uint32_t maxVertIdx = sets[i].fDrawable->CvtGetNumVerts(sets[i].fSpanIdx)-1;
 
         FindEdges(maxVertIdx, nTris, idxList, edgeVerts[i]);
     }
@@ -153,8 +153,8 @@ void plInterMeshSmooth::FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<UInt16>
 
 void plInterMeshSmooth::SmoothNormals(hsTArray<plSpanHandle>& sets)
 {
-    hsTArray<UInt16>* shareVtx = TRACKED_NEW hsTArray<UInt16>[sets.GetCount()];
-    hsTArray<UInt16>* edgeVerts = TRACKED_NEW hsTArray<UInt16>[sets.GetCount()];
+    hsTArray<uint16_t>* shareVtx = new hsTArray<uint16_t>[sets.GetCount()];
+    hsTArray<uint16_t>* edgeVerts = new hsTArray<uint16_t>[sets.GetCount()];
     FindEdges(sets, edgeVerts);
 
     int i;
@@ -202,7 +202,7 @@ void plInterMeshSmooth::SmoothNormals(hsTArray<plSpanHandle>& sets)
     delete [] edgeVerts;
 }
 
-void plInterMeshSmooth::FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, hsTArray<UInt16>& edgeVerts, hsTArray<UInt16>& shareVtx, hsVector3& normAccum)
+void plInterMeshSmooth::FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, hsTArray<uint16_t>& edgeVerts, hsTArray<uint16_t>& shareVtx, hsVector3& normAccum)
 {
     int i;
     for( i = 0; i < edgeVerts.GetCount(); i++ )
@@ -220,29 +220,29 @@ void plInterMeshSmooth::FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, 
     }
 }
 
-void plInterMeshSmooth::SetNormals(plSpanHandle& set, hsTArray<UInt16>& shareVtx, hsVector3& norm)
+void plInterMeshSmooth::SetNormals(plSpanHandle& set, hsTArray<uint16_t>& shareVtx, hsVector3& norm)
 {
     int i;
     for( i = 0; i < shareVtx.GetCount(); i++ )
         GetNormal(set, shareVtx[i]) = norm;
 }
 
-hsPoint3& plInterMeshSmooth::GetPosition(plSpanHandle& set, UInt16 idx)
+hsPoint3& plInterMeshSmooth::GetPosition(plSpanHandle& set, uint16_t idx)
 {
     return set.fDrawable->CvtGetPosition(set.fSpanIdx, idx);
 }
 
-hsVector3& plInterMeshSmooth::GetNormal(plSpanHandle& set, UInt16 idx)
+hsVector3& plInterMeshSmooth::GetNormal(plSpanHandle& set, uint16_t idx)
 {
     return set.fDrawable->CvtGetNormal(set.fSpanIdx, idx);
 }
 
-void plInterMeshSmooth::SetAngle(hsScalar degs)
+void plInterMeshSmooth::SetAngle(float degs)
 {
-    fMinNormDot = hsCosine(hsScalarDegToRad(degs));
+    fMinNormDot = cos(hsDegreesToRadians(degs));
 }
 
-hsScalar plInterMeshSmooth::GetAngle() const
+float plInterMeshSmooth::GetAngle() const
 {
-    return hsScalarRadToDeg(hsACosine(fMinNormDot));
+    return hsRadiansToDegrees(acos(fMinNormDot));
 }

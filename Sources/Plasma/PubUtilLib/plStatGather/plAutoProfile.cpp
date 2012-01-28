@@ -87,7 +87,7 @@ protected:
     bool fLinkedToSingleAge;
     bool fJustLinkToAges;
 
-    UInt64 fLinkTime;
+    uint64_t fLinkTime;
 
     std::string fStatusMessage;
 
@@ -162,12 +162,12 @@ void plAutoProfileImp::IInit()
     plgDispatch::Dispatch()->RegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 
-    plConsoleMsg* consoleMsg = TRACKED_NEW plConsoleMsg(plConsoleMsg::kExecuteLine, "Camera.AlwaysCut true");
+    plConsoleMsg* consoleMsg = new plConsoleMsg(plConsoleMsg::kExecuteLine, "Camera.AlwaysCut true");
     consoleMsg->Send();
 }
 
 #ifdef HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
+
 #include <shellapi.h>
 #endif
 
@@ -176,8 +176,8 @@ void plAutoProfileImp::IShutdown()
     // KLUDGE - Copy the load timing log, in case we used it
     #define kTimingLog L"readtimings.0.log"
     #define kAgeTimingLog L"agetimings.0.log"
-    wchar destPath[MAX_PATH];
-    wchar sourcePath[MAX_PATH];
+    wchar_t destPath[MAX_PATH];
+    wchar_t sourcePath[MAX_PATH];
 
     PathAddFilename(destPath, plProfileManagerFull::Instance().GetProfilePath(), kTimingLog, arrsize(destPath));
     PathGetLogDirectory(sourcePath, arrsize(sourcePath));
@@ -201,7 +201,7 @@ void plAutoProfileImp::IShutdown()
     // Pump the queue so we get fully unregistered
     plgDispatch::Dispatch()->MsgQueueProcess();
 
-    plClientMsg* clientMsg = TRACKED_NEW plClientMsg(plClientMsg::kQuit);
+    plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
     clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
 }
 
@@ -326,7 +326,7 @@ bool plAutoProfileImp::INextSpawnPoint()
 
     fNextSpawnPoint++;
 
-    plTimerCallbackMsg* timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey());
+    plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());
     plgTimerCallbackMgr::NewTimer(30, timerMsg);
 
     return true;
@@ -372,7 +372,7 @@ hsBool plAutoProfileImp::MsgReceive(plMessage* msg)
         fStatusMessage = "Age loaded.  Preparing to profile.";
 
         // Age is loaded, start profiling in 5 seconds (to make sure the avatar is linked in all the way)
-        plTimerCallbackMsg* timerMsg = TRACKED_NEW plTimerCallbackMsg(GetKey());
+        plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());
         plgTimerCallbackMgr::NewTimer(5, timerMsg);
         return true;
     }

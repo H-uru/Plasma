@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsDXTDirectXCodec_inc
 
 
-#include "hsWindows.h"
+
 #include "hsCodec.h"
 
 class plMipmap;
@@ -76,10 +76,10 @@ public:
     static void Init()  { fRegistered = Register(); }
 
     plMipmap    *CreateCompressedMipmap(plMipmap *uncompressed);
-    plMipmap    *CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth = 0);
+    plMipmap    *CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth = 0);
 
     // Colorize a compressed mipmap
-    hsBool  ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask );
+    hsBool  ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
 #if HS_BUILD_FOR_WIN32
     void        Initialize( IDirect3DDevice8 *directDraw );
@@ -88,11 +88,11 @@ public:
 
 #if HS_BUILD_FOR_WIN32
 private:
-    UInt32 ICompressedFormat(const plMipmap *uncompressed);
-    IDirectDrawSurface7     *IMakeDirect3DSurface( UInt32 formatType, UInt32 mipMapLevels, UInt32 width, UInt32 height );
-    void                    IFillSurface( hsRGBAColor32* src, UInt32 mmlvs, IDirectDrawSurface7 *pddsDest );
-    void                    IFillFromSurface( hsRGBAColor32* dest, UInt32 mmlvs, IDirectDrawSurface7 *pddsSrc );
-    void                    ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, Int32 mipMapLevels );
+    uint32_t ICompressedFormat(const plMipmap *uncompressed);
+    IDirectDrawSurface7     *IMakeDirect3DSurface( uint32_t formatType, uint32_t mipMapLevels, uint32_t width, uint32_t height );
+    void                    IFillSurface( hsRGBAColor32* src, uint32_t mmlvs, IDirectDrawSurface7 *pddsDest );
+    void                    IFillFromSurface( hsRGBAColor32* dest, uint32_t mmlvs, IDirectDrawSurface7 *pddsSrc );
+    void                    ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, int32_t mipMapLevels );
     void                    CheckErrorCode(HRESULT res);
     hsBool                  IInitialize();
 #endif
@@ -104,7 +104,7 @@ private:
     void*           fDirectDraw;
     void*           fDDLibraryInstance;
 #endif
-    UInt32          fFlags;
+    uint32_t          fFlags;
     
     enum
     {

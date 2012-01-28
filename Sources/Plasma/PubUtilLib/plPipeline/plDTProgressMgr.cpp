@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDTProgressMgr.h"
 #include "plPipeline.h"
 #include "plDebugText.h"
@@ -124,7 +124,7 @@ void    plDTProgressMgr::Deactivate()
 
 void    plDTProgressMgr::Draw( plPipeline *p )
 {
-    UInt16      scrnWidth, scrnHeight, width, height, x, y;
+    uint16_t      scrnWidth, scrnHeight, width, height, x, y;
     plDebugText &text = plDebugText::Instance();
 
     plOperationProgress *prog;
@@ -133,8 +133,8 @@ void    plDTProgressMgr::Draw( plPipeline *p )
     if( fOperations == nil )
         return;
 
-    scrnWidth = (UInt16)p->Width();
-    scrnHeight = (UInt16)p->Height();
+    scrnWidth = (uint16_t)p->Width();
+    scrnHeight = (uint16_t)p->Height();
 
     width = scrnWidth - 64;
     height = 16;
@@ -177,12 +177,12 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 //// IDrawTheStupidThing /////////////////////////////////////////////////////
 
 void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-                                            UInt16 x, UInt16 y, UInt16 width, UInt16 height )
+                                            uint16_t x, uint16_t y, uint16_t width, uint16_t height )
 {
     plDebugText &text = plDebugText::Instance();
 
     // Lets just set the color to blue
-    UInt32 color = 0xff302b3a;
+    uint32_t color = 0xff302b3a;
 
     if( prog->GetMax() > 0.f )
     {
@@ -193,12 +193,12 @@ void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress
         width -= 4;
         height -= 4;
 
-        UInt16 drawWidth    = width;
-        Int16 drawX         = x;
-        UInt16 rightX       = drawX + drawWidth;
+        uint16_t drawWidth    = width;
+        int16_t drawX         = x;
+        uint16_t rightX       = drawX + drawWidth;
 
         if (prog->GetProgress() <= prog->GetMax())
-            drawWidth = (UInt16)( (hsScalar)width * prog->GetProgress() / prog->GetMax() );
+            drawWidth = (uint16_t)( (float)width * prog->GetProgress() / prog->GetMax() );
 
         rightX = drawX + drawWidth;
 
@@ -223,7 +223,7 @@ void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress
         const char* unitTerm = (timeRemain == 1) ? "SECOND" : "SECONDS";
         sprintf(remainStr, "%s%d %s REMAINING", remainStr, timeRemain, unitTerm);
 
-        text.DrawString(x, y + height + 2, remainStr, (UInt32)0xff635e6d );
+        text.DrawString(x, y + height + 2, remainStr, (uint32_t)0xff635e6d );
 
         x -= 2;
         y -= 2;
@@ -241,12 +241,12 @@ void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress
     {
         if( prog->GetTitle()[ 0 ] != 0 )
         {
-            text.DrawString( x, y, prog->GetTitle(), (UInt32)0xccb0b0b0 );
-            x += (UInt16)text.CalcStringWidth( prog->GetTitle() );
+            text.DrawString( x, y, prog->GetTitle(), (uint32_t)0xccb0b0b0 );
+            x += (uint16_t)text.CalcStringWidth( prog->GetTitle() );
         }
 
         if( prog->GetStatusText()[ 0 ] != 0 )
-            text.DrawString( x, y, prog->GetStatusText(), (UInt32)0xccb0b0b0 );
+            text.DrawString( x, y, prog->GetStatusText(), (uint32_t)0xccb0b0b0 );
     }
 }
 

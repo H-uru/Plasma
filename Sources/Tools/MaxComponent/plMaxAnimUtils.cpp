@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Max.h"
 #include "notetrck.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
 #include "plMaxAnimUtils.h"
@@ -304,33 +304,33 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
                 }
                 else
                 {
-                    char *nameCopy = TRACKED_NEW char[strlen(segName)+1];
+                    char *nameCopy = new char[strlen(segName)+1];
                     strcpy(nameCopy, segName);
 
                     switch (type)
                     {
                     case kNoteStartAnim:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(time, -1, nameCopy, SegmentSpec::kAnim);
+                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kAnim);
                         break;
 
                     case kNoteStartLoop:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(time, -1, nameCopy, SegmentSpec::kLoop);
+                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kLoop);
                         break;
 
                     case kNoteEndLoop:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(-1, time, nameCopy, SegmentSpec::kLoop);
+                        (*segMap)[nameCopy] = new SegmentSpec(-1, time, nameCopy, SegmentSpec::kLoop);
                         break;
 
                     case kNoteMarker:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(time, -1, nameCopy, SegmentSpec::kMarker);
+                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kMarker);
                         break;
 
                     case kNoteStopPoint:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(time, -1, nameCopy, SegmentSpec::kStopPoint);
+                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kStopPoint);
                         break;
 
                     case kNoteSuppress:
-                        (*segMap)[nameCopy] = TRACKED_NEW SegmentSpec(-1, -1, nameCopy, SegmentSpec::kSuppress);
+                        (*segMap)[nameCopy] = new SegmentSpec(-1, -1, nameCopy, SegmentSpec::kSuppress);
                         break;
                         
                     default:
@@ -351,7 +351,7 @@ SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
     if (!anim->HasNoteTracks())
         return nil;
     
-    SegmentMap *segMap = TRACKED_NEW SegmentMap();
+    SegmentMap *segMap = new SegmentMap();
 
     int numTracks = anim->NumNoteTracks();
 

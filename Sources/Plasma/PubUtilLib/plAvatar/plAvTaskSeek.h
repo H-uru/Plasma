@@ -62,7 +62,7 @@ public:
         kSeekRunNormal,
         kSeekAbort,
     };
-    UInt8 fState;
+    uint8_t fState;
 
     enum 
     {
@@ -82,15 +82,15 @@ public:
 
     /** Initiate the task; make sure we're running on the right type of brain, save off
         user input state, and turn off any other running behaviors.*/
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Progress towards the goal using a combination of walking and cheating-via-sliding.
         Returns true if we're still working on it; false if we're done. */
     
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Restore user input state, etc. */
-    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, hsScalar elapsed);
+    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     
     /** clear our target, and when we try to eval, we'll just finish */
     virtual void LeaveAge(plArmatureMod *avatar);
@@ -121,19 +121,19 @@ protected:
     /** Progress towards the goal. We get as close as we can by just pushing the same
         buttons as the user (forward, turn, etc.) when we're really close we slide
         around a bit so we can wind up on the *exact* initial orientation. */
-    hsBool IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain, double time, hsScalar elapsed);
+    hsBool IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed);
 
     /** Okay, we're in the pure cheating mode now. Try to wrap it up;
         returns true when it's finally there. */
-    bool ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, double time, hsScalar elapsed);
+    bool ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed);
 
     /** Final cheating for position */
     hsBool IFinishPosition(hsPoint3 &newPosition, plArmatureMod *avatar, plAvBrainHuman *brain,
-                           double time, hsScalar elapsed);
+                           double time, float elapsed);
 
     /** Final cheating for rotation */
     hsBool IFinishRotation(hsQuat &newRotation, plArmatureMod *avatar, plAvBrainHuman *brain,
-                           double time, hsScalar elapsed);
+                           double time, float elapsed);
 
     /** If our target's moving, cache its new position and orientation for later math */
     hsBool IUpdateObjective(plArmatureMod *avatar);
@@ -170,20 +170,20 @@ protected:
     hsBool fStillRotating;                  // haven't yet reached the final orientation
     
     hsVector3 fGoalVec;                     // vec from us to the goal
-    hsScalar fDistance;                     // how far to the goal?
-    hsScalar fAngForward;                   // 1.0 = goal is forward; -1.0 = goal is backward
-    hsScalar fAngRight;                     // 1.0 = goal is directly right; -1.0 = goal is directly left
-    hsScalar fDistForward;                  // distance straight forward to goal plane
-    hsScalar fDistRight;                    // distance straight right to goal plane
+    float fDistance;                     // how far to the goal?
+    float fAngForward;                   // 1.0 = goal is forward; -1.0 = goal is backward
+    float fAngRight;                     // 1.0 = goal is directly right; -1.0 = goal is directly left
+    float fDistForward;                  // distance straight forward to goal plane
+    float fDistRight;                    // distance straight right to goal plane
 
-    hsScalar fShuffleRange;
-    hsScalar fMaxSidleAngle;        // in right . goal
-    hsScalar fMaxSidleRange;        // in feet
-    hsScalar fMinFwdAngle;          // in fwd . goal
-    hsScalar fMaxBackAngle;         // in fwd . goal
+    float fShuffleRange;
+    float fMaxSidleAngle;        // in right . goal
+    float fMaxSidleRange;        // in feet
+    float fMinFwdAngle;          // in fwd . goal
+    float fMaxBackAngle;         // in fwd . goal
     
     double   fStartTime;
-    UInt8    fFlags;
+    uint8_t    fFlags;
     plKey    fNotifyFinishedKey;    // Send a message to this key when we're done.
 };
 

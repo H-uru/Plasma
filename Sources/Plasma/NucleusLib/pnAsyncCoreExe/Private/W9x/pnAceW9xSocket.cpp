@@ -194,7 +194,7 @@ private:
         void *       param;
         union {
             struct {
-                byte connType;
+                uint8_t connType;
             } connect;
             struct {
                 const void * data;  // pointer to application's data
@@ -206,7 +206,7 @@ private:
     // These variables are protected by the critical section
     CCritSect               m_critSect;
     LISTDECL(Command, link) m_commandList;
-    ARRAY(byte)             m_sendQueue;
+    ARRAY(uint8_t)             m_sendQueue;
 
     // These variables are never modified outside the constructor and
     // destructor
@@ -218,7 +218,7 @@ private:
     // These variables are only ever touched during a callback from the
     // window procedure, which is single threaded
     unsigned                m_dispatched;
-    byte                    m_readBuffer[1460 * 2];
+    uint8_t                    m_readBuffer[1460 * 2];
     unsigned                m_readBytes;
     void *                  m_userState;
 
@@ -246,7 +246,7 @@ public:
     void ProcessQueue ();
     void QueueConnect (
         void * param,
-        byte   connType
+        uint8_t   connType
     );
     void QueueWrite (
         void *       param,
@@ -430,8 +430,8 @@ void CSocket::OnConnect () {
 
     // Get addresses for the connection notification
     AsyncNotifySocketConnect notify;
-    ZERO(notify.localAddr);
-    ZERO(notify.remoteAddr);
+    memset(&notify.localAddr, 0, sizeof(notify.localAddr));
+    memset(&notify.remoteAddr, 0, sizeof(notify.remoteAddr));
     int nameLen = sizeof(notify.localAddr);
     if (getsockname(m_sock, (sockaddr *)&notify.localAddr, &nameLen))
         if (GetLastError() == WSAENOTCONN)
@@ -457,13 +457,13 @@ void CSocket::OnConnect () {
     );
 
     // Delete the connect command
-    DEL(command);
+    delete command;
 
     // Handle failure to connect
     if (error) {
 
         // Destroy the socket
-        DEL(this);
+        delete this;
 
     }
 
@@ -528,7 +528,7 @@ void CSocket::OnReadReady () {
         if (notify.bytesProcessed >= m_readBytes)
             m_readBytes = 0;
         else if (notify.bytesProcessed) {
-            MemMove(
+            memmove(
                 &m_readBuffer[0],
                 &m_readBuffer[notify.bytesProcessed],
                 m_readBytes - notify.bytesProcessed
@@ -578,12 +578,12 @@ void CSocket::OnWriteReady () {
         if ((unsigned)result == m_sendQueue.Bytes())
             m_sendQueue.Clear();
         else if (result) {
-            MemMove(
+            memmove(
                 &m_sendQueue[0],
                 &m_sendQueue[result],
                 m_sendQueue.Bytes() - result
             );
-            COMPILER_ASSERT(sizeof(m_sendQueue[0]) == sizeof(byte));
+            COMPILER_ASSERT(sizeof(m_sendQueue[0]) == sizeof(uint8_t));
             m_sendQueue.SetCount(m_sendQueue.Count() - result);
         }
     
@@ -625,7 +625,7 @@ void CSocket::ProcessQueue () {
                 AsyncNotifySocketWrite notify;
                 notify.param          = command->param;
                 notify.asyncId        = 0;
-                notify.buffer         = (byte *)command->write.data;
+                notify.buffer         = (uint8_t *)command->write.data;
                 notify.bytes          = command->write.bytes;
                 notify.bytesProcessed = 0;
                 bool notifyResult = m_notifyProc(
@@ -643,7 +643,7 @@ void CSocket::ProcessQueue () {
         }
 
         // Delete the command
-        DEL(command);
+        delete command;
 
     }
     
@@ -652,11 +652,11 @@ void CSocket::ProcessQueue () {
 //===========================================================================
 void CSocket::QueueConnect (
     void * param,
-    byte   connType
+    uint8_t   connType
 ) {
     ASSERT(!IsConnected() && !IsDisconnected());
 
-    Command * command = NEW(Command);
+    Command * command = new Command;
     command->code             = command->CONNECT;
     command->param            = param;
     command->connect.connType = connType;
@@ -671,7 +671,7 @@ void CSocket::QueueWrite (
 ) {
     ASSERT(!IsDisconnected());
 
-    Command * command = NEW(Command);
+    Command * command = new Command;
     command->code        = command->CONNECT;
     command->param       = param;
     command->write.data  = data;
@@ -710,7 +710,7 @@ bool CSocket::Send (  // returns false if disconnected
     // If we were unable to send the entire message, queue the unsent portion
     if ((unsigned)result < bytes) {
         m_sendQueue.Add(
-            (const byte *)data + result,
+            (const uint8_t *)data + result,
             bytes - result
         );
     }
@@ -913,7 +913,7 @@ static unsigned THREADCALL W9xSocketThreadProc (AsyncThread *) {
     // Register the window class
     HINSTANCE instance = (HINSTANCE)GetModuleHandle(nil);
     WNDCLASS  wndClass;
-    ZERO(wndClass);
+    memset(&wndClass, 0, sizeof(wndClass));
     wndClass.lpfnWndProc   = WndProc;
     wndClass.hInstance     = instance;
     wndClass.lpszClassName = CLASS_NAME;
@@ -1027,7 +1027,7 @@ void W9xSocketConnect (
     UINT message = (s_message++ & 0x3fff) | WM_APP;  // range 0x8000 - 0xbfff
 
     // Create a socket object
-    CSocket * object = NEW(CSocket)(
+    CSocket * object = new CSocket(
         sequence,
         message,
         sock,
@@ -1037,7 +1037,7 @@ void W9xSocketConnect (
     // Queue a connect notification for the socket
     object->QueueConnect(
         param,
-        sendBytes ? ((const byte *)sendData)[0] : (byte)0
+        sendBytes ? ((const uint8_t *)sendData)[0] : (uint8_t)0
     );
 
     // Queue sending data
@@ -1105,7 +1105,7 @@ void W9xSocketDelete (
 
     // Delete the object
     s_critSect.Enter();
-    DEL(object);
+    delete object;
     s_critSect.Leave();
 
 }

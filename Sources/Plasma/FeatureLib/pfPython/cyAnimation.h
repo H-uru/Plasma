@@ -109,20 +109,20 @@ public:
 
     //  Play an animation only from specific time start to end
     //
-    virtual void PlayRange(hsScalar start, hsScalar end);
+    virtual void PlayRange(float start, float end);
 
     //  Play (continue) an animation until the specified time is reached
     //
-    virtual void PlayToTime(hsScalar time);
+    virtual void PlayToTime(float time);
 
     //  Play (continue) an animation until the specified point is reached
     //
-    virtual void PlayToPercentage(hsScalar zeroToOne);  
+    virtual void PlayToPercentage(float zeroToOne);  
 
     //  Jump the animation to the specified time
     //  Doesn't start or stop playing of animation
     //
-    virtual void SkipToTime(hsScalar time);
+    virtual void SkipToTime(float time);
 
     //  Set whether the animation is to be looped or not
     //
@@ -135,13 +135,13 @@ public:
 
     // Sets the start and end of the looping points in the animation
     //
-    virtual void SetLoopStart(hsScalar start);
-    virtual void SetLoopEnd(hsScalar end);
+    virtual void SetLoopStart(float start);
+    virtual void SetLoopEnd(float end);
     
     //  Sets the speed of the animation
     //  Doesn't start or stop playing animation
     //
-    virtual void Speed(hsScalar speed);
+    virtual void Speed(float speed);
 
 
     //  Jump the animation to the specified time

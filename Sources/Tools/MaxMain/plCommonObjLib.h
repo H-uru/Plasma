@@ -88,7 +88,7 @@ class plCommonObjLib
 
         void            AddObject( hsKeyedObject *object );
         hsBool          RemoveObjectAndKey( plKey &key );
-        hsKeyedObject   *FindObject( const char *name, UInt16 classType = (UInt16)-1 );
+        hsKeyedObject   *FindObject( const char *name, uint16_t classType = (uint16_t)-1 );
         void            ClearObjectList( void );
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect
@@ -96,8 +96,8 @@ class plCommonObjLib
 
 
         /// Static functions for use only by the export resManager
-        static UInt32           GetNumLibs( void );
-        static plCommonObjLib   *GetLib( UInt32 idx );
+        static uint32_t           GetNumLibs( void );
+        static plCommonObjLib   *GetLib( uint32_t idx );
 
 
     private:

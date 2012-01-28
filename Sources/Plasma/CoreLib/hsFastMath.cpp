@@ -40,14 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
-#include "hsScalar.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsFastMath.h"
 
-const hsScalar hsFastMath::kSqrtTwo = hsSquareRoot(2.f);
-const hsScalar hsFastMath::kInvSqrtTwo = hsScalarInvert(hsFastMath::kSqrtTwo);
-const hsScalar hsFastMath::kTwoPI = hsScalarPI * 2.f;
+const float hsFastMath::kSqrtTwo = sqrt(2.f);
+const float hsFastMath::kInvSqrtTwo = hsInvert(hsFastMath::kSqrtTwo);
+const float hsFastMath::kTwoPI = M_PI * 2.f;
 
 hsPoint2 statCosSinTable[9] = // must match length in inline
 {
@@ -579,11 +578,11 @@ unsigned char statSeedTable[] = {
     0x6a
 };
 
-hsScalar hsFastMath::IATan2OverTwoPi(hsScalar y, hsScalar x)
+float hsFastMath::IATan2OverTwoPi(float y, float x)
 {
     const int tabSize = 16; // pad with one extra because hi can go hi
     const int tabMax = tabSize-1;
-    static hsScalar tab[tabSize+1] = {
+    static float tab[tabSize+1] = {
                     0.f,
                     0.0105947f,
                     0.0210962f,
@@ -609,14 +608,14 @@ hsScalar hsFastMath::IATan2OverTwoPi(hsScalar y, hsScalar x)
     if((yNeg = (y < 0)))y = -y;
     if((xNeg = (x < 0)))x = -x;
     hsBool yBigger = y >= x;
-    hsScalar div = yBigger ? x / y : y / x;
+    float div = yBigger ? x / y : y / x;
 
-    hsScalar fInd = div * tabMax;
+    float fInd = div * tabMax;
     int lo = int(fInd);
     int hi = lo+1;
-    hsScalar frac = fInd - lo;
+    float frac = fInd - lo;
 
-    hsScalar res = tab[lo];
+    float res = tab[lo];
     res += frac * (tab[hi] - res);
 
     // now move to proper half quadrant

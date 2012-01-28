@@ -62,8 +62,8 @@ class plLayerAnimationBase : public plLayerInterface
 protected:
     char*                       fSegmentID;
     double                      fEvalTime;
-    hsScalar                    fCurrentTime;
-    hsScalar                    fLength;
+    float                    fCurrentTime;
+    float                    fLength;
 
     plController*   fPreshadeColorCtl;
     plController*   fRuntimeColorCtl;
@@ -72,8 +72,8 @@ protected:
     plController*   fOpacityCtl;
     plController*   fTransformCtl;
 
-    hsScalar IMakeUniformLength();
-    void IEvalConvertedTime(hsScalar secs, UInt32 passChans, UInt32 evalChans, UInt32 &dirty);
+    float IMakeUniformLength();
+    void IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty);
 
 public:
     plLayerAnimationBase();
@@ -83,7 +83,7 @@ public:
     GETINTERFACE_ANY( plLayerAnimationBase, plLayerInterface );
     
     virtual plLayerInterface*           Attach(plLayerInterface* prev);
-    //virtual UInt32                        Eval(double secs, UInt32 frame, UInt32 ignore) = 0;
+    //virtual uint32_t                        Eval(double secs, uint32_t frame, uint32_t ignore) = 0;
 
     virtual hsBool                      MsgReceive(plMessage* msg);
 
@@ -91,7 +91,7 @@ public:
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
 
     // Specialized
-    hsScalar GetLength() const { return fLength; }
+    float GetLength() const { return fLength; }
     char *GetSegmentID() const { return fSegmentID; }
     void SetSegmentID(char *ID) { delete fSegmentID; fSegmentID = hsStrcpy(ID); }
 
@@ -127,7 +127,7 @@ public:
     GETINTERFACE_ANY( plLayerAnimation, plLayerAnimationBase );
 
     virtual plLayerInterface*           Attach(plLayerInterface* prev);
-    virtual UInt32                      Eval(double wSecs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
 
     virtual hsBool                      MsgReceive(plMessage* msg);
 
@@ -155,8 +155,8 @@ protected:
         kFadeIFace      = 0x08,
         kFadeCCR        = 0x10,
     };
-    UInt8 fFadeFlags;
-    UInt8 fLastFadeFlag;
+    uint8_t fFadeFlags;
+    uint8_t fLastFadeFlag;
     hsBool fFadeFlagsDirty;
     
 public:
@@ -173,14 +173,14 @@ public:
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual hsBool DirtySynchState(const char* sdlName, UInt32 sendFlags) { return false; } // don't send link state
+    virtual hsBool DirtySynchState(const char* sdlName, uint32_t sendFlags) { return false; } // don't send link state
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual UInt32 Eval(double wSecs, UInt32 frame, UInt32 ignore); 
+    virtual uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore); 
     virtual hsBool MsgReceive(plMessage* pMsg);
     void Enable(hsBool b) { fEnabled = b; }
-    void SetFadeFlag(UInt8 flag, hsBool val);
+    void SetFadeFlag(uint8_t flag, hsBool val);
 
     hsBool fLeavingAge;
 };
@@ -198,7 +198,7 @@ public:
     CLASSNAME_REGISTER( plLayerSDLAnimation );
     GETINTERFACE_ANY( plLayerSDLAnimation, plLayerAnimationBase );
 
-    virtual UInt32                      Eval(double wSecs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
 
     virtual hsBool                      MsgReceive(plMessage* msg);
 

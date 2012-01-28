@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLightSpace.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
@@ -58,8 +58,8 @@ hsBool plLightSpace::MsgReceive(plMessage* msg)
         // which is entering and leaving, and whether it is entering or leaving.
         plKey otherKey = nil;
         hsBool enter = true; 
-        UInt8 ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
-        plLightRefMsg* liMsg = TRACKED_NEW plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
+        uint8_t ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
+        plLightRefMsg* liMsg = new plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
         plgDispatch::MsgSend(liMsg);
         return true;
     }
@@ -80,7 +80,7 @@ void plLightSpace::Read(hsStream* s, hsResMgr* mgr)
 {
     plMultiModifier::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, new plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
 }
 
 void plLightSpace::Write(hsStream* s, hsResMgr* mgr)

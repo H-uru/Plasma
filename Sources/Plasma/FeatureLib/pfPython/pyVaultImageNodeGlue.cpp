@@ -126,7 +126,7 @@ PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitleW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* title = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* title = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, title, strLen);
         title[strLen] = L'\0';
         self->fThis->Image_SetTitleW(title);

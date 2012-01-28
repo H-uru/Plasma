@@ -63,9 +63,9 @@ public:
     static void ShowDebugInfo( hsBool s ) { fPrintDbgInfo = s; }
 
     // Get info for which object these things are attached to - camera or refObject
-    UInt8 GetAttachedPosType() { return (UInt8)fPosRatio; }
-    UInt8 GetAttachedFacingType() { return (UInt8)fFacingRatio; }
-    UInt8 GetAttachedVelType() { return (UInt8)fVelRatio; }
+    uint8_t GetAttachedPosType() { return (uint8_t)fPosRatio; }
+    uint8_t GetAttachedFacingType() { return (uint8_t)fFacingRatio; }
+    uint8_t GetAttachedVelType() { return (uint8_t)fVelRatio; }
     
     enum 
     {
@@ -83,12 +83,12 @@ protected:
 
     plVirtualCam1*      fVCam;
 
-    hsScalar            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
+    float            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
     hsBool              fInitMe;
 
     static hsBool       fPrintDbgInfo;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     void            ISetRef( const plKey &ref, hsBool binding, int type );
     void            ICheckAudio( void ) const;
 

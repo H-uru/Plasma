@@ -63,7 +63,7 @@ public:
 
     union
     {
-        UInt8   N[kGuidBytes];
+        uint8_t   N[kGuidBytes];
         hsWide  fWide;
     };
     plServerGuid();
@@ -94,7 +94,7 @@ public:
     void            CopyFrom( const plServerGuid * other );
     void            Clear();
 
-    static void SetGuidSeed( UInt32 seed );
+    static void SetGuidSeed( uint32_t seed );
     static bool GuidSeedIsSet( void ) { return fGuidSeed!=0;}
     static plServerGuid GenerateGuid( void );
 
@@ -102,7 +102,7 @@ public:
     GETINTERFACE_ANY( plServerGuid, plCreatable );
 
 private:
-    static UInt32   fGuidSeed;  // only low 24 bits are used
+    static uint32_t   fGuidSeed;  // only low 24 bits are used
 };
 
 

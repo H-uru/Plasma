@@ -62,7 +62,7 @@ public:
     CLASSNAME_REGISTER( plLightSpace );
     GETINTERFACE_ANY( plLightSpace, plMultiModifier );
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

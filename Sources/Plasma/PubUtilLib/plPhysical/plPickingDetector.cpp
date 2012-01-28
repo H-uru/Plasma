@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPickingDetector.h"
 #include "plMessage/plActivatorMsg.h"
 #include "plMessage/plPickedMsg.h"
@@ -78,7 +78,7 @@ hsBool plPickingDetector::MsgReceive(plMessage* msg)
     {
         for (int i = 0; i < fReceivers.Count(); i++)
         {
-            plActivatorMsg* pMsg = TRACKED_NEW plActivatorMsg;
+            plActivatorMsg* pMsg = new plActivatorMsg;
             pMsg->AddReceiver( fReceivers[i] );
             if (pPMsg->fPicked)
                 pMsg->SetTriggerType( plActivatorMsg::kPickedTrigger );

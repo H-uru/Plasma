@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plFontCache_h
 #define _plFontCache_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -90,9 +90,9 @@ class plFontCache : public hsKeyedObject
         
         static plFontCache  &GetInstance( void );
 
-        plFont  *GetFont( const char *face, UInt8 size, UInt32 fontFlags );
+        plFont  *GetFont( const char *face, uint8_t size, uint32_t fontFlags );
 
-//      HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+//      HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, uint32_t quality );
 //      void    FreeFont( HFONT font );
         void    Clear( void );
 

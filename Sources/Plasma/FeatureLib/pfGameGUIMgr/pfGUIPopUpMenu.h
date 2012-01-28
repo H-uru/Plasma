@@ -100,10 +100,10 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
         hsBool                  fNeedsRebuilding, fWaitingForSkin;
-        hsScalar                fOriginX, fOriginY;
-        UInt16                  fMargin;
+        float                fOriginX, fOriginY;
+        uint16_t                  fMargin;
         hsTArray<pfMenuItem>    fMenuItems;
-        Int32                   fSubMenuOpen;
+        int32_t                   fSubMenuOpen;
 
         pfGUISkin               *fSkin;
 
@@ -118,7 +118,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 
         hsGMaterial *ICreateDynMaterial( void );
 
-        void        IHandleMenuSomething( UInt32 idx, pfGUIControlMod *ctrl, Int32 extended = -1 );
+        void        IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctrl, int32_t extended = -1 );
 
         void        ISeekToOrigin( void );
 
@@ -153,9 +153,9 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
         virtual void    SetEnabled( hsBool e );
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, hsScalar mouseX, hsScalar mouseY, UInt8 modifiers );
+        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
 
-        void            Show( hsScalar x, hsScalar y );
+        void            Show( float x, float y );
 
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
@@ -164,7 +164,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         void    AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
         void    SetSkin( pfGUISkin *skin );
 
-        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, hsScalar x, hsScalar y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
 
 };
 
@@ -195,7 +195,7 @@ class pfGUISkin : public hsKeyedObject
         class pfSRect
         {
             public:
-                UInt16  fX, fY, fWidth, fHeight;
+                uint16_t  fX, fY, fWidth, fHeight;
 
                 void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
                 void    Read( hsStream *s );
@@ -206,7 +206,7 @@ class pfGUISkin : public hsKeyedObject
 
         plMipmap    *fTexture;
         pfSRect     fElements[ kNumElements ];
-        UInt16      fItemMargin, fBorderMargin;
+        uint16_t      fItemMargin, fBorderMargin;
 
     public:
 
@@ -229,13 +229,13 @@ class pfGUISkin : public hsKeyedObject
         plMipmap        *GetTexture( void ) const { return fTexture; }
         void            SetTexture( plMipmap *tex );
 
-        const pfSRect   &GetElement( UInt32 idx ) const { return fElements[ idx ]; }
-        hsBool          IsElementSet( UInt32 idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
-        void            SetElement( UInt32 idx, UInt16 x, UInt16 y, UInt16 w, UInt16 h );
+        const pfSRect   &GetElement( uint32_t idx ) const { return fElements[ idx ]; }
+        hsBool          IsElementSet( uint32_t idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
+        void            SetElement( uint32_t idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h );
 
-        void            SetMargins( UInt16 item, UInt16 border ) { fItemMargin = item; fBorderMargin = border; }
-        UInt16          GetItemMargin( void ) const { return fItemMargin; }
-        UInt16          GetBorderMargin( void ) const { return fBorderMargin; }
+        void            SetMargins( uint16_t item, uint16_t border ) { fItemMargin = item; fBorderMargin = border; }
+        uint16_t          GetItemMargin( void ) const { return fItemMargin; }
+        uint16_t          GetBorderMargin( void ) const { return fBorderMargin; }
 };
 
 #endif // _pfGUIPopUpMenu_h

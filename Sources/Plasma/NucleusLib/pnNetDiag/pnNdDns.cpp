@@ -74,7 +74,7 @@ struct DNSParam {
 //============================================================================
 static void LookupCallback (
     void *              param,
-    const wchar         name[],
+    const wchar_t         name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -86,7 +86,7 @@ static void LookupCallback (
             p->diag->nodes[p->srv] = node;
         }
         p->diag->critsect.Leave();
-        wchar nodeStr[64];
+        wchar_t nodeStr[64];
         NetAddressNodeToString(p->diag->nodes[p->srv], nodeStr, arrsize(nodeStr));
         p->dump(L"[DNS] Success. %s --> %s", name, nodeStr);
         p->callback(
@@ -113,7 +113,7 @@ static void LookupCallback (
         );
     }
     p->diag->DecRef("DNS");
-    DEL(p);
+    delete p;
 }
 
 
@@ -157,7 +157,7 @@ void NetDiagDns (
         return;
     }
 
-    wchar * host = nil;
+    wchar_t * host = nil;
     diag->critsect.Enter();
     {
         if (diag->hosts[srv])
@@ -190,5 +190,5 @@ void NetDiagDns (
         0,
         dnsParam
     );
-    FREE(host);
+    free(host);
 }
