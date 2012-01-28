@@ -49,6 +49,23 @@ PYTHON_CLASS_DEFINITION(ptPlayer, pyPlayer);
 PYTHON_DEFAULT_NEW_DEFINITION(ptPlayer, pyPlayer)
 PYTHON_DEFAULT_DEALLOC_DEFINITION(ptPlayer)
 
+static char* ConvertString(PyObject* obj)
+{
+    if (PyString_Check(obj))
+    {
+        return hsStrcpy(PyString_AsString(obj));
+    } else if (PyUnicode_Check(obj)) {
+        size_t size = PyUnicode_GetSize(obj);
+        wchar_t* temp = new wchar_t[size + 1];
+        PyUnicode_AsWideChar((PyUnicodeObject*)obj, temp, size);
+        temp[size] = 0;
+        char* buf = hsWStringToString(temp);
+        delete[] temp;
+        return buf;
+    } else
+        return NULL; // You suck.
+}
+
 PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 {
     // we have two sets of arguments we can use, hence the generic PyObject* pointers
@@ -63,56 +80,46 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
         PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
         PYTHON_RETURN_INIT_ERROR;
     }
-    if (pyKey::Check(firstObj)) // arg set 1
+
+    pyKey* key = NULL;
+    char* name = NULL;
+    uint32_t pid = -1;
+    float distSeq = -1;
+
+    if (pyKey::Check(firstObj))
     {
-        // make sure the remaining objects fit the arg list
-        if ((!thirdObj) || (!fourthObj))
+        key = pyKey::ConvertFrom(firstObj);
+        if (!(name = ConvertString(secondObj)))
         {
-            // missing arguments
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
         }
-        if ((!PyString_Check(secondObj)) || (!PyLong_Check(thirdObj)) || (!PyFloat_Check(fourthObj)))
+        if (!(PyLong_Check(thirdObj) && PyFloat_Check(fourthObj)))
         {
-            // incorrect types
+            delete[] name;
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
         }
-        // all args are correct, convert and init
-        pyKey* key = pyKey::ConvertFrom(firstObj);
-        char* name = PyString_AsString(secondObj);
-        unsigned long pid = PyLong_AsUnsignedLong(thirdObj);
-        float distsq = (float)PyFloat_AsDouble(fourthObj);
-        self->fThis->Init(key->getKey(), name, pid, distsq);
-        PYTHON_RETURN_INIT_OK;
+
+        pid = PyLong_AsUnsignedLong(thirdObj);
+        distSeq = (float)PyFloat_AsDouble(fourthObj);
+    } else if (name = ConvertString(firstObj)){
+        if (!PyLong_Check(secondObj) || thirdObj  || fourthObj)
+        {
+            delete[] name;
+            PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
+            PYTHON_RETURN_INIT_ERROR;
+        }
+
+        pid = PyLong_AsUnsignedLong(secondObj);
+    } else {
+        PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
+        PYTHON_RETURN_INIT_ERROR;
     }
-    else if (PyString_Check(firstObj)) // arg set 2
-    {
-        // make sure there are only two args
-        if (thirdObj || fourthObj)
-        {
-            // too many arguments
-            PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
-            PYTHON_RETURN_INIT_ERROR;
-        }
-        char* name = PyString_AsString(firstObj);
-        unsigned long pid = 0;
-        if (PyLong_Check(secondObj))
-            pid = PyLong_AsUnsignedLong(secondObj);
-        else if (PyInt_Check(secondObj))
-            pid = (unsigned long)PyInt_AsLong(secondObj);
-        else
-        {
-            // incorrect type
-            PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
-            PYTHON_RETURN_INIT_ERROR;
-        }
-        self->fThis->Init(nil, name, pid, -1);
-        PYTHON_RETURN_INIT_OK;
-    }
-    // some other args came in
-    PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
-    PYTHON_RETURN_INIT_ERROR;
+
+    self->fThis->Init(key, name, pid, distSeq);
+    delete[] name;
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_RICH_COMPARE_DEFINITION(ptPlayer, obj1, obj2, compareType)
