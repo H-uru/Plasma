@@ -70,8 +70,8 @@ void cyInputInterface::PushTelescopeInterface()
 {
     if (!fTelescopeInterface)
     {
-        fTelescopeInterface = TRACKED_NEW plTelescopeInputInterface;
-        plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kAddInterface);
+        fTelescopeInterface = new plTelescopeInputInterface;
+        plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kAddInterface);
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
     }
@@ -88,7 +88,7 @@ void cyInputInterface::PopTelescope()
 {
     if (fTelescopeInterface)
     {
-        plInputIfaceMgrMsg* pMsg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kRemoveInterface);
+        plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kRemoveInterface);
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
         hsRefCnt_SafeUnRef( fTelescopeInterface );

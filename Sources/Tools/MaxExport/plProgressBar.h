@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProgressBar_inc
 #define plProgressBar_inc
 
-#include "hsTypes.h"
-#include "hsScalar.h"
+#include "HeadSpin.h"
+
 
 // The progress bar displays an amount that's *fraction* of the distance between min and max.
 // i.e., if min is 0.2 and max is 0.7, the bar will run the gamut from min to max; at fraction
@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plProgressBar
 {
 public:
-    plProgressBar(hsScalar min, hsScalar max) : fMin(min), fMax(max) 
+    plProgressBar(float min, float max) : fMin(min), fMax(max) 
     { 
           hsAssert(min >= 0, "Min too small.");
           hsAssert(min <= 1, "Min too big.");
@@ -63,13 +63,13 @@ public:
           hsAssert(min <= max, "Min and max out of order.");
     }
 
-    virtual hsBool32 Update(hsScalar fraction) = 0;
+    virtual hsBool32 Update(float fraction) = 0;
 
-    hsScalar GetTotalFraction(hsScalar f) const { return fMin + f * (fMax - fMin); }
+    float GetTotalFraction(float f) const { return fMin + f * (fMax - fMin); }
 
 private:
-    hsScalar fMin;
-    hsScalar fMax;
+    float fMin;
+    float fMax;
 };
 
 #endif // plProgressBar_inc

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plNetMsgScreener.h"
 #include "plCreatableIndex.h"
 
@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // say why the msg got rejected
 //
-void plNetMsgScreener::IRejectLogMsg(Int16 classIndex, const char* desc, const plNetGameMember* gm) const
+void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const plNetGameMember* gm) const
 {
     DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s", 
         plFactory::GetNameOfClass(classIndex), desc, IGetAgeName(), IGetSenderName(gm));
@@ -88,7 +88,7 @@ void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, con
 // Try to accept/reject quickly
 // the netMsg arg has been peeked except for the stream
 //
-plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(Int16 classIndex, const plNetGameMember* gm) const
+plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(int16_t classIndex, const plNetGameMember* gm) const
 {
     // Check based on baseclass
     if (plFactory::DerivesFrom(plCCRMessage::Index(), classIndex))

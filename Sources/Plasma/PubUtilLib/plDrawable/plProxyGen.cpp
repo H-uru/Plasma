@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plProxyGen.h"
 
 #include "plSurface/hsGMaterial.h"
@@ -56,9 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static hsTArray<plDrawableSpans*>   fProxyDrawables;
 static hsTArray<hsGMaterial*>   fProxyMaterials;
-static UInt32                   fProxyKeyCounter = 0;
+static uint32_t                   fProxyKeyCounter = 0;
 
-plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac)
+plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
 :   fProxyMsgType(0),
     fProxyDraw(nil),
     fProxyMat(nil)
@@ -100,7 +100,7 @@ void plProxyGen::Init(const hsKeyedObject* owner)
 
 }
 
-UInt32 plProxyGen::IGetDrawableType() const
+uint32_t plProxyGen::IGetDrawableType() const
 {
     switch( fProxyMsgType & plProxyDrawMsg::kAllTypes )
     {
@@ -121,10 +121,10 @@ UInt32 plProxyGen::IGetDrawableType() const
     return plDrawable::kGenericProxy;
 }
 
-UInt32 plProxyGen::IGetProxyIndex() const
+uint32_t plProxyGen::IGetProxyIndex() const
 {
     plKey sceneNode = IGetNode();
-    UInt32 drawType = IGetDrawableType();
+    uint32_t drawType = IGetDrawableType();
 
     int firstNil = -1;
     int firstMatch = -1;
@@ -153,9 +153,9 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 {
     const hsColorRGBA& amb = fAmbient;
     const hsColorRGBA& dif = fColor;
-    hsScalar opac = fAmbient.a;
+    float opac = fAmbient.a;
 
-    hsGMaterial* retVal = TRACKED_NEW hsGMaterial();
+    hsGMaterial* retVal = new hsGMaterial();
 
     char buff[256];
     if( GetKey()->GetName() )
@@ -220,7 +220,7 @@ void plProxyGen::IGenerateProxy()
     if( !IGetNode() )
         return;
 
-    UInt32 idx = IGetProxyIndex();
+    uint32_t idx = IGetProxyIndex();
 
     hsGMaterial* mat = IGetProxyMaterial();
     hsAssert(mat, "Failed to create proxy material");
@@ -247,11 +247,11 @@ void plProxyGen::IGenerateProxy()
 
         IApplyProxy(idx);
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, idx, 0);
+        plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, idx, 0);
         hsgResMgr::ResMgr()->AddViaNotify(mat->GetKey(), msg, plRefFlags::kActiveRef);
         fProxyMat = mat;
 
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg( GetKey(), plNodeRefMsg::kOnRequest, (Int8)idx, plNodeRefMsg::kDrawable );
+        plNodeRefMsg* refMsg = new plNodeRefMsg( GetKey(), plNodeRefMsg::kOnRequest, (int8_t)idx, plNodeRefMsg::kDrawable );
         hsgResMgr::ResMgr()->AddViaNotify(fProxyDrawables[idx]->GetKey(), refMsg, plRefFlags::kActiveRef);
         fProxyDraw = fProxyDrawables[idx];
     }
@@ -259,7 +259,7 @@ void plProxyGen::IGenerateProxy()
 
 //// IApplyProxy
 // Add our proxy to our scenenode for rendering.
-void plProxyGen::IApplyProxy(UInt32 idx) const
+void plProxyGen::IApplyProxy(uint32_t idx) const
 {
     if( fProxyDrawables[idx] && IGetNode() && (fProxyDrawables[idx]->GetSceneNode() != IGetNode()) )
     {
@@ -269,7 +269,7 @@ void plProxyGen::IApplyProxy(UInt32 idx) const
 
 //// IRemoveProxy
 // Remove our proxy from our scenenode.
-void plProxyGen::IRemoveProxy(UInt32 idx) const
+void plProxyGen::IRemoveProxy(uint32_t idx) const
 {
     if( fProxyDrawables[idx] )
     {
@@ -347,7 +347,7 @@ hsBool plProxyGen::MsgReceive(plMessage* msg)
 
 void plProxyGen::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-    UInt32 idx = IGetProxyIndex();
+    uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
         int i;
@@ -358,7 +358,7 @@ void plProxyGen::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 
 void plProxyGen::SetDisable(hsBool on)
 {
-    UInt32 idx = IGetProxyIndex();
+    uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
         int i;

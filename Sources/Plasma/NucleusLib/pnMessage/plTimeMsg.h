@@ -50,23 +50,23 @@ class plTimeMsg : public plMessage
 {
 protected:
     double          fSeconds;
-    hsScalar        fDelSecs;
+    float        fDelSecs;
 
 public:
     plTimeMsg();
     plTimeMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t, const hsScalar* del);
+                    const double* t, const float* del);
     ~plTimeMsg();
 
     CLASSNAME_REGISTER( plTimeMsg );
     GETINTERFACE_ANY( plTimeMsg, plMessage );
 
     plTimeMsg& SetSeconds(double s) { fSeconds = s; return *this; }
-    plTimeMsg& SetDelSeconds(hsScalar d) { fDelSecs = d; return *this; }
+    plTimeMsg& SetDelSeconds(float d) { fDelSecs = d; return *this; }
 
     double          DSeconds() { return fSeconds; }
-    hsScalar        DelSeconds() { return fDelSecs; }
+    float        DelSeconds() { return fDelSecs; }
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr)
@@ -90,7 +90,7 @@ public:
     plEvalMsg();
     plEvalMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t, const hsScalar* del);
+                    const double* t, const float* del);
     ~plEvalMsg();
 
     CLASSNAME_REGISTER( plEvalMsg );
@@ -107,7 +107,7 @@ public:
     plTransformMsg();
     plTransformMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t, const hsScalar* del);
+                    const double* t, const float* del);
     ~plTransformMsg();
 
     CLASSNAME_REGISTER( plTransformMsg );
@@ -125,7 +125,7 @@ class plDelayedTransformMsg : public plTransformMsg
 {
 public:
     plDelayedTransformMsg() : plTransformMsg() {}
-    plDelayedTransformMsg(const plKey &s, const plKey &r, const double* t, const hsScalar* del) : plTransformMsg(s, r, t, del) {}
+    plDelayedTransformMsg(const plKey &s, const plKey &r, const double* t, const float* del) : plTransformMsg(s, r, t, del) {}
     
     CLASSNAME_REGISTER( plDelayedTransformMsg );
     GETINTERFACE_ANY( plDelayedTransformMsg, plTransformMsg );

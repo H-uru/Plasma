@@ -54,7 +54,7 @@ class plMAXCameraLayerClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plMAXCameraLayer(); }
+    void*           Create(BOOL loading = FALSE) { return new plMAXCameraLayer(); }
     const TCHAR*    ClassName()     { return GetString(IDS_MAX_CAMERA_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return MAX_CAMERA_LAYER_CLASS_ID; }
@@ -170,7 +170,7 @@ static ParamBlockDesc2 gMAXCameraLayerParamBlk
 /////////////////////////////////////////////////////////////////////////////
 
 const char *plMAXCameraLayer::kUVStrings[] = { "1", "2", "3", "4", "5", "6", "7", "8" };
-const UInt8 plMAXCameraLayer::kMaxUVSrc = 8;
+const uint8_t plMAXCameraLayer::kMaxUVSrc = 8;
 
 plMAXCameraLayer::plMAXCameraLayer() :
 fParmsPB(NULL),
@@ -272,7 +272,7 @@ IParamBlock2* plMAXCameraLayer::GetParamBlockByID(BlockID id)
 //From ReferenceTarget
 RefTargetHandle plMAXCameraLayer::Clone(RemapDir &remap)
 {
-    plMAXCameraLayer *mnew = TRACKED_NEW plMAXCameraLayer();
+    plMAXCameraLayer *mnew = new plMAXCameraLayer();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefMain, remap.CloneRef(fParmsPB));
     BaseClone(this, mnew, remap);

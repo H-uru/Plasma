@@ -89,7 +89,7 @@ pyGUIPopUpMenu::pyGUIPopUpMenu()
     fBuiltMenu = nil;
 }
 
-pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc/* = plLocation::kGlobalFixedLoc */)
+pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc/* = plLocation::kGlobalFixedLoc */)
 {
     fBuiltMenu = pfGUIPopUpMenu::Build( name, nil, screenOriginX, screenOriginY, destLoc );
     if( fBuiltMenu != nil )
@@ -101,7 +101,7 @@ pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, hsScalar screenOriginX, hsScal
         fGCkey = nil;
 }
 
-pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY )
+pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY )
 {
     pfGUIPopUpMenu *parentMenu = pfGUIPopUpMenu::ConvertNoRef( parent.fGCkey->ObjectIsLoaded() );
     
@@ -140,7 +140,7 @@ void pyGUIPopUpMenu::setup(plKey objkey)
     fGCkey = objkey;
 }
 
-void pyGUIPopUpMenu::setup(const char *name, hsScalar screenOriginX, hsScalar screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
+void pyGUIPopUpMenu::setup(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
     // kill any previous menu
     if( fBuiltMenu != nil )
@@ -160,7 +160,7 @@ void pyGUIPopUpMenu::setup(const char *name, hsScalar screenOriginX, hsScalar sc
         fGCkey = nil;
 }
 
-void pyGUIPopUpMenu::setup(const char *name, pyGUIPopUpMenu &parent, hsScalar screenOriginX, hsScalar screenOriginY)
+void pyGUIPopUpMenu::setup(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
     // kill any previous menu
     if( fBuiltMenu != nil )
@@ -220,7 +220,7 @@ PyObject* pyGUIPopUpMenu::getObjPyKey()
 
 
 // interface functions
-UInt32  pyGUIPopUpMenu::GetTagID()
+uint32_t  pyGUIPopUpMenu::GetTagID()
 {
     kGetMenuPtr( 0 );
     return menu->GetTagID();
@@ -246,7 +246,7 @@ const char* pyGUIPopUpMenu::GetName( void )
 }
 
 
-UInt32 pyGUIPopUpMenu::GetVersion(void)
+uint32_t pyGUIPopUpMenu::GetVersion(void)
 {
     kGetMenuPtr( 0 );
     return menu->GetVersion();
@@ -299,7 +299,7 @@ PyObject* pyGUIPopUpMenu::GetBackSelColor()
 }
 
     // set color scheme
-void pyGUIPopUpMenu::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIPopUpMenu::SetForeColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
@@ -314,7 +314,7 @@ void pyGUIPopUpMenu::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar 
         color->fForeColor.a = a;
 }
 
-void pyGUIPopUpMenu::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIPopUpMenu::SetSelColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
@@ -329,7 +329,7 @@ void pyGUIPopUpMenu::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a
         color->fSelForeColor.a = a;
 }
 
-void pyGUIPopUpMenu::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIPopUpMenu::SetBackColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
@@ -344,7 +344,7 @@ void pyGUIPopUpMenu::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar 
         color->fBackColor.a = a;
 }
 
-void pyGUIPopUpMenu::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIPopUpMenu::SetBackSelColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
@@ -369,7 +369,7 @@ void    pyGUIPopUpMenu::AddConsoleCmdItem( const char *name, const char *console
 void    pyGUIPopUpMenu::AddConsoleCmdItemW( std::wstring name, const char *consoleCmd )
 {
     kGetMenuPtr( ; );
-    menu->AddItem( name.c_str(), TRACKED_NEW pfGUIConsoleCmdProc( consoleCmd ), nil );
+    menu->AddItem( name.c_str(), new pfGUIConsoleCmdProc( consoleCmd ), nil );
 }
 
 void    pyGUIPopUpMenu::AddNotifyItem( const char *name )

@@ -65,7 +65,7 @@ class plSpaceHit
 {
 public:
     int         fIdx;
-    hsScalar    fClosest;
+    float    fClosest;
 };
 
 class plVisLOSMgr
@@ -74,18 +74,18 @@ protected:
     plPageTreeMgr*  fPageMgr;
     plPipeline*     fPipe;
 
-    hsScalar        fMaxDist;
+    float        fMaxDist;
 
     hsPoint3        fCurrFrom;
     hsPoint3        fCurrTarg;
 
     hsBool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
-    hsBool ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest);
+    hsBool ICheckBound(const hsBounds3Ext& bnd, float& closest);
     hsBool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
     hsBool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
     hsBool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
     hsBool ICheckDrawable(plDrawable* d, plVisHit& hit);
-    hsBool ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit);
+    hsBool ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit);
     
 public:
     hsBool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);

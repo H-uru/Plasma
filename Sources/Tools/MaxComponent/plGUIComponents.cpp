@@ -406,7 +406,7 @@ public:
         kRefCurrIDSel = 64      // So we can share it among other components
     };
 
-    static UInt32 GetTagIDOnNode( plMaxNode *node );
+    static uint32_t GetTagIDOnNode( plMaxNode *node );
 };
 
 //Max desc stuff necessary below.
@@ -435,7 +435,7 @@ void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
     idx2 = idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)str );
     SendMessage( hWnd, CB_SETITEMDATA, (WPARAM)idx, (LPARAM)0 );
 
-    for( UInt32 i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
+    for( uint32_t i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
     {
         pfGUITag *tag = pfGameGUIMgr::GetTag( i );
         idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)tag->fName );
@@ -612,9 +612,9 @@ hsBool plGUITagComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-UInt32 plGUITagComponent::GetTagIDOnNode( plMaxNode *node )
+uint32_t plGUITagComponent::GetTagIDOnNode( plMaxNode *node )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     for( i = 0; i < node->NumAttachedComponents( false ); i++ )
@@ -986,7 +986,7 @@ hsBool plGUIColorSchemeComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     pfGUIControlMod *ctrl = plGUIControlBase::GrabControlFromObject( node );
     if( ctrl != nil )
     {
-        pfGUIColorScheme *cs = TRACKED_NEW pfGUIColorScheme;
+        pfGUIColorScheme *cs = new pfGUIColorScheme;
         ConvertScheme( fCompPB, cs, pErrMsg );
         ctrl->SetColorScheme( cs );
     }
@@ -1178,7 +1178,7 @@ plGUIDialogComponent::plGUIDialogComponent( hsBool dontInit )
 
 pfGUIDialogMod  *plGUIDialogComponent::IMakeDialog( void )
 {
-    return TRACKED_NEW pfGUIDialogMod();
+    return new pfGUIDialogMod();
 }
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
@@ -1213,14 +1213,14 @@ hsBool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrM
     }
 
     const char *ageName = fCompPB->GetStr(kRefAgeName);
-    Int32 seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( ageName, dialogName );
-    Int32 newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, ageName, dialogName );
+    int32_t seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( ageName, dialogName );
+    int32_t newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, ageName, dialogName );
     if( newNum != seqNum )
     {
         if( !fSeqNumValidated )
         {
             plLocation pageLoc = plPluginResManager::ResMgr()->FindLocation( ageName, dialogName );
-            Int32 pageSeqNum = pageLoc.GetSequenceNumber();
+            int32_t pageSeqNum = pageLoc.GetSequenceNumber();
             char errMsg[ 512 ];
             sprintf( errMsg, "The sequence number stored by the resource manager (0x%X) for page %s, District, %s does not match\n"
                             "the sequence number stored in the .age file (0x%X). Forcing it to use the one in the .age file", 
@@ -1268,7 +1268,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return true;
     }
 
-    plPostEffectMod* mod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod* mod = new plPostEffectMod;
 
     float hither = cam->GetEnvRange(timeVal, ENV_NEAR_RANGE); 
     if( hither < 0.5f )
@@ -1281,7 +1281,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fov = cam->GetFOV(timeVal);
     // convert
     int FOVType = cam->GetFOVType();
-    hsScalar fovX, fovY;
+    float fovX, fovY;
     switch(FOVType)
     {
     case 0: // FOV_W
@@ -1297,15 +1297,15 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / hsScalarPI;
-    fovY *= 180.f / hsScalarPI;
+    fovX *= 180.f / M_PI;
+    fovY *= 180.f / M_PI;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 
     // Should already be created from SetupProperties...
     // Note: can't just grab the node's room key, 'cause we might not be on the right node!
     plKey sceneNodeKey = plPluginResManager::ResMgr()->NameToLoc( fCompPB->GetStr( kRefAgeName ), 
-                                                        fCompPB->GetStr( kRefDialogName ), (UInt32)-1 );
+                                                        fCompPB->GetStr( kRefDialogName ), (uint32_t)-1 );
     mod->SetNodeKey( sceneNodeKey );
 
 //  node->AddModifier(mod);
@@ -1320,10 +1320,10 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plLocation nodeLoc = sceneNodeKey->GetUoid().GetLocation();
 
     plKey modKey = hsgResMgr::ResMgr()->NewKey( fCompPB->GetStr( kRefDialogName ), mod, nodeLoc );
-    hsgResMgr::ResMgr()->AddViaNotify( modKey, TRACKED_NEW plNodeRefMsg( sceneNodeKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( modKey, new plNodeRefMsg( sceneNodeKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
 
     // Also add our dialog mod to the scene node in the same way
-    hsgResMgr::ResMgr()->AddViaNotify( fDialogMod->GetKey(), TRACKED_NEW plNodeRefMsg( sceneNodeKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fDialogMod->GetKey(), new plNodeRefMsg( sceneNodeKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
 
     /// Already created our mod, just gotta fill it out
     fDialogMod->SetRenderMod( mod );
@@ -1357,7 +1357,7 @@ hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 
         // Note: can't just grab the node's room key, 'cause we might not be on the right node!
         plKey sceneNodeKey = plPluginResManager::ResMgr()->NameToLoc( fCompPB->GetStr( kRefAgeName ),
-                                                            fCompPB->GetStr( kRefDialogName ), (UInt32)-1 );
+                                                            fCompPB->GetStr( kRefDialogName ), (uint32_t)-1 );
 
         plLocation nodeLoc = sceneNodeKey->GetUoid().GetLocation();
         plKey dlgKey = hsgResMgr::ResMgr()->NewKey( fCompPB->GetStr( kRefDialogName ), fDialogMod, nodeLoc );
@@ -1365,7 +1365,7 @@ hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         fDialogMod->SetSceneNodeKey( sceneNodeKey );
 
         // See if there's a tag to be had
-        UInt32 id = fCompPB->GetInt( plGUITagComponent::kRefCurrIDSel );
+        uint32_t id = fCompPB->GetInt( plGUITagComponent::kRefCurrIDSel );
         if( id > 0 )
             fDialogMod->SetTagID( id );
 
@@ -1422,7 +1422,7 @@ bool    plGUIDialogComponent::SetNotifyReceiver( plKey key )
 
 pfGUIDialogMod  *plGUIDialogComponent::GetNodeDialog( plMaxNode *childNode )
 {
-    UInt32 i, numComp = childNode->NumAttachedComponents( false );
+    uint32_t i, numComp = childNode->NumAttachedComponents( false );
     for( i = 0; i < numComp; i++ )
     {
         plComponentBase *comp = childNode->GetAttachedComponent( i );
@@ -1544,7 +1544,7 @@ void    plGUIControlBase::CollectNonDrawables( INodeTab &nonDrawables )
 
 pfGUIDialogMod  *plGUIControlBase::IGetDialogMod( plMaxNode *node )
 {
-    UInt32      i;
+    uint32_t      i;
 
 
     for( i = 0; i < node->NumAttachedComponents( false ); i++ )
@@ -1582,12 +1582,12 @@ hsBool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
     node->AddModifier( fControl, IGetUniqueName(node) );
 
     // Look for any tag IDs
-    UInt32 id = plGUITagComponent::GetTagIDOnNode( node );
+    uint32_t id = plGUITagComponent::GetTagIDOnNode( node );
     if( id > 0 )
         fControl->SetTagID( id );
 
     // Now add it to our list of converted nodes
-    UInt32 i = fTargetNodes.Find( node );
+    uint32_t i = fTargetNodes.Find( node );
     if( i == fTargetNodes.kMissingIndex )
     {
         fTargetNodes.Append( node );
@@ -1626,7 +1626,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Grab fControl from the modifier list on the node, since fControl isn't valid
     // between PreConvert() and Convert() (it might get called multiple times, once per node applied)
-    UInt32 i = fTargetNodes.Find( node );
+    uint32_t i = fTargetNodes.Find( node );
     if( i == fTargetNodes.kMissingIndex )
     {
         pErrMsg->Set( true, "GUI Control Component Error", "The object %s somehow skipped the GUI control Pre-convert stage. Inform a programmer immediately and seek shelter.", node->GetName() ).Show(); 
@@ -1645,7 +1645,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             case 0:
                 // Console command
-                fControl->SetHandler( TRACKED_NEW pfGUIConsoleCmdProc( fCompPB->GetStr( kRefConsoleCmd ) ) );
+                fControl->SetHandler( new pfGUIConsoleCmdProc( fCompPB->GetStr( kRefConsoleCmd ) ) );
                 break;
 
             case 1:
@@ -1656,7 +1656,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 break;
 
             case 2:
-                fControl->SetHandler( TRACKED_NEW pfGUICloseDlgProc() );
+                fControl->SetHandler( new pfGUICloseDlgProc() );
                 break;
 
             case 3:
@@ -1674,7 +1674,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl( node );
         hsTArray<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial, node, 0 );
         
-        UInt32 i, j;
+        uint32_t i, j;
         plDynamicTextMap *dynText = nil;
         plLayerInterface *layerIFace = nil;
 
@@ -1715,7 +1715,7 @@ hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 pfGUIControlMod *plGUIControlBase::GrabControlFromObject( INode *node )
 {
-    UInt32  i;
+    uint32_t  i;
     plMaxNodeBase   *maxNode = (plMaxNodeBase *)node;
 
 
@@ -1788,7 +1788,7 @@ pfGUIControlMod *plGUIControlBase::ConvertCompToControl( plComponentBase *comp, 
         }
         else
         {
-            UInt32 i = base->fTargetNodes.Find( (plMaxNode *)sceneObjectNode );
+            uint32_t i = base->fTargetNodes.Find( (plMaxNode *)sceneObjectNode );
             if( i == base->fTargetNodes.kMissingIndex )
                 return nil;
 
@@ -1799,7 +1799,7 @@ pfGUIControlMod *plGUIControlBase::ConvertCompToControl( plComponentBase *comp, 
     return nil;
 }
 
-const char  *plGUIControlBase::ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, UInt8 guiCtrlEvent, plMaxNode *maxNode )
+const char  *plGUIControlBase::ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, uint8_t guiCtrlEvent, plMaxNode *maxNode )
 {
     if( fCompPB->GetInt( checkBoxID ) )
     {
@@ -1878,7 +1878,7 @@ class plGUIButtonComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIButtonMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIButtonMod; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
 public:
@@ -2220,7 +2220,7 @@ class plGUICheckBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUICheckBoxCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUICheckBoxCtrl; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
 public:
@@ -2420,7 +2420,7 @@ class plGUIDraggableComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIDraggableMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDraggableMod; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
 public:
@@ -2529,7 +2529,7 @@ class plGUIKnobCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIKnobCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIKnobCtrl; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
     hsBool  IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W );
@@ -2644,14 +2644,14 @@ hsBool  plGUIKnobCtrlComponent::IGrabAnimationRange( plMaxNode *node, plErrorMsg
 
     // Get the affine parts and the TM Controller
     plSceneObject *obj = node->GetSceneObject();
-    hsAffineParts * parts = TRACKED_NEW hsAffineParts;
+    hsAffineParts * parts = new hsAffineParts;
     plController* tmc = hsControlConverter::Instance().ConvertTMAnim(obj, node, parts);
 
     if (tmc)
     {
-        plMatrixControllerChannel *channel = TRACKED_NEW plMatrixControllerChannel(tmc, parts);
+        plMatrixControllerChannel *channel = new plMatrixControllerChannel(tmc, parts);
 
-        hsScalar length = tmc->GetLength();
+        float length = tmc->GetLength();
 
         startL2W = channel->Value( 0.f );
         endL2W = channel->Value( length );
@@ -2778,7 +2778,7 @@ class plGUIListBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIListBoxMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIListBoxMod; }
     virtual bool            INeedsDynamicText( void ) { return true; }
 
 public:
@@ -2948,7 +2948,7 @@ hsBool plGUIListBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pfGUIValueCtrl *scroll = pfGUIValueCtrl::ConvertNoRef( GrabControlMod( fCompPB->GetINode( kRefScrollCtrl ) ) );
         if( scroll != nil )
         {
-            hsgResMgr::ResMgr()->AddViaNotify( scroll->GetKey(), TRACKED_NEW plGenRefMsg( ctrl->GetKey(), 
+            hsgResMgr::ResMgr()->AddViaNotify( scroll->GetKey(), new plGenRefMsg( ctrl->GetKey(), 
                                         plRefMsg::kOnCreate, -1, pfGUIListBoxMod::kRefScrollCtrl ), plRefFlags::kActiveRef );
         }
     }
@@ -2993,7 +2993,7 @@ hsBool plGUIListBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             hsAssert( nodeID == GUI_SKIN_CLASSID, "Bad node param in GUIMenu::Convert()" );
 
             plGUISkinComp *skin = (plGUISkinComp *)comp;
-            hsgResMgr::ResMgr()->AddViaNotify( skin->GetConvertedSkin()->GetKey(), TRACKED_NEW plGenRefMsg( ctrl->GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefSkin ), plRefFlags::kActiveRef );
+            hsgResMgr::ResMgr()->AddViaNotify( skin->GetConvertedSkin()->GetKey(), new plGenRefMsg( ctrl->GetKey(), plRefMsg::kOnCreate, -1, pfGUIControlMod::kRefSkin ), plRefFlags::kActiveRef );
         }
     }
 
@@ -3013,7 +3013,7 @@ class plGUITextBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUITextBoxMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUITextBoxMod; }
     virtual bool            INeedsDynamicText( void ) { return true; }
 
 public:
@@ -3110,14 +3110,14 @@ public:
                         int strLen = SendDlgItemMessage( hWnd, IDC_GUI_INITTEXT, WM_GETTEXTLENGTH, 0, 0 );
                         if( strLen > 0 )
                         {
-                            char *str = TRACKED_NEW char[ strLen + 1 ];
+                            char *str = new char[ strLen + 1 ];
                             GetDlgItemText( hWnd, IDC_GUI_INITTEXT, str, strLen + 1 );
                             str[ strLen ] = 0;
                             ISetTranslation(fCurLanguage,str);
                             delete [] str;
 
                             std::string translation = plLocalization::LocalToString(fTranslations);
-                            str = TRACKED_NEW char[ translation.length() + 1 ];
+                            str = new char[ translation.length() + 1 ];
                             strcpy(str,translation.c_str());
                             str[translation.length()] = 0;
                 
@@ -3141,7 +3141,7 @@ public:
                         int strLen = SendDlgItemMessage( hWnd, IDC_GUI_LOCALIZATION_PATH, WM_GETTEXTLENGTH, 0, 0 );
                         if( strLen > 0 )
                         {
-                            char *str = TRACKED_NEW char[ strLen + 1 ];
+                            char *str = new char[ strLen + 1 ];
                             GetDlgItemText( hWnd, IDC_GUI_LOCALIZATION_PATH, str, strLen + 1 );
                             str[ strLen ] = 0;
                             pmap->GetParamBlock()->SetValue( plGUITextBoxComponent::kRefLocalizationPath, 0, str );
@@ -3310,7 +3310,7 @@ class plGUIEditBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIEditBoxMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIEditBoxMod; }
     virtual bool            INeedsDynamicText( void ) { return true; }
 
 public:
@@ -3405,7 +3405,7 @@ class plGUIUpDownPairComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIUpDownPairMod; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIUpDownPairMod; }
 
 public:
     plGUIUpDownPairComponent();
@@ -3617,7 +3617,7 @@ class plGUIDragBarComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIDragBarCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDragBarCtrl; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
 public:
@@ -3703,7 +3703,7 @@ class plGUIRadioGroupComponent : public plGUIControlBase
 
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIRadioGroupCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIRadioGroupCtrl; }
 
 public:
     plGUIRadioGroupComponent();
@@ -3916,7 +3916,7 @@ class plGUIDynDisplayComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIDynDisplayCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDynDisplayCtrl; }
     virtual bool            IHasProcRollout( void ) { return false; }
 
 public:
@@ -4045,7 +4045,7 @@ hsBool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     
     const hsTArray<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
 
-    UInt32 i,count = pLayer->GetNumConversionTargets();
+    uint32_t i,count = pLayer->GetNumConversionTargets();
     for( i = 0; i < count; i++ )
     {
         plLayerInterface *layIface = pLayer->GetConversionTarget( i );
@@ -4056,12 +4056,12 @@ hsBool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if( map != nil )
             ctrl->AddMap( map );
 
-        UInt32 mat;
+        uint32_t mat;
         bool found = false;
         for (mat=0; mat<materials.GetCount(); mat++)
         {
             hsGMaterial *curMaterial = materials[mat].fHsMaterial;
-            UInt32 lay;
+            uint32_t lay;
             for (lay=0; lay<curMaterial->GetNumLayers(); lay++)
             {
                 if (layIface->BottomOfStack() == curMaterial->GetLayer(lay))
@@ -4092,7 +4092,7 @@ class plGUIMultiLineEditComp : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIMultiLineEditCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIMultiLineEditCtrl; }
     virtual bool            INeedsDynamicText( void ) { return true; }
 
 public:
@@ -4192,7 +4192,7 @@ hsBool plGUIMultiLineEditComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pfGUIValueCtrl *scroll = pfGUIValueCtrl::ConvertNoRef( GrabControlMod( fCompPB->GetINode( kRefScrollCtrl ) ) );
         if( scroll != nil )
         {
-            hsgResMgr::ResMgr()->AddViaNotify( scroll->GetKey(), TRACKED_NEW plGenRefMsg( ctrl->GetKey(), 
+            hsgResMgr::ResMgr()->AddViaNotify( scroll->GetKey(), new plGenRefMsg( ctrl->GetKey(), 
                                         plRefMsg::kOnCreate, -1, pfGUIMultiLineEditCtrl::kRefScrollCtrl ), plRefFlags::kActiveRef );
         }
     }
@@ -4214,7 +4214,7 @@ class plGUIProgressCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIProgressCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIProgressCtrl; }
     virtual bool            ICanHaveProxy( void ) { return false; }
 
 public:
@@ -4476,7 +4476,7 @@ class plGUIClickMapComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return TRACKED_NEW pfGUIClickMapCtrl; }
+    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIClickMapCtrl; }
     virtual bool            ICanHaveProxy( void ) { return false; }
 
 public:
@@ -4695,12 +4695,12 @@ plKey   plGUISkinComp::GetConvertedSkinKey( void ) const
     return nil;
 }
 
-UInt32  plGUISkinComp::GetNumMtls( void ) const
+uint32_t  plGUISkinComp::GetNumMtls( void ) const
 {
     return 1;
 }
 
-Texmap  *plGUISkinComp::GetMtl( UInt32 idx )
+Texmap  *plGUISkinComp::GetMtl( uint32_t idx )
 {
     return (Texmap *)GetSkinBitmap();
 }
@@ -4713,7 +4713,7 @@ plLayerTex  *plGUISkinComp::GetSkinBitmap( void )
     plLayerTex  *layer = (plLayerTex *)fCompPB->GetTexmap( kRefBitmap, 0 );
     if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
     {
-        layer = TRACKED_NEW plLayerTex;
+        layer = new plLayerTex;
 
         fCompPB->SetValue( kRefBitmap, 0, (Texmap *)layer );
     }
@@ -4758,7 +4758,7 @@ hsBool plGUISkinComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         return true;
     }
 
-    fConvertedSkin = TRACKED_NEW pfGUISkin();
+    fConvertedSkin = new pfGUISkin();
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fConvertedSkin, node->GetLocation() );
 
     return true;
@@ -4773,7 +4773,7 @@ hsBool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     fConvertedSkin->SetMargins( fCompPB->GetInt( kRefItemMargin ), fCompPB->GetInt( kRefBorderMargin ) );
 
-    UInt32  i;
+    uint32_t  i;
     for( i = 0; i < pfGUISkin::kNumElements; i++ )
     {
         ParamID     id = ( i * 4 ) + kRefUpLeftCorner;
@@ -4791,7 +4791,7 @@ hsBool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             plBitmap *bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), fConvertedSkin->GetKey()->GetUoid().GetLocation(), 0, plMipmap::kForceNonCompressed | plMipmap::kAlphaChannelFlag | plMipmap::kNoMaxSize );
             if( bMap != nil && plMipmap::ConvertNoRef( bMap ) != nil )
             {
-                hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), TRACKED_NEW plGenRefMsg( fConvertedSkin->GetKey(), 
+                hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( fConvertedSkin->GetKey(), 
                                         plRefMsg::kOnCreate, -1, pfGUISkin::kRefMipmap ), plRefFlags::kActiveRef );
             }
         }
@@ -4903,7 +4903,7 @@ plGUIMenuComponent::plGUIMenuComponent() : plGUIDialogComponent( true )
 
 pfGUIDialogMod  *plGUIMenuComponent::IMakeDialog( void )
 {
-    return TRACKED_NEW pfGUIPopUpMenu();
+    return new pfGUIPopUpMenu();
 }
 
 plKey   plGUIMenuComponent::GetConvertedMenuKey( void ) const
@@ -4975,7 +4975,7 @@ hsBool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     const plLocation &loc = menu->GetKey()->GetUoid().GetLocation();
 
     // Create the rendermod
-    plPostEffectMod *renderMod = TRACKED_NEW plPostEffectMod;
+    plPostEffectMod *renderMod = new plPostEffectMod;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), renderMod, loc );
 
     renderMod->SetHither( 0.5f );
@@ -4988,29 +4988,29 @@ hsBool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     float fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / hsScalarPI );
-    renderMod->SetFovY( fovY * 180.f / hsScalarPI );
+    renderMod->SetFovX( fovX * 180.f / M_PI );
+    renderMod->SetFovY( fovY * 180.f / M_PI );
 
 
-    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), TRACKED_NEW plNodeRefMsg( fConvertedNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( fConvertedNode, TRACKED_NEW plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );        
+    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), new plNodeRefMsg( fConvertedNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fConvertedNode, new plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );        
 
     menu->SetRenderMod( renderMod );
     menu->SetName( fCompPB->GetStr( kRefDialogName ) );
 
     // Create the dummy scene object to hold the menu
-    plSceneObject   *newObj = TRACKED_NEW plSceneObject;
+    plSceneObject   *newObj = new plSceneObject;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), newObj, loc );
 
     // *#&$(*@&#$ need a coordIface...
-    plCoordinateInterface *newCI = TRACKED_NEW plCoordinateInterface;
+    plCoordinateInterface *newCI = new plCoordinateInterface;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), newCI, loc );
 
 
-    hsgResMgr::ResMgr()->AddViaNotify( menu->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
+    hsgResMgr::ResMgr()->AddViaNotify( menu->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );      
 
-    hsgResMgr::ResMgr()->AddViaNotify( newCI->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );        
-    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), TRACKED_NEW plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );     
+    hsgResMgr::ResMgr()->AddViaNotify( newCI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );        
+    hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );     
 
     newObj->SetSceneNode( fConvertedNode );
     menu->SetSceneNodeKey( fConvertedNode );
@@ -5033,8 +5033,8 @@ hsBool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         return true;        // Only convert once, since we don't care what node we're on
 
     /// Create an entirely new sceneNode for us
-    Int32 seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
-    Int32 newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
+    int32_t seqNum = plPageInfoUtils::GetSeqNumFromAgeDesc( fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
+    int32_t newNum = plPluginResManager::ResMgr()->VerifySeqNumber( seqNum, fCompPB->GetStr( kRefAgeName ), fCompPB->GetStr( kRefDialogName ) );
     if( newNum != seqNum )
     {
         if( !fSeqNumValidated )
@@ -5056,7 +5056,7 @@ hsBool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         return false;
     }
 
-    fConvertedMenu = TRACKED_NEW pfGUIPopUpMenu();
+    fConvertedMenu = new pfGUIPopUpMenu();
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fConvertedMenu, fConvertedNode->GetUoid().GetLocation() );
 
     return true;

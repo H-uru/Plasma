@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plHardRegionPlanes.h"
 
 #include "hsStream.h"
@@ -147,11 +147,11 @@ void plHardRegionPlanes::AddPlane(const hsVector3& n, const hsPoint3& p)
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
-        const hsScalar kCloseToOne = 1.f - 1.e-4f;
+        const float kCloseToOne = 1.f - 1.e-4f;
         if( fPlanes[i].fNorm.InnerProduct(nNorm) >= kCloseToOne )
         {
-            hsScalar newDist = nNorm.InnerProduct(p);
-            hsScalar oldDist = fPlanes[i].fNorm.InnerProduct(fPlanes[i].fPos);
+            float newDist = nNorm.InnerProduct(p);
+            float oldDist = fPlanes[i].fNorm.InnerProduct(fPlanes[i].fPos);
             if( newDist > oldDist )
             {
                 fPlanes[i].fPos = p;

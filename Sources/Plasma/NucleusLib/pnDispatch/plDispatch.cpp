@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsResMgr.h"
 #include "plDispatch.h"
 #define PLMESSAGE_PRIVATE
@@ -81,10 +81,10 @@ public:
                                         fReceivers.Append(rcv); return *this;
                                     }
     const plKey&                    GetReceiver(int i) const { return fReceivers[i]; }
-    UInt32                          GetNumReceivers() const { return fReceivers.GetCount(); }
+    uint32_t                          GetNumReceivers() const { return fReceivers.GetCount(); }
 };
 
-Int32                   plDispatch::fNumBufferReq = 0;
+int32_t                   plDispatch::fNumBufferReq = 0;
 hsBool                  plDispatch::fMsgActive = false;
 plMsgWrap*              plDispatch::fMsgCurrent = nil;
 plMsgWrap*              plDispatch::fMsgHead = nil;
@@ -168,7 +168,7 @@ plMsgWrap* plDispatch::IDequeue(plMsgWrap** head, plMsgWrap** tail)
 
 hsBool plDispatch::ISortToDeferred(plMessage* msg)
 {
-    plMsgWrap* msgWrap = TRACKED_NEW plMsgWrap(msg);
+    plMsgWrap* msgWrap = new plMsgWrap(msg);
     if( !fFutureMsgQueue )
     {
         if( IGetOwner() )
@@ -213,7 +213,7 @@ void plDispatch::ICheckDeferred(double secs)
         plgDispatch::Dispatch()->UnRegisterForExactType(plTimeMsg::Index(), IGetOwnerKey());
 }
 
-hsBool plDispatch::IListeningForExactType(UInt16 hClass)
+hsBool plDispatch::IListeningForExactType(uint16_t hClass)
 {
     if( (hClass == plTimeMsg::Index()) && fFutureMsgQueue )
         return true;
@@ -305,7 +305,7 @@ void plDispatch::IMsgDispatch()
         }
 #endif // HS_DEBUGGING
 
-        static UInt64 startTicks = 0;
+        static uint64_t startTicks = 0;
         if (plDispatchLogBase::IsLogging())
             startTicks = hsTimer::GetFullTickCount();
 
@@ -338,12 +338,12 @@ void plDispatch::IMsgDispatch()
                 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-                UInt32 rcvTicks = hsTimer::GetPrecTickCount();
+                uint32_t rcvTicks = hsTimer::GetPrecTickCount();
 
                 // Object could be deleted by this message, so we need to log this stuff now
                 const char* keyname = "(unknown)";
                 const char* className = "(unknown)";
-                UInt32 clonePlayerID = 0;
+                uint32_t clonePlayerID = 0;
                 if (plDispatchLogBase::IsLoggingLong())
                 {
                     hsKeyedObject* ko = hsKeyedObject::ConvertNoRef(rcv);
@@ -463,7 +463,7 @@ hsBool plDispatch::MsgSend(plMessage* msg, hsBool async)
     else if((timeMsg = plTimeMsg::ConvertNoRef(msg)))
         ICheckDeferred(timeMsg->DSeconds());
 
-    plMsgWrap* msgWrap = TRACKED_NEW plMsgWrap(msg);
+    plMsgWrap* msgWrap = new plMsgWrap(msg);
     hsRefCnt_SafeUnRef(msg);
 
     // broadcast
@@ -537,7 +537,7 @@ void plDispatch::MsgQueueProcess()
     }
 }
 
-void plDispatch::RegisterForType(UInt16 hClass, const plKey& receiver)
+void plDispatch::RegisterForType(uint16_t hClass, const plKey& receiver)
 {
     int i;
     for( i = 0; i < plFactory::GetNumClasses(); i++ )
@@ -547,14 +547,14 @@ void plDispatch::RegisterForType(UInt16 hClass, const plKey& receiver)
     }
 }
 
-void plDispatch::RegisterForExactType(UInt16 hClass, const plKey& receiver)
+void plDispatch::RegisterForExactType(uint16_t hClass, const plKey& receiver)
 {
     int idx = hClass;
     fRegisteredExactTypes.ExpandAndZero(idx+1);
     plTypeFilter* filt = fRegisteredExactTypes[idx];
     if( !filt )
     {
-        filt = TRACKED_NEW plTypeFilter;
+        filt = new plTypeFilter;
         fRegisteredExactTypes[idx] = filt;
         filt->fHClass = hClass;
     }
@@ -563,7 +563,7 @@ void plDispatch::RegisterForExactType(UInt16 hClass, const plKey& receiver)
         filt->fReceivers.Append(receiver);
 }
 
-void plDispatch::UnRegisterForType(UInt16 hClass, const plKey& receiver)
+void plDispatch::UnRegisterForType(uint16_t hClass, const plKey& receiver)
 {
     int i;
     for( i = 0; i < fRegisteredExactTypes.GetCount(); i++ )
@@ -632,7 +632,7 @@ void plDispatch::UnRegisterAll(const plKey& receiver)
     }
 }
 
-void plDispatch::UnRegisterForExactType(UInt16 hClass, const plKey& receiver)
+void plDispatch::UnRegisterForExactType(uint16_t hClass, const plKey& receiver)
 {
     int idx = hClass;
     if( idx >= fRegisteredExactTypes.GetCount() )

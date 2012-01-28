@@ -41,18 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsRefCnt.h"
-#include "hsUtils.h"
 #include "hsStlUtils.h"
 #include "hsExceptions.h"
+#include <math.h>
 
-
-#if HS_BUILD_FOR_WIN32
 #ifdef _MSC_VER
-# include <crtdbg.h>        /* for _RPT_BASE */
-#endif
-# define WIN32_LEAN_AND_MEAN
-# define WIN32_EXTRA_LEAN
-# include <windows.h>   // For OutputDebugString()
+#   include <crtdbg.h>
 #endif
 
 
@@ -88,16 +82,10 @@ void hsDebugMessage (const char message[], long val)
 {
     char    s[1024];
 
-#if HS_BUILD_FOR_WIN32
-    #define strfmt _snprintf
-#else
-    #define strfmt snprintf
-#endif
-
     if (val)
-        s[0] = strfmt(&s[1], 1022, "%s: %ld", message, val);
+        s[0] = snprintf(&s[1], 1022, "%s: %ld", message, val);
     else
-        s[0] = strfmt(&s[1], 1022, "%s", message);
+        s[0] = snprintf(&s[1], 1022, "%s", message);
 
     if (gHSDebugProc)
         gHSDebugProc(&s[1]);
@@ -116,6 +104,93 @@ void hsDebugMessage (const char message[], long val)
 }
 #endif
 
+static bool s_GuiAsserts = true;
+void ErrorEnableGui(bool enabled)
+{
+    s_GuiAsserts = enabled;
+}
+
+void ErrorAssert(int line, const char file[], const char fmt[], ...)
+{
+#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+    char msg[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, args);
+#ifdef HS_DEBUGGING
+    if (s_GuiAsserts)
+    {
+        if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
+            DebugBreak();
+    } else 
+#endif // HS_DEBUGGING
+      if (DebugIsDebuggerPresent()) {
+        char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
+        DebugMsg(str, file, line, msg);
+    }
+#else
+    DebugBreakIfDebuggerPresent();
+#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+}
+
+bool DebugIsDebuggerPresent()
+{
+#ifdef _MSC_VER
+    return IsDebuggerPresent();
+#else
+    // FIXME
+    return false;
+#endif
+}
+
+void DebugBreakIfDebuggerPresent()
+{
+#ifdef _MSC_VER
+    __try 
+    {
+        __debugbreak();
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        // Debugger not present or some such shwiz.
+        // Whatever. Don't crash here.
+    }
+#endif // _MSC_VER
+}
+
+void DebugMsg(const char fmt[], ...)
+{
+    char msg[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, args);
+
+    if (DebugIsDebuggerPresent())
+    {
+#ifdef _MSC_VER
+        OutputDebugStringA(msg);
+        OutputDebugStringA("\n");
+#endif
+    } else {
+        fprintf(stderr, msg);
+        fprintf(stderr, "\n");
+    }
+}
+
+void ErrorMinimizeAppWindow () 
+{
+#ifdef HS_BUILD_FOR_WIN32
+    // If the application's topmost window is a fullscreen
+    // popup window, minimize it before displaying an error
+    HWND appWindow = GetActiveWindow();
+    if ( ((GetWindowLong(appWindow, GWL_STYLE) & WS_POPUP) != 0) )
+        SetWindowPos(
+            appWindow,
+            HWND_NOTOPMOST,
+            0, 0, // position
+            0, 0, // size
+            SWP_HIDEWINDOW | SWP_NOMOVE | SWP_NOSIZE
+        );
+#endif
+}
 
 ///////////////////////////////////////////////////////////////////
 

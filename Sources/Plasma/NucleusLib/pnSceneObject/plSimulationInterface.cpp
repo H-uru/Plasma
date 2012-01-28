@@ -99,7 +99,7 @@ void plSimulationInterface::Read(hsStream* s, hsResMgr* mgr)
     // Also unnecessary
     int poop = s->ReadLE32();
 
-    plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
+    plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
     mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
 }
 

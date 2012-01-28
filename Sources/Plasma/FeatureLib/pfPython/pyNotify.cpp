@@ -112,12 +112,12 @@ void pyNotify::SetNetForce(hsBool state)
 }
 
 
-void pyNotify::SetActivateState(hsScalar state)
+void pyNotify::SetActivateState(float state)
 {
     fBuildMsg.SetState(state);
 }
 
-void pyNotify::SetType(Int32 type)
+void pyNotify::SetType(int32_t type)
 {
     fBuildMsg.fType = type;
 }
@@ -141,12 +141,12 @@ void pyNotify::AddPickEvent( hsBool enabled, pyKey* other, pyKey* self, pyPoint3
                                 hitPoint.fPoint );
 }
 
-void pyNotify::AddControlKeyEvent( Int32 key, hsBool down )
+void pyNotify::AddControlKeyEvent( int32_t key, hsBool down )
 {
     fBuildMsg.AddControlKeyEvent(key,down);
 }
 
-void pyNotify::AddVarNumber(const char* name, hsScalar number)
+void pyNotify::AddVarNumber(const char* name, float number)
 {
     fBuildMsg.AddVariableEvent(name,number);
 }
@@ -156,7 +156,7 @@ void pyNotify::AddVarKey(const char* name, pyKey* key)
     fBuildMsg.AddVariableEvent(name, key ? key->getKey() : plKey() );
 }
 
-void pyNotify::AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, hsScalar dot)
+void pyNotify::AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, float dot)
 {
     fBuildMsg.AddFacingEvent( other ? other->getKey() : plKey(),
                                 self ? self->getKey() : plKey(),
@@ -175,12 +175,12 @@ void pyNotify::AddActivateEvent( hsBool active, hsBool activate )
     fBuildMsg.AddActivateEvent(activate);
 }
 
-void pyNotify::AddCallbackEvent( Int32 event )
+void pyNotify::AddCallbackEvent( int32_t event )
 {
     fBuildMsg.AddCallbackEvent(event);
 }
 
-void pyNotify::AddResponderState(Int32 state)
+void pyNotify::AddResponderState(int32_t state)
 {
     fBuildMsg.AddResponderStateEvent(state);
 }
@@ -191,7 +191,7 @@ void pyNotify::Send()
         return;
 
     // create new notify message to do the actual send with
-    plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+    plNotifyMsg* pNMsg = new plNotifyMsg;
 
     if ( fNetPropagate )
         pNMsg->SetBCastFlag(plMessage::kNetPropagate);

@@ -67,7 +67,7 @@ public:
     plKey GetLightMapKey() const { return fLightMapKey; }
 
     float GetScale() const;
-    UInt32 GetUVWSrc() const;
+    uint32_t GetUVWSrc() const;
 
     hsBool GetCompress() const;
     hsBool GetShared() const;

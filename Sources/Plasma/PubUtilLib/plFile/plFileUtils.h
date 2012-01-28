@@ -57,29 +57,29 @@ class plUnifiedTime;
 namespace plFileUtils
 {
     static const char kKeyFilename[] = "encryption.key";
-    static const wchar kWKeyFilename[] = L"encryption.key";
+    static const wchar_t kWKeyFilename[] = L"encryption.key";
 
     // Creates the directory specified. Returns false if unsuccessful or directory already exists
     hsBool  CreateDir( const char *path ); 
-    hsBool  CreateDir( const wchar *path ); 
+    hsBool  CreateDir( const wchar_t *path ); 
     hsBool RemoveDir(const char* path);
     hsBool RemoveDirTree(const char * path);
 
     // delete file from disk
     bool RemoveFile(const char* filename, bool delReadOnly=false);
-    bool RemoveFile(const wchar* filename, bool delReadOnly=false);
+    bool RemoveFile(const wchar_t* filename, bool delReadOnly=false);
 
     bool FileCopy(const char* existingFile, const char* newFile);
-    bool FileCopy(const wchar* existingFile, const wchar* newFile);
+    bool FileCopy(const wchar_t* existingFile, const wchar_t* newFile);
     bool FileMove(const char* existingFile, const char* newFile);
-    bool FileMove(const wchar* existingFile, const wchar* newFile);
+    bool FileMove(const wchar_t* existingFile, const wchar_t* newFile);
 
     bool FileExists(const char* file);
-    bool FileExists(const wchar* file);
+    bool FileExists(const wchar_t* file);
 
     // Given a filename with path, makes sure the file's path exists
     hsBool  EnsureFilePathExists( const char *filename );
-    hsBool  EnsureFilePathExists( const wchar *filename );
+    hsBool  EnsureFilePathExists( const wchar_t *filename );
     
     // Gets the creation and modification dates of the file specified. Returns false if unsuccessful
     hsBool  GetFileTimes( const char *path, plUnifiedTime *createTimeOut, plUnifiedTime *modifyTimeOut );
@@ -91,34 +91,34 @@ namespace plFileUtils
 
     // Return a pointer into the given string at the start of the actual filename (i.e. past any path info)
     const char* GetFileName(const char* pathAndName);
-    const wchar* GetFileName(const wchar* pathAndName);
+    const wchar_t* GetFileName(const wchar_t* pathAndName);
     // Get the file extension (without the .), or nil if it doesn't have one
     const char* GetFileExt(const char* pathAndName);
-    const wchar* GetFileExt(const wchar* pathAndName);
+    const wchar_t* GetFileExt(const wchar_t* pathAndName);
 
     // Strips the filename off the given full path
     void StripFile(char* pathAndName);
-    void StripFile(wchar* pathAndName);
+    void StripFile(wchar_t* pathAndName);
     void StripExt(char* fileName);
-    void StripExt(wchar* fileName);
+    void StripExt(wchar_t* fileName);
 
     // Get the size of the given file in bytes
-    UInt32      GetFileSize( const char *path );
-    UInt32      GetFileSize( const wchar *path );
+    uint32_t      GetFileSize( const char *path );
+    uint32_t      GetFileSize( const wchar_t *path );
 
     // Adds a slash to the end of a filename (or does nothing if it's already there)
     void AddSlash(char* path);
-    void AddSlash(wchar* path);
+    void AddSlash(wchar_t* path);
 
     // Concatenates fileName onto path, making sure to add a slash if necessary
     void ConcatFileName(char* path, const char* fileName);
-    void ConcatFileName(wchar* path, const wchar* fileName);
+    void ConcatFileName(wchar_t* path, const wchar_t* fileName);
 
     // searches the parent directory of filename for the encryption key file, and reads it
     // into the key passed in. Returns false if the key file didn't exist (and sets key to
     // the default key)
-    bool GetSecureEncryptionKey(const char* filename, UInt32* key, unsigned length);
-    bool GetSecureEncryptionKey(const wchar* filename, UInt32* key, unsigned length);
+    bool GetSecureEncryptionKey(const char* filename, uint32_t* key, unsigned length);
+    bool GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key, unsigned length);
 };
 
 

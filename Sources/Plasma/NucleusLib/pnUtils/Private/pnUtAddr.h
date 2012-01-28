@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 struct NetAddress {
-    byte data[24];
+    uint8_t data[24];
 };
 
 typedef unsigned NetAddressNode;
@@ -116,7 +116,7 @@ inline bool NetAddressEqual (const NetAddress & a1, const NetAddress & a2) {
 
 void NetAddressToString (
     const NetAddress &  addr, 
-    wchar *             str, 
+    wchar_t *             str, 
     unsigned            chars, 
     ENetAddressFormat   format
 );
@@ -125,7 +125,7 @@ void NetAddressToString (
 // - names which require DNS lookup will cause the function to return false
 bool NetAddressFromString (
     NetAddress *    addr,
-    const wchar     str[],
+    const wchar_t     str[],
     unsigned        defaultPort
 );
 
@@ -139,12 +139,12 @@ void NetAddressSetPort (
 
 void NetAddressNodeToString (
     NetAddressNode      node,
-    wchar *             str,
+    wchar_t *             str,
     unsigned            chars
 );
 NetAddressNode NetAddressNodeFromString (
-    const wchar         string[],
-    const wchar *       endPtr[]
+    const wchar_t         string[],
+    const wchar_t *       endPtr[]
 );
 
 NetAddressNode NetAddressGetNode (

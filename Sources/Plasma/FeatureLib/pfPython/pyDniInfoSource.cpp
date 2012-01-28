@@ -51,7 +51,7 @@ pyDniInfoSource::pyDniInfoSource()
 {}
 
 pyDniInfoSource::~pyDniInfoSource() {
-    FREE(fAgeName);
+    free(fAgeName);
 }
 
 PyObject* pyDniInfoSource::GetAgeCoords( void )
@@ -65,16 +65,16 @@ PyObject* pyDniInfoSource::GetAgeCoords( void )
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyDniInfoSource::GetAgeTime( void ) const
+uint32_t pyDniInfoSource::GetAgeTime( void ) const
 {
     RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
     if (!node)
         return 0;
     
-    UInt32 result;
+    uint32_t result;
     VaultAgeInfoNode ageInfo(node);
     if (const plUnifiedTime * utime = ageInfo.GetAgeTime())
-        result = (UInt32)utime->GetSecs();
+        result = (uint32_t)utime->GetSecs();
     else
         result = 0;
     node->DecRef();

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLightInfo.h"
 #include "plLightKonstants.h"
 #include "hsBounds.h"
@@ -74,8 +74,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // heinous
 #include "plNetClient/plNetClientMgr.h"
 #include "pnMessage/plEnableMsg.h"
-static hsScalar kMaxYon = 1000.f;
-static hsScalar kMinHither = 1.f;
+static float kMaxYon = 1000.f;
+static float kMinHither = 1.f;
 
 #include "plLightProxy.h"
 
@@ -102,7 +102,7 @@ plLightInfo::plLightInfo()
     fNextDevPtr = nil;
     fPrevDevPtr = nil;
 
-    fProxyGen = TRACKED_NEW plLightProxy;
+    fProxyGen = new plLightProxy;
     fProxyGen->Init(this);
 
     fRegisteredForRenderMsg = false;
@@ -141,9 +141,9 @@ void plLightInfo::IRefresh()
 
 void plLightInfo::ICheckMaxStrength()
 {
-    hsScalar r = GetDiffuse().r >= 0 ? GetDiffuse().r : -GetDiffuse().r;
-    hsScalar g = GetDiffuse().g >= 0 ? GetDiffuse().g : -GetDiffuse().g;
-    hsScalar b = GetDiffuse().b >= 0 ? GetDiffuse().b : -GetDiffuse().b;
+    float r = GetDiffuse().r >= 0 ? GetDiffuse().r : -GetDiffuse().r;
+    float g = GetDiffuse().g >= 0 ? GetDiffuse().g : -GetDiffuse().g;
+    float b = GetDiffuse().b >= 0 ? GetDiffuse().b : -GetDiffuse().b;
     fMaxStrength = 
         r > g 
         ?   (
@@ -157,11 +157,11 @@ void plLightInfo::ICheckMaxStrength()
                 : b
             );
 
-    const hsScalar kMinMaxStrength = 1.e-2f;
+    const float kMinMaxStrength = 1.e-2f;
     SetZero(fMaxStrength < kMinMaxStrength);
 }
 
-void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     if( IsIdle() )
     {
@@ -215,7 +215,7 @@ void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, hsBoo
     }
 }
 
-const hsTArray<Int16>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<Int16>& visList, hsTArray<Int16>& litList, hsBool charac)
+const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, hsBool charac)
 {
     Refresh();
 
@@ -469,9 +469,9 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     fLocalToWorld = fLightToWorld * fLocalToLight;
     fWorldToLocal = fLightToLocal * fWorldToLight;
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kProjection), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kProjection), plRefFlags::kActiveRef);
 
-    mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSoftVolume), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSoftVolume), plRefFlags::kActiveRef);
 
     // Let our sceneNode know we're here.
     plKey nodeKey = mgr->ReadKey(s);
@@ -481,7 +481,7 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     fVisRegions.SetCountAndZero(n);
     int i;
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
 
     SetDirty(true);
 }
@@ -519,7 +519,7 @@ void plLightInfo::ISetSceneNode(plKey node)
     {
         if( node )
         {
-            plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kLight);
+            plNodeRefMsg* refMsg = new plNodeRefMsg(node, plRefMsg::kOnCreate, -1, plNodeRefMsg::kLight);
             hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
         if( fSceneNode )
@@ -592,7 +592,7 @@ plDirectionalLightInfo::~plDirectionalLightInfo()
 {
 }
 
-void plDirectionalLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plDirectionalLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
 }
@@ -637,8 +637,8 @@ void plLimitedDirLightInfo::IRefresh()
         hsMatrix44 l2ndc;
         l2ndc.Reset();
 
-        hsScalar width = fWidth;
-        hsScalar height = fHeight;
+        float width = fWidth;
+        float height = fHeight;
 
         l2ndc.fMap[0][0] = 1.f / width;
         l2ndc.fMap[0][3] = 0.5f;
@@ -658,7 +658,7 @@ void plLimitedDirLightInfo::IRefresh()
     }
 }
 
-void plLimitedDirLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plLimitedDirLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     // If we haven't culled the object, return that we're full strength.
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
@@ -685,14 +685,14 @@ void plLimitedDirLightInfo::Write(hsStream* s, hsResMgr* mgr)
 void plLimitedDirLightInfo::IMakeIsect()
 {
     if( !fParPlanes )
-        fParPlanes = TRACKED_NEW plParallelIsect;
+        fParPlanes = new plParallelIsect;
 
     fParPlanes->SetNumPlanes(3);
     
     hsPoint3 p0, p1;
 
-    hsScalar width = fWidth;
-    hsScalar height = fHeight;
+    float width = fWidth;
+    float height = fHeight;
     p0.Set(-width*0.5f, 0, 0);
     p1.Set(width*0.5f, 0, 0);
     fParPlanes->SetPlane(0, p0, p1);
@@ -712,7 +712,7 @@ void plLimitedDirLightInfo::IMakeIsect()
 //  Creates a new box drawable for showing the light's
 //  influence.
 
-plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     hsPoint3 corner;
     corner.Set(-fWidth*0.5f, -fHeight*0.5f, -fDepth);
@@ -752,11 +752,11 @@ plOmniLightInfo::~plOmniLightInfo()
 
 void plOmniLightInfo::IMakeIsect()
 {
-    fSphere = TRACKED_NEW plSphereIsect;
+    fSphere = new plSphereIsect;
     fSphere->SetTransform(fLightToWorld, fWorldToLight);
 }
 
-void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plLightInfo::GetStrengthAndScale(bnd, strength, scale);
 
@@ -764,7 +764,7 @@ void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     const hsPoint3& pos = bnd.GetCenter();
 
     hsPoint3 wpos = GetWorldPosition();
-    hsScalar dist = hsVector3(&pos, &wpos).MagnitudeSquared();
+    float dist = hsVector3(&pos, &wpos).MagnitudeSquared();
     dist = 1.f / hsFastMath::InvSqrtAppr(dist);
     if( fAttenQuadratic > 0 )
     {
@@ -785,16 +785,16 @@ void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     }
 }
 
-hsScalar plOmniLightInfo::GetRadius() const
+float plOmniLightInfo::GetRadius() const
 {
-    hsScalar radius = 0;
+    float radius = 0;
     if( fAttenQuadratic > 0 )
     {
-        hsScalar mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
-        hsScalar det = fAttenLinear*fAttenLinear - 4.f * fAttenQuadratic * fAttenConst * (1.f - mult * plSillyLightKonstants::GetFarPowerKonst());
+        float mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
+        float det = fAttenLinear*fAttenLinear - 4.f * fAttenQuadratic * fAttenConst * (1.f - mult * plSillyLightKonstants::GetFarPowerKonst());
         if( det > 0 )
         {
-            det = hsSquareRoot(det);
+            det = sqrt(det);
 
             radius = -fAttenLinear + det;
             radius /= fAttenQuadratic * 2.f;
@@ -804,7 +804,7 @@ hsScalar plOmniLightInfo::GetRadius() const
     }
     else if( fAttenLinear > 0 )
     {
-        hsScalar mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
+        float mult = fDiffuse.a >= 0 ? fDiffuse.a : -fDiffuse.a;
         radius = (mult * plSillyLightKonstants::GetFarPowerKonst() - 1.f ) * fAttenConst / fAttenLinear;
     }
     else if( fAttenCutoff > 0 )
@@ -864,7 +864,7 @@ void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 //  Creates a new sphere drawable for showing the omnilight's
 //  sphere (haha) of influence.
 
-plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     if( rad == 0 )
@@ -887,8 +887,8 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>
 // Spot
 plSpotLightInfo::plSpotLightInfo()
 :   fFalloff(1.f),
-    fSpotInner(hsScalarPI * 0.125f),
-    fSpotOuter(hsScalarPI * 0.25f),
+    fSpotInner(M_PI * 0.125f),
+    fSpotOuter(M_PI * 0.25f),
     fCone(nil)
 {
 }
@@ -898,7 +898,7 @@ plSpotLightInfo::~plSpotLightInfo()
     delete fCone;
 }
 
-void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& strength, hsScalar& scale) const
+void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plOmniLightInfo::GetStrengthAndScale(bnd, strength, scale);
 
@@ -908,13 +908,13 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
     hsVector3 del;
     hsPoint3 wpos = GetWorldPosition();
     del.Set(&pos, &wpos);
-    hsScalar invDist = del.MagnitudeSquared();
+    float invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 
-    hsScalar dot = del.InnerProduct(GetWorldDirection());
+    float dot = del.InnerProduct(GetWorldDirection());
     dot *= invDist;
 
-    hsScalar cosInner, cosOuter, t;
+    float cosInner, cosOuter, t;
     hsFastMath::SinCosInRangeAppr(fSpotInner, t, cosInner);
     hsFastMath::SinCosInRangeAppr(fSpotOuter, t, cosOuter);
     if( dot < cosOuter )
@@ -925,7 +925,7 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, hsScalar& str
 
 void plSpotLightInfo::IMakeIsect()
 {
-    fCone = TRACKED_NEW plConeIsect;
+    fCone = new plConeIsect;
     fCone->SetTransform(fLightToWorld, fWorldToLight);
 }
 
@@ -936,7 +936,7 @@ void plSpotLightInfo::IRefresh()
     if( !fCone )
         IMakeIsect();
 
-    hsScalar effFOV = fSpotOuter;
+    float effFOV = fSpotOuter;
     fCone->SetAngle(effFOV);
     
 
@@ -948,12 +948,12 @@ void plSpotLightInfo::IRefresh()
 
     if( GetProjection() )
     {
-        hsScalar yon = GetRadius();
+        float yon = GetRadius();
         if( yon < kMinHither )
             yon = kMaxYon;
-        hsScalar hither = hsMinimum(kMinHither, yon * 0.5f);
+        float hither = hsMinimum(kMinHither, yon * 0.5f);
 
-        hsScalar sinFOV, cosFOV;
+        float sinFOV, cosFOV;
         hsFastMath::SinCos(effFOV, sinFOV, cosFOV);
 
         hsMatrix44 l2ndc;
@@ -1000,7 +1000,7 @@ hsVector3 plSpotLightInfo::GetWorldDirection() const
 //  Generates a new drawable for showing the spotlight's
 //  sphere of influence.
 
-plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     float   x, y;

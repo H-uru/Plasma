@@ -166,7 +166,7 @@ CLockWaitSetAllocator::CLockWaitSetAllocator (CLockWaitSetAllocator * prev) {
 
 //===========================================================================
 CLockWaitSetAllocator::~CLockWaitSetAllocator () {
-    DEL(m_prev);
+    delete m_prev;
 }
 
 //===========================================================================
@@ -178,7 +178,7 @@ CLockWaitSet * CLockWaitSetAllocator::Alloc () {
     if (!s_allocator || !s_allocator->m_spareList.Head()) {
         if (!s_allocator)
             atexit(Shutdown);
-        s_allocator = NEW(CLockWaitSetAllocator)(s_allocator);
+        s_allocator = new CLockWaitSetAllocator(s_allocator);
     }
 
     // Get an available wait set from the active allocator
@@ -207,7 +207,7 @@ void CLockWaitSetAllocator::Shutdown () {
     // Free all allocators
     while (s_allocator) {
         CLockWaitSetAllocator * prev = s_allocator->m_prev;
-        DEL(s_allocator);
+        delete s_allocator;
         s_allocator = prev;
     }
 

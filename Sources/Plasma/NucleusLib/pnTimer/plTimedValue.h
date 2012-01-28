@@ -57,7 +57,7 @@ protected:
     T           fGoal;
     T           fInit;
     double      fStart;
-    hsScalar    fInvSecs;
+    float    fInvSecs;
 
 public:
     plTimedValue() {}
@@ -67,7 +67,7 @@ public:
     plTimedValue<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
     plTimedValue<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-    plTimedValue<T>& Set(const T& v, hsScalar secs=0);
+    plTimedValue<T>& Set(const T& v, float secs=0);
 
     operator T () const { return Value(); }
 
@@ -83,7 +83,7 @@ public:
     plTimedSimple<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
     plTimedSimple<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-    plTimedSimple<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
+    plTimedSimple<T>& Set(const T& v, float secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -97,14 +97,14 @@ public:
     plTimedCompound<T>& operator=(const plTimedValue<T>& o) { return Set(o, 0.f); }
     plTimedCompound<T>& operator=(const T& v) { return Set(v, 0.f); }
 
-    plTimedCompound<T>& Set(const T& v, hsScalar secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
+    plTimedCompound<T>& Set(const T& v, float secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
 };
 
 template <class T> 
-plTimedValue<T>& plTimedValue<T>::Set(const T& v, hsScalar secs)
+plTimedValue<T>& plTimedValue<T>::Set(const T& v, float secs)
 {
     if( secs <= 0 )
     {
@@ -126,7 +126,7 @@ T plTimedValue<T>::Value() const
 {
     if( fInvSecs > 0 )
     {
-        hsScalar t = (hsScalar)((hsTimer::GetSysSeconds() - fStart) * fInvSecs);
+        float t = (float)((hsTimer::GetSysSeconds() - fStart) * fInvSecs);
         hsAssert(t >= 0, "Moving back in time");
 
         if( t < 1.f )

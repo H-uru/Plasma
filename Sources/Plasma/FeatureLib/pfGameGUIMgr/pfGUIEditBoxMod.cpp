@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define LIMIT_VOICE_CHAT 1
 #endif
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIEditBoxMod.h"
 #include "pfGameGUIMgr.h"
 
@@ -86,7 +86,7 @@ pfGUIEditBoxMod::~pfGUIEditBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIEditBoxMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIEditBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -126,7 +126,7 @@ void    pfGUIEditBoxMod::IUpdate( void )
     if( fBuffer != nil )
     {
         // First, calc the cursor position, so we can adjust the scrollPos as necessary
-        Int16 cursorPos, oldCursorPos;
+        int16_t cursorPos, oldCursorPos;
         if( fFocused && !fSpecialCaptureKeyEventMode )
         {
             // Really cheap hack here to figure out where to draw the cursor
@@ -136,7 +136,7 @@ void    pfGUIEditBoxMod::IUpdate( void )
             fBuffer[ fCursorPos ] = backup;
 
             oldCursorPos = cursorPos;
-            cursorPos -= (Int16)fScrollPos;
+            cursorPos -= (int16_t)fScrollPos;
 
             if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 18 )
             {
@@ -149,7 +149,7 @@ void    pfGUIEditBoxMod::IUpdate( void )
                     fScrollPos = 0;
             }
 
-            cursorPos = (Int16)(oldCursorPos - fScrollPos);
+            cursorPos = (int16_t)(oldCursorPos - fScrollPos);
         }
 
         if ( fFocused && fSpecialCaptureKeyEventMode )
@@ -159,7 +159,7 @@ void    pfGUIEditBoxMod::IUpdate( void )
         else
             fDynTextMap->SetTextColor( GetColorScheme()->fForeColor, GetColorScheme()->fTransparent &&
                                                                      GetColorScheme()->fBackColor.a == 0.f );
-        fDynTextMap->DrawClippedString( (Int16)(4 - fScrollPos), 4, fBuffer, 
+        fDynTextMap->DrawClippedString( (int16_t)(4 - fScrollPos), 4, fBuffer, 
                                         4, 4, fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8 );
 
         if( fFocused && !fSpecialCaptureKeyEventMode )
@@ -193,10 +193,10 @@ void    pfGUIEditBoxMod::Write( hsStream *s, hsResMgr *mgr )
 //  (if any). Shift-click and ctrl-click avoids the deselect and toggles
 //  the item clicked on.
 
-void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     wchar_t backup;
-    UInt16  width;
+    uint16_t  width;
 
 
     if( fBuffer != nil && fDynTextMap != nil )
@@ -225,17 +225,17 @@ void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
 
 //// HandleMouseUp ///////////////////////////////////////////////////////////
 
-void    pfGUIEditBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIEditBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
 //// HandleMouseDrag /////////////////////////////////////////////////////////
 
-void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
+hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
     if( fBuffer == nil )
         return false;
@@ -262,7 +262,7 @@ hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
     return true;
 }
 
-hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers )
+hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     if ( fSpecialCaptureKeyEventMode)
     {
@@ -470,14 +470,14 @@ void    pfGUIEditBoxMod::SetText( const wchar_t *str )
     }
 }
 
-void    pfGUIEditBoxMod::SetBufferSize( UInt32 size )
+void    pfGUIEditBoxMod::SetBufferSize( uint32_t size )
 {
     delete [] fBuffer;
 
     fBufferSize = size;
     if( size > 0 )
     {
-        fBuffer = TRACKED_NEW wchar_t[ size + 1 ];
+        fBuffer = new wchar_t[ size + 1 ];
         memset( fBuffer, 0, (size + 1) * sizeof(wchar_t) );
     }
     else
@@ -499,7 +499,7 @@ void    pfGUIEditBoxMod::SetCursorToEnd( void )
         fCursorPos = wcslen( fBuffer );
 }
 
-void pfGUIEditBoxMod::SetLastKeyCapture(UInt32 key, UInt8 modifiers)
+void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
 {
     // capture the key
     fSavedKey = (plKeyDef)key;

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSDLModifierMsg_INC
 
 #include "pnMessage/plMessage.h"
-#include "hsUtils.h"
+
 
 //
 // A msg sent to an SDL modifier to tell it send or recv state.
@@ -67,8 +67,8 @@ protected:
     Action fAction;
     plStateDataRecord* fState;      // for recving state
     bool fManageStateMem;           // delete fState?
-    UInt32 fPlayerID;
-    UInt32 fFlags;
+    uint32_t fPlayerID;
+    uint32_t fFlags;
 
 public:
     plSDLModifierMsg(const char* sdlName=nil, Action a=kActionNone);
@@ -77,8 +77,8 @@ public:
     CLASSNAME_REGISTER( plSDLModifierMsg );
     GETINTERFACE_ANY( plSDLModifierMsg, plMessage );
 
-    UInt32 GetFlags() const { return fFlags; }
-    void SetFlags(UInt32 f) { fFlags = f; }
+    uint32_t GetFlags() const { return fFlags; }
+    void SetFlags(uint32_t f) { fFlags = f; }
 
     Action GetAction() const { return fAction; }
     void SetAction(Action t) { fAction=t; }
@@ -89,8 +89,8 @@ public:
     const char* GetSDLName() const { return fSDLName; }
     void SetSDLName(const char* s) { delete [] fSDLName; fSDLName=hsStrcpy(s); }
         
-    UInt32 GetPlayerID() const { return fPlayerID;  }
-    void SetPlayerID(UInt32 p) { fPlayerID=p;   }
+    uint32_t GetPlayerID() const { return fPlayerID;  }
+    void SetPlayerID(uint32_t p) { fPlayerID=p;   }
     
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }

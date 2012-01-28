@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAccessSnapShot.h"
 
 #include "hsGeometry3.h"
@@ -74,7 +74,7 @@ void plAccessSnapShot::Release()
     }
 }
 
-UInt32 plAccessSnapShot::ICheckAlloc(const plAccessVtxSpan& src, UInt32 chanMask, UInt32 chan, UInt16 chanSize)
+uint32_t plAccessSnapShot::ICheckAlloc(const plAccessVtxSpan& src, uint32_t chanMask, uint32_t chan, uint16_t chanSize)
 {
     if( ((1 << chan) & chanMask) && src.fStrides[chan] )
     {
@@ -98,16 +98,16 @@ UInt32 plAccessSnapShot::ICheckAlloc(const plAccessVtxSpan& src, UInt32 chanMask
     return chanMask;
 }
 
-void plAccessSnapShot::IRecordSizes(UInt16 sizes[]) const
+void plAccessSnapShot::IRecordSizes(uint16_t sizes[]) const
 {
     int chan;
     for( chan = 0; chan < kNumValidChans; chan++ )
         sizes[chan] = fChanSize[chan];
 }
 
-UInt16 plAccessSnapShot::IComputeStride() const
+uint16_t plAccessSnapShot::IComputeStride() const
 {
-    UInt16 stride = 0;
+    uint16_t stride = 0;
     int chan;
     for( chan = 0; chan < kNumValidChans; chan++ )
         stride += fChanSize[chan];
@@ -115,12 +115,12 @@ UInt16 plAccessSnapShot::IComputeStride() const
     return stride;
 }
 
-void plAccessSnapShot::ICopyOldData(UInt8* data, const UInt16* const oldSizes, UInt16 oldStride, UInt16 newStride)
+void plAccessSnapShot::ICopyOldData(uint8_t* data, const uint16_t* const oldSizes, uint16_t oldStride, uint16_t newStride)
 {
-    UInt32 oldOffset = 0;
-    UInt32 newOffset = 0;
-    UInt8*  srcChannels[kNumValidChans];
-    UInt8*  dstChannels[kNumValidChans];
+    uint32_t oldOffset = 0;
+    uint32_t newOffset = 0;
+    uint8_t*  srcChannels[kNumValidChans];
+    uint8_t*  dstChannels[kNumValidChans];
     int chan;
     for( chan = 0; chan < kNumValidChans; chan++ )
     {
@@ -152,9 +152,9 @@ void plAccessSnapShot::ICopyOldData(UInt8* data, const UInt16* const oldSizes, U
     }
 }
 
-void plAccessSnapShot::ISetupPointers(UInt16 newStride)
+void plAccessSnapShot::ISetupPointers(uint16_t newStride)
 {
-    fData = TRACKED_NEW UInt8[fNumVerts * newStride];
+    fData = new uint8_t[fNumVerts * newStride];
 
     int size = 0;
     int chan;
@@ -169,33 +169,33 @@ void plAccessSnapShot::ISetupPointers(UInt16 newStride)
     }
 }
 
-UInt32 plAccessSnapShot::CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask)
+uint32_t plAccessSnapShot::CopyFrom(const plAccessVtxSpan& src, uint32_t chanMask)
 {
     hsAssert(!fNumVerts || (fNumVerts == src.fNumVerts), "Copying from a different sized span");
 
     fNumVerts = src.fNumVerts;
 
-    UInt16 oldSize[kNumValidChans];
-    UInt8* oldData = fData;
+    uint16_t oldSize[kNumValidChans];
+    uint8_t* oldData = fData;
     IRecordSizes(oldSize);
 
-    UInt16 oldStride = IComputeStride();
+    uint16_t oldStride = IComputeStride();
 
     // First, allocate any storage we need. Kill any requested channels out of the
     // mask that we already have.
     chanMask = ICheckAlloc(src, chanMask, kPosition, sizeof(hsPoint3));
 
-    chanMask = ICheckAlloc(src, chanMask, kWeight, sizeof(hsScalar) * src.fNumWeights);
+    chanMask = ICheckAlloc(src, chanMask, kWeight, sizeof(float) * src.fNumWeights);
     if( fChanSize[kWeight] )
         fNumWeights = src.fNumWeights;
 
-    chanMask = ICheckAlloc(src, chanMask, kWgtIndex, sizeof(UInt32));
+    chanMask = ICheckAlloc(src, chanMask, kWgtIndex, sizeof(uint32_t));
 
     chanMask = ICheckAlloc(src, chanMask, kNormal, sizeof(hsVector3));
 
-    chanMask = ICheckAlloc(src, chanMask, kDiffuse, sizeof(UInt32));
+    chanMask = ICheckAlloc(src, chanMask, kDiffuse, sizeof(uint32_t));
 
-    chanMask = ICheckAlloc(src, chanMask, kSpecular, sizeof(UInt32));
+    chanMask = ICheckAlloc(src, chanMask, kSpecular, sizeof(uint32_t));
 
     chanMask = ICheckAlloc(src, chanMask, kUVW, sizeof(hsPoint3) * src.fNumUVWsPerVert);
     if( fChanSize[kUVW] )
@@ -206,14 +206,14 @@ UInt32 plAccessSnapShot::CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask)
     if( !chanMask )
         return 0;
 
-    UInt16 newStride = IComputeStride();
+    uint16_t newStride = IComputeStride();
 
     ISetupPointers(newStride);
 
     ICopyOldData(oldData, oldSize, oldStride, newStride);
 
-    UInt8*  srcChannels[kNumValidChans];
-    UInt8*  dstChannels[kNumValidChans];
+    uint8_t*  srcChannels[kNumValidChans];
+    uint8_t*  dstChannels[kNumValidChans];
     int chan;
     for( chan = 0; chan < kNumValidChans; chan++ )
     {
@@ -238,7 +238,7 @@ UInt32 plAccessSnapShot::CopyFrom(const plAccessVtxSpan& src, UInt32 chanMask)
     return chanMask;
 }
 
-UInt32 plAccessSnapShot::CopyTo(const plAccessVtxSpan& dst, UInt32 chanMask)
+uint32_t plAccessSnapShot::CopyTo(const plAccessVtxSpan& dst, uint32_t chanMask)
 {
     hsAssert(fNumVerts == dst.fNumVerts, "Vertex count mismatch, is this our real source?");
 

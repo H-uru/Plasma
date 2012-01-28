@@ -66,7 +66,7 @@ void pyGrassShader::SetKey(plKey key)
 // Setter functions
 //////////////////////////////////////////////////////////////////////
 
-void pyGrassShader::SetWaveDistortion(int waveNum, const std::vector<hsScalar> & distortion)
+void pyGrassShader::SetWaveDistortion(int waveNum, const std::vector<float> & distortion)
 {
     if ((waveNum < 0)||(waveNum >= plGrassShaderMod::kNumWaves))
     {
@@ -95,7 +95,7 @@ void pyGrassShader::SetWaveDistortion(int waveNum, const std::vector<hsScalar> &
     }
 }
 
-void pyGrassShader::SetWaveDirection(int waveNum, const std::vector<hsScalar> & direction)
+void pyGrassShader::SetWaveDirection(int waveNum, const std::vector<float> & direction)
 {
     if ((waveNum < 0)||(waveNum >= plGrassShaderMod::kNumWaves))
     {
@@ -123,7 +123,7 @@ void pyGrassShader::SetWaveDirection(int waveNum, const std::vector<hsScalar> & 
     }
 }
 
-void pyGrassShader::SetWaveSpeed(int waveNum, hsScalar speed)
+void pyGrassShader::SetWaveSpeed(int waveNum, float speed)
 {
     if ((waveNum < 0)||(waveNum >= plGrassShaderMod::kNumWaves))
     {
@@ -147,9 +147,9 @@ void pyGrassShader::SetWaveSpeed(int waveNum, hsScalar speed)
 // Getter functions
 //////////////////////////////////////////////////////////////////////
 
-std::vector<hsScalar> pyGrassShader::GetWaveDistortion(int waveNum) const
+std::vector<float> pyGrassShader::GetWaveDistortion(int waveNum) const
 {
-    std::vector<hsScalar> retVal;
+    std::vector<float> retVal;
     retVal.push_back(-1);
     retVal.push_back(-1);
     retVal.push_back(-1);
@@ -174,9 +174,9 @@ std::vector<hsScalar> pyGrassShader::GetWaveDistortion(int waveNum) const
     return retVal;
 }
 
-std::vector<hsScalar> pyGrassShader::GetWaveDirection(int waveNum) const
+std::vector<float> pyGrassShader::GetWaveDirection(int waveNum) const
 {
-    std::vector<hsScalar> retVal;
+    std::vector<float> retVal;
     retVal.push_back(-1);
     retVal.push_back(-1);
     if ((waveNum < 0)||(waveNum >= plGrassShaderMod::kNumWaves))
@@ -199,7 +199,7 @@ std::vector<hsScalar> pyGrassShader::GetWaveDirection(int waveNum) const
     return retVal;
 }
 
-hsScalar pyGrassShader::GetWaveSpeed(int waveNum) const
+float pyGrassShader::GetWaveSpeed(int waveNum) const
 {
     if ((waveNum < 0)||(waveNum >= plGrassShaderMod::kNumWaves))
     {

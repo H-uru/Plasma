@@ -49,43 +49,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsVectorStream : public hsStream
 {
 protected:
-    std::vector<Byte> fVector;
-    UInt32 fEnd;    // End of file (one past the last byte)
+    std::vector<uint8_t> fVector;
+    uint32_t fEnd;    // End of file (one past the last byte)
 
 public:
     hsVectorStream();
-    hsVectorStream(UInt32 chunkSize);
+    hsVectorStream(uint32_t chunkSize);
     virtual ~hsVectorStream();
 
     virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual hsBool  Open(const wchar *, const wchar *)  { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
     virtual hsBool  Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
     
     virtual hsBool  AtEnd();
-    virtual UInt32  Read(UInt32 byteCount, void * buffer);
-    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
-    virtual void    Skip(UInt32 deltaByteCount);
+    virtual uint32_t  Read(uint32_t byteCount, void * buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
+    virtual void    Skip(uint32_t deltaByteCount);
     virtual void    Rewind();
     virtual void    FastFwd();
     virtual void    Truncate();
 
-    virtual UInt32  GetEOF();
+    virtual uint32_t  GetEOF();
     virtual void    CopyToMem(void* mem);
 
     virtual void    Reset();        // clears the buffers
 
     // Erase number of bytes at the current position
-    virtual void    Erase(UInt32 bytes);
+    virtual void    Erase(uint32_t bytes);
     // A pointer to the beginning of the data in the stream.  This is only valid
     // until someone modifies the stream.
     const void      *GetData();
     // In case you want to try and be efficient with your memory allocations
-    void Reserve(UInt32 bytes) { fVector.reserve(bytes); }
+    void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
 };
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#include "hsWindows.h"
+
 
 class hsNamedPipeStream : public hsStream
 {
@@ -93,17 +93,17 @@ protected:
     HANDLE      fPipe;
     OVERLAPPED  fOverlap;
     hsBool      fReadMode;  // True for read, false for write
-    UInt8       fFlags;
-    UInt32      fTimeout;
+    uint8_t       fFlags;
+    uint32_t      fTimeout;
 
-    hsBool ICheckOverlappedResult(BOOL result, UInt32 &numTransferred);
-    hsBool IRead(UInt32 byteCount, void *buffer, UInt32 &numRead);
-    hsBool IWrite(UInt32 byteCount, const void *buffer, UInt32 &numWritten);
+    hsBool ICheckOverlappedResult(BOOL result, uint32_t &numTransferred);
+    hsBool IRead(uint32_t byteCount, void *buffer, uint32_t &numRead);
+    hsBool IWrite(uint32_t byteCount, const void *buffer, uint32_t &numWritten);
 
 public:
     enum { kThrowOnError = 1 }; // Throws if a read or write operation fails
 
-    hsNamedPipeStream(UInt8 flags=0, UInt32 timeout=INFINITE);
+    hsNamedPipeStream(uint8_t flags=0, uint32_t timeout=INFINITE);
     virtual ~hsNamedPipeStream();
 
     // The server (writer) and client (reader) need to open the same file.
@@ -111,12 +111,12 @@ public:
     // computer name to do it over the network.  'pipeName' is whatever you
     // want.
     virtual hsBool  Open(const char *name, const char *mode);
-    virtual hsBool  Open(const wchar *name, const wchar *mode);
+    virtual hsBool  Open(const wchar_t *name, const wchar_t *mode);
     virtual hsBool  Close();
     
-    virtual UInt32  Read(UInt32 byteCount, void *buffer);
-    virtual UInt32  Write(UInt32 byteCount, const void *buffer);
-    virtual void    Skip(UInt32 deltaByteCount);
+    virtual uint32_t  Read(uint32_t byteCount, void *buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void *buffer);
+    virtual void    Skip(uint32_t deltaByteCount);
     virtual void    Rewind();
 
     // - For the server (writer) only -

@@ -76,7 +76,7 @@ enum EFileError {
 
 EFileError AsyncGetLastFileError ();
 
-const wchar * FileErrorToString (EFileError error);
+const wchar_t * FileErrorToString (EFileError error);
 
 
 /****************************************************************************
@@ -99,19 +99,19 @@ struct AsyncNotifyFile {
 };
 
 struct AsyncNotifyFileConnect : AsyncNotifyFile {
-    qword           fileSize;
-    qword           fileLastWriteTime;
+    uint64_t           fileSize;
+    uint64_t           fileLastWriteTime;
 };
 
 struct AsyncNotifyFileFlush : AsyncNotifyFile {
     EFileError      error;
-    qword           truncateSize;
+    uint64_t        truncateSize;
 };
 
 struct AsyncNotifyFileRead : AsyncNotifyFile {
-    qword           offset;
-    byte *          buffer;
-    unsigned        bytes;
+    uint64_t           offset;
+    uint8_t *          buffer;
+    unsigned           bytes;
 };
 
 typedef AsyncNotifyFileRead AsyncNotifyFileWrite;
@@ -147,19 +147,19 @@ const unsigned kAsyncFileShareRead          = 0x00000001;
 const unsigned kAsyncFileShareWrite         = 0x00000002;
 
 AsyncFile AsyncFileOpen (
-    const wchar             fullPath[],
+    const wchar_t           fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,     // optional
     void *                  userState,          // optional
-    qword *                 fileSize,           // optional
-    qword *                 fileLastWriteTime   // optional
+    uint64_t *              fileSize,           // optional
+    uint64_t *              fileLastWriteTime   // optional
 );
 
 // Use with AsyncFileDelete/AsyncFileFlushBuffers
-const qword kAsyncFileDontTruncate          = (qword) -1;
+const uint64_t kAsyncFileDontTruncate          = (uint64_t) -1;
 
 // This function may ONLY be called when there is no outstanding I/O against a file
 // and no more I/O will be initiated against it.  This function guarantees that it
@@ -167,23 +167,23 @@ const qword kAsyncFileDontTruncate          = (qword) -1;
 // the same filename can succeed.
 void AsyncFileClose (
     AsyncFile   file,
-    qword       truncateSize
+    uint64_t    truncateSize
 );
 
 void AsyncFileSetLastWriteTime (
     AsyncFile   file,
-    qword       lastWriteTime
+    uint64_t    lastWriteTime
 );
 
-qword AsyncFileGetLastWriteTime (
-    const wchar fileName[]
+uint64_t AsyncFileGetLastWriteTime (
+    const wchar_t fileName[]
 );
 
 // Truncation occurs atomically, any writes which occur after
 // AsyncFileFlushBuffers will be queued until the truncation completes
 AsyncId AsyncFileFlushBuffers (
     AsyncFile   file, 
-    qword       truncateSize,
+    uint64_t    truncateSize,
     bool        notify,
     void *      param
 );
@@ -193,7 +193,7 @@ const unsigned kAsyncFileRwSync    = 1<<1;
 
 AsyncId AsyncFileRead (
     AsyncFile       file,
-    qword           offset,
+    uint64_t        offset,
     void *          buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -203,7 +203,7 @@ AsyncId AsyncFileRead (
 // Buffer must stay valid until I/O is completed
 AsyncId AsyncFileWrite (
     AsyncFile       file,
-    qword           offset,
+    uint64_t        offset,
     const void *    buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -227,7 +227,7 @@ enum EFileSeekFrom {
 
 bool AsyncFileSeek (
     AsyncFile       file,
-    qword           distance,
+    uint64_t        distance,
     EFileSeekFrom   seekFrom
 );
 
@@ -240,11 +240,11 @@ bool AsyncFileSeek (
 
 #include <PshPack1.h>
 struct AsyncSocketConnectPacket {
-    byte        connType;
-    word        hdrBytes;
-    dword       buildId;
-    dword       buildType;
-    dword       branchId;
+    uint8_t     connType;
+    uint16_t    hdrBytes;
+    uint32_t    buildId;
+    uint32_t    buildType;
+    uint32_t    branchId;
     Uuid        productId;
 };
 #include <PopPack.h>
@@ -282,13 +282,13 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     unsigned        branchId;
     Uuid            productId;
     NetAddress      addr;
-    byte *          buffer;
+    uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
 };
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
-    byte *          buffer;
+    uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
 };
@@ -344,7 +344,7 @@ COMPILER_ASSERT_HEADER(EConnType, kNumConnTypes < 256);
 
 
 void AsyncSocketRegisterNotifyProc (
-    byte                    connType,
+    uint8_t                 connType,
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId = 0,
     unsigned                buildType = 0,
@@ -353,7 +353,7 @@ void AsyncSocketRegisterNotifyProc (
 );
 
 void AsyncSocketUnregisterNotifyProc (
-    byte                    connType,
+    uint8_t                 connType,
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId = 0,
     unsigned                buildType = 0,
@@ -362,7 +362,7 @@ void AsyncSocketUnregisterNotifyProc (
 );
 
 FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const byte              buffer[],
+    const uint8_t           buffer[],
     unsigned                bytes,
     unsigned *              bytesProcessed,
     unsigned *              connType,
@@ -465,7 +465,7 @@ void AsyncSocketEnableNagling (
 
 typedef void (* FAsyncLookupProc) (
     void *              param,
-    const wchar         name[],
+    const wchar_t       name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 );
@@ -473,7 +473,7 @@ typedef void (* FAsyncLookupProc) (
 void AsyncAddressLookupName (
     AsyncCancelId *     cancelId,
     FAsyncLookupProc    lookupProc,
-    const wchar         name[],
+    const wchar_t       name[],
     unsigned            port,
     void *              param
 );

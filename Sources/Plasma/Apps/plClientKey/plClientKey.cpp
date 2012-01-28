@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plClientKey.h"
-#include "hsWindows.h"
 
-typedef const UInt32* (*GETKEY)();
+typedef const uint32_t* (*GETKEY)();
 
-const UInt32* plClientKey::GetKey()
+const uint32_t* plClientKey::GetKey()
 {
     HMODULE hDll = LoadLibrary("sp.dll");
     if (hDll)
@@ -52,7 +51,7 @@ const UInt32* plClientKey::GetKey()
         GETKEY getKey = (GETKEY)GetProcAddress(hDll, "GetKey");
         if (getKey)
         {
-            static UInt32 key[4];
+            static uint32_t key[4];
             memcpy(key, getKey(), sizeof(key));
             FreeLibrary(hDll);
             return key;

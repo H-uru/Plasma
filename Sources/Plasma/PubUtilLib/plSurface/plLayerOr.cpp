@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerOr.h"
 
 plLayerOr::plLayerOr()
 {
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
 
     fOwnedChannels = kState;
@@ -71,9 +71,9 @@ plLayerInterface    *plLayerOr::Attach( plLayerInterface* prev )
     return plLayerInterface::Attach( prev );
 }
 
-UInt32 plLayerOr::Eval(double secs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerOr::Eval(double secs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    uint32_t ret = plLayerInterface::Eval(secs, frame, ignore);
     if( fUnderLay )
     {
         if( fDirty || (ret & kState) )

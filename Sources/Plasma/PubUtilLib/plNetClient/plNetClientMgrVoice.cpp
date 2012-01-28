@@ -245,7 +245,7 @@ hsBool plNetClientMgr::IUpdateListenList(double secs)
                 int i;
                 for(i=0;i<fTransport.GetNumMembers();i++)
                 {
-                    fTransport.GetMember(i)->SetDistSq(hsScalarMax);
+                    fTransport.GetMember(i)->SetDistSq(FLT_MAX);
 
                     if (fTransport.GetMember(i)->IsServer())
                         continue;
@@ -337,7 +337,7 @@ hsBool plNetClientMgr::IUpdateListenList(double secs)
         SynchTalkList();
 #endif
         // notify KI, member distances have been updated
-        plMemberUpdateMsg* mu = TRACKED_NEW plMemberUpdateMsg;
+        plMemberUpdateMsg* mu = new plMemberUpdateMsg;
         mu->Send();
     }
 

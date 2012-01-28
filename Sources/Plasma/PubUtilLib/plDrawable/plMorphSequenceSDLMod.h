@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier/plSDLModifier.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -57,7 +57,7 @@ protected:
     void IPutCurrentStateIn(plStateDataRecord* dstState);
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
 
-    UInt32 IApplyModFlags(UInt32 sendFlags)
+    uint32_t IApplyModFlags(uint32_t sendFlags)
     {
         if (fIsAvatar)
             return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);

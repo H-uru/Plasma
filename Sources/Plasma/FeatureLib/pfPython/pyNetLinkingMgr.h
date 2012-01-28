@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyNetLinkingMgr_h_inc
 #define pyNetLinkingMgr_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -91,11 +91,11 @@ public:
     // Link to my Neighborhood Age
     void LinkToMyNeighborhoodAge();
     // Link player to my current age
-    void LinkPlayerHere( UInt32 playerID );
+    void LinkPlayerHere( uint32_t playerID );
     // Link player to specified age
-    void LinkPlayerToAge( pyAgeLinkStruct & link, UInt32 playerID );
+    void LinkPlayerToAge( pyAgeLinkStruct & link, uint32_t playerID );
     // Link to player's current age
-    void LinkToPlayersAge( UInt32 playerID );
+    void LinkToPlayersAge( uint32_t playerID );
 
     PyObject* GetCurrAgeLink(); // returns pyAgeLinkStructRef
     PyObject* GetPrevAgeLink(); // returns pyAgeLinkStructRef

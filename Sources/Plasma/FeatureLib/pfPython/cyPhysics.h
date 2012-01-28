@@ -102,12 +102,12 @@ public:
     // Move the object in a direction and distance
     // if the object is physical then warp it
     // otherwise just use the coordinate interface and set the transform
-    virtual void Move(pyVector3& direction, hsScalar distance);
+    virtual void Move(pyVector3& direction, float distance);
 
     //  Rotate the object
     //  if the object is physical then warp it
     //  otherwise just use the coordinate interface and set the transform
-    virtual void Rotate(hsScalar rad, pyVector3& axis);
+    virtual void Rotate(float rad, pyVector3& axis);
 
     // apply a force to the center of mass of the receiver
     virtual void Force(pyVector3& force);
@@ -133,7 +133,7 @@ public:
     // Decrease all velocities on the given object.
     // A damp factor of 0 nulls them all entirely;
     // A damp factor of 1 leaves them alone.
-    virtual void Damp(hsScalar damp);
+    virtual void Damp(float damp);
 
     // Shift the center of mass of the given object by the given
     // amount in the given direction.

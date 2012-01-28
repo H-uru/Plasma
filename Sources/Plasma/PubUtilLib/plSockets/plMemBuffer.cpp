@@ -39,8 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
+
 #include "plMemBuffer.h"
+#include "HeadSpin.h"
 
 /////////////////////////////////////////////////
 
@@ -83,7 +84,7 @@ void plMemBuffer::SetBuffer(char * data, int len)
 
 void plMemBuffer::CopyBuffer(char * data, int len)
 {
-    char * tmp =  TRACKED_NEW char[len];
+    char * tmp =  new char[len];
     memcpy(tmp,data,len);
     ClearBuffer();
     AllocBuffer(len);
@@ -100,7 +101,7 @@ void plMemBuffer::GrowBuffer(int newLen)
         int len = newLen + kThrashSize;
         len = len+len;
         
-        char * tmp =  TRACKED_NEW char[len];
+        char * tmp =  new char[len];
         
         if(fBuffer != nil)
             memcpy(tmp,fBuffer,fBufferLen);
@@ -143,7 +144,7 @@ void plMemBuffer::ClearBuffer()
 
 void plMemBuffer::AllocBuffer(int len)
 {        
-    fBuffer = TRACKED_NEW char[len];
+    fBuffer = new char[len];
     fBufferLocal = true;
     fBufferLen = len;
 }

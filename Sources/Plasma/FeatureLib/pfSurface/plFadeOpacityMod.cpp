@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFadeOpacityMod.h"
 
 #include "plFadeOpacityLay.h"
@@ -83,8 +83,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool plFadeOpacityMod::fLOSCheckDisabled = false;
 
-const hsScalar kDefFadeUp(5.f);
-const hsScalar kDefFadeDown(1.f);
+const float kDefFadeUp(5.f);
+const float kDefFadeDown(1.f);
 
 plFadeOpacityMod::plFadeOpacityMod()
 :   fFadeUp(kDefFadeUp),
@@ -178,7 +178,7 @@ void plFadeOpacityMod::IOnRenderMsg(plRenderMsg* rend)
         {
             // If we've moved more than 3 feet in a frame, we'll consider this a 
             // camera cut. In that case, don't fade up or down, just go there.
-            const hsScalar kCutMagSquared = 3.f * 3.f;
+            const float kCutMagSquared = 3.f * 3.f;
             if( hsVector3(&eyePos, &fLastEye).MagnitudeSquared() > kCutMagSquared )
                 fFade = kImmediate;
         }
@@ -237,7 +237,7 @@ void plFadeOpacityMod::ICalcOpacity()
     switch( fFade )
     {
     case kFadeUp:
-        fOpCurrent = (hsScalar)(t - fStart);
+        fOpCurrent = (float)(t - fStart);
         if( fOpCurrent > fFadeUp )
         {
             fOpCurrent = 1.f;
@@ -249,7 +249,7 @@ void plFadeOpacityMod::ICalcOpacity()
         }
         break;
     case kFadeDown:
-        fOpCurrent = (hsScalar)(t - fStart);
+        fOpCurrent = (float)(t - fStart);
         if( fOpCurrent > fFadeDown )
         {
             fOpCurrent = 0.f;
@@ -366,7 +366,7 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )
             {
-                plFadeOpacityLay* fade = NEW(plFadeOpacityLay);
+                plFadeOpacityLay* fade = new plFadeOpacityLay();
 
                 hsgResMgr::ResMgr()->NewKey(lay->GetKey()->GetName(), fade, lay->GetKey()->GetUoid().GetLocation());
 
@@ -375,11 +375,11 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
                 // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
                 fFadeLays.Append(fade);
 
-                plMatRefMsg* msg = NEW(plMatRefMsg)(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
+                plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
                 msg->SetOldRef(lay);
                 hsgResMgr::ResMgr()->SendRef(fade, msg, plRefFlags::kActiveRef);
 
-                plGenRefMsg* toMe = NEW(plGenRefMsg)(GetKey(), plRefMsg::kOnRequest, 0, kRefFadeLay);
+                plGenRefMsg* toMe = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFadeLay);
                 hsgResMgr::ResMgr()->SendRef(fade, toMe, plRefFlags::kPassiveRef);
             }
         }

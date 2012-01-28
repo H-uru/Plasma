@@ -105,7 +105,7 @@ void SqlConnBindParameterBigInt (
         inputOutputType,
         SQL_C_SBIGINT,
         SQL_BIGINT,
-        sizeof(qword),
+        sizeof(uint64_t),
         0,
         parameterValuePtr,
         0,
@@ -117,7 +117,7 @@ void SqlConnBindParameterBigInt (
 bool SqlConnGetBlobData (
     SqlStmt *       stmt,
     unsigned        colIndex,
-    ARRAY(byte) *   buffer,
+    ARRAY(uint8_t) *   buffer,
     unsigned *      bytesAdded
 ) {
     // Since a number of routines use this function, set the chunk size to be
@@ -184,12 +184,12 @@ bool SqlConnGetBlobData (
 int SqlConnPutBlobData (
     SqlStmt *   stmt,
     unsigned    bytes,
-    const byte  data[]
+    const uint8_t  data[]
 ) {
     int result;
     SQLPOINTER putPtr;
     while (SQL_NEED_DATA == (result = SqlConnParamData(stmt, &putPtr))) {
-        if (!SqlConnPutData(stmt, const_cast<byte *>(data), bytes))
+        if (!SqlConnPutData(stmt, const_cast<uint8_t *>(data), bytes))
             return SQL_ERROR;
     }
     return result;

@@ -65,7 +65,7 @@ public:
 protected:
 
     // Constants from which to work.
-    UInt32                  fGSFlags;
+    uint32_t                  fGSFlags;
 
     hsColorRGBA             fAmbient;
     hsColorRGBA             fDiffuse;
@@ -103,8 +103,8 @@ public:
     void SetDiffuse(const hsColorRGBA& col) { fDiffuse = col; }
     hsColorRGBA GetDiffuse() const { return fDiffuse; }
 
-    void SetSource(UInt32 f) { fGSFlags &= ~kSourceMask; fGSFlags |= f; }
-    UInt32 GetSource() { return fGSFlags & kSourceMask; }
+    void SetSource(uint32_t f) { fGSFlags &= ~kSourceMask; fGSFlags |= f; }
+    uint32_t GetSource() { return fGSFlags & kSourceMask; }
 
     void SetScalar(hsBool32 on) { if(on)fGSFlags |= kScalarIntensity; else fGSFlags &= ~kScalarIntensity; }
     hsBool32 GetScalar() { return 0 != (fGSFlags & kScalarIntensity); }

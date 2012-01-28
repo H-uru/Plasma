@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <math.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plStereizer.h"
 #include "plLineFollowMod.h"
@@ -119,7 +119,7 @@ hsBool plStereizer::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool plStereizer::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plStereizer::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -135,7 +135,7 @@ hsBool plStereizer::Stereize()
     // Find distance to listener
     hsPoint3 pos = IGetUnStereoPos();
     hsVector3 posToList(&fListPos, &pos);
-    hsScalar dist = posToList.Magnitude();
+    float dist = posToList.Magnitude();
 
     // If distance less than ambient distance
     //      setup as pure ambient
@@ -210,14 +210,14 @@ hsPoint3 plStereizer::IGetAmbientPos() const
     return pos;
 }
 
-hsPoint3 plStereizer::IGetLocalizedPos(const hsVector3& posToList, hsScalar distToList) const
+hsPoint3 plStereizer::IGetLocalizedPos(const hsVector3& posToList, float distToList) const
 {
     hsPoint3 pos = IGetUnStereoPos();
 
     hsVector3 axOut(-posToList.fY, posToList.fX, 0);
     hsFastMath::NormalizeAppr(axOut);
 
-    hsScalar distOut = distToList * fTanAng;
+    float distOut = distToList * fTanAng;
     if( distOut > fMaxSepDist )
         distOut = fMaxSepDist;
     else if( distOut < fMinSepDist )
@@ -232,12 +232,12 @@ hsPoint3 plStereizer::IGetLocalizedPos(const hsVector3& posToList, hsScalar dist
     return pos;
 }
 
-void plStereizer::SetSepAngle(hsScalar rads)
+void plStereizer::SetSepAngle(float rads)
 {
-    fTanAng = hsScalar(tan(rads));
+    fTanAng = float(tan(rads));
 }
 
-hsScalar plStereizer::GetSepAngle() const
+float plStereizer::GetSepAngle() const
 {
     return atan(fTanAng);
 }

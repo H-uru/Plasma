@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientStats_h
 #define plNetClientStats_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // Holds stats counters used by the Net Client
@@ -58,16 +58,16 @@ public:
     //
 private:
     // Vault msg counters
-    UInt32  fNumVaultMsgsSent;
-    UInt32  fNumVaultMsgsRcvd;
-    UInt32  fVaultMsgSentBytes;
-    UInt32  fVaultMsgRcvdBytes;
+    uint32_t  fNumVaultMsgsSent;
+    uint32_t  fNumVaultMsgsRcvd;
+    uint32_t  fVaultMsgSentBytes;
+    uint32_t  fVaultMsgRcvdBytes;
 public:
     // msg counters
-    UInt32  GetNumVaultMsgsSent() const { return fNumVaultMsgsSent; }
-    UInt32  GetNumVaultMsgsRcvd() const { return fNumVaultMsgsRcvd; }
-    UInt32  GetVaultMsgSentBytes() const { return fVaultMsgSentBytes; }
-    UInt32  GetVaultMsgRcvdBytes() const { return fVaultMsgRcvdBytes; }
+    uint32_t  GetNumVaultMsgsSent() const { return fNumVaultMsgsSent; }
+    uint32_t  GetNumVaultMsgsRcvd() const { return fNumVaultMsgsRcvd; }
+    uint32_t  GetVaultMsgSentBytes() const { return fVaultMsgSentBytes; }
+    uint32_t  GetVaultMsgRcvdBytes() const { return fVaultMsgRcvdBytes; }
     void    TallyVaultMsgSent( int size ) { fNumVaultMsgsSent++; fVaultMsgSentBytes+=size; }
     void    TallyVaultMsgRcvd( int size ) { fNumVaultMsgsRcvd++; fVaultMsgRcvdBytes+=size; }
     void    ResetVaultMsgCounters() { fNumVaultMsgsSent=fNumVaultMsgsRcvd=fVaultMsgSentBytes=fVaultMsgRcvdBytes=0;  }
@@ -77,7 +77,7 @@ public:
     //
 private:
     int fAgeStatsULBits, fAgeStatsDLBits;
-    UInt32 fRecvdMultipleAcks;
+    uint32_t fRecvdMultipleAcks;
     double fAgeStatsLinkInTime;
     
 public:
@@ -85,7 +85,7 @@ public:
     void ResetAgeStats();
     float GetAgeStatsULBitsPerSec() const;
     float GetAgeStatsDLBitsPerSec() const;
-    UInt32 GetRecvdMultipleAcks() const;
+    uint32_t GetRecvdMultipleAcks() const;
 };
 
 #endif  // plNetClientStats_h

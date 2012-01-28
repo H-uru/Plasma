@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plShadowSlave.h"
 #include "plTweak.h"
@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define isnan _isnan
 #endif
 
-static const hsScalar kMinMinZ = 1.f; // totally random arbitrary number (has to be > 0).
+static const float kMinMinZ = 1.f; // totally random arbitrary number (has to be > 0).
 
 bool plShadowSlave::ISetupOrthoViewTransform()
 {
@@ -60,14 +60,14 @@ bool plShadowSlave::ISetupOrthoViewTransform()
 
     bnd.Transform(&fWorldToLight);
 
-    hsScalar minZ = bnd.GetMins().fZ;
-    hsScalar maxZ = bnd.GetCenter().fZ + fAttenDist;
+    float minZ = bnd.GetMins().fZ;
+    float maxZ = bnd.GetCenter().fZ + fAttenDist;
 
-    hsScalar minX = bnd.GetMins().fX;
-    hsScalar maxX = bnd.GetMaxs().fX;
+    float minX = bnd.GetMins().fX;
+    float maxX = bnd.GetMaxs().fX;
 
-    hsScalar minY = bnd.GetMins().fY;
-    hsScalar maxY = bnd.GetMaxs().fY;
+    float minY = bnd.GetMins().fY;
+    float maxY = bnd.GetMaxs().fY;
 
 
     hsMatrix44 proj;
@@ -82,7 +82,7 @@ bool plShadowSlave::ISetupOrthoViewTransform()
     // and an offset of zero works great. This could be a driver bug, or
     // hardware "dependency" (read IHV bug), but whatever, zero is working
     // now. Might need to adjust for new drivers or other hardware.
-    const hsScalar kAdjustBias = 0.0f;
+    const float kAdjustBias = 0.0f;
     proj.fMap[0][0] = 1.f / (maxX - minX);
     proj.fMap[0][3] = -minX / (maxX - minX) + kAdjustBias / fWidth;
     proj.fMap[1][1] = -1.f / (maxY - minY);
@@ -98,20 +98,20 @@ bool plShadowSlave::ISetupOrthoViewTransform()
     // Like the adjust bias above, this part is correct in theory, but only
     // screws things up (increases Z-acne).
 #if 0
-    hsScalar delX = maxX - minX;
+    float delX = maxX - minX;
     minX += delX / (fWidth * 0.5f);
     maxX -= delX / (fWidth * 0.5f);
-    hsScalar delY = maxY - minY;
+    float delY = maxY - minY;
     minY += delY / (fHeight * 0.5f);
     maxY -= delY / (fHeight * 0.5f);
 #endif 
 
 
     fView.SetView(hsPoint3(minX, minY, minZ), hsPoint3(maxX, maxY, maxZ));
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(fWorldToLight, fLightToWorld);
     fView.SetPerspective(false);
-    fView.SetViewPort(0, 0, hsScalar(fWidth), hsScalar(fHeight), false);
+    fView.SetViewPort(0, 0, float(fWidth), float(fHeight), false);
 
     fLightDir = fLightToWorld.GetAxis(hsMatrix44::kUp);
     SetFlag(kPositional, false);
@@ -126,8 +126,8 @@ bool plShadowSlave::ISetupPerspViewTransform()
 
     bnd.Transform(&fWorldToLight);
 
-    hsScalar minZ = bnd.GetMins().fZ;
-    hsScalar maxZ = bnd.GetCenter().fZ + fAttenDist;
+    float minZ = bnd.GetMins().fZ;
+    float maxZ = bnd.GetCenter().fZ + fAttenDist;
 
     if( minZ < kMinMinZ )
         minZ = kMinMinZ;
@@ -142,7 +142,7 @@ bool plShadowSlave::ISetupPerspViewTransform()
     if (isnan(bnd.GetMaxs().fX) || isnan(bnd.GetMaxs().fY))
         return false;
 
-    hsScalar cotX, cotY;
+    float cotX, cotY;
     if( -bnd.GetMins().fX > bnd.GetMaxs().fX )
     {
         hsAssert(bnd.GetMins().fX < 0, "Empty shadow caster bounds?");
@@ -180,11 +180,11 @@ bool plShadowSlave::ISetupPerspViewTransform()
     proj.fMap[1][1] = cotY * 0.5f;
     proj.fMap[1][2] = -0.5f * (1.f + 0.5f/fHeight);
 #else
-    plConst(hsScalar) kBiasScale(1.f);
-    plConst(hsScalar) kBiasTrans(1.f);
-    proj.fMap[0][0] = cotX * 0.5f * ( hsScalar(fWidth-2.f) / hsScalar(fWidth) ) * kBiasScale;
+    plConst(float) kBiasScale(1.f);
+    plConst(float) kBiasTrans(1.f);
+    proj.fMap[0][0] = cotX * 0.5f * ( float(fWidth-2.f) / float(fWidth) ) * kBiasScale;
     proj.fMap[0][2] = 0.5f * (1.f - kBiasTrans * 0.5f/fWidth);
-    proj.fMap[1][1] = -cotY * 0.5f * ( hsScalar(fHeight-2.f) / hsScalar(fHeight) ) * kBiasScale;
+    proj.fMap[1][1] = -cotY * 0.5f * ( float(fHeight-2.f) / float(fHeight) ) * kBiasScale;
     proj.fMap[1][2] = 0.5f * (1.f - kBiasTrans * 0.5f/fHeight);
 #endif
 
@@ -206,13 +206,13 @@ bool plShadowSlave::ISetupPerspViewTransform()
     cotX -= cotX / (fWidth * 0.5f);
     cotY -= cotY / (fHeight * 0.5f);
 
-    hsScalar tanX = 1.f / cotX;
-    hsScalar tanY = 1.f / cotY;
+    float tanX = 1.f / cotX;
+    float tanY = 1.f / cotY;
     fView.SetView(hsPoint3(-tanX, -tanY, minZ), hsPoint3(tanX, tanY, maxZ));
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(fWorldToLight, fLightToWorld);
     fView.SetPerspective(true);
-    fView.SetViewPort(0, 0, hsScalar(fWidth), hsScalar(fHeight), false);
+    fView.SetViewPort(0, 0, float(fWidth), float(fHeight), false);
 
     fLightPos = fLightToWorld.GetTranslate();
     SetFlag(kPositional, true);

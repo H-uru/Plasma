@@ -57,11 +57,11 @@ protected:
 
 //  plAnimTimeConvert           fTimeConvert;
 
-    Int32                       fCurrentFrame;
-    hsScalar                    fLength;
-    UInt32                      fWidth, fHeight;
+    int32_t                       fCurrentFrame;
+    float                         fLength;
+    uint32_t                      fWidth, fHeight;
 
-    virtual Int32               ISecsToFrame(hsScalar secs) = 0;
+    virtual int32_t               ISecsToFrame(float secs) = 0;
 
     hsBool                      IGetFault() const { return !(fMovieName &&  *fMovieName); }
     hsBool                      ISetFault(const char* errStr);
@@ -69,7 +69,7 @@ protected:
     hsBool                      IMovieIsIdle(); // will call IRelease();
     hsBool                      ISetupBitmap();
     hsBool                      ISetSize(int w, int h);
-    hsBool                      ISetLength(hsScalar secs);
+    hsBool                      ISetLength(float secs);
     hsBool                      ICurrentFrameDirty(double wSecs);
 
     virtual hsBool              IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
@@ -82,7 +82,7 @@ public:
     CLASSNAME_REGISTER( plLayerMovie );
     GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
@@ -97,7 +97,7 @@ public:
     // Movie specific
     int                     GetWidth() const;
     int                     GetHeight() const;
-    hsScalar                GetLength() const { return fLength; }
+    float                   GetLength() const { return fLength; }
 
     virtual void            DefaultMovie();
 };

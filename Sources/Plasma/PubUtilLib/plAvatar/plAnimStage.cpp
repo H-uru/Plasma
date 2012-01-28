@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultistageBehMod.h"
 
 // global
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
@@ -103,7 +103,7 @@ plAnimStage::plAnimStage()
 {
 }
 
-plAnimStage::plAnimStage(const char *animName, UInt8 notify)
+plAnimStage::plAnimStage(const char *animName, uint8_t notify)
 : fNotify(notify),
   fArmature(nil),
   fBrain(nil),
@@ -132,7 +132,7 @@ plAnimStage::plAnimStage(const char *animName, UInt8 notify)
 
 // PLANIMSTAGE canonical ctor
 plAnimStage::plAnimStage(const char *animName,
-                         UInt8 notify,
+                         uint8_t notify,
                          ForwardType forward,
                          BackType back,
                          AdvanceType advance,
@@ -164,7 +164,7 @@ plAnimStage::plAnimStage(const char *animName,
 }
 
 plAnimStage::plAnimStage(const char *animName,
-                         UInt8 notify,
+                         uint8_t notify,
                          ForwardType forward,
                          BackType back,
                          AdvanceType advance,
@@ -288,7 +288,7 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
 }
 
 // SENDNOTIFY
-hsBool plAnimStage::ISendNotify(UInt32 notifyMask, UInt32 notifyType, plArmatureMod *armature, plArmatureBrain *brain)
+hsBool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain)
 {
     // make sure the user has requested this type of notify
     if(fNotify & notifyMask)
@@ -296,7 +296,7 @@ hsBool plAnimStage::ISendNotify(UInt32 notifyMask, UInt32 notifyType, plArmature
         plKey avKey = armature->GetTarget(0)->GetKey();
         if (fMod)
             avKey = fMod->GetKey();
-        plNotifyMsg *msg = TRACKED_NEW plNotifyMsg();
+        plNotifyMsg *msg = new plNotifyMsg();
         msg->SetSender(avKey);
 
         if (fMod)
@@ -626,15 +626,15 @@ void plAnimStage::SetRegresstype(RegressType t)
 }
 
 // GETNOTIFYFLAGS
-UInt32 plAnimStage::GetNotifyFlags()
+uint32_t plAnimStage::GetNotifyFlags()
 {
     return fNotify;
 }
 
 // SETNOTIFYFLAGS
-void plAnimStage::SetNotifyFlags(UInt32 newFlags)
+void plAnimStage::SetNotifyFlags(uint32_t newFlags)
 {
-    fNotify = (UInt8)newFlags;
+    fNotify = (uint8_t)newFlags;
 }
 
 // GETNUMLOOPS

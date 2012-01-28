@@ -75,7 +75,7 @@ public:
     BigNum ();
     BigNum (const BigNum & a);
     BigNum (unsigned a);
-    BigNum (unsigned bytes, const void * data, bool le=false);
+    BigNum (unsigned bytess, const void * data, bool le=false);
     ~BigNum ();
 
     BigNum & operator= (const BigNum & a)
@@ -87,7 +87,7 @@ public:
     // Constant parameters need not be distinct from the destination or from
     // each other
 
-    void Add (const BigNum & a, dword b)
+    void Add (const BigNum & a, uint32_t b)
     {
         // this = a + b
         BN_copy(&m_number, &a.m_number);
@@ -100,7 +100,7 @@ public:
         BN_add(&m_number, &a.m_number, &b.m_number);
     }
 
-    int  Compare (dword a) const;
+    int  Compare (uint32_t a) const;
     int  Compare (const BigNum & a) const
     {
         return BN_cmp(&m_number, &a.m_number);
@@ -110,11 +110,11 @@ public:
         return BN_is_zero(&m_number);
     }
 
-    void Div (const BigNum & a, dword b, dword * remainder)
+    void Div (const BigNum & a, uint32_t b, uint32_t * remainder)
     {
         // this = a / b, remainder = a % b
         BN_copy(&m_number, &a.m_number);
-        *remainder = (dword)BN_div_word(&m_number, b);
+        *remainder = (uint32_t)BN_div_word(&m_number, b);
     }
 
     void Div (const BigNum & a, const BigNum & b, BigNum * remainder)
@@ -125,15 +125,15 @@ public:
                &a.m_number, &b.m_number, GetContext());
     }
 
-    void FromData_BE (unsigned bytes, const void * data)
+    void FromData_BE (unsigned bytess, const void * data)
     {
-        BN_bin2bn((const unsigned char *)data, bytes, &m_number);
+        BN_bin2bn((const unsigned char *)data, bytess, &m_number);
     }
 
-    void FromData_LE (unsigned bytes, const void * data);
+    void FromData_LE (unsigned bytess, const void * data);
 
-    unsigned char * GetData_BE (unsigned * bytes) const;
-    unsigned char * GetData_LE (unsigned * bytes) const;
+    unsigned char * GetData_BE (unsigned * bytess) const;
+    unsigned char * GetData_LE (unsigned * bytess) const;
 
     bool IsPrime () const
     {
@@ -148,7 +148,7 @@ public:
         BN_div(nil, &m_number, &a.m_number, &b.m_number, GetContext());
     }
 
-    void Mul (const BigNum & a, dword b)
+    void Mul (const BigNum & a, uint32_t b)
     {
         // this = a * b
         BN_copy(&m_number, &a.m_number);
@@ -161,7 +161,7 @@ public:
         BN_mul(&m_number, &a.m_number, &b.m_number, GetContext());
     }
 
-    void PowMod (dword a, const BigNum & b, const BigNum & c)
+    void PowMod (uint32_t a, const BigNum & b, const BigNum & c)
     {
         // this = a ^ b % c
         PowMod(BigNum(a), b, c);
@@ -176,7 +176,7 @@ public:
     void Rand (const BigNum & a, BigNum * seed)
     {
         // this = random number less than a
-        unsigned bits = BN_num_bits(&a.m_number);
+        int bits = BN_num_bits(&a.m_number);
         do
             Rand(bits, seed);
         while (Compare(a) >= 0);
@@ -214,7 +214,7 @@ public:
         BN_rshift(&m_number, &a.m_number, b);
     }
 
-    void Sub (const BigNum & a, dword b)
+    void Sub (const BigNum & a, uint32_t b)
     {
         // this = a - b
         BN_copy(&m_number, &a.m_number);

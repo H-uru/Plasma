@@ -53,12 +53,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string.h>
 
-void    plStatusEncrypt::Encrypt( UInt8 *line, UInt8 hint )
+void    plStatusEncrypt::Encrypt( uint8_t *line, uint8_t hint )
 {
     // Current encryption scheme: rotate all characters right by 2 bits,
     // then rotate the whole damn line by 3 bits to the right
-    UInt32 i, len = strlen( (char *)line );
-    UInt8 newHi, hiBits = ( ( line[ len - 1 ] ) << ( 5 - 2 ) ) & 0xe0;
+    uint32_t i, len = strlen( (char *)line );
+    uint8_t newHi, hiBits = ( ( line[ len - 1 ] ) << ( 5 - 2 ) ) & 0xe0;
 
     for( i = 0; i < len; i++ )
     {
@@ -76,11 +76,11 @@ void    plStatusEncrypt::Encrypt( UInt8 *line, UInt8 hint )
     }
 }
 
-void    plStatusEncrypt::Decrypt( UInt8 *line, Int32 len, UInt8 hint )
+void    plStatusEncrypt::Decrypt( uint8_t *line, int32_t len, uint8_t hint )
 {
     // Da reverse, of course!
-    Int32 i;
-    UInt8 lastChar = 0, newLo, loBits = ( line[ 0 ] ^ hint ) >> 5;
+    int32_t i;
+    uint8_t lastChar = 0, newLo, loBits = ( line[ 0 ] ^ hint ) >> 5;
 
     for( i = len - 1; i >= 0; i-- )
     {

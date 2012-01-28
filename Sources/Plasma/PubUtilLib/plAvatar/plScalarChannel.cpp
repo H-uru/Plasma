@@ -80,14 +80,14 @@ plScalarChannel::~plScalarChannel()
 
 // value --------------------------------------------------------
 // ------
-const hsScalar & plScalarChannel::Value(double time, hsBool peek)
+const float & plScalarChannel::Value(double time, hsBool peek)
 {
     return fResult;
 }
 
 // value --------------------------------------------------------------
 // ------
-void plScalarChannel::Value(hsScalar &scalar, double time, hsBool peek)
+void plScalarChannel::Value(float &scalar, double time, hsBool peek)
 {
     scalar = Value(time, peek);
 }
@@ -111,7 +111,7 @@ plAGChannel * plScalarChannel::MakeBlend(plAGChannel * channelB,
 
     if (chanB)
     {
-        result = TRACKED_NEW plScalarBlend(this, chanB, chanBias);
+        result = new plScalarBlend(this, chanB, chanBias);
     } else {
         hsStatusMessage("Blend operation failed.");
     }
@@ -122,14 +122,14 @@ plAGChannel * plScalarChannel::MakeBlend(plAGChannel * channelB,
 // --------------
 plAGChannel * plScalarChannel::MakeZeroState()
 {
-    return TRACKED_NEW plScalarConstant(Value(0));
+    return new plScalarConstant(Value(0));
 }
 
 // MakeTimeScale --------------------------------------------------------
 // --------------
 plAGChannel * plScalarChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plScalarTimeScale(this, timeSource);
+    return new plScalarTimeScale(this, timeSource);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ plScalarConstant::plScalarConstant()
 
 // ctor ------------------------------------------
 // -----
-plScalarConstant::plScalarConstant(hsScalar value)
+plScalarConstant::plScalarConstant(float value)
 {
     fResult = value;
 }
@@ -202,7 +202,7 @@ hsBool plScalarTimeScale::IsStoppedAt(double time)
 }
 
 // VALUE
-const hsScalar & plScalarTimeScale::Value(double time, hsBool peek)
+const float & plScalarTimeScale::Value(double time, hsBool peek)
 {
     fResult = fChannelIn->Value(fTimeSource->Value(time, peek));
 
@@ -265,7 +265,7 @@ plScalarBlend::~plScalarBlend()
 // ------------
 hsBool plScalarBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fChannelA->IsStoppedAt(time);
     if (blend == 1)
@@ -276,17 +276,17 @@ hsBool plScalarBlend::IsStoppedAt(double time)
 
 // Value ------------------------------------------------------
 // ------
-const hsScalar & plScalarBlend::Value(double time, hsBool peek)
+const float & plScalarBlend::Value(double time, hsBool peek)
 {
-    hsScalar curBlend = fChannelBias->Value(time, peek);
+    float curBlend = fChannelBias->Value(time, peek);
     if(curBlend == 0) {
         fChannelA->Value(fResult, time, peek);
     } else {
         if(curBlend == 1) {
             fChannelB->Value(fResult, time, peek);
         } else {
-            const hsScalar &scalarA = fChannelA->Value(time, peek);
-            const hsScalar &scalarB = fChannelB->Value(time, peek);
+            const float &scalarA = fChannelA->Value(time, peek);
+            const float &scalarB = fChannelB->Value(time, peek);
             fResult = scalarA + curBlend * (scalarB - scalarA);
         }
     }
@@ -353,17 +353,17 @@ plScalarControllerChannel::~plScalarControllerChannel()
 
 // Value ------------------------------------------------------------------
 // ------
-const hsScalar & plScalarControllerChannel::Value(double time, hsBool peek)
+const float & plScalarControllerChannel::Value(double time, hsBool peek)
 {
     return Value(time, peek, nil);
 }
 
 // Value ------------------------------------------------------------------
 // ------
-const hsScalar & plScalarControllerChannel::Value(double time, hsBool peek,
+const float & plScalarControllerChannel::Value(double time, hsBool peek,
                                                   plControllerCacheInfo *cache)
 {       
-    fController->Interp((hsScalar)time, &fResult, cache);
+    fController->Interp((float)time, &fResult, cache);
     return fResult;
 }
 
@@ -373,7 +373,7 @@ plAGChannel *plScalarControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 {
     plControllerCacheInfo *cache = fController->CreateCache();
     cache->SetATC(atc);
-    return TRACKED_NEW plScalarControllerCacheChannel(this, cache);
+    return new plScalarControllerCacheChannel(this, cache);
 }
 
 // Write -------------------------------------------------------------
@@ -428,7 +428,7 @@ plScalarControllerCacheChannel::~plScalarControllerCacheChannel()
 
 // Value ---------------------------------------------------------------------
 // ------
-const hsScalar & plScalarControllerCacheChannel::Value(double time, bool peek)
+const float & plScalarControllerCacheChannel::Value(double time, bool peek)
 {
     return fControllerChannel->Value(time, peek, fCache);
 }
@@ -486,7 +486,7 @@ hsBool plATCChannel::IsStoppedAt(double time)
 
 // Value -----------------------------------------------------
 // ------
-const hsScalar & plATCChannel::Value(double time, hsBool peek)
+const float & plATCChannel::Value(double time, hsBool peek)
 {
     fResult = (peek ? fConvert->WorldToAnimTimeNoUpdate(time) : fConvert->WorldToAnimTime(time));
     return fResult;
@@ -506,7 +506,7 @@ plScalarSDLChannel::plScalarSDLChannel()
     fResult = 0;
 }
 
-plScalarSDLChannel::plScalarSDLChannel(hsScalar length)
+plScalarSDLChannel::plScalarSDLChannel(float length)
 : fLength(length), fVar(nil) 
 {
     fResult = 0;
@@ -526,7 +526,7 @@ hsBool plScalarSDLChannel::IsStoppedAt(double time)
 
 // Value -----------------------------------------------------------
 // ------
-const hsScalar & plScalarSDLChannel::Value(double time, hsBool peek)
+const float & plScalarSDLChannel::Value(double time, hsBool peek)
 {
     if (fVar)
         fVar->Get(&fResult);
@@ -557,8 +557,8 @@ void plSpotInnerApplicator::IApply(const plAGModifier *mod, double time)
 
     plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
 
-    const hsScalar &scalar = scalarChan->Value(time);
-    sli->SetSpotInner(hsScalarDegToRad(scalar)*0.5f);
+    const float &scalar = scalarChan->Value(time);
+    sli->SetSpotInner(hsDegreesToRadians(scalar)*0.5f);
 }
 
 // IApply --------------------------------------------------------------
@@ -570,8 +570,8 @@ void plSpotOuterApplicator::IApply(const plAGModifier *mod, double time)
 
     plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
 
-    const hsScalar &scalar = scalarChan->Value(time);
-    sli->SetSpotOuter(hsScalarDegToRad(scalar)*0.5f);
+    const float &scalar = scalarChan->Value(time);
+    sli->SetSpotOuter(hsDegreesToRadians(scalar)*0.5f);
 }
 
 

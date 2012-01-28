@@ -152,7 +152,7 @@ hsBool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErr
             plDrawableSpans* drawable = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
             if( drawable )
             {
-                UInt32 diIndex = di->GetDrawableMeshIndex(iDraw);
+                uint32_t diIndex = di->GetDrawableMeshIndex(iDraw);
 
                 ISendItOff(fLightInfos[i], drawable, diIndex);
             }
@@ -161,7 +161,7 @@ hsBool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErr
     return true;
 }
 
-hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, UInt32 diIndex)
+hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex)
 {
     plDISpanIndex spans = drawable->GetDISpans(diIndex);
 
@@ -170,8 +170,8 @@ hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* dra
 
     if( !fCompPB->GetInt(kTest) )
     {
-        UInt8 liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProjDI : plDrawable::kMsgPermaLightDI;
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, diIndex, liMsgType);
+        uint8_t liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProjDI : plDrawable::kMsgPermaLightDI;
+        plGenRefMsg* refMsg = new plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, diIndex, liMsgType);
         hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), refMsg, plRefFlags::kPassiveRef);
     }
     else
@@ -180,13 +180,13 @@ hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* dra
         hsBitVector litSpans;
         liInfo->GetAffectedForced(drawable->GetSpaceTree(), litSpans, false);
 
-        UInt8 liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProj : plDrawable::kMsgPermaLight;
+        uint8_t liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProj : plDrawable::kMsgPermaLight;
         int i;
         for( i = 0; i < spans.GetCount(); i++ )
         {
             if( litSpans.IsBitSet(spans[i]) )
             {
-                plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, spans[i], liMsgType);
+                plGenRefMsg* refMsg = new plGenRefMsg(drawable->GetKey(), plRefMsg::kOnCreate, spans[i], liMsgType);
                 hsgResMgr::ResMgr()->AddViaNotify(liInfo->GetKey(), refMsg, plRefFlags::kPassiveRef);
             }
         }

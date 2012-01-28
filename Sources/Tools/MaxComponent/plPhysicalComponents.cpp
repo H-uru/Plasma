@@ -426,11 +426,11 @@ void plPhysTerrainComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 void ValidateGroups(IParamBlock2* pb, int memberID, int bounceID, plComponent* comp, plErrorMsg* pErrMsg)
 {
-    UInt32 defMember = pb->GetParamDef(memberID).def.i;
-    UInt32 member = pb->GetInt(memberID);
+    uint32_t defMember = pb->GetParamDef(memberID).def.i;
+    uint32_t member = pb->GetInt(memberID);
 
-    UInt32 defCollide = pb->GetParamDef(bounceID).def.i;
-    UInt32 collide = pb->GetInt(bounceID);
+    uint32_t defCollide = pb->GetParamDef(bounceID).def.i;
+    uint32_t collide = pb->GetInt(bounceID);
 
     if (defMember != member || defCollide != collide)
     {
@@ -1075,9 +1075,9 @@ public:
     Swim2DDlgProc() {}
     ~Swim2DDlgProc() {}
     
-    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, UInt32 id)
+    void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
-        UInt32 minIndex, maxIndex;
+        uint32_t minIndex, maxIndex;
         hsBool adjustMin;
         switch(id)
         {
@@ -1324,19 +1324,19 @@ hsBool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
     case kCurrentSpiral:
         {
-            fSwimRegions[node] = TRACKED_NEW plSwimCircularCurrentRegion();
+            fSwimRegions[node] = new plSwimCircularCurrentRegion();
             hsgResMgr::ResMgr()->NewKey(node->GetName(), fSwimRegions[node], node->GetLocation(), node->GetLoadMask()); 
             break;
         }
     case kCurrentStraight:
         {
-            fSwimRegions[node] = TRACKED_NEW plSwimStraightCurrentRegion();
+            fSwimRegions[node] = new plSwimStraightCurrentRegion();
             hsgResMgr::ResMgr()->NewKey(node->GetName(), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     default:
         {
-            fSwimRegions[node] = TRACKED_NEW plSwimRegionInterface();
+            fSwimRegions[node] = new plSwimRegionInterface();
             hsgResMgr::ResMgr()->NewKey(node->GetName(), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
@@ -1354,11 +1354,11 @@ hsBool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (!detectorNode->GetSceneObject()->GetModifierByType(plSwimDetector::Index()))
         {
             plKey nilKey;
-            plSwimMsg *enterMsg = TRACKED_NEW plSwimMsg(detectorNode->GetKey(), nilKey, true, nil);
-            plSwimMsg *exitMsg = TRACKED_NEW plSwimMsg(detectorNode->GetKey(), nilKey, false, nil);
+            plSwimMsg *enterMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, true, nil);
+            plSwimMsg *exitMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, false, nil);
             enterMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             exitMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-            plSwimDetector *swimMod = TRACKED_NEW plSwimDetector(enterMsg, exitMsg);
+            plSwimDetector *swimMod = new plSwimDetector(enterMsg, exitMsg);
             detectorNode->AddModifier(swimMod, IGetUniqueName(node));
             
             // the mod doesn't have a valid key until AddModifier is called, so this comes last.
@@ -1384,7 +1384,7 @@ hsBool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             plMaxNode *currentNode = (plMaxNode *)fCompPB->GetINode(ParamID(kSwimCurrentNode));
             if (currentNode)
             {
-                plGenRefMsg *msg= TRACKED_NEW plGenRefMsg(circInt->GetKey(), plRefMsg::kOnCreate, -1, -1);
+                plGenRefMsg *msg= new plGenRefMsg(circInt->GetKey(), plRefMsg::kOnCreate, -1, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(currentNode->GetSceneObject()->GetKey(), msg, plRefFlags::kActiveRef); 
             }
             break;
@@ -1400,7 +1400,7 @@ hsBool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             plMaxNode *currentNode = (plMaxNode *)fCompPB->GetINode(ParamID(kSwimCurrentNode));
             if (currentNode)
             {
-                plGenRefMsg *msg= TRACKED_NEW plGenRefMsg(strInt->GetKey(), plRefMsg::kOnCreate, -1, -1);
+                plGenRefMsg *msg= new plGenRefMsg(strInt->GetKey(), plRefMsg::kOnCreate, -1, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(currentNode->GetSceneObject()->GetKey(), msg, plRefFlags::kActiveRef); 
             }
             break;
@@ -1416,7 +1416,7 @@ hsBool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     fSwimRegions[node]->fUpBuoyancy = fCompPB->GetFloat(ParamID(kSwimBuoyancyUp)) + 1;
     fSwimRegions[node]->fMaxUpwardVel = fCompPB->GetFloat(ParamID(kSwimMaxUpVel));
     
-    hsgResMgr::ResMgr()->AddViaNotify(fSwimRegions[node]->GetKey(), TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(fSwimRegions[node]->GetKey(), new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     
     return true;
 }
@@ -1633,7 +1633,7 @@ void plPhysSubWorldComponent::IAddChildren(plMaxNode* node, plMaxNode* subworld)
 
         bool hasSubworld = false;
 
-        UInt32 numComps = child->NumAttachedComponents();
+        uint32_t numComps = child->NumAttachedComponents();
         for (int j = 0; j < numComps; j++)
         {
             plComponentBase* comp = child->GetAttachedComponent(j);
@@ -1765,11 +1765,11 @@ hsBool plSubworldDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
     
-    plSubworldRegionDetector *detector = TRACKED_NEW plSubworldRegionDetector;
+    plSubworldRegionDetector *detector = new plSubworldRegionDetector;
     
     // Register the detector
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     // need to get the key for the camera here...
     plMaxNode* pSubNode = (plMaxNode*)fCompPB->GetINode(kSubworldTarget);
@@ -1881,12 +1881,12 @@ hsBool plPanicLinkDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMs
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
     
-    plPanicLinkRegion *detector = TRACKED_NEW plPanicLinkRegion;
+    plPanicLinkRegion *detector = new plPanicLinkRegion;
     detector->fPlayLinkOutAnim = fCompPB->GetInt(ParamID(kPlayAnim));
     
     // Register the detector
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     return true;
 }
 
@@ -2002,14 +2002,14 @@ hsBool plRideAnimatedPhysicalComponent::Convert(plMaxNode *node, plErrorMsg *pEr
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
-    plRideAnimatedPhysMsg* enter = TRACKED_NEW plRideAnimatedPhysMsg(obj->GetKey(), nil, true, nil);
+    plRideAnimatedPhysMsg* enter = new plRideAnimatedPhysMsg(obj->GetKey(), nil, true, nil);
     enter->SetBCastFlag(plMessage::kPropagateToModifiers);
-    plRideAnimatedPhysMsg* exit = TRACKED_NEW plRideAnimatedPhysMsg(obj->GetKey(), nil, false, nil);
+    plRideAnimatedPhysMsg* exit = new plRideAnimatedPhysMsg(obj->GetKey(), nil, false, nil);
     exit->SetBCastFlag(plMessage::kPropagateToModifiers);
-    plRidingAnimatedPhysicalDetector *detector = TRACKED_NEW plRidingAnimatedPhysicalDetector(enter, exit);
+    plRidingAnimatedPhysicalDetector *detector = new plRidingAnimatedPhysicalDetector(enter, exit);
     // Register the detector
     //node->AddModifier(detector, IGetUniqueName(node));
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     return true;
 }

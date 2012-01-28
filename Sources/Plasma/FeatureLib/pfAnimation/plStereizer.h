@@ -67,13 +67,13 @@ protected:
     };
 
     // Static properties
-    hsScalar        fAmbientDist;
-    hsScalar        fTransition;
+    float        fAmbientDist;
+    float        fTransition;
 
-    hsScalar        fMaxSepDist;
-    hsScalar        fMinSepDist;
+    float        fMaxSepDist;
+    float        fMinSepDist;
 
-    hsScalar        fTanAng;
+    float        fTanAng;
 
     hsPoint3        fInitPos;
 
@@ -82,9 +82,9 @@ protected:
     hsVector3       fListDirection;
     hsVector3       fListUp;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
-    hsPoint3    IGetLocalizedPos(const hsVector3& posToList, hsScalar distToList) const;
+    hsPoint3    IGetLocalizedPos(const hsVector3& posToList, float distToList) const;
     hsPoint3    IGetAmbientPos() const;
     void        ISetNewPos(const hsPoint3& newPos);
 
@@ -109,20 +109,20 @@ public:
     hsBool  Stereize();
     void    SetFromListenerMsg(const plListenerMsg* listMsg);
 
-    void SetAmbientDist(hsScalar d) { fAmbientDist = d; }
-    hsScalar GetAmbientDist() const { return fAmbientDist; }
+    void SetAmbientDist(float d) { fAmbientDist = d; }
+    float GetAmbientDist() const { return fAmbientDist; }
 
-    void SetTransition(hsScalar d) { fTransition = d; }
-    hsScalar GetTransition() const { return fTransition; }
+    void SetTransition(float d) { fTransition = d; }
+    float GetTransition() const { return fTransition; }
 
-    void SetMaxSepDist(hsScalar d) { fMaxSepDist = d; }
-    hsScalar GetMaxSepDist() const { return fMaxSepDist; }
+    void SetMaxSepDist(float d) { fMaxSepDist = d; }
+    float GetMaxSepDist() const { return fMaxSepDist; }
 
-    void SetMinSepDist(hsScalar d) { fMinSepDist = d; }
-    hsScalar GetMinSepDist() const { return fMinSepDist; }
+    void SetMinSepDist(float d) { fMinSepDist = d; }
+    float GetMinSepDist() const { return fMinSepDist; }
 
-    void SetSepAngle(hsScalar rads);
-    hsScalar GetSepAngle() const;
+    void SetSepAngle(float rads);
+    float GetSepAngle() const;
 
     void SetAsLeftChannel(hsBool on) { if(on)SetFlag(kLeftChannel); else ClearFlag(kLeftChannel); }
     hsBool IsLeftChannel() const { return HasFlag(kLeftChannel); }

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAgeInfoStruct_h_inc
 #define pyAgeInfoStruct_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 
@@ -99,10 +99,10 @@ public:
     void    SetAgeDescription( const char * v );
     const char * GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid( const char * guid );
-    Int32   GetAgeSequenceNumber() const;
-    void    SetAgeSequenceNumber( Int32 v );
-    Int32   GetAgeLanguage() const;
-    void    SetAgeLanguage( Int32 v );
+    int32_t   GetAgeSequenceNumber() const;
+    void    SetAgeSequenceNumber( int32_t v );
+    int32_t   GetAgeLanguage() const;
+    void    SetAgeLanguage( int32_t v );
     const char * GetDisplayName() const;
 };
 
@@ -142,8 +142,8 @@ public:
     void    SetAgeUserDefinedName( const char * v );
     const char * GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid( const char * guid );
-    Int32   GetAgeSequenceNumber() const;
-    void    SetAgeSequenceNumber( Int32 v );
+    int32_t   GetAgeSequenceNumber() const;
+    void    SetAgeSequenceNumber( int32_t v );
     const char * GetDisplayName() const;
 };
 

@@ -100,9 +100,9 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
         FT_GlyphSlot    ftSlot = ftFace->glyph;
         FT_ULong        ftChar;
         FT_UInt         ftIndex;
-        UInt32          numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
+        uint32_t          numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
         FT_Glyph        ftGlyphs[ kMaxGlyphs ];
-        UInt16          glyphChars[ kMaxGlyphs ];
+        uint16_t          glyphChars[ kMaxGlyphs ];
         FT_Vector       ftAdvances[ kMaxGlyphs ];
         FT_BBox         ftGlyphBox, ftFontBox;
         FT_UInt         previous = 0;
@@ -153,7 +153,7 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
 
                 if( maxChar < ftChar )
                     maxChar = ftChar;
-                glyphChars[ numGlyphs ] = (UInt16)ftChar;
+                glyphChars[ numGlyphs ] = (uint16_t)ftChar;
 
                 numGlyphs++;
             }
@@ -167,7 +167,7 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
         if( fBPP == 1 )
             fWidth = ( ( fWidth + 7 ) >> 3 ) << 3;
         fHeight = totalHeight;
-        fBMapData = new UInt8[ ( fWidth * fHeight * fBPP ) >> 3 ];
+        fBMapData = new uint8_t[ ( fWidth * fHeight * fBPP ) >> 3 ];
         memset( fBMapData, 0, ( fWidth * fHeight * fBPP ) >> 3 );
 
         // Set the name and size of our font
@@ -186,13 +186,13 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
         SetFace( str );
 
         // # of bytes per row 
-        UInt32 stride = ( fBPP == 1 ) ? ( fWidth >> 3 ) : fWidth;
+        uint32_t stride = ( fBPP == 1 ) ? ( fWidth >> 3 ) : fWidth;
 
         // Pre-expand our char list
         fCharacters.ExpandAndZero( maxChar + 1 );
         fCharacters.SetCount( 0 );
         if( callback != nil )
-            callback->NumChars( (UInt16)(maxChar + 1) );
+            callback->NumChars( (uint16_t)(maxChar + 1) );
 
         // Now re-run through our stored list of glyphs, converting them to bitmaps
         for( i = 0; i < numGlyphs; i++ )
@@ -214,7 +214,7 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
             FT_BitmapGlyph ftBitmap = (FT_BitmapGlyph)ftGlyphs[ i ];
             plCharacter *ch = &fCharacters[ glyphChars[ i ] ];
 
-            UInt8 *ourBitmap = IGetFreeCharData( ch->fBitmapOff );
+            uint8_t *ourBitmap = IGetFreeCharData( ch->fBitmapOff );
             if( ourBitmap == nil )
                 throw false;
 
@@ -225,16 +225,16 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
             }
 
             // Set these now, since setting them before would've changed the IGetFreeCharData results
-            ch->fLeftKern = (hsScalar)ftBitmap->left;
-            ch->fRightKern = (hsScalar)ftAdvances[ i ].x / 64.f - (hsScalar)fWidth - ch->fLeftKern;//ftBitmap->bitmap.width;
+            ch->fLeftKern = (float)ftBitmap->left;
+            ch->fRightKern = (float)ftAdvances[ i ].x / 64.f - (float)fWidth - ch->fLeftKern;//ftBitmap->bitmap.width;
             ch->fBaseline = ftBitmap->top;
             ch->fHeight = ftBitmap->bitmap.rows;
 
             // Copy data straight through to our bitmap
             int y;
-            UInt8 *srcData = (UInt8 *)ftBitmap->bitmap.buffer;
+            uint8_t *srcData = (uint8_t *)ftBitmap->bitmap.buffer;
 
-            UInt32 bytesWide = ( fBPP == 1 ) ? ( ( ftBitmap->bitmap.width + 7 ) >> 3 ) : ftBitmap->bitmap.width;
+            uint32_t bytesWide = ( fBPP == 1 ) ? ( ( ftBitmap->bitmap.width + 7 ) >> 3 ) : ftBitmap->bitmap.width;
 
             for( y = 0; y < ch->fHeight; y++ )
             {

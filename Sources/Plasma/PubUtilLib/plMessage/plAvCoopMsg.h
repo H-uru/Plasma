@@ -99,7 +99,7 @@ public:
 
     // constructors
     plAvCoopMsg();
-    plAvCoopMsg(Command cmd, UInt32 id, UInt16 serial);
+    plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial);
     plAvCoopMsg(plKey sender, plCoopCoordinator *coordinateur);
     ~plAvCoopMsg();
 
@@ -117,8 +117,8 @@ public:
     //
     /////////////////////////////////////////////////////////////////////////////////////
 
-    UInt32 fInitiatorID;
-    UInt16 fInitiatorSerial;
+    uint32_t fInitiatorID;
+    uint16_t fInitiatorSerial;
 
     Command fCommand;
 

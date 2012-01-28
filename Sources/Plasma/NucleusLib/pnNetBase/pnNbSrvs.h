@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNbSrvs_inc
 #define pnNbSrvs_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnNbConst.h"
 
 /*****************************************************************************
@@ -84,25 +84,25 @@ enum ESrvType {
 *
 ***/
 
-unsigned GetAuthSrvHostnames (const wchar *** addrs);   // returns addrCount
-void SetAuthSrvHostname (const wchar addr[]);
+unsigned GetAuthSrvHostnames (const wchar_t *** addrs);   // returns addrCount
+void SetAuthSrvHostname (const wchar_t addr[]);
 
-unsigned GetFileSrvHostnames (const wchar *** addrs);   // returns addrCount
-void SetFileSrvHostname (const wchar addr[]);
+unsigned GetFileSrvHostnames (const wchar_t *** addrs);   // returns addrCount
+void SetFileSrvHostname (const wchar_t addr[]);
 
-unsigned GetCsrSrvHostnames (const wchar *** addrs);    // returns addrCount
-void SetCsrSrvHostname (const wchar addr[]);
+unsigned GetCsrSrvHostnames (const wchar_t *** addrs);    // returns addrCount
+void SetCsrSrvHostname (const wchar_t addr[]);
 
-unsigned GetGateKeeperSrvHostnames (const wchar *** addrs); // returns addrCount
-void SetGateKeeperSrvHostname (const wchar addr[]);
+unsigned GetGateKeeperSrvHostnames (const wchar_t *** addrs); // returns addrCount
+void SetGateKeeperSrvHostname (const wchar_t addr[]);
 
-const wchar *GetServerStatusUrl ();
-void SetServerStatusUrl (const wchar url[]);
+const wchar_t *GetServerStatusUrl ();
+void SetServerStatusUrl (const wchar_t url[]);
 
-const wchar *GetServerSignupUrl ();
-void SetServerSignupUrl (const wchar url[]);
+const wchar_t *GetServerSignupUrl ();
+void SetServerSignupUrl (const wchar_t url[]);
 
-const wchar *GetServerDisplayName ();
-void SetServerDisplayName (const wchar name[]);
+const wchar_t *GetServerDisplayName ();
+void SetServerDisplayName (const wchar_t name[]);
 
 #endif // pnNbSrvs_inc

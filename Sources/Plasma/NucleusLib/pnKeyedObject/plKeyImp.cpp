@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsKeyedObject.h"
 #include "hsResMgr.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSelfDestructMsg.h"
 #include "hsTimer.h"
@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProfile_CreateMemCounter("Keys", "Memory", KeyMem);
 
-static UInt32 CalcKeySize(plKeyImp* key)
+static uint32_t CalcKeySize(plKeyImp* key)
 {
-    UInt32 nameLen = 0;
+    uint32_t nameLen = 0;
     if (key->GetUoid().GetObjectName())
         nameLen = strlen(key->GetUoid().GetObjectName()) + 1;
     return sizeof(plKeyImp) + nameLen;
@@ -64,8 +64,8 @@ static UInt32 CalcKeySize(plKeyImp* key)
 #ifdef LOG_ACTIVE_REFS
 #include "plCreatableIndex.h"
 static const char* kObjName = "GUI_District_OptionsMenuGUI";
-static UInt16 kClassType = CLASS_INDEX_SCOPED(plSceneNode);
-static UInt32 kCloneID = 0;
+static uint16_t kClassType = CLASS_INDEX_SCOPED(plSceneNode);
+static uint32_t kCloneID = 0;
 hsBool IsTrackedKey(const plKeyImp* key)
 {
     return hsStrEQ(key->GetName(), kObjName) && key->GetUoid().GetClassType() == kClassType && key->GetUoid().GetCloneID() == kCloneID;
@@ -86,7 +86,7 @@ plKeyImp::plKeyImp() :
 #endif
 }
 
-plKeyImp::plKeyImp(plUoid u, UInt32 pos,UInt32 len):
+plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
     fUoid(u),
     fObjectPtr(nil), 
     fStartPos(pos),
@@ -159,7 +159,7 @@ hsKeyedObject* plKeyImp::ObjectIsLoaded() const
 }
 
 // Copy the contents of p for cloning process
-void plKeyImp::CopyForClone(const plKeyImp *p, UInt32 playerID, UInt32 cloneID)
+void plKeyImp::CopyForClone(const plKeyImp *p, uint32_t playerID, uint32_t cloneID)
 {
     fObjectPtr = nil;               // the clone object start as nil
     fUoid = p->GetUoid();           // we will set the UOID the same to start
@@ -213,7 +213,7 @@ void plKeyImp::Write(hsStream* s)
     fUoid.Write(s);
     s->WriteLE(fStartPos);
     s->WriteLE(fDataLen);
-    if (fStartPos == (UInt32)-1)
+    if (fStartPos == (uint32_t)-1)
         int foo = 0;
 }
 
@@ -226,8 +226,8 @@ void plKeyImp::WriteObject(hsStream* stream)
     if (ko == nil)
     {
         // Mark the key as not written
-        fStartPos = (UInt32)-1;
-        fDataLen = (UInt32)-1;
+        fStartPos = (uint32_t)-1;
+        fDataLen = (uint32_t)-1;
         return;
     }
 
@@ -289,7 +289,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
         ClearNotifyCreated();
         
         plKey key=plKey::Make( this );  // for linux build
-        plSelfDestructMsg* nuke = TRACKED_NEW plSelfDestructMsg( key );
+        plSelfDestructMsg* nuke = new plSelfDestructMsg( key );
         plgDispatch::Dispatch()->MsgSend(nuke);
     }
 }
@@ -405,7 +405,7 @@ void plKeyImp::RemoveClone(plKeyImp* key) const
     }
 }
 
-plKey plKeyImp::GetClone(UInt32 playerID, UInt32 cloneID) const
+plKey plKeyImp::GetClone(uint32_t playerID, uint32_t cloneID) const
 {
     for (int i = 0; i < fClones.GetCount(); i++)
     {
@@ -419,12 +419,12 @@ plKey plKeyImp::GetClone(UInt32 playerID, UInt32 cloneID) const
     return plKey();
 }
 
-UInt32 plKeyImp::GetNumClones()
+uint32_t plKeyImp::GetNumClones()
 {
     return fClones.GetCount();
 }
 
-plKey plKeyImp::GetCloneByIdx(UInt32 idx)
+plKey plKeyImp::GetCloneByIdx(uint32_t idx)
 {
     if (idx < fClones.GetCount())
         return plKey::Make(fClones[idx]);
@@ -444,7 +444,7 @@ void plKeyImp::SatisfyPending() const
     if (!--fPendingRefs)
     {
 #ifdef PL_SEND_SATISFIED
-        plSatisfiedMsg* msg = TRACKED_NEW plSatisfiedMsg(this);
+        plSatisfiedMsg* msg = new plSatisfiedMsg(this);
         plgDispatch::MsgSend(msg);
 #endif // PL_SEND_SATISFIED
     }
@@ -645,7 +645,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
         iTargetKey->ClearNotifyCreated();
         
         plKey key = plKey::Make(iTargetKey);
-        plSelfDestructMsg* nuke = TRACKED_NEW plSelfDestructMsg(key);
+        plSelfDestructMsg* nuke = new plSelfDestructMsg(key);
         plgDispatch::Dispatch()->MsgSend(nuke);
     }
     else

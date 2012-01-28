@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRandomSoundMod.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plAudioInterface.h"
@@ -66,7 +66,7 @@ void plRandomSoundModGroup::Read(hsStream *s)
 {
     fNumSounds = s->ReadLE16();
     fGroupedIdx = s->ReadLE16();
-    fIndices = TRACKED_NEW UInt16[fNumSounds];
+    fIndices = new uint16_t[fNumSounds];
 
     int i;
     for (i = 0; i < fNumSounds; i++)
@@ -119,7 +119,7 @@ void plRandomSoundMod::IStop()
 
     if( fGroups != nil && fGroups[ fCurrentGroup ].fGroupedIdx != -1 )
     {
-        plSoundMsg *msg = TRACKED_NEW plSoundMsg();
+        plSoundMsg *msg = new plSoundMsg();
         msg->SetCmd(plSoundMsg::kStop);
         msg->fIndex = fGroups[ fCurrentGroup ].fIndices[ fCurrent ];
         plgDispatch::MsgSend(msg);
@@ -127,8 +127,8 @@ void plRandomSoundMod::IStop()
     else
     {
         if(fCurrent == -1) return;
-        UInt16 currentSndIdx = ( fGroups != nil ) ? fGroups[fCurrentGroup].fIndices[fCurrent] : fActiveList[fCurrent];
-        plSoundMsg* snd = TRACKED_NEW plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
+        uint16_t currentSndIdx = ( fGroups != nil ) ? fGroups[fCurrentGroup].fIndices[fCurrent] : fActiveList[fCurrent];
+        plSoundMsg* snd = new plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
         snd->SetCmd(plSoundMsg::kStop);
         snd->fIndex = currentSndIdx;
         plgDispatch::MsgSend(snd);
@@ -151,7 +151,7 @@ void plRandomSoundMod::IPlayNext()
     }
 
     int i;
-    UInt16 currentSndIdx;
+    uint16_t currentSndIdx;
     int nSounds = (fGroups == nil ? ai->GetNumSounds() : fGroups[fCurrentGroup].fNumSounds);
     fEndTimes.ExpandAndZero(nSounds);
     plSound *pSound = nil;
@@ -185,10 +185,10 @@ void plRandomSoundMod::IPlayNext()
         fFirstTimePlay = false;
         if( !(fMode & kOneCmd) )
         {
-            hsScalar delay = IGetDelay(0);
+            float delay = IGetDelay(0);
             double t = hsTimer::GetSysSeconds() + delay;
 
-            plAnimCmdMsg* anim = TRACKED_NEW plAnimCmdMsg(GetKey(), GetKey(), &t);
+            plAnimCmdMsg* anim = new plAnimCmdMsg(GetKey(), GetKey(), &t);
             anim->SetCmd(plAnimCmdMsg::kContinue);
             plgDispatch::MsgSend(anim);
             return;
@@ -203,7 +203,7 @@ void plRandomSoundMod::IPlayNext()
 
     // We don't want random sounds to synch, since we don't synch the randomness. So force this next
     // sound to not synch
-    hsScalar currLen;
+    float currLen;
     if( fGroups != nil && fGroups[ fCurrentGroup ].fGroupedIdx != -1 )
     {
         currentSndIdx = fGroups[ fCurrentGroup ].fIndices[ fCurrent ];
@@ -217,13 +217,13 @@ void plRandomSoundMod::IPlayNext()
         sound->SetLocalOnly(true);
 
         // Send msg to the grouped sound to switch sounds
-        plSoundMsg *snd = TRACKED_NEW plSoundMsg();
+        plSoundMsg *snd = new plSoundMsg();
         snd->SetCmd( plSoundMsg::kSelectFromGroup );
         snd->fIndex = currentSndIdx;
         snd->Send( sound->GetKey() );
 
         // Now tell the audio interface to play the sound (probably should change this....)
-        snd = TRACKED_NEW plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
+        snd = new plSoundMsg(GetKey(), GetTarget()->GetKey(), nil);
         snd->SetCmd(plSoundMsg::kGoToTime);
         snd->fTime = (0);
         snd->SetCmd(plSoundMsg::kStop);
@@ -245,7 +245,7 @@ void plRandomSoundMod::IPlayNext()
         }
 
         if (ai->GetSound(currentSndIdx))
-            currLen = (hsScalar)(ai->GetSound(currentSndIdx)->GetLength());
+            currLen = (float)(ai->GetSound(currentSndIdx)->GetLength());
         else
             currLen = 0;
     }
@@ -262,11 +262,11 @@ void plRandomSoundMod::IPlayNext()
 
     if( !(fMode & kOneCmd) )
     {
-        hsScalar delay = IGetDelay(currLen);
+        float delay = IGetDelay(currLen);
 
         double t = hsTimer::GetSysSeconds() + delay;
 
-        plAnimCmdMsg* anim = TRACKED_NEW plAnimCmdMsg(GetKey(), GetKey(), &t);
+        plAnimCmdMsg* anim = new plAnimCmdMsg(GetKey(), GetKey(), &t);
         anim->SetCmd(plAnimCmdMsg::kContinue);
         plgDispatch::MsgSend(anim);
     }
@@ -276,7 +276,7 @@ void plRandomSoundMod::IPlayNext()
     }
 }
 
-void plRandomSoundMod::SetCurrentGroup(UInt16 group)
+void plRandomSoundMod::SetCurrentGroup(uint16_t group)
 {
     hsAssert(group < fNumGroups, "Setting an invalid group on a random sound modifier");
 
@@ -297,7 +297,7 @@ void plRandomSoundMod::Read(hsStream *s, hsResMgr *mgr)
     fNumGroups = s->ReadLE16();
     if (fNumGroups > 0)
     {
-        fGroups = TRACKED_NEW plRandomSoundModGroup[fNumGroups];
+        fGroups = new plRandomSoundModGroup[fNumGroups];
         int i;
         for (i = 0; i < fNumGroups; i++)
             fGroups[i].Read(s);
@@ -319,7 +319,7 @@ void plRandomSoundMod::Write(hsStream *s, hsResMgr *mgr)
 
 void    plRandomSoundMod::ForceSoundLoadState( hsBool loaded )
 {
-    UInt16  i, j;
+    uint16_t  i, j;
 
     plAudioInterface* ai = IGetTargetAudioInterface(0);
     if( ai == nil )
@@ -386,7 +386,7 @@ hsBool plRandomSoundMod::MsgReceive(plMessage* msg)
     return plRandomCommandMod::MsgReceive(msg);
 }
 
-void plRandomSoundMod::ISetVolume(hsScalar volume)
+void plRandomSoundMod::ISetVolume(float volume)
 {
     plSound *pSound = nil;
     

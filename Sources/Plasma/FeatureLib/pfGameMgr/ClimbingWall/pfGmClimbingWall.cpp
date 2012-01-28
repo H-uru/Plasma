@@ -211,7 +211,7 @@ pfGmClimbingWall::pfGmClimbingWall (
 //============================================================================
 pfGmClimbingWall::~pfGmClimbingWall () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -279,8 +279,8 @@ void pfGmClimbingWall::Ready (unsigned readyType, unsigned teamNumber) {
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.readyType       = (byte)readyType;
-    msg.teamNumber      = (byte)teamNumber;
+    msg.readyType       = (uint8_t)readyType;
+    msg.teamNumber      = (uint8_t)teamNumber;
 
     GameMgrSend(&msg);
 }
@@ -293,8 +293,8 @@ void pfGmClimbingWall::ChangeBlocker (unsigned teamNumber, unsigned blockerNumbe
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.teamNumber      = (byte)teamNumber;
-    msg.blockerNumber   = (byte)blockerNumber;
+    msg.teamNumber      = (uint8_t)teamNumber;
+    msg.blockerNumber   = (uint8_t)blockerNumber;
     msg.added           = added;
 
     GameMgrSend(&msg);
@@ -320,7 +320,7 @@ void pfGmClimbingWall::PlayerEntered (unsigned teamNumber) {
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.teamNumber      = (byte)teamNumber;
+    msg.teamNumber      = (uint8_t)teamNumber;
 
     GameMgrSend(&msg);
 }

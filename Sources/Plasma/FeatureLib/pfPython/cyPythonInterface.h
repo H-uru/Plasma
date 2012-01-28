@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NOTE: Eventually, this will be made into a separate dll, because there should
 //       only be one instance of this interface. 
 //
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include <Python.h>
 
@@ -60,7 +60,7 @@ class pyKey;
 class  PythonInterface
 {
 private:
-    static Int32 initialized;   // count how many times we initialize
+    static int32_t initialized;   // count how many times we initialize
                                 // and make sure that many finalize on the way out
     static hsBool FirstTimeInit;
     static hsBool IsInShutdown; // whether we are _really_ in shutdown mode
@@ -173,7 +173,7 @@ public:
     //
     //  PURPOSE    : marshals an object into a char string
     //
-    static hsBool DumpObject(PyObject* pyobj, char** pickle, Int32* size);
+    static hsBool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -183,7 +183,7 @@ public:
     //
     //  PURPOSE    : Load a python object from a pickled object
     //
-    static PyObject* LoadObject(char* pickle, Int32 size);
+    static PyObject* LoadObject(char* pickle, int32_t size);
 
 
     /////////////////////////////////////////////////////////////////////////////

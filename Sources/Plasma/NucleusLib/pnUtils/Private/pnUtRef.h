@@ -168,7 +168,7 @@ public:
     }
 
     inline virtual void OnZeroRef () {
-        DEL(this);
+        delete this;
     }
 
 protected:

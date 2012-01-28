@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCaptureRender.h"
 
 #ifndef MF_FRONTBUFF_CAPTURE
@@ -128,14 +128,14 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 hsTArray<plCaptureRenderMsg*>   plCaptureRender::fProcessed;
 
 // plCaptureRender::Capture
-hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
+hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     // Create our render target
-    const UInt16 flags = plRenderTarget::kIsOffscreen;
-    const UInt8 bitDepth(32);
-    const UInt8 zDepth(-1);
-    const UInt8 stencilDepth(-1);
-    plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
+    const uint16_t flags = plRenderTarget::kIsOffscreen;
+    const uint8_t bitDepth(32);
+    const uint8_t zDepth(-1);
+    const uint8_t stencilDepth(-1);
+    plRenderTarget* rt = new plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
 
     static int idx=0;
     char buff[32];
@@ -144,14 +144,14 @@ hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
 
 
     // Create a render request and render request message
-    plCaptureRenderRequest* req = TRACKED_NEW plCaptureRenderRequest;
+    plCaptureRenderRequest* req = new plCaptureRenderRequest;
 
-    const hsScalar pri(-100.f);
+    const float pri(-100.f);
     req->SetPriority(pri);
 
     req->SetRenderTarget(rt);
 
-    const UInt32 renderState 
+    const uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -161,7 +161,7 @@ hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
     req->RequestAck(ack);
 
     // Submit
-    plRenderRequestMsg* msg = TRACKED_NEW plRenderRequestMsg(ack, req);
+    plRenderRequestMsg* msg = new plRenderRequestMsg(ack, req);
     hsRefCnt_SafeUnRef(req);
     msg->Send();
 
@@ -188,7 +188,7 @@ hsBool plCaptureRender::IProcess(plPipeline* pipe, const plKey& ack, plRenderTar
     mipMap->Ref();
 
     // Stash it, and send it off during the update phase.
-    plCaptureRenderMsg* msg = TRACKED_NEW plCaptureRenderMsg(ack, mipMap);
+    plCaptureRenderMsg* msg = new plCaptureRenderMsg(ack, mipMap);
     fProcessed.Append(msg);
 
     return true;
@@ -215,18 +215,18 @@ void plCaptureRender::Update(plPipeline* pipe)
 
     for( i = 0; i < fCapReqs.GetCount(); i++ )
     {
-        plMipmap* mipmap = TRACKED_NEW plMipmap(fCapReqs[i].fWidth, fCapReqs[i].fHeight, plMipmap::kARGB32Config, 1);
+        plMipmap* mipmap = new plMipmap(fCapReqs[i].fWidth, fCapReqs[i].fHeight, plMipmap::kARGB32Config, 1);
 
         pipe->CaptureScreen(mipmap, false, fCapReqs[i].fWidth, fCapReqs[i].fHeight);
 
-        plCaptureRenderMsg* msg = TRACKED_NEW plCaptureRenderMsg(fCapReqs[i].fAck, mipmap);
+        plCaptureRenderMsg* msg = new plCaptureRenderMsg(fCapReqs[i].fAck, mipmap);
         msg->Send();
     }
 
     fCapReqs.Reset();
 }
 
-hsBool plCaptureRender::Capture(const plKey& ack, UInt16 width, UInt16 height)
+hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     CapInfo capInfo;
     capInfo.fAck = ack;

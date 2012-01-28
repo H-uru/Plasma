@@ -60,7 +60,7 @@ public:
     CLASSNAME_REGISTER( plCondRefMsg );
     GETINTERFACE_ANY( plCondRefMsg, plRefMsg );
 
-    Int8                    fWhich;
+    int8_t                    fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
     void Read(hsStream* stream, hsResMgr* mgr)

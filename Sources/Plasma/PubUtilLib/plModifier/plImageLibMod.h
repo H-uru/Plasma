@@ -54,7 +54,7 @@ protected:
 
     hsTArray<plBitmap *>    fImages;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plImageLibMod();
@@ -73,7 +73,7 @@ public:
         kRefImage = 0
     };
 
-    UInt32  GetNumImages( void ) const { return fImages.GetCount(); }
+    uint32_t  GetNumImages( void ) const { return fImages.GetCount(); }
 };
 
 #endif // plImageLibMod_inc

@@ -60,15 +60,15 @@ protected:
     IDirect3DDevice9            *fDevice; 
 
     static IDirect3DVertexBuffer9       *fBuffer;
-    static UInt32                       fBufferCursor;
+    static uint32_t                       fBufferCursor;
 
     IDirect3DStateBlock9 *fOldStateBlock;
     IDirect3DStateBlock9 *fTextStateBlock;
 
-    virtual void    ICreateTexture( UInt16 *data );
+    virtual void    ICreateTexture( uint16_t *data );
     virtual void    IInitStateBlocks( void );
-    virtual void    IDrawPrimitive( UInt32 count, plFontVertex *array );
-    virtual void    IDrawLines( UInt32 count, plFontVertex *array );
+    virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array );
+    virtual void    IDrawLines( uint32_t count, plFontVertex *array );
 
 public:
     plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );

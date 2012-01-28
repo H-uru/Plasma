@@ -93,7 +93,7 @@ void plNetClientRecorder::IMakeFilename(const char* recName, char* path)
 
 bool plNetClientRecorder::IsRecordableMsg(plNetMessage* msg) const
 {
-    UInt16 idx = msg->ClassIndex();
+    uint16_t idx = msg->ClassIndex();
 
     return (
         idx == CLASS_INDEX_SCOPED(plNetMsgLoadClone) ||
@@ -123,7 +123,7 @@ bool plNetClientLoggingRecorder::IProcessRecordMsg(plNetMessage* msg, double sec
     if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
     {
         plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-        UInt16 gameMsgIdx = gameMsg->StreamInfo()->GetStreamType();
+        uint16_t gameMsgIdx = gameMsg->StreamInfo()->GetStreamType();
 
         if (gameMsgIdx == CLASS_INDEX_SCOPED(plServerReplyMsg))
             return false;

@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 #include "MaxExport/plExportProgressBar.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plShadowComponents.h"
 
@@ -67,7 +67,7 @@ void DummyCodeIncludeFuncShadow()
 {
 }
 
-static UInt16 QualityBitToMask(int q) { return ~((1 << q) - 1); }
+static uint16_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
 
 #define WM_ROLLOUT_OPEN WM_USER+1
 static const int kNumQualities = 4;
@@ -207,7 +207,7 @@ hsBool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     const float kBoostPercentToAbs = 1.e-2f;
     if( !fCaster )
     {
-        fCaster = TRACKED_NEW plShadowCaster;
+        fCaster = new plShadowCaster;
         plLoadMask lm(QualityBitToMask(fCompPB->GetInt(kQuality)), QualityBitToMask(0));
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), fCaster, node->GetLocation(), lm);
         fCaster->SetSelfShadow(fCompPB->GetInt(kSelfShadow));
@@ -260,7 +260,7 @@ hsBool plShadowCastComponent::AddShadowCastModifier(plSceneObject* so, plShadowC
     }
 
     // Okay, we're clear, just add via notify.
-    hsgResMgr::ResMgr()->AddViaNotify(caster->GetKey(), TRACKED_NEW plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(caster->GetKey(), new plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     return true;
 }
@@ -415,7 +415,7 @@ hsBool plShadowLightComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 hsBool plShadowLightComponent::IAddDirectMaster(plMaxNode* node, plSceneObject* so)
 {
-    plDirectShadowMaster* directMaster = TRACKED_NEW plDirectShadowMaster;
+    plDirectShadowMaster* directMaster = new plDirectShadowMaster;
 
     plLoadMask lm(QualityBitToMask(fCompPB->GetInt(kQuality)), QualityBitToMask(0));
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), directMaster, node->GetLocation(), lm);
@@ -428,13 +428,13 @@ hsBool plShadowLightComponent::IAddDirectMaster(plMaxNode* node, plSceneObject* 
 
     directMaster->SetProperty(plShadowMaster::kSelfShadow, fCompPB->GetInt(kSelfShadow));
 
-    hsgResMgr::ResMgr()->AddViaNotify(directMaster->GetKey(), TRACKED_NEW plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(directMaster->GetKey(), new plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     return true;
 }
 
 hsBool plShadowLightComponent::IAddPointMaster(plMaxNode* node, plSceneObject* so)
 {
-    plPointShadowMaster* pointMaster = TRACKED_NEW plPointShadowMaster;
+    plPointShadowMaster* pointMaster = new plPointShadowMaster;
 
     plLoadMask lm(QualityBitToMask(fCompPB->GetInt(kQuality)), QualityBitToMask(0));
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pointMaster, node->GetLocation(), lm);
@@ -447,7 +447,7 @@ hsBool plShadowLightComponent::IAddPointMaster(plMaxNode* node, plSceneObject* s
 
     pointMaster->SetProperty(plShadowMaster::kSelfShadow, fCompPB->GetInt(kSelfShadow));
 
-    hsgResMgr::ResMgr()->AddViaNotify(pointMaster->GetKey(), TRACKED_NEW plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(pointMaster->GetKey(), new plObjRefMsg(so->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     return true;
 }

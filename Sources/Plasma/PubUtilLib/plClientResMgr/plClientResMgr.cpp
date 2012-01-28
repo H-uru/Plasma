@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "plJPEG/plJPEG.h"
@@ -61,7 +61,7 @@ plClientResMgr& plClientResMgr::Instance(void)
 
 plClientResMgr::plClientResMgr()
 {
-    this->ClientResources = TRACKED_NEW std::map<std::string, plMipmap*>;
+    this->ClientResources = new std::map<std::string, plMipmap*>;
 }
 
 plClientResMgr::~plClientResMgr()
@@ -84,13 +84,13 @@ void plClientResMgr::ILoadResources(const char* resfile)
         return;
     }
 
-    wchar* wFilename = hsStringToWString(resfile);
+    wchar_t* wFilename = hsStringToWString(resfile);
     hsUNIXStream in;
 
     if (in.Open(wFilename, L"rb")) {
-        UInt32 header = in.ReadLE32();
-        UInt32 version = in.ReadLE32();
-        UInt32 num_resources = 0;
+        uint32_t header = in.ReadLE32();
+        uint32_t version = in.ReadLE32();
+        uint32_t num_resources = 0;
 
         switch (version) {
             case 1:
@@ -98,7 +98,7 @@ void plClientResMgr::ILoadResources(const char* resfile)
 
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = NULL;
-                    UInt32 res_size = 0;
+                    uint32_t res_size = 0;
                     char* tmp_name = in.ReadSafeStringLong();
                     std::string res_name = std::string(tmp_name);
                     std::string res_type = res_name.substr(res_name.length() - 4, 4);

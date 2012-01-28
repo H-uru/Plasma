@@ -167,10 +167,10 @@ public:
 public:
 
     plPipeConst() {}
-    plPipeConst(Type t, UInt16 r) : fType(t), fReg(r) {}
+    plPipeConst(Type t, uint16_t r) : fType(t), fReg(r) {}
 
     Type        fType;
-    UInt16              fReg;
+    uint16_t              fReg;
 };
 
 typedef plPipeConst::Type plPipeConstType;
@@ -187,7 +187,7 @@ public:
         kShaderUnsupported  = 0x20
     };
 protected:
-    mutable UInt32              fFlags;
+    mutable uint32_t              fFlags;
 
     hsTArray<plShaderConst>     fConsts;
 
@@ -195,8 +195,8 @@ protected:
 
     const plShaderDecl*         fDecl;
 
-    UInt8                       fInput;
-    UInt8                       fOutput;
+    uint8_t                       fInput;
+    uint8_t                       fOutput;
 
     hsTArray<plPipeConst>       fPipeConsts;
 
@@ -212,7 +212,7 @@ public:
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
     void                    SetNumConsts(int cnt) { fConsts.SetCount(cnt); }
-    UInt32                  GetNumConsts() const { return fConsts.GetCount(); }
+    uint32_t                  GetNumConsts() const { return fConsts.GetCount(); }
     plShaderConst&          GetConst(int i) { return fConsts[i]; }
     const plShaderConst&    GetConst(int i) const { return fConsts[i]; }
     void                    SetConst(int i, const plShaderConst& c) { fConsts[i] = c; }
@@ -225,8 +225,8 @@ public:
     hsColorRGBA             GetColor(int i) const;
     hsPoint3                GetPosition(int i) const;
     hsVector3               GetVector(int i) const;
-    void                    GetVector(int i, hsScalar& x, hsScalar& y, hsScalar& z, hsScalar& w) const;
-    hsScalar                GetFloat(int i, int chan) const;
+    void                    GetVector(int i, float& x, float& y, float& z, float& w) const;
+    float                GetFloat(int i, int chan) const;
     const float* const      GetFloat4(int i) const;
 
     void                    SetMatrix(int i, const plFloat44& xfm); // Will transpose
@@ -236,8 +236,8 @@ public:
     void                    SetMatrix24(int i, const hsMatrix44& xfm);
     void                    SetColor(int i, const hsColorRGBA& col);
     void                    SetVector(int i, const hsScalarTriple& vec); /* Doesn't touch .fW */
-    void                    SetVectorW(int i, const hsScalarTriple& vec, hsScalar w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
-    void                    SetVector(int i, hsScalar x, hsScalar y, hsScalar z, hsScalar w);
+    void                    SetVectorW(int i, const hsScalarTriple& vec, float w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
+    void                    SetVector(int i, float x, float y, float z, float w);
     void                    SetFloat(int i, int chan, float v);
     void                    SetFloat4(int i, const float* const f);
 
@@ -261,22 +261,22 @@ public:
 
     void                    CopyConsts(const plShader* src) { fConsts = src->fConsts; }
 
-    void                    SetInputFormat(UInt8 format) { fInput = format; }
-    void                    SetOutputFormat(UInt8 format) { fOutput = format; }
+    void                    SetInputFormat(uint8_t format) { fInput = format; }
+    void                    SetOutputFormat(uint8_t format) { fOutput = format; }
 
-    UInt8                   GetInputFormat() const { return fInput; }
-    UInt8                   GetOutputFormat() const { return fOutput; }
+    uint8_t                   GetInputFormat() const { return fInput; }
+    uint8_t                   GetOutputFormat() const { return fOutput; }
 
-    UInt32                  GetNumPipeConsts() const { return fPipeConsts.GetCount(); }
+    uint32_t                  GetNumPipeConsts() const { return fPipeConsts.GetCount(); }
     const plPipeConst&      GetPipeConst(int i) const { return fPipeConsts[i]; }
     plPipeConst::Type       GetPipeConstType(int i) const { return fPipeConsts[i].fType; }
-    UInt16                  GetPipeConstReg(int i) const { return fPipeConsts[i].fReg; }
+    uint16_t                  GetPipeConstReg(int i) const { return fPipeConsts[i].fReg; }
 
     void                    SetNumPipeConsts(int n);
     void                    SetPipeConst(int i, const plPipeConst& c) { fPipeConsts[i] = c; }
-    void                    SetPipeConst(int i, plPipeConstType t, UInt16 r) { fPipeConsts[i].fType = t; fPipeConsts[i].fReg = r; }
+    void                    SetPipeConst(int i, plPipeConstType t, uint16_t r) { fPipeConsts[i].fType = t; fPipeConsts[i].fReg = r; }
     void                    SetPipeConstType(int i, plPipeConstType t) { fPipeConsts[i].fType = t; }
-    void                    SetPipeConstReg(int i, UInt16 r) { fPipeConsts[i].fReg = r; }
+    void                    SetPipeConstReg(int i, uint16_t r) { fPipeConsts[i].fReg = r; }
 };
 
 #endif // plShader_inc

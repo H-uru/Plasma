@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-const dword kRandomMax = 0x7fffffff;
+const uint32_t kRandomMax = 0x7fffffff;
 
 void     RandReset ();
 void     RandSetSeed (unsigned seed);

@@ -60,10 +60,10 @@ public:
     //------------------------
 
     // Given a page string combo, returns the key of the sceneNode for that page. If the page does not exist, it creates one.
-    plKey NameToLoc(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
+    plKey NameToLoc(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant = false);
 
     // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
-    Int32 VerifySeqNumber(Int32 sequenceNumber, const char* age, const char* page);
+    int32_t VerifySeqNumber(int32_t sequenceNumber, const char* age, const char* page);
 
     enum VerifyErrors
     {
@@ -97,11 +97,11 @@ public:
 
 protected:
     plLocation ICreateLocation(const char* age, const char* page, hsBool itinerant);
-    plLocation ICreateLocation(const char* age, const char* page, Int32 seqNum, hsBool itinerant);
+    plLocation ICreateLocation(const char* age, const char* page, int32_t seqNum, hsBool itinerant);
 
-    plRegistryPageNode* INameToPage(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant = false);
+    plRegistryPageNode* INameToPage(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant = false);
 
-    void IPreLoadTextures(plRegistryPageNode* pageNode, Int32 origSeqNumber);
+    void IPreLoadTextures(plRegistryPageNode* pageNode, int32_t origSeqNumber);
 
     void IShutdown();
 

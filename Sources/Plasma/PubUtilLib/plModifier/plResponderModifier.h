@@ -54,30 +54,30 @@ class plResponderModifier : public plSingleModifier
 {
     friend class plResponderSDLModifier;
 protected:
-    typedef std::map<Int8,Int8> WaitToCmd;
+    typedef std::map<int8_t,int8_t> WaitToCmd;
 
     class plResponderCmd
     {
     public:
         plResponderCmd() : fMsg(nil), fWaitOn(-1) {}
-        plResponderCmd(plMessage *msg, Int8 waitOn) : fMsg(msg), fWaitOn(waitOn) {}
+        plResponderCmd(plMessage *msg, int8_t waitOn) : fMsg(msg), fWaitOn(waitOn) {}
 
         plMessage *fMsg;
-        Int8 fWaitOn;       // Index into fCompletedEvents of who we're waiting on
+        int8_t fWaitOn;       // Index into fCompletedEvents of who we're waiting on
     };
     class plResponderState
     {
     public:
         hsTArray<plResponderCmd> fCmds;
-        Int8 fNumCallbacks;         // So we know how far to search into the bitvector to find out when we're done
-        Int8 fSwitchToState;        // State to switch to when all commands complete
+        int8_t fNumCallbacks;         // So we know how far to search into the bitvector to find out when we're done
+        int8_t fSwitchToState;        // State to switch to when all commands complete
         WaitToCmd fWaitToCmd;
     };
 
     hsTArray<plResponderState> fStates;
 
-    Int8 fCurState;                 // The current state (first index for fCommandList)
-    Int8 fCurCommand;               // The command we are currently waiting to send (or -1 if we're not sending)
+    int8_t fCurState;                 // The current state (first index for fCommandList)
+    int8_t fCurCommand;               // The command we are currently waiting to send (or -1 if we're not sending)
     bool fNetRequest;               // Was the last trigger a net request
     hsBitVector fCompletedEvents;   // Which events that commands are waiting on have completed
     bool fEnabled;
@@ -94,16 +94,16 @@ protected:
         kDetectUnTrigger    = 0x2,
         kSkipFFSound        = 0x4
     };
-    UInt8 fFlags;
-    UInt32 fNotifyMsgFlags; // store the msg flags of the notify which triggered us
+    uint8_t fFlags;
+    uint32_t fNotifyMsgFlags; // store the msg flags of the notify which triggered us
 
     void Trigger(plNotifyMsg *msg);
     bool IIsLocalOnlyCmd(plMessage* cmd);
     bool IContinueSending();
 
-    Int8 ICmdFromWait(Int8 waitIdx);
+    int8_t ICmdFromWait(int8_t waitIdx);
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
     static void IDebugAnimBox(bool start);
@@ -116,9 +116,9 @@ protected:
     plMessage* IGetFastForwardMsg(plMessage* msg, bool python);
 
     void ISetResponderStateFromNotify(plNotifyMsg* msg);
-    void ISetResponderState(Int8 state);
+    void ISetResponderState(int8_t state);
 
-    void ILog(UInt32 color, const char* format, ...);
+    void ILog(uint32_t color, const char* format, ...);
 
     friend class plResponderComponent;
     friend class plResponderWait;
@@ -143,12 +143,12 @@ public:
     // Restore callback state after load
     void Restore();
     
-    const Int8 GetState() const { return fCurState; }
+    const int8_t GetState() const { return fCurState; }
     //
     // Export time only
     //
     void AddCommand(plMessage* pMsg, int state=0);
-    void AddCallback(Int8 state, Int8 cmd, Int8 callback);
+    void AddCallback(int8_t state, int8_t cmd, int8_t callback);
 };
 
 // Message for changing the enable state in a responder modifier

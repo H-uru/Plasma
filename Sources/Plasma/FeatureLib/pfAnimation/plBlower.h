@@ -58,21 +58,21 @@ protected:
     class Oscillator
     {
     public:
-        hsScalar    fFrequency;
-        hsScalar    fPhase;
-        hsScalar    fPower;
+        float    fFrequency;
+        float    fPhase;
+        float    fPower;
     };
     static plRandom fRandom;
 
     // Parameters
-    hsScalar        fMasterPower;
-    hsScalar        fMasterFrequency;
-    hsScalar        fDirectRate;
-    hsScalar        fImpulseRate;
-    hsScalar        fSpringKonst;
-    hsScalar        fBias;
+    float        fMasterPower;
+    float        fMasterFrequency;
+    float        fDirectRate;
+    float        fImpulseRate;
+    float        fSpringKonst;
+    float        fBias;
 
-    hsScalar                    fAccumTime;
+    float                    fAccumTime;
     hsTArray<Oscillator>        fOscillators;
 
     // CurrentState
@@ -80,13 +80,13 @@ protected:
     hsPoint3        fRestPos;
     hsPoint3        fLocalRestPos;
     hsVector3       fCurrDel;
-    hsScalar        fMaxOffsetDist;
+    float        fMaxOffsetDist;
 
     void    IInitOscillators();
     void    ISetTargetTransform();
-    void    IBlow(double secs, hsScalar delSecs);
+    void    IBlow(double secs, float delSecs);
     
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 public:
     ~plBlower();
     plBlower();
@@ -99,19 +99,19 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetMasterPower(hsScalar f) { fMasterPower = f; }
-    void SetMasterFrequency(hsScalar f) { fMasterFrequency = f; }
-    void SetDirectRate(hsScalar f) { fDirectRate = f; }
-    void SetImpulseRate(hsScalar f) { fImpulseRate = f; }
-    void SetSpringKonst(hsScalar f) { fSpringKonst = f; }
-    void SetConstancy(hsScalar f);
+    void SetMasterPower(float f) { fMasterPower = f; }
+    void SetMasterFrequency(float f) { fMasterFrequency = f; }
+    void SetDirectRate(float f) { fDirectRate = f; }
+    void SetImpulseRate(float f) { fImpulseRate = f; }
+    void SetSpringKonst(float f) { fSpringKonst = f; }
+    void SetConstancy(float f);
 
-    hsScalar GetMasterPower() const { return fMasterPower; }
-    hsScalar GetMasterFrequency() const { return fMasterFrequency; }
-    hsScalar GetDirectRate() const { return fDirectRate; }
-    hsScalar GetImpulseRate() const { return fImpulseRate; }
-    hsScalar GetSpringKonst() const { return fSpringKonst; }
-    hsScalar GetConstancy() const;
+    float GetMasterPower() const { return fMasterPower; }
+    float GetMasterFrequency() const { return fMasterFrequency; }
+    float GetDirectRate() const { return fDirectRate; }
+    float GetImpulseRate() const { return fImpulseRate; }
+    float GetSpringKonst() const { return fSpringKonst; }
+    float GetConstancy() const;
 };
 
 #endif // plBlower_inc

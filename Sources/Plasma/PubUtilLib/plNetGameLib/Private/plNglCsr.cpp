@@ -90,7 +90,7 @@ struct CliCsConn : AtomicRef {
     void StopAutoPing ();
     void TimerPing ();
 
-    void Send (const unsigned_ptr fields[], unsigned count);
+    void Send (const uintptr_t fields[], unsigned count);
 };
 
 
@@ -108,14 +108,14 @@ struct ConnectedNotifyTrans : NetNotifyTrans {
     , m_latestBuildId(lbi)
     { }
     ~ConnectedNotifyTrans () {
-        DEL(m_connectParam);
+        delete m_connectParam;
     }
     void Post ();
 };
 
 struct LoginRequestTrans : NetCsrTrans {
 
-    wchar                   m_csrName[kMaxAccountNameLength];
+    wchar_t                   m_csrName[kMaxAccountNameLength];
     ShaDigest               m_namePassHash;
     FNetCliCsrLoginCallback m_callback;
     void *                  m_param;
@@ -124,7 +124,7 @@ struct LoginRequestTrans : NetCsrTrans {
     unsigned                m_csrFlags;
     
     LoginRequestTrans (
-        const wchar             csrName[],
+        const wchar_t             csrName[],
         const ShaDigest &       namePassHash,
         FNetCliCsrLoginCallback callback,
         void *                  param
@@ -133,7 +133,7 @@ struct LoginRequestTrans : NetCsrTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -213,7 +213,7 @@ static void UnlinkAndAbandonConn_CS (CliCsConn * conn) {
 //============================================================================
 static void SendRegisterRequest (CliCsConn * conn) {
     
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Csr_RegisterRequest,
         0
     };
@@ -411,7 +411,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar         name[],
+    const wchar_t         name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -437,7 +437,7 @@ static void AsyncLookupCallback (
 
 //============================================================================
 static bool Recv_PingReply (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes,
     void *
 ) {
@@ -450,7 +450,7 @@ static bool Recv_PingReply (
 
 //============================================================================
 static bool Recv_RegisterReply (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    ,
     void *      param
 ) {
@@ -461,7 +461,7 @@ static bool Recv_RegisterReply (
     conn->serverChallenge   = reply.serverChallenge;
     conn->latestBuildId     = reply.csrBuildId;
 
-    ConnectedNotifyTrans * trans = NEW(ConnectedNotifyTrans)(
+    ConnectedNotifyTrans * trans = new ConnectedNotifyTrans(
         conn->connectParam,
         conn->latestBuildId
     );
@@ -474,7 +474,7 @@ static bool Recv_RegisterReply (
 
 //============================================================================
 static bool Recv_LoginReply (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes,
     void *
 ) {
@@ -543,7 +543,7 @@ CliCsConn::~CliCsConn () {
     if (cli)
         NetCliDelete(cli, true);
         
-    DEL(connectParam);
+    delete connectParam;
 
     AtomicAdd(&s_perf[kPerfConnCount], -1);
 }
@@ -583,7 +583,7 @@ void CliCsConn::TimerPing () {
     // Send a ping request
     pingSendTimeMs = GetNonZeroTimeMs();
     
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_PingRequest,
                     0,      // not a transaction
                     pingSendTimeMs,
@@ -595,7 +595,7 @@ void CliCsConn::TimerPing () {
 }
 
 //============================================================================
-void CliCsConn::Send (const unsigned_ptr fields[], unsigned count) {
+void CliCsConn::Send (const uintptr_t fields[], unsigned count) {
 
     critsect.Enter();
     {
@@ -628,7 +628,7 @@ void ConnectedNotifyTrans::Post () {
 
 //============================================================================
 LoginRequestTrans::LoginRequestTrans (
-    const wchar             csrName[],
+    const wchar_t             csrName[],
     const ShaDigest &       namePassHash,
     FNetCliCsrLoginCallback callback,
     void *                  param
@@ -648,11 +648,11 @@ bool LoginRequestTrans::Send () {
         return false;
         
     ShaDigest challengeHash;
-    dword clientChallenge = 0;
+    uint32_t clientChallenge = 0;
     
     CryptCreateRandomSeed(
         sizeof(clientChallenge),
-        (byte *) &clientChallenge
+        (uint8_t *) &clientChallenge
     );
 
     CryptHashPasswordChallenge(
@@ -662,12 +662,12 @@ bool LoginRequestTrans::Send () {
         &challengeHash
     );
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Csr_LoginRequest,
                         m_transId,
                         clientChallenge,
-        (unsigned_ptr)  m_csrName,
-        (unsigned_ptr)  &challengeHash
+        (uintptr_t)  m_csrName,
+        (uintptr_t)  &challengeHash
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -687,7 +687,7 @@ void LoginRequestTrans::Post () {
 
 //============================================================================
 bool LoginRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Csr2Cli_LoginReply & reply = *(const Csr2Cli_LoginReply *) msg;
@@ -828,7 +828,7 @@ unsigned CsrGetConnId () {
 
 //============================================================================
 void NetCliCsrStartConnect (
-    const wchar *               addrList[],
+    const wchar_t *               addrList[],
     unsigned                    addrCount,
     FNetCliCsrConnectedCallback callback,
     void *                      param
@@ -838,11 +838,11 @@ void NetCliCsrStartConnect (
 
     for (unsigned i = 0; i < addrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar * name = addrList[i];
+        const wchar_t * name = addrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                ConnectParam * cp = NEW(ConnectParam);
+                ConnectParam * cp = new ConnectParam;
                 cp->callback    = callback;
                 cp->param       = param;
 
@@ -861,7 +861,7 @@ void NetCliCsrStartConnect (
             NetAddress addr;
             NetAddressFromString(&addr, addrList[i], kNetDefaultClientPort);
             
-            ConnectParam * cp = NEW(ConnectParam);
+            ConnectParam * cp = new ConnectParam;
             cp->callback    = callback;
             cp->param       = param;
 
@@ -884,12 +884,12 @@ void NetCliCsrDisconnect () {
 
 //============================================================================
 void NetCliCsrLoginRequest (
-    const wchar             csrName[],
+    const wchar_t             csrName[],
     const ShaDigest &       namePassHash,
     FNetCliCsrLoginCallback callback,
     void *                  param
 ) {
-    LoginRequestTrans * trans = NEW(LoginRequestTrans)(
+    LoginRequestTrans * trans = new LoginRequestTrans(
         csrName,
         namePassHash,
         callback,

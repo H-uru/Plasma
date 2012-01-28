@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyNetServerSessionInfo_h_inc
 #define pyNetServerSessionInfo_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "pnUUID/pnUUID.h"
 
@@ -79,9 +79,9 @@ public:
     plNetServerSessionInfo & ServerInfo() { return fInfo; }
 
     void SetServerName(const char * val) { fInfo.SetServerName( val ); }
-    void SetServerType(UInt8 val) { fInfo.SetServerType( val ); }
+    void SetServerType(uint8_t val) { fInfo.SetServerType( val ); }
     void SetServerAddr(const char * val) { fInfo.SetServerAddr( val ); }
-    void SetServerPort(UInt16 val) { fInfo.SetServerPort( val ); }
+    void SetServerPort(uint16_t val) { fInfo.SetServerPort( val ); }
     void SetServerGuid(const char * val) { fServerGuid.FromString( val ); fInfo.SetServerGuid( &fServerGuid ); }
     bool HasServerName() const { return fInfo.HasServerName(); }
     bool HasServerType() const { return fInfo.HasServerType(); }
@@ -89,9 +89,9 @@ public:
     bool HasServerPort() const { return fInfo.HasServerPort(); }
     bool HasServerGuid() const { return fInfo.HasServerGuid(); }
     const char *    GetServerName() const { return fInfo.GetServerName(); }
-    UInt8           GetServerType() const { return fInfo.GetServerType(); }
+    uint8_t           GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
-    UInt16          GetServerPort() const { return fInfo.GetServerPort(); }
+    uint16_t          GetServerPort() const { return fInfo.GetServerPort(); }
     const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
 };
 
@@ -119,9 +119,9 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     void SetServerName(const char * val) { fInfo.SetServerName( val ); }
-    void SetServerType(UInt8 val) { fInfo.SetServerType( val ); }
+    void SetServerType(uint8_t val) { fInfo.SetServerType( val ); }
     void SetServerAddr(const char * val) { fInfo.SetServerAddr( val ); }
-    void SetServerPort(UInt16 val) { fInfo.SetServerPort( val ); }
+    void SetServerPort(uint16_t val) { fInfo.SetServerPort( val ); }
     void SetServerGuid(const char * val) { fServerGuid.FromString( val ); fInfo.SetServerGuid( &fServerGuid ); }
     bool HasServerName() const { return fInfo.HasServerName(); }
     bool HasServerType() const { return fInfo.HasServerType(); }
@@ -129,9 +129,9 @@ public:
     bool HasServerPort() const { return fInfo.HasServerPort(); }
     bool HasServerGuid() const { return fInfo.HasServerGuid(); }
     const char *    GetServerName() const { return fInfo.GetServerName(); }
-    UInt8           GetServerType() const { return fInfo.GetServerType(); }
+    uint8_t           GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
-    UInt16          GetServerPort() const { return fInfo.GetServerPort(); }
+    uint16_t          GetServerPort() const { return fInfo.GetServerPort(); }
     const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
 };
 

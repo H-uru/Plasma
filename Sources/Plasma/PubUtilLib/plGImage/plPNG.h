@@ -59,11 +59,11 @@ public:
 
     plMipmap* ReadFromStream(hsStream* inStream) { return IRead(inStream); }
     plMipmap* ReadFromFile(const char* fileName);
-    plMipmap* ReadFromFile(const wchar* fileName);
+    plMipmap* ReadFromFile(const wchar_t* fileName);
 
     hsBool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
     hsBool WriteToFile(const char* fileName, plMipmap* sourceData);
-    hsBool WriteToFile(const wchar* fileName, plMipmap* sourceData);
+    hsBool WriteToFile(const wchar_t* fileName, plMipmap* sourceData);
 
     static plPNG& Instance(void);
 };

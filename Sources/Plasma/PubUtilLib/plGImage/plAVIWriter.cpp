@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAVIWriter.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
-#include "hsWindows.h"
+
 #if HS_BUILD_FOR_WIN32
 #include <vfw.h>
 #endif
@@ -68,7 +68,7 @@ protected:
     BITMAPINFOHEADER fBitmapInfo;
 
     hsBool fOldRealTime;
-    hsScalar fOldFrameTimeInc;
+    float fOldFrameTimeInc;
 
     double fStartTime;
 

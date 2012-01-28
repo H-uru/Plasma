@@ -62,7 +62,7 @@ typedef void (*FNetCliCsrConnectedCallback) (
     unsigned    latestBuildId
 );
 void NetCliCsrStartConnect (
-    const wchar *               addrList[],
+    const wchar_t *               addrList[],
     unsigned                    addrCount,
     FNetCliCsrConnectedCallback callback = nil,
     void *                      param = nil
@@ -76,7 +76,7 @@ typedef void (*FNetCliCsrLoginCallback)(
     unsigned        csrFlags
 );
 void NetCliCsrLoginRequest (
-    const wchar             csrName[],
+    const wchar_t             csrName[],
     const ShaDigest &       namePassHash,
     FNetCliCsrLoginCallback callback,
     void *                  param
@@ -87,7 +87,7 @@ typedef void (*FNetCliCsrSetTicketFilterCallback)(
     void *          param
 );
 void NetCliCsrSetTicketFilter (
-    const wchar                         filterSpec[],
+    const wchar_t                         filterSpec[],
     FNetCliCsrSetTicketFilterCallback   callback,
     void *                              param
 );

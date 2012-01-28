@@ -113,37 +113,37 @@ private:
 public:
     void    Rewind();
     void    FastFwd();
-    void    SetPosition(UInt32 position);
+    void    SetPosition(uint32_t position);
 
-    UInt32 Read(UInt32 byteCount, void * buffer);
-    void Skip(UInt32 deltaByteCount);
+    uint32_t Read(uint32_t byteCount, void * buffer);
+    void Skip(uint32_t deltaByteCount);
 
-    UInt32  LogRead(UInt32 byteCount, void * buffer, const char* desc);
+    uint32_t  LogRead(uint32_t byteCount, void * buffer, const char* desc);
     char*   LogReadSafeString();
     char*   LogReadSafeStringLong();
-    void    LogSkip(UInt32 deltaByteCount, const char* desc);
+    void    LogSkip(uint32_t deltaByteCount, const char* desc);
     void    LogStringString(const char* s);
     void    LogSubStreamStart(const char* desc);
     void    LogSubStreamEnd();
     void    LogSubStreamPushDesc(const char* desc);
 
     LOG_READ_LE(bool, kBool)
-    LOG_READ_LE(UInt8, kUInt)
-    LOG_READ_LE(UInt16, kUInt)
-    LOG_READ_LE(UInt32, kUInt)
-    LOG_READ_LE_ARRAY(UInt8, kUInt)
-    LOG_READ_LE_ARRAY(UInt16, kUInt)
-    LOG_READ_LE_ARRAY(UInt32, kUInt)
+    LOG_READ_LE(uint8_t, kUInt)
+    LOG_READ_LE(uint16_t, kUInt)
+    LOG_READ_LE(uint32_t, kUInt)
+    LOG_READ_LE_ARRAY(uint8_t, kUInt)
+    LOG_READ_LE_ARRAY(uint16_t, kUInt)
+    LOG_READ_LE_ARRAY(uint32_t, kUInt)
 
-    LOG_READ_LE(Int8, kInt)
+    LOG_READ_LE(int8_t, kInt)
     LOG_READ_LE(char, kChar)
-    LOG_READ_LE(Int16, kInt)
-    LOG_READ_LE(Int32, kInt)
+    LOG_READ_LE(int16_t, kInt)
+    LOG_READ_LE(int32_t, kInt)
     LOG_READ_LE(int, kInt)
-    LOG_READ_LE_ARRAY(Int8, kInt)
+    LOG_READ_LE_ARRAY(int8_t, kInt)
     LOG_READ_LE_ARRAY(char, kChar)
-    LOG_READ_LE_ARRAY(Int16, kInt)
-    LOG_READ_LE_ARRAY(Int32, kInt)
+    LOG_READ_LE_ARRAY(int16_t, kInt)
+    LOG_READ_LE_ARRAY(int32_t, kInt)
     LOG_READ_LE_ARRAY(int, kInt)
 
     LOG_READ_LE(float, kFloat)

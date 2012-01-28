@@ -119,7 +119,7 @@ const char* plNetServerConstants::GetServerName(int type)
     }
 }
 
-UInt16 plNetServerConstants::GetPort(int type)
+uint16_t plNetServerConstants::GetPort(int type)
 { 
     switch(type)
     {

@@ -73,7 +73,7 @@ pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(int n)
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-hsBool pyVaultPlayerInfoListNode::HasPlayer( UInt32 playerID )
+hsBool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
 {
     if (!fNode)
         return false;
@@ -92,7 +92,7 @@ hsBool pyVaultPlayerInfoListNode::HasPlayer( UInt32 playerID )
     return (rvn != nil);
 }
 
-hsBool pyVaultPlayerInfoListNode::AddPlayer( UInt32 playerID )
+hsBool pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
 {
     if (HasPlayer(playerID))
         return true;
@@ -119,7 +119,7 @@ hsBool pyVaultPlayerInfoListNode::AddPlayer( UInt32 playerID )
     return nodeIds.Count() != 0;
 }
 
-void pyVaultPlayerInfoListNode::RemovePlayer( UInt32 playerID )
+void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
 {
     if (!fNode)
         return;
@@ -138,7 +138,7 @@ void pyVaultPlayerInfoListNode::RemovePlayer( UInt32 playerID )
     templateNode->DecRef();
 }
 
-PyObject * pyVaultPlayerInfoListNode::GetPlayer( UInt32 playerID )
+PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
 {
     if (!fNode)
         PYTHON_RETURN_NONE;

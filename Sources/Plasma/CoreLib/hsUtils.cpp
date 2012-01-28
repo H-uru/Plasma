@@ -39,22 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
-#if HS_BUILD_FOR_WIN32
-extern "C" {
-#endif
-#include <stdio.h>
-#include <stdarg.h>
-#if HS_BUILD_FOR_WIN32
-};
-#endif
 
-#if HS_BUILD_FOR_WIN32
-#include <winsock2.h>
-#include <windows.h>
-#endif
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
+#include <math.h>
 
 
 char * hsFormatStr(const char * fmt, ...)
@@ -75,16 +64,9 @@ char * hsFormatStrV(const char * fmt, va_list args)
 
 static char hsStrBuf[100];
 
-char *hsScalarToStr(hsScalar s)
+char *hsScalarToStr(float s)
 {
-    if (s == hsIntToScalar(hsScalarToInt(s)))
-        sprintf(hsStrBuf, "%d", hsScalarToInt(s));
-    else
-    #if HS_CAN_USE_FLOAT
-        sprintf(hsStrBuf, "%f", hsScalarToFloat(s));
-    #else
-        sprintf(hsStrBuf, "%d:%lu", hsFixedToInt(s), (UInt16)s);
-    #endif
+    sprintf(hsStrBuf, "%f", s);
     return hsStrBuf;
 }
 
@@ -96,7 +78,7 @@ int hsMessageBoxWithOwner(void * owner, const char message[], const char caption
         return hsMBoxOk;
 
 #if HS_BUILD_FOR_WIN32
-    UInt32 flags = 0;
+    uint32_t flags = 0;
 
     if (kind == hsMessageBoxNormal)
         flags |= MB_OK;
@@ -150,7 +132,7 @@ int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t c
         return hsMBoxOk;
 
 #if HS_BUILD_FOR_WIN32
-    UInt32 flags = 0;
+    uint32_t flags = 0;
     
     if (kind == hsMessageBoxNormal)
         flags |= MB_OK;
@@ -216,6 +198,11 @@ int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int
 #endif
 }
 
+inline hsBool hsCompare(float a, float b, float delta)
+{
+    return (fabs(a - b) < delta);
+}
+
 
 /* Generic psuedo RNG used in ANSI C. */ 
 static unsigned long SEED = 1;
@@ -250,13 +237,13 @@ char* hsStrcpy(char dst[], const char src[])
         if (dst == nil)
         {
             int count = hsStrlen(src);
-            dst = (char *)ALLOC(count + 1);
+            dst = (char *)malloc(count + 1);
             memcpy(dst, src, count);
             dst[count] = 0;
             return dst;
         }
 
-        Int32 i;
+        int32_t i;
         for (i = 0; src[i] != 0; i++)
             dst[i] = src[i];
         dst[i] = 0;
@@ -265,7 +252,7 @@ char* hsStrcpy(char dst[], const char src[])
     return dst;
 }
 
-hsBool hsStrEQ(const char s1[], const char s2[])
+bool hsStrEQ(const char s1[], const char s2[])
 {
     if (s1 && s2)
     {
@@ -278,7 +265,7 @@ hsBool hsStrEQ(const char s1[], const char s2[])
     return (!s1 && !s2);
 }
 
-hsBool hsStrCaseEQ(const char* s1, const char* s2)
+bool hsStrCaseEQ(const char* s1, const char* s2)
 {
     if (s1 && s2)
     {
@@ -312,10 +299,10 @@ void hsStrLower(char *s)
     }
 }
 
-char* hsP2CString(const UInt8 pstring[], char cstring[])
+char* hsP2CString(const uint8_t pstring[], char cstring[])
 {
     char*        cstr = cstring;
-    const UInt8* stop = &pstring[1] + pstring[0];
+    const uint8_t* stop = &pstring[1] + pstring[0];
     
     pstring += 1;   //  skip length byte
     while (pstring < stop)
@@ -324,7 +311,7 @@ char* hsP2CString(const UInt8 pstring[], char cstring[])
     return cstring;
 }
 
-UInt8* hsC2PString(const char cstring[], UInt8 pstring[])
+uint8_t* hsC2PString(const char cstring[], uint8_t pstring[])
 {
     int i;
 
@@ -341,7 +328,7 @@ wchar_t *hsStringToWString( const char *str )
 {
     // convert the char string to a wchar_t string
     int len = strlen(str);
-    wchar_t *wideString = TRACKED_NEW wchar_t[len+1];
+    wchar_t *wideString = new wchar_t[len+1];
     for (int i=0; i<len; i++)
         wideString[i] = btowc(str[i]);
     wideString[len] = L'\0';
@@ -355,7 +342,7 @@ char    *hsWStringToString( const wchar_t *str )
 {
     // convert the wchar_t string to a char string
     int len = wcslen(str);
-    char *sStr = TRACKED_NEW char[len+1];
+    char *sStr = new char[len+1];
 
     int i;
     for (i = 0; i < len; i++)
@@ -394,7 +381,7 @@ void hsCPathToMacPath(char* dst, char* fname)
     else if(strstr(fname, "\\\\"))
     {
         prefix = 0;
-        offset = 2;         // copy fname from 2-bytes in. This removes 
+        offset = 2;         // copy fname from 2-Bytes in. This removes 
                             // the first two chars...
     }
 
@@ -423,7 +410,7 @@ int hsRemove(const char * fname)
     
 }
 
-UInt32 hsPhysicalMemory()
+uint32_t hsPhysicalMemory()
 {
 #define HS_ONE_MEGABYTE 1048576 // 1024 * 1024
 
@@ -436,7 +423,7 @@ UInt32 hsPhysicalMemory()
 
 MemSpec hsMemorySpec()
 {
-    UInt32 mem = hsPhysicalMemory();
+    uint32_t mem = hsPhysicalMemory();
 
     // Currently adding a little margin of error here
     // due to the fact that Windows doesn't seem to

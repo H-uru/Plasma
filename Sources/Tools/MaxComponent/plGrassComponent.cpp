@@ -236,7 +236,7 @@ plGrassComponent::plGrassComponent() : fShader(nil)
 
 hsBool plGrassComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fShader = TRACKED_NEW plGrassShaderMod();
+    fShader = new plGrassShaderMod();
 
     plLoadMask loadMask;
     int qual = 1;
@@ -263,12 +263,12 @@ hsBool plGrassComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 hsBool plGrassComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(fShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     hsTArray<hsGMaterial*> mats;
     hsMaterialConverter::Instance().CollectConvertedMaterials(hsMaterialConverter::Instance().GetBaseMtl(node), mats);
-    hsgResMgr::ResMgr()->SendRef(mats[0]->GetKey(), TRACKED_NEW plGenRefMsg(fShader->GetKey(), plRefMsg::kOnRequest, 0, plGrassShaderMod::kRefMaterial), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mats[0]->GetKey(), new plGenRefMsg(fShader->GetKey(), plRefMsg::kOnRequest, 0, plGrassShaderMod::kRefMaterial), plRefFlags::kActiveRef);
 
     return TRUE;
 }

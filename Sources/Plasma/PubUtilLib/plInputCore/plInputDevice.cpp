@@ -42,22 +42,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plInputDevice.cpp
 //#include "STRING"
 
-#include "hsConfig.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 #include "plInputDevice.h"
 #include "plInputManager.h"
 #include "plAvatarInputInterface.h"
 #include "plMessage/plInputEventMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "hsUtils.h"
+
 #include "plgDispatch.h"
 
 #include "plPipeline/plPlates.h"
 #include "plPipeline/plDebugText.h"
 #include "plGImage/plMipmap.h"
 
-#include "hsWindows.h"
+
 #include "plPipeline.h"
 
 // The resolution that uses the base size of the cursor. 
@@ -109,7 +108,7 @@ void plKeyboardDevice::ReleaseAllKeys()
             fKeyboardState[i] = false;
 
             // fake a key-up command
-            plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
+            plKeyEventMsg* pMsg = new plKeyEventMsg;
             pMsg->SetKeyCode( (plKeyDef)i );
             pMsg->SetKeyDown( false );
             pMsg->SetShiftKeyDown( fShiftKeyDown );
@@ -129,7 +128,7 @@ void plKeyboardDevice::ReleaseAllKeys()
         fKeyboardState[KEY_SHIFT] = false;
         fShiftKeyDown = false;
 
-        plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
+        plKeyEventMsg* pMsg = new plKeyEventMsg;
         pMsg->SetKeyCode( KEY_SHIFT );
         pMsg->SetKeyDown( false );
         pMsg->SetShiftKeyDown( false );
@@ -143,7 +142,7 @@ void plKeyboardDevice::ReleaseAllKeys()
         fKeyboardState[KEY_CTRL] = false;
         fCtrlKeyDown = false;
 
-        plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
+        plKeyEventMsg* pMsg = new plKeyEventMsg;
         pMsg->SetKeyCode( KEY_CTRL );
         pMsg->SetKeyDown( false );
         pMsg->SetShiftKeyDown( false );
@@ -188,7 +187,7 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
     }
 
     // send a key event...
-    plKeyEventMsg* pMsg = TRACKED_NEW plKeyEventMsg;
+    plKeyEventMsg* pMsg = new plKeyEventMsg;
     pMsg->SetKeyChar( c );
     pMsg->SetKeyCode( key );
     pMsg->SetKeyDown( bKeyDown );
@@ -225,8 +224,8 @@ bool plMouseDevice::bMsgAlways = true;
 bool plMouseDevice::bCursorHidden = false;
 bool plMouseDevice::bCursorOverride = false;
 bool plMouseDevice::bInverted = false;
-hsScalar plMouseDevice::fWidth = BASE_WIDTH;
-hsScalar plMouseDevice::fHeight = BASE_HEIGHT;
+float plMouseDevice::fWidth = BASE_WIDTH;
+float plMouseDevice::fHeight = BASE_HEIGHT;
 plMouseDevice* plMouseDevice::fInstance = 0;
 
 plMouseDevice::plMouseDevice()
@@ -259,7 +258,7 @@ plMouseDevice::~plMouseDevice()
     fCursor = nil;
     plMouseDevice::fInstance = nil;
 }
-void plMouseDevice::SetDisplayResolution(hsScalar Width, hsScalar Height)
+void plMouseDevice::SetDisplayResolution(float Width, float Height)
 {
     fWidth = Width;
     fHeight = Height;
@@ -309,7 +308,7 @@ void plMouseDevice::AddCCRToCursor()
         txt.DrawString(fInstance->fWXPos + 12, fInstance->fWYPos - 17, "CCR");
     }
 }
-void plMouseDevice::AddIDNumToCursor(UInt32 idNum)
+void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
 {
     if (fInstance && idNum)
     {
@@ -321,7 +320,7 @@ void plMouseDevice::AddIDNumToCursor(UInt32 idNum)
 }
         
 
-void plMouseDevice::SetCursorX(hsScalar x)
+void plMouseDevice::SetCursorX(float x)
 {
     /// Set the cursor position
     if( fCursor == nil  && !plMouseDevice::bCursorHidden)
@@ -335,7 +334,7 @@ void plMouseDevice::SetCursorX(hsScalar x)
 //  txt.DrawString(fWXPos + 20,fWYPos - 5,"test");
 
 }
-void plMouseDevice::SetCursorY(hsScalar y)
+void plMouseDevice::SetCursorY(float y)
 {
     /// Set the cursor position
     if( fCursor == nil && !plMouseDevice::bCursorHidden)
@@ -387,7 +386,7 @@ void plMouseDevice::NewCursor(char* cursor)
         fInstance->fCursor->SetVisible( true );
 }
 
-void    plMouseDevice::SetCursorOpacity( hsScalar opacity )
+void    plMouseDevice::SetCursorOpacity( float opacity )
 {
     fInstance->fOpacity = opacity;
     if( fInstance->fCursor != nil )
@@ -406,7 +405,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
         }
         else
         {
-            plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+            plMouseEventMsg* pMsg = new plMouseEventMsg;
             pMsg->SetXPos( fXPos );
             pMsg->SetYPos( fYPos );
             pMsg->SetDX(0);
@@ -421,7 +420,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
         }
         else
         {
-            plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+            plMouseEventMsg* pMsg = new plMouseEventMsg;
             pMsg->SetXPos( fXPos );
             pMsg->SetYPos( fYPos );
             pMsg->SetDX(0);
@@ -467,7 +466,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
     if (pXMsg)
     {
         // send a mouse event
-        plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+        plMouseEventMsg* pMsg = new plMouseEventMsg;
         if (pXMsg->fX == 999)
             pMsg->SetXPos( fXPos + 0.001f );
         else
@@ -505,7 +504,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
     if (pYMsg)
     {
         // send a mouse event
-        plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+        plMouseEventMsg* pMsg = new plMouseEventMsg;
         pMsg->SetXPos( fXPos );
         if (pYMsg->fY == 999)
             pMsg->SetYPos( fYPos + 0.01f );
@@ -544,7 +543,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
     {
         
         // send a mouse event
-        plMouseEventMsg* pMsg = TRACKED_NEW plMouseEventMsg;
+        plMouseEventMsg* pMsg = new plMouseEventMsg;
         pMsg->SetXPos( fXPos );
         pMsg->SetYPos( fYPos );
         pMsg->SetDX(0);
@@ -604,7 +603,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
         if (pBMsg->fButton & kRightButtonDblClk)
         {
             // right button dbl clicked, send TWO messages
-            plMouseEventMsg* pMsg2 = TRACKED_NEW plMouseEventMsg;
+            plMouseEventMsg* pMsg2 = new plMouseEventMsg;
             pMsg2->SetXPos( fXPos );
             pMsg2->SetYPos( fYPos );
             pMsg2->SetDX(0);
@@ -622,7 +621,7 @@ hsBool plMouseDevice::MsgReceive(plMessage* msg)
         if (pBMsg->fButton & kLeftButtonDblClk)
         {
             // left button dbl clicked, send TWO messages
-            plMouseEventMsg* pMsg2 = TRACKED_NEW plMouseEventMsg;
+            plMouseEventMsg* pMsg2 = new plMouseEventMsg;
             pMsg2->SetXPos( fXPos );
             pMsg2->SetYPos( fYPos );
             pMsg2->SetDX(0);

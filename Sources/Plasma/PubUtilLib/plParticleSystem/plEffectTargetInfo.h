@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plEffectTargetInfo_inc
 #define plEffectTargetInfo_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 struct hsPoint3;
 class plPipeline;
@@ -58,7 +58,7 @@ public:
     plPipeline*         fPipeline;
     plParticleSystem*   fSystem;
     double              fSecs;
-    hsScalar            fDelSecs;
+    float            fDelSecs;
 };
 
 
@@ -68,27 +68,27 @@ public:
 class plEffectTargetInfo
 {
 public:
-    // Byte arrays. Declared as type UInt8 so that adding the stride to the pointer is guaranteed to advance
+    // uint8_t arrays. Declared as type uint8_t so that adding the stride to the pointer is guaranteed to advance
     // the exact number of bytes.
-    UInt8 *fPos;
-    UInt8 *fVelocity;
-    UInt8 *fInvMass;
-    UInt8 *fAcceleration;
-    UInt8 *fColor;
-    UInt8 *fRadsPerSec;
-    UInt8 *fMiscFlags;
+    uint8_t *fPos;
+    uint8_t *fVelocity;
+    uint8_t *fInvMass;
+    uint8_t *fAcceleration;
+    uint8_t *fColor;
+    uint8_t *fRadsPerSec;
+    uint8_t *fMiscFlags;
     
-    UInt32 fPosStride;
-    UInt32 fVelocityStride;
-    UInt32 fInvMassStride;
-    UInt32 fAccelerationStride;
-    UInt32 fColorStride;
-    UInt32 fRadsPerSecStride;
-    UInt32 fMiscFlagsStride;
+    uint32_t fPosStride;
+    uint32_t fVelocityStride;
+    uint32_t fInvMassStride;
+    uint32_t fAccelerationStride;
+    uint32_t fColorStride;
+    uint32_t fRadsPerSecStride;
+    uint32_t fMiscFlagsStride;
 
     plParticleContext   fContext;
-    UInt32              fNumValidParticles;
-    UInt32              fFirstNewParticle;
+    uint32_t              fNumValidParticles;
+    uint32_t              fFirstNewParticle;
     
     // We're going to need some sort of connectivity data for constraint satisfaction, but at least we have
     // a system that allows that to be added in smoothly when it's needed, so for now, let's get the main

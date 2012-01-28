@@ -56,7 +56,7 @@ protected:
     plSceneObject*  fTarget;
     hsBitVector     fFlags;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0;
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) = 0;
     
 public:
     plSingleModifier();

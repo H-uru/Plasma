@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsFastMath.h"
 #include "hsTimer.h"
 
@@ -115,29 +115,29 @@ using namespace plShaderID;
 
 // #define TEST_UVWS
 
-static const hsScalar kPiOverTwo = hsScalarPI * 0.5f;
+static const float kPiOverTwo = M_PI * 0.5f;
 
-static const hsScalar kGravConst = 30.f;
+static const float kGravConst = 30.f;
 
-static const hsScalar kOOEightNsqPI = 1.f / (8.f * hsScalarPI * 4.f * 4.f);
-static hsScalar currOOEightNsqPI = kOOEightNsqPI;
+static const float kOOEightNsqPI = 1.f / (8.f * M_PI * 4.f * 4.f);
+static float currOOEightNsqPI = kOOEightNsqPI;
 
-static inline hsScalar FreqToLen(hsScalar f) { return 2.f * hsScalarPI / f; }
-static inline hsScalar LenToFreq(hsScalar l) { return 2.f * hsScalarPI / l; }
+static inline float FreqToLen(float f) { return 2.f * M_PI / f; }
+static inline float LenToFreq(float l) { return 2.f * M_PI / l; }
 
-static inline hsScalar MPH2FPS(hsScalar f) { return f * 5280.f / 3600.f; }
-static inline hsScalar FPS2MPH(hsScalar f) { return f / 5280.f * 3600.f; }
+static inline float MPH2FPS(float f) { return f * 5280.f / 3600.f; }
+static inline float FPS2MPH(float f) { return f / 5280.f * 3600.f; }
 
-plCONST(hsScalar) kTimeClamp(0.3f);
+plCONST(float) kTimeClamp(0.3f);
 
 inline void plWorldWave7::Accumulate(hsPoint3& accumPos, hsVector3& accumNorm) const
 {
-    hsScalar dist = accumPos.fX * fDir.fX + accumPos.fY * fDir.fY;
+    float dist = accumPos.fX * fDir.fX + accumPos.fY * fDir.fY;
 
     dist *= fFreq;
     dist += fPhase;
 
-    hsScalar s, c;
+    float s, c;
     hsFastMath::SinCosAppr(dist, s, c);
 //  s += 1.f;
 
@@ -153,12 +153,12 @@ inline void plWorldWave7::Accumulate(hsPoint3& accumPos, hsVector3& accumNorm) c
 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-inline void plWaveSet7::GraphLen(hsScalar len) const
+inline void plWaveSet7::GraphLen(float len) const
 {
     if( fStatusGraph )
     {
-        hsScalar maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
-        Int32 val = Int32(len / maxLen * 100.f);
+        float maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
+        int32_t val = int32_t(len / maxLen * 100.f);
         fStatusGraph->AddData(val);
     }
 }
@@ -196,7 +196,7 @@ inline void plWaveSet7::LogF(const char *format, ...) const
     }
 }
 
-inline void plWaveSet7::LogF(UInt32 color, const char *format, ...) const
+inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
 {
     if( fStatusLog )
     {
@@ -226,7 +226,7 @@ void plWaveSet7::StopLog()
     fStatusLog = nil;
 }
 #else // PLASMA_EXTERNAL_RELEASE
-inline void plWaveSet7::GraphLen(hsScalar len) const
+inline void plWaveSet7::GraphLen(float len) const
 {
 }
 
@@ -246,7 +246,7 @@ inline void plWaveSet7::LogF(const char *format, ...) const
 {
 }
 
-inline void plWaveSet7::LogF(UInt32 color, const char *format, ...) const
+inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
 {
 }
 
@@ -375,18 +375,18 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
     int i;
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
     }
     n = stream->ReadLE32();
     for( i = 0; i < n; i++ )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDecal), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDecal), plRefFlags::kPassiveRef);
     }
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
 
     if( HasFlag(kHasRefObject) )
     {
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
     }
 
     ISetupTextureWaves();
@@ -456,7 +456,7 @@ hsBool plWaveSet7::MsgReceive(plMessage* msg)
             }
         }
 
-        hsScalar dt = update->DelSeconds();
+        float dt = update->DelSeconds();
         if( dt > kTimeClamp )
             dt = kTimeClamp;
 
@@ -474,7 +474,7 @@ hsBool plWaveSet7::MsgReceive(plMessage* msg)
 
         fCurrTime = hsTimer::GetSysSeconds();
         // Can't just use GetDelSysSeconds() or else we lose time if we skip a frame render because of high FPS.
-        hsScalar dt = fLastTime > 0 ? hsScalar(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
+        float dt = fLastTime > 0 ? float(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
         if( dt > kTimeClamp )
             dt = kTimeClamp;
 
@@ -753,7 +753,7 @@ hsBool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
     return false;
 }
 
-void plWaveSet7::SetState(const plFixedWaterState7& state, hsScalar dur)
+void plWaveSet7::SetState(const plFixedWaterState7& state, float dur)
 { 
     fState.Set(state, dur);
 
@@ -764,7 +764,7 @@ void plWaveSet7::SetState(const plFixedWaterState7& state, hsScalar dur)
     }
 }
 
-void plWaveSet7::IUpdateWaves(hsScalar dt)
+void plWaveSet7::IUpdateWaves(float dt)
 {
     ITransition(dt);
     ITransTex(dt);
@@ -786,9 +786,9 @@ void plWaveSet7::IUpdateWaves(hsScalar dt)
 }
 
 // return true if we've finished this transition.
-hsBool plWaveSet7::ITransContinue(hsScalar dt)
+hsBool plWaveSet7::ITransContinue(float dt)
 {
-    hsScalar currFade = (fFreqMod[fTransistor] += fTransDel * dt);
+    float currFade = (fFreqMod[fTransistor] += fTransDel * dt);
 
     if( currFade <= 0 )
     {
@@ -814,24 +814,24 @@ hsBool plWaveSet7::ITransContinue(hsScalar dt)
     return false;
 }
 
-void plWaveSet7::IStartTransition(hsScalar dt)
+void plWaveSet7::IStartTransition(float dt)
 {
     // select the next wave for transitioning
     if( ++fTransistor >= kNumWaves )
         fTransistor = 0;
 
     // set the transFade to be fading down.
-    plCONST(hsScalar) kTransDel(0.5f);
+    plCONST(float) kTransDel(0.5f);
     fTransDel = -kTransDel;
 }
 
-hsScalar plWaveSet7::ITransitionDelay() const
+float plWaveSet7::ITransitionDelay() const
 {
-    plCONST(hsScalar) kTransDelay(2.f);
+    plCONST(float) kTransDelay(2.f);
     return kTransDelay;
 }
 
-void plWaveSet7::ITransition(hsScalar dt)
+void plWaveSet7::ITransition(float dt)
 {
     // If we're in a transition, keep transitioning till it's done.
     if( fTransDel != 0 )
@@ -847,9 +847,9 @@ void plWaveSet7::ITransition(hsScalar dt)
 
 }
 
-hsBool plWaveSet7::ITransTexContinue(hsScalar dt)
+hsBool plWaveSet7::ITransTexContinue(float dt)
 {
-    hsScalar currFade = (fTexWaveFade[fTexTrans] += fTexTransDel * dt);
+    float currFade = (fTexWaveFade[fTexTrans] += fTexTransDel * dt);
 
     if( currFade <= 0 )
     {
@@ -875,22 +875,22 @@ hsBool plWaveSet7::ITransTexContinue(hsScalar dt)
     return false;
 }
 
-void plWaveSet7::IStartTexTransition(hsScalar dt)
+void plWaveSet7::IStartTexTransition(float dt)
 {
     if( ++fTexTrans >= kNumTexWaves )
         fTexTrans = 0;
 
-    plConst(hsScalar) kTexTransDel(4.f);
+    plConst(float) kTexTransDel(4.f);
     fTexTransDel = -kTexTransDel;
 }
 
-void plWaveSet7::ITransTex(hsScalar dt)
+void plWaveSet7::ITransTex(float dt)
 {
 
     // If we're in a transition, keep with it.
     if( fTexTransDel != 0 )
     {
-        plConst(hsScalar) kTexTransDelay(0);
+        plConst(float) kTexTransDelay(0);
         if( ITransTexContinue(dt) )
             fTexTransCountDown = kTexTransDelay;
     }
@@ -905,20 +905,20 @@ void plWaveSet7::ICalcScale()
 {
 }
 
-void plWaveSet7::IUpdateWave(hsScalar dt, int i)
+void plWaveSet7::IUpdateWave(float dt, int i)
 {
     plWorldWave7& wave = fWorldWaves[i];
 
-    hsScalar len = FreqToLen(wave.fFreq);
+    float len = FreqToLen(wave.fFreq);
 
-    hsScalar speed = hsFastMath::InvSqrtAppr(len / (2.f * hsScalarPI * kGravConst));
+    float speed = hsFastMath::InvSqrtAppr(len / (2.f * M_PI * kGravConst));
 
-    static hsScalar speedHack = 1.f;
+    static float speedHack = 1.f;
     speed *= speedHack;
     wave.fPhase += speed * dt;
-//  wave.fPhase = fmod( speed * t, 2.f * hsScalarPI);
+//  wave.fPhase = fmod( speed * t, 2.f * M_PI);
 
-    hsScalar amp = GeoState().fAmpOverLen * len / hsScalar(kNumWaves);
+    float amp = GeoState().fAmpOverLen * len / float(kNumWaves);
 
     amp *= fFreqMod[i] * fFreqScale;
 
@@ -945,7 +945,7 @@ void plWaveSet7::IInitWave(int i)
 
     wave.fLength = GeoState().fMinLength + fRand.RandZeroToOne() * (GeoState().fMaxLength - GeoState().fMinLength);
 
-    hsScalar len = wave.fLength;
+    float len = wave.fLength;
 
     wave.fFreq = LenToFreq(len);
 
@@ -956,18 +956,18 @@ void plWaveSet7::IInitWave(int i)
     // Figure out the direction based on wind direction.
     // Even waves go in the wind direction,
     // odd waves go opposite direction
-    plConst(hsScalar) kMinRotDeg(15.f);
-    plConst(hsScalar) kMaxRotDeg(180.f);
+    plConst(float) kMinRotDeg(15.f);
+    plConst(float) kMaxRotDeg(180.f);
     hsVector3 dir = fWindDir;
 
-    hsScalar rotBase = GeoState().fAngleDev;
+    float rotBase = GeoState().fAngleDev;
 
-    hsScalar rads = rotBase * fRand.RandMinusOneToOne();
-    hsScalar rx = hsScalar(cosf(rads));
-    hsScalar ry = hsScalar(sinf(rads));
+    float rads = rotBase * fRand.RandMinusOneToOne();
+    float rx = float(cosf(rads));
+    float ry = float(sinf(rads));
 
-    hsScalar x = dir.fX;
-    hsScalar y = dir.fY;
+    float x = dir.fX;
+    float y = dir.fY;
     dir.fX = x * rx + y * ry;
     dir.fY = x * -ry + y * rx;
 
@@ -985,7 +985,7 @@ inline void plWaveSet7::IScrunch(hsPoint3& pos, hsVector3& norm) const
     hsFastMath::NormalizeAppr(norm);
 }
 
-hsScalar plWaveSet7::EvalPoint(hsPoint3& pos, hsVector3& norm)
+float plWaveSet7::EvalPoint(hsPoint3& pos, hsVector3& norm)
 {
     hsPoint3 accumPos;
     hsVector3 accumNorm;
@@ -1003,7 +1003,7 @@ hsScalar plWaveSet7::EvalPoint(hsPoint3& pos, hsVector3& norm)
     IScrunch(accumPos, accumNorm);
 
     // Project original pos along Z onto the plane tangent at accumPos with norm accumNorm
-    hsScalar t = hsVector3(&accumPos, &pos).InnerProduct(accumNorm);
+    float t = hsVector3(&accumPos, &pos).InnerProduct(accumNorm);
     t /= accumNorm.fZ;
 
     pos.fZ += t;
@@ -1013,7 +1013,7 @@ hsScalar plWaveSet7::EvalPoint(hsPoint3& pos, hsVector3& norm)
     return pos.fZ;
 }
 
-void plWaveSet7::IUpdateWindDir(hsScalar dt)
+void plWaveSet7::IUpdateWindDir(float dt)
 {
     fWindDir = -State().fWindDir;
     hsFastMath::NormalizeAppr(fWindDir);
@@ -1025,10 +1025,10 @@ void plWaveSet7::IUpdateRefObject()
     {
         hsMatrix44 l2w = fRefObj->GetLocalToWorld();
         
-        hsScalar h = l2w.fMap[2][3];
+        float h = l2w.fMap[2][3];
 
-        hsScalar x = -l2w.fMap[0][1];
-        hsScalar y = -l2w.fMap[1][1];
+        float x = -l2w.fMap[0][1];
+        float y = -l2w.fMap[1][1];
 
         fState.fWaterHeight = h;
 
@@ -1036,7 +1036,7 @@ void plWaveSet7::IUpdateRefObject()
     }
 }
 
-void plWaveSet7::IFloatBuoy(hsScalar dt, plSceneObject* so)
+void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
 {
     // Compute force based on world bounds
     hsBounds3Ext wBnd = so->GetDrawInterface()->GetWorldBounds();
@@ -1052,8 +1052,8 @@ void plWaveSet7::IFloatBuoy(hsScalar dt, plSceneObject* so)
     // (in an approximation lazy hackish way).
     hsPoint2 boxDepth;
     wBnd.TestPlane(surfNorm, boxDepth);
-    hsScalar surfDepth = surfNorm.InnerProduct(surfPos);
-    hsScalar depth = surfDepth - boxDepth.fX;
+    float surfDepth = surfNorm.InnerProduct(surfPos);
+    float depth = surfDepth - boxDepth.fX;
 
     if( depth < 0 )
         return;
@@ -1063,12 +1063,12 @@ void plWaveSet7::IFloatBuoy(hsScalar dt, plSceneObject* so)
 
     // We really want the cross section area as facing into the water,
     // but life is full of little disappointments.
-    hsScalar area = (wBnd.GetMaxs().fX - wBnd.GetMins().fX) * (wBnd.GetMaxs().fY - wBnd.GetMins().fY);
+    float area = (wBnd.GetMaxs().fX - wBnd.GetMins().fX) * (wBnd.GetMaxs().fY - wBnd.GetMins().fY);
 
-    hsScalar volume = area * depth;
+    float volume = area * depth;
 
-    plCONST(hsScalar) kWaterDensity(1.0f);
-    hsScalar forceMag = volume * kWaterDensity;
+    plCONST(float) kWaterDensity(1.0f);
+    float forceMag = volume * kWaterDensity;
 
     // surfNorm is now the impulse vector. But where to apply it.
     // Don't currently have anything informative from the physical to use.
@@ -1076,33 +1076,33 @@ void plWaveSet7::IFloatBuoy(hsScalar dt, plSceneObject* so)
 
     plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
-//  plImpulseMsg* iMsg = TRACKED_NEW plImpulseMsg(GetKey(), physKey, hsVector3(0, 0, 1.f) * forceMag * dt);
+//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0, 0, 1.f) * forceMag * dt);
 //  iMsg->Send();
 
 #if 0
-    plCONST(hsScalar) kRotScale(1.f);
+    plCONST(float) kRotScale(1.f);
     hsVector3 rotAx = hsVector3(0, 0, 1.f) % surfNorm;
     rotAx *= kRotScale * dt * volume;
 
-    plAngularImpulseMsg* aMsg = TRACKED_NEW plAngularImpulseMsg(GetKey(), physKey, rotAx);
+    plAngularImpulseMsg* aMsg = new plAngularImpulseMsg(GetKey(), physKey, rotAx);
     aMsg->Send();
 #endif
 
-    plCONST(hsScalar) kDampener(0.1f);
-    plCONST(hsScalar) kBaseDamp(0.1f);
+    plCONST(float) kDampener(0.1f);
+    plCONST(float) kBaseDamp(0.1f);
     if( wBnd.GetMaxs().fZ > wBnd.GetMins().fZ )
     {
         // Remember, we've already limited depth to be <= Max.fZ - Min.fZ;
-        hsScalar damp = depth / (wBnd.GetMaxs().fZ - wBnd.GetMins().fZ);
+        float damp = depth / (wBnd.GetMaxs().fZ - wBnd.GetMins().fZ);
         damp *= kDampener;
         damp += kBaseDamp;
 
-//      plDampMsg* dMsg = TRACKED_NEW plDampMsg(GetKey(), physKey, damp);
+//      plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
 //      dMsg->Send();
     }
 }
 
-void plWaveSet7::IFloatBuoys(hsScalar dt)
+void plWaveSet7::IFloatBuoys(float dt)
 {
     int i;
     for( i = 0; i < fBuoys.GetCount(); i++ )
@@ -1122,7 +1122,7 @@ void plWaveSet7::IShiftCenter(plSceneObject* so) const
         hsPoint3 center = so->GetDrawInterface()->GetWorldBounds().GetCenter();
         hsPoint3 pos = so->GetLocalToWorld().GetTranslate();
         hsVector3 offset(&pos, &center);
-//      plShiftMassMsg* msg = TRACKED_NEW plShiftMassMsg(GetKey(), so->GetSimulationInterface()->GetPhysical()->GetKey(), offset);
+//      plShiftMassMsg* msg = new plShiftMassMsg(GetKey(), so->GetSimulationInterface()->GetPhysical()->GetKey(), offset);
 //      msg->Send();
     }
 }
@@ -1171,7 +1171,7 @@ void plWaveSet7::ICheckTargetMaterials()
         if( !fTargBnds.GetCount() )
             fTargBnds.SetCount(1);
         
-        plConst(hsScalar) kMaxWaveHeight(5.f);
+        plConst(float) kMaxWaveHeight(5.f);
 
         hsPoint3 p;
         p = targBnd.GetMins();
@@ -1186,13 +1186,13 @@ void plWaveSet7::ICheckTargetMaterials()
 
 void plWaveSet7::IAddTarget(const plKey& key)
 {
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(key, plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(key, plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
 void plWaveSet7::IRemoveTarget(const plKey& key)
 {
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(key, plRefMsg::kOnRemove, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(key, plRefMsg::kOnRemove, -1, plObjRefMsg::kModifier);
     refMsg->SetRef(this);
     refMsg->Send();
 }
@@ -1211,19 +1211,19 @@ void plWaveSet7::SetRefObject(plSceneObject* refObj)
 {
     fFlags.SetBit(kHasRefObject, refObj != nil);
 
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRefObj);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRefObj);
     hsgResMgr::ResMgr()->SendRef(refObj, msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::AddBuoy(plKey soKey)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBuoy);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBuoy);
     hsgResMgr::ResMgr()->AddViaNotify(soKey, msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::RemoveBuoy(plKey soKey)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefBuoy);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefBuoy);
     msg->SetRef(soKey->ObjectIsLoaded());
     msg->Send();
 }
@@ -1239,39 +1239,39 @@ class plFilterMask
 {
     protected:
         int             fExt;
-        hsScalar        **fMask;
+        float        **fMask;
 
     public:
 
-        plFilterMask( hsScalar sig );
+        plFilterMask( float sig );
         virtual ~plFilterMask();
 
         int     Begin() const { return -fExt; }
         int     End() const { return fExt; }
 
-        hsScalar    Mask( int i, int j ) const { return fMask[ i ][ j ]; }
+        float    Mask( int i, int j ) const { return fMask[ i ][ j ]; }
 };
 // End evil.
 
 void plWaveSet7::IInitState()
 {
-    plConst(hsScalar) kWaterTable(-10.f);
-    plConst(hsScalar) kWaterOffset[3] = { 3.f, 3.f, 0.f };
-    plConst(hsScalar) kMaxAtten[3] = { 1.f, 1.f, 1.f };
-    plConst(hsScalar) kMinAtten[3] = { 0.f, 0.f, 0.f };
-    plConst(hsScalar) kDepthFalloff[3] = { 4.f, 4.f, 6.f };
+    plConst(float) kWaterTable(-10.f);
+    plConst(float) kWaterOffset[3] = { 3.f, 3.f, 0.f };
+    plConst(float) kMaxAtten[3] = { 1.f, 1.f, 1.f };
+    plConst(float) kMinAtten[3] = { 0.f, 0.f, 0.f };
+    plConst(float) kDepthFalloff[3] = { 4.f, 4.f, 6.f };
 
-    plConst(hsScalar) kGeoMinLen(3.f);
-    plConst(hsScalar) kGeoMaxLen(8.f);
-    plConst(hsScalar) kGeoAmpOverLen(0.1f);
-    plConst(hsScalar) kGeoAngleDev(30.f * hsScalarPI / 180.f);
-    plConst(hsScalar) kGeoChop(1.f);
+    plConst(float) kGeoMinLen(3.f);
+    plConst(float) kGeoMaxLen(8.f);
+    plConst(float) kGeoAmpOverLen(0.1f);
+    plConst(float) kGeoAngleDev(30.f * M_PI / 180.f);
+    plConst(float) kGeoChop(1.f);
 
-    plConst(hsScalar) kTexMinLen(4.f);
-    plConst(hsScalar) kTexMaxLen(30.f);
-    plConst(hsScalar) kTexAmpOverLen(0.1f);
-    plConst(hsScalar) kTexAngleDev(30.f * hsScalarPI / 180.f);
-    plConst(hsScalar) kTexChop(1.f);
+    plConst(float) kTexMinLen(4.f);
+    plConst(float) kTexMaxLen(30.f);
+    plConst(float) kTexAmpOverLen(0.1f);
+    plConst(float) kTexAngleDev(30.f * M_PI / 180.f);
+    plConst(float) kTexChop(1.f);
 
     plFixedWaterState7 state;
 
@@ -1291,9 +1291,9 @@ void plWaveSet7::IInitState()
     
     state.fRippleScale = 25.f;
 
-    plConst(hsScalar) kNoise(1.f);
-    plConst(hsScalar) kSpecStart(50.f);
-    plConst(hsScalar) kSpecEnd(10000.f);
+    plConst(float) kNoise(1.f);
+    plConst(float) kSpecStart(50.f);
+    plConst(float) kSpecEnd(10000.f);
 
     hsVector3 spec;
     spec[state.kNoise] = kNoise;
@@ -1405,20 +1405,20 @@ void plWaveSet7::ISetupTextureWaves()
 
 void plWaveSet7::IInitTexWave(int i)
 {
-    hsScalar rads = fRand.RandMinusOneToOne() * TexState().fAngleDev;
-    hsScalar dx = sin(rads);
-    hsScalar dy = cos(rads);
+    float rads = fRand.RandMinusOneToOne() * TexState().fAngleDev;
+    float dx = sin(rads);
+    float dy = cos(rads);
 
 
-    hsScalar tx = dx;
+    float tx = dx;
     dx = fWindDir.fY * dx - fWindDir.fX * dy;
     dy = fWindDir.fX * tx + fWindDir.fY * dy;
 
-    hsScalar maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
-    hsScalar minLen = TexState().fMinLength * kCompositeSize / State().fRippleScale;
-    hsScalar len = hsScalar(i) / hsScalar(kNumTexWaves-1) * (maxLen - minLen) + minLen;
+    float maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
+    float minLen = TexState().fMinLength * kCompositeSize / State().fRippleScale;
+    float len = float(i) / float(kNumTexWaves-1) * (maxLen - minLen) + minLen;
 
-    hsScalar reps = hsScalar(kCompositeSize) / len;
+    float reps = float(kCompositeSize) / len;
 
     dx *= reps;
     dy *= reps;
@@ -1428,9 +1428,9 @@ void plWaveSet7::IInitTexWave(int i)
     fTexWaves[i].fRotScale00 = dx;
     fTexWaves[i].fRotScale01 = dy;
 
-    hsScalar effK = hsFastMath::InvSqrt(dx*dx + dy*dy);
-    fTexWaves[i].fLen = hsScalar(kCompositeSize) * effK;
-    fTexWaves[i].fFreq = hsScalarPI * 2.f / fTexWaves[i].fLen;
+    float effK = hsFastMath::InvSqrt(dx*dx + dy*dy);
+    fTexWaves[i].fLen = float(kCompositeSize) * effK;
+    fTexWaves[i].fFreq = M_PI * 2.f / fTexWaves[i].fLen;
     fTexWaves[i].fAmp = fTexWaves[i].fLen * TexState().fAmpOverLen;
     fTexWaves[i].fPhase = fRand.RandZeroToOne();
     
@@ -1448,20 +1448,20 @@ void plWaveSet7::SetSceneNode(const plKey& key)
 
 void plWaveSet7::AddDynaDecalMgr(plKey& key)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefDynaDecalMgr);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefDynaDecalMgr);
     hsgResMgr::ResMgr()->AddViaNotify(key, msg, plRefFlags::kPassiveRef);
 
-    msg = TRACKED_NEW plGenRefMsg(key, plRefMsg::kOnRequest, 0, plDynaRippleVSMgr::kRefWaveSetBase);
+    msg = new plGenRefMsg(key, plRefMsg::kOnRequest, 0, plDynaRippleVSMgr::kRefWaveSetBase);
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), msg, plRefFlags::kPassiveRef);
 }
 
 void plWaveSet7::RemoveDynaDecalMgr(plKey& key)
 {
-    plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefDynaDecalMgr);
+    plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefDynaDecalMgr);
     msg->SetRef(key->ObjectIsLoaded());
     msg->Send();
 
-    msg = TRACKED_NEW plGenRefMsg(key, plRefMsg::kOnRemove, 0, plDynaRippleVSMgr::kRefWaveSetBase);
+    msg = new plGenRefMsg(key, plRefMsg::kOnRemove, 0, plDynaRippleVSMgr::kRefWaveSetBase);
     msg->SetRef(this);
     msg->Send();
 }
@@ -1470,20 +1470,20 @@ void plWaveSet7::RemoveDynaDecalMgr(plKey& key)
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void plWaveSet7::IUpdateLayers(hsScalar dt)
+void plWaveSet7::IUpdateLayers(float dt)
 {
     IUpdateBumpLayers(dt);
 
     ISubmitRenderRequests();
 }
 
-void plWaveSet7::IUpdateBumpLayers(hsScalar dt)
+void plWaveSet7::IUpdateBumpLayers(float dt)
 {
-    plCONST(hsScalar) speedHack(1.f / 3.f);
+    plCONST(float) speedHack(1.f / 3.f);
     int i;
     for( i = 0; i < kNumTexWaves; i++ )
     {
-        hsScalar speed = hsFastMath::InvSqrtAppr(fTexWaves[i].fLen / (2.f * hsScalarPI * kGravConst)) * speedHack;
+        float speed = hsFastMath::InvSqrtAppr(fTexWaves[i].fLen / (2.f * M_PI * kGravConst)) * speedHack;
         fTexWaves[i].fPhase -= dt * speed;
         fTexWaves[i].fPhase -= int(fTexWaves[i].fPhase);
 
@@ -1518,7 +1518,7 @@ void plWaveSet7::ISubmitRenderRequests()
     }
 }
 
-plMipmap* plWaveSet7::ICreateBumpBitmapFFP(hsScalar amp, hsScalar dx, hsScalar dy) const
+plMipmap* plWaveSet7::ICreateBumpBitmapFFP(float amp, float dx, float dy) const
 {
     return nil;
 }
@@ -1610,7 +1610,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersFFP()
 plMipmap* plWaveSet7::ICreateBiasNoiseMap()
 {
     const int size = kCompositeSize >> 2;
-    plMipmap* mipMap = TRACKED_NEW plMipmap(
+    plMipmap* mipMap = new plMipmap(
         size, size,
         plMipmap::kARGB32Config,
         1, 
@@ -1627,15 +1627,15 @@ plMipmap* plWaveSet7::ICreateBiasNoiseMap()
         int j;
         for( j = 0; j < size; j++ )
         {
-            hsScalar x = fRand.RandMinusOneToOne();
-            hsScalar y = fRand.RandMinusOneToOne();
+            float x = fRand.RandMinusOneToOne();
+            float y = fRand.RandMinusOneToOne();
 
-            UInt8 r = UInt8((x * 0.5f + 0.5f) * 255.999f);
-            UInt8 g = UInt8((y * 0.5f + 0.5f) * 255.999f);
+            uint8_t r = uint8_t((x * 0.5f + 0.5f) * 255.999f);
+            uint8_t g = uint8_t((y * 0.5f + 0.5f) * 255.999f);
 
 //          r = g = 0xff; // SATURATE
 
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             *val = (0xff << 24)
                 | (r << 16)
                 | (g << 8)
@@ -1656,7 +1656,7 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
 
     if( !fCosineLUT )
     {
-        plMipmap* mipMap = TRACKED_NEW plMipmap(
+        plMipmap* mipMap = new plMipmap(
         kCompositeSize, sizeV,
         plMipmap::kARGB32Config,
         kNumLevels, 
@@ -1667,7 +1667,7 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
         sprintf(buff, "%s_%s", GetKey()->GetName(), "BumpBitPS");
         hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
-        hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefCosineLUT), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefCosineLUT), plRefFlags::kActiveRef);
     }
     hsAssert(fCosineLUT, "Failed to make cosine lookup table");
 
@@ -1681,19 +1681,19 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
         int i;
         for( i = 0; i < sizeU; i++ )
         {
-            hsScalar y = hsScalar(i);
-            hsScalar dist = hsScalar(i) / hsScalar(sizeU-1) * 2.f * hsScalarPI;
-            hsScalar c = cos(dist);
-            hsScalar s = sin(dist);
+            float y = float(i);
+            float dist = float(i) / float(sizeU-1) * 2.f * M_PI;
+            float c = cos(dist);
+            float s = sin(dist);
             s *= 0.5f;
             s += 0.5f;
-            s = hsScalar(pow(s, TexState().fChop));
+            s = float(pow(s, TexState().fChop));
             c *= s;
-            UInt8 cosDist = UInt8((c * 0.5 + 0.5) * 255.999f);
+            uint8_t cosDist = uint8_t((c * 0.5 + 0.5) * 255.999f);
             int j;
             for( j = 0; j < sizeV; j++ )
             {
-                UInt32* val = fCosineLUT->GetAddr32(i, j);
+                uint32_t* val = fCosineLUT->GetAddr32(i, j);
                 *val = (0xff << 24)
                     | (cosDist << 16)
                     | (cosDist << 8)
@@ -1715,7 +1715,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
         int i;
         for( i = 0; i < 2; i++ )
         {
-            plLayer* layer = TRACKED_NEW plLayer;
+            plLayer* layer = new plLayer;
             char buff[256];
             sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "Bias", i);
             hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -1735,7 +1735,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
 
             layer->SetUVWSrc(0);
 
-            plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+            plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
             hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
             IAddBumpBiasShaders(layer);
@@ -1751,7 +1751,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
 
 plLayer* plWaveSet7::ICreateBumpLayerPS(plMipmap* mipMap, hsGMaterial* bumpMat, int which)
 {
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), "BumpLayerPS", which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -1786,7 +1786,7 @@ plLayer* plWaveSet7::ICreateBumpLayerPS(plMipmap* mipMap, hsGMaterial* bumpMat, 
 
     bumpMat->AddLayerViaNotify(layer);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return layer;
@@ -1809,7 +1809,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
     //
 
     // Create a blank material
-    hsGMaterial* bumpMat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* bumpMat = new hsGMaterial;
     char buff[256];
     sprintf(buff, "%s_%s", GetKey()->GetName(), "BumpMatPS");
     hsgResMgr::ResMgr()->NewKey(buff, bumpMat, GetKey()->GetUoid().GetLocation());
@@ -1839,7 +1839,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
 
 
     // Need to add this via notify to ourselves.
-    hsgResMgr::ResMgr()->SendRef(bumpMat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpMat), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(bumpMat->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpMat), plRefFlags::kActiveRef);
 
     ICreateBumpDrawable();
 
@@ -1850,7 +1850,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 {
     if( !fBiasVShader )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_BiasVS", GetKey()->GetName());
@@ -1888,7 +1888,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
             2.f);
 
         hsVector3 specVec = State().fSpecVec;
-        hsScalar biasScale = 0.5f * specVec[State().kNoise] / (hsScalar(kNumBumpShaders) + specVec[State().kNoise]);
+        float biasScale = 0.5f * specVec[State().kNoise] / (float(kNumBumpShaders) + specVec[State().kNoise]);
         vShader->SetVector(plBiasVS::kScaleBias,
             biasScale,
             biasScale,
@@ -1902,19 +1902,19 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 //      vShader->SetDecl(&vDecl);
         vShader->SetDecl(plShaderTable::Decl(vs_BiasNormals));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasVShader), plRefFlags::kActiveRef);
 
 
         fBiasVShader = vShader;
     }
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
     hsgResMgr::ResMgr()->SendRef(fBiasVShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 
     if( !fBiasPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_BiasPS", GetKey()->GetName());
@@ -1930,12 +1930,12 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 //      pShader->SetDecl(&pDecl);
         pShader->SetDecl(plShaderTable::Decl(ps_BiasNormals));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasPShader), plRefFlags::kActiveRef);
 
         fBiasPShader = pShader;
     }
 
-    refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);   
+    refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);   
     hsgResMgr::ResMgr()->SendRef(fBiasPShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 }
@@ -1949,7 +1949,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* vShader = TRACKED_NEW plShader;
+            plShader* vShader = new plShader;
             char buff[256];
             sprintf(buff, "%s_BumpVS_%d", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -1975,7 +1975,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
 
             vShader->SetDecl(plShaderTable::Decl(vs_CompCosines));
 
-            hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpVShader), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpVShader), plRefFlags::kActiveRef);
 
             fBumpVShader[iShader] = vShader;
 
@@ -1995,7 +1995,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* pShader = TRACKED_NEW plShader;
+            plShader* pShader = new plShader;
             char buff[256];
             sprintf(buff, "%s_BumpPS_%d", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2007,8 +2007,8 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
             for( iLay = 0; iLay < kBumpPerPass; iLay++ )
             {
                 pShader->SetVector(plBumpPS::kWave0,
-                    -fTexWaves[iBase + iLay].fDirX * (1.f / hsScalar(kBumpPerPass)),
-                    -fTexWaves[iBase + iLay].fDirY * (1.f / hsScalar(kBumpPerPass)),
+                    -fTexWaves[iBase + iLay].fDirX * (1.f / float(kBumpPerPass)),
+                    -fTexWaves[iBase + iLay].fDirY * (1.f / float(kBumpPerPass)),
                     1.f,
                     1.f);
             }
@@ -2025,7 +2025,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
 
             pShader->SetVector(plBumpPS::kHalfOne, 0.25f, 0.25f, 0.25f, 1.f);
 
-            hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpPShader), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpPShader), plRefFlags::kActiveRef);
 
             fBumpPShader[iShader] = pShader;
 
@@ -2038,14 +2038,14 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
 
 plDrawableSpans* plWaveSet7::ICreateBumpDrawable()
 {
-    fBumpDraw = TRACKED_NEW plDrawableSpans;
+    fBumpDraw = new plDrawableSpans;
     char buff[256];
     sprintf(buff, "%s_BumpDraw", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, fBumpDraw, GetKey()->GetUoid().GetLocation());
 
     ICreateClearDrawable(fBumpDraw, fBumpMat);
     
-    hsgResMgr::ResMgr()->SendRef(fBumpDraw->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpDraw), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(fBumpDraw->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBumpDraw), plRefFlags::kActiveRef);
 
     return fBumpDraw;
 }
@@ -2097,7 +2097,7 @@ plDrawableSpans* plWaveSet7::ICreateClearDrawable(plDrawableSpans* drawable, hsG
     uvw[3] = uvw[0];
     uvw[3].fX += 1.f;
 
-    UInt16 idx[6];
+    uint16_t idx[6];
     idx[0] = 1;
     idx[1] = 0;
     idx[2] = 2;
@@ -2120,9 +2120,9 @@ plDrawableSpans* plWaveSet7::ICreateClearDrawable(plDrawableSpans* drawable, hsG
     return drawable;
 }
 
-plRenderRequest* plWaveSet7::ICreateRenderRequest(plRenderTarget* rt, plDrawableSpans* draw, hsScalar pri)
+plRenderRequest* plWaveSet7::ICreateRenderRequest(plRenderTarget* rt, plDrawableSpans* draw, float pri)
 {
-    plRenderRequest* req = TRACKED_NEW plRenderRequest;
+    plRenderRequest* req = new plRenderRequest;
 
     static plPageTreeMgr emptyMgr;
     req->SetPageTreeMgr(&emptyMgr);
@@ -2148,12 +2148,12 @@ plRenderRequest* plWaveSet7::ICreateRenderRequest(plRenderTarget* rt, plDrawable
 
 plRenderTarget* plWaveSet7::ICreateTransferRenderTarget(const char* name, int size)
 {
-    UInt16 flags = plRenderTarget::kIsTexture | plRenderTarget::kIsOrtho;
-    UInt8 bitDepth = 32;
-    UInt8 zDepth = 0;
-    UInt8 stencilDepth = 0;
+    uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsOrtho;
+    uint8_t bitDepth = 32;
+    uint8_t zDepth = 0;
+    uint8_t stencilDepth = 0;
     
-    plRenderTarget* rt = TRACKED_NEW plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
+    plRenderTarget* rt = new plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
 
     char buff[256];
     sprintf(buff, "%s_%s", GetKey()->GetName(), name);
@@ -2167,7 +2167,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
     plLayer* layer = mat->GetNumLayers() > which ? plLayer::ConvertNoRef(mat->GetLayer(which)->BottomOfStack()) : nil;
     if( !layer )
     {
-        layer = TRACKED_NEW plLayer;
+        layer = new plLayer;
         char buff[256];
         sprintf(buff, "%s_%sLayerPS_%d", GetKey()->GetName(), suff, which);
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -2194,7 +2194,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
 
     layer->SetTransform(xfm);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(bm->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return layer;
@@ -2202,7 +2202,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
 
 plLayer* plWaveSet7::ICreateTotalEnvLayer(plBitmap* envMap, hsGMaterial* mat, int which, const char* pref)
 {
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%s_%d", GetKey()->GetName(), pref, "EnvLayerPS", which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -2226,7 +2226,7 @@ plLayer* plWaveSet7::ICreateTotalEnvLayer(plBitmap* envMap, hsGMaterial* mat, in
 
     layer->SetTransform(xfm);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
+    plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture);
     hsgResMgr::ResMgr()->SendRef(envMap->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     mat->AddLayerViaNotify(layer);
@@ -2248,7 +2248,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
     int i;
     for( i = mat->GetNumLayers()-1; i > 0; i-- )
     {
-        plMatRefMsg* refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
+        plMatRefMsg* refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(mat->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
     }
 
@@ -2266,7 +2266,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
 
 
     fBumpReq = ICreateRenderRequest(rt, fBumpDraw, -100.f);
-    fBumpReqMsg = TRACKED_NEW plRenderRequestMsg(GetKey(), fBumpReq);
+    fBumpReqMsg = new plRenderRequestMsg(GetKey(), fBumpReq);
 
     IAddFixedVertexShader(mat, numUVWs);
     IAddFixedPixelShader(mat);
@@ -2281,7 +2281,7 @@ void plWaveSet7::ICreateFixedMat(hsGMaterial* mat, const int numUVWs)
 
     if( !fEnvMap )
     {
-        plDynamicEnvMap* env = TRACKED_NEW plDynamicEnvMap((UInt16)fEnvSize, (UInt16)fEnvSize, 32);
+        plDynamicEnvMap* env = new plDynamicEnvMap((uint16_t)fEnvSize, (uint16_t)fEnvSize, 32);
         hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), env, GetKey()->GetUoid().GetLocation());
         fEnvMap = env;
         env->SetPosition(hsPoint3(0, 0, 50.f));
@@ -2302,7 +2302,7 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
     if( !fShoreVShader )
     {
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_ShoreVS", GetKey()->GetName());
@@ -2316,12 +2316,12 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
 
         vShader->SetVector(plShoreVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plShoreVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
-        vShader->SetVector(plShoreVS::kPiConsts, 1.f / (8.f*hsScalarPI*4.f*4.f), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plShoreVS::kPiConsts, 1.f / (8.f*M_PI*4.f*4.f), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plShoreVS::kNumericConsts, 0, 0.5f, 1.f, 2.f);
 
-        plConst(hsScalar) kK1(0.5f);
-        plConst(hsScalar) kK2(1.5f);
-        hsScalar negK1OverK2Sq = -kK1 / (kK2 * kK2);
+        plConst(float) kK1(0.5f);
+        plConst(float) kK2(1.5f);
+        float negK1OverK2Sq = -kK1 / (kK2 * kK2);
         vShader->SetVector(plShoreVS::kIncline, negK1OverK2Sq, kK1, 0.f, 0.f);
 
         vShader->SetNumPipeConsts(5);
@@ -2342,7 +2342,7 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
 //      vShader->SetDecl(&decl);
         vShader->SetDecl(plShaderTable::Decl(vs_ShoreLeave7));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShoreVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShoreVShader), plRefFlags::kActiveRef);
 
         fShoreVShader = vShader;
 
@@ -2356,7 +2356,7 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
 {
     if( !fShorePShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_ShorePS", GetKey()->GetName());
@@ -2367,7 +2367,7 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
 //      pShader->SetShaderFileName("sha/ps_ShoreLeave6.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_ShoreLeave6));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShorePShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShorePShader), plRefFlags::kActiveRef);
 
         fShorePShader = pShader;
     }
@@ -2380,7 +2380,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
     if( !fFixedVShader )
     {
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_FixedVS", GetKey()->GetName());
@@ -2394,7 +2394,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 
         vShader->SetVector(plFixedVS7::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plFixedVS7::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
-        vShader->SetVector(plFixedVS7::kPiConsts, 1.f / (8.f*hsScalarPI*4.f*4.f), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plFixedVS7::kPiConsts, 1.f / (8.f*M_PI*4.f*4.f), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plFixedVS7::kNumericConsts, 0, 0.5f, 1.f, 2.f);
 
         vShader->SetNumPipeConsts(5);
@@ -2414,7 +2414,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 //      vShader->SetShaderFileName("sha/vs_WaveFixedFin.inl");
 //      vShader->SetShaderFileName("sha/vs_TestPos.inl");
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedVShader), plRefFlags::kActiveRef);
 
         fFixedVShader = vShader;
 
@@ -2425,11 +2425,11 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 }
 
 // type is either plLayRefMsg::kVertexShader or plLayRefMsg::kPixelShader.
-void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, UInt8 type, plShader* shader)
+void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uint8_t type, plShader* shader)
 {
     if( iFirst < 0 )
         iFirst = 0;
-    if( UInt32(iLast) >= mat->GetNumLayers() )
+    if( uint32_t(iLast) >= mat->GetNumLayers() )
         iLast = mat->GetNumLayers()-1;
     int i;
     for( i = iFirst; i <= iLast; i++ )
@@ -2439,7 +2439,7 @@ void plWaveSet7::IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, UIn
             && (layer->GetVertexShader() != shader) 
             && (layer->GetPixelShader() != shader) )
         {
-            plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, type);   
+            plLayRefMsg* refMsg = new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, type);   
             hsgResMgr::ResMgr()->SendRef(shader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
 //          layer->SetShadeFlags(layer->GetShadeFlags() | hsGMatState::kShadeReallyNoFog);
@@ -2451,7 +2451,7 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
 {
     if( !fFixedPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_FixedPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2467,7 +2467,7 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
 //      pShader->SetShaderFileName("sha/ps_TestPos.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveFixed));
         
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedPShader), plRefFlags::kActiveRef);
         
         fFixedPShader = pShader;
     }
@@ -2480,7 +2480,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 {
     if( !fRipVShader )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_RipVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -2493,7 +2493,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 
         vShader->SetVector(plRipVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plRipVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
-        vShader->SetVector(plRipVS::kPiConsts, 1.f / (8.f*hsScalarPI*4.f*4.f), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plRipVS::kPiConsts, 1.f / (8.f*M_PI*4.f*4.f), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plRipVS::kNumericConsts, 0, 0.5f, 1.f, 2.f);
 
         hsVector3 waterOffset = State().fWaterOffset;
@@ -2533,7 +2533,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
             ripConsts.fLife,
             1.f / (ripConsts.fLife - ripConsts.fDecay));
 
-        plConst(hsScalar) kRipBias(0.1);
+        plConst(float) kRipBias(0.1);
         vShader->SetVector(plRipVS::kRampBias,
             ripConsts.fRamp,
             1.f / ripConsts.fRamp,
@@ -2553,7 +2553,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 //      vShader->SetDecl(&decl);
         vShader->SetDecl(plShaderTable::Decl(vs_WaveRip7));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipVShader), plRefFlags::kActiveRef);
 
         hsAssert(vShader == fRipVShader, "Should have been set by SendRef");
     }
@@ -2566,7 +2566,7 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
 {
     if( !fRipPShader )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_RipPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -2580,7 +2580,7 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
 //      pShader->SetShaderFileName("sha/ps_WaveRip.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveRip));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipPShader), plRefFlags::kActiveRef);
 
         hsAssert(pShader == fRipPShader, "Should have been set by SendRef");
     }
@@ -2626,7 +2626,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
         };
 
 
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_%s", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -2639,7 +2639,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
 
         vShader->SetVector(plWaveDecVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plWaveDecVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
-        vShader->SetVector(plWaveDecVS::kPiConsts, 1.f / (8.f*hsScalarPI*4.f*4.f), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plWaveDecVS::kPiConsts, 1.f / (8.f*M_PI*4.f*4.f), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plWaveDecVS::kNumericConsts, 0, 0.5f, 1.f, 2.f);
 
         hsVector3 waterOffset = State().fWaterOffset;
@@ -2665,7 +2665,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
             0.f
             );
 
-        plConst(hsScalar) kBias(0.1);
+        plConst(float) kBias(0.1);
         vShader->SetVector(plWaveDecVS::kBias,
             kBias,
             0,
@@ -2688,7 +2688,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
 //      vShader->SetDecl(&shaderDecls[t]);
         vShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecVShader), plRefFlags::kActiveRef);
 
         hsAssert(vShader == fDecalVShaders[t], "Should have been set by SendRef");
     }
@@ -2754,7 +2754,7 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
             ps_WaveDecEnv
         };
 
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
 
         char buff[256];
         sprintf(buff, "%s_%s", GetKey()->GetName(), fname[t]);
@@ -2765,7 +2765,7 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
 //      pShader->SetShaderFileName(buff);
         pShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecPShader), plRefFlags::kActiveRef);
 
         hsAssert(fDecalPShaders[t] == pShader, "Should have been set by SendRef");
     }
@@ -2850,7 +2850,7 @@ void plWaveSet7::IUpdateShaders(plPipeline* pipe, const hsMatrix44& l2w, const h
 
 void plWaveSet7::IUpdateBumpPShader(plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
-    plCONST(Int32)      skip(0);
+    plCONST(int32_t)      skip(0);
     int i;
     for( i = 0; i < kNumBumpShaders; i++ )
     {
@@ -2861,16 +2861,16 @@ void plWaveSet7::IUpdateBumpPShader(plPipeline* pipe, const hsMatrix44& l2w, con
             int iTex = i*kBumpPerPass + j;
 
             hsVector3 specVec = State().fSpecVec;
-            hsScalar scale = 1.f / (hsScalar(kNumBumpShaders) + specVec[State().kNoise]);
+            float scale = 1.f / (float(kNumBumpShaders) + specVec[State().kNoise]);
 
-            hsScalar maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
-            hsScalar rescale = fTexWaves[iTex].fLen / maxLen;
+            float maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
+            float rescale = fTexWaves[iTex].fLen / maxLen;
 
-            hsScalar bias = 0.5f * scale;
+            float bias = 0.5f * scale;
             fBumpPShader[i]->SetVector(plBumpPS::kHalfOne, scale, scale, 1.f, 1.f);
             fBumpPShader[i]->SetVector(plBumpPS::kBias, bias, bias, 1.f, 1.f);
 
-            hsScalar layScale = skip & (1 << iTex) ? 0.f : (1.f / hsScalar(kBumpPerPass));
+            float layScale = skip & (1 << iTex) ? 0.f : (1.f / float(kBumpPerPass));
             layScale *= fTexWaveFade[iTex];
 
             fBumpPShader[i]->SetVector(plBumpPS::kWave0 + j,
@@ -2887,9 +2887,9 @@ void plWaveSet7::IUpdateBumpVShader(plPipeline* pipe, const hsMatrix44& l2w, con
 {
 }
 
-static inline hsScalar IRound(hsScalar f)
+static inline float IRound(float f)
 {
-    return hsScalar(int(f + (f > 0 ? 0.5f : -0.5f)));
+    return float(int(f + (f > 0 ? 0.5f : -0.5f)));
 }
 
 void plWaveSet7::IUpdateBiasVShader()
@@ -2898,24 +2898,24 @@ void plWaveSet7::IUpdateBiasVShader()
     if( fBiasVShader )
     {
         // Can't just use GetDelSysSeconds() or else we lose time if we skip a frame render because of high FPS.
-        hsScalar dt = fLastTime > 0 ? hsScalar(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
-        plConst(hsScalar) kRate(-0.1f);
-        hsScalar tx = kRate * dt;
-        hsScalar ty = kRate * dt;
-        plConst(hsScalar) kScaleU(4.f);
-        plConst(hsScalar) kScaleV(1.f);
+        float dt = fLastTime > 0 ? float(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
+        plConst(float) kRate(-0.1f);
+        float tx = kRate * dt;
+        float ty = kRate * dt;
+        plConst(float) kScaleU(4.f);
+        plConst(float) kScaleV(1.f);
         tx += fBiasVShader->GetFloat(plBiasVS::kTexU0, 3);
-        tx -= hsScalar(int(tx));
+        tx -= float(int(tx));
 
         ty += fBiasVShader->GetFloat(plBiasVS::kTexV0, 3);
-        ty -= hsScalar(int(ty));
+        ty -= float(int(ty));
 
-        hsScalar scale = 1.f + (4.f - 1.f) * TexState().fAngleDev/hsScalarPI;
+        float scale = 1.f + (4.f - 1.f) * TexState().fAngleDev/M_PI;
 
-        hsScalar m00 = IRound(fWindDir.fY * scale);
-        hsScalar m01 = IRound(fWindDir.fX * scale);
-        hsScalar m10 = IRound(-fWindDir.fX * 4.f);
-        hsScalar m11 = IRound(fWindDir.fY * 4.f);
+        float m00 = IRound(fWindDir.fY * scale);
+        float m01 = IRound(fWindDir.fX * scale);
+        float m10 = IRound(-fWindDir.fX * 4.f);
+        float m11 = IRound(fWindDir.fY * 4.f);
 
         fBiasVShader->SetVector(plBiasVS::kTexU0,
             m00,
@@ -2928,8 +2928,8 @@ void plWaveSet7::IUpdateBiasVShader()
             0,
             ty);
 
-        plConst(hsScalar) kUpperNoiseOffU(0.f);
-        plConst(hsScalar) kUpperNoiseOffV(0.3f);
+        plConst(float) kUpperNoiseOffU(0.f);
+        plConst(float) kUpperNoiseOffV(0.3f);
         fBiasVShader->SetVector(plBiasVS::kTexU1,
             m00,
             m01,
@@ -2942,7 +2942,7 @@ void plWaveSet7::IUpdateBiasVShader()
             ty + kUpperNoiseOffV);
 
         hsVector3 specVec = State().fSpecVec;
-        hsScalar biasScale = 0.5f * specVec[State().kNoise] / (hsScalar(kNumBumpShaders) + specVec[State().kNoise]);
+        float biasScale = 0.5f * specVec[State().kNoise] / (float(kNumBumpShaders) + specVec[State().kNoise]);
         fBiasVShader->SetVector(plBiasVS::kScaleBias,
             biasScale,
             biasScale,
@@ -3011,7 +3011,7 @@ void plWaveSet7::IUpdateRipVShader(plPipeline* pipe, const hsMatrix44& l2w, cons
         int i; 
         for( i = 0; i < kNumWaves; i++ )
         {
-            normQ[i] = GeoState().fChop / (2.f*hsScalarPI * GeoState().fAmpOverLen * kNumWaves);
+            normQ[i] = GeoState().fChop / (2.f*M_PI * GeoState().fAmpOverLen * kNumWaves);
         }
 
         fRipVShader->SetVector(plRipVS::kQADirX,
@@ -3083,10 +3083,10 @@ void plWaveSet7::IUpdateDecVShader(int t, plPipeline* pipe)
 
             hsPoint3 envCenter(State().fEnvCenter);
 
-            hsScalar envRadius = State().fEnvRadius;
+            float envRadius = State().fEnvRadius;
 
             hsVector3 camToCen(&envCenter, &worldCam);
-            hsScalar G = camToCen.MagnitudeSquared() - envRadius * envRadius;
+            float G = camToCen.MagnitudeSquared() - envRadius * envRadius;
             shader->SetVectorW(plWaveDecVS::kEnvAdjust, camToCen, G);
 
         }
@@ -3095,7 +3095,7 @@ void plWaveSet7::IUpdateDecVShader(int t, plPipeline* pipe)
         int i;
         for( i = 0; i < kNumWaves; i++ )
         {
-            normQ[i] = GeoState().fChop / (2.f*hsScalarPI * GeoState().fAmpOverLen * kNumWaves);
+            normQ[i] = GeoState().fChop / (2.f*M_PI * GeoState().fAmpOverLen * kNumWaves);
         }
 
         shader->SetVector(plWaveDecVS::kQADirX,
@@ -3213,16 +3213,16 @@ void plWaveSet7::IUpdateShoreVShader(plPipeline* pipe, const hsMatrix44& l2w, co
             fWorldWaves[2].fLength,
             fWorldWaves[3].fLength);
 
-        plConst(hsScalar) kK1(2.f);
-        plConst(hsScalar) kK2(5.f);
-        hsScalar negK1OverK2Sq = -kK1 / (kK2 * kK2);
+        plConst(float) kK1(2.f);
+        plConst(float) kK2(5.f);
+        float negK1OverK2Sq = -kK1 / (kK2 * kK2);
         fShoreVShader->SetVector(plShoreVS::kIncline, negK1OverK2Sq, kK1, 0.f, 0.f);
 
         float normQ[kNumWaves];
         int i;
         for( i = 0; i < kNumWaves; i++ )
         {
-            normQ[i] = GeoState().fChop / (2.f*hsScalarPI * GeoState().fAmpOverLen * kNumWaves);
+            normQ[i] = GeoState().fChop / (2.f*M_PI * GeoState().fAmpOverLen * kNumWaves);
         }
 
         fShoreVShader->SetVector(plShoreVS::kQADirX,
@@ -3279,18 +3279,18 @@ void plWaveSet7::IUpdateFixedVShader(plPipeline* pipe, const hsMatrix44& l2w, co
             fWorldWaves[2].fDir.fY,
             fWorldWaves[3].fDir.fY);
 
-        plCONST(hsScalar) kEnvRadius(500.f);
-        hsScalar envRadius = State().fEnvRadius;
+        plCONST(float) kEnvRadius(500.f);
+        float envRadius = State().fEnvRadius;
 
         hsPoint3 worldCam = pipe->GetViewTransform().GetCameraToWorld().GetTranslate();
 
         hsPoint3 envCenter(State().fEnvCenter);
 
         hsVector3 camToCen(&envCenter, &worldCam);
-        hsScalar G = camToCen.MagnitudeSquared() - envRadius * envRadius;
+        float G = camToCen.MagnitudeSquared() - envRadius * envRadius;
         fFixedVShader->SetVectorW(plFixedVS7::kEnvAdjust, camToCen, G);
 
-        hsScalar texScale = 1.f / State().fRippleScale;
+        float texScale = 1.f / State().fRippleScale;
 
         fFixedVShader->SetVector(plFixedVS7::kUVScale,
             texScale,
@@ -3298,21 +3298,21 @@ void plWaveSet7::IUpdateFixedVShader(plPipeline* pipe, const hsMatrix44& l2w, co
             0,
             0);
 
-        hsScalar specAtten = State().fTexState.fAmpOverLen * hsScalarPI * 2.f;
+        float specAtten = State().fTexState.fAmpOverLen * M_PI * 2.f;
 
-        plCONST(hsScalar) kScaleHack(0.1f);
-        hsScalar baseScale = kScaleHack;
-//      baseScale *= hsScalar(kBumpPerPass) * (hsScalar(kNumBumpShaders) + State().fSpecVec[State().kNoise]);
+        plCONST(float) kScaleHack(0.1f);
+        float baseScale = kScaleHack;
+//      baseScale *= float(kBumpPerPass) * (float(kNumBumpShaders) + State().fSpecVec[State().kNoise]);
         // Not sure what's right here. but we are currently scaling down by 1/(numBumpShaders + noise),
         // so I guess we want to scale up by that amount here. Not sure we shouldn't figuring in bumpperpass
         // on both, but at least now we're consistent.
         hsVector3 specVec = State().fSpecVec;
-        baseScale *= (hsScalar(kNumBumpShaders) + specVec[State().kNoise]);
+        baseScale *= (float(kNumBumpShaders) + specVec[State().kNoise]);
         baseScale *= (TexState().fChop + 1.f);
 
 
-        hsScalar specStart = specVec[State().kSpecStart];
-        hsScalar specEnd = specVec[State().kSpecEnd];
+        float specStart = specVec[State().kSpecStart];
+        float specEnd = specVec[State().kSpecEnd];
         if( specStart > specEnd )
             specEnd = specStart + 1.f;
         fFixedVShader->SetVector(plFixedVS7::kSpecAtten,
@@ -3370,7 +3370,7 @@ void plWaveSet7::IUpdateFixedVShader(plPipeline* pipe, const hsMatrix44& l2w, co
         int i;
         for( i = 0; i < kNumWaves; i++ )
         {
-            normQ[i] = GeoState().fChop / (2.f*hsScalarPI * GeoState().fAmpOverLen * kNumWaves);
+            normQ[i] = GeoState().fChop / (2.f*M_PI * GeoState().fAmpOverLen * kNumWaves);
         }
 
         fFixedVShader->SetVector(plFixedVS7::kDirXK,
@@ -3532,14 +3532,14 @@ void plWaveSet7::ICheckDecalEnvLayers(hsGMaterial* mat)
             }
             else
             {
-                refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+1, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+                refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+1, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
                 hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
             }
 
-            refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+2, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+2, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
 
-            refMsg = TRACKED_NEW plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+3, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+3, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
         }
     }
@@ -3577,7 +3577,7 @@ void plWaveSet7::ISetupDecal(hsGMaterial* mat)
 
 void plWaveSet7::AddShoreTest(plKey& key)
 {
-    hsgResMgr::ResMgr()->SendRef(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefShore), plRefFlags::kPassiveRef);
 
     plSceneObject* so = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
     ICheckShoreMaterial(so);
@@ -3631,7 +3631,7 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
         int iDn = i << 1;
         int iUp = iDn + 1;
 
-        hsScalar delX = hsScalar(i) / hsScalar(nWid-1);
+        float delX = float(i) / float(nWid-1);
 
         pos[iDn].fX = delX * 2.f - 1.f;
         pos[iDn].fY = -1.f;
@@ -3660,10 +3660,10 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nTris = (nWid-1) * 2;
 
-    hsTArray<UInt16> idxArr;
+    hsTArray<uint16_t> idxArr;
     idxArr.SetCount(nTris * 3);
 
-    UInt16* idx = idxArr.AcquireArray();
+    uint16_t* idx = idxArr.AcquireArray();
 
     int iBase = 0;
     for( i = 0; i < nTris; i += 2 )
@@ -3695,34 +3695,34 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
     return drawable;
 }
 
-plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, UInt32 ref, int which)
+plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, uint32_t ref, int which)
 {
-    plDrawableSpans* drawable = TRACKED_NEW plDrawableSpans;
+    plDrawableSpans* drawable = new plDrawableSpans;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, drawable, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return drawable;
 }
 
-hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, UInt32 ref, int which)
+hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, uint32_t ref, int which)
 {
-    hsGMaterial* mat = TRACKED_NEW hsGMaterial;
+    hsGMaterial* mat = new hsGMaterial;
 
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, mat, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mat->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mat;
 }
 
 plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
 {
-    plLayer* lay = TRACKED_NEW plLayer;
+    plLayer* lay = new plLayer;
     char buff[256];
     sprintf(buff, "%s_%s_%d", GetKey()->GetName(), name, suff);
     hsgResMgr::ResMgr()->NewKey(buff, lay, GetKey()->GetUoid().GetLocation());
@@ -3730,9 +3730,9 @@ plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
     return lay;
 }
 
-plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, UInt32 ref)
+plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, uint32_t ref)
 {
-    plMipmap* mipMap = TRACKED_NEW plMipmap(
+    plMipmap* mipMap = new plMipmap(
         width, height,
         plMipmap::kARGB32Config,
         1, 
@@ -3743,7 +3743,7 @@ plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, U
     sprintf(buff, "%s_%s", GetKey()->GetName(), name);
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
-    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (Int8)ref), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (int8_t)ref), plRefFlags::kActiveRef);
 
     return mipMap;
 }
@@ -3762,8 +3762,8 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
     {
         plMipmap* mipMap = ICreateBlankTex("Graph", width, height, kRefGraphShoreTex);
 
-        plConst(hsScalar) kRampFrac(0.4f);
-        plConst(hsScalar) kTruncFrac(0.8f);
+        plConst(float) kRampFrac(0.4f);
+        plConst(float) kTruncFrac(0.8f);
         const int rampEnd = int(kRampFrac * height + 0.5f);
         int truncEnd = int(kTruncFrac * height);
         if( truncEnd >= (height-1) )
@@ -3771,7 +3771,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
         int j;
         for( j = 0; j < height; j++ )
         {
-            UInt32 alpha = 255;
+            uint32_t alpha = 255;
             plConst(int) kRampStart(4);
             if( j <= kRampStart )
             {
@@ -3786,7 +3786,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
             {
                 alpha = 0;
             }
-            UInt32 color = (alpha << 24)
+            uint32_t color = (alpha << 24)
                     | (0xff << 16)
                     | (0xff << 8)
                     | 0xff;
@@ -3794,7 +3794,7 @@ plMipmap* plWaveSet7::ICreateGraphShoreTex(int width, int height)
             int i;
             for( i = 0; i < width; i++ )
             {
-                UInt32* val = mipMap->GetAddr32(i, j);
+                uint32_t* val = mipMap->GetAddr32(i, j);
                 *val = color;
             }
         }
@@ -3812,7 +3812,7 @@ void plWaveSet7::IRefillBubbleShoreTex()
     const int height = mipMap->GetHeight();
 
     // Initialize to white opaque. 
-    memset(mipMap->GetAddr32(0,0), 0xff, width*height*sizeof(UInt32));
+    memset(mipMap->GetAddr32(0,0), 0xff, width*height*sizeof(uint32_t));
 
     plConst(int) kMinNumBub(1024);
     plConst(int) kMaxNumBub(6000);
@@ -3825,10 +3825,10 @@ void plWaveSet7::IRefillBubbleShoreTex()
         int jLoc = (int)(fRand.RandZeroToOne() * height);
 
         // Select a random radius
-        plConst(hsScalar) kMinRad(2.f);
-        plConst(hsScalar) kMaxRad(5.0f);
+        plConst(float) kMinRad(2.f);
+        plConst(float) kMaxRad(5.0f);
         int radius = int(kMinRad + fRand.RandZeroToOne() * (kMaxRad - kMinRad));
-        hsScalar invRadiusSq = 1.f / hsScalar(radius*radius);
+        float invRadiusSq = 1.f / float(radius*radius);
 
         // Carve out a hole.
         int j;
@@ -3849,17 +3849,17 @@ void plWaveSet7::IRefillBubbleShoreTex()
                 else if( ii >= width )
                     ii -= width;
 
-                hsScalar f = hsScalar(i*i + j*j) * invRadiusSq;
+                float f = float(i*i + j*j) * invRadiusSq;
                 if( f > 1.f )
                     f = 1.f;
-                plConst(hsScalar) kMinAlpha(0.8f);
-                plConst(hsScalar) kMaxAlpha(1.f);
+                plConst(float) kMinAlpha(0.8f);
+                plConst(float) kMaxAlpha(1.f);
                 f *= (kMaxAlpha - kMinAlpha);
                 f += kMinAlpha;
 
-                UInt32* val = mipMap->GetAddr32(ii, jj);
-                UInt32 alpha = (*val) >> 24;
-                alpha = UInt32(hsScalar(alpha) * f);
+                uint32_t* val = mipMap->GetAddr32(ii, jj);
+                uint32_t alpha = (*val) >> 24;
+                alpha = uint32_t(float(alpha) * f);
                 *val &= 0x00ffffff;
                 *val |= (alpha << 24);
             }
@@ -3874,10 +3874,10 @@ void plWaveSet7::IRefillBubbleShoreTex()
         int i;
         for( i = 0; i < width; i++ )
         {
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             hsColorRGBA col;
             col.FromARGB32(*val);
-            hsScalar alpha = col.a;
+            float alpha = col.a;
             col = maxColor - minColor;
             col *= alpha;
             col += minColor;
@@ -3915,8 +3915,8 @@ void plWaveSet7::IRefillEdgeShoreTex()
     const int width = mipMap->GetWidth();
     const int height = mipMap->GetHeight();
 
-    plConst(hsScalar) kCenter(0.8f);
-    plConst(hsScalar) kRadius(0.025f);
+    plConst(float) kCenter(0.8f);
+    plConst(float) kRadius(0.025f);
 
     const int center = int(kCenter * height);
 
@@ -3924,45 +3924,45 @@ void plWaveSet7::IRefillEdgeShoreTex()
 
     const int top = center + radius;
     const int bot = center - radius;
-    const hsScalar invRadiusSq = 1.f / hsScalar(radius*radius);
+    const float invRadiusSq = 1.f / float(radius*radius);
 
     hsAssert(top < height-1, "Center too high or radius too big");
 
-    const hsScalar maxAlpha = State().fEdgeOpac * 255.9f;
+    const float maxAlpha = State().fEdgeOpac * 255.9f;
     int j;
     for( j = 0; j < height; j++ )
     {
-        UInt32 alpha = 0;
+        uint32_t alpha = 0;
         if( (j > bot)&&(j < top) )
         {
 #if 0 // like x^2
-            hsScalar a = hsScalar(j-center);
+            float a = float(j-center);
             a *= a;
             a *= invRadiusSq;
             a = 1.f - a;
 #elif 1 // like 1/x^2
-            hsScalar a = hsScalar(j-center);
+            float a = float(j-center);
             if( a < 0 )
                 a = -a;
-            a /= hsScalar(radius);
+            a /= float(radius);
             a = 1.f - a;
             a *= a;
 #else // like cos
-            hsScalar a = hsScalar(j - center);
-            a /= hsScalar(radius);
-            a *= hsScalarPI;
+            float a = float(j - center);
+            a /= float(radius);
+            a *= M_PI;
             a = hsFastMath::CosInRange(a);
             a += 1.f;
             a *= 0.5f;
 #endif
 
-            alpha = UInt32(a * maxAlpha);
+            alpha = uint32_t(a * maxAlpha);
         }
 
         int i;
         for( i = 0; i < width; i++ )
         {
-            UInt32* val = mipMap->GetAddr32(i, j);
+            uint32_t* val = mipMap->GetAddr32(i, j);
             *val = (alpha << 24)
                 | (alpha << 16)
                 | (alpha << 8)
@@ -3996,7 +3996,7 @@ plMipmap* plWaveSet7::ICreateEdgeShoreTex(int width, int height)
 void plWaveSet7::ISetAsTexture(plLayer* lay, plBitmap* tex)
 {
     hsAssert(lay && tex, "Trying to set nil texture or nil layer");
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(lay->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture);   
+    plLayRefMsg* refMsg = new plLayRefMsg(lay->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture);   
     hsgResMgr::ResMgr()->SendRef(tex->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
@@ -4145,7 +4145,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
 {
     if( !fGraphVShader[iPass] )
     {
-        plShader* vShader = TRACKED_NEW plShader;
+        plShader* vShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_GraphVS_%d", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -4154,7 +4154,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
         vShader->SetNumConsts(plGraphVS::kNumConsts);
         
         vShader->SetVector(plGraphVS::kNumericConsts, 0, 0.5f, 1.f, 2.f);
-        vShader->SetVector(plGraphVS::kPiConsts, 1.f / (2.f*hsScalarPI), hsScalarPI/2.f, hsScalarPI, hsScalarPI*2.f);
+        vShader->SetVector(plGraphVS::kPiConsts, 1.f / (2.f*M_PI), M_PI/2.f, M_PI, M_PI*2.f);
         vShader->SetVector(plGraphVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
 
 #ifndef TEST_UVWS
@@ -4168,7 +4168,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
 //      vShader->SetShaderFileName("sha/vs_WaveGraph2.inl");
         vShader->SetDecl(plShaderTable::Decl(vs_WaveGraph2));
 
-        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphVShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphVShader), plRefFlags::kActiveRef);
 
         hsAssert(fGraphVShader[iPass] == vShader, "SendRef should have set shader");
     }
@@ -4180,7 +4180,7 @@ void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
 {
     if( !fGraphPShader[iPass] )
     {
-        plShader* pShader = TRACKED_NEW plShader;
+        plShader* pShader = new plShader;
         char buff[256];
         sprintf(buff, "%s_GraphPS_%d", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -4194,7 +4194,7 @@ void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
 //      pShader->SetShaderFileName("sha/ps_WaveGraph.inl");
         pShader->SetDecl(plShaderTable::Decl(ps_WaveGraph));
 
-        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphPShader), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphPShader), plRefFlags::kActiveRef);
 
         hsAssert(fGraphPShader[iPass] == pShader, "SendRef should have set shader");
     }
@@ -4209,10 +4209,10 @@ plRenderTarget* plWaveSet7::ISetupGraphShoreRenderReq(int which)
     sprintf(name, "Graph_%d", which);
     plRenderTarget* rt = ICreateTransferRenderTarget(name, kGraphSize);
     
-    hsgResMgr::ResMgr()->SendRef(rt->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, kRefGraphShoreRT), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->SendRef(rt->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, kRefGraphShoreRT), plRefFlags::kActiveRef);
 
     fGraphReq[which] = ICreateRenderRequest(rt, fGraphShoreDraw[which], -100.f);
-    fGraphReqMsg[which] = TRACKED_NEW plRenderRequestMsg(GetKey(), fGraphReq[which]);
+    fGraphReqMsg[which] = new plRenderRequestMsg(GetKey(), fGraphReq[which]);
 
     return rt;
 }
@@ -4255,7 +4255,7 @@ void plWaveSet7::IMakeShoreLayer(hsGMaterial* mat, int which)
     char name[512];
     if( which >= mat->GetNumLayers() )
     {
-        plLayer* lay = TRACKED_NEW plLayer;
+        plLayer* lay = new plLayer;
         sprintf(name, "%s_lay_%d", mat->GetKey()->GetName(), which);
         hsgResMgr::ResMgr()->NewKey(name, lay, GetKey()->GetUoid().GetLocation());
 
@@ -4333,9 +4333,9 @@ void plWaveSet7::IInitGraph(int iPass)
 
     static int lastOne = 0;
 
-    plConst(hsScalar) kBasePeriod(3.f);
-    hsScalar life = State().fPeriod * kBasePeriod * (1.f + fRand.RandZeroToOne()); 
-    gs.fInvLife = (1.f + hsScalar(lastOne)/hsScalar(kGraphShorePasses-1)) / life;
+    plConst(float) kBasePeriod(3.f);
+    float life = State().fPeriod * kBasePeriod * (1.f + fRand.RandZeroToOne()); 
+    gs.fInvLife = (1.f + float(lastOne)/float(kGraphShorePasses-1)) / life;
 
     lastOne = !lastOne;
 
@@ -4348,7 +4348,7 @@ void plWaveSet7::IInitGraph(int iPass)
     {
         // Okay, phase we don't have to think too hard about,
         // it doesn't matter as long as it's random.
-        gs.fPhase[i] = fRand.RandZeroToOne() * 2.f * hsScalarPI;
+        gs.fPhase[i] = fRand.RandZeroToOne() * 2.f * M_PI;
 
         // Next up is frequency, but frequency is the hard one.
         // Remember frequency has to preserve tiling, so freq = k * 2 * PI.
@@ -4369,16 +4369,16 @@ void plWaveSet7::IInitGraph(int iPass)
         }
 
         // Input will be in range [0..2], so we'll omit the customary 2*PI here.
-        gs.fFreq[i] = k * hsScalarPI; 
+        gs.fFreq[i] = k * M_PI; 
 
         // Amplitude depends on freqency, or roughly inversely proportional
         // to frequency (randomized about linear on period).
         // Divide by 4 because that's how many oscillators we have, and they
         // are summed.
-        hsScalar period = 1.f / hsScalar(k);
-        plConst(hsScalar) kAmpScale(1.f / 4.f / 2.f);
-        plConst(hsScalar) kMinPeriodFrac(1.f);
-        plConst(hsScalar) kMaxPeriodFrac(2.f);
+        float period = 1.f / float(k);
+        plConst(float) kAmpScale(1.f / 4.f / 2.f);
+        plConst(float) kMinPeriodFrac(1.f);
+        plConst(float) kMaxPeriodFrac(2.f);
         period *= kMinPeriodFrac + fRand.RandZeroToOne() * (kMaxPeriodFrac - kMinPeriodFrac);
         period *= kAmpScale;
         gs.fAmp[i] = period;
@@ -4410,7 +4410,7 @@ void plWaveSet7::IShuffleDownGraphs(int iPass)
     IInitGraph(kGraphShorePasses-1);
 }
 
-void plWaveSet7::IUpdateGraphShader(hsScalar dt, int iPass)
+void plWaveSet7::IUpdateGraphShader(float dt, int iPass)
 {
     if( fGraphShoreDraw[iPass] )
     {
@@ -4418,15 +4418,15 @@ void plWaveSet7::IUpdateGraphShader(hsScalar dt, int iPass)
         plShader* shader = fGraphVShader[iPass];
 
         gs.fAge += dt;
-        hsScalar rads = gs.fAge * gs.fInvLife;
-        if( rads >= hsScalarPI )
+        float rads = gs.fAge * gs.fInvLife;
+        if( rads >= M_PI )
         {
             // Recycle this one and restart the upper.
             IShuffleDownGraphs(iPass);
         }
         else
         {
-            hsScalar sinAge = hsFastMath::SinInRange(rads);
+            float sinAge = hsFastMath::SinInRange(rads);
 
             shader->SetVector(plGraphVS::kAmplitude, 
                 gs.fAmp[0] * sinAge, 
@@ -4440,11 +4440,11 @@ void plWaveSet7::IUpdateGraphShader(hsScalar dt, int iPass)
             tint.a *= sinAge;
             shader->SetColor(plGraphVS::kColor, tint);
 
-            plConst(hsScalar) kCMax(1.f);
-            plConst(hsScalar) kCMin(3.f);
-            hsScalar cMin = kCMax + (kCMin - kCMax) * State().fFingerLength;
-            plConst(hsScalar) k2ndLayerScale(2.f);
-            plConst(hsScalar) k2ndLayerVoff(1.5f);
+            plConst(float) kCMax(1.f);
+            plConst(float) kCMin(3.f);
+            float cMin = kCMax + (kCMin - kCMax) * State().fFingerLength;
+            plConst(float) k2ndLayerScale(2.f);
+            plConst(float) k2ndLayerVoff(1.5f);
             shader->SetVector(plGraphVS::kUVWConsts,
                 (kCMax - cMin) * sinAge + cMin,
                 gs.fUOff,
@@ -4454,7 +4454,7 @@ void plWaveSet7::IUpdateGraphShader(hsScalar dt, int iPass)
     }
 }
 
-void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, hsScalar dt)
+void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, float dt)
 {
     if( fGraphShoreDraw[0] )
     {

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plKeyMap.h"
 
 // conversion functions
-const char* pyKeyMap::ConvertVKeyToChar( UInt32 vk, UInt32 flags )
+const char* pyKeyMap::ConvertVKeyToChar( uint32_t vk, uint32_t flags )
 {
     const char *key = plKeyMap::ConvertVKeyToChar( vk );
     static char shortKey[ 2 ];
@@ -78,7 +78,7 @@ const char* pyKeyMap::ConvertVKeyToChar( UInt32 vk, UInt32 flags )
     return newKey;
 }
 
-UInt32 pyKeyMap::ConvertCharToVKey( const char* charVKey )
+uint32_t pyKeyMap::ConvertCharToVKey( const char* charVKey )
 {
     char    str[ 16 ];
     int     i;
@@ -96,13 +96,13 @@ UInt32 pyKeyMap::ConvertCharToVKey( const char* charVKey )
     return plKeyMap::ConvertCharToVKey( str );
 }
 
-UInt32 pyKeyMap::ConvertCharToFlags( const char *charVKey )
+uint32_t pyKeyMap::ConvertCharToFlags( const char *charVKey )
 {
     char    str[ 16 ];
     strcpy( str, charVKey );
 
     // Find modifiers to set flags with
-    UInt32 keyFlags = 0;
+    uint32_t keyFlags = 0;
     if( strstr( str, "_S" ) || strstr( str, "_s" ) )
         keyFlags |= plKeyCombo::kShift;
     if( strstr( str, "_C" ) || strstr( str, "_c" ) )
@@ -112,13 +112,13 @@ UInt32 pyKeyMap::ConvertCharToFlags( const char *charVKey )
 }
 
 
-UInt32 pyKeyMap::ConvertCharToControlCode(const char* charCode)
+uint32_t pyKeyMap::ConvertCharToControlCode(const char* charCode)
 {
     ControlEventCode code = plInputMap::ConvertCharToControlCode(charCode);
-    return (UInt32)code;
+    return (uint32_t)code;
 }
 
-const char* pyKeyMap::ConvertControlCodeToString( UInt32 code )
+const char* pyKeyMap::ConvertControlCodeToString( uint32_t code )
 {
     return plInputMap::ConvertControlCodeToString((ControlEventCode)code);
 }
@@ -193,7 +193,7 @@ plKeyCombo pyKeyMap::IBindKeyToVKey( const char *keyStr )
     return combo;
 }
 
-UInt32 pyKeyMap::GetBindingKey1(UInt32 code)
+uint32_t pyKeyMap::GetBindingKey1(uint32_t code)
 {
     if( plInputInterfaceMgr::GetInstance() != nil )
     {
@@ -201,13 +201,13 @@ UInt32 pyKeyMap::GetBindingKey1(UInt32 code)
         if ( keymap )
         {
             plKeyCombo key = keymap->GetKey1();
-            return (UInt32)(key.fKey);
+            return (uint32_t)(key.fKey);
         }
     }
     return 0;
 }
 
-UInt32 pyKeyMap::GetBindingFlags1(UInt32 code)
+uint32_t pyKeyMap::GetBindingFlags1(uint32_t code)
 {
     if( plInputInterfaceMgr::GetInstance() != nil )
     {
@@ -215,27 +215,13 @@ UInt32 pyKeyMap::GetBindingFlags1(UInt32 code)
         if ( keymap )
         {
             plKeyCombo key = keymap->GetKey1();
-            return (UInt32)(key.fFlags);
+            return (uint32_t)(key.fFlags);
         }
     }
     return 0;
 }
 
-UInt32 pyKeyMap::GetBindingKey2(UInt32 code)
-{
-    if( plInputInterfaceMgr::GetInstance() != nil )
-    {
-        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
-        if ( keymap )
-        {
-            plKeyCombo key = keymap->GetKey2();
-            return (UInt32)(key.fKey);
-        }
-    }
-    return 0;
-}
-
-UInt32 pyKeyMap::GetBindingFlags2(UInt32 code)
+uint32_t pyKeyMap::GetBindingKey2(uint32_t code)
 {
     if( plInputInterfaceMgr::GetInstance() != nil )
     {
@@ -243,13 +229,27 @@ UInt32 pyKeyMap::GetBindingFlags2(UInt32 code)
         if ( keymap )
         {
             plKeyCombo key = keymap->GetKey2();
-            return (UInt32)(key.fFlags);
+            return (uint32_t)(key.fKey);
         }
     }
     return 0;
 }
 
-UInt32 pyKeyMap::GetBindingKeyConsole(const char* command)
+uint32_t pyKeyMap::GetBindingFlags2(uint32_t code)
+{
+    if( plInputInterfaceMgr::GetInstance() != nil )
+    {
+        const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBinding((ControlEventCode)code);
+        if ( keymap )
+        {
+            plKeyCombo key = keymap->GetKey2();
+            return (uint32_t)(key.fFlags);
+        }
+    }
+    return 0;
+}
+
+uint32_t pyKeyMap::GetBindingKeyConsole(const char* command)
 {
     if( plInputInterfaceMgr::GetInstance() != nil )
     {
@@ -257,13 +257,13 @@ UInt32 pyKeyMap::GetBindingKeyConsole(const char* command)
         if ( keymap )
         {
             plKeyCombo key = keymap->GetKey1();
-            return (UInt32)(key.fKey);
+            return (uint32_t)(key.fKey);
         }
     }
     return 0;
 }
 
-UInt32 pyKeyMap::GetBindingFlagsConsole(const char* command)
+uint32_t pyKeyMap::GetBindingFlagsConsole(const char* command)
 {
     if( plInputInterfaceMgr::GetInstance() != nil )
     {
@@ -271,7 +271,7 @@ UInt32 pyKeyMap::GetBindingFlagsConsole(const char* command)
         if ( keymap )
         {
             plKeyCombo key = keymap->GetKey1();
-            return (UInt32)(key.fFlags);
+            return (uint32_t)(key.fFlags);
         }
     }
     return 0;

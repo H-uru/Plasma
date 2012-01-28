@@ -363,9 +363,9 @@ hsBool plClickDragComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     plSceneObject *obj = node->GetSceneObject();
 
     // do the same thing for axis animation controllers.
-    plAxisAnimModifier* pAxis = TRACKED_NEW plAxisAnimModifier;
+    plAxisAnimModifier* pAxis = new plAxisAnimModifier;
     plKey axisKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pAxis, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(axisKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(axisKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     logic->AddNotifyReceiver(axisKey);
     
     fAxisKeys[node] = axisKey;
@@ -384,11 +384,11 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
         // Create the detector
     plDetectorModifier *detector = nil;
-    detector = TRACKED_NEW plPickingDetector;
+    detector = new plPickingDetector;
 
     // Register the detector
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     // set up the axis anim controller
     
@@ -405,7 +405,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pAxis->GetNotify()->AddReceiver(receivers[i]);
 
     pAxis->SetNotificationKey(logicKey);
-    UInt32 count = node->NumAttachedComponents();
+    uint32_t count = node->NumAttachedComponents();
     hsBool bHasAnim = false;
     plAnimComponentBase* pAnim = nil;
 
@@ -437,17 +437,17 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pAxis->SetAllOrNothing(fCompPB->GetInt(kClickDragAllOrNothing));
 
         // add callbacks for beginning and end of animation
-        plEventCallbackMsg* pCall1 = TRACKED_NEW plEventCallbackMsg;
+        plEventCallbackMsg* pCall1 = new plEventCallbackMsg;
         pCall1->fEvent = kBegin;
         pCall1->fRepeats = -1;
         pCall1->AddReceiver(axisKey);
         
-        plEventCallbackMsg* pCall2 = TRACKED_NEW plEventCallbackMsg;
+        plEventCallbackMsg* pCall2 = new plEventCallbackMsg;
         pCall2->fEvent = kEnd;
         pCall2->fRepeats = -1;
         pCall2->AddReceiver(axisKey);
 
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         const char *tempAnimName = pAnim->GetAnimName();
         if (tempAnimName == nil)
         {
@@ -484,9 +484,9 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         
         // verify that there is a physical proxy attached to this scene object:
-        UInt32 count = ((plMaxNodeBase*)pProxyNode)->NumAttachedComponents();
+        uint32_t count = ((plMaxNodeBase*)pProxyNode)->NumAttachedComponents();
         hsBool bHasPhys = false;
-//      for (UInt32 i = 0; i < count; i++)
+//      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyNode)->GetAttachedComponent(i);
         //          if (comp->ClassID() == Class_ID(0x11e81ee4, 0x36b81450))
@@ -504,11 +504,11 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
         if(pProxyNode->CanConvert())
         {
-            det2 = TRACKED_NEW plPickingDetector;
+            det2 = new plPickingDetector;
             // Register the detector
             det2Key = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), det2, loc);
-            hsgResMgr::ResMgr()->AddViaNotify(det2Key, TRACKED_NEW plObjRefMsg(((plMaxNode*)pProxyNode)->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-            hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg( det2Key, plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(det2Key, new plObjRefMsg(((plMaxNode*)pProxyNode)->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg( det2Key, plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
             det2->SetProxyKey(node->GetSceneObject()->GetKey());
         }
         else
@@ -523,7 +523,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 
     // create and register the CONDITIONS for the DETECTOR's Logic Modifier
-    plActivatorConditionalObject* activatorCond = TRACKED_NEW plActivatorConditionalObject;
+    plActivatorConditionalObject* activatorCond = new plActivatorConditionalObject;
     plKey activatorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), activatorCond, loc);
 
     // do we have a required region?
@@ -531,9 +531,9 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (pProxyRegNode)
     {
         // verify that there is a physical detector attached to this scene object:
-        UInt32 count = ((plMaxNodeBase*)pProxyRegNode)->NumAttachedComponents();
+        uint32_t count = ((plMaxNodeBase*)pProxyRegNode)->NumAttachedComponents();
         hsBool bHasPhys = false;
-//      for (UInt32 i = 0; i < count; i++)
+//      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyRegNode)->GetAttachedComponent(i);
         //          if (comp->ClassID() == Class_ID(0x33b60376, 0x7e5163e0))
@@ -553,12 +553,12 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             // need a player in box condition here...
             // first a detector-any for the box
-            plObjectInVolumeDetector* pCDet = TRACKED_NEW plObjectInVolumeDetector(plCollisionDetector::kTypeAny);
+            plObjectInVolumeDetector* pCDet = new plObjectInVolumeDetector(plCollisionDetector::kTypeAny);
             plKey cDetKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pCDet, loc);
-            hsgResMgr::ResMgr()->AddViaNotify(cDetKey, TRACKED_NEW plObjRefMsg(((plMaxNode*)pProxyRegNode)->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(cDetKey, new plObjRefMsg(((plMaxNode*)pProxyRegNode)->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
             pCDet->AddLogicObj(logicKey);
             // then an object-in-box condition for the logic mod
-            plObjectInBoxConditionalObject* boxCond = TRACKED_NEW plObjectInBoxConditionalObject;
+            plObjectInBoxConditionalObject* boxCond = new plObjectInBoxConditionalObject;
             plKey boxCondKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), boxCond, loc);
             logic->AddCondition(boxCond);
         }
@@ -578,13 +578,13 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 
     // How do we feel about player facing
-    plFacingConditionalObject* facingCond = TRACKED_NEW plFacingConditionalObject;
+    plFacingConditionalObject* facingCond = new plFacingConditionalObject;
     facingCond->SetDirectional(fCompPB->GetInt(kClickDragDirectional));
     int deg = fCompPB->GetInt(kClickDragDegrees);
     if (deg > 180)
         deg = 180;
-    hsScalar rad = hsScalarDegToRad(deg);
-    facingCond->SetTolerance(hsCosine(rad));
+    float rad = hsDegreesToRadians(deg);
+    facingCond->SetTolerance(cos(rad));
     plKey facingKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), facingCond, loc);
     
     

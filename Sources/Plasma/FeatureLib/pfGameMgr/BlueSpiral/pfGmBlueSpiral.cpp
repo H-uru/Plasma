@@ -203,7 +203,7 @@ pfGmBlueSpiral::pfGmBlueSpiral (
 //============================================================================
 pfGmBlueSpiral::~pfGmBlueSpiral () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -269,7 +269,7 @@ void pfGmBlueSpiral::HitCloth (int clothNum) {
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.clothNum        = (byte)clothNum;
+    msg.clothNum        = (uint8_t)clothNum;
 
     GameMgrSend(&msg);
 }

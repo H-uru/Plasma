@@ -34,7 +34,8 @@ work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
  or by snail mail at:
-      Cyan Worlds, Inc.
+      Cyan Worlds, I
+      nc.
       14617 N Newport Hwy
       Mead, WA   99021
 
@@ -44,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
+#include <math.h>
 
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
@@ -91,75 +93,6 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
 }
 
 
-
-#if 0
-
-hsMatrix44& hsMatrix44::Reset()
-{
-    for(int i = 0; i < 4; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            fMap[i][j] = (i==j) ? hsScalar1 : 0;
-        }
-    }
-    return *this;
-}
-#endif
-
-#if 0 // Havok reeks
-hsMatrix44 operator*(const hsMatrix44& a, const hsMatrix44& b)
-{
-    hsMatrix44 c;
-
-    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
-    {
-        c.Reset();
-        return c;
-    }
-
-    if( a.fFlags & hsMatrix44::kIsIdent )
-        return b;
-    if( b.fFlags & hsMatrix44::kIsIdent )
-        return a;
-
-    c.fMap[0][0] = hsScalarMul(a.fMap[0][0], b.fMap[0][0]) + hsScalarMul(a.fMap[0][1], b.fMap[1][0]) + hsScalarMul(a.fMap[0][2], b.fMap[2][0]) + hsScalarMul(a.fMap[0][3], b.fMap[3][0]);
-    c.fMap[0][1] = hsScalarMul(a.fMap[0][0], b.fMap[0][1]) + hsScalarMul(a.fMap[0][1], b.fMap[1][1]) + hsScalarMul(a.fMap[0][2], b.fMap[2][1]) + hsScalarMul(a.fMap[0][3], b.fMap[3][1]);
-    c.fMap[0][2] = hsScalarMul(a.fMap[0][0], b.fMap[0][2]) + hsScalarMul(a.fMap[0][1], b.fMap[1][2]) + hsScalarMul(a.fMap[0][2], b.fMap[2][2]) + hsScalarMul(a.fMap[0][3], b.fMap[3][2]);
-    c.fMap[0][3] = hsScalarMul(a.fMap[0][0], b.fMap[0][3]) + hsScalarMul(a.fMap[0][1], b.fMap[1][3]) + hsScalarMul(a.fMap[0][2], b.fMap[2][3]) + hsScalarMul(a.fMap[0][3], b.fMap[3][3]);
-
-    c.fMap[1][0] = hsScalarMul(a.fMap[1][0], b.fMap[0][0]) + hsScalarMul(a.fMap[1][1], b.fMap[1][0]) + hsScalarMul(a.fMap[1][2], b.fMap[2][0]) + hsScalarMul(a.fMap[1][3], b.fMap[3][0]);
-    c.fMap[1][1] = hsScalarMul(a.fMap[1][0], b.fMap[0][1]) + hsScalarMul(a.fMap[1][1], b.fMap[1][1]) + hsScalarMul(a.fMap[1][2], b.fMap[2][1]) + hsScalarMul(a.fMap[1][3], b.fMap[3][1]);
-    c.fMap[1][2] = hsScalarMul(a.fMap[1][0], b.fMap[0][2]) + hsScalarMul(a.fMap[1][1], b.fMap[1][2]) + hsScalarMul(a.fMap[1][2], b.fMap[2][2]) + hsScalarMul(a.fMap[1][3], b.fMap[3][2]);
-    c.fMap[1][3] = hsScalarMul(a.fMap[1][0], b.fMap[0][3]) + hsScalarMul(a.fMap[1][1], b.fMap[1][3]) + hsScalarMul(a.fMap[1][2], b.fMap[2][3]) + hsScalarMul(a.fMap[1][3], b.fMap[3][3]);
-    
-    c.fMap[2][0] = hsScalarMul(a.fMap[2][0], b.fMap[0][0]) + hsScalarMul(a.fMap[2][1], b.fMap[1][0]) + hsScalarMul(a.fMap[2][2], b.fMap[2][0]) + hsScalarMul(a.fMap[2][3], b.fMap[3][0]);
-    c.fMap[2][1] = hsScalarMul(a.fMap[2][0], b.fMap[0][1]) + hsScalarMul(a.fMap[2][1], b.fMap[1][1]) + hsScalarMul(a.fMap[2][2], b.fMap[2][1]) + hsScalarMul(a.fMap[2][3], b.fMap[3][1]);
-    c.fMap[2][2] = hsScalarMul(a.fMap[2][0], b.fMap[0][2]) + hsScalarMul(a.fMap[2][1], b.fMap[1][2]) + hsScalarMul(a.fMap[2][2], b.fMap[2][2]) + hsScalarMul(a.fMap[2][3], b.fMap[3][2]);
-    c.fMap[2][3] = hsScalarMul(a.fMap[2][0], b.fMap[0][3]) + hsScalarMul(a.fMap[2][1], b.fMap[1][3]) + hsScalarMul(a.fMap[2][2], b.fMap[2][3]) + hsScalarMul(a.fMap[2][3], b.fMap[3][3]);
-    
-    c.fMap[3][0] = hsScalarMul(a.fMap[3][0], b.fMap[0][0]) + hsScalarMul(a.fMap[3][1], b.fMap[1][0]) + hsScalarMul(a.fMap[3][2], b.fMap[2][0]) + hsScalarMul(a.fMap[3][3], b.fMap[3][0]);
-    c.fMap[3][1] = hsScalarMul(a.fMap[3][0], b.fMap[0][1]) + hsScalarMul(a.fMap[3][1], b.fMap[1][1]) + hsScalarMul(a.fMap[3][2], b.fMap[2][1]) + hsScalarMul(a.fMap[3][3], b.fMap[3][1]);
-    c.fMap[3][2] = hsScalarMul(a.fMap[3][0], b.fMap[0][2]) + hsScalarMul(a.fMap[3][1], b.fMap[1][2]) + hsScalarMul(a.fMap[3][2], b.fMap[2][2]) + hsScalarMul(a.fMap[3][3], b.fMap[3][2]);
-    c.fMap[3][3] = hsScalarMul(a.fMap[3][0], b.fMap[0][3]) + hsScalarMul(a.fMap[3][1], b.fMap[1][3]) + hsScalarMul(a.fMap[3][2], b.fMap[2][3]) + hsScalarMul(a.fMap[3][3], b.fMap[3][3]);
-
-    return c;
-}
-
-hsVector3 operator*(const hsMatrix44& m, const hsVector3& p)
-{   
-    if( m.fFlags & hsMatrix44::kIsIdent )
-        return p;
-
-    hsVector3 rVal;
-
-    rVal.fX = hsScalarMul(p.fX, m.fMap[0][0]) + hsScalarMul(p.fY, m.fMap[0][1]) + hsScalarMul(p.fZ, m.fMap[0][2]);
-    rVal.fY = hsScalarMul(p.fX, m.fMap[1][0]) + hsScalarMul(p.fY, m.fMap[1][1]) + hsScalarMul(p.fZ, m.fMap[1][2]);
-    rVal.fZ = hsScalarMul(p.fX, m.fMap[2][0]) + hsScalarMul(p.fY, m.fMap[2][1]) + hsScalarMul(p.fZ, m.fMap[2][2]);
-
-    return rVal;
-}
-#else // Havok reeks
 hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
 {
     hsMatrix44 c;
@@ -175,25 +108,25 @@ hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
     if( b.fFlags & hsMatrix44::kIsIdent )
         return *this;
 
-    c.fMap[0][0] = hsScalarMul(fMap[0][0], b.fMap[0][0]) + hsScalarMul(fMap[0][1], b.fMap[1][0]) + hsScalarMul(fMap[0][2], b.fMap[2][0]) + hsScalarMul(fMap[0][3], b.fMap[3][0]);
-    c.fMap[0][1] = hsScalarMul(fMap[0][0], b.fMap[0][1]) + hsScalarMul(fMap[0][1], b.fMap[1][1]) + hsScalarMul(fMap[0][2], b.fMap[2][1]) + hsScalarMul(fMap[0][3], b.fMap[3][1]);
-    c.fMap[0][2] = hsScalarMul(fMap[0][0], b.fMap[0][2]) + hsScalarMul(fMap[0][1], b.fMap[1][2]) + hsScalarMul(fMap[0][2], b.fMap[2][2]) + hsScalarMul(fMap[0][3], b.fMap[3][2]);
-    c.fMap[0][3] = hsScalarMul(fMap[0][0], b.fMap[0][3]) + hsScalarMul(fMap[0][1], b.fMap[1][3]) + hsScalarMul(fMap[0][2], b.fMap[2][3]) + hsScalarMul(fMap[0][3], b.fMap[3][3]);
+    c.fMap[0][0] = (fMap[0][0] * b.fMap[0][0]) + (fMap[0][1] * b.fMap[1][0]) + (fMap[0][2] * b.fMap[2][0]) + (fMap[0][3] * b.fMap[3][0]);
+    c.fMap[0][1] = (fMap[0][0] * b.fMap[0][1]) + (fMap[0][1] * b.fMap[1][1]) + (fMap[0][2] * b.fMap[2][1]) + (fMap[0][3] * b.fMap[3][1]);
+    c.fMap[0][2] = (fMap[0][0] * b.fMap[0][2]) + (fMap[0][1] * b.fMap[1][2]) + (fMap[0][2] * b.fMap[2][2]) + (fMap[0][3] * b.fMap[3][2]);
+    c.fMap[0][3] = (fMap[0][0] * b.fMap[0][3]) + (fMap[0][1] * b.fMap[1][3]) + (fMap[0][2] * b.fMap[2][3]) + (fMap[0][3] * b.fMap[3][3]);
 
-    c.fMap[1][0] = hsScalarMul(fMap[1][0], b.fMap[0][0]) + hsScalarMul(fMap[1][1], b.fMap[1][0]) + hsScalarMul(fMap[1][2], b.fMap[2][0]) + hsScalarMul(fMap[1][3], b.fMap[3][0]);
-    c.fMap[1][1] = hsScalarMul(fMap[1][0], b.fMap[0][1]) + hsScalarMul(fMap[1][1], b.fMap[1][1]) + hsScalarMul(fMap[1][2], b.fMap[2][1]) + hsScalarMul(fMap[1][3], b.fMap[3][1]);
-    c.fMap[1][2] = hsScalarMul(fMap[1][0], b.fMap[0][2]) + hsScalarMul(fMap[1][1], b.fMap[1][2]) + hsScalarMul(fMap[1][2], b.fMap[2][2]) + hsScalarMul(fMap[1][3], b.fMap[3][2]);
-    c.fMap[1][3] = hsScalarMul(fMap[1][0], b.fMap[0][3]) + hsScalarMul(fMap[1][1], b.fMap[1][3]) + hsScalarMul(fMap[1][2], b.fMap[2][3]) + hsScalarMul(fMap[1][3], b.fMap[3][3]);
+    c.fMap[1][0] = (fMap[1][0] * b.fMap[0][0]) + (fMap[1][1] * b.fMap[1][0]) + (fMap[1][2] * b.fMap[2][0]) + (fMap[1][3] * b.fMap[3][0]);
+    c.fMap[1][1] = (fMap[1][0] * b.fMap[0][1]) + (fMap[1][1] * b.fMap[1][1]) + (fMap[1][2] * b.fMap[2][1]) + (fMap[1][3] * b.fMap[3][1]);
+    c.fMap[1][2] = (fMap[1][0] * b.fMap[0][2]) + (fMap[1][1] * b.fMap[1][2]) + (fMap[1][2] * b.fMap[2][2]) + (fMap[1][3] * b.fMap[3][2]);
+    c.fMap[1][3] = (fMap[1][0] * b.fMap[0][3]) + (fMap[1][1] * b.fMap[1][3]) + (fMap[1][2] * b.fMap[2][3]) + (fMap[1][3] * b.fMap[3][3]);
     
-    c.fMap[2][0] = hsScalarMul(fMap[2][0], b.fMap[0][0]) + hsScalarMul(fMap[2][1], b.fMap[1][0]) + hsScalarMul(fMap[2][2], b.fMap[2][0]) + hsScalarMul(fMap[2][3], b.fMap[3][0]);
-    c.fMap[2][1] = hsScalarMul(fMap[2][0], b.fMap[0][1]) + hsScalarMul(fMap[2][1], b.fMap[1][1]) + hsScalarMul(fMap[2][2], b.fMap[2][1]) + hsScalarMul(fMap[2][3], b.fMap[3][1]);
-    c.fMap[2][2] = hsScalarMul(fMap[2][0], b.fMap[0][2]) + hsScalarMul(fMap[2][1], b.fMap[1][2]) + hsScalarMul(fMap[2][2], b.fMap[2][2]) + hsScalarMul(fMap[2][3], b.fMap[3][2]);
-    c.fMap[2][3] = hsScalarMul(fMap[2][0], b.fMap[0][3]) + hsScalarMul(fMap[2][1], b.fMap[1][3]) + hsScalarMul(fMap[2][2], b.fMap[2][3]) + hsScalarMul(fMap[2][3], b.fMap[3][3]);
+    c.fMap[2][0] = (fMap[2][0] * b.fMap[0][0]) + (fMap[2][1] * b.fMap[1][0]) + (fMap[2][2] * b.fMap[2][0]) + (fMap[2][3] * b.fMap[3][0]);
+    c.fMap[2][1] = (fMap[2][0] * b.fMap[0][1]) + (fMap[2][1] * b.fMap[1][1]) + (fMap[2][2] * b.fMap[2][1]) + (fMap[2][3] * b.fMap[3][1]);
+    c.fMap[2][2] = (fMap[2][0] * b.fMap[0][2]) + (fMap[2][1] * b.fMap[1][2]) + (fMap[2][2] * b.fMap[2][2]) + (fMap[2][3] * b.fMap[3][2]);
+    c.fMap[2][3] = (fMap[2][0] * b.fMap[0][3]) + (fMap[2][1] * b.fMap[1][3]) + (fMap[2][2] * b.fMap[2][3]) + (fMap[2][3] * b.fMap[3][3]);
     
-    c.fMap[3][0] = hsScalarMul(fMap[3][0], b.fMap[0][0]) + hsScalarMul(fMap[3][1], b.fMap[1][0]) + hsScalarMul(fMap[3][2], b.fMap[2][0]) + hsScalarMul(fMap[3][3], b.fMap[3][0]);
-    c.fMap[3][1] = hsScalarMul(fMap[3][0], b.fMap[0][1]) + hsScalarMul(fMap[3][1], b.fMap[1][1]) + hsScalarMul(fMap[3][2], b.fMap[2][1]) + hsScalarMul(fMap[3][3], b.fMap[3][1]);
-    c.fMap[3][2] = hsScalarMul(fMap[3][0], b.fMap[0][2]) + hsScalarMul(fMap[3][1], b.fMap[1][2]) + hsScalarMul(fMap[3][2], b.fMap[2][2]) + hsScalarMul(fMap[3][3], b.fMap[3][2]);
-    c.fMap[3][3] = hsScalarMul(fMap[3][0], b.fMap[0][3]) + hsScalarMul(fMap[3][1], b.fMap[1][3]) + hsScalarMul(fMap[3][2], b.fMap[2][3]) + hsScalarMul(fMap[3][3], b.fMap[3][3]);
+    c.fMap[3][0] = (fMap[3][0] * b.fMap[0][0]) + (fMap[3][1] * b.fMap[1][0]) + (fMap[3][2] * b.fMap[2][0]) + (fMap[3][3] * b.fMap[3][0]);
+    c.fMap[3][1] = (fMap[3][0] * b.fMap[0][1]) + (fMap[3][1] * b.fMap[1][1]) + (fMap[3][2] * b.fMap[2][1]) + (fMap[3][3] * b.fMap[3][1]);
+    c.fMap[3][2] = (fMap[3][0] * b.fMap[0][2]) + (fMap[3][1] * b.fMap[1][2]) + (fMap[3][2] * b.fMap[2][2]) + (fMap[3][3] * b.fMap[3][2]);
+    c.fMap[3][3] = (fMap[3][0] * b.fMap[0][3]) + (fMap[3][1] * b.fMap[1][3]) + (fMap[3][2] * b.fMap[2][3]) + (fMap[3][3] * b.fMap[3][3]);
 
     return c;
 }
@@ -205,34 +138,13 @@ hsVector3 hsMatrix44::operator*(const hsVector3& p) const
 
     hsVector3 rVal;
 
-    rVal.fX = hsScalarMul(p.fX, fMap[0][0]) + hsScalarMul(p.fY, fMap[0][1]) + hsScalarMul(p.fZ, fMap[0][2]);
-    rVal.fY = hsScalarMul(p.fX, fMap[1][0]) + hsScalarMul(p.fY, fMap[1][1]) + hsScalarMul(p.fZ, fMap[1][2]);
-    rVal.fZ = hsScalarMul(p.fX, fMap[2][0]) + hsScalarMul(p.fY, fMap[2][1]) + hsScalarMul(p.fZ, fMap[2][2]);
+    rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]);
+    rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]);
+    rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]);
 
     return rVal;
 }
-#endif // Havok reeks
 
-#if 0 // Havok reeks
-int operator==(const hsMatrix44& s, const hsMatrix44& t)
-{
-    if( s.fFlags & t.fFlags & hsMatrix44::kIsIdent )
-    {
-        return true;
-    }
-
-    for(int i = 0; i < 4; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            if (s.fMap[i][j] != t.fMap[i][j])
-                return false;
-        }
-    }
-
-    return true;
-}
-#else // Havok reeks
 int hsMatrix44::operator==(const hsMatrix44& ss) const
 {
     if( ss.fFlags & fFlags & hsMatrix44::kIsIdent )
@@ -251,7 +163,6 @@ int hsMatrix44::operator==(const hsMatrix44& ss) const
 
     return true;
 }
-#endif // Havok reeks
 
 hsMatrix44& hsMatrix44::Scale(const hsVector3* scale)
 {
@@ -315,7 +226,7 @@ hsMatrix44& hsMatrix44::SetTranslate(const hsScalarTriple* pt)
     NotIdentity();
     return *this;
 }
-hsMatrix44&     hsMatrix44::MakeRotateMat(int axis, hsScalar radians)
+hsMatrix44&     hsMatrix44::MakeRotateMat(int axis, float radians)
 {
     Reset();
     SetRotate(axis, radians);
@@ -323,7 +234,7 @@ hsMatrix44&     hsMatrix44::MakeRotateMat(int axis, hsScalar radians)
     return *this;
 }
 
-hsMatrix44&     hsMatrix44::Rotate(int axis, hsScalar radians)
+hsMatrix44&     hsMatrix44::Rotate(int axis, float radians)
 {
     hsMatrix44 rMat;
     rMat.MakeRotateMat(axis, radians);
@@ -331,10 +242,10 @@ hsMatrix44&     hsMatrix44::Rotate(int axis, hsScalar radians)
     return *this;
 }
 
-hsMatrix44&     hsMatrix44::SetRotate(int axis, hsScalar radians)
+hsMatrix44&     hsMatrix44::SetRotate(int axis, float radians)
 {
-    hsScalar s = hsSine(radians);
-    hsScalar c = hsCosine(radians);
+    float s = sin(radians);
+    float c = cos(radians);
     int c1,c2;
     switch (axis)
     {
@@ -361,11 +272,11 @@ hsMatrix44&     hsMatrix44::SetRotate(int axis, hsScalar radians)
     return *this;
 }
 
-void hsMatrix44::MakeXRotation(hsScalar radians)
+void hsMatrix44::MakeXRotation(float radians)
 {
     Reset();
-    hsScalar s = hsSine(radians);
-    hsScalar c = hsCosine(radians);
+    float s = sin(radians);
+    float c = cos(radians);
 
     fMap[1][1] = c;
     fMap[2][2] = c;
@@ -374,11 +285,11 @@ void hsMatrix44::MakeXRotation(hsScalar radians)
     NotIdentity();
 }
 
-void hsMatrix44::MakeYRotation(hsScalar radians)
+void hsMatrix44::MakeYRotation(float radians)
 {
     Reset();
-    hsScalar s = hsSine(radians);
-    hsScalar c = hsCosine(radians);
+    float s = sin(radians);
+    float c = cos(radians);
     fMap[0][0] = c;
     fMap[2][2] = c;
     fMap[0][2] = -s;
@@ -386,11 +297,11 @@ void hsMatrix44::MakeYRotation(hsScalar radians)
     NotIdentity();
 }
 
-void hsMatrix44::MakeZRotation(hsScalar radians)
+void hsMatrix44::MakeZRotation(float radians)
 {
     Reset();
-    hsScalar s = hsSine(radians);
-    hsScalar c = hsCosine(radians);
+    float s = sin(radians);
+    float c = cos(radians);
     fMap[0][0] = c;
     fMap[1][1] = c;
     fMap[0][1] = s;
@@ -630,14 +541,14 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
 
 ///////////////////////////////////////////////////////
 
-static hsScalar GetDeterminant33(const hsMatrix44* mat)
+static float GetDeterminant33(const hsMatrix44* mat)
 {
-    return  hsScalarMul(hsScalarMul(mat->fMap[0][0], mat->fMap[1][1]), mat->fMap[2][2]) +
-            hsScalarMul(hsScalarMul(mat->fMap[0][1], mat->fMap[1][2]), mat->fMap[2][0]) +
-            hsScalarMul(hsScalarMul(mat->fMap[0][2], mat->fMap[1][0]), mat->fMap[2][1]) -
-            hsScalarMul(hsScalarMul(mat->fMap[0][2], mat->fMap[1][1]), mat->fMap[2][0]) -
-            hsScalarMul(hsScalarMul(mat->fMap[0][1], mat->fMap[1][0]), mat->fMap[2][2]) -
-            hsScalarMul(hsScalarMul(mat->fMap[0][0], mat->fMap[1][2]), mat->fMap[2][1]);
+    return  ((mat->fMap[0][0] * mat->fMap[1][1]) * mat->fMap[2][2]) +
+            ((mat->fMap[0][1] * mat->fMap[1][2]) * mat->fMap[2][0]) +
+            ((mat->fMap[0][2] * mat->fMap[1][0]) * mat->fMap[2][1]) -
+            ((mat->fMap[0][2] * mat->fMap[1][1]) * mat->fMap[2][0]) -
+            ((mat->fMap[0][1] * mat->fMap[1][0]) * mat->fMap[2][2]) -
+            ((mat->fMap[0][0] * mat->fMap[1][2]) * mat->fMap[2][1]);
 }
 
 hsMatrix44* hsMatrix44::GetTranspose(hsMatrix44* transp) const
@@ -649,21 +560,21 @@ hsMatrix44* hsMatrix44::GetTranspose(hsMatrix44* transp) const
 }
 
 
-static inline hsScalar Determinant2(hsScalar a, hsScalar b,hsScalar c, hsScalar d)
+static inline float Determinant2(float a, float b,float c, float d)
 {
-    return hsScalarMul(a,d) - hsScalarMul(c,b);
+    return (a * d) - (c * b);
 }
 
-static inline hsScalar Determinant3(hsScalar a, hsScalar b, hsScalar c,
-                       hsScalar d, hsScalar e, hsScalar f,
-                       hsScalar g, hsScalar h, hsScalar i)
+static inline float Determinant3(float a, float b, float c,
+                       float d, float e, float f,
+                       float g, float h, float i)
 {
-    return hsScalarMul(a, Determinant2(e, f, h, i))
-        -  hsScalarMul(b, Determinant2(d, f, g, i))
-        +  hsScalarMul(c, Determinant2(d, e, g, h));
+    return (a * Determinant2(e, f, h, i))
+        -  (b * Determinant2(d, f, g, i))
+        +  (c * Determinant2(d, e, g, h));
 }
 
-hsScalar hsMatrix44::GetDeterminant() const
+float hsMatrix44::GetDeterminant() const
 {
     return (fMap[0][0]*Determinant3(fMap[1][1], fMap[2][1], fMap[3][1],
                                       fMap[1][2], fMap[2][2], fMap[3][2],
@@ -753,7 +664,7 @@ hsMatrix44 *hsMatrix44::GetAdjoint(hsMatrix44 *adj) const
 
 hsMatrix44* hsMatrix44::GetInverse(hsMatrix44* inverse) const
 {
-    hsScalar det = GetDeterminant();
+    float det = GetDeterminant();
     int i,j;
 
     if (det == 0.0f)
@@ -762,7 +673,7 @@ hsMatrix44* hsMatrix44::GetInverse(hsMatrix44* inverse) const
         return inverse;
     }
 
-    det = hsScalarInvert(det);
+    det = hsInvert(det);
     GetAdjoint(inverse);
 
     for (i=0; i<4; i++)
@@ -840,7 +751,7 @@ hsBool hsMatrix44::IsIdentity(void)
 #if 0 // IDENTITY_CRISIS
             if( i == j)
             {
-                if (fMap[i][j] != hsScalar1) 
+                if (fMap[i][j] != 1.f) 
                 {
                     NotIdentity();
                     retVal = false;
@@ -855,17 +766,17 @@ hsBool hsMatrix44::IsIdentity(void)
                 }
             }
 #else // IDENTITY_CRISIS
-            const hsScalar kEPS = 1.e-5f;
+            const float kEPS = 1.e-5f;
             if( i == j)
             {
-                if( (fMap[i][j] < hsScalar1-kEPS) || (fMap[i][j] > hsScalar1+kEPS) ) 
+                if( (fMap[i][j] < 1.f-kEPS) || (fMap[i][j] > 1.f+kEPS) ) 
                 {
                     NotIdentity();
                     retVal = false;
                 }
                 else
                 {
-                    fMap[i][j] = hsScalar1;
+                    fMap[i][j] = 1.f;
                 }
             }
             else
@@ -909,12 +820,7 @@ void hsMatrix44::Read(hsStream *stream)
         int i,j;
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
-#if HS_SCALAR_IS_FIXED
-                fMap[i][j] = stream->ReadLE32();
-#endif
-#if HS_SCALAR_IS_FLOAT
                 fMap[i][j] = stream->ReadLEFloat();
-#endif
         IsIdentity();
     }
     else
@@ -930,11 +836,6 @@ void hsMatrix44::Write(hsStream *stream)
         int i,j;
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
-#if HS_SCALAR_IS_FIXED
-                stream->WriteLE32(fMap[i][j]);
-#endif
-#if HS_SCALAR_IS_FLOAT
                 stream->WriteLEFloat(fMap[i][j]);         
-#endif
     }
 }

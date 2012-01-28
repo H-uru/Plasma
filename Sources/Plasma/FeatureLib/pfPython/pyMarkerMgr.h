@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"
@@ -68,19 +68,19 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void AddMarker(double x, double y, double z, UInt32 id, bool justCreated);
-    void RemoveMarker(UInt32 id);
+    void AddMarker(double x, double y, double z, uint32_t id, bool justCreated);
+    void RemoveMarker(uint32_t id);
     void RemoveAllMarkers();
 
-    void SetSelectedMarker(UInt32 markerID);
-    UInt32 GetSelectedMarker();
+    void SetSelectedMarker(uint32_t markerID);
+    uint32_t GetSelectedMarker();
     void ClearSelectedMarker();
 
     void SetMarkersRespawn(bool respawn);
     bool GetMarkersRespawn();
 
-    void CaptureQuestMarker(UInt32 id, bool captured); // for QUEST games (no teams)
-    void CaptureTeamMarker(UInt32 id, int team); // for TEAM games (0 = not captured)
+    void CaptureQuestMarker(uint32_t id, bool captured); // for QUEST games (no teams)
+    void CaptureTeamMarker(uint32_t id, int team); // for TEAM games (0 = not captured)
     
     // Shows your markers locally, so you can see where they are
     void ShowMarkersLocal();

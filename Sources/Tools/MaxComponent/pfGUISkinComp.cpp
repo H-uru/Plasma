@@ -199,7 +199,7 @@ void    pfGUISkinEditProc::IRefreshImageBuffer( void )
         {
             SetDIBitsToDevice( fImageDC, 0, 0, fDblWidth, fDblHeight,
                                 0, 0, 0, fDblHeight,
-                                ( (UInt8 *)bitInfo ) + bitInfo->bmiHeader.biSize,
+                                ( (uint8_t *)bitInfo ) + bitInfo->bmiHeader.biSize,
                                 bitInfo,
                                 DIB_RGB_COLORS );
         }
@@ -348,7 +348,7 @@ bool    pfGUISkinEditProc::IPointWithinHorzRange( int x, int y, int ptX1, int pt
     return false;
 }
 
-UInt8   pfGUISkinEditProc::IGetDragTypeFlags( int x, int y )
+uint8_t   pfGUISkinEditProc::IGetDragTypeFlags( int x, int y )
 {
     // Corners
     if( IPointWithinRange( x, y, fCurrElemRect.left, fCurrElemRect.top ) )
@@ -719,7 +719,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             }
             else
             {
-                UInt8 dragType = IGetDragTypeFlags( x, y );
+                uint8_t dragType = IGetDragTypeFlags( x, y );
                 HCURSOR cursor;
                 switch( dragType )
                 {

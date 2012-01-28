@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plPhysical/plSimDefs.h"
 #include "hsBitVector.h"
-#include "hsUtils.h"
+
 
 class NxActor;
 class NxConvexMesh;
@@ -74,12 +74,12 @@ class PhysRecipe
 public:
     PhysRecipe();
 
-    hsScalar mass;
-    hsScalar friction;
-    hsScalar restitution;
+    float mass;
+    float friction;
+    float restitution;
     plSimDefs::Bounds bounds;
     plSimDefs::Group group;
-    UInt32 reportsOn;
+    uint32_t reportsOn;
     plKey objectKey;
     plKey sceneNode;
     plKey worldKey;
@@ -91,7 +91,7 @@ public:
     NxTriangleMesh* triMesh;
 
     // For spheres only
-    hsScalar radius;
+    float radius;
     hsPoint3 offset;
 
     // For Boxes
@@ -151,10 +151,10 @@ public:
 
     virtual int GetGroup() const { return fGroup; }
 
-    virtual void    AddLOSDB(UInt16 flag) { hsSetBits(fLOSDBs, flag); }
-    virtual void    RemoveLOSDB(UInt16 flag) { hsClearBits(fLOSDBs, flag); }
-    virtual UInt16  GetAllLOSDBs() { return fLOSDBs; }
-    virtual hsBool  IsInLOSDB(UInt16 flag) { return hsCheckBits(fLOSDBs, flag); }
+    virtual void    AddLOSDB(uint16_t flag) { hsSetBits(fLOSDBs, flag); }
+    virtual void    RemoveLOSDB(uint16_t flag) { hsClearBits(fLOSDBs, flag); }
+    virtual uint16_t  GetAllLOSDBs() { return fLOSDBs; }
+    virtual hsBool  IsInLOSDB(uint16_t flag) { return hsCheckBits(fLOSDBs, flag); }
 
     virtual hsBool    DoDetectorHullWorkaround() { return fSaveTriangles ? true : false;    }
     virtual hsBool  Should_I_Trigger(hsBool enter, hsPoint3& pos);
@@ -178,7 +178,7 @@ public:
 
     virtual void ExcludeRegionHack(hsBool cleared);
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
     hsBool DoReportOn(plSimDefs::Group group) const { return hsCheckBits(fReportsOn, 1<<group); }
 
@@ -191,7 +191,7 @@ public:
     //this partially for exclude regions vs avatar capsule
     virtual hsBool OverlapWithCapsule(NxCapsule& cap);
 
-    virtual hsScalar GetMass() {return fMass;}
+    virtual float GetMass() {return fMass;}
 protected:
     void IGetPositionSim(hsPoint3& pos) const;
     void IGetRotationSim(hsQuat& rot) const;
@@ -207,7 +207,7 @@ protected:
     //
     /////////////////////////////////////////////////////////////
 
-    void IConvertGroups(UInt32 memberOf, UInt32 reportsOn, UInt32 collideWith);
+    void IConvertGroups(uint32_t memberOf, uint32_t reportsOn, uint32_t collideWith);
 
     /** See if the object is in a valid, non-overlapping position.
         A valid overlap is one which is approved by the collision
@@ -224,7 +224,7 @@ protected:
     /////////////////////////////////////////////////////////////
 
     /** Remember that we need to do a synch soon. */
-    hsBool DirtySynchState(const char* SDLStateName, UInt32 synchFlags );
+    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
 
     double GetLastSyncTime() { return fLastSyncTime; }
 
@@ -243,8 +243,8 @@ protected:
 
     plSimDefs::Bounds fBoundsType;
     plSimDefs::Group fGroup;
-    UInt32 fReportsOn;          // bit vector for groups we report interactions with
-    UInt16 fLOSDBs;             // Which LOS databases we get put into
+    uint32_t fReportsOn;          // bit vector for groups we report interactions with
+    uint16_t fLOSDBs;             // Which LOS databases we get put into
     hsBitVector fProps;         // plSimulationInterface::plSimulationProperties kept here
     float   fMass;
 
@@ -253,13 +253,13 @@ protected:
 
     // PHYSX FIXME - need to create a plasma hull so that we can determine if inside
     hsPlane3* fWorldHull;
-    UInt32    fHullNumberPlanes;
+    uint32_t    fHullNumberPlanes;
     hsPoint3* fSaveTriangles;
     hsBool      fInsideConvexHull;
     void ISetHullToWorldWTriangles();
     inline hsBool ITestPlane(const hsPoint3 &pos, const hsPlane3 &plane)
     {
-        hsScalar dis = plane.fN.InnerProduct(pos);
+        float dis = plane.fN.InnerProduct(pos);
         dis += plane.fD;
         if (dis == 0.f)
             return false;

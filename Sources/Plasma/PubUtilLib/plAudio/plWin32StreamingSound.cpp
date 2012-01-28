@@ -273,7 +273,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     SetProperty( kPropIs3DSound, is3D );
 
     plWAVHeader header = fDataStream->GetHeader();
-    UInt32 bufferSize = (UInt32)(fBufferLengthInSecs * header.fAvgBytesPerSec); 
+    uint32_t bufferSize = (uint32_t)(fBufferLengthInSecs * header.fAvgBytesPerSec); 
 
     // Debug flag #2
     if( is3D && fChannelSelect == 0 && header.fNumChannels > 1 && plgAudioSys::IsDebugFlagSet( plgAudioSys::kDisableLeftSelect ) )
@@ -293,7 +293,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     }
 
     // Actually create the buffer now (always looping)
-    fDSoundBuffer = TRACKED_NEW plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
+    fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
     if( !fDSoundBuffer->IsValid() )
     {
         fDataStream->Close();
@@ -310,7 +310,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
         return false;
     }
 
-    fTotalBytes = (UInt32)bufferSize;
+    fTotalBytes = (uint32_t)bufferSize;
     plProfile_NewMem(MemSounds, fTotalBytes);
 
     plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();      
@@ -364,13 +364,13 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s", fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName() );
 
     // Get pertinent info
-    SetLength( (hsScalar)fDataStream->GetLengthInSecs() );
+    SetLength( (float)fDataStream->GetLengthInSecs() );
 
     // Set up our deswizzler, if necessary
     delete fDeswizzler;
     if( fDataStream->GetHeader().fNumChannels != header.fNumChannels )
-        fDeswizzler = TRACKED_NEW plSoundDeswizzler( (UInt32)(fBufferLengthInSecs * fDataStream->GetHeader().fAvgBytesPerSec), 
-                                             (UInt8)(fDataStream->GetHeader().fNumChannels), 
+        fDeswizzler = new plSoundDeswizzler( (uint32_t)(fBufferLengthInSecs * fDataStream->GetHeader().fAvgBytesPerSec), 
+                                             (uint8_t)(fDataStream->GetHeader().fNumChannels), 
                                              header.fBitsPerSample / 8 );
     else
         fDeswizzler = nil;
@@ -475,7 +475,7 @@ unsigned plWin32StreamingSound::GetByteOffset()
 float plWin32StreamingSound::GetActualTimeSec()
 {
     if(fDataStream && fDSoundBuffer)
-        return fDSoundBuffer->BytePosToMSecs(fDataStream->NumBytesLeft()) / 1000.0f;
+        return fDSoundBuffer->bytePosToMSecs(fDataStream->NumBytesLeft()) / 1000.0f;
     return 0.0f;
 }
 

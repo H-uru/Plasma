@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLLOC_H
 
 #include "HeadSpin.h"
-#include "hsUtils.h"
 
 
 // Values for UOID, such as AGE, District Room
@@ -65,7 +64,7 @@ class plLocFileParser
 public:
     plLocFileParser();
     ~plLocFileParser()              { if (fpFile) fclose(fpFile); fpFile = 0; }
-    void    ThrowBack(char *p,UInt8 lev) { fThrowBack = p; fThrowBackLevel = lev; }
+    void    ThrowBack(char *p,uint8_t lev) { fThrowBack = p; fThrowBackLevel = lev; }
     void    ClearThrowBack()        { fThrowBack = NULL; fThrowBackLevel = 0; }
     bool    ThrowBackAvailable()    { return (fThrowBack == NULL) ? false: true; }
     int NextLine(char **pP); // returns an Allocated string in pP of next valid line, and Level #, or LOC_EOF

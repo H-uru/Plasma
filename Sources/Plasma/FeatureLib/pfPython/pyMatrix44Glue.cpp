@@ -300,7 +300,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, right)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, getData)
 {
-    hsScalar *mat = self->fThis->GetData();
+    float *mat = self->fThis->GetData();
 
     PyObject *retVal = Py_BuildValue("(ffff)(ffff)(ffff)(ffff)",
         mat[0],  mat[1],  mat[2], mat[3],
@@ -320,7 +320,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, getData)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, setData, args)
 {
-    hsScalar mat[4*4];
+    float mat[4*4];
 
     if (!PyArg_ParseTuple(args, "((ffff)(ffff)(ffff)(ffff))", 
         &mat[0], &mat[1], &mat[2], &mat[3], 

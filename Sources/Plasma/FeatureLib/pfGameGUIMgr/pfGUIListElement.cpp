@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIListElement.h"
 #include "pfGameGUIMgr.h"
 
@@ -91,7 +91,7 @@ pfGUIListText::pfGUIListText( const char *text ) : pfGUIListElement( kText )
 
 pfGUIListText::pfGUIListText( const wchar_t *text ) : pfGUIListElement( kText )
 {
-    fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+    fText = new wchar_t[ wcslen( text ) + 1 ];
     wcscpy( fText, text );
     fJustify = kLeftJustify;
 }
@@ -121,7 +121,7 @@ void    pfGUIListText::Write( hsStream *s, hsResMgr *mgr )
     delete [] text;
 }
 
-hsBool  pfGUIListText::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, UInt16 maxWidth, UInt16 maxHeight )
+hsBool  pfGUIListText::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     textGen->SetJustify( (plDynamicTextMap::Justify)fJustify );
     if( fSelected )
@@ -139,7 +139,7 @@ hsBool  pfGUIListText::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, UInt
     return true;
 }
 
-void    pfGUIListText::GetSize( plDynamicTextMap *textGen, UInt16 *width, UInt16 *height )
+void    pfGUIListText::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     *width = textGen->CalcStringWidth( GetText(), height );
     if( height != nil )
@@ -173,7 +173,7 @@ void    pfGUIListText::SetText( const wchar_t *text )
     delete [] fText;
     if( text != nil )
     {
-        fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+        fText = new wchar_t[ wcslen( text ) + 1 ];
         wcscpy( fText, text );
     }
     else
@@ -248,7 +248,7 @@ void    pfGUIListPicture::Write( hsStream *s, hsResMgr *mgr )
 
 }
 
-hsBool  pfGUIListPicture::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, UInt16 maxWidth, UInt16 maxHeight )
+hsBool  pfGUIListPicture::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     if( fSelected )
         textGen->FillRect( x, y, maxWidth, maxHeight, fColors->fSelBackColor );
@@ -265,7 +265,7 @@ hsBool  pfGUIListPicture::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, U
     return true;
 }
 
-void    pfGUIListPicture::GetSize( plDynamicTextMap *textGen, UInt16 *width, UInt16 *height )
+void    pfGUIListPicture::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
     if( mip == nil )
@@ -275,9 +275,9 @@ void    pfGUIListPicture::GetSize( plDynamicTextMap *textGen, UInt16 *width, UIn
             *height = 16;
     }
 
-    *width = (UInt16)(mip->GetWidth() + fBorderSize + fBorderSize);
+    *width = (uint16_t)(mip->GetWidth() + fBorderSize + fBorderSize);
     if( height != nil )
-        *height = (UInt16)(mip->GetHeight() + fBorderSize + fBorderSize);
+        *height = (uint16_t)(mip->GetHeight() + fBorderSize + fBorderSize);
 }
 
 int     pfGUIListPicture::CompareTo( pfGUIListElement *rightSide )
@@ -309,7 +309,7 @@ pfGUIListTreeRoot::pfGUIListTreeRoot( const char *text ) : pfGUIListElement( kTr
 
 pfGUIListTreeRoot::pfGUIListTreeRoot( const wchar_t *text ) : pfGUIListElement( kTreeRoot )
 {
-    fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+    fText = new wchar_t[ wcslen( text ) + 1 ];
     wcscpy( fText, text );
 }
 
@@ -338,7 +338,7 @@ void    pfGUIListTreeRoot::Write( hsStream *s, hsResMgr *mgr )
     delete [] temp;
 }
 
-hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, UInt16 maxWidth, UInt16 maxHeight )
+hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     textGen->SetJustify( plDynamicTextMap::kLeftJustify );
     if( fSelected )
@@ -356,7 +356,7 @@ hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, 
     {
         const pfGUISkin::pfSRect &r = fSkin->GetElement( fShowChildren ? pfGUISkin::kTreeButtonOpen : pfGUISkin::kTreeButtonClosed );
 
-        Int16 e = ( maxHeight - r.fHeight );
+        int16_t e = ( maxHeight - r.fHeight );
         if( e < 0 )
             e = 0;
         e >>= 1;
@@ -369,7 +369,7 @@ hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, 
     return true;
 }
 
-hsBool  pfGUIListTreeRoot::MouseClicked( UInt16 localX, UInt16 localY )
+hsBool  pfGUIListTreeRoot::MouseClicked( uint16_t localX, uint16_t localY )
 {
     if( fSkin != nil )
     {
@@ -388,7 +388,7 @@ hsBool  pfGUIListTreeRoot::MouseClicked( UInt16 localX, UInt16 localY )
     return false;
 }
 
-void    pfGUIListTreeRoot::GetSize( plDynamicTextMap *textGen, UInt16 *width, UInt16 *height )
+void    pfGUIListTreeRoot::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     *width = textGen->CalcStringWidth( GetTitle(), height );
     if( height != nil )
@@ -400,7 +400,7 @@ void    pfGUIListTreeRoot::GetSize( plDynamicTextMap *textGen, UInt16 *width, UI
 
         if( fSkin != nil )
         {
-            UInt16 h = fSkin->GetElement( pfGUISkin::kTreeButtonClosed ).fHeight;
+            uint16_t h = fSkin->GetElement( pfGUISkin::kTreeButtonClosed ).fHeight;
             if( *height < h )
                 *height = h;
         }
@@ -432,7 +432,7 @@ void    pfGUIListTreeRoot::SetTitle( const wchar_t *text )
     delete [] fText;
     if( text != nil )
     {
-        fText = TRACKED_NEW wchar_t[ wcslen( text ) + 1 ];
+        fText = new wchar_t[ wcslen( text ) + 1 ];
         wcscpy( fText, text );
     }
     else
@@ -446,14 +446,14 @@ void    pfGUIListTreeRoot::AddChild( pfGUIListElement *el )
     el->SetCollapsed( !fShowChildren );
 }
 
-void    pfGUIListTreeRoot::RemoveChild( UInt32 idx )
+void    pfGUIListTreeRoot::RemoveChild( uint32_t idx )
 {
     fChildren.Remove( idx );
 }
 
 void    pfGUIListTreeRoot::ShowChildren( hsBool s )
 {
-    UInt32 i;
+    uint32_t i;
 
 
     fShowChildren = s;
@@ -463,7 +463,7 @@ void    pfGUIListTreeRoot::ShowChildren( hsBool s )
 
 void    pfGUIListTreeRoot::SetCollapsed( hsBool c )
 {
-    UInt32 i;
+    uint32_t i;
 
     
     pfGUIListElement::SetCollapsed( c );

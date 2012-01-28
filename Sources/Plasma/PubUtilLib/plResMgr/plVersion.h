@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVersion_h_inc
 #define plVersion_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // RULES:
 // Log your change
@@ -59,14 +59,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plVersion
 {
 public:
-    static UInt16 GetMajorVersion();
-    static UInt16 GetMinorVersion();
+    static uint16_t GetMajorVersion();
+    static uint16_t GetMinorVersion();
 
     // Pass in a creatable index to get its current version.  Zero means it
     // hasn't changed since the last major version change, anything else is the
     // last minor version it changed at.  This takes into account the version of
     // parent classes.
-    static int GetCreatableVersion(UInt16 creatableIndex);
+    static int GetCreatableVersion(uint16_t creatableIndex);
 };
 
 /*  Major Log                           ---Death to those who do not log changes---
@@ -138,7 +138,7 @@ public:
    64  10/28/05 jeff    changed plLocation to handle more pages and plUoid for optimization reasons
    65   2/22/06 bob     animation key rewrite to save space
    66   2/27/06 bob     64-bit quaternion anim keys
-   67   2/28/06 bob     Anims store UInt16 frame numbers, not 32-bit float times.
+   67   2/28/06 bob     Anims store uint16_t frame numbers, not 32-bit float times.
    68   3/03/06 bob     constant anim channels (plMatrixConstant, plScalarConstant had no R/W methods)
    69   5/08/06 bob     changed plVertCoder and hsMatrix44::Read/Write
    70   2/12/07 bob     Merged in several registry/resMangaer fixes

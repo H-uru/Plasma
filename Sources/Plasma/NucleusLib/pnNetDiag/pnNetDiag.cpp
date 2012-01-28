@@ -65,9 +65,9 @@ namespace ND {
 ***/
 
 HMODULE     g_lib;
-//const wchar   g_version[] = L"miasma";
-//const wchar   g_version[] = L"ectomorph";
-const wchar g_version[] = L"solvent";
+//const wchar_t   g_version[] = L"miasma";
+//const wchar_t   g_version[] = L"ectomorph";
+const wchar_t g_version[] = L"solvent";
 
 } // namespace ND
 
@@ -82,15 +82,15 @@ const wchar g_version[] = L"solvent";
 NetDiag::~NetDiag () {
 
     for (unsigned srv = 0; srv < kNumDiagSrvs; ++srv)
-        FREE(hosts[srv]);
+        free(hosts[srv]);
 }
 
 //============================================================================
-void NetDiag::SetHost (unsigned srv, const wchar host[]) {
+void NetDiag::SetHost (unsigned srv, const wchar_t host[]) {
 
     critsect.Enter();
     {       
-        FREE(hosts[srv]);
+        free(hosts[srv]);
         
         if (host)
             hosts[srv] = StrDup(host);
@@ -155,7 +155,7 @@ void NetDiagDelete (NetDiag * diag) {
 void NetDiagSetHost (
     NetDiag *       diag,
     ENetProtocol    protocol,
-    const wchar     host[]
+    const wchar_t     host[]
 ) {
     ASSERT(diag);
     

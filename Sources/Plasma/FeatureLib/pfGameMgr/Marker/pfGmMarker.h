@@ -89,12 +89,12 @@ public:
     void StartGame ();
     void PauseGame ();
     void ResetGame ();
-    void ChangeGameName (const wchar name[]);
+    void ChangeGameName (const wchar_t name[]);
     void ChangeTimeLimit (unsigned long timeLimit);
     void DeleteGame ();
-    void AddMarker (double x, double y, double z, const wchar name[], const wchar age[]);
+    void AddMarker (double x, double y, double z, const wchar_t name[], const wchar_t age[]);
     void DeleteMarker (unsigned long markerID);
-    void ChangeMarkerName (unsigned long markerID, const wchar name[]);
+    void ChangeMarkerName (unsigned long markerID, const wchar_t name[]);
     void CaptureMarker (unsigned long markerID);
     //========================================================================
 };

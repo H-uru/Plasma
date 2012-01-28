@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SIMPLEEXPORT_H
 #define __SIMPLEEXPORT_H
 
-#include "hsWindows.h"
+
 #include "MaxMain/resource.h"
 #include "Max.h"
 #include "HeadSpin.h"
@@ -79,7 +79,7 @@ public:
     const char*         GetName()                   { return fName; }
 
 private:
-    static hsBool       IProgressCallback(hsScalar percent);
+    static hsBool       IProgressCallback(float percent);
     static DWORD WINAPI IProgressDummyFunc(LPVOID arg); 
 
     char                fName[128];
@@ -91,7 +91,7 @@ class HSClassDesc2 : public ClassDesc
 {
 public:
     int             IsPublic() { return 1; }
-    void *          Create(BOOL loading = FALSE) { return TRACKED_NEW HSExport2; }
+    void *          Create(BOOL loading = FALSE) { return new HSExport2; }
     const TCHAR *   ClassName() { return "Plasma 2.0 Scene Exporter"; }
     SClass_ID       SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
 #ifdef HS_DEBUGGING

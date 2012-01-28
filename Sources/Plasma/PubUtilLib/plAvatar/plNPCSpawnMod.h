@@ -65,7 +65,7 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
 
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:

@@ -66,16 +66,16 @@ public:
     ~hsStringTable();
     void Reset();
     Node* Find(const char* str);
-    Node* FindPartial(char* str, Int32 len=0) const;
+    Node* FindPartial(char* str, int32_t len=0) const;
     void Register(const char* str, void* data);
 
     typedef hsBool (hsStringTableCallback)(Node*);
     hsBool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
 private:
     Node* FindRecur(Node* root, const char* str, hsBool createIfNeeded=false);
-    Node* FindPartialRecur(Node* root, char* str, Int32 len) const;
+    Node* FindPartialRecur(Node* root, char* str, int32_t len) const;
     Node* AddRecur(Node* root, const char* str);
-    Node* FindLeafRecur(Node* root, char* str, Int32 len) const;
+    Node* FindLeafRecur(Node* root, char* str, int32_t len) const;
     void RemoveNode(Node* root);
     hsBool IterateRecur(Node* root, hsStringTableCallback* callback);
 

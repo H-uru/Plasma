@@ -110,7 +110,7 @@ plAvatarMgr * plAvatarMgr::GetInstance()
 {
     if(!fInstance)
     {
-        fInstance = TRACKED_NEW plAvatarMgr;
+        fInstance = new plAvatarMgr;
         fInstance->RegisterAs(kAvatarMgr_KEY);
         fInstance->Ref();
     }
@@ -210,7 +210,7 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
         if (loc.IsValid())
         {
             plUoid uID(loc, plSceneObject::Index(), theName);
-            plLoadAvatarMsg *cloneMsg = TRACKED_NEW plLoadAvatarMsg (uID, requestor, 0, isPlayer, spawnPoint, initialTask, userStr);
+            plLoadAvatarMsg *cloneMsg = new plLoadAvatarMsg (uID, requestor, 0, isPlayer, spawnPoint, initialTask, userStr);
             result =  cloneMsg->GetCloneKey();
             
             // the clone message is automatically addressed to the net client manager
@@ -224,7 +224,7 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
 void plAvatarMgr::UnLoadAvatar(plKey avatarKey, bool isPlayer)
 {
     hsBool isLoading = false;
-    plLoadAvatarMsg *msg = TRACKED_NEW plLoadAvatarMsg(avatarKey, GetKey(), 0, isPlayer, isLoading);
+    plLoadAvatarMsg *msg = new plLoadAvatarMsg(avatarKey, GetKey(), 0, isPlayer, isLoading);
     msg->Send();
 }
 
@@ -238,7 +238,7 @@ void plAvatarMgr::PropagateLocalPlayer(int spawnPoint)
         plKey requestor = GetKey();
         bool isPlayer = true;
         hsBool isLoading = true;
-        plLoadAvatarMsg *msg = TRACKED_NEW plLoadAvatarMsg(playerKey, requestor, 0, isPlayer, isLoading);
+        plLoadAvatarMsg *msg = new plLoadAvatarMsg(playerKey, requestor, 0, isPlayer, isLoading);
 
         if (spawnPoint >= 0)
         {
@@ -267,7 +267,7 @@ bool plAvatarMgr::UnPropagateLocalPlayer()
         plKey requestor = GetKey();
         bool isPlayer = true;
         hsBool isLoading = false;
-        plLoadAvatarMsg *msg = TRACKED_NEW plLoadAvatarMsg(playerKey, requestor, 0, isPlayer, isLoading);
+        plLoadAvatarMsg *msg = new plLoadAvatarMsg(playerKey, requestor, 0, isPlayer, isLoading);
         msg->SetBCastFlag(plMessage::kLocalPropagate, false);
         msg->Send();
         return true;
@@ -283,7 +283,7 @@ void plAvatarMgr::UnLoadRemotePlayer(plKey remotePlayer)
         plKey requestor = GetKey();
         bool isPlayer = true;
         hsBool isLoading = false;
-        plLoadAvatarMsg * msg = TRACKED_NEW plLoadAvatarMsg(remotePlayer, requestor, 0, isPlayer, isLoading);
+        plLoadAvatarMsg * msg = new plLoadAvatarMsg(remotePlayer, requestor, 0, isPlayer, isLoading);
 
         // don't propagate over the network. this is just for removing our local version
         msg->SetBCastFlag(plMessage::kNetPropagate, false);
@@ -300,7 +300,7 @@ void plAvatarMgr::UnLoadLocalPlayer()
         plKey mgrKey = GetKey();
         bool isPlayer = true;
         hsBool isLoading = false;
-        plLoadAvatarMsg *msg = TRACKED_NEW plLoadAvatarMsg(playerKey, mgrKey, 0, isPlayer, isLoading);
+        plLoadAvatarMsg *msg = new plLoadAvatarMsg(playerKey, mgrKey, 0, isPlayer, isLoading);
         msg->Send();
     }
 }
@@ -372,8 +372,8 @@ hsBool plAvatarMgr::HandleCoopMsg(plAvCoopMsg *msg)
 {
     plAvCoopMsg::Command cmd = msg->fCommand;
     
-    UInt32 id = msg->fInitiatorID;
-    UInt16 serial = msg->fInitiatorSerial;
+    uint32_t id = msg->fInitiatorID;
+    uint16_t serial = msg->fInitiatorSerial;
 
     if(cmd == plAvCoopMsg::kStartNew)
     {
@@ -407,14 +407,14 @@ hsBool plAvatarMgr::HandleNotifyMsg(plNotifyMsg *msg)
     proCoopEventData *ed = static_cast<proCoopEventData *>(msg->FindEventRecord(proEventData::kCoop));
     if(ed)
     {
-        UInt32 id = ed->fID;
-        UInt16 serial = ed->fSerial;
+        uint32_t id = ed->fID;
+        uint16_t serial = ed->fSerial;
         return IPassMessageToActiveCoop(msg, id, serial);
     }
     return false;
 }
 
-hsBool plAvatarMgr::IPassMessageToActiveCoop(plMessage *msg, UInt32 id, UInt16 serial)
+hsBool plAvatarMgr::IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial)
 {
     plCoopMap::iterator i = fActiveCoops.find(id);
     while(i != fActiveCoops.end() && (*i).first == id)
@@ -471,7 +471,7 @@ void plAvatarMgr::IFinishLoadingAvatar(plLoadAvatarMsg *cloneMsg)
         // *** might want to move this to the human brain so we can make sure the 
         // *** avatar is sufficiently initialized before anyone accesses him
         bool isLocal = cloneMsg->GetOriginatingPlayerID() == plNetClientMgr::GetInstance()->GetPlayerID();
-        plPlayerPageMsg* pageM = TRACKED_NEW plPlayerPageMsg;
+        plPlayerPageMsg* pageM = new plPlayerPageMsg;
         pageM->SetBCastFlag(plMessage::kBCastByExactType);
         pageM->fLocallyOriginated = isLocal;
         pageM->fPlayer = avatarKey;
@@ -482,7 +482,7 @@ void plAvatarMgr::IFinishLoadingAvatar(plLoadAvatarMsg *cloneMsg)
 
     // This can probably be replaced by the plPlayerPageMsg:
     // ...keeping for the moment for compatibility
-    plMemberUpdateMsg* mu = TRACKED_NEW plMemberUpdateMsg;
+    plMemberUpdateMsg* mu = new plMemberUpdateMsg;
     mu->Send();
 }
 
@@ -498,7 +498,7 @@ void plAvatarMgr::IFinishUnloadingAvatar(plLoadAvatarMsg *cloneMsg)
         plKey avatar = cloneMsg->GetCloneKey();
 
         bool isLocal = cloneMsg->GetOriginatingPlayerID() == plNetClientMgr::GetInstance()->GetPlayerID();
-        plPlayerPageMsg *pageM = TRACKED_NEW plPlayerPageMsg;
+        plPlayerPageMsg *pageM = new plPlayerPageMsg;
         pageM->SetBCastFlag(plMessage::kBCastByExactType);
         pageM->fLocallyOriginated = isLocal;
         pageM->fPlayer = avatar;
@@ -510,7 +510,7 @@ void plAvatarMgr::IFinishUnloadingAvatar(plLoadAvatarMsg *cloneMsg)
     }
 
     // check on this...can it be subsumed by plPlayerPageMsg ?
-    plMemberUpdateMsg *mu = TRACKED_NEW plMemberUpdateMsg;
+    plMemberUpdateMsg *mu = new plMemberUpdateMsg;
     mu->Send();
 }
 
@@ -738,7 +738,7 @@ plArmatureMod* plAvatarMgr::FindAvatar(plKey& avatarKey)
     return nil;
 }
 
-plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(UInt32 pid)
+plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(uint32_t pid)
 {
     plAvatarVec::iterator it;
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)
@@ -815,7 +815,7 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
     return -1;
 }
 
-int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
+int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
 {
     plNetTransport &mgr = plNetClientMgr::GetInstance()->TransportMgr();
     plNetTransportMember *mbr = mgr.GetMember(mgr.FindMember(remoteID));
@@ -834,7 +834,7 @@ int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
     if (!localSO)
         return plCCRError::kNilLocalAvatar;
 
-    plWarpMsg *warp = TRACKED_NEW plWarpMsg(nil, (iMove ? localSO->GetKey() : remoteSO->GetKey()), 
+    plWarpMsg *warp = new plWarpMsg(nil, (iMove ? localSO->GetKey() : remoteSO->GetKey()), 
         plWarpMsg::kFlushTransform, (iMove ? remoteSO->GetLocalToWorld() : localSO->GetLocalToWorld()));
     
     warp->SetBCastFlag(plMessage::kNetPropagate);
@@ -843,7 +843,7 @@ int plAvatarMgr::WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z)
+int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
 {
     plSceneObject *localSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
     if (!localSO)
@@ -853,14 +853,14 @@ int plAvatarMgr::WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z)
     hsVector3 v(x, y, z);
     m.SetTranslate(&v);
 
-    plWarpMsg *warp = TRACKED_NEW plWarpMsg(nil, localSO->GetKey(), plWarpMsg::kFlushTransform, m);
+    plWarpMsg *warp = new plWarpMsg(nil, localSO->GetKey(), plWarpMsg::kFlushTransform, m);
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(int pid, hsScalar x, hsScalar y, hsScalar z)
+int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     plNetTransportMember* mbr=nc->TransportMgr().GetMember(nc->TransportMgr().FindMember(pid));
@@ -873,7 +873,7 @@ int plAvatarMgr::WarpPlayerToXYZ(int pid, hsScalar x, hsScalar y, hsScalar z)
     hsVector3 v(x, y, z);
     m.SetTranslate(&v);
 
-    plWarpMsg *warp = TRACKED_NEW plWarpMsg(nil, player->GetKey(), 0, m);
+    plWarpMsg *warp = new plWarpMsg(nil, player->GetKey(), 0, m);
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
@@ -899,7 +899,7 @@ void plAvatarMgr::RemoveMaintainersMarker(plMaintainersMarkerModifier *mm)
 void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
 {
     int count = fMaintainersMarkers.Count();
-    //  plDniCoordinateInfo ret = TRACKED_NEW plDniCoordinateInfo;
+    //  plDniCoordinateInfo ret = new plDniCoordinateInfo;
     if (count > 0)
     {   
 
@@ -962,10 +962,10 @@ void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
                 hsVector3 retVec(pt - retPoint);
                 retVec.Normalize();
 
-                hsScalar dotView = retVec * zeroVec;
-                hsScalar dotRight = retVec * zeroRight;
+                float dotView = retVec * zeroVec;
+                float dotRight = retVec * zeroRight;
 
-                hsScalar deg = acosf(dotView);
+                float deg = acosf(dotView);
                 deg*=(180/3.141592);
                 // account for being > 180
                 if (dotRight < 0.0f) 
@@ -1007,37 +1007,37 @@ void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *lin
         {
 
             // make the host brain
-            plAvBrainCoop * brainH = TRACKED_NEW plAvBrainCoop(plAvBrainGeneric::kExitNormal, 3.0, 3.0, plAvBrainGeneric::kMoveRelative, guestKey);
+            plAvBrainCoop * brainH = new plAvBrainCoop(plAvBrainGeneric::kExitNormal, 3.0, 3.0, plAvBrainGeneric::kMoveRelative, guestKey);
 
-            plAnimStage *hostOffer = TRACKED_NEW plAnimStage("BookOffer", plAnimStage::kNotifyAdvance);     // autoforward, autoadvance
+            plAnimStage *hostOffer = new plAnimStage("BookOffer", plAnimStage::kNotifyAdvance);     // autoforward, autoadvance
             // repeats until the guest brain tells us that it's done
-            plAnimStage *hostIdle = TRACKED_NEW plAnimStage("BookOfferIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+            plAnimStage *hostIdle = new plAnimStage("BookOfferIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                                     plAnimStage::kAdvanceNone, plAnimStage::kRegressNone, -1);
 
-            plAnimStage *hostFinish = TRACKED_NEW plAnimStage("BookOfferFinish", plAnimStage::kNotifyAdvance);  // autoforward, autoadvance
+            plAnimStage *hostFinish = new plAnimStage("BookOfferFinish", plAnimStage::kNotifyAdvance);  // autoforward, autoadvance
             
             brainH->AddStage(hostOffer);
             brainH->AddStage(hostIdle);
             brainH->AddStage(hostFinish);
 
-            UInt32 hostID = brainH->GetInitiatorID();
-            UInt32 hostSerial = brainH->GetInitiatorSerial();
+            uint32_t hostID = brainH->GetInitiatorID();
+            uint32_t hostSerial = brainH->GetInitiatorSerial();
 
 
             // make the guest brain
-            plAvBrainCoop * brainG = TRACKED_NEW plAvBrainCoop(plAvBrainGeneric::kExitNormal, 3.0, 3.0, plAvBrainGeneric::kMoveRelative,
-                                                       hostID, (UInt16)hostSerial, hostKey);
+            plAvBrainCoop * brainG = new plAvBrainCoop(plAvBrainGeneric::kExitNormal, 3.0, 3.0, plAvBrainGeneric::kMoveRelative,
+                                                       hostID, (uint16_t)hostSerial, hostKey);
 
-            plAnimStage *guestAccept = TRACKED_NEW plAnimStage("BookAccept", plAnimStage::kNotifyAdvance);
-            plAnimStage *guestAcceptIdle = TRACKED_NEW plAnimStage("BookAcceptIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+            plAnimStage *guestAccept = new plAnimStage("BookAccept", plAnimStage::kNotifyAdvance);
+            plAnimStage *guestAcceptIdle = new plAnimStage("BookAcceptIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                                            plAnimStage::kAdvanceNone, plAnimStage::kRegressNone, -1);
             
             brainG->AddStage(guestAccept);
             brainG->AddStage(guestAcceptIdle);
-            plCoopCoordinator *coord = TRACKED_NEW plCoopCoordinator(hostKey, guestKey, brainH, brainG, "Convergence", 1, 1, linkMsg, true);
+            plCoopCoordinator *coord = new plCoopCoordinator(hostKey, guestKey, brainH, brainG, "Convergence", 1, 1, linkMsg, true);
 
 
-            plAvCoopMsg *coMg = TRACKED_NEW plAvCoopMsg(hostKey, coord);
+            plAvCoopMsg *coMg = new plAvCoopMsg(hostKey, coord);
             coMg->SetBCastFlag(plMessage::kNetPropagate);
             coMg->SetBCastFlag(plMessage::kNetForce);
 

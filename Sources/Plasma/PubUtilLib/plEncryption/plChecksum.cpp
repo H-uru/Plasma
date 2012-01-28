@@ -67,7 +67,7 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
     fSum+= hsToLE32(last);
 }
 
-plMD5Checksum::plMD5Checksum( UInt32 size, UInt8 *buffer )
+plMD5Checksum::plMD5Checksum( uint32_t size, uint8_t *buffer )
 {
     fValid = false;
     Start();
@@ -116,11 +116,11 @@ void    plMD5Checksum::CalcFromFile( const char *fileName )
 
 void plMD5Checksum::CalcFromStream( hsStream* stream )
 {
-    UInt32 sPos = stream->GetPosition();
+    uint32_t sPos = stream->GetPosition();
     unsigned loadLen = 1024 * 1024;
     Start();
 
-    UInt8 *buf = TRACKED_NEW UInt8[loadLen];
+    uint8_t *buf = new uint8_t[loadLen];
     
     while(int read = stream->Read(loadLen, buf))
         AddTo( read, buf );
@@ -136,7 +136,7 @@ void    plMD5Checksum::Start( void )
     fValid = false;
 }
 
-void    plMD5Checksum::AddTo( UInt32 size, const UInt8 *buffer )
+void    plMD5Checksum::AddTo( uint32_t size, const uint8_t *buffer )
 {
     MD5_Update( &fContext, buffer, size );
 }
@@ -166,7 +166,7 @@ const char  *plMD5Checksum::GetAsHexString( void ) const
     return tempString;
 }
 
-UInt8   plMD5Checksum::IHexCharToInt( char c ) const
+uint8_t   plMD5Checksum::IHexCharToInt( char c ) const
 {
     switch( c )
     {
@@ -214,7 +214,7 @@ void        plMD5Checksum::SetFromHexString( const char *string )
     fValid = true;
 }
 
-void plMD5Checksum::SetValue(UInt8* checksum)
+void plMD5Checksum::SetValue(uint8_t* checksum)
 {
     fValid = true;
     memcpy(fChecksum, checksum, sizeof(fChecksum));

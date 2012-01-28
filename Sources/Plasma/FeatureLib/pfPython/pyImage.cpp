@@ -71,13 +71,13 @@ PyObject* pyImage::GetPixelColor(float x, float y)
         image = plMipmap::ConvertNoRef(fMipMapKey->ObjectIsLoaded());
     if (image)
     {
-        UInt32 height = image->GetHeight();
-        UInt32 width = image->GetWidth();
-        UInt32 iX = (UInt32)((float)width * x);
-        UInt32 iY = (UInt32)((float)height * y);
+        uint32_t height = image->GetHeight();
+        uint32_t width = image->GetWidth();
+        uint32_t iX = (uint32_t)((float)width * x);
+        uint32_t iY = (uint32_t)((float)height * y);
         hsColorRGBA pixColor;
         image->SetCurrLevel(0);
-        UInt32 *color = image->GetAddr32(iX,iY);
+        uint32_t *color = image->GetAddr32(iX,iY);
         pixColor.FromARGB32(*color);
         return pyColor::New(pixColor);
     }
@@ -97,8 +97,8 @@ PyObject* pyImage::GetColorLoc(const pyColor &color)
         image = plMipmap::ConvertNoRef(fMipMapKey->ObjectIsLoaded());
     if (image)
     {
-        UInt32 height = image->GetHeight();
-        UInt32 width = image->GetWidth();
+        uint32_t height = image->GetHeight();
+        uint32_t width = image->GetWidth();
         double minSqrDist = 9999999;
         hsPoint3 closestMatch;
         image->SetCurrLevel(0);
@@ -138,7 +138,7 @@ PyObject* pyImage::GetColorLoc(const pyColor &color)
 
 // GetWidth
 // returns the width of the image
-UInt32 pyImage::GetWidth()
+uint32_t pyImage::GetWidth()
 {
     plMipmap* image;
     if (fMipmap)
@@ -152,7 +152,7 @@ UInt32 pyImage::GetWidth()
 
 // GetHeight
 // returns the height of the image
-UInt32 pyImage::GetHeight()
+uint32_t pyImage::GetHeight()
 {
     plMipmap* image;
     if (fMipmap)
@@ -165,7 +165,7 @@ UInt32 pyImage::GetHeight()
 }
 
 #include "plJPEG/plJPEG.h"
-void pyImage::SaveAsJPEG(const wchar* fileName, UInt8 quality)
+void pyImage::SaveAsJPEG(const wchar_t* fileName, uint8_t quality)
 {
     if (quality <= 0 || quality > 100)
     {
@@ -177,7 +177,7 @@ void pyImage::SaveAsJPEG(const wchar* fileName, UInt8 quality)
 }
 
 #include "plGImage/plPNG.h"
-void pyImage::SaveAsPNG(const wchar* fileName)
+void pyImage::SaveAsPNG(const wchar_t* fileName)
 {
 
     plPNG::Instance().WriteToFile( fileName, this->GetImage() );
@@ -185,7 +185,7 @@ void pyImage::SaveAsPNG(const wchar* fileName)
 
 #include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
-PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 height)
+PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height)
 {
     plMipmap* theMipmap = plJPEG::Instance().ReadFromFile(filename);
     if (theMipmap)
@@ -201,7 +201,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 
 
         // let's create a nice name for this thing based on the filename
         std::string name = "PtImageFromDisk_";
-        const wchar* i = filename;
+        const wchar_t* i = filename;
         int charsChecked = 0;
 
         while (*i != '\\' && *i != '\0' && charsChecked < 1024)

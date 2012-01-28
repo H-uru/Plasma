@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDecalMtl.h"
 #include "../resource.h"
 //extern ClassDesc2* GetMaxLayerDesc();
@@ -63,7 +63,7 @@ class plDecalMtlClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plDecalMtl(loading); }
+    void*           Create(BOOL loading) { return new plDecalMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_DECAL_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return DECAL_MTL_CLASS_ID; }
@@ -87,8 +87,8 @@ ParamBlockDesc2 *GetDecalLayersPB();
 plDecalMtl::plDecalMtl(BOOL loading) : plPassMtlBase( loading )
 {
     plDecalMtlDesc.MakeAutoParamBlocks( this );
-    fLayersPB->SetValue( kDecalLayBase, 0, TRACKED_NEW plLayerTex );
-    fLayersPB->SetValue( kDecalLayTop, 0, TRACKED_NEW plLayerTex );
+    fLayersPB->SetValue( kDecalLayBase, 0, new plLayerTex );
+    fLayersPB->SetValue( kDecalLayTop, 0, new plLayerTex );
 
     // If we do this later (like, when the dialog loads) something blows up,
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
@@ -306,7 +306,7 @@ int plDecalMtl::SubTexmapOn(int i)
 
 RefTargetHandle plDecalMtl::Clone(RemapDir &remap)
 {
-    plDecalMtl *mnew = TRACKED_NEW plDecalMtl(FALSE);
+    plDecalMtl *mnew = new plDecalMtl(FALSE);
     plPassMtlBase::ICloneBase( mnew, remap );
     return (RefTargetHandle)mnew;
 }

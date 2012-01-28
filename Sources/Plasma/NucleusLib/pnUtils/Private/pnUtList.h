@@ -100,25 +100,25 @@ class TList;
 class CBaseLink {
     friend class CBaseList;
 
-    inline static bool   TermCheck (byte * ptr);
-    inline static byte * TermMark (byte * ptr);
-    inline static byte * TermUnmarkAlways (byte * ptr);
+    inline static bool   TermCheck (uint8_t * ptr);
+    inline static uint8_t * TermMark (uint8_t * ptr);
+    inline static uint8_t * TermUnmarkAlways (uint8_t * ptr);
 
 protected:
     CBaseLink * volatile m_prevLink;
-    byte * volatile      m_next;
+    uint8_t * volatile      m_next;
 
     inline int  CalcLinkOffset () const;
     inline void InitializeLinks ();
     inline void InitializeLinksWithOffset (int linkOffset);
-    inline void InsertAfter (byte * node, CBaseLink * prevLink, int linkOffset);
-    inline void InsertBefore (byte * node, CBaseLink * nextLink);
-    inline byte * Next () const;
-    inline byte * NextIgnoreTerm () const;
-    inline byte * NextUnchecked () const;
+    inline void InsertAfter (uint8_t * node, CBaseLink * prevLink, int linkOffset);
+    inline void InsertBefore (uint8_t * node, CBaseLink * nextLink);
+    inline uint8_t * Next () const;
+    inline uint8_t * NextIgnoreTerm () const;
+    inline uint8_t * NextUnchecked () const;
     inline CBaseLink * NextLink () const;
     inline CBaseLink * NextLink (int linkOffset) const;
-    inline byte * Prev () const;
+    inline uint8_t * Prev () const;
     inline void UnlinkFromNeighbors ();
 
 public:
@@ -160,24 +160,24 @@ CBaseLink & CBaseLink::operator= (const CBaseLink & source) {
 
 //===========================================================================
 int CBaseLink::CalcLinkOffset () const {
-    return (int)((byte *)this - m_prevLink->NextIgnoreTerm());
+    return (int)((uint8_t *)this - m_prevLink->NextIgnoreTerm());
 }
 
 //===========================================================================
 void CBaseLink::InitializeLinks () {
-    ASSERT(!((unsigned_ptr)this & 3));
+    ASSERT(!((uintptr_t)this & 3));
     m_prevLink = this;
-    m_next     = TermMark((byte *)this);
+    m_next     = TermMark((uint8_t *)this);
 }
 
 //===========================================================================
 void CBaseLink::InitializeLinksWithOffset (int linkOffset) {
     m_prevLink = this;
-    m_next     = TermMark((byte *)this - linkOffset);
+    m_next     = TermMark((uint8_t *)this - linkOffset);
 }
 
 //===========================================================================
-void CBaseLink::InsertAfter (byte * node, CBaseLink * prevLink, int linkOffset) {
+void CBaseLink::InsertAfter (uint8_t * node, CBaseLink * prevLink, int linkOffset) {
     UnlinkFromNeighbors();
     m_prevLink = prevLink;
     m_next     = prevLink->m_next;
@@ -186,7 +186,7 @@ void CBaseLink::InsertAfter (byte * node, CBaseLink * prevLink, int linkOffset) 
 }
 
 //===========================================================================
-void CBaseLink::InsertBefore (byte * node, CBaseLink * nextLink) {
+void CBaseLink::InsertBefore (uint8_t * node, CBaseLink * nextLink) {
     UnlinkFromNeighbors();
     m_prevLink = nextLink->m_prevLink;
     m_next     = m_prevLink->m_next;
@@ -200,17 +200,17 @@ bool CBaseLink::IsLinked () const {
 }
 
 //===========================================================================
-byte * CBaseLink::Next () const {
+uint8_t * CBaseLink::Next () const {
     return TermCheck(m_next) ? nil : m_next;
 }
 
 //===========================================================================
-byte * CBaseLink::NextIgnoreTerm () const {
+uint8_t * CBaseLink::NextIgnoreTerm () const {
     return TermUnmarkAlways(m_next);
 }
 
 //===========================================================================
-byte * CBaseLink::NextUnchecked () const {
+uint8_t * CBaseLink::NextUnchecked () const {
     return m_next;
 }
 
@@ -226,27 +226,27 @@ CBaseLink * CBaseLink::NextLink (int linkOffset) const {
 }
 
 //===========================================================================
-byte * CBaseLink::Prev () const {
+uint8_t * CBaseLink::Prev () const {
     return m_prevLink->m_prevLink->Next();
 }
 
 //===========================================================================
-bool CBaseLink::TermCheck (byte * ptr) {
-    return (unsigned_ptr)ptr & 1;
+bool CBaseLink::TermCheck (uint8_t * ptr) {
+    return (uintptr_t)ptr & 1;
 }
 
 //===========================================================================
-byte * CBaseLink::TermMark (byte * ptr) {
+uint8_t * CBaseLink::TermMark (uint8_t * ptr) {
     // Converts an unmarked pointer to a marked pointer
     ASSERT(!TermCheck(ptr));
-    return (byte *)((unsigned_ptr)ptr + 1);
+    return (uint8_t *)((uintptr_t)ptr + 1);
 }
 
 //===========================================================================
-byte * CBaseLink::TermUnmarkAlways (byte * ptr) {
+uint8_t * CBaseLink::TermUnmarkAlways (uint8_t * ptr) {
     // Returns an unmarked pointer regardless of whether the source pointer
     // was marked on unmarked
-    return (byte *)((unsigned_ptr)ptr & ~1);
+    return (uint8_t *)((uintptr_t)ptr & ~1);
 }
 
 //===========================================================================
@@ -333,16 +333,16 @@ private:
     CBaseLink m_terminator;
 
 protected:
-    inline CBaseLink * GetLink (const byte * node) const;
-    inline byte * Head () const;
-    inline bool IsLinked (const byte * node) const;
-    inline void Link (byte * node, ELinkType linkType, byte * existingNode);
-    void Link (CBaseList * list, byte * afterNode, byte * beforeNode, ELinkType linkType, byte * existingNode);
-    inline byte * Next (const byte * node) const;
-    inline byte * NextUnchecked (const byte * node) const;
-    inline byte * Prev (byte * node) const;
-    inline byte * Tail () const;
-    inline void   Unlink (byte * node);
+    inline CBaseLink * GetLink (const uint8_t * node) const;
+    inline uint8_t * Head () const;
+    inline bool IsLinked (const uint8_t * node) const;
+    inline void Link (uint8_t * node, ELinkType linkType, uint8_t * existingNode);
+    void Link (CBaseList * list, uint8_t * afterNode, uint8_t * beforeNode, ELinkType linkType, uint8_t * existingNode);
+    inline uint8_t * Next (const uint8_t * node) const;
+    inline uint8_t * NextUnchecked (const uint8_t * node) const;
+    inline uint8_t * Prev (uint8_t * node) const;
+    inline uint8_t * Tail () const;
+    inline void   Unlink (uint8_t * node);
 
 public:
     inline CBaseList ();
@@ -376,23 +376,23 @@ CBaseList & CBaseList::operator= (const CBaseList & source) {
 }
 
 //===========================================================================
-CBaseLink * CBaseList::GetLink (const byte * node) const {
+CBaseLink * CBaseList::GetLink (const uint8_t * node) const {
     return (CBaseLink *)(node + m_linkOffset);
 }
 
 //===========================================================================
-byte * CBaseList::Head () const {
+uint8_t * CBaseList::Head () const {
     return m_terminator.Next();
 }
 
 //===========================================================================
-bool CBaseList::IsLinked (const byte * node) const {
+bool CBaseList::IsLinked (const uint8_t * node) const {
     ASSERT(node);
     return GetLink(node)->IsLinked();
 }
 
 //===========================================================================
-void CBaseList::Link (byte * node, ELinkType linkType, byte * existingNode) {
+void CBaseList::Link (uint8_t * node, ELinkType linkType, uint8_t * existingNode) {
     ASSERT(node != existingNode);
     ASSERT(m_linkOffset != LINK_OFFSET_UNINIT);
     ASSERT((linkType == kListLinkAfter) || (linkType == kListLinkBefore));
@@ -403,19 +403,19 @@ void CBaseList::Link (byte * node, ELinkType linkType, byte * existingNode) {
 }
 
 //===========================================================================
-byte * CBaseList::Next (const byte * node) const {
+uint8_t * CBaseList::Next (const uint8_t * node) const {
     ASSERT(node);
     return GetLink(node)->Next();
 }
 
 //===========================================================================
-byte * CBaseList::NextUnchecked (const byte * node) const {
+uint8_t * CBaseList::NextUnchecked (const uint8_t * node) const {
     ASSERT(node);
     return GetLink(node)->NextUnchecked();
 }
 
 //===========================================================================
-byte * CBaseList::Prev (byte * node) const {
+uint8_t * CBaseList::Prev (uint8_t * node) const {
     ASSERT(node);
     return GetLink(node)->Prev();
 }
@@ -429,12 +429,12 @@ void CBaseList::SetLinkOffset (int linkOffset) {
 }
 
 //===========================================================================
-byte * CBaseList::Tail () const {
+uint8_t * CBaseList::Tail () const {
     return m_terminator.Prev();
 }
 
 //===========================================================================
-void CBaseList::Unlink (byte * node) {
+void CBaseList::Unlink (uint8_t * node) {
     ASSERT(node);
     GetLink(node)->Unlink();
 }
@@ -485,7 +485,7 @@ void TList<T>::Clear () {
 //===========================================================================
 template<class T>
 void TList<T>::Delete (T * node) {
-    DEL(node);
+    delete node;
 }
 
 //===========================================================================
@@ -503,49 +503,49 @@ const T * TList<T>::Head () const {
 //===========================================================================
 template<class T>
 bool TList<T>::IsLinked (const T * node) const {
-    return CBaseList::IsLinked((const byte *)node);
+    return CBaseList::IsLinked((const uint8_t *)node);
 }
 
 //===========================================================================
 template<class T>
 void TList<T>::Link (T * node, ELinkType linkType, T * existingNode) {
-    CBaseList::Link((byte *)node, linkType, (byte *)existingNode);
+    CBaseList::Link((uint8_t *)node, linkType, (uint8_t *)existingNode);
 }
 
 //===========================================================================
 template<class T>
 void TList<T>::Link (TList<T> * list, ELinkType linkType, T * existingNode) {
-    CBaseList::Link(list, nil, nil, linkType, (byte *)existingNode);
+    CBaseList::Link(list, nil, nil, linkType, (uint8_t *)existingNode);
 }
 
 //===========================================================================
 template<class T>
 void TList<T>::Link (TList<T> * list, T * afterNode, T * beforeNode, ELinkType linkType, T * existingNode) {
-    CBaseList::Link(list, (byte *)afterNode, (byte *)beforeNode, linkType, (byte *)existingNode);
+    CBaseList::Link(list, (uint8_t *)afterNode, (uint8_t *)beforeNode, linkType, (uint8_t *)existingNode);
 }
 
 //===========================================================================
 template<class T>
 inline T * TList<T>::Next (const T * node) {
-    return (T *)CBaseList::Next((byte *)node);
+    return (T *)CBaseList::Next((uint8_t *)node);
 }
 
 //===========================================================================
 template<class T>
 inline const T * TList<T>::Next (const T * node) const {
-    return (const T *)CBaseList::Next((byte *)node);
+    return (const T *)CBaseList::Next((uint8_t *)node);
 }
 
 //===========================================================================
 template<class T>
 inline T * TList<T>::NextUnchecked (const T * node) {
-    return (T *)CBaseList::NextUnchecked((byte *)node);
+    return (T *)CBaseList::NextUnchecked((uint8_t *)node);
 }
 
 //===========================================================================
 template<class T>
 inline const T * TList<T>::NextUnchecked (const T * node) const {
-    return (const T *)CBaseList::NextUnchecked((byte *)node);
+    return (const T *)CBaseList::NextUnchecked((uint8_t *)node);
 }
 
 //===========================================================================
@@ -557,11 +557,7 @@ inline T * TList<T>::New (ELinkType linkType, T * existingNode, const char file[
 //===========================================================================
 template<class T>
 inline T * TList<T>::NewFlags (unsigned flags, ELinkType linkType, T * existingNode, const char file[], int line) {
-    if (!file) {
-        file = __FILE__;
-        line = __LINE__;
-    }
-    T * node = new(MemAlloc(sizeof(T), flags, file, line)) T;
+    T * node = new T();
     if (linkType != kListUnlinked)
         Link(node, linkType, existingNode);
     return node;
@@ -576,13 +572,13 @@ inline T * TList<T>::NewZero (ELinkType linkType, T * existingNode, const char f
 //===========================================================================
 template<class T>
 inline T * TList<T>::Prev (const T * node) {
-    return (T *)CBaseList::Prev((byte *)node);
+    return (T *)CBaseList::Prev((uint8_t *)node);
 }
 
 //===========================================================================
 template<class T>
 inline const T * TList<T>::Prev (const T * node) const {
-    return (const T *)CBaseList::Prev((byte *)node);
+    return (const T *)CBaseList::Prev((uint8_t *)node);
 }
 
 //===========================================================================
@@ -600,7 +596,7 @@ inline const T * TList<T>::Tail () const {
 //===========================================================================
 template<class T>
 inline void TList<T>::Unlink (T * node) {
-    CBaseList::Unlink((byte *)node);
+    CBaseList::Unlink((uint8_t *)node);
 }
 
 

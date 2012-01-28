@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIClickMapCtrl.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
@@ -72,7 +72,7 @@ pfGUIClickMapCtrl::~pfGUIClickMapCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIClickMapCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIClickMapCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -96,14 +96,14 @@ void    pfGUIClickMapCtrl::Write( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Write( s, mgr );
 }
 
-void    pfGUIClickMapCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     IScreenToLocalPt( mousePt );
     fLastMousePt = fLastMouseDragPt = mousePt;
     fTracking = true;
 }
 
-void    pfGUIClickMapCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( fTracking )
     {
@@ -114,7 +114,7 @@ void    pfGUIClickMapCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIClickMapCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( fTracking )
     {
@@ -125,7 +125,7 @@ void    pfGUIClickMapCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
     }
 }
 
-void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers )
 {
     IScreenToLocalPt( mousePt );
     fLastMousePt = mousePt;
@@ -136,10 +136,10 @@ void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers 
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
 {
     if( fCustomCursor != -1 )
-        return (UInt32)fCustomCursor;
+        return (uint32_t)fCustomCursor;
 
     return plInputInterface::kCursorPoised;
 }

@@ -134,9 +134,9 @@ void GuidClear (Uuid * uuid) {
 }
 
 //============================================================================
-bool GuidFromString (const wchar str[], Uuid * uuid) {
+bool GuidFromString (const wchar_t str[], Uuid * uuid) {
     ASSERT(uuid);
-    COMPILER_ASSERT(sizeof(wchar) == sizeof(unsigned short));
+    COMPILER_ASSERT(sizeof(wchar_t) == sizeof(unsigned short));
     return RPC_S_OK == UuidFromStringW((unsigned short *) str, (GUID *) uuid);
 }
 
@@ -159,8 +159,8 @@ bool GuidIsNil (const Uuid & uuid) {
 }
 
 //============================================================================
-const wchar * GuidToString (const Uuid & uuid, wchar * dst, unsigned chars) {
-    wchar * src;
+const wchar_t * GuidToString (const Uuid & uuid, wchar_t * dst, unsigned chars) {
+    wchar_t * src;
     RPC_STATUS s;
     s = UuidToStringW( (GUID *) &uuid, (RPC_WSTR*)&src );
     if (RPC_S_OK == s)
@@ -173,7 +173,7 @@ const wchar * GuidToString (const Uuid & uuid, wchar * dst, unsigned chars) {
 
 //============================================================================
 const char * GuidToString (const Uuid & uuid, char * dst, unsigned chars) {
-    byte * src;
+    uint8_t * src;
     RPC_STATUS s;
     s = UuidToStringA( (GUID *) &uuid, &src );
     if (RPC_S_OK == s)

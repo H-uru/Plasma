@@ -43,27 +43,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNbKeys_inc
 #define pnNbKeys_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnNbConst.h"
 
 // Auth Server
 static const unsigned kAuthDhGValue = 41;
-extern byte kAuthDhNData[kNetDiffieHellmanKeyBits / 8];
-extern byte kAuthDhXData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8];
 
 // CSR Server
 static const unsigned kCsrDhGValue = 97;
-extern byte kCsrDhNData[kNetDiffieHellmanKeyBits / 8];
-extern byte kCsrDhXData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kCsrDhNData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kCsrDhXData[kNetDiffieHellmanKeyBits / 8];
 
 // Game Server
 static const unsigned kGameDhGValue = 73;
-extern byte kGameDhNData[kNetDiffieHellmanKeyBits / 8];
-extern byte kGameDhXData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kGameDhXData[kNetDiffieHellmanKeyBits / 8];
 
 // GateKeeper Server
 static const unsigned kGateKeeperDhGValue = 4;
-extern byte kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8];
-extern byte kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8];
+extern uint8_t kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8];
 
 #endif // pnNbKeys_inc

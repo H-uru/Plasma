@@ -82,10 +82,10 @@ class plParticleCore
 {
 public:
     hsPoint3 fPos;
-    UInt32 fColor; // Particle opacity goes into the color's alpha.
+    uint32_t fColor; // Particle opacity goes into the color's alpha.
     hsPoint3 fOrientation; // fMiscFlags determines how this should be used.
     hsVector3 fNormal;
-    hsScalar fHSize, fVSize; // distance from the heart of the particle to the borders of its poly.
+    float fHSize, fVSize; // distance from the heart of the particle to the borders of its poly.
     hsPoint3 fUVCoords[4];
 };
 
@@ -94,20 +94,20 @@ class plParticleExt
 public:
     //hsPoint3 fOldPos;
     hsVector3 fVelocity;
-    hsScalar fInvMass; // The inverse (1 / mass) is what we actually need for calculations. Storing it this
+    float fInvMass; // The inverse (1 / mass) is what we actually need for calculations. Storing it this
                        // way allows us to make an object immovable with an inverse mass of 0 (and save a divide).
     hsVector3 fAcceleration; // Accumulated from multiple forces.
-    hsScalar fLife; // how many seconds before we recycle this? (My particle has more of a life than I do...)
-    hsScalar fStartLife;
-    hsScalar fScale;
-    hsScalar fRadsPerSec;
-    //UInt32 fOrigColor;
+    float fLife; // how many seconds before we recycle this? (My particle has more of a life than I do...)
+    float fStartLife;
+    float fScale;
+    float fRadsPerSec;
+    //uint32_t fOrigColor;
 
     enum // Miscellaneous flags for particles
     {
         kImmortal                   = 0x00000001,
     };
-    UInt32 fMiscFlags;  // I know... 32 bits for a single flag...
+    uint32_t fMiscFlags;  // I know... 32 bits for a single flag...
                         // Feel free to change this if you've got something to pack it against.
 };
 

@@ -64,9 +64,7 @@ REGISTER_CREATABLE(plInitialAgeStateLoadedMsg);
 #include "plLocTreeView.h"
 #include "plEditDlg.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <WinSock2.h>
-#include <Windows.h>
+#include "HeadSpin.h"
 #include <Commdlg.h>
 #include <stdio.h>
 #include <commctrl.h>

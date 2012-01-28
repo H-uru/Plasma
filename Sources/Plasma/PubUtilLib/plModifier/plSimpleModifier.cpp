@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSimpleModifier.h"
 #include "plgDispatch.h"
 
@@ -114,7 +114,7 @@ void plSimpleModifier::IEnd()
     }
 }
 
-hsBool plSimpleModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plSimpleModifier::IEval(double secs, float del, uint32_t dirty)
 {
     return IHandleTime(secs, del);
 }
@@ -180,13 +180,13 @@ hsBool plSimpleModifier::IHandleCmd(plAnimCmdMsg* modMsg)
     return true;
 }   
 
-hsBool plSimpleModifier::IHandleTime(double wSecs, hsScalar del)
+hsBool plSimpleModifier::IHandleTime(double wSecs, float del)
 {
 
     if( !fTarget )
         return true;
 
-    hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
+    float secs = fTimeConvert.WorldToAnimTime(wSecs);
     
     if( secs != fCurrentTime )
     {

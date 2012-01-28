@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFogEnvironment.h"
 
+#include <math.h>
 #include "plTweak.h"
 
 //// Constructors & Destructor ///////////////////////////////////////////////
@@ -56,12 +57,12 @@ plFogEnvironment::plFogEnvironment()
     fType = kNoFog;
 }
 
-plFogEnvironment::plFogEnvironment( hsScalar start, hsScalar end, hsScalar density, hsColorRGBA &color )
+plFogEnvironment::plFogEnvironment( float start, float end, float density, hsColorRGBA &color )
 {
     Set( start, end, density, &color );
 }
 
-plFogEnvironment::plFogEnvironment( FogType type, hsScalar end, hsScalar density, hsColorRGBA &color )
+plFogEnvironment::plFogEnvironment( FogType type, float end, float density, hsColorRGBA &color )
 {
     SetExp( type, end, density, &color );
 }
@@ -72,7 +73,7 @@ plFogEnvironment::~plFogEnvironment()
 
 //// Set /////////////////////////////////////////////////////////////////////
 
-void    plFogEnvironment::Set( hsScalar start, hsScalar end, hsScalar density, const hsColorRGBA *color )
+void    plFogEnvironment::Set( float start, float end, float density, const hsColorRGBA *color )
 {
     if( density <= 0.f )
     {
@@ -92,7 +93,7 @@ void    plFogEnvironment::Set( hsScalar start, hsScalar end, hsScalar density, c
         fColor = *color;
 }
 
-void    plFogEnvironment::SetExp( FogType type, hsScalar end, hsScalar density, const hsColorRGBA *color )
+void    plFogEnvironment::SetExp( FogType type, float end, float density, const hsColorRGBA *color )
 {
     hsAssert( type == kExpFog || type == kExp2Fog, "Invalid fog type passed to plFogEnvironment" );
     if( density <= 0.f )
@@ -117,7 +118,7 @@ void    plFogEnvironment::SetExp( FogType type, hsScalar end, hsScalar density, 
 //  Gets the parameters. Sets start to 0 if the type is not linear (can be
 //  nil).
 
-void    plFogEnvironment::GetParameters( hsScalar *start, hsScalar *end, hsScalar *density, hsColorRGBA *color )
+void    plFogEnvironment::GetParameters( float *start, float *end, float *density, hsColorRGBA *color )
 {
     hsAssert( fType != kLinearFog || start != nil, "Trying to get non-linear paramters on linear fog!" );
     hsAssert( end != nil && density != nil && color != nil, "Bad pointer to plFogEnvironment::GetParameters()" );
@@ -138,7 +139,7 @@ void    plFogEnvironment::GetParameters( hsScalar *start, hsScalar *end, hsScala
 //  scale our end value out by the density. The whole formula is:
 //      pipelineEnd = ( end - start ) / density + start
 
-void    plFogEnvironment::GetPipelineParams( hsScalar *start, hsScalar *end, hsColorRGBA *color )
+void    plFogEnvironment::GetPipelineParams( float *start, float *end, hsColorRGBA *color )
 {
 //  hsAssert( fType == kLinearFog, "Getting linear pipeline params on non-linear fog!" );
 
@@ -173,7 +174,7 @@ void    plFogEnvironment::GetPipelineParams( hsScalar *start, hsScalar *end, hsC
 //  to modulate the density by the end value so that it actually ends at the
 //  right spot. 
 
-void    plFogEnvironment::GetPipelineParams( hsScalar *density, hsColorRGBA *color )
+void    plFogEnvironment::GetPipelineParams( float *density, hsColorRGBA *color )
 {
     const float ln256       = logf( 256.f );
     const float sqrtLn256   = sqrtf( ln256 );

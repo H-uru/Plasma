@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -73,7 +73,7 @@ public:
     };
     
     plPhysicalSndGroup();
-    plPhysicalSndGroup( UInt32 grp );
+    plPhysicalSndGroup( uint32_t grp );
     virtual ~plPhysicalSndGroup();
 
     CLASSNAME_REGISTER( plPhysicalSndGroup );
@@ -85,18 +85,18 @@ public:
     virtual void Read( hsStream *s, hsResMgr *mgr );
     virtual void Write( hsStream *s, hsResMgr *mgr );
 
-    void PlaySlideSound(UInt32 against);
-    void StopSlideSound(UInt32 against);
-    void PlayImpactSound(UInt32 against);
-    void SetSlideSoundVolume(UInt32 against, hsScalar volume);
-    bool HasSlideSound(UInt32 against);
-    bool HasImpactSound(UInt32 against);
+    void PlaySlideSound(uint32_t against);
+    void StopSlideSound(uint32_t against);
+    void PlayImpactSound(uint32_t against);
+    void SetSlideSoundVolume(uint32_t against, float volume);
+    bool HasSlideSound(uint32_t against);
+    bool HasImpactSound(uint32_t against);
 
-    UInt32 GetGroup( void ) const { return fGroup; }
+    uint32_t GetGroup( void ) const { return fGroup; }
 
     // Export only
-    void    AddImpactSound( UInt32 against, plKey receiver );
-    void    AddSlideSound( UInt32 against, plKey receiver );
+    void    AddImpactSound( uint32_t against, plKey receiver );
+    void    AddSlideSound( uint32_t against, plKey receiver );
     bool    IsSliding() { return fPlayingSlideSound; }
 
 protected:
@@ -107,7 +107,7 @@ protected:
         kRefSlideSound
     };
 
-    UInt32  fGroup;
+    uint32_t  fGroup;
     bool fPlayingSlideSound;
 
     // Sound key arrays for, well, our sounds!

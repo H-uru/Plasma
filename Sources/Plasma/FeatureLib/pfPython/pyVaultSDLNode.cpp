@@ -97,7 +97,7 @@ PyObject * pyVaultSDLNode::GetStateDataRecord() const
     if (sdl.GetStateDataRecord(rec))
         return pySDLStateDataRecord::New(rec);
     else
-        DEL(rec);
+        delete rec;
 
     PYTHON_RETURN_NONE;
 }
@@ -107,7 +107,7 @@ void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
     if (!fNode)
         return;
 
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, agename, arrsize(wStr)); 
     VaultSDLNode sdl(fNode);
     sdl.InitStateDataRecord(wStr, flags);

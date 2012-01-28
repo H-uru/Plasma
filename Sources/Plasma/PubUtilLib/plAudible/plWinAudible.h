@@ -82,11 +82,11 @@ public:
     void        Stop(int index = -1);
     void        FastForwardPlay(int index = -1);
     void        FastForwardToggle(int index = -1);
-    void        SetMin(const hsScalar m,int index = -1); // sets minimum falloff distance
-    void        SetMax(const hsScalar m,int index = -1); // sets maximum falloff distance
+    void        SetMin(const float m,int index = -1); // sets minimum falloff distance
+    void        SetMax(const float m,int index = -1); // sets maximum falloff distance
     void        SetPosition(const hsPoint3 p, int index = -1);
-    hsScalar    GetMin(int index = -1) const;
-    hsScalar    GetMax(int index = -1) const;
+    float    GetMin(int index = -1) const;
+    float    GetMax(int index = -1) const;
     virtual void SetVelocity(const hsVector3 vel,int index = -1);
     hsVector3   GetVelocity(int index = -1) const;
     hsPoint3    GetPosition(int index = -1);
@@ -98,7 +98,7 @@ public:
     void        RemoveCallbacks(plSoundMsg* pMsg);
     void        AddCallbacks(plSoundMsg* pMsg);     
     hsBool      AddSound(plSound *pSnd, int index,hsBool is3D);
-    int         AddSoundFromResource(plSound *pSnd, void* addr, Int32 size, hsBool is3D);
+    int         AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, hsBool is3D);
     virtual void        GetStatus(plSoundMsg* pMsg);
     virtual int         GetNumSounds() const {return fSoundObjs.Count();}
     virtual plSound*    GetSound(int i) const;
@@ -106,7 +106,7 @@ public:
     virtual void        SetVolume(const float volume,int index = -1);
     virtual void        SetMuted( hsBool muted, int index = -1 );
     virtual void        ToggleMuted( int index = -1 );
-    virtual void        SetTalkIcon(int index, UInt32 str){;}
+    virtual void        SetTalkIcon(int index, uint32_t str){;}
     virtual void        ClearTalkIcon(){;}
     void                SetFilename(int index, const char *filename, hsBool isCompressed);
 
@@ -122,7 +122,7 @@ public:
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
     
 private:
     hsTArray<plSound    *>      fSoundObjs;
@@ -131,7 +131,7 @@ private:
     hsMatrix44                  fLocalToWorld;
     plSoundSDLModifier*         fSDLMod;
     plKey                       fSceneObj;
-    void    IAssignSoundKey( plSound *sound, const char *name, UInt32 i );
+    void    IAssignSoundKey( plSound *sound, const char *name, uint32_t i );
 };
 
 
@@ -150,11 +150,11 @@ public:
     virtual void Activate();
     virtual void DeActivate();
     virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void PlayNetworkedSpeech(const char* addr, Int32 size, int numFrames, unsigned char flags);
+    virtual void PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags);
     
     virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1);
     virtual void SetVelocity(const hsVector3 vel,int index = -1);
-    virtual void SetTalkIcon(int index, UInt32 str);
+    virtual void SetTalkIcon(int index, uint32_t str);
     virtual void ClearTalkIcon();
 
 protected:

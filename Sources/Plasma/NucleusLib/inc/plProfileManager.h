@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProfileManager_h_inc
 #define plProfileManager_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plProfile.h"
 
@@ -56,7 +56,7 @@ protected:
 
     double fLastAvgTime;
 
-    UInt32 fProcessorSpeed;
+    uint32_t fProcessorSpeed;
 
     plProfileManager();
 
@@ -70,12 +70,12 @@ public:
     void BeginFrame();  // Call begin frame on all timers
     void EndFrame();    // Call end frame on all timers
 
-    void SetAvgTime(UInt32 avgMS);
+    void SetAvgTime(uint32_t avgMS);
 
-    UInt32 GetProcessorSpeed() { return fProcessorSpeed; }
+    uint32_t GetProcessorSpeed() { return fProcessorSpeed; }
 
     // Backdoor for hack timers in calculated profiles
-    static UInt32 GetTime();
+    static uint32_t GetTime();
 };
 
 class plProfileLaps
@@ -90,16 +90,16 @@ protected:
         LapInfo(const char* name) { fName = name; fDisplayFlags = kDisplayTime; }
         bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
 
-        void BeginTiming(UInt32 value) { fValue -= value; }
-        void EndTiming(UInt32 value) { fValue += value; fTimerSamples++; }
+        void BeginTiming(uint32_t value) { fValue -= value; }
+        void EndTiming(uint32_t value) { fValue += value; fTimerSamples++; }
     };
     std::vector<LapInfo> fLapTimes;
 
     LapInfo* IFindLap(const char* lapName);
 
 public:
-    void BeginLap(UInt32 curValue, const char* name);
-    void EndLap(UInt32 curValue, const char* name);
+    void BeginLap(uint32_t curValue, const char* name);
+    void EndLap(uint32_t curValue, const char* name);
 
     void BeginFrame();
     void EndFrame();

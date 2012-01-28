@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfLocalizationMgr_h
 #define _pfLocalizationMgr_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 class pfLocalizationMgr

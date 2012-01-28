@@ -79,8 +79,8 @@ public:
 
     virtual void    Clickable( void );
     virtual void    Unclickable( void );
-    virtual void    SetScrollPosition( Int32 topLine );
-    virtual void    MoveCursor( Int32 dir );
+    virtual void    SetScrollPosition( int32_t topLine );
+    virtual void    MoveCursor( int32_t dir );
     virtual void    ClearBuffer( void );
     virtual void    SetText( const char *asciiText );
     virtual void    SetTextW( const wchar_t *asciiText );
@@ -90,17 +90,17 @@ public:
     virtual void    SetEncodedBufferW( PyObject* buffer_object );
     virtual const char* GetEncodedBuffer();
     virtual const wchar_t* GetEncodedBufferW();
-    virtual UInt32  GetBufferSize();
+    virtual uint32_t  GetBufferSize();
     
-    virtual void    SetBufferLimit(Int32 limit);
-    virtual Int32   GetBufferLimit();
+    virtual void    SetBufferLimit(int32_t limit);
+    virtual int32_t   GetBufferLimit();
 
     virtual void    InsertChar( char c );
     virtual void    InsertCharW( wchar_t c );
     virtual void    InsertString( const char *string );
     virtual void    InsertStringW( const wchar_t *string );
     virtual void    InsertColor( pyColor& color );
-    virtual void    InsertStyle( UInt8 fontStyle );
+    virtual void    InsertStyle( uint8_t fontStyle );
     virtual void    DeleteChar( void );
 
     virtual void    Lock( void );
@@ -112,8 +112,8 @@ public:
 
     virtual void    DeleteLinesFromTop( int lines );
 
-    virtual UInt32  GetFontSize();
-    virtual void    SetFontSize( UInt32 fontsize );
+    virtual uint32_t  GetFontSize();
+    virtual void    SetFontSize( uint32_t fontsize );
 };
 
 #endif // _pyGUIControlMultiLineEdit_h_

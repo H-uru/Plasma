@@ -111,23 +111,23 @@ public:
 
     // Auth with active server using auth info set earlier.
     // Will timeout after maxAuthSecs elapsed.
-    int     NetAuthenticate( double maxAuthSecs, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetAuthenticate( double maxAuthSecs, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Leave the active server.
-    int     NetLeave( UInt8 reason, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetLeave( uint8_t reason, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Ping the specified server.
-    int     NetPing( int serverType, int timeoutSecs=0, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetPing( int serverType, int timeoutSecs=0, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Spawn a game for us.
-    int     NetFindAge( const pyAgeLinkStruct* linkInfo, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetFindAge( const pyAgeLinkStruct* linkInfo, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Get player list.
-    int     NetGetPlayerList( PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetGetPlayerList( PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Set the active player.
-    int     NetSetActivePlayer( UInt32 playerID, const char* playerName, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetSetActivePlayer( uint32_t playerID, const char* playerName, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Create a player
-    int     NetCreatePlayer( const char* playerName, const char* avatarShape, UInt32 createFlags, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetCreatePlayer( const char* playerName, const char* avatarShape, uint32_t createFlags, PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Join age
-    int     NetJoinAge( PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetJoinAge( PyObject* cbClass=nil, uint32_t cbContext=0 );
     // Set server-side timeout
-    int     NetSetTimeout( float timeoutSecs, PyObject* cbClass=nil, UInt32 cbContext=0 );
+    int     NetSetTimeout( float timeoutSecs, PyObject* cbClass=nil, uint32_t cbContext=0 );
 
     ////////////////////////////////////////////////////////////////
 
@@ -139,7 +139,7 @@ public:
 
     // Get/Set Log object
     void    SetLog( pyStatusLog* log );
-    void    SetLogByName( const char * name, UInt32 flags=0 );
+    void    SetLogByName( const char * name, uint32_t flags=0 );
     PyObject* GetLog() const; // return pyStatusLog
 
     // NetCore log level
@@ -168,13 +168,13 @@ public:
     const pyNetServerSessionInfo* GetActiveServer() const;
 
     // Sets/clears receipt tracking for given message class.
-    void    SetReceiptTrackingForType( UInt16 msgClassIdx, bool on );
+    void    SetReceiptTrackingForType( uint16_t msgClassIdx, bool on );
 
     // Adds a msg handler for a msg that is convertable to specified type.
-    void    AddMsgHandlerForType( UInt16 msgClassIdx, pyNetClientCommMsgHandler* handler );
+    void    AddMsgHandlerForType( uint16_t msgClassIdx, pyNetClientCommMsgHandler* handler );
 
     // Adds a msg handler for a specific msg type.
-    void    AddMsgHandlerForExactType( UInt16 msgClassIdx, pyNetClientCommMsgHandler* handler );
+    void    AddMsgHandlerForExactType( uint16_t msgClassIdx, pyNetClientCommMsgHandler* handler );
 
     void    RemoveMsgHandler( pyNetClientCommMsgHandler* handler );
 
@@ -187,9 +187,9 @@ public:
     void    SetMsgReceiptHandler( pyNetClientCommRcptHandler* rcptHandler );
 
     // Send a message to the server.
-    int     SendMsg( plNetMessage* msg, UInt32 sendFlags=0 );
+    int     SendMsg( plNetMessage* msg, uint32_t sendFlags=0 );
     // Send a message to specified peer
-    int     SendMsg( plNetMessage* msg, plNetCore::PeerID peerID, UInt32 sendFlags=0 );
+    int     SendMsg( plNetMessage* msg, plNetCore::PeerID peerID, uint32_t sendFlags=0 );
 
     // Set the alive message send frequency. 0 means don't send periodic alive msgs.
     void    SetAliveFreq( float secs );

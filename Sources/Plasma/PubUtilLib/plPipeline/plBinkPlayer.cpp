@@ -39,9 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #ifdef BINK_SDK_AVAILABLE
 #include <BINK.h>
 #endif
@@ -60,11 +58,11 @@ static const D3DMATRIX ident = { 1.0f, 0.0f, 0.0f, 0.0f,
                                      0.0f, 0.0f, 1.0f, 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
-static const UInt16 kMaxVolume = 32768;
+static const uint16_t kMaxVolume = 32768;
 const U32   kDefaultBack    = 0;
 const U32   kDefaultFore    = 1;
-const UInt32 kBackTrack = 0;
-const UInt32 kForeTrack = 1;
+const uint32_t kBackTrack = 0;
+const uint32_t kForeTrack = 1;
 
 const int fSndTrack(0); // STUB
 
@@ -91,22 +89,22 @@ plBinkPlayer::~plBinkPlayer()
     Stop();
 }
 
-void plBinkPlayer::SetBackGroundTrack(UInt32 t)
+void plBinkPlayer::SetBackGroundTrack(uint32_t t)
 {
     fTracks[kBackTrack] = t;
 }
 
-void plBinkPlayer::SetForeGroundTrack(UInt32 t)
+void plBinkPlayer::SetForeGroundTrack(uint32_t t)
 {
     fTracks[kForeTrack] = t;
 }
 
-UInt32 plBinkPlayer::GetForeGroundTrack()
+uint32_t plBinkPlayer::GetForeGroundTrack()
 {
     return fTracks[kForeTrack];
 }
 
-UInt32 plBinkPlayer::GetBackGroundTrack()
+uint32_t plBinkPlayer::GetBackGroundTrack()
 {
     return fTracks[kBackTrack];
 }
@@ -293,7 +291,7 @@ hsBool plBinkPlayer::ICheckFadingFrom()
 {
     if( fFadeState == kFadeFrom )
     {
-        fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
+        fFadeParm = (float)((hsTimer::GetSeconds() - fFadeStart) / fFadeFromTime);
         if( fFadeParm >= 1.f )
         {
             // We're done, go into normal mode
@@ -339,7 +337,7 @@ hsBool plBinkPlayer::ICheckFadingTo()
         }
         else
         {
-            fFadeParm = (hsScalar)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
+            fFadeParm = (float)((hsTimer::GetSeconds() - fFadeStart) / fFadeToTime);
             if( fFadeParm >= 1.f )
             {
                 fFadeState = kFadeNone;
@@ -485,36 +483,36 @@ void plBinkPlayer::SetColor(const hsColorRGBA& color)
     fColor = color;
 }
 
-void plBinkPlayer::SetPosition(hsScalar x, hsScalar y)
+void plBinkPlayer::SetPosition(float x, float y)
 {
     fPos.Set(x, y);
     if( fBink )
         ISetVerts();
 }
 
-void plBinkPlayer::SetScale(hsScalar x, hsScalar y)
+void plBinkPlayer::SetScale(float x, float y)
 {
     fScale.Set(x, y);
     if( fBink )
         ISetVerts();
 }
 
-hsScalar plBinkPlayer::IGetVolume(int background) const
+float plBinkPlayer::IGetVolume(int background) const
 {
     int t = background ? kBackTrack : kForeTrack;
-    return hsScalar(fVolume[t]) / hsScalar(kMaxVolume);
+    return float(fVolume[t]) / float(kMaxVolume);
 }
 
-void plBinkPlayer::ISetVolume(hsScalar v, int background)
+void plBinkPlayer::ISetVolume(float v, int background)
 {
     int track = background ? kBackTrack : kForeTrack;
-    UInt16 volume;
+    uint16_t volume;
     if( v < 0 )
         volume = 0;
     else if( v >= 1.f )
         volume = kMaxVolume;
     else
-        volume = UInt16(v * float(kMaxVolume));
+        volume = uint16_t(v * float(kMaxVolume));
 
     if( volume != fVolume[track] )
     {

@@ -78,9 +78,9 @@ enum {
 ***/
 
 struct Srv2State_ConnData {
-    dword   dataBytes;
-    dword   buildId;
-    dword   srvType;
+    uint32_t   dataBytes;
+    uint32_t   buildId;
+    uint32_t   srvType;
 };
 struct Srv2State_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -96,20 +96,20 @@ struct Srv2State_Connect {
 
 struct Srv2State_FetchObject : SrvMsgHeader {
     Uuid    ownerId;
-    wchar   objectName[kMaxStateObjectName];
+    wchar_t   objectName[kMaxStateObjectName];
 };
 
 struct Srv2State_SaveObject : SrvMsgHeader {
     Uuid        ownerId;        
-    wchar       objectName[kMaxStateObjectName];
-    dword       objectDataBytes;
-    byte        objectData[1]; // objectData[objectDataBytes], actually
+    wchar_t       objectName[kMaxStateObjectName];
+    uint32_t       objectDataBytes;
+    uint8_t        objectData[1]; // objectData[objectDataBytes], actually
     // no more fields after var length alloc
 };
 
 struct Srv2State_DeleteObject : SrvMsgHeader {
     Uuid    ownerId;        
-    wchar   objectName[kMaxStateObjectName];
+    wchar_t   objectName[kMaxStateObjectName];
 };
 
 
@@ -120,8 +120,8 @@ struct Srv2State_DeleteObject : SrvMsgHeader {
 ***/
 
 struct State2Srv_ObjectFetched : SrvMsgHeader { 
-    dword   objectDataBytes;
-    byte    objectData[1];
+    uint32_t   objectDataBytes;
+    uint8_t    objectData[1];
     // no more fields after var length alloc
 };
 

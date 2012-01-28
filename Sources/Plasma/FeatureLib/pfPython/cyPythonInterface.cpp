@@ -176,7 +176,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Games/VarSync/pyVarSyncMsg.h"
 #include "Games/VarSync/pyVarSyncGame.h"
 
-Int32 PythonInterface::initialized = 0;                 // only need to initialize all of Python once
+int32_t PythonInterface::initialized = 0;                 // only need to initialize all of Python once
 hsBool PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 hsBool PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
@@ -661,7 +661,7 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Write(text);
@@ -754,7 +754,7 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        wchar* wdata = hsStringToWString(fData.c_str());
+        wchar_t* wdata = hsStringToWString(fData.c_str());
         NetCliAuthLogPythonTraceback(wdata);
         delete [] wdata;
 
@@ -787,7 +787,7 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Write(text);
@@ -1164,7 +1164,7 @@ void PythonInterface::initPython()
         AddPlasmaMethods(methods);
 
         // now copy the data to our real method definition structure
-        plasmaMethods = TRACKED_NEW PyMethodDef[methods.size() + 1];
+        plasmaMethods = new PyMethodDef[methods.size() + 1];
         for (int curMethod = 0; curMethod < methods.size(); curMethod++)
             plasmaMethods[curMethod] = methods[curMethod];
         PyMethodDef terminator = {NULL};
@@ -1290,7 +1290,7 @@ void PythonInterface::initPython()
         AddPlasmaGameMethods(methods);
 
         // now copy the data to our real method definition structure
-        plasmaGameMethods = TRACKED_NEW PyMethodDef[methods.size() + 1];
+        plasmaGameMethods = new PyMethodDef[methods.size() + 1];
         for (int curMethod = 0; curMethod < methods.size(); curMethod++)
             plasmaGameMethods[curMethod] = methods[curMethod];
         plasmaGameMethods[methods.size()] = terminator; // add the terminator
@@ -2126,7 +2126,7 @@ PyObject* PythonInterface::CompileString(char *command, char* filename)
 //
 //  PURPOSE    : marshals an object into a char string
 //
-hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
+hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object
@@ -2160,7 +2160,7 @@ hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
 //
 //  PURPOSE    : Load a python object from a pickled object
 //
-PyObject* PythonInterface::LoadObject(char* pickle, Int32 size)
+PyObject* PythonInterface::LoadObject(char* pickle, int32_t size)
 {
     return PyMarshal_ReadObjectFromString(pickle, size);
 }

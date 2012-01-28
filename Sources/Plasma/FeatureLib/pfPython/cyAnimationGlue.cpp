@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "cyAnimation.h"
-#include "hsUtils.h"
+
 
 #include <Python.h>
 

@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLNOTETRACKDLG_INC
 #define PLNOTETRACKDLG_INC
 
-#include "hsTypes.h"
-#include "hsWindows.h"  // For HWND
+#include "HeadSpin.h"
+  // For HWND
 #include "plMaxAnimUtils.h"
 
 class IParamBlock2;

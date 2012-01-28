@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUICheckBoxCtrl.h"
 #include "pfGameGUIMgr.h"
 
@@ -79,7 +79,7 @@ pfGUICheckBoxCtrl::~pfGUICheckBoxCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUICheckBoxCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUICheckBoxCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -98,7 +98,7 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Read(s, mgr);
 
     fAnimationKeys.Reset();
-    UInt32 i, count = s->ReadLE32();
+    uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
 
@@ -110,7 +110,7 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    UInt32 i, count = fAnimationKeys.GetCount();
+    uint32_t i, count = fAnimationKeys.GetCount();
     s->WriteLE32( count );
     for( i = 0; i < count; i++ )
         mgr->WriteKey( s, fAnimationKeys[ i ] );
@@ -130,14 +130,14 @@ void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool forc
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUICheckBoxCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUICheckBoxCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fClicking = true;
     if(fPlaySound)
         IPlaySound( kMouseDown );
 }
 
-void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( fClicking )
     {
@@ -162,7 +162,7 @@ void    pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= fals
     fChecked = checked;
     if( fAnimationKeys.GetCount() > 0 )
     {
-        plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg();
+        plAnimCmdMsg *msg = new plAnimCmdMsg();
         if( fChecked )
         {
             // Moving to true
@@ -203,7 +203,7 @@ void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *
     delete [] fAnimName;
     if( name != nil )
     {
-        fAnimName = TRACKED_NEW char[ strlen( name ) + 1 ];
+        fAnimName = new char[ strlen( name ) + 1 ];
         strcpy( fAnimName, name );
     }
     else
@@ -212,7 +212,7 @@ void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
 {
     if( fClicking )
         return plInputInterface::kCursorClicked;

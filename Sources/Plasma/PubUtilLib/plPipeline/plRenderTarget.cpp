@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRenderTarget.h"
 #include "plCubicRenderTarget.h"
 #include "hsStream.h"
@@ -90,9 +90,9 @@ hsBool plRenderTarget::MsgReceive(plMessage* msg)
     return plBitmap::MsgReceive(msg);
 }
 
-UInt32  plRenderTarget::Read( hsStream *s )
+uint32_t  plRenderTarget::Read( hsStream *s )
 {
-    UInt32  total = plBitmap::Read( s );
+    uint32_t  total = plBitmap::Read( s );
 
     fWidth = s->ReadLE16();
     fHeight = s->ReadLE16();
@@ -116,12 +116,12 @@ UInt32  plRenderTarget::Read( hsStream *s )
     fZDepth = s->ReadByte();
     fStencilDepth = s->ReadByte();
 
-    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( hsBool );
 }
 
-UInt32  plRenderTarget::Write( hsStream *s )
+uint32_t  plRenderTarget::Write( hsStream *s )
 {
-    UInt32  total = plBitmap::Write( s );
+    uint32_t  total = plBitmap::Write( s );
 
     s->WriteLE16( fWidth );
     s->WriteLE16( fHeight );
@@ -145,23 +145,23 @@ UInt32  plRenderTarget::Write( hsStream *s )
     s->WriteByte( fZDepth );
     s->WriteByte( fStencilDepth );
 
-    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( hsScalar ) : sizeof( UInt16 ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( hsBool );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //// plCubicRenderTarget Functions ////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-UInt32  plCubicRenderTarget::Read( hsStream *s )
+uint32_t  plCubicRenderTarget::Read( hsStream *s )
 {
     int     i;
-    UInt32  total = plRenderTarget::Read( s );
+    uint32_t  total = plRenderTarget::Read( s );
 
 
     for( i = 0; i < 6; i++ )
     {
         if( fFaces[ i ] == nil )
-            fFaces[ i ] = TRACKED_NEW plRenderTarget();
+            fFaces[ i ] = new plRenderTarget();
 
         fFaces[ i ]->fParent = this;
         total += fFaces[ i ]->Read( s );
@@ -170,10 +170,10 @@ UInt32  plCubicRenderTarget::Read( hsStream *s )
     return total;
 }
 
-UInt32  plCubicRenderTarget::Write( hsStream *s )
+uint32_t  plCubicRenderTarget::Write( hsStream *s )
 {
     int     i;
-    UInt32  total = plRenderTarget::Write( s );
+    uint32_t  total = plRenderTarget::Write( s );
     
 
     for( i = 0; i < 6; i++ )
@@ -184,9 +184,9 @@ UInt32  plCubicRenderTarget::Write( hsStream *s )
     return total;
 }
 
-UInt32  plCubicRenderTarget::GetTotalSize( void ) const
+uint32_t  plCubicRenderTarget::GetTotalSize( void ) const
 {
-    UInt32      size = 0, i;
+    uint32_t      size = 0, i;
     
     for( i = 0; i < 6; i++ )
     {

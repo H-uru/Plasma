@@ -182,27 +182,27 @@ PyObject *pyVaultPlayerNode::GetPlayerInfo()
 
 PyObject *pyVaultPlayerNode::GetLinkToMyNeighborhood()
 {
-    plAgeLinkStruct * link = NEW(plAgeLinkStruct);
+    plAgeLinkStruct * link = new plAgeLinkStruct();
     
     if (VaultGetLinkToMyNeighborhood(link)) {
         PyObject * result = pyAgeLinkStruct::New(link);
         return result;
     }
 
-    DEL(link);
+    delete link;
     PYTHON_RETURN_NONE;
 }
 
 PyObject *pyVaultPlayerNode::GetLinkToCity()
 {
-    plAgeLinkStruct * link = NEW(plAgeLinkStruct);
+    plAgeLinkStruct * link = new plAgeLinkStruct();
     
     if (VaultGetLinkToCity(link)) {
         PyObject * result = pyAgeLinkStruct::New(link);
         return result;
     }
 
-    DEL(link);
+    delete link;
     PYTHON_RETURN_NONE;
 }
 
@@ -244,7 +244,7 @@ void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
 
 PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, entryName, arrsize(wStr));
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         PyObject * result = pyVaultChronicleNode::New(rvn);
@@ -301,12 +301,12 @@ bool pyVaultPlayerNode::IsDisabled()
     return player.disabled;
 }
 
-void pyVaultPlayerNode::SetOnlineTime(UInt32 value)
+void pyVaultPlayerNode::SetOnlineTime(uint32_t value)
 {
     hsAssert(false, "python may not change a player's online time this way");
 }
 
-UInt32 pyVaultPlayerNode::GetOnlineTime()
+uint32_t pyVaultPlayerNode::GetOnlineTime()
 {
     if (!fNode)
         return 0;

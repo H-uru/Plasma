@@ -83,13 +83,13 @@ struct CliGkConn : AtomicRef {
     void StopAutoPing ();
     void TimerPing ();
     
-    void Send (const unsigned_ptr fields[], unsigned count);
+    void Send (const uintptr_t fields[], unsigned count);
 
     CCritSect       critsect;
     LINK(CliGkConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar           name[MAX_PATH];
+    wchar_t           name[MAX_PATH];
     NetAddress      addr;
     Uuid            token;
     unsigned        seq;
@@ -107,7 +107,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
     void *                                  m_param;
     unsigned                                m_pingAtMs;
     unsigned                                m_replyAtMs;
-    ARRAY(byte)                             m_payload;
+    ARRAY(uint8_t)                             m_payload;
     
     PingRequestTrans (
         FNetCliGateKeeperPingRequestCallback    callback,
@@ -120,7 +120,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -131,7 +131,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
 struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperFileSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    wchar                                               m_addr[64];
+    wchar_t                                               m_addr[64];
     bool                                                m_isPatcher;
     
     FileSrvIpAddressRequestTrans (
@@ -143,7 +143,7 @@ struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -154,7 +154,7 @@ struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
 struct AuthSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    wchar                                               m_addr[64];
+    wchar_t                                               m_addr[64];
     
     AuthSrvIpAddressRequestTrans (
         FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
@@ -164,7 +164,7 @@ struct AuthSrvIpAddressRequestTrans : NetGateKeeperTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -246,7 +246,7 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
 
 //============================================================================
 static void SendClientRegisterRequest (CliGkConn * conn) {
-/*    const unsigned_ptr msg[] = {
+/*    const uintptr_t msg[] = {
         kCli2GateKeeper_ClientRegisterRequest,
         BuildId(),
     };
@@ -271,7 +271,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
         }
         s_critsect.Leave();
             
-    //  AuthConnectedNotifyTrans * trans = NEW(AuthConnectedNotifyTrans);
+    //  AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
     //  NetTransSend(trans);
     }
 
@@ -463,7 +463,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const wchar         name[],
+    const wchar_t         name[],
     const NetAddress &  addr
 ) {
     ASSERT(s_running);
@@ -481,7 +481,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar         name[],
+    const wchar_t         name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -660,7 +660,7 @@ void CliGkConn::TimerPing () {
         // Send a ping request
         pingSendTimeMs = GetNonZeroTimeMs();
         
-        const unsigned_ptr msg[] = {
+        const uintptr_t msg[] = {
             kCli2GateKeeper_PingRequest,
             pingSendTimeMs,
             0,      // not a transaction
@@ -673,7 +673,7 @@ void CliGkConn::TimerPing () {
 }
 
 //============================================================================
-void CliGkConn::Send (const unsigned_ptr fields[], unsigned count) {
+void CliGkConn::Send (const uintptr_t fields[], unsigned count) {
     critsect.Enter();
     {
         NetCliSend(cli, fields, count);
@@ -691,7 +691,7 @@ void CliGkConn::Send (const unsigned_ptr fields[], unsigned count) {
 
 //============================================================================
 static bool Recv_PingReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -706,7 +706,7 @@ static bool Recv_PingReply (
 
 //============================================================================
 static bool Recv_FileSrvIpAddressReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -720,7 +720,7 @@ static bool Recv_FileSrvIpAddressReply (
 
 //============================================================================
 static bool Recv_AuthSrvIpAddressReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -774,7 +774,7 @@ PingRequestTrans::PingRequestTrans (
 ,   m_param(param)
 ,   m_pingAtMs(pingAtMs)
 {
-    m_payload.Set((const byte *)payload, payloadBytes);
+    m_payload.Set((const uint8_t *)payload, payloadBytes);
 }
 
 //============================================================================
@@ -783,12 +783,12 @@ bool PingRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2GateKeeper_PingRequest,
                         m_pingAtMs,
                         m_transId,
                         m_payload.Count(),
-        (unsigned_ptr)  m_payload.Ptr(),
+        (uintptr_t)  m_payload.Ptr(),
     };
     
     m_conn->Send(msg, arrsize(msg));
@@ -811,7 +811,7 @@ void PingRequestTrans::Post () {
 
 //============================================================================
 bool PingRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const GateKeeper2Cli_PingReply & reply = *(const GateKeeper2Cli_PingReply *)msg;
@@ -850,7 +850,7 @@ bool FileSrvIpAddressRequestTrans::Send () {
         return false;
 
     
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2GateKeeper_FileSrvIpAddressRequest,
                         m_transId,
                         m_isPatcher == true ? 1 : 0
@@ -873,7 +873,7 @@ void FileSrvIpAddressRequestTrans::Post () {
 
 //============================================================================
 bool FileSrvIpAddressRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const GateKeeper2Cli_FileSrvIpAddressReply & reply = *(const GateKeeper2Cli_FileSrvIpAddressReply *)msg;
@@ -909,7 +909,7 @@ bool AuthSrvIpAddressRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2GateKeeper_AuthSrvIpAddressRequest,
                         m_transId,
     };
@@ -931,7 +931,7 @@ void AuthSrvIpAddressRequestTrans::Post () {
 
 //============================================================================
 bool AuthSrvIpAddressRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const GateKeeper2Cli_AuthSrvIpAddressReply & reply = *(const GateKeeper2Cli_AuthSrvIpAddressReply *)msg;
@@ -1065,14 +1065,14 @@ unsigned GateKeeperGetConnId () {
 
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const wchar *   gateKeeperAddrList[],
+    const wchar_t *   gateKeeperAddrList[],
     unsigned        gateKeeperAddrCount
 ) {
     gateKeeperAddrCount = min(gateKeeperAddrCount, 1);
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar * name = gateKeeperAddrList[i];
+        const wchar_t * name = gateKeeperAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1114,7 +1114,7 @@ void NetCliGateKeeperPingRequest (
     FNetCliGateKeeperPingRequestCallback    callback,
     void *                                  param
 ) {
-    PingRequestTrans * trans = NEW(PingRequestTrans)(
+    PingRequestTrans * trans = new PingRequestTrans(
         callback,
         param,
         pingTimeMs, 
@@ -1130,7 +1130,7 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
     void *                                              param,
     bool                                                isPatcher
 ) {
-    FileSrvIpAddressRequestTrans * trans = NEW(FileSrvIpAddressRequestTrans)(callback, param, isPatcher);
+    FileSrvIpAddressRequestTrans * trans = new FileSrvIpAddressRequestTrans(callback, param, isPatcher);
     NetTransSend(trans);
 }
 
@@ -1139,6 +1139,6 @@ void NetCliGateKeeperAuthSrvIpAddressRequest (
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
     void *                                              param
 ) {
-    AuthSrvIpAddressRequestTrans * trans = NEW(AuthSrvIpAddressRequestTrans)(callback, param);
+    AuthSrvIpAddressRequestTrans * trans = new AuthSrvIpAddressRequestTrans(callback, param);
     NetTransSend(trans);
 }

@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plOneShotMod : public plMultiModifier
 {
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
     char * fAnimName;       // the name of the animation associated with this one-shot
     hsBool fDrivable;       // whether the user can control the position of the animation
     hsBool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)

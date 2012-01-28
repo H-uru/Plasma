@@ -70,10 +70,10 @@ public:
     virtual hsBool      MsgReceive( plMessage *pMsg );
     
 protected:
-    hsScalar            fTimeAtBufferStart;
+    float            fTimeAtBufferStart;
     plAudioFileReader   *fDataStream;
-    hsScalar            fBufferLengthInSecs;
-    UInt8               fBlankBufferFillCounter;
+    float            fBufferLengthInSecs;
+    uint8_t               fBlankBufferFillCounter;
     plSoundDeswizzler   *fDeswizzler;
     char                fSrcFilename[ 256 ];
     StreamType          fStreamType;
@@ -86,7 +86,7 @@ protected:
     bool                fPlayWhenStopped;
     unsigned            fStartPos;
 
-    hsScalar            IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
+    float            IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
     virtual void        SetStartPos(unsigned bytes);
 
     virtual void        IDerivedActuallyPlay( void );

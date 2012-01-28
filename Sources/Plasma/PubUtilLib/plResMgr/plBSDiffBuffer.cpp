@@ -51,9 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBSDiffBuffer.h"
-#include "hsUtils.h"
+
 #include "hsStream.h"
 
 #define plBSDiffBuffer_MIN(x,y) (((x)<(y)) ? (x) : (y))
@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  buffer, but if you do, it'll help this class do some internal space 
 //  optimization.
 
-plBSDiffBuffer::plBSDiffBuffer( UInt32 newLength, UInt32 oldLength )
+plBSDiffBuffer::plBSDiffBuffer( uint32_t newLength, uint32_t oldLength )
 : fNewLength( newLength )
 , fPatchLength( 0 )
 {
@@ -82,7 +82,7 @@ plBSDiffBuffer::plBSDiffBuffer( UInt32 newLength, UInt32 oldLength )
 //  will be copied, so you don't need to keep it around after you construct
 //  this object.
 
-plBSDiffBuffer::plBSDiffBuffer( void *buffer, UInt32 length )
+plBSDiffBuffer::plBSDiffBuffer( void *buffer, uint32_t length )
 : fNewLength( 0 )
 , fPatchLength( 0 )
 , fPatchBuffer( nil )
@@ -91,7 +91,7 @@ plBSDiffBuffer::plBSDiffBuffer( void *buffer, UInt32 length )
     if (!buffer || length < 32)
         hsAssert(false, "Corrupt Patch Buffer!");
 
-    if((fPatchBuffer=TRACKED_NEW unsigned char[length+1])!=nil)
+    if((fPatchBuffer=new unsigned char[length+1])!=nil)
     {
         fPatchLength = length;
         memcpy(fPatchBuffer, buffer, fPatchLength);
@@ -111,21 +111,21 @@ plBSDiffBuffer::~plBSDiffBuffer()
 
 //// Diff /////////////////////////////////////////////////////////////////////
 //  Diff() creates the diff buffer from the new and old. 
-UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength, void *newBuffer )
+uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t newLength, void *newBuffer )
 {
     hsAssert( fWriting, "Trying to Add() to a difference buffer that's reading" );
 
-    Int32 *I,*V;
+    int32_t *I,*V;
 
-    Int32 scan,pos,len;
-    Int32 lastscan,lastpos,lastoffset;
-    Int32 oldscore,scsc;
+    int32_t scan,pos,len;
+    int32_t lastscan,lastpos,lastoffset;
+    int32_t oldscore,scsc;
 
-    Int32 s,Sf,lenf,Sb,lenb;
-    Int32 overlap,Ss,lens;
-    Int32 i;
+    int32_t s,Sf,lenf,Sb,lenb;
+    int32_t overlap,Ss,lens;
+    int32_t i;
 
-    UInt32 cblen,dblen,eblen;
+    uint32_t cblen,dblen,eblen;
     unsigned char *oldbuf, *newbuf;
     unsigned char *cb,*db,*eb;
 
@@ -142,8 +142,8 @@ UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength
     oldbuf = (unsigned char *)oldBuffer;
     newbuf = (unsigned char *)newBuffer;
 
-    if(((I=TRACKED_NEW Int32[oldLength+1])==nil) ||
-        ((V=TRACKED_NEW Int32[oldLength+1])==nil))
+    if(((I=new int32_t[oldLength+1])==nil) ||
+        ((V=new int32_t[oldLength+1])==nil))
     {
         delete[] I;
         delete[] V;
@@ -157,9 +157,9 @@ UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength
     /*
      *  These could probably be smaller, especially cb.
      */
-    if(((cb=TRACKED_NEW unsigned char[newLength+1])==nil) ||
-       ((db=TRACKED_NEW unsigned char[newLength+1])==nil) ||
-       ((eb=TRACKED_NEW unsigned char[newLength+1])==nil))
+    if(((cb=new unsigned char[newLength+1])==nil) ||
+       ((db=new unsigned char[newLength+1])==nil) ||
+       ((eb=new unsigned char[newLength+1])==nil))
     {
         delete[] I;
         delete[] cb;
@@ -246,9 +246,9 @@ UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength
             dblen+=lenf;
             eblen+=(scan-lenb)-(lastscan+lenf);
 
-            IWriteUnsignedInt8(lenf,cb+cblen);
-            IWriteUnsignedInt8((scan-lenb)-(lastscan+lenf),cb+cblen+8);
-            IWriteUnsignedInt8((pos-lenb)-(lastpos+lenf),cb+cblen+16);
+            IWriteUnsignedint8_t(lenf,cb+cblen);
+            IWriteUnsignedint8_t((scan-lenb)-(lastscan+lenf),cb+cblen+8);
+            IWriteUnsignedint8_t((pos-lenb)-(lastpos+lenf),cb+cblen+16);
             cblen+=24;
 
             lastscan=scan-lenb;
@@ -257,13 +257,13 @@ UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength
         };
     };
 
-    IWriteUnsignedInt8(cblen,header+8);
-    IWriteUnsignedInt8(dblen,header+16);
-    IWriteUnsignedInt8(newLength,header+24);
+    IWriteUnsignedint8_t(cblen,header+8);
+    IWriteUnsignedint8_t(dblen,header+16);
+    IWriteUnsignedint8_t(newLength,header+24);
 
     fPatchLength = 32 + cblen + dblen + eblen;
     fPatchBuffer = nil;
-    if((fPatchBuffer=TRACKED_NEW unsigned char[fPatchLength])!=nil)
+    if((fPatchBuffer=new unsigned char[fPatchLength])!=nil)
     {
         memcpy(fPatchBuffer,header,32);
         memcpy(fPatchBuffer+32,cb,cblen);
@@ -290,7 +290,7 @@ UInt32 plBSDiffBuffer::Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength
 //  function will rewind the diff stream, so once you call it, you can't do
 //  anything else on the object.
 
-void plBSDiffBuffer::GetBuffer( UInt32 &length, void *&bufferPtr )
+void plBSDiffBuffer::GetBuffer( uint32_t &length, void *&bufferPtr )
 {
     hsAssert( fWriting, "Trying to GetBuffer() on a difference buffer that's reading" );
 
@@ -315,20 +315,20 @@ void plBSDiffBuffer::GetBuffer( UInt32 &length, void *&bufferPtr )
 
 // Patch() will take this diff buffer and apply it to the given old buffer,
 // allocating and producing a new buffer. You are responsible for freeing the new buffer.
-UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLength, void *&newBuffer )
+uint32_t plBSDiffBuffer::Patch( uint32_t oldLength, void *oldBuffer, uint32_t &newLength, void *&newBuffer )
 {
     hsAssert( !fWriting, "Trying to Patch() a difference buffer that's writing" );
 
     unsigned char *ctrlpipe, *ctrlend;
     unsigned char *diffpipe, *diffend;
     unsigned char *extrapipe;
-    UInt32 ctrllen,datalen;
+    uint32_t ctrllen,datalen;
     int version=0;
     unsigned char *newpos, *newend;
     unsigned char *oldpos, *oldend;
     unsigned char *patchend;
-    UInt32 ctrl[3];
-    UInt32 i;
+    uint32_t ctrl[3];
+    uint32_t i;
 
     if (oldBuffer == nil ||
         oldLength < 0 ||
@@ -375,9 +375,9 @@ UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLeng
 
     if(!version) return (-1);
 
-    ctrllen=IReadUnsignedInt8(fPatchBuffer+8);
-    datalen=IReadUnsignedInt8(fPatchBuffer+16);
-    newLength=IReadUnsignedInt8(fPatchBuffer+24);
+    ctrllen=IReadUnsignedint8_t(fPatchBuffer+8);
+    datalen=IReadUnsignedint8_t(fPatchBuffer+16);
+    newLength=IReadUnsignedint8_t(fPatchBuffer+24);
     if((ctrllen<0) || (datalen<0) || (newLength<0) ||
         ((version==1) && (32+ctrllen+datalen!=fPatchLength)))
         return (-1);
@@ -390,7 +390,7 @@ UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLeng
         extrapipe=diffpipe+datalen;
     };
 
-    if((newBuffer=(void *)TRACKED_NEW unsigned char[newLength+1])==nil) return(-1);
+    if((newBuffer=(void *)new unsigned char[newLength+1])==nil) return(-1);
     newpos = (unsigned char *)newBuffer;
     newend = (unsigned char *)newBuffer + newLength;
     oldpos = (unsigned char *)oldBuffer;
@@ -398,7 +398,7 @@ UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLeng
     while(newpos<newend) {
         for(i=0;i<=version;i++) {
             if(ctrlend-ctrlpipe < 8) return (-1);
-            ctrl[i]=IReadUnsignedInt8(ctrlpipe);
+            ctrl[i]=IReadUnsignedint8_t(ctrlpipe);
             ctrlpipe += 8;
         };
 
@@ -443,11 +443,11 @@ UInt32 plBSDiffBuffer::Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLeng
 //// Private Helper Functions ///////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-// Reads in an 8-byte unsigned integer least significant byte first and returns a
-// UInt32. We'll ignore the top four bytes.
-UInt32 plBSDiffBuffer::IReadUnsignedInt8(unsigned char *buf)
+// Reads in an 8-uint8_t unsigned integer least significant uint8_t first and returns a
+// uint32_t. We'll ignore the top four bytes.
+uint32_t plBSDiffBuffer::IReadUnsignedint8_t(unsigned char *buf)
 {
-    UInt32 y;
+    uint32_t y;
 
     y=buf[7]&0x7F;
     y=y*256;y+=buf[6];
@@ -459,21 +459,21 @@ UInt32 plBSDiffBuffer::IReadUnsignedInt8(unsigned char *buf)
     y=y*256;y+=buf[0];
 
     // casting added so compiler doesn't warn about negating an unsigned value
-    Int32 signedY = (Int32)y;
+    int32_t signedY = (int32_t)y;
     if(buf[7]&0x80) signedY=-signedY;
-    y = (UInt32)signedY;
+    y = (uint32_t)signedY;
 
     return y;
 }
 
-void plBSDiffBuffer::IWriteUnsignedInt8(UInt32 x,unsigned char *buf)
+void plBSDiffBuffer::IWriteUnsignedint8_t(uint32_t x,unsigned char *buf)
 {
-    UInt32 y;
-    Int32 signedY, signedX = (Int32)x;
+    uint32_t y;
+    int32_t signedY, signedX = (int32_t)x;
 
     // casting added so compiler doesn't warn about negating an unsigned value
     if(x<0) signedY=-signedX; else signedY=signedX;
-    y = (UInt32)signedY;
+    y = (uint32_t)signedY;
 
     buf[0]=(unsigned char)(y%256);y-=buf[0];
     y=y/256;buf[1]=(unsigned char)(y%256);y-=buf[1];
@@ -489,22 +489,22 @@ void plBSDiffBuffer::IWriteUnsignedInt8(UInt32 x,unsigned char *buf)
 
 /*
  *  This function will ensure that no boundary errors occur. It also increments *src
- *  by nbytes when done.
+ *  by nBytes when done.
  */
-void plBSDiffBuffer::ISafeMemcpy(unsigned char *dest, unsigned char *src, size_t nbytes,
+void plBSDiffBuffer::ISafeMemcpy(unsigned char *dest, unsigned char *src, size_t nBytes,
                                  unsigned char *destend, unsigned char *srcend)
 {
-    if((destend - dest < nbytes) ||
-       (srcend - src < nbytes))
+    if((destend - dest < nBytes) ||
+       (srcend - src < nBytes))
     {
         hsAssert(false,"Corrupt patch\n");
     }
-    memcpy(dest,src,nbytes);
+    memcpy(dest,src,nBytes);
 }
 
-void plBSDiffBuffer::ISplit(Int32 *I,Int32 *V,UInt32 start,UInt32 len,UInt32 h)
+void plBSDiffBuffer::ISplit(int32_t *I,int32_t *V,uint32_t start,uint32_t len,uint32_t h)
 {
-    UInt32 i,j,k,x,tmp,jj,kk;
+    uint32_t i,j,k,x,tmp,jj,kk;
 
     if(len<16) {
         for(k=start;k<start+len;k+=j) {
@@ -563,10 +563,10 @@ void plBSDiffBuffer::ISplit(Int32 *I,Int32 *V,UInt32 start,UInt32 len,UInt32 h)
     if(start+len>kk) ISplit(I,V,kk,start+len-kk,h);
 }
 
-void plBSDiffBuffer::IQSuffixSort(Int32 *I,Int32 *V,unsigned char *old,UInt32 oldsize)
+void plBSDiffBuffer::IQSuffixSort(int32_t *I,int32_t *V,unsigned char *old,uint32_t oldsize)
 {
-    UInt32 buckets[256];
-    UInt32 i,h,len;
+    uint32_t buckets[256];
+    uint32_t i,h,len;
 
     for(i=0;i<256;i++) buckets[i]=0;
     for(i=0;i<oldsize;i++) buckets[old[i]]++;
@@ -581,33 +581,33 @@ void plBSDiffBuffer::IQSuffixSort(Int32 *I,Int32 *V,unsigned char *old,UInt32 ol
     for(i=1;i<256;i++) if(buckets[i]==buckets[i-1]+1) I[buckets[i]]=-1;
     I[0]=-1;
 
-    // oldsize converted to Int32 to stop warning about negating unsigned numbers
-    for(h=1;I[0]!=-(Int32)(oldsize+1);h+=h) {
+    // oldsize converted to int32_t to stop warning about negating unsigned numbers
+    for(h=1;I[0]!=-(int32_t)(oldsize+1);h+=h) {
         len=0;
         for(i=0;i<oldsize+1;) {
             if(I[i]<0) {
                 len-=I[i];
                 i-=I[i];
             } else {
-                // len converted to Int32 to stop the warning about negating an unsigned number
-                if(len) I[i-len]=-(Int32)len;
+                // len converted to int32_t to stop the warning about negating an unsigned number
+                if(len) I[i-len]=-(int32_t)len;
                 len=V[I[i]]+1-i;
                 ISplit(I,V,i,len,h);
                 i+=len;
                 len=0;
             };
         };
-        // len converted to Int32 to stop the warning about negating an unsigned number
-        if(len) I[i-len]=-(Int32)len;
+        // len converted to int32_t to stop the warning about negating an unsigned number
+        if(len) I[i-len]=-(int32_t)len;
     };
 
     for(i=0;i<oldsize+1;i++) I[V[i]]=i;
 }
 
-UInt32 plBSDiffBuffer::IMatchLen( unsigned char *oldBuffer, UInt32 oldLength,
-                                  unsigned char *newBuffer, UInt32 newLength)
+uint32_t plBSDiffBuffer::IMatchLen( unsigned char *oldBuffer, uint32_t oldLength,
+                                  unsigned char *newBuffer, uint32_t newLength)
 {
-    UInt32 i;
+    uint32_t i;
 
     for(i=0;(i<oldLength)&&(i<newLength);i++)
         if(oldBuffer[i]!=newBuffer[i]) break;
@@ -615,12 +615,12 @@ UInt32 plBSDiffBuffer::IMatchLen( unsigned char *oldBuffer, UInt32 oldLength,
     return i;
 }
 
-UInt32 plBSDiffBuffer::ISearch( Int32 *I,
-                                unsigned char *oldBuffer, UInt32 oldLength,
-                                unsigned char *newBuffer, UInt32 newLength,
-                                UInt32 st, UInt32 en, Int32 *pos)
+uint32_t plBSDiffBuffer::ISearch( int32_t *I,
+                                unsigned char *oldBuffer, uint32_t oldLength,
+                                unsigned char *newBuffer, uint32_t newLength,
+                                uint32_t st, uint32_t en, int32_t *pos)
 {
-    UInt32 x,y;
+    uint32_t x,y;
 
     if(en-st<2) {
         x=IMatchLen(oldBuffer+I[st],oldLength-I[st],newBuffer,newLength);

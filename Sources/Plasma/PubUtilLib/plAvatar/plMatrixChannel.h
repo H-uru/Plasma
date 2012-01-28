@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 
 // global
-#include "hsTypes.h"        // you need types to include Matrix
+#include "HeadSpin.h"        // you need types to include Matrix
 #include "hsMatrix44.h"
 #include "plTransform/hsAffineParts.h"
 
@@ -173,7 +173,7 @@ public:
     virtual plAGChannel * MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority);
 
     // you cannot blend on top of a channel that has higher priority than you do.
-    virtual UInt16 GetPriority();
+    virtual uint16_t GetPriority();
 
     // SPECIFICS
     const plMatrixChannel * GetChannelA() const { return fChannelA; }
@@ -348,7 +348,7 @@ public:
     virtual hsBool CanBlend(plAGApplicator *app);
 
     hsBool fIgnoreNextCorrection;
-    static const hsScalar fDelayLength; // static var for now.  
+    static const float fDelayLength; // static var for now.  
 };
 
 // PLMATRIXDIFFERENCEAPP

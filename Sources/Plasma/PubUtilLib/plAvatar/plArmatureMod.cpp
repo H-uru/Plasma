@@ -184,7 +184,7 @@ void plArmatureModBase::RemoveTarget(plSceneObject* so)
     plAGMasterMod::RemoveTarget(so);
 }
 
-hsBool plArmatureModBase::IEval(double time, hsScalar elapsed, UInt32 dirty)
+hsBool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -220,7 +220,7 @@ void plArmatureModBase::Read(hsStream * stream, hsResMgr *mgr)
         plKey meshKey = mgr->ReadKey(stream);
         fMeshKeys.push_back(meshKey);
         
-        plKeyVector *vec = TRACKED_NEW plKeyVector;
+        plKeyVector *vec = new plKeyVector;
         int boneCount = stream->ReadLE32();
         for(int j = 0; j < boneCount; j++)
             vec->push_back(mgr->ReadKey(stream));
@@ -276,7 +276,7 @@ void plArmatureModBase::EnableDrawingTree(const plSceneObject *object, hsBool st
     if (!object)
         return;
     
-    plEnableMsg *msg = TRACKED_NEW plEnableMsg;
+    plEnableMsg *msg = new plEnableMsg;
     if (status)
         msg->SetCmd( plEnableMsg::kEnable );
     else
@@ -436,7 +436,7 @@ void plArmatureModBase::AdjustLOD()
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 ourPos = l2w.GetTranslate();
         hsPoint3 delta = ourPos - camPos;
-        hsScalar distanceSquared = delta.MagnitudeSquared();
+        float distanceSquared = delta.MagnitudeSquared();
         if (distanceSquared < fLODDistance * fLODDistance)
             SetLOD(__max(0, fMinLOD));
         else if (distanceSquared < fLODDistance * fLODDistance * 4.0) 
@@ -507,12 +507,12 @@ int plArmatureModBase::AppendBoneVec(plKeyVector *boneVec)
     return fUnusedBones.size() - 1;
 }
 
-UInt8 plArmatureModBase::GetNumLOD() const
+uint8_t plArmatureModBase::GetNumLOD() const
 {
     return fMeshKeys.size();
 }
 
-void plArmatureModBase::EnablePhysics(hsBool status, UInt16 reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnablePhysics(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
     if (status)
         fDisabledPhysics &= ~reason;
@@ -538,7 +538,7 @@ void plArmatureModBase::EnablePhysicsKinematic(hsBool status)
         fController->Kinematic(status);
 }
 
-void plArmatureModBase::EnableDrawing(hsBool status, UInt16 reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnableDrawing(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
     hsBool oldStatus = !fDisabledDraw;
     if (status)
@@ -604,7 +604,7 @@ void plArmatureModBase::ICustomizeApplicator()
             }
         }
         plAGModifier *volAGMod = const_cast<plAGModifier *>(agMod);
-        plMatrixDifferenceApp *differ = TRACKED_NEW plMatrixDifferenceApp();
+        plMatrixDifferenceApp *differ = new plMatrixDifferenceApp();
         
         fRootAnimator = differ;
         volAGMod->SetApplicator(differ);        
@@ -628,8 +628,8 @@ void plArmatureModBase::IEnableBones(int lod, hsBool enable)
 
 const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"};
 
-const hsScalar plArmatureMod::kAvatarInputSynchThreshold = 10.f;
-hsScalar plArmatureMod::fMouseTurnSensitivity = 1.f;
+const float plArmatureMod::kAvatarInputSynchThreshold = 10.f;
+float plArmatureMod::fMouseTurnSensitivity = 1.f;
 hsBool plArmatureMod::fClickToTurn = true;
 
 void plArmatureMod::IInitDefaults()
@@ -758,7 +758,7 @@ const plSceneObject *plArmatureMod::FindBone(const char * name) const
     return result;
 }
 
-const plSceneObject *plArmatureMod::FindBone(UInt32 id) const
+const plSceneObject *plArmatureMod::FindBone(uint32_t id) const
 {
     if(fBoneMap)
         return fBoneMap->FindBone(id);
@@ -766,10 +766,10 @@ const plSceneObject *plArmatureMod::FindBone(UInt32 id) const
         return nil;
 }
 
-void plArmatureMod::AddBoneMapping(UInt32 id, const plSceneObject *bone)
+void plArmatureMod::AddBoneMapping(uint32_t id, const plSceneObject *bone)
 {
     if(!fBoneMap)
-        fBoneMap = TRACKED_NEW plAvBoneMap();
+        fBoneMap = new plAvBoneMap();
 
     fBoneMap->AddBoneMapping(id, bone);
 }
@@ -888,7 +888,7 @@ void plArmatureMod::SpawnAt(int spawnNum, double time)
     }
     fWaitFlags &= ~kNeedSpawn;
     
-    plAvatarSpawnNotifyMsg *notify = TRACKED_NEW plAvatarSpawnNotifyMsg();
+    plAvatarSpawnNotifyMsg *notify = new plAvatarSpawnNotifyMsg();
     notify->SetTimeStamp(hsTimer::GetSysSeconds() + 0.1);
     notify->SetBCastFlag(plMessage::kBCastByExactType);
     notify->Send();
@@ -901,10 +901,10 @@ void plArmatureMod::SetFollowerParticleSystemSO(plSceneObject *follower)
     // TODO: Check for old one and clean up.
     hsPoint3 trans = GetTarget(0)->GetLocalToWorld().GetTranslate() - follower->GetLocalToWorld().GetTranslate();
     
-    plWarpMsg *warp = TRACKED_NEW plWarpMsg(GetKey(), follower->GetKey(), plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity,
+    plWarpMsg *warp = new plWarpMsg(GetKey(), follower->GetKey(), plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity,
         GetTarget(0)->GetLocalToWorld());
     warp->Send();
-    hsgResMgr::ResMgr()->AddViaNotify(follower->GetKey(), TRACKED_NEW plAttachMsg(GetTarget(0)->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(follower->GetKey(), new plAttachMsg(GetTarget(0)->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
     fFollowerParticleSystemSO = follower;
 
     plParticleSystem *sys = const_cast<plParticleSystem*>(plParticleSystem::ConvertNoRef(follower->GetModifierByType(plParticleSystem::Index())));
@@ -932,11 +932,11 @@ void plArmatureMod::UnRegisterForBehaviorNotify(plKey key)
     fNotifyKeys.RemoveItem(key);
 }
 
-void plArmatureMod::IFireBehaviorNotify(UInt32 type, hsBool behaviorStart)
+void plArmatureMod::IFireBehaviorNotify(uint32_t type, hsBool behaviorStart)
 {
     if (fNotifyKeys.GetCount() > 0)
     {
-        plAvatarBehaviorNotifyMsg *msg = TRACKED_NEW plAvatarBehaviorNotifyMsg();
+        plAvatarBehaviorNotifyMsg *msg = new plAvatarBehaviorNotifyMsg();
         msg->SetSender(GetKey());
         msg->AddReceivers(fNotifyKeys);
         msg->fType = type;
@@ -963,7 +963,7 @@ void plArmatureMod::EnterAge(hsBool reSpawn)
         if (sys)
         {
             // Need to tell other clients about this
-            plLoadCloneMsg *clone = TRACKED_NEW plLoadCloneMsg(GetFollowerParticleSystemSO()->GetKey(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID(), true);
+            plLoadCloneMsg *clone = new plLoadCloneMsg(GetFollowerParticleSystemSO()->GetKey(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID(), true);
             clone->SetBCastFlag(plMessage::kLocalPropagate, false);
             clone->Send();
 
@@ -998,7 +998,7 @@ void plArmatureMod::LeaveAge()
     if (GetFollowerParticleSystemSO())
     {
         // Need to tell other clients to remove this
-        plLoadCloneMsg *clone = TRACKED_NEW plLoadCloneMsg(GetFollowerParticleSystemSO()->GetKey(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID(), false);
+        plLoadCloneMsg *clone = new plLoadCloneMsg(GetFollowerParticleSystemSO()->GetKey(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID(), false);
         clone->SetBCastFlag(plMessage::kLocalPropagate, false);
         clone->Send();
     }
@@ -1024,7 +1024,7 @@ void plArmatureMod::PanicLink(hsBool playLinkOutAnim /* = true */)
     plNetApp::StaticDebugMsg("plArmatureMod::PanicLink()");
 
     // make the player book blink as they are linking out
-    pfKIMsg *msg = TRACKED_NEW pfKIMsg( pfKIMsg::kStartBookAlert );
+    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kStartBookAlert );
     plgDispatch::MsgSend( msg );
 
     // Can't depend on the anim to link if the human brain isn't ready to deal with it
@@ -1035,13 +1035,13 @@ void plArmatureMod::PanicLink(hsBool playLinkOutAnim /* = true */)
 
     if (playLinkOutAnim)
     {
-        plAvOneShotLinkTask *task = TRACKED_NEW plAvOneShotLinkTask;
+        plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
 
         char *animName = MakeAnimationName("FallingLinkOut");
         task->SetAnimName(animName);
         task->SetMarkerName("touch");
     
-        plAvTaskMsg *taskMsg = TRACKED_NEW plAvTaskMsg(GetKey(), GetKey(), task);
+        plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->Send();
 
         delete [] animName;
@@ -1061,13 +1061,13 @@ void plArmatureMod::PersonalLink()
         ILinkToPersonalAge();
     else
     {
-        plAvOneShotLinkTask *task = TRACKED_NEW plAvOneShotLinkTask;
+        plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
         char *animName = MakeAnimationName("PersonalLink"); 
         task->SetAnimName(animName);
         task->SetMarkerName("touch");
         delete [] animName;
         
-        plAvTaskMsg *taskMsg = TRACKED_NEW plAvTaskMsg(GetKey(), GetKey(), task);
+        plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);    
         taskMsg->Send();
     }
@@ -1253,7 +1253,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
                 return true; // Only the local player can create the clone.
 
             // Clone is sent to all players.
-            plLoadCloneMsg *cloneMsg = TRACKED_NEW plLoadCloneMsg(partMsg->fSysSOKey->GetUoid(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID());
+            plLoadCloneMsg *cloneMsg = new plLoadCloneMsg(partMsg->fSysSOKey->GetUoid(), plAvatarMgr::GetInstance()->GetKey(), GetKey()->GetUoid().GetClonePlayerID());
             cloneMsg->SetTriggerMsg(partMsg);
             cloneMsg->SetBCastFlag(plMessage::kNetForce);
             cloneMsg->Send();
@@ -1302,7 +1302,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
                 if(spawnSO)
                 {
                     hsMatrix44 l2w = spawnSO->GetLocalToWorld();
-                    plWarpMsg *warpM = TRACKED_NEW plWarpMsg(nil, GetTarget(0)->GetKey(), plWarpMsg::kFlushTransform, l2w);
+                    plWarpMsg *warpM = new plWarpMsg(nil, GetTarget(0)->GetKey(), plWarpMsg::kFlushTransform, l2w);
                     warpM->Send();
                     fWaitFlags &= ~kNeedSpawn;
                 }
@@ -1495,7 +1495,7 @@ hsBool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
 void plArmatureMod::IHandleInputStateMsg(plAvatarInputStateMsg *msg)
 {
     int i;
-    UInt32 curBit;
+    uint32_t curBit;
     for (i = 0, curBit = 0x1; i < plAvatarInputStateMsg::fMapSize; i++, curBit <<= 1)
     {
         SetInputFlag(msg->fCodeMap[i], msg->fState & curBit);
@@ -1503,14 +1503,14 @@ void plArmatureMod::IHandleInputStateMsg(plAvatarInputStateMsg *msg)
     
 }
 
-void plArmatureMod::SynchInputState(UInt32 rcvID /* = kInvalidPlayerID */)
+void plArmatureMod::SynchInputState(uint32_t rcvID /* = kInvalidPlayerID */)
 {
     if (plAvatarMgr::GetInstance()->GetLocalAvatar() != this)
         return;
     
-    plAvatarInputStateMsg *msg = TRACKED_NEW plAvatarInputStateMsg();
+    plAvatarInputStateMsg *msg = new plAvatarInputStateMsg();
     int i;
-    UInt32 curBit;
+    uint32_t curBit;
     for (i = 0, curBit = 0x1; i < plAvatarInputStateMsg::fMapSize; i++, curBit <<= 1)
     {
         if (GetInputFlag(msg->fCodeMap[i]))
@@ -1542,13 +1542,13 @@ void plArmatureMod::ILinkToPersonalAge()
     link.SetSpawnPoint(hutSpawnPoint);
     
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
-    plLinkToAgeMsg* pMsg = TRACKED_NEW plLinkToAgeMsg( &link );
+    plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
     pMsg->SetLinkInAnimName("PersonalBookEnter");
     pMsg->AddReceiver(nc->GetKey());
     pMsg->Send();   
 }
 
-hsBool plArmatureMod::IEval(double time, hsScalar elapsed, UInt32 dirty)
+hsBool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -1631,7 +1631,7 @@ hsBool plArmatureMod::IEval(double time, hsScalar elapsed, UInt32 dirty)
             hsPoint3 trans = GetTarget(0)->GetLocalToWorld().GetTranslate() - follower->GetLocalToWorld().GetTranslate();
             if (trans.MagnitudeSquared() > 1) // we can be a bit fuzzy about this, since the particle system is rather large and people won't notice it being off
             {
-                plWarpMsg *warp = TRACKED_NEW plWarpMsg(GetKey(), follower->GetKey(), plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity,
+                plWarpMsg *warp = new plWarpMsg(GetKey(), follower->GetKey(), plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity,
                     GetTarget(0)->GetLocalToWorld());
                 warp->Send();
 
@@ -1666,29 +1666,29 @@ void plArmatureMod::AddTarget(plSceneObject* so)
     
     // attach a clothingSDLModifier to handle clothing saveState
     delete fClothingSDLMod;
-    fClothingSDLMod = TRACKED_NEW plClothingSDLModifier;
+    fClothingSDLMod = new plClothingSDLModifier;
     fClothingSDLMod->SetClothingOutfit(GetClothingOutfit());    // ok if clothingOutfit is nil at this point
     so->AddModifier(fClothingSDLMod);
 
     // add avatar sdl modifier
     delete fAvatarSDLMod;
-    fAvatarSDLMod = TRACKED_NEW plAvatarSDLModifier;
+    fAvatarSDLMod = new plAvatarSDLModifier;
     so->AddModifier(fAvatarSDLMod);
 
     delete fAvatarPhysicalSDLMod;
-    fAvatarPhysicalSDLMod = TRACKED_NEW plAvatarPhysicalSDLModifier;
+    fAvatarPhysicalSDLMod = new plAvatarPhysicalSDLModifier;
     so->AddModifier(fAvatarPhysicalSDLMod);
 
     // At export time, this key will be nil. This is important, or else we'll overwrite the page the key comes from.
     if (fFootSoundSOKey != nil)
-        hsgResMgr::ResMgr()->AddViaNotify(fFootSoundSOKey, TRACKED_NEW plAttachMsg(so->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fFootSoundSOKey, new plAttachMsg(so->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
     if (fLinkSoundSOKey != nil)
-        hsgResMgr::ResMgr()->AddViaNotify(fLinkSoundSOKey, TRACKED_NEW plAttachMsg(so->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fLinkSoundSOKey, new plAttachMsg(so->GetKey(), nil, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
 
     if (fUpdateMsg)
         fUpdateMsg->UnRef(); // delete an old one.
     
-    fUpdateMsg = TRACKED_NEW plArmatureUpdateMsg(GetKey(), so->IsLocallyOwned(), true, this);       
+    fUpdateMsg = new plArmatureUpdateMsg(GetKey(), so->IsLocallyOwned(), true, this);       
 }
 
 void plArmatureMod::RemoveTarget(plSceneObject* so)
@@ -1772,7 +1772,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     }
         
     if( stream->ReadBool() )
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plClothingBase     
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plClothingBase     
     else
         fClothingOutfit = nil;
 
@@ -1781,7 +1781,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     if( stream->ReadBool() )
     {
         plKey effectMgrKey = mgr->ReadKey(stream);
-        mgr->AddViaNotify(effectMgrKey, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plArmatureEffects       
+        mgr->AddViaNotify(effectMgrKey, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plArmatureEffects       
 
         // Attach the Footstep emitter scene object
         hsResMgr *mgr = hsgResMgr::ResMgr();
@@ -1810,7 +1810,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
                 effectKey = mgr->ReRegister(nil, effectUoid);
             }
             if (effectKey != nil)
-                mgr->AddViaNotify(effectKey, TRACKED_NEW plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+                mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 
             // Get the linking sound
             plUoid LinkUoid(gLoc, plSceneObject::Index(), "LinkSoundSource");
@@ -1843,7 +1843,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, UInt32 synchFlags)
+hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
     if (SDLStateName && stricmp(SDLStateName, kSDLAvatar))
@@ -1862,7 +1862,7 @@ hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, UInt32 synchFlag
     return false;
 }
 
-hsBool plArmatureMod::DirtyPhysicalSynchState(UInt32 synchFlags)
+hsBool plArmatureMod::DirtyPhysicalSynchState(uint32_t synchFlags)
 {
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
     synchFlags |= plSynchedObject::kBCastToClients;
@@ -1882,14 +1882,14 @@ void plArmatureMod::IFinalize()
     
     if (fWaitFlags & kNeedAudio)
     {
-        plSetListenerMsg *msg = TRACKED_NEW plSetListenerMsg( plSetListenerMsg::kVelocity, GetTarget(0)->GetKey(), true );
+        plSetListenerMsg *msg = new plSetListenerMsg( plSetListenerMsg::kVelocity, GetTarget(0)->GetKey(), true );
         msg->Send();
         fWaitFlags &= ~kNeedAudio;
     }
     
     if (fWaitFlags & kNeedCamera)
     {
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetCmd(plCameraMsg::kCreateNewDefaultCam);
         pMsg->SetCmd(plCameraMsg::kSetSubject);
         pMsg->SetSubject(GetTarget(0));
@@ -1925,13 +1925,13 @@ void plArmatureMod::ICustomizeApplicator()
             }
         }
         plAGModifier *volAGMod = const_cast<plAGModifier *>(agMod);
-        fBoneRootAnimator = TRACKED_NEW plMatrixDelayedCorrectionApplicator();
+        fBoneRootAnimator = new plMatrixDelayedCorrectionApplicator();
         volAGMod->SetApplicator(fBoneRootAnimator);
         fWaitFlags &= ~kNeedApplicator;
     }       
 }   
 
-const plSceneObject *plArmatureMod::GetClothingSO(UInt8 lod) const 
+const plSceneObject *plArmatureMod::GetClothingSO(uint8_t lod) const 
 {
     if (fClothToSOMap.GetCount() <= lod)
         return nil;
@@ -1947,7 +1947,7 @@ void plArmatureMod::NetworkSynch(double timeNow, int force)
     {
         // make sure state change gets sent out over the network
         // avatar state should use relevance region filtering
-        UInt32 flags = kBCastToClients | kUseRelevanceRegions;
+        uint32_t flags = kBCastToClients | kUseRelevanceRegions;
         if (force)
             flags |= kForceFullSend;
         DirtyPhysicalSynchState(flags);
@@ -2056,7 +2056,7 @@ hsBool plArmatureMod::ValidateMesh()
             // If we haven't created the mapping yet...
             if (fClothToSOMap.GetCount() <= i || fClothToSOMap[i] == nil)
             {
-                plGenRefMsg *refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, i, 0);
+                plGenRefMsg *refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, i, 0);
                 hsgResMgr::ResMgr()->SendRef(meshObj->GetKey(), refMsg, plRefFlags::kPassiveRef); 
             }
         }
@@ -2094,7 +2094,7 @@ int plArmatureMod::GetBrainCount()
     return fBrains.size();
 }
 
-plArmatureBrain * plArmatureMod::FindBrainByClass(UInt32 classID) const
+plArmatureBrain * plArmatureMod::FindBrainByClass(uint32_t classID) const
 {
     int n = fBrains.size();
 
@@ -2285,12 +2285,12 @@ void plArmatureMod::SetJumpKeyDown()
     SetInputFlag(B_CONTROL_JUMP, true);
 }
 
-hsScalar plArmatureMod::GetTurnStrength() const
+float plArmatureMod::GetTurnStrength() const
 {
     return GetKeyTurnStrength() + GetAnalogTurnStrength();
 }
 
-hsScalar plArmatureMod::GetKeyTurnStrength() const
+float plArmatureMod::GetKeyTurnStrength() const
 {
     if (StrafeKeyDown())
         return 0.f; 
@@ -2298,12 +2298,12 @@ hsScalar plArmatureMod::GetKeyTurnStrength() const
     return (TurnLeftKeyDown() ? 1.f : 0.f) + (TurnRightKeyDown() ? -1.f: 0.f);
 }
 
-hsScalar plArmatureMod::GetAnalogTurnStrength() const
+float plArmatureMod::GetAnalogTurnStrength() const
 {
     if (StrafeKeyDown())
         return 0.f;
 
-    hsScalar elapsed = hsTimer::GetDelSysSeconds();
+    float elapsed = hsTimer::GetDelSysSeconds();
     if (elapsed > 0)
         return fMouseFrameTurnStrength / elapsed;
     else
@@ -2425,7 +2425,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
     for (i = 0; i < markers.size(); i++)
     {
         
-        hsScalar time = -1;
+        float time = -1;
         hsBool isLeft = false;
         if (strstr(markers[i], "SndLeftFootDown") == markers[i])
         {
@@ -2439,11 +2439,11 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         {
             plEventCallbackInterceptMsg *iMsg;
 
-            plArmatureEffectMsg *msg = TRACKED_NEW plArmatureEffectMsg(fEffects->GetKey(), kTime);
+            plArmatureEffectMsg *msg = new plArmatureEffectMsg(fEffects->GetKey(), kTime);
             msg->fEventTime = time;
             msg->fTriggerIdx = AnimNameToIndex(anim->GetName());
             
-            iMsg = TRACKED_NEW plEventCallbackInterceptMsg();
+            iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
             iMsg->fEvent = kTime;
@@ -2452,10 +2452,10 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             hsRefCnt_SafeUnRef(msg);
             hsRefCnt_SafeUnRef(iMsg);
 
-            plAvatarFootMsg* foot = TRACKED_NEW plAvatarFootMsg(GetKey(), this, isLeft);
+            plAvatarFootMsg* foot = new plAvatarFootMsg(GetKey(), this, isLeft);
             foot->fEventTime = time;
 
-            iMsg = TRACKED_NEW plEventCallbackInterceptMsg();
+            iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
             iMsg->fEvent = kTime;
@@ -2474,10 +2474,10 @@ const char *plArmatureMod::GetAnimRootName(const char *name)
     return name + fAnimationPrefix.length();
 }
 
-Int8 plArmatureMod::AnimNameToIndex(const char *name)
+int8_t plArmatureMod::AnimNameToIndex(const char *name)
 {
     const char *rootName = GetAnimRootName(name);
-    Int8 result = -1;
+    int8_t result = -1;
     
     if (!strcmp(rootName, "Walk") || !strcmp(rootName, "WalkBack") ||
         !strcmp(rootName, "LadderDown") || !strcmp(rootName, "LadderDownOn") ||
@@ -2614,7 +2614,7 @@ void plArmatureLODMod::Read(hsStream *stream, hsResMgr *mgr)
         plKey meshKey = mgr->ReadKey(stream);
         fMeshKeys.push_back(meshKey);
         
-        plKeyVector *vec = TRACKED_NEW plKeyVector;
+        plKeyVector *vec = new plKeyVector;
         int boneCount = stream->ReadLE32();
         for(int j = 0; j < boneCount; j++)
             vec->push_back(mgr->ReadKey(stream));
@@ -2655,7 +2655,7 @@ int plArmatureMod::RefreshDebugDisplay()
     plDebugText     &debugTxt = plDebugText::Instance();
     char            strBuf[ 2048 ];
     int             lineHeight = debugTxt.GetFontSize() + 4;
-    UInt32          scrnWidth, scrnHeight;
+    uint32_t          scrnWidth, scrnHeight;
 
     debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
     int y = 10;
@@ -2784,13 +2784,13 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
 class plAvBoneMap::BoneMapImp 
 {
 public: 
-    typedef std::map<UInt32, const plSceneObject *> id2SceneObjectMap;
+    typedef std::map<uint32_t, const plSceneObject *> id2SceneObjectMap;
     id2SceneObjectMap fMap;
 };
 
 plAvBoneMap::plAvBoneMap()
 {
-    fImp = TRACKED_NEW BoneMapImp;
+    fImp = new BoneMapImp;
 }
 
 plAvBoneMap::~plAvBoneMap()
@@ -2798,7 +2798,7 @@ plAvBoneMap::~plAvBoneMap()
     delete fImp;
 }
 
-const plSceneObject * plAvBoneMap::FindBone(UInt32 boneID)
+const plSceneObject * plAvBoneMap::FindBone(uint32_t boneID)
 {
     BoneMapImp::id2SceneObjectMap::iterator i = fImp->fMap.find(boneID);
     const plSceneObject *result = nil;
@@ -2810,7 +2810,7 @@ const plSceneObject * plAvBoneMap::FindBone(UInt32 boneID)
     return result;
 }
 
-void plAvBoneMap::AddBoneMapping(UInt32 boneID, const plSceneObject *SO)
+void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 {
     (fImp->fMap)[boneID] = SO;
 }

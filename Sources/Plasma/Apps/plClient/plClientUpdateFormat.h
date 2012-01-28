@@ -54,13 +54,13 @@ namespace ClientUpdate
 //
 // Format of the update stream
 //
-// UInt8 - type (kUpdate, kShutdown)
+// uint8_t - type (kUpdate, kShutdown)
 //
 // If type is kUpdate:
-// UInt32 - number of deleted keys
+// uint32_t - number of deleted keys
 // plUoid - uoid of deleted key (* num)
 //
-// UInt32 - number of new creatables
+// uint32_t - number of new creatables
 // plCreatable - new creatable (* num)
 //
 

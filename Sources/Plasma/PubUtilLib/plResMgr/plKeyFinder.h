@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //----------------------------
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
 #include "hsStlUtils.h"
@@ -90,7 +90,7 @@ public:
 
     // These are Stupid search because they just do string searchs on the objects.
     plKey StupidSearch(const char * age, const char * rm, const char *className, const char *obName, hsBool subString=false);
-    plKey StupidSearch(const char * age, const char * rm, UInt16 objType, const char *obName, hsBool subString=false);
+    plKey StupidSearch(const char * age, const char * rm, uint16_t objType, const char *obName, hsBool subString=false);
 
     eErrCodes   GetLastErrorCode() { return fLastError; }
     const char* GetLastErrorString(); // For Console display
@@ -98,7 +98,7 @@ public:
     void ReallyStupidResponderSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
     void ReallyStupidActivatorSearch(const char* name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
-    void ReallyStupidSubstringSearch(const char* name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidSubstringSearch(const char* name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
     void GetActivatorNames(std::vector<std::string>& names);
     void GetResponderNames(std::vector<std::string>& names);

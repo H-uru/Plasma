@@ -193,7 +193,7 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
     else
         fFlags &= ~kUnLoadingAge;
 
-    plAgeLoadedMsg * msg = TRACKED_NEW plAgeLoadedMsg;
+    plAgeLoadedMsg * msg = new plAgeLoadedMsg;
     msg->fLoaded = loaded;
     msg->Send();
 }
@@ -212,11 +212,11 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     nc->DebugMsg( "Net: Loading age %s", fAgeName);
 
     if ((fFlags & kLoadMask) != 0)
-        ErrorFatal(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%S will now exit.", ProductShortName());
+        ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%S will now exit.", ProductShortName());
         
     fFlags |= kLoadingAge;
     
-    plAgeBeginLoadingMsg* ageBeginLoading = TRACKED_NEW plAgeBeginLoadingMsg();
+    plAgeBeginLoadingMsg* ageBeginLoading = new plAgeBeginLoadingMsg();
     ageBeginLoading->Send();
 
     ///////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ bool plAgeLoader::ILoadAge(const char ageName[])
 
 
     // Tell the client to load-and-hold all the keys for this age, to make the loading process work better
-    plClientMsg *loadAgeKeysMsg = TRACKED_NEW plClientMsg( plClientMsg::kLoadAgeKeys );
+    plClientMsg *loadAgeKeysMsg = new plClientMsg( plClientMsg::kLoadAgeKeys );
     loadAgeKeysMsg->SetAgeName( fAgeName);
     loadAgeKeysMsg->Send( clientKey );
 
@@ -282,12 +282,12 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     plUoid oid=nc->GetAgeSDLObjectUoid(fAgeName);
     plKey ageSDLObjectKey = hsgResMgr::ResMgr()->FindKey(oid);
     if (ageSDLObjectKey)
-        hsgResMgr::ResMgr()->AddViaNotify(ageSDLObjectKey, TRACKED_NEW plGenRefMsg(nc->GetKey(), plRefMsg::kOnCreate, -1, 
+        hsgResMgr::ResMgr()->AddViaNotify(ageSDLObjectKey, new plGenRefMsg(nc->GetKey(), plRefMsg::kOnCreate, -1, 
         plNetClientMgr::kAgeSDLHook), plRefFlags::kActiveRef);
     
     int nPages = 0;
 
-    plClientMsg* pMsg1 = TRACKED_NEW plClientMsg(plClientMsg::kLoadRoom);
+    plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoom);
     pMsg1->SetAgeName(fAgeName);
 
     // Loop and ref!
@@ -308,7 +308,7 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     pMsg1->Send(clientKey);
 
     // Send the client a message to let go of the extra keys it was holding on to
-    plClientMsg *dumpAgeKeys = TRACKED_NEW plClientMsg( plClientMsg::kReleaseAgeKeys );
+    plClientMsg *dumpAgeKeys = new plClientMsg( plClientMsg::kReleaseAgeKeys );
     dumpAgeKeys->SetAgeName( fAgeName);
     dumpAgeKeys->Send( clientKey );
 
@@ -358,7 +358,7 @@ bool    plAgeLoader::IUnloadAge()
     hsAssert( (fFlags & kLoadMask)==0, "already loading or unloading an age?"); 
     fFlags |= kUnLoadingAge;
     
-    plAgeBeginLoadingMsg* msg = TRACKED_NEW plAgeBeginLoadingMsg();
+    plAgeBeginLoadingMsg* msg = new plAgeBeginLoadingMsg();
     msg->fLoading = false;
     msg->Send();
 
@@ -395,7 +395,7 @@ bool    plAgeLoader::IUnloadAge()
     // before any messages get processed
     for( i = 0; i < newPageOuts.size(); i++ )
     {
-        plClientMsg *pMsg1 = TRACKED_NEW plClientMsg( plClientMsg::kUnloadRoom );
+        plClientMsg *pMsg1 = new plClientMsg( plClientMsg::kUnloadRoom );
         pMsg1->AddRoomLoc(newPageOuts[i]->GetUoid().GetLocation());
         pMsg1->Send( clientKey );
     }
@@ -415,7 +415,7 @@ void plAgeLoader::ExecPendingAgeFniFiles()
     int i;
     for (i=0;i<PendingAgeFniFiles().size(); i++)
     {
-        plConsoleMsg    *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kExecuteFile, fPendingAgeFniFiles[i].c_str() );
+        plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, fPendingAgeFniFiles[i].c_str() );
         plgDispatch::MsgSend( cMsg );
     }
     fPendingAgeFniFiles.clear();

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const char* plSDL::kAgeSDLObjectName = {"AgeSDLHook"};
 
 // static 
-const UInt8 plStateDataRecord::kIOVersion=6;
+const uint8_t plStateDataRecord::kIOVersion=6;
 
 //
 // helper 
@@ -155,12 +155,12 @@ void plStateDataRecord::IInitDescriptor(const plStateDescriptor* sd)
             {
                 if (vd->GetAsSDVarDescriptor())
                 {   // it's a var which references another state descriptor.
-                    fSDVarsList.push_back(TRACKED_NEW plSDStateVariable(vd->GetAsSDVarDescriptor()));
+                    fSDVarsList.push_back(new plSDStateVariable(vd->GetAsSDVarDescriptor()));
                 }
                 else
                 {
                     hsAssert(vd->GetAsSimpleVarDescriptor(), "var class problem");
-                    fVarsList.push_back(TRACKED_NEW plSimpleStateVariable(vd->GetAsSimpleVarDescriptor()));
+                    fVarsList.push_back(new plSimpleStateVariable(vd->GetAsSimpleVarDescriptor()));
                 }
             }
         }
@@ -234,10 +234,10 @@ bool plStateDataRecord::IHasUsedVars(const VarsList& vars) const
 //
 // read state vars and indices, return true on success
 //
-bool plStateDataRecord::Read(hsStream* s, float timeConvert, UInt32 readOptions)
+bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOptions)
 {
     fFlags = s->ReadLE16();
-    UInt8 ioVersion = s->ReadByte();
+    uint8_t ioVersion = s->ReadByte();
     if (ioVersion != kIOVersion)
         return false;
 
@@ -333,7 +333,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, UInt32 readOptions)
 //
 // write out the state vars, along with their index
 //
-void plStateDataRecord::Write(hsStream* s, float timeConvert, UInt32 writeOptions) const
+void plStateDataRecord::Write(hsStream* s, float timeConvert, uint32_t writeOptions) const
 {
 #ifdef HS_DEBUGGING
     if ( !plSDLMgr::GetInstance()->AllowTimeStamping() && (writeOptions & plSDL::kWriteTimeStamps) )
@@ -343,7 +343,7 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, UInt32 writeOption
     }
 #endif
 
-    s->WriteLE16((UInt16)fFlags);
+    s->WriteLE16((uint16_t)fFlags);
     s->WriteByte(kIOVersion);
 
     //
@@ -394,7 +394,7 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, UInt32 writeOption
 //
 bool plStateDataRecord::ReadStreamHeader(hsStream* s, char** name, int* version, plUoid* objUoid)
 {
-    UInt16 savFlags;
+    uint16_t savFlags;
     s->ReadLE(&savFlags);
     if (!(savFlags & plSDL::kAddedVarLengthIO))     // using to establish a new version in the header, can delete in 8/03
     {
@@ -429,13 +429,13 @@ bool plStateDataRecord::ReadStreamHeader(hsStream* s, char** name, int* version,
 //
 void plStateDataRecord::WriteStreamHeader(hsStream* s, plUoid* objUoid) const
 {
-    UInt16 savFlags=plSDL::kAddedVarLengthIO;       // using to establish a new version in the header, can delete in 8/03
+    uint16_t savFlags=plSDL::kAddedVarLengthIO;       // using to establish a new version in the header, can delete in 8/03
     if (objUoid)
         savFlags |= plSDL::kHasUoid;
 
     s->WriteLE(savFlags);
     s->WriteSafeString(GetDescriptor()->GetName());         
-    s->WriteLE16((Int16)GetDescriptor()->GetVersion());
+    s->WriteLE16((int16_t)GetDescriptor()->GetVersion());
     if (objUoid)
         objUoid->Write(s);
 }
@@ -443,7 +443,7 @@ void plStateDataRecord::WriteStreamHeader(hsStream* s, plUoid* objUoid) const
 //
 // create and prepare a net msg with this data
 //
-plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, UInt32 writeOptions) const
+plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, uint32_t writeOptions) const
 {
     // save to stream
     hsRAMStream stream; 
@@ -453,9 +453,9 @@ plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, UInt32 writeO
     // fill in net msg
     plNetMsgSDLState* msg;  
     if (writeOptions & plSDL::kBroadcast)
-        msg = TRACKED_NEW plNetMsgSDLStateBCast;
+        msg = new plNetMsgSDLStateBCast;
     else
-        msg = TRACKED_NEW plNetMsgSDLState;
+        msg = new plNetMsgSDLState;
     
     msg->StreamInfo()->CopyStream(&stream);
     return msg;
@@ -464,7 +464,7 @@ plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, UInt32 writeO
 //
 // Destroys 'this' and makes a total copy of other
 //
-void plStateDataRecord::CopyFrom(const plStateDataRecord& other, UInt32 writeOptions/*=0*/)
+void plStateDataRecord::CopyFrom(const plStateDataRecord& other, uint32_t writeOptions/*=0*/)
 {
     fFlags = other.GetFlags();
     IInitDescriptor(other.GetDescriptor());
@@ -487,7 +487,7 @@ void plStateDataRecord::CopyFrom(const plStateDataRecord& other, UInt32 writeOpt
 // copy them to my corresponding item.
 // Requires that records have the same descriptor.
 //
-void plStateDataRecord::UpdateFrom(const plStateDataRecord& other, UInt32 writeOptions/*=0*/)
+void plStateDataRecord::UpdateFrom(const plStateDataRecord& other, uint32_t writeOptions/*=0*/)
 {
     if ( GetDescriptor()->GetVersion()!=other.GetDescriptor()->GetVersion() )
     {

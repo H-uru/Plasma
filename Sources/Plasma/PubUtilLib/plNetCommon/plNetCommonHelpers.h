@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetCommonHelpers_h_inc
 #define plNetCommonHelpers_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsTimer.h"
 #include "pnNetCommon/pnNetCommon.h"
@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SERVER
 class plNetCoreStatsSummary : public plCreatable
 {
-    static const UInt8 StreamVersion;
+    static const uint8_t StreamVersion;
     float fULBitsPS;
     float fDLBitsPS;
     float fULPeakBitsPS;
     float fDLPeakBitsPS;
     float fULPeakPktsPS;
     float fDLPeakPktsPS;
-    UInt32 fDLDroppedPackets;
+    uint32_t fDLDroppedPackets;
 public:
     plNetCoreStatsSummary();
     CLASSNAME_REGISTER( plNetCoreStatsSummary );
@@ -74,7 +74,7 @@ public:
     float GetDLPeakBitsPS() const { return fDLPeakBitsPS; }
     float GetULPeakPktsPS() const { return fULPeakPktsPS; }
     float GetDLPeakPktsPS() const { return fDLPeakPktsPS; }
-    UInt32 GetDLDroppedPackets() const { return fDLDroppedPackets; }
+    uint32_t GetDLDroppedPackets() const { return fDLDroppedPackets; }
 };
 #endif // SERVER
 
@@ -90,10 +90,10 @@ class plCreatableListHelper : public plCreatable
         kCompressed         = 1<<1,
         kWritten            = 1<<2,
     };
-    UInt8                               fFlags;
-    std::map<UInt16,plCreatable*>       fItems;
+    uint8_t                               fFlags;
+    std::map<uint16_t,plCreatable*>       fItems;
     mutable std::vector<plCreatable*>   fManagedItems;
-    UInt32  fCompressionThreshold;  // NOT WRITTEN
+    uint32_t  fCompressionThreshold;  // NOT WRITTEN
     std::string fWritten;
     void IClearItems();
 
@@ -111,26 +111,26 @@ public:
 
     void    SetWantCompression( bool v ) { if ( v ) fFlags|=kWantCompression; else fFlags&=~kWantCompression; }
     bool    WantCompression() const { return ( fFlags&kWantCompression )!=0; }
-    UInt32  GetCompressionThreshold() const { return fCompressionThreshold; }
-    void    SetCompressionThreshold( UInt32 v ) { fCompressionThreshold=v; }
+    uint32_t  GetCompressionThreshold() const { return fCompressionThreshold; }
+    void    SetCompressionThreshold( uint32_t v ) { fCompressionThreshold=v; }
     
     // support for generic arguments
-    void    AddItem( UInt16 id, plCreatable * item, bool manageItem=false );
-    void    AddItem( UInt16 id, const plCreatable * item, bool manageItem=false );
-    plCreatable* GetItem( UInt16 id, bool unManageItem=false ) const;
-    void    RemoveItem( UInt16 id, bool unManageItem=false );
-    bool    ItemExists( UInt16 id ) const;
+    void    AddItem( uint16_t id, plCreatable * item, bool manageItem=false );
+    void    AddItem( uint16_t id, const plCreatable * item, bool manageItem=false );
+    plCreatable* GetItem( uint16_t id, bool unManageItem=false ) const;
+    void    RemoveItem( uint16_t id, bool unManageItem=false );
+    bool    ItemExists( uint16_t id ) const;
     int     GetNumItems() const { return fItems.size();}
     // helpers for typed arguments
-    void    AddString( UInt16 id, const char * value );
-    void    AddString( UInt16 id, std::string & value );
-    const char * GetString( UInt16 id );
-    void    AddInt( UInt16 id, Int32 value );
-    Int32   GetInt( UInt16 id );
-    void    AddDouble( UInt16 id, double value );
-    double  GetDouble( UInt16 id );
+    void    AddString( uint16_t id, const char * value );
+    void    AddString( uint16_t id, std::string & value );
+    const char * GetString( uint16_t id );
+    void    AddInt( uint16_t id, int32_t value );
+    int32_t   GetInt( uint16_t id );
+    void    AddDouble( uint16_t id, double value );
+    double  GetDouble( uint16_t id );
     void    GetItemsAsVec( std::vector<plCreatable*>& out );
-    void    GetItems( std::map<UInt16,plCreatable*>& out );
+    void    GetItems( std::map<uint16_t,plCreatable*>& out );
 };
 
 /////////////////////////////////////////////////////////////////////

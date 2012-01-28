@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGUIDialogNotifyProc.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 #include "pfGUIControlMod.h"
@@ -73,9 +73,9 @@ pfGUIDialogNotifyProc::pfGUIDialogNotifyProc( plKey &r )
 }
 
 
-void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, UInt32 event )
+void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, uint32_t event )
 {
-    pfGUINotifyMsg  *notify = TRACKED_NEW pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
+    pfGUINotifyMsg  *notify = new pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
     notify->SetEvent( ctrlKey, event );
     plgDispatch::MsgSend( notify );
 }

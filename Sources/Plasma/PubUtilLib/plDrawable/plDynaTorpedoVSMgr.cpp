@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaTorpedoVSMgr.h"
 #include "plDynaDecal.h"
 
@@ -68,7 +68,7 @@ int plDynaTorpedoVSMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
 
-    plDynaRippleVS* rip = TRACKED_NEW plDynaRippleVS();
+    plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
     rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
@@ -148,7 +148,7 @@ void plDynaTorpedoVSMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDynaTorpedoMgr::Read(stream, mgr);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
 }
 
 void plDynaTorpedoVSMgr::Write(hsStream* stream, hsResMgr* mgr)

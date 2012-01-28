@@ -52,10 +52,10 @@ class plSoftVolumeSimple : public plSoftVolume
 {
 protected:
     plVolumeIsect*              fVolume;
-    hsScalar                    fSoftDist;
+    float                    fSoftDist;
 
 private:
-    virtual hsScalar            IGetStrength(const hsPoint3& pos) const;
+    virtual float            IGetStrength(const hsPoint3& pos) const;
 
 public:
     plSoftVolumeSimple();
@@ -73,8 +73,8 @@ public:
     plVolumeIsect* GetVolume() const { return fVolume; }
     void SetVolume(plVolumeIsect* v); // Takes ownership, don't delete after giving to SoftVolume
 
-    hsScalar GetDistance() const { return fSoftDist; }
-    void SetDistance(hsScalar d) { fSoftDist = d; }
+    float GetDistance() const { return fSoftDist; }
+    void SetDistance(float d) { fSoftDist = d; }
 
 };
 
@@ -101,17 +101,17 @@ public:
     // Now Complex specifics
     virtual hsBool MsgReceive(plMessage* msg);
 
-    UInt16          GetNumSubs() const { return fSubVolumes.GetCount(); }
+    uint16_t          GetNumSubs() const { return fSubVolumes.GetCount(); }
     const plSoftVolume* GetSub(int i) const { return fSubVolumes[i]; }
 };
 
 class plSoftVolumeUnion : public plSoftVolumeComplex
 {
 protected:
-    virtual hsScalar            IUpdateListenerStrength() const;
+    virtual float            IUpdateListenerStrength() const;
 
 private:
-    virtual hsScalar            IGetStrength(const hsPoint3& pos) const;
+    virtual float            IGetStrength(const hsPoint3& pos) const;
 
 public:
     plSoftVolumeUnion();
@@ -125,10 +125,10 @@ public:
 class plSoftVolumeIntersect : public plSoftVolumeComplex
 {
 protected:
-    virtual hsScalar            IUpdateListenerStrength() const;
+    virtual float            IUpdateListenerStrength() const;
 
 private:
-    virtual hsScalar            IGetStrength(const hsPoint3& pos) const;
+    virtual float            IGetStrength(const hsPoint3& pos) const;
 
 public:
     plSoftVolumeIntersect();
@@ -142,10 +142,10 @@ public:
 class plSoftVolumeInvert : public plSoftVolumeComplex
 {
 protected:
-    virtual hsScalar            IUpdateListenerStrength() const;
+    virtual float            IUpdateListenerStrength() const;
 
 private:
-    virtual hsScalar            IGetStrength(const hsPoint3& pos) const;
+    virtual float            IGetStrength(const hsPoint3& pos) const;
 
 public:
     plSoftVolumeInvert();

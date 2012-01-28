@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIDragBarCtrl.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
@@ -78,7 +78,7 @@ pfGUIDragBarCtrl::~pfGUIDragBarCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDragBarCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIDragBarCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -112,7 +112,7 @@ void    pfGUIDragBarCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force
 
 //// HandleMouseDown/Up //////////////////////////////////////////////////////
 
-void    pfGUIDragBarCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDragBarCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     // if we are anchored <to the floor> then don't let it be moved
     if ( fAnchored )
@@ -128,7 +128,7 @@ void    pfGUIDragBarCtrl::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
     fDialog->UpdateAllBounds();
 }
 
-void    pfGUIDragBarCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDragBarCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     // if we are anchored <to the floor> then don't let it be moved
     if ( fAnchored )
@@ -139,7 +139,7 @@ void    pfGUIDragBarCtrl::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
     fDialog->UpdateAllBounds();
 }
 
-void    pfGUIDragBarCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIDragBarCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     // if we are anchored <to the floor> then don't let it be moved
     if ( fAnchored )
@@ -151,7 +151,7 @@ void    pfGUIDragBarCtrl::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIDragBarCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIDragBarCtrl::IGetDesiredCursor( void ) const
 {
     // if we are anchored, then no cursors that say we can move
     if ( fAnchored )

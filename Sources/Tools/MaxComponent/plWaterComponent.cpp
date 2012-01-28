@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWaterComponent.h"
 #include "plSoftVolumeComponent.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTweak.h"
 
 #include "plDrawable/plWaveSetBase.h"
@@ -71,7 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisRegion.h"
 
 static const float kPercentToFrac(1.e-2f);
-static const float kDegreeToRad(hsScalarPI/180.f);
+static const float kDegreeToRad(M_PI/180.f);
 
 
 // Preliminary setup bookkeeping
@@ -411,17 +411,17 @@ void plWaterComponent::CheckForObsoleteParams()
         //      SpecEnd = kEnvRadius * 2.f
 
         // Okay, here we go.
-        hsScalar dispersion = fCompPB->GetFloat(kDispersion) / 100.f;
-        plConst(hsScalar) kMinAng(5.f);
-        plConst(hsScalar) kMaxAng(180.f);
+        float dispersion = fCompPB->GetFloat(kDispersion) / 100.f;
+        plConst(float) kMinAng(5.f);
+        plConst(float) kMaxAng(180.f);
         
-        hsScalar angleDev = kMinAng + dispersion * (kMaxAng - kMinAng);
+        float angleDev = kMinAng + dispersion * (kMaxAng - kMinAng);
         fCompPB->SetValue(kGeoAngleDev, TimeValue(0), angleDev);
         fCompPB->SetValue(kTexAngleDev, TimeValue(0), angleDev);
 
-        hsScalar windSpeed = fCompPB->GetFloat(kWindSpeed);
-        const hsScalar kGravConst(32.f); // ft/s^2
-        hsScalar waveLen = windSpeed * windSpeed / kGravConst;
+        float windSpeed = fCompPB->GetFloat(kWindSpeed);
+        const float kGravConst(32.f); // ft/s^2
+        float waveLen = windSpeed * windSpeed / kGravConst;
         waveLen /= 2.f;
         if( waveLen < 1.f )
             waveLen = 1.f;
@@ -429,14 +429,14 @@ void plWaterComponent::CheckForObsoleteParams()
         fCompPB->SetValue(kGeoMaxLen, TimeValue(0), waveLen*2.f);
         fCompPB->SetValue(kGeoAmpOverLen, TimeValue(0), 10.f);
 
-        hsScalar rippleScale = fCompPB->GetFloat(kRippleScale);
+        float rippleScale = fCompPB->GetFloat(kRippleScale);
         fCompPB->SetValue(kTexMinLen, TimeValue(0), 4.f / 256.f * rippleScale);
         fCompPB->SetValue(kTexMaxLen, TimeValue(0), 32.f / 256.f * rippleScale);
-        hsScalar amp = 0.01f;
-        hsScalar specMute = 0.5f;
+        float amp = 0.01f;
+        float specMute = 0.5f;
         if( windSpeed < 15.f )
         {
-            hsScalar p = windSpeed / 15.f;
+            float p = windSpeed / 15.f;
             amp += p * (0.1f - 0.01f);
 
             specMute += (1-p)* 0.5f;
@@ -446,9 +446,9 @@ void plWaterComponent::CheckForObsoleteParams()
 
         fCompPB->SetValue(kNoise, TimeValue(0), 50.f);
 
-        hsScalar envRad = fCompPB->GetFloat(kEnvRadius);
-        hsScalar specStart = envRad / 2.f;
-        hsScalar specEnd = envRad * 2.f;
+        float envRad = fCompPB->GetFloat(kEnvRadius);
+        float specStart = envRad / 2.f;
+        float specEnd = envRad * 2.f;
         fCompPB->SetValue(kSpecStart, TimeValue(0), specStart);
         fCompPB->SetValue(kSpecEnd, TimeValue(0), specEnd);
         
@@ -512,7 +512,7 @@ hsBool plWaterComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     if( !fWaveSet )
         return true;
 
-    plObjRefMsg* refMsg = TRACKED_NEW plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
+    plObjRefMsg* refMsg = new plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(fWaveSet->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     return true;
@@ -558,16 +558,16 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
     plDynamicEnvMap* env = plEnvMapComponent::GetEnvMap((plMaxNode*)ref);
     if( !env )
     {
-        UInt32 size = fCompPB->GetInt(kEnvSize);
-        UInt32 i;
+        uint32_t size = fCompPB->GetInt(kEnvSize);
+        uint32_t i;
         for( i = 9; i > 5; i-- )
         {
             if( (1UL << i) <= size )
                 break;
         }
-        size = UInt32(1 << i);
+        size = uint32_t(1 << i);
 
-        env = TRACKED_NEW plDynamicEnvMap(size, size, 32);
+        env = new plDynamicEnvMap(size, size, 32);
         hsgResMgr::ResMgr()->NewKey(ref->GetName(), env, node->GetLocation(), node->GetLoadMask());
 
         Point3 pos = ref->GetNodeTM(TimeValue(0)).GetTrans();
@@ -584,7 +584,7 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
     fWaveSet->SetEnvSize(env->GetWidth());
 
 
-    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fWaveSet->GetKey(), plRefMsg::kOnCreate, -1, plWaveSet7::kRefEnvMap);
+    plGenRefMsg* refMsg = new plGenRefMsg(fWaveSet->GetKey(), plRefMsg::kOnCreate, -1, plWaveSet7::kRefEnvMap);
     hsgResMgr::ResMgr()->SendRef(env->GetKey(), refMsg, plRefFlags::kActiveRef);
 
     ws.fEnvRadius = fCompPB->GetFloat(kEnvRadius);
@@ -614,7 +614,7 @@ hsBool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // Go ahead and create the WaveSet modifier. There will be just
     // one created by this component, everyone has to share.
-    fWaveSet = TRACKED_NEW plWaveSet7;
+    fWaveSet = new plWaveSet7;
     hsgResMgr::ResMgr()->NewKey( IGetUniqueName(node), fWaveSet, node->GetLocation(), node->GetLoadMask());
 
     // Set up the parameters
@@ -685,7 +685,7 @@ hsBool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsScalar plWaterComponent::IGetWaterHeight()
+float plWaterComponent::IGetWaterHeight()
 {
     plMaxNodeBase* node = nil;
     
@@ -703,7 +703,7 @@ hsScalar plWaterComponent::IGetWaterHeight()
     return ws.fWaterHeight;
 }
 
-hsScalar plWaterComponent::GetWaterHeight(INode* node)
+float plWaterComponent::GetWaterHeight(INode* node)
 {
     if( !node )
         return 0.f;
@@ -1273,21 +1273,21 @@ plRenderTarget* plEnvMapComponent::IGetMap()
 
     if( !fMap )
     {
-        UInt32 size = fCompPB->GetInt(kEnvSize);
+        uint32_t size = fCompPB->GetInt(kEnvSize);
         for( i = 9; i > 5; i-- )
         {
-            if( (1UL << UInt32(i)) <= size )
+            if( (1UL << uint32_t(i)) <= size )
                 break;
         }
-        size = 1 << UInt32(i);
+        size = 1 << uint32_t(i);
 
         plDynamicEnvMap* env = nil;
         plDynamicCamMap* cam = nil;
         fMap = nil;
         if (fCompPB->GetInt((ParamID(kMapType))) == kMapCubic)
-            fMap = env = TRACKED_NEW plDynamicEnvMap(size, size, 32);
+            fMap = env = new plDynamicEnvMap(size, size, 32);
         else if (fCompPB->GetInt((ParamID(kMapType))) == kMapSingle)
-            fMap = cam = TRACKED_NEW plDynamicCamMap(size, size, 32);
+            fMap = cam = new plDynamicCamMap(size, size, 32);
 
         // Need to assign the key before we call all the setup functions.
         hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
@@ -1326,7 +1326,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
                 plVisRegion* effReg = effComp->GetVisRegion(firstTarg);
                 if( effReg )
                 {
-                    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, plDynamicEnvMap::kRefVisSet);
+                    plGenRefMsg* refMsg = new plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, plDynamicEnvMap::kRefVisSet);
                     hsgResMgr::ResMgr()->SendRef(effReg->GetKey(), refMsg, plRefFlags::kPassiveRef);
 
                     visGot++;
@@ -1352,8 +1352,8 @@ plRenderTarget* plEnvMapComponent::IGetMap()
 
         // Right now, the envMap doesn't use this, but I plan to make it do so, so I'm
         // going ahead and adding the ref regardless of which type of map we made.
-        UInt8 refType = cam ? plDynamicCamMap::kRefRootNode : plDynamicEnvMap::kRefRootNode;
-        hsgResMgr::ResMgr()->AddViaNotify(firstTarg->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, refType), plRefFlags::kPassiveRef);
+        uint8_t refType = cam ? plDynamicCamMap::kRefRootNode : plDynamicEnvMap::kRefRootNode;
+        hsgResMgr::ResMgr()->AddViaNotify(firstTarg->GetSceneObject()->GetKey(), new plGenRefMsg(fMap->GetKey(), plRefMsg::kOnCreate, -1, refType), plRefFlags::kPassiveRef);
     }
     return fMap;
 }

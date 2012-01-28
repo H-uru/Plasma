@@ -56,7 +56,7 @@ pyWaveSet::pyWaveSet(pyKey& key)
 // Geometric wave parameters. These are all safe to twiddle at any time or speed.
 // The new settings take effect as new waves are spawned.
 
-void pyWaveSet::SetGeoMaxLength(hsScalar s, hsScalar secs)
+void pyWaveSet::SetGeoMaxLength(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -68,7 +68,7 @@ void pyWaveSet::SetGeoMaxLength(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetGeoMinLength(hsScalar s, hsScalar secs)
+void pyWaveSet::SetGeoMinLength(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -80,7 +80,7 @@ void pyWaveSet::SetGeoMinLength(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetGeoAmpOverLen(hsScalar s, hsScalar secs)
+void pyWaveSet::SetGeoAmpOverLen(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -92,7 +92,7 @@ void pyWaveSet::SetGeoAmpOverLen(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetGeoChop(hsScalar s, hsScalar secs)
+void pyWaveSet::SetGeoChop(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -104,7 +104,7 @@ void pyWaveSet::SetGeoChop(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetGeoAngleDev(hsScalar s, hsScalar secs)
+void pyWaveSet::SetGeoAngleDev(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -120,7 +120,7 @@ void pyWaveSet::SetGeoAngleDev(hsScalar s, hsScalar secs)
 // Texture wave parameters. Safe to twiddle any time or speed.
 // The new settings take effect as new waves are spawned.
 
-void pyWaveSet::SetTexMaxLength(hsScalar s, hsScalar secs)
+void pyWaveSet::SetTexMaxLength(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -132,7 +132,7 @@ void pyWaveSet::SetTexMaxLength(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetTexMinLength(hsScalar s, hsScalar secs)
+void pyWaveSet::SetTexMinLength(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -144,7 +144,7 @@ void pyWaveSet::SetTexMinLength(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetTexAmpOverLen(hsScalar s, hsScalar secs)
+void pyWaveSet::SetTexAmpOverLen(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -156,7 +156,7 @@ void pyWaveSet::SetTexAmpOverLen(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetTexChop(hsScalar s, hsScalar secs)
+void pyWaveSet::SetTexChop(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -168,7 +168,7 @@ void pyWaveSet::SetTexChop(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetTexAngleDev(hsScalar s, hsScalar secs)
+void pyWaveSet::SetTexAngleDev(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -183,7 +183,7 @@ void pyWaveSet::SetTexAngleDev(hsScalar s, hsScalar secs)
 // The size in feet of one tile of the ripple texture. If you change this (I don't 
 // recommend it), you need to change it very slowly or it will look very stupid.
 
-void pyWaveSet::SetRippleScale(hsScalar s, hsScalar secs)
+void pyWaveSet::SetRippleScale(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -199,7 +199,7 @@ void pyWaveSet::SetRippleScale(hsScalar s, hsScalar secs)
 // The direction the wind is blowing (waves will be more or less perpindicular to wind dir).
 // Change somewhat slowly, like over 30 seconds.
 
-void pyWaveSet::SetWindDir(const pyVector3& s, hsScalar secs)
+void pyWaveSet::SetWindDir(const pyVector3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -214,7 +214,7 @@ void pyWaveSet::SetWindDir(const pyVector3& s, hsScalar secs)
 // --------------------------------------------------------------------------------
 // Change these gently, effect is immediate.
 
-void pyWaveSet::SetSpecularNoise(hsScalar s, hsScalar secs)
+void pyWaveSet::SetSpecularNoise(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -226,7 +226,7 @@ void pyWaveSet::SetSpecularNoise(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetSpecularStart(hsScalar s, hsScalar secs)
+void pyWaveSet::SetSpecularStart(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -238,7 +238,7 @@ void pyWaveSet::SetSpecularStart(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetSpecularEnd(hsScalar s, hsScalar secs)
+void pyWaveSet::SetSpecularEnd(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -253,7 +253,7 @@ void pyWaveSet::SetSpecularEnd(hsScalar s, hsScalar secs)
 // --------------------------------------------------------------------------------
 // Water Height is overriden if the ref object is animated.
 
-void pyWaveSet::SetWaterHeight(hsScalar s, hsScalar secs)
+void pyWaveSet::SetWaterHeight(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -268,7 +268,7 @@ void pyWaveSet::SetWaterHeight(hsScalar s, hsScalar secs)
 // --------------------------------------------------------------------------------
 // Water Offset and DepthFalloff are complicated, and not immediately interesting to animate.
 
-void pyWaveSet::SetWaterOffset(const pyVector3& s, hsScalar secs)
+void pyWaveSet::SetWaterOffset(const pyVector3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -280,7 +280,7 @@ void pyWaveSet::SetWaterOffset(const pyVector3& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetOpacOffset(hsScalar s, hsScalar secs)
+void pyWaveSet::SetOpacOffset(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -292,7 +292,7 @@ void pyWaveSet::SetOpacOffset(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetReflOffset(hsScalar s, hsScalar secs)
+void pyWaveSet::SetReflOffset(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -304,7 +304,7 @@ void pyWaveSet::SetReflOffset(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetWaveOffset(hsScalar s, hsScalar secs)
+void pyWaveSet::SetWaveOffset(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -316,7 +316,7 @@ void pyWaveSet::SetWaveOffset(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetDepthFalloff(const pyVector3& s, hsScalar secs)
+void pyWaveSet::SetDepthFalloff(const pyVector3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -328,7 +328,7 @@ void pyWaveSet::SetDepthFalloff(const pyVector3& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetOpacFalloff(hsScalar s, hsScalar secs)
+void pyWaveSet::SetOpacFalloff(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -340,7 +340,7 @@ void pyWaveSet::SetOpacFalloff(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetReflFalloff(hsScalar s, hsScalar secs)
+void pyWaveSet::SetReflFalloff(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -352,7 +352,7 @@ void pyWaveSet::SetReflFalloff(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetWaveFalloff(hsScalar s, hsScalar secs)
+void pyWaveSet::SetWaveFalloff(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -367,7 +367,7 @@ void pyWaveSet::SetWaveFalloff(hsScalar s, hsScalar secs)
 // --------------------------------------------------------------------------------
 // Max and Min Atten aren't very interesting, and will probably go away.
 
-void pyWaveSet::SetMaxAtten(const pyVector3& s, hsScalar secs)
+void pyWaveSet::SetMaxAtten(const pyVector3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -379,7 +379,7 @@ void pyWaveSet::SetMaxAtten(const pyVector3& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetMinAtten(const pyVector3& s, hsScalar secs)
+void pyWaveSet::SetMinAtten(const pyVector3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -394,7 +394,7 @@ void pyWaveSet::SetMinAtten(const pyVector3& s, hsScalar secs)
 // --------------------------------------------------------------------------------
 // Water colors, adjust slowly, effect is immediate.
 
-void pyWaveSet::SetWaterTint(pyColor& s, hsScalar secs)
+void pyWaveSet::SetWaterTint(pyColor& s, float secs)
 {
     if (fWaterKey)
     {
@@ -406,7 +406,7 @@ void pyWaveSet::SetWaterTint(pyColor& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetWaterOpacity(hsScalar s, hsScalar secs)
+void pyWaveSet::SetWaterOpacity(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -418,7 +418,7 @@ void pyWaveSet::SetWaterOpacity(hsScalar s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetSpecularTint(pyColor& s, hsScalar secs)
+void pyWaveSet::SetSpecularTint(pyColor& s, float secs)
 {
     if (fWaterKey)
     {
@@ -430,7 +430,7 @@ void pyWaveSet::SetSpecularTint(pyColor& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetSpecularMute(hsScalar s, hsScalar secs)
+void pyWaveSet::SetSpecularMute(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -447,7 +447,7 @@ void pyWaveSet::SetSpecularMute(hsScalar s, hsScalar secs)
 // the sphere north will move the reflections north, changing the radius of the
 // sphere effects parallax in the obvious way.
 
-void pyWaveSet::SetEnvCenter(const pyPoint3& s, hsScalar secs)
+void pyWaveSet::SetEnvCenter(const pyPoint3& s, float secs)
 {
     if (fWaterKey)
     {
@@ -459,7 +459,7 @@ void pyWaveSet::SetEnvCenter(const pyPoint3& s, hsScalar secs)
     }
 }
 
-void pyWaveSet::SetEnvRadius(hsScalar s, hsScalar secs)
+void pyWaveSet::SetEnvRadius(float s, float secs)
 {
     if (fWaterKey)
     {
@@ -478,7 +478,7 @@ void pyWaveSet::SetEnvRadius(hsScalar s, hsScalar secs)
 // ================================================================================
 
 // --------------------------------------------------------------------------------
-hsScalar pyWaveSet::GetGeoMaxLength() const
+float pyWaveSet::GetGeoMaxLength() const
 {
     if (fWaterKey)
     {
@@ -492,7 +492,7 @@ hsScalar pyWaveSet::GetGeoMaxLength() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetGeoMinLength() const
+float pyWaveSet::GetGeoMinLength() const
 {
     if (fWaterKey)
     {
@@ -506,7 +506,7 @@ hsScalar pyWaveSet::GetGeoMinLength() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetGeoAmpOverLen() const
+float pyWaveSet::GetGeoAmpOverLen() const
 {
     if (fWaterKey)
     {
@@ -520,7 +520,7 @@ hsScalar pyWaveSet::GetGeoAmpOverLen() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetGeoChop() const
+float pyWaveSet::GetGeoChop() const
 {
     if (fWaterKey)
     {
@@ -534,7 +534,7 @@ hsScalar pyWaveSet::GetGeoChop() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetGeoAngleDev() const
+float pyWaveSet::GetGeoAngleDev() const
 {
     if (fWaterKey)
     {
@@ -550,7 +550,7 @@ hsScalar pyWaveSet::GetGeoAngleDev() const
 
 // --------------------------------------------------------------------------------
 
-hsScalar pyWaveSet::GetTexMaxLength() const
+float pyWaveSet::GetTexMaxLength() const
 {
     if (fWaterKey)
     {
@@ -564,7 +564,7 @@ hsScalar pyWaveSet::GetTexMaxLength() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetTexMinLength() const
+float pyWaveSet::GetTexMinLength() const
 {
     if (fWaterKey)
     {
@@ -578,7 +578,7 @@ hsScalar pyWaveSet::GetTexMinLength() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetTexAmpOverLen() const
+float pyWaveSet::GetTexAmpOverLen() const
 {
     if (fWaterKey)
     {
@@ -592,7 +592,7 @@ hsScalar pyWaveSet::GetTexAmpOverLen() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetTexChop() const
+float pyWaveSet::GetTexChop() const
 {
     if (fWaterKey)
     {
@@ -606,7 +606,7 @@ hsScalar pyWaveSet::GetTexChop() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetTexAngleDev() const
+float pyWaveSet::GetTexAngleDev() const
 {
     if (fWaterKey)
     {
@@ -622,7 +622,7 @@ hsScalar pyWaveSet::GetTexAngleDev() const
 
 // --------------------------------------------------------------------------------
 
-hsScalar pyWaveSet::GetRippleScale() const
+float pyWaveSet::GetRippleScale() const
 {
     if (fWaterKey)
     {
@@ -654,7 +654,7 @@ PyObject* pyWaveSet::GetWindDir() const
 
 // --------------------------------------------------------------------------------
 
-hsScalar pyWaveSet::GetSpecularNoise() const
+float pyWaveSet::GetSpecularNoise() const
 {
     if (fWaterKey)
     {
@@ -668,7 +668,7 @@ hsScalar pyWaveSet::GetSpecularNoise() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetSpecularStart() const
+float pyWaveSet::GetSpecularStart() const
 {
     if (fWaterKey)
     {
@@ -682,7 +682,7 @@ hsScalar pyWaveSet::GetSpecularStart() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetSpecularEnd() const
+float pyWaveSet::GetSpecularEnd() const
 {
     if (fWaterKey)
     {
@@ -698,7 +698,7 @@ hsScalar pyWaveSet::GetSpecularEnd() const
 
 // --------------------------------------------------------------------------------
 
-hsScalar pyWaveSet::GetWaterHeight() const
+float pyWaveSet::GetWaterHeight() const
 {
     if (fWaterKey)
     {
@@ -728,7 +728,7 @@ PyObject* pyWaveSet::GetWaterOffset() const
     PYTHON_RETURN_NONE;
 }
 
-hsScalar pyWaveSet::GetOpacOffset() const
+float pyWaveSet::GetOpacOffset() const
 {
     if (fWaterKey)
     {
@@ -742,7 +742,7 @@ hsScalar pyWaveSet::GetOpacOffset() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetReflOffset() const
+float pyWaveSet::GetReflOffset() const
 {
     if (fWaterKey)
     {
@@ -756,7 +756,7 @@ hsScalar pyWaveSet::GetReflOffset() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetWaveOffset() const
+float pyWaveSet::GetWaveOffset() const
 {
     if (fWaterKey)
     {
@@ -784,7 +784,7 @@ PyObject* pyWaveSet::GetDepthFalloff() const
     PYTHON_RETURN_NONE;
 }
 
-hsScalar pyWaveSet::GetOpacFalloff() const
+float pyWaveSet::GetOpacFalloff() const
 {
     if (fWaterKey)
     {
@@ -798,7 +798,7 @@ hsScalar pyWaveSet::GetOpacFalloff() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetReflFalloff() const
+float pyWaveSet::GetReflFalloff() const
 {
     if (fWaterKey)
     {
@@ -812,7 +812,7 @@ hsScalar pyWaveSet::GetReflFalloff() const
     return -1;
 }
 
-hsScalar pyWaveSet::GetWaveFalloff() const
+float pyWaveSet::GetWaveFalloff() const
 {
     if (fWaterKey)
     {
@@ -872,7 +872,7 @@ PyObject* pyWaveSet::GetWaterTint() const
     PYTHON_RETURN_NONE;
 }
 
-hsScalar pyWaveSet::GetWaterOpacity() const
+float pyWaveSet::GetWaterOpacity() const
 {
     if (fWaterKey)
     {
@@ -900,7 +900,7 @@ PyObject* pyWaveSet::GetSpecularTint() const
     PYTHON_RETURN_NONE;
 }
 
-hsScalar pyWaveSet::GetSpecularMute() const
+float pyWaveSet::GetSpecularMute() const
 {
     if (fWaterKey)
     {
@@ -930,7 +930,7 @@ PyObject* pyWaveSet::GetEnvCenter() const
     PYTHON_RETURN_NONE;
 }
 
-hsScalar pyWaveSet::GetEnvRadius() const
+float pyWaveSet::GetEnvRadius() const
 {
     if (fWaterKey)
     {

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
+
 #include "HeadSpin.h"
 #include "plTextFont.h"
 #include "plDebugText.h"
@@ -73,11 +73,11 @@ plTextFont::~plTextFont()
 
 //// IInitFontTexture /////////////////////////////////////////////////////////
 
-UInt16  *plTextFont::IInitFontTexture( void )
+uint16_t  *plTextFont::IInitFontTexture( void )
 {
     int     nHeight, x, y, c;
     char    myChar[ 2 ] = "x";
-    UInt16  *tBits;
+    uint16_t  *tBits;
 
     DWORD       *bitmapBits;
     BITMAPINFO  bmi;
@@ -138,7 +138,7 @@ UInt16  *plTextFont::IInitFontTexture( void )
         myChar[ 0 ] = c;
         GetTextExtentPoint32( hDC, myChar, 1, &size );
 
-        if( (UInt32)( x + size.cx + 1 ) > fTextureWidth )
+        if( (uint32_t)( x + size.cx + 1 ) > fTextureWidth )
         {
             x = 0;
             y += size.cy + 1;
@@ -146,8 +146,8 @@ UInt16  *plTextFont::IInitFontTexture( void )
 
         ExtTextOut( hDC, x, y, ETO_OPAQUE, nil, myChar, 1, nil );
 
-        fCharInfo[ c ].fW = (UInt16)size.cx;
-        fCharInfo[ c ].fH = (UInt16)size.cy;
+        fCharInfo[ c ].fW = (uint16_t)size.cx;
+        fCharInfo[ c ].fH = (uint16_t)size.cy;
         fCharInfo[ c ].fUVs[ 0 ].fX = (float)x / (float)fTextureWidth;
         fCharInfo[ c ].fUVs[ 0 ].fY = (float)y / (float)fTextureHeight;
         fCharInfo[ c ].fUVs[ 1 ].fX = (float)( x + size.cx ) / (float)fTextureWidth;
@@ -166,7 +166,7 @@ UInt16  *plTextFont::IInitFontTexture( void )
     fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
 
     /// Now create the data block
-    UInt16  *data = TRACKED_NEW UInt16[ fTextureWidth * fTextureHeight ];
+    uint16_t  *data = new uint16_t[ fTextureWidth * fTextureHeight ];
     tBits = data;
     for( y = 0; y < fTextureHeight; y++ )
     {
@@ -193,7 +193,7 @@ UInt16  *plTextFont::IInitFontTexture( void )
 
 //// Create ///////////////////////////////////////////////////////////////////
 
-void    plTextFont::Create( char *face, UInt16 size )
+void    plTextFont::Create( char *face, uint16_t size )
 {
     // Init normal stuff
     strncpy( fFace, face, sizeof( fFace ) );
@@ -204,7 +204,7 @@ void    plTextFont::Create( char *face, UInt16 size )
 
 void    plTextFont::IInitObjects( void )
 {
-    UInt16  *data;
+    uint16_t  *data;
 
 
     // Create texture
@@ -222,8 +222,8 @@ void    plTextFont::IInitObjects( void )
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plTextFont::DrawString( const char *string, int sX, int sY, UInt32 hexColor, 
-                                UInt8 style, UInt32 rightEdge )
+void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hexColor, 
+                                uint8_t style, uint32_t rightEdge )
 {
     static hsTArray<plFontVertex>   verts;
     
@@ -355,7 +355,7 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, UInt32 hexCo
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-UInt32  plTextFont::CalcStringWidth( const char *string )
+uint32_t  plTextFont::CalcStringWidth( const char *string )
 {
     int     i, width = 0;
 
@@ -378,7 +378,7 @@ UInt32  plTextFont::CalcStringWidth( const char *string )
 //  to create a background for our console; will be obliterated once we figure
 //  a better way to do so.
 
-void    plTextFont::DrawRect( int left, int top, int right, int bottom, UInt32 hexColor )
+void    plTextFont::DrawRect( int left, int top, int right, int bottom, uint32_t hexColor )
 {
     static hsTArray<plFontVertex>   verts;
     int                             i;
@@ -412,7 +412,7 @@ void    plTextFont::DrawRect( int left, int top, int right, int bottom, UInt32 h
 //  second. I just LOOOOVE temporary functions :)
 //  Note: this way sucks. Live with it.
 
-void    plTextFont::Draw3DBorder( int left, int top, int right, int bottom, UInt32 hexColor1, UInt32 hexColor2 )
+void    plTextFont::Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 )
 {
     static hsTArray<plFontVertex>   verts;
     int                             i;

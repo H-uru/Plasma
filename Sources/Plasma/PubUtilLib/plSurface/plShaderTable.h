@@ -102,17 +102,17 @@ class plShaderDecl
 {
 protected:
     const plShaderID::ID    fID;
-    const UInt32            fByteLen;
-    const UInt8* const      fCodes;
+    const uint32_t            fbyteLen;
+    const uint8_t* const      fCodes;
     const char* const       fFileName;
 
 public:
-    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered, UInt32 byteLen = 0, const UInt8* const codes = 0L) : fID(id), fByteLen(byteLen), fCodes(codes), fFileName(fname) {}
+    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered, uint32_t byteLen = 0, const uint8_t* const codes = 0L) : fID(id), fbyteLen(byteLen), fCodes(codes), fFileName(fname) {}
     // Data (fCodes) is never deleted, It points to memory compiled in.
 
     plShaderID::ID GetID() const { return fID; }
-    UInt32 GetByteLen() const { return fByteLen; }
-    const UInt8* GetCodes() const { return fCodes; }
+    uint32_t GetByteLen() const { return fbyteLen; }
+    const uint8_t* GetCodes() const { return fCodes; }
     const char* const GetFileName() const { return fFileName; }
 };
 
@@ -124,7 +124,7 @@ protected:
         kLoadFromFile       = 0x1
     };
 
-    UInt32                          fFlags;
+    uint32_t                          fFlags;
 
     const plShaderDecl*             fTable[plShaderID::kNumShaders];
 

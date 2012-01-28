@@ -136,40 +136,40 @@ class plGeometrySpan
         hsBounds3Ext        fWorldBounds;
         plFogEnvironment    *fFogEnviron;
 
-        UInt32          fBaseMatrix;
-        UInt8           fNumMatrices;
-        UInt16          fLocalUVWChans;
-        UInt16          fMaxBoneIdx;
-        UInt32          fPenBoneIdx;
+        uint32_t          fBaseMatrix;
+        uint8_t           fNumMatrices;
+        uint16_t          fLocalUVWChans;
+        uint16_t          fMaxBoneIdx;
+        uint32_t          fPenBoneIdx;
 
-        hsScalar        fMinDist;
-        hsScalar        fMaxDist;
+        float        fMinDist;
+        float        fMaxDist;
 
-        hsScalar        fWaterHeight;
+        float        fWaterHeight;
 
-        UInt8           fFormat;
-        UInt32          fProps;
-        UInt32          fNumVerts, fNumIndices;
+        uint8_t           fFormat;
+        uint32_t          fProps;
+        uint32_t          fNumVerts, fNumIndices;
 
         /// Current vertex format:
         ///     float   position[ 3 ];
         ///     float   normal[ 3 ];
         ///     float   uvCoords[ ][ 3 ];
         ///     float   weights[];              // 0-3 blending weights
-        ///     UInt32  weightIndices;          // Only if there are >= 1 blending weights
+        ///     uint32_t  weightIndices;          // Only if there are >= 1 blending weights
 
-        UInt8*          fVertexData;
-        UInt16*         fIndexData;
-        UInt32          fDecalLevel;
+        uint8_t*          fVertexData;
+        uint16_t*         fIndexData;
+        uint32_t          fDecalLevel;
 
         hsColorRGBA*    fMultColor;
         hsColorRGBA*    fAddColor;
 
-        UInt32*         fDiffuseRGBA;
-        UInt32*         fSpecularRGBA;
+        uint32_t*         fDiffuseRGBA;
+        uint32_t*         fSpecularRGBA;
 
         mutable hsTArray<plGeometrySpan *>* fInstanceRefs;
-        mutable UInt32                      fInstanceGroupID;       // For writing out/reading in instance refs
+        mutable uint32_t                      fInstanceGroupID;       // For writing out/reading in instance refs
 
         // The following is only used for logging during export. It is never set
         // at runtime. Don't even think about using it for anything.
@@ -177,7 +177,7 @@ class plGeometrySpan
 
         // The following is ONLY used during pack; it's so we can do a reverse lookup
         // from the instanceRefs list to the correct span in the drawable
-        UInt32      fSpanRefIndex;
+        uint32_t      fSpanRefIndex;
 
         // These two matrices are inverses of each other (duh). They are only used on computing the local
         // bounds. fLocalBounds is always the bounds in the space defined by fWorldToLocal, but the bounds
@@ -191,34 +191,34 @@ class plGeometrySpan
         ~plGeometrySpan();
 
         /// UV stuff
-        UInt8   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
-        void    SetNumUVs( UInt8 numUVs ) 
+        uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
+        void    SetNumUVs( uint8_t numUVs ) 
         {
             hsAssert( numUVs < kMaxNumUVChannels, "Invalid UV count to plGeometrySpan" );
             fFormat = ( fFormat & ~kUVCountMask ) | numUVs; 
         }
 
-        static UInt8 CalcNumUVs( UInt8 format ) { return ( format & kUVCountMask ); }
-        static UInt8 UVCountToFormat( UInt8 numUVs ) { return numUVs & kUVCountMask; }
+        static uint8_t CalcNumUVs( uint8_t format ) { return ( format & kUVCountMask ); }
+        static uint8_t UVCountToFormat( uint8_t numUVs ) { return numUVs & kUVCountMask; }
  
         /// Creation functions
-        void    BeginCreate( hsGMaterial *material, const hsMatrix44 &l2wMatrix, UInt8 format );
+        void    BeginCreate( hsGMaterial *material, const hsMatrix44 &l2wMatrix, uint8_t format );
 
         // Phasing these in...
         // Note: uvArray should be a fixed array with enough pointers for the max # of uv channels.
         // Any unused UVs should be nil
-        UInt16  AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor,
-                            hsPoint3 **uvPtrArray, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, UInt32 weightIndices = 0 );
-        UInt16  AddVertex( hsPoint3 *position, hsPoint3 *normal, UInt32 hexColor, UInt32 specularColor = 0,
-                            hsPoint3 **uvPtrArray = nil, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, UInt32 weightIndices = 0 );
+        uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor,
+                            hsPoint3 **uvPtrArray, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
+        uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor = 0,
+                            hsPoint3 **uvPtrArray = nil, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
 
-        void    AddIndex( UInt16 index );
-        void    AddTriIndices( UInt16 index1, UInt16 index2, UInt16 index3 );
-        void    AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, UInt32 color );
+        void    AddIndex( uint16_t index );
+        void    AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 );
+        void    AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color );
 
         // uvws is an array count*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nil
-        void    AddVertexArray( UInt32 count, hsPoint3 *positions, hsVector3 *normals, UInt32 *colors, hsPoint3 *uvws=nil, int uvwsPerVtx=0 );
-        void    AddIndexArray( UInt32 count, UInt16 *indices );
+        void    AddVertexArray( uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nil, int uvwsPerVtx=0 );
+        void    AddIndexArray( uint32_t count, uint16_t *indices );
 
         void    EndCreate( void );
 
@@ -226,13 +226,13 @@ class plGeometrySpan
         /// Manipulation--currently only used for applying static lighting, which of course needs individual vertices
         // Wrong. Also used for the interleaving of the multiple vertex data streams here into single vertex
         //      stream within the plGBufferGroups. mf.
-        void    ExtractInitColor( UInt32 index, hsColorRGBA *multColor, hsColorRGBA *addColor) const;
-        void    ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *normal, UInt32 *color, UInt32 *specColor = nil );
-        void    ExtractUv( UInt32 vIdx, UInt8 uvIdx, hsPoint3* uv );
-        void    ExtractWeights( UInt32 vIdx, float *weightArray, UInt32 *indices );
-        void    StuffVertex( UInt32 index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    StuffVertex( UInt32 index, hsColorRGBA *color, hsColorRGBA *specColor = nil );
+        void    ExtractInitColor( uint32_t index, hsColorRGBA *multColor, hsColorRGBA *addColor) const;
+        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
+        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor = nil );
+        void    ExtractUv( uint32_t vIdx, uint8_t uvIdx, hsPoint3* uv );
+        void    ExtractWeights( uint32_t vIdx, float *weightArray, uint32_t *indices );
+        void    StuffVertex( uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
+        void    StuffVertex( uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nil );
 
         // Clear out the buffers
         void            ClearBuffers( void );
@@ -244,12 +244,12 @@ class plGeometrySpan
         void            MakeInstanceOf( const plGeometrySpan *instance );
 
         // Get the size of one vertex in a span, based on a format
-        static UInt32   GetVertexSize( UInt8 format );
+        static uint32_t   GetVertexSize( uint8_t format );
 
         void    Read( hsStream *stream );
         void    Write( hsStream *stream );
 
-        static UInt32   AllocateNewGroupID() { return IAllocateNewGroupID(); }
+        static uint32_t   AllocateNewGroupID() { return IAllocateNewGroupID(); }
 
         void        BreakInstance();
         void        ChangeInstance(plGeometrySpan* newInstance);
@@ -263,16 +263,16 @@ class plGeometrySpan
         {
             hsPoint3    fPosition;
             hsPoint3    fNormal;
-            UInt32      fColor, fSpecularColor;
+            uint32_t      fColor, fSpecularColor;
             hsColorRGBA fMultColor, fAddColor;
             hsPoint3    fUVs[ kMaxNumUVChannels ];
             float       fWeights[ 3 ];
-            UInt32      fIndices;
+            uint32_t      fIndices;
         };
 
         hsBool                  fCreating;
         hsTArray<TempVertex>    fVertAccum;
-        hsTArray<UInt16>        fIndexAccum;
+        hsTArray<uint16_t>        fIndexAccum;
 
         void        IUnShareData();
         void        IDuplicateUniqueData( const plGeometrySpan *source );
@@ -300,12 +300,12 @@ class plGeometrySpan
 
         // THIS is so we can clear fInstanceGroups as early and as efficiently as possible; see
         // the notes on IGetInstanceGroup().
-        static UInt32   fHighestReadInstanceGroup;
+        static uint32_t   fHighestReadInstanceGroup;
 
-        static UInt32   IAllocateNewGroupID( void );
-        static void     IClearGroupID( UInt32 groupID );
+        static uint32_t   IAllocateNewGroupID( void );
+        static void     IClearGroupID( uint32_t groupID );
 
-        static hsTArray<plGeometrySpan *>   *IGetInstanceGroup( UInt32 groupID, UInt32 expectedCount );
+        static hsTArray<plGeometrySpan *>   *IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount );
 };
 
 

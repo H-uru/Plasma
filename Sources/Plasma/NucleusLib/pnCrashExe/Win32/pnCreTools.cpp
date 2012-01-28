@@ -66,7 +66,7 @@ static BOOL MYIMAGEAPI iSymGetModuleInfo (
     DWORD,
     IMAGEHLP_MODULE * ModuleInfo
 ) {
-    ZEROPTR(ModuleInfo);
+    memset(ModuleInfo, 0, sizeof(*ModuleInfo));
     return false;
 }
 
@@ -109,7 +109,7 @@ static BOOL MYIMAGEAPI iSymGetSymFromAddr (
     PIMAGEHLP_SYMBOL Symbol  
 ) {
     *Displacement = 0;
-    ZEROPTR(Symbol);
+    memset(Symbol, 0, sizeof(*Symbol));
     return false;
 }
 

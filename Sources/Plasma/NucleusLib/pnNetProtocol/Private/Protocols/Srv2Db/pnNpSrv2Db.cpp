@@ -67,7 +67,7 @@ bool Srv2DbValidateConnect (
     const Srv2Db_ConnData & connect = * (const Srv2Db_ConnData *) listen->buffer;
 
     // Validate message size
-    const unsigned kMinStructSize = sizeof(dword) * 1;
+    const unsigned kMinStructSize = sizeof(uint32_t) * 1;
     if (listen->bytes < kMinStructSize)
         return false;
     if (listen->bytes < connect.dataBytes)
@@ -83,8 +83,8 @@ bool Srv2DbValidateConnect (
         return false;
     }
 
-    ZEROPTR(connectPtr);
-    MemCopy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
+    memset(connectPtr, 0, sizeof(*connectPtr));
+    memcpy(connectPtr, &connect, min(sizeof(*connectPtr), connect.dataBytes));
 
     listen->bytesProcessed += connect.dataBytes;
     return true;

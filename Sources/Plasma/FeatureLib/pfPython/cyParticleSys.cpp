@@ -79,9 +79,9 @@ void cyParticleSys::SetNetForce(hsBool state)
 //
 //  PURPOSE    : send the message to the Particle System
 //
-void cyParticleSys::ISendParticleSysMsg(UInt32 param, hsScalar value)
+void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
 {
-    plParticleUpdateMsg* pMsg = TRACKED_NEW plParticleUpdateMsg(fSender, nil, nil, param, value);
+    plParticleUpdateMsg* pMsg = new plParticleUpdateMsg(fSender, nil, nil, param, value);
     // check if this needs to be network forced to all clients
     if (fNetForce )
     {
@@ -103,62 +103,62 @@ void cyParticleSys::ISendParticleSysMsg(UInt32 param, hsScalar value)
 //
 // All these methods just call the IsendParticleSysMsg to do the real work
 //
-void cyParticleSys::SetParticlesPerSecond(hsScalar value)
+void cyParticleSys::SetParticlesPerSecond(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamParticlesPerSecond,value);
 }
 
-void cyParticleSys::SetInitPitchRange(hsScalar value)
+void cyParticleSys::SetInitPitchRange(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamInitPitchRange,value);
 }
 
-void cyParticleSys::SetInitYawRange(hsScalar value)
+void cyParticleSys::SetInitYawRange(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamInitYawRange,value);
 }
 
-void cyParticleSys::SetVelMin(hsScalar value)
+void cyParticleSys::SetVelMin(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMin,value);
 }
 
-void cyParticleSys::SetVelMax(hsScalar value)
+void cyParticleSys::SetVelMax(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamVelMax,value);
 }
 
-void cyParticleSys::SetXSize(hsScalar value)
+void cyParticleSys::SetXSize(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamXSize,value);
 }
 
-void cyParticleSys::SetYSize(hsScalar value)
+void cyParticleSys::SetYSize(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamYSize,value);
 }
 
-void cyParticleSys::SetScaleMin(hsScalar value)
+void cyParticleSys::SetScaleMin(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMin,value);
 }
 
-void cyParticleSys::SetScaleMax(hsScalar value)
+void cyParticleSys::SetScaleMax(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamScaleMax,value);
 }
 
-void cyParticleSys::SetGenLife(hsScalar value)
+void cyParticleSys::SetGenLife(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamGenLife,value);
 }
 
-void cyParticleSys::SetPartLifeMin(hsScalar value)
+void cyParticleSys::SetPartLifeMin(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMin,value);
 }
 
-void cyParticleSys::SetPartLifeMax(hsScalar value)
+void cyParticleSys::SetPartLifeMax(float value)
 {
     ISendParticleSysMsg(plParticleUpdateMsg::kParamPartLifeMax,value);
 }

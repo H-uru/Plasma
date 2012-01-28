@@ -110,8 +110,8 @@ void NetDiagSys (
     ASSERT(callback);
 
     { // Timestamp
-        wchar str[256];
-        qword time = TimeGetTime();
+        wchar_t str[256];
+        uint64_t time = TimeGetTime();
         TimePrettyPrint(time, arrsize(str), str);
         dump(L"[SYS] Time: %s UTC", str);
     }
@@ -121,7 +121,7 @@ void NetDiagSys (
     }
     
     { // Product
-        wchar product[128];
+        wchar_t product[128];
         ProductString(product, arrsize(product));
         dump(L"[SYS] Product: %s", product);
     }
@@ -139,9 +139,9 @@ void NetDiagSys (
     }
     
     { // System
-        word    cpuCaps;
-        dword   cpuVendor[3];
-        word    cpuSignature;
+        uint16_t    cpuCaps;
+        uint32_t   cpuVendor[3];
+        uint16_t    cpuSignature;
         CpuGetInfo(&cpuCaps, cpuVendor, &cpuSignature);
         SYSTEM_INFO info;
         GetSystemInfo(&info);
@@ -158,7 +158,7 @@ void NetDiagSys (
 
         ULONG ulOutBufLen = 0;
         GetAdaptersInfo(nil, &ulOutBufLen);
-        PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)ALLOC(ulOutBufLen);
+        PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)malloc(ulOutBufLen);
         PIP_ADAPTER_INFO pAdapter;
         if (GetAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
             pAdapter = pInfo;
@@ -172,6 +172,6 @@ void NetDiagSys (
             dump(L"[SYS] Error getting adaper list");
             callback(diag, kNetProtocolNil, kNetErrFileNotFound, param);
         }
-        FREE(pInfo);
+        free(pInfo);
     }
 }

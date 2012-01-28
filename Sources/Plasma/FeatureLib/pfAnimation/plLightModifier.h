@@ -87,7 +87,7 @@ public:
     void SetSpecularCtl(plController* ctl) { fSpecularCtl = ctl; }
 
     virtual void DefaultAnimation();
-    virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual float MaxAnimLength(float len) const;
 };
 
 class plOmniModifier : public plLightModifier
@@ -121,7 +121,7 @@ public:
     void SetAttenCtl(plController* ctl) { fAttenCtl = ctl; }
     void SetInitAtten(const hsPoint3& p) { fInitAtten = p; }
 
-    virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual float MaxAnimLength(float len) const;
 };
 
 class plSpotModifier : public plOmniModifier
@@ -155,7 +155,7 @@ public:
     void SetInnerCtl(plController* ctl) { fInnerCtl = ctl; }
     void SetOuterCtl(plController* ctl) { fOuterCtl = ctl; }
 
-    virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual float MaxAnimLength(float len) const;
 };
 
 class plLtdDirModifier : public plLightModifier
@@ -191,7 +191,7 @@ public:
     void SetHeightCtl(plController* ctl) { fHeightCtl = ctl; }
     void SetDepthCtl(plController* ctl) { fDepthCtl = ctl; }
 
-    virtual hsScalar MaxAnimLength(hsScalar len) const;
+    virtual float MaxAnimLength(float len) const;
 };
 
 #endif // plLightModifier_inc

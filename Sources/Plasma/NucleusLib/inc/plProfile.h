@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProfile_h_inc
 #define plProfile_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 #define PL_PROFILE_ENABLED
@@ -153,22 +153,22 @@ public:
 protected:
     const char* fName;      // Name of timer
 
-    UInt32 fValue;
+    uint32_t fValue;
 
-    UInt32 fAvgCount;
-    UInt64 fAvgTotal;
-    UInt32 fLastAvg;
-    UInt32 fMax;
+    uint32_t fAvgCount;
+    uint64_t fAvgTotal;
+    uint32_t fLastAvg;
+    uint32_t fMax;
     hsBool fActive;
     hsBool fRunning;
-    UInt8 fDisplayFlags;
+    uint8_t fDisplayFlags;
 
     // Number of times EndTiming was called. Can be used to combine timing and counting in one timer
-    UInt32 fTimerSamples;
+    uint32_t fTimerSamples;
 
     void IAddAvg();
 
-    void IPrintValue(UInt32 value, char* buf, hsBool printType);
+    void IPrintValue(uint32_t value, char* buf, hsBool printType);
 
 public:
     plProfileBase();
@@ -179,13 +179,13 @@ public:
 
     void UpdateAvg();
 
-    UInt32 GetValue();
+    uint32_t GetValue();
 
     void PrintValue(char* buf, hsBool printType=true);
     void PrintAvg(char* buf, hsBool printType=true);
     void PrintMax(char* buf, hsBool printType=true);
 
-    UInt32 GetTimerSamples() const { return fTimerSamples; }
+    uint32_t GetTimerSamples() const { return fTimerSamples; }
 
     const char* GetName() { return fName; }
 
@@ -194,7 +194,7 @@ public:
     void Stop() { fRunning = false; }
     void Start() { fRunning = true; }
 
-    UInt8 GetDisplayFlags() const { return fDisplayFlags; }
+    uint8_t GetDisplayFlags() const { return fDisplayFlags; }
 
     void ResetMax() { fMax = 0; }
 };
@@ -216,21 +216,21 @@ protected:
 
 public:
     // Name is the timer name. Each timer group gets its own plStatusLog
-    plProfileVar(const char *name, const char* group, UInt8 flags);
+    plProfileVar(const char *name, const char* group, uint8_t flags);
     ~plProfileVar();
 
     // For timing
     void BeginTiming() { if (fActive && fRunning) IBeginTiming(); }
     void EndTiming() { if (fActive && fRunning) IEndTiming(); }
 
-    void NewMem(UInt32 memAmount) { fValue += memAmount; }
-    void DelMem(UInt32 memAmount) { fValue -= memAmount; }
+    void NewMem(uint32_t memAmount) { fValue += memAmount; }
+    void DelMem(uint32_t memAmount) { fValue -= memAmount; }
 
     // For Counting
     void Inc(int i = 1) { fValue += i;}
     void Dec(int i = 1) { fValue -= i;}
 
-    void Set(UInt32 value) { fValue = value; }
+    void Set(uint32_t value) { fValue = value; }
 
     // 
     // For multiple timings per frame of the same thing ie. Each particle system

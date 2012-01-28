@@ -82,9 +82,9 @@ enum {
 ***/
 
 struct Srv2Score_ConnData {
-    dword   dataBytes;
-    dword   buildId;
-    dword   srvType;
+    uint32_t   dataBytes;
+    uint32_t   buildId;
+    uint32_t   srvType;
 };
 struct Srv2Score_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -99,46 +99,46 @@ struct Srv2Score_Connect {
 ***/
 
 struct Srv2Score_ScoreCreate : SrvMsgHeader {
-    dword   ownerId;
-    wchar   gameName[kMaxGameScoreNameLength];
-    dword   gameType;
-    dword   value;
+    uint32_t   ownerId;
+    wchar_t   gameName[kMaxGameScoreNameLength];
+    uint32_t   gameType;
+    uint32_t   value;
 };
 
 struct Srv2Score_ScoreDelete : SrvMsgHeader {
-    dword   scoreId;
+    uint32_t   scoreId;
 };
 
 struct Srv2Score_ScoreGetScores : SrvMsgHeader {
-    dword   ownerId;
-    wchar   gameName[kMaxGameScoreNameLength];
+    uint32_t   ownerId;
+    wchar_t   gameName[kMaxGameScoreNameLength];
 };
 
 struct Srv2Score_ScoreAddPoints : SrvMsgHeader {
-    dword   scoreId;
-    dword   numPoints;
+    uint32_t   scoreId;
+    uint32_t   numPoints;
 };
 
 struct Srv2Score_ScoreTransferPoints : SrvMsgHeader {
-    dword   srcScoreId;
-    dword   destScoreId;
-    dword   numPoints;
+    uint32_t   srcScoreId;
+    uint32_t   destScoreId;
+    uint32_t   numPoints;
 };
 
 struct Srv2Score_ScoreSetPoints : SrvMsgHeader {
-    dword   scoreId;
-    dword   numPoints;
+    uint32_t   scoreId;
+    uint32_t   numPoints;
 };
 
 struct Srv2Score_ScoreGetRanks : SrvMsgHeader {
-    dword ownerId;
-    dword scoreGroup;
-    dword parentFolderId;
-    wchar gameName[kMaxGameScoreNameLength];
-    dword timePeriod;
-    dword numResults;
-    dword pageNumber;
-    dword sortDesc;
+    uint32_t ownerId;
+    uint32_t scoreGroup;
+    uint32_t parentFolderId;
+    wchar_t gameName[kMaxGameScoreNameLength];
+    uint32_t timePeriod;
+    uint32_t numResults;
+    uint32_t pageNumber;
+    uint32_t sortDesc;
 };
 
 
@@ -149,20 +149,20 @@ struct Srv2Score_ScoreGetRanks : SrvMsgHeader {
 ***/
 
 struct Score2Srv_ScoreCreateReply : SrvMsgHeader { 
-    dword   scoreId;
-    dword   createdTime;
+    uint32_t   scoreId;
+    uint32_t   createdTime;
 };
 
 struct Score2Srv_ScoreGetScoresReply : SrvMsgHeader {
-    dword   scoreCount;
-    dword   byteCount;
-    byte    buffer[1];
+    uint32_t   scoreCount;
+    uint32_t   byteCount;
+    uint8_t    buffer[1];
 };
 
 struct Score2Srv_ScoreGetRanksReply : SrvMsgHeader {
-    dword   rankCount;
-    dword   byteCount;
-    byte    buffer[1];
+    uint32_t   rankCount;
+    uint32_t   byteCount;
+    uint8_t    buffer[1];
 };
 
 

@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPageInfo.h"
-#include "hsUtils.h"
+
 #include "hsStream.h"
 #include "pnKeyedObject/plUoid.h"
 #include "plVersion.h"
 
-static UInt32       sCurrPageInfoVersion = 6;
+static uint32_t       sCurrPageInfoVersion = 6;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 plPageInfo::plPageInfo()
@@ -112,7 +112,7 @@ void    plPageInfo::SetLocation( const plLocation &loc )
     fLocation = loc;
 }
 
-void plPageInfo::AddClassVersion(UInt16 classIdx, UInt16 version)
+void plPageInfo::AddClassVersion(uint16_t classIdx, uint16_t version)
 {
     ClassVersion cv;
     cv.Class = classIdx;
@@ -135,7 +135,7 @@ void plPageInfo::Read( hsStream *s )
     // 5 is the earliest version since we began working again on the P20 codebase in Sep 2005,
     // after Uru's online component was cancelled in Feb 2004, so I've removed support for
     // anything prior to that to clean things up a bit.
-    UInt32 version = s->ReadLE32();
+    uint32_t version = s->ReadLE32();
     if (version > sCurrPageInfoVersion || version < 5)
     {
         hsAssert( false, "Invalid header version in plPageInfo::Read()" );
@@ -153,11 +153,11 @@ void plPageInfo::Read( hsStream *s )
 
         if (version < 6)
         {
-            UInt16 unusedMinorVersion;
+            uint16_t unusedMinorVersion;
             s->ReadLE(&unusedMinorVersion);
-            Int32 unusedReleaseVersion;
+            int32_t unusedReleaseVersion;
             s->ReadLE(&unusedReleaseVersion); // This was always zero... yanked.
-            UInt32 unusedFlags;
+            uint32_t unusedFlags;
             s->ReadLE(&unusedFlags);
         }
 
@@ -168,9 +168,9 @@ void plPageInfo::Read( hsStream *s )
 
     if (version >= 6)
     {
-        UInt16 numClassVersions = s->ReadLE16();
+        uint16_t numClassVersions = s->ReadLE16();
         fClassVersions.reserve(numClassVersions);
-        for (UInt16 i = 0; i < numClassVersions; i++)
+        for (uint16_t i = 0; i < numClassVersions; i++)
         {
             ClassVersion cv;
             cv.Class = s->ReadLE16();
@@ -190,9 +190,9 @@ void    plPageInfo::Write( hsStream *s )
     s->WriteLE( fChecksum );
     s->WriteLE( fDataStart );
     s->WriteLE( fIndexStart );
-    UInt16 numClassVersions = UInt16(fClassVersions.size());
+    uint16_t numClassVersions = uint16_t(fClassVersions.size());
     s->WriteLE16(numClassVersions);
-    for (UInt16 i = 0; i < numClassVersions; i++)
+    for (uint16_t i = 0; i < numClassVersions; i++)
     {
         ClassVersion& cv = fClassVersions[i];
         s->WriteLE16(cv.Class);

@@ -212,10 +212,12 @@ static bool AdvanceStep (
                 ++start;
             const char * term = StrChr(start, ';');
             if (term) {
-                char * buffer = ALLOCA(char, term + 1 - start);
+                char * buffer = (char*)malloc(term + 1 - start);
                 StrCopy(buffer, start, term + 1 - start);
                 Send(sock, "rcpt to:<", buffer, ">\r\n", nil);
                 transaction->subStep = term + 1 - transaction->recipient;
+
+                free(buffer);
             }
             else {
                 Send(sock, "rcpt to:<", start, ">\r\n", nil);
@@ -353,13 +355,13 @@ static void DestroyTransaction (MailTransaction * transaction) {
         );
     }
 
-    DEL(transaction);
+    delete transaction;
 }
 
 //===========================================================================
 static void MailLookupProc (
     void *              param,
-    const wchar *       ,
+    const wchar_t *       ,
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -445,12 +447,7 @@ static void __cdecl Send (
     }
 
     // Allocate string buffer
-    char * packed;
-    const unsigned kStackBufSize = 8 * 1024;
-    if (bytes > kStackBufSize)
-        packed = (char *) ALLOC(bytes);
-    else
-        packed = (char *) _alloca(bytes);
+    char* packed = (char *) malloc(bytes);
 
     // Pack the string
     {
@@ -466,8 +463,7 @@ static void __cdecl Send (
     AsyncSocketSend(sock, packed, bytes - 1);
 
     // Free the string
-    if (bytes > kStackBufSize)
-        FREE(packed);
+    free(packed);
 }
 
 //===========================================================================
@@ -518,7 +514,7 @@ static void IMail (
 
     // Create a transaction record
     MailTransaction * transaction = new(
-        ALLOC(offsetof(MailTransaction, buffer) + bytes)
+        malloc(offsetof(MailTransaction, buffer) + bytes)
     ) MailTransaction;
     transaction->stepTable  = stepTable;
     transaction->sock       = nil;
@@ -554,7 +550,7 @@ static void IMail (
 
     // Start the transaction with a dns lookup
     const unsigned kSmtpPort = 25;
-    wchar smtpName[256];
+    wchar_t smtpName[256];
     StrToUnicode(smtpName, smtp, arrsize(smtpName));
 
     // Add transaction to global list
@@ -619,7 +615,7 @@ void MailEncodePassword (
     // Encode data and move it back to the front of the array
     dstChars = Base64Encode(
         srcChars,
-        (const byte *) emailAuth->Ptr(),
+        (const uint8_t *) emailAuth->Ptr(),
         dstChars,
         dstData
     );
@@ -716,7 +712,7 @@ bool MailQueued () {
 }
 
 //============================================================================
-const wchar * MailErrorToString (EMailError error) {
+const wchar_t * MailErrorToString (EMailError error) {
 
     switch (error) {
         case kMailSuccess:              return L"kMailSuccess";

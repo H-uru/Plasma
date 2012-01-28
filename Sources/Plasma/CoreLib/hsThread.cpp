@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define CoreLib_Thread
 
 #include "hsThread.h"
-#include "hsUtils.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////////

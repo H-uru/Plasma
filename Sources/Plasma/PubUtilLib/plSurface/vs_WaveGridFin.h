@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const UInt32 vs_WaveGridFinByteLen = 1728;
+static const uint32_t vs_WaveGridFinbyteLen = 1728;
 
-static const UInt8 vs_WaveGridFinCodes[] = {
+static const uint8_t vs_WaveGridFinCodes[] = {
     0x1,    0x1,    0xfe,   0xff,
     0x1f,   0x0,    0x0,    0x0,
     0x0,    0x0,    0x0,    0x80,
@@ -478,7 +478,7 @@ static const UInt8 vs_WaveGridFinCodes[] = {
     0xff,   0xff,   0x0,    0x0
     };
 
-static const plShaderDecl vs_WaveGridFinDecl("sha/vs_WaveGridFin.inl", vs_WaveGridFin, vs_WaveGridFinByteLen, vs_WaveGridFinCodes);
+static const plShaderDecl vs_WaveGridFinDecl("sha/vs_WaveGridFin.inl", vs_WaveGridFin, vs_WaveGridFinbyteLen, vs_WaveGridFinCodes);
 
 static const plShaderRegister vs_WaveGridFinRegister(&vs_WaveGridFinDecl);
 

@@ -56,13 +56,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ////////////////////////////////////////////////////////////////////////////////
 
 pfMarkerMgr* pfMarkerMgr::fInstance = nil;
-const UInt32 pfMarkerMgr::kNoMarkerSelected = (UInt32)(-1);
+const uint32_t pfMarkerMgr::kNoMarkerSelected = (uint32_t)(-1);
 
 pfMarkerMgr* pfMarkerMgr::Instance()
 {
     if (!pfMarkerMgr::fInstance)
     {
-        pfMarkerMgr::fInstance = TRACKED_NEW pfMarkerMgr;
+        pfMarkerMgr::fInstance = new pfMarkerMgr;
         pfMarkerMgr::fInstance->IInit();
     }
 
@@ -99,11 +99,11 @@ void pfMarkerMgr::IInit()
 
 void pfMarkerMgr::IShutdown()
 {
-    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
     {
         curMarker->second->Remove();
-        DEL(curMarker->second);
+        delete curMarker->second;
         ++curMarker;
     }
     fMarkers.clear();
@@ -112,9 +112,9 @@ void pfMarkerMgr::IShutdown()
     UnRegisterAs(kMarkerMgr_KEY);
 }
 
-pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, UInt32& id)
+pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, uint32_t& id)
 {
-    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
     {
         if (curMarker->second->GetKey() == markerKey)
@@ -131,7 +131,7 @@ pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, UInt32& id)
 void pfMarkerMgr::IUpdate()
 {
     // Update all markers
-    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
     {
         curMarker->second->Update(hsTimer::GetSeconds());
@@ -145,7 +145,7 @@ void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
         return; // not the local player, abort
 
     // make sure the marker isn't frozen
-    UInt32 id;
+    uint32_t id;
     pfMarkerInfo* hitMarker = IFindMarker(markerKey, id);
     if (!hitMarker)
         return; // abort, something weird is going on
@@ -153,42 +153,42 @@ void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
         return; // marker frozen, abort
 
     // tell people about it
-    pfMarkerMsg* msg = TRACKED_NEW pfMarkerMsg;
+    pfMarkerMsg* msg = new pfMarkerMsg;
     msg->fType = pfMarkerMsg::kMarkerCaptured;
     msg->fMarkerID = id;
     msg->Send();
 }
 
-void pfMarkerMgr::AddMarker(double x, double y, double z, UInt32 id, bool justCreated)
+void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool justCreated)
 {
     if (fMarkers.find(id) != fMarkers.end())
     {
         // delete existing one if we're changing its location
         fMarkers[id]->Remove();
-        DEL(fMarkers[id]);
+        delete fMarkers[id];
     }
 
-    hsPoint3 pos((hsScalar)x, (hsScalar)y, (hsScalar)z);
-    fMarkers[id] = TRACKED_NEW pfMarkerInfo(pos, justCreated);
+    hsPoint3 pos((float)x, (float)y, (float)z);
+    fMarkers[id] = new pfMarkerInfo(pos, justCreated);
     fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }
 
-void pfMarkerMgr::RemoveMarker(UInt32 id)
+void pfMarkerMgr::RemoveMarker(uint32_t id)
 {
     if (fMarkers.find(id) == fMarkers.end())
         return;
     fMarkers[id]->Remove();
-    DEL(fMarkers[id]);
+    delete fMarkers[id];
     fMarkers.erase(id);
 }
 
 void pfMarkerMgr::RemoveAllMarkers()
 {
-    std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+    std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
     {
         curMarker->second->Remove();
-        DEL(curMarker->second);
+        delete curMarker->second;
         ++curMarker;
     }
     fMarkers.clear();
@@ -204,7 +204,7 @@ void pfMarkerMgr::ClearSelectedMarker()
     }
 }
 
-void pfMarkerMgr::SetSelectedMarker(UInt32 id)
+void pfMarkerMgr::SetSelectedMarker(uint32_t id)
 {
     ClearSelectedMarker();
 
@@ -218,13 +218,13 @@ void pfMarkerMgr::SetSelectedMarker(UInt32 id)
     }
 }
 
-UInt32 pfMarkerMgr::GetSelectedMarker()
+uint32_t pfMarkerMgr::GetSelectedMarker()
 {
     return fSelectedMarker;
 }
 
 // for QUEST games (no teams)
-void pfMarkerMgr::CaptureMarker(UInt32 id, bool captured)
+void pfMarkerMgr::CaptureMarker(uint32_t id, bool captured)
 {
     if (fMarkers.find(id) == fMarkers.end())
         return;
@@ -239,7 +239,7 @@ void pfMarkerMgr::CaptureMarker(UInt32 id, bool captured)
 }
 
 // for TEAM games (0 = not captured)
-void pfMarkerMgr::CaptureMarker(UInt32 id, int team)
+void pfMarkerMgr::CaptureMarker(uint32_t id, int team)
 {
     if (fMarkers.find(id) == fMarkers.end())
         return;
@@ -263,13 +263,13 @@ void pfMarkerMgr::LocalShowMarkers(bool show)
     fShowingLocalMarkers = show;
     if (show)
     {
-        std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+        std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
         while (curMarker != fMarkers.end())
             curMarker->second->Show(true);
     }
     else
     {
-        std::map<UInt32, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
+        std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
         while (curMarker != fMarkers.end())
             curMarker->second->Show(false);
     }
@@ -317,7 +317,7 @@ hsBool pfMarkerMgr::MsgReceive(plMessage* msg)
         plKey cloneKey = cloneMsg->GetCloneKey();
         if (cloneMsg->GetIsLoading() && cloneKey)
         {
-            UInt32 id;
+            uint32_t id;
             pfMarkerInfo* marker = IFindMarker(cloneKey, id);
             marker->InitSpawned(cloneKey);
         }

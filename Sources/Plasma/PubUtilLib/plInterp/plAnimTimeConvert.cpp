@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
 #include "plAvatar/plAGAnim.h"
@@ -97,15 +97,15 @@ void plAnimTimeConvert::Init(plATCAnim *anim, plAGAnimInstance *instance, plAGMa
 {
         // Set up our eval callbacks
     plAGInstanceCallbackMsg *instMsg;
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kStart); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);    
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kStop); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
-    instMsg = TRACKED_NEW plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust); 
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust); 
     instMsg->fInstance = instance;
     AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
@@ -197,7 +197,7 @@ void plAnimTimeConvert::ResizeStates(int cnt)
 
     while (cnt>fStates.size())
     {
-        fStates.push_back(TRACKED_NEW plATCState);
+        fStates.push_back(new plATCState);
     }
 
     hsAssert(fStates.size()==cnt, "state resize mismatch");
@@ -212,7 +212,7 @@ void plAnimTimeConvert::ResetWrap()
     fFlags &= (~kWrap & ~kNeedsReset);
 }
 
-hsScalar plAnimTimeConvert::ICalcEaseTime(const plATCEaseCurve *curve, double start, double end)
+float plAnimTimeConvert::ICalcEaseTime(const plATCEaseCurve *curve, double start, double end)
 {
     start -= curve->fBeginWorldTime;
     end -= curve->fBeginWorldTime;
@@ -224,12 +224,12 @@ hsScalar plAnimTimeConvert::ICalcEaseTime(const plATCEaseCurve *curve, double st
         end = curve->fLength;
 
 
-    hsScalar delSecs = 0;
+    float delSecs = 0;
 
     if (start < curve->fLength)
     {   
         // Redundant eval... but only when easing.
-        delSecs = curve->PositionGivenTime((hsScalar)end) - curve->PositionGivenTime((hsScalar)start);
+        delSecs = curve->PositionGivenTime((float)end) - curve->PositionGivenTime((float)start);
     }
     return delSecs;
 }
@@ -244,7 +244,7 @@ void plAnimTimeConvert::IClearSpeedEase()
     fSpeedEaseCurve = nil;
 }
 
-void plAnimTimeConvert::ICheckTimeCallbacks(hsScalar frameStart, hsScalar frameStop)
+void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
 {
     int i;
     for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
@@ -262,7 +262,7 @@ void plAnimTimeConvert::ICheckTimeCallbacks(hsScalar frameStart, hsScalar frameS
     }
 }
 
-hsBool plAnimTimeConvert::ITimeInFrame(hsScalar secs, hsScalar start, hsScalar stop)
+hsBool plAnimTimeConvert::ITimeInFrame(float secs, float start, float stop)
 {
     if (secs == start && secs == stop)
         return true;
@@ -328,7 +328,7 @@ void plAnimTimeConvert::ISendCallback(int i)
     }
 }
 
-plAnimTimeConvert& plAnimTimeConvert::IStop(double time, hsScalar animTime)
+plAnimTimeConvert& plAnimTimeConvert::IStop(double time, float animTime)
 {
     if( IsStopped() )
         return *this;
@@ -352,17 +352,17 @@ plAnimTimeConvert& plAnimTimeConvert::IStop(double time, hsScalar animTime)
     return *this;
 }
 
-plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, hsScalar animTime /* = -1 */)
+plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, float animTime /* = -1 */)
 {
     if (fStates.size() > 0 && worldTime < fStates.front()->fStartWorldTime)
         return *this; // Sorry... state saves only work in the forward direction
 
     fLastStateChange = worldTime;
-    plATCState *state = TRACKED_NEW plATCState;
+    plATCState *state = new plATCState;
 
     state->fStartWorldTime = fLastStateChange;
     state->fStartAnimTime = (animTime < 0 ? WorldToAnimTimeNoUpdate(fLastStateChange) : animTime);
-    state->fFlags = (UInt8)fFlags;
+    state->fFlags = (uint8_t)fFlags;
     state->fBegin = fBegin;
     state->fEnd = fEnd;
     state->fLoopBegin = fLoopBegin;
@@ -395,7 +395,7 @@ void plAnimTimeConvert::IFlushOldStates()
 {
     plATCState *state;
     plATCStateList::const_iterator i = fStates.begin();
-    UInt32 count = 0;
+    uint32_t count = 0;
 
     for (; i != fStates.end(); i++)
     {
@@ -446,7 +446,7 @@ void plAnimTimeConvert::SetOwner(plSynchedObject* o)
     fOwner = o; 
 }
 
-hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const UInt32 &flags, 
+hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
                                        const plATCEaseCurve *curve) const       
 {
     if (flags & kStopped)
@@ -468,11 +468,11 @@ hsBool plAnimTimeConvert::IsStoppedAt(double wSecs) const
     return IIsStoppedAt(wSecs, state->fFlags, state->fEaseCurve);
 }
 
-hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
+float plAnimTimeConvert::WorldToAnimTime(double wSecs)
 {
     //hsAssert(wSecs >= fLastEvalWorldTime, "Tried to eval a time that's earlier than the last eval time.");
     double d = wSecs - fLastEvalWorldTime;
-    hsScalar f = fCurrentAnimTime;
+    float f = fCurrentAnimTime;
 
     if (wSecs < fLastStateChange)
     {
@@ -505,8 +505,8 @@ hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
         
         return fCurrentAnimTime;
     }
-    hsScalar note = fCurrentAnimTime - f;
-    hsScalar secs = 0, delSecs = 0;
+    float note = fCurrentAnimTime - f;
+    float secs = 0, delSecs = 0;
 
     if (fCurrentEaseCurve != nil)
     {
@@ -514,7 +514,7 @@ hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
         if (wSecs > fCurrentEaseCurve->GetEndWorldTime())
         {
             if (fFlags & kEasingIn)
-                delSecs += hsScalar(wSecs - fCurrentEaseCurve->GetEndWorldTime()) * fSpeed;
+                delSecs += float(wSecs - fCurrentEaseCurve->GetEndWorldTime()) * fSpeed;
 
             IClearSpeedEase();
             
@@ -524,7 +524,7 @@ hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
     else 
     {
         // The easy case... playing the animation at a constant speed.
-        delSecs = hsScalar(wSecs - fLastEvalWorldTime) * fSpeed;
+        delSecs = float(wSecs - fLastEvalWorldTime) * fSpeed;
     }
     
     if (fFlags & kBackwards)
@@ -617,12 +617,12 @@ hsScalar plAnimTimeConvert::WorldToAnimTime(double wSecs)
     return fCurrentAnimTime = secs;
 }
 
-hsScalar plAnimTimeConvert::WorldToAnimTimeNoUpdate(double wSecs) const
+float plAnimTimeConvert::WorldToAnimTimeNoUpdate(double wSecs) const
 {
     return IWorldToAnimTimeNoUpdate(wSecs, IGetState(wSecs));
 }
 
-hsScalar plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *state)
+float plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *state)
 {
     //hsAssert(wSecs >= fLastEvalWorldTime, "Tried to eval a time that's earlier than the last eval time.");
     if (state == nil)
@@ -631,7 +631,7 @@ hsScalar plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *s
     if (state->fFlags & kStopped)
         return state->fStartAnimTime;
     
-    hsScalar secs = 0, delSecs = 0;
+    float secs = 0, delSecs = 0;
     
     if (state->fEaseCurve != nil)
     {
@@ -639,13 +639,13 @@ hsScalar plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *s
         if (wSecs > state->fEaseCurve->GetEndWorldTime())
         {
             if (state->fFlags & kEasingIn)
-                delSecs += hsScalar(wSecs - state->fEaseCurve->GetEndWorldTime()) * state->fSpeed;
+                delSecs += float(wSecs - state->fEaseCurve->GetEndWorldTime()) * state->fSpeed;
         }
     }
     else 
     {
         // The easy case... playing the animation at a constant speed.
-        delSecs = hsScalar(wSecs - state->fStartWorldTime) * state->fSpeed;
+        delSecs = float(wSecs - state->fStartWorldTime) * state->fSpeed;
     }
     
     if (state->fFlags & kBackwards)
@@ -720,12 +720,12 @@ hsScalar plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *s
     return secs;
 }
 
-hsScalar plAnimTimeConvert::IWorldToAnimTimeBeforeState(double wSecs) const
+float plAnimTimeConvert::IWorldToAnimTimeBeforeState(double wSecs) const
 {
     return IWorldToAnimTimeNoUpdate(wSecs, IGetState(wSecs));
 }
 
-void plAnimTimeConvert::SetCurrentAnimTime(hsScalar s, hsBool jump /* = false */)
+void plAnimTimeConvert::SetCurrentAnimTime(float s, hsBool jump /* = false */)
 {
     // We're setting the anim value for whenever we last evaluated.
     fFlags |= kForcedMove;
@@ -743,7 +743,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(hsScalar s, hsBool jump /* = false */
     IProcessStateChange(hsTimer::GetSysSeconds(), fCurrentAnimTime);
 }
 
-void plAnimTimeConvert::SetEase(hsBool easeIn, UInt8 type, hsScalar minLength, hsScalar maxLength, hsScalar normLength) 
+void plAnimTimeConvert::SetEase(hsBool easeIn, uint8_t type, float minLength, float maxLength, float normLength) 
 { 
     if (easeIn)
     {
@@ -759,24 +759,24 @@ void plAnimTimeConvert::SetEase(hsBool easeIn, UInt8 type, hsScalar minLength, h
 
 
 
-hsScalar plAnimTimeConvert::GetBestStopDist(hsScalar min, hsScalar max, hsScalar norm, hsScalar time) const
+float plAnimTimeConvert::GetBestStopDist(float min, float max, float norm, float time) const
 {
-    hsScalar bestTime = -1;
-    hsScalar bestDist = -1;
+    float bestTime = -1;
+    float bestDist = -1;
     if (fStopPoints.GetCount() == 0)
         return norm;
 
-    hsScalar curTime;
-    hsScalar curDist;
+    float curTime;
+    float curDist;
 
     int i;
     for (i = 0; i < fStopPoints.GetCount(); i++)
     {
-        hsScalar stop = fStopPoints.Get(i);
+        float stop = fStopPoints.Get(i);
 
         if (IsLooped())
         {
-            hsScalar loopDist;
+            float loopDist;
             if (IsBackwards())
             {
                 if ((time >= fLoopBegin && stop < fLoopBegin) ||
@@ -841,9 +841,9 @@ hsScalar plAnimTimeConvert::GetBestStopDist(hsScalar min, hsScalar max, hsScalar
 }
 
 // Passing in a rate of zero specifies an immediate change.
-void plAnimTimeConvert::SetSpeed(hsScalar goal, hsScalar rate /* = 0 */)
+void plAnimTimeConvert::SetSpeed(float goal, float rate /* = 0 */)
 {
-    hsScalar curSpeed = fSpeed;
+    float curSpeed = fSpeed;
     fSpeed = goal;
     
 
@@ -860,7 +860,7 @@ void plAnimTimeConvert::SetSpeed(hsScalar goal, hsScalar rate /* = 0 */)
         if (fCurrentEaseCurve != nil)
         {
             double easeTime = curTime - fCurrentEaseCurve->fBeginWorldTime;
-            curSpeed = fCurrentEaseCurve->VelocityGivenTime((hsScalar)easeTime);
+            curSpeed = fCurrentEaseCurve->VelocityGivenTime((float)easeTime);
         }
         if (fSpeedEaseCurve != nil)
         {
@@ -869,7 +869,7 @@ void plAnimTimeConvert::SetSpeed(hsScalar goal, hsScalar rate /* = 0 */)
         }
         else
         {
-            hsScalar length;
+            float length;
             length = (goal - curSpeed) / rate;
             if (length < 0)
                 length = -length;
@@ -889,7 +889,7 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fFlags = (UInt16)(s->ReadLE32());
+    fFlags = (uint16_t)(s->ReadLE32());
 
     fBegin = fInitialBegin = s->ReadLEScalar();
     fEnd = fInitialEnd = s->ReadLEScalar();
@@ -975,7 +975,7 @@ plAnimTimeConvert& plAnimTimeConvert::Stop(double stopTime)
 
     if (stopTime < 0)
         stopTime = hsTimer::GetSysSeconds();
-    hsScalar stopAnimTime = WorldToAnimTimeNoUpdate(stopTime);
+    float stopAnimTime = WorldToAnimTimeNoUpdate(stopTime);
     
     SetFlag(kEasingIn, false);
 
@@ -984,11 +984,11 @@ plAnimTimeConvert& plAnimTimeConvert::Stop(double stopTime)
         return IStop(stopTime, fCurrentAnimTime);
     }
 
-    hsScalar currSpeed;
+    float currSpeed;
     if (fCurrentEaseCurve == nil || stopTime >= fCurrentEaseCurve->GetEndWorldTime())
         currSpeed = fSpeed;
     else
-        currSpeed = fCurrentEaseCurve->VelocityGivenTime((hsScalar)(stopTime - fCurrentEaseCurve->fBeginWorldTime));
+        currSpeed = fCurrentEaseCurve->VelocityGivenTime((float)(stopTime - fCurrentEaseCurve->fBeginWorldTime));
 
     fEaseOutCurve->RecalcToSpeed(currSpeed > fSpeed ? currSpeed : fSpeed, 0);
     fEaseOutCurve->SetLengthOnDistance(GetBestStopDist(fEaseOutCurve->GetMinDistance(), fEaseOutCurve->GetMaxDistance(),
@@ -1013,11 +1013,11 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     
     if (fEaseInCurve != nil)
     {
-        hsScalar currSpeed;
+        float currSpeed;
         if (fCurrentEaseCurve == nil || startTime >= fCurrentEaseCurve->GetEndWorldTime())
             currSpeed = 0;
         else
-            currSpeed = fCurrentEaseCurve->VelocityGivenTime((hsScalar)(startTime - fCurrentEaseCurve->fBeginWorldTime));
+            currSpeed = fCurrentEaseCurve->VelocityGivenTime((float)(startTime - fCurrentEaseCurve->fBeginWorldTime));
 
         if (currSpeed <= fSpeed)
         {
@@ -1119,7 +1119,7 @@ plAnimTimeConvert& plAnimTimeConvert::Loop(hsBool on)
     return *this;
 }
 
-plAnimTimeConvert& plAnimTimeConvert::PlayToTime(hsScalar time)
+plAnimTimeConvert& plAnimTimeConvert::PlayToTime(float time)
 {
     fFlags |= kNeedsReset;
     if (fCurrentAnimTime > time)
@@ -1144,7 +1144,7 @@ plAnimTimeConvert& plAnimTimeConvert::PlayToTime(hsScalar time)
     return *this;
 }
 
-plAnimTimeConvert& plAnimTimeConvert::PlayToPercentage(hsScalar percent)
+plAnimTimeConvert& plAnimTimeConvert::PlayToPercentage(float percent)
 {
     return PlayToTime(fBegin + (fEnd - fBegin) * percent);
 }
@@ -1280,7 +1280,7 @@ hsBool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
         if (fCurrentAnimTime == fEnd)
             return true;
         double currTime = hsTimer::GetSysSeconds();
-        hsScalar newTime = fCurrentAnimTime + hsTimer::GetDelSysSeconds();
+        float newTime = fCurrentAnimTime + hsTimer::GetDelSysSeconds();
         if (newTime > fEnd)
         {
             newTime = fEnd;
@@ -1293,7 +1293,7 @@ hsBool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
         if (fCurrentAnimTime == fBegin)
             return true;
         double currTime = hsTimer::GetSysSeconds();
-        hsScalar newTime = fCurrentAnimTime - hsTimer::GetDelSysSeconds();
+        float newTime = fCurrentAnimTime - hsTimer::GetDelSysSeconds();
         if (newTime < fBegin)
         {
             newTime = fBegin;
@@ -1350,7 +1350,7 @@ void plATCState::Read(hsStream *s, hsResMgr *mgr)
     fStartWorldTime = s->ReadLEDouble();
     fStartAnimTime = s->ReadLEScalar();
 
-    fFlags = (UInt8)(s->ReadLE32());
+    fFlags = (uint8_t)(s->ReadLE32());
     fEnd = s->ReadLEScalar();
     fLoopBegin = s->ReadLEScalar();
     fLoopEnd = s->ReadLEScalar();

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsTimer.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
 
 #include "plTweak.h"
 
@@ -85,8 +85,8 @@ hsWide plTimerShare::DSecondsToRawTicks(double secs)
     double ticks = secs * hsTimer::GetRawBase().AsDouble();
     double hi = ticks / double(65536) / double(65536);
     ticks -= hi;
-    retVal.fHi = Int32(hi);
-    retVal.fLo = Int32(ticks);
+    retVal.fHi = int32_t(hi);
+    retVal.fLo = int32_t(ticks);
     return retVal;
 }
 
@@ -123,7 +123,7 @@ double plTimerShare::IncSysSeconds()
     else if( fSmoothingClampSecs >= 0 )
     {
         double t = GetSeconds();
-        hsScalar delSys = hsScalar(t - fRealSeconds);
+        float delSys = float(t - fRealSeconds);
         fClamping = ( (fTimeClampSecs > 0) && (delSys > fTimeClampSecs) );
         if (fClamping)
         {
@@ -132,8 +132,8 @@ double plTimerShare::IncSysSeconds()
         delSys *= fSysTimeScale;
         if( fDelSysSeconds > 0 && fDelSysSeconds < fSmoothingClampSecs )
         {
-            const hsScalar kFrac = 0.1f;
-            const hsScalar kOneMinusFrac = 1.f-kFrac;
+            const float kFrac = 0.1f;
+            const float kOneMinusFrac = 1.f-kFrac;
             delSys *= kFrac;
             delSys += fDelSysSeconds * kOneMinusFrac;
         }
@@ -146,7 +146,7 @@ double plTimerShare::IncSysSeconds()
             {
                 fRealSeconds = t;
                 t = GetSeconds();
-                delSys = hsScalar(t - fRealSeconds);
+                delSys = float(t - fRealSeconds);
                 count--;
             }
 #endif
@@ -182,12 +182,12 @@ double plTimerShare::IncSysSeconds()
         }
         avg /= double(kSmoothBuffUsed);
 
-        plCONST(hsScalar) kMaxSmoothable(0.15f);
-        fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+        plCONST(float) kMaxSmoothable(0.15f);
+        fDelSysSeconds = float(avg - fRealSeconds) * fSysTimeScale;
         if( fDelSysSeconds > kMaxSmoothable * fSysTimeScale )
         {
             avg = t;
-            fDelSysSeconds = hsScalar(avg - fRealSeconds) * fSysTimeScale;
+            fDelSysSeconds = float(avg - fRealSeconds) * fSysTimeScale;
             fResetSmooth = true;
         }
         fSysSeconds += fDelSysSeconds;
@@ -206,8 +206,6 @@ void plTimerShare::SetRealTime(hsBool realTime)
 }
 
 #if HS_BUILD_FOR_WIN32
-
-#include <windows.h>
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {
@@ -242,7 +240,7 @@ hsWide hsTimer::IInitRawBase()
 #include <sys/time.h>
 
 #define kMicroSecondsUnit   1000000
-static UInt32   gBaseTime = 0;
+static uint32_t   gBaseTime = 0;
 
 hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
 {
@@ -300,7 +298,7 @@ double hsTimer::GetPrecTicksPerSec()
     return 1;
 }
 
-UInt32 hsTimer::GetPrecTickCount()
+uint32_t hsTimer::GetPrecTickCount()
 {
 #if HS_BUILD_FOR_WIN32
     LARGE_INTEGER ti;
@@ -312,20 +310,20 @@ UInt32 hsTimer::GetPrecTickCount()
     return 1;
 #endif
 }
-UInt32 hsTimer::PrecSecsToTicks(hsScalar secs)
+uint32_t hsTimer::PrecSecsToTicks(float secs)
 {
-    return (UInt32)(((double)secs) * fPrecTicksPerSec);
+    return (uint32_t)(((double)secs) * fPrecTicksPerSec);
 }
-double hsTimer::PrecTicksToSecs(UInt32 ticks)
+double hsTimer::PrecTicksToSecs(uint32_t ticks)
 {
     return ((double)ticks) / fPrecTicksPerSec;
 }
-double hsTimer::PrecTicksToHz(UInt32 ticks)
+double hsTimer::PrecTicksToHz(uint32_t ticks)
 {
     return fPrecTicksPerSec / ((double)ticks);
 }
 
-UInt64 hsTimer::GetFullTickCount()
+uint64_t hsTimer::GetFullTickCount()
 {
 #if HS_BUILD_FOR_WIN32
     LARGE_INTEGER ticks;
@@ -336,10 +334,10 @@ UInt64 hsTimer::GetFullTickCount()
 #endif
 }
 
-float hsTimer::FullTicksToMs(UInt64 ticks)
+float hsTimer::FullTicksToMs(uint64_t ticks)
 {
 #ifdef HS_BUILD_FOR_WIN32
-    static UInt64 ticksPerTenthMs = 0;
+    static uint64_t ticksPerTenthMs = 0;
 
     if (ticksPerTenthMs == 0)
     {

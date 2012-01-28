@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsThread.h"
 #include "plDSoundBuffer.h"
 #include <al.h>
@@ -62,14 +62,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plStatusLog/plStatusLog.h"
 
-UInt32 plDSoundBuffer::fNumBuffers = 0;
+uint32_t plDSoundBuffer::fNumBuffers = 0;
 plProfile_CreateCounterNoReset( "Playing", "Sound", SoundPlaying );
 plProfile_CreateCounterNoReset( "Allocated", "Sound", NumAllocated );
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plDSoundBuffer::plDSoundBuffer( UInt32 size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool isLooping, hsBool tryStatic, bool streaming )
+plDSoundBuffer::plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool isLooping, hsBool tryStatic, bool streaming )
 { 
     fLooping = isLooping;
     fValid = false;
@@ -100,10 +100,10 @@ plDSoundBuffer::~plDSoundBuffer()
 
 //// IAllocate ///////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::IAllocate( UInt32 size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic )
+void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic )
 {
     // Create a DSound buffer description
-    fBufferDesc = TRACKED_NEW plWAVHeader;
+    fBufferDesc = new plWAVHeader;
     *fBufferDesc = bufferDesc;
 
     fBufferSize = size;
@@ -317,7 +317,7 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
         if(!size)
             break;  
 
-        MemCopy(bufferData, pData, size);
+        memcpy(bufferData, pData, size);
         pData += size;
         bytes-= size;
         numBuffersToQueue++;
@@ -699,28 +699,28 @@ hsBool  plDSoundBuffer::IsEAXAccelerated( void ) const
     return fEAXSource.IsValid();
 }
 
-//// BytePosToMSecs //////////////////////////////////////////////////////////
+//// bytePosToMSecs //////////////////////////////////////////////////////////
 
-UInt32  plDSoundBuffer::BytePosToMSecs( UInt32 bytePos ) const
+uint32_t  plDSoundBuffer::bytePosToMSecs( uint32_t bytePos ) const
 {
-    return (UInt32)(bytePos * 1000 / (hsScalar)fBufferDesc->fAvgBytesPerSec);
+    return (uint32_t)(bytePos * 1000 / (float)fBufferDesc->fAvgBytesPerSec);
 }
 
 //// GetBufferBytePos ////////////////////////////////////////////////////////
 
-UInt32  plDSoundBuffer::GetBufferBytePos( hsScalar timeInSecs ) const
+uint32_t  plDSoundBuffer::GetBufferBytePos( float timeInSecs ) const
 {
     hsAssert( fBufferDesc != nil, "Nil buffer description when calling GetBufferBytePos()" );
 
-    UInt32  byte = (UInt32)( timeInSecs * (hsScalar)fBufferDesc->fNumSamplesPerSec );
-    byte *= fBufferDesc->fBlockAlign;
+    uint32_t  uint8_t = (uint32_t)( timeInSecs * (float)fBufferDesc->fNumSamplesPerSec );
+    uint8_t *= fBufferDesc->fBlockAlign;
 
-    return byte;
+    return uint8_t;
 }
 
 //// GetLengthInBytes ////////////////////////////////////////////////////////
 
-UInt32  plDSoundBuffer::GetLengthInBytes( void ) const
+uint32_t  plDSoundBuffer::GetLengthInBytes( void ) const
 {
     return fBufferSize;
 }
@@ -734,7 +734,7 @@ void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, hsBool f
 
 //// GetBlockAlign ///////////////////////////////////////////////////////////
 
-UInt8   plDSoundBuffer::GetBlockAlign( void ) const
+uint8_t   plDSoundBuffer::GetBlockAlign( void ) const
 {
     return ( fBufferDesc != nil ) ? fBufferDesc->fBlockAlign : 0;
 }
@@ -742,7 +742,7 @@ UInt8   plDSoundBuffer::GetBlockAlign( void ) const
 //// SetScalarVolume /////////////////////////////////////////////////////////
 // Sets the volume, but on a range from 0 to 1
 
-void    plDSoundBuffer::SetScalarVolume( hsScalar volume )
+void    plDSoundBuffer::SetScalarVolume( float volume )
 {
     if(source)
     {

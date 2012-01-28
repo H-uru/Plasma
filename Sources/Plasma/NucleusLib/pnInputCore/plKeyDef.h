@@ -42,11 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKeyDef_inc
 #define plKeyDef_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
-
-#include <windows.h>
 
 #define VK_BACK_QUOTE   0xc0
 // MinGW is missing these definitions:

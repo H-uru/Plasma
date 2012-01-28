@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerTex.h"
 #include "plLayerTexBitmapPB.h"
 #include "../plDetailCurveCtrl.h"
@@ -135,7 +135,7 @@ public:
             GetClientRect( basis, &r );
             MapWindowPoints( basis, dlg, (POINT *)&r, 2 );
             
-            ctrl = TRACKED_NEW plDetailCurveCtrl( dlg, IDC_DETAIL_CURVE_CTRL, &r );
+            ctrl = new plDetailCurveCtrl( dlg, IDC_DETAIL_CURVE_CTRL, &r );
         }
         
         EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)pblock->GetInt( kBmpUseDetail, t ) );
@@ -217,7 +217,7 @@ public:
                     if (!pbbm->bm)
                         pbbm->bm = TheManager->Load(&pbbm->bi);
                     
-                    BMCropper *cropper = TRACKED_NEW BMCropper(pblock);
+                    BMCropper *cropper = new BMCropper(pblock);
                     
                     pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
                 }

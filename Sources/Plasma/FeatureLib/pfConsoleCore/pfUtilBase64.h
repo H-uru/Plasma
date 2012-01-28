@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfUtilBase64_inc
 #define pfUtilBase64_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 /*****************************************************************************
 *
@@ -60,7 +60,7 @@ inline unsigned Base64EncodeSize (unsigned srcChars) {
 }
 unsigned Base64Encode (
     unsigned    srcChars,
-    const byte  srcData[],
+    const uint8_t  srcData[],
     unsigned    dstChars,
     char *      dstData
 );
@@ -74,7 +74,7 @@ unsigned Base64Decode (
     unsigned    srcChars,
     const char  srcData[],
     unsigned    dstChars,
-    byte *      dstData
+    uint8_t *      dstData
 );
 
 #endif //pnUtilBase64_inc

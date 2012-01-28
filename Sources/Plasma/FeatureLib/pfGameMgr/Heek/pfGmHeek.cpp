@@ -245,7 +245,7 @@ pfGmHeek::pfGmHeek (
 
 //============================================================================
 pfGmHeek::~pfGmHeek () {
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -294,14 +294,14 @@ void pfGmHeek::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 }
 
 //============================================================================
-void pfGmHeek::PlayGame (unsigned position, dword points, const wchar name[]) {
+void pfGmHeek::PlayGame (unsigned position, uint32_t points, const wchar_t name[]) {
     Cli2Srv_Heek_PlayGame msg;
     msg.messageId       = kCli2Srv_Heek_PlayGame;
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
 
-    msg.position        = (byte)position;
+    msg.position        = (uint8_t)position;
     msg.points          = points;
     StrCopy(msg.name, name, arrsize(msg.name));
 
@@ -327,7 +327,7 @@ void pfGmHeek::Choose (EHeekChoice choice) {
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
 
-    msg.choice = (byte)choice;
+    msg.choice = (uint8_t)choice;
 
     GameMgrSend(&msg);
 }
@@ -340,7 +340,7 @@ void pfGmHeek::SequenceFinished (EHeekSeqFinished seq) {
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
 
-    msg.seqFinished = (byte)seq;
+    msg.seqFinished = (uint8_t)seq;
 
     GameMgrSend(&msg);
 }

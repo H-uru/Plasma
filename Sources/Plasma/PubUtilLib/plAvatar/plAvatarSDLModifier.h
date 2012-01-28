@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvatarSDLModifier_inc
 #define plAvatarSDLModifier_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plModifier/plSDLModifier.h"
 
@@ -68,7 +68,7 @@ protected:
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
     void IPutCurrentStateIn(plStateDataRecord* dstState);
 
-    UInt32 IApplyModFlags(UInt32 sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     CLASSNAME_REGISTER( plAvatarPhysicalSDLModifier );
@@ -150,7 +150,7 @@ protected:
     void IPutDriveBrainIn(plArmatureMod *avMod, plAvBrainDrive *brain, plStateDataRecord* dstState);
     bool IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, plStateDataRecord* dstState);
     
-    UInt32 IApplyModFlags(UInt32 sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     CLASSNAME_REGISTER( plAvatarSDLModifier );

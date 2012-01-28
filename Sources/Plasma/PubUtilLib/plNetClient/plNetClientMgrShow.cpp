@@ -105,7 +105,7 @@ void plNetClientMgr::IShowLists()
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
             mbr->AsStdString().c_str(),
             mbr->IsPeerToPeer(),
-            mbr->GetDistSq() != hsScalarMax ? hsSquareRoot(mbr->GetDistSq()) :-1.f);
+            mbr->GetDistSq() != FLT_MAX ? sqrt(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
         y+=yOff;
         mbr->SetTransportFlags(mbr->GetTransportFlags() & 
@@ -184,12 +184,12 @@ void plNetClientMgr::IShowRooms()
     }
 }
 
-UInt32 IPrintRelRegion(const hsBitVector& region, int x, int y, const hsBitVector* cmpRegion)
+uint32_t IPrintRelRegion(const hsBitVector& region, int x, int y, const hsBitVector* cmpRegion)
 {
     char buf[256];
     int maxBits = 255;
 
-    UInt32 num = plRelevanceMgr::Instance()->GetNumRegions();
+    uint32_t num = plRelevanceMgr::Instance()->GetNumRegions();
     if (num > maxBits)
         num = maxBits;
 
@@ -229,7 +229,7 @@ void plNetClientMgr::IShowRelevanceRegions()
     //
     // Print out the player names in the first column
     //
-    UInt32 maxPlayerName = 0;
+    uint32_t maxPlayerName = 0;
 
     txt.DrawString(x, y, GetPlayerName());
     maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(GetPlayerName()));
@@ -265,7 +265,7 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (avMod)
         {
             ourIn = &avMod->GetRelRegionImIn();
-            UInt32 width = IPrintRelRegion(*ourIn, x, y, nil);
+            uint32_t width = IPrintRelRegion(*ourIn, x, y, nil);
 
             ourCare = &avMod->GetRelRegionCareAbout();
             IPrintRelRegion(*ourCare, x + width + xOff, y, nil);
@@ -287,7 +287,7 @@ void plNetClientMgr::IShowRelevanceRegions()
             if (avMod)
             {
                 const hsBitVector& in = avMod->GetRelRegionImIn();
-                UInt32 width = IPrintRelRegion(in, x, y, ourCare);
+                uint32_t width = IPrintRelRegion(in, x, y, ourCare);
 
                 const hsBitVector& care = avMod->GetRelRegionCareAbout();
                 IPrintRelRegion(care, x + width + xOff, y, ourIn);

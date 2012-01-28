@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBlower.h"
 #include "plgDispatch.h"
 #include "hsFastMath.h"
@@ -51,13 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plRandom plBlower::fRandom;
 
-static const hsScalar kDefaultMasterPower = 20.f;
-static const hsScalar kDefaultMasterFrequency = 2.f;
-static const hsScalar kDefaultDirectRate = 1.f;
-static const hsScalar kDefaultImpulseRate = 1.e2f;
-static const hsScalar kDefaultSpringKonst = 20.f;
-static const hsScalar kDefaultBias = 0.25f;
-static const hsScalar kInitialMaxOffDist = 1.f;
+static const float kDefaultMasterPower = 20.f;
+static const float kDefaultMasterFrequency = 2.f;
+static const float kDefaultDirectRate = 1.f;
+static const float kDefaultImpulseRate = 1.e2f;
+static const float kDefaultSpringKonst = 20.f;
+static const float kDefaultBias = 0.25f;
+static const float kInitialMaxOffDist = 1.f;
 
 plBlower::plBlower()
 :   
@@ -82,7 +82,7 @@ plBlower::~plBlower()
 {
 }
 
-void plBlower::IBlow(double secs, hsScalar delSecs)
+void plBlower::IBlow(double secs, float delSecs)
 {
     hsPoint3 worldPos = fTarget->GetLocalToWorld().GetTranslate();
     hsPoint3 localPos = fTarget->GetLocalToParent().GetTranslate();
@@ -93,13 +93,13 @@ void plBlower::IBlow(double secs, hsScalar delSecs)
 
     // Strength = Strength + rnd01 * (MaxStrength - Strength)
 
-    hsScalar t = (fAccumTime += delSecs);
+    float t = (fAccumTime += delSecs);
 
-    hsScalar strength = 0;
+    float strength = 0;
     int i;
     for( i = 0; i < fOscillators.GetCount(); i++ )
     {
-        hsScalar c, s;
+        float c, s;
         t *= fOscillators[i].fFrequency * fMasterFrequency;
         t += fOscillators[i].fPhase;
         hsFastMath::SinCosAppr(t, s, c);
@@ -116,25 +116,25 @@ void plBlower::IBlow(double secs, hsScalar delSecs)
 
     hsFastMath::NormalizeAppr(fDirection);
 
-    hsScalar offDist = hsVector3(&fRestPos, &worldPos).Magnitude();
+    float offDist = hsVector3(&fRestPos, &worldPos).Magnitude();
     if( offDist > fMaxOffsetDist )
         fMaxOffsetDist = offDist;
 
     hsVector3 force = fDirection * strength;
 
-    static hsScalar kOffsetDistFrac = 0.5f; // make me const
+    static float kOffsetDistFrac = 0.5f; // make me const
     if( offDist > fMaxOffsetDist * kOffsetDistFrac )
     {
         offDist /= fMaxOffsetDist;
         offDist *= fMasterPower;
 
-        hsScalar impulse = offDist * delSecs * fImpulseRate;
+        float impulse = offDist * delSecs * fImpulseRate;
 
         force.fX += impulse * fRandom.RandMinusOneToOne();
         force.fY += impulse * fRandom.RandMinusOneToOne();
         force.fZ += impulse * fRandom.RandMinusOneToOne();
     }
-    const hsScalar kOffsetDistDecay = 0.999f;
+    const float kOffsetDistDecay = 0.999f;
     fMaxOffsetDist *= kOffsetDistDecay;
 
     hsVector3 accel = force;
@@ -145,9 +145,9 @@ void plBlower::IBlow(double secs, hsScalar delSecs)
     fCurrDel = del;
 }
 
-hsBool plBlower::IEval(double secs, hsScalar delSecs, UInt32 dirty)
+hsBool plBlower::IEval(double secs, float delSecs, uint32_t dirty)
 {
-    const hsScalar kMaxDelSecs = 0.1f;
+    const float kMaxDelSecs = 0.1f;
     if( delSecs > kMaxDelSecs )
         delSecs = kMaxDelSecs;
     IBlow(secs, delSecs);
@@ -212,20 +212,20 @@ void plBlower::Write(hsStream* s, hsResMgr* mgr)
 
 void plBlower::IInitOscillators()
 {
-    const hsScalar kBasePower = 5.f;
+    const float kBasePower = 5.f;
     fOscillators.SetCount(5);
     int i;
     for( i = 0; i < fOscillators.GetCount(); i++ )
     {
-        hsScalar fi = hsScalar(i+1);
-        fOscillators[i].fFrequency = fi / hsScalarPI * fRandom.RandRangeF(0.75f, 1.25f);
-//      fOscillators[i].fFrequency = 1.f / hsScalarPI * fRandom.RandRangeF(0.5f, 1.5f);
+        float fi = float(i+1);
+        fOscillators[i].fFrequency = fi / M_PI * fRandom.RandRangeF(0.75f, 1.25f);
+//      fOscillators[i].fFrequency = 1.f / M_PI * fRandom.RandRangeF(0.5f, 1.5f);
         fOscillators[i].fPhase = fRandom.RandZeroToOne();
         fOscillators[i].fPower = kBasePower * fRandom.RandRangeF(0.75f, 1.25f);
     }
 }
 
-void plBlower::SetConstancy(hsScalar f)
+void plBlower::SetConstancy(float f)
 {
     if( f < 0 )
         f = 0;
@@ -235,7 +235,7 @@ void plBlower::SetConstancy(hsScalar f)
     fBias = f;
 }
 
-hsScalar plBlower::GetConstancy() const
+float plBlower::GetConstancy() const
 {
     return fBias;
 }

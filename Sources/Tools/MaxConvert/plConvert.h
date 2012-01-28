@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvert_inc
 #define plConvert_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -88,7 +88,7 @@ protected:
 
 public:
     static plConvert& Instance();
-    UInt32 fWarned; 
+    uint32_t fWarned; 
     enum {
         kWarnedDecalOnBlendObj          = 0x1,
         kWarnedBadMaterialOnParticle    = 0x2,

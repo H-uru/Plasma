@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "plPipeline.h"
 #include "plPlates.h"
 
@@ -75,7 +75,7 @@ void SetHInstance(void *instance)
 //// plPlate Functions ///////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-UInt32  plPlate::fMagicUniqueKeyInt  = 0;
+uint32_t  plPlate::fMagicUniqueKeyInt  = 0;
 
 plPlate::plPlate( plPlate **owningHandle )
 {
@@ -107,7 +107,7 @@ plPlate::~plPlate()
 
 //// SetPosition /////////////////////////////////////////////////////////////
 
-void    plPlate::SetPosition( hsScalar x, hsScalar y, hsScalar z )
+void    plPlate::SetPosition( float x, float y, float z )
 {
     hsVector3   triple;
 
@@ -130,14 +130,14 @@ void    plPlate::SetPosition( hsScalar x, hsScalar y, hsScalar z )
 
 //// SetSize /////////////////////////////////////////////////////////////////
 
-void    plPlate::SetSize( hsScalar width, hsScalar height, bool adjustByAspectRation )
+void    plPlate::SetSize( float width, float height, bool adjustByAspectRation )
 {
     hsVector3   size;
 
     width *= fDepth / 1.0f;
     height *= fDepth / 1.0f;
 
-    size.fX = adjustByAspectRation ? (width * ((hsScalar)plPlateManager::Instance().GetPipeHeight() / (hsScalar)plPlateManager::Instance().GetPipeWidth())) : width;
+    size.fX = adjustByAspectRation ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width;
     size.fY = height;
     size.fZ = 1.0f;
 
@@ -166,7 +166,7 @@ void plPlate::SetTexture(plBitmap *texture)
     hsGMaterial     *material;
     char            keyName[ 128 ];
 
-    material = TRACKED_NEW hsGMaterial();
+    material = new hsGMaterial();
     sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
@@ -176,14 +176,14 @@ void plPlate::SetTexture(plBitmap *texture)
     layer->SetOpacity( fOpacity );
     layer->SetUVWSrc(plLayerInterface::kUVWPassThru);
 
-    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), TRACKED_NEW plGenRefMsg(layer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), new plGenRefMsg(layer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     SetMaterial(material);
 }
 
 //// SetOpacity //////////////////////////////////////////////////////////////
 
-void    plPlate::SetOpacity( hsScalar opacity )
+void    plPlate::SetOpacity( float opacity )
 {
     if( fMaterial != nil && fMaterial->GetLayer( 0 ) != nil )
     {
@@ -198,7 +198,7 @@ void    plPlate::SetOpacity( hsScalar opacity )
 //  Creates a new material for this plate with either a specified texture 
 //  or an empty, white-filled bitmap.
 
-plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAlpha, plMipmap* texture )
+plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, hsBool withAlpha, plMipmap* texture )
 {
     plLayer         *layer;
     hsGMaterial     *material;
@@ -212,7 +212,7 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
     else
     {
         /// Create a new bitmap
-        fMipmap = TRACKED_NEW plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
+        fMipmap = new plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
         memset( fMipmap->GetImage(), 0xff, height * fMipmap->GetRowBytes() );
         sprintf( keyName, "PlateBitmap#%d", fMagicUniqueKeyInt++ );
         hsgResMgr::ResMgr()->NewKey( keyName, fMipmap, plLocation::kGlobalFixedLoc );
@@ -220,7 +220,7 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
     }
 
     /// NOW create a layer wrapper and a material for that layer
-    material = TRACKED_NEW hsGMaterial();
+    material = new hsGMaterial();
     sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
@@ -229,7 +229,7 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
     layer->SetBlendFlags( layer->GetBlendFlags() | hsGMatState::kBlendAlpha );
     layer->SetOpacity( fOpacity );
 
-    hsgResMgr::ResMgr()->AddViaNotify( fMipmap->GetKey(), TRACKED_NEW plLayRefMsg( layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fMipmap->GetKey(), new plLayRefMsg( layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // Set up a ref to these. Since we don't have a key, we use the
     // generic RefObject() (and matching UnRefObject() when we're done).
@@ -249,7 +249,7 @@ void plPlate::CreateFromResource(const char *resName)
 {
     if (resName)
     {
-        plMipmap* resTexture = TRACKED_NEW plMipmap;
+        plMipmap* resTexture = new plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
 
         char keyName[128];
@@ -326,7 +326,7 @@ plGraphPlate::~plGraphPlate()
 
 //// IMakePow2 ///////////////////////////////////////////////////////////////
 
-UInt32  plGraphPlate::IMakePow2( UInt32 value )
+uint32_t  plGraphPlate::IMakePow2( uint32_t value )
 {
     int         i;
 
@@ -337,9 +337,9 @@ UInt32  plGraphPlate::IMakePow2( UInt32 value )
 
 //// SetDataRange ////////////////////////////////////////////////////////////
 
-void    plGraphPlate::SetDataRange( UInt32 min, UInt32 max, UInt32 width )
+void    plGraphPlate::SetDataRange( uint32_t min, uint32_t max, uint32_t width )
 {
-    UInt32      height;
+    uint32_t      height;
 
 
     width = IMakePow2( width + 4 );
@@ -357,7 +357,7 @@ void    plGraphPlate::SetDataRange( UInt32 min, UInt32 max, UInt32 width )
 
 //// SetDataLabels ///////////////////////////////////////////////////////////
 
-void    plGraphPlate::SetDataLabels( UInt32 min, UInt32 max )
+void    plGraphPlate::SetDataLabels( uint32_t min, uint32_t max )
 {
     fLabelMin = min;
     fLabelMax = max;
@@ -367,7 +367,7 @@ void    plGraphPlate::SetDataLabels( UInt32 min, UInt32 max )
 
 void    plGraphPlate::ClearData( void )
 {
-    UInt32  *bits = (UInt32 *)fMipmap->GetImage(), *ptr;
+    uint32_t  *bits = (uint32_t *)fMipmap->GetImage(), *ptr;
     int     i;
 
 
@@ -395,9 +395,9 @@ void    plGraphPlate::ClearData( void )
 //// AddData /////////////////////////////////////////////////////////////////
 //  Scroll graph data left by one, then add the new value
 
-void    plGraphPlate::AddData( Int32 value, Int32 value2, Int32 value3, Int32 value4 )
+void    plGraphPlate::AddData( int32_t value, int32_t value2, int32_t value3, int32_t value4 )
 {
-    std::vector<Int32> values;
+    std::vector<int32_t> values;
     if (value != -1)
         values.push_back(value);
     if (value2 != -1)
@@ -409,15 +409,15 @@ void    plGraphPlate::AddData( Int32 value, Int32 value2, Int32 value3, Int32 va
     AddData(values);
 }
 
-void    plGraphPlate::AddData( std::vector<Int32> values )
+void    plGraphPlate::AddData( std::vector<int32_t> values )
 {
     hsAssert( fMipmap != nil, "Trying to add data to an uninitialized plGraphPlate" );
 
     fMipmap->SetCurrLevel( 0 );
 
-    UInt32  *bits = (UInt32 *)fMipmap->GetImage(), *ptr;
-    UInt32  *minDPos = fMipmap->GetAddr32( 3, fMipmap->GetHeight() - 3 - 10 );
-    UInt32  *maxDPos = fMipmap->GetAddr32( 3, 2 );
+    uint32_t  *bits = (uint32_t *)fMipmap->GetImage(), *ptr;
+    uint32_t  *minDPos = fMipmap->GetAddr32( 3, fMipmap->GetHeight() - 3 - 10 );
+    uint32_t  *maxDPos = fMipmap->GetAddr32( 3, 2 );
     int     i, j;
     std::vector<int> lows, his;
     float   lineCtr, lineInc;
@@ -447,7 +447,7 @@ void    plGraphPlate::AddData( std::vector<Int32> values )
             values[ i ] = fLabelMax;
         else if( values[ i ] < fLabelMin )
             values[ i ] = fLabelMin;
-        values[ i ] = (UInt32)( (float)values[ i ] * ( fMipmap->GetHeight() - 4 ) / ( fLabelMax - fLabelMin + 1 ) );
+        values[ i ] = (uint32_t)( (float)values[ i ] * ( fMipmap->GetHeight() - 4 ) / ( fLabelMax - fLabelMin + 1 ) );
 
         if( values[ i ] < fLastValues[ i ] )
         {
@@ -473,7 +473,7 @@ void    plGraphPlate::AddData( std::vector<Int32> values )
         if( lineInt != lastLineInt )
             bumpCtr = 2;
 
-        memmove( ptr, ptr + 1, ( fMipmap->GetWidth() - 5 ) * sizeof( UInt32 ) );
+        memmove( ptr, ptr + 1, ( fMipmap->GetWidth() - 5 ) * sizeof( uint32_t ) );
         int dataIndex;
         bool dataPlotted = false;
         for (dataIndex = 0; dataIndex < values.size(); dataIndex++)
@@ -520,7 +520,7 @@ void    plGraphPlate::AddData( std::vector<Int32> values )
 
 //// SetColors ///////////////////////////////////////////////////////////////
 
-void    plGraphPlate::SetColors( UInt32 bgHexColor, UInt32 axesHexColor, UInt32 dataHexColor, UInt32 graphHexColor )
+void    plGraphPlate::SetColors( uint32_t bgHexColor, uint32_t axesHexColor, uint32_t dataHexColor, uint32_t graphHexColor )
 {
     fBGHexColor = bgHexColor;
     fAxesHexColor = axesHexColor;
@@ -535,9 +535,9 @@ void    plGraphPlate::SetColors( UInt32 bgHexColor, UInt32 axesHexColor, UInt32 
 
 //// SetDataColors ///////////////////////////////////////////////////////////
 
-void    plGraphPlate::SetDataColors( UInt32 hexColor1, UInt32 hexColor2, UInt32 hexColor3, UInt32 hexColor4 )
+void    plGraphPlate::SetDataColors( uint32_t hexColor1, uint32_t hexColor2, uint32_t hexColor3, uint32_t hexColor4 )
 {
-    std::vector<UInt32> colors;
+    std::vector<uint32_t> colors;
     colors.push_back(hexColor1);
     colors.push_back(hexColor2);
     colors.push_back(hexColor3);
@@ -545,7 +545,7 @@ void    plGraphPlate::SetDataColors( UInt32 hexColor1, UInt32 hexColor2, UInt32 
     SetDataColors(colors);
 }
 
-void    plGraphPlate::SetDataColors( const std::vector<UInt32> & hexColors )
+void    plGraphPlate::SetDataColors( const std::vector<uint32_t> & hexColors )
 {
     fDataHexColors = hexColors;
 }
@@ -584,7 +584,7 @@ void    plGraphPlate::SetLabelText( const std::vector<std::string> & text )
 
 //// IDrawNumber /////////////////////////////////////////////////////////////
 
-void    plGraphPlate::IDrawNumber( UInt32 number, UInt32 *dataPtr, UInt32 stride, UInt32 color )
+void    plGraphPlate::IDrawNumber( uint32_t number, uint32_t *dataPtr, uint32_t stride, uint32_t color )
 {
     char    str[ 16 ];
     int     i;
@@ -600,7 +600,7 @@ void    plGraphPlate::IDrawNumber( UInt32 number, UInt32 *dataPtr, UInt32 stride
 
 //// IDrawDigit //////////////////////////////////////////////////////////////
 
-void    plGraphPlate::IDrawDigit( char digit, UInt32 *dataPtr, UInt32 stride, UInt32 color )
+void    plGraphPlate::IDrawDigit( char digit, uint32_t *dataPtr, uint32_t stride, uint32_t color )
 {
     /// Yes, I know this is ugly. Move it into another file if you like.
     char    digits[ 10 ][ 5 * 3 ] =
@@ -699,20 +699,20 @@ plPlateManager::~plPlateManager()
 
 void    plPlateManager::CreatePlate( plPlate **handle )
 {
-    plPlate     *plate = TRACKED_NEW plPlate( handle );
+    plPlate     *plate = new plPlate( handle );
 
 
     plate->ILink( &fPlates );
     *handle = plate;
 }
 
-void    plPlateManager::CreatePlate( plPlate **handle, hsScalar width, hsScalar height )
+void    plPlateManager::CreatePlate( plPlate **handle, float width, float height )
 {
     CreatePlate( handle );
     (*handle)->SetSize( width, height );
 }
 
-void    plPlateManager::CreatePlate( plPlate **handle, hsScalar x, hsScalar y, hsScalar width, hsScalar height )
+void    plPlateManager::CreatePlate( plPlate **handle, float x, float y, float width, float height )
 {
     CreatePlate( handle );
     (*handle)->SetPosition( x, y );
@@ -721,7 +721,7 @@ void    plPlateManager::CreatePlate( plPlate **handle, hsScalar x, hsScalar y, h
 
 void    plPlateManager::CreateGraphPlate( plGraphPlate **handle )
 {
-    plGraphPlate    *plate = TRACKED_NEW plGraphPlate( (plPlate **)handle );
+    plGraphPlate    *plate = new plGraphPlate( (plPlate **)handle );
 
 
     plate->ILink( &fPlates );
@@ -741,12 +741,12 @@ void    plPlateManager::DestroyPlate( plPlate *plate )
 
 //// GetPipeWidth/Height /////////////////////////////////////////////////////
 
-UInt32  plPlateManager::GetPipeWidth( void )
+uint32_t  plPlateManager::GetPipeWidth( void )
 {
     return fOwner->Width();
 }
 
-UInt32  plPlateManager::GetPipeHeight( void )
+uint32_t  plPlateManager::GetPipeHeight( void )
 {
     return fOwner->Height();
 }
@@ -775,7 +775,7 @@ void    plPlateManager::IResortPlate( plPlate *plate, bool fromCurrent )
 
 //// SetPlateScreenPos ///////////////////////////////////////////////////////
 
-void    plPlateManager::SetPlateScreenPos( plPlate *plate, UInt32 x, UInt32 y )
+void    plPlateManager::SetPlateScreenPos( plPlate *plate, uint32_t x, uint32_t y )
 {
     float   cX = ( (float)x / fOwner->Width() ) * 2.0f - 1.0f;
     float   cY = ( (float)y / fOwner->Height() ) * 2.0f - 1.0f;
@@ -783,7 +783,7 @@ void    plPlateManager::SetPlateScreenPos( plPlate *plate, UInt32 x, UInt32 y )
     plate->SetPosition( cX, cY );
 }
 
-void    plPlateManager::SetPlatePixelSize( plPlate *plate, UInt32 pWidth, UInt32 pHeight )
+void    plPlateManager::SetPlatePixelSize( plPlate *plate, uint32_t pWidth, uint32_t pHeight )
 {
     float width = (float)pWidth / fOwner->Width() * 2.0f;
     float height = (float)pHeight / fOwner->Height() * 2.0f;

@@ -65,7 +65,7 @@ struct IniSection;
 
 // File
 Ini * IniOpen (
-    const wchar         filename[]
+    const wchar_t         filename[]
 );
 void IniClose (
     Ini *               ini
@@ -74,39 +74,39 @@ void IniClose (
 // Section
 const IniSection * IniGetFirstSection (
     const Ini *         ini,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 );
 const IniSection * IniGetNextSection (
     const IniSection *  section,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 );
 const IniSection * IniGetSection (
     const Ini *         ini,
-    const wchar         name[]
+    const wchar_t         name[]
 );
 
 // Key
 const IniKey * IniGetFirstKey (
     const IniSection *  section,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 );
 const IniKey * IniGetFirstKey (
     const Ini *         ini,
-    const wchar         sectionName[],
-    wchar *             name,
+    const wchar_t         sectionName[],
+    wchar_t *             name,
     unsigned            chars
 );
 const IniKey * IniGetNextKey (
     const IniKey *      key,
-    wchar *             name,
+    wchar_t *             name,
     unsigned            chars
 );
 const IniKey * IniGetKey (
     const IniSection *  ini,
-    const wchar         name[]
+    const wchar_t         name[]
 );
 
 // Value
@@ -116,13 +116,13 @@ const IniValue * IniGetFirstValue (
 );
 const IniValue * IniGetFirstValue (
     const IniSection *  section,
-    const wchar         keyName[],
+    const wchar_t         keyName[],
     unsigned *          iter
 );
 const IniValue * IniGetFirstValue (
     const Ini *         ini,
-    const wchar         sectionName[],
-    const wchar         keyName[],
+    const wchar_t         sectionName[],
+    const wchar_t         keyName[],
     unsigned *          iter
 );
 const IniValue * IniGetNextValue (
@@ -139,10 +139,10 @@ bool IniGetUnsigned (
 );
 bool IniGetString (
     const IniValue *    value,
-    wchar *             result,
+    wchar_t *             result,
     unsigned            resultChars,
     unsigned            index = 0,
-    const wchar         defaultValue[] = nil
+    const wchar_t         defaultValue[] = nil
 );
 bool IniGetUuid (
     const IniValue *    value,
@@ -154,8 +154,8 @@ bool IniGetUuid (
 // Bounded values
 unsigned IniGetBoundedValue (
     const Ini *         ini,
-    const wchar         sectionName[],
-    const wchar         keyName[],
+    const wchar_t         sectionName[],
+    const wchar_t         keyName[],
     unsigned            index,
     unsigned            minVal,
     unsigned            maxVal,

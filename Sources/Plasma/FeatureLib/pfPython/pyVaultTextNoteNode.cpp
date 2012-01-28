@@ -76,7 +76,7 @@ void pyVaultTextNoteNode::Note_SetTitle( const char * text )
     if (!fNode)
         return;
 
-    wchar wStr[MAX_PATH] = L"";
+    wchar_t wStr[MAX_PATH] = L"";
     if (text)
         StrToUnicode(wStr, text, arrsize(wStr));
     VaultTextNoteNode textNote(fNode);
@@ -103,7 +103,7 @@ std::string pyVaultTextNoteNode::Note_GetTitle( void )
         std::string result;
         aStr = StrDupToAnsi(textNote.noteTitle);
         result = aStr;
-        FREE(aStr);
+        free(aStr);
         return result;
     }
     return "";
@@ -125,12 +125,12 @@ void pyVaultTextNoteNode::Note_SetText( const char * text )
     if (!fNode)
         return;
 
-    wchar * wStr = nil;
+    wchar_t * wStr = nil;
     if (text)
         wStr = StrDupToUnicode(text);
     VaultTextNoteNode textNote(fNode);
     textNote.SetNoteText(wStr);
-    FREE(wStr);
+    free(wStr);
 }
 
 void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )
@@ -153,7 +153,7 @@ std::string pyVaultTextNoteNode::Note_GetText( void )
         std::string result;
         aStr = StrDupToAnsi(textNote.noteText);
         result = aStr;
-        FREE(aStr);
+        free(aStr);
         return result;
     }
     return "";
@@ -170,7 +170,7 @@ std::wstring pyVaultTextNoteNode::Note_GetTextW( void )
     return L"";
 }
 
-void pyVaultTextNoteNode::Note_SetType( Int32 type )
+void pyVaultTextNoteNode::Note_SetType( int32_t type )
 {
     if (!fNode)
         return;
@@ -179,7 +179,7 @@ void pyVaultTextNoteNode::Note_SetType( Int32 type )
     textNote.SetNoteType(type);
 }
 
-Int32 pyVaultTextNoteNode::Note_GetType( void )
+int32_t pyVaultTextNoteNode::Note_GetType( void )
 {
     if (!fNode)
         return 0;
@@ -188,7 +188,7 @@ Int32 pyVaultTextNoteNode::Note_GetType( void )
     return textNote.noteType;
 }
 
-void pyVaultTextNoteNode::Note_SetSubType( Int32 type )
+void pyVaultTextNoteNode::Note_SetSubType( int32_t type )
 {
     if (!fNode)
         return;
@@ -197,7 +197,7 @@ void pyVaultTextNoteNode::Note_SetSubType( Int32 type )
     textNote.SetNoteSubType(type);
 }
 
-Int32 pyVaultTextNoteNode::Note_GetSubType( void )
+int32_t pyVaultTextNoteNode::Note_GetSubType( void )
 {
     if (!fNode)
         return 0;
@@ -215,7 +215,7 @@ PyObject * pyVaultTextNoteNode::GetDeviceInbox() const
         PYTHON_RETURN_NONE;
 }
 
-void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObject, UInt32 cbContext )
+void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObject, uint32_t cbContext )
 {
     if (!fNode)
         return;
@@ -223,7 +223,7 @@ void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObj
     pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    wchar wDev[MAX_PATH];
+    wchar_t wDev[MAX_PATH];
     StrToUnicode(wDev, devName, arrsize(wDev));
     
     if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, DEFAULT_DEVICE_INBOX)) {

@@ -143,7 +143,7 @@ PF_CONSOLE_FILE_DUMMY(Net)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void    pfConsoleCmd_groupName_functionName( UInt32 numParams, pfConsoleCmdParam *params, 
+//      void    pfConsoleCmd_groupName_functionName( uint32_t numParams, pfConsoleCmdParam *params, 
 //                                                      void (*PrintString)( char * ) );
 //
 //  numParams is exactly what it sounds like. params is an array of console
@@ -237,7 +237,7 @@ PF_CONSOLE_CMD( Net,        // groupName
         text += (char*)params[i];
         text += " ";
     }
-    plConsoleMsg    *cMsg = TRACKED_NEW plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
+    plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
     cMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
     cMsg->SetBCastFlag(plMessage::kLocalPropagate, 0);
     plgDispatch::MsgSend( cMsg );
@@ -792,8 +792,8 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    wchar wName[MAX_PATH];
-    wchar wObj[MAX_PATH];
+    wchar_t wName[MAX_PATH];
+    wchar_t wObj[MAX_PATH];
     StrToUnicode(wName, params[0], arrsize(wName));
     StrToUnicode(wObj, params[1], arrsize(wObj));
     VaultRegisterMTStationAndWait ( wName, wObj );

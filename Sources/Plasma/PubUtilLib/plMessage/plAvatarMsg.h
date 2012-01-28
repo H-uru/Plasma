@@ -190,7 +190,7 @@ public:
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, hsBool smartSeek,
                 plAvAlignment align = kAlignHandle, char *animName = nil, hsBool noSeek = false, 
-                UInt8 flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
+                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekMsg );
@@ -214,7 +214,7 @@ public:
     hsBool fNoSeek;
     char *fAnimName;
     plAvAlignment fAlignType;
-    UInt8 fFlags;
+    uint8_t fFlags;
     plKey fFinishKey;
 };
 
@@ -282,9 +282,9 @@ public:
                 }
         fType;
     int fWhichStage;                // used only by goto stage
-    hsScalar fTransitionTime;       // for crossfade between stages
+    float fTransitionTime;       // for crossfade between stages
     hsBool fSetTime;
-    hsScalar fNewTime;
+    float fNewTime;
     hsBool fSetDirection;
     hsBool fNewDirection;
     int fNewLoopCount;
@@ -293,7 +293,7 @@ public:
 
     //! Older constructor version, allowing simple rewinding only
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool rewind, hsScalar transitionTime);
+                        Type type, int stage, hsBool rewind, float transitionTime);
 
     /** Canonical constructor, allowing full control over time and direction of new stage.
         \param sender Message sender
@@ -301,14 +301,14 @@ public:
         \param type The "verb" for the command - next stage, previous stage, goto stage
         \param stage The stage we're going to, if this is a goto command
         \param setTime Do we want to manually set the time on the target stage?
-        \param newTime If setTime is true, this is the TRACKED_NEW (local) time used in the target stage
+        \param newTime If setTime is true, this is the new (local) time used in the target stage
         \param setDirection Do we want to set the overall brain direction?
         \param isForward If setDirection is true, then true = forward, false = backward
         \param transitionTime Time in seconds to transition between stages.
     */  
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool setTime, hsScalar newTime,
-                        hsBool setDirection, bool isForward, hsScalar transitiontime);
+                        Type type, int stage, hsBool setTime, float newTime,
+                        hsBool setDirection, bool isForward, float transitiontime);
     
     /** Constructor for setting the loop count in a particular stage.
         \param sender The sender of this message.
@@ -389,7 +389,7 @@ public:
         kStealthCloaked,
         kStealthCloakedButSeen,
     };
-    UInt8 fMode;
+    uint8_t fMode;
     int fLevel;     // you are invisible to other players/CCRs of lower level
     
     CLASSNAME_REGISTER(plAvatarStealthModeMsg);
@@ -402,7 +402,7 @@ public:
 class plAvatarBehaviorNotifyMsg : public plMessage
 {
 public:
-    UInt32 fType;
+    uint32_t fType;
     hsBool state;
     
     plAvatarBehaviorNotifyMsg() : fType(0),state(false) {}
@@ -419,7 +419,7 @@ class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarOpacityCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarOpacityCallbackMsg );
@@ -449,7 +449,7 @@ class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarPhysicsEnableCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                      plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarPhysicsEnableCallbackMsg );

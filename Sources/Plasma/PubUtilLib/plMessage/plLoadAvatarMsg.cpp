@@ -65,7 +65,7 @@ plLoadAvatarMsg::plLoadAvatarMsg()
 }
 
 // CTOR uoidToClone, requestorKey, userData, isPlayer, spawnPOint, initialTask
-plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData,
+plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
                                  hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char* userStr /*= nil*/)
 : plLoadCloneMsg(uoidToClone, requestorKey, userData),
   fIsPlayer(isPlayer),
@@ -76,7 +76,7 @@ plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &request
     SetUserStr(userStr);
 }
 
-plLoadAvatarMsg::plLoadAvatarMsg(const plKey &existing, const plKey &requestor, UInt32 userData,
+plLoadAvatarMsg::plLoadAvatarMsg(const plKey &existing, const plKey &requestor, uint32_t userData,
                                 hsBool isPlayer, hsBool isLoading, const char* userStr /*= nil*/)
 :   plLoadCloneMsg(existing, requestor, userData, isLoading),
     fIsPlayer(isPlayer),
@@ -226,7 +226,7 @@ void plLoadAvatarMsg::SetUserStr(const char *userStr)
         return;
     }
 
-    fUserStr = TRACKED_NEW char[strlen(userStr) + 1];
+    fUserStr = new char[strlen(userStr) + 1];
     strcpy(fUserStr, userStr);
     fUserStr[strlen(userStr)] = '\0';
 }

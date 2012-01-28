@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDniCoordinateInfo_h_inc
 #define plDniCoordinateInfo_h_inc
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
@@ -54,7 +54,7 @@ class hsResMgr;
 
 class plDniCoordinateInfo : public plCreatable
 {
-    static const UInt8 StreamVersion;
+    static const uint8_t StreamVersion;
 
 protected:
     // spherical coords (rho,theta,phi)

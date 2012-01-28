@@ -58,14 +58,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
+
 #include "Max.h"
 #include "stdmat.h"
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
 
-#include "hsUtils.h"
+
 #include "hsExceptionStack.h"
 
 #include "plLayerConverter.h"
@@ -198,7 +198,7 @@ void    plLayerConverter::UnmuteWarnings( void )
         
 plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
                                                         plMaxNode *maxNode,
-                                                        UInt32 blendFlags, hsBool preserveUVOffset,
+                                                        uint32_t blendFlags, hsBool preserveUVOffset,
                                                         hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::ConvertTexmap" );
@@ -275,7 +275,7 @@ void    plLayerConverter::IRegisterConversion( plPlasmaMAXLayer *origLayer, plLa
 //// IConvertLayerTex /////////////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertLayerTex" );
@@ -332,7 +332,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;//hsGTexture::kMipMap;
+    int32_t texFlags = 0;//hsGTexture::kMipMap;
 
     // Texture Alpha/Color
     if( bitmapPB->GetInt( kBmpInvertColor ) )
@@ -411,7 +411,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
 //// IConvertStaticEnvLayer ///////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertStaticEnvLayer" );
@@ -451,7 +451,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;
+    int32_t texFlags = 0;
 
     // Texture Alpha/Color
     if( bitmapPB->GetInt( plStaticEnvLayer::kBmpInvertColor ) )
@@ -521,7 +521,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
 //// IConvertDynamicEnvLayer //////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicEnvLayer" );
@@ -556,7 +556,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     }
 
     // Create texture and add it to list if unique
-    Int32 texFlags = 0;
+    int32_t texFlags = 0;
 
     /// Since we're a cubic environMap, we don't care about the UV transform nor the uvwSrc
     plasmaLayer->SetUVWSrc( 0 );
@@ -574,7 +574,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 
     plBitmap *texture = (plBitmap *)IMakeCubicRenderTarget( texName, maxNode, anchor );
     if( texture )
-        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // Tag this layer as reflective cubic environmentmapping
     if( bitmapPB->GetInt(plDynamicEnvLayer::kBmpRefract) )
@@ -588,7 +588,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 }
 
 plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *layer, 
-                                                           plMaxNode *maxNode, UInt32 blendFlags, 
+                                                           plMaxNode *maxNode, uint32_t blendFlags, 
                                                            hsBool preserveUVOffset, hsBool upperLayer)
 {
     hsGuardBegin( "plLayerConverter::IConvertCameraLayer" );
@@ -612,17 +612,17 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
     plDynamicCamMap *map = plEnvMapComponent::GetCamMap(rootNode ? rootNode : maxNode);
     if (map)
     {
-        Int32 texFlags = 0;
+        int32_t texFlags = 0;
         if (!pb->GetInt(ParamID(plMAXCameraLayer::kExplicitCam)))
         {
             plasmaLayer->SetUVWSrc(plLayerInterface::kUVWPosition);
             plasmaLayer->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-            hsgResMgr::ResMgr()->AddViaNotify(rootNode->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefRootNode), plRefFlags::kActiveRef);
-            hsgResMgr::ResMgr()->AddViaNotify(plasmaLayer->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefMatLayer), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(rootNode->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefRootNode), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(plasmaLayer->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefMatLayer), plRefFlags::kActiveRef);
             if (!pb->GetInt(ParamID(plMAXCameraLayer::kForce)))
             {
                 plBitmap *disableTexture = hsMaterialConverter::Instance().GetStaticColorTexture(pb->GetColor(ParamID(plMAXCameraLayer::kDisableColor)), loc);
-                hsgResMgr::ResMgr()->AddViaNotify(disableTexture->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefDisableTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->AddViaNotify(disableTexture->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefDisableTexture), plRefFlags::kActiveRef);
             }
         }
         else
@@ -632,7 +632,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
             {
                 const plCameraModifier1 *mod = plCameraModifier1::ConvertNoRef(camNode->GetSceneObject()->GetModifierByType(plCameraModifier1::Index()));
                 if (mod)
-                    hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefCamera), plRefFlags::kActiveRef);
+                    hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefCamera), plRefFlags::kActiveRef);
             }
 
             plasmaLayer->SetUVWSrc(pb->GetInt(ParamID(plMAXCameraLayer::kUVSource)));
@@ -643,9 +643,9 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
         int i;
         for (i = 0; i < nodeList.GetCount(); i++)
         {
-            hsgResMgr::ResMgr()->AddViaNotify(nodeList[i]->GetSceneObject()->GetKey(), TRACKED_NEW plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(nodeList[i]->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
         }
-        hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), TRACKED_NEW plLayRefMsg(plasmaLayer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), new plLayRefMsg(plasmaLayer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     }
 
@@ -657,7 +657,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
 //// IConvertDynamicTextLayer /////////////////////////////////////////////////
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicTextLayer" );
@@ -692,7 +692,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
                                                     maxNode );
 
     // Set the initial bitmap if necessary
-    UInt32 *initBuffer = IGetInitBitmapBuffer( maxLayer );
+    uint32_t *initBuffer = IGetInitBitmapBuffer( maxLayer );
     if( initBuffer != nil )
     {
         texture->SetInitBuffer( initBuffer );
@@ -700,7 +700,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
     }
 
     // Add the texture in
-    hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( plasmaLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     // All done!
     return (plLayerInterface *)plasmaLayer;
@@ -712,11 +712,11 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
 //  Called to get a 32-bit uncompressed ARGB version of the init bitmap of
 //  a dynamic text layer
 
-UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const
+uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const
 {
-    UInt32          *buffer;
+    uint32_t          *buffer;
     hsRGBAColor32   *buffPtr;
-    UInt16          width, height;
+    uint16_t          width, height;
 
 
     IParamBlock2 *bitmapPB = layer->GetParamBlockByID( plDynamicTextLayer::kBlkBitmap );
@@ -728,7 +728,7 @@ UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) con
     width = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportWidth );
     height = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportHeight );
 
-    buffer = TRACKED_NEW UInt32[ width * height ];
+    buffer = new uint32_t[ width * height ];
     if( buffer == nil )
         return nil;
 
@@ -762,12 +762,12 @@ UInt32  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) con
     return buffer;
 }
 
-static UInt32 MakeUInt32Color(float r, float g, float b, float a)
+static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 {
-    return (UInt32(a * 255.9f) << 24)
-            |(UInt32(r * 255.9f) << 16)
-            |(UInt32(g * 255.9f) << 8)
-            |(UInt32(b * 255.9f) << 0);
+    return (uint32_t(a * 255.9f) << 24)
+            |(uint32_t(r * 255.9f) << 16)
+            |(uint32_t(g * 255.9f) << 8)
+            |(uint32_t(b * 255.9f) << 0);
 }
 
 plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loClamp, int hiClamp)
@@ -789,7 +789,7 @@ plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loCla
     // necessary. -mcn
     plMipmap *texture = plBitmapCreator::Instance().CreateBlankMipmap( kLUTWidth, kLUTHeight, plMipmap::kARGB32Config, 1, funkName, node->GetLocation() );
 
-    UInt32* pix = (UInt32*)texture->GetImage();
+    uint32_t* pix = (uint32_t*)texture->GetImage();
 
     if( isAdd )
     {
@@ -873,17 +873,17 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const char* name, plMaxNode *
     }
     plBitmap* funkRamp = IGetAttenRamp(node, chanAdd, loClamp, hiClamp);
 
-    plLayer* layer = TRACKED_NEW plLayer;
+    plLayer* layer = new plLayer;
     layer->InitToDefault();
     hsgResMgr::ResMgr()->NewKey(name, layer, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(funkRamp->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
     layer->SetPreshadeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
     layer->SetRuntimeColor(hsColorRGBA().Set(0, 0, 0, 1.f));
 
     layer->SetZFlags(hsGMatState::kZNoZWrite);
-    UInt32 blendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexColor | hsGMatState::kBlendAlphaMult;
+    uint32_t blendFlags = hsGMatState::kBlendAlpha | hsGMatState::kBlendNoTexColor | hsGMatState::kBlendAlphaMult;
     layer->SetBlendFlags(blendFlags);
     layer->SetClampFlags(hsGMatState::kClampTexture);
 
@@ -895,7 +895,7 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const char* name, plMaxNode *
 }
 
 plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *layer, 
-                                                                plMaxNode *maxNode, UInt32 blendFlags, 
+                                                                plMaxNode *maxNode, uint32_t blendFlags, 
                                                                 hsBool preserveUVOffset, hsBool upperLayer)
 {
     hsGuardBegin( "plPlasmaMAXLayer::IConvertAngleAttenLayer" );
@@ -929,7 +929,7 @@ plLayer     *plLayerConverter::ICreateLayer( const char *name, hsBool upperLayer
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateLayer" );
 
-    plLayer *layer = TRACKED_NEW plLayer;
+    plLayer *layer = new plLayer;
     layer->InitToDefault();
 
     hsgResMgr::ResMgr()->NewKey( name, layer, loc );
@@ -967,7 +967,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
     }
 
     // UVW Src
-    Int32 uvwSrc = srcLayer->GetMapChannel() - 1;
+    int32_t uvwSrc = srcLayer->GetMapChannel() - 1;
 
     if( fErrorMsg->Set( !( fWarned & kWarnedTooManyUVs ) && 
                         ( ( uvwSrc < 0 ) || ( uvwSrc >= plGeometrySpan::kMaxNumUVChannels ) ), 
@@ -989,7 +989,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
 
 //// ICreateDynTextMap ////////////////////////////////////////////////////////
 
-plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName, UInt32 width, UInt32 height,
+plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName, uint32_t width, uint32_t height,
                                                         hsBool includeAlphaChannel, plMaxNode *node )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateDynTextMap" );
@@ -1013,7 +1013,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName,
     }
 
     // Create
-    map = TRACKED_NEW plDynamicTextMap();
+    map = new plDynamicTextMap();
     map->SetNoCreate( width, height, includeAlphaChannel );
 
     /// Add a key for it
@@ -1030,7 +1030,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const char *layerName,
 ///////////////////////////////////////////////////////////////////////////////
 
 plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLocation &loc, 
-                                                UInt32 clipID /* = 0 */, UInt32 texFlags /* = 0 */, bool useJPEG /* = false */)
+                                                uint32_t clipID /* = 0 */, uint32_t texFlags /* = 0 */, bool useJPEG /* = false */)
 {
     plBitmapData bd;
     bd.fileName = fileName;
@@ -1077,7 +1077,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
         }
     }
     else
-        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), TRACKED_NEW plLayRefMsg( destLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( texture->GetKey(), new plLayRefMsg( destLayer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture ), plRefFlags::kActiveRef );
 
     return destLayer;
 }
@@ -1115,19 +1115,19 @@ plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const char *name,
         return nil;
 
     /// Create
-    cubic = TRACKED_NEW plCubicRenderTarget( plRenderTarget::kIsTexture, 256, 256, 32 );
+    cubic = new plCubicRenderTarget( plRenderTarget::kIsTexture, 256, 256, 32 );
     hsAssert( cubic != nil, "Cannot create cubic render target!" );
 
     /// Add a key
     key = hsgResMgr::ResMgr()->NewKey( name, cubic, node->GetLocation() );
 
     /// Now make a modifier
-    plCubicRenderTargetModifier *mod = TRACKED_NEW plCubicRenderTargetModifier();
+    plCubicRenderTargetModifier *mod = new plCubicRenderTargetModifier();
     sprintf( modName, "%s_mod", name );
 
     hsgResMgr::ResMgr()->NewKey( modName, mod, node->GetLocation() );
-    hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), TRACKED_NEW plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
-    hsgResMgr::ResMgr()->AddViaNotify( mod->GetKey(), TRACKED_NEW plObjRefMsg( sObjKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), new plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( mod->GetKey(), new plObjRefMsg( sObjKey, plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
 
     return cubic;
 }

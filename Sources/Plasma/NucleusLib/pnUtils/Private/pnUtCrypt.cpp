@@ -149,7 +149,7 @@ void Sha1Process (
 static void Rc4Codec (
     CryptKey *      key,
     bool            encrypt,
-    ARRAY(byte) *   dest,
+    ARRAY(uint8_t) *   dest,
     unsigned        sourceBytes,
     const void *    sourceData
 ) {
@@ -166,9 +166,11 @@ static void Rc4Codec (
     void *          data
 ) {
     // RC4 uses the same algorithm to both encrypt and decrypt
-    byte * temp = ALLOCA(byte, bytes);
+    uint8_t * temp = (uint8_t *)malloc(bytes);
     RC4((RC4_KEY *)key->handle, bytes, (const unsigned char *)data, temp);
-    MemCopy(data, temp, bytes);
+    memcpy(data, temp, bytes);
+
+    free(temp);
 }
 
 } using namespace Crypt;
@@ -230,9 +232,9 @@ CryptKey * CryptKeyCreate (
     CryptKey * key = nil;
     switch (algorithm) {
         case kCryptRc4: {
-            RC4_KEY * rc4 = NEW(RC4_KEY);
+            RC4_KEY * rc4 = new RC4_KEY;
             RC4_set_key(rc4, bytes, (const unsigned char *)data);
-            key = NEW(CryptKey);
+            key = new CryptKey;
             key->algorithm = kCryptRc4;
             key->handle = rc4;
         }
@@ -254,8 +256,8 @@ void CryptKeyClose (
     if (!key)
         return;
 
-    DEL(key->handle);
-    DEL(key);
+    delete key->handle;
+    delete key;
 }
 
 //============================================================================
@@ -278,7 +280,7 @@ unsigned CryptKeyGetBlockSize (
 //============================================================================
 void CryptCreateRandomSeed (
     unsigned        bytes,
-    byte *          data
+    uint8_t *          data
 ) {
     COMPILER_ASSERT(SHA_DIGEST_LENGTH == 20);
 
@@ -289,16 +291,16 @@ void CryptCreateRandomSeed (
         unsigned cur = 0;
         unsigned end = max(bytes, sizeof(s_shaSeed));
         for (; cur < end; ++cur) {
-            ((byte *) &s_shaSeed)[seedIndex] ^= data[dataIndex];
+            ((uint8_t *) &s_shaSeed)[seedIndex] ^= data[dataIndex];
             if (++seedIndex >= sizeof(s_shaSeed))
                 seedIndex = 0;
             if (++dataIndex >= bytes)
                 dataIndex = 0;
         }
 
-        s_shaSeed.data[2] ^= (dword) &bytes;
-        s_shaSeed.data[3] ^= (dword) bytes;
-        s_shaSeed.data[4] ^= (dword) data;
+        s_shaSeed.data[2] ^= (uint32_t) &bytes;
+        s_shaSeed.data[3] ^= (uint32_t) bytes;
+        s_shaSeed.data[4] ^= (uint32_t) data;
     }
 
     // Hash seed
@@ -312,7 +314,7 @@ void CryptCreateRandomSeed (
         unsigned cur = 0;
         unsigned end = max(bytes, sizeof(digest));
         for (; cur < end; ++cur) {
-            data[dst] ^= ((const byte *) &digest)[src];
+            data[dst] ^= ((const uint8_t *) &digest)[src];
             if (++src >= sizeof(digest))
                 src = 0;
             if (++dst >= bytes)
@@ -330,14 +332,14 @@ void CryptCreateRandomSeed (
 
 //============================================================================
 void CryptHashPassword (
-    const wchar username[],
-    const wchar password[],
+    const wchar_t username[],
+    const wchar_t password[],
     ShaDigest * namePassHash
 ) {
     unsigned passlen = StrLen(password);
     unsigned userlen = StrLen(username);
 
-    wchar * buffer = ALLOCA(wchar, passlen + userlen);
+    wchar_t * buffer = (wchar_t*)malloc(sizeof(wchar_t) * (passlen + userlen));
     StrCopy(buffer, password, passlen);
     StrCopy(buffer + passlen, username, userlen);
     StrLower(buffer + passlen); // lowercase the username
@@ -348,6 +350,8 @@ void CryptHashPassword (
         (userlen + passlen) * sizeof(buffer[0]),
         buffer
     );
+
+    free(buffer);
 }
 
 //============================================================================
@@ -359,8 +363,8 @@ void CryptHashPasswordChallenge (
 ) {
     #include <pshpack1.h>
     struct {
-        dword       clientChallenge;
-        dword       serverChallenge;
+        uint32_t       clientChallenge;
+        uint32_t       serverChallenge;
         ShaDigest   namePassHash;
     } buffer;
     #include <poppack.h>
@@ -393,7 +397,7 @@ void CryptCreateFastWeakChallenge (
 //============================================================================
 void CryptEncrypt (
     CryptKey *      key,
-    ARRAY(byte) *   dest,
+    ARRAY(uint8_t) *   dest,
     unsigned        sourceBytes,
     const void *    sourceData
 ) {
@@ -436,7 +440,7 @@ void CryptEncrypt (
 //============================================================================
 void CryptDecrypt (
     CryptKey *      key,
-    ARRAY(byte) *   dest,
+    ARRAY(uint8_t) *   dest,
     unsigned        sourceBytes,
     const void *    sourceData
 ) {

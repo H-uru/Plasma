@@ -63,7 +63,7 @@ protected:
     hsTArray<plKey> fRecvr;
     hsBool          fNetForce;
 
-    virtual void    ISendParticleSysMsg(UInt32 param, hsScalar value);
+    virtual void    ISendParticleSysMsg(uint32_t param, float value);
 
     cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
 
@@ -81,18 +81,18 @@ public:
     virtual void    AddRecvr(plKey &recvr);
     virtual void SetNetForce(hsBool state);
 
-    virtual void    SetParticlesPerSecond(hsScalar value);
-    virtual void    SetInitPitchRange(hsScalar value);
-    virtual void    SetInitYawRange(hsScalar value);
-    virtual void    SetVelMin(hsScalar value);
-    virtual void    SetVelMax(hsScalar value);
-    virtual void    SetXSize(hsScalar value);
-    virtual void    SetYSize(hsScalar value);
-    virtual void    SetScaleMin(hsScalar value);
-    virtual void    SetScaleMax(hsScalar value);
-    virtual void    SetGenLife(hsScalar value);
-    virtual void    SetPartLifeMin(hsScalar value);
-    virtual void    SetPartLifeMax(hsScalar value);
+    virtual void    SetParticlesPerSecond(float value);
+    virtual void    SetInitPitchRange(float value);
+    virtual void    SetInitYawRange(float value);
+    virtual void    SetVelMin(float value);
+    virtual void    SetVelMax(float value);
+    virtual void    SetXSize(float value);
+    virtual void    SetYSize(float value);
+    virtual void    SetScaleMin(float value);
+    virtual void    SetScaleMax(float value);
+    virtual void    SetGenLife(float value);
+    virtual void    SetPartLifeMin(float value);
+    virtual void    SetPartLifeMax(float value);
 
 };
 

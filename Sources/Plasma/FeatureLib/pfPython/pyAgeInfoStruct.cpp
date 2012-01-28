@@ -137,29 +137,29 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
         fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
 }
 
-Int32 pyAgeInfoStruct::GetAgeSequenceNumber() const
+int32_t pyAgeInfoStruct::GetAgeSequenceNumber() const
 {
     return fAgeInfo.GetAgeSequenceNumber();
 }
 
-void pyAgeInfoStruct::SetAgeSequenceNumber( Int32 v )
+void pyAgeInfoStruct::SetAgeSequenceNumber( int32_t v )
 {
     fAgeInfo.SetAgeSequenceNumber( v );
 }
 
-Int32 pyAgeInfoStruct::GetAgeLanguage() const
+int32_t pyAgeInfoStruct::GetAgeLanguage() const
 {
     return fAgeInfo.GetAgeLanguage();
 }
 
-void pyAgeInfoStruct::SetAgeLanguage( Int32 v )
+void pyAgeInfoStruct::SetAgeLanguage( int32_t v )
 {
     fAgeInfo.SetAgeLanguage( v );
 }
 
 const char * pyAgeInfoStruct::GetDisplayName() const
 {
-    Int32 seq = GetAgeSequenceNumber();
+    int32_t seq = GetAgeSequenceNumber();
     if ( seq>0 )
         xtl::format( fDisplayName, "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
     else
@@ -223,19 +223,19 @@ void pyAgeInfoStructRef::SetAgeInstanceGuid( const char * guid )
     fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
 }
 
-Int32 pyAgeInfoStructRef::GetAgeSequenceNumber() const
+int32_t pyAgeInfoStructRef::GetAgeSequenceNumber() const
 {
     return fAgeInfo.GetAgeSequenceNumber();
 }
 
-void pyAgeInfoStructRef::SetAgeSequenceNumber( Int32 v )
+void pyAgeInfoStructRef::SetAgeSequenceNumber( int32_t v )
 {
     fAgeInfo.SetAgeSequenceNumber( v );
 }
 
 const char * pyAgeInfoStructRef::GetDisplayName() const
 {
-    Int32 seq = GetAgeSequenceNumber();
+    int32_t seq = GetAgeSequenceNumber();
     if ( seq>0 )
         xtl::format( fDisplayName, "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
     else

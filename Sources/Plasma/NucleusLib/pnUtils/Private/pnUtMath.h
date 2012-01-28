@@ -70,11 +70,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-unsigned MATHCALL MathLowBitPos (dword val);
-unsigned MATHCALL MathHighBitPos (dword val);
+unsigned MATHCALL MathLowBitPos (uint32_t val);
+unsigned MATHCALL MathHighBitPos (uint32_t val);
 
 //===========================================================================
-inline unsigned MathBitCount (dword val) {
+inline unsigned MathBitCount (uint32_t val) {
     val = val - ((val >> 1) & 033333333333) - ((val >> 2) & 011111111111);
     val = ((val + (val >> 3)) & 030707070707);
     val = val + (val >> 6);
@@ -89,7 +89,7 @@ inline unsigned MathBitMaskCreate (unsigned count) {
 }
 
 //===========================================================================
-inline dword MathHighBitValue (dword val) {
+inline uint32_t MathHighBitValue (uint32_t val) {
     return val ? 1 << MathHighBitPos(val) : 0;
 }
 
@@ -111,6 +111,6 @@ inline unsigned MathNextMultiplePow2 (unsigned val, unsigned multiple) {
 }
 
 //===========================================================================
-inline dword MathNextPow2 (dword val) {
+inline uint32_t MathNextPow2 (uint32_t val) {
     return MathIsPow2(val) ? val : 1 << (MathHighBitPos(val) + 1);
 }

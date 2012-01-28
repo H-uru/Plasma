@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBufferedFileReader.h"
 //#include "plProfile.h"
 
@@ -86,7 +86,7 @@ plBufferedFileReader::plBufferedFileReader( const char *path, plAudioCore::Chann
     fHeader = reader->GetHeader();
 
     fBufferSize = reader->GetDataSize();
-    fBuffer = TRACKED_NEW UInt8[ fBufferSize ];
+    fBuffer = new uint8_t[ fBufferSize ];
     //plProfile_NewMem( SndBufferedMem, fBufferSize );
     if( fBuffer == nil )
     {
@@ -115,7 +115,7 @@ void    plBufferedFileReader::Close( void )
 {
     //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
-    DEL(fBuffer);;
+    delete fBuffer;
     fBuffer = nil;
     fBufferSize = 0;
     fCursor = 0;
@@ -141,7 +141,7 @@ float   plBufferedFileReader::GetLengthInSecs( void )
     return (float)fBufferSize / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool  plBufferedFileReader::SetPosition( UInt32 numBytes )
+hsBool  plBufferedFileReader::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "SetPosition() called on an invalid RAM buffer" );
 
@@ -155,7 +155,7 @@ hsBool  plBufferedFileReader::SetPosition( UInt32 numBytes )
     return true;
 }
 
-hsBool  plBufferedFileReader::Read( UInt32 numBytes, void *buffer )
+hsBool  plBufferedFileReader::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "Read() called on an invalid RAM buffer" );
 
@@ -174,7 +174,7 @@ hsBool  plBufferedFileReader::Read( UInt32 numBytes, void *buffer )
     return valid;
 }
 
-UInt32  plBufferedFileReader::NumBytesLeft( void )
+uint32_t  plBufferedFileReader::NumBytesLeft( void )
 {
     hsAssert( IsValid(), "NumBytesLeft() called on an invalid RAM buffer" );
 

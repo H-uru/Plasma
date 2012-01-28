@@ -64,18 +64,18 @@ public:
 
     virtual plWAVHeader &GetHeader( void );
     virtual void    Close( void );
-    virtual UInt32  GetDataSize( void ) { return fBufferSize; }
+    virtual uint32_t  GetDataSize( void ) { return fBufferSize; }
     virtual float   GetLengthInSecs( void );
-    virtual hsBool  SetPosition( UInt32 numBytes );
-    virtual hsBool  Read( UInt32 numBytes, void *buffer );
-    virtual UInt32  NumBytesLeft( void );
+    virtual hsBool  SetPosition( uint32_t numBytes );
+    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual uint32_t  NumBytesLeft( void );
     virtual hsBool  IsValid( void ) { return ( fBuffer != nil ) ? true : false; }
 
 protected:
-    UInt32          fBufferSize;
-    UInt8           *fBuffer;
+    uint32_t          fBufferSize;
+    uint8_t           *fBuffer;
     plWAVHeader     fHeader;
-    UInt32          fCursor;
+    uint32_t          fCursor;
     void            IError( const char *msg );
 };
 

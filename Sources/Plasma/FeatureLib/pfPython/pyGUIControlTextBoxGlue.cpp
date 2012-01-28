@@ -93,7 +93,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringW, args)
     if (PyUnicode_Check(textObj))
     {
         int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* temp = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* temp = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->SetTextW(temp);

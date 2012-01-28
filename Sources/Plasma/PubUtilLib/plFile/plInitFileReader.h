@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  reader, and ending with a nil pointer (see below). Finally, create      //
 //  a plInitFileReader with the array you created and it'll parse the       //
 //  given file (or stream) and call your readers as needed. You can also    //
-//  optionally pass in a UInt32 for userData that will be passed on to each //
+//  optionally pass in a uint32_t for userData that will be passed on to each //
 //  reader in turn.                                                         //
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plInitFileReader_h
 #define _plInitFileReader_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsTemplates.h"
 
@@ -77,7 +77,7 @@ class plInitSectionReader
         virtual const char  *GetSectionName( void ) const = 0;
 
         // Override this to parse each line in your section. Return false to abort parsing
-        virtual hsBool      ParseLine( const char *line, UInt32 userData ) = 0;
+        virtual hsBool      ParseLine( const char *line, uint32_t userData ) = 0;
         
         // Override this if you're defining an unhandled section reader
         virtual void SetSectionName(const char* section) {}
@@ -96,14 +96,14 @@ class plInitSectionTokenReader : public plInitSectionReader
         const char  *fSeparators;
 
         // Override this to parse each token in your section. Return false to abort parsing
-        virtual hsBool      IParseToken( const char *token, hsStringTokenizer *tokenizer, UInt32 userData ) = 0;
+        virtual hsBool      IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData ) = 0;
 
     public:
 
         plInitSectionTokenReader( const char *separators = ",=\t" );
 
         // Overridden for you. Override IParseToken()
-        virtual hsBool      ParseLine( const char *line, UInt32 userData );
+        virtual hsBool      ParseLine( const char *line, uint32_t userData );
 };
 
 //// Main Reader Class ///////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ class plInitFileReader
         hsStream            *fStream;
         hsStream            *fOurStream;
         char                *fCurrLine;
-        UInt32              fLineSize;
+        uint32_t              fLineSize;
         bool                fRequireEncrypted;
 
         plInitSectionReader             *fCurrSection;
@@ -133,9 +133,9 @@ class plInitFileReader
         // element of the array will be the "default" section--i.e. if there is no section
         // header at the top of the file, that reader will be used.
 
-        plInitFileReader( plInitSectionReader **readerArray, UInt16 lineSize = 256 );
-        plInitFileReader( const char *fileName, plInitSectionReader **readerArray, UInt16 lineSize = 256 );
-        plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, UInt16 lineSize = 256 );
+        plInitFileReader( plInitSectionReader **readerArray, uint16_t lineSize = 256 );
+        plInitFileReader( const char *fileName, plInitSectionReader **readerArray, uint16_t lineSize = 256 );
+        plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, uint16_t lineSize = 256 );
         virtual ~plInitFileReader();
 
         void SetRequireEncrypted(bool require) { fRequireEncrypted = require; }
@@ -144,7 +144,7 @@ class plInitFileReader
 
         hsBool  Open( const char *fileName );
         hsBool  Open( hsStream *stream );
-        hsBool  Parse( UInt32 userData = 0 );
+        hsBool  Parse( uint32_t userData = 0 );
         void    Close( void );
 
         hsBool  IsOpen( void ) const { return fStream != nil; }

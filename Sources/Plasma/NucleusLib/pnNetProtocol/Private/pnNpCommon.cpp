@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace pnNpCommon {
 
-// Verify our qword constants were properly inited as such.
+// Verify our uint64_t constants were properly inited as such.
 COMPILER_ASSERT(NetVaultNode::kBlob_2);
 
 
@@ -74,7 +74,7 @@ const unsigned kNumBlobFields   = 4;
 
 //============================================================================
 template <typename T>
-static inline void IReadValue (T * value, byte ** buffer, unsigned * bufsz) {
+static inline void IReadValue (T * value, uint8_t ** buffer, unsigned * bufsz) {
     ASSERT(*bufsz >= sizeof(T));
     *value = *(T *)*buffer;
     *buffer += sizeof(T);
@@ -83,22 +83,22 @@ static inline void IReadValue (T * value, byte ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-static inline void IReadArray (T ** buf, unsigned * elems, byte ** buffer, unsigned * bufsz) {
-    dword bytes;
+static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, unsigned * bufsz) {
+    uint32_t bytes;
     IReadValue(&bytes, buffer, bufsz);
     ASSERT(bytes % sizeof(T) == 0);
     *elems = bytes / sizeof(T);
     T * src = (T *)*buffer;
-    DEL(*buf);
-    *buf = (T *)ALLOC(bytes);
-    MemCopy(*buf, src, bytes);
+    delete *buf;
+    *buf = (T *)malloc(bytes);
+    memcpy(*buf, src, bytes);
     *buffer += bytes;
     *bufsz -= bytes;
 }
 
 //============================================================================
 template <typename T>
-static inline void IReadString (T ** buf, byte ** buffer, unsigned * bufsz) {
+static inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
     unsigned elems;
     IReadArray(buf, &elems, buffer, bufsz);
     // ensure the string is null-terminated
@@ -108,23 +108,23 @@ static inline void IReadString (T ** buf, byte ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-static inline void IWriteValue (const T & value, ARRAY(byte) * buffer) {
+static inline void IWriteValue (const T & value, ARRAY(uint8_t) * buffer) {
     T * ptr = (T *) buffer->New(sizeof(T));
     *ptr = value;
 }
 
 //============================================================================
 template <typename T>
-static inline void IWriteArray (const T buf[], unsigned elems, ARRAY(byte) * buffer) {
+static inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer) {
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
     T * dst = (T *) buffer->New(bytes);
-    MemCopy(dst, buf, bytes);
+    memcpy(dst, buf, bytes);
 }
 
 //============================================================================
 template <typename T>
-static inline void IWriteString (const T str[], ARRAY(byte) * buffer) {
+static inline void IWriteString (const T str[], ARRAY(uint8_t) * buffer) {
     IWriteArray(str, StrLen(str) + 1, buffer);
 }
 
@@ -155,7 +155,7 @@ static inline bool ICompareStringI (const T lhs[], const T rhs[]) {
 }
 
 //============================================================================
-static inline bool ICompareArray (const byte lhs[], const byte rhs[]) {
+static inline bool ICompareArray (const uint8_t lhs[], const uint8_t rhs[]) {
     return false;
 }
 
@@ -168,7 +168,7 @@ static inline void ICopyValue (T * plhs, const T & rhs) {
 //============================================================================
 template <typename T>
 static inline void ICopyString (T ** plhs, const T rhs[]) {
-    FREE(*plhs);
+    free(*plhs);
     if (rhs)
         *plhs = StrDup(rhs);
     else
@@ -176,8 +176,8 @@ static inline void ICopyString (T ** plhs, const T rhs[]) {
 }
 
 //============================================================================
-static inline void ICopyString (wchar ** plhs, const wchar rhs[]) {
-    FREE(*plhs);
+static inline void ICopyString (wchar_t ** plhs, const wchar_t rhs[]) {
+    free(*plhs);
     if (rhs)
         *plhs = StrDup(rhs);
     else
@@ -235,12 +235,12 @@ static bool IStrSqlEscape (const T src[], T * dst, unsigned dstChars) {
 ***/
 
 //============================================================================
-unsigned NetGameScore::Read(const byte inbuffer[], unsigned bufsz, byte** end) {
+unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** end) {
 
-    byte * buffer = const_cast<byte *>(inbuffer);
-    byte * start = buffer;
+    uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
+    uint8_t * start = buffer;
 
-    wchar* tempstr = nil;
+    wchar_t* tempstr = nil;
 
     IReadValue(&scoreId, &buffer, &bufsz);
     IReadValue(&ownerId, &buffer, &bufsz);
@@ -250,7 +250,7 @@ unsigned NetGameScore::Read(const byte inbuffer[], unsigned bufsz, byte** end) {
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(gameName, tempstr, arrsize(gameName));
-    DEL(tempstr);
+    delete tempstr;
 
     if (end)
         *end = buffer;
@@ -259,7 +259,7 @@ unsigned NetGameScore::Read(const byte inbuffer[], unsigned bufsz, byte** end) {
 }
 
 //============================================================================
-unsigned NetGameScore::Write(ARRAY(byte) * buffer) const {
+unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
 
     unsigned pos = buffer->Count();
 
@@ -290,19 +290,19 @@ void NetGameScore::CopyFrom(const NetGameScore & score) {
 ***/
 
 //============================================================================
-unsigned NetGameRank::Read(const byte inbuffer[], unsigned bufsz, byte** end) {
+unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** end) {
 
-    byte * buffer = const_cast<byte *>(inbuffer);
-    byte * start = buffer;
+    uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
+    uint8_t * start = buffer;
 
-    wchar* tempstr = nil;
+    wchar_t* tempstr = nil;
 
     IReadValue(&rank, &buffer, &bufsz);
     IReadValue(&score, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(name, tempstr, arrsize(name));
-    DEL(tempstr);
+    delete tempstr;
 
     if (end)
         *end = buffer;
@@ -311,7 +311,7 @@ unsigned NetGameRank::Read(const byte inbuffer[], unsigned bufsz, byte** end) {
 }
 
 //============================================================================
-unsigned NetGameRank::Write(ARRAY(byte) * buffer) const {
+unsigned NetGameRank::Write(ARRAY(uint8_t) * buffer) const {
 
     unsigned pos = buffer->Count();
 
@@ -337,11 +337,11 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 
 //============================================================================
 static void DeallocNodeFields (NetVaultNode * node) {
-    for (qword fieldFlag = 1; fieldFlag; fieldFlag <<= 1) {
+    for (uint64_t fieldFlag = 1; fieldFlag; fieldFlag <<= 1) {
         if (fieldFlag > node->fieldFlags)
             break;
 
-        #define DELFIELD(f, v) case (qword)(NetVaultNode::f): DEL(node->v); node->v = nil; break
+        #define DELFIELD(f, v) case (uint64_t)(NetVaultNode::f): delete node->v; node->v = nil; break
         switch (fieldFlag & node->fieldFlags) {
             DELFIELD(kCreateAgeName,    createAgeName);
             DELFIELD(kString64_1,       string64_1);
@@ -372,16 +372,16 @@ NetVaultNode::~NetVaultNode () {
 }
 
 //============================================================================
-unsigned NetVaultNode::Read_LCS (const byte inbuffer[], unsigned bufsz, unsigned rwOpts) {
+unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], unsigned bufsz, unsigned rwOpts) {
 
     DeallocNodeFields(this);
 
-    byte * buffer = const_cast<byte *>(inbuffer);
-    byte * start = buffer;
+    uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
+    uint8_t * start = buffer;
 
     IReadValue(&fieldFlags, &buffer, &bufsz);
     
-    for (qword bit = 1; bit; bit <<= 1) {
+    for (uint64_t bit = 1; bit; bit <<= 1) {
 
         // if we've passed all fields on the node then bail 
         if (bit > fieldFlags)
@@ -441,11 +441,11 @@ unsigned NetVaultNode::Read_LCS (const byte inbuffer[], unsigned bufsz, unsigned
 }
 
 //============================================================================
-unsigned NetVaultNode::Write_LCS (ARRAY(byte) * buffer, unsigned rwOpts) {
+unsigned NetVaultNode::Write_LCS (ARRAY(uint8_t) * buffer, unsigned rwOpts) {
 
     unsigned pos = buffer->Count();
 
-    qword flags = fieldFlags;
+    uint64_t flags = fieldFlags;
 
     if (rwOpts & kRwDirtyOnly)
         flags &= dirtyFlags;
@@ -455,7 +455,7 @@ unsigned NetVaultNode::Write_LCS (ARRAY(byte) * buffer, unsigned rwOpts) {
 
     IWriteValue(flags, buffer);
         
-    for (qword bit = 1; bit; bit <<= 1) {
+    for (uint64_t bit = 1; bit; bit <<= 1) {
 
         // if we've passed all fields on the node then bail 
         if (bit > flags)
@@ -515,7 +515,7 @@ unsigned NetVaultNode::Write_LCS (ARRAY(byte) * buffer, unsigned rwOpts) {
 
 //============================================================================
 bool NetVaultNode::Matches (const NetVaultNode * other) {
-    for (qword bit = 1; bit; bit <<= 1) {
+    for (uint64_t bit = 1; bit; bit <<= 1) {
         // if bit has gone past all set fields on the other node without failing, return true
         if (bit > other->fieldFlags)
             return true;
@@ -574,9 +574,9 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
     if (this == other)
         return;
         
-    qword origDirtyFlags = dirtyFlags;
+    uint64_t origDirtyFlags = dirtyFlags;
         
-    for (qword bit = 1; bit; bit <<= 1) {
+    for (uint64_t bit = 1; bit; bit <<= 1) {
         // we already have a value for this field...
         if (bit & fieldFlags) {
             if (!(copyOpts & kCopyOverwrite))
@@ -701,7 +701,7 @@ void NetVaultNode::SetModifyTime (unsigned v) {
 }
 
 //============================================================================
-void NetVaultNode::SetCreateAgeName (const wchar v[]) {
+void NetVaultNode::SetCreateAgeName (const wchar_t v[]) {
     IVaultNodeSetString(kCreateAgeName, this, &createAgeName, v, kMaxVaultNodeStringLength);
 }
 
@@ -786,67 +786,67 @@ void NetVaultNode::SetUuid_4 (const Uuid & v) {
 }
 
 //============================================================================
-void NetVaultNode::SetString64_1 (const wchar v[]) {
+void NetVaultNode::SetString64_1 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_1, this, &string64_1, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetString64_2 (const wchar v[]) {
+void NetVaultNode::SetString64_2 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_2, this, &string64_2, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetString64_3 (const wchar v[]) {
+void NetVaultNode::SetString64_3 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_3, this, &string64_3, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetString64_4 (const wchar v[]) {
+void NetVaultNode::SetString64_4 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_4, this, &string64_4, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetString64_5 (const wchar v[]) {
+void NetVaultNode::SetString64_5 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_5, this, &string64_5, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetString64_6 (const wchar v[]) {
+void NetVaultNode::SetString64_6 (const wchar_t v[]) {
     IVaultNodeSetString(kString64_6, this, &string64_6, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetIString64_1 (const wchar v[]) {
+void NetVaultNode::SetIString64_1 (const wchar_t v[]) {
     IVaultNodeSetString(kIString64_1, this, &istring64_1, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetIString64_2 (const wchar v[]) {
+void NetVaultNode::SetIString64_2 (const wchar_t v[]) {
     IVaultNodeSetString(kIString64_2, this, &istring64_2, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
-void NetVaultNode::SetText_1 (const wchar v[]) {
+void NetVaultNode::SetText_1 (const wchar_t v[]) {
     IVaultNodeSetString(kText_1, this, &text_1, v, (unsigned)-1);
 }
 
 //============================================================================
-void NetVaultNode::SetText_2 (const wchar v[]) {
+void NetVaultNode::SetText_2 (const wchar_t v[]) {
     IVaultNodeSetString(kText_2, this, &text_2, v, (unsigned)-1);
 }
 
 //============================================================================
-void NetVaultNode::SetBlob_1 (const byte v[], unsigned len) {
+void NetVaultNode::SetBlob_1 (const uint8_t v[], unsigned len) {
     IVaultNodeSetBlob(kBlob_1, this, &blob_1, &blob_1Length, v, len);
 }
 
 //============================================================================
-void NetVaultNode::SetBlob_2 (const byte v[], unsigned len) {
+void NetVaultNode::SetBlob_2 (const uint8_t v[], unsigned len) {
     IVaultNodeSetBlob(kBlob_2, this, &blob_2, &blob_2Length, v, len);
 }
 
 //============================================================================
-void NetVaultNode::SetText (qword fieldFlag, const wchar v[]) {
+void NetVaultNode::SetText (uint64_t fieldFlag, const wchar_t v[]) {
     switch (fieldFlag) {
         case kText_1: SetText_1(v); break;
         case kText_2: SetText_2(v); break;
@@ -855,7 +855,7 @@ void NetVaultNode::SetText (qword fieldFlag, const wchar v[]) {
 }
 
 //============================================================================
-void NetVaultNode::SetBlob (qword fieldFlag, const byte v[], unsigned len) {
+void NetVaultNode::SetBlob (uint64_t fieldFlag, const uint8_t v[], unsigned len) {
     switch (fieldFlag) {
         case kBlob_1: SetBlob_1(v, len); break;
         case kBlob_2: SetBlob_2(v, len); break;
@@ -916,11 +916,11 @@ NetVaultNodeFieldArray::~NetVaultNodeFieldArray () {
 }
 
 //============================================================================
-void * NetVaultNodeFieldArray::GetFieldAddress (qword bit) {
+void * NetVaultNodeFieldArray::GetFieldAddress (uint64_t bit) {
     ASSERT(bit);
     
     unsigned index = 0;
-    for (qword b = bit; b > 1; b >>= 1)
+    for (uint64_t b = bit; b > 1; b >>= 1)
         ++index;
 
     // do not return blob fields
@@ -931,11 +931,11 @@ void * NetVaultNodeFieldArray::GetFieldAddress (qword bit) {
 }
 
 //============================================================================
-const wchar * NetVaultNodeFieldArray::GetFieldName (qword bit) {
+const wchar_t * NetVaultNodeFieldArray::GetFieldName (uint64_t bit) {
     ASSERT(bit);
     
     unsigned index = 0;
-    for (qword b = bit; b > 1; b >>= 1)
+    for (uint64_t b = bit; b > 1; b >>= 1)
         ++index;
 
     ASSERT(index < fields.Count());
@@ -944,8 +944,8 @@ const wchar * NetVaultNodeFieldArray::GetFieldName (qword bit) {
 
 //============================================================================
 void NetVaultNodeFieldArray::GetFieldValueString_LCS (
-    qword           bit,
-    wchar *         dst,
+    uint64_t           bit,
+    wchar_t *         dst,
     unsigned        dstChars
 ) {
     void * fieldAddr = GetFieldAddress(bit);
@@ -976,7 +976,7 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kUuid_2:
         case NetVaultNode::kUuid_3:
         case NetVaultNode::kUuid_4: {
-            wchar tmp[64];
+            wchar_t tmp[64];
             GuidToHex(*(Uuid *)fieldAddr, tmp, arrsize(tmp));
             StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp);
         }
@@ -991,9 +991,10 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kString64_6:
         case NetVaultNode::kIString64_1:
         case NetVaultNode::kIString64_2: {
-            wchar * tmp = ALLOCA(wchar, dstChars);
-            IStrSqlEscape(*(wchar **)fieldAddr, tmp, dstChars);
+            wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * dstChars);
+            IStrSqlEscape(*(wchar_t **)fieldAddr, tmp, dstChars);
             StrPrintf(dst, dstChars, L"'%s'", tmp);
+            free(tmp);
         }
         break;
 
@@ -1008,7 +1009,7 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
 //============================================================================
 void NetVaultNodeFieldArray::BuildWhereClause_LCS (
     EWhereCondition condition,
-    wchar *         dst,
+    wchar_t *         dst,
     unsigned        dstChars
 ) {
     if (!dstChars)
@@ -1016,20 +1017,20 @@ void NetVaultNodeFieldArray::BuildWhereClause_LCS (
         
     dst[0] = 0;
     
-    static const wchar * s_conditionStrs[] = {
+    static const wchar_t * s_conditionStrs[] = {
         L" AND ",
         L" OR "
     };
 
     unsigned fieldCount = 0;
-    for (qword bit = 1; bit; bit <<= 1) {
+    for (uint64_t bit = 1; bit; bit <<= 1) {
         if (!(bit & node->fieldFlags))
             continue;
             
         if (fieldCount++)
             StrPack(dst, s_conditionStrs[condition], dstChars);
             
-        wchar str[256];
+        wchar_t str[256];
         GetFieldValueString_LCS(bit, str, arrsize(str));
 
         StrPack(dst, GetFieldName(bit), dstChars);
@@ -1039,7 +1040,7 @@ void NetVaultNodeFieldArray::BuildWhereClause_LCS (
 }
 
 //============================================================================
-NetVaultNodeFieldArray::ESqlType NetVaultNodeFieldArray::GetSqlType_LCS (qword bit) {
+NetVaultNodeFieldArray::ESqlType NetVaultNodeFieldArray::GetSqlType_LCS (uint64_t bit) {
     switch (bit) {
         case NetVaultNode::kNodeId:
         case NetVaultNode::kCreatorId:
@@ -1099,7 +1100,7 @@ NetVaultNodeFieldArray::ESqlType NetVaultNodeFieldArray::GetSqlType_LCS (qword b
 
 //============================================================================
 CSrvPackBuffer::CSrvPackBuffer (unsigned bytes) {
-    m_data = (byte *)ALLOC(bytes);
+    m_data = (uint8_t *)malloc(bytes);
     m_pos  = m_data;
     m_end  = m_pos + bytes;
 }
@@ -1109,23 +1110,23 @@ void * CSrvPackBuffer::Alloc (unsigned bytes) {
     ASSERT((signed) bytes >= 0);
     ASSERT(m_pos + bytes <= m_end);
 
-    byte * pos = m_pos;
+    uint8_t * pos = m_pos;
     m_pos += bytes;
     return pos;
 }
 
 //============================================================================
 void CSrvPackBuffer::AddData (const void * ptr, unsigned bytes) {
-    MemCopy(Alloc(bytes), ptr, bytes);
+    memcpy(Alloc(bytes), ptr, bytes);
 }
 
 //============================================================================
-void CSrvPackBuffer::AddString (const wchar str[]) {
+void CSrvPackBuffer::AddString (const wchar_t str[]) {
     AddData(str, StrBytes(str));
 }
 
 //============================================================================
-void CSrvPackBuffer::AddDWordArray (const UInt32 * arr, unsigned count) {
+void CSrvPackBuffer::AddDWordArray (const uint32_t * arr, unsigned count) {
     // Don't let large counts cause pointer wrap
     count &= 0x00ffffff;
     AddData(arr, count * sizeof(arr[0]));
@@ -1145,14 +1146,14 @@ unsigned CSrvPackBuffer::Size () {
 
 //============================================================================
 CSrvUnpackBuffer::CSrvUnpackBuffer (const void * buffer, unsigned count) {
-    m_pos = (const byte *) buffer;
+    m_pos = (const uint8_t *) buffer;
     m_end = m_pos + count;
 }
 
 //============================================================================
 const void * CSrvUnpackBuffer::GetData (unsigned bytes) {
     for (;;) {
-        const byte * result = m_pos;
+        const uint8_t * result = m_pos;
         m_pos += bytes;
         
         if (m_pos < result)
@@ -1168,16 +1169,16 @@ const void * CSrvUnpackBuffer::GetData (unsigned bytes) {
 }
 
 //============================================================================
-const wchar * CSrvUnpackBuffer::GetString () {
+const wchar_t * CSrvUnpackBuffer::GetString () {
     
      if (m_end) {  
-          const wchar * end = (const wchar *) (m_end - sizeof(wchar) + 1);  
-          for (const wchar * cur = (const wchar *) m_pos; cur < end; ) {  
+          const wchar_t * end = (const wchar_t *) (m_end - sizeof(wchar_t) + 1);  
+          for (const wchar_t * cur = (const wchar_t *) m_pos; cur < end; ) {  
                if (*cur++)  
                     continue;  
   
-               const wchar * pos   = (const wchar *) m_pos;  
-               m_pos               = (const byte *) cur;  
+               const wchar_t * pos   = (const wchar_t *) m_pos;  
+               m_pos               = (const uint8_t *) cur;  
                return pos;  
           }  
      }  
@@ -1187,10 +1188,10 @@ const wchar * CSrvUnpackBuffer::GetString () {
 }
 
 //============================================================================
-const dword * CSrvUnpackBuffer::GetDWordArray (unsigned count) {
+const uint32_t * CSrvUnpackBuffer::GetDWordArray (unsigned count) {
     // Don't let large counts cause pointer wrap
     if (count & 0x00ffffff)
-        return (const dword *)GetData(count * sizeof(dword));
+        return (const uint32_t *)GetData(count * sizeof(uint32_t));
 
     m_end = nil;
     return nil;

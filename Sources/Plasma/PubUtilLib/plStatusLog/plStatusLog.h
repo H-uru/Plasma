@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plStatusLog_h
 #define _plStatusLog_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsThread.h"
 
 #include <string>
@@ -79,17 +79,17 @@ class plStatusLog
     protected:
 
 
-        mutable UInt32      fFlags;     // Mutable so we can change it in IPrintLineToFile() internally
-        UInt32  fOrigFlags;
+        mutable uint32_t      fFlags;     // Mutable so we can change it in IPrintLineToFile() internally
+        uint32_t  fOrigFlags;
 
-        UInt32      fMaxNumLines;
+        uint32_t      fMaxNumLines;
         std::string fCFilename; // used ONLY by GetFileName()
         std::wstring fFilename;
         char        **fLines;
-        UInt32      *fColors;
+        uint32_t      *fColors;
         hsMutex     fMutex;     // To make multithreaded-safe
         FILE*       fFileHandle;
-        UInt32      fSize;
+        uint32_t      fSize;
         bool        fEncryptMe;
         bool        fForceLog;
 
@@ -100,19 +100,19 @@ class plStatusLog
         void    IUnlink( void );
         void    ILink( plStatusLog **back );
 
-        bool    IAddLine( const char *line, Int32 count, UInt32 color );
-        bool    IPrintLineToFile( const char *line, UInt32 count );
-        void    IParseFileName(wchar* file, size_t fnsize, wchar* fileNoExt, wchar** ext) const;
+        bool    IAddLine( const char *line, int32_t count, uint32_t color );
+        bool    IPrintLineToFile( const char *line, uint32_t count );
+        void    IParseFileName(wchar_t* file, size_t fnsize, wchar_t* fileNoExt, wchar_t** ext) const;
 
         void    IInit( void );
         void    IFini( void );
         bool    IReOpen( void );
 
-        plStatusLog( UInt8 numDisplayLines, const wchar *filename, UInt32 flags );
+        plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags );
 
     public:
 
-        static UInt32 fLoggingOff;
+        static uint32_t fLoggingOff;
         enum StatusFlagType
         {
             kFilledBackground   = 0x00000001,
@@ -159,28 +159,28 @@ class plStatusLog
 
         ~plStatusLog();
 
-        bool    AddLine( const char *line, UInt32 color = kWhite );
+        bool    AddLine( const char *line, uint32_t color = kWhite );
 
         /// printf-like functions
 
         bool    AddLineF( const char *format, ... );
-        bool    AddLineF( UInt32 color, const char *format, ... );
+        bool    AddLineF( uint32_t color, const char *format, ... );
 
         bool    AddLineV( const char *format, va_list arguments );
-        bool    AddLineV( UInt32 color, const char *format, va_list arguments );
+        bool    AddLineV( uint32_t color, const char *format, va_list arguments );
 
         /// Static functions that you give a filename to and it searches for a log based on that
         /// (or creates one if it isn't available)
         static bool AddLineS( const char *filename, const char *format, ... );
-        static bool AddLineS( const char *filename, UInt32 color, const char *format, ... );
+        static bool AddLineS( const char *filename, uint32_t color, const char *format, ... );
 
         void    Clear( void );
 
         // Clear and open a new file.
-        void    Bounce( UInt32 flags=0 );
+        void    Bounce( uint32_t flags=0 );
 
         const char* GetFileName() const {return fCFilename.c_str();}
-        const wchar* GetFileNameW() const {return fFilename.c_str();}
+        const wchar_t* GetFileNameW() const {return fFilename.c_str();}
 
         void SetForceLog(bool force) { fForceLog = force; }
 };
@@ -206,12 +206,12 @@ class plStatusLogMgr
 
         double fLastLogChangeTime;
 
-        static wchar            fBasePath[];
+        static wchar_t            fBasePath[];
 
-        static const wchar  *IGetBasePath( void ) { return fBasePath; }
+        static const wchar_t  *IGetBasePath( void ) { return fBasePath; }
 
-        void    IEnsurePathExists( const wchar *dirName );
-        void    IPathAppend( wchar *base, const wchar *extra, unsigned maxLen );
+        void    IEnsurePathExists( const wchar_t *dirName );
+        void    IPathAppend( wchar_t *base, const wchar_t *extra, unsigned maxLen );
 
         hsMutex     fMutex;     // To make multithreaded-safe
 
@@ -228,25 +228,25 @@ class plStatusLogMgr
 
         void        Draw( void );
 
-        plStatusLog *CreateStatusLog( UInt8 numDisplayLines, const char *filename, UInt32 flags = plStatusLog::kFilledBackground );
-        plStatusLog *CreateStatusLog( UInt8 numDisplayLines, const wchar *filename, UInt32 flags = plStatusLog::kFilledBackground );
+        plStatusLog *CreateStatusLog( uint8_t numDisplayLines, const char *filename, uint32_t flags = plStatusLog::kFilledBackground );
+        plStatusLog *CreateStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags = plStatusLog::kFilledBackground );
         void        ToggleStatusLog( plStatusLog *logToDisplay );
         void        NextStatusLog( void );
         void        PrevStatusLog( void );
         void        SetCurrStatusLog( const char *logName );
-        void        SetCurrStatusLog( const wchar *logName );
+        void        SetCurrStatusLog( const wchar_t *logName );
         plStatusLog *FindLog( const char *filename, hsBool createIfNotFound = true );
-        plStatusLog *FindLog( const wchar *filename, hsBool createIfNotFound = true );
+        plStatusLog *FindLog( const wchar_t *filename, hsBool createIfNotFound = true );
 
         void        SetDrawer( plStatusLogDrawerStub *drawer ) { fDrawer = drawer; }
         void        SetBasePath( const char * path );
-        void        SetBasePath( const wchar * path );
+        void        SetBasePath( const wchar_t * path );
 
         void        BounceLogs();
 
         // Create a new folder and copy all log files into it (returns false on failure)
         bool        DumpLogs( const char *newFolderName );
-        bool        DumpLogs( const wchar *newFolderName );
+        bool        DumpLogs( const wchar_t *newFolderName );
 };
 
 //// plStatusLogDrawerStub Class ////////////////////////////////////////////
@@ -260,12 +260,12 @@ class plStatusLogDrawerStub
 {
     protected:
 
-        UInt32      IGetMaxNumLines( plStatusLog *log ) const { return log->fMaxNumLines; }
+        uint32_t      IGetMaxNumLines( plStatusLog *log ) const { return log->fMaxNumLines; }
         char        **IGetLines( plStatusLog *log ) const { return log->fLines; }
         const char  *IGetFilename( plStatusLog *log ) const { return log->GetFileName(); }
-        const wchar *IGetFilenameW( plStatusLog *log ) const { return log->GetFileNameW(); }
-        UInt32      *IGetColors( plStatusLog *log ) const { return log->fColors; }
-        UInt32      IGetFlags( plStatusLog *log ) const { return log->fFlags; }
+        const wchar_t *IGetFilenameW( plStatusLog *log ) const { return log->GetFileNameW(); }
+        uint32_t      *IGetColors( plStatusLog *log ) const { return log->fColors; }
+        uint32_t      IGetFlags( plStatusLog *log ) const { return log->fFlags; }
         
     public:
         virtual ~plStatusLogDrawerStub() {}

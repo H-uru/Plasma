@@ -64,14 +64,14 @@ public:
         kSetRefresh     = 0x40
     };
 
-    UInt32              fCmd;
+    uint32_t              fCmd;
 
     hsPoint3            fPos;
-    hsScalar            fHither;
-    hsScalar            fYon;
-    hsScalar            fFogStart;
+    float            fHither;
+    float            fYon;
+    float            fFogStart;
     hsColorRGBA         fColor;         
-    hsScalar            fRefresh;
+    float            fRefresh;
 
 public:
     plDynamicEnvMapMsg() : plMessage(nil, nil, nil), fCmd(0) {}

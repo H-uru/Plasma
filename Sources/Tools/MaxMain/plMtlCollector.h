@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMtlCollector_h_inc
 #define plMtlCollector_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <set>
 #include "hsSTLSortUtils.h"
 
@@ -69,7 +69,7 @@ public:
         kNoSubMtls = 0x10,
     };
 
-    static void GetMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags=0);
+    static void GetMtls(MtlSet* mtls, TexSet* texmaps, uint32_t flags=0);
 
     static void GetMtlLayers(Mtl *mtl, LayerSet& layers);
 

@@ -57,9 +57,9 @@ pyMoviePlayer::pyMoviePlayer(const char* movieName,pyKey& selfKey)
     // make the movie
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
-        pfMovieEventMsg* movCallback = TRACKED_NEW pfMovieEventMsg(fMovieName);
+        pfMovieEventMsg* movCallback = new pfMovieEventMsg(fMovieName);
         movCallback->AddReceiver(fSelfKey);
         mov->AddCallback(movCallback);
         mov->Send();
@@ -83,9 +83,9 @@ void pyMoviePlayer::MakeMovie(const char* movieName, pyKey& selfKey)
     fSelfKey = selfKey.getKey();
     if (fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
-        pfMovieEventMsg* movCallback = TRACKED_NEW pfMovieEventMsg(fMovieName);
+        pfMovieEventMsg* movCallback = new pfMovieEventMsg(fMovieName);
         movCallback->AddReceiver(fSelfKey);
         mov->AddCallback(movCallback);
         mov->Send();
@@ -93,11 +93,11 @@ void pyMoviePlayer::MakeMovie(const char* movieName, pyKey& selfKey)
     }
 }
 
-void pyMoviePlayer::SetCenter(hsScalar x, hsScalar y)
+void pyMoviePlayer::SetCenter(float x, float y)
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kMove);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMove);
         mov->SetSender(fSelfKey);
         mov->SetCenterX(x);
         mov->SetCenterY(y);
@@ -105,11 +105,11 @@ void pyMoviePlayer::SetCenter(hsScalar x, hsScalar y)
     }
 }
 
-void pyMoviePlayer::SetScale(hsScalar width, hsScalar height)
+void pyMoviePlayer::SetScale(float width, float height)
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kScale);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kScale);
         mov->SetSender(fSelfKey);
         mov->SetScaleX(width);
         mov->SetScaleY(height);
@@ -121,29 +121,29 @@ void pyMoviePlayer::SetColor(pyColor color)
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kColor);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kColor);
         mov->SetSender(fSelfKey);
         mov->SetColor(color.getColor());
         mov->Send();
     }
 }
 
-void pyMoviePlayer::SetVolume(hsScalar volume)
+void pyMoviePlayer::SetVolume(float volume)
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kVolume);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kVolume);
         mov->SetSender(fSelfKey);
         mov->SetVolume(volume);
         mov->Send();
     }
 }
 
-void pyMoviePlayer::SetOpacity(hsScalar opacity)
+void pyMoviePlayer::SetOpacity(float opacity)
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kOpacity);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kOpacity);
         mov->SetSender(fSelfKey);
         mov->SetOpacity(opacity);
         mov->Send();
@@ -155,7 +155,7 @@ void pyMoviePlayer::Play()
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kStart);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart);
         mov->SetSender(fSelfKey);
         mov->Send();
     }
@@ -165,7 +165,7 @@ void pyMoviePlayer::PlayPaused()
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kStart | plMovieMsg::kPause);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart | plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
         mov->Send();
     }
@@ -175,7 +175,7 @@ void pyMoviePlayer::Pause()
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kPause);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
         mov->Send();
     }
@@ -185,7 +185,7 @@ void pyMoviePlayer::Resume()
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kResume);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kResume);
         mov->SetSender(fSelfKey);
         mov->Send();
     }
@@ -195,7 +195,7 @@ void pyMoviePlayer::Stop()
 {
     if ( fMovieName)
     {
-        plMovieMsg* mov = TRACKED_NEW plMovieMsg(fMovieName, plMovieMsg::kStop);
+        plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStop);
         mov->SetSender(fSelfKey);
         mov->Send();
     }

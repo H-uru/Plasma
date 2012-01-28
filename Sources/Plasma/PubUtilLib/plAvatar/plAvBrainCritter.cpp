@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsConfig.h"
-#include "hsWindows.h"
 
 #include "plAvCallbackAction.h"
 #include "plAvBrainCritter.h"
@@ -83,7 +81,7 @@ public:
         fAvMod(nil), fCritterBrain(nil), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) {}
     virtual ~CritterBehavior() {}
 
-    void Init(plAGAnim* anim, hsBool loop, plAvBrainCritter* brain, plArmatureMod* body, UInt8 index)
+    void Init(plAGAnim* anim, hsBool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
     {
         plArmatureBehavior::Init(anim, loop, brain, body, index);
         fAvMod = body;
@@ -93,8 +91,8 @@ public:
 
     virtual hsBool PreCondition(double time, float elapsed) {return true;}
 
-    hsScalar GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
-    void SetAnimTime(hsScalar time) {fAnim->SetCurrentTime(time, true);}
+    float GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
+    void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
 
     std::string Name() const {return fName;}
     std::string AnimName() const {return fAnimName;}
@@ -131,7 +129,7 @@ plAvBrainCritter::plAvBrainCritter(): fCallbackAction(nil), fCurMode(kIdle), fNe
     fLocallyControlled(false), fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
     fAngRight(0)
 {
-    SightCone(hsScalarPI/2); // 90deg
+    SightCone(M_PI/2); // 90deg
     StopDistance(1);
     SightDistance(10);
     HearingDistance(10);
@@ -154,7 +152,7 @@ plAvBrainCritter::~plAvBrainCritter()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-hsBool plAvBrainCritter::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainCritter::Apply(double time, float elapsed)
 {
     // update internal pathfinding variables
     IEvalGoal();
@@ -195,12 +193,12 @@ void plAvBrainCritter::Activate(plArmatureModBase* avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = TRACKED_NEW plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+        fCallbackAction = new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
         fCallbackAction->ActivateController();
     }
 
     // tell people that care that we are good to go
-    plAIBrainCreatedMsg* brainCreated = TRACKED_NEW plAIBrainCreatedMsg(fArmature->GetKey());
+    plAIBrainCreatedMsg* brainCreated = new plAIBrainCreatedMsg(fArmature->GetKey());
     plgDispatch::MsgSend(brainCreated);
 }
 
@@ -240,7 +238,7 @@ void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::
         return; // can't find it, die
 
     // create the behavior and set it up
-    CritterBehavior* behavior = TRACKED_NEW CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
+    CritterBehavior* behavior = new CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
     fBehaviors.Push(behavior);
     behavior->Init(anim, loop, this, fAvMod, fBehaviors.Count() - 1);
     fUserBehaviors[behaviorName].push_back(fBehaviors.Count() - 1);
@@ -327,7 +325,7 @@ bool plAvBrainCritter::AtGoal() const
     return (finalGoalVec.MagnitudeSquared() <= fStopDistanceSquared);
 }
 
-void plAvBrainCritter::SightCone(hsScalar coneRad)
+void plAvBrainCritter::SightCone(float coneRad)
 {
     fSightConeAngle = coneRad;
 
@@ -339,7 +337,7 @@ void plAvBrainCritter::SightCone(hsScalar coneRad)
     fSightConeDotMin = straightVector * viewVector;
 }
 
-void plAvBrainCritter::HearingDistance(hsScalar hearDis)
+void plAvBrainCritter::HearingDistance(float hearDis)
 {
     fHearingDistance = hearDis;
     fHearingDistanceSquared = fHearingDistance * fHearingDistance;
@@ -461,14 +459,14 @@ hsBool plAvBrainCritter::IInitBaseAnimations()
     CritterBehavior* behavior;
     if (idle)
     {
-        fBehaviors[kIdle] = behavior = TRACKED_NEW CritterBehavior(kDefaultIdleBehName, true); // starts at a random start point each time
+        fBehaviors[kIdle] = behavior = new CritterBehavior(kDefaultIdleBehName, true); // starts at a random start point each time
         behavior->Init(idle, true, this, fAvMod, kIdle);
         fUserBehaviors[kDefaultIdleBehName].push_back(kIdle);
     }
 
     if (run)
     {
-        fBehaviors[kRun] = behavior = TRACKED_NEW CritterBehavior(kDefaultRunBehName);
+        fBehaviors[kRun] = behavior = new CritterBehavior(kDefaultRunBehName);
         behavior->Init(run, true, this, fAvMod, kRun);
         fUserBehaviors[kDefaultRunBehName].push_back(kRun);
     }
@@ -533,7 +531,7 @@ void plAvBrainCritter::IStartBehavior()
     // if we start at a random point, do so
     if (behavior->RandomStartPoint())
     {
-        hsScalar newStart = sRandom.RandZeroToOne() * behavior->GetAnimLength();
+        float newStart = sRandom.RandZeroToOne() * behavior->GetAnimLength();
         behavior->SetAnimTime(newStart);
     }
 
@@ -584,7 +582,7 @@ void plAvBrainCritter::IEvalGoal()
             hsVector3 avVec(creaturePos - avPos);
             avVec.Normalize();
 
-            hsScalar dotAv = avVec * goalVec;
+            float dotAv = avVec * goalVec;
             if (dotAv > 0.5f) // within a 45deg angle in front of us
             {
                 // a player is in the way, so we will change our "goal" to a 90deg angle from the player
@@ -608,7 +606,7 @@ void plAvBrainCritter::IEvalGoal()
             // tell everyone who cares that we have arrived
             for (unsigned i = 0; i < fReceivers.size(); ++i)
             {
-                plAIArrivedAtGoalMsg* msg = TRACKED_NEW plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
+                plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
                 msg->Goal(fFinalGoalPos);
                 msg->Send();
             }
@@ -616,7 +614,7 @@ void plAvBrainCritter::IEvalGoal()
     }
 }
 
-hsScalar plAvBrainCritter::IGetTurnStrength(double time) const
+float plAvBrainCritter::IGetTurnStrength(double time) const
 {
     if (!RunningBehavior(kDefaultRunBehName))
         return 0.0f;
@@ -673,7 +671,7 @@ bool plAvBrainCritter::ICanSeeAvatar(plArmatureMod* avatar) const
     
     const plSceneObject* creatureObj = fArmature->GetTarget(0);
     hsVector3 view(creatureObj->GetCoordinateInterface()->GetLocalToWorld().GetAxis(hsMatrix44::kView));
-    hsScalar avDot = view * avVec;
+    float avDot = view * avVec;
     if (avDot < fSightConeDotMin)
         return false; // out of our cone of view
     return true;
@@ -701,7 +699,7 @@ bool plAvBrainCritter::ICanHearAvatar(plArmatureMod* avatar) const
     fAvMod->GetPositionAndRotationSim(&creaturePos, &creatureRot);
 
     hsVector3 avVec(creaturePos - avPos);
-    hsScalar distSq = avVec.MagnitudeSquared();
+    float distSq = avVec.MagnitudeSquared();
     if (distSq <= fHearingDistanceSquared)
         return true; // within our normal hearing distance
     else if (isLoud && (distSq <= fLoudHearingDistanceSquared))

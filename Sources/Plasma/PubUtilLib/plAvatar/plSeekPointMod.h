@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSeekPointMod : public plMultiModifier
 {
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return true;}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
     char * fName;                                       // public because you can't change it
 
 public:

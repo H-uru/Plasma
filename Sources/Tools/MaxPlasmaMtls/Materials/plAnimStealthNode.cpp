@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
 #include "../resource.h"
@@ -69,7 +69,7 @@ class plStealthClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return FALSE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plAnimStealthNode(loading); }
+    void*           Create(BOOL loading) { return new plAnimStealthNode(loading); }
     const TCHAR*    ClassName()     { return GetString( IDS_STEALTH_NAME ); }
     SClass_ID       SuperClassID()  { return HELPER_CLASS_ID; }
     Class_ID        ClassID()       { return ANIMSTEALTH_CLASSID; }
@@ -903,11 +903,11 @@ void        plAnimStealthNode::SetLoop( bool b, const char *name )
         fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name );
 }
 
-UInt8       plAnimStealthNode::GetEaseInType( void ) const      { return (UInt8)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
-hsScalar    plAnimStealthNode::GetEaseInLength( void ) const    { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInLength ); }
-hsScalar    plAnimStealthNode::GetEaseInMin( void ) const       { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInMin ); }
-hsScalar    plAnimStealthNode::GetEaseInMax( void ) const       { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseInMax ); }
-void        plAnimStealthNode::SetEaseIn( UInt8 type, hsScalar length, hsScalar min, hsScalar max )
+uint8_t       plAnimStealthNode::GetEaseInType( void ) const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
+float    plAnimStealthNode::GetEaseInLength( void ) const    { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInLength ); }
+float    plAnimStealthNode::GetEaseInMin( void ) const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMin ); }
+float    plAnimStealthNode::GetEaseInMax( void ) const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMax ); }
+void        plAnimStealthNode::SetEaseIn( uint8_t type, float length, float min, float max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseInType, 0, (int)type );
     fParamBlock->SetValue( (ParamID)kPBEaseInLength, 0, (float)length );
@@ -915,11 +915,11 @@ void        plAnimStealthNode::SetEaseIn( UInt8 type, hsScalar length, hsScalar 
     fParamBlock->SetValue( (ParamID)kPBEaseInMax, 0, (float)max );
 }
 
-UInt8       plAnimStealthNode::GetEaseOutType( void ) const     { return (UInt8)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
-hsScalar    plAnimStealthNode::GetEaseOutLength( void ) const   { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutLength ); }
-hsScalar    plAnimStealthNode::GetEaseOutMin( void ) const      { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutMin ); }
-hsScalar    plAnimStealthNode::GetEaseOutMax( void ) const      { return (hsScalar)fParamBlock->GetFloat( (ParamID)kPBEaseOutMax ); }
-void        plAnimStealthNode::SetEaseOut( UInt8 type, hsScalar length, hsScalar min, hsScalar max )
+uint8_t       plAnimStealthNode::GetEaseOutType( void ) const     { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
+float    plAnimStealthNode::GetEaseOutLength( void ) const   { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutLength ); }
+float    plAnimStealthNode::GetEaseOutMin( void ) const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMin ); }
+float    plAnimStealthNode::GetEaseOutMax( void ) const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMax ); }
+void        plAnimStealthNode::SetEaseOut( uint8_t type, float length, float min, float max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseOutType, 0, (int)type );
     fParamBlock->SetValue( (ParamID)kPBEaseOutLength, 0, (float)length );

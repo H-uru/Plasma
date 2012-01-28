@@ -88,15 +88,15 @@ class plCubicEnvironmap : public plBitmap
 
 
         // Get the total size in bytes
-        virtual UInt32  GetTotalSize( void ) const;
+        virtual uint32_t  GetTotalSize( void ) const;
 
         virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
         virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-        plMipmap    *GetFace( UInt8 face ) const { return fFaces[ face ]; }
+        plMipmap    *GetFace( uint8_t face ) const { return fFaces[ face ]; }
 
         // Export-only: Copy the mipmap given into a face
-        void        CopyToFace( plMipmap *mip, UInt8 face );
+        void        CopyToFace( plMipmap *mip, uint8_t face );
 
     protected:
 
@@ -105,8 +105,8 @@ class plCubicEnvironmap : public plBitmap
         plMipmap        *fFaces[ 6 ];
         hsBool          fInitialized;
 
-        virtual UInt32  Read( hsStream *s );
-        virtual UInt32  Write( hsStream *s );
+        virtual uint32_t  Read( hsStream *s );
+        virtual uint32_t  Write( hsStream *s );
 
 };
 

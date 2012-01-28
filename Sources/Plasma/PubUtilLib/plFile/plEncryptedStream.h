@@ -53,64 +53,64 @@ class plEncryptedStream : public hsStream
 {
 protected:
     FILE* fRef;
-    UInt32 fKey[4];
+    uint32_t fKey[4];
 
-    UInt32 fActualFileSize;
+    uint32_t fActualFileSize;
 
     bool fBufferedStream;
 
     hsStream* fRAMStream;
 
-    wchar* fWriteFileName;
+    wchar_t* fWriteFileName;
 
     enum OpenMode { kOpenRead, kOpenWrite, kOpenFail };
     OpenMode fOpenMode;
 
     void IBufferFile();
 
-    UInt32 IRead(UInt32 bytes, void* buffer);
+    uint32_t IRead(uint32_t bytes, void* buffer);
 
-    void IEncipher(UInt32* const v);
-    void IDecipher(UInt32* const v);
+    void IEncipher(uint32_t* const v);
+    void IDecipher(uint32_t* const v);
 
-    bool IWriteEncypted(hsStream* sourceStream, const wchar* outputFile);
+    bool IWriteEncypted(hsStream* sourceStream, const wchar_t* outputFile);
 
     static bool ICheckMagicString(FILE* fp);
 
 public:
-    // If you don't pass in a key (4 UInt32's), the default one will be used
-    plEncryptedStream(UInt32* key=nil);
+    // If you don't pass in a key (4 uint32_t's), the default one will be used
+    plEncryptedStream(uint32_t* key=nil);
     ~plEncryptedStream();
 
     virtual hsBool  Open(const char* name, const char* mode = "rb");
-    virtual hsBool  Open(const wchar* name, const wchar* mode = L"rb");
+    virtual hsBool  Open(const wchar_t* name, const wchar_t* mode = L"rb");
     virtual hsBool  Close();
 
-    virtual UInt32  Read(UInt32 byteCount, void* buffer);
-    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
     virtual hsBool  AtEnd();
-    virtual void    Skip(UInt32 deltaByteCount);
+    virtual void    Skip(uint32_t deltaByteCount);
     virtual void    Rewind();
     virtual void    FastFwd();
-    virtual UInt32  GetEOF();
+    virtual uint32_t  GetEOF();
 
-    UInt32 GetActualFileSize() const { return fActualFileSize;}
+    uint32_t GetActualFileSize() const { return fActualFileSize;}
 
     static bool FileEncrypt(const char* fileName);
-    static bool FileEncrypt(const wchar* fileName);
+    static bool FileEncrypt(const wchar_t* fileName);
     static bool FileDecrypt(const char* fileName);
-    static bool FileDecrypt(const wchar* fileName);
+    static bool FileDecrypt(const wchar_t* fileName);
 
     static bool IsEncryptedFile(const char* fileName);
-    static bool IsEncryptedFile(const wchar* fileName);
+    static bool IsEncryptedFile(const wchar_t* fileName);
 
     // Attempts to create a read-binary stream for the requested file.  If it's
     // encrypted, you'll get a plEncryptedStream, otherwise just a standard
     // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const char* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
-    static hsStream* OpenEncryptedFile(const wchar* fileName, bool requireEncrypted = true, UInt32* cryptKey = nil);
-    static hsStream* OpenEncryptedFileWrite(const char* fileName, UInt32* cryptKey = nil);
-    static hsStream* OpenEncryptedFileWrite(const wchar* fileName, UInt32* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const char* fileName, bool requireEncrypted = true, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const wchar_t* fileName, bool requireEncrypted = true, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFileWrite(const char* fileName, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey = nil);
 };
 
 #endif // plEncryptedStream_h_inc

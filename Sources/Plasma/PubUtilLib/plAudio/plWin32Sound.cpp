@@ -134,7 +134,7 @@ void plWin32Sound::IActuallyPlay( void )
         {
             // If we can't load (for ex., if audio is off), then we act like we played and then stopped
             // really fast. Thus, we need to send *all* of our callbacks off immediately and then Stop().
-            UInt32 i;
+            uint32_t i;
             for( i = 0; i < fSoundEvents.GetCount(); i++ )
             {
                 fSoundEvents[ i ]->SendCallbacks();
@@ -185,7 +185,7 @@ void plWin32Sound::IActuallyStop()
 
 plSoundMsg* plWin32Sound::GetStatus(plSoundMsg* pMsg)
 {
-    plSoundMsg* pReply = TRACKED_NEW plSoundMsg;
+    plSoundMsg* pReply = new plSoundMsg;
     pReply->AddReceiver( pMsg->GetSender() );
     pReply->SetCmd(plSoundMsg::kStatusReply);
     pReply->fLoop = IsPropertySet( kPropLooping );
@@ -229,7 +229,7 @@ void plWin32Sound::SetConeAngles( int inner, int outer )
     }
 }
 
-void plWin32Sound::SetConeOrientation( hsScalar x, hsScalar y, hsScalar z )
+void plWin32Sound::SetConeOrientation( float x, float y, float z )
 {
     plSound::SetConeOrientation(x, y, z);
     if(fDSoundBuffer)
@@ -290,7 +290,7 @@ void plWin32Sound::ISetActualVolume(const float volume)
             fAwaitingPosition = true;
         }
     }
-    IUpdateDebugPlate();    // Byte me.
+    IUpdateDebugPlate();    // uint8_t me.
 }
 
 //////////////////////////////////////////////////////////////
@@ -327,14 +327,14 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
 
     if( type == plSoundEvent::kTime )
     {
-        UInt32 byteTime = ( fDSoundBuffer != nil ) ? fDSoundBuffer->GetBufferBytePos( pMsg->fEventTime ) : 0;
+        uint32_t byteTime = ( fDSoundBuffer != nil ) ? fDSoundBuffer->GetBufferBytePos( pMsg->fEventTime ) : 0;
 
         event = IFindEvent( type, byteTime );
 
         if( event == nil )
         {
             // Add a new sound event for this guy
-            event = TRACKED_NEW plSoundEvent( type, byteTime, this );
+            event = new plSoundEvent( type, byteTime, this );
             //fDSoundBuffer->AddPosNotify( byteTime );
             fSoundEvents.Append( event );
         }
@@ -346,7 +346,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
         if( event == nil )
         {
             // Add a new sound event for this guy
-            event = TRACKED_NEW plSoundEvent( type, this );
+            event = new plSoundEvent( type, this );
             fSoundEvents.Append( event );
         }
     }
@@ -378,7 +378,7 @@ void plWin32Sound::IRemoveCallback( plEventCallbackMsg *pMsg )
     }
 }
 
-plSoundEvent *plWin32Sound::IFindEvent( plSoundEvent::Types type, UInt32 bytePos )
+plSoundEvent *plWin32Sound::IFindEvent( plSoundEvent::Types type, uint32_t bytePos )
 {
     for(int i = 0; i < fSoundEvents.GetCount(); ++i )
     {

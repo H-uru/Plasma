@@ -64,7 +64,7 @@ struct EventHash {
         ESrvType    srvType
     );
 
-    inline dword GetHash () const;
+    inline uint32_t GetHash () const;
     inline bool operator== (const EventHash & rhs) const;
 };
 
@@ -117,7 +117,7 @@ inline EventHash::EventHash (
 }
 
 //============================================================================
-inline dword EventHash::GetHash () const {
+inline uint32_t EventHash::GetHash () const {
     CHashValue hash(this, sizeof(*this));
     return hash.GetHash();
 }
@@ -189,7 +189,7 @@ void NetLogRegisterEvents (const NetLogEvent events[], unsigned count) {
     HASHTABLEDECL(NetLogEventHash, EventHash, link) tempHashTable;
 
     for(unsigned i = 0; i < count; ++i) {
-        hash = NEW(NetLogEventHash)(events[i].logEventType, events[i].srvType, &events[i]);
+        hash = new NetLogEventHash(events[i].logEventType, events[i].srvType, &events[i]);
         tempHashTable.Add(hash);
     }
     s_critsect.Enter();

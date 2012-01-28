@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #define PLMESSAGE_PRIVATE
 #include "plMessage.h"
 #include "hsStream.h"
@@ -84,7 +84,7 @@ plMessage::~plMessage()
 }
 
 plMessage&      plMessage::SetNumReceivers(int n) { fReceivers.SetCount(n); return *this; }
-UInt32          plMessage::GetNumReceivers() const { return fReceivers.GetCount(); }
+uint32_t          plMessage::GetNumReceivers() const { return fReceivers.GetCount(); }
 const plKey&    plMessage::GetReceiver(int i) const { return fReceivers[i]; }
 plMessage&      plMessage::RemoveReceiver(int i) { fReceivers.Remove(i); return *this; }
 
@@ -200,24 +200,24 @@ void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE32(fBCastFlags);
 }
 
-void plMessage::AddNetReceiver( UInt32 plrID )
+void plMessage::AddNetReceiver( uint32_t plrID )
 {
     if ( !fNetRcvrPlayerIDs )
-        fNetRcvrPlayerIDs = TRACKED_NEW std::vector<UInt32>;
+        fNetRcvrPlayerIDs = new std::vector<uint32_t>;
     fNetRcvrPlayerIDs->push_back( plrID );
 }
 
-void plMessage::AddNetReceivers( const std::vector<UInt32> & plrIDs )
+void plMessage::AddNetReceivers( const std::vector<uint32_t> & plrIDs )
 {
     if ( !fNetRcvrPlayerIDs )
-        fNetRcvrPlayerIDs = TRACKED_NEW std::vector<UInt32>;
+        fNetRcvrPlayerIDs = new std::vector<uint32_t>;
     std::copy( plrIDs.begin(), plrIDs.end(), std::back_inserter( *fNetRcvrPlayerIDs ) );
 }
 
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     hsAssert( stringref.length()<0xFFFF, "buf too big for plMsgStdStringHelper" );
@@ -228,16 +228,16 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::PokeBig(const std::string & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
-    UInt32 strlen = stringref.length();
+    uint32_t strlen = stringref.length();
     stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Poke(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     hsAssert( bufsz<0xFFFF, "buf too big for plMsgStdStringHelper" );
@@ -248,7 +248,7 @@ int plMsgStdStringHelper::Poke(const char * buf, UInt32 bufsz, hsStream* stream,
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::PokeBig(const char * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
     stream->WriteLE(bufsz);
     if (bufsz)
@@ -257,7 +257,7 @@ int plMsgStdStringHelper::PokeBig(const char * buf, UInt32 bufsz, hsStream* stre
 }
 
 // STATIC
-int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push this");
@@ -279,9 +279,9 @@ int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
 {
-    UInt32 bufsz;
+    uint32_t bufsz;
     stream->LogSubStreamStart("push this");
     stream->LogReadLE(&bufsz,"Bufsz");
     stringref.erase();
@@ -304,7 +304,7 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgXtlStringHelper::Poke(const xtl::istring & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgXtlStringHelper::Poke(const xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     strlen = stringref.length();
@@ -315,7 +315,7 @@ int plMsgXtlStringHelper::Poke(const xtl::istring & stringref, hsStream* stream,
 }
 
 // STATIC
-int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push me");
@@ -337,7 +337,7 @@ int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const UInt32 peekOptions)
+int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     strlen = (str)?hsStrlen(str):0;
@@ -348,7 +348,7 @@ int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const UInt32 pe
 }
 
 // STATIC
-int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const UInt32 peekOptions)
+int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
     stream->LogSubStreamStart("push me");
@@ -359,7 +359,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const UInt32 peekOpt
     {
         if (strlen)
         {
-            str = TRACKED_NEW char[strlen+1];
+            str = new char[strlen+1];
             str[strlen] = '\0';
             if (strlen) {
                 stream->LogRead(strlen,str,"CString");
@@ -375,14 +375,14 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const UInt32 peekOpt
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgCArrayHelper::Poke(const void * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions)
+int plMsgCArrayHelper::Poke(const void * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
     stream->Write(bufsz,buf);
     return stream->GetPosition();
 }
 
 // STATIC
-int plMsgCArrayHelper::Peek(void * buf, UInt32 bufsz, hsStream* stream, const UInt32 peekOptions)
+int plMsgCArrayHelper::Peek(void * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
     stream->LogSubStreamStart("push me");
     stream->LogRead(bufsz,buf,"CArray");

@@ -53,9 +53,9 @@ protected:
     
     hsTArray<plKey>     fDecalMgrs;
 
-    hsScalar            fWetLength;
+    float            fWetLength;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plDecalEnableMod();
@@ -69,11 +69,11 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetWetLength(hsScalar t) { fWetLength = t; }
-    hsScalar GetWetLength() const { return fWetLength; }
+    void SetWetLength(float t) { fWetLength = t; }
+    float GetWetLength() const { return fWetLength; }
 
     void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
-    UInt32 GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
+    uint32_t GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
     const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
 };
 

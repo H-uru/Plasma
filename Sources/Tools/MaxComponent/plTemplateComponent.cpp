@@ -102,8 +102,8 @@ plTemplateComponent::plTemplateComponent()
 
 const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
 {
-    UInt32 numComps = node->NumAttachedComponents();
-    for (UInt32 i = 0; i < numComps; i++)
+    uint32_t numComps = node->NumAttachedComponents();
+    for (uint32_t i = 0; i < numComps; i++)
     {
         plComponentBase* comp = node->GetAttachedComponent(i);
         if (comp->ClassID() == PAGEINFO_CID)
@@ -128,7 +128,7 @@ hsBool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
 
 #if 0
     const char *templateName = node->GetName();
-    plKey roomKey = plPluginResManager::ResMgr()->NameToLoc(ageName, "District", "BuiltIn", (UInt32)-1);
+    plKey roomKey = plPluginResManager::ResMgr()->NameToLoc(ageName, "District", "BuiltIn", (uint32_t)-1);
 
     // Set this object and all its children to be in the special template age
     node->SetRoomKey(roomKey);
@@ -224,7 +224,7 @@ hsBool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!templateName)
         return false;
 
-    plCloneSpawnModifier* mod = TRACKED_NEW plCloneSpawnModifier;
+    plCloneSpawnModifier* mod = new plCloneSpawnModifier;
     mod->SetExportTime();
     mod->SetTemplateName(templateName);
     node->AddModifier(mod, IGetUniqueName(node));

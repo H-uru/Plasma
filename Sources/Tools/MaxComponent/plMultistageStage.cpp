@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "max.h"
 #include "hsStream.h"
 #include "resource.h"
-#include "hsUtils.h"
+
 
 #include "plAvatar/plAnimStage.h"
 
@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 char* MyReadSafeString(hsStream* s)
 {
     char *name = nil;
-    UInt16 numChars = s->ReadLE16();
+    uint16_t numChars = s->ReadLE16();
 
     bool oldFormat = !(numChars & 0xf000);
     if (oldFormat)
@@ -64,7 +64,7 @@ char* MyReadSafeString(hsStream* s)
     hsAssert(numChars <= s->GetSizeLeft(), "Bad string");
     if (numChars > 0)
     {
-        name = TRACKED_NEW char[numChars+1];
+        name = new char[numChars+1];
         s->Read(numChars, name);
         name[numChars] = '\0';      
     }
@@ -186,7 +186,7 @@ void plStandardStage::Read(hsStream *stream)
 {
     plBaseStage::Read(stream);
 
-    UInt16 version = stream->ReadLE16();
+    uint16_t version = stream->ReadLE16();
 
     delete [] fAnimName;
     fAnimName = MyReadSafeString(stream);
@@ -456,7 +456,7 @@ void plStandardStage::IInitDlg()
 plAnimStage* plStandardStage::CreateStage()
 {
     int loopCount = fLoopForever ? -1 : fNumLoops;
-    plAnimStage* stage = TRACKED_NEW plAnimStage(fAnimName,
+    plAnimStage* stage = new plAnimStage(fAnimName,
                                         fNotify,
                                         (plAnimStage::ForwardType)fForward,
                                         (plAnimStage::BackType)fBackward,
@@ -473,7 +473,7 @@ plAnimStage* plStandardStage::CreateStage()
 
 plBaseStage* plStandardStage::Clone()
 {
-    plStandardStage* clone = TRACKED_NEW plStandardStage;
+    plStandardStage* clone = new plStandardStage;
     clone->fAnimName = hsStrcpy(fAnimName);
     clone->fNumLoops = fNumLoops;
     clone->fLoopForever = fLoopForever;

@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef hsGDirect3DTnLEnumerate_h
 #define hsGDirect3DTnLEnumerate_h
-#include "hsConfig.h"
+#include "HeadSpin.h"
 
 #include "hsTemplates.h"
 //#include "plMemTrackerOff.h"
@@ -138,7 +138,7 @@ protected:
     hsBool  ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
     HRESULT IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT format );
 
-    static const UInt8 kNumDisplayFormats;
+    static const uint8_t kNumDisplayFormats;
     static const D3DFORMAT kDisplayFormats[];
 
 public:
@@ -153,7 +153,7 @@ public:
     HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
     HRESULT D3DEnum_SelectDefaultDriver( DWORD dwFlags );
 
-    UInt32 GetNumDrivers() { return fDrivers.GetCount(); }
+    uint32_t GetNumDrivers() { return fDrivers.GetCount(); }
     D3DEnum_DriverInfo* GetDriver(int i) { return &fDrivers[i]; }
 
     D3DEnum_DriverInfo* GetCurrentDriver() { return fCurrentDriver; }

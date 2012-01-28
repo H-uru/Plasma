@@ -70,7 +70,7 @@ struct hsKeyFrame
         kMatrix44KeyFrame,
     };
 
-    UInt16 fFrame;
+    uint16_t fFrame;
     static const int kMaxFrameNumber;
 };
 
@@ -98,7 +98,7 @@ struct hsBezPoint3Key : public hsKeyFrame
 
 struct hsScalarKey : public hsKeyFrame
 {
-    hsScalar    fValue;
+    float    fValue;
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
@@ -108,9 +108,9 @@ struct hsScalarKey : public hsKeyFrame
 
 struct hsBezScalarKey : public hsKeyFrame
 {
-    hsScalar    fInTan;
-    hsScalar    fOutTan;
-    hsScalar    fValue;
+    float    fInTan;
+    float    fOutTan;
+    float    fValue;
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
@@ -138,8 +138,8 @@ struct hsCompressedQuatKey32 : public hsKeyFrame
         kCompQuatNukeW,
     };
 
-    static const hsScalar kOneOverRootTwo;
-    static const hsScalar k10BitScaleRange;
+    static const float kOneOverRootTwo;
+    static const float k10BitScaleRange;
 
     void SetQuat(hsQuat &q);
     void GetQuat(hsQuat &q);
@@ -150,7 +150,7 @@ struct hsCompressedQuatKey32 : public hsKeyFrame
     hsBool CompareValue(hsCompressedQuatKey32 *key);
 
 protected:
-    UInt32 fData;
+    uint32_t fData;
 };
 
 struct hsCompressedQuatKey64 : public hsKeyFrame
@@ -163,9 +163,9 @@ struct hsCompressedQuatKey64 : public hsKeyFrame
         kCompQuatNukeW,
     };
 
-    static const hsScalar kOneOverRootTwo;
-    static const hsScalar k20BitScaleRange;
-    static const hsScalar k21BitScaleRange;
+    static const float kOneOverRootTwo;
+    static const float k20BitScaleRange;
+    static const float k21BitScaleRange;
 
     void SetQuat(hsQuat &q);
     void GetQuat(hsQuat &q);
@@ -176,7 +176,7 @@ struct hsCompressedQuatKey64 : public hsKeyFrame
     hsBool CompareValue(hsCompressedQuatKey64 *key);
 
 protected:
-    UInt32 fData[2];
+    uint32_t fData[2];
 };
 
 struct hsScaleValue : public hsKeyFrame
@@ -221,8 +221,8 @@ struct hsG3DSMaxKeyFrame : public hsKeyFrame
 
     void Reset() { fParts.Reset(); }    // Make parts identity
 
-    void Set(hsMatrix44 *mat, UInt16 frame);
-    void Set(const hsAffineParts &parts, UInt16 frame);
+    void Set(hsMatrix44 *mat, uint16_t frame);
+    void Set(const hsAffineParts &parts, uint16_t frame);
 
     hsMatrix44* GetMatrix44(hsMatrix44 *mat) { fParts.ComposeMatrix(mat); return mat; }
 

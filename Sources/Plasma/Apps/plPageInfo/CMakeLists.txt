@@ -13,6 +13,6 @@ set(plPageInfo_SOURCES
 )
 
 add_executable(plPageInfo ${plPageInfo_SOURCES})
-target_link_libraries(plPageInfo CoreLib CoreLibExe pnProduct plResMgr plAudioCore)
+target_link_libraries(plPageInfo CoreLib pnProduct plResMgr plAudioCore)
 
 source_group("Source Files" FILES ${plPageInfo_SOURCES})

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGameGUIMsg_h
 #define _pfGameGUIMsg_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 
@@ -56,7 +56,7 @@ class pfGameGUIMsg : public plMessage
 {
     protected:
 
-        UInt8   fCommand;
+        uint8_t   fCommand;
         char    fString[ 128 ];     
         char    *fAge;
 
@@ -69,7 +69,7 @@ class pfGameGUIMsg : public plMessage
         };
 
         pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fAge = nil; }
-        pfGameGUIMsg( plKey &receiver, UInt8 command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fAge = nil; }
+        pfGameGUIMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fAge = nil; }
         ~pfGameGUIMsg() { delete [] fAge; }
 
         CLASSNAME_REGISTER( pfGameGUIMsg );
@@ -91,7 +91,7 @@ class pfGameGUIMsg : public plMessage
             s->WriteSafeString( fAge );
         }
 
-        UInt8       GetCommand( void ) { return fCommand; }
+        uint8_t       GetCommand( void ) { return fCommand; }
 
         void        SetString( const char *str ) { hsStrncpy( fString, str, sizeof( fString ) - 1 ); }
         const char  *GetString( void ) { return fString; }

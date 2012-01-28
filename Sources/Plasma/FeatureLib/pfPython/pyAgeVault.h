@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -98,7 +98,7 @@ public:
     PyObject*       GetChronicleFolder( void ); // returns pyVaultFolderNode
     // Age chronicle (not the player chronicle!)
     PyObject*       FindChronicleEntry( const char * entryName ); // returns pyVaultChronicleNode
-    void AddChronicleEntry( const char * name, UInt32 type, const char * value );
+    void AddChronicleEntry( const char * name, uint32_t type, const char * value );
     // Players who have published to devices in this age
     PyObject*       GetPeopleIKnowAboutFolder( void ); // returns pyVaultPlayerInfoListNode
     // PERSONAL AGE SPECIFIC
@@ -108,7 +108,7 @@ public:
     PyObject*       GetSubAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     // AGE DEVICES. AKA IMAGERS, WHATEVER.
     // Add a new device.
-    void AddDevice( const char * deviceName, PyObject * cb=nil, UInt32 cbContext=0 );
+    void AddDevice( const char * deviceName, PyObject * cb=nil, uint32_t cbContext=0 );
     // Remove a device.
     void RemoveDevice( const char * deviceName );
     // True if device exists in age.
@@ -116,7 +116,7 @@ public:
     // Get the device node by name.
     PyObject * GetDevice( const char * deviceName ); // returns pyVaultTextNoteNode
     // Sets the inbox associated with a device.
-    void SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cb=nil, UInt32 cbContext=0 );
+    void SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cb=nil, uint32_t cbContext=0 );
     // Get the inbox associated with a device.
     PyObject * GetDeviceInbox( const char * deviceName ); // returns pyVaultFolderNode
     // find matching node

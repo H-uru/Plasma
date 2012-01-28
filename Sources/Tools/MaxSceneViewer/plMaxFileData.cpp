@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plMaxFileData.h"
 #include "hsUtils.h"
 
@@ -81,7 +81,7 @@ public:
     void GetClassName(TSTR& s) {s = "blah";}
 
     // Control methods
-    RefTargetHandle Clone(RemapDir& remap) { return TRACKED_NEW plMaxFileDataControl(); }
+    RefTargetHandle Clone(RemapDir& remap) { return new plMaxFileDataControl(); }
     void Copy(Control *from) {}
     virtual BOOL IsReplaceable() { return FALSE; }
 
@@ -100,7 +100,7 @@ public:
 };
 
 #define MAXFILE_DATA_CHUNK  1001
-static const UInt8 kVersion = 1;
+static const uint8_t kVersion = 1;
 
 IOResult plMaxFileDataControl::Load(ILoad *iload)
 {
@@ -110,8 +110,8 @@ IOResult plMaxFileDataControl::Load(ILoad *iload)
     {
         if (iload->CurChunkID() == MAXFILE_DATA_CHUNK)
         {
-            UInt8 version = 0;
-            res = iload->Read(&version, sizeof(UInt8), &nb);
+            uint8_t version = 0;
+            res = iload->Read(&version, sizeof(uint8_t), &nb);
             res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
             int branchLen = 0;
@@ -147,7 +147,7 @@ class MaxFileDataClassDesc : public ClassDesc
 {
 public:
     int             IsPublic()              { return FALSE; }
-    void*           Create(BOOL loading)    { return TRACKED_NEW plMaxFileDataControl; }
+    void*           Create(BOOL loading)    { return new plMaxFileDataControl; }
     const TCHAR*    ClassName()             { return _T("MaxFileData"); }
     SClass_ID       SuperClassID()          { return CTRL_FLOAT_CLASS_ID; }
     Class_ID        ClassID()               { return PLASMA_FILE_DATA_CID; }

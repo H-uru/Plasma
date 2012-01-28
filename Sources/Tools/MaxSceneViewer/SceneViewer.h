@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SceneViewer_h_inc
 #define SceneViewer_h_inc
 
-#include "hsWindows.h"
+#include "HeadSpin.h"
 
 // The dialog for setting up and starting the SceneViewer.  Controls starting the client
 // and SceneSync; SceneSync controls the updates though.

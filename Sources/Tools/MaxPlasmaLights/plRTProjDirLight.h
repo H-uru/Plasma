@@ -122,7 +122,7 @@ class plRTProjDirLight : public plRTLightBase
         SClass_ID   SuperClassID( void ) { return LIGHT_CLASS_ID; }
 
         ObjLightDesc    *CreateLightDesc( INode *n, BOOL forceShadowBuf = FALSE );
-        GenLight        *NewLight( int type ) { return TRACKED_NEW plRTProjDirLight(); }
+        GenLight        *NewLight( int type ) { return new plRTProjDirLight(); }
         RefTargetHandle Clone( RemapDir &remap );
 
         int             CanConvertToType( Class_ID obtype ) { return ( obtype ==  RTPDIR_LIGHT_CLASSID ) ? 1 : 0; }

@@ -257,7 +257,7 @@ void pyVaultAgeInfoNode::SetAgeDescription( const char * v )
 {
 }
 
-Int32 pyVaultAgeInfoNode::GetSequenceNumber() const
+int32_t pyVaultAgeInfoNode::GetSequenceNumber() const
 {
     if (!fNode)
         return -1;
@@ -266,11 +266,11 @@ Int32 pyVaultAgeInfoNode::GetSequenceNumber() const
     return access.ageSequenceNumber;
 }
 
-void pyVaultAgeInfoNode::SetSequenceNumber( Int32 v )
+void pyVaultAgeInfoNode::SetSequenceNumber( int32_t v )
 {
 }
 
-Int32 pyVaultAgeInfoNode::GetAgeLanguage() const
+int32_t pyVaultAgeInfoNode::GetAgeLanguage() const
 {
     if (!fNode)
         return -1;
@@ -279,20 +279,20 @@ Int32 pyVaultAgeInfoNode::GetAgeLanguage() const
     return access.ageLanguage;
 }
 
-void pyVaultAgeInfoNode::SetAgeLanguage( Int32 v )
+void pyVaultAgeInfoNode::SetAgeLanguage( int32_t v )
 {
 }
 
-UInt32 pyVaultAgeInfoNode::GetAgeID() const
+uint32_t pyVaultAgeInfoNode::GetAgeID() const
 {
     return 0;
 }
 
-void pyVaultAgeInfoNode::SetAgeID( UInt32 v )
+void pyVaultAgeInfoNode::SetAgeID( uint32_t v )
 {
 }
 
-UInt32 pyVaultAgeInfoNode::GetCzarID() const
+uint32_t pyVaultAgeInfoNode::GetCzarID() const
 {
     hsAssert(false, "eric, port me");
     return 0;

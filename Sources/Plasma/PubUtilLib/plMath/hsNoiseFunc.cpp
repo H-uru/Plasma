@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsNoiseFunc.h"
-#include "hsTypes.h"
-#include "hsScalar.h"
+#include "HeadSpin.h"
+
 #include "hsGeometry3.h"
 
 hsNoiseFunc::hsNoiseFunc() 
@@ -52,7 +52,7 @@ hsNoiseFunc::~hsNoiseFunc()
 {
 }
 
-void hsNoiseFunc::Seed(UInt32 s)
+void hsNoiseFunc::Seed(uint32_t s)
 {
     srand(s);
 }
@@ -67,7 +67,7 @@ hsTableNoise::~hsTableNoise()
     delete [] fTable;
 }
 
-void hsTableNoise::SetTable(int len, hsScalar* arr)
+void hsTableNoise::SetTable(int len, float* arr)
 {
     fTableLen = len;
 
@@ -78,7 +78,7 @@ void hsTableNoise::SetTable(int len, hsScalar* arr)
         return;
     }
 
-    fTable = TRACKED_NEW hsScalar[len+2];
+    fTable = new float[len+2];
 
     int i;
     for( i = 0; i < len; i++ )
@@ -88,67 +88,67 @@ void hsTableNoise::SetTable(int len, hsScalar* arr)
 
 }
 
-hsScalar hsTableNoise::Noise(hsScalar lo, hsScalar hi, hsScalar t)
+float hsTableNoise::Noise(float lo, float hi, float t)
 {
     hsAssert(fTableLen, "Badly initialized table noise function");
 
-    hsScalar r = hsScalar(rand()) / hsScalar(RAND_MAX);
+    float r = float(rand()) / float(RAND_MAX);
     r = lo + (hi - lo) * r;
 
     if( t < 0 )
         t = 0;
-    else if( t > hsScalar1 )
-        t = hsScalar1;
+    else if( t > 1.f )
+        t = 1.f;
 
-    hsScalar tIdx = t * fTableLen;
-    UInt32 idx = UInt32(tIdx);
-    hsScalar frac = tIdx - hsScalar(idx);
+    float tIdx = t * fTableLen;
+    uint32_t idx = uint32_t(tIdx);
+    float frac = tIdx - float(idx);
     hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 
-    hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
+    float scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
     
     r *= scale;
 
     return r;
 }
 
-hsScalar hsTableNoise::NoisePoint(const hsPoint3& p, hsScalar lo, hsScalar hi, hsScalar t)
+float hsTableNoise::NoisePoint(const hsPoint3& p, float lo, float hi, float t)
 {
     hsAssert(fTableLen, "Badly initialized table noise function");
 
-    UInt32 sX = *((UInt32*)&p.fX);
-    UInt32 sY = *((UInt32*)&p.fY);
-    UInt32 sZ = *((UInt32*)&p.fZ);
+    uint32_t sX = *((uint32_t*)&p.fX);
+    uint32_t sY = *((uint32_t*)&p.fY);
+    uint32_t sZ = *((uint32_t*)&p.fZ);
 
-    UInt32 sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
+    uint32_t sAll = ((((sX & 0x07800000) >> 16) | ((sX & 0x007fffff) >> 17)) << 20)
                 | ((((sY & 0x07800000) >> 16) | ((sY & 0x007fffff) >> 17)) << 10)
                 | ((((sZ & 0x07800000) >> 16) | ((sZ & 0x007fffff) >> 17))      );
 
-    const UInt32 kExp = 0x3f800000;
-    const UInt32 kMsk = 0x007fffff;
+    const uint32_t kExp = 0x3f800000;
+    const uint32_t kMsk = 0x007fffff;
 
-    const UInt32 kA = 1665636L;
-    const UInt32 kC = 1013904223L;
+    const uint32_t kA = 1665636L;
+    const uint32_t kC = 1013904223L;
 
-    UInt32 iR = kA * sAll + kC;
+    uint32_t iR = kA * sAll + kC;
     iR &= kMsk;
     iR |= kExp;
 
-    hsScalar r = (*(float*)&iR) - 1.f;
+    float r = (*(float*)&iR) - 1.f;
 
     r = lo + (hi - lo) * r;
 
     if( t < 0 )
         t = 0;
-    else if( t > hsScalar1 )
-        t = hsScalar1;
+    else if( t > 1.f )
+        t = 1.f;
 
-    hsScalar tIdx = t * fTableLen;
-    UInt32 idx = UInt32(tIdx);
-    hsScalar frac = tIdx - hsScalar(idx);
+    float tIdx = t * fTableLen;
+    uint32_t idx = uint32_t(tIdx);
+    float frac = tIdx - float(idx);
     hsAssert((idx >= 0)&&(idx <= fTableLen), "Noise parm t out of range [0..1]");
 
-    hsScalar scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
+    float scale = fTable[idx] + (fTable[idx+1] - fTable[idx]) * frac;
     
     r *= scale;
 

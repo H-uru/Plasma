@@ -50,11 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 #include <string.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAudioFileReader.h"
 #include "plAudioCore.h"
 //#include "hsTimer.h"
-#include "hsUtils.h"
+
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"
@@ -90,24 +90,24 @@ plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore
         {
             char cachedPath[256];
             IGetCachedPath(path, cachedPath, whichChan);
-            plAudioFileReader *r =  TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+            plAudioFileReader *r =  new plCachedFileReader(cachedPath, plAudioCore::kAll);
             if (!r->IsValid()) {
                 // So we tried to play a cached file and it didn't exist
                 // Oops... we should cache it now
                 delete r;
                 ICacheFile(path, true, whichChan);
-                r = TRACKED_NEW plCachedFileReader(cachedPath, plAudioCore::kAll);
+                r = new plCachedFileReader(cachedPath, plAudioCore::kAll);
             }
             return r;
         }
         
-        plAudioFileReader *r =  TRACKED_NEW plFastWAV(path, whichChan);
+        plAudioFileReader *r =  new plFastWAV(path, whichChan);
         return r;
     }
     else if (type == kStreamRAM)
-        return TRACKED_NEW plBufferedFileReader(path, whichChan);
+        return new plBufferedFileReader(path, whichChan);
     else if (type == kStreamNative)
-        return TRACKED_NEW plOGGCodec(path, whichChan);
+        return new plOGGCodec(path, whichChan);
 
     return nil;
 }
@@ -116,7 +116,7 @@ plAudioFileReader* plAudioFileReader::CreateWriter(const char* path, plWAVHeader
 {
     const char* ext = plFileUtils::GetFileExt(path);
 
-    plAudioFileReader* writer = TRACKED_NEW plCachedFileReader(path, plAudioCore::kAll);
+    plAudioFileReader* writer = new plCachedFileReader(path, plAudioCore::kAll);
     writer->OpenForWriting(path, header);
     return writer;
 }
@@ -164,11 +164,11 @@ void plAudioFileReader::ICacheFile(const char* path, bool noOverwrite, plAudioCo
             return;
         }
 
-        UInt8 buffer[4096];
-        UInt32 numLeft;
+        uint8_t buffer[4096];
+        uint32_t numLeft;
         while ((numLeft = reader->NumBytesLeft()) > 0)
         {
-            UInt32 toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
+            uint32_t toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
             reader->Read(toRead, buffer);
             writer->Write(toRead, buffer);
         }

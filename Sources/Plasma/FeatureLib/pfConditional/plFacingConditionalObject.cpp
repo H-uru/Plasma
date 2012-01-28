@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFacingConditionalObject.h"
 #include "plgDispatch.h"
 #include "pnModifier/plLogicModBase.h"
@@ -96,7 +96,7 @@ hsBool plFacingConditionalObject::Verify(plMessage* msg)
                 ourView = v;
                 ourView.Normalize();
             }
-            hsScalar dot = playerView * ourView;
+            float dot = playerView * ourView;
             if (dot >= fTolerance)
             {
                 fLogicMod->GetNotify()->AddFacingEvent( pActivateMsg->fHitterObj, fLogicMod->GetTarget()->GetKey(), dot, true);
@@ -129,7 +129,7 @@ hsBool plFacingConditionalObject::Verify(plMessage* msg)
                 ourView.fZ = playerView.fZ;
                 ourView.Normalize();
             }
-            hsScalar dot = playerView * ourView;
+            float dot = playerView * ourView;
             if (dot >= fTolerance)
             {
                 return true;            

@@ -42,13 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CHECKSUM_H
 #define PL_CHECKSUM_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include <openssl/md5.h>
 
 class plChecksum
 {
 public:
-    typedef UInt32 SumStorage;
+    typedef uint32_t SumStorage;
 private:
     SumStorage fSum;
 public:
@@ -66,13 +66,13 @@ class plMD5Checksum
 
         hsBool  fValid;
         MD5_CTX fContext;
-        UInt8   fChecksum[ MD5_DIGEST_LENGTH ];
+        uint8_t   fChecksum[ MD5_DIGEST_LENGTH ];
 
-        UInt8   IHexCharToInt( char c ) const;
+        uint8_t   IHexCharToInt( char c ) const;
 
     public:
 
-        plMD5Checksum( UInt32 size, UInt8 *buffer );
+        plMD5Checksum( uint32_t size, uint8_t *buffer );
         plMD5Checksum();
         plMD5Checksum( const plMD5Checksum &rhs );
         plMD5Checksum( const char *fileName );
@@ -85,14 +85,14 @@ class plMD5Checksum
         void    CalcFromStream( hsStream* stream );
 
         void    Start( void );
-        void    AddTo( UInt32 size, const UInt8 *buffer );
+        void    AddTo( uint32_t size, const uint8_t *buffer );
         void    Finish( void );
 
-        const UInt8 *GetValue( void ) const { return fChecksum; }
-        UInt32      GetSize( void ) const { return sizeof( fChecksum ); }
+        const uint8_t *GetValue( void ) const { return fChecksum; }
+        uint32_t      GetSize( void ) const { return sizeof( fChecksum ); }
 
         // Backdoor for cached checksums (ie, if you loaded it off disk)
-        void SetValue(UInt8* checksum);
+        void SetValue(uint8_t* checksum);
 
         // Note: GetAsHexString() returns a pointer to a static string; do not rely on the contents of this string between calls!
         const char  *GetAsHexString( void ) const;

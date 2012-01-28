@@ -122,7 +122,7 @@ PF_CONSOLE_CMD( Game, TakeScreenshot, "...", "Takes a shot of the current frame 
 
     plMipmap        myMipmap;
     char            fileName[ 512 ];
-    UInt32          uniqueNumber;   
+    uint32_t          uniqueNumber;   
 
 
     if( numParams > 1 )
@@ -167,7 +167,7 @@ PF_CONSOLE_CMD( Game, LoadDialog, "string dlgName", "Loads the given GUI dialog 
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        pfGameGUIMsg    *msg = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
+        pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
         msg->SetString( params[ 0 ] );
         plgDispatch::MsgSend( msg );
     }
@@ -179,7 +179,7 @@ PF_CONSOLE_CMD( Game, LoadLocalDialog, "string ageName, string dlgName", "Loads 
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        pfGameGUIMsg    *msg = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
+        pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
         msg->SetString( params[ 1 ] );
         msg->SetAge( params[ 0 ] );
         plgDispatch::MsgSend( msg );
@@ -192,7 +192,7 @@ PF_CONSOLE_CMD( Game, ShowDialog, "string dlgName", "Shows the given GUI dialog"
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        pfGameGUIMsg    *msg = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
+        pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
         msg->SetString( params[ 0 ] );
         plgDispatch::MsgSend( msg );
     }
@@ -204,7 +204,7 @@ PF_CONSOLE_CMD( Game, HideDialog, "string dlgName", "Hides the given GUI dialog"
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        pfGameGUIMsg    *msg = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
+        pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
         msg->SetString( params[ 0 ] );
         plgDispatch::MsgSend( msg );
     }
@@ -218,11 +218,11 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
     plKey mgrKey = hsgResMgr::ResMgr()->FindKey( lu );
     if( mgrKey )
     {
-        pfGameGUIMsg    *msg = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
+        pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
         msg->SetString( params[ 0 ] );
         plgDispatch::MsgSend( msg );
 
-        pfGameGUIMsg    *msg2 = TRACKED_NEW pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
+        pfGameGUIMsg    *msg2 = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
         msg2->SetString( params[ 1 ] );
         plgDispatch::MsgSend( msg2 );
     }
@@ -275,116 +275,116 @@ PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
 
 PF_CONSOLE_CMD( Game, EnterChatMode, "", "Enters in-game chat mode" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kEnterChatMode);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kEnterChatMode);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIToggleMini, "", "Toggle between mini and big KI" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kMiniBigKIToggle);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kMiniBigKIToggle);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIPutAway, "", "Put KI completely away" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIPutAway);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIPutAway);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatPageUp, "", "Scroll chat display one page up" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kChatAreaPageUp);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kChatAreaPageUp);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatPageDown, "", "Scroll chat display one page down" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kChatAreaPageDown);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kChatAreaPageDown);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatToStart, "", "Scroll chat display to top of buffer" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kChatAreaGoToBegin);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kChatAreaGoToBegin);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatToEnd, "", "Scroll chat display to bottom of buffer" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kChatAreaGoToEnd);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kChatAreaGoToEnd);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KITakePicture, "", "Take picture with KI" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKITakePicture);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKITakePicture);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KICreateJournal, "", "Create journal note entry" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKICreateJournalNote);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKICreateJournalNote);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatToggleFaded, "", "Toggle fade of chat display" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIToggleFade);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIToggleFade);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIChatToggleFadeEnable, "", "Toggle enable of chat fade" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIToggleFadeEnable);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIToggleFadeEnable);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIUpSizeFont, "", "Up size the KI font (chatarea)" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIUpSizeFont);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIUpSizeFont);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIDownSizeFont, "", "Down size the KI font (chatarea)" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIDownSizeFont);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIDownSizeFont);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIOpenYeeshaBook, "", "Open the player's Yeesha book" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIOpenYeehsaBook);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIOpenYeehsaBook);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIOpenKI, "", "Open the KI a little at a time" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIOpenKI);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIOpenKI);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KIHelp, "", "Open the CCR help dialog" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKIShowCCRHelp);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKIShowCCRHelp);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KICreateMarker, "", "Create marker in the working marker folder" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKICreateMarker);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKICreateMarker);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, KICreateMarkerFolder, "", "Create marker folder in current Age's journal folder" )
 {
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kKICreateMarkerFolder);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kKICreateMarkerFolder);
     plgDispatch::MsgSend( msg );
 }
 
 PF_CONSOLE_CMD( Game, SetChatFadeDelay, "float delayInSecs", "Sets the time in seconds before the chat text disappears" )
 {
 //  pfKI::GetInstance()->SetChatFadeDelay( params[ 0 ] );
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kSetChatFadeDelay);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetChatFadeDelay);
     msg->SetDelay( params[0] );
     plgDispatch::MsgSend( msg );
 }
@@ -448,7 +448,7 @@ PF_CONSOLE_CMD( Game_Emote, Sit, "", "")
 PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages from this client appear as admin messages" )
 {
 //  pfKI::GetInstance()->SetTextChatAdminMode( (bool)params[ 0 ] );
-    pfKIMsg* msg = TRACKED_NEW pfKIMsg(pfKIMsg::kSetTextChatAdminMode);
+    pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetTextChatAdminMode);
     msg->SetFlags( params[0] ? pfKIMsg::kAdminMsg : 0 );
     plgDispatch::MsgSend( msg );
 }

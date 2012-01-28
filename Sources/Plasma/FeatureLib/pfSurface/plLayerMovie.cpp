@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerMovie.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "hsUtils.h"
+
 
 #include "plMessage/plAnimCmdMsg.h"
 #include "plGImage/plMipmap.h"
@@ -58,7 +58,7 @@ plLayerMovie::plLayerMovie()
     fHeight(32)
 {
     fOwnedChannels |= kTexture;
-    fTexture = TRACKED_NEW plBitmap*;
+    fTexture = new plBitmap*;
     *fTexture = nil;
     
 //  fTimeConvert.SetOwner(this);
@@ -82,7 +82,7 @@ hsBool plLayerMovie::ISetFault(const char* errStr)
     return true;
 }
 
-hsBool plLayerMovie::ISetLength(hsScalar secs)
+hsBool plLayerMovie::ISetLength(float secs)
 {
     fLength = secs;
     return false;
@@ -111,7 +111,7 @@ hsBool plLayerMovie::ISetupBitmap()
 {
     if( !GetTexture() )
     {
-        plMipmap* b = TRACKED_NEW plMipmap( fWidth, fHeight, plMipmap::kARGB32Config, 1 );
+        plMipmap* b = new plMipmap( fWidth, fHeight, plMipmap::kARGB32Config, 1 );
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
@@ -142,8 +142,8 @@ hsBool plLayerMovie::IMovieIsIdle()
 
 hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
 {
-    hsScalar secs = fTimeConvert.WorldToAnimTime(wSecs);
-    UInt32 frame = ISecsToFrame(secs);
+    float secs = fTimeConvert.WorldToAnimTime(wSecs);
+    uint32_t frame = ISecsToFrame(secs);
     if( frame == fCurrentFrame )
         return false;
     fCurrentFrame = frame;
@@ -151,9 +151,9 @@ hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
     return true;
 }
 
-UInt32 plLayerMovie::Eval(double wSecs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerMovie::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 dirty = plLayerAnimation::Eval(wSecs, frame, ignore);
+    uint32_t dirty = plLayerAnimation::Eval(wSecs, frame, ignore);
 
     if( !IGetFault() && !(ignore & kTexture) )
     {
@@ -188,7 +188,7 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     int len = s->ReadLE32();
     if( len )
     {
-        fMovieName = TRACKED_NEW char[len+1];
+        fMovieName = new char[len+1];
         s->Read(len, fMovieName);
         fMovieName[len] = 0;
     }

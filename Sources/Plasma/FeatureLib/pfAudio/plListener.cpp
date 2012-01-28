@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsMatrix44.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plListener.h"
 #include "plgDispatch.h"
 #include "plAudio/plAudioSystem.h"
@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool      plListener::fPrintDbgInfo = false;
 
-hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plListener::IEval(double secs, float del, uint32_t dirty)
 {
 //  if (!plgAudioSys::Active())
 //      return true;
@@ -69,7 +69,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
 
     int y = 16 + 12, x = 400;
     if( fPrintDbgInfo ) 
-        plDebugText::Instance().DrawString( x, 16, "Listener:", (UInt32)0xffffffff, plDebugText::kStyleBold );
+        plDebugText::Instance().DrawString( x, 16, "Listener:", (uint32_t)0xffffffff, plDebugText::kStyleBold );
 
     // Get the avatar's SceneObject
     plKey key = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
@@ -80,7 +80,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     {
         // We don't have a position to init by, so do NOT eval yet!!!
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing yet", (UInt32)0xffffffff );
+            plDebugText::Instance().DrawString( x, y, "Not eval-ing yet", (uint32_t)0xffffffff );
         return true;
     }
 
@@ -165,12 +165,12 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     if( facingType == kInvalid || posType == kInvalid || velType == kInvalid )
     {
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing: missing one or more parameter bases", (UInt32)0xff0000ff );
+            plDebugText::Instance().DrawString( x, y, "Not eval-ing: missing one or more parameter bases", (uint32_t)0xff0000ff );
         return true;
     }
 
     // Got the params, now construct and send out the message, as well as update the audio system
-    plListenerMsg* msg = TRACKED_NEW plListenerMsg;
+    plListenerMsg* msg = new plListenerMsg;
     msg->SetDirection( dir );
     msg->SetUp( up );
     msg->SetPosition( position );
@@ -184,19 +184,19 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
     {
         char str[ 256 ];
         sprintf( str, "Direction: (%3.2f,%3.2f,%3.2f) from %s", dir.fX, dir.fY, dir.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Up: (%3.2f,%3.2f,%3.2f) from %s", up.fX, up.fY, up.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Position: (%3.2f,%3.2f,%3.2f) from %s", position.fX, position.fY, position.fZ, ( posType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
 
         sprintf( str, "Velocity: (%3.2f,%3.2f,%3.2f) from %s", velocity.fX, velocity.fY, velocity.fZ, ( velType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (UInt32)0xffffffff );
+        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
         y += 12;
     }
     plgDispatch::MsgSend( msg );
@@ -207,7 +207,7 @@ hsBool plListener::IEval(double secs, hsScalar del, UInt32 dirty)
 void    plListener::ISetRef( const plKey &ref, hsBool binding, int type )
 {
     if( binding )
-        hsgResMgr::ResMgr()->AddViaNotify( ref, TRACKED_NEW plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, type ), plRefFlags::kPassiveRef );
+        hsgResMgr::ResMgr()->AddViaNotify( ref, new plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, type ), plRefFlags::kPassiveRef );
     else
         GetKey()->Release( ref );
 }
@@ -293,9 +293,9 @@ hsBool plListener::MsgReceive(plMessage* msg)
         if( fInitMe )
         {
             // By default, position and orientation are camera based
-            plSetListenerMsg *set = TRACKED_NEW plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kFacing, nil, true );
+            plSetListenerMsg *set = new plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kFacing, nil, true );
             set->Send();
-            set = TRACKED_NEW plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kPosition, nil, true );
+            set = new plSetListenerMsg( plSetListenerMsg::kVCam | plSetListenerMsg::kPosition, nil, true );
             set->Send();
 
             fInitMe = false;
