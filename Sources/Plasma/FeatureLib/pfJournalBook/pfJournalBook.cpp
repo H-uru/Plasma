@@ -1743,10 +1743,8 @@ void    pfJournalBook::IHandleCheckClick( uint32_t idx, pfBookData::WhichSide wh
 void    pfJournalBook::GoToPage( uint32_t pageNumber )
 {
     // Put us here, but only on an even page (odd pages go on the right, y'know)
-    if (pageNumber < fPageStarts.Count())
-        fCurrentPage = pageNumber & ~0x00000001;
-    else
-        fCurrentPage = 0;
+    // (no need for a range check, going past the end simply puts you on a blank page, able to go backward but not forward)
+    fCurrentPage = pageNumber & ~0x00000001;
     fVisibleLinks.Reset();
     IRenderPage( fCurrentPage, pfJournalDlgProc::kTagLeftDTMap );
     IRenderPage( fCurrentPage + 1, pfJournalDlgProc::kTagRightDTMap );
@@ -2609,7 +2607,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool s
         }
     }
 
-    hsAssert(page < fPageStarts.GetCount(), "UnInitialized page start!");
+    hsAssert(page < fPageStarts.GetCount() || page > fLastPage, "UnInitialized page start!");
     if( page <= fLastPage 
         && page < fPageStarts.GetCount())   // Added this as a crash-prevention bandaid - MT
     {
