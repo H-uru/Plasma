@@ -6917,6 +6917,14 @@ class xKI(ptModifier):
                             idx = message.index(">>")
                             player = ptPlayer(PtGetLocalizedString("KI.Chat.InterAgePlayerRecvd", [player.getPlayerName(),message[2:idx]]),player.getPlayerID())
                             message = message[idx+2:]
+                            # add unknown buddy to recents
+                            if ((not cflags.private) and (not cflags.neighbors)):
+                                buddies = ptVault().getBuddyListFolder()
+                                if (type(buddies) != type(None)):
+                                    buddyID = player.getPlayerID()
+                                    if (not buddies.playerlistHasPlayer(buddyID)):
+                                        PtDebugPrint('xKI: Add unknown buddy %d to recents' % buddyID)
+                                        self.IAddPlayerToRecents(buddyID)
                         except ValueError:
                             pass
                     # save the playerid for reply
