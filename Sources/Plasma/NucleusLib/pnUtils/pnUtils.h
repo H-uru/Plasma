@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PNUTILS_H
 
 
-#include "Private/pnUtAllIncludes.h"
+#include "pnUtAllIncludes.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PNUTILS_H
