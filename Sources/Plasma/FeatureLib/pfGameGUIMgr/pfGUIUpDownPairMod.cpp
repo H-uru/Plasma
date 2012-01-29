@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIUpDownPairMod.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUIButtonMod.h"
@@ -106,7 +106,7 @@ pfGUIUpDownPairMod::pfGUIUpDownPairMod()
     fDownControl = nil;
     fValue = fMin = fMax = fStep = 0.f;
 
-    fButtonProc = TRACKED_NEW pfUpDownBtnProc( nil, nil, this );
+    fButtonProc = new pfUpDownBtnProc( nil, nil, this );
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -119,7 +119,7 @@ pfGUIUpDownPairMod::~pfGUIUpDownPairMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIUpDownPairMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -205,8 +205,8 @@ void    pfGUIUpDownPairMod::Read( hsStream *s, hsResMgr *mgr )
 
     fUpControl = nil;
     fDownControl = nil;
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
-    mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
+    mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
 
     s->ReadLE( &fMin );
     s->ReadLE( &fMax );
@@ -228,13 +228,13 @@ void    pfGUIUpDownPairMod::Write( hsStream *s, hsResMgr *mgr )
 }
 
 
-void    pfGUIUpDownPairMod::SetRange( hsScalar min, hsScalar max )
+void    pfGUIUpDownPairMod::SetRange( float min, float max )
 {
     pfGUIValueCtrl::SetRange( min, max );
     IUpdate();
 }
 
-void    pfGUIUpDownPairMod::SetCurrValue( hsScalar v )
+void    pfGUIUpDownPairMod::SetCurrValue( float v )
 {
     pfGUIValueCtrl::SetCurrValue( v );
     IUpdate();

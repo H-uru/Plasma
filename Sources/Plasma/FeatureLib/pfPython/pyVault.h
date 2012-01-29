@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"
@@ -130,7 +130,7 @@ public:
     ///////////////
     // Chronicle
     PyObject* FindChronicleEntry( const char * entryName ); // returns pyVaultChronicleNode
-    void AddChronicleEntry( const char * name, UInt32 type, const char * value );
+    void AddChronicleEntry( const char * name, uint32_t type, const char * value );
     ///////////////
     // publishing
     void    SendToDevice( pyVaultNode& node, const char * deviceName );
@@ -165,10 +165,10 @@ public:
 
     ///////////////
     // Invite player to visit an age.
-    void InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID );
-    void UnInvitePlayerToAge( const char * guid, UInt32 playerID );
+    void InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID );
+    void UnInvitePlayerToAge( const char * guid, uint32_t playerID );
     // Offer link to player
-    void OfferLinkToPlayer( const pyAgeLinkStruct & link, UInt32 playerID );
+    void OfferLinkToPlayer( const pyAgeLinkStruct & link, uint32_t playerID );
 
     ///////////////
     // Creates neighborhood and joins the player to it as the mayor/czar.

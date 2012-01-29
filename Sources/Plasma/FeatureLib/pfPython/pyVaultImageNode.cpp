@@ -70,7 +70,7 @@ static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
 
     hsgResMgr::ResMgr()->AddViaNotify(
         key,
-        NEW(plGenRefMsg)(
+        new plGenRefMsg(
             plNetClientMgr::GetInstance()->GetKey(),
             plRefMsg::kOnCreate,
             0,
@@ -113,7 +113,7 @@ void pyVaultImageNode::Image_SetTitle( const char * text )
     if (!fNode)
         return;
         
-    wchar * wStr = hsStringToWString(text);
+    wchar_t * wStr = hsStringToWString(text);
 
     VaultImageNode image(fNode);
     image.SetImageTitle(wStr);
@@ -209,7 +209,7 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
         fMipmap = nil;
     }
 
-    byte * buffer = nil;
+    uint8_t * buffer = nil;
     int bytes;
     PyObject_AsReadBuffer(pybuf, (const void **)&buffer, &bytes);
     if (buffer) {
@@ -232,7 +232,7 @@ void pyVaultImageNode::SetImageFromScrShot()
 
     if (cyMisc::GetPipeline()) {
         VaultImageNode access(fNode);
-        fMipmap = NEW(plMipmap);
+        fMipmap = new plMipmap();
         if (cyMisc::GetPipeline()->CaptureScreen(fMipmap, false, 800, 600)) {
             fMipmapKey = fMipmap->GetKey();
             if (!fMipmapKey)
@@ -244,7 +244,7 @@ void pyVaultImageNode::SetImageFromScrShot()
         else {
             access.SetImageData(nil, 0);
             access.SetImageType(VaultImageNode::kNone);
-            DEL(fMipmap);
+            delete fMipmap;
             fMipmap = nil;
         }
     }

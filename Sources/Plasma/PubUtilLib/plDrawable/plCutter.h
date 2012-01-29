@@ -95,7 +95,7 @@ class plFlatGridMesh
 {
 public:
     hsTArray<plCutoutMiniVtx>   fVerts;
-    hsTArray<UInt16>            fIdx;
+    hsTArray<uint16_t>            fIdx;
 
     void Reset() { fVerts.SetCount(0); fIdx.SetCount(0); }
 };
@@ -105,14 +105,14 @@ class plCutter : public plCreatable
 protected:
 
     // Permanent attributes
-    hsScalar fLengthU;
-    hsScalar fLengthV;
-    hsScalar fLengthW;
+    float fLengthU;
+    float fLengthV;
+    float fLengthW;
 
     // Internal cached stuff
-    hsScalar        fDistU;
-    hsScalar        fDistV;
-    hsScalar        fDistW;
+    float        fDistU;
+    float        fDistV;
+    float        fDistW;
     hsVector3       fDirU;
     hsVector3       fDirV;
     hsVector3       fDirW;
@@ -136,7 +136,7 @@ protected:
 
     hsBool          IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& hit) const;
 
-    inline void     ISetPosNorm(hsScalar parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
+    inline void     ISetPosNorm(float parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
 
     void            ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
     void            ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
@@ -155,7 +155,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     hsBool      FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const;
-    hsBool      FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, hsScalar height) const;
+    hsBool      FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const;
 
     void        Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, hsBool flip=false);
 
@@ -163,9 +163,9 @@ public:
     hsBool      CutoutGrid(int nWid, int nLen, plFlatGridMesh& dst) const;
 
     void        SetLength(const hsVector3& s) { fLengthU = s.fX; fLengthV = s.fY; fLengthW = s.fZ; }
-    hsScalar    GetLengthU() const { return fLengthU; }
-    hsScalar    GetLengthV() const { return fLengthV; }
-    hsScalar    GetLengthW() const { return fLengthW; }
+    float    GetLengthU() const { return fLengthU; }
+    float    GetLengthV() const { return fLengthV; }
+    float    GetLengthW() const { return fLengthW; }
 
     const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
     plBoundsIsect& GetIsect() { return fIsect; }

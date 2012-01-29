@@ -137,14 +137,14 @@ plSceneObject* plCameraModifier1::GetSubject()
         return fSubObj;
 }   
 
-void plCameraModifier1::SetFOVw(hsScalar f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVw(float f, hsBool fUpdateVCam) 
 { 
     fFOVw = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
         plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
 }
 
-void plCameraModifier1::SetFOVh(hsScalar f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVh(float f, hsBool fUpdateVCam) 
 { 
     fFOVh = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
@@ -191,7 +191,7 @@ hsBool plCameraModifier1::MsgReceive(plMessage* msg)
         double time = (double)fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fAccel;
         double time2 = (double)pEventMsg->fEventTime;
         time = hsABS(time - time2);
-        hsScalar h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
+        float h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
         if (GetBrain())
             GetBrain()->SetFOVGoal(h, time);
     }
@@ -323,7 +323,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Read(stream, mgr);
     fBrain = nil;
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
     int count = stream->ReadLE32();
     int i;
     for (i = 0; i < count; i++)
@@ -333,14 +333,14 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         hsBool cutpos = stream->ReadBool();
         hsBool cutpoa = stream->ReadBool();
         hsBool ignore = stream->ReadBool();
-        hsScalar v = stream->ReadLEScalar();
-        hsScalar a = stream->ReadLEScalar();
-        hsScalar d = stream->ReadLEScalar();
-        hsScalar pV = stream->ReadLEScalar();
-        hsScalar pA = stream->ReadLEScalar();
-        hsScalar pD = stream->ReadLEScalar();
+        float v = stream->ReadLEScalar();
+        float a = stream->ReadLEScalar();
+        float d = stream->ReadLEScalar();
+        float pV = stream->ReadLEScalar();
+        float pA = stream->ReadLEScalar();
+        float pD = stream->ReadLEScalar();
 
-        CamTrans* camTrans = TRACKED_NEW CamTrans(key);
+        CamTrans* camTrans = new CamTrans(key);
         camTrans->fAccel = a;
         camTrans->fDecel = d;
         camTrans->fVelocity = v;
@@ -364,7 +364,7 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     }
     for(i = 0; i < n; i++ )
     {   
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
     }
 
     n = stream->ReadLE32();
@@ -430,7 +430,7 @@ void plCameraModifier1::Push(hsBool recenter)
     {
         if (fStartAnimOnPush)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kRunForward);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());
@@ -455,7 +455,7 @@ void plCameraModifier1::Pop()
     {
         if (fStopAnimOnPop)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kStop);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());
@@ -465,7 +465,7 @@ void plCameraModifier1::Pop()
         }
         if (fResetAnimOnPop)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             pMsg->AddReceiver(GetTarget()->GetKey());

@@ -102,18 +102,18 @@ public:
 
     hsGDeviceRef*   fVtxDeviceRef;
 
-    UInt8*          fChannels[kNumValidChans];
-    UInt16          fStrides[kNumValidChans];
-    Int32           fOffsets[kNumValidChans];
+    uint8_t*          fChannels[kNumValidChans];
+    uint16_t          fStrides[kNumValidChans];
+    int32_t           fOffsets[kNumValidChans];
 
-    UInt16          fNumWeights;
-    UInt16          fNumUVWsPerVert;
-    UInt16          fNumVerts;
+    uint16_t          fNumWeights;
+    uint16_t          fNumUVWsPerVert;
+    uint16_t          fNumVerts;
 
     //////////////////////////////////
     // QUERY SECTION
     // Queries on how much of what we got.
-    UInt32          VertCount() const { return fNumVerts; }
+    uint32_t          VertCount() const { return fNumVerts; }
     hsBool          HasChannel(Channel chan) const { return fStrides[chan] > 0; }
     hsBool              HasPositions() const { return HasChannel(kPosition); }
     hsBool              HasWeights() const { return HasChannel(kWeight); }
@@ -131,13 +131,13 @@ public:
     hsPoint3&       Position(int i) const { return *(hsPoint3*)(fChannels[kPosition] + i*fStrides[kPosition]); }
     hsVector3&      Normal(int i) const { return *(hsVector3*)(fChannels[kNormal] + i*fStrides[kNormal]); }
 
-    hsScalar&       Weight(int iVtx, int iWgt) const { return *(hsScalar*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + iWgt*sizeof(hsScalar)); }
-    hsScalar*       Weights(int i) const { return (hsScalar*)(fChannels[kWeight] + i*fStrides[kWeight]); }
-    UInt32&         WgtIndices(int i) const { return *(UInt32*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex]); }
-    UInt8&          WgtIndex(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + iWgt); }
+    float&       Weight(int iVtx, int iWgt) const { return *(float*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + iWgt*sizeof(float)); }
+    float*       Weights(int i) const { return (float*)(fChannels[kWeight] + i*fStrides[kWeight]); }
+    uint32_t&         WgtIndices(int i) const { return *(uint32_t*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex]); }
+    uint8_t&          WgtIndex(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + iWgt); }
 
-    UInt32&         Diffuse32(int i) const { return *(UInt32*)(fChannels[kDiffuse] + i*fStrides[kDiffuse]); }
-    UInt32&         Specular32(int i) const { return *(UInt32*)(fChannels[kSpecular] + i*fStrides[kSpecular]); }
+    uint32_t&         Diffuse32(int i) const { return *(uint32_t*)(fChannels[kDiffuse] + i*fStrides[kDiffuse]); }
+    uint32_t&         Specular32(int i) const { return *(uint32_t*)(fChannels[kSpecular] + i*fStrides[kSpecular]); }
 
     hsColorRGBA     DiffuseRGBA(int i) const { return hsColorRGBA().FromARGB32(Diffuse32(i)); }
     hsColorRGBA     SpecularRGBA(int i) const { return hsColorRGBA().FromARGB32(Specular32(i)); }
@@ -153,13 +153,13 @@ public:
     hsPoint3&       PositionOff(int i) const { return *(hsPoint3*)(fChannels[kPosition] + i*fStrides[kPosition] + fOffsets[kPosition]); }
     hsVector3&      NormalOff(int i) const { return *(hsVector3*)(fChannels[kNormal] + i*fStrides[kNormal] + fOffsets[kNormal]); }
 
-    hsScalar&       WeightOff(int iVtx, int iWgt) const { return *(hsScalar*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + fOffsets[kWeight] + iWgt*sizeof(hsScalar)); }
-    hsScalar*       WeightsOff(int i) const { return (hsScalar*)(fChannels[kWeight] + i*fStrides[kWeight] + fOffsets[kWeight]); }
-    UInt32&         WgtIndicesOff(int i) const { return *(UInt32*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex] + fOffsets[kWgtIndex]); }
-    UInt8&          WgtIndexOff(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + fOffsets[kWgtIndex] + iWgt); }
+    float&       WeightOff(int iVtx, int iWgt) const { return *(float*)(fChannels[kWeight] + iVtx*fStrides[kWeight] + fOffsets[kWeight] + iWgt*sizeof(float)); }
+    float*       WeightsOff(int i) const { return (float*)(fChannels[kWeight] + i*fStrides[kWeight] + fOffsets[kWeight]); }
+    uint32_t&    WgtIndicesOff(int i) const { return *(uint32_t*)(fChannels[kWgtIndex] + i * fStrides[kWgtIndex] + fOffsets[kWgtIndex]); }
+    uint8_t&     WgtIndexOff(int iVtx, int iWgt) const { return *(fChannels[kWgtIndex] + iVtx*fStrides[kWgtIndex] + fOffsets[kWgtIndex] + iWgt); }
 
-    UInt32&         Diffuse32Off(int i) const { return *(UInt32*)(fChannels[kDiffuse] + i*fStrides[kDiffuse] + fOffsets[kDiffuse]); }
-    UInt32&         Specular32Off(int i) const { return *(UInt32*)(fChannels[kSpecular] + i*fStrides[kSpecular] + fOffsets[kSpecular]); }
+    uint32_t&       Diffuse32Off(int i) const { return *(uint32_t*)(fChannels[kDiffuse] + i*fStrides[kDiffuse] + fOffsets[kDiffuse]); }
+    uint32_t&       Specular32Off(int i) const { return *(uint32_t*)(fChannels[kSpecular] + i*fStrides[kSpecular] + fOffsets[kSpecular]); }
 
     hsColorRGBA     DiffuseRGBAOff(int i) const { return hsColorRGBA().FromARGB32(Diffuse32Off(i)); }
     hsColorRGBA     SpecularRGBAOff(int i) const { return hsColorRGBA().FromARGB32(Specular32Off(i)); }
@@ -178,24 +178,24 @@ public:
     void            ClearVerts();
 
     // Must at least set a count and the valid channels. Note below on setting up for UVW access.
-    plAccessVtxSpan&    SetVertCount(UInt16 c) { fNumVerts = c; return *this; }
-    plAccessVtxSpan&    SetStream(void* p, UInt16 stride, Int32 offset, Channel chan) { fChannels[chan] = (UInt8*)p; fStrides[chan] = stride; fOffsets[chan] = offset; return *this; }
+    plAccessVtxSpan&    SetVertCount(uint16_t c) { fNumVerts = c; return *this; }
+    plAccessVtxSpan&    SetStream(void* p, uint16_t stride, int32_t offset, Channel chan) { fChannels[chan] = (uint8_t*)p; fStrides[chan] = stride; fOffsets[chan] = offset; return *this; }
 
     //////////////////////////////////
     // Convenience versions. You get the idea.
-    plAccessVtxSpan&    PositionStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kPosition); }
-    plAccessVtxSpan&    NormalStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kNormal); }
-    plAccessVtxSpan&    DiffuseStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kDiffuse); }
-    plAccessVtxSpan&    SpecularStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kSpecular); }
-    plAccessVtxSpan&    WeightStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kWeight); }
-    plAccessVtxSpan&    WgtIndexStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kWgtIndex); }
+    plAccessVtxSpan&    PositionStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kPosition); }
+    plAccessVtxSpan&    NormalStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kNormal); }
+    plAccessVtxSpan&    DiffuseStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kDiffuse); }
+    plAccessVtxSpan&    SpecularStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kSpecular); }
+    plAccessVtxSpan&    WeightStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kWeight); }
+    plAccessVtxSpan&    WgtIndexStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kWgtIndex); }
     plAccessVtxSpan&    SetNumWeights(int n) { if( !(fNumWeights = n) ) SetStream(nil, 0, 0, kWeight).SetStream(nil, 0, 0, kWgtIndex); return *this; }
     // Note on UVW access setup, you don't actually "have" to set the number of uvws per vertex,
     // but one way or another you'll need to know to access the uvws. If you're going to be setting
     // up the AccessSpan and passing it off for processing, you definitely better set it. But the
     // accessor and iterators don't ever use it.
     // Note that this means the UVWStream stride is from uvw[0][0] to uvw[1][0] in bytes.
-    plAccessVtxSpan&    UVWStream(void* p, UInt16 stride, Int32 offset) { return SetStream(p, stride, offset, kUVW); }
+    plAccessVtxSpan&    UVWStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kUVW); }
     plAccessVtxSpan&    SetNumUVWs(int n) { if( !(fNumUVWsPerVert = n) )SetStream(nil, 0, 0, kUVW); return *this; }
     //////////////////////////////////
 
@@ -224,9 +224,9 @@ private:
     union
     {
         T*          fValue;
-        UInt8*      fValueByte;
+        uint8_t*    fValueByte;
     };
-    UInt8*                      fValueEnd;
+    uint8_t*                    fValueEnd;
     plAccessVtxSpan*            fAccess;
     plAccessVtxSpan::Channel    fChan;
 
@@ -355,7 +355,7 @@ public:
 
 class plAccDiffuseIterator
 {
-    plAccIterator<UInt32>       fDiffuse;
+    plAccIterator<uint32_t>       fDiffuse;
 public:
     plAccDiffuseIterator(plAccessVtxSpan* acc) 
         :   fDiffuse(acc, plAccessVtxSpan::kDiffuse) {}
@@ -367,7 +367,7 @@ public:
         return *this; 
     }
 
-    UInt32*             Diffuse32() const { return fDiffuse.Value(); }
+    uint32_t*             Diffuse32() const { return fDiffuse.Value(); }
 
     hsColorRGBA         DiffuseRGBA() const { return hsColorRGBA().FromARGB32(*Diffuse32()); }
 
@@ -379,8 +379,8 @@ public:
 class plAccDiffSpecIterator
 {
 protected:
-    plAccIterator<UInt32>       fDiffuse;
-    plAccIterator<UInt32>       fSpecular;
+    plAccIterator<uint32_t>       fDiffuse;
+    plAccIterator<uint32_t>       fSpecular;
 public:
     plAccDiffSpecIterator(plAccessVtxSpan* acc) 
         :   fDiffuse(acc, plAccessVtxSpan::kDiffuse),
@@ -394,8 +394,8 @@ public:
         return *this; 
     }
 
-    UInt32*             Diffuse32() const { return fDiffuse.Value(); }
-    UInt32*             Specular32() const { return fSpecular.Value(); }
+    uint32_t*             Diffuse32() const { return fDiffuse.Value(); }
+    uint32_t*             Specular32() const { return fSpecular.Value(); }
 
     hsColorRGBA         DiffuseRGBA() const { return hsColorRGBA().FromARGB32(*Diffuse32()); }
     hsColorRGBA         SpecularRGBA() const { return hsColorRGBA().FromARGB32(*Specular32()); }
@@ -410,11 +410,11 @@ class plAccVertexIterator
 {
 protected:
     plAccIterator<hsPoint3>     fPosition;
-    plAccIterator<hsScalar>     fWeight;
-    plAccIterator<UInt8>        fWgtIndex;
+    plAccIterator<float>     fWeight;
+    plAccIterator<uint8_t>        fWgtIndex;
     plAccIterator<hsVector3>    fNormal;
-    plAccIterator<UInt32>       fDiffuse;
-    plAccIterator<UInt32>       fSpecular;
+    plAccIterator<uint32_t>       fDiffuse;
+    plAccIterator<uint32_t>       fSpecular;
     plAccIterator<hsPoint3>     fUVW;
 public:
     plAccVertexIterator(plAccessVtxSpan* acc) 
@@ -440,16 +440,16 @@ public:
     }
 
     hsPoint3*           Position() const { return fPosition.Value(); }
-    hsScalar*           Weights() const { return fWeight.Value(); }
-    hsScalar*           Weight(int i) const { return fWeight.Value() + i; }
-    UInt32*             WgtIndices() const { return (UInt32*)(fWgtIndex.Value()); }
-    UInt8*              WgtIndex(int i) const { return fWgtIndex.Value() + i; }
+    float*           Weights() const { return fWeight.Value(); }
+    float*           Weight(int i) const { return fWeight.Value() + i; }
+    uint32_t*             WgtIndices() const { return (uint32_t*)(fWgtIndex.Value()); }
+    uint8_t*              WgtIndex(int i) const { return fWgtIndex.Value() + i; }
     hsVector3*          Normal() const { return fNormal.Value(); }
     hsPoint3*           UVWs() const { return fUVW.Value(); }
     hsPoint3*           UVW(int i) const { return fUVW.Value() + i; }
 
-    UInt32*             Diffuse32() const { return fDiffuse.Value(); }
-    UInt32*             Specular32() const { return fSpecular.Value(); }
+    uint32_t*             Diffuse32() const { return fDiffuse.Value(); }
+    uint32_t*             Specular32() const { return fSpecular.Value(); }
 
     hsColorRGBA         DiffuseRGBA() const { return hsColorRGBA().FromARGB32(*Diffuse32()); }
     hsColorRGBA         SpecularRGBA() const { return hsColorRGBA().FromARGB32(*Specular32()); }

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace ND {
 
 extern HMODULE          g_lib;
-extern const wchar      g_version[];
+extern const wchar_t      g_version[];
 
 
 //============================================================================
@@ -75,7 +75,7 @@ inline unsigned NetProtocolToSrv (ENetProtocol protocol) {
 }
 
 //============================================================================
-inline const wchar * SrvToString (unsigned srv) {
+inline const wchar_t * SrvToString (unsigned srv) {
     
     switch (srv) {
         case kDiagSrvAuth:  return L"Auth";
@@ -92,13 +92,13 @@ struct NetDiag : AtomicRef {
 
     bool            destroyed;
     CCritSect       critsect;
-    wchar *         hosts[kNumDiagSrvs];
+    wchar_t *         hosts[kNumDiagSrvs];
     unsigned        nodes[kNumDiagSrvs];
     
     ~NetDiag ();
 
     void Destroy ();
-    void SetHost (unsigned srv, const wchar host[]);    
+    void SetHost (unsigned srv, const wchar_t host[]);    
 };
 
 

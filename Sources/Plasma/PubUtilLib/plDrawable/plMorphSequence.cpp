@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plMorphSequence.h"
 #include "plMorphSequenceSDLMod.h"
 
@@ -89,7 +89,7 @@ void plMorphDataSet::Write(hsStream* s, hsResMgr* mgr)
 
 ///////////////////////////////////////////////////////////////////////////
 
-const UInt32 kChanMask = plAccessVtxSpan::kPositionMask
+const uint32_t kChanMask = plAccessVtxSpan::kPositionMask
                         | plAccessVtxSpan::kNormalMask
                         | plAccessVtxSpan::kUVWMask;
 
@@ -98,14 +98,14 @@ const UInt32 kChanMask = plAccessVtxSpan::kPositionMask
 // that's what got loaded from disk.
 // Use Access RW. That might already be handled in the customization stuff.
 
-plConst(hsScalar)   kMorphTime(0.5);
+plConst(float)   kMorphTime(0.5);
 
 class plMorphTarget
 {
 public:
-    UInt16      fLayer;
-    UInt16      fDelta;
-    hsScalar    fWeight;
+    uint16_t      fLayer;
+    uint16_t      fDelta;
+    float    fWeight;
 };
 
 hsTArray<plMorphTarget> fTgtWgts;
@@ -131,11 +131,11 @@ hsBool plMorphSequence::MsgReceive(plMessage* msg)
         // Can always add it in later if desired.
         if( fTgtWgts.GetCount() )
         {
-            hsScalar delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? kMorphTime : 1.e-3f);
+            float delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? kMorphTime : 1.e-3f);
             int i;
             for( i = 0; i < fTgtWgts.GetCount(); i++ )
             {
-                hsScalar currWgt = GetWeight(fTgtWgts[i].fLayer, fTgtWgts[i].fDelta);
+                float currWgt = GetWeight(fTgtWgts[i].fLayer, fTgtWgts[i].fDelta);
                 if( fTgtWgts[i].fWeight < currWgt )
                 {
                     if( fTgtWgts[i].fWeight >= (currWgt -= delWgt) )
@@ -233,7 +233,7 @@ int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = nil */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs[iLay].GetNumDeltas();
 }
 
-hsScalar plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) const 
+float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) const 
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index == -1)
@@ -242,7 +242,7 @@ hsScalar plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil *
         return fSharedMeshes[index].fArrayWeights[iLay].fDeltaWeights[iDel];
 }
 
-void plMorphSequence::SetWeight(int iLay, int iDel, hsScalar w, plKey meshKey /* = nil */)
+void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = nil */)
 {
     int index = IFindSharedMeshIndex(meshKey);
 
@@ -462,7 +462,7 @@ void plMorphSequence::AddTarget(plSceneObject* so)
 
     if (!fMorphSDLMod)
     {
-        fMorphSDLMod = TRACKED_NEW plMorphSequenceSDLMod;
+        fMorphSDLMod = new plMorphSequenceSDLMod;
         so->AddModifier(fMorphSDLMod);
     }
 }
@@ -493,7 +493,7 @@ void plMorphSequence::Read(hsStream* s, hsResMgr* mgr)
     
     n = s->ReadLE32();
     for( i = 0; i < n; i++)
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 }
 
 void plMorphSequence::Write(hsStream* s, hsResMgr* mgr)
@@ -642,17 +642,17 @@ hsBool plMorphSequence::IFindIndices(int iShare)
     if( !di )
         return false;
 
-    Int32 meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
+    int32_t meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
     if( meshIdx < 0 )
         return false;
 
-    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((UInt8)meshIdx));
+    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((uint8_t)meshIdx));
     if( !dr )
         return false;
 
     mInfo.fCurrDraw = dr;
 
-    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((UInt8)meshIdx));
+    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((uint8_t)meshIdx));
 
     hsAssert(mInfo.fMesh->fSpans.GetCount() == diIndex.GetCount(), "Mismatch between geometry and indices");
 
@@ -671,7 +671,7 @@ void plMorphSequence::IReleaseIndices(int iShare)
     mInfo.fCurrDraw = nil;
 }
 
-Int32 plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
+int32_t plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
 {
     int i;
     for( i = 0; i < fSharedMeshes.GetCount(); i++ )
@@ -683,7 +683,7 @@ Int32 plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
     return -1;
 }
 
-Int32 plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
+int32_t plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
 {
     int i;
     for( i = 0; i < fPendingStates.GetCount(); i++ )

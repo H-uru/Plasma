@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAgeManifest.h"
-#include "hsUtils.h"
+
 
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// plManifestFile ///////////////////////////////////////////////////////
 
-plManifestFile::plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, UInt32 size, UInt32 zippedSize, UInt32 flags, bool md5Now) :
+plManifestFile::plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now) :
     fChecksum(check),
     fSize(size),
     fZippedSize(zippedSize),
@@ -117,7 +117,7 @@ bool plManifestFile::LocalExists()
 //////////////////////////////////////////////////////////////////////////////
 
 const char* plManifest::fTimeFormat = "%m/%d/%y %H:%M:%S";
-static const UInt32 kLatestFormatVersion = 5;
+static const uint32_t kLatestFormatVersion = 5;
 
 plManifest::plManifest()
 {
@@ -151,7 +151,7 @@ protected:
 
     virtual const char* GetSectionName() const { return "version"; }
 
-    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, UInt32 userData)
+    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
     {
         if (stricmp(token, "format") == 0)
             fDest->SetFormatVersion(atoi(tokenizer->next()));
@@ -170,22 +170,22 @@ protected:
 
     virtual void AddFile(plManifestFile* file) = 0;
 
-    plManifestFile* IReadManifestFile(const char* token, hsStringTokenizer* tokenizer, UInt32 userData, bool isPage)
+    plManifestFile* IReadManifestFile(const char* token, hsStringTokenizer* tokenizer, uint32_t userData, bool isPage)
     {
         char name[256];
         strcpy(name, token);
-        UInt32 size = atoi(tokenizer->next());
+        uint32_t size = atoi(tokenizer->next());
         plMD5Checksum sum;
         sum.SetFromHexString(tokenizer->next());
-        UInt32 flags = atoi(tokenizer->next());
-        UInt32 zippedSize = 0;
+        uint32_t flags = atoi(tokenizer->next());
+        uint32_t zippedSize = 0;
         if (hsCheckBits(flags, plManifestFile::kFlagZipped))
             zippedSize = atoi(tokenizer->next());
 
-        return TRACKED_NEW plManifestFile(name, "", sum, size, zippedSize, flags);
+        return new plManifestFile(name, "", sum, size, zippedSize, flags);
     }
 
-    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, UInt32 userData)
+    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
     {
         plManifestFile* file = IReadManifestFile(token, tokenizer, userData, false);
         AddFile(file);

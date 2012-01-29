@@ -110,7 +110,6 @@ target_link_libraries(MaxMain ${Vorbis_LIBRARIES})
 # Carbon copy from plClient
 # TODO: Maybe see if some of these can be removed?
 target_link_libraries(MaxMain CoreLib)
-target_link_libraries(MaxMain CoreLibExe)
 target_link_libraries(MaxMain pfAnimation)
 target_link_libraries(MaxMain pfAudio)
 target_link_libraries(MaxMain pfCamera)

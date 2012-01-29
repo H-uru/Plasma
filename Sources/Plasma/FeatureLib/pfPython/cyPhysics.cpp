@@ -95,7 +95,7 @@ void cyPhysics::EnableT(hsBool state)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -150,7 +150,7 @@ void  cyPhysics::EnableCollision()
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
-        plEventGroupEnableMsg* pMsg = TRACKED_NEW plEventGroupEnableMsg;
+        plEventGroupEnableMsg* pMsg = new plEventGroupEnableMsg;
         if (fNetForce )
         {
             // set the network propagate flag to make sure it gets to the other clients
@@ -179,7 +179,7 @@ void  cyPhysics::DisableCollision()
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
-        plEventGroupEnableMsg* pMsg = TRACKED_NEW plEventGroupEnableMsg;
+        plEventGroupEnableMsg* pMsg = new plEventGroupEnableMsg;
         if (fNetForce )
         {
             // set the network propagate flag to make sure it gets to the other clients
@@ -251,7 +251,7 @@ void cyPhysics::WarpMat(pyMatrix44& mat)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plWarpMsg* pMsg = TRACKED_NEW plWarpMsg(mat.fMatrix);
+        plWarpMsg* pMsg = new plWarpMsg(mat.fMatrix);
         pMsg->SetWarpFlags(plWarpMsg::kFlushTransform);
         // check if this needs to be network forced to all clients
         if (fNetForce )
@@ -283,7 +283,7 @@ void cyPhysics::WarpMat(pyMatrix44& mat)
 //             : if the object is physical then warp it
 //             : otherwise just use the coordinate interface and set the transform
 //
-void cyPhysics::Move(pyVector3& direction, hsScalar distance)
+void cyPhysics::Move(pyVector3& direction, float distance)
 {
     //move each receiver (object) separately
     int i;
@@ -310,7 +310,7 @@ void cyPhysics::Move(pyVector3& direction, hsScalar distance)
                 if ( si )
                 {
                     // create message for each receiver
-                    plWarpMsg* pMsg = TRACKED_NEW plWarpMsg(target_matrix);
+                    plWarpMsg* pMsg = new plWarpMsg(target_matrix);
                     // check if this needs to be network forced to all clients
                     if (fNetForce )
                     {
@@ -352,7 +352,7 @@ void cyPhysics::Move(pyVector3& direction, hsScalar distance)
 //             : if the object is physical then warp it
 //             : otherwise just use the coordinate interface and set the transform
 //
-void cyPhysics::Rotate(hsScalar rad, pyVector3& axis)
+void cyPhysics::Rotate(float rad, pyVector3& axis)
 {
     // rotate each receiver (object) separately
     int i;
@@ -380,7 +380,7 @@ void cyPhysics::Rotate(hsScalar rad, pyVector3& axis)
                 if ( si )
                 {
                     // create message for each receiver
-                    plWarpMsg* pMsg = TRACKED_NEW plWarpMsg(target_matrix);
+                    plWarpMsg* pMsg = new plWarpMsg(target_matrix);
                     // check if this needs to be network forced to all clients
                     if (fNetForce )
                     {
@@ -427,7 +427,7 @@ void cyPhysics::Force(pyVector3& force)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plForceMsg* pMsg = TRACKED_NEW plForceMsg;
+        plForceMsg* pMsg = new plForceMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -466,7 +466,7 @@ void cyPhysics::ForceWithOffset(pyVector3& force, pyPoint3& offset)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plOffsetForceMsg* pMsg = TRACKED_NEW plOffsetForceMsg;
+        plOffsetForceMsg* pMsg = new plOffsetForceMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -506,7 +506,7 @@ void cyPhysics::Torque(pyVector3& torque)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plTorqueMsg* pMsg = TRACKED_NEW plTorqueMsg;
+        plTorqueMsg* pMsg = new plTorqueMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -544,7 +544,7 @@ void cyPhysics::Impulse(pyVector3& impulse)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plImpulseMsg* pMsg = TRACKED_NEW plImpulseMsg;
+        plImpulseMsg* pMsg = new plImpulseMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -583,7 +583,7 @@ void cyPhysics::ImpulseWithOffset(pyVector3& impulse, pyPoint3& offset)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plOffsetImpulseMsg* pMsg = TRACKED_NEW plOffsetImpulseMsg;
+        plOffsetImpulseMsg* pMsg = new plOffsetImpulseMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -622,7 +622,7 @@ void cyPhysics::AngularImpulse(pyVector3& impulse)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAngularImpulseMsg* pMsg = TRACKED_NEW plAngularImpulseMsg;
+        plAngularImpulseMsg* pMsg = new plAngularImpulseMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -655,14 +655,14 @@ void cyPhysics::AngularImpulse(pyVector3& impulse)
 //             : A damp factor of 1 leaves them alone.
 //
 //
-void cyPhysics::Damp(hsScalar damp)
+void cyPhysics::Damp(float damp)
 {
     hsAssert(0, "Who uses this?");
     // must have a receiver!
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plDampMsg* pMsg = TRACKED_NEW plDampMsg;
+        plDampMsg* pMsg = new plDampMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -701,7 +701,7 @@ void cyPhysics::ShiftMass(pyVector3& offset)
 /*  if ( fRecvr.Count() > 0 )
     {
         // create message
-        plShiftMassMsg* pMsg = TRACKED_NEW plShiftMassMsg;
+        plShiftMassMsg* pMsg = new plShiftMassMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -752,7 +752,7 @@ void cyPhysics::SetLinearVelocity(pyVector3& velocity)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plLinearVelocityMsg* pMsg = TRACKED_NEW plLinearVelocityMsg;
+        plLinearVelocityMsg* pMsg = new plLinearVelocityMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -779,7 +779,7 @@ void cyPhysics::SetAngularVelocity(pyVector3& angVel)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAngularVelocityMsg* pMsg = TRACKED_NEW plAngularVelocityMsg;
+        plAngularVelocityMsg* pMsg = new plAngularVelocityMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {

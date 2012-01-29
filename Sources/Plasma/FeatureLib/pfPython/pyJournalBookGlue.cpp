@@ -109,7 +109,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     if (PyUnicode_Check(sourceObj))
     {
         int len = PyUnicode_GetSize(sourceObj);
-        wchar_t* temp = TRACKED_NEW wchar_t[len + 1];
+        wchar_t* temp = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)sourceObj, temp, len);
         temp[len] = L'\0';
 

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plMaxCFGFile.h"
 #include "max.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFile/plBrowseFolder.h"
 
 const char *plMaxConfig::GetPluginIni()
@@ -64,7 +64,7 @@ const char *plMaxConfig::GetClientPath(bool getNew, bool quiet)
     const char *plugDir = GetPluginIni();
 
     // Get the saved path
-    UInt32 len = GetPrivateProfileString("SceneViewer", "Directory", "", plasmaPath, MAX_PATH, plugDir);
+    uint32_t len = GetPrivateProfileString("SceneViewer", "Directory", "", plasmaPath, MAX_PATH, plugDir);
 
     // If we didn't find a path, or we want a new one, ask the user for one
     if ((len == 0 || getNew) && !quiet)
@@ -105,7 +105,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
         configstr[0] = '\0';
         
         const char *plugDir = GetPluginIni();
-        UInt32 len = GetPrivateProfileString("AssetMan", "Disable", "", configstr, MAX_PATH, plugDir);
+        uint32_t len = GetPrivateProfileString("AssetMan", "Disable", "", configstr, MAX_PATH, plugDir);
 
         if (strcmp(configstr, "1") == 0 || stricmp(configstr, "true") == 0)
             disabled = true;

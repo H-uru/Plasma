@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "hsStream.h"
 
-hsBool plZlibCompress::Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn)
+hsBool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     unsigned long buflen_out = *bufLenOut;
     bool result = (uncompress(bufOut, &buflen_out, bufIn, bufLenIn) == Z_OK);
@@ -52,7 +52,7 @@ hsBool plZlibCompress::Uncompress(UInt8* bufOut, UInt32* bufLenOut, const UInt8*
     return result;
 }
 
-hsBool plZlibCompress::Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* bufIn, UInt32 bufLenIn)
+hsBool plZlibCompress::Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     // according to compress doc, the bufOut buffer should be at least .1% larger than source buffer, plus 12 bytes.
     hsAssert(*bufLenOut>=(int)(bufLenIn*1.1+12), "bufOut compress buffer is not large enough");
@@ -65,12 +65,12 @@ hsBool plZlibCompress::Compress(UInt8* bufOut, UInt32* bufLenOut, const UInt8* b
 //
 // copy bufOut to bufIn, set bufLenIn=bufLenOut
 //
-hsBool plZlibCompress::ICopyBuffers(UInt8** bufIn, UInt32* bufLenIn, char* bufOut, UInt32 bufLenOut, int offset, bool ok)
+hsBool plZlibCompress::ICopyBuffers(uint8_t** bufIn, uint32_t* bufLenIn, char* bufOut, uint32_t bufLenOut, int offset, bool ok)
 {
     if (ok)
     {
         *bufLenIn = bufLenOut+offset;
-        UInt8* newBuf = TRACKED_NEW UInt8[*bufLenIn];           // alloc new buffer
+        uint8_t* newBuf = new uint8_t[*bufLenIn];           // alloc new buffer
         HSMemory::BlockMove(*bufIn, newBuf, offset);    // copy offset (uncompressed) part
         delete [] *bufIn;                               // delete original buffer
 
@@ -87,16 +87,16 @@ hsBool plZlibCompress::ICopyBuffers(UInt8** bufIn, UInt32* bufLenIn, char* bufOu
 // In place version
 // offset is how much to skip over when compressing
 //
-hsBool plZlibCompress::Compress(UInt8** bufIn, UInt32* bufLenIn, int offset)
+hsBool plZlibCompress::Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset)
 {
-    UInt32 adjBufLenIn = *bufLenIn - offset;
-    UInt8* adjBufIn = *bufIn + offset;
+    uint32_t adjBufLenIn = *bufLenIn - offset;
+    uint8_t* adjBufIn = *bufIn + offset;
 
     // according to compress doc, the bufOut buffer should be at least .1% larger than source buffer, plus 12 bytes.
-    UInt32 bufLenOut = (int)(adjBufLenIn*1.1+12);
-    char* bufOut = TRACKED_NEW char[bufLenOut];
+    uint32_t bufLenOut = (int)(adjBufLenIn*1.1+12);
+    char* bufOut = new char[bufLenOut];
     
-    bool ok=(Compress((UInt8*)bufOut, &bufLenOut, (UInt8*)adjBufIn, adjBufLenIn) && 
+    bool ok=(Compress((uint8_t*)bufOut, &bufLenOut, (uint8_t*)adjBufIn, adjBufLenIn) && 
         bufLenOut < adjBufLenIn);
     return ICopyBuffers(bufIn, bufLenIn, bufOut, bufLenOut, offset, ok);
 }
@@ -104,14 +104,14 @@ hsBool plZlibCompress::Compress(UInt8** bufIn, UInt32* bufLenIn, int offset)
 //
 // In place version
 //
-hsBool plZlibCompress::Uncompress(UInt8** bufIn, UInt32* bufLenIn, UInt32 bufLenOut, int offset)
+hsBool plZlibCompress::Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t bufLenOut, int offset)
 {
-    UInt32 adjBufLenIn = *bufLenIn - offset;
-    UInt8* adjBufIn = *bufIn + offset;
+    uint32_t adjBufLenIn = *bufLenIn - offset;
+    uint8_t* adjBufIn = *bufIn + offset;
 
-    char* bufOut = TRACKED_NEW char[bufLenOut];
+    char* bufOut = new char[bufLenOut];
     
-    bool ok=Uncompress((UInt8*)bufOut, &bufLenOut, (UInt8*)adjBufIn, adjBufLenIn) ? true : false;
+    bool ok=Uncompress((uint8_t*)bufOut, &bufLenOut, (uint8_t*)adjBufIn, adjBufLenIn) ? true : false;
     return ICopyBuffers(bufIn, bufLenIn, bufOut, bufLenOut, offset, ok);
 }
 
@@ -127,7 +127,7 @@ hsBool  plZlibCompress::UncompressFile( const char *compressedPath, const char *
     hsBool  worked = false;
     int     length, err;
 
-    UInt8   buffer[ kGzBufferSize ];
+    uint8_t   buffer[ kGzBufferSize ];
 
 
     outFile = fopen( destPath, "wb" );
@@ -169,7 +169,7 @@ hsBool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *
     hsBool  worked = false;
     int     length, err;
 
-    UInt8   buffer[ kGzBufferSize ];
+    uint8_t   buffer[ kGzBufferSize ];
 
 
     inFile = fopen( uncompressedPath, "rb" );
@@ -213,7 +213,7 @@ hsBool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s 
     hsBool  worked = false;
     int     length, err;
 
-    UInt8   buffer[ kGzBufferSize ];
+    uint8_t   buffer[ kGzBufferSize ];
 
 
     inFile = gzopen( filename, "rb" );
@@ -248,7 +248,7 @@ hsBool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
     hsBool  worked = false;
     int     length, err;
 
-    UInt8   buffer[ kGzBufferSize ];
+    uint8_t   buffer[ kGzBufferSize ];
 
 
     outFile = gzopen( filename, "wb" );

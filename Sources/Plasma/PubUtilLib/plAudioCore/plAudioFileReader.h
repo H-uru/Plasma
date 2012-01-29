@@ -73,15 +73,15 @@ public:
     virtual void    Open(){}
     virtual void    Close( void ) = 0;
 
-    virtual UInt32  GetDataSize( void ) = 0;
+    virtual uint32_t  GetDataSize( void ) = 0;
     virtual float   GetLengthInSecs( void ) = 0;
 
-    virtual hsBool  SetPosition( UInt32 numBytes ) = 0;
-    virtual hsBool  Read( UInt32 numBytes, void *buffer ) = 0;
-    virtual UInt32  NumBytesLeft( void ) = 0;
+    virtual hsBool  SetPosition( uint32_t numBytes ) = 0;
+    virtual hsBool  Read( uint32_t numBytes, void *buffer ) = 0;
+    virtual uint32_t  NumBytesLeft( void ) = 0;
 
     virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
-    virtual UInt32  Write( UInt32 bytes, void *buffer ) { return 0; }
+    virtual uint32_t  Write( uint32_t bytes, void *buffer ) { return 0; }
 
     virtual hsBool  IsValid( void ) = 0;
 

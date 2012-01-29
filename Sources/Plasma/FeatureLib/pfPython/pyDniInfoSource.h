@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyDniInfoSource_h_inc
 #define pyDniInfoSource_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 
@@ -74,7 +74,7 @@ public:
     // current coords of the player in current age as a pyDniCoordinates
     PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
     // current time in current age (tbd)
-    UInt32          GetAgeTime( void ) const;
+    uint32_t          GetAgeTime( void ) const;
     // name of current age
     const char *    GetAgeName( void ) const;
     // unique identifier for this age instance

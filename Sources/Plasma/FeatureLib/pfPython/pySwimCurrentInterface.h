@@ -69,20 +69,20 @@ public:
 
     void setKey(pyKey& key) {fSwimCurrentKey = key.getKey();} // for python glue only, do NOT call
 
-    hsScalar getNearDist();
-    void setNearDist(hsScalar val);
+    float getNearDist();
+    void setNearDist(float val);
 
-    hsScalar getFarDist();
-    void setFarDist(hsScalar val);
+    float getFarDist();
+    void setFarDist(float val);
 
-    hsScalar getNearVel();
-    void setNearVel(hsScalar val);
+    float getNearVel();
+    void setNearVel(float val);
 
-    hsScalar getFarVel();
-    void setFarVel(hsScalar val);
+    float getFarVel();
+    void setFarVel(float val);
 
-    hsScalar getRotation();
-    void setRotation(hsScalar val);
+    float getRotation();
+    void setRotation(float val);
 
     void enable();
     void disable();

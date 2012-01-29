@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAngleAttenLayer.h"
 
 #include "iparamb2.h"
@@ -53,7 +53,7 @@ class plAngleAttenLayerClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plAngleAttenLayer(); }
+    void*           Create(BOOL loading = FALSE) { return new plAngleAttenLayer(); }
     const TCHAR*    ClassName()     { return GetString(IDS_ANGLE_ATTEN_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return ANGLE_ATTEN_LAYER_CLASS_ID; }
@@ -239,7 +239,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlockByID(BlockID id)
 //From ReferenceTarget 
 RefTargetHandle plAngleAttenLayer::Clone(RemapDir &remap) 
 {
-    plAngleAttenLayer *mnew = TRACKED_NEW plAngleAttenLayer();
+    plAngleAttenLayer *mnew = new plAngleAttenLayer();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefAngles, remap.CloneRef(fParmsPB));
     BaseClone(this, mnew, remap);

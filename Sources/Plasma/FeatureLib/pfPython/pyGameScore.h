@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: a wrapper class to provide access to a game score
 //
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -76,7 +76,7 @@ public:
     static void     AddPlasmaClasses(PyObject *m);
 
     int             GetScoreID();
-    UInt32          GetCreatedTime();
+    uint32_t          GetCreatedTime();
     int             GetOwnerID();
     int             GetGameType();
     int             GetValue();

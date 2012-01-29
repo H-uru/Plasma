@@ -74,11 +74,11 @@ enum {
 ***/
 
 struct Srv2Log_ConnData {
-    dword   dataBytes;
-    dword   buildId;
-    dword   srvType;
-    dword   buildType;
-    dword   productId;
+    uint32_t   dataBytes;
+    uint32_t   buildId;
+    uint32_t   srvType;
+    uint32_t   buildType;
+    uint32_t   productId;
 };
 
 struct Srv2Log_Connect {
@@ -95,7 +95,7 @@ struct Srv2Log_Connect {
 
 struct Srv2Log_LogMsg : SrvMsgHeader {
     unsigned    eventType;
-    qword       timestamp;
+    uint64_t       timestamp;
 };
 
 

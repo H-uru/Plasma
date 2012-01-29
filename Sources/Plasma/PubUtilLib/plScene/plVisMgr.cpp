@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plVisMgr.h"
 
 #include "plVisRegion.h"
@@ -209,7 +209,7 @@ plVisMgr* plGlobalVisMgr::fInstance = nil;
 
 void plGlobalVisMgr::Init()
 {
-    fInstance = TRACKED_NEW plVisMgr;
+    fInstance = new plVisMgr;
     fInstance->RegisterAs(kGlobalVisMgr_KEY);
 }
 

@@ -72,12 +72,12 @@ protected:
 
     plSceneObject*              fRootNode;
     hsPoint3                    fPos;
-    hsScalar                    fHither;
-    hsScalar                    fYon;
-    hsScalar                    fFogStart;
+    float                    fHither;
+    float                    fYon;
+    float                    fFogStart;
     hsColorRGBA                 fColor;
 
-    hsScalar                    fRefreshRate;
+    float                    fRefreshRate;
     double                      fLastRefresh;
     int                         fLastRender;
     int                         fOutStanding;
@@ -99,7 +99,7 @@ protected:
 
 public:
     plDynamicEnvMap();
-    plDynamicEnvMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1);
+    plDynamicEnvMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1);
 
     virtual ~plDynamicEnvMap();
 
@@ -116,18 +116,18 @@ public:
     void Init();
 
     void        SetPosition(const hsPoint3& pos);
-    void        SetHither(hsScalar f);
-    void        SetYon(hsScalar f);
-    void        SetFogStart(hsScalar f);
+    void        SetHither(float f);
+    void        SetYon(float f);
+    void        SetFogStart(float f);
     void        SetColor(const hsColorRGBA& col);
-    void        SetRefreshRate(hsScalar secs);
+    void        SetRefreshRate(float secs);
 
     hsPoint3    GetPosition() const;
-    hsScalar    GetHither() const { return fHither; }
-    hsScalar    GetYon() const { return fYon; }
-    hsScalar    GetFogStart() const { return fFogStart; }
+    float    GetHither() const { return fHither; }
+    float    GetYon() const { return fYon; }
+    float    GetFogStart() const { return fFogStart; }
     hsColorRGBA GetColor() const { return fColor; }
-    hsScalar    GetRefreshRate() const { return 6.f * fRefreshRate; }
+    float    GetRefreshRate() const { return 6.f * fRefreshRate; }
 
     void        AddVisRegion(plVisRegion* reg); // Will just send a ref
 
@@ -153,16 +153,16 @@ public:
         kRefMatLayer,
     };
 
-    hsScalar                    fHither;
-    hsScalar                    fYon;
-    hsScalar                    fFogStart;
+    float                    fHither;
+    float                    fYon;
+    float                    fFogStart;
     hsColorRGBA                 fColor;
 
 protected:
     plRenderRequest             fReq;
     plRenderRequestMsg*         fReqMsg;
 
-    hsScalar                    fRefreshRate;
+    float                    fRefreshRate;
     double                      fLastRefresh;
     int                         fOutStanding;
 
@@ -177,7 +177,7 @@ protected:
     // Extra info for swapping around textures when reflections are disabled.
     plBitmap*                   fDisableTexture;
     hsTArray<plLayer*>          fMatLayers;
-    static UInt8                fFlags;
+    static uint8_t                fFlags;
     enum 
     {
         kReflectionCapable  = 0x01,
@@ -196,7 +196,7 @@ protected:
 
 public:
     plDynamicCamMap();
-    plDynamicCamMap(UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = -1, UInt8 sDepth = -1);
+    plDynamicCamMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1);
 
     virtual ~plDynamicCamMap();
 
@@ -212,7 +212,7 @@ public:
     void Init();
 
     void        SetIncludeCharacters(hsBool b);
-    void        SetRefreshRate(hsScalar secs);
+    void        SetRefreshRate(float secs);
     void        AddVisRegion(plVisRegion* reg);
     void        SetVisRegionName(char *name){ fVisRegionNames.Push(name); }
 

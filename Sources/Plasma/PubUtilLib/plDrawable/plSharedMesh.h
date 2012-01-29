@@ -65,12 +65,12 @@ public:
     hsTArray<plGeometrySpan *>fSpans;
     hsTArray<const plSceneObject *> fActiveInstances;
     plMorphDataSet *fMorphSet;
-    UInt8 fFlags;
+    uint8_t fFlags;
     
     plSharedMesh();
     ~plSharedMesh();
     
-    void CreateInstance(plSceneObject *so, UInt8 boneIndex);
+    void CreateInstance(plSceneObject *so, uint8_t boneIndex);
     void RemoveInstance(plSceneObject *so);
     
     CLASSNAME_REGISTER( plSharedMesh );

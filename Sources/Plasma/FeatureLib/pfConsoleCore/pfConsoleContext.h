@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfConsoleContext_h
 #define _pfConsoleContext_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfConsoleCmd.h"
 
 
@@ -76,12 +76,12 @@ class pfConsoleContext
 
         void    Clear( void );
 
-        UInt32              GetNumVars( void ) const;
-        const char          *GetVarName( UInt32 idx ) const;
-        pfConsoleCmdParam   &GetVarValue( UInt32 idx ) const;
+        uint32_t              GetNumVars( void ) const;
+        const char          *GetVarName( uint32_t idx ) const;
+        pfConsoleCmdParam   &GetVarValue( uint32_t idx ) const;
 
-        Int32   FindVar( const char *name ) const;
-        void    RemoveVar( UInt32 idx );
+        int32_t   FindVar( const char *name ) const;
+        void    RemoveVar( uint32_t idx );
 
         void    AddVar( const char *name, const pfConsoleCmdParam &value );
         void    AddVar( const char *name, int value );
@@ -90,7 +90,7 @@ class pfConsoleContext
         void    AddVar( const char *name, char value );
         void    AddVar( const char *name, bool value );
 
-        hsBool  SetVar( UInt32 idx, const pfConsoleCmdParam &value );
+        hsBool  SetVar( uint32_t idx, const pfConsoleCmdParam &value );
 
         hsBool  SetVar( const char *name, const pfConsoleCmdParam &value );
         hsBool  SetVar( const char *name, int value );

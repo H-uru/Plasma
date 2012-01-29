@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIValueCtrl.h"
 #include "pfGameGUIMgr.h"
 
@@ -66,7 +66,7 @@ pfGUIValueCtrl::~pfGUIValueCtrl()
 
 //// SetCurrValue ////////////////////////////////////////////////////////////
 
-void    pfGUIValueCtrl::SetCurrValue( hsScalar v )
+void    pfGUIValueCtrl::SetCurrValue( float v )
 {
     fValue = v;
     if( fValue < fMin )
@@ -77,7 +77,7 @@ void    pfGUIValueCtrl::SetCurrValue( hsScalar v )
 
 //// SetRange ////////////////////////////////////////////////////////////////
 
-void    pfGUIValueCtrl::SetRange( hsScalar min, hsScalar max )
+void    pfGUIValueCtrl::SetRange( float min, float max )
 {
     fMin = min; 
     fMax = max; 

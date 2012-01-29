@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plModulator.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
@@ -76,18 +76,18 @@ void plModulator::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 }
 
 // Volume - Want to base this on the closest point on the bounds, instead of just the center.
-hsScalar plModulator::Modulation(const hsBounds3Ext& bnd) const
+float plModulator::Modulation(const hsBounds3Ext& bnd) const
 {
     return Modulation(bnd.GetCenter());
 }
 
-hsScalar plModulator::Modulation(const hsPoint3& pos) const
+float plModulator::Modulation(const hsPoint3& pos) const
 {
     hsAssert(fVolume, "Modulator with no Volume is pretty useless");
 
-    hsScalar dist = fVolume->Test(pos);
+    float dist = fVolume->Test(pos);
 
-    hsScalar retVal;
+    float retVal;
     if( dist > 0 )
     {
         if( dist < fSoftDist )

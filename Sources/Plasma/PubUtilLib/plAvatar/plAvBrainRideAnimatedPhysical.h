@@ -58,7 +58,7 @@ public:
     virtual void Deactivate();
     virtual hsBool MsgReceive(plMessage *msg);
     virtual hsBool LeaveAge();
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
 protected:
     hsBool IInitAnimations();
     mode fMode;

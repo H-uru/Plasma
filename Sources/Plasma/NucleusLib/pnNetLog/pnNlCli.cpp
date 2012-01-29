@@ -156,7 +156,7 @@ static void NetLogConnDisconnect () {
 
 //============================================================================
 static void AddEventNode (Srv2Log_LogMsg *msg) {
-    LogConnEventNode *node = NEW(LogConnEventNode)(msg, TimeGetMs() + kIssueSaveMs);
+    LogConnEventNode *node = new LogConnEventNode(msg, TimeGetMs() + kIssueSaveMs);
     s_critsect.Enter();
     {
         s_eventQueue.Link(node);
@@ -181,7 +181,7 @@ static void ParseIni (Ini * ini) {
     );
 
     if (value) {
-        wchar addrStr[32];
+        wchar_t addrStr[32];
         IniGetString(value, addrStr, arrsize(addrStr), 0, nil);
         NetAddress addr;
         NetAddressFromString(&addr, addrStr, kNetDefaultServerPort);
@@ -190,7 +190,7 @@ static void ParseIni (Ini * ini) {
 }
 
 //============================================================================
-static void IniChangeCallback (const wchar fullPath[]) {
+static void IniChangeCallback (const wchar_t fullPath[]) {
     Ini * ini = IniOpen(fullPath);
     ParseIni(ini);
     IniClose(ini);
@@ -207,7 +207,7 @@ static unsigned TimerCallback (void *) {
         if(allowedNumTrans < 0)     // this could be negative, if so set to zero
             allowedNumTrans = 0;
 
-        dword currTime = TimeGetMs();
+        uint32_t currTime = TimeGetMs();
         LogConnEventNode *hash;
         int timeDiff;
 
@@ -310,7 +310,7 @@ static unsigned CalcArgsLength (const NetLogEvent &event, va_list args) {
             break;
             
             case kLogParamStringW: {
-                wchar *str = va_arg(args, wchar *);
+                wchar_t *str = va_arg(args, wchar_t *);
                 if(!str)
                     str = L"";
                 length += StrBytes(str);
@@ -416,7 +416,7 @@ bool LogMsgTrans::OnTransReply (
         AddEventNode(msgBuffer);
     }
     else {
-        FREE(msgBuffer);
+        free(msgBuffer);
     }
     return true;
 }
@@ -543,7 +543,7 @@ void NetLogCliSendEvent (const NetLogEvent &event, va_list args) {
             break;
             
             case kLogParamStringW: {
-                wchar *str = va_arg(args, wchar *);
+                wchar_t *str = va_arg(args, wchar_t *);
                 if(!str)
                     str = L"";
                 pack.AddString(str);

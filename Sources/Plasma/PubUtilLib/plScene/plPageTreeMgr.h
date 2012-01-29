@@ -59,9 +59,9 @@ class plDrawSpanPair
 {
 public:
     plDrawSpanPair() {}
-    plDrawSpanPair(UInt16 d, UInt16 s) : fDrawable(d), fSpan(s) {}
-    UInt16      fDrawable;
-    UInt16      fSpan;
+    plDrawSpanPair(uint16_t d, uint16_t s) : fDrawable(d), fSpan(s) {}
+    uint16_t      fDrawable;
+    uint16_t      fSpan;
 };
 
 class plDrawVisList
@@ -71,7 +71,7 @@ public:
     virtual ~plDrawVisList() {}
 
     plDrawable*         fDrawable;
-    hsTArray<Int16>     fVisList;
+    hsTArray<int16_t>     fVisList;
 
     plDrawVisList& operator=(const plDrawVisList& v) { fDrawable = v.fDrawable; fVisList = v.fVisList; return *this; }
 };
@@ -94,7 +94,7 @@ protected:
     hsBool                      IBuildSpaceTree();
     hsBool                      IRefreshTree(plPipeline* pipe);
     void                        ISortCullPolys(plPipeline* pipe);
-    hsBool                      IGetOcclusion(plPipeline* pipe, hsTArray<Int16>& list);
+    hsBool                      IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list);
     hsBool                      IGetCullPolys(plPipeline* pipe);
     void                        IResetOcclusion(plPipeline* pipe);
     void                        IAddCullPolyList(const hsTArray<plCullPoly>& polyList);

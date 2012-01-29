@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plDirectShadowMaster.h"
 #include "plShadowSlave.h"
@@ -73,9 +73,9 @@ plDirectShadowMaster::~plDirectShadowMaster()
 plShadowSlave* plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
 {
     if( caster->GetPerspective() )
-        return TRACKED_NEW plPerspDirSlave;
+        return new plPerspDirSlave;
     
-    return TRACKED_NEW plDirectShadowSlave;
+    return new plDirectShadowSlave;
 }
 
 plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
@@ -172,7 +172,7 @@ void plDirectShadowMaster::IComputeISect(const hsBounds3Ext& casterBnd, plShadow
     fIsectPool.ExpandAndZero(iIsect+1);
     if( !fIsectPool[iIsect] )
     {
-        fIsectPool[iIsect] = TRACKED_NEW plBoundsIsect;
+        fIsectPool[iIsect] = new plBoundsIsect;
     }
     plBoundsIsect* isect = fIsectPool[iIsect];
 

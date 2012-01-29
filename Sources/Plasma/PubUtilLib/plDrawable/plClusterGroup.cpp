@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plClusterGroup.h"
 
 #include "plSpanTemplate.h"
@@ -86,7 +86,7 @@ plClusterGroup::~plClusterGroup()
 
 plCluster* plClusterGroup::IAddCluster()
 {
-    plCluster* cluster = TRACKED_NEW plCluster;
+    plCluster* cluster = new plCluster;
     // Set the cluster's group.
     cluster->SetGroup(this);
     fClusters.Append(cluster);
@@ -109,26 +109,26 @@ void plClusterGroup::Read(hsStream* stream, hsResMgr* mgr)
 
     int i;
 
-    fTemplate = TRACKED_NEW plSpanTemplate;
+    fTemplate = new plSpanTemplate;
     fTemplate->Read(stream);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefMaterial), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefMaterial), plRefFlags::kActiveRef);
 
     const int numClust = stream->ReadLE32();
     fClusters.SetCount(numClust);
     for( i = 0; i < numClust; i++ )
     {
-        fClusters[i] = TRACKED_NEW plCluster;
+        fClusters[i] = new plCluster;
         fClusters[i]->Read(stream, this);
     }
 
     const int numRegions = stream->ReadLE32();
     for( i = 0; i < numRegions; i++ )
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRegion), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRegion), plRefFlags::kActiveRef);
 
     const int numLights = stream->ReadLE32();
     for( i = 0; i < numLights; i++ )
-        mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefLight), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefLight), plRefFlags::kActiveRef);
 
     fLOD.Read(stream);
 
@@ -172,7 +172,7 @@ void plClusterGroup::Write(hsStream* stream, hsResMgr* mgr)
 void plClusterGroup::ISendToSelf(RefType t, hsKeyedObject* ref)
 {
     hsAssert(ref, "Sending self a nil object");
-    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, t);
+    plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, t);
     hsgResMgr::ResMgr()->SendRef(ref->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
@@ -299,7 +299,7 @@ hsBool plClusterGroup::MsgReceive(plMessage* msg)
 
 void plClusterGroup::UnPack()
 {
-    plDrawableSpans* drawable = TRACKED_NEW plDrawableSpans;
+    plDrawableSpans* drawable = new plDrawableSpans;
     fDrawable = hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), drawable, GetKey()->GetUoid().GetLocation());
     drawable->UnPackCluster(this);
 
@@ -316,9 +316,9 @@ void plClusterGroup::SetVisible(bool visible)
     }
 }
 
-UInt32 plClusterGroup::NumInst() const
+uint32_t plClusterGroup::NumInst() const
 {
-    UInt32 numInst = 0;
+    uint32_t numInst = 0;
     int i;
     for( i = 0; i < fClusters.GetCount(); i++ )
         numInst += fClusters[i]->NumInsts();

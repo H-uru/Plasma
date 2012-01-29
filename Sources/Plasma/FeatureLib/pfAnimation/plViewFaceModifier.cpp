@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plViewFaceModifier.h"
 #include "plgDispatch.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -86,7 +86,7 @@ void plViewFaceModifier::Read(hsStream* s, hsResMgr* mgr)
     fOrigParentToLocal.Read(s);
 
     if( HasFlag(kFaceObj) )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefFaceObj), plRefFlags::kPassiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 
     fOffset.Read(s);
 
@@ -129,7 +129,7 @@ void plViewFaceModifier::SetTarget(plSceneObject* so)
         plgDispatch::Dispatch()->RegisterForExactType(plArmatureUpdateMsg::Index(), GetKey());
 }
 
-hsBool plViewFaceModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plViewFaceModifier::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -157,7 +157,7 @@ hsBool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
     }
     
     hsPoint3 localAt = worldToLocal * at;
-    hsScalar len = localAt.MagnitudeSquared();
+    float len = localAt.MagnitudeSquared();
     if( len <= 0 )
         return false;
     len = -hsFastMath::InvSqrtAppr(len);
@@ -220,7 +220,7 @@ hsBool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
     x.fMap[3][0] = x.fMap[3][1] = x.fMap[3][2] = 0;
     xInv.fMap[0][3] = xInv.fMap[1][3] = xInv.fMap[2][3] = 0;
     
-    xInv.fMap[3][3] = x.fMap[3][3] = hsScalar1;
+    xInv.fMap[3][3] = x.fMap[3][3] = 1.f;
     
     x.NotIdentity();
     xInv.NotIdentity();
@@ -239,7 +239,7 @@ hsBool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
         x.fMap[2][1] *= fScale.fZ;
         x.fMap[2][2] *= fScale.fZ;
 
-        hsScalar inv = 1.f / fScale.fX;
+        float inv = 1.f / fScale.fX;
         xInv.fMap[0][0] *= inv;
         xInv.fMap[1][0] *= inv;
         xInv.fMap[2][0] *= inv;
@@ -390,7 +390,7 @@ void plViewFaceModifier::IOnRemove(plGenRefMsg* refMsg)
 
 void plViewFaceModifier::ISetObject(plKey soKey)
 {
-    hsgResMgr::ResMgr()->SendRef(soKey, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
+    hsgResMgr::ResMgr()->SendRef(soKey, new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 }
 
 void plViewFaceModifier::SetFollowMode(FollowMode m, plKey soKey)

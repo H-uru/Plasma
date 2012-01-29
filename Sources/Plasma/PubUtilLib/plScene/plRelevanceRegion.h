@@ -54,10 +54,10 @@ class plRelevanceRegion : public plObjInterface
 protected:
     plRegionBase *fRegion;
     hsBitVector fRegionsICareAbout;     
-    UInt32 fMgrIdx;
+    uint32_t fMgrIdx;
     
 public:
-    plRelevanceRegion() : fRegion(nil), fMgrIdx((UInt32)-1) {}
+    plRelevanceRegion() : fRegion(nil), fMgrIdx((uint32_t)-1) {}
     virtual ~plRelevanceRegion() {}
     
     CLASSNAME_REGISTER( plRelevanceRegion );
@@ -66,12 +66,12 @@ public:
     virtual hsBool MsgReceive(plMessage* msg);
     
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
-    virtual Int32 GetNumProperties() const { return 1; }    
+    virtual int32_t GetNumProperties() const { return 1; }    
     
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetMgrIndex(UInt32 idx);
+    void SetMgrIndex(uint32_t idx);
 };
 
 #endif // plRelevanceRegion_inc

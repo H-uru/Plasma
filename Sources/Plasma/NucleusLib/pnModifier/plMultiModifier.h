@@ -64,7 +64,7 @@ public:
     CLASSNAME_REGISTER( plMultiModifier );
     GETINTERFACE_ANY( plMultiModifier, plModifier );
     
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0;
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) = 0;
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 

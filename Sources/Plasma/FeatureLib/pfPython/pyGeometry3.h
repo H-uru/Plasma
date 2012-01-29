@@ -57,7 +57,7 @@ class pyPoint3
 {
 protected:
     pyPoint3() : fPoint(0,0,0) {}
-    pyPoint3(hsScalar x, hsScalar y, hsScalar z) : fPoint(x,y,z) {}
+    pyPoint3(float x, float y, float z) : fPoint(x,y,z) {}
     pyPoint3(hsPoint3 pt) : fPoint(pt.fX,pt.fY,pt.fZ) {}
 
 public:
@@ -73,20 +73,20 @@ public:
     hsPoint3        fPoint;
 
     // python get attributes helpers
-    hsScalar    getX() { return fPoint.fX; }
-    hsScalar    getY() { return fPoint.fY; }
-    hsScalar    getZ() { return fPoint.fZ; }
+    float    getX() { return fPoint.fX; }
+    float    getY() { return fPoint.fY; }
+    float    getZ() { return fPoint.fZ; }
 
     // python set attributes helpers
-    void    setX(hsScalar x) { fPoint.fX = x; }
-    void    setY(hsScalar y) { fPoint.fY = y; }
-    void    setZ(hsScalar z) { fPoint.fZ = z; }
+    void    setX(float x) { fPoint.fX = x; }
+    void    setY(float y) { fPoint.fY = y; }
+    void    setZ(float z) { fPoint.fZ = z; }
 
     // methods to manipulate point3's
     void Zero() { fPoint.fX=0; fPoint.fY=0; fPoint.fZ=0; }
     PyObject* Copy() { return pyPoint3::New(fPoint); }
-    hsScalar Distance(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).Magnitude(); }
-    hsScalar DistanceSquared(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).MagnitudeSquared(); }
+    float Distance(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).Magnitude(); }
+    float DistanceSquared(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).MagnitudeSquared(); }
 };
 
 
@@ -94,7 +94,7 @@ class pyVector3
 {
 protected:
     pyVector3() : fVector(0,0,0) {}
-    pyVector3(hsScalar x, hsScalar y, hsScalar z) : fVector(x,y,z) {}
+    pyVector3(float x, float y, float z) : fVector(x,y,z) {}
     pyVector3(hsVector3 v) : fVector(v.fX,v.fY,v.fZ) {}
 
 public:
@@ -110,14 +110,14 @@ public:
     hsVector3       fVector;
 
     // python get attributes helpers
-    hsScalar    getX() { return fVector.fX; }
-    hsScalar    getY() { return fVector.fY; }
-    hsScalar    getZ() { return fVector.fZ; }
+    float    getX() { return fVector.fX; }
+    float    getY() { return fVector.fY; }
+    float    getZ() { return fVector.fZ; }
 
     // python set attributes helpers
-    void    setX(hsScalar x) { fVector.fX = x; }
-    void    setY(hsScalar y) { fVector.fY = y; }
-    void    setZ(hsScalar z) { fVector.fZ = z; }
+    void    setX(float x) { fVector.fX = x; }
+    void    setY(float y) { fVector.fY = y; }
+    void    setZ(float z) { fVector.fZ = z; }
 
     // operator methods
     PyObject*   operator+(const pyVector3& b) const { return pyVector3::New(fVector + b.fVector); }
@@ -125,12 +125,12 @@ public:
 
     // methods to manipulate vectors
     void    Normalize() { fVector.Normalize(); }
-    hsScalar Dot(pyVector3 other) { return fVector*other.fVector;}
+    float Dot(pyVector3 other) { return fVector*other.fVector;}
     PyObject* Cross(pyVector3 other) {return pyVector3::New(fVector%other.fVector); }
-    hsScalar Magnitude() { return fVector.Magnitude(); }
-    hsScalar MagnitudeSquared() { return fVector.MagnitudeSquared(); }
+    float Magnitude() { return fVector.Magnitude(); }
+    float MagnitudeSquared() { return fVector.MagnitudeSquared(); }
     void Zero() { fVector.fX=0; fVector.fY=0; fVector.fZ=0; }
-    PyObject* Scale(hsScalar scale) { return pyVector3::New(fVector * scale); }
+    PyObject* Scale(float scale) { return pyVector3::New(fVector * scale); }
     PyObject* Add(pyVector3& other) { return pyVector3::New(fVector + other.fVector); }
     PyObject* Subtract(pyVector3& other) { return pyVector3::New(fVector - other.fVector); }
     PyObject* Copy() { return pyVector3::New(fVector); }

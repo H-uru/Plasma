@@ -65,7 +65,7 @@ public:
     {
         Py_XDECREF( fPyObject );
     }
-    void OperationStarted( UInt32 context )
+    void OperationStarted( uint32_t context )
     {
         if ( fPyObject )
         {
@@ -81,7 +81,7 @@ public:
             }
         }
     }
-    void OperationComplete( UInt32 context, int resultCode )
+    void OperationComplete( uint32_t context, int resultCode )
     {
         if ( fPyObject )
         {
@@ -90,11 +90,11 @@ public:
             if ( pyArgs )
             {
                 PyObject* pyDict = PyDict_New();
-                std::map<UInt16,plCreatable*>   args;
+                std::map<uint16_t,plCreatable*>   args;
                 fCbArgs.GetItems( args );
-                for ( std::map<UInt16,plCreatable*>::iterator ii=args.begin(); ii!=args.end(); ++ii )
+                for ( std::map<uint16_t,plCreatable*>::iterator ii=args.begin(); ii!=args.end(); ++ii )
                 {
-                    UInt16 key = ii->first;
+                    uint16_t key = ii->first;
                     PyObject* keyObj = PyInt_FromLong(key);
                     char* strTemp = NULL;
                     plCreatable* arg = ii->second;
@@ -106,12 +106,12 @@ public:
                         switch ( value.GetType() )
                         {
                         case plGenericType::kInt:
-                            valueObj = PyLong_FromLong((Int32)value);
+                            valueObj = PyLong_FromLong((int32_t)value);
                             PyDict_SetItem(pyDict, keyObj, valueObj);
                             Py_DECREF(valueObj);
                             break;
                         case plGenericType::kUInt:
-                            valueObj = PyLong_FromUnsignedLong((UInt32)value);
+                            valueObj = PyLong_FromUnsignedLong((uint32_t)value);
                             PyDict_SetItem(pyDict, keyObj, valueObj);
                             Py_DECREF(valueObj);
                             break;
@@ -209,55 +209,55 @@ pyNetClientComm::~pyNetClientComm()
 }
 
 // NetAuthenticate ----------------------------------------------
-int pyNetClientComm::NetAuthenticate( double maxAuthSecs, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetAuthenticate( double maxAuthSecs, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetAuthenticate( maxAuthSecs, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetLeave ----------------------------------------------
-int pyNetClientComm::NetLeave( UInt8 reason, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetLeave( uint8_t reason, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetLeave( reason, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetPing ----------------------------------------------
-int pyNetClientComm::NetPing( int serverType, int timeoutSecs/*=0*/, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetPing( int serverType, int timeoutSecs/*=0*/, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetPing( serverType, timeoutSecs, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetFindAge ----------------------------------------------
-int pyNetClientComm::NetFindAge( const pyAgeLinkStruct* linkInfo, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetFindAge( const pyAgeLinkStruct* linkInfo, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetFindAge( linkInfo->GetAgeLink(), new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetGetPlayerList ----------------------------------------------
-int pyNetClientComm::NetGetPlayerList( PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetGetPlayerList( PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetGetPlayerList( new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetSetActivePlayer ----------------------------------------------
-int pyNetClientComm::NetSetActivePlayer( UInt32 playerID, const char* playerName, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetSetActivePlayer( uint32_t playerID, const char* playerName, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetSetActivePlayer( playerID, playerName, 0 /*ccrLevel*/, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetCreatePlayer ----------------------------------------------
-int pyNetClientComm::NetCreatePlayer( const char* playerName, const char* avatarShape, UInt32 createFlags, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetCreatePlayer( const char* playerName, const char* avatarShape, uint32_t createFlags, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetCreatePlayer( playerName, avatarShape, createFlags, nil, nil, nil, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetJoinAge ----------------------------------------------
-int pyNetClientComm::NetJoinAge( PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetJoinAge( PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetJoinAge( true /*tryP2P*/, true /*allowTimeout*/, new pyNetClientCommCallback( cbClass ), cbContext );
 }
 
 // NetSetTimeout ----------------------------------------------
-int pyNetClientComm::NetSetTimeout( float timeoutSecs, PyObject* cbClass/*=nil*/, UInt32 cbContext/*=0 */)
+int pyNetClientComm::NetSetTimeout( float timeoutSecs, PyObject* cbClass/*=nil*/, uint32_t cbContext/*=0 */)
 {
     return fNetClient.NetSetTimeout( timeoutSecs, new pyNetClientCommCallback( cbClass ), cbContext );
 }
@@ -309,7 +309,7 @@ int pyNetClientComm::SetAuthInfo( const char* acctName, const char* password )
 }
 
 // SetLogByName ----------------------------------------------
-void pyNetClientComm::SetLogByName( const char * name, UInt32 flags )
+void pyNetClientComm::SetLogByName( const char * name, uint32_t flags )
 {
     plStatusLog * log = plStatusLogMgr::GetInstance().CreateStatusLog( 80, name,
         flags | plStatusLog::kTimestamp | plStatusLog::kDeleteForMe );

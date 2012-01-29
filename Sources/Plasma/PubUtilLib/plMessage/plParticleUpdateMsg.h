@@ -56,7 +56,7 @@ class plParticleUpdateMsg : public plMessage
 public:
     plParticleUpdateMsg()
         : plMessage(nil, nil, nil) {}
-    plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, UInt32 paramID, hsScalar paramValue )
+    plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, uint32_t paramID, float paramValue )
         : plMessage(s, r, t) { fParamID = paramID; fParamValue = paramValue; }
     virtual ~plParticleUpdateMsg() {}
 
@@ -85,11 +85,11 @@ public:
         kParamEnabled,
     };
 
-    UInt32 fParamID;
-    hsScalar fParamValue;
+    uint32_t fParamID;
+    float fParamValue;
 
-    UInt32 GetParamID() { return fParamID; }
-    hsScalar GetParamValue() { return fParamValue; }
+    uint32_t GetParamID() { return fParamID; }
+    float GetParamValue() { return fParamValue; }
 
     // IO
     virtual void Read(hsStream* stream, hsResMgr* mgr)
@@ -118,10 +118,10 @@ class plParticleTransferMsg : public plMessage
 {
 public:
     plKey   fSysSOKey; // sceneObject of the system we're snagging particles from
-    UInt16  fNumToTransfer; // number of particles to transfer
+    uint16_t  fNumToTransfer; // number of particles to transfer
     
     plParticleTransferMsg() : plMessage(nil, nil, nil), fSysSOKey(nil), fNumToTransfer(0) {}
-    plParticleTransferMsg(const plKey &s, const plKey &r, const double* t, plKey sysSOKey, UInt16 numParticles )
+    plParticleTransferMsg(const plKey &s, const plKey &r, const double* t, plKey sysSOKey, uint16_t numParticles )
         : plMessage(s, r, t) { fSysSOKey = sysSOKey; fNumToTransfer = numParticles; }
     virtual ~plParticleTransferMsg() {} 
 
@@ -155,10 +155,10 @@ public:
 class plParticleKillMsg : public plMessage
 {
 public:
-    hsScalar fNumToKill;
-    hsScalar fTimeLeft;
+    float fNumToKill;
+    float fTimeLeft;
 
-    UInt8 fFlags;
+    uint8_t fFlags;
     enum
     {
         kParticleKillImmortalOnly = 0x1,    // Only slap a death sentence on "immortal" particles (the others are already dying)
@@ -166,7 +166,7 @@ public:
     };
 
     plParticleKillMsg() : plMessage(nil, nil, nil), fNumToKill(0.f), fTimeLeft(0.f), fFlags(kParticleKillImmortalOnly) {}
-    plParticleKillMsg(const plKey &s, const plKey &r, const double* t, hsScalar numToKill, hsScalar timeLeft, UInt8 flags = kParticleKillImmortalOnly )
+    plParticleKillMsg(const plKey &s, const plKey &r, const double* t, float numToKill, float timeLeft, uint8_t flags = kParticleKillImmortalOnly )
         : plMessage(s, r, t) { fNumToKill = numToKill; fTimeLeft = timeLeft; fFlags = flags; }
     virtual ~plParticleKillMsg() {} 
     
@@ -196,8 +196,8 @@ public:
 class plParticleFlockMsg : public plMessage
 {
 public:
-    hsScalar fX, fY, fZ;
-    UInt8 fCmd;
+    float fX, fY, fZ;
+    uint8_t fCmd;
     enum
     {
         kFlockCmdSetOffset,
@@ -205,7 +205,7 @@ public:
     };
 
     plParticleFlockMsg() : plMessage(nil, nil, nil), fCmd(0), fX(0.f), fY(0.f), fZ(0.f) {}
-    plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, UInt8 cmd, hsScalar x, hsScalar y, hsScalar z)
+    plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, uint8_t cmd, float x, float y, float z)
         : plMessage(s, r, t), fCmd(cmd), fX(x), fY(y), fZ(z) {}
     virtual ~plParticleFlockMsg() {}
 

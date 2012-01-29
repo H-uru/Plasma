@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define MF_NEW_RGC
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 #include "dummy.h"
 #include "notify.h"
@@ -101,7 +101,7 @@ void getRGC(void* param, NotifyInfo* info)
 class LMGScanPoint
 {
 public:
-    hsScalar            fU;
+    float            fU;
     hsPoint3            fBary;
 };
 
@@ -117,12 +117,12 @@ public:
 
 static int kDefaultSize = 64;
 
-static UInt32 MakeUInt32Color(float r, float g, float b, float a)
+static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 {
-    return (UInt32(a * 255.9f) << 24)
-            |(UInt32(r * 255.9f) << 16)
-            |(UInt32(g * 255.9f) << 8)
-            |(UInt32(b * 255.9f) << 0);
+    return (uint32_t(a * 255.9f) << 24)
+            |(uint32_t(r * 255.9f) << 16)
+            |(uint32_t(g * 255.9f) << 8)
+            |(uint32_t(b * 255.9f) << 0);
 }
 
 plLightMapGen& plLightMapGen::Instance()
@@ -171,7 +171,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         fInterface = ip;
         fTime = t;
 
-        fRP = TRACKED_NEW RendParams;
+        fRP = new RendParams;
         fRP->SetRenderElementMgr(fInterface->GetRenderElementMgr(RS_Production));
 
 #ifdef MF_NEW_RGC
@@ -191,7 +191,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         vp.yon = 30.f;
         vp.distance = 1.f;
         vp.zoom = 1.f;
-        vp.fov = hsScalarPI / 4.f;
+        vp.fov = M_PI / 4.f;
         vp.nearRange = 1.f;
         vp.farRange = 30.f;
 
@@ -239,7 +239,7 @@ hsBool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
 
 #else MF_NEW_RGC
 
-        fRGC = TRACKED_NEW plRenderGlobalContext(fInterface, fTime);
+        fRGC = new plRenderGlobalContext(fInterface, fTime);
         fRGC->MakeRenderInstances((plMaxNode*)fInterface->GetRootNode(), fTime);
 
 #endif // MF_NEW_RGC
@@ -308,8 +308,8 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
     {
         mipmap->SetCurrLevel(i);
 
-        UInt32 width = mipmap->GetCurrWidth();
-        UInt32 height = mipmap->GetCurrHeight();
+        uint32_t width = mipmap->GetCurrWidth();
+        uint32_t height = mipmap->GetCurrHeight();
 
         sprintf(buf, "----- Level %d (%dx%d) -----\n", i, width, height);
         dump.WriteString(buf);
@@ -318,11 +318,11 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
         {
             for (int x = 0; x < width; x++)
             {
-                UInt32 color = *(mipmap->GetAddr32(x, y));
-                UInt8 r = ((UInt8)((color)>>16));
-                UInt8 g = ((UInt8)((color)>>8));
-                UInt8 b = ((UInt8)((color)>>0));
-                UInt8 a = ((UInt8)((color)>>24));
+                uint32_t color = *(mipmap->GetAddr32(x, y));
+                uint8_t r = ((uint8_t)((color)>>16));
+                uint8_t g = ((uint8_t)((color)>>8));
+                uint8_t b = ((uint8_t)((color)>>0));
+                uint8_t a = ((uint8_t)((color)>>24));
                 sprintf(buf, "[%3d,%3d,%3d,%3d]", r, g, b, a);
                 dump.WriteString(buf);
             }
@@ -344,7 +344,7 @@ hsBool plLightMapGen::ICompressLightMaps()
 
         if( orig )
         {
-            const hsScalar kFilterSigma = 1.0f;
+            const float kFilterSigma = 1.0f;
 
             if( IsFresh(orig) )
             {
@@ -380,7 +380,7 @@ hsBool plLightMapGen::ICompressLightMaps()
                         if( orig == fCreatedLayers[j]->GetTexture() )
                         {
                             fCreatedLayers[j]->GetKey()->Release(orig->GetKey());
-                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), TRACKED_NEW plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), new plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
                         }
                     }
 
@@ -478,7 +478,7 @@ hsBool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const h
     if( !(span.fProps & plGeometrySpan::kDiffuseFoldedIn) )
     {
         hsBool foldin = 0 != (span.fProps & plGeometrySpan::kLiteVtxNonPreshaded);
-        hsScalar opacity = 1.f;
+        float opacity = 1.f;
         hsColorRGBA dif = hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f);
         if( foldin )
         {
@@ -569,7 +569,7 @@ plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
     int height = dst->GetHeight();
 
     // Temporary mipmap here, so we don't have to worry about using plBitmapCreator
-    plMipmap* bitmap = TRACKED_NEW plMipmap( width, height, plMipmap::kRGB32Config, 1 );
+    plMipmap* bitmap = new plMipmap( width, height, plMipmap::kRGB32Config, 1 );
     HSMemory::Clear(bitmap->GetImage(), bitmap->GetHeight() * bitmap->GetRowBytes() );
 
     return bitmap;
@@ -584,7 +584,7 @@ hsBool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
     dst->SetCurrLevel( 0 );
 
     // BLURLATER
-//  static hsScalar kFilterSigma = 0.5f;
+//  static float kFilterSigma = 0.5f;
 //  src->Filter(kFilterSigma);
 
     // What we really want to do here is antialias our rasterization, so we can
@@ -596,24 +596,24 @@ hsBool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
     {
         for( i = 0; i < dst->GetWidth(); i++ )
         {
-            UInt32 srcRed = (*src->GetAddr32(i, j) >> 16) & 0xff;
-            UInt32 dstRed = (*dst->GetAddr32(i, j) >> 16) & 0xff;
+            uint32_t srcRed = (*src->GetAddr32(i, j) >> 16) & 0xff;
+            uint32_t dstRed = (*dst->GetAddr32(i, j) >> 16) & 0xff;
 //          dstRed += srcRed;
             if( dstRed < srcRed )
                 dstRed = srcRed;
             if( dstRed > 0xff )
                 dstRed = 0xff;
 
-            UInt32 srcGreen = (*src->GetAddr32(i, j) >> 8) & 0xff;
-            UInt32 dstGreen = (*dst->GetAddr32(i, j) >> 8) & 0xff;
+            uint32_t srcGreen = (*src->GetAddr32(i, j) >> 8) & 0xff;
+            uint32_t dstGreen = (*dst->GetAddr32(i, j) >> 8) & 0xff;
 //          dstGreen += srcGreen;
             if( dstGreen < srcGreen )
                 dstGreen = srcGreen;
             if( dstGreen > 0xff )
                 dstGreen = 0xff;
 
-            UInt32 srcBlue = (*src->GetAddr32(i, j) >> 0) & 0xff;
-            UInt32 dstBlue = (*dst->GetAddr32(i, j) >> 0) & 0xff;
+            uint32_t srcBlue = (*src->GetAddr32(i, j) >> 0) & 0xff;
+            uint32_t dstBlue = (*dst->GetAddr32(i, j) >> 0) & 0xff;
 //          dstBlue += srcBlue;
             if( dstBlue < srcBlue )
                 dstBlue = srcBlue;
@@ -711,8 +711,8 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
         i1 = i0 == 2 ? 0 : i0+1;
         i2 = i1 == 2 ? 0 : i1+1;
 
-        hsScalar v0 = uv[i0].fY;
-        hsScalar v1 = uv[i1].fY;
+        float v0 = uv[i0].fY;
+        float v1 = uv[i1].fY;
 
         int vStart = int(v0);
         int vEnd = int(v1);
@@ -731,7 +731,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
             bary[i0] = (v1 - float(vMid)) / (v1 - v0);
             bary[i1] = 1.f - bary[i0];
             bary[i2] = 0;
-            hsScalar u = uv[i0].fX * bary[i0]
+            float u = uv[i0].fX * bary[i0]
                         + uv[i1].fX * bary[i1];
             if( scanline[vMid].fEmpty )
             {
@@ -776,7 +776,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
             int uMid;
             for( uMid = uStart; uMid <= uEnd; uMid++ )
             {
-                hsScalar t = (scanline[i].fFar.fU - float(uMid)) / (scanline[i].fFar.fU - scanline[i].fNear.fU);
+                float t = (scanline[i].fFar.fU - float(uMid)) / (scanline[i].fFar.fU - scanline[i].fNear.fU);
                 hsPoint3 bary = scanline[i].fNear.fBary * t;
                 bary += scanline[i].fFar.fBary * (1.f - t);
 
@@ -785,7 +785,7 @@ hsBool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, cons
 
                 hsFastMath::NormalizeAppr(n);
 
-                UInt32 color = IShadePoint(ctx, amb, p, n);
+                uint32_t color = IShadePoint(ctx, amb, p, n);
                 *bitmap->GetAddr32(uMid, i) = color;
 
             }
@@ -931,8 +931,8 @@ hsBool plLightMapGen::IDirAffectsNode(plLightMapInfo* liInfo, LightObject* liObj
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
-    hsScalar radX = ls.fallsize;
-    hsScalar radY = radX;
+    float radX = ls.fallsize;
+    float radY = radX;
     if( ls.shape == RECT_LIGHT )
         radY /= ls.aspect;
 
@@ -968,8 +968,8 @@ hsBool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
-    hsScalar coneRad[2];
-    coneRad[0] = ls.fallsize * hsScalarPI / 180.f;
+    float coneRad[2];
+    coneRad[0] = ls.fallsize * M_PI / 180.f;
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;
@@ -981,13 +981,13 @@ hsBool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     int j;
     for( j = 0; j < 8; j++ )
     {
-        hsScalar rad;
-        rad = hsScalar(atan2(corners[j].fX, -corners[j].fZ));
+        float rad;
+        rad = float(atan2(corners[j].fX, -corners[j].fZ));
         if( rad > coneRad[0] )
             numPos[0]++;
         if( rad < -coneRad[0] )
             numPos[2]++;
-        rad = hsScalar(atan2(corners[j].fY, -corners[j].fZ));
+        rad = float(atan2(corners[j].fY, -corners[j].fZ));
         if( rad > coneRad[1] )
             numPos[1]++;
         if( rad < -coneRad[1] )
@@ -1021,7 +1021,7 @@ hsBool plLightMapGen::IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liOb
     if( bnd.GetType() != kBoundsNormal )
         return false;
 
-    hsScalar radius = ls.attenEnd;
+    float radius = ls.attenEnd;
 
     int i;
     for( i = 0; i < 3; i++ )
@@ -1208,9 +1208,9 @@ hsBool plLightMapGen::IValidateUVWSrc(hsTArray<plGeometrySpan *>& spans) const
 
 void plLightMapGen::IInitBitmapColor(plMipmap* bitmap, const hsColorRGBA& col) const
 {
-    UInt32 initColor = MakeUInt32Color(col.r, col.g, col.b, col.a);
-    UInt32* pix = (UInt32*)bitmap->GetImage();
-    UInt32* pixEnd = ((UInt32*)bitmap->GetImage()) + bitmap->GetWidth() * bitmap->GetHeight();
+    uint32_t initColor = MakeUInt32Color(col.r, col.g, col.b, col.a);
+    uint32_t* pix = (uint32_t*)bitmap->GetImage();
+    uint32_t* pixEnd = ((uint32_t*)bitmap->GetImage()) + bitmap->GetWidth() * bitmap->GetHeight();
     while( pix < pixEnd )
         *pix++ = initColor;
 }
@@ -1279,11 +1279,11 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     }
     else
     {
-        objMat = TRACKED_NEW hsGMaterial;
+        objMat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey(newMatName, objMat, nodeLoc);
 
         for( i = 0; i < mat->GetNumLayers(); i++ )
-            hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), TRACKED_NEW plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
     }
 
     objMat->SetCompositeFlags(objMat->GetCompositeFlags() | hsGMaterial::kCompIsLightMapped);
@@ -1365,10 +1365,10 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             }
         }
 
-        plLayer* layer = TRACKED_NEW plLayer;
+        plLayer* layer = new plLayer;
         layer->InitToDefault();
         layKey = hsgResMgr::ResMgr()->NewKey(layName, layer, nodeLoc);
-        hsgResMgr::ResMgr()->AddViaNotify(mipKey, TRACKED_NEW plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(mipKey, new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
         layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
         layer->SetZFlags(hsGMatState::kZNoZWrite);
         layer->SetBlendFlags(hsGMatState::kBlendMult);
@@ -1377,7 +1377,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         layer->SetMiscFlags(hsGMatState::kMiscLightMap);
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(layKey, TRACKED_NEW plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kPiggyBack), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(layKey, new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kPiggyBack), plRefFlags::kActiveRef);
 
     span.fMaterial = objMat;
 
@@ -1450,7 +1450,7 @@ Color plLightMapGen::ShadePoint(plMaxLightContext& ctx, const hsPoint3& p, const
 
 }
 
-UInt32 plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n)
+uint32_t plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n)
 {
     ctx.globContext = fRGC;
     ctx.SetPoint(p, n);
@@ -1459,7 +1459,7 @@ UInt32 plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, cons
     accum += amb;
     accum.ClampMinMax();
 
-    UInt32 retVal;
+    uint32_t retVal;
 
     retVal = MakeUInt32Color(accum.r, accum.g, accum.b, 1.f);
 

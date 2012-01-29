@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetTransportMember_h
 #define plNetTransportMember_h
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetMember.h"
 #include "pnKeyedObject/plKey.h"
@@ -66,11 +66,11 @@ public:
 protected:
     plKey           fAvatarKey;
     plString        fPlayerName;
-    UInt32          fPlayerID;
+    uint32_t        fPlayerID;
     std::vector<int> fSubscriptions;    // list of channelGrp subscriptions
-    UInt32          fTransportFlags;
+    uint32_t        fTransportFlags;
     float           fDistSq;            // from local player, temp
-    UInt8           fCCRLevel;
+    uint8_t         fCCRLevel;
 public:
     CLASSNAME_REGISTER( plNetTransportMember);
     GETINTERFACE_ANY( plNetTransportMember, plNetMember);
@@ -91,8 +91,8 @@ public:
         }
     void SetPlayerName(const plString & value) { fPlayerName=value;}
     plString GetPlayerName() const { return fPlayerName;}
-    void SetPlayerID(UInt32 value) { fPlayerID=value;}
-    UInt32 GetPlayerID() const { return fPlayerID;}
+    void SetPlayerID(uint32_t value) { fPlayerID=value;}
+    uint32_t GetPlayerID() const { return fPlayerID;}
     void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
     bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
 
@@ -105,8 +105,8 @@ public:
 
     void CopySubscriptions(std::vector<int>* channels) { *channels = fSubscriptions; }
 
-    void SetTransportFlags(UInt32 f) { fTransportFlags=f; }
-    UInt32 GetTransportFlags() const { return fTransportFlags; }
+    void SetTransportFlags(uint32_t f) { fTransportFlags=f; }
+    uint32_t GetTransportFlags() const { return fTransportFlags; }
 
     bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
     plString AsString() const;
@@ -118,8 +118,8 @@ public:
     }
 
     bool IsCCR() const { return (fCCRLevel>0);  }
-    UInt8 GetCCRLevel() const { return fCCRLevel;   }
-    void SetCCRLevel(UInt8 cl) { fCCRLevel=cl;  }
+    uint8_t GetCCRLevel() const { return fCCRLevel;   }
+    void SetCCRLevel(uint8_t cl) { fCCRLevel=cl;  }
 };
 
 #endif  // plNetTransportMember_h

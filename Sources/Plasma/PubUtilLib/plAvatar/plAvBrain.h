@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLAVBRAIN_INC
 
 #include "plAGModifier.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
@@ -71,13 +71,13 @@ public:
     CLASSNAME_REGISTER( plArmatureBrain );
     GETINTERFACE_ANY( plArmatureBrain, plCreatable );   
     
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
     virtual void Activate(plArmatureModBase *armature);
     virtual void Deactivate() {}
     virtual void Suspend() {}
     virtual void Resume() {}
     virtual void Spawn(double timeNow) {}
-    virtual void OnBehaviorStop(UInt8 index) {}
+    virtual void OnBehaviorStop(uint8_t index) {}
     virtual hsBool LeaveAge();
     virtual hsBool IsRunningTask() const;
     virtual void QueueTask(plAvTask *task);
@@ -88,7 +88,7 @@ public:
     virtual hsBool MsgReceive(plMessage *msg);
     
 protected:
-    virtual void IProcessTasks(double time, hsScalar elapsed);
+    virtual void IProcessTasks(double time, float elapsed);
     virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
         
     typedef std::deque<plAvTask *> plAvTaskQueue;

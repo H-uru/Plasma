@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include "hsTemplates.h"
 #endif
 #include "hsRefCnt.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class plCreator;
 class plCreatable;
@@ -61,13 +61,13 @@ private:
     hsTArray<plCreator*>        fCreators;
 
     void                IForceShutdown();
-    void                IUnRegister(UInt16 hClass);
-    UInt16              IRegister(UInt16 hClass, plCreator* worker);
+    void                IUnRegister(uint16_t hClass);
+    uint16_t              IRegister(uint16_t hClass, plCreator* worker);
     hsBool              IIsEmpty();
-    UInt16              IGetNumClasses();
-    plCreatable*        ICreate(UInt16 hClass);
-    hsBool              IDerivesFrom(UInt16 hBase, UInt16 hDer);
-    hsBool              IIsValidClassIndex(UInt16 hClass);
+    uint16_t              IGetNumClasses();
+    plCreatable*        ICreate(uint16_t hClass);
+    hsBool              IDerivesFrom(uint16_t hBase, uint16_t hDer);
+    hsBool              IIsValidClassIndex(uint16_t hClass);
 
     static hsBool       ICreateTheFactory();
     static void         IShutdown();
@@ -82,28 +82,28 @@ public:
     static plFactory*   GetTheFactory();
 
 
-    static UInt16       Register(UInt16 hClass, plCreator* worker); // returns hClass
-    static void         UnRegister(UInt16 hClass, plCreator* worker);
+    static uint16_t       Register(uint16_t hClass, plCreator* worker); // returns hClass
+    static void         UnRegister(uint16_t hClass, plCreator* worker);
 
-    static bool         CanCreate(UInt16 hClass);   // return true if creator exists. doesn't assert
-    static plCreatable* Create(UInt16 hClass);
+    static bool         CanCreate(uint16_t hClass);   // return true if creator exists. doesn't assert
+    static plCreatable* Create(uint16_t hClass);
 
-    static hsBool       DerivesFrom(UInt16 hBase, UInt16 hDer);
+    static hsBool       DerivesFrom(uint16_t hBase, uint16_t hDer);
 
-    static UInt16       GetNumClasses();
+    static uint16_t       GetNumClasses();
 
-    static UInt16       FindClassIndex(const char* className);      // slow lookup for things like console
+    static uint16_t       FindClassIndex(const char* className);      // slow lookup for things like console
 
-    static hsBool       IsValidClassIndex(UInt16 hClass);
+    static hsBool       IsValidClassIndex(uint16_t hClass);
 
     // Don't call this unless you're a DLL being initialized.
     static void         SetTheFactory(plFactory* fac);
 
-    static const char   *GetNameOfClass(UInt16 type);
+    static const char   *GetNameOfClass(uint16_t type);
 
 #ifdef HS_DEBUGGING
-    void                IValidate(UInt16 keyIndex);
-    static  void        Validate(UInt16 keyIndex);
+    void                IValidate(uint16_t keyIndex);
+    static  void        Validate(uint16_t keyIndex);
 #endif
 };
 

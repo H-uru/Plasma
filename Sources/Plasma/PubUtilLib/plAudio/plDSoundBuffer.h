@@ -68,15 +68,15 @@ class plAudioFileReader;
 class plDSoundBuffer
 {
 public:
-    plDSoundBuffer( UInt32 size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool looping, hsBool tryStatic = false, bool streaming = false );
+    plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool looping, hsBool tryStatic = false, bool streaming = false );
     ~plDSoundBuffer();
 
     void        Play( void );
     void        Stop( void );
     void        Rewind() ;
     
-    UInt32      GetLengthInBytes( void ) const;
-    void        SetScalarVolume( hsScalar volume ); // Sets the volume, but on a range from 0 to 1
+    uint32_t      GetLengthInBytes( void ) const;
+    void        SetScalarVolume( float volume ); // Sets the volume, but on a range from 0 to 1
 
     unsigned    GetSource() { return source; }
     void        SetPosition(float x, float y, float z);
@@ -109,13 +109,13 @@ public:
 
     
     unsigned    GetByteOffset();
-    UInt32      GetBufferBytePos( hsScalar timeInSecs ) const;
-    UInt32      BytePosToMSecs( UInt32 bytePos ) const;
+    uint32_t      GetBufferBytePos( float timeInSecs ) const;
+    uint32_t      bytePosToMSecs( uint32_t bytePos ) const;
 
     void            SetEAXSettings(  plEAXSourceSettings *settings, hsBool force = false );
     void            SetTimeOffsetBytes(unsigned bytes);
-    UInt8           GetBlockAlign( void ) const;
-    static UInt32   GetNumBuffers() { return fNumBuffers; }
+    uint8_t           GetBlockAlign( void ) const;
+    static uint32_t   GetNumBuffers() { return fNumBuffers; }
     float           GetDefaultMinDistance() { return fDefaultMinDistance; }
     bool            GetAvailableBufferId(unsigned *bufferId);
     unsigned        GetNumQueuedBuffers(){ return fNumQueuedBuffers;} // returns the max number of buffers queued on a source
@@ -135,13 +135,13 @@ protected:
 
     BufferType          fType;
     hsBool              fValid, fLooping;
-    UInt32              fLockLength;
+    uint32_t              fLockLength;
     void *              fLockPtr;
     
-    hsTArray<UInt32>    fPosNotifys;
+    hsTArray<uint32_t>    fPosNotifys;
     bool                fStreaming;
     plWAVHeader*        fBufferDesc;
-    UInt32              fBufferSize;
+    uint32_t              fBufferSize;
 
     unsigned            buffer;                                 // used if this is not a streaming buffer
     unsigned            streamingBuffers[STREAMING_BUFFERS];    // used if this is a streaming buffer
@@ -152,13 +152,13 @@ protected:
 
     plEAXSource         fEAXSource;
     
-    static UInt32       fNumBuffers;
+    static uint32_t       fNumBuffers;
     static float        fDefaultMinDistance;
 
     unsigned            fNumQueuedBuffers;
-    hsScalar            fPrevVolume;
+    float            fPrevVolume;
 
-    void    IAllocate( UInt32 size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic );
+    void    IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic );
     void    IRelease( void );
     int     IGetALFormat(unsigned bitsPerSample, unsigned int numChannels);
 };

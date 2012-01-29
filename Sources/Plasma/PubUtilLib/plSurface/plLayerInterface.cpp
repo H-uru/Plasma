@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerInterface.h"
 #include "plMessage/plLayRefMsg.h"
 #include "plLayer.h"
@@ -97,7 +97,7 @@ plLayerInterface::~plLayerInterface()
     delete fBumpEnvXfm;
 }
 
-void plLayerInterface::ISetPassThru(UInt32 chans)
+void plLayerInterface::ISetPassThru(uint32_t chans)
 {
     fPassThruChannels |= chans;
     if( fOverLay )
@@ -129,7 +129,7 @@ void plLayerInterface::ISetPassThru(UInt32 chans)
 // Note that a layer may claim ownership of its channels but then lose
 //      ownership (because another layer went active) before ever having
 //      been Eval'd.
-void plLayerInterface::ClaimChannels(UInt32 chans)
+void plLayerInterface::ClaimChannels(uint32_t chans)
 {
     if( fOverLay )
         fOverLay->ISetPassThru(chans);
@@ -137,18 +137,18 @@ void plLayerInterface::ClaimChannels(UInt32 chans)
     DirtySynchState(kSDLLayer, 0);
 }
 
-UInt32 plLayerInterface::Eval(double secs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerInterface::Eval(double secs, uint32_t frame, uint32_t ignore)
 {
     if( fUnderLay )
         return fUnderLay->Eval(secs, frame, ignore);
 
-    return UInt32(0);
+    return uint32_t(0);
 }
 
 // Export Only
 void plLayerInterface::AttachViaNotify(plLayerInterface *prev)
 {
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);
+    plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);
     hsgResMgr::ResMgr()->AddViaNotify(prev->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
@@ -330,7 +330,7 @@ void plLayerInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plSynchedObject::Read(s, mgr);
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);    
+    plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kUnderLay);    
     plKey key = mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     if( key && !fUnderLay )
         Attach(plLayer::DefaultLayer());

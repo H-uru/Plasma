@@ -45,10 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTelescopeInputInterface.h"
 
 #include "plInputInterfaceMgr.h"
@@ -100,7 +97,7 @@ void    plTelescopeInputInterface::Init( plInputInterfaceMgr *manager )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plTelescopeInputInterface::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plTelescopeInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     return true;
 }

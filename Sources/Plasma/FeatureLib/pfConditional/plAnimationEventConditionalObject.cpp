@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAnimationEventConditionalObject.h"
 #include "pnInputCore/plKeyDef.h"
 #include "plModifier/plSimpleModifier.h"
@@ -67,13 +67,13 @@ hsBool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 }
     
 
-void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, hsScalar time)
+void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float time)
 {
-    plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg* pMsg = new plAnimCmdMsg;
     pMsg->AddReceiver(fTarget);
     pMsg->SetSender( GetKey() );
 
-    plEventCallbackMsg* cb = TRACKED_NEW plEventCallbackMsg(GetKey(), b, 0, time);
+    plEventCallbackMsg* cb = new plEventCallbackMsg(GetKey(), b, 0, time);
 
     pMsg->AddCallback( cb );
     hsRefCnt_SafeUnRef(cb);

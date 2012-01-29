@@ -91,18 +91,18 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
     printf("==Packing %s, ",fileName.c_str());
 
     pyStream.FastFwd();
-    UInt32 pyFileSize = pyStream.GetPosition();
+    uint32_t pyFileSize = pyStream.GetPosition();
     pyStream.Rewind();
 
     glueStream.FastFwd();
-    UInt32 glueFileSize = glueStream.GetPosition();
+    uint32_t glueFileSize = glueStream.GetPosition();
     glueStream.Rewind();
 
-    UInt32 totalSize = pyFileSize + glueFileSize + 2;
+    uint32_t totalSize = pyFileSize + glueFileSize + 2;
 
     char *code = new char[totalSize];
 
-    UInt32 amountRead = pyStream.Read(pyFileSize, code);
+    uint32_t amountRead = pyStream.Read(pyFileSize, code);
     hsAssert(amountRead == pyFileSize, "Bad read");
 
     code[pyFileSize] = '\n';
@@ -189,7 +189,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
     // make sure that we have code to save
     if (pythonCode)
     {
-        Int32 size;
+        int32_t size;
         char* pycode;
         PythonInterface::DumpObject(pythonCode,&pycode,&size);
 
@@ -420,21 +420,21 @@ void PackDirectory(std::string dir, std::string rootPath, std::string pakName, s
     // set to maximum optimization (includes removing __doc__ strings)
     Py_OptimizeFlag = 2;
 
-    std::vector<UInt32> filePositions;
+    std::vector<uint32_t> filePositions;
     filePositions.resize(fileNames.size());
 
     for (i = 0; i < fileNames.size(); i++)
     {
         // strip '.py' from the file name
         std::string properFileName = fileNames[i].substr(0, fileNames[i].size()-3);
-        UInt32 initialPos = s.GetPosition();
+        uint32_t initialPos = s.GetPosition();
         WritePythonFile(properFileName, pathNames[i], &s);
-        UInt32 endPos = s.GetPosition();
+        uint32_t endPos = s.GetPosition();
 
         filePositions[i] = initialPos;
     }
 
-    s.SetPosition(sizeof(UInt32));
+    s.SetPosition(sizeof(uint32_t));
     for (i = 0; i < fileNames.size(); i++)
     {
         s.WriteSafeString(fileNames[i].c_str());

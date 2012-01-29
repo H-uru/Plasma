@@ -68,15 +68,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  struct spawnPt
 //  {
 //      hsPoint3 pt;
-//      hsScalar dist;
+//      float dist;
 //  };
 //
-//  static hsScalar     fTurnRate;
+//  static float     fTurnRate;
 //
-//  static hsScalar     fAcceleration;
-//  static hsScalar     fDeceleration;
-//  static hsScalar     fMaxVelocity;
-//  hsScalar            fCurSpeed;
+//  static float     fAcceleration;
+//  static float     fDeceleration;
+//  static float     fMaxVelocity;
+//  float            fCurSpeed;
 //
 //
 //  double              fLastTime;
@@ -88,19 +88,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  bool                bUseDesiredMatrix;
 //  bool                bIgnoreDesiredMatrix;
 //
-//  hsScalar            fRotationScalar;
+//  float            fRotationScalar;
 //  hsTArray<spawnPt*>  fSpawnPoints;
 //  
-//  void IAdjustVelocity(hsScalar adjAccelRate, 
-//                       hsScalar adjDecelRate, 
+//  void IAdjustVelocity(float adjAccelRate, 
+//                       float adjDecelRate, 
 //                       hsVector3* dir, 
 //                       hsVector3* vel, 
-//                       hsScalar maxSpeed, 
-//                       hsScalar distToGoal,
+//                       float maxSpeed, 
+//                       float distToGoal,
 //                       double elapsedTime);
 //
-//  hsScalar IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime);
-//  hsBool32 IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal);
+//  float IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime);
+//  hsBool32 IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
 //
 //  hsBool  HasMovementFlag(int f) const { return fMoveFlags.IsBitSet(f); }
 //  void    SetMovementFlag(int f) { fMoveFlags.SetBit(f); }
@@ -129,7 +129,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  virtual void    RemoveTarget(plSceneObject* so);
 //
 //  hsBool HandleControlInput(plControlEventMsg* pMsg);
-//  virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+//  virtual hsBool IEval(double secs, float del, uint32_t dirty);
 //
 //  void SetMoving(hsBool b);
 //  hsBool IsMoving() { return bMoving; }

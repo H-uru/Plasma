@@ -78,21 +78,21 @@ protected:
     hsColorRGBA fColor;
 
     hsColorRGBA fFadeInColor;
-    hsScalar    fFadeInSecs;
+    float    fFadeInSecs;
 
     hsColorRGBA fFadeOutColor;
-    hsScalar    fFadeOutSecs;
+    float    fFadeOutSecs;
 
-    hsScalar    fVolume;
+    float    fVolume;
 
     char*       fFileName;
 
-    UInt16      fCmd;
+    uint16_t      fCmd;
 
     hsTArray<plMessage*>    fCallbacks;
 
 public:
-    plMovieMsg(const char* n, UInt16 cmd) 
+    plMovieMsg(const char* n, uint16_t cmd) 
         : plMessage(nil, nil, nil) 
     { 
         fFileName = hsStrcpy(n);
@@ -130,30 +130,30 @@ public:
     }
 
     // Make sure you set at least one command, and set appropriate params for the command
-    UInt16 GetCmd() const { return fCmd; }
-    plMovieMsg& SetCmd(UInt16 c) { fCmd = c; return *this; }
+    uint16_t GetCmd() const { return fCmd; }
+    plMovieMsg& SetCmd(uint16_t c) { fCmd = c; return *this; }
 
     // Center 0,0 is center of screen, 1,1 is Upper-Right, -1,-1 is Lower-Left, etc.
     const hsPoint2& GetCenter() const { return fCenter; }
-    hsScalar GetCenterX() const { return fCenter.fX; }
-    hsScalar GetCenterY() const { return fCenter.fY; }
+    float GetCenterX() const { return fCenter.fX; }
+    float GetCenterY() const { return fCenter.fY; }
 
     plMovieMsg& SetCenter(const hsPoint2& p) { fCenter = p; return *this; }
-    plMovieMsg& SetCenter(hsScalar x, hsScalar y) { fCenter.Set(x, y); return *this; }
-    plMovieMsg& SetCenterX(hsScalar x) { fCenter.fX = x; return *this; }
-    plMovieMsg& SetCenterY(hsScalar y) { fCenter.fY = y; return *this; }
+    plMovieMsg& SetCenter(float x, float y) { fCenter.Set(x, y); return *this; }
+    plMovieMsg& SetCenterX(float x) { fCenter.fX = x; return *this; }
+    plMovieMsg& SetCenterY(float y) { fCenter.fY = y; return *this; }
 
     // Scale of 1.0 matches movie pixel to screen pixel (whatever the resolution).
     // Scale of 2.0 doubles each movie pixel across 2 screen pixels.
     // Etc.
     const hsPoint2& GetScale() const { return fScale; }
-    hsScalar GetScaleX() const { return fScale.fX; }
-    hsScalar GetScaleY() const { return fScale.fY; }
+    float GetScaleX() const { return fScale.fX; }
+    float GetScaleY() const { return fScale.fY; }
 
     plMovieMsg& SetScale(const hsPoint2& p) { fScale = p; return *this; }
-    plMovieMsg& SetScale(hsScalar x, hsScalar y) { fScale.Set(x, y); return *this; }
-    plMovieMsg& SetScaleX(hsScalar x) { fScale.fX = x; return *this; }
-    plMovieMsg& SetScaleY(hsScalar y) { fScale.fY = y; return *this; }
+    plMovieMsg& SetScale(float x, float y) { fScale.Set(x, y); return *this; }
+    plMovieMsg& SetScaleX(float x) { fScale.fX = x; return *this; }
+    plMovieMsg& SetScaleY(float y) { fScale.fY = y; return *this; }
 
     // Include the movie folder, e.g. "avi/porno.bik"
     // String is copied, not pointer copy.
@@ -163,30 +163,30 @@ public:
     // Color is mostly useful for alpha fade up and down.
     const hsColorRGBA& GetColor() const { return fColor; }
     plMovieMsg& SetColor(const hsColorRGBA& c) { fColor = c; return *this; }
-    plMovieMsg& SetColor(hsScalar r, hsScalar g, hsScalar b, hsScalar a) { fColor.Set(r,g,b,a); return *this; }
-    plMovieMsg& SetOpacity(hsScalar a) { return SetColor(1.f, 1.f, 1.f, a); }
+    plMovieMsg& SetColor(float r, float g, float b, float a) { fColor.Set(r,g,b,a); return *this; }
+    plMovieMsg& SetOpacity(float a) { return SetColor(1.f, 1.f, 1.f, a); }
 
     // Or the auto matic fades
     const hsColorRGBA& GetFadeInColor() const { return fFadeInColor; }
     plMovieMsg& SetFadeInColor(const hsColorRGBA& c) { fFadeInColor = c; return *this; }
-    plMovieMsg& SetFadeInColor(hsScalar r, hsScalar g, hsScalar b, hsScalar a) { fFadeInColor.Set(r,g,b,a); return *this; }
+    plMovieMsg& SetFadeInColor(float r, float g, float b, float a) { fFadeInColor.Set(r,g,b,a); return *this; }
 
-    hsScalar GetFadeInSecs() const { return fFadeInSecs; }
-    plMovieMsg& SetFadeInSecs(hsScalar s) { fFadeInSecs = s; return *this; }
+    float GetFadeInSecs() const { return fFadeInSecs; }
+    plMovieMsg& SetFadeInSecs(float s) { fFadeInSecs = s; return *this; }
 
     const hsColorRGBA& GetFadeOutColor() const { return fFadeOutColor; }
     plMovieMsg& SetFadeOutColor(const hsColorRGBA& c) { fFadeOutColor = c; return *this; }
-    plMovieMsg& SetFadeOutColor(hsScalar r, hsScalar g, hsScalar b, hsScalar a) { fFadeOutColor.Set(r,g,b,a); return *this; }
+    plMovieMsg& SetFadeOutColor(float r, float g, float b, float a) { fFadeOutColor.Set(r,g,b,a); return *this; }
 
-    hsScalar GetFadeOutSecs() const { return fFadeOutSecs; }
-    plMovieMsg& SetFadeOutSecs(hsScalar s) { fFadeOutSecs = s; return *this; }
+    float GetFadeOutSecs() const { return fFadeOutSecs; }
+    plMovieMsg& SetFadeOutSecs(float s) { fFadeOutSecs = s; return *this; }
 
     // Volume is on scale of 0=muted to 1=full
-    hsScalar GetVolume() const { return fVolume; }
-    plMovieMsg& SetVolume(hsScalar v) { fVolume = v; return *this; }
+    float GetVolume() const { return fVolume; }
+    plMovieMsg& SetVolume(float v) { fVolume = v; return *this; }
 
     plMovieMsg& AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); return *this; }
-    UInt32 GetNumCallbacks() const { return fCallbacks.GetCount(); }
+    uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
     plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }

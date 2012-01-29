@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_AV_BEHAVIORS_H
 #define PL_AV_BEHAVIORS_H
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnTimer/plTimedValue.h"
@@ -60,10 +60,10 @@ public:
     plArmatureBehavior();
     virtual ~plArmatureBehavior();
 
-    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  UInt8 index);
+    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  uint8_t index);
     virtual void Process(double time, float elapsed);
-    virtual void SetStrength(hsScalar val, hsScalar rate = 0.f); // default instant change
-    virtual hsScalar GetStrength();
+    virtual void SetStrength(float val, float rate = 0.f); // default instant change
+    virtual float GetStrength();
     virtual void Rewind();
     void DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
@@ -71,14 +71,14 @@ public:
     {
         kBehaviorFlagNotifyOnStop = 0x01,
     };
-    UInt32 fFlags;
+    uint32_t fFlags;
     
 protected:
     plAGAnimInstance *fAnim;
     plArmatureModBase *fArmature;
     plArmatureBrain *fBrain;
-    plTimedValue<hsScalar> fStrength;
-    UInt8 fIndex;
+    plTimedValue<float> fStrength;
+    uint8_t fIndex;
 
     virtual void IStart();
     virtual void IStop();

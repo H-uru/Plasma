@@ -106,17 +106,17 @@ public:
     // (ISetSegRange(-1, -1) will give you the entire anim.)
     plLeafController* MakeMatrix44Controller(StdUVGen* uvGen, const char* nodeName);
     plLeafController* MakeMatrix44Controller(Control* prsControl);
-    plLeafController* MakeScalarController(Control* control, plMaxNode* node, hsScalar start = -1, hsScalar end = -1);
-    plController* MakeColorController(Control* control, plMaxNode* node, hsScalar start = -1, hsScalar end = -1);
-    plController* MakePosController(Control* control, plMaxNode* node, hsScalar start = -1, hsScalar end = -1);
-    plController* MakeScaleController(Control* control, plMaxNode* node, hsScalar start = -1, hsScalar end = -1);
-    plController* MakeRotController(Control* control, plMaxNode* node, hsBool camRot = false, hsScalar start = -1, hsScalar end = -1);
-    plCompoundController* MakeTransformController(Control* control, plMaxNode* node, hsScalar start = -1, hsScalar end = -1);
+    plLeafController* MakeScalarController(Control* control, plMaxNode* node, float start = -1, float end = -1);
+    plController* MakeColorController(Control* control, plMaxNode* node, float start = -1, float end = -1);
+    plController* MakePosController(Control* control, plMaxNode* node, float start = -1, float end = -1);
+    plController* MakeScaleController(Control* control, plMaxNode* node, float start = -1, float end = -1);
+    plController* MakeRotController(Control* control, plMaxNode* node, hsBool camRot = false, float start = -1, float end = -1);
+    plCompoundController* MakeTransformController(Control* control, plMaxNode* node, float start = -1, float end = -1);
 
     // This last one was in tempAnim.cpp on its own for some time, apparently created
     // as an initial attempt to get anims working in Max. It's still used, so I don't want
     // to nuke it, but it made sense to move it here.
-    plController* ConvertTMAnim(plSceneObject *obj, plMaxNode *node, hsAffineParts *parts, hsScalar start = -1, hsScalar end = -1);
+    plController* ConvertTMAnim(plSceneObject *obj, plMaxNode *node, hsAffineParts *parts, float start = -1, float end = -1);
     //
     //
     //////////////////////////////////////////////////////////////////////////
@@ -124,12 +124,12 @@ public:
     void    Matrix3ToHsMatrix44(Matrix3* m3, hsMatrix44* hsM);
     Matrix3 StdUVGenToMatrix3(StdUVGen* uvGen);
     bool    StdUVGenToHsMatrix44(hsMatrix44* hsMat, StdUVGen* uvGen, bool preserveOffset=false);
-    void    MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, hsScalar maxRads);
-    void    ScalePositionController(plController* ctl, hsScalar scale);
+    void    MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads);
+    void    ScalePositionController(plController* ctl, float scale);
 
-    void    ReduceKeys(Control *control, hsScalar threshold);
+    void    ReduceKeys(Control *control, float threshold);
     hsBool  HasKeyTimes(Control* ctl);
-    UInt8       GetKeyType(Control* ctl, hsBool rotQuat = false);
+    uint8_t       GetKeyType(Control* ctl, hsBool rotQuat = false);
 
     plMaxNode* GetXformParent(plMaxNode* node);
     hsBool ForceWorldSpace(plMaxNode* node);
@@ -150,8 +150,8 @@ public:
     float GetAnimLength()       { return fAnimLength; }
 
 private:
-    void ISetSegRange(hsScalar start, hsScalar end);
-    void IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc, hsScalar start, hsScalar end);
+    void ISetSegRange(float start, float end);
+    void IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc, float start, float end);
 
     plLeafController* ICreateSimpleRotController(plMaxNode* node, Control* control, hsBool camRot = false);
     plLeafController* ICreateSimpleScaleController(plMaxNode* node, Control* control);
@@ -163,8 +163,8 @@ private:
     void    IEnableEaseCurves(Animatable* control, bool enable);
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     int     IAddPartsKeys(Control* control, hsTArray <hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
-    Int32   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, hsBool rotQuat = false);
-    Int32   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, Int32 &start, Int32 &end);
+    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, hsBool rotQuat = false);
+    int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);
     bool    IIsKeyInRange(IKey* key);
@@ -183,13 +183,13 @@ private:
     hsConverterUtils& fConverterUtils;
     plErrorMsg * fErrorMsg;
 
-    Int32       fTicksPerFrame;
-    Int32       fFrameRate;
-    Int32       fTicksPerSec;
-    Int32       fStartFrame;
-    Int32       fEndFrame;
-    Int32       fNumFrames;
-    hsScalar    fAnimLength;
+    int32_t       fTicksPerFrame;
+    int32_t       fFrameRate;
+    int32_t       fTicksPerSec;
+    int32_t       fStartFrame;
+    int32_t       fEndFrame;
+    int32_t       fNumFrames;
+    float    fAnimLength;
     hsBool    fWarned;
 
     hsBool    fForceLocal;

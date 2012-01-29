@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaFootMgr.h"
 #include "plDynaDecal.h"
 
@@ -63,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMath/plRandom.h"
 static plRandom sRand;
 
-static const UInt32 kNumPrintIDs = 2;
-static const UInt32 kPrintIDs[kNumPrintIDs] =
+static const uint32_t kNumPrintIDs = 2;
+static const uint32_t kPrintIDs[kNumPrintIDs] =
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -74,7 +74,7 @@ static const UInt32 kPrintIDs[kNumPrintIDs] =
 int plDynaFootMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
-    fDecals.Append(TRACKED_NEW plDynaSplot());
+    fDecals.Append(new plDynaSplot());
 
     return idx;
 }
@@ -109,13 +109,13 @@ hsBool plDynaFootMgr::MsgReceive(plMessage* msg)
     plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
     if( footMsg )
     {
-        UInt32 id = footMsg->IsLeft() ? plAvBrainHuman::LFootPrint : plAvBrainHuman::RFootPrint;
+        uint32_t id = footMsg->IsLeft() ? plAvBrainHuman::LFootPrint : plAvBrainHuman::RFootPrint;
 
         plArmatureMod* armMod = footMsg->GetArmature();
         const plPrintShape* shape = IGetPrintShape(armMod, id);
         if( shape )
         {
-            plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+            plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
             if( IPrintFromShape(shape, footMsg->IsLeft()) )
             {
                 INotifyActive(info, armMod->GetKey(), id);
@@ -138,10 +138,10 @@ hsBool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, hsBool flip)
 
     if( shape )
     {
-        plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+        plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
         double secs = hsTimer::GetSysSeconds();
-        hsScalar wetness = IHowWet(info, secs);
+        float wetness = IHowWet(info, secs);
         fInitAtten = wetness;
 
         if( wetness <= 0 )

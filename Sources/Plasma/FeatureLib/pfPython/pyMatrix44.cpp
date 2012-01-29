@@ -83,9 +83,9 @@ PyObject* pyMatrix44::GetTranslate(PyObject* pt)
     return pt;
 }
 
-hsScalar* pyMatrix44::GetData()
+float* pyMatrix44::GetData()
 {
-    hsScalar *res = new hsScalar[4*4];
+    float *res = new float[4*4];
     res[0] = fMatrix.fMap[0][0];  res[1] = fMatrix.fMap[0][1];  res[2] = fMatrix.fMap[0][2];  res[3] = fMatrix.fMap[0][3];
     res[4] = fMatrix.fMap[1][0];  res[5] = fMatrix.fMap[1][1];  res[6] = fMatrix.fMap[1][2];  res[7] = fMatrix.fMap[1][3];
     res[8] = fMatrix.fMap[2][0];  res[9] = fMatrix.fMap[2][1];  res[10] = fMatrix.fMap[2][2]; res[11] = fMatrix.fMap[2][3];
@@ -94,7 +94,7 @@ hsScalar* pyMatrix44::GetData()
     return res;
 }
 
-void pyMatrix44::SetData(const hsScalar mat[])
+void pyMatrix44::SetData(const float mat[])
 {
     fMatrix.fMap[0][0] = mat[0];
     fMatrix.fMap[0][1] = mat[1];

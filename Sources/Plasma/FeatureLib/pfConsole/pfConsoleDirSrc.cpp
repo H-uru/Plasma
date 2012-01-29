@@ -46,19 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfConsoleDirSrc.h"
-
+#include "HeadSpin.h"
 #include "hsExceptions.h"
 
 #ifdef HS_BUILD_FOR_WIN32
-
-#define WIN32_EXTRA_LEAN
-#define WIN32_LEAN_AND_MEAN
-#ifndef _WINDOWS_H_ // redundant include guard to minimize compile times
-#define _WINDOWS_H_
-#include <windows.h>
-#endif // _WINDOWS_H_
-
-#include <winbase.h>
 
 #include <sstream>
 
@@ -67,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsBool  pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
 {
-    wchar* wPath = hsStringToWString(path.c_str());
-    wchar* wMask = hsStringToWString(mask.c_str());
+    wchar_t* wPath = hsStringToWString(path.c_str());
+    wchar_t* wMask = hsStringToWString(mask.c_str());
     hsBool ret = ParseDirectory(wPath, wMask);
     delete [] wPath;
     delete [] wMask;
@@ -104,8 +95,8 @@ hsBool  pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wst
                 // errors in the parsing
                 std::wstringstream error;
                 std::wstringstream caption;
-                wchar* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
-                wchar* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
+                wchar_t* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
+                wchar_t* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
 
                 caption << L"Error parsing " << findInfo.cFileName;
                 error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";
@@ -161,5 +152,5 @@ hsBool pfConsoleDirSrc::AlreadyProcessedFile(const std::wstring& path, const std
 
 void pfConsoleDirSrc::AddProcessedFile(const std::wstring& path, const std::wstring& file)
 {
-    fProcessedFiles.push_back(TRACKED_NEW FileName(path, file));    
+    fProcessedFiles.push_back(new FileName(path, file));    
 }

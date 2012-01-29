@@ -51,10 +51,10 @@ protected:
     plKey fRedAnimKey;
     plKey fOpenAnimKey;
     plKey fBounceAnimKey;
-    UInt16 fPlaceSndIdx;
-    UInt16 fHitSndIdx;
+    uint16_t fPlaceSndIdx;
+    uint16_t fHitSndIdx;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return true; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     plKey IFindCloneKey(plKey baseKey);
     
@@ -68,7 +68,7 @@ public:
     GETINTERFACE_ANY(plGameMarkerModifier, plSingleModifier);
 
     void ExportInit(plKey greenKey, plKey redKey, plKey openKey, plKey bounceAnimKey,
-                    UInt16 placeSndIdx, UInt16 hitSndIdx)
+                    uint16_t placeSndIdx, uint16_t hitSndIdx)
     {
         fGreenAnimKey = greenKey;
         fRedAnimKey = redKey;

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetVoiceList_h
 #define plNetVoiceList_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 //
@@ -108,7 +108,7 @@ private:
     {
         kDirty  = 0x1
     };
-    UInt32 fFlags;
+    uint32_t fFlags;
 public:
     plNetTalkList() : fFlags(0) {}
     ~plNetTalkList() {}

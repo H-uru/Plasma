@@ -46,7 +46,6 @@ target_link_libraries(MaxPlasmaLights ${3dsm_LIBRARIES})
 # Carbon copy from plClient
 # TODO: Maybe see if some of these can be removed?
 target_link_libraries(MaxPlasmaLights CoreLib)
-target_link_libraries(MaxPlasmaLights CoreLibExe)
 target_link_libraries(MaxPlasmaLights pfAnimation)
 target_link_libraries(MaxPlasmaLights pfAudio)
 target_link_libraries(MaxPlasmaLights pfCamera)

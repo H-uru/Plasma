@@ -164,7 +164,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
@@ -248,11 +248,11 @@ public:
     void CurBook(pfJournalBook *curBook) {fCurrBook = curBook;}
 
     // Quick helper
-    plDynamicTextMap *GetDTMap(UInt32 which);
-    pfGUIMultiLineEditCtrl *GetEditCtrl(UInt32 which);
+    plDynamicTextMap *GetDTMap(uint32_t which);
+    pfGUIMultiLineEditCtrl *GetEditCtrl(uint32_t which);
 
     // Seeks the width and height animations to set the desired book size. Sizes are in % across the animation
-    void SetCurrSize(hsScalar w, hsScalar h);
+    void SetCurrSize(float w, float h);
 
     // Enables or disables the left and right page corners, to indicate current turnage state
     void UpdatePageCorners(WhichSide which);
@@ -269,8 +269,8 @@ public:
     // Registers (or unregisters) for time messages so we can process special FX if we need to
     void RegisterForSFX(WhichSide whichSides);
 
-    void HitEndOfControlList(Int32 cursorPos);
-    void HitBeginningOfControlList(Int32 cursorPos);
+    void HitEndOfControlList(int32_t cursorPos);
+    void HitBeginningOfControlList(int32_t cursorPos);
 
     void EnableEditGUI(hsBool enable=true);
     void DisableEditGUI() {EnableEditGUI(false);}
@@ -317,7 +317,7 @@ protected:
     WhichSide   fCurrSFXPages;
 
     // Base time to calc SFX anim positions from
-    hsScalar    fBaseSFXTime;
+    float    fBaseSFXTime;
     hsBool      fResetSFXFlag;
     hsBool      fSFXUpdateFlip;     // So we only update alternating pages every frame, to save processor time
 
@@ -325,13 +325,13 @@ protected:
     hsBool      fCurrentlyTurning, fCurrentlyOpen, fStartedOpen;
 
     hsBool      fEditable;
-    Int32       fAdjustCursorTo;
+    int32_t       fAdjustCursorTo;
 
     // Inits our dialog template
     void IInitTemplate(pfGUIDialogMod *templateDlg);
 
     // Process SFX for this frame
-    void IHandleSFX(hsScalar currTime, WhichSide whichSide = kNoSides);
+    void IHandleSFX(float currTime, WhichSide whichSide = kNoSides);
 
     // Yet another step in the page flip, to make SURE we're already showing the turning page before we fill in the page behind it
     void IFillUncoveringPage(hsBool rightSide);
@@ -403,7 +403,7 @@ class pfJournalBook : public hsKeyedObject
         void    Hide( void );
 
         // Opens the book, optionally to the given page
-        void    Open( UInt32 startingPage = 0 );
+        void    Open( uint32_t startingPage = 0 );
 
         // Closes the book.
         void    Close( void );
@@ -415,7 +415,7 @@ class pfJournalBook : public hsKeyedObject
         void    PreviousPage( void );
 
         // For completeness...
-        void    GoToPage( UInt32 pageNumber );
+        void    GoToPage( uint32_t pageNumber );
 
         // See below. Just forces a full calc of the cached info
         void    ForceCacheCalculations( void );
@@ -424,19 +424,19 @@ class pfJournalBook : public hsKeyedObject
         void    CloseAndHide( void );
 
         // Sets the book size scaling. 1,1 would be full size, 0,0 is the smallest size possible
-        void    SetBookSize( hsScalar width, hsScalar height );
+        void    SetBookSize( float width, float height );
 
         // What page are we on?
-        UInt32  GetCurrentPage( void ) const { return fCurrentPage; }
+        uint32_t  GetCurrentPage( void ) const { return fCurrentPage; }
 
         // Set the margin (defaults to 16 pixels)
-        void    SetPageMargin( UInt32 margin ) { fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = margin; }
+        void    SetPageMargin( uint32_t margin ) { fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = margin; }
 
         // Turns on or off page turning
         void    AllowPageTurning( hsBool allow ) { fAllowTurning = allow; }
 
         // grabs a certain movie based on it's index in the source file
-        plKey   GetMovie( UInt8 index );
+        plKey   GetMovie( uint8_t index );
 
         // turns on and off editing of the book
         void    SetEditable( hsBool editable=true );
@@ -476,13 +476,13 @@ class pfJournalBook : public hsKeyedObject
         bool    fCoverFromHTML;
         // Cached array of page starts in the esHTML source. Generated as we flip through
         // the book, so that going backwards can be done efficiently.
-        hsTArray<UInt32>    fPageStarts;
+        hsTArray<uint32_t>    fPageStarts;
 
         // is the book done showing and ready for more page calculations
         hsBool  fAreWeShowing;
 
         // Our current page
-        UInt32  fCurrentPage;
+        uint32_t  fCurrentPage;
 
         // are we editing this book? (adjusts how we draw and flip pages)
         hsBool  fAreEditing;
@@ -491,13 +491,13 @@ class pfJournalBook : public hsKeyedObject
         hsBool  fAllowTurning; // do we allow the user to turn pages?
 
         // The ending page. -1 until calculated by flipping to it
-        UInt32  fLastPage;
+        uint32_t  fLastPage;
 
         // Per book size
-        hsScalar    fWidthScale, fHeightScale;
+        float    fWidthScale, fHeightScale;
 
         // Per book margin around the edge (defaults to 16 pixels)
-        UInt32      fPageTMargin, fPageLMargin, fPageBMargin, fPageRMargin;
+        uint32_t      fPageTMargin, fPageLMargin, fPageBMargin, fPageRMargin;
 
         // Some animation keys we use
         plKey   fPageTurnAnimKey;
@@ -520,30 +520,30 @@ class pfJournalBook : public hsKeyedObject
         void    IFreeSource( void );
 
         // Compile helpers
-        UInt8   IGetTagType( const wchar_t *string );
+        uint8_t   IGetTagType( const wchar_t *string );
         hsBool  IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option );
 
         plKey   IGetMipmapKey( const wchar_t *name, const plLocation &loc );
 
         // Renders one (1) page into the given DTMap
-        void    IRenderPage( UInt32 page, UInt32 whichDTMap, hsBool suppressRendering = false );
+        void    IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool suppressRendering = false );
 
         // moves the movie layers from one material onto another
         void    IMoveMovies( hsGMaterial *source, hsGMaterial *dest);
 
         // Starting at the given chunk, works backwards to determine the full set of current
         // font properties at that point, or assigns defaults if none were specified
-        void    IFindFontProps( UInt32 chunkIdx, const wchar_t *&face, UInt8 &size, UInt8 &flags, hsColorRGBA &color, Int16 &spacing );
+        void    IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
 
         // Find the last paragraph chunk and thus the last par alignment settings
-        UInt8   IFindLastAlignment( void ) const;
+        uint8_t   IFindLastAlignment( void ) const;
 
         // Handle clicks on either side of the book
         void    IHandleLeftSideClick( void );
         void    IHandleRightSideClick( void );
 
         // Just sends out a notify to our currently set receiver key
-        void    ISendNotify( UInt32 type, UInt32 linkID = 0 );
+        void    ISendNotify( uint32_t type, uint32_t linkID = 0 );
 
         // Close with a notify
         void    ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool immediate );
@@ -552,10 +552,10 @@ class pfJournalBook : public hsKeyedObject
         void    IFinishShow( hsBool startOpened );
 
         // Find the current moused link, if any
-        Int32   IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp );
+        int32_t   IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp );
 
         // Ensures that all the page starts are calced up to the given page (but not including it)
-        void    IRecalcPageStarts( UInt32 upToPage );
+        void    IRecalcPageStarts( uint32_t upToPage );
 
         // Load (or unload) all the images for the book
         void    ILoadAllImages( hsBool unload );
@@ -564,15 +564,15 @@ class pfJournalBook : public hsKeyedObject
         void    IPurgeDynaTextMaps( );
 
         // Process a click on the given "check box" image
-        void    IHandleCheckClick( UInt32 idx, pfBookData::WhichSide which );
+        void    IHandleCheckClick( uint32_t idx, pfBookData::WhichSide which );
 
         // Draw me an image!
-        void    IDrawMipmap( pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, plMipmap *mip, plDynamicTextMap *dtMap, UInt32 whichDTMap, hsBool dontRender );
+        void    IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, hsBool dontRender );
         
         // Movie functions
         loadedMovie         *IMovieAlreadyLoaded(pfEsHTMLChunk *chunk);
-        loadedMovie         *IGetMovieByIndex(UInt8 index);
-        plLayerBink         *IMakeMovieLayer(pfEsHTMLChunk *chunk, UInt16 x, UInt16 y, plMipmap *baseMipmap, UInt32 whichDTMap, hsBool dontRender);
+        loadedMovie         *IGetMovieByIndex(uint8_t index);
+        plLayerBink         *IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, hsBool dontRender);
 
         // Cover functions
         plLayerInterface    *IMakeBaseLayer(plMipmap *image);

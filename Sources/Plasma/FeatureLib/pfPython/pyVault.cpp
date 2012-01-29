@@ -201,9 +201,9 @@ PyObject* pyVault::GetAgeJournalsFolder( void )
 // ...such as how many pictures, notes and markers they have
 PyObject* pyVault::GetKIUsage(void)
 {
-    UInt32 pictures = 0;
-    UInt32 notes = 0;
-    UInt32 markerGames = 0;
+    uint32_t pictures = 0;
+    uint32_t notes = 0;
+    uint32_t markerGames = 0;
 
     for (;;) {
         RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
@@ -346,7 +346,7 @@ PyObject* pyVault::GetVisitAgeLink( const pyAgeInfoStruct & info)
 // Chronicle
 PyObject* pyVault::FindChronicleEntry( const char * entryName )
 {
-    wchar wEntryName[kMaxVaultNodeStringLength];
+    wchar_t wEntryName[kMaxVaultNodeStringLength];
     StrToUnicode(wEntryName, entryName, arrsize(wEntryName));
     
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wEntryName)) {
@@ -359,18 +359,18 @@ PyObject* pyVault::FindChronicleEntry( const char * entryName )
     PYTHON_RETURN_NONE;
 }
 
-void pyVault::AddChronicleEntry( const char * name, UInt32 type, const char * value )
+void pyVault::AddChronicleEntry( const char * name, uint32_t type, const char * value )
 {
-    wchar * wEntryName = StrDupToUnicode(name);
-    wchar * wEntryValue = StrDupToUnicode(value);
+    wchar_t * wEntryName = StrDupToUnicode(name);
+    wchar_t * wEntryValue = StrDupToUnicode(value);
     
     // FIXME: We should ideally not block, but for now, the Python assumes that when 
     //        we return, the chronicle exists and can be found with findChronicleEntry. 
     //        Maybe we should insert a dummy into the tree? (currently hard)
     VaultAddChronicleEntryAndWait(wEntryName, type, wEntryValue);
     
-    FREE(wEntryName);
-    FREE(wEntryValue);
+    free(wEntryName);
+    free(wEntryValue);
 }
 
 
@@ -379,7 +379,7 @@ void pyVault::SendToDevice( pyVaultNode& node, const char * deviceName )
     if (!node.GetNode())
         return;
 
-    wchar wDevName[256];
+    wchar_t wDevName[256];
     StrToUnicode(wDevName, deviceName, arrsize(wDevName));
 
     // Note: This actually blocks (~Hoikas)
@@ -437,7 +437,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
         templateNode->fieldFlags = 0;
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
-        wchar str[MAX_PATH];
+        wchar_t str[MAX_PATH];
         StrToUnicode(str, kPersonalAgeFilename, arrsize(str));
         ageInfo.SetAgeFilename(str);
 
@@ -452,7 +452,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
                 if (sdl.GetStateDataRecord(rec, plSDL::kKeepDirty))
                     result = pySDLStateDataRecord::New(rec);
                 else
-                    DEL(rec);
+                    delete rec;
                 rvnSdl->DecRef();
             }
             rvnInfo->DecRef();
@@ -482,7 +482,7 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
         templateNode->fieldFlags = 0;
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
-        wchar str[MAX_PATH];
+        wchar_t str[MAX_PATH];
         StrToUnicode(str, kPersonalAgeFilename, arrsize(str));
         ageInfo.SetAgeFilename(str);
 
@@ -544,8 +544,8 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
 
 void pyVault::RegisterMTStation( const char * stationName, const char * backLinkSpawnPtObjName )
 {
-    wchar wStationName[256];
-    wchar wSpawnPt[256];
+    wchar_t wStationName[256];
+    wchar_t wSpawnPt[256];
     StrToUnicode(wStationName, stationName, arrsize(wStationName));
     StrToUnicode(wSpawnPt, backLinkSpawnPtObjName, arrsize(wSpawnPt));
 
@@ -583,10 +583,10 @@ void pyVault::UnRegisterVisitAge( const char * guidstr )
 void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
 {
     if (result == kNetSuccess)
-        VaultSendNode(node, (UInt32)param);
+        VaultSendNode(node, (uint32_t)param);
 }
 
-void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID )
+void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
     NetVaultNode * templateNode = NEWZERO(NetVaultNode);
     templateNode->IncRef();
@@ -602,10 +602,10 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, UInt32 playerID )
 void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
 {
     if (result == kNetSuccess)
-        VaultSendNode(node, (UInt32)param);
+        VaultSendNode(node, (uint32_t)param);
 }
 
-void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
+void pyVault::UnInvitePlayerToAge( const char * str, uint32_t playerID )
 {
     plAgeInfoStruct info;
     info.SetAgeInstanceGuid(&plUUID(str));
@@ -631,7 +631,7 @@ void pyVault::UnInvitePlayerToAge( const char * str, UInt32 playerID )
 }
 
 //============================================================================
-void pyVault::OfferLinkToPlayer( const pyAgeLinkStruct & link, UInt32 playerID )
+void pyVault::OfferLinkToPlayer( const pyAgeLinkStruct & link, uint32_t playerID )
 {
     hsAssert(false, "eric, port me");
 }

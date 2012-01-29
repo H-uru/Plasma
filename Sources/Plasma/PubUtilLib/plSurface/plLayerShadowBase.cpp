@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayerShadowBase.h"
 
 ///////////////////////////////////////////////////////////////////////////
@@ -51,13 +51,13 @@ plLayerLightBase::plLayerLightBase()
                 | kAmbientColor
                 | kPreshadeColor;
 
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
     
-    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor = new hsColorRGBA;
     fAmbientColor->Set(0,0,0,1.f);
 
-    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor = new hsColorRGBA;
     fPreshadeColor->Set(0,0,0,1.f);
 }
 
@@ -71,16 +71,16 @@ plLayerInterface* plLayerLightBase::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-UInt32 plLayerLightBase::Eval(double secs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerLightBase::Eval(double secs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    uint32_t ret = plLayerInterface::Eval(secs, frame, ignore);
     if( fUnderLay )
     {
         if( fDirty || (ret & kState) )
         {
             *fState = fUnderLay->GetState();
 
-            UInt32 blend = fState->fBlendFlags;
+            uint32_t blend = fState->fBlendFlags;
 
             fState->fBlendFlags &= ~hsGMatState::kBlendMask;
 
@@ -114,13 +114,13 @@ plLayerShadowBase::plLayerShadowBase()
                 | kAmbientColor
                 | kPreshadeColor;
 
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
     
-    fAmbientColor = TRACKED_NEW hsColorRGBA;
+    fAmbientColor = new hsColorRGBA;
     fAmbientColor->Set(0,0,0,1.f);
 
-    fPreshadeColor = TRACKED_NEW hsColorRGBA;
+    fPreshadeColor = new hsColorRGBA;
     fPreshadeColor->Set(0,0,0,1.f);
 }
 
@@ -134,9 +134,9 @@ plLayerInterface* plLayerShadowBase::Attach(plLayerInterface* prev)
     return plLayerInterface::Attach(prev);
 }
 
-UInt32 plLayerShadowBase::Eval(double secs, UInt32 frame, UInt32 ignore)
+uint32_t plLayerShadowBase::Eval(double secs, uint32_t frame, uint32_t ignore)
 {
-    UInt32 ret = plLayerInterface::Eval(secs, frame, ignore);
+    uint32_t ret = plLayerInterface::Eval(secs, frame, ignore);
     if( fUnderLay )
     {
         if( fDirty || (ret & kState) )

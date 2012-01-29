@@ -67,7 +67,7 @@ protected:
     };
 
     // Volatile flag, whether we're setup yet or not.
-    UInt8           fSetup;
+    uint8_t           fSetup;
 
     enum {
         kNearTrans,
@@ -77,16 +77,16 @@ protected:
 
         kNumDists
     };
-    hsScalar        fDists[kNumDists];
+    float           fDists[kNumDists];
 
     hsPoint3        fRefPos;
 
     hsTArray<plFadeOpacityLay*> fFadeLays;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) { return false; }
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
 
-    hsScalar ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
+    float ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
     void ISetOpacity();
 
     void ISetup();
@@ -116,13 +116,13 @@ public:
 
     // Rules are:
     // NearTrans <= NearOpaq <= FarOpaque <= FarTrans
-    void SetFarDist(hsScalar opaque, hsScalar transparent);
-    void SetNearDist(hsScalar transparent, hsScalar opaque);
+    void SetFarDist(float opaque, float transparent);
+    void SetNearDist(float transparent, float opaque);
 
-    hsScalar GetFarTransparent() const { return fDists[kFarTrans]; }
-    hsScalar GetNearTransparent() const { return fDists[kNearTrans]; }
-    hsScalar GetFarOpaque() const { return fDists[kFarOpaq]; }
-    hsScalar GetNearOpaque() const { return fDists[kNearOpaq]; }
+    float GetFarTransparent() const { return fDists[kFarTrans]; }
+    float GetNearTransparent() const { return fDists[kNearTrans]; }
+    float GetFarOpaque() const { return fDists[kFarOpaq]; }
+    float GetNearOpaque() const { return fDists[kNearOpaq]; }
 };
 
 #endif // plDistOpacityMod_inc

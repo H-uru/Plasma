@@ -72,9 +72,9 @@ protected:
 
     plVisMgr*               fMgr;
 
-    Int32                   fIndex;
+    int32_t                   fIndex;
 
-    void                    SetIndex(Int32 i) { fIndex = i; }
+    void                    SetIndex(int32_t i) { fIndex = i; }
 
     friend class plVisMgr;
 public:
@@ -84,7 +84,7 @@ public:
     CLASSNAME_REGISTER( plVisRegion );
     GETINTERFACE_ANY( plVisRegion, plObjInterface );
 
-    virtual Int32   GetNumProperties() const { return 3; } // This is stupid.
+    virtual int32_t   GetNumProperties() const { return 3; } // This is stupid.
 
     virtual hsBool MsgReceive(plMessage* msg);
 
@@ -97,7 +97,7 @@ public:
 
     hsBool          Eval(const hsPoint3& pos) const;
 
-    Int32           GetIndex() const { return fIndex; }
+    int32_t           GetIndex() const { return fIndex; }
 
     hsBool          Registered() const { return GetIndex() > 0; }
 

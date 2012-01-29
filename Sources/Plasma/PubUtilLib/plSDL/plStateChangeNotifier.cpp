@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 // static 
-UInt32 plStateChangeNotifier::fCurrentPlayerID = 0;
+uint32_t plStateChangeNotifier::fCurrentPlayerID = 0;
 
 plStateChangeNotifier::plStateChangeNotifier() :
 fDelta(0)
@@ -123,7 +123,7 @@ bool plStateChangeNotifier::operator==(const plStateChangeNotifier &other) const
 void plStateChangeNotifier::SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, 
                                                 const char* sdlName)
 {
-    plSDLNotificationMsg* m = TRACKED_NEW plSDLNotificationMsg;
+    plSDLNotificationMsg* m = new plSDLNotificationMsg;
 
     // add receivers
     KeyList::iterator kit=fKeys.begin();

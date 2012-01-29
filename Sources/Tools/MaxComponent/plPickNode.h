@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickNode_h_inc
 #define plPickNode_h_inc
 
-#include "hsConfig.h"
 #include "max.h"
 #include <vector>
 

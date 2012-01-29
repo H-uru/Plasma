@@ -59,13 +59,13 @@ const Uuid kNilGuid;
 ***/
 
 //============================================================================
-Uuid::Uuid (const wchar str[]) {
+Uuid::Uuid (const wchar_t str[]) {
     
     GuidFromString(str, this);
 }
 
 //============================================================================
-Uuid::Uuid (const byte buf[], unsigned length) {
+Uuid::Uuid (const uint8_t buf[], unsigned length) {
     
     GuidFromHex(buf, length, this);
 }
@@ -78,11 +78,11 @@ unsigned GuidHash (const Uuid & uuid) {
 }
 
 //============================================================================
-static const wchar s_hexChars[] = L"0123456789ABCDEF";
-const wchar * GuidToHex (const Uuid & uuid, wchar * dst, unsigned chars) {
+static const wchar_t s_hexChars[] = L"0123456789ABCDEF";
+const wchar_t * GuidToHex (const Uuid & uuid, wchar_t * dst, unsigned chars) {
     
-    wchar * str = ALLOCA(wchar, sizeof(uuid.data) * 2 + 1);
-    wchar * cur = str;
+    wchar_t * str = (wchar_t*)malloc((sizeof(uuid.data) * 2 + 1) * sizeof(wchar_t));
+    wchar_t * cur = str;
     
     for (unsigned i = 0; i < sizeof(uuid.data); ++i) {
         *cur++ = s_hexChars[(uuid.data[i] >> 4) & 0x0f];
@@ -91,13 +91,15 @@ const wchar * GuidToHex (const Uuid & uuid, wchar * dst, unsigned chars) {
     *cur = 0;
     
     StrCopy(dst, str, chars);
+
+    free(str);
     return dst;
 }
 
 //============================================================================
-bool GuidFromHex (const byte buf[], unsigned length, Uuid * uuid) {
+bool GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid) {
 
-    ASSERT(length == msizeof(Uuid, data));
-    MemCopy(uuid->data, buf, msizeof(Uuid, data));
+    ASSERT(length == sizeof(uuid->data));
+    memcpy(uuid->data, buf, sizeof(uuid->data));
     return true;
 }

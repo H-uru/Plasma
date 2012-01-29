@@ -75,7 +75,7 @@ public:
     CLASSNAME_REGISTER(plAvBrainCritter);
     GETINTERFACE_ANY(plAvBrainCritter, plArmatureBrain);
 
-    hsBool Apply(double time, hsScalar elapsed);
+    hsBool Apply(double time, float elapsed);
     hsBool MsgReceive(plMessage* msg);
 
     virtual void Activate(plArmatureModBase* avMod);
@@ -104,15 +104,15 @@ public:
     bool AvoidingAvatars() const {return fAvoidingAvatars;}
     bool AtGoal() const;
 
-    void StopDistance(hsScalar stopDistance) {fStopDistance = stopDistance; fStopDistanceSquared = fStopDistance * fStopDistance;}
-    hsScalar StopDistance() const {return fStopDistance;}
+    void StopDistance(float stopDistance) {fStopDistance = stopDistance; fStopDistanceSquared = fStopDistance * fStopDistance;}
+    float StopDistance() const {return fStopDistance;}
 
-    void SightCone(hsScalar coneRad);
-    hsScalar SightCone() const {return fSightConeAngle;}
-    void SightDistance(hsScalar sightDis) {fSightDistance = sightDis; fSightDistanceSquared = fSightDistance * fSightDistance;}
-    hsScalar SightDistance() const {return fSightDistance;}
-    void HearingDistance(hsScalar hearDis);
-    hsScalar HearingDistance() const {return fHearingDistance;}
+    void SightCone(float coneRad);
+    float SightCone() const {return fSightConeAngle;}
+    void SightDistance(float sightDis) {fSightDistance = sightDis; fSightDistanceSquared = fSightDistance * fSightDistance;}
+    float SightDistance() const {return fSightDistance;}
+    void HearingDistance(float hearDis);
+    float HearingDistance() const {return fHearingDistance;}
 
     bool CanSeeAvatar(unsigned long id) const;
     bool CanHearAvatar(unsigned long id) const;
@@ -142,7 +142,7 @@ protected:
     void IStartBehavior(); // fades in and initializes fNextMode, then sets fCurMode
     void IProcessBehavior(double time, float elapsed); // processes fCurMode
     void IEvalGoal();
-    hsScalar IGetTurnStrength(double time) const;
+    float IGetTurnStrength(double time) const;
 
     std::vector<unsigned long> IGetAgePlayerIDList() const;
 
@@ -162,19 +162,19 @@ protected:
     bool fAvoidingAvatars; // are we avoiding avatars to the best of our ability when pathfinding?
     hsPoint3 fFinalGoalPos; // the location we are pathfinding to
     hsPoint3 fImmediateGoalPos; // the location of the point we are immediately going towards (not necessarily our final goal)
-    hsScalar fDotGoal; // dot product to our goal
-    hsScalar fAngRight; // dot product of our local right-hand vector to our goal
+    float fDotGoal; // dot product to our goal
+    float fAngRight; // dot product of our local right-hand vector to our goal
 
-    hsScalar fStopDistance; // how close we need to get to our goal before stopping
-    hsScalar fStopDistanceSquared; // the above, squared, for faster calculation
+    float fStopDistance; // how close we need to get to our goal before stopping
+    float fStopDistanceSquared; // the above, squared, for faster calculation
 
-    hsScalar fSightConeAngle; // in radians, the width of the cone we can see (/2 on each side of where we face, so 90deg cone is 45deg on each side)
-    hsScalar fSightConeDotMin; // the minimum dot-product of the cone we can see (1 - straight ahead only, 0 - 90deg either side, -1 - 180 behind, or full 360)
-    hsScalar fSightDistance; // how far away we can see (cone in front of us)
-    hsScalar fSightDistanceSquared; // the above, squared, for faster calculation
-    hsScalar fHearingDistance; // how far away we can hear (360 degrees)
-    hsScalar fHearingDistanceSquared; // the above, squared, for faster calculation
-    hsScalar fLoudHearingDistanceSquared; // how far away we can hear loud noises, squared, for faster calculation
+    float fSightConeAngle; // in radians, the width of the cone we can see (/2 on each side of where we face, so 90deg cone is 45deg on each side)
+    float fSightConeDotMin; // the minimum dot-product of the cone we can see (1 - straight ahead only, 0 - 90deg either side, -1 - 180 behind, or full 360)
+    float fSightDistance; // how far away we can see (cone in front of us)
+    float fSightDistanceSquared; // the above, squared, for faster calculation
+    float fHearingDistance; // how far away we can hear (360 degrees)
+    float fHearingDistanceSquared; // the above, squared, for faster calculation
+    float fLoudHearingDistanceSquared; // how far away we can hear loud noises, squared, for faster calculation
 
     std::map<std::string, std::vector<int> > fUserBehaviors; // string is behavior name, internal vector is the list of behaviors that are randomly picked from
 

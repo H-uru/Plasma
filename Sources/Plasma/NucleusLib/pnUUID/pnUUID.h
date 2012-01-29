@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnUUID_h_inc
 #define pnUUID_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #ifdef HS_BUILD_FOR_WIN32
 #include "pnUtils/pnUtils.h"
@@ -54,7 +54,7 @@ class plUUID
 {
     // must be first field in class
 public:
-    UInt8   fData[16];
+    uint8_t   fData[16];
     struct Match
     {
         const plUUID * fGuid;

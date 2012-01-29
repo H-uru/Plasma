@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsMemory.h"
 #include "hsRefCnt.h"
-#include "hsUtils.h"
+
 
 #include <stdarg.h>
 
@@ -62,8 +62,8 @@ class hsDlistNode
 public:
     static hsDlistNode *fpFirst;
     static hsDlistNode *fpLast;
-    static UInt32       fcreated;
-    static UInt32       fdestroyed;
+    static uint32_t       fcreated;
+    static uint32_t       fdestroyed;
 
     void *fpThing;
     hsDlistNode *fpPrev;
@@ -127,13 +127,13 @@ public:
 // Use this for an array of objects of class T allocated with new[]
 template <class T> class hsTempArray {
     T*      fArray;
-    UInt32  fCount;
+    uint32_t  fCount;
     hsTempArray<T>& operator=(const hsTempArray<T>&);
 public:
-    hsTempArray(long count) : fArray(TRACKED_NEW T[count]), fCount(count)
+    hsTempArray(long count) : fArray(new T[count]), fCount(count)
     {
     }
-    hsTempArray(long count, T initValue) : fArray(TRACKED_NEW T[count]), fCount(count)
+    hsTempArray(long count, T initValue) : fArray(new T[count]), fCount(count)
     {
         for (int i = 0; i < count; i++)
             fArray[i] = initValue;
@@ -151,12 +151,12 @@ public:
 
     operator T*() const { return fArray; }
     T* GetArray() const { return fArray; }
-    void Accomodate(UInt32 count)
+    void Accomodate(uint32_t count)
     {
         if (count > fCount)
         {   delete[] fArray;
             fCount = count;
-            fArray = TRACKED_NEW T[count];
+            fArray = new T[count];
         }
     }
 };
@@ -224,29 +224,29 @@ public:
 
 template <class T> class hsDynamicArray {
 private:
-    Int32       fCount;
+    int32_t       fCount;
     T*          fArray; 
 
     hsDynamicArray<T>&  operator=(const hsDynamicArray<T>&);        // don't allow assignment
 public:
     enum { kMissingIndex = -1 };
 
-                hsDynamicArray(Int32 count = 0);
+                hsDynamicArray(int32_t count = 0);
     virtual     ~hsDynamicArray();
 
-    Int32       GetCount() const { return fCount; }
+    int32_t       GetCount() const { return fCount; }
     hsBool      IsEmpty() const { return fCount == 0; }
-    const T&        Get(Int32 index) const;
-    Int32       Get(Int32 index, Int32 count, T data[]) const;
-    Int32       Find(const T&) const;   // returns kMissingIndex if not found
+    const T&        Get(int32_t index) const;
+    int32_t       Get(int32_t index, int32_t count, T data[]) const;
+    int32_t       Find(const T&) const;   // returns kMissingIndex if not found
 
-    void            SetCount(Int32 count);
-    T&          operator[]( Int32 index );
-    Int32       Append(const T&);
-    Int32       InsertAtIndex(UInt32 index, const T& obj);
-    Int32       Push(const T&);
-    Int32       Pop(T*);
-    void            Remove(Int32);
+    void            SetCount(int32_t count);
+    T&          operator[]( int32_t index );
+    int32_t       Append(const T&);
+    int32_t       InsertAtIndex(uint32_t index, const T& obj);
+    int32_t       Push(const T&);
+    int32_t       Pop(T*);
+    void            Remove(int32_t);
     void            Reset();    // clears out everything
 
     T*          AcquireArray() { return fArray; }
@@ -254,9 +254,9 @@ public:
     void            ReleaseArray(T*) {}
     hsDynamicArray<T>*  Copy(hsDynamicArray<T>* dst = nil) const;
 
-    T*          ForEach(Boolean (*proc)(T&));
-    T*          ForEach(Boolean (*proc)(T&, void* p1), void* p1);
-    T*          ForEach(Boolean (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
+    T*          ForEach(bool (*proc)(T&));
+    T*          ForEach(bool (*proc)(T&, void* p1), void* p1);
+    T*          ForEach(bool (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 };
 
 // Use this for block of memory allocated with HSMemory::New()
@@ -274,12 +274,12 @@ public:
 
 
 template <class T>
-    hsDynamicArray<T>::hsDynamicArray(Int32 count)
+    hsDynamicArray<T>::hsDynamicArray(int32_t count)
 {
     fCount  = count;
     fArray  = nil;
     if (count)
-        fArray = TRACKED_NEW T[ count ];
+        fArray = new T[ count ];
 }
 
 template <class T>
@@ -289,13 +289,13 @@ hsDynamicArray<T>::~hsDynamicArray()
 }
 
 template <class T>
-void hsDynamicArray<T>::SetCount(Int32 count)
+void hsDynamicArray<T>::SetCount(int32_t count)
 {
     if (fCount != count)
     {   if (count == 0)
             this->Reset();
         else
-        {   T*  newArray = TRACKED_NEW T[count];
+        {   T*  newArray = new T[count];
             
             if (fArray)
             {   int copyCount = hsMinimum(count, fCount);
@@ -310,26 +310,26 @@ void hsDynamicArray<T>::SetCount(Int32 count)
     }
 }
 
-template <class T> T& hsDynamicArray<T>::operator[]( Int32 index )
+template <class T> T& hsDynamicArray<T>::operator[]( int32_t index )
 {
-    hsDebugCode(hsThrowIfBadParam((UInt32)index >= (UInt32)fCount);)
+    hsDebugCode(hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);)
 
     return fArray[index];
 }
 
-template <class T> const T& hsDynamicArray<T>::Get( Int32 index ) const
+template <class T> const T& hsDynamicArray<T>::Get( int32_t index ) const
 {
-    hsDebugCode(hsThrowIfBadParam((UInt32)index >= (UInt32)fCount);)
+    hsDebugCode(hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);)
 
     return fArray[index];
 }
 
 template <class T>
-Int32 hsDynamicArray<T>::Get(Int32 index, Int32 count, T data[]) const
+int32_t hsDynamicArray<T>::Get(int32_t index, int32_t count, T data[]) const
 {
     if (count > 0)
     {   hsThrowIfNilParam(data);
-        hsThrowIfBadParam((UInt32)index >= fCount);
+        hsThrowIfBadParam((uint32_t)index >= fCount);
 
         if (index + count > fCount)
             count = fCount - index;
@@ -340,7 +340,7 @@ Int32 hsDynamicArray<T>::Get(Int32 index, Int32 count, T data[]) const
 }
 
 template <class T>
-Int32 hsDynamicArray<T>::Find(const T& obj) const
+int32_t hsDynamicArray<T>::Find(const T& obj) const
 {
     for (int i = 0; i < fCount; i++)
         if (fArray[i] == obj)
@@ -349,16 +349,16 @@ Int32 hsDynamicArray<T>::Find(const T& obj) const
 }
 
 template <class T>
-void hsDynamicArray<T>::Remove(Int32 index)
+void hsDynamicArray<T>::Remove(int32_t index)
 {
-    hsThrowIfBadParam((UInt32)index >= (UInt32)fCount);
+    hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);
     
     T rVal = fArray[index];
 
     if (--fCount > 0)
     {   
         int i;
-        T* newList = TRACKED_NEW T[fCount];
+        T* newList = new T[fCount];
         for(i = 0 ; i < index;i++)
             newList[i] = fArray[i];
         for (i = index; i < fCount; i++)
@@ -373,7 +373,7 @@ void hsDynamicArray<T>::Remove(Int32 index)
 }
 
 template <class T>
-Int32 hsDynamicArray<T>::Pop(T *obj)
+int32_t hsDynamicArray<T>::Pop(T *obj)
 {
     hsThrowIfBadParam(this->IsEmpty());
 
@@ -384,11 +384,11 @@ Int32 hsDynamicArray<T>::Pop(T *obj)
 
 
 template <class T>
-Int32 hsDynamicArray<T>::Push(const T& obj)
+int32_t hsDynamicArray<T>::Push(const T& obj)
 {
     if (fArray)
     {
-        T* newList = TRACKED_NEW T[fCount+1];
+        T* newList = new T[fCount+1];
         for(int i = 0 ; i < fCount; i++)
             newList[i+1] = fArray[i];
         newList[0] = obj;
@@ -397,17 +397,17 @@ Int32 hsDynamicArray<T>::Push(const T& obj)
     }
     else
     {   hsAssert(fCount == 0, "mismatch");
-        fArray = TRACKED_NEW T[1];
+        fArray = new T[1];
         fArray[0] = obj;
     }
     return ++fCount;
 }
 
 template <class T>
-Int32 hsDynamicArray<T>::Append(const T& obj)
+int32_t hsDynamicArray<T>::Append(const T& obj)
 {
     if (fArray)
-    {   T* newList = TRACKED_NEW T[fCount + 1];
+    {   T* newList = new T[fCount + 1];
 
         for (int i = 0; i < fCount; i++)
             newList[i] = fArray[i];
@@ -417,7 +417,7 @@ Int32 hsDynamicArray<T>::Append(const T& obj)
     }
     else
     {   hsAssert(fCount == 0, "mismatch");
-        fArray = TRACKED_NEW T[1];
+        fArray = new T[1];
         fArray[0] = obj;
     }
     return ++fCount;
@@ -425,17 +425,17 @@ Int32 hsDynamicArray<T>::Append(const T& obj)
 
 
 template <class T>
-Int32 hsDynamicArray<T>::InsertAtIndex(UInt32 index, const T& obj)
+int32_t hsDynamicArray<T>::InsertAtIndex(uint32_t index, const T& obj)
 {
     if (fArray)
     {   
-        hsAssert(UInt32(fCount) >= index, "Index too large for array");
-        T* newList = TRACKED_NEW T[fCount + 1];
+        hsAssert(uint32_t(fCount) >= index, "Index too large for array");
+        T* newList = new T[fCount + 1];
         unsigned i;
         for ( i = 0; i < index; i++)
             newList[i] = fArray[i];
         newList[index] = obj;
-        for ( i = index; i < UInt32(fCount); i++)
+        for ( i = index; i < uint32_t(fCount); i++)
             newList[i+1] = fArray[i];
     
         delete [] fArray;
@@ -445,7 +445,7 @@ Int32 hsDynamicArray<T>::InsertAtIndex(UInt32 index, const T& obj)
     {   
         hsAssert(fCount == 0, "mismatch");
         hsAssert(index ==0,"Can't insert at non zero index in empty array");
-        fArray = TRACKED_NEW T[1];
+        fArray = new T[1];
         fArray[0] = obj;
     }
     return ++fCount;
@@ -464,7 +464,7 @@ template <class T>
 hsDynamicArray<T>* hsDynamicArray<T>::Copy(hsDynamicArray<T>* dst) const
 {
     if (dst == nil)
-        dst = TRACKED_NEW hsDynamicArray<T>;
+        dst = new hsDynamicArray<T>;
     else
         dst->Reset();
 
@@ -475,7 +475,7 @@ hsDynamicArray<T>* hsDynamicArray<T>::Copy(hsDynamicArray<T>* dst) const
     return dst;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&))
+template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&))
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i]))
@@ -483,7 +483,7 @@ template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&))
     return nil;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&, void* p1), void * p1)
+template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&, void* p1), void * p1)
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i], p1))
@@ -491,7 +491,7 @@ template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&, void* p1), 
     return nil;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&, void* p1, void* p2), void *p1, void *p2)
+template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&, void* p1, void* p2), void *p1, void *p2)
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i], p1, p2))
@@ -504,10 +504,10 @@ template <class T> T* hsDynamicArray<T>::ForEach(Boolean (*proc)(T&, void* p1, v
 class hsTArrayBase 
 {
 protected:
-    UInt16      fUseCount;
-    UInt16      fTotalCount;
+    uint16_t      fUseCount;
+    uint16_t      fTotalCount;
 
-    void GrowArraySize(UInt16 nSize);
+    void GrowArraySize(uint16_t nSize);
 
 #ifdef HS_DEBUGTARRAY
     hsTArrayBase();
@@ -521,7 +521,7 @@ protected:
 #endif
 
 public:
-    UInt16 GetNumAlloc() const { return fTotalCount; }
+    uint16_t GetNumAlloc() const { return fTotalCount; }
 };
 
 template <class T> void hsTArray_CopyForward(const T src[], T dst[], int count);
@@ -659,7 +659,7 @@ template <class T> hsTArray<T>::hsTArray(int count) : fArray(nil)
     hsTArray_ValidateCount(count);
     fUseCount = fTotalCount = count;
     if (count > 0)
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
 }
 
 template <class T> hsTArray<T>::hsTArray(const hsTArray<T>& src) : fArray(nil)
@@ -669,7 +669,7 @@ template <class T> hsTArray<T>::hsTArray(const hsTArray<T>& src) : fArray(nil)
 
     if (count > 0)
     {   
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
         hsTArray_CopyForward(src.fArray, fArray, count);
     }
 }
@@ -708,7 +708,7 @@ bool hsTArray<T>::operator==(const hsTArray<T>& src) const
 
 template <class T> void hsTArray<T>::Swap( hsTArray<T>& src )
 {
-    UInt16      use, tot;
+    uint16_t      use, tot;
     T           *array;
 
 
@@ -759,7 +759,7 @@ template <class T> void hsTArray<T>::SetCount(int count)
     {   
         if (fArray)
             delete[] fArray;
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
         fUseCount = fTotalCount = count;
     }
     fUseCount = count;
@@ -770,7 +770,7 @@ template <class T> void hsTArray<T>::Expand(int NewCount) // New Count is Absolu
     hsTArray_ValidateCount(NewCount);
     if (NewCount > fTotalCount)         // This is Expand not Shrink
     {   
-        T*  newArray = TRACKED_NEW T[NewCount];
+        T*  newArray = new T[NewCount];
 
         if (fArray != nil)
         {   hsTArray_CopyForward(fArray, newArray, fUseCount);
@@ -846,7 +846,7 @@ template <class T> void hsTArray<T>::IncCount(int index, int count)
             fTotalCount = newCount;
 
         GrowArraySize(newCount);    // Sets new fTotalCount
-        T*  newArray = TRACKED_NEW T[fTotalCount];
+        T*  newArray = new T[fTotalCount];
 
         if (fArray != nil)
         {   hsTArray_CopyForward(fArray, newArray, index);
@@ -903,10 +903,10 @@ template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&, void* p1, void* p2
 class hsLargeArrayBase 
 {
 protected:
-    UInt32      fUseCount;
-    UInt32      fTotalCount;
+    uint32_t      fUseCount;
+    uint32_t      fTotalCount;
 
-    void GrowArraySize(UInt32 nSize);
+    void GrowArraySize(uint32_t nSize);
 
 #ifdef HS_DEBUGTARRAY
     hsLargeArrayBase();
@@ -920,7 +920,7 @@ protected:
 #endif
 
 public:
-    UInt32 GetNumAlloc() const { return fTotalCount; }
+    uint32_t GetNumAlloc() const { return fTotalCount; }
 };
 
 
@@ -1056,7 +1056,7 @@ template <class T> hsLargeArray<T>::hsLargeArray(int count) : fArray(nil)
     hsLargeArray_ValidateCount(count);
     fUseCount = fTotalCount = count;
     if (count > 0)
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
 }
 
 template <class T> hsLargeArray<T>::hsLargeArray(const hsLargeArray<T>& src) : fArray(nil)
@@ -1066,7 +1066,7 @@ template <class T> hsLargeArray<T>::hsLargeArray(const hsLargeArray<T>& src) : f
 
     if (count > 0)
     {   
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
         hsLargeArray_CopyForward(src.fArray, fArray, count);
     }
 }
@@ -1081,7 +1081,7 @@ template <class T> hsLargeArray<T>& hsLargeArray<T>::operator=(const hsLargeArra
 
 template <class T> void hsLargeArray<T>::Swap( hsLargeArray<T>& src )
 {
-    UInt32      use, tot;
+    uint32_t      use, tot;
     T           *array;
 
 
@@ -1128,7 +1128,7 @@ template <class T> void hsLargeArray<T>::SetCount(int count)
     {   
         if (fArray)
             delete[] fArray;
-        fArray = TRACKED_NEW T[count];
+        fArray = new T[count];
         fUseCount = fTotalCount = count;
     }
     fUseCount = count;
@@ -1139,7 +1139,7 @@ template <class T> void hsLargeArray<T>::Expand(int NewCount) // New Count is Ab
     hsLargeArray_ValidateCount(NewCount);
     if (NewCount > fTotalCount)         // This is Expand not Shrink
     {   
-        T*  newArray = TRACKED_NEW T[NewCount];
+        T*  newArray = new T[NewCount];
 
         if (fArray != nil)
         {   hsLargeArray_CopyForward(fArray, newArray, fUseCount);
@@ -1215,7 +1215,7 @@ template <class T> void hsLargeArray<T>::IncCount(int index, int count)
             fTotalCount = newCount;
 
         GrowArraySize(newCount);    // Sets new fTotalCount
-        T*  newArray = TRACKED_NEW T[fTotalCount];
+        T*  newArray = new T[fTotalCount];
 
         if (fArray != nil)
         {   hsLargeArray_CopyForward(fArray, newArray, index);

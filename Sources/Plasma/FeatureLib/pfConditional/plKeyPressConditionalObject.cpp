@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plKeyPressConditionalObject.h"
 #include "plPhysical/plDetectorModifier.h"
 #include "pnModifier/plLogicModBase.h"
@@ -78,7 +78,7 @@ void plKeyPressConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 void plKeyPressConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteLE32((UInt32)fKeyEvent);
+    stream->WriteLE32((uint32_t)fKeyEvent);
 
 }
 

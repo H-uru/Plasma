@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDispatchLogBase_inc
 #define plDispatchLogBase_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 //
 // For debugging messaging code.
@@ -60,7 +60,7 @@ public:
     };
 
 protected:
-    static UInt32 fFlags;
+    static uint32_t fFlags;
     static plDispatchLogBase* fInstance;
 
 public:
@@ -68,22 +68,22 @@ public:
 
     virtual ~plDispatchLogBase() {}
 
-    static void SetFlags(UInt32 f) { fFlags=f; }
-    static UInt32 GetFlags() { return fFlags; }
+    static void SetFlags(uint32_t f) { fFlags=f; }
+    static uint32_t GetFlags() { return fFlags; }
 
     static bool IsLogging() { return fInstance != nil; }
     static bool IsLoggingLong() { return (fFlags & kLogLongReceives) != 0; }
 
-    virtual void AddFilterType(UInt16 type)=0;
-    virtual void AddFilterExactType(UInt16 type)=0;
+    virtual void AddFilterType(uint16_t type)=0;
+    virtual void AddFilterExactType(uint16_t type)=0;
 
-    virtual void RemoveFilterType(UInt16 type)=0;
-    virtual void RemoveFilterExactType(UInt16 type)=0;
+    virtual void RemoveFilterType(uint16_t type)=0;
+    virtual void RemoveFilterExactType(uint16_t type)=0;
 
     virtual void LogStatusBarChange(const char* name, const char* action)=0;
-    virtual void LogLongReceive(const char* keyname, const char* className, UInt32 clonePlayerID, plMessage* msg, float ms)=0;
+    virtual void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)=0;
 
-    virtual void DumpMsg(plMessage* msg, int numReceivers, int sendTime, Int32 indent)=0;
+    virtual void DumpMsg(plMessage* msg, int numReceivers, int sendTime, int32_t indent)=0;
 };
 
 #endif  // plDispatchLogBase_inc

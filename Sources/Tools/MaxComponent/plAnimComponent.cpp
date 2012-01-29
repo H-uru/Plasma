@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "resource.h"
-#include "hsUtils.h"
+
 #include "plAnimComponent.h"
 #include "plComponentProcBase.h"
 #include "plPhysicalComponents.h"
@@ -580,10 +580,10 @@ hsBool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     bool needSetMaster = fNeedReset;
     if (fNeedReset)
     {
-        fForward = TRACKED_NEW plMsgForwarder;
+        fForward = new plMsgForwarder;
         plKey forwardKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), fForward, node->GetLocation());
 
-        plNodeRefMsg *refMsg = TRACKED_NEW plNodeRefMsg(node->GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
+        plNodeRefMsg *refMsg = new plNodeRefMsg(node->GetRoomKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
         hsgResMgr::ResMgr()->AddViaNotify(forwardKey, refMsg, plRefFlags::kActiveRef);
     }
 
@@ -617,7 +617,7 @@ const char *plAnimComponentBase::GetAnimName()
 
 bool IsSubworld(plMaxNode* node)
 {
-    UInt32 numComps = node->NumAttachedComponents();
+    uint32_t numComps = node->NumAttachedComponents();
     for (int i = 0; i < numComps; i++)
     {
         plComponentBase* comp = node->GetAttachedComponent(i);
@@ -699,7 +699,7 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             {
                 node->AddModifier(new plAGModifier(node->GetName()), IGetUniqueName(node));
             }
-            mod = TRACKED_NEW plAGMasterMod();
+            mod = new plAGMasterMod();
 
             plKey modKey = node->AddModifier(mod, IGetUniqueName(node));
         }
@@ -723,21 +723,21 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
-        plAgeGlobalAnim *ageAnim = TRACKED_NEW plAgeGlobalAnim(animName, 0, 0);
+        plAgeGlobalAnim *ageAnim = new plAgeGlobalAnim(animName, 0, 0);
         ageAnim->SetGlobalVarName((char*)fCompPB->GetStr(ParamID(kAnimGlobalName)));
 
         fAnims[node] = ageAnim;
     }
     else
     {
-        plATCAnim *ATCAnim = TRACKED_NEW plATCAnim(animName, 0, 0);
+        plATCAnim *ATCAnim = new plATCAnim(animName, 0, 0);
         plNotetrackAnim noteAnim(node, pErrMsg);
         plAnimInfo info = noteAnim.GetAnimInfo(animName);
         ATCAnim->SetAutoStart(fCompPB->GetInt(kAnimAutoStart));
 
-        hsScalar start = info.GetAnimStart();
-        hsScalar end = info.GetAnimEnd();
-        hsScalar initial = info.GetAnimInitial();
+        float start = info.GetAnimStart();
+        float end = info.GetAnimEnd();
+        float initial = info.GetAnimInitial();
         if (start != -1)
             ATCAnim->SetStart(start);
         if (end != -1)
@@ -749,8 +749,8 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             ATCAnim->SetLoop(true);
             const char *loopName = fCompPB->GetStr(kAnimLoopName);
-            hsScalar loopStart = info.GetLoopStart(loopName);
-            hsScalar loopEnd = info.GetLoopEnd(loopName);
+            float loopStart = info.GetLoopStart(loopName);
+            float loopEnd = info.GetLoopEnd(loopName);
 
             ATCAnim->SetLoopStart(loopStart == -1 ? ATCAnim->GetStart() : loopStart);
             ATCAnim->SetLoopEnd(loopEnd == -1 ? ATCAnim->GetEnd() : loopEnd);
@@ -787,7 +787,7 @@ hsBool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErro
 
     // Get the affine parts and the TM Controller
     plSceneObject *obj = node->GetSceneObject();
-    hsAffineParts * parts = TRACKED_NEW hsAffineParts;
+    hsAffineParts * parts = new hsAffineParts;
     plController* tmc;
 
     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -797,9 +797,9 @@ hsBool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErro
 
     if (tmc)
     {
-        plMatrixChannelApplicator *app = TRACKED_NEW plMatrixChannelApplicator();
+        plMatrixChannelApplicator *app = new plMatrixChannelApplicator();
             app->SetChannelName(node->GetName());
-        plMatrixControllerChannel *channel = TRACKED_NEW plMatrixControllerChannel(tmc, parts);
+        plMatrixControllerChannel *channel = new plMatrixControllerChannel(tmc, parts);
         app->SetChannel(channel);
         anim->AddApplicator(app);
         if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
@@ -888,7 +888,7 @@ hsBool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plE
     plLocation nodeLoc = node->GetLocation();
     plKey animKey = hsgResMgr::ResMgr()->NewKey(buffer, anim, nodeLoc);
 
-    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, 0, 0);
+    plGenRefMsg* refMsg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnCreate, 0, 0);
     hsgResMgr::ResMgr()->AddViaNotify(animKey, refMsg, plRefFlags::kActiveRef);
 
     return true;
@@ -932,7 +932,7 @@ hsBool plAnimComponentBase::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 
 void plAnimComponentBase::SetupCtl( plAGAnim *anim, plController *ctl, plAGApplicator *app, plMaxNode *node )
 {
-    plScalarControllerChannel *channel = TRACKED_NEW plScalarControllerChannel(ctl);
+    plScalarControllerChannel *channel = new plScalarControllerChannel(ctl);
     app->SetChannel(channel);
     anim->AddApplicator(app);
     if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))

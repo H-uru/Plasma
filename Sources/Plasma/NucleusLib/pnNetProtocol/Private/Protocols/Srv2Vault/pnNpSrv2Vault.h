@@ -152,9 +152,9 @@ enum {
 ***/
 
 struct Srv2Vault_ConnData {
-    dword   dataBytes;
-    dword   buildId;
-    dword   srvType;
+    uint32_t   dataBytes;
+    uint32_t   buildId;
+    uint32_t   srvType;
 };
 struct Srv2Vault_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -170,20 +170,20 @@ struct Srv2Vault_Connect {
 
 struct Srv2Vault_PlayerCreateRequest : SrvMsgHeader {
     Uuid    accountUuid;
-    wchar   playerName[kMaxPlayerNameLength];
-    wchar   avatarShape[MAX_PATH];
-    wchar   friendInvite[MAX_PATH];
-    byte    explorer;
+    wchar_t   playerName[kMaxPlayerNameLength];
+    wchar_t   avatarShape[MAX_PATH];
+    wchar_t   friendInvite[MAX_PATH];
+    uint8_t    explorer;
 };
 
 struct Srv2Vault_PlayerDeleteRequest : SrvMsgHeader {
     Uuid    accountId;
-    dword   playerId;
+    uint32_t   playerId;
 };
 
 struct Srv2Vault_UpgradeVisitorRequest : SrvMsgHeader {
     Uuid    accountId;
-    dword   playerId;
+    uint32_t   playerId;
 };
 
 struct Srv2Vault_AccountLoginRequest : SrvMsgHeader {
@@ -195,43 +195,43 @@ struct Srv2Vault_AccountLogout : SrvMsgHeader {
 };
 
 struct Srv2Vault_FetchChildNodeRefs : SrvMsgHeader {
-    dword   parentId;
-    dword   maxDepth;
+    uint32_t   parentId;
+    uint32_t   maxDepth;
 };
 
 struct Srv2Vault_NodeFetch : SrvMsgHeader {
-    dword   nodeId;
+    uint32_t   nodeId;
 };
 
 struct Srv2Vault_CreateNodeRequest : SrvMsgHeader {
     Uuid    accountId;
-    dword   creatorId;
-    dword   nodeBytes;
-    byte    nodeBuffer[1];
+    uint32_t   creatorId;
+    uint32_t   nodeBytes;
+    uint8_t    nodeBuffer[1];
 };
 
 struct Srv2Vault_DeleteNodeRequest : SrvMsgHeader {
-    dword       nodeId;
+    uint32_t       nodeId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;
 };
 
 struct Srv2Vault_NodeSave : SrvMsgHeader {
-    dword       nodeId;
+    uint32_t       nodeId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;
     Uuid        revisionId;
-    dword       nodeBytes;
-    byte        nodeBuffer[1];
+    uint32_t       nodeBytes;
+    uint8_t        nodeBuffer[1];
 };
 
 struct Srv2Vault_NodeSave2 : SrvMsgHeader {
-    dword   nodeId;
+    uint32_t   nodeId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;
     Uuid    revisionId;
-    dword   nodeBytes;
-    byte    nodeBuffer[1];
+    uint32_t   nodeBytes;
+    uint8_t    nodeBuffer[1];
 };
 
 struct Srv2Vault_NodeAdd : SrvMsgHeader {
@@ -243,35 +243,35 @@ struct Srv2Vault_NodeAdd2 : SrvMsgHeader {
 };
 
 struct Srv2Vault_NodeRemove : SrvMsgHeader {
-    dword   parentId;
-    dword   childId;
+    uint32_t   parentId;
+    uint32_t   childId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;  
 };
 
 struct Srv2Vault_NodeRemove2 : SrvMsgHeader {
-    dword   parentId;
-    dword   childId;
+    uint32_t   parentId;
+    uint32_t   childId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;
 };
 
 struct Srv2Vault_NodeFindRequest : SrvMsgHeader {
     // Template node to match
-    dword   nodeBytes;
-    byte    nodeBuffer[1];  // [nodeBytes], actually
+    uint32_t   nodeBytes;
+    uint8_t    nodeBuffer[1];  // [nodeBytes], actually
     // no more fields after var length alloc
 };
 
 struct Srv2Vault_SendNode : SrvMsgHeader {
-    dword   srcPlayerId;    // sender
-    dword   srcNodeId;      // sent item
-    dword   dstPlayerId;    // recipient
+    uint32_t   srcPlayerId;    // sender
+    uint32_t   srcNodeId;      // sent item
+    uint32_t   dstPlayerId;    // recipient
 };
 
 struct Srv2Vault_RegisterPlayerVault : SrvMsgHeader {
     Uuid    accountId;
-    dword   playerId;
+    uint32_t   playerId;
 };
 
 struct Srv2Vault_UnregisterPlayerVault : SrvMsgHeader {
@@ -280,7 +280,7 @@ struct Srv2Vault_UnregisterPlayerVault : SrvMsgHeader {
 
 struct Srv2Vault_RegisterAgeVault : SrvMsgHeader {
     Uuid    accountId;
-    dword   ageId;  // age's vault node id
+    uint32_t   ageId;  // age's vault node id
 };
 
 struct Srv2Vault_UnregisterAgeVault : SrvMsgHeader {
@@ -289,82 +289,82 @@ struct Srv2Vault_UnregisterAgeVault : SrvMsgHeader {
 
 struct Srv2Vault_AgeInitRequest : SrvMsgHeader {
     Uuid    accountId;
-    dword   playerId;
+    uint32_t   playerId;
     Uuid    ageInstId;
     Uuid    parentAgeInstId;
-    dword   ageLanguage;
-    dword   ageSequenceNumber;
+    uint32_t   ageLanguage;
+    uint32_t   ageSequenceNumber;
 // packed fields:
-    // wchar ageFilename[]
-    // wchar ageInstName[]
-    // wchar ageUserName[]
-    // wchar ageDesc[]
+    // wchar_t ageFilename[]
+    // wchar_t ageInstName[]
+    // wchar_t ageUserName[]
+    // wchar_t ageDesc[]
 };
 
 struct Srv2Vault_GetPublicAgeList : SrvMsgHeader {
-    wchar   ageName[kMaxAgeNameLength];
+    wchar_t   ageName[kMaxAgeNameLength];
 };
 
 struct Srv2Vault_SetAgePublic : SrvMsgHeader {
-    dword   playerId;
-    dword   ageInfoId;
-    byte    publicOrNot;
+    uint32_t   playerId;
+    uint32_t   ageInfoId;
+    uint8_t    publicOrNot;
 };
 
 struct Srv2Vault_CurrentPopulationReply : SrvMsgHeader {
-    dword           ageCount;
+    uint32_t           ageCount;
     unsigned        agePopulations[1];  // [ageCount], actually
     // no more fields after var length alloc
 };
 
 struct Srv2Vault_ChangePlayerNameRequest : SrvMsgHeader {
     Uuid    accountId;
-    dword   playerId;
-    wchar   newName[kMaxPlayerNameLength];
+    uint32_t   playerId;
+    wchar_t   newName[kMaxPlayerNameLength];
 };
 
 struct Srv2Vault_AccountOnline : SrvMsgHeader {
     Uuid    acctId;
-    dword   buildId;
-    dword   authNode;
+    uint32_t   buildId;
+    uint32_t   authNode;
 };
 
 struct Srv2Vault_AccountOffline : SrvMsgHeader {
     Uuid    acctId;
-    dword   buildId;
+    uint32_t   buildId;
 };
 
 struct Srv2Vault_PlayerOnline : SrvMsgHeader {
     Uuid    acctId;
-    dword   buildId;
-    dword   playerId;
+    uint32_t   buildId;
+    uint32_t   playerId;
 };
 
 struct Srv2Vault_PlayerOffline : SrvMsgHeader {
-    dword   playerId;
-    dword   buildId;
+    uint32_t   playerId;
+    uint32_t   buildId;
 };
 
 struct Srv2Vault_AgeOnline : SrvMsgHeader {
     Uuid    ageInstId;
-    dword   buildId;
-    dword   gameNode;
+    uint32_t   buildId;
+    uint32_t   gameNode;
 };
 
 struct Srv2Vault_AgeOffline : SrvMsgHeader {
     Uuid    ageInstId;
-    dword   buildId;
+    uint32_t   buildId;
 };
 
 struct Srv2Vault_PlayerJoinedAge : SrvMsgHeader {
-    dword   playerId;
+    uint32_t   playerId;
     Uuid    ageInstId;
-    dword   buildId;
+    uint32_t   buildId;
 };
 
 struct Srv2Vault_PlayerLeftAge : SrvMsgHeader {
-    dword   playerId;
-    dword   buildId;
+    uint32_t   playerId;
+    uint32_t   buildId;
 };
 
 
@@ -376,30 +376,30 @@ struct Srv2Vault_PlayerLeftAge : SrvMsgHeader {
 ***/
 
 struct Vault2Srv_PlayerCreateReply : SrvMsgHeader {
-    dword   playerId;
+    uint32_t   playerId;
 };
 
 struct Vault2Srv_AccountLoginReply : SrvMsgHeader {
-    dword           playerInfoCount;
+    uint32_t           playerInfoCount;
     SrvPlayerInfo   playerInfos[1];
 };
 
 struct Vault2Srv_NodeRefsFetched : SrvMsgHeader {
-    dword           refCount;
+    uint32_t           refCount;
     NetVaultNodeRef refs[1];
 };
 
 struct Vault2Srv_NodeFetched : SrvMsgHeader {
-    dword           nodeBytes;
-    byte            nodeBuffer[1];
+    uint32_t           nodeBytes;
+    uint8_t            nodeBuffer[1];
 };
 
 struct Vault2Srv_NodeCreated : SrvMsgHeader {
-    dword           nodeId;
+    uint32_t           nodeId;
 };
 
 struct Vault2Srv_NodeChanged : SrvMsgHeader {
-    dword           nodeId;
+    uint32_t           nodeId;
     Uuid            revisionId;
     Uuid            accountId;  // the notify target
 };
@@ -410,42 +410,42 @@ struct Vault2Srv_NodeAdded : SrvMsgHeader {
 };
 
 struct Vault2Srv_NodeRemoved : SrvMsgHeader {
-    dword           parentId;
-    dword           childId;
+    uint32_t           parentId;
+    uint32_t           childId;
     Uuid            accountId;  // the notify target
 };
 
 struct Vault2Srv_NodeDeleted : SrvMsgHeader {
-    dword           nodeId;
+    uint32_t           nodeId;
     Uuid            accountId;  // the notify target
 };
 
 struct Vault2Srv_NodeFindReply : SrvMsgHeader {
     // out: ids of matching nodes
-    dword           nodeIdCount;
-    dword           nodeIds[1]; // [nodeIdCount], actually
+    uint32_t           nodeIdCount;
+    uint32_t           nodeIds[1]; // [nodeIdCount], actually
     // no more fields after var length alloc
 };
 
 struct Vault2Srv_AgeInitReply : SrvMsgHeader {
-    dword           ageNodeId;
-    dword           ageInfoNodeId;
+    uint32_t           ageNodeId;
+    uint32_t           ageInfoNodeId;
     Uuid            accountId;  // the requestor
 };
 
 struct Vault2Srv_PublicAgeList : SrvMsgHeader {
-    dword           ageCount;
+    uint32_t           ageCount;
     NetAgeInfo      ages[1];    // [ageCount], actually
     // no more fields after var length alloc
 };
 
 struct Vault2Srv_NotifyAgeSDLChanged : SrvMsgHeader {
-    wchar       ageName[kMaxAgeNameLength];
+    wchar_t       ageName[kMaxAgeNameLength];
     Uuid        ageInstId;
 };
 
 struct Vault2Srv_CurrentPopulationRequest : SrvMsgHeader {
-    dword       ageCount;
+    uint32_t       ageCount;
     Uuid        ageInstIds[1];  // [ageCount], actually
     // no more fields after var length alloc
 };

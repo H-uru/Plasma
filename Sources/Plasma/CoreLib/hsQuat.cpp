@@ -53,13 +53,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Construct quat from angle (in radians) and axis of rotation
 //
-hsQuat::hsQuat(hsScalar rad, const hsVector3* axis)
+hsQuat::hsQuat(float rad, const hsVector3* axis)
 {
-    // hsAssert(rad >= -hsScalarPI && rad <= hsScalarPI, "Quat: Angle should be between -PI and PI");
+    // hsAssert(rad >= -M_PI && rad <= M_PI, "Quat: Angle should be between -PI and PI");
 
-    fW = hsCosine(rad*0.5f);
+    fW = cos(rad*0.5f);
 
-    hsScalar s = hsSine(rad*0.5f);
+    float s = sin(rad*0.5f);
     fX = axis->fX*s;
     fY = axis->fY*s;
     fZ = axis->fZ*s;
@@ -68,7 +68,7 @@ hsQuat::hsQuat(hsScalar rad, const hsVector3* axis)
 hsQuat hsQuat::Inverse()
 {
     hsQuat q2 = Conjugate();
-    hsScalar msInv = 1.0f/q2.MagnitudeSquared();
+    float msInv = 1.0f/q2.MagnitudeSquared();
     return (q2 * msInv);
 }
 
@@ -82,11 +82,11 @@ hsPoint3 hsQuat::Rotate(const hsScalarTriple* v)
     return hsPoint3(res.fX, res.fY, res.fZ);
 }
 
-void hsQuat::SetAngleAxis(const hsScalar rad, const hsVector3 &axis)
+void hsQuat::SetAngleAxis(const float rad, const hsVector3 &axis)
 {
-    fW = hsCosine(rad*0.5f);
+    fW = cos(rad*0.5f);
 
-    hsScalar s = hsSine(rad*0.5f);
+    float s = sin(rad*0.5f);
     fX = axis.fX*s;
     fY = axis.fY*s;
     fZ = axis.fZ*s; 
@@ -95,16 +95,16 @@ void hsQuat::SetAngleAxis(const hsScalar rad, const hsVector3 &axis)
 //
 // Might want to Normalize before calling this
 //
-void hsQuat::GetAngleAxis(hsScalar *rad, hsVector3 *axis) const
+void hsQuat::GetAngleAxis(float *rad, hsVector3 *axis) const
 {
     hsAssert((fW >= -1) && (fW <= 1), "Invalid acos argument");
-    hsScalar ac = hsACosine(fW);
+    float ac = acos(fW);
     *rad = 2.0f * ac;
 
-    hsScalar s = hsSine(ac);
+    float s = sin(ac);
     if (s != 0.0f)
     {
-        hsScalar invS = 1.0f/s;
+        float invS = 1.0f/s;
         axis->Set(fX*invS, fY*invS, fZ*invS);
     }
     else
@@ -114,7 +114,7 @@ void hsQuat::GetAngleAxis(hsScalar *rad, hsVector3 *axis) const
 //
 //
 //
-hsScalar hsQuat::MagnitudeSquared()
+float hsQuat::MagnitudeSquared()
 {
     return (fX*fX + fY*fY + fZ*fZ + fW*fW);
 }
@@ -122,9 +122,9 @@ hsScalar hsQuat::MagnitudeSquared()
 //
 //
 //
-hsScalar hsQuat::Magnitude()
+float hsQuat::Magnitude()
 {
-    return hsSquareRoot(MagnitudeSquared());
+    return sqrt(MagnitudeSquared());
 }
 
 //
@@ -132,7 +132,7 @@ hsScalar hsQuat::Magnitude()
 //
 void hsQuat::Normalize()
 {
-    hsScalar invMag = 1.0f/Magnitude();
+    float invMag = 1.0f/Magnitude();
     fX *= invMag;
     fY *= invMag;
     fZ *= invMag;
@@ -145,11 +145,11 @@ void hsQuat::Normalize()
 void hsQuat::NormalizeIfNeeded()
 {
 
-    hsScalar magSquared = MagnitudeSquared();
+    float magSquared = MagnitudeSquared();
     if (magSquared == 1.0f)
         return;
 
-    hsScalar invMag = 1.0f/hsSquareRoot(magSquared);
+    float invMag = 1.0f/sqrt(magSquared);
     fX *= invMag;
     fY *= invMag;
     fZ *= invMag;
@@ -259,17 +259,17 @@ void hsQuat::Write(hsStream *stream)
 //
 // Interpolate on a sphere.
 //
-void hsQuat::SetFromSlerp(hsQuat *q1, hsQuat *q2, hsScalar t)
+void hsQuat::SetFromSlerp(hsQuat *q1, hsQuat *q2, float t)
 {
     hsAssert(t>=0.0 && t<= 1.0, "Quat slerp param must be between 0 an 1");
-    hsScalar theta = hsACosine(q1->Dot(*q2));
+    float theta = acos(q1->Dot(*q2));
 
-    hsScalar st = hsSine(theta);
+    float st = sin(theta);
     assert(st != 0.0);
 
-    hsScalar s1 = hsSine(1.0-t)*theta / st;
+    float s1 = sin(1.0-t)*theta / st;
 
-    hsScalar s2 = hsSine(t)*theta / st;
+    float s2 = sin(t)*theta / st;
 
     *this = (*q1) * s1 + (*q2) * s2;
 }
@@ -280,15 +280,15 @@ void hsQuat::SetFromSlerp(hsQuat *q1, hsQuat *q2, hsScalar t)
 
 #define EPSILON 1.0E-6          /* a tiny number */
 
-void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, hsScalar alpha, int spin)
+void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, float alpha, int spin)
 //  double alpha;           /* interpolation parameter (0 to 1) */
 //  Quaternion *a, *b;      /* start and end unit quaternions */
 //  int spin;           /* number of extra spin rotations */
 {
-    hsScalar beta;          /* complementary interp parameter */
-    hsScalar theta;         /* angle between A and B */
-    hsScalar sin_t, cos_t;      /* sine, cosine of theta */
-    hsScalar phi;           /* theta plus spins */
+    float beta;          /* complementary interp parameter */
+    float theta;         /* angle between A and B */
+    float sin_t, cos_t;      /* sine, cosine of theta */
+    float phi;           /* theta plus spins */
     int bflip;          /* use negation of B? */
 
     /* cosine theta = dot product of A and B */
@@ -313,12 +313,12 @@ void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, hsScalar alpha, int 
     } else 
     {               /* normal case */
 //      hsAssert((cos_t >= -1) && (cos_t <= 1), "Invalid acos argument");
-        theta   = hsACosine(cos_t);
-        phi     = theta + spin * hsScalarPI;
-        sin_t   = hsSine(theta);
+        theta   = acos(cos_t);
+        phi     = theta + spin * M_PI;
+        sin_t   = sin(theta);
         hsAssert(sin_t != 0.0, "Invalid sin value in quat slerp");
-        beta    = hsSine(theta - alpha*phi) / sin_t;
-        alpha   = hsSine(alpha*phi) / sin_t;
+        beta    = sin(theta - alpha*phi) / sin_t;
+        alpha   = sin(alpha*phi) / sin_t;
     }
 
     if (bflip)
@@ -337,11 +337,11 @@ void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, hsScalar alpha, int 
 //
 void hsQuat::SetFromMatrix(const hsMatrix44* mat)
 {
-    hsScalar wSq = 0.25f*(1 + mat->fMap[0][0] + mat->fMap[1][1] + mat->fMap[2][2]);
+    float wSq = 0.25f*(1 + mat->fMap[0][0] + mat->fMap[1][1] + mat->fMap[2][2]);
     if (wSq > EPSILON)
     {
-        fW = hsSquareRoot(wSq);
-        hsScalar iw4 = 1.0f/(4.0f*fW);
+        fW = sqrt(wSq);
+        float iw4 = 1.0f/(4.0f*fW);
         fX = (mat->fMap[2][1] - mat->fMap[1][2]) * iw4;
         fY = (mat->fMap[0][2] - mat->fMap[2][0]) * iw4;
         fZ = (mat->fMap[1][0] - mat->fMap[0][1]) * iw4;
@@ -349,21 +349,21 @@ void hsQuat::SetFromMatrix(const hsMatrix44* mat)
     }
 
     fW = 0;
-    hsScalar xSq = -0.5f*(mat->fMap[1][1] + mat->fMap[2][2]);
+    float xSq = -0.5f*(mat->fMap[1][1] + mat->fMap[2][2]);
     if (xSq > EPSILON)
     {
-        fX = hsSquareRoot(xSq);
-        hsScalar ix2 = 1.0f/(2.0f*fX);
+        fX = sqrt(xSq);
+        float ix2 = 1.0f/(2.0f*fX);
         fY = mat->fMap[1][0] * ix2;
         fZ = mat->fMap[2][0] * ix2;
         return;
     }
 
     fX = 0;
-    hsScalar ySq = 0.5f * (1 - mat->fMap[2][2]);
+    float ySq = 0.5f * (1 - mat->fMap[2][2]);
     if (ySq > EPSILON)
     {
-        fY = hsSquareRoot(ySq);
+        fY = sqrt(ySq);
         fZ = mat->fMap[2][1] / (2.0f*fY);
         return;
     }

@@ -55,19 +55,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static const wchar s_manifest[] = L"Internal";
-    static const wchar s_macmanifest[] = L"macInternal";
-    static const wchar s_thinmanifest[] = L"ThinInternal";
+    static const wchar_t s_manifest[] = L"Internal";
+    static const wchar_t s_macmanifest[] = L"macInternal";
+    static const wchar_t s_thinmanifest[] = L"ThinInternal";
 #else
-    static const wchar s_manifest[] = L"External";
-    static const wchar s_macmanifest[] = L"macExternal";
-    static const wchar s_thinmanifest[] = L"ThinExternal";
+    static const wchar_t s_manifest[] = L"External";
+    static const wchar_t s_macmanifest[] = L"macExternal";
+    static const wchar_t s_thinmanifest[] = L"ThinExternal";
 #endif
 
 struct ManifestFile
 {
     LINK(ManifestFile) link;
-    ManifestFile(const wchar clientName[], const wchar downloadName[], const wchar md5val[], int flags, plLauncherInfo *info)
+    ManifestFile(const wchar_t clientName[], const wchar_t downloadName[], const wchar_t md5val[], int flags, plLauncherInfo *info)
     {
         StrCopy(filename, clientName, arrsize(filename));
         StrCopy(zipName, downloadName, arrsize(zipName));
@@ -77,9 +77,9 @@ struct ManifestFile
         md5failed = false;  
     }
 
-    wchar filename[MAX_PATH];
-    wchar zipName[MAX_PATH];
-    wchar md5[MAX_PATH];
+    wchar_t filename[MAX_PATH];
+    wchar_t zipName[MAX_PATH];
+    wchar_t md5[MAX_PATH];
     int flags;
     bool md5failed;     
     plLauncherInfo *info;
@@ -88,13 +88,13 @@ struct ManifestFile
 
 class ProgressStream : public plZlibStream {
 public:
-    virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
     static plLauncherInfo *info;
     static long totalBytes;
     static unsigned progress;
 
     // for updating bytes per second
-    static dword startTime;
+    static uint32_t startTime;
 };
 
 struct ProcessManifestEntryParam {
@@ -107,7 +107,7 @@ struct ProcessManifestEntryParam {
 };
 
 struct ManifestResult {
-    wchar                               group[MAX_PATH];
+    wchar_t                             group[MAX_PATH];
     ARRAY(NetCliFileManifestEntry)      manifest;
     long *                              indicator;
     plLauncherInfo *                    info;
@@ -120,7 +120,7 @@ struct ManifestResult {
 static void DownloadCallback (
     ENetError       result,
     void *          param,
-    const wchar     filename[],
+    const wchar_t   filename[],
     hsStream *      writer
 );
 
@@ -165,7 +165,7 @@ static long s_perf[kNumPerf];
 long                ProgressStream::totalBytes;
 unsigned            ProgressStream::progress;
 plLauncherInfo *    ProgressStream::info;
-dword               ProgressStream::startTime = 0;
+uint32_t            ProgressStream::startTime = 0;
 long                ProcessManifestEntryParam::progress = 0;
 long                ProcessManifestEntryParam::totalSize = 0;
 double              ProcessManifestEntryParam::startTime = 0;
@@ -181,9 +181,9 @@ double              ProcessManifestEntryParam::startTime = 0;
 //              leaving clients with older patchers "dead in the water", without
 //              a way to play Uru.
 #ifdef PLASMA_EXTERNAL_RELEASE
-const wchar kPatcherExeFilename[] = L"UruLauncher.exe";
+const wchar_t kPatcherExeFilename[] = L"UruLauncher.exe";
 #else
-const wchar kPatcherExeFilename[] = L"plUruLauncher.exe";
+const wchar_t kPatcherExeFilename[] = L"plUruLauncher.exe";
 #endif
 
 
@@ -192,9 +192,9 @@ const wchar kPatcherExeFilename[] = L"plUruLauncher.exe";
 //============================================================================
 #ifdef PLASMA_EXTERNAL_RELEASE
 #ifdef HS_DEBUGGING
-static wchar s_clientExeName[] = L"plClient_dbg.exe";
+static wchar_t s_clientExeName[] = L"plClient_dbg.exe";
 #else
-static wchar s_clientExeName[] = L"UruExplorer.exe";
+static wchar_t s_clientExeName[] = L"UruExplorer.exe";
 #endif // HS_DEBUGGING
 
 //============================================================================
@@ -202,9 +202,9 @@ static wchar s_clientExeName[] = L"UruExplorer.exe";
 //============================================================================
 #else
 #ifdef HS_DEBUGGING
-static wchar s_clientExeName[] = L"plClient_dbg.exe";
+static wchar_t s_clientExeName[] = L"plClient_dbg.exe";
 #else
-static wchar s_clientExeName[] = L"plClient.exe";
+static wchar_t s_clientExeName[] = L"plClient.exe";
 #endif // HS_DEBUGGING
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -216,14 +216,14 @@ static wchar s_clientExeName[] = L"plClient.exe";
 ***/
 
 //============================================================================
-static void LogHandler (ELogSeverity severity, const wchar msg[]) {
+static void LogHandler (ELogSeverity severity, const wchar_t msg[]) {
     AsyncLogWriteMsg(L"UruPlayer", severity, msg);
 }
 
 //============================================================================
 static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
 
-    const wchar * srv;
+    const wchar_t * srv;
     switch (protocol) {
         case kNetProtocolNil:               srv = L"Notify";        break;
         case kNetProtocolCli2File:          srv = L"File";          break;
@@ -287,7 +287,7 @@ static void WaitUruExitProc (void * param) {
 */
 
 //============================================================================
-static bool MD5Check (const char filename[], const wchar md5[]) {
+static bool MD5Check (const char filename[], const wchar_t md5[]) {
     // Do md5 check
     char md5copy[MAX_PATH];
     plMD5Checksum existingMD5(filename);
@@ -315,7 +315,7 @@ static void DecompressOgg (ManifestFile *mf) {
                 break;
             }
 
-            UInt32 size = reader->GetDataSize();
+            uint32_t size = reader->GetDataSize();
             delete reader;
 
             ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, neededBytes;
@@ -355,13 +355,13 @@ static void RequestNextManifestFile () {
         return;
     s_manifestQueue.Unlink(nextfile);
     char  path[MAX_PATH];
-    wchar basePath[MAX_PATH];
+    wchar_t basePath[MAX_PATH];
     StrPrintf(path, arrsize(path), "%s%S", s_workingDir, nextfile->filename);
     StrToUnicode(basePath, path, arrsize(basePath));
     PathRemoveFilename(basePath, basePath, arrsize(basePath));
     PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
 
-    ProgressStream *writer = NEW(ProgressStream);   // optimization: dont delete and recreate. Doesn't seem to be working currently, ZLibStream is breaking
+    ProgressStream *writer = new ProgressStream();   // optimization: dont delete and recreate. Doesn't seem to be working currently, ZLibStream is breaking
     if(!writer->Open(path, "wb"))
     {
         writer->Close();
@@ -384,7 +384,7 @@ static void RequestNextManifestFile () {
 static void DownloadCallback (
     ENetError       result,
     void *          param,
-    const wchar     filename[],
+    const wchar_t   filename[],
     hsStream *      writer
 ) {
     s_numConnectFailures = 0;
@@ -435,7 +435,7 @@ static void DownloadCallback (
 #endif // PLASMA_EXTERNAL_RELEASE
                 Shutdown(mf->info);
             }
-            writer = NEW(ProgressStream);
+            writer = new ProgressStream();
             if (!writer->Open(path, "wb")) {
 #ifdef PLASMA_EXTERNAL_RELEASE
                 MessageBox(nil, s_fileOpenError, "URU Launcher", MB_ICONERROR);
@@ -457,7 +457,7 @@ static void DownloadCallback (
 
     if(s_running)
     {
-        wchar ext[MAX_EXT];
+        wchar_t ext[MAX_EXT];
         PathSplitPath(mf->filename, nil, nil, nil, ext);
         if(!StrCmpI(L".ogg", ext))
         {
@@ -497,7 +497,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
         s_workingDir,
         p->mr->manifest[p->index].clientName
     );
-    dword start = (dword)(TimeGetTime() / kTimeIntervalsPerMs);
+    uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
     if(!MD5Check(path, p->mr->manifest[p->index].md5)) {
         p->mr->critsect.Enter();
         p->mr->indices.Add(p->index);
@@ -506,7 +506,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
     }
 
     // if we have a file that was cached the MD5 check will be really fast throwing off our approx time remaining.
-    dword t = (dword)(TimeGetTime() / kTimeIntervalsPerMs - start);
+    uint32_t t = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs - start);
     if(t < 25)
     {
         // cached file
@@ -542,7 +542,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
 
 //============================================================================
 static void ProcessManifest (void * param) {
-    wchar basePath[MAX_PATH];
+    wchar_t basePath[MAX_PATH];
     char path[MAX_PATH];    
     AtomicAdd(&s_perf[kPerfThreadTaskCount], 1);
         
@@ -617,7 +617,7 @@ static void ProcessManifest (void * param) {
                     PathRemoveFilename(basePath, basePath, arrsize(basePath));
                     PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
 
-                    ManifestFile * mf = NEW(ManifestFile)(
+                    ManifestFile * mf = new ManifestFile(
                         manifest[index].clientName,
                         manifest[index].downloadName,
                         manifest[index].md5,
@@ -654,7 +654,7 @@ static void ProcessManifest (void * param) {
             }
         }
     }
-    DEL(mr);
+    delete mr;
     AtomicAdd(&s_perf[kPerfThreadTaskCount], -1);
 }
 
@@ -662,7 +662,7 @@ static void ProcessManifest (void * param) {
 static void ManifestCallback (
     ENetError                       result,
     void *                          param,
-    const wchar                     group[],
+    const wchar_t                   group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 ){
@@ -689,7 +689,7 @@ static void ManifestCallback (
         return;
     }
     
-    ManifestResult * mr = NEW(ManifestResult);
+    ManifestResult * mr = new ManifestResult();
     StrCopy(mr->group, group, arrsize(mr->group));
     mr->manifest.Set(manifest, entryCount);
     mr->info = info;
@@ -725,7 +725,7 @@ static void ManifestCallback (
 static void ThinManifestCallback (
     ENetError                       result,
     void *                          param,
-    const wchar                     group[],
+    const wchar_t                   group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 ){
@@ -788,7 +788,7 @@ static void ThinManifestCallback (
 ***/
 
 //============================================================================
-UInt32 ProgressStream::Write(UInt32 byteCount, const void* buffer) {
+uint32_t ProgressStream::Write(uint32_t byteCount, const void* buffer) {
     if(!s_running || s_patchError) 
         return 0;
     if(!startTime) {
@@ -814,7 +814,7 @@ UInt32 ProgressStream::Write(UInt32 byteCount, const void* buffer) {
         info->SetBytesRemaining(totalBytes - progress);
         if(TimeGetSecondsSince2001Utc() != startTime)
         {
-            dword bytesPerSec = (progress ) / (TimeGetSecondsSince2001Utc() - startTime);
+            uint32_t bytesPerSec = (progress ) / (TimeGetSecondsSince2001Utc() - startTime);
             info->SetTimeRemaining(bytesPerSec ? (totalBytes - progress) / bytesPerSec : 0);
         }
     }
@@ -826,7 +826,7 @@ UInt32 ProgressStream::Write(UInt32 byteCount, const void* buffer) {
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar     addr[]
+    const wchar_t   addr[]
 ) {
     NetCliGateKeeperDisconnect();
 
@@ -866,7 +866,7 @@ void InitAsyncCore () {
     AsyncCoreInitialize();
     AsyncLogInitialize(L"Log", false);
         
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     LogMsg(kLogPerf, L"Patcher: %s", productString);
 }
@@ -902,7 +902,7 @@ void UruPrepProc (void * param) {
     s_patchComplete = false;
     s_patchError = false;
 
-    const wchar ** addrs;
+    const wchar_t ** addrs;
     unsigned count;
 
     count = GetGateKeeperSrvHostnames(&addrs);
@@ -920,7 +920,7 @@ void UruPrepProc (void * param) {
     
     while(ManifestFile *mf = s_manifestQueue.Head())
     {
-        DEL(mf);
+        delete mf;
     }
     // If s_patchError, we don't wait around for s_numFiles
     // to drop to zero because it never does for reasons
@@ -974,11 +974,11 @@ void  UruStartProc (void * param) {
     
     plLauncherInfo *info = (plLauncherInfo *) param;
     
-    wchar workDir[MAX_PATH];
+    wchar_t workDir[MAX_PATH];
     StrPrintf(workDir, arrsize(workDir), L"%s", info->path);
     //fprintf(stderr, "URUPlayer StartProc gamePath is:%ws\n", workDir);
 
-    wchar cmdLine[MAX_PATH];
+    wchar_t cmdLine[MAX_PATH];
     StrPrintf(cmdLine, arrsize(cmdLine), L"%s%s %s", workDir, s_clientExeName, info->cmdLine);
     
     // Create the named event so the client won't restart us (Windows will clean it up when we exit)
@@ -991,8 +991,8 @@ void  UruStartProc (void * param) {
     fprintf(stderr, "URUPlayer StartProc, running game process at dir:%ws, cmd:%ws for application:%ws\n", workDir, cmdLine, s_clientExeName);
 
     STARTUPINFOW si;
-    ZERO(si);
-    ZERO(s_pi);
+    memset(&si, 0, sizeof(si));
+    memset(&s_pi, 0, sizeof(s_pi));
     si.cb = sizeof(si);
 
     info->SetText("Launching URU...");

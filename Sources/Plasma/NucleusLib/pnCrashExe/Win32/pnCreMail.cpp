@@ -166,7 +166,7 @@ void CrashSendEmail (
 
         // create process
         STARTUPINFO si;
-        ZERO(si);
+        memset(&si, 0, sizeof(si));
         si.cb           = sizeof(si);
         si.dwFlags      = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
         si.wShowWindow  = SW_HIDE;

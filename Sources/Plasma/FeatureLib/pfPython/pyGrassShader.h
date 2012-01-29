@@ -77,13 +77,13 @@ public:
 
     void SetKey(plKey key);
 
-    void SetWaveDistortion(int waveNum, const std::vector<hsScalar> & distortion);
-    void SetWaveDirection(int waveNum, const std::vector<hsScalar> & direction);
-    void SetWaveSpeed(int waveNum, hsScalar speed);
+    void SetWaveDistortion(int waveNum, const std::vector<float> & distortion);
+    void SetWaveDirection(int waveNum, const std::vector<float> & direction);
+    void SetWaveSpeed(int waveNum, float speed);
 
-    std::vector<hsScalar> GetWaveDistortion(int waveNum) const;
-    std::vector<hsScalar> GetWaveDirection(int waveNum) const;
-    hsScalar GetWaveSpeed(int waveNum) const;
+    std::vector<float> GetWaveDistortion(int waveNum) const;
+    std::vector<float> GetWaveDirection(int waveNum) const;
+    float GetWaveSpeed(int waveNum) const;
 
     void ResetWaves();
 };

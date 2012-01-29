@@ -229,8 +229,8 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
             if (loopName)
             {
                 anim->SetLoop(true);
-                hsScalar loopStart = info.GetLoopStart(loopName);
-                hsScalar loopEnd = info.GetLoopEnd(loopName);
+                float loopStart = info.GetLoopStart(loopName);
+                float loopEnd = info.GetLoopEnd(loopName);
                 anim->SetLoopStart(loopStart == -1 ? anim->GetStart() : loopStart);
                 anim->SetLoopEnd(loopEnd == -1 ? anim->GetEnd() : loopEnd);
             }
@@ -254,7 +254,7 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
 // -------------
 plATCAnim * plAnimAvatarComponent::NewAnimation(const char *name, double begin, double end)
 {
-    return TRACKED_NEW plATCAnim(name, begin, end); 
+    return new plATCAnim(name, begin, end); 
 }
 
 
@@ -288,15 +288,15 @@ hsBool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim
             // around. Just nuke it and replace it with a constant channel.
             if (tmc->PurgeRedundantSubcontrollers())
             {
-                channel = TRACKED_NEW plMatrixConstant(constSetting);
+                channel = new plMatrixConstant(constSetting);
                 delete tmc;
                 tmc = nil;
             }
             else
             {
-                channel = TRACKED_NEW plMatrixControllerChannel(tmc, &parts);
+                channel = new plMatrixControllerChannel(tmc, &parts);
             }
-            plMatrixChannelApplicator *app = TRACKED_NEW plMatrixChannelApplicator();
+            plMatrixChannelApplicator *app = new plMatrixChannelApplicator();
             app->SetChannelName(node->GetKey()->GetName());
             app->SetChannel(channel);
             mod->AddApplicator(app);
@@ -345,7 +345,7 @@ hsBool plAnimAvatarComponent::MakePersistent(plMaxNode *node, plAGAnim *anim, co
     {
         plKey animKey = hsgResMgr::ResMgr()->NewKey(animName, anim, nodeLoc);
 
-        plNodeRefMsg* refMsg = TRACKED_NEW plNodeRefMsg(sceneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kGeneric);
+        plNodeRefMsg* refMsg = new plNodeRefMsg(sceneNodeKey, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kGeneric);
 
         hsgResMgr::ResMgr()->AddViaNotify(animKey, refMsg, plRefFlags::kActiveRef);
     }
@@ -457,5 +457,5 @@ hsBool plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 // -------------
 plATCAnim * plEmoteComponent::NewAnimation(const char *name, double begin, double end)
 {
-    return TRACKED_NEW plEmoteAnim(name, begin, end, fFadeIn, fFadeOut, fBodyUsage);
+    return new plEmoteAnim(name, begin, end, fFadeIn, fFadeOut, fBodyUsage);
 }

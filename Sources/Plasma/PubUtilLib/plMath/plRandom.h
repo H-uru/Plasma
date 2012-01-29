@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plRandom
 {
 protected:
-    mutable UInt32      fSeed;
+    mutable uint32_t      fSeed;
 public:
     inline float        RandNorm() const;
     inline int          Rand() const;
@@ -65,7 +65,7 @@ public:
     inline float        RandMinusOneToOne() const;
     inline float        RandZeroToOne() const;
 
-    UInt32              GetSeed() const { return fSeed; }
+    uint32_t              GetSeed() const { return fSeed; }
     void                SetSeed(int seed) { fSeed = seed; }
 
     plRandom(int seed = 1) : fSeed(seed) {}
@@ -92,18 +92,18 @@ inline int plRandom::Rand() const
 #endif // FAST_Q
 }
 
-// RandZeroToOne - take our usual random UInt32.
+// RandZeroToOne - take our usual random uint32_t.
 // We're going to mask in an exponent to make it
 // a float in range [1..2). Then subtract 1.f to
-// make it [0..1). We shift our random UInt32 down
+// make it [0..1). We shift our random uint32_t down
 // by 9 because the upper bits are the most random.
 inline float plRandom::RandZeroToOne() const
 {
 #ifndef FAST_Q
     return Rand() * RandNorm();
 #else // FAST_Q
-    const UInt32 kOneExp = 0x3f800000;
-    register UInt32 temp = kOneExp | (UInt32(Rand()) >> 9);
+    const uint32_t kOneExp = 0x3f800000;
+    register uint32_t temp = kOneExp | (uint32_t(Rand()) >> 9);
     return (*(float*)&temp) - 1.f;
 #endif // FAST_Q
 }
@@ -116,8 +116,8 @@ inline float plRandom::RandMinusOneToOne() const
 #ifndef FAST_Q
     return RandZeroToOne() * 2.f - 1.f;
 #else // FAST_Q
-    const UInt32 kTwoExp = 0x40000000;
-    register UInt32 temp = kTwoExp | (UInt32(Rand()) >> 9);
+    const uint32_t kTwoExp = 0x40000000;
+    register uint32_t temp = kTwoExp | (uint32_t(Rand()) >> 9);
     return (*(float*)&temp) - 3.f;
 #endif // FAST_Q
 }

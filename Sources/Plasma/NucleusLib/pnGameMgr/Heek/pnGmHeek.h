@@ -138,18 +138,18 @@ enum {
 
     // Cli2Srv
     struct Cli2Srv_Heek_PlayGame : GameMsgHeader {
-        byte        position;       // 0...4
-        dword       points;
-        wchar       name[256];
+        uint8_t        position;       // 0...4
+        uint32_t       points;
+        wchar_t       name[256];
     };
     struct Cli2Srv_Heek_LeaveGame : GameMsgHeader {
         // no extra data
     };
     struct Cli2Srv_Heek_Choose : GameMsgHeader {
-        byte        choice;         // kHeekRock...kHeekScissors
+        uint8_t        choice;         // kHeekRock...kHeekScissors
     };
     struct Cli2Srv_Heek_SeqFinished : GameMsgHeader {
-        byte        seqFinished;    // kHeekCountdownSeq...kHeekGameWinSeq
+        uint8_t        seqFinished;    // kHeekCountdownSeq...kHeekGameWinSeq
     };
 
     // Srv2Cli
@@ -162,39 +162,39 @@ enum {
         // no extra data
     };
     struct Srv2Cli_Heek_Welcome : GameMsgHeader {
-        dword       points;
-        dword       rank;
-        wchar       name[256];
+        uint32_t       points;
+        uint32_t       rank;
+        wchar_t       name[256];
     };
     struct Srv2Cli_Heek_Drop : GameMsgHeader {
-        byte        position;       // 0...4
+        uint8_t        position;       // 0...4
     };
     struct Srv2Cli_Heek_Setup : GameMsgHeader {
-        byte        position;       // 0...4
+        uint8_t        position;       // 0...4
         bool        buttonState;
         bool        lightOn[6];
     };
     struct Srv2Cli_Heek_LightState : GameMsgHeader {
-        byte        lightNum;
-        byte        state;          // kHeekLightOn...kHeekLightFlash
+        uint8_t        lightNum;
+        uint8_t        state;          // kHeekLightOn...kHeekLightFlash
     };
     struct Srv2Cli_Heek_InterfaceState : GameMsgHeader {
         bool        buttonsEnabled;
     };
     struct Srv2Cli_Heek_CountdownState : GameMsgHeader {
-        byte        state;          // kHeekCountdownStart...kHeekCountdownIdle
+        uint8_t        state;          // kHeekCountdownStart...kHeekCountdownIdle
     };
     struct Srv2Cli_Heek_WinLose : GameMsgHeader {
         bool        win;
-        byte        choice;         // kHeekRock...kHeekScissors
+        uint8_t        choice;         // kHeekRock...kHeekScissors
     };
     struct Srv2Cli_Heek_GameWin : GameMsgHeader {
-        byte        choice;         // kHeekRock...kHeekScissors
+        uint8_t        choice;         // kHeekRock...kHeekScissors
     };
     struct Srv2Cli_Heek_PointUpdate : GameMsgHeader {
         bool        displayUpdate;
-        dword       points;
-        dword       rank;
+        uint32_t       points;
+        uint32_t       rank;
     };
 
 //============================================================================

@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsStlUtils_h_inc
 #define hsStlUtils_h_inc
 
-#include "hsUtils.h"
-//#include <xmemory>
+
+#include "HeadSpin.h"
 #include <functional>
 #include <algorithm>
 #include <string>
@@ -114,12 +114,12 @@ public:
 
     void deallocate(pointer _Ptr, size_type)
         {   // deallocate object at _Ptr, ignore size
-        FREE(_Ptr);
+        free(_Ptr);
         }
 
     pointer allocate(size_type _Count)
         {   // allocate array of _Count elements
-        return (pointer)ALLOC(_Count * sizeof(_Ty));
+        return (pointer)malloc(_Count * sizeof(_Ty));
         }
 
     pointer allocate(size_type _Count, const void*)

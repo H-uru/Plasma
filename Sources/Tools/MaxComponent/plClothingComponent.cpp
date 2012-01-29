@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "max.h"
 #include "resource.h"
-//#include "hsUtils.h"
+//
 #include "hsTemplates.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plPageInfo.h"
@@ -168,7 +168,7 @@ hsBool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg
             if (!LODNode->GetSwappableGeom())
                 LODNode->SetSwappableGeom(new plSharedMesh);
 
-            //UInt32 targetID = fCompPB->GetInt(kType);
+            //uint32_t targetID = fCompPB->GetInt(kType);
             //((plMaxNode *)LODNode->GetParentNode())->SetSwappableGeomTarget(targetID);
         }
     }
@@ -198,7 +198,7 @@ hsBool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
         spanArray.Reset();
-        //plSharedMesh *mesh = TRACKED_NEW plSharedMesh;
+        //plSharedMesh *mesh = new plSharedMesh;
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
         if (LODNode != nil)
         {
@@ -240,7 +240,7 @@ hsBool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             if (keys[j] != nil)
             {
-                refMsg = TRACKED_NEW plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
+                refMsg = new plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(keys[j], refMsg, plRefFlags::kActiveRef);
             }
         }

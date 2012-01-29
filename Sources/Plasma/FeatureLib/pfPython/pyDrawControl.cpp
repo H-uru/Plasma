@@ -58,13 +58,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #endif
 
-void pyDrawControl::SetGamma2(hsScalar gamma)
+void pyDrawControl::SetGamma2(float gamma)
 {
 #ifndef BUILDING_PYPLASMA
     char command[256];
     sprintf(command,"Graphics.Renderer.Gamma2 %f",gamma);
     // create message to send to the console
-    plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+    plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
     pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
     pMsg->SetControlActivated(true);
@@ -77,14 +77,14 @@ void pyDrawControl::SetGamma2(hsScalar gamma)
 #include "plGLight/plShadowMaster.h"
 #endif
 
-void pyDrawControl::SetShadowVisDistance(hsScalar distance)
+void pyDrawControl::SetShadowVisDistance(float distance)
 {
 #ifndef BUILDING_PYPLASMA
     plShadowMaster::SetGlobalShadowQuality(distance);
 #endif
 }
 
-hsScalar pyDrawControl::GetShadowVisDistance()
+float pyDrawControl::GetShadowVisDistance()
 {
 #ifndef BUILDING_PYPLASMA
     return plShadowMaster::GetGlobalShadowQuality();
@@ -131,7 +131,7 @@ void pyDrawControl::DisableRenderScene()
 {
 #ifndef BUILDING_PYPLASMA
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-    plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kDisableRenderScene);
+    plClientMsg* msg = new plClientMsg(plClientMsg::kDisableRenderScene);
     msg->AddReceiver( clientKey );
     msg->Send();
 #endif
@@ -141,7 +141,7 @@ void pyDrawControl::EnableRenderScene()
 {
 #ifndef BUILDING_PYPLASMA
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
-    plClientMsg* msg = TRACKED_NEW plClientMsg(plClientMsg::kEnableRenderScene);
+    plClientMsg* msg = new plClientMsg(plClientMsg::kEnableRenderScene);
     msg->AddReceiver( clientKey );
     msg->Send();
 #endif

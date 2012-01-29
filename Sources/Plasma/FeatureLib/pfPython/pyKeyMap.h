@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnInputCore/plKeyMap.h"
 
 #include <Python.h>
@@ -79,25 +79,25 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // conversion functions
-    const char* ConvertVKeyToChar( UInt32 vk, UInt32 flags );
-    UInt32 ConvertCharToVKey( const char *charVKey );
-    UInt32 ConvertCharToFlags( const char *charVKey );
+    const char* ConvertVKeyToChar( uint32_t vk, uint32_t flags );
+    uint32_t ConvertCharToVKey( const char *charVKey );
+    uint32_t ConvertCharToFlags( const char *charVKey );
 
-    UInt32 ConvertCharToControlCode(const char* charCode);
-    const char* ConvertControlCodeToString( UInt32 code );
+    uint32_t ConvertCharToControlCode(const char* charCode);
+    const char* ConvertControlCodeToString( uint32_t code );
 
 
     // bind a key to an action
     void BindKey( const char* keyStr1, const char* keyStr2, const char* act);
     void BindKeyToConsoleCommand( const char* keyStr1, const char* command);
 
-    UInt32 GetBindingKey1(UInt32 code);
-    UInt32 GetBindingFlags1(UInt32 code);
-    UInt32 GetBindingKey2(UInt32 code);
-    UInt32 GetBindingFlags2(UInt32 code);
+    uint32_t GetBindingKey1(uint32_t code);
+    uint32_t GetBindingFlags1(uint32_t code);
+    uint32_t GetBindingKey2(uint32_t code);
+    uint32_t GetBindingFlags2(uint32_t code);
 
-    UInt32 GetBindingKeyConsole(const char* command);
-    UInt32 GetBindingFlagsConsole(const char* command);
+    uint32_t GetBindingKeyConsole(const char* command);
+    uint32_t GetBindingFlagsConsole(const char* command);
 
     void WriteKeyMap();
 

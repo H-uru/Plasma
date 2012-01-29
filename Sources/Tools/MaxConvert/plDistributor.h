@@ -255,8 +255,8 @@ protected:
 
     BOOL                INeedMeshTree() const;
     void                IMakeMeshTree() const;
-    void                IFindFaceSet(const Box3& box, Tab<Int32>& faces) const;
-    BOOL                IProjectVertex(const Point3& pt, const Point3& dir, float maxDist, Tab<Int32>&faces, Point3& projPt) const;
+    void                IFindFaceSet(const Box3& box, Tab<int32_t>& faces) const;
+    BOOL                IProjectVertex(const Point3& pt, const Point3& dir, float maxDist, Tab<int32_t>&faces, Point3& projPt) const;
     BOOL                IConform(Matrix3& l2w, int iRepNode, plMeshCacheTab& cache, int& iCache) const;
     BOOL                IConformHeight(Matrix3& l2w, int iRepNode, plMeshCacheTab& cache, int& iCache) const;
     BOOL                IConformAll(Matrix3& l2w, int iRepNode, plMeshCacheTab& cache, int& iCache) const;
@@ -302,7 +302,7 @@ public:
     BOOL                Distribute(INode* surfNode, plDistribInstTab& replicants, plMeshCacheTab& cache, plExportProgressBar& bar) const;
 
     void                Reset();
-    UInt32              GetRandSeed() const;
+    uint32_t              GetRandSeed() const;
     void                SetRandSeed(int seed);
 
     void                ClearReplicateNodes();
@@ -325,10 +325,10 @@ public:
     float               GetAlignmentWeight() const { return fAlignWgt * 100.f; }
 
     void                SetPolarRange(float deg);
-    float               GetPolarRange() const { return hsScalarRadToDeg(fPolarRange); }
+    float               GetPolarRange() const { return hsRadiansToDegrees(fPolarRange); }
 
-    void                SetAzimuthRange(float deg) { fAzimuthRange = hsScalarDegToRad(deg); }
-    float               GetAzimuthRange() const { return hsScalarRadToDeg(fAzimuthRange); }
+    void                SetAzimuthRange(float deg) { fAzimuthRange = hsDegreesToRadians(deg); }
+    float               GetAzimuthRange() const { return hsRadiansToDegrees(fAzimuthRange); }
 
     void                SetOverallProb(float percent) { fOverallProb = percent/100.f; }
     float               GetOverallProb() const { return fOverallProb * 100.f; }

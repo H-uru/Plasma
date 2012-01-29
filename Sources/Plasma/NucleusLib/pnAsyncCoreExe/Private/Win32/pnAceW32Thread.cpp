@@ -65,7 +65,7 @@ struct ThreadTask {
     AsyncThreadTaskList *   taskList;
     FAsyncThreadTask        callback;
     void *                  param;
-    wchar                   debugStr[256];
+    wchar_t                   debugStr[256];
 };
 
 static HANDLE   s_taskPort;
@@ -148,7 +148,7 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
             #endif
 
             task->taskList->DecRef("task");
-            DEL(task);
+            delete task;
         }
     }
     PerfSubCounter(kAsyncPerfThreadTaskThreadsActive, 1);
@@ -234,7 +234,7 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 //===========================================================================
 AsyncThreadTaskList * AsyncThreadTaskListCreate () {
     ASSERT(s_taskPort);
-    AsyncThreadTaskList * taskList = NEW(AsyncThreadTaskList);
+    AsyncThreadTaskList * taskList = new AsyncThreadTaskList;
     taskList->IncRef("TaskList");
     return taskList;
 }
@@ -257,7 +257,7 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-    const wchar             debugStr[],
+    const wchar_t             debugStr[],
     EThreadTaskPriority     priority /* = kThreadTaskPriorityNormal */
 ) {
     ASSERT(s_taskPort);
@@ -266,7 +266,7 @@ void AsyncThreadTaskAdd (
     ASSERT(priority == kThreadTaskPriorityNormal);
 
     // Allocate a new task record
-    ThreadTask * task   = NEW(ThreadTask);
+    ThreadTask * task   = new ThreadTask;
     task->taskList      = taskList;
     task->callback      = callback;
     task->param         = param;

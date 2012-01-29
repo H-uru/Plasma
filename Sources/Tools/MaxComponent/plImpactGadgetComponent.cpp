@@ -169,15 +169,15 @@ OBSOLETE_CLASS(plImpactGadget, gImpactGadgetDesc, "Collision Sensor",  "Collisio
 //      physNode = node;
 // 
 //  // Create remote detector
-//  plCollisionDetector* det = TRACKED_NEW plCollisionDetector;
+//  plCollisionDetector* det = new plCollisionDetector;
 //  det->SetType(plCollisionDetector::kTypeBump);
 //  
 //  // Register the detector
 //  plKey detKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), det, loc);
-//  hsgResMgr::ResMgr()->AddViaNotify(detKey, TRACKED_NEW plObjRefMsg(physNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+//  hsgResMgr::ResMgr()->AddViaNotify(detKey, new plObjRefMsg(physNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 //  
 //  // create and register the CONDITIONS for the DETECTOR's Logic Modifier
-//  plActivatorConditionalObject* activatorCond = TRACKED_NEW plActivatorConditionalObject;
+//  plActivatorConditionalObject* activatorCond = new plActivatorConditionalObject;
 //  plKey activatorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), activatorCond, loc);
 // 
 //  // link everything up:

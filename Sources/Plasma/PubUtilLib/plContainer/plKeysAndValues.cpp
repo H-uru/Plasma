@@ -174,7 +174,7 @@ std::string plKeysAndValues::GetValue(const std::string & key, const std::string
     return defval;
 }
 
-UInt32 plKeysAndValues::GetValue(const std::string & key, UInt32 defval, bool * outFound) const
+uint32_t plKeysAndValues::GetValue(const std::string & key, uint32_t defval, bool * outFound) const
 {
     char buf[20];
     sprintf(buf, "%ul", defval);
@@ -229,17 +229,17 @@ bool plKeysAndValues::GetValueIterators(const xtl::istring & key, Values::const_
 
 void plKeysAndValues::Read(hsStream * s)
 {
-    UInt16 nkeys;
+    uint16_t nkeys;
     s->ReadLE(&nkeys);
     for (int ki=0; ki<nkeys; ki++)
     {
-        UInt16 strlen;
+        uint16_t strlen;
         s->ReadLE(&strlen);
         std::string key;
         key.assign(strlen+1,'\0');
         s->Read(strlen,(void*)key.data());
         key.resize(strlen);
-        UInt16 nvalues;
+        uint16_t nvalues;
         s->ReadLE(&nvalues);
         for (int vi=0; vi<nvalues; vi++)
         {
@@ -257,24 +257,24 @@ void plKeysAndValues::Read(hsStream * s)
 void plKeysAndValues::Write(hsStream * s)
 {
     // write nkeys
-    s->WriteLE((UInt16)fKeys.size());
+    s->WriteLE((uint16_t)fKeys.size());
     // iterate through keys
     Keys::const_iterator ki,ke;
     GetKeyIterators(ki,ke);
     for (;ki!=ke;++ki)
     {
         // write key string
-        s->WriteLE((UInt16)ki->first.size());
+        s->WriteLE((uint16_t)ki->first.size());
         s->Write(ki->first.size(),ki->first.c_str());
         // write nvalues for this key
-        s->WriteLE((UInt16)ki->second.size());
+        s->WriteLE((uint16_t)ki->second.size());
         // iterate through values for this key
         Values::const_iterator vi,ve;
         GetValueIterators(ki->first,vi,ve);
         for (;vi!=ve;++vi)
         {
             // write value string
-            s->WriteLE((UInt16)vi->size());
+            s->WriteLE((uint16_t)vi->size());
             s->Write(vi->size(),vi->c_str());
         }
     }

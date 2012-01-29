@@ -42,16 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stdlib.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRandomCommandMod.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plgDispatch.h"
 #include "hsTimer.h"
-#include "hsUtils.h"
 
-static const hsScalar kRandNormalize = 1.f / 32767.f;
+
+static const float kRandNormalize = 1.f / 32767.f;
 
 plRandomCommandMod::plRandomCommandMod()
 {
@@ -126,11 +126,11 @@ int plRandomCommandMod::IExcludeSelections(int ncmds)
     return ncmds;
 }
 
-hsScalar plRandomCommandMod::IGetDelay(hsScalar len) const
+float plRandomCommandMod::IGetDelay(float len) const
 {
-    hsScalar r = float(hsRand() * kRandNormalize);
+    float r = float(hsRand() * kRandNormalize);
 
-    hsScalar delay = fMinDelay + (fMaxDelay - fMinDelay) * r;
+    float delay = fMinDelay + (fMaxDelay - fMinDelay) * r;
 
     if( fMode & kDelayFromEnd )
         delay += len;
@@ -156,7 +156,7 @@ hsBool plRandomCommandMod::ISelectNext(int ncmds)
         }
         return true;
     }
-    hsScalar r = float(hsRand() * kRandNormalize);
+    float r = float(hsRand() * kRandNormalize);
 
     int nSelect = ncmds;
     
@@ -294,13 +294,13 @@ void plRandomCommandMod::Write(hsStream* s, hsResMgr* mgr)
     s->WriteLEScalar(fMaxDelay);
 }
 
-void plRandomCommandMod::IRetry(hsScalar secs)
+void plRandomCommandMod::IRetry(float secs)
 {
     IStop();
 
     double t = hsTimer::GetSysSeconds() + secs;
 
-    plAnimCmdMsg* msg = TRACKED_NEW plAnimCmdMsg(nil, GetKey(), &t);
+    plAnimCmdMsg* msg = new plAnimCmdMsg(nil, GetKey(), &t);
     msg->SetCmd(plAnimCmdMsg::kContinue);
     plgDispatch::MsgSend(msg);
 }

@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDynSurfaceWriter_h
 
 #include "hsColorRGBA.h"
-#include "hsWindows.h"              // EVIL
+              // EVIL
 
 struct hsMatrix44;
 
@@ -97,32 +97,32 @@ class plDynSurfaceWriter
 
 
         plDynSurfaceWriter();
-        plDynSurfaceWriter( plDynamicTextMap *target, UInt32 flags = 0 );
+        plDynSurfaceWriter( plDynamicTextMap *target, uint32_t flags = 0 );
         virtual ~plDynSurfaceWriter();
 
 
         /// Operations to perform on the text block
         
         void    ClearToColor( hsColorRGBA &color );
-        void    SetFont( const char *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
+        void    SetFont( const char *face, uint16_t size, uint8_t fontFlags = 0, hsBool antiAliasRGB = true );
         void    SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
         void    SetJustify( Justify j );
 
-        void    DrawString( UInt16 x, UInt16 y, const char *text );
-        void    DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height );
-        void    DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height );
-        void    DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height );
-        UInt16  CalcStringWidth( const char *text, UInt16 *height = nil );
-        void    CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height );
-        void    FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
-        void    FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color );
+        void    DrawString( uint16_t x, uint16_t y, const char *text );
+        void    DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height );
+        void    DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
+        void    DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height );
+        uint16_t  CalcStringWidth( const char *text, uint16_t *height = nil );
+        void    CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height );
+        void    FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
+        void    FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
 
-//      void    DrawImage( UInt16 x, UInt16 y, plMipmap *image, hsBool respectAlpha = false );
-//      void    DrawClippedImage( UInt16 x, UInt16 y, plMipmap *image, UInt16 srcClipX, UInt16 srcClipY, 
-//                              UInt16 srcClipWidth, UInt16 srcClipHeight, hsBool respectAlpha = false );
+//      void    DrawImage( uint16_t x, uint16_t y, plMipmap *image, hsBool respectAlpha = false );
+//      void    DrawClippedImage( uint16_t x, uint16_t y, plMipmap *image, uint16_t srcClipX, uint16_t srcClipY, 
+//                              uint16_t srcClipWidth, uint16_t srcClipHeight, hsBool respectAlpha = false );
 
         // Copy the raw data from the given buffer.
-//      void    SetBitsFromBuffer( UInt32 *clearBuffer, UInt16 width, UInt16 height )
+//      void    SetBitsFromBuffer( uint32_t *clearBuffer, uint16_t width, uint16_t height )
 
         /// Target switching operations
 
@@ -148,16 +148,16 @@ class plDynSurfaceWriter
         void        IRefreshOSJustify( void );
         void        ISetTextColor( hsColorRGBA &color, hsBool blockRGB );
 
-        void        ISetFont( const char *face, UInt16 size, UInt8 fontFlags = 0, hsBool antiAliasRGB = true );
+        void        ISetFont( const char *face, uint16_t size, uint8_t fontFlags = 0, hsBool antiAliasRGB = true );
 
         plDynamicTextMap    *fCurrTarget;
-        UInt32              fFlags;
+        uint32_t              fFlags;
         Justify             fJustify;
         hsBool              fFlushed;
 
         char        *fFontFace;
-        UInt16      fFontSize;
-        UInt8       fFontFlags;
+        uint16_t      fFontSize;
+        uint8_t       fFontFlags;
         hsBool      fFontAntiAliasRGB;
         hsBool      fFontBlockedRGB;
 
@@ -171,7 +171,7 @@ class plDynSurfaceWriter
             protected:
                 void        *fBits;
 
-                virtual UInt8   IBitsPerPixel( void ) const = 0;
+                virtual uint8_t   IBitsPerPixel( void ) const = 0;
 
             public:
                 HDC         fDC;
@@ -180,36 +180,36 @@ class plDynSurfaceWriter
                 COLORREF    fTextColor;
                 int         fSaveNum;
 
-                UInt16      fWidth, fHeight;
+                uint16_t      fWidth, fHeight;
 
                 char        *fFontFace;
-                UInt16      fFontSize;
-                UInt8       fFontFlags;
+                uint16_t      fFontSize;
+                uint8_t       fFontFlags;
                 hsBool      fFontAntiAliasRGB, fFontBlockedRGB;
 
                 plWinSurface();
                 ~plWinSurface();
 
-                void    Allocate( UInt16 w, UInt16 h );
+                void    Allocate( uint16_t w, uint16_t h );
                 void    Release( void );
 
-                hsBool  WillFit( UInt16 w, UInt16 h );
-                hsBool  FontMatches( const char *face, UInt16 size, UInt8 flags, hsBool aaRGB );
-                void    SetFont( const char *face, UInt16 size, UInt8 flags, hsBool aaRGB );
+                hsBool  WillFit( uint16_t w, uint16_t h );
+                hsBool  FontMatches( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB );
+                void    SetFont( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB );
         };
 
         class plWinRGBSurface : public plWinSurface
         {
-                virtual UInt8   IBitsPerPixel( void ) const { return 32; }
+                virtual uint8_t   IBitsPerPixel( void ) const { return 32; }
             public:
-                UInt32  *GetBits( void ) const { return (UInt32 *)fBits; }
+                uint32_t  *GetBits( void ) const { return (uint32_t *)fBits; }
         };
 
         class plWinAlphaSurface : public plWinSurface
         {
-                virtual UInt8   IBitsPerPixel( void ) const { return 8; }
+                virtual uint8_t   IBitsPerPixel( void ) const { return 8; }
             public:
-                UInt8   *GetBits( void ) const { return (UInt8 *)fBits; }
+                uint8_t   *GetBits( void ) const { return (uint8_t *)fBits; }
         };
 
         plWinRGBSurface     fRGBSurface;

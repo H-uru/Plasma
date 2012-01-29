@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include <hkgeometry/geomdef.h>   // for havok Vertex
 //
 //
-//#include "hsTypes.h"
+//#include "HeadSpin.h"
 //#include "../plInterp/plController.h"
 //#include "plPlayerModifier.h"
 //#include "hsTimer.h"
@@ -77,10 +77,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //#include "../plHavok1/plHKPhysical.h"
 //
-//hsScalar plPlayerModifier::fTurnRate = 1.0f;
-//hsScalar plPlayerModifier::fAcceleration = 80.0f;
-//hsScalar plPlayerModifier::fDeceleration = 80.0f;
-//hsScalar plPlayerModifier::fMaxVelocity = 200.0f;
+//float plPlayerModifier::fTurnRate = 1.0f;
+//float plPlayerModifier::fAcceleration = 80.0f;
+//float plPlayerModifier::fDeceleration = 80.0f;
+//float plPlayerModifier::fMaxVelocity = 200.0f;
 //
 //plPlayerModifier::plPlayerModifier() :
 //bUseDesiredFacing(false),
@@ -107,15 +107,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //{
 //  if( fTarget && fTarget->IsLocallyOwned()==plSynchedObject::kYes )
 //  {
-//      plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+//      plCameraMsg* pMsg = new plCameraMsg;
 //      pMsg->SetCmd(plCameraMsg::kSetSubject);
 //      pMsg->SetSubject(nil);
 //      pMsg->SetBCastFlag( plMessage::kBCastByExactType );
 //      plgDispatch::MsgSend(pMsg);
 //
-//      plAudioSysMsg* pAudMsg1 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRefCamera);
-//      plAudioSysMsg* pAudMsg2 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRefCamera);
-//      plAudioSysMsg* pAudMsg3 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRefCamera);
+//      plAudioSysMsg* pAudMsg1 = new plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRefCamera);
+//      plAudioSysMsg* pAudMsg2 = new plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRefCamera);
+//      plAudioSysMsg* pAudMsg3 = new plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRefCamera);
 //      plgDispatch::MsgSend(pAudMsg1);
 //      plgDispatch::MsgSend(pAudMsg2);
 //      plgDispatch::MsgSend(pAudMsg3);
@@ -152,14 +152,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //void plPlayerModifier::IDoLocalSetup(plSceneObject* so)
 //{
-//  plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+//  plCameraMsg* pMsg = new plCameraMsg;
 //  pMsg->SetCmd(plCameraMsg::kSetSubject);
 //  pMsg->SetSubject(so);
 //  pMsg->SetBCastFlag( plMessage::kBCastByExactType );
 //  plgDispatch::MsgSend(pMsg);
 //
 //  // this is to solve the problem of physical vs nonphysical players...
-////    plCameraMsg* pMsg2 = TRACKED_NEW plCameraMsg;
+////    plCameraMsg* pMsg2 = new plCameraMsg;
 ////    pMsg2->SetBCastFlag(plMessage::kBCastByExactType);
 ////    pMsg2->SetCmd(plCameraMsg::kSetOffset);
 ////    pMsg2->SetCmd(plCameraMsg::kEntering);
@@ -172,11 +172,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //void  plPlayerModifier::IMakeUsListener( plSceneObject *so )
 //{
 //  // set the listener to use us...
-//  plAudioSysMsg* pAudMsg1 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRef);
+//  plAudioSysMsg* pAudMsg1 = new plAudioSysMsg(plAudioSysMsg::kSetListenerFacingRef);
 //  pAudMsg1->SetSceneObject(so->GetKey());
-//  plAudioSysMsg* pAudMsg2 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRef);
+//  plAudioSysMsg* pAudMsg2 = new plAudioSysMsg(plAudioSysMsg::kSetListenerCoordinateRef);
 //  pAudMsg2->SetSceneObject(so->GetKey());
-//  plAudioSysMsg* pAudMsg3 = TRACKED_NEW plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRef);
+//  plAudioSysMsg* pAudMsg3 = new plAudioSysMsg(plAudioSysMsg::kSetListenerVelocityRef);
 //  pAudMsg3->SetSceneObject(so->GetKey());
 //  plgDispatch::MsgSend(pAudMsg1);
 //  plgDispatch::MsgSend(pAudMsg2);
@@ -209,7 +209,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  plSpawnModMsg* pSpawn = plSpawnModMsg::ConvertNoRef(msg);
 //  if (pSpawn && HasFlag(kWantsToSpawn))
 //  {
-//      spawnPt* pt = TRACKED_NEW spawnPt;
+//      spawnPt* pt = new spawnPt;
 //      pt->pt = pSpawn->fPos;
 //      
 //      hsVector3 temp(fTarget->GetCoordinateInterface()->GetLocalToWorld().GetTranslate() - pt->pt);
@@ -260,7 +260,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //{
 //  if (b != bMoving)
 //  {
-//      plPlayerMsg* pMsg = TRACKED_NEW plPlayerMsg;
+//      plPlayerMsg* pMsg = new plPlayerMsg;
 //      
 //      if (b)
 //          pMsg->SetCmd( plPlayerMsg::kMovementStarted );
@@ -277,7 +277,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //hsPoint3 forceRight(-200,0,0);
 //hsPoint3 forceUp(0,0,15);
 //
-//hsBool plPlayerModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+//hsBool plPlayerModifier::IEval(double secs, float del, uint32_t dirty)
 //{
 //  // setup for local player if necessary
 //  if (HasFlag(kNeedsLocalSetup))
@@ -330,7 +330,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //              fSpawnPoints[fSpawnPoints.Count()-1]->pt : fSpawnPoints[netID]->pt;
 //#endif
 //          // Send msg for net synchronization
-//          plWarpMsg* warpMsg = TRACKED_NEW plWarpMsg;
+//          plWarpMsg* warpMsg = new plWarpMsg;
 //          warpMsg->fPos = warpPoint;
 //          warpMsg->AddReceiver( fTarget->GetKey() );
 //          warpMsg->SetWarpFlags(warpMsg->GetWarpFlags() | plWarpMsg::kFlushTransform | plWarpMsg::kZeroVelocity );
@@ -350,7 +350,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      }
 //      else 
 //      {
-//          plSpawnRequestMsg* pMsg = TRACKED_NEW plSpawnRequestMsg;
+//          plSpawnRequestMsg* pMsg = new plSpawnRequestMsg;
 //          pMsg->SetSender(GetKey());
 //          plgDispatch::MsgSend( pMsg );
 //      }
@@ -371,8 +371,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      return true;
 //
 //  // update our desired position:
-////    hsScalar eTime = secs - fLastTime;
-//  hsScalar eTime = hsTimer::GetDelSysSeconds();
+////    float eTime = secs - fLastTime;
+//  float eTime = hsTimer::GetDelSysSeconds();
 //  
 //  hsPoint3    newLinearForce(0,0,0);
 //
@@ -385,8 +385,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  hsVector3 view, up, right;
 //  targetMatrix.GetAxis(&view, &up, &right);
 //  
-//  hsScalar speed = fMaxVelocity;
-//  hsScalar turn = fTurnRate;
+//  float speed = fMaxVelocity;
+//  float turn = fTurnRate;
 //
 //  if (HasMovementFlag(B_CONTROL_MODIFIER_FAST))
 //  {
@@ -437,7 +437,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  hsPoint3 newPos;
 //
 //  hsVector3 dir(fDesiredPosition - curPos);
-//  hsScalar distToGoal=dir.Magnitude();
+//  float distToGoal=dir.Magnitude();
 //
 //  if (dir.MagnitudeSquared() > 0.0f)
 //      dir.Normalize();
@@ -447,7 +447,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  IAdjustVelocity(fAcceleration, fDeceleration, &dir, &vel, fMaxVelocity, distToGoal, eTime);
 //  fCurSpeed = vel.Magnitude();
 //  
-//  hsScalar distMoved = IClampVelocity(&vel, fMaxVelocity, eTime);
+//  float distMoved = IClampVelocity(&vel, fMaxVelocity, eTime);
 //
 //  // compute final pos
 //  if (distMoved > distToGoal)
@@ -471,8 +471,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //      // compute degrees needed to turn left/right        
 //      hsVector3 cross = fPlayerViewGoal % view;
-//      hsScalar dot = fPlayerViewGoal * view;
-//      hsScalar rad = hsACosine(dot);
+//      float dot = fPlayerViewGoal * view;
+//      float rad = acos(dot);
 //      fRotationScalar = 1.0f;
 //      
 //      if (cross.fZ<0)
@@ -491,7 +491,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      }
 //  }
 //  
-//  hsScalar angle = 0;
+//  float angle = 0;
 //
 //  if ( HasMovementFlag( B_CONTROL_ROTATE_RIGHT ) )
 //  {
@@ -561,15 +561,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ////
 //// vector version.  dir vector should be normalized
 ////
-//void plPlayerModifier::IAdjustVelocity(hsScalar adjAccelRate, hsScalar adjDecelRate, 
-//                                     hsVector3* dir, hsVector3* vel, hsScalar maxSpeed, 
-//                                     hsScalar distToGoal, double elapsedTime)
+//void plPlayerModifier::IAdjustVelocity(float adjAccelRate, float adjDecelRate, 
+//                                     hsVector3* dir, hsVector3* vel, float maxSpeed, 
+//                                     float distToGoal, double elapsedTime)
 //{
-//  hsScalar speed = vel->Magnitude();      // save current speed
+//  float speed = vel->Magnitude();      // save current speed
 //  *vel = *dir * speed;                    // change vel to correct dir
 //
 //  // compute accel/decel
-//  hsScalar finalAccelRate;
+//  float finalAccelRate;
 //  if (IShouldDecelerate(adjDecelRate, speed, distToGoal))
 //  {
 //      finalAccelRate = -adjDecelRate;
@@ -594,13 +594,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  }
 //}
 //
-//hsScalar plPlayerModifier::IClampVelocity(hsVector3* vel, hsScalar maxSpeed, double elapsedTime)
+//float plPlayerModifier::IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime)
 //{
 //  *vel = *vel * elapsedTime;
 //  maxSpeed *= elapsedTime;
 //
 //  // clamp speed  (clamp if going negative?)
-//  hsScalar distMoved = vel->Magnitude();
+//  float distMoved = vel->Magnitude();
 //  if (distMoved > maxSpeed)
 //  {
 //      vel->Normalize();
@@ -610,16 +610,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  return distMoved;
 //}
 //
-//hsBool32 plPlayerModifier::IShouldDecelerate(hsScalar decelSpeed, hsScalar curSpeed, hsScalar distToGoal)
+//hsBool32 plPlayerModifier::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
 //{
 //  if (decelSpeed == 0)
 //      // no deceleration
 //      return false;
 //
 //  // compute distance required to stop, given decel speed (in units/sec sq)
-//  hsScalar stopTime = curSpeed / decelSpeed;      
-//  hsScalar avgSpeed = curSpeed * .5f;
-//  hsScalar stopDist = avgSpeed * stopTime;
+//  float stopTime = curSpeed / decelSpeed;      
+//  float avgSpeed = curSpeed * .5f;
+//  float stopDist = avgSpeed * stopTime;
 //
 //  return (hsABS(distToGoal) <= hsABS(stopDist));  // stopDist+avgSpeed?   
 //}

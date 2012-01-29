@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsConverterUtils.h"
 #include "hsResMgr.h"
 #include "MaxMain/MaxCompat.h"
@@ -93,10 +93,10 @@ namespace {
             hsGuardEnd;
         }
         
-        Int32   GetInstanceCount()  { return fInstanceCount; }
+        int32_t   GetInstanceCount()  { return fInstanceCount; }
         
     private:
-        Int32   fInstanceCount;
+        int32_t   fInstanceCount;
     };
 }
 
@@ -418,19 +418,19 @@ char* hsConverterUtils::StripMangledReference(char* dest, const char* name)
     hsGuardEnd; 
 }
 
-Int32 hsConverterUtils::FindNamedSelSetFromName(const char *name)
+int32_t hsConverterUtils::FindNamedSelSetFromName(const char *name)
 {
     hsGuardBegin("hsConverterUtils::FindNamedSelSetFromName");
 
     #if MAX_VERSION_MAJOR <= 12
-    for (Int32 i=0; i<fInterface->GetNumNamedSelSets(); i++)
+    for (int32_t i=0; i<fInterface->GetNumNamedSelSets(); i++)
     {
         if (!_stricmp(name, fInterface->GetNamedSelSetName(i)))
             return (i);
     }
     #else
     INamedSelectionSetManager* selSetMgr = INamedSelectionSetManager::GetInstance();
-    for (Int32 i=0; i<selSetMgr->GetNumNamedSelSets(); i++)
+    for (int32_t i=0; i<selSetMgr->GetNumNamedSelSets(); i++)
     {
         if (!_stricmp(name, selSetMgr->GetNamedSelSetName(i)))
             return (i);
@@ -525,7 +525,7 @@ void hsConverterUtils::CreateNodeSearchCache()
 {
     if (!fNodeSearchCache)
     {
-        fNodeSearchCache = TRACKED_NEW hsHashTable<CacheNode>();
+        fNodeSearchCache = new hsHashTable<CacheNode>();
     }
     fNodeSearchCache->clear();
 
@@ -555,7 +555,7 @@ void hsConverterUtils::IBuildNodeSearchCacheRecur(INode* node)
     }
 }
 
-UInt32 hsConverterUtils::CacheNode::GetHash() const
+uint32_t hsConverterUtils::CacheNode::GetHash() const
 {
     const char* k = GetName();
     int len = k ? strlen(k) : 0;

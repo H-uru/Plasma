@@ -112,14 +112,14 @@ public:
                                 | kColARGB8888,
     };
 
-    UInt32          fCode;
-    hsScalar        fPosScale;
+    uint32_t          fCode;
+    float        fPosScale;
 
     plSpanEncoding() : fCode(kPosNone|kColNone), fPosScale(0) {}
-    plSpanEncoding(UInt32 c, hsScalar s) : fCode(c), fPosScale(s) {}
+    plSpanEncoding(uint32_t c, float s) : fCode(c), fPosScale(s) {}
 
-    UInt32      Code() const { return fCode; }
-    hsScalar    Scale() const { return fPosScale; }
+    uint32_t      Code() const { return fCode; }
+    float    Scale() const { return fPosScale; }
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -128,22 +128,22 @@ public:
 class plSpanInstance
 {
 protected:
-    UInt8*          fPosDelta;
-    UInt8*          fCol;
+    uint8_t*          fPosDelta;
+    uint8_t*          fCol;
 
-    hsScalar        fL2W[3][4];
+    float        fL2W[3][4];
 
     friend class plSpanInstanceIter;
 public:
     plSpanInstance();
     ~plSpanInstance();
 
-    void Read(hsStream* s, const plSpanEncoding& encoding, UInt32 numVerts);
-    void Write(hsStream* s, const plSpanEncoding& encoding, UInt32 numVerts) const;
+    void Read(hsStream* s, const plSpanEncoding& encoding, uint32_t numVerts);
+    void Write(hsStream* s, const plSpanEncoding& encoding, uint32_t numVerts) const;
 
-    void Encode(const plSpanEncoding& encoding, UInt32 numVerts, const hsVector3* delPos, const UInt32* color);
+    void Encode(const plSpanEncoding& encoding, uint32_t numVerts, const hsVector3* delPos, const uint32_t* color);
 
-    void Alloc(const plSpanEncoding& encoding, UInt32 numVerts);
+    void Alloc(const plSpanEncoding& encoding, uint32_t numVerts);
     void DeAlloc();
 
     hsMatrix44 LocalToWorld() const;
@@ -154,7 +154,7 @@ public:
     hsBool HasPosDelta() const { return fPosDelta != nil; }
     hsBool HasColor() const { return fCol != nil; }
 
-    static UInt16 PosStrideFromEncoding(const plSpanEncoding& encoding)
+    static uint16_t PosStrideFromEncoding(const plSpanEncoding& encoding)
     {
         switch(encoding.fCode & plSpanEncoding::kPosMask)
         {
@@ -169,7 +169,7 @@ public:
         }
         return 0;
     }
-    static UInt16 ColStrideFromEncoding(const plSpanEncoding& encoding)
+    static uint16_t ColStrideFromEncoding(const plSpanEncoding& encoding)
     {
         switch(encoding.fCode & plSpanEncoding::kPosMask)
         {
@@ -195,29 +195,29 @@ class plSpanInstanceIter
 protected:
     plSpanInstance*     fInst;
     plSpanEncoding      fEncoding;
-    UInt32              fNumVerts;
-    Int32               fNumVertsLeft;
-    UInt16              fPosStride;
-    UInt16              fColStride;
+    uint32_t              fNumVerts;
+    int32_t               fNumVertsLeft;
+    uint16_t              fPosStride;
+    uint16_t              fColStride;
 
     union {
-        Int8*       fPos888;
-        Int16*      fPos161616;
-        UInt32*     fPos101010;
+        int8_t*       fPos888;
+        int16_t*      fPos161616;
+        uint32_t*     fPos101010;
     };
     union {
-        UInt8*      fA8;
-        UInt8*      fI8;
-        UInt16*     fAI88;
-        UInt8*      fRGB888;
-        UInt32*     fARGB8888;
+        uint8_t*      fA8;
+        uint8_t*      fI8;
+        uint16_t*     fAI88;
+        uint8_t*      fRGB888;
+        uint32_t*     fARGB8888;
     };
 
 public:
     plSpanInstanceIter();
-    plSpanInstanceIter(plSpanInstance* inst, const plSpanEncoding& encoding, UInt32 numVerts) { Init(inst, encoding, numVerts); }
+    plSpanInstanceIter(plSpanInstance* inst, const plSpanEncoding& encoding, uint32_t numVerts) { Init(inst, encoding, numVerts); }
 
-    void Init(plSpanInstance* inst, const plSpanEncoding& encoding, UInt32 numVerts)
+    void Init(plSpanInstance* inst, const plSpanEncoding& encoding, uint32_t numVerts)
     {
         fInst = inst;
         fEncoding = encoding;
@@ -229,7 +229,7 @@ public:
 
     void        Begin()
     {
-        fPos888 = (Int8*)fInst->fPosDelta;
+        fPos888 = (int8_t*)fInst->fPosDelta;
         fA8 = fInst->fCol;
 
         fNumVertsLeft = fNumVerts;
@@ -270,7 +270,7 @@ public:
         pos += DelPos();
         return pos;
     };
-    UInt32      Color(UInt32 c) const 
+    uint32_t      Color(uint32_t c) const 
     { 
         switch(fEncoding.fCode & plSpanEncoding::kColMask)
         {
@@ -283,7 +283,7 @@ public:
                 | (*fI8 << 0);
         case plSpanEncoding::kColAI88:
             {
-                const UInt32 col = *fAI88 & 0xff;
+                const uint32_t col = *fAI88 & 0xff;
                 return ((*fAI88 & 0xff00) << 24)
                     | (col << 16)
                     | (col << 8)

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFollowMod.h"
 #include "plgDispatch.h"
 #include "pnNetCommon/plNetApp.h"
@@ -218,7 +218,7 @@ void plFollowMod::IMoveTarget()
     GetTarget()->SetTransform(l2w, w2l);
 }
 
-hsBool plFollowMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plFollowMod::IEval(double secs, float del, uint32_t dirty)
 {
     if( ICheckLeader() )
         IMoveTarget();
@@ -281,7 +281,7 @@ void plFollowMod::Read(hsStream* stream, hsResMgr* mgr)
     fLeaderType = FollowLeaderType(stream->ReadByte());
     fMode = stream->ReadByte();
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefLeader), plRefFlags::kActiveRef);
 
     // If active?
     Activate();

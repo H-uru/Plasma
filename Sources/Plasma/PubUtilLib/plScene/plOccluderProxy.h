@@ -55,7 +55,7 @@ protected:
     plOccluder*         fOwner;
 
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil);
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
     virtual plKey               IGetNode() const;
 public:
     plOccluderProxy();

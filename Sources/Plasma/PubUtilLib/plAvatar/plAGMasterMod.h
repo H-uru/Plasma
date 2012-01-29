@@ -106,14 +106,14 @@ public:
     /** Attach the given animation object with the given blend factor.
         If there's no animation already attached to blend with, the
         animation will be attached at full strength. */
-    plAGAnimInstance *AttachAnimationBlended(plAGAnim *anim, hsScalar blendFactor = 0,
-                                             UInt16 blendPriority = kAGMedBlendPriority,
+    plAGAnimInstance *AttachAnimationBlended(plAGAnim *anim, float blendFactor = 0,
+                                             uint16_t blendPriority = kAGMedBlendPriority,
                                              hsBool cache = false);
 
     /** Look up the given animation by name and attach it
         with the given blend factor. */
-    plAGAnimInstance *AttachAnimationBlended(const char *name, hsScalar blendFactor = 0,
-                                             UInt16 blendPriority = kAGMedBlendPriority,
+    plAGAnimInstance *AttachAnimationBlended(const char *name, float blendFactor = 0,
+                                             uint16_t blendPriority = kAGMedBlendPriority,
                                              hsBool cache = false);
 
     /** Play a simple anim (one that doesn't affect root) once and auto detach. 
@@ -152,7 +152,7 @@ public:
         attached, it could be anywhere, including buried under
         a bunch of other animations. If it's important that it be
         on top of the stack, you may need to detach it first. */
-    plAGAnimInstance *FindOrAttachInstance(const char *name, hsScalar blendFactor);
+    plAGAnimInstance *FindOrAttachInstance(const char *name, float blendFactor);
 
     /** Return the number of animations available. */
     int GetNumAnimations();
@@ -168,7 +168,7 @@ public:
     /** Apply all our animations to all our parts.
         \param timeNow is the current world time
         \param elapsed is the time since the previous frame */
-    void ApplyAnimations(double timeNow, hsScalar elapsed);
+    void ApplyAnimations(double timeNow, float elapsed);
 
     /** Runs through our anims and applies them, without
         processing fades. This is used when we load in anim
@@ -210,7 +210,7 @@ public:
     virtual void Read(hsStream * stream, hsResMgr *mgr);
 
     hsBool HasRunningAnims();
-    hsBool DirtySynchState(const char* SDLStateName, UInt32 synchFlags);    
+    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);    
     
     CLASSNAME_REGISTER( plAGMasterMod );
     GETINTERFACE_ANY( plAGMasterMod, plModifier );
@@ -220,7 +220,7 @@ protected:
     plAGModifier * ICacheChannelMod(plAGModifier *mod) const;
     plAGModifier * IFindChannelMod(const plSceneObject *obj, const char *name) const;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     
     virtual void IApplyDynamic() {};    // dummy function required by base class
 

@@ -262,7 +262,7 @@ bool formatv(std::string & out, const char * fmt, va_list args)
         {
             if (pbuf!=buf)
                 delete [] pbuf;
-            pbuf = TRACKED_NEW char[kBufSz+kBufSz*attempts];
+            pbuf = new char[kBufSz+kBufSz*attempts];
         }
     }
     while (!success && attempts<kMaxAttempts);
@@ -314,7 +314,7 @@ bool formatv(std::wstring & out, const wchar_t * fmt, va_list args)
         {
             if (pbuf!=buf)
                 delete [] pbuf;
-            pbuf = TRACKED_NEW wchar_t[kBufSz+kBufSz*attempts];
+            pbuf = new wchar_t[kBufSz+kBufSz*attempts];
         }
     }
     while (!success && attempts<kMaxAttempts);

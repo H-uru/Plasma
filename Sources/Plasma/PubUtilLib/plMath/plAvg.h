@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_AVG_H
 #define PL_AVG_H
 
-#include "hsConfig.h"
+#include "HeadSpin.h"
 #include "hsThread.h"
 #include "hsStlUtils.h"
 

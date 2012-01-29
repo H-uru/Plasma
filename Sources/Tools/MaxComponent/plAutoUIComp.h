@@ -53,14 +53,14 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
     // Get the value of a control.  Pass in the id and your 'this' pointer.
     //
-    hsBool   GetCheckBox(Int16 id, plComponentBase *comp);
-    hsScalar GetFloatSpinner(Int16 id, plComponentBase *comp);
-    int      GetIntSpinner(Int16 id, plComponentBase *comp);
-    TSTR     GetEditBox(Int16 id, plComponentBase *comp);
-    INode*   GetPickNode(Int16 id, plComponentBase *comp, int idx);
+    hsBool   GetCheckBox(int16_t id, plComponentBase *comp);
+    float GetFloatSpinner(int16_t id, plComponentBase *comp);
+    int      GetIntSpinner(int16_t id, plComponentBase *comp);
+    TSTR     GetEditBox(int16_t id, plComponentBase *comp);
+    INode*   GetPickNode(int16_t id, plComponentBase *comp, int idx);
 
     // Get the count for a parameter that takes an index
-    int Count(Int16 id, plComponentBase *comp);
+    int Count(int16_t id, plComponentBase *comp);
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Max/internal functions

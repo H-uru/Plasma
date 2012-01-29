@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plAvatar/plAvCallbackAction.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCollisionDetector.h"
 #include "plMessage/plCollideMsg.h"
 #include "plgDispatch.h"
@@ -114,7 +114,7 @@ hsBool plCollisionDetector::MsgReceive(plMessage* msg)
             {
                 for (int i = 0; i < fReceivers.Count(); i++)
                 {
-                    plActivatorMsg* pMsg = TRACKED_NEW plActivatorMsg;
+                    plActivatorMsg* pMsg = new plActivatorMsg;
                     pMsg->AddReceiver( fReceivers[i] );
 
                     if (fProxyKey)
@@ -141,7 +141,7 @@ hsBool plCollisionDetector::MsgReceive(plMessage* msg)
 
         for (int i = 0; i < fReceivers.Count(); i++)
         {
-            plActivatorMsg* pMsg = TRACKED_NEW plActivatorMsg;
+            plActivatorMsg* pMsg = new plActivatorMsg;
             pMsg->AddReceiver( fReceivers[i] );
             if (fProxyKey)
                 pMsg->fHiteeObj = fProxyKey;
@@ -194,7 +194,7 @@ hsBool plCollisionDetector::MsgReceive(plMessage* msg)
             plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
             for (int i = 0; i < fReceivers.Count(); i++)
             {
-                plActivatorMsg* pMsg = TRACKED_NEW plActivatorMsg;
+                plActivatorMsg* pMsg = new plActivatorMsg;
                 pMsg->AddReceiver( fReceivers[i] );
                 if (fProxyKey)
                     pMsg->fHiteeObj = fProxyKey;
@@ -491,7 +491,7 @@ void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immedi
             else
                 initialState =false;
 
-            plCollisionBookKeepingInfo* BookKeeper=TRACKED_NEW plCollisionBookKeepingInfo(hitter);
+            plCollisionBookKeepingInfo* BookKeeper=new plCollisionBookKeepingInfo(hitter);
             if(entering)
             {
                 BookKeeper->enters++;
@@ -509,7 +509,7 @@ void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immedi
     }
     else
     {
-        plActivatorMsg* ActivatorMsg = TRACKED_NEW plActivatorMsg;
+        plActivatorMsg* ActivatorMsg = new plActivatorMsg;
         ActivatorMsg->AddReceivers(fReceivers);
         if (fProxyKey)
             ActivatorMsg->fHiteeObj = fProxyKey;
@@ -533,7 +533,7 @@ void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immedi
     }
 #endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
 
-/*  fSavedActivatorMsg = TRACKED_NEW plActivatorMsg;
+/*  fSavedActivatorMsg = new plActivatorMsg;
 
     fSavedActivatorMsg->AddReceivers(fReceivers);
 
@@ -647,7 +647,7 @@ void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
             HitIt = fCurrentResidents.find((*it)->hitter);
             if(HitIt != fCurrentResidents.end()) alreadyInside = true;
             else alreadyInside=false;
-            plActivatorMsg* actout=TRACKED_NEW plActivatorMsg;
+            plActivatorMsg* actout=new plActivatorMsg;
             actout->fHitterObj=((*it)->hitter);
             actout->SetSender(GetKey());
             if (fProxyKey)
@@ -743,7 +743,7 @@ plObjectInVolumeAndFacingDetector::~plObjectInVolumeAndFacingDetector()
 
 void plObjectInVolumeAndFacingDetector::SetFacingTolerance(int degrees)
 {
-    fFacingTolerance = hsCosine(hsScalarDegToRad(degrees));
+    fFacingTolerance = cos(hsDegreesToRadians(degrees));
 }
 
 void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
@@ -760,7 +760,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         playerView.Normalize();
         objView.Normalize();
 
-        hsScalar dot = playerView * objView;
+        float dot = playerView * objView;
 //      hsStatusMessageF("Dot: %f Tolerance: %f", dot, fFacingTolerance);
         bool facing = dot >= fFacingTolerance;
 
@@ -890,14 +890,14 @@ hsBool plSubworldRegionDetector::MsgReceive(plMessage* msg)
                         DetectorLogSpecial("Switching to subworld %s", fSub->GetName());
 
                         plKey nilKey;
-                        plSubWorldMsg* msg = TRACKED_NEW plSubWorldMsg(GetKey(), avMod->GetKey(), fSub);
+                        plSubWorldMsg* msg = new plSubWorldMsg(GetKey(), avMod->GetKey(), fSub);
                         msg->Send();
                     }
                 }
                 else
                 {
                     DetectorLogSpecial("Switching to main subworld");
-                    plSubWorldMsg* msg = TRACKED_NEW plSubWorldMsg(GetKey(), avMod->GetKey(), nil);
+                    plSubWorldMsg* msg = new plSubWorldMsg(GetKey(), avMod->GetKey(), nil);
                     msg->Send();
                 }
             }
@@ -1075,7 +1075,7 @@ hsBool plSimpleRegionSensor::MsgReceive(plMessage *msg)
 }
 
 // IEVAL
-hsBool plSimpleRegionSensor::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plSimpleRegionSensor::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }

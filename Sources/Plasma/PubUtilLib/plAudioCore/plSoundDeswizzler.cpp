@@ -46,26 +46,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSoundDeswizzler.h"
 #include <string.h>
 
 
-plSoundDeswizzler::plSoundDeswizzler( void *srcPtr, UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize )
+plSoundDeswizzler::plSoundDeswizzler( void *srcPtr, uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize )
 {
     fNumSamples = srcLength / sampleSize;
     fSampleSize = sampleSize;
     fStride = fSampleSize * numChannels;
-    fData = (UInt8 *)srcPtr;
+    fData = (uint8_t *)srcPtr;
     fOwnsData = false;
 }
 
-plSoundDeswizzler::plSoundDeswizzler( UInt32 srcLength, UInt8 numChannels, UInt32 sampleSize )
+plSoundDeswizzler::plSoundDeswizzler( uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize )
 {
     fNumSamples = srcLength / sampleSize;
     fSampleSize = sampleSize;
     fStride = fSampleSize * numChannels;
-    fData = TRACKED_NEW UInt8[ srcLength ];
+    fData = new uint8_t[ srcLength ];
     fOwnsData = true;
 }
 
@@ -75,11 +75,11 @@ plSoundDeswizzler::~plSoundDeswizzler()
         delete [] fData;
 }
 
-void    plSoundDeswizzler::Extract( UInt8 channelSelect, void *dest, UInt32 numBytesToProcess )
+void    plSoundDeswizzler::Extract( uint8_t channelSelect, void *dest, uint32_t numBytesToProcess )
 {
-    UInt8   *srcPtr = fData + channelSelect * fSampleSize;
-    UInt8   *destPtr = (UInt8 *)dest;
-    UInt32  i;
+    uint8_t   *srcPtr = fData + channelSelect * fSampleSize;
+    uint8_t   *destPtr = (uint8_t *)dest;
+    uint32_t  i;
 
 
     if( numBytesToProcess == 0 )

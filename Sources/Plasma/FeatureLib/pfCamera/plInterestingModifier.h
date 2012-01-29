@@ -61,13 +61,13 @@ protected:
         kTypeLookAtMod,
     };
 
-    UInt8       fType;
-    hsScalar    fView;
+    uint8_t       fType;
+    float    fView;
 
-    static hsScalar fInterestRadius;
-    static hsScalar fInterestWeight;
+    static float fInterestRadius;
+    static float fInterestWeight;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     
 public:
     plInterestingModifier(){ fType = kTypeInteresting;}
@@ -78,16 +78,16 @@ public:
     CLASSNAME_REGISTER( plInterestingModifier );
     GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
 
-    hsScalar GetInterestWeight() { return fInterestWeight; }
-    hsScalar GetInterestRadius() { return fInterestRadius; }
+    float GetInterestWeight() { return fInterestWeight; }
+    float GetInterestRadius() { return fInterestRadius; }
 
-    void SetInterestWeight(hsScalar _InterestRadius) { fInterestWeight =_InterestRadius; }
-    void SetInterestRadius(hsScalar _InterestWeight) { fInterestRadius =_InterestWeight; }
+    void SetInterestWeight(float _InterestRadius) { fInterestWeight =_InterestRadius; }
+    void SetInterestRadius(float _InterestWeight) { fInterestRadius =_InterestWeight; }
     
     virtual void AddTarget(plSceneObject* so);
     
-    void    SetType(UInt8 type) { fType = type; }
-    UInt8   GetType() { return fType; }
+    void    SetType(uint8_t type) { fType = type; }
+    uint8_t   GetType() { return fType; }
 };
 
 

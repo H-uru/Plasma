@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAutoUIParams.h"
 
 #include "MaxMain/plMaxAccelerators.h"
-#include "hsUtils.h"
+
 #include <algorithm>
 #include "MaxMain/plMaxNode.h"
 #include "plComponentBase.h"
@@ -417,7 +417,7 @@ bool plEditParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBloc
             int len = GetWindowTextLength(fhEdit)+1;
             if (len > 1)
             {
-                char *buf = TRACKED_NEW char[len];
+                char *buf = new char[len];
                 GetWindowText(fhEdit, buf, len);
                 pb->SetValue(fID, 0, buf);
                 delete [] buf;
@@ -1724,7 +1724,7 @@ bool plDropDownListParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IP
 
             if (idx >=0 && idx < fOptions.size())
             {
-                char* buf = TRACKED_NEW char[fOptions[idx].size() + 1];
+                char* buf = new char[fOptions[idx].size() + 1];
                 strcpy(buf, fOptions[idx].c_str());
                 pb->SetValue(fID, 0, buf);
                 delete [] buf;

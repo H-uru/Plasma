@@ -71,9 +71,9 @@ protected:
     plAnimTimeConvert       fTimeConvert;
 
     // The following are in animation time.
-    hsScalar                fCurrentTime;
+    float                fCurrentTime;
 
-    hsBool                  IHandleTime(double wSecs, hsScalar del);
+    hsBool                  IHandleTime(double wSecs, float del);
 
     hsBool                  IHandleRef(plRefMsg* refMsg);
     virtual hsBool          IHandleCmd(plAnimCmdMsg* modMsg);
@@ -83,7 +83,7 @@ protected:
     virtual void            IBegin();
     virtual void            IEnd();
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plSimpleModifier();

@@ -240,7 +240,7 @@ hsBool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (IsValid())
     {
-        plOneShotMod *mod = TRACKED_NEW plOneShotMod;
+        plOneShotMod *mod = new plOneShotMod;
         hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
         fMods[node] = mod;
     }

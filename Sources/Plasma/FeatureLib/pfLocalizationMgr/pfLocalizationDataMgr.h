@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfLocalizationDataMgr_h
 #define _pfLocalizationDataMgr_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include "pfLocalizedString.h"
@@ -113,7 +113,7 @@ protected:
     void IConvertSet(LocSetInfo *setInfo, const std::wstring & curPath);
     void IConvertAge(LocAgeInfo *ageInfo, const std::wstring & curPath);
 
-    char *IConvertToByteStream(const std::wstring & data, UInt32 &len); // converts the wstring data to a string of bytes for file writing
+    char *IConvertToByteStream(const std::wstring & data, uint32_t &len); // converts the wstring data to a string of bytes for file writing
     void IWriteText(const std::string & filename, const std::wstring & ageName, const std::wstring & languageName); // Write localization text to the specified file
 
     pfLocalizationDataMgr(const std::string & path);

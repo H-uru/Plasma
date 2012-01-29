@@ -141,7 +141,7 @@ protected:
 
     plWaveSetBase*  IGetWaveSet() const { return (plWaveSetBase*)fWaveSet; } // fWaveSet set in SetupProperties pass.
 
-    hsScalar        IGetWaterHeight();
+    float        IGetWaterHeight();
 
 public:
     plWaterComponent();
@@ -157,7 +157,7 @@ public:
     virtual int GetMinCap() { return plQuality::kPS_1_1; }
 
     // This works anytime.
-    static hsScalar GetWaterHeight(INode* node); // node is component node.
+    static float GetWaterHeight(INode* node); // node is component node.
 
     // These only work after PreConvert pass
     static plWaveSetBase* GetWaveSet(INode* node); // Node is the component node

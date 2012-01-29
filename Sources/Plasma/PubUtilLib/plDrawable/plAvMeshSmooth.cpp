@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plAvMeshSmooth.h"
 
 #include "plGeometrySpan.h"
@@ -52,15 +52,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class EdgeBin
 {
 public:
-    UInt16  fVtx;
-    UInt16  fCount;
+    uint16_t  fVtx;
+    uint16_t  fCount;
 
     EdgeBin() : fVtx(0), fCount(0) {}
 };
 
-void plAvMeshSmooth::FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, hsTArray<UInt16>& edgeVerts)
+void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
-    hsTArray<EdgeBin>*  bins = TRACKED_NEW hsTArray<EdgeBin>[maxVtxIdx+1];
+    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -138,7 +138,7 @@ void plAvMeshSmooth::FindEdges(UInt32 maxVtxIdx, UInt32 nTris, UInt16* idxList, 
     delete [] bins;
 }
 
-void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeVerts)
+void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts)
 {
     int i;
     for( i = 0; i < spans.GetCount(); i++ )
@@ -149,9 +149,9 @@ void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeV
 
         plAccessTriSpan& triSpan = spans[i].fAccSpan.AccessTri();
 
-        UInt32 nTris = triSpan.TriCount();
-        UInt16* idxList = triSpan.fTris;
-        UInt32 maxVertIdx = triSpan.VertCount()-1;
+        uint32_t nTris = triSpan.TriCount();
+        uint16_t* idxList = triSpan.fTris;
+        uint32_t maxVertIdx = triSpan.VertCount()-1;
 
         FindEdges(maxVertIdx, nTris, idxList, edgeVerts[i]);
     }
@@ -171,10 +171,10 @@ void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<UInt16>* edgeV
 // morph target mesh's local space. Whatever.
 void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans)
 {
-    hsTArray<UInt16>* dstEdgeVerts = TRACKED_NEW hsTArray<UInt16>[dstSpans.GetCount()];
+    hsTArray<uint16_t>* dstEdgeVerts = new hsTArray<uint16_t>[dstSpans.GetCount()];
     FindEdges(dstSpans, dstEdgeVerts);
 
-    hsTArray<UInt16>* srcEdgeVerts = TRACKED_NEW hsTArray<UInt16>[srcSpans.GetCount()];
+    hsTArray<uint16_t>* srcEdgeVerts = new hsTArray<uint16_t>[srcSpans.GetCount()];
     FindEdges(srcSpans, srcEdgeVerts);
 
     int i;
@@ -194,7 +194,7 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
             else
                 dstDiff.Set(1.f, 1.f, 1.f, 1.f);
 
-            hsScalar maxDot = fMinNormDot;
+            float maxDot = fMinNormDot;
 
             hsPoint3 smoothPos = dstPos;
             hsVector3 smoothNorm = dstNorm;
@@ -209,12 +209,12 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
                     hsPoint3 srcPos = IPositionToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
                     hsVector3 srcNorm = INormalToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
 
-                    hsScalar dist = hsVector3(&dstPos, &srcPos).MagnitudeSquared();
+                    float dist = hsVector3(&dstPos, &srcPos).MagnitudeSquared();
                     if( dist <= fDistTolSq )
                     {
                         smoothPos = srcPos;
 
-                        hsScalar currDot = srcNorm.InnerProduct(dstNorm);
+                        float currDot = srcNorm.InnerProduct(dstNorm);
                         if( currDot > maxDot )
                         {
                             maxDot = currDot;
@@ -265,22 +265,22 @@ hsVector3 plAvMeshSmooth::INormalToSpan(XfmSpan& span, const hsVector3& wNorm) c
     return ret;
 }
 
-void plAvMeshSmooth::SetAngle(hsScalar degs)
+void plAvMeshSmooth::SetAngle(float degs)
 {
-    fMinNormDot = hsCosine(hsScalarDegToRad(degs));
+    fMinNormDot = cos(hsDegreesToRadians(degs));
 }
 
-hsScalar plAvMeshSmooth::GetAngle() const
+float plAvMeshSmooth::GetAngle() const
 {
-    return hsScalarRadToDeg(hsACosine(fMinNormDot));
+    return hsRadiansToDegrees(acos(fMinNormDot));
 }
 
-void plAvMeshSmooth::SetDistTol(hsScalar dist)
+void plAvMeshSmooth::SetDistTol(float dist)
 {
     fDistTolSq = dist * dist;
 }
 
-hsScalar plAvMeshSmooth::GetDistTol() const
+float plAvMeshSmooth::GetDistTol() const
 {
-    return hsSquareRoot(fDistTolSq);
+    return sqrt(fDistTolSq);
 }

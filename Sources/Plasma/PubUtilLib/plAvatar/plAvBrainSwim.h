@@ -62,7 +62,7 @@ public:
     GETINTERFACE_ANY( plAvBrainSwim, plArmatureBrain );
 
     virtual void Activate(plArmatureModBase *avMod);
-    hsBool Apply(double time, hsScalar elapsed);
+    hsBool Apply(double time, float elapsed);
     virtual void Deactivate();
     virtual void Suspend();
     virtual void Resume();
@@ -71,10 +71,10 @@ public:
     bool IsWalking();
     bool IsWading();
     bool IsSwimming();
-    hsScalar GetSurfaceDistance() { return fSurfaceDistance; }
+    float GetSurfaceDistance() { return fSurfaceDistance; }
 
     plSwimmingController *fCallbackAction;
-    static const hsScalar kMinSwimDepth;
+    static const float kMinSwimDepth;
     
 protected:
     void IStartWading();

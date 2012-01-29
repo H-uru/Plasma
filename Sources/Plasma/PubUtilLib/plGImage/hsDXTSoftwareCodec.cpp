@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <memory.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsDXTSoftwareCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
@@ -75,9 +75,9 @@ hsDXTSoftwareCodec::~hsDXTSoftwareCodec()
 
 plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 {
-    UInt8           format;
+    uint8_t           format;
     plMipmap        *compressed = nil;
-    UInt8           i;
+    uint8_t           i;
 
 
     /// Sanity checks
@@ -94,7 +94,7 @@ plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
 
     /// Set up structure
-    compressed = TRACKED_NEW plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
+    compressed = new plMipmap( uncompressed->GetWidth(), uncompressed->GetHeight(), plMipmap::kARGB32Config,
                                 uncompressed->GetNumLevels(), plMipmap::kDirectXCompression, format );
 
     {
@@ -131,12 +131,12 @@ plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 //                  (i.e. they're not compressed). See CreateCompressedMipmap().
 //  8.18.2000 mcn - Updated to handle new flags instead of just a bit depth
 
-plMipmap *hsDXTSoftwareCodec::CreateUncompressedMipmap( plMipmap *compressed, UInt8 flags )
+plMipmap *hsDXTSoftwareCodec::CreateUncompressedMipmap( plMipmap *compressed, uint8_t flags )
 {
     plMipmap    *uncompressed = nil;
-    Int32       totalSize;
-    Int32       width, height;
-    UInt8       i;
+    int32_t       totalSize;
+    int32_t       width, height;
+    uint8_t       i;
 
 
     /// Sanity checks
@@ -190,7 +190,7 @@ plMipmap *hsDXTSoftwareCodec::CreateUncompressedMipmap( plMipmap *compressed, UI
             uncompressed->SetCurrLevel( i );
             compressed->SetCurrLevel( i );
 
-            IXlateColorBlock( (plMipmap *)uncompressed, (UInt32 *)compressed->GetLevelPtr( i ), flags );
+            IXlateColorBlock( (plMipmap *)uncompressed, (uint32_t *)compressed->GetLevelPtr( i ), flags );
         }
 
         /// Reset
@@ -204,11 +204,11 @@ plMipmap *hsDXTSoftwareCodec::CreateUncompressedMipmap( plMipmap *compressed, UI
 //// IXlateColorBlock /////////////////////////////////////////////////////////
 //  Converts a block from ARGB 8888 to the given format of the bitmap.
 
-void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlock, UInt8 flags )
+void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, uint32_t *srcBlock, uint8_t flags )
 {
-    UInt8       *bytePtr;
-    UInt16      *wordPtr, tempVal;
-    UInt32      i;
+    uint8_t       *bytePtr;
+    uint16_t      *wordPtr, tempVal;
+    uint32_t      i;
 
 
     if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kRGB8888 )
@@ -218,31 +218,31 @@ void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlo
         if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kAInten88 )
         {
             /// Upper 8 bits from alpha, lower 8 bits from blue
-            wordPtr = (UInt16 *)destBMap->GetCurrLevelPtr();
+            wordPtr = (uint16_t *)destBMap->GetCurrLevelPtr();
             for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
             {
-                wordPtr[ i ] = (UInt16)( ( ( srcBlock[ i ] >> 16 ) & 0xff00 ) | ( srcBlock[ i ] & 0x00ff ) );
+                wordPtr[ i ] = (uint16_t)( ( ( srcBlock[ i ] >> 16 ) & 0xff00 ) | ( srcBlock[ i ] & 0x00ff ) );
             }
         }
         else if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kInten8 )
         {
             /// 8 bits from blue
-            bytePtr = (UInt8 *)destBMap->GetCurrLevelPtr();
+            bytePtr = (uint8_t *)destBMap->GetCurrLevelPtr();
             for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
             {
-                bytePtr[ i ] = (UInt8)( srcBlock[ i ] & 0x00ff );
+                bytePtr[ i ] = (uint8_t)( srcBlock[ i ] & 0x00ff );
             }
         }
         else if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kRGB1555 )
         {
-            wordPtr = (UInt16 *)destBMap->GetCurrLevelPtr();
+            wordPtr = (uint16_t *)destBMap->GetCurrLevelPtr();
 
             if( ( flags & hsCodecManager::kCompOrderMask ) == hsCodecManager::kWeirdCompOrder )
             {
                 /// Really do 5551
                 for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
                 {
-                    tempVal = (UInt16)( ( ( srcBlock[ i ] & 0x000000f8 ) >> 2 ) |
+                    tempVal = (uint16_t)( ( ( srcBlock[ i ] & 0x000000f8 ) >> 2 ) |
                               ( ( ( srcBlock[ i ] & 0x0000f800 ) >> 5 ) ) |
                               ( ( ( srcBlock[ i ] & 0x00f80000 ) >> 8 ) ) |
                               ( ( srcBlock[ i ] & 0x80000000 ) >> 31 ) );
@@ -255,7 +255,7 @@ void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlo
                 /// Normal 1555
                 for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
                 {
-                    tempVal = (UInt16)( ( ( srcBlock[ i ] & 0x000000f8 ) >> 3 ) |
+                    tempVal = (uint16_t)( ( ( srcBlock[ i ] & 0x000000f8 ) >> 3 ) |
                               ( ( ( srcBlock[ i ] & 0x0000f800 ) >> 6 ) ) |
                               ( ( ( srcBlock[ i ] & 0x00f80000 ) >> 9 ) ) |
                               ( ( srcBlock[ i ] & 0x80000000 ) >> 16 ) );
@@ -266,14 +266,14 @@ void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlo
         }
         else if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kRGB4444 )
         {
-            wordPtr = (UInt16 *)destBMap->GetCurrLevelPtr();
+            wordPtr = (uint16_t *)destBMap->GetCurrLevelPtr();
 
             if( ( flags & hsCodecManager::kCompOrderMask ) == hsCodecManager::kWeirdCompOrder )
             {
                 /// Really do 4444 reversed (switch red and blue)
                 for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
                 {
-                    tempVal = (UInt16)( ( ( srcBlock[ i ] & 0x000000f0 ) << 4 ) |
+                    tempVal = (uint16_t)( ( ( srcBlock[ i ] & 0x000000f0 ) << 4 ) |
                               ( ( ( srcBlock[ i ] & 0x0000f000 ) >> 8 ) ) |
                               ( ( ( srcBlock[ i ] & 0x00f00000 ) >> 20 ) ) |
                               ( ( ( srcBlock[ i ] & 0xf0000000 ) >> 16 ) ) );
@@ -286,7 +286,7 @@ void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlo
                 /// Normal 4444
                 for( i = 0; i < destBMap->GetCurrWidth() * destBMap->GetCurrHeight(); i++ )
                 {
-                    tempVal = (UInt16)( ( ( srcBlock[ i ] & 0x000000f0 ) >> 4 ) |
+                    tempVal = (uint16_t)( ( ( srcBlock[ i ] & 0x000000f0 ) >> 4 ) |
                               ( ( ( srcBlock[ i ] & 0x0000f000 ) >> 8 ) ) |
                               ( ( ( srcBlock[ i ] & 0x00f00000 ) >> 12 ) ) |
                               ( ( ( srcBlock[ i ] & 0xf0000000 ) >> 16 ) ) );
@@ -304,9 +304,9 @@ void    hsDXTSoftwareCodec::IXlateColorBlock( plMipmap *destBMap, UInt32 *srcBlo
 //  Sets the fields of an uncompressed bitmap according to the source
 //  (compressed) bitmap and the given bit depth.
 
-plMipmap    *hsDXTSoftwareCodec::ICreateUncompressedMipmap( plMipmap *compressed, UInt8 flags )
+plMipmap    *hsDXTSoftwareCodec::ICreateUncompressedMipmap( plMipmap *compressed, uint8_t flags )
 {
-    UInt8       bitDepth, type;
+    uint8_t       bitDepth, type;
     plMipmap    *newMap;
 
 
@@ -342,7 +342,7 @@ plMipmap    *hsDXTSoftwareCodec::ICreateUncompressedMipmap( plMipmap *compressed
             type = plMipmap::UncompressedInfo::kRGB1555;
     }
 
-    newMap = TRACKED_NEW plMipmap( compressed->GetWidth(), compressed->GetHeight(), bitDepth,
+    newMap = new plMipmap( compressed->GetWidth(), compressed->GetHeight(), bitDepth,
                             compressed->GetNumLevels(), plMipmap::kUncompressed, type );
     newMap->SetFlags( compressed->GetFlags() );                         
 
@@ -358,22 +358,22 @@ plMipmap    *hsDXTSoftwareCodec::ICreateUncompressedMipmap( plMipmap *compressed
 
 void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *compressed)
 {
-    UInt32 *compressedImage = (UInt32 *)compressed->GetCurrLevelPtr();
-    UInt32 *uncompressedImage = (UInt32 *)uncompressed->GetCurrLevelPtr();
-    UInt32 blockSize = compressed->fDirectXInfo.fBlockSize;
-    Int32 x, y;
-    Int32 xMax = compressed->GetCurrWidth() >> 2;
-    Int32 yMax = compressed->GetCurrHeight() >> 2;
+    uint32_t *compressedImage = (uint32_t *)compressed->GetCurrLevelPtr();
+    uint32_t *uncompressedImage = (uint32_t *)uncompressed->GetCurrLevelPtr();
+    uint32_t blockSize = compressed->fDirectXInfo.fBlockSize;
+    int32_t x, y;
+    int32_t xMax = compressed->GetCurrWidth() >> 2;
+    int32_t yMax = compressed->GetCurrHeight() >> 2;
     for (x = 0; x < xMax; ++x)
     {
         for (y = 0; y < yMax; ++y)
         {
-            UInt8 alpha[8];
-            UInt16 color[4];
-            UInt32 *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
-            UInt8 *charBlock = (UInt8 *)block;
-            UInt8 *alphaBlock = nil;
-            UInt8 *colorBlock = nil;
+            uint8_t alpha[8];
+            uint16_t color[4];
+            uint32_t *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
+            uint8_t *charBlock = (uint8_t *)block;
+            uint8_t *alphaBlock = nil;
+            uint8_t *colorBlock = nil;
 
             if (compressed->fDirectXInfo.fCompressionType == hsGBitmap::DirectXInfo::kDXT5)
             {
@@ -414,7 +414,7 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
                 hsAssert(false, "Unrecognized compression scheme.");
             }
 
-            UInt32 encoding;
+            uint32_t encoding;
             color[0] = (colorBlock[1] << 8) | colorBlock[0];
             color[1] = (colorBlock[3] << 8) | colorBlock[2];
 
@@ -442,19 +442,19 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
                 encoding = kThreeColorEncoding;
             }
 
-            UInt8 r, g, b, a;
-            Int32 xx, yy;
+            uint8_t r, g, b, a;
+            int32_t xx, yy;
             for (xx = 0; xx < 4; ++xx)
             {
                 for (yy = 0; yy < 4; ++yy)
                 {
                     if (alphaBlock)
                     {
-                        UInt32 alphaMask = 0x7;
-                        UInt32 firstThreeBytes = (alphaBlock[4] << 16) + (alphaBlock[3] << 8) + alphaBlock[2];
-                        UInt32 secondThreeBytes = (alphaBlock[7] << 16) + (alphaBlock[6] << 8) + alphaBlock[5];
-                        UInt32 alphaIndex;
-                        UInt32 alphaShift;
+                        uint32_t alphaMask = 0x7;
+                        uint32_t firstThreeBytes = (alphaBlock[4] << 16) + (alphaBlock[3] << 8) + alphaBlock[2];
+                        uint32_t secondThreeBytes = (alphaBlock[7] << 16) + (alphaBlock[6] << 8) + alphaBlock[5];
+                        uint32_t alphaIndex;
+                        uint32_t alphaShift;
                         if (yy < 2)
                         {
                             alphaShift = 3 * (4 * yy + xx);
@@ -473,11 +473,11 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
                         a = 255;
                     }
 
-                    UInt32 colorMask = 0x3;
-                    UInt32 colorDWord = (colorBlock[7] << 24) | (colorBlock[6] << 16) | 
+                    uint32_t colorMask = 0x3;
+                    uint32_t colorDWord = (colorBlock[7] << 24) | (colorBlock[6] << 16) | 
                         (colorBlock[5] << 8) | colorBlock[4];
-                    UInt32 colorShift = 2 * (4 * yy + xx);
-                    UInt32 colorIndex = (colorDWord >> colorShift) & colorMask;
+                    uint32_t colorShift = 2 * (4 * yy + xx);
+                    uint32_t colorIndex = (colorDWord >> colorShift) & colorMask;
 
                     if ((encoding == kThreeColorEncoding) && (colorIndex == 3))
                     {
@@ -485,9 +485,9 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
                     }
                     else
                     {
-                        r = (UInt8)((color[colorIndex] >> 8) & 0xf8);
-                        g = (UInt8)((color[colorIndex] >> 3) & 0xfc);
-                        b = (UInt8)((color[colorIndex] << 3) & 0xf8);
+                        r = (uint8_t)((color[colorIndex] >> 8) & 0xf8);
+                        g = (uint8_t)((color[colorIndex] >> 3) & 0xfc);
+                        b = (uint8_t)((color[colorIndex] << 3) & 0xf8);
                     }
 
                     hsRGBAColor32* pixel = (hsRGBAColor32*)uncompressed->GetAddr32(4 * x + xx, 4 * y + yy);
@@ -514,7 +514,7 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
 //  7.31.2000 mcn - Created, based on old code (uncredited)
 //  8.18.2000 mcn - Updated to handle 'weird' formats and other flags.
 
-void    hsDXTSoftwareCodec::UncompressMipmap( plMipmap *destBMap, plMipmap *srcBMap, UInt8 flags )
+void    hsDXTSoftwareCodec::UncompressMipmap( plMipmap *destBMap, plMipmap *srcBMap, uint8_t flags )
 {
     if( destBMap->fUncompressedInfo.fType == plMipmap::UncompressedInfo::kRGB8888 )
     {
@@ -572,17 +572,17 @@ void    hsDXTSoftwareCodec::UncompressMipmap( plMipmap *destBMap, plMipmap *srcB
 
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMipmap *srcBMap )
 {
-    UInt16      *srcData;
-    UInt16      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      x, y, bMapStride;
-    UInt16      colors[ 4 ];
-    Int32       numBlocks, i, j;
-    UInt8       *bytePtr;
-    UInt16      alphas[ 8 ], aTemp, a0, a1;
+    uint16_t      *srcData;
+    uint16_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      x, y, bMapStride;
+    uint16_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
+    uint8_t       *bytePtr;
+    uint16_t      alphas[ 8 ], aTemp, a0, a1;
 
-    UInt32      aBitSrc1, aBitSrc2;
-    UInt16      cBitSrc1, cBitSrc2;
+    uint32_t      aBitSrc1, aBitSrc2;
+    uint16_t      cBitSrc1, cBitSrc2;
 
 
     /// Setup some nifty stuff
@@ -591,10 +591,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr16's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
     x = y = 0;
 
 
@@ -602,7 +602,7 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
     for( i = 0; i < numBlocks; i++ )
     {
         /// Per block--determine alpha compression type first
-        bytePtr = (UInt8 *)srcData;
+        bytePtr = (uint8_t *)srcData;
         alphas[ 0 ] = bytePtr[ 0 ];
         alphas[ 1 ] = bytePtr[ 1 ];
 
@@ -651,12 +651,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
         alphas[ 1 ] &= 0xf000;
 
         /// Now do the 16 pixels in 2 blocks, decompressing 3-bit lookups
-        aBitSrc1 = ( (UInt32)bytePtr[ 4 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 3 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 2 ] );
-        aBitSrc2 = ( (UInt32)bytePtr[ 7 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 6 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 5 ] );
+        aBitSrc1 = ( (uint32_t)bytePtr[ 4 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 3 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 2 ] );
+        aBitSrc2 = ( (uint32_t)bytePtr[ 7 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 6 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 5 ] );
 
         /// Now decompress color data
         srcData += 4;       // Alpha was 4 16-bit words worth
@@ -729,17 +729,17 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16( plMipmap *destBMap, plMip
 
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, plMipmap *srcBMap )
 {
-    UInt16      *srcData;
-    UInt16      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      x, y, bMapStride;
-    UInt16      colors[ 4 ];
-    Int32       numBlocks, i, j;
-    UInt8       *bytePtr;
-    UInt16      alphas[ 8 ], aTemp, a0, a1;
+    uint16_t      *srcData;
+    uint16_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      x, y, bMapStride;
+    uint16_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
+    uint8_t       *bytePtr;
+    uint16_t      alphas[ 8 ], aTemp, a0, a1;
 
-    UInt32      aBitSrc1, aBitSrc2;
-    UInt16      cBitSrc1, cBitSrc2;
+    uint32_t      aBitSrc1, aBitSrc2;
+    uint16_t      cBitSrc1, cBitSrc2;
 
 
     /// Setup some nifty stuff
@@ -748,10 +748,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr16's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
     x = y = 0;
 
 
@@ -759,7 +759,7 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
     for( i = 0; i < numBlocks; i++ )
     {
         /// Per block--determine alpha compression type first
-        bytePtr = (UInt8 *)srcData;
+        bytePtr = (uint8_t *)srcData;
         alphas[ 0 ] = bytePtr[ 0 ];
         alphas[ 1 ] = bytePtr[ 1 ];
 
@@ -808,12 +808,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
         alphas[ 1 ] &= 0xf000;
 
         /// Now do the 16 pixels in 2 blocks, decompressing 3-bit lookups
-        aBitSrc1 = ( (UInt32)bytePtr[ 4 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 3 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 2 ] );
-        aBitSrc2 = ( (UInt32)bytePtr[ 7 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 6 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 5 ] );
+        aBitSrc1 = ( (uint32_t)bytePtr[ 4 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 3 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 2 ] );
+        aBitSrc2 = ( (uint32_t)bytePtr[ 7 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 6 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 5 ] );
 
         /// Now decompress color data
         srcData += 4;       // Alpha was 4 16-bit words worth
@@ -885,17 +885,17 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To16Weird( plMipmap *destBMap, 
 
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMipmap *srcBMap )
 {
-    UInt16      *srcData;
-    UInt32      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      x, y, bMapStride;
-    UInt32      colors[ 4 ];
-    Int32       numBlocks, i, j;
-    UInt8       *bytePtr;
-    UInt32      alphas[ 8 ], aTemp, a0, a1;
+    uint16_t      *srcData;
+    uint32_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      x, y, bMapStride;
+    uint32_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
+    uint8_t       *bytePtr;
+    uint32_t      alphas[ 8 ], aTemp, a0, a1;
 
-    UInt32      aBitSrc1, aBitSrc2;
-    UInt16      cBitSrc1, cBitSrc2;
+    uint32_t      aBitSrc1, aBitSrc2;
+    uint16_t      cBitSrc1, cBitSrc2;
 
 
     /// Setup some nifty stuff
@@ -904,10 +904,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr32's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr32( 0, 1 ) - destBMap->GetAddr32( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr32( 0, 1 ) - destBMap->GetAddr32( 0, 0 ) );
     x = y = 0;
 
 
@@ -915,7 +915,7 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
     for( i = 0; i < numBlocks; i++ )
     {
         /// Per block--determine alpha compression type first
-        bytePtr = (UInt8 *)srcData;
+        bytePtr = (uint8_t *)srcData;
         alphas[ 0 ] = bytePtr[ 0 ];
         alphas[ 1 ] = bytePtr[ 1 ];
 
@@ -972,12 +972,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
         }
 
         /// Now do the 16 pixels in 2 blocks, decompressing 3-bit lookups
-        aBitSrc1 = ( (UInt32)bytePtr[ 4 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 3 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 2 ] );
-        aBitSrc2 = ( (UInt32)bytePtr[ 7 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 6 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 5 ] );
+        aBitSrc1 = ( (uint32_t)bytePtr[ 4 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 3 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 2 ] );
+        aBitSrc2 = ( (uint32_t)bytePtr[ 7 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 6 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 5 ] );
 
         /// Now decompress color data
         srcData += 4;       // Alpha was 4 16-bit words worth
@@ -1046,17 +1046,17 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5To32( plMipmap *destBMap, plMip
 
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, plMipmap *srcBMap )
 {
-    UInt16      *srcData;
-    UInt16      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      x, y, bMapStride;
-    UInt8       colors[ 4 ];
-    Int32       numBlocks, i, j;
-    UInt8       *bytePtr;
-    UInt16      alphas[ 8 ], aTemp, a0, a1;
+    uint16_t      *srcData;
+    uint16_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      x, y, bMapStride;
+    uint8_t       colors[ 4 ];
+    int32_t       numBlocks, i, j;
+    uint8_t       *bytePtr;
+    uint16_t      alphas[ 8 ], aTemp, a0, a1;
 
-    UInt32      aBitSrc1, aBitSrc2;
-    UInt16      cBitSrc1, cBitSrc2;
+    uint32_t      aBitSrc1, aBitSrc2;
+    uint16_t      cBitSrc1, cBitSrc2;
 
 
     /// Setup some nifty stuff
@@ -1065,10 +1065,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr32's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
     x = y = 0;
 
 
@@ -1076,7 +1076,7 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
     for( i = 0; i < numBlocks; i++ )
     {
         /// Per block--determine alpha compression type first
-        bytePtr = (UInt8 *)srcData;
+        bytePtr = (uint8_t *)srcData;
         alphas[ 0 ] = bytePtr[ 0 ];
         alphas[ 1 ] = bytePtr[ 1 ];
 
@@ -1121,17 +1121,17 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
         }
 
         /// Now do the 16 pixels in 2 blocks, decompressing 3-bit lookups
-        aBitSrc1 = ( (UInt32)bytePtr[ 4 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 3 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 2 ] );
-        aBitSrc2 = ( (UInt32)bytePtr[ 7 ] << 16 ) + 
-                    ( (UInt32)bytePtr[ 6 ] << 8 ) + 
-                    ( (UInt32)bytePtr[ 5 ] );
+        aBitSrc1 = ( (uint32_t)bytePtr[ 4 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 3 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 2 ] );
+        aBitSrc2 = ( (uint32_t)bytePtr[ 7 ] << 16 ) + 
+                    ( (uint32_t)bytePtr[ 6 ] << 8 ) + 
+                    ( (uint32_t)bytePtr[ 5 ] );
 
         /// Now decompress color data
         srcData += 4;       // Alpha was 4 16-bit words worth
-        colors[ 0 ] = (UInt8)IRGB16To32Bit( srcData[ 0 ] );
-        colors[ 1 ] = (UInt8)IRGB16To32Bit( srcData[ 1 ] );
+        colors[ 0 ] = (uint8_t)IRGB16To32Bit( srcData[ 0 ] );
+        colors[ 1 ] = (uint8_t)IRGB16To32Bit( srcData[ 1 ] );
         colors[ 2 ] = IMixTwoThirdsInten( colors[ 0 ], colors[ 1 ] );
         colors[ 3 ] = IMixTwoThirdsInten( colors[ 1 ], colors[ 0 ] );
         
@@ -1140,10 +1140,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
         
         for( j = 0; j < 8; j++ )
         {
-            destBlock[ j ] = alphas[ aBitSrc1 & 0x07 ] | (UInt16)colors[ cBitSrc1 & 0x03 ];
+            destBlock[ j ] = alphas[ aBitSrc1 & 0x07 ] | (uint16_t)colors[ cBitSrc1 & 0x03 ];
             aBitSrc1 >>= 3;
             cBitSrc1 >>= 2;
-            destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | (UInt16)colors[ cBitSrc2 & 0x03 ];
+            destBlock[ j + 8 ] = alphas[ aBitSrc2 & 0x07 ] | (uint16_t)colors[ cBitSrc2 & 0x03 ];
             aBitSrc2 >>= 3;
             cBitSrc2 >>= 2;
 
@@ -1194,12 +1194,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT5ToAInten( plMipmap *destBMap, p
 
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMipmap *srcBMap )
 {
-    UInt16      *srcData, tempW1, tempW2;
-    UInt16      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      bitSource, bitSource2, x, y, bMapStride;
-    UInt16      colors[ 4 ];
-    Int32       numBlocks, i, j;
+    uint16_t      *srcData, tempW1, tempW2;
+    uint16_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      bitSource, bitSource2, x, y, bMapStride;
+    uint16_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
 
 
     /// Setup some nifty stuff
@@ -1208,10 +1208,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMip
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr32's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
     x = y = 0;
 
 
@@ -1296,12 +1296,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16( plMipmap *destBMap, plMip
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap, 
                                                    plMipmap *srcBMap )
 {
-    UInt16      *srcData, tempW1, tempW2;
-    UInt16      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      bitSource, bitSource2, x, y, bMapStride;
-    UInt16      colors[ 4 ];
-    Int32       numBlocks, i, j;
+    uint16_t      *srcData, tempW1, tempW2;
+    uint16_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      bitSource, bitSource2, x, y, bMapStride;
+    uint16_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
 
 
     /// Setup some nifty stuff
@@ -1310,10 +1310,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap,
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr32's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr16( 0, 1 ) - destBMap->GetAddr16( 0, 0 ) );
     x = y = 0;
 
 
@@ -1398,12 +1398,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To16Weird( plMipmap *destBMap,
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap, 
                                                    plMipmap *srcBMap )
 {
-    UInt16      *srcData, tempW1, tempW2;
-    UInt32      *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      bitSource, bitSource2, x, y, bMapStride;
-    UInt32      colors[ 4 ];
-    Int32       numBlocks, i, j;
+    uint16_t      *srcData, tempW1, tempW2;
+    uint32_t      *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      bitSource, bitSource2, x, y, bMapStride;
+    uint32_t      colors[ 4 ];
+    int32_t       numBlocks, i, j;
 
 
     /// Setup some nifty stuff
@@ -1412,10 +1412,10 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap,
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr32's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr32( 0, 1 ) - destBMap->GetAddr32( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr32( 0, 1 ) - destBMap->GetAddr32( 0, 0 ) );
     x = y = 0;
 
 
@@ -1499,12 +1499,12 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1To32( plMipmap *destBMap,
 void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap, 
                                                    plMipmap *srcBMap )
 {
-    UInt16      *srcData, tempW1, tempW2;
-    UInt8       *destData, destBlock[ 16 ];
-    UInt32      blockSize;
-    UInt32      bitSource, bitSource2, x, y, bMapStride;
-    UInt8       colors[ 4 ];
-    Int32       numBlocks, i, j;
+    uint16_t      *srcData, tempW1, tempW2;
+    uint8_t       *destData, destBlock[ 16 ];
+    uint32_t      blockSize;
+    uint32_t      bitSource, bitSource2, x, y, bMapStride;
+    uint8_t       colors[ 4 ];
+    int32_t       numBlocks, i, j;
 
 
     /// Setup some nifty stuff
@@ -1513,18 +1513,18 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap,
     numBlocks = ( srcBMap->GetCurrWidth() * srcBMap->GetCurrHeight() ) >> 4;
 
     blockSize = srcBMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)srcBMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)srcBMap->GetCurrLevelPtr();
     // Note our trick here to make sure nothing breaks if GetAddr8's 
     // formula changes
-    bMapStride = (UInt32)( destBMap->GetAddr8( 0, 1 ) - destBMap->GetAddr8( 0, 0 ) );
+    bMapStride = (uint32_t)( destBMap->GetAddr8( 0, 1 ) - destBMap->GetAddr8( 0, 0 ) );
     x = y = 0;
 
     /// Loop through the # of blocks (width*height / 16-pixel-blocks)
     for( i = 0; i < numBlocks; i++ )
     {
         /// Decompress color data block (cast will automatically truncate to blue)
-        colors[ 0 ] = (UInt8)IRGB16To32Bit( srcData[ 0 ] );
-        colors[ 1 ] = (UInt8)IRGB16To32Bit( srcData[ 1 ] );
+        colors[ 0 ] = (uint8_t)IRGB16To32Bit( srcData[ 0 ] );
+        colors[ 1 ] = (uint8_t)IRGB16To32Bit( srcData[ 1 ] );
 
         tempW1 = hsToLE16( srcData[ 0 ] );
         tempW2 = hsToLE16( srcData[ 1 ] );
@@ -1593,9 +1593,9 @@ void    hsDXTSoftwareCodec::IUncompressMipmapDXT1ToInten( plMipmap *destBMap,
 //  bits) is 0. Will be optimized LATER.
 //
 
-UInt32  hsDXTSoftwareCodec::IRGB16To32Bit( UInt16 color )
+uint32_t  hsDXTSoftwareCodec::IRGB16To32Bit( uint16_t color )
 {
-    UInt32      r, g, b;
+    uint32_t      r, g, b;
 
     color = hsToLE16(color);
     
@@ -1616,9 +1616,9 @@ UInt32  hsDXTSoftwareCodec::IRGB16To32Bit( UInt16 color )
 //  bits) is 0.
 //
 
-UInt16  hsDXTSoftwareCodec::IRGB565To4444( UInt16 color )
+uint16_t  hsDXTSoftwareCodec::IRGB565To4444( uint16_t color )
 {
-    UInt16      r, g, b;
+    uint16_t      r, g, b;
 
     color = hsToLE16( color );
     
@@ -1641,9 +1641,9 @@ UInt16  hsDXTSoftwareCodec::IRGB565To4444( UInt16 color )
 //  bits) is 0. This is the OpenGL-friendly version (B and R are swapped)
 //
 
-UInt16  hsDXTSoftwareCodec::IRGB565To4444Rev( UInt16 color )
+uint16_t  hsDXTSoftwareCodec::IRGB565To4444Rev( uint16_t color )
 {
-    UInt16      r, g, b;
+    uint16_t      r, g, b;
 
     color = hsToLE16( color );
     
@@ -1666,9 +1666,9 @@ UInt16  hsDXTSoftwareCodec::IRGB565To4444Rev( UInt16 color )
 //  bit) is 0.
 //
 
-UInt16  hsDXTSoftwareCodec::IRGB565To1555( UInt16 color )
+uint16_t  hsDXTSoftwareCodec::IRGB565To1555( uint16_t color )
 {
-    UInt16      r, g, b;
+    uint16_t      r, g, b;
 
     color = hsToLE16( color );
     
@@ -1691,9 +1691,9 @@ UInt16  hsDXTSoftwareCodec::IRGB565To1555( UInt16 color )
 //  bit) is 0.
 //
 
-UInt16  hsDXTSoftwareCodec::IRGB565To5551( UInt16 color )
+uint16_t  hsDXTSoftwareCodec::IRGB565To5551( uint16_t color )
 {
-    UInt16      rg, b;
+    uint16_t      rg, b;
 
     color = hsToLE16( color );
     
@@ -1710,9 +1710,9 @@ UInt16  hsDXTSoftwareCodec::IRGB565To5551( UInt16 color )
 //  first parameter and 1/3rd of the second. Will be optimized LATER.
 //
 
-UInt32  hsDXTSoftwareCodec::IMixTwoThirdsRGB32( UInt32 twoThirds, UInt32 oneThird )
+uint32_t  hsDXTSoftwareCodec::IMixTwoThirdsRGB32( uint32_t twoThirds, uint32_t oneThird )
 {
-    UInt32  r, g, b;
+    uint32_t  r, g, b;
 
 
     r = ( ( twoThirds & 0x00ff0000 ) + ( twoThirds & 0x00ff0000 )
@@ -1736,9 +1736,9 @@ UInt32  hsDXTSoftwareCodec::IMixTwoThirdsRGB32( UInt32 twoThirds, UInt32 oneThir
 //  first parameter and 1/3rd of the second. Alpha is ignored.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB1555( UInt16 twoThirds, UInt16 oneThird )
+uint16_t  hsDXTSoftwareCodec::IMixTwoThirdsRGB1555( uint16_t twoThirds, uint16_t oneThird )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( twoThirds & 0x7c00 ) + ( twoThirds & 0x7c00 )
@@ -1762,9 +1762,9 @@ UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB1555( UInt16 twoThirds, UInt16 oneTh
 //  first parameter and 1/3rd of the second. Alpha is ignored.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB5551( UInt16 twoThirds, UInt16 oneThird )
+uint16_t  hsDXTSoftwareCodec::IMixTwoThirdsRGB5551( uint16_t twoThirds, uint16_t oneThird )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( twoThirds & 0xf800 ) + ( twoThirds & 0xf800 )
@@ -1788,9 +1788,9 @@ UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB5551( UInt16 twoThirds, UInt16 oneTh
 //  first parameter and 1/3rd of the second. Alpha is ignored.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB4444( UInt16 twoThirds, UInt16 oneThird )
+uint16_t  hsDXTSoftwareCodec::IMixTwoThirdsRGB4444( uint16_t twoThirds, uint16_t oneThird )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( twoThirds & 0x0f00 ) + ( twoThirds & 0x0f00 )
@@ -1814,7 +1814,7 @@ UInt16  hsDXTSoftwareCodec::IMixTwoThirdsRGB4444( UInt16 twoThirds, UInt16 oneTh
 //  first parameter and 1/3rd of the second.
 //
 
-UInt8   hsDXTSoftwareCodec::IMixTwoThirdsInten( UInt8 twoThirds, UInt8 oneThird )
+uint8_t   hsDXTSoftwareCodec::IMixTwoThirdsInten( uint8_t twoThirds, uint8_t oneThird )
 {
     return( ( twoThirds + twoThirds + oneThird ) / 3 );
 }
@@ -1825,9 +1825,9 @@ UInt8   hsDXTSoftwareCodec::IMixTwoThirdsInten( UInt8 twoThirds, UInt8 oneThird 
 //  the two colors given.
 //
 
-UInt32  hsDXTSoftwareCodec::IMixEqualRGB32( UInt32 color1, UInt32 color2 )
+uint32_t  hsDXTSoftwareCodec::IMixEqualRGB32( uint32_t color1, uint32_t color2 )
 {
-    UInt32  r, g, b;
+    uint32_t  r, g, b;
 
 
     r = ( ( color1 & 0x00ff0000 ) + ( color2 & 0x00ff0000 ) ) >> 1;
@@ -1848,9 +1848,9 @@ UInt32  hsDXTSoftwareCodec::IMixEqualRGB32( UInt32 color1, UInt32 color2 )
 //  the two colors given.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixEqualRGB1555( UInt16 color1, UInt16 color2 )
+uint16_t  hsDXTSoftwareCodec::IMixEqualRGB1555( uint16_t color1, uint16_t color2 )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( color1 & 0x7c00 ) + ( color2 & 0x7c00 ) ) >> 1;
@@ -1871,9 +1871,9 @@ UInt16  hsDXTSoftwareCodec::IMixEqualRGB1555( UInt16 color1, UInt16 color2 )
 //  the two colors given.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixEqualRGB5551( UInt16 color1, UInt16 color2 )
+uint16_t  hsDXTSoftwareCodec::IMixEqualRGB5551( uint16_t color1, uint16_t color2 )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( color1 & 0xf800 ) + ( color2 & 0xf800 ) ) >> 1;
@@ -1894,9 +1894,9 @@ UInt16  hsDXTSoftwareCodec::IMixEqualRGB5551( UInt16 color1, UInt16 color2 )
 //  the two colors given.
 //
 
-UInt16  hsDXTSoftwareCodec::IMixEqualRGB4444( UInt16 color1, UInt16 color2 )
+uint16_t  hsDXTSoftwareCodec::IMixEqualRGB4444( uint16_t color1, uint16_t color2 )
 {
-    UInt16  r, g, b;
+    uint16_t  r, g, b;
 
 
     r = ( ( color1 & 0x0f00 ) + ( color2 & 0x0f00 ) ) >> 1;
@@ -1917,7 +1917,7 @@ UInt16  hsDXTSoftwareCodec::IMixEqualRGB4444( UInt16 color1, UInt16 color2 )
 //  the two colors given.
 //
 
-UInt8   hsDXTSoftwareCodec::IMixEqualInten( UInt8 color1, UInt8 color2 )
+uint8_t   hsDXTSoftwareCodec::IMixEqualInten( uint8_t color1, uint8_t color2 )
 {
     return( ( color1 + color2 ) >> 1 );
 }
@@ -1926,31 +1926,31 @@ UInt8   hsDXTSoftwareCodec::IMixEqualInten( UInt8 color1, UInt8 color2 )
 
 void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *compressed )
 {
-    UInt32 *compressedImage = (UInt32 *)compressed->GetCurrLevelPtr();
-    UInt32 *uncompressedImage = (UInt32 *)uncompressed->GetCurrLevelPtr();
-    Int32 x, y;
-    Int32 xMax = uncompressed->GetCurrWidth() >> 2;
-    Int32 yMax = uncompressed->GetCurrHeight() >> 2;
+    uint32_t *compressedImage = (uint32_t *)compressed->GetCurrLevelPtr();
+    uint32_t *uncompressedImage = (uint32_t *)uncompressed->GetCurrLevelPtr();
+    int32_t x, y;
+    int32_t xMax = uncompressed->GetCurrWidth() >> 2;
+    int32_t yMax = uncompressed->GetCurrHeight() >> 2;
     for (x = 0; x < xMax; ++x)
     {
         for (y = 0; y < yMax; ++y)
         {
-            UInt8 maxAlpha = 0;
-            UInt8 minAlpha = 255;
-            UInt8 oldMaxAlpha = 0;
-            UInt8 oldMinAlpha = 255;
-            UInt8 alpha[8];
-            Int32 maxDistance = 0;
+            uint8_t maxAlpha = 0;
+            uint8_t minAlpha = 255;
+            uint8_t oldMaxAlpha = 0;
+            uint8_t oldMinAlpha = 255;
+            uint8_t alpha[8];
+            int32_t maxDistance = 0;
             hsRGBAColor32 color[4];
             hsBool hasTransparency = false;
 
-            Int32 xx, yy;
+            int32_t xx, yy;
             for (xx = 0; xx < 4; ++xx)
             {
                 for (yy = 0; yy < 4; ++yy)
                 {
                     hsRGBAColor32* pixel = (hsRGBAColor32*)uncompressed->GetAddr32(4 * x + xx, 4 * y + yy);
-                    UInt8 pixelAlpha = pixel->a;
+                    uint8_t pixelAlpha = pixel->a;
                     if (pixelAlpha != 255)
                     {
                         hasTransparency = true;
@@ -1979,7 +1979,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                         }
                     }
                     
-                    Int32 xx2, yy2;
+                    int32_t xx2, yy2;
                     for (xx2 = 0; xx2 < 4; ++xx2)
                     {
                         for (yy2 = 0; yy2 < 4; ++yy2)
@@ -1987,7 +1987,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                             hsRGBAColor32* pixel1 = (hsRGBAColor32*)uncompressed->GetAddr32(4 * x + xx, 4 * y + yy);
                             hsRGBAColor32* pixel2 = (hsRGBAColor32*)uncompressed->GetAddr32(4 * x + xx2, 4 * y + yy2);
                             
-                            Int32 distance = ColorDistanceARGBSquared(*pixel1, *pixel2);
+                            int32_t distance = ColorDistanceARGBSquared(*pixel1, *pixel2);
                             if (distance >= maxDistance)
                             {
                                 maxDistance = distance;
@@ -2045,8 +2045,8 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                 }
             }
             
-            UInt32 encoding;
-            UInt16 shortColor[2];
+            uint32_t encoding;
+            uint16_t shortColor[2];
             shortColor[0] = Color32To16(color[0]);
             shortColor[1] = Color32To16(color[1]);
             if ((shortColor[0] == shortColor[1]) ||
@@ -2057,7 +2057,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
 
                 if (shortColor[0] > shortColor[1])
                 {
-                    UInt16 temp = shortColor[1];
+                    uint16_t temp = shortColor[1];
                     shortColor[1] = shortColor[0];
                     shortColor[0] = temp;
                     
@@ -2079,7 +2079,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
 
                 if (shortColor[0] < shortColor[1])
                 {
-                    UInt16 temp = shortColor[1];
+                    uint16_t temp = shortColor[1];
                     shortColor[1] = shortColor[0];
                     shortColor[0] = temp;
                     
@@ -2093,15 +2093,15 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
             }
             
             // Process each pixel in block
-            UInt32 blockSize = compressed->fDirectXInfo.fBlockSize;
-            UInt32 *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
-            UInt8 *byteBlock = (UInt8 *)block;
-            UInt8 *alphaBlock = nil;
-            UInt16 *colorBlock = nil;
+            uint32_t blockSize = compressed->fDirectXInfo.fBlockSize;
+            uint32_t *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
+            uint8_t *byteBlock = (uint8_t *)block;
+            uint8_t *alphaBlock = nil;
+            uint16_t *colorBlock = nil;
             if (compressed->fDirectXInfo.fCompressionType == plMipmap::DirectXInfo::kDXT5)
             {
                 alphaBlock = byteBlock;
-                colorBlock = (UInt16 *)(byteBlock + 8);
+                colorBlock = (uint16_t *)(byteBlock + 8);
                 alphaBlock[0] = 0;
                 alphaBlock[1] = 0;
                 alphaBlock[2] = 0;
@@ -2114,7 +2114,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
             else if (compressed->fDirectXInfo.fCompressionType == plMipmap::DirectXInfo::kDXT1)
             {
                 alphaBlock = nil;
-                colorBlock = (UInt16 *)(byteBlock);
+                colorBlock = (uint16_t *)(byteBlock);
             }
             else
             {
@@ -2130,16 +2130,16 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                 for (yy = 0; yy < 4; ++yy)
                 {
                     hsRGBAColor32* pixel = (hsRGBAColor32*)uncompressed->GetAddr32(4 * x + xx, 4 * y + yy);
-                    UInt8 pixelAlpha = pixel->a;
+                    uint8_t pixelAlpha = pixel->a;
                     if (alphaBlock)
                     {
-                        UInt32 alphaIndex = 0;
-                        UInt32 alphaDistance = abs(pixelAlpha - alpha[0]);
+                        uint32_t alphaIndex = 0;
+                        uint32_t alphaDistance = abs(pixelAlpha - alpha[0]);
                         
-                        Int32 i;
+                        int32_t i;
                         for (i = 1; i < 8; i++)
                         {
-                            UInt32 distance = abs(pixelAlpha - alpha[i]);
+                            uint32_t distance = abs(pixelAlpha - alpha[i]);
                             if (distance < alphaDistance)
                             {
                                 alphaIndex = i;
@@ -2149,25 +2149,25 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                         
                         if (yy < 2)
                         {
-                            UInt32 alphaShift = 3 * (4 * yy + xx);
-                            UInt32 threeAlphaBytes = alphaIndex << alphaShift;
+                            uint32_t alphaShift = 3 * (4 * yy + xx);
+                            uint32_t threeAlphaBytes = alphaIndex << alphaShift;
                             alphaBlock[2] |= (threeAlphaBytes & 0xff);
                             alphaBlock[3] |= ((threeAlphaBytes >> 8) & 0xff);
                             alphaBlock[4] |= ((threeAlphaBytes >> 16) & 0xff);
                         }
                         else
                         {
-                            UInt32 alphaShift = 3 * (4 * (yy - 2) + xx);
-                            UInt32 threeAlphaBytes = alphaIndex << alphaShift;
+                            uint32_t alphaShift = 3 * (4 * (yy - 2) + xx);
+                            uint32_t threeAlphaBytes = alphaIndex << alphaShift;
                             alphaBlock[5] |= (threeAlphaBytes & 0xff);
                             alphaBlock[6] |= ((threeAlphaBytes >> 8) & 0xff);
                             alphaBlock[7] |= ((threeAlphaBytes >> 16) & 0xff);
                         }
                     }
                     
-                    UInt32 colorShift = 2 * (4 * yy + xx);
-                    UInt32 colorIndex = 0;
-                    UInt32 colorDistance = ColorDistanceARGBSquared(*pixel, color[0]);
+                    uint32_t colorShift = 2 * (4 * yy + xx);
+                    uint32_t colorIndex = 0;
+                    uint32_t colorDistance = ColorDistanceARGBSquared(*pixel, color[0]);
                     
                     if ((encoding == kThreeColorEncoding) &&
                         (pixelAlpha == 0))
@@ -2176,11 +2176,11 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                     }
                     else
                     {
-                        Int32 i;
-                        Int32 colorMax = (encoding == kThreeColorEncoding) ? 3 : 4;
+                        int32_t i;
+                        int32_t colorMax = (encoding == kThreeColorEncoding) ? 3 : 4;
                         for (i = 1; i < colorMax; i++)
                         {
-                            UInt32 distance = ColorDistanceARGBSquared(*pixel, color[i]);
+                            uint32_t distance = ColorDistanceARGBSquared(*pixel, color[i]);
                             if (distance < colorDistance)
                             {
                                 colorIndex = i;
@@ -2191,14 +2191,14 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
 
                     if (yy < 2)
                     {
-                        UInt32 colorShift = 2 * (4 * yy + xx);
-                        UInt16 colorWord = (UInt16)(colorIndex << colorShift);
+                        uint32_t colorShift = 2 * (4 * yy + xx);
+                        uint16_t colorWord = (uint16_t)(colorIndex << colorShift);
                         colorBlock[2] |= colorWord;
                     }
                     else
                     {
-                        UInt32 colorShift = 2 * (4 * (yy - 2) + xx);
-                        UInt16 colorWord = (UInt16)(colorIndex << colorShift);
+                        uint32_t colorShift = 2 * (4 * (yy - 2) + xx);
+                        uint16_t colorWord = (uint16_t)(colorIndex << colorShift);
                         colorBlock[3] |= colorWord;
                     }
                 } // for yy
@@ -2216,10 +2216,10 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
     } // for x
 }
 
-UInt16 hsDXTSoftwareCodec::BlendColors16(UInt16 weight1, UInt16 color1, UInt16 weight2, UInt16 color2)
+uint16_t hsDXTSoftwareCodec::BlendColors16(uint16_t weight1, uint16_t color1, uint16_t weight2, uint16_t color2)
 {
-    UInt16 r1, r2, g1, g2, b1, b2;
-    UInt16 r, g, b;
+    uint16_t r1, r2, g1, g2, b1, b2;
+    uint16_t r, g, b;
 
     r1 = (color1 >> 8) & 0xf8;
     g1 = (color1 >> 3) & 0xfc;
@@ -2229,31 +2229,31 @@ UInt16 hsDXTSoftwareCodec::BlendColors16(UInt16 weight1, UInt16 color1, UInt16 w
     g2 = (color2 >> 3) & 0xfc;
     b2 = (color2 << 3) & 0xf8;
     
-    r = ((UInt16)r1 * weight1 + (UInt16)r2 * weight2)/(weight1 + weight2);
-    g = ((UInt16)g1 * weight1 + (UInt16)g2 * weight2)/(weight1 + weight2);
-    b = ((UInt16)b1 * weight1 + (UInt16)b2 * weight2)/(weight1 + weight2);
+    r = ((uint16_t)r1 * weight1 + (uint16_t)r2 * weight2)/(weight1 + weight2);
+    g = ((uint16_t)g1 * weight1 + (uint16_t)g2 * weight2)/(weight1 + weight2);
+    b = ((uint16_t)b1 * weight1 + (uint16_t)b2 * weight2)/(weight1 + weight2);
 
     return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | ((b & 0xf8) >> 3);
 }
 
 
-hsRGBAColor32 hsDXTSoftwareCodec::BlendColors32(UInt32 weight1, hsRGBAColor32 color1, 
-                                         UInt32 weight2, hsRGBAColor32 color2)
+hsRGBAColor32 hsDXTSoftwareCodec::BlendColors32(uint32_t weight1, hsRGBAColor32 color1, 
+                                         uint32_t weight2, hsRGBAColor32 color2)
 {
     hsRGBAColor32 result;
 
-    result.r = static_cast<UInt8>((color1.r * weight1 + color2.r * weight2)/(weight1 + weight2));
-    result.g = static_cast<UInt8>((color1.g * weight1 + color2.g * weight2)/(weight1 + weight2));
-    result.b = static_cast<UInt8>((color1.b * weight1 + color2.b * weight2)/(weight1 + weight2));
+    result.r = static_cast<uint8_t>((color1.r * weight1 + color2.r * weight2)/(weight1 + weight2));
+    result.g = static_cast<uint8_t>((color1.g * weight1 + color2.g * weight2)/(weight1 + weight2));
+    result.b = static_cast<uint8_t>((color1.b * weight1 + color2.b * weight2)/(weight1 + weight2));
 
     return result;
 }
 
 
-Int32 hsDXTSoftwareCodec::ColorDistanceARGBSquared(hsRGBAColor32 color1, hsRGBAColor32 color2)
+int32_t hsDXTSoftwareCodec::ColorDistanceARGBSquared(hsRGBAColor32 color1, hsRGBAColor32 color2)
 {
-    Int32 r1, g1, b1;
-    Int32 r2, g2, b2;
+    int32_t r1, g1, b1;
+    int32_t r2, g2, b2;
 
     r1 = color1.r;
     r2 = color2.r;
@@ -2265,11 +2265,11 @@ Int32 hsDXTSoftwareCodec::ColorDistanceARGBSquared(hsRGBAColor32 color1, hsRGBAC
     return (r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2);
 }
 
-UInt16 hsDXTSoftwareCodec::Color32To16(hsRGBAColor32 color)
+uint16_t hsDXTSoftwareCodec::Color32To16(hsRGBAColor32 color)
 {
-    UInt8 r = (UInt8)(color.r & 0xf8);
-    UInt8 g = (UInt8)(color.g & 0xfc);
-    UInt8 b = (UInt8)(color.b & 0xf8);
+    uint8_t r = (uint8_t)(color.r & 0xf8);
+    uint8_t g = (uint8_t)(color.g & 0xfc);
+    uint8_t b = (uint8_t)(color.b & 0xf8);
 
     return (r << 8) | (g << 3) | (b >> 3);
 }
@@ -2282,7 +2282,7 @@ hsBool hsDXTSoftwareCodec::Register()
 //// ICalcCompressedFormat ////////////////////////////////////////////////////
 //  Determine the DXT compression format based on a bitmap.
 
-UInt8   hsDXTSoftwareCodec::ICalcCompressedFormat( plMipmap *bMap )
+uint8_t   hsDXTSoftwareCodec::ICalcCompressedFormat( plMipmap *bMap )
 {
     if( bMap->GetFlags() & plMipmap::kAlphaChannelFlag )
         return plMipmap::DirectXInfo::kDXT5;
@@ -2294,11 +2294,11 @@ UInt8   hsDXTSoftwareCodec::ICalcCompressedFormat( plMipmap *bMap )
 //// ColorizeCompBitmap ///////////////////////////////////////////////////////
 //  Colorizes a compressed bitmap according to the color mask given.
 
-hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask )
+hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
-    UInt32  numBlocks, blockSize;
-    UInt16  *srcData, color1, color2, gray, grayDiv2, i;
-    UInt8   compMasks[ 3 ][ 2 ] = { { 0, 0 }, { 0, 0xff }, { 0xff, 0 } };
+    uint32_t  numBlocks, blockSize;
+    uint16_t  *srcData, color1, color2, gray, grayDiv2, i;
+    uint8_t   compMasks[ 3 ][ 2 ] = { { 0, 0 }, { 0, 0xff }, { 0xff, 0 } };
 
 
     /// Sanity checks
@@ -2311,7 +2311,7 @@ hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colo
     numBlocks = ( bMap->GetCurrWidth() * bMap->GetCurrHeight() ) >> 4;
 
     blockSize = bMap->fDirectXInfo.fBlockSize >> 1; // In 16-bit words
-    srcData = (UInt16 *)bMap->GetCurrLevelPtr();
+    srcData = (uint16_t *)bMap->GetCurrLevelPtr();
     
     // If we're DXT5, we'll artificially advance srcData so it points to the start
     // of the first *color* block, not the first compressed block
@@ -2375,7 +2375,7 @@ hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colo
             srcData[ 2 ] ^= ( ( ~( srcData[ i ] >> 1 ) ) & 0x5555 );
             srcData[ 3 ] ^= ( ( ~( srcData[ i ] >> 1 ) ) & 0x5555 );
 
-            /// Spoiler for above: we shift the word right one bit, then
+            /// Spoiler for above: we shift the uint16_t right one bit, then
             /// not the bits, then mask off the lower bits of the pairs
             /// (which of course used to be the upper bits). Now any upper
             /// bits that were 0 are now lower bits of 1, and everything 

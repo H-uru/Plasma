@@ -68,14 +68,14 @@ public:
 protected:
     hsTArray<plMessage*>            fCommandList;
     hsTArray<plKey>                 fReceiverList;
-    UInt32                          fCounterLimit;
-    hsScalar                        fTimer;
+    uint32_t                          fCounterLimit;
+    float                        fTimer;
     hsBitVector                     fFlags;
-    UInt32                          fCounter;
+    uint32_t                          fCounter;
     plNotifyMsg*                    fNotify;
     bool                            fDisabled;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) {return false;}
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
     void IUpdateSharedState(bool triggered) const;
     hsBool IEvalCounter();
     virtual void PreTrigger(hsBool netRequest);
@@ -107,7 +107,7 @@ public:
 
     void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
     void SetOneShot(hsBool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
-    void RegisterForMessageType(UInt16 hClass);
+    void RegisterForMessageType(uint16_t hClass);
 
     virtual void RequestTrigger(hsBool netRequest=false);
     virtual void RequestUnTrigger() { UnTrigger(); }

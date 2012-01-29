@@ -23,7 +23,6 @@ set(plFontConverter_RESOURCES
 add_executable(plFontConverter WIN32 ${plFontConverter_SOURCES} ${plFontConverter_HEADERS} ${plFontConverter_RESOURCES})
 
 target_link_libraries(plFontConverter CoreLib)
-target_link_libraries(plFontConverter CoreLibExe)
 target_link_libraries(plFontConverter pnKeyedObject)
 target_link_libraries(plFontConverter pnSceneObject)
 target_link_libraries(plFontConverter pnProduct)

@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plResMgrSettings_h
 #define _plResMgrSettings_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 class plResMgrSettings
 {
@@ -63,7 +63,7 @@ protected:
     bool fFilterOlderPageVersions;
     bool fFilterNewerPageVersions;
 
-    UInt8 fLoggingLevel;
+    uint8_t fLoggingLevel;
 
     bool fPassiveKeyRead;
     bool fLoadPagesOnInit;
@@ -93,8 +93,8 @@ public:
     bool GetFilterNewerPageVersions() const { return fFilterNewerPageVersions; }
     void SetFilterNewerPageVersions(bool f) { fFilterNewerPageVersions = f; }
 
-    UInt8   GetLoggingLevel() const { return fLoggingLevel; }
-    void    SetLoggingLevel(UInt8 level) { fLoggingLevel = level; }
+    uint8_t   GetLoggingLevel() const { return fLoggingLevel; }
+    void    SetLoggingLevel(uint8_t level) { fLoggingLevel = level; }
 
     bool GetPassiveKeyRead() const { return fPassiveKeyRead; }
     void SetPassiveKeyRead(bool p) { fPassiveKeyRead = p; }

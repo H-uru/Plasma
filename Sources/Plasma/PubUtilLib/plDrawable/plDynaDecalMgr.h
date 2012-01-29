@@ -98,13 +98,13 @@ public:
     double      fLastTime;
     hsPoint3    fLastPos;
     double      fWetTime;
-    hsScalar    fWetLength;
-    UInt32      fFlags;
+    float    fWetLength;
+    uint32_t      fFlags;
 
     plDynaDecalInfo& Init(const plKey& key);
 };
 
-typedef std::map< unsigned_ptr, plDynaDecalInfo, std::less<unsigned_ptr> > plDynaDecalMap;
+typedef std::map< uintptr_t, plDynaDecalInfo, std::less<uintptr_t> > plDynaDecalMap;
 
 // plDynaDecalMgr
 // Primary responsibilities:
@@ -150,63 +150,63 @@ protected:
     hsTArray<plSceneObject*>    fPartyObjects;
     hsTArray<plParticleSystem*> fParticles;
 
-    hsScalar                    fPartyTime;
+    float                    fPartyTime;
 
-    UInt16                      fMaxNumVerts;
-    UInt16                      fMaxNumIdx;
+    uint16_t                      fMaxNumVerts;
+    uint16_t                      fMaxNumIdx;
 
-    UInt32                      fWaitOnEnable;
+    uint32_t                      fWaitOnEnable;
     
-    hsScalar                    fWetLength;
-    hsScalar                    fRampEnd;
-    hsScalar                    fDecayStart;
-    hsScalar                    fLifeSpan;
-    hsScalar                    fIntensity;
+    float                    fWetLength;
+    float                    fRampEnd;
+    float                    fDecayStart;
+    float                    fLifeSpan;
+    float                    fIntensity;
 
-    hsScalar                    fGridSizeU;
-    hsScalar                    fGridSizeV;
+    float                    fGridSizeU;
+    float                    fGridSizeV;
 
     hsVector3                   fScale;
 
     // some temp calculated stuff
-    hsScalar                    fInitAtten; 
+    float                    fInitAtten; 
     // These 4 are in normalized units [0..1], not feet.
-    hsScalar                    fMinDepth;
-    hsScalar                    fMinDepthRange;
-    hsScalar                    fMaxDepth;
-    hsScalar                    fMaxDepthRange;
+    float                    fMinDepth;
+    float                    fMinDepthRange;
+    float                    fMaxDepth;
+    float                    fMaxDepthRange;
 
-    hsTArray<UInt32>            fPartIDs;
+    hsTArray<uint32_t>            fPartIDs;
     hsTArray<plKey>             fNotifies;
 
     const plPrintShape* IGetPrintShape(const plKey& objKey) const;
-    const plPrintShape* IGetPrintShape(plArmatureMod* avMod, UInt32 id) const;
+    const plPrintShape* IGetPrintShape(plArmatureMod* avMod, uint32_t id) const;
 
     virtual hsBool      IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
-    void                INotifyActive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const;
-    void                INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, UInt32 id) const;
+    void                INotifyActive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
+    void                INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
     hsBool              IWetParts(const plDynaDecalEnableMsg* enaMsg);
-    hsBool              IWetPart(UInt32 id, const plDynaDecalEnableMsg* enaMsg);
+    hsBool              IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg);
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
-    hsScalar            IHowWet(plDynaDecalInfo& info, double t) const;
-    plDynaDecalInfo&    IGetDecalInfo(unsigned_ptr id, const plKey& key);
-    void                IRemoveDecalInfo(UInt32 id);
+    float            IHowWet(plDynaDecalInfo& info, double t) const;
+    plDynaDecalInfo&    IGetDecalInfo(uintptr_t id, const plKey& key);
+    void                IRemoveDecalInfo(uint32_t id);
     void                IRemoveDecalInfos(const plKey& key);
 
     hsGMaterial*        ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, hsBool rtLit);
-    void                IAllocAuxSpan(plAuxSpan* aux, UInt32 maxNumVerts, UInt32 maxNumIdx);
-    plAuxSpan*          IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, UInt16 numVerts, UInt16 numIdx);
+    void                IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx);
+    plAuxSpan*          IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, uint16_t numVerts, uint16_t numIdx);
     hsBool              IMakeAuxRefs(plPipeline* pipe);
 
-    UInt16*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
+    uint16_t*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
     plDecalVtxFormat*   IGetBaseVtxPtr(const plAuxSpan* auxSpan) const;
 
     virtual int         INewDecal() = 0;
-    plDynaDecal*        IInitDecal(plAuxSpan* aux, double t, UInt16 numVerts, UInt16 numIdx);
+    plDynaDecal*        IInitDecal(plAuxSpan* aux, double t, uint16_t numVerts, uint16_t numIdx);
     void                IKillDecal(int i);
     void                IUpdateDecals(double t);
 
-    void                ICountIncoming(hsTArray<plCutoutPoly>& src, UInt16& numVerts, UInt16& numIdx) const;
+    void                ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
     hsBool              IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
     hsBool              IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
     hsBool              IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
@@ -225,7 +225,7 @@ protected:
 
     void                ISetDepthFalloff(); // Sets from current cutter settings.
 
-    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight=false, hsScalar waterHeight=0.f);
+    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight=false, float waterHeight=0.f);
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 
@@ -259,25 +259,25 @@ public:
     void SetWaitOnEnable(hsBool on) { fWaitOnEnable = on; }
     hsBool GetWaitOnEnable() const { return fWaitOnEnable; }
 
-    void SetWetLength(hsScalar f) { fWetLength = f; }
-    void SetRampEnd(hsScalar f) { fRampEnd = f; }
-    void SetDecayStart(hsScalar f) { fDecayStart = f; }
-    void SetLifeSpan(hsScalar f) { fLifeSpan = f; }
-    void SetIntensity(hsScalar f) { fIntensity = f; }
-    hsScalar GetWetLength() const { return fWetLength; }
-    hsScalar GetRampEnd() const { return fRampEnd; }
-    hsScalar GetDecayStart() const { return fDecayStart; }
-    hsScalar GetLifeSpan() const { return fLifeSpan; }
-    hsScalar GetIntensity() const { return fIntensity; }
+    void SetWetLength(float f) { fWetLength = f; }
+    void SetRampEnd(float f) { fRampEnd = f; }
+    void SetDecayStart(float f) { fDecayStart = f; }
+    void SetLifeSpan(float f) { fLifeSpan = f; }
+    void SetIntensity(float f) { fIntensity = f; }
+    float GetWetLength() const { return fWetLength; }
+    float GetRampEnd() const { return fRampEnd; }
+    float GetDecayStart() const { return fDecayStart; }
+    float GetLifeSpan() const { return fLifeSpan; }
+    float GetIntensity() const { return fIntensity; }
 
-    void        SetPartyTime(hsScalar secs) { fPartyTime = secs; } // Duration of particle spewage
-    hsScalar    GetPartyTime() const { return fPartyTime; }
+    void        SetPartyTime(float secs) { fPartyTime = secs; } // Duration of particle spewage
+    float    GetPartyTime() const { return fPartyTime; }
 
     void ConvertToEnvMap(plBitmap* envMap);
     const plMipmap* GetMipmap() const;
 
     void AddNotify(const plKey& k) { fNotifies.Append(k); }
-    UInt32 GetNumNotifies() const { return fNotifies.GetCount(); }
+    uint32_t GetNumNotifies() const { return fNotifies.GetCount(); }
     const plKey& GetNotify(int i) const { return fNotifies[i]; }
 
     static void SetDisableAccumulate(hsBool on) { fDisableAccumulate = on; }

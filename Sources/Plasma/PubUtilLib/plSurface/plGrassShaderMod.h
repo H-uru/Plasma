@@ -53,12 +53,12 @@ class plGrassWave
 public:
     plGrassWave() : fDistX(0.F), fDistY(0.F), fDistZ(0.F), fDirX(0.F), fDirY(0.F), fSpeed(0.F) {}
 
-    hsScalar fDistX;
-    hsScalar fDistY;
-    hsScalar fDistZ;
-    hsScalar fDirX;
-    hsScalar fDirY;
-    hsScalar fSpeed;
+    float fDistX;
+    float fDistY;
+    float fDistZ;
+    float fDirX;
+    float fDirY;
+    float fSpeed;
 
     void Write(hsStream *s);
     void Read(hsStream *s);
@@ -99,7 +99,7 @@ public:
     plGrassWave fWaves[kNumWaves];
 
 protected:
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
     virtual void IApplyDynamic() {};    // dummy function required by base class
     void ISetupShaders();
     void IRefreshWaves(plShader *vShader);

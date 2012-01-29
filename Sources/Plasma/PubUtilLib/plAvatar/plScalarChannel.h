@@ -74,15 +74,15 @@ class plControllerCacheInfo;
 class plScalarChannel : public plAGChannel
 {
 protected:
-    hsScalar fResult;
+    float fResult;
 
 public:
     plScalarChannel();
     virtual ~plScalarChannel();
 
     // AG PROTOCOL
-    virtual const hsScalar & Value(double time, hsBool peek = false);
-    virtual void Value(hsScalar &result, double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek = false);
+    virtual void Value(float &result, double time, hsBool peek = false);
 
     // combine it (allocates combine object)
     virtual plAGChannel * MakeCombine(plAGChannel * channelB);
@@ -109,11 +109,11 @@ class plScalarConstant : public plScalarChannel
 {
 public:
     plScalarConstant();
-    plScalarConstant(hsScalar value);
+    plScalarConstant(float value);
     virtual ~plScalarConstant();
 
-    void Set(hsScalar value) { fResult = value; }
-    hsScalar Get() { return fResult; }
+    void Set(float value) { fResult = value; }
+    float Get() { return fResult; }
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plScalarConstant );
@@ -141,7 +141,7 @@ public:
     virtual ~plScalarTimeScale();
 
     virtual hsBool IsStoppedAt(double time);
-    virtual const hsScalar & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek = false);
     virtual plAGChannel * Detach(plAGChannel * channel);
 
     // PLASMA PROTOCOL
@@ -179,7 +179,7 @@ public:
     virtual hsBool IsStoppedAt(double time);
 
     // AG PROTOCOL
-    virtual const hsScalar & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek = false);
     
     // remove the specified channel from our graph
     virtual plAGChannel * Detach(plAGChannel * channel);
@@ -205,8 +205,8 @@ public:
     virtual ~plScalarControllerChannel();
     
     // AG PROTOCOL
-    virtual const hsScalar & Value(double time, hsBool peek = false);
-    virtual const hsScalar & Value(double time, hsBool peek, plControllerCacheInfo *cache);
+    virtual const float & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek, plControllerCacheInfo *cache);
     
     virtual plAGChannel *MakeCacheChannel(plAnimTimeConvert *atc);
         
@@ -235,7 +235,7 @@ public:
     plScalarControllerCacheChannel(plScalarControllerChannel *channel, plControllerCacheInfo *cache);
     virtual ~plScalarControllerCacheChannel();
     
-    virtual const hsScalar & Value(double time, bool peek = false);
+    virtual const float & Value(double time, bool peek = false);
     
     virtual plAGChannel * Detach(plAGChannel * channel);
     
@@ -261,7 +261,7 @@ public:
     virtual ~plATCChannel();
 
     virtual hsBool IsStoppedAt(double time);
-    virtual const hsScalar & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek = false);
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plATCChannel );
@@ -276,15 +276,15 @@ class plScalarSDLChannel : public plScalarChannel
 {
 protected:
     plSimpleStateVariable *fVar;
-    hsScalar fLength;
+    float fLength;
 
 public:
     plScalarSDLChannel();
-    plScalarSDLChannel(hsScalar length);
+    plScalarSDLChannel(float length);
     virtual ~plScalarSDLChannel();
 
     virtual hsBool IsStoppedAt(double time);
-    virtual const hsScalar & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, hsBool peek = false);
 
     void SetVar(plSimpleStateVariable *var) { fVar = var; }
 

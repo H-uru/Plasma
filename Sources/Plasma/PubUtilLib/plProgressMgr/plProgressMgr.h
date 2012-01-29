@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plProgressMgr_h
 #define _plProgressMgr_h
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 
 class plPipeline;
 class plPlate;
@@ -73,14 +73,14 @@ class plOperationProgress
 
     protected:
 
-        hsScalar    fValue, fMax;
+        float    fValue, fMax;
         char        fStatusText[ 256 ];
         char        fTitle[ 256 ];
-        UInt32      fContext;
+        uint32_t      fContext;
         double      fStartTime;
 
-        UInt32 fElapsedSecs, fRemainingSecs;
-        hsScalar fAmtPerSec;
+        uint32_t fElapsedSecs, fRemainingSecs;
+        float fAmtPerSec;
 
         enum Flags
         {
@@ -93,7 +93,7 @@ class plOperationProgress
             kOverall        = 0x40,
             kAlwaysDrawText = 0x80,
         };
-        UInt8 fFlags;
+        uint8_t fFlags;
 
         plOperationProgress *fNext, *fBack;
 
@@ -103,29 +103,29 @@ class plOperationProgress
         void IChildUpdateBegin(plOperationProgress* child);
         void IChildUpdateEnd(plOperationProgress* child);
 
-        plOperationProgress( hsScalar length );
+        plOperationProgress( float length );
 
     public:
 
         ~plOperationProgress();
 
-        hsScalar GetMax( void ) const { return fMax; }
-        hsScalar GetProgress( void ) const { return fValue; }
+        float GetMax( void ) const { return fMax; }
+        float GetProgress( void ) const { return fValue; }
         const char * GetTitle( void ) const { return fTitle; }
         const char * GetStatusText( void ) const { return fStatusText; }
-        UInt32  GetContext( void ) const { return fContext; }
-        UInt32 GetElapsedSecs() { return fElapsedSecs; }
-        UInt32 GetRemainingSecs() { return fRemainingSecs; }
-        hsScalar GetAmtPerSec() { return fAmtPerSec; }
+        uint32_t  GetContext( void ) const { return fContext; }
+        uint32_t GetElapsedSecs() { return fElapsedSecs; }
+        uint32_t GetRemainingSecs() { return fRemainingSecs; }
+        float GetAmtPerSec() { return fAmtPerSec; }
 
         // Adds on to current value
-        void    Increment( hsScalar byHowMuch );
+        void    Increment( float byHowMuch );
 
         // Sets current value
-        void    SetHowMuch( hsScalar byHowMuch );
+        void    SetHowMuch( float byHowMuch );
 
         // Set the length
-        void    SetLength( hsScalar length );
+        void    SetLength( float length );
 
         // Sets the display text above the bar (nil for nothing)
         void    SetStatusText( const char *text );
@@ -134,7 +134,7 @@ class plOperationProgress
         void    SetTitle( const char *title );
 
         // Application data
-        void    SetContext( UInt32 context ) { fContext = context;}
+        void    SetContext( uint32_t context ) { fContext = context;}
 
         hsBool  IsDone( void ) { return ( fValue < fMax ) ? false : true; }
 
@@ -215,7 +215,7 @@ class plProgressMgr
 
         void IUpdateFlags(plOperationProgress* progress);
 
-        plOperationProgress* IRegisterOperation(hsScalar length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText);
+        plOperationProgress* IRegisterOperation(float length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText);
         // Called by the operation
         void IUnregisterOperation(plOperationProgress* op);
 
@@ -234,8 +234,8 @@ class plProgressMgr
 
         virtual void    Draw( plPipeline *p ) { }
 
-        plOperationProgress* RegisterOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
-        plOperationProgress* RegisterOverallOperation(hsScalar length, const char *title = nil, StaticText staticTextType = kNone, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOperation(float length, const char *title = nil, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOverallOperation(float length, const char *title = nil, StaticText staticTextType = kNone, bool alwaysDrawText = false);
 
 
         plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );

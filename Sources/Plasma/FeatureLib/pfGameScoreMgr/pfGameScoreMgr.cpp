@@ -58,7 +58,7 @@ pfGameScore::~pfGameScore()
 void pfGameScore::Init(
     unsigned sid,
     unsigned oid,
-    UInt32 createTime,
+    uint32_t createTime,
     const char gname[],
     unsigned gType,
     int val
@@ -101,7 +101,7 @@ void pfGameScoreMgr::AddCachedScore(pfGameScore * score)
     GameScoreLink * scoreLink = fScores.Find(score->scoreId);
     if (scoreLink == nil)
     {
-        GameScoreLink * link = TRACKED_NEW GameScoreLink(score);
+        GameScoreLink * link = new GameScoreLink(score);
         fScores.Add(link);
     }
     else
@@ -112,7 +112,7 @@ void pfGameScoreMgr::RemoveCachedScore(unsigned scoreId)
 {
     if (GameScoreLink * link = fScores.Find(scoreId))
     {
-        DEL(link);
+        delete link;
     }
 }
 
@@ -145,7 +145,7 @@ static void CreateScoreCallback(
     ENetError   result,
     void *      param,
     unsigned    scoreId,
-    UInt32      createdTime,
+    uint32_t      createdTime,
     unsigned    ownerId,
     const char* gameName,
     unsigned    gameType,
@@ -178,7 +178,7 @@ ENetError pfGameScoreMgr::CreateScore(
     pfGameScore&    score
 ) {
     CreateScoreOp param;
-    MemZero(&param, sizeof(CreateScoreOp));
+    memset(&param, 0, sizeof(CreateScoreOp));
     param.score = &score;
 
     NetCliAuthScoreCreate(
@@ -205,7 +205,7 @@ ENetError pfGameScoreMgr::DeleteScore(
     unsigned scoreId
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreDelete(
         scoreId,
@@ -240,11 +240,11 @@ static void GetScoresCallback(
     op->result = result;
 
     if (IS_NET_SUCCESS(result)) {
-        *(op->scores) = TRACKED_NEW pfGameScore*[scoreCount];
+        *(op->scores) = new pfGameScore*[scoreCount];
         *(op->scoreCount) = scoreCount;
 
         for (int i = 0; i < scoreCount; ++i) {
-            pfGameScore* score = TRACKED_NEW pfGameScore();
+            pfGameScore* score = new pfGameScore();
             score->IncRef();
 
             char tempGameName[kMaxGameScoreNameLength];
@@ -277,7 +277,7 @@ ENetError pfGameScoreMgr::GetScoresIncRef(
     int&            outScoreListCount
 ) {
     GetScoresOp param;
-    MemZero(&param, sizeof(GetScoresOp));
+    memset(&param, 0, sizeof(GetScoresOp));
     param.scores        = &outScoreList;
     param.scoreCount    = &outScoreListCount;
 
@@ -304,7 +304,7 @@ ENetError pfGameScoreMgr::AddPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreAddPoints(
         scoreId,
@@ -336,7 +336,7 @@ ENetError pfGameScoreMgr::TransferPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreTransferPoints(
         srcScoreId,
@@ -371,7 +371,7 @@ ENetError pfGameScoreMgr::SetPoints(
     int         numPoints
 ) {
     NetWaitOp param;
-    MemZero(&param, sizeof(NetWaitOp));
+    memset(&param, 0, sizeof(NetWaitOp));
 
     NetCliAuthScoreSetPoints(
         scoreId,
@@ -414,11 +414,11 @@ static void GetRanksCallback(
     op->result = result;
 
     if (IS_NET_SUCCESS(result)) {
-        *(op->ranks) = TRACKED_NEW NetGameRank*[rankCount];
+        *(op->ranks) = new NetGameRank*[rankCount];
         *(op->rankCount) = rankCount;
 
         for (int i = 0; i < rankCount; ++i) {
-            NetGameRank * rank = TRACKED_NEW NetGameRank;
+            NetGameRank * rank = new NetGameRank;
 
             rank->rank  = ranks[i].rank;
             rank->score = ranks[i].score;
@@ -448,7 +448,7 @@ ENetError pfGameScoreMgr::GetRankList(
     int&            outRankListCount
 ) {
     GetRanksOp param;
-    MemZero(&param, sizeof(GetRanksOp));
+    memset(&param, 0, sizeof(GetRanksOp));
     param.ranks     = &outRankList;
     param.rankCount = &outRankListCount;
 

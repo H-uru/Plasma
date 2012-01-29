@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPipeline.h"
 #include "plTweak.h"
 #include "hsFastMath.h"
@@ -60,7 +60,7 @@ void plPerspDirSlave::Init()
     fFlags |= kCastInCameraSpace; 
 }
 
-hsPoint3 plPerspDirSlave::IProject(const hsMatrix44& world2NDC, const hsPoint3& pos, hsScalar w) const
+hsPoint3 plPerspDirSlave::IProject(const hsMatrix44& world2NDC, const hsPoint3& pos, float w) const
 {
     hsPoint3 retVal;
     retVal.fX = world2NDC.fMap[0][0] * pos.fX
@@ -78,7 +78,7 @@ hsPoint3 plPerspDirSlave::IProject(const hsMatrix44& world2NDC, const hsPoint3& 
         + world2NDC.fMap[2][2] * pos.fZ
         + world2NDC.fMap[2][3] * w;
 
-    hsScalar invW = 1.f / (
+    float invW = 1.f / (
         world2NDC.fMap[3][0] * pos.fX
         + world2NDC.fMap[3][1] * pos.fY
         + world2NDC.fMap[3][2] * pos.fZ
@@ -125,8 +125,8 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
 {
     plViewTransform pipeView = pipe->GetViewTransform();
 
-    plConst(hsScalar) kYon(100.f);
-    plConst(hsScalar) kHither(30.f);
+    plConst(float) kYon(100.f);
+    plConst(float) kHither(30.f);
     pipeView.SetHither(kHither);
     pipeView.SetYon(kYon);
 
@@ -153,7 +153,7 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     }
     else if( kUseFrustCenter )
     {
-        plConst(hsScalar) kDist(50.f);
+        plConst(float) kDist(50.f);
         hsPoint3 camFrustCenter(0.f, 0.f, kDist);
         lookAt = IProject(cam2NDC, camFrustCenter);
     }
@@ -167,8 +167,8 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     hsMatrix44 li2CamNDC;
     IComputeCamNDCToLight(perspLiPos, lookAt, camNDC2Li, li2CamNDC);
 
-    hsScalar minZ, maxZ;
-    hsScalar cotX, cotY;
+    float minZ, maxZ;
+    float cotX, cotY;
 
     plConst(hsBool) kFixedPersp(true);
     if( !kFixedPersp )
@@ -197,13 +197,13 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
         plConst(hsBool) kFakeDepth(false);
         if( kFakeDepth )
         {
-            plConst(hsScalar) kMin(1.f);
-            plConst(hsScalar) kMax(30.f);
+            plConst(float) kMin(1.f);
+            plConst(float) kMax(30.f);
             minZ = kMin;
             maxZ = kMax;
         }
 
-        plConst(hsScalar) kMinMinZ(1.f);
+        plConst(float) kMinMinZ(1.f);
         if( minZ < kMinMinZ )
             minZ = kMinMinZ;
 
@@ -231,7 +231,7 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     }
     else
     {
-        plConst(hsScalar) kHi(1.f);
+        plConst(float) kHi(1.f);
         hsBounds3Ext bnd;
         const hsPoint3 lo(-1.f, -1.f, 0.f);
         const hsPoint3 hi(1.f, 1.f, kHi);
@@ -254,7 +254,7 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
         if (isnan(bnd.GetMaxs().fX) || isnan(bnd.GetMaxs().fY))
             return false;
 
-        plConst(hsScalar) kMinMinZ(1.f);
+        plConst(float) kMinMinZ(1.f);
         if( minZ < kMinMinZ )
             minZ = kMinMinZ;
 
@@ -320,9 +320,9 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     cotX -= cotX / (fWidth * 0.5f);
     cotY -= cotY / (fHeight * 0.5f);
 
-    hsScalar tanX = 1.f / cotX;
-    hsScalar tanY = 1.f / cotY;
-    fView.SetScreenSize((UInt16)fWidth, (UInt16)fHeight);
+    float tanX = 1.f / cotX;
+    float tanY = 1.f / cotY;
+    fView.SetScreenSize((uint16_t)fWidth, (uint16_t)fHeight);
     fView.SetCameraTransform(pipe->GetViewTransform().GetWorldToCamera(), pipe->GetViewTransform().GetCameraToWorld());
     fView.SetPerspective(true);
     fView.SetViewPort(0, 0, (float)fWidth, (float)fHeight, false);
@@ -368,10 +368,10 @@ void plPerspDirSlave::IComputeCamNDCToLight(const hsPoint3& from, const hsPoint3
 {
 
     hsVector3 atToFrom(&from, &at);
-    hsScalar distSq = atToFrom.MagnitudeSquared();
+    float distSq = atToFrom.MagnitudeSquared();
     atToFrom *= hsFastMath::InvSqrtAppr(distSq);
 
-    const hsScalar kMinMag = 0.5f;
+    const float kMinMag = 0.5f;
     hsVector3 up(0,0,1.f);
     if( CrossProd(up, (at - from)).MagnitudeSquared() < kMinMag )
     {

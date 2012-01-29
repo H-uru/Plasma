@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 #include "hsStream.h"
@@ -203,7 +203,7 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
             {
                 if (fLinks[i]->GetLinkKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                 {
-                    plLinkOutUnloadMsg* lam = TRACKED_NEW plLinkOutUnloadMsg;   // derived from LoadAgeMsg
+                    plLinkOutUnloadMsg* lam = new plLinkOutUnloadMsg;   // derived from LoadAgeMsg
                     lam->SetAgeFilename( NetCommGetAge()->ageDatasetName );
                     lam->AddReceiver(plNetClientMgr::GetInstance()->GetKey());
                     lam->SetPlayerID(plNetClientMgr::GetInstance()->GetPlayerID());
@@ -212,14 +212,14 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
             }
             else
             {
-                plLinkInDoneMsg* lid = TRACKED_NEW plLinkInDoneMsg;
+                plLinkInDoneMsg* lid = new plLinkInDoneMsg;
                 lid->AddReceiver(fLinks[i]->GetLinkKey());
                 lid->SetBCastFlag(plMessage::kPropagateToModifiers);
                 lid->Send();                    
 
                 if (fLinks[i]->GetLinkKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                 {
-                    plLinkInDoneMsg* lid = TRACKED_NEW plLinkInDoneMsg;
+                    plLinkInDoneMsg* lid = new plLinkInDoneMsg;
                     lid->AddReceiver(plNetClientMgr::GetInstance()->GetKey());
                     lid->Send();
                 }
@@ -251,7 +251,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         if (!plNetClientMgr::GetInstance()->IsAPlayerKey(pSeudoMsg->fAvatarKey))
             return true;
         // send the trigger message to the avatar...
-        plPseudoLinkAnimTriggerMsg* pMsg = TRACKED_NEW plPseudoLinkAnimTriggerMsg(true, pSeudoMsg->fAvatarKey);
+        plPseudoLinkAnimTriggerMsg* pMsg = new plPseudoLinkAnimTriggerMsg(true, pSeudoMsg->fAvatarKey);
         pMsg->SetSender(GetKey());
         pMsg->Send();
         IAddPsuedo(pSeudoMsg);
@@ -269,7 +269,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             {
                 hsMatrix44 mat = pObj->GetCoordinateInterface()->GetLocalToWorld();
                 // create message
-                plWarpMsg* pMsg = TRACKED_NEW plWarpMsg(mat);
+                plWarpMsg* pMsg = new plWarpMsg(mat);
                 pMsg->SetWarpFlags(plWarpMsg::kFlushTransform);
                 pMsg->AddReceiver(pSeudoCallback->fAvatarKey);
                 plUoid U(kVirtualCamera1_KEY);
@@ -280,7 +280,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
                 }
                 plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
                 // now make him re-appear
-                plPseudoLinkAnimTriggerMsg* pTrigMsg = TRACKED_NEW plPseudoLinkAnimTriggerMsg(false, pSeudoCallback->fAvatarKey);
+                plPseudoLinkAnimTriggerMsg* pTrigMsg = new plPseudoLinkAnimTriggerMsg(false, pSeudoCallback->fAvatarKey);
                 pTrigMsg->SetSender(GetKey());
                 pTrigMsg->Send();
                 IRemovePseudo(pSeudoCallback->fAvatarKey);
@@ -293,7 +293,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
     {
         plNetApp::GetInstance()->DebugMsg("Received LinkEffectsTriggerPREPMsg\n");
         IAddWait(tpMsg->GetTrigger());
-        plLinkEffectPrepBCMsg *bcpMsg = TRACKED_NEW plLinkEffectPrepBCMsg;
+        plLinkEffectPrepBCMsg *bcpMsg = new plLinkEffectPrepBCMsg;
         bcpMsg->fLeavingAge = tpMsg->fLeavingAge;
         bcpMsg->fLinkKey = tpMsg->fLinkKey;
         bcpMsg->Send();
@@ -361,7 +361,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         else
             hsStatusMessage("Starting LinkIn FX\n");
         
-        plLinkEffectBCMsg *BCMsg = TRACKED_NEW plLinkEffectBCMsg();
+        plLinkEffectBCMsg *BCMsg = new plLinkEffectBCMsg();
         BCMsg->fLinkKey = linkKey;
         BCMsg->SetLinkFlag(plLinkEffectBCMsg::kLeavingAge, pTriggerMsg->IsLeavingAge());
         BCMsg->SetLinkFlag(plLinkEffectBCMsg::kSendCallback, true);
@@ -424,11 +424,11 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             
             if (avMod && linkInAnim)
             {   
-                plAvOneShotTask *task = TRACKED_NEW plAvOneShotTask(linkInAnim->GetName(), false, false, nil);
+                plAvOneShotTask *task = new plAvOneShotTask(linkInAnim->GetName(), false, false, nil);
                 task->fBackwards = true;
                 task->fDisableLooping = true;
                 task->fDisablePhysics = false;
-                (TRACKED_NEW plAvTaskMsg(GetKey(), avMod->GetKey(), task))->Send();
+                (new plAvTaskMsg(GetKey(), avMod->GetKey(), task))->Send();
             }
                 
         }
@@ -439,7 +439,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         // link, plus we know any effect broadcast messages will have processed before this (and therefore
         // have told us to wait for them.)
         pTriggerMsg->fEffects++;
-        plLinkCallbackMsg *dummyMsg = TRACKED_NEW plLinkCallbackMsg();
+        plLinkCallbackMsg *dummyMsg = new plLinkCallbackMsg();
         dummyMsg->AddReceiver(GetKey());
         dummyMsg->fLinkKey = linkKey;
         plgDispatch::MsgSend(dummyMsg);
@@ -498,19 +498,19 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             return true;
         }
 
-        const hsScalar kMaxTimeForLinkTrigger = 30.f;
+        const float kMaxTimeForLinkTrigger = 30.f;
 
         // If we're not loading state, we're in the age. So this avatar coming in must be linking in.
         // If the player is us, no prep is necessary.
         if (!plNetClientApp::GetInstance()->IsLoadingInitialAgeState() && 
             (pageMsg->fPlayer != nc->GetLocalPlayerKey()))
         {
-            plLinkEffectsTriggerMsg *trigMsg = TRACKED_NEW plLinkEffectsTriggerMsg;
+            plLinkEffectsTriggerMsg *trigMsg = new plLinkEffectsTriggerMsg;
             trigMsg->SetLeavingAge(false);
             trigMsg->SetLinkKey(pageMsg->fPlayer);
 
             // Send off the prep message right away
-            plLinkEffectsTriggerPrepMsg *trigPrepMsg = TRACKED_NEW plLinkEffectsTriggerPrepMsg;
+            plLinkEffectsTriggerPrepMsg *trigPrepMsg = new plLinkEffectsTriggerPrepMsg;
             trigPrepMsg->fLinkKey = pageMsg->fPlayer;
             trigPrepMsg->SetTrigger(trigMsg);
             trigPrepMsg->Send(GetKey());
@@ -529,7 +529,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-void plLinkEffectsMgr::WaitForEffect(plKey linkKey, hsScalar time)
+void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 {
     plLinkEffectsTriggerMsg *msg = IFindLinkTriggerMsg(linkKey);
     if (msg == nil)
@@ -539,7 +539,7 @@ void plLinkEffectsMgr::WaitForEffect(plKey linkKey, hsScalar time)
     }
 
     msg->fEffects++;
-    plLinkCallbackMsg *callback = TRACKED_NEW plLinkCallbackMsg();
+    plLinkCallbackMsg *callback = new plLinkCallbackMsg();
     callback->fEvent = kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = linkKey;
@@ -559,7 +559,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
 
     msg->fEffects++;
 
-    plLinkCallbackMsg *callback = TRACKED_NEW plLinkCallbackMsg();
+    plLinkCallbackMsg *callback = new plLinkCallbackMsg();
     callback->fEvent = kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = linkKey;
@@ -567,7 +567,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
     return callback;
 }
 
-void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, hsScalar time)
+void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, float time)
 {
     plPseudoLinkEffectMsg* msg = IFindPseudo(linkKey);
     if (msg == nil)
@@ -576,7 +576,7 @@ void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, hsScalar time)
         return;
     }
 
-    plPseudoLinkAnimCallbackMsg* callback = TRACKED_NEW plPseudoLinkAnimCallbackMsg();
+    plPseudoLinkAnimCallbackMsg* callback = new plPseudoLinkAnimCallbackMsg();
     callback->fAvatarKey = linkKey;
     double timeToDeliver = hsTimer::GetSysSeconds() + time;
     callback->SetTimeStamp( timeToDeliver );

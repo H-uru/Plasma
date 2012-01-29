@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plTimerCallbackManager.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plgDispatch.h"
@@ -82,9 +82,9 @@ hsBool plTimerCallbackManager::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-plTimerCallback* plTimerCallbackManager::NewTimer(hsScalar time, plMessage* pMsg)
+plTimerCallback* plTimerCallbackManager::NewTimer(float time, plMessage* pMsg)
 {
-    plTimerCallback* t = TRACKED_NEW plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
+    plTimerCallback* t = new plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
     fCallbacks.Append(t); 
     // sort them
     for (int i = 0; i < fCallbacks.Count(); i++)
@@ -92,8 +92,8 @@ plTimerCallback* plTimerCallbackManager::NewTimer(hsScalar time, plMessage* pMsg
         for (int j = i + 1; j < fCallbacks.Count(); j++)
         {
 #if 0
-            hsScalar a = fCallbacks[i]->fTime;
-            hsScalar b = fCallbacks[j]->fTime;
+            float a = fCallbacks[i]->fTime;
+            float b = fCallbacks[j]->fTime;
 #endif
             if (fCallbacks[i]->fTime < fCallbacks[j]->fTime)
             {
@@ -176,7 +176,7 @@ plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nil;
 
 void plgTimerCallbackMgr::Init()
 {
-    fMgr = TRACKED_NEW plTimerCallbackManager;
+    fMgr = new plTimerCallbackManager;
     fMgr->RegisterAs( kTimerCallbackManager_KEY );      // fixedKey from plFixedKey.h
     plgDispatch::Dispatch()->RegisterForExactType( plTimeMsg::Index(), fMgr->GetKey() );
 }

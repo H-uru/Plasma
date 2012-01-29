@@ -67,11 +67,11 @@ void CrashSetEmailParameters (
 );
 
 void * CrashAddModule (
-    unsigned_ptr    address,
+    uintptr_t    address,
     unsigned        buildId,
     unsigned        branchId,
-    const wchar     name[],
-    const wchar     buildString[]
+    const wchar_t     name[],
+    const wchar_t     buildString[]
 );
 
 void CrashRemoveModule (
@@ -86,7 +86,7 @@ void CrashRemoveModule (
 ***/
 
 #ifdef SERVER
-void * CrashAddDeadlockCheck (void * thread, const wchar debugstr[] );
+void * CrashAddDeadlockCheck (void * thread, const wchar_t debugstr[] );
 void CrashRemoveDeadlockCheck (void * check);
 void CrashSetDeadlockCheckTimes (unsigned emailSec, unsigned terminateSec);
 // returns previous setting

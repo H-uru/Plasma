@@ -74,7 +74,7 @@ struct CliGmConn : AtomicRef {
     CliGmConn ();
     ~CliGmConn ();
 
-    void Send (const unsigned_ptr fields[], unsigned count);
+    void Send (const uintptr_t fields[], unsigned count);
 };
 
 
@@ -100,7 +100,7 @@ struct JoinAgeRequestTrans : NetGameTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -112,7 +112,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 
     unsigned        bufferType;
     unsigned        bufferBytes;
-    byte *          bufferData;
+    uint8_t *          bufferData;
 
     RcvdPropagatedBufferTrans () : NetNotifyTrans(kGmRcvdPropagatedBufferTrans) {}
     ~RcvdPropagatedBufferTrans ();
@@ -125,7 +125,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 struct RcvdGameMgrMsgTrans : NetNotifyTrans {
 
     unsigned        bufferBytes;
-    byte *          bufferData;
+    uint8_t *          bufferData;
 
     RcvdGameMgrMsgTrans () : NetNotifyTrans(kGmRcvdGameMgrMsgTrans) {}
     ~RcvdGameMgrMsgTrans ();
@@ -405,7 +405,7 @@ CliGmConn::~CliGmConn () {
 }
 
 //============================================================================
-void CliGmConn::Send (const unsigned_ptr fields[], unsigned count) {
+void CliGmConn::Send (const uintptr_t fields[], unsigned count) {
     critsect.Enter();
     {
         NetCliSend(cli, fields, count);
@@ -423,7 +423,7 @@ void CliGmConn::Send (const unsigned_ptr fields[], unsigned count) {
 
 //============================================================================
 static bool Recv_PingReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *          param
 ) {
@@ -432,7 +432,7 @@ static bool Recv_PingReply (
 
 //============================================================================
 static bool Recv_JoinAgeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *          param
 ) {
@@ -447,17 +447,17 @@ static bool Recv_JoinAgeReply (
 
 //============================================================================
 static bool Recv_PropagateBuffer (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *          param
 ) {
     const Game2Cli_PropagateBuffer & reply = *(const Game2Cli_PropagateBuffer *)msg;
 
-    RcvdPropagatedBufferTrans * trans = NEW(RcvdPropagatedBufferTrans);
+    RcvdPropagatedBufferTrans * trans = new RcvdPropagatedBufferTrans;
     trans->bufferType   = reply.type;
     trans->bufferBytes  = reply.bytes;
-    trans->bufferData   = (byte *)ALLOC(reply.bytes);
-    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    trans->bufferData   = (uint8_t *)malloc(reply.bytes);
+    memcpy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
     return true;
@@ -465,16 +465,16 @@ static bool Recv_PropagateBuffer (
 
 //============================================================================
 static bool Recv_GameMgrMsg (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *          param
 ) {
     const Game2Cli_GameMgrMsg & reply = *(const Game2Cli_GameMgrMsg *)msg;
 
-    RcvdGameMgrMsgTrans * trans = NEW(RcvdGameMgrMsgTrans);
+    RcvdGameMgrMsgTrans * trans = new RcvdGameMgrMsgTrans;
     trans->bufferBytes  = reply.bytes;
-    trans->bufferData   = (byte *)ALLOC(reply.bytes);
-    MemCopy(trans->bufferData, reply.buffer, reply.bytes);
+    trans->bufferData   = (uint8_t *)malloc(reply.bytes);
+    memcpy(trans->bufferData, reply.buffer, reply.bytes);
     NetTransSend(trans);
 
     return true;
@@ -530,11 +530,11 @@ bool JoinAgeRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Game_JoinAgeRequest,
                         m_transId,
                         m_ageMcpId,
-        (unsigned_ptr) &m_accountUuid,
+        (uintptr_t) &m_accountUuid,
                         m_playerInt,
     };
 
@@ -553,7 +553,7 @@ void JoinAgeRequestTrans::Post () {
 
 //============================================================================
 bool JoinAgeRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Game2Cli_JoinAgeReply & reply = *(const Game2Cli_JoinAgeReply *) msg;
@@ -570,7 +570,7 @@ bool JoinAgeRequestTrans::Recv (
 
 //============================================================================
 RcvdPropagatedBufferTrans::~RcvdPropagatedBufferTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================
@@ -587,7 +587,7 @@ void RcvdPropagatedBufferTrans::Post () {
 
 //============================================================================
 RcvdGameMgrMsgTrans::~RcvdGameMgrMsgTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================
@@ -771,17 +771,17 @@ void NetCliGameSetRecvBufferHandler (
 void NetCliGamePropagateBuffer (
     unsigned                        type,
     unsigned                        bytes,
-    const byte                      buffer[]
+    const uint8_t                      buffer[]
 ) {
     CliGmConn * conn = GetConnIncRef("PropBuffer");
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Game_PropagateBuffer,
         type,
         bytes,
-        (unsigned_ptr) buffer,
+        (uintptr_t) buffer,
     };
 
     conn->Send(msg, arrsize(msg));
@@ -800,10 +800,10 @@ void NetCliGameSendGameMgrMsg (GameMsgHeader * msgHdr) {
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Game_GameMgrMsg,
                         msgHdr->messageBytes,
-        (unsigned_ptr)  msgHdr,
+        (uintptr_t)  msgHdr,
     };
     
     conn->Send(msg, arrsize(msg));

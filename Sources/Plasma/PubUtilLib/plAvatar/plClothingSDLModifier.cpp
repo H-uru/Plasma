@@ -135,10 +135,10 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
 
     // skin tint
     plSDStateVariable* appearanceStateDesc = dstState->FindSDVar(kStrAppearance); // for skin tint
-    UInt8 skinTint[3];
-    skinTint[0] = (UInt8)(clothing->fSkinTint.r * 255);
-    skinTint[1] = (UInt8)(clothing->fSkinTint.g * 255);
-    skinTint[2] = (UInt8)(clothing->fSkinTint.b * 255);
+    uint8_t skinTint[3];
+    skinTint[0] = (uint8_t)(clothing->fSkinTint.r * 255);
+    skinTint[1] = (uint8_t)(clothing->fSkinTint.g * 255);
+    skinTint[2] = (uint8_t)(clothing->fSkinTint.b * 255);
     appearanceStateDesc->GetStateDataRecord(0)->FindVar(kStrSkinTint)->Set(skinTint);
 
     plSimpleStateVariable* faceBlends = appearanceStateDesc->GetStateDataRecord(0)->FindVar(kStrFaceBlends);
@@ -146,7 +146,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     if (faceBlends->GetCount() != numBlends)
         faceBlends->Alloc(numBlends);
     for(i = 0; i < numBlends; i++)
-        faceBlends->Set((UInt8)(clothing->fSkinBlends[i] * 255), i);
+        faceBlends->Set((uint8_t)(clothing->fSkinBlends[i] * 255), i);
 
     SDRs.Append(appearanceStateDesc->GetStateDataRecord(0));
 
@@ -165,14 +165,14 @@ void plClothingSDLModifier::PutSingleItemIntoSDR(plClosetItem *item, plStateData
 
     //hsColorRGBA c = item->fOptions.fTint1;
     //hsColorRGBA c2 = item->fOptions.fTint2;
-    UInt8 c[3];
-    UInt8 c2[3];
-    c[0] = (UInt8)(item->fOptions.fTint1.r * 255);
-    c[1] = (UInt8)(item->fOptions.fTint1.g * 255);
-    c[2] = (UInt8)(item->fOptions.fTint1.b * 255);
-    c2[0] = (UInt8)(item->fOptions.fTint2.r * 255);
-    c2[1] = (UInt8)(item->fOptions.fTint2.g * 255);
-    c2[2] = (UInt8)(item->fOptions.fTint2.b * 255);
+    uint8_t c[3];
+    uint8_t c2[3];
+    c[0] = (uint8_t)(item->fOptions.fTint1.r * 255);
+    c[1] = (uint8_t)(item->fOptions.fTint1.g * 255);
+    c[2] = (uint8_t)(item->fOptions.fTint1.b * 255);
+    c2[0] = (uint8_t)(item->fOptions.fTint2.r * 255);
+    c2[1] = (uint8_t)(item->fOptions.fTint2.g * 255);
+    c2[2] = (uint8_t)(item->fOptions.fTint2.b * 255);
     
     sdr->FindVar(kStrTint)->Set(c);
     sdr->FindVar(kStrTint2)->Set(c2);
@@ -229,8 +229,8 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
         return;
 
     int i;
-    UInt8 tint[3];
-    hsScalar tintScalar[3];
+    uint8_t tint[3];
+    float tintScalar[3];
     if (!strcmp(sdr->GetDescriptor()->GetName(), kStrClothingDescName))
     {
         // get item from clothesItem
@@ -300,9 +300,9 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
             int numBlends = plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst;
             for(i = 0; i < numBlends && i < faceBlends->GetCount(); i++)
             {
-                UInt8 blend;
+                uint8_t blend;
                 faceBlends->Get(&blend, i);
-                clothing->fSkinBlends[i] = (hsScalar)blend / 255;
+                clothing->fSkinBlends[i] = (float)blend / 255;
             }
         }       
     }

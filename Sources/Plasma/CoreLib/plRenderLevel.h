@@ -79,8 +79,8 @@ public:
     };
 public:
     plRenderLevel() { Set(kDefRendMajorLevel, kDefRendMinorLevel); }
-    plRenderLevel(UInt32 l) : fLevel(l) {}
-    plRenderLevel(UInt32 major, UInt32 minor) { Set(major, minor); }
+    plRenderLevel(uint32_t l) : fLevel(l) {}
+    plRenderLevel(uint32_t major, uint32_t minor) { Set(major, minor); }
 
     int operator==(const plRenderLevel& l) const { return fLevel == l.fLevel; }
     int operator!=(const plRenderLevel& l) const { return fLevel != l.fLevel; }
@@ -89,15 +89,15 @@ public:
     int operator>=(const plRenderLevel& l) const { return fLevel >= l.fLevel; }
     int operator<=(const plRenderLevel& l) const { return fLevel <= l.fLevel; }
 
-    UInt32  Level() const { return fLevel; }
+    uint32_t  Level() const { return fLevel; }
 
-    UInt32  Minor() const { return UInt32(fLevel & kMinorLevelMask); }
-    UInt32  Major() const { return UInt32(fLevel >> kMajorShift); }
+    uint32_t  Minor() const { return uint32_t(fLevel & kMinorLevelMask); }
+    uint32_t  Major() const { return uint32_t(fLevel >> kMajorShift); }
 
-    plRenderLevel& Set(UInt32 l) { fLevel = l; return *this; }
-    plRenderLevel& Set(UInt32 major, UInt32 minor) { fLevel = (UInt32(major) << kMajorShift) | UInt32(minor); return *this; }
+    plRenderLevel& Set(uint32_t l) { fLevel = l; return *this; }
+    plRenderLevel& Set(uint32_t major, uint32_t minor) { fLevel = (uint32_t(major) << kMajorShift) | uint32_t(minor); return *this; }
 
-    UInt32  fLevel;
+    uint32_t  fLevel;
 
     static plRenderLevel OpaqueRenderLevel() { return plRenderLevel(kOpaqueMajorLevel, kOpaqueMinorLevel); }
 };

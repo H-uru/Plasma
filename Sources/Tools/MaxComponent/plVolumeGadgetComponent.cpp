@@ -314,7 +314,7 @@ hsBool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
 //  physProps->SetAllowLOS(true, node, pErrMsg);
     physProps->SetGroup(plSimDefs::kGroupDetector, node, pErrMsg);
 
-    UInt32 reportOn = fCompPB->GetInt(kVolumeReportOn);
+    uint32_t reportOn = fCompPB->GetInt(kVolumeReportOn);
     physProps->SetReportGroup(reportOn, node, pErrMsg);
 
     return true;
@@ -329,11 +329,11 @@ hsBool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Create and register the VolumeGadget's logic component
     if(fCompPB->GetInt(kVolumeGadgetEnter) || fCompPB->GetInt(kVolumeTriggerOnFacing))
     {   
-        plLogicModifier *logic = TRACKED_NEW plLogicModifier;
+        plLogicModifier *logic = new plLogicModifier;
         char tmpName[256];
         sprintf(tmpName, "%s_Enter", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
-        hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
         fLogicModKeys[node] = logicKey;
         if (fCompPB->GetInt(kVolumeOneShot))
@@ -344,11 +344,11 @@ hsBool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     
     if(fCompPB->GetInt(kVolumeGadgetExit))
     {   
-        plLogicModifier *logic = TRACKED_NEW plLogicModifier;
+        plLogicModifier *logic = new plLogicModifier;
         char tmpName[256];
         sprintf(tmpName, "%s_Exit", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
-        hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
         fLogicModOutKeys[node] = logicKey;
         if (fCompPB->GetInt(kVolumeOneShot))
@@ -385,7 +385,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     plDetectorModifier* detector = nil;
     if (enter && fCompPB->GetInt(kVolumeTriggerOnFacing))
     {
-        plObjectInVolumeAndFacingDetector* newDetector = TRACKED_NEW plObjectInVolumeAndFacingDetector;
+        plObjectInVolumeAndFacingDetector* newDetector = new plObjectInVolumeAndFacingDetector;
 
         int deg = fCompPB->GetInt(kVolumeDegrees);
         if (deg > 180)
@@ -398,7 +398,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
         detector = newDetector;
     }
     else
-        detector = TRACKED_NEW plObjectInVolumeDetector;
+        detector = new plObjectInVolumeDetector;
 
     const char* prefix = "Exit";
     if (enter)
@@ -407,15 +407,15 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     // Register the detector
     sprintf(tmpName, "%s_%s", IGetUniqueName(node), prefix);
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(tmpName, detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     plVolumeSensorConditionalObject* boxCond=nil;
     if((fCompPB->GetInt(kSkipServerArbitration)==0))
     {//we want server arbitration
-        boxCond = TRACKED_NEW plVolumeSensorConditionalObject;
+        boxCond = new plVolumeSensorConditionalObject;
     }
     else
     {
-        boxCond = TRACKED_NEW plVolumeSensorConditionalObjectNoArbitration;
+        boxCond = new plVolumeSensorConditionalObjectNoArbitration;
     }
     sprintf(tmpName, "%s_%s", IGetUniqueName(node), prefix);
     plKey boxKey = hsgResMgr::ResMgr()->NewKey(tmpName, boxCond, loc);

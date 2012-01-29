@@ -194,7 +194,7 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
     txt.DrawString(x, y+height, groupName, 255, 255, 255, 255, plDebugText::kStyleBold);
     height += yInc;
 
-    UInt32 samplesWidth = txt.CalcStringWidth("[000]");
+    uint32_t samplesWidth = txt.CalcStringWidth("[000]");
 
     for (int i = 0; i < group.size(); i++)
     {
@@ -376,13 +376,13 @@ void plProfileManagerFull::Update()
         double value;
         double scale;
         int i;
-        std::vector<Int32> values;
+        std::vector<int32_t> values;
         for (i=0; i<fDetailVars.size(); i++)
         {
             value = (double)fDetailVars[i].var->GetValue();
             scale = 100.0/((double)(fDetailVars[i].max-fDetailVars[i].min));
             value = scale*value-fDetailVars[i].min;
-            values.push_back((Int32)value);
+            values.push_back((int32_t)value);
         }
         fDetailGraph->AddData(values);
         fDetailGraph->SetVisible(true);
@@ -421,15 +421,15 @@ void plProfileManagerFull::IPrintGroup(hsStream* s, const char* groupName, bool 
 void plProfileManagerFull::LogStats(const char* ageName, const char* spawnName)
 {
     fLogStats = true;
-    wchar* temp = hsStringToWString(ageName);
+    wchar_t* temp = hsStringToWString(ageName);
     fLogAgeName = temp;
     delete [] temp;
     fLogSpawnName = spawnName;
 }
 
-const wchar* plProfileManagerFull::GetProfilePath()
+const wchar_t* plProfileManagerFull::GetProfilePath()
 {
-    static wchar profilePath[MAX_PATH];
+    static wchar_t profilePath[MAX_PATH];
     static bool initialized = false;
 
     if (!initialized)
@@ -442,7 +442,7 @@ const wchar* plProfileManagerFull::GetProfilePath()
         PathAddFilename(profilePath, profilePath, L"Profile", arrsize(profilePath));
         plFileUtils::CreateDir(profilePath);
     
-        wchar buff[256];
+        wchar_t buff[256];
         swprintf(buff, 256, L"%02d-%02d-%04d_%02d-%02d//",
             curTime.GetMonth(),
             curTime.GetDay(),
@@ -459,7 +459,7 @@ const wchar* plProfileManagerFull::GetProfilePath()
 
 void plProfileManagerFull::ILogStats()
 {
-    wchar statFilename[256];
+    wchar_t statFilename[256];
     swprintf(statFilename, 256, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
 
     bool exists = plFileUtils::FileExists(statFilename);
@@ -543,7 +543,7 @@ void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
         fShowLaps->SetLapsActive(true);
 }
 
-void plProfileManagerFull::CreateGraph(const char* varName, UInt32 min, UInt32 max)
+void plProfileManagerFull::CreateGraph(const char* varName, uint32_t min, uint32_t max)
 {
     // If the graph is already created, destroy it
     for (int i = 0; i < fGraphs.size(); i++)
@@ -609,7 +609,7 @@ void plProfileManagerFull::HideDetailGraph()
     }
 }
 
-void plProfileManagerFull::AddDetailVar(const char* varName, UInt32 min, UInt32 max)
+void plProfileManagerFull::AddDetailVar(const char* varName, uint32_t min, uint32_t max)
 {
     int i=0;
     for (i=0; i<fDetailVars.size(); i++)
@@ -658,7 +658,7 @@ void plProfileManagerFull::UpdateDetailLabels()
         fDetailGraph->SetLabelText(labels);
 
         // update the colors as well, just in case
-        std::vector<UInt32> colors;
+        std::vector<uint32_t> colors;
         colors.push_back(0xff00ff00); // green
         colors.push_back(0xff0000ff); // blue
         colors.push_back(0xffffff00); // yellow

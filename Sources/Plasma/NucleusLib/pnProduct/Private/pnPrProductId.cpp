@@ -58,9 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace Product {
 
 namespace Uru {
-    static const wchar kCoreName[]  = L"UruLive";
-    static const wchar kShortName[] = L"UruLive";
-    static const wchar kLongName[]  = L"Uru Live";
+    static const wchar_t kCoreName[]  = L"UruLive";
+    static const wchar_t kShortName[] = L"UruLive";
+    static const wchar_t kLongName[]  = L"Uru Live";
     static const plUUID  kId("ea489821-6c35-4bd0-9dae-bb17c585e680");
 }
 
@@ -101,23 +101,23 @@ const plUUID& ProductId () {
 }
 
 //============================================================================
-const wchar * ProductCoreName () {
+const wchar_t * ProductCoreName () {
     return PRODUCT_CORE_NAME;
 }
 
 //============================================================================
-const wchar * ProductShortName () {
+const wchar_t * ProductShortName () {
     return PRODUCT_SHORT_NAME;
 }
 
 //============================================================================
-const wchar * ProductLongName () {
+const wchar_t * ProductLongName () {
     return PRODUCT_LONG_NAME;
 }
 
 
 //============================================================================
-void ProductString (wchar * dest, unsigned destChars) {
+void ProductString (wchar_t * dest, unsigned destChars) {
     // Example: "UruLive.2.214 - External.Release"
     swprintf(
         dest,

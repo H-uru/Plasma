@@ -101,8 +101,8 @@ plSynchedValueBase* plSynchedObject::GetSynchedValue(int i) const
 void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueAddrOffset)
 {
     // copy to new larger array
-    AddrOffsetType* tmp = TRACKED_NEW AddrOffsetType[fNumSynchedValues+1];
-    Int32 i;
+    AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues+1];
+    int32_t i;
     for(i=0;i<fNumSynchedValues;i++)
         tmp[i] = fSynchedValueAddrOffsets[i];
 
@@ -117,8 +117,8 @@ void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueA
 void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
 {
     // copy to new larger array
-    plSynchedValueBase** tmp = TRACKED_NEW plSynchedValueBase*[fNumSynchedValueFriends+1];
-    Int32 i;
+    plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends+1];
+    int32_t i;
     for(i=0;i<fNumSynchedValueFriends;i++)
         tmp[i] = fSynchedValueFriends[i];
 
@@ -131,14 +131,14 @@ void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
 }
 
 // adds synchedValue and returns index
-UInt8 plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v) 
+uint8_t plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v) 
 { 
-    Int32 addrOff = ((Int32)v - (Int32)this)>>2;    
-    hsAssert(hsABS(addrOff) < (UInt32)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
+    int32_t addrOff = ((int32_t)v - (int32_t)this)>>2;    
+    hsAssert(hsABS(addrOff) < (uint32_t)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
     IAppendSynchedValueAddrOffset((AddrOffsetType)addrOff); 
-    Int32 idx = fNumSynchedValues-1; 
+    int32_t idx = fNumSynchedValues-1; 
     hsAssert(idx<256, "index too big");
-    return (UInt8)idx;
+    return (uint8_t)idx;
 }
 
 hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v) 
@@ -155,7 +155,7 @@ hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v)
     int idx=i;
     if (idx<fNumSynchedValues)
     {
-        AddrOffsetType* tmp = TRACKED_NEW AddrOffsetType[fNumSynchedValues-1];      
+        AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues-1];      
         for(i=0;i<idx;i++)
             tmp[i] = fSynchedValueAddrOffsets[i];
         for(i=idx+1;i<fNumSynchedValues;i++)
@@ -167,7 +167,7 @@ hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v)
     else
     {
         idx -= fNumSynchedValues;
-        plSynchedValueBase** tmp = TRACKED_NEW plSynchedValueBase*[fNumSynchedValueFriends-1];      
+        plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends-1];      
         for(i=0;i<idx;i++)
             tmp[i] = fSynchedValueFriends[i];
         for(i=idx+1;i<fNumSynchedValueFriends;i++)
@@ -190,9 +190,9 @@ void plSynchedObject::RegisterSynchedValueFriend(plSynchedValueBase* v)
 //
 // send sdl state msg immediately
 //
-void plSynchedObject::SendSDLStateMsg(const char* SDLStateName, UInt32 synchFlags /*SendSDLStateFlags*/)
+void plSynchedObject::SendSDLStateMsg(const char* SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
-    plSDLModifierMsg* sdlMsg = TRACKED_NEW plSDLModifierMsg(SDLStateName,
+    plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(SDLStateName,
         (synchFlags & kBCastToClients) ? plSDLModifierMsg::kSendToServerAndClients : plSDLModifierMsg::kSendToServer /* action */);
     sdlMsg->SetFlags(synchFlags);
     hsAssert(GetKey(), "nil key on synchedObject?");
@@ -203,7 +203,7 @@ void plSynchedObject::SendSDLStateMsg(const char* SDLStateName, UInt32 synchFlag
 // Tell an object to send an sdl state update.
 // The request will get queued (returns true)
 //
-hsBool plSynchedObject::DirtySynchState(const char* SDLStateName, UInt32 synchFlags /*SendSDLStateFlags*/)
+hsBool plSynchedObject::DirtySynchState(const char* SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     if (!IOKToDirty(SDLStateName))
     {
@@ -256,7 +256,7 @@ hsBool plSynchedObject::DirtySynchState(const char* SDLStateName, UInt32 synchFl
 // add state defn if not already there.
 // if there adjust flags if necessary
 //
-void plSynchedObject::IAddDirtyState(plKey objKey, const char* sdlName, UInt32 sendFlags)
+void plSynchedObject::IAddDirtyState(plKey objKey, const char* sdlName, uint32_t sendFlags)
 {
     bool found=false;
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
@@ -336,7 +336,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fSynchFlags);
     if (fSynchFlags & kExcludePersistentState)
     {
-        Int16 num;
+        int16_t num;
         stream->ReadLE(&num);
         fSDLExcludeList.clear();
         int i;
@@ -350,7 +350,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kHasVolatileState)
     {
-        Int16 num;
+        int16_t num;
         stream->ReadLE(&num);
         fSDLVolatileList.clear();
         int i;
@@ -370,7 +370,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kExcludePersistentState)
     {
-        Int16 num=fSDLExcludeList.size();
+        int16_t num=fSDLExcludeList.size();
         stream->WriteLE(num);
 
         SDLStateList::iterator it=fSDLExcludeList.begin();
@@ -382,7 +382,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kHasVolatileState)
     {
-        Int16 num=fSDLVolatileList.size();
+        int16_t num=fSDLVolatileList.size();
         stream->WriteLE(num);
 
         SDLStateList::iterator it=fSDLVolatileList.begin();
@@ -471,7 +471,7 @@ bool plSynchedObject::IOKToDirty(const char* SDLStateName) const
 //
 // return true if this object should send his SDL msg (for persistence or synch) over the net
 //
-bool plSynchedObject::IOKToNetwork(const char* sdlName, UInt32* synchFlags) const
+bool plSynchedObject::IOKToNetwork(const char* sdlName, uint32_t* synchFlags) const
 {
     // determine destination
     bool dstServerOnly=false, dstClientsOnly=false, dstClientsAndServer=false;  

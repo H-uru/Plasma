@@ -629,7 +629,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFileExists, args, "Params: filename\nReturns t
     if (PyUnicode_Check(filenameObj))
     {
         int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
         text[strLen] = L'\0';
         bool retVal = cyMisc::FileExists(text);
@@ -664,7 +664,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
     if (PyUnicode_Check(directoryObj))
     {
         int strLen = PyUnicode_GetSize(directoryObj);
-        wchar_t* text = TRACKED_NEW wchar_t[strLen + 1];
+        wchar_t* text = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)directoryObj, text, strLen);
         text[strLen] = L'\0';
         bool retVal = cyMisc::CreateDir(text);

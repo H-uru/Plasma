@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
+#include "HeadSpin.h"
 #include "pnTimer/pnBuildDates.h"
 
 char    pnBuildDates::fBuildDate[ 128 ] = __DATE__;

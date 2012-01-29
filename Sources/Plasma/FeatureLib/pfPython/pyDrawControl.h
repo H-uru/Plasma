@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 
@@ -65,9 +65,9 @@ public:
     //static void AddPlasmaConstantsClasses(PyObject* m);
 
     // static python functions
-    static void SetGamma2(hsScalar gamma);
-    static void SetShadowVisDistance(hsScalar distance);
-    static hsScalar GetShadowVisDistance();
+    static void SetGamma2(float gamma);
+    static void SetShadowVisDistance(float distance);
+    static float GetShadowVisDistance();
     static void EnableShadows();
     static void DisableShadows();
     static hsBool IsShadowsEnabled();

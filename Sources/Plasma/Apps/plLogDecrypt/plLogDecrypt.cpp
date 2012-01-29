@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstdio>
 #include <cstring>
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "plStatusLog/plEncryptLogLine.h"
 
 void IProcessFile(const char *path)
@@ -62,16 +62,16 @@ void IProcessFile(const char *path)
 
     if( fpIn != nil && fpOut != nil)
     {
-        UInt8 line[ 2048 ];
+        uint8_t line[ 2048 ];
         while( !feof( fpIn ) )
         {
             // Read next string
             long pos = ftell(fpIn);
             if( pos == -1L )
                 break;
-            UInt8 hint = (UInt8)pos;
-            UInt16 sizeHint = (UInt16)pos;
-            UInt16 size;
+            uint8_t hint = (uint8_t)pos;
+            uint16_t sizeHint = (uint16_t)pos;
+            uint16_t size;
 
             if( stricmp( path + strlen( path ) - 4, ".log" ) == 0 )
             {
@@ -81,14 +81,14 @@ void IProcessFile(const char *path)
                     int c = fgetc( fpIn );
                     if( c == EOF || c == hint )
                         break;
-                    line[ i ] = (UInt8)c;
+                    line[ i ] = (uint8_t)c;
                 }
                 line[ i ] = 0;
                 size = i;
             }
             else
             {
-                // UInt16 line length is encoded first
+                // uint16_t line length is encoded first
                 int c = fgetc( fpIn );
                 if( c == EOF )
                     break;

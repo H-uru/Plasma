@@ -94,7 +94,7 @@ static void IAsyncInitUseW9x () {
 #ifdef HS_BUILD_FOR_WIN32
     W9xGetApi(&g_api);
 #else
-    ErrorFatal("W9x I/O Not supported on this platform");
+    ErrorAssert("W9x I/O Not supported on this platform");
 #endif
 }
 
@@ -103,7 +103,7 @@ static void IAsyncInitUseNt () {
 #ifdef HS_BUILD_FOR_WIN32
     NtGetApi(&g_api);
 #else
-    ErrorFatal("Nt I/O Not supported on this platform");
+    ErrorAssert("Nt I/O Not supported on this platform");
 #endif
 }
 
@@ -113,7 +113,7 @@ static void IAsyncInitUseUnix () {
     #error Unix I/O not implemented yet
     UxGetApi(&g_api);
 #else
-    ErrorFatal(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
+    ErrorAssert(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
 #endif
 }
 
@@ -130,7 +130,7 @@ static void IAsyncInitForClient () {
 #elif HS_BUILD_FOR_UNIX
     IAsyncInitUseUnix();
 #else
-    ErrorFatal("AsyncCore: No default implementation for this platform");
+    ErrorAssert("AsyncCore: No default implementation for this platform");
 #endif    
 }
 
@@ -141,7 +141,7 @@ static void IAsyncInitForServer () {
 #elif HS_BUILD_FOR_UNIX
     IAsyncInitUseUnix();
 #else
-    ErrorFatal("AsyncCore: No default implementation for this platform");
+    ErrorAssert("AsyncCore: No default implementation for this platform");
 #endif    
 }
 
@@ -185,9 +185,9 @@ void AsyncCoreInitialize () {
     // Initialize WinSock
     WSADATA wsaData;
     if (WSAStartup(0x101, &wsaData))
-        ErrorFatal(__LINE__, __FILE__, "WSA startup failed");
+        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
     if (wsaData.wVersion != 0x101)
-        ErrorFatal(__LINE__, __FILE__, "WSA version failed");
+        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
 #endif
 
 #ifdef CLIENT
@@ -212,7 +212,7 @@ void AsyncCoreDestroy (unsigned waitMs) {
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
     
-    ZERO(g_api);
+    memset(&g_api, 0, sizeof(g_api));
 }
 
 //============================================================================

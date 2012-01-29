@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsResMgr_inc
 #define hsResMgr_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsRefCnt.h"
 #include "plLoadMask.h"
 #include "plRefFlags.h"

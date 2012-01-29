@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plDrawInterface.h"
@@ -77,9 +77,9 @@ plAudioInterface* plModifier::IGetTargetAudioInterface(int iTarg) const
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nil; 
 }
 
-plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, UInt32 classIdx) const
+plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, uint32_t classIdx) const
 {
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((UInt16)classIdx) : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((uint16_t)classIdx) : nil; 
 }
 
 plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
@@ -92,7 +92,7 @@ hsBool plModifier::MsgReceive(plMessage* msg)
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
     if( eval )
     {
-        UInt32 dirty = ~0L;
+        uint32_t dirty = ~0L;
         IEval(eval->DSeconds(), eval->DelSeconds(), dirty);
         return true;
     }

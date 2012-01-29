@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_PNNPCLI2GATEKEEPER_H
 
 
-// kNetProtocolCli2GateKeeper messages (must be <= (word)-1)
+// kNetProtocolCli2GateKeeper messages (must be <= (uint16_t)-1)
 enum {
     // Global
     kCli2GateKeeper_PingRequest,
@@ -62,7 +62,7 @@ enum {
 
     kNumCli2GateKeeperMessages
 };
-COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumCli2GateKeeperMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumCli2GateKeeperMessages <= (uint16_t)-1);
 
 enum {
     // Global
@@ -72,7 +72,7 @@ enum {
    
     kNumGateKeeper2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumGateKeeper2CliMessages <= (word)-1);
+COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumGateKeeper2CliMessages <= (uint16_t)-1);
 
 
 //============================================================================
@@ -88,7 +88,7 @@ COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumGateKeeper2CliMessages <= (word)-1);
 ***/
 
 struct Cli2GateKeeper_ConnData {
-    dword       dataBytes;
+    uint32_t       dataBytes;
     Uuid        token;
 };
 
@@ -103,26 +103,26 @@ struct Cli2GateKeeper_Connect {
 // PingRequest
 extern const NetMsg kNetMsg_Cli2GateKeeper_PingRequest;
 struct Cli2GateKeeper_PingRequest {
-    dword       messageId;
-    dword       transId;
-    dword       pingTimeMs;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       pingTimeMs;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // FileSrvIpAddressRequest
 extern const NetMsg kNetMsg_Cli2GateKeeper_FileSrvIpAddressRequest;
 struct Cli2GateKeeper_FileSrvIpAddressRequest {
-    dword       messageId;
-    dword       transId;
-    byte        isPatcher;
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint8_t        isPatcher;
 };
 
 // AuthSrvIpAddressRequest
 extern const NetMsg kNetMsg_Cli2GateKeeper_AuthSrvIpAddressRequest;
 struct Cli2GateKeeper_AuthSrvIpAddressRequest {
-    dword       messageId;
-    dword       transId;
+    uint32_t       messageId;
+    uint32_t       transId;
 };
 
 
@@ -132,26 +132,26 @@ struct Cli2GateKeeper_AuthSrvIpAddressRequest {
 // PingReply
 extern const NetMsg kNetMsg_GateKeeper2Cli_PingReply;
 struct GateKeeper2Cli_PingReply {
-    dword       messageId;
-    dword       transId;
-    dword       pingTimeMs;
-    dword       payloadBytes;
-    byte        payload[1]; // [payloadBytes]
+    uint32_t       messageId;
+    uint32_t       transId;
+    uint32_t       pingTimeMs;
+    uint32_t       payloadBytes;
+    uint8_t        payload[1]; // [payloadBytes]
 };
 
 // FileSrvIpAddressReply
 extern const NetMsg kNetMsg_GateKeeper2Cli_FileSrvIpAddressReply;
 struct GateKeeper2Cli_FileSrvIpAddressReply {
-    dword messageId;
-    dword transId;
-    wchar address[24];
+    uint32_t messageId;
+    uint32_t transId;
+    wchar_t address[24];
 };
 
 
 // FileSrvIpAddressReply
 extern const NetMsg kNetMsg_GateKeeper2Cli_AuthSrvIpAddressReply;
 struct GateKeeper2Cli_AuthSrvIpAddressReply {
-    dword messageId;
-    dword transId;
-    wchar address[24];
+    uint32_t messageId;
+    uint32_t transId;
+    wchar_t address[24];
 };

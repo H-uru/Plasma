@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsBounds.h"
 #include "hsStream.h"
 
 #include "hsFastMath.h"
 
-const hsScalar hsBounds::kRealSmall = 1.0e-5f;
+const float hsBounds::kRealSmall = 1.0e-5f;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -61,7 +61,7 @@ void hsBounds::Read(hsStream *s)
 
 void hsBounds::Write(hsStream *s) 
 {
-    s->WriteLE32((Int32)fType);
+    s->WriteLE32((int32_t)fType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -186,18 +186,18 @@ void hsBounds3::MakeSymmetric(const hsPoint3* p)
     if( fType != kBoundsNormal )
         return;
 
-    hsScalar delMax = 0;
+    float delMax = 0;
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar delUp;
+        float delUp;
 
         delUp = fMaxs[i] - (*p)[i];
         delMax = hsMaximum(delMax, delUp);
         delUp = (*p)[i] - fMins[i];
         delMax = hsMaximum(delMax, delUp);
     }
-    const hsScalar sqrtTwo = 1.41421f;
+    const float sqrtTwo = 1.41421f;
     delMax *= sqrtTwo;
     hsAssert((delMax > -1.e6f)&&(delMax < 1.e6f), "MakeSymmetric going out to sea");
     fCenter = *p;
@@ -213,8 +213,8 @@ void hsBounds3::InscribeSphere()
     if( fType != kBoundsNormal )
         return;
 
-    const hsScalar ooSix = hsScalarInvert(2.f * 3.f);
-    hsScalar a = GetMaxDim() * ooSix;
+    const float ooSix = hsInvert(2.f * 3.f);
+    float a = GetMaxDim() * ooSix;
     hsPoint3 p = GetCenter();
     p.fX += a;
     p.fY += a;
@@ -230,9 +230,9 @@ void hsBounds3::InscribeSphere()
 }
 
 // neg, pos, zero == disjoint, I contain other, overlap
-Int32 hsBounds3::TestBound(const hsBounds3& other) const
+int32_t hsBounds3::TestBound(const hsBounds3& other) const
 {
-    Int32 retVal = 1;
+    int32_t retVal = 1;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -264,7 +264,7 @@ hsBool hsBounds3::IsInside(const hsPoint3* pos) const
 void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
 {
     hsPoint3 center = (*GetMaxs() + *GetMins()) * 0.5f;
-    hsScalar radius = GetMaxDim() * 0.5f;
+    float radius = GetMaxDim() * 0.5f;
 
     const int nLong = 9;
     const int nLati = 5;
@@ -290,13 +290,13 @@ void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
     {
         for( j = 0; j < nLati; j++ )
         {
-            hsScalar theta = (hsScalar(i) / nLong) * 2.f * hsScalarPI;
-            hsScalar cosTheta = hsCosine(theta);
-            hsScalar sinTheta = hsSine(theta);
+            float theta = (float(i) / nLong) * 2.f * M_PI;
+            float cosTheta = cos(theta);
+            float sinTheta = sin(theta);
 
-            hsScalar phi = (hsScalar(j+1) / (nLati+1)) * hsScalarPI;
-            hsScalar cosPhi = hsCosine(phi);
-            hsScalar sinPhi = hsSine(phi);
+            float phi = (float(j+1) / (nLati+1)) * M_PI;
+            float cosPhi = cos(phi);
+            float sinPhi = sin(phi);
 
             pt.fX = center.fX + radius * sinPhi * cosTheta;
             pt.fY = center.fY + radius * sinPhi * sinTheta;
@@ -348,7 +348,7 @@ void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
 //
 // Allocate and create mesh from bounding box
 //
-void hsBounds3::MakeTriMesh(hsGTriMesh* tMesh, UInt32 triFlags, hsPoint3* cornersIn) const
+void hsBounds3::MakeTriMesh(hsGTriMesh* tMesh, uint32_t triFlags, hsPoint3* cornersIn) const
 {
     hsAssert(cornersIn || fType == kBoundsNormal, 
         "Invalid bounds type for hsBounds3::MakeTriMesh ");
@@ -412,13 +412,13 @@ void hsBounds3::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
 {
     hsAssert(fType == kBoundsNormal, "TestPlane only valid for kBoundsNormal filled bounds");
 
-    hsScalar dmax = fMins.InnerProduct(n);
-    hsScalar dmin = dmax;
+    float dmax = fMins.InnerProduct(n);
+    float dmin = dmax;
 
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar dd;
+        float dd;
         dd = fMaxs[i] - fMins[i];
         dd *= n[i];
 
@@ -432,19 +432,19 @@ void hsBounds3::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
     depth.fY = dmax;
 }
 
-hsScalar hsBounds3::ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, const hsPoint3 *v1, hsPoint3 *out)
+float hsBounds3::ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, const hsPoint3 *v1, hsPoint3 *out)
 {
     hsVector3 del(v1, v0);
-    hsScalar magSq = del.MagnitudeSquared();
-    hsScalar t = 0.f;
+    float magSq = del.MagnitudeSquared();
+    float t = 0.f;
     if( magSq < hsBounds::kRealSmall )
     {
         *out = *v0;
     }
     else
     {
-        t = del.InnerProduct(hsVector3(p, v0)) * hsScalarInvert(magSq);
-        if( t >= hsScalar1 )
+        t = del.InnerProduct(hsVector3(p, v0)) * hsInvert(magSq);
+        if( t >= 1.f )
             *out = *v1;
         else if( t <= 0 )
             *out = *v0;
@@ -454,10 +454,10 @@ hsScalar hsBounds3::ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, co
     return t;
 }
 
-hsScalar hsBounds3::ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* v, hsPoint3* out)
+float hsBounds3::ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* v, hsPoint3* out)
 {
-    hsScalar magSq = v->MagnitudeSquared();
-    hsScalar t = 0.f;
+    float magSq = v->MagnitudeSquared();
+    float t = 0.f;
     hsPoint3 origin(0,0,0);
     if( magSq < hsBounds::kRealSmall )
     {
@@ -465,7 +465,7 @@ hsScalar hsBounds3::ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector
     }
     else
     {
-        t = v->InnerProduct(hsVector3(*p)) * hsScalarInvert(magSq);
+        t = v->InnerProduct(hsVector3(*p)) * hsInvert(magSq);
         *out = hsPoint3(*v * t);
     }
     return t;
@@ -542,7 +542,7 @@ hsBool hsBoundsOriented::IsInside(const hsPoint3* pos) const
     int i;
     for( i = 0; i < fNumPlanes; i++ )
     {
-        hsScalar dis = fPlanes[i].fN.InnerProduct(pos);
+        float dis = fPlanes[i].fN.InnerProduct(pos);
         dis += fPlanes[i].fD;
         if( dis > 0.f )
             return false;
@@ -551,18 +551,18 @@ hsBool hsBoundsOriented::IsInside(const hsPoint3* pos) const
     return true;
 }
 
-void hsBoundsOriented::SetNumberPlanes(UInt32 n)
+void hsBoundsOriented::SetNumberPlanes(uint32_t n)
 {
     delete [] fPlanes;
-    fPlanes = TRACKED_NEW hsPlane3[fNumPlanes = n];
+    fPlanes = new hsPlane3[fNumPlanes = n];
 }
 
-void hsBoundsOriented::SetPlane(UInt32 i, hsPlane3 *pln)
+void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
 {
     fType = kBoundsNormal;
     if( i >= fNumPlanes )
     {
-        hsPlane3 *newPlanes = TRACKED_NEW hsPlane3[i+1];
+        hsPlane3 *newPlanes = new hsPlane3[i+1];
         if( fPlanes )
         {
             int k;
@@ -633,7 +633,7 @@ void hsBoundsOriented::Read(hsStream *stream)
     fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;
-    fPlanes = TRACKED_NEW hsPlane3[fNumPlanes];
+    fPlanes = new hsPlane3[fNumPlanes];
     int i;
     for( i = 0; i < fNumPlanes; i++ )
     {
@@ -690,7 +690,7 @@ void hsBounds3Ext::IMakeDists() const
             fDists[i].fY = fDists[i].fX + fAxes[i].InnerProduct(fAxes[i]);
             if( fDists[i].fX > fDists[i].fY )
             {
-                hsScalar t = fDists[i].fX;
+                float t = fDists[i].fX;
                 fDists[i].fX = fDists[i].fY;
                 fDists[i].fY = t;
             }
@@ -713,7 +713,7 @@ void hsBounds3Ext::IMakeSphere() const
             int i;
             for( i = 1; i < 3; i++ )
             {
-                hsScalar dist = fMaxs[i] - fMins[i];
+                float dist = fMaxs[i] - fMins[i];
                 if( dist < fRadius )
                     fRadius = dist;
             }
@@ -721,21 +721,21 @@ void hsBounds3Ext::IMakeSphere() const
         }
         else
         {
-            fRadius = hsSquareRoot(hsVector3(&fMaxs, &fCenter).MagnitudeSquared());
+            fRadius = sqrt(hsVector3(&fMaxs, &fCenter).MagnitudeSquared());
         }
     }
     else
     {
         if( fBounds3Flags & kIsSphere )
         {
-            hsScalar minMagSq = fAxes[0].MagnitudeSquared();
-            hsScalar magSq = fAxes[1].MagnitudeSquared();
+            float minMagSq = fAxes[0].MagnitudeSquared();
+            float magSq = fAxes[1].MagnitudeSquared();
             if( magSq < minMagSq )
                 magSq = minMagSq;
             magSq = fAxes[2].MagnitudeSquared();
             if( magSq < minMagSq )
                 magSq = minMagSq;
-            fRadius = hsSquareRoot(magSq);
+            fRadius = sqrt(magSq);
         }
         else
         {
@@ -747,7 +747,7 @@ void hsBounds3Ext::IMakeSphere() const
                 if( !IAxisIsZero(i) )
                     accum += fAxes[i];
             }
-            fRadius = hsSquareRoot((accum * 0.5f).MagnitudeSquared());
+            fRadius = sqrt((accum * 0.5f).MagnitudeSquared());
         }
     }
     fExtFlags |= kSphereSet;
@@ -850,7 +850,7 @@ void hsBounds3Ext::Union(const hsVector3 *v)
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar dot = fAxes[i].InnerProduct(v);
+            float dot = fAxes[i].InnerProduct(v);
             dot /= fAxes[i].MagnitudeSquared();
             if( dot > 0 )
             {
@@ -911,9 +911,9 @@ void hsBounds3Ext::InscribeSphere()
         return;
     }
 
-    const hsScalar oneThird = hsScalarInvert(3.f);
-//  hsScalar a = GetMaxDim() * hsScalarInvert(6.f);
-    hsScalar a = GetRadius() * oneThird;
+    const float oneThird = hsInvert(3.f);
+//  float a = GetMaxDim() * hsInvert(6.f);
+    float a = GetRadius() * oneThird;
     hsPoint3 p = GetCenter();
     p.fX += a;
     p.fY += a;
@@ -941,12 +941,12 @@ void hsBounds3Ext::Transform(const hsMatrix44 *m)
 
         fCorner = *m * fMins;
         hsVector3 v;
-        hsScalar span;
+        float span;
         span = fMaxs.fX - fMins.fX;
         if( span < kRealSmall )
         {
             fExtFlags |= kAxisZeroZero;
-            span = hsScalar1;
+            span = 1.f;
         }
         v.Set(span, 0, 0);
         fAxes[0] = *m * v;
@@ -954,7 +954,7 @@ void hsBounds3Ext::Transform(const hsMatrix44 *m)
         if( span < kRealSmall )
         {
             fExtFlags |= kAxisOneZero;
-            span = hsScalar1;
+            span = 1.f;
         }
         v.Set(0, span, 0);
         fAxes[1] = *m * v;
@@ -962,7 +962,7 @@ void hsBounds3Ext::Transform(const hsMatrix44 *m)
         if( span < kRealSmall )
         {
             fExtFlags |= kAxisTwoZero;
-            span = hsScalar1;
+            span = 1.f;
         }
         v.Set(0, 0, span);
         fAxes[2] = *m * v;
@@ -1001,7 +1001,7 @@ void hsBounds3Ext::Translate(const hsVector3 &v)
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar d;
+            float d;
             d = fAxes[i].InnerProduct(v);
             fDists[i].fX += d;
             fDists[i].fY += d;
@@ -1020,7 +1020,7 @@ hsBool hsBounds3Ext::IsInside(const hsPoint3 *p) const
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar diss = p->InnerProduct(fAxes[i]);
+        float diss = p->InnerProduct(fAxes[i]);
         if( (diss < fDists[i].fX)
             ||(diss > fDists[i].fY) )
             return false;
@@ -1030,7 +1030,7 @@ hsBool hsBounds3Ext::IsInside(const hsPoint3 *p) const
 }
 
 // neg, pos, zero == disjoint, I contain other, overlap
-Int32 hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
+int32_t hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
 {
     if( fExtFlags & kAxisAligned )
         return hsBounds3::TestBound(other);
@@ -1038,7 +1038,7 @@ Int32 hsBounds3Ext::TestBound(const hsBounds3Ext& other) const
     if( !(fExtFlags & kDistsSet) )
         IMakeDists();
 
-    Int32 retVal = 1;
+    int32_t retVal = 1;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -1068,15 +1068,15 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
     }
     else
     {
-        hsScalar dmax = fCorner.InnerProduct(n);
-        hsScalar dmin = dmax;
+        float dmax = fCorner.InnerProduct(n);
+        float dmin = dmax;
 
         int i;
         for( i = 0; i < 3; i++ )
         {
             if( !IAxisIsZero(i) )
             {
-                hsScalar d;
+                float d;
                 d = fAxes[i].InnerProduct(n);
                 if( d < 0 )
                     dmin += d;
@@ -1098,9 +1098,9 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
 {
     if( fExtFlags & kAxisAligned )
     {
-        hsScalar dmax = fMins.InnerProduct(n);
-        hsScalar dmin = dmax;
-        hsScalar dvel = myVel.InnerProduct(n);
+        float dmax = fMins.InnerProduct(n);
+        float dmin = dmax;
+        float dvel = myVel.InnerProduct(n);
         if( dvel < 0 )
             dmin += dvel;
         else
@@ -1109,7 +1109,7 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar dd;
+            float dd;
             dd = fMaxs[i] - fMins[i];
             dd *= n[i];
 
@@ -1124,9 +1124,9 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
     }
     else
     {
-        hsScalar dmax = fCorner.InnerProduct(n);
-        hsScalar dmin = dmax;
-        hsScalar dvel = myVel.InnerProduct(n);
+        float dmax = fCorner.InnerProduct(n);
+        float dmin = dmax;
+        float dvel = myVel.InnerProduct(n);
         if( dvel < 0 )
             dmin += dvel;
         else
@@ -1137,7 +1137,7 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
         {
             if( !IAxisIsZero(i) )
             {
-                hsScalar d;
+                float d;
                 d = fAxes[i].InnerProduct(n);
                 if( d < 0 )
                     dmin += d;
@@ -1151,24 +1151,24 @@ void hsBounds3Ext::TestPlane(const hsVector3 &n, const hsVector3 &myVel, hsPoint
     }
 }
 
-Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &ptVel) const
+int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &ptVel) const
 {
     if( fExtFlags & kAxisAligned )
     {
-        Int32 retVal = -1;
+        int32_t retVal = -1;
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar effMax = fMaxs[i];
-            hsScalar effMin = fMins[i];
+            float effMax = fMaxs[i];
+            float effMin = fMins[i];
             if( ptVel[i] < 0 )
                 effMax -= ptVel[i];
             else
                 effMin -= ptVel[i];
 
             int j;
-            const UInt32 low = 0x1, hi = 0x2;
-            UInt32 mask = low | hi;
+            const uint32_t low = 0x1, hi = 0x2;
+            uint32_t mask = low | hi;
             for( j = 0; j < n; j++ )
             {
                 if( pList[j][i] > effMin )
@@ -1185,21 +1185,21 @@ Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &pt
     }
     else // non-axis aligned case
     {
-        Int32 retVal = -1; // all inside
+        int32_t retVal = -1; // all inside
         if( !(fExtFlags & kDistsSet) )
             IMakeDists();
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar diff = fAxes[i].InnerProduct(ptVel);
+            float diff = fAxes[i].InnerProduct(ptVel);
             hsBool someLow = false;
             hsBool someHi = false;
             hsBool someIn = false;
             int j;
             for( j = 0; j < n; j++ )
             {
-                hsScalar d = fAxes[i].InnerProduct(pList[j]);
-                hsScalar ddiff = d + diff;
+                float d = fAxes[i].InnerProduct(pList[j]);
+                float ddiff = d + diff;
                 if( d < fDists[i].fX )
                     someLow = true;
                 else if( d > fDists[i].fY )
@@ -1228,7 +1228,7 @@ Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &pt
     }
 }
 
-Int32 hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
+int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
 {
     hsBool someIn = false;
     hsBool someOut = false;
@@ -1260,7 +1260,7 @@ hsBool hsBounds3Ext::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& 
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar dist = fAxes[i].InnerProduct(p);
+        float dist = fAxes[i].InnerProduct(p);
         if( dist < fDists[i].fX )
         {
             outer += fAxes[i];
@@ -1271,7 +1271,7 @@ hsBool hsBounds3Ext::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& 
         }
         else
         {
-            hsScalar t = (dist - fDists[i].fX) / (fDists[i].fY - fDists[i].fX);
+            float t = (dist - fDists[i].fX) / (fDists[i].fY - fDists[i].fX);
             inner += t * fAxes[i];
             if( t > 0.5f )
                 outer += fAxes[i];
@@ -1309,8 +1309,8 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel) 
 
         if( other.fExtFlags & kAxisAligned )
         {
-            hsScalar myMin = fMins[i];
-            hsScalar myMax = fMaxs[i];
+            float myMin = fMins[i];
+            float myMax = fMaxs[i];
             if( myVel[i] < 0 )
                 myMin += myVel[i];
             else
@@ -1329,11 +1329,11 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel) 
 
         // still leaves the 3 axes of origAxis.Cross(myVel)
         hsVector3 ax = fAxes[i] % myVel;
-        hsScalar dmax = fCorner.InnerProduct(ax);
-        hsScalar dmin = dmax;
+        float dmax = fCorner.InnerProduct(ax);
+        float dmin = dmax;
         int j = i+1;
         if( 3 == j )j = 0;
-        hsScalar d;
+        float d;
         d = fAxes[j].InnerProduct(ax);
         if( d < 0 )
             dmin += d;
@@ -1368,10 +1368,10 @@ static hsBool ISectInterval(const hsPoint2& other, const hsPoint2& mine)
 
 static hsBool ITestDepth(const hsPoint2& other, const hsPoint2& mine, 
                           const hsVector3& inAx, 
-                          hsVector3 &outAx, hsScalar& depth)
+                          hsVector3 &outAx, float& depth)
 {
     depth = 0;
-    hsScalar d0, d1;
+    float d0, d1;
     d0 = other.fY - mine.fX;
     if( d0 <= 0 )
         return false;
@@ -1397,20 +1397,20 @@ static hsBool ITestDepth(const hsPoint2& other, const hsPoint2& mine,
     return true;
 }
 
-Int32 hsBounds3Ext::IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
-                              hsScalar* tClose, hsScalar* tImpact) const
+int32_t hsBounds3Ext::IClosestISect(const hsBounds3Ext& other, const hsVector3& myVel,
+                              float* tClose, float* tImpact) const
 {
     // Should assert both have their spheres set.
 
     hsVector3 meToOt(&other.GetCenter(), &GetCenter());
 
     // cTerm = (myCenter - otCenter)^2 - (myRad + otRad)^2
-    hsScalar cTerm;
+    float cTerm;
 
     cTerm = GetRadius() + other.GetRadius();
     cTerm *= -cTerm;
 
-    hsScalar meToOtLen = meToOt.MagnitudeSquared();
+    float meToOtLen = meToOt.MagnitudeSquared();
     cTerm += meToOtLen;
     if( cTerm <= 0 )
     {
@@ -1418,27 +1418,27 @@ Int32 hsBounds3Ext::IClosestISect(const hsBounds3Ext& other, const hsVector3& my
         return -1; // started off in contact
     }
 
-    hsScalar ooATerm = myVel.InnerProduct(myVel);
+    float ooATerm = myVel.InnerProduct(myVel);
     if( ooATerm < hsBounds::kRealSmall )
     {
         *tClose = *tImpact = 0;
         return 0;
     }
-    ooATerm = hsScalarInvert(ooATerm);
+    ooATerm = hsInvert(ooATerm);
 
-    hsScalar bTerm = myVel.InnerProduct(meToOt);
+    float bTerm = myVel.InnerProduct(meToOt);
     bTerm *= ooATerm;
-    hsScalar bSqTerm = bTerm * bTerm;
+    float bSqTerm = bTerm * bTerm;
     // bTerm is t for closest point to line
 
-    hsScalar det = bSqTerm - ooATerm * cTerm;
+    float det = bSqTerm - ooATerm * cTerm;
     if( det < 0 )
     {
         *tClose = *tImpact = bTerm;
         return 0;
     }
 
-    det = hsSquareRoot(det);
+    det = sqrt(det);
     *tClose = bTerm;
     *tImpact = bTerm - det;
 
@@ -1451,26 +1451,26 @@ void hsBounds3Ext::Unalign()
 
     fCorner = fMins;
     hsVector3 v;
-    hsScalar span;
+    float span;
     span = fMaxs.fX - fMins.fX;
     if( span < kRealSmall )
     {
         fExtFlags |= kAxisZeroZero;
-        span = hsScalar1;
+        span = 1.f;
     }
     fAxes[0].Set(span, 0, 0);
     span = fMaxs.fY - fMins.fY;
     if( span < kRealSmall )
     {
         fExtFlags |= kAxisOneZero;
-        span = hsScalar1;
+        span = 1.f;
     }
     fAxes[1].Set(0, span, 0);
     span = fMaxs.fZ - fMins.fZ;
     if( span < kRealSmall )
     {
         fExtFlags |= kAxisTwoZero;
-        span = hsScalar1;
+        span = 1.f;
     }
     fAxes[2].Set(0, 0, span);
 }
@@ -1491,15 +1491,15 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
     if( !(other.fExtFlags & (kDistsSet|kAxisAligned)) )
         other.IMakeDists();
 
-    const hsScalar kRealBig = 1.e30f;
-    hsScalar tstDepths[9];
+    const float kRealBig = 1.e30f;
+    float tstDepths[9];
     hsVector3 tstAxes[9];
-    hsScalar totDepth = 0;
+    float totDepth = 0;
     int nDeep = 0;
     int i;
     for( i = 0; i < 3; i++ )
     {
-        const hsScalar kFavorConstant = 0.01f; // smaller is favored
+        const float kFavorConstant = 0.01f; // smaller is favored
 
         other.TestPlane(fAxes[i], -myVel, depth);
 
@@ -1527,9 +1527,9 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
             depth.fY = other.fMaxs[i];
 
             hsVector3 ax;
-            ax.Set( 0 == i ? hsScalar1 : 0,
-                    1 == i ? hsScalar1 : 0,
-                    2 == i ? hsScalar1 : 0);
+            ax.Set( 0 == i ? 1.f : 0,
+                    1 == i ? 1.f : 0,
+                    2 == i ? 1.f : 0);
 
             if( !ITestDepth(depth, mine, ax, tstAxes[i+3], tstDepths[i+3]) )
                 return false;
@@ -1571,7 +1571,7 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
         {
             hsPoint2 myDepth;
             myDepth.fX = myDepth.fY = fCorner.InnerProduct(ax);
-            hsScalar d;
+            float d;
             int j = i == 2 ? 0 : i+1;
             if( !IAxisIsZero(j) )
             {
@@ -1604,7 +1604,7 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
     hsVector3 norm;
     if( totDepth <= 0 )
     {
-        hsScalar t, tIgnore;
+        float t, tIgnore;
         IClosestISect(other, myVel, &tIgnore, &t);
         if( t < 0 )
             t = 0;
@@ -1648,8 +1648,8 @@ hsBool hsBounds3Ext::ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel)
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar effMax = fMaxs[i];
-        hsScalar effMin = fMins[i];
+        float effMax = fMaxs[i];
+        float effMin = fMins[i];
         if( myVel[i] > 0 )
             effMax += myVel[i];
         else
@@ -1675,17 +1675,17 @@ hsBool hsBounds3Ext::ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) 
     // such uglies...
     if( myVel.MagnitudeSquared() > 0 )
     {
-        hsScalar parm = hsVector3(&other.GetCenter(), &fCenter).InnerProduct(myVel) 
+        float parm = hsVector3(&other.GetCenter(), &fCenter).InnerProduct(myVel) 
             / myVel.InnerProduct(myVel);
         if( parm > 0 )
         {
-            if( parm > hsScalar1 )
-                parm = hsScalar1;
+            if( parm > 1.f )
+                parm = 1.f;
             closestPt += myVel * parm;
         }
     }
 
-    hsScalar combRad = fRadius + other.fRadius;
+    float combRad = fRadius + other.fRadius;
 
     return hsVector3(&closestPt, &other.GetCenter()).MagnitudeSquared() < combRad*combRad;
 }
@@ -1696,16 +1696,16 @@ hsBool hsBounds3Ext::ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) cons
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar effMax = fMaxs[i];
-        hsScalar effMin = fMins[i];
+        float effMax = fMaxs[i];
+        float effMin = fMins[i];
         if( myVel[i] < 0 )
             effMin += myVel[i];
         else
             effMax += myVel[i];
 
         int j;
-        const UInt32 low = 0x1, hi = 0x2;
-        UInt32 mask = low | hi;
+        const uint32_t low = 0x1, hi = 0x2;
+        uint32_t mask = low | hi;
         for( j = 0; j < 3; j++ )
         {
             if( tri.fVerts[j][i] > effMin )
@@ -1730,8 +1730,8 @@ hsBool hsBounds3Ext::TriBSHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
     hsVector3 repel;
     repel.Set(&myPt, &closePt);
 
-    hsScalar myDepth;
-    hsScalar repelMagSq = repel.MagnitudeSquared();
+    float myDepth;
+    float repelMagSq = repel.MagnitudeSquared();
     if( repelMagSq < hsBounds::kRealSmall )
     {
         repel = tri.fNormal;
@@ -1767,11 +1767,11 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
     hsPoint3 myPt = fCorner;
     myPt += myVel;
 
-    const hsScalar kMinDist = 1.f; // Huge min dist because world is really big right now. mf horse
+    const float kMinDist = 1.f; // Huge min dist because world is really big right now. mf horse
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar axDot = fAxes[i].InnerProduct(tri.fNormal);
+        float axDot = fAxes[i].InnerProduct(tri.fNormal);
         if( axDot < -kMinDist )
         {
             // moving towards
@@ -1796,7 +1796,7 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
     repel.Set(&myPt, &closePt);
     repel += (-2.f * repel.InnerProduct(tri.fNormal)) * tri.fNormal;
 
-    hsScalar repelMag = hsFastMath::InvSqrt(repel.MagnitudeSquared());
+    float repelMag = hsFastMath::InvSqrt(repel.MagnitudeSquared());
     
     if( repelMag < hsBounds::kRealSmall )
     {
@@ -1826,18 +1826,18 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
 
     hsVector3 repel;
     repel.Set(&myPt, &closePt);
-    hsScalar repelDotNorm = repel.InnerProduct(tri.fNormal);
+    float repelDotNorm = repel.InnerProduct(tri.fNormal);
     if( repelDotNorm < 0 )
     {
         repel += (-2.f * repelDotNorm) * tri.fNormal;
     }
 
-    hsScalar repelMagSq = repel.MagnitudeSquared();
+    float repelMagSq = repel.MagnitudeSquared();
     if( repelMagSq < hsBounds::kRealSmall )
         repel = tri.fNormal;
     else
     {
-        hsScalar repelMag = hsFastMath::InvSqrt(repelMagSq);
+        float repelMag = hsFastMath::InvSqrt(repelMagSq);
         repel *= repelMag;
     }
 
@@ -1872,7 +1872,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
     if( !(tri.fTriFlags & hsBounds3Tri::kAxesSet) )
         tri.SetAxes();
 
-    hsScalar depth = tri.fDist - faceDepth.fX;
+    float depth = tri.fDist - faceDepth.fX;
     hsVector3 norm = tri.fNormal;
 
     // that only leaves the planes of triEdge.Cross(vel)
@@ -1886,7 +1886,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
             return false;
 
 #if 0
-        hsScalar testDepth = tri.fPerpDists[i].fY - depths.fX;
+        float testDepth = tri.fPerpDists[i].fY - depths.fX;
         if( testDepth < depth )
         {
             depth = testDepth;
@@ -1894,7 +1894,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
         }
 #endif
     }
-    hsScalar vDotN = myVel.InnerProduct(tri.fNormal);
+    float vDotN = myVel.InnerProduct(tri.fNormal);
     if( vDotN > 0 )
         depth -= vDotN;
 
@@ -1914,7 +1914,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
         ||(tri.fDist < faceDepth.fX) )
         return false;
 
-    hsScalar centDist = tri.fNormal.InnerProduct(hit->fRootCenter);
+    float centDist = tri.fNormal.InnerProduct(hit->fRootCenter);
     if( centDist < tri.fDist )
         return false;
 
@@ -1925,7 +1925,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
     if( !(tri.fTriFlags & hsBounds3Tri::kAxesSet) )
         tri.SetAxes();
 
-    hsScalar depth = tri.fDist - faceDepth.fX;
+    float depth = tri.fDist - faceDepth.fX;
     hsVector3 norm = tri.fNormal;
 
     // that only leaves the planes of triEdge.Cross(vel)
@@ -1939,7 +1939,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
             return false;
 
 #if 0
-        hsScalar testDepth = tri.fPerpDists[i].fY - depths.fX;
+        float testDepth = tri.fPerpDists[i].fY - depths.fX;
         if( testDepth < depth )
         {
             depth = testDepth;
@@ -1947,7 +1947,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
         }
 #endif
     }
-    hsScalar vDotN = myVel.InnerProduct(tri.fNormal);
+    float vDotN = myVel.InnerProduct(tri.fNormal);
     if( vDotN > 0 )
         depth -= vDotN;
 
@@ -1978,11 +1978,11 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
         IMakeSphere();
 
     hsAssert(fBounds3Flags & kCenterValid, "Sphere set but not center (TriBS)");
-    hsScalar radScaled = fRadius * tri.fNormal.Magnitude();
-    hsScalar centerDist = tri.fNormal.InnerProduct(fCenter);
-    hsScalar velDist = tri.fNormal.InnerProduct(myVel);
-    hsScalar effMin = centerDist;
-    hsScalar effMax = centerDist;
+    float radScaled = fRadius * tri.fNormal.Magnitude();
+    float centerDist = tri.fNormal.InnerProduct(fCenter);
+    float velDist = tri.fNormal.InnerProduct(myVel);
+    float effMin = centerDist;
+    float effMax = centerDist;
 
     if( velDist > 0 )
         effMax += velDist;
@@ -1997,7 +1997,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
         return false;
 
     // mf horse
-    hsScalar normDepth = tri.fDist - (centerDist - radScaled + velDist);
+    float normDepth = tri.fDist - (centerDist - radScaled + velDist);
     if( normDepth <= 0 )
     {
         // we'll report a depth of zero to (hopefully) neutralize any effects
@@ -2034,7 +2034,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
         else
             effMin += velDist;
 
-        hsScalar radScale = fRadius * tri.fPerpAxes[i].Magnitude();
+        float radScale = fRadius * tri.fPerpAxes[i].Magnitude();
         effMax += radScale;
         effMin -= radScale;
         if( tri.fPerpDists[i].fY <= effMin )
@@ -2053,11 +2053,11 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
         IMakeSphere();
 
     hsAssert(fBounds3Flags & kCenterValid, "Sphere set but not center (TriBS)");
-    hsScalar radScaled = fRadius * tri.fNormal.Magnitude();
-    hsScalar centerDist = tri.fNormal.InnerProduct(fCenter);
-    hsScalar velDist = tri.fNormal.InnerProduct(myVel);
-    hsScalar effMin = centerDist;
-    hsScalar effMax = centerDist;
+    float radScaled = fRadius * tri.fNormal.Magnitude();
+    float centerDist = tri.fNormal.InnerProduct(fCenter);
+    float velDist = tri.fNormal.InnerProduct(myVel);
+    float effMin = centerDist;
+    float effMax = centerDist;
 
     if( velDist > 0 )
         effMax += velDist;
@@ -2072,7 +2072,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
         return false;
 
     // mf horse
-    hsScalar normDepth = tri.fDist - (centerDist - radScaled + velDist);
+    float normDepth = tri.fDist - (centerDist - radScaled + velDist);
     if( normDepth <= 0 )
     {
 #if 0 // need to report the collision even if the object is leaving the tri
@@ -2120,7 +2120,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
         else
             effMin += velDist;
 
-        hsScalar radScale = fRadius * tri.fPerpAxes[i].Magnitude();
+        float radScale = fRadius * tri.fPerpAxes[i].Magnitude();
         effMax += radScale;
         effMin -= radScale;
         if( tri.fPerpDists[i].fY <= effMin )
@@ -2130,7 +2130,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
 
     }
 
-    hsScalar invLen = hsScalarInvert(tri.fNormal.Magnitude());
+    float invLen = hsInvert(tri.fNormal.Magnitude());
     hit->Set(this, &tri, &tri.fNormal, normDepth);
 
     // mf horse - move this into Set()?
@@ -2149,7 +2149,7 @@ hsBool hsBounds3Ext::ISectBSBS(const hsBounds3Ext& other, const hsVector3& myVel
     if(!(other.fExtFlags & kSphereSet) )
         other.IMakeSphere();
 
-    hsScalar tClose, tImpact;
+    float tClose, tImpact;
     if( !IClosestISect(other, myVel, &tClose, &tImpact) )
         return false;
     if( (tImpact < 0) || (tImpact > 1.f) )
@@ -2163,8 +2163,8 @@ hsBool hsBounds3Ext::ISectBSBS(const hsBounds3Ext& other, const hsVector3& myVel
     hsVector3 del;
     del.Set(&closePt, &other.GetCenter());
 
-    hsScalar mag = del.Magnitude();
-    hsScalar depth = GetRadius() + other.GetRadius() - mag;
+    float mag = del.Magnitude();
+    float depth = GetRadius() + other.GetRadius() - mag;
     if( depth <= 0 )
         return false;
 
@@ -2201,10 +2201,10 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
     hsAssert(fBounds3Flags & kCenterValid, "Sphere set but not center (BoxBS(vel))");
 
     hsVector3 minAxis;
-    hsScalar minDepth;
+    float minDepth;
     hsBool haveAxis = false;
     hsVector3 tstAxis;
-    hsScalar tstDepth;
+    float tstDepth;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -2212,9 +2212,9 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         if( other.fExtFlags & kAxisAligned )
         {
             // first try the other box axes
-            hsScalar effMin = fCenter[i];
-            hsScalar effMax = effMin;
-            hsScalar velDist = myVel[i];
+            float effMin = fCenter[i];
+            float effMax = effMin;
+            float velDist = myVel[i];
             if( velDist > 0 )
                 effMax += velDist;
             else
@@ -2232,7 +2232,7 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
             {
                 tstDepth = other.fMaxs[i] - effMin;
                 hsAssert(tstDepth > -kRealSmall, "Late to be finding sep axis");
-                tstAxis.Set(i == 0 ? hsScalar1 : 0, i & 1 ? hsScalar1 : 0, i & 2 ? hsScalar1 : 0);
+                tstAxis.Set(i == 0 ? 1.f : 0, i & 1 ? 1.f : 0, i & 2 ? 1.f : 0);
                 tryAxis = true;
             }
             else
@@ -2241,7 +2241,7 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
             {
                 tstDepth = effMax - other.fMins[i];
                 hsAssert(tstDepth > -kRealSmall, "Late to be finding sep axis");
-                tstAxis.Set(i == 0 ? -hsScalar1 : 0, i & 1 ? -hsScalar1 : 0, i & 2 ? -hsScalar1 : 0);
+                tstAxis.Set(i == 0 ? -1.f : 0, i & 1 ? -1.f : 0, i & 2 ? -1.f : 0);
                 tryAxis = true;
             }
             else 
@@ -2250,11 +2250,11 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         else
         {
             // first try the other box axes
-            hsScalar radScaled = fRadius * other.fAxes[i].Magnitude();
-            hsScalar centerDist = other.fAxes[i].InnerProduct(fCenter);
-            hsScalar effMin = centerDist;
-            hsScalar effMax = centerDist;
-            hsScalar velDist = other.fAxes[i].InnerProduct(myVel);
+            float radScaled = fRadius * other.fAxes[i].Magnitude();
+            float centerDist = other.fAxes[i].InnerProduct(fCenter);
+            float effMin = centerDist;
+            float effMax = centerDist;
+            float velDist = other.fAxes[i].InnerProduct(myVel);
             if( velDist > 0 )
                 effMax += velDist;
             else
@@ -2289,10 +2289,10 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         }
         if( tryAxis )
         {
-            hsScalar magSq = tstAxis.MagnitudeSquared();
+            float magSq = tstAxis.MagnitudeSquared();
             if( magSq > kRealSmall )
             {
-                tstDepth *= tstDepth * hsScalarInvert(magSq);
+                tstDepth *= tstDepth * hsInvert(magSq);
                 if( !haveAxis||(tstDepth < minDepth) )
                 {
                     minDepth = tstDepth;
@@ -2307,14 +2307,14 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
     hsVector3 diag(&fCenter, &other.GetCenter());
     if( !haveAxis && (diag.MagnitudeSquared() < kRealSmall) )
         diag.Set(1.f, 0, 0);
-    hsScalar effMin = diag.InnerProduct(fCenter);
-    hsScalar effMax = effMin;
-    hsScalar velDist = diag.InnerProduct(myVel);
+    float effMin = diag.InnerProduct(fCenter);
+    float effMax = effMin;
+    float velDist = diag.InnerProduct(myVel);
     if( velDist > 0 )
         effMax += velDist;
     else
         effMin += velDist;
-    hsScalar radDist = fRadius * diag.Magnitude();
+    float radDist = fRadius * diag.Magnitude();
     effMax += radDist;
     effMin -= radDist;
     hsPoint2 otherDepth;
@@ -2326,10 +2326,10 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
 
     tstAxis = diag;
     tstDepth = otherDepth.fY - effMin;
-    hsScalar magSq = tstAxis.MagnitudeSquared();
+    float magSq = tstAxis.MagnitudeSquared();
     if( magSq > 0 )
     {
-        tstDepth *= tstDepth * hsScalarInvert(magSq);
+        tstDepth *= tstDepth * hsInvert(magSq);
         if( !haveAxis ||(tstDepth < minDepth) )
         {
             minDepth = tstDepth;
@@ -2337,10 +2337,10 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         }
     }
 
-    hsScalar invMag = hsScalarInvert(minAxis.Magnitude());
+    float invMag = hsInvert(minAxis.Magnitude());
     minAxis *= invMag;
     hsAssert(minDepth >= 0, "Late to find sep plane");
-    minDepth = hsSquareRoot(minDepth);
+    minDepth = sqrt(minDepth);
     hit->Set(this, &other, minAxis, minDepth);
 
     return true;
@@ -2358,9 +2358,9 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar effMin = fCenter[i];
-            hsScalar effMax = effMin;
-            hsScalar velDist = myVel[i];
+            float effMin = fCenter[i];
+            float effMax = effMin;
+            float velDist = myVel[i];
             if( velDist > 0 )
                 effMax += velDist;
             else
@@ -2383,14 +2383,14 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar effMin = other.fAxes[i].InnerProduct(fCenter);
-            hsScalar effMax = effMin;
-            hsScalar velDist = other.fAxes[i].InnerProduct(myVel);
+            float effMin = other.fAxes[i].InnerProduct(fCenter);
+            float effMax = effMin;
+            float velDist = other.fAxes[i].InnerProduct(myVel);
             if( velDist > 0 )
                 effMax += velDist;
             else
                 effMin += velDist;
-            hsScalar radScaled = fRadius * other.fAxes[i].Magnitude();
+            float radScaled = fRadius * other.fAxes[i].Magnitude();
             effMax += radScaled;
             effMin -= radScaled;
 
@@ -2403,14 +2403,14 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
 
     // now try the axis between the center of sphere and center of other box
     hsVector3 diag(&fCenter, &other.GetCenter());
-    hsScalar effMin = diag.InnerProduct(fCenter);
-    hsScalar effMax = effMin;
-    hsScalar velDist = diag.InnerProduct(myVel);
+    float effMin = diag.InnerProduct(fCenter);
+    float effMax = effMin;
+    float velDist = diag.InnerProduct(myVel);
     if( velDist > 0 )
         effMax += velDist;
     else
         effMin += velDist;
-    hsScalar radDist = fRadius * diag.Magnitude();
+    float radDist = fRadius * diag.Magnitude();
     effMax += radDist;
     effMin -= radDist;
     hsPoint2 otherDepth;
@@ -2429,9 +2429,9 @@ hsBool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
         IMakeSphere();
 
     hsPoint3 onLine;
-    hsScalar z = ClosestPointToLine(&fCenter, from, at, &onLine);
+    float z = ClosestPointToLine(&fCenter, from, at, &onLine);
     
-    hsScalar distSq = hsVector3(&onLine, &fCenter).MagnitudeSquared();
+    float distSq = hsVector3(&onLine, &fCenter).MagnitudeSquared();
     if( distSq >= fRadius*fRadius )
         return false;
 
@@ -2454,8 +2454,8 @@ hsBool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
         int i;
         for( i = 0; i < 3; i++ )
         {
-            hsScalar d0 = fAxes[i].InnerProduct(from);
-            hsScalar d1 = fAxes[i].InnerProduct(at);
+            float d0 = fAxes[i].InnerProduct(from);
+            float d1 = fAxes[i].InnerProduct(at);
             if( d0 < d1 )
             {
                 if( d1 < fDists[i].fX )
@@ -2475,7 +2475,7 @@ hsBool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
     return true;
 }
 
-hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, hsScalar radius) const
+hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, float radius) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2484,14 +2484,14 @@ hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, hsScala
     hsPoint3 onLine;
     ClosestPointToLine(&fCenter, from, at, &onLine);
 
-    hsScalar distSq = hsVector3(&onLine, &fCenter).MagnitudeSquared();
-    hsScalar radiusSq = fRadius * fRadius;
+    float distSq = hsVector3(&onLine, &fCenter).MagnitudeSquared();
+    float radiusSq = fRadius * fRadius;
     if (distSq - radius*radius >= radiusSq)
         return false;
 
-    hsScalar dist = hsVector3(from, &onLine).Magnitude();
-    hsScalar len = hsVector3(from, at).Magnitude();
-    hsScalar partRadius = radius/len * dist;
+    float dist = hsVector3(from, &onLine).Magnitude();
+    float len = hsVector3(from, at).Magnitude();
+    float partRadius = radius/len * dist;
     if (distSq - fRadius*fRadius - partRadius*partRadius >= 0)
     {
         hsVector3 rayToCenter(&fCenter,&onLine);
@@ -2531,8 +2531,8 @@ hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, hsScala
             atLine.Normalize();
             hsPoint3 atEdge = *at + atLine * radius;
 
-            hsScalar d0 = fAxes[i].InnerProduct(*from);
-            hsScalar d1 = fAxes[i].InnerProduct(atEdge);
+            float d0 = fAxes[i].InnerProduct(*from);
+            float d1 = fAxes[i].InnerProduct(atEdge);
             if( d0 < d1 )
             {
                 if( d1 < fDists[i].fX )
@@ -2557,18 +2557,18 @@ hsBool hsBounds3Ext::ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoin
 {
     hsVector3 c2f(&from,&GetCenter());
     hsVector3 f2t(&to,&from);
-    hsScalar a = f2t.MagnitudeSquared();
-    hsScalar b = 2 * (c2f.InnerProduct(f2t));
-    hsScalar c = c2f.MagnitudeSquared() - GetRadius()*GetRadius();
+    float a = f2t.MagnitudeSquared();
+    float b = 2 * (c2f.InnerProduct(f2t));
+    float c = c2f.MagnitudeSquared() - GetRadius()*GetRadius();
         
-    hsScalar disc = b*b - 4*a*c;
+    float disc = b*b - 4*a*c;
     if (disc < 0)
         return false;
     else
     {
-        hsScalar discSqrt = hsSquareRoot(disc);
-        hsScalar denom = 1.f/(2*a);
-        hsScalar t = (-b - discSqrt) * denom;
+        float discSqrt = sqrt(disc);
+        float denom = 1.f/(2*a);
+        float t = (-b - discSqrt) * denom;
 
         if (t<1 && t>0)
             at = from + (f2t * t);
@@ -2640,7 +2640,7 @@ void hsBounds3Tri::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
 {
     depth.fX = depth.fY = n.InnerProduct(fVerts[0]);
 
-    hsScalar d1, d2;
+    float d1, d2;
 
     d1 = n.InnerProduct(fVerts[1]);
     d2 = n.InnerProduct(fVerts[2]);
@@ -2666,10 +2666,10 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
     hsPoint3 pPln;
     if( ax )
     {
-        hsScalar t;
+        float t;
 
         t =  fNormal.InnerProduct(fVerts[0] - *p);
-        hsScalar s = fNormal.InnerProduct(ax);
+        float s = fNormal.InnerProduct(ax);
         if( (s > hsBounds::kRealSmall)||(s < -hsBounds::kRealSmall) )
         {
             t /= s;
@@ -2684,7 +2684,7 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
     }
     else
     {
-        hsScalar t;
+        float t;
 
         t =  fNormal.InnerProduct(fVerts[0] - *p);
         t /= fNormal.MagnitudeSquared();
@@ -2701,7 +2701,7 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsScalar tst = fPerpAxes[i].InnerProduct(pPln);
+        float tst = fPerpAxes[i].InnerProduct(pPln);
         hsBool in = false;
         if( fOnIsMax & (1 << i) )
         {
@@ -2733,9 +2733,9 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
             kPlus = k == 2 ? 0 : k+1;
 
             hsPoint3 pTmp;
-            hsScalar z;
+            float z;
             z = hsBounds3::ClosestPointToLine(&pPln, fVerts+k, fVerts+kPlus, &pTmp);
-            if( z <= hsScalar1 )
+            if( z <= 1.f )
                 *out = pTmp;
             else
             {
@@ -2768,13 +2768,13 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
     if( 0 )
     {
         hsVector3 ndeb = hsVector3(fVerts+1, fVerts) % hsVector3(fVerts+2, fVerts);
-        hsScalar dis;
+        float dis;
         dis = fNormal.InnerProduct(pPln) - fDist;
         if( (fDist > hsBounds::kRealSmall)||(fDist < -hsBounds::kRealSmall) )
             dis /= fDist;
         hsAssert((dis < hsBounds::kRealSmall)&&(dis > -hsBounds::kRealSmall), "Non-planar pPln");
         dis = hsVector3(&pPln, out).MagnitudeSquared();
-        hsScalar vDis;
+        float vDis;
         vDis = hsVector3(&pPln, fVerts+0).MagnitudeSquared();
         hsAssert( vDis - dis > -hsBounds::kRealSmall, "Bad closest point");
         vDis = hsVector3(&pPln, fVerts+1).MagnitudeSquared();
@@ -2784,9 +2784,9 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
         hsBool dork = false;
         if( dork )
         {
-            hsScalar zn[3];
-            hsScalar zf[3];
-            hsScalar z[3];
+            float zn[3];
+            float zf[3];
+            float z[3];
             int i;
             for( i = 0; i < 3; i++ )
             {
@@ -2829,7 +2829,7 @@ void hsBounds3Tri::SetAxes() const
         if( fPerpDists[i].fX > fPerpDists[i].fY )
         {
             fOnIsMax |= 1 << i;
-            hsScalar d = fPerpDists[i].fX;
+            float d = fPerpDists[i].fX;
             fPerpDists[i].fX = fPerpDists[i].fY;
             fPerpDists[i].fY = d;
         }
@@ -2878,7 +2878,7 @@ hsBounds3Tri* hsBounds3Tri::Translate(const hsVector3& v)
         int j = i == 2 ? 0 : i+1;
         int k = j == 2 ? 0 : j+1;
 
-        hsScalar del = fPerpAxes[i].InnerProduct(v);
+        float del = fPerpAxes[i].InnerProduct(v);
         fPerpDists[i].fX += del;
         fPerpDists[i].fY += del;
     }
@@ -2940,7 +2940,7 @@ hsBounds3Tri::hsBounds3Tri(hsTriangle3* t, const hsMatrix44& x)
         t, x);
 }
 
-void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, UInt32 triFlags, hsTriangle3 *t)
+void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, uint32_t triFlags, hsTriangle3 *t)
 {
     fTriFlags = 0;
 
@@ -2958,7 +2958,7 @@ void hsBounds3Tri::Set(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, U
     fDist = fNormal.InnerProduct(fVerts[0]);
 }
 
-hsBounds3Tri::hsBounds3Tri(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, UInt32 triFlags, hsTriangle3 *t)
+hsBounds3Tri::hsBounds3Tri(hsPoint3 *v0, hsPoint3 *v1, hsPoint3 *v2, hsVector3 *n, uint32_t triFlags, hsTriangle3 *t)
 {
     Set(v0, v1, v2, n, triFlags, t);
 }
@@ -2977,11 +2977,11 @@ hsBounds3Tri::~hsBounds3Tri()
 
 
 // Finds closest intersection vertex or triangle/center-line intersection
-hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, hsScalar cosThetaSq, hsBool ignoreFacing, hsPoint3& at, hsBool& backSide) const
+hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, float cosThetaSq, hsBool ignoreFacing, hsPoint3& at, hsBool& backSide) const
 {
-    hsScalar d0 = from.InnerProduct(fNormal);
-    hsScalar d1 = at.InnerProduct(fNormal);
-    hsScalar dt = fNormal.InnerProduct(fVerts[0]);
+    float d0 = from.InnerProduct(fNormal);
+    float d1 = at.InnerProduct(fNormal);
+    float dt = fNormal.InnerProduct(fVerts[0]);
     backSide = d0 < dt;
     if( !ignoreFacing && backSide )
         return false;
@@ -2991,16 +2991,16 @@ hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, hsScala
          return true;
 
     hsVector3 av(&to,&from);
-    hsScalar distASq = av.MagnitudeSquared();
-    hsScalar radiusSq = distASq * (1-cosThetaSq)/cosThetaSq;
+    float distASq = av.MagnitudeSquared();
+    float radiusSq = distASq * (1-cosThetaSq)/cosThetaSq;
 
-    hsScalar minDistSq = 0;
-    Int32 minVert = 0;
+    float minDistSq = 0;
+    int32_t minVert = 0;
     hsBool sect = false;
-    for (Int32 i=0; i<3; i++)
+    for (int32_t i=0; i<3; i++)
     {
         hsPoint3 onLine;
-        hsScalar t = hsBounds3::ClosestPointToLine(&fVerts[i], &from, &to, &onLine);
+        float t = hsBounds3::ClosestPointToLine(&fVerts[i], &from, &to, &onLine);
 
         // outside the cap of the cylinder
         if (t<0 || t>1)
@@ -3012,9 +3012,9 @@ hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, hsScala
 
         hsVector3 bv(&fVerts[i],&from);
 
-        hsScalar distBSq = bv.MagnitudeSquared();
+        float distBSq = bv.MagnitudeSquared();
 
-        hsScalar cosMuSquared = (av * bv) / (distASq * distBSq);
+        float cosMuSquared = (av * bv) / (distASq * distBSq);
 
         // outside the angle of the cone
         if (cosMuSquared > cosThetaSq)

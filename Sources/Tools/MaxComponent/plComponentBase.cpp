@@ -203,7 +203,7 @@ void plComponentBase::AddTargetsToList(INodeTab& list)
     }
 }
 
-UInt32 plComponentBase::NumTargets()
+uint32_t plComponentBase::NumTargets()
 {
     if (fTargsPB)
         return fTargsPB->Count(kTargs);
@@ -211,7 +211,7 @@ UInt32 plComponentBase::NumTargets()
     return 0;
 }
 
-plMaxNodeBase *plComponentBase::GetTarget(UInt32 i)
+plMaxNodeBase *plComponentBase::GetTarget(uint32_t i)
 {
     if (fTargsPB && i < NumTargets())
         return (plMaxNodeBase*)fTargsPB->GetINode(kTargs, 0, i);
@@ -225,8 +225,8 @@ void plComponentBase::AddTarget(plMaxNodeBase *target)
         return;
 
     // Make sure we don't already ref this
-    UInt32 count = fTargsPB->Count(kTargs);
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fTargsPB->Count(kTargs);
+    for (uint32_t i = 0; i < count; i++)
     {
         if (fTargsPB->GetINode(kTargs, 0, i) == target)
             return;
@@ -243,8 +243,8 @@ void plComponentBase::DeleteTarget(plMaxNodeBase *target)
     if (!target)
         return;
 
-    UInt32 count = fTargsPB->Count(kTargs);
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fTargsPB->Count(kTargs);
+    for (uint32_t i = 0; i < count; i++)
     {
         if (fTargsPB->GetINode(kTargs, 0, i) == target)
         {
@@ -535,8 +535,8 @@ void plComponentBase::DestroyRollups()
 
 static bool INodeHasComponent(plMaxNodeBase *node, plMaxNodeBase *compNode)
 {
-    UInt32 count = node->NumAttachedComponents();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = node->NumAttachedComponents();
+    for (uint32_t i = 0; i < count; i++)
     {
         if (node->GetAttachedComponent(i)->GetINode() == compNode)
             return true;
@@ -568,7 +568,7 @@ int plSharedComponents(INodeTab& nodes, INodeTab& components)
     for (i = 1; i < nodes.Count(); i++)
     {
         plMaxNodeBase *node = (plMaxNodeBase*)nodes[i];
-        UInt32 count = node->NumAttachedComponents();
+        uint32_t count = node->NumAttachedComponents();
 
         for (int j = components.Count()-1; j >= 0; j--)
         {
@@ -630,7 +630,7 @@ static void FindObsoleteComponents(plMaxNodeBase *node, std::vector<plComponentB
 static bool gUpdatingComponents = false;
 
 #include <set>
-#include "hsUtils.h"
+
 
 static void ComponentNotify(void *param, NotifyInfo *info)
 {

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plAudioCaps.h"
 
 // Sets the master volume of a given audio channel
-void pyAudioControl::SetSoundFXVolume( hsScalar volume )
+void pyAudioControl::SetSoundFXVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kSoundFX;
@@ -68,7 +68,7 @@ void pyAudioControl::SetSoundFXVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetMusicVolume( hsScalar volume )
+void pyAudioControl::SetMusicVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kBgndMusic;
@@ -82,7 +82,7 @@ void pyAudioControl::SetMusicVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetVoiceVolume( hsScalar volume )
+void pyAudioControl::SetVoiceVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kVoice;
@@ -96,7 +96,7 @@ void pyAudioControl::SetVoiceVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetAmbienceVolume( hsScalar volume )
+void pyAudioControl::SetAmbienceVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kAmbience;
@@ -110,7 +110,7 @@ void pyAudioControl::SetAmbienceVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetGUIVolume( hsScalar volume )
+void pyAudioControl::SetGUIVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kGUI;
@@ -124,7 +124,7 @@ void pyAudioControl::SetGUIVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetNPCVoiceVolume( hsScalar volume )
+void pyAudioControl::SetNPCVoiceVolume( float volume )
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kNPCVoice;
@@ -138,42 +138,42 @@ void pyAudioControl::SetNPCVoiceVolume( hsScalar volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-hsScalar pyAudioControl::GetSoundFXVolume()
+float pyAudioControl::GetSoundFXVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kSoundFX;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-hsScalar pyAudioControl::GetMusicVolume()
+float pyAudioControl::GetMusicVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kBgndMusic;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-hsScalar pyAudioControl::GetVoiceVolume()
+float pyAudioControl::GetVoiceVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kVoice;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-hsScalar pyAudioControl::GetAmbienceVolume()
+float pyAudioControl::GetAmbienceVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kAmbience;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-hsScalar pyAudioControl::GetGUIVolume()
+float pyAudioControl::GetGUIVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kGUI;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-hsScalar pyAudioControl::GetNPCVoiceVolume()
+float pyAudioControl::GetNPCVoiceVolume()
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kNPCVoice;
@@ -271,7 +271,7 @@ hsBool pyAudioControl::CanSetMicLevel()
     return plWinMicLevel::CanSetLevel();
 }
 
-void pyAudioControl::SetMicLevel( hsScalar level )
+void pyAudioControl::SetMicLevel( float level )
 {
     // make sure the volume is within range
     if( level > 1.f )
@@ -282,7 +282,7 @@ void pyAudioControl::SetMicLevel( hsScalar level )
         plWinMicLevel::SetLevel( level );
 }
 
-hsScalar pyAudioControl::GetMicLevel()
+float pyAudioControl::GetMicLevel()
 {
     return plWinMicLevel::GetLevel();
 }
@@ -348,29 +348,29 @@ void pyAudioControl::PushToTalk( hsBool state )
 }
 
 // Set the squelch level
-void pyAudioControl::SquelchLevel( hsScalar level )
+void pyAudioControl::SquelchLevel( float level )
 {
     plVoiceRecorder::SetSquelch(level);
 }
 
 
 // Adjust voice packet frame size
-void pyAudioControl::RecordFrame( Int32 size )
+void pyAudioControl::RecordFrame( int32_t size )
 {
 }
 
 
 // Set the sample rate for recording
-void pyAudioControl::RecordSampleRate( Int32 sample_rate )
+void pyAudioControl::RecordSampleRate( int32_t sample_rate )
 {
 }
 
-UInt8 pyAudioControl::GetPriorityCutoff( void )
+uint8_t pyAudioControl::GetPriorityCutoff( void )
 {
     return plgAudioSys::GetPriorityCutoff();
 }
 
-void pyAudioControl::SetPriorityCutoff( UInt8 cut )
+void pyAudioControl::SetPriorityCutoff( uint8_t cut )
 {
     plgAudioSys::SetPriorityCutoff( cut );
 }

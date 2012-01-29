@@ -54,11 +54,11 @@ public:
     CLASSNAME_REGISTER( plDispatchBase );
     GETINTERFACE_ANY( plDispatchBase, plCreatable );
 
-    virtual void RegisterForType(UInt16 hClass, const plKey& receiver) = 0;
-    virtual void RegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void RegisterForType(uint16_t hClass, const plKey& receiver) = 0;
+    virtual void RegisterForExactType(uint16_t hClass, const plKey& receiver) = 0;
 
-    virtual void UnRegisterForType(UInt16 hClass, const plKey& receiver) = 0;
-    virtual void UnRegisterForExactType(UInt16 hClass, const plKey& receiver) = 0;
+    virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver) = 0;
+    virtual void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) = 0;
 
     virtual void UnRegisterAll(const plKey& receiver) = 0;
 

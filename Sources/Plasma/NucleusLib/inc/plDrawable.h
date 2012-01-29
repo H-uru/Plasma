@@ -61,10 +61,10 @@ class plAccessSpan;
 class plDrawableCriteria
 {
 public:
-    plDrawableCriteria(UInt32 crit, const plRenderLevel& lev, const plLoadMask& m, UInt32 ty=1 /* Normal */ ) : fCriteria(crit), fLevel(lev), fType(ty), fLoadMask(m) {}
-    UInt32              fCriteria;
+    plDrawableCriteria(uint32_t crit, const plRenderLevel& lev, const plLoadMask& m, uint32_t ty=1 /* Normal */ ) : fCriteria(crit), fLevel(lev), fType(ty), fLoadMask(m) {}
+    uint32_t              fCriteria;
     plRenderLevel       fLevel;
-    UInt32              fType;
+    uint32_t              fType;
     plLoadMask          fLoadMask;
 };
 
@@ -146,38 +146,38 @@ public:
     virtual plDrawable& SetProperty( int prop, hsBool on ) = 0;
     virtual hsBool GetProperty( int prop ) const = 0;
 
-    virtual plDrawable& SetProperty( UInt32 index, int prop, hsBool on ) = 0;
-    virtual hsBool GetProperty( UInt32 index, int prop ) const = 0;
+    virtual plDrawable& SetProperty( uint32_t index, int prop, hsBool on ) = 0;
+    virtual hsBool GetProperty( uint32_t index, int prop ) const = 0;
 
     virtual plDrawable& SetNativeProperty( int prop, hsBool on ) = 0;
     virtual hsBool GetNativeProperty( int prop ) const = 0;
 
-    virtual plDrawable& SetNativeProperty( UInt32 index, int prop, hsBool on ) = 0;
-    virtual hsBool GetNativeProperty( UInt32 index, int prop ) const = 0;
+    virtual plDrawable& SetNativeProperty( uint32_t index, int prop, hsBool on ) = 0;
+    virtual hsBool GetNativeProperty( uint32_t index, int prop ) const = 0;
 
-    virtual plDrawable& SetSubType( UInt32 index, plSubDrawableType t, hsBool on ) = 0;
-    virtual UInt32 GetSubType( UInt32 index ) const = 0; // returns or of all spans with this index (index==-1 is all spans).
+    virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, hsBool on ) = 0;
+    virtual uint32_t GetSubType( uint32_t index ) const = 0; // returns or of all spans with this index (index==-1 is all spans).
 
-    virtual UInt32  GetType( void ) const = 0;
-    virtual void    SetType( UInt32 type ) = 0;
+    virtual uint32_t  GetType( void ) const = 0;
+    virtual void    SetType( uint32_t type ) = 0;
 
     virtual void SetRenderLevel(const plRenderLevel& l) = 0;
     virtual const plRenderLevel& GetRenderLevel() const = 0;
 
-    virtual plDrawable& SetTransform( UInt32 index, const hsMatrix44& l2w, const hsMatrix44& w2l ) = 0;
-    virtual const hsMatrix44& GetLocalToWorld( UInt32 span = (UInt32)-1 ) const = 0;
-    virtual const hsMatrix44& GetWorldToLocal( UInt32 span = (UInt32)-1 ) const = 0;
+    virtual plDrawable& SetTransform( uint32_t index, const hsMatrix44& l2w, const hsMatrix44& w2l ) = 0;
+    virtual const hsMatrix44& GetLocalToWorld( uint32_t span = (uint32_t)-1 ) const = 0;
+    virtual const hsMatrix44& GetWorldToLocal( uint32_t span = (uint32_t)-1 ) const = 0;
 
-    virtual const hsBounds3Ext& GetLocalBounds( UInt32 index = (UInt32)-1 ) const = 0;
-    virtual const hsBounds3Ext& GetWorldBounds( UInt32 index = (UInt32)-1 ) const = 0;
-    virtual const hsBounds3Ext& GetMaxWorldBounds( UInt32 index = (UInt32)-1 ) const = 0;
+    virtual const hsBounds3Ext& GetLocalBounds( uint32_t index = (uint32_t)-1 ) const = 0;
+    virtual const hsBounds3Ext& GetWorldBounds( uint32_t index = (uint32_t)-1 ) const = 0;
+    virtual const hsBounds3Ext& GetMaxWorldBounds( uint32_t index = (uint32_t)-1 ) const = 0;
 
     virtual plSpaceTree*    GetSpaceTree() const = 0;
-    virtual void            SetDISpanVisSet(UInt32 diIndex, hsKeyedObject* reg, hsBool on) = 0;
+    virtual void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, hsBool on) = 0;
 
     // Taking span index. DI Index doesn't make sense here, because one object's DI can dereference into many materials etc.
     virtual hsGMaterial*    GetSubMaterial(int index) const = 0;
-    virtual hsBool          GetSubVisDists(int index, hsScalar& minDist, hsScalar& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
+    virtual hsBool          GetSubVisDists(int index, float& minDist, float& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
 
     // Should implement hsKeyedObject Read/Write/Save/Load as well
 
@@ -186,9 +186,9 @@ public:
     virtual plKey GetSceneNode() const = 0;
 
     /// Funky particle system functions
-    virtual UInt32  CreateParticleSystem( UInt32 maxNumEmitters, UInt32 maxNumParticles, hsGMaterial *material ) = 0;
-    virtual void    ResetParticleSystem( UInt32 index ) = 0;
-    virtual void    AssignEmitterToParticleSystem( UInt32 index, plParticleEmitter *emitter ) = 0;
+    virtual uint32_t  CreateParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material ) = 0;
+    virtual void    ResetParticleSystem( uint32_t index ) = 0;
+    virtual void    AssignEmitterToParticleSystem( uint32_t index, plParticleEmitter *emitter ) = 0;
 
     /// EXPORT-ONLY
 

@@ -55,11 +55,11 @@ class plFontFreeType : public plFont
 
         struct Options
         {
-            UInt8   fSize;
+            uint8_t   fSize;
             hsBool  fUseKerning;
-            UInt8   fBitDepth;
-            UInt32  fScreenRes;
-            UInt32  fMaxCharLimit;
+            uint8_t   fBitDepth;
+            uint32_t  fScreenRes;
+            uint32_t  fMaxCharLimit;
 
             Options() { fSize = 12; fUseKerning = false; fBitDepth = 1; fScreenRes = 96; fMaxCharLimit = 255; }
         };

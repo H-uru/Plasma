@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //===========================================================================
 void TimeGetElapsedDesc (
-    dword             minutesElapsed,
+    uint32_t             minutesElapsed,
     TimeElapsedDesc * desc
 ) {
 
@@ -67,7 +67,7 @@ void TimeGetElapsedDesc (
     const unsigned kMinutesPerMonth = 43830;
     const unsigned kMinutesPerYear  = 525960;
 
-    dword & elapsed = minutesElapsed;
+    uint32_t & elapsed = minutesElapsed;
     desc->years   = (elapsed / kMinutesPerYear);  elapsed -= desc->years  * kMinutesPerYear;
     desc->months  = (elapsed / kMinutesPerMonth); elapsed -= desc->months * kMinutesPerMonth;
     desc->weeks   = (elapsed / kMinutesPerWeek);  elapsed -= desc->weeks  * kMinutesPerWeek;
@@ -78,15 +78,15 @@ void TimeGetElapsedDesc (
 }
 
 //============================================================================
-dword TimeGetSecondsSince2001Utc () {
-    qword time    = TimeGetTime();
-    dword seconds = (dword)((time - kTime1601To2001) / kTimeIntervalsPerSecond);
+uint32_t TimeGetSecondsSince2001Utc () {
+    uint64_t time    = TimeGetTime();
+    uint32_t seconds = (uint32_t)((time - kTime1601To2001) / kTimeIntervalsPerSecond);
     return seconds;
 }
 
 //============================================================================
-dword TimeGetSecondsSince1970Utc () {
-    qword time    = TimeGetTime();
-    dword seconds = (dword)((time  - kTime1601To1970) / kTimeIntervalsPerSecond);
+uint32_t TimeGetSecondsSince1970Utc () {
+    uint64_t time    = TimeGetTime();
+    uint32_t seconds = (uint32_t)((time  - kTime1601To1970) / kTimeIntervalsPerSecond);
     return seconds;
 }

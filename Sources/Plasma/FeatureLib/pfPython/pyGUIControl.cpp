@@ -108,7 +108,7 @@ PyObject* pyGUIControl::getObjPyKey()
 
 
 // interface functions
-UInt32  pyGUIControl::GetTagID()
+uint32_t  pyGUIControl::GetTagID()
 {
     if ( fGCkey )
     {
@@ -334,7 +334,7 @@ PyObject* pyGUIControl::GetBackSelColor()
     PYTHON_RETURN_NONE;
 }
 
-UInt32 pyGUIControl::GetFontSize()
+uint32_t pyGUIControl::GetFontSize()
 {
     if ( fGCkey )
     {
@@ -351,7 +351,7 @@ UInt32 pyGUIControl::GetFontSize()
 
 
     // set color scheme
-void pyGUIControl::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetForeColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -371,7 +371,7 @@ void pyGUIControl::SetForeColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a 
     }
 }
 
-void pyGUIControl::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -391,7 +391,7 @@ void pyGUIControl::SetSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
     }
 }
 
-void pyGUIControl::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetBackColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -411,7 +411,7 @@ void pyGUIControl::SetBackColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a 
     }
 }
 
-void pyGUIControl::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar a )
+void pyGUIControl::SetBackSelColor( float r, float g, float b, float a )
 {
     if ( fGCkey )
     {
@@ -432,7 +432,7 @@ void pyGUIControl::SetBackSelColor( hsScalar r, hsScalar g, hsScalar b, hsScalar
 }
 
 
-void pyGUIControl::SetFontSize(UInt32 fontsize)
+void pyGUIControl::SetFontSize(uint32_t fontsize)
 {
     if ( fGCkey )
     {
@@ -440,7 +440,7 @@ void pyGUIControl::SetFontSize(UInt32 fontsize)
         if ( pdmod )
         {
             pfGUIColorScheme* color = pdmod->GetColorScheme();
-            color->fFontSize = (UInt8)fontsize;
+            color->fFontSize = (uint8_t)fontsize;
         }
     }
 }

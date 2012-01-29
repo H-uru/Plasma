@@ -76,11 +76,11 @@ void SqlConnBindParameterBigInt (
 bool SqlConnGetBlobData (
     SqlStmt *       stmt,
     unsigned        colIndex,
-    ARRAY(byte) *   buffer,
+    ARRAY(uint8_t) *   buffer,
     unsigned *      bytesAdded
 );
 int SqlConnPutBlobData (
     SqlStmt *   stmt,
     unsigned    bytes,
-    const byte  data[]
+    const uint8_t  data[]
 );

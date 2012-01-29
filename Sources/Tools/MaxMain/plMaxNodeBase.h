@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeBase_inc
 #define plMaxNodeBase_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "max.h"
 #include "hsMatrix44.h"
@@ -101,7 +101,7 @@ public:
     hsBool          GetWaterDecEnv();
     hsBool          GetVS();
     hsBool          GetHasWaterHeight();
-    hsScalar        GetWaterHeight();
+    float        GetWaterHeight();
     hsBool          GetSmoothAll();
     hsBool          GetForceSortable();
     hsBool          GetConcave();
@@ -114,7 +114,7 @@ public:
     hsBool          GetItinerant();
     hsBool          GetUnBounded();
     hsBool          GetDisableNormal();
-    UInt32          GetDecalLevel();
+    uint32_t          GetDecalLevel();
     hsBool          GetMovable();
     hsBool          GetNoShadow();
     hsBool          GetForceShadow();
@@ -129,7 +129,7 @@ public:
     hsBool          GetForceMaterialCopy();
     hsBool          GetInstanced();
     hsBool          GetParticleRelated();
-    UInt32          GetSoundIdxCounter();
+    uint32_t          GetSoundIdxCounter();
     plSceneObject*  GetAvatarSO();
     BOOL            HasFade();
     Box3            GetFade();
@@ -140,11 +140,11 @@ public:
     BOOL            GetGeoDice(int& maxFaces, float& maxSize, int& minFaces);
     hsBool          GetIsGUI();
     plSharedMesh*   GetSwappableGeom();
-    UInt32          GetSwappableGeomTarget();
+    uint32_t          GetSwappableGeomTarget();
     plMaxBoneMap*   GetBoneMap();
     hsBool          GetOverrideHighLevelSDL();
-    UInt8           GetAnimCompress();
-    hsScalar        GetKeyReduceThreshold();
+    uint8_t           GetAnimCompress();
+    float        GetKeyReduceThreshold();
     int             NumRenderDependencies();
     plMaxNodeBase*  GetRenderDependency(int i);
 
@@ -162,7 +162,7 @@ public:
     void            SetItinerant(hsBool b);
     void            SetUnBounded(hsBool b);
     void            SetDisableNormal(hsBool b);
-    void            SetDecalLevel(UInt32 i);
+    void            SetDecalLevel(uint32_t i);
     void            SetMovable(hsBool b);
     void            SetNoPreShade(hsBool b);
     void            SetForcePreShade(hsBool b);
@@ -170,7 +170,7 @@ public:
     void            SetSortAsOpaque(hsBool b);
     void            SetVS(hsBool b);
     void            SetHasWaterHeight(hsBool b);
-    void            SetWaterHeight(hsScalar h);
+    void            SetWaterHeight(float h);
     void            SetSmoothAll(hsBool b);
     void            SetForceSortable(hsBool b);
     void            SetConcave(hsBool b);
@@ -195,7 +195,7 @@ public:
     void            SetForceMaterialCopy(hsBool b);
     void            SetInstanced(hsBool b);
     void            SetParticleRelated(hsBool b);
-    void            SetSoundIdxCounter(UInt32 ctr);
+    void            SetSoundIdxCounter(uint32_t ctr);
     void            SetAvatarSO(plSceneObject *so);
     void            SetFade(const Box3& b);
     void            SetDup2Sided(hsBool b);
@@ -204,11 +204,11 @@ public:
     void            SetGeoDice(BOOL on, int maxFaces, float maxSize, int minFaces);
     void            SetIsGUI(hsBool b);
     void            SetSwappableGeom(plSharedMesh *sm);
-    void            SetSwappableGeomTarget(UInt32 id);
+    void            SetSwappableGeomTarget(uint32_t id);
     void            SetBoneMap(plMaxBoneMap *bones);
     void            SetOverrideHighLevelSDL(hsBool b);
-    void            SetAnimCompress(UInt8 v);
-    void            SetKeyReduceThreshold(hsScalar v);
+    void            SetAnimCompress(uint8_t v);
+    void            SetKeyReduceThreshold(float v);
     hsBool          AddRenderDependency(plMaxNodeBase* m);
     hsBool          RenderDependsOn(plMaxNodeBase* m);
     void            ClearRenderDependencies();
@@ -218,8 +218,8 @@ public:
 
     // Dirty flags for SceneWatcher use
     enum { kGeomDirty = 0x1, kMatDirty = 0x2, kAllDirty = 0xFF };
-    hsBool  GetDirty(UInt8 i);
-    void    SetDirty(UInt8 i, hsBool b);
+    hsBool  GetDirty(uint8_t i);
+    void    SetDirty(uint8_t i, hsBool b);
 
     plKey GetParentKey() { plMaxNodeBase *pPar = (plMaxNodeBase*)GetParentNode(); hsAssert(pPar, "No Parent"); return pPar->GetKey(); }
 
@@ -248,13 +248,13 @@ public:
     // component will want to know what other components are attached to it. In
     // that case, set all to true, so that the attached components won't be
     // verified to be in your target list.
-    UInt32 NumAttachedComponents(bool all=false);
-    plComponentBase *GetAttachedComponent(UInt32 i, bool all=false);
+    uint32_t NumAttachedComponents(bool all=false);
+    plComponentBase *GetAttachedComponent(uint32_t i, bool all=false);
 
     hsBool      Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
     hsBool      Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
-    hsScalar    BoxVolume(const Box3& bnd, const Matrix3& l2w);
-    hsScalar    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
+    float    BoxVolume(const Box3& bnd, const Matrix3& l2w);
+    float    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
                                     // region, the region with highest priority wins.
 
     Interface *GetInterface() { return ::GetCOREInterface(); }
@@ -299,12 +299,12 @@ protected:
         kPlasmaLightChunk,  // No longer in use, but cleared from old files
     };
 
-    UInt8 *IGetSceneViewerChunk();
+    uint8_t *IGetSceneViewerChunk();
     // Attempts to convert a RefMaker pointer to a component.  Returns nil if it is not a component.
     plComponentBase *IRefMakerToComponent(ReferenceMaker *maker, bool all);
 
-    UInt32          IGetMajorRenderLevel(hsBool forBlend);
-    UInt32          IGetMinorRenderLevel(hsBool forBlend);
+    uint32_t          IGetMajorRenderLevel(hsBool forBlend);
+    uint32_t          IGetMinorRenderLevel(hsBool forBlend);
 
     hsBool          IRenderLevelSet(hsBool forBlend);
     void            ISetRenderLevel(const plRenderLevel& l, hsBool forBlend);

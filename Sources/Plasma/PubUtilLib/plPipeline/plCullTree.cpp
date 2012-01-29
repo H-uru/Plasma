@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCullTree.h"
 #include "plDrawable/plSpaceTree.h"
 #include "hsFastMath.h"
@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define MF_DEBUG_NORM
 #ifdef MF_DEBUG_NORM
 
-#define IDEBUG_NORMALIZE( a, b ) { hsScalar len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); a *= len; b *= len; }
+#define IDEBUG_NORMALIZE( a, b ) { float len = hsFastMath::InvSqrtAppr((a).MagnitudeSquared()); a *= len; b *= len; }
 
 #else // MF_DEBUG_NORM
 #define IDEBUG_NORMALIZE( a, b )
@@ -60,10 +60,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define CULL_SMALL_TOLERANCE
 #ifdef CULL_SMALL_TOLERANCE
-//static const hsScalar kTolerance = 1.e-5f;
-static const hsScalar kTolerance = 1.e-3f;
+//static const float kTolerance = 1.e-5f;
+static const float kTolerance = 1.e-3f;
 #else //CULL_SMALL_TOLERANCE
-static const hsScalar kTolerance = 1.e-1f;
+static const float kTolerance = 1.e-1f;
 #endif // CULL_SMALL_TOLERANCE
 
 plProfile_CreateCounter("Harvest Nodes", "Draw", HarvestNodes);
@@ -128,8 +128,8 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     // side timings to be sure. Still looking for some reasonably constructed real data sets. mf
 #define MF_TEST_SPHERE_FIRST
 #ifdef MF_TEST_SPHERE_FIRST
-    hsScalar dist = fNorm.InnerProduct(bnd.GetCenter()) + fDist;
-    hsScalar rad = bnd.GetRadius();
+    float dist = fNorm.InnerProduct(bnd.GetCenter()) + fDist;
+    float rad = bnd.GetRadius();
     if( dist < -rad )
         return kCulled;
     if( dist > rad )
@@ -139,7 +139,7 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     hsPoint2 depth;
     bnd.TestPlane(fNorm, depth);
 
-    const hsScalar kSafetyDist = -0.1f;
+    const float kSafetyDist = -0.1f;
     if( depth.fY + fDist < kSafetyDist )
         return kCulled;
 
@@ -149,7 +149,7 @@ plCullNode::plCullStatus plCullNode::TestBounds(const hsBounds3Ext& bnd) const
     return kSplit;
 }
 
-plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, hsScalar rad) const
+plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, float rad) const
 {
     plCullNode::plCullStatus retVal = TestSphere(center, rad);
 
@@ -198,9 +198,9 @@ plCullNode::plCullStatus plCullNode::ITestSphereRecur(const hsPoint3& center, hs
     return kCulled;
 }
 
-plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, hsScalar rad) const
+plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, float rad) const
 {
-    hsScalar dist = fNorm.InnerProduct(center) + fDist;
+    float dist = fNorm.InnerProduct(center) + fDist;
     if( dist < -rad )
         return kCulled;
     if( dist > rad )
@@ -210,7 +210,7 @@ plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, hsScalar
 }
 
 // For this Cull Node, recur down the space hierarchy pruning out who to test for the next Cull Node.
-plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsLargeArray<Int16>& clear, hsLargeArray<Int16>& split, hsLargeArray<Int16>& culled) const
+plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsLargeArray<int16_t>& clear, hsLargeArray<int16_t>& split, hsLargeArray<int16_t>& culled) const
 {
     if( space->IsDisabled(who) || (space->GetNode(who).fWorldBounds.GetType() != kBoundsNormal) )
     {
@@ -263,21 +263,21 @@ plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, Int16 w
 // We reclaim the scratch indices in clear and split when we're done (SetCount(0)), but we can't
 // reclaim the culled, because our caller may be looking at who all we culled. See below in split.
 // If a node is disabled, we can just ignore we ever got called.
-void plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsBitVector& totList, hsBitVector& outList) const
+void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& totList, hsBitVector& outList) const
 {
     if( space->IsDisabled(who) )
         return;
 
-    UInt32 myClearStart = ScratchClear().GetCount();
-    UInt32 mySplitStart = ScratchSplit().GetCount();
-    UInt32 myCullStart = ScratchCulled().GetCount();
+    uint32_t myClearStart = ScratchClear().GetCount();
+    uint32_t mySplitStart = ScratchSplit().GetCount();
+    uint32_t myCullStart = ScratchCulled().GetCount();
 
     if( kPureSplit == ITestNode(space, who, ScratchClear(), ScratchSplit(), ScratchCulled()) )
         ScratchSplit().Append(who);
 
-    UInt32 myClearEnd = ScratchClear().GetCount();
-    UInt32 mySplitEnd = ScratchSplit().GetCount();
-    UInt32 myCullEnd = ScratchCulled().GetCount();
+    uint32_t myClearEnd = ScratchClear().GetCount();
+    uint32_t mySplitEnd = ScratchSplit().GetCount();
+    uint32_t myCullEnd = ScratchCulled().GetCount();
 
     int i;
     // If there's no OuterChild, everything in clear and split is visible. Everything in culled
@@ -368,7 +368,7 @@ void plCullNode::ITestNode(const plSpaceTree* space, Int16 who, hsBitVector& tot
     ScratchCulled().SetCount(myCullStart);
 }
 
-void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<Int16>& outList) const
+void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
 {
     ITestNode(space, space->GetRoot(), ScratchTotVec(), ScratchBitVec());
     space->BitVectorToList(outList, ScratchBitVec());
@@ -384,7 +384,7 @@ void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<Int16>& outList) co
 // This section builds the tree from the input cullpoly's
 //////////////////////////////////////////////////////////////////////
 
-void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& depths,
+void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depths,
                             hsBitVector& inVerts,
                             hsBitVector& outVerts,
                             hsBitVector& onVerts,
@@ -415,7 +415,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
             if( outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                hsScalar t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -429,7 +429,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
             if( inVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                hsScalar t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -451,7 +451,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<hsScalar>& de
         ||(outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) && inVerts.IsBitSet(0)) )
     {
         hsPoint3 interp;
-        hsScalar t = IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
+        float t = IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
         onVerts.SetBit(outPoly.fVerts.GetCount());
         if( poly.fClipped.IsBitSet(poly.fVerts.GetCount()-1) )
             outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
@@ -477,7 +477,7 @@ void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly,
             if( onVerts.IsBitSet(vtxIdx[i]) && onVerts.IsBitSet(vtxIdx[last]) && onVerts.IsBitSet(vtxIdx[next]) )
             {
 #if 0 // FISH
-                hsScalar dot = hsVector3(&srcPoly.fVerts[vtxIdx[last]], &srcPoly.fVerts[vtxIdx[i]]).InnerProduct(hsVector3(&srcPoly.fVerts[vtxIdx[next]], &srcPoly.fVerts[vtxIdx[i]]));
+                float dot = hsVector3(&srcPoly.fVerts[vtxIdx[last]], &srcPoly.fVerts[vtxIdx[i]]).InnerProduct(hsVector3(&srcPoly.fVerts[vtxIdx[next]], &srcPoly.fVerts[vtxIdx[i]]));
                 if( dot <= 0 )
 #endif // FISH
                     continue;
@@ -512,7 +512,7 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
                                                 plCullPoly*& innerPoly, 
                                                 plCullPoly*& outerPoly) const
 {
-    static hsTArray<hsScalar> depths;
+    static hsTArray<float> depths;
     depths.SetCount(poly.fVerts.GetCount());
 
     static hsBitVector onVerts;
@@ -597,12 +597,12 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
     return kSplit;
 }
 
-hsScalar plCullNode::IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const
+float plCullNode::IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const
 {
     hsVector3 oneToOh;
     oneToOh.Set(&p0, &p1);
 
-    hsScalar t = -(fNorm.InnerProduct(p1) + fDist) / fNorm.InnerProduct(oneToOh);
+    float t = -(fNorm.InnerProduct(p1) + fDist) / fNorm.InnerProduct(oneToOh);
     if( t >= 1.f )
     {
         out = p0;
@@ -658,8 +658,8 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 
     hsVector3 cenToEye(&fViewPos, &poly.fCenter);
     hsFastMath::NormalizeAppr(cenToEye);
-    hsScalar camDist = cenToEye.InnerProduct(poly.fNorm);
-    plConst(hsScalar) kTol(0.1f);
+    float camDist = cenToEye.InnerProduct(poly.fNorm);
+    plConst(float) kTol(0.1f);
     hsBool backFace = camDist < -kTol;
     if( !backFace && (camDist < kTol) )
         return;
@@ -709,7 +709,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 #endif // DEBUG_POINTERS
 }
 
-Int16 plCullTree::IAddPolyRecur(const plCullPoly& poly, Int16 iNode)
+int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
 {
     if( poly.fVerts.GetCount() < 3 )
         return iNode;
@@ -759,16 +759,16 @@ Int16 plCullTree::IAddPolyRecur(const plCullPoly& poly, Int16 iNode)
     return iNode;
 }
 
-Int16 plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
+int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
 {
-    Int16 retINode = fNodeList.GetCount();
+    int16_t retINode = fNodeList.GetCount();
     plCullNode* nextNode = fNodeList.Push();
     hsVector3 a;
     hsVector3 b;
     a.Set(&poly.fVerts[i0], &fViewPos);
     b.Set(&poly.fVerts[i1], &fViewPos);
     hsVector3 n = a % b;
-    hsScalar d = -n.InnerProduct(fViewPos);
+    float d = -n.InnerProduct(fViewPos);
 
     IDEBUG_NORMALIZE(n, d);
 
@@ -777,21 +777,21 @@ Int16 plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
     return retINode;
 }
 
-Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
+int16_t plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
 {
     if( fCapturePolys )
         IVisPoly(poly, true);
 
     int firstNode = fNodeList.GetCount();
 
-    Int16 iNode = -1;
+    int16_t iNode = -1;
 
     int i;
     for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
-            Int16 child = IMakePolyNode(poly, i, i+1);
+            int16_t child = IMakePolyNode(poly, i, i+1);
             if( iNode >= 0 )
                 IGetNode(iNode)->fOuterChild = child;
             iNode = child;
@@ -799,7 +799,7 @@ Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
     }
     if( !poly.fClipped.IsBitSet(i) )
     {
-        Int16 child = IMakePolyNode(poly, i, 0);
+        int16_t child = IMakePolyNode(poly, i, 0);
         if( iNode >= 0 )
             IGetNode(iNode)->fOuterChild = child;
         iNode = child;
@@ -813,7 +813,7 @@ Int16 plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
     return firstNode;
 }
 
-Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
+int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 {
     poly.Validate();
 
@@ -825,14 +825,14 @@ Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 
     int firstNode = fNodeList.GetCount();
 
-    Int16 iNode = -1;
+    int16_t iNode = -1;
 
     int i;
     for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
-            Int16 child = IMakePolyNode(poly, i, i+1);
+            int16_t child = IMakePolyNode(poly, i, i+1);
             if( iNode >= 0 )
                 IGetNode(iNode)->fInnerChild = child;
             iNode = child;
@@ -840,7 +840,7 @@ Int16 plCullTree::IMakePolySubTree(const plCullPoly& poly) const
     }
     if( !poly.fClipped.IsBitSet(i) )
     {
-        Int16 child = IMakePolyNode(poly, i, 0);
+        int16_t child = IMakePolyNode(poly, i, 0);
         if( iNode >= 0 )
             IGetNode(iNode)->fInnerChild = child;
         iNode = child;
@@ -971,7 +971,7 @@ void plCullTree::ReleaseCapture() const
 // End visualization section of the program
 ///////////////////////////////////////////////////////////////////
 
-void plCullTree::ISetupScratch(UInt16 nNodes)
+void plCullTree::ISetupScratch(uint16_t nNodes)
 {
     ScratchPolys().SetCount(nNodes << 1);
     ScratchPolys().SetCount(0);
@@ -996,11 +996,11 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
     fNodeList.SetCount(6);
     fNodeList.SetCount(0);
 
-    Int16       lastIdx = -1;
+    int16_t       lastIdx = -1;
 
     plCullNode* node;
     hsVector3 norm;
-    hsScalar dist;
+    float dist;
 
     int i;
     for( i = 0; i < 2; i++ )
@@ -1067,7 +1067,7 @@ void plCullTree::SetViewPos(const hsPoint3& p)
 //////////////////////////////////////////////////////////////////////
 // Use the tree
 //////////////////////////////////////////////////////////////////////
-void plCullTree::Harvest(const plSpaceTree* space, hsTArray<Int16>& outList) const
+void plCullTree::Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
 {
     outList.SetCount(0);
     if (!space->IsEmpty())
@@ -1080,7 +1080,7 @@ hsBool plCullTree::BoundsVisible(const hsBounds3Ext& bnd) const
     return plCullNode::kCulled != IGetRoot()->ITestBoundsRecur(bnd);
 }
 
-hsBool plCullTree::SphereVisible(const hsPoint3& center, hsScalar rad) const
+hsBool plCullTree::SphereVisible(const hsPoint3& center, float rad) const
 {
     return plCullNode::kCulled != IGetRoot()->ITestSphereRecur(center, rad);
 }

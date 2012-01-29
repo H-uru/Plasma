@@ -80,7 +80,7 @@ public:
     
     virtual void    SetMin(const int m); // sets minimum falloff distance
     virtual void    SetMax(const int m); // sets maximum falloff distance
-    virtual void    SetConeOrientation(hsScalar x, hsScalar y, hsScalar z);
+    virtual void    SetConeOrientation(float x, float y, float z);
     virtual void    SetOuterVolume( const int v ); // volume for the outer cone (if applicable)
     virtual void    SetConeAngles( int inner, int outer );
     virtual void    SetPosition(const hsPoint3 pos);
@@ -93,8 +93,8 @@ public:
     };
 
     // Selects a channel source from a multi-channel (stereo) file. Ignored if source is mono
-    void            SetChannelSelect( ChannelSelect source ) { fChannelSelect = (UInt8)source; }
-    virtual UInt8   GetChannelSelect( void ) const { return fChannelSelect; }
+    void            SetChannelSelect( ChannelSelect source ) { fChannelSelect = (uint8_t)source; }
+    virtual uint8_t   GetChannelSelect( void ) const { return fChannelSelect; }
     
 protected:
 
@@ -103,11 +103,11 @@ protected:
     hsBool              fFailed;
     hsBool              fPositionInited, fAwaitingPosition;
     hsBool              fReallyPlaying;
-    UInt32              fTotalBytes;
+    uint32_t              fTotalBytes;
 
     hsBool              fWasPlaying;
     
-    UInt8               fChannelSelect;     // For selecting a mono channel from a stereo file
+    uint8_t               fChannelSelect;     // For selecting a mono channel from a stereo file
 
     hsTArray<plSoundEvent *>    fSoundEvents;
 
@@ -125,7 +125,7 @@ protected:
 
     virtual void    IAddCallback( plEventCallbackMsg *pMsg );
     virtual void    IRemoveCallback( plEventCallbackMsg *pMsg );
-    plSoundEvent    *IFindEvent( plSoundEvent::Types type, UInt32 bytePos = 0 );
+    plSoundEvent    *IFindEvent( plSoundEvent::Types type, uint32_t bytePos = 0 );
 
     virtual void    IRead( hsStream *s, hsResMgr *mgr );
     virtual void    IWrite( hsStream *s, hsResMgr *mgr );

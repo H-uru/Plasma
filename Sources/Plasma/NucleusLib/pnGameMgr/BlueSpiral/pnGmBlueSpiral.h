@@ -112,12 +112,12 @@ enum {
         // empty
     };
     struct Cli2Srv_BlueSpiral_HitCloth : GameMsgHeader {
-        byte clothNum; // the cloth we hit, 0..6
+        uint8_t clothNum; // the cloth we hit, 0..6
     };
 
     // Srv2Cli
     struct Srv2Cli_BlueSpiral_ClothOrder : GameMsgHeader {
-        byte order[7]; // each value is the cloth to hit, 0..6, the order is the order in the array
+        uint8_t order[7]; // each value is the cloth to hit, 0..6, the order is the order in the array
     };
     struct Srv2Cli_BlueSpiral_SuccessfulHit : GameMsgHeader {
         // empty

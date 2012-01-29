@@ -98,7 +98,7 @@ bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = TRACKED_NEW hsUNIXStream;
+        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
@@ -125,7 +125,7 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = TRACKED_NEW hsUNIXStream;
+        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
@@ -250,7 +250,7 @@ bool plNetClientStreamRecorder::IIsValidMsg(plNetMessage* msg)
 {
     if (plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg))
     {
-        Int16 type = gameMsg->StreamInfo()->GetStreamType();
+        int16_t type = gameMsg->StreamInfo()->GetStreamType();
 
         //
         // These messages will be regenerated if they are for the local avatar,
@@ -367,7 +367,7 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
 
 bool plNetClientStressStreamRecorder::IsRecordableMsg(plNetMessage* msg) const
 {
-    UInt16 idx = msg->ClassIndex();
+    uint16_t idx = msg->ClassIndex();
 
     return (
         plNetClientStreamRecorder::IsRecordableMsg(msg)

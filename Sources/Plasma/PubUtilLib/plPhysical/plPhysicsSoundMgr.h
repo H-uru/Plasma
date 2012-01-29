@@ -84,7 +84,7 @@ private:
     void IStartCollision(const CollidePair& cp);
     void IStopCollision(const CollidePair& cp);
     void IUpdateCollision(const CollidePair& cp);
-    void IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength);
+    void IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, float strength);
     
     typedef std::set<CollidePair> CollideSet;
     CollideSet fPrevCollisions;

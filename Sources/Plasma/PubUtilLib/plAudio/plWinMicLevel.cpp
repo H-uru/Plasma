@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plWinMicLevel.h"
-#include "hsWindows.h"
+
 
 #if HS_BUILD_FOR_WIN32
 #include <mmsystem.h>
@@ -86,7 +86,7 @@ MIXERLINE       *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type );
 
 //// The Publics /////////////////////////////////////////////////////////////
 
-hsScalar    plWinMicLevel::GetLevel( void )
+float    plWinMicLevel::GetLevel( void )
 {
     if( !CanSetLevel() )
         return -1;
@@ -96,13 +96,13 @@ hsScalar    plWinMicLevel::GetLevel( void )
     if( !IGetControlValue( rawValue ) ) 
         return -1;
 
-    return (hsScalar)( rawValue - sMinValue ) / (hsScalar)( sMaxValue - sMinValue );
+    return (float)( rawValue - sMinValue ) / (float)( sMaxValue - sMinValue );
 #else
     return -1;
 #endif
 }
 
-void    plWinMicLevel::SetLevel( hsScalar level )
+void    plWinMicLevel::SetLevel( float level )
 {
     if( !CanSetLevel() )
         return;
@@ -361,7 +361,7 @@ MIXERLINE   *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type )
 {
     // A mixer or MUX is really a combination of MORE lines. And beautifully, you can't
     // just ask for a single one off of it, you have to ask for them all and search through yourself
-    MIXERCONTROLDETAILS_LISTTEXT *lineInfo = TRACKED_NEW MIXERCONTROLDETAILS_LISTTEXT[ mux->cMultipleItems ];
+    MIXERCONTROLDETAILS_LISTTEXT *lineInfo = new MIXERCONTROLDETAILS_LISTTEXT[ mux->cMultipleItems ];
     if( lineInfo == nil )
         return nil;
 

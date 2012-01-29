@@ -88,7 +88,7 @@ class plSoftSoundNode
 {
     public:
         const plKey fSoundKey;
-        hsScalar    fRank;
+        float    fRank;
 
         plSoftSoundNode *fNext;
         plSoftSoundNode **fPrev;
@@ -120,7 +120,7 @@ class plSoftSoundNode
             }
         }
 
-        void    SortedLink( plSoftSoundNode **prev, hsScalar rank )
+        void    SortedLink( plSoftSoundNode **prev, float rank )
         {
             fRank = rank;
 
@@ -132,7 +132,7 @@ class plSoftSoundNode
         }
 
         // Larger values are first in the list
-        void    AddToSortedLink( plSoftSoundNode *toAdd, hsScalar rank )
+        void    AddToSortedLink( plSoftSoundNode *toAdd, float rank )
         {
             if( fRank > rank )
             {
@@ -162,8 +162,8 @@ class plSoftSoundNode
 
 // plAudioSystem //////////////////////////////////////////////////////////////////////////
 
-Int32   plAudioSystem::fMaxNumSounds = 16;
-Int32   plAudioSystem::fNumSoundsSlop = 8;
+int32_t   plAudioSystem::fMaxNumSounds = 16;
+int32_t   plAudioSystem::fNumSoundsSlop = 8;
 
 plAudioSystem::plAudioSystem() :
 fStartTime(0),
@@ -512,7 +512,7 @@ void plAudioSystem::SetDistanceModel(int i)
 // Set the number of active sounds the audio system is allowed to play, based on the priority cutoff
 void plAudioSystem::SetMaxNumberOfActiveSounds()
 {
-    UInt16 priorityCutoff = plgAudioSys::GetPriorityCutoff();
+    uint16_t priorityCutoff = plgAudioSys::GetPriorityCutoff();
     int maxNumSounds = 24;
     
     // Keep this to a reasonable amount based on the users hardware, since we want the sounds to be played in hardware
@@ -553,7 +553,7 @@ void    plAudioSystem::SetActive( hsBool b )
     if( fActive )
     {
         // Clear to send activate message (if listener not inited yet, delay until then)
-        plgDispatch::MsgSend( TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kActivate ) );
+        plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kActivate ) );
     }
 }
 
@@ -565,7 +565,7 @@ void    plAudioSystem::SetActive( hsBool b )
 //  need to be recalced, just resorted.
 void    plAudioSystem::RegisterSoftSound( const plKey soundKey )
 {
-    plSoftSoundNode *node = TRACKED_NEW plSoftSoundNode( soundKey );
+    plSoftSoundNode *node = new plSoftSoundNode( soundKey );
     node->Link( &fSoftRegionSounds );
 
     fCurrDebugSound = nil;
@@ -632,9 +632,9 @@ void    plAudioSystem::UnregisterSoftSound( const plKey soundKey )
 void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
 {
     plSoftSoundNode *node, *myNode;
-    hsScalar        distSquared, rank;
+    float        distSquared, rank;
     plSoftSoundNode *sortedList = nil;
-    Int32           i;
+    int32_t           i;
     
     plProfile_BeginTiming(SoundSoftUpdate);
     
@@ -779,7 +779,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
         /// Notify sound that it really is still enabled
         sound->UpdateSoftVolume( true );
         
-        UInt32 color = plStatusLog::kGreen;
+        uint32_t color = plStatusLog::kGreen;
         switch (sound->GetStreamType())
         {
             case plSound::kStreamFromDisk:      color = plStatusLog::kYellow;   break;
@@ -896,7 +896,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
             }
             else
             {
-                plgAudioSys::SetGlobalFadeVolume( (hsScalar)((currTime-fStartFade) / fFadeLength) );
+                plgAudioSys::SetGlobalFadeVolume( (float)((currTime-fStartFade) / fFadeLength) );
             }
         }
         return true;
@@ -906,7 +906,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
     {
         if (pASMsg->GetAudFlag() == plAudioSysMsg::kPing && fListenerInit)
         {
-            plAudioSysMsg* pMsg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kActivate );
+            plAudioSysMsg* pMsg = new plAudioSysMsg( plAudioSysMsg::kActivate );
             pMsg->AddReceiver( pASMsg->GetSender() );
             pMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
             plgDispatch::MsgSend( pMsg );
@@ -996,14 +996,14 @@ hsBool          plgAudioSys::fMuted = true;
 hsBool          plgAudioSys::fDelayedActivate = false;
 hsBool          plgAudioSys::fEnableEAX = false;
 hsWindowHndl    plgAudioSys::fWnd = nil;
-hsScalar        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
-hsScalar        plgAudioSys::f2D3DBias = 0.75f;
-UInt32          plgAudioSys::fDebugFlags = 0;
-hsScalar        plgAudioSys::fStreamingBufferSize = 2.f;
-hsScalar        plgAudioSys::fStreamFromRAMCutoff = 10.f;
-UInt8           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
+float        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
+float        plgAudioSys::f2D3DBias = 0.75f;
+uint32_t          plgAudioSys::fDebugFlags = 0;
+float        plgAudioSys::fStreamingBufferSize = 2.f;
+float        plgAudioSys::fStreamFromRAMCutoff = 10.f;
+uint8_t           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
 hsBool          plgAudioSys::fEnableExtendedLogs = false;
-hsScalar        plgAudioSys::fGlobalFadeVolume = 1.f;
+float        plgAudioSys::fGlobalFadeVolume = 1.f;
 hsBool          plgAudioSys::fLogStreamingUpdates = false;
 std::string     plgAudioSys::fDeviceName;
 hsBool          plgAudioSys::fRestarting = false;
@@ -1011,7 +1011,7 @@ hsBool          plgAudioSys::fMutedStateChange = false;
 
 void plgAudioSys::Init(hsWindowHndl hWnd)
 {
-    fSys = TRACKED_NEW plAudioSystem;
+    fSys = new plAudioSystem;
     fSys->RegisterAs( kAudioSystem_KEY );
     plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
@@ -1159,7 +1159,7 @@ void plgAudioSys::Activate(hsBool b)
         if( !IsMuted() )
         {
             SetMuted( true );
-            plAudioSysMsg *msg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kUnmuteAll );
+            plAudioSysMsg *msg = new plAudioSysMsg( plAudioSysMsg::kUnmuteAll );
             msg->SetTimeStamp( hsTimer::GetSysSeconds() );
             msg->AddReceiver( fSys->GetKey() );
             msg->SetBCastFlag( plMessage::kBCastByExactType, false );
@@ -1171,11 +1171,11 @@ void plgAudioSys::Activate(hsBool b)
     fSys->SetActive( false );
     
     plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Sending deactivate/destroy messages --" );
-    plgDispatch::MsgSend( TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
+    plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
 
     // Send ourselves a shutdown message, so that the deactivates get processed first
     fSys->fWaitingForShutdown = true;
-    plAudioSysMsg *msg = TRACKED_NEW plAudioSysMsg( plAudioSysMsg::kDestroy );
+    plAudioSysMsg *msg = new plAudioSysMsg( plAudioSysMsg::kDestroy );
     msg->SetBCastFlag( plMessage::kBCastByExactType, false );
     msg->Send( fSys->GetKey() );
 //  fSys->Shutdown();
@@ -1183,12 +1183,12 @@ void plgAudioSys::Activate(hsBool b)
     fInit = false;
 }
 
-void    plgAudioSys::SetChannelVolume( ASChannel chan, hsScalar vol )
+void    plgAudioSys::SetChannelVolume( ASChannel chan, float vol )
 {
     fChannelVolumes[ chan ] = vol;
 }
 
-void    plgAudioSys::SetGlobalFadeVolume( hsScalar vol )
+void    plgAudioSys::SetGlobalFadeVolume( float vol )
 {
     if(!fMuted)
         fGlobalFadeVolume = vol;
@@ -1196,7 +1196,7 @@ void    plgAudioSys::SetGlobalFadeVolume( hsScalar vol )
         fGlobalFadeVolume = 0;
 }
 
-hsScalar    plgAudioSys::GetChannelVolume( ASChannel chan )
+float    plgAudioSys::GetChannelVolume( ASChannel chan )
 {
     return fChannelVolumes[ chan ];
 }
@@ -1206,12 +1206,12 @@ void    plgAudioSys::NextDebugSound( void )
     fSys->NextDebugSound();
 }
 
-void plgAudioSys::Set2D3DBias( hsScalar bias )
+void plgAudioSys::Set2D3DBias( float bias )
 {
     f2D3DBias = bias;
 }
 
-hsScalar plgAudioSys::Get2D3Dbias()
+float plgAudioSys::Get2D3Dbias()
 {
     return f2D3DBias;
 }

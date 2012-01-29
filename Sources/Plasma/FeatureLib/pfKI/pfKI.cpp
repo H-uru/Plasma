@@ -102,7 +102,7 @@ class plKIYesNoBox : public pfGUIDialogProc
     protected:
 
         pfGUICtrlProcObject *fCBProc;
-        UInt32              fNoCBValue, fYesCBValue;
+        uint32_t              fNoCBValue, fYesCBValue;
 
     public:
 
@@ -110,7 +110,7 @@ class plKIYesNoBox : public pfGUIDialogProc
 
         virtual void    DoSomething( pfGUIControlMod *ctrl )
         {
-            UInt32  cbValue = 0;
+            uint32_t  cbValue = 0;
 
             if( ctrl->GetTagID() == kKIYesBtn )
             {
@@ -133,7 +133,7 @@ class plKIYesNoBox : public pfGUIDialogProc
             ctrl->SetText( msg );
         }
 
-        void    Ask( const char *msg, pfGUICtrlProcObject *callbackProc, UInt32 noCBValue, UInt32 yesCBValue )
+        void    Ask( const char *msg, pfGUICtrlProcObject *callbackProc, uint32_t noCBValue, uint32_t yesCBValue )
         {
             SetMessage( msg );
             fCBProc = callbackProc;
@@ -232,7 +232,7 @@ class plKIMainProc : public pfGUIDialogProc
 
         virtual void    DoSomething( pfGUIControlMod *ctrl );
         virtual void    OnHide( void );
-        virtual void    UserCallback( UInt32 userValue );       
+        virtual void    UserCallback( uint32_t userValue );       
         virtual void    OnInit( void );
         virtual void    OnShow( void );
 
@@ -433,7 +433,7 @@ void    plKIMainProc::OnHide( void )
     plBlackBarProc::ClearKIButtons();
 }
 
-void    plKIMainProc::UserCallback( UInt32 userValue )
+void    plKIMainProc::UserCallback( uint32_t userValue )
 {
     if( userValue == 1 )
     {
@@ -456,7 +456,7 @@ void    plKIMainProc::OnShow( void )
 
 void    plKIMainProc::GrabVaultFolder( void ) 
 {
-    Int16 sel = -1;
+    int16_t sel = -1;
 
 
     plKI *kiVault = plNetClientMgr::GetInstance()->GetPlayerKI();
@@ -470,7 +470,7 @@ void    plKIMainProc::GrabVaultFolder( void )
     plKIFolderVec * folders = kiVault->GetFolders();
     for( plKIFolderVec::const_iterator folderIter = folders->begin(); folderIter != folders->end(); ++folderIter )
     {
-        UInt16 id = listsList->AddElement( new pfKIListItemElement( *folderIter ) );
+        uint16_t id = listsList->AddElement( new pfKIListItemElement( *folderIter ) );
         if( *folderIter == fKIFolder )
             sel = id;
     }
@@ -542,7 +542,7 @@ class pfKIChatElement : public pfGUIListElement
         plKITextNoteElement *fDataItem;
         hsColorRGBA         fTextColor;
         char                *fString;
-        UInt32              fFlags;
+        uint32_t              fFlags;
 
     public:
 
@@ -557,7 +557,7 @@ class pfKIChatElement : public pfGUIListElement
             sprintf( fString, "%s: %s", source->GetTitle(), source->GetText() );
         }
 
-        pfKIChatElement( const char *user, const char *msg, UInt32 flags ) : pfGUIListElement( 0 )
+        pfKIChatElement( const char *user, const char *msg, uint32_t flags ) : pfGUIListElement( 0 )
         {
             fDataItem = nil;
             fFlags = flags;
@@ -582,7 +582,7 @@ class pfKIChatElement : public pfGUIListElement
 
         virtual ~pfKIChatElement() { delete [] fString; }
 
-        virtual void    Draw( plDynamicTextMap *textGen, UInt16 x, UInt16 y, UInt16 maxWidth, UInt16 maxHeight )
+        virtual void    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
         {
             if( fFlags & kHackFlagLocalMsg )
                 fTextColor.a = fColors->fSelForeColor.a;
@@ -594,7 +594,7 @@ class pfKIChatElement : public pfGUIListElement
             textGen->DrawWrappedString( x + 2, y, fString, maxWidth - 4, maxHeight );
         }
 
-        virtual void    GetSize( plDynamicTextMap *textGen, UInt16 *width, UInt16 *height )
+        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
         {
             *width = textGen->GetVisibleWidth() - 4;
             textGen->CalcWrappedStringSize( fString, width, height );
@@ -840,7 +840,7 @@ class plKIMiniProc : public pfGUIDialogProc
             }
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, UInt32 event )
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
         {
             // The only controls that will trigger a HandleExtendedEvent() are the ones that we want
             // to have force the text to show
@@ -922,7 +922,7 @@ class plKIMiniProc : public pfGUIDialogProc
             fChatList->ScrollToBegin();
         }
 */
-        void    ReceivedChatItem( const char *user, const char *msg, UInt32 flags )
+        void    ReceivedChatItem( const char *user, const char *msg, uint32_t flags )
         {
             if( fChatList == nil )
                 return;
@@ -952,7 +952,7 @@ class plKIMiniProc : public pfGUIDialogProc
                 pfGUIListBoxMod     *userList = pfGUIListBoxMod::ConvertNoRef( fDialog->GetControlFromTag( kKITempID_PlayerList ) );
                 pfKIListPlayerItem  *currPlayer = nil;
                 int                 mbrIndex = -1;
-                UInt32              msgFlags;
+                uint32_t              msgFlags;
 
                 if( userList != nil && userList->GetNumElements() > 0 && userList->GetSelection() != -1 )
                     currPlayer = (pfKIListPlayerItem *)userList->GetElement( userList->GetSelection() );

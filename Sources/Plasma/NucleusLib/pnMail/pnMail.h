@@ -77,7 +77,7 @@ typedef void (* FMailResult)(void * param, EMailError result);
 void MailStop ();
 bool MailQueued ();
 
-const wchar * MailErrorToString (EMailError error);
+const wchar_t * MailErrorToString (EMailError error);
 
 
 //============================================================================

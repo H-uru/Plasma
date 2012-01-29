@@ -58,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
-#include "hsWindows.h"
+#include "HeadSpin.h"
+
 #include "plWinFontCache.h"
 
 #include "plStatusLog/plStatusLog.h"
@@ -93,7 +93,7 @@ plWinFontCache  &plWinFontCache::GetInstance( void )
     return cache;
 }
 
-HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, hsBool italic, UInt32 quality )
+HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, hsBool italic, uint32_t quality )
 {
     int     i;
 
@@ -114,7 +114,7 @@ HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, hsB
     return nil;
 }
 
-HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, hsBool italic, UInt32 quality )
+HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, hsBool italic, uint32_t quality )
 {
     plFontRecord    myRec;
     int             i;
@@ -206,7 +206,7 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, hsB
     return myRec.fFont;
 }
 
-HFONT   plWinFontCache::GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality )
+HFONT   plWinFontCache::GetMeAFont( const char *face, int height, int weight, hsBool italic, uint32_t quality )
 {
     HFONT   font = IFindFont( face, height, weight, italic, quality );
     if( font == nil )
@@ -287,7 +287,7 @@ void    plWinFontCache::ILoadCustomFonts( void )
         if( numAdded > 0 )
         {
             plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Added custom font %s, %d fonts", fileName, numAdded );
-            fCustFonts.Append( TRACKED_NEW plCustFont( fileName ) );
+            fCustFonts.Append( new plCustFont( fileName ) );
         }
         else
         {

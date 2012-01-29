@@ -116,7 +116,7 @@ static void GetCachedServerKey (
 void NetMsgCryptClientStart (
     NetMsgChannel * channel,
     unsigned        seedBytes,
-    const byte      seedData[],
+    const uint8_t      seedData[],
     BigNum *        clientSeed,
     BigNum *        serverSeed
 ) {
@@ -146,7 +146,7 @@ void NetMsgCryptClientStart (
 void NetMsgCryptServerConnect (
     NetMsgChannel * channel,
     unsigned        seedBytes,
-    const byte      seedData[],
+    const uint8_t      seedData[],
     BigNum *        clientSeed
 ) {
     // Server computes client key: ka = y^a mod n

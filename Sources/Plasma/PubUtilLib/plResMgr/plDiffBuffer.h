@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDiffBuffer_h
 #define _plDiffBuffer_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ class plDiffBuffer
     protected:
 
         hsBool      fWriting, f16BitMode;
-        UInt32      fNewLength;
+        uint32_t      fNewLength;
         hsRAMStream *fStream;
         
         // Support for BSDiff patch buffers (Patching only)
@@ -91,8 +91,8 @@ class plDiffBuffer
 
     public:
 
-        plDiffBuffer( UInt32 newLength, UInt32 oldLength = 0 );     // Constructor for writing new buffers. oldLength isn't required but helpful for optimizations
-        plDiffBuffer( void *buffer, UInt32 length );    // Constructor for applying a given diff set
+        plDiffBuffer( uint32_t newLength, uint32_t oldLength = 0 );     // Constructor for writing new buffers. oldLength isn't required but helpful for optimizations
+        plDiffBuffer( void *buffer, uint32_t length );    // Constructor for applying a given diff set
                                                         // to an old buffer
         virtual ~plDiffBuffer();
 
@@ -100,19 +100,19 @@ class plDiffBuffer
         /// Creation/write functions
 
         // Add() appends an Add-New-Data operation to the diff buffer. The data supplied will be copied internally.
-        void    Add( Int32 length, void *newData );
+        void    Add( int32_t length, void *newData );
 
         // Copy() appends a Copy-Data-From-Old operation to the diff buffer
-        void    Copy( Int32 length, UInt32 oldOffset );
+        void    Copy( int32_t length, uint32_t oldOffset );
 
         // GetBuffer() will copy the diff stream into a new buffer and return it. You are responsible for freeing the buffer.
-        void    GetBuffer( UInt32 &length, void *&bufferPtr );
+        void    GetBuffer( uint32_t &length, void *&bufferPtr );
 
 
         /// Apply functions
 
         // Apply() will take this diff buffer and apply it to the given old buffer, allocating and producing a new buffer. You are responsible for freeing the new buffer.
-        void    Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLength, void *&newBuffer );
+        void    Apply( uint32_t oldLength, void *oldBuffer, uint32_t &newLength, void *&newBuffer );
 
 };
 

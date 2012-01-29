@@ -51,10 +51,10 @@ class plRandomSoundModGroup
 {
 public:
     hsBitVector fExcluded;
-    Int8 fCurrent;
-    UInt16 fNumSounds;
-    UInt16 *fIndices;
-    Int16   fGroupedIdx;        // Only used if we point to a groupedSound, in which case fIndices are indices into
+    int8_t fCurrent;
+    uint16_t fNumSounds;
+    uint16_t *fIndices;
+    int16_t   fGroupedIdx;        // Only used if we point to a groupedSound, in which case fIndices are indices into
                                 // that sound. -1 if unused.
 
     plRandomSoundModGroup();
@@ -67,17 +67,17 @@ public:
 class plRandomSoundMod : public plRandomCommandMod
 {
 protected:
-    UInt16 fCurrentGroup;
-    UInt16 fNumGroups;
+    uint16_t fCurrentGroup;
+    uint16_t fNumGroups;
     plRandomSoundModGroup *fGroups;
-    std::vector<UInt16> fActiveList;    // list of sounds we're allowed to choose
+    std::vector<uint16_t> fActiveList;    // list of sounds we're allowed to choose
     int              fOldPriority;      // old sound priority
     hsBool          fFirstTimePlay;
     
     virtual void    IPlayNext();
     virtual void    IPlayNextIfMaster();
     virtual void    IStop();
-    void            ISetVolume(hsScalar volume);
+    void            ISetVolume(float volume);
     void            ISetPosition(hsPoint3);
     plSound         *IGetSoundPtr(); 
     
@@ -91,14 +91,14 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    void SetCurrentGroup(UInt16 group);
+    void SetCurrentGroup(uint16_t group);
         
     void    ForceSoundLoadState( hsBool loaded );
     hsBool  MsgReceive(plMessage* msg);
     float           GetVolume();
 
     // EXPORT ONLY
-    void SetGroupInfo(UInt16 numGroups, plRandomSoundModGroup *groups) { fNumGroups = numGroups; fGroups = groups; }
+    void SetGroupInfo(uint16_t numGroups, plRandomSoundModGroup *groups) { fNumGroups = numGroups; fGroups = groups; }
 };
 
 #endif // plRandomSoundMod_inc

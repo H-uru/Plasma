@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "istdplug.h"
 #include "custcont.h"
 
-#include "HeadSpin.h"
-
 #include "MaxExport/SimpleExport.h"
 #include "MaxMain/MaxCompat.h"
 
@@ -172,7 +170,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
         }
         
         // Initialize the ResManager
-        plResManager* pRmgr = TRACKED_NEW plPluginResManager;
+        plResManager* pRmgr = new plPluginResManager;
         hsgResMgr::Init(pRmgr);
     }
 
@@ -240,7 +238,7 @@ class plGeneralAttribClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return 1; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plGeneralAttrib; }
+    void*           Create(BOOL loading) { return new plGeneralAttrib; }
     const TCHAR*    ClassName()     { return _T("Plasma Attrib"); }
     SClass_ID       SuperClassID()  { return CUST_ATTRIB_CLASS_ID; }
     Class_ID        ClassID()       { return PL_GEN_ATTRIB_CLASS_ID; }

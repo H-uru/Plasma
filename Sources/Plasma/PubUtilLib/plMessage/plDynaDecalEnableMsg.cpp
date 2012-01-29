@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaDecalEnableMsg.h"
 
 #include "hsResMgr.h"
@@ -51,11 +51,11 @@ plDynaDecalEnableMsg::plDynaDecalEnableMsg()
     fKey(nil),
     fFlags(0),
     fConTime(0),
-    fID(UInt32(-1))
+    fID(uint32_t(-1))
 {
 }
 
-plDynaDecalEnableMsg::plDynaDecalEnableMsg(const plKey& r, const plKey& a, double t, hsScalar w, hsBool end, UInt32 id, hsBool isArm)
+plDynaDecalEnableMsg::plDynaDecalEnableMsg(const plKey& r, const plKey& a, double t, float w, hsBool end, uint32_t id, hsBool isArm)
 :   plMessage(nil, r, nil),
     fKey(a),
     fFlags(0),

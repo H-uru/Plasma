@@ -69,7 +69,7 @@ hsBool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
 }
 
 
-hsScalar pyGUIControlValue::GetValue()
+float pyGUIControlValue::GetValue()
 {
     if ( fGCkey )
     {
@@ -81,7 +81,7 @@ hsScalar pyGUIControlValue::GetValue()
     return 0.0;
 }
 
-void pyGUIControlValue::SetValue( hsScalar v )
+void pyGUIControlValue::SetValue( float v )
 {
     if ( fGCkey )
     {
@@ -92,7 +92,7 @@ void pyGUIControlValue::SetValue( hsScalar v )
     }
 }
 
-hsScalar pyGUIControlValue::GetMin( void )
+float pyGUIControlValue::GetMin( void )
 {
     if ( fGCkey )
     {
@@ -104,7 +104,7 @@ hsScalar pyGUIControlValue::GetMin( void )
     return 0.0;
 }
 
-hsScalar pyGUIControlValue::GetMax( void )
+float pyGUIControlValue::GetMax( void )
 {
     if ( fGCkey )
     {
@@ -116,7 +116,7 @@ hsScalar pyGUIControlValue::GetMax( void )
     return 0.0;
 }
 
-hsScalar pyGUIControlValue::GetStep( void )
+float pyGUIControlValue::GetStep( void )
 {
     if ( fGCkey )
     {
@@ -128,7 +128,7 @@ hsScalar pyGUIControlValue::GetStep( void )
     return 0.0;
 }
 
-void pyGUIControlValue::SetRange( hsScalar min, hsScalar max )
+void pyGUIControlValue::SetRange( float min, float max )
 {
     if ( fGCkey )
     {
@@ -139,7 +139,7 @@ void pyGUIControlValue::SetRange( hsScalar min, hsScalar max )
     }
 }
 
-void pyGUIControlValue::SetStep( hsScalar step )
+void pyGUIControlValue::SetStep( float step )
 {
     if ( fGCkey )
     {

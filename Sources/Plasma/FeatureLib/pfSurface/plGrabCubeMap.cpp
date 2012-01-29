@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plGrabCubeMap.h"
 
@@ -87,7 +87,7 @@ void plGrabCubeRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 }
 
 
-void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
 {
     hsPoint3 center;
     if( obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
@@ -105,18 +105,18 @@ void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* p
     ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
-void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
 {
     ISetupRenderRequests(pipe, center, pref, clearColor, q);
 }
 
-void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, UInt8 q) const
+void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q) const
 {
     hsMatrix44 worldToCameras[6];
     hsMatrix44 cameraToWorlds[6];
     hsMatrix44::MakeEnvMapMatrices(center, worldToCameras, cameraToWorlds);
 
-    UInt32 renderState 
+    uint32_t renderState 
         = plPipeline::kRenderNormal
         | plPipeline::kRenderClearColor
         | plPipeline::kRenderClearDepth;
@@ -136,7 +136,7 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
     int i;
     for( i = 0; i < 6; i++ )
     {
-        plGrabCubeRenderRequest* req = TRACKED_NEW plGrabCubeRenderRequest;
+        plGrabCubeRenderRequest* req = new plGrabCubeRenderRequest;
         req->SetRenderState(renderState);
 
         req->SetDrawableMask(plDrawable::kNormal);
@@ -159,7 +159,7 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
         req->fQuality = q;
         sprintf(req->fFileName, "%s_%s.jpg", pref, suff[i]);
 
-        plRenderRequestMsg* reqMsg = TRACKED_NEW plRenderRequestMsg(nil, req);
+        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nil, req);
         reqMsg->Send();
         hsRefCnt_SafeUnRef(req);
     }

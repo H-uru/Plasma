@@ -116,7 +116,7 @@ void plSoundSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState)
             {
                 //double timeStarted;
                 /*if (soundState->FindVar(kStrTime)->Get(&timeStarted))
-                    sound->SynchedPlay((hsScalar)timeStarted);
+                    sound->SynchedPlay((float)timeStarted);
                 else
                 {
                     // Can't get the time we're supposed to start at, so we'll just try to play normally,

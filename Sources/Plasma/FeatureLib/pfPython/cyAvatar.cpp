@@ -179,7 +179,7 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAvOneShotMsg* pMsg = TRACKED_NEW plAvOneShotMsg(
+        plAvOneShotMsg* pMsg = new plAvOneShotMsg(
             (plKey )fSender,
             nil,
             seekKey.getKey(),   // Mark D told me to do it ...paulg
@@ -226,7 +226,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
         if ( plOneShotMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
         {
             // create a message OneShotMessage
-            plOneShotMsg* pMsg = TRACKED_NEW plOneShotMsg;
+            plOneShotMsg* pMsg = new plOneShotMsg;
             // check if this needs to be network forced to all clients
             if (netProp)
             {
@@ -267,7 +267,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
         {
             // its a multistage thingy... need to send it a plNotifyMsg
             // create new notify message to do the actual send with
-            plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* pNMsg = new plNotifyMsg;
 
             // set whether this should be forced over the network (ignoring net-cascading)
             if (netProp)
@@ -320,7 +320,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netFor
     {
         // its a multistage thingy... need to send it a plNotifyMsg
         // create new notify message to do the actual send with
-        plNotifyMsg* pNMsg = TRACKED_NEW plNotifyMsg;
+        plNotifyMsg* pNMsg = new plNotifyMsg;
 
         // set whether this should be forced over the network (ignoring net-cascading)
         if (netProp)
@@ -372,7 +372,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netFor
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -385,7 +385,7 @@ void cyAvatar::NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsSc
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kNextStage, 0, setTime, newTime,
                     setDirection, (bool)isForward, transTime);
 
@@ -411,7 +411,7 @@ void cyAvatar::NextStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsSc
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -424,7 +424,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, 
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kPrevStage, 0, setTime, newTime,
                     setDirection, (bool)isForward, transTime);
 
@@ -451,7 +451,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, hsScalar transTime, hsBool setTime, 
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool setTime, hsScalar newTime,
+void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
                         hsBool setDirection, bool isForward, hsBool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
@@ -464,7 +464,7 @@ void cyAvatar::GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool 
             if ( avKey )
             {
                 // create the message
-                plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg((plKey)fSender, avKey,
+                plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kGotoStage, stage, setTime, newTime,
                     setDirection, isForward, transTime);
 
@@ -479,15 +479,15 @@ void cyAvatar::GoToStage(pyKey &behKey, Int32 stage, hsScalar transTime, hsBool 
 }
 
 
-void cyAvatar::SetLoopCount(pyKey &behKey, Int32 stage, Int32 loopCount, hsBool netForce)
+void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsBool netForce)
 {
     // if it is a Multistage guy
     if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
     {
-        plMultistageModMsg* pMsg = TRACKED_NEW plMultistageModMsg((plKey)nil, behKey.getKey());
+        plMultistageModMsg* pMsg = new plMultistageModMsg((plKey)nil, behKey.getKey());
         pMsg->SetCommand(plMultistageModMsg::kSetLoopCount);
-        pMsg->fStageNum = (UInt8)stage;
-        pMsg->fNumLoops = (UInt8)loopCount;
+        pMsg->fStageNum = (uint8_t)stage;
+        pMsg->fNumLoops = (uint8_t)loopCount;
 
         if ( netForce )
             pMsg->SetBCastFlag(plMessage::kNetForce | plMessage::kNetPropagate);
@@ -513,7 +513,7 @@ void cyAvatar::Seek(pyKey &seekKey, float duration, hsBool usePhysics)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAvSeekMsg* pMsg = TRACKED_NEW plAvSeekMsg(
+        plAvSeekMsg* pMsg = new plAvSeekMsg(
             (plKey)fSender,nil, seekKey.getKey(),duration,usePhysics);
 
         // check if this needs to be network forced to all clients
@@ -543,7 +543,7 @@ void cyAvatar::Seek(pyKey &seekKey, float duration, hsBool usePhysics)
 //
 //  PURPOSE    : Return what clothing group the avatar is in
 //
-Int32 cyAvatar::GetAvatarClothingGroup()
+int32_t cyAvatar::GetAvatarClothingGroup()
 {
     // find the avatar's armature modifier
     const plArmatureMod *avMod = nil;
@@ -572,7 +572,7 @@ Int32 cyAvatar::GetAvatarClothingGroup()
 //
 //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
 //
-std::vector<std::string> cyAvatar::GetEntireClothingList(Int32 clothing_type)
+std::vector<std::string> cyAvatar::GetEntireClothingList(int32_t clothing_type)
 {
     // Currently, just all the clothing available will be returned
     hsTArray<plClothingItem*> clothingList = plClothingMgr::GetClothingMgr()->GetItemList();
@@ -594,7 +594,7 @@ std::vector<std::string> cyAvatar::GetEntireClothingList(Int32 clothing_type)
 //
 //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
 //
-std::vector<PyObject*> cyAvatar::GetClosetClothingList(Int32 clothing_type)
+std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
 {
     std::vector<PyObject*> retVal;
 
@@ -816,7 +816,7 @@ void cyAvatar::AddWardrobeClothingItem(const char* clothing_name,pyColor& tint1,
 //  PURPOSE    : Return a list of unique clothing items (each has a different mesh)
 //             : that belong to the specific type
 //
-std::vector<PyObject*> cyAvatar::GetUniqueMeshList(Int32 clothing_type)
+std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
 {
     std::vector<PyObject*> retVal;
 
@@ -1049,7 +1049,7 @@ hsBool cyAvatar::TintClothingItem(const char* clothing_name, pyColor& tint)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, UInt8 layer)
+hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer)
 {
     return TintClothingItemLayerU(clothing_name,tint,layer,true);
 }
@@ -1164,7 +1164,7 @@ hsBool cyAvatar::TintClothingItemU(const char* clothing_name, pyColor& tint, hsB
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, UInt8 layer, hsBool update)
+hsBool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, hsBool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1246,7 +1246,7 @@ PyObject* cyAvatar::GetTintClothingItem(const char* clothing_name)
 //
 //  PURPOSE    : Get the tint a clothing item, i.e. change the color of it
 //
-PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, UInt8 layer)
+PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, uint8_t layer)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1379,7 +1379,7 @@ plMorphSequence* cyAvatar::LocalMorphSequence()
 //
 //  PURPOSE    : Set the morph value of a specific layer of clothing
 //
-void cyAvatar::SetMorph(const char* clothing_name, UInt8 layer, float value)
+void cyAvatar::SetMorph(const char* clothing_name, uint8_t layer, float value)
 {
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name);
     if( !item )
@@ -1430,7 +1430,7 @@ void cyAvatar::SetMorph(const char* clothing_name, UInt8 layer, float value)
 //
 //  PURPOSE    : Returns the current morph value of the specific layer of clothing
 //
-float cyAvatar::GetMorph(const char* clothing_name, UInt8 layer)
+float cyAvatar::GetMorph(const char* clothing_name, uint8_t layer)
 {
     plMorphSequence* seq = LocalMorphSequence();
     if( !seq )
@@ -1474,7 +1474,7 @@ float cyAvatar::GetMorph(const char* clothing_name, UInt8 layer)
 //
 //  PURPOSE    : Set the skin blend for the specified layer
 //
-void cyAvatar::SetSkinBlend(UInt8 layer, float value)
+void cyAvatar::SetSkinBlend(uint8_t layer, float value)
 {
     if (value < 0.0) value = 0.0;
     if (value > 1.0) value = 1.0;
@@ -1494,7 +1494,7 @@ void cyAvatar::SetSkinBlend(UInt8 layer, float value)
 //
 //  PURPOSE    : Returns the current layer's skin blend
 //
-float cyAvatar::GetSkinBlend(UInt8 layer)
+float cyAvatar::GetSkinBlend(uint8_t layer)
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
@@ -1546,7 +1546,7 @@ void cyAvatar::EnterSubWorld(pySceneObject& object)
                     plKey subWorldKey = SOkey;
                     plKey physKey = avatar->GetKey();
                     plKey nilKey;   // sorry
-                    plSubWorldMsg *swMsg = TRACKED_NEW plSubWorldMsg(nilKey, physKey, subWorldKey);
+                    plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
                     swMsg->Send();
                 }
             }
@@ -1573,7 +1573,7 @@ void cyAvatar::ExitSubWorld()
             plKey subWorldKey;      // we're going to the nil subworld
             plKey physKey = avatar->GetKey();
             plKey nilKey;   // sorry
-            plSubWorldMsg *swMsg = TRACKED_NEW plSubWorldMsg(nilKey, physKey, subWorldKey);
+            plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
             swMsg->Send();
         }
     }
@@ -1616,7 +1616,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 #ifndef PLASMA_EXTERNAL_RELEASE
     plClothingMgr::ChangeAvatar((char*)genderName);
     
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, genderName, arrsize(wStr));
     
     RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
@@ -1637,7 +1637,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 //
 void cyAvatar::ChangePlayerName(const char* playerName)
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, playerName, arrsize(wStr));
     
     RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
@@ -1847,12 +1847,12 @@ bool cyAvatar::LocalAvatarIsMoving()
     return false;
 }
 
-void cyAvatar::SetMouseTurnSensitivity(hsScalar val)
+void cyAvatar::SetMouseTurnSensitivity(float val)
 {
     plArmatureMod::SetMouseTurnSensitivity(val);
 }
 
-hsScalar cyAvatar::GetMouseTurnSensitivity()
+float cyAvatar::GetMouseTurnSensitivity()
 {
     return plArmatureMod::GetMouseTurnSensitivity();
 }
@@ -1949,7 +1949,7 @@ bool IExitTopmostGenericMode()
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg(nil, avatar->GetKey(),
+    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nil, avatar->GetKey(),
         plAvBrainGenericMsg::kGotoStage, 2, false, 0.0,
         false, false, 0.0);
 

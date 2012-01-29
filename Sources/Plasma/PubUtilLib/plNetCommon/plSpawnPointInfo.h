@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpawnPointInfo_h_inc
 #define plSpawnPointInfo_h_inc
 
-#include "hsConfig.h"
 #include "hsStlUtils.h"
 
 ///////////////////////////////////////////////////////////////////

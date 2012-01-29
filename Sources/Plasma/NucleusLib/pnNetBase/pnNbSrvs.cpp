@@ -53,26 +53,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-static wchar s_authAddrConsole[64] = {0};
-static const wchar * s_authAddrs[] = {
+static wchar_t s_authAddrConsole[64] = {0};
+static const wchar_t * s_authAddrs[] = {
     s_authAddrConsole
 };
 
 
-static wchar s_fileAddrConsole[64] = {0};
-static const wchar * s_fileAddrs[] = {
+static wchar_t s_fileAddrConsole[64] = {0};
+static const wchar_t * s_fileAddrs[] = {
     s_fileAddrConsole
 };
 
 
-static wchar s_csrAddrConsole[64] = {0};
-static const wchar * s_csrAddrs[] = {
+static wchar_t s_csrAddrConsole[64] = {0};
+static const wchar_t * s_csrAddrs[] = {
     s_csrAddrConsole
 };
 
 
-static wchar s_gateKeeperAddrConsole[64] = {0};
-static const wchar * s_gateKeeperAddrs[] = {
+static wchar_t s_gateKeeperAddrConsole[64] = {0};
+static const wchar_t * s_gateKeeperAddrs[] = {
     s_gateKeeperAddrConsole
 };
 
@@ -86,14 +86,14 @@ static const wchar * s_gateKeeperAddrs[] = {
 //============================================================================
 // Auth
 //============================================================================
-unsigned GetAuthSrvHostnames (const wchar *** addrs) {
+unsigned GetAuthSrvHostnames (const wchar_t *** addrs) {
 
     *addrs = s_authAddrs; 
     return arrsize(s_authAddrs);
 }
 
 //============================================================================
-void SetAuthSrvHostname (const wchar addr[]) {
+void SetAuthSrvHostname (const wchar_t addr[]) {
 
     wcsncpy(s_authAddrConsole, addr, arrsize(s_authAddrConsole));
 }
@@ -101,14 +101,14 @@ void SetAuthSrvHostname (const wchar addr[]) {
 //============================================================================
 // File
 //============================================================================
-unsigned GetFileSrvHostnames (const wchar *** addrs) {
+unsigned GetFileSrvHostnames (const wchar_t *** addrs) {
 
     *addrs = s_fileAddrs; 
     return arrsize(s_fileAddrs);
 }
 
 //============================================================================
-void SetFileSrvHostname (const wchar addr[]) {
+void SetFileSrvHostname (const wchar_t addr[]) {
 
     wcsncpy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
 }
@@ -116,14 +116,14 @@ void SetFileSrvHostname (const wchar addr[]) {
 //============================================================================
 // Csr
 //============================================================================
-unsigned GetCsrSrvHostnames (const wchar *** addrs) {
+unsigned GetCsrSrvHostnames (const wchar_t *** addrs) {
 
     *addrs = s_csrAddrs; 
     return arrsize(s_csrAddrs);
 }
 
 //============================================================================
-void SetCsrSrvHostname (const wchar addr[]) {
+void SetCsrSrvHostname (const wchar_t addr[]) {
 
     wcsncpy(s_csrAddrConsole, addr, arrsize(s_csrAddrConsole));
 }
@@ -132,14 +132,14 @@ void SetCsrSrvHostname (const wchar addr[]) {
 //============================================================================
 // GateKeeper
 //============================================================================
-unsigned GetGateKeeperSrvHostnames (const wchar *** addrs) {
+unsigned GetGateKeeperSrvHostnames (const wchar_t *** addrs) {
 
     *addrs = s_gateKeeperAddrs; 
     return arrsize(s_gateKeeperAddrs);
 }
 
 //============================================================================
-void SetGateKeeperSrvHostname (const wchar addr[]) {
+void SetGateKeeperSrvHostname (const wchar_t addr[]) {
     wcsncpy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
 }
 
@@ -147,36 +147,36 @@ void SetGateKeeperSrvHostname (const wchar addr[]) {
 //============================================================================
 // User-visible Server
 //============================================================================
-static wchar s_serverStatusUrl[256] = {0};
-static wchar s_serverSignupUrl[256] = {0};
-static wchar s_serverName[256] = {0};
+static wchar_t s_serverStatusUrl[256] = {0};
+static wchar_t s_serverSignupUrl[256] = {0};
+static wchar_t s_serverName[256] = {0};
 
 //============================================================================
-const wchar *GetServerStatusUrl () {
+const wchar_t *GetServerStatusUrl () {
     return s_serverStatusUrl;
 }
 
 //============================================================================
-void SetServerStatusUrl (const wchar url[]) {
+void SetServerStatusUrl (const wchar_t url[]) {
     wcsncpy(s_serverStatusUrl, url, arrsize(s_serverStatusUrl));
 }
 
 //============================================================================
-const wchar *GetServerSignupUrl () {
+const wchar_t *GetServerSignupUrl () {
     return s_serverSignupUrl;
 }
 
 //============================================================================
-void SetServerSignupUrl (const wchar url[]) {
+void SetServerSignupUrl (const wchar_t url[]) {
     wcsncpy(s_serverSignupUrl, url, arrsize(s_serverSignupUrl));
 }
 
 //============================================================================
-const wchar *GetServerDisplayName () {
+const wchar_t *GetServerDisplayName () {
     return s_serverName;
 }
 
 //============================================================================
-void SetServerDisplayName (const wchar name[]) {
+void SetServerDisplayName (const wchar_t name[]) {
     wcsncpy(s_serverName, name, arrsize(s_serverName));
 }

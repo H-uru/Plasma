@@ -60,7 +60,7 @@ pyStream::~pyStream()
 }
 
 
-hsBool pyStream::Open(const wchar* fileName, const wchar* flags)
+hsBool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
 {
     // make sure its closed first
     Close();
@@ -88,7 +88,7 @@ hsBool pyStream::Open(const wchar* fileName, const wchar* flags)
                 // force encryption?
                 if (encryptflag)
                 {
-                    fStream = TRACKED_NEW plEncryptedStream;
+                    fStream = new plEncryptedStream;
                     fStream->Open(fileName, L"wb");
                 }
                 else

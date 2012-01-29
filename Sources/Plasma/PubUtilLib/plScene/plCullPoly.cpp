@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCullPoly.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
 #include "hsFastMath.h"
 
-plCullPoly& plCullPoly::InitFromVerts(UInt32 f)
+plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 {
     fFlags = f;
 
@@ -66,20 +66,20 @@ plCullPoly& plCullPoly::InitFromVerts(UInt32 f)
     {
         fCenter += fVerts[i];
     }
-    fCenter *= 1.f / hsScalar(fVerts.GetCount());
+    fCenter *= 1.f / float(fVerts.GetCount());
 
     fRadius = ICalcRadius();
 
     return *this;
 }
 
-hsScalar plCullPoly::ICalcRadius() const
+float plCullPoly::ICalcRadius() const
 {
-    hsScalar radSq = 0;
+    float radSq = 0;
     int i;
     for( i = 0; i < fVerts.GetCount(); i++ )
     {
-        hsScalar tmpSq = hsVector3(&fVerts[i], &fCenter).MagnitudeSquared();
+        float tmpSq = hsVector3(&fVerts[i], &fCenter).MagnitudeSquared();
         if( tmpSq > radSq )
             radSq = tmpSq;
     }
@@ -169,8 +169,8 @@ void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
 #ifdef MF_VALIDATE_POLYS
 hsBool plCullPoly::Validate() const
 {
-    const hsScalar kMinMag = 1.e-8f;
-    hsScalar magSq = fNorm.MagnitudeSquared();
+    const float kMinMag = 1.e-8f;
+    float magSq = fNorm.MagnitudeSquared();
     if( magSq < kMinMag )
         return false;
     if( fVerts.GetCount() < 3 )

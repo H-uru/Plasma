@@ -86,7 +86,7 @@ void plArmatureEffectsMgr::Read(hsStream *s, hsResMgr *mgr)
     int numEffects = s->ReadLE32();
     while (numEffects > 0)
     {
-        plRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+        plRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
         hsgResMgr::ResMgr()->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
         numEffects--;
     }
@@ -157,12 +157,12 @@ hsBool plArmatureEffectsMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-UInt32 plArmatureEffectsMgr::GetNumEffects()
+uint32_t plArmatureEffectsMgr::GetNumEffects()
 {
     return fEffects.GetCount();
 }
 
-plArmatureEffect *plArmatureEffectsMgr::GetEffect(UInt32 num)
+plArmatureEffect *plArmatureEffectsMgr::GetEffect(uint32_t num)
 {
     return fEffects[num];
 }
@@ -182,7 +182,7 @@ void plArmatureEffectsMgr::ResetEffects()
 
 plArmatureEffectFootSound::plArmatureEffectFootSound()
 {
-    plArmatureEffectFootSurface *surface = TRACKED_NEW plArmatureEffectFootSurface;
+    plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
     surface->fID = plArmatureEffectsMgr::kFootNoSurface;
     surface->fTrigger = nil;
     fSurfaces.Append(surface);
@@ -209,14 +209,14 @@ void plArmatureEffectFootSound::Read(hsStream* s, hsResMgr* mgr)
     int i;
     for (i = 0; i < count; i++)
     {
-        plGenRefMsg *msg = TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1);
+        plGenRefMsg *msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
     }
 }
 
-UInt32 plArmatureEffectFootSound::IFindSurfaceByTrigger(plKey trigger)
+uint32_t plArmatureEffectFootSound::IFindSurfaceByTrigger(plKey trigger)
 {
-    UInt32 i;
+    uint32_t i;
 
     // Skip index 0. It's the special "NoSurface" that should always be at the stack bottom
     for (i = 1; i < fSurfaces.GetCount(); i++)
@@ -265,14 +265,14 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
     plArmatureEffectMsg *eMsg = plArmatureEffectMsg::ConvertNoRef(msg);
     if (eMsg)
     {
-        UInt32 curSurfaceIndex = fSurfaces[fSurfaces.GetCount() - 1]->fID;
+        uint32_t curSurfaceIndex = fSurfaces[fSurfaces.GetCount() - 1]->fID;
 
         if (curSurfaceIndex < plArmatureEffectsMgr::kMaxSurface && fMods[curSurfaceIndex] != nil)
         {
             if (plgAudioSys::Active() && fActiveSurfaces.IsBitSet(curSurfaceIndex))
             {
                 fMods[curSurfaceIndex]->SetCurrentGroup(eMsg->fTriggerIdx);
-                plAnimCmdMsg *animMsg = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg *animMsg = new plAnimCmdMsg;
                 animMsg->AddReceiver(fMods[curSurfaceIndex]->GetKey());
                 animMsg->SetCmd(plAnimCmdMsg::kContinue);
                 plgDispatch::MsgSend(animMsg);
@@ -294,7 +294,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
             {
                 plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - %s", 
                                       plArmatureEffectsMgr::SurfaceStrings[sMsg->fSurface]);
-                plArmatureEffectFootSurface *surface = TRACKED_NEW plArmatureEffectFootSurface;
+                plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
                 surface->fID = sMsg->fSurface;
                 surface->fTrigger = sMsg->GetSender();
                 fSurfaces.Append(surface);
@@ -302,7 +302,7 @@ hsBool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
         }
         else
         {
-            UInt32 index = IFindSurfaceByTrigger(sMsg->GetSender());
+            uint32_t index = IFindSurfaceByTrigger(sMsg->GetSender());
             if (index != -1)
             {
                 if (index == fSurfaces.GetCount() - 1) // It's the top on the stack
@@ -324,7 +324,7 @@ void plArmatureEffectFootSound::Reset()
         delete fSurfaces.Pop();
 }
 
-void plArmatureEffectFootSound::SetFootType(UInt8 type)
+void plArmatureEffectFootSound::SetFootType(uint8_t type)
 {
     if (type == kFootTypeBare)
     {

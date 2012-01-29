@@ -52,7 +52,7 @@ hsBool plGameMarkerModifier::MsgReceive(plMessage* msg)
     {
         if (collideMsg->fEntering)
         {
-            plNotifyMsg* notify = TRACKED_NEW plNotifyMsg;
+            plNotifyMsg* notify = new plNotifyMsg;
             notify->AddCollisionEvent(true, collideMsg->fOtherKey, GetTarget()->GetKey());
             notify->Send(hsgResMgr::ResMgr()->FindKey(kMarkerMgr_KEY));
         }

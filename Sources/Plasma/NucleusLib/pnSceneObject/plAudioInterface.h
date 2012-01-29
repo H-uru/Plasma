@@ -87,7 +87,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     void        SetProperty(int prop, hsBool on);
-    Int32       GetNumProperties() const { return kNumProps; }
+    int32_t       GetNumProperties() const { return kNumProps; }
 
     plSound*    GetSound(int i) const;
     int         GetNumSounds() const;

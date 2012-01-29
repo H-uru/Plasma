@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "hsMatrix44.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plTextGenerator.h"
@@ -77,7 +77,7 @@ plTextGenerator::plTextGenerator()
     fHost = nil;
 }
 
-plTextGenerator::plTextGenerator( plMipmap *host, UInt16 width, UInt16 height )
+plTextGenerator::plTextGenerator( plMipmap *host, uint16_t width, uint16_t height )
 {
     fHost = nil;
     Attach( host, width, height );
@@ -96,9 +96,9 @@ plTextGenerator::~plTextGenerator()
 //  Grab onto a plMipmap, suck the texture out of it and replace it with our
 //  own.        
 
-void    plTextGenerator::Attach( plMipmap *host, UInt16 width, UInt16 height )
+void    plTextGenerator::Attach( plMipmap *host, uint16_t width, uint16_t height )
 {
-    UInt16      textWidth, textHeight;
+    uint16_t      textWidth, textHeight;
 
 
     hsAssert( fHost == nil, "Attempting to attach an already attached plTextGenerator" );
@@ -151,7 +151,7 @@ void    plTextGenerator::Attach( plMipmap *host, UInt16 width, UInt16 height )
     }
 
     /// Send ourselves a passive ref of the mipmap, so we get notified if and when it goes away
-    hsgResMgr::ResMgr()->AddViaNotify( fHost->GetKey(), TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
+    hsgResMgr::ResMgr()->AddViaNotify( fHost->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kActiveRef );
 #endif
     /// All done!
 }
@@ -160,7 +160,7 @@ void    plTextGenerator::Attach( plMipmap *host, UInt16 width, UInt16 height )
 //  OS-specific. Allocates a rectangular bitmap of the given dimensions that
 //  the OS can draw text into. Returns a pointer to the pixels.
 
-UInt32      *plTextGenerator::IAllocateOSSurface( UInt16 width, UInt16 height )
+uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t height )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -201,7 +201,7 @@ UInt32      *plTextGenerator::IAllocateOSSurface( UInt16 width, UInt16 height )
 
     SelectObject( fWinAlphaDC, fWinAlphaBitmap );
 
-    return (UInt32 *)fWinRGBBits;
+    return (uint32_t *)fWinRGBBits;
 #endif
 }
 
@@ -257,8 +257,8 @@ void    plTextGenerator::IDestroyOSSurface( void )
 void    plTextGenerator::ClearToColor( hsColorRGBA &color )
 {
     int     i;
-    UInt32  *data = (UInt32 *)fHost->fImage;
-    UInt32  hexColor = color.ToARGB32();
+    uint32_t  *data = (uint32_t *)fHost->fImage;
+    uint32_t  hexColor = color.ToARGB32();
 
 #if HS_BUILD_FOR_WIN32
     GdiFlush();
@@ -269,14 +269,14 @@ void    plTextGenerator::ClearToColor( hsColorRGBA &color )
 
     // Fill our alpha bitmap as well, since we use that too
 #if HS_BUILD_FOR_WIN32
-    memset( fWinAlphaBits, (UInt8)( color.a * 255.f ), fHost->fWidth * fHost->fHeight );
+    memset( fWinAlphaBits, (uint8_t)( color.a * 255.f ), fHost->fWidth * fHost->fHeight );
 #endif
 }
 
 //// SetFont //////////////////////////////////////////////////////////////////
 //  OS-specific. Load the given font for drawing the text with.
 
-void    plTextGenerator::SetFont( const char *face, UInt16 size, hsBool antiAliasRGB )
+void    plTextGenerator::SetFont( const char *face, uint16_t size, hsBool antiAliasRGB )
 {
 #if HS_BUILD_FOR_WIN32
     if( fWinFont != nil )
@@ -338,14 +338,14 @@ void    plTextGenerator::SetTextColor( hsColorRGBA &color, hsBool blockRGB )
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plTextGenerator::DrawString( UInt16 x, UInt16 y, const char *text )
+void    plTextGenerator::DrawString( uint16_t x, uint16_t y, const char *text )
 {
     wchar_t *wText = hsStringToWString(text);
     DrawString(x,y,wText);
     delete [] wText;
 }
 
-void    plTextGenerator::DrawString( UInt16 x, UInt16 y, const wchar_t *text )
+void    plTextGenerator::DrawString( uint16_t x, uint16_t y, const wchar_t *text )
 {
 #if HS_BUILD_FOR_WIN32
     
@@ -357,14 +357,14 @@ void    plTextGenerator::DrawString( UInt16 x, UInt16 y, const wchar_t *text )
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height )
 {
     wchar_t *wText = hsStringToWString(text);
     DrawClippedString(x,y,wText,width,height);
     delete [] wText;
 }
 
-void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t width, uint16_t height )
 {
 #if HS_BUILD_FOR_WIN32
     
@@ -379,14 +379,14 @@ void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const wchar_t *tex
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const char *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
 {
     wchar_t *wText = hsStringToWString(text);
     DrawClippedString(x,y,wText,clipX,clipY,width,height);
     delete [] wText;
 }
 
-void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const wchar_t *text, UInt16 clipX, UInt16 clipY, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
 {
 #if HS_BUILD_FOR_WIN32
     
@@ -401,14 +401,14 @@ void    plTextGenerator::DrawClippedString( Int16 x, Int16 y, const wchar_t *tex
 
 //// DrawWrappedString ////////////////////////////////////////////////////////
 
-void    plTextGenerator::DrawWrappedString( UInt16 x, UInt16 y, const char *text, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height )
 {
     wchar_t *wText = hsStringToWString(text);
     DrawWrappedString(x,y,wText,width,height);
     delete [] wText;
 }
 
-void    plTextGenerator::DrawWrappedString( UInt16 x, UInt16 y, const wchar_t *text, UInt16 width, UInt16 height )
+void    plTextGenerator::DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height )
 {
 #if HS_BUILD_FOR_WIN32
     
@@ -428,15 +428,15 @@ void    plTextGenerator::DrawWrappedString( UInt16 x, UInt16 y, const wchar_t *t
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-UInt16      plTextGenerator::CalcStringWidth( const char *text, UInt16 *height )
+uint16_t      plTextGenerator::CalcStringWidth( const char *text, uint16_t *height )
 {
     wchar_t *wText = hsStringToWString(text);
-    UInt16 retVal = CalcStringWidth(wText,height);
+    uint16_t retVal = CalcStringWidth(wText,height);
     delete [] wText;
     return retVal;
 }
 
-UInt16      plTextGenerator::CalcStringWidth( const wchar_t *text, UInt16 *height )
+uint16_t      plTextGenerator::CalcStringWidth( const wchar_t *text, uint16_t *height )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -444,22 +444,22 @@ UInt16      plTextGenerator::CalcStringWidth( const wchar_t *text, UInt16 *heigh
     ::GetTextExtentPoint32W( fWinRGBDC, text, wcslen( text ), &size );
 
     if( height != nil )
-        *height = (UInt16)size.cy;
+        *height = (uint16_t)size.cy;
 
-    return (UInt16)size.cx;
+    return (uint16_t)size.cx;
 #endif
 }
 
 //// CalcWrappedStringSize ////////////////////////////////////////////////////
 
-void    plTextGenerator::CalcWrappedStringSize( const char *text, UInt16 *width, UInt16 *height )
+void    plTextGenerator::CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height )
 {
     wchar_t *wText = hsStringToWString(text);
     CalcWrappedStringSize(wText,width,height);
     delete [] wText;
 }
 
-void    plTextGenerator::CalcWrappedStringSize( const wchar_t *text, UInt16 *width, UInt16 *height )
+void    plTextGenerator::CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -468,15 +468,15 @@ void    plTextGenerator::CalcWrappedStringSize( const wchar_t *text, UInt16 *wid
 
     ::DrawTextW( fWinRGBDC, text, wcslen( text ), &r, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_WORDBREAK | DT_CALCRECT );
 
-    *width = (UInt16)(r.right);
+    *width = (uint16_t)(r.right);
     if( height != nil )
-        *height = (UInt16)r.bottom;
+        *height = (uint16_t)r.bottom;
 #endif
 }
 
 //// FillRect /////////////////////////////////////////////////////////////////
 
-void    plTextGenerator::FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color )
+void    plTextGenerator::FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -500,7 +500,7 @@ void    plTextGenerator::FillRect( UInt16 x, UInt16 y, UInt16 width, UInt16 heig
 
 //// FrameRect ////////////////////////////////////////////////////////////////
 
-void    plTextGenerator::FrameRect( UInt16 x, UInt16 y, UInt16 width, UInt16 height, hsColorRGBA &color )
+void    plTextGenerator::FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -531,9 +531,9 @@ void    plTextGenerator::FlushToHost( void )
     GdiFlush();
 
     // Now copy our alpha channel over. I hate the GDI
-    UInt32      i = fHost->fWidth * fHost->fHeight;
-    UInt32      *dest = fWinRGBBits;
-    UInt8       *src = fWinAlphaBits;
+    uint32_t      i = fHost->fWidth * fHost->fHeight;
+    uint32_t      *dest = fWinRGBBits;
+    uint8_t       *src = fWinAlphaBits;
 
 /*  while( i-- )
     {
@@ -559,14 +559,14 @@ void    plTextGenerator::FlushToHost( void )
 
 //// GetTextWidth/Height //////////////////////////////////////////////////////
 
-UInt16  plTextGenerator::GetTextWidth( void )
+uint16_t  plTextGenerator::GetTextWidth( void )
 {
-    return ( fHost != nil ) ? (UInt16)(fHost->fWidth) : 0;
+    return ( fHost != nil ) ? (uint16_t)(fHost->fWidth) : 0;
 }
 
-UInt16  plTextGenerator::GetTextHeight( void )
+uint16_t  plTextGenerator::GetTextHeight( void )
 {
-    return ( fHost != nil ) ? (UInt16)(fHost->fHeight) : 0;
+    return ( fHost != nil ) ? (uint16_t)(fHost->fHeight) : 0;
 }
 
 //// GetLayerTransform ////////////////////////////////////////////////////////

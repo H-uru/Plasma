@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plActivePrintShape.h"
 
 #include "plMessage/plRippleShapeMsg.h"
@@ -65,7 +65,7 @@ void plActivePrintShape::Read(hsStream* stream, hsResMgr* mgr)
 {
     plPrintShape::Read(stream, mgr);
 
-    UInt32 n = stream->ReadLE32();
+    uint32_t n = stream->ReadLE32();
     fDecalMgrs.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -125,6 +125,6 @@ hsBool plActivePrintShape::INotify()
 
 plRippleShapeMsg* plActivePrintShape::ISetupShapeMsg()
 {
-    fShapeMsg = TRACKED_NEW plRippleShapeMsg(nil, this);
+    fShapeMsg = new plRippleShapeMsg(nil, this);
     return fShapeMsg;
 }

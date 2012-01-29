@@ -200,7 +200,7 @@ const char* pyAgeVault::GetAgeGuid( void )
 // Chronicle
 PyObject* pyAgeVault::FindChronicleEntry( const char * entryName )
 {
-    wchar wEntryName[kMaxVaultNodeStringLength];
+    wchar_t wEntryName[kMaxVaultNodeStringLength];
     StrToUnicode(wEntryName, entryName, arrsize(wEntryName));
     
     if (RelVaultNode * rvn = VaultFindAgeChronicleEntryIncRef(wEntryName)) {
@@ -213,25 +213,25 @@ PyObject* pyAgeVault::FindChronicleEntry( const char * entryName )
     PYTHON_RETURN_NONE;
 }
 
-void pyAgeVault::AddChronicleEntry( const char * name, UInt32 type, const char * value )
+void pyAgeVault::AddChronicleEntry( const char * name, uint32_t type, const char * value )
 {
-    wchar * wEntryName = StrDupToUnicode(name);
-    wchar * wEntryValue = StrDupToUnicode(value);
+    wchar_t * wEntryName = StrDupToUnicode(name);
+    wchar_t * wEntryValue = StrDupToUnicode(value);
     
     VaultAddAgeChronicleEntry(wEntryName, type, wEntryValue);
     
-    FREE(wEntryName);
-    FREE(wEntryValue);
+    free(wEntryName);
+    free(wEntryValue);
 }
 
 // AGE DEVICES. AKA IMAGERS, WHATEVER.
 // Add a new device.
-void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, UInt32 cbContext )
+void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, uint32_t cbContext )
 {
     pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, deviceName, arrsize(wStr));
 
     if (RelVaultNode * rvn = VaultAgeAddDeviceAndWaitIncRef(wStr)) {
@@ -245,7 +245,7 @@ void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, UInt32
 // Remove a device.
 void pyAgeVault::RemoveDevice( const char * deviceName )
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, deviceName, arrsize(wStr));
 
     VaultAgeRemoveDevice(wStr);
@@ -254,7 +254,7 @@ void pyAgeVault::RemoveDevice( const char * deviceName )
 // True if device exists in age.
 bool pyAgeVault::HasDevice( const char * deviceName )
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, deviceName, arrsize(wStr));
 
     return VaultAgeHasDevice(wStr);
@@ -262,7 +262,7 @@ bool pyAgeVault::HasDevice( const char * deviceName )
 
 PyObject * pyAgeVault::GetDevice( const char * deviceName )
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, deviceName, arrsize(wStr));
 
     if (RelVaultNode * rvn = VaultAgeGetDeviceIncRef(wStr)) {
@@ -275,14 +275,14 @@ PyObject * pyAgeVault::GetDevice( const char * deviceName )
 }
 
 // Sets the inbox associated with a device.
-void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cbObject, UInt32 cbContext )
+void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cbObject, uint32_t cbContext )
 {
     pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    wchar wDev[MAX_PATH];
+    wchar_t wDev[MAX_PATH];
     StrToUnicode(wDev, deviceName, arrsize(wDev));
-    wchar wInb[MAX_PATH];
+    wchar_t wInb[MAX_PATH];
     StrToUnicode(wInb, inboxName, arrsize(wInb));
     
     if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, wInb)) {
@@ -295,7 +295,7 @@ void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName
 
 PyObject * pyAgeVault::GetDeviceInbox( const char * deviceName )
 {
-    wchar wStr[MAX_PATH];
+    wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, deviceName, arrsize(wStr));
 
     if (RelVaultNode * rvn = VaultAgeGetDeviceInboxIncRef(wStr)) {
@@ -311,7 +311,7 @@ PyObject * pyAgeVault::GetAgeSDL() const
 {
     plStateDataRecord * rec = NEWZERO(plStateDataRecord);
     if (!VaultAgeGetAgeSDL(rec)) {
-        DEL(rec);
+        delete rec;
         PYTHON_RETURN_NONE;
     }
     else {

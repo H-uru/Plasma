@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFastWavReader.h"
 
 
@@ -64,12 +64,12 @@ class plRIFFChunk
 {
     public:
         char    fID[ 4 ];
-        UInt32  fSize;
+        uint32_t  fSize;
 
         void    Read( FILE *fp )
         {
             fread( fID, 1, 4, fp );
-            fread( &fSize, sizeof( UInt32 ), 1, fp );
+            fread( &fSize, sizeof( uint32_t ), 1, fp );
         }
 
         bool    IsA( const char *type )
@@ -185,8 +185,8 @@ plFastWAV::plFastWAV( const char *path, plAudioCore::ChannelSelect whichChan ) :
 
         fFakeHeader = fHeader;
         fFakeHeader.fAvgBytesPerSec /= fChannelAdjust;
-        fFakeHeader.fNumChannels /= (UInt16)fChannelAdjust;
-        fFakeHeader.fBlockAlign /= (UInt16)fChannelAdjust;
+        fFakeHeader.fNumChannels /= (uint16_t)fChannelAdjust;
+        fFakeHeader.fBlockAlign /= (uint16_t)fChannelAdjust;
 
         SetPosition( 0 );
 //      fCurrDataPos = 0;
@@ -265,7 +265,7 @@ float   plFastWAV::GetLengthInSecs( void )
     return (float)( fDataSize / fChannelAdjust ) / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool  plFastWAV::SetPosition( UInt32 numBytes )
+hsBool  plFastWAV::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid WAV file" );
 
@@ -277,7 +277,7 @@ hsBool  plFastWAV::SetPosition( UInt32 numBytes )
     return ( fseek( fFileHandle, fDataStartPos + fCurrDataPos, SEEK_SET ) == 0 ) ? true : false;
 }
 
-hsBool  plFastWAV::Read( UInt32 numBytes, void *buffer )
+hsBool  plFastWAV::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid WAV file" );
 
@@ -285,9 +285,9 @@ hsBool  plFastWAV::Read( UInt32 numBytes, void *buffer )
     if( fWhichChannel != plAudioCore::kAll )
     {
         size_t  numRead, sampleSize = fHeader.fBlockAlign / fChannelAdjust;
-        static UInt8    trashBuffer[ 32 ];
+        static uint8_t    trashBuffer[ 32 ];
 
-        UInt32 numBytesFull = numBytes;
+        uint32_t numBytesFull = numBytes;
         if( fCurrDataPos + ( numBytes * fChannelAdjust ) > fDataSize )
             numBytesFull -= sampleSize;
 
@@ -302,7 +302,7 @@ hsBool  plFastWAV::Read( UInt32 numBytes, void *buffer )
             if( thisRead != sampleSize )
                 return false;
 
-            buffer = (void *)( (UInt8 *)buffer + sampleSize );
+            buffer = (void *)( (uint8_t *)buffer + sampleSize );
             fCurrDataPos += sampleSize * fChannelAdjust;
         }
 
@@ -321,7 +321,7 @@ hsBool  plFastWAV::Read( UInt32 numBytes, void *buffer )
             if( thisRead != sampleSize )
                 return false;
 
-            buffer = (void *)( (UInt8 *)buffer + sampleSize );
+            buffer = (void *)( (uint8_t *)buffer + sampleSize );
             fCurrDataPos += sampleSize;
         }
 
@@ -341,7 +341,7 @@ hsBool  plFastWAV::Read( UInt32 numBytes, void *buffer )
     return true;
 }
 
-UInt32  plFastWAV::NumBytesLeft( void )
+uint32_t  plFastWAV::NumBytesLeft( void )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid WAV file" );
     hsAssert( fCurrDataPos <= fDataSize, "Invalid current position while reading WAV file" );

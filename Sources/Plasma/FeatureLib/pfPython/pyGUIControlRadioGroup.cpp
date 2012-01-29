@@ -65,7 +65,7 @@ hsBool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
     return false;
 }
 
-Int32 pyGUIControlRadioGroup::GetValue( void )
+int32_t pyGUIControlRadioGroup::GetValue( void )
 {
     if ( fGCkey )
     {
@@ -77,7 +77,7 @@ Int32 pyGUIControlRadioGroup::GetValue( void )
     return -1;
 }
 
-void pyGUIControlRadioGroup::SetValue( Int32 value )
+void pyGUIControlRadioGroup::SetValue( int32_t value )
 {
     if ( fGCkey )
     {

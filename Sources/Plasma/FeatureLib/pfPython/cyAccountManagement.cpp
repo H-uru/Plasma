@@ -135,7 +135,7 @@ void cyAccountManagement::UpgradeVisitorToExplorer(unsigned playerId)
 
 void cyAccountManagement::ChangePassword(const char* password)
 {
-    wchar* wpassword = StrDupToUnicode(password);
+    wchar_t* wpassword = StrDupToUnicode(password);
     NetCommChangeMyPassword(wpassword);
-    FREE(wpassword);
+    free(wpassword);
 }

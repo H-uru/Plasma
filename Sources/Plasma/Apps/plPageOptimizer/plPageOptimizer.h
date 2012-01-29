@@ -59,7 +59,7 @@ protected:
     KeyVec fKeyLoadOrder;   // The order objects were loaded in
     KeySet fLoadedKeys;     // Keys we've loaded objects for, for quick lookup
     KeyVec fAllKeys;        // All the keys in the page
-    std::vector<UInt8> fBuf;
+    std::vector<uint8_t> fBuf;
 
     bool fOptimized;        // True after optimization if the page was already optimized
 

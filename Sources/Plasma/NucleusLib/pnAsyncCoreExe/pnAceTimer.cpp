@@ -133,7 +133,7 @@ static inline unsigned RunTimers () {
         while (AsyncTimer * t = s_timerDelete.Head()) {
             if (t->destroyProc)
                 CallTimerProc(t, t->destroyProc);
-            DEL(t);
+            delete t;
         }
 
         // Get first timer to run
@@ -187,7 +187,7 @@ static inline void InitializeTimer () {
             (LPCTSTR) nil
         );
         if (!s_timerEvent)
-            ErrorFatal(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
+            ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
         s_timerThread = (HANDLE) AsyncThreadCreate(
             TimerThreadProc,
@@ -225,12 +225,12 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     while (AsyncTimer * t = s_timerDelete.Head()) {
         if (t->destroyProc)
             CallTimerProc(t, t->destroyProc);
-        DEL(t);
+        delete t;
     }
     s_timerCrit.Leave();
 
     if (AsyncTimer * timer = s_timerProcs.Root())
-        ErrorFatal(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
+        ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
 }
 
 
@@ -253,7 +253,7 @@ void AsyncTimerCreate (
     ASSERT(timerProc);
 
     // Allocate timer outside critical section
-    AsyncTimer * t  = NEW(AsyncTimer);
+    AsyncTimer * t  = new AsyncTimer;
     t->timerProc    = timerProc;
     t->destroyProc  = nil;
     t->param        = param;

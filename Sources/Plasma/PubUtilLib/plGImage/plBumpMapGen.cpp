@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "plBumpMapGen.h"
 
@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMipmap* plBumpMapGen::MakeCompatibleBlank(const plMipmap* src)
 {
-    return TRACKED_NEW plMipmap(src->GetWidth(), src->GetHeight(), plMipmap::kARGB32Config, 1, plMipmap::kUncompressed, plMipmap::UncompressedInfo::kRGB8888);
+    return new plMipmap(src->GetWidth(), src->GetHeight(), plMipmap::kARGB32Config, 1, plMipmap::kUncompressed, plMipmap::UncompressedInfo::kRGB8888);
 }
 
 plMipmap* plBumpMapGen::TwosCompToBias(plMipmap* dst)
 {
-    UInt8* pDst = (UInt8*)dst->GetAddr32(0, 0);
+    uint8_t* pDst = (uint8_t*)dst->GetAddr32(0, 0);
 
     const int width = dst->GetWidth();
     const int height = dst->GetHeight();
@@ -77,7 +77,7 @@ plMipmap* plBumpMapGen::TwosCompToBias(plMipmap* dst)
     return dst;
 }
 
-plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt32 mask, UInt32 flags)
+plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, uint32_t mask, uint32_t flags)
 {
     const plMipmap* src = origSrc;
     if( !dst )
@@ -91,7 +91,7 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt3
         // as expensive a point sample as possible without using transcendental functions).
         // This might be correctable by calling plMipmap::Filter after the upscale. Or I 
         // could just assert that dst dimensions match src dimensions.
-        newSrc->ResizeNicely((UInt16)(dst->GetWidth()), (UInt16)(dst->GetHeight()), plMipmap::kDefaultFilter);
+        newSrc->ResizeNicely((uint16_t)(dst->GetWidth()), (uint16_t)(dst->GetHeight()), plMipmap::kDefaultFilter);
 
         src = newSrc;
     }
@@ -102,7 +102,7 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt3
     }
     dst->SetCurrLevel(0);
 
-    const Int32 divis = ((mask >> 0) & 0xff)
+    const int32_t divis = ((mask >> 0) & 0xff)
                     +((mask >> 8) & 0xff)
                     +((mask >> 16) & 0xff);
 
@@ -110,37 +110,37 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt3
     const int height = src->GetHeight();
     const int stride = src->GetRowBytes(); // Should be width * 4;
 
-    const UInt32 alphaOr = flags & kScaleHgtByAlpha ? 0 : 0xff;
+    const uint32_t alphaOr = flags & kScaleHgtByAlpha ? 0 : 0xff;
 
-    UInt32* pDst = dst->GetAddr32(0, 0);
-    UInt32* pBase = src->GetAddr32(0, 0);
-    UInt32* pSrc = pBase;
+    uint32_t* pDst = dst->GetAddr32(0, 0);
+    uint32_t* pBase = src->GetAddr32(0, 0);
+    uint32_t* pSrc = pBase;
     int i;
     int j;
     for( j = 0; j < height; j++ )
     {
-        UInt32* pUp = j ? pSrc - width : pBase;
-        UInt32* pDn = j < height-1 ? pSrc + width : pBase;
+        uint32_t* pUp = j ? pSrc - width : pBase;
+        uint32_t* pDn = j < height-1 ? pSrc + width : pBase;
         for( i = 0; i < width; i++ )
         {
-            UInt32* pLf = i ? pSrc - 1 : pSrc + width-1;
-            UInt32* pRt = i < width-1 ? pSrc + 1 : pSrc - width + 1;
+            uint32_t* pLf = i ? pSrc - 1 : pSrc + width-1;
+            uint32_t* pRt = i < width-1 ? pSrc + 1 : pSrc - width + 1;
 
-            UInt32 up = (((*pUp & mask) >> 0) & 0xff)
+            uint32_t up = (((*pUp & mask) >> 0) & 0xff)
                         + (((*pUp & mask) >> 8) & 0xff)
                         + (((*pUp & mask) >> 16) & 0xff);
-            UInt32 dn = (((*pDn & mask) >> 0) & 0xff)
+            uint32_t dn = (((*pDn & mask) >> 0) & 0xff)
                         + (((*pDn & mask) >> 8) & 0xff)
                         + (((*pDn & mask) >> 16) & 0xff);
 
-            UInt32 rt = (((*pRt & mask) >> 0) & 0xff)
+            uint32_t rt = (((*pRt & mask) >> 0) & 0xff)
                         + (((*pRt & mask) >> 8) & 0xff)
                         + (((*pRt & mask) >> 16) & 0xff);
-            UInt32 lf = (((*pLf & mask) >> 0) & 0xff)
+            uint32_t lf = (((*pLf & mask) >> 0) & 0xff)
                         + (((*pLf & mask) >> 8) & 0xff)
                         + (((*pLf & mask) >> 16) & 0xff);
 
-            UInt32 hgt = (((*pSrc & mask) >> 0) & 0xff)
+            uint32_t hgt = (((*pSrc & mask) >> 0) & 0xff)
                         + (((*pSrc & mask) >> 8) & 0xff)
                         + (((*pSrc & mask) >> 16) & 0xff);
             
@@ -156,11 +156,11 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt3
             // are on, so divis = 0xff+0xff+0xff = 3*255.
             // So we muliply by 255 and divide by divis, so in this example,
             // that means divide by 3.
-            Int32 delUpDn = dn - up;
+            int32_t delUpDn = dn - up;
             delUpDn *= 255;
             delUpDn /= divis;
 
-            Int32 delRtLf = lf - rt;
+            int32_t delRtLf = lf - rt;
             delRtLf *= 255;
             delRtLf /= divis;
 
@@ -196,7 +196,7 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, UInt3
     return dst;
 }
 
-plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 mask, UInt32 flags, hsScalar smooth)
+plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_t mask, uint32_t flags, float smooth)
 {
     dst = QikBumpMap(dst, src, mask, flags & ~kBias);
 
@@ -205,9 +205,9 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
 
     if( flags & kBubbleTest )
     {
-        Int8* pDst = (Int8*)dst->GetAddr32(0, 0);
+        int8_t* pDst = (int8_t*)dst->GetAddr32(0, 0);
 
-        Int32 nZ = Int32(smooth * 255.99f);
+        int32_t nZ = int32_t(smooth * 255.99f);
 
         int i;
         int j;
@@ -215,12 +215,12 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
         {
             for( i = 0; i < width; i++ )
             {
-                hsScalar x = hsScalar(i) / hsScalar(width-1) * 2.f - 1.f;
-                hsScalar y = hsScalar(j) / hsScalar(height-1) * 2.f - 1.f;
+                float x = float(i) / float(width-1) * 2.f - 1.f;
+                float y = float(j) / float(height-1) * 2.f - 1.f;
 
-                hsScalar z = 1.f - x*x - y*y;
+                float z = 1.f - x*x - y*y;
                 if( z > 0 )
-                    z = hsSquareRoot(z);
+                    z = sqrt(z);
                 else
                 {
                     x = 0;
@@ -228,12 +228,12 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
                     z = 1.f;
                 }
                 z *= smooth;
-                hsScalar invLen = hsFastMath::InvSqrt(x*x + y*y + z*z) * 127.00f;
+                float invLen = hsFastMath::InvSqrt(x*x + y*y + z*z) * 127.00f;
 
 
-                pDst[2] = Int8(x * invLen);
-                pDst[1] = Int8(y * invLen);
-                pDst[0] = Int8(z * invLen);
+                pDst[2] = int8_t(x * invLen);
+                pDst[1] = int8_t(y * invLen);
+                pDst[0] = int8_t(z * invLen);
 
                 pDst += 4;
             }
@@ -242,9 +242,9 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
     else
     if( flags & kNormalize )
     {
-        Int8* pDst = (Int8*)dst->GetAddr32(0, 0);
+        int8_t* pDst = (int8_t*)dst->GetAddr32(0, 0);
 
-        Int32 nZ = Int32(smooth * 127.00f);
+        int32_t nZ = int32_t(smooth * 127.00f);
 
         int i;
         int j;
@@ -252,18 +252,18 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
         {
             for( i = 0; i < width; i++ )
             {
-                Int32 x = pDst[2];
-                Int32 y = pDst[1];
+                int32_t x = pDst[2];
+                int32_t y = pDst[1];
         
                 if( x )
                     x *= 1;
                 if( y )
                     y *= 1;
 
-                hsScalar invLen = hsFastMath::InvSqrt((hsScalar)(x*x + y*y + nZ*nZ)) * 127.0f;
-                pDst[2] = Int8(x * invLen);
-                pDst[1] = Int8(y * invLen);
-                pDst[0] = Int8(nZ * invLen);
+                float invLen = hsFastMath::InvSqrt((float)(x*x + y*y + nZ*nZ)) * 127.0f;
+                pDst[2] = int8_t(x * invLen);
+                pDst[1] = int8_t(y * invLen);
+                pDst[0] = int8_t(nZ * invLen);
 
                 pDst += 4;
             }
@@ -271,17 +271,17 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
     }
     else if( smooth != 1.f )
     {
-        Int32 divis = 127;
-        Int32 nZ = 127;
+        int32_t divis = 127;
+        int32_t nZ = 127;
         if( (smooth > 1.f) )
         {
-            divis = (Int32)(smooth * 127);
+            divis = (int32_t)(smooth * 127);
         }
         else
         {
-            nZ = UInt32(smooth * 127.5f); 
+            nZ = uint32_t(smooth * 127.5f); 
         }
-        Int8* pDst = (Int8*)dst->GetAddr32(0, 0);
+        int8_t* pDst = (int8_t*)dst->GetAddr32(0, 0);
 
         int i;
         int j;
@@ -289,18 +289,18 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, UInt32 
         {
             for( i = 0; i < width; i++ )
             {
-                Int32 v;
-                *pDst = (Int8)nZ;
+                int32_t v;
+                *pDst = (int8_t)nZ;
                 pDst++;
 
                 v = *pDst * 127;
                 v /= divis;
-                *pDst = (Int8)(v & 0xff);
+                *pDst = (int8_t)(v & 0xff);
                 pDst++;
                 
                 v = *pDst * 127;
                 v /= divis;
-                *pDst = (Int8)(v & 0xff);
+                *pDst = (int8_t)(v & 0xff);
 
                 pDst += 2;
             }

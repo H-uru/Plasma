@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
+
 #include "hsFiles.h"
 #include "plStreamSource.h"
 #include "plSecureStream.h"
@@ -56,7 +56,7 @@ void ToLower(std::wstring& str)
         str[i] = towlower(str[i]);
 }
 
-void ReplaceSlashes(std::wstring& path, wchar replaceWith)
+void ReplaceSlashes(std::wstring& path, wchar_t replaceWith)
 {
     for (unsigned i = 0; i < path.length(); i++)
     {
@@ -127,7 +127,7 @@ hsStream* plStreamSource::GetFile(std::wstring filename)
             fFileData[filename].fExt = ext;
             if (plSecureStream::IsSecureFile(sFilename.c_str()))
             {
-                UInt32 encryptionKey[4];
+                uint32_t encryptionKey[4];
                 if (!plFileUtils::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4))
                 {
                     FATAL("Hey camper... You need an NTD key file!");

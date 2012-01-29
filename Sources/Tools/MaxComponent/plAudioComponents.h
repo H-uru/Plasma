@@ -109,7 +109,7 @@ class plBaseSoundEmitterComponent : public plComponent
             return -1;
         }
 
-        static plSoundBuffer    *GetSourceBuffer( const char *fileName, plMaxNode *node, UInt32 srcBufferFlags );
+        static plSoundBuffer    *GetSourceBuffer( const char *fileName, plMaxNode *node, uint32_t srcBufferFlags );
         static hsBool           LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg );
 
         virtual void    UpdateSoundFileSelection( void );
@@ -128,7 +128,7 @@ class plBaseSoundEmitterComponent : public plComponent
         void            SetCreateGrouped( plMaxNode *baseNode, int commonSoundIdx );
 
         // Grabs the current sound volume
-        virtual hsScalar    GetSoundVolume( void ) const;
+        virtual float    GetSoundVolume( void ) const;
 
     protected:
 #ifdef MAXASS_AVAILABLE
@@ -139,7 +139,7 @@ class plBaseSoundEmitterComponent : public plComponent
 
         friend class plAudioBaseComponentProc;
 
-        static UInt32       fWarningFlags;
+        static uint32_t       fWarningFlags;
         bool                fAllowUnhide;
     
         hsBool              fCreateGrouped;
@@ -154,7 +154,7 @@ class plBaseSoundEmitterComponent : public plComponent
 
         void    IUpdateAssets( void );
 
-        static void     IShowError( UInt32 type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg );
+        static void     IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg );
 
         std::map<plMaxNode*, int> fIndices;
         std::map<plMaxNode*, bool> fValidNodes;
@@ -167,9 +167,9 @@ class plBaseSoundEmitterComponent : public plComponent
         void    IGrabSoftRegion( plSound *sound, plErrorMsg *pErrMsg );
         void    IGrabEAXParams( plSound *sound, plErrorMsg *pErrMsg );
 
-        virtual UInt32 ICalcSourceBufferFlags() const;
+        virtual uint32_t ICalcSourceBufferFlags() const;
 
-        static plSoundBuffer *IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, UInt32 srcBufferFlags );
+        static plSoundBuffer *IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags );
 
         plSoundBuffer   *IProcessSourceBuffer( plMaxNode *maxNode, plErrorMsg *errMsg );
 

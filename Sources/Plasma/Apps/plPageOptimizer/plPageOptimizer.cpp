@@ -135,8 +135,8 @@ void plPageOptimizer::Optimize()
     if (loaded)
         IRewritePage();
 
-    UInt32 oldSize = plFileUtils::GetFileSize(fPagePath);
-    UInt32 newSize = plFileUtils::GetFileSize(fTempPagePath);
+    uint32_t oldSize = plFileUtils::GetFileSize(fPagePath);
+    uint32_t newSize = plFileUtils::GetFileSize(fTempPagePath);
 
     if (!loaded)
     {
@@ -190,19 +190,19 @@ void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey 
     class plUpdateKeyImp : public plKeyImp
     {
     public:
-        void SetStartPos(UInt32 startPos) { fStartPos = startPos; }
+        void SetStartPos(uint32_t startPos) { fStartPos = startPos; }
     };
 
     plUpdateKeyImp* keyImp = (plUpdateKeyImp*)(plKeyImp*)key;
-    UInt32 startPos = keyImp->GetStartPos();
-    UInt32 len = keyImp->GetDataLen();
+    uint32_t startPos = keyImp->GetStartPos();
+    uint32_t len = keyImp->GetDataLen();
 
     oldPage->SetPosition(startPos);
     if (len > fBuf.size())
         fBuf.resize(len);
     oldPage->Read(len, &fBuf[0]);
 
-    UInt32 newStartPos = newPage->GetPosition();
+    uint32_t newStartPos = newPage->GetPosition();
 
     // If we move any buffers, this page wasn't optimized already
     if (newStartPos != startPos)
@@ -223,7 +223,7 @@ void plPageOptimizer::IRewritePage()
 
         const plPageInfo& pageInfo = fPageNode->GetPageInfo();
 
-        UInt32 dataStart = pageInfo.GetDataStart();
+        uint32_t dataStart = pageInfo.GetDataStart();
 
         fBuf.resize(dataStart);
 
@@ -243,31 +243,31 @@ void plPageOptimizer::IRewritePage()
                 IWriteKeyData(&oldPage, &newPage, fAllKeys[i]);
         }
 
-        UInt32 newKeyStart = newPage.GetPosition();
-        UInt32 oldKeyStart = pageInfo.GetIndexStart();
+        uint32_t newKeyStart = newPage.GetPosition();
+        uint32_t oldKeyStart = pageInfo.GetIndexStart();
         oldPage.SetPosition(oldKeyStart);
 
-        UInt32 numTypes = oldPage.ReadSwap32();
+        uint32_t numTypes = oldPage.ReadSwap32();
         newPage.WriteSwap32(numTypes);
 
-        for (UInt32 i = 0; i < numTypes; i++)
+        for (uint32_t i = 0; i < numTypes; i++)
         {
-            UInt16 classType = oldPage.ReadSwap16();
-            UInt32 len = oldPage.ReadSwap32();
-            UInt8 flags = oldPage.ReadByte();
-            UInt32 numKeys = oldPage.ReadSwap32();
+            uint16_t classType = oldPage.ReadSwap16();
+            uint32_t len = oldPage.ReadSwap32();
+            uint8_t flags = oldPage.ReadByte();
+            uint32_t numKeys = oldPage.ReadSwap32();
 
             newPage.WriteSwap16(classType);
             newPage.WriteSwap32(len);
             newPage.WriteByte(flags);
             newPage.WriteSwap32(numKeys);
 
-            for (UInt32 j = 0; j < numKeys; j++)
+            for (uint32_t j = 0; j < numKeys; j++)
             {
                 plUoid uoid;
                 uoid.Read(&oldPage);
-                UInt32 startPos = oldPage.ReadSwap32();
-                UInt32 dataLen = oldPage.ReadSwap32();
+                uint32_t startPos = oldPage.ReadSwap32();
+                uint32_t dataLen = oldPage.ReadSwap32();
 
                 // Get the new start pos
                 plKeyImp* key = (plKeyImp*)fResMgr->FindKey(uoid);

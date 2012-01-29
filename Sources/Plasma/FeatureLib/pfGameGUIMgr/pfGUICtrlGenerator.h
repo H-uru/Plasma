@@ -75,7 +75,7 @@ class pfGUICtrlGenerator
     protected:
 
         char    fFontFace[ 256 ];
-        UInt32  fFontSize;
+        uint32_t  fFontSize;
 
         hsTArray<plTextGenerator *> fTextGens;
 
@@ -104,7 +104,7 @@ class pfGUICtrlGenerator
 
         void    Shutdown( void );
 
-        void            SetFont( const char *face, UInt16 size );
+        void            SetFont( const char *face, uint16_t size );
 
 
         pfGUIButtonMod  *GenerateRectButton( const char *title, float x, float y, float width, float height,

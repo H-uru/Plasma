@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsMatrix44.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
@@ -63,12 +63,12 @@ plSoftVolumeSimple::~plSoftVolumeSimple()
     delete fVolume;
 }
 
-hsScalar plSoftVolumeSimple::IGetStrength(const hsPoint3& pos) const
+float plSoftVolumeSimple::IGetStrength(const hsPoint3& pos) const
 {
     if( !fVolume || GetProperty(kDisable) )
         return 0;
 
-    hsScalar dist = fVolume->Test(pos);
+    float dist = fVolume->Test(pos);
 
     if( dist <= 0 )
         return 1.f;
@@ -129,7 +129,7 @@ void plSoftVolumeComplex::Read(hsStream* s, hsResMgr* mgr)
     int n = s->ReadLE32();
     int i;
     for( i = 0; i < n; i++ )
-        mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubVolume), plRefFlags::kActiveRef);
+        mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubVolume), plRefFlags::kActiveRef);
 }
 
 void plSoftVolumeComplex::Write(hsStream* s, hsResMgr* mgr)
@@ -184,13 +184,13 @@ plSoftVolumeUnion::~plSoftVolumeUnion()
 {
 }
 
-hsScalar plSoftVolumeUnion::IGetStrength(const hsPoint3& pos) const
+float plSoftVolumeUnion::IGetStrength(const hsPoint3& pos) const
 {
-    hsScalar retVal = 0;
+    float retVal = 0;
     int i;
     for( i = 0; i < fSubVolumes.GetCount(); i++ )
     {
-        hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
+        float subRet = fSubVolumes[i]->GetStrength(pos);
         if( subRet >= 1.f )
             return 1.f;
         if( subRet > retVal )
@@ -199,13 +199,13 @@ hsScalar plSoftVolumeUnion::IGetStrength(const hsPoint3& pos) const
     return retVal;
 }
 
-hsScalar plSoftVolumeUnion::IUpdateListenerStrength() const
+float plSoftVolumeUnion::IUpdateListenerStrength() const
 {
-    hsScalar retVal = 0;
+    float retVal = 0;
     int i;
     for( i = 0; i < fSubVolumes.GetCount(); i++ )
     {
-        hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
+        float subRet = fSubVolumes[i]->GetListenerStrength();
         if( subRet >= 1.f )
         {
             retVal = 1.f;
@@ -228,13 +228,13 @@ plSoftVolumeIntersect::~plSoftVolumeIntersect()
 {
 }
 
-hsScalar plSoftVolumeIntersect::IGetStrength(const hsPoint3& pos) const
+float plSoftVolumeIntersect::IGetStrength(const hsPoint3& pos) const
 {
-    hsScalar retVal = 1.f;
+    float retVal = 1.f;
     int i;
     for( i = 0; i < fSubVolumes.GetCount(); i++ )
     {
-        hsScalar subRet = fSubVolumes[i]->GetStrength(pos);
+        float subRet = fSubVolumes[i]->GetStrength(pos);
         if( subRet <= 0 )
             return 0;
         if( subRet < retVal )
@@ -243,13 +243,13 @@ hsScalar plSoftVolumeIntersect::IGetStrength(const hsPoint3& pos) const
     return retVal;
 }
 
-hsScalar plSoftVolumeIntersect::IUpdateListenerStrength() const
+float plSoftVolumeIntersect::IUpdateListenerStrength() const
 {
-    hsScalar retVal = 1.f;
+    float retVal = 1.f;
     int i;
     for( i = 0; i < fSubVolumes.GetCount(); i++ )
     {
-        hsScalar subRet = fSubVolumes[i]->GetListenerStrength();
+        float subRet = fSubVolumes[i]->GetListenerStrength();
         if( subRet <= 0 )
         {
             retVal = 0.f;
@@ -272,7 +272,7 @@ plSoftVolumeInvert::~plSoftVolumeInvert()
 {
 }
 
-hsScalar plSoftVolumeInvert::IGetStrength(const hsPoint3& pos) const
+float plSoftVolumeInvert::IGetStrength(const hsPoint3& pos) const
 {
     hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
     if( fSubVolumes.GetCount() )
@@ -281,10 +281,10 @@ hsScalar plSoftVolumeInvert::IGetStrength(const hsPoint3& pos) const
     return 1.f;
 }
 
-hsScalar plSoftVolumeInvert::IUpdateListenerStrength() const
+float plSoftVolumeInvert::IUpdateListenerStrength() const
 {
     hsAssert(fSubVolumes.GetCount() <= 1, "Too many subvolumes on inverter");
-    hsScalar retVal = 1.f;
+    float retVal = 1.f;
     if( fSubVolumes.GetCount() )
         retVal = (1.f - fSubVolumes[0]->GetListenerStrength());
 

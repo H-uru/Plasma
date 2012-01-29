@@ -42,14 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsWideDefined
 #define hsWideDefined
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 struct hsWide {
-    Int32   fHi;
-    UInt32  fLo;
+    int32_t   fHi;
+    uint32_t  fLo;
 
-    hsWide* Set(Int32 lo) { fLo = lo; if (lo < 0) fHi = -1L; else fHi = 0; return this; }
-    hsWide* Set(Int32 hi, UInt32 lo) { fHi = hi; fLo = lo; return this; }
+    hsWide* Set(int32_t lo) { fLo = lo; if (lo < 0) fHi = -1L; else fHi = 0; return this; }
+    hsWide* Set(int32_t hi, uint32_t lo) { fHi = hi; fLo = lo; return this; }
 
     inline hsBool   IsNeg() const { return fHi < 0; }
     inline hsBool   IsPos() const { return fHi > 0 || (fHi == 0 && fLo != 0); }
@@ -65,37 +65,35 @@ struct hsWide {
     hsBool operator>=(const hsWide& b) const { return !(*this < b); }
 
     inline hsWide*  Negate();
-    inline hsWide*  Add(Int32 scaler);
+    inline hsWide*  Add(int32_t scaler);
     inline hsWide*  Add(const hsWide* a);
     inline hsWide*  Sub(const hsWide* a);
     inline hsWide*  ShiftLeft(unsigned shift);
     inline hsWide*  ShiftRight(unsigned shift);
     inline hsWide*  RoundRight(unsigned shift);
 
-    inline Int32    AsLong() const;             // return bits 31-0, checking for over/under flow
-    inline hsFixed  AsFixed() const;            // return bits 47-16, checking for over/under flow
-    inline hsFract  AsFract() const;            // return bits 61-30, checking for over/under flow
+    inline int32_t    AsLong() const;             // return bits 31-0, checking for over/under flow
+    inline int32_t  AsFixed() const;            // return bits 47-16, checking for over/under flow
+    inline int32_t  AsFract() const;            // return bits 61-30, checking for over/under flow
 
-    hsWide* Mul(Int32 a);                   // this updates the wide
-    hsWide* Mul(Int32 a, Int32 b);          // this sets the wide
-    hsWide* Div(Int32 denom);               // this updates the wide
+    hsWide* Mul(int32_t a);                   // this updates the wide
+    hsWide* Mul(int32_t a, int32_t b);          // this sets the wide
+    hsWide* Div(int32_t denom);               // this updates the wide
     hsWide* Div(const hsWide* denom);       // this updates the wide
 
-    hsFixed FixDiv(const hsWide* denom) const;
-    hsFract FracDiv(const hsWide* denom) const;
+    int32_t FixDiv(const hsWide* denom) const;
+    int32_t FracDiv(const hsWide* denom) const;
 
-    Int32   Sqrt() const;
-    Int32   CubeRoot() const;
+    int32_t   Sqrt() const;
+    int32_t   CubeRoot() const;
 
-#if HS_CAN_USE_FLOAT
     double  AsDouble() const { return fHi * double(65536) * double(65536) + fLo; }
     hsWide* Set(double d) 
     { 
-        Int32 hi = Int32(d / double(65536) / double(65536));
-        Int32 lo = Int32(d - double(hi));
+        int32_t hi = int32_t(d / double(65536) / double(65536));
+        int32_t lo = int32_t(d - double(hi));
         return Set(hi, lo);
     }
-#endif
 
 };
 
@@ -104,22 +102,17 @@ const hsWide kNegInfinity64 = { kNegInfinity32, 0 };
 
 /////////////////////// Inline implementations ///////////////////////
 
-#define TOP2BITS(n) (UInt32(n) >> 30)
-#define TOP3BITS(n) (UInt32(n) >> 29)
+#define TOP2BITS(n) (uint32_t(n) >> 30)
+#define TOP3BITS(n) (uint32_t(n) >> 29)
 
-#if HS_PIN_MATH_OVERFLOW && HS_DEBUG_MATH_OVERFLOW
-    #define hsSignalMathOverflow()  hsDebugMessage("Math overflow", 0)
-    #define hsSignalMathUnderflow() hsDebugMessage("Math underflow", 0)
-#else
     #define hsSignalMathOverflow()
     #define hsSignalMathUnderflow()
-#endif
 
-#define WIDE_ISNEG(hi, lo)                      (Int32(hi) < 0)
+#define WIDE_ISNEG(hi, lo)                      (int32_t(hi) < 0)
 #define WIDE_LESSTHAN(hi, lo, hi2, lo2)             ((hi) < (hi2) || (hi) == (hi2) && (lo) < (lo2))
 #define WIDE_SHIFTLEFT(outH, outL, inH, inL, shift)     do { (outH) = ((inH) << (shift)) | ((inL) >> (32 - (shift))); (outL) = (inL) << (shift); } while (0)
-#define WIDE_NEGATE(hi, lo)                     do { (hi) = ~(hi); if (((lo) = -Int32(lo)) == 0) (hi) += 1; } while (0) 
-#define WIDE_ADDPOS(hi, lo, scaler)             do { UInt32 tmp = (lo) + (scaler); if (tmp < (lo)) (hi) += 1; (lo) = tmp; } while (0)
+#define WIDE_NEGATE(hi, lo)                     do { (hi) = ~(hi); if (((lo) = -int32_t(lo)) == 0) (hi) += 1; } while (0) 
+#define WIDE_ADDPOS(hi, lo, scaler)             do { uint32_t tmp = (lo) + (scaler); if (tmp < (lo)) (hi) += 1; (lo) = tmp; } while (0)
 #define WIDE_SUBWIDE(hi, lo, subhi, sublo)          do { (hi) -= (subhi); if ((lo) < (sublo)) (hi) -= 1; (lo) -= (sublo); } while (0) 
 
 /////////////////////// Inline implementations ///////////////////////
@@ -131,13 +124,13 @@ inline hsWide* hsWide::Negate()
     return this;
 }
 
-inline hsWide* hsWide::Add(Int32 scaler)
+inline hsWide* hsWide::Add(int32_t scaler)
 {
     if (scaler >= 0)
         WIDE_ADDPOS(fHi, fLo, scaler);
     else
     {   scaler = -scaler;
-        if (fLo < UInt32(scaler))
+        if (fLo < uint32_t(scaler))
             fHi--;
         fLo -= scaler;
     }
@@ -147,7 +140,7 @@ inline hsWide* hsWide::Add(Int32 scaler)
 
 inline hsWide* hsWide::Add(const hsWide* a)
 {
-    UInt32  newLo = fLo + a->fLo;
+    uint32_t  newLo = fLo + a->fLo;
 
     fHi += a->fHi;
     if (newLo < (fLo | a->fLo))
@@ -184,34 +177,24 @@ inline hsWide* hsWide::RoundRight(unsigned shift)
     return this->Add(1L << (shift - 1))->ShiftRight(shift);
 }
 
-inline Int32 hsWide::AsLong() const
+inline int32_t hsWide::AsLong() const
 {
-#if HS_PIN_MATH_OVERFLOW
-    if (fHi > 0 || (fHi == 0 && (Int32)fLo < 0))
-    {   hsSignalMathOverflow();
-        return kPosInfinity32;
-    }
-    if (fHi < -1L || (fHi == -1L && (Int32)fLo >= 0))
-    {   hsSignalMathOverflow();
-        return kNegInfinity32;
-    }
-#endif
-    return (Int32)fLo;
+    return (int32_t)fLo;
 }
 
 inline hsBool hsWide::IsWide() const
 {
-    return (fHi > 0 || (fHi == 0 && (Int32)fLo < 0)) || (fHi < -1L || (fHi == -1L && (Int32)fLo >= 0));
+    return (fHi > 0 || (fHi == 0 && (int32_t)fLo < 0)) || (fHi < -1L || (fHi == -1L && (int32_t)fLo >= 0));
 }
 
-inline hsFixed hsWide::AsFixed() const
+inline int32_t hsWide::AsFixed() const
 {
     hsWide tmp = *this;
 
     return tmp.RoundRight(16)->AsLong();
 }
 
-inline hsFract hsWide::AsFract() const
+inline int32_t hsWide::AsFract() const
 {
     hsWide tmp = *this;
 

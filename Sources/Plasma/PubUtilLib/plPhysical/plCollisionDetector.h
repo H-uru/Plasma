@@ -56,7 +56,7 @@ class plEvalMsg;
 class plCollisionDetector : public plDetectorModifier
 {
 protected:
-    Int8    fType;
+    int8_t    fType;
     hsBool  fBumped, fTriggered;
 
     plArmatureMod* IGetAvatarModifier(plKey key);
@@ -81,7 +81,7 @@ public:
     CLASSNAME_REGISTER( plCollisionDetector );
     GETINTERFACE_ANY( plCollisionDetector, plDetectorModifier );
 
-    virtual void SetType(Int8 i) { fType |= i; }
+    virtual void SetType(int8_t i) { fType |= i; }
 
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
@@ -130,7 +130,7 @@ public:
         fWaitingForEval=false;fSavedActivatorMsg=nil;
         
     }
-    plObjectInVolumeDetector(Int8 i){fType = i;fWaitingForEval=false;fSavedActivatorMsg=nil;}
+    plObjectInVolumeDetector(int8_t i){fType = i;fWaitingForEval=false;fSavedActivatorMsg=nil;}
     virtual ~plObjectInVolumeDetector(){;}
     
     virtual hsBool MsgReceive(plMessage* msg);
@@ -147,7 +147,7 @@ public:
 class plObjectInVolumeAndFacingDetector : public plObjectInVolumeDetector
 {
 protected:
-    hsScalar fFacingTolerance;
+    float fFacingTolerance;
     bool fNeedWalkingForward;
 
     bool fAvatarInVolume;
@@ -271,7 +271,7 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 protected:
     plMessage *fEnterMsg;
     plMessage *fExitMsg;

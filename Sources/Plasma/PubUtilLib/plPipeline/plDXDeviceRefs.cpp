@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <d3d9.h>
 #include <ddraw.h>
@@ -157,8 +157,8 @@ void    plDXIndexBufferRef::Release( void )
 {
     if( fD3DBuffer != nil )
     {
-        plProfile_DelMem(MemIndex, fCount * sizeof(UInt16));
-        PROFILE_POOL_MEM(fPoolType, fCount * sizeof(UInt16), false, "IndexBuff");
+        plProfile_DelMem(MemIndex, fCount * sizeof(uint16_t));
+        PROFILE_POOL_MEM(fPoolType, fCount * sizeof(uint16_t), false, "IndexBuff");
         ReleaseObject( fD3DBuffer );
     }
 
@@ -171,8 +171,8 @@ void    plDXIndexBufferRef::Release( void )
 
 //// Set //////////////////////////////////////////////////////////////////////
 
-plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, 
-                                                     UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed, hsBool renderTarget )
+plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, 
+                                                     uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed, hsBool renderTarget )
 {
     if( fDataSize > 0 )
         plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
@@ -194,7 +194,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, UInt32 ml, UInt32 mw, UInt32 
         fLevelSizes = lSz;
     else
     {
-        fLevelSizes = TRACKED_NEW UInt32[1];
+        fLevelSizes = new uint32_t[1];
         fLevelSizes[0] = sz;
     }
     fData       = pd;
@@ -207,8 +207,8 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, UInt32 ml, UInt32 mw, UInt32 
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
-plDXTextureRef::plDXTextureRef( D3DFORMAT ft, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, 
-                                                UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed, hsBool renderTarget )
+plDXTextureRef::plDXTextureRef( D3DFORMAT ft, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, 
+                                                uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed, hsBool renderTarget )
 {
     fLevelSizes = nil;
     fOwner = nil;
@@ -303,7 +303,7 @@ void    plDXLightRef::UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *s
 
             fD3DInfo.Falloff = spotOwner->GetFalloff();
             fD3DInfo.Theta = spotOwner->GetSpotInner() * 2;
-//          fD3DInfo.Phi = spotOwner->GetProjection() ? hsScalarPI : spotOwner->GetSpotOuter() * 2;
+//          fD3DInfo.Phi = spotOwner->GetProjection() ? M_PI : spotOwner->GetSpotOuter() * 2;
             // D3D doesn't seem to like a Phi of PI, even though that's supposed to be the
             // largest legal value. Symptom is an erratic, intermitant, unpredictable failure
             // of the light to light, with bizarreness like lighting one object but not the object
@@ -367,7 +367,7 @@ void    plDXLightRef::Release( void )
 
 //// Constructor //////////////////////////////////////////////////////////////
 
-plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner, hsBool releaseDepthOnDelete )
+plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, hsBool releaseDepthOnDelete )
                     : plDXTextureRef( tp, ml, owner->GetWidth(), owner->GetHeight(),
                                         owner->GetWidth() * owner->GetHeight(),
                                         owner->GetWidth() * owner->GetHeight() * ( owner->GetPixelSize() >> 3 ),
@@ -397,7 +397,7 @@ plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, UInt32 ml, plRenderTarge
 
 //// Set //////////////////////////////////////////////////////////////////////
 
-plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, UInt32 ml, plRenderTarget *owner )
+plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner )
 {
     fOwner = owner;
 

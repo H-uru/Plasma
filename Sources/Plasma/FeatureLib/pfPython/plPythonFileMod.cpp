@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -434,7 +434,7 @@ bool plPythonFileMod::ILoadPythonCode()
     // see if the file exists first before trying to import it
     char pathandfile[256];
     sprintf(pathandfile, ".\\python\\%s.py",fPythonFile);
-    wchar *wPathandfile = hsStringToWString(pathandfile);
+    wchar_t *wPathandfile = hsStringToWString(pathandfile);
     hsBool exists = PathDoesFileExist(wPathandfile);
     delete [] wPathandfile;
     if (exists)
@@ -553,7 +553,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                     if (sceneObj)
                     {
                         hsAssert(!fSDLMod, "Python SDL modifier already created");
-                        fSDLMod = TRACKED_NEW plPythonSDLModifier(this);
+                        fSDLMod = new plPythonSDLModifier(this);
                         sceneObj->AddModifier(fSDLMod);
                     }
                 }
@@ -604,7 +604,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                             case plPythonParameter::kFloat:
                                 value = PyFloat_FromDouble(parameter.datarecord.fFloatNumber);
                                 break;
-                            case plPythonParameter::kBoolean:
+                            case plPythonParameter::kbool:
                                 value = PyInt_FromLong(parameter.datarecord.fBool);
                                 break;
                             case plPythonParameter::kString:
@@ -773,7 +773,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 {
                     // create the callback object
                     // Set the callback for the vault thingy
-                    fVaultCallback = TRACKED_NEW PythonVaultCallback( this, kfunc_VaultEvent );
+                    fVaultCallback = new PythonVaultCallback( this, kfunc_VaultEvent );
                     VaultRegisterCallback(fVaultCallback);
                 }
 
@@ -781,7 +781,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 if ( fPyFunctionInstances[kfunc_OnDefaultKeyCaught] != nil )
                 {
                     // Make us a key catcher
-                    fKeyCatcher = TRACKED_NEW pfPythonKeyCatcher( this );
+                    fKeyCatcher = new pfPythonKeyCatcher( this );
 
                     // Tell the input interface manager to use our catcher
                     plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher( fKeyCatcher );
@@ -957,8 +957,8 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     const char* pKeyName = pKey->GetName().c_str();
     const char* pSobjName = sKey->GetName().c_str();
 
-    UInt16 len = pKey->GetName().GetSize();
-    UInt16 slen = sKey->GetName().GetSize();
+    uint16_t len = pKey->GetName().GetSize();
+    uint16_t slen = sKey->GetName().GetSize();
 
     hsAssert(len+slen < 256, "Warning: String length exceeds 256 characters.");
     char modulename[256];
@@ -987,7 +987,7 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
         // we have an owner... so we must be a clone.
         // add the cloneID to the end of the module name
         // and set the fIAmAClone flag
-        UInt32 cloneID = pKeyImp->GetUoid().GetCloneID();
+        uint32_t cloneID = pKeyImp->GetUoid().GetCloneID();
         name += plString::Format("%d", cloneID);
         fAmIAttachedToClone = true;
     }
@@ -996,7 +996,7 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     if ( !PythonInterface::IsModuleNameUnique(modulename) )
     {
         // if not unique then add the sequence number to the end of the modulename
-        UInt32 seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
+        uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
         name += plString::Format("%d", seqID);
     }
 
@@ -1011,7 +1011,7 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
 //  PURPOSE    : set the param in the python file
 //             : so named stuff works
 //
-void plPythonFileMod::ISetKeyValue(const plKey& key, Int32 id)
+void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 {
     PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam",fModule);
     
@@ -1045,7 +1045,7 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, Int32 id)
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, Int32 id)
+void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, int32_t id)
 {
     if ( !responderName.IsNull() )
     {
@@ -1073,7 +1073,7 @@ void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, Int32 
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, Int32 id)
+void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, int32_t id)
 {
     if ( !activatorName.IsNull() )
     {
@@ -1110,7 +1110,7 @@ void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, Int32 
                 {
                     // setup a ref notify when it does get loaded
                     hsgResMgr::ResMgr()->AddViaNotify(keylist[i],
-                                                    TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
+                                                    new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
                                                     plRefFlags::kPassiveRef);
                 }
             }
@@ -1129,7 +1129,7 @@ void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, Int32 
 //    Tasks:
 //      - Call the Python code's Update function (if there)
 //
-hsBool plPythonFileMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 {
     if ( fModule )
     {
@@ -1263,7 +1263,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             // create a list for the event records
             PyObject* levents = PyList_New(0); // start with a list of no elements
             // loop thought the event records to get the data and transform into python objects
-            Int32 num_records = pNtfyMsg->GetEventCount();
+            int32_t num_records = pNtfyMsg->GetEventCount();
             int j;
             for ( j=0; j<num_records; j++ )
             {
@@ -1486,7 +1486,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
 
             // Need to determine which of the Activators sent this plNotifyMsg
             // and set the ID appropriately
-            Int32 id = -1;  // assume that none was found
+            int32_t id = -1;  // assume that none was found
             if ( pNtfyMsg->GetSender() != nil )
             {
                 // loop throught the parameters and set them by id
@@ -1621,7 +1621,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             {
                 // now create the control... but first we need to find out what it is
                 PyObject* pyCtrlKey = pyKey::New(pGUIMsg->GetControlKey());
-                UInt32 control_type = pyGUIDialog::WhatControlType(*(pyKey::ConvertFrom(pyCtrlKey)));
+                uint32_t control_type = pyGUIDialog::WhatControlType(*(pyKey::ConvertFrom(pyCtrlKey)));
                 Py_DECREF(pyCtrlKey);
 
                 switch (control_type)
@@ -1684,7 +1684,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             }
             // Need to determine which of the GUIDialogs sent this plGUINotifyMsg
             // and set the ID appropriately
-            Int32 id = -1;  // assume that none was found
+            int32_t id = -1;  // assume that none was found
             if ( pGUIMsg->GetSender() != nil )
             {
                 // loop throught the parameters and set them by id
@@ -2339,7 +2339,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnMarkerMsg],
                     (char*)fFunctionNames[kfunc_OnMarkerMsg],
-                    "lO", (UInt32)markermsg->fType, ptuple);
+                    "lO", (uint32_t)markermsg->fType, ptuple);
             if (retVal == nil)
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2497,7 +2497,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnMovieEvent],
                     (char*)fFunctionNames[kfunc_OnMovieEvent],
-                    "si", moviemsg->fMovieName, (UInt32)moviemsg->fReason);
+                    "si", moviemsg->fMovieName, (uint32_t)moviemsg->fReason);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2897,7 +2897,7 @@ void plPythonFileMod::EnableControlKeyEvents()
     if ( fPyFunctionInstances[kfunc_OnKeyEvent] != nil )
     {
         // register for key events
-        plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+        plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
         pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -2916,7 +2916,7 @@ void plPythonFileMod::EnableControlKeyEvents()
 void plPythonFileMod::DisableControlKeyEvents()
 {
     // unregister for key events
-    plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
     pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg->SetSender(GetKey());
     pModMsg->SetCmd(plCmdIfaceModMsg::kRemove);

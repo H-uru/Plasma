@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfConsoleCmd.h"
-#include "hsUtils.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 pfConsoleCmdGroup   *pfConsoleCmdGroup::fBaseCmdGroup = nil;
-UInt32              pfConsoleCmdGroup::fBaseCmdGroupRef = 0;
+uint32_t              pfConsoleCmdGroup::fBaseCmdGroupRef = 0;
 
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -106,7 +106,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup( void )
     if( fBaseCmdGroup == nil )
     {
         /// Initialize base group
-        fBaseCmdGroup = TRACKED_NEW pfConsoleCmdGroup( nil, nil );
+        fBaseCmdGroup = new pfConsoleCmdGroup( nil, nil );
     }
 
     return fBaseCmdGroup;
@@ -164,7 +164,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommand( char *name )
 //  how many matches it skips before returning a match. (That way you can
 //  cycle through matches by sending 1 + the last counter every time).
 
-pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, UInt32 *counter )
+pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, uint32_t *counter )
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group;
@@ -226,7 +226,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupRecurse( const char *name )
     static char         seps[] = " ._";
 
 
-    string = TRACKED_NEW char[ strlen( name ) + 1 ];
+    string = new char[ strlen( name ) + 1 ];
     hsAssert( string != nil, "Cannot allocate string in FindSubGroupRecurse()" );
     strcpy( string, name );
 
@@ -249,7 +249,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupRecurse( const char *name )
 //// FindCommandNoCase ///////////////////////////////////////////////////////
 //  Case-insensitive version of FindCommand.
 
-pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, UInt8 flags, pfConsoleCmd *start )
+pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, uint8_t flags, pfConsoleCmd *start )
 {
     pfConsoleCmd    *cmd;
 
@@ -284,7 +284,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, UInt8 flags, 
 
 //// FindSubGroupNoCase //////////////////////////////////////////////////////
 
-pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( char *name, UInt8 flags, pfConsoleCmdGroup *start )
+pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( char *name, uint8_t flags, pfConsoleCmdGroup *start )
 {
     pfConsoleCmdGroup   *group;
 
@@ -464,7 +464,7 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
         {
             if( strcmp( fSigTypes[ i ], tok ) == 0 )
             {
-                fSignature.Push( (UInt8)i );
+                fSignature.Push( (uint8_t)i );
                 break;
             }
         }
@@ -509,7 +509,7 @@ void    pfConsoleCmd::Unregister( void )
 //// Execute /////////////////////////////////////////////////////////////////
 //  Run da thing!
 
-void    pfConsoleCmd::Execute( Int32 numParams, pfConsoleCmdParam *params, void (*PrintFn)( const char * ) )
+void    pfConsoleCmd::Execute( int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)( const char * ) )
 {
     fFunction( numParams, params, PrintFn );
 }
@@ -538,7 +538,7 @@ void    pfConsoleCmd::Unlink( void )
 
 //// GetSigEntry /////////////////////////////////////////////////////////////
 
-UInt8   pfConsoleCmd::GetSigEntry( UInt8 i )
+uint8_t   pfConsoleCmd::GetSigEntry( uint8_t i )
 {
     if( fSignature.GetCount() == 0 )
         return kNone;

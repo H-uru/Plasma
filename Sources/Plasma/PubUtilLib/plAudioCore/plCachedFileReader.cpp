@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCachedFileReader.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -117,7 +117,7 @@ void plCachedFileReader::Close()
     }
 }
 
-UInt32 plCachedFileReader::GetDataSize()
+uint32_t plCachedFileReader::GetDataSize()
 {
     hsAssert(IsValid(), "GetDataSize() called on an invalid cache file");
 
@@ -131,7 +131,7 @@ float plCachedFileReader::GetLengthInSecs()
     return (float)fDataLength / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool plCachedFileReader::SetPosition(UInt32 numBytes)
+hsBool plCachedFileReader::SetPosition(uint32_t numBytes)
 {
     hsAssert(IsValid(), "SetPosition() called on an invalid cache file");
 
@@ -142,7 +142,7 @@ hsBool plCachedFileReader::SetPosition(UInt32 numBytes)
     return !fseek(fFileHandle, sizeof(plWAVHeader) + fCurPosition, SEEK_SET);
 }
 
-hsBool plCachedFileReader::Read(UInt32 numBytes, void *buffer)
+hsBool plCachedFileReader::Read(uint32_t numBytes, void *buffer)
 {
     hsAssert(IsValid(), "Read() called on an invalid cache file");
 
@@ -154,7 +154,7 @@ hsBool plCachedFileReader::Read(UInt32 numBytes, void *buffer)
     return numRead >= numBytes;
 }
 
-UInt32 plCachedFileReader::NumBytesLeft()
+uint32_t plCachedFileReader::NumBytesLeft()
 {
     hsAssert(IsValid(), "NumBytesLeft() called on an invalid cache file");
     hsAssert(fCurPosition <= fDataLength, "Invalid position while reading");
@@ -187,7 +187,7 @@ hsBool plCachedFileReader::OpenForWriting(const char *path, plWAVHeader &header)
     return fFileHandle != nil;
 }
 
-UInt32 plCachedFileReader::Write(UInt32 bytes, void* buffer)
+uint32_t plCachedFileReader::Write(uint32_t bytes, void* buffer)
 {
     hsAssert(IsValid(), "Write() called on an invalid cache file");
 
@@ -196,5 +196,5 @@ UInt32 plCachedFileReader::Write(UInt32 bytes, void* buffer)
     fCurPosition += written;
     fDataLength += written;
 
-    return (UInt32)written;
+    return (uint32_t)written;
 }

@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaRippleVSMgr.h"
 #include "plDynaDecal.h"
 
@@ -77,7 +77,7 @@ int plDynaRippleVSMgr::INewDecal()
 {
     int idx = fDecals.GetCount();
 
-    plDynaRippleVS* rip = TRACKED_NEW plDynaRippleVS();
+    plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
     rip->fC2U = (fInitUVW.fX - fFinalUVW.fX) / (fLifeSpan * fFinalUVW.fX);
 
@@ -103,7 +103,7 @@ void plDynaRippleVSMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDynaRippleMgr::Read(stream, mgr);
 
-    mgr->ReadKeyNotifyMe(stream, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefWaveSetBase), plRefFlags::kPassiveRef);
 }
 
 void plDynaRippleVSMgr::Write(hsStream* stream, hsResMgr* mgr)
@@ -172,14 +172,14 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
 
     hsBool retVal = false;
 
-    plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+    plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
     const hsMatrix44& shapeL2W = shape->GetOwner()->GetLocalToWorld();
 
-    plConst(hsScalar) kMinDist(2.0f);
-    plConst(hsScalar) kMinTime(1.5f);
+    plConst(float) kMinDist(2.0f);
+    plConst(float) kMinTime(1.5f);
     double t = hsTimer::GetSysSeconds();
-    hsScalar dt = hsScalar(t - info.fLastTime) * sRand.RandZeroToOne();
+    float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
     hsBool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
     hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
@@ -193,18 +193,18 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
         randPert.Normalize();
         if( !farEnough )
         {
-            plConst(hsScalar) kRandPert = 0.5f;
+            plConst(float) kRandPert = 0.5f;
             randPert *= kRandPert;
         }
         else
         {
-            plConst(hsScalar) kRandPert = 0.15f;
+            plConst(float) kRandPert = 0.15f;
             randPert *= kRandPert;
         }
         pos += randPert;
 
         // Are we potentially touching the water?
-        hsScalar waterHeight = fWaveSetBase->GetHeight();
+        float waterHeight = fWaveSetBase->GetHeight();
         if( (pos.fZ - fScale.fZ * shape->GetHeight() < waterHeight)
             &&(pos.fZ + fScale.fZ * shape->GetHeight() > waterHeight) )
         {
@@ -212,9 +212,9 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
             hsVector3 dir(fWaveSetBase->GetWindDir());
             hsVector3 up(0.f, 0.f, 1.f);
 
-            hsScalar wid = hsMaximum(shape->GetWidth(), shape->GetLength());
+            float wid = hsMaximum(shape->GetWidth(), shape->GetLength());
             
-            plConst(hsScalar) kMaxWaterDepth(1000.f);
+            plConst(float) kMaxWaterDepth(1000.f);
 
             hsVector3 size(wid * fScale.fX, wid * fScale.fY, kMaxWaterDepth);
             fCutter->SetLength(size);

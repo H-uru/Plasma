@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //===========================================================================
 void PathGetProgramDirectory (
-    wchar       *dst,
+    wchar_t       *dst,
     unsigned     dstChars
 ) {
     ASSERT(dst);
@@ -69,15 +69,15 @@ void PathGetProgramDirectory (
 
 //===========================================================================
 void PathAddFilename (
-    wchar       *dst, 
-    const wchar  src[], 
-    const wchar  fname[],
+    wchar_t       *dst, 
+    const wchar_t  src[], 
+    const wchar_t  fname[],
     unsigned     dstChars
 ) {
     ASSERT(dst);
     ASSERT(dstChars);
 
-    wchar temp[MAX_PATH];
+    wchar_t temp[MAX_PATH];
     if (dst == src) {
         StrCopy(temp, src, arrsize(temp));
         src = temp;
@@ -92,42 +92,42 @@ void PathAddFilename (
 
 //===========================================================================
 void PathRemoveFilename (
-    wchar       *dst, 
-    const wchar  src[], 
+    wchar_t       *dst, 
+    const wchar_t  src[], 
     unsigned     dstChars
 ) {
     ASSERT(dst);
     ASSERT(src);
     ASSERT(dstChars);
 
-    wchar drive[MAX_DRIVE];
-    wchar dir[MAX_DIR];
+    wchar_t drive[MAX_DRIVE];
+    wchar_t dir[MAX_DIR];
     PathSplitPath(src, drive, dir, 0, 0);
     PathMakePath(dst, dstChars, drive, dir, 0, 0);
 }
 
 //===========================================================================
 void PathRemoveExtension (
-    wchar       *dst, 
-    const wchar  src[], 
+    wchar_t       *dst, 
+    const wchar_t  src[], 
     unsigned     dstChars
 ) {
     ASSERT(dst);
     ASSERT(src);
     ASSERT(dstChars);
 
-    wchar drive[MAX_DRIVE];
-    wchar dir[MAX_DIR];
-    wchar fname[MAX_FNAME];
+    wchar_t drive[MAX_DRIVE];
+    wchar_t dir[MAX_DIR];
+    wchar_t fname[MAX_FNAME];
     PathSplitPath(src, drive, dir, fname, 0);
     PathMakePath(dst, dstChars, drive, dir, fname, 0);
 }
 
 //===========================================================================
 void PathSetExtension (
-    wchar       *dst, 
-    const wchar  src[],
-    const wchar  ext[],
+    wchar_t       *dst, 
+    const wchar_t  src[],
+    const wchar_t  ext[],
     unsigned     dstChars
 ) {
     ASSERT(dst);
@@ -135,18 +135,18 @@ void PathSetExtension (
     ASSERT(dst != ext);
     ASSERT(dstChars);
 
-    wchar drive[MAX_DRIVE];
-    wchar dir[MAX_DIR];
-    wchar fname[MAX_FNAME];
+    wchar_t drive[MAX_DRIVE];
+    wchar_t dir[MAX_DIR];
+    wchar_t fname[MAX_FNAME];
     PathSplitPath(src, drive, dir, fname, 0);
     PathMakePath(dst, dstChars, drive, dir, fname, ext);
 }
 
 //===========================================================================
 void PathAddExtension (
-    wchar       *dst, 
-    const wchar  src[],
-    const wchar  ext[],
+    wchar_t       *dst, 
+    const wchar_t  src[],
+    const wchar_t  ext[],
     unsigned     dstChars
 ) {
     ASSERT(dst);
@@ -154,10 +154,10 @@ void PathAddExtension (
     ASSERT(dst != ext);
     ASSERT(dstChars);
 
-    wchar drive[MAX_DRIVE];
-    wchar dir[MAX_DIR];
-    wchar fname[MAX_FNAME];
-    wchar oldext[MAX_EXT];
+    wchar_t drive[MAX_DRIVE];
+    wchar_t dir[MAX_DIR];
+    wchar_t fname[MAX_FNAME];
+    wchar_t oldext[MAX_EXT];
     PathSplitPath(src, drive, dir, fname, oldext);
     PathMakePath(
         dst, 
@@ -171,16 +171,16 @@ void PathAddExtension (
 
 //===========================================================================
 void PathRemoveDirectory (
-    wchar       *dst, 
-    const wchar  src[], 
+    wchar_t       *dst, 
+    const wchar_t  src[], 
     unsigned     dstChars
 ) {
     ASSERT(dst);
     ASSERT(src);
     ASSERT(dstChars);
 
-    wchar fname[MAX_FNAME];
-    wchar ext[MAX_EXT];
+    wchar_t fname[MAX_FNAME];
+    wchar_t ext[MAX_EXT];
     PathSplitPath(src, 0, 0, fname, ext);
     PathMakePath(dst, dstChars, 0, 0, fname, ext);
 }
@@ -194,14 +194,14 @@ void PathRemoveDirectory (
 
 //============================================================================
 void PathSplitEmail (
-    const wchar emailAddr[],
-    wchar *     user,
+    const wchar_t emailAddr[],
+    wchar_t *     user,
     unsigned    userChars,
-    wchar *     domain,
+    wchar_t *     domain,
     unsigned    domainChars,
-    wchar *     tld,
+    wchar_t *     tld,
     unsigned    tldChars,
-    wchar *     subDomains,
+    wchar_t *     subDomains,
     unsigned    subDomainChars,
     unsigned    subDomainCount
 ) {
@@ -234,12 +234,12 @@ void PathSplitEmail (
         return;
 
     // copy email address so we can tokenize it
-    wchar * tmp = ALLOCA(wchar, len + 1);
+    wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * (len + 1));
     StrCopy(tmp, emailAddr, len + 1);
-    const wchar * work = tmp;
+    const wchar_t * work = tmp;
 
     // parse user   
-    wchar token[MAX_PATH];
+    wchar_t token[MAX_PATH];
     if (!StrTokenize(&work, token, arrsize(token), L"@"))
         return;
 
@@ -252,12 +252,14 @@ void PathSplitEmail (
         return;
     
     // parse all domains
-    ARRAY(wchar *) arr;
+    ARRAY(wchar_t *) arr;
     while (StrTokenize(&work, token, arrsize(token), L".")) {
         unsigned toklen = StrLen(token);
-        wchar * str = ALLOCA(wchar, toklen + 1);
+        wchar_t * str = (wchar_t*)malloc(sizeof(wchar_t) * (toklen + 1));
         StrCopy(str, token, toklen + 1);
         arr.Add(str);
+
+        free(str);
     }
 
     // copy domains to output parameters
@@ -285,6 +287,8 @@ void PathSplitEmail (
             if (subDomains)
                 StrCopy(&SUB_DOMAIN(index), arr[index], subDomainChars);
     }
+
+    free(tmp);
     
     #undef SUB_DOMAIN
 }

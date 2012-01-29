@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsExceptions.h"
-#include "hsUtils.h"
+
 #include "plPNG.h"
 #include "plGImage/plMipmap.h"
 
@@ -55,13 +55,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void pngReadDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 {
     hsStream* inStream = (hsStream*)png_get_io_ptr(png_ptr);
-    inStream->Read(length, (UInt8*)png_data);
+    inStream->Read(length, (uint8_t*)png_data);
 }
 
 void pngWriteDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length)
 {
     hsStream* outStream = (hsStream*)png_get_io_ptr(png_ptr);
-    outStream->Write(length, (UInt8*)png_data);
+    outStream->Write(length, (uint8_t*)png_data);
 }
 
 //// Singleton Instance ///////////////////////////////////////////////////////
@@ -152,9 +152,9 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             // Invert color byte-order as used by plMipmap for DirectX
             png_set_bgr(png_ptr);
             /// Construct a new mipmap to hold everything
-            newMipmap = TRACKED_NEW plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
+            newMipmap = new plMipmap(imgWidth, imgHeight, plMipmap::kARGB32Config, 1, plMipmap::kUncompressed);
             char* destp = (char*)newMipmap->GetImage();
-            png_bytep* row_ptrs = TRACKED_NEW png_bytep[imgHeight];
+            png_bytep* row_ptrs = new png_bytep[imgHeight];
             const unsigned int stride = imgWidth * bitdepth * channels / 8;
 
             //  Assign row pointers to the appropriate locations in the newly-created Mipmap
@@ -180,13 +180,13 @@ plMipmap* plPNG::IRead(hsStream* inStream)
 
 plMipmap* plPNG::ReadFromFile(const char* fileName)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     plMipmap* retVal = ReadFromFile(wFilename);
     delete [] wFilename;
     return retVal;
 }
 
-plMipmap* plPNG::ReadFromFile(const wchar* fileName)
+plMipmap* plPNG::ReadFromFile(const wchar_t* fileName)
 {
     hsUNIXStream in;
 
@@ -220,7 +220,7 @@ hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
 
         //  Assign delegate function for writing to hsStream
         png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, NULL);
-        UInt8 psize = source->GetPixelSize();
+        uint8_t psize = source->GetPixelSize();
         png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA,
                      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         // Invert color byte-order as used by plMipmap for DirectX
@@ -228,7 +228,7 @@ hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
         // Write out the image metadata
         png_write_info(png_ptr, info_ptr);
         char* srcp = (char*)source->GetImage();
-        png_bytep* row_ptrs = TRACKED_NEW png_bytep[source->GetHeight()];
+        png_bytep* row_ptrs = new png_bytep[source->GetHeight()];
         const unsigned int stride = source->GetWidth() * source->GetPixelSize() / 8;
 
         //  Assign row pointers to the appropriate locations in the newly-created Mipmap
@@ -250,13 +250,13 @@ hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
 
 hsBool plPNG::WriteToFile(const char* fileName, plMipmap* sourceData)
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsBool retVal = WriteToFile(wFilename, sourceData);
     delete [] wFilename;
     return retVal;
 }
 
-hsBool plPNG::WriteToFile(const wchar* fileName, plMipmap* sourceData)
+hsBool plPNG::WriteToFile(const wchar_t* fileName, plMipmap* sourceData)
 {
     hsUNIXStream out;
 

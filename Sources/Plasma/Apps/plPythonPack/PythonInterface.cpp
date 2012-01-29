@@ -152,7 +152,7 @@ PyObject* PythonInterface::CompileString(const char *command, const char* filena
 //
 //  PURPOSE    : marshals an object into a char string
 //
-hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Int32* size)
+hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object

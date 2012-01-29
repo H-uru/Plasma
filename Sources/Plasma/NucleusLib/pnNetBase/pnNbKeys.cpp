@@ -43,17 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNbKeys.h"
 
 // Auth Server
-byte kAuthDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
-byte kAuthDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
 // CSR Server
-byte kCsrDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
-byte kCsrDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kCsrDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kCsrDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
 // Game Server
-byte kGameDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
-byte kGameDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kGameDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
 // GateKeeper Server
-byte kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
-byte kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
+uint8_t kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8] = {0};

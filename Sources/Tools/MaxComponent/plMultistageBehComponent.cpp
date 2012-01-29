@@ -189,7 +189,7 @@ void plMultistageBehComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>
 hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     //create the modifier here so that other components can find it
-    plMultistageBehMod *mod = TRACKED_NEW plMultistageBehMod;
+    plMultistageBehMod *mod = new plMultistageBehMod;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), mod, node->GetLocation());
     fMods[node] = mod;
 
@@ -199,7 +199,7 @@ hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
 hsBool plMultistageBehComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Create the stage vector
-    plAnimStageVec* animStages = TRACKED_NEW plAnimStageVec;
+    plAnimStageVec* animStages = new plAnimStageVec;
     int numStages = fStages.size();
     animStages->reserve(numStages);
 
@@ -349,7 +349,7 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             if (LOWORD(wParam) == IDC_ADD)
             {
                 // Create the new stage and give it a default name.
-                plBaseStage* stage = TRACKED_NEW plStandardStage;
+                plBaseStage* stage = new plStandardStage;
                 int count = fStages.size();
                 fStages.push_back(stage);
                 char buf[64];
@@ -487,14 +487,14 @@ public:
 
     // Don't support any of this
     virtual hsBool Open(const char *, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual hsBool Open(const wchar *, const wchar * = L"rb") { hsAssert(0, "Not supported"); return false; }
+    virtual hsBool Open(const wchar_t *, const wchar_t * = L"rb") { hsAssert(0, "Not supported"); return false; }
     virtual hsBool Close() {  hsAssert(0, "Not supported"); return false; }
-    virtual void   Skip(UInt32 deltaByteCount) { hsAssert(0, "Not supported"); }
+    virtual void   Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
     virtual void   Rewind() { hsAssert(0, "Not supported"); }
 
-    virtual UInt32  GetEOF() { return (UInt32)fLoad->CurChunkLength(); }
+    virtual uint32_t  GetEOF() { return (uint32_t)fLoad->CurChunkLength(); }
 
-    virtual UInt32 Read(UInt32 byteCount, void * buffer)
+    virtual uint32_t Read(uint32_t byteCount, void * buffer)
     {
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
@@ -503,7 +503,7 @@ public:
         fPosition += numRead;
         return numRead;
     }
-    virtual UInt32 Write(UInt32 byteCount, const void* buffer)
+    virtual uint32_t Write(uint32_t byteCount, const void* buffer)
     {
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");
@@ -571,7 +571,7 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
             break;
 
         case kStandard:
-            stage = TRACKED_NEW plStandardStage;
+            stage = new plStandardStage;
             break;
         }
 

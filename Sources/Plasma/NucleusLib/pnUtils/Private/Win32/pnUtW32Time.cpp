@@ -57,13 +57,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //============================================================================
 static void FormatTime (
-    qword       time,
-    wchar const dateFmt[],
-    wchar const timeFmt[],
+    uint64_t       time,
+    wchar_t const dateFmt[],
+    wchar_t const timeFmt[],
     unsigned    chars,
-    wchar *     buffer
+    wchar_t *     buffer
 ) {
-    COMPILER_ASSERT(sizeof(FILETIME) == sizeof(qword));
+    COMPILER_ASSERT(sizeof(FILETIME) == sizeof(uint64_t));
 
     SYSTEMTIME sysTime;
     FileTimeToSystemTime((FILETIME *)&time, &sysTime);
@@ -108,13 +108,13 @@ static void FormatTime (
 
 //===========================================================================
 void TimeGetDesc (
-    qword       time,
+    uint64_t       time,
     TimeDesc *  desc
 ) {
     ASSERT(desc);
 
     SYSTEMTIME sysTime;
-    COMPILER_ASSERT(sizeof(qword) == sizeof(FILETIME));
+    COMPILER_ASSERT(sizeof(uint64_t) == sizeof(FILETIME));
     FileTimeToSystemTime((FILETIME *) &time, &sysTime);
 
     desc->year      = sysTime.wYear;
@@ -127,17 +127,17 @@ void TimeGetDesc (
 }
 
 //============================================================================
-qword TimeGetTime () {
-    qword time;
-    COMPILER_ASSERT(sizeof(qword) == sizeof(FILETIME));
+uint64_t TimeGetTime () {
+    uint64_t time;
+    COMPILER_ASSERT(sizeof(uint64_t) == sizeof(FILETIME));
     GetSystemTimeAsFileTime((FILETIME *) &time);
     return time;
 }
 
 //============================================================================
-qword TimeGetLocalTime () {
-    qword time;
-    COMPILER_ASSERT(sizeof(qword) == sizeof(FILETIME));
+uint64_t TimeGetLocalTime () {
+    uint64_t time;
+    COMPILER_ASSERT(sizeof(uint64_t) == sizeof(FILETIME));
     GetSystemTimeAsFileTime((FILETIME *) &time);
     FileTimeToLocalFileTime((FILETIME *) &time, (FILETIME *) &time);
     return time;
@@ -145,9 +145,9 @@ qword TimeGetLocalTime () {
 
 //============================================================================
 void TimePrettyPrint (
-    qword       time,
+    uint64_t       time,
     unsigned    chars,
-    wchar *     buffer
+    wchar_t *     buffer
 ) {
     FormatTime(
         time,

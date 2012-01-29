@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plFont_h
 #define _plFont_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
 #include "pcSmallRect.h"
@@ -74,7 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBDFConvertCallback
 {
     public:
-        virtual void    NumChars( UInt16 chars ) {}
+        virtual void    NumChars( uint16_t chars ) {}
         virtual void    CharDone( void ) {}
 };
 
@@ -132,32 +132,32 @@ class plFont : public hsKeyedObject
 
         // Font face and size. This is just used for IDing purposes, not for rendering
         char    fFace[ 256 ];
-        UInt8   fSize;
-        UInt32  fFlags;
+        uint8_t   fSize;
+        uint32_t  fFlags;
 
         // Size of the whole font bitmap. Fonts are stored vertically, one
         // character at a time, so fWidth is really the max width of any one
         // character bitmap, with of course the proper padding
-        UInt32  fWidth, fHeight;
+        uint32_t  fWidth, fHeight;
 
         // Bpp of our font bitmap. We're grayscale, remember...
-        UInt8   fBPP;
+        uint8_t   fBPP;
 
         // Bitmap data!
-        UInt8   *fBMapData;
+        uint8_t   *fBMapData;
 
         // Our character class, for per-char info
         class plCharacter
         {
             public:
-                UInt32  fBitmapOff;     // Offset in the font bitmap in bytes 
-                                        // to the first byte of the character
-                UInt32  fHeight;        // Height in pixels of this character
-                Int32   fBaseline;      // Number of pixels down from the top of 
+                uint32_t  fBitmapOff;     // Offset in the font bitmap in bytes 
+                                        // to the first uint8_t of the character
+                uint32_t  fHeight;        // Height in pixels of this character
+                int32_t   fBaseline;      // Number of pixels down from the top of 
                                         // the char bitmap to the baseline.
                 
-                hsScalar    fLeftKern;  // Kerning values for this char, in pixels
-                hsScalar    fRightKern; // Note that the right kern is relative to 
+                float    fLeftKern;  // Kerning values for this char, in pixels
+                float    fRightKern; // Note that the right kern is relative to 
                                         // the right side of the bitmap area, which
                                         // is the width of the font bitmap, so
                                         // basically each character is the same width,
@@ -182,14 +182,14 @@ class plFont : public hsKeyedObject
         };
 
         // First character we encode--everything below this we don't render
-        UInt16  fFirstChar;
+        uint16_t  fFirstChar;
 
         // Our characters, stored in an hsTArray for easy construction
         hsTArray<plCharacter>   fCharacters;
 
         // Max character bitmap height and max ascent for any character
-        UInt32  fMaxCharHeight;
-        Int32   fFontAscent, fFontDescent;
+        uint32_t  fMaxCharHeight;
+        int32_t   fFontAscent, fFontDescent;
 
         typedef void (plFont::*CharRenderFunc)( const plCharacter &c );
 
@@ -197,18 +197,18 @@ class plFont : public hsKeyedObject
         class plRenderInfo
         {
             public:
-                Int16       fFirstLineIndent;
-                Int16       fX, fY, fNumCols, fFarthestX, fLastX, fLastY;
-                Int16       fMaxWidth, fMaxHeight, fMaxAscent, fMaxDescent;
-                Int16       fLineSpacing;
-                UInt8       *fDestPtr;
-                UInt32      fDestStride;
-                UInt8       fDestBPP;
-                UInt32      fColor;
+                int16_t       fFirstLineIndent;
+                int16_t       fX, fY, fNumCols, fFarthestX, fLastX, fLastY;
+                int16_t       fMaxWidth, fMaxHeight, fMaxAscent, fMaxDescent;
+                int16_t       fLineSpacing;
+                uint8_t       *fDestPtr;
+                uint32_t      fDestStride;
+                uint8_t       fDestBPP;
+                uint32_t      fColor;
                 plMipmap    *fMipmap;
-                UInt32      fFlags;
+                uint32_t      fFlags;
                 pcSmallRect fClipRect;
-                hsScalar    fFloatWidth;
+                float    fFloatWidth;
 
                 const wchar_t   *fVolatileStringPtr;    // Just so we know where we clipped
 
@@ -220,10 +220,10 @@ class plFont : public hsKeyedObject
         void    IClear( bool onConstruct = false );
         void    ICalcFontAscent( void );
 
-        UInt8   *IGetFreeCharData( UInt32 &newOffset );
+        uint8_t   *IGetFreeCharData( uint32_t &newOffset );
 
-        void    IRenderLoop( const wchar_t *string, Int32 maxCount );
-        void    IRenderString( plMipmap *mip, UInt16 x, UInt16 y, const wchar_t *string, hsBool justCalc );
+        void    IRenderLoop( const wchar_t *string, int32_t maxCount );
+        void    IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, hsBool justCalc );
 
         // Various render functions
         void    IRenderChar1To32( const plCharacter &c );
@@ -245,43 +245,43 @@ class plFont : public hsKeyedObject
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
         const char  *GetFace( void ) const { return fFace; }
-        UInt8       GetSize( void ) const { return fSize; }
-        UInt16      GetFirstChar( void ) const { return fFirstChar; }
-        UInt16      GetNumChars( void ) const { return fCharacters.GetCount(); }
-        UInt32      GetFlags( void ) const { return fFlags; }
-        hsScalar    GetDescent( void ) const { return (hsScalar)fFontDescent; }
-        hsScalar    GetAscent( void ) const { return (hsScalar)fFontAscent; }
+        uint8_t       GetSize( void ) const { return fSize; }
+        uint16_t      GetFirstChar( void ) const { return fFirstChar; }
+        uint16_t      GetNumChars( void ) const { return fCharacters.GetCount(); }
+        uint32_t      GetFlags( void ) const { return fFlags; }
+        float    GetDescent( void ) const { return (float)fFontDescent; }
+        float    GetAscent( void ) const { return (float)fFontAscent; }
 
-        UInt32      GetBitmapWidth( void ) const { return fWidth; }
-        UInt32      GetBitmapHeight( void ) const { return fHeight; }
-        UInt8       GetBitmapBPP( void ) const { return fBPP; }
+        uint32_t      GetBitmapWidth( void ) const { return fWidth; }
+        uint32_t      GetBitmapHeight( void ) const { return fHeight; }
+        uint8_t       GetBitmapBPP( void ) const { return fBPP; }
 
         void    SetFace( const char *face );
-        void    SetSize( UInt8 size );
-        void    SetFlags( UInt32 flags ) { fFlags = flags; }
-        void    SetFlag( UInt32 flag, hsBool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
-        hsBool  IsFlagSet( UInt32 flag ) { if( fFlags & flag ) return true; return false; }
+        void    SetSize( uint8_t size );
+        void    SetFlags( uint32_t flags ) { fFlags = flags; }
+        void    SetFlag( uint32_t flag, hsBool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
+        hsBool  IsFlagSet( uint32_t flag ) { if( fFlags & flag ) return true; return false; }
 
-        void    SetRenderColor( UInt32 color );
-        void    SetRenderFlag( UInt32 flag, hsBool on ) { if( on ) fRenderInfo.fFlags |= flag; else fRenderInfo.fFlags &= ~flag; }
-        hsBool  IsRenderFlagSet( UInt32 flag ) { return ( fRenderInfo.fFlags & flag ) ? true : false; }
-        void    SetRenderClipRect( Int16 x, Int16 y, Int16 width, Int16 height );
-        void    SetRenderXJustify( UInt32 j ) { fRenderInfo.fFlags &= ~kRenderJustXMask; fRenderInfo.fFlags |= j; }
-        void    SetRenderYJustify( UInt32 j ) { fRenderInfo.fFlags &= ~kRenderJustYMask; fRenderInfo.fFlags |= j; }
-        void    SetRenderFirstLineIndent( Int16 indent ) { fRenderInfo.fFirstLineIndent = indent; }
-        void    SetRenderLineSpacing( Int16 spacing ) { fRenderInfo.fLineSpacing = spacing; }
+        void    SetRenderColor( uint32_t color );
+        void    SetRenderFlag( uint32_t flag, hsBool on ) { if( on ) fRenderInfo.fFlags |= flag; else fRenderInfo.fFlags &= ~flag; }
+        hsBool  IsRenderFlagSet( uint32_t flag ) { return ( fRenderInfo.fFlags & flag ) ? true : false; }
+        void    SetRenderClipRect( int16_t x, int16_t y, int16_t width, int16_t height );
+        void    SetRenderXJustify( uint32_t j ) { fRenderInfo.fFlags &= ~kRenderJustXMask; fRenderInfo.fFlags |= j; }
+        void    SetRenderYJustify( uint32_t j ) { fRenderInfo.fFlags &= ~kRenderJustYMask; fRenderInfo.fFlags |= j; }
+        void    SetRenderFirstLineIndent( int16_t indent ) { fRenderInfo.fFirstLineIndent = indent; }
+        void    SetRenderLineSpacing( int16_t spacing ) { fRenderInfo.fLineSpacing = spacing; }
 
         // Sets flags too
-        void    SetRenderClipping( Int16 x, Int16 y, Int16 width, Int16 height );
-        void    SetRenderWrapping( Int16 x, Int16 y, Int16 width, Int16 height );
+        void    SetRenderClipping( int16_t x, int16_t y, int16_t width, int16_t height );
+        void    SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t height );
 
-        void    RenderString( plMipmap *mip, UInt16 x, UInt16 y, const char *string, UInt16 *lastX = nil, UInt16 *lastY = nil );
-        void    RenderString( plMipmap *mip, UInt16 x, UInt16 y, const wchar_t *string, UInt16 *lastX = nil, UInt16 *lastY = nil );
+        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const char *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
 
-        UInt16  CalcStringWidth( const char *string );
-        UInt16  CalcStringWidth( const wchar_t *string );
-        void    CalcStringExtents( const char *string, UInt16 &width, UInt16 &height, UInt16 &ascent, UInt32 &firstClippedChar, UInt16 &lastX, UInt16 &lastY );
-        void    CalcStringExtents( const wchar_t *string, UInt16 &width, UInt16 &height, UInt16 &ascent, UInt32 &firstClippedChar, UInt16 &lastX, UInt16 &lastY );
+        uint16_t  CalcStringWidth( const char *string );
+        uint16_t  CalcStringWidth( const wchar_t *string );
+        void    CalcStringExtents( const char *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
+        void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
         hsBool  LoadFromFNT( const char *path );
         hsBool  LoadFromFNTStream( hsStream *stream );

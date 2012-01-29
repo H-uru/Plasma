@@ -64,7 +64,7 @@ struct EventHash {
         ESrvType    srvType
     );
 
-    inline dword GetHash () const;
+    inline uint32_t GetHash () const;
     inline bool operator== (const EventHash & rhs) const;
 };
 
@@ -117,7 +117,7 @@ static long                     s_perf[kNlSrvNumPerf];
 static CCritSect                s_critsect;
 static bool                     s_running;
 static LISTDECL(LogConn, link)  s_conns;
-void (*NetLogSrvCallback)(const NetLogEvent *event, const ARRAY(wchar) &, unsigned, NetAddressNode &, qword, unsigned, unsigned ) ;
+void (*NetLogSrvCallback)(const NetLogEvent *event, const ARRAY(wchar_t) &, unsigned, NetAddressNode &, uint64_t, unsigned, unsigned ) ;
 
 
 /*****************************************************************************
@@ -140,7 +140,7 @@ static void ParseIni (Ini * ini) {
 }
 
 //============================================================================
-static void IniChangeCallback (const wchar fullPath[]) {
+static void IniChangeCallback (const wchar_t fullPath[]) {
     Ini * ini = IniOpen(fullPath);
     ParseIni(ini);
     IniClose(ini);
@@ -269,8 +269,8 @@ bool LogConn::Recv_Srv2Log_LogMsg(const Srv2Log_LogMsg & msg ) {
     CSrvUnpackBuffer unpack(&msg, msg.messageBytes);
     (void)unpack.GetData(sizeof(msg));
     unsigned length = 0;
-    ARRAY(wchar) databuf;
-    wchar data[256];
+    ARRAY(wchar_t) databuf;
+    wchar_t data[256];
     const void *pData = 0;
 
     SendReply(msg.transId, kNetSuccess);    
@@ -360,7 +360,7 @@ bool LogConn::Recv_Srv2Log_LogMsg(const Srv2Log_LogMsg & msg ) {
                 break;
                 
                 case kLogParamStringW: {
-                    const wchar *str = unpack.GetString();
+                    const wchar_t *str = unpack.GetString();
                     if(!str) {
                         continue;
                     }
@@ -489,7 +489,7 @@ bool LogConn::Recv_Srv2Log_LogMsg(const Srv2Log_LogMsg & msg ) {
                     break;
                     
                     case kLogParamStringW: {
-                        const wchar *str = unpack.GetString();
+                        const wchar_t *str = unpack.GetString();
                         if(!str) {
                             continue;
                         }
@@ -575,7 +575,7 @@ void NetLogSrvDestroy () {
 }
 
 //============================================================================
-void NetLogSrvRegisterCallback( void (*NlSrvCallback)(const NetLogEvent *, const ARRAY(wchar) &, unsigned, NetAddressNode &, qword, unsigned, unsigned )) {
+void NetLogSrvRegisterCallback( void (*NlSrvCallback)(const NetLogEvent *, const ARRAY(wchar_t) &, unsigned, NetAddressNode &, uint64_t, unsigned, unsigned )) {
     NetLogSrvCallback = NlSrvCallback;
 }
 

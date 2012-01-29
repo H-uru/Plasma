@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plMsgForwarder.h"
 #include "hsResMgr.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnNetCommon/plNetApp.h"
@@ -124,7 +124,7 @@ hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             hsAssert(event, "Message forwarder only supports event callback messages");
             if (event)
             {
-                plForwardCallback *fc = TRACKED_NEW plForwardCallback;
+                plForwardCallback *fc = new plForwardCallback;
                 fc->fNumCallbacks = fForwardKeys.Count();
 
                 // Turn off net propagate the callbacks to us will all be local.  Only the
