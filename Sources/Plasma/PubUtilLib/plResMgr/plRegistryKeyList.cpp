@@ -69,11 +69,11 @@ plRegistryKeyList::~plRegistryKeyList()
 class plSearchKeyImp : public plKeyImp
 {
 public:
-    const char* fSearchKeyName;
-    const char* GetName() const { return fSearchKeyName; }
+    plString fSearchKeyName;
+    const plString& GetName() const { return fSearchKeyName; }
 };
 
-plKeyImp* plRegistryKeyList::FindKey(const char* keyName)
+plKeyImp* plRegistryKeyList::FindKey(const plString& keyName)
 {
     static plSearchKeyImp searchKey;
     searchKey.fSearchKeyName = keyName;
@@ -86,7 +86,7 @@ plKeyImp* plRegistryKeyList::FindKey(const char* keyName)
         for (int i = 0; i < fStaticKeys.size(); i++)
         {
             plKeyImp* curKey = fStaticKeys[i];
-            if (curKey && hsStrCaseEQ(keyName, curKey->GetName()))
+            if (curKey && !keyName.Compare(curKey->GetName(), plString::kCaseInsensitive))
                 return curKey;
         }
     }
@@ -94,7 +94,7 @@ plKeyImp* plRegistryKeyList::FindKey(const char* keyName)
     {
         // We're sorted, do a fast lookup
         StaticVec::const_iterator it = std::lower_bound(fStaticKeys.begin(), fStaticKeys.end(), &searchKey, KeySorter());
-        if (it != fStaticKeys.end() && hsStrCaseEQ(keyName, (*it)->GetName()))
+        if (it != fStaticKeys.end() && !keyName.Compare((*it)->GetName(), plString::kCaseInsensitive))
             return *it;
     }
 
@@ -124,7 +124,7 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid)
         // because of local data. Verify that we have the right key by
         // name, and if it's wrong, do the slower find-by-name.
         plKeyImp *keyImp = fStaticKeys[objectID-1];
-        if (!hsStrCaseEQ(keyImp->GetName(), uoid.GetObjectName()))
+        if (keyImp->GetName().Compare(uoid.GetObjectName(), plString::kCaseInsensitive) != 0)
             return FindKey(uoid.GetObjectName());
         else
             return keyImp;

@@ -211,7 +211,7 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
         plDrawable* p = sortedDrawList[i].fDrawable;
 
 
-        plProfile_BeginLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName().c_str());
     
         if( sortedDrawList[i].fDrawable->GetNativeProperty(plDrawable::kPropSortSpans) )
         {
@@ -229,7 +229,7 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
 
         }
 
-        plProfile_EndLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName().c_str());
     }
 
     return numDrawn;

@@ -1719,7 +1719,7 @@ bool plSimpleStateVariable::Get(plKey* value, int idx) const
             if (*value)
             {
                 const plUoid& newUoid = (*value)->GetUoid();
-                if (stricmp(newUoid.GetObjectName(), fU[idx].GetObjectName()) != 0)
+                if (newUoid.GetObjectName().Compare(fU[idx].GetObjectName(), plString::kCaseInsensitive) != 0)
                 {
                     // uoid names don't match... chances are the key changed in the local data after the key was written to the sdl
                     // do a search by name, which takes longer, to get the correct key
@@ -1780,7 +1780,7 @@ bool plSimpleStateVariable::Get(plCreatable** value, int idx) const
 
 /////////////////////////////////////////////////////////////
 
-const char* plSimpleStateVariable::GetKeyName(int idx) const
+plString plSimpleStateVariable::GetKeyName(int idx) const
 {
     if (fVar.GetAtomicType()==plVarDescriptor::kKey)
     {
@@ -1790,7 +1790,7 @@ const char* plSimpleStateVariable::GetKeyName(int idx) const
         }
     }
     hsAssert(false, "passing wrong value type to SDL variable"); 
-    return "(nil)";
+    return _TEMP_CONVERT_FROM_LITERAL("(nil)");
 }
 
 #pragma optimize( "g", off )    // disable float optimizations

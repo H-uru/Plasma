@@ -828,13 +828,6 @@ void plNetMsgSDLStateBCast::WriteVersion(hsStream* s, hsResMgr* mgr)
 ////////////////////////////////////////////////////////
 // plNetMsgRoomsList
 ////////////////////////////////////////////////////////
-plNetMsgRoomsList::~plNetMsgRoomsList()
-{
-    int i;
-    for(i=0;i<GetNumRooms();i++)
-        delete [] fRoomNames[i];
-}
-
 int plNetMsgRoomsList::IPokeBuffer(hsStream* stream, UInt32 peekOptions)
 {
     int bytes=plNetMessage::IPokeBuffer(stream, peekOptions);
@@ -871,7 +864,6 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, UInt32 peekOptions)
             loc.Read(stream);
             fRooms[i]=loc;
             // read room name for debugging
-            delete [] fRoomNames[i];
             stream->LogSubStreamPushDesc("RoomList");
             plMsgCStringHelper::Peek(fRoomNames[i],stream,peekOptions);
         }
@@ -884,13 +876,13 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, UInt32 peekOptions)
 void plNetMsgRoomsList::AddRoom(plKey rmKey)
 {
     fRooms.push_back(rmKey->GetUoid().GetLocation());
-    fRoomNames.push_back(hsStrcpy(rmKey->GetName()));
+    fRoomNames.push_back(rmKey->GetName());
 }
 
-void plNetMsgRoomsList::AddRoomLocation(plLocation loc, const char* rmName)
+void plNetMsgRoomsList::AddRoomLocation(plLocation loc, const plString& rmName)
 {
     fRooms.push_back(loc);
-    fRoomNames.push_back(rmName ? hsStrcpy(rmName) : nil);
+    fRoomNames.push_back(rmName);
 }
 
 int plNetMsgRoomsList::FindRoomLocation(plLocation loc)

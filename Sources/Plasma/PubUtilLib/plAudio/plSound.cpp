@@ -141,10 +141,10 @@ void plSound::IPrintDbgMessage( const char *msg, hsBool isError )
 
     if( isError )
 //      ourLog->AddLineF( plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
-        ourLog->AddLineS( "audio.log", plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
+        ourLog->AddLineS( "audio.log", plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
     else
 //      ourLog->AddLineF( "%s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
-        ourLog->AddLineS( "audio.log", "%s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
+        ourLog->AddLineS( "audio.log", "%s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
 }
 
 ///////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ void plSound::IUpdateDebugPlate( void )
             fDebugPlate->SetPosition( -0.5, 0 );
             fDebugPlate->SetDataRange( 0, 100, 100 );
             fDebugPlate->SetColors( 0x80202000 );
-            fDebugPlate->SetTitle( (char *)GetKeyName() );      // Bleah
+            fDebugPlate->SetTitle( _TEMP_CONVERT_TO_CONST_CHAR( GetKeyName() ) );      // Bleah
             fDebugPlate->SetLabelText( "Desired", "Curr", "Soft", "Dist" );
         }
 
@@ -190,7 +190,7 @@ void plSound::SetCurrDebugPlate( const plKey soundKey )
         {
             fDebugPlate->ClearData();
             fDebugPlate->SetVisible( true );
-            fDebugPlate->SetTitle( (char *)fCurrDebugPlateSound->GetKeyName() );        // Bleah
+            fDebugPlate->SetTitle( _TEMP_CONVERT_TO_CONST_CHAR( fCurrDebugPlateSound->GetKeyName() ) );        // Bleah
         }
     }
 }

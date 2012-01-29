@@ -118,7 +118,7 @@ public:
     void UnloadKeys();  // Frees all our keys
 
     // Find a key by type and name
-    plKeyImp* FindKey(UInt16 classType, const char* name) const;
+    plKeyImp* FindKey(UInt16 classType, const plString& name) const;
     // Find a key by direct uoid lookup (or fallback to name lookup if that doesn't work)
     plKeyImp* FindKey(const plUoid& uoid) const;
     

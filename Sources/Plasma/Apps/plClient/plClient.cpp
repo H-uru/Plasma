@@ -632,7 +632,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
         {
         case plClientRefMsg::kLoadRoom :
             #ifndef PLASMA_EXTERNAL_RELEASE
-            plStatusLog::AddLineS( "pageouts.log", ".. ClientRefMsg received for room %s", pRefMsg->GetRef() != nil ? pRefMsg->GetRef()->GetKey()->GetUoid().GetObjectName() : "nilref" );
+            plStatusLog::AddLineS( "pageouts.log", ".. ClientRefMsg received for room %s", pRefMsg->GetRef() != nil ? pRefMsg->GetRef()->GetKey()->GetUoid().GetObjectName().c_str() : "nilref" );
             #endif
 
             // was it that the room was loaded?
@@ -782,11 +782,10 @@ hsBool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        char str[256];
-        sprintf(str, "Callback event from %s\n", callback->GetSender()
-                    ? callback->GetSender()->GetName()
-                    : "Unknown");
-        hsStatusMessage(str);
+        plString str = plString::Format("Callback event from %s\n", callback->GetSender()
+                        ? callback->GetSender()->GetName().c_str()
+                        : "Unknown");
+        hsStatusMessage(str.c_str());
         static int gotten = 0;
         if( ++gotten > 5 )
         {
@@ -1282,7 +1281,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
 
 void plClient::IReadKeyedObjCallback(plKey key)
 {
-    fInstance->IIncProgress(1, key->GetName());
+    fInstance->IIncProgress(1, _TEMP_CONVERT_TO_CONST_CHAR(key->GetName()));
 }
 
 //============================================================================

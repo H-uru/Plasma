@@ -211,7 +211,7 @@ public:
         kTurnBackPage
     };
     
-    pfBookData(const char *guiName = nil);
+    pfBookData(const plString &guiName = plString::Null);
     virtual ~pfBookData();
 
     void LoadGUI(); // need this seperate because the plKey isn't setup until the constructor is done
@@ -284,7 +284,7 @@ protected:
         kRefDefaultCover
     };
 
-    std::string         fGUIName;
+    plString            fGUIName;
 
     // The pointer to our dialog
     pfGUIDialogMod      *fDialog;
@@ -362,8 +362,8 @@ class pfJournalBook : public hsKeyedObject
         // The constructor takes in the esHTML source for the journal, along with
         // the name of the mipmap to use as the cover of the book. The callback
         // key is the keyed object to send event messages to (see <img> tag).
-        pfJournalBook( const char *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const char *guiName = nil );
-        pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const char *guiName = nil );
+        pfJournalBook( const char *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const plString &guiName = plString::Null );
+        pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const plString &guiName = plString::Null );
 
         virtual ~pfJournalBook();
 
@@ -380,15 +380,15 @@ class pfJournalBook : public hsKeyedObject
         static void SingletonShutdown( void );
         
         // loads a gui
-        static void LoadGUI( const char *guiName );
+        static void LoadGUI( const plString &guiName );
 
         // unloads a gui if we don't need it any more and want to free up memory
-        static void UnloadGUI( const char *guiName );
+        static void UnloadGUI( const plString &guiName );
 
         // unloads all GUIs except for the default
         static void UnloadAllGUIs();
 
-        void    SetGUI( const char *guiName );
+        void    SetGUI( const plString &guiName );
 
         // Shows the book, optionally starting open or closed
         void    Show( hsBool startOpened = false );
@@ -505,8 +505,8 @@ class pfJournalBook : public hsKeyedObject
         // Current list of linkable image chunks we have visible on the screen, for quick hit testing
         hsTArray<pfEsHTMLChunk *>   fVisibleLinks;
 
-        static std::map<std::string,pfBookData*> fBookGUIs;
-        std::string fCurBookGUI;
+        static std::map<plString,pfBookData*> fBookGUIs;
+        plString fCurBookGUI;
 
         enum Refs
         {

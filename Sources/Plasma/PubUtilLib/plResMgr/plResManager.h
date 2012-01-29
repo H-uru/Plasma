@@ -123,7 +123,7 @@ public:
     //---------------------------
     // Registry Modification Functions
     //---------------------------
-    virtual plKey NewKey(const char* name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
+    virtual plKey NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
     virtual plKey NewKey(plUoid& newUoid, hsKeyedObject* object);
 
     virtual plDispatchBase* Dispatch();
@@ -174,7 +174,7 @@ protected:
     friend class plKeyImp;
     friend class plResManagerHelper;
 
-    virtual plKey   ReRegister(const char* nm, const plUoid& uoid);
+    virtual plKey   ReRegister(const plString& nm, const plUoid& uoid);
     virtual hsBool  ReadObject(plKeyImp* key); // plKeys call this when needed
     virtual hsBool  IReadObject(plKeyImp* pKey, hsStream *stream);  
 

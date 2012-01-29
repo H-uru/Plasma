@@ -179,10 +179,10 @@ void    plFontCache::ILoadCustomFonts( void )
             delete font;
         else
         {
-            char keyName[ 512 ];
+            plString keyName;
             if( font->GetKey() == nil )
             {
-                sprintf( keyName, "%s-%d", font->GetFace(), font->GetSize() );
+                keyName = plString::Format( "%s-%d", font->GetFace(), font->GetSize() );
                 hsgResMgr::ResMgr()->NewKey( keyName, font, plLocation::kGlobalFixedLoc );
             }
 

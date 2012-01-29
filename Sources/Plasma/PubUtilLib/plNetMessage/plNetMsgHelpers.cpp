@@ -364,7 +364,7 @@ int plNetMsgObjectHelper::Peek(hsStream* stream, const UInt32 peekOptions)
 
 hsBool plNetMsgObjectHelper::SetFromKey(const plKey &key)
 {
-    if (!key || !key->GetName())
+    if (!key || key->GetName().IsNull())
         return false;
     
     fUoid = key->GetUoid();

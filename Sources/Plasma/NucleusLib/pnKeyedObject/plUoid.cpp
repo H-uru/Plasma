@@ -135,21 +135,19 @@ plLocation plLocation::MakeNormal(UInt32 number)
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
-plUoid::plUoid(const plLocation& location, UInt16 classType, const char* objectName, const plLoadMask& m)
+plUoid::plUoid(const plLocation& location, UInt16 classType, const plString& objectName, const plLoadMask& m)
 {
-    fObjectName = nil;
     Invalidate();
 
     fLocation = location;
     fClassType = classType;
-    fObjectName = hsStrcpy(objectName);
+    fObjectName = objectName;
     fLoadMask = m;
     fClonePlayerID = 0;
 }
 
 plUoid::plUoid(const plUoid& src)
 {
-    fObjectName = nil;
     Invalidate();
     *this = src;
 }
@@ -177,7 +175,7 @@ void plUoid::Read(hsStream* s)
     s->LogReadLE(&fClassType, "ClassType");
     s->LogReadLE(&fObjectID, "ObjectID");
     s->LogSubStreamPushDesc("ObjectName");
-    fObjectName = s->LogReadSafeString();
+    fObjectName = s->LogReadSafeString_TEMP();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)
@@ -210,7 +208,7 @@ void plUoid::Write(hsStream* s) const
 
     s->WriteLE( fClassType );
     s->WriteLE( fObjectID );
-    s->WriteSafeString( fObjectName );
+    s->WriteSafeString_TEMP( fObjectName );
 
     // conditional cloneIDs write
     if (contents & kHasCloneIDs)
@@ -228,9 +226,7 @@ void plUoid::Invalidate()
     fCloneID = 0;
     fClonePlayerID = 0;
     fClassType = 0;
-    if (fObjectName)
-        delete [] fObjectName;
-    fObjectName = nil;
+    fObjectName = plString::Null;
     fLocation.Invalidate();
     fLoadMask = plLoadMask::kAlways;
 
@@ -238,7 +234,7 @@ void plUoid::Invalidate()
 
 hsBool plUoid::IsValid() const
 {
-    if (!fLocation.IsValid() || fObjectName == nil)
+    if (!fLocation.IsValid() || fObjectName.IsNull())
         return false;
 
     return true;
@@ -249,7 +245,7 @@ hsBool plUoid::operator==(const plUoid& u) const
     return  fLocation == u.fLocation
             && fLoadMask == u.fLoadMask
             && fClassType == u.fClassType
-            && hsStrEQ(fObjectName, u.fObjectName)
+            && fObjectName == u.fObjectName
             && fObjectID == u.fObjectID
             && fCloneID == u.fCloneID
             && fClonePlayerID == u.fClonePlayerID;
@@ -261,9 +257,7 @@ plUoid& plUoid::operator=(const plUoid& rhs)
     fCloneID = rhs.fCloneID;
     fClonePlayerID = rhs.fClonePlayerID;
     fClassType = rhs.fClassType;
-    if (fObjectName)
-        delete [] fObjectName;
-    fObjectName = hsStrcpy(rhs.fObjectName);
+    fObjectName = rhs.fObjectName;
     fLocation = rhs.fLocation;
     fLoadMask = rhs.fLoadMask;
 
@@ -276,7 +270,7 @@ plString plUoid::StringIze() const // Format to displayable string
     return plString::Format("(0x%x:0x%x:%s:C:[%u,%u])",
         fLocation.GetSequenceNumber(), 
         int(fLocation.GetFlags()), 
-        fObjectName, 
+        fObjectName.c_str(),
         GetClonePlayerID(), 
         GetCloneID());
 }

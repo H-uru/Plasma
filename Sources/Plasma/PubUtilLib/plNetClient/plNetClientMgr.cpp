@@ -1480,7 +1480,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
     pl->fKey = hsgResMgr::ResMgr()->FindKey(pl->fUoid);
 
     // check for age SDL state
-    if (pl->fUoid.GetObjectName() && !strcmp(pl->fUoid.GetObjectName(), plSDL::kAgeSDLObjectName))
+    if (!pl->fUoid.GetObjectName().IsNull() && !pl->fUoid.GetObjectName().Compare(plSDL::kAgeSDLObjectName))
     {
         DebugMsg("Recv SDL state for age hook object, uoid=%s", pl->fUoid.StringIze().c_str());
         if (!pl->fKey)

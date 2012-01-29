@@ -112,10 +112,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        return PyString_FromString(cyMisc::GetClientName(*key));
+        return PyString_FromString(cyMisc::GetClientName(*key).s_str());
     }
     else
-        return PyString_FromString(cyMisc::GetLocalClientName());
+        return PyString_FromString(cyMisc::GetLocalClientName().c_str());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalAvatar, "This will return a ptSceneobject of the local avatar\n"

@@ -528,15 +528,15 @@ void plResManager::IPageOutSceneNodes(hsBool forceAll)
 
 inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
 {
-    const char* objectName = uoid.GetObjectName();
+    const plString& objectName = uoid.GetObjectName();
 
     // If we're running localized, try to find a localized version first
-    if ((objectName != nil) && plLocalization::IsLocalized())
+    if ((!objectName.IsNull()) && plLocalization::IsLocalized())
     {
         char localName[256];
-        if (plLocalization::GetLocalized(objectName, localName))
+        if (plLocalization::GetLocalized(_TEMP_CONVERT_TO_CONST_CHAR(objectName), localName))
         {
-            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName);
+            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), _TEMP_CONVERT_FROM_LITERAL(localName));
             if (localKey != nil)
                 return localKey;
         }
@@ -743,9 +743,9 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
 //  Creates a new key and assigns it to the given keyed object, also placing
 //  it into the registry.
 
-plKey plResManager::NewKey(const char* name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
+plKey plResManager::NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
 {
-    hsAssert(name && name[0] != '\0', "No name for new key");
+    hsAssert(!name.IsEmpty(), "No name for new key");
     plUoid newUoid(loc, object->ClassIndex(), name, m);
     return NewKey(newUoid, object);
 }
@@ -764,7 +764,7 @@ plKey plResManager::NewKey(plUoid& newUoid, hsKeyedObject* object)
     return keyPtr;
 }
 
-plKey plResManager::ReRegister(const char* nm, const plUoid& oid)
+plKey plResManager::ReRegister(const plString& nm, const plUoid& oid)
 {
     hsAssert(fInited, "Attempting to reregister a key before we're inited!");
 
@@ -919,7 +919,7 @@ plKey plResManager::ICloneKey(const plUoid& objUoid, UInt32 playerID, UInt32 clo
     fCurCloneID = cloneID;
     fCurClonePlayerID = playerID;
 
-    plKey cloneKey = ReRegister("", objUoid);
+    plKey cloneKey = ReRegister(_TEMP_CONVERT_FROM_LITERAL(""), objUoid);
 
     fCurClonePlayerID = 0;
     fCurCloneID = 0;
@@ -1270,7 +1270,7 @@ public:
     {
         if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
         {
-            plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
+            plUoid uoid(page->GetPageInfo().GetLocation(), 0, _TEMP_CONVERT_FROM_LITERAL(""));
             fLocations.push_back(uoid.GetLocation());
         }
         return true;

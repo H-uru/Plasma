@@ -59,7 +59,7 @@ public:
     virtual ~plKeyImp();
 
     virtual const plUoid&   GetUoid() const { return fUoid; }
-    virtual const char*     GetName() const;
+    virtual const plString& GetName() const;
 
     virtual hsKeyedObject*  GetObjectPtr();
     virtual hsKeyedObject*  ObjectIsLoaded() const;

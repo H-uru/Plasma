@@ -341,7 +341,7 @@ void plDispatch::IMsgDispatch()
                 UInt32 rcvTicks = hsTimer::GetPrecTickCount();
 
                 // Object could be deleted by this message, so we need to log this stuff now
-                const char* keyname = "(unknown)";
+                plString keyname = _TEMP_CONVERT_FROM_LITERAL("(unknown)");
                 const char* className = "(unknown)";
                 UInt32 clonePlayerID = 0;
                 if (plDispatchLogBase::IsLoggingLong())
@@ -373,7 +373,7 @@ void plDispatch::IMsgDispatch()
                     float rcvTime = (float)(hsTimer::PrecTicksToSecs(rcvTicks) * 1000.f);
                     // If the receiver takes more than 5 ms to process its message, log it
                     if (rcvTime > 5.f)
-                        plDispatchLogBase::GetInstance()->LogLongReceive(keyname, className, clonePlayerID, msg, rcvTime);
+                        plDispatchLogBase::GetInstance()->LogLongReceive(keyname.c_str(), className, clonePlayerID, msg, rcvTime);
                 }
 #endif // PLASMA_EXTERNAL_RELEASE
 

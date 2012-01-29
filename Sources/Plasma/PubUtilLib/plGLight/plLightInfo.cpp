@@ -373,7 +373,7 @@ hsBool plLightInfo::MsgReceive(plMessage* msg)
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
     {
-        plProfile_BeginLap(LightInfo, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(LightInfo, this->GetKey()->GetUoid().GetObjectName().c_str());
 
         if( !fDeviceRef && !GetProperty(kLPShadowOnly) )
         {
@@ -382,7 +382,7 @@ hsBool plLightInfo::MsgReceive(plMessage* msg)
 
         ICheckMaxStrength();
 
-        plProfile_EndLap(LightInfo, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(LightInfo, this->GetKey()->GetUoid().GetObjectName().c_str());
         return true;
     }
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
@@ -395,7 +395,7 @@ hsBool plLightInfo::MsgReceive(plMessage* msg)
             case kProjection:
                 fProjection = plLayerInterface::ConvertNoRef(refMsg->GetRef());
                 {
-                    if( GetKey() && GetKey()->GetName() && !strncmp(GetKey()->GetName(), "RTPatternLight", strlen("RTPatternLight")) )
+                    if( GetKey() && !GetKey()->GetName().CompareN("RTPatternLight", strlen("RTPatternLight")) )
                         SetProperty(kLPForceProj, true);
                 }
                 break;

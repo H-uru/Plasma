@@ -313,7 +313,7 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Peek(plString  & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::Peek(plString & stringref, hsStream* stream, const UInt32 peekOptions)
 {
     std::string temp;
     int pos = Peek(temp, stream, peekOptions);
@@ -321,7 +321,7 @@ int plMsgStdStringHelper::Peek(plString  & stringref, hsStream* stream, const UI
     return pos;
 }
 
-int plMsgStdStringHelper::PeekBig(plString  & stringref, hsStream* stream, const UInt32 peekOptions)
+int plMsgStdStringHelper::PeekBig(plString & stringref, hsStream* stream, const UInt32 peekOptions)
 {
     std::string temp;
     int pos = PeekBig(temp, stream, peekOptions);
@@ -397,6 +397,20 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const UInt32 peekOpt
     }
     stream->LogSubStreamEnd();
     return stream->GetPosition();
+}
+
+int plMsgCStringHelper::Poke(const plString & str, hsStream* stream, const UInt32 peekOptions)
+{
+    return Poke(str.c_str(), stream, peekOptions);
+}
+
+int plMsgCStringHelper::Peek(plString & str, hsStream* stream, const UInt32 peekOptions)
+{
+    char * temp = nil;
+    int pos = Peek(temp, stream, peekOptions);
+    str = plString::FromIso8859_1(temp);
+    delete [] temp;
+    return pos;
 }
 
 

@@ -934,7 +934,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
     {
         //if( fListener )
         {
-            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
+            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
             if(hsTimer::GetMilliSeconds() - fLastUpdateTimeMs > UPDATE_TIME_MS)
             {
                 IUpdateSoftSounds( fCurrListenerPos );
@@ -947,7 +947,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
                 }
                 //fCommittedListenerPos = fCurrListenerPos;
             }
-            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
+            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
         }
         
         return true;

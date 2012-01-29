@@ -493,7 +493,7 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
     }
 
     actorDesc.userData = this;
-    actorDesc.name = GetKeyName();
+    actorDesc.name = GetKeyName().c_str();
 
     // Put the dynamics into actor group 1.  The actor groups are only used for
     // deciding who we get contact reports for.
@@ -617,7 +617,7 @@ hsBool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     plKey ourKey = GetKey();
     PhysRefType refType = PhysRefType(refMsg->fType);
 
-    const char* refKeyName = refKey ? refKey->GetName() : "MISSING";
+    plString refKeyName = refKey ? refKey->GetName() : _TEMP_CONVERT_FROM_LITERAL("MISSING");
 
     if (refType == kPhysRefWorld)
     {
@@ -695,11 +695,11 @@ plPhysical& plPXPhysical::SetProperty(int prop, hsBool status)
         case plSimulationInterface::kNoSynchronize:     propName = "kNoSynchronize";        break;
         }
 
-        const char* name = "(unknown)";
+        plString name = _TEMP_CONVERT_FROM_LITERAL("(unknown)");
         if (GetKey())
             name = GetKeyName();
         if (plSimulationMgr::fExtraProfile)
-            plSimulationMgr::Log("Warning: Redundant physical property set (property %s, value %s) on %s", propName, status ? "true" : "false", name);
+            plSimulationMgr::Log("Warning: Redundant physical property set (property %s, value %s) on %s", propName, status ? "true" : "false", name.c_str());
     }
 
     switch (prop)
@@ -786,7 +786,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
             if (!CompareMatrices(curl2w, fCachedLocal2World, .0001f))
             {
                 plProfile_Inc(LocationsSent);
-                plProfile_BeginLap(PhysicsUpdates, GetKeyName());
+                plProfile_BeginLap(PhysicsUpdates, GetKeyName().c_str());
 
                 // quick peek at the translation...last time it was corrupted because we applied a non-unit quaternion
 //              hsAssert(real_finite(fCachedLocal2World.fMap[0][3]) &&
@@ -808,7 +808,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
                 pCorrMsg->Send();
                 if (fProxyGen)
                     fProxyGen->SetTransform(fCachedLocal2World, w2l);
-                plProfile_EndLap(PhysicsUpdates, GetKeyName());
+                plProfile_EndLap(PhysicsUpdates, GetKeyName().c_str());
             }
         }
     }

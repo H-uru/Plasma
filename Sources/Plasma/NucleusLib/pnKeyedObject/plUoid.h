@@ -57,9 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTypes.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
+#include "plString.h"
 
 class hsStream;
-class plString;
 
 //// plLocation //////////////////////////////////////////////////////////////
 
@@ -144,15 +144,15 @@ public:
 class plUoid
 {
 public:
-    plUoid() { fObjectName = nil; Invalidate(); }
-    plUoid(const plLocation& location, UInt16 classType, const char* objectName, const plLoadMask& m=plLoadMask::kAlways);
+    plUoid() { Invalidate(); }
+    plUoid(const plLocation& location, UInt16 classType, const plString& objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
     plUoid(const plUoid& src);
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
     UInt16              GetClassType() const { return fClassType; }
-    const char*         GetObjectName() const { return fObjectName; }
+    const plString&     GetObjectName() const { return fObjectName; }
     const plLoadMask&   GetLoadMask() const { return fLoadMask; }
 
     void Read(hsStream* s);
@@ -188,7 +188,7 @@ protected:
     UInt32      fClonePlayerID; // The ID of the player who made this clone
     UInt16      fCloneID;       // The ID of this clone (unique per client)
     UInt16      fClassType;
-    char*       fObjectName;
+    plString    fObjectName;
     plLocation  fLocation;
     plLoadMask  fLoadMask;
 };

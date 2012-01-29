@@ -59,7 +59,8 @@ struct FileEntry;
 #ifndef STREAM_LOGGER
 #define hsReadOnlyLoggingStream hsReadOnlyStream
 #define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
-#define LogReadSafeString() ReadSafeString();
+#define LogReadSafeString() ReadSafeString()
+#define LogReadSafeString_TEMP() ReadSafeString_TEMP()
 #define LogReadSafeStringLong() ReadSafeStringLong();
 #define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
 #define LogReadLE(value, desc) ReadLE(value)
@@ -130,6 +131,7 @@ public:
     virtual hsBool  IsCompressed() { return false; }
 
     UInt32          WriteString(const char cstring[]);
+    UInt32          WriteString_TEMP(const plString & string) { return WriteString(string.c_str()); }
     UInt32          WriteFmt(const char * fmt, ...);
     UInt32          WriteFmtV(const char * fmt, va_list av);
 
@@ -142,6 +144,11 @@ public:
     UInt32          WriteSafeWString(const wchar_t *string);
     char *          ReadSafeString();
     wchar_t *       ReadSafeWString();
+
+    UInt32          WriteSafeString_TEMP(const plString &string);        // uses 2 bytes for length
+    UInt32          WriteSafeWString_TEMP(const plString &string);
+    plString        ReadSafeString_TEMP();
+    plString        ReadSafeWString_TEMP();
 
     hsBool          GetToken(char *s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     hsBool          ReadLn(char* s, UInt32 maxLen=UInt32(-1), const char beginComment=kComment, const char endComment=kEolnCode);

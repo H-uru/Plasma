@@ -126,10 +126,6 @@ class plString
     };
 #pragma warning(pop)
 
-    enum CaseSense {
-        kCaseSensitive, kCaseInsensitive
-    };
-
 public:
     static const plString Null;
 
@@ -212,23 +208,50 @@ public:
         return str;
     }
 
-    int Compare(const plString &str, CaseSense sense = kCaseSensitive) const
+    enum CaseSensitivity {
+        kCaseSensitive, kCaseInsensitive
+    };
+
+    int Compare(const plString &str, CaseSensitivity sense = kCaseSensitive) const
     {
+        if (c_str() == str.c_str())
+            return 0;
+
         return (sense == kCaseSensitive) ? strcmp(s_str(), str.s_str())
                                          : stricmp(s_str(), str.s_str());
     }
 
-    int Compare(const char *str, CaseSense sense = kCaseSensitive) const
+    int Compare(const char *str, CaseSensitivity sense = kCaseSensitive) const
     {
         return (sense == kCaseSensitive) ? strcmp(s_str(), str)
                                          : stricmp(s_str(), str);
     }
 
+    int CompareN(const plString &str, size_t count, CaseSensitivity sense = kCaseSensitive) const
+    {
+        if (c_str() == str.c_str())
+            return 0;
+
+        return (sense == kCaseSensitive) ? strncmp(s_str(), str.s_str(), count)
+                                         : strnicmp(s_str(), str.s_str(), count);
+    }
+
+    int CompareN(const char *str, size_t count, CaseSensitivity sense = kCaseSensitive) const
+    {
+        return (sense == kCaseSensitive) ? strncmp(s_str(), str, count)
+                                         : strnicmp(s_str(), str, count);
+    }
+
+    bool operator<(const plString &other) const { return Compare(other) < 0; }
     bool operator==(const plString &other) const { return Compare(other) == 0; }
     bool operator!=(const plString &other) const { return Compare(other) != 0; }
 
-    int Find(char ch, CaseSense sense = kCaseSensitive) const;
-    int FindReverse(char ch, CaseSense sense = kCaseSensitive) const;
+    int Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
+    int FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
+
+    int Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
+    int Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
+    { return Find(str.c_str(), sense); }
 
     plString TrimLeft(const char *charset = " \t\n\r") const;
     plString TrimRight(const char *charset = " \t\n\r") const;

@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "plPipeline/plDebugText.h"
 
-void plAnimDebugList::AddObjects(char *subString)
+void plAnimDebugList::AddObjects(const plString &subString)
 {
     std::vector<plKey> keys;
     std::vector<plKey>::iterator i;
@@ -79,18 +79,18 @@ void plAnimDebugList::AddObjects(char *subString)
     }
 }
 
-void plAnimDebugList::RemoveObjects(char *subString)
+void plAnimDebugList::RemoveObjects(const plString &subString)
 {
     int i;
     for (i = fMaterialKeys.GetCount() - 1; i >= 0; i--)
     {
-        if (strstr(fMaterialKeys[i]->GetName(), subString))
+        if (fMaterialKeys[i]->GetName().Find(subString) >= 0)
             fMaterialKeys.Remove(i);
     }
 
     for (i = fSOKeys.GetCount() - 1; i >= 0; i--)
     {
-        if (strstr(fSOKeys[i]->GetName(), subString))
+        if (fSOKeys[i]->GetName().Find(subString) >= 0)
             fSOKeys.Remove(i);
     }
 }
