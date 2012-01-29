@@ -38,6 +38,7 @@ set(pfPython_SOURCES
     pyEnum.cpp
     pyGameScore.cpp
     pyGeometry3.cpp
+    pyGlueHelpers.cpp
     pyGrassShader.cpp
     pyGUIControl.cpp
     pyGUIControlButton.cpp

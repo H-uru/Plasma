@@ -49,23 +49,6 @@ PYTHON_CLASS_DEFINITION(ptPlayer, pyPlayer);
 PYTHON_DEFAULT_NEW_DEFINITION(ptPlayer, pyPlayer)
 PYTHON_DEFAULT_DEALLOC_DEFINITION(ptPlayer)
 
-static char* ConvertString(PyObject* obj)
-{
-    if (PyString_Check(obj))
-    {
-        return hsStrcpy(PyString_AsString(obj));
-    } else if (PyUnicode_Check(obj)) {
-        size_t size = PyUnicode_GetSize(obj);
-        wchar_t* temp = new wchar_t[size + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)obj, temp, size);
-        temp[size] = 0;
-        char* buf = hsWStringToString(temp);
-        delete[] temp;
-        return buf;
-    } else
-        return NULL; // You suck.
-}
-
 PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 {
     // we have two sets of arguments we can use, hence the generic PyObject* pointers
@@ -89,7 +72,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
     if (pyKey::Check(firstObj))
     {
         key = pyKey::ConvertFrom(firstObj);
-        if (!(name = ConvertString(secondObj)))
+        if (!(name = PyString_AsStringEx(secondObj)))
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
@@ -103,7 +86,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 
         pid = PyLong_AsUnsignedLong(thirdObj);
         distSeq = (float)PyFloat_AsDouble(fourthObj);
-    } else if (name = ConvertString(firstObj)){
+    } else if (name = PyString_AsStringEx(firstObj)){
         if (!PyLong_Check(secondObj) || thirdObj  || fourthObj)
         {
             delete[] name;
