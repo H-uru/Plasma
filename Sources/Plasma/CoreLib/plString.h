@@ -27,8 +27,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plString_Defined
 #define plString_Defined
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
 #include <stddef.h>
 #include <vector>
 #include <functional>
@@ -133,7 +132,7 @@ private:
     plStringBuffer<char> fUtf8Buffer;
 
     void IConvertFromUtf8(const char *utf8, size_t size, bool steal);
-    void IConvertFromUtf16(const UInt16 *utf16, size_t size);
+    void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
@@ -157,7 +156,7 @@ public:
         return str;
     }
 
-    static inline plString FromUtf16(const UInt16 *utf16, size_t size = kSizeAuto)
+    static inline plString FromUtf16(const uint16_t *utf16, size_t size = kSizeAuto)
     {
         plString str;
         str.IConvertFromUtf16(utf16, size);
@@ -183,7 +182,7 @@ public:
     char CharAt(size_t position) const { return c_str()[position]; }
 
     plStringBuffer<char> ToUtf8() const { return fUtf8Buffer; }
-    plStringBuffer<UInt16> ToUtf16() const;
+    plStringBuffer<uint16_t> ToUtf16() const;
     plStringBuffer<wchar_t> ToWchar() const;
     plStringBuffer<char> ToIso8859_1() const;
 
