@@ -95,7 +95,7 @@ bool            GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid);
 *
 ***/
 
-#include <pshpack1.h>
+#pragma pack(push, 1)
 struct Uuid {
     union {
         uint32_t   uint32_ts[4];
@@ -113,6 +113,6 @@ struct Uuid {
     inline bool operator != (const Uuid & rhs) const { return !GuidsAreEqual(*this, rhs); }
     inline bool operator != (int rhs)          const { ASSERT(!rhs); return !GuidsAreEqual(*this, kNilGuid); }
 };
-#include <poppack.h>
+#pragma pack(pop)
 
 #endif

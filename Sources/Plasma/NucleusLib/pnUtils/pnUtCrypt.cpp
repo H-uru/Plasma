@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "pnUtCrypt.h"
+#include "pnUtStr.h"
+#include "pnUtTime.h"
 
 #include <openssl/md5.h>
 #include <openssl/sha.h>
@@ -360,13 +362,13 @@ void CryptHashPasswordChallenge (
     const ShaDigest &   namePassHash,
     ShaDigest *         challengeHash
 ) {
-    #include <pshpack1.h>
+#pragma pack(push, 1)
     struct {
         uint32_t       clientChallenge;
         uint32_t       serverChallenge;
         ShaDigest   namePassHash;
     } buffer;
-    #include <poppack.h>
+#pragma pack(pop)
     buffer.clientChallenge  = clientChallenge;
     buffer.serverChallenge  = serverChallenge;
     buffer.namePassHash     = namePassHash;

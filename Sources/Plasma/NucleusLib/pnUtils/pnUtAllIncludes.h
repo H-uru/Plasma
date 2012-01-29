@@ -52,18 +52,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtCoreLib.h"    // must be first in list
 #include "pnUtPragma.h"
 #include "pnUtAddr.h"
-#if HS_BUILD_FOR_WIN32
 #include "pnUtUuid.h"
-#endif
 #include "pnUtMath.h"
 #include "pnUtSort.h"
 #include "pnUtArray.h"
 #include "pnUtList.h"
 #include "pnUtHash.h"
 #include "pnUtPriQ.h"
-#if HS_BUILD_FOR_WIN32
 #include "pnUtSync.h"
-#endif
 #include "pnUtTime.h"
 #if HS_BUILD_FOR_WIN32
 #include "pnUtTls.h"
