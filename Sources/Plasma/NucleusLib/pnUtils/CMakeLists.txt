@@ -21,7 +21,6 @@ set(pnUtils_HEADERS
     pnUtPriQ.h
     pnUtRand.h
     pnUtRef.h
-    pnUtSkipList.h
     pnUtSort.h
     pnUtSpareList.h
     pnUtStr.h

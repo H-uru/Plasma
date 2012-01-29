@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMISC_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtMisc.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMISC_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMISC_H
 
 #include "Pch.h"
@@ -166,3 +164,4 @@ const unsigned kCpuCapTsc   = 1<<9; // time stamp counter
 #define CPU_SIGNATURE_FAMILY(sig)               ((sig >> 8) & 0xf)
 #define CPU_SIGNATURE_MODEL(sig)                ((sig >> 4) & 0xf)
 #define CPU_SIGNATURE_STEPPING(sig)             (sig & 0xf)
+#endif

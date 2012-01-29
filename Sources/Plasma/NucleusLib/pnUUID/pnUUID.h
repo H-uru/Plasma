@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #ifdef HS_BUILD_FOR_WIN32
-#include "pnUtils/pnUtils.h"
+#include "pnUtils/pnUtUuid.h"
 #endif
 
 class hsStream;

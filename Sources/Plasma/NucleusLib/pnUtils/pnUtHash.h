@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTHASH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtHash.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTHASH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTHASH_H
 
 #include "Pch.h"
@@ -746,3 +744,4 @@ typedef THashKeyStr< wchar_t, THashKeyStrCmp<wchar_t> >  CHashKeyStr;
 typedef THashKeyStr< wchar_t, THashKeyStrCmpI<wchar_t> > CHashKeyStrI;
 typedef THashKeyStr< char, THashKeyStrCmp<char> >    CHashKeyStrChar;
 typedef THashKeyStr< char, THashKeyStrCmpI<char> >   CHashKeyStrCharI;
+#endif

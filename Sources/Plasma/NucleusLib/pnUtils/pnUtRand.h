@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTRAND_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtRand.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTRAND_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTRAND_H
 
 #include "Pch.h"
@@ -66,3 +64,4 @@ float    RandFloat ();
 float    RandFloat (float minVal, float maxVal);
 unsigned RandUnsigned ();
 unsigned RandUnsigned (unsigned minVal, unsigned maxVal);
+#endif

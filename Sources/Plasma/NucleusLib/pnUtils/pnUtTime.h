@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTIME_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtTime.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTIME_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTIME_H
 
 #include "Pch.h"
@@ -128,3 +126,4 @@ uint32_t TimeGetSecondsSince1970Utc ();
 
 static const uint64_t kTime1601To1970  = 11644473600 * kTimeIntervalsPerSecond;
 static const uint64_t kTime1601To2001  = 12622780800 * kTimeIntervalsPerSecond;
+#endif

@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSPARELIST_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtSpareList.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSPARELIST_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSPARELIST_H
 
 #include "Pch.h"
@@ -147,3 +145,4 @@ template<class T>
 T * TSpareList<T>::New () {
     return new(CBaseSpareList::Alloc(OBJECT_SIZE, typeid(T).name())) T;
 }
+#endif
