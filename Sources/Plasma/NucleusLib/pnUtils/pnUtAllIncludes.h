@@ -61,9 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtPriQ.h"
 #include "pnUtSync.h"
 #include "pnUtTime.h"
-#if HS_BUILD_FOR_WIN32
 #include "pnUtTls.h"
-#endif
 #include "pnUtStr.h"
 #include "pnUtRef.h"
 #include "pnUtPath.h"

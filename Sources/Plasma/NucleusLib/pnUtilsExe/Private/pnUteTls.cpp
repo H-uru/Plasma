@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
+#if HS_BUILD_FOR_WIN32
 
 /*****************************************************************************
 *
@@ -105,3 +106,5 @@ void ThreadAssertCanBlock (const char file[], int line) {
     if (ThreadLocalGetValue(s_tlsNoBlock))
         ErrorAssert(line, file, "This thread may not block");
 }
+
+#endif
