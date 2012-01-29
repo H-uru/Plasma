@@ -438,9 +438,9 @@ void plArmatureModBase::AdjustLOD()
         hsPoint3 delta = ourPos - camPos;
         float distanceSquared = delta.MagnitudeSquared();
         if (distanceSquared < fLODDistance * fLODDistance)
-            SetLOD(__max(0, fMinLOD));
+            SetLOD(max(0, fMinLOD));
         else if (distanceSquared < fLODDistance * fLODDistance * 4.0) 
-            SetLOD(__max(1, fMinLOD));
+            SetLOD(max(1, fMinLOD));
         else 
             SetLOD(2);
     }
@@ -1102,7 +1102,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
     plCorrectionMsg *corMsg = plCorrectionMsg::ConvertNoRef(msg);
     if (corMsg)
     {
-        hsMatrix44 &correction = corMsg->fWorldToLocal * GetTarget(0)->GetLocalToWorld();
+        hsMatrix44 correction = corMsg->fWorldToLocal * GetTarget(0)->GetLocalToWorld();
         if (fBoneRootAnimator)
             fBoneRootAnimator->SetCorrection(correction);
     }
@@ -2678,14 +2678,14 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 worldPos = l2w.GetTranslate();
 
-        char *opaque = IsOpaque() ? "yes" : "no"; 
+        const char *opaque = IsOpaque() ? "yes" : "no"; 
         sprintf(strBuf, "position(world): %.2f, %.2f, %.2f Opaque: %3s", 
                 worldPos.fX, worldPos.fY, worldPos.fZ, opaque);
         debugTxt.DrawString(x, y, strBuf);
         y += lineHeight;
 
         hsPoint3 kPos;
-        char *kinematic = "n.a.";
+        const char *kinematic = "n.a.";
         const char* frozen = "n.a.";
         if (fController)
         {
