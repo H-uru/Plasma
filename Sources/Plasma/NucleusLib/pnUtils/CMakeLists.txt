@@ -45,6 +45,7 @@ set(pnUtils_SOURCES
     pnUtSpareList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
+    pnUtUuid.cpp
 )
 
 if(WIN32)
@@ -59,13 +60,12 @@ if(WIN32)
 
         pnUtCrypt.cpp
         pnUtTls.cpp
-        pnUtUuid.cpp
     )
 else()
     set(pnUtils_UNIX
         Unix/pnUtUxStr.cpp
         #Unix/pnUtUxSync.cpp
-        #Unix/pnUtUxUuid.cpp
+        Unix/pnUtUxUuid.cpp
     )
 endif()
 

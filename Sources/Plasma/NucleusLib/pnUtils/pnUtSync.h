@@ -104,9 +104,9 @@ public:
 
 #ifdef HS_BUILD_FOR_WIN32
 typedef HANDLE EventHandle;
-#else
-# error "CEvent: Not implemented on this platform"
-#endif
+//#else
+//# error "CEvent: Not implemented on this platform"
+//#endif
 
 const unsigned  kEventWaitForever   = (unsigned)-1;
 
@@ -130,5 +130,6 @@ public:
     
     const EventHandle & Handle () const { return m_handle; }
 };
+#endif // HS_BUILD_FOR_WIN32
 
 #endif

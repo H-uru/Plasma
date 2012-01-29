@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnUtCoreLib.h"    // must be first in list
 #include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
 #include <malloc.h>
 

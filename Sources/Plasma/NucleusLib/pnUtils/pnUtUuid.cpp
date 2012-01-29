@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "pnUtUuid.h"
+#include "pnUtHash.h"
+#include "pnUtStr.h"
 
 
 const Uuid kNilGuid;
