@@ -189,7 +189,7 @@ plVirtualCam1::plVirtualCam1()
         wchar_t fileAndPath[MAX_PATH];
         PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
         PathAddFilename(fileAndPath, fileAndPath, L"camLog.txt", arrsize(fileAndPath));
-        foutLog = _wfopen( fileAndPath, L"wt" );
+        foutLog = hsWFopen( fileAndPath, L"wt" );
     }
 #endif
 
@@ -1306,7 +1306,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
                 pMsg->SetFadeOut(true);
                 pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-                pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+                pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
                 pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
                 plgDispatch::MsgSend(pMsg);
                 return true;
