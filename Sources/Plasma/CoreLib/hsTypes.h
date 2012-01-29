@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdlib>
 #include <cstdio>
 #include <cstddef>
+#include <math.h>
 
 
 /************************** Basic Macros *****************************/
