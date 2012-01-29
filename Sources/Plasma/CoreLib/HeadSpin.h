@@ -48,8 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Internal Headers
 // These are only ever included here :)
-#include "hsWindows.h"
 #include "hsTypes.h"
+#include "hsWindows.h"
 #include "hsUtils.h"
 
 #endif

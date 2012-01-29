@@ -46,7 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define   _HSUTILS_H
 
 #include "HeadSpin.h"
-#include <ctype.h>
+#include <cctype>
+#include <cstring>
 #include <stdarg.h>
 
 int     hsStrlen(const char src[]);
