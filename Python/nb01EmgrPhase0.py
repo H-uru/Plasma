@@ -58,7 +58,7 @@ variable = None
 
 BooleanVARs = [
     "nb01LinkBookGarrisonVis",
-    "nb01RatCreatureVis"
+    "nb01RatCreatureVis",
     ]
 
 byteEderToggle = 0
@@ -177,7 +177,7 @@ class nb01EmgrPhase0(ptResponder):
                 print "nb01EmgrPhase0.OnServerInitComplete(): will check the Eder Delin/Tsogal book and its stained glass..."
                 self.IManageEders()
 
-            if (byteGZGlass > numGZGlasses) and self.sceneobject.isLocallyOwned():
+            if ((byteGZGlass > numGZGlasses) or not byteGZGlass) and self.sceneobject.isLocallyOwned():
                 newGlass = xRandom.randint(1,numGZGlasses)
                 print "nb01EmgrPhase0.OnServerInitComplete():  GZ stained glass randomly picked to be #: ",newGlass
                 ageSDL = PtGetAgeSDL()
