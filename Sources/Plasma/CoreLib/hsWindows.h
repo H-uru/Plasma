@@ -65,9 +65,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      include <ws2tcpip.h>
 #   endif // MAXPLUGINCODE
 #   define WIN32_LEAN_AND_MEAN
+#   define NOMINMAX // Needed to prevent NxMath conflicts
 #   include <Windows.h>
     
     typedef HWND hsWindowHndl;
+    typedef HINSTANCE hsWindowInst;
 #else
     typedef int32_t* hsWindowHndl;
+    typedef int32_t* hsWindowInst;
 #endif // HS_BUILD_FOR_WIN32
+
+/****************************************************************************
+*
+*   max/min inline functions
+*
+***/
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
