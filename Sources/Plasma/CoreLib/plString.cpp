@@ -38,7 +38,7 @@ const plString plString::Null;
 #if WCHAR_BYTES == 2
 #define u16slen(str, max) wcsnlen((const wchar_t *)(str), (max))
 #else
-static inline size_t u16slen(const UInt16 *ustr, size_t max)
+static inline size_t u16slen(const uint16_t *ustr, size_t max)
 {
     size_t length = 0;
     for ( ; *ustr++ && max--; ++length)
@@ -83,14 +83,14 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size, bool steal)
                         : plStringBuffer<char>(utf8, size);
 }
 
-void plString::IConvertFromUtf16(const UInt16 *utf16, size_t size)
+void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
 {
     if ((long)size < 0)
         size = u16slen(utf16, -(long)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
-    const UInt16 *sp = utf16;
+    const uint16_t *sp = utf16;
     while (sp < utf16 + size) {
         if (*sp >= 0xD800 && *sp <= 0xDFFF) {
             // Surrogate pair
@@ -107,7 +107,7 @@ void plString::IConvertFromUtf16(const UInt16 *utf16, size_t size)
     }
 
     // And perform the actual conversion
-    char *utf8 = TRACKED_NEW char[convlen + 1];
+    char *utf8 = new char[convlen + 1];
     char *dp = utf8;
     sp = utf16;
     while (sp < utf16 + size) {
@@ -154,7 +154,7 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
 {
 #if WCHAR_BYTES == 2
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
-    IConvertFromUtf16((const UInt16 *)wstr, size);
+    IConvertFromUtf16((const uint16_t *)wstr, size);
 #else
     if ((long)size < 0)
         size = wcsnlen(wstr, -(long)size);
@@ -179,7 +179,7 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     }
 
     // And perform the actual conversion
-    char *utf8 = TRACKED_NEW char[convlen + 1];
+    char *utf8 = new char[convlen + 1];
     char *dp = utf8;
     sp = wstr;
     while (sp < wstr + size) {
@@ -227,7 +227,7 @@ void plString::IConvertFromIso8859_1(const char *astr, size_t size)
     }
 
     // And perform the actual conversion
-    char *utf8 = TRACKED_NEW char[convlen + 1];
+    char *utf8 = new char[convlen + 1];
     char *dp = utf8;
     sp = astr;
     while (sp < astr + size) {
@@ -244,10 +244,10 @@ void plString::IConvertFromIso8859_1(const char *astr, size_t size)
     fUtf8Buffer = plStringBuffer<char>::Steal(utf8, convlen);
 }
 
-plStringBuffer<UInt16> plString::ToUtf16() const
+plStringBuffer<uint16_t> plString::ToUtf16() const
 {
     if (IsNull())
-        return plStringBuffer<UInt16>();
+        return plStringBuffer<uint16_t>();
 
     // Calculate the UTF-16 size
     size_t convlen = 0;
@@ -270,8 +270,8 @@ plStringBuffer<UInt16> plString::ToUtf16() const
     }
 
     // And perform the actual conversion
-    UInt16 *ustr = TRACKED_NEW UInt16[convlen + 1];
-    UInt16 *dp = ustr;
+    uint16_t *ustr = new uint16_t[convlen + 1];
+    uint16_t *dp = ustr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
         unsigned int unichar;
@@ -298,14 +298,14 @@ plStringBuffer<UInt16> plString::ToUtf16() const
     }
     ustr[convlen] = 0;
 
-    return plStringBuffer<UInt16>::Steal(ustr, convlen);
+    return plStringBuffer<uint16_t>::Steal(ustr, convlen);
 }
 
 plStringBuffer<wchar_t> plString::ToWchar() const
 {
 #if WCHAR_BYTES == 2
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
-    plStringBuffer<UInt16> utf16 = ToUtf16();
+    plStringBuffer<uint16_t> utf16 = ToUtf16();
     return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf16);
 #else
     if (IsNull())
@@ -329,7 +329,7 @@ plStringBuffer<wchar_t> plString::ToWchar() const
     }
 
     // And perform the actual conversion
-    wchar_t *wstr = TRACKED_NEW wchar_t[convlen + 1];
+    wchar_t *wstr = new wchar_t[convlen + 1];
     wchar_t *dp = wstr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
@@ -380,7 +380,7 @@ plStringBuffer<char> plString::ToIso8859_1() const
     }
 
     // And perform the actual conversion
-    char *astr = TRACKED_NEW char[convlen + 1];
+    char *astr = new char[convlen + 1];
     char *dp = astr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
@@ -463,7 +463,7 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         int size = 4096;
         for ( ;; ) {
             va_copy(vptr, vptr_save);
-            char *bigbuffer = TRACKED_NEW char[size];
+            char *bigbuffer = new char[size];
             chars = vsnprintf(bigbuffer, size, fmt, vptr);
             if (chars >= 0)
                 return plString::Steal(bigbuffer);
@@ -473,7 +473,7 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         }
     } else if (chars >= 256) {
         va_copy(vptr, vptr_save);
-        char *bigbuffer = TRACKED_NEW char[chars+1];
+        char *bigbuffer = new char[chars+1];
         vsnprintf(bigbuffer, chars+1, fmt, vptr);
         return plString::Steal(bigbuffer);
     }
@@ -611,7 +611,7 @@ plString plString::Substr(int start, size_t size) const
     if (start == 0 && size == maxSize)
         return *this;
 
-    char *substr = TRACKED_NEW char[size + 1];
+    char *substr = new char[size + 1];
     memcpy(substr, c_str() + start, size);
     substr[size] = 0;
 
@@ -624,7 +624,7 @@ plString plString::Substr(int start, size_t size) const
 plString &plString::operator+=(const plString &str)
 {
     size_t catsize = GetSize() + str.GetSize();
-    char *catstr = TRACKED_NEW char[catsize + 1];
+    char *catstr = new char[catsize + 1];
     memcpy(catstr, s_str(), GetSize());
     memcpy(catstr + GetSize(), str.s_str(), str.GetSize());
     catstr[catsize] = 0;
@@ -635,7 +635,7 @@ plString &plString::operator+=(const plString &str)
 plString operator+(const plString &left, const plString &right)
 {
     size_t catsize = left.GetSize() + right.GetSize();
-    char *catstr = TRACKED_NEW char[catsize + 1];
+    char *catstr = new char[catsize + 1];
     memcpy(catstr, left.s_str(), left.GetSize());
     memcpy(catstr + left.GetSize(), right.s_str(), right.GetSize());
     catstr[catsize] = 0;
