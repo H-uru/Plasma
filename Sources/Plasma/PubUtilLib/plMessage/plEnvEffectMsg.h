@@ -85,7 +85,7 @@ public:
 
 class plEnvAudioEffectMsg : public plEnvEffectMsg
 {
-    UInt32 fPreset;
+    uint32_t fPreset;
 
 public:
     plEnvAudioEffectMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
@@ -98,8 +98,8 @@ public:
     CLASSNAME_REGISTER( plEnvAudioEffectMsg );
     GETINTERFACE_ANY( plEnvAudioEffectMsg, plEnvEffectMsg );
     
-    UInt32 GetEffect() { return fPreset; }
-    void SetEffect(UInt32 i) { fPreset = i; }
+    uint32_t GetEffect() { return fPreset; }
+    void SetEffect(uint32_t i) { fPreset = i; }
 
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)

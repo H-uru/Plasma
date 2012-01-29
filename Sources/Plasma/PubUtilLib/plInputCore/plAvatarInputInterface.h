@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include "hsGeometry3.h"
-#include "hsUtils.h"
+
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ class plAvatarInputMap
         virtual hsBool IsBasic() { return false; }
 
         plMouseMap      *fMouseMap;
-        UInt32          fButtonState;
+        uint32_t          fButtonState;
 };
 
 // Basic avatar mappings, for when the avatar is in "suspended input" mode.
@@ -178,8 +178,8 @@ class plAvatarInputInterface : public plInputInterface
 {
     protected:
 
-        UInt32      fCurrentCursor;
-        hsScalar    fCursorOpacity, fCursorTimeout, fCursorFadeDelay;
+        uint32_t      fCurrentCursor;
+        float    fCursorOpacity, fCursorTimeout, fCursorFadeDelay;
 
         plAvatarInputMap        *fInputMap;
 
@@ -188,7 +188,7 @@ class plAvatarInputInterface : public plInputInterface
         virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty );
+        virtual hsBool IEval( double secs, float del, uint32_t dirty );
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -209,7 +209,7 @@ class plAvatarInputInterface : public plInputInterface
         
         void    Reset();
 
-        void    RequestCursorToWorldPos(hsScalar xPos, hsScalar yPos, int ID);
+        void    RequestCursorToWorldPos(float xPos, float yPos, int ID);
 
         hsBitVector     fControlFlags;
         hsBool          fMouseDisabled;
@@ -228,9 +228,9 @@ class plAvatarInputInterface : public plInputInterface
     
         // Always return true, since the cursor should be representing how we control the avatar
         virtual hsBool      HasInterestingCursorID( void ) const { return true; }
-        virtual UInt32      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
-        virtual UInt32      GetCurrentCursorID( void ) const { return fCurrentCursor; }
-        virtual hsScalar    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
+        virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
+        virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
+        virtual float    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
         virtual hsBool      InterpretInputEvent( plInputEventMsg *pMsg );
@@ -256,7 +256,7 @@ class plAvatarInputInterface : public plInputInterface
         
         void    SetControlFlag(int f, hsBool val = true)            { fControlFlags.SetBit(f, val); }
 
-        void    SetCursorFadeDelay( hsScalar delay ) { fCursorFadeDelay = delay; }
+        void    SetCursorFadeDelay( float delay ) { fCursorFadeDelay = delay; }
 
         hsBool  IsEnterChatModeBound();
 

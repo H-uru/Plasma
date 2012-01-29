@@ -92,31 +92,31 @@ protected:
     plDrawableSpans*            fProxyDraw;
     hsGMaterial*                fProxyMat;
 
-    UInt32                      fProxyMsgType;
+    uint32_t                      fProxyMsgType;
 
-    hsTArray<UInt32>            fProxyIndex;
+    hsTArray<uint32_t>            fProxyIndex;
 
     // These must be implemented by the specific type, so we know what to draw.
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo=nil) = 0; // called by IGenerate
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil) = 0; // called by IGenerate
     virtual plKey               IGetNode() const = 0;
 
     // Derived type should set fProxyMsgType as one of plProxyDrawMsg::types
-    UInt32                      IGetProxyMsgType() const { return fProxyMsgType; }
+    uint32_t                      IGetProxyMsgType() const { return fProxyMsgType; }
 
     // These are all fine by default.
-    UInt32                      IGetProxyIndex() const;
-    UInt32                      IGetDrawableType() const;
+    uint32_t                      IGetProxyIndex() const;
+    uint32_t                      IGetDrawableType() const;
 
     virtual hsGMaterial*        IMakeProxyMaterial() const;
     virtual hsGMaterial*        IGetProxyMaterial() const; // will make material if needed.
     hsGMaterial* IFindProxyMaterial() const;
 
     virtual void                IGenerateProxy();
-    virtual void                IApplyProxy(UInt32 drawIdx) const; // called by IGenerate 
-    virtual void                IRemoveProxy(UInt32 drawIdx) const; 
+    virtual void                IApplyProxy(uint32_t drawIdx) const; // called by IGenerate 
+    virtual void                IRemoveProxy(uint32_t drawIdx) const; 
     virtual void                IDestroyProxy();
 public:
-    plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac);
+    plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
     virtual ~plProxyGen();
 
     virtual void                SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);

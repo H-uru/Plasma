@@ -116,7 +116,7 @@ ITicTacToe::ITicTacToe (pfGmTicTacToe * gameCli)
 :   gameCli(gameCli)
 {
     // Fill the board with space chars
-    MemSet(board, ' ', sizeof(board));
+    memset(board, ' ', sizeof(board));
 }
 
 //============================================================================
@@ -174,7 +174,7 @@ void ITicTacToe::RecvGameOver (const Srv2Cli_TTT_GameOver & msg, void * param) {
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 
-    DEL(gameCli);   // we're done
+    delete gameCli;   // we're done
 }
 
 //============================================================================
@@ -210,7 +210,7 @@ pfGmTicTacToe::pfGmTicTacToe (
 //============================================================================
 pfGmTicTacToe::~pfGmTicTacToe () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -262,8 +262,8 @@ void pfGmTicTacToe::MakeMove (unsigned row, unsigned col) {
     msg.messageBytes    = sizeof(msg);
     msg.recvGameId      = GetGameId();  // send to GameSrv on server
     msg.transId         = 0;
-    msg.row             = (byte)row;
-    msg.col             = (byte)col;
+    msg.row             = (uint8_t)row;
+    msg.col             = (uint8_t)col;
     
     GameMgrSend(&msg);
 }

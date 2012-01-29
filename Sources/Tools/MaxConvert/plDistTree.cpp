@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 
 
@@ -61,7 +61,7 @@ void plDistTree::Reset()
     fNodes.Reset();
 }
 
-void plDistTree::AddBoxIData(const Box3& box, const Box3& fade, UInt32 iData)
+void plDistTree::AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData)
 {
     fRoot = IAddNodeRecur(fRoot, box, fade, iData);
 }
@@ -139,7 +139,7 @@ BOOL plDistTree::IBoxesClear(const Box3& box0, const Box3& box1) const
         ||(box0.Max()[2] < box1.Min()[2]);
 }
 
-BOOL plDistTree::IBoxClearRecur(Int32 iNode, const Box3& box, const Box3& fade) const
+BOOL plDistTree::IBoxClearRecur(int32_t iNode, const Box3& box, const Box3& fade) const
 {
     if( iNode < 0 )
         return true;
@@ -162,7 +162,7 @@ BOOL plDistTree::IBoxClearRecur(Int32 iNode, const Box3& box, const Box3& fade) 
     return true;
 }
 
-BOOL plDistTree::IPointClearRecur(Int32 iNode, const Point3& pt, const Box3& fade) const
+BOOL plDistTree::IPointClearRecur(int32_t iNode, const Point3& pt, const Box3& fade) const
 {
     if( iNode < 0 )
         return true;
@@ -186,7 +186,7 @@ BOOL plDistTree::IPointClearRecur(Int32 iNode, const Point3& pt, const Box3& fad
 }
 
 
-Int32 plDistTree::IAddNodeRecur(Int32 iNode, const Box3& box, const Box3& fade, UInt32 iData)
+int32_t plDistTree::IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData)
 {
     // if iNode < 0, make a node for box and return that.
     if( iNode < 0 )
@@ -218,9 +218,9 @@ Int32 plDistTree::IAddNodeRecur(Int32 iNode, const Box3& box, const Box3& fade, 
     {
 #endif
         {
-            Int32 iChild = IGetChild(fNodes[iNode].fBox, box);
+            int32_t iChild = IGetChild(fNodes[iNode].fBox, box);
         
-            Int32 iChildNode = IAddNodeRecur(fNodes[iNode].fChildren[iChild], box, fade, iData);
+            int32_t iChildNode = IAddNodeRecur(fNodes[iNode].fChildren[iChild], box, fade, iData);
             fNodes[iNode].fChildren[iChild] = iChildNode;
 
             fNodes[iNode].fBox += fNodes[fNodes[iNode].fChildren[iChild]].fBox;
@@ -233,15 +233,15 @@ Int32 plDistTree::IAddNodeRecur(Int32 iNode, const Box3& box, const Box3& fade, 
     }
 }
 
-Int32 plDistTree::IMergeNodes(Int32 iNode, const Box3& box, const Box3& fade, UInt32 iData)
+int32_t plDistTree::IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData)
 {
     Box3 parBox = box;
     parBox += fNodes[iNode].fBox;
 
-    Int32 pNode = INextNode(parBox, NonFade(), UInt32(-1));
-    Int32 iChild = IGetChild(parBox, box);
+    int32_t pNode = INextNode(parBox, NonFade(), uint32_t(-1));
+    int32_t iChild = IGetChild(parBox, box);
 
-    Int32 cNode = INextNode(box, fade, iData);
+    int32_t cNode = INextNode(box, fade, iData);
 
     fNodes[pNode].fChildren[iChild] = cNode;
 
@@ -258,20 +258,20 @@ Int32 plDistTree::IMergeNodes(Int32 iNode, const Box3& box, const Box3& fade, UI
     return pNode;
 }
 
-Int32 plDistTree::IGetChild(const Box3& parent, const Box3& child) const
+int32_t plDistTree::IGetChild(const Box3& parent, const Box3& child) const
 {
     Point3 parCenter = parent.Center();
     Point3 chiCenter = child.Center();
 
-    Int32 idx = ((parCenter[0] < chiCenter[0]) << 0)
+    int32_t idx = ((parCenter[0] < chiCenter[0]) << 0)
         | ((parCenter[1] < chiCenter[1]) << 1)
         | ((parCenter[2] < chiCenter[2]) << 2);
     return idx;
 }
 
-Int32 plDistTree::INextNode(const Box3& box, const Box3& fade, UInt32 iData)
+int32_t plDistTree::INextNode(const Box3& box, const Box3& fade, uint32_t iData)
 {
-    Int32 iNode = fNodes.GetCount();
+    int32_t iNode = fNodes.GetCount();
 
     fNodes.Push();
 
@@ -291,12 +291,12 @@ Int32 plDistTree::INextNode(const Box3& box, const Box3& fade, UInt32 iData)
     return iNode;
 }
 
-void plDistTree::HarvestBox(const Box3& box, Tab<Int32>& out) const
+void plDistTree::HarvestBox(const Box3& box, Tab<int32_t>& out) const
 {
     IHarvestBoxRecur(fRoot, box, out);
 }
 
-void plDistTree::IHarvestBoxRecur(Int32 iNode, const Box3& box, Tab<Int32>& out) const
+void plDistTree::IHarvestBoxRecur(int32_t iNode, const Box3& box, Tab<int32_t>& out) const
 {
     if( iNode < 0 )
         return;

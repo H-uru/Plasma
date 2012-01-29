@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPageInfo_h
 #define _plPageInfo_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnKeyedObject/plUoid.h"
 #include <vector>
 
@@ -56,17 +56,17 @@ class plLocation;
 class plPageInfo
 {
 public:
-    struct ClassVersion { UInt16 Class; UInt16 Version; };
+    struct ClassVersion { uint16_t Class; uint16_t Version; };
     typedef std::vector<ClassVersion> ClassVerVec;
 
 protected:
     plLocation  fLocation;
     char*       fAge;
     char*       fPage;
-    UInt16      fMajorVersion;
+    uint16_t      fMajorVersion;
     ClassVerVec fClassVersions;
-    UInt32      fChecksum;                  
-    UInt32      fDataStart, fIndexStart;
+    uint32_t      fChecksum;                  
+    uint32_t      fDataStart, fIndexStart;
 
     void        IInit( void );
     void        ISetFrom( const plPageInfo &src );
@@ -84,7 +84,7 @@ public:
     plPageInfo &operator=( const plPageInfo &src );
 
     void                ClearClassVersions() { fClassVersions.clear(); }
-    void                AddClassVersion(UInt16 classIdx, UInt16 version);
+    void                AddClassVersion(uint16_t classIdx, uint16_t version);
     const ClassVerVec&  GetClassVersions() const { return fClassVersions; }
 
     void    SetStrings( const char *age, const char *page );
@@ -92,21 +92,21 @@ public:
     void                SetLocation(const plLocation& loc);
     const plLocation&   GetLocation() const;
 
-    UInt16  GetMajorVersion() const { return fMajorVersion; }
-    void    SetMajorVersion(UInt16 major) { fMajorVersion = major; }
+    uint16_t  GetMajorVersion() const { return fMajorVersion; }
+    void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }
 
-    void    SetChecksum( UInt32 c ) { fChecksum = c; }
-    UInt32  GetChecksum( void ) const { return fChecksum; }
+    void    SetChecksum( uint32_t c ) { fChecksum = c; }
+    uint32_t  GetChecksum( void ) const { return fChecksum; }
 
     void    Read( hsStream *s );
     void    Write( hsStream *s );
 
     hsBool  IsValid( void ) const;
 
-    UInt32  GetDataStart( void ) const { return fDataStart; }
-    void    SetDataStart( UInt32 s ) { fDataStart = s; }
+    uint32_t  GetDataStart( void ) const { return fDataStart; }
+    void    SetDataStart( uint32_t s ) { fDataStart = s; }
 
-    UInt32  GetIndexStart( void ) const { return fIndexStart; }
-    void    SetIndexStart( UInt32 s ) { fIndexStart = s; }
+    uint32_t  GetIndexStart( void ) const { return fIndexStart; }
+    void    SetIndexStart( uint32_t s ) { fIndexStart = s; }
 };
 #endif // _plPageInfo_h

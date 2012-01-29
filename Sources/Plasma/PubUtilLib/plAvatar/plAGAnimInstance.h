@@ -98,7 +98,7 @@ public:
         This attaches the animation channels to the channels of
         the master modifier and creates all the bookkeeping structures
         necessary to undo it later. */
-    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, hsScalar blend, UInt16 blendPriority, hsBool cache, bool useAmplitude);
+    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, float blend, uint16_t blendPriority, hsBool cache, bool useAmplitude);
 
     /** Destructor. Removes the animation from the scene objects it's attached to. */
     virtual ~plAGAnimInstance();
@@ -112,7 +112,7 @@ public:
 
     /** Set the speed of the animation. This is expressed as a fraction of
         the speed with which the animation was defined. */
-    void SetSpeed(hsScalar speed) { if (fTimeConvert) fTimeConvert->SetSpeed(speed); };
+    void SetSpeed(float speed) { if (fTimeConvert) fTimeConvert->SetSpeed(speed); };
 
     // \{
     /**
@@ -126,8 +126,8 @@ public:
         yet been seen to have any practical utility whatsoever. Note that
         even if an animation has a blend strength of 1.0, it may have another
         animation on top/downstream from it that is masking it completely. */
-    hsScalar SetBlend(hsScalar blend);
-    hsScalar GetBlend();
+    float SetBlend(float blend);
+    float GetBlend();
     // \}
 
     /** Set the strength of the animation with respect to its 0th frame.
@@ -135,9 +135,9 @@ public:
         Animations must be designed to use this: frame 0 of the animation
         must be a reasonable "default pose" as it will be blended with the
         current frame of the animation to produce the result. */
-    hsScalar SetAmplitude(hsScalar amp);
+    float SetAmplitude(float amp);
     /** Get the current strength of the animation. */
-    hsScalar GetAmplitude();
+    float GetAmplitude();
 
     /** Make this animation loop (or not.) Note that the instance can loop
         or not without regard to whether the plAGAnim it is based on loops. */
@@ -159,20 +159,20 @@ public:
         Note that this time is in animation local time, not global time.
         The "jump" parameter specifies whether or not to fire callbacks
         that occur between the current time and the target time. */
-    void SetCurrentTime(hsScalar newLocalTime, hsBool jump = false);
+    void SetCurrentTime(float newLocalTime, hsBool jump = false);
 
     /** Move the playback head by the specified relative amount within 
         the animation. This may cause looping. If the beginning or end
         of the animation is reached an looping is not on, the movement
         will pin.
         \param jump if true, don't look for callbacks between old time and TRACKED_NEW */
-    void SeekRelative(hsScalar delta, hsBool jump);
+    void SeekRelative(float delta, hsBool jump);
     
     /** Gradually fade the blend strength or amplitude of the animation.
         \param goal is the desired blend strength
         \param rate is in blend units per second
         \type is either kFadeBlend or kFadeAmp */
-    void Fade(hsScalar goal, hsScalar rate, UInt8 type = kFadeBlend);
+    void Fade(float goal, float rate, uint8_t type = kFadeBlend);
 
     /** Fade the animation and detach it after the fade is complete.
         Extremely useful for situations where the controlling logic
@@ -180,7 +180,7 @@ public:
         out gradually.
         \deprecated 
     */
-    void FadeAndDetach(hsScalar goal, hsScalar rate);
+    void FadeAndDetach(float goal, float rate);
 
     /** Has the animation terminated of natural causes?
         Primarily used to see if an animation has played all the 
@@ -218,11 +218,11 @@ public:
         in the animation and will be sent when playback passes that time. */
     void AttachCallbacks(plOneShotCallbacks *callbacks);
     
-    void ProcessFade(hsScalar elapsed);             // process any outstanding fades    
+    void ProcessFade(float elapsed);             // process any outstanding fades    
     void SearchForGlobals(); // Util function to setup SDL channels
 protected:
     /** Set up bookkeeping for a fade. */
-    void ISetupFade(hsScalar goal, hsScalar rate, bool detach, UInt8 type);
+    void ISetupFade(float goal, float rate, bool detach, uint8_t type);
 
     void IRegisterDetach(const char *channelName, plAGChannel *channel);
 
@@ -244,15 +244,15 @@ protected:
     plAnimTimeConvert       *fTimeConvert;
 
     hsBool              fFadeBlend;         /// we are fading the blend
-    hsScalar            fFadeBlendGoal;     /// what blend level we're trying to reach
-    hsScalar            fFadeBlendRate;     /// how fast are we fading in blend units per second (1 blend unit = full)
+    float            fFadeBlendGoal;     /// what blend level we're trying to reach
+    float            fFadeBlendRate;     /// how fast are we fading in blend units per second (1 blend unit = full)
     hsBool              fFadeDetach;        /// detach after fade is finished? (only used for blend fades)
     
     hsBool              fFadeAmp;           /// we are fading the amplitude
-    hsScalar            fFadeAmpGoal;       /// amplitude we're trying to reach 
-    hsScalar            fFadeAmpRate;       /// how faster we're fading in blend units per second
+    float            fFadeAmpGoal;       /// amplitude we're trying to reach 
+    float            fFadeAmpRate;       /// how faster we're fading in blend units per second
 
-    hsScalar ICalcFade(hsBool &fade, hsScalar curVal, hsScalar goal, hsScalar rate, hsScalar elapsed);
+    float ICalcFade(hsBool &fade, float curVal, float goal, float rate, float elapsed);
 
 };
 
@@ -264,7 +264,7 @@ protected:
 extern const char *gGlobalAnimName;
 extern const char *gGlobalChannelName;
 
-void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, UInt16 classIndex);
+void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex);
 void UnRegisterAGAlloc(plAGChannel *object);
 void DumpAGAllocs();
 

@@ -64,10 +64,10 @@ protected:
     plSimulationInterface*      IGetTargetSimulationInterface(int iTarg) const;
     plCoordinateInterface*      IGetTargetCoordinateInterface(int iTarg) const;
     plAudioInterface*           IGetTargetAudioInterface(int iTarg) const;
-    plObjInterface*             IGetTargetGenericInterface(int iTarg, UInt32 classIdx) const;
+    plObjInterface*             IGetTargetGenericInterface(int iTarg, uint32_t classIdx) const;
     plModifier*                 IGetTargetModifier(int iTarg, int iMod) const;
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty) = 0; // called only by owner object's Eval()
+    virtual hsBool IEval(double secs, float del, uint32_t dirty) = 0; // called only by owner object's Eval()
 
     friend class plSceneObject;
 public:

@@ -56,14 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static const wchar s_manifest[] = L"InternalPatcher";
+    static const wchar_t s_manifest[] = L"InternalPatcher";
 #else
-    static const wchar s_manifest[] = L"ExternalPatcher";
+    static const wchar_t s_manifest[] = L"ExternalPatcher";
 #endif
 
 class SelfPatcherStream : public plZlibStream {
     public:
-        virtual UInt32  Write(UInt32 byteCount, const void* buffer);
+        virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
         static plLauncherInfo *info;
         static unsigned totalBytes;
         static unsigned progress;
@@ -76,7 +76,7 @@ static bool         s_downloadComplete;
 static long         s_numFiles;
 static ENetError    s_patchResult;
 static bool         s_updated;
-static wchar        s_newPatcherFile[MAX_PATH];
+static wchar_t        s_newPatcherFile[MAX_PATH];
 
 
 /*****************************************************************************
@@ -105,7 +105,7 @@ static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
 static void DownloadCallback (
     ENetError       result,
     void *          param,
-    const wchar     filename[],
+    const wchar_t     filename[],
     hsStream *      writer
 ) {
     if(IS_NET_ERROR(result)) {
@@ -135,7 +135,7 @@ static void DownloadCallback (
 }
 
 //============================================================================
-static bool MD5Check (const char filename[], const wchar md5[]) {
+static bool MD5Check (const char filename[], const wchar_t md5[]) {
     // Do md5 check
     char md5copy[MAX_PATH];
     plMD5Checksum existingMD5(filename);
@@ -150,7 +150,7 @@ static bool MD5Check (const char filename[], const wchar md5[]) {
 static void ManifestCallback (
     ENetError                       result,
     void *                          param,
-    const wchar                     group[],
+    const wchar_t                     group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 ) {
@@ -180,7 +180,7 @@ static void ManifestCallback (
 
     // MD5 check current patcher against value in manifest
     ASSERT(entryCount == 1);
-    wchar curPatcherFile[MAX_PATH];
+    wchar_t curPatcherFile[MAX_PATH];
     PathGetProgramName(curPatcherFile, arrsize(curPatcherFile));
     StrToAnsi(ansi, curPatcherFile, arrsize(ansi));
     if (!MD5Check(ansi, manifest[0].md5)) {
@@ -193,7 +193,7 @@ static void ManifestCallback (
         StrToAnsi(ansi, s_newPatcherFile, arrsize(ansi));
         SelfPatcherStream * stream = NEWZERO(SelfPatcherStream);
         if (!stream->Open(ansi, "wb"))
-            ErrorFatal(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
+            ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
 
         NetCliFileDownloadRequest(manifest[0].downloadName, stream, DownloadCallback, nil);
     }
@@ -206,7 +206,7 @@ static void ManifestCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar     addr[]
+    const wchar_t     addr[]
 ) {
     NetCliGateKeeperDisconnect();
 
@@ -236,7 +236,7 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
     NetClientInitialize();
     NetClientSetErrorHandler(NetErrorHandler);
 
-    const wchar ** addrs;
+    const wchar_t ** addrs;
     unsigned count;
 
     count = GetGateKeeperSrvHostnames(&addrs);
@@ -263,11 +263,11 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
         // launch new patcher
         STARTUPINFOW        si;
         PROCESS_INFORMATION pi;
-        ZERO(si);
-        ZERO(pi);
+        memset(&si, 0, sizeof(si));
+        memset(&pi, 0, sizeof(pi));
         si.cb = sizeof(si);
 
-        wchar cmdline[MAX_PATH];
+        wchar_t cmdline[MAX_PATH];
         StrPrintf(cmdline, arrsize(cmdline), L"%s %s", s_newPatcherFile, info->cmdLine);
 
         // we have only successfully patched if we actually launch the new version of the patcher
@@ -300,7 +300,7 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
 ***/
 
 //============================================================================
-UInt32 SelfPatcherStream::Write(UInt32 byteCount, const void* buffer) {
+uint32_t SelfPatcherStream::Write(uint32_t byteCount, const void* buffer) {
     progress += byteCount;
     float p = (float)progress / (float)totalBytes * 100;        // progress
     SetProgress( (int)p );

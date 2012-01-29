@@ -336,11 +336,11 @@ void plComponentUtil::IAddRollups(plComponentBase* comp)
     //
     // Update the targets dialog
     //
-    UInt32 numTargs = 0;
+    uint32_t numTargs = 0;
     if (fCurComponent)
     {
         // Only count non-nil targets
-        for (UInt32 i = 0; i < fCurComponent->NumTargets(); i++)
+        for (uint32_t i = 0; i < fCurComponent->NumTargets(); i++)
             if (fCurComponent->GetTarget(i))
                 numTargs++;
     }
@@ -376,14 +376,14 @@ void plComponentUtil::INextTarget(bool forward)
     // Loop through the selected component's targets until we find the currently selected node.
     // This gives us a starting point to find the next or previous target in this component's list.
     plMaxNode *curNode = (plMaxNode*)GetCOREInterface()->GetSelNode(0);
-    UInt32 count = fCurComponent->NumTargets();
-    for (UInt32 i = 0; i < count; i++)
+    uint32_t count = fCurComponent->NumTargets();
+    for (uint32_t i = 0; i < count; i++)
     {
         if (fCurComponent->GetTarget(i) == curNode)
         {
             // Got to loop until the target is non-nil here, so we skip over
             // any deleted nodes.
-            UInt32 targIdx = i;
+            uint32_t targIdx = i;
             do
             {
                 // Figure out which target to change to

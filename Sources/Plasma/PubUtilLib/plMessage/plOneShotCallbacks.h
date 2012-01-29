@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsRefCnt.h"
 
@@ -59,12 +59,12 @@ public:
     class plOneShotCallback
     {
     public:
-        plOneShotCallback(char *marker, plKey &receiver, Int16 user) :
+        plOneShotCallback(char *marker, plKey &receiver, int16_t user) :
           fMarker(marker), fReceiver(receiver) , fUser(user) {}
 
         char *fMarker;
         plKey fReceiver;
-        Int16 fUser;
+        int16_t fUser;
     };
 
 protected:
@@ -74,7 +74,7 @@ public:
     plOneShotCallbacks();
     ~plOneShotCallbacks();
 
-    void AddCallback(const char *marker, plKey &receiver, Int16 user=0);
+    void AddCallback(const char *marker, plKey &receiver, int16_t user=0);
     int GetNumCallbacks();
     plOneShotCallback& GetCallback(int i);
 

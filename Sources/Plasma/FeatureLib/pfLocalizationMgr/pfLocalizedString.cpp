@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 
 #include "pfLocalizedString.h"
 
@@ -131,7 +131,7 @@ void pfLocalizedString::IConvertFromPlainText(const std::wstring & plainText)
                         curTextBlock.fText = L"";
 
                         std::wstring number = plainText.substr(curIndex + 1, (endArgPos - (curIndex + 1)));
-                        curTextBlock.fParamIndex = (UInt8)wcstol(number.c_str(), NULL, 10) - 1; // args are 1-based, vectors are 0-based
+                        curTextBlock.fParamIndex = (uint8_t)wcstol(number.c_str(), NULL, 10) - 1; // args are 1-based, vectors are 0-based
                         fText.push_back(curTextBlock);
 
                         curTextBlock.fIsParam = false;
@@ -240,7 +240,7 @@ void pfLocalizedString::IConvertFromXML(const std::wstring & xml)
                         curTextBlock.fText = L"";
 
                         std::wstring number = xml.substr(curIndex + 1, (endArgPos - (curIndex + 1)));
-                        curTextBlock.fParamIndex = (UInt8)wcstol(number.c_str(), nil, 10) - 1; // args are 1-based, vectors are 0-based
+                        curTextBlock.fParamIndex = (uint8_t)wcstol(number.c_str(), nil, 10) - 1; // args are 1-based, vectors are 0-based
                         fText.push_back(curTextBlock);
 
                         curTextBlock.fIsParam = false;

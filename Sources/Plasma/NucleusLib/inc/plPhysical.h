@@ -98,10 +98,10 @@ public:
     virtual int GetGroup() const = 0;
 
     // Flags in plSimDefs::plLOSDB
-    virtual void    AddLOSDB(UInt16 flag) = 0;
-    virtual void    RemoveLOSDB(UInt16 flag) = 0;
-    virtual UInt16  GetAllLOSDBs() = 0;
-    virtual hsBool  IsInLOSDB(UInt16 flag) = 0;
+    virtual void    AddLOSDB(uint16_t flag) = 0;
+    virtual void    RemoveLOSDB(uint16_t flag) = 0;
+    virtual uint16_t  GetAllLOSDBs() = 0;
+    virtual hsBool  IsInLOSDB(uint16_t flag) = 0;
 
     // Return the key of our subworld. May be a nil key.
     virtual plKey GetWorldKey() const = 0;
@@ -121,12 +121,12 @@ public:
     virtual void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) = 0;
     virtual void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) = 0;
 
-    virtual hsScalar GetMass() = 0;
+    virtual float GetMass() = 0;
     // I wish I could think of a better way to do this, but this is how it's
     // going to be for now.
     virtual void ExcludeRegionHack(hsBool cleared) = 0;
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo) = 0;
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) = 0;
 };
 
 #endif // plPhysical_inc

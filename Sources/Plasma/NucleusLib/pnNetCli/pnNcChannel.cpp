@@ -110,7 +110,7 @@ ChannelCrit::~ChannelCrit () {
             channel->DecRef("ChannelLink");
         }
 
-        DEL(s_channels);
+        delete s_channels;
         s_channels = nil;
     }
     LeaveSafe();
@@ -129,7 +129,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
     ASSERT(msg.fields);
     ASSERT(msg.count);
 
-    unsigned maxBytes = sizeof(word);    // for message id
+    unsigned maxBytes = sizeof(uint16_t);    // for message id
     bool prevFieldWasVarCount = false;
 
     for (unsigned i = 0; i < msg.count; i++) {
@@ -160,7 +160,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
         prevFieldWasVarCount = false;
         switch (field.type) {
             case kNetMsgFieldInteger:
-                maxBytes += sizeof(qword);
+                maxBytes += sizeof(uint64_t);
             break;
 
             case kNetMsgFieldReal:
@@ -261,14 +261,14 @@ static NetMsgChannel * FindChannel_CS (unsigned protocol, bool server) {
 //===========================================================================
 static NetMsgChannel * FindOrCreateChannel_CS (unsigned protocol, bool server) {
     if (!s_channels) {
-        s_channels = NEW(LIST(NetMsgChannel));
+        s_channels = new LIST(NetMsgChannel);
         s_channels->SetLinkOffset(offsetof(NetMsgChannel, m_link));
     }
 
     // find or create protocol
     NetMsgChannel * channel = FindChannel_CS(protocol, server);
     if (!channel) {
-        channel                 = NEW(NetMsgChannel);
+        channel                 = new NetMsgChannel();
         channel->m_protocol     = protocol;
         channel->m_server       = server;
         channel->m_largestRecv  = 0;

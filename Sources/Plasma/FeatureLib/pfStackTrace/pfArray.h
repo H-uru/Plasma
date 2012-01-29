@@ -101,7 +101,7 @@ private:
             cap = m_cap*2;
         m_cap = cap;
 
-        T* data = TRACKED_NEW T[cap];
+        T* data = new T[cap];
         for ( int i = 0 ; i < m_len ; ++i )
             data[i] = m_data[i];
         delete[] m_data;

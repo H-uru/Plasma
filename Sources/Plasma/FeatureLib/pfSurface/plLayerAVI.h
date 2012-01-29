@@ -55,7 +55,7 @@ protected:
 
     hsBool                      ICloseMovie();
 
-    virtual Int32               ISecsToFrame(hsScalar secs);
+    virtual int32_t               ISecsToFrame(float secs);
     virtual hsBool              IInit();
     virtual hsBool              IGetCurrentFrame();
     virtual hsBool              IRelease();

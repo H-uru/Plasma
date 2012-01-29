@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plSpaceTree.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static hsBitVector scratchTotVec;
 static hsBitVector scratchBitVec;
-static hsTArray<Int16> scratchList;
+static hsTArray<int16_t> scratchList;
 static hsTArray<hsRadixSort::Elem> scratchSort;
 
 plProfile_CreateCounter("Harvest Leaves", "Draw", HarvestLeaves);
@@ -92,7 +92,7 @@ plSpaceTree::~plSpaceTree()
 {
 }
 
-void plSpaceTree::IRefreshRecur(Int16 which)
+void plSpaceTree::IRefreshRecur(int16_t which)
 {
     plSpaceTreeNode& sub = fTree[which];
 
@@ -123,7 +123,7 @@ void plSpaceTree::Refresh()
         IRefreshRecur(fRoot);
 }
 
-void plSpaceTree::SetTreeFlag(UInt16 f, hsBool on)
+void plSpaceTree::SetTreeFlag(uint16_t f, hsBool on)
 {
     if( IsEmpty() )
         return;
@@ -139,7 +139,7 @@ void plSpaceTree::SetTreeFlag(UInt16 f, hsBool on)
         fTree[i].fFlags |= f;
 }
 
-void plSpaceTree::ClearTreeFlag(UInt16 f)
+void plSpaceTree::ClearTreeFlag(uint16_t f)
 {
     if( IsEmpty() )
         return;
@@ -149,7 +149,7 @@ void plSpaceTree::ClearTreeFlag(UInt16 f)
         fTree[i].fFlags &= ~f;
 }
 
-void plSpaceTree::SetLeafFlag(Int16 idx, UInt16 f, hsBool on)
+void plSpaceTree::SetLeafFlag(int16_t idx, uint16_t f, hsBool on)
 {
     if( IsEmpty() )
         return;
@@ -181,7 +181,7 @@ void plSpaceTree::SetLeafFlag(Int16 idx, UInt16 f, hsBool on)
     }
 }
 
-void plSpaceTree::ClearLeafFlag(Int16 idx, UInt16 f)
+void plSpaceTree::ClearLeafFlag(int16_t idx, uint16_t f)
 {
     hsAssert(idx == fTree[idx].fLeafIndex, "Some scrambling of indices");
 
@@ -200,7 +200,7 @@ void plSpaceTree::ClearLeafFlag(Int16 idx, UInt16 f)
 
 }
 
-inline void plSpaceTree::IEnableLeaf(Int16 idx, hsBitVector& cache) const
+inline void plSpaceTree::IEnableLeaf(int16_t idx, hsBitVector& cache) const
 {
 
     cache.SetBit(idx);
@@ -221,12 +221,12 @@ inline void plSpaceTree::IEnableLeaf(Int16 idx, hsBitVector& cache) const
     }
 }
 
-void plSpaceTree::EnableLeaf(Int16 idx, hsBitVector& cache) const
+void plSpaceTree::EnableLeaf(int16_t idx, hsBitVector& cache) const
 {
     IEnableLeaf(idx, cache);
 }
 
-void plSpaceTree::EnableLeaves(const hsTArray<Int16>& list, hsBitVector& cache) const
+void plSpaceTree::EnableLeaves(const hsTArray<int16_t>& list, hsBitVector& cache) const
 {
     if( IsEmpty() )
         return;
@@ -237,7 +237,7 @@ void plSpaceTree::EnableLeaves(const hsTArray<Int16>& list, hsBitVector& cache) 
     }
 }
 
-void plSpaceTree::IHarvestAndCullEnabledLeaves(Int16 subIdx, const hsBitVector& cache, hsTArray<Int16>& list) const
+void plSpaceTree::IHarvestAndCullEnabledLeaves(int16_t subIdx, const hsBitVector& cache, hsTArray<int16_t>& list) const
 {
     if( !cache.IsBitSet(subIdx) )
         return;
@@ -267,7 +267,7 @@ void plSpaceTree::IHarvestAndCullEnabledLeaves(Int16 subIdx, const hsBitVector& 
     }
 }
 
-void plSpaceTree::IHarvestEnabledLeaves(Int16 subIdx, const hsBitVector& cache, hsTArray<Int16>& list) const
+void plSpaceTree::IHarvestEnabledLeaves(int16_t subIdx, const hsBitVector& cache, hsTArray<int16_t>& list) const
 {
     if( !cache.IsBitSet(subIdx) )
         return;
@@ -286,7 +286,7 @@ void plSpaceTree::IHarvestEnabledLeaves(Int16 subIdx, const hsBitVector& cache, 
     }
 }
 
-void plSpaceTree::HarvestEnabledLeaves(plVolumeIsect* cull, const hsBitVector& cache, hsTArray<Int16>& list) const
+void plSpaceTree::HarvestEnabledLeaves(plVolumeIsect* cull, const hsBitVector& cache, hsTArray<int16_t>& list) const
 {
     if( IsEmpty() )
         return;
@@ -297,7 +297,7 @@ void plSpaceTree::HarvestEnabledLeaves(plVolumeIsect* cull, const hsBitVector& c
         IHarvestEnabledLeaves(fRoot, cache, list);
 }
 
-void plSpaceTree::IHarvestEnabledLeaves(Int16 subIdx, const hsBitVector& cache, hsBitVector& totList, hsBitVector& list) const
+void plSpaceTree::IHarvestEnabledLeaves(int16_t subIdx, const hsBitVector& cache, hsBitVector& totList, hsBitVector& list) const
 {
     if( IsDisabled(subIdx) )
         return;
@@ -320,7 +320,7 @@ void plSpaceTree::IHarvestEnabledLeaves(Int16 subIdx, const hsBitVector& cache, 
     }
 }
 
-void plSpaceTree::MoveLeaf(Int16 idx, const hsBounds3Ext& bnd)
+void plSpaceTree::MoveLeaf(int16_t idx, const hsBounds3Ext& bnd)
 {
     hsAssert(idx == fTree[idx].fLeafIndex, "Some scrambling of indices");
 
@@ -340,7 +340,7 @@ void plSpaceTree::MoveLeaf(Int16 idx, const hsBounds3Ext& bnd)
     }
 }
 
-void plSpaceTree::HarvestLeaves(Int16 subRoot, hsBitVector& totList, hsBitVector& list) const
+void plSpaceTree::HarvestLeaves(int16_t subRoot, hsBitVector& totList, hsBitVector& list) const
 {
     if( !IsEmpty() )
     {
@@ -380,13 +380,13 @@ void plSpaceTree::HarvestLeaves(plVolumeIsect* cull, hsBitVector& list) const
     scratchTotVec.Clear();
 }
 
-void plSpaceTree::HarvestLeaves(Int16 subRoot, hsBitVector& list) const 
+void plSpaceTree::HarvestLeaves(int16_t subRoot, hsBitVector& list) const 
 { 
     IHarvestLeaves(GetNode(subRoot), scratchTotVec, list);
     scratchTotVec.Clear();
 }
 
-void plSpaceTree::HarvestLeaves(plVolumeIsect* cull, hsTArray<Int16>& list) const
+void plSpaceTree::HarvestLeaves(plVolumeIsect* cull, hsTArray<int16_t>& list) const
 {
     if( !IsEmpty() )
     {
@@ -397,7 +397,7 @@ void plSpaceTree::HarvestLeaves(plVolumeIsect* cull, hsTArray<Int16>& list) cons
     }
 }
 
-void plSpaceTree::HarvestLeaves(hsTArray<Int16>& list) const 
+void plSpaceTree::HarvestLeaves(hsTArray<int16_t>& list) const 
 {
     if( !IsEmpty() )
     {
@@ -408,7 +408,7 @@ void plSpaceTree::HarvestLeaves(hsTArray<Int16>& list) const
     }
 }
 
-void plSpaceTree::HarvestLeaves(Int16 subRoot, hsTArray<Int16>& list) const 
+void plSpaceTree::HarvestLeaves(int16_t subRoot, hsTArray<int16_t>& list) const 
 { 
     if( !IsEmpty() )
     {
@@ -420,7 +420,7 @@ void plSpaceTree::HarvestLeaves(Int16 subRoot, hsTArray<Int16>& list) const
     }
 }
 
-void plSpaceTree::BitVectorToList(hsTArray<Int16>& list, const hsBitVector& bitVec) const
+void plSpaceTree::BitVectorToList(hsTArray<int16_t>& list, const hsBitVector& bitVec) const
 {
 #if 0 // added func to bitvector
     int i;
@@ -472,7 +472,7 @@ void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsBitVec
     }
 }
 
-void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray<Int16>& list) const
+void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const
 {
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
@@ -525,7 +525,7 @@ void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsBitVector& to
     }
 }
 
-void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsTArray<Int16>& list) const
+void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const
 {
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
@@ -547,9 +547,9 @@ void plSpaceTree::Read(hsStream* s, hsResMgr* mgr)
 
     fRoot = s->ReadLE16();
 
-    fNumLeaves = UInt16(s->ReadLE32());
+    fNumLeaves = uint16_t(s->ReadLE32());
 
-    UInt32 n = s->ReadLE32();
+    uint32_t n = s->ReadLE32();
     fTree.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )
@@ -574,7 +574,7 @@ void plSpaceTree::Write(hsStream* s, hsResMgr* mgr)
 
 // Some debug only stuff
 
-void plSpaceTree::HarvestLevel(int level, hsTArray<Int16>& list) const
+void plSpaceTree::HarvestLevel(int level, hsTArray<int16_t>& list) const
 {
     if( !IsEmpty() )
     {
@@ -582,7 +582,7 @@ void plSpaceTree::HarvestLevel(int level, hsTArray<Int16>& list) const
     }
 }
 
-void plSpaceTree::IHarvestLevel(Int16 subRoot, int level, int currLevel, hsTArray<Int16>& list) const
+void plSpaceTree::IHarvestLevel(int16_t subRoot, int level, int currLevel, hsTArray<int16_t>& list) const
 {
     if( level == currLevel )
     {

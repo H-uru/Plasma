@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFilterCoordInterface.h"
 
 #include "hsMatrix44.h"
@@ -50,7 +50,7 @@ static hsMatrix44* InvTRS(const hsMatrix44& trs, hsMatrix44& inv)
 {
     inv.NotIdentity();
 
-    hsScalar invSSq[3];
+    float invSSq[3];
     invSSq[0] = 1.f / (trs.fMap[0][0] * trs.fMap[0][0] + trs.fMap[1][0] * trs.fMap[1][0] + trs.fMap[2][0] * trs.fMap[2][0]);
     invSSq[1] = 1.f / (trs.fMap[0][1] * trs.fMap[0][1] + trs.fMap[1][1] * trs.fMap[1][1] + trs.fMap[2][1] * trs.fMap[2][1]);
     invSSq[2] = 1.f / (trs.fMap[0][2] * trs.fMap[0][2] + trs.fMap[1][2] * trs.fMap[1][2] + trs.fMap[2][2] * trs.fMap[2][2]);

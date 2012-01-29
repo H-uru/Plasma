@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCoordinateInterface.h"
 #include "plDrawInterface.h"
 #include "plSimulationInterface.h"
@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProfile.h"
 
-UInt8 plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransformPhaseNormal;
+uint8_t plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransformPhaseNormal;
 hsBool plCoordinateInterface::fDelayedTransformsEnabled = true;
 
 plCoordinateInterface::plCoordinateInterface()
@@ -165,7 +165,7 @@ void plCoordinateInterface::IAddChild(plSceneObject* child)
     ISetChild(child, -1);
 }
 
-void plCoordinateInterface::IAttachChild(plSceneObject* child, UInt8 flags)
+void plCoordinateInterface::IAttachChild(plSceneObject* child, uint8_t flags)
 {
     hsAssert(child, "Attaching a nil child");
     plCoordinateInterface* childCI = child->GetVolatileCoordinateInterface();
@@ -188,7 +188,7 @@ void plCoordinateInterface::IAttachChild(plSceneObject* child, UInt8 flags)
         childCI->WarpToWorld(l2w,w2l);
 }
 
-void plCoordinateInterface::IDetachChild(plSceneObject* child, UInt8 flags)
+void plCoordinateInterface::IDetachChild(plSceneObject* child, uint8_t flags)
 {
     hsAssert(child, "Detaching a nil child");
     plCoordinateInterface* childCI = child->GetVolatileCoordinateInterface();
@@ -313,7 +313,7 @@ void plCoordinateInterface::SetTransformPhysical(const hsMatrix44& l2w, const hs
     // AND those public interfaces therefore have to set their own "reason" for the transform change
     // THEREFORE: we need to preserve the "reason" flags before we call the public interfaces
     //            so that we don't get reasonPhysics + reasonUnknown, just reasonPhysics
-    UInt16 oldReason = fReason;
+    uint16_t oldReason = fReason;
 
     if( fParent )
     {
@@ -326,7 +326,7 @@ void plCoordinateInterface::SetTransformPhysical(const hsMatrix44& l2w, const hs
     fReason = oldReason | kReasonPhysics;
 }
 
-UInt16 plCoordinateInterface::GetReasons()
+uint16_t plCoordinateInterface::GetReasons()
 {
     return fReason;
 }
@@ -463,7 +463,7 @@ void plCoordinateInterface::IRecalcTransforms()
     plProfile_EndTiming(CIRecalcT);
 }
 
-void plCoordinateInterface::ITransformChanged(hsBool force, UInt16 reasons, hsBool checkForDelay)
+void plCoordinateInterface::ITransformChanged(hsBool force, uint16_t reasons, hsBool checkForDelay)
 {
     plProfile_IncCount(CITrans, 1);
     plProfile_BeginTiming(CITransT);
@@ -471,7 +471,7 @@ void plCoordinateInterface::ITransformChanged(hsBool force, UInt16 reasons, hsBo
     // inherit reasons for transform change from our parents
     fReason |= reasons;
     
-    UInt16 propagateReasons = fReason;
+    uint16_t propagateReasons = fReason;
 
     hsBool process = !(checkForDelay && GetProperty(kDelayedTransformEval)) || !fDelayedTransformsEnabled;
 
@@ -561,7 +561,7 @@ void plCoordinateInterface::Read(hsStream* stream, hsResMgr* mgr)
     int i;
     for( i = 0; i < n; i++ )
     {
-        plIntRefMsg* refMsg = TRACKED_NEW plIntRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
+        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plIntRefMsg::kChildObject);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kPassiveRef);
     }
 }

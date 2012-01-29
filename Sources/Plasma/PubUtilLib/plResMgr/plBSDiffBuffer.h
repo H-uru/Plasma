@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plBSDiffBuffer_h
 #define _plBSDiffBuffer_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -76,13 +76,13 @@ class plBSDiffBuffer
     protected:
 
         hsBool          fWriting;
-        UInt32          fNewLength, fPatchLength;
+        uint32_t          fNewLength, fPatchLength;
         unsigned char*  fPatchBuffer;
 
     public:
 
-        plBSDiffBuffer( UInt32 newLength, UInt32 oldLength = 0 );       // Constructor for writing new buffers. oldLength isn't required but helpful for optimizations
-        plBSDiffBuffer( void *buffer, UInt32 length );  // Constructor for applying a given diff set
+        plBSDiffBuffer( uint32_t newLength, uint32_t oldLength = 0 );       // Constructor for writing new buffers. oldLength isn't required but helpful for optimizations
+        plBSDiffBuffer( void *buffer, uint32_t length );  // Constructor for applying a given diff set
                                                         // to an old buffer
         virtual ~plBSDiffBuffer();
 
@@ -90,36 +90,36 @@ class plBSDiffBuffer
         /// Creation/write functions
 
         //  Diff() creates the diff buffer from the new and old. 
-        UInt32  Diff( UInt32 oldLength, void *oldBuffer, UInt32 newLength, void *newBuffer );
+        uint32_t  Diff( uint32_t oldLength, void *oldBuffer, uint32_t newLength, void *newBuffer );
 
         // GetBuffer() will copy the diff stream into a new buffer and return it. You are responsible for freeing the buffer.
-        void    GetBuffer( UInt32 &length, void *&bufferPtr );
+        void    GetBuffer( uint32_t &length, void *&bufferPtr );
 
 
         /// Apply functions
 
         // Apply() is another way to call Patch().
-        UInt32  Apply( UInt32 oldLength, void *oldBuffer, UInt32 &newLength, void *&newBuffer )
+        uint32_t  Apply( uint32_t oldLength, void *oldBuffer, uint32_t &newLength, void *&newBuffer )
         { return Patch(oldLength, oldBuffer, newLength, newBuffer); };
 
         // Patch() will take this diff buffer and apply it to the given old buffer,
         // allocating and producing a new buffer. You are responsible for freeing the new buffer.
-        UInt32  Patch( UInt32 oldLength, void *oldBuffer, UInt32 &newLength, void *&newBuffer );
+        uint32_t  Patch( uint32_t oldLength, void *oldBuffer, uint32_t &newLength, void *&newBuffer );
 
     private:
         
-        UInt32  IReadUnsignedInt8(unsigned char *buf);
-        void    IWriteUnsignedInt8(UInt32 x,unsigned char *buf);
-        void    ISafeMemcpy(unsigned char *dest, unsigned char *src, size_t nbytes,
+        uint32_t  IReadUnsignedint8_t(unsigned char *buf);
+        void    IWriteUnsignedint8_t(uint32_t x,unsigned char *buf);
+        void    ISafeMemcpy(unsigned char *dest, unsigned char *src, size_t nBytes,
                             unsigned char *destend, unsigned char *srcend);
-        void    ISplit(Int32 *I,Int32 *V,UInt32 start,UInt32 len,UInt32 h);
-        void    IQSuffixSort(Int32 *I,Int32 *V,unsigned char *old,UInt32 oldsize);
-        UInt32  IMatchLen( unsigned char *oldBuffer, UInt32 oldLength,
-                           unsigned char *newBuffer, UInt32 newLength);
-        UInt32  ISearch( Int32 *I,
-                         unsigned char *oldBuffer, UInt32 oldLength,
-                         unsigned char *newBuffer, UInt32 newLength,
-                         UInt32 st, UInt32 en, Int32 *pos);
+        void    ISplit(int32_t *I,int32_t *V,uint32_t start,uint32_t len,uint32_t h);
+        void    IQSuffixSort(int32_t *I,int32_t *V,unsigned char *old,uint32_t oldsize);
+        uint32_t  IMatchLen( unsigned char *oldBuffer, uint32_t oldLength,
+                           unsigned char *newBuffer, uint32_t newLength);
+        uint32_t  ISearch( int32_t *I,
+                         unsigned char *oldBuffer, uint32_t oldLength,
+                         unsigned char *newBuffer, uint32_t newLength,
+                         uint32_t st, uint32_t en, int32_t *pos);
 
 
 };

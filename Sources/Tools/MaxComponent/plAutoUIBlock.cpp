@@ -46,14 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "iparamb2.h"
 
 #include "plComponentReg.h"
-#include "hsUtils.h"
+
 #include "resource.h"
 
 plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version)
 {
     fName = hsStrcpy(name);
     fVersion = version;
-    fDesc = TRACKED_NEW ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
+    fDesc = new ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
     fIsMultiModifier = false;
 }
 

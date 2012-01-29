@@ -71,11 +71,11 @@ public:
     void        Stop(int index = -1){;}
     void        FastForwardPlay(int index = -1){;}
     void        FastForwardToggle(int index = -1){;}
-    void        SetMin(const hsScalar m,int index = -1){;} // sets minimum falloff distance
-    void        SetMax(const hsScalar m,int index = -1){;} // sets maximum falloff distance
+    void        SetMin(const float m,int index = -1){;} // sets minimum falloff distance
+    void        SetMax(const float m,int index = -1){;} // sets maximum falloff distance
     virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1){return *this;}
-    hsScalar    GetMin(int index = -1) const{return 0;}
-    hsScalar    GetMax(int index = -1) const{return 0;}
+    float    GetMin(int index = -1) const{return 0;}
+    float    GetMax(int index = -1) const{return 0;}
     void        SetVelocity(const hsVector3 vel,int index = -1){;}
     hsVector3   GetVelocity(int index = -1) const;
     hsPoint3    GetPosition(int index = -1);
@@ -96,7 +96,7 @@ public:
 
     virtual void    SetMuted( hsBool muted, int index = -1 ) {;}
     virtual void    ToggleMuted( int index = -1 ) {;}
-    virtual void    SetTalkIcon(int index, UInt32 str){;}
+    virtual void    SetTalkIcon(int index, uint32_t str){;}
     virtual void    ClearTalkIcon(){;}
 
     virtual void        SetFadeIn( const int type, const float length, int index = -1 ) {}

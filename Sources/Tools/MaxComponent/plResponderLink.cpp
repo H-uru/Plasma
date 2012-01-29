@@ -249,7 +249,7 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
     if ( !ageLinkInAnimName )
         ageLinkInAnimName = kDefaultLinkInAnimName;
 
-    plLinkToAgeMsg *msg = TRACKED_NEW plLinkToAgeMsg;
+    plLinkToAgeMsg *msg = new plLinkToAgeMsg;
     msg->GetAgeLink()->SetLinkingRules( linkingRule );
     msg->GetAgeLink()->SetSpawnPoint( plSpawnPointInfo( ageSpawnPtTitle, ageSpawnPtName ) );
     msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename( ageFilename );
@@ -490,7 +490,7 @@ plMessage *plResponderCmdEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg,
 
     BOOL enable = pb->GetInt(kEnable);
 
-    plResponderEnableMsg *msg = TRACKED_NEW plResponderEnableMsg;
+    plResponderEnableMsg *msg = new plResponderEnableMsg;
     msg->fEnable = (enable != false);
     
     plMaxNodeBase *respondNode = (plMaxNodeBase*)pb->GetReferenceTarget(kEnableNode);
@@ -559,7 +559,7 @@ plMessage *plResponderCmdPhysEnable::CreateMsg(plMaxNode* node, plErrorMsg *pErr
 
     BOOL enable = pb->GetInt(kEnable);
 
-    plEnableMsg* enableMsg = TRACKED_NEW plEnableMsg;
+    plEnableMsg* enableMsg = new plEnableMsg;
     enableMsg->SetCmd(plEnableMsg::kPhysical);
     enableMsg->SetCmd(enable ? plEnableMsg::kEnable : plEnableMsg::kDisable);
     enableMsg->AddReceiver(physNode->GetKey());
@@ -672,7 +672,7 @@ plMessage *plResponderCmdOneShot::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg
         if (!oneShotKey)
             throw "One-shot component didn't convert";
 
-        plOneShotMsg *msg = TRACKED_NEW plOneShotMsg;
+        plOneShotMsg *msg = new plOneShotMsg;
         msg->AddReceiver(oneShotKey);
         return msg;
     }
@@ -715,7 +715,7 @@ ParamBlockDesc2 *plResponderCmdNotify::GetDesc()
 
 plMessage *plResponderCmdNotify::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
-    plNotifyMsg *msg = TRACKED_NEW plNotifyMsg;
+    plNotifyMsg *msg = new plNotifyMsg;
     msg->SetBCastFlag(plMessage::kNetPropagate, 0);
     msg->SetState(1.0);         // set to positive state
     msg->AddCallbackEvent(1);   // create an event record with callback
@@ -825,7 +825,7 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
     // Just stuffing this in here because I'm lazy
     if (comp->ClassID() == CAM_REGION_CID)
     {
-        plEnableMsg* enableMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* enableMsg = new plEnableMsg;
         enableMsg->SetCmd(plEnableMsg::kPhysical);
         enableMsg->SetCmd(enable ? plEnableMsg::kEnable : plEnableMsg::kDisable);
 
@@ -835,7 +835,7 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
         return enableMsg;
     }
 
-    plEnableMsg *msg = TRACKED_NEW plEnableMsg;
+    plEnableMsg *msg = new plEnableMsg;
     msg->SetCmd(enable ? plEnableMsg::kEnable : plEnableMsg::kDisable);
 
     hsTArray<plKey> keys;
@@ -1018,7 +1018,7 @@ plMessage *plResponderCmdXRegion::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg
     {
         plExcludeRegionComponent *xComp = (plExcludeRegionComponent*)comp;
 
-        plExcludeRegionMsg *msg = TRACKED_NEW plExcludeRegionMsg;
+        plExcludeRegionMsg *msg = new plExcludeRegionMsg;
 
         int type = pb->GetInt(kXRegionType);
         switch (type)
@@ -1098,7 +1098,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
         throw "No Camera Specified";
     hsBool fail = true;
     int count = pCamNode->NumAttachedComponents();
-    for (UInt32 x = 0; x < count; x++)
+    for (uint32_t x = 0; x < count; x++)
     {
         plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
         if (comp->ClassID() == AUTOCAM_CID ||
@@ -1115,7 +1115,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
     if (fail)
         throw "Invalid Camera Specified";
 
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
 
     if(pCamNode->CanConvert())
@@ -1127,7 +1127,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
         pMsg->SetNewCam(((plMaxNode*)pCamNode)->GetSceneObject()->GetKey());
 
         int count = ((plMaxNode*)pCamNode)->NumAttachedComponents();
-        for (UInt32 x = 0; x < count; x++)
+        for (uint32_t x = 0; x < count; x++)
         {
             plComponentBase *comp = ((plMaxNode*)pCamNode)->GetAttachedComponent(x);
             if (comp->ClassID() == DEFAULTCAM_CID)
@@ -1185,7 +1185,7 @@ const char *plResponderCmdCamForce::GetInstanceName(IParamBlock2 *pb)
 
 plMessage *plResponderCmdCamForce::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
-    plCameraMsg* msg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* msg = new plCameraMsg;
     msg->SetBCastFlag(plMessage::kBCastByType);
     msg->SetBCastFlag(plMessage::kNetPropagate, false);
 
@@ -1241,9 +1241,9 @@ plMessage *plResponderCmdDelay::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, 
 {
     float time = pb->GetFloat(kDelayTime);
 
-    plTimerCallbackMsg *msg = TRACKED_NEW plTimerCallbackMsg;
+    plTimerCallbackMsg *msg = new plTimerCallbackMsg;
     msg->fTime = time;
-    msg->fID = UInt32(-1);
+    msg->fID = uint32_t(-1);
 
     return msg;
 }
@@ -1253,7 +1253,7 @@ void plResponderCmdDelay::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPara
     plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(waitInfo.msg);
     hsAssert(timerMsg, "Somebody is crazy");
 
-    if (timerMsg->fID != UInt32(-1))
+    if (timerMsg->fID != uint32_t(-1))
     {
         pErrMsg->Set(true,
                     "Responder Delay",
@@ -1380,7 +1380,7 @@ plMessage *plResponderCmdVisibility::CreateMsg(plMaxNode* node, plErrorMsg *pErr
     plMaxNode* visNode = (plMaxNode*)pb->GetINode(kVisibilityNode);
     if (visNode)
     {
-        plEnableMsg* msg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* msg = new plEnableMsg;
         msg->SetCmd(plEnableMsg::kDrawable);
 
         int type = pb->GetInt(kVisibilityType);
@@ -1551,7 +1551,7 @@ plMessage *plResponderCmdSubWorld::CreateMsg(plMaxNode* node, plErrorMsg *pErrMs
         break;
     }
 
-    plSubWorldMsg * swMsg = TRACKED_NEW plSubWorldMsg(nilKey, nilKey2, worldKey);
+    plSubWorldMsg * swMsg = new plSubWorldMsg(nilKey, nilKey2, worldKey);
 
     return swMsg;
 }
@@ -1629,7 +1629,7 @@ const char *plResponderCmdFootSurface::GetInstanceName(IParamBlock2 *pb)
 
 plMessage *plResponderCmdFootSurface::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
-    plArmatureEffectStateMsg* msg = TRACKED_NEW plArmatureEffectStateMsg;
+    plArmatureEffectStateMsg* msg = new plArmatureEffectStateMsg;
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     msg->SetBCastFlag(plMessage::kNetPropagate);
     msg->fSurface = pb->GetInt(kSurface);
@@ -1729,7 +1729,7 @@ plMessage *plResponderCmdMultistage::CreateMsg(plMaxNode* node, plErrorMsg *pErr
     plMaxNodeBase *targNode;
     if (compNode.GetCompAndNode(comp, targNode))
     {
-        plNotifyMsg* msg = TRACKED_NEW plNotifyMsg;
+        plNotifyMsg* msg = new plNotifyMsg;
         msg->SetState(1.f);
 
         // Will actually be set to the player key at runtime

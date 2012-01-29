@@ -68,7 +68,7 @@ public:
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const = 0;    
-    virtual hsScalar            Test(const hsPoint3& pos) const = 0;
+    virtual float            Test(const hsPoint3& pos) const = 0;
 
     virtual void Read(hsStream* s, hsResMgr* mgr) = 0;
     virtual void Write(hsStream* s, hsResMgr* mgr) = 0;
@@ -79,7 +79,7 @@ class plSphereIsect : public plVolumeIsect
 protected:
     hsPoint3            fCenter;
     hsPoint3            fWorldCenter;
-    hsScalar            fRadius;
+    float            fRadius;
     hsPoint3            fMins;
     hsPoint3            fMaxs;
 public:
@@ -90,14 +90,14 @@ public:
     GETINTERFACE_ANY( plSphereIsect, plVolumeIsect );
 
     void SetCenter(const hsPoint3& c);
-    void SetRadius(hsScalar r);
+    void SetRadius(float r);
 
-    hsScalar GetRadius() const { return fRadius; }
+    float GetRadius() const { return fRadius; }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;    
-    virtual hsScalar            Test(const hsPoint3& pos) const; // return 0 if point inside, else "distance" from pos to volume
+    virtual float            Test(const hsPoint3& pos) const; // return 0 if point inside, else "distance" from pos to volume
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -108,8 +108,8 @@ class plConeIsect : public plVolumeIsect
 protected:
     hsBool              fCapped;
 
-    hsScalar            fRadAngle;
-    hsScalar            fLength;
+    float            fRadAngle;
+    float            fLength;
 
     hsPoint3            fWorldTip;
     hsVector3           fWorldNorm;
@@ -118,7 +118,7 @@ protected:
     hsMatrix44          fLightToNDC;
 
     hsVector3           fNorms[5];
-    hsScalar            fDists[5];
+    float            fDists[5];
 
     void                ISetup();
 public:
@@ -129,16 +129,16 @@ public:
     CLASSNAME_REGISTER( plConeIsect );
     GETINTERFACE_ANY( plConeIsect, plVolumeIsect );
 
-    void SetAngle(hsScalar rads);
-    void SetLength(hsScalar d);
+    void SetAngle(float rads);
+    void SetLength(float d);
 
-    hsScalar GetLength() const { return fCapped ? fLength : 0; }
-    hsScalar GetAngle() const { return fRadAngle; }
+    float GetLength() const { return fCapped ? fLength : 0; }
+    float GetAngle() const { return fRadAngle; }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -149,15 +149,15 @@ class plCylinderIsect : public plVolumeIsect
 protected:
     hsPoint3        fTop;
     hsPoint3        fBot;
-    hsScalar        fRadius;
+    float        fRadius;
 
     hsPoint3        fWorldBot;
     hsVector3       fWorldNorm;
-    hsScalar        fLength;
-    hsScalar        fMin;
-    hsScalar        fMax;
+    float        fLength;
+    float        fMin;
+    float        fMax;
 
-    void ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, hsScalar radius);
+    void ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, float radius);
 
 public:
     plCylinderIsect();
@@ -166,13 +166,13 @@ public:
     CLASSNAME_REGISTER( plCylinderIsect );
     GETINTERFACE_ANY( plCylinderIsect, plVolumeIsect );
 
-    void SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, hsScalar radius);
-    void SetCylinder(const hsPoint3& lBot, const hsVector3& axis, hsScalar radius);
+    void SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, float radius);
+    void SetCylinder(const hsPoint3& lBot, const hsVector3& axis, float radius);
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -185,8 +185,8 @@ protected:
     {
     public:
         hsVector3           fNorm;
-        hsScalar            fMin;
-        hsScalar            fMax;
+        float            fMin;
+        float            fMax;
 
         hsPoint3            fPosOne;
         hsPoint3            fPosTwo;
@@ -201,14 +201,14 @@ public:
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
 
     void SetNumPlanes(int n); // each plane is really two parallel planes
-    UInt16 GetNumPlanes() const { return fPlanes.GetCount(); }
+    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
 
     void SetPlane(int which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -221,11 +221,11 @@ protected:
     {
     public:
         hsVector3       fNorm;
-        hsScalar        fDist;
+        float        fDist;
         hsPoint3        fPos;
 
         hsVector3       fWorldNorm;
-        hsScalar        fWorldDist;
+        float        fWorldDist;
     };
 
     hsTArray<SinglePlane>   fPlanes;
@@ -238,14 +238,14 @@ public:
     GETINTERFACE_ANY( plConvexIsect, plVolumeIsect );
 
     void ClearPlanes() { fPlanes.SetCount(0); }
-    void AddPlaneUnchecked(const hsVector3& n, hsScalar dist); // no validation here
+    void AddPlaneUnchecked(const hsVector3& n, float dist); // no validation here
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    UInt16 GetNumPlanes() const { return fPlanes.GetCount(); }
+    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -268,7 +268,7 @@ public:
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -287,7 +287,7 @@ public:
     GETINTERFACE_ANY( plComplexIsect, plVolumeIsect );
 
     void AddVolume(plVolumeIsect* v); // Will capture pointer
-    UInt16 GetNumVolumes() const { return fVolumes.GetCount(); }
+    uint16_t GetNumVolumes() const { return fVolumes.GetCount(); }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
@@ -305,7 +305,7 @@ public:
     GETINTERFACE_ANY( plUnionIsect, plComplexIsect );
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 };
 
 class plIntersectionIsect : public plComplexIsect
@@ -318,7 +318,7 @@ public:
     GETINTERFACE_ANY( plIntersectionIsect, plComplexIsect );
 
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual hsScalar            Test(const hsPoint3& pos) const;
+    virtual float            Test(const hsPoint3& pos) const;
 };
 
 #endif // plVolumeIsect_inc

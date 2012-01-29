@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 class RandomContext {
-    dword m_seed;
-    dword m_value;
+    uint32_t m_seed;
+    uint32_t m_value;
 
     void UpdateValue ();
 
@@ -79,7 +79,7 @@ public:
 *
 ***/
 
-static const dword kDefaultRandomSeed = 0x075bd924;
+static const uint32_t kDefaultRandomSeed = 0x075bd924;
 
 static RandomContext s_random;
 
@@ -99,11 +99,11 @@ RandomContext::RandomContext ()
 
 //============================================================================
 void RandomContext::UpdateValue () {
-    const dword A = 0xbc8f;
-    const dword Q = 0xadc8;
-    const dword R = 0x0d47;
+    const uint32_t A = 0xbc8f;
+    const uint32_t Q = 0xadc8;
+    const uint32_t R = 0x0d47;
 
-    dword div = m_value / Q;
+    uint32_t div = m_value / Q;
     m_value   = A * (m_value - Q * div) - R * div;
     if (m_value > kRandomMax)
         m_value -= kRandomMax + 1;

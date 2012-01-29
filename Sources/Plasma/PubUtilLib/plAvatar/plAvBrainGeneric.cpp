@@ -76,14 +76,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 hsBool plAvBrainGeneric::fForce3rdPerson = true;
-const hsScalar plAvBrainGeneric::kDefaultFadeIn = 6.f; // 1/6th of a second to fade in
-const hsScalar plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
+const float plAvBrainGeneric::kDefaultFadeIn = 6.f; // 1/6th of a second to fade in
+const float plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
 
 // plAvBrainGeneric ----------------
 // -----------------
 plAvBrainGeneric::plAvBrainGeneric()
 : fRecipient(nil),
-  fStages(TRACKED_NEW plAnimStageVec),
+  fStages(new plAnimStageVec),
   fCurStage(0),
   fType(kGeneric),
   fExitFlags(kExitNormal),
@@ -105,7 +105,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
                                    plMessage *startMessage,
                                    plMessage *endMessage,
                                    plKey recipient,
-                                   UInt32 exitFlags,
+                                   uint32_t exitFlags,
                                    float fadeIn,
                                    float fadeOut,
                                    MoveMode moveMode)
@@ -128,7 +128,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
 }
 
 // plAvBrainGeneric 
-plAvBrainGeneric::plAvBrainGeneric(UInt32 exitFlags, float fadeIn, float fadeOut, MoveMode moveMode)
+plAvBrainGeneric::plAvBrainGeneric(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode)
 : fRecipient(nil),
   fStages(nil),
   fCurStage(0),
@@ -172,7 +172,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
 
     if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
     {
-        plInputIfaceMgrMsg* msg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables );
+        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables );
         plgDispatch::MsgSend(msg);
     }
 
@@ -208,7 +208,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
         if (plAvBrainGeneric::fForce3rdPerson && fAvMod->IsLocalAvatar())
         {
             // create message to force 3rd person mode
-            plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+            plCameraMsg* pMsg = new plCameraMsg;
             pMsg->SetBCastFlag(plMessage::kBCastByExactType);
             pMsg->SetCmd(plCameraMsg::kResponderSetThirdPerson);
             pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
@@ -248,7 +248,7 @@ bool plAvBrainGeneric::MatchAnimNames(const char *names[], int count)
 
 // Apply ----------------------------------------------------
 // ------
-hsBool plAvBrainGeneric::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainGeneric::Apply(double time, float elapsed)
 {
     hsBool result = false;
 
@@ -307,7 +307,7 @@ void plAvBrainGeneric::Deactivate()
     if (plAvBrainGeneric::fForce3rdPerson && fAvMod->IsLocalAvatar())
     {
         // create message to force 3rd person mode
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->SetCmd(plCameraMsg::kResponderUndoThirdPerson);
@@ -318,7 +318,7 @@ void plAvBrainGeneric::Deactivate()
 
     if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
     {
-        plInputIfaceMgrMsg* msg = TRACKED_NEW plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables );
+        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables );
         plgDispatch::MsgSend(msg);
     }
 }
@@ -491,7 +491,7 @@ hsBool plAvBrainGeneric::IProcessFadeOut(double time, float elapsed)
 // ISwitchStages ---------------------------------------------------------------------------------------------------
 // --------------
 hsBool plAvBrainGeneric::ISwitchStages(int oldStageNum, int newStageNum, float delta, hsBool setTime, float newTime,
-                                       float fadeNew, hsScalar fadeOld, double worldTime)
+                                       float fadeNew, float fadeOld, double worldTime)
 {
 #ifdef DEBUG_MULTISTAGE
     char sbuf[256];
@@ -879,7 +879,7 @@ hsBool plAvBrainGeneric::LeaveAge()
 int plAvBrainGeneric::AddStage(plAnimStage *stage)
 {
     if(!fStages)
-        fStages = TRACKED_NEW plAnimStageVec;
+        fStages = new plAnimStageVec;
     fStages->push_back(stage);
     return fStages->size() - 1;
 }

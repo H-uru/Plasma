@@ -168,18 +168,18 @@ enum StateIdx {
     kZ,
     kMisc 
 };
-    UInt32          fBlendFlags;
-    UInt32          fClampFlags;
-    UInt32          fShadeFlags;
-    UInt32          fZFlags;
-    UInt32          fMiscFlags;
+    uint32_t          fBlendFlags;
+    uint32_t          fClampFlags;
+    uint32_t          fShadeFlags;
+    uint32_t          fZFlags;
+    uint32_t          fMiscFlags;
 
-    static hsBool Differs(UInt32 mine, UInt32 hers, UInt32 mask)
+    static hsBool Differs(uint32_t mine, uint32_t hers, uint32_t mask)
     {
         return (mine & mask) ^ (hers & mask);
     }
 
-    static hsBool Differs(UInt32 mine, UInt32 hers)
+    static hsBool Differs(uint32_t mine, uint32_t hers)
     {
         return mine ^ hers;
     }
@@ -192,7 +192,7 @@ enum StateIdx {
             | (fZFlags ^ other.fZFlags)
             | (fMiscFlags ^ other.fMiscFlags));
     }
-    UInt32 Value(int i) const
+    uint32_t Value(int i) const
     {
         switch(i)
         {
@@ -210,7 +210,7 @@ enum StateIdx {
         hsAssert(false, "Bad param");
         return fBlendFlags;
     }
-    UInt32& operator[](const int i)
+    uint32_t& operator[](const int i)
     {
         switch(i)
         {
@@ -254,7 +254,7 @@ enum StateIdx {
     inline void Read(hsStream* s);
     inline void Write(hsStream* s);
 
-    hsGMatState(UInt32 blend=0, UInt32 clamp=0, UInt32 shade=0, UInt32 z=0, UInt32 misc=0) 
+    hsGMatState(uint32_t blend=0, uint32_t clamp=0, uint32_t shade=0, uint32_t z=0, uint32_t misc=0) 
         :   fBlendFlags(blend), 
             fClampFlags(clamp),
             fShadeFlags(shade),

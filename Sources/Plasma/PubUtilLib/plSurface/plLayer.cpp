@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLayer.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "hsStream.h"
@@ -73,32 +73,32 @@ plLayer::plLayer()
                 | kPixelShader
                 | kBumpEnvXfm;
 
-    fTransform = TRACKED_NEW hsMatrix44;
+    fTransform = new hsMatrix44;
     fTransform->Reset();
 
-    fPreshadeColor = TRACKED_NEW hsColorRGBA;
-    fRuntimeColor = TRACKED_NEW hsColorRGBA;
-    fAmbientColor = TRACKED_NEW hsColorRGBA;
-    fSpecularColor = TRACKED_NEW hsColorRGBA;
-    fOpacity = TRACKED_NEW hsScalar;
+    fPreshadeColor = new hsColorRGBA;
+    fRuntimeColor = new hsColorRGBA;
+    fAmbientColor = new hsColorRGBA;
+    fSpecularColor = new hsColorRGBA;
+    fOpacity = new float;
     
-    fState = TRACKED_NEW hsGMatState;
+    fState = new hsGMatState;
     fState->Reset();
 
-    fUVWSrc = TRACKED_NEW UInt32;
-    fLODBias = TRACKED_NEW hsScalar;
-    fSpecularPower = TRACKED_NEW hsScalar;
+    fUVWSrc = new uint32_t;
+    fLODBias = new float;
+    fSpecularPower = new float;
 
-    fTexture = TRACKED_NEW plBitmap*;
+    fTexture = new plBitmap*;
     *fTexture = nil;
 
-    fVertexShader = TRACKED_NEW plShader*;
+    fVertexShader = new plShader*;
     *fVertexShader = nil;
 
-    fPixelShader = TRACKED_NEW plShader*;
+    fPixelShader = new plShader*;
     *fPixelShader = nil;
 
-    fBumpEnvXfm = TRACKED_NEW hsMatrix44;
+    fBumpEnvXfm = new hsMatrix44;
     fBumpEnvXfm->Reset();
 }
 
@@ -106,9 +106,9 @@ plLayer::~plLayer()
 {
 }
 
-UInt32 plLayer::Eval(double secs, UInt32 frame, UInt32 ignore) 
+uint32_t plLayer::Eval(double secs, uint32_t frame, uint32_t ignore) 
 { 
-    return UInt32(0); 
+    return uint32_t(0); 
 }
 
 void plLayer::Read(hsStream* s, hsResMgr* mgr)
@@ -128,14 +128,14 @@ void plLayer::Read(hsStream* s, hsResMgr* mgr)
     *fLODBias = s->ReadLEScalar();
     *fSpecularPower = s->ReadLEScalar();
 
-    plLayRefMsg* refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture); 
+    plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture); 
     mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef); 
 
 #if 1 // For read/write shaders
-    refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
+    refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kVertexShader); 
     mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
 
-    refMsg = TRACKED_NEW plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);  
+    refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kPixelShader);  
     mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
 
     fBumpEnvXfm->Read(s);

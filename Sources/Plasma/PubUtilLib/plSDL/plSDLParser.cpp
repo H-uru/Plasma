@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plSDL.h"
 #include "plFile/hsFiles.h"
@@ -90,7 +90,7 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
 //  curDesc=plSDLMgr::GetInstance()->FindDescriptor(token, plSDL::kLatestVersion);
 //  if (!curDesc)
     {
-        curDesc = TRACKED_NEW plStateDescriptor;
+        curDesc = new plStateDescriptor;
         curDesc->SetName(token);
 
         DebugMsg("SDL: DESC name=%s", token);
@@ -182,10 +182,10 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         plStateDescriptor* stateDesc = plSDLMgr::GetInstance()->FindDescriptor(sdlName, plSDL::kLatestVersion);
         hsAssert(stateDesc, xtl::format("can't find nested state desc reference %s, fileName=%s", 
                 sdlName, fileName).c_str());
-        curVar = TRACKED_NEW plSDVarDescriptor(stateDesc);
+        curVar = new plSDVarDescriptor(stateDesc);
     }
     else
-        curVar = TRACKED_NEW plSimpleVarDescriptor;
+        curVar = new plSimpleVarDescriptor;
     
     curDesc->AddVar(curVar);
     bool ok=curVar->SetType(token);

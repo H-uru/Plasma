@@ -82,24 +82,24 @@ class plDXTextureRef : public plDXDeviceRef
         IDirect3DBaseTexture9   *fD3DTexture;
         D3DFORMAT               fFormatType;    // Format of the D3D texture object
 
-        UInt32      fMMLvs;         // Number of mipmap levels
-        UInt32      fMaxWidth;      // Width of the highest mipmap level
-        UInt32      fMaxHeight;     // Height of the highest mipmap level (no pun intended)
-        UInt32      fNumPix;        // total num texels in all mip levels
-        UInt32      fDataSize;      // size of fData[0..n] in bytes
-        UInt32*     fLevelSizes;    // fLevelSize[i] == size in bytes of level i
-        //UInt32        fCurrLOD;       // Current LOD setting for this texture
+        uint32_t      fMMLvs;         // Number of mipmap levels
+        uint32_t      fMaxWidth;      // Width of the highest mipmap level
+        uint32_t      fMaxHeight;     // Height of the highest mipmap level (no pun intended)
+        uint32_t      fNumPix;        // total num texels in all mip levels
+        uint32_t      fDataSize;      // size of fData[0..n] in bytes
+        uint32_t*     fLevelSizes;    // fLevelSize[i] == size in bytes of level i
+        //uint32_t        fCurrLOD;       // Current LOD setting for this texture
 
         plBitmap    *fOwner;
 
         void*       fData;          // for reloading
 
-        UInt32      GetFlags( void ) { return fFlags; }
-        void        SetFlags( UInt32 flag ) { fFlags = flag; }
+        uint32_t      GetFlags( void ) { return fFlags; }
+        void        SetFlags( uint32_t flag ) { fFlags = flag; }
 
-        plDXTextureRef& Set( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
+        plDXTextureRef& Set( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
 
-        plDXTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
+        plDXTextureRef( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false );
         virtual ~plDXTextureRef();
 
         void            Link( plDXTextureRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
@@ -113,7 +113,7 @@ class plDXCubeTextureRef : public plDXTextureRef
     public:
         void    *fFaceData[ 5 ];            // First face is in the inherited fData
 
-        plDXCubeTextureRef( D3DFORMAT tp, UInt32 ml, UInt32 mw, UInt32 mh, UInt32 np, UInt32 sz, UInt32 manSize, UInt32* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false ) :
+        plDXCubeTextureRef( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed=false, hsBool renderTarget = false ) :
                             plDXTextureRef( tp, ml, mw, mh, np, sz, manSize, lSz, pd, ed, renderTarget )
         {
 

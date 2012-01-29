@@ -75,12 +75,12 @@ protected:
     hsTArray<plVisRegion*>      fVisRegions;
     hsBitVector                 fVisNot;
 
-    hsScalar                    fPriority;
+    float                    fPriority;
     hsBounds3Ext                fWorldBounds;
 
     plKey                       fSceneNode;
 
-    virtual hsScalar            IComputeSurfaceArea();
+    virtual float            IComputeSurfaceArea();
     virtual void                IComputeBounds();
 
     virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fPolys; }
@@ -99,7 +99,7 @@ public:
 
     virtual hsBool      MsgReceive(plMessage* msg);
 
-    virtual hsScalar GetPriority() const { return fPriority; }
+    virtual float GetPriority() const { return fPriority; }
 
     hsBool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
     hsBool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
@@ -114,13 +114,13 @@ public:
     virtual const hsTArray<plCullPoly>& GetWorldPolyList() const { return fPolys; }
     virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fPolys; }
 
-    virtual Int32   GetNumProperties() const { return kNumProps; }
+    virtual int32_t   GetNumProperties() const { return kNumProps; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
     // Export only function to initialize.
     virtual void ComputeFromPolys();

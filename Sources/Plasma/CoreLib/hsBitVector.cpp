@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
@@ -62,18 +62,18 @@ hsBitVector::hsBitVector(int b, ...)
     va_end( vl );
 }
 
-hsBitVector::hsBitVector(const hsTArray<Int16>& src)
+hsBitVector::hsBitVector(const hsTArray<int16_t>& src)
 :   fBitVectors(nil),
     fNumBitVectors(0)
 {
     FromList(src);
 }
 
-void hsBitVector::IGrow(UInt32 newNumBitVectors)
+void hsBitVector::IGrow(uint32_t newNumBitVectors)
 {
     hsAssert(newNumBitVectors > fNumBitVectors, "Growing smaller");
-    UInt32 *old = fBitVectors;
-    fBitVectors = TRACKED_NEW UInt32[newNumBitVectors];
+    uint32_t *old = fBitVectors;
+    fBitVectors = new uint32_t[newNumBitVectors];
     int i;
     for( i = 0; i < fNumBitVectors; i++ )
         fBitVectors[i] = old[i];
@@ -95,8 +95,8 @@ hsBitVector& hsBitVector::Compact()
     for( hiVec = fNumBitVectors-1; (hiVec >= 0)&& !fBitVectors[hiVec]; --hiVec );
     if( hiVec >= 0 )
     {
-        UInt32 *old = fBitVectors;
-        fBitVectors = TRACKED_NEW UInt32[++hiVec];
+        uint32_t *old = fBitVectors;
+        fBitVectors = new uint32_t[++hiVec];
         int i;
         for( i = 0; i < hiVec; i++ )
             fBitVectors[i] = old[i];
@@ -119,7 +119,7 @@ void hsBitVector::Read(hsStream* s)
     if( fNumBitVectors )
     {
         delete [] fBitVectors;
-        fBitVectors = TRACKED_NEW UInt32[fNumBitVectors];
+        fBitVectors = new uint32_t[fNumBitVectors];
         int i;
         for( i = 0; i < fNumBitVectors; i++ )
             s->LogReadLE(&fBitVectors[i],"BitVector");
@@ -135,7 +135,7 @@ void hsBitVector::Write(hsStream* s) const
         s->WriteLE32(fBitVectors[i]);
 }
 
-hsTArray<Int16>& hsBitVector::Enumerate(hsTArray<Int16>& dst) const
+hsTArray<int16_t>& hsBitVector::Enumerate(hsTArray<int16_t>& dst) const
 {
     dst.SetCount(0);
     hsBitIterator iter(*this);
@@ -148,7 +148,7 @@ hsTArray<Int16>& hsBitVector::Enumerate(hsTArray<Int16>& dst) const
     return dst;
 }
 
-hsBitVector& hsBitVector::FromList(const hsTArray<Int16>& src)
+hsBitVector& hsBitVector::FromList(const hsTArray<int16_t>& src)
 {
     Clear();
     int i;

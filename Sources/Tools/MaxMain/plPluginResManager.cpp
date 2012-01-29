@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plPluginResManager.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plRegistryHelpers.h"
@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCommonObjLib.h"
 #include "MaxComponent/plMiscComponents.h"
 
-plKey plPluginResManager::NameToLoc(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant)
+plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant)
 {
     // Hack for now--always prefer paging out sceneNodes first
     fPageOutHint = plSceneNode::Index();
@@ -76,7 +76,7 @@ plKey plPluginResManager::NameToLoc(const char* age, const char* page, Int32 seq
     if (snKey == nil)
     {
         // Not found, create a new one
-        plSceneNode *newSceneNode = TRACKED_NEW plSceneNode;
+        plSceneNode *newSceneNode = new plSceneNode;
         snKey = NewKey(keyName, newSceneNode, pageNode->GetPageInfo().GetLocation());
 
         // Call init after it gets a key
@@ -110,14 +110,14 @@ plKey plPluginResManager::NameToLoc(const char* age, const char* page, Int32 seq
 //  seqNumber, returns the page for that combo (either by preloading it or
 //  by creating it).
 
-plRegistryPageNode* plPluginResManager::INameToPage(const char* age, const char* page, Int32 sequenceNumber, hsBool itinerant)
+plRegistryPageNode* plPluginResManager::INameToPage(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant)
 {
     // Find the location first, to see if it already exists
     plRegistryPageNode* pageNode = FindPage(age, page);
     if (pageNode == nil)
     {
         // This page does not yet exist, so create a new page
-        if (sequenceNumber != UInt32(-1))
+        if (sequenceNumber != uint32_t(-1))
         {
             const plLocation& newLoc = ICreateLocation(age, page, sequenceNumber, itinerant);
             pageNode = CreatePage(newLoc, age, page);
@@ -157,9 +157,9 @@ public:
 
     virtual hsBool EatKey(const plKey& key)
     {
-        UInt32 count = plCommonObjLib::GetNumLibs();
+        uint32_t count = plCommonObjLib::GetNumLibs();
 
-        for (UInt32 i = 0; i < count; i++)
+        for (uint32_t i = 0; i < count; i++)
         {
             plCommonObjLib* lib = plCommonObjLib::GetLib(i);
             if (lib->IsInteresting(key))
@@ -188,7 +188,7 @@ public:
 //  Note: Broken out in a separate function 5.31.2002 mcn to facilitate
 //  pre-loading textures exported to our special textures page.
 
-void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, Int32 origSeqNumber)
+void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t origSeqNumber)
 {
     // For common pages, we want to kinda-maybe-load all the objects so they don't get wiped when we
     // re-export them. However, we don't have a good way of telling whether a page is a common page,
@@ -233,7 +233,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, Int32 or
         // Make sure it's not a global page we're handling either
         if (!pageNode->GetPageInfo().GetLocation().IsReserved())
         {
-            Int32 texSeqNum = -1;
+            int32_t texSeqNum = -1;
             if (origSeqNumber != -1)
                 texSeqNum = plPageInfoUtils::GetCommonSeqNumFromNormal(origSeqNumber, plAgeDescription::kTextures);
 
@@ -243,7 +243,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, Int32 or
             hsAssert(texturePage != nil, "Unable to get or create the shared textures page? Shouldn't be possible.");
 
             // Do the other one
-            Int32 commonSeqNum = -1;
+            int32_t commonSeqNum = -1;
             if (origSeqNumber != -1)
                 commonSeqNum = plPageInfoUtils::GetCommonSeqNumFromNormal(origSeqNumber, plAgeDescription::kGlobal);
 
@@ -294,7 +294,7 @@ void plPluginResManager::IShutdown()
     // Loop through all the commonObjLibs and clear their object lists, just
     // as a safety measure (the creators of the various libs should really
     // be doing it)
-    for (UInt32 i = 0; i < plCommonObjLib::GetNumLibs(); i++)
+    for (uint32_t i = 0; i < plCommonObjLib::GetNumLibs(); i++)
         plCommonObjLib::GetLib(i)->ClearObjectList();
 
     plResManager::IShutdown();
@@ -304,11 +304,11 @@ void plPluginResManager::IShutdown()
 class plSeqNumberFinder : public plRegistryPageIterator
 {
 protected:
-    Int32&  fSeqNum;
+    int32_t&  fSeqNum;
     hsBool  fWillBeReserved;
 
 public:
-    plSeqNumberFinder(Int32& seqNum, hsBool willBeReserved) : fSeqNum(seqNum), fWillBeReserved(willBeReserved) {}
+    plSeqNumberFinder(int32_t& seqNum, hsBool willBeReserved) : fSeqNum(seqNum), fWillBeReserved(willBeReserved) {}
 
     virtual hsBool EatPage(plRegistryPageNode* page)
     {
@@ -322,15 +322,15 @@ public:
 
 plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, hsBool itinerant)
 {
-    Int32 seqNum = VerifySeqNumber(0, age, page);
+    int32_t seqNum = VerifySeqNumber(0, age, page);
     return ICreateLocation(age, page, seqNum, itinerant);
 }
 
-plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, Int32 seqNum, hsBool itinerant)
+plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, int32_t seqNum, hsBool itinerant)
 {
     hsBool willBeReserved = hsStrCaseEQ(age, "global");
 
-    Int32 oldNum = seqNum;
+    int32_t oldNum = seqNum;
     seqNum = VerifySeqNumber(seqNum, age, page);
     if (seqNum != oldNum)
     {
@@ -427,7 +427,7 @@ void plPluginResManager::AddLooseEnd(plKey key)
     }
 }
 // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
-Int32 plPluginResManager::VerifySeqNumber(Int32 sequenceNumber, const char* age, const char* page)
+int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const char* age, const char* page)
 {
     hsBool negated = false, willBeReserved = hsStrCaseEQ(age, "global");
     if (sequenceNumber < 0)
@@ -479,7 +479,7 @@ Int32 plPluginResManager::VerifySeqNumber(Int32 sequenceNumber, const char* age,
     const int kTemporarySequenceStartPrefix = 100; // can't be larger then 0xFE, so well start out at 100 for kicks
     sequenceNumber = plPageInfoUtils::CombineSeqNum(kTemporarySequenceStartPrefix, 0);
 
-    Int32 upperLimit = 0xFEFFFF; // largest legal sequence number is a prefix of FE and a suffix of FFFF
+    int32_t upperLimit = 0xFEFFFF; // largest legal sequence number is a prefix of FE and a suffix of FFFF
     for(; sequenceNumber < upperLimit; sequenceNumber++)
     {
         if (willBeReserved)
@@ -508,7 +508,7 @@ bool plPluginResManager::NukeKeyAndObject(plKey& objectKey)
     class plPublicRefKey : public plKeyImp
     {
     public:
-        UInt16 GetRefCount() const { return fRefCount; }
+        uint16_t GetRefCount() const { return fRefCount; }
     };
 
     plKeyImp* keyData = (plKeyImp*)objectKey;

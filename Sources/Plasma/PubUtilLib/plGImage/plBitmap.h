@@ -119,8 +119,8 @@ class plBitmap : public hsKeyedObject
                 kDXT5           = 0x5
             };
 
-            UInt8       fCompressionType;   
-            UInt8       fBlockSize;             // In bytes
+            uint8_t       fCompressionType;   
+            uint8_t       fBlockSize;             // In bytes
         };
 
         struct UncompressedInfo
@@ -134,12 +134,12 @@ class plBitmap : public hsKeyedObject
                 kAInten88  = 0x04   /// 8-bit intensity channel w/ 8-bit alpha
             };
 
-            UInt8   fType;
+            uint8_t   fType;
         };
 
         //// Public Data /////
 
-        UInt8       fCompressionType;
+        uint8_t       fCompressionType;
         union 
         {
             DirectXInfo         fDirectXInfo;
@@ -156,16 +156,16 @@ class plBitmap : public hsKeyedObject
         GETINTERFACE_ANY( plBitmap, hsKeyedObject );
 
         // Get the total size in bytes
-        virtual UInt32  GetTotalSize( void ) const = 0;
+        virtual uint32_t  GetTotalSize( void ) const = 0;
 
         // Read and write
         virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
         virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-        UInt16          GetFlags( void ) const { return fFlags; }
-        void            SetFlags( UInt16 flags ) { fFlags = flags; }
+        uint16_t          GetFlags( void ) const { return fFlags; }
+        void            SetFlags( uint16_t flags ) { fFlags = flags; }
 
-        UInt8           GetPixelSize( void ) const { return fPixelSize; }
+        uint8_t           GetPixelSize( void ) const { return fPixelSize; }
 
         hsBool          IsCompressed( void ) const { return ( fCompressionType == kDirectXCompression ); }
 
@@ -173,32 +173,32 @@ class plBitmap : public hsKeyedObject
         virtual hsGDeviceRef    *GetDeviceRef( void ) const { return fDeviceRef; }
         virtual void            SetDeviceRef( hsGDeviceRef *const devRef );
 
-        static void     SetGlobalLevelChopCount( UInt8 count ) { fGlobalNumLevelsToChop = count; }
-        static UInt8    GetGlobalLevelChopCount() { return fGlobalNumLevelsToChop; }
+        static void     SetGlobalLevelChopCount( uint8_t count ) { fGlobalNumLevelsToChop = count; }
+        static uint8_t    GetGlobalLevelChopCount() { return fGlobalNumLevelsToChop; }
 
         // Compares and sets the modified time for the source texture
-        bool IsSameModifiedTime(UInt32 lowTime, UInt32 highTime);
-        void SetModifiedTime(UInt32 lowTime, UInt32 highTime);
+        bool IsSameModifiedTime(uint32_t lowTime, uint32_t highTime);
+        void SetModifiedTime(uint32_t lowTime, uint32_t highTime);
 
     protected:
 
         //// Protected Members ////
 
-        UInt8           fPixelSize; // 1, 2, 4, 8, 16, (24), 32, 64
-        UInt8           fSpace;     // no, direct, gray, index
-        UInt16          fFlags;     // alphachannel | alphabit
+        uint8_t           fPixelSize; // 1, 2, 4, 8, 16, (24), 32, 64
+        uint8_t           fSpace;     // no, direct, gray, index
+        uint16_t          fFlags;     // alphachannel | alphabit
 
         mutable hsGDeviceRef    *fDeviceRef;
 
-        static UInt8            fGlobalNumLevelsToChop;
+        static uint8_t            fGlobalNumLevelsToChop;
 
         // The modification time of the source texture.
         // Used to determine if we can reuse an already converted copy.
-        UInt32 fLowModifiedTime;
-        UInt32 fHighModifiedTime;
+        uint32_t fLowModifiedTime;
+        uint32_t fHighModifiedTime;
 
-        virtual UInt32  Read( hsStream *s );
-        virtual UInt32  Write( hsStream *s );
+        virtual uint32_t  Read( hsStream *s );
+        virtual uint32_t  Write( hsStream *s );
 };
 
 #endif // _plBitmap_h

@@ -58,10 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // socket notification procedures
 
 // connection data format:
-//      byte    connType;
-//      dword   buildId;    [optional]
-//      dword   branchId;   [optional]
-//      dword   buildType;  [optional]
+//      uint8_t    connType;
+//      uint32_t   buildId;    [optional]
+//      uint32_t   branchId;   [optional]
+//      uint32_t   buildType;  [optional]
 //      Uuid    productId;  [optional]
 const unsigned kConnHashFlagsIgnore     = 0x01;
 const unsigned kConnHashFlagsExactMatch = 0x02;
@@ -160,7 +160,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
 //===========================================================================
 static unsigned GetConnHash (
     ISocketConnHash *   hash,
-    const byte          buffer[],
+    const uint8_t          buffer[],
     unsigned            bytes
 ) {
     if (!bytes)
@@ -174,7 +174,7 @@ static unsigned GetConnHash (
         hash->productId = 0;
         hash->flags     = 0;
 
-        // one byte consumed
+        // one uint8_t consumed
         return 1;
     }
     else {
@@ -238,9 +238,9 @@ EFileError AsyncGetLastFileError () {
 }
 
 //============================================================================
-const wchar * FileErrorToString (EFileError error) {
+const wchar_t * FileErrorToString (EFileError error) {
     
-    static wchar * s_fileErrorStrings[] = {
+    static wchar_t * s_fileErrorStrings[] = {
         L"FileSuccess",
         L"FileErrorInvalidParameter",
         L"FileErrorFileNotFound",
@@ -255,15 +255,15 @@ const wchar * FileErrorToString (EFileError error) {
 
 //============================================================================
 AsyncFile AsyncFileOpen (
-    const wchar             fullPath[],
+    const wchar_t             fullPath[],
     FAsyncNotifyFileProc    notifyProc,
     EFileError *            error,
     unsigned                desiredAccess,
     unsigned                openMode,
     unsigned                shareModeFlags,
     void *                  userState,
-    qword *                 fileSize,
-    qword *                 fileLastWriteTime
+    uint64_t *                 fileSize,
+    uint64_t *                 fileLastWriteTime
 ) {
     ASSERT(g_api.fileOpen);
     return g_api.fileOpen(
@@ -282,7 +282,7 @@ AsyncFile AsyncFileOpen (
 //============================================================================
 void AsyncFileClose (
     AsyncFile   file,
-    qword       truncateSize
+    uint64_t       truncateSize
 ) {
     ASSERT(g_api.fileClose);
     g_api.fileClose(file, truncateSize);
@@ -291,15 +291,15 @@ void AsyncFileClose (
 //============================================================================
 void AsyncFileSetLastWriteTime (
     AsyncFile   file,
-    qword       lastWriteTime
+    uint64_t       lastWriteTime
 ) {
     ASSERT(g_api.fileSetLastWriteTime);
     g_api.fileSetLastWriteTime(file, lastWriteTime);
 }
 
 //============================================================================
-qword AsyncFileGetLastWriteTime (
-    const wchar fileName[]
+uint64_t AsyncFileGetLastWriteTime (
+    const wchar_t fileName[]
 ) {
     ASSERT(g_api.fileGetLastWriteTime);
     return g_api.fileGetLastWriteTime(fileName);
@@ -308,7 +308,7 @@ qword AsyncFileGetLastWriteTime (
 //============================================================================
 AsyncId AsyncFileFlushBuffers (
     AsyncFile   file, 
-    qword       truncateSize,
+    uint64_t       truncateSize,
     bool        notify,
     void *      param
 ) {
@@ -319,7 +319,7 @@ AsyncId AsyncFileFlushBuffers (
 //============================================================================
 AsyncId AsyncFileRead (
     AsyncFile       file,
-    qword           offset,
+    uint64_t           offset,
     void *          buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -339,7 +339,7 @@ AsyncId AsyncFileRead (
 //============================================================================
 AsyncId AsyncFileWrite (
     AsyncFile       file,
-    qword           offset,
+    uint64_t           offset,
     const void *    buffer,
     unsigned        bytes,
     unsigned        flags,
@@ -369,7 +369,7 @@ AsyncId AsyncFileCreateSequence (
 //============================================================================
 bool AsyncFileSeek (
     AsyncFile       file,
-    qword           distance,
+    uint64_t           distance,
     EFileSeekFrom   seekFrom
 ) {
     ASSERT(g_api.fileSeek);
@@ -493,7 +493,7 @@ void AsyncSocketEnableNagling (
 
 //===========================================================================
 void AsyncSocketRegisterNotifyProc (
-    byte                    connType, 
+    uint8_t                    connType, 
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId,
     unsigned                buildType,
@@ -504,7 +504,7 @@ void AsyncSocketRegisterNotifyProc (
     ASSERT(notifyProc);
 
     // Perform memory allocation outside lock
-    ISocketConnType * ct    = NEW(ISocketConnType);
+    ISocketConnType * ct    = new ISocketConnType;
     ct->notifyProc          = notifyProc;
     ct->connType            = connType;
     ct->buildId             = buildId;
@@ -522,7 +522,7 @@ void AsyncSocketRegisterNotifyProc (
 
 //===========================================================================
 void AsyncSocketUnregisterNotifyProc (
-    byte                    connType, 
+    uint8_t                    connType, 
     FAsyncNotifySocketProc  notifyProc,
     unsigned                buildId,
     unsigned                buildType,
@@ -553,12 +553,12 @@ void AsyncSocketUnregisterNotifyProc (
     s_notifyProcLock.LeaveWrite();
 
     // perform memory deallocation outside the lock
-    DEL(scan);
+    delete scan;
 }
 
 //===========================================================================
 FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const byte  buffer[],
+    const uint8_t  buffer[],
     unsigned    bytes,
     unsigned *  bytesProcessed,
     unsigned *  connType,

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "pfLocalizedString.h"
 #include "pfLocalizationDataMgr.h"
@@ -78,7 +78,7 @@ void pfLocalizationMgr::Initialize(const std::string & dataPath)
     if (fInstance)
         return;
 
-    fInstance = TRACKED_NEW pfLocalizationMgr();
+    fInstance = new pfLocalizationMgr();
     pfLocalizationDataMgr::Initialize(dataPath); // set up the data manager
 }
 

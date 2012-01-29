@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "plGeometrySpan.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Static Data /////////////////////////////////////////////////////////////
 
 hsBitVector     plGeometrySpan::fInstanceGroupIDFlags;
-UInt32          plGeometrySpan::fHighestReadInstanceGroup = 0;
+uint32_t          plGeometrySpan::fHighestReadInstanceGroup = 0;
 
 hsTArray<hsTArray<plGeometrySpan *> *>  plGeometrySpan::fInstanceGroups;
 
@@ -108,7 +108,7 @@ void    plGeometrySpan::IClearMembers( void )
     fSpecularRGBA = nil;
     fInstanceRefs = nil;
     fInstanceGroupID = kNoGroupID;
-    fSpanRefIndex = (UInt32)-1;
+    fSpanRefIndex = (uint32_t)-1;
 
     fLocalToOBB.Reset();
     fOBBToLocal.Reset();
@@ -193,7 +193,7 @@ void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
         // Go find a new groupID
         instance->fInstanceGroupID = IAllocateNewGroupID();
 
-        instance->fInstanceRefs = array = TRACKED_NEW hsTArray<plGeometrySpan *>;
+        instance->fInstanceRefs = array = new hsTArray<plGeometrySpan *>;
         // Go figure, it won't append the const version to the array...this is a cheat,
         // but then, so is making fInstanceRefs mutable :)
         array->Append( (plGeometrySpan *)instance );
@@ -216,11 +216,11 @@ void plGeometrySpan::IUnShareData()
 {
     if( fVertexData )
     {
-        UInt8* oldVtxData = fVertexData;
+        uint8_t* oldVtxData = fVertexData;
 
-        UInt32 size = GetVertexSize( fFormat );
+        uint32_t size = GetVertexSize( fFormat );
 
-        fVertexData = TRACKED_NEW UInt8[ size * fNumVerts ];
+        fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, oldVtxData, size * fNumVerts );
     }
 
@@ -228,7 +228,7 @@ void plGeometrySpan::IUnShareData()
     {
         hsColorRGBA* oldMult = fMultColor;
 
-        fMultColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fMultColor = new hsColorRGBA[ fNumVerts ];
         memcpy( fMultColor, oldMult, sizeof(hsColorRGBA) * fNumVerts );
     }
 
@@ -236,7 +236,7 @@ void plGeometrySpan::IUnShareData()
     {
         hsColorRGBA* oldAdd = fAddColor;
 
-        fAddColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fAddColor = new hsColorRGBA[ fNumVerts ];
         memcpy( fAddColor, oldAdd, sizeof(hsColorRGBA) * fNumVerts );
     }
 }
@@ -250,7 +250,7 @@ void plGeometrySpan::BreakInstance()
     hsAssert(fInstanceRefs->GetCount(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
 
     fInstanceGroupID = IAllocateNewGroupID();
-    fInstanceRefs = TRACKED_NEW hsTArray<plGeometrySpan*>;
+    fInstanceRefs = new hsTArray<plGeometrySpan*>;
     fInstanceRefs->Append(this);
 
     IUnShareData();
@@ -303,9 +303,9 @@ void plGeometrySpan::UnInstance()
 //  Static function that allocates a new groupID by finding an empty slot in
 //  the bitVector, then marking it as used and returning that bit #
 
-UInt32  plGeometrySpan::IAllocateNewGroupID( void )
+uint32_t  plGeometrySpan::IAllocateNewGroupID( void )
 {
-    UInt32          id;
+    uint32_t          id;
 
 
     for( id = 0; id < fInstanceGroupIDFlags.GetSize(); id++ )
@@ -321,7 +321,7 @@ UInt32  plGeometrySpan::IAllocateNewGroupID( void )
 //// IClearGroupID ///////////////////////////////////////////////////////////
 //  Done with this groupID, so clear the entry in the bit table.
 
-void    plGeometrySpan::IClearGroupID( UInt32 groupID )
+void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 {
     fInstanceGroupIDFlags.ClearBit( groupID - 1 );
 }
@@ -340,7 +340,7 @@ void    plGeometrySpan::IClearGroupID( UInt32 groupID )
 //  we remove an entry, we decrement this ID until we hit a used pointer again;
 //  if we don't find one, we reset the array.
 
-hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( UInt32 groupID, UInt32 expectedCount )
+hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount )
 {
     hsTArray<plGeometrySpan *>  *array;
 
@@ -350,7 +350,7 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( UInt32 groupID, 
     if( fInstanceGroups.GetCount() <= groupID || fInstanceGroups[ groupID ] == nil )
     {
         // Not yet in the list--make a new hsTArray
-        array = TRACKED_NEW hsTArray<plGeometrySpan *>;
+        array = new hsTArray<plGeometrySpan *>;
         fInstanceGroupIDFlags.SetBit( groupID, true );
         
         if( expectedCount > 1 )
@@ -416,24 +416,24 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
 
     if( source->fIndexData != nil )
     {
-        fIndexData = TRACKED_NEW UInt16[ fNumIndices ];
-        memcpy( fIndexData, source->fIndexData, sizeof( UInt16 ) * fNumIndices );
+        fIndexData = new uint16_t[ fNumIndices ];
+        memcpy( fIndexData, source->fIndexData, sizeof( uint16_t ) * fNumIndices );
     }
     else
         fIndexData = nil;
 
     if( source->fDiffuseRGBA )
     {
-        fDiffuseRGBA = TRACKED_NEW UInt32[ fNumVerts ];
-        memcpy( fDiffuseRGBA, source->fDiffuseRGBA, sizeof( UInt32 ) * fNumVerts );
+        fDiffuseRGBA = new uint32_t[ fNumVerts ];
+        memcpy( fDiffuseRGBA, source->fDiffuseRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
         fDiffuseRGBA = nil;
 
     if( source->fSpecularRGBA )
     {
-        fSpecularRGBA = TRACKED_NEW UInt32[ fNumVerts ];
-        memcpy( fSpecularRGBA, source->fSpecularRGBA, sizeof( UInt32 ) * fNumVerts );
+        fSpecularRGBA = new uint32_t[ fNumVerts ];
+        memcpy( fSpecularRGBA, source->fSpecularRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
         fSpecularRGBA = nil;
@@ -447,7 +447,7 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
 
 void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 {
-    UInt32      size;
+    uint32_t      size;
 
 
     // Just to make sure
@@ -462,7 +462,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
     {
         size = GetVertexSize( fFormat );
 
-        fVertexData = TRACKED_NEW UInt8[ size * fNumVerts ];
+        fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, source->fVertexData, size * fNumVerts );
     }
     else
@@ -470,7 +470,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 
     if( source->fMultColor )
     {
-        fMultColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fMultColor = new hsColorRGBA[ fNumVerts ];
         memcpy( fMultColor, source->fMultColor, sizeof(hsColorRGBA) * fNumVerts );
     }
     else
@@ -480,7 +480,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 
     if( source->fAddColor )
     {
-        fAddColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fAddColor = new hsColorRGBA[ fNumVerts ];
         memcpy( fAddColor, source->fAddColor, sizeof(hsColorRGBA) * fNumVerts );
     }
     else
@@ -493,7 +493,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 
 void    plGeometrySpan::Read( hsStream *stream )
 {
-    UInt32      size, i;
+    uint32_t      size, i;
 
 
     hsAssert( !fCreating, "Cannot read geometry span while creating" );
@@ -543,19 +543,19 @@ void    plGeometrySpan::Read( hsStream *stream )
     {
         size = GetVertexSize( fFormat );
 
-        fVertexData = TRACKED_NEW UInt8[ size * fNumVerts ];
+        fVertexData = new uint8_t[ size * fNumVerts ];
         stream->Read( size * fNumVerts, fVertexData );
 
-        fMultColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
-        fAddColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fMultColor = new hsColorRGBA[ fNumVerts ];
+        fAddColor = new hsColorRGBA[ fNumVerts ];
         for( i = 0; i < fNumVerts; i++ )
         {
             fMultColor[ i ].Read( stream );
             fAddColor[ i ].Read( stream );
         }
 
-        fDiffuseRGBA = TRACKED_NEW UInt32[ fNumVerts ];
-        fSpecularRGBA = TRACKED_NEW UInt32[ fNumVerts ];
+        fDiffuseRGBA = new uint32_t[ fNumVerts ];
+        fSpecularRGBA = new uint32_t[ fNumVerts ];
         stream->ReadLE32( fNumVerts, fDiffuseRGBA );
         stream->ReadLE32( fNumVerts, fSpecularRGBA );
     }
@@ -570,7 +570,7 @@ void    plGeometrySpan::Read( hsStream *stream )
 
     if( fNumIndices > 0 )
     {
-        fIndexData = TRACKED_NEW UInt16[ fNumIndices ];
+        fIndexData = new uint16_t[ fNumIndices ];
         stream->ReadLE16( fNumIndices, fIndexData );
     }
     else
@@ -580,7 +580,7 @@ void    plGeometrySpan::Read( hsStream *stream )
     fInstanceGroupID = stream->ReadLE32();
     if( fInstanceGroupID != kNoGroupID )
     {
-        UInt32  count = stream->ReadLE32();
+        uint32_t  count = stream->ReadLE32();
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
         fInstanceRefs->Append( this );
@@ -592,7 +592,7 @@ void    plGeometrySpan::Read( hsStream *stream )
 
 void    plGeometrySpan::Write( hsStream *stream )
 {
-    UInt32      size, i;
+    uint32_t      size, i;
 
 
     hsAssert( !fCreating, "Cannot write geometry span while creating" );
@@ -611,7 +611,7 @@ void    plGeometrySpan::Write( hsStream *stream )
     stream->WriteByte( fNumMatrices );
     stream->WriteLE16(fLocalUVWChans);
     stream->WriteLE16(fMaxBoneIdx);
-    stream->WriteLE16((UInt16)fPenBoneIdx);
+    stream->WriteLE16((uint16_t)fPenBoneIdx);
 
     stream->WriteLEScalar(fMinDist);
     stream->WriteLEScalar(fMaxDist);
@@ -663,9 +663,9 @@ void    plGeometrySpan::Write( hsStream *stream )
 
 //// GetVertexSize ///////////////////////////////////////////////////////////
 
-UInt32  plGeometrySpan::GetVertexSize( UInt8 format )
+uint32_t  plGeometrySpan::GetVertexSize( uint8_t format )
 {
-    UInt32  size;
+    uint32_t  size;
 
 
     size = sizeof( float ) * ( 3 + 3 ); // pos + normal
@@ -683,14 +683,14 @@ UInt32  plGeometrySpan::GetVertexSize( UInt8 format )
         default: hsAssert( false, "Bad weight count in GetVertexSize()" );
     }
     if( format & kSkinIndices )
-        size += sizeof(UInt32);
+        size += sizeof(uint32_t);
 
     return size;
 }
 
 //// BeginCreate //////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::BeginCreate( hsGMaterial *material, const hsMatrix44 &l2wMatrix, UInt8 format )
+void    plGeometrySpan::BeginCreate( hsGMaterial *material, const hsMatrix44 &l2wMatrix, uint8_t format )
 {
     fCreating = true;
 
@@ -705,8 +705,8 @@ void    plGeometrySpan::BeginCreate( hsGMaterial *material, const hsMatrix44 &l2
 //  that UV channel (and all above them) are not used. The array of pointers 
 //  MUST be of size kMaxNumUVChannels.
 
-UInt16  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor, 
-                                    hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, UInt32 indices )
+uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor, 
+                                    hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, uint32_t indices )
 {
     AddVertex( position, normal, 0, 0, uvPtrArray, weight1, weight2, weight3, indices );
 
@@ -720,8 +720,8 @@ UInt16  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColor
     return idx;
 }
 
-UInt16  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, UInt32 hexColor, UInt32 specularColor, 
-                                    hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, UInt32 indices )
+uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor, 
+                                    hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, uint32_t indices )
 {
     TempVertex      vert;
     int             i, numWeights;
@@ -782,14 +782,14 @@ UInt16  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, UInt32 
 
 //// AddIndex Variations //////////////////////////////////////////////////////
 
-void    plGeometrySpan::AddIndex( UInt16 index )
+void    plGeometrySpan::AddIndex( uint16_t index )
 {
     hsAssert( fCreating, "Calling AddIndex() on a non-creating plGeometrySpan!" );
 
     fIndexAccum.Append( index );
 }
 
-void    plGeometrySpan::AddTriIndices( UInt16 index1, UInt16 index2, UInt16 index3 )
+void    plGeometrySpan::AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
@@ -800,7 +800,7 @@ void    plGeometrySpan::AddTriIndices( UInt16 index1, UInt16 index2, UInt16 inde
 
 //// AddTriangle //////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, UInt32 color )
+void    plGeometrySpan::AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color )
 {
     hsVector3       twoTo1, twoTo3, normal;
     hsPoint3        normalPt;
@@ -823,12 +823,12 @@ void    plGeometrySpan::AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 
 
 //// AddVertexArray ///////////////////////////////////////////////////////////
 
-void    plGeometrySpan::AddVertexArray( UInt32 count, hsPoint3 *positions, hsVector3 *normals, UInt32 *colors, hsPoint3* uvws, int uvwsPerVtx )
+void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3* uvws, int uvwsPerVtx )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
 
-    UInt32      i, dest;
+    uint32_t      i, dest;
 
     // This test actually does work, even if it's bad form...
     hsAssert( GetNumUVs() == uvwsPerVtx, "Calling wrong AddVertex() for plGeometrySpan format" );
@@ -866,12 +866,12 @@ void    plGeometrySpan::AddVertexArray( UInt32 count, hsPoint3 *positions, hsVec
 
 //// AddIndexArray ////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::AddIndexArray( UInt32 count, UInt16 *indices )
+void    plGeometrySpan::AddIndexArray( uint32_t count, uint16_t *indices )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
 
-    UInt32      i, dest;
+    uint32_t      i, dest;
 
 
     dest = fIndexAccum.GetCount();
@@ -885,8 +885,8 @@ void    plGeometrySpan::AddIndexArray( UInt32 count, UInt16 *indices )
 void    plGeometrySpan::EndCreate( void )
 {
     hsBounds3Ext    bounds;
-    UInt32          i, size;
-    UInt8           *tempPtr;
+    uint32_t          i, size;
+    uint8_t           *tempPtr;
 
 
     hsAssert( fCreating, "Calling EndCreate() on a non-creating plGeometrySpan!" );
@@ -918,18 +918,18 @@ void    plGeometrySpan::EndCreate( void )
             delete [] fVertexData;
 
         fNumVerts = fVertAccum.GetCount();
-        fVertexData = TRACKED_NEW UInt8[ size * fNumVerts ];
+        fVertexData = new uint8_t[ size * fNumVerts ];
 
         delete [] fMultColor;
-        fMultColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fMultColor = new hsColorRGBA[ fNumVerts ];
 
         delete [] fAddColor;
-        fAddColor = TRACKED_NEW hsColorRGBA[ fNumVerts ];
+        fAddColor = new hsColorRGBA[ fNumVerts ];
 
         delete [] fDiffuseRGBA;
         delete [] fSpecularRGBA;
-        fDiffuseRGBA = TRACKED_NEW UInt32[ fNumVerts ];
-        fSpecularRGBA = TRACKED_NEW UInt32[ fNumVerts ];
+        fDiffuseRGBA = new uint32_t[ fNumVerts ];
+        fSpecularRGBA = new uint32_t[ fNumVerts ];
     }
     else
         fNumVerts = fVertAccum.GetCount();
@@ -963,8 +963,8 @@ void    plGeometrySpan::EndCreate( void )
             tempPtr += numWeights * sizeof(float);
             if( fFormat & kSkinIndices )
             {
-                memcpy( tempPtr, &fVertAccum[ i ].fIndices, sizeof(UInt32) );
-                tempPtr += sizeof(UInt32);
+                memcpy( tempPtr, &fVertAccum[ i ].fIndices, sizeof(uint32_t) );
+                tempPtr += sizeof(uint32_t);
             }
         }
 
@@ -1000,7 +1000,7 @@ void    plGeometrySpan::EndCreate( void )
             delete [] fIndexData;
 
         fNumIndices = fIndexAccum.GetCount();
-        fIndexData = TRACKED_NEW UInt16[ fNumIndices ];
+        fIndexData = new uint16_t[ fNumIndices ];
     }
     else
         fNumIndices = fIndexAccum.GetCount();
@@ -1019,7 +1019,7 @@ void plGeometrySpan::AdjustBounds(hsBounds3Ext& bnd) const
     hsBounds3Ext wBnd = bnd;
     wBnd.Transform(&fLocalToWorld);
 
-    const hsScalar kMaxWaveHeight(5.f);
+    const float kMaxWaveHeight(5.f);
     hsBounds3Ext rebound;
     rebound.MakeEmpty();
     hsPoint3 pos = wBnd.GetMins();
@@ -1033,7 +1033,7 @@ void plGeometrySpan::AdjustBounds(hsBounds3Ext& bnd) const
 }
 
 //// ExtractVertex ////////////////////////////////////////////////////////////
-void    plGeometrySpan::ExtractInitColor( UInt32 index, hsColorRGBA *multColor, hsColorRGBA *addColor) const
+void    plGeometrySpan::ExtractInitColor( uint32_t index, hsColorRGBA *multColor, hsColorRGBA *addColor) const
 {
     if( multColor )
         *multColor = fMultColor[index];
@@ -1044,9 +1044,9 @@ void    plGeometrySpan::ExtractInitColor( UInt32 index, hsColorRGBA *multColor, 
 //  Extracts the given vertex out of the vertex buffer and into the pointers
 //  given.
 
-void    plGeometrySpan::ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor )
+void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor )
 {
-    UInt32      hex, spec;
+    uint32_t      hex, spec;
 
 
     ExtractVertex( index, pos, normal, &hex, &spec );
@@ -1067,9 +1067,9 @@ void    plGeometrySpan::ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *n
 //// ExtractVertex ////////////////////////////////////////////////////////////
 //  Hex-color version of ExtractVertex.
 
-void    plGeometrySpan::ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *normal, UInt32 *color, UInt32 *specColor )
+void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor )
 {
-    UInt8       *basePtr;
+    uint8_t       *basePtr;
     float       *fPtr;
 
 
@@ -1095,9 +1095,9 @@ void    plGeometrySpan::ExtractVertex( UInt32 index, hsPoint3 *pos, hsVector3 *n
 
 //// ExtractUv ////////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::ExtractUv( UInt32 vIdx, UInt8 uvIdx, hsPoint3 *uv )
+void    plGeometrySpan::ExtractUv( uint32_t vIdx, uint8_t uvIdx, hsPoint3 *uv )
 {
-    UInt8       *basePtr;
+    uint8_t       *basePtr;
     float       *fPtr;
 
 
@@ -1119,11 +1119,11 @@ void    plGeometrySpan::ExtractUv( UInt32 vIdx, UInt8 uvIdx, hsPoint3 *uv )
 //// ExtractWeights ///////////////////////////////////////////////////////////
 //  Gets the weights out of the vertex data.
 
-void    plGeometrySpan::ExtractWeights( UInt32 vIdx, float *weightArray, UInt32 *indices )
+void    plGeometrySpan::ExtractWeights( uint32_t vIdx, float *weightArray, uint32_t *indices )
 {
-    UInt8       *basePtr;
+    uint8_t       *basePtr;
     float       *fPtr;
-    UInt32      *dPtr;
+    uint32_t      *dPtr;
     int         numWeights;
 
 
@@ -1149,7 +1149,7 @@ void    plGeometrySpan::ExtractWeights( UInt32 vIdx, float *weightArray, UInt32 
     {
         fPtr += numWeights;
 
-        dPtr = (UInt32 *)fPtr;
+        dPtr = (uint32_t *)fPtr;
         *indices = *dPtr;
     }
 }
@@ -1158,9 +1158,9 @@ void    plGeometrySpan::ExtractWeights( UInt32 vIdx, float *weightArray, UInt32 
 //  Stuffs the given vertex data into the vertex buffer. Vertex must already
 //  exist!
 
-void    plGeometrySpan::StuffVertex( UInt32 index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor )
+void    plGeometrySpan::StuffVertex( uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor )
 {
-    UInt8       *basePtr;
+    uint8_t       *basePtr;
     float       *fPtr;
 
 
@@ -1183,27 +1183,27 @@ void    plGeometrySpan::StuffVertex( UInt32 index, hsPoint3 *pos, hsPoint3 *norm
     StuffVertex( index, color, specColor );
 }
 
-void    plGeometrySpan::StuffVertex( UInt32 index, hsColorRGBA *color, hsColorRGBA *specColor )
+void    plGeometrySpan::StuffVertex( uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor )
 {
-    UInt8       r, g, b, a;
+    uint8_t       r, g, b, a;
 
 
     /// Where?
     hsAssert( index < fNumVerts, "Invalid index passed to StuffVertex()" );
 
-    a = (UInt8)( color->a >= 1 ? 255 : color->a <= 0 ? 0 : color->a * 255.0 );
-    r = (UInt8)( color->r >= 1 ? 255 : color->r <= 0 ? 0 : color->r * 255.0 );
-    g = (UInt8)( color->g >= 1 ? 255 : color->g <= 0 ? 0 : color->g * 255.0 );
-    b = (UInt8)( color->b >= 1 ? 255 : color->b <= 0 ? 0 : color->b * 255.0 );
+    a = (uint8_t)( color->a >= 1 ? 255 : color->a <= 0 ? 0 : color->a * 255.0 );
+    r = (uint8_t)( color->r >= 1 ? 255 : color->r <= 0 ? 0 : color->r * 255.0 );
+    g = (uint8_t)( color->g >= 1 ? 255 : color->g <= 0 ? 0 : color->g * 255.0 );
+    b = (uint8_t)( color->b >= 1 ? 255 : color->b <= 0 ? 0 : color->b * 255.0 );
     
     fDiffuseRGBA[ index ] = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
 
     if( specColor != nil )
     {
-        a = (UInt8)( specColor->a >= 1 ? 255 : specColor->a <= 0 ? 0 : specColor->a * 255.0 );
-        r = (UInt8)( specColor->r >= 1 ? 255 : specColor->r <= 0 ? 0 : specColor->r * 255.0 );
-        g = (UInt8)( specColor->g >= 1 ? 255 : specColor->g <= 0 ? 0 : specColor->g * 255.0 );
-        b = (UInt8)( specColor->b >= 1 ? 255 : specColor->b <= 0 ? 0 : specColor->b * 255.0 );
+        a = (uint8_t)( specColor->a >= 1 ? 255 : specColor->a <= 0 ? 0 : specColor->a * 255.0 );
+        r = (uint8_t)( specColor->r >= 1 ? 255 : specColor->r <= 0 ? 0 : specColor->r * 255.0 );
+        g = (uint8_t)( specColor->g >= 1 ? 255 : specColor->g <= 0 ? 0 : specColor->g * 255.0 );
+        b = (uint8_t)( specColor->b >= 1 ? 255 : specColor->b <= 0 ? 0 : specColor->b * 255.0 );
         
         fSpecularRGBA[ index ] = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
     }

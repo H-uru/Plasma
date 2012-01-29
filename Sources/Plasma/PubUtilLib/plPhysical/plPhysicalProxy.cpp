@@ -55,7 +55,7 @@ plPhysicalProxy::plPhysicalProxy()
 {
 }
 
-plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, hsScalar opac)
+plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
 :   plProxyGen(amb, dif, opac),
     fOwner(nil),
     fController(nil)
@@ -97,7 +97,7 @@ plKey plPhysicalProxy::IGetNode() const
     return nil;
 }
 
-plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if (fOwner)
     {

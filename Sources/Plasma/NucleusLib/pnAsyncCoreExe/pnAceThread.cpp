@@ -75,7 +75,7 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
     unsigned result = thread->proc(thread);
 
     // Cleanup thread
-    DEL(thread);
+    delete thread;
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
     return result;
@@ -107,9 +107,9 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 void * AsyncThreadCreate (
     FAsyncThreadProc    threadProc,
     void *              argument,
-    const wchar         name[]
+    const wchar_t         name[]
 ) {
-    AsyncThread * thread    = NEW(AsyncThread);
+    AsyncThread * thread    = new AsyncThread;
     thread->proc            = threadProc;
     thread->handle          = nil;
     thread->argument        = argument;
@@ -128,7 +128,7 @@ void * AsyncThreadCreate (
     );
     if (!handle) {
         LogMsg(kLogFatal, "%s (%u)", __FILE__, GetLastError());
-        ErrorFatal(__LINE__, __FILE__, "_beginthreadex failed");
+        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
     }
 
     thread->handle = handle;

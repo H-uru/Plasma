@@ -54,12 +54,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWAVHeader
 {
     public:
-        UInt16  fFormatTag;
-        UInt16  fNumChannels;
-        UInt32  fNumSamplesPerSec;
-        UInt32  fAvgBytesPerSec;
-        UInt16  fBlockAlign;
-        UInt16  fBitsPerSample;
+        uint16_t  fFormatTag;
+        uint16_t  fNumChannels;
+        uint32_t  fNumSamplesPerSec;
+        uint32_t  fAvgBytesPerSec;
+        uint16_t  fBlockAlign;
+        uint16_t  fBitsPerSample;
 
         enum
         {

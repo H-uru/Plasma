@@ -88,7 +88,7 @@ void plPhysicsSoundMgr::Update()
 void plPhysicsSoundMgr::IStartCollision(const CollidePair& cp)
 {
     hsVector3 v1, v2;
-    const hsScalar strengthThreshold = 20.0f;
+    const float strengthThreshold = 20.0f;
 
     plPhysical* physicalA = cp.FirstPhysical();
     plPhysical* physicalB = cp.SecondPhysical();
@@ -106,7 +106,7 @@ void plPhysicsSoundMgr::IStartCollision(const CollidePair& cp)
     physicalA->GetLinearVelocitySim(v1);
     physicalB->GetLinearVelocitySim(v2);
     hsVector3 vel = v1 - v2;
-    hsScalar strength = vel.MagnitudeSquared();
+    float strength = vel.MagnitudeSquared();
     
     if (strength >= strengthThreshold)
     {
@@ -149,7 +149,7 @@ void plPhysicsSoundMgr::IStopCollision(const CollidePair& cp)
 
 void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
 {
-    const hsScalar slideThreshhold = 0.f;   
+    const float slideThreshhold = 0.f;   
     hsVector3 v1, v2;
     plPhysical* physicalA = cp.FirstPhysical();
     plPhysical* physicalB = cp.SecondPhysical();
@@ -162,7 +162,7 @@ void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
     physicalA->GetLinearVelocitySim(v1);
     physicalB->GetLinearVelocitySim(v2);
     hsVector3 vel = v1 - v2;
-    hsScalar strength = vel.MagnitudeSquared();
+    float strength = vel.MagnitudeSquared();
     
     // scale strength to use as volume
     strength /= 16*8;
@@ -175,7 +175,7 @@ void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
         IProcessSlide(sndB, sndA, strength);
 }
 
-void plPhysicsSoundMgr::IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, hsScalar strength)
+void plPhysicsSoundMgr::IProcessSlide(plPhysicalSndGroup* sndA, plPhysicalSndGroup* sndB, float strength)
 {
     sndA->SetSlideSoundVolume(sndB->GetGroup(), strength);
 

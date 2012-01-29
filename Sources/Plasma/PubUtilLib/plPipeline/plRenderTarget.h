@@ -71,30 +71,30 @@ class plRenderTarget : public plBitmap
 
     protected:
 
-        UInt16      fWidth, fHeight;
+        uint16_t      fWidth, fHeight;
 
         union
         {
             struct 
             {
-                UInt16      fLeft, fTop, fRight, fBottom;
+                uint16_t      fLeft, fTop, fRight, fBottom;
             } fAbsolute;
             struct 
             {
-                hsScalar    fLeft, fTop, fRight, fBottom;
+                float    fLeft, fTop, fRight, fBottom;
             } fProportional;
         } fViewport;
 
         hsBool      fApplyTexQuality;
         hsBool      fProportionalViewport;
-        UInt8       fZDepth, fStencilDepth;
+        uint8_t       fZDepth, fStencilDepth;
     
         plCubicRenderTarget *fParent;   
 
         virtual void SetKey(plKey k);
 
-        virtual UInt32  Read( hsStream *s );
-        virtual UInt32  Write( hsStream *s );
+        virtual uint32_t  Read( hsStream *s );
+        virtual uint32_t  Write( hsStream *s );
     public:
 
         CLASSNAME_REGISTER( plRenderTarget );
@@ -116,7 +116,7 @@ class plRenderTarget : public plBitmap
             plPipeResReq::Request();
         }
 
-        plRenderTarget( UInt16 flags, UInt16 width, UInt16 height, UInt8 bitDepth, UInt8 zDepth = 0xff, UInt8 stencilDepth = 0xff )
+        plRenderTarget( uint16_t flags, uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = 0xff, uint8_t stencilDepth = 0xff )
         {
             fWidth = width;
             fHeight = height;
@@ -136,7 +136,7 @@ class plRenderTarget : public plBitmap
         }
 
         // Render-to-Screen constructor
-        plRenderTarget( UInt16 flags, hsScalar left, hsScalar top, hsScalar right, hsScalar bottom, UInt8 bitDepth, UInt8 zDepth = 0xff, UInt8 stencilDepth = 0xff )
+        plRenderTarget( uint16_t flags, float left, float top, float right, float bottom, uint8_t bitDepth, uint8_t zDepth = 0xff, uint8_t stencilDepth = 0xff )
         {
             fWidth = 0; // Can't really set these, at least not yet
             fHeight = 0;
@@ -157,7 +157,7 @@ class plRenderTarget : public plBitmap
 
         virtual ~plRenderTarget() {}
 
-        virtual void            SetViewport( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom )
+        virtual void            SetViewport( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom )
         {
             ASSERT_ABSOLUTE;
             fViewport.fAbsolute.fLeft = left; 
@@ -166,7 +166,7 @@ class plRenderTarget : public plBitmap
             fViewport.fAbsolute.fBottom = bottom;
         }
 
-        virtual void            SetViewport( hsScalar left, hsScalar top, hsScalar right, hsScalar bottom )
+        virtual void            SetViewport( float left, float top, float right, float bottom )
         {
             ASSERT_PROPORTIONAL;
             fViewport.fProportional.fLeft = left; 
@@ -175,26 +175,26 @@ class plRenderTarget : public plBitmap
             fViewport.fProportional.fBottom = bottom;
         }
 
-        UInt16  GetWidth( void ) { return fWidth; }
-        UInt16  GetHeight( void ) { return fHeight; }
-        UInt8   GetZDepth( void ) { return fZDepth; }
-        UInt8   GetStencilDepth( void ) { return fStencilDepth; }
+        uint16_t  GetWidth( void ) { return fWidth; }
+        uint16_t  GetHeight( void ) { return fHeight; }
+        uint8_t   GetZDepth( void ) { return fZDepth; }
+        uint8_t   GetStencilDepth( void ) { return fStencilDepth; }
 
-        UInt16      GetVPLeft( void )   { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fLeft; }
-        UInt16      GetVPTop( void )    { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fTop; }
-        UInt16      GetVPRight( void )  { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fRight; }
-        UInt16      GetVPBottom( void ) { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fBottom; }
+        uint16_t      GetVPLeft( void )   { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fLeft; }
+        uint16_t      GetVPTop( void )    { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fTop; }
+        uint16_t      GetVPRight( void )  { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fRight; }
+        uint16_t      GetVPBottom( void ) { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fBottom; }
 
-        hsScalar    GetVPLeftProp( void )   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
-        hsScalar    GetVPTopProp( void )    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
-        hsScalar    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
-        hsScalar    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
+        float    GetVPLeftProp( void )   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
+        float    GetVPTopProp( void )    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
+        float    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
+        float    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
 
         hsBool      ViewIsProportional( void ) const { return fProportionalViewport; }
 
         plCubicRenderTarget *GetParent( void ) const { return fParent; }
 
-        virtual UInt32  GetTotalSize( void ) const { return fWidth * fHeight * ( fPixelSize >> 3 ); }
+        virtual uint32_t  GetTotalSize( void ) const { return fWidth * fHeight * ( fPixelSize >> 3 ); }
 
         virtual hsBool MsgReceive(plMessage* msg);
 

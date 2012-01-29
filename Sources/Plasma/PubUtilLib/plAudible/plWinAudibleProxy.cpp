@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plWinAudibleProxy.h"
 #include "plWinAudible.h"
 
@@ -72,7 +72,7 @@ plKey plWinAudibleProxy::IGetNode() const
     return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
-plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {

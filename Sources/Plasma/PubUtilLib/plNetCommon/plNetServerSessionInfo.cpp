@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "plNetServerSessionInfo.h"
@@ -291,7 +291,7 @@ void plAgeInfoStruct::SetAgeUserDefinedName( const char * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeSequenceNumber( UInt32 v )
+void plAgeInfoStruct::SetAgeSequenceNumber( uint32_t v )
 {
     if ( v )
     {
@@ -317,7 +317,7 @@ void plAgeInfoStruct::SetAgeDescription( const char * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeLanguage( UInt32 v )
+void plAgeInfoStruct::SetAgeLanguage( uint32_t v )
 {
     if ( v >= 0 )
     {
@@ -731,7 +731,7 @@ void plNetServerSessionInfo::SetServerName(const char * val)
     }
 }
 
-void plNetServerSessionInfo::SetServerType(UInt8 val)
+void plNetServerSessionInfo::SetServerType(uint8_t val)
 {
     if (val>0)
     {
@@ -759,7 +759,7 @@ void plNetServerSessionInfo::SetServerAddr(const char * val)
     }
 }
 
-void plNetServerSessionInfo::SetServerPort(UInt16 val)
+void plNetServerSessionInfo::SetServerPort(uint16_t val)
 {
     if (val>0)
     {

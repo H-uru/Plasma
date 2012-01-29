@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -82,10 +82,10 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-    virtual hsBool  HasPlayer( UInt32 playerID );
-    hsBool  AddPlayer( UInt32 playerID );
-    void    RemovePlayer( UInt32 playerID );
-    PyObject * GetPlayer( UInt32 playerID ); // returns pyVaultPlayerInfoNode
+    virtual hsBool  HasPlayer( uint32_t playerID );
+    hsBool  AddPlayer( uint32_t playerID );
+    void    RemovePlayer( uint32_t playerID );
+    PyObject * GetPlayer( uint32_t playerID ); // returns pyVaultPlayerInfoNode
 
     void    Sort();
 

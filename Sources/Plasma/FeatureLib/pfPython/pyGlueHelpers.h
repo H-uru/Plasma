@@ -112,7 +112,7 @@ PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *, PyObject *) \
     self = (pythonClassName*)type->tp_alloc(type, 0); \
     if (self != NULL) \
     { \
-        self->fThis = TRACKED_NEW glueClassName(); \
+        self->fThis = new glueClassName(); \
         if (self->fThis == NULL) \
         { \
             Py_DECREF(self); \

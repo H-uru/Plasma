@@ -96,7 +96,7 @@ plAGChannel * plQuatChannel::MakeCombine(plAGChannel *channelA)
 {
     if(plPointChannel::ConvertNoRef(channelA))
     {
-        return TRACKED_NEW plQuatPointCombine(this, (plPointChannel *)channelA);
+        return new plQuatPointCombine(this, (plPointChannel *)channelA);
     } else {
         return nil;
     }
@@ -109,7 +109,7 @@ plAGChannel *plQuatChannel::MakeBlend(plAGChannel *channelB, plScalarChannel *ch
     plScalarChannel *chanBias = plScalarChannel::ConvertNoRef(channelBias);
     if(chanB && chanBias)
     {
-        return TRACKED_NEW plQuatBlend(this, chanB, chanBias);
+        return new plQuatBlend(this, chanB, chanBias);
     } else {
         hsStatusMessageF("Blend operation failed.");
         return this;
@@ -119,13 +119,13 @@ plAGChannel *plQuatChannel::MakeBlend(plAGChannel *channelB, plScalarChannel *ch
 // MAKEZEROSTATE
 plAGChannel * plQuatChannel::MakeZeroState()
 {
-    return TRACKED_NEW plQuatConstant(Value(0));
+    return new plQuatConstant(Value(0));
 }
 
 // MAKETIMESCALE
 plAGChannel * plQuatChannel::MakeTimeScale(plScalarChannel *timeSource)
 {
-    return TRACKED_NEW plQuatTimeScale(this, timeSource);
+    return new plQuatTimeScale(this, timeSource);
 }
 
 /////////////////
@@ -246,7 +246,7 @@ plQuatBlend::~plQuatBlend()
 
 hsBool plQuatBlend::IsStoppedAt(double time)
 {
-    hsScalar blend = fChannelBias->Value(time);
+    float blend = fChannelBias->Value(time);
     if (blend == 0)
         return fQuatA->IsStoppedAt(time);
     if (blend == 1)

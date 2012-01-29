@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plOGGCodec.h"
 
 #include "hsTimer.h"
 #include "pnNetCommon/plNetApp.h"
 
 plOGGCodec::DecodeFormat    plOGGCodec::fDecodeFormat = plOGGCodec::k16bitSigned;
-UInt8                       plOGGCodec::fDecodeFlags = 0;
+uint8_t                       plOGGCodec::fDecodeFlags = 0;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ void    plOGGCodec::BuildActualWaveHeader()
     int factdata = 0;
     int size = fDataSize+48; // size of data with header except for first four bytes
 
-    fHeadBuf = (UInt8 *) ALLOC(56);
+    fHeadBuf = (uint8_t *)malloc(56);
     memcpy(fHeadBuf, "RIFF", 4);
     memcpy(fHeadBuf+4, &size, 4);
     memcpy(fHeadBuf+8, "WAVE", 4);
@@ -126,7 +126,7 @@ void    plOGGCodec::IOpen( const char *path, plAudioCore::ChannelSelect whichCha
     if( fFileHandle != nil )
     {
         /// Create the OGG data struct
-        fOggFile = TRACKED_NEW OggVorbis_File;
+        fOggFile = new OggVorbis_File;
 
         /// Open the OGG decompressor
         if( ov_open( fFileHandle, fOggFile, NULL, 0 ) < 0 )
@@ -155,7 +155,7 @@ void    plOGGCodec::IOpen( const char *path, plAudioCore::ChannelSelect whichCha
         /// because we end up waiting for 1 more sample than we actually have. So, on the
         /// assumption that OGG is just slightly wrong sometimes, we just subtract 1 sample
         /// from what it tells us. As Brice put it, who's going to miss 1/40,000'ths of a second?
-        fDataSize = (UInt32)(( ov_pcm_total( fOggFile, -1 ) - 1 ) * fHeader.fBlockAlign);
+        fDataSize = (uint32_t)(( ov_pcm_total( fOggFile, -1 ) - 1 ) * fHeader.fBlockAlign);
 
         /// Channel select
         if( fWhichChannel != plAudioCore::kAll )
@@ -173,8 +173,8 @@ void    plOGGCodec::IOpen( const char *path, plAudioCore::ChannelSelect whichCha
         /// Construct our fake header for channel adjustment
         fFakeHeader = fHeader;
         fFakeHeader.fAvgBytesPerSec /= fChannelAdjust;
-        fFakeHeader.fNumChannels /= (UInt16)fChannelAdjust;
-        fFakeHeader.fBlockAlign /= (UInt16)fChannelAdjust;
+        fFakeHeader.fNumChannels /= (uint16_t)fChannelAdjust;
+        fFakeHeader.fBlockAlign /= (uint16_t)fChannelAdjust;
 
         SetPosition( 0 );
     }
@@ -189,12 +189,12 @@ plOGGCodec::~plOGGCodec()
 void    plOGGCodec::Close( void )
 {
     // plNetClientApp::StaticDebugMsg("Ogg Close, t=%f, start", hsTimer::GetSeconds());
-    FREE(fHeadBuf);
+    free(fHeadBuf);
     fHeadBuf = nil;
     if( fOggFile != nil )
     {
         ov_clear( fOggFile );
-        DEL(fOggFile);
+        delete fOggFile;
         fOggFile = nil;
     }
 
@@ -227,7 +227,7 @@ float   plOGGCodec::GetLengthInSecs( void )
     return (float)ov_time_total( fOggFile, -1 );
 }
 
-hsBool  plOGGCodec::SetPosition( UInt32 numBytes )
+hsBool  plOGGCodec::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
     
@@ -263,7 +263,7 @@ hsBool  plOGGCodec::SetPosition( UInt32 numBytes )
     return true;
 }
 
-hsBool  plOGGCodec::Read( UInt32 numBytes, void *buffer )
+hsBool  plOGGCodec::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
 //  plNetClientApp::StaticDebugMsg("Ogg Read, t=%f, start", hsTimer::GetSeconds());
@@ -332,7 +332,7 @@ hsBool  plOGGCodec::Read( UInt32 numBytes, void *buffer )
             for (i = 0; i < thisRead; i += sampleSize * 2)
             {
                 memcpy(buffer, &trashBuffer[i + sampleOffset], sampleSize);
-                buffer = (void*)((UInt8*)buffer + sampleSize);
+                buffer = (void*)((uint8_t*)buffer + sampleSize);
 
                 numBytes -= sampleSize;
             }
@@ -343,7 +343,7 @@ hsBool  plOGGCodec::Read( UInt32 numBytes, void *buffer )
     return true;
 }
 
-UInt32  plOGGCodec::NumBytesLeft( void )
+uint32_t  plOGGCodec::NumBytesLeft( void )
 {
     if(!IsValid())
     {
@@ -351,5 +351,5 @@ UInt32  plOGGCodec::NumBytesLeft( void )
         return 0;
     }
 
-    return (UInt32)(( fDataSize - ( ov_pcm_tell( fOggFile ) * fHeader.fBlockAlign ) ) / fChannelAdjust);
+    return (uint32_t)(( fDataSize - ( ov_pcm_tell( fOggFile ) * fHeader.fBlockAlign ) ) / fChannelAdjust);
 }

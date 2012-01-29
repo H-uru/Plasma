@@ -59,16 +59,16 @@ class plLayerOr : public plLayerInterface
         CLASSNAME_REGISTER( plLayerOr );
         GETINTERFACE_ANY( plLayerOr, plLayerInterface );
 
-        void    SetBlendFlags( UInt32 f )   { fOringState.fBlendFlags = f; }
-        void    SetClampFlags( UInt32 f )   { fOringState.fClampFlags = f; }
-        void    SetShadeFlags( UInt32 f )   { fOringState.fShadeFlags = f; }
-        void    SetZFlags( UInt32 f )       { fOringState.fZFlags = f; }
-        void    SetMiscFlags( UInt32 f )    { fOringState.fMiscFlags = f; }
+        void    SetBlendFlags( uint32_t f )   { fOringState.fBlendFlags = f; }
+        void    SetClampFlags( uint32_t f )   { fOringState.fClampFlags = f; }
+        void    SetShadeFlags( uint32_t f )   { fOringState.fShadeFlags = f; }
+        void    SetZFlags( uint32_t f )       { fOringState.fZFlags = f; }
+        void    SetMiscFlags( uint32_t f )    { fOringState.fMiscFlags = f; }
         void    SetState( const hsGMatState& state );
 
         virtual plLayerInterface*   Attach(plLayerInterface* prev);
 
-        virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+        virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 };
 
 #endif //_plLayerOr_h

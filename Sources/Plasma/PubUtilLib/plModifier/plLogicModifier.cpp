@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLogicModifier.h"
 #include "plgDispatch.h"
 #include "pnTimer/plTimerCallbackManager.h"
@@ -162,7 +162,7 @@ hsBool plLogicModifier::MsgReceive(plMessage* msg)
     {
         plCursorChangeMsg* pMsg = 0;
         if ((VerifyConditions(pFakeMsg) && fMyCursor) && !Disabled())
-            pMsg = TRACKED_NEW plCursorChangeMsg(fMyCursor, 1);
+            pMsg = new plCursorChangeMsg(fMyCursor, 1);
         else
         {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -190,7 +190,7 @@ hsBool plLogicModifier::MsgReceive(plMessage* msg)
                 }
             }
 #endif  // PLASMA_EXTERNAL_RELEASE
-            pMsg = TRACKED_NEW plCursorChangeMsg(plCursorChangeMsg::kNullCursor, 1);
+            pMsg = new plCursorChangeMsg(plCursorChangeMsg::kNullCursor, 1);
         }
         
         pMsg->AddReceiver( pFakeMsg->GetSender() );
@@ -221,7 +221,7 @@ void plLogicModifier::PreTrigger(hsBool netRequest)
 
     if (fTimer)
     {
-        plgTimerCallbackMgr::NewTimer( fTimer, TRACKED_NEW plTimerCallbackMsg( GetKey() ) );
+        plgTimerCallbackMgr::NewTimer( fTimer, new plTimerCallbackMsg( GetKey() ) );
         return;
     }
     plLogicModBase::PreTrigger(netRequest);
@@ -244,7 +244,7 @@ void plLogicModifier::Read(hsStream* stream, hsResMgr* mgr)
     int i;
     for(i = 0; i < n; i++ )
     {   
-        refMsg = TRACKED_NEW plCondRefMsg(GetKey(), i);
+        refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
     fMyCursor = stream->ReadLE32();
@@ -261,7 +261,7 @@ void plLogicModifier::Write(hsStream* stream, hsResMgr* mgr)
 
 void plLogicModifier::AddCondition(plConditionalObject* c)
 {
-    plGenRefMsg *msg= TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
+    plGenRefMsg *msg= new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
     hsgResMgr::ResMgr()->AddViaNotify(c->GetKey(), msg, plRefFlags::kActiveRef); 
 
     fConditionList.Append(c); 

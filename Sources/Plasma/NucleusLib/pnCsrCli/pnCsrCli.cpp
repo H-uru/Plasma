@@ -198,7 +198,7 @@ void CsrCliShutdown () {
 
 //============================================================================
 void CsrCliStartConnecting (
-    const wchar addr[],
+    const wchar_t addr[],
     FCsrCliOnConnect onConnect
 ) {
     ASSERT(s_running);

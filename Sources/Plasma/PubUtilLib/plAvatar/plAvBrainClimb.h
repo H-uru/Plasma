@@ -98,7 +98,7 @@ public:
 
     virtual void Activate(plArmatureModBase *avMod);
     virtual void Deactivate();
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);
+    virtual hsBool Apply(double timeNow, float elapsed);
 
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
@@ -187,10 +187,10 @@ private:
     Mode fNextMode;
     plClimbMsg::Direction fDesiredDirection;        // up / down / left / right
     float fControlDir;                              // 1.0 = move current stage forward -1.0 = move current stage back
-    UInt32  fAllowedDirections;
-    UInt32  fPhysicallyBlockedDirections;
-    UInt32  fOldPhysicallyBlockedDirections;        // for debug display convenience
-    UInt32  fAllowedDismounts;
+    uint32_t  fAllowedDirections;
+    uint32_t  fPhysicallyBlockedDirections;
+    uint32_t  fOldPhysicallyBlockedDirections;        // for debug display convenience
+    uint32_t  fAllowedDismounts;
 
     float fVerticalProbeLength;
     float fHorizontalProbeLength;

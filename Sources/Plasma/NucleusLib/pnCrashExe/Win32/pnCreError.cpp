@@ -59,13 +59,13 @@ namespace Crash {
 struct Module {
     LINK(Module)    link;
     
-    unsigned_ptr    address;
+    uintptr_t    address;
     unsigned        buildId;
     unsigned        branchId;
-    wchar *         name;
-    wchar *         buildString;
+    wchar_t *         name;
+    wchar_t *         buildString;
     
-    ~Module () { FREE(name); FREE(buildString); }
+    ~Module () { free(name); free(buildString); }
 };
 
 struct EmailParams : AtomicRef {
@@ -77,18 +77,18 @@ struct EmailParams : AtomicRef {
     char *          replyTo;
     
     ~EmailParams () {
-        FREE(smtp);
-        FREE(sender);
-        FREE(recipients);
-        FREE(username);
-        FREE(password);
-        FREE(replyTo);
+        free(smtp);
+        free(sender);
+        free(recipients);
+        free(username);
+        free(password);
+        free(replyTo);
     }
 };
 
 struct ErrLog {
     unsigned    pos;
-    wchar       name[MAX_PATH];
+    wchar_t       name[MAX_PATH];
     char        buffer[512*1024];
     char        terminator;
 };
@@ -100,7 +100,7 @@ struct DeadlockCheck {
     unsigned            deadlockTerminateMs;
     bool                deadlocked;
     bool                emailSent;
-    wchar               debugStr[256];
+    wchar_t               debugStr[256];
 };
 
 
@@ -334,7 +334,7 @@ static ErrLog * CreateErrLog () {
     log->terminator = 0;
 
     // Initialize log filename
-    wchar srcName[MAX_PATH];
+    wchar_t srcName[MAX_PATH];
     SYSTEMTIME currTime;
     GetLocalTime(&currTime);
     StrPrintf(
@@ -442,7 +442,7 @@ static void LogThread (
     ErrLog * const      log,
     const CImageHelp &  ih,
     HANDLE              hThread,
-    const wchar         name[],
+    const wchar_t         name[],
     const CONTEXT &     ctx
 ) {
     char threadName[256];
@@ -478,10 +478,10 @@ static void LogCrashInfo (
     {
         LogSectionHeader(log, "Program");
         
-        wchar productIdStr[64];
+        wchar_t productIdStr[64];
         GuidToString(ProductId(), productIdStr, arrsize(productIdStr));
         
-        wchar productBuildTag[128];
+        wchar_t productBuildTag[128];
         ProductString(productBuildTag, arrsize(productBuildTag));
         
         SYSTEMTIME currtime;
@@ -538,7 +538,7 @@ static void LogCrashInfo (
             if (WSAStartup(0x101, &wsaData) || (wsaData.wVersion != 0x101))
                 break;
 
-            wchar ipAddress[256];
+            wchar_t ipAddress[256];
             NetAddressNode addrNodes[16];
             unsigned addrCount = NetAddressGetLocal(16, addrNodes);
             LogPrintf(log, "IpAddrs    : ");
@@ -871,7 +871,7 @@ static void pnCrashExeShutdown () {
 AUTO_INIT_FUNC(pnCrashExe) {
     // The critical section has to be initialized
     // before program startup and never freed
-    static byte rawMemory[sizeof CCritSect];
+    static uint8_t rawMemory[sizeof CCritSect];
     s_critsect = new(rawMemory) CCritSect;
 
     s_running = true;
@@ -938,11 +938,11 @@ void CrashSetEmailParameters (
 
 //============================================================================
 void * CrashAddModule (
-    unsigned_ptr    address,
+    uintptr_t    address,
     unsigned        buildId,
     unsigned        branchId,
-    const wchar     name[],
-    const wchar     buildString[]
+    const wchar_t     name[],
+    const wchar_t     buildString[]
 ) {
     ASSERT(name);
     Module * module = NEWZERO(Module);
@@ -975,7 +975,7 @@ void CrashRemoveModule (
     Module * module = (Module *) param;
     SAFE_CRITSECT_ENTER();
     {
-        DEL(module);
+        delete module;
     }
     SAFE_CRITSECT_LEAVE();
 }
@@ -991,7 +991,7 @@ void CrashRemoveModule (
 #ifdef SERVER
 void * CrashAddDeadlockCheck (
     void *      thread,
-    const wchar debugStr[]
+    const wchar_t debugStr[]
 ) {
     s_spareCrit.Enter();
     DeadlockCheck * check = (DeadlockCheck *)s_deadlockSpares.Alloc();

@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage.h"
 #include "hsResMgr.h"
 #include "pnModifier/plSingleModifier.h"
-#include "hsUtils.h"
+
 #include "hsGeometry3.h"
 
 
@@ -80,7 +80,7 @@ public:
         kNone
     };
 
-    proEventData( Int32 evtType = kNone ) : fEventType( evtType )
+    proEventData( int32_t evtType = kNone ) : fEventType( evtType )
     {
     }
     virtual ~proEventData() {}
@@ -102,9 +102,9 @@ public:
         kNothing
     };
 
-    Int32 fEventType;       // what type of event (evenType enum)
+    int32_t fEventType;       // what type of event (evenType enum)
 
-    static proEventData* ICreateEventDataType(Int32 type);
+    static proEventData* ICreateEventDataType(int32_t type);
 
     static proEventData* Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
@@ -165,7 +165,7 @@ protected:
 };
 
 proEventType(ControlKey)
-    Int32   fControlKey;    // what control key was hit
+    int32_t   fControlKey;    // what control key was hit
     hsBool  fDown;          // was the key going down (false if going up)
 
 protected:
@@ -178,10 +178,10 @@ protected:
 
 proEventType(Variable)
     char*   fName;          // name of variable
-    Int32   fDataType;      // type of data
+    int32_t   fDataType;      // type of data
 
     // Can't be a union, sadly, but it isn't that much of a waste of space...
-    hsScalar    fNumber;    // if its a number
+    float    fNumber;    // if its a number
     plKey       fKey;       // if its a plKey (pointer to something)
 
 
@@ -198,7 +198,7 @@ protected:
 proEventType(Facing)
     plKey       fFacer; // what was facing
     plKey       fFacee; // what was being faced
-    hsScalar    dot;     // the dot prod of their view vectors
+    float    dot;     // the dot prod of their view vectors
     hsBool      enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:
@@ -235,7 +235,7 @@ protected:
 };      
 
 proEventType(Callback)
-    Int32   fEventType;  // enumerated in plEventCallbackMsg.h
+    int32_t   fEventType;  // enumerated in plEventCallbackMsg.h
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -246,7 +246,7 @@ protected:
 };
 
 proEventType(ResponderState)
-    Int32   fState;     // what state the responder should be switched to before triggering
+    int32_t   fState;     // what state the responder should be switched to before triggering
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -257,8 +257,8 @@ protected:
 };
 
 proEventType(MultiStage)
-    Int32   fStage; 
-    Int32   fEvent;
+    int32_t   fStage; 
+    int32_t   fEvent;
     plKey   fAvatar;    // who was running the stage
 
 protected:
@@ -270,8 +270,8 @@ protected:
 };
 
 proEventType(Coop)
-    UInt32  fID;        // player ID of the initiator
-    UInt16  fSerial;    // serial number for the initiator
+    uint32_t  fID;        // player ID of the initiator
+    uint16_t  fSerial;    // serial number for the initiator
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
     virtual void IWrite(hsStream* stream, hsResMgr* mgr);
@@ -284,7 +284,7 @@ protected:
 proEventType(ClickDrag)
     plKey picker; // always the local avatar in this case
     plKey picked;
-    hsScalar animPos; // 0.0 to 1.0 animation percentage
+    float animPos; // 0.0 to 1.0 animation percentage
 };
 
 proEventType(OfferLinkingBook)
@@ -300,8 +300,8 @@ protected:
 };
 
 proEventType(Book)
-    UInt32  fEvent;     // The type of event. See pfJournalBook.h for enumsu
-    UInt32  fLinkID;    // The link ID of the image clicked, if an image link event, otherwise unused
+    uint32_t  fEvent;     // The type of event. See pfJournalBook.h for enumsu
+    uint32_t  fLinkID;    // The link ID of the image clicked, if an image link event, otherwise unused
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
     virtual void IWrite(hsStream* stream, hsResMgr* mgr);
@@ -354,36 +354,36 @@ public:
         kResponderFF,           // Fast forward
         kResponderChangeState,  // Change state without triggering
     };
-    Int32       fType;              // what type of notification
-    hsScalar    fState;             // state of the notifier 0.0=false, 1.0=true
-    Int32       fID;                // special ID mostly for responder State transitions
+    int32_t       fType;              // what type of notification
+    float    fState;             // state of the notifier 0.0=false, 1.0=true
+    int32_t       fID;                // special ID mostly for responder State transitions
     hsTArray<proEventData*> fEvents;// list of events with data
 
     void SetType(notificationType type) { fType = type; }
-    void SetState(hsScalar state) { fState = state; }
+    void SetState(float state) { fState = state; }
 
     // event records for the notify message
     void AddEvent( proEventData* ed);
     void AddCollisionEvent( hsBool enter, const plKey &other, const plKey &self, hsBool onlyOneCollision=true );
     void AddPickEvent( const plKey &other, const plKey& self, hsBool enabled, hsPoint3 hitPoint );
-    void AddControlKeyEvent( Int32 key, hsBool down );
-    void AddVariableEvent( const char* name, hsScalar number );
+    void AddControlKeyEvent( int32_t key, hsBool down );
+    void AddVariableEvent( const char* name, float number );
     void AddVariableEvent( const char *name, const plKey &key);
-    void AddFacingEvent( const plKey &other, const plKey &self, hsScalar dot, hsBool enabled);
+    void AddFacingEvent( const plKey &other, const plKey &self, float dot, hsBool enabled);
     void AddContainerEvent( const plKey &container, const plKey &contained, hsBool entering);
     void AddActivateEvent( hsBool activate );
-    void AddCallbackEvent( Int32 event );
-    void AddResponderStateEvent( Int32 state );
-    void AddMultiStageEvent( Int32 stage, Int32 event, const plKey& avatar );
-    void AddCoopEvent(UInt32 id, UInt16 serial);
+    void AddCallbackEvent( int32_t event );
+    void AddResponderStateEvent( int32_t state );
+    void AddMultiStageEvent( int32_t stage, int32_t event, const plKey& avatar );
+    void AddCoopEvent(uint32_t id, uint16_t serial);
     void AddSpawnedEvent (const plKey &spawner, const plKey &spawned);
-    void AddClickDragEvent(const plKey& dragger, const plKey& dragee, hsScalar animPos);
+    void AddClickDragEvent(const plKey& dragger, const plKey& dragee, float animPos);
     void AddOfferBookEvent(const plKey& offerer, int targetAge, int offeree);
-    void AddBookEvent( UInt32 event, UInt32 linkID = 0 );
+    void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);
-    proEventData* FindEventRecord( Int32 eventtype );
-    Int32 GetEventCount() { return fEvents.Count(); }
-    proEventData* GetEventRecord(Int32 i) { return fEvents[i]; }
+    proEventData* FindEventRecord( int32_t eventtype );
+    int32_t GetEventCount() { return fEvents.Count(); }
+    proEventData* GetEventRecord(int32_t i) { return fEvents[i]; }
     void ClearEvents();
 
     // Searches the event records for an event triggered by an avatar, and returns that key

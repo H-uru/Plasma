@@ -65,7 +65,7 @@ class plSoundBuffer : public hsKeyedObject
 {       
 public:
     plSoundBuffer();
-    plSoundBuffer( const char *fileName, UInt32 flags = 0 );
+    plSoundBuffer( const char *fileName, uint32_t flags = 0 );
     ~plSoundBuffer();
     
     CLASSNAME_REGISTER( plSoundBuffer );
@@ -87,22 +87,22 @@ public:
         kPending,
     };
 
-    void            RoundDataPos( UInt32 &pos );
+    void            RoundDataPos( uint32_t &pos );
 
     virtual void    Read( hsStream *s, hsResMgr *mgr );
     virtual void    Write( hsStream *s, hsResMgr *mgr );
 
     plWAVHeader &GetHeader( void )              { return fHeader; }
-    UInt32      GetDataLength( void ) const     { return fDataLength; }
+    uint32_t      GetDataLength( void ) const     { return fDataLength; }
     void        SetDataLength(unsigned length)  { fDataLength = length; } 
     void        *GetData( void ) const          { return fData; }
     const char  *GetFileName( void ) const      { return fFileName; }
     hsBool      IsValid( void ) const           { return fValid; }
-    hsScalar    GetDataLengthInSecs( void ) const;
+    float    GetDataLengthInSecs( void ) const;
 
     void                SetFileName( const char *name );
-    hsBool              HasFlag( UInt32 flag ) { return ( fFlags & flag ) ? true : false; }
-    void                SetFlag( UInt32 flag, hsBool yes = true ) { if( yes ) fFlags |= flag; else fFlags &= ~flag; }
+    hsBool              HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
+    void                SetFlag( uint32_t flag, hsBool yes = true ) { if( yes ) fFlags |= flag; else fFlags &= ~flag; }
 
     // Must be called until return value is kSuccess. starts an asynchronous load first time called. returns kSuccess when finished.
     ELoadReturnVal      AsyncLoad( plAudioFileReader::StreamType type, unsigned length = 0 );   
@@ -121,7 +121,7 @@ public:
     unsigned                        GetAsyncLoadLength() { return fAsyncLoadLength ? fAsyncLoadLength : fDataLength; }
 
     // for plugins only
-    void                SetInternalData( plWAVHeader &header, UInt32 length, UInt8 *data );
+    void                SetInternalData( plWAVHeader &header, uint32_t length, uint8_t *data );
     ELoadReturnVal      EnsureInternal( );  
     void                SetError() { fError = true; }
 
@@ -134,12 +134,12 @@ protected:
     void            IInitBuffer();
 
     hsBool          IGrabHeaderInfo( void );
-    void            IAddBuffers( void *base, void *toAdd, UInt32 lengthInBytes, UInt8 bitsPerSample );
+    void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );
     void            IGetFullPath( char *destStr );
     
-    UInt32          fFlags;
+    uint32_t          fFlags;
     hsBool          fValid;
-    UInt32          fDataRead;
+    uint32_t          fDataRead;
     char            *fFileName;
     
     bool            fLoaded;
@@ -147,10 +147,10 @@ protected:
     bool            fError;
     
     plAudioFileReader * fReader;    
-    UInt8 *             fData;
+    uint8_t *             fData;
     plWAVHeader         fHeader;
-    UInt32              fDataLength;
-    UInt32              fAsyncLoadLength;
+    uint32_t              fDataLength;
+    uint32_t              fAsyncLoadLength;
     plAudioFileReader::StreamType fStreamType;
 
     // for plugins only

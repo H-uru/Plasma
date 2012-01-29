@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGenericVar_inc
 #define plGenericVar_inc
 
-#include "hsTypes.h"
-#include "hsUtils.h"
+#include "HeadSpin.h"
+
 #include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
@@ -60,8 +60,8 @@ public:
 protected:
     union
     {
-        Int32           fI;
-        UInt32          fU;
+        int32_t           fI;
+        uint32_t          fU;
         float           fF;
         double          fD;
         bool            fB;
@@ -85,10 +85,10 @@ public:
     };
 
 protected:
-    UInt8   fType;
+    uint8_t   fType;
     
-    const Int32     &IToInt( void ) const;
-    const UInt32    &IToUInt( void ) const;
+    const int32_t     &IToInt( void ) const;
+    const uint32_t    &IToUInt( void ) const;
     const float     &IToFloat( void ) const;
     const double        &IToDouble( void ) const;
     const bool      &IToBool( void ) const;
@@ -106,8 +106,8 @@ public:
 
     void CopyFrom(const plGenericType& c);
     virtual void Reset();
-    operator Int32() const { return IToInt(); }
-    operator UInt32() const { return IToUInt(); }
+    operator int32_t() const { return IToInt(); }
+    operator uint32_t() const { return IToUInt(); }
     operator double() const { return IToDouble(); }
     operator float() const { return IToFloat(); }
     operator bool() const { return IToBool(); }
@@ -115,13 +115,13 @@ public:
     operator char() const { return IToChar(); }
 
     void    SetType(Types t)        { fType=t; }
-    UInt8   GetType( void ) const   { return fType; }
+    uint8_t   GetType( void ) const   { return fType; }
     
     std::string GetAsStdString() const;
 
     // implicit set
-    void    Set( Int32 i )      { fI = i; fType = kInt; }
-    void    Set( UInt32 i )     { fU = i; fType = kUInt; }
+    void    Set( int32_t i )      { fI = i; fType = kInt; }
+    void    Set( uint32_t i )     { fU = i; fType = kUInt; }
     void    Set( float f )      { fF = f; fType = kFloat; }
     void    Set( double d )     { fD = d; fType = kDouble; }
     void    Set( bool b )       { fB = b; fType = kBool; }
@@ -129,8 +129,8 @@ public:
     void    Set( char c )       { fC = c; fType = kChar; }
 
     // explicit set
-    void    SetInt( Int32 i )           { fI = i; fType = kInt; }
-    void    SetUInt( UInt32 i )         { fU = i; fType = kUInt; }
+    void    SetInt( int32_t i )           { fI = i; fType = kInt; }
+    void    SetUInt( uint32_t i )         { fU = i; fType = kUInt; }
     void    SetFloat( float f )     { fF = f; fType = kFloat; }
     void    SetDouble( double d )   { fD = d; fType = kDouble; }
     void    SetBool( bool b )       { fB = b; fType = kBool; }
@@ -182,8 +182,8 @@ public:
     void    Write(hsStream* s, hsResMgr* mgr) { fValue.Write(s);}
     plGenericType& Value() { return fValue; }
     const plGenericType& Value() const { return fValue; }
-    operator Int32() const { return (Int32)fValue; }
-    operator UInt32() const { return (UInt32)fValue; }
+    operator int32_t() const { return (int32_t)fValue; }
+    operator uint32_t() const { return (uint32_t)fValue; }
     operator float() const { return (float)fValue; }
     operator double() const { return (double)fValue; }
     operator bool() const { return (bool)fValue; }

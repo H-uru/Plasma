@@ -131,7 +131,7 @@ void cyAnimation::Play()
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -174,7 +174,7 @@ void cyAnimation::Stop()
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -212,7 +212,7 @@ void cyAnimation::Resume()
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -245,7 +245,7 @@ void cyAnimation::Resume()
 //
 //  PURPOSE    : Play an animation only from specific time start to end
 //
-void cyAnimation::PlayRange(hsScalar start, hsScalar end)
+void cyAnimation::PlayRange(float start, float end)
 {
     SkipToTime(start);
     PlayToTime(end);
@@ -258,13 +258,13 @@ void cyAnimation::PlayRange(hsScalar start, hsScalar end)
 //
 //  PURPOSE    : Play (continue) an animation until the specified time is reached
 //
-void cyAnimation::PlayToTime(hsScalar time)
+void cyAnimation::PlayToTime(float time)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -297,13 +297,13 @@ void cyAnimation::PlayToTime(hsScalar time)
 //
 //  PURPOSE    : Play (continue) an animation until the specified point is reached
 //
-void cyAnimation::PlayToPercentage(hsScalar zeroToOne)
+void cyAnimation::PlayToPercentage(float zeroToOne)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -337,13 +337,13 @@ void cyAnimation::PlayToPercentage(hsScalar zeroToOne)
 //  PURPOSE    : Jump the animation to the specified time
 //             : Doesn't start or stop playing of animation
 //
-void cyAnimation::SkipToTime(hsScalar time)
+void cyAnimation::SkipToTime(float time)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -382,7 +382,7 @@ void cyAnimation::Looped(hsBool looped)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -423,7 +423,7 @@ void cyAnimation::Backwards(hsBool backwards)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -458,13 +458,13 @@ void cyAnimation::Backwards(hsBool backwards)
 //  Function   : SetLoopStart and SetLoopEnd
 //  PARAMETERS : value  - sets the start or the end of the animation
 //
-void cyAnimation::SetLoopStart(hsScalar start)
+void cyAnimation::SetLoopStart(float start)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -490,13 +490,13 @@ void cyAnimation::SetLoopStart(hsScalar start)
     }
 }
 
-void cyAnimation::SetLoopEnd(hsScalar end)
+void cyAnimation::SetLoopEnd(float end)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -532,13 +532,13 @@ void cyAnimation::SetLoopEnd(hsScalar end)
 //  PURPOSE    : Sets the speed of the animation
 //             : Doesn't start or stop playing animation
 //
-void cyAnimation::Speed(hsScalar speed)
+void cyAnimation::Speed(float speed)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {
@@ -571,7 +571,7 @@ void cyAnimation::IRunOneCmd(int cmd)
     if ( fRecvr.Count() > 0 )
     {
         // create message
-        plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* pMsg = new plAnimCmdMsg;
         // check if this needs to be network forced to all clients
         if (fNetForce )
         {

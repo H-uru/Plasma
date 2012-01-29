@@ -64,7 +64,7 @@ plAvBrainDrive::plAvBrainDrive()
 }
 
 // CTOR max velocity, turn rate
-plAvBrainDrive::plAvBrainDrive(hsScalar maxVelocity, hsScalar turnRate)
+plAvBrainDrive::plAvBrainDrive(float maxVelocity, float turnRate)
 : fMaxVelocity(maxVelocity), fTurnRate(turnRate)
 {
 }
@@ -75,7 +75,7 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
     plArmatureBrain::Activate(avMod);
 
     IEnablePhysics(false, avMod->GetTarget(0)->GetKey());
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     pMsg->SetCmd(plCameraMsg::kNonPhysOn);
     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pMsg->Send();               
@@ -87,7 +87,7 @@ void plAvBrainDrive::Deactivate()
     if (fAvMod)
     {   
         IEnablePhysics(true, fAvMod->GetTarget(0)->GetKey());
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetCmd(plCameraMsg::kNonPhysOff);
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->Send();               
@@ -100,17 +100,17 @@ void plAvBrainDrive::IEnablePhysics(bool enable, plKey avKey)
 }
 
 // APPLY
-hsBool plAvBrainDrive::Apply(double timeNow, hsScalar elapsed)
+hsBool plAvBrainDrive::Apply(double timeNow, float elapsed)
 {
     plSceneObject * avSO = fAvMod->GetTarget(0);
-    hsScalar eTime = hsTimer::GetDelSysSeconds();
+    float eTime = hsTimer::GetDelSysSeconds();
     hsMatrix44 targetMatrix = avSO->GetLocalToWorld();
 
     hsPoint3 playerPos = targetMatrix.GetTranslate();
     hsVector3 view, up, right;
     targetMatrix.GetAxis(&view, &up, &right);
-    hsScalar speed = fMaxVelocity;
-    hsScalar turn = fTurnRate;
+    float speed = fMaxVelocity;
+    float turn = fTurnRate;
 
     if (fAvMod->FastKeyDown())
     {
@@ -148,7 +148,7 @@ hsBool plAvBrainDrive::Apply(double timeNow, hsScalar elapsed)
     hsVector3 rotUp(0,0,1);
     hsVector3 rotRight(1,0,0);
     hsMatrix44 rot;
-    hsScalar angle = 0;
+    float angle = 0;
 
     if ( fAvMod->GetInputFlag( B_CONTROL_ROTATE_RIGHT ) || fAvMod->GetInputFlag( B_CONTROL_ROTATE_LEFT ) || fAvMod->GetInputFlag( A_CONTROL_TURN ) )
     {

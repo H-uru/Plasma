@@ -116,7 +116,7 @@ void pyGUIControlTextBox::SetTextW( std::wstring text )
     }
 }
 
-void pyGUIControlTextBox::SetFontSize( UInt8 size )
+void pyGUIControlTextBox::SetFontSize( uint8_t size )
 {
     if ( fGCkey )
     {
@@ -178,7 +178,7 @@ void pyGUIControlTextBox::SetBackColor( pyColor& color )
 
 }
 
-void pyGUIControlTextBox::SetJustify( UInt8 justify )
+void pyGUIControlTextBox::SetJustify( uint8_t justify )
 {
     if ( fGCkey )
     {
@@ -198,7 +198,7 @@ void pyGUIControlTextBox::SetJustify( UInt8 justify )
     }
 }
 
-UInt8 pyGUIControlTextBox::GetJustify()
+uint8_t pyGUIControlTextBox::GetJustify()
 {
     if ( fGCkey )
     {

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLogicModBase.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plLogicModBase::ConsoleTrigger(plKey playerKey)
 {
     // Setup the event data in case this is a OneShot responder that needs it
-    proPickedEventData *ed = TRACKED_NEW proPickedEventData;
+    proPickedEventData *ed = new proPickedEventData;
     ed->fPicker = playerKey;
     ed->fPicked = nil;
     fNotify->AddEvent(ed);
@@ -80,7 +80,7 @@ fTimer(0.0f),
 fNotify(nil),
 fDisabled(false)
 {
-    fNotify = TRACKED_NEW plNotifyMsg;
+    fNotify = new plNotifyMsg;
 }
 
 plLogicModBase::~plLogicModBase()
@@ -99,7 +99,7 @@ void plLogicModBase::AddTarget(plSceneObject* so)
     plSingleModifier::AddTarget(so);
 }
 
-void plLogicModBase::RegisterForMessageType(UInt16 hClass)
+void plLogicModBase::RegisterForMessageType(uint16_t hClass)
 {
     plgDispatch::Dispatch()->RegisterForExactType( hClass, GetKey() ); 
 }
@@ -113,7 +113,7 @@ void plLogicModBase::RegisterForMessageType(UInt16 hClass)
 void plLogicModBase::IUpdateSharedState(bool triggered) const
 {
     plNetSharedState ss("TrigState");
-    plGenericVar* sv = TRACKED_NEW plGenericVar("Triggered");
+    plGenericVar* sv = new plGenericVar("Triggered");
     sv->Value().SetBool(triggered); // attempting to set trig state to true
     ss.AddVar(sv);
     
@@ -304,7 +304,7 @@ void plLogicModBase::Reset(bool bCounterReset)
 
 void plLogicModBase::CreateNotifyMsg()
 {   
-    fNotify = TRACKED_NEW plNotifyMsg;
+    fNotify = new plNotifyMsg;
     for (int i = 0; i < fReceiverList.Count(); i++)
         fNotify->AddReceiver(fReceiverList[i]);
 }

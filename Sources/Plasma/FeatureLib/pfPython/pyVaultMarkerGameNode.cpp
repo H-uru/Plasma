@@ -83,7 +83,7 @@ void pyVaultMarkerGameNode::SetGameName (const char v[])
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        wchar unicode[kMaxVaultNodeStringLength];
+        wchar_t unicode[kMaxVaultNodeStringLength];
         StrToUnicode(unicode, v, arrsize(unicode));
         access.SetGameName(unicode);
     }

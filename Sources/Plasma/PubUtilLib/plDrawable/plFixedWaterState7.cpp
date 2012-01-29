@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFixedWaterState7.h"
 
 #include "hsStream.h"
 
-void plFixedWaterState7::WaveState::Set(const plFixedWaterState7::WaveState& w, hsScalar secs)
+void plFixedWaterState7::WaveState::Set(const plFixedWaterState7::WaveState& w, float secs)
 {
     fMaxLength.Set(w.fMaxLength, secs);
     fMinLength.Set(w.fMinLength, secs);
@@ -54,7 +54,7 @@ void plFixedWaterState7::WaveState::Set(const plFixedWaterState7::WaveState& w, 
     fAngleDev.Set(w.fAngleDev, secs);
 }
 
-void plFixedWaterState7::Set(const plFixedWaterState7& t, hsScalar secs)
+void plFixedWaterState7::Set(const plFixedWaterState7& t, float secs)
 {
     fWindDir.Set(t.fWindDir, secs);
 

@@ -189,7 +189,7 @@ void plExcludeRegionModifier::AddTarget(plSceneObject* so)
     if (so)
     {
         delete fSDLModifier;
-        fSDLModifier = TRACKED_NEW plExcludeRegionSDLModifier(this);
+        fSDLModifier = new plExcludeRegionSDLModifier(this);
         so->AddModifier(fSDLModifier);
     }
     plSingleModifier::SetTarget(so);
@@ -285,7 +285,7 @@ void plExcludeRegionModifier::IMoveAvatars()
 
             if (closestIdx != -1)
             {
-                plAvSeekMsg* msg = TRACKED_NEW plAvSeekMsg;
+                plAvSeekMsg* msg = new plAvSeekMsg;
                 msg->SetBCastFlag(plMessage::kPropagateToModifiers);
                 msg->AddReceiver(fContainedAvatars[i]);
                 msg->fSmartSeek = fSeek;
@@ -305,7 +305,7 @@ void plExcludeRegionModifier::IMoveAvatars()
         int numControllers = plPXPhysicalControllerCore::GetNumberOfControllersInThisSubWorld(phys->GetWorldKey());
         if (numControllers > 0)
         {
-            plPXPhysicalControllerCore** controllers = TRACKED_NEW plPXPhysicalControllerCore*[numControllers];
+            plPXPhysicalControllerCore** controllers = new plPXPhysicalControllerCore*[numControllers];
 
             int actualCount = plPXPhysicalControllerCore::GetControllersInThisSubWorld(phys->GetWorldKey(), numControllers, controllers);
             
@@ -323,7 +323,7 @@ void plExcludeRegionModifier::IMoveAvatars()
                         // *** warning; if there's more than one generic brain active, this will only look at the first
                         if (curGenBrain  && curGenBrain->GetType() == plAvBrainGeneric::kLadder)
                         {
-                            plAvBrainGenericMsg* pMsg = TRACKED_NEW plAvBrainGenericMsg(
+                            plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(
                                 nil,
                                 constAvMod->GetKey(),
                                 plAvBrainGenericMsg::kGotoStage,
@@ -341,7 +341,7 @@ void plExcludeRegionModifier::IMoveAvatars()
                             int closestIdx = IFindClosestSafePoint(controllers[i]->GetOwner());
                             if (closestIdx != -1)
                             {
-                                plAvSeekMsg* msg = TRACKED_NEW plAvSeekMsg;
+                                plAvSeekMsg* msg = new plAvSeekMsg;
                                 msg->SetBCastFlag(plMessage::kPropagateToModifiers);
                                 msg->AddReceiver(controllers[i]->GetOwner());
                                 msg->fSmartSeek = fSeek;

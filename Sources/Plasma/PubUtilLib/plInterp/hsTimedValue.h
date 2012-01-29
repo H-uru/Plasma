@@ -53,9 +53,9 @@ public:
         kInstant        = 0x2
     };
 protected:
-    UInt32                  fFlags;
-    hsScalar                fDuration;
-    hsScalar                fStartTime;
+    uint32_t                  fFlags;
+    float                fDuration;
+    float                fStartTime;
 
     T                       fValue;
     T                       fGoal;
@@ -65,10 +65,10 @@ public:
     hsTimedValue() : fFlags(kIdle|kInstant), fDuration(0) {}
     hsTimedValue(const T& v) : fFlags(kIdle|kInstant), fDuration(0) { SetValue(v); }
 
-    UInt32 GetFlags() { return fFlags; }
+    uint32_t GetFlags() { return fFlags; }
 
-    void SetDuration(hsScalar duration);
-    hsScalar GetDuration() const { return fDuration; }
+    void SetDuration(float duration);
+    float GetDuration() const { return fDuration; }
 
     hsBool32 operator==(const hsTimedValue<T>& v);
     hsTimedValue<T>& operator=(const T& v) { SetValue(v); return *this; }
@@ -83,22 +83,22 @@ public:
 
     void Reset() { fFlags |= (kIdle | kInstant); }
 
-    void StartClock(hsScalar s);
-    hsScalar GetStartTime() const { return fStartTime; }
+    void StartClock(float s);
+    float GetStartTime() const { return fStartTime; }
 
     const T& GetFrom() const { return fFrom; }
 
-    void Update(hsScalar s);
+    void Update(float s);
 
-    void WriteScalar(hsStream* s, hsScalar currSecs);
-    void Write(hsStream* s, hsScalar currSecs);
+    void WriteScalar(hsStream* s, float currSecs);
+    void Write(hsStream* s, float currSecs);
 
-    void ReadScalar(hsStream* s, hsScalar currSecs);
-    void Read(hsStream* s, hsScalar currSecs);
+    void ReadScalar(hsStream* s, float currSecs);
+    void Read(hsStream* s, float currSecs);
 };
 
 template <class T>
-void hsTimedValue<T>::WriteScalar(hsStream* s, hsScalar currSecs)
+void hsTimedValue<T>::WriteScalar(hsStream* s, float currSecs)
 {
     s->WriteLE32(fFlags);
 
@@ -115,7 +115,7 @@ void hsTimedValue<T>::WriteScalar(hsStream* s, hsScalar currSecs)
 }
 
 template <class T>
-void hsTimedValue<T>::Write(hsStream* s, hsScalar currSecs)
+void hsTimedValue<T>::Write(hsStream* s, float currSecs)
 {
     s->WriteLE32(fFlags);
 
@@ -132,7 +132,7 @@ void hsTimedValue<T>::Write(hsStream* s, hsScalar currSecs)
 }
 
 template <class T>
-void hsTimedValue<T>::ReadScalar(hsStream* s, hsScalar currSecs)
+void hsTimedValue<T>::ReadScalar(hsStream* s, float currSecs)
 {
     fFlags = s->ReadLE32();
 
@@ -149,7 +149,7 @@ void hsTimedValue<T>::ReadScalar(hsStream* s, hsScalar currSecs)
 }
 
 template <class T>
-void hsTimedValue<T>::Read(hsStream* s, hsScalar currSecs)
+void hsTimedValue<T>::Read(hsStream* s, float currSecs)
 {
     fFlags = s->ReadLE32();
 
@@ -166,7 +166,7 @@ void hsTimedValue<T>::Read(hsStream* s, hsScalar currSecs)
 }
 
 template <class T>
-void hsTimedValue<T>::SetDuration(hsScalar duration) 
+void hsTimedValue<T>::SetDuration(float duration) 
 { 
     fDuration = duration; 
     if( fDuration > 0 )
@@ -192,7 +192,7 @@ hsBool32 hsTimedValue<T>::operator==(const hsTimedValue<T>& v)
 }
 
 template <class T>
-void hsTimedValue<T>::StartClock(hsScalar s)
+void hsTimedValue<T>::StartClock(float s)
 {
     fStartTime = s;
 
@@ -212,19 +212,19 @@ void hsTimedValue<T>::StartClock(hsScalar s)
 }
 
 template <class T>
-void hsTimedValue<T>::Update(hsScalar s)
+void hsTimedValue<T>::Update(float s)
 {
     if( fFlags & kIdle )
         return;
 
     hsAssert(fDuration > 0, "Instant should always be idle");
 
-    hsScalar interp = (s - fStartTime) / fDuration;
+    float interp = (s - fStartTime) / fDuration;
 
-    if( interp >= hsScalar1 )
+    if( interp >= 1.f )
     {
         fValue = fGoal;
-        interp = hsScalar1;
+        interp = 1.f;
         fFlags |= kIdle;
     }
     else

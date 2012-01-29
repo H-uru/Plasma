@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynamicEnvLayer.h"
 
 #include "iparamb2.h"
@@ -72,7 +72,7 @@ class plDynamicEnvLayerClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plDynamicEnvLayer(); }
+    void*           Create(BOOL loading = FALSE) { return new plDynamicEnvLayer(); }
     const TCHAR*    ClassName()     { return GetString(IDS_DYNAMIC_ENVMAP_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return DYNAMIC_ENV_LAYER_CLASS_ID; }
@@ -226,7 +226,7 @@ IParamBlock2    *plDynamicEnvLayer::GetParamBlockByID( BlockID id )
 
 RefTargetHandle plDynamicEnvLayer::Clone( RemapDir &remap ) 
 {
-    plDynamicEnvLayer *mnew = TRACKED_NEW plDynamicEnvLayer();
+    plDynamicEnvLayer *mnew = new plDynamicEnvLayer();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefBitmap, remap.CloneRef(fBitmapPB));
     mnew->ReplaceReference(kRefUVGen, remap.CloneRef(fUVGen));

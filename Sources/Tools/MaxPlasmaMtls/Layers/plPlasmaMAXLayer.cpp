@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPlasmaMAXLayer.h"
 
 #include "stdmat.h"
@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
 
-#include "hsUtils.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plRefMsg.h"
 #include "plSurface/plLayerInterface.h"
@@ -133,7 +133,7 @@ plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
 
 class plLayerTargetContainer : public hsKeyedObject
 {
-    static UInt32       fKeyCount;
+    static uint32_t       fKeyCount;
 
     public:
         hsTArray<plLayerInterface *>    fLayers;
@@ -162,7 +162,7 @@ class plLayerTargetContainer : public hsKeyedObject
         }
 };
 
-UInt32  plLayerTargetContainer::fKeyCount = 0;
+uint32_t  plLayerTargetContainer::fKeyCount = 0;
 
 
 void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
@@ -170,7 +170,7 @@ void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
     if( fConversionTargets == nil )
     {
         // Create us a new container
-        fConversionTargets = TRACKED_NEW plLayerTargetContainer;
+        fConversionTargets = new plLayerTargetContainer;
         fConversionTargets->GetKey()->RefObject();
     }
 

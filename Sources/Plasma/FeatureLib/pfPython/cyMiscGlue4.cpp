@@ -666,11 +666,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress,
         PYTHON_RETURN_ERROR;
     }
 
-    wchar emailAddr[kMaxEmailAddressLength];
-    MemSet(emailAddr, 0, sizeof(emailAddr));
+    wchar_t emailAddr[kMaxEmailAddressLength];
+    memset(emailAddr, 0, sizeof(emailAddr));
 
-    wchar toName[kMaxPlayerNameLength];
-    MemSet(toName, 0, sizeof(toName));
+    wchar_t toName[kMaxPlayerNameLength];
+    memset(toName, 0, sizeof(toName));
 
     // Check and see if the email address is ok
     int origStrLen = 0;

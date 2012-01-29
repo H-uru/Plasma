@@ -125,12 +125,12 @@ void hsReadOnlyLoggingStream::FastFwd()
     hsThrow( "can't fast forward a logging stream");
 }
 
-void hsReadOnlyLoggingStream::SetPosition(UInt32 position)
+void hsReadOnlyLoggingStream::SetPosition(uint32_t position)
 {
     hsThrow( "can't set position on a logging stream");
 }
 
-void hsReadOnlyLoggingStream::Skip(UInt32 deltaByteCount)
+void hsReadOnlyLoggingStream::Skip(uint32_t deltaByteCount)
 {
     hsReadOnlyStream::Skip(deltaByteCount);
     if (deltaByteCount > 0 && !IsLogEntryWaiting())
@@ -139,9 +139,9 @@ void hsReadOnlyLoggingStream::Skip(UInt32 deltaByteCount)
     }
 }
 
-UInt32 hsReadOnlyLoggingStream::Read(UInt32 byteCount, void * buffer)
+uint32_t hsReadOnlyLoggingStream::Read(uint32_t byteCount, void * buffer)
 {
-    UInt32 ret = hsReadOnlyStream::Read(byteCount,buffer);
+    uint32_t ret = hsReadOnlyStream::Read(byteCount,buffer);
     if (ret > 0 && !IsLogEntryWaiting())
     {
         LogEntry(plGenericType::kNone,byteCount,nil,"Unknown Read");
@@ -151,7 +151,7 @@ UInt32 hsReadOnlyLoggingStream::Read(UInt32 byteCount, void * buffer)
 }
 
 
-void hsReadOnlyLoggingStream::LogSkip(UInt32 deltaByteCount, const char* desc)
+void hsReadOnlyLoggingStream::LogSkip(uint32_t deltaByteCount, const char* desc)
 {
     ILogEntryWaiting();
     Skip(deltaByteCount);
@@ -161,10 +161,10 @@ void hsReadOnlyLoggingStream::LogSkip(UInt32 deltaByteCount, const char* desc)
     }
 }
 
-UInt32 hsReadOnlyLoggingStream::LogRead(UInt32 byteCount, void * buffer, const char* desc)
+uint32_t hsReadOnlyLoggingStream::LogRead(uint32_t byteCount, void * buffer, const char* desc)
 {
     ILogEntryWaiting();
-    UInt32 ret = Read(byteCount,buffer);
+    uint32_t ret = Read(byteCount,buffer);
     if (ret > 0)
     {
         LogEntry(plGenericType::kNone,byteCount,nil,desc);
@@ -175,15 +175,15 @@ UInt32 hsReadOnlyLoggingStream::LogRead(UInt32 byteCount, void * buffer, const c
 char *hsReadOnlyLoggingStream::LogReadSafeString()
 {
     LogSubStreamStart("push me");
-    UInt16 numChars; 
+    uint16_t numChars; 
     LogReadLE(&numChars,"NumChars");
 
     numChars &= ~0xf000; // XXX: remove when hsStream no longer does this.
     if (numChars > 0)
     {       
-        char *name = TRACKED_NEW char[numChars+1];
+        char *name = new char[numChars+1];
         ILogEntryWaiting();
-        UInt32 ret = Read(numChars, name);
+        uint32_t ret = Read(numChars, name);
         name[numChars] = '\0';
         if (ret > 0)
         {
@@ -199,13 +199,13 @@ char *hsReadOnlyLoggingStream::LogReadSafeString()
 char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
 {
     LogSubStreamStart("push me");
-    UInt32 numChars; 
+    uint32_t numChars; 
     LogReadLE(&numChars,"NumChars");
     if (numChars > 0)
     {
-        char *name = TRACKED_NEW char[numChars+1];
+        char *name = new char[numChars+1];
         ILogEntryWaiting();
-        UInt32 ret = Read(numChars, name);
+        uint32_t ret = Read(numChars, name);
         name[numChars] = '\0';
         if (ret > 0)
         {

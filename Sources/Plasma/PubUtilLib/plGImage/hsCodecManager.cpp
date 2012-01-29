@@ -69,9 +69,9 @@ hsCodecManager::hsCodecManager()
 {
 }
 
-plMipmap *hsCodecManager::CreateCompressedMipmap(UInt32 compressionFormat, plMipmap *uncompressed)
+plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plMipmap *uncompressed)
 {
-    Int32 i, j;
+    int32_t i, j;
     for (i = 0; i < fCodecTable.Count(); i++)
     {
         if (fCodecTable[i].fCompressionFormat == compressionFormat)
@@ -97,9 +97,9 @@ plMipmap *hsCodecManager::CreateCompressedMipmap(UInt32 compressionFormat, plMip
     return nil;
 }
 
-plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth)
+plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
 {
-    Int32 i, j;
+    int32_t i, j;
     for (i = 0; i < fCodecTable.Count(); i++)
     {
         if( fCodecTable[i].fCompressionFormat == compressed->fCompressionType )
@@ -125,9 +125,9 @@ plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, UInt8 b
     return nil;
 }
 
-hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask )
+hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
-    Int32 i, j;
+    int32_t i, j;
 
 
     for( i = 0; i < fCodecTable.Count(); i++ )
@@ -148,9 +148,9 @@ hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMas
     return false;
 }
 
-hsBool hsCodecManager::Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority)
+hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float priority)
 {
-    Int32 i, j;
+    int32_t i, j;
     for (i = 0; i < fCodecTable.Count(); i++)
     {
         if (fCodecTable[i].fCompressionFormat == compressionFormat)

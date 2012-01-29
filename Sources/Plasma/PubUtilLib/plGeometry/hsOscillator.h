@@ -137,7 +137,7 @@ public:
 
     virtual void AdjustWorldBounds(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBounds3Ext& bnd) const;
 
-    virtual UInt32 GetType() const { return kTypeOscillator; }
+    virtual uint32_t GetType() const { return kTypeOscillator; }
 
     // Don't call these, use base class LabelAndWrite() and CreateAndRead()
     virtual void Read(hsStream* s);
@@ -167,11 +167,11 @@ public:
     const hsBounds3Ext& GetWorldCenterBounds() const { return fWorldCenterBounds; }
 
     void    SetNumWaves(int n);
-    UInt32  GetNumWaves() const { return fWaves.GetCount(); }
+    uint32_t  GetNumWaves() const { return fWaves.GetCount(); }
     hsWave& GetWeakestWave(hsScalar secs);
     hsWave& GetTempWave(hsScalar secs);
 
-    virtual void Init(Int32 nParams, hsScalar* params);
+    virtual void Init(int32_t nParams, hsScalar* params);
 
     static hsGTriMesh* MakeWaveMesh(int nSpokes, const hsPoint3& center, hsScalar minRad, hsScalar maxRad, hsScalar uRange, hsScalar vRange, hsScalar attenStartFrac, hsBool32 stitch);
 

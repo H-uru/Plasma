@@ -101,20 +101,20 @@ protected:
     // from dirty bits), or when you want to (you'll know from secs/frame).
     
     // fOwnedChannels specifies which channels you have allocated and own (and will delete)
-    UInt32                  fOwnedChannels;
+    uint32_t                  fOwnedChannels;
     // fPassThruChannels are channels which we need to pass through our underlay's values,
     // even if we have a differing opinion on what the value should be. This let's us arbitrate
     // between different layers that control the same channels. A layer can claim control of
     // a channel by telling all other layers to pass through that channel via the 
-    // ClaimChannels(UInt32 chans) member function. See .cpp for arbitration rules.
-    UInt32                  fPassThruChannels;
+    // ClaimChannels(uint32_t chans) member function. See .cpp for arbitration rules.
+    uint32_t                  fPassThruChannels;
 
     hsMatrix44*             fTransform;
     hsColorRGBA*            fPreshadeColor;
     hsColorRGBA*            fRuntimeColor;      // Diffuse color to be used with runtime lights vs. static preshading
     hsColorRGBA*            fAmbientColor;
     hsColorRGBA*            fSpecularColor;
-    hsScalar*               fOpacity;
+    float*               fOpacity;
     
     // Would like to abstract out the mipmap, but we'll bring it
     // along for now.
@@ -122,9 +122,9 @@ protected:
 
     // (Currently) unanimatables.
     hsGMatState*            fState;
-    UInt32*                 fUVWSrc;
-    hsScalar*               fLODBias;
-    hsScalar*               fSpecularPower;
+    uint32_t*                 fUVWSrc;
+    float*               fLODBias;
+    float*               fSpecularPower;
 
     plShader**              fVertexShader;
     plShader**              fPixelShader;
@@ -132,7 +132,7 @@ protected:
     hsMatrix44*             fBumpEnvXfm;
 
     void                    IUnthread();
-    void                    ISetPassThru(UInt32 chans);
+    void                    ISetPassThru(uint32_t chans);
 
 public:
     plLayerInterface();
@@ -153,21 +153,21 @@ public:
     const hsColorRGBA&      GetRuntimeColor() const { return *fRuntimeColor; }
     const hsColorRGBA&      GetAmbientColor() const { return *fAmbientColor; }
     const hsColorRGBA&      GetSpecularColor() const { return *fSpecularColor; }
-    hsScalar                GetOpacity() const { return *fOpacity; }
+    float                GetOpacity() const { return *fOpacity; }
 
     plBitmap*               GetTexture() const { return *fTexture; }
 
     // (Currently) unanimatables
-    UInt32                  GetUVWSrc() const { return *fUVWSrc; }
-    hsScalar                GetLODBias() const { return *fLODBias; }
-    hsScalar                GetSpecularPower() const { return *fSpecularPower; }
+    uint32_t                  GetUVWSrc() const { return *fUVWSrc; }
+    float                GetLODBias() const { return *fLODBias; }
+    float                GetSpecularPower() const { return *fSpecularPower; }
 
     const hsGMatState&      GetState() const { return *fState; }
-    UInt32                  GetBlendFlags() const { return fState->fBlendFlags; }
-    UInt32                  GetClampFlags() const { return fState->fClampFlags; }
-    UInt32                  GetShadeFlags() const { return fState->fShadeFlags; }
-    UInt32                  GetZFlags() const { return fState->fZFlags; }
-    UInt32                  GetMiscFlags() const { return fState->fMiscFlags; }
+    uint32_t                  GetBlendFlags() const { return fState->fBlendFlags; }
+    uint32_t                  GetClampFlags() const { return fState->fClampFlags; }
+    uint32_t                  GetShadeFlags() const { return fState->fShadeFlags; }
+    uint32_t                  GetZFlags() const { return fState->fZFlags; }
+    uint32_t                  GetMiscFlags() const { return fState->fMiscFlags; }
 
     plShader*               GetVertexShader() const { return *fVertexShader; }
     plShader*               GetPixelShader() const { return *fPixelShader; }
@@ -176,7 +176,7 @@ public:
 
     // ClaimChannels will tell every other layer on this stack (besides this) to
     // pass through the value, giving this layer the final say on it's value
-    void                    ClaimChannels(UInt32 chans);
+    void                    ClaimChannels(uint32_t chans);
 
     // Eval may be called multiple times per frame, or even multiple times per render (for multiple
     // renders per frame). The burden of deciding whether any update is necessary falls to the 
@@ -187,7 +187,7 @@ public:
     // return value of fUnderLay->Eval() - bits are true for fields that an interface earlier in the chain dirtied. A field
     //      flagged dirty that you modify (as opposed to overwrite) should be updated regardless of secs and frame.
     //
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
     // Attach gives you a chance to decide whether you want to pass through fields from prev (by copying 
     // the pointers which you then sooner put long pins through your own eyes than modify). Alloc
@@ -208,7 +208,7 @@ public:
     plLayerInterface*           GetAttached();
     void                        AttachViaNotify(plLayerInterface *prev); // Export only
 
-    hsBool                  OwnChannel(UInt32 which) const { return 0 != (fOwnedChannels & which); }
+    hsBool                  OwnChannel(uint32_t which) const { return 0 != (fOwnedChannels & which); }
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);

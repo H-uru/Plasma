@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "plMaxCFGFile.h"
 #include "hsStream.h"
-#include "hsUtils.h"
+
 #ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
@@ -187,7 +187,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 
 #ifdef MAXASS_AVAILABLE
         if( fAssetManIface == nil )
-            fAssetManIface = TRACKED_NEW MaxAssBranchAccess();
+            fAssetManIface = new MaxAssBranchAccess();
 #endif
 
         // Make our bold font by getting the normal font and bolding
@@ -333,7 +333,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             {
                 if( MessageBox( hDlg, "Are you sure you wish to reassign the sequence prefix for this age?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
-                    Int32 prefix = (Int32)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
+                    int32_t prefix = (int32_t)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
                     fSeqPrefixSpin->SetValue( ( prefix >= 0 ) ? prefix : -prefix, false );
                     fDirty = true;
                 }
@@ -853,7 +853,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
         {
             ageFolder.GetPathAndName(agePath);
 
-            plAgeFile* age = TRACKED_NEW plAgeFile(plAgeFile::kLocalFile, agePath);
+            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, agePath);
             ageFiles.push_back(age);
         }
     }
@@ -873,7 +873,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
             {
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
                 {
-                    plAgeFile* age = TRACKED_NEW plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
+                    plAgeFile* age = new plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
 
                     int existing = IFindAge(age->fAgeName.c_str(), ageFiles);
                     // Remove it from our "local" list if there, since it's a duplicate
@@ -1092,16 +1092,16 @@ void plAgeDescInterface::INewPage()
     int idx = ListBox_AddString(hPages, name);
 
     // Choose a new sequence suffix for it
-    plAgePage *newPage = TRACKED_NEW plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
+    plAgePage *newPage = new plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
     ListBox_SetItemData( hPages, idx, (LPARAM)newPage );
    
     fDirty = true;
 }
 
-UInt32  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
+uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
 {
     int     i, count = ListBox_GetCount( pageCombo );
-    UInt32  searchSeq = 1;
+    uint32_t  searchSeq = 1;
 
     do
     {
@@ -1253,7 +1253,7 @@ void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
     }
     fCapSpin->SetValue(maxCap, FALSE);
 
-    Int32 seqPrefix = aged.GetSequencePrefix();
+    int32_t seqPrefix = aged.GetSequencePrefix();
     if( seqPrefix < 0 )
     {
         // Reserved prefix
@@ -1282,9 +1282,9 @@ void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
     }
 }
 
-UInt32  plAgeDescInterface::IGetNextFreeSequencePrefix( hsBool getReservedPrefix )
+uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( hsBool getReservedPrefix )
 {
-    Int32               searchSeq = getReservedPrefix ? -1 : 1;
+    int32_t               searchSeq = getReservedPrefix ? -1 : 1;
     hsTArray<char *>    ageList;
     int                 i;
 

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plDynaPuddleMgr.h"
 
 #include "plPrintShape.h"
@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plArmatureMod.h"
 
-static const UInt32 kNumPrintIDs = 2;
-static const UInt32 kPrintIDs[kNumPrintIDs] =
+static const uint32_t kNumPrintIDs = 2;
+static const uint32_t kPrintIDs[kNumPrintIDs] =
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -94,7 +94,7 @@ hsBool plDynaPuddleMgr::MsgReceive(plMessage* msg)
             const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
             if( shape )
             {
-                plDynaDecalInfo& info = IGetDecalInfo(unsigned_ptr(shape), shape->GetKey());
+                plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 if( IRippleFromShape(shape, true) )
                 {
                     INotifyActive(info, armMod->GetKey(), fPartIDs[i]);

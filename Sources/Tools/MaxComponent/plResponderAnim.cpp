@@ -330,7 +330,7 @@ plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrM
     if (!animKey)
         throw "Animation component didn't convert";
 
-    plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg *msg = new plAnimCmdMsg;
     msg->AddReceiver(animKey);
 
     const char *tempAnimName = comp->GetAnimName();
@@ -409,7 +409,7 @@ plMessage* plResponderCmdAnim::ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMs
             const plAudioInterface *ai = targNode->GetSceneObject()->GetAudioInterface();
             plKey key = ai->GetKey();
 
-            plSoundMsg* msg = TRACKED_NEW plSoundMsg;
+            plSoundMsg* msg = new plSoundMsg;
             msg->AddReceiver(key);
             msg->fIndex = soundIdx;
 
@@ -440,7 +440,7 @@ plMessage* plResponderCmdAnim::ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMs
             plKey key = plAudioComp::GetRandomSoundKey(comp, targNode);
             if (key)
             {
-                plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg;
+                plAnimCmdMsg *msg = new plAnimCmdMsg;
                 msg->AddReceiver(key);
 
                 if (type == kRespondPlayRndSound)
@@ -502,7 +502,7 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
     if (soundMsg)
         soundMsg->SetCmd(plSoundMsg::kAddCallbacks);
 
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(waitInfo.receiver);
     eventMsg->fRepeats = 0;
     eventMsg->fUser = waitInfo.callbackUser;

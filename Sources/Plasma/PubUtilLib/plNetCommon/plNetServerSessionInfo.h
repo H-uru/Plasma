@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetServerSessionInfo_h_inc
 #define plNetServerSessionInfo_h_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 #include "pnNetCommon/plNetServers.h"
@@ -60,7 +60,7 @@ class plVaultAgeLinkNode;
 
 class plAgeInfoStruct : public plCreatable
 {
-    mutable UInt8           fFlags;
+    mutable uint8_t           fFlags;
 
     // Age dataset name "Neighborhood"
     std::string     fAgeFilename;
@@ -79,10 +79,10 @@ class plAgeInfoStruct : public plCreatable
 
     // A modifier to user-defined name to make it unique in gui lists.
     // Assigned by vault server.
-    Int32           fAgeSequenceNumber;
+    int32_t           fAgeSequenceNumber;
     
     // The language of the client that created this age
-    Int32           fAgeLanguage;
+    int32_t           fAgeLanguage;
 
     mutable std::string     fDisplayName;
 
@@ -97,9 +97,9 @@ class plAgeInfoStruct : public plCreatable
         kHasAgeLanguage         = 1<<6,
     };
 
-    void    SetFlag( UInt8 bit, bool on=true ) const { (on)?fFlags|=bit:fFlags&=~bit;}
-    void    ClearFlag( UInt8 bit ) { fFlags&=~bit;}
-    bool    IsFlagSet( UInt8 bit ) const { return (fFlags&bit)!=0;}
+    void    SetFlag( uint8_t bit, bool on=true ) const { (on)?fFlags|=bit:fFlags&=~bit;}
+    void    ClearFlag( uint8_t bit ) { fFlags&=~bit;}
+    bool    IsFlagSet( uint8_t bit ) const { return (fFlags&bit)!=0;}
 
 public:
     plAgeInfoStruct()
@@ -123,16 +123,16 @@ public:
     const plUUID * GetAgeInstanceGuid() const { return &fAgeInstanceGuid; }
     const char * GetAgeUserDefinedName() const { return fAgeUserDefinedName.c_str(); }
     const char * GetAgeDescription() const { return fAgeDescription.c_str(); }
-    UInt32  GetAgeSequenceNumber() const { return fAgeSequenceNumber; }
-    UInt32  GetAgeLanguage() const { return fAgeLanguage; }
+    uint32_t  GetAgeSequenceNumber() const { return fAgeSequenceNumber; }
+    uint32_t  GetAgeLanguage() const { return fAgeLanguage; }
 
     void    SetAgeFilename( const char * v );
     void    SetAgeInstanceName( const char * v );
     void    SetAgeInstanceGuid( const plUUID * v );
     void    SetAgeUserDefinedName( const char * v );
     void    SetAgeDescription( const char * v );
-    void    SetAgeSequenceNumber( UInt32 v );
-    void    SetAgeLanguage( UInt32 v );
+    void    SetAgeSequenceNumber( uint32_t v );
+    void    SetAgeLanguage( uint32_t v );
 
     bool    HasAgeFilename() const { return IsFlagSet( kHasAgeFilename ); }
     bool    HasAgeInstanceName() const { return IsFlagSet( kHasAgeInstanceName ); }
@@ -154,19 +154,19 @@ public:
 
 class plAgeLinkStruct : public plCreatable
 {
-    UInt16              fFlags;
+    uint16_t              fFlags;
 
     // Where we want to link.
     plAgeInfoStruct     fAgeInfo;
 
     // The linking rule to use. See plNetCommon::LinkingRules
-    Int8                fLinkingRules;
+    int8_t                fLinkingRules;
 
     // Where to spawn avatar when we load the age specified in fAgeInfo
     plSpawnPointInfo    fSpawnPoint;
 
     // Override PLS/MCP load balancing rules for CCRs.
-    UInt8               fAmCCR;
+    uint8_t               fAmCCR;
 
     // If this is a child age link, who is the parent
     //    ...Age dataset name  like "Neighborhood"
@@ -183,9 +183,9 @@ class plAgeLinkStruct : public plCreatable
         kHasParentAgeFilename   = 1<<6,
     };
 
-    void    SetFlag( UInt16 bit, bool on=true ) { (on)?fFlags|=bit:fFlags&=~bit;}
-    void    ClearFlag( UInt16 bit ) { fFlags&=~bit;}
-    bool    IsFlagSet( UInt16 bit ) const { return (fFlags&bit)!=0;}
+    void    SetFlag( uint16_t bit, bool on=true ) { (on)?fFlags|=bit:fFlags&=~bit;}
+    void    ClearFlag( uint16_t bit ) { fFlags&=~bit;}
+    bool    IsFlagSet( uint16_t bit ) const { return (fFlags&bit)!=0;}
 
 public:
     plAgeLinkStruct();
@@ -230,11 +230,11 @@ public:
 
 class plNetServerSessionInfo : public plCreatable
 {
-    UInt8           fFlags;
+    uint8_t           fFlags;
     std::string     fServerName;
-    UInt8           fServerType;
+    uint8_t           fServerType;
     std::string     fServerAddr;
-    UInt16          fServerPort;
+    uint16_t          fServerPort;
     plUUID  fServerGuid;
 
     enum
@@ -246,9 +246,9 @@ class plNetServerSessionInfo : public plCreatable
         kHasServerGuid  = 1<<4,
     };
 
-    void    SetFlag( UInt8 bit ) { fFlags|=bit;}
-    void    ClearFlag( UInt8 bit ) { fFlags&=~bit;}
-    bool    IsFlagSet( UInt8 bit ) const { return (fFlags&bit)!=0;}
+    void    SetFlag( uint8_t bit ) { fFlags|=bit;}
+    void    ClearFlag( uint8_t bit ) { fFlags&=~bit;}
+    bool    IsFlagSet( uint8_t bit ) const { return (fFlags&bit)!=0;}
 
 public:
     plNetServerSessionInfo()
@@ -260,16 +260,16 @@ public:
     GETINTERFACE_ANY( plNetServerSessionInfo, plCreatable );
 
     void SetServerName(const char * val);
-    void SetServerType(UInt8 val);
+    void SetServerType(uint8_t val);
     void SetServerAddr(const char * val);
-    void SetServerPort(UInt16 val);
+    void SetServerPort(uint16_t val);
     void SetServerGuid(const plUUID * val);
     void CopyServerGuid(const plUUID & val);
 
     const char *    GetServerName() const { return fServerName.c_str();}
-    UInt8           GetServerType() const { return fServerType;}
+    uint8_t           GetServerType() const { return fServerType;}
     const char *    GetServerAddr() const { return fServerAddr.c_str(); }
-    UInt16          GetServerPort() const { return fServerPort; }
+    uint16_t          GetServerPort() const { return fServerPort; }
     const plUUID *GetServerGuid() const { return &fServerGuid; }
     plUUID *    GetServerGuid() { return &fServerGuid; }
 
@@ -309,7 +309,7 @@ public:
 //class plAgeLinkingInfo : public plCreatable
 //{
 //  int             fLinkingRules;
-//  UInt32          fPlayerID;
+//  uint32_t          fPlayerID;
 //  hsBool8         fSuperUser;
 //  mutable plAgeInfoStruct fAgeInfo;
 //  mutable plNetServerSessionInfo fServerInfo;
@@ -322,8 +322,8 @@ public:
 //
 //  int     GetLinkingRules( void ) const { return fLinkingRules;}
 //  void    SetLinkingRules( int v ) { fLinkingRules=v;}
-//  UInt32  GetPlayerID( void ) const { return fPlayerID;}
-//  void    SetPlayerID( UInt32 v ) { fPlayerID=v;}
+//  uint32_t  GetPlayerID( void ) const { return fPlayerID;}
+//  void    SetPlayerID( uint32_t v ) { fPlayerID=v;}
 //  void    SetSuperUser(bool b) { fSuperUser=b;    }
 //  bool    GetSuperUser() const { return fSuperUser ? true : false;    }
 //

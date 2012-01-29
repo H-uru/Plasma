@@ -132,7 +132,7 @@ hsBool plOneShotMod::MsgReceive(plMessage* msg)
                 {
                     char *animName = avMod->MakeAnimationName(fAnimName);
 
-                    plAvOneShotMsg *avOSmsg = TRACKED_NEW plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
+                    plAvOneShotMsg *avOSmsg = new plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
                                                                  fSeekDuration, (hsBool)fSmartSeek, animName, fDrivable,
                                                                  fReversable);
 

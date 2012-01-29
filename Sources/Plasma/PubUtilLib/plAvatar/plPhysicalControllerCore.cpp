@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define kGENERICCONTROLLERRADIUS 1.1f
 #define kGENERICCONTROLLERHEIGHT 2.8f
 
-//#define kSWIMMINGCONTACTSLOPELIMIT (cosf(hsScalarDegToRad(80.f)))
-const  hsScalar plMovementStrategy::kAirTimeThreshold = .1f; // seconds
+//#define kSWIMMINGCONTACTSLOPELIMIT (cosf(hsDegreesToRadians(80.f)))
+const  float plMovementStrategy::kAirTimeThreshold = .1f; // seconds
 bool CompareMatrices(const hsMatrix44 &matA, const hsMatrix44 &matB, float tolerance);
 bool operator<(const plControllerSweepRecord left, const plControllerSweepRecord right)
 {
@@ -91,18 +91,18 @@ void plMovementStrategy::IApplyKinematic()
 plPhysicalControllerCore::~plPhysicalControllerCore()
 {
 }
-void plPhysicalControllerCore::Apply(hsScalar delSecs)
+void plPhysicalControllerCore::Apply(float delSecs)
 {
     fSimLength=delSecs;
     hsAssert(fMovementInterface, "plPhysicalControllerCore::Apply() missing a movement interface");
     if(fMovementInterface)fMovementInterface->Apply(delSecs);
 }
-void plPhysicalControllerCore::PostStep(hsScalar delSecs)
+void plPhysicalControllerCore::PostStep(float delSecs)
 {
     hsAssert(fMovementInterface, "plPhysicalControllerCore::PostStep() missing a movement interface");
     if(fMovementInterface)fMovementInterface->PostStep(delSecs);
 }
-void plPhysicalControllerCore::Update(hsScalar delSecs)
+void plPhysicalControllerCore::Update(float delSecs)
 {
     hsAssert(fMovementInterface, "plPhysicalControllerCore::Update() missing a movement interface");
     if(fMovementInterface)fMovementInterface->Update(delSecs);
@@ -111,7 +111,7 @@ void plPhysicalControllerCore::Update(hsScalar delSecs)
 void plPhysicalControllerCore::SendCorrectionMessages()
 {
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
-    plCorrectionMsg* corrMsg = TRACKED_NEW plCorrectionMsg;
+    plCorrectionMsg* corrMsg = new plCorrectionMsg;
     corrMsg->fLocalToWorld = fLastGlobalLoc;
     corrMsg->fLocalToWorld.GetInverse(&corrMsg->fWorldToLocal);
     corrMsg->fDirtySynch = true;
@@ -122,7 +122,7 @@ void plPhysicalControllerCore::SendCorrectionMessages()
     corrMsg->AddReceiver(fOwner);
     corrMsg->Send();
 }
-plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, hsScalar height, hsScalar radius)
+plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float height, float radius)
 :fMovementInterface(nil)
 ,fOwner(OwnerSceneObject)
 ,fHeight(height)
@@ -188,21 +188,21 @@ void plPhysicalControllerCore::MoveActorToSim()
         fAchievedLinearVelocity=fDisplacementThisStep/fSimLength;
         else fAchievedLinearVelocity.Set(0.0f,0.0f,0.0f);
 }
-void plPhysicalControllerCore::IncrementAngle(hsScalar deltaAngle)
+void plPhysicalControllerCore::IncrementAngle(float deltaAngle)
 {
-    hsScalar angle;
+    float angle;
     hsVector3 axis;
     fLocalRotation.NormalizeIfNeeded();
     fLocalRotation.GetAngleAxis(&angle, &axis);
     // adjust it (quaternions are weird...)
     if (axis.fZ < 0)
-        angle = (2*hsScalarPI) - angle; // axis is backwards, so reverse the angle too
+        angle = (2*M_PI) - angle; // axis is backwards, so reverse the angle too
     angle += deltaAngle;
     // make sure we wrap around
     if (angle < 0)
-        angle = (2*hsScalarPI) + angle; // angle is -, so this works like a subtract
-    if (angle >= (2*hsScalarPI))
-        angle = angle - (2*hsScalarPI);
+        angle = (2*M_PI) + angle; // angle is -, so this works like a subtract
+    if (angle >= (2*M_PI))
+        angle = angle - (2*M_PI);
     // and set the new angle
     fLocalRotation.SetAngleAxis(angle, hsVector3(0,0,1));
 }
@@ -235,11 +235,11 @@ bool plPhysicalControllerCore::GetFacingPushingPhysical()
 }
 ///////////////////////////
 //Walking Strategy
-void plWalkingStrategy::Apply(hsScalar delSecs)
+void plWalkingStrategy::Apply(float delSecs)
 {
     //Apply Should Only be Called from a PhysicalControllerCore
     hsAssert(fCore,"No Core shouldn't be Applying");
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -304,13 +304,13 @@ void plWalkingStrategy::Apply(hsScalar delSecs)
         {
             // Get our previous z velocity.  If we're on the ground, clamp it to zero at
             // the largest, so we won't launch into the air if we're running uphill.
-            hsScalar prevZVel = AchievedLinearVelocity.fZ;
+            float prevZVel = AchievedLinearVelocity.fZ;
             if (IsOnGround())
                 prevZVel = hsMinimum(prevZVel, 0.f);
-            hsScalar grav = kGravity * delSecs;
+            float grav = kGravity * delSecs;
             // If our gravity contribution isn't high enough this frame, we won't
             // report a collision even when standing on solid ground.
-            hsScalar maxGrav = -.001f / delSecs;
+            float maxGrav = -.001f / delSecs;
             if (grav > maxGrav)
                 grav = maxGrav;
             LinearVelocity.fZ = prevZVel + grav;
@@ -400,7 +400,7 @@ void plWalkingStrategy::Apply(hsScalar delSecs)
             //Did you hit your head on a dynamic?
             //with Physx's wonderful controller hit report vs flags issues we need to actually sweep to see
             std::multiset< plControllerSweepRecord > HitsDynamic;
-            UInt32 testFlag=1<<plSimDefs::kGroupDynamic;
+            uint32_t testFlag=1<<plSimDefs::kGroupDynamic;
             hsPoint3 startPos;
             hsPoint3 endPos;
             fCore->GetPositionSim(startPos);
@@ -447,23 +447,23 @@ void plWalkingStrategy::ICheckForFalseGround()
     // seen up to 220 reached in actual gameplay in a situation where we'd want this to take effect. 
     // This is the same running into 2 walls where the angle between them is 60.
     int i, j;
-    const hsScalar threshold = hsScalarDegToRad(240.f);
+    const float threshold = hsDegreesToRadians(240.f);
     int numContacts = fContactNormals.GetCount() + fPrevSlidingNormals.GetCount();
     if (numContacts >= 2)
     {
         // For extra fun... PhysX will actually report some collisions every other frame, as though
         // we're bouncing back and forth between the two (or more) objects blocking us. So it's not
         // enough to look at this frame's collisions, we have to check previous frames too.
-        hsTArray<hsScalar> fCollisionAngles;
+        hsTArray<float> fCollisionAngles;
         fCollisionAngles.SetCount(numContacts);
         int angleIdx = 0;
         for (i = 0; i < fContactNormals.GetCount(); i++, angleIdx++)
         {
-            fCollisionAngles[angleIdx] = hsATan2(fContactNormals[i].fY, fContactNormals[i].fX);
+            fCollisionAngles[angleIdx] = atan2(fContactNormals[i].fY, fContactNormals[i].fX);
         }
         for (i = 0; i < fPrevSlidingNormals.GetCount(); i++, angleIdx++)
         {
-            fCollisionAngles[angleIdx] = hsATan2(fPrevSlidingNormals[i].fY, fPrevSlidingNormals[i].fX);
+            fCollisionAngles[angleIdx] = atan2(fPrevSlidingNormals[i].fY, fPrevSlidingNormals[i].fX);
         }
         // numContacts is rarely larger than 6, so let's do a simple bubble sort.
         for (i = 0; i < numContacts; i++)
@@ -472,7 +472,7 @@ void plWalkingStrategy::ICheckForFalseGround()
             {
                 if (fCollisionAngles[i] > fCollisionAngles[j])
                 {
-                    hsScalar tempAngle = fCollisionAngles[i];
+                    float tempAngle = fCollisionAngles[i];
                     fCollisionAngles[i] = fCollisionAngles[j];
                     fCollisionAngles[j] = tempAngle;
                 }
@@ -487,16 +487,16 @@ void plWalkingStrategy::ICheckForFalseGround()
         if (i == numContacts)
         {
             // We got to the end. Check the last with the first and make your decision.
-            if (!(fCollisionAngles[0] - fCollisionAngles[numContacts - 1] >= (threshold - 2 * hsScalarPI)))
+            if (!(fCollisionAngles[0] - fCollisionAngles[numContacts - 1] >= (threshold - 2 * M_PI)))
                 fFalseGround = true;
         }
     }
 }
-void plWalkingStrategy::Update(hsScalar delSecs)
+void plWalkingStrategy::Update(float delSecs)
 {
     //Update Should Only be Called from a PhysicalControllerCore
     hsAssert(fCore,"Running Update: but have no Core");
-    hsScalar AngularVelocity=fCore->GetAngularVelocity();
+    float AngularVelocity=fCore->GetAngularVelocity();
     hsVector3 LinearVelocity=fCore->GetLinearVelocity();
 
     if (!fCore->IsEnabled() || fCore->IsKinematic())
@@ -515,7 +515,7 @@ void plWalkingStrategy::Update(hsScalar delSecs)
         fCore->MoveActorToSim();
         if (AngularVelocity != 0.f)
         {
-            hsScalar deltaAngle=AngularVelocity*delSecs;
+            float deltaAngle=AngularVelocity*delSecs;
             fCore->IncrementAngle( deltaAngle);
         }
         // We can't only send updates when the physical position changes because the
@@ -539,7 +539,7 @@ void plWalkingStrategy::Update(hsScalar delSecs)
         {
             //we have hit our head and we don't have anything beneath our feet          
             //not really friction just a way to make it seem more realistic keep between 0 and 1
-            hsScalar headFriction=0.0f;
+            float headFriction=0.0f;
             AchievedLinearVelocity.fX=(1.0f-headFriction)*LinearVelocity.fX;
             AchievedLinearVelocity.fY=(1.0f-headFriction)*LinearVelocity.fY;
             //only clamping when hitting head and going upwards, if going down leave it be
@@ -565,7 +565,7 @@ void plWalkingStrategy::Update(hsScalar delSecs)
 void plWalkingStrategy::IAddContactNormals(hsVector3& vec)
 {   
     //TODO: ADD in functionality to Adjust walkable slope for controller, also apply that in here
-    hsScalar dot = vec * kAvatarUp;
+    float dot = vec * kAvatarUp;
     if ( dot >= kSLOPELIMIT ) fGroundHit=true;
     else plMovementStrategySimulationInterface::IAddContactNormals(vec);
 }
@@ -610,10 +610,10 @@ void plSwimStrategy::IAdjustBuoyancy()
     else fBuoyancy =(depth/surfaceDepth );
     
 }
-void plSwimStrategy::Apply(hsScalar delSecs)
+void plSwimStrategy::Apply(float delSecs)
 {
     hsAssert(fCore,"PlSwimStrategy::Apply No Core shouldn't be Applying");
-    UInt32 collideFlags =
+    uint32_t collideFlags =
         1<<plSimDefs::kGroupStatic |
         1<<plSimDefs::kGroupAvatarBlocker |
         1<<plSimDefs::kGroupDynamic;
@@ -666,16 +666,16 @@ void plSwimStrategy::Apply(hsScalar delSecs)
                 LinearVelocity = subworldCI->GetWorldToLocal() * LinearVelocity;
         }
         IAdjustBuoyancy();
-        hsScalar zacc;
-        hsScalar retardent=0.0f;
-        static hsScalar FinalBobSpeed=0.5f;
+        float zacc;
+        float retardent=0.0f;
+        static float FinalBobSpeed=0.5f;
         //trying to dampen the oscillations
         if((AchievedLinearVelocity.fZ>FinalBobSpeed)||(AchievedLinearVelocity.fZ<-FinalBobSpeed))
             retardent=AchievedLinearVelocity.fZ *-.90f;
         zacc=(1-fBuoyancy)*-32.f + retardent;
         
         hsVector3 linCurrent(0.0f,0.0f,0.0f);
-        hsScalar angCurrent = 0.f;
+        float angCurrent = 0.f;
         if (fCurrentRegion != nil)
         {
         
@@ -702,14 +702,14 @@ void plSwimStrategy::Apply(hsScalar delSecs)
         fContactNormals.SetCount(0);
         fCore->Move(displacement,collideFlags,colFlags);
         if((colFlags&kBottom)||(colFlags&kSides))fHadContacts=true;
-        hsScalar angvel=fCore->GetAngularVelocity();
+        float angvel=fCore->GetAngularVelocity();
         fCore->SetAngularVelocity(angvel +angCurrent);
     }
 }
-void plSwimStrategy::Update(hsScalar delSecs)
+void plSwimStrategy::Update(float delSecs)
 {
     hsAssert(fCore,"Running Update: but have no Core");
-    hsScalar AngularVelocity=fCore->GetAngularVelocity();
+    float AngularVelocity=fCore->GetAngularVelocity();
     hsVector3 LinearVelocity=fCore->GetLinearVelocity();
     if (!fCore->IsEnabled() || fCore->IsKinematic())
     {
@@ -724,7 +724,7 @@ void plSwimStrategy::Update(hsScalar delSecs)
 
         if (AngularVelocity != 0.f)
         {
-            hsScalar deltaAngle=AngularVelocity*delSecs;
+            float deltaAngle=AngularVelocity*delSecs;
             fCore->IncrementAngle( deltaAngle);
         }
         fCore->UpdateWorldRelativePos();
@@ -737,7 +737,7 @@ void plSwimStrategy::Update(hsScalar delSecs)
 void plSwimStrategy::IAddContactNormals(hsVector3& vec)
 {   
     //TODO: ADD in functionality to Adjust walkable slope for controller, also apply that in here
-    hsScalar dot = vec * kAvatarUp;
+    float dot = vec * kAvatarUp;
     if ( dot >= kSLOPELIMIT )
     {
         fOnGround=true;
@@ -745,12 +745,12 @@ void plSwimStrategy::IAddContactNormals(hsVector3& vec)
     }
     else plMovementStrategySimulationInterface::IAddContactNormals(vec);
 }
-void plSwimStrategy::SetSurface(plSwimRegionInterface *region, hsScalar surfaceHeight)
+void plSwimStrategy::SetSurface(plSwimRegionInterface *region, float surfaceHeight)
 {
     fCurrentRegion=region;
     fSurfaceHeight=surfaceHeight;
 }
-void plRidingAnimatedPhysicalStrategy::Apply(hsScalar delSecs)
+void plRidingAnimatedPhysicalStrategy::Apply(float delSecs)
 {
     hsVector3 LinearVelocity=fCore->GetLinearVelocity();
     hsVector3 AchievedLinearVelocity=fCore->GetAchievedLinearVelocity();
@@ -772,7 +772,7 @@ void plRidingAnimatedPhysicalStrategy::Apply(hsScalar delSecs)
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     hsPoint3 startPos, desiredDestination, endPos;
     fCore->GetPositionSim(startPos);
-    UInt32 collideFlags =
+    uint32_t collideFlags =
     1<<plSimDefs::kGroupStatic |
     1<<plSimDefs::kGroupAvatarBlocker |
     1<<plSimDefs::kGroupDynamic;
@@ -884,7 +884,7 @@ bool plRidingAnimatedPhysicalStrategy::ICheckMove(const hsPoint3& startPos, cons
     //returns false if it believes the end result can't be obtained by pure application of velocity (collides into somthing that it can't climb up)
     //used as a way to check if it needs to hack getting there like in jumping
     
-    UInt32 collideFlags =
+    uint32_t collideFlags =
     1<<plSimDefs::kGroupStatic |
     1<<plSimDefs::kGroupAvatarBlocker |
     1<<plSimDefs::kGroupDynamic;
@@ -940,7 +940,7 @@ bool plRidingAnimatedPhysicalStrategy::ICheckMove(const hsPoint3& startPos, cons
     }
     
 }
-void plRidingAnimatedPhysicalStrategy::Update(hsScalar delSecs)
+void plRidingAnimatedPhysicalStrategy::Update(float delSecs)
 {
     if (!fCore->IsEnabled() || fCore->IsKinematic())
     {
@@ -949,7 +949,7 @@ void plRidingAnimatedPhysicalStrategy::Update(hsScalar delSecs)
     }   
     fCore->CheckAndHandleAnyStateChanges();
 }
-void plRidingAnimatedPhysicalStrategy::PostStep(hsScalar delSecs)
+void plRidingAnimatedPhysicalStrategy::PostStep(float delSecs)
 {
     if(!(!fCore->IsEnabled() || fCore->IsKinematic()))
     {
@@ -959,7 +959,7 @@ void plRidingAnimatedPhysicalStrategy::PostStep(hsScalar delSecs)
             fTimeInAir = 0.f;
         hsVector3 AchievedLinearVelocity, LinearVelocity;
         AchievedLinearVelocity = fCore->GetLinearVelocity();
-        hsScalar AngularVelocity=fCore->GetAngularVelocity();
+        float AngularVelocity=fCore->GetAngularVelocity();
         fCore->OverrideAchievedVelocity(AchievedLinearVelocity);
         plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
         if (so)
@@ -967,7 +967,7 @@ void plRidingAnimatedPhysicalStrategy::PostStep(hsScalar delSecs)
             fCore->UpdateControllerAndPhysicalRep();
             if (AngularVelocity != 0.f)
             {
-                hsScalar deltaAngle=AngularVelocity*delSecs;
+                float deltaAngle=AngularVelocity*delSecs;
                 fCore->IncrementAngle( deltaAngle);
             }
             fCore->UpdateWorldRelativePos();

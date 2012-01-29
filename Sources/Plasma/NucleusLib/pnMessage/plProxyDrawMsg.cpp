@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plProxyDrawMsg.h"
 #include "hsStream.h"
 
@@ -51,14 +51,14 @@ plProxyDrawMsg::plProxyDrawMsg()
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 
-plProxyDrawMsg::plProxyDrawMsg(UInt16 flags)
+plProxyDrawMsg::plProxyDrawMsg(uint16_t flags)
 :   plMessage(nil, nil, nil),
     fProxyFlags(flags)
 {
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 
-plProxyDrawMsg::plProxyDrawMsg(plKey &rcv, UInt16 flags)
+plProxyDrawMsg::plProxyDrawMsg(plKey &rcv, uint16_t flags)
 :   plMessage(rcv, rcv, nil),
     fProxyFlags(flags)
 {

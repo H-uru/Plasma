@@ -58,7 +58,7 @@ class plSpanTemplate
 public:
     // 99% of the time, the defaults are fine. Just tell me
     // how many UVWs, and whether you've got color.
-    static UInt16 MakeFormat(hsBool hasColor, int numUVWs,
+    static uint16_t MakeFormat(hsBool hasColor, int numUVWs,
                             hsBool hasWgtIdx = false,
                             int numWgts = 0,
                             hsBool hasNorm = true,
@@ -101,10 +101,10 @@ public:
     };
 protected:
 
-    UInt16  fNumVerts;
-    UInt16  fFormat;
-    UInt8   fStride;
-    UInt16  fNumTris;
+    uint16_t  fNumVerts;
+    uint16_t  fFormat;
+    uint8_t   fStride;
+    uint16_t  fNumTris;
 
     // Data stored interleaved. Any channels may be omitted, but
     // existing channels are in exactly the following order:
@@ -115,57 +115,57 @@ protected:
     //  Color
     //  Color2
     //  UVWs
-    UInt8*          fData;
+    uint8_t*          fData;
 
-    UInt16*         fIndices;
+    uint16_t*         fIndices;
 
     friend class plClusterUtil;
 public:
     plSpanTemplate();
     virtual ~plSpanTemplate() { DeAlloc(); }
 
-    const UInt8*    VertData() const { return fData; }
+    const uint8_t*    VertData() const { return fData; }
 
-    const UInt16*   IndexData() const { return fIndices; }
+    const uint16_t*   IndexData() const { return fIndices; }
 
-    UInt32  NumVerts() const { return fNumVerts; }
-    UInt32  Stride() const { return UInt32(fStride); }
-    UInt32  CalcStride();
-    UInt32  VertSize() const { return NumVerts() * Stride(); }
+    uint32_t  NumVerts() const { return fNumVerts; }
+    uint32_t  Stride() const { return uint32_t(fStride); }
+    uint32_t  CalcStride();
+    uint32_t  VertSize() const { return NumVerts() * Stride(); }
 
-    UInt32  NumTris() const { return fNumTris; }
-    UInt32  NumIndices() const { return NumTris() * 3; }
-    UInt32  IndexSize() const { return NumIndices() * sizeof(UInt16); }
+    uint32_t  NumTris() const { return fNumTris; }
+    uint32_t  NumIndices() const { return NumTris() * 3; }
+    uint32_t  IndexSize() const { return NumIndices() * sizeof(uint16_t); }
     
-    UInt8   PositionOffset() const { return UInt8(0); }
-    UInt8   WgtIdxOffset() const { return UInt8(PositionOffset() + NumPos() * sizeof(hsPoint3)); }
-    UInt8   WeightOffset() const { return UInt8(WgtIdxOffset() + NumWgtIdx() * sizeof(UInt32)); }
-    UInt8   NormalOffset() const { return UInt8(WeightOffset() + NumWeights() * sizeof(hsScalar)); }
-    UInt8   ColorOffset() const { return UInt8(NormalOffset() + NumNorm() * sizeof(hsVector3)); }
-    UInt8   Color2Offset() const { return UInt8(ColorOffset() + NumColor() * sizeof(UInt32)); }
-    UInt8   UVWOffset() const { return UInt8(Color2Offset() + NumColor2() * sizeof(UInt32)); }
+    uint8_t   PositionOffset() const { return uint8_t(0); }
+    uint8_t   WgtIdxOffset() const { return uint8_t(PositionOffset() + NumPos() * sizeof(hsPoint3)); }
+    uint8_t   WeightOffset() const { return uint8_t(WgtIdxOffset() + NumWgtIdx() * sizeof(uint32_t)); }
+    uint8_t   NormalOffset() const { return uint8_t(WeightOffset() + NumWeights() * sizeof(float)); }
+    uint8_t   ColorOffset() const { return uint8_t(NormalOffset() + NumNorm() * sizeof(hsVector3)); }
+    uint8_t   Color2Offset() const { return uint8_t(ColorOffset() + NumColor() * sizeof(uint32_t)); }
+    uint8_t   UVWOffset() const { return uint8_t(Color2Offset() + NumColor2() * sizeof(uint32_t)); }
 
-    UInt32  NumUVWs() const { return (fFormat & kUVWMask) >> 4; }
-    UInt32  NumWeights() const { return (fFormat & kWeightMask) >> 8; }
+    uint32_t  NumUVWs() const { return (fFormat & kUVWMask) >> 4; }
+    uint32_t  NumWeights() const { return (fFormat & kWeightMask) >> 8; }
 
-    UInt32  NumPos() const { return (fFormat & kPosMask) >> 0; }
-    UInt32  NumNorm() const { return (fFormat & kNormMask) >> 1; }
-    UInt32  NumColor() const { return (fFormat & kColorMask) >> 2; }
-    UInt32  NumColor2() const { return (fFormat & kColor2Mask) >> 10; }
-    UInt32  NumWgtIdx() const { return (fFormat & kWgtIdxMask) >> 3; }
+    uint32_t  NumPos() const { return (fFormat & kPosMask) >> 0; }
+    uint32_t  NumNorm() const { return (fFormat & kNormMask) >> 1; }
+    uint32_t  NumColor() const { return (fFormat & kColorMask) >> 2; }
+    uint32_t  NumColor2() const { return (fFormat & kColor2Mask) >> 10; }
+    uint32_t  NumWgtIdx() const { return (fFormat & kWgtIdxMask) >> 3; }
 
     hsPoint3*           Position(int i) const { return (hsPoint3*)GetData(kPosition, i); }
     hsVector3*          Normal(int i) const { return (hsVector3*)GetData(kNormal, i); }
-    UInt32*             Color(int i) const { return (UInt32*)GetData(kColor, i); }
-    UInt32*             Color2(int i) const { return (UInt32*)GetData(kColor2, i); }
-    UInt32*             WgtIdx(int i) const { return (UInt32*)GetData(kWgtIdx, i); }
+    uint32_t*             Color(int i) const { return (uint32_t*)GetData(kColor, i); }
+    uint32_t*             Color2(int i) const { return (uint32_t*)GetData(kColor2, i); }
+    uint32_t*             WgtIdx(int i) const { return (uint32_t*)GetData(kWgtIdx, i); }
     hsPoint3*           UVWs(int iv, int iuv) const { return (hsPoint3*)GetData(kUVW, iv, iuv); }
-    hsScalar*           Weight(int iv, int iw) const { return (hsScalar*)GetData(kWeight, iv, iw); }
+    float*           Weight(int iv, int iw) const { return (float*)GetData(kWeight, iv, iw); }
 
-    UInt8*              GetData(Channel chan, int i, int j=0) const
+    uint8_t*              GetData(Channel chan, int i, int j=0) const
     {
         ValidateInput(chan, i, j);
-        UInt8* base = fData + i * fStride;
+        uint8_t* base = fData + i * fStride;
         switch(chan)
         {
         case kPosition:
@@ -173,37 +173,37 @@ public:
         case kWeight:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + j * sizeof(hsScalar);
+                + j * sizeof(float);
         case kWgtIdx:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar);
+                + NumWeights() * sizeof(float);
         case kNormal:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
-                + NumWgtIdx() * sizeof(UInt32);
+                + NumWeights() * sizeof(float)
+                + NumWgtIdx() * sizeof(uint32_t);
         case kColor:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
-                + NumWgtIdx() * sizeof(UInt32)
+                + NumWeights() * sizeof(float)
+                + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3);
         case kColor2:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
-                + NumWgtIdx() * sizeof(UInt32)
+                + NumWeights() * sizeof(float)
+                + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3)
-                + NumColor() * sizeof(UInt32);
+                + NumColor() * sizeof(uint32_t);
         case kUVW:
             return base 
                 + NumPos() * sizeof(hsPoint3)
-                + NumWeights() * sizeof(hsScalar)
-                + NumWgtIdx() * sizeof(UInt32)
+                + NumWeights() * sizeof(float)
+                + NumWgtIdx() * sizeof(uint32_t)
                 + NumNorm() * sizeof(hsVector3)
-                + NumColor() * sizeof(UInt32)
-                + NumColor2() * sizeof(UInt32)
+                + NumColor() * sizeof(uint32_t)
+                + NumColor2() * sizeof(uint32_t)
                 + j * sizeof(hsPoint3);
         }
         hsAssert(false, "Unrecognized vertex channel");
@@ -240,7 +240,7 @@ public:
         return false;
     }
     
-    void Alloc(UInt16 format, UInt32 numVerts, UInt32 numTris);
+    void Alloc(uint16_t format, uint32_t numVerts, uint32_t numTris);
     void DeAlloc();
 
     void Read(hsStream* s);

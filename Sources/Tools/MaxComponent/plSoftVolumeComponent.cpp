@@ -243,7 +243,7 @@ plSoftVolBaseComponent* plSoftVolBaseComponent::GetSoftComponent(plComponentBase
 void plSoftVolBaseComponent::IAddSubVolume(plKey masterKey, plKey subKey)
 {
     if( masterKey && subKey )
-        hsgResMgr::ResMgr()->AddViaNotify(subKey, TRACKED_NEW plGenRefMsg(masterKey, plRefMsg::kOnCreate, 0, plSoftVolume::kSubVolume), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(subKey, new plGenRefMsg(masterKey, plRefMsg::kOnCreate, 0, plSoftVolume::kSubVolume), plRefFlags::kActiveRef);
 }
 
 plKey plSoftVolBaseComponent::ISetVolumeKey(plSoftVolume* vol)
@@ -265,7 +265,7 @@ plKey plSoftVolBaseComponent::IInvertVolume(plKey subKey)
     if( !subKey )
         return nil;
 
-    plSoftVolumeInvert* invert = TRACKED_NEW plSoftVolumeInvert;
+    plSoftVolumeInvert* invert = new plSoftVolumeInvert;
     plKey invertKey = ISetVolumeKey(invert);
 
     IAddSubVolume(invertKey, subKey);
@@ -454,7 +454,7 @@ plKey plSoftVolComponent::ICreateSoftVolume()
         return fSoftKey = ICreateFromNode(GetTarget(0));
     }
 
-    plSoftVolumeUnion* compound = TRACKED_NEW plSoftVolumeUnion;
+    plSoftVolumeUnion* compound = new plSoftVolumeUnion;
     fSoftKey = ISetVolumeKey(compound);
 
     int i;
@@ -507,7 +507,7 @@ plKey plSoftVolComponent::ICreateFromDummyObject(plMaxNodeBase* pNode, Object* o
     DummyObject* dummy = (DummyObject*)obj;
     Box3 bnd = dummy->GetBox();
 
-    plParallelIsect* isect = TRACKED_NEW plParallelIsect;
+    plParallelIsect* isect = new plParallelIsect;
     isect->SetNumPlanes(3);
 
     hsMatrix44 v2l = pNode->GetVertToLocal44();
@@ -539,7 +539,7 @@ plKey plSoftVolComponent::ICreateFromTriObject(plMaxNodeBase* pNode, Object* obj
     hsMatrix44 v2l = pNode->GetVertToLocal44();
     hsMatrix44 l2v = pNode->GetLocalToVert44();
 
-    plConvexIsect* isect = TRACKED_NEW plConvexIsect;
+    plConvexIsect* isect = new plConvexIsect;
     int i;
     for( i = 0; i < mesh->getNumFaces(); i++ )
     {
@@ -574,7 +574,7 @@ plKey plSoftVolComponent::ISetFromIsect(plMaxNodeBase* pNode, plVolumeIsect* ise
 {
     isect->SetTransform(pNode->GetLocalToWorld44(), pNode->GetWorldToLocal44());
 
-    plSoftVolumeSimple* simple = TRACKED_NEW plSoftVolumeSimple;
+    plSoftVolumeSimple* simple = new plSoftVolumeSimple;
     simple->SetVolume(isect);
     simple->SetDistance(fCompPB->GetFloat(kSoftDistance));
 
@@ -588,7 +588,7 @@ plKey plSoftVolComponent::ISetFromIsect(plMaxNodeBase* pNode, plVolumeIsect* ise
 
     plKey retVal = ISetVolumeKey(simple);
     
-    hsgResMgr::ResMgr()->AddViaNotify(simple->GetKey(), TRACKED_NEW plObjRefMsg(sceneObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(simple->GetKey(), new plObjRefMsg(sceneObj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
     return retVal;
 }
@@ -732,7 +732,7 @@ plKey plSoftVolUnionComponent::ICreateSoftVolume()
     if( numSubs < 2 )
         return fSoftKey = plSoftVolBaseComponent::GetSoftComponent(fCompPB->GetINode(kSubVolumes, 0, 0))->GetSoftVolume();
 
-    plSoftVolumeUnion* compound = TRACKED_NEW plSoftVolumeUnion;
+    plSoftVolumeUnion* compound = new plSoftVolumeUnion;
     fSoftKey = ISetVolumeKey(compound);
 
     int i;
@@ -893,7 +893,7 @@ plKey plSoftVolIsectComponent::ICreateSoftVolume()
     if( numSubs < 2 )
         return fSoftKey = plSoftVolBaseComponent::GetSoftComponent(fCompPB->GetINode(kSubVolumes, 0, 0))->GetSoftVolume();
 
-    plSoftVolumeIntersect* compound = TRACKED_NEW plSoftVolumeIntersect;
+    plSoftVolumeIntersect* compound = new plSoftVolumeIntersect;
     fSoftKey = ISetVolumeKey(compound);
 
     int i;
@@ -1129,7 +1129,7 @@ hsBool plLightRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     if( !softKey )
         return true;
 
-    hsgResMgr::ResMgr()->AddViaNotify(softKey, TRACKED_NEW plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kSoftVolume), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(softKey, new plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kSoftVolume), plRefFlags::kActiveRef);
 
     return true;
 }
@@ -1298,7 +1298,7 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
         if( !softKey )
             return;
 
-        fVisReg = TRACKED_NEW plVisRegion;
+        fVisReg = new plVisRegion;
         plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fVisReg, loc);
 
 
@@ -1309,7 +1309,7 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
         fVisReg->SetProperty(plVisRegion::kReplaceNormal, true);
         fVisReg->SetProperty(plVisRegion::kDisableNormal, disableNormal);
 
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fVisReg->GetKey(), plRefMsg::kOnCreate, 0, plVisRegion::kRefRegion);
+        plGenRefMsg* refMsg = new plGenRefMsg(fVisReg->GetKey(), plRefMsg::kOnCreate, 0, plVisRegion::kRefRegion);
         hsgResMgr::ResMgr()->SendRef(softKey, refMsg, plRefFlags::kActiveRef);
     }
 }
@@ -1338,21 +1338,21 @@ hsBool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         return true;
 
     if( di )
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(di->GetKey(), plRefMsg::kOnCreate, 0, plDrawInterface::kRefVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(di->GetKey(), plRefMsg::kOnCreate, 0, plDrawInterface::kRefVisRegion), plRefFlags::kActiveRef);
 
     if( occ )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(occ->GetKey(), plRefMsg::kOnCreate, 0, plOccluder::kRefVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(occ->GetKey(), plRefMsg::kOnCreate, 0, plOccluder::kRefVisRegion), plRefFlags::kActiveRef);
     }
 
     if( li )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kVisRegion), plRefFlags::kActiveRef);
     }
 
     if( !(di || occ || li) )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
 
     return true;
@@ -1464,14 +1464,14 @@ hsBool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         if( !softKey )
             return true;
 
-        fRegion = TRACKED_NEW plRelevanceRegion;
+        fRegion = new plRelevanceRegion;
         plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fRegion, node->GetLocation());
 
-        plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(fRegion->GetKey(), plRefMsg::kOnCreate, 0, 0);
+        plGenRefMsg* refMsg = new plGenRefMsg(fRegion->GetKey(), plRefMsg::kOnCreate, 0, 0);
         hsgResMgr::ResMgr()->SendRef(softKey, refMsg, plRefFlags::kActiveRef);
     }
 
-    hsgResMgr::ResMgr()->AddViaNotify(fRegion->GetKey(), TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(fRegion->GetKey(), new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     
     return true;
 }
@@ -1532,16 +1532,16 @@ hsBool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
         return false;
 
     if( di )
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(di->GetKey(), plRefMsg::kOnCreate, 0, plDrawInterface::kRefVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(di->GetKey(), plRefMsg::kOnCreate, 0, plDrawInterface::kRefVisRegion), plRefFlags::kActiveRef);
 
     if( occ )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(occ->GetKey(), plRefMsg::kOnCreate, 0, plOccluder::kRefVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(occ->GetKey(), plRefMsg::kOnCreate, 0, plOccluder::kRefVisRegion), plRefFlags::kActiveRef);
     }
 
     if( li )
     {
-        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), TRACKED_NEW plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kVisRegion), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(fVisReg->GetKey(), new plGenRefMsg(li->GetKey(), plRefMsg::kOnCreate, 0, plLightInfo::kVisRegion), plRefFlags::kActiveRef);
     }
 
     return true;
@@ -1560,7 +1560,7 @@ plVisRegion* plEffVisSetComponent::GetVisRegion(plMaxNode* node)
 {
     if( !fVisReg )
     {
-        fVisReg = TRACKED_NEW plVisRegion;
+        fVisReg = new plVisRegion;
         plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fVisReg, node->GetLocation());
 
         fVisReg->SetProperty(plVisRegion::kIsNot, false);

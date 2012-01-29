@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoadMask_inc
 #define plLoadMask_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 template <class T> class hsTArray;
 class hsStream;
@@ -55,30 +55,30 @@ public:
         kMaxCap = 1
     };
 protected:
-    static UInt8    fGlobalQuality;
-    static UInt8    fGlobalCapability;
+    static uint8_t    fGlobalQuality;
+    static uint8_t    fGlobalCapability;
     union {
-        UInt8           fQuality[kMaxCap+1];
-        UInt16          fMask;
+        uint8_t           fQuality[kMaxCap+1];
+        uint16_t          fMask;
     };
 
     static void SetGlobalQuality(int q) { fGlobalQuality = IBitToMask(q); }
     static void SetGlobalCapability(int c) { if( c > kMaxCap ) c = kMaxCap; else if( c < 0 ) c = 0; fGlobalCapability = c; }
 
-    static UInt8 IBitToMask(int b) { hsAssert(b<8, "LoadMask: bit too large for byte"); return (1 << b); }
+    static uint8_t IBitToMask(int b) { hsAssert(b<8, "LoadMask: bit too large for uint8_t"); return (1 << b); }
 
     friend class plQuality;
 public:
     // Change this to a for loop on kMaxCap+1 if we ever get more caps.
     plLoadMask() { fQuality[0] = fQuality[1] = 0xff; }
-    plLoadMask(UInt8 qLo, UInt8 qHi) { fQuality[0] = qLo; fQuality[1] = qHi; }
+    plLoadMask(uint8_t qLo, uint8_t qHi) { fQuality[0] = qLo; fQuality[1] = qHi; }
     ~plLoadMask() {}
 
     hsBool      DontLoad() const { return !(fQuality[fGlobalCapability] & fGlobalQuality); }
 
     hsBool      NeverLoads() const { return !(fQuality[0] && fQuality[1]); }
 
-    hsBool      IsUsed() const { return (fQuality[0] != UInt8(-1)) || (fQuality[1] != UInt8(-1));   }
+    hsBool      IsUsed() const { return (fQuality[0] != uint8_t(-1)) || (fQuality[1] != uint8_t(-1));   }
 
     hsBool      MatchesQuality(int q) const { return (IBitToMask(q) & (fQuality[0] | fQuality[1])) != 0; }
     hsBool      MatchesCapability(int c) const { return fQuality[c] != 0; }
@@ -88,11 +88,11 @@ public:
     hsBool      MatchesCurrentCapability() const { return MatchesCapability(fGlobalCapability); }
     hsBool      MatchesCurrent() const { return !DontLoad(); }
 
-    UInt8       GetQualityMask(int cap) const { return fQuality[cap]; }
+    uint8_t       GetQualityMask(int cap) const { return fQuality[cap]; }
 
-    plLoadMask&     SetMask(UInt8 lo, UInt8 hi) { fQuality[0] = lo; fQuality[1] = hi; return *this; }
+    plLoadMask&     SetMask(uint8_t lo, uint8_t hi) { fQuality[0] = lo; fQuality[1] = hi; return *this; }
     plLoadMask&     SetNever() { return SetMask(0,0); }
-    plLoadMask&     SetAlways() { return SetMask(UInt8(-1), UInt8(-1)); }
+    plLoadMask&     SetAlways() { return SetMask(uint8_t(-1), uint8_t(-1)); }
 
     plLoadMask& operator|=(const plLoadMask& m) { fMask |= m.fMask; return *this; }
     plLoadMask& operator&=(const plLoadMask& m) { fMask &= m.fMask; return *this; }
@@ -128,8 +128,8 @@ public:
     // items in the list had problems, so return of zero means A-OK.
     //
     static hsBool ComputeRepMasks(int num, const int quals[], const int caps[], plLoadMask masks[]);
-    static UInt32 ValidateReps(int num, const int quals[], const int caps[]);
-    static UInt32 ValidateMasks(int num, plLoadMask masks[]);
+    static uint32_t ValidateReps(int num, const int quals[], const int caps[]);
+    static uint32_t ValidateMasks(int num, plLoadMask masks[]);
 };
 
 #endif // plLoadMask_inc

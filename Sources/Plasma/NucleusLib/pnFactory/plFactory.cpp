@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #define PLFACTORY_PRIVATE
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plFactory.h"
 #include "hsStream.h"
 #include "plCreatable.h"
 #include "plCreator.h"
-#include "hsUtils.h"
+
 
 // For class names
 #include "plCreatableStrings.h"
@@ -68,12 +68,12 @@ hsBool plFactory::ICreateTheFactory()
     if( theFactory )
         return true;
 
-    theFactory = TRACKED_NEW plFactory;
+    theFactory = new plFactory;
 
     return theFactory != nil;
 }
 
-UInt16 plFactory::IGetNumClasses()
+uint16_t plFactory::IGetNumClasses()
 {
     return plCreatableIndex::plNumClassIndices;
 }
@@ -97,7 +97,7 @@ void plFactory::IShutdown()
     theFactory = nil;
 }
 
-UInt16 plFactory::IRegister(UInt16 hClass, plCreator* worker)
+uint16_t plFactory::IRegister(uint16_t hClass, plCreator* worker)
 {
     delete fCreators[hClass];
     fCreators[hClass] = worker;
@@ -107,7 +107,7 @@ UInt16 plFactory::IRegister(UInt16 hClass, plCreator* worker)
 //
 // return true if creator exists
 //
-bool plFactory::CanCreate(UInt16 hClass)
+bool plFactory::CanCreate(uint16_t hClass)
 {
     if( hClass & 0x8000 )               // nil creatable
         return false;
@@ -121,7 +121,7 @@ bool plFactory::CanCreate(UInt16 hClass)
     return ( theFactory->fCreators[ hClass ] != nil );  // check creator
 }
 
-plCreatable* plFactory::ICreate(UInt16 hClass)
+plCreatable* plFactory::ICreate(uint16_t hClass)
 {
     if (CanCreate(hClass))
     {
@@ -135,7 +135,7 @@ plCreatable* plFactory::ICreate(UInt16 hClass)
     return nil;
 }
 
-void plFactory::UnRegister(UInt16 hClass, plCreator* worker)
+void plFactory::UnRegister(uint16_t hClass, plCreator* worker)
 {
     if( theFactory )
     {
@@ -146,12 +146,12 @@ void plFactory::UnRegister(UInt16 hClass, plCreator* worker)
     }
 }
 
-void plFactory::IUnRegister(UInt16 hClass)
+void plFactory::IUnRegister(uint16_t hClass)
 {
     fCreators[hClass] = nil;
 }
 
-UInt16 plFactory::Register(UInt16 hClass, plCreator* worker)
+uint16_t plFactory::Register(uint16_t hClass, plCreator* worker)
 {
     if( !theFactory && !ICreateTheFactory() )
             return nil;
@@ -160,7 +160,7 @@ UInt16 plFactory::Register(UInt16 hClass, plCreator* worker)
     return theFactory->IRegister(hClass, worker);
 }
 
-plCreatable* plFactory::Create(UInt16 hClass)
+plCreatable* plFactory::Create(uint16_t hClass)
 {
     if( !theFactory && !ICreateTheFactory() )
             return nil;
@@ -170,7 +170,7 @@ plCreatable* plFactory::Create(UInt16 hClass)
 
 
 
-UInt16 plFactory::GetNumClasses()
+uint16_t plFactory::GetNumClasses()
 {
     if( !theFactory && !ICreateTheFactory() )
         return 0;
@@ -178,7 +178,7 @@ UInt16 plFactory::GetNumClasses()
     return theFactory->IGetNumClasses();
 }
 
-hsBool plFactory::IDerivesFrom(UInt16 hBase, UInt16 hDer)
+hsBool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
 {
     if( hDer >= fCreators.GetCount() )
         return false;
@@ -186,7 +186,7 @@ hsBool plFactory::IDerivesFrom(UInt16 hBase, UInt16 hDer)
     return fCreators[hDer] ? fCreators[hDer]->HasBaseClass(hBase) : false;
 }
 
-hsBool plFactory::DerivesFrom(UInt16 hBase, UInt16 hDer)
+hsBool plFactory::DerivesFrom(uint16_t hBase, uint16_t hDer)
 {
     if( !theFactory && !ICreateTheFactory() )
         return 0;
@@ -195,7 +195,7 @@ hsBool plFactory::DerivesFrom(UInt16 hBase, UInt16 hDer)
 }
 
 // slow lookup for things like console
-UInt16 plFactory::FindClassIndex(const char* className)
+uint16_t plFactory::FindClassIndex(const char* className)
 {
     int numClasses=GetNumClasses();
 
@@ -214,12 +214,12 @@ UInt16 plFactory::FindClassIndex(const char* className)
 }
 
 
-hsBool plFactory::IIsValidClassIndex(UInt16 hClass)
+hsBool plFactory::IIsValidClassIndex(uint16_t hClass)
 {
     return ( hClass < fCreators.GetCount() );
 }
 
-hsBool plFactory::IsValidClassIndex(UInt16 hClass)
+hsBool plFactory::IsValidClassIndex(uint16_t hClass)
 {
     return theFactory->IIsValidClassIndex(hClass);
 }
@@ -265,7 +265,7 @@ plFactory* plFactory::GetTheFactory()
 }
 
 // For my own nefarious purposes... hsStatusMessage  plCreatableIndex
-const char  *plFactory::GetNameOfClass(UInt16 type)
+const char  *plFactory::GetNameOfClass(uint16_t type)
 {
     if( type < GetNumClasses() )
     {
@@ -311,7 +311,7 @@ const char  *plFactory::GetNameOfClass(UInt16 type)
 **
 */
 
-void plFactory::IValidate(UInt16 keyIndex)
+void plFactory::IValidate(uint16_t keyIndex)
 {
 
     int FactoryIndex = GetNumClasses();
@@ -347,7 +347,7 @@ void plFactory::IValidate(UInt16 keyIndex)
 
 }  
 
-void plFactory::Validate(UInt16 keyIndex)
+void plFactory::Validate(uint16_t keyIndex)
 {
     theFactory->IValidate(keyIndex);
 

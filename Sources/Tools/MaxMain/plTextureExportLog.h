@@ -67,7 +67,7 @@ class plTextureExportLog
         class plBMapNode
         {
             public:
-                UInt32      fRank;  // Sort with biggest first
+                uint32_t      fRank;  // Sort with biggest first
                 plBitmap    *fBitmap;
                 plBMapNode  *fNextNode;
         };
@@ -75,8 +75,8 @@ class plTextureExportLog
         plBMapNode  *fNodeList;
 
 
-        void    IAddBMapNode( UInt32 rank, plBitmap *bMap );
-        void    IWriteTabbedString( hsStream *stream, const char *string, Int8 numTabs );
+        void    IAddBMapNode( uint32_t rank, plBitmap *bMap );
+        void    IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs );
 
     public: 
 

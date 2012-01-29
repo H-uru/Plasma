@@ -90,7 +90,7 @@ static const unsigned   kPayloadBytes   = 32;
 static FIcmpCreateFile  IcmpCreateFile;
 static FIcmpSendEcho    IcmpSendEcho;
 
-static byte             s_payload[kPayloadBytes];
+static uint8_t             s_payload[kPayloadBytes];
 
 
 /*****************************************************************************
@@ -100,7 +100,7 @@ static byte             s_payload[kPayloadBytes];
 ***/
 
 //============================================================================
-static const wchar * IpStatusToString (ULONG status) {
+static const wchar_t * IpStatusToString (ULONG status) {
 
     switch (status) {
         case IP_SUCCESS:                return L"IP_SUCCESS";
@@ -140,13 +140,13 @@ static void __cdecl PingThreadProc (void * param) {
     }
 
     char addr[64];  
-    wchar waddr[64];
+    wchar_t waddr[64];
     NetAddressNodeToString(p->diag->nodes[p->srv], waddr, arrsize(waddr));
     StrToAnsi(addr, waddr, arrsize(addr));
     
     ENetError result = kNetSuccess;
 
-    byte reply[kPayloadBytes + sizeof(ICMP_ECHO_REPLY)];
+    uint8_t reply[kPayloadBytes + sizeof(ICMP_ECHO_REPLY)];
     
     for (unsigned i = 0; i < kPingCount; ++i) {
         DWORD retval = IcmpSendEcho(
@@ -173,7 +173,7 @@ static void __cdecl PingThreadProc (void * param) {
     
     p->callback(p->diag, p->protocol, result, p->param);
     p->diag->DecRef("ICMP");
-    DEL(p);
+    delete p;
 }
 
 
@@ -190,7 +190,7 @@ void IcmpStartup () {
         IcmpCreateFile = (FIcmpCreateFile)GetProcAddress(g_lib, "IcmpCreateFile");
         IcmpSendEcho = (FIcmpSendEcho)GetProcAddress(g_lib, "IcmpSendEcho");
     }
-    MemSet(s_payload, (byte)((unsigned_ptr)&s_payload >> 4), arrsize(s_payload));
+    memset(s_payload, (uint8_t)((uintptr_t)&s_payload >> 4), arrsize(s_payload));
 }
 
 //============================================================================
@@ -245,7 +245,7 @@ void NetDiagIcmp (
         return;
     }
 
-    wchar nodeStr[64];
+    wchar_t nodeStr[64];
     NetAddressNodeToString(node, nodeStr, arrsize(nodeStr));        
     dump(L"[ICMP] Pinging %s with %u bytes of data...", nodeStr, kPayloadBytes);
 

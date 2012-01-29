@@ -60,23 +60,23 @@ hsCodecManager::hsCodecManager()
 {
 }
 
-plMipmap *hsCodecManager::CreateCompressedMipmap(UInt32 compressionFormat, plMipmap *uncompressed)
+plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plMipmap *uncompressed)
 {
     return nil;
 }
 
-plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, UInt8 bitDepth)
+plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
 {
     return nil;
 
 }
 
-hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const UInt8 *colorMask )
+hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
     return false;
 }
 
-hsBool hsCodecManager::Register(hsCodec *codec, UInt32 compressionFormat, hsScalar priority)
+hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
 {
     return true;
 }

@@ -57,7 +57,7 @@ void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = TRACKED_NEW plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
+        fCallbackAction = new plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
         fCallbackAction->ActivateController();
     }
 }
@@ -118,62 +118,62 @@ hsBool plAvBrainRideAnimatedPhysical::IInitAnimations()
     {
         plHBehavior *behavior;
         fBehaviors.SetCountAndZero(kHuBehaviorMax);
-        fBehaviors[kIdle] = behavior = TRACKED_NEW Idle;
+        fBehaviors[kIdle] = behavior = new Idle;
         behavior->Init(idle, true, this, fAvMod, kDefaultFade, kDefaultFade, kIdle, plHBehavior::kBehaviorTypeIdle);
         behavior->SetStrength(1.f, 0.f);
         
-        fBehaviors[kWalk] = behavior = TRACKED_NEW Walk;
+        fBehaviors[kWalk] = behavior = new Walk;
         behavior->Init(walk, true, this, fAvMod, kDefaultFade, 5.f, kWalk, plHBehavior::kBehaviorTypeWalk);
         
-        fBehaviors[kRun] = behavior = TRACKED_NEW Run;
+        fBehaviors[kRun] = behavior = new Run;
         behavior->Init(run, true, this, fAvMod, kDefaultFade, 2.0, kRun, plHBehavior::kBehaviorTypeRun);
 
-        fBehaviors[kWalkBack] = behavior = TRACKED_NEW WalkBack;
+        fBehaviors[kWalkBack] = behavior = new WalkBack;
         behavior->Init(walkBack, true, this, fAvMod, kDefaultFade, kDefaultFade, kWalkBack, plHBehavior::kBehaviorTypeWalkBack);
 
-        fBehaviors[kStandingTurnLeft] = behavior = TRACKED_NEW StandingTurnLeft;
+        fBehaviors[kStandingTurnLeft] = behavior = new StandingTurnLeft;
         behavior->Init(standingLeft, true, this, fAvMod, 3.0f, 6.0f, kStandingTurnLeft, plHBehavior::kBehaviorTypeTurnLeft);
 
-        fBehaviors[kStandingTurnRight] = behavior = TRACKED_NEW StandingTurnRight;
+        fBehaviors[kStandingTurnRight] = behavior = new StandingTurnRight;
         behavior->Init(standingRight, true, this, fAvMod, 3.0f, 6.0f, kStandingTurnRight, plHBehavior::kBehaviorTypeTurnRight);
 
-        fBehaviors[kStepLeft] = behavior = TRACKED_NEW StepLeft;
+        fBehaviors[kStepLeft] = behavior = new StepLeft;
         behavior->Init(stepLeft, true, this, fAvMod, kDefaultFade, kDefaultFade, kStepLeft, plHBehavior::kBehaviorTypeSidestepLeft);
 
-        fBehaviors[kStepRight] = behavior = TRACKED_NEW StepRight;
+        fBehaviors[kStepRight] = behavior = new StepRight;
         behavior->Init(stepRight, true, this, fAvMod, kDefaultFade, kDefaultFade, kStepRight, plHBehavior::kBehaviorTypeSidestepRight);
 
         // Warning: Changing the blend times of the jump animations will affect the path you take, because until we're fully blended,
         // we won't be using the full motion defined in the animation. This isn't an issue for standing jump, but you need to be
         // aware of it for the walk/run jumps.
-        fBehaviors[kFall] = behavior = TRACKED_NEW Fall;
+        fBehaviors[kFall] = behavior = new Fall;
         behavior->Init(fall, true, this, fAvMod, 1.0f, 10, kFall, plHBehavior::kBehaviorTypeFall);
 
-        fBehaviors[kStandingJump] = behavior = TRACKED_NEW StandingJump;
+        fBehaviors[kStandingJump] = behavior = new StandingJump;
         behavior->Init(standJump, false, this, fAvMod, kDefaultFade, kDefaultFade, kStandingJump, plHBehavior::kBehaviorTypeStandingJump);
 
-        fBehaviors[kWalkingJump] = behavior = TRACKED_NEW WalkingJump;
+        fBehaviors[kWalkingJump] = behavior = new WalkingJump;
         behavior->Init(walkJump, false, this, fAvMod, 10, 3.0, kWalkingJump, plHBehavior::kBehaviorTypeWalkingJump);
 
-        fBehaviors[kRunningJump] = behavior = TRACKED_NEW RunningJump;
+        fBehaviors[kRunningJump] = behavior = new RunningJump;
         behavior->Init(runJump, false, this, fAvMod, 10, 2.0, kRunningJump, plHBehavior::kBehaviorTypeRunningJump);
         
-        fBehaviors[kGroundImpact] = behavior = TRACKED_NEW GroundImpact;
+        fBehaviors[kGroundImpact] = behavior = new GroundImpact;
         behavior->Init(groundImpact, false, this, fAvMod, 6.0f, kDefaultFade, kGroundImpact, plHBehavior::kBehaviorTypeGroundImpact);
         
-        fBehaviors[kRunningImpact] = behavior = TRACKED_NEW RunningImpact;
+        fBehaviors[kRunningImpact] = behavior = new RunningImpact;
         behavior->Init(runningImpact, false, this, fAvMod, 6.0f, kDefaultFade, kRunningImpact, plHBehavior::kBehaviorTypeRunningImpact);
         
-        fBehaviors[kMovingTurnLeft] = behavior = TRACKED_NEW MovingTurnLeft;
+        fBehaviors[kMovingTurnLeft] = behavior = new MovingTurnLeft;
         behavior->Init(movingLeft, true, this, fAvMod, kDefaultFade, kDefaultFade, kMovingTurnLeft, plHBehavior::kBehaviorTypeMovingTurnLeft);
 
-        fBehaviors[kMovingTurnRight] = behavior = TRACKED_NEW MovingTurnRight;
+        fBehaviors[kMovingTurnRight] = behavior = new MovingTurnRight;
         behavior->Init(movingRight, true, this, fAvMod, kDefaultFade, kDefaultFade, kMovingTurnRight, plHBehavior::kBehaviorTypeMovingTurnRight);
 
-        fBehaviors[kPushWalk] = behavior = TRACKED_NEW PushWalk;
+        fBehaviors[kPushWalk] = behavior = new PushWalk;
         behavior->Init(pushWalk, true, this, fAvMod, kDefaultFade, kDefaultFade, kPushWalk, plHBehavior::kBehaviorTypePushWalk);
         
-        //fBehaviors[kPushIdle] = behavior = TRACKED_NEW PushIdle;
+        //fBehaviors[kPushIdle] = behavior = new PushIdle;
         //behavior->Init(pushIdle, true, this, fAvMod, kDefaultFade, kDefaultFade, kPushIdle, plHBehavior::kBehaviorTypePushIdle);
 
         result = true;
@@ -184,7 +184,7 @@ hsBool plAvBrainRideAnimatedPhysical::LeaveAge()
 {
     return plArmatureBrain::LeaveAge();
 }
-hsBool plAvBrainRideAnimatedPhysical::Apply(double timeNow, hsScalar elapsed)
+hsBool plAvBrainRideAnimatedPhysical::Apply(double timeNow, float elapsed)
 {
     if(this->fMode==kAbort) return false;
     else return plAvBrainHuman::Apply(timeNow, elapsed);

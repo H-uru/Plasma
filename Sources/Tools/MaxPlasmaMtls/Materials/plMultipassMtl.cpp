@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plMultipassMtl.h"
 #include "plPassMtl.h"
 #include "plMultipassMtlPB.h"
@@ -49,7 +49,7 @@ class plMultipassClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return TRACKED_NEW plMultipassMtl(loading); }
+    void*           Create(BOOL loading) { return new plMultipassMtl(loading); }
     const TCHAR*    ClassName()     { return GetString(IDS_MULTI_MTL); }
     SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID()       { return MULTIMTL_CLASS_ID; }
@@ -79,7 +79,7 @@ void plMultipassMtl::Reset()
 
 ParamDlg* plMultipassMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 
 {
-    fMtlDlg = TRACKED_NEW plMultipassMtlDlg(hwMtlEdit, imp, this);
+    fMtlDlg = new plMultipassMtlDlg(hwMtlEdit, imp, this);
 
     return fMtlDlg; 
 }
@@ -271,7 +271,7 @@ IOResult plMultipassMtl::Load(ILoad *iload)
 
 RefTargetHandle plMultipassMtl::Clone(RemapDir &remap)
 {
-    plMultipassMtl *mnew = TRACKED_NEW plMultipassMtl(FALSE);
+    plMultipassMtl *mnew = new plMultipassMtl(FALSE);
     *((MtlBase*)mnew) = *((MtlBase*)this); 
     mnew->ReplaceReference(kRefPasses, remap.CloneRef(fPassesPB));
 
@@ -378,7 +378,7 @@ void plMultipassMtl::SetNumSubMtls(int num)
 
     for (int i = curNum; i < num; i++)
     {
-        plPassMtl *newMtl = TRACKED_NEW plPassMtl(false);
+        plPassMtl *newMtl = new plPassMtl(false);
         fPassesPB->SetValue(kMultPasses, t, newMtl, i);
         fPassesPB->SetValue(kMultOn, t, TRUE, i);
         GetCOREInterface()->AssignNewName(fPassesPB->GetMtl(kMultPasses, t, i));

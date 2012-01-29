@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderCmd_h_inc
 #define plResponderCmd_h_inc
 
-#include "hsConfig.h"
 #include <vector>
 #include <string>
 #include "pnKeyedObject/plKey.h"

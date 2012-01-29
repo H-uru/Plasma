@@ -67,7 +67,7 @@ void pfMarkerInfo::Init()
     plResManager* resMgr = (plResManager*)hsgResMgr::ResMgr();
 
     // Force the client to keep the GlobalMarkers keys loaded, so we don't load them every time we clone
-    plClientMsg* loadAgeKeysMsg = TRACKED_NEW plClientMsg(plClientMsg::kLoadAgeKeys);
+    plClientMsg* loadAgeKeysMsg = new plClientMsg(plClientMsg::kLoadAgeKeys);
     loadAgeKeysMsg->SetAgeName("GlobalMarkers");
     loadAgeKeysMsg->Send(resMgr->FindKey(kClient_KEY));
 
@@ -112,7 +112,7 @@ void pfMarkerInfo::Spawn(MarkerType type)
     fType = type;
     fLastChange = 0;
 
-    plLoadCloneMsg* cloneMsg = TRACKED_NEW plLoadCloneMsg(fMarkerUoid, pfMarkerMgr::Instance()->GetKey(), 0);
+    plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fMarkerUoid, pfMarkerMgr::Instance()->GetKey(), 0);
     cloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
     fKey = cloneMsg->GetCloneKey();
 
@@ -133,7 +133,7 @@ void pfMarkerInfo::InitSpawned(plKey markerKey)
     hsMatrix44 pos;
     pos.Reset();
     pos.SetTranslate(&fPosition);
-    plWarpMsg* warpMsg = TRACKED_NEW plWarpMsg(pfMarkerMgr::Instance()->GetKey(), fKey, plWarpMsg::kFlushTransform, pos);
+    plWarpMsg* warpMsg = new plWarpMsg(pfMarkerMgr::Instance()->GetKey(), fKey, plWarpMsg::kFlushTransform, pos);
     warpMsg->Send();
 
     // update its state
@@ -148,7 +148,7 @@ void pfMarkerInfo::Show(bool show)
     fVisible = show;
 
     if (fSpawned) {
-        plEnableMsg* msg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* msg = new plEnableMsg;
         msg->SetBCastFlag(plMessage::kPropagateToChildren);
         msg->SetCmd(plEnableMsg::kDrawable);
         msg->SetCmd(plEnableMsg::kPhysical);
@@ -183,7 +183,7 @@ void pfMarkerInfo::Remove()
 {
     if (fKey)
     {
-        plLoadCloneMsg* cloneMsg = TRACKED_NEW plLoadCloneMsg(fKey, pfMarkerMgr::Instance()->GetKey(), 0, false);
+        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fKey, pfMarkerMgr::Instance()->GetKey(), 0, false);
         cloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         cloneMsg->Send();
 
@@ -210,7 +210,7 @@ void pfMarkerInfo::IPlayBounce(bool play)
     if (fMod && fSpawned)
     {
         // Send anim start/stop msg
-        plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* animMsg = new plAnimCmdMsg;
         animMsg->SetCmd(play ? plAnimCmdMsg::kContinue : plAnimCmdMsg::kStop);
         animMsg->SetCmd(plAnimCmdMsg::kSetLooping);
         animMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
@@ -242,7 +242,7 @@ void pfMarkerInfo::IPlayColor(bool play)
             break;
         }
 
-        plAnimCmdMsg* animMsg = TRACKED_NEW plAnimCmdMsg;
+        plAnimCmdMsg* animMsg = new plAnimCmdMsg;
         animMsg->SetCmd(play ? plAnimCmdMsg::kContinue : plAnimCmdMsg::kStop);
         animMsg->SetCmd(plAnimCmdMsg::kSetLooping);
         animMsg->SetCmd(plAnimCmdMsg::kGoToBegin);
@@ -258,7 +258,7 @@ void pfMarkerInfo::IPlaySound(bool place)
     {
         const plAudioInterface* ai = fMod->GetTarget()->GetAudioInterface();
 
-        plSoundMsg* msg = TRACKED_NEW plSoundMsg;
+        plSoundMsg* msg = new plSoundMsg;
         msg->fIndex = place ? fMod->fPlaceSndIdx : fMod->fHitSndIdx;
         msg->SetCmd(plSoundMsg::kPlay);
         msg->SetSender(pfMarkerMgr::Instance()->GetKey());

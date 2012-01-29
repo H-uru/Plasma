@@ -136,7 +136,7 @@ hsBool hsMacFile::Create(OSType creator, OSType fileType, ScriptCode scriptCode)
 
 #define kFileNotFound_Err       -43
 
-hsBool hsMacFile::OpenDataFork(SInt8 perm, Int16* refnum)
+hsBool hsMacFile::OpenDataFork(Sint8_t perm, int16_t* refnum)
 {
     this->Close();
 
@@ -177,7 +177,7 @@ hsStream* hsMacFile::OpenStream(const char mode[], hsBool throwIfFailure)
     hsThrowIfNilParam(mode);
 
     short   refnum;
-    SInt8   perm = 0;
+    Sint8_t   perm = 0;
     
     if (::strchr(mode, 'r'))
         perm |= fsRdPerm;
@@ -185,7 +185,7 @@ hsStream* hsMacFile::OpenStream(const char mode[], hsBool throwIfFailure)
         perm |= fsWrPerm;
     
     if (this->OpenDataFork(perm, &refnum))
-    {   hsFileStream*   stream = TRACKED_NEW hsFileStream;
+    {   hsFileStream*   stream = new hsFileStream;
         stream->SetFileRef(refnum);
         return stream;
     }
@@ -212,13 +212,13 @@ struct hsFolderIterator_Data {
     OSType  fFileType;
     OSType  fCreator;
     char    fCName[_MAX_PATH];
-    Int16   fCurrIndex;
+    int16_t   fCurrIndex;
     hsBool  fValid;
 };
 
 hsFolderIterator::hsFolderIterator(const char path[])
 {
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
 
     fData->fCurrIndex = 0;
     fData->fValid = false;
@@ -231,7 +231,7 @@ hsFolderIterator::hsFolderIterator(const char path[])
 
 hsFolderIterator::hsFolderIterator(const struct FSSpec* spec)       // Alt Constructor - pass in FSSpec from OpenDlg()
 {
-    fData = TRACKED_NEW hsFolderIterator_Data;
+    fData = new hsFolderIterator_Data;
 
     fData->fCurrIndex = 0;
     fData->fValid = false;
@@ -266,7 +266,7 @@ void hsFolderIterator::SetMacFolder(OSType folderType)
     this->Reset();
 }
 
-void hsFolderIterator::SetMacFolder(Int16 vRefNum, Int32 dirID)
+void hsFolderIterator::SetMacFolder(int16_t vRefNum, int32_t dirID)
 {
     fData->fSpec.vRefNum    = vRefNum;
     fData->fSpec.parID      = dirID;

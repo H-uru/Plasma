@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
 #include "plVirtualCamNeu.h"
 #include "plCameraModifier.h"
 #include "plCameraBrain.h"
@@ -83,24 +84,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 
 #include "hsGeometry3.h"
-#include "hsConfig.h"
 #include "hsQuat.h"
 
-hsScalar plVirtualCam1::fFOVw           =  45.0f;
-hsScalar plVirtualCam1::fFOVh           =  33.75f;
-hsScalar plVirtualCam1::fHither         =   0.3f;
-hsScalar plVirtualCam1::fYon            = 500.0f;
+float plVirtualCam1::fFOVw           =  45.0f;
+float plVirtualCam1::fFOVh           =  33.75f;
+float plVirtualCam1::fHither         =   0.3f;
+float plVirtualCam1::fYon            = 500.0f;
 hsBool   plVirtualCam1::printFOV        = false;
 hsBool   plVirtualCam1::fUseAccelOverride   = 1;
 hsBool   plVirtualCam1::freeze  = 0;
-//hsScalar plVirtualCam1::fAccel            = 5.0f;
-//hsScalar plVirtualCam1::fDecel            = 5.0f;
-//hsScalar plVirtualCam1::fVel          = 10.0f;
-hsScalar plVirtualCam1::fAccel          = 50.0f;
-hsScalar plVirtualCam1::fDecel          = 50.0f;
-hsScalar plVirtualCam1::fVel            = 100.0f;
-hsScalar plVirtualCam1::fPanResponseTime    = 3.0f;
-hsScalar plVirtualCam1::fFallTimerDelay = 0.25f;
+//float plVirtualCam1::fAccel            = 5.0f;
+//float plVirtualCam1::fDecel            = 5.0f;
+//float plVirtualCam1::fVel          = 10.0f;
+float plVirtualCam1::fAccel          = 50.0f;
+float plVirtualCam1::fDecel          = 50.0f;
+float plVirtualCam1::fVel            = 100.0f;
+float plVirtualCam1::fPanResponseTime    = 3.0f;
+float plVirtualCam1::fFallTimerDelay = 0.25f;
 hsBool   plVirtualCam1::alwaysCutForColin = false;
 hsBool   plVirtualCam1::WalkPan3rdPerson = false;
 hsBool     plVirtualCam1::StayInFirstPersonForever = false;
@@ -148,7 +148,7 @@ plVirtualCam1::plVirtualCam1()
     fThirdPersonCam = nil;
     fTransPos = POS_TRANS_OFF;
     fPrevCam = nil;
-    fTransitionCamera = TRACKED_NEW plCameraModifier1;
+    fTransitionCamera = new plCameraModifier1;
     fTransitionCamera->RegisterAs(kTransitionCamera_KEY);
     // set initial view position
     fOutputPos.Set(100,100,100);
@@ -164,8 +164,8 @@ plVirtualCam1::plVirtualCam1()
     fCameraDriveInterface = plDebugInputInterface::GetInstance();
     hsRefCnt_SafeRef( fCameraDriveInterface );
 
-    fDriveCamera = TRACKED_NEW plCameraModifier1;
-    plCameraBrain1* pDriveBrain = TRACKED_NEW plCameraBrain1_Drive(fDriveCamera);
+    fDriveCamera = new plCameraModifier1;
+    plCameraBrain1* pDriveBrain = new plCameraBrain1_Drive(fDriveCamera);
 
     PushCamera(fDriveCamera);
     fForceCutOnce=false;
@@ -186,7 +186,7 @@ plVirtualCam1::plVirtualCam1()
     // only open log file if logging is on
     if ( !plStatusLog::fLoggingOff )
     {
-        wchar fileAndPath[MAX_PATH];
+        wchar_t fileAndPath[MAX_PATH];
         PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
         PathAddFilename(fileAndPath, fileAndPath, L"camLog.txt", arrsize(fileAndPath));
         foutLog = _wfopen( fileAndPath, L"wt" );
@@ -262,7 +262,7 @@ void plVirtualCam1::RebuildStack(const plKey& key)
     }
     if (!HasFlags(kFirstPersonAtLinkOut))
     {
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         pMsg->SetSender(GetKey());
         pMsg->SetCmd(plEnableMsg::kEnable);
         pMsg->AddType(plEnableMsg::kDrawable);
@@ -287,7 +287,7 @@ void plVirtualCam1::SetOffset(float x, float y, float z)
 }
 
 // static function
-void plVirtualCam1::SetFOV(hsScalar x, hsScalar y)
+void plVirtualCam1::SetFOV(float x, float y)
 {
 
     float fovW = y * fAspectRatio;
@@ -307,12 +307,12 @@ if (printFOV)
 
 }
 // static function
-void plVirtualCam1::SetFOV(hsScalar x, hsScalar y, plCameraModifier1* pCam)
+void plVirtualCam1::SetFOV(float x, float y, plCameraModifier1* pCam)
 {
     if (plVirtualCam1::Instance()->GetCurrentCamera() != pCam)
         return;
 
-    hsScalar diff = hsABS(fFOVw - x);
+    float diff = hsABS(fFOVw - x);
     if (diff > 10.0f)
     {
 #ifdef STATUS_LOG
@@ -339,7 +339,7 @@ void plVirtualCam1::SetFOV(hsScalar x, hsScalar y, plCameraModifier1* pCam)
 
 // static function
 
-void plVirtualCam1::SetDepth(hsScalar h, hsScalar y)
+void plVirtualCam1::SetDepth(float h, float y)
 {
     return;
     fHither = h;
@@ -490,7 +490,7 @@ void plVirtualCam1::ICreatePlate()
     plMipmap *ourMip = fEffectPlate->CreateMaterial( 16, 16, true );
     for( y = 0; y < ourMip->GetHeight(); y++ )
     {
-        UInt32  *pixels = ourMip->GetAddr32( 0, y );
+        uint32_t  *pixels = ourMip->GetAddr32( 0, y );
         for( x = 0; x < ourMip->GetWidth(); x++ )
             pixels[ x ] = 0xff000000;
     }
@@ -684,17 +684,17 @@ void plVirtualCam1::AdjustForInput()
 
         UnPanIfNeeded();
 
-        hsScalar panSpeed = 0.5f;
+        float panSpeed = 0.5f;
         double secs = hsTimer::GetDelSysSeconds();
         
         if (HasMovementFlag(B_CAMERA_PAN_UP))
-            fY -= (hsScalar)(panSpeed * secs);
+            fY -= (float)(panSpeed * secs);
         if (HasMovementFlag(B_CAMERA_PAN_DOWN))
-            fY += (hsScalar)(panSpeed * secs);  
+            fY += (float)(panSpeed * secs);  
         if (HasMovementFlag(B_CAMERA_PAN_LEFT))
-            fX -= (hsScalar)(panSpeed * secs);
+            fX -= (float)(panSpeed * secs);
         if (HasMovementFlag(B_CAMERA_PAN_RIGHT))
-            fX += (hsScalar)(panSpeed * secs);
+            fX += (float)(panSpeed * secs);
     }
     if ((fY == 0.5f && fX == 0.5f) &&
         fFirstPersonOverride == nil) 
@@ -725,17 +725,17 @@ void plVirtualCam1::AdjustForInput()
 
     // scale maximum angle by % mouse input
 
-    hsScalar scaledX;
+    float scaledX;
     if (fFirstPersonOverride)
         scaledX = 3.14159;
     else
-        scaledX = (hsScalar)(3.14159 - (fXPanLimit * ( (fX - 0.5f) / 0.5f)));
+        scaledX = (float)(3.14159 - (fXPanLimit * ( (fX - 0.5f) / 0.5f)));
 
-    hsScalar scaledZ; 
+    float scaledZ; 
     if (fFirstPersonOverride)
-        scaledZ = (hsScalar)(3.14159 - (0.872f * ( (fY - 0.5f) / 0.5f)));
+        scaledZ = (float)(3.14159 - (0.872f * ( (fY - 0.5f) / 0.5f)));
     else
-        scaledZ = (hsScalar)(3.14159 - (fZPanLimit * ( (fY - 0.5f) / 0.5f)));
+        scaledZ = (float)(3.14159 - (fZPanLimit * ( (fY - 0.5f) / 0.5f)));
 
     hsMatrix44 mX;
     hsMatrix44 mZ;
@@ -824,7 +824,7 @@ void plVirtualCam1::Output()
         fFadeCounter-=1;
         if (fFadeCounter == 0 && fFirstPersonOverride == nil)
         {
-            plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+            plEnableMsg* pMsg = new plEnableMsg;
             pMsg->SetSender(GetKey());
             pMsg->SetCmd(plEnableMsg::kEnable);
             pMsg->AddType(plEnableMsg::kDrawable);
@@ -888,7 +888,7 @@ void plVirtualCam1::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
 
     // register for control messages
-    plCmdIfaceModMsg* pModMsg = TRACKED_NEW plCmdIfaceModMsg;
+    plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
     pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg->SetSender(GetKey());
     pModMsg->SetCmd(plCmdIfaceModMsg::kAdd);
@@ -1068,8 +1068,8 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
     {
         if (!HasFlags(kFalling))
         {
-            hsScalar dX = pMouseMsg->GetDX();
-            hsScalar dY = pMouseMsg->GetDY();
+            float dX = pMouseMsg->GetDX();
+            float dY = pMouseMsg->GetDY();
             if (plMouseDevice::GetInverted())
             {
                 dX *= -1.f;
@@ -1238,7 +1238,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
                 
                     fPythonOverride->Push(!HasFlags(kAvatarWalking));
                     
-                    CamTrans* pTrans = TRACKED_NEW CamTrans(fPythonOverride->GetKey());
+                    CamTrans* pTrans = new CamTrans(fPythonOverride->GetKey());
                     if (pCam->Cmd(plCameraMsg::kPythonOverridePushCut))
                         pTrans->fCutPOA = pTrans->fCutPos = true; 
                     StartTransition(pTrans);
@@ -1302,7 +1302,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
             if (HasFlags(kJustLinkedIn))
             {
                 ClearFlags(kJustLinkedIn);
-                plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                 pMsg->SetFadeOut(true);
                 pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1420,17 +1420,17 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         if (mod->GetSubject() == subject)
             return;
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
+        plGenRefMsg* msg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
         msg->SetOldRef(mod->GetSubject());
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
     }
     else
     {
-        plCameraModifier1* pMod = TRACKED_NEW plCameraModifier1;
-        plCameraBrain1_FirstPerson* pBrain = TRACKED_NEW plCameraBrain1_FirstPerson(pMod);
+        plCameraModifier1* pMod = new plCameraModifier1;
+        plCameraBrain1_FirstPerson* pBrain = new plCameraBrain1_FirstPerson(pMod);
         pMod->RegisterAs( kDefaultCameraMod1_KEY );
         //pBrain->SetSubject(subject);
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
+        plGenRefMsg* msg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
         
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pMod->GetKey());
@@ -1459,16 +1459,16 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         if (mod->GetSubject() == subject)
             return;
 
-        plGenRefMsg* msg = TRACKED_NEW plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
+        plGenRefMsg* msg = new plGenRefMsg(mod->GetKey(), plRefMsg::kOnReplace, 0, plCameraBrain1::kSubject );
         msg->SetOldRef(mod->GetSubject());
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msg, plRefFlags::kPassiveRef);
     }
     else
     {
-        plCameraModifier1* pModx = TRACKED_NEW plCameraModifier1;
-        plCameraBrain1_Avatar* pBrainx = TRACKED_NEW plCameraBrain1_Avatar(pModx);
+        plCameraModifier1* pModx = new plCameraModifier1;
+        plCameraBrain1_Avatar* pBrainx = new plCameraBrain1_Avatar(pModx);
         pModx->RegisterAs( kBuiltIn3rdPersonCamera_KEY );
-        plGenRefMsg* msgx = TRACKED_NEW plGenRefMsg(pModx->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
+        plGenRefMsg* msgx = new plGenRefMsg(pModx->GetKey(), plRefMsg::kOnCreate, 0, plCameraBrain1::kSubject ); // SceneObject
         hsgResMgr::ResMgr()->AddViaNotify(subject->GetKey(), msgx, plRefFlags::kPassiveRef);
 
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pModx->GetKey());
@@ -1503,7 +1503,7 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
     }
 
     if (pCam->GetKey())
-        hsgResMgr::ResMgr()->AddViaNotify(pCam->GetKey(), TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pCam->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
 }
 
 void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
@@ -1570,7 +1570,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
             if (!pCam->SetFaded(true))
             {
                 // new camera doesn't support fading, fade him back in
-                plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                 pMsg->SetFadeOut(false);
                 pMsg->SetSubjectKey(GetCurrentStackCamera()->GetBrain()->GetSubject()->GetKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1628,7 +1628,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
                 // do a track transition here;
                 fPrevCam = GetCurrentStackCamera();
                 AddCameraToStack(pCam);
-                pTrans = TRACKED_NEW CamTrans(pCam->GetKey());
+                pTrans = new CamTrans(pCam->GetKey());
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
@@ -1639,7 +1639,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
             {
                 // both fixed brains, cut between them
                 AddCameraToStack(pCam);
-                pTrans = TRACKED_NEW CamTrans(pCam->GetKey());
+                pTrans = new CamTrans(pCam->GetKey());
                 pTrans->fCutPOA = true;
                 pTrans->fCutPos = true;
                 StartTransition(pTrans);
@@ -1747,7 +1747,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
                 if (!GetCurrentStackCamera()->SetFaded(true))
                 {
                     // new camera doesn't support fading, fade him back in
-                    plCameraTargetFadeMsg* pMsg = TRACKED_NEW plCameraTargetFadeMsg;
+                    plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                     pMsg->SetFadeOut(false);
                     pMsg->SetSubjectKey(pCam->GetBrain()->GetSubject()->GetKey());
                     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -1781,14 +1781,14 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
                 {
                     // do a track transition here;
                     fPrevCam = pCam;
-                    pTrans = TRACKED_NEW CamTrans(GetCurrentStackCamera()->GetKey());
+                    pTrans = new CamTrans(GetCurrentStackCamera()->GetKey());
                     StartTransition(pTrans);
                     delete(pTrans);
                 }
                 else
                 {
                     fPrevCam = pCam;
-                    pTrans = TRACKED_NEW CamTrans(GetCurrentStackCamera()->GetKey());
+                    pTrans = new CamTrans(GetCurrentStackCamera()->GetKey());
                     pTrans->fCutPOA = true;
                     pTrans->fCutPos = true;
                     StartTransition(pTrans);
@@ -1867,7 +1867,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     if ( (fPythonOverride && plCameraBrain1_Avatar::ConvertNoRef(fPythonOverride->GetBrain())) ||
          (plCameraBrain1_Avatar::ConvertNoRef(pCam->GetBrain()) && !fPythonOverride) )
     {   
-        plCameraBrain1_Avatar* pAvBrain = TRACKED_NEW plCameraBrain1_Avatar;
+        plCameraBrain1_Avatar* pAvBrain = new plCameraBrain1_Avatar;
         
         pAvBrain->SetOffset(((plCameraBrain1_Avatar*)pCam->GetBrain())->GetOffset());
         pAvBrain->SetPOAOffset(pCam->GetBrain()->GetPOAOffset());
@@ -1888,7 +1888,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     }
     else
     {
-        pBrain = TRACKED_NEW plCameraBrain1;
+        pBrain = new plCameraBrain1;
     }
     pBrain->SetFlags(plCameraBrain1::kIsTransitionCamera);
     
@@ -1906,7 +1906,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         curVec.fZ = transVec.fZ = 0;
         transVec.Normalize();
         curVec.Normalize();
-        hsScalar dot = curVec * transVec;
+        float dot = curVec * transVec;
         if (dot <= 0.5f || transVec.MagnitudeSquared() != 0.0f) 
         {
             pBrain->SetPOAAccel(100);
@@ -1973,7 +1973,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     pBrain->SetCamera(fTransitionCamera);
 
     // deal with FOV - 
-    hsScalar diffH = hsABS(pCam->GetFOVh() - fPrevCam->GetFOVh());
+    float diffH = hsABS(pCam->GetFOVh() - fPrevCam->GetFOVh());
     if ( diffH )
     {
         double time = 0;
@@ -2029,7 +2029,7 @@ void plVirtualCam1::RunTransition()
         plCameraBrain1_Avatar* pAvBr = plCameraBrain1_Avatar::ConvertNoRef(pBrain);
         if (pAvBr)
         {
-            hsScalar off = pAvBr->GetOffset().MagnitudeSquared();
+            float off = pAvBr->GetOffset().MagnitudeSquared();
             hsVector3 dist(pToCam->GetTargetPos() - fTransitionCamera->GetTargetPos());
             if (dist.MagnitudeSquared() > off)
                 fTransitionCamera->GetBrain()->SetFlags(plCameraBrain1::kPanicVelocity);

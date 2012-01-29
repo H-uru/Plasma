@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIListBoxMod.h"
 #include "pfGUIListElement.h"
 #include "pfGameGUIMgr.h"
@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// plSmallRect Stuff ///////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::plSmallRect::Set( Int16 l, Int16 t, Int16 r, Int16 b ) 
+void    pfGUIListBoxMod::plSmallRect::Set( int16_t l, int16_t t, int16_t r, int16_t b ) 
 {
     fLeft = l;
     fTop = t;
@@ -76,7 +76,7 @@ void    pfGUIListBoxMod::plSmallRect::Set( Int16 l, Int16 t, Int16 r, Int16 b )
     fBottom = b; 
 }
 
-hsBool  pfGUIListBoxMod::plSmallRect::Contains( Int16 x, Int16 y )
+hsBool  pfGUIListBoxMod::plSmallRect::Contains( int16_t x, int16_t y )
 {
     if( x < fLeft || x > fRight || y < fTop || y > fBottom )
         return false;
@@ -140,7 +140,7 @@ pfGUIListBoxMod::~pfGUIListBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIListBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -190,7 +190,7 @@ void    pfGUIListBoxMod::IPostSetUpDynTextMap( void )
 void    pfGUIListBoxMod::IUpdate( void )
 {
     int         i, j;
-    UInt16      x, y, width, height, maxHeight;
+    uint16_t      x, y, width, height, maxHeight;
 
 
     if( !fReadyToRoll )
@@ -242,7 +242,7 @@ void    pfGUIListBoxMod::IUpdate( void )
                 {
                     // Shit. Move the scrollPos up to this item at the very least
                     fScrollPos = j;
-                    fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+                    fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
                     fCheckScroll = false;
                     break;
                 }
@@ -345,7 +345,7 @@ void    pfGUIListBoxMod::IUpdate( void )
             if( anySelected )
             {
                 fScrollPos = j;
-                fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+                fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
                 IUpdate();      // Gotta update again, since we just changed the scrollPos after the fact
                 return;
             }
@@ -361,7 +361,7 @@ void    pfGUIListBoxMod::IUpdate( void )
 
 void    pfGUIListBoxMod::ICalcWrapStarts( void )
 {
-    UInt16      i, x, y, maxHeight, width, height;
+    uint16_t      i, x, y, maxHeight, width, height;
 
 
     fWrapStartIdxs.Reset();
@@ -370,7 +370,7 @@ void    pfGUIListBoxMod::ICalcWrapStarts( void )
     {
         if( !HasFlag( kScrollLeftToRight ) )
         {
-            for( i = 0, x = (UInt16)-1, y = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
+            for( i = 0, x = (uint16_t)-1, y = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
             {
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
 
@@ -387,7 +387,7 @@ void    pfGUIListBoxMod::ICalcWrapStarts( void )
         }
         else
         {
-            for( i = 0, y = (UInt16)-1, x = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
+            for( i = 0, y = (uint16_t)-1, x = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
             {
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
                 if( y + height >= fDynTextMap->GetVisibleHeight() )
@@ -419,7 +419,7 @@ void    pfGUIListBoxMod::ICalcWrapStarts( void )
 
 void    pfGUIListBoxMod::ICalcScrollRange( void )
 {
-    UInt16      ctrlHt, ctrlWd, height, width, maxHeight;
+    uint16_t      ctrlHt, ctrlWd, height, width, maxHeight;
     int         i, j, end;
 
 
@@ -495,9 +495,9 @@ void    pfGUIListBoxMod::ICalcScrollRange( void )
             // Smaller than the viewing area, so we don't scroll at all
             fScrollControl->SetRange( 0.f, 0.f );
         else
-            fScrollControl->SetRange( 0.f, (hsScalar)( i + 1 ) );
+            fScrollControl->SetRange( 0.f, (float)( i + 1 ) );
 
-        fScrollControl->SetCurrValue( (hsScalar)( (int)fScrollControl->GetMax() - fScrollPos ) );
+        fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
     }
 }
 
@@ -516,9 +516,9 @@ void    pfGUIListBoxMod::Read( hsStream *s, hsResMgr *mgr )
     fScrollControl = nil;
     if( s->ReadBool() )
     {
-        fScrollProc = TRACKED_NEW pfScrollProc( this );
+        fScrollProc = new pfScrollProc( this );
         fScrollProc->IncRef();
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefScrollCtrl ), plRefFlags::kActiveRef );
     }
 
     if( HasFlag( kDisableSelection ) )
@@ -549,7 +549,7 @@ hsBool  pfGUIListBoxMod::FilterMousePosition( hsPoint3 &mousePt )
     if( !HasFlag( kAllowMousePassThrough ) )
         return true;
 
-    Int32 hover = fCurrClick = IGetItemFromPoint( mousePt );
+    int32_t hover = fCurrClick = IGetItemFromPoint( mousePt );
     if( hover == -1 )
         return false;
 
@@ -561,9 +561,9 @@ hsBool  pfGUIListBoxMod::FilterMousePosition( hsPoint3 &mousePt )
 //  (if any). Shift-click and ctrl-click avoids the deselect and toggles
 //  the item clicked on.
 
-void    pfGUIListBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIListBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    Int32   i;
+    int32_t   i;
 
     int lastSelection = -1;
     if (HasFlag(kForbidNoSelection))
@@ -597,15 +597,15 @@ void    pfGUIListBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
             // Select our new range, deselect everything outside
             if( fCurrClick <= fMaxSel )
             {
-                ISelectRange( 0, (Int8)(fCurrClick - 1), false );
-                ISelectRange( (Int8)fCurrClick, (Int8)fMaxSel, true );
-                ISelectRange( (Int8)(fMaxSel + 1), -1, false );
+                ISelectRange( 0, (int8_t)(fCurrClick - 1), false );
+                ISelectRange( (int8_t)fCurrClick, (int8_t)fMaxSel, true );
+                ISelectRange( (int8_t)(fMaxSel + 1), -1, false );
             }
             else if( fCurrClick >= fMinSel )
             {
-                ISelectRange( 0, (Int8)(fMinSel - 1), false );
-                ISelectRange( (Int8)fMinSel, (Int8)fCurrClick, true );
-                ISelectRange( (Int8)(fCurrClick + 1), -1, false );
+                ISelectRange( 0, (int8_t)(fMinSel - 1), false );
+                ISelectRange( (int8_t)fMinSel, (int8_t)fCurrClick, true );
+                ISelectRange( (int8_t)(fCurrClick + 1), -1, false );
             }
             fElements[ fCurrClick ]->SetSelected( true );
         }
@@ -633,13 +633,13 @@ void    pfGUIListBoxMod::HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers )
 
 //// HandleMouseUp ///////////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fClicking = false;
     if( !( fModsAtDragTime & ( pfGameGUIMgr::kShiftDown | pfGameGUIMgr::kCtrlDown ) ) && !HasFlag( kHandsOffMultiSelect ) )
     {
         // No modifiers--simply select whatever item we're on
-        Int32   item = IGetItemFromPoint( mousePt );
+        int32_t   item = IGetItemFromPoint( mousePt );
         if( item != fCurrClick )
         {
             if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
@@ -665,8 +665,8 @@ void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
                 hsPoint3 localPt = mousePt;
                 IScreenToLocalPt( localPt );
 
-                UInt16 lX = (UInt16)(( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) ) - fElementBounds[ fCurrClick ].fLeft);
-                UInt16 lY = (UInt16)(( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) )- fElementBounds[ fCurrClick ].fTop);
+                uint16_t lX = (uint16_t)(( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) ) - fElementBounds[ fCurrClick ].fLeft);
+                uint16_t lY = (uint16_t)(( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) )- fElementBounds[ fCurrClick ].fTop);
 
                 if( fElements[ fCurrClick ]->MouseClicked( lX, lY ) )
                 {
@@ -684,14 +684,14 @@ void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers )
 //// HandleMouseHover ////////////////////////////////////////////////////////
 //  Just updates our currHover item so we can update the mouse appropriately
 
-void    pfGUIListBoxMod::HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIListBoxMod::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fCurrHover = IGetItemFromPoint( mousePt );
 }
 
 //// HandleMouseDrag /////////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
     int     i;
 
@@ -701,15 +701,15 @@ void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
         // Select our new range, deselect everything outside
         if( fCurrClick <= fMaxSel )
         {
-            ISelectRange( 0, (Int8)(fCurrClick - 1), false );
-            ISelectRange( (Int8)fCurrClick, (Int8)fMaxSel, true );
-            ISelectRange( (Int8)(fMaxSel + 1), -1, false );
+            ISelectRange( 0, (int8_t)(fCurrClick - 1), false );
+            ISelectRange( (int8_t)fCurrClick, (int8_t)fMaxSel, true );
+            ISelectRange( (int8_t)(fMaxSel + 1), -1, false );
         }
         else if( fCurrClick >= fMinSel )
         {
-            ISelectRange( 0, (Int8)(fMinSel - 1), false );
-            ISelectRange( (Int8)fMinSel, (Int8)fCurrClick, true );
-            ISelectRange( (Int8)(fCurrClick + 1), -1, false );
+            ISelectRange( 0, (int8_t)(fMinSel - 1), false );
+            ISelectRange( (int8_t)fMinSel, (int8_t)fCurrClick, true );
+            ISelectRange( (int8_t)(fCurrClick + 1), -1, false );
         }
         IUpdate();
     }
@@ -731,7 +731,7 @@ void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
         }
         else
         {
-            Int32   item = IGetItemFromPoint( mousePt );
+            int32_t   item = IGetItemFromPoint( mousePt );
             if( item != fCurrClick )
             {
                 if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
@@ -749,12 +749,12 @@ void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers )
 
 //// HandleMouseDblClick /////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::HandleMouseDblClick( hsPoint3 &mousePt, UInt8 modifiers )
+void    pfGUIListBoxMod::HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers )
 {
     if( !HasFlag( kGrowLeavesAndProcessOxygen ) )
         return;     // We only care about double clicks if we make oxygen
 
-    Int32 item = IGetItemFromPoint( mousePt );
+    int32_t item = IGetItemFromPoint( mousePt );
     if( item != -1 )
     {
         if( fElements[ item ]->GetType() == pfGUIListElement::kTreeRoot )
@@ -774,20 +774,20 @@ void    pfGUIListBoxMod::HandleMouseDblClick( hsPoint3 &mousePt, UInt8 modifiers
 
 //// IGetItemFromPoint ///////////////////////////////////////////////////////
 
-Int32   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
+int32_t   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
 {
     if( !fBounds.IsInside( &mousePt ) )
         return -1;
 
     hsPoint3    localPt = mousePt; // despite getting a ref to the point (why?) we do NOT want to modify it
     IScreenToLocalPt( localPt );
-    UInt32      i;
-    Int16       clickItem = -1 , clickY = (Int16)( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) );
-    Int16       clickX = (Int16)( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) );
+    uint32_t      i;
+    int16_t       clickItem = -1 , clickY = (int16_t)( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) );
+    int16_t       clickX = (int16_t)( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) );
 
     // We have a nice array that has the starting (top) Y's of each visible element. So we just
     // check against that.
-    UInt32 startAt = 0;
+    uint32_t startAt = 0;
     // make sure that we have a valid fScrollPos
     if ( fScrollPos != -1 )
     {
@@ -802,7 +802,7 @@ Int32   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
     {
         if( i<fElementBounds.GetCount() && fElementBounds[ i ].Contains( clickX, clickY ) )
         {
-            clickItem = (Int16)i;
+            clickItem = (int16_t)i;
             break;
         }
     }
@@ -817,9 +817,9 @@ Int32   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
 //  Find the min and max item that's selected. Returns -1 for both if nobody
 //  is selected
 
-void    pfGUIListBoxMod::IFindSelectionRange( Int32 *min, Int32 *max )
+void    pfGUIListBoxMod::IFindSelectionRange( int32_t *min, int32_t *max )
 {
-    Int32       i;
+    int32_t       i;
 
 
     *min = *max = -1;
@@ -845,9 +845,9 @@ void    pfGUIListBoxMod::IFindSelectionRange( Int32 *min, Int32 *max )
 
 //// ISelectRange ////////////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::ISelectRange( Int8 min, Int8 max, hsBool select )
+void    pfGUIListBoxMod::ISelectRange( int8_t min, int8_t max, hsBool select )
 {
-    Int16   i;
+    int16_t   i;
 
 
     if( max == -1 )
@@ -859,7 +859,7 @@ void    pfGUIListBoxMod::ISelectRange( Int8 min, Int8 max, hsBool select )
 
 //// SetSelection ////////////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::SetSelection( Int32 item )
+void    pfGUIListBoxMod::SetSelection( int32_t item )
 {
     if( HasFlag( kSingleSelect ) )
     {
@@ -879,7 +879,7 @@ void    pfGUIListBoxMod::SetSelection( Int32 item )
     IUpdate();
 }
 
-void    pfGUIListBoxMod::RemoveSelection( Int32 item )
+void    pfGUIListBoxMod::RemoveSelection( int32_t item )
 {
     // make sure the item is valid
     if ( item != -1 && item < fElements.GetCount() )
@@ -900,7 +900,7 @@ void    pfGUIListBoxMod::RemoveSelection( Int32 item )
     IUpdate();
 }
 
-void    pfGUIListBoxMod::AddSelection( Int32 item )
+void    pfGUIListBoxMod::AddSelection( int32_t item )
 {
     // make sure the item is valid (can't add a non-selection!)
     if ( item != -1 && item < fElements.GetCount() )
@@ -921,12 +921,12 @@ void    pfGUIListBoxMod::AddSelection( Int32 item )
 
 //// HandleKeyPress //////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::HandleKeyPress( wchar_t key, UInt8 modifiers )
+hsBool  pfGUIListBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
     return false;
 }
 
-hsBool  pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers )
+hsBool  pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     if( key == KEY_CAPSLOCK )
         return false;
@@ -1029,7 +1029,7 @@ void    pfGUIListBoxMod::ScrollToBegin( void )
 
 void        pfGUIListBoxMod::SetColorScheme( pfGUIColorScheme *newScheme )
 {
-    UInt16  i;
+    uint16_t  i;
 
     pfGUIControlMod::SetColorScheme( newScheme );
 
@@ -1040,22 +1040,22 @@ void        pfGUIListBoxMod::SetColorScheme( pfGUIColorScheme *newScheme )
     }
 }
 
-void pfGUIListBoxMod::SetScrollPos( Int32 pos )
+void pfGUIListBoxMod::SetScrollPos( int32_t pos )
 {
     if ( pos >= (int)fScrollControl->GetMin() && pos <= (int)fScrollControl->GetMax() )
     {
-        fScrollControl->SetCurrValue( (hsScalar)pos );
+        fScrollControl->SetCurrValue( (float)pos );
         fScrollPos = (int)fScrollControl->GetMax() - pos;
     }
     IUpdate();
 }
 
-Int32 pfGUIListBoxMod::GetScrollPos( void )
+int32_t pfGUIListBoxMod::GetScrollPos( void )
 {
     return (int)fScrollControl->GetCurrValue();
 }
 
-Int32 pfGUIListBoxMod::GetScrollRange( void )
+int32_t pfGUIListBoxMod::GetScrollRange( void )
 {
     return (int)fScrollControl->GetMax() - (int)fScrollControl->GetMin();
 }
@@ -1065,9 +1065,9 @@ Int32 pfGUIListBoxMod::GetScrollRange( void )
 //// Element Manipulation ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-UInt16  pfGUIListBoxMod::AddElement( pfGUIListElement *el )
+uint16_t  pfGUIListBoxMod::AddElement( pfGUIListElement *el )
 {
-    UInt16  idx = fElements.GetCount();
+    uint16_t  idx = fElements.GetCount();
     fElements.Append( el );
     el->SetColorScheme( GetColorScheme() );
     el->SetSkin( fSkin );
@@ -1081,10 +1081,10 @@ UInt16  pfGUIListBoxMod::AddElement( pfGUIListElement *el )
     return idx;
 }
 
-void    pfGUIListBoxMod::RemoveElement( UInt16 index )
+void    pfGUIListBoxMod::RemoveElement( uint16_t index )
 {
     // Make sure no other elements care about this one
-    UInt16 i, j;
+    uint16_t i, j;
     for( i = 0; i < fElements.GetCount(); i++ )
     {
         if( fElements[ i ]->GetType() == pfGUIListElement::kTreeRoot )
@@ -1118,7 +1118,7 @@ void    pfGUIListBoxMod::RemoveElement( UInt16 index )
     }
 }
 
-Int16   pfGUIListBoxMod::FindElement( pfGUIListElement *toCompareTo )
+int16_t   pfGUIListBoxMod::FindElement( pfGUIListElement *toCompareTo )
 {
     int     i;
 
@@ -1129,7 +1129,7 @@ Int16   pfGUIListBoxMod::FindElement( pfGUIListElement *toCompareTo )
             return i;
     }
 
-    return (Int16)-1;
+    return (int16_t)-1;
 }
 
 void    pfGUIListBoxMod::ClearAllElements( void )
@@ -1152,34 +1152,34 @@ void    pfGUIListBoxMod::ClearAllElements( void )
     HandleExtendedEvent( pfGUIListBoxMod::kListCleared );
 }
 
-UInt16  pfGUIListBoxMod::AddString( const char *string )
+uint16_t  pfGUIListBoxMod::AddString( const char *string )
 {
-    return AddElement( TRACKED_NEW pfGUIListText( string ) );
+    return AddElement( new pfGUIListText( string ) );
 }
 
-UInt16  pfGUIListBoxMod::AddString( const wchar_t *string )
+uint16_t  pfGUIListBoxMod::AddString( const wchar_t *string )
 {
-    return AddElement( TRACKED_NEW pfGUIListText( string ) );
+    return AddElement( new pfGUIListText( string ) );
 }
 
-Int16   pfGUIListBoxMod::FindString( const char *toCompareTo )
-{
-    pfGUIListText   text( toCompareTo );
-    return FindElement( &text );
-}
-
-Int16   pfGUIListBoxMod::FindString( const wchar_t *toCompareTo )
+int16_t   pfGUIListBoxMod::FindString( const char *toCompareTo )
 {
     pfGUIListText   text( toCompareTo );
     return FindElement( &text );
 }
 
-UInt16  pfGUIListBoxMod::GetNumElements( void )
+int16_t   pfGUIListBoxMod::FindString( const wchar_t *toCompareTo )
+{
+    pfGUIListText   text( toCompareTo );
+    return FindElement( &text );
+}
+
+uint16_t  pfGUIListBoxMod::GetNumElements( void )
 {
     return fElements.GetCount();
 }
 
-pfGUIListElement    *pfGUIListBoxMod::GetElement( UInt16 idx )
+pfGUIListElement    *pfGUIListBoxMod::GetElement( uint16_t idx )
 {
     return fElements[ idx ];
 }
@@ -1199,7 +1199,7 @@ void    pfGUIListBoxMod::UnlockList( void )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-UInt32      pfGUIListBoxMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIListBoxMod::IGetDesiredCursor( void ) const
 {
     if( fCurrHover == -1 )
         return plInputInterface::kNullCursor;

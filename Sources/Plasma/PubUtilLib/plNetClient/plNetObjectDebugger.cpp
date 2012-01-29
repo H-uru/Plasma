@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 #include "plAgeLoader/plAgeLoader.h"
 
-plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, UInt32 flags) : 
+plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, uint32_t flags) : 
 fLoc(loc), 
 fFlags(flags)
 { 
@@ -187,7 +187,7 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
     // set string matching flags
     //
     int len = strlen(objName);
-    UInt32 flags=0;
+    uint32_t flags=0;
     if (objName[0]=='*')
     {
         if (objName[len-1]=='*')
@@ -224,7 +224,7 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
         flags |= kPageMatch;
     }
 
-    fDebugObjects.push_back(TRACKED_NEW DebugObject(tmpObjName, loc, flags));
+    fDebugObjects.push_back(new DebugObject(tmpObjName, loc, flags));
 
     ICreateStatusLog();
 

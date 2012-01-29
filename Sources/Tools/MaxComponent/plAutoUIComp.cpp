@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 {
-    fDesc = TRACKED_NEW ParamBlockDesc2(plComponentBase::kBlkComp, "Auto", IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, end);
+    fDesc = new ParamBlockDesc2(plComponentBase::kBlkComp, "Auto", IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, end);
     cd->autoComp = this;
 }
 
@@ -60,37 +60,37 @@ plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 // Get value from control
 //
 
-hsBool plAutoUIComp::GetCheckBox(Int16 id, plComponentBase *comp)
+hsBool plAutoUIComp::GetCheckBox(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetInt(id);
 }
 
-hsScalar plAutoUIComp::GetFloatSpinner(Int16 id, plComponentBase *comp)
+float plAutoUIComp::GetFloatSpinner(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetFloat(id);
 }
 
-int plAutoUIComp::GetIntSpinner(Int16 id, plComponentBase *comp)
+int plAutoUIComp::GetIntSpinner(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetInt(id);
 }
 
-TSTR plAutoUIComp::GetEditBox(Int16 id, plComponentBase *comp)
+TSTR plAutoUIComp::GetEditBox(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetStr(id);  
 }
 
-INode *plAutoUIComp::GetPickNode(Int16 id, plComponentBase *comp, int idx)
+INode *plAutoUIComp::GetPickNode(int16_t id, plComponentBase *comp, int idx)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetINode(id, 0, idx);
 }
 
-int plAutoUIComp::Count(Int16 id, plComponentBase *comp)
+int plAutoUIComp::Count(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->Count(id);

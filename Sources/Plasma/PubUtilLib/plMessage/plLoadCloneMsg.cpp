@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other
 #include "pnNetCommon/plNetApp.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 
 
@@ -65,7 +65,7 @@ plLoadCloneMsg::plLoadCloneMsg()
 
 // CTOR uoidToClone, requestorKey, userData, isLoading
 // this form is for creating new clones
-plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData)
+plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData)
     : fRequestorKey(requestorKey),
       fUserData(userData),
       fValidMsg(false),
@@ -99,7 +99,7 @@ plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestor
 
 // CTOR existing, requestor, userData, isLoading
 // this form is for unloading or other operations on existing clones
-plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, UInt32 userData, hsBool isLoading)
+plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, hsBool isLoading)
 : fCloneKey(existing),
   fRequestorKey(requestor),
   fUserData(userData),
@@ -237,18 +237,18 @@ hsBool plLoadCloneMsg::IsValidMessage()
 }
 
 // GETUSERDATA
-UInt32 plLoadCloneMsg::GetUserData()
+uint32_t plLoadCloneMsg::GetUserData()
 {
     return fUserData;
 }
 
 // GETORIGINATINGPLAYERID
-UInt32 plLoadCloneMsg::GetOriginatingPlayerID()
+uint32_t plLoadCloneMsg::GetOriginatingPlayerID()
 {
     return fOriginatingPlayerID;
 }
 
-void plLoadCloneMsg::SetOriginatingPlayerID(UInt32 playerId)
+void plLoadCloneMsg::SetOriginatingPlayerID(uint32_t playerId)
 {
     fOriginatingPlayerID = playerId;
 }

@@ -127,27 +127,27 @@ public:
 #ifdef HS_BUILD_FOR_WIN32
 // only implemented on Win32 for now
 class hsWFolderIterator {
-    wchar       fPath[kFolderIterator_MaxPath];
+    wchar_t       fPath[kFolderIterator_MaxPath];
     struct      hsWFolderIterator_Data* fData;
     bool        fCustomFilter;
 public:
-    hsWFolderIterator(const wchar path[] = nil, bool useCustomFilter=false);
+    hsWFolderIterator(const wchar_t path[] = nil, bool useCustomFilter=false);
     virtual     ~hsWFolderIterator();
 
-    const wchar*    GetPath() const { return fPath; }
-    void            SetPath(const wchar path[]);
+    const wchar_t*    GetPath() const { return fPath; }
+    void            SetPath(const wchar_t path[]);
 
     void            Reset();
     hsBool          NextFile();
-    hsBool          NextFileSuffix(const wchar suffix[]);
-    const wchar*    GetFileName() const;
-    int             GetPathAndName(wchar pathandname[] = nil);
+    hsBool          NextFileSuffix(const wchar_t suffix[]);
+    const wchar_t*    GetFileName() const;
+    int             GetPathAndName(wchar_t pathandname[] = nil);
     hsBool          IsDirectory( void ) const;
 
-    FILE*           OpenFILE(const wchar mode[]);
+    FILE*           OpenFILE(const wchar_t mode[]);
 
-    void        SetWinSystemDir(const wchar subdir[]);  // e.g. "Fonts"
-    void        SetFileFilterStr(const wchar filterStr[]);  // e.g. "*.*"
+    void        SetWinSystemDir(const wchar_t subdir[]);  // e.g. "Fonts"
+    void        SetFileFilterStr(const wchar_t filterStr[]);  // e.g. "*.*"
 };
 #endif
 

@@ -67,8 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  SORTARRAYTYPE(type)                      TSortArray< type, TArrayCopyBits< type >, type, 0>
 #define  SORTARRAYTYPEOBJ(type)                   TSortArray< type, TArrayCopyObject< type >, type, 0>
 
-#define  ARR_MEMORY_FLAGS       0 /*| kMemIgnoreBlock*/
-
 
 /****************************************************************************
 *
@@ -97,7 +95,7 @@ public:
     inline void Clear ();
     inline unsigned Count () const;
     inline T * Detach ();
-    inline void Fill (byte value);
+    inline void Fill (uint8_t value);
     inline T * Ptr ();
     inline const T * Ptr () const;
     inline void Set (const T * source, unsigned count);
@@ -142,7 +140,7 @@ TBuffer<T>::TBuffer (const TBuffer<T> & source) {
 template<class T>
 TBuffer<T>::~TBuffer () {
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
 }
 
 //===========================================================================
@@ -159,8 +157,8 @@ TBuffer<T> & TBuffer<T>::operator= (const TBuffer<T> & source) {
 //===========================================================================
 template<class T>
 bool TBuffer<T>::operator== (const TBuffer<T> & source) const {
-    unsigned size = MemSize(m_data);
-    return (size == MemSize(source.m_data)) && !MemCmp(m_data, source.m_data, size);
+    unsigned size = _m_size(m_data);
+    return (size == _m_size(source.m_data)) && !memcmp(m_data, source.m_data, size);
 }
 
 //===========================================================================
@@ -181,22 +179,22 @@ T TBuffer<T>::operator[] (unsigned index) const {
 template<class T>
 void TBuffer<T>::Attach (T * source, unsigned count) {
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data = source;
-    ASSERT(MemSize(source) >= count * sizeof(T));
+    ASSERT(_m_size(source) >= count * sizeof(T));
 }
 
 //===========================================================================
 template<class T>
 unsigned TBuffer<T>::Bytes () const {
-    return m_data ? MemSize(m_data) : 0;
+    return m_data ? _m_size(m_data) : 0;
 }
 
 //===========================================================================
 template<class T>
 void TBuffer<T>::Clear () {
     if (m_data) {
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
         m_data = nil;
     }
 }
@@ -204,7 +202,7 @@ void TBuffer<T>::Clear () {
 //===========================================================================
 template<class T>
 unsigned TBuffer<T>::Count () const {
-    return m_data ? (MemSize(m_data) / sizeof(T)) : 0;
+    return m_data ? (_m_size(m_data) / sizeof(T)) : 0;
 }
 
 //===========================================================================
@@ -217,9 +215,9 @@ T * TBuffer<T>::Detach () {
 
 //===========================================================================
 template<class T>
-void TBuffer<T>::Fill (byte value) {
+void TBuffer<T>::Fill (uint8_t value) {
     if (m_data)
-        MemSet(m_data, value, Bytes());
+        memset(m_data, value, Bytes());
 }
 
 //===========================================================================
@@ -245,9 +243,9 @@ void TBuffer<T>::Set (const T * source, unsigned count) {
 template<class T>
 void TBuffer<T>::SetBytes (unsigned bytes) {
     if (bytes)
-        m_data = (T *)REALLOCFLAGS(m_data, bytes, ARR_MEMORY_FLAGS);
+        m_data = (T *)realloc(m_data, bytes);
     else if (m_data) {
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
         m_data = nil;
     }
 }
@@ -262,10 +260,10 @@ void TBuffer<T>::SetCount (unsigned count) {
 template<class T>
 void TBuffer<T>::Zero () {
     if (m_data)
-        MemZero(m_data, Bytes());
+        memset(m_data, 0, Bytes());
 }
 
-typedef TBuffer<byte> CBuffer;
+typedef TBuffer<uint8_t> CBuffer;
 
 
 /****************************************************************************
@@ -302,7 +300,7 @@ public:
 //===========================================================================
 template<class T>
 void TArrayCopyBits<T>::Assign (T * dest, const T source[], unsigned count) {
-    MemMove(dest, source, count * sizeof(T));
+    memmove(dest, source, count * sizeof(T));
 }
 
 //===========================================================================
@@ -420,7 +418,7 @@ public:
     inline void Clear ();
     inline unsigned Count () const;
     inline T * Detach ();
-    inline void Fill (byte value);
+    inline void Fill (uint8_t value);
     inline T * Ptr ();
     inline const T * Ptr () const;
     inline void Set (const T * source, unsigned count);
@@ -449,7 +447,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (unsigned count) {
     m_alloc = m_count = count;
     if (count) {
-        m_data = (T *)ALLOCFLAGS(count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(count * sizeof(T));
         C::Construct(m_data, count);
     }
     else
@@ -461,7 +459,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (const T * source, unsigned count) {
     m_alloc = m_count = count;
     if (count) {
-        m_data = (T *)ALLOCFLAGS(count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(count * sizeof(T));
         C::CopyConstruct(m_data, source, count);
     }
     else
@@ -473,7 +471,7 @@ template<class T, class C>
 TFArray<T,C>::TFArray (const TFArray<T,C> & source) {
     m_alloc = m_count = source.m_count;
     if (m_count) {
-        m_data = (T *)ALLOCFLAGS(m_count * sizeof(T), ARR_MEMORY_FLAGS);
+        m_data = (T *)malloc(m_count * sizeof(T));
         C::CopyConstruct(m_data, source.m_data, m_count);
     }
     else
@@ -539,7 +537,7 @@ void TFArray<T,C>::AdjustSize (unsigned newAlloc, unsigned newCount) {
             C::CopyConstruct(newData, m_data, m_count);
             C::Destruct(m_data, m_count);
             if (m_data)
-                FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+                free(m_data);
         }
         m_alloc = newAlloc;
         m_data  = newData;
@@ -558,9 +556,9 @@ template<class T, class C>
 void TFArray<T,C>::Attach (T * source, unsigned count) {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data  = source;
-    m_alloc = MemSize(source) / sizeof(T);
+    m_alloc = _m_size(source) / sizeof(T);
     m_count = count;
     ASSERT(m_alloc >= m_count);
 }
@@ -570,7 +568,7 @@ template<class T, class C>
 void TFArray<T,C>::AttachTemp (T * source, unsigned count) {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data  = source;
     m_alloc = count;
     m_count = count;
@@ -587,7 +585,7 @@ template<class T, class C>
 void TFArray<T,C>::Clear () {
     C::Destruct(m_data, m_count);
     if (m_data)
-        FREEFLAGS(m_data, ARR_MEMORY_FLAGS);
+        free(m_data);
     m_data = nil;
     m_alloc = m_count = 0;
 }
@@ -610,9 +608,9 @@ T * TFArray<T,C>::Detach () {
 
 //===========================================================================
 template<class T, class C>
-void TFArray<T,C>::Fill (byte value) {
+void TFArray<T,C>::Fill (uint8_t value) {
     C::Destruct(m_data, m_count);
-    MemSet(m_data, value, m_count * sizeof(T));
+    memset(m_data, value, m_count * sizeof(T));
     C::Construct(m_data, m_count);
 }
 
@@ -680,7 +678,7 @@ const T * TFArray<T,C>::Top () const {
 template<class T, class C>
 void TFArray<T,C>::Zero () {
     C::Destruct(m_data, m_count);
-    MemZero(m_data, m_count * sizeof(T));
+    memset(m_data, 0, m_count * sizeof(T));
     C::Construct(m_data, m_count);
 }
 
@@ -696,7 +694,7 @@ template<class T, class C>
 void TFArray<T,C>::ZeroRange (unsigned index, unsigned count) {
     ASSERT(index + count <= m_count);
     C::Destruct(m_data + index, count);
-    MemZero(m_data + index, count * sizeof(T));
+    memset(m_data + index, 0, count * sizeof(T));
     C::Construct(m_data + index, count);
 }
 
@@ -991,8 +989,8 @@ void TArray<T,C>::Trim () {
 template<class T, class C, class K, unsigned OFFSET>
 class TSortArray : public TArray<T,C> {
 private:
-    inline static K & SortKey (T & rec) { return *(K *)((byte *)&rec + OFFSET); }
-    inline static const K & SortKey (const T & rec) { return *(const K *)((const byte *)&rec + OFFSET); }
+    inline static K & SortKey (T & rec) { return *(K *)((uint8_t *)&rec + OFFSET); }
+    inline static const K & SortKey (const T & rec) { return *(const K *)((const uint8_t *)&rec + OFFSET); }
 
 public:
     inline bool      Delete (K sortKey);

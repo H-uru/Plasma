@@ -110,8 +110,8 @@ public:
     hsVector3           GetUp() const { return *((hsVector3*)&GetWorldToCamera().fMap[1]); }
     hsVector3           GetAcross() const { return *((hsVector3*)&GetWorldToCamera().fMap[0]); }
 
-    UInt16              GetScreenWidth() const { return fWidth; }
-    UInt16              GetScreenHeight() const { return fHeight; }
+    uint16_t              GetScreenWidth() const { return fWidth; }
+    uint16_t              GetScreenHeight() const { return fHeight; }
 
     void                GetViewPort(hsPoint2& mins, hsPoint2& maxs) const;
     void                GetViewPort(int& loX, int& loY, int& hiX, int& hiY) const;
@@ -130,15 +130,15 @@ public:
     hsPoint3            GetMapMax() const { return fMapMax; }
     void                GetMapping(hsPoint3& mapMin, hsPoint3& mapMax) const { mapMin = fMapMin; mapMax = fMapMax; }
 
-    hsScalar            GetFovX() const;
-    hsScalar            GetFovY() const;
-    hsScalar            GetFovXDeg() const { return hsScalarRadToDeg(GetFovX()); }
-    hsScalar            GetFovYDeg() const { return hsScalarRadToDeg(GetFovY()); }
-    hsScalar            GetOrthoWidth() const { return fMax.fX - fMin.fX; }
-    hsScalar            GetOrthoHeight() const { return fMax.fY - fMin.fY; }
-    hsScalar            GetHither() const { return fMin.fZ; }
-    hsScalar            GetYon() const { return fMax.fZ; }
-    void                GetDepth(hsScalar& hither, hsScalar& yon) const { hither = GetHither(); yon = GetYon(); }
+    float            GetFovX() const;
+    float            GetFovY() const;
+    float            GetFovXDeg() const { return hsRadiansToDegrees(GetFovX()); }
+    float            GetFovYDeg() const { return hsRadiansToDegrees(GetFovY()); }
+    float            GetOrthoWidth() const { return fMax.fX - fMin.fX; }
+    float            GetOrthoHeight() const { return fMax.fY - fMin.fY; }
+    float            GetHither() const { return fMin.fZ; }
+    float            GetYon() const { return fMax.fZ; }
+    void                GetDepth(float& hither, float& yon) const { hither = GetHither(); yon = GetYon(); }
 
     // Setup.
     // First, our world to camera and back again.
@@ -149,16 +149,16 @@ public:
     void                SetPerspective(hsBool on) { SetOrthogonal(!on); }
 
     // Next, setting the scree/window/rendertarget size
-    void                SetWidth(UInt16 w) { fWidth = w; }
-    void                SetHeight(UInt16 h) { fHeight = h; }
-    void                SetScreenSize(UInt16 w, UInt16 h) { SetWidth(w); SetHeight(h); }
+    void                SetWidth(uint16_t w) { fWidth = w; }
+    void                SetHeight(uint16_t h) { fHeight = h; }
+    void                SetScreenSize(uint16_t w, uint16_t h) { SetWidth(w); SetHeight(h); }
 
     // Next, setting the viewport. You only need to do this if you want to use the screen functions above.
     // If you're passing in and getting out normalized device coordinates, skip this. If you don't set viewport,
     // Defaults to 0,0,width,height (i.e. the whole screen).
     void                SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, hsBool relative=true);
     void                SetViewPort(float loX, float loY, float hiX, float hiY, hsBool relative=true) { SetViewPort(hsPoint2().Set(loX, loY), hsPoint2().Set(hiX, hiY), relative); }
-    void                SetViewPort(UInt16 left, UInt16 top, UInt16 right, UInt16 bottom) { SetViewPort(hsScalar(left), hsScalar(top), hsScalar(right), hsScalar(bottom), false); }
+    void                SetViewPort(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom) { SetViewPort(float(left), float(top), float(right), float(bottom), false); }
 
     void                SetMapping(const hsPoint3& mins, const hsPoint3& maxs) { SetMapMin(mins); SetMapMax(maxs); }
     void                SetMapMin(const hsPoint3& mins) { fMapMin = mins; }
@@ -166,35 +166,35 @@ public:
 
     // Next, variants on setting up our projection matrix.
     // Depth is pretty uniform.
-    void                SetDepth(hsScalar hither, hsScalar yon) { fMin.fZ = hither; fMax.fZ = yon; InvalidateTransforms(); }
+    void                SetDepth(float hither, float yon) { fMin.fZ = hither; fMax.fZ = yon; InvalidateTransforms(); }
     void                SetDepth(const hsPoint2& d) { SetDepth(d.fX, d.fY); }
-    void                SetHither(hsScalar hither) { fMin.fZ = hither; InvalidateTransforms(); }
-    void                SetYon(hsScalar yon) { fMax.fZ = yon; InvalidateTransforms(); }
+    void                SetHither(float hither) { fMin.fZ = hither; InvalidateTransforms(); }
+    void                SetYon(float yon) { fMax.fZ = yon; InvalidateTransforms(); }
 
     // Garden variety symmetric fov uses either of this first batch. Unless you're doing some funky projection, you don't even
     // need to look through the rest.
     // Degrees - all are full angles, < 180 degrees
     void                SetFovDeg(const hsPoint2& deg) { SetFovDeg(deg.fX, deg.fY); }
-    void                SetFovDeg(hsScalar degX, hsScalar degY) { SetFovXDeg(degX); SetFovYDeg(degY); }
-    void                SetFovXDeg(hsScalar deg) { SetFovX(hsScalarDegToRad(deg)); }
-    void                SetFovYDeg(hsScalar deg) { SetFovY(hsScalarDegToRad(deg)); }
+    void                SetFovDeg(float degX, float degY) { SetFovXDeg(degX); SetFovYDeg(degY); }
+    void                SetFovXDeg(float deg) { SetFovX(hsDegreesToRadians(deg)); }
+    void                SetFovYDeg(float deg) { SetFovY(hsDegreesToRadians(deg)); }
 
     // Radians - all are full angles, < PI
     void                SetFov(const hsPoint2& rad) { SetFov(rad.fX, rad.fY); }
-    void                SetFov(hsScalar radX, hsScalar radY) { SetFovX(radX); SetFovY(radY); }
-    void                SetFovX(hsScalar rad) { SetHalfWidth(hsTan(rad * 0.5f)); }
-    void                SetFovY(hsScalar rad) { SetHalfHeight(hsTan(rad * 0.5f)); }
+    void                SetFov(float radX, float radY) { SetFovX(radX); SetFovY(radY); }
+    void                SetFovX(float rad) { SetHalfWidth(tan(rad * 0.5f)); }
+    void                SetFovY(float rad) { SetHalfHeight(tan(rad * 0.5f)); }
 
-    // For orthogonal projection, don't call SetWidth(hsTan(fovRads)), because hsTan(f)/2 != hsTan(f/2)
+    // For orthogonal projection, don't call SetWidth(tan(fovRads)), because tan(f)/2 != tan(f/2)
     // For non-centered, call SetWidths/Heights() directly.
-    void                SetWidth(hsScalar w) { SetHalfWidth(w * 0.5f); }
-    void                SetHeight(hsScalar h) { SetHalfHeight(h * 0.5f); }
+    void                SetWidth(float w) { SetHalfWidth(w * 0.5f); }
+    void                SetHeight(float h) { SetHalfHeight(h * 0.5f); }
 
     // The rest do no interpretation, just stuff the values passed in.
-    void                SetHalfWidth(hsScalar hw) { SetWidths(-hw, hw); }
-    void                SetHalfHeight(hsScalar hh) { SetHeights(-hh, hh); }
-    void                SetWidths(hsScalar minW, hsScalar maxW) { fMin.fX = minW; fMax.fX = maxW; InvalidateTransforms(); }
-    void                SetHeights(hsScalar minH, hsScalar maxH) { fMin.fY = minH; fMax.fY = maxH; InvalidateTransforms(); }
+    void                SetHalfWidth(float hw) { SetWidths(-hw, hw); }
+    void                SetHalfHeight(float hh) { SetHeights(-hh, hh); }
+    void                SetWidths(float minW, float maxW) { fMin.fX = minW; fMax.fX = maxW; InvalidateTransforms(); }
+    void                SetHeights(float minH, float maxH) { fMin.fY = minH; fMax.fY = maxH; InvalidateTransforms(); }
     void                SetWidths(const hsPoint2& w) { SetWidths(w.fX, w.fY); }
     void                SetHeights(const hsPoint2& h) { SetHeights(h.fX, h.fY); }
     void                SetView(const hsPoint3& mins, const hsPoint3& maxs) { fMax = maxs; fMin = mins; InvalidateTransforms(); }
@@ -292,7 +292,7 @@ protected:
         kViewPortRelative   = 0x10
     };
 
-    mutable UInt32          fFlags;
+    mutable uint32_t          fFlags;
 
     hsMatrix44              fCameraToWorld;
     hsMatrix44              fWorldToCamera;
@@ -301,8 +301,8 @@ protected:
     hsPoint3                fMax; // maxTanX/X, maxTanY/Y, yon
 
     // Screen (or rendertarget) dimensions in pixels.
-    UInt16                  fWidth; 
-    UInt16                  fHeight;
+    uint16_t                  fWidth; 
+    uint16_t                  fHeight;
 
     // Viewport can be stored as fraction of screen size, so the view transform's viewport
     // can be set up independent of the size of the window it's applied to. 
@@ -319,7 +319,7 @@ protected:
     mutable hsMatrix44      fWorldToNDC;
 
     // Have to set a limit here on the smallest the hither plane can be.
-    static const hsScalar   kMinHither;
+    static const float   kMinHither;
 
     void                ISetCameraToNDC() const;
     hsBool              ICameraToNDCSet() const { return IHasFlag(kCameraToNDCSet); }
@@ -334,8 +334,8 @@ protected:
     void                InvalidateTransforms() { ISetFlag(kCameraToNDCSet|kWorldToNDCSet, false); }
 
     // Flags - generic
-    hsBool              IHasFlag(UInt32 f) const { return 0 != (fFlags & f); }
-    void                ISetFlag(UInt32 f, hsBool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
+    hsBool              IHasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+    void                ISetFlag(uint32_t f, hsBool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
 
 };
 

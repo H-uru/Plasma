@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plEncryptedStream.h"
 
 
-const Int32     pfConsoleEngine::fMaxNumParams = 16;
+const int32_t     pfConsoleEngine::fMaxNumParams = 16;
 
 static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
@@ -125,7 +125,7 @@ hsBool  pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     char                *ptr;
     static char         string[ 512 ];
     static char         tempString[ 512 ];
-    UInt32              i;
+    uint32_t              i;
 
     
     /// Scan for subgroups. This can be an empty loop
@@ -249,13 +249,13 @@ void    DummyPrintFn( const char *line )
 
 hsBool  pfConsoleEngine::ExecuteFile( const char *fileName )
 {
-    wchar* wFilename = hsStringToWString(fileName);
+    wchar_t* wFilename = hsStringToWString(fileName);
     hsBool ret = ExecuteFile(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-hsBool  pfConsoleEngine::ExecuteFile( const wchar *fileName )
+hsBool  pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
 {
     char            string[ 512 ];
     int             line;
@@ -302,7 +302,7 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    Int32               numParams, i, numQuotedParams = 0;
+    int32_t               numParams, i, numQuotedParams = 0;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
     char                *ptr;
     hsBool              valid = true;
@@ -360,7 +360,7 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
             pfConsoleContext    &context = pfConsoleContext::GetRootContext();
 
             // Potential variable, see if we can find it
-            Int32 idx = context.FindVar( ptr + 1 );
+            int32_t idx = context.FindVar( ptr + 1 );
             if( idx == -1 )
             {
                 ISetErrorMsg( "Invalid console variable name" );
@@ -375,13 +375,13 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
         }
 
         if( !valid )
-            valid = IConvertToParam( cmd->GetSigEntry( (UInt8)numParams ), ptr, &paramArray[ numParams ] );
+            valid = IConvertToParam( cmd->GetSigEntry( (uint8_t)numParams ), ptr, &paramArray[ numParams ] );
     }
     for( i = numParams; i < fMaxNumParams + 1; i++ )
         paramArray[ i ].SetNone();
 
-    if( !valid || ( cmd->GetSigEntry( (UInt8)numParams ) != pfConsoleCmd::kAny && 
-                    cmd->GetSigEntry( (UInt8)numParams ) != pfConsoleCmd::kNone ) )
+    if( !valid || ( cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kAny && 
+                    cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kNone ) )
     {
         // Print help string and return
         static char     string[ 512 ];
@@ -402,7 +402,7 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-hsBool  pfConsoleEngine::IConvertToParam( UInt8 type, char *string, pfConsoleCmdParam *param )
+hsBool  pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param )
 {
     char    *c, expChars[] = "dDeE+-.";
     hsBool  hasDecimal = false, hasLetters = false;
@@ -561,7 +561,7 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
 //  groups. numToSkip specifies how many matches to skip before returning one
 //  (so if numToSkip = 1, then this will return the second match found).
 
-hsBool  pfConsoleEngine::FindNestedPartialCmd( char *line, UInt32 numToSkip, hsBool preserveParams )
+hsBool  pfConsoleEngine::FindNestedPartialCmd( char *line, uint32_t numToSkip, hsBool preserveParams )
 {
     pfConsoleCmd        *cmd;
 

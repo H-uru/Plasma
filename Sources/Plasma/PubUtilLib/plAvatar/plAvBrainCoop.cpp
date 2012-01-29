@@ -91,12 +91,12 @@ plAvBrainCoop::plAvBrainCoop()
 
 // plAvBrainCoop ----------------------------------------------------------
 // --------------
-plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
+plAvBrainCoop::plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut,
                              MoveMode moveMode, plKey guestKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
   fGuestKey(guestKey)
 {
-    static UInt16 coopSerial = 0;
+    static uint16_t coopSerial = 0;
 
     // this particular constructor is only called by the initiator...
     fInitiatorID = plNetClientApp::GetInstance()->GetPlayerID();
@@ -105,8 +105,8 @@ plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
 
 // plAvBrainCoop ----------------------------------------------------------
 // --------------
-plAvBrainCoop::plAvBrainCoop(UInt32 exitFlags, float fadeIn, float fadeOut,
-                             MoveMode moveMode, UInt32 initiatorID, UInt16 initiatorSerial,
+plAvBrainCoop::plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut,
+                             MoveMode moveMode, uint32_t initiatorID, uint16_t initiatorSerial,
                              plKey hostKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
   fInitiatorID(initiatorID), fInitiatorSerial(initiatorSerial),
@@ -130,7 +130,7 @@ hsBool plAvBrainCoop::MsgReceive(plMessage *msg)
 
             if(localPlayer == fGuestKey)
             {
-                plAvCoopMsg *coopM = TRACKED_NEW plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
+                plAvCoopMsg *coopM = new plAvCoopMsg(plAvCoopMsg::kGuestAccepted, fInitiatorID, fInitiatorSerial);
                 coopM->SetBCastFlag(plMessage::kNetPropagate);
                 coopM->Send();
 
@@ -181,14 +181,14 @@ void plAvBrainCoop::EnableGuestClick()
 
 // GetInitiatorID --------------------
 // ---------------
-UInt32 plAvBrainCoop::GetInitiatorID()
+uint32_t plAvBrainCoop::GetInitiatorID()
 {
     return fInitiatorID;
 }
 
 // GetInitiatorSerial --------------------
 // -------------------
-UInt16 plAvBrainCoop::GetInitiatorSerial()
+uint16_t plAvBrainCoop::GetInitiatorSerial()
 {
     return fInitiatorSerial;
 }

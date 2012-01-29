@@ -79,7 +79,7 @@ public:
     IMtlParams *fIMtlParams;
 
     static const char *LayerStrings[];
-    static const UInt8 LayerToPBIdx[];
+    static const uint8_t LayerToPBIdx[];
 
     enum
     {

@@ -69,7 +69,7 @@ static bool IsPlasmaMtl(Mtl *mtl)
     return false;
 }
 
-static bool IsTexmapOK(Texmap *tex, UInt8 flags)
+static bool IsTexmapOK(Texmap *tex, uint8_t flags)
 {
     if (flags & plMtlCollector::kPlasmaOnly && !plPlasmaMAXLayer::GetPlasmaMAXLayer(tex))
         return false;
@@ -77,7 +77,7 @@ static bool IsTexmapOK(Texmap *tex, UInt8 flags)
     return true;
 }
 
-static bool IsMtlOK(Mtl *mtl, UInt8 flags)
+static bool IsMtlOK(Mtl *mtl, uint8_t flags)
 {
     if (flags & plMtlCollector::kPlasmaOnly && !IsPlasmaMtl(mtl))
         return false;
@@ -91,7 +91,7 @@ static bool IsMtlOK(Mtl *mtl, UInt8 flags)
     return true;
 }
 
-void GetMtlsRecur(MtlBase *mtlBase, MtlSet* mtls, TexSet* texmaps, UInt32 flags)
+void GetMtlsRecur(MtlBase *mtlBase, MtlSet* mtls, TexSet* texmaps, uint32_t flags)
 {
     if (!mtlBase)
         return;
@@ -177,7 +177,7 @@ static void GetTexmapPBs(Texmap* tex, PBSet& pbs)
 
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
 
-static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 flags)
+static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, uint32_t flags)
 {
     Mtl *mtl = node->GetMtl();
     GetMtlsRecur(mtl, mtls, texmaps, flags);
@@ -192,7 +192,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 
     plGUIControlBase *gui = plGUIControlBase::GetGUIComp( node );
     if( gui != nil )
     {
-        UInt32 i;
+        uint32_t i;
         for( i = 0; i < gui->GetNumMtls(); i++ )
             GetMtlsRecur( gui->GetMtl( i ), mtls, texmaps, flags );
     }
@@ -202,7 +202,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 
         plGUISkinComp *guiSkin = plGUISkinComp::GetGUIComp( node );
         if( guiSkin != nil )
         {
-            UInt32 i;
+            uint32_t i;
             for( i = 0; i < guiSkin->GetNumMtls(); i++ )
                 GetMtlsRecur( guiSkin->GetMtl( i ), mtls, texmaps, flags );
         }
@@ -215,7 +215,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 
                 if( base->ClassID() == IMAGE_LIB_CID )
                 {
                     pfImageLibComponent *iLib = (pfImageLibComponent *)base;
-                    UInt32 i;
+                    uint32_t i;
                     for( i = 0; i < iLib->GetNumBitmaps(); i++ )
                         GetMtlsRecur( iLib->GetBitmap( i ), mtls, texmaps, flags );
                 }
@@ -227,7 +227,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, UInt32 
         GetNodeMtlsRecur(node->GetChildNode(i), mtls, texmaps, flags);
 }
 
-static void GetEditorMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags)
+static void GetEditorMtls(MtlSet* mtls, TexSet* texmaps, uint32_t flags)
 {
     static const int kNumEditorSlots = 24;
 
@@ -239,7 +239,7 @@ static void GetEditorMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags)
     }
 }
 
-void plMtlCollector::GetMtls(MtlSet* mtls, TexSet* texmaps, UInt32 flags)
+void plMtlCollector::GetMtls(MtlSet* mtls, TexSet* texmaps, uint32_t flags)
 {
     Interface *ip = GetCOREInterface();
 

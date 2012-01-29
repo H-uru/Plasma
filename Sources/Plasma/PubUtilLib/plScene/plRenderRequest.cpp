@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRenderRequest.h"
 #include "plPageTreeMgr.h"
 #include "plPipeline/plRenderTarget.h"
@@ -57,8 +57,8 @@ plRenderRequest::plRenderRequest()
     fAck(nil),
     fOverrideMat(nil),
     fEraseMat(nil),
-    fDrawableMask(UInt32(-1)),
-    fSubDrawableMask(UInt32(-1)),
+    fDrawableMask(uint32_t(-1)),
+    fSubDrawableMask(uint32_t(-1)),
     fRenderState(0),
     fClearDepth(1.f),
     fFogStart(-1.f),
@@ -136,7 +136,7 @@ void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
     
     if( GetAck() )
     {
-        plRenderRequestAck* ack = TRACKED_NEW plRenderRequestAck( GetAck(), GetUserData() );
+        plRenderRequestAck* ack = new plRenderRequestAck( GetAck(), GetUserData() );
         ack->SetNumDrawn(numDrawn);
         plgDispatch::MsgSend( ack );
     }

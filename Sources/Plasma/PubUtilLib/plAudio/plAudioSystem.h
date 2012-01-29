@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAudioSystem_h
 #define plAudioSystem_h
 
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include "hsWindowHndl.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -128,13 +128,13 @@ protected:
     plSoftSoundNode     *fActiveSofts;
     plStatusLog         *fDebugActiveSoundDisplay;
 
-    static Int32        fMaxNumSounds, fNumSoundsSlop;      // max number of sounds the engine is allowed to audibly play. Different than fMaxNumSources. That is the max number of sounds the audio card can play
+    static int32_t        fMaxNumSounds, fNumSoundsSlop;      // max number of sounds the engine is allowed to audibly play. Different than fMaxNumSources. That is the max number of sounds the audio card can play
     plSoftSoundNode     *fCurrDebugSound;
     hsTArray<plKey>     fPendingRegisters;
 
     hsPoint3    fCurrListenerPos;//, fCommittedListenerPos;
     hsBool      fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
-    Int64     fStartTime;
+    int64_t     fStartTime;
 
     hsTArray<hsKeyedObject *>       fMyRefs;
     hsTArray<plEAXListenerMod *>    fEAXRegions;
@@ -154,7 +154,7 @@ protected:
     void    RegisterSoftSound( const plKey soundKey );
     void    UnregisterSoftSound( const plKey soundKey );
     void    IUpdateSoftSounds( const hsPoint3 &newPosition );
-    UInt32  IScaleVolume(float volume);
+    uint32_t  IScaleVolume(float volume);
     void    IEnumerateDevices();
 
 public:
@@ -205,30 +205,30 @@ public:
 
     static void NextDebugSound( void );
 
-    static void     SetChannelVolume( ASChannel chan, hsScalar vol );
-    static hsScalar GetChannelVolume( ASChannel chan );
+    static void     SetChannelVolume( ASChannel chan, float vol );
+    static float GetChannelVolume( ASChannel chan );
 
-    static void     Set2D3DBias( hsScalar bias );
-    static hsScalar Get2D3Dbias();
+    static void     Set2D3DBias( float bias );
+    static float Get2D3Dbias();
 
-    static void     SetGlobalFadeVolume( hsScalar vol );
-    static hsScalar GetGlobalFadeVolume( void ) { return fGlobalFadeVolume; }
+    static void     SetGlobalFadeVolume( float vol );
+    static float GetGlobalFadeVolume( void ) { return fGlobalFadeVolume; }
 
-    static void     SetDebugFlag( UInt32 flag, hsBool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
-    static hsBool   IsDebugFlagSet( UInt32 flag ) { return fDebugFlags & flag; }
+    static void     SetDebugFlag( uint32_t flag, hsBool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
+    static hsBool   IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
     static void     ClearDebugFlags( void ) { fDebugFlags = 0; }
 
-    static hsScalar GetStreamingBufferSize( void ) { return fStreamingBufferSize; }
-    static void     SetStreamingBufferSize( hsScalar size ) { fStreamingBufferSize = size; }
+    static float GetStreamingBufferSize( void ) { return fStreamingBufferSize; }
+    static void     SetStreamingBufferSize( float size ) { fStreamingBufferSize = size; }
 
-    static UInt8    GetPriorityCutoff( void ) { return fPriorityCutoff; }
-    static void     SetPriorityCutoff( UInt8 cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
+    static uint8_t    GetPriorityCutoff( void ) { return fPriorityCutoff; }
+    static void     SetPriorityCutoff( uint8_t cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
 
     static hsBool   AreExtendedLogsEnabled( void ) { return fEnableExtendedLogs; }
     static void     EnableExtendedLogs( hsBool e ) { fEnableExtendedLogs = e; }
 
-    static hsScalar GetStreamFromRAMCutoff( void ) { return fStreamFromRAMCutoff; }
-    static void     SetStreamFromRAMCutoff( hsScalar c ) { fStreamFromRAMCutoff = c; }
+    static float GetStreamFromRAMCutoff( void ) { return fStreamFromRAMCutoff; }
+    static void     SetStreamFromRAMCutoff( float c ) { fStreamFromRAMCutoff = c; }
 
     static void SetListenerPos(const hsPoint3 pos);
     static void SetListenerVelocity(const hsVector3 vel);
@@ -261,15 +261,15 @@ private:
     static hsWindowHndl         fWnd;
     static hsBool               fUseHardware;
     static hsBool               fDelayedActivate;
-    static hsScalar             fChannelVolumes[ kNumChannels ];
-    static hsScalar             fGlobalFadeVolume;
-    static UInt32               fDebugFlags;
+    static float             fChannelVolumes[ kNumChannels ];
+    static float             fGlobalFadeVolume;
+    static uint32_t               fDebugFlags;
     static hsBool               fEnableEAX;
-    static hsScalar             fStreamingBufferSize;
-    static UInt8                fPriorityCutoff;
+    static float             fStreamingBufferSize;
+    static uint8_t                fPriorityCutoff;
     static hsBool               fEnableExtendedLogs;
-    static hsScalar             fStreamFromRAMCutoff;
-    static hsScalar             f2D3DBias;
+    static float             fStreamFromRAMCutoff;
+    static float             f2D3DBias;
     static hsBool               fLogStreamingUpdates;
     static std::string          fDeviceName;
     static hsBool               fRestarting;

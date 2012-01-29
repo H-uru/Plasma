@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plVolumeIsect.h"
 #include "hsBounds.h"
 #include "hsFastMath.h"
@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plIntersect/plClosest.h"
 
-static const hsScalar kDefLength = 5.f;
+static const float kDefLength = 5.f;
 
 plSphereIsect::plSphereIsect()
 :   fRadius(1.f)
@@ -77,9 +77,9 @@ void plSphereIsect::SetCenter(const hsPoint3& c)
     }
 }
 
-void plSphereIsect::SetRadius(hsScalar r)
+void plSphereIsect::SetRadius(float r)
 {
-    hsScalar del = r - fRadius;
+    float del = r - fRadius;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -140,12 +140,12 @@ plVolumeCullResult plSphereIsect::Test(const hsBounds3Ext& bnd) const
     return kVolumeClear;
 }
 
-hsScalar plSphereIsect::Test(const hsPoint3& pos) const
+float plSphereIsect::Test(const hsPoint3& pos) const
 {
-    hsScalar dist = (pos - fWorldCenter).MagnitudeSquared();
+    float dist = (pos - fWorldCenter).MagnitudeSquared();
     if( dist < fRadius*fRadius )
         return 0;
-    dist = hsSquareRoot(dist);
+    dist = sqrt(dist);
     return dist - fRadius;
 }
 
@@ -171,7 +171,7 @@ void plSphereIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 
 plConeIsect::plConeIsect()
-:   fLength(kDefLength), fRadAngle(hsScalarPI*0.25f), fCapped(false)
+:   fLength(kDefLength), fRadAngle(M_PI*0.25f), fCapped(false)
 {
     ISetup();
 }
@@ -180,7 +180,7 @@ plConeIsect::~plConeIsect()
 {
 }
 
-void plConeIsect::SetAngle(hsScalar rads)
+void plConeIsect::SetAngle(float rads)
 {
     fRadAngle = rads;
     ISetup();
@@ -188,17 +188,17 @@ void plConeIsect::SetAngle(hsScalar rads)
 
 void plConeIsect::ISetup()
 {
-    hsScalar sinAng, cosAng;
+    float sinAng, cosAng;
     hsFastMath::SinCosInRangeAppr(fRadAngle, sinAng, cosAng);
 
-    const hsScalar kHither = 0.1f;
+    const float kHither = 0.1f;
     fLightToNDC.Reset();
-    fLightToNDC.fMap[0][0] =   hsScalarDiv( cosAng, sinAng );
-    fLightToNDC.fMap[1][1] =   hsScalarDiv( cosAng, sinAng );
-    fLightToNDC.fMap[2][2] =    -hsScalarDiv( fLength, fLength - kHither );
-    fLightToNDC.fMap[3][3] =    hsIntToScalar( 0 );
-    fLightToNDC.fMap[3][2] =    hsIntToScalar( -1 );
-    fLightToNDC.fMap[2][3] =    -hsScalarMulDiv( fLength, kHither, fLength - kHither );
+    fLightToNDC.fMap[0][0] =   cosAng / sinAng;
+    fLightToNDC.fMap[1][1] =   cosAng / sinAng;
+    fLightToNDC.fMap[2][2] =    -(fLength / (fLength - kHither));
+    fLightToNDC.fMap[3][3] =    int32_t( 0 );
+    fLightToNDC.fMap[3][2] =    int32_t( -1 );
+    fLightToNDC.fMap[2][3] =    -(fLength * kHither / (fLength - kHither));
     fLightToNDC.NotIdentity();
 }
 
@@ -229,7 +229,7 @@ plVolumeCullResult plConeIsect::Test(const hsBounds3Ext& bnd) const
 
         hsVector3 perp = axis % normDir;
 
-        hsScalar sinAng, cosAng;
+        float sinAng, cosAng;
         hsFastMath::SinCosInRangeAppr(fRadAngle, sinAng, cosAng);
 
         hsVector3 tangent = normDir + sinAng * perp + (1-cosAng) * (axis % perp);
@@ -239,7 +239,7 @@ plVolumeCullResult plConeIsect::Test(const hsBounds3Ext& bnd) const
         hsVector3 normIn2 = perp + sinAng * (perp % axis) + (1-cosAng) * (axis % (axis % perp));
 
         bnd.TestPlane(normIn, depth);
-        hsScalar normInDotTip = normIn.InnerProduct(fWorldTip);
+        float normInDotTip = normIn.InnerProduct(fWorldTip);
         if( depth.fY < normInDotTip )
             return kVolumeCulled;
     }
@@ -247,9 +247,9 @@ plVolumeCullResult plConeIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plConeIsect::Test(const hsPoint3& pos) const
+float plConeIsect::Test(const hsPoint3& pos) const
 {
-    UInt32 clampFlags = fCapped ? plClosest::kClamp : plClosest::kClampLower;
+    uint32_t clampFlags = fCapped ? plClosest::kClamp : plClosest::kClampLower;
     hsPoint3 cp;
 
     plClosest::PointOnLine(pos,
@@ -257,17 +257,17 @@ hsScalar plConeIsect::Test(const hsPoint3& pos) const
                   cp,
                   clampFlags);
 
-    hsScalar radDist = (pos - cp).Magnitude();
-    hsScalar axDist = fWorldNorm.InnerProduct(pos - fWorldTip) / fLength;
+    float radDist = (pos - cp).Magnitude();
+    float axDist = fWorldNorm.InnerProduct(pos - fWorldTip) / fLength;
     if( axDist < 0 )
     {
         return radDist;
     }
-    hsScalar sinAng, cosAng;
+    float sinAng, cosAng;
 
     hsFastMath::SinCosInRangeAppr(fRadAngle, sinAng, cosAng);
 
-    hsScalar radius = axDist * sinAng / cosAng;
+    float radius = axDist * sinAng / cosAng;
 
     radDist -= radius;
     axDist -= fLength;
@@ -282,7 +282,7 @@ hsScalar plConeIsect::Test(const hsPoint3& pos) const
 
 //#define MF_DEBUG_NORM
 #ifdef MF_DEBUG_NORM
-#define IDEBUG_NORMALIZE( a, b ) { hsScalar len = 1.f / a.Magnitude(); a *= len; b *= len; }
+#define IDEBUG_NORMALIZE( a, b ) { float len = 1.f / a.Magnitude(); a *= len; b *= len; }
 #else // MF_DEBUG_NORM
 #define IDEBUG_NORMALIZE( a, b )
 #endif // MF_DEBUG_NORM
@@ -316,7 +316,7 @@ void plConeIsect::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     }
 }
 
-void plConeIsect::SetLength(hsScalar d)
+void plConeIsect::SetLength(float d)
 {
     if( d > 0 )
     {
@@ -386,7 +386,7 @@ plCylinderIsect::~plCylinderIsect()
 {
 }
 
-void plCylinderIsect::ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, hsScalar radius)
+void plCylinderIsect::ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, float radius)
 {
     fWorldNorm.Set(&wTop, &wBot);
     fLength = fWorldNorm.Magnitude();
@@ -394,14 +394,14 @@ void plCylinderIsect::ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, hsSc
     fMax = fWorldNorm.InnerProduct(wTop);
     if( fMin > fMax )
     {
-        hsScalar t = fMin;
+        float t = fMin;
         fMin = fMax;
         fMax = t;
     }
     fRadius = radius;
 }
 
-void plCylinderIsect::SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, hsScalar radius)
+void plCylinderIsect::SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, float radius)
 {
     fTop = lTop;
     fBot = lBot;
@@ -410,7 +410,7 @@ void plCylinderIsect::SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, hs
     ISetupCyl(fTop, fBot, fRadius);
 }
 
-void plCylinderIsect::SetCylinder(const hsPoint3& lBot, const hsVector3& axis, hsScalar radius)
+void plCylinderIsect::SetCylinder(const hsPoint3& lBot, const hsVector3& axis, float radius)
 {
     fBot = lBot;
     fTop = fBot;
@@ -457,12 +457,12 @@ plVolumeCullResult plCylinderIsect::Test(const hsBounds3Ext& bnd) const
     bnd.GetAxes(axes+0, axes+1, axes+2);
     hsPoint3 cp = corner;
 
-    hsScalar bndRadiusSq = bnd.GetRadius();
+    float bndRadiusSq = bnd.GetRadius();
     bndRadiusSq *= bndRadiusSq;
 
-    hsScalar radiusSq = fRadius*fRadius;
+    float radiusSq = fRadius*fRadius;
 
-    hsScalar maxClearDistSq = fRadius - bnd.GetRadius();
+    float maxClearDistSq = fRadius - bnd.GetRadius();
     maxClearDistSq *= maxClearDistSq;
 
     int i;
@@ -474,7 +474,7 @@ plVolumeCullResult plCylinderIsect::Test(const hsBounds3Ext& bnd) const
                       cp, axes[i],
                       cp0, currPt,
                       plClosest::kClamp);
-        hsScalar distSq = (cp0 - currPt).MagnitudeSquared();
+        float distSq = (cp0 - currPt).MagnitudeSquared();
         if( distSq < radiusSq )
         {
             if( distSq < maxClearDistSq )
@@ -489,7 +489,7 @@ plVolumeCullResult plCylinderIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plCylinderIsect::Test(const hsPoint3& pos) const
+float plCylinderIsect::Test(const hsPoint3& pos) const
 {
     hsPoint3 cp;
 
@@ -498,15 +498,15 @@ hsScalar plCylinderIsect::Test(const hsPoint3& pos) const
                   cp,
                   plClosest::kClamp);
 
-    hsScalar radDist = (pos - cp).Magnitude() - fRadius;
-    hsScalar axDist = fWorldNorm.InnerProduct(pos - fWorldBot) / fLength;
+    float radDist = (pos - cp).Magnitude() - fRadius;
+    float axDist = fWorldNorm.InnerProduct(pos - fWorldBot) / fLength;
 
     if( axDist < 0 )
         axDist = -axDist;
     else
         axDist -= fLength;
 
-    hsScalar dist = axDist > radDist ? axDist : radDist;
+    float dist = axDist > radDist ? axDist : radDist;
     
     return dist > 0 ? dist : 0;
 }
@@ -569,8 +569,8 @@ void plParallelIsect::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
         hsVector3 norm;
         norm.Set(&wPosOne, &wPosTwo);
         fPlanes[i].fNorm = norm;
-        hsScalar t0 = norm.InnerProduct(wPosOne);
-        hsScalar t1 = norm.InnerProduct(wPosTwo);
+        float t0 = norm.InnerProduct(wPosOne);
+        float t1 = norm.InnerProduct(wPosTwo);
 
         if( t0 > t1 )
         {
@@ -605,13 +605,13 @@ plVolumeCullResult plParallelIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plParallelIsect::Test(const hsPoint3& pos) const
+float plParallelIsect::Test(const hsPoint3& pos) const
 {
-    hsScalar maxDist = 0;
+    float maxDist = 0;
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
-        hsScalar dist = fPlanes[i].fNorm.InnerProduct(pos);
+        float dist = fPlanes[i].fNorm.InnerProduct(pos);
 
         if( dist > fPlanes[i].fMax )
         {
@@ -676,7 +676,7 @@ plConvexIsect::~plConvexIsect()
 {
 }
 
-void plConvexIsect::AddPlaneUnchecked(const hsVector3& n, hsScalar dist)
+void plConvexIsect::AddPlaneUnchecked(const hsVector3& n, float dist)
 {
     SinglePlane plane;
     plane.fNorm = n;
@@ -697,10 +697,10 @@ void plConvexIsect::AddPlane(const hsVector3& n, const hsPoint3& p)
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
-        const hsScalar kCloseToOne = 1.f - 1.e-4f;
+        const float kCloseToOne = 1.f - 1.e-4f;
         if( fPlanes[i].fNorm.InnerProduct(nNorm) >= kCloseToOne )
         {
-            hsScalar dist = nNorm.InnerProduct(p);
+            float dist = nNorm.InnerProduct(p);
             if( dist > fPlanes[i].fDist )
             {
                 fPlanes[i].fDist = dist;
@@ -761,13 +761,13 @@ plVolumeCullResult plConvexIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plConvexIsect::Test(const hsPoint3& pos) const
+float plConvexIsect::Test(const hsPoint3& pos) const
 {
-    hsScalar maxDist = 0;
+    float maxDist = 0;
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
     {
-        hsScalar dist = fPlanes[i].fWorldNorm.InnerProduct(pos) - fPlanes[i].fWorldDist;
+        float dist = fPlanes[i].fWorldNorm.InnerProduct(pos) - fPlanes[i].fWorldDist;
 
         if( dist > maxDist )
             maxDist = dist;
@@ -777,7 +777,7 @@ hsScalar plConvexIsect::Test(const hsPoint3& pos) const
 
 void plConvexIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    Int16 n = s->ReadLE16();
+    int16_t n = s->ReadLE16();
 
     fPlanes.SetCount(n);
     int i;
@@ -843,7 +843,7 @@ plVolumeCullResult plBoundsIsect::Test(const hsBounds3Ext& bnd) const
     return retVal < 0 ? kVolumeCulled : kVolumeSplit;   
 }
 
-hsScalar plBoundsIsect::Test(const hsPoint3& pos) const
+float plBoundsIsect::Test(const hsPoint3& pos) const
 {
     hsAssert(false, "Unimplemented");
     return 0.f;
@@ -942,13 +942,13 @@ plVolumeCullResult plUnionIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plUnionIsect::Test(const hsPoint3& pos) const
+float plUnionIsect::Test(const hsPoint3& pos) const
 {
-    hsScalar retVal = 1.e33f;
+    float retVal = 1.e33f;
     int i;
     for( i = 0; i < fVolumes.GetCount(); i++ )
     {
-        hsScalar ret = fVolumes[i]->Test(pos);
+        float ret = fVolumes[i]->Test(pos);
         if( ret <= 0 )
             return 0;
         if( ret < retVal )
@@ -990,13 +990,13 @@ plVolumeCullResult plIntersectionIsect::Test(const hsBounds3Ext& bnd) const
     return retVal;
 }
 
-hsScalar plIntersectionIsect::Test(const hsPoint3& pos) const
+float plIntersectionIsect::Test(const hsPoint3& pos) const
 {
-    hsScalar retVal = -1.f;
+    float retVal = -1.f;
     int i;
     for( i = 0; i < fVolumes.GetCount(); i++ )
     {
-        hsScalar ret = fVolumes[i]->Test(pos);
+        float ret = fVolumes[i]->Test(pos);
         if( ret > retVal )
             retVal = ret;
     }

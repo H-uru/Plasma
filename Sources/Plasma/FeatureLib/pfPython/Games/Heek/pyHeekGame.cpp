@@ -65,12 +65,12 @@ void pyHeekGame::JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID)
     pfGameMgr::GetInstance()->JoinCommonGame(callbackKey.getKey(), kGameTypeId_Heek, gameID, 0, NULL);
 }
 
-void pyHeekGame::PlayGame(int position, UInt32 points, std::wstring name)
+void pyHeekGame::PlayGame(int position, uint32_t points, std::wstring name)
 {
     if (gameClient)
     {
         pfGmHeek* heek = pfGmHeek::ConvertNoRef(gameClient);
-        heek->PlayGame((unsigned)position, (dword)points, name.c_str());
+        heek->PlayGame((unsigned)position, (uint32_t)points, name.c_str());
     }
 }
 

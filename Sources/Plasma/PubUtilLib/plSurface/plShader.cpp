@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plShader.h"
 #include "plShaderTable.h"
 
@@ -147,7 +147,7 @@ void plShader::SetVector(int i, const hsScalarTriple& vec)
     fConsts[i].fZ = vec.fZ;
 }
 
-void plShader::SetVector(int i, hsScalar x, hsScalar y, hsScalar z, hsScalar w)
+void plShader::SetVector(int i, float x, float y, float z, float w)
 {
     fConsts[i].x = x;
     fConsts[i].y = y;
@@ -263,7 +263,7 @@ hsVector3 plShader::GetVector(int i) const
     return hsVector3(fConsts[i].fX, fConsts[i].fY, fConsts[i].fZ);
 }
 
-void plShader::GetVector(int i, hsScalar& x, hsScalar& y, hsScalar& z, hsScalar& w) const
+void plShader::GetVector(int i, float& x, float& y, float& z, float& w) const
 {
     x = fConsts[i].x;
     y = fConsts[i].y;
@@ -271,7 +271,7 @@ void plShader::GetVector(int i, hsScalar& x, hsScalar& y, hsScalar& z, hsScalar&
     w = fConsts[i].w;
 }
 
-hsScalar plShader::GetFloat(int i, int chan) const
+float plShader::GetFloat(int i, int chan) const
 {
     return fConsts[i].fArray[chan];
 }
@@ -287,7 +287,7 @@ void plShader::Read(hsStream* s, hsResMgr* mgr)
 
     hsKeyedObject::Read(s, mgr);
 
-    UInt32 n = s->ReadLE32();
+    uint32_t n = s->ReadLE32();
     fConsts.SetCount(n);
     int i;
     for( i = 0; i < n; i++ )

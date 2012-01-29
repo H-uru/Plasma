@@ -49,9 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsConfig.h"
-#include "hsWindows.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputInterfaceMgr.h"
 #include "plInputInterface.h"
 #include "plInputDevice.h"      // For mouse device stuff
@@ -160,15 +158,15 @@ void    plInputInterfaceMgr::Init( void )
     plgDispatch::Dispatch()->RegisterForExactType( plClientMsg::Index(), GetKey() );
     
     /// Hacks (?) for now
-    plAvatarInputInterface *avatar = TRACKED_NEW plAvatarInputInterface();
+    plAvatarInputInterface *avatar = new plAvatarInputInterface();
     IAddInterface( avatar );
     hsRefCnt_SafeUnRef( avatar );
 
-    plSceneInputInterface *scene = TRACKED_NEW plSceneInputInterface();
+    plSceneInputInterface *scene = new plSceneInputInterface();
     IAddInterface( scene );
     hsRefCnt_SafeUnRef( scene );
 
-    plDebugInputInterface *camDrive = TRACKED_NEW plDebugInputInterface();
+    plDebugInputInterface *camDrive = new plDebugInputInterface();
     IAddInterface( camDrive );
     hsRefCnt_SafeUnRef( camDrive );
     
@@ -249,7 +247,7 @@ void plInputInterfaceMgr::ResetClickableState()
 
 //// IUpdateCursor ///////////////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::IUpdateCursor( Int32 newCursor )
+void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 {
     char*     mouseCursorResID;
 
@@ -297,7 +295,7 @@ void    plInputInterfaceMgr::IUpdateCursor( Int32 newCursor )
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Inherited from plSingleModifier, gets called once per IUpdate() loop. 
 
-hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 {
     const char *inputEval = "Eval";
     plProfile_BeginLap(Input, inputEval);
@@ -315,7 +313,7 @@ hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, UInt32 dirty )
         if( !fMessageQueue[ i ]->GetSource()->IHandleCtrlCmd( fMessageQueue[ i ] ) )
         {
             // Nope, just dispatch it like normal
-            plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+            plControlEventMsg* pMsg = new plControlEventMsg;
             for (int j = 0; j < fReceivers.Count(); j++)
                 pMsg->AddReceiver( fReceivers[ j ] );
             pMsg->SetControlActivated( fMessageQueue[i]->fControlActivated );
@@ -332,7 +330,7 @@ hsBool plInputInterfaceMgr::IEval( double secs, hsScalar del, UInt32 dirty )
 
             if (fMessageQueue[i]->fNetPropagateToPlayers)
             {
-                pMsg = TRACKED_NEW plControlEventMsg;
+                pMsg = new plControlEventMsg;
                 for (int j = 0; j < fReceivers.Count(); j++)
                     if (fReceivers[j] == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                         pMsg->AddReceiver( fReceivers[j] );
@@ -432,7 +430,7 @@ hsBool  plInputInterfaceMgr::MsgReceive( plMessage *msg )
         const char *inputIEM = "InputEventMsg";
         plProfile_BeginLap(Input, inputIEM);
         hsBool handled = false;
-        UInt32 missedInputStartIdx = 0;
+        uint32_t missedInputStartIdx = 0;
         plInputInterface *oldCurrentFocus = fCurrentFocus;
 
         // Current focus (if there is one) gets first crack

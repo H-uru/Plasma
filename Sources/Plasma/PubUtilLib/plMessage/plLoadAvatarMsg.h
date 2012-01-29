@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoadAvatarMsg_INC
 
 #include "plLoadCloneMsg.h"
-#include "hsUtils.h"
+
 #include "pnKeyedObject/plUoid.h"
 
 class plAvTask;
@@ -82,7 +82,7 @@ public:
         \param initialTask - queue up this task after loading (and spawning)
         \param userStr - a string that the user can set
         */
-    plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, UInt32 userData,
+    plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
                     hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
 
     /** Use this form if you're sending a message about an existing clone -- either
@@ -96,7 +96,7 @@ public:
         \param isLoading - Are we loading or unloading?
         \param userStr - a string that the user can set
         */
-    plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, UInt32 userData,
+    plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, uint32_t userData,
                     hsBool isPlayer, hsBool isLoading, const char *userStr = nil);
 
     virtual ~plLoadAvatarMsg();

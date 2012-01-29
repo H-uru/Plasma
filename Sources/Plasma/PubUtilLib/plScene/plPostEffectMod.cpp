@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plPostEffectMod.h"
 #include "plPageTreeMgr.h"
 #include "plSceneNode.h"
@@ -64,8 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plPostEffectMod::plPostEffectMod()
 :   fHither(1.f),
     fYon(100.f),
-    fFovX(hsScalarPI * 0.25f),
-    fFovY(hsScalarPI * 0.25f * 0.75f),
+    fFovX(M_PI * 0.25f),
+    fFovY(M_PI * 0.25f * 0.75f),
     fPageMgr(nil),
     fRenderTarget(nil),
     fRenderRequest(nil)
@@ -83,18 +83,18 @@ plPostEffectMod::~plPostEffectMod()
 
 void plPostEffectMod::ISetupRenderRequest()
 {
-    UInt32 rtFlags = 0;
+    uint32_t rtFlags = 0;
 
     // If we go to rendering to sub-window, we'll want to explicitly set width and height
-    UInt32 width = 0;
-    UInt32 height = 0;
+    uint32_t width = 0;
+    uint32_t height = 0;
 
-    UInt32 colorDepth = 0;
-    UInt32 zDepth = 0;
-    UInt32 stencilDepth = 0;
+    uint32_t colorDepth = 0;
+    uint32_t zDepth = 0;
+    uint32_t stencilDepth = 0;
 
-    fRenderRequest = TRACKED_NEW plRenderRequest;
-    UInt32 renderState = plPipeline::kRenderNormal
+    fRenderRequest = new plRenderRequest;
+    uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection
         | plPipeline::kRenderNoLights
         | plPipeline::kRenderClearDepth;
@@ -107,7 +107,7 @@ void plPostEffectMod::ISetupRenderRequest()
 
     fRenderRequest->SetRenderTarget(fRenderTarget);
 
-    fPageMgr = TRACKED_NEW plPageTreeMgr;
+    fPageMgr = new plPageTreeMgr;
 
     fRenderRequest->SetPageTreeMgr(fPageMgr);
 
@@ -157,7 +157,7 @@ hsBool plPostEffectMod::IIsEnabled() const
     return /*GetTarget() &&*/ !fPageMgr->Empty() && fState.IsBitSet(kEnabled);
 }
 
-hsBool plPostEffectMod::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plPostEffectMod::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -223,7 +223,7 @@ void plPostEffectMod::ISubmitRequest()
 
     IUpdateRenderRequest();
 
-    plRenderRequestMsg* req = TRACKED_NEW plRenderRequestMsg(GetKey(), fRenderRequest);
+    plRenderRequestMsg* req = new plRenderRequestMsg(GetKey(), fRenderRequest);
     plgDispatch::MsgSend(req);
 }
 
@@ -305,7 +305,7 @@ void plPostEffectMod::Read(hsStream* s, hsResMgr* mgr)
     fFovX = s->ReadLEScalar();
     fFovY = s->ReadLEScalar();
 
-    fNodeKey = mgr->ReadKeyNotifyMe(s, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
+    fNodeKey = mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
 
     fDefaultW2C.Read( s );
     fDefaultC2W.Read( s );

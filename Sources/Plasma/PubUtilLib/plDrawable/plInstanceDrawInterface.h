@@ -53,10 +53,10 @@ protected:
     plDrawableSpans *fDrawable;
     hsTArray<plSharedMesh*> fMeshes;
 
-    virtual void ICheckDrawableIndex(UInt8 which);
+    virtual void ICheckDrawableIndex(uint8_t which);
 
 public:
-    UInt32 fTargetID;
+    uint32_t fTargetID;
 
     plInstanceDrawInterface();
     virtual ~plInstanceDrawInterface();
@@ -73,11 +73,11 @@ public:
     void RemoveSharedMesh(plSharedMesh *mesh);
 
     virtual void ReleaseData();
-    virtual void SetSharedMesh(UInt8 which, plSharedMesh *mesh);
-    virtual void IClearIndex(UInt8 which);
+    virtual void SetSharedMesh(uint8_t which, plSharedMesh *mesh);
+    virtual void IClearIndex(uint8_t which);
     plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
 
-    Int32 GetSharedMeshIndex(const plSharedMesh *mesh) const;
+    int32_t GetSharedMeshIndex(const plSharedMesh *mesh) const;
 };
 
 

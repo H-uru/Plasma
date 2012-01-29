@@ -76,7 +76,7 @@ private:
     plSimulationInterface*      GetVolatileSimulationInterface() { return fSimulationInterface; }
     plCoordinateInterface*      GetVolatileCoordinateInterface() { return fCoordinateInterface; }
     plAudioInterface*           GetVolatileAudioInterface() { return fAudioInterface; }
-    plObjInterface*             GetVolatileGenericInterface(UInt16 classIdx) const;
+    plObjInterface*             GetVolatileGenericInterface(uint16_t classIdx) const;
 
     plModifier*                 GetVolatileModifier(int i) { return fModifiers[i]; }
 
@@ -117,7 +117,7 @@ protected:
 
     void                    ISetInterface(plObjInterface* iface);
     void                    IRemoveInterface(plObjInterface* iface);
-    void                    IRemoveInterface(Int16 idx, plObjInterface* iface=nil);
+    void                    IRemoveInterface(int16_t idx, plObjInterface* iface=nil);
 
     void                    ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
@@ -140,14 +140,14 @@ public:
     int                     GetNumGenerics() const { return fGenerics.GetCount(); }
     const plObjInterface*   GetGeneric(int i) const { return fGenerics[i]; }
 
-    plObjInterface*         GetGenericInterface(UInt16 classIdx) const { return GetVolatileGenericInterface(classIdx); }
+    plObjInterface*         GetGenericInterface(uint16_t classIdx) const { return GetVolatileGenericInterface(classIdx); }
 
     int                     GetNumModifiers() const { return fModifiers.GetCount(); }
     const plModifier*       GetModifier(int i) const { return fModifiers[i]; }
-    const plModifier*       GetModifierByType(UInt16 classIdx) const;
+    const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
     virtual hsBool MsgReceive(plMessage* msg);
-    virtual hsBool Eval(double secs, hsScalar del);
+    virtual hsBool Eval(double secs, float del);
 
     void                    SetSceneNode(plKey newNode);
     plKey                   GetSceneNode() const;

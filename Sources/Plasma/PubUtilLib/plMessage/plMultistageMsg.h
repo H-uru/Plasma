@@ -58,14 +58,14 @@ public:
         kSetLoopCount,
     };
 
-    UInt8 fStageNum;
-    UInt8 fNumLoops;
+    uint8_t fStageNum;
+    uint8_t fNumLoops;
 
     plMultistageModMsg() : fStageNum(0), fNumLoops(1) {}
     plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender,receiver,nil),fStageNum(0),fNumLoops(1) {}
 
-    hsBool GetCommand(UInt8 cmd) { return fCmds.IsBitSet(cmd); }
-    void SetCommand(UInt8 cmd, hsBool val = true) { fCmds.SetBit(cmd, val); }
+    hsBool GetCommand(uint8_t cmd) { return fCmds.IsBitSet(cmd); }
+    void SetCommand(uint8_t cmd, hsBool val = true) { fCmds.SetBit(cmd, val); }
     
     // plasma protocol
     CLASSNAME_REGISTER( plMultistageModMsg );

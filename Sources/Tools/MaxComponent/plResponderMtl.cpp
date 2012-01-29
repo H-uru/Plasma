@@ -337,8 +337,8 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
         throw "No material specified";
 
     const char *animName = pb->GetStr(kMtlAnim);
-    hsScalar begin=-1.f;
-    hsScalar end = -1.f;
+    float begin=-1.f;
+    float end = -1.f;
 
     SegmentMap *segMap = GetAnimSegmentMap(maxMtl, pErrMsg);
 
@@ -374,7 +374,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
             throw "Material animation key(s) not found";
     }
 
-    plAnimCmdMsg *msg = TRACKED_NEW plAnimCmdMsg;
+    plAnimCmdMsg *msg = new plAnimCmdMsg;
     msg->AddReceivers(keys);
 
     switch (pb->GetInt(kMtlType))
@@ -462,7 +462,7 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     if (animMsg)
         animMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
 
-    plEventCallbackMsg *eventMsg = TRACKED_NEW plEventCallbackMsg;
+    plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(waitInfo.receiver);
     eventMsg->fRepeats = 0;
     eventMsg->fEvent = kStop;

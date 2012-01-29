@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plBitmap.h"
 
 #include "hsResMgr.h"
@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Static Members ///////////////////////////////////////////////////////////
 
-UInt8   plBitmap::fGlobalNumLevelsToChop = 0;
+uint8_t   plBitmap::fGlobalNumLevelsToChop = 0;
 
 
 //// Constructor & Destructor /////////////////////////////////////////////////
@@ -85,12 +85,12 @@ plBitmap::~plBitmap()
         hsRefCnt_SafeUnRef( fDeviceRef );
 }
 
-bool plBitmap::IsSameModifiedTime(UInt32 lowTime, UInt32 highTime)
+bool plBitmap::IsSameModifiedTime(uint32_t lowTime, uint32_t highTime)
 {
     return (fLowModifiedTime == lowTime && fHighModifiedTime == highTime);
 }
 
-void plBitmap::SetModifiedTime(UInt32 lowTime, UInt32 highTime)
+void plBitmap::SetModifiedTime(uint32_t lowTime, uint32_t highTime)
 {
     fLowModifiedTime = lowTime;
     fHighModifiedTime = highTime;
@@ -98,12 +98,12 @@ void plBitmap::SetModifiedTime(UInt32 lowTime, UInt32 highTime)
 
 //// Read /////////////////////////////////////////////////////////////////////
 
-static UInt8    sBitmapVersion = 2;
+static uint8_t    sBitmapVersion = 2;
 
-UInt32  plBitmap::Read( hsStream *s )
+uint32_t  plBitmap::Read( hsStream *s )
 {
-    UInt8   version = s->ReadByte();
-    UInt32  read = 6;
+    uint8_t   version = s->ReadByte();
+    uint32_t  read = 6;
 
 
     hsAssert( version == sBitmapVersion, "Invalid bitamp version on Read()" );
@@ -133,9 +133,9 @@ UInt32  plBitmap::Read( hsStream *s )
 
 //// Write ////////////////////////////////////////////////////////////////////
 
-UInt32  plBitmap::Write( hsStream *s )
+uint32_t  plBitmap::Write( hsStream *s )
 {
-    UInt32  written = 6;
+    uint32_t  written = 6;
 
 
     s->WriteByte( sBitmapVersion );

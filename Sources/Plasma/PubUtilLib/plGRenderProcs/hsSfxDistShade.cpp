@@ -258,11 +258,11 @@ void hsSfxDistShade::Read(hsStream* s)
     fMinDist = s->ReadSwapScalar();
     fMaxDist = s->ReadSwapScalar();
 
-    Int32 cnt = s->ReadSwap32();
+    int32_t cnt = s->ReadSwap32();
 
     if( cnt )
     {
-        hsSfxDfTableEntry* arr = TRACKED_NEW hsSfxDfTableEntry[cnt];
+        hsSfxDfTableEntry* arr = new hsSfxDfTableEntry[cnt];
         int i;
         for( i = 0; i < cnt; i++ )
         {

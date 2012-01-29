@@ -58,11 +58,11 @@ class pfGUIClickMapCtrl : public pfGUIControlMod
 
         hsPoint3        fLastMousePt, fLastMouseUpPt, fLastMouseDragPt;
         hsBool          fTracking;
-        Int32           fCustomCursor;
+        int32_t           fCustomCursor;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual UInt32      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
     public:
 
@@ -85,10 +85,10 @@ class pfGUIClickMapCtrl : public pfGUIControlMod
             kMouseHovered
         };
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual hsBool  MsgReceive( plMessage* pMsg );
         
@@ -99,7 +99,7 @@ class pfGUIClickMapCtrl : public pfGUIControlMod
         const hsPoint3  &GetLastMouseUpPt( void ) const { return fLastMouseUpPt; }
         const hsPoint3  &GetLastMouseDragPt( void ) const { return fLastMouseDragPt; }
 
-        void    SetCustomCursor( Int32 cursor = -1 ) { fCustomCursor = cursor; }
+        void    SetCustomCursor( int32_t cursor = -1 ) { fCustomCursor = cursor; }
 };
 
 #endif // _pfGUIClickMapCtrl_h

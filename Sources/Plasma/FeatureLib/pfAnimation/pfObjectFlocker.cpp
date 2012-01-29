@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsMatrix44.h"
 #include "hsGeometry3.h"
@@ -496,7 +496,7 @@ pfBoid::~pfBoid()
     // delete this boid's token in the proximity database
     delete fProximityToken;
 
-    plLoadCloneMsg* msg = TRACKED_NEW plLoadCloneMsg(fObjKey, fFlockerPtr->GetKey(), 0, false);
+    plLoadCloneMsg* msg = new plLoadCloneMsg(fObjKey, fFlockerPtr->GetKey(), 0, false);
     msg->Send();
 }
 
@@ -790,7 +790,7 @@ fMaxForce(10.0f),
 fMaxSpeed(5.0f),
 fMinSpeed(4.0f)
 {
-     fDatabase = TRACKED_NEW pfBasicProximityDatabase<pfVehicle*>();
+     fDatabase = new pfBasicProximityDatabase<pfVehicle*>();
 }
 
 pfFlock::~pfFlock()
@@ -886,7 +886,7 @@ void pfFlock::Update(plSceneObject *goal, float deltaTime)
 
 void pfFlock::AddBoid(pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos)
 {
-    pfBoid *newBoid = TRACKED_NEW pfBoid(*fDatabase, flocker, key, pos);
+    pfBoid *newBoid = new pfBoid(*fDatabase, flocker, key, pos);
 
     newBoid->SetGoalWeight(fGoalWeight);
     newBoid->SetWanderWeight(fRandomWeight);
@@ -924,7 +924,7 @@ pfObjectFlocker::~pfObjectFlocker()
     plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pfObjectFlocker::SetNumBoids(UInt8 val)
+void pfObjectFlocker::SetNumBoids(uint8_t val)
 {
     fNumBoids = val;
 }
@@ -934,7 +934,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     plInitialAgeStateLoadedMsg* loadMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if (loadMsg)
     {
-        plEnableMsg* pMsg = TRACKED_NEW plEnableMsg;
+        plEnableMsg* pMsg = new plEnableMsg;
         pMsg->AddReceiver(fBoidKey);
         pMsg->SetCmd(plEnableMsg::kDrawable);
         pMsg->AddType(plEnableMsg::kDrawable);
@@ -945,13 +945,13 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
         hsPoint3 pos(fTarget->GetLocalToWorld().GetTranslate());
         for (int i = 0; i < fNumBoids; i++)
         {
-            plLoadCloneMsg* cloneMsg = TRACKED_NEW plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
+            plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
             plKey newKey = cloneMsg->GetCloneKey();
             cloneMsg->Send();
 
-            hsScalar xAdjust = (2 * RAND()) - 1; // produces a random number between -1 and 1
-            hsScalar yAdjust = (2 * RAND()) - 1;
-            hsScalar zAdjust = (2 * RAND()) - 1;
+            float xAdjust = (2 * RAND()) - 1; // produces a random number between -1 and 1
+            float yAdjust = (2 * RAND()) - 1;
+            float zAdjust = (2 * RAND()) - 1;
             hsPoint3 boidPos(pos.fX + xAdjust, pos.fY + yAdjust, pos.fZ + zAdjust);
             fFlock.AddBoid(this, newKey, boidPos);
         }
@@ -966,7 +966,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     {
         if (fRandomizeAnimationStart)
         {
-            plAnimCmdMsg* pMsg = TRACKED_NEW plAnimCmdMsg;
+            plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->SetSender(GetKey());
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers | plMessage::kPropagateToChildren);
             pMsg->AddReceiver( lcMsg->GetCloneKey() );
@@ -979,7 +979,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool pfObjectFlocker::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
 {
     fFlock.Update(fTarget, del);
 

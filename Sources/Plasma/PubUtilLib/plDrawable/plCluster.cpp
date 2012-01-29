@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "plCluster.h"
 
@@ -74,7 +74,7 @@ void plCluster::Read(hsStream* s, plClusterGroup* grp)
     int i;
     for( i = 0; i < numInst; i++ )
     {
-        fInsts[i] = TRACKED_NEW plSpanInstance;
+        fInsts[i] = new plSpanInstance;
         fInsts[i]->Read(s, fEncoding, numVerts);
     }
 
@@ -94,8 +94,8 @@ void plCluster::Write(hsStream* s) const
 }
 
 inline void inlTESTPOINT(const hsPoint3& destP, 
-                         hsScalar& minX, hsScalar& minY, hsScalar& minZ, 
-                         hsScalar& maxX, hsScalar& maxY, hsScalar& maxZ)
+                         float& minX, float& minY, float& minZ, 
+                         float& maxX, float& maxY, float& maxZ)
 {
     if( destP.fX < minX )
         minX = destP.fX;
@@ -113,15 +113,15 @@ inline void inlTESTPOINT(const hsPoint3& destP,
         maxZ = destP.fZ;
 }
 
-void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& wBnd) const
+void plCluster::UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ext& wBnd) const
 {
-    hsScalar minX = 1.e33f;
-    hsScalar minY = 1.e33f;
-    hsScalar minZ = 1.e33f;
+    float minX = 1.e33f;
+    float minY = 1.e33f;
+    float minZ = 1.e33f;
 
-    hsScalar maxX = -1.e33f;
-    hsScalar maxY = -1.e33f;
-    hsScalar maxZ = -1.e33f;
+    float maxX = -1.e33f;
+    float maxY = -1.e33f;
+    float maxZ = -1.e33f;
 
     hsAssert(fGroup->GetTemplate(), "Can't unpack without a template");
     const plSpanTemplate& templ = *fGroup->GetTemplate();
@@ -129,7 +129,7 @@ void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& w
     for( i = 0; i < fInsts.GetCount(); i++ )
     {
         // First, just copy our template, offsetting by prescribed amount.
-        const UInt16* iSrc = templ.IndexData();
+        const uint16_t* iSrc = templ.IndexData();
         int n = templ.NumIndices();
         while( n-- )
         {
@@ -173,7 +173,7 @@ void plCluster::UnPack(UInt8* vDst, UInt16* iDst, int idxOffset, hsBounds3Ext& w
                 *norm = w2l * *norm;
                 hsFastMath::NormalizeAppr(*norm);
 
-                UInt32* color = (UInt32*)(vDst + colOff);
+                uint32_t* color = (uint32_t*)(vDst + colOff);
                 *color = iter.Color(*color);
 
                 vDst += stride;

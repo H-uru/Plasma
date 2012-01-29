@@ -53,7 +53,7 @@ class plConsoleMsg : public plMessage
 {
 protected:
 
-    UInt32      fCmd;
+    uint32_t      fCmd;
     char        *fString;
 
 public:
@@ -66,20 +66,20 @@ public:
     };
 
     plConsoleMsg() : plMessage(nil, nil, nil), fCmd( 0 ), fString( nil ) { SetBCastFlag(kBCastByExactType); }
-    plConsoleMsg( UInt32 cmd, const char *str ) : 
+    plConsoleMsg( uint32_t cmd, const char *str ) : 
                 plMessage(nil, nil, nil), fCmd( cmd ), fString(hsStrcpy(str))
                 { SetBCastFlag( kBCastByExactType ); }
     
-    ~plConsoleMsg() { FREE(fString); }
+    ~plConsoleMsg() { free(fString); }
 
     CLASSNAME_REGISTER( plConsoleMsg );
     GETINTERFACE_ANY( plConsoleMsg, plMessage );
 
-    UInt32      GetCmd( void ) const { return fCmd; }
+    uint32_t      GetCmd( void ) const { return fCmd; }
     const char  *GetString( void ) const { return fString; };
     
-    void SetCmd (UInt32 cmd) { fCmd = cmd; }
-    void SetString (const char str[]) { FREE(fString); fString = hsStrcpy(str); }
+    void SetCmd (uint32_t cmd) { fCmd = cmd; }
+    void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 

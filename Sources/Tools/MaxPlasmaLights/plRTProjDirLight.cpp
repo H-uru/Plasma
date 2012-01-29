@@ -178,12 +178,12 @@ plRTProjDirLight::plRTProjDirLight()
 
 ObjLightDesc *plRTProjDirLight::CreateLightDesc( INode *n, BOOL forceShadowBuf )
 {
-    return TRACKED_NEW DirLight( n, forceShadowBuf );
+    return new DirLight( n, forceShadowBuf );
 }
 
 RefTargetHandle plRTProjDirLight::Clone( RemapDir &remap )
 {
-    plRTProjDirLight *obj = TRACKED_NEW plRTProjDirLight;
+    plRTProjDirLight *obj = new plRTProjDirLight;
 
     obj->ReplaceReference( kRefDirLight, fLightPB->Clone( remap ) );
     BaseClone( this, obj, remap );
@@ -287,7 +287,7 @@ Texmap  *plRTProjDirLight::GetProjMap()
     plLayerTex  *layer = (plLayerTex *)fProjPB->GetTexmap( kTexmap, 0 );
     if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
     {
-        layer = TRACKED_NEW plLayerTex;
+        layer = new plLayerTex;
         fProjPB->SetValue( kTexmap, 0, (Texmap *)layer );
 
         IParamBlock2 *bitmapPB = layer->GetParamBlockByID( plLayerTex::kBlkBitmap );

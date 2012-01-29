@@ -264,9 +264,9 @@ hsBool plClickableComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     plSceneObject *obj = clickNode->GetSceneObject();
 
     // Create and register the VolumeGadget's logic component
-    plLogicModifier *logic = TRACKED_NEW plLogicModifier;
+    plLogicModifier *logic = new plLogicModifier;
     plKey logicKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), logic, clickNode->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(logicKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     fLogicModKeys[clickNode] = logicKey;
 
@@ -328,14 +328,14 @@ hsBool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
         // Create the detector
     plDetectorModifier *detector = nil;
-    detector = TRACKED_NEW plPickingDetector;
+    detector = new plPickingDetector;
 
     // Register the detector
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), detector, loc);
-    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, TRACKED_NEW plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
     // create and register the CONDITIONS for the DETECTOR's Logic Modifier
-    plActivatorConditionalObject* activatorCond = TRACKED_NEW plActivatorConditionalObject;
+    plActivatorConditionalObject* activatorCond = new plActivatorConditionalObject;
     plKey activatorKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), activatorCond, loc);
     
     //
@@ -345,14 +345,14 @@ hsBool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // first a detector-any for the box
     if (!ignoreProxyRegion)
     {
-        plObjectInVolumeDetector* pCDet = TRACKED_NEW plObjectInVolumeDetector(plCollisionDetector::kTypeAny);
+        plObjectInVolumeDetector* pCDet = new plObjectInVolumeDetector(plCollisionDetector::kTypeAny);
         
         plKey pCDetKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), pCDet, loc);
-        hsgResMgr::ResMgr()->AddViaNotify(pCDetKey, TRACKED_NEW plObjRefMsg(detectNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(pCDetKey, new plObjRefMsg(detectNode->GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         pCDet->AddLogicObj(logicKey);
 
         // then an object-in-box condition for the logic mod
-        plObjectInBoxConditionalObject* boxCond = TRACKED_NEW plObjectInBoxConditionalObject;
+        plObjectInBoxConditionalObject* boxCond = new plObjectInBoxConditionalObject;
         plKey boxCondKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), boxCond, loc);
         logic->AddCondition(boxCond);
     }
@@ -360,13 +360,13 @@ hsBool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     //
     // How do we feel about player facing
     //
-    plFacingConditionalObject* facingCond = TRACKED_NEW plFacingConditionalObject;
+    plFacingConditionalObject* facingCond = new plFacingConditionalObject;
     facingCond->SetDirectional(fCompPB->GetInt(kClickableDirectional));
     int deg = fCompPB->GetInt(kClickableDegrees);
     if (deg > 180)
         deg = 180;
-    hsScalar rad = hsScalarDegToRad(deg);
-    facingCond->SetTolerance(hsCosine(rad));
+    float rad = hsDegreesToRadians(deg);
+    facingCond->SetTolerance(cos(rad));
     plKey facingKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), facingCond, loc);
     
     detector->AddLogicObj(logicKey);     // send messages to this logic component

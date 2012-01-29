@@ -63,7 +63,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
         bool            fUseLocalizationPath;
 
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IUpdate( void );
         virtual void    IPostSetUpDynTextMap( void );
@@ -87,9 +87,9 @@ class pfGUITextBoxMod : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 

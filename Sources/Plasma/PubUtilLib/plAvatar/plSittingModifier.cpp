@@ -160,14 +160,14 @@ hsBool plSittingModifier::MsgReceive(plMessage *msg)
                 plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nil);
                 if (brain && !brain->IsRunningTask())
                 {
-                    plNotifyMsg *notifyEnter = TRACKED_NEW plNotifyMsg();   // a message to send back when the brain starts
+                    plNotifyMsg *notifyEnter = new plNotifyMsg();   // a message to send back when the brain starts
                     notifyEnter->fState = 1.0f;                     // it's an "on" event
                     ISetupNotify(notifyEnter, notifyMsg);           // copy events and address to sender
             
                     plNotifyMsg *notifyExit = nil;
                     if (avatarKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                     {
-                        notifyExit = TRACKED_NEW plNotifyMsg();         // a new message to send back when the brain's done
+                        notifyExit = new plNotifyMsg();         // a new message to send back when the brain's done
                         notifyExit->fState = 0.0f;              // it's an "off" event
                         ISetupNotify(notifyExit, notifyMsg);    // copy events and address to sender
                         notifyExit->AddReceiver(GetKey());      // have this message come back to us as well
@@ -198,7 +198,7 @@ hsBool plSittingModifier::MsgReceive(plMessage *msg)
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
                 plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
 
-                UInt32 flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
+                uint32_t flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
                 avMod->DirtyPhysicalSynchState(flags);
             }
         }
@@ -226,27 +226,27 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
         plAvBrainGeneric *brain = IBuildSitBrain(avModKey, seekKey, &animName, enterNotify, exitNotify);
         if(brain)
         {
-            plAvSeekMsg *seekMsg = TRACKED_NEW plAvSeekMsg(ourKey, avModKey, seekKey, 0.0f, true, kAlignHandleAnimEnd, animName);
+            plAvSeekMsg *seekMsg = new plAvSeekMsg(ourKey, avModKey, seekKey, 0.0f, true, kAlignHandleAnimEnd, animName);
             seekMsg->Send();
-            plAvTaskBrain *brainTask = TRACKED_NEW plAvTaskBrain(brain);
-            plAvTaskMsg *brainMsg = TRACKED_NEW plAvTaskMsg(ourKey, avModKey, brainTask);
+            plAvTaskBrain *brainTask = new plAvTaskBrain(brain);
+            plAvTaskMsg *brainMsg = new plAvTaskMsg(ourKey, avModKey, brainTask);
 
             brainMsg->Send();
             
             if (avModKey == plAvatarMgr::GetInstance()->GetLocalAvatarKey())
             {
-                plCameraMsg* pCam = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pCam = new plCameraMsg;
                 pCam->SetBCastFlag(plMessage::kBCastByExactType);
                 pCam->SetCmd(plCameraMsg::kResetPanning);
                 pCam->Send();
             
-                plCameraMsg* pCam2 = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pCam2 = new plCameraMsg;
                 pCam2->SetBCastFlag(plMessage::kBCastByExactType);
                 pCam2->SetCmd(plCameraMsg::kPythonSetFirstPersonOverrideEnable);
                 pCam2->SetActivated(false);
                 pCam2->Send();  
     
-                plCameraMsg* pCam3 = TRACKED_NEW plCameraMsg;
+                plCameraMsg* pCam3 = new plCameraMsg;
                 pCam3->SetBCastFlag(plMessage::kBCastByExactType);
                     pCam3->SetCmd(plCameraMsg::kPythonUndoFirstPerson);
                 pCam3->Send();
@@ -264,7 +264,7 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
 
 // IIsClosestAnim -------------------------------------------------------------------
 // ---------------
-bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, hsScalar &closestDist,
+bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDist,
                     hsPoint3 curPosition, const plArmatureMod *avatar)
 {
     plAGAnim *anim = avatar->FindCustomAnim(animName);
@@ -283,7 +283,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, hsScalar &closest
         hsMatrix44 candidateGoal = sitGoal * animEndToStart;
         hsPoint3 distP = candidateGoal.GetTranslate() - curPosition;
         hsVector3 distV(distP.fX, distP.fY, distP.fZ);
-        hsScalar dist = distP.Magnitude();
+        float dist = distP.Magnitude();
         if(closestDist == 0.0 || dist < closestDist)
         {
             closestDist = dist;
@@ -307,8 +307,8 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
     hsMatrix44 animEndToStart;
     hsMatrix44 sitGoal = seekObj->GetLocalToWorld();
     hsMatrix44 candidateGoal;
-    hsScalar closestDist = 0.0f;
-    UInt8 closestApproach = 0;
+    float closestDist = 0.0f;
+    uint8_t closestApproach = 0;
     hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
     char * sitAnimName = nil;
     char * standAnimName = "StandUpFront";      // always prefer to stand facing front
@@ -341,15 +341,15 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(sitAnimName)
         {
-            UInt32 exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
-            brain = TRACKED_NEW plAvBrainGeneric(nil, enterNotify, exitNotify, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+            uint32_t exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
+            brain = new plAvBrainGeneric(nil, enterNotify, exitNotify, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
                                          plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
 
-            plAnimStage *sitStage = TRACKED_NEW plAnimStage(sitAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+            plAnimStage *sitStage = new plAnimStage(sitAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                                     plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone, 0);
-            plAnimStage *idleStage = TRACKED_NEW plAnimStage("SitIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+            plAnimStage *idleStage = new plAnimStage("SitIdle", plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                                     plAnimStage::kAdvanceOnMove, plAnimStage::kRegressNone, -1);
-            plAnimStage *standStage = TRACKED_NEW plAnimStage(standAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+            plAnimStage *standStage = new plAnimStage(standAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
                                                     plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone, 0);
 
             brain->AddStage(sitStage);
@@ -370,12 +370,12 @@ void plSittingModifier::UnTrigger()
 {
     if (fTriggeredAvatarKey == plAvatarMgr::GetInstance()->GetLocalAvatarKey())
     {
-        plCameraMsg* pCam = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pCam = new plCameraMsg;
         pCam->SetBCastFlag(plMessage::kBCastByExactType);
         pCam->SetCmd(plCameraMsg::kResetPanning);
         pCam->Send();
 
-        plCameraMsg* pCam2 = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pCam2 = new plCameraMsg;
         pCam2->SetBCastFlag(plMessage::kBCastByExactType);
         pCam2->SetCmd(plCameraMsg::kPythonSetFirstPersonOverrideEnable);
         pCam2->SetActivated(true);

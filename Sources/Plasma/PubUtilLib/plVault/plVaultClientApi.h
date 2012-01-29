@@ -178,7 +178,7 @@ struct RelVaultNode : NetVaultNode {
     void SetSeen (unsigned parentId, bool seen);
     
     // logging
-    void Print (const wchar tag[], FStateDump dumpProc, unsigned level);
+    void Print (const wchar_t tag[], FStateDump dumpProc, unsigned level);
     void PrintTree (FStateDump dumpProc, unsigned level);
     
     // AgeInfoNode-specific (and it checks!)
@@ -246,7 +246,7 @@ void VaultDeleteNode (
 );
 void VaultPublishNode (
     unsigned        nodeId,
-    const wchar     deviceName[]
+    const wchar_t     deviceName[]
 );
 void VaultSendNode (
     RelVaultNode*   srcNode,
@@ -353,20 +353,20 @@ bool            VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link);
 void            VaultRegisterVisitAge (const plAgeLinkStruct* link);
 bool            VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info);
 bool            VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info);
-RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar entryName[], int entryType = -1);
-bool            VaultHasChronicleEntry (const wchar entryName[], int entryType = -1);
+RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar_t entryName[], int entryType = -1);
+bool            VaultHasChronicleEntry (const wchar_t entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void            VaultAddChronicleEntryAndWait (
-    const wchar entryName[],
+    const wchar_t entryName[],
     int         entryType,
-    const wchar entryValue[]
+    const wchar_t entryValue[]
 );
 bool        VaultAmIgnoringPlayer (unsigned playerId);
 unsigned    VaultGetKILevel ();
 bool        VaultGetCCRStatus ();               // true=online, false=away
 bool        VaultSetCCRStatus (bool online);    // true=online, false=away
-void        VaultDump (const wchar tag[], unsigned vaultId, FStateDump dumpProc);
-void        VaultDump (const wchar tag[], unsigned vaultId);
+void        VaultDump (const wchar_t tag[], unsigned vaultId, FStateDump dumpProc);
+void        VaultDump (const wchar_t tag[], unsigned vaultId);
 
 bool VaultAmInMyPersonalAge ();
 bool VaultAmInMyNeighborhoodAge ();
@@ -375,8 +375,8 @@ bool VaultAmCzarOfCurrentAge ();
 bool VaultAmOwnerOfAge (const Uuid & ageInstId);
 bool VaultAmCzarOfAge (const Uuid & ageInstId);
 bool VaultRegisterMTStationAndWait (
-    const wchar stationName[],
-    const wchar linkBackSpawnPtObjName[]
+    const wchar_t stationName[],
+    const wchar_t linkBackSpawnPtObjName[]
 );
 void VaultProcessPlayerInbox ();
 
@@ -402,19 +402,19 @@ RelVaultNode * VaultGetAgePublicAgesFolderIncRef ();
 RelVaultNode * VaultAgeGetBookshelfFolderIncRef ();
 RelVaultNode * VaultFindAgeSubAgeLinkIncRef (const plAgeInfoStruct * info);
 RelVaultNode * VaultFindAgeChildAgeLinkIncRef (const plAgeInfoStruct * info);
-RelVaultNode * VaultFindAgeChronicleEntryIncRef (const wchar entryName[], int entryType = -1);
+RelVaultNode * VaultFindAgeChronicleEntryIncRef (const wchar_t entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void           VaultAddAgeChronicleEntry (
-    const wchar entryName[],
+    const wchar_t entryName[],
     int         entryType,
-    const wchar entryValue[]
+    const wchar_t entryValue[]
 );
-RelVaultNode * VaultAgeAddDeviceAndWaitIncRef (const wchar deviceName[]);   // blocks until completion
-void VaultAgeRemoveDevice (const wchar deviceName[]);
-bool VaultAgeHasDevice (const wchar deviceName[]);
-RelVaultNode * VaultAgeGetDeviceIncRef (const wchar deviceName[]);
-RelVaultNode * VaultAgeSetDeviceInboxAndWaitIncRef (const wchar deviceName[], const wchar inboxName[]); // blocks until completion
-RelVaultNode * VaultAgeGetDeviceInboxIncRef (const wchar deviceName[]);
+RelVaultNode * VaultAgeAddDeviceAndWaitIncRef (const wchar_t deviceName[]);   // blocks until completion
+void VaultAgeRemoveDevice (const wchar_t deviceName[]);
+bool VaultAgeHasDevice (const wchar_t deviceName[]);
+RelVaultNode * VaultAgeGetDeviceIncRef (const wchar_t deviceName[]);
+RelVaultNode * VaultAgeSetDeviceInboxAndWaitIncRef (const wchar_t deviceName[], const wchar_t inboxName[]); // blocks until completion
+RelVaultNode * VaultAgeGetDeviceInboxIncRef (const wchar_t deviceName[]);
 void VaultClearDeviceInboxMap ();
 
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);
@@ -434,11 +434,11 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
 );
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const wchar             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
+    const wchar_t             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
-UInt8 VaultAgeFindOrCreateChildAgeLink(const wchar parentAgeName[], const plAgeInfoStruct* info, plAgeLinkStruct* link);
+uint8_t VaultAgeFindOrCreateChildAgeLink(const wchar_t parentAgeName[], const plAgeInfoStruct* info, plAgeLinkStruct* link);
 
 
 
@@ -469,7 +469,7 @@ typedef void (*FVaultProgressCallback)(
 );
 
 void VaultDownload (
-    const wchar                 tag[],
+    const wchar_t                 tag[],
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
     void *                      cbParam,
@@ -477,7 +477,7 @@ void VaultDownload (
     void *                      cbProgressParam
 );
 void VaultDownloadAndWait (
-    const wchar                 tag[],
+    const wchar_t                 tag[],
     unsigned                    vaultId,
     FVaultProgressCallback      progressCallback,
     void *                      cbProgressParam

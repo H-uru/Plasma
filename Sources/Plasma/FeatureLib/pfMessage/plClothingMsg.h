@@ -51,14 +51,14 @@ class hsResMgr;
 class plClothingMsg : public plMessage
 {
 protected:
-    UInt32 fCommands;
+    uint32_t fCommands;
 
 public:
     plKey fItemKey;
     hsColorRGBA fColor;
-    UInt8 fLayer;
-    UInt8 fDelta;
-    hsScalar fWeight;
+    uint8_t fLayer;
+    uint8_t fDelta;
+    float fWeight;
 
     plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
     ~plClothingMsg() {}
@@ -79,8 +79,8 @@ public:
         kSaveCustomizations =   0x0100,
     };
 
-    hsBool GetCommand(UInt32 command) { return fCommands & command; }
-    void AddCommand(UInt32 command) { fCommands |= command; }
+    hsBool GetCommand(uint32_t command) { return fCommands & command; }
+    void AddCommand(uint32_t command) { fCommands |= command; }
     hsBool ResendUpdate() { return fCommands != kUpdateTexture; }
 
     // IO 
@@ -97,10 +97,10 @@ class plElementRefMsg : public plGenRefMsg
 {
 public:
     char        *fElementName;
-    UInt32      fLayer;
+    uint32_t      fLayer;
 
     plElementRefMsg() : plGenRefMsg(), fElementName(nil), fLayer(1) {}
-    plElementRefMsg(const plKey &r, UInt8 c, int which, int type, char *name, UInt8 layer) : plGenRefMsg(r, c, which, type)
+    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, char *name, uint8_t layer) : plGenRefMsg(r, c, which, type)
     {
         fLayer = layer;
         fElementName = hsStrcpy(name);

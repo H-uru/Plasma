@@ -65,12 +65,12 @@ class plEventCallbackMsg : public plMessage
 protected:
     
 public:
-    hsScalar        fEventTime; // the time for time events
+    float        fEventTime; // the time for time events
     CallbackEvent   fEvent;     // the event    
-    Int16           fIndex;     // the index of the object we want the event to come from
+    int16_t           fIndex;     // the index of the object we want the event to come from
                                 // (where applicable, required for sounds)
-    Int16           fRepeats;   // -1 for infinite repeats, 0 for one call, no repeats
-    Int16           fUser;      // User defined data, useful for keeping track of multiple callbacks
+    int16_t           fRepeats;   // -1 for infinite repeats, 0 for one call, no repeats
+    int16_t           fUser;      // User defined data, useful for keeping track of multiple callbacks
 
     plEventCallbackMsg() : fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) {;}
     plEventCallbackMsg (const plKey &s, 
@@ -79,7 +79,7 @@ public:
                         plMessage(s, r, t),
                         fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) {;}
     
-    plEventCallbackMsg(const plKey &receiver, CallbackEvent e, int idx=0, hsScalar t=0, Int16 repeats=-1, UInt16 user=0) :
+    plEventCallbackMsg(const plKey &receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                         plMessage(nil, receiver, nil), fEvent(e), fIndex(idx), fEventTime(t), fRepeats(repeats), fUser(user) {}
 
     ~plEventCallbackMsg(){;}
@@ -101,7 +101,7 @@ public:
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLEFloat(fEventTime);
-        stream->WriteLE16((Int16)fEvent);
+        stream->WriteLE16((int16_t)fEvent);
         stream->WriteLE16(fIndex);
         stream->WriteLE16(fRepeats);
         stream->WriteLE16(fUser);

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plRenderRequestMsg.h"
 #include "pnKeyedObject/plUoid.h"
 #include "pnKeyedObject/plFixedKey.h"
@@ -88,7 +88,7 @@ plRenderRequestAck::plRenderRequestAck()
     hsAssert(false, "Improper usage, use argumented constructor");
 }
 
-plRenderRequestAck::plRenderRequestAck(plKey r, UInt32 userData)
+plRenderRequestAck::plRenderRequestAck(plKey r, uint32_t userData)
 :   plMessage(nil, r, nil),
     fUserData(userData)
 {

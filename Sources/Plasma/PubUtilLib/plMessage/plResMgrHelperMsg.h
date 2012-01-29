@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plResMgrHelperMsg_h
 #define _plResMgrHelperMsg_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "plResMgr/plResManagerHelper.h"
@@ -57,7 +57,7 @@ protected:
 
     plResPageKeyRefList *fKeyList;
 
-    UInt8       fCommand;
+    uint8_t       fCommand;
 
 public:
 
@@ -69,7 +69,7 @@ public:
         kDisableDebugScreen
     };
 
-    plResMgrHelperMsg( UInt8 command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
+    plResMgrHelperMsg( uint8_t command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
     ~plResMgrHelperMsg() { delete fKeyList; }
 
     CLASSNAME_REGISTER( plResMgrHelperMsg );
@@ -85,7 +85,7 @@ public:
         hsAssert( false, "This should never get written" );
     }
 
-    UInt8   GetCommand( void ) const { return fCommand; }
+    uint8_t   GetCommand( void ) const { return fCommand; }
 };
 
 #endif // _plResMgrHelperMsg_h

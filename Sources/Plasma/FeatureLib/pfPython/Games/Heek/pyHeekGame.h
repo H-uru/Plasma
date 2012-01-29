@@ -76,7 +76,7 @@ public:
     static bool IsHeekGame(std::wstring guid);
     static void JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID);
 
-    void PlayGame(int position, UInt32 points, std::wstring name);
+    void PlayGame(int position, uint32_t points, std::wstring name);
     void LeaveGame();
     void Choose(int choice);
     void SequenceFinished(int seq);

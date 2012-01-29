@@ -152,12 +152,12 @@ public:
     // visList is write only. On output, visList is UNSORTED visible spans.
     // Called once per scene render (maybe multiple times per frame).
     // Returns true if rendering should proceed.
-    virtual hsBool                      PreRender(plDrawable* drawable, hsTArray<Int16>& visList, plVisMgr* visMgr=nil) = 0;
+    virtual hsBool                      PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
     // PrepForRender - perform any processing on the drawable data nessecary before rendering.
     // visList is read only. On input, visList is SORTED visible spans, and is ALL spans which will be drawn this render.
     // Called once per scene render. 
     // Returns true if rendering should proceed.
-    virtual hsBool                      PrepForRender(plDrawable* drawable, hsTArray<Int16>& visList, plVisMgr* visMgr=nil) = 0;
+    virtual hsBool                      PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
     // Render - draw the drawable to the current render target.
     // visList is read only. On input, visList is SORTED visible spans. May not be the complete list of visible spans
     // for this drawable.
@@ -165,17 +165,17 @@ public:
     //      Render(drawable0, visList0) // visList0 contains furthest spans in drawable0
     //      Render(drawable1, visList1) // visList1 contains spans from drawable1 between drawable0's visList0 and visList2
     //      Render(drawable0, visList2) // visList2 contains closest spans in drawable0.
-    virtual void                        Render(plDrawable* d, const hsTArray<Int16>& visList) = 0;
+    virtual void                        Render(plDrawable* d, const hsTArray<int16_t>& visList) = 0;
     // Draw - Convenience wrapper for standalone renders. Calls PreRender, PrepForRender, Render. Currently for internal
     // use only, but may prove useful for procedurals (render to texture).
     virtual void                        Draw(plDrawable* d) = 0;
     
     // Device-specific ref creation. Includes buffers and fonts
-    virtual plTextFont                  *MakeTextFont( char *face, UInt16 size ) = 0;
+    virtual plTextFont                  *MakeTextFont( char *face, uint16_t size ) = 0;
 
     // Create and/or Refresh geometry buffers
-    virtual void            CheckVertexBufferRef(plGBufferGroup* owner, UInt32 idx) = 0;
-    virtual void            CheckIndexBufferRef(plGBufferGroup* owner, UInt32 idx) = 0;
+    virtual void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
+    virtual void            CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
 
     virtual hsBool          OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, hsBool readOnly) = 0;
     virtual hsBool          CloseAccess(plAccessSpan& acc) = 0;
@@ -217,10 +217,10 @@ public:
     virtual void                        PopRenderRequest(plRenderRequest* req) = 0;
 
     virtual void                        ClearRenderTarget( plDrawable* d ) = 0; // nil d reverts to ClearRenderTarget(nil, nil).
-    virtual void                        ClearRenderTarget(const hsColorRGBA* col = nil, const hsScalar* depth = nil) = 0; // col/depth are overrides for current default.
-    virtual void                        SetClear(const hsColorRGBA* col=nil, const hsScalar* depth=nil) = 0; // sets the default clear for current render target.
+    virtual void                        ClearRenderTarget(const hsColorRGBA* col = nil, const float* depth = nil) = 0; // col/depth are overrides for current default.
+    virtual void                        SetClear(const hsColorRGBA* col=nil, const float* depth=nil) = 0; // sets the default clear for current render target.
     virtual hsColorRGBA                 GetClearColor() const = 0;
-    virtual hsScalar                    GetClearDepth() const = 0;
+    virtual float                    GetClearDepth() const = 0;
     virtual hsGDeviceRef                *MakeRenderTargetRef( plRenderTarget *owner ) = 0;
     virtual void                        PushRenderTarget( plRenderTarget *target ) = 0;
     virtual plRenderTarget              *PopRenderTarget( void ) = 0;
@@ -236,21 +236,21 @@ public:
     virtual void                        EndVisMgr(plVisMgr* visMgr) = 0;
 
     virtual hsBool                      IsFullScreen() const = 0;
-    virtual UInt32                      Width() const = 0;
-    virtual UInt32                      Height() const = 0;
-    virtual UInt32                      ColorDepth() const = 0;
-    virtual void                        Resize( UInt32 width, UInt32 height ) = 0;
+    virtual uint32_t                      Width() const = 0;
+    virtual uint32_t                      Height() const = 0;
+    virtual uint32_t                      ColorDepth() const = 0;
+    virtual void                        Resize( uint32_t width, uint32_t height ) = 0;
 
     // Culling. Might be used in Update before bothering to do any serious computation.
     virtual hsBool                      TestVisibleWorld(const hsBounds3Ext& wBnd) = 0;
     virtual hsBool                      TestVisibleWorld(const plSceneObject* sObj) = 0;
-    virtual hsBool                      HarvestVisible(plSpaceTree* space, hsTArray<Int16>& visList) = 0;
+    virtual hsBool                      HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList) = 0;
     virtual hsBool                      SubmitOccluders(const hsTArray<const plCullPoly*>& polyList) = 0;
     
-    virtual void                        SetDebugFlag( UInt32 flag, hsBool on ) = 0;
-    virtual hsBool                      IsDebugFlagSet( UInt32 flag ) const = 0;
-    virtual void                        SetMaxCullNodes(UInt16 n) = 0; // Debug/analysis only
-    virtual UInt16                      GetMaxCullNodes() const = 0; // Debug/analysis only
+    virtual void                        SetDebugFlag( uint32_t flag, hsBool on ) = 0;
+    virtual hsBool                      IsDebugFlagSet( uint32_t flag ) const = 0;
+    virtual void                        SetMaxCullNodes(uint16_t n) = 0; // Debug/analysis only
+    virtual uint16_t                      GetMaxCullNodes() const = 0; // Debug/analysis only
 
     // Properties
     enum Properties
@@ -262,15 +262,15 @@ public:
     virtual hsBool                      CheckResources() = 0; // Do we need to call LoadResources?
     virtual void                        LoadResources() = 0;
 
-    virtual void                        SetProperty( UInt32 prop, hsBool on ) = 0;
-    virtual hsBool                      GetProperty( UInt32 prop ) const = 0;
-    virtual UInt32                      GetMaxLayersAtOnce() const = 0;
+    virtual void                        SetProperty( uint32_t prop, hsBool on ) = 0;
+    virtual hsBool                      GetProperty( uint32_t prop ) const = 0;
+    virtual uint32_t                      GetMaxLayersAtOnce() const = 0;
 
     // Drawable type mask
-    virtual void                        SetDrawableTypeMask( UInt32 mask ) = 0;
-    virtual UInt32                      GetDrawableTypeMask( void ) const = 0;
-    virtual void                        SetSubDrawableTypeMask( UInt32 mask ) = 0;
-    virtual UInt32                      GetSubDrawableTypeMask( void ) const = 0;
+    virtual void                        SetDrawableTypeMask( uint32_t mask ) = 0;
+    virtual uint32_t                      GetDrawableTypeMask( void ) const = 0;
+    virtual void                        SetSubDrawableTypeMask( uint32_t mask ) = 0;
+    virtual uint32_t                      GetSubDrawableTypeMask( void ) const = 0;
 
     // View state
     virtual hsPoint3                    GetViewPositionWorld() const = 0;
@@ -279,17 +279,17 @@ public:
     virtual hsVector3                   GetViewDirWorld() const = 0;
     virtual void                        GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const = 0;
 
-    virtual void                        GetFOV(hsScalar& fovX, hsScalar& fovY) const = 0;
-    virtual void                        SetFOV(hsScalar fovX, hsScalar fovY) = 0;
+    virtual void                        GetFOV(float& fovX, float& fovY) const = 0;
+    virtual void                        SetFOV(float fovX, float fovY) = 0;
 
-    virtual void                        GetSize(hsScalar& width, hsScalar& height) const = 0;
-    virtual void                        SetSize(hsScalar width, hsScalar height) = 0;
+    virtual void                        GetSize(float& width, float& height) const = 0;
+    virtual void                        SetSize(float width, float height) = 0;
 
-    virtual void                        GetDepth(hsScalar& hither, hsScalar& yon) const = 0;
-    virtual void                        SetDepth(hsScalar hither, hsScalar yon) = 0;
+    virtual void                        GetDepth(float& hither, float& yon) const = 0;
+    virtual void                        SetDepth(float hither, float yon) = 0;
 
-    virtual void                        SetZBiasScale( hsScalar scale ) = 0;
-    virtual hsScalar                    GetZBiasScale( void ) const = 0;
+    virtual void                        SetZBiasScale( float scale ) = 0;
+    virtual float                    GetZBiasScale( void ) const = 0;
 
     virtual const hsMatrix44&           GetWorldToCamera() const = 0;
     virtual const hsMatrix44&           GetCameraToWorld() const = 0;
@@ -300,8 +300,8 @@ public:
 
     virtual const plViewTransform&      GetViewTransform() const = 0;
 
-    virtual void                        ScreenToWorldPoint( int n, UInt32 stride, Int32 *scrX, Int32 *scrY, 
-                                                    hsScalar dist, UInt32 strideOut, hsPoint3 *worldOut ) = 0;
+    virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
+                                                    float dist, uint32_t strideOut, hsPoint3 *worldOut ) = 0;
 
     virtual void                        RefreshMatrices( void ) = 0;
     virtual void                        RefreshScreenMatrices( void ) = 0;
@@ -314,11 +314,11 @@ public:
     virtual plLayerInterface*           AppendLayerInterface(plLayerInterface* li, hsBool onAllLayers = false) = 0;
     virtual plLayerInterface*           RemoveLayerInterface(plLayerInterface* li, hsBool onAllLayers = false) = 0;
 
-    virtual UInt32                      GetMaterialOverrideOn(hsGMatState::StateIdx category) const = 0;
-    virtual UInt32                      GetMaterialOverrideOff(hsGMatState::StateIdx category) const = 0;
+    virtual uint32_t                      GetMaterialOverrideOn(hsGMatState::StateIdx category) const = 0;
+    virtual uint32_t                      GetMaterialOverrideOff(hsGMatState::StateIdx category) const = 0;
 
     virtual hsGMatState                 PushMaterialOverride(const hsGMatState& state, hsBool on) = 0;
-    virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, UInt32 which, hsBool on) = 0;
+    virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, hsBool on) = 0;
     virtual void                        PopMaterialOverride(const hsGMatState& restore, hsBool on) = 0;
     virtual const hsGMatState&          GetMaterialOverride(hsBool on) const = 0;
 
@@ -330,13 +330,13 @@ public:
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co) = 0;
 
     // These all return true if the gamma was successfully set.
-    virtual hsBool                      SetGamma(hsScalar eR, hsScalar eG, hsScalar eB) = 0;
-    virtual hsBool                      SetGamma(const UInt16* const tabR, const UInt16* const tabG, const UInt16* const tabB) = 0; // len table = 256.
-    virtual hsBool                      SetGamma(hsScalar e) { return SetGamma(e, e, e); }
-    virtual hsBool                      SetGamma(const UInt16* const table) { return SetGamma(table, table, table); } 
+    virtual hsBool                      SetGamma(float eR, float eG, float eB) = 0;
+    virtual hsBool                      SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0; // len table = 256.
+    virtual hsBool                      SetGamma(float e) { return SetGamma(e, e, e); }
+    virtual hsBool                      SetGamma(const uint16_t* const table) { return SetGamma(table, table, table); } 
 
     // flipVertical is for the AVI writer, which wants it's frames upside down
-    virtual hsBool                      CaptureScreen( plMipmap *dest, bool flipVertical = false, UInt16 desiredWidth = 0, UInt16 desiredHeight = 0 ) = 0;
+    virtual hsBool                      CaptureScreen( plMipmap *dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0 ) = 0;
 
     // Returns an un-named (GetKey()==nil) mipmap same dimensions as targ. You are responsible for deleting said mipMap.
     virtual plMipmap*                   ExtractMipMap(plRenderTarget* targ) = 0;

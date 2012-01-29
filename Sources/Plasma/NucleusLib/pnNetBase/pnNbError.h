@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNbError_inc
 #define pnNbError_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnNbConst.h"
 
 /*****************************************************************************
@@ -113,17 +113,17 @@ enum ENetError {
     // (don't worry, the compiler will tell you if one is missing ;)
     kNumNetErrors,
 
-    // Net messages require ENetError to be sizeof(dword)
-    kNetErrorForceDword             = (dword)(-1)
+    // Net messages require ENetError to be sizeof(uint32_t)
+    kNetErrorForceDword             = (uint32_t)(-1)
 };
 
-//COMPILER_ASSERT_HEADER(pnNbError, sizeof(ENetError) == sizeof(dword));
+//COMPILER_ASSERT_HEADER(pnNbError, sizeof(ENetError) == sizeof(uint32_t));
 
 #define IS_NET_ERROR(a)     (((int)(a)) > kNetSuccess)
 #define IS_NET_SUCCESS(a)   (((int)(a)) == kNetSuccess)
 
 
-const wchar * NetErrorToString (ENetError code);    // user-friendly string
-const wchar * NetErrorAsString (ENetError code);    // string version of enum identifier
+const wchar_t * NetErrorToString (ENetError code);    // user-friendly string
+const wchar_t * NetErrorAsString (ENetError code);    // string version of enum identifier
 
 #endif // pnNbError_inc

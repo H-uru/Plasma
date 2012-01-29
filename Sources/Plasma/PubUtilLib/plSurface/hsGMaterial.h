@@ -81,20 +81,20 @@ public:
     };
 
 protected:
-    UInt32                  fLOD;
+    uint32_t                  fLOD;
     hsTArray<plLayerInterface*>     fLayers;
     hsTArray<plLayerInterface*>     fPiggyBacks;
 
-    UInt32                  fCompFlags;
-    UInt32                  fLoadFlags;
+    uint32_t                  fCompFlags;
+    uint32_t                  fLoadFlags;
 
-    hsScalar                fLastUpdateTime;
+    float                fLastUpdateTime;
 
     void                IClearLayers();
-    UInt32              IMakeExtraLayer();
+    uint32_t              IMakeExtraLayer();
 
-    void                    InsertLayer(plLayerInterface* lay, Int32 which = 0, hsBool piggyBack = false);
-    void                    SetLayer(plLayerInterface* lay, Int32 which = 0, hsBool insert=false, hsBool piggyBack=false);
+    void                    InsertLayer(plLayerInterface* lay, int32_t which = 0, hsBool piggyBack = false);
+    void                    SetLayer(plLayerInterface* lay, int32_t which = 0, hsBool insert=false, hsBool piggyBack=false);
     void                    ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, hsBool piggyBack = false);
     void                    RemoveLayer(plLayerInterface* oldLay, hsBool piggyBack = false);
 public:
@@ -105,24 +105,24 @@ public:
     virtual hsGMaterial*    CloneNoLayers(); // For things like blending copies, that manipulate layers directly.
                                              // copies no keyed objects.
     plLayer*                MakeBaseLayer();
-    plLayerInterface*       GetLayer(UInt32 which);
-    plLayerInterface*       GetPiggyBack(UInt32 which);
-    UInt32                  AddLayerViaNotify(plLayerInterface* lay);
-    UInt32                  GetNumLayers() const        { return fLayers.GetCount(); }
+    plLayerInterface*       GetLayer(uint32_t which);
+    plLayerInterface*       GetPiggyBack(uint32_t which);
+    uint32_t                  AddLayerViaNotify(plLayerInterface* lay);
+    uint32_t                  GetNumLayers() const        { return fLayers.GetCount(); }
     void                    SetNumLayers(int cnt);
-    UInt32                  GetNumPiggyBacks() const    { return fPiggyBacks.GetCount(); }
+    uint32_t                  GetNumPiggyBacks() const    { return fPiggyBacks.GetCount(); }
     void                    SetNumPiggyBacks();
 
-    void                    SetLOD(UInt32 l)            { fLOD = l; }
-    UInt32                  GetLOD() const              { return fLOD; }
+    void                    SetLOD(uint32_t l)            { fLOD = l; }
+    uint32_t                  GetLOD() const              { return fLOD; }
 
-    void                    SetCompositeFlags(UInt32 f) { fCompFlags = f; } // normally composite flags are calculated internally, not set.
-    UInt32                  GetCompositeFlags() const   { return fCompFlags; }
-    UInt32                  GetLoadFlags() const        { return fLoadFlags; }
+    void                    SetCompositeFlags(uint32_t f) { fCompFlags = f; } // normally composite flags are calculated internally, not set.
+    uint32_t                  GetCompositeFlags() const   { return fCompFlags; }
+    uint32_t                  GetLoadFlags() const        { return fLoadFlags; }
 
-    hsScalar                GetLastUpdateTime() const   { return fLastUpdateTime; }
-    void                    SetLastUpdateTime(hsScalar f) { fLastUpdateTime = f; }
-    hsBool                  IShouldUpdate(hsScalar secs, UInt32 flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
+    float                GetLastUpdateTime() const   { return fLastUpdateTime; }
+    void                    SetLastUpdateTime(float f) { fLastUpdateTime = f; }
+    hsBool                  IShouldUpdate(float secs, uint32_t flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
 
     hsBool                  IsDynamic() const           { return (fCompFlags & kCompDynamic); }
     hsBool                  IsDecal() const             { return (fCompFlags & kCompDecal); }
@@ -133,7 +133,7 @@ public:
     virtual void        Read(hsStream* s, hsResMgr *group);
     virtual void        Write(hsStream* s, hsResMgr *group);
 
-    virtual void Eval(double secs, UInt32 frame);
+    virtual void Eval(double secs, uint32_t frame);
     virtual void Reset();
     virtual void Init();
 

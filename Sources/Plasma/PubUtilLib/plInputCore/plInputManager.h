@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_INPUT_MANAGER_H
 #define PL_INPUT_MANAGER_H
 
-#include "hsWindows.h"
-#include "hsTypes.h"
+
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnInputCore/plInputMap.h"
@@ -84,8 +84,8 @@ public:
 
     void    Activate( bool activating );
 
-    hsScalar    GetMouseScale( void ) const { return fMouseScale; }
-    void        SetMouseScale( hsScalar s );
+    float    GetMouseScale( void ) const { return fMouseScale; }
+    void        SetMouseScale( float s );
     
     static plKeyDef UntranslateKey(plKeyDef key, hsBool extended);
     
@@ -96,8 +96,8 @@ protected:
     plInputInterfaceMgr         *fInterfaceMgr;
     bool                        fActive, fFirstActivated;       
 
-    hsScalar                    fMouseScale;
-    static UInt8                bRecenterMouse;
+    float                    fMouseScale;
+    static uint8_t                bRecenterMouse;
     static HWND                 fhWnd;
     
 public:

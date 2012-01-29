@@ -104,15 +104,15 @@ public:
     bool AvoidingAvatars() const;
     bool AtGoal() const;
 
-    void StopDistance(hsScalar stopDistance);
-    hsScalar StopDistance() const;
+    void StopDistance(float stopDistance);
+    float StopDistance() const;
 
-    void SightCone(hsScalar coneRad);
-    hsScalar SightCone() const;
-    void SightDistance(hsScalar sightDis);
-    hsScalar SightDistance() const;
-    void HearingDistance(hsScalar hearDis);
-    hsScalar HearingDistance() const;
+    void SightCone(float coneRad);
+    float SightCone() const;
+    void SightDistance(float sightDis);
+    float SightDistance() const;
+    void HearingDistance(float hearDis);
+    float HearingDistance() const;
 
     bool CanSeeAvatar(unsigned long id) const;
     bool CanHearAvatar(unsigned long id) const;

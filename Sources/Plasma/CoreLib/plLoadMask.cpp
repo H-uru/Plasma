@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plLoadMask.h"
 #include "hsStream.h"
 #include "hsTemplates.h"
@@ -75,13 +75,13 @@ void plQuality::SetCapability(int c)
 
 const plLoadMask plLoadMask::kAlways;
 
-UInt8 plLoadMask::fGlobalQuality = UInt8(1);
-UInt8 plLoadMask::fGlobalCapability = UInt8(0);
+uint8_t plLoadMask::fGlobalQuality = uint8_t(1);
+uint8_t plLoadMask::fGlobalCapability = uint8_t(0);
 
 void plLoadMask::Read(hsStream* s)
 {
     // read as packed byte
-    UInt8 qc;
+    uint8_t qc;
     s->LogReadLE(&qc,"Quality|Capabilty");
 
     fQuality[0] = (qc & 0xf0) >> 4;
@@ -95,13 +95,13 @@ void plLoadMask::Read(hsStream* s)
 void plLoadMask::Write(hsStream* s) const
 {
     // write packed into 1 byte
-    UInt8 qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
+    uint8_t qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
     s->WriteLE(qc);
 }
 
-UInt32 plLoadMask::ValidateReps(int num, const int quals[], const int caps[])
+uint32_t plLoadMask::ValidateReps(int num, const int quals[], const int caps[])
 {
-    UInt32 retVal = 0;
+    uint32_t retVal = 0;
     int i;
     for( i = 1; i < num; i++ )
     {
@@ -118,9 +118,9 @@ UInt32 plLoadMask::ValidateReps(int num, const int quals[], const int caps[])
     return retVal;
 }
 
-UInt32 plLoadMask::ValidateMasks(int num, plLoadMask masks[])
+uint32_t plLoadMask::ValidateMasks(int num, plLoadMask masks[])
 {
-    UInt32 retVal = 0;
+    uint32_t retVal = 0;
     int i;
     for( i = 0; i < num; i++ )
     {
@@ -160,12 +160,12 @@ hsBool plLoadMask::ComputeRepMasks(
         {
             // Q starts off the bits higher than or equal to 1 << qual.
             // I.e. we just turned off all lower quality bits.
-            UInt8 q = ~( (1 << quals[i]) - 1 );
+            uint8_t q = ~( (1 << quals[i]) - 1 );
 
             // For this cap level, if we require higher caps,
             // turn off our quality (i.e. we won't load at this
             // cap for any quality setting.
-            UInt8 c = caps[i] > kMaxCap ? kMaxCap : caps[i];
+            uint8_t c = caps[i] > kMaxCap ? kMaxCap : caps[i];
             if( c > k )
                 q = 0;
 

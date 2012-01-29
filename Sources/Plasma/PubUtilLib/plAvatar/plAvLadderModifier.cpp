@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plAvatar/plAvCallbackAction.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 // singular
 #include "plAvLadderModifier.h"
@@ -105,7 +105,7 @@ plAvLadderMod::plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hs
 }
 
 // Must be facing within 45 degrees of the ladder
-static const hsScalar kTolerance = hsCosine(hsScalarDegToRad(45));
+static const float kTolerance = cos(hsDegreesToRadians(45));
 
 bool plAvLadderMod::IIsReadyToClimb()
 {
@@ -120,7 +120,7 @@ bool plAvLadderMod::IIsReadyToClimb()
         playerView.fZ = 0;
 
         // Are we facing towards the ladder?
-        hsScalar dot = playerView * fLadderView;
+        float dot = playerView * fLadderView;
 
         bool movingForward = false;
 
@@ -135,12 +135,12 @@ bool plAvLadderMod::IIsReadyToClimb()
 
         if (dot >= kTolerance && movingForward)
         {
-            DetectorLogSpecial("%s: Ladder starting climb (%f)", GetKeyName(), hsScalarRadToDeg(hsACosine(dot)));
+            DetectorLogSpecial("%s: Ladder starting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return true;
         }
         else if (movingForward)
         {
-//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName(), hsScalarRadToDeg(hsACosine(dot)));
+//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return false;
         }
     }
@@ -155,7 +155,7 @@ void plAvLadderMod::ITriggerSelf(plKey avKey)
     {
         plKey avPhysKey = avKey;
         // I'm going to lie and pretend it's from the avatar. the alternative is lengthy and unreadable.
-        plNotifyMsg *notifyMsg = TRACKED_NEW plNotifyMsg(avPhysKey, GetKey());
+        plNotifyMsg *notifyMsg = new plNotifyMsg(avPhysKey, GetKey());
         notifyMsg->fID = kNotifyTrigger;
         notifyMsg->Send();
         fAvatarMounting = true;
@@ -266,9 +266,9 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                     traverseName = "LadderDown";
                 }
 
-                plAnimStageVec *v = TRACKED_NEW plAnimStageVec;
+                plAnimStageVec *v = new plAnimStageVec;
 
-                plAnimStage *s1 = TRACKED_NEW plAnimStage(mountName,
+                plAnimStage *s1 = new plAnimStage(mountName,
                                                   0,
                                                   plAnimStage::kForwardAuto,
                                                   plAnimStage::kBackAuto,
@@ -282,7 +282,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                 // if loops is zero, we don't need the traverse animation at all.
                 if(fLoops)
                 {
-                    plAnimStage *s2 = TRACKED_NEW plAnimStage(traverseName,
+                    plAnimStage *s2 = new plAnimStage(traverseName,
                                                       0,
                                                       plAnimStage::kForwardKey,
                                                       plAnimStage::kBackKey,
@@ -296,7 +296,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                         s2->SetReverseOnIdle(true);
                     v->push_back(s2);
                 }
-                plAnimStage *s3 = TRACKED_NEW plAnimStage(dismountName,
+                plAnimStage *s3 = new plAnimStage(dismountName,
                                                   0,
                                                   plAnimStage::kForwardAuto,
                                                   plAnimStage::kBackAuto,
@@ -307,12 +307,12 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                     s3->SetReverseOnIdle(true);
                 v->push_back(s3);
 
-                plNotifyMsg* enterNotify = TRACKED_NEW plNotifyMsg(GetKey(), GetKey());
+                plNotifyMsg* enterNotify = new plNotifyMsg(GetKey(), GetKey());
                 enterNotify->fID = kNotifyAvatarOnLadder;
 
-                UInt32 exitFlags = plAvBrainGeneric::kExitNormal;
+                uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
-                plAvBrainGeneric *ladBrain = TRACKED_NEW plAvBrainGeneric(v, enterNotify, nil, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+                plAvBrainGeneric *ladBrain = new plAvBrainGeneric(v, enterNotify, nil, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
                                                                   plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
                 ladBrain->SetType(plAvBrainGeneric::kLadder);
                 ladBrain->SetReverseFBControlsOnRelease(!fGoingUp);
@@ -321,9 +321,9 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
 
                 // Very important that we dumb seek here. Otherwise you can run off the edge of a ladder, and seek will be helpless
                 // until you hit the ground, at which point you have no hope of successfully seeking.
-                plAvSeekMsg *seeker = TRACKED_NEW plAvSeekMsg(nil, avKey, seekKey, 1.0f, false);
+                plAvSeekMsg *seeker = new plAvSeekMsg(nil, avKey, seekKey, 1.0f, false);
                 seeker->Send();
-                plAvPushBrainMsg *brainer = TRACKED_NEW plAvPushBrainMsg(nil, avKey, ladBrain);
+                plAvPushBrainMsg *brainer = new plAvPushBrainMsg(nil, avKey, ladBrain);
                 brainer->Send();
             }
         }

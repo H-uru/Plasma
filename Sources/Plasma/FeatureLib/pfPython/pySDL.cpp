@@ -56,7 +56,7 @@ pySDLStateDataRecord::pySDLStateDataRecord( plStateDataRecord * rec )
 }
 
 pySDLStateDataRecord::~pySDLStateDataRecord() {
-    DEL(fRec);
+   delete fRec;
 }
 
 plStateDataRecord * pySDLStateDataRecord::GetRec() const
@@ -125,7 +125,7 @@ plSimpleStateVariable * pySimpleStateVariable::GetVar() const
     return fVar;
 }
 
-bool pySimpleStateVariable::SetByte( byte v, int idx )
+bool pySimpleStateVariable::SetByte( uint8_t v, int idx )
 {
     if ( !fVar )
         return false;
@@ -174,9 +174,9 @@ bool pySimpleStateVariable::SetBool( bool v, int idx )
     return fVar->Set( v, idx );
 }
 
-byte pySimpleStateVariable::GetByte( int idx ) const
+uint8_t pySimpleStateVariable::GetByte( int idx ) const
 {
-    byte v = 0;
+    uint8_t v = 0;
     if ( fVar )
         fVar->Get( &v, idx );
     return v;

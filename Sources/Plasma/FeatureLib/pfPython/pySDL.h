@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #include <Python.h>
@@ -98,7 +98,6 @@ public:
     void SetFromDefaults(bool timeStampNow);
 };
 
-typedef unsigned char byte;
 // pySimpleStateVariable
 class pySimpleStateVariable
 {
@@ -123,14 +122,14 @@ public:
     plSimpleStateVariable * GetVar() const;
 
     /////////////////////
-    bool    SetByte( byte v, int idx=0 );
+    bool    SetByte( uint8_t v, int idx=0 );
     bool    SetShort( short v, int idx=0 );
     bool    SetFloat( float v, int idx=0 );
     bool    SetDouble( double v, int idx=0 );
     bool    SetInt( int v, int idx=0 );
     bool    SetString( const char * v, int idx=0 );
     bool    SetBool(bool v, int idx=0 );
-    byte    GetByte( int idx=0 ) const;
+    uint8_t GetByte( int idx=0 ) const;
     short   GetShort( int idx=0 ) const;
     int     GetInt( int idx=0 ) const;
     float   GetFloat( int idx=0 ) const;

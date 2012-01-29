@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsUtils.h"
+
 #include "hsTimer.h"
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
@@ -67,7 +67,7 @@ bool DumpSounds();
 //// PrintVersion ///////////////////////////////////////////////////////////////
 void PrintVersion()
 {
-    wchar productString[256];
+    wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     printf("%S\n\n", productString);
 }
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
     plResMgrSettings::Get().SetFilterNewerPageVersions(false);
     plResMgrSettings::Get().SetFilterOlderPageVersions(false);
     plResMgrSettings::Get().SetLoadPagesOnInit(false);
-    gResMgr = TRACKED_NEW plResManager;
+    gResMgr = new plResManager;
     hsgResMgr::Init(gResMgr);
     gResMgr->AddSinglePage(pageFile);
 
@@ -185,7 +185,7 @@ bool DumpSounds()
             const char* filename = buffer->GetFileName();
             if (filename)
             {
-                UInt32 flags = 0;
+                uint32_t flags = 0;
 
                 if (stricmp(plFileUtils::GetFileExt(filename), "wav") != 0)
                 {

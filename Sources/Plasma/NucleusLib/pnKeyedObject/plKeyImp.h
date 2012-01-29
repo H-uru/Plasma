@@ -55,7 +55,7 @@ class plKeyImp : public plKeyData
 {
 public:
     plKeyImp();
-    plKeyImp(plUoid, UInt32 pos,UInt32 len);
+    plKeyImp(plUoid, uint32_t pos,uint32_t len);
     virtual ~plKeyImp();
 
     virtual const plUoid&   GetUoid() const { return fUoid; }
@@ -66,7 +66,7 @@ public:
     virtual hsKeyedObject*  VerifyLoaded();
 
     // called before writing to disk so that static keys can have faster lookups (int compare instead of string compare)
-    void SetObjectID(UInt32 id) {fUoid.SetObjectID(id);}
+    void SetObjectID(uint32_t id) {fUoid.SetObjectID(id);}
 
     //----------------------
     // I/O
@@ -78,8 +78,8 @@ public:
     // For when you need to skip over a key in a stream
     static void SkipRead(hsStream* s);
 
-    UInt32 GetStartPos() const  { return fStartPos; } // for ResMgr to read the Objects
-    UInt32 GetDataLen() const   { return fDataLen;  } // for ResMgr to read the Objects
+    uint32_t GetStartPos() const  { return fStartPos; } // for ResMgr to read the Objects
+    uint32_t GetDataLen() const   { return fDataLen;  } // for ResMgr to read the Objects
 
     //----------------------
     // Allow a keyed object to behave as if it has an active ref when in fact the object
@@ -112,35 +112,35 @@ public:
     //----------------------
     void    AddClone(plKeyImp* c);
     void    RemoveClone(plKeyImp* c) const;
-    plKey   GetClone(UInt32 playerID, UInt32 cloneID) const;
-    void    CopyForClone(const plKeyImp* p, UInt32 playerID, UInt32 cloneID);    // Copy the contents of p for cloning process
+    plKey   GetClone(uint32_t playerID, uint32_t cloneID) const;
+    void    CopyForClone(const plKeyImp* p, uint32_t playerID, uint32_t cloneID);    // Copy the contents of p for cloning process
 
-    UInt32  GetNumClones();
-    plKey   GetCloneByIdx(UInt32 idx);
+    uint32_t  GetNumClones();
+    plKey   GetCloneByIdx(uint32_t idx);
     plKey   GetCloneOwner() { return fCloneOwner; }
 
     void NotifyCreated();
     void ISetupNotify(plRefMsg* msg, plRefFlags::Type flags); // Setup notifcations for reference, don't send anything.
 
     void        AddRef(plKeyImp* key) const;
-    UInt16      GetNumRefs() const { return fRefs.GetCount(); }
+    uint16_t      GetNumRefs() const { return fRefs.GetCount(); }
     plKeyImp*   GetRef(int i) const { return fRefs[i]; }
     void        RemoveRef(plKeyImp *key) const;
 
-    virtual UInt16      GetActiveRefs() const           { return fNumActiveRefs; }
-    virtual UInt16      GetNumNotifyCreated() const     { return fNotifyCreated.GetCount(); }
+    virtual uint16_t      GetActiveRefs() const           { return fNumActiveRefs; }
+    virtual uint16_t      GetNumNotifyCreated() const     { return fNotifyCreated.GetCount(); }
     virtual plRefMsg*   GetNotifyCreated(int i) const   { return fNotifyCreated[i]; }
     virtual const hsBitVector& GetActiveBits() const    { return fActiveRefs; }
 
 protected:
     void        AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags);
     void        ClearNotifyCreated();
-    UInt16      GetNumNotifyCreated() { return fNotifyCreated.GetCount(); }
+    uint16_t      GetNumNotifyCreated() { return fNotifyCreated.GetCount(); }
     plRefMsg*   GetNotifyCreated(int i) { return fNotifyCreated[i]; }
     void        RemoveNotifyCreated(int i);
 
-    UInt16      IncActiveRefs() { return ++fNumActiveRefs; }
-    UInt16      DecActiveRefs() { return fNumActiveRefs ? --fNumActiveRefs : 0; }
+    uint16_t      IncActiveRefs() { return ++fNumActiveRefs; }
+    uint16_t      DecActiveRefs() { return fNumActiveRefs ? --fNumActiveRefs : 0; }
 
     hsBool  IsActiveRef(int i) const            { return fActiveRefs.IsBitSet(i) != 0; }
     void    SetActiveRef(int i, hsBool on=true) { fActiveRefs.SetBit(i, on); }
@@ -160,16 +160,16 @@ protected:
 
     // These fields are the ones actually saved to disk
     plUoid fUoid;
-    UInt32 fStartPos;   // where I live in the Datafile  
-    UInt32 fDataLen;    // Length in the Datafile
+    uint32_t fStartPos;   // where I live in the Datafile  
+    uint32_t fDataLen;    // Length in the Datafile
 
     // Following used by hsResMgr to notify on defered load or when a passive ref is destroyed.
-    UInt16                      fNumActiveRefs; // num active refs on me
+    uint16_t                      fNumActiveRefs; // num active refs on me
     hsBitVector                 fActiveRefs;    // Which of notify created are active refs
     hsBitVector                 fNotified;      // which of notifycreated i've already notified.
     hsTArray<plRefMsg*>         fNotifyCreated; // people to notify when I'm created or destroyed
     mutable hsTArray<plKeyImp*> fRefs;          // refs I've made (to be released when I'm unregistered).
-    mutable Int16               fPendingRefs;   // Outstanding requests I have out.
+    mutable int16_t               fPendingRefs;   // Outstanding requests I have out.
     mutable hsTArray<plKeyImp*> fClones;        // clones of me
     mutable plKey               fCloneOwner;    // pointer for clones back to the owning key
 };

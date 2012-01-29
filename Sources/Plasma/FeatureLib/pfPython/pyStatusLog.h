@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  and interface to the ChatLog (ptChatStatusLog)
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include <Python.h>
 #include "pyGlueHelpers.h"
@@ -80,7 +80,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    virtual hsBool Open(const char* logName, UInt32 numLines, UInt32 flags);
+    virtual hsBool Open(const char* logName, uint32_t numLines, uint32_t flags);
     virtual hsBool Write(const char* text);
     virtual hsBool WriteColor(const char* text, pyColor& color);
     virtual void Close();

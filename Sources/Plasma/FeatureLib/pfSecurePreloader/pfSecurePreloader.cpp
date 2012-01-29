@@ -77,7 +77,7 @@ void GotAuthSrvManifest(
     ENetError                   result,
     void*                       param,
     const NetCliAuthFileInfo    infoArr[],
-    UInt32                      infoCount
+    uint32_t                      infoCount
 ) {
     AuthRequestParams* arp = (AuthRequestParams*)param;
     if (IS_NET_ERROR(result))
@@ -96,7 +96,7 @@ void GotFileSrvManifest(
     void*                         param, 
     const wchar_t                 group[], 
     const NetCliFileManifestEntry manifest[], 
-    UInt32                        entryCount
+    uint32_t                        entryCount
 ) {
     pfSecurePreloader* sp = (pfSecurePreloader*)param;
     if (result == kNetErrFileNotFound)
@@ -168,18 +168,18 @@ public:
     }
 
     hsBool AtEnd() { return fOutput->AtEnd(); }
-    UInt32 GetEOF() { return fOutput->GetEOF(); }
-    UInt32 GetPosition() const { return fOutput->GetPosition(); }
-    UInt32 GetSizeLeft() const { return fOutput->GetSizeLeft(); }
-    UInt32 Read(UInt32 count, void* buf) { return fOutput->Read(count, buf); }
+    uint32_t GetEOF() { return fOutput->GetEOF(); }
+    uint32_t GetPosition() const { return fOutput->GetPosition(); }
+    uint32_t GetSizeLeft() const { return fOutput->GetSizeLeft(); }
+    uint32_t Read(uint32_t count, void* buf) { return fOutput->Read(count, buf); }
     void Rewind() { fOutput->Rewind(); }
-    void SetPosition(UInt32 pos) { fOutput->SetPosition(pos); }
-    void Skip(UInt32 deltaByteCount) { fOutput->Skip(deltaByteCount); }
+    void SetPosition(uint32_t pos) { fOutput->SetPosition(pos); }
+    void Skip(uint32_t deltaByteCount) { fOutput->Skip(deltaByteCount); }
 
-    UInt32 Write(UInt32 count, const void* buf)
+    uint32_t Write(uint32_t count, const void* buf)
     {
         if (fProgress)
-            fProgress->Increment((hsScalar)count);
+            fProgress->Increment((float)count);
         if (fIsZipped)
             return plZlibStream::Write(count, buf);
         else
@@ -217,9 +217,9 @@ hsRAMStream* pfSecurePreloader::LoadToMemory(const wchar_t* file) const
     hsRAMStream* ram = new hsRAMStream;
     s.Open(file);
     
-    UInt32 loadLen = 1024 * 1024;
-    UInt8* buf = new UInt8[loadLen];
-    while (UInt32 read = s.Read(loadLen, buf))
+    uint32_t loadLen = 1024 * 1024;
+    uint8_t* buf = new uint8_t[loadLen];
+    while (uint32_t read = s.Read(loadLen, buf))
         ram->Write(read, buf);
     delete[] buf;
 
@@ -232,12 +232,12 @@ void pfSecurePreloader::SaveFile(hsStream* file, const wchar_t* name) const
 {
     hsUNIXStream s;
     s.Open(name, L"wb");
-    UInt32 pos = file->GetPosition();
+    uint32_t pos = file->GetPosition();
     file->Rewind();
 
-    UInt32 loadLen = 1024 * 1024;
-    UInt8* buf = new UInt8[loadLen];
-    while (UInt32 read = file->Read(loadLen, buf))
+    uint32_t loadLen = 1024 * 1024;
+    uint8_t* buf = new uint8_t[loadLen];
+    while (uint32_t read = file->Read(loadLen, buf))
         s.Write(read, buf);
     file->SetPosition(pos);
     s.Close();
@@ -326,14 +326,14 @@ void pfSecurePreloader::Shutdown()
     UnRegisterAs(kSecurePreloader_KEY);
 }
 
-void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries[], UInt32 entryCount)
+void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries[], uint32_t entryCount)
 {
-    UInt32 totalBytes = 0;
+    uint32_t totalBytes = 0;
     if (fProgress)
-        totalBytes = (UInt32)fProgress->GetMax();
+        totalBytes = (uint32_t)fProgress->GetMax();
     fLegacyMode = true;
 
-    for (UInt32 i = 0; i < entryCount; ++i)
+    for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliAuthFileInfo mfs = manifestEntries[i];
         fDownloadEntries.push(wcsdup(mfs.filename));
@@ -351,15 +351,15 @@ void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries
 
     if (fProgress)
     {
-        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetLength((float)totalBytes);
         fProgress->SetTitle("Downloading...");
     }
 }
 
-void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEntries[], UInt32 entryCount)
+void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEntries[], uint32_t entryCount)
 {
-    UInt32 totalBytes = 0;
-    for (UInt32 i = 0; i < entryCount; ++i)
+    uint32_t totalBytes = 0;
+    for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliFileManifestEntry mfs = manifestEntries[i];
         bool fetchMe = true;
@@ -402,7 +402,7 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
 
     if (totalBytes && fProgress)
     {
-        fProgress->SetLength((hsScalar)totalBytes);
+        fProgress->SetLength((float)totalBytes);
         fProgress->SetTitle("Downloading...");
     }
 

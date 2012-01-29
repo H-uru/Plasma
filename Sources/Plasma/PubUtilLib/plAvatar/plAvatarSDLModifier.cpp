@@ -135,7 +135,7 @@ void plAvatarPhysicalSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* 
             if ((rotVar->IsDirty() || posVar->IsDirty()) && avMod->GetController())
             {
                 hsPoint3 pos;
-                hsScalar zRot;
+                float zRot;
                 posVar->Get(&pos.fX);
                 rotVar->Get(&zRot);
                 avMod->GetController()->SetState(pos, zRot);
@@ -155,7 +155,7 @@ void plAvatarPhysicalSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState
     if(avMod && avMod->GetController())
     {
         hsPoint3 pos;
-        hsScalar zRot;
+        float zRot;
         avMod->GetController()->GetState(pos, zRot);
         dstState->FindVar(kStrRotation)->Set(zRot);
         dstState->FindVar(kStrPosition)->Set(&pos.fX);
@@ -299,7 +299,7 @@ void plAvatarSDLModifier::IPutClimbBrainIn(plArmatureMod *avMod, plAvBrainClimb 
 
 void plAvatarSDLModifier::ISetClimbBrainFrom(plArmatureMod *avMod, const plStateDataRecord* srcState)
 {
-    plAvBrainClimb *climbBrain = TRACKED_NEW plAvBrainClimb();
+    plAvBrainClimb *climbBrain = new plAvBrainClimb();
     avMod->PushBrain(climbBrain);
     climbBrain->LoadFromSDL(srcState);
 }
@@ -311,7 +311,7 @@ void plAvatarSDLModifier::IPutDriveBrainIn(plArmatureMod *avMod, plAvBrainDrive 
 
 void plAvatarSDLModifier::ISetDriveBrainFrom(plArmatureMod *avMod, const plStateDataRecord* src)
 {
-    plAvBrainDrive *driveBrain = TRACKED_NEW plAvBrainDrive();
+    plAvBrainDrive *driveBrain = new plAvBrainDrive();
     avMod->PushBrain(driveBrain);
 }
 
@@ -357,7 +357,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
             return false;
     }
     
-    plAnimStageVec * stages = TRACKED_NEW plAnimStageVec();
+    plAnimStageVec * stages = new plAnimStageVec();
     for (int j = 0; j < numStages; j++)
     {
         plStateDataRecord* stageState = stagesVar->GetStateDataRecord(j);
@@ -418,7 +418,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
     }
 
     plAvBrainGeneric *newBrain =
-        TRACKED_NEW plAvBrainGeneric(stages,
+        new plAvBrainGeneric(stages,
                              nil, nil,
                              callbackRcvr,
                              exitFlags,
@@ -437,7 +437,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
 // IGetStageFrom ----------------------------------------------------------------------------------------
 plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plStateDataRecord* srcState)
 {
-    UInt32 notifyFlags=0;
+    uint32_t notifyFlags=0;
     
     bool notifyEnter, notifyLoop, notifyAdv, notifyRegress;
     if (srcState->FindVar(StandardStageVarNames::kStrNotifyEnter)->Get(&notifyEnter))
@@ -499,8 +499,8 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     
     // ***!!! need to capture "advanceTo" and "regressTo" values!!!
     bool hackAdvanceToWrong = false, hackRegressToWrong = false;
-    plAnimStage *newStage = TRACKED_NEW plAnimStage(name,
-                                            (UInt8)notifyFlags,
+    plAnimStage *newStage = new plAnimStage(name,
+                                            (uint8_t)notifyFlags,
                                             static_cast<plAnimStage::ForwardType>(fwd),
                                             static_cast<plAnimStage::BackType>(bwd),
                                             static_cast<plAnimStage::AdvanceType>(adv),
@@ -526,7 +526,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
         dstState->FindVar(StandardStageVarNames::kStrStageAdvance)->Set((int)stage->GetAdvanceType());
         dstState->FindVar(StandardStageVarNames::kStrStageRegress)->Set((int)stage->GetRegressType());
         
-        UInt32 notifies = stage->GetNotifyFlags();
+        uint32_t notifies = stage->GetNotifyFlags();
         dstState->FindVar(StandardStageVarNames::kStrNotifyEnter)->Set((notifies & plAnimStage::kNotifyEnter) ? true : false);
         dstState->FindVar(StandardStageVarNames::kStrNotifyLoop)->Set((notifies & plAnimStage::kNotifyLoop) ? true : false);
         dstState->FindVar(StandardStageVarNames::kStrNotifyStageAdvance)->Set((notifies & plAnimStage::kNotifyAdvance) ? true : false);

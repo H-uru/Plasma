@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAgeManifest_h
 #define _plAgeManifest_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "hsUtils.h"
+
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plFile/plInitFileReader.h"
 #include "plEncryption/plChecksum.h"
@@ -66,9 +66,9 @@ protected:
     std::string     fName;
     std::string     fServerPath;
     plMD5Checksum   fChecksum;
-    UInt32          fSize;
-    UInt32          fZippedSize;
-    UInt32          fFlags;
+    uint32_t          fSize;
+    uint32_t          fZippedSize;
+    uint32_t          fFlags;
 
     bool            fMd5Checked;
     bool            fIsLocalUpToDate;
@@ -86,15 +86,15 @@ public:
         kFlagZipped                 = 1<<3,
     };
 
-    plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, UInt32 size, UInt32 zippedSize, UInt32 flags, bool md5Now = true);
+    plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
     virtual ~plManifestFile();
 
     const char* GetName() const { return fName.c_str(); }
     const char* GetServerPath() const { return fServerPath.c_str(); }
     const plMD5Checksum& GetChecksum() const { return fChecksum; }
-    UInt32 GetDiskSize() const { return fSize; }
-    UInt32 GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
-    UInt32 GetFlags() const { return fFlags; }
+    uint32_t GetDiskSize() const { return fSize; }
+    uint32_t GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
+    uint32_t GetFlags() const { return fFlags; }
 
     void    DoMd5Check();
     bool    IsLocalUpToDate();
@@ -106,7 +106,7 @@ public:
 class plManifest
 {
 protected:
-    UInt32 fFormatVersion;
+    uint32_t fFormatVersion;
     char* fAgeName;     // Mostly just for debugging
 
     hsTArray<plManifestFile*> fFiles;
@@ -116,7 +116,7 @@ protected:
 public:
     static const char* fTimeFormat;       // Standard string for the printed version of our timestamps
 
-    void SetFormatVersion(UInt32 v) { fFormatVersion = v; }
+    void SetFormatVersion(uint32_t v) { fFormatVersion = v; }
     void AddFile(plManifestFile* file);
 
     plManifest();
@@ -125,10 +125,10 @@ public:
     bool Read(const char* filename);
     bool Read(hsStream* stream);
 
-    UInt32 GetFormatVersion() const { return fFormatVersion; }
+    uint32_t GetFormatVersion() const { return fFormatVersion; }
 
-    UInt32 GetNumFiles() const { return fFiles.GetCount(); }
-    const plManifestFile& GetFile(UInt32 i) const { return *fFiles[i]; }
+    uint32_t GetNumFiles() const { return fFiles.GetCount(); }
+    const plManifestFile& GetFile(uint32_t i) const { return *fFiles[i]; }
 };
 
 #endif //_plAgeManifest_h

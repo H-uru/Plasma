@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const UInt32 vs_WaveFixedFin7ByteLen = 1876;
+static const uint32_t vs_WaveFixedFin7byteLen = 1876;
 
-static const UInt8 vs_WaveFixedFin7Codes[] = {
+static const uint8_t vs_WaveFixedFin7Codes[] = {
     0x1,    0x1,    0xfe,   0xff,
     0x1f,   0x0,    0x0,    0x0,
     0x0,    0x0,    0x0,    0x80,
@@ -515,7 +515,7 @@ static const UInt8 vs_WaveFixedFin7Codes[] = {
     0xff,   0xff,   0x0,    0x0
     };
 
-static const plShaderDecl vs_WaveFixedFin7Decl("sha/vs_WaveFixedFin7.inl", vs_WaveFixedFin7, vs_WaveFixedFin7ByteLen, vs_WaveFixedFin7Codes);
+static const plShaderDecl vs_WaveFixedFin7Decl("sha/vs_WaveFixedFin7.inl", vs_WaveFixedFin7, vs_WaveFixedFin7byteLen, vs_WaveFixedFin7Codes);
 
 static const plShaderRegister vs_WaveFixedFin7Register(&vs_WaveFixedFin7Decl);
 

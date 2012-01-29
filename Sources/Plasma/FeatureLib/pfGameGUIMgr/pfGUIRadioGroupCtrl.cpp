@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pfGUIRadioGroupCtrl.h"
 #include "pfGameGUIMgr.h"
 #include "pfGUICheckBoxCtrl.h"
@@ -73,7 +73,7 @@ class pfGroupProc : public pfGUICtrlProcObject
 
         virtual void    DoSomething( pfGUIControlMod *ctrl )
         {
-            Int32   newIdx;
+            int32_t   newIdx;
 
 
             // So one of our controls got clicked. That means that we change our value
@@ -124,7 +124,7 @@ class pfGroupProc : public pfGUICtrlProcObject
 
 pfGUIRadioGroupCtrl::pfGUIRadioGroupCtrl()
 {
-    fButtonProc = TRACKED_NEW pfGroupProc( this );
+    fButtonProc = new pfGroupProc( this );
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -137,7 +137,7 @@ pfGUIRadioGroupCtrl::~pfGUIRadioGroupCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIRadioGroupCtrl::IEval( double secs, hsScalar del, UInt32 dirty )
+hsBool  pfGUIRadioGroupCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
@@ -175,12 +175,12 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    UInt32  i, count = s->ReadLE32();
+    uint32_t  i, count = s->ReadLE32();
     fControls.SetCountAndZero( count );
 
     for( i = 0; i < count; i++ )
     {
-        mgr->ReadKeyNotifyMe( s, TRACKED_NEW plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
+        mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
     }
 
     fValue = fDefaultValue = s->ReadLE16();
@@ -190,7 +190,7 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
 
 void    pfGUIRadioGroupCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-    UInt32  i;
+    uint32_t  i;
 
 
     pfGUIControlMod::Write( s, mgr );
@@ -199,12 +199,12 @@ void    pfGUIRadioGroupCtrl::Write( hsStream *s, hsResMgr *mgr )
     for( i = 0; i < fControls.GetCount(); i++ )
         mgr->WriteKey( s, fControls[ i ]->GetKey() );
 
-    s->WriteLE16( (UInt16)fDefaultValue );
+    s->WriteLE16( (uint16_t)fDefaultValue );
 }
 
 //// SetValue ////////////////////////////////////////////////////////////////
 
-void    pfGUIRadioGroupCtrl::SetValue( Int32 value )
+void    pfGUIRadioGroupCtrl::SetValue( int32_t value )
 {
     if( value != fValue && ( value != -1 || HasFlag( kAllowNoSelection ) ) )
     {

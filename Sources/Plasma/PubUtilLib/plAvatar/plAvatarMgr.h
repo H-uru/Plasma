@@ -132,7 +132,7 @@ public:
     plArmatureMod *GetLocalAvatar();
     plKey GetLocalAvatarKey();
     static plArmatureMod *FindAvatar(plKey& avatarKey); // Key of the sceneObject
-    plArmatureMod *FindAvatarByPlayerID(UInt32 pid);
+    plArmatureMod *FindAvatarByPlayerID(uint32_t pid);
     plArmatureMod *FindAvatarByModelName(char *name); // Probably only useful for custom NPCs. All players are
                                                       // either "Male" or "Female".
     void FindAllAvatarsByModelName(const char* name, plArmatureModPtrVec& outVec);
@@ -149,9 +149,9 @@ public:
     int NumSpawnPoints() { return fSpawnPoints.size(); }
     int FindSpawnPoint( const char *name ) const;
     // \}
-    static int WarpPlayerToAnother(hsBool iMove, UInt32 remoteID);
-    static int WarpPlayerToXYZ(hsScalar x, hsScalar y, hsScalar z);
-    static int WarpPlayerToXYZ(int pid, hsScalar x, hsScalar y, hsScalar z);
+    static int WarpPlayerToAnother(hsBool iMove, uint32_t remoteID);
+    static int WarpPlayerToXYZ(float x, float y, float z);
+    static int WarpPlayerToXYZ(int pid, float x, float y, float z);
 
     static plAvatarMgr *GetInstance();
     static void ShutDown();
@@ -160,7 +160,7 @@ public:
     hsBool MsgReceive(plMessage *msg);
     hsBool HandleCoopMsg(plAvCoopMsg *msg);
     hsBool HandleNotifyMsg(plNotifyMsg *msg);
-    hsBool IPassMessageToActiveCoop(plMessage *msg, UInt32 id, UInt16 serial);
+    hsBool IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial);
 
     // similar to a spawn point, maintainers markers are used 
     // to generate your position in Dni coordinates
@@ -224,7 +224,7 @@ protected:
     // ID. By using a multimap, however, we can still handle a few different coops
     // for the same user by just iterating from the first match forward until
     // we run out of matches.
-    typedef std::multimap<UInt32, plCoopCoordinator *> plCoopMap;
+    typedef std::multimap<uint32_t, plCoopCoordinator *> plCoopMap;
     plCoopMap fActiveCoops;
 
     hsTArray<plLoadCloneMsg*> fCloneMsgQueue;

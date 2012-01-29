@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsBounds.h"
 #include "hsFastMath.h"
 
@@ -84,7 +84,7 @@ hsBool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray
     if( node.fFlags & plSpaceTreeNode::kDisabled )
         return false;
 
-    hsScalar closest;
+    float closest;
     // If it's a hit
     if( ICheckBound(node.fWorldBounds, closest) )
     {
@@ -149,7 +149,7 @@ hsBool plVisLOSMgr::ISetup(const hsPoint3& pStart, const hsPoint3& pEnd)
 
     fMaxDist = hsVector3(&fCurrTarg, &fCurrFrom).Magnitude();
 
-    const hsScalar kMinMaxDist(0);
+    const float kMinMaxDist(0);
     return fMaxDist > kMinMaxDist;
 }
 
@@ -245,7 +245,7 @@ hsBool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hit)
+hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit)
 {
     if( !(dr->GetSpan(spanIdx)->fTypeMask & plSpan::kIcicleSpan) )
         return false;
@@ -263,7 +263,7 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hi
     hsPoint3 currTarg = src.GetWorldToLocal() * fCurrTarg;
 
     hsVector3 currDir(&currTarg, &currFrom);
-    hsScalar maxDist = currDir.Magnitude();
+    float maxDist = currDir.Magnitude();
 
     currDir /= maxDist;
 
@@ -272,9 +272,9 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hi
     {
         // Project the current ray onto the tri plane
         hsVector3 norm = hsVector3(&tri.Position(1), &tri.Position(0)) % hsVector3(&tri.Position(2), &tri.Position(0));
-        hsScalar dotNorm = norm.InnerProduct(currDir);
+        float dotNorm = norm.InnerProduct(currDir);
 
-        const hsScalar kMinDotNorm = 1.e-3f;
+        const float kMinDotNorm = 1.e-3f;
         if( dotNorm >= -kMinDotNorm )
         {
             if( !twoSided )
@@ -282,7 +282,7 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hi
             if( dotNorm <= kMinDotNorm )
                 continue;
         }
-        hsScalar dist = hsVector3(&tri.Position(0), &currFrom).InnerProduct(norm);
+        float dist = hsVector3(&tri.Position(0), &currFrom).InnerProduct(norm);
         if( dist > 0 )
             continue;
         dist /= dotNorm;
@@ -295,13 +295,13 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hi
 
         // Find the 3 cross products (v[i+1]-v[i]) X (proj - v[i]) dotted with current ray
         hsVector3 cross0 = hsVector3(&tri.Position(1), &tri.Position(0)) % hsVector3(&projPt, &tri.Position(0));
-        hsScalar dot0 = cross0.InnerProduct(currDir);
+        float dot0 = cross0.InnerProduct(currDir);
 
         hsVector3 cross1 = hsVector3(&tri.Position(2), &tri.Position(1)) % hsVector3(&projPt, &tri.Position(1));
-        hsScalar dot1 = cross1.InnerProduct(currDir);
+        float dot1 = cross1.InnerProduct(currDir);
 
         hsVector3 cross2 = hsVector3(&tri.Position(0), &tri.Position(2)) % hsVector3(&projPt, &tri.Position(2));
-        hsScalar dot2 = cross2.InnerProduct(currDir);
+        float dot2 = cross2.InnerProduct(currDir);
 
         // If all 3 are negative, projPt is a hit
         // If all 3 are positive and we're two sided, projPt is a hit
@@ -330,7 +330,7 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, UInt32 spanIdx, plVisHit& hi
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
+hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
 {
     if( bnd.GetType() != kBoundsNormal )
         return false;
@@ -360,7 +360,7 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
     const hsPoint3& currTarg = fCurrTarg;
 
     hsVector3 currDir(&currTarg, &currFrom);
-    const hsScalar maxDistSq = currDir.MagnitudeSquared();
+    const float maxDistSq = currDir.MagnitudeSquared();
 
     currDir *= hsFastMath::InvSqrt(maxDistSq);
 
@@ -374,14 +374,14 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
 
         // Project the current ray onto the tri plane
         hsVector3 norm = hsVector3(&p1, &p0) % hsVector3(&p2, &p0);
-        hsScalar dotNorm = norm.InnerProduct(currDir);
+        float dotNorm = norm.InnerProduct(currDir);
 
-        const hsScalar kMinDotNorm = 1.e-3f;
+        const float kMinDotNorm = 1.e-3f;
         if( dotNorm >= -kMinDotNorm )
         {
             continue;
         }
-        hsScalar dist = hsVector3(&p0, &currFrom).InnerProduct(norm);
+        float dist = hsVector3(&p0, &currFrom).InnerProduct(norm);
         if( dist >= 0 )
             continue;
         dist /= dotNorm;
@@ -395,16 +395,16 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
 
         // Find the 3 cross products (v[i+1]-v[i]) X (proj - v[i]) dotted with current ray
         hsVector3 cross0 = hsVector3(&p1, &p0) % hsVector3(&projPt, &p0);
-        hsScalar dot0 = cross0.InnerProduct(currDir);
+        float dot0 = cross0.InnerProduct(currDir);
 
         hsVector3 cross1 = hsVector3(&p2, &p1) % hsVector3(&projPt, &p1);
-        hsScalar dot1 = cross1.InnerProduct(currDir);
+        float dot1 = cross1.InnerProduct(currDir);
 
         hsVector3 cross2 = hsVector3(&p3, &p2) % hsVector3(&projPt, &p2);
-        hsScalar dot2 = cross2.InnerProduct(currDir);
+        float dot2 = cross2.InnerProduct(currDir);
 
         hsVector3 cross3 = hsVector3(&p0, &p3) % hsVector3(&projPt, &p3);
-        hsScalar dot3 = cross3.InnerProduct(currDir);
+        float dot3 = cross3.InnerProduct(currDir);
 
         // If all 4 are negative, projPt is a hit
         if( (dot0 <= 0) && (dot1 <= 0) && (dot2 <= 0) && (dot3 <= 0) )
@@ -418,11 +418,11 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, hsScalar& closest)
 
 hsBool plVisLOSMgr::CursorCheck(plVisHit& hit)
 {
-    Int32 sx= Int32(plMouseDevice::Instance()->GetCursorX() * fPipe->Width());
-    Int32 sy= Int32(plMouseDevice::Instance()->GetCursorY() * fPipe->Height());
+    int32_t sx= int32_t(plMouseDevice::Instance()->GetCursorX() * fPipe->Width());
+    int32_t sy= int32_t(plMouseDevice::Instance()->GetCursorY() * fPipe->Height());
 
     hsPoint3 from = fPipe->GetViewPositionWorld();
-    plConst(hsScalar) dist(1.e5f);
+    plConst(float) dist(1.e5f);
 
     hsPoint3 targ;
     fPipe->ScreenToWorldPoint(1, 0, &sx, &sy, dist, 0, &targ);

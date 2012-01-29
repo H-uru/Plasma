@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPlasmaServers.h"
 #include "hsStream.h"
-#include "hsUtils.h"
 
 bool plPlasmaServers::GetServerInfo()
 {

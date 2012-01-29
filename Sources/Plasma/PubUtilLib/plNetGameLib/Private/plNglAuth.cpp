@@ -82,13 +82,13 @@ struct CliAuConn : AtomicRef {
     void StopAutoPing ();
     void TimerPing ();
     
-    void Send (const unsigned_ptr fields[], unsigned count);
+    void Send (const uintptr_t fields[], unsigned count);
 
     CCritSect       critsect;
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar           name[MAX_PATH];
+    wchar_t           name[MAX_PATH];
     NetAddress      addr;
     Uuid            token;
     unsigned        seq;
@@ -105,7 +105,7 @@ struct PingRequestTrans : NetAuthTrans {
     void *                          m_param;
     unsigned                        m_pingAtMs;
     unsigned                        m_replyAtMs;
-    ARRAY(byte)                     m_payload;
+    ARRAY(uint8_t)                     m_payload;
     
     PingRequestTrans (
         FNetCliAuthPingRequestCallback  callback,
@@ -118,7 +118,7 @@ struct PingRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -131,23 +131,23 @@ struct AccountExistsRequestTrans : NetAuthTrans {
     void *                                      m_param;
 
     // send    
-    wchar                                       m_accountName[kMaxAccountNameLength];
+    wchar_t                                       m_accountName[kMaxAccountNameLength];
 
     // recv
-    byte                                        m_exists;
+    uint8_t                                        m_exists;
     
 
     
     AccountExistsRequestTrans (
         FNetCliAuthAccountExistsRequestCallback callback,
         void *                          param,
-        const wchar                     accountName[]
+        const wchar_t                     accountName[]
     );
 
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -172,15 +172,15 @@ struct LoginRequestTrans : NetAuthTrans {
 
     void AddPlayer (
         unsigned    playerInt,
-        const wchar playerName[],
-        const wchar avatarShape[],
+        const wchar_t playerName[],
+        const wchar_t avatarShape[],
         unsigned    explorer
     );
 
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -191,14 +191,14 @@ struct LoginRequestTrans : NetAuthTrans {
 struct AgeRequestTrans : NetAuthTrans {
     FNetCliAuthAgeRequestCallback       m_callback;
     void *                              m_param;
-    wchar                               m_ageName[kMaxAgeNameLength];
+    wchar_t                               m_ageName[kMaxAgeNameLength];
     unsigned                            m_ageMcpId;
     Uuid                                m_ageInstId;
     unsigned                            m_ageVaultId;
     NetAddressNode                      m_gameSrvNode;
 
     AgeRequestTrans (
-        const wchar                         ageName[],
+        const wchar_t                         ageName[],
         const Uuid &                        ageInstId,
         FNetCliAuthAgeRequestCallback       callback,
         void *                              param
@@ -208,7 +208,7 @@ struct AgeRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -221,7 +221,7 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     void *                                  m_param;
 
     // send    
-    wchar                                   m_accountName[kMaxAccountNameLength];
+    wchar_t                                   m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
     unsigned                                m_accountFlags;
     unsigned                                m_billingType;
@@ -230,8 +230,8 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     Uuid                                    m_accountId;
 
     AccountCreateRequestTrans (
-        const wchar                             accountName[],
-        const wchar                             password[],
+        const wchar_t                             accountName[],
+        const wchar_t                             password[],
         unsigned                                accountFlags,
         unsigned                                billingType,
         FNetCliAuthAccountCreateRequestCallback callback,
@@ -241,7 +241,7 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -254,7 +254,7 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     void *                                          m_param;
 
     // send    
-    wchar                                   m_accountName[kMaxAccountNameLength];
+    wchar_t                                   m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
     Uuid                                    m_key;
     unsigned                                m_billingType;
@@ -264,8 +264,8 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     Uuid                                    m_activationKey;
 
     AccountCreateFromKeyRequestTrans (
-        const wchar                                     accountName[],
-        const wchar                                     password[],
+        const wchar_t                                     accountName[],
+        const wchar_t                                     password[],
         const Uuid &                                    key,
         unsigned                                        billingType,
         FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -275,7 +275,7 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -288,18 +288,18 @@ struct PlayerCreateRequestTrans : NetAuthTrans {
     void *                                  m_param;
 
     // send    
-    wchar                                   m_playerName[kMaxPlayerNameLength];
-    wchar                                   m_avatarShape[MAX_PATH];
-    wchar                                   m_friendInvite[MAX_PATH];
+    wchar_t                                   m_playerName[kMaxPlayerNameLength];
+    wchar_t                                   m_avatarShape[MAX_PATH];
+    wchar_t                                   m_friendInvite[MAX_PATH];
 
     // recv
     NetCliAuthPlayerInfo                    m_playerInfo;
 
 
     PlayerCreateRequestTrans (
-        const wchar                             playerName[],
-        const wchar                             avatarShape[],
-        const wchar                             friendInvite[],
+        const wchar_t                             playerName[],
+        const wchar_t                             avatarShape[],
+        const wchar_t                             friendInvite[],
         FNetCliAuthPlayerCreateRequestCallback  callback,
         void *                                  param
     );
@@ -307,7 +307,7 @@ struct PlayerCreateRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -335,7 +335,7 @@ struct PlayerDeleteRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -359,7 +359,7 @@ struct UpgradeVisitorRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -385,7 +385,7 @@ struct SetPlayerRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -398,12 +398,12 @@ struct AccountChangePasswordRequestTrans : NetAuthTrans {
     void *                                          m_param;
 
     // send    
-    wchar                                   m_accountName[kMaxAccountNameLength];
+    wchar_t                                   m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
 
     AccountChangePasswordRequestTrans (
-        const wchar                                     accountName[],
-        const wchar                                     password[],
+        const wchar_t                                     accountName[],
+        const wchar_t                                     password[],
         FNetCliAuthAccountChangePasswordRequestCallback callback,
         void *                                          param
     );
@@ -411,7 +411,7 @@ struct AccountChangePasswordRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -424,13 +424,13 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     void *                                  m_param;
     
     // send
-    wchar                                   m_ageName[MAX_PATH];
+    wchar_t                                   m_ageName[MAX_PATH];
     
     // recv
     ARRAY(NetAgeInfo)                       m_ages;
     
     GetPublicAgeListTrans (
-        const wchar                         ageName[],
+        const wchar_t                         ageName[],
         FNetCliAuthGetPublicAgeListCallback callback,
         void *                              param
     );
@@ -438,7 +438,7 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -451,11 +451,11 @@ struct AccountSetRolesRequestTrans : NetAuthTrans {
     void *                                      m_param;
 
     // send    
-    wchar                                   m_accountName[kMaxAccountNameLength];
+    wchar_t                                   m_accountName[kMaxAccountNameLength];
     unsigned                                m_accountFlags;
 
     AccountSetRolesRequestTrans (
-        const wchar                                 accountName[],
+        const wchar_t                                 accountName[],
         unsigned                                    accountFlags,
         FNetCliAuthAccountSetRolesRequestCallback   callback,
         void *                                      param
@@ -464,7 +464,7 @@ struct AccountSetRolesRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -477,11 +477,11 @@ struct AccountSetBillingTypeRequestTrans : NetAuthTrans {
     void *                                          m_param;
 
     // send    
-    wchar                                   m_accountName[kMaxAccountNameLength];
+    wchar_t                                   m_accountName[kMaxAccountNameLength];
     unsigned                                m_billingType;
 
     AccountSetBillingTypeRequestTrans (
-        const wchar                                     accountName[],
+        const wchar_t                                     accountName[],
         unsigned                                        billingType,
         FNetCliAuthAccountSetBillingTypeRequestCallback callback,
         void *                                          param
@@ -490,7 +490,7 @@ struct AccountSetBillingTypeRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -514,7 +514,7 @@ struct AccountActivateRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -526,22 +526,22 @@ struct FileListRequestTrans : NetAuthTrans {
     FNetCliAuthFileListRequestCallback  m_callback;
     void *                              m_param;
 
-    wchar                               m_directory[MAX_PATH];
-    wchar                               m_ext[MAX_EXT];
+    wchar_t                               m_directory[MAX_PATH];
+    wchar_t                               m_ext[MAX_EXT];
 
     ARRAY(NetCliAuthFileInfo)           m_fileInfoArray;
 
     FileListRequestTrans (
         FNetCliAuthFileListRequestCallback  callback,
         void *                              param,
-        const wchar                         directory[],
-        const wchar                         ext[]
+        const wchar_t                         directory[],
+        const wchar_t                         ext[]
     );
 
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -553,20 +553,20 @@ struct FileDownloadRequestTrans : NetAuthTrans {
     FNetCliAuthFileRequestCallback  m_callback;
     void *                          m_param;
 
-    wchar                           m_filename[MAX_PATH];
+    wchar_t                           m_filename[MAX_PATH];
     hsStream *                      m_writer;
 
     FileDownloadRequestTrans (
         FNetCliAuthFileRequestCallback  callback,
         void *                          param,
-        const wchar                     filename[],
+        const wchar_t                   filename[],
         hsStream *                      writer
     );
 
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -578,7 +578,7 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
 
     unsigned    bytes;
     unsigned    offset;
-    byte *      data;
+    uint8_t *   data;
     hsStream *  writer;
 
     RcvdFileDownloadChunkTrans () : NetNotifyTrans(kRcvdFileDownloadChunkTrans) {}
@@ -594,7 +594,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 
     unsigned        bufferType;
     unsigned        bufferBytes;
-    byte *          bufferData;
+    uint8_t *          bufferData;
 
     RcvdPropagatedBufferTrans () : NetNotifyTrans(kRcvdPropagatedBufferTrans) {}
     ~RcvdPropagatedBufferTrans ();
@@ -669,7 +669,7 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -683,10 +683,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
 
     Uuid                        m_ageInstId;
     Uuid                        m_parentAgeInstId;
-    wchar *                     m_ageFilename;
-    wchar *                     m_ageInstName;
-    wchar *                     m_ageUserName;
-    wchar *                     m_ageDesc;
+    wchar_t *                     m_ageFilename;
+    wchar_t *                     m_ageInstName;
+    wchar_t *                     m_ageUserName;
+    wchar_t *                     m_ageDesc;
     unsigned                    m_ageSequenceNumber;
     unsigned                    m_ageLanguage;
     
@@ -698,10 +698,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
         void *                      param,              // optional
         const Uuid &                ageInstId,          // optional. is used in match
         const Uuid &                parentAgeInstId,    // optional. is used in match
-        const wchar                 ageFilename[],      // optional. is used in match
-        const wchar                 ageInstName[],      // optional. not used in match
-        const wchar                 ageUserName[],      // optional. not used in match
-        const wchar                 ageDesc[],          // optional. not used in match
+        const wchar_t                 ageFilename[],      // optional. is used in match
+        const wchar_t                 ageInstName[],      // optional. not used in match
+        const wchar_t                 ageUserName[],      // optional. not used in match
+        const wchar_t                 ageDesc[],          // optional. not used in match
         unsigned                    ageSequenceNumber,  // optional. not used in match
         unsigned                    ageLanguage         // optional. not used in match
     );
@@ -710,7 +710,7 @@ struct VaultInitAgeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -735,7 +735,7 @@ struct VaultFetchNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -762,7 +762,7 @@ struct VaultFindNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -787,7 +787,7 @@ struct VaultCreateNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -799,7 +799,7 @@ struct VaultSaveNodeTrans : NetAuthTrans {
 
     unsigned                            m_nodeId;
     Uuid                                m_revisionId;
-    ARRAY(byte)                         m_buffer;
+    ARRAY(uint8_t)                         m_buffer;
     FNetCliAuthVaultNodeSaveCallback    m_callback;
     void *                              m_param;
     
@@ -815,7 +815,7 @@ struct VaultSaveNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -842,7 +842,7 @@ struct VaultAddNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -867,7 +867,7 @@ struct VaultRemoveNodeTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -902,7 +902,7 @@ struct SetPlayerBanStatusRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -916,11 +916,11 @@ struct ChangePlayerNameRequestTrans : NetAuthTrans {
 
     // send    
     unsigned                                        m_playerId;
-    wchar                                           m_newName[kMaxPlayerNameLength];
+    wchar_t                                           m_newName[kMaxPlayerNameLength];
 
     ChangePlayerNameRequestTrans (
         unsigned                                    playerId,
-        const wchar                                 newName[],
+        const wchar_t                                 newName[],
         FNetCliAuthChangePlayerNameRequestCallback  callback,
         void *                                      param
     );
@@ -928,7 +928,7 @@ struct ChangePlayerNameRequestTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -941,13 +941,13 @@ struct SendFriendInviteTrans : NetAuthTrans {
     void *                              m_param;
 
     // send    
-    wchar                               m_emailAddress[kMaxEmailAddressLength];
-    wchar                               m_toName[kMaxPlayerNameLength];
+    wchar_t                               m_emailAddress[kMaxEmailAddressLength];
+    wchar_t                               m_toName[kMaxPlayerNameLength];
     Uuid                                m_inviteUuid;
 
     SendFriendInviteTrans (
-        const wchar                             emailAddr[],
-        const wchar                             toName[],
+        const wchar_t                             emailAddr[],
+        const wchar_t                             toName[],
         const Uuid &                            inviteUuid,
         FNetCliAuthSendFriendInviteCallback     callback,
         void *                                  param
@@ -956,7 +956,7 @@ struct SendFriendInviteTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -986,7 +986,7 @@ struct ScoreCreateTrans : NetAuthTrans {
 
     // recv
     unsigned                        m_scoreId;
-    UInt32                          m_createdTime;
+    uint32_t                          m_createdTime;
 
     ScoreCreateTrans (
         unsigned                        ownerId,
@@ -1000,7 +1000,7 @@ struct ScoreCreateTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1024,7 +1024,7 @@ struct ScoreDeleteTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1054,7 +1054,7 @@ struct ScoreGetScoresTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1080,7 +1080,7 @@ struct ScoreAddPointsTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1108,7 +1108,7 @@ struct ScoreTransferPointsTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1134,7 +1134,7 @@ struct ScoreSetPointsTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1150,7 +1150,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     unsigned                        m_ownerId;
     unsigned                        m_scoreGroup;
     unsigned                        m_parentFolderId;
-    wchar                           m_gameName[kMaxGameScoreNameLength];
+    wchar_t                           m_gameName[kMaxGameScoreNameLength];
     unsigned                        m_timePeriod;
     unsigned                        m_numResults;
     unsigned                        m_pageNumber;
@@ -1176,7 +1176,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     bool Send ();
     void Post ();
     bool Recv (
-        const byte  msg[],
+        const uint8_t  msg[],
         unsigned    bytes
     );
 };
@@ -1199,14 +1199,14 @@ static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
-static wchar                        s_accountName[kMaxAccountNameLength];
+static wchar_t                        s_accountName[kMaxAccountNameLength];
 static ShaDigest                    s_accountNamePassHash;
-static wchar                        s_authToken[kMaxPublisherAuthKeyLength];
-static wchar                        s_os[kMaxGTOSIdLength];
+static wchar_t                        s_authToken[kMaxPublisherAuthKeyLength];
+static wchar_t                        s_os[kMaxGTOSIdLength];
 
 static long                         s_perf[kNumPerf];
 
-static UInt32                       s_encryptionKey[4];
+static uint32_t                       s_encryptionKey[4];
 
 static FNetCliAuthRecvBufferHandler         s_bufRcvdCb;
 static FNetCliAuthConnectCallback           s_connectedCb;
@@ -1232,14 +1232,14 @@ static inline bool ICharIsSpace (unsigned ch) {
 }
 
 //===========================================================================
-static ENetError FixupPlayerName (wchar * name) {
+static ENetError FixupPlayerName (wchar_t * name) {
     ASSERT(name);
 
     // Trim leading and trailing whitespace and convert
     // multiple internal spaces into only one space
     unsigned nonSpaceChars = 0;
-    wchar *dst = name;
-    for (wchar *src = name; *src; ) {
+    wchar_t *dst = name;
+    for (wchar_t *src = name; *src; ) {
         // Skip whitespace
         while (*src && ICharIsSpace(*src))
             src++;
@@ -1314,7 +1314,7 @@ static void UnlinkAndAbandonConn_CS (CliAuConn * conn) {
 
 //============================================================================
 static void SendClientRegisterRequest (CliAuConn * conn) {
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ClientRegisterRequest,
         BuildId(),
     };
@@ -1333,7 +1333,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
         if (!s_perf[kPingDisabled])
             conn->AutoPing();
             
-        AuthConnectedNotifyTrans * trans = NEW(AuthConnectedNotifyTrans);
+        AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
         NetTransSend(trans);
     }
 
@@ -1525,7 +1525,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const wchar         name[],
+    const wchar_t         name[],
     const NetAddress &  addr
 ) {
     ASSERT(s_running);
@@ -1543,7 +1543,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar         name[],
+    const wchar_t         name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -1720,7 +1720,7 @@ void CliAuConn::TimerPing () {
         // Send a ping request
         pingSendTimeMs = GetNonZeroTimeMs();
         
-        const unsigned_ptr msg[] = {
+        const uintptr_t msg[] = {
             kCli2Auth_PingRequest,
             pingSendTimeMs,
             0,      // not a transaction
@@ -1733,7 +1733,7 @@ void CliAuConn::TimerPing () {
 }
 
 //============================================================================
-void CliAuConn::Send (const unsigned_ptr fields[], unsigned count) {
+void CliAuConn::Send (const uintptr_t fields[], unsigned count) {
     critsect.Enter();
     {
         NetCliSend(cli, fields, count);
@@ -1751,7 +1751,7 @@ void CliAuConn::Send (const unsigned_ptr fields[], unsigned count) {
 
 //============================================================================
 static bool Recv_PingReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1765,7 +1765,7 @@ static bool Recv_PingReply (
 
 //============================================================================
 static bool Recv_AccountExistsReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1780,7 +1780,7 @@ static bool Recv_AccountExistsReply (
 
 //============================================================================
 static bool Recv_ClientRegisterReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        ,
     void *          param
 ) {
@@ -1801,7 +1801,7 @@ static bool Recv_ClientRegisterReply (
 
 //============================================================================
 static bool Recv_AcctPlayerInfo (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1814,7 +1814,7 @@ static bool Recv_AcctPlayerInfo (
 
 //============================================================================
 static bool Recv_AcctLoginReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1827,7 +1827,7 @@ static bool Recv_AcctLoginReply (
 
 //============================================================================
 static bool Recv_AcctCreateReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1840,7 +1840,7 @@ static bool Recv_AcctCreateReply (
 
 //============================================================================
 static bool Recv_AcctCreateFromKeyReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1853,7 +1853,7 @@ static bool Recv_AcctCreateFromKeyReply (
 
 //============================================================================
 static bool Recv_PlayerCreateReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1866,7 +1866,7 @@ static bool Recv_PlayerCreateReply (
 
 //============================================================================
 static bool Recv_PlayerDeleteReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1879,7 +1879,7 @@ static bool Recv_PlayerDeleteReply (
 
 //============================================================================
 static bool Recv_UpgradeVisitorReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1892,7 +1892,7 @@ static bool Recv_UpgradeVisitorReply (
 
 //============================================================================
 static bool Recv_AcctSetPlayerReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1905,7 +1905,7 @@ static bool Recv_AcctSetPlayerReply (
 
 //============================================================================
 static bool Recv_AcctChangePasswordReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1918,7 +1918,7 @@ static bool Recv_AcctChangePasswordReply (
 
 //============================================================================
 static bool Recv_AcctSetRolesReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1931,7 +1931,7 @@ static bool Recv_AcctSetRolesReply (
 
 //============================================================================
 static bool Recv_AcctSetBillingTypeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1944,7 +1944,7 @@ static bool Recv_AcctSetBillingTypeReply (
 
 //============================================================================
 static bool Recv_AcctActivateReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1957,7 +1957,7 @@ static bool Recv_AcctActivateReply (
 
 //============================================================================
 static bool Recv_AgeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1970,7 +1970,7 @@ static bool Recv_AgeReply (
 
 //============================================================================
 static bool Recv_FileListReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1983,7 +1983,7 @@ static bool Recv_FileListReply (
 
 //============================================================================
 static bool Recv_FileDownloadChunk (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -1996,7 +1996,7 @@ static bool Recv_FileDownloadChunk (
 
 //============================================================================
 static bool Recv_KickedOff (
-    const byte      buffer[],
+    const uint8_t      buffer[],
     unsigned        bytes,
     void *          param
 ) {
@@ -2010,7 +2010,7 @@ static bool Recv_KickedOff (
 
 //============================================================================
 static bool Recv_VaultNodeRefsFetched (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2023,7 +2023,7 @@ static bool Recv_VaultNodeRefsFetched (
 
 //============================================================================
 static bool Recv_VaultNodeFetched (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2036,7 +2036,7 @@ static bool Recv_VaultNodeFetched (
 
 //============================================================================
 static bool Recv_VaultNodeCreated (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2049,13 +2049,13 @@ static bool Recv_VaultNodeCreated (
 
 //============================================================================
 static bool Recv_VaultNodeChanged (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        ,
     void *
 ) {
     const Auth2Cli_VaultNodeChanged & notify = *(const Auth2Cli_VaultNodeChanged *)msg;
     
-    VaultNodeChangedTrans * trans = NEW(VaultNodeChangedTrans);
+    VaultNodeChangedTrans * trans = new VaultNodeChangedTrans;
     trans->m_nodeId     = notify.nodeId;
     trans->m_revId      = notify.revisionId;
     NetTransSend(trans);
@@ -2065,13 +2065,13 @@ static bool Recv_VaultNodeChanged (
 
 //============================================================================
 static bool Recv_VaultNodeAdded (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        ,
     void *
 ) {
     const Auth2Cli_VaultNodeAdded & notify = *(const Auth2Cli_VaultNodeAdded *)msg;
     
-    VaultNodeAddedTrans * trans = NEW(VaultNodeAddedTrans);
+    VaultNodeAddedTrans * trans = new VaultNodeAddedTrans;
     trans->m_parentId   = notify.parentId;
     trans->m_childId    = notify.childId;
     trans->m_ownerId    = notify.ownerId;
@@ -2082,13 +2082,13 @@ static bool Recv_VaultNodeAdded (
 
 //============================================================================
 static bool Recv_VaultNodeRemoved (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        ,
     void *
 ) {
     const Auth2Cli_VaultNodeRemoved & notify = *(const Auth2Cli_VaultNodeRemoved *)msg;
     
-    VaultNodeRemovedTrans * trans = NEW(VaultNodeRemovedTrans);
+    VaultNodeRemovedTrans * trans = new VaultNodeRemovedTrans;
     trans->m_parentId   = notify.parentId;
     trans->m_childId    = notify.childId;
     NetTransSend(trans);
@@ -2098,13 +2098,13 @@ static bool Recv_VaultNodeRemoved (
 
 //============================================================================
 static bool Recv_VaultNodeDeleted (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        ,
     void *
 ) {
     const Auth2Cli_VaultNodeDeleted & notify = *(const Auth2Cli_VaultNodeDeleted *)msg;
     
-    VaultNodeDeletedTrans * trans = NEW(VaultNodeDeletedTrans);
+    VaultNodeDeletedTrans * trans = new VaultNodeDeletedTrans;
     trans->m_nodeId     = notify.nodeId;
     NetTransSend(trans);
 
@@ -2113,7 +2113,7 @@ static bool Recv_VaultNodeDeleted (
 
 //============================================================================
 static bool Recv_VaultSaveNodeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2126,7 +2126,7 @@ static bool Recv_VaultSaveNodeReply (
 
 //============================================================================
 static bool Recv_VaultAddNodeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2139,7 +2139,7 @@ static bool Recv_VaultAddNodeReply (
 
 //============================================================================
 static bool Recv_VaultRemoveNodeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2152,7 +2152,7 @@ static bool Recv_VaultRemoveNodeReply (
 
 //============================================================================
 static bool Recv_VaultInitAgeReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2165,7 +2165,7 @@ static bool Recv_VaultInitAgeReply (
 
 //============================================================================
 static bool Recv_VaultNodeFindReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2178,7 +2178,7 @@ static bool Recv_VaultNodeFindReply (
 
 //============================================================================
 static bool Recv_PublicAgeList (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2191,7 +2191,7 @@ static bool Recv_PublicAgeList (
 
 //============================================================================
 static bool Recv_ServerAddr (
-    const byte  in[],
+    const uint8_t  in[],
     unsigned    ,
     void *
 ) {
@@ -2209,7 +2209,7 @@ static bool Recv_ServerAddr (
                 NetAddressGetPort(s_active->addr),
                 &s_active->addr
             );
-            wchar addrStr[64];
+            wchar_t addrStr[64];
             NetAddressNodeToString(
                 msg.srvAddr,
                 addrStr,
@@ -2225,11 +2225,11 @@ static bool Recv_ServerAddr (
 
 //============================================================================
 static bool Recv_NotifyNewBuild (
-    const byte[],
+    const uint8_t[],
     unsigned    ,
     void *
 ) {
-    NotifyNewBuildTrans * trans = NEW(NotifyNewBuildTrans);
+    NotifyNewBuildTrans * trans = new NotifyNewBuildTrans;
     NetTransSend(trans);
 
     return true;
@@ -2237,7 +2237,7 @@ static bool Recv_NotifyNewBuild (
 
 //============================================================================
 static bool Recv_SetPlayerBanStatusReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2250,7 +2250,7 @@ static bool Recv_SetPlayerBanStatusReply (
 
 //============================================================================
 static bool Recv_ChangePlayerNameReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2263,7 +2263,7 @@ static bool Recv_ChangePlayerNameReply (
 
 //============================================================================
 static bool Recv_SendFriendInviteReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2276,7 +2276,7 @@ static bool Recv_SendFriendInviteReply (
 
 //============================================================================
 static bool Recv_ScoreCreateReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2289,7 +2289,7 @@ static bool Recv_ScoreCreateReply (
 
 //============================================================================
 static bool Recv_ScoreDeleteReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2302,7 +2302,7 @@ static bool Recv_ScoreDeleteReply (
 
 //============================================================================
 static bool Recv_ScoreGetScoresReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2315,7 +2315,7 @@ static bool Recv_ScoreGetScoresReply (
 
 //============================================================================
 static bool Recv_ScoreAddPointsReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2328,7 +2328,7 @@ static bool Recv_ScoreAddPointsReply (
 
 //============================================================================
 static bool Recv_ScoreTransferPointsReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2341,7 +2341,7 @@ static bool Recv_ScoreTransferPointsReply (
 
 //============================================================================
 static bool Recv_ScoreSetPointsReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2354,7 +2354,7 @@ static bool Recv_ScoreSetPointsReply (
 
 //============================================================================
 static bool Recv_ScoreGetRanksReply (
-    const byte      msg[],
+    const uint8_t      msg[],
     unsigned        bytes,
     void *
 ) {
@@ -2490,7 +2490,7 @@ PingRequestTrans::PingRequestTrans (
 ,   m_param(param)
 ,   m_pingAtMs(pingAtMs)
 {
-    m_payload.Set((const byte *)payload, payloadBytes);
+    m_payload.Set((const uint8_t *)payload, payloadBytes);
 }
 
 //============================================================================
@@ -2499,12 +2499,12 @@ bool PingRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_PingRequest,
                         m_pingAtMs,
                         m_transId,
                         m_payload.Count(),
-        (unsigned_ptr)  m_payload.Ptr(),
+        (uintptr_t)  m_payload.Ptr(),
     };
     
     m_conn->Send(msg, arrsize(msg));
@@ -2527,7 +2527,7 @@ void PingRequestTrans::Post () {
 
 //============================================================================
 bool PingRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
@@ -2551,7 +2551,7 @@ bool PingRequestTrans::Recv (
 AccountExistsRequestTrans::AccountExistsRequestTrans (
     FNetCliAuthAccountExistsRequestCallback callback,
     void *                          param,
-    const wchar                     accountName[]
+    const wchar_t                     accountName[]
 ) : NetAuthTrans(kPingRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
@@ -2565,10 +2565,10 @@ bool AccountExistsRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AccountExistsRequest,
                         m_transId,
-                        (unsigned_ptr)m_accountName
+                        (uintptr_t)m_accountName
     };
     
     m_conn->Send(msg, arrsize(msg));
@@ -2588,7 +2588,7 @@ void AccountExistsRequestTrans::Post () {
 
 //============================================================================
 bool AccountExistsRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AccountExistsReply & reply = *(const Auth2Cli_AccountExistsReply *)msg;
@@ -2618,14 +2618,14 @@ LoginRequestTrans::LoginRequestTrans (
 ,   m_accountFlags(0)
 ,   m_playerCount(0)
 {
-    ZERO(m_players);
+    memset(&m_players, 0, sizeof(m_players));
 }
 
 //============================================================================
 void LoginRequestTrans::AddPlayer (
     unsigned    playerInt,
-    const wchar playerName[],
-    const wchar avatarShape[],
+    const wchar_t playerName[],
+    const wchar_t avatarShape[],
     unsigned    explorer
 ) {
     unsigned index = m_playerCount++;
@@ -2643,9 +2643,9 @@ bool LoginRequestTrans::Send () {
         return false;
 
     ShaDigest challengeHash;
-    dword clientChallenge = 0;
+    uint32_t clientChallenge = 0;
 
-    wchar domain[15];
+    wchar_t domain[15];
     PathSplitEmail(s_accountName, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
     if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
@@ -2654,7 +2654,7 @@ bool LoginRequestTrans::Send () {
     else {
         CryptCreateRandomSeed(
             sizeof(clientChallenge),
-            (byte *) &clientChallenge
+            (uint8_t *) &clientChallenge
         );
 
         CryptHashPasswordChallenge(
@@ -2665,14 +2665,14 @@ bool LoginRequestTrans::Send () {
         );
     }
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctLoginRequest,
         m_transId,
         clientChallenge,
-        (unsigned_ptr) s_accountName,
-        (unsigned_ptr) &challengeHash,
-        (unsigned_ptr) s_authToken,
-        (unsigned_ptr) s_os,
+        (uintptr_t) s_accountName,
+        (uintptr_t) &challengeHash,
+        (uintptr_t) s_authToken,
+        (uintptr_t) s_os,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -2695,10 +2695,10 @@ void LoginRequestTrans::Post () {
 
 //============================================================================
 bool LoginRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
-    dword msgId = (dword)*msg;
+    uint32_t msgId = (uint32_t)*msg;
     switch (msgId) {
         case kAuth2Cli_AcctPlayerInfo: {
             const Auth2Cli_AcctPlayerInfo & reply = *(const Auth2Cli_AcctPlayerInfo *) msg;
@@ -2715,8 +2715,8 @@ bool LoginRequestTrans::Recv (
             m_billingType   = reply.billingType;
 
             unsigned memSize = min(arrsize(s_encryptionKey), arrsize(reply.encryptionKey));
-            memSize *= sizeof(UInt32);
-            MemCopy(s_encryptionKey, reply.encryptionKey, memSize);
+            memSize *= sizeof(uint32_t);
+            memcpy(s_encryptionKey, reply.encryptionKey, memSize);
         }
         break;
 
@@ -2735,7 +2735,7 @@ bool LoginRequestTrans::Recv (
 
 //============================================================================
 AgeRequestTrans::AgeRequestTrans (
-    const wchar                         ageName[],
+    const wchar_t                         ageName[],
     const Uuid &                        ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
@@ -2756,11 +2756,11 @@ bool AgeRequestTrans::Send () {
     if (!AcquireConn())
         return true;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AgeRequest,
                         m_transId,
-        (unsigned_ptr)  m_ageName,
-        (unsigned_ptr) &m_ageInstId,
+        (uintptr_t)  m_ageName,
+        (uintptr_t) &m_ageInstId,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -2782,7 +2782,7 @@ void AgeRequestTrans::Post () {
 
 //============================================================================
 bool AgeRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AgeReply & reply = *(const Auth2Cli_AgeReply *) msg;
@@ -2803,8 +2803,8 @@ bool AgeRequestTrans::Recv (
 
 //============================================================================
 AccountCreateRequestTrans::AccountCreateRequestTrans (
-    const wchar                             accountName[],
-    const wchar                             password[],
+    const wchar_t                             accountName[],
+    const wchar_t                             password[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
@@ -2829,11 +2829,11 @@ bool AccountCreateRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctCreateRequest,
                         m_transId,
-        (unsigned_ptr)  m_accountName,
-        (unsigned_ptr)  &m_namePassHash,
+        (uintptr_t)  m_accountName,
+        (uintptr_t)  &m_namePassHash,
                         m_accountFlags,
                         m_billingType,
     };
@@ -2854,7 +2854,7 @@ void AccountCreateRequestTrans::Post () {
 
 //============================================================================
 bool AccountCreateRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctCreateReply & reply = *(const Auth2Cli_AcctCreateReply *) msg;
@@ -2873,8 +2873,8 @@ bool AccountCreateRequestTrans::Recv (
 
 //============================================================================
 AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
-    const wchar                                     accountName[],
-    const wchar                                     password[],
+    const wchar_t                                     accountName[],
+    const wchar_t                                     password[],
     const Uuid &                                    key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -2899,12 +2899,12 @@ bool AccountCreateFromKeyRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctCreateFromKeyRequest,
                         m_transId,
-        (unsigned_ptr)  m_accountName,
-        (unsigned_ptr)  &m_namePassHash,
-        (unsigned_ptr)  &m_key,
+        (uintptr_t)  m_accountName,
+        (uintptr_t)  &m_namePassHash,
+        (uintptr_t)  &m_key,
                         m_billingType,
     };
 
@@ -2925,7 +2925,7 @@ void AccountCreateFromKeyRequestTrans::Post () {
 
 //============================================================================
 bool AccountCreateFromKeyRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctCreateFromKeyReply & reply = *(const Auth2Cli_AcctCreateFromKeyReply *) msg;
@@ -2945,9 +2945,9 @@ bool AccountCreateFromKeyRequestTrans::Recv (
 
 //============================================================================
 PlayerCreateRequestTrans::PlayerCreateRequestTrans (
-    const wchar                             playerName[],
-    const wchar                             avatarShape[],
-    const wchar                             friendInvite[],
+    const wchar_t                             playerName[],
+    const wchar_t                             avatarShape[],
+    const wchar_t                             friendInvite[],
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) : NetAuthTrans(kPlayerCreateRequestTrans)
@@ -2960,7 +2960,7 @@ PlayerCreateRequestTrans::PlayerCreateRequestTrans (
         StrCopy(m_friendInvite, friendInvite, arrsize(m_friendInvite));
     else
         m_friendInvite[0] = 0;
-    ZERO(m_playerInfo);
+    memset(&m_playerInfo, 0, sizeof(m_playerInfo));
 }
 
 //============================================================================
@@ -2968,12 +2968,12 @@ bool PlayerCreateRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_PlayerCreateRequest,
                         m_transId,
-        (unsigned_ptr)  m_playerName,
-        (unsigned_ptr)  m_avatarShape,
-        (unsigned_ptr)  m_friendInvite,
+        (uintptr_t)  m_playerName,
+        (uintptr_t)  m_avatarShape,
+        (uintptr_t)  m_friendInvite,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -2992,7 +2992,7 @@ void PlayerCreateRequestTrans::Post () {
 
 //============================================================================
 bool PlayerCreateRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_PlayerCreateReply & reply = *(const Auth2Cli_PlayerCreateReply *) msg;
@@ -3031,7 +3031,7 @@ bool PlayerDeleteRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_PlayerDeleteRequest,
                         m_transId,
                         m_playerId
@@ -3052,7 +3052,7 @@ void PlayerDeleteRequestTrans::Post () {
 
 //============================================================================
 bool PlayerDeleteRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    
 ) {
     const Auth2Cli_PlayerDeleteReply & reply = *(const Auth2Cli_PlayerDeleteReply *) msg;
@@ -3085,7 +3085,7 @@ bool UpgradeVisitorRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_UpgradeVisitorRequest,
                         m_transId,
                         m_playerId
@@ -3106,7 +3106,7 @@ void UpgradeVisitorRequestTrans::Post () {
 
 //============================================================================
 bool UpgradeVisitorRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    
 ) {
     const Auth2Cli_UpgradeVisitorReply & reply = *(const Auth2Cli_UpgradeVisitorReply *) msg;
@@ -3140,7 +3140,7 @@ bool SetPlayerRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctSetPlayerRequest,
         m_transId,
         m_playerInt,
@@ -3158,7 +3158,7 @@ void SetPlayerRequestTrans::Post () {
 
 //============================================================================
 bool SetPlayerRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctSetPlayerReply & reply = *(const Auth2Cli_AcctSetPlayerReply *) msg;
@@ -3175,8 +3175,8 @@ bool SetPlayerRequestTrans::Recv (
 
 //============================================================================
 AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
-    const wchar                                     accountName[],
-    const wchar                                     password[],
+    const wchar_t                                     accountName[],
+    const wchar_t                                     password[],
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) : NetAuthTrans(kAccountChangePasswordRequestTrans)
@@ -3197,11 +3197,11 @@ bool AccountChangePasswordRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctChangePasswordRequest,
                         m_transId,
-        (unsigned_ptr)  m_accountName,
-        (unsigned_ptr)  &m_namePassHash,
+        (uintptr_t)  m_accountName,
+        (uintptr_t)  &m_namePassHash,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3219,7 +3219,7 @@ void AccountChangePasswordRequestTrans::Post () {
 
 //============================================================================
 bool AccountChangePasswordRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctChangePasswordReply & reply = *(const Auth2Cli_AcctChangePasswordReply *) msg;
@@ -3237,7 +3237,7 @@ bool AccountChangePasswordRequestTrans::Recv (
 
 //============================================================================
 GetPublicAgeListTrans::GetPublicAgeListTrans (
-    const wchar                         ageName[],
+    const wchar_t                         ageName[],
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) : NetAuthTrans(kGetPublicAgeListTrans)
@@ -3252,10 +3252,10 @@ bool GetPublicAgeListTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_GetPublicAgeList,
                         m_transId,
-        (unsigned_ptr)  &m_ageName,
+        (uintptr_t)  &m_ageName,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3274,7 +3274,7 @@ void GetPublicAgeListTrans::Post () {
 
 //============================================================================
 bool GetPublicAgeListTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_PublicAgeList & reply = *(const Auth2Cli_PublicAgeList *) msg;
@@ -3296,7 +3296,7 @@ bool GetPublicAgeListTrans::Recv (
 
 //============================================================================
 AccountSetRolesRequestTrans::AccountSetRolesRequestTrans (
-    const wchar                                 accountName[],
+    const wchar_t                                 accountName[],
     unsigned                                    accountFlags,
     FNetCliAuthAccountSetRolesRequestCallback   callback,
     void *                                      param
@@ -3313,10 +3313,10 @@ bool AccountSetRolesRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctSetRolesRequest,
                         m_transId,
-        (unsigned_ptr)  m_accountName,
+        (uintptr_t)  m_accountName,
                         m_accountFlags,
     };
 
@@ -3335,7 +3335,7 @@ void AccountSetRolesRequestTrans::Post () {
 
 //============================================================================
 bool AccountSetRolesRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctSetRolesReply & reply = *(const Auth2Cli_AcctSetRolesReply *) msg;
@@ -3353,7 +3353,7 @@ bool AccountSetRolesRequestTrans::Recv (
 
 //============================================================================
 AccountSetBillingTypeRequestTrans::AccountSetBillingTypeRequestTrans (
-    const wchar                                     accountName[],
+    const wchar_t                                     accountName[],
     unsigned                                        billingType,
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
@@ -3370,10 +3370,10 @@ bool AccountSetBillingTypeRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctSetBillingTypeRequest,
                         m_transId,
-        (unsigned_ptr)  m_accountName,
+        (uintptr_t)  m_accountName,
                         m_billingType,
     };
 
@@ -3392,7 +3392,7 @@ void AccountSetBillingTypeRequestTrans::Post () {
 
 //============================================================================
 bool AccountSetBillingTypeRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctSetBillingTypeReply & reply = *(const Auth2Cli_AcctSetBillingTypeReply *) msg;
@@ -3425,10 +3425,10 @@ bool AccountActivateRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_AcctActivateRequest,
                         m_transId,
-        (unsigned_ptr)  &m_activationKey,
+        (uintptr_t)  &m_activationKey,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3446,7 +3446,7 @@ void AccountActivateRequestTrans::Post () {
 
 //============================================================================
 bool AccountActivateRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_AcctActivateReply & reply = *(const Auth2Cli_AcctActivateReply *) msg;
@@ -3466,8 +3466,8 @@ bool AccountActivateRequestTrans::Recv (
 FileListRequestTrans::FileListRequestTrans (
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param,
-    const wchar                         directory[],
-    const wchar                         ext[]
+    const wchar_t                         directory[],
+    const wchar_t                         ext[]
 ) : NetAuthTrans(kFileListRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
@@ -3481,11 +3481,11 @@ bool FileListRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_FileListRequest,
         m_transId,
-        (unsigned_ptr) m_directory,
-        (unsigned_ptr) m_ext,
+        (uintptr_t) m_directory,
+        (uintptr_t) m_ext,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3500,47 +3500,47 @@ void FileListRequestTrans::Post () {
 
 //============================================================================
 bool FileListRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *) msg;
 
-    dword wcharCount = reply.wcharCount;
-    const wchar* curChar = reply.fileData;
-    // if wcharCount is 2, the data only contains the terminator "\0\0" and we
+    uint32_t wchar_tCount = reply.wchar_tCount;
+    const wchar_t* curChar = reply.fileData;
+    // if wchar_tCount is 2, the data only contains the terminator "\0\0" and we
     // don't need to convert anything
-    if (wcharCount == 2)
+    if (wchar_tCount == 2)
         m_fileInfoArray.Clear();
     else
     {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
         bool done = false;
         while (!done) {
-            if (wcharCount == 0)
+            if (wchar_tCount == 0)
             {
                 done = true;
                 break;
             }
 
             // read in the filename
-            wchar filename[MAX_PATH];
+            wchar_t filename[MAX_PATH];
             StrCopy(filename, curChar, arrsize(filename));
             filename[arrsize(filename) - 1] = L'\0'; // make sure it's terminated
 
             unsigned filenameLen = StrLen(filename);
             curChar += filenameLen; // advance the pointer
-            wcharCount -= filenameLen; // keep track of the amount remaining
-            if ((*curChar != L'\0') || (wcharCount <= 0))
+            wchar_tCount -= filenameLen; // keep track of the amount remaining
+            if ((*curChar != L'\0') || (wchar_tCount <= 0))
                 return false; // something is screwy, abort and disconnect
 
             curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
-            wcharCount--;
-            if (wcharCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
+            wchar_tCount--;
+            if (wchar_tCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
                 return false; // screwy data
             unsigned size = ((*curChar) << 16) + (*(curChar + 1));
             curChar += 2;
-            wcharCount -= 2;
-            if ((*curChar != L'\0') || (wcharCount <= 0))
+            wchar_tCount -= 2;
+            if ((*curChar != L'\0') || (wchar_tCount <= 0))
                 return false; // screwy data
 
             // save the data in our array
@@ -3550,15 +3550,15 @@ bool FileListRequestTrans::Recv (
 
             // point it at either the second part of the terminator, or the next filename
             curChar++;
-            wcharCount--;
+            wchar_tCount--;
             if (*curChar == L'\0')
             {
                 // we hit the terminator
-                if (wcharCount != 1)
+                if (wchar_tCount != 1)
                     return false; // invalid data, we shouldn't have any more
                 done = true; // we're done
             }
-            else if (wcharCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
+            else if (wchar_tCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
                 return false; // screwy data
         }
     }
@@ -3579,7 +3579,7 @@ bool FileListRequestTrans::Recv (
 FileDownloadRequestTrans::FileDownloadRequestTrans (
     FNetCliAuthFileRequestCallback  callback,
     void *                          param,
-    const wchar                     filename[],
+    const wchar_t                     filename[],
     hsStream *                      writer
 ) : NetAuthTrans(kFileDownloadRequestTrans)
 ,   m_callback(callback)
@@ -3597,10 +3597,10 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
         m_transId,
-        (unsigned_ptr) m_filename,
+        (uintptr_t) m_filename,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3615,7 +3615,7 @@ void FileDownloadRequestTrans::Post () {
 
 //============================================================================
 bool FileDownloadRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_FileDownloadChunk & reply = *(const Auth2Cli_FileDownloadChunk *) msg;
@@ -3630,12 +3630,12 @@ bool FileDownloadRequestTrans::Recv (
     // we have data to write, so queue it for write in the main thread (we're
     // currently in a net recv thread)
     if (reply.chunkSize) {
-        RcvdFileDownloadChunkTrans * writeTrans = NEW(RcvdFileDownloadChunkTrans);
+        RcvdFileDownloadChunkTrans * writeTrans = new RcvdFileDownloadChunkTrans;
         writeTrans->writer  = m_writer;
         writeTrans->bytes   = reply.chunkSize;
         writeTrans->offset  = reply.chunkOffset;
-        writeTrans->data    = (byte *)ALLOC(reply.chunkSize);
-        MemCopy(writeTrans->data, reply.chunkData, reply.chunkSize);
+        writeTrans->data    = (uint8_t *)malloc(reply.chunkSize);
+        memcpy(writeTrans->data, reply.chunkData, reply.chunkSize);
         NetTransSend(writeTrans);
     }
 
@@ -3646,7 +3646,7 @@ bool FileDownloadRequestTrans::Recv (
     }
     
     // Ack the data
-    const unsigned_ptr ack[] = {
+    const uintptr_t ack[] = {
         kCli2Auth_FileDownloadChunkAck,
         m_transId
     };
@@ -3664,7 +3664,7 @@ bool FileDownloadRequestTrans::Recv (
 
 //============================================================================
 RcvdFileDownloadChunkTrans::~RcvdFileDownloadChunkTrans () {
-    FREE(data);
+    free(data);
 }
 
 //============================================================================
@@ -3687,7 +3687,7 @@ void RcvdFileDownloadChunkTrans::Post () {
 
 //============================================================================
 RcvdPropagatedBufferTrans::~RcvdPropagatedBufferTrans () {
-    FREE(bufferData);
+    free(bufferData);
 }
 
 //============================================================================
@@ -3772,7 +3772,7 @@ bool VaultFetchNodeRefsTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultFetchNodeRefs,
         m_transId,
         m_nodeId,
@@ -3796,7 +3796,7 @@ void VaultFetchNodeRefsTrans::Post () {
 
 //============================================================================
 bool VaultFetchNodeRefsTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned
 ) {
     const Auth2Cli_VaultNodeRefsFetched & reply = *(const Auth2Cli_VaultNodeRefsFetched *) msg;
@@ -3823,10 +3823,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
     void *                      param,              // optional
     const Uuid &                ageInstId,          // optional. is used in match
     const Uuid &                parentAgeInstId,    // optional. is used in match
-    const wchar                 ageFilename[],      // optional. is used in match
-    const wchar                 ageInstName[],      // optional. not used in match
-    const wchar                 ageUserName[],      // optional. not used in match
-    const wchar                 ageDesc[],          // optional. not used in match
+    const wchar_t                 ageFilename[],      // optional. is used in match
+    const wchar_t                 ageInstName[],      // optional. not used in match
+    const wchar_t                 ageUserName[],      // optional. not used in match
+    const wchar_t                 ageDesc[],          // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage         // optional. not used in match
 ) : NetAuthTrans(kVaultInitAgeTrans)
@@ -3845,10 +3845,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 
 //============================================================================
 VaultInitAgeTrans::~VaultInitAgeTrans () {
-    FREE(m_ageFilename);
-    FREE(m_ageInstName);
-    FREE(m_ageUserName);
-    FREE(m_ageDesc);
+    free(m_ageFilename);
+    free(m_ageInstName);
+    free(m_ageUserName);
+    free(m_ageDesc);
 }
 
 //============================================================================
@@ -3856,15 +3856,15 @@ bool VaultInitAgeTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultInitAgeRequest,
                         m_transId,
-        (unsigned_ptr) &m_ageInstId,
-        (unsigned_ptr) &m_parentAgeInstId,
-        (unsigned_ptr)  m_ageFilename,
-        (unsigned_ptr)  m_ageInstName,
-        (unsigned_ptr)  m_ageUserName,
-        (unsigned_ptr)  m_ageDesc,
+        (uintptr_t) &m_ageInstId,
+        (uintptr_t) &m_parentAgeInstId,
+        (uintptr_t)  m_ageFilename,
+        (uintptr_t)  m_ageInstName,
+        (uintptr_t)  m_ageUserName,
+        (uintptr_t)  m_ageDesc,
                         m_ageSequenceNumber,
                         m_ageLanguage,
     };
@@ -3887,7 +3887,7 @@ void VaultInitAgeTrans::Post () {
 
 //============================================================================
 bool VaultInitAgeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    
 ) {
     const Auth2Cli_VaultInitAgeReply & reply = *(const Auth2Cli_VaultInitAgeReply *) msg;
@@ -3925,7 +3925,7 @@ bool VaultFetchNodeTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeFetch,
         m_transId,
         m_nodeId,
@@ -3949,7 +3949,7 @@ void VaultFetchNodeTrans::Post () {
 
 //============================================================================
 bool VaultFetchNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultNodeFetched & reply = *(const Auth2Cli_VaultNodeFetched *) msg;
@@ -3996,16 +3996,16 @@ bool VaultFindNodeTrans::Send () {
     if (!AcquireConn())
         return false;
         
-    ARRAY(byte) buffer;
+    ARRAY(uint8_t) buffer;
     m_node->critsect.Enter();
     m_node->Write_LCS(&buffer, 0);
     m_node->critsect.Leave();
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeFind,
                         m_transId,
                         buffer.Count(),
-        (unsigned_ptr)  buffer.Ptr(),
+        (uintptr_t)  buffer.Ptr(),
     };
             
     m_conn->Send(msg, arrsize(msg));
@@ -4025,13 +4025,13 @@ void VaultFindNodeTrans::Post () {
 
 //============================================================================
 bool VaultFindNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultNodeFindReply & reply = *(const Auth2Cli_VaultNodeFindReply *) msg;
 
     if (IS_NET_SUCCESS(reply.result)) {
-        COMPILER_ASSERT(sizeof(unsigned) == sizeof(dword));
+        COMPILER_ASSERT(sizeof(unsigned) == sizeof(uint32_t));
         m_nodeIds.Set((unsigned *)reply.nodeIds, reply.nodeIdCount);
     }
 
@@ -4066,14 +4066,14 @@ bool VaultCreateNodeTrans::Send () {
     if (!AcquireConn())
         return false;
         
-    ARRAY(byte) buffer;
+    ARRAY(uint8_t) buffer;
     m_templateNode->Write_LCS(&buffer, 0);
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeCreate,
                         m_transId,
                         buffer.Count(),
-        (unsigned_ptr)  buffer.Ptr()
+        (uintptr_t)  buffer.Ptr()
     };
             
     m_conn->Send(msg, arrsize(msg));
@@ -4093,7 +4093,7 @@ void VaultCreateNodeTrans::Post () {
 
 //============================================================================
 bool VaultCreateNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultNodeCreated & reply = *(const Auth2Cli_VaultNodeCreated *) msg;
@@ -4127,7 +4127,7 @@ VaultSaveNodeTrans::VaultSaveNodeTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    m_buffer.Set((const byte *)data, dataCount);
+    m_buffer.Set((const uint8_t *)data, dataCount);
 }
 
 //============================================================================
@@ -4135,13 +4135,13 @@ bool VaultSaveNodeTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeSave,
                         m_transId,
                         m_nodeId,
-        (unsigned_ptr)  &m_revisionId,
+        (uintptr_t)  &m_revisionId,
                         m_buffer.Count(),
-        (unsigned_ptr)  m_buffer.Ptr(),
+        (uintptr_t)  m_buffer.Ptr(),
     };
             
     m_conn->Send(msg, arrsize(msg));
@@ -4161,7 +4161,7 @@ void VaultSaveNodeTrans::Post () {
 
 //============================================================================
 bool VaultSaveNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultSaveNodeReply & reply = *(const Auth2Cli_VaultSaveNodeReply *) msg;
@@ -4199,7 +4199,7 @@ bool VaultAddNodeTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeAdd,
                     m_transId,
                     m_parentId,
@@ -4224,7 +4224,7 @@ void VaultAddNodeTrans::Post () {
 
 //============================================================================
 bool VaultAddNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultAddNodeReply & reply = *(const Auth2Cli_VaultAddNodeReply *) msg;
@@ -4260,7 +4260,7 @@ bool VaultRemoveNodeTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultNodeRemove,
                     m_transId,
                     m_parentId,
@@ -4284,7 +4284,7 @@ void VaultRemoveNodeTrans::Post () {
 
 //============================================================================
 bool VaultRemoveNodeTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_VaultRemoveNodeReply & reply = *(const Auth2Cli_VaultRemoveNodeReply *) msg;
@@ -4333,7 +4333,7 @@ bool SetPlayerBanStatusRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_SetPlayerBanStatusRequest,
                         m_transId,
                         m_playerId,
@@ -4355,7 +4355,7 @@ void SetPlayerBanStatusRequestTrans::Post () {
 
 //============================================================================
 bool SetPlayerBanStatusRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_SetPlayerBanStatusReply & reply = *(const Auth2Cli_SetPlayerBanStatusReply *) msg;
@@ -4374,7 +4374,7 @@ bool SetPlayerBanStatusRequestTrans::Recv (
 //============================================================================
 ChangePlayerNameRequestTrans::ChangePlayerNameRequestTrans (
     unsigned                                    playerId,
-    const wchar                                 newName[],
+    const wchar_t                                 newName[],
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 ) : NetAuthTrans(kChangePlayerNameRequestTrans)
@@ -4390,11 +4390,11 @@ bool ChangePlayerNameRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ChangePlayerNameRequest,
                         m_transId,
                         m_playerId,
-        (unsigned_ptr)  m_newName,
+        (uintptr_t)  m_newName,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4412,7 +4412,7 @@ void ChangePlayerNameRequestTrans::Post () {
 
 //============================================================================
 bool ChangePlayerNameRequestTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ChangePlayerNameReply & reply = *(const Auth2Cli_ChangePlayerNameReply *) msg;
@@ -4431,8 +4431,8 @@ bool ChangePlayerNameRequestTrans::Recv (
 
 //============================================================================
 SendFriendInviteTrans::SendFriendInviteTrans (
-    const wchar                             emailAddr[],
-    const wchar                             toName[],
+    const wchar_t                             emailAddr[],
+    const wchar_t                             toName[],
     const Uuid &                            inviteUuid,
     FNetCliAuthSendFriendInviteCallback     callback,
     void *                                  param
@@ -4450,12 +4450,12 @@ bool SendFriendInviteTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_SendFriendInviteRequest,
                         m_transId,
-        (unsigned_ptr) &m_inviteUuid,
-        (unsigned_ptr)  m_emailAddress,
-        (unsigned_ptr)  m_toName,
+        (uintptr_t) &m_inviteUuid,
+        (uintptr_t)  m_emailAddress,
+        (uintptr_t)  m_toName,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4473,7 +4473,7 @@ void SendFriendInviteTrans::Post () {
 
 //============================================================================
 bool SendFriendInviteTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_SendFriendInviteReply & reply = *(const Auth2Cli_SendFriendInviteReply *) msg;
@@ -4528,14 +4528,14 @@ bool ScoreCreateTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar wgameName[kMaxGameScoreNameLength];
+    wchar_t wgameName[kMaxGameScoreNameLength];
     StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
             kCli2Auth_ScoreCreate,
                         m_transId,
                         m_ownerId,
-        (unsigned_ptr)  wgameName,
+        (uintptr_t)  wgameName,
                         m_gameType,
                         m_value
     };
@@ -4563,7 +4563,7 @@ void ScoreCreateTrans::Post () {
 
 //============================================================================
 bool ScoreCreateTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreCreateReply & reply = *(const Auth2Cli_ScoreCreateReply *) msg;
@@ -4599,7 +4599,7 @@ bool ScoreDeleteTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreDelete,
                         m_transId,
                         m_scoreId,
@@ -4622,7 +4622,7 @@ void ScoreDeleteTrans::Post () {
 
 //============================================================================
 bool ScoreDeleteTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreDeleteReply & reply = *(const Auth2Cli_ScoreDeleteReply *) msg;
@@ -4659,14 +4659,14 @@ bool ScoreGetScoresTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar wgameName[kMaxGameScoreNameLength];
+    wchar_t wgameName[kMaxGameScoreNameLength];
     StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreGetScores,
                         m_transId,
                         m_ownerId,
-        (unsigned_ptr)  wgameName
+        (uintptr_t)  wgameName
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4688,16 +4688,16 @@ void ScoreGetScoresTrans::Post () {
 
 //============================================================================
 bool ScoreGetScoresTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreGetScoresReply & reply = *(const Auth2Cli_ScoreGetScoresReply *) msg;
 
     if (reply.scoreCount > 0) {
         m_scoreCount    = reply.scoreCount;
-        m_scores        = TRACKED_NEW NetGameScore[m_scoreCount];
+        m_scores        = new NetGameScore[m_scoreCount];
 
-        byte*       bufferPos = const_cast<byte*>(reply.buffer);
+        uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
 
         for (unsigned i = 0; i < m_scoreCount; ++i) {
@@ -4739,7 +4739,7 @@ bool ScoreAddPointsTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreAddPoints,
                         m_transId,
                         m_scoreId,
@@ -4763,7 +4763,7 @@ void ScoreAddPointsTrans::Post () {
 
 //============================================================================
 bool ScoreAddPointsTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreAddPointsReply & reply = *(const Auth2Cli_ScoreAddPointsReply *) msg;
@@ -4800,7 +4800,7 @@ bool ScoreTransferPointsTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreTransferPoints,
                         m_transId,
                         m_srcScoreId,
@@ -4825,7 +4825,7 @@ void ScoreTransferPointsTrans::Post () {
 
 //============================================================================
 bool ScoreTransferPointsTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreTransferPointsReply & reply = *(const Auth2Cli_ScoreTransferPointsReply *) msg;
@@ -4860,7 +4860,7 @@ bool ScoreSetPointsTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreSetPoints,
                         m_transId,
                         m_scoreId,
@@ -4884,7 +4884,7 @@ void ScoreSetPointsTrans::Post () {
 
 //============================================================================
 bool ScoreSetPointsTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreSetPointsReply & reply = *(const Auth2Cli_ScoreSetPointsReply *) msg;
@@ -4932,13 +4932,13 @@ bool ScoreGetRanksTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ScoreGetRanks,
                         m_transId,
                         m_ownerId,
                         m_scoreGroup,
                         m_parentFolderId,
-        (unsigned_ptr)  m_gameName,
+        (uintptr_t)  m_gameName,
                         m_timePeriod,
                         m_numResults,
                         m_pageNumber,
@@ -4964,16 +4964,16 @@ void ScoreGetRanksTrans::Post () {
 
 //============================================================================
 bool ScoreGetRanksTrans::Recv (
-    const byte  msg[],
+    const uint8_t  msg[],
     unsigned    bytes
 ) {
     const Auth2Cli_ScoreGetRanksReply & reply = *(const Auth2Cli_ScoreGetRanksReply *) msg;
 
     if (reply.rankCount > 0) {
         m_rankCount = reply.rankCount;
-        m_ranks     = TRACKED_NEW NetGameRank[m_rankCount];
+        m_ranks     = new NetGameRank[m_rankCount];
 
-        byte*       bufferPos = const_cast<byte*>(reply.buffer);
+        uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
 
         for (unsigned i = 0; i < m_rankCount; ++i) {
@@ -5135,7 +5135,7 @@ void AuthPingEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthStartConnect (
-    const wchar *   authAddrList[],
+    const wchar_t *   authAddrList[],
     unsigned        authAddrCount
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
@@ -5144,7 +5144,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar * name = authAddrList[i];
+        const wchar_t * name = authAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -5216,7 +5216,7 @@ void NetCliAuthPingRequest (
     FNetCliAuthPingRequestCallback  callback,
     void *                          param
 ) {
-    PingRequestTrans * trans = NEW(PingRequestTrans)(
+    PingRequestTrans * trans = new PingRequestTrans(
         callback,
         param,
         pingTimeMs,
@@ -5228,11 +5228,11 @@ void NetCliAuthPingRequest (
 
 //============================================================================
 void NetCliAuthAccountExistsRequest (
-    const wchar                                 accountName[],
+    const wchar_t                                 accountName[],
     FNetCliAuthAccountExistsRequestCallback     callback,
     void *                                      param
 ) {
-    AccountExistsRequestTrans * trans = NEW(AccountExistsRequestTrans)(
+    AccountExistsRequestTrans * trans = new AccountExistsRequestTrans(
         callback,
         param,
         accountName
@@ -5242,10 +5242,10 @@ void NetCliAuthAccountExistsRequest (
 
 //============================================================================
 void NetCliAuthLoginRequest (
-    const wchar                     accountName[],
+    const wchar_t                     accountName[],
     const ShaDigest *               accountNamePassHash,
-    const wchar                     authToken[],
-    const wchar                     os[],
+    const wchar_t                     authToken[],
+    const wchar_t                     os[],
     FNetCliAuthLoginRequestCallback callback,
     void *                          param
 ) {
@@ -5259,18 +5259,18 @@ void NetCliAuthLoginRequest (
     if (os)
         StrCopy(s_os, os, arrsize(s_os));
 
-    LoginRequestTrans * trans = NEW(LoginRequestTrans)(callback, param);
+    LoginRequestTrans * trans = new LoginRequestTrans(callback, param);
     NetTransSend(trans);
 }
 
 //============================================================================
 void NetCliAuthAgeRequest (
-    const wchar                         ageName[],
+    const wchar_t                         ageName[],
     const Uuid &                        ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) {
-    AgeRequestTrans * trans = NEW(AgeRequestTrans)(
+    AgeRequestTrans * trans = new AgeRequestTrans(
         ageName,
         ageInstId,
         callback,
@@ -5281,24 +5281,24 @@ void NetCliAuthAgeRequest (
 
 //============================================================================
 void NetCliAuthGetEncryptionKey (
-    UInt32      key[],
+    uint32_t      key[],
     unsigned    size
 ) {
     unsigned memSize = min(arrsize(s_encryptionKey), size);
-    memSize *= sizeof(UInt32);
-    MemCopy(key, s_encryptionKey, memSize);
+    memSize *= sizeof(uint32_t);
+    memcpy(key, s_encryptionKey, memSize);
 }
 
 //============================================================================
 void NetCliAuthAccountCreateRequest (
-    const wchar                             accountName[],
-    const wchar                             password[],
+    const wchar_t                             accountName[],
+    const wchar_t                             password[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
     void *                                  param
 ) {
-    AccountCreateRequestTrans * trans = NEW(AccountCreateRequestTrans)(
+    AccountCreateRequestTrans * trans = new AccountCreateRequestTrans(
         accountName,
         password,
         accountFlags,
@@ -5311,14 +5311,14 @@ void NetCliAuthAccountCreateRequest (
 
 //============================================================================
 void NetCliAuthAccountCreateFromKeyRequest (
-    const wchar                                     accountName[],
-    const wchar                                     password[],
+    const wchar_t                                     accountName[],
+    const wchar_t                                     password[],
     Uuid                                            key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
     void *                                          param
 ) {
-    AccountCreateFromKeyRequestTrans * trans = NEW(AccountCreateFromKeyRequestTrans)(
+    AccountCreateFromKeyRequestTrans * trans = new AccountCreateFromKeyRequestTrans(
         accountName,
         password,
         key,
@@ -5331,13 +5331,13 @@ void NetCliAuthAccountCreateFromKeyRequest (
 
 //============================================================================
 void NetCliAuthPlayerCreateRequest (
-    const wchar                             playerName[],
-    const wchar                             avatarShape[],
-    const wchar                             friendInvite[],
+    const wchar_t                             playerName[],
+    const wchar_t                             avatarShape[],
+    const wchar_t                             friendInvite[],
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) {
-    wchar name[kMaxPlayerNameLength];
+    wchar_t name[kMaxPlayerNameLength];
     StrCopy(name, playerName, arrsize(name));
     ENetError error = FixupPlayerName(name);
     if (IS_NET_ERROR(error)) {
@@ -5345,7 +5345,7 @@ void NetCliAuthPlayerCreateRequest (
         callback(error, param, playerInfo);
     }
     else {
-        PlayerCreateRequestTrans * trans = NEW(PlayerCreateRequestTrans)(
+        PlayerCreateRequestTrans * trans = new PlayerCreateRequestTrans(
             name,
             avatarShape,
             friendInvite,
@@ -5362,7 +5362,7 @@ void NetCliAuthPlayerDeleteRequest (
     FNetCliAuthPlayerDeleteRequestCallback  callback,
     void *                                  param
 ) {
-    PlayerDeleteRequestTrans * trans = NEW(PlayerDeleteRequestTrans)(
+    PlayerDeleteRequestTrans * trans = new PlayerDeleteRequestTrans(
         playerId,
         callback,
         param
@@ -5376,7 +5376,7 @@ void NetCliAuthUpgradeVisitorRequest (
     FNetCliAuthUpgradeVisitorRequestCallback    callback,
     void *                                      param
 ) {
-    UpgradeVisitorRequestTrans * trans = NEW(UpgradeVisitorRequestTrans)(
+    UpgradeVisitorRequestTrans * trans = new UpgradeVisitorRequestTrans(
         playerId,
         callback,
         param
@@ -5392,7 +5392,7 @@ void NetCliAuthSetCCRLevel (
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_ClientSetCCRLevel,
                     ccrLevel,
     };
@@ -5407,7 +5407,7 @@ void NetCliAuthSetPlayerRequest (
     FNetCliAuthSetPlayerRequestCallback callback,
     void *                              param
 ) {
-    SetPlayerRequestTrans * trans = NEW(SetPlayerRequestTrans)(
+    SetPlayerRequestTrans * trans = new SetPlayerRequestTrans(
         playerInt,
         callback,
         param
@@ -5424,7 +5424,7 @@ void NetCliAuthSetAgePublic (
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_SetAgePublic,
                     ageInfoId,
                     publicOrNot,
@@ -5437,11 +5437,11 @@ void NetCliAuthSetAgePublic (
 
 //============================================================================
 void NetCliAuthGetPublicAgeList (
-    const wchar                         ageName[],
+    const wchar_t                         ageName[],
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) {
-    GetPublicAgeListTrans * trans = NEW(GetPublicAgeListTrans)(
+    GetPublicAgeListTrans * trans = new GetPublicAgeListTrans(
         ageName,
         callback,
         param
@@ -5451,12 +5451,12 @@ void NetCliAuthGetPublicAgeList (
 
 //============================================================================
 void NetCliAuthAccountChangePasswordRequest (
-    const wchar                                     accountName[],
-    const wchar                                     password[],
+    const wchar_t                                     accountName[],
+    const wchar_t                                     password[],
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) {
-    AccountChangePasswordRequestTrans * trans = NEW(AccountChangePasswordRequestTrans)(
+    AccountChangePasswordRequestTrans * trans = new AccountChangePasswordRequestTrans(
         accountName,
         password,
         callback,
@@ -5467,12 +5467,12 @@ void NetCliAuthAccountChangePasswordRequest (
 
 //============================================================================
 void NetCliAuthAccountSetRolesRequest (
-    const wchar                                 accountName[],
+    const wchar_t                                 accountName[],
     unsigned                                    accountFlags,
     FNetCliAuthAccountSetRolesRequestCallback   callback,
     void *                                      param
 ) {
-    AccountSetRolesRequestTrans * trans = NEW(AccountSetRolesRequestTrans)(
+    AccountSetRolesRequestTrans * trans = new AccountSetRolesRequestTrans(
         accountName,
         accountFlags,
         callback,
@@ -5483,12 +5483,12 @@ void NetCliAuthAccountSetRolesRequest (
 
 //============================================================================
 void NetCliAuthAccountSetBillingTypeRequest (
-    const wchar                                     accountName[],
+    const wchar_t                                     accountName[],
     unsigned                                        billingType,
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
 ) {
-    AccountSetBillingTypeRequestTrans * trans = NEW(AccountSetBillingTypeRequestTrans)(
+    AccountSetBillingTypeRequestTrans * trans = new AccountSetBillingTypeRequestTrans(
         accountName,
         billingType,
         callback,
@@ -5503,7 +5503,7 @@ void NetCliAuthAccountActivateRequest (
     FNetCliAuthAccountActivateRequestCallback   callback,
     void *                                      param
 ) {
-    AccountActivateRequestTrans * trans = NEW(AccountActivateRequestTrans)(
+    AccountActivateRequestTrans * trans = new AccountActivateRequestTrans(
         activationKey,
         callback,
         param
@@ -5513,12 +5513,12 @@ void NetCliAuthAccountActivateRequest (
 
 //============================================================================
 void NetCliAuthFileListRequest (
-    const wchar                         dir[],
-    const wchar                         ext[],
+    const wchar_t                         dir[],
+    const wchar_t                         ext[],
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 ) {
-    FileListRequestTrans * trans = NEW(FileListRequestTrans)(
+    FileListRequestTrans * trans = new FileListRequestTrans(
         callback,
         param,
         dir,
@@ -5529,12 +5529,12 @@ void NetCliAuthFileListRequest (
 
 //============================================================================
 void NetCliAuthFileRequest (
-    const wchar                     filename[],
+    const wchar_t                     filename[],
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param
 ) {
-    FileDownloadRequestTrans * trans = NEW(FileDownloadRequestTrans)(
+    FileDownloadRequestTrans * trans = new FileDownloadRequestTrans(
         callback,
         param,
         filename,
@@ -5643,7 +5643,7 @@ unsigned NetCliAuthVaultNodeSave (
     // We're definitely saving this node, so assign a revisionId
     node->revisionId = GuidGenerate();
 
-    ARRAY(byte) buffer;
+    ARRAY(uint8_t) buffer;
     unsigned bytes = node->Write_LCS(&buffer, NetVaultNode::kRwDirtyOnly | NetVaultNode::kRwUpdateDirty);
     
     VaultSaveNodeTrans * trans = NEWZERO(VaultSaveNodeTrans)(
@@ -5723,7 +5723,7 @@ void NetCliAuthVaultSetSeen (
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultSetSeen,
                     parentId,
                     childId,
@@ -5744,7 +5744,7 @@ void NetCliAuthVaultSendNode (
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_VaultSendNode,
                     srcNodeId,
                     dstPlayerId,
@@ -5759,10 +5759,10 @@ void NetCliAuthVaultSendNode (
 void NetCliAuthVaultInitAge (
     const Uuid &                ageInstId,          // optional. is used in match
     const Uuid &                parentAgeInstId,    // optional. is used in match
-    const wchar                 ageFilename[],      // optional. is used in match
-    const wchar                 ageInstName[],      // optional. not used in match
-    const wchar                 ageUserName[],      // optional. not used in match
-    const wchar                 ageDesc[],          // optional. not used in match
+    const wchar_t                 ageFilename[],      // optional. is used in match
+    const wchar_t                 ageInstName[],      // optional. not used in match
+    const wchar_t                 ageUserName[],      // optional. not used in match
+    const wchar_t                 ageDesc[],          // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
     FNetCliAuthAgeInitCallback  callback,           // optional
@@ -5792,7 +5792,7 @@ void NetCliAuthSetRecvBufferHandler (
 
 //============================================================================
 void NetCliAuthSendCCRPetition (
-    const wchar *       petitionText
+    const wchar_t *       petitionText
 ) {
     hsAssert(false, "eric, implement me.");
 }
@@ -5801,17 +5801,17 @@ void NetCliAuthSendCCRPetition (
 void NetCliAuthPropagateBuffer (
     unsigned                        type,
     unsigned                        bytes,
-    const byte                      buffer[]
+    const uint8_t                      buffer[]
 ) {
     CliAuConn * conn = GetConnIncRef("PropBuffer");
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
         kCli2Auth_PropagateBuffer,
         type,
         bytes,
-        (unsigned_ptr) buffer,
+        (uintptr_t) buffer,
     };
 
     conn->Send(msg, arrsize(msg));
@@ -5821,14 +5821,14 @@ void NetCliAuthPropagateBuffer (
 }
 
 //============================================================================
-void NetCliAuthLogPythonTraceback (const wchar traceback[]) {
+void NetCliAuthLogPythonTraceback (const wchar_t traceback[]) {
     CliAuConn * conn = GetConnIncRef("LogTraceback");
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
        kCli2Auth_LogPythonTraceback,
-       (unsigned_ptr) traceback
+       (uintptr_t) traceback
     };
 
     conn->Send(msg, arrsize(msg));
@@ -5838,14 +5838,14 @@ void NetCliAuthLogPythonTraceback (const wchar traceback[]) {
 
 
 //============================================================================
-void NetCliAuthLogStackDump (const wchar stackdump[]) {
+void NetCliAuthLogStackDump (const wchar_t stackdump[]) {
     CliAuConn * conn = GetConnIncRef("LogStackDump");
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
        kCli2Auth_LogStackDump,
-       (unsigned_ptr) stackdump
+       (uintptr_t) stackdump
     };
 
     conn->Send(msg, arrsize(msg));
@@ -5861,7 +5861,7 @@ void NetCliAuthLogClientDebuggerConnect () {
 
     unsigned nothing = 0;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
        kCli2Auth_LogClientDebuggerConnect,
         nothing
     };
@@ -5884,7 +5884,7 @@ void NetCliAuthSetPlayerBanStatusRequest (
     FNetCliAuthSetPlayerBanStatusRequestCallback    callback,
     void *                                          param
 ) {
-    SetPlayerBanStatusRequestTrans * trans = NEW(SetPlayerBanStatusRequestTrans)(
+    SetPlayerBanStatusRequestTrans * trans = new SetPlayerBanStatusRequestTrans(
         playerId,
         banned,
         callback,
@@ -5901,7 +5901,7 @@ void NetCliAuthKickPlayer (
     if (!conn)
         return;
 
-    const unsigned_ptr msg[] = {
+    const uintptr_t msg[] = {
        kCli2Auth_KickPlayer,
                     playerId
     };
@@ -5913,11 +5913,11 @@ void NetCliAuthKickPlayer (
 //============================================================================
 void NetCliAuthChangePlayerNameRequest (
     unsigned                                    playerId,
-    const wchar                                 newName[],
+    const wchar_t                                 newName[],
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 ) {
-    ChangePlayerNameRequestTrans * trans = NEW(ChangePlayerNameRequestTrans)(
+    ChangePlayerNameRequestTrans * trans = new ChangePlayerNameRequestTrans(
         playerId,
         newName,
         callback,
@@ -5928,13 +5928,13 @@ void NetCliAuthChangePlayerNameRequest (
 
 //============================================================================
 void NetCliAuthSendFriendInvite (
-    const wchar                         emailAddress[],
-    const wchar                         toName[],
+    const wchar_t                         emailAddress[],
+    const wchar_t                         toName[],
     const Uuid&                         inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 ) {
-    SendFriendInviteTrans * trans = NEW(SendFriendInviteTrans)(
+    SendFriendInviteTrans * trans = new SendFriendInviteTrans(
         emailAddress,
         toName,
         inviteUuid,
@@ -5953,7 +5953,7 @@ void NetCliAuthScoreCreate (
     FNetCliAuthCreateScoreCallback  callback,
     void *                          param
 ) {
-    ScoreCreateTrans * trans = NEW(ScoreCreateTrans)(
+    ScoreCreateTrans * trans = new ScoreCreateTrans(
         ownerId,
         gameName,
         gameType,
@@ -5970,7 +5970,7 @@ void NetCliAuthScoreDelete(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreDeleteTrans * trans = NEW(ScoreDeleteTrans)(
+    ScoreDeleteTrans * trans = new ScoreDeleteTrans(
         scoreId,
         callback,
         param
@@ -5985,7 +5985,7 @@ void NetCliAuthScoreGetScores(
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) {
-    ScoreGetScoresTrans * trans = NEW(ScoreGetScoresTrans)(
+    ScoreGetScoresTrans * trans = new ScoreGetScoresTrans(
         ownerId,
         gameName,
         callback,
@@ -6001,7 +6001,7 @@ void NetCliAuthScoreAddPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreAddPointsTrans * trans = NEW(ScoreAddPointsTrans)(
+    ScoreAddPointsTrans * trans = new ScoreAddPointsTrans(
         scoreId,
         numPoints,
         callback,
@@ -6018,7 +6018,7 @@ void NetCliAuthScoreTransferPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreTransferPointsTrans * trans = NEW(ScoreTransferPointsTrans)(
+    ScoreTransferPointsTrans * trans = new ScoreTransferPointsTrans(
         srcScoreId,
         destScoreId,
         numPoints,
@@ -6035,7 +6035,7 @@ void NetCliAuthScoreSetPoints(
     FNetCliAuthScoreUpdateCallback  callback,
     void *                          param
 ) {
-    ScoreSetPointsTrans * trans = NEW(ScoreSetPointsTrans)(
+    ScoreSetPointsTrans * trans = new ScoreSetPointsTrans(
         scoreId,
         numPoints,
         callback,
@@ -6057,7 +6057,7 @@ void NetCliAuthScoreGetRankList(
     FNetCliAuthGetRanksCallback callback,
     void *                      param
 ) {
-    ScoreGetRanksTrans * trans = NEW(ScoreGetRanksTrans)(
+    ScoreGetRanksTrans * trans = new ScoreGetRanksTrans(
         ownerId,
         scoreGroup,
         parentFolderId,

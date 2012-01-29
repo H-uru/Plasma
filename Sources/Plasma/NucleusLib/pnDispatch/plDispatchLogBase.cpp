@@ -42,4 +42,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDispatchLogBase.h"
     
 plDispatchLogBase* plDispatchLogBase::fInstance = nil;
-UInt32 plDispatchLogBase::fFlags = 0;
+uint32_t plDispatchLogBase::fFlags = 0;

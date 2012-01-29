@@ -62,16 +62,16 @@ public:
         kNumProps // last
     };
     
-    virtual Int32 GetNumProperties() const { return kNumProps; }    
+    virtual int32_t GetNumProperties() const { return kNumProps; }    
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);
 
-    hsScalar fDownBuoyancy;
-    hsScalar fUpBuoyancy;
-    hsScalar fMaxUpwardVel;
+    float fDownBuoyancy;
+    float fUpBuoyancy;
+    float fMaxUpwardVel;
 };
 
 class plSwimCircularCurrentRegion : public plSwimRegionInterface
@@ -86,14 +86,14 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);    
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
     virtual hsBool MsgReceive(plMessage* msg);
     
-    hsScalar fRotation;
-    hsScalar fPullNearDistSq;
-    hsScalar fPullNearVel;
-    hsScalar fPullFarDistSq;
-    hsScalar fPullFarVel;
+    float fRotation;
+    float fPullNearDistSq;
+    float fPullNearVel;
+    float fPullFarDistSq;
+    float fPullFarVel;
 
 protected:
     plSceneObject *fCurrentSO;
@@ -111,13 +111,13 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     
-    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, hsScalar &angularResult, hsScalar elapsed);    
+    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
     virtual hsBool MsgReceive(plMessage* msg);
     
-    hsScalar fNearDist;
-    hsScalar fNearVel;
-    hsScalar fFarDist;
-    hsScalar fFarVel;
+    float fNearDist;
+    float fNearVel;
+    float fFarDist;
+    float fFarVel;
     
 protected:
     plSceneObject *fCurrentSO;

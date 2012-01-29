@@ -97,7 +97,7 @@ protected:
 private:
     FILE    *fErrfile;          // the error file to write the nasties
     char    fErrfile_name[ERROR_LOGFILE_NAME_LEN];  // the name of the error file
-    Int32   fNumberErrors;
+    int32_t   fNumberErrors;
 
 private:
     void        IDebugThrow();

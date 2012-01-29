@@ -276,7 +276,7 @@ hsBool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
 {
     plLineFollowMod::FollowMode mode = plLineFollowMod::FollowMode(fCompPB->GetInt(kFollowModeRadio));
 
-    plLineFollowMod* lineMod = TRACKED_NEW plLineFollowMod;
+    plLineFollowMod* lineMod = new plLineFollowMod;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(pNode), lineMod, pNode->GetLocation());
 
     if( plLineFollowMod::kFollowObject == mode )
@@ -292,7 +292,7 @@ hsBool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
                 plSceneObject* targObj = targNode->GetSceneObject();
                 if( targObj )
                 {
-                    plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefObject);
+                    plGenRefMsg* refMsg = new plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefObject);
                     hsgResMgr::ResMgr()->AddViaNotify(targObj->GetKey(), refMsg, plRefFlags::kPassiveRef);
 
                     lineMod->SetFollowMode(plLineFollowMod::kFollowObject);
@@ -328,7 +328,7 @@ hsBool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
     hsAffineParts initParts;
     AP_SET(initParts, ap);
 
-    plAnimPath* animPath = TRACKED_NEW plAnimPath;
+    plAnimPath* animPath = new plAnimPath;
     animPath->SetController(tmc);
     animPath->InitParts(initParts);
 
@@ -340,7 +340,7 @@ hsBool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
         plSceneObject* parObj = parNode->GetSceneObject();
         if( parObj )
         {
-            plGenRefMsg* refMsg = TRACKED_NEW plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefParent);
+            plGenRefMsg* refMsg = new plGenRefMsg(lineMod->GetKey(), plRefMsg::kOnCreate, 0, plLineFollowMod::kRefParent);
             hsgResMgr::ResMgr()->AddViaNotify(parObj->GetKey(), refMsg, plRefFlags::kPassiveRef);
         }
     }
@@ -583,15 +583,15 @@ hsBool plStereizeComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMs
 
 hsBool plStereizeComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    plStereizer* stereo = TRACKED_NEW plStereizer;
+    plStereizer* stereo = new plStereizer;
 
     stereo->SetAmbientDist(fCompPB->GetFloat(kAmbientDist));
     stereo->SetTransition(fCompPB->GetFloat(kTransition));
 
-    hsScalar ang = fCompPB->GetFloat(kSepAngle);
+    float ang = fCompPB->GetFloat(kSepAngle);
     if( ang > 80.f )
         ang = 80.f;
-    stereo->SetSepAngle(hsScalarDegToRad(ang));
+    stereo->SetSepAngle(hsDegreesToRadians(ang));
 
     stereo->SetMaxSepDist(fCompPB->GetFloat(kMaxDist));
     stereo->SetMinSepDist(fCompPB->GetFloat(kMinDist));
@@ -805,7 +805,7 @@ hsBool plSwivelComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
 
 hsBool plSwivelComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    plViewFaceModifier* pMod = TRACKED_NEW plViewFaceModifier;
+    plViewFaceModifier* pMod = new plViewFaceModifier;
     pMod->SetOrigTransform(node->GetLocalToParent44(), node->GetParentToLocal44());
     node->AddModifier(pMod, IGetUniqueName(node));
 

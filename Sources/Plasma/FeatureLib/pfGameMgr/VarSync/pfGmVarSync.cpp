@@ -202,7 +202,7 @@ pfGmVarSync::pfGmVarSync (
 //============================================================================
 pfGmVarSync::~pfGmVarSync () {
 
-    DEL(internal);
+    delete internal;
 }
 
 //============================================================================
@@ -249,7 +249,7 @@ void pfGmVarSync::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 }
 
 //============================================================================
-void pfGmVarSync::SetStringVar (unsigned long id, const wchar* val) {
+void pfGmVarSync::SetStringVar (unsigned long id, const wchar_t* val) {
 
     Cli2Srv_VarSync_SetStringVar msg;
     msg.messageId       = kCli2Srv_VarSync_SetStringVar;
@@ -289,7 +289,7 @@ void pfGmVarSync::RequestAllVars () {
 }
 
 //============================================================================
-void pfGmVarSync::CreateStringVar (const wchar* name, const wchar* val) {
+void pfGmVarSync::CreateStringVar (const wchar_t* name, const wchar_t* val) {
 
     Cli2Srv_VarSync_CreateStringVar msg;
     msg.messageId       = kCli2Srv_VarSync_CreateStringVar;
@@ -303,7 +303,7 @@ void pfGmVarSync::CreateStringVar (const wchar* name, const wchar* val) {
 }
 
 //============================================================================
-void pfGmVarSync::CreateNumericVar (const wchar* name, double val) {
+void pfGmVarSync::CreateNumericVar (const wchar_t* name, double val) {
 
     Cli2Srv_VarSync_CreateNumericVar msg;
     msg.messageId       = kCli2Srv_VarSync_CreateNumericVar;

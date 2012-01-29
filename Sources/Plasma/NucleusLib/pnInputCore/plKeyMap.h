@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plKeyMap_h
 
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 
@@ -64,7 +64,7 @@ class plKeyCombo
 {
     public:
         plKeyDef    fKey;
-        UInt8       fFlags;
+        uint8_t       fFlags;
 
         // The ordering of this lets us treat the flags as a priority number.
         // kCtrl + kShift > kCtrl > kShift > no flags
@@ -77,7 +77,7 @@ class plKeyCombo
         static plKeyCombo   kUnmapped;
 
         plKeyCombo();
-        plKeyCombo( plKeyDef k, UInt8 flags = 0 ) : fKey( k ), fFlags( flags ) { }
+        plKeyCombo( plKeyDef k, uint8_t flags = 0 ) : fKey( k ), fFlags( flags ) { }
         
         hsBool  IsSatisfiedBy(const plKeyCombo &combo) const;       
 
@@ -114,7 +114,7 @@ class plKeyBinding
     protected:
 
         ControlEventCode    fCode;
-        UInt32              fCodeFlags; // Needed?
+        uint32_t              fCodeFlags; // Needed?
         plKeyCombo          fKey1;      // KEY_UNMAPPED for not-used
         plKeyCombo          fKey2;
         char                *fString;
@@ -122,11 +122,11 @@ class plKeyBinding
     public:
 
         plKeyBinding();
-        plKeyBinding( ControlEventCode code, UInt32 codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
+        plKeyBinding( ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
         virtual ~plKeyBinding();
 
         ControlEventCode    GetCode( void ) const { return fCode; }
-        UInt32              GetCodeFlags( void ) const { return fCodeFlags; }
+        uint32_t              GetCodeFlags( void ) const { return fCodeFlags; }
         const plKeyCombo    &GetKey1( void ) const { return fKey1; }
         const plKeyCombo    &GetKey2( void ) const { return fKey2; }
         const char          *GetExtendedString( void ) const { return fString; }
@@ -172,7 +172,7 @@ class plKeyMap : public plInputMap
         virtual ~plKeyMap();
 
         // Adds a given control code to the map. Once you add it, you can't change its flags. Returns false if the code is already present
-        hsBool  AddCode( ControlEventCode code, UInt32 codeFlags );
+        hsBool  AddCode( ControlEventCode code, uint32_t codeFlags );
 
         // Same but for console commands. No flags b/c console commands always use the same flags
         hsBool  AddConsoleCommand( const char *command );
@@ -220,11 +220,11 @@ class plKeyMap : public plInputMap
         static const char* GetStringUnmapped();
 
 
-        UInt32              GetNumBindings( void ) const { return fBindings.GetCount(); }
-        const plKeyBinding  &GetBinding( UInt32 i ) const { return *fBindings[ i ]; }
+        uint32_t              GetNumBindings( void ) const { return fBindings.GetCount(); }
+        const plKeyBinding  &GetBinding( uint32_t i ) const { return *fBindings[ i ]; }
         void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
 
-        static const char* ConvertVKeyToChar( UInt32 vk );
+        static const char* ConvertVKeyToChar( uint32_t vk );
         static plKeyDef ConvertCharToVKey( const char *c );
 
         static Win32keyConvert  fKeyConversionEnglish[];

@@ -57,7 +57,7 @@ plDebugText plDebugText::fInstance;
 
 //// DrawString //////////////////////////////////////////////////////////////
 
-void    plDebugText::DrawString( UInt16 x, UInt16 y, const char *string, UInt32 hexColor, UInt8 style )
+void    plDebugText::DrawString( uint16_t x, uint16_t y, const char *string, uint32_t hexColor, uint8_t style )
 {
     if( IsEnabled() && fManager && string != nil && string[ 0 ] != 0 )
         fManager->AddString( x, y, string, hexColor, style, fDrawOnTopMode );
@@ -65,7 +65,7 @@ void    plDebugText::DrawString( UInt16 x, UInt16 y, const char *string, UInt32 
 
 //// CalcStringWidth /////////////////////////////////////////////////////////
 
-UInt32  plDebugText::CalcStringWidth( const char *string )
+uint32_t  plDebugText::CalcStringWidth( const char *string )
 {
     if( IsEnabled() && fManager && string )
         return fManager->CalcStringWidth( string );
@@ -78,7 +78,7 @@ UInt32  plDebugText::CalcStringWidth( const char *string )
 //  to create a background for our console; will be obliterated once we figure
 //  a better way to do so.
 
-void    plDebugText::DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor )
+void    plDebugText::DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor )
 {
     if( IsEnabled() && fManager )
         fManager->DrawRect( left, top, right, bottom, hexColor, fDrawOnTopMode );
@@ -86,7 +86,7 @@ void    plDebugText::DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bot
 
 //// Draw3DBorder ////////////////////////////////////////////////////////////
 
-void    plDebugText::Draw3DBorder( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor1, UInt32 hexColor2 )
+void    plDebugText::Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2 )
 {
     if( IsEnabled() && fManager )
         fManager->Draw3DBorder( left, top, right, bottom, hexColor1, hexColor2, fDrawOnTopMode );
@@ -94,13 +94,13 @@ void    plDebugText::Draw3DBorder( UInt16 left, UInt16 top, UInt16 right, UInt16
 
 //// GetScreenSize ///////////////////////////////////////////////////////////
 
-void    plDebugText::GetScreenSize( UInt32 *width, UInt32 *height )
+void    plDebugText::GetScreenSize( uint32_t *width, uint32_t *height )
 {
     if( fManager )
         fManager->GetScreenSize( width, height );
 }
 
-UInt16 plDebugText::GetFontHeight()
+uint16_t plDebugText::GetFontHeight()
 {
     if (fManager)
         return fManager->GetFontHeight();
@@ -113,7 +113,7 @@ UInt16 plDebugText::GetFontHeight()
 
 //// plDebugTextNode Constructor /////////////////////////////////////////////
 
-plDebugTextManager::plDebugTextNode::plDebugTextNode( const char *s, UInt32 c, UInt16 x, UInt16 y, UInt8 style )
+plDebugTextManager::plDebugTextNode::plDebugTextNode( const char *s, uint32_t c, uint16_t x, uint16_t y, uint8_t style )
 {
     HSMemory::Clear( fText, sizeof( fText ) );
     strncpy( fText, s, sizeof( fText ) - 1 );
@@ -123,7 +123,7 @@ plDebugTextManager::plDebugTextNode::plDebugTextNode( const char *s, UInt32 c, U
     fStyle = style;
 }
 
-plDebugTextManager::plDebugTextNode::plDebugTextNode( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 c )
+plDebugTextManager::plDebugTextNode::plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c )
 {
     memset( fText, 0, sizeof( fText ) );
     fColor = c;
@@ -134,7 +134,7 @@ plDebugTextManager::plDebugTextNode::plDebugTextNode( UInt16 left, UInt16 top, U
     fStyle = 0xff;
 }
 
-plDebugTextManager::plDebugTextNode::plDebugTextNode( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 c1, UInt32 c2 )
+plDebugTextManager::plDebugTextNode::plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c1, uint32_t c2 )
 {
     memset( fText, 0, sizeof( fText ) );
     fColor = c1;
@@ -156,7 +156,7 @@ plDebugTextManager::~plDebugTextManager()
 
 //// AddString ///////////////////////////////////////////////////////////////
 
-void    plDebugTextManager::AddString( UInt16 x, UInt16 y, const char *s, UInt32 hexColor, UInt8 style, hsBool drawOnTop )
+void    plDebugTextManager::AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, hsBool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( s, hexColor, x, y, style ) );
@@ -169,7 +169,7 @@ void    plDebugTextManager::AddString( UInt16 x, UInt16 y, const char *s, UInt32
 //  to create a background for our console; will be obliterated once we figure
 //  a better way to do so.
 
-void    plDebugTextManager::DrawRect( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor, hsBool drawOnTop )
+void    plDebugTextManager::DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, hsBool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( left, top, right, bottom, hexColor ) );
@@ -179,7 +179,7 @@ void    plDebugTextManager::DrawRect( UInt16 left, UInt16 top, UInt16 right, UIn
 
 //// Draw3DBorder ////////////////////////////////////////////////////////////
 
-void    plDebugTextManager::Draw3DBorder( UInt16 left, UInt16 top, UInt16 right, UInt16 bottom, UInt32 hexColor1, UInt32 hexColor2, hsBool drawOnTop )
+void    plDebugTextManager::Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, hsBool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( left, top, right, bottom, hexColor1, hexColor2 ) );
@@ -275,7 +275,7 @@ void    plDebugTextManager::DrawToDevice( plPipeline *pipe )
 
 //// CalcStringWidth /////////////////////////////////////////////////////////
 
-UInt32  plDebugTextManager::CalcStringWidth( const char *string )
+uint32_t  plDebugTextManager::CalcStringWidth( const char *string )
 {
     if( !plDebugText::Instance().IsEnabled() || fFont == nil )
         return 0;
@@ -285,7 +285,7 @@ UInt32  plDebugTextManager::CalcStringWidth( const char *string )
 
 //// GetScreenSize ///////////////////////////////////////////////////////////
 
-void    plDebugTextManager::GetScreenSize( UInt32 *width, UInt32 *height )
+void    plDebugTextManager::GetScreenSize( uint32_t *width, uint32_t *height )
 {
     if( width != nil )
         *width = fSWidth;
@@ -293,7 +293,7 @@ void    plDebugTextManager::GetScreenSize( UInt32 *width, UInt32 *height )
         *height = fSHeight;
 }
 
-UInt16 plDebugTextManager::GetFontHeight()
+uint16_t plDebugTextManager::GetFontHeight()
 {
     if (fFont)
         return fFont->GetFontHeight();

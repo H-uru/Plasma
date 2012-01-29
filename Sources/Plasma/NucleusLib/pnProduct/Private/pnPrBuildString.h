@@ -58,4 +58,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-const wchar * ProductBuildString ();
+const wchar_t * ProductBuildString ();

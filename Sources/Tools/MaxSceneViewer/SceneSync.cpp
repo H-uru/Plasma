@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #include "SceneSync.h"
 #include "SceneWatcher.h"
@@ -233,7 +233,7 @@ bool SceneSync::BeginClientSync(const char *semaphoreName, const char *pipeName)
 
 //  Update();
 
-    fUpdateSignal = TRACKED_NEW hsSemaphore(0, semaphoreName);
+    fUpdateSignal = new hsSemaphore(0, semaphoreName);
 
     fPipeName = pipeName;
 
@@ -353,7 +353,7 @@ bool SceneSync::IStartWatching(bool forceWatch)
     // b) there is previously saved data for this scene (we need to keep up to date)
     if (forceWatch || CanLoadOldResMgr())
     {
-        fSceneWatcher = TRACKED_NEW SceneWatcher;
+        fSceneWatcher = new SceneWatcher;
     }
 
     return true;

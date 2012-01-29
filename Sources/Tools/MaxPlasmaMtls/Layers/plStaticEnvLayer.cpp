@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plStaticEnvLayer.h"
 
 #include "iparamb2.h"
@@ -53,7 +53,7 @@ class plStaticEnvLayerClassDesc : public ClassDesc2
 {
 public:
     int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return TRACKED_NEW plStaticEnvLayer(); }
+    void*           Create(BOOL loading = FALSE) { return new plStaticEnvLayer(); }
     const TCHAR*    ClassName()     { return GetString(IDS_STATIC_ENVMAP_LAYER); }
     SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
     Class_ID        ClassID()       { return STATIC_ENV_LAYER_CLASS_ID; }
@@ -223,7 +223,7 @@ IParamBlock2* plStaticEnvLayer::GetParamBlockByID(BlockID id)
 //From ReferenceTarget 
 RefTargetHandle plStaticEnvLayer::Clone(RemapDir &remap) 
 {
-    plStaticEnvLayer *mnew = TRACKED_NEW plStaticEnvLayer();
+    plStaticEnvLayer *mnew = new plStaticEnvLayer();
     *((MtlBase*)mnew) = *((MtlBase*)this); // copy superclass stuff
     mnew->ReplaceReference(kRefBitmap, remap.CloneRef(fBitmapPB));
     mnew->ReplaceReference(kRefUVGen, remap.CloneRef(fUVGen));

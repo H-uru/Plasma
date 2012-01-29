@@ -56,7 +56,7 @@ public:
     CLASSNAME_REGISTER( plLayer );
     GETINTERFACE_ANY( plLayer, plLayerInterface );
 
-    virtual UInt32          Eval(double secs, UInt32 frame, UInt32 ignore);
+    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
@@ -66,11 +66,11 @@ public:
     // Flat layer specifics
     plLayer& InitToDefault();
 
-    void SetBlendFlags(UInt32 f) { fState->fBlendFlags = f; }
-    void SetClampFlags(UInt32 f) { fState->fClampFlags = f; }
-    void SetShadeFlags(UInt32 f) { fState->fShadeFlags = f; }
-    void SetZFlags(UInt32 f) { fState->fZFlags = f; }
-    void SetMiscFlags(UInt32 f) { fState->fMiscFlags = f; }
+    void SetBlendFlags(uint32_t f) { fState->fBlendFlags = f; }
+    void SetClampFlags(uint32_t f) { fState->fClampFlags = f; }
+    void SetShadeFlags(uint32_t f) { fState->fShadeFlags = f; }
+    void SetZFlags(uint32_t f) { fState->fZFlags = f; }
+    void SetMiscFlags(uint32_t f) { fState->fMiscFlags = f; }
     void SetState(const hsGMatState& state);
 
     void SetTexture(plBitmap* t) { *fTexture = t; }
@@ -79,11 +79,11 @@ public:
     void SetRuntimeColor( const hsColorRGBA& col ) { *fRuntimeColor = col; }
     void SetAmbientColor(const hsColorRGBA& col) { *fAmbientColor = col; }
     void SetSpecularColor(const hsColorRGBA& col) { *fSpecularColor = col; }
-    void SetOpacity(hsScalar a) { *fOpacity = a; }
+    void SetOpacity(float a) { *fOpacity = a; }
     void SetTransform(const hsMatrix44& xfm);
-    void SetUVWSrc(UInt32 chan) { *fUVWSrc = chan; }
-    void SetLODBias(hsScalar f) { *fLODBias = f; }
-    void SetSpecularPower(hsScalar f) { *fSpecularPower = f; }
+    void SetUVWSrc(uint32_t chan) { *fUVWSrc = chan; }
+    void SetLODBias(float f) { *fLODBias = f; }
+    void SetSpecularPower(float f) { *fSpecularPower = f; }
 
     void SetVertexShader(plShader* shader) { *fVertexShader = shader; }
     void SetPixelShader(plShader* shader) { *fPixelShader = shader; }

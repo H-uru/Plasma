@@ -59,9 +59,9 @@ public:
     virtual ~plCreator() { }
 
     virtual plCreatable*    Create() const = 0;
-    virtual UInt16          ClassIndex() = 0;
+    virtual uint16_t          ClassIndex() = 0;
     virtual const char*     ClassName() const = 0;
-    virtual hsBool          HasBaseClass(UInt16 hBase) = 0;
+    virtual hsBool          HasBaseClass(uint16_t hBase) = 0;
 
     friend class plFactory;
 };
@@ -81,16 +81,16 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(UInt16 hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual UInt16 ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
+    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
-    virtual plCreatable* Create() const { return TRACKED_NEW plClassName; }         \
+    virtual plCreatable* Create() const { return new plClassName; }         \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-UInt16 plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
 
 #define REGISTER_NONCREATABLE( plClassName )                                        \
                                                                                     \
@@ -107,16 +107,16 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(UInt16 hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual UInt16 ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
+    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
     virtual plCreatable*        Create() const { return nil; }                      \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-UInt16 plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
 
 #define DECLARE_EXTERNAL_CREATABLE( plClassName )                                   \
                                                                                     \
@@ -140,16 +140,16 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(UInt16 hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual UInt16 ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
-    virtual plCreatable* Create() const { return TRACKED_NEW plClassName; }         \
+    virtual plCreatable* Create() const { return new plClassName; }         \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-UInt16 plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
 
 #define REGISTER_EXTERNAL_CREATABLE(plClassName)                                    \
 static##plClassName##__Creator.Register();                                          //
@@ -172,16 +172,16 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(UInt16 hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual UInt16 ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     virtual const char* ClassName() const { return #plClassName; }                  \
                                                                                     \
     virtual plCreatable*        Create() const { return nil; }                      \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-UInt16 plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
 
 
 #endif // plCreator_inc

@@ -120,13 +120,13 @@ public:
     void Init();
 
     virtual hsBool MsgReceive(plMessage* msg);
-    static void SetFOV(hsScalar w, hsScalar h);
-    static void SetFOV(hsScalar w, hsScalar h, plCameraModifier1* pCam);
-    static void SetDepth(hsScalar h, hsScalar y);
-    static hsScalar GetFOVw() { return fFOVw; }
-    static hsScalar GetFOVh() { return fFOVh; }
-    static hsScalar GetHither() { return fHither; }
-    static hsScalar GetYon()    { return fYon; }
+    static void SetFOV(float w, float h);
+    static void SetFOV(float w, float h, plCameraModifier1* pCam);
+    static void SetDepth(float h, float y);
+    static float GetFOVw() { return fFOVw; }
+    static float GetFOVh() { return fFOVh; }
+    static float GetHither() { return fHither; }
+    static float GetYon()    { return fYon; }
     static void     SetOffset(float x, float y, float z);
     static void SetAspectRatio(float aspect) { fAspectRatio = aspect; }
     static float GetAspectRatio() { return fAspectRatio; }
@@ -174,8 +174,8 @@ public:
     void StartUnPan();
     // these are for console access
     static hsBool fUseAccelOverride, freeze, alwaysCutForColin, WalkPan3rdPerson,StayInFirstPersonForever;
-    static hsScalar fDecel, fAccel, fVel;
-    static hsScalar fFallTimerDelay;
+    static float fDecel, fAccel, fVel;
+    static float fFallTimerDelay;
     
 private:
 
@@ -215,19 +215,19 @@ private:
     hsBitVector         fFlags;
     hsTArray<plSceneObject*>    fCamerasLoaded;
     hsBitVector         fMoveFlags;
-    hsScalar            fX;
-    hsScalar            fY;
-    hsScalar            fXPanLimit;
-    hsScalar            fZPanLimit;
-    hsScalar            fXPanLimitGoal;
-    hsScalar            fZPanLimitGoal;
-    hsScalar            fXUnPanRate;
-    hsScalar            fZUnPanRate;
-    hsScalar            fXPanInterpRate;
-    hsScalar            fZPanInterpRate;
+    float            fX;
+    float            fY;
+    float            fXPanLimit;
+    float            fZPanLimit;
+    float            fXPanLimitGoal;
+    float            fZPanLimitGoal;
+    float            fXUnPanRate;
+    float            fZUnPanRate;
+    float            fXPanInterpRate;
+    float            fZPanInterpRate;
     double              fUnPanEndTime;
     double              fInterpPanLimitTime;
-    hsScalar            fRetainedFY;
+    float            fRetainedFY;
     
     // built-in cameras
     plCameraModifier1*  fDriveCamera; // for driving around 
@@ -237,11 +237,11 @@ private:
     plCameraModifier1*  fPrevCam; // the last camera we were displaying
     plCameraModifier1*  fThirdPersonCam; // built in third person cam for ccr's when they jump about
 
-    static hsScalar fFOVh, fFOVw;
-    static hsScalar fHither, fYon;
+    static float fFOVh, fFOVw;
+    static float fHither, fYon;
     static plVirtualCam1* fInstance;
     static hsBool printFOV; 
-    static hsScalar fPanResponseTime;
+    static float fPanResponseTime;
     static float fAspectRatio;
     hsBool fForceCutOnce;
 

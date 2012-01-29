@@ -54,7 +54,7 @@ class plModulator : public plCreatable
 {
 protected:
     plVolumeIsect*          fVolume;
-    hsScalar                fSoftDist;
+    float                fSoftDist;
 
 public:
     plModulator();
@@ -66,13 +66,13 @@ public:
     const plVolumeIsect*    GetVolume() const { return fVolume; }
     void                    SetVolume(plVolumeIsect* vol); // Takes ownership, so don't delete after handing it in.
 
-    hsScalar                Modulation(const hsPoint3& pos) const;
-    hsScalar                Modulation(const hsBounds3Ext& bnd) const;
+    float                Modulation(const hsPoint3& pos) const;
+    float                Modulation(const hsBounds3Ext& bnd) const;
 
     void                    SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-    hsScalar                GetSoftDist() const { return fSoftDist; }
-    void                    SetSoftDist(hsScalar s) { fSoftDist = s; }
+    float                GetSoftDist() const { return fSoftDist; }
+    void                    SetSoftDist(float s) { fSoftDist = s; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

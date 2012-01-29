@@ -90,16 +90,16 @@ public:
     hsTArray<plMipmap **> fTextures;
     hsTArray<char *> fElementNames;
     hsTArray<plClothingElement *> fElements;
-    UInt8 fGroup;   // Each avatar can wear one of the available groups
-    UInt8 fType;    // Each group has multiple types of clothes (shirt/pants/etc)
-    UInt8 fTileset;
-    UInt8 fSortOrder;
+    uint8_t fGroup;   // Each avatar can wear one of the available groups
+    uint8_t fType;    // Each group has multiple types of clothes (shirt/pants/etc)
+    uint8_t fTileset;
+    uint8_t fSortOrder;
     char *fDescription;
     char *fCustomText;
     plMipmap *fThumbnail;
     plClothingItem *fAccessory; // Forced accessory to always wear with this item.
-    UInt8 fDefaultTint1[3];
-    UInt8 fDefaultTint2[3];
+    uint8_t fDefaultTint1[3];
+    uint8_t fDefaultTint2[3];
     
     char *fAccessoryName; // Export only
 
@@ -167,10 +167,10 @@ public:
     hsTArray<plClothingItem*> fItems;
     hsTArray<plClothingItemOptions*> fOptions;
     plClothingBase *fBase;
-    UInt8 fGroup;
+    uint8_t fGroup;
     bool fSynchClients;     // set true if the next synch should be bcast
     hsColorRGBA fSkinTint;
-    hsScalar fSkinBlends[plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst]; // Controls the opacity between skin textures.
+    float fSkinBlends[plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst]; // Controls the opacity between skin textures.
 
     plClothingOutfit();
     ~plClothingOutfit();
@@ -181,26 +181,26 @@ public:
     void SaveCustomizations(hsBool retry = true);
     void AddItem(plClothingItem *item, hsBool update = true, hsBool broadcast = true, hsBool netForce=false);
     void RemoveItem(plClothingItem *item, hsBool update = true, hsBool netForce=false);
-    void TintItem(plClothingItem *item, hsScalar red, hsScalar green, hsScalar blue, hsBool update = true, hsBool broadcast = true, 
-                  hsBool netForce = false, hsBool retry = true, UInt8 fLayer = plClothingElement::kLayerTint1);
-    void TintSkin(hsScalar red, hsScalar green, hsScalar blue,
+    void TintItem(plClothingItem *item, float red, float green, float blue, hsBool update = true, hsBool broadcast = true, 
+                  hsBool netForce = false, hsBool retry = true, uint8_t fLayer = plClothingElement::kLayerTint1);
+    void TintSkin(float red, float green, float blue,
                   hsBool update = true, hsBool broadcast = true);
-    void MorphItem(plClothingItem *item, UInt8 layer, UInt8 delta, hsScalar weight, hsBool retry = true);
-    void SetAge(hsScalar age, hsBool update = true, hsBool broadcast = true);
-    void SetSkinBlend(hsScalar blend, UInt8 layer, hsBool update = true, hsBool broadcast = true);
-    hsScalar GetSkinBlend(UInt8 layer);     
-    hsColorRGBA GetItemTint(plClothingItem *item, UInt8 layer = 2) const;
-    hsScalar GetAge() const { return fSkinBlends[0]; }
+    void MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight, hsBool retry = true);
+    void SetAge(float age, hsBool update = true, hsBool broadcast = true);
+    void SetSkinBlend(float blend, uint8_t layer, hsBool update = true, hsBool broadcast = true);
+    float GetSkinBlend(uint8_t layer);     
+    hsColorRGBA GetItemTint(plClothingItem *item, uint8_t layer = 2) const;
+    float GetAge() const { return fSkinBlends[0]; }
     hsTArray<plClothingItem*> &GetItemList() { return fItems; }
     hsTArray<plClothingItemOptions*> &GetOptionList() { return fOptions; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    hsBool DirtySynchState(const char* SDLStateName, UInt32 synchFlags);
+    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);
 
     void StripAccessories();
     void WearDefaultClothing();
-    void WearDefaultClothingType(UInt32 clothingType);
+    void WearDefaultClothingType(uint32_t clothingType);
     void WearMaintainerOutfit();
     void WearRandomOutfit();
     void RemoveMaintainerOutfit();
@@ -231,8 +231,8 @@ protected:
 
     void IAddItem(plClothingItem *item);
     void IRemoveItem(plClothingItem *item);
-    hsBool ITintItem(plClothingItem *item, hsColorRGBA color, UInt8 layer);
-    hsBool IMorphItem(plClothingItem *item, UInt8 layer, UInt8 delta, hsScalar weight);
+    hsBool ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer);
+    hsBool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight);
     void IHandleMorphSDR(plStateDataRecord *sdr);
         
     void IUpdate();
@@ -269,8 +269,8 @@ public:
     // Functions that relate to all existing clothing
     plClothingItem *FindItemByName(const char *name);
     hsTArray<plClothingItem*>& GetItemList() { return fItems; }
-    void GetItemsByGroup(UInt8 group, hsTArray<plClothingItem*> &out);
-    void GetItemsByGroupAndType(UInt8 group, UInt8 type, hsTArray<plClothingItem*> &out);
+    void GetItemsByGroup(uint8_t group, hsTArray<plClothingItem*> &out);
+    void GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out);
     void GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out);
     
     // Give an array of items (from one of the above functions, for example)

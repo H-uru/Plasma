@@ -115,18 +115,18 @@ class hsQuat;
 class hsEuler 
 {
 public:
-    hsScalar fX,fY,fZ;
-    UInt32 fOrder;
+    float fX,fY,fZ;
+    uint32_t fOrder;
 
-    hsEuler(hsScalar ai, hsScalar aj, hsScalar ah, UInt32 order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
+    hsEuler(float ai, float aj, float ah, uint32_t order) : fX(ai),fY(aj),fZ(ah),fOrder(order) {}
     
     // getters, converters
     void GetQuat(hsQuat* res );
     void GetMatrix44(hsMatrix44* M);
 
     // setters, converters
-    void SetFromMatrix44(const hsMatrix44* M, UInt32 order);
-    void SetFromQuat(const hsQuat* q, UInt32 order);
+    void SetFromMatrix44(const hsMatrix44* M, uint32_t order);
+    void SetFromQuat(const hsQuat* q, uint32_t order);
 };
 
 #endif  // HS_EULER_inc

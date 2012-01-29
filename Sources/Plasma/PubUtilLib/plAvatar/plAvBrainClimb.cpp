@@ -210,7 +210,7 @@ void plAvBrainClimb::Deactivate()
 }
 
 // APPLY
-hsBool plAvBrainClimb::Apply(double time, hsScalar elapsed)
+hsBool plAvBrainClimb::Apply(double time, float elapsed)
 {
     hsBool result = true;
 
@@ -284,7 +284,7 @@ hsBool plAvBrainClimb::IHandleClimbMsg(plClimbMsg *msg)
             && fCurMode != kFallingOff
             && fCurMode != kFinishing)
             {
-                plClimbEventMsg* pMsg = TRACKED_NEW plClimbEventMsg;
+                plClimbEventMsg* pMsg = new plClimbEventMsg;
                 pMsg->SetSender(msg->fTarget);
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
                 pMsg->SetBCastFlag(plMessage::kLocalPropagate);
@@ -679,21 +679,21 @@ void plAvBrainClimb::IProbeEnvironment()
     plKey ourKey = fAvMod->GetKey();
 
     // *** would be cool if we could hint that these should be batched for spatial coherence optimization
-    plLOSRequestMsg *upReq = TRACKED_NEW plLOSRequestMsg(ourKey, start, up, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
-    upReq->SetRequestID(static_cast<UInt32>(plClimbMsg::kUp));
+    plLOSRequestMsg *upReq = new plLOSRequestMsg(ourKey, start, up, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
+    upReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kUp));
     upReq->Send();
 
-    plLOSRequestMsg *downReq = TRACKED_NEW plLOSRequestMsg(ourKey, start, down, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
-    downReq->SetRequestID(static_cast<UInt32>(plClimbMsg::kDown));
+    plLOSRequestMsg *downReq = new plLOSRequestMsg(ourKey, start, down, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
+    downReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kDown));
     downReq->Send();
 
-    plLOSRequestMsg *leftReq = TRACKED_NEW plLOSRequestMsg(ourKey, start, left, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
-    leftReq->SetRequestID(static_cast<UInt32>(plClimbMsg::kLeft));
+    plLOSRequestMsg *leftReq = new plLOSRequestMsg(ourKey, start, left, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
+    leftReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kLeft));
     leftReq->SetRequestType(plSimDefs::kLOSDBCustom);
     leftReq->Send();
 
-    plLOSRequestMsg *rightReq = TRACKED_NEW plLOSRequestMsg(ourKey, start, right, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
-    rightReq->SetRequestID(static_cast<UInt32>(plClimbMsg::kRight));
+    plLOSRequestMsg *rightReq = new plLOSRequestMsg(ourKey, start, right, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
+    rightReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kRight));
     rightReq->Send();
 
     fOldPhysicallyBlockedDirections = fPhysicallyBlockedDirections;
@@ -732,52 +732,52 @@ void plAvBrainClimb::ICalcProbeLengths()
 // ---------------
 hsBool plAvBrainClimb::IInitAnimations()
 {
-    fUp = TRACKED_NEW plAnimStage("WallClimbUp",
+    fUp = new plAnimStage("WallClimbUp",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressAuto,
                           0);
-    fDown = TRACKED_NEW plAnimStage("WallClimbDown",
+    fDown = new plAnimStage("WallClimbDown",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressAuto,
                           0);
-    fLeft = TRACKED_NEW plAnimStage("WallClimbLeft",
+    fLeft = new plAnimStage("WallClimbLeft",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressAuto,
                           0);
-    fRight = TRACKED_NEW plAnimStage("WallClimbRight",
+    fRight = new plAnimStage("WallClimbRight",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressAuto,
                           0);
     // the mounts
-    fMountUp = TRACKED_NEW plAnimStage("WallClimbMountUp",
+    fMountUp = new plAnimStage("WallClimbMountUp",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fMountDown = TRACKED_NEW plAnimStage("WallClimbMountDown",
+    fMountDown = new plAnimStage("WallClimbMountDown",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fMountLeft = TRACKED_NEW plAnimStage("WallClimbMountLeft",
+    fMountLeft = new plAnimStage("WallClimbMountLeft",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fMountRight = TRACKED_NEW plAnimStage("WallClimbMountRight",
+    fMountRight = new plAnimStage("WallClimbMountRight",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
     // and here's the dismount
-    fDismountUp = TRACKED_NEW plAnimStage("WallClimbDismountUp",
+    fDismountUp = new plAnimStage("WallClimbDismountUp",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fDismountDown = TRACKED_NEW plAnimStage("WallClimbDismountDown",
+    fDismountDown = new plAnimStage("WallClimbDismountDown",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fDismountLeft = TRACKED_NEW plAnimStage("WallClimbDismountLeft",
+    fDismountLeft = new plAnimStage("WallClimbDismountLeft",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fDismountRight = TRACKED_NEW plAnimStage("WallClimbDismountUp",
+    fDismountRight = new plAnimStage("WallClimbDismountUp",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
     // other
-    fIdle = TRACKED_NEW plAnimStage("WallClimbIdle",
+    fIdle = new plAnimStage("WallClimbIdle",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fRelease = TRACKED_NEW plAnimStage("WallClimbRelease",
+    fRelease = new plAnimStage("WallClimbRelease",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
-    fFallOff = TRACKED_NEW plAnimStage("WallClimbFallOff",
+    fFallOff = new plAnimStage("WallClimbFallOff",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressNone,
                           0);
     return true;

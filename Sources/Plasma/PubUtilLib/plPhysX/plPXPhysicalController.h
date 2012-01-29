@@ -127,7 +127,7 @@ public:
     virtual bool IsKinematic();
     virtual void GetKinematicPosition(hsPoint3& pos);
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<UInt32>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
     virtual const hsMatrix44& GetPrevSubworldW2L() { return fPrevSubworldW2L; }
 

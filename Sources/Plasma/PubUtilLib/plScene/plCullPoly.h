@@ -51,7 +51,7 @@ class hsStream;
 class hsResMgr;
 struct hsMatrix44;
 
-const hsScalar          kCullPolyDegen = 1.e-4f;
+const float          kCullPolyDegen = 1.e-4f;
 
 class plCullPoly
 {
@@ -62,17 +62,17 @@ public:
         kTwoSided   = 0x2
     };
 
-    UInt32                  fFlags;
+    uint32_t                  fFlags;
     mutable hsBitVector     fClipped; // fClipped[i] => edge(fVerts[i], fVerts[(i+1)%n])
 
     hsTArray<hsPoint3>      fVerts;
     hsVector3               fNorm;
-    hsScalar                fDist;
+    float                fDist;
     hsPoint3                fCenter;
-    hsScalar                fRadius;
+    float                fRadius;
 
     const hsPoint3&         GetCenter() const { return fCenter; }
-    hsScalar                GetRadius() const { return fRadius; }
+    float                GetRadius() const { return fRadius; }
 
     void                    SetHole(hsBool on) { if( on )fFlags |= kHole; else fFlags &= ~kHole; }
     void                    SetTwoSided(hsBool on) { if( on )fFlags |= kTwoSided; else fFlags &= ~kTwoSided; }
@@ -82,8 +82,8 @@ public:
 
     plCullPoly&             Init(const plCullPoly& p) { fClipped.Clear(); fVerts.SetCount(0); fFlags = p.fFlags; fNorm = p.fNorm; fDist = p.fDist; fCenter = p.fCenter; return *this; }
     plCullPoly&             Flip(const plCullPoly& p);
-    plCullPoly&             InitFromVerts(UInt32 f=kNone);
-    hsScalar                ICalcRadius() const;
+    plCullPoly&             InitFromVerts(uint32_t f=kNone);
+    float                ICalcRadius() const;
 
     plCullPoly&             Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, plCullPoly& dst) const;
 

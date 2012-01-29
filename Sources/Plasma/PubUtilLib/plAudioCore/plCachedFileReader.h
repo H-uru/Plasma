@@ -68,15 +68,15 @@ public:
 
     virtual void    Close();
 
-    virtual UInt32  GetDataSize();
+    virtual uint32_t  GetDataSize();
     virtual float   GetLengthInSecs();
 
-    virtual hsBool  SetPosition(UInt32 numBytes);
-    virtual hsBool  Read(UInt32 numBytes, void *buffer);
-    virtual UInt32  NumBytesLeft();
+    virtual hsBool  SetPosition(uint32_t numBytes);
+    virtual hsBool  Read(uint32_t numBytes, void *buffer);
+    virtual uint32_t  NumBytesLeft();
 
     virtual hsBool  OpenForWriting(const char *path, plWAVHeader &header);
-    virtual UInt32  Write(UInt32 bytes, void *buffer);
+    virtual uint32_t  Write(uint32_t bytes, void *buffer);
 
     virtual hsBool  IsValid() { return fFileHandle != nil; }
 
@@ -89,8 +89,8 @@ protected:
     char            fFilename[512];
     FILE *          fFileHandle;
     plWAVHeader     fHeader;
-    UInt32          fDataLength;
-    UInt32          fCurPosition;
+    uint32_t          fDataLength;
+    uint32_t          fCurPosition;
 
     void IError(const char *msg);
 };

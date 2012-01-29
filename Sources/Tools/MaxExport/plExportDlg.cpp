@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plExportDlg.h"
 #include "MaxMain/resource.h"
 #include "max.h"

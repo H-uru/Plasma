@@ -80,7 +80,7 @@ public:
 
     hsBitVector         fCmd;
     plControlConfig*    fInterface;
-    UInt32              fControlCode;
+    uint32_t              fControlCode;
     int                 fIndex; 
 
     hsBool Cmd(int n) { return fCmd.IsBitSet(n); }

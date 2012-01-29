@@ -62,8 +62,8 @@ public:
     CLASSNAME_REGISTER( plMeshRefMsg );
     GETINTERFACE_ANY( plMeshRefMsg, plRefMsg );
 
-    UInt8       fType;
-    UInt8       fWhich;
+    uint8_t       fType;
+    uint8_t       fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
     virtual void Read(hsStream* stream, hsResMgr* mgr)

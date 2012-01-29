@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTransitionMgr_h
 #define _plTransitionMgr_h
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsUtils.h"
+
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -74,13 +74,13 @@ class plTransitionMgr : public hsKeyedObject
             kTransitionFadeOut
         };
 
-        UInt8       fCurrentEffect;
+        uint8_t       fCurrentEffect;
         hsBool      fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
-        hsScalar    fEffectLength, fCurrOpacity, fOpacDelta;
-        hsScalar    fLastTime;
+        float    fEffectLength, fCurrOpacity, fOpacDelta;
+        float    fLastTime;
 
-        void    IStartFadeIn( hsScalar lengthInSecs, UInt8 effect = kFadeIn );
-        void    IStartFadeOut( hsScalar lengthInSecs, UInt8 effect = kFadeOut );
+        void    IStartFadeIn( float lengthInSecs, uint8_t effect = kFadeIn );
+        void    IStartFadeOut( float lengthInSecs, uint8_t effect = kFadeOut );
 
         void    ICreatePlate( void );
 

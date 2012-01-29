@@ -82,8 +82,8 @@ const NetMsgField kNetMsgFieldBuildId       = NET_MSG_FIELD_DWORD();
 #include <PshPack1.h>
 struct SrvPlayerInfo {
     unsigned    playerInt;
-    wchar       playerName[kMaxPlayerNameLength];
-    wchar       avatarShape[kMaxVaultNodeStringLength];
+    wchar_t       playerName[kMaxPlayerNameLength];
+    wchar_t       avatarShape[kMaxVaultNodeStringLength];
     unsigned    explorer;
 };
 #include <PopPack.h>
@@ -97,14 +97,14 @@ struct SrvPlayerInfo {
 
 struct NetAgeInfo {
     Uuid        ageInstId;
-    wchar       ageFilename[kMaxAgeNameLength];
-    wchar       ageInstName[kMaxAgeNameLength];
-    wchar       ageUserName[kMaxAgeNameLength];
-    wchar       ageDesc[1024];
-    dword       ageSequenceNumber;
-    dword       ageLanguage;
-    dword       population;         // only used with GetPublicAgeList query results
-    dword       currentPopulation;  // only used with GetPublicAgeList query results
+    wchar_t       ageFilename[kMaxAgeNameLength];
+    wchar_t       ageInstName[kMaxAgeNameLength];
+    wchar_t       ageUserName[kMaxAgeNameLength];
+    wchar_t       ageDesc[1024];
+    uint32_t       ageSequenceNumber;
+    uint32_t       ageLanguage;
+    uint32_t       population;         // only used with GetPublicAgeList query results
+    uint32_t       currentPopulation;  // only used with GetPublicAgeList query results
 };
 
 /*****************************************************************************
@@ -116,13 +116,13 @@ struct NetAgeInfo {
 struct NetGameScore {
     unsigned    scoreId;
     unsigned    ownerId;
-    UInt32      createdTime;
-    wchar       gameName[kMaxGameScoreNameLength];
+    uint32_t      createdTime;
+    wchar_t       gameName[kMaxGameScoreNameLength];
     unsigned    gameType;
     int         value;
 
-    unsigned Read (const byte inbuffer[], unsigned bufsz, byte** end = nil);    // returns number of bytes read
-    unsigned Write (ARRAY(byte) * buffer) const;                                // returns number of bytes written
+    unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nil);    // returns number of bytes read
+    unsigned Write (ARRAY(uint8_t) * buffer) const;                                // returns number of bytes written
 
     void CopyFrom (const NetGameScore & score);
 };
@@ -136,10 +136,10 @@ struct NetGameScore {
 struct NetGameRank {
     unsigned    rank;
     int         score;
-    wchar       name[kMaxPlayerNameLength];
+    wchar_t       name[kMaxPlayerNameLength];
 
-    unsigned Read (const byte inbuffer[], unsigned bufsz, byte** end = nil);    // returns number of bytes read
-    unsigned Write (ARRAY(byte) * buffer) const;                                // returns number of bytes written
+    unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nil);    // returns number of bytes read
+    unsigned Write (ARRAY(uint8_t) * buffer) const;                                // returns number of bytes written
 
     void CopyFrom (const NetGameRank & fromRank);
 };
@@ -170,44 +170,44 @@ struct NetVaultNode : AtomicRef {
     
     // These flag values must not change unless all servers are
     // simultaneously replaced, so basically forget it.
-    static const qword kNodeId          = (qword)1<< 0;
-    static const qword kCreateTime      = (qword)1<< 1;
-    static const qword kModifyTime      = (qword)1<< 2;
-    static const qword kCreateAgeName   = (qword)1<< 3;
-    static const qword kCreateAgeUuid   = (qword)1<< 4;
-    static const qword kCreatorAcct     = (qword)1<< 5;
-    static const qword kCreatorId       = (qword)1<< 6;
-    static const qword kNodeType        = (qword)1<< 7;
-    static const qword kInt32_1         = (qword)1<< 8;
-    static const qword kInt32_2         = (qword)1<< 9;
-    static const qword kInt32_3         = (qword)1<<10;
-    static const qword kInt32_4         = (qword)1<<11;
-    static const qword kUInt32_1        = (qword)1<<12;
-    static const qword kUInt32_2        = (qword)1<<13;
-    static const qword kUInt32_3        = (qword)1<<14;
-    static const qword kUInt32_4        = (qword)1<<15;
-    static const qword kUuid_1          = (qword)1<<16;
-    static const qword kUuid_2          = (qword)1<<17;
-    static const qword kUuid_3          = (qword)1<<18;
-    static const qword kUuid_4          = (qword)1<<19;
-    static const qword kString64_1      = (qword)1<<20;
-    static const qword kString64_2      = (qword)1<<21;
-    static const qword kString64_3      = (qword)1<<22;
-    static const qword kString64_4      = (qword)1<<23;
-    static const qword kString64_5      = (qword)1<<24;
-    static const qword kString64_6      = (qword)1<<25;
-    static const qword kIString64_1     = (qword)1<<26;
-    static const qword kIString64_2     = (qword)1<<27;
+    static const uint64_t kNodeId          = (uint64_t)1<< 0;
+    static const uint64_t kCreateTime      = (uint64_t)1<< 1;
+    static const uint64_t kModifyTime      = (uint64_t)1<< 2;
+    static const uint64_t kCreateAgeName   = (uint64_t)1<< 3;
+    static const uint64_t kCreateAgeUuid   = (uint64_t)1<< 4;
+    static const uint64_t kCreatorAcct     = (uint64_t)1<< 5;
+    static const uint64_t kCreatorId       = (uint64_t)1<< 6;
+    static const uint64_t kNodeType        = (uint64_t)1<< 7;
+    static const uint64_t kInt32_1         = (uint64_t)1<< 8;
+    static const uint64_t kInt32_2         = (uint64_t)1<< 9;
+    static const uint64_t kInt32_3         = (uint64_t)1<<10;
+    static const uint64_t kInt32_4         = (uint64_t)1<<11;
+    static const uint64_t kUInt32_1        = (uint64_t)1<<12;
+    static const uint64_t kUInt32_2        = (uint64_t)1<<13;
+    static const uint64_t kUInt32_3        = (uint64_t)1<<14;
+    static const uint64_t kUInt32_4        = (uint64_t)1<<15;
+    static const uint64_t kUuid_1          = (uint64_t)1<<16;
+    static const uint64_t kUuid_2          = (uint64_t)1<<17;
+    static const uint64_t kUuid_3          = (uint64_t)1<<18;
+    static const uint64_t kUuid_4          = (uint64_t)1<<19;
+    static const uint64_t kString64_1      = (uint64_t)1<<20;
+    static const uint64_t kString64_2      = (uint64_t)1<<21;
+    static const uint64_t kString64_3      = (uint64_t)1<<22;
+    static const uint64_t kString64_4      = (uint64_t)1<<23;
+    static const uint64_t kString64_5      = (uint64_t)1<<24;
+    static const uint64_t kString64_6      = (uint64_t)1<<25;
+    static const uint64_t kIString64_1     = (uint64_t)1<<26;
+    static const uint64_t kIString64_2     = (uint64_t)1<<27;
     // blobs always come last
-    static const qword kText_1          = (qword)1<<28;
-    static const qword kText_2          = (qword)1<<29;
-    static const qword kBlob_1          = (qword)1<<30;
-    static const qword kBlob_2          = (qword)1<<31;
+    static const uint64_t kText_1          = (uint64_t)1<<28;
+    static const uint64_t kText_2          = (uint64_t)1<<29;
+    static const uint64_t kBlob_1          = (uint64_t)1<<30;
+    static const uint64_t kBlob_2          = (uint64_t)1<<31;
     
     CCritSect   critsect;
     
-    qword       fieldFlags;
-    qword       dirtyFlags;
+    uint64_t       fieldFlags;
+    uint64_t       dirtyFlags;
     
     Uuid        revisionId;
 
@@ -216,7 +216,7 @@ struct NetVaultNode : AtomicRef {
     unsigned    nodeId;
     unsigned    createTime;
     unsigned    modifyTime;
-    wchar *     createAgeName;
+    wchar_t *   createAgeName;
     Uuid        createAgeUuid;
     Uuid        creatorAcct;    // accountId of node creator
     unsigned    creatorId;      // playerId of node creator
@@ -233,25 +233,25 @@ struct NetVaultNode : AtomicRef {
     Uuid        uuid_2;
     Uuid        uuid_3;
     Uuid        uuid_4;
-    wchar *     string64_1;
-    wchar *     string64_2;
-    wchar *     string64_3;
-    wchar *     string64_4;
-    wchar *     string64_5;
-    wchar *     string64_6;
-    wchar *     istring64_1;
-    wchar *     istring64_2;
-    wchar *     text_1;
-    wchar *     text_2;
-    byte *      blob_1; unsigned blob_1Length;
-    byte *      blob_2; unsigned blob_2Length;
+    wchar_t *   string64_1;
+    wchar_t *   string64_2;
+    wchar_t *   string64_3;
+    wchar_t *   string64_4;
+    wchar_t *   string64_5;
+    wchar_t *   string64_6;
+    wchar_t *   istring64_1;
+    wchar_t *   istring64_2;
+    wchar_t *   text_1;
+    wchar_t *   text_2;
+    uint8_t *   blob_1; uint32_t blob_1Length;
+    uint8_t *   blob_2; uint32_t blob_2Length;
     
     NetVaultNode ();
     ~NetVaultNode ();
 
     // Threaded apps: Must be called with node->critsect locked 
-    unsigned Read_LCS (const byte buffer[], unsigned bufsz, unsigned rwOpts);   // returns number of bytes read
-    unsigned Write_LCS (ARRAY(byte) * buffer, unsigned rwOpts);                 // returns number of bytes written
+    unsigned Read_LCS (const uint8_t buffer[], unsigned bufsz, unsigned rwOpts);   // returns number of bytes read
+    unsigned Write_LCS (ARRAY(uint8_t) * buffer, unsigned rwOpts);                 // returns number of bytes written
     
     bool Matches (const NetVaultNode * other);
     void CopyFrom (const NetVaultNode * other, unsigned copyOpts);
@@ -260,7 +260,7 @@ struct NetVaultNode : AtomicRef {
     void SetNodeId (unsigned v);
     void SetCreateTime (unsigned v);
     void SetModifyTime (unsigned v);
-    void SetCreateAgeName (const wchar v[]);
+    void SetCreateAgeName (const wchar_t v[]);
     void SetCreateAgeUuid (const Uuid & v);
     void SetCreatorAcct (const Uuid & v);
     void SetCreatorId (unsigned v);
@@ -277,27 +277,27 @@ struct NetVaultNode : AtomicRef {
     void SetUuid_2 (const Uuid & v);
     void SetUuid_3 (const Uuid & v);
     void SetUuid_4 (const Uuid & v);
-    void SetString64_1 (const wchar v[]);
-    void SetString64_2 (const wchar v[]);
-    void SetString64_3 (const wchar v[]);
-    void SetString64_4 (const wchar v[]);
-    void SetString64_5 (const wchar v[]);
-    void SetString64_6 (const wchar v[]);
-    void SetIString64_1 (const wchar v[]);
-    void SetIString64_2 (const wchar v[]);
-    void SetText_1 (const wchar v[]);
-    void SetText_2 (const wchar v[]);
-    void SetBlob_1 (const byte v[], unsigned len);
-    void SetBlob_2 (const byte v[], unsigned len);
+    void SetString64_1 (const wchar_t v[]);
+    void SetString64_2 (const wchar_t v[]);
+    void SetString64_3 (const wchar_t v[]);
+    void SetString64_4 (const wchar_t v[]);
+    void SetString64_5 (const wchar_t v[]);
+    void SetString64_6 (const wchar_t v[]);
+    void SetIString64_1 (const wchar_t v[]);
+    void SetIString64_2 (const wchar_t v[]);
+    void SetText_1 (const wchar_t v[]);
+    void SetText_2 (const wchar_t v[]);
+    void SetBlob_1 (const uint8_t v[], unsigned len);
+    void SetBlob_2 (const uint8_t v[], unsigned len);
     
-    void SetText (qword fieldFlag, const wchar v[]);
-    void SetBlob (qword fieldFlag, const byte v[], unsigned len);
+    void SetText (uint64_t fieldFlag, const wchar_t v[]);
+    void SetBlob (uint64_t fieldFlag, const uint8_t v[], unsigned len);
 
     // These are only here to aid macro expansions (naming case matches field flags)
     inline unsigned GetNodeId () const { return nodeId; }
     inline unsigned GetCreateTime () const { return createTime; }
     inline unsigned GetModifyTime () const { return modifyTime; }
-    inline wchar * GetCreateAgeName () const { return createAgeName; }
+    inline wchar_t * GetCreateAgeName () const { return createAgeName; }
     inline Uuid GetCreateAgeUuid () const { return createAgeUuid; }
     inline Uuid GetCreatorAcct () const { return creatorAcct; }
     inline unsigned GetCreatorId () const { return creatorId; }
@@ -314,27 +314,27 @@ struct NetVaultNode : AtomicRef {
     inline Uuid GetUuid_2 () const { return uuid_2; }
     inline Uuid GetUuid_3 () const { return uuid_3; }
     inline Uuid GetUuid_4 () const { return uuid_4; }
-    inline wchar * GetString64_1 () const { return string64_1; }
-    inline wchar * GetString64_2 () const { return string64_2; }
-    inline wchar * GetString64_3 () const { return string64_3; }
-    inline wchar * GetString64_4 () const { return string64_4; }
-    inline wchar * GetString64_5 () const { return string64_5; }
-    inline wchar * GetString64_6 () const { return string64_6; }
-    inline wchar * GetIString64_1 () const { return istring64_1; }
-    inline wchar * GetIString64_2 () const { return istring64_2; }
+    inline wchar_t * GetString64_1 () const { return string64_1; }
+    inline wchar_t * GetString64_2 () const { return string64_2; }
+    inline wchar_t * GetString64_3 () const { return string64_3; }
+    inline wchar_t * GetString64_4 () const { return string64_4; }
+    inline wchar_t * GetString64_5 () const { return string64_5; }
+    inline wchar_t * GetString64_6 () const { return string64_6; }
+    inline wchar_t * GetIString64_1 () const { return istring64_1; }
+    inline wchar_t * GetIString64_2 () const { return istring64_2; }
     // no blob "getters"
 };
 
 
 //============================================================================
 inline void IVaultNodeSetString (
-    qword           bit,
+    uint64_t        bit,
     NetVaultNode *  node,
     char **         pdst,
     const char      src[],
     unsigned        chars
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src && src[0])
         *pdst = StrDupLen(src, chars);
     else
@@ -345,13 +345,13 @@ inline void IVaultNodeSetString (
 
 //============================================================================
 inline void IVaultNodeSetString (
-    qword           bit,
+    uint64_t        bit,
     NetVaultNode *  node,
-    wchar **        pdst,
-    const wchar     src[],
+    wchar_t **      pdst,
+    const wchar_t   src[],
     unsigned        chars
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src && src[0])
         *pdst = StrDupLen(src, chars);
     else
@@ -363,7 +363,7 @@ inline void IVaultNodeSetString (
 //============================================================================
 template <typename T>
 inline void IVaultNodeSetValue (
-    qword           bit,
+    uint64_t           bit,
     NetVaultNode *  node,
     T *             pdst,
     const T &       src
@@ -375,16 +375,17 @@ inline void IVaultNodeSetValue (
 
 //============================================================================
 inline void IVaultNodeSetBlob (
-    qword           bit,
+    uint64_t        bit,
     NetVaultNode *  node,
-    byte **         pdst,
+    uint8_t **      pdst,
     unsigned *      pdstLen,
-    const byte      src[],
+    const uint8_t   src[],
     unsigned        srcLen
 ) {
-    FREE(*pdst);
+    free(*pdst);
     if (src) {
-        *pdst = (byte*)MEMDUP(src, srcLen);
+        *pdst = (uint8_t*)malloc(srcLen);
+        memcpy(*pdst, src, srcLen);
         *pdstLen = srcLen;
     }
     else {
@@ -416,8 +417,8 @@ struct NetVaultNodeFieldArray {
     
     struct Field {
         void *          addr;
-        const wchar *   name;
-        Field (void * addr, const wchar name[])
+        const wchar_t *   name;
+        Field (void * addr, const wchar_t name[])
         : addr(addr), name(name)
         { }
     };
@@ -427,13 +428,13 @@ struct NetVaultNodeFieldArray {
     NetVaultNodeFieldArray (NetVaultNode * node);
     ~NetVaultNodeFieldArray ();
 
-    void * GetFieldAddress (qword bit);
-    const wchar * GetFieldName (qword bit);
+    void * GetFieldAddress (uint64_t bit);
+    const wchar_t * GetFieldName (uint64_t bit);
     
     // client must lock node's local critical section before calling these.
-    void GetFieldValueString_LCS (qword bit, wchar * dst, unsigned dstChars);   
-    void BuildWhereClause_LCS (EWhereCondition condition, wchar * dst, unsigned dstChars);
-    ESqlType GetSqlType_LCS (qword bit);
+    void GetFieldValueString_LCS (uint64_t bit, wchar_t * dst, unsigned dstChars);   
+    void BuildWhereClause_LCS (EWhereCondition condition, wchar_t * dst, unsigned dstChars);
+    ESqlType GetSqlType_LCS (uint64_t bit);
 };
 
 
@@ -453,15 +454,15 @@ struct NetVaultNodeRef {
 // SrvPackBuffer
 //============================================================================
 
-// Allocate a CSrvPackBuffer on the heap with one extra dword to allow for padding
+// Allocate a CSrvPackBuffer on the heap with one extra uint32_t to allow for padding
 #define SRV_ALLOC_BUFFER(bytes)                                     \
-    new(ALLOC(sizeof(CSrvPackBuffer) + (bytes) + sizeof(dword)))    \
-    CSrvPackBuffer(bytes + sizeof(dword))
+    new(malloc(sizeof(CSrvPackBuffer) + (bytes) + sizeof(uint32_t)))    \
+    CSrvPackBuffer(bytes + sizeof(uint32_t))
 
-// Allocate a CSrvPackBuffer on the stack with one extra dword to allow for padding
+// Allocate a CSrvPackBuffer on the stack with one extra uint32_t to allow for padding
 #define SRV_ALLOCA_BUFFER(bytes)                                        \
-    new(_alloca(sizeof(CSrvPackBuffer) + (bytes) + sizeof(dword)))  \
-    CSrvPackBuffer(bytes + sizeof(dword))
+    new(_alloca(sizeof(CSrvPackBuffer) + (bytes) + sizeof(uint32_t)))  \
+    CSrvPackBuffer(bytes + sizeof(uint32_t))
 
 class CSrvPackBuffer {
 public:
@@ -469,16 +470,16 @@ public:
 
     void * Alloc (unsigned bytes);
     void AddData (const void * ptr, unsigned bytes);
-    void AddString (const wchar str[]);
-    void AddDWordArray (const UInt32 * arr, unsigned count);
+    void AddString (const wchar_t str[]);
+    void AddDWordArray (const uint32_t * arr, unsigned count);
     // add new "Add..." methods here as needed
 
     unsigned Size ();
     
 private:
-    byte * m_pos;
-    byte * m_end;
-    byte * m_data;
+    uint8_t * m_pos;
+    uint8_t * m_end;
+    uint8_t * m_data;
 };
 
 class CSrvUnpackBuffer {
@@ -486,13 +487,13 @@ public:
     CSrvUnpackBuffer (const void * buffer, unsigned count);
 
     const void *  GetData (unsigned bytes);
-    const wchar * GetString ();
-    const dword * GetDWordArray (unsigned count);
+    const wchar_t * GetString ();
+    const uint32_t * GetDWordArray (unsigned count);
     
     unsigned BytesLeft ();
     bool ParseError ();
 
 private:
-    const byte * m_pos;
-    const byte * m_end;
+    const uint8_t * m_pos;
+    const uint8_t * m_end;
 };

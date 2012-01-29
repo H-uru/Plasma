@@ -76,8 +76,8 @@ public:
     };
 protected:
     FollowLeaderType    fLeaderType;
-    UInt8               fMode;
-    UInt8               fLeaderSet;
+    uint8_t               fMode;
+    uint8_t               fLeaderSet;
 
     plSceneObject*      fLeader; // may be nil if Leader isn't a sceneobject
 
@@ -87,7 +87,7 @@ protected:
     hsBool ICheckLeader();
     void IMoveTarget();
 
-    virtual hsBool IEval(double secs, hsScalar del, UInt32 dirty);
+    virtual hsBool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plFollowMod();
@@ -106,8 +106,8 @@ public:
     void SetType(FollowLeaderType t) { fLeaderType = t; }
     FollowLeaderType GetType() const { return fLeaderType; }
 
-    void SetMode(UInt8 m) { fMode = m; }
-    UInt8 GetMode() const { return fMode; }
+    void SetMode(uint8_t m) { fMode = m; }
+    uint8_t GetMode() const { return fMode; }
 
     void Activate();
     void Deactivate();

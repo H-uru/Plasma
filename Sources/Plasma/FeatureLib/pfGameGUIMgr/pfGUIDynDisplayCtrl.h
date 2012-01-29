@@ -79,7 +79,7 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
 
         hsTArray<hsGMaterial *>         fMaterials;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
     public:
 
@@ -95,14 +95,14 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        UInt32              GetNumMaps( void ) const { return fTextMaps.GetCount(); }
-        plDynamicTextMap    *GetMap( UInt32 i ) const { return fTextMaps[ i ]; }
+        uint32_t              GetNumMaps( void ) const { return fTextMaps.GetCount(); }
+        plDynamicTextMap    *GetMap( uint32_t i ) const { return fTextMaps[ i ]; }
 
-        UInt32              GetNumLayers( void ) const { return fLayers.GetCount(); }
-        plLayerInterface    *GetLayer( UInt32 i ) const { return fLayers[ i ]; }
+        uint32_t              GetNumLayers( void ) const { return fLayers.GetCount(); }
+        plLayerInterface    *GetLayer( uint32_t i ) const { return fLayers[ i ]; }
 
-        UInt32              GetNumMaterials( void ) const { return fMaterials.GetCount(); }
-        hsGMaterial         *GetMaterial( UInt32 i ) const { return fMaterials[ i ]; }
+        uint32_t              GetNumMaterials( void ) const { return fMaterials.GetCount(); }
+        hsGMaterial         *GetMaterial( uint32_t i ) const { return fMaterials[ i ]; }
 
         // Export only
         void    AddMap( plDynamicTextMap *map );

@@ -64,17 +64,17 @@ class pfGUIEditBoxMod : public pfGUIControlMod
     protected:
 
         wchar_t         *fBuffer;
-        UInt32          fBufferSize, fCursorPos;
-        Int32           fScrollPos;
+        uint32_t          fBufferSize, fCursorPos;
+        int32_t           fScrollPos;
         hsBool          fIgnoreNextKey, fEscapedFlag;
         hsBool          fFirstHalfExitKeyPushed;
         
         hsBool          fSpecialCaptureKeyEventMode;
 
         plKeyDef        fSavedKey;
-        UInt8           fSavedModifiers;
+        uint8_t           fSavedModifiers;
 
-        virtual hsBool IEval( double secs, hsScalar del, UInt32 dirty ); // called only by owner object's Eval()
+        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
@@ -97,16 +97,16 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, UInt8 modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, UInt8 modifiers );
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual hsBool  HandleKeyPress( wchar_t key, UInt8 modifiers );
-        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, UInt8 modifiers );
+        virtual hsBool  HandleKeyPress( wchar_t key, uint8_t modifiers );
+        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 
-        void    SetBufferSize( UInt32 size );
+        void    SetBufferSize( uint32_t size );
 
         std::string GetBuffer( void );
         std::wstring    GetBufferW( void ) { return fBuffer; }
@@ -120,9 +120,9 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         hsBool      WasEscaped( void ) { hsBool e = fEscapedFlag; fEscapedFlag = false; return e; }
 
         void        SetSpecialCaptureKeyMode(hsBool state) { fSpecialCaptureKeyEventMode = state; }
-        UInt32      GetLastKeyCaptured() { return (UInt32)fSavedKey; }
-        UInt8       GetLastModifiersCaptured() { return fSavedModifiers; }
-        void        SetLastKeyCapture(UInt32 key, UInt8 modifiers);
+        uint32_t      GetLastKeyCaptured() { return (uint32_t)fSavedKey; }
+        uint8_t       GetLastModifiersCaptured() { return fSavedModifiers; }
+        void        SetLastKeyCapture(uint32_t key, uint8_t modifiers);
 
         void        SetChatMode(hsBool state) { plKeyboardDevice::IgnoreCapsLock(state); }
 

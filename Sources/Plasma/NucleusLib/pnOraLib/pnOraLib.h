@@ -67,7 +67,7 @@ struct OraConn {
 // treat all fields as read-only
     OraEnv *            oraEnv;
     occi::Connection *  occiConn;
-    wchar               tag[128];
+    wchar_t               tag[128];
 };
 
 
@@ -77,7 +77,7 @@ struct OraConn {
 *
 ***/
 
-void OraLogError (const wchar sql[], const exception & e);
+void OraLogError (const wchar_t sql[], const exception & e);
 
 void OraGetShaDigest (
     occi::Statement *   oraStmt,
@@ -94,7 +94,7 @@ void OraSetShaDigest (
 void OraBindString (
     occi::Statement *   oraStmt,
     unsigned            index,
-    wchar *             buffer,
+    wchar_t *             buffer,
     unsigned            chars,
     ub2 *               length,
     sb2 *               indicator
@@ -103,7 +103,7 @@ void OraBindString (
 void OraBindString (
     occi::ResultSet *   rs,
     unsigned            index,
-    wchar *             buffer,
+    wchar_t *             buffer,
     unsigned            chars,
     ub2 *               length,
     sb2 *               indicator
@@ -121,21 +121,21 @@ void OraSetUuid (
     const Uuid &        uuid
 );
 
-OraConn * OraGetConn (const wchar tag[] = nil);
+OraConn * OraGetConn (const wchar_t tag[] = nil);
 
 void OraFreeConn (OraConn *& oraConn);
 
 occi::Statement * OraGetStmt (
     OraConn *       oraConn,
-    const wchar     sql[]
+    const wchar_t     sql[]
 );
 
 void OraFreeStmt (occi::Statement *& oraStmt);
 
 void OraInitialize (
-    const wchar username[], 
-    const wchar password[], 
-    const wchar connectString[],
+    const wchar_t username[], 
+    const wchar_t password[], 
+    const wchar_t connectString[],
     unsigned stmtCacheSize
 );
 void OraShutdown ();

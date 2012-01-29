@@ -49,14 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfCharacter/pfMarkerMgr.h"
 
-void pyMarkerMgr::AddMarker(double x, double y, double z, UInt32 id, bool justCreated)
+void pyMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool justCreated)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
         mmi->AddMarker(x, y, z, id, justCreated);
 }
 
-void pyMarkerMgr::RemoveMarker(UInt32 id)
+void pyMarkerMgr::RemoveMarker(uint32_t id)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
@@ -70,14 +70,14 @@ void pyMarkerMgr::RemoveAllMarkers()
         mmi->RemoveAllMarkers();
 }
 
-void pyMarkerMgr::SetSelectedMarker(UInt32 markerID)
+void pyMarkerMgr::SetSelectedMarker(uint32_t markerID)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
         mmi->SetSelectedMarker(markerID);
 }
 
-UInt32 pyMarkerMgr::GetSelectedMarker()
+uint32_t pyMarkerMgr::GetSelectedMarker()
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
@@ -107,14 +107,14 @@ bool pyMarkerMgr::GetMarkersRespawn()
     return false;
 }
 
-void pyMarkerMgr::CaptureQuestMarker(UInt32 id, bool captured)
+void pyMarkerMgr::CaptureQuestMarker(uint32_t id, bool captured)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
         mmi->CaptureMarker(id, captured);
 }
 
-void pyMarkerMgr::CaptureTeamMarker(UInt32 id, int team)
+void pyMarkerMgr::CaptureTeamMarker(uint32_t id, int team)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)

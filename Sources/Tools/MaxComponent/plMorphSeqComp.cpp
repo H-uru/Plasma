@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 #include "MaxExport/plExportProgressBar.h"
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsResMgr.h"
 
 #include "pnSceneObject/plSceneObject.h"
@@ -304,7 +304,7 @@ hsBool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     plMorphSequence* morphSeq = const_cast<plMorphSequence *>(plMorphSequence::ConvertNoRef(node->GetSceneObject()->GetModifierByType(plMorphSequence::Index())));
     if (!morphSeq)
     {
-        morphSeq = TRACKED_NEW plMorphSequence;
+        morphSeq = new plMorphSequence;
         node->AddModifier(morphSeq, IGetUniqueName(node));
     }
     
@@ -316,9 +316,9 @@ hsBool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 
     // Error check we have some base geometry.
 
-    plMorphDataSet *set = TRACKED_NEW plMorphDataSet;
+    plMorphDataSet *set = new plMorphDataSet;
     hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), set, node->GetLocation());
-    hsgResMgr::ResMgr()->AddViaNotify(set->GetKey(), TRACKED_NEW plGenRefMsg(mesh->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+    hsgResMgr::ResMgr()->AddViaNotify(set->GetKey(), new plGenRefMsg(mesh->GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 
     const int num = fCompPB->Count(kLayers);
     int i;

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "plCommonObjLib.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonObjLibList
 {
     public:
-        UInt32                      fRefCount;
+        uint32_t                      fRefCount;
         hsTArray<plCommonObjLib *>  fLibs;
 
         plCommonObjLibList() { fRefCount = 0; }
@@ -92,12 +92,12 @@ class plCommonObjLibList
 
 plCommonObjLibList  *plCommonObjLib::fLibList = nil;
 
-UInt32  plCommonObjLib::GetNumLibs( void )
+uint32_t  plCommonObjLib::GetNumLibs( void )
 {
     return ( fLibList != nil ) ? fLibList->fLibs.GetCount() : 0;
 }
 
-plCommonObjLib  *plCommonObjLib::GetLib( UInt32 idx )
+plCommonObjLib  *plCommonObjLib::GetLib( uint32_t idx )
 {
     if( fLibList == nil )
         return nil;
@@ -117,7 +117,7 @@ plCommonObjLib::plCommonObjLib()
 {
     // Make sure we have a list to add ourselves to
     if( fLibList == nil )
-        fLibList = TRACKED_NEW plCommonObjLibList();
+        fLibList = new plCommonObjLibList();
 
     // Add ourselves to the list of libs
     fLibList->Add( this );
@@ -219,7 +219,7 @@ hsBool  plCommonObjLib::RemoveObjectAndKey( plKey &key )
 //  our lib. Returns nil if not found. Use to find out if you already have a
 //  object of a given name that was previously exported.
 
-hsKeyedObject   *plCommonObjLib::FindObject( const char *name, UInt16 classType /* = -1 */ )
+hsKeyedObject   *plCommonObjLib::FindObject( const char *name, uint16_t classType /* = -1 */ )
 {
     int     i;
 
@@ -230,7 +230,7 @@ hsKeyedObject   *plCommonObjLib::FindObject( const char *name, UInt16 classType 
 
 
         if( stricmp( uoid.GetObjectName(), name ) == 0 &&
-            ( classType == (UInt16)-1 || classType == uoid.GetClassType() ) )
+            ( classType == (uint16_t)-1 || classType == uoid.GetClassType() ) )
         {
             return fObjects[ i ];
         }

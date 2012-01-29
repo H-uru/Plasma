@@ -67,7 +67,7 @@ public:
     // Now Complex specifics
     virtual hsBool MsgReceive(plMessage* msg);
 
-    UInt16          GetNumSubs() const { return fSubRegions.GetCount(); }
+    uint16_t          GetNumSubs() const { return fSubRegions.GetCount(); }
     const plHardRegion* GetSub(int i) const { return fSubRegions[i]; }
 };
 

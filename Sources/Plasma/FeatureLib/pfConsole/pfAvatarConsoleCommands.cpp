@@ -358,14 +358,14 @@ PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the na
 
     if (key)
     {
-        plNotifyMsg *msg = TRACKED_NEW plNotifyMsg;
+        plNotifyMsg *msg = new plNotifyMsg;
 
         msg->fType = plNotifyMsg::kActivator;
         msg->fState = 1;    // Triggered
         
         // Setup the event data in case this is a OneShot responder that needs it
         plKey playerKey = plAvatarMgr::GetInstance()->GetLocalAvatar()->GetKey();
-        proPickedEventData *ed = TRACKED_NEW proPickedEventData;
+        proPickedEventData *ed = new proPickedEventData;
         ed->fPicker = playerKey;
         ed->fPicked = key; // ???
         msg->AddEvent(ed);
@@ -385,7 +385,7 @@ PF_CONSOLE_CMD( Avatar_Multistage, Advance, "", "Advances the avatar's current m
     {
         plKey avKey = avatar->GetKey();
         
-        plAvBrainGenericMsg *msg = TRACKED_NEW plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -399,7 +399,7 @@ PF_CONSOLE_CMD( Avatar_Multistage, Regress, "", "Regresses the avatar's current 
     {
         plKey avKey = avatar->GetKey();
         
-        plAvBrainGenericMsg *msg = TRACKED_NEW plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -502,8 +502,8 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
             plKey targetKey = seekTarget->GetKey();
             
             plKey avKey = avatar->GetKey();
-            hsScalar unused = 0.0f;
-            plAvSeekMsg *msg = TRACKED_NEW plAvSeekMsg(nil, avKey, targetKey, unused, false);
+            float unused = 0.0f;
+            plAvSeekMsg *msg = new plAvSeekMsg(nil, avKey, targetKey, unused, false);
             
             plgDispatch::MsgSend(msg);
         }
@@ -525,7 +525,7 @@ PF_CONSOLE_CMD( Avatar,
     
     if (avMod)
     {
-        plArmatureEffectStateMsg *msg = TRACKED_NEW plArmatureEffectStateMsg();
+        plArmatureEffectStateMsg *msg = new plArmatureEffectStateMsg();
         msg->AddReceiver(avMod->GetArmatureEffects()->GetKey());
         msg->fSurface = (int)params[0];
         plgDispatch::MsgSend(msg);
@@ -542,7 +542,7 @@ PF_CONSOLE_CMD( Avatar, SetStealthMode, "int mode", "Set the stealth mode of you
         int level = mode==plAvatarStealthModeMsg::kStealthVisible ? 0 : 1;
         
         // send msg to make myself invisible locally
-        plAvatarStealthModeMsg *msg = TRACKED_NEW plAvatarStealthModeMsg();
+        plAvatarStealthModeMsg *msg = new plAvatarStealthModeMsg();
         msg->SetSender(avKey);
         msg->fMode = mode;
         msg->fLevel = level;
@@ -551,7 +551,7 @@ PF_CONSOLE_CMD( Avatar, SetStealthMode, "int mode", "Set the stealth mode of you
         // send net msg to other players to synch them up
         // the msg will go to their NetClientMgr who will decide whether they see
         // our avatar as total or semi-invisible based on the invis level.
-        plCCRInvisibleMsg *invisMsg = TRACKED_NEW plCCRInvisibleMsg;        // ctor sets flags and receiver
+        plCCRInvisibleMsg *invisMsg = new plCCRInvisibleMsg;        // ctor sets flags and receiver
         invisMsg->fInvisLevel=level;
         invisMsg->fAvKey=avKey;
         invisMsg->Send();
@@ -594,7 +594,7 @@ PF_CONSOLE_CMD( Avatar, FakeLinkToObj, "string objName", "Pseudo-Link the avatar
         PrintString("Can't find object with that name, fake link failed.");
         return;
     }
-    plPseudoLinkEffectMsg* msg = TRACKED_NEW plPseudoLinkEffectMsg;
+    plPseudoLinkEffectMsg* msg = new plPseudoLinkEffectMsg;
     msg->fAvatarKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
     msg->fLinkObjKey = seekKey;
     plgDispatch::MsgSend(msg);
@@ -616,7 +616,7 @@ PF_CONSOLE_CMD( Avatar_Physics, TogglePhysical, "", "Disable/enable physics on t
     
     if(avatar)
     {
-        plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg = new plControlEventMsg;
         pMsg->SetControlActivated(true);
         pMsg->SetControlCode(B_CONTROL_TOGGLE_PHYSICAL);
         
@@ -779,7 +779,7 @@ PF_CONSOLE_CMD( Avatar_Climb, Start, "string direction", "Specify initial mount 
             mode = plAvBrainClimb::kMountingLeft;
         else if(stricmp(dirStr, "right") == 0)
             mode = plAvBrainClimb::kMountingRight;
-        plAvBrainClimb *brain = TRACKED_NEW plAvBrainClimb(mode);
+        plAvBrainClimb *brain = new plAvBrainClimb(mode);
         avMod->PushBrain(brain);
     }
 }
@@ -801,7 +801,7 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableDismount, "string direction", "Let the avata
             dir = plClimbMsg::kLeft;
         else if(stricmp(dirStr, "right") == 0)
             dir = plClimbMsg::kRight;
-        plClimbMsg *msg = TRACKED_NEW plClimbMsg(mgr, avKey, plClimbMsg::kEnableDismount, dir, true);
+        plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kEnableDismount, dir, true);
         msg->Send();
     }
 }
@@ -824,7 +824,7 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableClimb, "string direction, int onOff", "Allow
         else if(stricmp(dirStr, "right") == 0)
             dir = plClimbMsg::kRight;
         hsBool enable = static_cast<int>(params[1]) ? true : false;
-        plClimbMsg *msg = TRACKED_NEW plClimbMsg(mgr, avKey, plClimbMsg::kEnableClimb, dir, enable);
+        plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kEnableClimb, dir, enable);
         msg->Send();
     }
 }
@@ -836,7 +836,7 @@ PF_CONSOLE_CMD( Avatar_Climb, Release, "", "")
     {
         plKey mgr = plAvatarMgr::GetInstance()->GetKey();
         plKey avKey = avMod->GetKey();
-        plClimbMsg *msg = TRACKED_NEW plClimbMsg(mgr, avKey, plClimbMsg::kRelease);
+        plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kRelease);
         msg->Send();
     }
 }
@@ -848,7 +848,7 @@ PF_CONSOLE_CMD( Avatar_Climb, FallOff, "", "")
     {
         plKey mgr = plAvatarMgr::GetInstance()->GetKey();
         plKey avKey = avMod->GetKey();
-        plClimbMsg *msg = TRACKED_NEW plClimbMsg(mgr, avKey, plClimbMsg::kFallOff);
+        plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kFallOff);
         msg->Send();
     }
 }
@@ -868,7 +868,7 @@ PF_CONSOLE_CMD( Avatar_Swim, Start, "", "")
     plArmatureMod *avMod = const_cast<plArmatureMod*>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plAvBrainSwim * brayne = TRACKED_NEW plAvBrainSwim();
+        plAvBrainSwim * brayne = new plAvBrainSwim();
         avMod->PushBrain(brayne);
     }
 }
@@ -880,7 +880,7 @@ PF_CONSOLE_CMD( Avatar_Swim, Start, "", "")
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// void WarpPlayerToAnother(hsBool iMove, UInt32 remoteID)
+// void WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
 PF_CONSOLE_CMD( Avatar_Warp, WarpToPlayer, "int PlayerID", "Warp our player to the same position as another player.")
 {
     plAvatarMgr::WarpPlayerToAnother(true, (int)params[0]);

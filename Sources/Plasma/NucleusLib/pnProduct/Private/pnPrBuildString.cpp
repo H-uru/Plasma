@@ -57,10 +57,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //============================================================================
-const wchar * ProductBuildString () {
+const wchar_t * ProductBuildString () {
     // This string is replaced by plMarkBuild.exe with the following string:
     // "date:YYMMDD time:HHMMSS user:%USERNAME%"
-    static const wchar PRODUCT_BUILD_STRING[64] = {
+    static const wchar_t PRODUCT_BUILD_STRING[64] = {
         L"PRODUCT_BUILD_STRING                                           "
     };
     return PRODUCT_BUILD_STRING;

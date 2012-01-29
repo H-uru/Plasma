@@ -83,7 +83,7 @@ void cyCamera::SetSender(plKey &sender)
 void cyCamera::Push(pyKey& newCamKey)
 {
     // create message
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     if ( fSender )
         pMsg->SetSender(fSender);
 
@@ -113,7 +113,7 @@ void cyCamera::Push(pyKey& newCamKey)
 void cyCamera::Pop(pyKey& oldCamKey)
 {
     // create message
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     if ( fSender )
         pMsg->SetSender(fSender);
 
@@ -140,12 +140,12 @@ void cyCamera::Pop(pyKey& oldCamKey)
 //
 //  PURPOSE    : Send controlKey commands to the virtual camera (should be like a pass thru)
 //
-void cyCamera::ControlKey(Int32 controlKey, hsBool activated)
+void cyCamera::ControlKey(int32_t controlKey, hsBool activated)
 {
     // make sure that we have a virtual camera to send this to
     if ( fTheCam )
     {
-        plControlEventMsg* pMsg = TRACKED_NEW plControlEventMsg;
+        plControlEventMsg* pMsg = new plControlEventMsg;
         // set sender if there is one
         if ( fSender )
             pMsg->SetSender(fSender);
@@ -173,7 +173,7 @@ void cyCamera::ControlKey(Int32 controlKey, hsBool activated)
 void cyCamera::TransitionTo(pyKey& newCamKey, double time, hsBool save)
 {
     // create message
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     if ( fSender )
         pMsg->SetSender(fSender);
     // must have a receiver!
@@ -200,7 +200,7 @@ void cyCamera::SetEnableFirstPersonOverride(hsBool state)
     if ( fTheCam )
     {
         // create message
-        plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+        plCameraMsg* pMsg = new plCameraMsg;
         if ( fSender )
             pMsg->SetSender(fSender);
 
@@ -218,7 +218,7 @@ void cyCamera::SetEnableFirstPersonOverride(hsBool state)
 void cyCamera::UndoFirstPerson()
 {
     // create message
-    plCameraMsg* pMsg = TRACKED_NEW plCameraMsg;
+    plCameraMsg* pMsg = new plCameraMsg;
     if ( fSender )
         pMsg->SetSender(fSender);
     // must have a receiver!
@@ -233,7 +233,7 @@ void cyCamera::UndoFirstPerson()
 }
 
 
-hsScalar cyCamera::GetFOV()
+float cyCamera::GetFOV()
 {
     if ( fTheCam )
     {
@@ -250,7 +250,7 @@ hsScalar cyCamera::GetFOV()
     return 0.0;
 }
 
-void cyCamera::SetFOV(hsScalar fov, double t)
+void cyCamera::SetFOV(float fov, double t)
 {
     if ( fTheCam )
     {

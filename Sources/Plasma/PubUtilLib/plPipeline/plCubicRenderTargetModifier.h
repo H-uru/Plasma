@@ -93,7 +93,7 @@ protected:
 
     plRenderRequest         *fRequests[ 6 ];
 
-    virtual hsBool  IEval( double secs, hsScalar del, UInt32 dirty ); // required by plModifier
+    virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // required by plModifier
 
     void            ICreateRenderRequest( int face );
 

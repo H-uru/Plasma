@@ -50,8 +50,8 @@ struct pyAlarm
     double  fStart;
     float   fSecs;
     PyObject *  fCb;
-    UInt32  fCbContext;
-    pyAlarm( double start, float secs, PyObject * cb, UInt32 cbContext )
+    uint32_t  fCbContext;
+    pyAlarm( double start, float secs, PyObject * cb, uint32_t cbContext )
     : fStart( start )
     , fSecs( secs )
     , fCb( cb )
@@ -127,10 +127,10 @@ void pyAlarmMgr::Update( double secs )
     }
 }
 
-void pyAlarmMgr::SetAlarm( float secs, PyObject * cb, UInt32 cbContext )
+void pyAlarmMgr::SetAlarm( float secs, PyObject * cb, uint32_t cbContext )
 {
     double start = hsTimer::GetSysSeconds();
-    fAlarms.push_back( TRACKED_NEW pyAlarm( start, secs, cb, cbContext ) );
+    fAlarms.push_back( new pyAlarm( start, secs, cb, cbContext ) );
 }
 
 void pyAlarmMgr::Clear()

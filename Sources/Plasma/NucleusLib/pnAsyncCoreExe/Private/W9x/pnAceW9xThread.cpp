@@ -206,7 +206,7 @@ void CThreadDispObject::Close () {
 //===========================================================================
 AsyncId CThreadDispObject::Queue (void * op) {
     AsyncId asyncId = 0;
-    NEW(CThreadDispRec)(this, op, &asyncId);
+    new CThreadDispRec(this, op, &asyncId);
     SetEvent(s_signalEvent);
     return asyncId;
 }
@@ -234,7 +234,7 @@ static unsigned CALLBACK W9xThreadProc (AsyncThread *) {
         if (rec) {
             s_dispInProcList.Link(rec);
             rec->Complete(&s_critSect);
-            DEL(rec);
+            delete rec;
             timeout = 0;
         }
         else {
@@ -245,7 +245,7 @@ static unsigned CALLBACK W9xThreadProc (AsyncThread *) {
         // Consume events, check for destruction, and block if we have
         // nothing to do.
         HANDLE events[] = {s_destroyEvent, s_signalEvent};
-        dword  result   = WaitForMultipleObjects(
+        uint32_t  result   = WaitForMultipleObjects(
             arrsize(events),
             events,
             FALSE,

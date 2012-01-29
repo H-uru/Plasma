@@ -79,7 +79,7 @@ public:
     plCoopCoordinator();
     plCoopCoordinator(plKey host, plKey guest,
                       plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                      const char *synchBone, UInt32 hostOfferStage, UInt32 guestAcceptStage,
+                      const char *synchBone, uint32_t hostOfferStage, uint32_t guestAcceptStage,
                       plMessage *guestAcceptMsg,
                       bool autoStartGuest);
     ~plCoopCoordinator();
@@ -88,8 +88,8 @@ public:
 
     void Run();
 
-    UInt32 GetInitiatorID();
-    UInt16 GetInitiatorSerial();
+    uint32_t GetInitiatorID();
+    uint16_t GetInitiatorSerial();
 
     bool IsActiveForReal();
 
@@ -116,11 +116,11 @@ protected:
     plAvBrainCoop *fHostBrain;
     plAvBrainCoop *fGuestBrain;
 
-    UInt32 fInitiatorID;
-    UInt32 fInitiatorSerial;
+    uint32_t fInitiatorID;
+    uint32_t fInitiatorSerial;
     
-    UInt32  fHostOfferStage;            // when we enter this stage, the offer is ready
-    UInt32  fGuestAcceptStage;          // when we enter this stage, the offer is accepted
+    uint32_t  fHostOfferStage;            // when we enter this stage, the offer is ready
+    uint32_t  fGuestAcceptStage;          // when we enter this stage, the offer is accepted
 
     plMessage *fGuestAcceptMsg;         // send this when the guest accepts
 

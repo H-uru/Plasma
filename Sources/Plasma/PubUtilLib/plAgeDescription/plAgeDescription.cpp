@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "plAgeDescription.h"
-#include "hsUtils.h"
+
 #include "hsStlUtils.h"
 #include "plFile/hsFiles.h"
 #include "plFile/plInitFileReader.h"
@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 
-const UInt32    plAgePage::kInvalidSeqSuffix = (UInt32)-1;
+const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
-plAgePage::plAgePage( const char *name, UInt32 seqSuffix, Byte flags )
+plAgePage::plAgePage( const char *name, uint32_t seqSuffix, uint8_t flags )
 {
     fName = name != nil ? hsStrcpy( name ) : nil;
     fSeqSuffix = seqSuffix;
@@ -95,7 +95,7 @@ plAgePage &plAgePage::operator=( const plAgePage &src )
     return *this;
 }
 
-void plAgePage::SetFlags(Byte f, bool on)
+void plAgePage::SetFlags(uint8_t f, bool on)
 {
     if (on)
         hsSetBits(fFlags, f);
@@ -256,9 +256,9 @@ void plAgeDescription::ClearPageList()
 }
 
 
-void    plAgeDescription::AppendPage( const char *name, int seqSuffix, Byte flags )
+void    plAgeDescription::AppendPage( const char *name, int seqSuffix, uint8_t flags )
 {
-    fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (UInt32)seqSuffix, flags ) );
+    fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
 }
 
 void    plAgeDescription::SeekFirstPage( void )
@@ -315,23 +315,23 @@ plLocation  plAgeDescription::CalcPageLocation( const char *page ) const
     if( ap != nil )
     {
         // Combine our sequence # together
-        Int32 combined;
-        hsAssert(fSeqPrefix > -255 && fSeqPrefix <= 0xFEFF, "Age sequence prefex is out of range!"); // sequence prefix can NOT be larger or equal to 1-byte max value
-        UInt32 suffix = ap->GetSeqSuffix();
-        hsAssert(suffix <= 0xFFFF, "Page sequence number is out of range!"); // page sequence number can NOT be larger then 2-byte max value
+        int32_t combined;
+        hsAssert(fSeqPrefix > -255 && fSeqPrefix <= 0xFEFF, "Age sequence prefex is out of range!"); // sequence prefix can NOT be larger or equal to 1-uint8_t max value
+        uint32_t suffix = ap->GetSeqSuffix();
+        hsAssert(suffix <= 0xFFFF, "Page sequence number is out of range!"); // page sequence number can NOT be larger then 2-uint8_t max value
         if( fSeqPrefix < 0 ) // we are a global age
-            combined = -(Int32)( ( ( -fSeqPrefix ) << 16 ) + suffix );
+            combined = -(int32_t)( ( ( -fSeqPrefix ) << 16 ) + suffix );
         else
             combined = ( fSeqPrefix << 16 ) + suffix;
 
         // Now, our 32 bit number looks like the following:
         // 0xRRAAPPPP
         // - RR is FF when reserved, and 00-FE when normal
-        // - AA is the low byte of the age sequence prefix (FF not allowed on a negative prefix because 0xFFFFFFFFFF is reserved for invalid sequence number)
+        // - AA is the low uint8_t of the age sequence prefix (FF not allowed on a negative prefix because 0xFFFFFFFFFF is reserved for invalid sequence number)
         // - PPPP is the two bytes for page sequence number
 
         if( IsGlobalAge() )
-            return plLocation::MakeReserved( (UInt32)combined );
+            return plLocation::MakeReserved( (uint32_t)combined );
         else
         {
             plLocation ret = plLocation::MakeNormal( combined );
@@ -396,7 +396,7 @@ const char  *plAgeDescription::GetSectionName( void ) const
     return "AgeInfo";
 }
 
-hsBool      plAgeDescription::IParseToken( const char *token, hsStringTokenizer *tokenizer, UInt32 userData )
+hsBool      plAgeDescription::IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData )
 {
     char *tok;
 
@@ -525,7 +525,7 @@ const char *plAgeDescription::GetCommonPage( int pageType )
 
 void    plAgeDescription::AppendCommonPages( void )
 {
-    UInt32 startSuffix = 0xffff, i;
+    uint32_t startSuffix = 0xffff, i;
 
 
     if( IsGlobalAge() )

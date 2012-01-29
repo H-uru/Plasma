@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnNbProtocol_inc
 #define pnNbProtocol_inc
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "pnNbConst.h"
 
 /*****************************************************************************
@@ -84,6 +84,6 @@ enum ENetProtocol {
 // NetProtocolToString as well.  Unfortunately, the compiler
 // cannot enforce this since the protocol values are not
 // numerically sequential.
-const wchar * NetProtocolToString (ENetProtocol protocol);
+const wchar_t * NetProtocolToString (ENetProtocol protocol);
 
 #endif // pnNbProtocol_inc

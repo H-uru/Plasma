@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PL_UNIFIEDTIME_INC_
 #define _PL_UNIFIEDTIME_INC_
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 
 #if HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
+
 #endif
 
 //
@@ -76,14 +76,14 @@ public:
 
 protected:
     time_t  fSecs;
-    UInt32  fMicros;
+    uint32_t  fMicros;
     Mode    fMode;
 
-    static Int32    fLocalTimeZoneOffset;
+    static int32_t    fLocalTimeZoneOffset;
 
     struct tm * IGetTime(const time_t * timer) const;
 
-    static Int32    IGetLocalTimeZoneOffset( void );
+    static int32_t    IGetLocalTimeZoneOffset( void );
 
 public:
     plUnifiedTime() : fSecs(0),fMicros(0), fMode(kGmt) { }      // set ToEpoch() at start
@@ -109,7 +109,7 @@ public:
 
     // getters
     time_t GetSecs() const { return fSecs; }
-    UInt32 GetMicros() const { return fMicros; }
+    uint32_t GetMicros() const { return fMicros; }
     double GetSecsDouble() const;  // get the secs and micros as a double floating point value
     hsBool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
     struct tm * GetTm(struct tm * ptm=nil) const;
@@ -126,7 +126,7 @@ public:
     // setters
     void SetSecs(const time_t secs) { fSecs = secs; }
     void SetSecsDouble(double secs);
-    void SetMicros(const UInt32 micros) { fMicros = micros; }
+    void SetMicros(const uint32_t micros) { fMicros = micros; }
     hsBool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
     hsBool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
     hsBool SetToUTC();

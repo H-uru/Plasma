@@ -61,18 +61,18 @@ class plRawKeyedObject : public hsKeyedObject
     protected:
 
         plKey       fSrcKey;
-        UInt32      fBufferSize;
-        UInt8       *fBuffer;
+        uint32_t      fBufferSize;
+        uint8_t       *fBuffer;
 
     public:
 
         plRawKeyedObject();
-        plRawKeyedObject( const plKey &key, UInt32 size, UInt8 *buffer );
+        plRawKeyedObject( const plKey &key, uint32_t size, uint8_t *buffer );
         virtual ~plRawKeyedObject();
 
-        void    SetBuffer( UInt32 size, UInt8 *data );
-        UInt32  GetBufferSize( void ) const { return fBufferSize; }
-        UInt8   *GetBuffer( void ) const { return fBuffer; }
+        void    SetBuffer( uint32_t size, uint8_t *data );
+        uint32_t  GetBufferSize( void ) const { return fBufferSize; }
+        uint8_t   *GetBuffer( void ) const { return fBuffer; }
 
         void    SetKey( plKey k );
         void    Write( hsStream *stream );

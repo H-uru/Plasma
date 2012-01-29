@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsThread.h"
 #ifndef EAX_SDK_AVAILABLE
 #include "plEAXStructures.h"
@@ -251,13 +251,13 @@ void    plEAXListener::IFail( const char *msg, hsBool major )
 //  Mutes the given properties, so if you have some props that you want
 //  half strength, this function will do it for ya.
 
-void    plEAXListener::IMuteProperties( EAXREVERBPROPERTIES *props, hsScalar percent )
+void    plEAXListener::IMuteProperties( EAXREVERBPROPERTIES *props, float percent )
 {
     // We only mute the room, roomHF and roomLF, since those control the overall effect
     // application. All three are a direct linear blend as defined by eax-util.cpp, so
     // this should be rather easy
 
-    hsScalar invPercent = 1.f - percent;
+    float invPercent = 1.f - percent;
 
     // The old way, as dictated by EAX sample code...
 #ifdef EAX_SDK_AVAILABLE
@@ -359,7 +359,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
                 }
                 else
                 {
-                    hsScalar scale = strength / ( totalStrength + strength );
+                    float scale = strength / ( totalStrength + strength );
                     EAX3ListenerInterpolate( &finalProps, modArray[ i ]->GetListenerProps(), scale, &finalProps, false );
                     totalStrength += strength;
                     bMorphing = true;
@@ -512,7 +512,7 @@ void    plEAXSourceSettings::Write( hsStream *s )
     }
 }
 
-void    plEAXSourceSettings::SetRoomParams( Int16 room, Int16 roomHF, hsBool roomAuto, hsBool roomHFAuto )
+void    plEAXSourceSettings::SetRoomParams( int16_t room, int16_t roomHF, hsBool roomAuto, hsBool roomHFAuto )
 {
     fRoom = room;
     fRoomHF = roomHF;
@@ -551,13 +551,13 @@ void    plEAXSourceSettings::Enable( hsBool e )
     }
 }
 
-void    plEAXSourceSettings::SetOutsideVolHF( Int16 vol )
+void    plEAXSourceSettings::SetOutsideVolHF( int16_t vol )
 {
     fOutsideVolHF = vol;
     fDirtyParams |= kOutsideVolHF;
 }
 
-void    plEAXSourceSettings::SetFactors( hsScalar airAbsorption, hsScalar roomRolloff, hsScalar doppler, hsScalar rolloff )
+void    plEAXSourceSettings::SetFactors( float airAbsorption, float roomRolloff, float doppler, float rolloff )
 {
     fAirAbsorptionFactor = airAbsorption;
     fRoomRolloffFactor = roomRolloff;
@@ -566,7 +566,7 @@ void    plEAXSourceSettings::SetFactors( hsScalar airAbsorption, hsScalar roomRo
     fDirtyParams |= kFactors;
 }
 
-void    plEAXSourceSettings::SetOcclusionSoftValue( hsScalar value )
+void    plEAXSourceSettings::SetOcclusionSoftValue( float value )
 {
     if( fOcclusionSoftValue != value )
     {
@@ -576,19 +576,19 @@ void    plEAXSourceSettings::SetOcclusionSoftValue( hsScalar value )
     }
 }
 
-void    plEAXSourceSettings::IRecalcSofts( UInt8 whichOnes )
+void    plEAXSourceSettings::IRecalcSofts( uint8_t whichOnes )
 {
-    hsScalar    percent, invPercent;
+    float    percent, invPercent;
 
     if( whichOnes & kOcclusion )
     {
         percent = fOcclusionSoftValue;
         invPercent = 1.f - percent;
 
-        Int16       occ = (Int16)( ( (float)fSoftStarts.GetOcclusion() * invPercent ) + ( (float)fSoftEnds.GetOcclusion() * percent ) );
-        hsScalar    lfRatio = (hsScalar)( ( fSoftStarts.GetOcclusionLFRatio() * invPercent ) + ( fSoftEnds.GetOcclusionLFRatio() * percent ) );
-        hsScalar    roomRatio = (hsScalar)( ( fSoftStarts.GetOcclusionRoomRatio() * invPercent ) + ( fSoftEnds.GetOcclusionRoomRatio() * percent ) );
-        hsScalar    directRatio = (hsScalar)( ( fSoftStarts.GetOcclusionDirectRatio() * invPercent ) + ( fSoftEnds.GetOcclusionDirectRatio() * percent ) );
+        int16_t       occ = (int16_t)( ( (float)fSoftStarts.GetOcclusion() * invPercent ) + ( (float)fSoftEnds.GetOcclusion() * percent ) );
+        float    lfRatio = (float)( ( fSoftStarts.GetOcclusionLFRatio() * invPercent ) + ( fSoftEnds.GetOcclusionLFRatio() * percent ) );
+        float    roomRatio = (float)( ( fSoftStarts.GetOcclusionRoomRatio() * invPercent ) + ( fSoftEnds.GetOcclusionRoomRatio() * percent ) );
+        float    directRatio = (float)( ( fSoftStarts.GetOcclusionDirectRatio() * invPercent ) + ( fSoftEnds.GetOcclusionDirectRatio() * percent ) );
 
         fCurrSoftValues.SetOcclusion( occ, lfRatio, roomRatio, directRatio );
     }
@@ -623,7 +623,7 @@ void    plEAXSourceSoftSettings::Write( hsStream *s )
     s->WriteLE( fOcclusionDirectRatio );
 }
 
-void    plEAXSourceSoftSettings::SetOcclusion( Int16 occ, hsScalar lfRatio, hsScalar roomRatio, hsScalar directRatio )
+void    plEAXSourceSoftSettings::SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio )
 {
     fOcclusion = occ;
     fOcclusionLFRatio = lfRatio;
@@ -668,7 +668,7 @@ hsBool  plEAXSource::IsValid( void ) const
 
 void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, hsBool force )
 {
-    UInt32 dirtyParams;
+    uint32_t dirtyParams;
     if(source == 0 || !fInit) 
         return;
 

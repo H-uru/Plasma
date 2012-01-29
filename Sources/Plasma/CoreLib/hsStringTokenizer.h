@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsStringTokenizer_Included_
 #define _hsStringTokenizer_Included_
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 
 #ifndef HS_BUILD_FOR_WIN32
 #include <wchar.h>
@@ -58,7 +58,7 @@ private:
     char *fLastTerminator;
     char fLastRep;
 
-    Int32 fNumSeps;
+    int32_t fNumSeps;
     hsBool fQAsTok;
     hsBool fInQuote;
     hsBool fCheckAlphaNum;
@@ -66,7 +66,7 @@ public:
     hsStringTokenizer(const char *string=nil, const char *seps=nil);
     ~hsStringTokenizer();
     char *next();
-    hsBool  Next( char *token, UInt32 maxTokLen );
+    hsBool  Next( char *token, uint32_t maxTokLen );
     hsBool HasMoreTokens();
     void Reset(const char *string, const char *seps);
     void ParseQuotes(hsBool qAsTok);
@@ -84,32 +84,32 @@ private:
 class hsWStringTokenizer 
 {
 private:
-    wchar *fSeps;
-    wchar *fTok;
-    wchar *fLastTerminator;
-    wchar fLastRep;
+    wchar_t *fSeps;
+    wchar_t *fTok;
+    wchar_t *fLastTerminator;
+    wchar_t fLastRep;
 
-    Int32 fNumSeps;
+    int32_t fNumSeps;
     hsBool fQAsTok;
     hsBool fInQuote;
     hsBool fCheckAlphaNum;
 public:
-    hsWStringTokenizer(const wchar *string=nil, const wchar *seps=nil);
+    hsWStringTokenizer(const wchar_t *string=nil, const wchar_t *seps=nil);
     ~hsWStringTokenizer();
-    wchar *next();
-    hsBool  Next( wchar *token, UInt32 maxTokLen );
+    wchar_t *next();
+    hsBool  Next( wchar_t *token, uint32_t maxTokLen );
     hsBool HasMoreTokens();
-    void Reset(const wchar *string, const wchar *seps);
+    void Reset(const wchar_t *string, const wchar_t *seps);
     void ParseQuotes(hsBool qAsTok);
 
-    wchar   *GetRestOfString( void ) const { return fTok; }
+    wchar_t   *GetRestOfString( void ) const { return fTok; }
 
-    wchar *fString;
+    wchar_t *fString;
 
     void    RestoreLastTerminator( void );
 
 private:
-    hsBool IsSep(wchar c);
+    hsBool IsSep(wchar_t c);
 };
 
 #endif // _hsStringTokenizer_Included_

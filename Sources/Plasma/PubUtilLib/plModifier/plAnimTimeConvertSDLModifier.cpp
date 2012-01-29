@@ -88,7 +88,7 @@ void plAnimTimeConvertSDLModifier::ISetCurrentATC(const plStateDataRecord* atcSt
         plStateDataRecord::SimpleVarsList vars;
         int num=atcStateDataRec->GetUsedVars(&vars);
         int j;
-        hsScalar lastStateAnimTime = 0;
+        float lastStateAnimTime = 0;
         double lastStateChange = 0;
         for(j=0;j<num;j++)
         {

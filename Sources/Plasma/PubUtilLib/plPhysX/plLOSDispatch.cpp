@@ -74,7 +74,7 @@ public:
 
     bool GotHit() { return fDist != FLT_MAX; }
     plKey GetObj() { return fHitObj; }
-    hsScalar GetDistance() { return fDist; }
+    float GetDistance() { return fDist; }
     const hsVector3& GetNormal() { return fNormal; }
     const hsPoint3& GetPoint() { return fPoint; }
     void ResetHitObj(){fHitObj=nil;}
@@ -85,7 +85,7 @@ private:
         plPXPhysical* phys = (plPXPhysical*)hitActor.userData;
 
         plKey objKey = nil;
-        UInt16 objDB = plSimDefs::kLOSDBNone;
+        uint16_t objDB = plSimDefs::kLOSDBNone;
 
         if (phys)
         {
@@ -153,7 +153,7 @@ private:
     plKey fHitObj;
     hsVector3 fNormal;
     hsPoint3 fPoint;
-    hsScalar fDist;
+    float fDist;
 } gMyReport;
 
 plLOSDispatch::plLOSDispatch()
@@ -213,7 +213,7 @@ hsBool plLOSDispatch::MsgReceive(plMessage* msg)
         gMyReport.InitCast(requestMsg->GetRequestType(), requestMsg->GetTestType());
 
         hsVector3 norm = hsVector3(at - from);
-        hsScalar dist = norm.Magnitude();
+        float dist = norm.Magnitude();
         norm.Normalize();
 
         NxRay worldRay;
@@ -238,7 +238,7 @@ hsBool plLOSDispatch::MsgReceive(plMessage* msg)
                 // If we have a cull db, adjust the length of the raycast to be from the
                 // original point to the object we hit.  If we find anything from the cull
                 // db in there, the cast fails.
-                hsScalar dist = gMyReport.GetDistance();
+                float dist = gMyReport.GetDistance();
                 if(dist!=0.0)
                 {
                     gMyReport.InitCast(requestMsg->GetCullDB(), plLOSRequestMsg::kTestAny);
@@ -290,7 +290,7 @@ plMessage* plLOSDispatch::ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44&
 {
     plKey ourKey = GetKey();
     plKey rcvKey = requestMsg->GetSender();
-    plLOSHitMsg* hitMsg = TRACKED_NEW plLOSHitMsg(ourKey, rcvKey, nil);
+    plLOSHitMsg* hitMsg = new plLOSHitMsg(ourKey, rcvKey, nil);
     hitMsg->fNoHit = false;
     hitMsg->fObj = gMyReport.GetObj();
     hitMsg->fDistance = gMyReport.GetDistance();
@@ -304,7 +304,7 @@ plMessage* plLOSDispatch::ICreateMissMsg(plLOSRequestMsg* requestMsg)
 {
     plKey ourKey = GetKey();
     plKey rcvKey = requestMsg->GetSender();
-    plLOSHitMsg* missMsg = TRACKED_NEW plLOSHitMsg(ourKey, rcvKey, nil);
+    plLOSHitMsg* missMsg = new plLOSHitMsg(ourKey, rcvKey, nil);
     missMsg->fNoHit = true;
     missMsg->fObj = nil;
     missMsg->fRequestID = requestMsg->GetRequestID();

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
 #include "pnSceneObject/plDrawInterface.h"
@@ -52,11 +52,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 
-hsScalar plInterestingModifier::fInterestRadius     = 100.0f;
-hsScalar plInterestingModifier::fInterestWeight     = 1.0f;
+float plInterestingModifier::fInterestRadius     = 100.0f;
+float plInterestingModifier::fInterestWeight     = 1.0f;
 
 
-hsBool plInterestingModifier::IEval(double secs, hsScalar del, UInt32 dirty)
+hsBool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
 {
     for (int i=0; i < GetNumTargets(); i++)
     {
@@ -65,7 +65,7 @@ hsBool plInterestingModifier::IEval(double secs, hsScalar del, UInt32 dirty)
             const hsBounds3Ext& targBnd = GetTarget(i)->GetDrawInterface()->GetWorldBounds();
             if( targBnd.GetType() == kBoundsNormal )
             {
-                plInterestingModMsg* pMsg = TRACKED_NEW plInterestingModMsg;
+                plInterestingModMsg* pMsg = new plInterestingModMsg;
                 pMsg->fPos= GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetCenter();
                 pMsg->fSize = GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetMaxDim();
                 pMsg->fRadius = fInterestRadius;

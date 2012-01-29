@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsExceptionStack_inc
 #define hsExceptionStack_inc
 
-#include "hsUtils.h"
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
 class hsExceptionStackDestroyer;
@@ -62,8 +61,8 @@ public:
 
     static hsExceptionStack& Instance();
 
-    Int32 GetNumEntries() const             { return fEntries.Count(); }
-    const char* GetEntry(Int32 i) const     { return fEntries[i]; }
+    int32_t GetNumEntries() const             { return fEntries.Count(); }
+    const char* GetEntry(int32_t i) const     { return fEntries[i]; }
 
     void Push(const char* str);
 
@@ -84,7 +83,7 @@ inline hsExceptionStack& hsExceptionStack::Instance()
 {
     if (!fExceptionStack)
     {
-        fExceptionStack = TRACKED_NEW hsExceptionStack;
+        fExceptionStack = new hsExceptionStack;
     }
 
     return *fExceptionStack;

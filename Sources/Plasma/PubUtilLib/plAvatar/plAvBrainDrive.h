@@ -70,7 +70,7 @@ public:
         \param maxVelocity The highest speed this avatar can fly at.
         \param turnRate The speed at which we will turn, in radians per second.
         */
-    plAvBrainDrive(hsScalar maxVelocity, hsScalar turnRate);
+    plAvBrainDrive(float maxVelocity, float turnRate);
 
 
     // BRAIN PROTOCOL
@@ -81,7 +81,7 @@ public:
     virtual void Deactivate();
 
     /** Look at the key states and figure out if and how we should move */
-    virtual hsBool Apply(double timeNow, hsScalar elapsed);     // main control loop. called by avatar eval()
+    virtual hsBool Apply(double timeNow, float elapsed);     // main control loop. called by avatar eval()
 
     // the user brain base handles most of the details of control messages,
     // so this function just looks for the special command which gets us out
@@ -94,8 +94,8 @@ public:
 protected:
     void IEnablePhysics(bool enable, plKey avKey);
     
-    hsScalar    fMaxVelocity;
-    hsScalar    fTurnRate;
+    float    fMaxVelocity;
+    float    fTurnRate;
 };
 
 #endif // AVBRAINDRIVE_INC

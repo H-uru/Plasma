@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsColorRGBA.h"
-#include "hsWindows.h"              // EVIL
+              // EVIL
 #include "hsTemplates.h"
 
 #if HS_BUILD_FOR_WIN32
@@ -84,7 +84,7 @@ class plWinFontCache
                 int     fHeight;
                 int     fWeight;
                 hsBool  fItalic;
-                UInt32  fQuality;
+                uint32_t  fQuality;
         };
 
         class plCustFont
@@ -106,8 +106,8 @@ class plWinFontCache
 
         plWinFontCache();
 
-        HFONT   IFindFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
-        HFONT   IMakeFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+        HFONT   IFindFont( const char *face, int height, int weight, hsBool italic, uint32_t quality );
+        HFONT   IMakeFont( const char *face, int height, int weight, hsBool italic, uint32_t quality );
 
         void    ILoadCustomFonts( void );
 
@@ -116,7 +116,7 @@ class plWinFontCache
         virtual ~plWinFontCache();
         static plWinFontCache   &GetInstance( void );
 
-        HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, UInt32 quality );
+        HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, uint32_t quality );
         void    FreeFont( HFONT font );
         void    Clear( void );
 

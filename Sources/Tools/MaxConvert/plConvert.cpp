@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // 3DSMax HeadSpin exporter
 //
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "Max.h"
 #include "istdplug.h"
 #include "Notify.h"
@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysX/plSimulationMgr.h"
 #include "MaxMain/plPhysXCooking.h"
 #include "MaxExport/plExportProgressBar.h"
-#include "hsUtils.h"
+
 
 #include "MaxMain/plGetLocationDlg.h"
 
@@ -395,7 +395,7 @@ void plConvert::DeInit()
     // to work without loading in the entire age worth of reffing objects. - 5.30.2002 mcn
 //  plBitmapCreator::Instance().DeInit();
 
-    plNodeCleanupMsg *clean = TRACKED_NEW plNodeCleanupMsg();
+    plNodeCleanupMsg *clean = new plNodeCleanupMsg();
     plgDispatch::MsgSend( clean );
 }
 

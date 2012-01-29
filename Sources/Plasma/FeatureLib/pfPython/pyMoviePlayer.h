@@ -77,11 +77,11 @@ public:
     void MakeMovie(const char* movieName, pyKey& selfKey); // only used by python glue, do NOT call
 
     // getters and setters
-    virtual void SetCenter(hsScalar x, hsScalar y);
-    virtual void SetScale(hsScalar width, hsScalar height);
+    virtual void SetCenter(float x, float y);
+    virtual void SetScale(float width, float height);
     virtual void SetColor(pyColor color);
-    virtual void SetVolume(hsScalar volume);
-    virtual void SetOpacity(hsScalar opacity);
+    virtual void SetVolume(float volume);
+    virtual void SetOpacity(float opacity);
 
     // actions
     virtual void Play();        // kStart

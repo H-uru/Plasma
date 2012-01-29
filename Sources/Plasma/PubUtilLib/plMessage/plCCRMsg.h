@@ -63,7 +63,7 @@ public:
 class plCCRPetitionMsg : public plCCRMessage
 {
 private:
-    UInt8 fPetitionType;
+    uint8_t fPetitionType;
     std::string fNote;
     std::string fTitle;
 public:
@@ -82,8 +82,8 @@ public:
     const char* GetTitle() const { return fTitle.c_str();   }
 
     // petition type
-    void SetType(const UInt8 t) { fPetitionType=t;  }
-    UInt8 GetType() const { return fPetitionType;   }
+    void SetType(const uint8_t t) { fPetitionType=t;  }
+    uint8_t GetType() const { return fPetitionType;   }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -96,7 +96,7 @@ class plCCRInvisibleMsg : public plCCRMessage
 {
 public:
     plKey   fAvKey;
-    UInt8   fInvisLevel;     // 0 means visible
+    uint8_t   fInvisLevel;     // 0 means visible
 
     plCCRInvisibleMsg();
     ~plCCRInvisibleMsg() {}
@@ -124,7 +124,7 @@ public:
     };
     std::string fString;
     Type fType;
-    UInt32 fCCRPlayerID;
+    uint32_t fCCRPlayerID;
 
     plCCRCommunicationMsg();
     ~plCCRCommunicationMsg() {}
@@ -139,8 +139,8 @@ public:
     void SetType(Type t) { fType=t; }
     Type GetType() const { return fType; }
     
-    void SetCCRPlayerID(UInt32 t) { fCCRPlayerID=t; }
-    UInt32 GetCCRPlayerID() const { return fCCRPlayerID; }
+    void SetCCRPlayerID(uint32_t t) { fCCRPlayerID=t; }
+    uint32_t GetCCRPlayerID() const { return fCCRPlayerID; }
     
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTypes.h"
+#include "HeadSpin.h"
 #include "hsStream.h"
 #include "plListenerMsg.h"
 #include "hsResMgr.h"
@@ -66,7 +66,7 @@ void plListenerMsg::Write(hsStream* s, hsResMgr* mgr)
 }
 
 
-plSetListenerMsg::plSetListenerMsg( UInt8 type, const plKey &srcKey, hsBool binding ) : plMessage( nil, nil, nil ) 
+plSetListenerMsg::plSetListenerMsg( uint8_t type, const plKey &srcKey, hsBool binding ) : plMessage( nil, nil, nil ) 
 {
     plUoid uoid( kListenerMod_KEY );
     plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );
@@ -94,10 +94,10 @@ void plSetListenerMsg::Write( hsStream *s, hsResMgr *mgr )
     s->WriteBool( fBinding );
 }
 
-void plSetListenerMsg::Set( const plKey &key, UInt8 type, hsBool binding )
+void plSetListenerMsg::Set( const plKey &key, uint8_t type, hsBool binding )
 {
     fSrcKey = key;
-    fType = (UInt8)type;
+    fType = (uint8_t)type;
     fBinding = binding;
 }
 
