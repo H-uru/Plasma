@@ -45,15 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCOMMMSGS_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCOMMMSGS_H
+#ifndef plNetCommMsgs_inc
+#define plNetCommMsgs_inc
 
 
-#include "pnUtils/pnUtils.h"
+#include "pnUtils/pnUtArray.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnMessage/plMessage.h"
-#include "pnNetProtocol/pnNetProtocol.h"
-
 
 class plNetCommReplyMsg : public plMessage {
 public:
@@ -173,4 +171,4 @@ public:
 
 
 
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLNETCOMMMSGS_H
+#endif // plNetCommMsgs_inc
