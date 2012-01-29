@@ -41,26 +41,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtArray.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "pnUtArray.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+/****************************************************************************
+*
+*   CBaseArray
+*
+***/
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
+//===========================================================================
+unsigned CBaseArray::CalcAllocGrowth (unsigned newAlloc, unsigned oldAlloc, unsigned * chunkSize) {
 
-#endif
+    // If this is the initial allocation, or if the new allocation is more
+    // than twice as big as the old allocation and larger than the chunk
+    // size, then allocate exactly the amount of memory requested
+    if (!oldAlloc || (newAlloc >= max(2 * oldAlloc, *chunkSize)))
+        return newAlloc;
+
+    // Otherwise, allocate memory beyond what was requested in preparation
+    // for future requests, so that we can reduce the time spent performing
+    // memory management
+
+    // For small allocations, double the size of the buffer each time
+    if (newAlloc < *chunkSize)
+        return max(newAlloc, 2 * oldAlloc);
+
+    // For larger allocations, grow by the chunk size each time
+    if (oldAlloc + *chunkSize > newAlloc) {
+
+        // If the application appears to be growing the array a chunk size
+        // at a time and has allocated at least 16 chunks, double the chunk
+        // size
+        if (newAlloc >= 16 * *chunkSize)
+            *chunkSize *= 2;
+
+        return oldAlloc + *chunkSize;
+    }
+    unsigned remainder = newAlloc % *chunkSize;
+    if (remainder)
+        return newAlloc + *chunkSize - remainder;
+    else
+        return newAlloc;
+
+}
+
+//===========================================================================
+void * CBaseArray::ReallocPtr (void * ptr, unsigned bytes) {
+    void * newPtr = nil;
+    if (bytes) {
+        newPtr = malloc(bytes);
+    }
+    return newPtr;
+}

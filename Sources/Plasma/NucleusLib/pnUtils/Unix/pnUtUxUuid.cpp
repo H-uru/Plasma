@@ -41,26 +41,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/Unix/pnUtUxUuid.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "../pnUtUUID.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
+/*****************************************************************************
+*
+*   Uuid Unix implementation
+*
+***/
 
-#include <malloc.h>
+#ifdef HS_BUILD_FOR_UNIX
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
+#include <uuid/uuid.h>
+
+COMPILER_ASSERT(sizeof(Uuid) >= sizeof(uuid_t));
+
+#else
+
+// Dummy function to prevent a linker warning complaining about no public symbols if the
+// contents of the file get compiled out via pre-processor
+void UxUuidPreventLNK4221Warning () {
+}
 
 #endif
