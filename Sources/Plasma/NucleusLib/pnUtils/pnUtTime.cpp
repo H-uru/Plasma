@@ -41,26 +41,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtTime.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "pnUtTime.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+/*****************************************************************************
+*
+*   Exports
+*
+***/
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
+//===========================================================================
+void TimeGetElapsedDesc (
+    uint32_t             minutesElapsed,
+    TimeElapsedDesc * desc
+) {
 
-#endif
+    const unsigned kMinutesPerHour  = 60;
+    const unsigned kMinutesPerDay   = 1440;
+    const unsigned kMinutesPerWeek  = 10080;
+    const unsigned kMinutesPerMonth = 43830;
+    const unsigned kMinutesPerYear  = 525960;
+
+    uint32_t & elapsed = minutesElapsed;
+    desc->years   = (elapsed / kMinutesPerYear);  elapsed -= desc->years  * kMinutesPerYear;
+    desc->months  = (elapsed / kMinutesPerMonth); elapsed -= desc->months * kMinutesPerMonth;
+    desc->weeks   = (elapsed / kMinutesPerWeek);  elapsed -= desc->weeks  * kMinutesPerWeek;
+    desc->days    = (elapsed / kMinutesPerDay);   elapsed -= desc->days   * kMinutesPerDay;
+    desc->hours   = (elapsed / kMinutesPerHour);  elapsed -= desc->hours  * kMinutesPerHour;
+    desc->minutes = elapsed;
+
+}
+
+//============================================================================
+uint32_t TimeGetSecondsSince2001Utc () {
+    uint64_t time    = TimeGetTime();
+    uint32_t seconds = (uint32_t)((time - kTime1601To2001) / kTimeIntervalsPerSecond);
+    return seconds;
+}
+
+//============================================================================
+uint32_t TimeGetSecondsSince1970Utc () {
+    uint64_t time    = TimeGetTime();
+    uint32_t seconds = (uint32_t)((time  - kTime1601To1970) / kTimeIntervalsPerSecond);
+    return seconds;
+}

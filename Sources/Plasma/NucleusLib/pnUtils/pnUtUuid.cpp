@@ -41,26 +41,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtUuid.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "pnUtUuid.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+const Uuid kNilGuid;
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
 
-#endif
+/*****************************************************************************
+*
+*   Exports
+*
+***/
+
+//============================================================================
+Uuid::Uuid (const wchar_t str[]) {
+    
+    GuidFromString(str, this);
+}
+
+//============================================================================
+Uuid::Uuid (const uint8_t buf[], unsigned length) {
+    
+    GuidFromHex(buf, length, this);
+}
+
+//============================================================================
+unsigned GuidHash (const Uuid & uuid) {
+    
+    CHashValue hash(&uuid.data, sizeof(uuid.data));
+    return hash.GetHash();
+}
+
+//============================================================================
+static const wchar_t s_hexChars[] = L"0123456789ABCDEF";
+const wchar_t * GuidToHex (const Uuid & uuid, wchar_t * dst, unsigned chars) {
+    
+    wchar_t * str = (wchar_t*)malloc((sizeof(uuid.data) * 2 + 1) * sizeof(wchar_t));
+    wchar_t * cur = str;
+    
+    for (unsigned i = 0; i < sizeof(uuid.data); ++i) {
+        *cur++ = s_hexChars[(uuid.data[i] >> 4) & 0x0f];
+        *cur++ = s_hexChars[uuid.data[i] & 0x0f];
+    }
+    *cur = 0;
+    
+    StrCopy(dst, str, chars);
+
+    free(str);
+    return dst;
+}
+
+//============================================================================
+bool GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid) {
+
+    ASSERT(length == sizeof(uuid->data));
+    memcpy(uuid->data, buf, sizeof(uuid->data));
+    return true;
+}

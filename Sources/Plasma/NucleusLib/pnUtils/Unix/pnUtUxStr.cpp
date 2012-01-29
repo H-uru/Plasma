@@ -41,26 +41,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/Unix/pnUtUxStr.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "../pnUtStr.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+#ifdef HS_BUILD_FOR_UNIX
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
+
+#else
+
+// Dummy function to prevent a linker warning complaining about no public symbols if the
+// contents of the file get compiled out via pre-processor
+void UxStrPreventLNK4221Warning () {
+}
 
 #endif

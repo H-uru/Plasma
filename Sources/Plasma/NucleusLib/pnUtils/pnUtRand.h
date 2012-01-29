@@ -41,26 +41,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtRand.h
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
-
-#include <malloc.h>
-
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
+#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTRAND_H
+#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtRand.h included more than once"
 #endif
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTRAND_H
 
-#endif
+#include "Pch.h"
+
+/*****************************************************************************
+*
+*   Psuedo-random number generator
+*
+***/
+
+const uint32_t kRandomMax = 0x7fffffff;
+
+void     RandReset ();
+void     RandSetSeed (unsigned seed);
+float    RandFloat ();
+float    RandFloat (float minVal, float maxVal);
+unsigned RandUnsigned ();
+unsigned RandUnsigned (unsigned minVal, unsigned maxVal);

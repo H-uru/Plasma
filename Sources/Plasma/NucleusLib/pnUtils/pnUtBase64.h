@@ -41,26 +41,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtBase64.h
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
-
-#include <malloc.h>
-
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
+#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBASE64_H
+#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtBase64.h included more than once"
 #endif
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBASE64_H
 
-#endif
+#include "Pch.h"
+
+
+/*****************************************************************************
+*
+*   Base64 Codec API
+*
+***/
+
+const unsigned kBase64EncodeBlock    = 4;
+const unsigned kBase64EncodeMultiple = 3;
+
+inline unsigned Base64EncodeSize (unsigned srcChars) {
+    return (srcChars + kBase64EncodeMultiple - 1) / kBase64EncodeMultiple
+         * kBase64EncodeBlock;
+}
+unsigned Base64Encode (
+    unsigned    srcChars,
+    const uint8_t  srcData[],
+    unsigned    dstChars,
+    char *      dstData
+);
+
+inline unsigned Base64DecodeSize (unsigned srcChars, const char srcData[]) {
+    return srcChars * kBase64EncodeMultiple / kBase64EncodeBlock
+         - ((srcChars >= 1 && srcData[srcChars - 1] == '=') ? 1 : 0)
+         - ((srcChars >= 2 && srcData[srcChars - 2] == '=') ? 1 : 0);
+}
+unsigned Base64Decode (
+    unsigned    srcChars,
+    const char  srcData[],
+    unsigned    dstChars,
+    uint8_t *      dstData
+);

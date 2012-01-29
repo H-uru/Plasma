@@ -41,26 +41,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtMath.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "pnUtMath.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+/*****************************************************************************
+*
+*   Exported bit manipulation functions
+*
+***/
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
+//===========================================================================
+#ifndef _M_IX86
+
+unsigned MathHighBitPos (uint32_t val) {
+    ASSERT(val);
+    double f = (double)val;
+    return (*((uint32_t *)&f + 1) >> 20) - 1023;
+}
+
+#else
+
+__declspec(naked) unsigned __fastcall MathHighBitPos (uint32_t) {
+    __asm {
+        bsr     eax, ecx
+        ret     0
+    };
+}
+
 #endif
+
+//===========================================================================
+#ifndef _M_IX86
+
+unsigned MathLowBitPos (uint32_t val) {
+    val &= ~(val - 1);  // clear all but the low bit
+    ASSERT(val);
+    double f = (double)val;
+    return (*((uint32_t *)&f + 1) >> 20) - 1023;
+}
+
+#else
+
+__declspec(naked) unsigned __fastcall MathLowBitPos (uint32_t) {
+    __asm {
+        bsf     eax, ecx
+        ret     0
+    };
+}
 
 #endif

@@ -41,26 +41,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtAddr.cpp
 *   
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+#include "pnUtAddr.h"
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "pnUtPragma.h"
-#include "pnProduct/pnProduct.h"
 
-#include <malloc.h>
+/*****************************************************************************
+*
+*   CNetAddressHash
+*
+***/
 
-#ifdef HS_BUILD_FOR_WIN32
-#pragma warning(push, 3)
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#pragma warning(pop)
-#endif
+//============================================================================
+CNetAddressHash::CNetAddressHash (
+    const NetAddress &      addr
+) : m_addr(addr)
+,   m_equals(nil)
+{ }
 
-#endif
+//============================================================================
+CNetAddressHash::CNetAddressHash (
+    const NetAddress &      addr,
+    FNetAddressEqualityProc equals
+) : m_addr(addr)
+,   m_equals(equals)
+{ }
+
+//============================================================================
+bool CNetAddressHash::operator== (const CNetAddressHash & rhs) const {
+    ASSERT(m_equals);
+    return m_equals(m_addr, rhs.m_addr);
+}
+
+//============================================================================
+unsigned CNetAddressHash::GetHash () const {
+    return NetAddressHash(m_addr);
+}
+
+//============================================================================
+const NetAddress & CNetAddressHash::GetAddr () const {
+    return m_addr;
+}
+
+
+/*****************************************************************************
+*
+*   Exported data
+*
+***/
+
+NetAddress  kNilNetAddress;
