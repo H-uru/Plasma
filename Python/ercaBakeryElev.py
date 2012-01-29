@@ -178,6 +178,12 @@ class ercaBakeryElev(ptResponder):
             PtDebugPrint("ERROR: ercaBakeryElev.OnServerInitComplete():\tERROR reading SDL name for pool empty")
             boolElevBusy = 0
         PtDebugPrint("DEBUG: ercaBakeryElev.OnServerInitComplete():\t%s = %d" % (SDLElevBusy.value,ageSDL[SDLElevBusy.value][0]) )
+
+        # Fix for elevator getting stuck permanently if a player has previously linked or crashed while it was busy
+        if boolElevBusy and self.sceneobject.isLocallyOwned():
+            PtDebugPrint("DEBUG: ercaBakeryElev.OnServerInitComplete():\tElevator busy but I am alone! Resetting...")
+            ageSDL[SDLElevBusy.value] = (0,)
+            boolElevBusy = 0
         
         if boolElevPos:
             RespElevOps.run(self.key,state="up",fastforward=1)
