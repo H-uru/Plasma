@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCORELIB_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtCoreLib.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCORELIB_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCORELIB_H
 
 #pragma warning(push, 0)
@@ -58,3 +56,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #pragma warning(pop)
+#endif
