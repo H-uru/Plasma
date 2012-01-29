@@ -95,6 +95,8 @@ class grsnGearRide(ptResponder):
         self.version = 4
         PtDebugPrint("grsnGearRide.__init__():\tversion %i" % self.version)
         self._canChangeSubworld = False
+        self._inNiche = False
+        self._canChangeSubworld = False
     
     def _ClearExcludeRegions(self):
         gearEnterExclude.clear(self.key)
