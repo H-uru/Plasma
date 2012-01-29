@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <float.h>
 #include <math.h>
 
-#ifndef isnan
+#ifdef _MSC_VER
 #define isnan _isnan
 #endif
 
