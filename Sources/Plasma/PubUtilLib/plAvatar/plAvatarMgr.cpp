@@ -636,7 +636,7 @@ void plAvatarMgr::RemoveOneShot(plOneShotMod *oneshot)
 
         if(oneshot == thisOneshot)
         {
-            i = fOneShots.erase(i);
+            fOneShots.erase(i);
             // destroy our copy of the target name
             delete[] name;
         } else {
