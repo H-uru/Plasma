@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTPATH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtPath.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTPATH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTPATH_H
 
 #include "Pch.h"
@@ -325,3 +323,4 @@ void PathSplitEmail (
     unsigned    subDomainChars, // arrsize(subs[0]) --> 256
     unsigned    subDomainCount  // arrsize(subs)    --> 16
 );
+#endif

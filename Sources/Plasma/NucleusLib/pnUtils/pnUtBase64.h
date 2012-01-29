@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBASE64_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtBase64.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBASE64_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBASE64_H
 
 #include "Pch.h"
@@ -84,3 +82,4 @@ unsigned Base64Decode (
     unsigned    dstChars,
     uint8_t *      dstData
 );
+#endif

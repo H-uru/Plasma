@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCRYPT_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtCrypt.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCRYPT_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCRYPT_H
 
 #include "Pch.h"
@@ -182,3 +180,4 @@ void CryptDecrypt (
     unsigned        bytes,
     void *          data
 );
+#endif

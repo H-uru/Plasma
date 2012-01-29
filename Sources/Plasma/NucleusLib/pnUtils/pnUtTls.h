@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTLS_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtTls.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTLS_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTLS_H
 
 #include "Pch.h"
@@ -71,3 +69,4 @@ void ThreadLocalSetValue (unsigned id, void * value);
 void ThreadAllowBlock ();
 void ThreadDenyBlock ();
 void ThreadAssertCanBlock (const char file[], int line);
+#endif

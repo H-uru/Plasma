@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMATH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtMath.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMATH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTMATH_H
 
 #include "Pch.h"
@@ -115,3 +113,4 @@ inline unsigned MathNextMultiplePow2 (unsigned val, unsigned multiple) {
 inline uint32_t MathNextPow2 (uint32_t val) {
     return MathIsPow2(val) ? val : 1 << (MathHighBitPos(val) + 1);
 }
+#endif
