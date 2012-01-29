@@ -163,7 +163,8 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
 
     // write config info formatted like an ini file to a buffer
     hsRAMStream ram;
-    info.WriteTo( &plIniStreamConfigSource( &ram ) );
+    plIniStreamConfigSource src(&ram);
+    info.WriteTo(&src);
     int size = ram.GetPosition();
     ram.Rewind();
     std::string buf;
