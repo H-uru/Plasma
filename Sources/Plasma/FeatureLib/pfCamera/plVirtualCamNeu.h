@@ -170,7 +170,7 @@ public:
     void ClearStack();
 
     void AddCameraLoaded(plSceneObject* pCam) { fCamerasLoaded.Append(pCam); }
-    hsBool RestoreFromName(const char* name);
+    hsBool RestoreFromName(const plString& name);
     void StartUnPan();
     // these are for console access
     static hsBool fUseAccelOverride, freeze, alwaysCutForColin, WalkPan3rdPerson,StayInFirstPersonForever;

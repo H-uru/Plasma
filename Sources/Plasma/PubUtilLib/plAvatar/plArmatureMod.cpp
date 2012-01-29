@@ -809,11 +809,8 @@ int plArmatureMod::IFindSpawnOverride( void )
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
     for( i = 0; i < mgr->NumSpawnPoints(); i++ )
     {
-        char    str2[ 256 ];
-        strcpy(str2, mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName());
-        strlwr(str2);
-
-        if (strstr(str2, fSpawnPointOverride) != nil)
+        const plString &name = mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName();
+        if (name.Find(fSpawnPointOverride, plString::kCaseInsensitive) >= 0)
             return i; // Found it!
     }
     return -1;
@@ -1792,33 +1789,33 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
         if (gLoc.IsValid())
         {
             const plUoid &myUoid = GetKey()->GetUoid();
-            plUoid SOUoid(gLoc, plSceneObject::Index(), "FootstepSoundObject");
+            plUoid SOUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSoundObject"));
             fFootSoundSOKey = mgr->FindKey(SOUoid);
             if (fFootSoundSOKey)
             {
                 // So it exists... but FindKey won't properly create our clone. So we do.
                 SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fFootSoundSOKey = mgr->ReRegister(nil, SOUoid);
+                fFootSoundSOKey = mgr->ReRegister(plString::Null, SOUoid);
             }
 
             // Add the effect to our effects manager
-            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), "FootstepSounds" );
+            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSounds") );
             plKey effectKey = mgr->FindKey(effectUoid);
             if (effectKey)
             {
                 effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                effectKey = mgr->ReRegister(nil, effectUoid);
+                effectKey = mgr->ReRegister(plString::Null, effectUoid);
             }
             if (effectKey != nil)
                 mgr->AddViaNotify(effectKey, TRACKED_NEW plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 
             // Get the linking sound
-            plUoid LinkUoid(gLoc, plSceneObject::Index(), "LinkSoundSource");
+            plUoid LinkUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("LinkSoundSource"));
             fLinkSoundSOKey = mgr->FindKey(LinkUoid);
             if (fLinkSoundSOKey)
             {
                 LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fLinkSoundSOKey = mgr->ReRegister(nil, LinkUoid);
+                fLinkSoundSOKey = mgr->ReRegister(plString::Null, LinkUoid);
             }
         }
     }
@@ -2060,7 +2057,7 @@ hsBool plArmatureMod::ValidateMesh()
                 hsgResMgr::ResMgr()->SendRef(meshObj->GetKey(), refMsg, plRefFlags::kPassiveRef); 
             }
         }
-        if (!strcmp(GetTarget(0)->GetKeyName(), "Yeesha"))
+        if (!GetTarget(0)->GetKeyName().Compare("Yeesha"))
             ISetTransparentDrawOrder(true);
         else
             ISetTransparentDrawOrder(false);
@@ -2704,7 +2701,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
         plKey world = nil;
         if (fController)
             world = fController->GetSubworld();
-        sprintf(strBuf, "In world: %s  Frozen: %s", world ? world->GetName() : "nil", frozen);
+        sprintf(strBuf, "In world: %s  Frozen: %s", world ? world->GetName().c_str() : "nil", frozen);
         debugTxt.DrawString(x,y, strBuf);
         y+= lineHeight;
 

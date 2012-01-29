@@ -164,7 +164,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
             }
 
             if( !fFilter )
-                AddLeaf( fTree, fCurrTypeItem, key->GetUoid().GetObjectName(), new plKeyInfo( key, fCurrPage ) );
+                AddLeaf( fTree, fCurrTypeItem, key->GetUoid().GetObjectName().c_str(), new plKeyInfo( key, fCurrPage ) );
             return true;
         }
 };
@@ -236,7 +236,7 @@ void    plResTreeView::IFindNextObject( HWND tree )
         plKeyInfo *keyInfo = (plKeyInfo *)itemInfo.lParam;
         if( keyInfo != nil && keyInfo->fKey != nil )
         {
-            if( StrStrI( keyInfo->fKey->GetUoid().GetObjectName(), gSearchString ) != nil )
+            if( keyInfo->fKey->GetUoid().GetObjectName().Compare( gSearchString, plString::kCaseInsensitive ) >= 0 )
             {
                 /// FOUND
                 TreeView_SelectItem( tree, fFoundItem );
@@ -415,7 +415,7 @@ void    plResTreeView::UpdateInfoDlg( HWND treeCtrl )
                 char    str[ 128 ];
 
 
-                SetDlgItemText( fInfoDlg, IDC_NAME, info->fKey->GetUoid().GetObjectName() );
+                SetDlgItemText( fInfoDlg, IDC_NAME, info->fKey->GetUoid().GetObjectName().c_str() );
 
                 const char *name = plFactory::GetNameOfClass( info->fKey->GetUoid().GetClassType() );
                 sprintf( str, "%s (%d)", name != nil ? name : "<unknown>", info->fKey->GetUoid().GetClassType() );

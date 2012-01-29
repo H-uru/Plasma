@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsWindows.h"
+#include "plString.h"
 
 static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
 
@@ -137,9 +138,9 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, In
 
     fLog->AddLineF("%sDispatched (%d) %d ms: time=%d CName=%s, sndr=%s, rcvr(%d)=%s, flags=0x%lx, tstamp=%f\n",
         indentStr, numReceivers, sendTimeMs,
-        int(sendTime), msg->ClassName(), msg->fSender?msg->fSender->GetName():"nil",
+        int(sendTime), msg->ClassName(), msg->fSender?msg->fSender->GetName().c_str():"nil",
         msg->GetNumReceivers(), msg->GetNumReceivers() && msg->GetReceiver(0)
-            ? msg->GetReceiver(0)->GetName():"nil",
+            ? msg->GetReceiver(0)->GetName().c_str():"nil",
         msg->fBCastFlags, msg->fTimeStamp);
 
     lastTime=curTime;

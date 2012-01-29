@@ -106,7 +106,7 @@ plKey plCloneSpawnModifier::SpawnClone(const char* cloneName, const char* cloneA
     const plLocation& loc = plKeyFinder::Instance().FindLocation(cloneAge, "BuiltIn");
 
     // Find the clone template key
-    plUoid objUoid(loc, plSceneObject::Index(), cloneName);
+    plUoid objUoid(loc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL(cloneName));
     plKey key = resMgr->FindKey(objUoid);
 
     if (key)

@@ -134,10 +134,6 @@ void plAvatarMgr::IReset()
 {
     fSeekPoints.clear();
 
-    // Oneshots have copies of strings in their maps. I'm assuming the others should be the same, but until
-    // I hear otherwise...
-    for( plOneShotMap::iterator it = fOneShots.begin(); it != fOneShots.end(); it++ )
-        delete [] (char *)it->first;
     fOneShots.clear();
     fAvatars.clear();
     fSpawnPoints.clear();
@@ -203,9 +199,9 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
         const plLocation& loc = (globalLoc.IsValid() ? globalLoc : custLoc.IsValid() ? custLoc : maleLoc);
 #endif
 
-        const char* theName = name;
+        plString theName = _TEMP_CONVERT_FROM_LITERAL(name);
         if ( loc == maleLoc )
-            theName = "Male";
+            theName = _TEMP_CONVERT_FROM_LITERAL("Male");
 
         if (loc.IsValid())
         {
@@ -561,15 +557,14 @@ void plAvatarMgr::AddSeekPoint(plSeekPointMod *seekPoint)
 {
     if(seekPoint)
     {
-        const char *name = seekPoint->GetTarget(0)->GetKey()->GetName();
-        char *ourName = hsStrcpy(name);
+        plString name = seekPoint->GetTarget(0)->GetKey()->GetName();
         plSeekPointMod *alreadyThere = FindSeekPoint(name);
-        
+
         /// hsAssert( ! alreadyThere, "Tried to add a seek point with duplicate name. Ignoring second seek point.");
 
         if ( ! alreadyThere)
         {
-            fSeekPoints[ourName] = seekPoint;
+            fSeekPoints[name] = seekPoint;
         }
     }
 }
@@ -579,21 +574,19 @@ void plAvatarMgr::RemoveSeekPoint(plSeekPointMod *seekPoint)
 {
     if(seekPoint)
     {
-        const char *name = seekPoint->GetTarget(0)->GetKey()->GetName();
+        plString name = seekPoint->GetTarget(0)->GetKey()->GetName();
 
         plSeekPointMap::iterator found = fSeekPoints.find(name);
 
         if(found != fSeekPoints.end())
         {
-            const char *oldName = (*found).first;
             fSeekPoints.erase(found);
-            delete[] const_cast<char *>(oldName);   // retarded language, this is...
         }
     }
 }
 
 // FINDSEEKPOINT
-plSeekPointMod * plAvatarMgr::FindSeekPoint(const char *name)
+plSeekPointMod * plAvatarMgr::FindSeekPoint(const plString &name)
 {
     plSeekPointMap::iterator found = fSeekPoints.find(name);
     
@@ -610,8 +603,7 @@ void plAvatarMgr::AddOneShot(plOneShotMod *oneshot)
 {
     if(oneshot)
     {
-        // allocate a copy of the target name to use as a key
-        char * name = hsStrcpy(oneshot->GetTarget(0)->GetKey()->GetName());
+        plString name = oneshot->GetTarget(0)->GetKey()->GetName();
         plOneShotMod *alreadyThere = FindOneShot(name);
         
 
@@ -619,8 +611,6 @@ void plAvatarMgr::AddOneShot(plOneShotMod *oneshot)
         {
             fOneShots[name] = oneshot;
         }
-        else
-            delete [] name;
     }
 }
 
@@ -631,14 +621,12 @@ void plAvatarMgr::RemoveOneShot(plOneShotMod *oneshot)
 
     while (i != fOneShots.end())
     {
-        char * name = (*i).first;
+        plString name = (*i).first;
         plOneShotMod *thisOneshot = (*i).second;
 
         if(oneshot == thisOneshot)
         {
             i = fOneShots.erase(i);
-            // destroy our copy of the target name
-            delete[] name;
         } else {
             i++;
         }
@@ -646,7 +634,7 @@ void plAvatarMgr::RemoveOneShot(plOneShotMod *oneshot)
 }
 
 // FINDONESHOT
-plOneShotMod *plAvatarMgr::FindOneShot(char *name)
+plOneShotMod *plAvatarMgr::FindOneShot(const plString &name)
 {
     plOneShotMap::iterator found = fOneShots.find(name);
     
@@ -756,7 +744,7 @@ plArmatureMod *plAvatarMgr::FindAvatarByModelName(char *name)
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)
     {
         plArmatureMod* armature = plArmatureMod::ConvertNoRef((*it)->ObjectIsLoaded());
-        if (armature && (!strcmp(armature->GetTarget(0)->GetKeyName(), name)))
+        if (armature && (!armature->GetTarget(0)->GetKeyName().Compare(name)))
             return armature;
     }
     
@@ -769,7 +757,7 @@ void plAvatarMgr::FindAllAvatarsByModelName(const char* name, plArmatureModPtrVe
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)
     {
         plArmatureMod* armature = plArmatureMod::ConvertNoRef((*it)->ObjectIsLoaded());
-        if (armature && (!strcmp(armature->GetTarget(0)->GetKeyName(), name)))
+        if (armature && (!armature->GetTarget(0)->GetKeyName().Compare(name)))
             outVec.push_back(armature);
     }
 }
@@ -807,8 +795,8 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
     for( i = 0; i < fSpawnPoints.size(); i++ )
     {
         if( fSpawnPoints[ i ] != nil && 
-            (strstr( fSpawnPoints[ i ]->GetKey()->GetUoid().GetObjectName(), name ) != nil ||
-             strstr( fSpawnPoints[i]->GetTarget(0)->GetKeyName(), name) != nil))
+            ( fSpawnPoints[ i ]->GetKey()->GetUoid().GetObjectName().Find( name ) >= 0 ||
+              fSpawnPoints[ i ]->GetTarget(0)->GetKeyName().Find( name ) >= 0 ))
             return i;
     }
 

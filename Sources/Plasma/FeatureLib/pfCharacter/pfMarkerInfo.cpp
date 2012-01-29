@@ -77,7 +77,7 @@ void pfMarkerInfo::Init()
     plLocation markerLoc = plKeyFinder::Instance().FindLocation("GlobalMarkers", "Markers");
 
     if (markerLoc.IsValid())
-        fMarkerUoid = plUoid(markerLoc, plSceneObject::Index(), "MarkerRoot");
+        fMarkerUoid = plUoid(markerLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("MarkerRoot"));
     else
         fMarkerUoid.Invalidate();
 }
@@ -101,7 +101,7 @@ void pfMarkerInfo::Spawn(MarkerType type)
         plLocation markerLoc = plKeyFinder::Instance().FindLocation("GlobalMarkers", "Markers");
 
         if (markerLoc.IsValid())
-            fMarkerUoid = plUoid(markerLoc, plSceneObject::Index(), "MarkerRoot");
+            fMarkerUoid = plUoid(markerLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("MarkerRoot"));
         else
         {
             hsAssert(false, "Unable to spawn markers because the marker age was not loaded or found");

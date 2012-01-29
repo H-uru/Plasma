@@ -55,6 +55,7 @@ class hsBitVector;
 
 class plKeyData;
 class plKeyImp;
+class plString;
 
 class plKey 
 {
@@ -96,7 +97,7 @@ class plKeyData
 {
 public:
     virtual const plUoid&   GetUoid() const=0;
-    virtual const char*     GetName() const=0;
+    virtual const plString& GetName() const=0;
 
     virtual hsKeyedObject*  GetObjectPtr()=0;
     virtual hsKeyedObject*  ObjectIsLoaded() const=0;

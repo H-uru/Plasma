@@ -446,7 +446,7 @@ public:
 
 //// Book data class /////////////////////////////////////////////////////////
 
-pfBookData::pfBookData(const char *guiName /* = nil */)
+pfBookData::pfBookData(const plString &guiName /* = nil */)
 {
     fCurrBook = nil;
     fDialog = nil;
@@ -470,10 +470,10 @@ pfBookData::pfBookData(const char *guiName /* = nil */)
     fEditable = false;
     fAdjustCursorTo = -1;
     
-    if (guiName)
+    if (!guiName.IsEmpty())
         fGUIName = guiName;
     else
-        fGUIName = "BkBook";
+        fGUIName = _TEMP_CONVERT_FROM_LITERAL("BkBook");
 }
 
 pfBookData::~pfBookData()
@@ -1137,18 +1137,18 @@ void pfBookData::EnableEditGUI(hsBool enable/* =true */)
 //// Our Singleton Stuff /////////////////////////////////////////////////////
 
 //pfJournalBook *pfJournalBook::fInstance = nil;
-std::map<std::string,pfBookData*> pfJournalBook::fBookGUIs;
+std::map<plString,pfBookData*> pfJournalBook::fBookGUIs;
 
 void    pfJournalBook::SingletonInit( void )
 {
-    fBookGUIs["BkBook"] = TRACKED_NEW pfBookData(); // load the default book data object
-    hsgResMgr::ResMgr()->NewKey("BkBook",fBookGUIs["BkBook"],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
-    fBookGUIs["BkBook"]->LoadGUI();
+    fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")] = TRACKED_NEW pfBookData(); // load the default book data object
+    hsgResMgr::ResMgr()->NewKey(_TEMP_CONVERT_FROM_LITERAL("BkBook"),fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
+    fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")]->LoadGUI();
 }
 
 void    pfJournalBook::SingletonShutdown( void )
 {
-    std::map<std::string,pfBookData*>::iterator i = fBookGUIs.begin();
+    std::map<plString,pfBookData*>::iterator i = fBookGUIs.begin();
     while (i != fBookGUIs.end())
     {
         pfBookData *bookData = i->second;
@@ -1159,7 +1159,7 @@ void    pfJournalBook::SingletonShutdown( void )
     fBookGUIs.clear();
 }
 
-void    pfJournalBook::LoadGUI( const char *guiName )
+void    pfJournalBook::LoadGUI( const plString &guiName )
 {
     if (fBookGUIs.find(guiName) == fBookGUIs.end()) // is it already loaded?
     { // nope, load it
@@ -1169,11 +1169,11 @@ void    pfJournalBook::LoadGUI( const char *guiName )
     }
 }
 
-void    pfJournalBook::UnloadGUI( const char *guiName )
+void    pfJournalBook::UnloadGUI( const plString &guiName )
 {
-    if (strcmp(guiName,"BkBook")==0)
+    if (guiName.Compare("BkBook")==0)
         return; // do not allow people to unload the default book gui
-    std::map<std::string,pfBookData*>::iterator loc = fBookGUIs.find(guiName);
+    std::map<plString,pfBookData*>::iterator loc = fBookGUIs.find(guiName);
     if (loc != fBookGUIs.end()) // make sure it's loaded
     {
         fBookGUIs[guiName]->GetKey()->UnRefObject();
@@ -1184,17 +1184,17 @@ void    pfJournalBook::UnloadGUI( const char *guiName )
 
 void    pfJournalBook::UnloadAllGUIs()
 {
-    std::map<std::string,pfBookData*>::iterator i = fBookGUIs.begin();
-    std::vector<std::string> names;
+    std::map<plString,pfBookData*>::iterator i = fBookGUIs.begin();
+    std::vector<plString> names;
     while (i != fBookGUIs.end())
     {
-        std::string name = i->first;
+        plString name = i->first;
         names.push_back(name); // store a list of keys
         i++;
     }
     int idx;
     for (idx = 0; idx < names.size(); idx++)
-        UnloadGUI(names[idx].c_str()); // UnloadGUI won't unload BkBook
+        UnloadGUI(names[idx]); // UnloadGUI won't unload BkBook
 }
 
 //// Constructor /////////////////////////////////////////////////////////////
@@ -1203,16 +1203,16 @@ void    pfJournalBook::UnloadAllGUIs()
 // key is the keyed object to send event messages to (see <img> tag).
 
 pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const char *guiName /* = nil */ )
+                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const plString &guiName /* = nil */ )
 {
-    if (guiName && (strcmp(guiName,"") != 0))
+    if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     else
-        fCurBookGUI = "BkBook";
+        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook");
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
-        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI.c_str());
-        hsgResMgr::ResMgr()->NewKey(fCurBookGUI.c_str(),fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
+        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI);
+        hsgResMgr::ResMgr()->NewKey(fCurBookGUI,fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
         fBookGUIs[fCurBookGUI]->LoadGUI();
     }
     
@@ -1239,16 +1239,16 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
 }
 
 pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const char *guiName /* = nil */ )
+                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const plString &guiName /* = nil */ )
 {
-    if (guiName && (strcmp(guiName,"") != 0))
+    if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     else
-        fCurBookGUI = "BkBook";
+        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook");
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
-        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI.c_str());
-        hsgResMgr::ResMgr()->NewKey(fCurBookGUI.c_str(),fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
+        fBookGUIs[fCurBookGUI] = TRACKED_NEW pfBookData(fCurBookGUI);
+        hsgResMgr::ResMgr()->NewKey(fCurBookGUI,fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
         fBookGUIs[fCurBookGUI]->LoadGUI();
     }
     
@@ -1288,12 +1288,12 @@ hsBool  pfJournalBook::MsgReceive( plMessage *pMsg )
     return hsKeyedObject::MsgReceive( pMsg );
 }
 
-void    pfJournalBook::SetGUI( const char *guiName )
+void    pfJournalBook::SetGUI( const plString &guiName )
 {
-    if (guiName && (strcmp(guiName,"") != 0))
+    if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
-        fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
+        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook"); // requested GUI isn't loaded, so use default GUI
     SetEditable(fWantEditing); // make sure that if we want editing, to set it
     ICompileSource(fUncompiledSource.c_str(), fDefLoc); // recompile the source to be safe
 }
@@ -2501,20 +2501,19 @@ void    pfJournalBook::IFreeSource( void )
 
 plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
 {
-    char *cName = hsWStringToString(name);
+    plString cName = plString::FromWchar(name);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if( strchr( cName, '/' ) != nil || strchr( cName, '\\' ) != nil )
+    if( cName.Find( '/' ) >= 0 || cName.Find( '\\' ) >= 0 )
     {
         // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
         plMipmap *mip;
-        if( strstr( cName, ".png" ) != nil )
-            mip = plPNG::Instance().ReadFromFile( cName );
+        if( cName.Find( ".png" ) >= 0 )
+            mip = plPNG::Instance().ReadFromFile( _TEMP_CONVERT_TO_CONST_CHAR( cName ) );
         else
-            mip = plJPEG::Instance().ReadFromFile( cName );
+            mip = plJPEG::Instance().ReadFromFile( _TEMP_CONVERT_TO_CONST_CHAR( cName ) );
 
         hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
-        delete [] cName;
         return mip->GetKey();
     }
 #endif
@@ -2524,7 +2523,6 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     plKey key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if( key != nil )
     {
-        delete [] cName;
         return key;
     }
 
@@ -2535,7 +2533,6 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if( key != nil )
     {
-        delete [] cName;
         return key;
     }
 
@@ -2548,13 +2545,11 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
             key = plKeyFinder::Instance().StupidSearch( thisAge, nil, plMipmap::Index(), cName, true );
             if( key != nil )
             {
-                delete [] cName;
                 return key;
             }
         }
     }
 
-    delete [] cName;
     return nil;
 }
 
@@ -3043,13 +3038,13 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, UInt16 x, UInt
 
         // We'll need a unique name. This is a hack, but an effective hack.
         static int uniqueSuffix = 0;
-        char buff[256];
+        plString buff;
 
-        sprintf(buff, "%s_%d_ml", GetKey()->GetName(), uniqueSuffix);
+        buff = plString::Format("%s_%d_ml", GetKey()->GetName().c_str(), uniqueSuffix);
         layer = TRACKED_NEW plLayer;
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
-        sprintf(buff, "%s_%d_m", GetKey()->GetName(), uniqueSuffix++);
+        buff = plString::Format("%s_%d_m", GetKey()->GetName().c_str(), uniqueSuffix++);
         movieLayer = TRACKED_NEW plLayerBink;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
@@ -3192,8 +3187,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    char buff[256];
-    sprintf(buff, "%s_%d", GetKey()->GetName(), uniqueSuffix++);
+    plString buff = plString::Format("%s_%d", GetKey()->GetName().c_str(), uniqueSuffix++);
 
     plLayer* layer = TRACKED_NEW plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3247,8 +3241,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    char buff[256];
-    sprintf(buff, "%s_%d_d", GetKey()->GetName(), uniqueSuffix++);
+    plString buff = plString::Format("%s_%d_d", GetKey()->GetName().c_str(), uniqueSuffix++);
 
     plLayer* layer = TRACKED_NEW plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());

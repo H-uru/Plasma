@@ -109,12 +109,7 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
     }
     else
     {
-        char oCopy[256], pCopy[256];
-        strcpy(oCopy, o);
-        strcpy(pCopy, p);
-        hsStrLower(oCopy);
-        hsStrLower(pCopy);
-        if (strstr(pCopy, oCopy))
+        if (plString(_TEMP_CONVERT_FROM_LITERAL(p)).Find(p, plString::kCaseInsensitive) >= 0)
             return true;
     }
 
@@ -122,7 +117,7 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
 }
 
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
-                                 const char *className, const char *obName, hsBool subString)
+                                 const char *className, const plString &obName, hsBool subString)
 {
     UInt16 ty = plFactory::FindClassIndex(className);
     return StupidSearch(age, rm, ty, obName, subString);
@@ -132,7 +127,7 @@ class plKeyFinderIter : public plRegistryKeyIterator, public plRegistryPageItera
 {
 protected:
     UInt16      fClassType;
-    const char  *fObjName;
+    plString    fObjName;
     hsBool      fSubstr;
     plKey       fFoundKey;
     const char  *fAgeName;
@@ -140,17 +135,17 @@ protected:
 public:
     plKey   GetFoundKey( void ) const { return fFoundKey; }
 
-    plKeyFinderIter( UInt16 classType, const char *obName, hsBool substr ) 
+    plKeyFinderIter( UInt16 classType, const plString &obName, hsBool substr )
             : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ) { }
 
-    plKeyFinderIter( UInt16 classType, const char *obName, hsBool substr, const char *ageName ) 
+    plKeyFinderIter( UInt16 classType, const plString &obName, hsBool substr, const char *ageName )
         : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ),
             fAgeName( ageName ) {}
 
     virtual hsBool  EatKey( const plKey& key )
     {
         if( key->GetUoid().GetClassType() == fClassType &&
-            NameMatches( fObjName, key->GetUoid().GetObjectName(), fSubstr ) )
+            NameMatches( fObjName.c_str(), key->GetUoid().GetObjectName().c_str(), fSubstr ) )
         {
             fFoundKey = key;
             return false;
@@ -187,9 +182,9 @@ public:
 };
 
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
-                                 UInt16 classType, const char *obName, hsBool subString)
+                                 UInt16 classType, const plString &obName, hsBool subString)
 {
-    if (!obName)
+    if (obName.IsNull())
         return nil;
 
     plUoid newOid;
@@ -239,12 +234,12 @@ plKey plKeyFinder::StupidSearch(const char * age, const char * rm,
     return nil;
 }
 
-void plKeyFinder::ReallyStupidResponderSearch(const char *name, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
+void plKeyFinder::ReallyStupidResponderSearch(const plString &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plResponderModifier), foundKeys, hintLocation);
 }
 
-void plKeyFinder::ReallyStupidActivatorSearch(const char *name, std::vector<plKey>& foundKeys, const plLocation &hintLocation)
+void plKeyFinder::ReallyStupidActivatorSearch(const plString &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation)
 {
     // use the createable macro so we don't have to pull in all of Python
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plLogicModifier), foundKeys, hintLocation);
@@ -252,7 +247,7 @@ void plKeyFinder::ReallyStupidActivatorSearch(const char *name, std::vector<plKe
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plSittingModifier), foundKeys, hintLocation);
 }
 
-void plKeyFinder::IGetNames(std::vector<std::string>& names, const char* searchName, int index)
+void plKeyFinder::IGetNames(std::vector<plString>& names, const plString& searchName, int index)
 {
     // Not really searching for any particular key, just need all the logic mods
     std::vector<plKey> keys;
@@ -267,14 +262,14 @@ void plKeyFinder::IGetNames(std::vector<std::string>& names, const char* searchN
     }
 }
 
-void plKeyFinder::GetResponderNames(std::vector<std::string>& names)
+void plKeyFinder::GetResponderNames(std::vector<plString>& names)
 {
-    IGetNames(names, "", CLASS_INDEX_SCOPED(plResponderModifier));
+    IGetNames(names, _TEMP_CONVERT_FROM_LITERAL(""), CLASS_INDEX_SCOPED(plResponderModifier));
 }
 
-void plKeyFinder::GetActivatorNames(std::vector<std::string>& names)
+void plKeyFinder::GetActivatorNames(std::vector<plString>& names)
 {
-    IGetNames(names, "", CLASS_INDEX_SCOPED(plLogicModifier));
+    IGetNames(names, _TEMP_CONVERT_FROM_LITERAL(""), CLASS_INDEX_SCOPED(plLogicModifier));
 }
 
 class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageIterator
@@ -282,19 +277,19 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
     protected:
 
         UInt16      fClassType;
-        const char  *fObjName;
+        plString    fObjName;
 
         std::vector<plKey>  &fFoundKeys;
 
     public:
     
-        plKeyFinderIterator( UInt16 classType, const char *obName, std::vector<plKey>& foundKeys ) 
+        plKeyFinderIterator( UInt16 classType, const plString &obName, std::vector<plKey>& foundKeys )
                 : fClassType( classType ), fObjName( obName ), fFoundKeys( foundKeys ) { }
 
         virtual hsBool  EatKey( const plKey& key )
         {
             if( key->GetUoid().IsValid() && key->GetUoid().GetClassType() == fClassType &&
-                strstr( key->GetUoid().GetObjectName(), fObjName ) )
+                key->GetUoid().GetObjectName().Find( fObjName ) >= 0 )
             {
                 fFoundKeys.push_back( key );
             }
@@ -309,9 +304,9 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
         }
 };
 
-void plKeyFinder::ReallyStupidSubstringSearch(const char *name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
+void plKeyFinder::ReallyStupidSubstringSearch(const plString &name, UInt16 objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
-    if (!name)
+    if (name.IsNull())
         return;
 
     plKeyFinderIterator collector( objType, name, foundKeys );

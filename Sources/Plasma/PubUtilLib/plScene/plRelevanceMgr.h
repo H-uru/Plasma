@@ -80,13 +80,13 @@ public:
     hsBool GetEnabled() { return fEnabled; }
     void SetEnabled(hsBool val) { fEnabled = val; }
 
-    UInt32 GetIndex(char *regionName);
+    UInt32 GetIndex(const plString &regionName);
     void MarkRegion(UInt32 localIdx, UInt32 remoteIdx, hsBool doICare);
     void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
     UInt32 GetNumRegions() const; // includes the secret 0 region in its count
     void ParseCsvInput(hsStream *s);
 
-    std::string GetRegionNames(hsBitVector regions);
+    plString GetRegionNames(hsBitVector regions);
 };
 
 #endif // plRelevanceMgr_inc

@@ -55,8 +55,8 @@ public:
     plAnimDebugList() : fEnabled(false) {}
     ~plAnimDebugList() {}
 
-    void AddObjects(char *subString);
-    void RemoveObjects(char *subString);
+    void AddObjects(const plString &subString);
+    void RemoveObjects(const plString &subString);
     void ShowReport();
 };
 

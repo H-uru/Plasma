@@ -210,21 +210,21 @@ void pySceneObject::SetNetForce(hsBool state)
 }
 
 
-const char* pySceneObject::GetName()
+plString pySceneObject::GetName()
 {
     if ( fSceneObjects.Count() > 0 )
         return fSceneObjects[0]->GetName();
-    return "";
+    return _TEMP_CONVERT_FROM_LITERAL("");
 }
 
-PyObject* pySceneObject::findObj(const char* name)
+PyObject* pySceneObject::findObj(const plString& name)
 {
     PyObject* pSobj = nil;
     // search through the plKeys that we have looking for this name
     int i;
     for ( i=0; i<fSceneObjects.Count(); i++ )
     {
-        if ( hsStrEQ(name,fSceneObjects[i]->GetName()) )
+        if ( name == fSceneObjects[i]->GetName() )
         {
             pSobj = pySceneObject::New(fSceneObjects[i],fPyMod);
             break;
@@ -235,7 +235,7 @@ PyObject* pySceneObject::findObj(const char* name)
     if ( pSobj == nil )
     {
         // throw a Python error, so the coder knows it didn't work
-        PyErr_SetString(PyExc_KeyError, name);
+        PyErr_SetString(PyExc_KeyError, name.c_str());
     }
 
     return pSobj;

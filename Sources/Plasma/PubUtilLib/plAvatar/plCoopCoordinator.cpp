@@ -111,21 +111,13 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
   fGuestAccepted(false),
   fGuestLinked(false)
 {
-    const char * hostName = host->GetName();
-    const char * guestName = guest->GetName();
     static int serial = 0;
-
-    int len = strlen(hostName) + strlen(guestName) + 3 /* serial num */ + 1;
-
-    char *newName = TRACKED_NEW char[len];
 
     serial = serial % 999;
 
-    sprintf(newName, "%s%s%3i\x000", hostName, guestName, serial++);
+    plString newName = plString::Format("%s%s%3i\x000", host->GetName().c_str(), guest->GetName().c_str(), serial++);
     
     plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
-
-    delete[] newName;
 
     fSynchBone = hsStrcpy(synchBone);
 

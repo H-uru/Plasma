@@ -69,10 +69,10 @@ bool ReportRoomToServer(const plKey &key)
     plLocation keyLoc=key->GetUoid().GetLocation();
     bool skip=(keyLoc.IsReserved() || keyLoc.IsVirtual() ||
                 // HACK ALERT - replace with new uoid type flags
-                (key->GetName() && 
-                    (!strnicmp(key->GetName(), "global", 6) ||
-                    strstr(key->GetName(), "_Male") ||
-                    strstr(key->GetName(), "_Female") 
+                (!key->GetName().IsNull() &&
+                    (!key->GetName().CompareN("global", 6, plString::kCaseInsensitive) ||
+                    key->GetName().Find("_Male") >= 0 ||
+                    key->GetName().Find("_Female") >= 0
                     )
                 )
             );  

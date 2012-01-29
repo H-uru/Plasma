@@ -451,24 +451,24 @@ class plNetMsgRoomsList : public plNetMessage
 {
 protected:
     std::vector<plLocation> fRooms; 
-    std::vector<char*> fRoomNames;      // for debug usage only
+    std::vector<plString> fRoomNames;      // for debug usage only
 
     int IPokeBuffer(hsStream* stream, UInt32 peekOptions=0);
     int IPeekBuffer(hsStream* stream, UInt32 peekOptions=0);
 public:
     plNetMsgRoomsList() {}
-    ~plNetMsgRoomsList();
+    ~plNetMsgRoomsList() {};
 
     CLASSNAME_REGISTER( plNetMsgRoomsList );
     GETINTERFACE_ANY( plNetMsgRoomsList, plNetMessage );
 
     void AddRoom(plKey rmKey);
-    void AddRoomLocation(plLocation loc, const char* rmName);
+    void AddRoomLocation(plLocation loc, const plString& rmName);
     int FindRoomLocation(plLocation loc);
 
     int GetNumRooms() const { return fRooms.size(); }
     plLocation GetRoomLoc(int i) const { return fRooms[i]; }
-    const char* GetRoomName(int i) const { return fRoomNames[i]; }      // debug
+    plString GetRoomName(int i) const { return fRoomNames[i]; }      // debug
 };
 
 //

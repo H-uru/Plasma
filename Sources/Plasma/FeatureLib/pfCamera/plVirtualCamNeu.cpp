@@ -533,11 +533,11 @@ void plVirtualCam1::SetRender(hsBool render)
 }
 
 // hack, hack, hack
-hsBool plVirtualCam1::RestoreFromName(const char* name)
+hsBool plVirtualCam1::RestoreFromName(const plString& name)
 {
     for(int i = 0; i < fCamerasLoaded.Count(); i++)
     {
-        if (strcmp(name, fCamerasLoaded[i]->GetKeyName()) == 0)
+        if (name.Compare(fCamerasLoaded[i]->GetKeyName()) == 0)
         {
             RebuildStack(fCamerasLoaded[i]->GetKey());
             return true;

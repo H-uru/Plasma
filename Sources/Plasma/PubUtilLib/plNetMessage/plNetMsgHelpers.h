@@ -213,7 +213,7 @@ public:
     void SetUoid(const plUoid &u) { fUoid=u; }
     
     // getters
-    const char* GetObjectName() const { return fUoid.GetObjectName(); }
+    const plString& GetObjectName() const { return fUoid.GetObjectName(); }
     UInt32      GetPageID() const { return fUoid.GetLocation().GetSequenceNumber(); }
     const plUoid& GetUoid() const { return fUoid; }
     

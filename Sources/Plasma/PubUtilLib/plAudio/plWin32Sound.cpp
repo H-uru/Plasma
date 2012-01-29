@@ -168,7 +168,7 @@ void plWin32Sound::IActuallyStop()
     {
         if( fDSoundBuffer != nil && fDSoundBuffer->IsPlaying() )
         {
-            plStatusLog::AddLineS( "audio.log", 0xffff0000, "WARNING: BUFFER FLAGGED AS STOPPED BUT NOT STOPPED - %s", GetKey() ? GetKeyName() : nil );
+            plStatusLog::AddLineS( "audio.log", 0xffff0000, "WARNING: BUFFER FLAGGED AS STOPPED BUT NOT STOPPED - %s", GetKey() ? GetKeyName().c_str() : nil );
             fDSoundBuffer->Stop();
         }
     }

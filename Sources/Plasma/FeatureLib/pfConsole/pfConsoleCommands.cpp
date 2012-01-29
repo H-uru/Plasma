@@ -267,9 +267,9 @@ PF_CONSOLE_FILE_DUMMY(Main)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const char* name, int type, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const char* name, const char* typeName, const char* ageName, 
+plKey FindSceneObjectByName(const plString& name, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const plString& name, int type, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const plString& name, const char* typeName, const char* ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -277,9 +277,9 @@ void PrintStringF(void pfun(const char *),const char * fmt, ...);
 // Find an object from name, type (int), and optionally age.
 // Name can be an alias specified by saying $foo
 //
-plKey FindObjectByName(const char* name, int type, const char* ageName, char* statusStr, bool subString)
+plKey FindObjectByName(const plString& name, int type, const char* ageName, char* statusStr, bool subString)
 {
-    if (!name)
+    if (name.IsNull())
     {
         if (statusStr)
             sprintf(statusStr, "Object name is nil");
@@ -338,10 +338,10 @@ plKey FindObjectByName(const char* name, int type, const char* ageName, char* st
 // Name can be an alias specified by saying $foo.
 // Will load the object if necessary.
 //
-plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusStr, bool subString)
+plKey FindSceneObjectByName(const plString& name, const char* ageName, char* statusStr, bool subString)
 {
     plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
-    
+
     if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nil))
     {
         if (statusStr)
@@ -356,7 +356,7 @@ plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusS
 // Find an object from name, type (string) and optionally age.
 // Name can be an alias specified by saying $foo
 //
-plKey FindObjectByNameAndType(const char* name, const char* typeName, const char* ageName, 
+plKey FindObjectByNameAndType(const plString& name, const char* typeName, const char* ageName,
                                char* statusStr, bool subString)
 {
     if (!typeName)
@@ -1628,7 +1628,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap,
                "Take cubemap from sceneObject's position and name it prefix_XX.jpg")
 {
     char str[512];
-    const char* objName = params[0];
+    plString objName = plString::FromUtf8(params[0]);
     plKey key = FindSceneObjectByName(objName, nil, str);
     PrintString( str );
     if( !key )
@@ -1892,7 +1892,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
 
     const char *ageName = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
 
-    plKey key = FindSceneObjectByName( params[ 0 ], ageName, str, true );
+    plKey key = FindSceneObjectByName( plString::FromUtf8( params[ 0 ] ), ageName, str, true );
     plSceneObject *obj = ( key != nil ) ? plSceneObject::ConvertNoRef( key->GetObjectPtr() ) : nil;
     if( !obj )
     {
@@ -2224,7 +2224,7 @@ PF_CONSOLE_CMD( App,
 {
 
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
@@ -2301,7 +2301,7 @@ PF_CONSOLE_CMD( App,
 {
 
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
@@ -2355,18 +2355,18 @@ PF_CONSOLE_CMD( App,
                 "Enable/Disable/Toggle display of named CamView object" )
 {
     char str[256];
-    char* name = params[0];
+    plString name = plString::FromUtf8(params[0]);
     plKey key = FindSceneObjectByName(name, nil, str);
     if( !key )
     {
-        sprintf(str, "%s - Not Found!", name);
+        sprintf(str, "%s - Not Found!", name.c_str());
         PrintString(str);
         return;
     }
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        sprintf(str, "%s - Not Found!", name);
+        sprintf(str, "%s - Not Found!", name.c_str());
         PrintString(str);
         return;
     }
@@ -2379,11 +2379,11 @@ PF_CONSOLE_CMD( App,
     }
     if( i >= obj->GetNumModifiers() )
     {
-        sprintf(str, "%s - No CamView Modifier found!", name);
+        sprintf(str, "%s - No CamView Modifier found!", name.c_str());
         PrintString(str);
         return;
     }
-    strcpy(str, name);
+    strcpy(str, name.c_str());
 
     plAnimCmdMsg* cmd = TRACKED_NEW plAnimCmdMsg(nil, obj->GetModifier(i)->GetKey(), nil);
 
@@ -2818,7 +2818,7 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
                "the objects who currently have active refs on it." )
 {
     char result[ 256 ];
-    plKey obj = FindObjectByNameAndType( params[ 1 ], params[ 0 ], nil, result);
+    plKey obj = FindObjectByNameAndType( plString::FromUtf8( params[ 1 ] ), params[ 0 ], nil, result);
     if( obj == nil )
     {
         PrintString( result );
@@ -2994,8 +2994,7 @@ PF_CONSOLE_CMD( Camera,     // groupName
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
     char str[256];
-    char foo[256];
-    sprintf(foo, "%s_", (const char*)params[0]);
+    plString foo = plString::Format("%s_", plString::FromUtf8(params[0]));
     plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", nil, str, true);
     PrintString(str);
 
@@ -3119,7 +3118,7 @@ PF_CONSOLE_CMD( Camera,     // groupName
 
 PF_CONSOLE_GROUP( Logic )
 
-static plLogicModBase *FindLogicMod(const char *name)
+static plLogicModBase *FindLogicMod(const plString &name)
 {
     char str[256];
     plKey key = FindObjectByNameAndType(name, "plLogicModifier", nil, str, true);
@@ -3133,7 +3132,7 @@ static plLogicModBase *FindLogicMod(const char *name)
 
 PF_CONSOLE_CMD( Logic, TriggerDetectorNum, "int detectorNum", "Triggers the detector with this number (from ListDetectors)")
 {
-    std::vector<std::string> activatorNames;
+    std::vector<plString> activatorNames;
     plKeyFinder::Instance().GetActivatorNames(activatorNames);
 
     int activatorNum = params[0];
@@ -3143,21 +3142,21 @@ PF_CONSOLE_CMD( Logic, TriggerDetectorNum, "int detectorNum", "Triggers the dete
         return;
     }
 
-    plLogicModBase *mod = FindLogicMod(activatorNames[activatorNum-1].c_str());
+    plLogicModBase *mod = FindLogicMod(activatorNames[activatorNum-1]);
     if (mod)
         mod->ConsoleTrigger(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
 }
 
 PF_CONSOLE_CMD( Logic, TriggerDetector, "string detectorComp", "Triggers the named detector component")
 {
-    plLogicModBase *mod = FindLogicMod((const char*)params[0]);
+    plLogicModBase *mod = FindLogicMod(plString::FromUtf8(params[0]));
     if (mod)
         mod->ConsoleTrigger(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
 }
 
 PF_CONSOLE_CMD(Logic, EnableDetector, "string detectorComp, bool enable", "Enables/disables the named detector component")
 {
-    plLogicModBase *mod = FindLogicMod((const char*)params[0]);
+    plLogicModBase *mod = FindLogicMod(plString::FromUtf8(params[0]));
     if (mod)
     {
         plEnableMsg* enableMsg = TRACKED_NEW plEnableMsg;
@@ -3202,7 +3201,7 @@ PF_CONSOLE_CMD( Logic, TriggerResponderNum, "int responderNum, ...", "Triggers t
         return;
     }
 
-    std::vector<std::string> responderNames;
+    std::vector<plString> responderNames;
     plKeyFinder::Instance().GetResponderNames(responderNames);
 
     int responderNum = params[0];
@@ -3219,7 +3218,7 @@ PF_CONSOLE_CMD( Logic, TriggerResponderNum, "int responderNum, ...", "Triggers t
     }
 
     char str[256];
-    plKey key = FindObjectByNameAndType(responderNames[responderNum-1].c_str(), "plResponderModifier", nil, str, true);
+    plKey key = FindObjectByNameAndType(responderNames[responderNum-1], "plResponderModifier", nil, str, true);
     PrintString(str);
 
     if (key)
@@ -3235,7 +3234,7 @@ PF_CONSOLE_CMD( Logic, TriggerResponder, "string responderComp, ...", "Triggers 
     }
     
     char str[256];
-    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", nil, str, true);
+    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plResponderModifier", nil, str, true);
     PrintString(str);
 
     int responderState = -1;
@@ -3257,7 +3256,7 @@ PF_CONSOLE_CMD( Logic, FastForwardResponder, "string responderComp, ...", "Fastf
     }
     
     char str[256];
-    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", nil, str, true);
+    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plResponderModifier", nil, str, true);
     PrintString(str);
 
     int responderState = -1;
@@ -3272,7 +3271,7 @@ PF_CONSOLE_CMD( Logic, FastForwardResponder, "string responderComp, ...", "Fastf
 
 PF_CONSOLE_CMD(Logic, ListDetectors, "", "Prints the names of the loaded detectors to the console")
 {
-    std::vector<std::string> activatorNames;
+    std::vector<plString> activatorNames;
     plKeyFinder::Instance().GetActivatorNames(activatorNames);
 
     for (int i = 0; i < activatorNames.size(); i++)
@@ -3285,7 +3284,7 @@ PF_CONSOLE_CMD(Logic, ListDetectors, "", "Prints the names of the loaded detecto
 
 PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded responders to the console")
 {
-    std::vector<std::string> responderNames;
+    std::vector<plString> responderNames;
     plKeyFinder::Instance().GetResponderNames(responderNames);
 
     for (int i = 0; i < responderNames.size(); i++)
@@ -3568,7 +3567,7 @@ PF_CONSOLE_CMD( Audio, SetVolume,
                 "string obj, float vol", "Sets the volume on a given object. 1 is max volume, 0 is silence" )
 {
     char    str[ 256 ];
-    plKey key = FindSceneObjectByName(params[ 0 ], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[ 0 ]), nil, str);
     if( key == nil )
         return;
 
@@ -3597,7 +3596,7 @@ PF_CONSOLE_CMD( Audio, IsolateSound,
     plKey           key;
     plAudioSysMsg   *asMsg;
 
-    key = FindSceneObjectByName( params[ 0 ], nil, str );
+    key = FindSceneObjectByName( plString::FromUtf8( params[ 0 ] ), nil, str );
     if( key == nil )
     {
         sprintf( str, "Cannot find sound %s", (char *)params[ 0 ] );
@@ -4020,7 +4019,7 @@ PF_CONSOLE_CMD( Nav, UnloadPlayer,  // Group name, Function name
                 "unloads a named player" )  // Help string
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString("UnloadPlayer (console version) is currently broken. Hassle Matt.");
     // plNetClientMgr::UnloadPlayer(key);
 }
@@ -4038,12 +4037,12 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
                 "moves a player from one paging unit to another" )  // Help string
 {
     char str[256];
-    plKey playerKey = FindSceneObjectByName(params[0], nil, str);
+    plKey playerKey = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if( !playerKey )
         return;
 
-    plKey nodeKey = FindObjectByName(params[1], plSceneNode::Index(), nil, str);
+    plKey nodeKey = FindObjectByName(plString::FromUtf8(params[1]), plSceneNode::Index(), nil, str);
     PrintString(str);
     if( !nodeKey )
         return;
@@ -4348,9 +4347,8 @@ PF_CONSOLE_CMD( Access,
                    "Set the weight for a morphMod" )
 {
     char str[256];
-    char name[256];
     char* preFix = params[0];
-    sprintf(name, "%s_plMorphSequence_0", preFix);
+    plString name = plString::Format("%s_plMorphSequence_0", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), nil, str);
     PrintString(str);
     if (!key)
@@ -4374,9 +4372,8 @@ PF_CONSOLE_CMD( Access,
                    "Activate a morphMod" )
 {
     char str[256];
-    char name[256];
     char* preFix = params[0];
-    sprintf(name, "%s_plMorphSequence_2", preFix);
+    plString name = plString::Format("%s_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), nil, str);
     PrintString(str);
     if (!key)
@@ -4396,9 +4393,8 @@ PF_CONSOLE_CMD( Access,
                    "Activate a morphMod" )
 {
     char str[256];
-    char name[256];
     char* preFix = params[0];
-    sprintf(name, "%s_plMorphSequence_2", preFix);
+    plString name = plString::Format("%s_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), nil, str);
     PrintString(str);
     if (!key)
@@ -4623,7 +4619,7 @@ PF_CONSOLE_CMD( Access,
                    "Test fading on visibility" )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if( !key )
         return;
@@ -4655,7 +4651,7 @@ PF_CONSOLE_CMD( Access,
                    "Set the los test marker" )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if( !key )
         return;
@@ -4669,7 +4665,7 @@ PF_CONSOLE_CMD( Access,
                    "Set the Los hack marker" )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
 
     plSceneObject* so = nil;
@@ -4744,7 +4740,7 @@ PF_CONSOLE_CMD( Access,
                    "Fire shot along gun's z-axis, creating decal of radius <radius>, with optional max-range (def 1000)" )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if( !key )
         return;
@@ -4825,7 +4821,7 @@ PF_CONSOLE_CMD( Access,
                "Add particle system <psys> to bulletMgr <bull>")
 {
     char str[256];
-    plKey bullKey = FindObjectByName(params[0], plDynaBulletMgr::Index(), nil, str, false);
+    plKey bullKey = FindObjectByName(plString::FromUtf8(params[0]), plDynaBulletMgr::Index(), nil, str, false);
     PrintString(str);
     if( !(bullKey && bullKey->GetObjectPtr()) )
     {
@@ -4833,7 +4829,7 @@ PF_CONSOLE_CMD( Access,
         return;
     }
 
-    plKey sysKey = FindSceneObjectByName(params[1], nil, str);
+    plKey sysKey = FindSceneObjectByName(plString::FromUtf8(params[1]), nil, str);
     if( !(sysKey && sysKey->GetObjectPtr()) )
     {
         PrintString("Psys not found");
@@ -5030,7 +5026,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
     PrintString(buff);
 }
 
-static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const char* name)
+static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const plString& name)
 {
     char str[256];
     plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), nil, str, false);
@@ -5046,7 +5042,7 @@ static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const char* name)
     return waveSet;
 }
 
-static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const char* name, int numParams, int n, plWaveCmd::Cmd cmd)
+static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const plString& name, int numParams, int n, plWaveCmd::Cmd cmd)
 {
     if( !numParams )
     {
@@ -5083,7 +5079,7 @@ static hsScalar LimitVal(hsScalar val, hsScalar lo, hsScalar hi, PrintFunk Print
 
 static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
-    plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 2, cmd);
+    plWaveSet7* wave = ICheckWaveParams(PrintString, plString::FromUtf8(params[0]), numParams, 2, cmd);
     if( !wave )
         return false;
 
@@ -5162,7 +5158,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
 
 static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
-    plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 3, cmd);
+    plWaveSet7* wave = ICheckWaveParams(PrintString, plString::FromUtf8(params[0]), numParams, 3, cmd);
     if( !wave )
         return false;
 
@@ -5205,7 +5201,7 @@ static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int
 
 static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
-    plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
+    plWaveSet7* wave = ICheckWaveParams(PrintString, plString::FromUtf8(params[0]), numParams, 4, cmd);
     if( !wave )
         return false;
 
@@ -5243,7 +5239,7 @@ static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int
 
 static bool ISendWaveCmd4c(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
-    plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
+    plWaveSet7* wave = ICheckWaveParams(PrintString, plString::FromUtf8(params[0]), numParams, 4, cmd);
     if( !wave )
         return false;
 
@@ -5279,7 +5275,7 @@ PF_CONSOLE_CMD( Wave, Log,  // Group name, Function name
                 "string waveSet",           // Params none
                 "Toggle logging for waves" )    // Help string
 {
-    const char* name = params[0];
+    plString name = plString::FromUtf8(params[0]);
     plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
     if( waveSet )
     {
@@ -5290,7 +5286,7 @@ PF_CONSOLE_CMD( Wave, Log,  // Group name, Function name
             waveSet->StopLog();
 
         char buff[256];
-        sprintf(buff, "Logging for %s now %s", name, logging ? "on" : "off");
+        sprintf(buff, "Logging for %s now %s", name.c_str(), logging ? "on" : "off");
         PrintString(buff);
     }
 }
@@ -5299,7 +5295,7 @@ PF_CONSOLE_CMD( Wave, Graph,    // Group name, Function name
                 "string waveSet",           // Params none
                 "Toggle graphing lens for waves" )  // Help string
 {
-    const char* name = params[0];
+    plString name = plString::FromUtf8(params[0]);
     plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
     if( waveSet )
     {
@@ -5310,7 +5306,7 @@ PF_CONSOLE_CMD( Wave, Graph,    // Group name, Function name
             waveSet->StopGraph();
 
         char buff[256];
-        sprintf(buff, "Graphing for %s now %s", name, graphing ? "on" : "off");
+        sprintf(buff, "Graphing for %s now %s", name.c_str(), graphing ? "on" : "off");
         PrintString(buff);
     }
 }
@@ -5514,7 +5510,7 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Drawable,    // Group name, Function name
                 "Enable or disable drawing of a sceneobject" )  // Help string
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;
@@ -5533,7 +5529,7 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Physical,    // Group name, Function name
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;
@@ -5575,7 +5571,7 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Audible,     // Group name, Function name
                 "Enable or disable the audible of a sceneobject" )  // Help string
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;
@@ -5594,7 +5590,7 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, All,         // Group name, Function name
                 "Enable or disable all fxns of a sceneobject" ) // Help string
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;
@@ -5614,8 +5610,8 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
 {
     char str[256];
 
-    const char* childName = params[0];
-    const char* parentName = params[1];
+    plString childName = plString::FromUtf8(params[0]);
+    plString parentName = plString::FromUtf8(params[1]);
 
     plKey childKey = FindSceneObjectByName(childName, nil, str);
     if( !childKey )
@@ -5641,7 +5637,7 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
     plAttachMsg* attMsg = TRACKED_NEW plAttachMsg(parentKey, child, plRefMsg::kOnRequest, nil);
     plgDispatch::MsgSend(attMsg);
 
-    sprintf(str, "%s now child of %s", childName, parentName);
+    sprintf(str, "%s now child of %s", childName.c_str(), parentName.c_str());
     PrintString(str);
 
 }
@@ -5652,7 +5648,7 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
 {
     char str[256];
 
-    const char* childName = params[0];
+    plString childName = plString::FromUtf8(params[0]);
 
     plKey childKey = FindSceneObjectByName(childName, nil, str);
     if( !childKey )
@@ -5677,13 +5673,13 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
         plAttachMsg* attMsg = TRACKED_NEW plAttachMsg(parentKey, child, plRefMsg::kOnRemove, nil);
         plgDispatch::MsgSend(attMsg);
 
-        sprintf(str, "%s detached from %s", childName, parentKey->GetName());
+        sprintf(str, "%s detached from %s", childName.c_str(), parentKey->GetName().c_str());
         PrintString(str);
         return;
     }
     else
     {
-        sprintf(str, "%s not attached to anything", childName);
+        sprintf(str, "%s not attached to anything", childName.c_str());
         PrintString(str);
         return;
     }
@@ -6238,7 +6234,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(char *objName, Int32 paramID, hsScalar value, void (*PrintString)(const char *))
+void UpdateParticleParam(const plString &objName, Int32 paramID, hsScalar value, void (*PrintString)(const char *))
 {
     char str[256];
     plKey key = FindSceneObjectByName(objName, nil, str);
@@ -6267,7 +6263,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the particles-per-second generated" )  // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamParticlesPerSecond, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamParticlesPerSecond, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6275,7 +6271,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the initial range of pitch of generated particles" )   // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamInitPitchRange, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamInitPitchRange, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6283,7 +6279,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the initial range of yaw of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamInitYawRange, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamInitYawRange, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6291,7 +6287,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the minimum initial velocity of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamVelMin, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamVelMin, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6299,7 +6295,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the maximum initial velocity of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamVelMax, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamVelMax, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6307,7 +6303,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the width of generated particles" )    // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamXSize, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamXSize, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6315,7 +6311,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the height of generated particles" )   // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamYSize, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamYSize, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6323,7 +6319,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the minimum width/height scaling of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamScaleMin, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamScaleMin, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6331,7 +6327,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the maximum width/height scaling of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamScaleMax, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamScaleMax, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6339,7 +6335,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the remaining life of the particle generator" )    // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamGenLife, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamGenLife, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6347,7 +6343,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the minimum lifespan of generated particles (negative values make them immortal)" )    // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamPartLifeMin, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamPartLifeMin, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,                 // Group name
@@ -6355,7 +6351,7 @@ PF_CONSOLE_CMD( ParticleSystem,                 // Group name
                 "string objName, float value",  // Params
                 "Set the max lifespan of generated particles" ) // Help string
 {
-    UpdateParticleParam(params[0], plParticleUpdateMsg::kParamPartLifeMax, params[1], PrintString);
+    UpdateParticleParam(plString::FromUtf8(params[0]), plParticleUpdateMsg::kParamPartLifeMax, params[1], PrintString);
 }
 
 PF_CONSOLE_CMD( ParticleSystem,
@@ -6364,7 +6360,7 @@ PF_CONSOLE_CMD( ParticleSystem,
                "Creates a system (if necessary) on the avatar, and transfers particles" )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     if (key == nil) 
         return;
     
@@ -6383,7 +6379,7 @@ PF_CONSOLE_CMD( ParticleSystem,
                "Flag some particles for death." )
 {
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     if (key == nil) 
         return;
     
@@ -6402,7 +6398,7 @@ PF_CONSOLE_CMD( ParticleSystem,
 
 PF_CONSOLE_SUBGROUP( ParticleSystem, Flock )
 
-static plParticleFlockEffect *FindFlock(char *objName)
+static plParticleFlockEffect *FindFlock(const plString &objName)
 {
     char str[256];
     plKey key = FindSceneObjectByName(objName, nil, str);
@@ -6430,7 +6426,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float x, float y, float z",
                "Set the flock's goal to be an offset from its sceneObject")
 {
-    plParticleEffect *flock = FindFlock(params[0]);
+    plParticleEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
     {
         (TRACKED_NEW plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, params[1], params[2], params[3]))->Send();
@@ -6442,7 +6438,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float x, float y, float z",
                "Set the goal for particles that leave the flock")
 {
-    plParticleEffect *flock = FindFlock(params[0]);
+    plParticleEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
     {
         (TRACKED_NEW plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, params[1], params[2], params[3]))->Send();
@@ -6454,7 +6450,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetInfluenceAvgRadius(params[1]);
     else
@@ -6466,7 +6462,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetInfluenceRepelRadius(params[1]);
     else
@@ -6478,7 +6474,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetGoalRadius(params[1]);
     else
@@ -6490,7 +6486,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetFullChaseRadius(params[1]);
     else
@@ -6502,7 +6498,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetConformStr(params[1]);
     else
@@ -6514,7 +6510,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetRepelStr(params[1]);
     else
@@ -6526,7 +6522,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetGoalOrbitStr(params[1]);
     else
@@ -6538,7 +6534,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetGoalChaseStr(params[1]);
     else
@@ -6550,7 +6546,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetMaxOrbitSpeed(params[1]);
     else
@@ -6562,7 +6558,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
                "string objName, float value",
                "")
 {
-    plParticleFlockEffect *flock = FindFlock(params[0]);
+    plParticleFlockEffect *flock = FindFlock(plString::FromUtf8(params[0]));
     if (flock)
         flock->SetMaxChaseSpeed(params[1]);
     else
@@ -6580,7 +6576,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
 
 PF_CONSOLE_GROUP( Animation ) // Defines a main command group
 
-void SendAnimCmdMsg(char *objName, plMessage *msg)
+void SendAnimCmdMsg(const plString &objName, plMessage *msg)
 {
     char str[256];
     plKey key = FindSceneObjectByName(objName, nil, str);
@@ -6603,7 +6599,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->SetCmd(plAnimCmdMsg::kContinue);
     msg->SetAnimName(nil);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-    SendAnimCmdMsg(params[0], msg);
+    SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
 
 PF_CONSOLE_CMD( Animation,                          // Group name
@@ -6615,7 +6611,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->SetCmd(plAnimCmdMsg::kStop);
     msg->SetAnimName(nil);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-    SendAnimCmdMsg(params[0], msg);
+    SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
 
 PF_CONSOLE_CMD( Animation,                          // Group name
@@ -6629,7 +6625,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->fBlendRate = params[3];
     msg->SetAnimName(params[1]);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-    SendAnimCmdMsg(params[0], msg);
+    SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
 
 PF_CONSOLE_CMD( Animation,                          // Group name
@@ -6643,7 +6639,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->fAmpRate = params[3];
     msg->SetAnimName(params[1]);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-    SendAnimCmdMsg(params[0], msg);
+    SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
 
 PF_CONSOLE_CMD( Animation,                          // Group name
@@ -6657,7 +6653,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->fSpeedChangeRate = params[3];
     msg->SetAnimName(params[1]);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-    SendAnimCmdMsg(params[0], msg);
+    SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
 
 PF_CONSOLE_CMD( Animation,
@@ -6667,7 +6663,7 @@ PF_CONSOLE_CMD( Animation,
 {
     plAnimDebugList *adl = plClient::GetInstance()->fAnimDebugList;
     if (adl) 
-        adl->AddObjects(params[0]);
+        adl->AddObjects(plString::FromUtf8(params[0]));
 }
 
 PF_CONSOLE_CMD( Animation,
@@ -6677,7 +6673,7 @@ PF_CONSOLE_CMD( Animation,
 {
     plAnimDebugList *adl = plClient::GetInstance()->fAnimDebugList;
     if (adl)
-        adl->RemoveObjects(params[0]);
+        adl->RemoveObjects(plString::FromUtf8(params[0]));
 }
 
 PF_CONSOLE_CMD( Animation,

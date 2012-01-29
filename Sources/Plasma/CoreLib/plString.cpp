@@ -490,7 +490,7 @@ plString plString::Format(const char *fmt, ...)
     return str;
 }
 
-int plString::Find(char ch, CaseSense sense) const
+int plString::Find(char ch, CaseSensitivity sense) const
 {
     if (sense == kCaseSensitive) {
         const char *cp = strchr(s_str(), ch);
@@ -506,7 +506,7 @@ int plString::Find(char ch, CaseSense sense) const
     }
 }
 
-int plString::FindReverse(char ch, CaseSense sense) const
+int plString::FindLast(char ch, CaseSensitivity sense) const
 {
     if (IsEmpty())
         return -1;
@@ -523,6 +523,26 @@ int plString::FindReverse(char ch, CaseSense sense) const
                 return cp - c_str();
         }
         return -1;
+    }
+}
+
+int plString::Find(const char *str, CaseSensitivity sense) const
+{
+    if (!str || !str[0])
+        return -1;
+
+    if (sense == kCaseSensitive) {
+        const char *cp = strstr(s_str(), str);
+        return cp ? (cp - c_str()) : -1;
+    } else {
+        // The easy way
+        size_t len = strlen(str);
+        const char *cp = c_str();
+        while (*cp) {
+            if (strnicmp(cp, str, len) == 0)
+                return cp - c_str();
+            ++cp;
+        }
     }
 }
 

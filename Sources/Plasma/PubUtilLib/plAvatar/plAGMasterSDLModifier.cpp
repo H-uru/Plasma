@@ -57,10 +57,10 @@ char plAGMasterSDLModifier::AGMasterVarNames::kStrBlends[]="blends";
 UInt32 plAGMasterSDLModifier::IApplyModFlags(UInt32 sendFlags)
 {
     // ugly hack so bug light animation state isn't stored on the server
-    if (stricmp(GetTarget()->GetKeyName(), "RTOmni-BugLightTest") == 0)
+    if (GetTarget()->GetKeyName().Compare("RTOmni-BugLightTest", plString::kCaseInsensitive) == 0)
         return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
     // ditto for the KI light
-    if (stricmp(GetTarget()->GetKeyName(), "RTOmniKILight") == 0)
+    if (GetTarget()->GetKeyName().Compare("RTOmniKILight", plString::kCaseInsensitive) == 0)
         return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
 
     return sendFlags;

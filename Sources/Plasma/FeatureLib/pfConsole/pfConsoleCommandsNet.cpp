@@ -196,9 +196,9 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const char* name, int type, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const char* name, const char* typeName, const char* ageName, 
+plKey FindSceneObjectByName(const plString& name, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const plString& name, int type, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const plString& name, const char* typeName, const char* ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -508,7 +508,7 @@ PF_CONSOLE_CMD( Net,            // groupName
                "Instructs the server to only send me updates about this object periodically" )  // helpString
 {   
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;

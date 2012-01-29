@@ -257,11 +257,11 @@ hsBool plLineFollowMod::MsgReceive(plMessage* msg)
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )
     {
-        plProfile_BeginLap(LineFollow, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(LineFollow, this->GetKey()->GetUoid().GetObjectName().c_str());
         hsPoint3 oldPos = fSearchPos;
         fSearchPos = rend->Pipeline()->GetViewPositionWorld();
         ICheckForPop(oldPos, fSearchPos);
-        plProfile_EndLap(LineFollow, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(LineFollow, this->GetKey()->GetUoid().GetObjectName().c_str());
         return true;
     }
     plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);

@@ -439,9 +439,7 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
-        char *name = s->ReadSafeString();
-        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
-        delete[] name;
+        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), s->ReadSafeString_TEMP());
         if (key)
             hsgResMgr::ResMgr()->AddViaNotify(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }
@@ -910,9 +908,7 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
-        char *name = s->ReadSafeString();
-        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
-        delete[] name;
+        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), s->ReadSafeString_TEMP());
         if (key)
             hsgResMgr::ResMgr()->AddViaNotify(key, TRACKED_NEW plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }

@@ -85,7 +85,7 @@ class pfGUICtrlGenerator
 
 
         plKey       IAddKey( hsKeyedObject *ko, const char *prefix );
-        void        IGetNextKeyName( char *name, const char *prefix );
+        plString    IGetNextKeyName( const char *prefix );
 
         hsGMaterial *ICreateSolidMaterial( hsColorRGBA &color );
 

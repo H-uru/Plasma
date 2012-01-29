@@ -115,9 +115,8 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
 
         if( retVal == plSoundBuffer::kError )
         {
-            char str[ 256 ];
-            sprintf( str, "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-            IPrintDbgMessage( str, true );
+            plString str = plString::Format( "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName().c_str() : "nil");
+            IPrintDbgMessage( str.c_str(), true );
             fFailed = true;
             return false;
         }

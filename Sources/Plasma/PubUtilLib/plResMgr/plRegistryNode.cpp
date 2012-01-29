@@ -309,7 +309,7 @@ hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, UInt16 c
     return true;
 }
 
-plKeyImp* plRegistryPageNode::FindKey(UInt16 classType, const char* name) const
+plKeyImp* plRegistryPageNode::FindKey(UInt16 classType, const plString& name) const
 {
     plRegistryKeyList* keys = IGetKeyList(classType);
     if (keys == nil)
@@ -350,8 +350,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
         // Attempt recovery
         for (int i = 0; i < 500; i++)
         {
-            char tempName[512];
-            sprintf(tempName, "%s%d", key->GetUoid().GetObjectName(), i);
+            plString tempName = plString::Format("%s%d", key->GetUoid().GetObjectName().c_str(), i);
             if (keys->FindKey(tempName) == nil)
             {
                 plUoid uoid(key->GetUoid().GetLocation(), key->GetUoid().GetClassType(), tempName, key->GetUoid().GetLoadMask());

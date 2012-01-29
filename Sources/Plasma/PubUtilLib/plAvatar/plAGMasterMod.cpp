@@ -241,7 +241,7 @@ hsBool plAGMasterMod::IEval(double secs, hsScalar del, UInt32 dirty)
 // APPLYANIMATIONS
 void plAGMasterMod::ApplyAnimations(double time, hsScalar elapsed)
 {
-    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName());
+    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName().c_str());
 
     // update any fades
     for (int i = 0; i < fAnimInstances.size(); i++)
@@ -251,7 +251,7 @@ void plAGMasterMod::ApplyAnimations(double time, hsScalar elapsed)
     
     AdvanceAnimsToTime(time);
 
-    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName());
+    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName().c_str());
 }
 
 void plAGMasterMod::AdvanceAnimsToTime(double time)

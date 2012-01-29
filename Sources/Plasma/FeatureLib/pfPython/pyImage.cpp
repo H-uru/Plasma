@@ -200,7 +200,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 
         }
 
         // let's create a nice name for this thing based on the filename
-        std::string name = "PtImageFromDisk_";
+        plString name = _TEMP_CONVERT_FROM_LITERAL("PtImageFromDisk_");
         const wchar* i = filename;
         int charsChecked = 0;
 
@@ -219,10 +219,9 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar* filename, UInt16 width, UInt16 
             i++;
         }
 
-        char* cName = hsWStringToString(i);
-        name = name + cName;
+        name += plString::FromWchar(i);
 
-        hsgResMgr::ResMgr()->NewKey(name.c_str(), theMipmap, plLocation::kGlobalFixedLoc);
+        hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
         
         return pyImage::New( theMipmap );
     }

@@ -180,9 +180,9 @@ hsBool plShadowMaster::MsgReceive(plMessage* msg)
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
     {
-        plProfile_BeginLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName().c_str());
         IBeginRender();
-        plProfile_EndLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName().c_str());
         return true;
     }
 

@@ -190,13 +190,16 @@ struct plMsgXtlStringHelper
 };
 
 /////////////////////////////////////////////////////////////////
-// reads/writes your char * field
+// reads/writes your char * field  (deprecated)
 
 struct plMsgCStringHelper
 {
     static int Poke(const char * str, hsStream* stream, const UInt32 peekOptions=0);
     // deletes str and reallocates. you must delete [] str;
     static int Peek(char *& str, hsStream* stream, const UInt32 peekOptions=0);
+
+    static int Poke(const plString & str, hsStream* stream, const UInt32 peekOptions=0);
+    static int Peek(plString & str, hsStream* stream, const UInt32 peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

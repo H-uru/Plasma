@@ -164,10 +164,10 @@ void plPlate::SetTexture(plBitmap *texture)
 {
     plLayer         *layer;
     hsGMaterial     *material;
-    char            keyName[ 128 ];
+    plString        keyName;
 
     material = TRACKED_NEW hsGMaterial();
-    sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
+    keyName = plString::Format( "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
     layer->SetShadeFlags( layer->GetShadeFlags() | hsGMatState::kShadeNoShade | hsGMatState::kShadeWhite | hsGMatState::kShadeReallyNoFog );
@@ -202,7 +202,7 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
 {
     plLayer         *layer;
     hsGMaterial     *material;
-    char            keyName[ 128 ];
+    plString        keyName;
 
 
     if (texture)
@@ -214,14 +214,14 @@ plMipmap    *plPlate::CreateMaterial( UInt32 width, UInt32 height, hsBool withAl
         /// Create a new bitmap
         fMipmap = TRACKED_NEW plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
         memset( fMipmap->GetImage(), 0xff, height * fMipmap->GetRowBytes() );
-        sprintf( keyName, "PlateBitmap#%d", fMagicUniqueKeyInt++ );
+        keyName = plString::Format( "PlateBitmap#%d", fMagicUniqueKeyInt++ );
         hsgResMgr::ResMgr()->NewKey( keyName, fMipmap, plLocation::kGlobalFixedLoc );
         fMipmap->SetFlags( fMipmap->GetFlags() | plMipmap::kDontThrowAwayImage );
     }
 
     /// NOW create a layer wrapper and a material for that layer
     material = TRACKED_NEW hsGMaterial();
-    sprintf( keyName, "PlateBlank#%d", fMagicUniqueKeyInt++ );
+    keyName = plString::Format( "PlateBlank#%d", fMagicUniqueKeyInt++ );
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
     layer->SetShadeFlags( layer->GetShadeFlags() | hsGMatState::kShadeNoShade | hsGMatState::kShadeWhite | hsGMatState::kShadeReallyNoFog );
@@ -252,8 +252,7 @@ void plPlate::CreateFromResource(const char *resName)
         plMipmap* resTexture = TRACKED_NEW plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
 
-        char keyName[128];
-        sprintf( keyName, "PlateResource#%d", fMagicUniqueKeyInt++ );
+        plString keyName = plString::Format( "PlateResource#%d", fMagicUniqueKeyInt++ );
         hsgResMgr::ResMgr()->NewKey(keyName, resTexture, plLocation::kGlobalFixedLoc);
         CreateMaterial(resTexture->GetWidth(), resTexture->GetHeight(), true, resTexture);
     }

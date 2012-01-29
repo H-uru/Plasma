@@ -208,7 +208,7 @@ class SensorReport : public NxUserTriggerReport
     void SendCollisionMsg(plKey receiver, plKey hitter, hsBool entering)
     {
         DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", receiver->GetName(), 
-                          hitter ? hitter->GetName() : "(nil)" , entering ? "'enter'" : "'exit'");
+                          hitter ? hitter->GetName().c_str() : "(nil)" , entering ? "'enter'" : "'exit'");
         plCollideMsg* msg = TRACKED_NEW plCollideMsg;
         msg->fOtherKey = hitter;
         msg->fEntering = entering;
@@ -537,8 +537,8 @@ void plSimulationMgr::ReleaseScene(plKey world)
 
 void plSimulationMgr::ISendCollisionMsg(plKey receiver, plKey hitter, hsBool entering)
 {
-    DetectorLogYellow("Collision: %s is inside %s. Sending an %s msg", hitter ? hitter->GetName() : "(nil)",
-                      receiver->GetName(), entering ? "'enter'" : "'exit'");
+    DetectorLogYellow("Collision: %s is inside %s. Sending an %s msg", hitter ? hitter->GetName().c_str() : "(nil)",
+                      receiver->GetName().c_str(), entering ? "'enter'" : "'exit'");
     plCollideMsg* msg = TRACKED_NEW plCollideMsg;
     msg->fOtherKey = hitter;
     msg->fEntering = entering;
@@ -740,10 +740,10 @@ void plSimulationMgr::ISendUpdates()
                     const plKey physKey = physical->GetKey();
                     if (physKey)
                     {
-                        const char *physName = physical->GetKeyName();
-                        if (physName)
+                        const plString &physName = physical->GetKeyName();
+                        if (!physName.IsNull())
                         {
-                            plSimulationMgr::Log("Removing physical <%s> because of missing scene node.\n", physName);
+                            plSimulationMgr::Log("Removing physical <%s> because of missing scene node.\n", physName.c_str());
                         }
                     }
 //                  Remove(physical);
