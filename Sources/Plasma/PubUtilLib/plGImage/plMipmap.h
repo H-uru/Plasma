@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plMipmap_h
 
 #include "plBitmap.h"
+#include "plString.h"
 
 #ifdef HS_DEBUGGING
     #define ASSERT_PIXELSIZE(bitmap, pixelsize)     hsAssert((bitmap)->fPixelSize == (pixelsize), "pixelSize mismatch")
@@ -291,13 +292,13 @@ class plMipmap : public plBitmap
         //// Protected Members ////
 
         void        *fImage;
-        uint32_t      fWidth, fHeight, fRowBytes, fTotalSize;
-        uint8_t       fNumLevels;
-        uint32_t      *fLevelSizes;
+        uint32_t    fWidth, fHeight, fRowBytes, fTotalSize;
+        uint8_t     fNumLevels;
+        uint32_t    *fLevelSizes;
 
         void        *fCurrLevelPtr;
-        uint8_t       fCurrLevel;
-        uint32_t      fCurrLevelWidth, fCurrLevelHeight, fCurrLevelRowBytes;
+        uint8_t     fCurrLevel;
+        uint32_t    fCurrLevelWidth, fCurrLevelHeight, fCurrLevelRowBytes;
 
         void    IReadRawImage( hsStream *stream );
         void    IWriteRawImage( hsStream *stream );
@@ -335,11 +336,11 @@ class plMipmap : public plBitmap
                 plRecord    *fNext;
                 plRecord    **fBackPtr;
 
-                char        fKeyName[ 256 ];
+                plString    fKeyName;
                 void        *fImage;
-                uint32_t      fWidth, fHeight, fRowBytes;
-                uint8_t       fNumLevels; 
-                uint8_t       fCompressionType;
+                uint32_t    fWidth, fHeight, fRowBytes;
+                uint8_t     fNumLevels;
+                uint8_t     fCompressionType;
                 union 
                 {
                     DirectXInfo         fDirectXInfo;

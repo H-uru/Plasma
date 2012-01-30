@@ -370,7 +370,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     if (pKey->GetStartPos() == uint32_t(-1) || pKey->GetDataLen() == uint32_t(-1))
         return false; // Try to recover from this by just not reading an object
 
-    kResMgrLog(3, ILog(3, "   Reading object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
+    kResMgrLog(3, ILog(3, "   Reading object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
 
     const plUoid& uoid = pKey->GetUoid();
 
@@ -440,7 +440,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         fCurCloneID = 0;
     }
 
-    kResMgrLog(4, ILog(4, "   ...Read complete for object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
+    kResMgrLog(4, ILog(4, "   ...Read complete for object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
 
     if (fLogReadTimes)
     {
@@ -449,7 +449,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         ourTime -= childTime;
 
         plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "%s, %s, %u, %.1f",
-            pKey->GetUoid().GetObjectName(),
+            pKey->GetUoid().GetObjectName().c_str(),
             plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()),
             pKey->GetDataLen(),
             hsTimer::FullTicksToMs(ourTime));
@@ -722,7 +722,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
     }
     if(key->GetUoid().GetLoadMask().DontLoad())
     {
-        hsStatusMessageF("%s being skipped because of load mask", key->GetName());
+        hsStatusMessageF("%s being skipped because of load mask", key->GetName().c_str());
         hsRefCnt_SafeUnRef(msg);
         return nil;
     }
