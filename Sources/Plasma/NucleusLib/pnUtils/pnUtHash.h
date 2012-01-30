@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtList.h"
 #include "pnUtArray.h"
 #include "pnUtMath.h"
+#include "pnUtStr.h"
 
 /****************************************************************************
 *
@@ -536,7 +537,7 @@ const T * THashTable<T,K>::Find (const K & key) const {
     unsigned        hash     = key.GetHash();
     const LIST(T) & slotList = this->GetSlotList(hash);
     for (const T * curr = slotList.Head(); curr; curr = slotList.Next(curr))
-        if ((GetHash(curr) == hash) && (*curr == key))
+        if ((this->GetHash(curr) == hash) && (*curr == key))
             return curr;
     return nil;
 }

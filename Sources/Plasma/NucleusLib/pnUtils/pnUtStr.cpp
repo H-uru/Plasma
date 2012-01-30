@@ -69,6 +69,25 @@ static uint32_t s_hashValue[] = {
 *   Internal functions
 *
 ***/
+//===========================================================================
+template<class chartype>
+static unsigned IStrLen (const chartype str[]) {
+    unsigned chars = 0;
+    for (; *str++; ++chars)
+        NULL_STMT;
+    return chars;
+}
+
+//===========================================================================
+template<class chartype>
+static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) {
+    while ((chars > 1) && ((*dest = *source++) != 0)) {
+        --chars;
+        ++dest;
+    }
+    if (chars)
+        *dest = 0;
+}
 
 //===========================================================================
 template<class chartype>
@@ -208,17 +227,6 @@ static int IStrCmpI (const chartype str1[], const chartype str2[], unsigned char
 }
 
 //===========================================================================
-template<class chartype>
-static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) {
-    while ((chars > 1) && ((*dest = *source++) != 0)) {
-        --chars;
-        ++dest;
-    }
-    if (chars)
-        *dest = 0;
-}
-
-//===========================================================================
 // returns StrLen(dest)
 template<class chartype>
 static unsigned IStrCopyLen (chartype * dest, const chartype source[], unsigned chars) {
@@ -282,15 +290,6 @@ static chartype * IStrStrI (chartype source[], const chartype match[]) {
     }
 
     return nil;
-}
-
-//===========================================================================
-template<class chartype>
-static unsigned IStrLen (const chartype str[]) {
-    unsigned chars = 0;
-    for (; *str++; ++chars)
-        NULL_STMT;
-    return chars;
 }
 
 //===========================================================================
