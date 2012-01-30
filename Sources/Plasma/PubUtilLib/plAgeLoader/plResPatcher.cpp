@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plResPatcher.h"
+#include "hsResMgr.h"
 
 #include "plAgeLoader/plAgeLoader.h"
 #include "plCompression/plZlibStream.h"
@@ -50,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbError.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProgressMgr/plProgressMgr.h"
+#include "plResMgr/plResManager.h"
 #include "plStatusLog/plStatusLog.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,6 +76,8 @@ public:
         else
             return fOutput->Write(count, buf);
     }
+
+    bool IsZipped() const { return fIsZipped; }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,6 +90,8 @@ static void FileDownloaded(
 {
     plResPatcher* patcher = (plResPatcher*)param;
     char* name = hsWStringToString(filename);
+    if (((plResDownloadStream*)writer)->IsZipped())
+        plFileUtils::StripExt(name); // Kill off .gz
     writer->Close();
     delete writer;
 
@@ -93,6 +99,12 @@ static void FileDownloaded(
     {
         case kNetSuccess:
             PatcherLog(kStatus, "    Download Complete: %s", name);
+            
+            // If this is a PRP, then we need to add it to the ResManager
+            if (stricmp(plFileUtils::GetFileExt(name), "prp") == 0)
+                ((plResManager*)hsgResMgr::ResMgr())->AddSinglePage(name);
+
+            // Continue down the warpath
             patcher->IssueRequest();
             delete[] name;
             return;
@@ -214,6 +226,10 @@ void plResPatcher::IssueRequest()
             char* eapSucksString = hsWStringToString(req.fFriendlyName.c_str());
             PatcherLog(kMajorStatus, "    Downloading file... %s", eapSucksString);
             xtl::format(title, L"Downloading... %s", plFileUtils::GetFileName(req.fFriendlyName.c_str()));
+
+            // If this is a PRP, we need to unload it from the ResManager
+            if (stricmp(plFileUtils::GetFileExt(eapSucksString), "prp") == 0)
+                ((plResManager*)hsgResMgr::ResMgr())->RemoveSinglePage(eapSucksString);
 
             plFileUtils::EnsureFilePathExists(req.fFriendlyName.c_str());
             plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile.c_str());
