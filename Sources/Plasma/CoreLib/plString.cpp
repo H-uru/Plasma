@@ -543,6 +543,8 @@ int plString::Find(const char *str, CaseSensitivity sense) const
                 return cp - c_str();
             ++cp;
         }
+
+        return -1;
     }
 }
 

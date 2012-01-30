@@ -81,7 +81,6 @@ plKeyImp::plKeyImp() :
     fCloneOwner(nil)
 {
 #ifdef HS_DEBUGGING
-    fIDName = nil;
     fClassType = nil;
 #endif
 }

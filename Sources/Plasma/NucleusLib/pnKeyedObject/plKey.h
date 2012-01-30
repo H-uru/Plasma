@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRefFlags.h"
+#include "plString.h"
 
 class hsKeyedObject;
 class plRefMsg;
@@ -55,7 +56,6 @@ class hsBitVector;
 
 class plKeyData;
 class plKeyImp;
-class plString;
 
 class plKey 
 {
@@ -131,7 +131,7 @@ protected:
 
 #ifdef HS_DEBUGGING
     // Debugging info fields
-    const char* fIDName;
+    plString    fIDName;
     const char* fClassType;
 #endif
 

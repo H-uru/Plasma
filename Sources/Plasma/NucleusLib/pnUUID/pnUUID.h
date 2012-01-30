@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 class hsStream;
+class plString;
 
 class plUUID
 {

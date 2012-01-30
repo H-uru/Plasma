@@ -159,7 +159,7 @@ plUoid::~plUoid()
 
 void plUoid::Read(hsStream* s)
 {
-    hsAssert(fObjectName == nil, "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName.IsNull(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
     uint8_t contents = s->ReadByte();

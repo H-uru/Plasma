@@ -307,6 +307,13 @@ public:
             return *this;
         }
 
+        iterator operator++(int)
+        {
+            iterator iter_save = *this;
+            (void) operator++();
+            return iter_save;
+        }
+
         iterator &operator+=(size_t delta)
         {
             while (delta) {

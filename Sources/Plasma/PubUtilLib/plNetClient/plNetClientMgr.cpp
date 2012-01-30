@@ -1390,7 +1390,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 if( idx != -1 )
                 {
                     hsAssert(playerKey, "NIL KEY?");
-                    hsAssert(playerKey->GetName(), "UNNAMED KEY");
+                    hsAssert(!playerKey->GetName().IsNull(), "UNNAMED KEY");
                     fTransport.GetMember(idx)->SetAvatarKey(playerKey);
                 }
                 else
