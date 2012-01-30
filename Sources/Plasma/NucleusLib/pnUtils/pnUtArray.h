@@ -823,7 +823,7 @@ void TArray<T,C>::AdjustSizeChunked (unsigned newAlloc, unsigned newCount) {
 
     // Process growing the allocation
     else
-        newAlloc = CalcAllocGrowth(newAlloc, this->m_alloc, &this->m_chunkSize);
+        newAlloc = this->CalcAllocGrowth(newAlloc, this->m_alloc, &this->m_chunkSize);
 
     // Perform the allocation
     this->AdjustSize(newAlloc, newCount);

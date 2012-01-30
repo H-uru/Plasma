@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "pnUtArray.h"
+#include <wchar.h>
 
 /*****************************************************************************
 *
