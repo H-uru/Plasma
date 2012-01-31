@@ -1142,7 +1142,7 @@ void    pfConsole::Draw( plPipeline *p )
         strcpy( tmp, "]" );
 
     drawText.DrawString( 10, y, tmp, 255, 255, 255, 255 );
-    i = 10 + drawText.CalcStringWidth( tmp ) + 4;
+    i = 19 + drawText.CalcStringWidth( tmp );
     drawText.DrawString( i, y, fWorkingLine, fConsoleTextColor );
 
     if( fCursorTicks >= 0 )
