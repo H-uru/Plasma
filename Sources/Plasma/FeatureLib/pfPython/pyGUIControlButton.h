@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlButton
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "pyKey.h"
 #include "pyGeometry3.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 #include "pyGUIControl.h"

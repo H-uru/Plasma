@@ -41,12 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef pyDniInfoSource_h_inc
 #define pyDniInfoSource_h_inc
+#include <Python.h>
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 
-
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyDniCoordinates;

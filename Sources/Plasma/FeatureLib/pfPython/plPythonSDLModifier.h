@@ -46,10 +46,12 @@ class plPythonFileMod;
 class plStateDataRecord;
 class plSimpleStateVariable;
 
+#include <Python.h>
+
+#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plModifier/plSDLModifier.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 
