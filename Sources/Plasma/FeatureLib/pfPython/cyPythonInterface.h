@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NOTE: Eventually, this will be made into a separate dll, because there should
 //       only be one instance of this interface. 
 //
+#include <Python.h>
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include <Python.h>
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 #include "../../Apps/CyPythonIDE/plCyDebug/plCyDebServer.h"

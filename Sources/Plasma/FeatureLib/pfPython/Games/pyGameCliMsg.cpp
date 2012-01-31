@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameCliMsg.h"
 #include "pyGameCli.h"
 
-#include "TicTacToe\pyTTTMsg.h"
-#include "Heek\pyHeekMsg.h"
-#include "Marker\pyMarkerMsg.h"
-#include "BlueSpiral\pyBlueSpiralMsg.h"
-#include "ClimbingWall\pyClimbingWallMsg.h"
+#include "TicTacToe/pyTTTMsg.h"
+#include "Heek/pyHeekMsg.h"
+#include "Marker/pyMarkerMsg.h"
+#include "BlueSpiral/pyBlueSpiralMsg.h"
+#include "ClimbingWall/pyClimbingWallMsg.h"
 #include "VarSync/pyVarSyncMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////

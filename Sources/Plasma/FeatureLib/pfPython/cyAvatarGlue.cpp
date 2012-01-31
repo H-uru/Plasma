@@ -803,10 +803,10 @@ PYTHON_CLASS_NEW_IMPL(ptAvatar, cyAvatar)
 static PyObject* New(PyObject* sender, PyObject* recvr = nil)
 {
     ptAvatar* newObj = (ptAvatar*)ptAvatar_type.tp_new(&ptAvatar_type, NULL, NULL);
-    pyKey* senderKey = pyKey::ConvertFrom(sender);
-    pyKey* recvrKey = pyKey::ConvertFrom(recvr);
-    newObj->fThis->SetSender(senderKey->getKey());
-    newObj->fThis->AddRecvr(recvrKey->getKey());
+    plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
+    plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
+    newObj->fThis->SetSender(senderKey);
+    newObj->fThis->AddRecvr(recvrKey);
     newObj->fThis->SetNetForce(false);
     return (PyObject*) newObj;
 }
