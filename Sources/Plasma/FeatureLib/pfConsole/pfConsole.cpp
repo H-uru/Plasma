@@ -540,8 +540,9 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     static hsBool   findAgain = false;
     static uint32_t   findCounter = 0;
 
-
-    if( !msg->GetKeyDown() )
+    // filter out keyUps and ascii control characters
+    // as the control functions are handled on the keyDown event
+    if( !msg->GetKeyDown() || (msg->GetKeyChar() > '\0' && msg->GetKeyChar() < ' '))
         return;
 
     if( msg->GetKeyCode() == KEY_ESCAPE )
@@ -1141,7 +1142,7 @@ void    pfConsole::Draw( plPipeline *p )
         strcpy( tmp, "]" );
 
     drawText.DrawString( 10, y, tmp, 255, 255, 255, 255 );
-    i = 10 + drawText.CalcStringWidth( tmp ) + 4;
+    i = 19 + drawText.CalcStringWidth( tmp );
     drawText.DrawString( i, y, fWorkingLine, fConsoleTextColor );
 
     if( fCursorTicks >= 0 )
