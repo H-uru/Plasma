@@ -76,6 +76,7 @@ class pfConsole : public hsKeyedObject
         enum Konstants 
         {
             kNumHistoryItems = 16,
+            kNumHistoryTypes = 2,
             kModeHidden = 0,
             kModeSingleLine = 1,
             kModeFull = 2,
@@ -100,8 +101,10 @@ class pfConsole : public hsKeyedObject
         short   fCursorTicks;
         uint32_t  fMsgTimeoutTimer;
 
-        char    fHistory[ kNumHistoryItems ][ kMaxCharsWide ];
-        uint32_t  fHistoryCursor, fHistoryRecallCursor;
+        struct _fHistory {
+            char fData[ kNumHistoryItems ][ kMaxCharsWide ];
+            uint32_t  fCursor, fRecallCursor;
+        } fHistory[ kNumHistoryTypes ];
         char    *fDisplayBuffer;
         char    fWorkingLine[ kWorkingLineSize ];
         uint32_t  fWorkingCursor;
