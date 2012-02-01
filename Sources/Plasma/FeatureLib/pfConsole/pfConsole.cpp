@@ -225,7 +225,6 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fWorkingCursor = 0;
 
     memset( fHistory, 0, sizeof( fHistory ) );
-    fHistoryCursor = fHistoryRecallCursor = 0;
 
     fEffectCounter = 0;
     fMode = 0;
@@ -626,11 +625,11 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if( msg->GetKeyCode() == KEY_UP )
     {
-        i = ( fHistoryRecallCursor > 0 ) ? fHistoryRecallCursor - 1 : kNumHistoryItems - 1;
-        if( fHistory[ i ][ 0 ] != 0 )
+        i = ( fHistory[ fPythonMode ].fRecallCursor > 0 ) ? fHistory[ fPythonMode ].fRecallCursor - 1 : kNumHistoryItems - 1;
+        if( fHistory[ fPythonMode ].fData[ i ][ 0 ] != 0 )
         {
-            fHistoryRecallCursor = i;
-            strcpy( fWorkingLine, fHistory[ fHistoryRecallCursor ] );
+            fHistory[ fPythonMode ].fRecallCursor = i;
+            strcpy( fWorkingLine, fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fRecallCursor ] );
             findAgain = false;
             findCounter = 0;
             fWorkingCursor = strlen( fWorkingLine );
@@ -639,18 +638,18 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if( msg->GetKeyCode() == KEY_DOWN )
     {
-        if( fHistoryRecallCursor != fHistoryCursor )
+        if( fHistory[ fPythonMode ].fRecallCursor != fHistory[ fPythonMode ].fCursor )
         {
-            i = ( fHistoryRecallCursor < kNumHistoryItems - 1 ) ? fHistoryRecallCursor + 1 : 0;
-            if( i != fHistoryCursor )
+            i = ( fHistory[ fPythonMode ].fRecallCursor < kNumHistoryItems - 1 ) ? fHistory[ fPythonMode ].fRecallCursor + 1 : 0;
+            if( i != fHistory[ fPythonMode ].fCursor )
             {
-                fHistoryRecallCursor = i;
-                strcpy( fWorkingLine, fHistory[ fHistoryRecallCursor ] );
+                fHistory[ fPythonMode ].fRecallCursor = i;
+                strcpy( fWorkingLine, fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fRecallCursor ] );
             }
             else
             {
                 memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
-                fHistoryRecallCursor = fHistoryCursor;
+                fHistory[ fPythonMode ].fRecallCursor = fHistory[ fPythonMode ].fCursor;
             }
             findAgain = false;
             findCounter = 0;
@@ -726,9 +725,9 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         if( fWorkingLine[ 0 ] != 0 )
         {
             // Save to history
-            strcpy( fHistory[ fHistoryCursor ], fWorkingLine );
-            fHistoryCursor = ( fHistoryCursor < kNumHistoryItems - 1 ) ? fHistoryCursor + 1 : 0;
-            fHistoryRecallCursor = fHistoryCursor;
+            strcpy( fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fCursor ], fWorkingLine );
+            fHistory[ fPythonMode ].fCursor = ( fHistory[ fPythonMode ].fCursor < kNumHistoryItems - 1 ) ? fHistory[ fPythonMode ].fCursor + 1 : 0;
+            fHistory[ fPythonMode ].fRecallCursor = fHistory[ fPythonMode ].fCursor;
         }
 
         // EXECUTE!!! (warning: DESTROYS fWorkingLine)
@@ -772,10 +771,10 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                     for ( i=fPythonMultiLines; i>0 ; i--)
                     {
                         // reach back in the history and find this line and paste it in here
-                        int recall = fHistoryCursor - i;
+                        int recall = fHistory[ fPythonMode ].fCursor - i;
                         if ( recall < 0 )
                             recall += kNumHistoryItems;
-                        strcat(biglines,fHistory[ recall ]);
+                        strcat(biglines,fHistory[ fPythonMode ].fData[ recall ]);
                         strcat(biglines,"\n");
                     }
                     // now evaluate this mess they made
