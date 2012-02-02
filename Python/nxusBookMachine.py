@@ -490,8 +490,8 @@ class nxusBookMachine(ptModifier):
             if ageFilename == "Neighborhood":
                 # if the current population and number of owners is zero then don't display it
                 #looks like it doesn't work (at least on Dirtsand)
-                #if age[2] != 0 or age[1] != 0:
-                hoods.append(AgeInstance(age))
+                if age[2] != 0 or age[1] != 0:
+                    hoods.append(AgeInstance(age))
             else:
                 PtDebugPrint("nxusBookMachine.gotPublicAgeList() - got the list of %s instances" % ageFilename)
                 try:
@@ -1047,6 +1047,9 @@ class nxusBookMachine(ptModifier):
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(colorSelected)
         
         self.ISetDescriptionText(description)
+        
+        if self.presentedBookAls is not None:
+            self.IBookRetract()
 
     def IChangeCategory(self, newCategory):
         if newCategory == self.idCategorySelected:
@@ -1127,6 +1130,9 @@ class nxusBookMachine(ptModifier):
         self.IPushGetBookBtn()
         self.idLinkSelected = None
         self.ISetDescriptionText(U"")
+        
+        if self.presentedBookAls is not None:
+            self.IBookRetract()
 
     def IClearGUI(self):
         # clear header titles and disable their buttons
