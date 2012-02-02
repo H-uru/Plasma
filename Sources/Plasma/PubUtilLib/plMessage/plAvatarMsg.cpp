@@ -174,12 +174,13 @@ void plAvTaskMsg::Write(hsStream *stream, hsResMgr *mgr)
 // CTOR()
 plAvSeekMsg::plAvSeekMsg()
 : plAvTaskMsg(),
-  fSeekPoint(nil),
+  fSeekPoint(nullptr),
   fDuration(0),
   fSmartSeek(true),
   fAlignType(kAlignHandle),
   fNoSeek(false),
-  fFlags(kSeekFlagForce3rdPersonOnStart)
+  fFlags(kSeekFlagForce3rdPersonOnStart),
+  fFinishMsg(nullptr)
 {
 }
 
@@ -198,7 +199,8 @@ plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
   fAlignType(alignType),
   fNoSeek(noSeek),
   fFlags(flags),
-  fFinishKey(finishKey)
+  fFinishKey(finishKey),
+  fFinishMsg(nullptr)
 {
 }
 

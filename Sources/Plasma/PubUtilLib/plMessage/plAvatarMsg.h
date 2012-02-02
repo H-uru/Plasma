@@ -218,6 +218,7 @@ public:
     plAvAlignment fAlignType;
     uint8_t fFlags;
     plKey fFinishKey;
+    plMessage* fFinishMsg;
 };
 
 class plAvTaskSeekDoneMsg : public plAvatarMsg
