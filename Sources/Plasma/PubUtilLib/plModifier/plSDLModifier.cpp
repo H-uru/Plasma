@@ -92,7 +92,7 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint
     bool dirtyOnly = (sendFlags & plSynchedObject::kForceFullSend) == 0;
     bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
     int writeOptions=0;
-//  if (dirtyOnly)
+    if (dirtyOnly)
         writeOptions |= plSDL::kDirtyOnly;
     if (broadcast)
         writeOptions |= plSDL::kBroadcast;
