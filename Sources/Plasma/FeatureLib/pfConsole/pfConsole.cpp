@@ -873,7 +873,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             }
         }
         // or are they just typing in a working line
-        else if( fWorkingCursor < kMaxCharsWide - 2 && key != 0 )
+        else if( strlen( fWorkingLine ) < kMaxCharsWide - 2 && key != 0 )
         {
             for( i = strlen( fWorkingLine ) + 1; i > fWorkingCursor; i-- )
                 fWorkingLine[ i ] = fWorkingLine[ i - 1 ];
