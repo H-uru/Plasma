@@ -2411,7 +2411,7 @@ void plClient::WindowActivate(bool active)
 void plClient::IOnAsyncInitComplete () {
     // Init State Desc Language (files should now be downloaded and in place)
     plSDLMgr::GetInstance()->SetNetApp(plNetClientMgr::GetInstance());
-    plSDLMgr::GetInstance()->Init( plSDL::kDisallowTimeStamping );
+    plSDLMgr::GetInstance()->Init( 0 );
 
     PythonInterface::initPython();
     // set the pipeline for the python cyMisc module so that it can do a screen capture

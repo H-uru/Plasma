@@ -525,7 +525,7 @@ void VaultSDLNode::SetSdlName (const wchar_t v[]) {
 
 //============================================================================
 #ifdef CLIENT
-bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOptions) {
+bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec) {
     if (!sdlDataLen || !sdlData)
         return false;
 
@@ -546,12 +546,17 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
     // out of (relto door will be closed, window shut, etc).    
     // rec->SetFromDefaults(false);
 
-    if (!rec->Read( &ram, 0, readOptions))
+    // Note: For servers that are missing timestamps, we want to go ahead and say "now" was their last modification.
+    //       If that's somehow inadequate, then the server programmer needs to not write stupid servers/netcode.
+    //       Obviously, we want it to all be clean so that only our changes are dirty.
+    uint32_t rwFlags = plSDL::kWantTimeStamp;
+
+    if (!rec->Read( &ram, rwFlags ))
         return false;
         
     // If we converted the record to a newer version, re-save it.       
     if (rec->GetDescriptor()->GetVersion() != sdlRecVersion)
-        SetStateDataRecord(rec, readOptions);
+        SetStateDataRecord(rec);
     
     return true;
 }
@@ -559,10 +564,16 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
 
 //============================================================================
 #ifdef CLIENT
-void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned writeOptions) {
+void VaultSDLNode::SetStateDataRecord (plStateDataRecord * rec) {
+    // Right now, only the fields we changed are dirty (whew), so let's update their TS *now*
+    // Then, dirty *everything*. Normally, we would try to be conservative and write only the dirty fields,
+    //       but Cyan's servers seem to suck a lot :(
+    rec->TimeStampDirtyVars();
+    uint32_t rwFlags = plSDL::kMakeDirty | plSDL::kWriteTimeStamps;
+
     hsRAMStream ram;
     rec->WriteStreamHeader(&ram);
-    rec->Write(&ram, 0, writeOptions);
+    rec->Write(&ram, 0, rwFlags);
     ram.Rewind();
     
     unsigned bytes = ram.GetEOF();
@@ -579,10 +590,10 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
 
 //============================================================================
 #ifdef CLIENT
-void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned writeOptions) {
+void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[]) {
     {
         plStateDataRecord * rec = NEWZERO(plStateDataRecord);
-        bool exists = GetStateDataRecord(rec, 0);
+        bool exists = GetStateDataRecord(rec);
         delete rec;
         if (exists)
             return;
@@ -593,7 +604,7 @@ void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned wri
     if (plStateDescriptor * des = plSDLMgr::GetInstance()->FindDescriptor(aStr, plSDL::kLatestVersion)) {
         plStateDataRecord rec(des);
         rec.SetFromDefaults(false);
-        SetStateDataRecord(&rec, writeOptions|plSDL::kDontWriteDirtyFlag);
+        SetStateDataRecord(&rec);
     }
 }
 #endif // def CLIENT

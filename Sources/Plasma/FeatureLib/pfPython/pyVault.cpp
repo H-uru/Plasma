@@ -449,7 +449,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {
                 VaultSDLNode sdl(rvnSdl);
                 plStateDataRecord * rec = NEWZERO(plStateDataRecord);
-                if (sdl.GetStateDataRecord(rec, plSDL::kKeepDirty))
+                if (sdl.GetStateDataRecord(rec))
                     result = pySDLStateDataRecord::New(rec);
                 else
                     delete rec;
@@ -493,7 +493,7 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
 
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {
                 VaultSDLNode sdl(rvnSdl);
-                sdl.SetStateDataRecord(rec, plSDL::kDirtyOnly | plSDL::kTimeStampOnRead);
+                sdl.SetStateDataRecord(rec);
                 rvnSdl->DecRef();
             }
             rvnInfo->DecRef();

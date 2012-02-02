@@ -84,10 +84,10 @@ public:
 //
     int     GetIdent() const;
     void    SetIdent( int v );
-    void InitStateDataRecord( const char* agename, int flags);
+    void InitStateDataRecord( const char* agename );
 
     PyObject * GetStateDataRecord() const; // returns pySDLStateDataRecord
-    void SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions=0 );
+    void SetStateDataRecord( const pySDLStateDataRecord & rec );
 };
 
 #endif // _pyVaultSDLNode_h_
