@@ -102,7 +102,7 @@ PyObject * pyVaultSDLNode::GetStateDataRecord() const
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
+void pyVaultSDLNode::InitStateDataRecord( const char* agename )
 {
     if (!fNode)
         return;
@@ -110,15 +110,15 @@ void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, agename, arrsize(wStr)); 
     VaultSDLNode sdl(fNode);
-    sdl.InitStateDataRecord(wStr, flags);
+    sdl.InitStateDataRecord(wStr);
 }
 
-void pyVaultSDLNode::SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions/*=0 */)
+void pyVaultSDLNode::SetStateDataRecord( const pySDLStateDataRecord & rec )
 {
     if (!fNode)
         return;
     
     VaultSDLNode sdl(fNode);
-    sdl.SetStateDataRecord(rec.GetRec(), writeOptions);
+    sdl.SetStateDataRecord(rec.GetRec());
 }
 

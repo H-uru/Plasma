@@ -418,7 +418,7 @@ RelVaultNode * VaultAgeGetDeviceInboxIncRef (const wchar_t deviceName[]);
 void VaultClearDeviceInboxMap ();
 
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);
-void VaultAgeUpdateAgeSDL (const class plStateDataRecord * rec);
+void VaultAgeUpdateAgeSDL (class plStateDataRecord * rec);
 
 unsigned VaultAgeGetAgeTime ();
 

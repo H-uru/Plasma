@@ -76,13 +76,12 @@ PYTHON_METHOD_DEFINITION(ptVaultSDLNode, setIdent, args)
 PYTHON_METHOD_DEFINITION(ptVaultSDLNode, initStateDataRecord, args)
 {
     char* fileName;
-    int flags;
-    if (!PyArg_ParseTuple(args, "si", &fileName, &flags))
+    if (!PyArg_ParseTuple(args, "s", &fileName))
     {
-        PyErr_SetString(PyExc_TypeError, "initStateDataRecord expects a string and an int");
+        PyErr_SetString(PyExc_TypeError, "initStateDataRecord expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->InitStateDataRecord(fileName, flags);
+    self->fThis->InitStateDataRecord(fileName);
     PYTHON_RETURN_NONE;
 }
 
@@ -94,28 +93,27 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultSDLNode, getStateDataRecord)
 PYTHON_METHOD_DEFINITION(ptVaultSDLNode, setStateDataRecord, args)
 {
     PyObject* recObj = NULL;
-    int writeOptions = 0;
-    if (!PyArg_ParseTuple(args, "O|i", &recObj, &writeOptions))
+    if (!PyArg_ParseTuple(args, "O", &recObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setStateDataRecord expects a ptSDLStateDataRecord and an optional int");
+        PyErr_SetString(PyExc_TypeError, "setStateDataRecord expects a ptSDLStateDataRecord");
         PYTHON_RETURN_ERROR;
     }
     if (!pySDLStateDataRecord::Check(recObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setStateDataRecord expects a ptSDLStateDataRecord and an optional int");
+        PyErr_SetString(PyExc_TypeError, "setStateDataRecord expects a ptSDLStateDataRecord");
         PYTHON_RETURN_ERROR;
     }
     pySDLStateDataRecord* rec = pySDLStateDataRecord::ConvertFrom(recObj);
-    self->fThis->SetStateDataRecord(*rec, writeOptions);
+    self->fThis->SetStateDataRecord(*rec);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultSDLNode)
     PYTHON_METHOD_NOARGS(ptVaultSDLNode, getIdent, "UNKNOWN"),
     PYTHON_METHOD(ptVaultSDLNode, setIdent, "Params: v\nUNKNOWN"),
-    PYTHON_METHOD(ptVaultSDLNode, initStateDataRecord, "Params: filename,flags\nRead the SDL Rec from File if needed"),
+    PYTHON_METHOD(ptVaultSDLNode, initStateDataRecord, "Params: filename\nRead the SDL Rec from File if needed"),
     PYTHON_METHOD_NOARGS(ptVaultSDLNode, getStateDataRecord, "Returns the ptSDLStateDataRecord associated with this node"),
-    PYTHON_METHOD(ptVaultSDLNode, setStateDataRecord, "Params: rec,writeOptions=0\nSets the ptSDLStateDataRecord"),
+    PYTHON_METHOD(ptVaultSDLNode, setStateDataRecord, "Params: rec\nSets the ptSDLStateDataRecord"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

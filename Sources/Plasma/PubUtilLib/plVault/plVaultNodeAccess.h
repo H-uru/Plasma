@@ -248,9 +248,9 @@ struct VaultSDLNode : NetVaultNodeAccess {
     void SetSdlName (const wchar_t v[]);
 
 #ifdef CLIENT
-    bool GetStateDataRecord (class plStateDataRecord * out, unsigned readOptions = 0);
-    void SetStateDataRecord (const class plStateDataRecord * rec, unsigned writeOptions = 0);
-    void InitStateDataRecord (const wchar_t sdlRecName[], unsigned writeOptions = 0);
+    bool GetStateDataRecord (class plStateDataRecord * out);
+    void SetStateDataRecord (class plStateDataRecord * rec);
+    void InitStateDataRecord (const wchar_t sdlRecName[]);
 #endif // def CLIENT
 };
 
