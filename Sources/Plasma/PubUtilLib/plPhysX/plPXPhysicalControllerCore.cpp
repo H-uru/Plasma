@@ -449,7 +449,7 @@ void plPXPhysicalControllerCore::MoveKinematicToController(hsPoint3& pos)
             newPos.x = (NxReal)pos.fX;
             newPos.y = (NxReal)pos.fY;
             newPos.z = (NxReal)pos.fZ+kPhysZOffset;
-            if ((fEnabled || fKinematic) && fBehavingLikeAnimatedPhys)
+            if (fBehavingLikeAnimatedPhys)
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
@@ -491,7 +491,7 @@ void plPXPhysicalControllerCore::ISetKinematicLoc(const hsMatrix44& l2w)
     // add z offset
     kPos.fZ += kPhysZOffset;
     // Update the physical position of kinematic
-    if (fEnabled || fBehavingLikeAnimatedPhys)
+    if (fBehavingLikeAnimatedPhys)
         fKinematicActor->moveGlobalPosition(plPXConvert::Point(kPos));
     else
         fKinematicActor->setGlobalPosition(plPXConvert::Point(kPos));
