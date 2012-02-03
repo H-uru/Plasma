@@ -337,7 +337,8 @@ class nxusBookMachine(ptModifier):
         self.guiState = kGUIDeactivated
         self.getBookBtnUp = False
         self.gettingBook = False
-        self.buttonsEnabled = False
+        self.controlsEnabled = False
+        self.animCount = 0
         self.dialogVisible = False
 
         self.currentStatusBarText = U""
@@ -616,20 +617,20 @@ class nxusBookMachine(ptModifier):
 
     def IPushGetBookBtn(self):
         if self.getBookBtnUp:
+            self.animCount += 1
             respButtonPress.run(self.key)
-            self.buttonsEnabled = False
             self.getBookBtnUp = False
 
     def IRetractGetBookBtn(self):
         if not self.getBookBtnUp:
+            self.animCount += 1
             respBookSelect.run(self.key) #retract button
             self.getBookBtnUp = True
-            self.buttonsEnabled = False # reenable when button is done animating
 
     def IBookRetract(self):
         actLink.disable()
+        self.animCount += 1
         respBookRetract.run(self.key)
-        self.buttonsEnabled = False
         self.presentedBookAls = None
 
     def OnVaultNotify(self, event, tupdata):
@@ -773,7 +774,8 @@ class nxusBookMachine(ptModifier):
         PtDisableControlKeyEvents(self.key)
         PtSendKIMessage(kEnableKIandBB, 0)
         respKISlotReturn.run(self.key)
-        self.buttonsEnabled = True
+        self.controlsEnabled = True
+        self.animCount = 0
 
         if self.presentedBookAls is not None:
             self.IBookRetract()
@@ -782,10 +784,12 @@ class nxusBookMachine(ptModifier):
             self.ICancelLinkChoice()
 
     def IOnGetBookBtn(self, state, events):
-        self.gettingBook = True
-        self.IPushGetBookBtn()
+        if self.animCount == 0:
+            self.gettingBook = True
+            self.IPushGetBookBtn()
 
     def IOnRespButtonPress(self, state, events):
+        self.animCount -= 1
         if self.gettingBook:
             #if there is already book presented, so we need to retract it
             if self.presentedBookAls is not None:
@@ -797,8 +801,8 @@ class nxusBookMachine(ptModifier):
                 selectedAls = self.controlIdToAgeEntry[self.idLinkSelected].als
                 self.presentedBookAls = selectedAls
                 self.IDrawLinkPanel()
-        else:
-            self.buttonsEnabled = True
+                
+            self.animCount += 1
 
 
     def IOnRespBookRetract(self, state, events):
@@ -809,16 +813,16 @@ class nxusBookMachine(ptModifier):
             self.IDrawLinkPanel()
             respGetBook.run(self.key)
         else:
-            self.buttonsEnabled = True
+            self.animCount -= 1
             self.gettingBook = False
 
     def IOnRespGetBook(self, state, events):
         actLink.enable()
         self.gettingBook = False
-        self.buttonsEnabled = True
+        self.animCount -= 1
 
     def IOnRespBookSelect(self, state, events):
-        self.buttonsEnabled = True
+        self.animCount -= 1
         self.getBookBtnUp = True
 
     def IOnActLink(self, state, events):
@@ -827,8 +831,7 @@ class nxusBookMachine(ptModifier):
         else:
             respGUIOff.run(self.key)
             actGetBook.disable()
-            self.buttonsEnabled = False
-            respGUIOff.run(self.key)
+            self.controlsEnabled = False
             self.IDoLink()
 
     def OnNotify(self, state, id, events):
@@ -874,7 +877,7 @@ class nxusBookMachine(ptModifier):
     def OnControlKeyEvent(self, controlKey, activeFlag):
         "exit machine op mode"
         if controlKey in (PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight):
-            if self.guiState == kGUIActivated and self.buttonsEnabled:
+            if self.guiState == kGUIActivated and self.controlsEnabled and self.animCount == 0:
                 actGetBook.disable()
                 respGUIOff.run(self.key)
 
@@ -898,17 +901,16 @@ class nxusBookMachine(ptModifier):
                 self.IClearGUI()
                 self.IUpdateHoodLink()
                 self.IUpdateLinks()
-                self.buttonsEnabled = True
+                self.controlsEnabled = True
 
-        #don't allow any click while self.buttonsEnabled is false (mostly when animations are playing) 
-        elif event == kAction and self.buttonsEnabled:
+        #don't allow any click while self.controlsEnabled is false or there are any animations playing) 
+        elif event == kAction and self.controlsEnabled and self.animCount == 0:
             ctrlID = control.getTagID()
             ##################
             # Link Select Buttons  #
             ##################
             if (ctrlID >= kIDBtnLinkSelectFirst and ctrlID <= kIDBtnLinkSelectLast) or ctrlID == kIDBtnNeighborhoodSelect:
                 self.IRetractGetBookBtn()
-
                 self.IChangeSelectedLink(ctrlID)
 
             ##################
@@ -928,9 +930,10 @@ class nxusBookMachine(ptModifier):
 
             elif ctrlID == kIDBtnScrollUp and self.indexDisplayStart > 0:
                 self.indexDisplayStart -= 1
-                if self.idLinkSelected is not None:
+                if self.idLinkSelected is not None and self.idLinkSelected != kIDBtnNeighborhoodSelect:
                     self.idLinkSelected += 10
-                    if self.idLinkSelected > kIDBtnLinkSelectLast:  # selected link scrolled off screen
+                    if self.idLinkSelected > kIDBtnLinkSelectLast:  
+                    # selected link scrolled off screen
                         self.ICancelLinkChoice()
 
                 self.IUpdateGUILinkList()
@@ -940,9 +943,10 @@ class nxusBookMachine(ptModifier):
                 #rhs value can be negative - but this shouldn't happen, since button should be disabled
                 if self.indexDisplayStart < entryCount - kNumDisplayFields:
                     self.indexDisplayStart = self.indexDisplayStart + 1
-                    if self.idLinkSelected is not None:
+                    if self.idLinkSelected is not None and self.idLinkSelected != kIDBtnNeighborhoodSelect:
                         self.idLinkSelected -= 10
-                        if self.idLinkSelected < kIDBtnLinkSelectFirst: # selected link scrolled off screen
+                        if self.idLinkSelected < kIDBtnLinkSelectFirst: 
+                        # selected link scrolled off screen
                             self.ICancelLinkChoice()
                     self.IUpdateGUILinkList()
                 else:
@@ -1047,9 +1051,6 @@ class nxusBookMachine(ptModifier):
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(colorSelected)
         
         self.ISetDescriptionText(description)
-        
-        if self.presentedBookAls is not None:
-            self.IBookRetract()
 
     def IChangeCategory(self, newCategory):
         if newCategory == self.idCategorySelected:
@@ -1059,6 +1060,9 @@ class nxusBookMachine(ptModifier):
         self.idCategorySelected = newCategory
         #update links with entries from new category
         self.IUpdateLinks()
+        
+        if self.presentedBookAls is not None and self.idLinkSelected != kIDBtnNeighborhoodSelect:
+            self.IBookRetract()
 
     def IChangeSelectedLink(self, newSelection):
         if newSelection == self.idLinkSelected:
@@ -1067,6 +1071,9 @@ class nxusBookMachine(ptModifier):
         description = self.controlIdToAgeEntry[newSelection].description
         self.IChangeSelection(self.idLinkSelected, newSelection, description)
         self.idLinkSelected = newSelection
+        
+        if self.presentedBookAls is not None:
+            self.IBookRetract()
 
 
     def IGetControlColor(self, controlId, enabled = True):
