@@ -2252,14 +2252,24 @@ void plClient::IDetectAudioVideoSettings()
     if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DRefDev)
         refDevice = true;
 
-    plPipeline::fDefaultPipeParams.Width = hsG3DDeviceSelector::kDefaultWidth;
-    plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
     plPipeline::fDefaultPipeParams.ColorDepth = hsG3DDeviceSelector::kDefaultDepth;
 #if defined(HS_DEBUGGING) || defined(DEBUG)
     plPipeline::fDefaultPipeParams.Windowed = true;
 #else
     plPipeline::fDefaultPipeParams.Windowed = false;
 #endif
+
+    // Use current desktop resolution for fullscreen mode
+    if(!plPipeline::fDefaultPipeParams.Windowed)
+    {
+        plPipeline::fDefaultPipeParams.Width = GetSystemMetrics(SM_CXSCREEN);
+        plPipeline::fDefaultPipeParams.Height = GetSystemMetrics(SM_CYSCREEN);
+    }
+    else
+    {
+        plPipeline::fDefaultPipeParams.Width = hsG3DDeviceSelector::kDefaultWidth;
+        plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
+    }
 
     plPipeline::fDefaultPipeParams.Shadows = 0;
     // enable shadows if TnL is available, meaning not an intel extreme.
