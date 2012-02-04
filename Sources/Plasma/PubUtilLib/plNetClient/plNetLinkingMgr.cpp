@@ -167,8 +167,10 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     if (!params->success) {
         plNetClientMgr::StaticErrorMsg(params->msg);
         hsMessageBox(params->msg, "Linking Error", hsMessageBoxNormal, hsMessageBoxIconError);
+#ifdef PLASMA_EXTERNAL_RELEASE
         plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
         clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+#endif
         return;
     }
     
