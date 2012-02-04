@@ -59,13 +59,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plResDownloadStream : public plZlibStream
 {
     plOperationProgress* fProgress;
+    char* fFilename;
     bool fIsZipped;
 
 public:
     plResDownloadStream(plOperationProgress* prog, const wchar_t* reqFile)
-        : fProgress(prog) 
+        : fProgress(prog), fFilename(nil)
     { 
         fIsZipped = wcscmp(plFileUtils::GetFileExt(reqFile), L"gz") == 0;
+    }
+
+    ~plResDownloadStream()
+    {
+        if (fFilename)
+            delete[] fFilename;
+    }
+
+    hsBool Open(const char* filename, const char* mode)
+    {
+        fFilename = hsStrcpy(filename);
+        return plZlibStream::Open(filename, mode);
     }
 
     uint32_t Write(uint32_t count, const void* buf)
@@ -78,6 +91,7 @@ public:
     }
 
     bool IsZipped() const { return fIsZipped; }
+    void Unlink() const { plFileUtils::RemoveFile(fFilename); }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -93,7 +107,6 @@ static void FileDownloaded(
     if (((plResDownloadStream*)writer)->IsZipped())
         plFileUtils::StripExt(name); // Kill off .gz
     writer->Close();
-    delete writer;
 
     switch (result)
     {
@@ -107,6 +120,7 @@ static void FileDownloaded(
             // Continue down the warpath
             patcher->IssueRequest();
             delete[] name;
+            delete writer;
             return;
         case kNetErrFileNotFound:
             PatcherLog(kError, "    Download Failed: %s not found", name);
@@ -119,8 +133,10 @@ static void FileDownloaded(
     }
 
     // Failure case
+    ((plResDownloadStream*)writer)->Unlink();
     patcher->Finish(false);
     delete[] name;
+    delete writer;
 }
 
 static void ManifestDownloaded(
