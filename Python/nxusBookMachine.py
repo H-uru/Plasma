@@ -1346,7 +1346,8 @@ class nxusBookMachine(ptModifier):
                 displayName = selectedInfo.getDisplayName()
 
             #normal cases: just add link with default link spot
-            newEntry = LinkListEntry(displayName, U"", description, False, entryEnabled)
+            stringLinkInfo = U"%05d%   04d%   04d" %(0,0,0) #temporary consistency hack. fixme
+            newEntry = LinkListEntry(displayName, stringLinkInfo, description, False, entryEnabled)
             newEntry.setLinkStruct(selectedInfo) #create link to instance, use default spawnPoint
             cityLinks.append(newEntry)
 
