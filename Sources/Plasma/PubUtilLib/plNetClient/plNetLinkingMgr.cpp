@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetTransport/plNetTransportMember.h"        // OfferLinkToPlayer()
 
 #include "plgDispatch.h"
+#include "pnMessage/plClientMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "pnKeyedObject/plKey.h"
@@ -159,8 +160,21 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     void *                  notify,
     void *                  userState
 ) {
-    plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
+    NCAgeJoinerCompleteNotify* params = (NCAgeJoinerCompleteNotify*)notify;
+
+    // Tell the user we failed to link.
+    // In the future, we might want to try graceful recovery (link back to Relto?)
+    if (!params->success) {
+        plNetClientMgr::StaticErrorMsg(params->msg);
+        hsMessageBox(params->msg, "Linking Error", hsMessageBoxNormal, hsMessageBoxIconError);
+#ifdef PLASMA_EXTERNAL_RELEASE
+        plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
+        clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+#endif
+        return;
+    }
     
+    plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
     switch (type) {
         case kAgeJoinerComplete: {
             ASSERT(joiner == s_ageJoiner);
