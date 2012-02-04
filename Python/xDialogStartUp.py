@@ -539,7 +539,10 @@ class xDialogStartUp(ptResponder):
                 PtShowDialog("GUIDialog04d")
             return
         
-        elif opType == PtAccountUpdateType.kActivePlayer:
+        if playerInt == 0:
+            return
+        
+        if opType == PtAccountUpdateType.kActivePlayer:
             print "Active player set."
 
             pythonBox = PtFindSceneobject("OptionsDialog", "GUI")
