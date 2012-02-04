@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 
 // Useful string functions
-char* PyString_AsStringEx(PyObject*);
-inline bool PyString_CheckEx(PyObject*);
+char* PyString_AsStringEx(PyObject* obj);
+bool PyString_CheckEx(PyObject* obj);
 
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 
