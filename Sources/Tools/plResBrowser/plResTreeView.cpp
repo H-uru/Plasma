@@ -116,7 +116,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
         {
             TVITEM tvi = {0};
             tvi.mask       = TVIF_TEXT | TVIF_PARAM;
-            tvi.pszText    = text ? (char*)text : "<NULL>";
+            tvi.pszText    = text ? (char*)text : (char*)"<NULL>";
             tvi.cchTextMax = text ? strlen(text) : 7;
             tvi.lParam     = (LPARAM)info;
 

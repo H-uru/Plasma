@@ -119,7 +119,7 @@ const wchar_t * ProductLongName () {
 //============================================================================
 void ProductString (wchar_t * dest, unsigned destChars) {
     // Example: "UruLive.2.214 - External.Release"
-    swprintf(
+    hsSnwprintf(
         dest,
         destChars,
         L"%s.%u.%u - %s.%s",
