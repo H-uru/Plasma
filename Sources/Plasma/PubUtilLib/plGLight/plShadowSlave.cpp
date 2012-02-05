@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <float.h>
 #include <math.h>
 
-#ifdef _MSC_VER
+#ifdef HS_BUILD_FOR_WIN32
 #define isnan _isnan
 #endif
 
