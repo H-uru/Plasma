@@ -141,6 +141,7 @@ void CpuGetInfo (
     uint32_t flags[2]  = { 0, 0 };
     cpuVendor[0]    = 0;
 
+#ifdef _MSC_VER
     _asm {
         // Detect if cpuid instruction is supported by attempting
         // to change the ID bit of EFLAGS
@@ -187,6 +188,7 @@ void CpuGetInfo (
 
 DONE:
     }
+#endif
 
     // Decode capability flags
     const static struct CpuCap {
