@@ -82,7 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 
-static void __cdecl LogDumpProc (
+static void CDECL LogDumpProc (
     void *              ,
     const wchar_t         fmt[],
     ...

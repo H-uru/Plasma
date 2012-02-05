@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef pyNetServerSessionInfo_h_inc
 #define pyNetServerSessionInfo_h_inc
+#include <Python.h>
 
 #include "HeadSpin.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "pnUUID/pnUUID.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

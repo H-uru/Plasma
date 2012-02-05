@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: a wrapper class to provide an interface to the scoring system
 //
+#include <Python.h>
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 

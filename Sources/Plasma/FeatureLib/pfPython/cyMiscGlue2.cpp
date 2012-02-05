@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include <Python.h>
 #include "cyMisc.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
@@ -47,11 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 
 // for enums
-#include "plNetCommon\plNetCommon.h"
-#include "plResMgr\plLocalization.h"
-#include "plMessage\plLOSRequestMsg.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plResMgr/plLocalization.h"
+#include "plMessage/plLOSRequestMsg.h"
 
-#include <Python.h>
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtYesNoDialog, args, "Params: selfkey,dialogMessage\nThis will display a Yes/No dialog to the user with the text dialogMessage\n"
             "This dialog _has_ to be answered by the user.\n"

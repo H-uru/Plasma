@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyCluster_h
 #define pyCluster_h
 
+#include <Python.h>
 #include "pyKey.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

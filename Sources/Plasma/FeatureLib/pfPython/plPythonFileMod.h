@@ -49,12 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This modifier will handle the interface to python code that has been file-ized.
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "pnModifier/plMultiModifier.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include <Python.h>
 
 #include "plPythonParameter.h"
 
