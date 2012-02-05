@@ -55,42 +55,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-#ifndef _M_IX86
 
 unsigned MathHighBitPos (uint32_t val) {
     ASSERT(val);
     double f = (double)val;
     return (*((uint32_t *)&f + 1) >> 20) - 1023;
 }
-
-#else
-
-__declspec(naked) unsigned __fastcall MathHighBitPos (uint32_t) {
-    __asm {
-        bsr     eax, ecx
-        ret     0
-    };
-}
-
-#endif
-
-//===========================================================================
-#ifndef _M_IX86
-
-unsigned MathLowBitPos (uint32_t val) {
-    val &= ~(val - 1);  // clear all but the low bit
-    ASSERT(val);
-    double f = (double)val;
-    return (*((uint32_t *)&f + 1) >> 20) - 1023;
-}
-
-#else
-
-__declspec(naked) unsigned __fastcall MathLowBitPos (uint32_t) {
-    __asm {
-        bsf     eax, ecx
-        ret     0
-    };
-}
-
-#endif

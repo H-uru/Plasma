@@ -52,25 +52,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Calling conventions
-*
-***/
-
-#ifdef _M_IX86
-#define  MATHCALL  __fastcall
-#else
-#define  MATHCALL
-#endif
-
-
-/*****************************************************************************
-*
 *   Bit manipulation functions
 *
 ***/
 
-unsigned MATHCALL MathLowBitPos (uint32_t val);
-unsigned MATHCALL MathHighBitPos (uint32_t val);
+unsigned MathHighBitPos (uint32_t val);
 
 //===========================================================================
 inline unsigned MathBitCount (uint32_t val) {
