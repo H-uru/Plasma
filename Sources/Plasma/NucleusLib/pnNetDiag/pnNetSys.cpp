@@ -68,7 +68,7 @@ typedef DWORD (PASCAL FAR * FGetAdaptersInfo)(
 *
 ***/
 
-static FGetAdaptersInfo     GetAdaptersInfo;
+static FGetAdaptersInfo     getAdaptersInfo;
 
 
 /*****************************************************************************
@@ -81,14 +81,14 @@ static FGetAdaptersInfo     GetAdaptersInfo;
 void SysStartup () {
 
     if (g_lib) {
-        GetAdaptersInfo = (FGetAdaptersInfo)GetProcAddress(g_lib, "GetAdaptersInfo");
+        getAdaptersInfo = (FGetAdaptersInfo)GetProcAddress(g_lib, "GetAdaptersInfo");
     }
 }
 
 //============================================================================
 void SysShutdown () {
 
-    GetAdaptersInfo = nil;
+    getAdaptersInfo = nil;
 }
 
 
@@ -150,17 +150,17 @@ void NetDiagSys (
     }
     
     { // Adapters
-        if (!GetAdaptersInfo) {
+        if (!getAdaptersInfo) {
             dump(L"[SYS] Failed to load IP helper API");
             callback(diag, kNetProtocolNil, kNetErrNotSupported, param);
             return;
         }
 
         ULONG ulOutBufLen = 0;
-        GetAdaptersInfo(nil, &ulOutBufLen);
+        getAdaptersInfo(nil, &ulOutBufLen);
         PIP_ADAPTER_INFO pInfo = (PIP_ADAPTER_INFO)malloc(ulOutBufLen);
         PIP_ADAPTER_INFO pAdapter;
-        if (GetAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
+        if (getAdaptersInfo(pInfo, &ulOutBufLen) == NO_ERROR) {
             pAdapter = pInfo;
             while (pAdapter) {
                 dump(L"[SYS] NIC: %S", pAdapter->Description);
