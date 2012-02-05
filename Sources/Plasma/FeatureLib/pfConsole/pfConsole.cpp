@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "pfPython/cyPythonInterface.h"
+
 #include "HeadSpin.h"
 #include "pfConsole.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
@@ -62,7 +64,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plPipeline.h"
 
-#include "pfPython/cyPythonInterface.h"
 #include "plNetClient/plNetClientMgr.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1214,7 +1215,7 @@ void pfConsole::AddLineF(const char * fmt, ...) {
     char str[1024];
     va_list args;
     va_start(args, fmt);
-    _vsnprintf(str, arrsize(str), fmt, args);
+    hsVsnprintf(str, arrsize(str), fmt, args);
     va_end(args);
     AddLine(str);
 }

@@ -57,6 +57,11 @@ plUUID::plUUID( const plUUID & other )
     CopyFrom( &other );
 }
 
+plUUID::plUUID( const Uuid & uuid )
+{
+    memcpy(fData, uuid.data, sizeof(fData));
+}
+
 void plUUID::Read( hsStream * s)
 {
     s->LogSubStreamPushDesc("plUUID");
@@ -72,4 +77,10 @@ const char * plUUID::AsString() const {
     static std::string str;
     ToStdString(str);
     return str.c_str();
+}
+
+plUUID::operator Uuid () const {
+    Uuid uuid;
+    memcpy(uuid.data, fData, sizeof(uuid.data));
+    return uuid;
 }

@@ -485,7 +485,7 @@ static void INetCliAuthDeletePlayerCallback (
     ENetError                       result,
     void *                          param
 ) {
-    unsigned playerInt = (unsigned)param;
+    uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
         LogMsg(kLogDebug, L"Delete player failed: %d %s", playerInt, NetErrorToString(result));
@@ -493,16 +493,16 @@ static void INetCliAuthDeletePlayerCallback (
     else {
         LogMsg(kLogDebug, L"Player deleted: %d", playerInt);
 
-        unsigned currPlayer = s_player ? s_player->playerInt : 0;       
+        uint32_t currPlayer = s_player ? s_player->playerInt : 0;       
 
-        {for (unsigned i = 0; i < s_players.Count(); ++i) {
+        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
             if (s_players[i].playerInt == playerInt) {
                 s_players.DeleteUnordered(i);
                 break;
             }
         }}
 
-        {for (unsigned i = 0; i < s_players.Count(); ++i) {
+        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
             if (s_players[i].playerInt == currPlayer) {
                 s_player = &s_players[i];
                 break;
@@ -512,7 +512,7 @@ static void INetCliAuthDeletePlayerCallback (
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kDeletePlayer);
     updateMsg->SetPlayerInt(playerInt);
-    updateMsg->SetResult((unsigned)result);
+    updateMsg->SetResult((uint32_t)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
     updateMsg->Send();
 }
@@ -638,7 +638,7 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     ENetError       result,
     void *          param
 ) {
-    unsigned playerInt = (unsigned)param;
+    uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
         LogMsg(kLogDebug, L"Upgrade visitor failed: %d %s", playerInt, NetErrorToString(result));
@@ -646,7 +646,7 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     else {
         LogMsg(kLogDebug, L"Upgrade visitor succeeded: %d", playerInt);
 
-        {for (unsigned i = 0; i < s_players.Count(); ++i) {
+        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
             if (s_players[i].playerInt == playerInt) {
                 s_players[i].explorer = true;
                 break;
@@ -656,7 +656,7 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kUpgradePlayer);
     updateMsg->SetPlayerInt(playerInt);
-    updateMsg->SetResult((unsigned)result);
+    updateMsg->SetResult((uint32_t)result);
     updateMsg->SetBCastFlag(plMessage::kBCastByExactType);
     updateMsg->Send();
 }

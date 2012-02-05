@@ -461,7 +461,8 @@ void plNetClientMgr::StartLinkInFX()
         plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
         lem->SetLeavingAge(false);  // linking in
         lem->SetLinkKey(fLocalPlayerKey);
-        lem->SetLinkInAnimKey(avMod->GetLinkInAnimKey());
+        plKey animKey = avMod->GetLinkInAnimKey();
+        lem->SetLinkInAnimKey(animKey);
         
         // indicate if we are invisible 
         if (avMod && avMod->IsInStealthMode() && avMod->GetTarget(0))
@@ -1287,7 +1288,7 @@ void plNetClientMgr::QueueDisableNet (bool showDlg, const char str[]) {
     msg->Ref();
     fDisableMsg = msg;
     IDisableNet();
-#endif;
+#endif
 }
 
 void plNetClientMgr::IDisableNet () {

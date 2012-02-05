@@ -158,7 +158,7 @@ public:
     plPointBlend(plPointChannel *channelA, plPointChannel *channelB, plScalarChannel *channelBias);
     virtual ~plPointBlend();
 
-    plAGChannel * plPointBlend::Remove(plAGChannel *srceToRemove);
+    plAGChannel * Remove(plAGChannel *srceToRemove);
 
     const plPointChannel * GetPointChannelA() const { return fPointA; }
     void SetPointChannelA(plPointChannel *the_PointA) { fPointA = the_PointA; }

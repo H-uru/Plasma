@@ -109,7 +109,7 @@ plSceneInputInterface::plSceneInputInterface()
 {
     fPipe = nil;
     fSpawnPoint = nil;
-    GuidClear(&fAgeInstanceGuid);
+    fAgeInstanceGuid.Clear();
     fInstance = this;
     SetEnabled( true );         // Always enabled
 }
@@ -790,7 +790,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
         }
         else if ( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kSetShareAgeInstanceGuid )
         {
-            fAgeInstanceGuid = mgrMsg->GetAgeInstanceGuid();
+            fAgeInstanceGuid = plUUID(mgrMsg->GetAgeInstanceGuid());
         }
     }
     plVaultNotifyMsg* pVaultMsg = plVaultNotifyMsg::ConvertNoRef(msg);
@@ -817,15 +817,15 @@ void plSceneInputInterface::ILinkOffereeToAge()
     info.SetAgeFilename(fOfferedAgeFile);
     info.SetAgeInstanceName(fOfferedAgeInstance);
 
-    bool isAgeInstanceGuidSet = !GuidIsNil(fAgeInstanceGuid);
+    bool isAgeInstanceGuidSet = fAgeInstanceGuid.IsSet();
     
     plAgeLinkStruct link;
     
     if (isAgeInstanceGuidSet) {
-        info.SetAgeInstanceGuid(&plUUID(fAgeInstanceGuid));
+        info.SetAgeInstanceGuid(&fAgeInstanceGuid);
         link.GetAgeInfo()->CopyFrom(&info);
 
-        GuidClear(&fAgeInstanceGuid);
+        fAgeInstanceGuid.Clear();
     }
     else if (!VaultGetOwnedAgeLink(&info, &link)) {
     
