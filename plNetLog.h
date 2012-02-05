@@ -104,6 +104,7 @@ private:
     QTreeWidget*    m_logView;
     QLineEdit*      m_exePath;
     QLineEdit*      m_searchText;
+    QMutex          m_logMutex;
 
     MessageQueue    m_msgQueues[kWatchedProtocolCount];
 };

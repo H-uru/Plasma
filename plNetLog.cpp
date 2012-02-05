@@ -164,6 +164,7 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QFileSystemModel* model = new QFileSystemModel();
     model->setRootPath(QDir::currentPath());
     model->setFilter(QDir::AllEntries | QDir::AllDirs | QDir::NoDotAndDotDot);
+    model->setNameFilters(QStringList() << "*.exe");
     dirCompleter->setModel(model);
     m_exePath->setCompleter(dirCompleter);
 
@@ -228,21 +229,22 @@ void plNetLogGUI::closeEvent(QCloseEvent* event)
 
 void plNetLogGUI::addNodes()
 {
-    static bool ImAlreadyAddingStuffSoGoAway = false;
-    if (ImAlreadyAddingStuffSoGoAway)
-        return;
+    // If it's already being updated when we get here, the queue will still get
+    // processed fully.  Therefore, failing the tryLock() is not a problem :)
 
-    // Handle this here so it gets done efficiently on the GUI thread, instead of
-    // blocking up the message queue
-    ImAlreadyAddingStuffSoGoAway = true;
-    bool updateScroll = (m_logView->verticalScrollBar()->value() == m_logView->verticalScrollBar()->maximum());
-    for (int i = 0; i < kWatchedProtocolCount; ++i) {
-        addLogItems(i, kCli2Srv, m_msgQueues[i].m_send);
-        addLogItems(i, kSrv2Cli, m_msgQueues[i].m_recv);
+    if (m_logMutex.tryLock()) {
+        // Handle this here so it gets done efficiently on the GUI thread, instead of
+        // blocking up the message queue
+        bool updateScroll = (m_logView->verticalScrollBar()->value() == m_logView->verticalScrollBar()->maximum());
+        for (int i = 0; i < kWatchedProtocolCount; ++i) {
+            addLogItems(i, kCli2Srv, m_msgQueues[i].m_send);
+            addLogItems(i, kSrv2Cli, m_msgQueues[i].m_recv);
+        }
+        if (updateScroll)
+            m_logView->verticalScrollBar()->setValue(m_logView->verticalScrollBar()->maximum());
+
+        m_logMutex.unlock();
     }
-    if (updateScroll)
-        m_logView->verticalScrollBar()->setValue(m_logView->verticalScrollBar()->maximum());
-    ImAlreadyAddingStuffSoGoAway = false;
 }
 
 void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buffer)
