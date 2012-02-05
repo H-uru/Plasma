@@ -443,7 +443,7 @@ const wchar_t* plProfileManagerFull::GetProfilePath()
         plFileUtils::CreateDir(profilePath);
     
         wchar_t buff[256];
-        swprintf(buff, 256, L"%02d-%02d-%04d_%02d-%02d//",
+        hsSnwprintf(buff, 256, L"%02d-%02d-%04d_%02d-%02d//",
             curTime.GetMonth(),
             curTime.GetDay(),
             curTime.GetYear(),
@@ -460,7 +460,7 @@ const wchar_t* plProfileManagerFull::GetProfilePath()
 void plProfileManagerFull::ILogStats()
 {
     wchar_t statFilename[256];
-    swprintf(statFilename, 256, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
+    hsSnwprintf(statFilename, 256, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
 
     bool exists = plFileUtils::FileExists(statFilename);
 

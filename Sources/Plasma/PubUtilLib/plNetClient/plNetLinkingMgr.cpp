@@ -926,8 +926,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         //--------------------------------------------------------------------
         // BASIC LINK. Link to a unique instance of the age, if no instance specified.
         case plNetCommon::LinkingRules::kBasicLink:
-            if (!info->HasAgeInstanceGuid())
-                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+            if (!info->HasAgeInstanceGuid()) {
+                plUUID newuuid(GuidGenerate());
+                info->SetAgeInstanceGuid(&newuuid);
+            }
         break;
 
         //--------------------------------------------------------------------
@@ -966,7 +968,8 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
-                        info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                        plUUID newuuid(GuidGenerate());
+                        info->SetAgeInstanceGuid(&newuuid);
                     }
                     
                     // register this as an owned age now before we link to it.
@@ -1006,7 +1009,8 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             }
 
                             if (!info->HasAgeInstanceGuid()) {
-                                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                                plUUID newuuid(GuidGenerate());
+                                info->SetAgeInstanceGuid(&newuuid);
                             }
 
                             VaultRegisterOwnedAge(link);
@@ -1092,10 +1096,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     case hsFail:
                         success = kLinkFailed;
                         break;
-                    case FALSE:
+                    case false:
                         success = kLinkDeferred;
                         break;
-                    case TRUE:
+                    case true:
                         success = kLinkImmediately;
                 }
                 

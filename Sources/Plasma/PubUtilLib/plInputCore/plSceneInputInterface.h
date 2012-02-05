@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputInterface.h"
 #include "hsGeometry3.h"
 #include "pnKeyedObject/plKey.h"
-#include "pnUtils/pnUtils.h"
+#include "pnUUID/pnUUID.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
         
@@ -86,7 +86,7 @@ class plSceneInputInterface : public plInputInterface
         const char* fOfferedAgeFile;
         const char* fOfferedAgeInstance;
         const char* fSpawnPoint;
-        Uuid fAgeInstanceGuid;
+        plUUID fAgeInstanceGuid;
         struct clickableTest
         {
             clickableTest(plKey k)

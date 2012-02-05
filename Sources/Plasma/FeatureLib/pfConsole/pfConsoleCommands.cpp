@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
+#include "pfPython/cyPythonInterface.h"
+#include "pfPython/plPythonSDLModifier.h"
 
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "plgDispatch.h"
@@ -162,10 +164,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
-
-
-#include "pfPython/cyPythonInterface.h"
-#include "pfPython/plPythonSDLModifier.h"
 
 #include "plResMgr/plResManagerHelper.h"
 #include "plResMgr/plResMgrSettings.h"
@@ -2466,11 +2464,10 @@ PF_CONSOLE_CMD( App,            // groupName
                "",              // paramList
                "Quit the client app" ) // helpString
 {
-    if( plClient::GetInstance() )
-        PostMessage(plClient::GetInstance()->GetWindowHandle(), 
-            WM_SYSCOMMAND,
-            SC_CLOSE,
-            0);
+    if( plClient::GetInstance() ) {
+        plClientMsg* msg = new plClientMsg(plClientMsg::kQuit);
+        msg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+    }
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -2510,8 +2507,12 @@ PF_CONSOLE_CMD(App,
                "",
                "Set low priority for this process")
 {
+#if HS_BUILD_FOR_WIN32
     SetPriorityClass( GetCurrentProcess(), IDLE_PRIORITY_CLASS );
     PrintString( "Set process priority to lowest setting" );
+#else
+    PrintString("Not implemented on your platform!");
+#endif
 }
 
 
@@ -3933,6 +3934,8 @@ PF_CONSOLE_CMD( Nav, PageInNodeList,    // Group name, Function name
                "string roomNameBase",           // Params
                "Pages in all scene nodes that start with name." )   // Help string
 {
+/* This is really old and hasn't worked since 2002 anyways. */
+#if HS_BUILD_FOR_WIN32
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
 
     std::string pageInNodesStr;
@@ -3950,6 +3953,7 @@ PF_CONSOLE_CMD( Nav, PageInNodeList,    // Group name, Function name
     }
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
     plgDispatch::MsgSend(pMsg1);
+#endif
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS

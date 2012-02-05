@@ -183,7 +183,7 @@ public:
 //      hsAssert(0, "fixme physx");
         float oldSpeed = fabs(fSwimBrain->fCallbackAction->GetTurnStrength());
         float thisInc = elapsed * incPerSec;
-        float newSpeed = __min(oldSpeed + thisInc, maxTurnSpeed);
+        float newSpeed = min(oldSpeed + thisInc, maxTurnSpeed);
         fSwimBrain->fCallbackAction->SetTurnStrength(newSpeed * fAvMod->GetKeyTurnStrength() + fAvMod->GetAnalogTurnStrength());
         // the turn is actually applied during PhysicsUpdate
     }

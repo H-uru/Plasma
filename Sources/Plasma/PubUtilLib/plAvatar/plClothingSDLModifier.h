@@ -99,7 +99,7 @@ public:
     static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
     static void PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr);
         
-    static const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(const plSceneObject *obj);
+    static const plClothingSDLModifier *FindClothingSDLModifier(const plSceneObject *obj);
 };
 
 #endif  // plClothingSDLModifier_inc

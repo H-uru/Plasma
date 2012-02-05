@@ -63,7 +63,7 @@ const unsigned kAsyncTimeInfinite = (unsigned) -1;
 #ifdef   _MSC_VER
 #define  THREADCALL __stdcall
 #else
-#define  THREADCALL __cdecl
+#define  THREADCALL CDECL
 #endif
 
 struct AsyncThread;

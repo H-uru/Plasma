@@ -53,10 +53,11 @@ class pyKey;
 class pyColor;
 class pyImage;
 
+#include <Python.h>
 #include "hsTemplates.h"
 #include "hsStlUtils.h"
+#include "hsResMgr.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 // BEGIN PACKED DATA STRUCTURES
 //============================================================================
-#include <PshPack1.h>
+#pragma pack(push,1)
 
 // kNetProtocolSrv2Score messages
 enum {
@@ -169,7 +169,7 @@ struct Score2Srv_ScoreGetRanksReply : SrvMsgHeader {
 //============================================================================
 // END PACKED DATA STRUCTURES
 //============================================================================
-#include <PopPack.h>
+#pragma pack(pop)
 
 
 /*****************************************************************************

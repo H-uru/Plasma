@@ -480,15 +480,15 @@ bool plStatusLog::IReOpen( void )
             ext = L".elf";
 #endif
         wchar_t fileToOpen[MAX_PATH];
-        swprintf(fileToOpen, MAX_PATH, L"%s.0%s", fileNoExt, ext);
+        hsSnwprintf(fileToOpen, MAX_PATH, L"%s.0%s", fileNoExt, ext);
         if (!(fFlags & kDontRotateLogs))
         {
             wchar_t work[MAX_PATH], work2[MAX_PATH];
-            swprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
+            hsSnwprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
             plFileUtils::RemoveFile(work);
-            swprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
+            hsSnwprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
             plFileUtils::FileMove(work2, work);
-            swprintf(work, MAX_PATH, L"%s.1%s",fileNoExt,ext);
+            hsSnwprintf(work, MAX_PATH, L"%s.1%s",fileNoExt,ext);
             plFileUtils::FileMove(work, work2);
             plFileUtils::FileMove(fileToOpen, work);
         }
@@ -541,7 +541,7 @@ void plStatusLog::IParseFileName(wchar_t* file, size_t fnsize, wchar_t* fileNoEx
 {
     const wchar_t *base = plStatusLogMgr::IGetBasePath();
     if( wcslen( base ) != nil )
-        swprintf( file, fnsize, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
+        hsSnwprintf( file, fnsize, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
     else
         wcscpy( file, fFilename.c_str() );
 
