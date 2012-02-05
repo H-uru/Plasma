@@ -8309,7 +8309,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
                                             ref->fMaxWidth, ref->fMaxHeight, ref->fMMLvs, ref->GetFlags() );
         return nil;
     }
-    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (char*)(ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
 
     return texPtr;
@@ -8362,7 +8362,7 @@ IDirect3DCubeTexture9   *plDXPipeline::IMakeD3DCubeTexture( plDXTextureRef *ref,
     IDirect3DCubeTexture9   *texPtr = nil;
     fManagedAlloced = true;
     WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, NULL));
-    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (char*)(ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
     return texPtr;
 }
@@ -11834,7 +11834,7 @@ void    plDXPipeline::ISetErrorMessage( char *errStr )
 // Convert the last D3D error code to a string (probably "Conflicting Render State").
 void    plDXPipeline::IGetD3DError()
 {
-    sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString( fSettings.fDXError ) );
+    sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString9( fSettings.fDXError ) );
 }
 
 // IShowErrorMessage /////////////////////////////////////////////////////////////
@@ -12025,6 +12025,7 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
 // This is obsolete as of DX8
 void    plDXPipeline::IFPUCheck()
 {
+#ifdef _MSC_VER
     WORD    wSave, wTemp;
     __asm fstcw wSave
     if (wSave & 0x300 ||            // Not single mode
@@ -12041,6 +12042,7 @@ void    plDXPipeline::IFPUCheck()
             fldcw   wTemp
         }
     }
+#endif
 }
 
 // PushPiggyBackLayer /////////////////////////////////////////////////////
