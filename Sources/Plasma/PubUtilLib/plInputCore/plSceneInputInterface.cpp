@@ -608,7 +608,8 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                 if (fBookMode == kBookOffered)
                 {
                     // and put our own dialog back up...
-                    ISendOfferNotification(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), 0, false);
+                    plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+                    ISendOfferNotification(avKey, 0, false);
                     //IManageIgnoredAvatars(fOffereeKey, false);
                     fOffereeKey = nil;
                     fBookMode = kNotOffering;
@@ -627,7 +628,8 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                 // tell them to ignore us
                 
                 plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
-                pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+                plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+                pMsg->SetAvKey(avKey);
                 pMsg->SetBCastFlag(plMessage::kNetPropagate);
                 pMsg->SetBCastFlag(plMessage::kNetForce);
                 pMsg->SetBCastFlag(plMessage::kLocalPropagate, false);
@@ -754,7 +756,8 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
             if (fBookMode == kBookOffered)
             {
                 // and put our own dialog back up...
-                ISendOfferNotification(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), 0, false);
+                plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+                ISendOfferNotification(avKey, 0, false);
                 //IManageIgnoredAvatars(fOffereeKey, false);
                 fBookMode = kOfferBook;
                 fOffereeKey = nil;
@@ -830,7 +833,8 @@ void plSceneInputInterface::ILinkOffereeToAge()
     else if (!VaultGetOwnedAgeLink(&info, &link)) {
     
         // We must have an owned copy of the age before we can offer it, so make one now
-        info.SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+        plUUID guid(GuidGenerate());
+        info.SetAgeInstanceGuid(&guid);
         std::string title;
         std::string desc;
         
@@ -858,7 +862,8 @@ void plSceneInputInterface::ILinkOffereeToAge()
         VaultAgeLinkNode linkAcc(linkNode);
         if (linkAcc.volat) {
             if (VaultUnregisterOwnedAgeAndWait(link.GetAgeInfo())) {
-                link.GetAgeInfo()->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                plUUID guid(GuidGenerate());
+                link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
                 VaultRegisterOwnedAgeAndWait(&link);
             }
         }
@@ -882,7 +887,8 @@ void plSceneInputInterface::ILinkOffereeToAge()
     if (!fPendingLink && stricmp(fOfferedAgeFile, kPersonalAgeFilename))
     {   
         // tell our local dialog to pop up again...
-        ISendOfferNotification(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), 0, false);
+        plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+        ISendOfferNotification(avKey, 0, false);
         // make them clickable again(in case they come back?)
         //IManageIgnoredAvatars(fOffereeKey, false);
         
@@ -1041,7 +1047,8 @@ hsBool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 {
                     // and put our own dialog back up...
                     ISendOfferNotification(fOffereeKey, -999, true);
-                    ISendOfferNotification(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), 0, false);
+                    plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+                    ISendOfferNotification(avKey, 0, false);
                     //IManageIgnoredAvatars(fOffereeKey, false);
                     fBookMode = kOfferBook;
                     fOffereeKey = nil;
@@ -1138,7 +1145,8 @@ void plSceneInputInterface::ISendAvatarDisabledNotification(hsBool enabled)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableAvatarClickable);
-    pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+    plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    pMsg->SetAvKey(avKey);
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
     pMsg->SetBCastFlag(plMessage::kLocalPropagate, false);

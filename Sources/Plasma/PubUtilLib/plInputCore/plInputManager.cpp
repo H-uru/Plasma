@@ -295,7 +295,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
                 break;
 
             BYTE scan = (BYTE)(Lparam >> 16);
-            UINT vkey = MapVirtualKey(scan, MAPVK_VSC_TO_VK);
+            UINT vkey = MapVirtualKey(scan, 1); //MAPVK_VSC_TO_VK
 
             bExtended = Lparam >> 24 & 1;
             hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
