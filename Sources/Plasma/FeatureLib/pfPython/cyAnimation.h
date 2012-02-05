@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
+#include <Python.h>
 
 #include "pyKey.h"
 #include "hsTemplates.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class cyAnimation

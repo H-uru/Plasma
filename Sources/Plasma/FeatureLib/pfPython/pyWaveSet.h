@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyWaveSet_h
 #define pyWaveSet_h
 
+#include <Python.h>
 #include "pyKey.h"
 #include "pyGeometry3.h"
 #include "pyColor.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

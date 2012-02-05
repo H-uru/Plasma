@@ -41,13 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef pyMatrix44_h_inc
 #define pyMatrix44_h_inc
+#include <Python.h>
 
 #include "hsStlUtils.h"
 
 #include "hsMatrix44.h"
 #include "pyGeometry3.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 
