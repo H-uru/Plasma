@@ -47,10 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage/plNetMessage.h"
 #include "plNetClient/plNetClientMgr.h"
 #include <algorithm>
-
-#if HS_BUILD_FOR_UNIX
 #include <float.h>
-#endif
 
 plNetTransport::~plNetTransport()
 {
