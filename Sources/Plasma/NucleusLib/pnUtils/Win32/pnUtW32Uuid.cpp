@@ -45,8 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#include "../../Pch.h"
-#pragma hdrstop
+#include "../pnUtils.h"
+#include <rpc.h>
+#include <rpcdce.h>
 
 #if 0
 
@@ -162,12 +163,12 @@ bool GuidIsNil (const Uuid & uuid) {
 const wchar_t * GuidToString (const Uuid & uuid, wchar_t * dst, unsigned chars) {
     wchar_t * src;
     RPC_STATUS s;
-    s = UuidToStringW( (GUID *) &uuid, (RPC_WSTR*)&src );
+    s = UuidToStringW( (GUID *) &uuid, (unsigned short**)&src );
     if (RPC_S_OK == s)
         StrCopy(dst, src, chars);
     else
         StrCopy(dst, L"", chars);
-    RpcStringFreeW( (RPC_WSTR *)&src );
+    RpcStringFreeW( (unsigned short**)&src );
     return dst;
 }
 
