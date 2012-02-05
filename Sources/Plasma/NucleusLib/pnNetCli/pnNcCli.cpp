@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # pragma message("Compiling pnNetCli with debugging on")
 # define NCCLI_LOG  LogMsg
 #else
-# define NCCLI_LOG  NULL_STMT
+# define NCCLI_LOG  LogMsg
 #endif
 
 #ifndef PLASMA_EXTERNAL_RELEASE
