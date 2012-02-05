@@ -62,6 +62,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #ifndef DXGetErrorString9
         #define DXGetErrorString9 DXGetErrorString
     #endif
+    #ifdef __MINGW32__ // UGH!
+        #define DXGetErrorString DXGetErrorString9
+    #endif
 #else
     #include <dxerr.h>
 #endif
@@ -11834,7 +11837,7 @@ void    plDXPipeline::ISetErrorMessage( char *errStr )
 // Convert the last D3D error code to a string (probably "Conflicting Render State").
 void    plDXPipeline::IGetD3DError()
 {
-    sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString9( fSettings.fDXError ) );
+    sprintf( fSettings.fErrorStr, "D3DError : %s", (char *)DXGetErrorString( fSettings.fDXError ) );
 }
 
 // IShowErrorMessage /////////////////////////////////////////////////////////////
