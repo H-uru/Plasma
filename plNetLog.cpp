@@ -147,11 +147,14 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QWidget* searchBar = new QWidget(window);
     m_searchText = new QLineEdit(searchBar);
     QPushButton* btnSearch = new QPushButton(tr("&Search..."), searchBar);
+    m_autoscroll = new QCheckBox(tr("&Autoscroll"), searchBar);
+    m_autoscroll->setChecked(true);
     QGridLayout* searchLayout = new QGridLayout(searchBar);
     searchLayout->setMargin(0);
     searchLayout->setHorizontalSpacing(4);
     searchLayout->addWidget(m_searchText, 0, 0);
     searchLayout->addWidget(btnSearch, 0, 1);
+    searchLayout->addWidget(m_autoscroll, 0, 2);
 
     m_logView = new QTreeWidget(window);
     m_logView->setHeaderHidden(true);
@@ -235,12 +238,11 @@ void plNetLogGUI::addNodes()
     if (m_logMutex.tryLock()) {
         // Handle this here so it gets done efficiently on the GUI thread, instead of
         // blocking up the message queue
-        bool updateScroll = (m_logView->verticalScrollBar()->value() == m_logView->verticalScrollBar()->maximum());
         for (int i = 0; i < kWatchedProtocolCount; ++i) {
             addLogItems(i, kCli2Srv, m_msgQueues[i].m_send);
             addLogItems(i, kSrv2Cli, m_msgQueues[i].m_recv);
         }
-        if (updateScroll)
+        if (m_autoscroll->isChecked())
             m_logView->verticalScrollBar()->setValue(m_logView->verticalScrollBar()->maximum());
 
         m_logMutex.unlock();

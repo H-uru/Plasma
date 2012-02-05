@@ -454,16 +454,16 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
         return "(NULL)";
     default:
         {
-            new QTreeWidgetItem(parent, QStringList()
+            QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList()
                 << QString("Unsupported creatable (%1)").arg(type, 4, 16, QChar('0')));
 
-            QTreeWidgetItem* item = parent;
-            while (item->parent())
+            while (item) {
+                QFont warnFont = item->font(0);
+                warnFont.setBold(true);
+                item->setFont(0, warnFont);
+                item->setForeground(0, Qt::red);
                 item = item->parent();
-            QFont warnFont = item->font(0);
-            warnFont.setBold(true);
-            item->setFont(0, warnFont);
-            item->setForeground(0, Qt::red);
+            }
 
             OutputDebugStringA(QString("Unsupported creatable (%1)\n")
                                .arg(type, 4, 16, QChar('0')).toUtf8().data());

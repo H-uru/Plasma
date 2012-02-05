@@ -471,6 +471,14 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 new QTreeWidgetItem(top, QStringList() << buffer.readString());
                 break;
             }
+        case kCli2Auth_LogStackDump:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()
+                    << QString("%1 --> Cli2Auth_LogStackDump").arg(timeFmt));
+                top->setForeground(0, kColorAuth);
+                new QTreeWidgetItem(top, QStringList() << buffer.readString());
+                break;
+            }
         case kCli2Auth_ScoreGetScores:
             {
                 QTreeWidgetItem* top = new QTreeWidgetItem(logger, QStringList()

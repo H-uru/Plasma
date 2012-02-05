@@ -24,6 +24,7 @@
 #include <QMainWindow>
 #include <QTreeWidget>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QThread>
 #include <QMutex>
 #include <cstdio>
@@ -104,6 +105,7 @@ private:
     QTreeWidget*    m_logView;
     QLineEdit*      m_exePath;
     QLineEdit*      m_searchText;
+    QCheckBox*      m_autoscroll;
     QMutex          m_logMutex;
 
     MessageQueue    m_msgQueues[kWatchedProtocolCount];
