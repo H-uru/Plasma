@@ -977,7 +977,7 @@ plCameraBrain1_Avatar::~plCameraBrain1_Avatar()
         pMsg->SetFadeOut(false);
         pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+        pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
         plgDispatch::MsgSend(pMsg);
     }
@@ -1152,7 +1152,7 @@ void plCameraBrain1_Avatar::ISendFadeMsg(hsBool fade)
         pMsg->SetFadeOut(fade);
         pMsg->SetSubjectKey(GetSubject()->GetKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+        pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->AddReceiver(GetSubject()->GetKey());
         plgDispatch::MsgSend(pMsg);
     }

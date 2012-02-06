@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a SceneObject
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "pyKey.h"
 #include "cyDraw.h"
@@ -57,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPythonPack_h_inc
 #define plPythonPack_h_inc
 
-#include "Python.h"
+#include <Python.h>
 #include "HeadSpin.h"
 
 namespace PythonPack

@@ -48,9 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 
 // Generic geom utils.
-hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
-void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
-float AngleRad2d (float x1, float y1, float x3, float y3);
+static hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
+static void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
+static float AngleRad2d (float x1, float y1, float x3, float y3);
 inline hsVector3 GetYAxis(hsMatrix44 &mat)
 {
     return hsVector3(mat.fMap[1][0], mat.fMap[1][1], mat.fMap[1][2]);
@@ -195,7 +195,7 @@ bool plWalkingController::EnableControlledFlight(bool status)
         fWaitingForGround = true;
     }
     else
-        fControlledFlight = __max(--fControlledFlight, 0);
+        fControlledFlight = max(--fControlledFlight, 0);
 
     return status;
 }

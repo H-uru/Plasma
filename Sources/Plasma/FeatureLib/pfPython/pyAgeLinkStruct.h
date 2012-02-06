@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAgeLinkStruct_h_inc
 #define pyAgeLinkStruct_h_inc
 
+#include <Python.h>
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "pyAgeInfoStruct.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

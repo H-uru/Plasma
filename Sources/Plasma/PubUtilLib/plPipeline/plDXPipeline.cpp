@@ -57,9 +57,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ddraw.h>
 #include <d3dx9mesh.h>
 
-#ifdef DX_OLD_SDK
+#if defined(DX_OLD_SDK) || defined(__MINGW32__)
     #include <dxerr9.h>
-    #define DXGetErrorString9 DXGetErrorString
+    #ifndef DXGetErrorString9
+        #define DXGetErrorString9 DXGetErrorString
+    #endif
+    #ifdef __MINGW32__ // UGH!
+        #define DXGetErrorString DXGetErrorString9
+    #endif
 #else
     #include <dxerr.h>
 #endif
@@ -12023,6 +12028,7 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
 // This is obsolete as of DX8
 void    plDXPipeline::IFPUCheck()
 {
+#ifdef _MSC_VER
     WORD    wSave, wTemp;
     __asm fstcw wSave
     if (wSave & 0x300 ||            // Not single mode
@@ -12039,6 +12045,7 @@ void    plDXPipeline::IFPUCheck()
             fldcw   wTemp
         }
     }
+#endif
 }
 
 // PushPiggyBackLayer /////////////////////////////////////////////////////

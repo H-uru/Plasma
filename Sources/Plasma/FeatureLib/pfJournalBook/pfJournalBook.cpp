@@ -1841,7 +1841,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
             }
             else if( lastParChunk != nil )
             {
-                uint32_t count = ((uint32_t)c - (uint32_t)start)/2; // wchar_t is 2 bytes
+                uint32_t count = ((uintptr_t)c - (uintptr_t)start)/2; // wchar_t is 2 bytes
                 
                 wchar_t *temp = new wchar_t[ count + 1 ];
                 wcsncpy( temp, start, count );
@@ -1901,7 +1901,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         }
                         else if( wcsicmp( name, L"link" ) == 0 )
                         {
-                            chunk->fEventID = _wtoi( option );
+                            chunk->fEventID = wcstol(option, NULL, 0);
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
                         }
                         else if( wcsicmp( name, L"blend" ) == 0 )
@@ -1917,10 +1917,10 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                             if( comma != nil )
                             {
 
-                                chunk->fAbsoluteY = _wtoi( comma + 1 );
+                                chunk->fAbsoluteY = wcstol(comma + 1, NULL, 0);
                                 *comma = 0;
                             }
-                            chunk->fAbsoluteX = _wtoi( option );
+                            chunk->fAbsoluteX = wcstol(option, NULL, 0);
                         }
                         else if( wcsicmp( name, L"glow" ) == 0 )
                         {
@@ -1961,7 +1961,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                                 wchar_t *comma2 = wcschr( comma + 1, L',' );
                                 if( comma2 != nil )
                                 {
-                                    if( _wtoi( comma2 + 1 ) != 0 )
+                                    if( wcstol(comma2 + 1, NULL, 0) != 0 )
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
                                     *comma2 = 0;
                                 }
@@ -2089,7 +2089,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         }
                         else if( wcsicmp( name, L"size" ) == 0 )
                         {
-                            chunk->fFontSize = _wtoi( option );
+                            chunk->fFontSize = wcstol(option, NULL, 0);
                             if (fBookGUIs[fCurBookGUI]->IsEditable())
                             {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontSize(chunk->fFontSize);
@@ -2112,7 +2112,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         }
                         else if( wcsicmp( name, L"spacing" ) == 0 )
                         {
-                            chunk->fLineSpacing = _wtoi(option);
+                            chunk->fLineSpacing = wcstol(option, NULL, 0);
                             chunk->fFlags |= pfEsHTMLChunk::kFontSpacing;
                         }
                     }
@@ -2127,13 +2127,13 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                     while(IGetNextOption(c,name,option))
                     {
                         if (wcsicmp(name,L"top") == 0)
-                            fPageTMargin = _wtoi(option);
+                            fPageTMargin = wcstol(option, NULL, 0);
                         else if (wcsicmp(name,L"left") == 0)
-                            fPageLMargin = _wtoi(option);
+                            fPageLMargin = wcstol(option, NULL, 0);
                         else if (wcsicmp(name,L"bottom") == 0)
-                            fPageBMargin = _wtoi(option);
+                            fPageBMargin = wcstol(option, NULL, 0);
                         else if (wcsicmp(name,L"right") == 0)
-                            fPageRMargin = _wtoi(option);
+                            fPageRMargin = wcstol(option, NULL, 0);
                     }
                     // set the edit controls to the margins we just set
                     if (fBookGUIs[fCurBookGUI]->IsEditable())
@@ -2203,10 +2203,10 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                             if( comma != nil )
                             {
 
-                                chunk->fAbsoluteY = _wtoi( comma + 1 );
+                                chunk->fAbsoluteY = wcstol(comma + 1, NULL, 0);
                                 *comma = 0;
                             }
-                            chunk->fAbsoluteX = _wtoi( option );
+                            chunk->fAbsoluteX = wcstol(option, NULL, 0);
                         }
                         else if (wcsicmp(name,L"resize")==0)
                         {
@@ -2251,7 +2251,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                         }
                         else if( wcsicmp( name, L"link" ) == 0 )
                         {
-                            chunk->fEventID = _wtoi( option );
+                            chunk->fEventID = wcstol(option, NULL, 0);
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
                         }
                         else if( wcsicmp( name, L"pos" ) == 0 )
@@ -2262,10 +2262,10 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
                             if( comma != nil )
                             {
 
-                                chunk->fAbsoluteY = _wtoi( comma + 1 );
+                                chunk->fAbsoluteY = wcstol(comma + 1, NULL, 0);
                                 *comma = 0;
                             }
-                            chunk->fAbsoluteX = _wtoi( option );
+                            chunk->fAbsoluteX = wcstol(option, NULL, 0);
                         }
                         else if (wcsicmp(name,L"resize")==0)
                         {
@@ -2336,7 +2336,7 @@ hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &
     }
     else if( lastParChunk != nil )
     {
-        uint32_t count = (uint32_t)c - (uint32_t)start;
+        uint32_t count = (uintptr_t)c - (uintptr_t)start;
         
         wchar_t *temp = new wchar_t[ count + 1 ];
         wcsncpy( temp, start, count + 1 );
@@ -2422,7 +2422,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         return false;
 
     // Copy name
-    uint32_t len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
+    uint32_t len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
     wcsncpy( name, c, len );
     name[len] = L'\0';
 
@@ -2442,7 +2442,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         while( *string != L'>' && *string != L'\"' && *string != L'\0' )
             string++;
 
-        len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
+        len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
         wcsncpy( option, c, len );
         option[len] = L'\0';
         
@@ -2457,7 +2457,7 @@ hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
     while( *string != L' ' && *string != L'>' && *string != L'\0' )
         string++;
 
-    len = ((uint32_t)string - (uint32_t)c)/2; // divide length by 2 because each character is two bytes
+    len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
     wcsncpy( option, c, len );
     option[len] = L'\0';
     

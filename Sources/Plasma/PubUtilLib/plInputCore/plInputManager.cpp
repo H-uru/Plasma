@@ -117,7 +117,7 @@ typedef int (__stdcall * Pfunc1) (const DIDEVICEINSTANCE* device, void* pRef);
 
 plInputManager* plInputManager::fInstance = nil;
 
-plInputManager::plInputManager( HWND hWnd ) :
+plInputManager::plInputManager( hsWindowHndl hWnd ) :
 fDInputMgr(nil),
 fInterfaceMgr(nil)
 {
@@ -178,7 +178,7 @@ void plInputManager::CreateInterfaceMod(plPipeline* p)
     fInterfaceMgr->Init();
 }
 
-void plInputManager::InitDInput(HINSTANCE hInst, HWND hWnd)
+void plInputManager::InitDInput(hsWindowInst hInst, hsWindowHndl hWnd)
 {
     if (fUseDInput)
     {
@@ -259,8 +259,9 @@ plKeyDef plInputManager::UntranslateKey(plKeyDef key, hsBool extended)
 
     return key;
 }
-        
-void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM Lparam, HWND hWnd)
+
+#if HS_BUILD_FOR_WIN32
+void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM Lparam, hsWindowHndl hWnd)
 {
     if( !fhWnd )
         fhWnd = hWnd;
@@ -294,7 +295,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
                 break;
 
             BYTE scan = (BYTE)(Lparam >> 16);
-            UINT vkey = MapVirtualKey(scan, MAPVK_VSC_TO_VK);
+            UINT vkey = MapVirtualKey(scan, 1); //MAPVK_VSC_TO_VK
 
             bExtended = Lparam >> 24 & 1;
             hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
@@ -431,6 +432,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
     }
 
 }
+#endif
 
 //// Activate ////////////////////////////////////////////////////////////////
 //  Handles what happens when the app (window) activates/deactivates

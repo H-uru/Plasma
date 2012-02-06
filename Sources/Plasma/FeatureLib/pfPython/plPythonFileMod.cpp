@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This modifier will handle the interface to python code that has been file-ized.
 //
 //////////////////////////////////////////////////////////////////////////
+#include "plPythonFileMod.h"
 
 #include "HeadSpin.h"
 #include "hsStream.h"
@@ -97,7 +98,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProfile.h"
 
-#include "plPythonFileMod.h"
 #include "cyPythonInterface.h"
 #include "pyKey.h"
 #include "cyDraw.h"

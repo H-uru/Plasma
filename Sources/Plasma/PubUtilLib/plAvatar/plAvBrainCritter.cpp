@@ -330,8 +330,8 @@ void plAvBrainCritter::SightCone(float coneRad)
     fSightConeAngle = coneRad;
 
     // calculate the minimum dot product for the cone of sight (angle/2 vector dotted with straight ahead)
-    hsVector3 straightVector(1, 0, 0), viewVector(1, 0, 0);
-    hsQuat rotation(fSightConeAngle/2, &hsVector3(0, 1, 0));
+    hsVector3 straightVector(1, 0, 0), viewVector(1, 0, 0), up(0, 1, 0);
+    hsQuat rotation(fSightConeAngle/2, &up);
     viewVector = hsVector3(rotation.Rotate(&viewVector));
     viewVector.Normalize();
     fSightConeDotMin = straightVector * viewVector;

@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyNotify   - a wrapper class to provide interface to send a NotifyMsg
 //
 //////////////////////////////////////////////////////////////////////
+#include "pyNotify.h"
 
 #include "plgDispatch.h"
 #include "pnMessage/plNotifyMsg.h"
@@ -51,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonFileMod.h"
 #include "pyGeometry3.h"
 
-#include "pyNotify.h"
 
 pyNotify::pyNotify()
 {

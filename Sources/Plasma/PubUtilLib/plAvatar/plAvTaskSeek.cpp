@@ -314,7 +314,8 @@ void plAvTaskSeek::LeaveAge(plArmatureMod *avatar)
 hsBool plAvTaskSeek::IAnalyze(plArmatureMod *avatar)
 {
     avatar->GetPositionAndRotationSim(&fPosition, &fRotation);
-    fGoalVec.Set(&(hsScalarTriple)(fSeekPos - fPosition));
+    hsScalarTriple tmp(fSeekPos - fPosition);
+    fGoalVec.Set(&tmp);
     hsVector3 normalizedGoalVec(fGoalVec);
     normalizedGoalVec.Normalize();
 
