@@ -1111,9 +1111,11 @@ class nxusBookMachine(ptModifier):
         txtInfo.setForeColor(color)
         txtInfo.setStringW(linkEntry.displayInfo)
 
-    def IEnableDelete(self, idButton, enable):
+    def IUpdateDeleteButton(self, idButton, enable):
         if enable:
             self.IShowEnableButton(idButton)
+        else:
+            self.IHideDisableButton(idButton)
 
     def IDisableLanguageControls(self):
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setString("")
@@ -1553,7 +1555,7 @@ class nxusBookMachine(ptModifier):
             self.IUpdateGuiEntry(idButton = idTextbox - 1 , idTxtName = idTextbox, idTxtInfo = idTextbox + 1,
                                     linkEntry = entry)
             self.IShowEnableButton(idTextbox - 1)
-            self.IEnableDelete(idButton = idTextbox + 99, enable = entry.canDelete)
+            self.IUpdateDeleteButton(idButton = idTextbox + 99, enable = entry.canDelete)
             idTextbox += 10
 
     def IUpdateLinks(self, categoryId = None):
