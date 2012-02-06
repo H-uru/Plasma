@@ -48,24 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // -----
 plAGApplicator::plAGApplicator()
 : fChannel(nil),
-  fChannelName(nil),
   fEnabled(true)
 {
 };
 
 // ctor -------------------------------
 // -----
-plAGApplicator::plAGApplicator(const char *channelName)
+plAGApplicator::plAGApplicator(const plString &channelName)
 : fChannel(nil),
-  fEnabled(true)
+  fEnabled(true),
+  fChannelName(channelName)
 {
-    fChannelName = hsStrcpy(channelName);
 };
 
 plAGApplicator::~plAGApplicator()
 {
-    if(fChannelName)
-        delete[] fChannelName;
 }
 
 void plAGApplicator::Apply(const plAGModifier *mod, double time, hsBool force)
@@ -74,14 +71,14 @@ void plAGApplicator::Apply(const plAGModifier *mod, double time, hsBool force)
         IApply(mod, time);
 }
 
-void plAGApplicator::SetChannelName(const char *name)
+void plAGApplicator::SetChannelName(const plString &name)
 {
-    if(name)
-        fChannelName = hsStrcpy(name);
+    if(!name.IsNull())
+        fChannelName = name;
 };
 
 
-const char * plAGApplicator::GetChannelName()
+plString plAGApplicator::GetChannelName()
 {
     return fChannelName;
 };
@@ -141,7 +138,7 @@ void plAGApplicator::Read(hsStream *stream, hsResMgr *mgr)
 
     fEnabled = stream->ReadBool();
     fChannel = nil; // Whatever is reading this applicator in should know what channel to assign it
-    fChannelName = stream->ReadSafeString();
+    fChannelName = stream->ReadSafeString_TEMP();
 }
 
 // IGETxI

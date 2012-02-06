@@ -50,7 +50,7 @@ plKey plComponentTools::AddModifier(plMaxNodeBase *node, plModifier *mod)
     return fAddModFunc(node, mod);
 }
 
-plKey plComponentTools::GetNewKey(const char *name, plModifier *mod, plLocation loc)
+plKey plComponentTools::GetNewKey(const plString &name, plModifier *mod, plLocation loc)
 {
     return fNewKey(name, mod, loc);
 }
@@ -70,12 +70,12 @@ plKey plComponentTools::GetAnimCompLightModKey(plComponentBase *comp, plMaxNodeB
     return fAnimLightKey(comp, node);
 }
 */
-const char *plComponentTools::GetAnimCompAnimName(plComponentBase *comp)
+plString plComponentTools::GetAnimCompAnimName(plComponentBase *comp)
 {
     return fAnimName(comp);
 }
 
-int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys)
+int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys)
 {
     return fMatMod(mtl, node, segName, keys);
 }

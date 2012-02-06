@@ -309,7 +309,7 @@ void plAvBrainHuman::IInitBoneMap()
     for(int i = 0; i < numTuples; i++)
     {
         HumanBoneID id = tupleMap[i].fID;
-        const char * name = tupleMap[i].fName;
+        plString name = _TEMP_CONVERT_FROM_LITERAL(tupleMap[i].fName);
         
         const plSceneObject * bone = this->fAvMod->FindBone(name);
         if( bone )
@@ -317,7 +317,7 @@ void plAvBrainHuman::IInitBoneMap()
             fAvMod->AddBoneMapping(id, bone);
         }
         else
-            hsStatusMessageF("Couldn't find standard bone %s.", name);
+            hsStatusMessageF("Couldn't find standard bone %s.", name.c_str());
     }
 }
 
@@ -346,9 +346,8 @@ void plAvBrainHuman::Suspend()
     // Kind of hacky... but this is a rather rare case.
     // If the user lets up on the PushToTalk key in another brain
     // we'll miss the message to take off the animation.
-    char *chatAnimName = fAvMod->MakeAnimationName("Talk"); 
+    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
     plAGAnimInstance *anim = fAvMod->FindAnimInstance(chatAnimName);
-    delete [] chatAnimName;
     if (anim)
         anim->FadeAndDetach(0, 1);
 
@@ -699,7 +698,7 @@ void plAvBrainHuman::TurnToPoint(hsPoint3 point)
 
 void plAvBrainHuman::IChatOn()
 {
-    char *chatAnimName = fAvMod->MakeAnimationName("Talk");
+    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
 
     // check that we aren't adding this twice...
     if (!fAvMod->FindAnimInstance(chatAnimName))
@@ -713,13 +712,11 @@ void plAvBrainHuman::IChatOn()
             taskMsg->Send();
         }
     }
-
-    delete [] chatAnimName;
 }
 
 void plAvBrainHuman::IChatOff()
 {
-    char *chatAnimName = fAvMod->MakeAnimationName("Talk");
+    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
     plKey avKey = fAvMod->GetKey();
     plAvAnimTask *animTask = new plAvAnimTask(chatAnimName, -1.0);
     if (animTask)
@@ -728,7 +725,6 @@ void plAvBrainHuman::IChatOff()
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);
         taskMsg->Send();
     }
-    delete[] chatAnimName;
 }
 
 hsBool plAvBrainHuman::IInitAnimations()
@@ -1422,12 +1418,11 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
 bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
 {
     bool result = false;
-    char *fullName = avatar->MakeAnimationName(emoteName);
+    plString fullName = avatar->MakeAnimationName(emoteName);
     plAGAnim *anim = plAGAnim::FindAnim(fullName);
     plEmoteAnim *emote = plEmoteAnim::ConvertNoRef(anim);
     hsBool alreadyActive = avatar->FindAnimInstance(fullName) != nil;
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
-    delete[] fullName;
 
     // XXX
     plAvBrainSwim *swimBrain = plAvBrainSwim::ConvertNoRef(avatar->GetCurrentBrain());

@@ -250,12 +250,12 @@ Mtl *plResponderCmdMtl::GetMtl(IParamBlock2 *pb)
     return (Mtl*)pb->GetReferenceTarget(kMtlRef);
 }
 
-const char *plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
+plString plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
 {
-    return pb->GetStr(kMtlAnim);
+    return plString::FromUtf8(pb->GetStr(kMtlAnim));
 }
 
-void ISearchLayerRecur(plLayerInterface *layer, const char *segName, hsTArray<plKey>& keys)
+void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArray<plKey>& keys)
 {
     if (!layer)
         return;
@@ -263,10 +263,8 @@ void ISearchLayerRecur(plLayerInterface *layer, const char *segName, hsTArray<pl
     plLayerAnimation *animLayer = plLayerAnimation::ConvertNoRef(layer);
     if (animLayer)
     {
-        char *ID = animLayer->GetSegmentID();
-        if (ID == nil)
-            ID = "";
-        if (!strcmp(ID, segName))
+        plString ID = animLayer->GetSegmentID();
+        if (!segName.Compare(ID))
         {
             if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
                 keys.Append(animLayer->GetKey());
@@ -276,17 +274,16 @@ void ISearchLayerRecur(plLayerInterface *layer, const char *segName, hsTArray<pl
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-int ISearchLayerRecur(hsGMaterial* mat, const char *segName, hsTArray<plKey>& keys)
+int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
 {
-    if (segName == nil)
-        segName = "";
+    plString name = segName.IsNull() ? _TEMP_CONVERT_FROM_LITERAL("") : segName;
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
-        ISearchLayerRecur(mat->GetLayer(i), segName, keys);
+        ISearchLayerRecur(mat->GetLayer(i), name, keys);
     return keys.GetCount();
 }
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char* segName, hsTArray<plKey>& keys)
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys)
 {
     int retVal = 0;
 
@@ -336,7 +333,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     if (!maxMtl)
         throw "No material specified";
 
-    const char *animName = pb->GetStr(kMtlAnim);
+    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
     float begin=-1.f;
     float end = -1.f;
 
@@ -357,9 +354,8 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
 
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
-    const char *loopName = nil;
-    loopName = pb->GetStr(kMtlLoop);
-    if (segMap && loopName)
+    plString loopName = plString::FromUtf8(pb->GetStr(kMtlLoop));
+    if (segMap && !loopName.IsNull())
         GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, begin, end);
 
     DeleteSegmentMap(segMap);
@@ -445,13 +441,14 @@ bool plResponderCmdMtl::IsWaitable(IParamBlock2 *pb)
 void plResponderCmdMtl::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 {
     Mtl *mtl = GetMtl(pb);
-    const char *animName = GetAnim(pb);
+    plString animName = GetAnim(pb);
 
     if (mtl)
     {
         plNotetrackAnim notetrackAnim(mtl, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
-        while (const char *marker = info.GetNextMarkerName())
+        plString marker;
+        while (!(marker = info.GetNextMarkerName()).IsNull())
             waitPoints.push_back(marker);
     }
 }
@@ -468,11 +465,11 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     eventMsg->fEvent = kStop;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (waitInfo.point)
+    if (!waitInfo.point.IsNull())
     {
         // FIXME COLIN - Error checking here?
         Mtl *mtl = GetMtl(pb);
-        const char *animName = GetAnim(pb);
+        plString animName = GetAnim(pb);
 
         plNotetrackAnim notetrackAnim(mtl, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
@@ -545,13 +542,14 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
     ComboBox_Enable(hLoop, TRUE);
 
     plNotetrackAnim anim(mtl, nil);
-    const char *animName = pb->GetStr(kMtlAnim);
+    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
     plAnimInfo info = anim.GetAnimInfo(animName);
 
-    while (const char *loopName = info.GetNextLoopName())
+    plString loopName;
+    while (!(loopName = info.GetNextLoopName()).IsNull())
     {
-        sel = ComboBox_AddString(hLoop, loopName);
-        if (!strcmp(loopName, savedName))
+        sel = ComboBox_AddString(hLoop, loopName.c_str());
+        if (!loopName.Compare(savedName))
             ComboBox_SetCurSel(hLoop, sel);
     }
 }

@@ -60,10 +60,10 @@ class pfGUIButtonMod : public pfGUIControlMod
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        char            *fAnimName;
+        plString        fAnimName;
 
         hsTArray<plKey> fMouseOverAnimKeys;
-        char            *fMouseOverAnimName;
+        plString        fMouseOverAnimName;
 
         hsBool          fClicking;
         hsBool          fTriggering;
@@ -83,7 +83,6 @@ class pfGUIButtonMod : public pfGUIControlMod
     public:
 
         pfGUIButtonMod();
-        virtual ~pfGUIButtonMod();
 
         CLASSNAME_REGISTER( pfGUIButtonMod );
         GETINTERFACE_ANY( pfGUIButtonMod, pfGUIControlMod );
@@ -130,8 +129,8 @@ class pfGUIButtonMod : public pfGUIControlMod
         void    StopDragging( hsBool cancel );
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
-        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const char *name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const plString &name );
 };
 
 #endif // _pfGUIButtonMod_h

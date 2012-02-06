@@ -1319,7 +1319,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Add it to the sceneNode as a generic interface, so it gets loaded with the sceneNode
     plLocation nodeLoc = sceneNodeKey->GetUoid().GetLocation();
 
-    plKey modKey = hsgResMgr::ResMgr()->NewKey( fCompPB->GetStr( kRefDialogName ), mod, nodeLoc );
+    plKey modKey = hsgResMgr::ResMgr()->NewKey( plString::FromUtf8( fCompPB->GetStr( kRefDialogName ) ), mod, nodeLoc );
     hsgResMgr::ResMgr()->AddViaNotify( modKey, new plNodeRefMsg( sceneNodeKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );
 
     // Also add our dialog mod to the scene node in the same way
@@ -1360,7 +1360,7 @@ hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
                                                             fCompPB->GetStr( kRefDialogName ), (uint32_t)-1 );
 
         plLocation nodeLoc = sceneNodeKey->GetUoid().GetLocation();
-        plKey dlgKey = hsgResMgr::ResMgr()->NewKey( fCompPB->GetStr( kRefDialogName ), fDialogMod, nodeLoc );
+        plKey dlgKey = hsgResMgr::ResMgr()->NewKey( plString::FromUtf8( fCompPB->GetStr( kRefDialogName ) ), fDialogMod, nodeLoc );
 
         fDialogMod->SetSceneNodeKey( sceneNodeKey );
 
@@ -2728,7 +2728,7 @@ hsBool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
     }
 
     if( fCompPB->GetInt( kRefOrientation ) == 1 )
@@ -4450,7 +4450,7 @@ hsBool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
     }
 
     const char *errMsg = ISetSoundIndex( kRefAnimateSound, kRefAnimateSoundComp, pfGUIProgressCtrl::kAnimateSound, node );

@@ -56,22 +56,22 @@ protected:
 
 public:
     plAnimInfo() : fSegMap(NULL), fAnimSpec(NULL) {}
-    plAnimInfo(SegmentMap *segMap, const char *animName);
+    plAnimInfo(SegmentMap *segMap, const plString &animName);
 
-    const char *GetAnimName();
+    plString GetAnimName();
     float GetAnimStart();
     float GetAnimEnd();
     float GetAnimInitial();
 
-    const char *GetNextLoopName();
-    float GetLoopStart(const char *loopName);
-    float GetLoopEnd(const char *loopName);
+    plString GetNextLoopName();
+    float GetLoopStart(const plString &loopName);
+    float GetLoopEnd(const plString &loopName);
 
-    const char *GetNextMarkerName();
-    float GetMarkerTime(const char *markerName);
+    plString GetNextMarkerName();
+    float GetMarkerTime(const plString &markerName);
 
     float GetNextStopPoint();   // Returns -1 on last stop point
-    bool IsSuppressed(const char *animName);
+    bool IsSuppressed(const plString &animName);
 };
 
 class plNotetrackAnim
@@ -88,8 +88,8 @@ public:
 
     bool HasNotetracks() { return (fSegMap != NULL); }
 
-    const char *GetNextAnimName();
-    plAnimInfo GetAnimInfo(const char *animName);
+    plString GetNextAnimName();
+    plAnimInfo GetAnimInfo(const plString &animName);
 };
 
 #endif //PL_NOTETRACK_ANIM

@@ -6548,7 +6548,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
 {
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     msg->SetCmd(plAnimCmdMsg::kContinue);
-    msg->SetAnimName(nil);
+    msg->SetAnimName(plString::Null);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
@@ -6560,7 +6560,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
 {
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     msg->SetCmd(plAnimCmdMsg::kStop);
-    msg->SetAnimName(nil);
+    msg->SetAnimName(plString::Null);
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
@@ -6574,7 +6574,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->SetCmd(plAGCmdMsg::kSetBlend);
     msg->fBlend = params[2];
     msg->fBlendRate = params[3];
-    msg->SetAnimName(params[1]);
+    msg->SetAnimName(plString::FromUtf8(params[1]));
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
@@ -6588,7 +6588,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->SetCmd(plAGCmdMsg::kSetAmp);
     msg->fAmp = params[2];
     msg->fAmpRate = params[3];
-    msg->SetAnimName(params[1]);
+    msg->SetAnimName(plString::FromUtf8(params[1]));
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }
@@ -6602,7 +6602,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
     msg->SetCmd(plAnimCmdMsg::kSetSpeed);
     msg->fSpeed = params[2];
     msg->fSpeedChangeRate = params[3];
-    msg->SetAnimName(params[1]);
+    msg->SetAnimName(plString::FromUtf8(params[1]));
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(plString::FromUtf8(params[0]), msg);
 }

@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plAnimCmdMsg::~plAnimCmdMsg()
 {
     ClearCmd();
-    delete [] fAnimName;
-    delete [] fLoopName;
 }
 
 
@@ -58,24 +56,22 @@ void plAnimCmdMsg::ClearCmd()
     fCmd.Clear(); 
 }
 
-void plAnimCmdMsg::SetAnimName(const char *name)
+void plAnimCmdMsg::SetAnimName(const plString &name)
 {
-    delete [] fAnimName;
-    fAnimName = hsStrcpy(name);
+    fAnimName = name;
 }
 
-const char *plAnimCmdMsg::GetAnimName()
+plString plAnimCmdMsg::GetAnimName()
 {
     return fAnimName;
 }
 
-void plAnimCmdMsg::SetLoopName(const char *name)
+void plAnimCmdMsg::SetLoopName(const plString &name)
 {
-    delete [] fLoopName;
-    fLoopName = hsStrcpy(name);
+    fLoopName = name;
 }
 
-const char *plAnimCmdMsg::GetLoopName()
+plString plAnimCmdMsg::GetLoopName()
 {
     return fLoopName;
 }
@@ -110,8 +106,8 @@ void plAnimCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fSpeedChangeRate);
     stream->ReadLE(&fTime);
 
-    fAnimName = stream->ReadSafeString();
-    fLoopName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
+    fLoopName = stream->ReadSafeString_TEMP();
 }
 
 void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -136,16 +132,14 @@ void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
 plAGCmdMsg::~plAGCmdMsg()
 {
     ClearCmd();
-    delete [] fAnimName;
 }
 
-void plAGCmdMsg::SetAnimName(const char *name)
+void plAGCmdMsg::SetAnimName(const plString &name)
 {
-    delete [] fAnimName;
-    fAnimName = hsStrcpy(name);
+    fAnimName = name;
 }
 
-const char *plAGCmdMsg::GetAnimName()
+plString plAGCmdMsg::GetAnimName()
 {
     return fAnimName;
 }
@@ -160,7 +154,7 @@ void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fAmp);
     stream->ReadLE(&fAmpRate);
 
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
 }
 
 void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -178,17 +172,12 @@ void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-plAGDetachCallbackMsg::~plAGDetachCallbackMsg()
+void plAGDetachCallbackMsg::SetAnimName(const plString &name)
 {
-    delete [] fAnimName;
+    fAnimName = name;
 }
 
-void plAGDetachCallbackMsg::SetAnimName(const char *name)
-{
-    fAnimName = hsStrcpy(name);
-}
-
-char *plAGDetachCallbackMsg::GetAnimName()
+plString plAGDetachCallbackMsg::GetAnimName()
 {
     return fAnimName;
 }

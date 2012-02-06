@@ -115,7 +115,7 @@ hsBool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plArmatureEffectFootSound *effect = new plArmatureEffectFootSound();
     
     // Note: MUST be a hard-coded keyname, since we search for same name in plArmatureMod.cpp
-    hsgResMgr::ResMgr()->NewKey( "FootstepSounds", effect, node->GetLocation());
+    hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("FootstepSounds"), effect, node->GetLocation());
 
     int i;
     for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)

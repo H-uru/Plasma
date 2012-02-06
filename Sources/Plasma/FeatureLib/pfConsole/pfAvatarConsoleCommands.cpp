@@ -632,11 +632,11 @@ PF_CONSOLE_CMD( Avatar_Physics, TogglePhysical, "", "Disable/enable physics on t
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "Blend the given animation with the current animation.")
 {
-    char *animationName = params[0];
+    plString animationName = plString::FromUtf8(params[0]);
     float blendFactor = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && animationName)
+    if (avatar && !animationName.IsNull())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -650,12 +650,12 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor, int priority", "Blend animation using priority.")
 {
-    char *animationName = params[0];
+    plString animationName = plString::FromUtf8(params[0]);
     float blendFactor = params[1];
     int priority = params[2];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && animationName)
+    if (avatar && !animationName.IsNull())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -671,15 +671,15 @@ PF_CONSOLE_CMD( Avatar_Anim, PlaySimpleAnim, "string AvatarName, string Animatio
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName(params[0]);
     if (avatar)
-        avatar->PlaySimpleAnim(params[1]);
+        avatar->PlaySimpleAnim(plString::FromUtf8(params[1]));
 }
 
 PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given animation from the avatar.")
 {
-    char *animationName = params[0];
+    plString animationName = plString::FromUtf8(params[0]);
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && animationName)
+    if (avatar && !animationName.IsNull())
     {
         plAGAnimInstance * instance = avatar->FindAnimInstance(animationName);
         if(instance)
@@ -691,11 +691,11 @@ PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given a
 
 PF_CONSOLE_CMD( Avatar_Anim, SetBlend, "string Animation, float blend", "Set the blend of the given animation.")
 {
-    char *animationName = params[0];
+    plString animationName = plString::FromUtf8(params[0]);
     float blend = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && animationName)
+    if (avatar && !animationName.IsNull())
     {
         plAGAnimInstance *anim = avatar->FindAnimInstance(animationName);
         if(anim)

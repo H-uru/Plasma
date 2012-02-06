@@ -322,15 +322,14 @@ wchar_t *hsStream::ReadSafeWString()
     return retVal;
 }
 
-uint32_t hsStream::WriteSafeString_TEMP(const plString &string)
+uint32_t hsStream::WriteSafeString(const plString &string)
 {
-    return WriteSafeString(string.c_str());
+    return WriteSafeString(_TEMP_CONVERT_TO_CONST_CHAR(string));
 }
 
-uint32_t hsStream::WriteSafeWString_TEMP(const plString &string)
+uint32_t hsStream::WriteSafeWString(const plString &string)
 {
-    plStringBuffer<wchar_t> wbuffer = string.ToWchar();
-    return WriteSafeWString(wbuffer.GetData());
+    return WriteSafeWString(_TEMP_CONVERT_TO_WCHAR_T(string));
 }
 
 plString hsStream::ReadSafeString_TEMP()

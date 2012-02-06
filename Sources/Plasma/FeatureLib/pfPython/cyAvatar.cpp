@@ -174,7 +174,7 @@ plKey cyAvatar::IFindArmatureModKey(plKey avKey)
 //  PURPOSE    : oneShot Avatar (must already be there)
 //
 void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
-               const char *animName, hsBool drivable, hsBool reversible)
+               const plString &animName, hsBool drivable, hsBool reversible)
 {
     if ( fRecvr.Count() > 0 )
     {
@@ -185,7 +185,7 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
             seekKey.getKey(),   // Mark D told me to do it ...paulg
             duration,  
             usePhysics,  
-            animName, // Constructor will do a copy. -mf- hsStrcpy(animName),
+            animName,
             drivable, 
             reversible);
 
@@ -1586,7 +1586,7 @@ void cyAvatar::ExitSubWorld()
 //
 //  PURPOSE    : Place the Avatar into the subworld of the sceneobject specified
 //
-void cyAvatar::PlaySimpleAnimation(const char* animName)
+void cyAvatar::PlaySimpleAnimation(const plString& animName)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
     if ( fRecvr.Count() > 0)

@@ -58,10 +58,10 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        char            *fAnimName;
+        plString        fAnimName;
 
                         // Computed once, once an anim is loaded that we can compute this with
-        float        fAnimBegin, fAnimEnd;
+        float           fAnimBegin, fAnimEnd;
         hsBool          fAnimTimesCalced;
         hsBool          fPlaySound;
 
@@ -69,12 +69,11 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
 
         hsBool          ICalcAnimTimes( void );
 
-        const uint32_t    fStopSoundTimer;
+        const uint32_t  fStopSoundTimer;
 
     public:
 
         pfGUIProgressCtrl();
-        virtual ~pfGUIProgressCtrl();
 
         CLASSNAME_REGISTER( pfGUIProgressCtrl );
         GETINTERFACE_ANY( pfGUIProgressCtrl, pfGUIValueCtrl );
@@ -103,7 +102,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         void DontPlaySounds() { fPlaySound = false; }
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
 };
 
 #endif // _pfGUIProgressCtrl_h

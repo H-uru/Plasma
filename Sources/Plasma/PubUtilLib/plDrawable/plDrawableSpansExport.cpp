@@ -386,7 +386,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
             uint32_t ptr = cell->fVtxStart + span->fCellOffset * stride;
 
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d offset)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
@@ -404,7 +404,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         else
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,
@@ -423,7 +423,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         if( geo->fProps & plGeometrySpan::kFirstInstance )
         {
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
@@ -437,7 +437,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         else
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
                 geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,

@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 #define _TEMP_CONVERT_FROM_LITERAL(x)       plString::FromUtf8((x))
 #define _TEMP_CONVERT_FROM_WCHAR_T(x)       plString::FromWchar((x))
-#define _TEMP_CONVERT_TO_CONST_CHAR(x)      (x).c_str()
-#define _TEMP_CONVERT_TO_CONST_CHAR_S(x)    (x).s_str()
+#define _TEMP_CONVERT_TO_CONST_CHAR(x)      ((x).c_str())
+#define _TEMP_CONVERT_TO_WCHAR_T(x)         ((x).ToWchar().GetData())
 
 typedef unsigned int UniChar;
 
@@ -70,7 +70,7 @@ private:
     StringRef *fData;
 
 public:
-    plStringBuffer() : fData(0) { }
+    plStringBuffer() : fData(nil) { }
 
     plStringBuffer(const plStringBuffer<_Ch> &copy)
     {

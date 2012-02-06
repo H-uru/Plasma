@@ -59,7 +59,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        char            *fAnimName;
+        plString        fAnimName;
         hsBool          fClicking;
 
         hsBool          fChecked;
@@ -72,7 +72,6 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
     public:
 
         pfGUICheckBoxCtrl();
-        virtual ~pfGUICheckBoxCtrl();
 
         CLASSNAME_REGISTER( pfGUICheckBoxCtrl );
         GETINTERFACE_ANY( pfGUICheckBoxCtrl, pfGUIControlMod );
@@ -94,7 +93,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         void DontPlaySounds() { fPlaySound = false; } // should the checkbox play sounds?
         
         const hsTArray<plKey>   &GetAnimationKeys( void ) const { return fAnimationKeys; }
-        const char              *GetAnimationName( void ) const { return fAnimName; }
+        plString                GetAnimationName( void ) const { return fAnimName; }
 
         enum SoundEvents
         {
@@ -105,7 +104,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         };
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
 };
 
 #endif // _pfGUICheckBoxCtrl_h

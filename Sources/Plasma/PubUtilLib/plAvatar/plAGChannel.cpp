@@ -62,8 +62,6 @@ plAGChannel::plAGChannel()
 #ifdef TRACK_AG_ALLOCS
     fName = gGlobalAnimName;
     RegisterAGAlloc(this, gGlobalChannelName, gGlobalAnimName, this->ClassIndex());
-#else // TRACK_AG_ALLOCS
-    fName = nil;
 #endif // TRACK_AG_ALLOCS
 }
 
@@ -121,7 +119,7 @@ void plAGChannel::Read(hsStream *stream, hsResMgr *mgr)
 {
     plCreatable::Read(stream, mgr);
 
-    fName = stream->ReadSafeString();
+    fName = stream->ReadSafeString_TEMP();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

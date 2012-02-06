@@ -28,6 +28,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 #include <cstdlib>
+#include <wchar.h>
 
 const plString plString::Null;
 
@@ -51,6 +52,11 @@ static inline size_t u16slen(const uint16_t *ustr, size_t max)
 
 void plString::IConvertFromUtf8(const char *utf8, size_t size, bool steal)
 {
+    if (utf8 == nil) {
+        fUtf8Buffer = plStringBuffer<char>();
+        return;
+    }
+
     if ((long)size < 0)
         size = strnlen(utf8, -(long)size);
 
@@ -85,6 +91,11 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size, bool steal)
 
 void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
 {
+    if (utf16 == nil) {
+        fUtf8Buffer = plStringBuffer<char>();
+        return;
+    }
+
     if ((long)size < 0)
         size = u16slen(utf16, -(long)size);
 
@@ -156,6 +167,11 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
     IConvertFromUtf16((const uint16_t *)wstr, size);
 #else
+    if (wstr == nil) {
+        fUtf8Buffer = plStringBuffer<char>();
+        return;
+    }
+
     if ((long)size < 0)
         size = wcsnlen(wstr, -(long)size);
 
@@ -213,6 +229,11 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
 
 void plString::IConvertFromIso8859_1(const char *astr, size_t size)
 {
+    if (astr == nil) {
+        fUtf8Buffer = plStringBuffer<char>();
+        return;
+    }
+
     if ((long)size < 0)
         size = strnlen(astr, -(long)size);
 
