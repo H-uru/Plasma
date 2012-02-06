@@ -141,7 +141,7 @@ void CBaseSpareList::CleanUp (const char typeName[]) {
         #ifdef CLIENT
         {
             char buffer[256];
-            StrPrintf(buffer, arrsize(buffer), "Memory leak: %s", typeName);
+            snprintf(buffer, arrsize(buffer), "Memory leak: %s", typeName);
             FATAL(buffer);
         }
         #else
