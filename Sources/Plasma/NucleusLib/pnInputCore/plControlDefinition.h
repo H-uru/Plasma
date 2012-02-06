@@ -125,14 +125,14 @@ struct CommandConvert
 
 struct plMouseInfo
 {
-    plMouseInfo(ControlEventCode _code, uint32_t _flags, hsPoint4 _box, char* _desc)
+    plMouseInfo(ControlEventCode _code, uint32_t _flags, hsPoint4 _box, const char* _desc)
     {
         fCode = _code;
         fControlFlags = _flags;
         fBox = _box;
         fControlDescription = _desc;
     }
-    plMouseInfo(ControlEventCode _code, uint32_t _flags, float pt1, float pt2, float pt3, float pt4, char* _desc)
+    plMouseInfo(ControlEventCode _code, uint32_t _flags, float pt1, float pt2, float pt3, float pt4, const char* _desc)
     {
         fCode = _code;
         fControlFlags = _flags;
@@ -140,9 +140,9 @@ struct plMouseInfo
         fControlDescription = _desc;
     }
     ControlEventCode    fCode;
-    uint32_t              fControlFlags;
+    uint32_t            fControlFlags;
     hsPoint4            fBox;
-    char*               fControlDescription;
+    const char*         fControlDescription;
 };
 
 

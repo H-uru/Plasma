@@ -49,10 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for game manager messages
 //
 
+#include <Python.h>
 #include "hsStlUtils.h"
 #include "pfGameMgr/pfGameMgr.h"
 
-#include <Python.h>
 #include "../pyGlueHelpers.h"
 
 class pyGameMgrMsg

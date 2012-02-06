@@ -101,7 +101,7 @@ COMPILER_ASSERT_HEADER(Cli2Scr, kNumCsr2CliMessages <= (uint16_t)-1);
 *   Networked structures
 *
 ***/
-#include <PshPack1.h>
+#pragma pack(push,1)
 
 //============================================================================
 // Connect packet
@@ -174,5 +174,5 @@ struct Csr2Cli_LoginReply : Cli2Csr_MsgHeader {
 };
 
 
-#include <PopPack.h>
+#pragma pack(pop)
 

@@ -171,7 +171,8 @@ void plAgeInfoStruct::CopyFrom(const NetAgeInfo & info) {
     StrToAnsi(tmp, info.ageDesc, arrsize(tmp));
     SetAgeDescription(tmp);
 
-    SetAgeInstanceGuid(&plUUID(info.ageInstId));
+    plUUID inst(info.ageInstId);
+    SetAgeInstanceGuid(&inst);
     SetAgeSequenceNumber(info.ageSequenceNumber);
     SetAgeLanguage(info.ageLanguage);
 }

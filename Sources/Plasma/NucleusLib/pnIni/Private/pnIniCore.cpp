@@ -295,7 +295,7 @@ static void ParseBuffer (
                 }
                 
                 if (chr == SECTION_CLOSE_CHAR) {
-                    StrCopy(dst, start, min(buffer - start + 1, arrsize(dst)));
+                    StrCopy(dst, start, min((unsigned long)(buffer - start + 1), arrsize(dst)));
                     section = AddSection(ini, dst);
                     state = STATE_STRIP_TRAILING;
                 }
@@ -319,7 +319,7 @@ static void ParseBuffer (
                     break;
                 }
 
-                StrCopy(dst, start, min(buffer - start + 1, arrsize(dst)));
+                StrCopy(dst, start, min((unsigned long)(buffer - start + 1), arrsize(dst)));
                 value = AddKeyValue(section, dst, lineNum);
                 start = buffer + 1;
                 state = STATE_VALUE;
@@ -340,7 +340,7 @@ static void ParseBuffer (
                     break;
                 }
 
-                StrCopy(dst, start, min(buffer - start + 1, arrsize(dst)));
+                StrCopy(dst, start, min((unsigned long)(buffer - start + 1), arrsize(dst)));
                 AddValueString(value, dst);
                 if (chr == VALUE_SEPARATOR)
                     start = buffer + 1;
@@ -352,7 +352,7 @@ static void ParseBuffer (
 
     // cleanup current value
     if (state == STATE_VALUE) {
-        StrCopy(dst, start, min(buffer - start + 1, arrsize(dst)));
+        StrCopy(dst, start, min((unsigned long)(buffer - start + 1), arrsize(dst)));
         AddValueString(value, dst);
     }
 }

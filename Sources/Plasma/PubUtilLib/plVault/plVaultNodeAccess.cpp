@@ -466,7 +466,8 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
                 if (StrLen(token) > 0) {
                     Uuid guid;
                     GuidFromString(token, &guid);
-                    info->SetAgeInstanceGuid(&plUUID(guid));
+                    plUUID uuid(guid);
+                    info->SetAgeInstanceGuid(&uuid);
                 }
             }
             break;

@@ -211,7 +211,7 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
     }
 
     uint8_t * buffer = nil;
-    int bytes;
+    Py_ssize_t bytes;
     PyObject_AsReadBuffer(pybuf, (const void **)&buffer, &bytes);
     if (buffer) {
         VaultImageNode access(fNode);

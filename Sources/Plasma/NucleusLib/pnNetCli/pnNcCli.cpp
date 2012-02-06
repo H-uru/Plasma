@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # pragma message("Compiling pnNetCli with debugging on")
 # define NCCLI_LOG  LogMsg
 #else
-# define NCCLI_LOG  NULL_STMT
+# define NCCLI_LOG  LogMsg
 #endif
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -603,7 +603,7 @@ namespace Connect {
 *
 ***/
 
-#include <PshPack1.h>
+#pragma pack(push,1)
 enum {
     kNetCliCli2SrvConnect,
     kNetCliSrv2CliEncrypt,
@@ -627,7 +627,7 @@ struct NetCli_Srv2Cli_Encrypt : NetCli_PacketHeader {
 struct NetCli_Srv2Cli_Error : NetCli_PacketHeader {
     uint32_t   error;              // ENetError
 };
-#include <PopPack.h>
+#pragma pack(pop)
 
 
 //===========================================================================

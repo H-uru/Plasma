@@ -238,7 +238,7 @@ bool AsyncFileSeek (
 *
 ***/
 
-#include <PshPack1.h>
+#pragma pack(push,1)
 struct AsyncSocketConnectPacket {
     uint8_t     connType;
     uint16_t    hdrBytes;
@@ -247,7 +247,7 @@ struct AsyncSocketConnectPacket {
     uint32_t    branchId;
     Uuid        productId;
 };
-#include <PopPack.h>
+#pragma pack(pop)
 
 
 /****************************************************************************

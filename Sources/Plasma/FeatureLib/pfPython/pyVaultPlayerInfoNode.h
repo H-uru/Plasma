@@ -48,8 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyVaultNode.h"
 #include <Python.h>
+#include "pyVaultNode.h"
 #include "pyGlueHelpers.h"
 
 class pyVaultPlayerInfoNode : public pyVaultNode

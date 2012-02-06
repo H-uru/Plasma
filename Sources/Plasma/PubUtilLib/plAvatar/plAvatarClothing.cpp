@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "plGDispatch.h"
+#include "plgDispatch.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"

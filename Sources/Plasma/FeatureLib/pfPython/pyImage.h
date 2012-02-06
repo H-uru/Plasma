@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to a plMipMap image
 //
 
+#include <Python.h>
 #include "hsStlUtils.h"
 
 #include "pyKey.h"
@@ -59,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #endif
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plKey;

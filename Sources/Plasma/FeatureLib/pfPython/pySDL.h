@@ -47,11 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pySDL - python subset of the plSDL library.
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plStateDataRecord;

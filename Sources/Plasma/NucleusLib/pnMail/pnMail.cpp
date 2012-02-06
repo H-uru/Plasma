@@ -95,7 +95,7 @@ static bool MailNotifyProc (
     void **             userState
 );
 
-static void __cdecl Send (
+static void CDECL Send (
     AsyncSocket sock,
     const char  str[],
     ...
@@ -431,7 +431,7 @@ static bool MailNotifyProc (
 }
 
 //===========================================================================
-static void __cdecl Send (
+static void CDECL Send (
     AsyncSocket sock,
     const char  str[],
     ...

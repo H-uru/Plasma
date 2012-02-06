@@ -250,7 +250,7 @@ class pfColorListElement : public pfGUIListText
             {
                 size_t length = wcslen( fString1 ) + wcslen( fString2 ) + 3;
                 thestring = new wchar_t[ length ];
-                snwprintf( thestring, length, L"%s %s", fString1, fString2 );
+                hsSnwprintf( thestring, length, L"%s %s", fString1, fString2 );
                 wemade_string = true;
             }
             else if (fString1)
