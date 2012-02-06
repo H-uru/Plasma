@@ -182,7 +182,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
         {
             // something to do here... later
             uint8_t* daBuffer = nil;
-            int length;
+            Py_ssize_t length;
             PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
             if ( daBuffer != nil )
             {
@@ -218,7 +218,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
         {
             // something to do here... later
             uint16_t* daBuffer = nil;
-            int length;
+            Py_ssize_t length;
             PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
             if ( daBuffer != nil )
             {
@@ -392,7 +392,8 @@ void pyGUIControlMultiLineEdit::InsertColor( pyColor& color )
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            pbmod->InsertColor(color.getColor());
+            hsColorRGBA col = color.getColor();
+            pbmod->InsertColor(col);
         }
     }
 }

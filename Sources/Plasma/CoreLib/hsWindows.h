@@ -58,6 +58,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
 #   endif // _MSC_VER
 
+    // Terrible hacks for MinGW because they don't have a reasonable
+    // default for the Windows version. We cheat and say it's XP.
+#   ifdef __MINGW32__
+#       undef _WIN32_WINNT
+#       define _WIN32_WINNT 0x501
+#       undef _WIN32_IE
+#       define _WIN32_IE    0x400
+#   endif
+
     // Windows.h includes winsock.h (winsocks 1), so we need to manually include winsock2 
     // and tell Windows.h to only bring in modern headers
 #   ifndef MAXPLUGINCODE
@@ -65,7 +74,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      include <ws2tcpip.h>
 #   endif // MAXPLUGINCODE
 #   define WIN32_LEAN_AND_MEAN
-#   define NOMINMAX // Needed to prevent NxMath conflicts
+#   ifndef NOMINMAX
+#      define NOMINMAX // Needed to prevent NxMath conflicts
+#   endif
 #   include <Windows.h>
     
     typedef HWND hsWindowHndl;

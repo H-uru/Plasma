@@ -39,9 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "plPythonPack.h"
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include "plPythonPack.h"
 #include "hsStream.h"
 #include "plFile/hsFiles.h"
 #include "plFile/plSecureStream.h"

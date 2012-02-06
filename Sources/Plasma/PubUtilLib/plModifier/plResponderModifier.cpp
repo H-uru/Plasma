@@ -788,7 +788,7 @@ void plResponderModifier::ILog(uint32_t color, const char* format, ...)
     char buf[256];
     va_list args;
     va_start(args, format);
-    int numWritten = _vsnprintf(buf, sizeof(buf), format, args);
+    int numWritten = hsVsnprintf(buf, sizeof(buf), format, args);
     hsAssert(numWritten > 0, "Buffer too small");
     va_end(args);
 

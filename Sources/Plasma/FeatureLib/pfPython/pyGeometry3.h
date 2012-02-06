@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyGeometry3   - the wrapper class for hsPoint3 and hsVector3
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "hsGeometry3.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class pyPoint3

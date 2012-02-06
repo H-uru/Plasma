@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef pyAgeInfoStruct_h_inc
 #define pyAgeInfoStruct_h_inc
+#include <Python.h>
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////

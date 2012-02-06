@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper for the TTT game client
 //
+#include <Python.h>
 
 #include "pfGameMgr/pfGameMgr.h"
 
-#include <Python.h>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCli.h"
 #include "../../pyKey.h"

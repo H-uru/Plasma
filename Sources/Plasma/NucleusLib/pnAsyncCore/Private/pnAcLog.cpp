@@ -122,7 +122,7 @@ void LogUnregisterHandler (FLogHandler callback) {
 }
 
 //===========================================================================
-void __cdecl LogMsg (ELogSeverity severity, const char format[], ...) {
+void CDECL LogMsg (ELogSeverity severity, const char format[], ...) {
     ASSERT(format);
 
     va_list args;
@@ -132,7 +132,7 @@ void __cdecl LogMsg (ELogSeverity severity, const char format[], ...) {
 }
 
 //===========================================================================
-void __cdecl LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
+void CDECL LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
     ASSERT(format);
 
     va_list args;

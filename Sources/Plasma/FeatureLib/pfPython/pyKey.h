@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyKey   - the wrapper class around a plKey so that Python can handle it
 //
 //////////////////////////////////////////////////////////////////////
+#include <Python.h>
 
 #include "pnKeyedObject/plKey.h"
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class plPythonFileMod;

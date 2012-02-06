@@ -48,12 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to map camera functions to plasma2 message
 //
+#include <Python.h>
 #include "HeadSpin.h"
 
 #include "pnKeyedObject/plKey.h"
 class pyKey;
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
 
 class cyCamera

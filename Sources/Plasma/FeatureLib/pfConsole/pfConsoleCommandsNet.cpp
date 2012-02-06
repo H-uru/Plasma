@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
+#include "pfPython/plPythonSDLModifier.h"
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "plgDispatch.h"
 
@@ -355,7 +356,8 @@ PF_CONSOLE_CMD( Net,        // groupName
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
-    link.GetAgeInfo()->SetAgeInstanceGuid( &plUUID( params[1] ) );
+    plUUID guid(params[1]);
+    link.GetAgeInfo()->SetAgeInstanceGuid( &guid );
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age...");
@@ -637,7 +639,6 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
         plNetObjectDebugger::GetInstance()->ClearAllDebugObjects();
 }
 
-#include "pfPython/plPythonSDLModifier.h"
 PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                DumpAgeSDLHook,      // fxnName
                "bool dirtyOnly", // paramList
@@ -810,7 +811,8 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     link.GetAgeInfo()->SetAgeInstanceName( params[0] );
-    link.GetAgeInfo()->SetAgeInstanceGuid( &plUUID(GuidGenerate()));
+    plUUID guid(GuidGenerate());
+    link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
     PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
@@ -837,7 +839,8 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     link.GetAgeInfo()->SetAgeInstanceName( params[0] );
-    link.GetAgeInfo()->SetAgeInstanceGuid( &plUUID(GuidGenerate()));
+    plUUID guid(GuidGenerate());
+    link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
     PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
