@@ -142,7 +142,7 @@ public:
     HWND    GetWinDlg( void ) const;
 
     // Interesting functions
-    const char  *GetSegmentName( void ) const;
+    plString    GetSegmentName( void ) const;
     void        SetSegment( const char *name ); // nil for "entire animation"
 
     // Conversion from stealth's INode to the actual object
@@ -203,32 +203,32 @@ public:
     void    SetAutoStart( bool b );
 
     bool        GetLoop( void ) const;
-    const char  *GetLoopName( void ) const;
-    void        SetLoop( bool b, const char *name );
+    plString    GetLoopName( void ) const;
+    void        SetLoop( bool b, const plString &name );
 
-    uint8_t       GetEaseInType( void ) const;
-    float    GetEaseInLength( void ) const;
-    float    GetEaseInMin( void ) const;
-    float    GetEaseInMax( void ) const;
+    uint8_t     GetEaseInType( void ) const;
+    float       GetEaseInLength( void ) const;
+    float       GetEaseInMin( void ) const;
+    float       GetEaseInMax( void ) const;
     void        SetEaseIn( uint8_t type, float length, float min, float max );
 
-    uint8_t       GetEaseOutType( void ) const;
-    float    GetEaseOutLength( void ) const;
-    float    GetEaseOutMin( void ) const;
-    float    GetEaseOutMax( void ) const;
+    uint8_t     GetEaseOutType( void ) const;
+    float       GetEaseOutLength( void ) const;
+    float       GetEaseOutMin( void ) const;
+    float       GetEaseOutMax( void ) const;
     void        SetEaseOut( uint8_t type, float length, float min, float max );
 
     // Conversion stuff
     void        GetAllStopPoints( hsTArray<float> &out );
-    float    GetSegStart( void ) const;
-    float    GetSegEnd( void ) const;
+    float       GetSegStart( void ) const;
+    float       GetSegEnd( void ) const;
     void        GetLoopPoints( float &start, float &end ) const;
     void        StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength );
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
     virtual hsBool  IsNodeRestricted( void ) { return true; }
-    virtual const char  *GetIfaceSegmentName( hsBool allowNil );
+    virtual plString GetIfaceSegmentName( hsBool allowNil );
     virtual hsBool  GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
     virtual hsBool      MightRequireSeparateMaterial( void ) { return true; }
 

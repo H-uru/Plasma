@@ -365,8 +365,7 @@ hsBool plLightMapGen::ICompressLightMaps()
                 {
                     const plLocation &textureLoc = plPluginResManager::ResMgr()->GetCommonPage(orig->GetKey()->GetUoid().GetLocation(),
                                                                                     plAgeDescription::kTextures );
-                    char name[512];
-                    sprintf(name, "%s_DX", orig->GetKey()->GetName());
+                    plString name = plString::Format("%s_DX", orig->GetKey()->GetName().c_str());
 
                     plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), name));
                     if( compKey )
@@ -1252,8 +1251,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             return mat->GetPiggyBack(i);
     }
 
-    char newMatName[256];
-    sprintf(newMatName, "%s_%s_LIGHTMAPGEN", mat->GetKey()->GetName(), node->GetName());
+    plString newMatName = plString::Format("%s_%s_LIGHTMAPGEN", mat->GetKey()->GetName().c_str(), node->GetName());
     plLocation nodeLoc = node->GetLocation();
 
     plKey matKey = hsgResMgr::ResMgr()->FindKey(plUoid(nodeLoc, hsGMaterial::Index(), newMatName));
@@ -1291,8 +1289,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     // Make sure layer (and mip) name are unique across pages by putting the page name in
     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(node->GetLocation());
 
-    char layName[256];
-    sprintf(layName, "%s_%s_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
+    plString layName = plString::Format("%s_%s_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
     
     plKey layKey = node->FindPageKey(plLayer::Index(), layName);
 
@@ -1309,8 +1306,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         }
         else
         {
-            char mipmapName[ 256 ];
-            sprintf( mipmapName, "%s_mip", layName );
+            plString mipmapName = plString::Format( "%s_mip", layName.c_str() );
 
             // Deleted the NOTE here because it was incorrect in every meaningful sense of the word. - mf
 
@@ -1320,8 +1316,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
 
             if( !mipKey && !fRecalcLightMaps )
             {
-                char compressedName[512];
-                sprintf(compressedName, "%s_DX", mipmapName);
+                plString compressedName = plString::Format("%s_DX", mipmapName.c_str());
 
                 plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), compressedName));
 

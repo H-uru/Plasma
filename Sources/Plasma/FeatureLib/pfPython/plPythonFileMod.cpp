@@ -629,23 +629,23 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                             NamedComponent comp;
                                             comp.isActivator = (isNamedAttr == 1);
                                             comp.id = parameter.fID;
-                                            comp.name = plString::FromUtf8(parameter.datarecord.fString);
+                                            comp.name = parameter.fString;
                                             
                                             fNamedCompQueue.Append(comp);
                                         }
                                         else
                                         {
                                             if (isNamedAttr == 1)
-                                                IFindActivatorAndAdd(plString::FromUtf8(parameter.datarecord.fString), parameter.fID);
+                                                IFindActivatorAndAdd(parameter.fString, parameter.fID);
                                             else
-                                                IFindResponderAndAdd(plString::FromUtf8(parameter.datarecord.fString), parameter.fID);
+                                                IFindResponderAndAdd(parameter.fString, parameter.fID);
                                         }
                                     }
                                 }
                                 // if it wasn't a named string then must be normal string type
                                 if ( isNamedAttr == 0 )
-                                    if ( parameter.datarecord.fString != nil )
-                                        value = PyString_FromString(parameter.datarecord.fString);
+                                    if ( !parameter.fString.IsNull() )
+                                        value = PyString_FromString(parameter.fString.c_str());
                                 break;
                             case plPythonParameter::kSceneObject:
                             case plPythonParameter::kSceneObjectList:

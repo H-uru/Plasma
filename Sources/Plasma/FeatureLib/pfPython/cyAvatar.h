@@ -103,7 +103,7 @@ public:
 
     // oneShot Avatar (must already be there)
     virtual void OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
-                   const char *animName, hsBool drivable, hsBool reversible);
+                   const plString &animName, hsBool drivable, hsBool reversible);
 
     // oneShot Avatar 
     virtual void RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp);
@@ -412,7 +412,7 @@ public:
     //
     virtual void ExitSubWorld();
 
-    virtual void PlaySimpleAnimation(const char* animName);
+    virtual void PlaySimpleAnimation(const plString& animName);
 
     /////////////////////////////////////////////////////////////////////////////
     //

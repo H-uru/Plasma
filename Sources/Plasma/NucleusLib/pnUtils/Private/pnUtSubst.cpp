@@ -157,8 +157,7 @@ bool IParseForSubst (
         }
 
         // Validate variable name length
-        chartype varBuffer[256];
-        if (varEnd - varStart >= arrsize(varBuffer)) {
+        if (varEnd - varStart >= 256) {
             result = false;
             src = current = varEnd + 1;
             continue;

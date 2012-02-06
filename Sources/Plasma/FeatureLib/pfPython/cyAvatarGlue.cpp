@@ -89,8 +89,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    std::string animNameStr = animName; // convert to string (for safety)
-    self->fThis->OneShot(*key, duration, usePhysics != 0, animNameStr.c_str(), drivable != 0, reversable != 0);
+    self->fThis->OneShot(*key, duration, usePhysics != 0, plString::FromUtf8(animName), drivable != 0, reversable != 0);
     PYTHON_RETURN_NONE;
 }
 
@@ -592,8 +591,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::string animNameStr = animName; // convert to a string (for safety)
-    self->fThis->PlaySimpleAnimation(animNameStr.c_str());
+    self->fThis->PlaySimpleAnimation(plString::FromUtf8(animName));
     PYTHON_RETURN_NONE;
 }
 

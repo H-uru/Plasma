@@ -2158,7 +2158,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         pMsg->AddReceiver(pCamMod->GetKey());
         pMsg->SetSender(pAnim->GetModKey(node));
         pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
-        pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
+        pMsg->SetAnimName(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
         pMsg->fTime = kfArray[0][i].fFrame / MAX_FRAMES_PER_SEC;
         pMsg->AddCallback(pCall);
         hsRefCnt_SafeUnRef(pCall);

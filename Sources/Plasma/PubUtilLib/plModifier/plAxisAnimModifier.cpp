@@ -203,7 +203,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 return true;
             plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->AddReceiver(fXAnim);
-            pMsg->SetAnimName(fAnimLabel.c_str());
+            pMsg->SetAnimName(fAnimLabel);
         //  pMsg->SetAnimName()
             if (fXPos < pMMsg->GetXPos())
             {
@@ -223,7 +223,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 return true;
             plAnimCmdMsg* pMsg = new plAnimCmdMsg;
             pMsg->AddReceiver(fYAnim);
-            pMsg->SetAnimName(fAnimLabel.c_str());
+            pMsg->SetAnimName(fAnimLabel);
             if (fYPos > pMMsg->GetYPos())
             {
                 if (fAllOrNothing)
@@ -301,7 +301,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
                 pMsg->AddCallback(pCall1);
                 pMsg->AddCallback(pCall2);
-                pMsg->SetAnimName(fAnimLabel.c_str());
+                pMsg->SetAnimName(fAnimLabel);
                 pMsg->AddReceiver( fXAnim );
 
                 hsRefCnt_SafeUnRef( pCall1 );
@@ -330,7 +330,7 @@ hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->AddCallback(pCall1);
                 pMsg->AddCallback(pCall2);
                 pMsg->AddReceiver( fYAnim );
-                pMsg->SetAnimName(fAnimLabel.c_str());
+                pMsg->SetAnimName(fAnimLabel);
 
                 hsRefCnt_SafeUnRef( pCall1 );
                 hsRefCnt_SafeUnRef( pCall2 );

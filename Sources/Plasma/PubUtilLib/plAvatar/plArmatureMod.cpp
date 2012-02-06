@@ -660,11 +660,11 @@ void plArmatureMod::IInitDefaults()
     fPhysHeight = 0.f;
     fPhysWidth = 0.f;
     fUpdateMsg = nil;
-    fRootName = nil;
+    fRootName = plString::Null;
     fDontPanicLink = false;
     fBodyAgeName = "GlobalAvatars";
     fBodyFootstepSoundPage = "Audio";
-    fAnimationPrefix = "Male";
+    fAnimationPrefix = _TEMP_CONVERT_FROM_LITERAL("Male");
     fUserStr = "";
 }
 
@@ -677,7 +677,6 @@ plArmatureMod::plArmatureMod() : plArmatureModBase()
 plArmatureMod::~plArmatureMod()
 {
     delete fBoneMap;
-    delete [] fRootName;
 
     if (fUpdateMsg)
         fUpdateMsg->UnRef();
@@ -746,7 +745,7 @@ void plArmatureMod::GetPositionAndRotationSim(hsPoint3* position, hsQuat* rotati
     }
 }
 
-const plSceneObject *plArmatureMod::FindBone(const char * name) const
+const plSceneObject *plArmatureMod::FindBone(const plString & name) const
 {
     plSceneObject *result = nil;
 
@@ -1034,14 +1033,12 @@ void plArmatureMod::PanicLink(hsBool playLinkOutAnim /* = true */)
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
 
-        char *animName = MakeAnimationName("FallingLinkOut");
+        plString animName = MakeAnimationName("FallingLinkOut");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
+        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
     
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->Send();
-
-        delete [] animName;
     }
     else
     {
@@ -1059,10 +1056,9 @@ void plArmatureMod::PersonalLink()
     else
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
-        char *animName = MakeAnimationName("PersonalLink"); 
+        plString animName = MakeAnimationName("PersonalLink");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
-        delete [] animName;
+        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
         
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);    
@@ -1758,7 +1754,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fMeshKeys.push_back(mgr->ReadKey(stream));
 
     // read the root name string
-    fRootName = stream->ReadSafeString();
+    fRootName = stream->ReadSafeString_TEMP();
 
     // read in the brains
     int nBrains = stream->ReadLE32();
@@ -1825,11 +1821,9 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fPhysHeight = stream->ReadLEFloat();
     fPhysWidth = stream->ReadLEFloat();
 
-    char* temp = stream->ReadSafeString();
-    fAnimationPrefix = temp;
-    delete [] temp;
+    fAnimationPrefix = stream->ReadSafeString_TEMP();
 
-    temp = stream->ReadSafeString();
+    char *temp = stream->ReadSafeString();
     fBodyAgeName = temp;
     delete [] temp;
 
@@ -1906,7 +1900,7 @@ void plArmatureMod::ICustomizeApplicator()
 {
     plArmatureModBase::ICustomizeApplicator();
 
-    const plAGModifier *agMod = GetChannelMod("Bone_Root", true);
+    const plAGModifier *agMod = GetChannelMod(_TEMP_CONVERT_FROM_LITERAL("Bone_Root"), true);
     if (agMod)
     {
         // are there any applicators that manipulate the transform?
@@ -2387,35 +2381,31 @@ bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
     return false;
 }
 
-char *plArmatureMod::MakeAnimationName(const char *baseName) const
+plString plArmatureMod::MakeAnimationName(const char *baseName) const
 {
-    std::string temp = fAnimationPrefix + baseName;
-    char *result = hsStrcpy(temp.c_str()); // why they want a new string I'll never know... but hey, too late to change it now
-    return result;
+    return fAnimationPrefix + _TEMP_CONVERT_FROM_LITERAL(baseName);
 }
 
-char *plArmatureMod::GetRootName()
+plString plArmatureMod::GetRootName()
 {
     return fRootName;
 }
 
-void plArmatureMod::SetRootName(const char *name)
+void plArmatureMod::SetRootName(const plString &name)
 {
-    delete [] fRootName;
-    fRootName = hsStrcpy(name);
+    fRootName = name;
 }
 
 plAGAnim *plArmatureMod::FindCustomAnim(const char *baseName) const
 {
-    char *customName = MakeAnimationName(baseName);
+    plString customName = MakeAnimationName(baseName);
     plAGAnim *result = plAGAnim::FindAnim(customName);
-    delete[] customName;
     return result;
 }
 
 void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc)
 {
-    std::vector<char*> markers;
+    std::vector<plString> markers;
     anim->CopyMarkerNames(markers);
 
     int i;
@@ -2424,12 +2414,12 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         
         float time = -1;
         hsBool isLeft = false;
-        if (strstr(markers[i], "SndLeftFootDown") == markers[i])
+        if (markers[i].Find("SndLeftFootDown") == 0)
         {
             isLeft = true;      
             time = anim->GetMarker(markers[i]);
         }
-        if (strstr(markers[i], "SndRightFootDown") == markers[i])
+        if (markers[i].Find("SndRightFootDown") == 0)
             time = anim->GetMarker(markers[i]);
 
         if (time >= 0)
@@ -2461,40 +2451,38 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             hsRefCnt_SafeUnRef(foot);
             hsRefCnt_SafeUnRef(iMsg);
         }
-
-        delete [] markers[i]; // done with this string, nuke it
     }
 }
 
-const char *plArmatureMod::GetAnimRootName(const char *name)
+plString plArmatureMod::GetAnimRootName(const plString &name)
 {
-    return name + fAnimationPrefix.length();
+    return name.Substr(fAnimationPrefix.GetSize());
 }
 
-int8_t plArmatureMod::AnimNameToIndex(const char *name)
+int8_t plArmatureMod::AnimNameToIndex(const plString &name)
 {
-    const char *rootName = GetAnimRootName(name);
+    plString rootName = GetAnimRootName(name);
     int8_t result = -1;
     
-    if (!strcmp(rootName, "Walk") || !strcmp(rootName, "WalkBack") ||
-        !strcmp(rootName, "LadderDown") || !strcmp(rootName, "LadderDownOn") ||
-        !strcmp(rootName, "LadderDownOff") || !strcmp(rootName, "LadderUp") ||
-        !strcmp(rootName, "LadderUpOn") || !strcmp(rootName, "LadderUpOff") ||
-        !strcmp(rootName, "SwimSlow") || !strcmp(rootName, "SwimBackward") ||
-        !strcmp(rootName, "BallPushWalk"))
+    if (!rootName.Compare("Walk") || !rootName.Compare("WalkBack") ||
+        !rootName.Compare("LadderDown") || !rootName.Compare("LadderDownOn") ||
+        !rootName.Compare("LadderDownOff") || !rootName.Compare("LadderUp") ||
+        !rootName.Compare("LadderUpOn") || !rootName.Compare("LadderUpOff") ||
+        !rootName.Compare("SwimSlow") || !rootName.Compare("SwimBackward") ||
+        !rootName.Compare("BallPushWalk"))
         result = kWalk;
-    else if (!strcmp(rootName, "Run") || !strcmp(rootName, "SwimFast"))
+    else if (!rootName.Compare("Run") || !rootName.Compare("SwimFast"))
         result = kRun;
-    else if (!strcmp(rootName, "TurnLeft") || !strcmp(rootName, "TurnRight") ||
-             !strcmp(rootName, "StepLeft") || !strcmp(rootName, "StepRight") ||
-             !strcmp(rootName, "SideSwimLeft") || !strcmp(rootName, "SideSwimRight") ||
-             !strcmp(rootName, "TreadWaterTurnLeft") || !strcmp(rootName, "TreadWaterTurnRight"))
+    else if (!rootName.Compare("TurnLeft") || !rootName.Compare("TurnRight") ||
+             !rootName.Compare("StepLeft") || !rootName.Compare("StepRight") ||
+             !rootName.Compare("SideSwimLeft") || !rootName.Compare("SideSwimRight") ||
+             !rootName.Compare("TreadWaterTurnLeft") || !rootName.Compare("TreadWaterTurnRight"))
         result = kTurn;
-    else if (!strcmp(rootName, "GroundImpact") || !strcmp(rootName, "RunningImpact"))
+    else if (!rootName.Compare("GroundImpact") || !rootName.Compare("RunningImpact"))
         result = kImpact;
-    else if (strstr(rootName, "Run")) // Critters
+    else if (rootName.Find("Run") >= 0) // Critters
         result = kRun;
-    else if (strstr(rootName, "Idle")) // Critters
+    else if (rootName.Find("Idle") >= 0) // Critters
         result = kWalk;
         
     return result;
@@ -2590,10 +2578,10 @@ plArmatureLODMod::plArmatureLODMod()
 }
 
 // CTOR (physical, name)
-plArmatureLODMod::plArmatureLODMod(const char* root_name)
+plArmatureLODMod::plArmatureLODMod(const plString& root_name)
 : plArmatureMod()
 {
-    fRootName = hsStrcpy(root_name);
+    fRootName = root_name;
 }
 
 plArmatureLODMod::~plArmatureLODMod()

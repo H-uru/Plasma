@@ -94,7 +94,7 @@ plCoopCoordinator::plCoopCoordinator()
 // ------------------
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                                     const char *synchBone,
+                                     const plString &synchBone,
                                      uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
@@ -108,6 +108,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
   fGuestAcceptStage(guestAcceptStage),
   fGuestAcceptMsg(guestAcceptMsg),
   fAutoStartGuest(autoStartGuest),
+  fSynchBone(synchBone),
   fGuestAccepted(false),
   fGuestLinked(false)
 {
@@ -118,8 +119,6 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
     plString newName = plString::Format("%s%s%3i\x000", host->GetName().c_str(), guest->GetName().c_str(), serial++);
     
     plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
-
-    fSynchBone = hsStrcpy(synchBone);
 
     plKey avMgrKey = plAvatarMgr::GetInstance()->GetKey();
 
@@ -134,13 +133,6 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->Send();
     }
-}
-
-// plCoopCoordinator ------------------
-// ------------------
-plCoopCoordinator::~plCoopCoordinator()
-{
-    delete[] fSynchBone;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -405,7 +397,7 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     else
         fGuestAcceptMsg = nil;
 
-    fSynchBone = stream->ReadSafeString();
+    fSynchBone = stream->ReadSafeString_TEMP();
     fAutoStartGuest = stream->Readbool();
     
     fInitiatorID = fHostBrain->GetInitiatorID();

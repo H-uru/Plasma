@@ -92,7 +92,7 @@ public:
     bool LocallyControlled() const {return fLocallyControlled;}
 
     std::string BehaviorName(int behavior) const;
-    std::string AnimationName(int behavior) const;
+    plString AnimationName(int behavior) const;
     int CurBehavior() const {return fCurMode;}
     int NextBehavior() const {return fNextMode;}
 

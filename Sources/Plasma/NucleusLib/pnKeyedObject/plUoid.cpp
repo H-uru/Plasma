@@ -208,7 +208,7 @@ void plUoid::Write(hsStream* s) const
 
     s->WriteLE( fClassType );
     s->WriteLE( fObjectID );
-    s->WriteSafeString_TEMP( fObjectName );
+    s->WriteSafeString( fObjectName );
 
     // conditional cloneIDs write
     if (contents & kHasCloneIDs)

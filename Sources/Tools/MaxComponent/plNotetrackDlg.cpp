@@ -129,11 +129,11 @@ void plNoteTrackDlg::ILoadAnims()
         SegmentSpec *spec = it->second;
         if (spec->fType == SegmentSpec::kAnim)
         {
-            int idx = ComboBox_AddString(fhAnim, spec->fName);
+            int idx = ComboBox_AddString(fhAnim, spec->fName.c_str());
             ComboBox_SetItemData(fhAnim, idx, kName);
 
             // If this is the saved animation name, select it
-            if (!strcmp(spec->fName, savedAnim))
+            if (!spec->fName.Compare(savedAnim))
                 ComboBox_SetCurSel(fhAnim, idx);
         }
     }
@@ -155,8 +155,8 @@ void plNoteTrackDlg::ILoadLoops()
     {
         // Get the animation segment (or leave it nil if we're using the entire animation)
         SegmentSpec *animSpec = nil;
-        const char *animName = fPB->GetStr(fAnimID);
-        if (animName && *animName != '\0' && fSegMap->find(animName) != fSegMap->end())
+        plString animName = plString::FromUtf8(fPB->GetStr(fAnimID));
+        if (!animName.IsEmpty() && fSegMap->find(animName) != fSegMap->end())
             animSpec = (*fSegMap)[animName];
 
         // Get the saved loop name
@@ -174,10 +174,10 @@ void plNoteTrackDlg::ILoadLoops()
                 if (!animSpec || animSpec->Contains(spec))
                 {
                     // Add the name
-                    int idx = ComboBox_AddString(fhLoop, spec->fName);
+                    int idx = ComboBox_AddString(fhLoop, spec->fName.c_str());
                     ComboBox_SetItemData(fhLoop, idx, kName);
 
-                    if (!strcmp(loopName, spec->fName))
+                    if (!spec->fName.Compare(loopName))
                         ComboBox_SetCurSel(fhLoop, idx);
                 }
             }
@@ -192,7 +192,7 @@ const char *plNoteTrackDlg::IGetSel(HWND hCombo)
     {
         char buf[256];
         ComboBox_GetText(hCombo, buf, sizeof(buf));
-        return (*fSegMap)[buf]->fName;
+        return (*fSegMap)[plString::FromUtf8(buf)]->fName.c_str();
     }
 
     return "";

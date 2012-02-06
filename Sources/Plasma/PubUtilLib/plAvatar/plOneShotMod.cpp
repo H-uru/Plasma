@@ -130,13 +130,12 @@ hsBool plOneShotMod::MsgReceive(plMessage* msg)
 
                 if(avMod)
                 {
-                    char *animName = avMod->MakeAnimationName(fAnimName);
+                    plString animName = avMod->MakeAnimationName(fAnimName);
 
                     plAvOneShotMsg *avOSmsg = new plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
                                                                  fSeekDuration, (hsBool)fSmartSeek, animName, fDrivable,
                                                                  fReversable);
 
-                    delete [] animName; // AvOneShotMsg constructor copies.
                     avOSmsg->fNoSeek = fNoSeek;
                     avOSmsg->SetBCastFlag(plMessage::kPropagateToModifiers);
                     hsRefCnt_SafeRef(oneShotMsg->fCallbacks);

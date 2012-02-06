@@ -279,10 +279,8 @@ bool plComponentBase::IsTarget(plMaxNodeBase *node)
     return false;
 }
 
-const char* plComponentBase::IGetUniqueName(plMaxNodeBase* target)
+plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
 {
-    static char nameBuf[256];
-
     // Make sure we've actually got multiple *used* targets.  (Some could be nil)
     int numUsedTargs = 0;
     int thisTargIdx = -1;
@@ -305,11 +303,9 @@ const char* plComponentBase::IGetUniqueName(plMaxNodeBase* target)
     hsAssert(thisTargIdx != -1, "Bad target for IGetUniqueName");
 
     if (numUsedTargs > 1)
-        _snprintf(nameBuf, sizeof(nameBuf), "%s_%d", GetINode()->GetName(), thisTargIdx);
+        return plString::Format("%s_%d", GetINode()->GetName(), thisTargIdx);
     else
-        strncpy(nameBuf, GetINode()->GetName(), sizeof(nameBuf));
-
-    return nameBuf;
+        return plString::FromUtf8(GetINode()->GetName());
 }
 
 plMaxNodeBase *plComponentBase::GetINode()

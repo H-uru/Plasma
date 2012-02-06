@@ -145,8 +145,8 @@ public:
     char *          ReadSafeString();
     wchar_t *       ReadSafeWString();
 
-    uint32_t        WriteSafeString_TEMP(const plString &string);        // uses 2 bytes for length
-    uint32_t        WriteSafeWString_TEMP(const plString &string);
+    uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
+    uint32_t        WriteSafeWString(const plString &string);
     plString        ReadSafeString_TEMP();
     plString        ReadSafeWString_TEMP();
 

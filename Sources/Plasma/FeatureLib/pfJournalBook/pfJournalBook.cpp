@@ -867,7 +867,7 @@ void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
     // in MAX, we just use a GUI check box to grab them for us, even though we never
     // actually use the functionality of the checkbox itself
     const hsTArray<plKey> &keys = fTurnPageButton->GetAnimationKeys();
-    const char *animName = fTurnPageButton->GetAnimationName();
+    plString animName = fTurnPageButton->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     if (immediate)
@@ -1474,7 +1474,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool imme
     fBookGUIs[fCurBookGUI]->CurrentlyOpen(!closeNotOpen);
 
     const hsTArray<plKey> &keys = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationKeys();
-    const char *animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
+    plString animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     if( !immediate )

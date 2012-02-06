@@ -1022,7 +1022,7 @@ void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *lin
             
             brainG->AddStage(guestAccept);
             brainG->AddStage(guestAcceptIdle);
-            plCoopCoordinator *coord = new plCoopCoordinator(hostKey, guestKey, brainH, brainG, "Convergence", 1, 1, linkMsg, true);
+            plCoopCoordinator *coord = new plCoopCoordinator(hostKey, guestKey, brainH, brainG, _TEMP_CONVERT_FROM_LITERAL("Convergence"), 1, 1, linkMsg, true);
 
 
             plAvCoopMsg *coMg = new plAvCoopMsg(hostKey, coord);
