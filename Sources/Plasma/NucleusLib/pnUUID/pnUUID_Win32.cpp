@@ -47,11 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <rpc.h>
 
-plUUID::plUUID( const Uuid & uuid )
-{
-    memcpy(fData, uuid.data, sizeof(fData));
-}
-
 void plUUID::Clear()
 {
     UuidCreateNil( (GUID *)this );
@@ -83,12 +78,6 @@ void plUUID::CopyFrom( const plUUID * v ) {
 
 void plUUID::CopyFrom( const plUUID & v ) {
     memcpy(fData, v.fData, sizeof(fData));
-}
-
-plUUID::operator Uuid () const {
-    Uuid uuid;
-    memcpy(uuid.data, fData, sizeof(uuid.data));
-    return uuid;
 }
 
 bool plUUID::FromString( const char * str )

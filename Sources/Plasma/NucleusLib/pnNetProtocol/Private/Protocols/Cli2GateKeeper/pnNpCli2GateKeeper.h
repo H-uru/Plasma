@@ -78,7 +78,7 @@ COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumGateKeeper2CliMessages <= (uint16_t)-
 //============================================================================
 // BEGIN PACKED DATA STRUCTURES
 //============================================================================
-#include <PshPack1.h>
+#pragma pack(push,1)
 
 
 /*****************************************************************************
@@ -155,3 +155,4 @@ struct GateKeeper2Cli_AuthSrvIpAddressReply {
     uint32_t transId;
     wchar_t address[24];
 };
+#pragma pack(pop)

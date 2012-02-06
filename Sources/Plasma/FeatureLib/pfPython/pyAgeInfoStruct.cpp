@@ -39,9 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStlUtils.h"
-
 #include "pyAgeInfoStruct.h"
+#include "hsStlUtils.h"
+#include "pnUtils/pnUtCrypt.h"
+
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -133,8 +134,10 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
         CryptDigest(kCryptMd5,  instanceGuid.fData , y.length(), y.c_str());
         fAgeInfo.SetAgeInstanceGuid(&instanceGuid);
     }
-    else
-        fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
+    else {
+        plUUID temp(guid);
+        fAgeInfo.SetAgeInstanceGuid( &temp );
+    }
 }
 
 int32_t pyAgeInfoStruct::GetAgeSequenceNumber() const
@@ -220,7 +223,8 @@ const char * pyAgeInfoStructRef::GetAgeInstanceGuid() const
 
 void pyAgeInfoStructRef::SetAgeInstanceGuid( const char * guid )
 {
-    fAgeInfo.SetAgeInstanceGuid( &plUUID( guid ) );
+    plUUID tmp(guid);
+    fAgeInfo.SetAgeInstanceGuid( &tmp );
 }
 
 int32_t pyAgeInfoStructRef::GetAgeSequenceNumber() const

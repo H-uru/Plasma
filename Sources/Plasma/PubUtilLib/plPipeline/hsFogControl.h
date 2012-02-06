@@ -148,4 +148,4 @@ public:
 };
 #endif // Move up to FeatureLevel
 
-#endif hsFogControl_inc
+#endif //hsFogControl_inc

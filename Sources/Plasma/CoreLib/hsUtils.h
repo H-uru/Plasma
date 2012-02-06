@@ -46,7 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define   _HSUTILS_H
 
 #include "HeadSpin.h"
-#include <ctype.h>
+#include <cctype>
+#include <cstring>
 #include <stdarg.h>
 
 int     hsStrlen(const char src[]);
@@ -163,6 +164,8 @@ inline hsBool hsCompare(float a, float b, float delta=0.0001);
 #    define hsSnwprintf     swprintf
 
 #   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
+
+#   define MAX_PATH 1024
 #endif
 
 // Useful floating point utilities

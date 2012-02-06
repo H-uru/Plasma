@@ -118,7 +118,8 @@ void cyAvatar::SetNetForce(hsBool state)
 
 void cyAvatar::SetSenderKey(pyKey& pKey)
 {
-    SetSender(pKey.getKey());
+    plKey k = pKey.getKey();
+    SetSender(k);
 }
 
 

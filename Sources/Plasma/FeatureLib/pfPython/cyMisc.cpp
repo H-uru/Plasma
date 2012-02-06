@@ -1317,7 +1317,8 @@ void cyMisc::SetPrivateChatList(const std::vector<pyPlayer*> & tolist)
         for (int i=0 ; i<tolist.size() ; i++ )
             pMsg->GetClientList()->Append(tolist[i]->GetPlayerID());
         
-        pMsg->SetRemovedKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+        plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+        pMsg->SetRemovedKey(k);
         pMsg->Send();
     }
 }
@@ -1334,7 +1335,8 @@ void cyMisc::SetPrivateChatList(const std::vector<pyPlayer*> & tolist)
 void cyMisc::ClearPrivateChatList(pyKey& member)
 {
     plNetVoiceListMsg* pMsg = new plNetVoiceListMsg(plNetVoiceListMsg::kDistanceMode);
-    pMsg->SetRemovedKey( member.getKey() );
+    plKey k = member.getKey();
+    pMsg->SetRemovedKey(k);
     pMsg->Send();
 }
 
@@ -1548,7 +1550,7 @@ void cyMisc::EnableAvatarCursorFade()
         plIfaceFadeAvatarMsg* iMsg = new plIfaceFadeAvatarMsg;
         iMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         iMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        iMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+        iMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         iMsg->Enable();
         iMsg->Send();
     }
@@ -1562,7 +1564,7 @@ void cyMisc::DisableAvatarCursorFade()
         plIfaceFadeAvatarMsg* iMsg = new plIfaceFadeAvatarMsg;
         iMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         iMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        iMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+        iMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         iMsg->Disable();
         iMsg->Send();
     }
@@ -1577,7 +1579,7 @@ void cyMisc::FadeLocalPlayer(hsBool fade)
         pMsg->SetFadeOut(fade);
         pMsg->SetSubjectKey(nmgr->GetLocalPlayerKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+        pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         pMsg->AddReceiver(nmgr->GetLocalPlayerKey());
         plgDispatch::MsgSend(pMsg);
     }
@@ -1659,7 +1661,8 @@ void cyMisc::ToggleAvatarClickability(hsBool on)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIEnableAvatarClickable);
     else
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
-    pMsg->SetAvKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+    plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    pMsg->SetAvKey(k);
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
     pMsg->Send();
@@ -1669,7 +1672,8 @@ void cyMisc::ToggleAvatarClickability(hsBool on)
 void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
 {
     plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareSpawnPoint);
-    pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+    plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    pMsg->SetSender(k);
     pMsg->SetSpawnPoint(spawnPoint);
     pMsg->Send();
 }
@@ -1677,7 +1681,8 @@ void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
 void cyMisc::SetShareAgeInstanceGuid(const Uuid& guid)
 {
     plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareAgeInstanceGuid);
-    pMsg->SetSender(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+    plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    pMsg->SetSender(k);
     pMsg->SetAgeInstanceGuid(guid);
     pMsg->Send();
 }
@@ -2425,7 +2430,7 @@ int cyMisc::GetKILevel()
     StrToUnicode(wStr, pfKIMsg::kChronicleKILevel, arrsize(wStr));
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         VaultChronicleNode chron(rvn);
-        result = _wtoi(chron.entryValue);
+        result = wcstol(chron.entryValue, nil, 0);
         rvn->DecRef();
     }
     

@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "pyDynamicText.h"
 #include "plgDispatch.h"
 #include "plMessage/plDynamicTextMsg.h"
 #include "pyKey.h"
@@ -54,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyImage.h"
 #include "plGImage/plDynamicTextMap.h"
 
-#include "pyDynamicText.h"
 
 pyDynamicText::pyDynamicText()
 {
@@ -154,7 +154,8 @@ void pyDynamicText::ClearToColor( pyColor& color )
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->ClearToColor(color.getColor());
+        hsColorRGBA col = color.getColor();
+        pMsg->ClearToColor(col);
 
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
@@ -193,7 +194,8 @@ void pyDynamicText::SetTextColor2( pyColor& color, bool blockRGB )
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->SetTextColor(color.getColor(),blockRGB);
+        hsColorRGBA col = color.getColor();
+        pMsg->SetTextColor(col,blockRGB);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }
@@ -215,7 +217,8 @@ void pyDynamicText::FillRect( uint16_t left, uint16_t top, uint16_t right, uint1
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->FillRect(left,top,right,bottom,color.getColor());
+        hsColorRGBA col = color.getColor();
+        pMsg->FillRect(left,top,right,bottom,col);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }
@@ -226,7 +229,8 @@ void pyDynamicText::FrameRect( uint16_t left, uint16_t top, uint16_t right, uint
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->FrameRect(left,top,right,bottom,color.getColor());
+        hsColorRGBA col = color.getColor();
+        pMsg->FrameRect(left,top,right,bottom,col);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }
@@ -311,7 +315,8 @@ void pyDynamicText::DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool re
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->DrawImage( x, y, image.GetKey(), respectAlpha);
+        plKey k = image.GetKey();
+        pMsg->DrawImage( x, y, k, respectAlpha);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }
@@ -326,7 +331,8 @@ void pyDynamicText::DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, ui
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->DrawClippedImage( x, y, image.GetKey(), cx, cy, cw, ch, respectAlpha);
+        plKey k = image.GetKey();
+        pMsg->DrawClippedImage( x, y, k, cx, cy, cw, ch, respectAlpha);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }

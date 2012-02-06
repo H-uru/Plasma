@@ -104,7 +104,7 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf,
     float strength = GetStrength();
     const char *onOff = strength > 0 ? "on" : "off";
     char blendBar[11] = "||||||||||";
-    int bars = (int)__min(10 * strength, 10);
+    int bars = (int)min(10 * strength, 10);
     blendBar[bars] = '\0';
 
     if (fAnim)

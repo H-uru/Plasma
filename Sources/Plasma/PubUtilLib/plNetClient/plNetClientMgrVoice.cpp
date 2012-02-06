@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <algorithm>
+#include <float.h>
 #include "hsMatrix44.h"
 #include "hsGeometry3.h"
 #include "plNetClientMgr.h"

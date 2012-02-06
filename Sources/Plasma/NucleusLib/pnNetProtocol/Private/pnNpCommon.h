@@ -79,14 +79,14 @@ const NetMsgField kNetMsgFieldBuildId       = NET_MSG_FIELD_DWORD();
 *
 ***/
 
-#include <PshPack1.h>
+#pragma pack(push,1)
 struct SrvPlayerInfo {
     unsigned    playerInt;
     wchar_t       playerName[kMaxPlayerNameLength];
     wchar_t       avatarShape[kMaxVaultNodeStringLength];
     unsigned    explorer;
 };
-#include <PopPack.h>
+#pragma pack(pop)
 
 
 /*****************************************************************************
@@ -441,14 +441,14 @@ struct NetVaultNodeFieldArray {
 //============================================================================
 // NetVaultNodeRef (packed because is sent over wire directly)
 //============================================================================
-#include <PshPack1.h>
+#pragma pack(push,1)
 struct NetVaultNodeRef {
     unsigned    parentId;
     unsigned    childId;
     unsigned    ownerId;
     bool        seen;
 };
-#include <PopPack.h>
+#pragma pack(pop)
 
 //============================================================================
 // SrvPackBuffer

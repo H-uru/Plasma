@@ -225,7 +225,7 @@ enum ETransType {
     kNumTransTypes
 };
 
-static char * s_transTypes[] = {
+static const char * s_transTypes[] = {
     // NglAuth.cpp
     "PingRequestTrans",
     "LoginRequestTrans",

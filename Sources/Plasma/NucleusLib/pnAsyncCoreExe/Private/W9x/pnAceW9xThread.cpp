@@ -219,7 +219,7 @@ AsyncId CThreadDispObject::Queue (void * op) {
 ***/
 
 //===========================================================================
-static unsigned CALLBACK W9xThreadProc (AsyncThread *) {
+static unsigned THREADCALL W9xThreadProc (AsyncThread *) {
 
     // Perform the main thread loop
     for (;;) {

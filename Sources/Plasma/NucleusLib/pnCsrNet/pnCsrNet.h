@@ -67,7 +67,7 @@ enum {
 //============================================================================
 // BEGIN PACKED DATA STRUCTURES
 //============================================================================
-#include <PshPack1.h>
+#pragma pack(push,1)
 
 #define CSRNET_MSG(a)   \
     CsrNet_##a () : SimpleNet_MsgHeader(kSimpleNetChannelCsr, kCsrNet_##a) { }
@@ -82,7 +82,7 @@ struct CsrNet_ExecConsoleCmd : SimpleNet_MsgHeader {
 //============================================================================
 // END PACKED DATA STRUCTURES
 //============================================================================
-#include <PopPack.h>
+#pragma pack(pop)
 
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNCSRNET_PNCSRNET_H

@@ -402,8 +402,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
 
     int bufLen = m->GetVoiceDataLen();
     const char* buf = m->GetVoiceData();
-    BYTE flags = m->GetFlags();
-    BYTE numFrames = m->GetNumFrames();
+    uint8_t flags = m->GetFlags();
+    uint8_t numFrames = m->GetNumFrames();
     plKey key = NULL;
 
     // plKey key=hsgResMgr::ResMgr()->FindKey(m->ObjectInfo()->GetUoid());

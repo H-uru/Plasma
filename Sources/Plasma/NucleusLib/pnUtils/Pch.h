@@ -45,15 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
 
-#include "Private/pnUtAllIncludes.h"
-#include "Intern.h"
-
-#include "pnProduct/pnProduct.h"
+#include "pnUtCoreLib.h"    // must be first in list
+#include "pnUtPragma.h"
 
 #include <malloc.h>
 
@@ -66,4 +62,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(pop)
 #endif
 
-#include <malloc.h> // _alloca
+#endif

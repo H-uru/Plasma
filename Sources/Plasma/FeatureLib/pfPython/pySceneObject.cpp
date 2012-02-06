@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h" // TEMP, for STL warnings
 #include "pySceneObject.h"
+#include "HeadSpin.h" // TEMP, for STL warnings
 
 #include "pnKeyedObject/plKey.h"
 #include "cyAvatar.h"

@@ -100,4 +100,4 @@ protected:
                             // Don't try to trigger during this time.
 };
 
-#endif plAvLadderMod_INC
+#endif //plAvLadderMod_INC

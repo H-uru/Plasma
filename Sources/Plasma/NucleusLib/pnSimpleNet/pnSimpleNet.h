@@ -84,7 +84,7 @@ COMPILER_ASSERT_HEADER(ESimpleNetChannel, kMaxSimpleNetChannels <= 0xff);
 //============================================================================
 // BEGIN PACKED DATA STRUCTURES
 //============================================================================
-#include <PshPack1.h>
+#pragma pack(push,1)
 
 //============================================================================
 // Connect packet
@@ -179,5 +179,6 @@ void SimpleNetSend (
     SimpleNetConn *         conn,
     SimpleNet_MsgHeader *   msg
 );
+#pragma pack(pop)
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNSIMPLENET_PNSIMPLENET_H

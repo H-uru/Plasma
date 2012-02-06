@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetTransport/plNetTransportMember.h"        // OfferLinkToPlayer()
 
 #include "plgDispatch.h"
+#include "pnMessage/plClientMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "pnKeyedObject/plKey.h"
@@ -159,8 +160,21 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     void *                  notify,
     void *                  userState
 ) {
-    plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
+    NCAgeJoinerCompleteNotify* params = (NCAgeJoinerCompleteNotify*)notify;
+
+    // Tell the user we failed to link.
+    // In the future, we might want to try graceful recovery (link back to Relto?)
+    if (!params->success) {
+        plNetClientMgr::StaticErrorMsg(params->msg);
+        hsMessageBox(params->msg, "Linking Error", hsMessageBoxNormal, hsMessageBoxIconError);
+#ifdef PLASMA_EXTERNAL_RELEASE
+        plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
+        clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+#endif
+        return;
+    }
     
+    plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
     switch (type) {
         case kAgeJoinerComplete: {
             ASSERT(joiner == s_ageJoiner);
@@ -912,8 +926,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         //--------------------------------------------------------------------
         // BASIC LINK. Link to a unique instance of the age, if no instance specified.
         case plNetCommon::LinkingRules::kBasicLink:
-            if (!info->HasAgeInstanceGuid())
-                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+            if (!info->HasAgeInstanceGuid()) {
+                plUUID newuuid(GuidGenerate());
+                info->SetAgeInstanceGuid(&newuuid);
+            }
         break;
 
         //--------------------------------------------------------------------
@@ -952,7 +968,8 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
-                        info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                        plUUID newuuid(GuidGenerate());
+                        info->SetAgeInstanceGuid(&newuuid);
                     }
                     
                     // register this as an owned age now before we link to it.
@@ -992,7 +1009,8 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             }
 
                             if (!info->HasAgeInstanceGuid()) {
-                                info->SetAgeInstanceGuid(&plUUID(GuidGenerate()));
+                                plUUID newuuid(GuidGenerate());
+                                info->SetAgeInstanceGuid(&newuuid);
                             }
 
                             VaultRegisterOwnedAge(link);
@@ -1078,10 +1096,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     case hsFail:
                         success = kLinkFailed;
                         break;
-                    case FALSE:
+                    case false:
                         success = kLinkDeferred;
                         break;
-                    case TRUE:
+                    case true:
                         success = kLinkImmediately;
                 }
                 
