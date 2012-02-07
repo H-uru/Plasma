@@ -358,7 +358,6 @@ void plSimulationMgr::Init()
     if (gTheInstance->InitSimulation())
     {
         gTheInstance->RegisterAs(kSimulationMgr_KEY);
-        gTheInstance->GetKey()->RefObject();
         plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
     }
     else
@@ -376,11 +375,8 @@ void plSimulationMgr::Shutdown()
     hsAssert(gTheInstance, "Simulation manager missing during shutdown.");
     if (gTheInstance)
     {
-        // UnRef to match our Ref in Init(). Unless something strange is
-        // going on, this should destroy the instance and set gTheInstance to nil.
-//      gTheInstance->GetKey()->UnRefObject();
         plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
-        gTheInstance->UnRegister();     // this will destroy the instance
+        gTheInstance->UnRegisterAs(kSimulationMgr_KEY);     // this will destroy the instance
         gTheInstance = nil;
     }
 }
