@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "plMessage/plCollideMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
 
 #include "plModifier/plDetectorLog.h"
 
@@ -357,7 +358,7 @@ void plSimulationMgr::Init()
     if (gTheInstance->InitSimulation())
     {
         gTheInstance->RegisterAs(kSimulationMgr_KEY);
-        gTheInstance->GetKey()->RefObject();
+        plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
     }
     else
     {
@@ -374,10 +375,8 @@ void plSimulationMgr::Shutdown()
     hsAssert(gTheInstance, "Simulation manager missing during shutdown.");
     if (gTheInstance)
     {
-        // UnRef to match our Ref in Init(). Unless something strange is
-        // going on, this should destroy the instance and set gTheInstance to nil.
-//      gTheInstance->GetKey()->UnRefObject();
-        gTheInstance->UnRegister();     // this will destroy the instance
+        plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
+        gTheInstance->UnRegisterAs(kSimulationMgr_KEY);     // this will destroy the instance
         gTheInstance = nil;
     }
 }
@@ -756,6 +755,13 @@ void plSimulationMgr::ISendUpdates()
 
 hsBool plSimulationMgr::MsgReceive(plMessage *msg)
 {
+    // Suspend/resume the simulation based on whether or not we're in an age...
+    if (plAgeLoadedMsg* aMsg = plAgeLoadedMsg::ConvertNoRef(msg))
+    {
+        fSuspended = !aMsg->fLoaded;
+        return true;
+    }
+
     return hsKeyedObject::MsgReceive(msg);
 }
 
