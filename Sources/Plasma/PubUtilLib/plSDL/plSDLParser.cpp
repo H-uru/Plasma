@@ -155,6 +155,80 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
 }
 
 //
+// Parse a state diff
+// Find the original desc and copy it
+// set new version
+//
+bool plSDLParser::IParseStateDiff(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc) const
+{
+    plSDL::DescriptorList* descList = &plSDLMgr::GetInstance()->fDescriptors;
+
+    bool ok = true;
+
+    char* name = token;
+    DebugMsg("SDL: DIFF name=%s", token);
+    
+    //
+    // {
+    //
+    stream->GetToken(token, kTokenLen); // skip '{'
+    
+    //
+    // VERSION
+    //
+    if (stream->GetToken(token, kTokenLen)) 
+    {
+        if (!strcmp(token, "VERSION"))
+        {
+            // read desc version
+            if (stream->GetToken(token, kTokenLen))
+            {
+                int v = atoi(token);
+                plStateDescriptor* prevDesc = plSDLMgr::GetInstance()->FindDescriptor(token, v - 1);
+                hsAssert(prevDesc, xtl::format("Could not find previous version of %s (%d), fileName=%s", name, v - 1, fileName).c_str());
+                curDesc = new plStateDescriptor(*prevDesc);
+                curDesc->SetVersion(v);
+                DebugMsg("\tVersion=%d", v);
+            }               
+        }
+        else
+        {
+            hsAssert(false, xtl::format("Error parsing state diff, missing VERSION, fileName=%s", 
+                fileName).c_str());
+            ok = false;
+        }
+    }
+    else
+    {
+        hsAssert(false, xtl::format("Error parsing state diff, fileName=%s", fileName).c_str());
+        ok = false;
+    }
+
+    if ( ok )
+    {
+        ok = ( plSDLMgr::GetInstance()->FindDescriptor(curDesc->GetName(), curDesc->GetVersion())==nil );
+        if ( !ok )
+        {
+            std::string err = xtl::format( "Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s", curDesc->GetName(), curDesc->GetVersion(), fileName );
+            plNetApp::StaticErrorMsg( err.c_str() );
+            hsAssert( false, err.c_str() );
+        }
+    }
+
+    if ( ok )
+    {
+        descList->push_back(curDesc);
+    }
+    else
+    {
+        delete curDesc;
+        curDesc = nil;
+    }
+
+    return false;
+}
+
+//
 // Parse a variable descriptor.
 // read type, name, count [default]
 // return true to skip the next token read
@@ -334,9 +408,10 @@ bool plSDLParser::ILoadSDLFile(const char* fileName) const
     plVarDescriptor* curVar=nil;
     plStateDescriptor* curDesc=nil;
     char token[kTokenLen];
-    bool parsingStateDesc=false;
+    enum parsingStates { kRoot, kDesc, kDiff, kVar, kAdd, kRemove, kUpdate, kDone };
+    parsingStates parsingState=kRoot;
     bool skip=false;
-    while (1)
+    while (parsingState != kDone)
     {       
         if (!skip)
         {
@@ -347,14 +422,43 @@ bool plSDLParser::ILoadSDLFile(const char* fileName) const
 
         if (!strcmp(token, "VAR"))
         {
-            parsingStateDesc=false;
+            hsAssert(parsingState == kDiff, xtl::format("VAR outside of STATEDESC block in %s", fileName).cstr());
+            parsingState=kVar;
             curVar=nil;     // start fresh
+            continue;
+        }
+
+        if (!strcmp(token, "ADD"))
+        {
+            hsAssert(parsingState == kDiff, xtl::format("ADD outside of STATEDIFF block in %s", fileName).cstr());
+            parsingState=kAdd;
+            continue;
+        }
+
+        if (!strcmp(token, "REMOVE"))
+        {
+            hsAssert(parsingState == kDiff, xtl::format("REMOVE outside of STATEDIFF block in %s", fileName).cstr());
+            parsingState=kRemove;
+            continue;
+        }
+
+        if (!strcmp(token, "UPDATE"))
+        {
+            hsAssert(parsingState == kDiff, xtl::format("UPDATE outside of STATEDIFF block in %s", fileName).cstr());
+            parsingState=kUpdate;
             continue;
         }
         
         if (!strcmp(token, "STATEDESC"))
         {
-            parsingStateDesc=true;
+            parsingState=kDesc;
+            curDesc=nil;    // start fresh
+            continue;
+        }
+
+        if (!strcmp(token, "STATEDIFF"))
+        {
+            parsingState=kDiff;
             curDesc=nil;    // start fresh
             continue;
         }
@@ -363,19 +467,47 @@ bool plSDLParser::ILoadSDLFile(const char* fileName) const
         {
             if ( curDesc )
                 curDesc->SetFilename( fileName );
-            parsingStateDesc=false;
-            continue;
+            parsingState=kRoot;
         }
 
-        if (parsingStateDesc)
+        switch(parsingState)
         {
+        case kDesc:
             skip=IParseStateDesc(fileName, stream, token, curDesc);
             if ( !curDesc )
-                break;  // failed to parse state desc
-        }
-        else
-        {
+                parsingState=kDone;  // failed to parse state desc
+            break;
+        case kDiff:
+            // finds the previous version of the named STATEDESC, copies into curDesc
+            skip=IParseStateDiff(fileName, stream, token, curDesc);
+            if( !curDesc )
+                parsingState=kDone;  // failed to parse state diff
+            break;
+        case kRemove:
+            // the current token is the name of the var we need to remove
+            curDesc->DelVar(token);
+            break;
+        case kUpdate:
+            // removes and re-adds the named variable
+            // we look ahead past the type to get the var name, and remove it
+            // the fall through to ADD
+            {
+                char* nextToken = token;
+                stream->GetToken(nextToken, kTokenLen);
+                curDesc->DelVar(nextToken);
+            }
+        case kAdd:
+            // same as normal var desc but we return to the diff state
             skip=IParseVarDesc(fileName, stream, token, curDesc, curVar);
+            parsingState=kDiff;
+            break;
+        case kVar:
+            skip=IParseVarDesc(fileName, stream, token, curDesc, curVar);
+            parsingState=kDesc;
+            break;
+        default:
+            hsAssert(false, "Invalid state in SDL parser");
+            break;
         }
     }
 

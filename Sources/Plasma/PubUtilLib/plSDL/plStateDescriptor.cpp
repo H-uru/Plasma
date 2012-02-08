@@ -63,6 +63,17 @@ void plStateDescriptor::IDeInit()
     fVarsList.clear();
 }
 
+void plStateDescriptor::DelVar(const char* n)  { 
+    for(VarsList::iterator it = fVarsList.begin(); it != fVarsList.end(); it++)
+    {
+        if(!stricmp((*it)->GetName(), n))
+        {
+            fVarsList.erase(it);
+            break;
+        }
+    }
+}
+
 plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
 {
     VarsList::const_iterator it;

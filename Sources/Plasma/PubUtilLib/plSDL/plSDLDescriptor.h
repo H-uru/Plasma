@@ -244,6 +244,7 @@ public:
     void SetVersion(int v) { fVersion=v; }
     void SetName(const char* n) { delete [] fName; fName=hsStrcpy(n); }
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
+    void DelVar( const char * n );
     void SetFilename( const char * n ) { fFilename=n;}
     
     plVarDescriptor* FindVar(const char* name, int* idx=nil) const;
