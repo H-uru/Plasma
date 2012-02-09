@@ -115,20 +115,6 @@ protected:
     plSimulationMgr();
     virtual ~plSimulationMgr();
 
-    // Set the maximum amount of time (in seconds) that the physics will advance
-    // between frames. If a frame-to-frame delta is bigger than this, we'll
-    // clamp it to this value.
-    // WARNING: animation doesn't do this, so if we clamp the time animated
-    // physicals and the avatar may move at a faster rate than usual.
-    void SetMaxDelta(float maxDelta);
-    float GetMaxDelta() const;
-    
-    // Set the number of steps per second that physics will advance.
-    // The more steps per second, the less fallthough and more accurate
-    // simulation response.
-    void SetStepsPerSecond(int stepsPerSecond);
-    int GetStepsPerSecond();
-
     // Walk through the synchronization requests and send them as appropriate.
     void IProcessSynchs();
 
@@ -150,9 +136,6 @@ protected:
     // Is the entire physics world suspended? If so, the clock can still advance
     // but nothing will move.
     bool fSuspended;
-
-    float fMaxDelta;
-    float fStepSize;
 
     // A utility class to keep track of a request for a physical synchronization.
     // These requests must pass a certain criteria (see the code for the latest)

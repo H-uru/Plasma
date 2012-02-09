@@ -1290,7 +1290,20 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
         return;
 
     fInstance->fMessagePumpProc();
-    fInstance->IDraw();
+
+    // HACK HACK HACK HACK!
+    // Yes, this is the ORIGINAL, EVIL famerate limit from plClient::IDraw (except I bumped it to 60fps)
+    // As it so happens, this callback is happening in the main resource loading thread
+    // Without this NASTY ASS HACK, we draw after loading every KO, which starves the loader.
+    // At some point, a better solution should be found... Like running the loader in a separate thread.
+    static float lastDrawTime;
+    static const float kMaxFrameRate = 1.f/60.f;
+    float currTime = (float) hsTimer::GetSeconds();
+    if ((currTime - lastDrawTime) > kMaxFrameRate)
+    {
+        fInstance->IDraw();
+        lastDrawTime = currTime;
+    }
 }
 
 //============================================================================
@@ -1836,22 +1849,6 @@ hsBool plClient::IDrawProgress() {
 
 hsBool plClient::IDraw()
 {
-    // Limit framerate
-    static float lastDrawTime;
-    static const float kMaxFrameRate = 1.f/30.f;
-    float currTime = (float) hsTimer::GetSeconds();
-    if (!fPipeline->IsDebugFlagSet(plPipeDbg::kFlagNVPerfHUD))
-    {
-        // If we're using NVPerfHUD to step through draw calls,
-        // We're going to have a frame delta of zero. In that
-        // case we need to draw no matter what, and we don't
-        // care as much about starving other threads because
-        // we're presumably just debugging a graphics glitch.
-        if ((currTime - lastDrawTime) < kMaxFrameRate)
-            return true;
-    }
-    lastDrawTime = currTime;
-
     // If we're shutting down, don't attempt to draw.  Doing so
     // tends to cause a device reload each frame.   
     if (fDone)
