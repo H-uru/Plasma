@@ -410,12 +410,12 @@ plPythonFileMod::~plPythonFileMod()
         PyObject *modules = PyImport_GetModuleDict();
         if( modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m))
         {
-            hsStatusMessageF("Module %s removed from python dictionary",fModuleName);
+            hsStatusMessageF("Module %s removed from python dictionary",fModuleName.c_str());
             PyDict_DelItemString(modules, fModuleName.c_str());
         }
         else
         {
-            hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName);
+            hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName.c_str());
         }
         // the above code should have unloaded the module from python, so it will delete itself, therefore
         // we need to set our pointer to nil to make sure we don't try to use it

@@ -334,9 +334,9 @@ void cyPhysics::Move(pyVector3& direction, float distance)
             }
             else
             {
-                char errmsg[256];
-                sprintf(errmsg,"Sceneobject %s does not have a coordinate interface.",obj->GetKeyName());
-                PyErr_SetString(PyExc_RuntimeError, errmsg);
+                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
+                                                   obj->GetKeyName().c_str());
+                PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
             }
         }
     }
@@ -404,9 +404,9 @@ void cyPhysics::Rotate(float rad, pyVector3& axis)
             }
             else
             {
-                char errmsg[256];
-                sprintf(errmsg,"Sceneobject %s does not have a coordinate interface.",obj->GetKeyName());
-                PyErr_SetString(PyExc_RuntimeError, errmsg);
+                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
+                                                   obj->GetKeyName().c_str());
+                PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
             }
         }
     }

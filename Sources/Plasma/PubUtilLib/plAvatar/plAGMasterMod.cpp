@@ -312,7 +312,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
                     plMatrixChannel *topChannel = plMatrixChannel::ConvertNoRef(channel);
                     if(topChannel)
                     {
-                        hsStatusMessageF("AGModifier: <%s>", mod->GetChannelName());
+                        hsStatusMessageF("AGModifier: <%s>", mod->GetChannelName().c_str());
                         topChannel->Dump(1, optimized, time);
                     }
                 }
@@ -718,7 +718,7 @@ hsBool plAGMasterMod::MsgReceive(plMessage* msg)
                 if (genRefMsg->fType == kPrivateAnim)
                 {
                     plAnimVector::iterator i = fPrivateAnims.begin();
-                    for (i; i != fPrivateAnims.end(); i++)
+                    for ( ; i != fPrivateAnims.end(); i++)
                     {
                         plAGAnim *currAnim = *i;
 

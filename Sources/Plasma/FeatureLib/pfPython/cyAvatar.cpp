@@ -1274,7 +1274,7 @@ PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, uint8_t laye
     }
 
     char errmsg[256];
-    sprintf(errmsg,"Cannot find clothing item %d to find out what tint it is",clothing_name);
+    sprintf(errmsg,"Cannot find clothing item %s to find out what tint it is",clothing_name);
     PyErr_SetString(PyExc_KeyError, errmsg);
     // returning nil means an error occurred
     return nil;

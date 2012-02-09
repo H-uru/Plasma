@@ -103,7 +103,7 @@ inline float plRandom::RandZeroToOne() const
     return Rand() * RandNorm();
 #else // FAST_Q
     const uint32_t kOneExp = 0x3f800000;
-    register uint32_t temp = kOneExp | (uint32_t(Rand()) >> 9);
+    uint32_t temp = kOneExp | (uint32_t(Rand()) >> 9);
     return (*(float*)&temp) - 1.f;
 #endif // FAST_Q
 }
@@ -117,7 +117,7 @@ inline float plRandom::RandMinusOneToOne() const
     return RandZeroToOne() * 2.f - 1.f;
 #else // FAST_Q
     const uint32_t kTwoExp = 0x40000000;
-    register uint32_t temp = kTwoExp | (uint32_t(Rand()) >> 9);
+    uint32_t temp = kTwoExp | (uint32_t(Rand()) >> 9);
     return (*(float*)&temp) - 3.f;
 #endif // FAST_Q
 }

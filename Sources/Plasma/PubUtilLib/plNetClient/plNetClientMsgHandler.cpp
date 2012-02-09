@@ -283,16 +283,17 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         if (m->GetHasPlayerID())
             pl->fPlayerID = m->GetPlayerID();       // copy originating playerID if we have it
         pl->fUoid = m->ObjectInfo()->GetUoid();
-        
+
         // queue up state
         nc->fPendingLoads.push_back(pl);
-        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s", m->ObjectInfo()->GetObjectName(), des->GetName() ) );
+        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s",
+                                  m->ObjectInfo()->GetObjectName().c_str(), des->GetName() ) );
     }
     else
         delete sdRec;
 
     delete [] descName; // We've only used descName for a lookup (via SDR, and some error strings. Must delete now.
-    
+
     return hsOK;
 }
 

@@ -224,13 +224,12 @@ void plAutoProfileImp::INextProfile()
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))
             {
-                char fileName[256];
-                sprintf(fileName, "%s%s_%s.jpg",
+                plString fileName = plString::Format("%S%s_%s.jpg",
                     plProfileManagerFull::Instance().GetProfilePath(),
-                    ageName, fLastSpawnPointName);
+                    ageName, fLastSpawnPointName.c_str());
 
                 plJPEG::Instance().SetWriteQuality(100);
-                plJPEG::Instance().WriteToFile(fileName, &mipmap);
+                plJPEG::Instance().WriteToFile(fileName.c_str(), &mipmap);
             }
 
             fLastSpawnPointName = plString::Null;

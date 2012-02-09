@@ -590,7 +590,7 @@ void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
         fFadeInParams.fVolStart = fCurrVolume;  // Hopefully, we got to fFadedVolume, but maybe not
         fFadeInParams.fVolEnd = fDesiredVol;
         fCurrFadeParams = &fFadeInParams;
-        plStatusLog::AddLineS("audio.log", "Fading in %s", GetKeyName());
+        plStatusLog::AddLineS("audio.log", "Fading in %s", GetKeyName().c_str());
     }
     else
         fCurrFadeParams = params;
@@ -809,7 +809,7 @@ bool plSound::ILoadDataBuffer( void )
         if(!buffer)
         {
             hsAssert(false, "unable to load sound buffer");
-            plStatusLog::AddLineS("audio.log", "Unable to load sound buffer: %s", GetKeyName());
+            plStatusLog::AddLineS("audio.log", "Unable to load sound buffer: %s", GetKeyName().c_str());
             return false;
         }
         SetLength( buffer->GetDataLengthInSecs() );

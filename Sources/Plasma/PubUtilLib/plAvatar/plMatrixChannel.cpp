@@ -170,7 +170,7 @@ void plMatrixChannel::Dump(int indent, bool optimized, double time)
     {
         indentStr += "- ";
     }
-    hsStatusMessageF("%s matChan<%s>", indentStr.c_str(), fName);
+    hsStatusMessageF("%s matChan<%s>", indentStr.c_str(), fName.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -300,9 +300,9 @@ void plMatrixTimeScale::Dump(int indent, bool optimized, double time)
     {
         indentStr += "- ";
     }
-    hsStatusMessageF("%s matTimeScale <%s> at time <%f>", indentStr.c_str(), fName, fTimeSource->Value(time, true));
+    hsStatusMessageF("%s matTimeScale <%s> at time <%f>", indentStr.c_str(), fName.c_str(), fTimeSource->Value(time, true));
     fChannelIn->Dump(indent + 1, optimized, time);
-    
+
 }
 
 
@@ -470,7 +470,7 @@ void plMatrixBlend::Dump(int indent, bool optimized, double time)
     {
         indentStr += "- ";
     }
-    hsStatusMessageF("%s matBlend<%s>, bias:<%f>", indentStr.c_str(), fName, fChannelBias->Value(time, true));
+    hsStatusMessageF("%s matBlend<%s>, bias:<%f>", indentStr.c_str(), fName.c_str(), fChannelBias->Value(time, true));
     if(optimized)
     {
         fOptimizedB->Dump(indent + 1, optimized, time);
@@ -569,7 +569,7 @@ void plMatrixControllerChannel::Dump(int indent, bool optimized, double time)
     {
         indentStr += "- ";
     }
-    hsStatusMessageF("%s MatController<%s>", indentStr.c_str(), fName);
+    hsStatusMessageF("%s MatController<%s>", indentStr.c_str(), fName.c_str());
 }
 
 // Write -------------------------------------------------------------

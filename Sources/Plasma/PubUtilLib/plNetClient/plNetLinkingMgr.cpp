@@ -951,9 +951,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         plString title;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
                         if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
-                            title = plString::Format("%s'", nc->GetPlayerName());
+                            title = plString::Format("%s'", nc->GetPlayerName().c_str());
                         else
-                            title = plString::Format("%s's", nc->GetPlayerName());
+                            title = plString::Format("%s's", nc->GetPlayerName().c_str());
                         info->SetAgeUserDefinedName(_TEMP_CONVERT_TO_CONST_CHAR(title));
                     }
                     if (!info->HasAgeDescription())
@@ -1087,7 +1087,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                 wchar_t parentAgeName[MAX_PATH];
                 if (link->HasParentAgeFilename())
                     StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-                
+
                 switch(VaultAgeFindOrCreateChildAgeLink(
                       (link->HasParentAgeFilename() ? parentAgeName : nil),
                       info,
@@ -1102,7 +1102,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     case true:
                         success = kLinkImmediately;
                 }
-                
+
                 if (success == kLinkImmediately)
                     info->CopyFrom(childLink.GetAgeInfo());
             }

@@ -58,7 +58,7 @@ static const float DEFAULT_INVERSE_MASS = 1.f;
 
 static plRandom sRandom;
 
-const void plParticleGenerator::ComputeDirection(float pitch, float yaw, hsVector3 &direction)
+void plParticleGenerator::ComputeDirection(float pitch, float yaw, hsVector3 &direction)
 {
     float cosPitch, sinPitch;
     float cosYaw, sinYaw;
@@ -70,7 +70,7 @@ const void plParticleGenerator::ComputeDirection(float pitch, float yaw, hsVecto
 
 // Inverse function of ComputeDirection. Give it a normalized vector, and it will tell you a
 // pitch and yaw (angles for the unit Z vector) to get there.
-const void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir)
+void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir)
 {
     const float PI = 3.14159f;
     pitch = asin(dir.fY);

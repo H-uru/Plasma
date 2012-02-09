@@ -612,7 +612,7 @@ const plLocation& plResManager::FindLocation(const char* age, const char* page) 
     return invalidLoc;
 }
 
-const void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const
+void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const
 {
     plRegistryPageNode* page = FindPage(loc);
     const plPageInfo& info = page->GetPageInfo();

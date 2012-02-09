@@ -182,9 +182,9 @@ class plGraphPlate : public plPlate
         void    SetDataColors( const std::vector<uint32_t> & hexColors );
 
         const char      *GetLabelText( int i ) { return fLabelText[ i ].c_str(); }
-        const uint32_t    GetDataColor( int i ) { return fDataHexColors[ i ]; }
-        const uint32_t    GetNumLabels() { return fLabelText.size(); }
-        const uint32_t    GetNumColors() { return fDataHexColors.size(); }
+        uint32_t        GetDataColor( int i ) { return fDataHexColors[ i ]; }
+        uint32_t        GetNumLabels() { return fLabelText.size(); }
+        uint32_t        GetNumColors() { return fDataHexColors.size(); }
 };
 
 //// plPlateManager Class Definition /////////////////////////////////////////

@@ -319,7 +319,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
         GetType(kOnRequest);
         GetType(kOnRemove);
         GetType(kOnReplace);
-        xtl::format(info, "Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName(), typeName);
+        xtl::format(info, "Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName().c_str(), typeName);
 
         return true;
     }

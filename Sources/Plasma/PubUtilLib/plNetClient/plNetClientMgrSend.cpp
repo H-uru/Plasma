@@ -120,7 +120,7 @@ int plNetClientMgr::ISendDirtyState(double secs)
             if (localOwned==plSynchedObject::kNo)
             {
                 DebugMsg("Late rejection of queued SDL state, obj %s, sdl %s",
-                    state->fObjKey->GetName(), state->fSDLName.c_str());
+                    state->fObjKey->GetName().c_str(), state->fSDLName.c_str());
                 continue;
             }
         }

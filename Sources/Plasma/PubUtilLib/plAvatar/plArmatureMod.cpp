@@ -2652,7 +2652,7 @@ int plArmatureMod::RefreshDebugDisplay()
 
 void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
 {
-    sprintf(strBuf, "Armature <%s>:", fRootName);
+    sprintf(strBuf, "Armature <%s>:", fRootName.c_str());
     debugTxt.DrawString(x, y, strBuf, 255, 128, 128);
     y += lineHeight;
 
