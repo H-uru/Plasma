@@ -159,7 +159,7 @@ void plWin32Sound::IActuallyStop()
                 --fIncidentalsPlaying;
             }
             fDSoundBuffer->Stop();
-            plStatusLog::AddLineS("impacts.log", "Stopping %s", GetKeyName());
+            plStatusLog::AddLineS("impacts.log", "Stopping %s", GetKeyName().c_str());
         
         }
         fReallyPlaying = false;

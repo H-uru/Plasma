@@ -112,7 +112,7 @@ public:
     }
 
     const _Ch *GetData() const { return fData ? fData->fStringData : 0; }
-    const size_t GetSize() const { return fData ? fData->fSize : 0; }
+    size_t GetSize() const { return fData ? fData->fSize : 0; }
 };
 
 

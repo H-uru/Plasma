@@ -241,7 +241,7 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
     if( GetKey() != nil && GetKeyName().Find( "Footstep" ) >= 0 )
         ;
     else
-        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str, GetKey() ? GetKeyName().c_str() : "unkeyed" );
+        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str.c_str(), GetKey() ? GetKeyName().c_str() : "unkeyed" );
 
     fTotalBytes = bufferSize;
 

@@ -1094,14 +1094,16 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
             if (node)
             {
                 #ifndef PLASMA_EXTERNAL_RELEASE
-                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s loaded; Removing node", node->GetKey()->GetUoid().GetObjectName());
+                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s loaded; Removing node",
+                                      node->GetKey()->GetUoid().GetObjectName().c_str());
                 #endif
                 fPageMgr->RemoveNode(node);
             }
             else
             {
                 #ifndef PLASMA_EXTERNAL_RELEASE
-                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s NOT loaded", nodeKey->GetUoid().GetObjectName());
+                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s NOT loaded",
+                                      nodeKey->GetUoid().GetObjectName().c_str());
                 #endif
             }
             GetKey()->Release(nodeKey);     // release notify interest in scene node
@@ -1117,7 +1119,8 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
                 fCurrentNode = nil;
 
             #ifndef PLASMA_EXTERNAL_RELEASE
-            plStatusLog::AddLineS("pageouts.log", "Telling netClientMgr about paging out %s", nodeKey->GetUoid().GetObjectName());
+            plStatusLog::AddLineS("pageouts.log", "Telling netClientMgr about paging out %s",
+                                  nodeKey->GetUoid().GetObjectName().c_str());
             #endif
 
             if (plNetClientMgr::GetInstance() != nil)
@@ -1241,7 +1244,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         plgDispatch::MsgSend(loadmsg);
     }
     else
-        hsStatusMessageF("Done loading hold room %s, t=%f\n", pRmKey->GetName(), hsTimer::GetSeconds());
+        hsStatusMessageF("Done loading hold room %s, t=%f\n", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
     for (int i = 0; i < fRoomsLoading.size(); i++)

@@ -1333,8 +1333,8 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         if (GetLocalPlayerKey() == playerKey)
         {
             fLocalPlayerKey = nil;
-            DebugMsg("Net: Unloading local player %s", playerKey->GetName());
-            
+            DebugMsg("Net: Unloading local player %s", playerKey->GetName().c_str());
+
             // notify server - NOTE: he might not still be around to get this...
             plNetMsgPlayerPage npp (playerKey->GetUoid(), playerMsg->fUnload);
             npp.SetNetProtocol(kNetProtocolCli2Game);
@@ -1343,7 +1343,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         else if (IsRemotePlayerKey(playerKey, &idx))
         {
             fRemotePlayerKeys.erase(fRemotePlayerKeys.begin()+idx); // remove key from list
-            DebugMsg("Net: Unloading remote player %s", playerKey->GetName());
+            DebugMsg("Net: Unloading remote player %s", playerKey->GetName().c_str());
         }
     }
     else
@@ -1362,9 +1362,9 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                     GetLocalPlayerKey() == playerKey,
                     "Different local player already loaded");
 
-                hsLogEntry(DebugMsg("Adding LOCAL player %s\n", playerKey->GetName()));
+                hsLogEntry(DebugMsg("Adding LOCAL player %s\n", playerKey->GetName().c_str()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupLocalPlayer);
-                
+
                 // don't save avatar state permanently on server
                 playerSO->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);               
                 const plCoordinateInterface* co = playerSO->GetCoordinateInterface();
@@ -1385,7 +1385,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             }
             else
             {
-                hsLogEntry(DebugMsg("Adding REMOTE player %s\n", playerKey->GetName()));
+                hsLogEntry(DebugMsg("Adding REMOTE player %s\n", playerKey->GetName().c_str()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupRemotePlayer);
                 idx=fTransport.FindMember(playerMsg->fClientID);
                 if( idx != -1 )
@@ -1396,7 +1396,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 }
                 else
                 {
-                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : %s\n", playerKey->GetName()));
+                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : %s\n", playerKey->GetName().c_str()));
                 }
             }
 

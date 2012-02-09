@@ -421,7 +421,8 @@ void plWinAudible::SetFilename(int index, const char *filename, hsBool isCompres
     }
     else
     {
-        plStatusLog::AddLineS("audio.log", "Cannot set filename of non-streaming sound. %s", fSoundObjs[ index ]->GetKeyName());
+        plStatusLog::AddLineS("audio.log", "Cannot set filename of non-streaming sound. %s",
+                              fSoundObjs[ index ]->GetKeyName().c_str());
     }
 }
 

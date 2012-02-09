@@ -88,7 +88,7 @@ public:
     virtual plKey       FindKey(const plUoid&); // Same as above, but will check the uoid for clones
     const plLocation&   FindLocation(const char* age, const char* page) const;
     // Use nil for any strings you don't need
-    const void          GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const;
+    void                GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const;
 
     //---------------------------
     //  Establish reference linkage 

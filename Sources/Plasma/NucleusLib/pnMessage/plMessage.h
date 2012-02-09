@@ -135,12 +135,12 @@ public:
     hsBool                  Send(const plKey r=nil, hsBool async=false); // Message will self-destruct after send.
     hsBool                  SendAndKeep(const plKey r=nil, hsBool async=false); // Message won't self-destruct after send.
 
-    const double GetTimeStamp() const { return fTimeStamp; }
+    double GetTimeStamp() const { return fTimeStamp; }
     plMessage& SetTimeStamp(double t) { fTimeStamp = t; return *this; }
 
     hsBool HasBCastFlag(uint32_t f) const { return 0 != (fBCastFlags & f); }
     plMessage& SetBCastFlag(uint32_t f, hsBool on=true) { if( on )fBCastFlags |= f; else fBCastFlags &= ~f; return *this; }
-    
+
     void SetAllBCastFlags(uint32_t f) { fBCastFlags=f; }
     uint32_t GetAllBCastFlags() const { return fBCastFlags; }
 

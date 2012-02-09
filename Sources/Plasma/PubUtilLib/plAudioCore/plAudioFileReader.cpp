@@ -66,16 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define kCacheDirName   "temp"
 
-static void hsStrUpper(char *s)
-{
-    if (s)
-    {
-        int len = hsStrlen(s);
-        for (int i = 0; i < len; i++)
-            s[i] = toupper(s[i]); 
-    }
-}
-
 plAudioFileReader* plAudioFileReader::CreateReader(const char* path, plAudioCore::ChannelSelect whichChan, StreamType type)
 {
     const char* ext = plFileUtils::GetFileExt(path);

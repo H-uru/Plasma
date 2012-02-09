@@ -2068,11 +2068,11 @@ bool plSimpleStateVariable::ReadData(hsStream* s, float timeConvert, uint32_t re
             uint32_t cnt;
             s->ReadLE(&cnt);      // have to read as long since we don't know how big the list is
 
-            if (cnt>=0 && cnt<plSDL::kMaxListSize)
+            if (cnt<plSDL::kMaxListSize)
                 fVar.SetCount(cnt);
             else
                 return false;
-        
+
             Alloc();        // alloc after setting count
         }
         else
@@ -2084,10 +2084,10 @@ bool plSimpleStateVariable::ReadData(hsStream* s, float timeConvert, uint32_t re
     // compare timestamps
     if (fTimeStamp > ut)
         return true;
-        
+
     if ( (saveFlags & plSDL::kHasTimeStamp) || (readOptions & plSDL::kTimeStampOnRead) )
         TimeStamp(ut);
-    
+
     // read list
     if (!(saveFlags & plSDL::kSameAsDefault))
     {

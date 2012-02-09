@@ -105,7 +105,7 @@ bool pyCritterBrain::RunningBehavior(const std::string& behaviorName) const
 std::string pyCritterBrain::BehaviorName(int behavior) const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->BehaviorName(behavior);
 }
 
@@ -133,14 +133,14 @@ int pyCritterBrain::NextBehavior() const
 std::string pyCritterBrain::IdleBehaviorName() const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->IdleBehaviorName();
 }
 
 std::string pyCritterBrain::RunBehaviorName() const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->RunBehaviorName();
 }
 

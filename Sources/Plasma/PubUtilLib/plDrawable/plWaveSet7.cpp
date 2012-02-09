@@ -1806,7 +1806,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
 
     // Create a blank material
     hsGMaterial* bumpMat = new hsGMaterial;
-    plString buff = plString::Format("%s_BumpMatPS", GetKey()->GetName());
+    plString buff = plString::Format("%s_BumpMatPS", GetKey()->GetName().c_str());
     hsgResMgr::ResMgr()->NewKey(buff, bumpMat, GetKey()->GetUoid().GetLocation());
 
     plMipmap* mipMap = ICreateBumpMipmapPS();

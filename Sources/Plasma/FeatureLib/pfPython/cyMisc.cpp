@@ -2362,7 +2362,7 @@ public:
 
                     if ( guid )
                     {
-                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeRemoved", "s", guid->AsString());
+                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeRemoved", "s", guid->AsString().c_str());
                         Py_XDECREF(retVal);
                     }
                 }
@@ -2454,7 +2454,6 @@ const char* cyMisc::GetCameraNumber(int number)
     if (pCam->GetTarget())
     {
         const char* ret = pCam->GetTarget()->GetKeyName().c_str();
-        (ret==nil) ? "empty" : ret;
         plString str = plString::Format("saving camera named %s to chronicle\n",ret);
         plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
         return ret;

@@ -74,7 +74,7 @@ void plNetClientMgr::IShowLists()
     sprintf(str, "%s%s PlyrName=%s PlyrID=%d AcctID=%d P2P=%d Join#=%d Peers=%d %.1f,%.1f,%.1f",
         GetFlagsBit(kSendingVoice) ? "V" : " ",
         GetFlagsBit(kSendingActions) ? "A" : " ",
-        GetPlayerName(), GetPlayerID(), 0, 
+        GetPlayerName().c_str(), GetPlayerID(), 0,
         IsPeerToPeer(), GetJoinOrder(), 0,
         pos.fX, pos.fY, pos.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
@@ -316,9 +316,9 @@ void plNetClientMgr::IShowAvatars()
     hsPoint3 pos = (player ? player->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
     hsVector3 ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
     sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-            GetPlayerName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+            GetPlayerName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
-    
+
 
     if (player)
     {
@@ -334,7 +334,7 @@ void plNetClientMgr::IShowAvatars()
                 hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
                 hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
                 sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                        pObj->GetKeyName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                        pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
                 txt.DrawString(x,y,str,255,255,255,255);
             }
         }
@@ -344,7 +344,7 @@ void plNetClientMgr::IShowAvatars()
     // Others
     y=startY;
     x=startX;
-    
+
     plNetTransportMember** members=nil;
     fTransport.GetMemberListDistSorted(members);
     for(i=0;i<fTransport.GetNumMembers();i++)
@@ -362,7 +362,7 @@ void plNetClientMgr::IShowAvatars()
                 mbr->AsString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
         txt.DrawString(x,y,str);
         y+=yOff;
-    
+
         if (player)
         {
             const plArmatureMod *avMod = plArmatureMod::ConvertNoRef(player->GetModifierByType(plArmatureMod::Index()));
@@ -372,13 +372,13 @@ void plNetClientMgr::IShowAvatars()
                 plSceneObject* pObj = pNonConstArm->GetFollowerParticleSystemSO();
                 if (pObj)
                 {
-                y+=yOff;
-                y+=yOff;
-                hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-                hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
-                sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                        pObj->GetKeyName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
-                txt.DrawString(x,y,str,255,255,255,255);
+                    y+=yOff;
+                    y+=yOff;
+                    hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
+                    hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+                    sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
+                            pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                    txt.DrawString(x,y,str,255,255,255,255);
                 }
             }
         }
@@ -386,6 +386,6 @@ void plNetClientMgr::IShowAvatars()
     }
 
     delete [] members;
-    
+
     txt.SetFont( "Courier New", 8 );
 }

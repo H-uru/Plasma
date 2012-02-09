@@ -2723,12 +2723,12 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
 
     if( peeker->GetUoid().IsClone() )
         PrintStringF( PrintString, "%d refs on %s, clone %d:%d: loaded=%d", 
-        peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(), 
-        peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
-        obj->ObjectIsLoaded() ? 1 : 0);
+            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName().c_str(), 
+            peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
+            obj->ObjectIsLoaded() ? 1 : 0);
     else
         PrintStringF( PrintString, "%d refs on %s: loaded=%d", 
-        peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(), obj->ObjectIsLoaded() ? 1 : 0 );
+            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName().c_str(), obj->ObjectIsLoaded() ? 1 : 0 );
 
     if( peeker->PeekNumNotifies() == 0 )
         return;
@@ -2754,7 +2754,8 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
                             limit--;
 
                             const plKey rcvr = msg->GetReceiver( j );
-                            PrintStringF( PrintString, "    %s:%s", plFactory::GetNameOfClass( rcvr->GetUoid().GetClassType() ), rcvr->GetUoid().GetObjectName() );
+                            PrintStringF( PrintString, "    %s:%s", plFactory::GetNameOfClass( rcvr->GetUoid().GetClassType() ),
+                                          rcvr->GetUoid().GetObjectName().c_str() );
                         }
                     }
                 }
@@ -2928,7 +2929,7 @@ PF_CONSOLE_CMD( Camera,     // groupName
                "increase drive turn rate" ) // helpString
 {
     plCameraBrain1_Drive::fTurnRate += 20.0f;
-    
+
 }
 
 PF_CONSOLE_CMD( Camera,     // groupName
@@ -2939,14 +2940,14 @@ PF_CONSOLE_CMD( Camera,     // groupName
     plCameraBrain1_Drive::fTurnRate -= 20.0f;
     if (plCameraBrain1_Drive::fTurnRate < 0.0)
         plCameraBrain1_Drive::fTurnRate = 20.0f;
-    
+
 }
 
 
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
     char str[256];
-    plString foo = plString::Format("%s_", plString::FromUtf8(params[0]));
+    plString foo = plString::Format("%s_", (char*)params[0]);
     plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", nil, str, true);
     PrintString(str);
 
@@ -4338,7 +4339,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    sprintf(str, "%s Active\n", name);
+    sprintf(str, "%s Active\n", name.c_str());
     PrintString(str);
 }
 
@@ -4359,7 +4360,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    sprintf(str, "%s Unactive\n", name);
+    sprintf(str, "%s Unactive\n", name.c_str());
     PrintString(str);
 }
 //////////////////
@@ -4504,9 +4505,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    char str[256];
-    sprintf(str, "%s Active\n", seq->GetKey()->GetName());
-    PrintString(str);
+    PrintString(plString::Format("%s Active\n", seq->GetKey()->GetName().c_str()).c_str());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4523,9 +4522,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    char str[256];
-    sprintf(str, "%s Unactive\n", seq->GetKey()->GetName());
-    PrintString(str);
+    PrintString(plString::Format("%s Unactive\n", seq->GetKey()->GetName().c_str()).c_str());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4533,7 +4530,6 @@ PF_CONSOLE_CMD( Access,
                    "string clothItem",
                    "Set face morphMod to affect a clothing item" )
 {
-    char str[256];
     plMorphSequence* seq = LocalMorphSequence();
     if( !seq )
     {
@@ -4548,8 +4544,8 @@ PF_CONSOLE_CMD( Access,
     seq->SetUseSharedMesh(true);
     seq->AddSharedMesh(item->fMeshes[plClothingItem::kLODHigh]);
 
-    sprintf(str, "%s on item %s\n", seq->GetKey()->GetName(), (char *)params[0]);
-    PrintString(str);
+    PrintString(plString::Format("%s on item %s\n", seq->GetKey()->GetName().c_str(),
+                                 (char *)params[0]).c_str());
 }
 
 #include "pfSurface/plFadeOpacityMod.h"

@@ -605,7 +605,7 @@ void plAvatarMgr::AddOneShot(plOneShotMod *oneshot)
     {
         plString name = oneshot->GetTarget(0)->GetKey()->GetName();
         plOneShotMod *alreadyThere = FindOneShot(name);
-        
+
 
         if ( ! alreadyThere)
         {
@@ -621,14 +621,14 @@ void plAvatarMgr::RemoveOneShot(plOneShotMod *oneshot)
 
     while (i != fOneShots.end())
     {
-        plString name = (*i).first;
-        plOneShotMod *thisOneshot = (*i).second;
+        plString name = i->first;
+        plOneShotMod *thisOneshot = i->second;
 
         if(oneshot == thisOneshot)
         {
-            i = fOneShots.erase(i);
+            fOneShots.erase(i++);
         } else {
-            i++;
+            ++i;
         }
     }
 }
@@ -637,12 +637,12 @@ void plAvatarMgr::RemoveOneShot(plOneShotMod *oneshot)
 plOneShotMod *plAvatarMgr::FindOneShot(const plString &name)
 {
     plOneShotMap::iterator found = fOneShots.find(name);
-    
+
     if (found == fOneShots.end())
     {
         return nil;
     } else {
-        return (*found).second;
+        return found->second;
     }
 }
 

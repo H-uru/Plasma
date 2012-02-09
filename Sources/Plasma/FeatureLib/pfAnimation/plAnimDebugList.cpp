@@ -104,7 +104,7 @@ void plAnimDebugList::ShowReport()
 
     int y,x,i,j;
     const int yOff=10, startY=40, startX=10;
-    char str[256];
+    plString str;
 
     x = startX;
     y = startY;
@@ -124,10 +124,10 @@ void plAnimDebugList::ShowReport()
                 plLayerAnimation *layerAnim = plLayerAnimation::ConvertNoRef(layer);
                 if (layerAnim)
                 {
-                    sprintf(str, "%s: %s %.3f (%.3f)", mat->GetKeyName(), layerAnim->GetKeyName(), 
+                    str = plString::Format("%s: %s %.3f (%.3f)", mat->GetKeyName().c_str(), layerAnim->GetKeyName().c_str(),
                             layerAnim->GetTimeConvert().CurrentAnimTime(),
                             layerAnim->GetTimeConvert().WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-                    txt.DrawString(x, y, str);
+                    txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
                     y += yOff;
                 }
                 layer = layer->GetOverLay();
@@ -137,7 +137,7 @@ void plAnimDebugList::ShowReport()
     y += yOff;
     txt.DrawString(x, y, "AGMaster Anims", 255, 255, 255, 255, plDebugText::kStyleBold);
     y += yOff;
-    
+
     for (i = 0; i < fSOKeys.GetCount(); i++)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fSOKeys[i]->ObjectIsLoaded());
@@ -148,17 +148,17 @@ void plAnimDebugList::ShowReport()
         if (!mod)
             continue;
 
-        sprintf(str, "  %s", so->GetKeyName());
-        txt.DrawString(x, y, str);
+        str = plString::Format("  %s", so->GetKeyName().c_str());
+        txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
         y += yOff;
 
         for (j = 0; j < mod->GetNumATCAnimations(); j++)
         {
             plAGAnimInstance *anim = mod->GetATCAnimInstance(j);
-            sprintf(str, "    %s: %.3f (%.3f)", anim->GetAnimation()->GetName(), 
+            str = plString::Format("    %s: %.3f (%.3f)", anim->GetAnimation()->GetName().c_str(),
                     anim->GetTimeConvert()->CurrentAnimTime(),
                     anim->GetTimeConvert()->WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-            txt.DrawString(x, y, str);
+            txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
             y += yOff;
         }
     }
