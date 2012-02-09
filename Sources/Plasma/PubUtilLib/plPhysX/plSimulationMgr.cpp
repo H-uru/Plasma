@@ -390,8 +390,6 @@ plSimulationMgr* plSimulationMgr::GetInstance()
 
 plSimulationMgr::plSimulationMgr()
     : fSuspended(true)
-    , fMaxDelta(kDefaultMaxDelta)
-    , fStepSize(kDefaultStepSize)
     , fLOSDispatch(new plLOSDispatch())
     , fSoundMgr(new plPhysicsSoundMgr)
     , fLog(nil)
@@ -450,15 +448,19 @@ NxScene* plSimulationMgr::GetScene(plKey world)
 
     if (!scene)
     {
-        uint32_t maxSteps = (uint32_t)ceil(fMaxDelta / fStepSize);
-
         NxSceneDesc sceneDesc;
         sceneDesc.gravity.set(0, 0, -32.174049f);
         sceneDesc.userTriggerReport = &gSensorReport;
         sceneDesc.userContactReport = &gContactReport;
-        sceneDesc.maxTimestep = fStepSize;
-        sceneDesc.maxIter = maxSteps;
         scene = fSDK->createScene(sceneDesc);
+
+        // See "Advancing The Simulation State" in the PhysX SDK Documentation
+        // This will cause PhysX to only update for our step size. If we call simulate
+        // faster than that, PhysX will return immediately. If we call it slower than that,
+        // PhysX will do some extra steps for us (isn't that nice?).
+        // Anyway, this should be a good way to make us independent of the framerate.
+        // If not, I blame the usual suspects (Tye, eap, etc...)
+        scene->setTiming(kDefaultStepSize);
 
         // Most physicals use the default friction and restitution values, so we
         // make them the default.
@@ -602,12 +604,6 @@ void plSimulationMgr::Advance(float delSecs)
     if (fSuspended)
         return;
 
-    if (delSecs > fMaxDelta)
-    {
-        if (fExtraProfile)
-            Log("Step clamped from %f to limit of %f", delSecs, fMaxDelta);
-        delSecs = fMaxDelta;
-    }
     plProfile_IncCount(StepLen, (int)(delSecs*1000));
 
 #ifndef PLASMA_EXTERNAL_RELASE
@@ -770,26 +766,6 @@ hsBool plSimulationMgr::MsgReceive(plMessage *msg)
 //  RESOLUTION & TIMEOUT PARAMETERS
 //
 /////////////////////////////////////////////////////////////////
-
-void plSimulationMgr::SetMaxDelta(float maxDelta)
-{
-    fMaxDelta = maxDelta;
-}
-
-float plSimulationMgr::GetMaxDelta() const
-{
-    return fMaxDelta;
-}
-
-void plSimulationMgr::SetStepsPerSecond(int stepsPerSecond)
-{
-    fStepSize = 1.0f / (float)stepsPerSecond;
-}
-
-int plSimulationMgr::GetStepsPerSecond()
-{
-    return (int)((1.0 / fStepSize) + 0.5f); // round to nearest int
-}
 
 int plSimulationMgr::GetMaterialIdx(NxScene* scene, float friction, float restitution)
 {
