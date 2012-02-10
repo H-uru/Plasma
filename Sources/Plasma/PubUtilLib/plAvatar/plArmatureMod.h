@@ -318,6 +318,7 @@ public:
     int     GetStealthLevel() const { return fStealthLevel; }
 
     bool    IsOpaque();
+    bool    IsLinkedIn();
     bool    IsMidLink();
     hsBool  ConsumeJump(); // returns true if the jump keypress was available to consume
 
@@ -401,6 +402,7 @@ protected:
     plArmatureUpdateMsg *fUpdateMsg;    
     
     // Trying to be a good lad here and align all our bools and bytes...
+    bool fIsLinkedIn;       // We have finished playing the LinkEffects and are properly in the age
     bool fMidLink;          // We're in between a LeaveAge and an EnterAge
     bool fAlreadyPanicLinking;  // Cleared when you enter an age. Prevents spamming the server with panic link requests.
     bool fUnconsumedJump;   // We've pressed the jump key, but haven't jumped yet
