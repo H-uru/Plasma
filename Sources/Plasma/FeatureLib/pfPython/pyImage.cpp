@@ -201,26 +201,9 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uin
 
         // let's create a nice name for this thing based on the filename
         std::string name = "PtImageFromDisk_";
-        const wchar_t* i = filename;
-        int charsChecked = 0;
-
-        while (*i != '\\' && *i != '\0' && charsChecked < 1024)
-        {
-            i++;
-            charsChecked++;
-        }
-        
-        if (*i == '\0')
-        {
-            i = filename;
-        }
-        else
-        {
-            i++;
-        }
-
-        char* cName = hsWStringToString(i);
-        name = name + cName;
+        char* filetext = hsWStringToString(filename);
+        name = name + filetext;
+        delete[] filetext;
 
         hsgResMgr::ResMgr()->NewKey(name.c_str(), theMipmap, plLocation::kGlobalFixedLoc);
         
@@ -246,26 +229,9 @@ PyObject* pyImage::LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint
 
         // let's create a nice name for this thing based on the filename
         std::string name = "PtImageFromDisk_";
-        const wchar_t* i = filename;
-        int charsChecked = 0;
-
-        while (*i != '\\' && *i != '\0' && charsChecked < 1024)
-        {
-            i++;
-            charsChecked++;
-        }
-
-        if (*i == '\0')
-        {
-            i = filename;
-        }
-        else
-        {
-            i++;
-        }
-
-        char* cName = hsWStringToString(i);
-        name = name + cName;
+        char* filetext = hsWStringToString(filename);
+        name = name + filetext;
+        delete[] filetext;
 
         hsgResMgr::ResMgr()->NewKey(name.c_str(), theMipmap, plLocation::kGlobalFixedLoc);
 
