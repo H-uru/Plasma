@@ -827,7 +827,12 @@ void plPXPhysical::ApplyHitForce()
 void plPXPhysical::ISetTransformGlobal(const hsMatrix44& l2w)
 {
     hsAssert(fActor->isDynamic(), "Shouldn't move a static actor");
-    fActor->wakeUp();
+
+    // If we wake up normal dynamic actors, they might explode.
+    // However, kinematics won't update if they are asleep. Thankfully, kinematics don't
+    //          explode, move, or cause spontaneous nuclear warfare.
+    if (fActor->readBodyFlag(NX_BF_KINEMATIC))
+        fActor->wakeUp();
 
     NxMat34 mat;
 
