@@ -171,6 +171,8 @@ PyObject* pyVaultImageNode::Image_GetImage( void )
             else
                 fMipmapKey->RefObject();
         }
+        else
+            PYTHON_RETURN_NONE;
     }
     
     return pyImage::New(fMipmap);   
