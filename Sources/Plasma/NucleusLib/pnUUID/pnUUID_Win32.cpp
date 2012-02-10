@@ -88,11 +88,6 @@ bool plUUID::FromString( const char * str )
     return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
 }
 
-bool plUUID::FromString( const plString & str )
-{
-    return FromString( str.c_str() );
-}
-
 bool plUUID::ToString( plString & out ) const
 {
     out = _TEMP_CONVERT_FROM_LITERAL("");
