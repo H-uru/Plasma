@@ -237,8 +237,7 @@ class plPanicLinkRegion : public plCollisionDetector
 public:
     hsBool fPlayLinkOutAnim;
     
-    plPanicLinkRegion() : fPlayLinkOutAnim(true) {;}
-    ~plPanicLinkRegion(){;}
+    plPanicLinkRegion() : fPlayLinkOutAnim(true) { }
 
     
     virtual hsBool MsgReceive(plMessage* msg);
