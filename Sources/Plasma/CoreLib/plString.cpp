@@ -640,7 +640,7 @@ plString plString::Substr(int start, size_t size) const
 
     // Don't re-check UTF-8 on this
     plString str;
-    str.fUtf8Buffer.Steal(substr, size);
+    str.fUtf8Buffer = plStringBuffer<char>::Steal(substr, size);
     return str;
 }
 
@@ -651,7 +651,7 @@ plString &plString::operator+=(const plString &str)
     memcpy(catstr, s_str(), GetSize());
     memcpy(catstr + GetSize(), str.s_str(), str.GetSize());
     catstr[catsize] = 0;
-    fUtf8Buffer.Steal(catstr, catsize);
+    fUtf8Buffer = plStringBuffer<char>::Steal(catstr, catsize);
     return *this;
 }
 
@@ -665,7 +665,7 @@ plString operator+(const plString &left, const plString &right)
 
     // Don't re-check UTF-8 on this
     plString str;
-    str.fUtf8Buffer.Steal(catstr, catsize);
+    str.fUtf8Buffer = plStringBuffer<char>::Steal(catstr, catsize);
     return str;
 }
 
