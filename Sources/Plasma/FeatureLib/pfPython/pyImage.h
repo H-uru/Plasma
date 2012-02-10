@@ -168,6 +168,7 @@ public:
     void SaveAsJPEG(const wchar_t* fileName, uint8_t quality = 75);
     void SaveAsPNG(const wchar_t* fileName);
     static PyObject* LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height); // returns pyImage
+    static PyObject* LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height); // returns pyImage
 #endif
 };
 
