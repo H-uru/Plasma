@@ -928,9 +928,7 @@ void plSubworldRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 ///////////////////////////////////
 hsBool plPanicLinkRegion::MsgReceive(plMessage* msg)
 {
-    plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
-
-    if (pCollMsg)
+    if (plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg))
     {
         if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pCollMsg->fOtherKey)
             return true;
@@ -940,13 +938,17 @@ hsBool plPanicLinkRegion::MsgReceive(plMessage* msg)
             plArmatureMod* avMod = IGetAvatarModifier(pCollMsg->fOtherKey);
             if (avMod)
             {
-                hsPoint3 kinPos;
-                if (avMod->GetController())
+                if (avMod->IsLinkedIn())
                 {
-                    avMod->GetController()->GetKinematicPosition(kinPos);
-                    DetectorLogSpecial("Avatar is panic linking. KinPos at %f,%f,%f and is %s",kinPos.fX,kinPos.fY,kinPos.fZ,avMod->GetController()->IsEnabled() ? "enabled" : "disabled");
-                }
-                avMod->PanicLink(fPlayLinkOutAnim);
+                    hsPoint3 kinPos;
+                    if (avMod->GetController())
+                    {
+                        avMod->GetController()->GetKinematicPosition(kinPos);
+                        DetectorLogSpecial("Avatar is panic linking. KinPos at %f,%f,%f and is %s",kinPos.fX,kinPos.fY,kinPos.fZ,avMod->GetController()->IsEnabled() ? "enabled" : "disabled");
+                    }
+                    avMod->PanicLink(fPlayLinkOutAnim);
+                } else
+                    DetectorLogRed("PANIC LINK %s before we actually linked in!", GetKey()->GetName());
             }
         }
 
