@@ -650,6 +650,7 @@ void plArmatureMod::IInitDefaults()
     fStealthLevel = 0;
     fMouseFrameTurnStrength = 0.f;
     fSuspendInputCount = 0;
+    fIsLinkedIn = false;
     fMidLink = false;
     fAlreadyPanicLinking = false;
     fReverseFBOnIdle = false;
@@ -1375,16 +1376,21 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
     plLinkInDoneMsg *doneMsg = plLinkInDoneMsg::ConvertNoRef(msg);
     if (doneMsg)
     {
+        fIsLinkedIn = true;
         IFireBehaviorNotify(plHBehavior::kBehaviorTypeLinkIn, false);
         return true;
     }
     
     plAgeLoadedMsg *ageLoadMsg = plAgeLoadedMsg::ConvertNoRef(msg);
-    if (ageLoadMsg && ageLoadMsg->fLoaded) 
+    if (ageLoadMsg) 
     {
-        // only the local player gets these
-        NetworkSynch(hsTimer::GetSysSeconds(), true);
-        EnablePhysics(true);
+        if (ageLoadMsg->fLoaded)
+        {
+            // only the local player gets these
+            NetworkSynch(hsTimer::GetSysSeconds(), true);
+            EnablePhysics(true);
+        } else
+            fIsLinkedIn = false;
         return true;
     }
     
@@ -2516,6 +2522,11 @@ bool plArmatureMod::IsOpaque()
 bool plArmatureMod::IsMidLink()
 {
     return fMidLink;
+}
+
+bool plArmatureMod::IsLinkedIn()
+{
+    return fIsLinkedIn;
 }
 
 hsBool plArmatureMod::ConsumeJump()
