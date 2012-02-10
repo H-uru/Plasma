@@ -290,7 +290,7 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultImageNode : NetVaultNodeAccess {
 
-    enum ImageTypes { kNone=0, kJPEG=1 };
+    enum ImageTypes { kNone=0, kJPEG=1, kPNG=2 };
 
     static const uint64_t kImageType       = NetVaultNode::kInt32_1;
     static const uint64_t kImageTitle      = NetVaultNode::kString64_1;
@@ -310,7 +310,7 @@ struct VaultImageNode : NetVaultNodeAccess {
     void SetImageData (const uint8_t buffer[], unsigned bytes);
     
 #ifdef CLIENT
-    void StuffImage (class plMipmap * src);
+    void StuffImage (class plMipmap * src, int dstType=kJPEG);
     bool ExtractImage (class plMipmap ** dst);
 #endif
 };

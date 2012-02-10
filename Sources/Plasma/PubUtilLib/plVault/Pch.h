@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnDispatch/plDispatch.h"
 #include "plDniCoordinateInfo.h"
 #include "plGImage/plMipmap.h"
+#include "plGImage/plPNG.h"
 #include "plJPEG/plJPEG.h"
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plNetClientComm/plNetClientComm.h"
