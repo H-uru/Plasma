@@ -633,18 +633,30 @@ void VaultImageNode::SetImageData (const uint8_t buffer[], unsigned bytes) {
 
 //============================================================================
 #ifdef CLIENT
-void VaultImageNode::StuffImage (plMipmap * src) {
+void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
     hsRAMStream ramStream;
-    plJPEG::Instance().SetWriteQuality(30/*percent*/);
-    if (plJPEG::Instance().WriteToStream(&ramStream, src)) {
+    hsBool compressSuccess = false;
+
+    switch (dstType) {
+        case kJPEG:
+            plJPEG::Instance().SetWriteQuality(70/*percent*/);
+            compressSuccess = plJPEG::Instance().WriteToStream(&ramStream, src);
+            break;
+        case kPNG:
+            compressSuccess = plPNG::Instance().WriteToStream(&ramStream, src);
+            break;
+        default:
+            break;
+    }
+
+    if (compressSuccess) {
         unsigned bytes = ramStream.GetEOF();        
         uint8_t * buffer = (uint8_t *)malloc(bytes);
         ramStream.CopyToMem(buffer);
         IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, buffer, bytes);
-        SetImageType(kJPEG);
+        SetImageType(dstType);
         free(buffer);
-    }
-    else {
+    } else {
         IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, nil, 0);
         SetImageType(kNone);
     }
@@ -654,22 +666,25 @@ void VaultImageNode::StuffImage (plMipmap * src) {
 //============================================================================
 #ifdef CLIENT
 bool VaultImageNode::ExtractImage (plMipmap ** dst) {
-    
+    hsRAMStream ramStream;
+    ramStream.Write(imgDataLen, imgData);
+    ramStream.Rewind();
+
     switch (imgType) {
-        case kNone:
-            (*dst) = nil;
-        return false;
-        
-        case kJPEG: {
-            hsRAMStream ramStream;
-            ramStream.Write(imgDataLen, imgData);
-            ramStream.Rewind();
+        case kJPEG:
             (*dst) = plJPEG::Instance().ReadFromStream(&ramStream);
-        }
-        return ((*dst) != nil);
-        
-        DEFAULT_FATAL(imgType);
+            break;
+
+        case kPNG:
+            (*dst) = plPNG::Instance().ReadFromStream(&ramStream);
+            break;
+
+        case kNone:
+        default:
+            (*dst) = nil;
+            break;
     }
+    return ((*dst) != nil);
 }
 #endif
 
