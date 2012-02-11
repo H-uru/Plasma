@@ -177,7 +177,9 @@ public:
 class plCameraRegionDetector : public plObjectInVolumeDetector
 {
 protected:
-    hsTArray<plCameraMsg*>  fMessages;
+    typedef std::vector<plCameraMsg*> plCameraMsgVec;
+
+    plCameraMsgVec  fMessages;
     bool    fIsInside;
     bool    fSavingSendMsg;
     bool    fSavedMsgEnterFlag;
@@ -193,7 +195,7 @@ public:
     ~plCameraRegionDetector();
 
     virtual hsBool MsgReceive(plMessage* msg);
-    void AddMessage(plCameraMsg* pMsg) { fMessages.Append(pMsg); }
+    void AddMessage(plCameraMsg* pMsg) { fMessages.push_back(pMsg); }
 
     CLASSNAME_REGISTER( plCameraRegionDetector );
     GETINTERFACE_ANY( plCameraRegionDetector, plCollisionDetector );
