@@ -94,10 +94,10 @@ struct NetCommAge {
     char        spawnPtName[64];
 };
 
-const NetCommAge * const            NetCommGetAge ();
-const NetCommAge * const            NetCommGetStartupAge ();
-const NetCommAccount * const        NetCommGetAccount ();
-const NetCommPlayer * const         NetCommGetPlayer ();
+const NetCommAge *                  NetCommGetAge ();
+const NetCommAge *                  NetCommGetStartupAge ();
+const NetCommAccount *              NetCommGetAccount ();
+const NetCommPlayer *               NetCommGetPlayer ();
 const ARRAY(NetCommPlayer) &        NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();

@@ -279,7 +279,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
         // The first step is to get the transform from the end to the beginning of the
         // animation. That's what this next line is doing. It's a bit unintuitive
         // until you look at the parameter definitions.
-        GetStartToEndTransform(anim, nil, &animEndToStart, "Handle");
+        GetStartToEndTransform(anim, nil, &animEndToStart, _TEMP_CONVERT_FROM_LITERAL("Handle"));
         hsMatrix44 candidateGoal = sitGoal * animEndToStart;
         hsPoint3 distP = candidateGoal.GetTranslate() - curPosition;
         hsVector3 distV(distP.fX, distP.fY, distP.fZ);
@@ -290,9 +290,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
             return true;
         }
     } else {
-        char buffy[256];
-        sprintf(buffy, "Missing sit animation: %s", animName);
-        hsAssert(false, buffy);
+        hsAssert(false, plString::Format("Missing sit animation: %s", animName).c_str());
     }
     return false;
 }

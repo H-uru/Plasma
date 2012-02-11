@@ -89,10 +89,10 @@ public:
     bool HasServerPort() const { return fInfo.HasServerPort(); }
     bool HasServerGuid() const { return fInfo.HasServerGuid(); }
     const char *    GetServerName() const { return fInfo.GetServerName(); }
-    uint8_t           GetServerType() const { return fInfo.GetServerType(); }
+    uint8_t         GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
-    uint16_t          GetServerPort() const { return fInfo.GetServerPort(); }
-    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
+    uint16_t        GetServerPort() const { return fInfo.GetServerPort(); }
+    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString().c_str(); }
 };
 
 
@@ -129,10 +129,10 @@ public:
     bool HasServerPort() const { return fInfo.HasServerPort(); }
     bool HasServerGuid() const { return fInfo.HasServerGuid(); }
     const char *    GetServerName() const { return fInfo.GetServerName(); }
-    uint8_t           GetServerType() const { return fInfo.GetServerType(); }
+    uint8_t         GetServerType() const { return fInfo.GetServerType(); }
     const char *    GetServerAddr() const { return fInfo.GetServerAddr(); }
-    uint16_t          GetServerPort() const { return fInfo.GetServerPort(); }
-    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString(); }
+    uint16_t        GetServerPort() const { return fInfo.GetServerPort(); }
+    const char *    GetServerGuid() const { fServerGuid.CopyFrom( fInfo.GetServerGuid() ); return fServerGuid.AsString().c_str(); }
 };
 
 

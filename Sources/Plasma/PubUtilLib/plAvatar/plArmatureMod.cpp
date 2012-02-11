@@ -661,11 +661,11 @@ void plArmatureMod::IInitDefaults()
     fPhysHeight = 0.f;
     fPhysWidth = 0.f;
     fUpdateMsg = nil;
-    fRootName = nil;
+    fRootName = plString::Null;
     fDontPanicLink = false;
     fBodyAgeName = "GlobalAvatars";
     fBodyFootstepSoundPage = "Audio";
-    fAnimationPrefix = "Male";
+    fAnimationPrefix = _TEMP_CONVERT_FROM_LITERAL("Male");
     fUserStr = "";
 }
 
@@ -678,7 +678,6 @@ plArmatureMod::plArmatureMod() : plArmatureModBase()
 plArmatureMod::~plArmatureMod()
 {
     delete fBoneMap;
-    delete [] fRootName;
 
     if (fUpdateMsg)
         fUpdateMsg->UnRef();
@@ -747,7 +746,7 @@ void plArmatureMod::GetPositionAndRotationSim(hsPoint3* position, hsQuat* rotati
     }
 }
 
-const plSceneObject *plArmatureMod::FindBone(const char * name) const
+const plSceneObject *plArmatureMod::FindBone(const plString & name) const
 {
     plSceneObject *result = nil;
 
@@ -810,11 +809,8 @@ int plArmatureMod::IFindSpawnOverride( void )
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
     for( i = 0; i < mgr->NumSpawnPoints(); i++ )
     {
-        char    str2[ 256 ];
-        strcpy(str2, mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName());
-        strlwr(str2);
-
-        if (strstr(str2, fSpawnPointOverride) != nil)
+        const plString &name = mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName();
+        if (name.Find(fSpawnPointOverride, plString::kCaseInsensitive) >= 0)
             return i; // Found it!
     }
     return -1;
@@ -1038,14 +1034,12 @@ void plArmatureMod::PanicLink(hsBool playLinkOutAnim /* = true */)
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
 
-        char *animName = MakeAnimationName("FallingLinkOut");
+        plString animName = MakeAnimationName("FallingLinkOut");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
+        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
     
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->Send();
-
-        delete [] animName;
     }
     else
     {
@@ -1063,10 +1057,9 @@ void plArmatureMod::PersonalLink()
     else
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
-        char *animName = MakeAnimationName("PersonalLink"); 
+        plString animName = MakeAnimationName("PersonalLink");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
-        delete [] animName;
+        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
         
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);    
@@ -1767,7 +1760,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fMeshKeys.push_back(mgr->ReadKey(stream));
 
     // read the root name string
-    fRootName = stream->ReadSafeString();
+    fRootName = stream->ReadSafeString_TEMP();
 
     // read in the brains
     int nBrains = stream->ReadLE32();
@@ -1798,33 +1791,33 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
         if (gLoc.IsValid())
         {
             const plUoid &myUoid = GetKey()->GetUoid();
-            plUoid SOUoid(gLoc, plSceneObject::Index(), "FootstepSoundObject");
+            plUoid SOUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSoundObject"));
             fFootSoundSOKey = mgr->FindKey(SOUoid);
             if (fFootSoundSOKey)
             {
                 // So it exists... but FindKey won't properly create our clone. So we do.
                 SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fFootSoundSOKey = mgr->ReRegister(nil, SOUoid);
+                fFootSoundSOKey = mgr->ReRegister(plString::Null, SOUoid);
             }
 
             // Add the effect to our effects manager
-            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), "FootstepSounds" );
+            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSounds") );
             plKey effectKey = mgr->FindKey(effectUoid);
             if (effectKey)
             {
                 effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                effectKey = mgr->ReRegister(nil, effectUoid);
+                effectKey = mgr->ReRegister(plString::Null, effectUoid);
             }
             if (effectKey != nil)
                 mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 
             // Get the linking sound
-            plUoid LinkUoid(gLoc, plSceneObject::Index(), "LinkSoundSource");
+            plUoid LinkUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("LinkSoundSource"));
             fLinkSoundSOKey = mgr->FindKey(LinkUoid);
             if (fLinkSoundSOKey)
             {
                 LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fLinkSoundSOKey = mgr->ReRegister(nil, LinkUoid);
+                fLinkSoundSOKey = mgr->ReRegister(plString::Null, LinkUoid);
             }
         }
     }
@@ -1834,11 +1827,9 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fPhysHeight = stream->ReadLEFloat();
     fPhysWidth = stream->ReadLEFloat();
 
-    char* temp = stream->ReadSafeString();
-    fAnimationPrefix = temp;
-    delete [] temp;
+    fAnimationPrefix = stream->ReadSafeString_TEMP();
 
-    temp = stream->ReadSafeString();
+    char *temp = stream->ReadSafeString();
     fBodyAgeName = temp;
     delete [] temp;
 
@@ -1915,7 +1906,7 @@ void plArmatureMod::ICustomizeApplicator()
 {
     plArmatureModBase::ICustomizeApplicator();
 
-    const plAGModifier *agMod = GetChannelMod("Bone_Root", true);
+    const plAGModifier *agMod = GetChannelMod(_TEMP_CONVERT_FROM_LITERAL("Bone_Root"), true);
     if (agMod)
     {
         // are there any applicators that manipulate the transform?
@@ -2066,7 +2057,7 @@ hsBool plArmatureMod::ValidateMesh()
                 hsgResMgr::ResMgr()->SendRef(meshObj->GetKey(), refMsg, plRefFlags::kPassiveRef); 
             }
         }
-        if (!strcmp(GetTarget(0)->GetKeyName(), "Yeesha"))
+        if (!GetTarget(0)->GetKeyName().Compare("Yeesha"))
             ISetTransparentDrawOrder(true);
         else
             ISetTransparentDrawOrder(false);
@@ -2396,35 +2387,31 @@ bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
     return false;
 }
 
-char *plArmatureMod::MakeAnimationName(const char *baseName) const
+plString plArmatureMod::MakeAnimationName(const char *baseName) const
 {
-    std::string temp = fAnimationPrefix + baseName;
-    char *result = hsStrcpy(temp.c_str()); // why they want a new string I'll never know... but hey, too late to change it now
-    return result;
+    return fAnimationPrefix + _TEMP_CONVERT_FROM_LITERAL(baseName);
 }
 
-char *plArmatureMod::GetRootName()
+plString plArmatureMod::GetRootName()
 {
     return fRootName;
 }
 
-void plArmatureMod::SetRootName(const char *name)
+void plArmatureMod::SetRootName(const plString &name)
 {
-    delete [] fRootName;
-    fRootName = hsStrcpy(name);
+    fRootName = name;
 }
 
 plAGAnim *plArmatureMod::FindCustomAnim(const char *baseName) const
 {
-    char *customName = MakeAnimationName(baseName);
+    plString customName = MakeAnimationName(baseName);
     plAGAnim *result = plAGAnim::FindAnim(customName);
-    delete[] customName;
     return result;
 }
 
 void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc)
 {
-    std::vector<char*> markers;
+    std::vector<plString> markers;
     anim->CopyMarkerNames(markers);
 
     int i;
@@ -2433,12 +2420,12 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         
         float time = -1;
         hsBool isLeft = false;
-        if (strstr(markers[i], "SndLeftFootDown") == markers[i])
+        if (markers[i].Find("SndLeftFootDown") == 0)
         {
             isLeft = true;      
             time = anim->GetMarker(markers[i]);
         }
-        if (strstr(markers[i], "SndRightFootDown") == markers[i])
+        if (markers[i].Find("SndRightFootDown") == 0)
             time = anim->GetMarker(markers[i]);
 
         if (time >= 0)
@@ -2470,40 +2457,38 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             hsRefCnt_SafeUnRef(foot);
             hsRefCnt_SafeUnRef(iMsg);
         }
-
-        delete [] markers[i]; // done with this string, nuke it
     }
 }
 
-const char *plArmatureMod::GetAnimRootName(const char *name)
+plString plArmatureMod::GetAnimRootName(const plString &name)
 {
-    return name + fAnimationPrefix.length();
+    return name.Substr(fAnimationPrefix.GetSize());
 }
 
-int8_t plArmatureMod::AnimNameToIndex(const char *name)
+int8_t plArmatureMod::AnimNameToIndex(const plString &name)
 {
-    const char *rootName = GetAnimRootName(name);
+    plString rootName = GetAnimRootName(name);
     int8_t result = -1;
     
-    if (!strcmp(rootName, "Walk") || !strcmp(rootName, "WalkBack") ||
-        !strcmp(rootName, "LadderDown") || !strcmp(rootName, "LadderDownOn") ||
-        !strcmp(rootName, "LadderDownOff") || !strcmp(rootName, "LadderUp") ||
-        !strcmp(rootName, "LadderUpOn") || !strcmp(rootName, "LadderUpOff") ||
-        !strcmp(rootName, "SwimSlow") || !strcmp(rootName, "SwimBackward") ||
-        !strcmp(rootName, "BallPushWalk"))
+    if (!rootName.Compare("Walk") || !rootName.Compare("WalkBack") ||
+        !rootName.Compare("LadderDown") || !rootName.Compare("LadderDownOn") ||
+        !rootName.Compare("LadderDownOff") || !rootName.Compare("LadderUp") ||
+        !rootName.Compare("LadderUpOn") || !rootName.Compare("LadderUpOff") ||
+        !rootName.Compare("SwimSlow") || !rootName.Compare("SwimBackward") ||
+        !rootName.Compare("BallPushWalk"))
         result = kWalk;
-    else if (!strcmp(rootName, "Run") || !strcmp(rootName, "SwimFast"))
+    else if (!rootName.Compare("Run") || !rootName.Compare("SwimFast"))
         result = kRun;
-    else if (!strcmp(rootName, "TurnLeft") || !strcmp(rootName, "TurnRight") ||
-             !strcmp(rootName, "StepLeft") || !strcmp(rootName, "StepRight") ||
-             !strcmp(rootName, "SideSwimLeft") || !strcmp(rootName, "SideSwimRight") ||
-             !strcmp(rootName, "TreadWaterTurnLeft") || !strcmp(rootName, "TreadWaterTurnRight"))
+    else if (!rootName.Compare("TurnLeft") || !rootName.Compare("TurnRight") ||
+             !rootName.Compare("StepLeft") || !rootName.Compare("StepRight") ||
+             !rootName.Compare("SideSwimLeft") || !rootName.Compare("SideSwimRight") ||
+             !rootName.Compare("TreadWaterTurnLeft") || !rootName.Compare("TreadWaterTurnRight"))
         result = kTurn;
-    else if (!strcmp(rootName, "GroundImpact") || !strcmp(rootName, "RunningImpact"))
+    else if (!rootName.Compare("GroundImpact") || !rootName.Compare("RunningImpact"))
         result = kImpact;
-    else if (strstr(rootName, "Run")) // Critters
+    else if (rootName.Find("Run") >= 0) // Critters
         result = kRun;
-    else if (strstr(rootName, "Idle")) // Critters
+    else if (rootName.Find("Idle") >= 0) // Critters
         result = kWalk;
         
     return result;
@@ -2604,10 +2589,10 @@ plArmatureLODMod::plArmatureLODMod()
 }
 
 // CTOR (physical, name)
-plArmatureLODMod::plArmatureLODMod(const char* root_name)
+plArmatureLODMod::plArmatureLODMod(const plString& root_name)
 : plArmatureMod()
 {
-    fRootName = hsStrcpy(root_name);
+    fRootName = root_name;
 }
 
 plArmatureLODMod::~plArmatureLODMod()
@@ -2678,7 +2663,7 @@ int plArmatureMod::RefreshDebugDisplay()
 
 void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
 {
-    sprintf(strBuf, "Armature <%s>:", fRootName);
+    sprintf(strBuf, "Armature <%s>:", fRootName.c_str());
     debugTxt.DrawString(x, y, strBuf, 255, 128, 128);
     y += lineHeight;
 
@@ -2715,7 +2700,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
         plKey world = nil;
         if (fController)
             world = fController->GetSubworld();
-        sprintf(strBuf, "In world: %s  Frozen: %s", world ? world->GetName() : "nil", frozen);
+        sprintf(strBuf, "In world: %s  Frozen: %s", world ? world->GetName().c_str() : "nil", frozen);
         debugTxt.DrawString(x,y, strBuf);
         y+= lineHeight;
 

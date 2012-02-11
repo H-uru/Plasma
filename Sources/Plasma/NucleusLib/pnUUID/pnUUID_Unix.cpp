@@ -106,13 +106,13 @@ bool plUUID::FromString( const char * str )
     return true;
 }
 
-bool plUUID::ToStdString( std::string & out ) const
+bool plUUID::ToString( plString & out ) const
 {
     uuid_t g;
     plUUIDHelper::CopyToNative( g, this );
     char buf[40];
     uuid_unparse( g, buf );
-    out = buf;
+    out = _TEMP_CONVERT_FROM_LITERAL( buf );
     return true;
 }
 

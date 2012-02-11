@@ -1605,7 +1605,7 @@ plKey plPickMaterialAnimationButtonParam::GetKey(IParamBlock2 *pb, int idx)
 }
 
 // this is in plResponderMtl.cpp
-extern int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char* segName, hsTArray<plKey>& keys);;
+extern int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys);;
 
 void plPickMaterialAnimationButtonParam::CreateKeyArray(IParamBlock2* pb)
 {
@@ -1613,7 +1613,7 @@ void plPickMaterialAnimationButtonParam::CreateKeyArray(IParamBlock2* pb)
 
     Mtl* mtl = (Mtl*)pb->GetReferenceTarget(fID);
 
-    int bob = GetMatAnimModKey(mtl, nil, nil, fKeys);
+    int bob = GetMatAnimModKey(mtl, nil, plString::Null, fKeys);
 }
 
 void plPickMaterialAnimationButtonParam::DestroyKeyArray()

@@ -277,7 +277,7 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
     if(fAnimInstance)
     {
         fAnimInstance->Stop();      // we'll be setting the time directly.
-        fAnimatedHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
+        fAnimatedHandle = (fAnimInstance->GetAnimation()->GetChannel(_TEMP_CONVERT_FROM_LITERAL("Handle")) != nil);
         fAttached = true;
         // this is too early to send the enter notify. we're attached, but we may not
         // have faded in yet.

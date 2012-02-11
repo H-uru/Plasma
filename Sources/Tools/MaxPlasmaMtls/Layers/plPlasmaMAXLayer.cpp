@@ -154,10 +154,7 @@ class plLayerTargetContainer : public hsKeyedObject
 
         plLayerTargetContainer()
         {
-            char str[ 512 ];
-
-
-            sprintf( str, "plLayerTargetContainer-%d", fKeyCount++ );
+            plString str = plString::Format( "plLayerTargetContainer-%d", fKeyCount++ );
             hsgResMgr::ResMgr()->NewKey( str, this, plLocation::kGlobalFixedLoc );
         }
 };

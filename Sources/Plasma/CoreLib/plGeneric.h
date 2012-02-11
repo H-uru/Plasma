@@ -88,11 +88,11 @@ public:
     // the cast functions will NOT cast from one type to another, use
     // GetType() to determine the type of parameter, then cast it to that type
     GenericType GetType() const {return fType;}
-    operator const bool() const {return fBoolVal;}
-    operator const int() const {return fIntVal;}
-    operator const double() const {return fFloatVal;}
+    operator bool() const {return fBoolVal;}
+    operator int() const {return fIntVal;}
+    operator double() const {return fFloatVal;}
     operator const wchar_t*() const {return fStringVal.c_str();}
-    operator const std::wstring() const {return fStringVal;}
+    operator std::wstring() const {return fStringVal;}
 
     int Write(hsStream* stream);
     int Read(hsStream* stream);

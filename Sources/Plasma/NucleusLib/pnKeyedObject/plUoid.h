@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
+#include "plString.h"
 
 class hsStream;
 
@@ -124,7 +125,7 @@ public:
     bool operator<(const plLocation& loc ) const { return fSequenceNumber < loc.fSequenceNumber; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    char* StringIze(char* str) const;  // Format to displayable string. Returns the same string for convenience
+    plString StringIze() const;  // Format to displayable string.
 
     static plLocation MakeReserved(uint32_t number);
     static plLocation MakeNormal(uint32_t number);
@@ -143,15 +144,15 @@ public:
 class plUoid
 {
 public:
-    plUoid() { fObjectName = nil; Invalidate(); }
-    plUoid(const plLocation& location, uint16_t classType, const char* objectName, const plLoadMask& m=plLoadMask::kAlways);
+    plUoid() { Invalidate(); }
+    plUoid(const plLocation& location, uint16_t classType, const plString& objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
     plUoid(const plUoid& src);
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
-    uint16_t              GetClassType() const { return fClassType; }
-    const char*         GetObjectName() const { return fObjectName; }
+    uint16_t            GetClassType() const { return fClassType; }
+    const plString&     GetObjectName() const { return fObjectName; }
     const plLoadMask&   GetLoadMask() const { return fLoadMask; }
 
     void Read(hsStream* s);
@@ -174,7 +175,7 @@ public:
     void SetObjectID(uint32_t id) { fObjectID = id; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    char* StringIze(char* str) const;  // Format to displayable string
+    plString StringIze() const;  // Format to displayable string
 
 protected:
     enum ContentsFlags  // for read/write functions
@@ -183,11 +184,11 @@ protected:
         kHasLoadMask    = 0x2,
     };
 
-    uint32_t      fObjectID;
-    uint32_t      fClonePlayerID; // The ID of the player who made this clone
-    uint16_t      fCloneID;       // The ID of this clone (unique per client)
-    uint16_t      fClassType;
-    char*       fObjectName;
+    uint32_t    fObjectID;
+    uint32_t    fClonePlayerID; // The ID of the player who made this clone
+    uint16_t    fCloneID;       // The ID of this clone (unique per client)
+    uint16_t    fClassType;
+    plString    fObjectName;
     plLocation  fLocation;
     plLoadMask  fLoadMask;
 };

@@ -195,7 +195,7 @@ hsBool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenLis
             GetListenList()->AddMember(newListenList[i].fMbr);
 #ifdef HS_DEBUGGING
             DebugMsg("\tLL Member %d, name=%s, cNum=%d, dist=%f\n", 
-                i, newListenList[i].fMbr->AsStdString().c_str(), 
+                i, newListenList[i].fMbr->AsString().c_str(),
                 newListenList[i].fMbr->GetPlayerID(), newListenList[i].fDistSq);
 #endif
         }

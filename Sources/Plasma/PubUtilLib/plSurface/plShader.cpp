@@ -276,7 +276,7 @@ float plShader::GetFloat(int i, int chan) const
     return fConsts[i].fArray[chan];
 }
 
-const float* const plShader::GetFloat4(int i) const
+const float* plShader::GetFloat4(int i) const
 {
     return fConsts[i].fArray;
 }

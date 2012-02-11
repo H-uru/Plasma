@@ -182,21 +182,21 @@ hsBool plListener::IEval(double secs, float del, uint32_t dirty)
 
     if( fPrintDbgInfo ) 
     {
-        char str[ 256 ];
-        sprintf( str, "Direction: (%3.2f,%3.2f,%3.2f) from %s", dir.fX, dir.fY, dir.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
+        plString str;
+        str = plString::Format( "Direction: (%3.2f,%3.2f,%3.2f) from %s", dir.fX, dir.fY, dir.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName().c_str() : "VCam" );
+        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        sprintf( str, "Up: (%3.2f,%3.2f,%3.2f) from %s", up.fX, up.fY, up.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
+        str = plString::Format( "Up: (%3.2f,%3.2f,%3.2f) from %s", up.fX, up.fY, up.fZ, ( facingType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName().c_str() : "VCam" );
+        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        sprintf( str, "Position: (%3.2f,%3.2f,%3.2f) from %s", position.fX, position.fY, position.fZ, ( posType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
+        str = plString::Format( "Position: (%3.2f,%3.2f,%3.2f) from %s", position.fX, position.fY, position.fZ, ( posType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName().c_str() : "VCam" );
+        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        sprintf( str, "Velocity: (%3.2f,%3.2f,%3.2f) from %s", velocity.fX, velocity.fY, velocity.fZ, ( velType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName() : "VCam" );
-        plDebugText::Instance().DrawString( x, y, str, (uint32_t)0xffffffff );
+        str = plString::Format( "Velocity: (%3.2f,%3.2f,%3.2f) from %s", velocity.fX, velocity.fY, velocity.fZ, ( velType == kObject ) ? pRefObject->GetKey()->GetUoid().GetObjectName().c_str() : "VCam" );
+        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
     }
     plgDispatch::MsgSend( msg );

@@ -194,12 +194,12 @@ void cyMisc::ConsoleNet(const char* command, hsBool netForce)
 //  PURPOSE    : Execute a console command from a python script,
 //                  optionally propagate over the net
 //
-PyObject* cyMisc::FindSceneObject(const char* name, const char* ageName)
+PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
 {
     // assume that we won't find the sceneobject (key is equal to nil)
     plKey key=nil;
 
-    if ( name || name[0] != 0)
+    if ( !name.IsEmpty() )
     {
         const char* theAge = ageName;
         if ( ageName[0] == 0 )
@@ -209,18 +209,17 @@ PyObject* cyMisc::FindSceneObject(const char* name, const char* ageName)
 
     if ( key == nil )
     {
-        char errmsg[256];
-        sprintf(errmsg,"Sceneobject %s not found",name);
-        PyErr_SetString(PyExc_NameError, errmsg);
+        plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+        PyErr_SetString(PyExc_NameError, errmsg.c_str());
         return nil; // return nil cause we errored
     }
     return pySceneObject::New(key);
 }
 
-PyObject* cyMisc::FindActivator(const char* name)
+PyObject* cyMisc::FindActivator(const plString& name)
 {
     plKey key = nil;
-    if (name && strlen(name) > 0)
+    if (!name.IsEmpty())
     {
         std::vector<plKey> keylist;
         plKeyFinder::Instance().ReallyStupidActivatorSearch(name, keylist);
@@ -453,10 +452,9 @@ hsBool cyMisc::WasLocallyNotified(pyKey &selfkey)
 //  PURPOSE    : Return the net client (account) name of the player whose avatar
 //              key is provided.
 //
-const char* cyMisc::GetClientName(pyKey &avKey)
+plString cyMisc::GetClientName(pyKey &avKey)
 {
-    const char* ret=plNetClientMgr::GetInstance()->GetPlayerName(avKey.getKey());
-    return (ret==nil) ? "" : ret;
+    return plNetClientMgr::GetInstance()->GetPlayerName(avKey.getKey());
 }
 
 PyObject* cyMisc::GetAvatarKeyFromClientID(int clientID)
@@ -547,7 +545,7 @@ hsBool cyMisc::ValidateKey(pyKey& key)
 //
 //  PURPOSE    : Return the local net client (account) name
 //
-const char* cyMisc::GetLocalClientName()
+plString cyMisc::GetLocalClientName()
 {
     return plNetClientMgr::GetInstance()->GetPlayerName();
 }
@@ -946,7 +944,7 @@ PyObject* cyMisc::GetLocalAvatar()
 PyObject* cyMisc::GetLocalPlayer()
 {
     return pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(),
-                        plNetClientMgr::GetInstance()->GetPlayerName(),
+                        plNetClientMgr::GetInstance()->GetPlayerName().c_str(),
                         plNetClientMgr::GetInstance()->GetPlayerID(),
                         0.0 );
 }
@@ -1003,7 +1001,7 @@ std::vector<PyObject*> cyMisc::GetPlayerList()
             // only non-ignored people in list and not in ignore list
             if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
             {
-                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                 pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
                 // modifies playerObj
@@ -1038,7 +1036,7 @@ std::vector<PyObject*> cyMisc::GetPlayerListDistanceSorted()
                 // only non-ignored people in list and not in ignore list
                 if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
                 {
-                    PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                    PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                     pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
                     // modifies playerObj
@@ -1916,7 +1914,7 @@ int cyMisc::GetNumParticles(pyKey& host)
 }
 
 
-void cyMisc::SetLightColorValue(pyKey& light, std::string lightName, float r, float g, float b, float a)
+void cyMisc::SetLightColorValue(pyKey& light, const plString& lightName, float r, float g, float b, float a)
 {
     // lightName is the name of the light object attached to the light that we want to talk to
     // for the bug lights, this would be "RTOmni-BugLightTest"
@@ -1964,7 +1962,7 @@ void cyMisc::SetLightColorValue(pyKey& light, std::string lightName, float r, fl
 }
 
 #include "pnMessage/plEnableMsg.h"
-void cyMisc::SetLightAnimationOn(pyKey& light, std::string lightName, hsBool start)
+void cyMisc::SetLightAnimationOn(pyKey& light, const plString& lightName, hsBool start)
 {
     // lightName is the name of the light object attached to the light that we want to talk to
     // for the bug lights, this would be "RTOmni-BugLightTest"
@@ -2364,7 +2362,7 @@ public:
 
                     if ( guid )
                     {
-                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeRemoved", "s", guid->AsString());
+                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeRemoved", "s", guid->AsString().c_str());
                         Py_XDECREF(retVal);
                     }
                 }
@@ -2455,28 +2453,25 @@ const char* cyMisc::GetCameraNumber(int number)
     plCameraModifier1* pCam = plVirtualCam1::Instance()->GetCameraNumber(number-1);
     if (pCam->GetTarget())
     {
-        const char* ret = pCam->GetTarget()->GetKeyName();
-        (ret==nil) ? "empty" : ret;
-        char str[256];
-        sprintf(str, "saving camera named %s to chronicle\n",ret);
-        plVirtualCam1::Instance()->AddMsgToLog(str);
+        const char* ret = pCam->GetTarget()->GetKeyName().c_str();
+        plString str = plString::Format("saving camera named %s to chronicle\n",ret);
+        plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
         return ret;
     }
     plVirtualCam1::Instance()->AddMsgToLog("sending empty to camera chronicle\n");
     return "empty";
 }
 
-void cyMisc::RebuildCameraStack(const char* name, const char* ageName)
+void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
 {
     plKey key=nil;
-    char str[256];
-    sprintf(str, "attempting to restore camera named %s from chronicle\n",name);
-    plVirtualCam1::Instance()->AddMsgToLog(str);
-        
-    if (strcmp(name, "empty") == 0)
+    plString str = plString::Format("attempting to restore camera named %s from chronicle\n",name.c_str());
+    plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
+
+    if (name.Compare("empty") == 0)
         return;
 
-    if ( name || name[0] != 0)
+    if ( !name.IsEmpty() )
     {
         key=plKeyFinder::Instance().StupidSearch(nil,nil,plSceneObject::Index(), name, false);
     }
@@ -2487,9 +2482,8 @@ void cyMisc::RebuildCameraStack(const char* name, const char* ageName)
         {
             // give up and force built in 3rd person
             plVirtualCam1::Instance()->PushThirdPerson();
-            char errmsg[256];
-            sprintf(errmsg,"Sceneobject %s not found",name);
-            PyErr_SetString(PyExc_NameError, errmsg);
+            plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+            PyErr_SetString(PyExc_NameError, errmsg.c_str());
         }
     }
     else
@@ -2512,9 +2506,8 @@ void cyMisc::RebuildCameraStack(const char* name, const char* ageName)
             }
         }
         plVirtualCam1::Instance()->PushThirdPerson();
-        char errmsg[256];
-        sprintf(errmsg,"Sceneobject %s has no camera modifier",name);
-        PyErr_SetString(PyExc_NameError, errmsg);
+        plString errmsg = plString::Format("Sceneobject %s has no camera modifier",name.c_str());
+        PyErr_SetString(PyExc_NameError, errmsg.c_str());
     }
     
 }
@@ -2676,10 +2669,10 @@ void cyMisc::FakeLinkToObject(pyKey& avatar, pyKey& object)
     plgDispatch::MsgSend(msg);
 }
 
-void cyMisc::FakeLinkToObjectNamed(const char* name)
+void cyMisc::FakeLinkToObjectNamed(const plString& name)
 {
     plKey key = nil;
-    if ( name || name[0] != 0)
+    if ( !name.IsEmpty() )
     {
         key = plKeyFinder::Instance().StupidSearch(nil,nil,plSceneObject::Index(), name, false);
     }

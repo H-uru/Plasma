@@ -187,8 +187,7 @@ hsBool plInventoryObjComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Create and register the ClickDrag's logic component
     plLogicModifier *logic = new plLogicModifier;
-    char tmpName[256];
-    sprintf(tmpName, "%s_%s_LogicModifier", obj->GetKeyName(), GetINode()->GetName());
+    plString tmpName = plString::Format("%s_%s_LogicModifier", obj->GetKeyName().c_str(), GetINode()->GetName());
     plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
     hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 

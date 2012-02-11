@@ -1337,10 +1337,10 @@ hsBool  plDXPipeline::ICreateDeviceObjects()
     /// Ok, we're done now
 #if MCN_BOUNDS_SPANS
     fBoundsSpans = new plDrawableSpans();
-    hsgResMgr::ResMgr()->NewKey( "BoundsSpans", fBoundsSpans, plLocation::kGlobalFixedLoc );
+    hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("BoundsSpans"), fBoundsSpans, plLocation::kGlobalFixedLoc );
     fBoundsSpans->SetNativeProperty( plDrawable::kPropVolatile, true );
     fBoundsMat = new hsGMaterial();
-    hsgResMgr::ResMgr()->NewKey( "BoundsMaterial", fBoundsMat, plLocation::kGlobalFixedLoc );
+    hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("BoundsMaterial"), fBoundsMat, plLocation::kGlobalFixedLoc );
     plLayer *lay = fBoundsMat->MakeBaseLayer();
     lay->SetMiscFlags( hsGMatState::kMiscWireFrame | hsGMatState::kMiscTwoSided );
     lay->SetShadeFlags( lay->GetShadeFlags() | hsGMatState::kShadeWhite );
@@ -8308,11 +8308,11 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
         IGetD3DError();
         plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to create texture (%s) Owner: %s "
                                             "Size: %d x %d NumLvls: %d Flags: %x",
-                                            fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "" : "",
+                                            fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "" : "",
                                             ref->fMaxWidth, ref->fMaxHeight, ref->fMMLvs, ref->GetFlags() );
         return nil;
     }
-    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (char*)(ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "(UnknownTexture)" : "(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
 
     return texPtr;
@@ -8330,7 +8330,7 @@ void    plDXPipeline::IFillD3DTexture( plDXTextureRef *ref )
     if( pTexDat == nil )
     {
         plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to fill texture ref (data is nil) Owner: %s",
-                                            ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "" : "" );
+                                            ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "" : "" );
         return;
     }
 
@@ -8345,7 +8345,7 @@ void    plDXPipeline::IFillD3DTexture( plDXTextureRef *ref )
             IGetD3DError();
             plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to lock texture level %d for filling (%s) Owner: %s "
                                                 "Size: %d x %d NumLvls: %d Flags: %x",
-                                                i, fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "" : "",
+                                                i, fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "" : "",
                                                 ref->fMaxWidth, ref->fMaxHeight, ref->fMMLvs, ref->GetFlags() );
             return;
         }
@@ -8365,7 +8365,7 @@ IDirect3DCubeTexture9   *plDXPipeline::IMakeD3DCubeTexture( plDXTextureRef *ref,
     IDirect3DCubeTexture9   *texPtr = nil;
     fManagedAlloced = true;
     WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, NULL));
-    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (char*)(ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "(UnknownTexture)" : "(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
     return texPtr;
 }
@@ -9371,7 +9371,7 @@ void plDXPipeline::IMakeOcclusionSnap()
         ident.Reset();
 
         hsGMaterial* mat = new hsGMaterial;
-        hsgResMgr::ResMgr()->NewKey( "OcclusionSnapMat", mat, plLocation::kGlobalFixedLoc );
+        hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("OcclusionSnapMat"), mat, plLocation::kGlobalFixedLoc );
         plLayer *lay = mat->MakeBaseLayer();
         lay->SetZFlags(hsGMatState::kZNoZWrite);
         lay->SetPreshadeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));

@@ -94,7 +94,7 @@ plCoopCoordinator::plCoopCoordinator()
 // ------------------
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                                     const char *synchBone,
+                                     const plString &synchBone,
                                      uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
@@ -108,26 +108,17 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
   fGuestAcceptStage(guestAcceptStage),
   fGuestAcceptMsg(guestAcceptMsg),
   fAutoStartGuest(autoStartGuest),
+  fSynchBone(synchBone),
   fGuestAccepted(false),
   fGuestLinked(false)
 {
-    const char * hostName = host->GetName();
-    const char * guestName = guest->GetName();
     static int serial = 0;
-
-    int len = strlen(hostName) + strlen(guestName) + 3 /* serial num */ + 1;
-
-    char *newName = new char[len];
 
     serial = serial % 999;
 
-    sprintf(newName, "%s%s%3i\x000", hostName, guestName, serial++);
+    plString newName = plString::Format("%s%s%3i\x000", host->GetName().c_str(), guest->GetName().c_str(), serial++);
     
     plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
-
-    delete[] newName;
-
-    fSynchBone = hsStrcpy(synchBone);
 
     plKey avMgrKey = plAvatarMgr::GetInstance()->GetKey();
 
@@ -142,13 +133,6 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->Send();
     }
-}
-
-// plCoopCoordinator ------------------
-// ------------------
-plCoopCoordinator::~plCoopCoordinator()
-{
-    delete[] fSynchBone;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -413,7 +397,7 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     else
         fGuestAcceptMsg = nil;
 
-    fSynchBone = stream->ReadSafeString();
+    fSynchBone = stream->ReadSafeString_TEMP();
     fAutoStartGuest = stream->Readbool();
     
     fInitiatorID = fHostBrain->GetInitiatorID();

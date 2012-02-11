@@ -113,7 +113,7 @@ public:
     plShaderID::ID GetID() const { return fID; }
     uint32_t GetByteLen() const { return fbyteLen; }
     const uint8_t* GetCodes() const { return fCodes; }
-    const char* const GetFileName() const { return fFileName; }
+    const char* GetFileName() const { return fFileName; }
 };
 
 class plShaderTableInst

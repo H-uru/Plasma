@@ -700,19 +700,12 @@ void plNetMsgStreamedObject::WriteVersion(hsStream* s, hsResMgr* mgr)
 
 ////////////////////////////////////////////////////////////////////
 // debug
-std::string plNetMsgSDLState::AsStdString() const
+plString plNetMsgSDLState::AsString() const
 {
-    std::string s;
-
     ISetDescName();     // set desc name for debug if necessary
 
-//  xtl::format(s,"object:%s, SDL:%s, initial:%d, %s",
-//      ObjectInfo()->GetObjectName(), fDescName.c_str(), fIsInitialState, plNetMsgStreamedObject::AsStdString().c_str() );
-
-    xtl::format(s,"object:%s, initial:%d, %s",
-        ObjectInfo()->GetObjectName(), fIsInitialState, plNetMsgStreamedObject::AsStdString().c_str() );
-
-    return s;
+    return plString::Format("object:%s, initial:%d, %s",
+        ObjectInfo()->GetObjectName().c_str(), fIsInitialState, plNetMsgStreamedObject::AsString().c_str() );
 }
 
 //
@@ -835,13 +828,6 @@ void plNetMsgSDLStateBCast::WriteVersion(hsStream* s, hsResMgr* mgr)
 ////////////////////////////////////////////////////////
 // plNetMsgRoomsList
 ////////////////////////////////////////////////////////
-plNetMsgRoomsList::~plNetMsgRoomsList()
-{
-    int i;
-    for(i=0;i<GetNumRooms();i++)
-        delete [] fRoomNames[i];
-}
-
 int plNetMsgRoomsList::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
 {
     int bytes=plNetMessage::IPokeBuffer(stream, peekOptions);
@@ -878,7 +864,6 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
             loc.Read(stream);
             fRooms[i]=loc;
             // read room name for debugging
-            delete [] fRoomNames[i];
             stream->LogSubStreamPushDesc("RoomList");
             plMsgCStringHelper::Peek(fRoomNames[i],stream,peekOptions);
         }
@@ -891,13 +876,13 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
 void plNetMsgRoomsList::AddRoom(plKey rmKey)
 {
     fRooms.push_back(rmKey->GetUoid().GetLocation());
-    fRoomNames.push_back(hsStrcpy(rmKey->GetName()));
+    fRoomNames.push_back(rmKey->GetName());
 }
 
-void plNetMsgRoomsList::AddRoomLocation(plLocation loc, const char* rmName)
+void plNetMsgRoomsList::AddRoomLocation(plLocation loc, const plString& rmName)
 {
     fRooms.push_back(loc);
-    fRoomNames.push_back(rmName ? hsStrcpy(rmName) : nil);
+    fRoomNames.push_back(rmName);
 }
 
 int plNetMsgRoomsList::FindRoomLocation(plLocation loc)
@@ -1119,7 +1104,7 @@ int plNetMsgMemberUpdate::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     if (bytes)
     {
         // FIX ME to something nice
-        fMemberInfo.GetClientGuid()->SetClientKey("");
+        fMemberInfo.GetClientGuid()->SetClientKey(_TEMP_CONVERT_FROM_LITERAL(""));
         fMemberInfo.GetClientGuid()->SetAccountUUID(plUUID());
         fMemberInfo.Poke(stream, peekOptions);
         stream->WriteByte(fAddMember);

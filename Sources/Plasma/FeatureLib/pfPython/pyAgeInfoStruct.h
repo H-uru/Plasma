@@ -57,14 +57,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pyVaultAgeInfoNode;
 class pyAgeInfoStructRef;
+class plString;
 
 
 class pyAgeInfoStruct
 {
 private:
     plAgeInfoStruct fAgeInfo;
-    mutable std::string fAgeInstanceGuidStr;    // for getting Age Instance GUID
-    mutable std::string fDisplayName;           // used by GetDisplayName()
+    mutable plString fAgeInstanceGuidStr;    // for getting Age Instance GUID
+    mutable plString fDisplayName;           // used by GetDisplayName()
 
 protected:
     pyAgeInfoStruct();
@@ -112,8 +113,8 @@ private:
     static plAgeInfoStruct fDefaultAgeInfo; // created so a default constructor could be made for python. Do NOT use
 
     plAgeInfoStruct & fAgeInfo;
-    mutable std::string fAgeInstanceGuidStr;    // for getting Age Instance GUID
-    mutable std::string fDisplayName;           // used by GetDisplayName()
+    mutable plString fAgeInstanceGuidStr;   // for getting Age Instance GUID
+    mutable plString fDisplayName;          // used by GetDisplayName()
 
 protected:
     pyAgeInfoStructRef(): fAgeInfo( fDefaultAgeInfo ) {} // only here for the python glue... do NOT call directly

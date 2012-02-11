@@ -55,8 +55,8 @@ plProfile_CreateMemCounter("Keys", "Memory", KeyMem);
 static uint32_t CalcKeySize(plKeyImp* key)
 {
     uint32_t nameLen = 0;
-    if (key->GetUoid().GetObjectName())
-        nameLen = strlen(key->GetUoid().GetObjectName()) + 1;
+    if (!key->GetUoid().GetObjectName().IsNull())
+        nameLen = key->GetUoid().GetObjectName().GetSize() + 1;
     return sizeof(plKeyImp) + nameLen;
 }
 
@@ -81,7 +81,6 @@ plKeyImp::plKeyImp() :
     fCloneOwner(nil)
 {
 #ifdef HS_DEBUGGING
-    fIDName = nil;
     fClassType = nil;
 #endif
 }
@@ -143,7 +142,7 @@ void plKeyImp::SetUoid(const plUoid& uoid)
 #endif
 }
 
-const char* plKeyImp::GetName() const   
+const plString& plKeyImp::GetName() const
 { 
     return fUoid.GetObjectName(); 
 }

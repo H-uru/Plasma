@@ -105,42 +105,42 @@ bool pyCritterBrain::RunningBehavior(const std::string& behaviorName) const
 std::string pyCritterBrain::BehaviorName(int behavior) const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->BehaviorName(behavior);
 }
 
-std::string pyCritterBrain::AnimationName(int behavior) const
+plString pyCritterBrain::AnimationName(int behavior) const
 {
     if (!fBrain)
-        return false;
+        return plString::Null;
     return fBrain->AnimationName(behavior);
 }
 
 int pyCritterBrain::CurBehavior() const
 {
     if (!fBrain)
-        return false;
+        return 0;
     return fBrain->CurBehavior();
 }
 
 int pyCritterBrain::NextBehavior() const
 {
     if (!fBrain)
-        return false;
+        return 0;
     return fBrain->NextBehavior();
 }
 
 std::string pyCritterBrain::IdleBehaviorName() const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->IdleBehaviorName();
 }
 
 std::string pyCritterBrain::RunBehaviorName() const
 {
     if (!fBrain)
-        return false;
+        return nil;
     return fBrain->RunBehaviorName();
 }
 

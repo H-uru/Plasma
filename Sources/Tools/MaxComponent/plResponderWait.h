@@ -46,6 +46,7 @@ class IParamBlock2;
 class plKey;
 class plMessage;
 class plResponderModifier;
+class plString;
 
 namespace ResponderWait
 {
@@ -62,5 +63,5 @@ namespace ResponderWait
     
     bool        GetWaitOnMe(IParamBlock2* waitPB);
     int         GetWaitingOn(IParamBlock2* waitPB);
-    const char* GetWaitPoint(IParamBlock2* waitPB);
+    plString    GetWaitPoint(IParamBlock2* waitPB);
 }

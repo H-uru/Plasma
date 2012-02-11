@@ -142,8 +142,8 @@ public:
     //  PURPOSE    : Execute a console command from a python script,
     //                  optionally propagate over the net
     //
-    static PyObject* FindSceneObject(const char* name, const char* ageName); // returns pySceneObject
-    static PyObject* FindActivator(const char* name); // returns pyKey
+    static PyObject* FindSceneObject(const plString& name, const char* ageName); // returns pySceneObject
+    static PyObject* FindActivator(const plString& name); // returns pyKey
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -252,7 +252,7 @@ public:
     //  PURPOSE    : Return the net client (account) name of the player whose avatar
     //              key is provided.
     //
-    static const char* GetClientName(pyKey &avKey);
+    static plString GetClientName(pyKey &avKey);
 
     static PyObject* GetAvatarKeyFromClientID(int clientID); // returns pyKey
     static int GetLocalClientID();
@@ -268,7 +268,7 @@ public:
     //
     //  PURPOSE    : Return the local net client (account) name
     //
-    static const char* GetLocalClientName();
+    static plString GetLocalClientName();
 
 
     //
@@ -697,8 +697,8 @@ public:
     static void SetParticleOffset(float x, float y, float z, pyKey& particles);
     static void KillParticles(float time, float pct, pyKey& particles);
     static int  GetNumParticles(pyKey& host);
-    static void SetLightColorValue(pyKey& light, std::string lightName, float r, float g, float b, float a);
-    static void SetLightAnimationOn(pyKey& light, std::string lightName, hsBool start);
+    static void SetLightColorValue(pyKey& light, const plString& lightName, float r, float g, float b, float a);
+    static void SetLightAnimationOn(pyKey& light, const plString& lightName, hsBool start);
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : RegisterForControlEventMessages
@@ -799,7 +799,7 @@ public:
 
     static int GetNumCameras();
     static const char* GetCameraNumber(int number);
-    static void RebuildCameraStack(const char* name, const char* ageName);
+    static void RebuildCameraStack(const plString& name, const char* ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
     static bool IsFirstPerson();
@@ -877,8 +877,8 @@ public:
     // PURPOSE    : takes an avatar key and an object key and fake-links the avatar
     //              to that object's position.  appears to be a link to other players
     //
-    static void FakeLinkToObject(pyKey& avatar, pyKey& object); 
-    static void FakeLinkToObjectNamed(const char* name);    
+    static void FakeLinkToObject(pyKey& avatar, pyKey& object);
+    static void FakeLinkToObjectNamed(const plString& name);
     
     //////////////////////////////////////////////////////////////////////////////
     //

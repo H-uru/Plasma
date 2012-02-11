@@ -60,10 +60,10 @@ class plSimpleStateVariable;
 class plLayerAnimationBase : public plLayerInterface
 {
 protected:
-    char*                       fSegmentID;
-    double                      fEvalTime;
-    float                    fCurrentTime;
-    float                    fLength;
+    plString        fSegmentID;
+    double          fEvalTime;
+    float           fCurrentTime;
+    float           fLength;
 
     plController*   fPreshadeColorCtl;
     plController*   fRuntimeColorCtl;
@@ -92,8 +92,8 @@ public:
 
     // Specialized
     float GetLength() const { return fLength; }
-    char *GetSegmentID() const { return fSegmentID; }
-    void SetSegmentID(char *ID) { delete fSegmentID; fSegmentID = hsStrcpy(ID); }
+    plString GetSegmentID() const { return fSegmentID; }
+    void SetSegmentID(const plString &ID) { fSegmentID = ID; }
 
     // Export construction functions follow
     void SetPreshadeColorCtl(plController* colCtl);
