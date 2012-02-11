@@ -71,13 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define kPhysxSkinWidth 0.1f
 #define kPhysZOffset ((fRadius + (fHeight / 2)) + kPhysxSkinWidth)
-//#define kSLOPELIMIT (cosf(NxMath::degToRad(55.f)))
-//#define kPhysicalHeightFudge 0.4f   // this fudge was used for PhysX 2.4
 #define kPhysicalHeightFudge 0.0f
-
-//#define STEP_OFFSET   1.0f
-#define STEP_OFFSET 0.5f
-//#define STEP_OFFSET   0.15f
+#define STEP_OFFSET   1.f
 
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -99,9 +94,9 @@ public:
         plPXPhysicalControllerCore* ac = plPXPhysicalControllerCore::FindController(hit.controller);
         NxActor& actor = hit.shape->getActor();
         plPXPhysical* phys = (plPXPhysical*)actor.userData;
-        static float SlopeLimit = kSLOPELIMIT;
         hsVector3 normal = plPXConvert::Vector(hit.worldNormal);
         ac->fMovementInterface->IAddContactNormals(normal);
+
 #ifndef PLASMA_EXTERNAL_RELEASE
         plDbgCollisionInfo info;
         info.fNormal = normal;
@@ -124,6 +119,7 @@ public:
         }
         ac->fDbgCollisionInfo.Append(info);
 #endif PLASMA_EXTERNAL_RELEASE
+
         // If the avatar hit a movable physical, apply some force to it.
         hsVector3 dir = plPXConvert::Vector(hit.dir);
         float dirdotup=dir.fZ;
