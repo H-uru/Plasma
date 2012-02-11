@@ -80,7 +80,7 @@ class SensorReport : public NxUserTriggerReport
         hsPoint3 otherPos = plPXConvert::Point(otherShape.getGlobalPosition());
 
         if (plSimulationMgr::fExtraProfile)
-            DetectorLogRed("-->%s %s (status=%x) other@(%f,%f,%f)",triggerPhys->GetObjectKey()->GetName(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit",status,otherPos.fX,otherPos.fY,otherPos.fZ);
+            DetectorLogRed("-->%s %s (status=%x) other@(%f,%f,%f)",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit",status,otherPos.fX,otherPos.fY,otherPos.fZ);
 
         plPXPhysical* otherPhys = (plPXPhysical*)otherShape.getActor().userData;
         if (otherPhys)
@@ -90,7 +90,7 @@ class SensorReport : public NxUserTriggerReport
             if (!doReport)
             {
                 if (plSimulationMgr::fExtraProfile)
-                    DetectorLogRed("<--Kill collision %s :failed group. US=%x OTHER=(%s)%x",triggerPhys->GetObjectKey()->GetName(),triggerPhys->GetGroup(),otherPhys->GetObjectKey()->GetName(),otherPhys->GetGroup());
+                    DetectorLogRed("<--Kill collision %s :failed group. US=%x OTHER=(%s)%x",triggerPhys->GetObjectKey()->GetName().c_str(),triggerPhys->GetGroup(),otherPhys->GetObjectKey()->GetName().c_str(),otherPhys->GetGroup());
             }
         }
         else
@@ -103,7 +103,7 @@ class SensorReport : public NxUserTriggerReport
                 {
 #ifdef PHYSX_ONLY_TRIGGER_FROM_KINEMATIC
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s : ignoring controller events.",triggerPhys->GetObjectKey()->GetName());
+                        DetectorLogRed("<--Kill collision %s : ignoring controller events.",triggerPhys->GetObjectKey()->GetName().c_str());
                     return;
 #else // else if trigger on both controller and kinematic
                     // only suppress controller collision 'enters' when disabled but let 'exits' continue
@@ -111,7 +111,7 @@ class SensorReport : public NxUserTriggerReport
                     if ( ( !controller->IsEnabled() /*&& (status & NX_TRIGGER_ON_ENTER)*/ ) || controller->IsKinematic() )
                     {
                         if (plSimulationMgr::fExtraProfile)
-                            DetectorLogRed("<--Kill collision %s : controller is not enabled.",triggerPhys->GetObjectKey()->GetName());
+                            DetectorLogRed("<--Kill collision %s : controller is not enabled.",triggerPhys->GetObjectKey()->GetName().c_str());
                         return;
                     }
 #endif  // PHYSX_ONLY_TRIGGER_FROM_KINEMATIC
@@ -124,7 +124,7 @@ class SensorReport : public NxUserTriggerReport
                     if ( !controller->IsKinematic() /*&& (status & NX_TRIGGER_ON_ENTER) */ )
                     {
                         if (plSimulationMgr::fExtraProfile)
-                            DetectorLogRed("<--Kill collision %s : kinematic is not enabled.",triggerPhys->GetObjectKey()->GetName());
+                            DetectorLogRed("<--Kill collision %s : kinematic is not enabled.",triggerPhys->GetObjectKey()->GetName().c_str());
                         return;
                     }
                 }
@@ -135,7 +135,7 @@ class SensorReport : public NxUserTriggerReport
                 {
                     if (!doReport)
                     {
-                        DetectorLogRed("<--Kill collision %s :failed group. US=%x OTHER=(NotAvatar)",triggerPhys->GetObjectKey()->GetName(),triggerPhys->GetGroup());
+                        DetectorLogRed("<--Kill collision %s :failed group. US=%x OTHER=(NotAvatar)",triggerPhys->GetObjectKey()->GetName().c_str(),triggerPhys->GetGroup());
                     }
                     else
                     {
@@ -155,29 +155,29 @@ class SensorReport : public NxUserTriggerReport
                 if (status & NX_TRIGGER_ON_ENTER && triggerPhys->Should_I_Trigger(status & NX_TRIGGER_ON_ENTER, otherPos) )
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
+                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
                     SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
                 }
                 else if (status & NX_TRIGGER_ON_ENTER)
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName());
+                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName().c_str());
                 }
                 if (status & NX_TRIGGER_ON_LEAVE && triggerPhys->Should_I_Trigger(status & NX_TRIGGER_ON_ENTER, otherPos) )
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
+                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
                     SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
                 }
                 else if (status & NX_TRIGGER_ON_LEAVE)
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName());
+                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName().c_str());
                 }
                 if (!(status & NX_TRIGGER_ON_ENTER) && !(status & NX_TRIGGER_ON_LEAVE) )
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed event(CH)",triggerPhys->GetObjectKey()->GetName());
+                        DetectorLogRed("<--Kill collision %s :failed event(CH)",triggerPhys->GetObjectKey()->GetName().c_str());
                 }
             }
             else
@@ -186,19 +186,19 @@ class SensorReport : public NxUserTriggerReport
                 if (status & NX_TRIGGER_ON_ENTER)
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
+                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
                     SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
                 }
                 if (status & NX_TRIGGER_ON_LEAVE)
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
+                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
                     SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
                 }
                 if (!(status & NX_TRIGGER_ON_ENTER) && !(status & NX_TRIGGER_ON_LEAVE) )
                 {
                     if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed event",triggerPhys->GetObjectKey()->GetName());
+                        DetectorLogRed("<--Kill collision %s :failed event",triggerPhys->GetObjectKey()->GetName().c_str());
                 }
 #ifdef USE_PHYSX_CONVEXHULL_WORKAROUND
             }
@@ -208,7 +208,7 @@ class SensorReport : public NxUserTriggerReport
 
     void SendCollisionMsg(plKey receiver, plKey hitter, hsBool entering)
     {
-        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", receiver->GetName(), 
+        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", receiver->GetName().c_str(),
                           hitter ? hitter->GetName().c_str() : "(nil)" , entering ? "'enter'" : "'exit'");
         plCollideMsg* msg = new plCollideMsg;
         msg->fOtherKey = hitter;
@@ -962,7 +962,7 @@ void plSimulationMgr::IDrawActiveActorList()
     for (SceneMap::iterator it = fScenes.begin(); it != fScenes.end(); it++)
     {
         
-        sprintf(strBuf, "Scene: %s",it->first->GetName());
+        sprintf(strBuf, "Scene: %s",it->first->GetName().c_str());
         debugTxt.DrawString(x, y, strBuf);
         y += lineHeight;
         uint32_t numActors =it->second->getNbActors();
