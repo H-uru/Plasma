@@ -133,8 +133,10 @@ void plWalkingController::RecalcVelocity(double timeNow, double timePrev, hsBool
 
     if (fController && !fWalkingStrategy->IsOnGround())
     {
+        // PhysX Hack: AchievedLinearVelocity is a Cyanic fix for superjumps. LinearVelocity is
+        //             always (0,0,0) outside of the controller update proc
         fImpactTime = fWalkingStrategy->GetAirTime();
-        fImpactVelocity = fController->GetLinearVelocity();
+        fImpactVelocity = fController->GetAchievedLinearVelocity();
         fClearImpact = false;
     }
     else
