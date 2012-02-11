@@ -614,13 +614,16 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileN
 plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plKey       key;
-    char        keyName[ MAX_PATH ];
+    plString    keyName;
     char        fullPath[ MAX_PATH ];
 
 
-    strcpy( keyName, fileName );
-    ::PathStripPath( keyName );
-    
+    // ***TEMP plString REVISIT***
+    char        tempPath[ MAX_PATH ];
+    strncpy(tempPath, fileName, MAX_PATH);
+    ::PathStripPath( tempPath );
+    keyName = _TEMP_CONVERT_FROM_LITERAL( tempPath );
+
     // TEMP HACK until we get packed sounds: 
     // Given the source filename, we check to see if it's in our plasma game directory. If not, or if
     // it's out of date, we copy it over. We'll truncate the filename inside plSoundBuffer when we're ready.
@@ -635,7 +638,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
         plFileUtils::CreateDir( fullPath );
 
         // Now finish the path...
-        strcat( fullPath, keyName );
+        strcat( fullPath, _TEMP_CONVERT_TO_CONST_CHAR( keyName ) );
 
         // Check filestamp
         WIN32_FILE_ATTRIBUTE_DATA   oldFileAttrib, newFileAttrib;
@@ -664,9 +667,9 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
 
     // Additional info for the keyName--need some flag mangling, specifically for the left/right channel mangling
     if( srcBufferFlags & plSoundBuffer::kOnlyLeftChannel )
-        strcat( keyName, ":L" );
+        keyName += _TEMP_CONVERT_FROM_LITERAL( ":L" );
     else if( srcBufferFlags & plSoundBuffer::kOnlyRightChannel )
-        strcat( keyName, ":R" );
+        keyName += _TEMP_CONVERT_FROM_LITERAL( ":R" );
 
     key = srcNode->FindPageKey( plSoundBuffer::Index(), keyName );  
     if( key != nil )
@@ -890,8 +893,8 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
     {
         destSound->SetProperty( plSound::kPropLooping, true );
 
-        const char *loop = fCompPB->GetStr((ParamID)kSoundLoopName);
-        if (loop && loop[0] != '\0')
+        plString loop = plString::FromUtf8( fCompPB->GetStr((ParamID)kSoundLoopName) );
+        if (!loop.IsEmpty())
         {
             SegmentMap *segMap = GetCompWaveSegmentMap( GetSoundFileName( kBaseSound ) );
             if (segMap && segMap->find(loop) != segMap->end())
@@ -915,7 +918,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
     hsControlConverter& cc = hsControlConverter::Instance();
 
     float start, end;
-    if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
     }
@@ -937,7 +940,7 @@ hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
 
         std::map<plMaxNode*, int>::iterator i = fIndices.begin();
         plSoundVolumeApplicator *app = new plSoundVolumeApplicator( (*i).second );
-        app->SetChannelName(node->GetName());
+        app->SetChannelName(plString::FromUtf8(node->GetName()));
         plAnimComponentBase::SetupCtl( anim, ctl, app, node );
         result = true;      
     }
@@ -1817,10 +1820,10 @@ public:
             for (SegmentMap::iterator it = segMap->begin(); it != segMap->end(); it++)
             {
                 SegmentSpec *spec = it->second;
-                int idx = SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName);
+                int idx = SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
                 SendMessage(hLoop, CB_SETITEMDATA, idx, 1);
 
-                if (!strcmp(spec->fName, loop))
+                if (!spec->fName.Compare(loop))
                     SendMessage(hLoop, CB_SETCURSEL, idx, 0);
             }
 
@@ -2185,8 +2188,7 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
 
-    char    keyName[ 256 ];
-    sprintf( keyName, "%s", GetINode()->GetName());
+    plString keyName = plString::FromUtf8(GetINode()->GetName());
 
     plWin32Sound *sound = nil;
 
@@ -2219,7 +2221,7 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 // Converts an array of components into a single grouped sound
 hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg )
 {
-    char    keyName[ 256 ];
+    plString keyName;
 
 
     if( !fValidNodes[ baseNode ] || !fCreateGrouped )
@@ -2340,7 +2342,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     if( fIndices.find( baseNode ) != fIndices.end() )
         index = fIndices[ baseNode ];
 
-    sprintf( keyName, "%s_MergedSound", GetINode()->GetName() );
+    keyName = plString::Format( "%s_MergedSound", GetINode()->GetName() );
 
     plKey buffKey = baseNode->FindPageKey( plSoundBuffer::Index(), keyName );   
     if( buffKey != nil )
@@ -2361,7 +2363,7 @@ hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     const plAudioInterface* ai = baseNode->GetSceneObject()->GetAudioInterface();
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
-    sprintf( keyName, "%s", GetINode()->GetName());
+    keyName = plString::FromUtf8(GetINode()->GetName());
     plWin32GroupedSound *sound = new plWin32GroupedSound;
     sound->SetPositionArray( startPoses.GetCount(), startPoses.AcquireArray(), volumes.AcquireArray() );
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
@@ -2508,8 +2510,7 @@ hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if( srcBuffer == nil )
         return false;
 
-    char    keyName[ 256 ];
-    sprintf( keyName, "%s_Win32BgndSnd", GetINode()->GetName() );
+    plString keyName = plString::Format( "%s_Win32BgndSnd", GetINode()->GetName() );
     plWin32Sound *sound = nil;
 
     if( srcBuffer->GetDataLengthInSecs() > 4.f )
@@ -2667,8 +2668,7 @@ hsBool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;
     }
 
-    char    keyName[ 256 ];
-    sprintf( keyName, "%s_Win32GUISound", GetINode()->GetName() );
+    plString keyName = plString::Format( "%s_Win32GUISound", GetINode()->GetName() );
 
     plWin32StaticSound *sound = new plWin32StaticSound;
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());

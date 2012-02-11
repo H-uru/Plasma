@@ -154,23 +154,23 @@ static plKey ExternAddModifier(plMaxNodeBase *node, plModifier *mod)
     return nil;//((plMaxNode*)node)->AddModifier(mod);
 }
 
-static plKey ExternGetNewKey(const char *name, plModifier *mod, plLocation loc)
+static plKey ExternGetNewKey(const plString &name, plModifier *mod, plLocation loc)
 {
     return nil;//hsgResMgr::ResMgr()->NewKey(name, mod, loc);
 }
 
 // In plResponderComponent (for no apparent reason).
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 // In plAudioComponents
 int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
 
 #include "MaxComponent/plAnimComponent.h"
 
-static const char *GetAnimCompAnimName(plComponentBase *comp)
+static plString GetAnimCompAnimName(plComponentBase *comp)
 {
     if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)
         return ((plAnimComponentBase*)comp)->GetAnimName();
-    return nil;
+    return plString::Null;
 }
 
 static plKey GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node)
@@ -258,7 +258,7 @@ void plMaxBoneMap::SortBones()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-plKey plMaxNode::AddModifier(plModifier *pMod, const char* name)
+plKey plMaxNode::AddModifier(plModifier *pMod, const plString& name)
 {
     plKey modKey = pMod->GetKey();
     if (!modKey)
@@ -539,7 +539,7 @@ hsBool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settin
 
     // Handle this as a SceneObject
     pso = new plSceneObject;
-    objKey = hsgResMgr::ResMgr()->NewKey(GetName(), pso, nodeLoc, GetLoadMask());
+    objKey = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetName()), pso, nodeLoc, GetLoadMask());
 
     // Remember info in MaxNodeData block for later
     plMaxNodeData *pDat = GetMaxNodeData();
@@ -828,7 +828,7 @@ hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     // add the object to the resource manager, keyed to the new name
     plLocation nodeLoc = GetKey()->GetUoid().GetLocation();
-    const char *objName = GetKey()->GetName();
+    plString objName = GetKey()->GetName();
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
     if (!physical->Init(recipe))
@@ -917,7 +917,7 @@ hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings
         //-------------------------
         plKey pNodeKey = GetKey();
         hsAssert(pNodeKey, "Missing key for this Object");
-        const char *pName = pNodeKey->GetName();
+        plString pName = pNodeKey->GetName();
         plLocation nodeLoc = GetLocation();
 
         plKey pCiKey = hsgResMgr::ResMgr()->NewKey(pName, ci,nodeLoc, GetLoadMask());
@@ -990,7 +990,7 @@ hsBool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings
                 }
                 pMod->SetScale(scale);
             }
-            AddModifier(pMod, GetName());
+            AddModifier(pMod, plString::FromUtf8(GetName()));
         }
     }
     return true;
@@ -1445,8 +1445,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         for (i = 0; i < spanArray.GetCount(); i++)
             swapSpans->Append(spanArray.Get(i));
 
-        char tmpName[256];
-        sprintf(tmpName, "%s_SMsh", GetName());
+        plString tmpName = plString::Format("%s_SMsh", GetName());
         hsgResMgr::ResMgr()->NewKey(tmpName, GetSwappableGeom(), GetLocation(), GetLoadMask());
                 
         return true;
@@ -2255,15 +2254,15 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
         occ->ComputeFromPolys();
 
         // Register it.
-        char tmpName[256];
-        if( GetKey() && GetKey()->GetName() && *GetKey()->GetName() )
+        plString tmpName;
+        if( GetKey() && !GetKey()->GetName().IsEmpty() )
         {
-            sprintf(tmpName, "%s_%s", GetKey()->GetName(), "Occluder");
+            tmpName = plString::Format("%s_Occluder", GetKey()->GetName().c_str());
         }
         else
         {
             static int numOcc = 0;
-            sprintf(tmpName, "%s_%4.4d", "Occluder", numOcc);
+            tmpName = plString::Format("Occluder_%4.4d", numOcc);
         }
         plKey key = hsgResMgr::ResMgr()->NewKey( tmpName, occ, nodeLoc, GetLoadMask() );
 
@@ -2986,7 +2985,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
         if( falloffCtl )
         {
             plLeafController* subCtl;
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 subCtl = hsControlConverter::Instance().MakeScalarController(falloffCtl, this);
             else
                 subCtl = hsControlConverter::Instance().MakeScalarController(falloffCtl, this,
@@ -3002,7 +3001,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
-                    if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+                    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                         anim->ExtendToLength(subCtl->GetLength());
                 }
                 else
@@ -3056,7 +3055,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
-                    if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+                    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                         anim->ExtendToLength(subCtl->GetLength());
 
                     float attenConst, attenLinear, attenQuadratic, attenCutoff;
@@ -3125,7 +3124,7 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
     if( ambientCtl )
     {
         plController* ctl;
-        if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(ambientCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(ambientCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3137,14 +3136,14 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( colorCtl )
     {
         plController* ctl;
-        if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(colorCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(colorCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3157,14 +3156,14 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( specCtl )
     {
         plController* ctl;
-        if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(specCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(specCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3176,7 +3175,7 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
@@ -3191,7 +3190,7 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
     if( innerCtl )
     {
         plLeafController* ctl;
-        if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeScalarController(innerCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeScalarController(innerCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3203,14 +3202,14 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( outerCtl )
     {
         plController* ctl;
-        if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeScalarController(outerCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeScalarController(outerCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3222,7 +3221,7 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!strcmp(anim->GetName(), ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
@@ -3318,7 +3317,7 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBl
 {
 
     plDrawableSpans *spans;
-    char            tmpName[ 512 ];
+    plString        tmpName;
     plLocation      nodeLoc = GetLocation();  
     
     if( !needBlending )
@@ -3344,13 +3343,13 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBl
     {
         /// Blending (deferred) spans
         spans->SetCriteria( crit );
-        sprintf( tmpName, "%s_%8.8x_%xBlendSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = plString::Format( "%s_%8.8x_%xBlendSpans", node->GetKeyName().c_str(), crit.fLevel.fLevel, crit.fCriteria);
     }
     else
     {
         /// Normal spans
         spans->SetCriteria( crit );
-        sprintf( tmpName, "%s_%8.8x_%xSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = plString::Format( "%s_%8.8x_%xSpans", node->GetKeyName().c_str(), crit.fLevel.fLevel, crit.fCriteria);
     }
 
     if (GetSwappableGeomTarget() != (uint32_t)-1 || GetSwappableGeom()) // We intend to swap geometry with this node... flag the drawable as volatile
@@ -3650,7 +3649,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
 {
     if(CanConvert()) {
         if (!HasAGMod()) {
-            const char *nameToUse;
+            plString nameToUse;
             
             // parse UserPropsBuf for entire BoneName line
             char localName[256];
@@ -3664,19 +3663,19 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             {
                 start+=len;
                 int i=0;
-                while(*start != '\n' && *start != '\0' && *start)
+                while(*start != '\n' && *start)
                 {
                     hsAssert(i<256, "localName overflow");
                     localName[i++]=*start++;
                 }
                 localName[i]=0;
 
-                nameToUse = localName;
+                nameToUse = plString::FromUtf8(localName);
 
             }
             else
             {
-                const char *nodeName = GetName();
+                plString nodeName = plString::FromUtf8(GetName());
         //      char str[256];
         //      sprintf(str, "Missing 'BoneName=foo' UserProp, on object %s, using node name", nodeName ? nodeName : "?");
         //      hsAssert(false, str);
@@ -3696,7 +3695,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             }
         */
             plAGModifier *mod = new plAGModifier(nameToUse);
-            AddModifier(mod, GetName());
+            AddModifier(mod, plString::FromUtf8(GetName()));
         }
     }
 
@@ -4049,7 +4048,7 @@ plPhysicalProps *plMaxNode::GetPhysicalProps()
 //// FindPageKey /////////////////////////////////////////////////////////////
 //  Little helper function. Calls FindKey() in the resManager using the location (page) of this node
 
-plKey   plMaxNode::FindPageKey( uint16_t classIdx, const char *name )
+plKey   plMaxNode::FindPageKey( uint16_t classIdx, const plString &name )
 {
     return hsgResMgr::ResMgr()->FindKey( plUoid( GetLocation(), classIdx, name ) );
 }
@@ -4109,7 +4108,7 @@ hsBool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *se
     {
         plInterfaceInfoModifier* pMod = new plInterfaceInfoModifier;
         
-        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(GetName(), pMod, GetLocation(), GetLoadMask());
+        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetName()), pMod, GetLocation(), GetLoadMask());
         hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         
         for(int i = 0; i < keys.Count(); i++)

@@ -364,7 +364,7 @@ int plNetMsgObjectHelper::Peek(hsStream* stream, const uint32_t peekOptions)
 
 hsBool plNetMsgObjectHelper::SetFromKey(const plKey &key)
 {
-    if (!key || !key->GetName())
+    if (!key || key->GetName().IsNull())
         return false;
     
     fUoid = key->GetUoid();
@@ -505,7 +505,7 @@ int plNetMsgMemberListHelper::Poke(hsStream* stream, const uint32_t peekOptions)
     int i;
     for(i=0;i<numMembers;i++)
     {
-        fMembers[i]->GetClientGuid()->SetClientKey("");
+        fMembers[i]->GetClientGuid()->SetClientKey(_TEMP_CONVERT_FROM_LITERAL(""));
         fMembers[i]->GetClientGuid()->SetAccountUUID(plUUID());
         fMembers[i]->Poke(stream, peekOptions);
     }

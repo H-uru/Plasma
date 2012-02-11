@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage/plNetMessage.h"
 #include "pnNetCommon/plNetApp.h"
 
-const char* plSDL::kAgeSDLObjectName = {"AgeSDLHook"};
+const plString plSDL::kAgeSDLObjectName = _TEMP_CONVERT_FROM_LITERAL("AgeSDLHook");
 
 // static 
 const uint8_t plStateDataRecord::kIOVersion=6;
@@ -734,19 +734,19 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     if (!dbg)
         return;
 
-    std::string pad;
+    plString pad;
     int i;
     for(i=0;i<level; i++)
-        pad += "   ";
+        pad += _TEMP_CONVERT_FROM_LITERAL("   ");
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
 
-    dbg->LogMsg(xtl::format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName() : " ").c_str());
+    dbg->LogMsg(plString::Format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ").c_str());
     if (msg)
-        dbg->LogMsg(xtl::format("%s%s", pad.c_str(),msg).c_str());
+        dbg->LogMsg(plString::Format("%s%s", pad.c_str(),msg).c_str());
 
-    dbg->LogMsg(xtl::format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d", 
+    dbg->LogMsg(plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
         pad.c_str(), this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
 
     // dump simple vars
@@ -778,17 +778,17 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
 
-    std::string logStr = xtl::format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName() : " ");
+    plString logStr = plString::Format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ");
 
-    stream->Write(logStr.length(), logStr.c_str());
+    stream->Write(logStr.GetSize(), logStr.c_str());
     if (msg)
     {
-        logStr = xtl::format("%s%s", pad.c_str(),msg);
-        stream->Write(logStr.length(), logStr.c_str());
+        logStr = plString::Format("%s%s", pad.c_str(),msg);
+        stream->Write(logStr.GetSize(), logStr.c_str());
     }
 
-    logStr = xtl::format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d", pad.c_str(), this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
-    stream->Write(logStr.length(), logStr.c_str());
+    logStr = plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d", pad.c_str(), this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
+    stream->Write(logStr.GetSize(), logStr.c_str());
 
     // dump simple vars
     for(i=0;i<fVarsList.size(); i++)
@@ -808,8 +808,8 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         }
     }
 
-    logStr = '\n';
-    stream->Write(logStr.length(), logStr.c_str());
+    logStr = _TEMP_CONVERT_FROM_LITERAL("\n");
+    stream->Write(logStr.GetSize(), logStr.c_str());
 }
 
 void plStateDataRecord::SetFromDefaults(bool timeStampNow)

@@ -102,8 +102,8 @@ class plNetServerAgentConstants
 {
 public:
     static const char* GetName() { return "Server_Agent"; }
-    static const uint16_t GetPort() { return 4800; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAgent; }
+    static uint16_t GetPort() { return 4800; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAgent; }
 };
 
 
@@ -111,8 +111,8 @@ class plNetLookupServerConstants
 {
 public:
     static const char* GetName() { return "Lookup_Server"; }
-    static const uint16_t GetPort() { return 2000; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kLookup; }
+    static uint16_t GetPort() { return 2000; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kLookup; }
 };
 
 
@@ -120,8 +120,8 @@ class plNetLobbyServerConstants
 {
 public:
     static const char* GetName() { return "Generated_Lobby"; }
-    static const uint16_t GetPort() { return 5000; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kLobby; }
+    static uint16_t GetPort() { return 5000; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kLobby; }
 };
 
 
@@ -129,8 +129,8 @@ class plNetVaultServerConstants
 {
 public:
     static const char* GetName() { return "Vault_Server"; }
-    static const uint16_t GetPort() { return 2001; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kVault; }
+    static uint16_t GetPort() { return 2001; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kVault; }
 };
 
 
@@ -138,8 +138,8 @@ class plNetAuthServerConstants
 {
 public:
     static const char* GetName() { return "Auth_Server"; }
-    static const uint16_t GetPort() { return 2002; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAuth; }
+    static uint16_t GetPort() { return 2002; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAuth; }
 };
 
 
@@ -147,17 +147,17 @@ class plNetAdminServerConstants
 {
 public:
     static const char* GetName() { return "Admin_Server"; }
-    static const uint16_t GetPort() { return 2003; }
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAdmin; }
+    static uint16_t GetPort() { return 2003; }
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kAdmin; }
 };
 
 class plNetGameServerConstants
 {
 public:
     static const char* GetName() { return "Game_Server"; }
-    static const uint16_t GetLowPort() { return 5001;}
-    static const uint16_t GetHighPort() { return 6001;}
-    static const plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kGame; }
+    static uint16_t GetLowPort() { return 5001;}
+    static uint16_t GetHighPort() { return 6001;}
+    static plNetServerConstants::ServerTypes GetType() { return plNetServerConstants::kGame; }
 };
 
 

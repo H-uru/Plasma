@@ -264,11 +264,11 @@ hsBool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     {
         // MakeCharacterHierarchy will attach agmodifiers to all the bones in the hierarchy;
         // have to manually add any for non-bone objects...
-        agMod = new plAGModifier("Handle");     // the player root is known as the handle
+        agMod = new plAGModifier(_TEMP_CONVERT_FROM_LITERAL("Handle"));     // the player root is known as the handle
         node->AddModifier(agMod, IGetUniqueName(node));
     }
 
-    agMod->SetChannelName("Handle");
+    agMod->SetChannelName(_TEMP_CONVERT_FROM_LITERAL("Handle"));
 
     // Get the position and radius of the head and torso physicals
     if (ClassID() == AVATAR_CLASS_ID || ClassID() == LOD_AVATAR_CLASS_ID)
@@ -453,7 +453,7 @@ plAvatarComponent::plAvatarComponent()
 
 void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char *name = node->GetKey()->GetName();
+    plString name = node->GetKey()->GetName();
 
     plMaxNode *meshNode = (plMaxNode *)fCompPB->GetINode(plAvatarComponent::kMeshNode);
     plKey meshKey = meshNode->GetSceneObject()->GetKey();
@@ -476,7 +476,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(fCompPB->GetStr(ParamID(kAnimationPrefix)));
+    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
 
@@ -491,7 +491,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMaterial *mat, plErrorMsg *pErrMsg)
 {
     plGenRefMsg *msg;
-    char keyName[256];
+    plString keyName;
     TSTR sdata;
     hsStringTokenizer toker;
 
@@ -509,11 +509,11 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     }
     else 
         base->SetLayoutName("BasicHuman");
-    sprintf(keyName, "%s_ClothingBase", node->GetName());
+    keyName = plString::Format("%s_ClothingBase", node->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, base, node->GetLocation());
     plClothingOutfit *outfit = new plClothingOutfit();
     outfit->fGroup = group;
-    sprintf(keyName, "%s_outfit", mod->GetKey()->GetName());
+    keyName = plString::Format("%s_outfit", mod->GetKey()->GetName().c_str());
     hsgResMgr::ResMgr()->NewKey(keyName, outfit, node->GetLocation());
     
     msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
@@ -682,10 +682,10 @@ hsBool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
 
 hsBool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
-    const char *name = node->GetKey()->GetName();
+    plString name = node->GetKey()->GetName();
 
     node->MakeCharacterHierarchy(pErrMsg);
-    node->SetupBonesAliasesRecur(name);
+    node->SetupBonesAliasesRecur(_TEMP_CONVERT_TO_CONST_CHAR(name));
 
 
     // create and register the player modifier
@@ -1052,7 +1052,7 @@ plLODAvatarComponent::plLODAvatarComponent() : fMaterial(nil)
 
 void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char *avatarName = node->GetKey()->GetName();
+    plString avatarName = node->GetKey()->GetName();
     plMaxNode *animRoot = (plMaxNode *)fCompPB->GetINode(plLODAvatarComponent::kRootNodeAddBtn);
     plKey animRootKey = animRoot->GetSceneObject()->GetKey();
     plArmatureLODMod* avMod = new plArmatureLODMod(avatarName);
@@ -1066,7 +1066,7 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(fCompPB->GetStr(ParamID(kAnimationPrefix)));
+    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     int iLODCount = fCompPB->Count(plLODAvatarComponent::kMeshNodeTab);
     for (int i = 0; i < iLODCount; i++)

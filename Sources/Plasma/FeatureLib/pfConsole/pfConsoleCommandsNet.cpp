@@ -197,9 +197,9 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const char* name, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const char* name, int type, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const char* name, const char* typeName, const char* ageName, 
+plKey FindSceneObjectByName(const plString& name, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const plString& name, int type, const char* ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const plString& name, const char* typeName, const char* ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -230,13 +230,13 @@ PF_CONSOLE_CMD( Net,        // groupName
                "broadcast chat msg" )   // helpString
 {
     // send chat text
-    std::string text=plNetClientMgr::GetInstance()->GetPlayerName();
-    text += ":";
+    plString text=plNetClientMgr::GetInstance()->GetPlayerName();
+    text += _TEMP_CONVERT_FROM_LITERAL(":");
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += (char*)params[i];
-        text += " ";
+        text += plString::FromUtf8( (char*)params[i] );
+        text += _TEMP_CONVERT_FROM_LITERAL(" ");
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
     cMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
@@ -510,7 +510,7 @@ PF_CONSOLE_CMD( Net,            // groupName
                "Instructs the server to only send me updates about this object periodically" )  // helpString
 {   
     char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), nil, str);
     PrintString(str);
     if (!key)
         return;
@@ -1017,7 +1017,7 @@ PF_CONSOLE_CMD(
         return;
     }
 
-    if (unsigned playerId = plNetClientMgr::GetInstance()->GetPlayerIdByName((const char *)params[1])) {
+    if (unsigned playerId = plNetClientMgr::GetInstance()->GetPlayerIdByName(plString::FromUtf8((const char *)params[1]))) {
         ttt->InvitePlayer(playerId);
         PrintStringF(PrintString, "Sent invite to playerId %u", playerId);
     }

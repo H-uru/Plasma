@@ -324,11 +324,11 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
                 return true;
             }
         }
-        
+
         plSceneObject *avatar = plSceneObject::ConvertNoRef(linkKey->ObjectIsLoaded());
         if (avatar == nil)
         {
-            plNetApp::GetInstance()->DebugMsg("Can't find avatar, mod=%s\n", linkKey->GetName());
+            plNetApp::GetInstance()->DebugMsg("Can't find avatar, mod=%s\n", linkKey->GetName().c_str());
             return true;
         }
 
@@ -338,7 +338,7 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
 //          hsAssert(false, "Trying to link an Avatar already in the process of linking.");
 //          return true;
 //      }
-        
+
         if (pTriggerMsg->GetInvisLevel() && linkKey != nc->GetLocalPlayerKey())
         {
 #ifdef PLASMA_EXTERNAL_RELEASE
@@ -470,12 +470,12 @@ hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         else if (pTriggerMsg->fEffects < 0 )
         {
             plNetApp::GetInstance()->DebugMsg("Too many link callbacks received for avatar %s. Ignoring extras.\n",
-                    pTriggerMsg->GetLinkKey()->GetName());          
+                    pTriggerMsg->GetLinkKey()->GetName().c_str());
         }
         else
         {
             plNetApp::GetInstance()->DebugMsg("%d link callbacks left until avatar %s links...\n", 
-                     pTriggerMsg->fEffects, pTriggerMsg->GetLinkKey()->GetName());
+                     pTriggerMsg->fEffects, pTriggerMsg->GetLinkKey()->GetName().c_str());
         }
         return true;
     }

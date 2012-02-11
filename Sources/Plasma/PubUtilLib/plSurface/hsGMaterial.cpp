@@ -132,11 +132,11 @@ plLayer* hsGMaterial::MakeBaseLayer()
     
     hsAssert(GetKey(), "All materials need a key (or temp key)");
 
-    char buff[256];
-    if( GetKey()->GetName() )
-        sprintf(buff, "%s_%s", GetKey()->GetName(), "Layer");
+    plString buff;
+    if( !GetKey()->GetName().IsNull() )
+        buff = plString::Format("%s_Layer", GetKey()->GetName().c_str());
     else
-        strcpy(buff, "Layer");
+        buff = _TEMP_CONVERT_FROM_LITERAL("Layer");
     hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     // Add layer so we have it now.
@@ -278,7 +278,7 @@ void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
 
 void hsGMaterial::Eval(double secs, uint32_t frame)
 {
-    plProfile_BeginLap(MaterialAnims, GetKeyName());
+    plProfile_BeginLap(MaterialAnims, GetKeyName().c_str());
 
     int i;
     for( i = 0; i < GetNumLayers(); i++ )
@@ -292,7 +292,7 @@ void hsGMaterial::Eval(double secs, uint32_t frame)
             fPiggyBacks[i]->Eval(secs, frame, 0);
     }
 
-    plProfile_EndLap(MaterialAnims, GetKeyName());
+    plProfile_EndLap(MaterialAnims, GetKeyName().c_str());
 }
 
 void hsGMaterial::Reset()

@@ -279,7 +279,7 @@ hsBool  pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
 
         if( !RunCommand( string, DummyPrintFn ) )
         {
-            sprintf( string, "Error in console file %s, command line %d: %s", fileName, line, fErrorMsg );
+            sprintf( string, "Error in console file %S, command line %d: %s", fileName, line, fErrorMsg );
             ISetErrorMsg( string );
             stream->Close();
             delete stream;

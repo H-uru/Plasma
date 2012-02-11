@@ -109,11 +109,11 @@ public:
 
         virtual hsBool Convert(plMaxNode* node, plErrorMsg *pErrMsg);
 
-        virtual plATCAnim * NewAnimation(const char *name, double begin, double end);
+        virtual plATCAnim * NewAnimation(const plString &name, double begin, double end);
 
         hsBool ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg);
         hsBool ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg);
-        hsBool MakePersistent(plMaxNode *node, plAGAnim *anim, const char *animName, plErrorMsg *pErrMsg);
+        hsBool MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg);
 
         virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 
@@ -218,15 +218,16 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
     // does this node have any segments specified?
     if (noteAnim.HasNotetracks())
     {
-        // for each segment we found: 
-        while (const char *animName = noteAnim.GetNextAnimName())
+        // for each segment we found:
+        plString animName;
+        while (!(animName = noteAnim.GetNextAnimName()).IsNull())
         {
             plAnimInfo info = noteAnim.GetAnimInfo(animName);
 
             plATCAnim *anim = NewAnimation(info.GetAnimName(), info.GetAnimStart(), info.GetAnimEnd());
 
-            const char *loopName = info.GetNextLoopName();
-            if (loopName)
+            plString loopName = info.GetNextLoopName();
+            if (!loopName.IsNull())
             {
                 anim->SetLoop(true);
                 float loopStart = info.GetLoopStart(loopName);
@@ -234,7 +235,8 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
                 anim->SetLoopStart(loopStart == -1 ? anim->GetStart() : loopStart);
                 anim->SetLoopEnd(loopEnd == -1 ? anim->GetEnd() : loopEnd);
             }
-            while (const char *marker = info.GetNextMarkerName())
+            plString marker;
+            while (!(marker = info.GetNextMarkerName()).IsNull())
                 anim->AddMarker(marker, info.GetMarkerTime(marker));
 
             ConvertNodeSegmentBranch(node, anim, pErrMsg);
@@ -252,7 +254,7 @@ hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
 
 // NewAnimation -------------------------------------------------------------------------
 // -------------
-plATCAnim * plAnimAvatarComponent::NewAnimation(const char *name, double begin, double end)
+plATCAnim * plAnimAvatarComponent::NewAnimation(const plString &name, double begin, double end)
 {
     return new plATCAnim(name, begin, end); 
 }
@@ -268,7 +270,7 @@ hsBool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim
 {
     // Check for a suppression marker
     plNotetrackAnim noteAnim(node, pErrMsg);
-    plAnimInfo info = noteAnim.GetAnimInfo(nil);
+    plAnimInfo info = noteAnim.GetAnimInfo(plString::Null);
     hsBool suppressed = info.IsSuppressed(mod->GetName());
 
     // Get the affine parts and the TM Controller
@@ -336,7 +338,7 @@ plKey FindSceneNode(plMaxNode *node)
 // Perform wizardry necessary to make the object save itself.
 //
 //
-hsBool plAnimAvatarComponent::MakePersistent(plMaxNode *node, plAGAnim *anim, const char *animName, plErrorMsg *pErrMsg)
+hsBool plAnimAvatarComponent::MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg)
 {
     // new approach: add to the generic pool on the scene node
     plLocation nodeLoc = node->GetLocation();
@@ -379,7 +381,7 @@ public:
 
     plEmoteComponent();
     virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual plATCAnim * NewAnimation(const char *name, double begin, double end);
+    virtual plATCAnim * NewAnimation(const plString &name, double begin, double end);
 
 protected:
     float fFadeIn;
@@ -455,7 +457,7 @@ hsBool plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 // NewAnimation ----------------------------------------------------------------------
 // -------------
-plATCAnim * plEmoteComponent::NewAnimation(const char *name, double begin, double end)
+plATCAnim * plEmoteComponent::NewAnimation(const plString &name, double begin, double end)
 {
     return new plEmoteAnim(name, begin, end, fFadeIn, fFadeOut, fBodyUsage);
 }

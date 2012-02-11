@@ -136,20 +136,20 @@ class plGeometrySpan
         hsBounds3Ext        fWorldBounds;
         plFogEnvironment    *fFogEnviron;
 
-        uint32_t          fBaseMatrix;
-        uint8_t           fNumMatrices;
-        uint16_t          fLocalUVWChans;
-        uint16_t          fMaxBoneIdx;
-        uint32_t          fPenBoneIdx;
+        uint32_t        fBaseMatrix;
+        uint8_t         fNumMatrices;
+        uint16_t        fLocalUVWChans;
+        uint16_t        fMaxBoneIdx;
+        uint32_t        fPenBoneIdx;
 
-        float        fMinDist;
-        float        fMaxDist;
+        float           fMinDist;
+        float           fMaxDist;
 
-        float        fWaterHeight;
+        float           fWaterHeight;
 
-        uint8_t           fFormat;
-        uint32_t          fProps;
-        uint32_t          fNumVerts, fNumIndices;
+        uint8_t         fFormat;
+        uint32_t        fProps;
+        uint32_t        fNumVerts, fNumIndices;
 
         /// Current vertex format:
         ///     float   position[ 3 ];
@@ -158,22 +158,22 @@ class plGeometrySpan
         ///     float   weights[];              // 0-3 blending weights
         ///     uint32_t  weightIndices;          // Only if there are >= 1 blending weights
 
-        uint8_t*          fVertexData;
-        uint16_t*         fIndexData;
-        uint32_t          fDecalLevel;
+        uint8_t*        fVertexData;
+        uint16_t*       fIndexData;
+        uint32_t        fDecalLevel;
 
         hsColorRGBA*    fMultColor;
         hsColorRGBA*    fAddColor;
 
-        uint32_t*         fDiffuseRGBA;
-        uint32_t*         fSpecularRGBA;
+        uint32_t*       fDiffuseRGBA;
+        uint32_t*       fSpecularRGBA;
 
         mutable hsTArray<plGeometrySpan *>* fInstanceRefs;
-        mutable uint32_t                      fInstanceGroupID;       // For writing out/reading in instance refs
+        mutable uint32_t                    fInstanceGroupID;       // For writing out/reading in instance refs
 
         // The following is only used for logging during export. It is never set
         // at runtime. Don't even think about using it for anything.
-        const char*                         fMaxOwner; 
+        plString                            fMaxOwner;
 
         // The following is ONLY used during pack; it's so we can do a reverse lookup
         // from the instanceRefs list to the correct span in the drawable

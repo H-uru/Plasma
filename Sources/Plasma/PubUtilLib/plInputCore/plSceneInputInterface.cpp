@@ -182,11 +182,11 @@ void plSceneInputInterface::IHalfFadeAvatar(hsBool out)
     plIfaceFadeAvatarMsg* pMsg = new plIfaceFadeAvatarMsg();
     pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-    pMsg->SetBCastFlag(plMessage::kNetPropagate, FALSE);
+    pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
     pMsg->SetFadeOut(out);
     pMsg->Send();
     fFadedLocalAvatar = out;
-    
+
 }
 
 
@@ -270,9 +270,9 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                     if (fShowLOS)
                     {
                         if (pLOSMsg->fNoHit)
-                            DetectorLogSpecial("%s: LOS miss", pObj->GetKeyName());
+                            DetectorLogSpecial("%s: LOS miss", pObj->GetKeyName().c_str());
                         else
-                            DetectorLogSpecial("%s: LOS hit", pObj->GetKeyName());
+                            DetectorLogSpecial("%s: LOS hit", pObj->GetKeyName().c_str());
                     }
                     int i;
                     const plInterfaceInfoModifier* pMod = 0;
@@ -837,17 +837,17 @@ void plSceneInputInterface::ILinkOffereeToAge()
         info.SetAgeInstanceGuid(&guid);
         std::string title;
         std::string desc;
-        
-        unsigned nameLen = StrLen(plNetClientMgr::GetInstance()->GetPlayerName());
-        if (plNetClientMgr::GetInstance()->GetPlayerName()[nameLen - 1] == 's' || plNetClientMgr::GetInstance()->GetPlayerName()[nameLen - 1] == 'S') {
-            xtl::format( title, "%s'", plNetClientMgr::GetInstance()->GetPlayerName() );
-            xtl::format( desc, "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName() );
+
+        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
+        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's' || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
+            xtl::format( title, "%s'", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
+            xtl::format( desc, "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
         }
         else {
-            xtl::format( title, "%s's", plNetClientMgr::GetInstance()->GetPlayerName() );
-            xtl::format( desc, "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName() );
+            xtl::format( title, "%s's", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
+            xtl::format( desc, "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
         }
-        
+
         info.SetAgeUserDefinedName( title.c_str() );
         info.SetAgeDescription( desc.c_str() );
 

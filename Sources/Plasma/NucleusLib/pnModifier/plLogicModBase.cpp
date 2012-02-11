@@ -141,11 +141,10 @@ hsBool plLogicModBase::MsgReceive(plMessage* msg)
         hsAssert(pSMsg->GetType() != plServerReplyMsg::kUnInit, "uninit server reply msg");
 
 #if 1
-        char str[256];
-        sprintf(str, "LM: LogicModifier %s recvd trigger request reply:%s, wasRequesting=%d, t=%f\n", GetKeyName(),
+        plNetClientApp::GetInstance()->DebugMsg("LM: LogicModifier %s recvd trigger request reply:%s, wasRequesting=%d, t=%f\n",
+            GetKeyName().c_str(),
             pSMsg->GetType() == plServerReplyMsg::kDeny ? "denied" : "confirmed", 
             HasFlag(kRequestingTrigger), hsTimer::GetSysSeconds());
-        plNetClientApp::GetInstance()->DebugMsg(str);
 #endif
 
         if (pSMsg->GetType() == plServerReplyMsg::kDeny)
@@ -191,21 +190,17 @@ void plLogicModBase::RequestTrigger(hsBool netRequest)
     if (HasFlag(kTriggered))
     {
 #if 1
-        char str[256];
-        sprintf(str, "LM: %s ignoring RequestTrigger(), already triggered, t=%f\n", GetKeyName(),
-            hsTimer::GetSysSeconds());
-        plNetClientApp::GetInstance()->DebugMsg(str);
+        plNetClientApp::GetInstance()->DebugMsg("LM: %s ignoring RequestTrigger(), already triggered, t=%f\n",
+            GetKeyName().c_str(), hsTimer::GetSysSeconds());
 #endif
         return;
     }
-    
+
     if (HasFlag(kRequestingTrigger))
     {
 #if 1
-        char str[256];
-        sprintf(str, "LM: %s ignoring RequestTrigger(), already requesting trigger, t=%f\n", GetKeyName(),
-            hsTimer::GetSysSeconds());
-        plNetClientApp::GetInstance()->DebugMsg(str);
+        plNetClientApp::GetInstance()->DebugMsg("LM: %s ignoring RequestTrigger(), already requesting trigger, t=%f\n",
+            GetKeyName().c_str(), hsTimer::GetSysSeconds());
 #endif
 
         return;
@@ -220,9 +215,8 @@ void plLogicModBase::RequestTrigger(hsBool netRequest)
         SetFlag(kRequestingTrigger);
 
 #if 1
-        char str[256];
-        sprintf(str, "LM: %s Setting RequestingTriggert=%f\n", GetKeyName(), hsTimer::GetSysSeconds());
-        plNetClientApp::GetInstance()->DebugMsg(str);
+        plNetClientApp::GetInstance()->DebugMsg("LM: %s Setting RequestingTriggert=%f\n",
+            GetKeyName().c_str(), hsTimer::GetSysSeconds());
 #endif
 
     }
@@ -256,12 +250,10 @@ void plLogicModBase::PreTrigger(hsBool netRequest)
 void plLogicModBase::Trigger(hsBool netRequest)
 {
 #if 1
-    char str[256];
-    sprintf(str, "LogicModifier %s is triggering, activatorType=%d\n", 
-        GetKeyName(), HasFlag(kTypeActivator));
-    plNetClientApp::GetInstance()->DebugMsg(str);
+    plNetClientApp::GetInstance()->DebugMsg("LogicModifier %s is triggering, activatorType=%d\n",
+        GetKeyName().c_str(), HasFlag(kTypeActivator));
 #endif
-    
+
     ClearFlag(kRequestingTrigger);
     if (!HasFlag(kMultiTrigger))
         SetFlag(kTriggered);

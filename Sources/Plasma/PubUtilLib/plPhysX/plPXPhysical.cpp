@@ -84,7 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define SpamMsg(x)
 #endif
               
-#define LogActivate(func) if (fActor->isSleeping()) SimLog("%s activated by %s", GetKeyName(), func);
+#define LogActivate(func) if (fActor->isSleeping()) SimLog("%s activated by %s", GetKeyName().c_str(), func);
 
 PhysRecipe::PhysRecipe()
     : mass(0.f)
@@ -152,7 +152,7 @@ plPXPhysical::plPXPhysical()
 
 plPXPhysical::~plPXPhysical()
 {
-    SpamMsg(plSimulationMgr::Log("Destroying physical %s", GetKeyName()));
+    SpamMsg(plSimulationMgr::Log("Destroying physical %s", GetKeyName().c_str()));
 
     if (fActor)
     {
@@ -345,9 +345,9 @@ hsBool plPXPhysical::Should_I_Trigger(hsBool enter, hsPoint3& pos)
 #ifdef PHYSX_SAVE_TRIGGERS_WORKAROUND
             trigger = true;
             fInsideConvexHull = enter;
-            DetectorLogSpecial("**>Saved a missing enter collision: %s",GetObjectKey()->GetName());
+            DetectorLogSpecial("**>Saved a missing enter collision: %s",GetObjectKey()->GetName().c_str());
 #else
-            DetectorLogSpecial("**>Could have saved a missing enter collision: %s",GetObjectKey()->GetName());
+            DetectorLogSpecial("**>Could have saved a missing enter collision: %s",GetObjectKey()->GetName().c_str());
 #endif PHYSX_SAVE_TRIGGERS_WORKAROUND
         }
     }
@@ -436,7 +436,7 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
     case plSimDefs::kProxyBounds:
         if (fGroup == plSimDefs::kGroupDetector)
         {
-            SimLog("Someone using an Exact on a detector region: %s", GetKeyName());
+            SimLog("Someone using an Exact on a detector region: %s", GetKeyName().c_str());
         }
         trimeshShapeDesc.meshData = recipe.triMesh;
         trimeshShapeDesc.userData = recipe.meshStream;
@@ -489,11 +489,11 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
     else
     {
         if ( GetProperty(plSimulationInterface::kPhysAnim) )
-            SimLog("An animated physical that has no mass: %s", GetKeyName());
+            SimLog("An animated physical that has no mass: %s", GetKeyName().c_str());
     }
 
     actorDesc.userData = this;
-    actorDesc.name = GetKeyName();
+    actorDesc.name = GetKeyName().c_str();
 
     // Put the dynamics into actor group 1.  The actor groups are only used for
     // deciding who we get contact reports for.
@@ -536,7 +536,7 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
         if (!fActor->isSleeping())
         {
             if (plSimulationMgr::fExtraProfile)
-                SimLog("Deactivating %s in SetPositionAndRotationSim", GetKeyName());
+                SimLog("Deactivating %s in SetPositionAndRotationSim", GetKeyName().c_str());
             fActor->putToSleep();
         }
     }
@@ -617,7 +617,7 @@ hsBool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     plKey ourKey = GetKey();
     PhysRefType refType = PhysRefType(refMsg->fType);
 
-    const char* refKeyName = refKey ? refKey->GetName() : "MISSING";
+    plString refKeyName = refKey ? refKey->GetName() : _TEMP_CONVERT_FROM_LITERAL("MISSING");
 
     if (refType == kPhysRefWorld)
     {
@@ -695,11 +695,11 @@ plPhysical& plPXPhysical::SetProperty(int prop, hsBool status)
         case plSimulationInterface::kNoSynchronize:     propName = "kNoSynchronize";        break;
         }
 
-        const char* name = "(unknown)";
+        plString name = _TEMP_CONVERT_FROM_LITERAL("(unknown)");
         if (GetKey())
             name = GetKeyName();
         if (plSimulationMgr::fExtraProfile)
-            plSimulationMgr::Log("Warning: Redundant physical property set (property %s, value %s) on %s", propName, status ? "true" : "false", name);
+            plSimulationMgr::Log("Warning: Redundant physical property set (property %s, value %s) on %s", propName, status ? "true" : "false", name.c_str());
     }
 
     switch (prop)
@@ -786,7 +786,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
             if (!CompareMatrices(curl2w, fCachedLocal2World, .0001f))
             {
                 plProfile_Inc(LocationsSent);
-                plProfile_BeginLap(PhysicsUpdates, GetKeyName());
+                plProfile_BeginLap(PhysicsUpdates, GetKeyName().c_str());
 
                 // quick peek at the translation...last time it was corrupted because we applied a non-unit quaternion
 //              hsAssert(real_finite(fCachedLocal2World.fMap[0][3]) &&
@@ -795,7 +795,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
 
                 if (fCachedLocal2World.GetTranslate().fZ < kMaxNegativeZPos)
                 {
-                    SimLog("Physical %s fell to %.1f (%.1f is the max).  Suppressing.", GetKeyName(), fCachedLocal2World.GetTranslate().fZ, kMaxNegativeZPos);
+                    SimLog("Physical %s fell to %.1f (%.1f is the max).  Suppressing.", GetKeyName().c_str(), fCachedLocal2World.GetTranslate().fZ, kMaxNegativeZPos);
                     // Since this has probably been falling for a while, and thus not getting any syncs,
                     // make sure to save it's current pos so we'll know to reset it later
                     DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients);
@@ -808,7 +808,7 @@ void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
                 pCorrMsg->Send();
                 if (fProxyGen)
                     fProxyGen->SetTransform(fCachedLocal2World, w2l);
-                plProfile_EndLap(PhysicsUpdates, GetKeyName());
+                plProfile_EndLap(PhysicsUpdates, GetKeyName().c_str());
             }
         }
     }
@@ -936,7 +936,7 @@ void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, hs
     else
     {
         if ( !fActor->isDynamic()  && plSimulationMgr::fExtraProfile)
-            SimLog("Setting transform on non-dynamic: %s.", GetKeyName());
+            SimLog("Setting transform on non-dynamic: %s.", GetKeyName().c_str());
     }
 }
 
@@ -1228,7 +1228,7 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     // we've got right now)
     if (pos && pos->fZ < kMaxNegativeZPos && initialSync)
     {
-        SimLog("Physical %s loaded out of range state.  Forcing initial state to server.", GetKeyName());
+        SimLog("Physical %s loaded out of range state.  Forcing initial state to server.", GetKeyName().c_str());
         DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients);
         return;
     }

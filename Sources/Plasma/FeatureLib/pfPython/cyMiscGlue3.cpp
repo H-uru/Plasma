@@ -183,7 +183,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobject, args, "Params: name,ageName\n
         PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    return cyMisc::FindSceneObject(name, ageName);
+    return cyMisc::FindSceneObject(plString::FromUtf8(name), ageName);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will try to find an activator based on its name\n"
@@ -197,7 +197,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will 
         PYTHON_RETURN_ERROR;
     }
 
-    return cyMisc::FindActivator(name);
+    return cyMisc::FindActivator(plString::FromUtf8(name));
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearCameraStack, cyMisc::ClearCameraStack, "Clears the camera stack")

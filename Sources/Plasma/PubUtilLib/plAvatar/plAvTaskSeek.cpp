@@ -535,7 +535,7 @@ hsBool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
                 // don't need to do this every frame; the animation doesn't change.
                 // *** cache the adjustment;
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nil, &adjustment, _TEMP_CONVERT_FROM_LITERAL("Handle"));   // actually getting end-to-start
                 // ... but we do still need to multiply by the (potentially changed) target
                 targL2W = targL2W * adjustment;
             }

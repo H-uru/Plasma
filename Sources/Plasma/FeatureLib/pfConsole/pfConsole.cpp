@@ -333,8 +333,8 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
             // InviteReceived           
             case kSrv2Cli_GameMgr_InviteReceived: {
                 const Srv2Cli_GameMgr_InviteReceived & gmMsg = *(const Srv2Cli_GameMgr_InviteReceived *)gameMgrMsg->netMsg;
-                const char * inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite received: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName ? inviterName : "<Unknown>");
+                const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
+                AddLineF("[GameMgr] Invite received: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.s_str("<Unknown>"));
             }
             return true;
 
@@ -342,8 +342,8 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
             // InviteRevoked            
             case kSrv2Cli_GameMgr_InviteRevoked: {
                 const Srv2Cli_GameMgr_InviteRevoked & gmMsg = *(const Srv2Cli_GameMgr_InviteRevoked *)gameMgrMsg->netMsg;
-                const char * inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite revoked: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName ? inviterName : "<Unknown>");
+                const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
+                AddLineF("[GameMgr] Invite revoked: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.s_str("<Unknown>"));
             }
             return true;
             
@@ -372,7 +372,7 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
                     cli->GetName(),
                     cli->GetGameId(),
                     netMsg.playerId
-                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId)
+                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
                         : "Computer"
                 );
             }
@@ -387,7 +387,7 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
                     cli->GetName(),
                     cli->GetGameId(),
                     netMsg.playerId
-                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId)
+                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
                         : "Computer"
                 );
             }
@@ -503,7 +503,7 @@ hsBool  pfConsole::MsgReceive( plMessage *msg )
                     const Srv2Cli_TTT_MoveMade & netMsg = *(const Srv2Cli_TTT_MoveMade *)gameCliMsg->netMsg;
                     const char * playerName
                         = netMsg.playerId
-                            ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId)
+                            ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
                             : "Computer";
                     AddLineF(
                         "[Game %s:%u] %s moved:",

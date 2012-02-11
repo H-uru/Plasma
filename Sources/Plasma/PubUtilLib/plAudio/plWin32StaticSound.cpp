@@ -115,9 +115,8 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
 
         if( retVal == plSoundBuffer::kError )
         {
-            char str[ 256 ];
-            sprintf( str, "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-            IPrintDbgMessage( str, true );
+            plString str = plString::Format( "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName().c_str() : "nil");
+            IPrintDbgMessage( str.c_str(), true );
             fFailed = true;
             return false;
         }
@@ -170,15 +169,15 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
         {
             delete fDSoundBuffer;
             fDSoundBuffer = nil;
-            plStatusLog::AddLineS("audio.log", "Could not play static sound, no voices left %s", GetKeyName());
+            plStatusLog::AddLineS("audio.log", "Could not play static sound, no voices left %s", GetKeyName().c_str());
             return false;
         }
-        
+
         plProfile_EndTiming( StaticSndShoveTime );
         IRefreshEAXSettings( true );
 
         fTotalBytes = bufferSize;
-        
+
         plProfile_NewMem(MemSounds, fTotalBytes);
 
         // get pertinent info

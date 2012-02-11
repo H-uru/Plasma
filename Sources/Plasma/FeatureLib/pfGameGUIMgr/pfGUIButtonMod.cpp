@@ -150,8 +150,6 @@ void    pfGUIButtonMod::StartDragging( void )
 
 pfGUIButtonMod::pfGUIButtonMod()
 {
-    fAnimName = nil;
-    fMouseOverAnimName = nil;
     fDraggable = nil;
     fOrigHandler = nil;
 
@@ -159,12 +157,6 @@ pfGUIButtonMod::pfGUIButtonMod()
     fTriggering = false;
     fNotifyType = kNotifyOnUp;
     SetFlag( kWantsInterest );
-}
-
-pfGUIButtonMod::~pfGUIButtonMod()
-{
-    delete [] fAnimName;
-    delete [] fMouseOverAnimName;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -204,13 +196,13 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
     uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
-    fAnimName = s->ReadSafeString();
+    fAnimName = s->ReadSafeString_TEMP();
 
     fMouseOverAnimKeys.Reset();
     count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fMouseOverAnimKeys.Append( mgr->ReadKey( s ) );
-    fMouseOverAnimName = s->ReadSafeString();
+    fMouseOverAnimName = s->ReadSafeString_TEMP();
 
     fNotifyType = s->ReadLE32();
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDraggable ), plRefFlags::kActiveRef );
@@ -366,30 +358,16 @@ void    pfGUIButtonMod::SetInteresting( hsBool i )
 }
 
 
-void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const char *name )
+void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
 {
     fAnimationKeys = keys;
-    delete [] fAnimName;
-    if( name != nil )
-    {
-        fAnimName = new char[ strlen( name ) + 1 ];
-        strcpy( fAnimName, name );
-    }
-    else
-        fAnimName = nil;
+    fAnimName = name;
 }
 
-void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const char *name )
+void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const plString &name )
 {
     fMouseOverAnimKeys = keys;
-    delete [] fMouseOverAnimName;
-    if( name != nil )
-    {
-        fMouseOverAnimName = new char[ strlen( name ) + 1 ];
-        strcpy( fMouseOverAnimName, name );
-    }
-    else
-        fMouseOverAnimName = nil;
+    fMouseOverAnimName = name;
 }
 
 

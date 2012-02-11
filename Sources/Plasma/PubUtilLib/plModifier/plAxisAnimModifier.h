@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 #include "pnModifier/plSingleModifier.h"
+#include "plString.h"
 
 
 class plKey;
@@ -74,7 +75,7 @@ protected:
     int             fIface;
     plNotifyMsg*    fNotify;
     
-    std::string     fAnimLabel;
+    plString        fAnimLabel;
 
     plAxisInputInterface    *fInputIface;
 
@@ -100,8 +101,8 @@ public:
     void SetNotificationKey(plKey k) { fNotificationKey = k; }
     plNotifyMsg* GetNotify() { return fNotify; }
 
-    const char* GetAnimLabel() const {return fAnimLabel.c_str();}
-    void SetAnimLabel(const char* a) {fAnimLabel = a;           }
+    plString GetAnimLabel() const { return fAnimLabel; }
+    void SetAnimLabel(const plString& a) { fAnimLabel = a; }
 
 };
 

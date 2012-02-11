@@ -226,7 +226,7 @@ hsBool plLOSDispatch::MsgReceive(plMessage* msg)
             scene->raycastAllShapes(worldRay, gMyReport, NX_ALL_SHAPES, 0xffffffff, dist, NX_RAYCAST_DISTANCE | NX_RAYCAST_IMPACT | NX_RAYCAST_NORMAL);
         }
         else{
-            SimLog("%s sent out a LOS request with a ray length of %d.", requestMsg->GetSender()->GetName(), dist);
+            SimLog("%s sent out a LOS request with a ray length of %d.", requestMsg->GetSender()->GetName().c_str(), dist);
         }
         if (gMyReport.GotHit())
         {
@@ -259,7 +259,7 @@ hsBool plLOSDispatch::MsgReceive(plMessage* msg)
                 else// we are right on top of the object I assume that means we hit it
                 {// since PhysX would have complained we will log it anyways. Just so we have a better idea, where this
                     //was happening previously
-                    SimLog("%s sent out a LOS request. The second cast for culling was of length 0. ABORTING and assuming hit.", requestMsg->GetSender()->GetName());
+                    SimLog("%s sent out a LOS request. The second cast for culling was of length 0. ABORTING and assuming hit.", requestMsg->GetSender()->GetName().c_str());
                 }
 
             }

@@ -247,7 +247,7 @@ public:
     virtual ~plAvOneShotMsg();
     plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                    const plKey& seekKey, float duration, hsBool fSmartSeek,
-                   const char *animName, hsBool drivable, hsBool reversible);
+                   const plString &animName, hsBool drivable, hsBool reversible);
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvOneShotMsg );
@@ -257,7 +257,7 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
 
     // public members
-    char * fAnimName;               // the name of the animation we're going to use
+    plString fAnimName;             // the name of the animation we're going to use
     hsBool fDrivable;               // are we animated by time or by mouse movement?
     hsBool fReversible;             // can we play backwards?
     plOneShotCallbacks *fCallbacks; // Callbacks given to us by a one-shot modifier

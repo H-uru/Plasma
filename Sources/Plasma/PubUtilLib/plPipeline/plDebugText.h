@@ -94,7 +94,7 @@ class plDebugText
         };
 
         ~plDebugText() { ; }
-        
+
         static plDebugText  &Instance( void ) { return fInstance; }
 
         uint32_t  CalcStringWidth( const char *string );
@@ -139,12 +139,12 @@ class plDebugText
 
         void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
         const char      *GetFontFace( void ) { return fFontFace; }
-        const uint16_t    GetFontSize( void ) { return fFontSize; }
-        uint16_t          GetFontHeight();
-        
+        uint16_t        GetFontSize( void ) { return fFontSize; }
+        uint16_t        GetFontHeight();
+
         void            SetEnable( hsBool on ) { fEnabled = on; }
         void            DisablePermanently( void ) { fEnabled = false; fLockEnable = true; }
-        const hsBool    IsEnabled( void ) { return fEnabled; }
+        hsBool          IsEnabled( void ) { return fEnabled; }
 
         void            GetScreenSize( uint32_t *width, uint32_t *height );
 };
