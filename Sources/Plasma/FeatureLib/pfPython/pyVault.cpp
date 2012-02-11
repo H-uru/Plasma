@@ -654,25 +654,25 @@ void pyVault::CreateNeighborhood()
     link.GetAgeInfo()->SetAgeFilename(kNeighborhoodAgeFilename);
     link.GetAgeInfo()->SetAgeInstanceName(kNeighborhoodAgeInstanceName);
 
-    std::string title;
-    std::string desc;
+    plString title;
+    plString desc;
 
-    unsigned nameLen = StrLen(nc->GetPlayerName());
-    if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
+    unsigned nameLen = nc->GetPlayerName().GetSize();
+    if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
     {
-        xtl::format( title, "%s'", nc->GetPlayerName() );
-        xtl::format( desc, "%s' %s", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName() );
+        title = plString::Format( "%s'", nc->GetPlayerName().c_str() );
+        desc = plString::Format( "%s' %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
     }
     else
     {
-        xtl::format( title, "%s's", nc->GetPlayerName() );
-        xtl::format( desc, "%s's %s", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName() );
+        title = plString::Format( "%s's", nc->GetPlayerName().c_str() );
+        desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
     }
 
     plUUID guid(GuidGenerate());
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
-    link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
-    link.GetAgeInfo()->SetAgeDescription( desc.c_str() );
+    link.GetAgeInfo()->SetAgeUserDefinedName( _TEMP_CONVERT_TO_CONST_CHAR(title) );
+    link.GetAgeInfo()->SetAgeDescription( _TEMP_CONVERT_TO_CONST_CHAR(desc) );
 
     VaultRegisterOwnedAge(&link);
 }

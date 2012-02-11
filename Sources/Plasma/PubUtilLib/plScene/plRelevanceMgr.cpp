@@ -149,12 +149,12 @@ hsBool plRelevanceMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-uint32_t plRelevanceMgr::GetIndex(char *regionName)
+uint32_t plRelevanceMgr::GetIndex(const plString &regionName)
 {
     int i;
     for (i = 0; i < fRegions.GetCount(); i++)
     {
-        if (fRegions[i] && !stricmp(regionName, fRegions[i]->GetKeyName()))
+        if (fRegions[i] && !regionName.Compare(fRegions[i]->GetKeyName(), plString::kCaseInsensitive))
             return i + 1;
     }
 
@@ -222,7 +222,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 plRegionInfo *info = new plRegionInfo;
                 regions.Append(info);
                 info->fName = hsStrcpy(buff);
-                info->fIndex = GetIndex(buff);
+                info->fIndex = GetIndex(_TEMP_CONVERT_FROM_LITERAL(buff));
             }
         }
         else // parsing actual settings.
@@ -231,7 +231,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             if (!toke.Next(buff, kBufSize))
                 continue;
             
-            int rowIndex = GetIndex(buff);
+            int rowIndex = GetIndex(_TEMP_CONVERT_FROM_LITERAL(buff));
             int column = 0;
             while (toke.Next(buff, kBufSize) && column < regions.GetCount())
             {
@@ -248,24 +248,24 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
         delete regions[i];
 }
 
-std::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
+plString plRelevanceMgr::GetRegionNames(hsBitVector regions)
 {
-    std::string retVal = "";
+    plString retVal;
     if (regions.IsBitSet(0))
-        retVal = "-Nowhere (0)-";
+        retVal = _TEMP_CONVERT_FROM_LITERAL("-Nowhere (0)-");
 
     for (int i = 0; i < fRegions.GetCount(); ++i)
     {
         if (regions.IsBitSet(i + 1))
         {
-            if (retVal.length() != 0)
-                retVal += ", ";
+            if (!retVal.IsEmpty())
+                retVal += _TEMP_CONVERT_FROM_LITERAL(", ");
             if (fRegions[i])
                 retVal += fRegions[i]->GetKeyName();
         }
     }
 
-    if (retVal.length() == 0)
-        retVal = "<NONE>";
+    if (retVal.IsEmpty())
+        retVal = _TEMP_CONVERT_FROM_LITERAL("<NONE>");
     return retVal;
 }

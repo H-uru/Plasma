@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 
-#include <sstream>
-
 #define SAFE(s) ((s)?(s):"(nil)")
 #define kComma  ","
 #define kEmpty  ""
@@ -178,11 +176,11 @@ void plAgeInfoStruct::CopyFrom(const NetAgeInfo & info) {
 }
 
 //============================================================================
-std::string plAgeInfoStruct::AsStdString() const
+plString plAgeInfoStruct::AsString() const
 {
     const char * spacer = kEmpty;
 
-    std::stringstream ss;
+    plStringStream ss;
 
     ss << "[";
 
@@ -237,7 +235,7 @@ std::string plAgeInfoStruct::AsStdString() const
     }
     ss  << "]";
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
 
@@ -496,11 +494,11 @@ void plAgeLinkStruct::Clear()
     fAmCCR = false;
 }
 
-std::string plAgeLinkStruct::AsStdString() const
+plString plAgeLinkStruct::AsString() const
 {
     const char * spacer = kEmpty;
 
-    std::stringstream ss;
+    plStringStream ss;
 
     ss << "[";
 
@@ -508,7 +506,7 @@ std::string plAgeLinkStruct::AsStdString() const
     {
         ss  << spacer
             << "Nfo:"
-            << fAgeInfo.AsStdString();
+            << fAgeInfo.AsString();
         spacer = kComma;
     }
     if (HasLinkingRules())
@@ -534,7 +532,7 @@ std::string plAgeLinkStruct::AsStdString() const
     }
     ss  << "]";
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
 
@@ -616,11 +614,11 @@ void plNetServerSessionInfo::CopyFrom(const plNetServerSessionInfo * other)
     }
 }
 
-std::string plNetServerSessionInfo::AsStdString() const
+plString plNetServerSessionInfo::AsString() const
 {
     const char * spacer = kEmpty;
 
-    std::stringstream ss;
+    plStringStream ss;
 
     ss << "[";
 
@@ -657,19 +655,19 @@ std::string plNetServerSessionInfo::AsStdString() const
     }
     ss  << "]";
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
-std::string plNetServerSessionInfo::AsLogString() const
+plString plNetServerSessionInfo::AsLogString() const
 {
     const char* spacer = kSemicolon;
 
-    std::stringstream ss;
-    std::string typeName = "";
+    plStringStream ss;
+    plString typeName = _TEMP_CONVERT_FROM_LITERAL("");
 
     if (HasServerType())
     {
-        typeName = plNetServerConstants::GetServerTypeStr(fServerType);
+        typeName = _TEMP_CONVERT_FROM_LITERAL(plNetServerConstants::GetServerTypeStr(fServerType));
     }
 
     if (HasServerName())
@@ -700,7 +698,7 @@ std::string plNetServerSessionInfo::AsLogString() const
         ss << spacer;
     }
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
 bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) const

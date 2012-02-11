@@ -94,17 +94,16 @@ public:
     // the data of the value
     union
     {
-        int32_t       fIntNumber;
+        int32_t     fIntNumber;
 
-        float    fFloatNumber;
+        float       fFloatNumber;
 
         hsBool      fBool;
-
-        char*       fString;
 
     } datarecord;
 
     plKey       fObjectKey;     // the plKey of the scene object (should be part of the union, but unions don't allow complex types)
+    plString    fString;
 
 
     plPythonParameter()
@@ -147,7 +146,7 @@ public:
                 SetTobool(other.datarecord.fBool);
                 break;
             case kString:
-                SetToString(other.datarecord.fString);
+                SetToString(other.fString);
                 break;
             case kSceneObject:
                 SetToSceneObject(other.fObjectKey);
@@ -174,7 +173,7 @@ public:
                 SetToAnimation(other.fObjectKey);
                 break;
             case kAnimationName:
-                SetToAnimationName(other.datarecord.fString);
+                SetToAnimationName(other.fString);
                 break;
             case kBehavior:
                 SetToBehavior(other.fObjectKey);
@@ -214,10 +213,6 @@ public:
 
     void SetToNone()
     {
-        // remove the string if one was created
-        if ( fValueType == kString || fValueType == kAnimationName )
-            delete [] datarecord.fString;
-
         fValueType = kNone;
     }
 
@@ -239,11 +234,11 @@ public:
         fValueType = kbool;
         datarecord.fBool = state;
     }
-    void SetToString(const char* string)
+    void SetToString(const plString& string)
     {
         SetToNone();
         fValueType = kString;
-        datarecord.fString = hsStrcpy(string);
+        fString = string;
     }
     void SetToSceneObject(plKey key, hsBool list=false)
     {
@@ -302,11 +297,11 @@ public:
         fValueType = kAnimation;
         fObjectKey = key;
     }
-    void SetToAnimationName(const char* string)
+    void SetToAnimationName(const plString& string)
     {
         SetToNone();
         fValueType = kAnimationName;
-        datarecord.fString = hsStrcpy(string);
+        fString = string;
     }
     void SetToBehavior(plKey key)
     {
@@ -380,11 +375,13 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    datarecord.fString = new char[count+1];
-                    stream->ReadLE(count,datarecord.fString);
+                    char *buffer = new char[count];
+                    stream->ReadLE(count, buffer);
+                    buffer[count-1] = 0;
+                    fString = plString::Steal(buffer, count);
                 }
                 else
-                    datarecord.fString = nil;
+                    fString = plString::Null;
                 break;
 
             case kSceneObject:
@@ -430,13 +427,13 @@ public:
 
             case kString:
             case kAnimationName:
-                if ( datarecord.fString != nil )
-                    count = hsStrlen(datarecord.fString)+1;
+                if ( !fString.IsNull() )
+                    count = fString.GetSize()+1;
                 else
                     count = 0;
                 stream->WriteLE(count);
                 if ( count != 0 )
-                    stream->WriteLE(count,datarecord.fString);
+                    stream->WriteLE(count, fString.c_str());
                 break;
 
             case kSceneObject:

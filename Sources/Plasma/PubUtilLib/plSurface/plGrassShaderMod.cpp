@@ -226,8 +226,7 @@ void plGrassShaderMod::ISetupShaders()
     if (!fVShader)
     {
         plShader* vShader = new plShader;
-        char buff[256];
-        sprintf(buff, "%s_GrassVS", GetKey()->GetName());
+        plString buff = plString::Format("%s_GrassVS", GetKey()->GetName().c_str());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         vShader->SetInputFormat(1);
@@ -250,8 +249,7 @@ void plGrassShaderMod::ISetupShaders()
     if (!fPShader)
     {
         plShader* pShader = new plShader;
-        char buff[256];
-        sprintf(buff, "%s_GrassPS", GetKey()->GetName());
+        plString buff = plString::Format("%s_GrassPS", GetKey()->GetName().c_str());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         pShader->SetNumConsts(0);

@@ -209,7 +209,7 @@ public:
     void    SetPlane(const hsVector3& n, float d) { fNorm = n; fDist = d; }
     
     const hsVector3& GetNormal() const { return fNorm; }
-    const float GetDist() const { return fDist; }
+    float GetDist() const { return fDist; }
 
     plCullStatus    TestBounds(const hsBounds3Ext& bnd) const;
     plCullStatus    TestSphere(const hsPoint3& center, float rad) const;

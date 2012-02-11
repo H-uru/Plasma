@@ -55,6 +55,7 @@ class plPassAnimDlgProc;
 class plStealthNodeAccessor;
 class plMaxNode;
 class plErrorMsg;
+class plString;
 
 class plPassMtlBase : public Mtl
 {
@@ -81,8 +82,8 @@ protected:
     hsTArray<plMtlChangeCallback *> fChangeCallbacks;
 
     void                IUpdateAnimNodes( void );
-    plAnimStealthNode   *IFindStealth( const char *animName );
-    plAnimStealthNode   *IVerifyStealthPresent( const char *animName );
+    plAnimStealthNode   *IFindStealth( const plString &animName );
+    plAnimStealthNode   *IVerifyStealthPresent( const plString &animName );
 
     int                 IGetNumStealths( hsBool update = true );
     plAnimStealthNode   *IGetStealth( int index, hsBool update = true );

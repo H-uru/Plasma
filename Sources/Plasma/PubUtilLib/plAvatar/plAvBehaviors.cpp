@@ -109,9 +109,9 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf,
 
     if (fAnim)
     {
-        const char *animName = fAnim->GetName();
+        plString animName = fAnim->GetName();
         float time = fAnim->GetTimeConvert()->CurrentAnimTime();    
-        sprintf(strBuf, "%20s %3s time: %5.2f %s", animName, onOff, time, blendBar);
+        sprintf(strBuf, "%20s %3s time: %5.2f %s", animName.c_str(), onOff, time, blendBar);
     }
     else
         sprintf(strBuf, "         Behavior %2d %3s %s", fIndex, onOff, blendBar);

@@ -620,9 +620,8 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
                 if ( !hsgResMgr::ResMgr()->FindKey( tmpUoid ) )
                 {
                     // discard the state if object not found in dataset.
-                    char tmp[256];
                     hsLogEntry( DebugMsg( "Failed to find object %s in dataset. Discarding pending state '%s'",
-                        tmpUoid.StringIze(tmp),
+                        tmpUoid.StringIze().c_str(),
                         pl->fSDRec->GetDescriptor()->GetName() ) );
                     delete pl;
                     it = fPendingLoads.erase(it);
@@ -664,7 +663,6 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
                 double rawSecs = hsTimer::GetSeconds();
                 if ((rawSecs - pl->fQueuedTime) > 60.f /*secs*/)
                 {
-                    char tmp[256], tmp2[256];
                     if (pl->fQueueTimeResets >= 5)
                     {
                         // if this is our fifth time in here then we've been queued
@@ -672,7 +670,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
 
                         WarningMsg( "Pending state '%s' for object [uoid:%s,key:%s] has been queued for about %f secs. Removing...",
                             pl->fSDRec && pl->fSDRec->GetDescriptor() ? pl->fSDRec->GetDescriptor()->GetName() : "?",
-                            pl->fUoid.StringIze(tmp2), pl->fKey ? pl->fKey->GetUoid().StringIze(tmp) : "?",
+                            pl->fUoid.StringIze().c_str(), pl->fKey ? pl->fKey->GetUoid().StringIze().c_str() : "?",
                             ( rawSecs - pl->fQueuedTime ) * pl->fQueueTimeResets);
 
                         delete pl;
@@ -682,7 +680,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
 
                     WarningMsg( "Pending state '%s' for object [uoid:%s,key:%s] has been queued for about %f secs. %s",
                         pl->fSDRec && pl->fSDRec->GetDescriptor() ? pl->fSDRec->GetDescriptor()->GetName() : "?",
-                        pl->fUoid.StringIze(tmp2), pl->fKey ? pl->fKey->GetUoid().StringIze(tmp) : "?",
+                        pl->fUoid.StringIze().c_str(), pl->fKey ? pl->fKey->GetUoid().StringIze().c_str() : "?",
                         ( rawSecs - pl->fQueuedTime ) * pl->fQueueTimeResets,
                         so ? "(not loaded)" : "(not final)" );
                     // reset queue time so we don't spew too many log msgs.
@@ -939,8 +937,7 @@ hsBool plNetClientMgr::MsgReceive( plMessage* msg )
         {
             hsAssert(fAgeSDLObjectKey==nil, "already have a ref to age sdl hook");
             fAgeSDLObjectKey = ref->GetRef()->GetKey();
-            char tmp[256];
-            DebugMsg("Age SDL hook object created, uoid=%s", fAgeSDLObjectKey->GetUoid().StringIze(tmp));
+            DebugMsg("Age SDL hook object created, uoid=%s", fAgeSDLObjectKey->GetUoid().StringIze().c_str());
         }
         else
         {
@@ -1150,34 +1147,34 @@ bool plNetClientMgr::CanSendMsg(plNetMessage * msg)
 // Return the net client (account) name of the player whose avatar
 // key is provided.  If avKey is nil, returns local client name.
 //
-const char* plNetClientMgr::GetPlayerName(const plKey avKey) const
+plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 {
     // local case
     if (!avKey || avKey==GetLocalPlayerKey())
-        return NetCommGetPlayer()->playerNameAnsi;
+        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
     
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
-    return mbr ? mbr->GetPlayerName() : nil;
+    return mbr ? mbr->GetPlayerName() : plString::Null;
 }
 
-const char * plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
+plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     // local case
     if (NetCommGetPlayer()->playerInt == playerId)
-        return NetCommGetPlayer()->playerNameAnsi;
+        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
         
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
-    return mbr ? mbr->GetPlayerName() : nil;
+    return mbr ? mbr->GetPlayerName() : plString::Null;
 }
 
-unsigned plNetClientMgr::GetPlayerIdByName (const char name[]) const {
+unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
     // local case
-    if (0 == StrCmp(name, NetCommGetPlayer()->playerNameAnsi, (unsigned)-1))
+    if (0 == name.Compare(NetCommGetPlayer()->playerNameAnsi))
         NetCommGetPlayer()->playerInt;
     
     unsigned n = TransportMgr().GetNumMembers();
     for (unsigned i = 0; i < n; ++i)
         if (plNetTransportMember * member = TransportMgr().GetMember(i))
-            if (0 == StrCmp(name, member->GetPlayerName(), (unsigned)-1))
+            if (0 == name.Compare(member->GetPlayerName()))
                 return member->GetPlayerID();
     return 0;
 }
@@ -1336,8 +1333,8 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         if (GetLocalPlayerKey() == playerKey)
         {
             fLocalPlayerKey = nil;
-            DebugMsg("Net: Unloading local player %s", playerKey->GetName());
-            
+            DebugMsg("Net: Unloading local player %s", playerKey->GetName().c_str());
+
             // notify server - NOTE: he might not still be around to get this...
             plNetMsgPlayerPage npp (playerKey->GetUoid(), playerMsg->fUnload);
             npp.SetNetProtocol(kNetProtocolCli2Game);
@@ -1346,7 +1343,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         else if (IsRemotePlayerKey(playerKey, &idx))
         {
             fRemotePlayerKeys.erase(fRemotePlayerKeys.begin()+idx); // remove key from list
-            DebugMsg("Net: Unloading remote player %s", playerKey->GetName());
+            DebugMsg("Net: Unloading remote player %s", playerKey->GetName().c_str());
         }
     }
     else
@@ -1365,9 +1362,9 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                     GetLocalPlayerKey() == playerKey,
                     "Different local player already loaded");
 
-                hsLogEntry(DebugMsg("Adding LOCAL player %s\n", playerKey->GetName()));
+                hsLogEntry(DebugMsg("Adding LOCAL player %s\n", playerKey->GetName().c_str()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupLocalPlayer);
-                
+
                 // don't save avatar state permanently on server
                 playerSO->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);               
                 const plCoordinateInterface* co = playerSO->GetCoordinateInterface();
@@ -1388,18 +1385,18 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             }
             else
             {
-                hsLogEntry(DebugMsg("Adding REMOTE player %s\n", playerKey->GetName()));
+                hsLogEntry(DebugMsg("Adding REMOTE player %s\n", playerKey->GetName().c_str()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupRemotePlayer);
                 idx=fTransport.FindMember(playerMsg->fClientID);
                 if( idx != -1 )
                 {
                     hsAssert(playerKey, "NIL KEY?");
-                    hsAssert(playerKey->GetName(), "UNNAMED KEY");
+                    hsAssert(!playerKey->GetName().IsNull(), "UNNAMED KEY");
                     fTransport.GetMember(idx)->SetAvatarKey(playerKey);
                 }
                 else
                 {
-                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : %s\n", playerKey->GetName()));
+                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : %s\n", playerKey->GetName().c_str()));
                 }
             }
 
@@ -1484,10 +1481,9 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
     pl->fKey = hsgResMgr::ResMgr()->FindKey(pl->fUoid);
 
     // check for age SDL state
-    char tmp[256];
-    if (pl->fUoid.GetObjectName() && !strcmp(pl->fUoid.GetObjectName(), plSDL::kAgeSDLObjectName))
+    if (!pl->fUoid.GetObjectName().IsNull() && !pl->fUoid.GetObjectName().Compare(plSDL::kAgeSDLObjectName))
     {
-        DebugMsg("Recv SDL state for age hook object, uoid=%s", pl->fUoid.StringIze(tmp));
+        DebugMsg("Recv SDL state for age hook object, uoid=%s", pl->fUoid.StringIze().c_str());
         if (!pl->fKey)
             WarningMsg("Can't find age hook object, nil key!");
         else
@@ -1500,12 +1496,12 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
         if (!pl->fKey->ObjectIsLoaded())
         {
             WarningMsg("Object %s not loaded, withholding SDL state", 
-                pl->fKey->GetUoid().StringIze(tmp));
+                pl->fKey->GetUoid().StringIze().c_str());
         }
         else if (!pl->fKey->ObjectIsLoaded()->IsFinal())
         {
             WarningMsg("Object %s is not FINAL, withholding SDL state", 
-                pl->fKey->GetUoid().StringIze(tmp));            
+                pl->fKey->GetUoid().StringIze().c_str());
         }
     }
 

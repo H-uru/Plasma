@@ -1026,7 +1026,7 @@ void plCameraBrain1_Avatar::Update(hsBool forced)
     if (fFlags.IsBitSet(kIsTransitionCamera))
     {
         if (GetKey())
-            hsStatusMessageF("%s thinks it's the transition camera\n",GetKeyName());
+            hsStatusMessageF("%s thinks it's the transition camera\n", GetKeyName().c_str());
     }
     else
     {
@@ -1318,8 +1318,8 @@ hsBool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
                         plSceneObject* child = (plSceneObject*)ci->GetChild(i)->GetOwner();
                         if (child)
                         {
-                            const char* name = child->GetKeyName();
-                            if (stricmp(name, "FPCameraOrigin") == 0)
+                            const plString& name = child->GetKeyName();
+                            if (name.Compare("FPCameraOrigin", plString::kCaseInsensitive) == 0)
                             {
                                 fPosNode = child;
                                 SetOffset(hsVector3(0,0,0));

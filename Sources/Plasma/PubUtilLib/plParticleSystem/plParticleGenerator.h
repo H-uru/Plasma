@@ -63,8 +63,8 @@ public:
     CLASSNAME_REGISTER( plParticleGenerator );
     GETINTERFACE_ANY( plParticleGenerator, plCreatable );
 
-    static const void ComputeDirection(float pitch, float yaw, hsVector3 &direction);
-    static const void ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir);
+    static void ComputeDirection(float pitch, float yaw, hsVector3 &direction);
+    static void ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir);
     static inline float GetRandomVar() { return 2.0f * (float)hsRand() / RAND_MAX - 1; } // returns a num between +/- 1.0
 };
 

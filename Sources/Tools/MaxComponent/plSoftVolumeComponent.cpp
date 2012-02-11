@@ -255,7 +255,7 @@ plKey plSoftVolBaseComponent::ISetVolumeKey(plSoftVolume* vol)
             break;
     }
     hsAssert(i < NumTargets(), "We're not attached to anything?");
-    plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), vol, GetTarget(i)->GetLocation());
+    plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), vol, GetTarget(i)->GetLocation());
 
     return key;
 }
@@ -1299,7 +1299,7 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
             return;
 
         fVisReg = new plVisRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fVisReg, loc);
+        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fVisReg, loc);
 
 
         hsBool excludes = fCompPB->GetInt(kExcludes);
@@ -1465,7 +1465,7 @@ hsBool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
             return true;
 
         fRegion = new plRelevanceRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fRegion, node->GetLocation());
+        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fRegion, node->GetLocation());
 
         plGenRefMsg* refMsg = new plGenRefMsg(fRegion->GetKey(), plRefMsg::kOnCreate, 0, 0);
         hsgResMgr::ResMgr()->SendRef(softKey, refMsg, plRefFlags::kActiveRef);
@@ -1561,7 +1561,7 @@ plVisRegion* plEffVisSetComponent::GetVisRegion(plMaxNode* node)
     if( !fVisReg )
     {
         fVisReg = new plVisRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(GetINode()->GetName(), fVisReg, node->GetLocation());
+        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fVisReg, node->GetLocation());
 
         fVisReg->SetProperty(plVisRegion::kIsNot, false);
         fVisReg->SetProperty(plVisRegion::kReplaceNormal, fCompPB->GetInt(kHideNormal));

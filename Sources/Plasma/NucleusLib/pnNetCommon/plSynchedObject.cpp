@@ -236,7 +236,7 @@ hsBool plSynchedObject::DirtySynchState(const char* SDLStateName, uint32_t synch
         {
             if (plNetClientApp::GetInstance())
                 plNetClientApp::GetInstance()->DebugMsg("Queueing SDL state with 'maybe' ownership, obj %s, sdl %s",
-                    GetKeyName(), SDLStateName);
+                    GetKeyName().c_str(), SDLStateName);
         }
     }
     

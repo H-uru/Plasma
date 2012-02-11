@@ -252,22 +252,22 @@ void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediat
     // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
     if (entering && fNumEvals - fLastExitEval <= 1 && fSavingSendMsg)
     {
-        DetectorLog("%s: Skipping Camera Entering volume", GetKeyName());
+        DetectorLog("%s: Skipping Camera Entering volume", GetKeyName().c_str());
         fLastEnterEval = fNumEvals;
         if (fSavingSendMsg)
         {
-            DetectorLog("%s: Dumping saved Camera Exiting volume", GetKeyName());
+            DetectorLog("%s: Dumping saved Camera Exiting volume", GetKeyName().c_str());
         }
         fSavingSendMsg = false;
         return;
     }
     if (!entering && fNumEvals - fLastEnterEval <= 1 && fSavingSendMsg)
     {
-        DetectorLog("%s: Skipping Exiting volume", GetKeyName());
+        DetectorLog("%s: Skipping Exiting volume", GetKeyName().c_str());
         fLastExitEval = fNumEvals;
         if (fSavingSendMsg)
         {
-            DetectorLog("%s: Dumping saved Camera Entering volume", GetKeyName());
+            DetectorLog("%s: Dumping saved Camera Entering volume", GetKeyName().c_str());
         }
         fSavingSendMsg = false;
         return;
@@ -276,7 +276,7 @@ void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediat
     // get rid of any saved messages... this should happen though
     if (fSavingSendMsg)
     {
-        DetectorLog("%s: Killing saved camera message... shouldn't happen", GetKeyName());
+        DetectorLog("%s: Killing saved camera message... shouldn't happen", GetKeyName().c_str());
     }
     // end PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
 #endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
@@ -285,12 +285,12 @@ void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediat
     fSavedMsgEnterFlag = entering;
     if (entering)
     {
-        //DetectorLog("%s: Saving camera Entering volume - Evals=%d", GetKeyName(),fNumEvals);
+        //DetectorLog("%s: Saving camera Entering volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
         fLastEnterEval = fNumEvals;
     }
     else
     {
-        //DetectorLog("%s: Saving camera Exiting volume - Evals=%d", GetKeyName(),fNumEvals);
+        //DetectorLog("%s: Saving camera Exiting volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
         fLastExitEval = fNumEvals;
     }
 
@@ -322,13 +322,13 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
             if (fSavedMsgEnterFlag)
             {
                 fMessages[i]->SetCmd(plCameraMsg::kEntering);
-                sprintf(str, "Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName(),fNumEvals,i+1,fMessages.Count());
+                sprintf(str, "Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
                 fIsInside = true;
             }
             else
             {
                 fMessages[i]->ClearCmd(plCameraMsg::kEntering);
-                sprintf(str, "Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName(),fNumEvals,i+1,fMessages.Count());
+                sprintf(str, "Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
                 fIsInside = false;
             }
             plgDispatch::MsgSend(fMessages[i]);
@@ -401,8 +401,8 @@ void plCameraRegionDetector::IHandleEval(plEvalMsg *pEval)
     {
         if(fSavedActivatorMsg)
             DetectorLog("%s didn't send its message. fNumEvals=%d fLastEnterEval=%d, fLastExit=%d",
-                GetKeyName(),fNumEvals, fLastEnterEval, fLastExitEval);
-        
+                GetKeyName().c_str(),fNumEvals, fLastEnterEval, fLastExitEval);
+
     }
 }
 
@@ -663,11 +663,11 @@ void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
                         fCurrentResidents.insert((*it)->hitter);
                         actout->AddReceivers(fReceivers);
                         actout->Send();
-                        DetectorLog("%s sent an Enter ActivatorMsg. To: %s", GetKeyName(), GetTarget()->GetKeyName()  );
+                        DetectorLog("%s sent an Enter ActivatorMsg. To: %s", GetKeyName().c_str(), GetTarget()->GetKeyName().c_str()  );
                     }
                     else
                     {
-                        DetectorLog("%s squelched an Enter ActivatorMsg.", GetKeyName());
+                        DetectorLog("%s squelched an Enter ActivatorMsg.", GetKeyName().c_str());
                         delete actout;
                     }
             }
@@ -680,11 +680,11 @@ void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
                         fCurrentResidents.erase((*it)->hitter);
                         actout->AddReceivers(fReceivers);
                         actout->Send();
-                        DetectorLog("%s sent an Exit ActivatorMsg. To: %s", GetKeyName(), GetTarget()->GetKeyName());
+                        DetectorLog("%s sent an Exit ActivatorMsg. To: %s", GetKeyName().c_str(), GetTarget()->GetKeyName().c_str());
                     }
                     else
                     {
-                        DetectorLog("%s squelched an Exit ActivatorMsg.", GetKeyName());
+                        DetectorLog("%s squelched an Exit ActivatorMsg.", GetKeyName().c_str());
                         delete actout;
                     }
             }
@@ -697,12 +697,12 @@ void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
         DetectorLog("This is the regions inhabitants after the op");
         for(ResidentSet::iterator it = fCurrentResidents.begin(); it!= fCurrentResidents.end(); it++)
         {
-            DetectorLog("%s", (*it)->GetName());
+            DetectorLog("%s", (*it)->GetName().c_str());
         }
         DetectorLog("*********");
 
         fCollisionList.clear();
-        
+
 }
 
 void plObjectInVolumeDetector::SetTarget(plSceneObject* so)
@@ -778,13 +778,13 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
 
         if (facing && movingForward && !fTriggered)
         {
-            DetectorLog("%s: Trigger InVolume&Facing", GetKeyName());
+            DetectorLog("%s: Trigger InVolume&Facing", GetKeyName().c_str());
             fTriggered = true;
             ITrigger(avatar->GetKey(), true, true);
         }
         else if (!facing && fTriggered)
         {
-            DetectorLog("%s: Untrigger InVolume&Facing", GetKeyName());
+            DetectorLog("%s: Untrigger InVolume&Facing", GetKeyName().c_str());
             fTriggered = false;
             ITrigger(avatar->GetKey(), false, true);
         }
@@ -877,7 +877,7 @@ hsBool plSubworldRegionDetector::MsgReceive(plMessage* msg)
         plArmatureMod* avMod = IGetAvatarModifier(pCollMsg->fOtherKey);
         if (avMod)
         {
-            DetectorLog("%s subworld detector %s", pCollMsg->fEntering ? "Entering" : "Exiting", GetKeyName());
+            DetectorLog("%s subworld detector %s", pCollMsg->fEntering ? "Entering" : "Exiting", GetKeyName().c_str());
 
             if ((pCollMsg->fEntering && !fOnExit) ||
                 (!pCollMsg->fEntering && fOnExit))
@@ -887,7 +887,7 @@ hsBool plSubworldRegionDetector::MsgReceive(plMessage* msg)
                     plSceneObject* SO = plSceneObject::ConvertNoRef(fSub->ObjectIsLoaded());
                     if (SO)
                     {
-                        DetectorLogSpecial("Switching to subworld %s", fSub->GetName());
+                        DetectorLogSpecial("Switching to subworld %s", fSub->GetName().c_str());
 
                         plKey nilKey;
                         plSubWorldMsg* msg = new plSubWorldMsg(GetKey(), avMod->GetKey(), fSub);

@@ -331,7 +331,6 @@ hsBool plPythonFileMod::fAtConvertTime = false;
 plPythonFileMod::plPythonFileMod()
 {
     fPythonFile = nil;
-    fModuleName = nil;
     fModule = nil;
     fLocalNotify= true;
     fIsFirstTimeEval = true;
@@ -404,26 +403,25 @@ plPythonFileMod::~plPythonFileMod()
     }
     // then get rid of this module
     //  NOTE: fModule shouldn't be made in the plugin, only at runtime
-    if ( fModuleName && fModule )
+    if ( !fModuleName.IsNull() && fModule )
     {
         //_PyModule_Clear(fModule);
         PyObject *m;
         PyObject *modules = PyImport_GetModuleDict();
-        if( modules && (m = PyDict_GetItemString(modules, fModuleName)) && PyModule_Check(m))
+        if( modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m))
         {
-            hsStatusMessageF("Module %s removed from python dictionary",fModuleName);
-            PyDict_DelItemString(modules, fModuleName);
+            hsStatusMessageF("Module %s removed from python dictionary",fModuleName.c_str());
+            PyDict_DelItemString(modules, fModuleName.c_str());
         }
         else
         {
-            hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName);
+            hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName.c_str());
         }
         // the above code should have unloaded the module from python, so it will delete itself, therefore
         // we need to set our pointer to nil to make sure we don't try to use it
         fModule = nil;
     }
-    delete [] fModuleName;
-    fModuleName = nil;
+    fModuleName = plString::Null;
 }
 
 #include "plPythonPack.h"
@@ -510,11 +508,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             {
                 plKey pkey = sobj->GetKey();
                 // nope, must be the first object. Then use it as the basis for the module
-                char modulename[256];
-                IMakeModuleName(modulename,sobj);
-                delete [] fModuleName;
-                fModuleName = StrDup(modulename);
-                fModule = PythonInterface::CreateModule(modulename);
+                fModuleName = IMakeModuleName(sobj);
+                fModule = PythonInterface::CreateModule(fModuleName.c_str());
 
                 // if we can't create the instance then there is nothing to do here
                 if (!ILoadPythonCode())
@@ -634,24 +629,23 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                             NamedComponent comp;
                                             comp.isActivator = (isNamedAttr == 1);
                                             comp.id = parameter.fID;
-                                            comp.name = new char[strlen(parameter.datarecord.fString) + 1];
-                                            strcpy(comp.name, parameter.datarecord.fString);
+                                            comp.name = parameter.fString;
                                             
                                             fNamedCompQueue.Append(comp);
                                         }
                                         else
                                         {
                                             if (isNamedAttr == 1)
-                                                IFindActivatorAndAdd(parameter.datarecord.fString, parameter.fID);
+                                                IFindActivatorAndAdd(parameter.fString, parameter.fID);
                                             else
-                                                IFindResponderAndAdd(parameter.datarecord.fString, parameter.fID);
+                                                IFindResponderAndAdd(parameter.fString, parameter.fID);
                                         }
                                     }
                                 }
                                 // if it wasn't a named string then must be normal string type
                                 if ( isNamedAttr == 0 )
-                                    if ( parameter.datarecord.fString != nil )
-                                        value = PyString_FromString(parameter.datarecord.fString);
+                                    if ( !parameter.fString.IsNull() )
+                                        value = PyString_FromString(parameter.fString.c_str());
                                 break;
                             case plPythonParameter::kSceneObject:
                             case plPythonParameter::kSceneObjectList:
@@ -951,7 +945,7 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 //
 // NOTE: This modifier wasn't intended to have multiple targets
 //
-void plPythonFileMod::IMakeModuleName(char* modulename,plSceneObject* sobj)
+plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
 {
     // Forgive my general crapulance...
     // This strips underscores out of module names 
@@ -960,13 +954,14 @@ void plPythonFileMod::IMakeModuleName(char* modulename,plSceneObject* sobj)
     plKey pKey = GetKey();
     plKey sKey = sobj->GetKey();
 
-    const char* pKeyName = pKey->GetName(); 
-    const char* pSobjName = sKey->GetName(); 
+    const char* pKeyName = pKey->GetName().c_str();
+    const char* pSobjName = sKey->GetName().c_str();
 
-    uint16_t len = hsStrlen(pKeyName);
-    uint16_t slen = hsStrlen(pSobjName);
+    uint16_t len = pKey->GetName().GetSize();
+    uint16_t slen = sKey->GetName().GetSize();
 
     hsAssert(len+slen < 256, "Warning: String length exceeds 256 characters.");
+    char modulename[256];
     
     int i, k = 0;
     for(i = 0; i < slen; i++)
@@ -983,6 +978,7 @@ void plPythonFileMod::IMakeModuleName(char* modulename,plSceneObject* sobj)
     }
 
     modulename[k] = '\0';
+    plString name = plString::FromUtf8(modulename);
 
     // check to see if we are attaching to a clone?
     plKeyImp* pKeyImp = (plKeyImp*)(sKey);
@@ -992,7 +988,7 @@ void plPythonFileMod::IMakeModuleName(char* modulename,plSceneObject* sobj)
         // add the cloneID to the end of the module name
         // and set the fIAmAClone flag
         uint32_t cloneID = pKeyImp->GetUoid().GetCloneID();
-        sprintf(modulename,"%s%d",modulename,cloneID);
+        name += plString::Format("%d", cloneID);
         fAmIAttachedToClone = true;
     }
 
@@ -1001,8 +997,10 @@ void plPythonFileMod::IMakeModuleName(char* modulename,plSceneObject* sobj)
     {
         // if not unique then add the sequence number to the end of the modulename
         uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
-        sprintf(modulename,"%s%d",modulename,seqID);
+        name += plString::Format("%d", seqID);
     }
+
+    return name;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1047,9 +1045,9 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindResponderAndAdd(const char *responderName, int32_t id)
+void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, int32_t id)
 {
-    if ( responderName != nil )
+    if ( !responderName.IsNull() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -1075,9 +1073,9 @@ void plPythonFileMod::IFindResponderAndAdd(const char *responderName, int32_t id
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindActivatorAndAdd(const char *activatorName, int32_t id)
+void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, int32_t id)
 {
-    if ( activatorName != nil )
+    if ( !activatorName.IsNull() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -1236,8 +1234,6 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 IFindActivatorAndAdd(comp.name, comp.id);
             else
                 IFindResponderAndAdd(comp.name, comp.id);
-
-            delete [] comp.name;
         }
 
         fNamedCompQueue.Reset();
@@ -1756,9 +1752,9 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             // yes...
             // call it
-            char* roomname = "";
+            const char* roomname = "";
             if ( pRLNMsg->GetRoom() != nil )
-                roomname = (char*)pRLNMsg->GetRoom()->GetName();
+                roomname = pRLNMsg->GetRoom()->GetName().c_str();
 
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
@@ -1965,7 +1961,7 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                 if ( mbrIndex != -1 )
                 {
                     plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
-                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
                 }
                 else
                 {
@@ -2837,11 +2833,10 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
 //
 void plPythonFileMod::ReportError()
 {
-    char objectName[128];
-    StrCopy(objectName, this->GetKeyName(), arrsize(objectName));
-    StrPack(objectName, " - ", arrsize(objectName));
+    plString objectName = this->GetKeyName();
+    objectName += _TEMP_CONVERT_FROM_LITERAL(" - ");
 
-    PythonInterface::WriteToStdErr(objectName);
+    PythonInterface::WriteToStdErr(objectName.c_str());
 
     PyErr_Print();      // make sure the error is printed
     PyErr_Clear();      // clear the error
@@ -2984,4 +2979,4 @@ void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
 //// kGlobalNameKonstant /////////////////////////////////////////////////
 //  My continued attempt to spread the CORRECT way to spell konstant. -mcn
 
-char plPythonFileMod::kGlobalNameKonstant[] = "VeryVerySpecialPythonFileMod";
+plString plPythonFileMod::kGlobalNameKonstant = _TEMP_CONVERT_FROM_LITERAL("VeryVerySpecialPythonFileMod");

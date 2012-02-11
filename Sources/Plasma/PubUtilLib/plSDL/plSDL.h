@@ -99,7 +99,7 @@ namespace plSDL
         kDisallowTimeStamping = 0x1,
     };
 
-    extern const char* kAgeSDLObjectName;
+    extern const plString kAgeSDLObjectName;
     void VariableLengthRead(hsStream* s, int size, int* val);
     void VariableLengthWrite(hsStream* s, int size, int val);
 };
@@ -303,7 +303,7 @@ public:
     const plUnifiedTime& GetTimeStamp() const { return fTimeStamp;  }
 
     // Special backdoor so the KI Manager can get the key name without having a ResMgr
-    const char* GetKeyName(int idx=0) const;
+    plString GetKeyName(int idx=0) const;
 
     int GetCount() const { return fVar.GetCount(); }    // helper
     plVarDescriptor* GetVarDescriptor() { return &fVar; }

@@ -65,8 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetBase/pnNetBase.h"
 
-#include <sstream>
-
 class plMessage;
 class plUUID;
 
@@ -246,11 +244,11 @@ public:
     void InitReplyFieldsFrom(plNetMessage * msg);
 
     // debug
-    virtual std::string AsStdString() const
+    virtual plString AsString() const
     {
         const char* delim = "";
 
-        std::stringstream ss;
+        plStringStream ss;
         if ( GetHasPlayerID() )
         {
             ss << delim << "p:" << GetPlayerID();
@@ -263,7 +261,7 @@ public:
         }
         if ( GetHasAcctUUID() )
         {
-            ss << delim << "a:" << GetAcctUUID()->AsStdString();
+            ss << delim << "a:" << GetAcctUUID()->AsString();
             delim = ",";
         }
         if ( IsBitSet(kHasVersion) )
@@ -272,7 +270,7 @@ public:
             delim = ",";
         }
 
-        return ss.str().c_str();
+        return ss.GetString();
     }
 };
 
@@ -331,12 +329,9 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // debug
-    std::string AsStdString() const
+    plString AsString() const
     {
-        std::string s;
-        char tmp[256];
-        xtl::format(s,"object=%s, %s",fObjectHelper.GetUoid().StringIze(tmp), plNetMessage::AsStdString().c_str());
-        return s;
+        return plString::Format("object=%s, %s",fObjectHelper.GetUoid().StringIze().c_str(), plNetMessage::AsString().c_str());
     }
 
 };
@@ -409,7 +404,7 @@ public:
     void SetIsAvatarState(bool b) { fIsAvatarState = b; }
     
     // debug
-    std::string AsStdString() const;
+    plString AsString() const;
     bool IsInitialState() const {return fIsInitialState!=0; }
     void SetIsInitialState( bool v ) { fIsInitialState=v; }
 
@@ -456,24 +451,24 @@ class plNetMsgRoomsList : public plNetMessage
 {
 protected:
     std::vector<plLocation> fRooms; 
-    std::vector<char*> fRoomNames;      // for debug usage only
+    std::vector<plString> fRoomNames;      // for debug usage only
 
     int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
     int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
 public:
     plNetMsgRoomsList() {}
-    ~plNetMsgRoomsList();
+    ~plNetMsgRoomsList() {};
 
     CLASSNAME_REGISTER( plNetMsgRoomsList );
     GETINTERFACE_ANY( plNetMsgRoomsList, plNetMessage );
 
     void AddRoom(plKey rmKey);
-    void AddRoomLocation(plLocation loc, const char* rmName);
+    void AddRoomLocation(plLocation loc, const plString& rmName);
     int FindRoomLocation(plLocation loc);
 
     int GetNumRooms() const { return fRooms.size(); }
     plLocation GetRoomLoc(int i) const { return fRooms[i]; }
-    const char* GetRoomName(int i) const { return fRoomNames[i]; }      // debug
+    plString GetRoomName(int i) const { return fRoomNames[i]; }      // debug
 };
 
 //
@@ -509,12 +504,10 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // debug
-    std::string AsStdString() const
+    plString AsString() const
     {
-        std::string s;
         const char* noc=plFactory::GetTheFactory()->GetNameOfClass(StreamInfo()->GetStreamType());
-        xtl::format(s,"%s %s",plNetMsgStream::AsStdString().c_str(), noc ? noc : "?");
-        return s;
+        return plString::Format("%s %s",plNetMsgStream::AsString().c_str(), noc ? noc : "?");
     }
 };
 
@@ -562,13 +555,10 @@ public:
 
 
     // debug
-    std::string AsStdString() const
+    plString AsString() const
     {
-        std::string s;
-        char tmp[256];
-        xtl::format(s,"object=%s initial=%d, %s",fObjectHelper.GetUoid().StringIze(tmp), fIsInitialState,
-            plNetMsgGameMessage::AsStdString().c_str());
-        return s;
+        return plString::Format("object=%s initial=%d, %s",fObjectHelper.GetUoid().StringIze().c_str(), fIsInitialState,
+            plNetMsgGameMessage::AsString().c_str());
     }
 };
 
@@ -805,11 +795,9 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // debug
-    std::string AsStdString() const
+    plString AsStdString() const
     {
-        std::string s;
-        xtl::format(s,"lockReq=%d, %s",fLockRequest, plNetMsgStreamedObject::AsStdString().c_str());
-        return s;
+        return plString::Format("lockReq=%d, %s",fLockRequest, plNetMsgStreamedObject::AsString().c_str());
     }
 };
 
@@ -991,18 +979,16 @@ public:
     const hsBitVector& GetRegionsICareAbout() const { return fRegionsICareAbout;    }
     const hsBitVector& GetRegionsImIn() const       { return fRegionsImIn;  }
 
-    std::string AsStdString() const
+    plString AsStdString() const
     {
-        std::string s;
-        std::string b1, b2;
+        plString b1, b2;
         int i;
         for(i=0;i<fRegionsImIn.GetNumBitVectors(); i++)
-            b1 += xtl::format("0x%x ", fRegionsImIn.GetBitVector(i)).c_str();
+            b1 += plString::Format("0x%x ", fRegionsImIn.GetBitVector(i));
         for(i=0;i<fRegionsICareAbout.GetNumBitVectors(); i++)
-            b2 += xtl::format("0x%x ", fRegionsICareAbout.GetBitVector(i)).c_str();
-        xtl::format( s, "rgnsImIn:%s, rgnsICareAbout:%s, %s",
-            b1.c_str(), b2.c_str(), plNetMessage::AsStdString().c_str() );
-        return s;
+            b2 += plString::Format("0x%x ", fRegionsICareAbout.GetBitVector(i));
+        return plString::Format("rgnsImIn:%s, rgnsICareAbout:%s, %s",
+            b1.c_str(), b2.c_str(), plNetMessage::AsString().c_str() );
     }
 };
 

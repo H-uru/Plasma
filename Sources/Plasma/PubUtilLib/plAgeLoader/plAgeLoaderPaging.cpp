@@ -69,17 +69,17 @@ bool ReportRoomToServer(const plKey &key)
     plLocation keyLoc=key->GetUoid().GetLocation();
     bool skip=(keyLoc.IsReserved() || keyLoc.IsVirtual() ||
                 // HACK ALERT - replace with new uoid type flags
-                (key->GetName() && 
-                    (!strnicmp(key->GetName(), "global", 6) ||
-                    strstr(key->GetName(), "_Male") ||
-                    strstr(key->GetName(), "_Female") 
+                (!key->GetName().IsNull() &&
+                    (!key->GetName().CompareN("global", 6, plString::kCaseInsensitive) ||
+                    key->GetName().Find("_Male") >= 0 ||
+                    key->GetName().Find("_Female") >= 0
                     )
                 )
             );  
     
     if (skip)
         hsLogEntry(plNetApp::StaticDebugMsg("Not reporting room %s to server, reserved=%d, virtual=%d", 
-            key->GetName(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
+            key->GetName().c_str(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
     
     return !skip;
 }
@@ -110,7 +110,7 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
             continue;
 
         pagingMsg->AddRoom(key);        
-        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room=%s\n", key->GetName()));
+        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room=%s\n", key->GetName().c_str()));
     }
     if( pagingMsg->GetNumRooms() > 0 )  // all rooms were reserved
     {
@@ -148,7 +148,7 @@ void plAgeLoader::FinishedPagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Finished paging out room %s", rmKey[i]->GetName());
+            nc->DebugMsg("Finished paging out room %s", rmKey[i]->GetName().c_str());
         }
     }
 
@@ -179,7 +179,7 @@ void plAgeLoader::StartPagingOutRoom(plKey* rmKey, int numRms)
             continue;
     
         pagingMsg.AddRoom(rmKey[i]);
-        nc->DebugMsg("\tSending PageOut msg, room=%s", rmKey[i]->GetName());
+        nc->DebugMsg("\tSending PageOut msg, room=%s", rmKey[i]->GetName().c_str());
     }
 
     if (!pagingMsg.GetNumRooms())   // all rooms were reserved
@@ -205,7 +205,7 @@ void plAgeLoader::IgnorePagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Ignoring paged out room %s", rmKey[i]->GetName());
+            nc->DebugMsg("Ignoring paged out room %s", rmKey[i]->GetName().c_str());
         }
     }
 

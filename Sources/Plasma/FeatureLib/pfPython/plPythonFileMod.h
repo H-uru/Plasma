@@ -74,10 +74,10 @@ protected:
 
     hsBool IEval(double secs, float del, uint32_t dirty);
 
-    void IMakeModuleName(char* modulename,plSceneObject* sobj);
+    plString IMakeModuleName(plSceneObject* sobj);
 
     char*       fPythonFile;
-    char*       fModuleName;
+    plString    fModuleName;
 
     // the list of receivers that want to be notified
     hsTArray<plKey>         fReceivers;
@@ -104,15 +104,15 @@ protected:
 
     struct NamedComponent
     {
-        char*   name;
-        int32_t   id;
-        bool    isActivator;
+        plString    name;
+        int32_t     id;
+        bool        isActivator;
     };
 
     hsTArray<NamedComponent> fNamedCompQueue;
 
-    virtual void IFindResponderAndAdd(const char *responderName, int32_t id);
-    virtual void IFindActivatorAndAdd(const char *activatorName, int32_t id);
+    virtual void IFindResponderAndAdd(const plString &responderName, int32_t id);
+    virtual void IFindActivatorAndAdd(const plString &activatorName, int32_t id);
     void ISetKeyValue(const plKey& key, int32_t id);
 
     bool ILoadPythonCode();
@@ -210,7 +210,7 @@ public:
     static const char* fFunctionNames[];
 
     // The konstant hard-coded name to be used for all global pythonFileMods
-    static char kGlobalNameKonstant[];
+    static plString kGlobalNameKonstant;
 
     // API for processing discarded keys as the deafult key catcher
     void    HandleDiscardedKey( plKeyEventMsg *msg );

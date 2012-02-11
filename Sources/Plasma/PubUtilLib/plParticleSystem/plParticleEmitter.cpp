@@ -324,7 +324,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
     
     if ((fGenerator != nil) && (fTimeToLive >= 0))
     {
-        plProfile_BeginLap(ParticleGenerate, fSystem->GetKeyName());
+        plProfile_BeginLap(ParticleGenerate, fSystem->GetKeyName().c_str());
         if (!fGenerator->AddAutoParticles(this, delta))
         {
             delete fGenerator;
@@ -332,7 +332,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
         }
         if( (fTimeToLive > 0) && ((fTimeToLive -= delta) <= 0) )
             fTimeToLive = -1.f;
-        plProfile_EndLap(ParticleGenerate, fSystem->GetKeyName());
+        plProfile_EndLap(ParticleGenerate, fSystem->GetKeyName().c_str());
     }
 
     fTargetInfo.fContext = fSystem->fContext;

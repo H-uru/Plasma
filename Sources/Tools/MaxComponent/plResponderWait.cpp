@@ -140,12 +140,12 @@ int ResponderWait::GetWaitingOn(IParamBlock2* waitPB)
     return waitPB->GetInt(kWaitWho);
 }
 
-const char* ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
+plString ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
 {
     const char* point = waitPB->GetStr(kWaitPoint);
     if (point && *point == '\0')
-        return nil;
-    return point;
+        return plString::Null;
+    return plString::FromUtf8(point);
 }
 
 /////////////////////////////////////////////////////////////////////////////

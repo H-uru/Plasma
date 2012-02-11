@@ -135,7 +135,7 @@ public:
     bool ReadFromFile( const char *fileNameToReadFrom ) ;
     void Read(hsStream* stream);
     void Write(hsStream* stream) const;
-    
+
     // Overload for plInitSectionTokenReader
     virtual const char  *GetSectionName( void ) const;
 

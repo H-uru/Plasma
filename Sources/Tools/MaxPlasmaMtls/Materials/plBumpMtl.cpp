@@ -86,7 +86,7 @@ plBumpMtl::plBumpMtl(BOOL loading) : plPassMtlBase( loading )
     // If we do this later (like, when the dialog loads) something blows up,
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
     if (!loading)
-        IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
+        IVerifyStealthPresent(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
 }
 
 ParamDlg* plBumpMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 

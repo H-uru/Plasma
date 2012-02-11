@@ -386,8 +386,8 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
             uint32_t ptr = cell->fVtxStart + span->fCellOffset * stride;
 
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d offset)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
+                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 ptr
@@ -404,8 +404,8 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         else
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
+                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
@@ -423,8 +423,8 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         if( geo->fProps & plGeometrySpan::kFirstInstance )
         {
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
+                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 span->fVBufferIdx,
@@ -437,8 +437,8 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         else
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner ? geo->fMaxOwner : "<unknown>",
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName() : "<unknown>",
+                geo->fMaxOwner.s_str("<unknown>"),
+                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
@@ -755,18 +755,18 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
         else if( t1 == nil && t2 == nil )
             break;  // Textures equal up to here--keep going with rest of tests
         
-        if( t1->GetKeyName() != nil && t2->GetKeyName() != nil )
+        if( !t1->GetKeyName().IsNull() && !t2->GetKeyName().IsNull() )
         {
-            j = stricmp( t1->GetKeyName(), t2->GetKeyName() );
+            j = t1->GetKeyName().Compare( t2->GetKeyName(), plString::kCaseInsensitive );
             if( j != 0 )
                 return (short)j;
         }
     }
 
     // Finally, by material itself.
-    if( span1->fMaterial->GetKeyName() != nil && span2->fMaterial->GetKeyName() != nil )
+    if( !span1->fMaterial->GetKeyName().IsNull() && !span2->fMaterial->GetKeyName().IsNull() )
     {
-        j = stricmp( span1->fMaterial->GetKeyName(), span2->fMaterial->GetKeyName() );
+        j = span1->fMaterial->GetKeyName().Compare( span2->fMaterial->GetKeyName(), plString::kCaseInsensitive );
         if( j != 0 )
             return (short)j;
     }

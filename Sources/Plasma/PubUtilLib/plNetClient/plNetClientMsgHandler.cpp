@@ -283,16 +283,17 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         if (m->GetHasPlayerID())
             pl->fPlayerID = m->GetPlayerID();       // copy originating playerID if we have it
         pl->fUoid = m->ObjectInfo()->GetUoid();
-        
+
         // queue up state
         nc->fPendingLoads.push_back(pl);
-        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s", m->ObjectInfo()->GetObjectName(), des->GetName() ) );
+        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s",
+                                  m->ObjectInfo()->GetObjectName().c_str(), des->GetName() ) );
     }
     else
         delete sdRec;
 
     delete [] descName; // We've only used descName for a lookup (via SDR, and some error strings. Must delete now.
-    
+
     return hsOK;
 }
 
@@ -487,7 +488,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     {
         plNetTransportMember* mbr = new plNetTransportMember(nc);
         IFillInTransportMember(m->MemberListInfo()->GetMember(i), mbr);
-        hsLogEntry(nc->DebugMsg("\tAdding transport member, name=%s, p2p=%d, plrID=%d\n", mbr->AsStdString().c_str(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
+        hsLogEntry(nc->DebugMsg("\tAdding transport member, name=%s, p2p=%d, plrID=%d\n", mbr->AsString().c_str(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
         int idx=nc->fTransport.AddMember(mbr);
         hsAssert(idx>=0, "Failed adding member?");
             

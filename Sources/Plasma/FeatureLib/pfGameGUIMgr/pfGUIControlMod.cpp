@@ -587,11 +587,11 @@ hsBool  pfGUIControlMod::MsgReceive( plMessage *msg )
 
     if( rend )
     {
-        plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
         // Only need it once
         if( ISetUpDynTextMap( rend->Pipeline() ) )
             plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), GetKey() );
-        plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
         return true;
     }
 

@@ -1,5 +1,16 @@
 add_definitions(-D_LIB)
 
+if(NOT WCHAR_BYTES)
+    include(CheckTypeSize)
+
+    check_type_size("wchar_t" WCHAR_BYTES)
+    if(NOT WCHAR_BYTES)
+        message(FATAL_ERROR "Could not determine sizeof(wchar_t)")
+        set(WCHAR_BYTES 0)
+    endif(NOT WCHAR_BYTES)
+endif(NOT WCHAR_BYTES)
+add_definitions(-DWCHAR_BYTES=${WCHAR_BYTES})
+
 set(CoreLib_SOURCES
     HeadSpin.cpp
     hsBitVector.cpp
@@ -24,6 +35,7 @@ set(CoreLib_SOURCES
     pcSmallRect.cpp
     plGeneric.cpp
     plLoadMask.cpp
+    plString.cpp
     plViewTransform.cpp
 )
 
@@ -72,6 +84,7 @@ set(CoreLib_HEADERS
     plLoadMask.h
     plQuality.h
     plRefCnt.h
+    plString.h
     plTweak.h
     plViewTransform.h
 )

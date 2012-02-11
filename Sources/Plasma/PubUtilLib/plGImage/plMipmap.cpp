@@ -2121,7 +2121,7 @@ hsBool  plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap:
 //// Debug Mipmap Memory Leak Tracker /////////////////////////////////////////
 
 plMipmap::plRecord  *plMipmap::fRecords = nil;
-uint32_t              plMipmap::fNumMipmaps = 0;
+uint32_t            plMipmap::fNumMipmaps = 0;
 
 void    plMipmap::IAddToMemRecord( plMipmap *mip, plRecord::Method method )
 {
@@ -2136,9 +2136,9 @@ void    plMipmap::IAddToMemRecord( plMipmap *mip, plRecord::Method method )
     newRecord->fNumLevels = mip->fNumLevels;
     newRecord->fRowBytes = mip->fRowBytes;
     if( mip->GetKey() )
-        strcpy( newRecord->fKeyName, mip->GetKeyName() );
+        newRecord->fKeyName = mip->GetKeyName();
     else
-        strcpy( newRecord->fKeyName, "<noKey>" );
+        newRecord->fKeyName = _TEMP_CONVERT_FROM_LITERAL( "<noKey>" );
     if( mip->fCompressionType != kDirectXCompression )
         newRecord->fUncompressedInfo.fType = mip->fUncompressedInfo.fType;
     else
