@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsQuat.h"
 #define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1
-#define kSLOPELIMIT (cosf(hsDegreesToRadians(55.f)))
+#define kSLOPELIMIT (cosf(hsDegreesToRadians(45.f)))
 
 class plCoordinateInterface;
 class plPhysical;
