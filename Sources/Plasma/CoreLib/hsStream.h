@@ -131,7 +131,7 @@ public:
     virtual hsBool    IsCompressed() { return false; }
 
     uint32_t        WriteString(const char cstring[]);
-    uint32_t        WriteString_TEMP(const plString & string) { return WriteString(string.c_str()); }
+    uint32_t        WriteString(const plString & string) { return WriteString(_TEMP_CONVERT_TO_CONST_CHAR(string)); }
     uint32_t        WriteFmt(const char * fmt, ...);
     uint32_t        WriteFmtV(const char * fmt, va_list av);
 
