@@ -236,13 +236,8 @@ void plCollisionDetector::Write(hsStream* stream, hsResMgr* mgr)
 
 plCameraRegionDetector::~plCameraRegionDetector()
 {
-    for(int i = 0; i < fMessages.Count(); i++)
-    {   
-        plMessage* pMsg = fMessages[i];
-        fMessages.Remove(i);
-        delete(pMsg);
-    }
-    fMessages.SetCountAndZero(0);
+    for (plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
+        hsRefCnt_SafeUnRef(*it);
 }
 
 void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediate)
@@ -314,7 +309,7 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
 {
     if (fSavingSendMsg)
     {
-        for (int i = 0; i < fMessages.Count(); i++)
+        for (size_t i = 0; i < fMessages.size(); ++i)
         {   
             char str[256];
 
@@ -322,13 +317,13 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
             if (fSavedMsgEnterFlag)
             {
                 fMessages[i]->SetCmd(plCameraMsg::kEntering);
-                sprintf(str, "Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
+                sprintf(str, "Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = true;
             }
             else
             {
                 fMessages[i]->ClearCmd(plCameraMsg::kEntering);
-                sprintf(str, "Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
+                sprintf(str, "Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = false;
             }
             plgDispatch::MsgSend(fMessages[i]);
@@ -372,8 +367,8 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
     int n = stream->ReadLE32();
-    fMessages.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
+    fMessages.resize(n);
+    for(size_t i = 0; i < n; i++ )
     {   
         plCameraMsg* pMsg =  plCameraMsg::ConvertNoRef(mgr->ReadCreatable(stream));
         fMessages[i] = pMsg;
@@ -383,9 +378,9 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE32(fMessages.GetCount());
-    for(int i = 0; i < fMessages.GetCount(); i++ )
-        mgr->WriteCreatable( stream, fMessages[i] );
+    stream->WriteLE32(fMessages.size());
+    for(plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
+        mgr->WriteCreatable( stream, *it );
 
 }
 void plCameraRegionDetector::IHandleEval(plEvalMsg *pEval)
