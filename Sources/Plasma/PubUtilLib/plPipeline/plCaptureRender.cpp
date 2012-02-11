@@ -138,8 +138,7 @@ hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t heigh
     plRenderTarget* rt = new plRenderTarget(flags, width, height, bitDepth, zDepth, stencilDepth);
 
     static int idx=0;
-    char buff[32];
-    sprintf(buff, "tRT%d", idx++);
+    plString buff = plString::Format("tRT%d", idx++);
     hsgResMgr::ResMgr()->NewKey(buff, rt, ack->GetUoid().GetLocation());
 
 
@@ -181,8 +180,7 @@ hsBool plCaptureRender::IProcess(plPipeline* pipe, const plKey& ack, plRenderTar
     static int currentCapIndex = 0;
 
     // Mipmap isn't created with a key so let's give it one now
-    char buff[512];
-    sprintf(buff, "CaptureRender_%d", currentCapIndex++);
+    plString buff = plString::Format("CaptureRender_%d", currentCapIndex++);
 
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, plLocation::kGlobalFixedLoc);
     mipMap->Ref();

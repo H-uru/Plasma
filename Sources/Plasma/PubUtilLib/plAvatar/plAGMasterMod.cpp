@@ -241,7 +241,7 @@ hsBool plAGMasterMod::IEval(double secs, float del, uint32_t dirty)
 // APPLYANIMATIONS
 void plAGMasterMod::ApplyAnimations(double time, float elapsed)
 {
-    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName());
+    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName().c_str());
 
     // update any fades
     for (int i = 0; i < fAnimInstances.size(); i++)
@@ -251,7 +251,7 @@ void plAGMasterMod::ApplyAnimations(double time, float elapsed)
     
     AdvanceAnimsToTime(time);
 
-    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName());
+    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName().c_str());
 }
 
 void plAGMasterMod::AdvanceAnimsToTime(double time)
@@ -301,7 +301,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
     for(plChannelModMap::iterator j = fChannelMods.begin(); j != end; j++)
     {
         plAGModifier *mod = (*j).second;
-        if(!justThisChannel || stricmp(justThisChannel, mod->GetChannelName()) == 0)
+        if(!justThisChannel || mod->GetChannelName().Compare(justThisChannel, plString::kCaseInsensitive) == 0)
         {
             plAGApplicator *app = mod->GetApplicator(kAGPinTransform);
 
@@ -312,7 +312,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
                     plMatrixChannel *topChannel = plMatrixChannel::ConvertNoRef(channel);
                     if(topChannel)
                     {
-                        hsStatusMessageF("AGModifier: <%s>", mod->GetChannelName());
+                        hsStatusMessageF("AGModifier: <%s>", mod->GetChannelName().c_str());
                         topChannel->Dump(1, optimized, time);
                     }
                 }
@@ -325,10 +325,10 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
 
 // GETCHANNELMOD(name)
 // Get the modifier that controls the channel with the given name
-plAGModifier * plAGMasterMod::GetChannelMod(const char * name, hsBool dontCache ) const
+plAGModifier * plAGMasterMod::GetChannelMod(const plString & name, hsBool dontCache ) const
 {
     plAGModifier * result = nil;
-    std::map<const char *, plAGModifier *, stringSorter>::const_iterator i = fChannelMods.find(name);
+    std::map<plString, plAGModifier *>::const_iterator i = fChannelMods.find(name);
 
     if (i != fChannelMods.end()) {
         result = (*i).second;
@@ -356,7 +356,7 @@ plAGModifier * plAGMasterMod::ICacheChannelMod(plAGModifier *mod) const
 // IFINDAGMOD (sceneObject)
 // See if there's an ag modifier on this sceneobject.
 // Doesn't check for multiples; just returns the first one.
-plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const char *name) const
+plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const plString &name) const
 {
     const plCoordinateInterface * CI = SO->GetCoordinateInterface();
 
@@ -365,8 +365,8 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const cha
 
     if(mod)
     {
-        const char *modName = mod->GetChannelName();
-        if(stricmp(name, modName) == 0)
+        plString modName = mod->GetChannelName();
+        if(modName.Compare(name, plString::kCaseInsensitive) == 0)
             return mod;
     }
 
@@ -421,7 +421,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
 }
 
 // ATTACHANIMATIONBLENDED(name, blend)
-plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, float blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
+plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const plString &name, float blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
     plAGAnim *anim = plAGAnim::FindAnim(name);
@@ -433,7 +433,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const char *name, float
     return instance;
 }
 
-void plAGMasterMod::PlaySimpleAnim(const char *name)
+void plAGMasterMod::PlaySimpleAnim(const plString &name)
 {
     plATCAnim *anim = plATCAnim::ConvertNoRef(plAGAnim::FindAnim(name));
     plAGAnimInstance *instance = nil;
@@ -460,18 +460,18 @@ void plAGMasterMod::PlaySimpleAnim(const char *name)
 // FINDANIMINSTANCE
 // Look for an animation instance of the given name on the modifier.
 // If we need this to be fast, should make it a map rather than a vector
-plAGAnimInstance * plAGMasterMod::FindAnimInstance(const char *name)
+plAGAnimInstance * plAGMasterMod::FindAnimInstance(const plString &name)
 {
     plAGAnimInstance *result = nil;
 
-    if (name)
+    if (!name.IsNull())
     {
         for (int i = 0; i < fAnimInstances.size(); i++)
         {
             plAGAnimInstance *act = fAnimInstances[i];
-            const char *eachName = act->GetName();
+            plString eachName = act->GetName();
 
-            if( stricmp(eachName, name) == 0)
+            if( eachName.Compare(name, plString::kCaseInsensitive) == 0)
             {
                 result = act;
                 break;
@@ -482,7 +482,7 @@ plAGAnimInstance * plAGMasterMod::FindAnimInstance(const char *name)
 }
 
 // FINDORATTACHINSTANCE
-plAGAnimInstance * plAGMasterMod::FindOrAttachInstance(const char *name, float blendFactor)
+plAGAnimInstance * plAGMasterMod::FindOrAttachInstance(const plString &name, float blendFactor)
 {
     plAGAnimInstance *result = FindAnimInstance(name);
     if(result)
@@ -587,7 +587,7 @@ void plAGMasterMod::DetachAnimation(plAGAnimInstance *anim)
 }
 
 // DETACHANIMATION(name)
-void plAGMasterMod::DetachAnimation(const char *name)
+void plAGMasterMod::DetachAnimation(const plString &name)
 {
     plAGAnimInstance *anim = FindAnimInstance(name);
     if(anim) {
@@ -603,10 +603,10 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
     for(int i = nAnims - 1; i >= 0; i--)
     {
         plAGAnimInstance *inst = fAnimInstances[i];
-        const char *name = inst->GetName();
+        plString name = inst->GetName();
         float blend = inst->GetBlend();
 
-        hsStatusMessageF("%d: %s with blend of %f\n", i, name, blend);
+        hsStatusMessageF("%d: %s with blend of %f\n", i, name.c_str(), blend);
     }
 }
 
@@ -628,10 +628,10 @@ hsBool plAGMasterMod::MsgReceive(plMessage* msg)
 
     if (cmdMsg = plAnimCmdMsg::ConvertNoRef(msg))
     {
-        const char *targetName = cmdMsg->GetAnimName();
+        plString targetName = cmdMsg->GetAnimName();
 
-        if (!targetName)
-            targetName = ENTIRE_ANIMATION_NAME;
+        if (targetName.IsNull())
+            targetName = _TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME);
 
         plAGAnimInstance *inst = FindAnimInstance(targetName);
         if (inst != nil)
@@ -718,7 +718,7 @@ hsBool plAGMasterMod::MsgReceive(plMessage* msg)
                 if (genRefMsg->fType == kPrivateAnim)
                 {
                     plAnimVector::iterator i = fPrivateAnims.begin();
-                    for (i; i != fPrivateAnims.end(); i++)
+                    for ( ; i != fPrivateAnims.end(); i++)
                     {
                         plAGAnim *currAnim = *i;
 

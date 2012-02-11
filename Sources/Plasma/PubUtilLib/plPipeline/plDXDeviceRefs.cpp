@@ -235,7 +235,7 @@ void    plDXTextureRef::Release( void )
 {
     plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
     plProfile_Extern(ManagedMem);
-    PROFILE_POOL_MEM(D3DPOOL_MANAGED, fDataSize, false, (char*)(fOwner ? fOwner->GetKey() ? fOwner->GetKey()->GetUoid().GetObjectName() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(D3DPOOL_MANAGED, fDataSize, false, (fOwner ? fOwner->GetKey() ? fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "(UnknownTexture)" : "(UnknownTexture)"));
     plDXPipeline::FreeManagedTexture(fDataSize);
     fDataSize = 0;
 

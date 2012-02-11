@@ -439,9 +439,7 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
-        char *name = s->ReadSafeString();
-        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
-        delete[] name;
+        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), s->ReadSafeString_TEMP());
         if (key)
             hsgResMgr::ResMgr()->AddViaNotify(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }
@@ -575,7 +573,10 @@ void plDynamicCamMap::ISetupRenderRequest(plPipeline *pipe)
     hsMatrix44 w2c, c2w;
     if (fCamera)
     {
-        w2c.MakeCamera(&fCamera->GetTargetPos(), &fCamera->GetTargetPOA(), &hsVector3(0.f, 0.f, 1.f));
+        hsPoint3 pos = fCamera->GetTargetPos();
+        hsPoint3 poa = fCamera->GetTargetPOA();
+        hsVector3 vec(0.f, 0.f, 1.f);
+        w2c.MakeCamera(&pos, &poa, &vec);
         w2c.GetInverse(&c2w);
     }
     else
@@ -586,7 +587,8 @@ void plDynamicCamMap::ISetupRenderRequest(plPipeline *pipe)
         // Could be optimized, but the matrix construction work here seems cheap relative to the cost
         // of rerendering all this stuff to a separate target, so I doubt we'd notice.
         hsMatrix44 invert;
-        invert.MakeScaleMat(&(hsVector3(1.f, 1.f, -1.f)));
+        hsVector3 vec(1.f, 1.f, -1.f);
+        invert.MakeScaleMat(&vec);
         w2c = pipe->GetWorldToCamera();
         c2w = pipe->GetCameraToWorld();
 
@@ -910,9 +912,7 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     nVis = s->ReadLE32();
     for( i = 0; i < nVis; i++)
     {
-        char *name = s->ReadSafeString();
-        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), name);
-        delete[] name;
+        plKey key = plKeyFinder::Instance().StupidSearch(nil, nil, plVisRegion::Index(), s->ReadSafeString_TEMP());
         if (key)
             hsgResMgr::ResMgr()->AddViaNotify(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisSet), plRefFlags::kActiveRef);
     }

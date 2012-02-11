@@ -89,7 +89,7 @@ plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestor
             this->AddReceiver(plNetApp::GetInstance()->GetKey());
         } else {
             char buffer[128];
-            sprintf(buffer, "Can't find key named %s", uoidToClone.GetObjectName());                
+            sprintf(buffer, "Can't find key named %s", uoidToClone.GetObjectName().c_str());
             hsAssert(0, buffer);
         }
     } else {

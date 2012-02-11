@@ -102,7 +102,7 @@ class plCommonPythonLib : public plCommonObjLib
             if( objectKey->GetUoid().GetClassType() == plPythonFileMod::Index() )
                 return true;
             if( objectKey->GetUoid().GetClassType() == plSceneObject::Index() &&
-                strcmp( objectKey->GetUoid().GetObjectName(), plSDL::kAgeSDLObjectName ) == 0 )
+                objectKey->GetUoid().GetObjectName().Compare( plSDL::kAgeSDLObjectName ) == 0 )
                 return true;
             return false;
         }
@@ -457,7 +457,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             break;
 
         case plAutoUIParam::kTypeString:
-            pyParam.SetToString(param->GetString(pb));
+            pyParam.SetToString(_TEMP_CONVERT_FROM_LITERAL(param->GetString(pb)));
             mod->AddParameter(pyParam);
             break;
 
@@ -805,9 +805,9 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     {
                         plAnimComponentBase *animcomp = (plAnimComponentBase*)comp;
                         // save out the animation name first
-                        const char *tempAnimName = animcomp->GetAnimName();
-                        if (tempAnimName == nil)
-                            pyParam.SetToAnimationName(ENTIRE_ANIMATION_NAME);
+                        plString tempAnimName = animcomp->GetAnimName();
+                        if (tempAnimName.IsNull())
+                            pyParam.SetToAnimationName(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
                         else
                             pyParam.SetToAnimationName(tempAnimName);
                         mod->AddParameter(pyParam);
@@ -929,7 +929,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             break;
         
         case plAutoUIParam::kTypeDropDownList:
-            pyParam.SetToString(param->GetString(pb));
+            pyParam.SetToString(_TEMP_CONVERT_FROM_LITERAL(param->GetString(pb)));
             mod->AddParameter(pyParam);
             break;
 
@@ -1074,13 +1074,13 @@ static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 
             switch (err.error)
             {
-            case plPythonFileComponent::Validate::kPythonBadVer:
+            case plPythonFileComponent::kPythonBadVer:
                 ListView_SetItemText(hList, idx, 2, "Old Version");
                 break;
-            case plPythonFileComponent::Validate::kPythonNoVer:
+            case plPythonFileComponent::kPythonNoVer:
                 ListView_SetItemText(hList, idx, 2, "No Version");
                 break;
-            case plPythonFileComponent::Validate::kPythonNoFile:
+            case plPythonFileComponent::kPythonNoFile:
                 ListView_SetItemText(hList, idx, 2, "No File/Python Error");
                 break;
             }
@@ -1119,10 +1119,10 @@ static void WriteBadPythonText(ErrorSet& badNodes)
         case plPythonFileComponent::kPythonBadVer:
             errorText = "Old Version";
             break;
-        case plPythonFileComponent::Validate::kPythonNoVer:
+        case plPythonFileComponent::kPythonNoVer:
             errorText = "No Version";
             break;
-        case plPythonFileComponent::Validate::kPythonNoFile:
+        case plPythonFileComponent::kPythonNoFile:
             errorText = "No File/Python Error";
             break;
         }

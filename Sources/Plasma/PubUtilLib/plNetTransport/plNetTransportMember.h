@@ -45,7 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plNetCommon/plNetMember.h"
-#include "pnKeyedObject/plKey.h" 
+#include "pnKeyedObject/plKey.h"
+#include "plString.h"
 
 //
 // This represents a participant in the game, ie. another 
@@ -64,12 +65,12 @@ public:
     };
 protected:
     plKey           fAvatarKey;
-    std::string     fPlayerName;
-    uint32_t          fPlayerID;
+    plString        fPlayerName;
+    uint32_t        fPlayerID;
     std::vector<int> fSubscriptions;    // list of channelGrp subscriptions
-    uint32_t          fTransportFlags;
+    uint32_t        fTransportFlags;
     float           fDistSq;            // from local player, temp
-    uint8_t           fCCRLevel;
+    uint8_t         fCCRLevel;
 public:
     CLASSNAME_REGISTER( plNetTransportMember);
     GETINTERFACE_ANY( plNetTransportMember, plNetMember);
@@ -88,8 +89,8 @@ public:
         {
             fAvatarKey=k;
         }
-    void SetPlayerName(const char * value) { fPlayerName=value;}
-    const char * GetPlayerName() const { return fPlayerName.c_str();}
+    void SetPlayerName(const plString & value) { fPlayerName=value;}
+    plString GetPlayerName() const { return fPlayerName;}
     void SetPlayerID(uint32_t value) { fPlayerID=value;}
     uint32_t GetPlayerID() const { return fPlayerID;}
     void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
@@ -108,7 +109,7 @@ public:
     uint32_t GetTransportFlags() const { return fTransportFlags; }
 
     bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
-    std::string AsStdString() const;
+    plString AsString() const;
     bool IsEqualTo(const plNetMember * other) const
     {
         const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);

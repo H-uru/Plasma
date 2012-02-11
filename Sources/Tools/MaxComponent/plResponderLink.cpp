@@ -1262,7 +1262,7 @@ void plResponderCmdDelay::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPara
                     "However, you don't actually need two commands to wait on\n"
                     "the same command since the first command will automatically\n"
                     "delay any commands further down the list",
-                    waitInfo.responderName, node->GetName()).Show();
+                    waitInfo.responderName.c_str(), node->GetName()).Show();
         pErrMsg->Set(false);
     }
     else

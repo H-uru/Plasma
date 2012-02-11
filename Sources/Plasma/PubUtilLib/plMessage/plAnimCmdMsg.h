@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
+#include "plString.h"
 #include "plInterp/plAnimEaseTypes.h"
 #include "plInterp/plAnimTimeConvert.h"
 
@@ -55,11 +56,11 @@ class plAGAnimInstance;
 class plAnimCmdMsg : public plMessageWithCallbacks
 {
 protected:
-    char *fAnimName;
-    char *fLoopName;
+    plString fAnimName;
+    plString fLoopName;
 
 private:
-    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=nil;}
+    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=plString::Null;}
 public:
     plAnimCmdMsg()
         : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
@@ -110,12 +111,16 @@ public:
     hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
-    void SetAnimName(const char *name);
-    const char *GetAnimName();
+    void SetAnimName(const plString &name);
+    plString GetAnimName();
     hsBool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
 
-    void SetLoopName(const char *name);
-    const char *GetLoopName();
+    // TEMP plString REVISIT
+    // Because I'm TOO LAZY to keep converting all these calls to SetAnimName
+    void SetAnimName(const char *name) { SetAnimName(_TEMP_CONVERT_FROM_LITERAL(name)); }
+
+    void SetLoopName(const plString &name);
+    plString GetLoopName();
 
     float fBegin;
     float fEnd;
@@ -136,11 +141,11 @@ public:
 class plAGCmdMsg : public plMessage
 {
 protected:
-    char *fAnimName;
+    plString fAnimName;
 
 private:
     void IInit() { fBlend = fAmp = 0;
-                   fAnimName=nil;}
+                   fAnimName=plString::Null;}
 public:
     plAGCmdMsg()
         : plMessage(nil, nil, nil) { IInit(); }
@@ -165,8 +170,8 @@ public:
     hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
-    void SetAnimName(const char *name);
-    const char *GetAnimName();
+    void SetAnimName(const plString &name);
+    plString GetAnimName();
 
     float fBlend;
     float fBlendRate;
@@ -199,13 +204,12 @@ public:
 class plAGDetachCallbackMsg : public plEventCallbackMsg
 {
 protected:
-    char *fAnimName;
+    plString fAnimName;
 
 public:
-    plAGDetachCallbackMsg() : plEventCallbackMsg(), fAnimName(nil) {}
+    plAGDetachCallbackMsg() : plEventCallbackMsg() {}
     plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
-                          plEventCallbackMsg(receiver, e, idx, t, repeats, user), fAnimName(nil) {}
-    virtual ~plAGDetachCallbackMsg();
+                          plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
 
     CLASSNAME_REGISTER( plAGDetachCallbackMsg );
     GETINTERFACE_ANY( plAGDetachCallbackMsg, plEventCallbackMsg );
@@ -214,8 +218,8 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) {}
     void Write(hsStream* stream, hsResMgr* mgr) {}
     
-    void SetAnimName(const char *name);
-    char *GetAnimName();
+    void SetAnimName(const plString &name);
+    plString GetAnimName();
 };
 
 

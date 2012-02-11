@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIKnobCtrl::pfGUIKnobCtrl() :
-    fAnimName(nil),
     fDragStart(0.f, 0.f, 0.f),
     fDragging(false),
     fAnimStartPos(0.f, 0.f, 0.f),
@@ -81,11 +80,6 @@ pfGUIKnobCtrl::pfGUIKnobCtrl() :
     fAnimTimesCalced(false)
 {
     SetFlag( kWantsInterest );
-}
-
-pfGUIKnobCtrl::~pfGUIKnobCtrl()
-{
-    delete [] fAnimName;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -112,7 +106,7 @@ void    pfGUIKnobCtrl::Read( hsStream *s, hsResMgr *mgr )
     uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
-    fAnimName = s->ReadSafeString();
+    fAnimName = s->ReadSafeString_TEMP();
 
     fAnimTimesCalced = false;
 
@@ -262,17 +256,10 @@ void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name )
+void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
 {
     fAnimationKeys = keys;
-    delete [] fAnimName;
-    if( name != nil )
-    {
-        fAnimName = new char[ strlen( name ) + 1 ];
-        strcpy( fAnimName, name );
-    }
-    else
-        fAnimName = nil;
+    fAnimName = name;
 }
 
 //// ICalcAnimTimes //////////////////////////////////////////////////////////

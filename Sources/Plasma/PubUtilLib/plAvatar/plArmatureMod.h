@@ -221,7 +221,7 @@ public:
 
     hsBool IsLocalAvatar();
     hsBool IsLocalAI();
-    virtual const plSceneObject *FindBone(const char * name) const;
+    virtual const plSceneObject *FindBone(const plString & name) const;
     virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
     virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);
     plAGModifier *GetRootAGMod();
@@ -298,15 +298,15 @@ public:
         kSwim,
     };
 
-    const char *GetAnimRootName(const char *name);
-    int8_t AnimNameToIndex(const char *name);
+    plString GetAnimRootName(const plString &name);
+    int8_t AnimNameToIndex(const plString &name);
     void SetBodyType(int type) { fBodyType = type; }
     int  GetBodyType(int type) { return fBodyType; }
     int  GetCurrentGenericType();
     bool FindMatchingGenericBrain(const char *names[], int count);
-    char *MakeAnimationName(const char * baseName) const;
-    char *GetRootName();
-    void SetRootName(const char *name);
+    plString MakeAnimationName(const char * baseName) const;
+    plString GetRootName();
+    void SetRootName(const plString &name);
     
     int  RefreshDebugDisplay();
     void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
@@ -370,7 +370,7 @@ public:
 
     void SetBodyAgeName(const char* ageName) {if (ageName) fBodyAgeName = ageName; else fBodyAgeName = "";}
     void SetBodyFootstepSoundPage(const char* pageName) {if (pageName) fBodyFootstepSoundPage = pageName; else fBodyFootstepSoundPage = "";}
-    void SetAnimationPrefix(const char* prefix) {if (prefix) fAnimationPrefix = prefix; else fAnimationPrefix = "";}
+    void SetAnimationPrefix(const plString& prefix) { fAnimationPrefix = prefix; }
 
     const char* GetUserStr() {return fUserStr.c_str();}
 
@@ -389,16 +389,16 @@ protected:
     void    ISetTransparentDrawOrder(bool val);
     plLayerLinkAnimation *IFindLayerLinkAnim();
     
-    char *fRootName;                        // the name of the player root (from the max file)
+    plString            fRootName;          // the name of the player root (from the max file)
     hsBitVector         fMoveFlags;         // which keys/buttons are currently pressed
     hsBitVector         fMoveFlagsBackup;   // a copy of fMoveFlags
     typedef std::vector<plControlEventMsg*> CtrlMessageVec;
     CtrlMessageVec      fQueuedCtrlMessages;    // input messages we haven't processed
-    float            fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
+    float               fMouseFrameTurnStrength; // Sum turnage from mouse delta messages since last eval.
     plKey               fFootSoundSOKey;    // The Scene Object we attach to targets for footstep sounds
     plKey               fLinkSoundSOKey;    // Same thing for linking... wwwwawAWAWAwawa...
     plKey               fLinkInAnimKey;     // Set when we link out, this is the anim to play (backwards) when we link in.
-    static float     fMouseTurnSensitivity;
+    static float        fMouseTurnSensitivity;
     plArmatureUpdateMsg *fUpdateMsg;    
     
     // Trying to be a good lad here and align all our bools and bytes...
@@ -445,7 +445,7 @@ protected:
     // strings for animations, age names, footstep sounds, etc
     std::string fBodyAgeName;
     std::string fBodyFootstepSoundPage;
-    std::string fAnimationPrefix;
+    plString fAnimationPrefix;
 
     // user-defined string assigned to this avatar
     std::string fUserStr;
@@ -459,7 +459,7 @@ class plArmatureLODMod : public plArmatureMod
 public:
     // tors
     plArmatureLODMod();
-    plArmatureLODMod(const char * root_name);
+    plArmatureLODMod(const plString & root_name);
     virtual ~plArmatureLODMod();
 
     CLASSNAME_REGISTER( plArmatureLODMod );

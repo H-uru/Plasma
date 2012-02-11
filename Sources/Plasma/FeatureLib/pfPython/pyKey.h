@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueHelpers.h"
+#include "plString.h"
 
 class plPythonFileMod;
 class pySceneObject;
@@ -98,7 +99,7 @@ public:
     // getter and setters
     virtual plKey getKey() { return fKey; }
     virtual void setKey(plKey key) { fKey=key; }
-    virtual const char* getName() const { return fKey ? fKey->GetName() : "nil";    }
+    virtual const char* getName() const { return fKey ? fKey->GetName().c_str() : "nil";    }
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();
 

@@ -351,18 +351,17 @@ void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR()
 plAvOneShotMsg::plAvOneShotMsg()
-: plAvSeekMsg(), fAnimName(nil), fDrivable(false), fReversible(false), fCallbacks(nil)
+: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks(nil)
 {
 }
 
 // CTOR(sender, receiver, seekKey, time)
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, hsBool smartSeek,
-                         const char *animName, hsBool drivable, hsBool reversible)
-: plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek),
+                         const plString &animName, hsBool drivable, hsBool reversible)
+: plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek), fAnimName(animName),
   fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
 // DTOR
@@ -370,8 +369,6 @@ plAvOneShotMsg::~plAvOneShotMsg()
 {
     hsRefCnt_SafeUnRef(fCallbacks);
     fCallbacks = nil;
-
-    delete[] fAnimName;
 }
 
 // READ
@@ -379,8 +376,7 @@ void plAvOneShotMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvSeekMsg::Read(stream, mgr);
 
-    delete [] fAnimName;
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fDrivable = stream->ReadBool();
     fReversible = stream->ReadBool();
 }

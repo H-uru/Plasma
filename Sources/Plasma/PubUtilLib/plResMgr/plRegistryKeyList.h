@@ -55,7 +55,7 @@ public:
     bool operator() (plKeyImp* k1, plKeyImp* k2) const
     {
         hsAssert(k1 && k2, "Should have valid keys here");
-        return stricmp(k1->GetName(), k2->GetName()) < 0;
+        return k1->GetName().Compare(k2->GetName(), plString::kCaseInsensitive) < 0;
     }
 };
 
@@ -100,7 +100,7 @@ public:
     uint16_t GetClassType() const { return fClassType; }
 
     // Find a key by name (case-insensitive)
-    plKeyImp* FindKey(const char* keyName);
+    plKeyImp* FindKey(const plString& keyName);
     // Find a key by uoid index.
     plKeyImp* FindKey(const plUoid& uoid);
 

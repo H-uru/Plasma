@@ -102,7 +102,7 @@ hsBool  pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wst
                 error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";
 
                 hsMessageBox(error.str().c_str(), caption.str().c_str(), hsMessageBoxNormal);               
-                
+
                 delete [] errorMsg;
                 delete [] errorLine;
 

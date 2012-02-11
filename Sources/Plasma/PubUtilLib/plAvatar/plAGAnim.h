@@ -92,7 +92,7 @@ public:
     plAGAnim();
     /** Construct with name, start time, and end time (within the max note track)
      */
-    plAGAnim(const char *name, double begin, double end);
+    plAGAnim(const plString &name, double begin, double end);
     /** Destruct, freeing the underlying animation data. */
     virtual ~plAGAnim();
 
@@ -112,12 +112,12 @@ public:
     /** Get the name of the channel having the given index. Useful for talking to an
         an animation before it is applied and finding out what channels it's going to
         affect. */
-    virtual const char * GetChannelName(int index);
+    virtual plString GetChannelName(int index);
 
     /** Get channel by name. This corresponds to the name of the scene object this channel
         will be attached to when the animation is applied.
         This function is fairly slow and shouldn't be used often. */
-    plAGChannel * GetChannel(const char *name) const;
+    plAGChannel * GetChannel(const plString &name) const;
 
     /** Return the number of applicators held by this animation. An applicator is used
         to attach a channel to a sceneobject. */
@@ -141,7 +141,7 @@ public:
         by the avatar or from script, but most of the functions which take an animation
         name (such as AttachAnimation on the plAGMasterMod) will also take an pointer
         to a plAGAnim. */
-    virtual const char * GetName() const { return fName; }
+    virtual plString GetName() const { return fName; }
 
     /** Return the length of the animation; end - start. */
     virtual float GetLength() const { return fEnd - fStart; }
@@ -176,12 +176,12 @@ public:
     /** Add the animation by name to a global static registry.
         This functionality will possibly be added to the resource
         manager. */
-    static void AddAnim(const char * name, plAGAnim *anim);
+    static void AddAnim(const plString & name, plAGAnim *anim);
     /** See if there is an animation with the given name in the
         global animation registry. */
-    static plAGAnim *FindAnim(const char *name);
+    static plAGAnim *FindAnim(const plString &name);
     /** Remove the given animation from the registry. */
-    static hsBool RemoveAnim(const char *name);
+    static hsBool RemoveAnim(const plString &name);
     /** Clear the animation cache. Used when resetting the client
         to a vanilla state, as when clearing the scene while
         exporting. */
@@ -199,17 +199,17 @@ protected:
     ApplicatorVec fApps;        /// our animation channels
     float fBlend;               /// requested blend factor
 
-    float fStart;            /// the start time of the beginning of the animation (usually 0)
-    float fEnd;              /// the end time of the animation
+    float fStart;               /// the start time of the beginning of the animation (usually 0)
+    float fEnd;                 /// the end time of the animation
 
-    char *fName;                /// the name of our animation
+    plString fName;             /// the name of our animation
 
     // ??? Can this be moved to the resource manager? If it can manage an efficient
     //     string-based namespace per class, we could get rid of this.
-    typedef std::map<const char *, plAGAnim *, stringISorter> plAnimMap;    //
+    typedef std::map<plString, plAGAnim *, plString::less_i> plAnimMap;    //
     static plAnimMap fAllAnims; /// map of animation names to animations
 
-    typedef std::map<const char *, plEmoteAnim *, stringISorter> plEmoteMap;
+    typedef std::map<plString, plEmoteAnim *, plString::less_i> plEmoteMap;
     static plEmoteMap fAllEmotes;
 };
 
@@ -230,7 +230,7 @@ public:
     plATCAnim();
     /** Construct with name, start time, and end time (within the max note track)
         Default is to start automatically, not loop, with no ease curves. */
-    plATCAnim(const char *name, double begin, double end);
+    plATCAnim(const plString &name, double begin, double end);
     /** Destruct, freeing the underlying animation data. */
     virtual ~plATCAnim();
 
@@ -305,11 +305,11 @@ public:
     /** Animations can have multiple defined loop segments; these
         are selected using animation control messages.
         Each loop segment is named using markers in the notetrack. */
-    void AddLoop(const char *name, float start, float end);
+    void AddLoop(const plString &name, float start, float end);
     /** Get the loop having the given name.
         \param start will return the start time of the loop.
         \param end will hold the end time of the loop */
-    bool GetLoop(const char *name, float &start, float &end) const;
+    bool GetLoop(const plString &name, float &start, float &end) const;
     /** Lets you get a loop by index instead of name. */
     bool GetLoop(uint32_t num, float &start, float &end) const;
     /** Returns the number of loops defined on this anim. */
@@ -318,10 +318,10 @@ public:
     /** Add a marker to the animation. Markers can be used
         for callbacks or for goto comands. A marker is a simple
         name/time tuple. */
-    void AddMarker(const char *name, float time);
+    void AddMarker(const plString &name, float time);
     /** Returns the time value of the marker named by name. */
-    float GetMarker(const char *name) const;
-    void CopyMarkerNames(std::vector<char*> &out);
+    float GetMarker(const plString &name) const;
+    void CopyMarkerNames(std::vector<plString> &out);
     /** Add a stop point to the animation. A stop point is a 
         "detent" for playback - if the animation is stopping
         near a stop point and fading out, the stop point will
@@ -363,10 +363,10 @@ protected:
     float fEaseOutMax;       /// maximum (initial) value of our ease-out
 
     // a map from segment names to times
-    typedef std::map<const char *, float, stringSorter> MarkerMap;
+    typedef std::map<plString, float> MarkerMap;
     MarkerMap fMarkers;
 
-    typedef std::map<const char *, std::pair<float,float>, stringSorter> LoopMap;
+    typedef std::map<plString, std::pair<float,float> > LoopMap;
     LoopMap fLoops;
 
     typedef std::vector<float> ScalarMap;
@@ -384,7 +384,7 @@ class plEmoteAnim : public plATCAnim
 public:
     
     plEmoteAnim();
-    plEmoteAnim(const char *animName, double begin, double end, float fadeIn, float fadeOut, BodyUsage bodyUsage);
+    plEmoteAnim(const plString &animName, double begin, double end, float fadeIn, float fadeOut, BodyUsage bodyUsage);
 
     BodyUsage GetBodyUsage() const;
     float GetFadeIn() const;
@@ -417,7 +417,7 @@ public:
     plAgeGlobalAnim();
     /** Construct with name, start time, and end time (within the max note track)
       */
-    plAgeGlobalAnim(const char *name, double begin, double end);
+    plAgeGlobalAnim(const plString &name, double begin, double end);
     /** Destruct, freeing the underlying animation data. */
     virtual ~plAgeGlobalAnim();
     
@@ -438,8 +438,8 @@ protected:
 };
 
 // USEFUL HELPER FUNCTIONS
-bool GetStartToEndTransform(const plAGAnim *anim, hsMatrix44 *startToEnd, hsMatrix44 *endToStart, const char *channelName);
-bool GetRelativeTransform(const plAGAnim *anim, double timeA, double timeB, hsMatrix44 *a2b, hsMatrix44 *b2a, const char *channelName);
+bool GetStartToEndTransform(const plAGAnim *anim, hsMatrix44 *startToEnd, hsMatrix44 *endToStart, const plString &channelName);
+bool GetRelativeTransform(const plAGAnim *anim, double timeA, double timeB, hsMatrix44 *a2b, hsMatrix44 *b2a, const plString &channelName);
 
 
 

@@ -322,6 +322,32 @@ wchar_t *hsStream::ReadSafeWString()
     return retVal;
 }
 
+uint32_t hsStream::WriteSafeString(const plString &string)
+{
+    return WriteSafeString(_TEMP_CONVERT_TO_CONST_CHAR(string));
+}
+
+uint32_t hsStream::WriteSafeWString(const plString &string)
+{
+    return WriteSafeWString(_TEMP_CONVERT_TO_WCHAR_T(string));
+}
+
+plString hsStream::ReadSafeString_TEMP()
+{
+    char *buffer = ReadSafeString();
+    plString result = plString::FromIso8859_1(buffer);
+    delete [] buffer;
+    return result;
+}
+
+plString hsStream::ReadSafeWString_TEMP()
+{
+    wchar_t *wbuffer = ReadSafeWString();
+    plString result = plString::FromWchar(wbuffer);
+    delete [] wbuffer;
+    return result;
+}
+
 hsBool  hsStream::Read4Bytes(void *pv)  // Virtual, faster version in sub classes
 {
     int knt = this->Read(sizeof(uint32_t), pv);

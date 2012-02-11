@@ -67,6 +67,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 
+class plString;
+
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -88,7 +90,7 @@ class plCommonObjLib
 
         void            AddObject( hsKeyedObject *object );
         hsBool          RemoveObjectAndKey( plKey &key );
-        hsKeyedObject   *FindObject( const char *name, uint16_t classType = (uint16_t)-1 );
+        hsKeyedObject   *FindObject( const plString &name, uint16_t classType = (uint16_t)-1 );
         void            ClearObjectList( void );
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect

@@ -123,7 +123,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fCleanupChannels.push_back(timeChan);
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to Attach anim <%s>", GetName());
+    hsStatusMessageF("\nAbout to Attach anim <%s>", GetName().c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 
@@ -131,7 +131,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     {
         plAGApplicator * app = fAnimation->GetApplicator(i);
         plAGChannel * inChannel = app->GetChannel();
-        const char * channelName = app->GetChannelName();
+        plString channelName = app->GetChannelName();
         plAGModifier * channelMod = master->GetChannelMod(channelName);
         
         if(channelMod) {
@@ -206,7 +206,7 @@ void plAGAnimInstance::SearchForGlobals()
     }
 }
 
-void plAGAnimInstance::IRegisterDetach(const char *channelName, plAGChannel *channel)
+void plAGAnimInstance::IRegisterDetach(const plString &channelName, plAGChannel *channel)
 {
     plDetachMap::value_type newPair(channelName, channel);
     fManualDetachChannels.insert(newPair);
@@ -243,14 +243,14 @@ void plAGAnimInstance::Detach()
 void plAGAnimInstance::DetachChannels()
 {
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to DETACH anim <%s>", GetName());
+    hsStatusMessageF("\nAbout to DETACH anim <%s>", GetName().c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
     plDetachMap::iterator i = fManualDetachChannels.begin();
 
     while(i != fManualDetachChannels.end())
     {
-        const char *channelName = (*i).first;
+        plString channelName = (*i).first;
         plAGModifier *channelMod = fMaster->GetChannelMod(channelName, true);
 
         if(channelMod)
@@ -274,7 +274,7 @@ void plAGAnimInstance::DetachChannels()
     fCleanupChannels.clear();
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName());
+    hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName().c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 }
@@ -323,12 +323,12 @@ float plAGAnimInstance::GetAmplitude()
 
 // GetName -----------------------------
 // --------
-const char * plAGAnimInstance::GetName()
+plString plAGAnimInstance::GetName()
 {
     if(fAnimation)
         return fAnimation->GetName();
     else
-        return nil;
+        return plString::Null;
 }
 
 // SetLoop ----------------------------------
@@ -409,7 +409,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
             eventMsg->fRepeats = 0;
             eventMsg->fUser = cb.fUser;
 
-            if (cb.fMarker)
+            if (!cb.fMarker.IsNull())
             {
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");

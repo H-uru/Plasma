@@ -79,10 +79,9 @@ public:
     plCoopCoordinator();
     plCoopCoordinator(plKey host, plKey guest,
                       plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                      const char *synchBone, uint32_t hostOfferStage, uint32_t guestAcceptStage,
+                      const plString &synchBone, uint32_t hostOfferStage, uint32_t guestAcceptStage,
                       plMessage *guestAcceptMsg,
                       bool autoStartGuest);
-    ~plCoopCoordinator();
 
     virtual hsBool MsgReceive(plMessage *msg);
 
@@ -124,7 +123,7 @@ protected:
 
     plMessage *fGuestAcceptMsg;         // send this when the guest accepts
 
-    char *fSynchBone;
+    plString fSynchBone;
     bool fAutoStartGuest;
     bool fGuestAccepted;
 

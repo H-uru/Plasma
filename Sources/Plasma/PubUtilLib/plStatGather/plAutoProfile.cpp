@@ -81,7 +81,7 @@ protected:
     plStringList fAges;
     int fNextAge;
     int fNextSpawnPoint;
-    const char* fLastSpawnPointName;
+    plString fLastSpawnPointName;
     // For profiling a single age
     std::string fAgeName;
     bool fLinkedToSingleAge;
@@ -89,7 +89,7 @@ protected:
 
     uint64_t fLinkTime;
 
-    std::string fStatusMessage;
+    plString fStatusMessage;
 
     void INextProfile();
     bool INextAge();
@@ -115,7 +115,7 @@ plAutoProfile* plAutoProfile::Instance()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-plAutoProfileImp::plAutoProfileImp() : fNextAge(0), fNextSpawnPoint(0), fLastSpawnPointName(nil), fLinkedToSingleAge(false), fJustLinkToAges(false)
+plAutoProfileImp::plAutoProfileImp() : fNextAge(0), fNextSpawnPoint(0), fLinkedToSingleAge(false), fJustLinkToAges(false)
 {
 }
 
@@ -216,24 +216,23 @@ void plAutoProfileImp::INextProfile()
     else
     {
         // Log the stats for this spawn point
-        if (fLastSpawnPointName)
+        if (!fLastSpawnPointName.IsNull())
         {
             const char * ageName = NetCommGetAge()->ageDatasetName;
-            plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName);
+            plProfileManagerFull::Instance().LogStats(ageName, _TEMP_CONVERT_TO_CONST_CHAR(fLastSpawnPointName));
 
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))
             {
-                char fileName[256];
-                sprintf(fileName, "%s%s_%s.jpg",
+                plString fileName = plString::Format("%S%s_%s.jpg",
                     plProfileManagerFull::Instance().GetProfilePath(),
-                    ageName, fLastSpawnPointName);
+                    ageName, fLastSpawnPointName.c_str());
 
                 plJPEG::Instance().SetWriteQuality(100);
-                plJPEG::Instance().WriteToFile(fileName, &mipmap);
+                plJPEG::Instance().WriteToFile(fileName.c_str(), &mipmap);
             }
 
-            fLastSpawnPointName = nil;
+            fLastSpawnPointName = plString::Null;
         }
 
         // Try to go to the next spawn point
@@ -277,8 +276,8 @@ bool plAutoProfileImp::INextAge()
     link.SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
     plNetLinkingMgr::GetInstance()->LinkToAge(&link);
 
-    fStatusMessage = "Linking to age ";
-    fStatusMessage += ageName;
+    fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Linking to age ");
+    fStatusMessage += _TEMP_CONVERT_FROM_LITERAL(ageName);
 
     return true;
 }
@@ -298,9 +297,9 @@ bool plAutoProfileImp::INextSpawnPoint()
         const plSpawnModifier* spawnMod = plAvatarMgr::GetInstance()->GetSpawnPoint(fNextSpawnPoint);
         fLastSpawnPointName = spawnMod->GetKeyName();
 
-        if (strncmp(fLastSpawnPointName, kPerfSpawnPrefix, kPerfSpawnLen) == 0)
+        if (fLastSpawnPointName.CompareN(kPerfSpawnPrefix, kPerfSpawnLen) == 0)
         {
-            fStatusMessage = "Profiling spawn point ";
+            fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Profiling spawn point ");
             fStatusMessage += fLastSpawnPointName;
 
             foundGood = true;
@@ -312,8 +311,8 @@ bool plAutoProfileImp::INextSpawnPoint()
 
     if (!foundGood)
     {
-        fLastSpawnPointName = nil;
-        fStatusMessage = "No profile spawn point found";
+        fLastSpawnPointName = plString::Null;
+        fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("No profile spawn point found");
         return false;
     }
 
@@ -337,7 +336,7 @@ hsBool plAutoProfileImp::MsgReceive(plMessage* msg)
     plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
     if (evalMsg)
     {
-        if (fStatusMessage.length() > 0)
+        if (fStatusMessage.GetSize() > 0)
             plDebugText::Instance().DrawString(10, 10, fStatusMessage.c_str());
     }
 
@@ -369,7 +368,7 @@ hsBool plAutoProfileImp::MsgReceive(plMessage* msg)
                 ms);
         }
 
-        fStatusMessage = "Age loaded.  Preparing to profile.";
+        fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Age loaded.  Preparing to profile.");
 
         // Age is loaded, start profiling in 5 seconds (to make sure the avatar is linked in all the way)
         plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());

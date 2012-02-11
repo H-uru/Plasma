@@ -70,7 +70,7 @@ protected:
 
     // Get a unique name based on this components name and the index of this target
     // Return value points to a static, so don't try to hold on to it
-    const char* IGetUniqueName(plMaxNodeBase* target);
+    plString IGetUniqueName(plMaxNodeBase* target);
 
 public:
     // Permanent Block ID's

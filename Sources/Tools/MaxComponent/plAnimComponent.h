@@ -115,7 +115,7 @@ public:
     hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual plKey GetModKey(plMaxNode *node)=0;
-    const char *GetAnimName();
+    plString GetAnimName();
     static hsBool IsAnimComponent(plComponentBase *comp);
 
     std::map<plMaxNode*, plAGAnim*> fAnims;
@@ -132,7 +132,7 @@ public:
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
     virtual hsBool  IsNodeRestricted( void ) { return true; }
-    virtual const char  *GetIfaceSegmentName( hsBool allowNil );
+    virtual plString GetIfaceSegmentName( hsBool allowNil );
 
 protected:
     hsBool IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);

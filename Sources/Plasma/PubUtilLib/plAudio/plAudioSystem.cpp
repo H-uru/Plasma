@@ -798,7 +798,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
                 sortedList->fRank, 
                 sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
                 sound->GetEAXSettings().GetCurrSofts().GetOcclusion(), 
-                sound->GetKeyName()
+                sound->GetKeyName().c_str()
             );
         }
         else 
@@ -809,7 +809,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
                 sound->GetPriority(), 
                 sortedList->fRank, 
                 sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
-                sound->GetKeyName()
+                sound->GetKeyName().c_str()
             );
         }
         i++;
@@ -833,7 +833,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
             "%d %1.2f %s", 
             sound->GetPriority(), 
             sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
-            sound->GetKeyName()
+            sound->GetKeyName().c_str()
         );
     }
     
@@ -934,7 +934,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
     {
         //if( fListener )
         {
-            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
+            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
             if(hsTimer::GetMilliSeconds() - fLastUpdateTimeMs > UPDATE_TIME_MS)
             {
                 IUpdateSoftSounds( fCurrListenerPos );
@@ -947,7 +947,7 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
                 }
                 //fCommittedListenerPos = fCurrListenerPos;
             }
-            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
+            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
         }
         
         return true;

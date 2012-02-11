@@ -286,12 +286,12 @@ public:
     void SetPingServer(uint8_t serverType) { fPingServerType = serverType; }
     
     // getters
-    uint32_t              GetPlayerID( void ) const;
-    const char *        GetPlayerName( const plKey avKey=nil ) const;
-    const char *        GetPlayerNameById (unsigned playerId) const;
-    unsigned            GetPlayerIdByName(const char name[]) const;
+    uint32_t            GetPlayerID( void ) const;
+    plString            GetPlayerName( const plKey avKey=nil ) const;
+    plString            GetPlayerNameById (unsigned playerId) const;
+    unsigned            GetPlayerIdByName(const plString & name) const;
 
-    uint8_t GetJoinOrder()                const { return fJoinOrder; }    // only valid at join time
+    uint8_t GetJoinOrder()              const { return fJoinOrder; }    // only valid at join time
 
     plKey GetLocalPlayerKey()           const { return fLocalPlayerKey; }
     plSynchedObject* GetLocalPlayer(hsBool forceLoad=false) const;

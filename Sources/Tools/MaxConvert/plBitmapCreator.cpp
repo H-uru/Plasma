@@ -521,7 +521,8 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     }
 
     // Get and mangle key name
-    char name[ 256 ], temp[ 256 ];
+    plString name;
+    char temp[ 256 ];
     _splitpath(bd->fileName, NULL, NULL, temp, NULL);
 
     // Somehow, sometimes, we get the same file in with different cases. So we need to force the
@@ -534,21 +535,21 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     {   
         // Mangle of the form: name@dropStart&dropStop&max&min
         if( clipID != -1 )
-            sprintf( name, "%s*%x#%d@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags, clipID, 
+            name = plString::Format( "%s*%x#%d@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags, clipID,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags & plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
         else
-            sprintf( name, "%s*%x@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags, 
+            name = plString::Format( "%s*%x@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags == plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
     }
     else if( clipID != -1 )
-        sprintf( name, "%s*%x#%d", temp, bd->texFlags, clipID );
+        name = plString::Format( "%s*%x#%d", temp, bd->texFlags, clipID );
     else
-        sprintf( name, "%s*%x", temp, bd->texFlags );
+        name = plString::Format( "%s*%x", temp, bd->texFlags );
     if( bd->invertAlpha )
-        strcat( name, "_inva" );
-    strcat( name, ".hsm" );
+        name += _TEMP_CONVERT_FROM_LITERAL( "_inva" );
+    name += _TEMP_CONVERT_FROM_LITERAL( ".hsm" );
 
 
     // Has this texture been used before?
@@ -672,7 +673,7 @@ void    plBitmapCreator::IAddBitmap( plBitmap *bitmap, hsBool dontRef )
 //  of "converted" maps to clean up at the end of export.
 
 plMipmap    *plBitmapCreator::CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, 
-                                                 const char *keyName, const plLocation &keyLocation )
+                                                 const plString &keyName, const plLocation &keyLocation )
 {
     hsGuardBegin( "plBitmapCreator::CreateBlankMipmap" );
 

@@ -52,7 +52,7 @@ class Mtl;
 class plMaxNodeBase;
 template <class T> class hsTArray;
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 
 class plResponderCmdMtl : public plResponderCmd
 {
@@ -74,7 +74,7 @@ public:
     virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
     
     Mtl *GetMtl(IParamBlock2 *pb);
-    const char *GetAnim(IParamBlock2 *pb);
+    plString GetAnim(IParamBlock2 *pb);
 };
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char* segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys);

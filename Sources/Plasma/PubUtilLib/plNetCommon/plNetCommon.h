@@ -199,7 +199,7 @@ namespace plNetCommon
             kChildAgeBook,
         };
 
-        static const char * LinkingRuleStr( int rule )
+        inline const char * LinkingRuleStr( int rule )
         {
             switch ( rule )
             {
@@ -227,7 +227,7 @@ namespace plNetCommon
             kTechnical
         };
     }
-    
+
     namespace BuildType
     {
         enum Types
@@ -238,7 +238,7 @@ namespace plNetCommon
             kExternalRelease
         };
 
-        static const char * BuildTypeStr( int rule )
+        inline const char * BuildTypeStr( int rule )
         {
             switch ( rule )
             {

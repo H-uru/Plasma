@@ -249,7 +249,7 @@ hsBool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
             {
                 hsMatrix44 adjustment;
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nil, &adjustment, _TEMP_CONVERT_FROM_LITERAL("Handle"));   // actually getting end-to-start
                 targetL2W = targetL2W * adjustment;
             }
             break;
@@ -334,8 +334,7 @@ void plAvSeekTask::LeaveAge(plArmatureMod *avatar)
 
 // CTOR default
 plAvAnimTask::plAvAnimTask()
-: fAnimName(nil),
-  fInitialBlend(0.0f),
+: fInitialBlend(0.0f),
   fTargetBlend(0.0f),
   fFadeSpeed(0.0f),
   fSetTime(0.0f),
@@ -347,7 +346,7 @@ plAvAnimTask::plAvAnimTask()
 }
 
 // CTOR animName, initialBlend, targetBlend, fadeSpeed, start, loop, attach
-plAvAnimTask::plAvAnimTask(const char *animName,
+plAvAnimTask::plAvAnimTask(const plString &animName,
                            float initialBlend,
                            float targetBlend,
                            float fadeSpeed,
@@ -355,7 +354,8 @@ plAvAnimTask::plAvAnimTask(const char *animName,
                            hsBool start,
                            hsBool loop,
                            hsBool attach)
-: fInitialBlend(initialBlend),
+: fAnimName(animName),
+  fInitialBlend(initialBlend),
   fTargetBlend(targetBlend),
   fFadeSpeed(fadeSpeed),
   fSetTime(setTime),
@@ -364,13 +364,12 @@ plAvAnimTask::plAvAnimTask(const char *animName,
   fAttach(attach),
   fAnimInstance(nil)
 {
-    if(animName)
-        fAnimName = hsStrcpy(animName);
 }
 
 // CTOR animName, fadeSpeed, attach
-plAvAnimTask::plAvAnimTask(const char *animName, float fadeSpeed, hsBool attach)
-: fInitialBlend(0.0f),
+plAvAnimTask::plAvAnimTask(const plString &animName, float fadeSpeed, hsBool attach)
+: fAnimName(animName),
+  fInitialBlend(0.0f),
   fTargetBlend(0.0f),
   fFadeSpeed(fadeSpeed),
   fSetTime(0.0f),
@@ -379,22 +378,10 @@ plAvAnimTask::plAvAnimTask(const char *animName, float fadeSpeed, hsBool attach)
   fAttach(attach),
   fAnimInstance(nil)
 {
-    if(animName)
-        fAnimName = hsStrcpy(animName);
 }
 
 
 
-
-// DTOR
-plAvAnimTask::~plAvAnimTask()
-{
-    if(fAnimName)
-    {
-        delete[] fAnimName;
-        fAnimName = nil;
-    }
-}
 
 // START
 hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
@@ -420,7 +407,7 @@ hsBool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double
         }
         else
         {
-            hsStatusMessageF("Couldn't find animation <%s> for plAvAnimTask: will try again", fAnimName);
+            hsStatusMessageF("Couldn't find animation <%s> for plAvAnimTask: will try again", fAnimName.c_str());
         }
     }
     else
@@ -480,7 +467,7 @@ void plAvAnimTask::LeaveAge(plArmatureMod *avatar)
 // READ
 void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fInitialBlend = stream->ReadLEScalar();
     fTargetBlend = stream->ReadLEScalar();
     fFadeSpeed = stream->ReadLEScalar();
@@ -515,7 +502,6 @@ void plAvOneShotTask::InitDefaults()
     fBackwards = false;
     fDisableLooping = false;
     fDisablePhysics = true;
-    fAnimName = nil;
     fMoveHandle = false;
     fAnimInstance = nil;
     fDrivable = false;
@@ -537,7 +523,7 @@ plAvOneShotTask::plAvOneShotTask()
 // this construct is typically used when you want to create a one-shot task as part of a sequence
 // of tasks
 // it's different than the message-based constructor in that fDetachAnimation and fMoveHandle default to false
-plAvOneShotTask::plAvOneShotTask(const char *animName, hsBool drivable, hsBool reversible, plOneShotCallbacks *callbacks)
+plAvOneShotTask::plAvOneShotTask(const plString &animName, hsBool drivable, hsBool reversible, plOneShotCallbacks *callbacks)
 {
     InitDefaults();
 
@@ -547,7 +533,7 @@ plAvOneShotTask::plAvOneShotTask(const char *animName, hsBool drivable, hsBool r
     
     // we're going to use this sometime in the future, better ref it so someone else doesn't release it
     hsRefCnt_SafeRef(fCallbacks);
-    fAnimName = hsStrcpy(animName);
+    fAnimName = animName;
 }
 
 // CTOR (plAvOneShotMsg, plArmatureMod)
@@ -565,14 +551,12 @@ plAvOneShotTask::plAvOneShotTask (plAvOneShotMsg *msg, plArmatureMod *avatar, pl
 
     // we're going to use this sometime in the future, better ref it so someone else doesn't release it
     hsRefCnt_SafeRef(fCallbacks);
-    fAnimName = hsStrcpy(msg->fAnimName);
+    fAnimName = msg->fAnimName;
 }
 
 // DTOR
 plAvOneShotTask::~plAvOneShotTask()
 {
-    if(fAnimName)
-        delete[] fAnimName;
     hsRefCnt_SafeUnRef(fCallbacks);
 }
 
@@ -640,7 +624,7 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
             plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
         }
 
-        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
+        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel(_TEMP_CONVERT_FROM_LITERAL("Handle")) != nil);
         if(fMoveHandle)
         {
             plMatrixDifferenceApp *differ = avatar->GetRootAnimator();
@@ -654,9 +638,8 @@ hsBool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, dou
     }
     else
     {
-        char buf[256];
-        sprintf(buf, "Oneshot: Can't find animation <%s>; all bets are off.", fAnimName);
-        hsAssert(false, buf);
+        plString buf = plString::Format("Oneshot: Can't find animation <%s>; all bets are off.", fAnimName.c_str());
+        hsAssert(false, buf.c_str());
         result = true;
     }
     return result;
@@ -750,10 +733,9 @@ void plAvOneShotTask::LeaveAge(plArmatureMod *avatar)
     fIgnore = true;
 }
 
-void plAvOneShotTask::SetAnimName(char *name)
+void plAvOneShotTask::SetAnimName(const plString &name)
 {
-    delete [] fAnimName;
-    fAnimName = hsStrcpy(name);
+    fAnimName = name;
 }
 
 //////////////////////
@@ -763,7 +745,6 @@ void plAvOneShotTask::SetAnimName(char *name)
 //////////////////////
 
 plAvOneShotLinkTask::plAvOneShotLinkTask() : plAvOneShotTask(), 
-fMarkerName(nil), 
 fMarkerTime(-1),
 fStartTime(0),
 fLinkFired(false)
@@ -773,7 +754,6 @@ fLinkFired(false)
 
 plAvOneShotLinkTask::~plAvOneShotLinkTask()
 {
-    delete [] fMarkerName;
 }
 
 // task protocol
@@ -782,7 +762,7 @@ hsBool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain,
     hsBool result = plAvOneShotTask::Start(avatar, brain, time, elapsed);
     fStartTime = time;
 
-    if (fAnimInstance && fMarkerName)
+    if (fAnimInstance && !fMarkerName.IsNull())
     {
         const plATCAnim *anim = plATCAnim::ConvertNoRef(fAnimInstance->GetAnimation());
         if (anim)
@@ -824,14 +804,13 @@ void plAvOneShotLinkTask::Write(hsStream *stream, hsResMgr *mgr)
 void plAvOneShotLinkTask::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvOneShotTask::Read(stream, mgr);
-    fAnimName = stream->ReadSafeString();
-    fMarkerName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
+    fMarkerName = stream->ReadSafeString_TEMP();
 }
 
-void plAvOneShotLinkTask::SetMarkerName(char *name)
+void plAvOneShotLinkTask::SetMarkerName(const plString &name)
 {
-    delete [] fMarkerName;
-    fMarkerName = hsStrcpy(name);
+    fMarkerName = name;
 }
 
 

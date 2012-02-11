@@ -448,12 +448,12 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pCall2->AddReceiver(axisKey);
 
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
-        const char *tempAnimName = pAnim->GetAnimName();
-        if (tempAnimName == nil)
+        plString tempAnimName = pAnim->GetAnimName();
+        if (tempAnimName.IsNull())
         {
             //pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
             pMsg->SetAnimName(pAnim->GetModKey(node)->GetName());
-            pAxis->SetAnimLabel(ENTIRE_ANIMATION_NAME);
+            pAxis->SetAnimLabel(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
         }
         else
         {
