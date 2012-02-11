@@ -395,7 +395,7 @@ void plPXPhysicalControllerCore::IMatchKinematicToController()
         kinPos.z = (NxReal)cPos.z;
         if (plSimulationMgr::fExtraProfile)
             SimLog("Match setting kinematic from %f,%f,%f to %f,%f,%f",prevKinPos.x,prevKinPos.y,prevKinPos.z,kinPos.x,kinPos.y,kinPos.z );
-        if (fBehavingLikeAnimatedPhys && fKinematic) // if NX_BF_KINEMATIC && (avatar is on a ladder or something)
+        if (fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             fKinematicActor->moveGlobalPosition(kinPos);
         else
             fKinematicActor->setGlobalPosition(kinPos);
@@ -409,7 +409,7 @@ void plPXPhysicalControllerCore::UpdateControllerAndPhysicalRep()
         {//this means we are moving the controller and then synchnig the kin
             NxExtendedVec3 ControllerPos= fController->getPosition();
             NxVec3 NewKinPos((NxReal)ControllerPos.x, (NxReal)ControllerPos.y, (NxReal)ControllerPos.z);
-            if (fEnabled || fKinematic)
+            if (fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic to %f,%f,%f",NewKinPos.x, NewKinPos.y, NewKinPos.z );
@@ -449,7 +449,7 @@ void plPXPhysicalControllerCore::MoveKinematicToController(hsPoint3& pos)
             newPos.x = (NxReal)pos.fX;
             newPos.y = (NxReal)pos.fY;
             newPos.z = (NxReal)pos.fZ+kPhysZOffset;
-            if (fBehavingLikeAnimatedPhys)
+            if (fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
             {
                 if (plSimulationMgr::fExtraProfile)
                     SimLog("Moving kinematic from %f,%f,%f to %f,%f,%f",pos.fX,pos.fY,pos.fZ+kPhysZOffset,kinPos.x,kinPos.y,kinPos.z );
@@ -491,7 +491,7 @@ void plPXPhysicalControllerCore::ISetKinematicLoc(const hsMatrix44& l2w)
     // add z offset
     kPos.fZ += kPhysZOffset;
     // Update the physical position of kinematic
-    if (fBehavingLikeAnimatedPhys)
+    if (fKinematicActor->readBodyFlag(NX_BF_KINEMATIC))
         fKinematicActor->moveGlobalPosition(plPXConvert::Point(kPos));
     else
         fKinematicActor->setGlobalPosition(plPXConvert::Point(kPos));

@@ -230,7 +230,7 @@ public:
     {
         plKeyImp* imp = (plKey)key;
 
-        fStream.WriteString_TEMP(imp->GetName());
+        fStream.WriteString(imp->GetName());
         fStream.WriteString(",");
 
         fStream.WriteString(plFactory::GetNameOfClass(imp->GetUoid().GetClassType()));
