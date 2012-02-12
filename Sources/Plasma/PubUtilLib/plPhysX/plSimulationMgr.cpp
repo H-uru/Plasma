@@ -595,10 +595,12 @@ void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
         plCollideMsg* pMsg = *it;
 
         // Should only ever be one receiver.
-        // If there's more than one, you suck.
+        // Oh, it seems we should update the hit status. The latest might be different than the older...
+        // Even in the same frame >.<
         if (pMsg->fOtherKey == hitter && pMsg->GetReceiver(0) == hitee)
         {
-            DetectorLogRed("DUPE: %s hit %s",
+            pMsg->fEntering = enter;
+            DetectorLogRed("DUPLICATE COLLISION: %s hit %s",
                 (hitter ? hitter->GetName().c_str() : "(nil)"),
                 (hitee ? hitee->GetName().c_str() : "(nil)"));
             return;
