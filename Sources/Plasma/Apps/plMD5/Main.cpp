@@ -45,9 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#include "Pch.h"
-#pragma hdrstop
+#include "pnUtils/pnUtils.h"
+#include "pnProduct/pnProduct.h"
+#include "plEncryption/plChecksum.h"
 
+#include <stdio.h>
 
 /*****************************************************************************
 *
@@ -56,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //============================================================================
-int __cdecl main (int argc, char ** argv) {
+int CDECL main (int argc, char ** argv) {
 
     if (argc < 2) {
         fprintf(stderr, "ERROR: Please specify filename.\n");
