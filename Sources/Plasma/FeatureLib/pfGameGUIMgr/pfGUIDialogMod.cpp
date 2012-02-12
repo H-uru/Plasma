@@ -498,7 +498,7 @@ static bool     showBounds = false;
 if( showBounds )
 {
     const hsBounds3 &bnds = fMousedCtrl->GetBounds();
-    plDebugText::Instance().DrawString( (uint16_t)(bnds.GetMins().fX), (uint16_t)(bnds.GetMins().fY), fMousedCtrl->GetKeyName(), (uint32_t)0xffffff00 );
+    plDebugText::Instance().DrawString( (uint16_t)(bnds.GetMins().fX), (uint16_t)(bnds.GetMins().fY), _TEMP_CONVERT_TO_CONST_CHAR( fMousedCtrl->GetKeyName() ), (uint32_t)0xffffff00 );
 }
 #endif
 

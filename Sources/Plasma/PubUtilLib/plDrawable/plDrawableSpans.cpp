@@ -1320,7 +1320,7 @@ hsBool plDrawableSpans::MsgReceive( plMessage* msg )
     }
     else if( plRenderMsg::ConvertNoRef( msg ) )
     {
-        plProfile_BeginLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName().c_str());
     
         IUpdateMatrixPaletteBoundsHack();
 
@@ -1331,7 +1331,7 @@ hsBool plDrawableSpans::MsgReceive( plMessage* msg )
         // The pipeline will then clear out those bits as it blends them, and then we simply
         // re-set them here, since plRenderMsg is sent once before all the rendering is done :)
         fFakeBlendingSpanVector = fBlendingSpanVector;
-        plProfile_EndLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName().c_str());
     
         return true;
     }

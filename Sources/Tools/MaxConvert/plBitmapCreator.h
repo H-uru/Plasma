@@ -100,7 +100,7 @@ class plBitmapCreator
         static plBitmapCreator  &Instance();
 
         plBitmap    *CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
-        plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const char *keyName, const plLocation &keyLocation );
+        plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const plString &keyName, const plLocation &keyLocation );
 
         void    Init( hsBool save, plErrorMsg *msg );
         void    DeInit( void );

@@ -314,8 +314,7 @@ hsBool plResManager::ReadObject(plKeyImp* key)
     // it will just inc/dec the open/close count during its read, and not actually 
     // close the stream, so we don't lose our place, lose our file handle, and thrash.
 
-    char locstr[64];
-    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze(locstr)));
+    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze().c_str()));
     plRegistryPageNode *pageNode = FindPage(key->GetUoid().GetLocation());
     if (!pageNode)
     {
@@ -371,7 +370,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     if (pKey->GetStartPos() == uint32_t(-1) || pKey->GetDataLen() == uint32_t(-1))
         return false; // Try to recover from this by just not reading an object
 
-    kResMgrLog(3, ILog(3, "   Reading object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
+    kResMgrLog(3, ILog(3, "   Reading object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
 
     const plUoid& uoid = pKey->GetUoid();
 
@@ -441,7 +440,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         fCurCloneID = 0;
     }
 
-    kResMgrLog(4, ILog(4, "   ...Read complete for object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
+    kResMgrLog(4, ILog(4, "   ...Read complete for object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
 
     if (fLogReadTimes)
     {
@@ -450,7 +449,7 @@ hsBool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         ourTime -= childTime;
 
         plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "%s, %s, %u, %.1f",
-            pKey->GetUoid().GetObjectName(),
+            pKey->GetUoid().GetObjectName().c_str(),
             plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()),
             pKey->GetDataLen(),
             hsTimer::FullTicksToMs(ourTime));
@@ -529,15 +528,15 @@ void plResManager::IPageOutSceneNodes(hsBool forceAll)
 
 inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
 {
-    const char* objectName = uoid.GetObjectName();
+    const plString& objectName = uoid.GetObjectName();
 
     // If we're running localized, try to find a localized version first
-    if ((objectName != nil) && plLocalization::IsLocalized())
+    if ((!objectName.IsNull()) && plLocalization::IsLocalized())
     {
         char localName[256];
-        if (plLocalization::GetLocalized(objectName, localName))
+        if (plLocalization::GetLocalized(_TEMP_CONVERT_TO_CONST_CHAR(objectName), localName))
         {
-            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName);
+            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), _TEMP_CONVERT_FROM_LITERAL(localName));
             if (localKey != nil)
                 return localKey;
         }
@@ -613,7 +612,7 @@ const plLocation& plResManager::FindLocation(const char* age, const char* page) 
     return invalidLoc;
 }
 
-const void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const
+void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const
 {
     plRegistryPageNode* page = FindPage(loc);
     const plPageInfo& info = page->GetPageInfo();
@@ -723,7 +722,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
     }
     if(key->GetUoid().GetLoadMask().DontLoad())
     {
-        hsStatusMessageF("%s being skipped because of load mask", key->GetName());
+        hsStatusMessageF("%s being skipped because of load mask", key->GetName().c_str());
         hsRefCnt_SafeUnRef(msg);
         return nil;
     }
@@ -744,9 +743,9 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
 //  Creates a new key and assigns it to the given keyed object, also placing
 //  it into the registry.
 
-plKey plResManager::NewKey(const char* name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
+plKey plResManager::NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
 {
-    hsAssert(name && name[0] != '\0', "No name for new key");
+    hsAssert(!name.IsEmpty(), "No name for new key");
     plUoid newUoid(loc, object->ClassIndex(), name, m);
     return NewKey(newUoid, object);
 }
@@ -765,7 +764,7 @@ plKey plResManager::NewKey(plUoid& newUoid, hsKeyedObject* object)
     return keyPtr;
 }
 
-plKey plResManager::ReRegister(const char* nm, const plUoid& oid)
+plKey plResManager::ReRegister(const plString& nm, const plUoid& oid)
 {
     hsAssert(fInited, "Attempting to reregister a key before we're inited!");
 
@@ -920,7 +919,7 @@ plKey plResManager::ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t
     fCurCloneID = cloneID;
     fCurClonePlayerID = playerID;
 
-    plKey cloneKey = ReRegister("", objUoid);
+    plKey cloneKey = ReRegister(_TEMP_CONVERT_FROM_LITERAL(""), objUoid);
 
     fCurClonePlayerID = 0;
     fCurCloneID = 0;
@@ -1271,7 +1270,7 @@ public:
     {
         if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
         {
-            plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
+            plUoid uoid(page->GetPageInfo().GetLocation(), 0, _TEMP_CONVERT_FROM_LITERAL(""));
             fLocations.push_back(uoid.GetLocation());
         }
         return true;
@@ -1576,14 +1575,14 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (refsLeft == 0)
         return;
 
-    char tempStr[256], tempStr2[128];
+    char tempStr2[128];
     if (key->ObjectIsLoaded() == nil)
         sprintf(tempStr2, "(key only, %d refs left)", refsLeft);
     else
         sprintf(tempStr2, "- %d bytes - %d refs left", key->GetDataLen(), refsLeft);
 
     hsStatusMessageF("    %s: %s %s\n", plFactory::GetNameOfClass(key->GetUoid().GetClassType()), 
-                                                key->GetUoid().StringIze(tempStr), tempStr2);
+                                                key->GetUoid().StringIze().c_str(), tempStr2);
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////

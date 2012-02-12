@@ -58,17 +58,17 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        char            *fAnimName;
+        plString        fAnimName;
 
         hsPoint3        fDragStart;
-        float        fDragValue;
+        float           fDragValue;
         hsBool          fDragging;
 
         hsPoint3        fAnimStartPos, fAnimEndPos; // Calculated at export time for kMapToScreenRange
-        float        fDragRangeMin, fDragRangeMax;
+        float           fDragRangeMin, fDragRangeMax;
 
                         // Computed once, once an anim is loaded that we can compute this with
-        float        fAnimBegin, fAnimEnd;
+        float           fAnimBegin, fAnimEnd;
         hsBool          fAnimTimesCalced;
 
         virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
@@ -80,7 +80,6 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
     public:
 
         pfGUIKnobCtrl();
-        virtual ~pfGUIKnobCtrl();
 
         CLASSNAME_REGISTER( pfGUIKnobCtrl );
         GETINTERFACE_ANY( pfGUIKnobCtrl, pfGUIValueCtrl );
@@ -109,7 +108,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
         virtual void    SetCurrValue( float v );
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const char *name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
         void    SetScreenRange( const hsPoint3 &startPos, const hsPoint3 &endPos ) { fAnimStartPos = startPos; fAnimEndPos = endPos; }
 };
 

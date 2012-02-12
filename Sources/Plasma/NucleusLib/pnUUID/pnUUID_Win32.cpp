@@ -88,15 +88,15 @@ bool plUUID::FromString( const char * str )
     return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
 }
 
-bool plUUID::ToStdString( std::string & out ) const
+bool plUUID::ToString( plString & out ) const
 {
-    out = "";
+    out = _TEMP_CONVERT_FROM_LITERAL("");
     unsigned char * ubuf;
     RPC_STATUS s;
     s = UuidToString( (GUID *) this, &ubuf );
     bool success = ( s==RPC_S_OK );
     if ( success )
-        out = (char*)ubuf;
+        out = plString::FromIso8859_1( (char*)ubuf );
     RpcStringFree( &ubuf );
     return success;
 }

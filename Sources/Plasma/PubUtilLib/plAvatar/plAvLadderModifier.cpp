@@ -135,7 +135,8 @@ bool plAvLadderMod::IIsReadyToClimb()
 
         if (dot >= kTolerance && movingForward)
         {
-            DetectorLogSpecial("%s: Ladder starting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
+            DetectorLogSpecial("%s: Ladder starting climb (%f)",
+                               GetKeyName().c_str(), hsRadiansToDegrees(acos(dot)));
             return true;
         }
         else if (movingForward)
@@ -179,7 +180,7 @@ hsBool plAvLadderMod::MsgReceive(plMessage* msg)
         // we can check every frame
         if (fAvatarInBox)
         {
-            DetectorLogSpecial("%s: Avatar entered ladder region", GetKeyName());
+            DetectorLogSpecial("%s: Avatar entered ladder region", GetKeyName().c_str());
 
             if (IIsReadyToClimb())
                 ITriggerSelf(collMsg->fOtherKey);
@@ -188,7 +189,7 @@ hsBool plAvLadderMod::MsgReceive(plMessage* msg)
         }
         else
         {
-            DetectorLogSpecial("%s: Avatar exited ladder region", GetKeyName());
+            DetectorLogSpecial("%s: Avatar exited ladder region", GetKeyName().c_str());
 
             plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
         }
@@ -215,7 +216,7 @@ hsBool plAvLadderMod::MsgReceive(plMessage* msg)
         }
         else if (notifyMsg->fID == kNotifyAvatarOnLadder)
         {
-            DetectorLogSpecial("%s: Avatar mounted ladder", GetKeyName());
+            DetectorLogSpecial("%s: Avatar mounted ladder", GetKeyName().c_str());
             fAvatarMounting = false;
         }
 

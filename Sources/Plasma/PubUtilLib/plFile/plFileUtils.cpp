@@ -520,7 +520,7 @@ bool plFileUtils::GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key,
     std::wstring sFilename = filename;
 
     // grab parent directory
-    unsigned loc = sFilename.rfind(L"\\");
+    size_t loc = sFilename.rfind(L"\\");
     if (loc == std::wstring::npos)
         loc = sFilename.rfind(L"/");
 

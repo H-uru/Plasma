@@ -408,8 +408,7 @@ plVoiceSound::plVoiceSound()
     fEAXSettings.SetRoomParams(-1200, -100, 0, 0);
     fLastUpdate = 0;
 
-    char keyName[32];
-    snprintf(keyName, arrsize(keyName), "VoiceSound_%d", fCount);
+    plString keyName = plString::Format("VoiceSound_%d", fCount);
     fCount++;
     hsgResMgr::ResMgr()->NewKey(keyName, this, plLocation::kGlobalFixedLoc);
 }

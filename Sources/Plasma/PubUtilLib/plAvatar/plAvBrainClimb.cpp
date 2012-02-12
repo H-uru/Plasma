@@ -714,7 +714,7 @@ void plAvBrainClimb::ICalcProbeLengths()
     hsAssert(up, "Couldn't find ClimbUp animation.");
     if(up)
     {
-        GetStartToEndTransform(up, &upMove, nil, "Handle");
+        GetStartToEndTransform(up, &upMove, nil, _TEMP_CONVERT_FROM_LITERAL("Handle"));
         fVerticalProbeLength = upMove.GetTranslate().fZ;
     } else
         fVerticalProbeLength = 4.0f;    // guess
@@ -722,7 +722,7 @@ void plAvBrainClimb::ICalcProbeLengths()
     hsAssert(left, "Couldn't find ClimbLeft animation.");
     if(left)
     {
-        GetStartToEndTransform(left, &leftMove, nil, "Handle");
+        GetStartToEndTransform(left, &leftMove, nil, _TEMP_CONVERT_FROM_LITERAL("Handle"));
         fHorizontalProbeLength = leftMove.GetTranslate().fX;
     } else
         fHorizontalProbeLength = 3.0f;  // guess

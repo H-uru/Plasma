@@ -65,12 +65,12 @@ hsBool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
     return hsgResMgr::SendRef(key, refMsg, flags);
 }
 
-const char* hsKeyedObject::GetKeyName() const
+plString hsKeyedObject::GetKeyName() const
 {
     if (fpKey)
         return fpKey->GetName();
     else
-        return "(unknown)";
+        return _TEMP_CONVERT_FROM_LITERAL("(unknown)");
 }
 
 hsKeyedObject::~hsKeyedObject()
@@ -123,7 +123,7 @@ void hsKeyedObject::UnRegisterAs(plFixedKeyId fixedKey)
     UnRegisterAsManual(uoid);
 }
 
-plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const char* p)
+plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const plString& p)
 {
     hsAssert(meUoid.GetClassType() == ClassIndex(),"Registering as wrong type!");
     // Really should be a NewKey() call just for fixed keys, so change this once player rooms behave
@@ -143,12 +143,9 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
         if (!(inUoid == myUoid))
         {
 #if !HS_BUILD_FOR_UNIX      // disable for unix servers
-            char inStr[255], myStr[255];
-            inUoid.StringIze(inStr);
-            myUoid.StringIze(myStr);
             hsAssert(false,
-                xtl::format("Request to Unregister wrong FixedKey, keyName=%s, inUoid=%s, myUoid=%s",
-                fpKey->GetName() ? fpKey->GetName() : "?", inStr, myStr).c_str());
+                plString::Format("Request to Unregister wrong FixedKey, keyName=%s, inUoid=%s, myUoid=%s",
+                    fpKey->GetName().s_str("?"), inUoid.StringIze().c_str(), myUoid.StringIze().c_str()).c_str());
 #endif
         }
         ((plKeyImp*)fpKey)->UnRegister();

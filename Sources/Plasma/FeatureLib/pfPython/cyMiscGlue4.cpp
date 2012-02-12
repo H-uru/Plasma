@@ -141,23 +141,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    std::string name = "";
+    plString name;
     if (PyUnicode_Check(nameObj))
     {
-        int strLen = PyUnicode_GetSize(nameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        name = cText;
-        delete [] cText;
-        delete [] text;
+        PyObject* utf8 = PyUnicode_AsUTF8String(nameObj);
+        name = plString::FromUtf8(PyString_AsString(utf8));
+        Py_DECREF(utf8);
     }
     else if (PyString_Check(nameObj))
     {
         // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(nameObj);
-        name = text;
+        name = plString::FromUtf8(PyString_AsString(nameObj));
     }
     else
     {
@@ -184,23 +178,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,sta
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    std::string name = "";
+    plString name;
     if (PyUnicode_Check(nameObj))
     {
-        int strLen = PyUnicode_GetSize(nameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        name = cText;
-        delete [] cText;
-        delete [] text;
+        PyObject* utf8 = PyUnicode_AsUTF8String(nameObj);
+        name = plString::FromUtf8(PyString_AsString(utf8));
+        Py_DECREF(utf8);
     }
     else if (PyString_Check(nameObj))
     {
         // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(nameObj);
-        name = text;
+        name = plString::FromUtf8(PyString_AsString(nameObj));
     }
     else
     {
@@ -363,7 +351,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtRebuildCameraStack, args, "Params: name,ageNam
         PyErr_SetString(PyExc_TypeError, "PtRebuildCameraStack expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::RebuildCameraStack(name, ageName);
+    cyMisc::RebuildCameraStack(plString::FromUtf8(name), ageName);
     PYTHON_RETURN_NONE;
 }
 

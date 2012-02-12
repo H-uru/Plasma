@@ -63,12 +63,12 @@ struct plKeySeed
     plFixedKeyId  feFixedKey;
     // NOTE: The following fields are broken out to make adding to the fixed key list easier.
     // However, what they really are, are just the fields of plUoid (including plLocation)
-    uint16_t      fType;
-    const char  *fObj;
+    uint16_t    fType;
+    plString    fObj;
    
     hsBool Match( plKeySeed *p ) 
     {  
-        if( ( fType == p->fType ) && stricmp( p->fObj, fObj ) == 0 )
+        if( ( fType == p->fType ) && p->fObj.Compare( fObj, plString::kCaseInsensitive ) == 0 )
         {
             return true;
         }
@@ -82,48 +82,50 @@ struct plKeySeed
     // 2) Be sure your ClassIndex CLASS_INDEX(plSceneObject) matches the type of object you want to have the fixedKey
     // 3) Make sure the Obj is unique for this location/Type Combo... (validated at runtime)
 
+#define _TCFL _TEMP_CONVERT_FROM_LITERAL
 plKeySeed SeedList[] = {
         //  Key Enum                    Type                                            Obj
 
-    { kFirst_Fixed_KEY,                 CLASS_INDEX_SCOPED( plSceneObject ),            "kFirst_Fixed_KEY" },
+    { kFirst_Fixed_KEY,                 CLASS_INDEX_SCOPED( plSceneObject ),            _TCFL("kFirst_Fixed_KEY")              },
 
-    { kLOSObject_KEY,                   CLASS_INDEX_SCOPED( plLOSDispatch ),            "kLOSObject_KEY",               },
-    { kTimerCallbackManager_KEY,        CLASS_INDEX_SCOPED( plTimerCallbackManager ),   "kTimerCallbackManager_KEY",    },
-    { kConsoleObject_KEY,               CLASS_INDEX_SCOPED( pfConsole ),                "kConsoleObject_KEY",           },
-    { kAudioSystem_KEY,                 CLASS_INDEX_SCOPED( plAudioSystem ),            "kAudioSystem_KEY",             },
-    { kInput_KEY,                       CLASS_INDEX_SCOPED( plInputManager ),           "kInput_KEY",                   },
-    { kClient_KEY,                      CLASS_INDEX_SCOPED( plClient ),                 "kClient_KEY",                  },
-    { kNetClientMgr_KEY,                CLASS_INDEX_SCOPED( plNetClientMgr ),           "kNetClientMgr_KEY",            },
-    { kListenerMod_KEY,                 CLASS_INDEX_SCOPED( plListener ),               "kListenerMod_KEY",             },
-    { kTransitionMgr_KEY,               CLASS_INDEX_SCOPED( plTransitionMgr ),          "kTransitionMgr_KEY",           },
-    { kLinkEffectsMgr_KEY,              CLASS_INDEX_SCOPED( plLinkEffectsMgr ),         "kLinkEffectsMgr_KEY",          },
-    { kGameGUIMgr_KEY,                  CLASS_INDEX_SCOPED( pfGameGUIMgr ),             "kGameGUIMgr_KEY",              },
-    { kGameGUIDynamicDlg_KEY,           CLASS_INDEX_SCOPED( plSceneNode ),              "kGameGUIDynamicDlg_KEY",       },
-    { kVirtualCamera1_KEY,              CLASS_INDEX_SCOPED( plVirtualCam1 ),            "kVirtualCamera_KEY",           },
-    { kDefaultCameraMod1_KEY,           CLASS_INDEX_SCOPED( plCameraModifier1 ),        "kDefaultCameraMod1_KEY",       },
-    { kKIGUIGlue_KEY,                   CLASS_INDEX_SCOPED( pfKI ),                     "kKIGUIGlue_KEY",               },
-    { kClothingMgr_KEY,                 CLASS_INDEX_SCOPED( plClothingMgr ),            "kClothingMgr_KEY",             },
-    { kInputInterfaceMgr_KEY,           CLASS_INDEX_SCOPED( plInputInterfaceMgr ),      "kInputInterfaceMgr_KEY",       },
-    { kAVIWriter_KEY,                   CLASS_INDEX_SCOPED( plAVIWriter ),              "kAVIWriter_KEY",               },
-    { kResManagerHelper_KEY,            CLASS_INDEX_SCOPED( plResManagerHelper ),       "kResManagerHelper_KEY",        },
-    { kAvatarMgr_KEY,                   CLASS_INDEX_SCOPED( plAvatarMgr ),              "kAvatarMgr_KEY",               },
-    { kSimulationMgr_KEY,               CLASS_INDEX_SCOPED( plSimulationMgr ),          "kSimulationMgr_KEY",           },
-    { kTransitionCamera_KEY,            CLASS_INDEX_SCOPED( plCameraModifier1 ),        "kTransitionCamera_KEY",        },
-    { kCCRMgr_KEY,                      CLASS_INDEX_SCOPED( plCCRMgr ),                 "kCCRMgr_KEY",                  },
-    { kNetClientCloneRoom_KEY,          CLASS_INDEX_SCOPED( plSceneNode ),              "kNetClientCloneRoom_KEY",      },
-    { kMarkerMgr_KEY,                   CLASS_INDEX_SCOPED( pfMarkerMgr ),              "kMarkerMgr_KEY",               },
-    { kAutoProfile_KEY,                 CLASS_INDEX_SCOPED( plAutoProfile ),            "kAutoProfile_KEY",             },
-    { kGlobalVisMgr_KEY,                CLASS_INDEX_SCOPED( plVisMgr ),                 "kGlobalVisMgr_KEY",            },
-    { kFontCache_KEY,                   CLASS_INDEX_SCOPED( plFontCache ),              "kFontCache_KEY",               },
-    { kRelevanceMgr_KEY,                CLASS_INDEX_SCOPED( plRelevanceMgr ),           "kRelevanceMgr_KEY",            },
-    { kJournalBookMgr_KEY,              CLASS_INDEX_SCOPED( pfJournalBook ),            "kJournalBookMgr_KEY"           },
-    { kAgeLoader_KEY,                   CLASS_INDEX_SCOPED( plAgeLoader),               "kAgeLoader_KEY"                },
-    { kBuiltIn3rdPersonCamera_KEY,      CLASS_INDEX_SCOPED( plCameraModifier1 ),        "kBuiltIn3rdPersonCamera_KEY",  },
-    { kSecurePreloader_KEY,             CLASS_INDEX_SCOPED( pfSecurePreloader ),        "kSecurePreloader_KEY",         },
+    { kLOSObject_KEY,                   CLASS_INDEX_SCOPED( plLOSDispatch ),            _TCFL("kLOSObject_KEY"),               },
+    { kTimerCallbackManager_KEY,        CLASS_INDEX_SCOPED( plTimerCallbackManager ),   _TCFL("kTimerCallbackManager_KEY"),    },
+    { kConsoleObject_KEY,               CLASS_INDEX_SCOPED( pfConsole ),                _TCFL("kConsoleObject_KEY"),           },
+    { kAudioSystem_KEY,                 CLASS_INDEX_SCOPED( plAudioSystem ),            _TCFL("kAudioSystem_KEY"),             },
+    { kInput_KEY,                       CLASS_INDEX_SCOPED( plInputManager ),           _TCFL("kInput_KEY"),                   },
+    { kClient_KEY,                      CLASS_INDEX_SCOPED( plClient ),                 _TCFL("kClient_KEY"),                  },
+    { kNetClientMgr_KEY,                CLASS_INDEX_SCOPED( plNetClientMgr ),           _TCFL("kNetClientMgr_KEY"),            },
+    { kListenerMod_KEY,                 CLASS_INDEX_SCOPED( plListener ),               _TCFL("kListenerMod_KEY"),             },
+    { kTransitionMgr_KEY,               CLASS_INDEX_SCOPED( plTransitionMgr ),          _TCFL("kTransitionMgr_KEY"),           },
+    { kLinkEffectsMgr_KEY,              CLASS_INDEX_SCOPED( plLinkEffectsMgr ),         _TCFL("kLinkEffectsMgr_KEY"),          },
+    { kGameGUIMgr_KEY,                  CLASS_INDEX_SCOPED( pfGameGUIMgr ),             _TCFL("kGameGUIMgr_KEY"),              },
+    { kGameGUIDynamicDlg_KEY,           CLASS_INDEX_SCOPED( plSceneNode ),              _TCFL("kGameGUIDynamicDlg_KEY"),       },
+    { kVirtualCamera1_KEY,              CLASS_INDEX_SCOPED( plVirtualCam1 ),            _TCFL("kVirtualCamera_KEY"),           },
+    { kDefaultCameraMod1_KEY,           CLASS_INDEX_SCOPED( plCameraModifier1 ),        _TCFL("kDefaultCameraMod1_KEY"),       },
+    { kKIGUIGlue_KEY,                   CLASS_INDEX_SCOPED( pfKI ),                     _TCFL("kKIGUIGlue_KEY"),               },
+    { kClothingMgr_KEY,                 CLASS_INDEX_SCOPED( plClothingMgr ),            _TCFL("kClothingMgr_KEY"),             },
+    { kInputInterfaceMgr_KEY,           CLASS_INDEX_SCOPED( plInputInterfaceMgr ),      _TCFL("kInputInterfaceMgr_KEY"),       },
+    { kAVIWriter_KEY,                   CLASS_INDEX_SCOPED( plAVIWriter ),              _TCFL("kAVIWriter_KEY"),               },
+    { kResManagerHelper_KEY,            CLASS_INDEX_SCOPED( plResManagerHelper ),       _TCFL("kResManagerHelper_KEY"),        },
+    { kAvatarMgr_KEY,                   CLASS_INDEX_SCOPED( plAvatarMgr ),              _TCFL("kAvatarMgr_KEY"),               },
+    { kSimulationMgr_KEY,               CLASS_INDEX_SCOPED( plSimulationMgr ),          _TCFL("kSimulationMgr_KEY"),           },
+    { kTransitionCamera_KEY,            CLASS_INDEX_SCOPED( plCameraModifier1 ),        _TCFL("kTransitionCamera_KEY"),        },
+    { kCCRMgr_KEY,                      CLASS_INDEX_SCOPED( plCCRMgr ),                 _TCFL("kCCRMgr_KEY"),                  },
+    { kNetClientCloneRoom_KEY,          CLASS_INDEX_SCOPED( plSceneNode ),              _TCFL("kNetClientCloneRoom_KEY"),      },
+    { kMarkerMgr_KEY,                   CLASS_INDEX_SCOPED( pfMarkerMgr ),              _TCFL("kMarkerMgr_KEY"),               },
+    { kAutoProfile_KEY,                 CLASS_INDEX_SCOPED( plAutoProfile ),            _TCFL("kAutoProfile_KEY"),             },
+    { kGlobalVisMgr_KEY,                CLASS_INDEX_SCOPED( plVisMgr ),                 _TCFL("kGlobalVisMgr_KEY"),            },
+    { kFontCache_KEY,                   CLASS_INDEX_SCOPED( plFontCache ),              _TCFL("kFontCache_KEY"),               },
+    { kRelevanceMgr_KEY,                CLASS_INDEX_SCOPED( plRelevanceMgr ),           _TCFL("kRelevanceMgr_KEY"),            },
+    { kJournalBookMgr_KEY,              CLASS_INDEX_SCOPED( pfJournalBook ),            _TCFL("kJournalBookMgr_KEY")           },
+    { kAgeLoader_KEY,                   CLASS_INDEX_SCOPED( plAgeLoader),               _TCFL("kAgeLoader_KEY")                },
+    { kBuiltIn3rdPersonCamera_KEY,      CLASS_INDEX_SCOPED( plCameraModifier1 ),        _TCFL("kBuiltIn3rdPersonCamera_KEY"),  },
+    { kSecurePreloader_KEY,             CLASS_INDEX_SCOPED( pfSecurePreloader ),        _TCFL("kSecurePreloader_KEY"),         },
     
 
-    { kLast_Fixed_KEY,                  CLASS_INDEX_SCOPED( plSceneObject ),            "kLast_Fixed_KEY",              }
+    { kLast_Fixed_KEY,                  CLASS_INDEX_SCOPED( plSceneObject ),            _TCFL("kLast_Fixed_KEY"),              }
 };
+#undef _TCFL
 
 
 //// plFixedKeyValidator /////////////////////////////////////////////////////
@@ -166,14 +168,13 @@ plUoid::plUoid(plFixedKeyId fixedkey)
 {
     hsAssert(fixedkey < kLast_Fixed_KEY, "Request for Fixed key is out of Range");
 
-    fObjectName = nil;
     Invalidate();
 
     plKeySeed* p= &SeedList[fixedkey];
 
     fLocation = plLocation::kGlobalFixedLoc;
     fClassType = p->fType;
-    fObjectName = hsStrcpy(p->fObj);
+    fObjectName = p->fObj;
     fObjectID = 0;
     fCloneID = 0;
     fClonePlayerID = 0;

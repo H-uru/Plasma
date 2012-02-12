@@ -160,9 +160,8 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
     // We need it to be resident to read in
     if( retVal == plSoundBuffer::kError) 
     {
-        char str[ 256 ];
-        sprintf( str, "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-        IPrintDbgMessage( str, true );
+        plString str = plString::Format("Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName().c_str() : "nil");
+        IPrintDbgMessage( str.c_str(), true );
         fFailed = true;
         return false;
     }
@@ -229,9 +228,8 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
     IFillCurrentSound( 0 );
 
     // Logging
-    char str[ 256 ];
-    sprintf( str, "   Grouped %s %s allocated (%d msec).", buffer->GetFileName() != nil ? "file" : "buffer", 
-                                            buffer->GetFileName() != nil ? buffer->GetFileName() : buffer->GetKey()->GetUoid().GetObjectName(),
+    plString str = plString::Format("   Grouped %s %s allocated (%d msec).", buffer->GetFileName() != nil ? "file" : "buffer",
+                                            buffer->GetFileName() != nil ? buffer->GetFileName() : buffer->GetKey()->GetUoid().GetObjectName().c_str(),
                                             //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
                                             //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
 #ifdef PL_PROFILE_ENABLED
@@ -239,11 +237,11 @@ hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
 #else
                                             0 );
 #endif
-    IPrintDbgMessage( str );
-    if( GetKey() != nil && GetKeyName() != nil && strstr( GetKeyName(), "Footstep" ) != nil )
+    IPrintDbgMessage( str.c_str() );
+    if( GetKey() != nil && GetKeyName().Find( "Footstep" ) >= 0 )
         ;
     else
-        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str, GetKey() ? GetKeyName() : "unkeyed" );
+        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str.c_str(), GetKey() ? GetKeyName().c_str() : "unkeyed" );
 
     fTotalBytes = bufferSize;
 

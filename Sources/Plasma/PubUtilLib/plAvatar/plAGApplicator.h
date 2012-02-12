@@ -62,6 +62,7 @@ class plAGModifier;
 /////////////////////////////////////////////////////////////////////////////////////////
 #include "pnFactory/plCreatable.h"
 #include "plAvDefs.h"
+#include "plString.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -88,7 +89,7 @@ public:
     // -- methods --
     /** Base constructor. */
     plAGApplicator();
-    plAGApplicator(const char *channelName);
+    plAGApplicator(const plString &channelName);
     virtual ~plAGApplicator();
 
     /** Return our single input channel. Applicators only ever
@@ -100,8 +101,12 @@ public:
     /** Set our input channel. Does not free the previous input channel. */
     void SetChannel(plAGChannel *channel) { fChannel = channel; }
 
-    void SetChannelName(const char *name);
-    const char * GetChannelName();
+    void SetChannelName(const plString &name);
+    plString GetChannelName();
+
+    // TEMP plString REVISIT
+    // Because I'm TOO LAZY to keep converting all these calls to SetChannelName
+    void SetChannelName(const char *name) { SetChannelName(_TEMP_CONVERT_FROM_LITERAL(name)); }
 
     /** Optionally suppress the action of this applicator.
         The applicator can still be forced to apply using the force
@@ -167,7 +172,7 @@ protected:
     // -- members --
     plAGChannel *fChannel;
     hsBool fEnabled;
-    char *fChannelName;
+    plString fChannelName;
 };
 
 #endif

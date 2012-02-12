@@ -68,8 +68,7 @@ plLayerAnimationBase::plLayerAnimationBase()
     fOpacityCtl(nil), 
     fTransformCtl(nil),
     fEvalTime(-1.0),
-    fCurrentTime(-1.f),
-    fSegmentID(nil)
+    fCurrentTime(-1.f)
 {
 }
 
@@ -81,7 +80,6 @@ plLayerAnimationBase::~plLayerAnimationBase()
     delete fSpecularColorCtl;
     delete fOpacityCtl;
     delete fTransformCtl;
-    delete [] fSegmentID;
 }
 
 void plLayerAnimationBase::Read(hsStream* s, hsResMgr* mgr)

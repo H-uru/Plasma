@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plKeyDef.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
+#include "plString.h"
 class plMessage;
 struct plMouseInfo;
 class plPipeline;
@@ -188,6 +189,7 @@ public:
     static bool GetInverted() { return plMouseDevice::bInverted; }
     static void SetInverted(bool inverted) { plMouseDevice::bInverted = inverted; }
     static void AddNameToCursor(const char* name);
+    static void AddNameToCursor(const plString& name) { AddNameToCursor(_TEMP_CONVERT_TO_CONST_CHAR(name)); }
     static void AddIDNumToCursor(uint32_t idNum);
     static void AddCCRToCursor();
     

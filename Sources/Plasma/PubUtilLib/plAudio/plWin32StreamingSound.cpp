@@ -208,13 +208,13 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( hsBool play
 
         sprintf( str, "   Readied file %s for streaming", fSrcFilename );
         IPrintDbgMessage( str );
-        
+
         // dont free sound data until we have a chance to use it in load sound
 
         return fDataStream ? plSoundBuffer::kSuccess : plSoundBuffer::kError;
     }
-        
-    plStatusLog::AddLineS("audio.log", "EnsureLoadable failed for streaming sound %d", fDataBufferKey->GetName());
+
+    plStatusLog::AddLineS("audio.log", "EnsureLoadable failed for streaming sound %d", fDataBufferKey->GetName().c_str());
     return plSoundBuffer::kError;
 }
 
@@ -263,9 +263,9 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
 
     if( retVal == plSoundBuffer::kError )
     {
-        char str[ 256 ];
-        sprintf( str, "Unable to open streaming source %s", fDataBufferKey->GetName() );
-        IPrintDbgMessage( str, true );
+        plString str = plString::Format( "Unable to open streaming source %s",
+                                         fDataBufferKey->GetName().c_str() );
+        IPrintDbgMessage( str.c_str(), true );
         fFailed = true;
         return false;
     }
@@ -349,7 +349,7 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
         delete fDSoundBuffer;
         fDSoundBuffer = nil;
 
-        plStatusLog::AddLineS("audio.log", "Could not play streaming sound, no voices left %s", GetKeyName());
+        plStatusLog::AddLineS("audio.log", "Could not play streaming sound, no voices left %s", GetKeyName().c_str());
         return false;
     }
     FreeSoundData();
@@ -361,7 +361,8 @@ hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
     sprintf( str, "   Streaming %s.", fSrcFilename);
     IPrintDbgMessage( str );
 
-    plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s", fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName() );
+    plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",
+                           fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName().c_str() );
 
     // Get pertinent info
     SetLength( (float)fDataStream->GetLengthInSecs() );
@@ -401,10 +402,10 @@ void plWin32StreamingSound::IStreamUpdate()
             }
             return;
         }
-        
+
         if(!fDSoundBuffer->StreamingFillBuffer(fDataStream))
         {
-            plStatusLog::AddLineS("audio.log", "%s Streaming buffer fill failed", GetKeyName());
+            plStatusLog::AddLineS("audio.log", "%s Streaming buffer fill failed", GetKeyName().c_str());
         }
     }
     plProfile_EndTiming( StreamSndShoveTime );

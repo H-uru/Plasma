@@ -167,7 +167,7 @@ hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             if (--fc->fNumCallbacks == 0)
             {
                 hsStatusMessageF("plEventCallbackMsg received, erasing, sender=%s, remoteMsg=%d\n",
-                    msg->GetSender() ? msg->GetSender()->GetName() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+                    msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
 
                 fCallbacks.erase(eventMsg);
 
@@ -190,7 +190,7 @@ hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
         else
         {
             hsStatusMessageF("! Unknown plEventCallbackMsg received, sender=%s, remoteMsg=%d\n",
-                msg->GetSender() ? msg->GetSender()->GetName() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+                msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
             hsAssert(0, "Unknown plEventCallbackMsg received");
         }
         return true;

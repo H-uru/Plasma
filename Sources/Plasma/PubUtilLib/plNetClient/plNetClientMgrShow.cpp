@@ -74,7 +74,7 @@ void plNetClientMgr::IShowLists()
     sprintf(str, "%s%s PlyrName=%s PlyrID=%d AcctID=%d P2P=%d Join#=%d Peers=%d %.1f,%.1f,%.1f",
         GetFlagsBit(kSendingVoice) ? "V" : " ",
         GetFlagsBit(kSendingActions) ? "A" : " ",
-        GetPlayerName(), GetPlayerID(), 0, 
+        GetPlayerName().c_str(), GetPlayerID(), 0,
         IsPeerToPeer(), GetJoinOrder(), 0,
         pos.fX, pos.fY, pos.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
@@ -103,7 +103,7 @@ void plNetClientMgr::IShowLists()
         sprintf(str, "%s%s %s p2p=%d dist=%.1f",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingVoice ? "V" : " ",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
-            mbr->AsStdString().c_str(),
+            mbr->AsString().c_str(),
             mbr->IsPeerToPeer(),
             mbr->GetDistSq() != FLT_MAX ? sqrt(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
@@ -121,7 +121,7 @@ void plNetClientMgr::IShowLists()
     y+=yOff;
     for(i=0;i<GetListenList()->GetNumMembers();i++)
     {
-        sprintf(str, "name=%s", GetListenList()->GetMember(i)->AsStdString().c_str());
+        sprintf(str, "name=%s", GetListenList()->GetMember(i)->AsString().c_str());
         txt.DrawString(x,y,str);
         y+=yOff;
     }
@@ -133,7 +133,7 @@ void plNetClientMgr::IShowLists()
     y+=yOff;
     for(i=0;i<GetTalkList()->GetNumMembers();i++)
     {
-        sprintf(str, "name=%s", GetTalkList()->GetMember(i)->AsStdString().c_str());
+        sprintf(str, "name=%s", GetTalkList()->GetMember(i)->AsString().c_str());
         txt.DrawString(x,y,str);
         y+=yOff;
     }
@@ -231,8 +231,8 @@ void plNetClientMgr::IShowRelevanceRegions()
     //
     uint32_t maxPlayerName = 0;
 
-    txt.DrawString(x, y, GetPlayerName());
-    maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(GetPlayerName()));
+    txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(GetPlayerName()));
+    maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(_TEMP_CONVERT_TO_CONST_CHAR(GetPlayerName())));
     y += yOff;
 
     int i;
@@ -243,9 +243,9 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (mbr->IsServer())
             continue;
 
-        const char* name = mbr->GetPlayerName();
-        txt.DrawString(x, y, name);
-        maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(name));
+        const plString& name = mbr->GetPlayerName();
+        txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(name));
+        maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(_TEMP_CONVERT_TO_CONST_CHAR(name)));
         y += yOff;
     }
 
@@ -316,9 +316,9 @@ void plNetClientMgr::IShowAvatars()
     hsPoint3 pos = (player ? player->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
     hsVector3 ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
     sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-            GetPlayerName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+            GetPlayerName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
-    
+
 
     if (player)
     {
@@ -334,7 +334,7 @@ void plNetClientMgr::IShowAvatars()
                 hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
                 hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
                 sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                        pObj->GetKeyName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                        pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
                 txt.DrawString(x,y,str,255,255,255,255);
             }
         }
@@ -344,7 +344,7 @@ void plNetClientMgr::IShowAvatars()
     // Others
     y=startY;
     x=startX;
-    
+
     plNetTransportMember** members=nil;
     fTransport.GetMemberListDistSorted(members);
     for(i=0;i<fTransport.GetNumMembers();i++)
@@ -359,10 +359,10 @@ void plNetClientMgr::IShowAvatars()
         ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
 
         sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                mbr->AsStdString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                mbr->AsString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
         txt.DrawString(x,y,str);
         y+=yOff;
-    
+
         if (player)
         {
             const plArmatureMod *avMod = plArmatureMod::ConvertNoRef(player->GetModifierByType(plArmatureMod::Index()));
@@ -372,13 +372,13 @@ void plNetClientMgr::IShowAvatars()
                 plSceneObject* pObj = pNonConstArm->GetFollowerParticleSystemSO();
                 if (pObj)
                 {
-                y+=yOff;
-                y+=yOff;
-                hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-                hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
-                sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
-                        pObj->GetKeyName(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
-                txt.DrawString(x,y,str,255,255,255,255);
+                    y+=yOff;
+                    y+=yOff;
+                    hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
+                    hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+                    sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
+                            pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
+                    txt.DrawString(x,y,str,255,255,255,255);
                 }
             }
         }
@@ -386,6 +386,6 @@ void plNetClientMgr::IShowAvatars()
     }
 
     delete [] members;
-    
+
     txt.SetFont( "Courier New", 8 );
 }

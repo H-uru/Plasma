@@ -491,11 +491,11 @@ void plResponderComponent::ISetupDefaultWait(plMaxNode* node, plErrorMsg* pErrMs
             int convertedIdx = cmdIdxs[i];
 
             ResponderWaitInfo waitInfo;
-            waitInfo.responderName = GetINode()->GetName();
+            waitInfo.responderName = plString::FromUtf8(GetINode()->GetName());
             waitInfo.receiver = responder->GetKey();
             waitInfo.callbackUser = numCallbacks++;
             waitInfo.msg = cmds[convertedIdx].fMsg;
-            waitInfo.point = nil;
+            waitInfo.point = plString::Null;
 
             IParamBlock2 *pb = (IParamBlock2*)statePB->GetReferenceTarget(kStateCmdParams, 0, i);
             plResponderCmd *cmd = plResponderCmd::Find(pb);
@@ -525,7 +525,7 @@ void plResponderComponent::IConvertCmdWaits(plMaxNode* node, plErrorMsg* pErrMsg
             int convertedIdx = cmdIdxs[wait];
 
             ResponderWaitInfo waitInfo;
-            waitInfo.responderName = GetINode()->GetName();
+            waitInfo.responderName = plString::FromUtf8(GetINode()->GetName());
             waitInfo.receiver = responder->GetKey();
             waitInfo.callbackUser = numCallbacks++;
             waitInfo.msg = cmds[convertedIdx].fMsg;

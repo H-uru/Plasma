@@ -181,7 +181,7 @@ void plNCAgeJoiner::IDispatchMsgReceiveCallback () {
 void plNCAgeJoiner::IResMgrProgressBarCallback (plKey key) {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (s_instance)
-        s_instance->progressBar->SetStatusText(key->GetName());
+        s_instance->progressBar->SetStatusText(_TEMP_CONVERT_TO_CONST_CHAR(key->GetName()));
 #endif
 }
 

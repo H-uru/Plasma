@@ -130,7 +130,7 @@ public:
     enum { kSetupProperties, kPreConvert, kConvert };
     hsBool DoComponents(int convertType, plErrorMsg *, plConvertSettings *);
 
-    plKey AddModifier(plModifier *pMod, const char* name);
+    plKey AddModifier(plModifier *pMod, const plString& name);
 
     hsBool ConvertToOccluder            (plErrorMsg* pErrMsg, hsBool twoSided, hsBool isHole);
 
@@ -179,7 +179,7 @@ public:
     plPhysicalProps *GetPhysicalProps();
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
-    plKey   FindPageKey( uint16_t classIdx, const char *name );
+    plKey   FindPageKey( uint16_t classIdx, const plString &name );
     const char *GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);

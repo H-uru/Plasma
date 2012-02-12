@@ -63,6 +63,7 @@ class hsGAnimLayer;
 class plBitmap;
 class plMipmap;
 class plErrorMsg;
+class plString;
 
 class Mtl;
 class Texmap;
@@ -138,10 +139,10 @@ public:
     static int GetCoordMapping(StdUVGen *uvgen);
     static void GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out);
 
-    static uint32_t       VertexChannelsRequestMask(plMaxNode* node, int iSubMtl, Mtl* mtl);
-    static uint32_t       VertexChannelsRequiredMask(plMaxNode* node, int iSubMtl);
+    static uint32_t     VertexChannelsRequestMask(plMaxNode* node, int iSubMtl, Mtl* mtl);
+    static uint32_t     VertexChannelsRequiredMask(plMaxNode* node, int iSubMtl);
     static int          NumVertexOpacityChannelsRequired(plMaxNode* node, int iSubMtl);
-    static uint32_t       ColorChannelsUseMask(plMaxNode* node, int iSubMtl);
+    static uint32_t     ColorChannelsUseMask(plMaxNode* node, int iSubMtl);
     static int          MaxUsedUVWSrc(plMaxNode* node, Mtl* mtl);
 
 
@@ -235,7 +236,7 @@ enum {
         hsBool              fSubMultiMat;
         hsBool              fOwnedCopy;
         hsBool              fRuntimeLit;
-        uint32_t              fSubMtlFlags;
+        uint32_t            fSubMtlFlags;
         int                 fNumUVChannels;
         hsBool              fMakeAlphaLayer;
     };
@@ -265,21 +266,21 @@ private:
     void IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial *mat, plMaxNode *node, 
                                  int layerIdx, int UVChan);
 
-    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const char *name, int subIndex, int numUVChannels, hsBool makeAlphaLayer);
-    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const char *name, int UVChan, int subMtlFlags = 0);
+    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int subIndex, int numUVChannels, hsBool makeAlphaLayer);
+    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags = 0);
 
     // ... calls one of:
-    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const char *name, int UVChan);
-    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const char *name, int UVChan, int subMtlFlags);
-    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const char *name);
-    hsBool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const char* namePrefix);
+    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan);
+    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags);
+    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const plString &name);
+    hsBool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const plString& namePrefix);
 
     hsGMaterial* IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, hsBool isMultiMat, 
                              hsBool forceCopy, hsBool runtimeLit, uint32_t subMtlFlags, int numUVChannels, hsBool makeAlphaLayer);
 
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, int bumpLayerIdx);
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat);
-    plLayer*    IMakeBumpLayer(plMaxNode* node, const char* nameBase, hsGMaterial* mat, uint32_t miscFlag);
+    plLayer*    IMakeBumpLayer(plMaxNode* node, const plString& nameBase, hsGMaterial* mat, uint32_t miscFlag);
     plMipmap*   IGetBumpLutTexture(plMaxNode* node);
 
     hsBool      IHasSubMtl(Mtl* base, Mtl* sub);
@@ -328,19 +329,19 @@ private:
     static plBitmap*        IGetFunkyRamp(plMaxNode* node, uint32_t funkyType);
     static void             IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsGMaterial* mat);
     static hsBool           IHasFunkyOpacity(plMaxNode* node, Texmap* texMap);
-    static uint32_t           IGetFunkyType(Texmap* texMap);
-    static uint32_t           IGetOpacityRanges(plMaxNode* node, Texmap* texMap, float& tr0, float& op0, float& op1, float& tr1);
+    static uint32_t         IGetFunkyType(Texmap* texMap);
+    static uint32_t         IGetOpacityRanges(plMaxNode* node, Texmap* texMap, float& tr0, float& op0, float& op1, float& tr1);
 
     Interface           *fInterface;
     hsConverterUtils&   fConverterUtils;
     hsBool              fSave;
     plErrorMsg          *fErrorMsg;
 
-    int32_t               fSubIndex;
+    int32_t             fSubIndex;
     hsBool              fChangedTimes;
 
     char                *fNodeName;
-    uint32_t              fWarned;
+    uint32_t            fWarned;
 
 
     DoneMaterialData            fLastMaterial;

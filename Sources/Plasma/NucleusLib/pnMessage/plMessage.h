@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plKey;
 class hsStream;
+class plString;
 
 // Base class for messages only has enough info to route it
 // and send it over the wire (Read/Write).
@@ -134,12 +135,12 @@ public:
     hsBool                  Send(const plKey r=nil, hsBool async=false); // Message will self-destruct after send.
     hsBool                  SendAndKeep(const plKey r=nil, hsBool async=false); // Message won't self-destruct after send.
 
-    const double GetTimeStamp() const { return fTimeStamp; }
+    double GetTimeStamp() const { return fTimeStamp; }
     plMessage& SetTimeStamp(double t) { fTimeStamp = t; return *this; }
 
     hsBool HasBCastFlag(uint32_t f) const { return 0 != (fBCastFlags & f); }
     plMessage& SetBCastFlag(uint32_t f, hsBool on=true) { if( on )fBCastFlags |= f; else fBCastFlags &= ~f; return *this; }
-    
+
     void SetAllBCastFlags(uint32_t f) { fBCastFlags=f; }
     uint32_t GetAllBCastFlags() const { return fBCastFlags; }
 
@@ -171,8 +172,12 @@ struct plMsgStdStringHelper
     static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
     static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PokeBig(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -185,13 +190,16 @@ struct plMsgXtlStringHelper
 };
 
 /////////////////////////////////////////////////////////////////
-// reads/writes your char * field
+// reads/writes your char * field  (deprecated)
 
 struct plMsgCStringHelper
 {
     static int Poke(const char * str, hsStream* stream, const uint32_t peekOptions=0);
     // deletes str and reallocates. you must delete [] str;
     static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
+
+    static int Poke(const plString & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(plString & str, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

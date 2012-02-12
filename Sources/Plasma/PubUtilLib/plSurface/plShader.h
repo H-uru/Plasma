@@ -226,8 +226,8 @@ public:
     hsPoint3                GetPosition(int i) const;
     hsVector3               GetVector(int i) const;
     void                    GetVector(int i, float& x, float& y, float& z, float& w) const;
-    float                GetFloat(int i, int chan) const;
-    const float* const      GetFloat4(int i) const;
+    float                   GetFloat(int i, int chan) const;
+    const float*            GetFloat4(int i) const;
 
     void                    SetMatrix(int i, const plFloat44& xfm); // Will transpose
     void                    SetMatrix3(int i, const plFloat44& xfm); // Will transpose

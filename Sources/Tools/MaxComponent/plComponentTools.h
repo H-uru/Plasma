@@ -55,11 +55,11 @@ class plComponentBase;
 class plMaxNodeBase;
 
 typedef plKey       (*PAddModFunc) (plMaxNodeBase *, plModifier *);
-typedef plKey       (*PGetNewKeyFunc) (const char*, plModifier*, plLocation);
+typedef plKey       (*PGetNewKeyFunc) (const plString&, plModifier*, plLocation);
 typedef void        (*PSetActivatorKeyFunc) (plMaxNodeBase*, plMaxNodeBase*, plMaxNodeBase*, plResponderModifier*);
 typedef plKey       (*PGetAnimModKeyFunc) (plComponentBase*, plMaxNodeBase*);
-typedef const char* (*PGetAnimNameFunc) (plComponentBase*);
-typedef int         (*PGetMaterialAnimModKeyFunc) (Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys);
+typedef plString    (*PGetAnimNameFunc) (plComponentBase*);
+typedef int         (*PGetMaterialAnimModKeyFunc) (Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 typedef int         (*PGetSoundNameAndIndex) (plComponentBase*, plMaxNodeBase* node, const char*& name);
 
 //
@@ -101,14 +101,14 @@ public:
             {}
 
     plKey AddModifier(plMaxNodeBase *node, plModifier *mod);
-    plKey GetNewKey(const char *name, plModifier *mod, plLocation loc);
+    plKey GetNewKey(const plString &name, plModifier *mod, plLocation loc);
     void SetActivatorKey(plMaxNodeBase *activatorNode, plMaxNodeBase *responderNode, plMaxNodeBase *convertNode, plResponderModifier *responderLogic);
 
-    const char *GetAnimCompAnimName(plComponentBase *comp);
+    plString GetAnimCompAnimName(plComponentBase *comp);
     plKey GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node);
 //  plKey GetAnimCompLightModKey(plComponentBase *comp, plMaxNodeBase *node);
 
-    int GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const char *segName, hsTArray<plKey>& keys);
+    int GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 
     int GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name);
 };

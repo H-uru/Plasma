@@ -271,7 +271,7 @@ hsBool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
 
 hsBool plObjectFlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    node->AddModifier(fFlocker, nil);
+    node->AddModifier(fFlocker, plString::Null);
 
     return true;
 }

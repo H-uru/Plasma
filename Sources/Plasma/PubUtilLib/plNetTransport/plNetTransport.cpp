@@ -62,7 +62,7 @@ int plNetTransport::AddMember(plNetTransportMember* mbr)
     if (FindMember(mbr)==-1)
     {
         fMembers.push_back(mbr);
-        hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member %s", mbr->AsStdString().c_str()) );
+        hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member %s", mbr->AsString().c_str()) );
         plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
         plNetClientMgr::GetInstance()->GetTalkList()->AddMember(mbr);
         DumpState();
@@ -87,7 +87,7 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
     if (!mbr)
         return;
 
-    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member %s", mbr->AsStdString().c_str()) );
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member %s", mbr->AsString().c_str()) );
 
 //  plNetClientMgr::GetInstance()->GetNetCore()->RemovePeer(mbr->GetPeerID());
     plNetClientMgr::GetInstance()->GetTalkList()->RemoveMember(mbr);
@@ -101,7 +101,7 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
     // remove member from master list
     fMembers.erase(it);
 
-    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member %s", mbr->AsStdString().c_str()) );
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member %s", mbr->AsString().c_str()) );
     DumpState();
     
     delete mbr;
@@ -320,7 +320,7 @@ void plNetTransport::DumpState()
         for(j=0; j<mList->size();j++)
         {
             plNetTransportMember * mbr = (*mList)[j];
-            hsLogEntry( nc->DebugMsg("\t\tMbr %s\n",(*mList)[j]->AsStdString().c_str()) );
+            hsLogEntry( nc->DebugMsg("\t\tMbr %s\n",(*mList)[j]->AsString().c_str()) );
         }
     }
 
@@ -329,7 +329,7 @@ void plNetTransport::DumpState()
     {
         plNetTransportMember * mbr = GetMember(i);
         hsLogEntry (nc->DebugMsg("\tMbr %d, name=%s, plyrID=%lu, subs=%d", 
-            i,mbr->AsStdString().c_str(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
+            i,mbr->AsString().c_str(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
         int j;
         for(j=0;j<mbr->GetNumSubscriptions();j++)
         {

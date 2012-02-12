@@ -72,6 +72,7 @@ class plBitmap;
 class plCubicRenderTarget;
 class hsConverterUtils;
 class plDynamicTextLayer;
+class plString;
 
 class plLayerConverter
 {
@@ -112,12 +113,12 @@ class plLayerConverter
         hsTArray<plPlasmaMAXLayer *>    fConvertedLayers;
 
 
-        plLayer             *ICreateLayer( const char *name, hsBool upperLayer, plLocation &loc );
+        plLayer             *ICreateLayer( const plString &name, hsBool upperLayer, plLocation &loc );
         void                IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *destLayer, plBitmapData *bitmapData, hsBool preserveUVOffset );
-        plDynamicTextMap    *ICreateDynTextMap( const char *layerName, uint32_t width, uint32_t height, hsBool includeAlpha, plMaxNode *node );
+        plDynamicTextMap    *ICreateDynTextMap( const plString &layerName, uint32_t width, uint32_t height, hsBool includeAlpha, plMaxNode *node );
 
         plLayer             *IAssignTexture( plBitmapData *bd, plMaxNode *maxNode, plLayer *destLayer, hsBool upperLayer, int clipID = -1 );
-        plCubicRenderTarget *IMakeCubicRenderTarget( const char *name, plMaxNode *maxNode, plMaxNode *anchor );
+        plCubicRenderTarget *IMakeCubicRenderTarget( const plString &name, plMaxNode *maxNode, plMaxNode *anchor );
 
         // Add your function to process your layer type here
         plLayerInterface    *IConvertLayerTex( plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, hsBool preserveUVOffset, hsBool upperLayer );
@@ -127,12 +128,12 @@ class plLayerConverter
         plLayerInterface    *IConvertDynamicTextLayer( plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, hsBool preserveUVOffset, hsBool upperLayer );
 
         plBitmap*           IGetAttenRamp( plMaxNode *maxNode, BOOL isAdd, int loClamp, int hiClamp);
-        plLayer*            ICreateAttenuationLayer(const char* name, plMaxNode *maxNode, int uvwSrc, float tr0, float op0, float tr1, float op1, int loClamp, int hiClamp);
+        plLayer*            ICreateAttenuationLayer(const plString& name, plMaxNode *maxNode, int uvwSrc, float tr0, float op0, float tr1, float op1, int loClamp, int hiClamp);
         plLayerInterface*   IConvertAngleAttenLayer(plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, hsBool preserveUVOffset, hsBool upperLayer);
 
         void                IRegisterConversion( plPlasmaMAXLayer *origLayer, plLayerInterface *convertedLayer );
 
-        uint32_t              *IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const;
+        uint32_t            *IGetInitBitmapBuffer( plDynamicTextLayer *layer ) const;
 
 };
 

@@ -59,10 +59,10 @@ public:
     class plOneShotCallback
     {
     public:
-        plOneShotCallback(char *marker, plKey &receiver, int16_t user) :
+        plOneShotCallback(const plString &marker, plKey &receiver, int16_t user) :
           fMarker(marker), fReceiver(receiver) , fUser(user) {}
 
-        char *fMarker;
+        plString fMarker;
         plKey fReceiver;
         int16_t fUser;
     };
@@ -74,7 +74,7 @@ public:
     plOneShotCallbacks();
     ~plOneShotCallbacks();
 
-    void AddCallback(const char *marker, plKey &receiver, int16_t user=0);
+    void AddCallback(const plString &marker, plKey &receiver, int16_t user=0);
     int GetNumCallbacks();
     plOneShotCallback& GetCallback(int i);
 

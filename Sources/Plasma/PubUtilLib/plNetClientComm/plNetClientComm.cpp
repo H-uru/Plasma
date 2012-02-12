@@ -875,7 +875,7 @@ static void FileSrvIpAddressCallback (
 ***/
 
 //============================================================================
-const NetCommPlayer * const NetCommGetPlayer () {
+const NetCommPlayer * NetCommGetPlayer () {
     static NetCommPlayer s_nilPlayer;
     return s_player ? s_player : &s_nilPlayer;
 }
@@ -891,7 +891,7 @@ unsigned NetCommGetPlayerCount () {
 }
 
 //============================================================================
-const NetCommAccount * const NetCommGetAccount () {
+const NetCommAccount * NetCommGetAccount () {
     return &s_account;
 }
 
@@ -901,12 +901,12 @@ bool NetCommIsLoginComplete() {
 }
 
 //============================================================================
-const NetCommAge * const NetCommGetAge () {
+const NetCommAge * NetCommGetAge () {
     return &s_age;
 }
 
 //============================================================================
-const NetCommAge * const NetCommGetStartupAge () {
+const NetCommAge * NetCommGetStartupAge () {
     return &s_startupAge;
 }
 

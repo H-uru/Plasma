@@ -948,23 +948,23 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     if (!info->HasAgeUserDefinedName())
                     {
                         // set user-defined name
-                        std::string title;
-                        unsigned nameLen = StrLen(nc->GetPlayerName());
-                        if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                            xtl::format(title, "%s'", nc->GetPlayerName());
+                        plString title;
+                        unsigned nameLen = nc->GetPlayerName().GetSize();
+                        if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                            title = plString::Format("%s'", nc->GetPlayerName().c_str());
                         else
-                            xtl::format(title, "%s's", nc->GetPlayerName());
-                        info->SetAgeUserDefinedName(title.c_str());
+                            title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                        info->SetAgeUserDefinedName(_TEMP_CONVERT_TO_CONST_CHAR(title));
                     }
                     if (!info->HasAgeDescription())
                     {
                         // set description
-                        std::string desc;
-                        unsigned nameLen = StrLen(nc->GetPlayerName());
-                        if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                            xtl::format(desc, "%s' %s", nc->GetPlayerName(), info->GetAgeInstanceName());
+                        plString desc;
+                        unsigned nameLen = nc->GetPlayerName().GetSize();
+                        if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                            desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                         else
-                            xtl::format(desc, "%s's %s", nc->GetPlayerName(), info->GetAgeInstanceName());
+                            desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
@@ -987,25 +987,25 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             if (!info->HasAgeUserDefinedName())
                             {
                                 // set user-defined name
-                                std::string title;
-                                unsigned nameLen = StrLen(nc->GetPlayerName());
-                                if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                                    xtl::format(title, "%s'", nc->GetPlayerName());
+                                plString title;
+                                unsigned nameLen = nc->GetPlayerName().GetSize();
+                                if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                                    title = plString::Format("%s'", nc->GetPlayerName().c_str());
                                 else
-                                    xtl::format(title, "%s's", nc->GetPlayerName());
-                                info->SetAgeUserDefinedName(title.c_str());
+                                    title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                                info->SetAgeUserDefinedName(_TEMP_CONVERT_TO_CONST_CHAR(title));
                             }
 
                             if (!info->HasAgeDescription())
                             {
                                 // set description
-                                std::string desc;
-                                unsigned nameLen = StrLen(nc->GetPlayerName());
-                                if (nc->GetPlayerName()[nameLen - 1] == 's' || nc->GetPlayerName()[nameLen - 1] == 'S')
-                                    xtl::format(desc, "%s' %s", nc->GetPlayerName(), info->GetAgeInstanceName());
+                                plString desc;
+                                unsigned nameLen = nc->GetPlayerName().GetSize();
+                                if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                                    desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                                 else
-                                    xtl::format(desc, "%s's %s", nc->GetPlayerName(), info->GetAgeInstanceName());
-                                info->SetAgeDescription( desc.c_str() );
+                                    desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
+                                info->SetAgeDescription( _TEMP_CONVERT_TO_CONST_CHAR(desc) );
                             }
 
                             if (!info->HasAgeInstanceGuid()) {
@@ -1087,7 +1087,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                 wchar_t parentAgeName[MAX_PATH];
                 if (link->HasParentAgeFilename())
                     StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-                
+
                 switch(VaultAgeFindOrCreateChildAgeLink(
                       (link->HasParentAgeFilename() ? parentAgeName : nil),
                       info,
@@ -1102,7 +1102,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     case true:
                         success = kLinkImmediately;
                 }
-                
+
                 if (success == kLinkImmediately)
                     info->CopyFrom(childLink.GetAgeInfo());
             }

@@ -142,8 +142,8 @@ public:
 
     // Restore callback state after load
     void Restore();
-    
-    const int8_t GetState() const { return fCurState; }
+
+    int8_t GetState() const { return fCurState; }
     //
     // Export time only
     //

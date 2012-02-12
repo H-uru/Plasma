@@ -280,7 +280,7 @@ class plDrawableSpans : public plDrawable
 
         virtual const plSpan                *GetSpan( uint32_t index ) const { return fSpans[ index ]; }
         virtual const plSpan                *GetSpan( uint32_t diIndex, uint32_t index ) const { return fSpans[ (*fDIIndices[ diIndex ])[ index ] ]; }
-        virtual const uint32_t                GetNumSpans( void ) const { return fSpans.GetCount(); }
+        virtual uint32_t                     GetNumSpans( void ) const { return fSpans.GetCount(); }
         virtual const hsTArray<plSpan *>    &GetSpanArray( void ) const { return fSpans; }
 
         hsMatrix44* GetMatrixPalette(int baseMatrix) const { return &fLocalToWorlds[baseMatrix]; }
@@ -294,7 +294,7 @@ class plDrawableSpans : public plDrawable
 
         // BufferGroups accessed only by Pipeline and it's close personal acquaintances.
         plGBufferGroup*                         GetBufferGroup(uint32_t i) const { return fGroups[i]; }
-        uint32_t                                  GetNumBufferGroups() const { return fGroups.GetCount(); }
+        uint32_t                                GetNumBufferGroups() const { return fGroups.GetCount(); }
         const hsTArray<plGeometrySpan*>&        GetSourceSpans() const { return fSourceSpans; }
 
         void            DirtyVertexBuffer(uint32_t group, uint32_t idx);

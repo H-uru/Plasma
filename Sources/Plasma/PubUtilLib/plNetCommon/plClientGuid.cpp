@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plClientGuid.h"
 #include "hsStream.h"
-#include <sstream>
 #include "plNetCommon.h"
 #include "pnMessage/plMessage.h"
 #include "plSockets/plNet.h"
@@ -105,10 +104,10 @@ void plClientGuid::SetTempPlayerID(uint32_t id)
     }
 }
 
-void plClientGuid::SetPlayerName( const char * v )
+void plClientGuid::SetPlayerName( const plString & v )
 {
-    fPlayerName = v?v:"";
-    if ( fPlayerName.size() )
+    fPlayerName = v;
+    if ( !fPlayerName.IsEmpty() )
         fFlags|=kPlayerName;
     else
         fFlags&=~kPlayerName;
@@ -155,10 +154,10 @@ void plClientGuid::SetReserved(bool b)
     fFlags |= kReserved;
 }
 
-void plClientGuid::SetClientKey(const std::string& key)
+void plClientGuid::SetClientKey(const plString& key)
 {
     fClientKey = key;
-    if ( fClientKey.size() )
+    if ( !fClientKey.IsEmpty() )
         fFlags|=kClientKey;
     else
         fFlags&=~kClientKey;
@@ -171,13 +170,13 @@ const char * plClientGuid::GetSrcAddrStr() const
     return foo;
 }
 
-std::string plClientGuid::AsStdString() const
+plString plClientGuid::AsString() const
 {
 #define kComma  ","
 #define kEmpty  ""
     const char * spacer = kEmpty;
 
-    std::stringstream ss;
+    plStringStream ss;
 
     ss << "[";
 
@@ -222,7 +221,7 @@ std::string plClientGuid::AsStdString() const
     }
     if (IsFlagSet(kAccountUUID))
     {
-        ss << spacer << "plUUID:" << fAccountUUID.AsStdString();
+        ss << spacer << "plUUID:" << fAccountUUID.AsString();
         spacer = kComma;
     }
     if ( IsFlagSet(kReserved))
@@ -237,19 +236,19 @@ std::string plClientGuid::AsStdString() const
     }
     ss  << "]";
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
-std::string plClientGuid::AsLogString() const
+plString plClientGuid::AsLogString() const
 {
 #define kSemicolon  ";"
     const char* spacer = kSemicolon;
 
-    std::stringstream ss;
+    plStringStream ss;
 
     if (IsFlagSet(kAccountUUID))
     {
-        ss << "AcctUUID=" << fAccountUUID.AsStdString();
+        ss << "AcctUUID=" << fAccountUUID.AsString();
         ss << spacer;
     }
     if (IsFlagSet(kPlayerID))
@@ -298,7 +297,7 @@ std::string plClientGuid::AsLogString() const
         ss << spacer;
     }
 
-    return ss.str().c_str();
+    return ss.GetString();
 }
 
 void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
