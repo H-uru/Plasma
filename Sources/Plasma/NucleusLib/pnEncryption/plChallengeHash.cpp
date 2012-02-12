@@ -62,14 +62,14 @@ void CryptCreateRandomSeed(size_t length, uint8_t* data)
             dataIdx = 0;
     }
 
-    ((uint32_t*)fSeed)[2] ^= (uint32_t)&length;
+    ((uint32_t*)fSeed)[2] ^= (uint32_t)((uintptr_t)&length);
     ((uint32_t*)fSeed)[3] ^= (uint32_t)length;
-    ((uint32_t*)fSeed)[4] ^= (uint32_t)data;
+    ((uint32_t*)fSeed)[4] ^= (uint32_t)((uintptr_t)data);
 
     // Hash seed
     plSHAChecksum sum(sizeof(ShaDigest), (uint8_t*)fSeed);
     ShaDigest digest;
-    memcpy(digest, sum->GetValue(), sizeof(ShaDigest));
+    memcpy(digest, sum.GetValue(), sizeof(ShaDigest));
 
     seedIdx = 0;
     dataIdx = 0;
