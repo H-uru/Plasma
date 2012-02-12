@@ -19,6 +19,7 @@ set(CoreLib_SOURCES
     hsCritSect.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
+    hsFiles.cpp
     hsGeometry3.cpp
     hsMatrix33.cpp
     hsMatrix44.cpp
@@ -34,6 +35,7 @@ set(CoreLib_SOURCES
     hsThread.cpp
     hsWide.cpp
     pcSmallRect.cpp
+    plFileUtils.cpp
     plGeneric.cpp
     plLoadMask.cpp
     plString.cpp
@@ -43,14 +45,15 @@ set(CoreLib_SOURCES
 if(WIN32 AND NOT CYGWIN)
     set(CoreLib_SOURCES ${CoreLib_SOURCES}
         hsThread_Win.cpp
+        hsFiles_Win.cpp
     )
 endif(WIN32 AND NOT CYGWIN)
 if(UNIX)
     set(CoreLib_SOURCES ${CoreLib_SOURCES}
         hsThread_Unix.cpp
+        hsFiles_Unix.cpp
     )
 endif(UNIX)
-    
 
 set(CoreLib_HEADERS
     HeadSpin.h
@@ -62,6 +65,7 @@ set(CoreLib_HEADERS
     hsCritSect.h
     hsExceptions.h
     hsFastMath.h
+    hsFiles.h
     hsGeometry3.h
     hsHashTable.h
     hsMatrix44.h
@@ -79,6 +83,7 @@ set(CoreLib_HEADERS
     hsThread.h
     hsWide.h
     pcSmallRect.h
+    plFileUtils.h
     plGeneric.h
     plLoadMask.h
     plQuality.h
