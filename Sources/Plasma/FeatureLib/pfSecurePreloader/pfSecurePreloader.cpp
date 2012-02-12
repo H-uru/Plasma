@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plCompression/plZlibStream.h"
 #include "pnEncryption/plChecksum.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 #include "plMessage/plNetCommMsgs.h"

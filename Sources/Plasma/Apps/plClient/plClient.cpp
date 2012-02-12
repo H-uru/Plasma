@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plFile/plEncryptedStream.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 #include "plInputCore/plInputManager.h"
 #include "plInputCore/plInputInterfaceMgr.h"
 #include "plInputCore/plInputDevice.h"
@@ -83,7 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "plScene/plPageTreeMgr.h"
 #include "plScene/plVisMgr.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 #include "pfKI/pfKI.h"
 

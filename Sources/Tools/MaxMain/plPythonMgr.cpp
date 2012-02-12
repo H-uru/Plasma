@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plAutoUIBlock.h"
 //#include "Python.h"
 #include "plMaxCFGFile.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 #include "plgDispatch.h"
 #include "pfPython/cyPythonInterface.h"

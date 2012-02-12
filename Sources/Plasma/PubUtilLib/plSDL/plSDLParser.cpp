@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plSDL.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plFile/plStreamSource.h"
 #include "pnNetCommon/pnNetCommon.h"
 #include "pnNetCommon/plNetApp.h"

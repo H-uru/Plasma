@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription.h"
 
 #include "hsStlUtils.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plFile/plInitFileReader.h"
 #include "plFile/plEncryptedStream.h"
 #include "hsStringTokenizer.h"

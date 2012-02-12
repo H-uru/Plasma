@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plCrashSrv.h"
 #include "plCrash_Private.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 #include "pnProduct/pnProduct.h"
 
 #ifdef HS_BUILD_FOR_WIN32

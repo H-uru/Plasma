@@ -115,7 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxPlasmaMtls/Layers/plDynamicTextLayer.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"

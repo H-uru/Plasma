@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
+#include "hsFiles.h"
+#include "plFileUtils.h"
 #include "plFile/plSecureStream.h"
 #include "pnProduct/pnProduct.h"
 
@@ -61,15 +61,15 @@ void print_help() {
     printf("\tplFileSecure (<directory> <ext>)|[/generate /default]\n");
     printf("\n");
     printf("<directory> <ext>    : The directory and extension of files to secure. Cannot\n");
-    printf("                       be used with /generate. Uses the %s file in\n", plFileUtils::kKeyFilename);
+    printf("                       be used with /generate. Uses the %s file in\n", plSecureStream::kKeyFilename);
     printf("                       the current directory (or default key if no file exists)\n");
-    printf("/generate            : Generates a random key and writes it to a %s\n", plFileUtils::kKeyFilename);
+    printf("/generate            : Generates a random key and writes it to a %s\n", plSecureStream::kKeyFilename);
     printf("                       file in the current directory. Cannot be used with\n");
     printf("                       <directory> <ext>\n");
-    printf("/default             : If used with /generate, creates a %s file\n", plFileUtils::kKeyFilename);
+    printf("/default             : If used with /generate, creates a %s file\n", plSecureStream::kKeyFilename);
     printf("                       with the default key. If used with <directory> <ext>, it\n");
     printf("                       secures with the default key instead of the\n");
-    printf("                       %s file's key\n", plFileUtils::kKeyFilename);
+    printf("                       %s file's key\n", plSecureStream::kKeyFilename);
     printf("\n");
 }
 
@@ -103,7 +103,7 @@ void GenerateKey(bool useDefault)
     }
 
     hsUNIXStream out;
-    out.Open(plFileUtils::kKeyFilename, "wb");
+    out.Open(plSecureStream::kKeyFilename, "wb");
     out.Write(sizeof(uint32_t) * arrsize(key), (void*)key);
     out.Close();
 }
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
     else
     {
         uint32_t key[4];
-        plFileUtils::GetSecureEncryptionKey(plFileUtils::kKeyFilename, key, arrsize(key));
+        plSecureStream::GetSecureEncryptionKey(plSecureStream::kKeyFilename, key, arrsize(key));
         SecureFiles(directory, ext, key);
     }
     return 0;
