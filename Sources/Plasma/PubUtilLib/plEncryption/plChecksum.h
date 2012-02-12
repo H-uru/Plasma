@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <openssl/md5.h>
+#include <openssl/sha.h>
 
 class plChecksum
 {
@@ -60,46 +61,122 @@ public:
 
 class hsStream;
 
-class plMD5Checksum 
+class plMD5Checksum
 {
     protected:
-
         hsBool  fValid;
         MD5_CTX fContext;
-        uint8_t   fChecksum[ MD5_DIGEST_LENGTH ];
-
-        uint8_t   IHexCharToInt( char c ) const;
+        uint8_t fChecksum[MD5_DIGEST_LENGTH];
 
     public:
-
-        plMD5Checksum( uint32_t size, uint8_t *buffer );
+        plMD5Checksum(uint32_t size, uint8_t *buffer);
         plMD5Checksum();
-        plMD5Checksum( const plMD5Checksum &rhs );
-        plMD5Checksum( const char *fileName );
-        plMD5Checksum( hsStream* stream );
+        plMD5Checksum(const plMD5Checksum &rhs);
+        plMD5Checksum(const char *fileName);
+        plMD5Checksum(hsStream* stream);
 
-        hsBool  IsValid( void ) const { return fValid; }
+        hsBool  IsValid() const { return fValid; }
         void    Clear();
 
-        void    CalcFromFile( const char *fileName );
-        void    CalcFromStream( hsStream* stream );
+        void    CalcFromFile(const char *fileName);
+        void    CalcFromStream(hsStream* stream);
 
-        void    Start( void );
-        void    AddTo( uint32_t size, const uint8_t *buffer );
-        void    Finish( void );
+        void    Start();
+        void    AddTo(uint32_t size, const uint8_t *buffer);
+        void    Finish();
 
-        const uint8_t *GetValue( void ) const { return fChecksum; }
-        uint32_t      GetSize( void ) const { return sizeof( fChecksum ); }
+        const uint8_t *GetValue() const { return fChecksum; }
+        uint32_t      GetSize() const { return sizeof(fChecksum); }
 
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
 
-        // Note: GetAsHexString() returns a pointer to a static string; do not rely on the contents of this string between calls!
-        const char  *GetAsHexString( void ) const;
+        // Note: GetAsHexString() returns a pointer to a static string;
+        // do not rely on the contents of this string between calls!
+        const char  *GetAsHexString() const;
         void        SetFromHexString( const char *string );
 
-        bool    operator==( const plMD5Checksum &rhs ) const;
-        bool    operator!=( const plMD5Checksum &rhs ) const { return !operator==( rhs ); }
+        bool    operator==(const plMD5Checksum &rhs) const;
+        bool    operator!=(const plMD5Checksum &rhs) const { return !operator==(rhs); }
 };
+
+class plSHAChecksum
+{
+    protected:
+        hsBool  fValid;
+        SHA_CTX fContext;
+        uint8_t fChecksum[SHA_DIGEST_LENGTH];
+
+    public:
+        plSHAChecksum(uint32_t size, uint8_t* buffer);
+        plSHAChecksum();
+        plSHAChecksum(const plSHAChecksum& rhs);
+        plSHAChecksum(const char* fileName);
+        plSHAChecksum(hsStream* stream);
+
+        hsBool IsValid() const { return fValid; }
+        void Clear();
+
+        void CalcFromFile(const char* fileName);
+        void CalcFromStream(hsStream* stream);
+
+        void Start();
+        void AddTo(uint32_t size, const uint8_t* buffer);
+        void Finish();
+
+        const uint8_t* GetValue() const { return fChecksum; }
+        uint32_t GetSize() const { return sizeof(fChecksum); }
+
+        // Backdoor for cached checksums (ie, if you loaded it off disk)
+        void SetValue(uint8_t* checksum);
+
+        // Note: GetAsHexString() returns a pointer to a static string;
+        // do not rely on the contents of this string between calls!
+        const char* GetAsHexString() const;
+        void SetFromHexString(const char* string);
+
+        bool operator==(const plSHAChecksum& rhs) const;
+        bool operator!=(const plSHAChecksum& rhs) const { return !operator==(rhs); }
+};
+
+class plSHA1Checksum
+{
+    protected:
+        hsBool  fValid;
+        SHA_CTX fContext;
+        uint8_t fChecksum[SHA_DIGEST_LENGTH];
+
+    public:
+        plSHA1Checksum(uint32_t size, uint8_t* buffer);
+        plSHA1Checksum();
+        plSHA1Checksum(const plSHA1Checksum& rhs);
+        plSHA1Checksum(const char* fileName);
+        plSHA1Checksum(hsStream* stream);
+
+        hsBool IsValid() const { return fValid; }
+        void Clear();
+
+        void CalcFromFile(const char* fileName);
+        void CalcFromStream(hsStream* stream);
+
+        void Start();
+        void AddTo(uint32_t size, const uint8_t* buffer);
+        void Finish();
+
+        const uint8_t* GetValue() const { return fChecksum; }
+        uint32_t GetSize() const { return sizeof(fChecksum); }
+
+        // Backdoor for cached checksums (ie, if you loaded it off disk)
+        void SetValue(uint8_t* checksum);
+
+        // Note: GetAsHexString() returns a pointer to a static string;
+        // do not rely on the contents of this string between calls!
+        const char* GetAsHexString() const;
+        void SetFromHexString(const char* string);
+
+        bool operator==(const plSHA1Checksum& rhs) const;
+        bool operator!=(const plSHA1Checksum& rhs) const { return !operator==(rhs); }
+};
+
 #endif // PL_CHECKSUM_H
 
