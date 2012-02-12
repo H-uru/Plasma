@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "hsStlUtils.h"
 #include "pnUtils/pnUtCrypt.h"
-#include "plEncryption/plChecksum.h"
+#include "pnEncryption/plChecksum.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
