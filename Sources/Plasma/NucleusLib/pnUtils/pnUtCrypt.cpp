@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtStr.h"
 #include "pnUtTime.h"
 
-#include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <openssl/rc4.h>
 
@@ -83,25 +82,6 @@ ShaDigest s_shaSeed;
 ***/
 
 //============================================================================
-void Md5Process (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    MD5_CTX md5;
-    MD5_Init(&md5);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        MD5_Update(&md5, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    MD5_Final((unsigned char *)dest, &md5);
-}
-
-//============================================================================
 void ShaProcess (
     void *          dest,
     unsigned        sourceCount,
@@ -118,25 +98,6 @@ void ShaProcess (
 
     // complete hashing
     SHA_Final((unsigned char *)dest, &sha);
-}
-
-//============================================================================
-void Sha1Process (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    SHA_CTX sha;
-    SHA1_Init(&sha);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        SHA1_Update(&sha, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    SHA1_Final((unsigned char *)dest, &sha);
 }
 
 
@@ -208,16 +169,8 @@ void CryptDigest (
     const void *    sourcePtrs[]    // [sourceCount]
 ) {
     switch (algorithm) {
-        case kCryptMd5:
-            Md5Process(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
         case kCryptSha:
             ShaProcess(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
-        case kCryptSha1:
-            Sha1Process(dest, sourceCount, sourceBytes, sourcePtrs);
         break;
 
         DEFAULT_FATAL(algorithm);
@@ -292,21 +245,21 @@ void CryptCreateRandomSeed (
         unsigned cur = 0;
         unsigned end = max(bytes, sizeof(s_shaSeed));
         for (; cur < end; ++cur) {
-            ((uint8_t *) &s_shaSeed)[seedIndex] ^= data[dataIndex];
+            s_shaSeed[seedIndex] ^= data[dataIndex];
             if (++seedIndex >= sizeof(s_shaSeed))
                 seedIndex = 0;
             if (++dataIndex >= bytes)
                 dataIndex = 0;
         }
 
-        s_shaSeed.data[2] ^= (uint32_t) &bytes;
-        s_shaSeed.data[3] ^= (uint32_t) bytes;
-        s_shaSeed.data[4] ^= (uint32_t) data;
+        ((uint32_t*)s_shaSeed)[2] ^= (uint32_t) &bytes;
+        ((uint32_t*)s_shaSeed)[3] ^= (uint32_t) bytes;
+        ((uint32_t*)s_shaSeed)[4] ^= (uint32_t) data;
     }
 
     // Hash seed
     ShaDigest digest;
-    CryptDigest(kCryptSha, &digest, sizeof(s_shaSeed), &s_shaSeed);
+    CryptDigest(kCryptSha, &digest, sizeof(s_shaSeed), s_shaSeed);
 
     // Update output with contents of digest
     {
@@ -324,11 +277,9 @@ void CryptCreateRandomSeed (
     }
 
     // Combine seed with digest
-    s_shaSeed.data[0] ^= digest.data[0];
-    s_shaSeed.data[1] ^= digest.data[1];
-    s_shaSeed.data[2] ^= digest.data[2];
-    s_shaSeed.data[3] ^= digest.data[3];
-    s_shaSeed.data[4] ^= digest.data[4];
+    for (size_t i = 0; i < SHA_DIGEST_LENGTH; i++) {
+        s_shaSeed[i] ^= digest[i];
+    }
 }
 
 //============================================================================

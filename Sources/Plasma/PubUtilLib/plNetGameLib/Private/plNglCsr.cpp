@@ -633,11 +633,11 @@ LoginRequestTrans::LoginRequestTrans (
     FNetCliCsrLoginCallback callback,
     void *                  param
 ) : NetCsrTrans(kCsrLoginTrans)
-,   m_namePassHash(namePassHash)
 ,   m_callback(callback)
 ,   m_param(param)
 {
     ASSERT(callback);
+    memcpy(m_namePassHash, namePassHash, sizeof(ShaDigest));
     StrCopy(m_csrName, csrName, arrsize(m_csrName));
 }
 

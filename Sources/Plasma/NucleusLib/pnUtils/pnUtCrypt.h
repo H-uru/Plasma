@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "pnUtArray.h"
+#include "pnEncryption/plChecksum.h"
 
 /*****************************************************************************
 *
@@ -61,15 +62,9 @@ struct CryptKey;
 
 enum ECryptAlgorithm {
     kCryptSha,
-    kCryptSha1,
-    kCryptMd5,
     kCryptRc4,
     kCryptRsa,
     kNumCryptAlgorithms
-};
-
-struct ShaDigest {
-    uint32_t data[5];
 };
 
 

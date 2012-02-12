@@ -1210,7 +1210,7 @@ void NetCommSetAccountUsernamePassword (
     const ShaDigest &   namePassHash
 ) {
     StrCopy(s_iniAccountUsername, username, arrsize(s_iniAccountUsername));
-    s_namePassHash = namePassHash;
+    memcpy(s_namePassHash, namePassHash, sizeof(ShaDigest));
 
     s_iniReadAccountInfo = false;
 }
@@ -1252,7 +1252,7 @@ void NetCommAuthenticate (
         s_iniAccountUsername,
         arrsize(s_account.accountNameAnsi)
     );
-    s_account.accountNamePassHash = s_namePassHash;
+    memcpy(s_account.accountNamePassHash, s_namePassHash, sizeof(ShaDigest));
 
     NetCliAuthLoginRequest(
         s_account.accountName,
