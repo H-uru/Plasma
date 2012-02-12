@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAgeLoadedMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "hsTimer.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "pnMessage/plEnableMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plLoadCloneMsg.h"

@@ -75,7 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plTimeMsg.h"
 #include "plgDispatch.h"
 
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "hsFastMath.h"
 
 #include "hsStream.h"
