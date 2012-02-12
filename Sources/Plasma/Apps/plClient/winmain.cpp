@@ -989,18 +989,9 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         PathSplitEmail(wusername, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
-            CryptDigest(
-                kCryptSha1,
-                &pLoginParam->namePassHash,
-                StrLen(password) * sizeof(password[0]),
-                password
-                );
+            plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
 
-                pLoginParam->namePassHash.data[0] = hsToBE32(pLoginParam->namePassHash.data[0]);
-                pLoginParam->namePassHash.data[1] = hsToBE32(pLoginParam->namePassHash.data[1]);
-                pLoginParam->namePassHash.data[2] = hsToBE32(pLoginParam->namePassHash.data[2]);
-                pLoginParam->namePassHash.data[3] = hsToBE32(pLoginParam->namePassHash.data[3]);
-                pLoginParam->namePassHash.data[4] = hsToBE32(pLoginParam->namePassHash.data[4]);
+            memcpy(pLoginParam->namePassHash, shasum.GetData(), sizeof(ShaDigest));
         }
         else
             CryptHashPassword(wusername, wpassword, &pLoginParam->namePassHash);
