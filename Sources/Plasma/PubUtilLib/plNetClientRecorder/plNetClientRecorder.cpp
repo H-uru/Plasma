@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAgeLoadedMsg.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 plNetClientRecorder::plNetClientRecorder(TimeWrapper* timeWrapper) :
 fTimeWrapper(timeWrapper)

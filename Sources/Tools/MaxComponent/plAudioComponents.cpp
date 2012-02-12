@@ -92,7 +92,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plWin32StreamingSound.h"
 #include "plAudio/plWin32GroupedSound.h"
 #include "plAudioCore/plSoundBuffer.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 
 // Valdez Asset Manager Related
 #ifdef MAXASS_AVAILABLE

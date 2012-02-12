@@ -1,3 +1,4 @@
+include_directories(../PubUtilLib/plUnifiedTime)    # EVIL:  For plFileUtils.cpp
 add_definitions(-D_LIB)
 
 if(NOT WCHAR_BYTES)

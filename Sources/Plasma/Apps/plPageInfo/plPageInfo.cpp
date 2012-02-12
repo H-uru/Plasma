@@ -41,8 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "hsTimer.h"
-#include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
+#include "hsFiles.h"
+#include "plFileUtils.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrSettings.h"
 
