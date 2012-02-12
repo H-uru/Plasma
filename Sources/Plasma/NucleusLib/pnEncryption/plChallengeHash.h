@@ -52,6 +52,4 @@ void CryptHashPassword(const plString& username, const plString& password, ShaDi
 
 void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallenge, ShaDigest namePassHash, ShaDigest challengeHash);
 
-void CryptCreateFastWeakChallenge(uint32_t* challenge, uint32_t val1, uint32_t val2);
-
 #endif //PL_CHALLENGE_HASH_H

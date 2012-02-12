@@ -61,33 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct CryptKey;
 
 enum ECryptAlgorithm {
-    kCryptSha,
     kCryptRc4,
     kCryptRsa,
     kNumCryptAlgorithms
 };
-
-
-/*****************************************************************************
-*
-*   Digest functions
-*
-***/
-
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    const unsigned  sourceBytes,
-    const void *    sourceData
-);
-
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],  // [sourceCount]
-    const void *    sourcePtrs[]    // [sourceCount]
-);
 
 
 /*****************************************************************************
@@ -118,18 +95,6 @@ void CryptKeyGenerate (
 unsigned CryptKeyGetBlockSize (
     CryptKey *      key
 );
-
-void CryptCreateRandomSeed (
-    unsigned        bytes,
-    uint8_t *          data
-);
-
-void CryptCreateFastWeakChallenge (
-    unsigned *  challenge,
-    unsigned    val1,
-    unsigned    val2
-);
-
 
 /*****************************************************************************
 *
