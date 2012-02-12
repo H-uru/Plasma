@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCli/pnNetCli.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "pnIni/pnIni.h"
+#include "pnEncryption/plChallengeHash.h"
 
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plNetClientMgrMsg.h"
@@ -775,7 +776,7 @@ static void IReadNetIni() {
                 L""
             );
 
-            CryptHashPassword(s_iniAccountUsername, password, &s_namePassHash);
+            CryptHashPassword(_TEMP_CONVERT_FROM_WCHAR_T(s_iniAccountUsername), _TEMP_CONVERT_FROM_WCHAR_T(password), s_namePassHash);
         }
         else {
             StrCopy(s_iniStartupAgeName, L"StartUp", arrsize(s_iniStartupAgeName));

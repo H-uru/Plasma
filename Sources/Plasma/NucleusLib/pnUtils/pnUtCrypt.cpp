@@ -282,49 +282,6 @@ void CryptCreateRandomSeed (
     }
 }
 
-//============================================================================
-void CryptHashPassword (
-    const wchar_t username[],
-    const wchar_t password[],
-    ShaDigest * namePassHash
-) {
-    unsigned passlen = StrLen(password);
-    unsigned userlen = StrLen(username);
-
-    wchar_t * buffer = (wchar_t*)malloc(sizeof(wchar_t) * (passlen + userlen));
-    StrCopy(buffer, password, passlen);
-    StrCopy(buffer + passlen, username, userlen);
-    StrLower(buffer + passlen); // lowercase the username
-
-    CryptDigest(
-        kCryptSha,
-        namePassHash,
-        (userlen + passlen) * sizeof(buffer[0]),
-        buffer
-    );
-
-    free(buffer);
-}
-
-//============================================================================
-void CryptHashPasswordChallenge (
-    unsigned            clientChallenge,
-    unsigned            serverChallenge,
-    const ShaDigest &   namePassHash,
-    ShaDigest *         challengeHash
-) {
-#pragma pack(push, 1)
-    struct {
-        uint32_t       clientChallenge;
-        uint32_t       serverChallenge;
-        ShaDigest   namePassHash;
-    } buffer;
-#pragma pack(pop)
-    buffer.clientChallenge  = clientChallenge;
-    buffer.serverChallenge  = serverChallenge;
-    buffer.namePassHash     = namePassHash;
-    CryptDigest(kCryptSha, challengeHash, sizeof(buffer), &buffer);
-}
 
 //============================================================================
 void CryptCreateFastWeakChallenge (

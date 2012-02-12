@@ -104,7 +104,7 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 
 //============================================================================
 
-plMD5Checksum::plMD5Checksum( uint32_t size, uint8_t *buffer )
+plMD5Checksum::plMD5Checksum(size_t size, uint8_t *buffer )
 {
     fValid = false;
     Start();
@@ -173,7 +173,7 @@ void plMD5Checksum::Start()
     fValid = false;
 }
 
-void plMD5Checksum::AddTo( uint32_t size, const uint8_t *buffer )
+void plMD5Checksum::AddTo(size_t size, const uint8_t *buffer )
 {
     MD5_Update( &fContext, buffer, size );
 }
@@ -230,7 +230,7 @@ bool plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
 
 //============================================================================
 
-plSHAChecksum::plSHAChecksum( uint32_t size, uint8_t *buffer )
+plSHAChecksum::plSHAChecksum(size_t size, uint8_t *buffer )
 {
     fValid = false;
     Start();
@@ -301,7 +301,7 @@ void plSHAChecksum::Start()
     fValid = false;
 }
 
-void plSHAChecksum::AddTo(uint32_t size, const uint8_t* buffer)
+void plSHAChecksum::AddTo(size_t size, const uint8_t* buffer)
 {
     SHA_Update(&fContext, buffer, size);
 }
@@ -356,7 +356,7 @@ bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
 
 //============================================================================
 
-plSHA1Checksum::plSHA1Checksum( uint32_t size, uint8_t *buffer )
+plSHA1Checksum::plSHA1Checksum(size_t size, uint8_t *buffer )
 {
     fValid = false;
     Start();
@@ -427,7 +427,7 @@ void plSHA1Checksum::Start()
     fValid = false;
 }
 
-void plSHA1Checksum::AddTo(uint32_t size, const uint8_t* buffer)
+void plSHA1Checksum::AddTo(size_t size, const uint8_t* buffer)
 {
     SHA1_Update(&fContext, buffer, size);
 }
