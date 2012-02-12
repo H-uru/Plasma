@@ -44,6 +44,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 
+
+static uint8_t IHexCharToInt(char c)
+{
+    switch( c )
+    {
+        // yes, it's ugly, but it'll be fast :)
+        case '0': return 0;
+        case '1': return 1;
+        case '2': return 2;
+        case '3': return 3;
+        case '4': return 4;
+        case '5': return 5;
+        case '6': return 6;
+        case '7': return 7;
+        case '8': return 8;
+        case '9': return 9;
+
+        case 'a': return 10;
+        case 'b': return 11;
+        case 'c': return 12;
+        case 'd': return 13;
+        case 'e': return 14;
+        case 'f': return 15;
+
+        case 'A': return 10;
+        case 'B': return 11;
+        case 'C': return 12;
+        case 'D': return 13;
+        case 'E': return 14;
+        case 'F': return 15;
+    }
+
+    return 0xff;
+}
+
 plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 {
     unsigned int wndsz = GetWindowSize(),i = 0;
@@ -66,6 +101,8 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
     }
     fSum+= hsToLE32(last);
 }
+
+//============================================================================
 
 plMD5Checksum::plMD5Checksum( uint32_t size, uint8_t *buffer )
 {
@@ -102,11 +139,11 @@ void plMD5Checksum::Clear()
     fValid = false;
 }
 
-void    plMD5Checksum::CalcFromFile( const char *fileName )
+void plMD5Checksum::CalcFromFile( const char *fileName )
 {
     hsUNIXStream s;
     fValid = false;
-    
+
     if( s.Open(fileName) )
     {
         CalcFromStream(&s);
@@ -121,7 +158,7 @@ void plMD5Checksum::CalcFromStream( hsStream* stream )
     Start();
 
     uint8_t *buf = new uint8_t[loadLen];
-    
+
     while(int read = stream->Read(loadLen, buf))
         AddTo( read, buf );
     delete[] buf;
@@ -130,24 +167,24 @@ void plMD5Checksum::CalcFromStream( hsStream* stream )
     stream->SetPosition(sPos);
 }
 
-void    plMD5Checksum::Start( void )
+void plMD5Checksum::Start()
 {
     MD5_Init( &fContext );
     fValid = false;
 }
 
-void    plMD5Checksum::AddTo( uint32_t size, const uint8_t *buffer )
+void plMD5Checksum::AddTo( uint32_t size, const uint8_t *buffer )
 {
     MD5_Update( &fContext, buffer, size );
 }
 
-void    plMD5Checksum::Finish( void )
+void plMD5Checksum::Finish()
 {
     MD5_Final( fChecksum, &fContext );
     fValid = true;
 }
 
-const char  *plMD5Checksum::GetAsHexString( void ) const
+const char *plMD5Checksum::GetAsHexString() const
 {
     const int   kHexStringSize = ( 2 * MD5_DIGEST_LENGTH ) + 1;
     static char tempString[ kHexStringSize ];
@@ -166,41 +203,7 @@ const char  *plMD5Checksum::GetAsHexString( void ) const
     return tempString;
 }
 
-uint8_t   plMD5Checksum::IHexCharToInt( char c ) const
-{
-    switch( c )
-    {
-        // yes, it's ugly, but it'll be fast :)
-        case '0': return 0;
-        case '1': return 1;
-        case '2': return 2;
-        case '3': return 3;
-        case '4': return 4;
-        case '5': return 5;
-        case '6': return 6;
-        case '7': return 7;
-        case '8': return 8;
-        case '9': return 9;
-
-        case 'a': return 10;
-        case 'b': return 11;
-        case 'c': return 12;
-        case 'd': return 13;
-        case 'e': return 14;
-        case 'f': return 15;
-
-        case 'A': return 10;
-        case 'B': return 11;
-        case 'C': return 12;
-        case 'D': return 13;
-        case 'E': return 14;
-        case 'F': return 15;
-    }
-
-    return 0xff;
-}
-
-void        plMD5Checksum::SetFromHexString( const char *string )
+void plMD5Checksum::SetFromHexString( const char *string )
 {
     const char  *ptr;
     int         i;
@@ -220,7 +223,260 @@ void plMD5Checksum::SetValue(uint8_t* checksum)
     memcpy(fChecksum, checksum, sizeof(fChecksum));
 }
 
-bool    plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
+bool plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
 {
     return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
 }
+
+//============================================================================
+
+plSHAChecksum::plSHAChecksum( uint32_t size, uint8_t *buffer )
+{
+    fValid = false;
+    Start();
+    AddTo(size, buffer);
+    Finish();
+}
+
+plSHAChecksum::plSHAChecksum()
+{
+    Clear();
+}
+
+plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
+{
+    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
+    fValid = rhs.fValid;
+}
+
+plSHAChecksum::plSHAChecksum(const char* fileName)
+{
+    CalcFromFile(fileName);
+}
+
+plSHAChecksum::plSHAChecksum(hsStream* stream)
+{
+    CalcFromStream(stream);
+}
+
+void plSHAChecksum::Clear()
+{
+    memset(fChecksum, 0, sizeof(fChecksum));
+    fValid = false;
+}
+
+void plSHAChecksum::CalcFromFile(const char* fileName)
+{
+    hsUNIXStream s;
+    fValid = false;
+
+    if (s.Open(fileName))
+    {
+        CalcFromStream(&s);
+        s.Close();
+    }
+}
+
+void plSHAChecksum::CalcFromStream(hsStream* stream)
+{
+    uint32_t sPos = stream->GetPosition();
+    unsigned loadLen = 1024 * 1024;
+    Start();
+
+    uint8_t* buf = new uint8_t[loadLen];
+
+    while (int read = stream->Read(loadLen, buf))
+    {
+        AddTo( read, buf );
+    }
+    delete[] buf;
+
+    Finish();
+    stream->SetPosition(sPos);
+}
+
+void plSHAChecksum::Start()
+{
+    SHA_Init(&fContext);
+    fValid = false;
+}
+
+void plSHAChecksum::AddTo(uint32_t size, const uint8_t* buffer)
+{
+    SHA_Update(&fContext, buffer, size);
+}
+
+void plSHAChecksum::Finish()
+{
+    SHA_Final(fChecksum, &fContext);
+    fValid = true;
+}
+
+const char *plSHAChecksum::GetAsHexString() const
+{
+    const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
+    static char tempString[kHexStringSize];
+
+    int i;
+    char* ptr;
+
+    hsAssert(fValid, "Trying to get string version of invalid checksum");
+
+    for (i = 0, ptr = tempString; i < sizeof(fChecksum); i++, ptr += 2)
+        sprintf(ptr, "%02x", fChecksum[i]);
+
+    *ptr = 0;
+
+    return tempString;
+}
+
+void plSHAChecksum::SetFromHexString(const char* string)
+{
+    const char* ptr;
+    int         i;
+
+    hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHAChecksum Set()");
+
+    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
+        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
+
+    fValid = true;
+}
+
+void plSHAChecksum::SetValue(uint8_t* checksum)
+{
+    fValid = true;
+    memcpy(fChecksum, checksum, sizeof(fChecksum));
+}
+
+bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
+{
+    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
+}
+
+//============================================================================
+
+plSHA1Checksum::plSHA1Checksum( uint32_t size, uint8_t *buffer )
+{
+    fValid = false;
+    Start();
+    AddTo(size, buffer);
+    Finish();
+}
+
+plSHA1Checksum::plSHA1Checksum()
+{
+    Clear();
+}
+
+plSHA1Checksum::plSHA1Checksum(const plSHA1Checksum& rhs)
+{
+    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
+    fValid = rhs.fValid;
+}
+
+plSHA1Checksum::plSHA1Checksum(const char* fileName)
+{
+    CalcFromFile(fileName);
+}
+
+plSHA1Checksum::plSHA1Checksum(hsStream* stream)
+{
+    CalcFromStream(stream);
+}
+
+void plSHA1Checksum::Clear()
+{
+    memset(fChecksum, 0, sizeof(fChecksum));
+    fValid = false;
+}
+
+void plSHA1Checksum::CalcFromFile(const char* fileName)
+{
+    hsUNIXStream s;
+    fValid = false;
+
+    if (s.Open(fileName))
+    {
+        CalcFromStream(&s);
+        s.Close();
+    }
+}
+
+void plSHA1Checksum::CalcFromStream(hsStream* stream)
+{
+    uint32_t sPos = stream->GetPosition();
+    unsigned loadLen = 1024 * 1024;
+    Start();
+
+    uint8_t* buf = new uint8_t[loadLen];
+
+    while (int read = stream->Read(loadLen, buf))
+    {
+        AddTo( read, buf );
+    }
+    delete[] buf;
+
+    Finish();
+    stream->SetPosition(sPos);
+}
+
+void plSHA1Checksum::Start()
+{
+    SHA1_Init(&fContext);
+    fValid = false;
+}
+
+void plSHA1Checksum::AddTo(uint32_t size, const uint8_t* buffer)
+{
+    SHA1_Update(&fContext, buffer, size);
+}
+
+void plSHA1Checksum::Finish()
+{
+    SHA1_Final(fChecksum, &fContext);
+    fValid = true;
+}
+
+const char *plSHA1Checksum::GetAsHexString() const
+{
+    const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
+    static char tempString[kHexStringSize];
+
+    int i;
+    char* ptr;
+
+    hsAssert(fValid, "Trying to get string version of invalid checksum");
+
+    for (i = 0, ptr = tempString; i < sizeof(fChecksum); i++, ptr += 2)
+        sprintf(ptr, "%02x", fChecksum[i]);
+
+    *ptr = 0;
+
+    return tempString;
+}
+
+void plSHA1Checksum::SetFromHexString(const char* string)
+{
+    const char* ptr;
+    int         i;
+
+    hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHA1Checksum Set()");
+
+    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
+        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
+
+    fValid = true;
+}
+
+void plSHA1Checksum::SetValue(uint8_t* checksum)
+{
+    fValid = true;
+    memcpy(fChecksum, checksum, sizeof(fChecksum));
+}
+
+bool plSHA1Checksum::operator==(const plSHA1Checksum& rhs) const
+{
+    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
+}
+
