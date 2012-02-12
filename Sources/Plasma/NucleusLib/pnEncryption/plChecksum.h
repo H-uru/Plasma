@@ -69,7 +69,7 @@ class plMD5Checksum
         uint8_t fChecksum[MD5_DIGEST_LENGTH];
 
     public:
-        plMD5Checksum(uint32_t size, uint8_t *buffer);
+        plMD5Checksum(size_t size, uint8_t *buffer);
         plMD5Checksum();
         plMD5Checksum(const plMD5Checksum &rhs);
         plMD5Checksum(const char *fileName);
@@ -82,11 +82,11 @@ class plMD5Checksum
         void    CalcFromStream(hsStream* stream);
 
         void    Start();
-        void    AddTo(uint32_t size, const uint8_t *buffer);
+        void    AddTo(size_t size, const uint8_t *buffer);
         void    Finish();
 
         const uint8_t *GetValue() const { return fChecksum; }
-        uint32_t      GetSize() const { return sizeof(fChecksum); }
+        size_t      GetSize() const { return sizeof(fChecksum); }
 
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
@@ -113,7 +113,7 @@ class plSHAChecksum
         ShaDigest fChecksum;
 
     public:
-        plSHAChecksum(uint32_t size, uint8_t* buffer);
+        plSHAChecksum(size_t size, uint8_t* buffer);
         plSHAChecksum();
         plSHAChecksum(const plSHAChecksum& rhs);
         plSHAChecksum(const char* fileName);
@@ -126,11 +126,11 @@ class plSHAChecksum
         void CalcFromStream(hsStream* stream);
 
         void Start();
-        void AddTo(uint32_t size, const uint8_t* buffer);
+        void AddTo(size_t size, const uint8_t* buffer);
         void Finish();
 
         const uint8_t* GetValue() const { return fChecksum; }
-        uint32_t GetSize() const { return sizeof(fChecksum); }
+        size_t GetSize() const { return sizeof(fChecksum); }
 
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
@@ -152,7 +152,7 @@ class plSHA1Checksum
         ShaDigest fChecksum;
 
     public:
-        plSHA1Checksum(uint32_t size, uint8_t* buffer);
+        plSHA1Checksum(size_t size, uint8_t* buffer);
         plSHA1Checksum();
         plSHA1Checksum(const plSHA1Checksum& rhs);
         plSHA1Checksum(const char* fileName);
@@ -165,11 +165,11 @@ class plSHA1Checksum
         void CalcFromStream(hsStream* stream);
 
         void Start();
-        void AddTo(uint32_t size, const uint8_t* buffer);
+        void AddTo(size_t size, const uint8_t* buffer);
         void Finish();
 
         const uint8_t* GetValue() const { return fChecksum; }
-        uint32_t GetSize() const { return sizeof(fChecksum); }
+        size_t GetSize() const { return sizeof(fChecksum); }
 
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);

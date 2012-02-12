@@ -124,19 +124,6 @@ void CryptCreateRandomSeed (
     uint8_t *          data
 );
 
-void CryptHashPassword (
-    const wchar_t username[],
-    const wchar_t password[],
-    ShaDigest * namePassHash
-);
-
-void CryptHashPasswordChallenge (
-    unsigned            clientChallenge,
-    unsigned            serverChallenge,
-    const ShaDigest &   namePassHash,
-    ShaDigest *         challengeHash
-);
-
 void CryptCreateFastWeakChallenge (
     unsigned *  challenge,
     unsigned    val1,

@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
+#include "pnEncryption/plChallengeHash.h"
+
 
 namespace Ngl { namespace Csr {
 /*****************************************************************************
@@ -659,7 +661,7 @@ bool LoginRequestTrans::Send () {
         clientChallenge,
         s_active->serverChallenge,
         m_namePassHash,
-        &challengeHash
+        challengeHash
     );
 
     const uintptr_t msg[] = {

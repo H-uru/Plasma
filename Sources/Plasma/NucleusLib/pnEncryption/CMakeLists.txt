@@ -3,10 +3,12 @@ include_directories("../../NucleusLib")
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(pnEncryption_SOURCES
+    plChallengeHash.cpp
     plChecksum.cpp
 )
 
 set(pnEncryption_HEADERS
+    plChallengeHash.h
     plChecksum.h
 )
 

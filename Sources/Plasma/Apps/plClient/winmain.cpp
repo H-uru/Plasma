@@ -994,7 +994,9 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
             memcpy(pLoginParam->namePassHash, shasum.GetData(), sizeof(ShaDigest));
         }
         else
-            CryptHashPassword(wusername, wpassword, &pLoginParam->namePassHash);
+        {
+            CryptHashPassword(_TEMP_CONVERT_FROM_WCHAR_T(wusername), _TEMP_CONVERT_FROM_WCHAR_T(wpassword), pLoginParam->namePassHash);
+        }
     }
 
     NetCommSetAccountUsernamePassword(wusername, pLoginParam->namePassHash);
