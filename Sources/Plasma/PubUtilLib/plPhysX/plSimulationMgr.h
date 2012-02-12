@@ -102,11 +102,14 @@ public:
     // PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
     void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);
     void UpdateAvatarInDetector(plKey world, plPXPhysical* detector);
+    
     //Fix to Move collision messages and their handling out of the simulation step
-    void AddCollisionMsg(plCollideMsg* msg);
+    void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
+
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDisplayAwakeActors;
 #endif //PLASMA_EXTERNAL_RELEASE
+
 protected:
     friend class ContactReport;
 
@@ -124,6 +127,10 @@ protected:
     NxPhysicsSDK* fSDK;
 
     plPhysicsSoundMgr* fSoundMgr;
+
+    // Pending collision messages
+    typedef std::vector<plCollideMsg*> CollisionVec;
+    CollisionVec fCollideMsgs;
 
     // A mapping from a key to a PhysX scene.  The key is either the
     // SimulationMgr key, for the main world, or a SceneObject key if it's a

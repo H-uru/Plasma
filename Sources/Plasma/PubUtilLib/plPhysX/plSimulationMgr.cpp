@@ -156,7 +156,7 @@ class SensorReport : public NxUserTriggerReport
                 {
                     if (plSimulationMgr::fExtraProfile)
                         DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
+                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
                 }
                 else if (status & NX_TRIGGER_ON_ENTER)
                 {
@@ -167,7 +167,7 @@ class SensorReport : public NxUserTriggerReport
                 {
                     if (plSimulationMgr::fExtraProfile)
                         DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
+                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
                 }
                 else if (status & NX_TRIGGER_ON_LEAVE)
                 {
@@ -187,13 +187,13 @@ class SensorReport : public NxUserTriggerReport
                 {
                     if (plSimulationMgr::fExtraProfile)
                         DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
+                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
                 }
                 if (status & NX_TRIGGER_ON_LEAVE)
                 {
                     if (plSimulationMgr::fExtraProfile)
                         DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    SendCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
+                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
                 }
                 if (!(status & NX_TRIGGER_ON_ENTER) && !(status & NX_TRIGGER_ON_LEAVE) )
                 {
@@ -205,18 +205,6 @@ class SensorReport : public NxUserTriggerReport
 #endif  // USE_PHYSX_CONVEXHULL_WORKAROUND
         }
     }
-
-    void SendCollisionMsg(plKey receiver, plKey hitter, hsBool entering)
-    {
-        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", receiver->GetName().c_str(),
-                          hitter ? hitter->GetName().c_str() : "(nil)" , entering ? "'enter'" : "'exit'");
-        plCollideMsg* msg = new plCollideMsg;
-        msg->fOtherKey = hitter;
-        msg->fEntering = entering;
-        msg->AddReceiver(receiver);
-        plgDispatch::Dispatch()->MsgQueue(msg); // Sends the msg on the next client update
-    }
-
 } gSensorReport;
 
 // This gets called by PhysX whenever two actor groups that are set to report
@@ -599,6 +587,32 @@ void plSimulationMgr::UpdateAvatarInDetector(plKey world, plPXPhysical* detector
     }
 }
 
+void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
+{
+    // First, make sure we have no dupes
+    for (CollisionVec::iterator it = fCollideMsgs.begin(); it != fCollideMsgs.end(); ++it)
+    {
+        plCollideMsg* pMsg = *it;
+
+        // Should only ever be one receiver.
+        // If there's more than one, you suck.
+        if (pMsg->fOtherKey == hitter && pMsg->GetReceiver(0) == hitee)
+        {
+            DetectorLogRed("DUPE: %s hit %s",
+                (hitter ? hitter->GetName().c_str() : "(nil)"),
+                (hitee ? hitee->GetName().c_str() : "(nil)"));
+            return;
+        }
+    }
+
+    // Still here? Then this must be a unique hit!
+    plCollideMsg* pMsg = new plCollideMsg;
+    pMsg->AddReceiver(hitee);
+    pMsg->fOtherKey = hitter;
+    pMsg->fEntering = enter;
+    fCollideMsgs.push_back(pMsg);
+}
+
 void plSimulationMgr::Advance(float delSecs)
 {
     if (fSuspended)
@@ -693,6 +707,15 @@ void plSimulationMgr::Advance(float delSecs)
 
 void plSimulationMgr::ISendUpdates()
 {
+    for (CollisionVec::iterator it = fCollideMsgs.begin(); it != fCollideMsgs.end(); ++it)
+    {
+        plCollideMsg* pMsg = *it;
+        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", pMsg->GetReceiver(0)->GetName().c_str(),
+                          pMsg->fOtherKey ? pMsg->fOtherKey->GetName().c_str() : "(nil)" , pMsg->fEntering ? "'enter'" : "'exit'");
+        plgDispatch::Dispatch()->MsgSend(pMsg);
+    }
+    fCollideMsgs.clear();
+
     SceneMap::iterator it = fScenes.begin();
     for (; it != fScenes.end(); it++)
     {
