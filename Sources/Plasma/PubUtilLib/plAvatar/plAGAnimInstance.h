@@ -192,7 +192,7 @@ public:
     hsBool IsAtEnd();
 
     /** Get the name of the underlying animation. */
-    const char * GetName();
+    plString GetName();
 
     /** Remove all channels from the master mode and remove us from
         our master modifier.
@@ -224,14 +224,14 @@ protected:
     /** Set up bookkeeping for a fade. */
     void ISetupFade(float goal, float rate, bool detach, uint8_t type);
 
-    void IRegisterDetach(const char *channelName, plAGChannel *channel);
+    void IRegisterDetach(const plString &channelName, plAGChannel *channel);
 
     const plAGAnim * fAnimation;
     plAGMasterMod * fMaster;
 
-    std::map<char *, plAGChannelApplicator *, stringISorter> fChannels;
+    std::map<plString, plAGChannelApplicator *, plString::less_i> fChannels;
 
-    typedef std::multimap<const char *, plAGChannel *> plDetachMap;
+    typedef std::multimap<plString, plAGChannel *> plDetachMap;
     plDetachMap fManualDetachChannels;
 
     std::vector<plAGChannel*> fCleanupChannels;

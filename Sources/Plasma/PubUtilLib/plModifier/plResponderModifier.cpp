@@ -775,7 +775,7 @@ void plResponderModifier::ILog(uint32_t color, const char* format, ...)
     if (!format || *format == '\0')
         return;
 
-    const char* keyName = GetKeyName();
+    const char* keyName = _TEMP_CONVERT_TO_CONST_CHAR(GetKeyName());
 
     // Make sure this key isn't in our list of keys to deny
     for (int i = 0; i < gNoLogStrings.size(); i++)

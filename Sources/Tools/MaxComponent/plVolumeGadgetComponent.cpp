@@ -330,8 +330,7 @@ hsBool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetEnter) || fCompPB->GetInt(kVolumeTriggerOnFacing))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        char tmpName[256];
-        sprintf(tmpName, "%s_Enter", IGetUniqueName(node));
+        plString tmpName = plString::Format("%s_Enter", IGetUniqueName(node).c_str());
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -345,8 +344,7 @@ hsBool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetExit))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        char tmpName[256];
-        sprintf(tmpName, "%s_Exit", IGetUniqueName(node));
+        plString tmpName = plString::Format("%s_Exit", IGetUniqueName(node).c_str());
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -365,7 +363,6 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
 
     plLocation loc = node->GetLocation();
     plSceneObject *obj = node->GetSceneObject();
-    char tmpName[256];
 
     plKey logicKey;
     if (enter)
@@ -405,7 +402,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
         prefix = "Enter";
 
     // Register the detector
-    sprintf(tmpName, "%s_%s", IGetUniqueName(node), prefix);
+    plString tmpName = plString::Format("%s_%s", IGetUniqueName(node).c_str(), prefix);
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(tmpName, detector, loc);
     hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     plVolumeSensorConditionalObject* boxCond=nil;
@@ -417,7 +414,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     {
         boxCond = new plVolumeSensorConditionalObjectNoArbitration;
     }
-    sprintf(tmpName, "%s_%s", IGetUniqueName(node), prefix);
+    tmpName = plString::Format("%s_%s", IGetUniqueName(node).c_str(), prefix);
     plKey boxKey = hsgResMgr::ResMgr()->NewKey(tmpName, boxCond, loc);
 
     if (enter)

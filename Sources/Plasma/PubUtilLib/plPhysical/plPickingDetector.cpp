@@ -91,7 +91,7 @@ hsBool plPickingDetector::MsgReceive(plMessage* msg)
                 pMsg->fPickedObj = fProxyKey;
             else
                 pMsg->fPickedObj = GetTarget()->GetKey();
-            
+
             // assume that since this is something that was PICKED that it was done by the local player.
             plKey locPlayerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
             if (locPlayerKey)
@@ -99,10 +99,10 @@ hsBool plPickingDetector::MsgReceive(plMessage* msg)
 
             pMsg->SetSender(GetKey());
             plgDispatch::MsgSend( pMsg );
-            hsStatusMessageF("%s sending activate message to %s\n",GetKey()->GetName(), fReceivers[i]->GetName());
+            hsStatusMessageF("%s sending activate message to %s\n",GetKey()->GetName().c_str(), fReceivers[i]->GetName().c_str());
         }
     }
-    
+
     if (RemoteMod() && RemoteMod()->MsgReceive(msg))
         return true;
 

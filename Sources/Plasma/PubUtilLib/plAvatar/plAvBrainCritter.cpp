@@ -95,7 +95,7 @@ public:
     void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
 
     std::string Name() const {return fName;}
-    std::string AnimName() const {return fAnimName;}
+    plString AnimName() const {return fAnimName;}
     bool RandomStartPoint() const {return fRandomStartPoint;}
     float FadeInLength() const {return fFadeInLength;}
     float FadeOutLength() const {return fFadeOutLength;}
@@ -117,7 +117,7 @@ protected:
     plAvBrainCritter *fCritterBrain;
 
     std::string fName; // user-created name for this behavior, also used as the index into the brain's behavior map
-    std::string fAnimName; // physical animation's name, for reference
+    plString fAnimName; // physical animation's name, for reference
     bool fRandomStartPoint; // do we want this behavior to start at a random frame every time we start it?
     float fFadeInLength; // how long to fade in this behavior
     float fFadeOutLength; // how long to fade out this behavior
@@ -290,10 +290,10 @@ std::string plAvBrainCritter::BehaviorName(int behavior) const
     return ((CritterBehavior*)fBehaviors[behavior])->Name();
 }
 
-std::string plAvBrainCritter::AnimationName(int behavior) const
+plString plAvBrainCritter::AnimationName(int behavior) const
 {
     if ((behavior >= fBehaviors.Count()) || (behavior < 0))
-        return "";
+        return _TEMP_CONVERT_FROM_LITERAL("");
     return ((CritterBehavior*)fBehaviors[behavior])->AnimName();
 }
 

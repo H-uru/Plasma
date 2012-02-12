@@ -58,11 +58,11 @@ float TimeValueToGameTime(TimeValue t)
     return float(t)/float(TPS);
 }
 
-bool GetSegMapAnimTime(const char *animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
+bool GetSegMapAnimTime(const plString &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
 {
     if (segMap)
     {
-        if (animName && segMap->find(animName) != segMap->end())
+        if (!animName.IsNull() && segMap->find(animName) != segMap->end())
         {
             SegmentSpec *spec = (*segMap)[animName];
             if (spec->fType == type)
@@ -124,14 +124,13 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
     return segMap;
 }
 
-SegmentSpec::SegmentSpec(float start, float end, char * name, SegType type) :
+SegmentSpec::SegmentSpec(float start, float end, const plString & name, SegType type) :
     fStart(start), fEnd(end), fName(name), fType(type), fInitial(-1)
 {
 }
 
 SegmentSpec::~SegmentSpec()
 {
-    delete [] fName;
 }
 
 // constants used for parsing the note tracks
@@ -154,7 +153,6 @@ SegmentSpec::SegmentSpec()
     fStart = -1;
     fEnd = -1;
     fInitial = -1;
-    fName = nil;
     fType = kAnim;
 }
 
@@ -211,7 +209,10 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
     char segSuffix[256];
 
     int matchedFields = sscanf(note, " %[^@] @ %s ", segName, segSuffix);
-    
+
+    plString name = _TEMP_CONVERT_FROM_LITERAL(segName);
+    plString suffix = _TEMP_CONVERT_FROM_LITERAL(segSuffix);
+
     if (matchedFields == 2)
     {
         NoteType type = kNoteUnknown;
@@ -249,7 +250,7 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
         }
         else
         {
-            SegmentMap::iterator existing = segMap->find(segName);
+            SegmentMap::iterator existing = segMap->find(name);
             SegmentSpec *existingSpec = (existing != segMap->end()) ? (*existing).second : nil;
             const char *kErrorTitle = "NoteTrack Anim Error";
 
@@ -304,37 +305,33 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
                 }
                 else
                 {
-                    char *nameCopy = new char[strlen(segName)+1];
-                    strcpy(nameCopy, segName);
-
                     switch (type)
                     {
                     case kNoteStartAnim:
-                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kAnim);
+                        (*segMap)[name] = new SegmentSpec(time, -1, name, SegmentSpec::kAnim);
                         break;
 
                     case kNoteStartLoop:
-                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kLoop);
+                        (*segMap)[name] = new SegmentSpec(time, -1, name, SegmentSpec::kLoop);
                         break;
 
                     case kNoteEndLoop:
-                        (*segMap)[nameCopy] = new SegmentSpec(-1, time, nameCopy, SegmentSpec::kLoop);
+                        (*segMap)[name] = new SegmentSpec(-1, time, name, SegmentSpec::kLoop);
                         break;
 
                     case kNoteMarker:
-                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kMarker);
+                        (*segMap)[name] = new SegmentSpec(time, -1, name, SegmentSpec::kMarker);
                         break;
 
                     case kNoteStopPoint:
-                        (*segMap)[nameCopy] = new SegmentSpec(time, -1, nameCopy, SegmentSpec::kStopPoint);
+                        (*segMap)[name] = new SegmentSpec(time, -1, name, SegmentSpec::kStopPoint);
                         break;
 
                     case kNoteSuppress:
-                        (*segMap)[nameCopy] = new SegmentSpec(-1, -1, nameCopy, SegmentSpec::kSuppress);
+                        (*segMap)[name] = new SegmentSpec(-1, -1, name, SegmentSpec::kSuppress);
                         break;
                         
                     default:
-                        delete [] nameCopy;
                         break;
                     }
                 }

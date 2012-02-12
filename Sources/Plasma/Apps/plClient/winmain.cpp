@@ -1129,8 +1129,8 @@ void StatusCallback(void *param)
         }
     }
 
-    delete [] statusUrl;
     curl_easy_cleanup(hCurl);
+    delete [] statusUrl;
 
     s_statusEvent.Signal();
 }

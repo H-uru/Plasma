@@ -102,7 +102,7 @@ public:
     const hsBitVector& GetVisSet() const { return fGroup->GetVisSet(); }
     const hsBitVector& GetVisNot() const { return fGroup->GetVisNot(); }
 
-    const hsTArray<plLightInfo*>& GetLights() const { fGroup->GetLights(); }
+    const hsTArray<plLightInfo*>& GetLights() const { return fGroup->GetLights(); }
 
     const plLODDist& GetLOD() const { return fGroup->GetLOD(); }
 };

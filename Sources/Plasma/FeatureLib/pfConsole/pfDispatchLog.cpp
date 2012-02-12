@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
-
+#include "plString.h"
 
 static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
 
@@ -137,9 +137,9 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, in
 
     fLog->AddLineF("%sDispatched (%d) %d ms: time=%d CName=%s, sndr=%s, rcvr(%d)=%s, flags=0x%lx, tstamp=%f\n",
         indentStr, numReceivers, sendTimeMs,
-        int(sendTime), msg->ClassName(), msg->fSender?msg->fSender->GetName():"nil",
+        int(sendTime), msg->ClassName(), msg->fSender?msg->fSender->GetName().c_str():"nil",
         msg->GetNumReceivers(), msg->GetNumReceivers() && msg->GetReceiver(0)
-            ? msg->GetReceiver(0)->GetName():"nil",
+            ? msg->GetReceiver(0)->GetName().c_str():"nil",
         msg->fBCastFlags, msg->fTimeStamp);
 
     lastTime=curTime;
@@ -319,7 +319,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
         GetType(kOnRequest);
         GetType(kOnRemove);
         GetType(kOnReplace);
-        xtl::format(info, "Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName(), typeName);
+        xtl::format(info, "Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName().c_str(), typeName);
 
         return true;
     }

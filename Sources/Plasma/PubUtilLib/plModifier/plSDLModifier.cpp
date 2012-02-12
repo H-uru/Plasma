@@ -178,14 +178,14 @@ void plSDLModifier::SendState(uint32_t sendFlags)
         {
             gMooseDump=true;
             plNetObjectDebugger::GetInstance()->SetDebugging(true);
-            curState->DumpToObjectDebugger(xtl::format("Object %s SENDS SDL state", 
-                GetStateOwnerKey()->GetName(), dirtyOnly).c_str());
+            curState->DumpToObjectDebugger(plString::Format("Object %s SENDS SDL state",
+                GetStateOwnerKey()->GetName().c_str(), dirtyOnly).c_str());
             gMooseDump=false;
         }
 
         // cache current state, send notifications if necessary
         fStateCache->UpdateFrom(*curState, dirtyOnly);  // update local copy of state
-        
+
         ISentState(curState);
     }
     delete curState;
@@ -197,14 +197,14 @@ void plSDLModifier::SendState(uint32_t sendFlags)
 void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
 {
     hsAssert(fStateCache, "nil stateCache");
-    
-    if (plNetObjectDebugger::GetInstance() && 
+
+    if (plNetObjectDebugger::GetInstance() &&
         plNetObjectDebugger::GetInstance()->IsDebugObject(GetStateOwnerKey()->ObjectIsLoaded()))
     {
         gMooseDump=true;
         plNetObjectDebugger::GetInstance()->SetDebugging(true);
-        srcState->DumpToObjectDebugger(xtl::format("Object %s RECVS SDL state", 
-            GetStateOwnerKey()->GetName()).c_str());
+        srcState->DumpToObjectDebugger(plString::Format("Object %s RECVS SDL state",
+            GetStateOwnerKey()->GetName().c_str()).c_str());
         gMooseDump=false;
     }
 
@@ -214,17 +214,17 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
 
         // apply incoming state
         ISetCurrentStateFrom(srcState);         // apply incoming state to sceneObj
-        
+
         // cache state, send notifications if necessary 
         fStateCache->UpdateFrom(*srcState, false);  // update local copy of state
         fSentOrRecvdState = true;
     }
     else
     {
-        plNetClientApp::GetInstance()->DebugMsg("\tReceiving and ignoring unused SDL state msg: type %s, object %s", 
-            GetSDLName(), GetStateOwnerKey()->GetName());
+        plNetClientApp::GetInstance()->DebugMsg("\tReceiving and ignoring unused SDL state msg: type %s, object %s",
+            GetSDLName(), GetStateOwnerKey()->GetName().c_str());
     }
-    
+
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->SetDebugging(false);
 }

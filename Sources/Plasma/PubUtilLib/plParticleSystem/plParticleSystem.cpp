@@ -486,9 +486,9 @@ hsBool plParticleSystem::MsgReceive(plMessage* msg)
 
     if ((rend = plRenderMsg::ConvertNoRef(msg)))
     {
-        plProfile_BeginLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_BeginLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName().c_str());
         IHandleRenderMsg(rend->Pipeline());
-        plProfile_EndLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
+        plProfile_EndLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName().c_str());
         return true;
     }
     else if ((refMsg = plGenRefMsg::ConvertNoRef(msg)))

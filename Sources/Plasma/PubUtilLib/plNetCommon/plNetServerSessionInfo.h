@@ -147,7 +147,7 @@ public:
 
     const char * GetDisplayName() const;
 
-    std::string AsStdString() const;
+    plString AsString() const;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ public:
     void    Read( hsStream * s, hsResMgr* );
     void    Write( hsStream * s, hsResMgr* );
 
-    std::string AsStdString() const;
+    plString AsString() const;
 };
 
 
@@ -291,8 +291,8 @@ public:
     void Clear();
     void CopyFrom(const plNetServerSessionInfo * other);
     bool IsEqualTo(const plNetServerSessionInfo * other) const;
-    virtual std::string AsStdString() const;
-    virtual std::string AsLogString() const;
+    virtual plString AsString() const;
+    virtual plString AsLogString() const;
 
     void Read(hsStream* s, hsResMgr* mgr=nil);
     void Write(hsStream* s, hsResMgr* mgr=nil);

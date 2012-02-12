@@ -178,7 +178,7 @@ public:
     // functions that all net client apps should implement
     virtual int SendMsg(plNetMessage* msg) = 0;
     virtual uint32_t GetPlayerID() const = 0;
-    virtual const char * GetPlayerName( const plKey avKey=nil ) const = 0;
+    virtual plString GetPlayerName( const plKey avKey=nil ) const = 0;
 
     // commonly used net client app functions
     virtual float GetCurrentAgeTimeOfDayPercent() const { hsAssert(false, "stub"); return 0.; }

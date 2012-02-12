@@ -64,28 +64,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plAGModifier::plAGModifier()
 : plSingleModifier()
 {
-    fChannelName = nil;
     fAutoApply = true;
     fEnabled = true;
 }
 
 // CTOR(name)
-plAGModifier::plAGModifier(const char *name, hsBool autoApply)
+plAGModifier::plAGModifier(const plString &name, hsBool autoApply)
 : plSingleModifier(), fAutoApply(autoApply)
 {
-    fChannelName = hsStrcpy(name);
+    fChannelName = name;
     fEnabled = true;
 }
 
 // DTOR
 plAGModifier::~plAGModifier()
 {
-    if(fChannelName)
-    {
-        delete[] fChannelName;
-        fChannelName = nil;
-    }
-
     int i;
     for (i = 0; i < fApps.size(); i++)
     {
@@ -94,7 +87,7 @@ plAGModifier::~plAGModifier()
 }
 
 // GETCHANNELNAME
-const char * plAGModifier::GetChannelName() const
+plString plAGModifier::GetChannelName() const
 {
     return fChannelName;
 }
@@ -106,9 +99,9 @@ void plAGModifier::Enable(hsBool val)
 }
 
 // SETCHANNELNAME
-void plAGModifier::SetChannelName(char * name)
+void plAGModifier::SetChannelName(const plString & name)
 {
-    fChannelName = hsStrcpy(name);
+    fChannelName = name;
 }
 
 // IAPPLYCHANNELS (time)
@@ -276,7 +269,7 @@ void plAGModifier::Read(hsStream *stream, hsResMgr *mgr)
     plSingleModifier::Read(stream, mgr);
 
     // read in the name of the modifier
-    fChannelName = stream->ReadSafeString();
+    fChannelName = stream->ReadSafeString_TEMP();
 }
 
 // WRITE

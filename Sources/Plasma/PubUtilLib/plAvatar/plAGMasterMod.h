@@ -98,7 +98,7 @@ public:
     virtual ~plAGMasterMod();
 
     /** Find an individual plAGModifier of the given name under our control. */
-    plAGModifier * GetChannelMod(const char * name, hsBool dontCache = false) const;
+    plAGModifier * GetChannelMod(const plString & name, hsBool dontCache = false) const;
 
     /** \name Managing Animations */
     // \{
@@ -112,13 +112,13 @@ public:
 
     /** Look up the given animation by name and attach it
         with the given blend factor. */
-    plAGAnimInstance *AttachAnimationBlended(const char *name, float blendFactor = 0,
+    plAGAnimInstance *AttachAnimationBlended(const plString &name, float blendFactor = 0,
                                              uint16_t blendPriority = kAGMedBlendPriority,
                                              hsBool cache = false);
 
     /** Play a simple anim (one that doesn't affect root) once and auto detach. 
         Intended for Zandi's facial animations that run seperate from the behaviors. */
-    void PlaySimpleAnim(const char *name);
+    void PlaySimpleAnim(const plString &name);
                                              
     /** Detach the given animation instance. Does nothing
         if the instance is not managed by this master mod. */
@@ -128,7 +128,7 @@ public:
     /** Detach the given animation by name. Searches for
         any instances derived from animations with the
         given name and removes them. */
-    void DetachAnimation(const char *name);
+    void DetachAnimation(const plString &name);
     // \}
 
     /** Print the current animation stack to the console.
@@ -139,7 +139,7 @@ public:
 
     /** Find and return any animation instances with the
         given name on this master modifer. */
-    plAGAnimInstance *FindAnimInstance(const char *name);
+    plAGAnimInstance *FindAnimInstance(const plString &name);
 
     /** Return the Ith animation instance, based on blend
         order. Of dubious utility, but, y'know. */
@@ -152,7 +152,7 @@ public:
         attached, it could be anywhere, including buried under
         a bunch of other animations. If it's important that it be
         on top of the stack, you may need to detach it first. */
-    plAGAnimInstance *FindOrAttachInstance(const char *name, float blendFactor);
+    plAGAnimInstance *FindOrAttachInstance(const plString &name, float blendFactor);
 
     /** Return the number of animations available. */
     int GetNumAnimations();
@@ -218,7 +218,7 @@ public:
 protected:
     // -- methods --
     plAGModifier * ICacheChannelMod(plAGModifier *mod) const;
-    plAGModifier * IFindChannelMod(const plSceneObject *obj, const char *name) const;
+    plAGModifier * IFindChannelMod(const plSceneObject *obj, const plString &name) const;
 
     virtual hsBool IEval(double secs, float del, uint32_t dirty);
     
@@ -231,7 +231,7 @@ protected:
     plSceneObject*  fTarget;
 
     // a map from channel names to ag modifiers within our domain
-    typedef std::map<const char *, plAGModifier*, stringSorter> plChannelModMap;
+    typedef std::map<plString, plAGModifier*> plChannelModMap;
     plChannelModMap fChannelMods;
 
     // instances which are currently attached to this master

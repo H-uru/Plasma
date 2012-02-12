@@ -166,7 +166,7 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
 {
     // update the internal keyboard state
     unsigned int keyCode = (unsigned int)key;
-    if ((key >= 0) && (key < 256))
+    if (key < 256)
         fKeyboardState[key] = bKeyDown;
 
     if (key == KEY_SHIFT)

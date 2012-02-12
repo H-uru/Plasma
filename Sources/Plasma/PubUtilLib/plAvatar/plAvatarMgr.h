@@ -101,7 +101,7 @@ public:
         do away with this bookeeping entirely. */
     void AddSeekPoint(plSeekPointMod *seekpoint);
     void RemoveSeekPoint(plSeekPointMod *seekpoint);
-    plSeekPointMod *FindSeekPoint(const char *name);
+    plSeekPointMod *FindSeekPoint(const plString &name);
     // \}
 
     // \{
@@ -109,7 +109,7 @@ public:
         scripting only. */
     void AddOneShot(plOneShotMod *oneshot);
     void RemoveOneShot(plOneShotMod *oneshot);
-    plOneShotMod *FindOneShot(char *name);
+    plOneShotMod *FindOneShot(const plString &name);
     // \}
     
     plKey LoadPlayer(const char* name, const char *account);
@@ -200,10 +200,10 @@ protected:
 
     static plAvatarMgr* fInstance;      // the single instance of the avatar manager
 
-    typedef std::map<const char *, plSeekPointMod *, stringISorter> plSeekPointMap;
+    typedef std::map<plString, plSeekPointMod *, plString::less_i> plSeekPointMap;
     plSeekPointMap fSeekPoints;
 
-    typedef std::map<char *, plOneShotMod *, stringISorter> plOneShotMap;
+    typedef std::map<plString, plOneShotMod *, plString::less_i> plOneShotMap;
     plOneShotMap fOneShots;
 
     typedef std::map<plKey, plMessage *> DeferredInits;

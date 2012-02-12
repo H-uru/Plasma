@@ -118,10 +118,9 @@ hsBool plLocation::IsVirtual() const
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-char* plLocation::StringIze(char* str)  const // Format to displayable string
+plString plLocation::StringIze()  const // Format to displayable string
 {
-    sprintf(str, "S0x%xF0x%x", fSequenceNumber, int(fFlags));
-    return str;
+    return plString::Format("S0x%xF0x%x", fSequenceNumber, int(fFlags));
 }
 
 plLocation plLocation::MakeReserved(uint32_t number)
@@ -136,21 +135,19 @@ plLocation plLocation::MakeNormal(uint32_t number)
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
-plUoid::plUoid(const plLocation& location, uint16_t classType, const char* objectName, const plLoadMask& m)
+plUoid::plUoid(const plLocation& location, uint16_t classType, const plString& objectName, const plLoadMask& m)
 {
-    fObjectName = nil;
     Invalidate();
 
     fLocation = location;
     fClassType = classType;
-    fObjectName = hsStrcpy(objectName);
+    fObjectName = objectName;
     fLoadMask = m;
     fClonePlayerID = 0;
 }
 
 plUoid::plUoid(const plUoid& src)
 {
-    fObjectName = nil;
     Invalidate();
     *this = src;
 }
@@ -162,7 +159,7 @@ plUoid::~plUoid()
 
 void plUoid::Read(hsStream* s)
 {
-    hsAssert(fObjectName == nil, "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName.IsNull(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
     uint8_t contents = s->ReadByte();
@@ -178,7 +175,7 @@ void plUoid::Read(hsStream* s)
     s->LogReadLE(&fClassType, "ClassType");
     s->LogReadLE(&fObjectID, "ObjectID");
     s->LogSubStreamPushDesc("ObjectName");
-    fObjectName = s->LogReadSafeString();
+    fObjectName = s->LogReadSafeString_TEMP();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)
@@ -229,9 +226,7 @@ void plUoid::Invalidate()
     fCloneID = 0;
     fClonePlayerID = 0;
     fClassType = 0;
-    if (fObjectName)
-        delete [] fObjectName;
-    fObjectName = nil;
+    fObjectName = plString::Null;
     fLocation.Invalidate();
     fLoadMask = plLoadMask::kAlways;
 
@@ -239,7 +234,7 @@ void plUoid::Invalidate()
 
 hsBool plUoid::IsValid() const
 {
-    if (!fLocation.IsValid() || fObjectName == nil)
+    if (!fLocation.IsValid() || fObjectName.IsNull())
         return false;
 
     return true;
@@ -250,7 +245,7 @@ hsBool plUoid::operator==(const plUoid& u) const
     return  fLocation == u.fLocation
             && fLoadMask == u.fLoadMask
             && fClassType == u.fClassType
-            && hsStrEQ(fObjectName, u.fObjectName)
+            && fObjectName == u.fObjectName
             && fObjectID == u.fObjectID
             && fCloneID == u.fCloneID
             && fClonePlayerID == u.fClonePlayerID;
@@ -262,9 +257,7 @@ plUoid& plUoid::operator=(const plUoid& rhs)
     fCloneID = rhs.fCloneID;
     fClonePlayerID = rhs.fClonePlayerID;
     fClassType = rhs.fClassType;
-    if (fObjectName)
-        delete [] fObjectName;
-    fObjectName = hsStrcpy(rhs.fObjectName);
+    fObjectName = rhs.fObjectName;
     fLocation = rhs.fLocation;
     fLoadMask = rhs.fLoadMask;
 
@@ -272,13 +265,12 @@ plUoid& plUoid::operator=(const plUoid& rhs)
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-char* plUoid::StringIze(char* str) const // Format to displayable string
+plString plUoid::StringIze() const // Format to displayable string
 {
-    sprintf(str, "(0x%x:0x%x:%s:C:[%u,%u])", 
+    return plString::Format("(0x%x:0x%x:%s:C:[%u,%u])",
         fLocation.GetSequenceNumber(), 
         int(fLocation.GetFlags()), 
-        fObjectName, 
+        fObjectName.c_str(),
         GetClonePlayerID(), 
         GetCloneID());
-    return str;
 }

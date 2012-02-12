@@ -538,10 +538,11 @@ protected:
         HWND hCombo = GetDlgItem(hWnd, ctrlID);
         ComboBox_ResetContent(hCombo);
 
-        while (const char* animName = anim.GetNextAnimName())
+        plString animName;
+        while (!(animName = anim.GetNextAnimName()).IsNull())
         {
-            int sel = ComboBox_AddString(hCombo, animName);
-            if (hsStrEQ(animName, savedName))
+            int sel = ComboBox_AddString(hCombo, animName.c_str());
+            if (animName.Compare(savedName) == 0)
                 ComboBox_SetCurSel(hCombo, sel);
         }
     }
@@ -714,7 +715,7 @@ plKey plGameMarkerComponent::IGetMtlAnimKey(int paramID, plMaxNode* node)
     Mtl* mtl = fCompPB->GetMtl(kMarkerMtl);
     plMaxNode* mtlNode  = (plMaxNode*)fCompPB->GetINode(kMarkerMtlNode);
     hsTArray<plKey> keys;
-    const char* anim = fCompPB->GetStr(paramID);
+    plString anim = plString::FromUtf8(fCompPB->GetStr(paramID));
     GetMatAnimModKey(mtl, mtlNode, anim, keys);
     hsAssert(keys.Count() == 1, "Wrong number of keys");
     return keys[0];

@@ -65,16 +65,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfGUICheckBoxCtrl::pfGUICheckBoxCtrl()
 {
-    fAnimName = nil;
     SetFlag( kWantsInterest );
     fChecked = false;
     fClicking = false;
     fPlaySound = true;
-}
-
-pfGUICheckBoxCtrl::~pfGUICheckBoxCtrl()
-{
-    delete [] fAnimName;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -102,7 +96,7 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
 
-    fAnimName = s->ReadSafeString();
+    fAnimName = s->ReadSafeString_TEMP();
     fChecked = s->ReadBool();
 }
 
@@ -197,17 +191,10 @@ void    pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= fals
     }
 }
 
-void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const char *name )
+void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
 {
     fAnimationKeys = keys;
-    delete [] fAnimName;
-    if( name != nil )
-    {
-        fAnimName = new char[ strlen( name ) + 1 ];
-        strcpy( fAnimName, name );
-    }
-    else
-        fAnimName = nil;
+    fAnimName = name;
 }
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////

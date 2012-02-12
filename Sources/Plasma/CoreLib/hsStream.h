@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsMemory.h"
+#include "plString.h"
 
 namespace hsPackFileSys {
 struct FileEntry;
@@ -58,7 +59,8 @@ struct FileEntry;
 #ifndef STREAM_LOGGER
 #define hsReadOnlyLoggingStream hsReadOnlyStream
 #define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
-#define LogReadSafeString() ReadSafeString();
+#define LogReadSafeString() ReadSafeString()
+#define LogReadSafeString_TEMP() ReadSafeString_TEMP()
 #define LogReadSafeStringLong() ReadSafeStringLong();
 #define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
 #define LogReadLE(value, desc) ReadLE(value)
@@ -129,6 +131,7 @@ public:
     virtual hsBool    IsCompressed() { return false; }
 
     uint32_t        WriteString(const char cstring[]);
+    uint32_t        WriteString(const plString & string) { return WriteString(_TEMP_CONVERT_TO_CONST_CHAR(string)); }
     uint32_t        WriteFmt(const char * fmt, ...);
     uint32_t        WriteFmtV(const char * fmt, va_list av);
 
@@ -141,6 +144,11 @@ public:
     uint32_t        WriteSafeWString(const wchar_t *string);
     char *          ReadSafeString();
     wchar_t *       ReadSafeWString();
+
+    uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
+    uint32_t        WriteSafeWString(const plString &string);
+    plString        ReadSafeString_TEMP();
+    plString        ReadSafeWString_TEMP();
 
     hsBool          GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     hsBool          ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);

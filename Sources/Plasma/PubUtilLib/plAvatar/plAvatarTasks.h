@@ -84,15 +84,13 @@ public:
         \param loop Make the animation loop?
         \param attach Are we attaching or detaching the animation?
     */
-    plAvAnimTask(const char *animName, float initialBlend, float targetBlend, float fadeSpeed,
+    plAvAnimTask(const plString &animName, float initialBlend, float targetBlend, float fadeSpeed,
                  float setTime, hsBool start, hsBool loop, hsBool attach);
 
     /** Canonical constructor form form for detaching
         \param animName The name of the animation we're detaching
         \param fadeSpeed How fast to fade it out. */
-    plAvAnimTask(const char *animName, float fadeSpeed, hsBool attach = false);
-
-    virtual ~plAvAnimTask();
+    plAvAnimTask(const plString &animName, float fadeSpeed, hsBool attach = false);
 
     // task protocol
     virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
@@ -108,11 +106,11 @@ public:
 
 protected:
     // public members
-    char* fAnimName;                    // the animation we're operating on
-    float fInitialBlend;             // the blend to establish (attaching only)
-    float fTargetBlend;              // the blend to achieve eventually (attaching only)
-    float fFadeSpeed;                // how fast to achieve the blend
-    float fSetTime;                  // set the animation to this time
+    plString fAnimName;                 // the animation we're operating on
+    float fInitialBlend;                // the blend to establish (attaching only)
+    float fTargetBlend;                 // the blend to achieve eventually (attaching only)
+    float fFadeSpeed;                   // how fast to achieve the blend
+    float fSetTime;                     // set the animation to this time
     hsBool fStart;                      // start the animation playing? (attaching only)
     hsBool fLoop;                       // turn on looping? (attaching only)
     hsBool fAttach;                     // attach? (otherwise detach)
@@ -184,7 +182,7 @@ public:
         \param reversable Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
-    plAvOneShotTask(const char *animName, hsBool drivable, hsBool reversible, plOneShotCallbacks *callbacks);
+    plAvOneShotTask(const plString &animName, hsBool drivable, hsBool reversible, plOneShotCallbacks *callbacks);
     /** Construct from a oneshot message.
         \param msg The message to copy our parameters from
         \param brain The brain to attach the task to.
@@ -197,7 +195,7 @@ public:
     virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
     
-    void SetAnimName(char *name);
+    void SetAnimName(const plString &name);
     
     static hsBool fForce3rdPerson;
 
@@ -211,7 +209,7 @@ public:
     
     // *** implement reader and writer if needed for network propagation
 protected:
-    char *fAnimName;                    // the name of the one-shot animation we want to use
+    plString fAnimName;                 // the name of the one-shot animation we want to use
     hsBool fMoveHandle;                 // move the handle after the oneshot's done playing?
     plAGAnimInstance *fAnimInstance;    // the animation instance (available only after it starts playing)
     hsBool fDrivable;                   // the user can control the animation with the mouse
@@ -257,10 +255,10 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr); 
 
-    void SetMarkerName(char *name);
+    void SetMarkerName(const plString &name);
         
 protected:
-    char *fMarkerName;
+    plString fMarkerName;
     double fStartTime;
     float fMarkerTime;
     hsBool fLinkFired;

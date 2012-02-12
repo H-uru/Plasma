@@ -80,16 +80,16 @@ void plProxyGen::Init(const hsKeyedObject* owner)
 {
     if( !GetKey() )
     {
-        char buff[256];
+        plString buff;
         plLocation loc;
         if( owner->GetKey() )
         {
-            sprintf(buff, "%s_%s_%d_%d", owner->GetKey()->GetName(), "ProxyGen", owner->GetKey()->GetUoid().GetClonePlayerID(), fProxyKeyCounter++);
+            buff = plString::Format("%s_ProxyGen_%d_%d", owner->GetKey()->GetName().c_str(), owner->GetKey()->GetUoid().GetClonePlayerID(), fProxyKeyCounter++);
             loc = owner->GetKey()->GetUoid().GetLocation();
         }
         else
         {
-            sprintf( buff, "ProxyGen%d", fProxyKeyCounter++ );
+            buff = plString::Format( "ProxyGen%d", fProxyKeyCounter++ );
             loc = plLocation::kGlobalFixedLoc;
         }
 
@@ -157,11 +157,11 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 
     hsGMaterial* retVal = new hsGMaterial();
 
-    char buff[256];
-    if( GetKey()->GetName() )
-        sprintf(buff, "%s_%s", GetKey()->GetName(), "Material");
+    plString buff;
+    if( !GetKey()->GetName().IsNull() )
+        buff = plString::Format("%s_Material", GetKey()->GetName().c_str());
     else
-        strcpy(buff, "ProxyMaterial");
+        buff = _TEMP_CONVERT_FROM_LITERAL("ProxyMaterial");
     hsgResMgr::ResMgr()->NewKey( buff, retVal, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     plLayer *lay = retVal->MakeBaseLayer();
@@ -232,11 +232,11 @@ void plProxyGen::IGenerateProxy()
 
     if( fProxyDrawables[idx] && !fProxyDrawables[idx]->GetKey() )
     {
-        char buff[256];
-        if( GetKey()->GetName() )
-            sprintf(buff, "%s_%s", GetKey()->GetName(), "ProxyDrawable");
+        plString buff;
+        if( !GetKey()->GetName().IsNull() )
+            buff = plString::Format("%s_ProxyDrawable", GetKey()->GetName().c_str());
         else
-            strcpy(buff, "ProxyDrawable");
+            buff = _TEMP_CONVERT_FROM_LITERAL("ProxyDrawable");
 
         hsgResMgr::ResMgr()->NewKey( buff, fProxyDrawables[ idx ], GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
     }
