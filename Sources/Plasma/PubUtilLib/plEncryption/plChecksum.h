@@ -100,12 +100,17 @@ class plMD5Checksum
         bool    operator!=(const plMD5Checksum &rhs) const { return !operator==(rhs); }
 };
 
+/* A bunch of things might store either a SHA or a SHA1 checksum, this provides
+ * them a way to store the checksum itself, rather than a union of the classes.
+ */
+typedef uint8_t ShaDigest[SHA_DIGEST_LENGTH];
+
 class plSHAChecksum
 {
     protected:
         hsBool  fValid;
         SHA_CTX fContext;
-        uint8_t fChecksum[SHA_DIGEST_LENGTH];
+        ShaDigest fChecksum;
 
     public:
         plSHAChecksum(uint32_t size, uint8_t* buffer);
@@ -144,7 +149,7 @@ class plSHA1Checksum
     protected:
         hsBool  fValid;
         SHA_CTX fContext;
-        uint8_t fChecksum[SHA_DIGEST_LENGTH];
+        ShaDigest fChecksum;
 
     public:
         plSHA1Checksum(uint32_t size, uint8_t* buffer);

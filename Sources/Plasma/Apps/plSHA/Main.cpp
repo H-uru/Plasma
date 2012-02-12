@@ -45,19 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stdio.h>
 
-int main (int argc, char ** argv) {
+int main (int argc, char** argv) {
 
     if (argc < 2) {
         fprintf(stderr, "ERROR: Please specify filename.\n");
         return 1;
     }
 
-    plMD5Checksum md5(argv[1]);
-    if (!md5.IsValid()) {
-        fprintf(stderr, "ERROR: MD5 failed.\n");
+    plSHAChecksum sha(argv[1]);
+    if (!sha.IsValid()) {
+        fprintf(stderr, "ERROR: SHA failed.\n");
         return 1;
     }
 
-    fprintf(stdout, "%s\n", md5.GetAsHexString());
+    plSHA1Checksum sha1(argv[1]);
+    if (!sha1.IsValid()) {
+        fprintf(stderr, "ERROR: SHA1 failed.\n");
+        return 1;
+    }
+
+    fprintf(stdout, "%s\tSHA\n", sha.GetAsHexString());
+    fprintf(stdout, "%s\tSHA1\n", sha1.GetAsHexString());
     return 0;
 }
