@@ -74,7 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plSpawnModifier.h"
 #include "plModifier/plMaintainersMarkerModifier.h"
 #include "plVault/plDniCoordinateInfo.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 
 #include "pnMessage/plPlayerPageMsg.h"
 #include "pnMessage/plWarpMsg.h"

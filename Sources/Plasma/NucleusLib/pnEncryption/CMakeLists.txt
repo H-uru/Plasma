@@ -10,6 +10,7 @@ set(pnEncryption_SOURCES
 set(pnEncryption_HEADERS
     plChallengeHash.h
     plChecksum.h
+    plRandom.h
 )
 
 add_library(pnEncryption STATIC ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})

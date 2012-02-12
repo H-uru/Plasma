@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"
 
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 static plRandom sRand;
 
 static const uint32_t kNumPrintIDs = 2;
