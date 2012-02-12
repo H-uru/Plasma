@@ -2649,7 +2649,7 @@ bool LoginRequestTrans::Send () {
     PathSplitEmail(s_accountName, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
     if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
-        challengeHash = s_accountNamePassHash;
+        memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
     }
     else {
         CryptCreateRandomSeed(
@@ -5253,7 +5253,7 @@ void NetCliAuthLoginRequest (
     if (accountName)
         StrCopy(s_accountName, accountName, arrsize(s_accountName));
     if (accountNamePassHash)
-        s_accountNamePassHash = *accountNamePassHash;
+        memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));
     if (authToken)
         StrCopy(s_authToken, authToken, arrsize(s_authToken));
     if (os)
