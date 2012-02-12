@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtStr.h"
 #include "pnUtTime.h"
 
-#include <openssl/sha.h>
 #include <openssl/rc4.h>
 
 /*****************************************************************************
@@ -72,34 +71,12 @@ struct CryptKey {
 
 namespace Crypt {
 
-ShaDigest s_shaSeed;
-
 
 /*****************************************************************************
 *
 *   Internal functions
 *
 ***/
-
-//============================================================================
-void ShaProcess (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    SHA_CTX sha;
-    SHA_Init(&sha);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        SHA_Update(&sha, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    SHA_Final((unsigned char *)dest, &sha);
-}
-
 
 /*****************************************************************************
 *
@@ -143,39 +120,6 @@ static void Rc4Codec (
 *   Exports
 *
 ***/
-
-//============================================================================
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    const unsigned  sourceBytes,
-    const void *    sourceData
-) {
-    CryptDigest(
-        algorithm,
-        dest,
-        1,
-        &sourceBytes,
-        &sourceData
-    );
-}
-
-//============================================================================
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],  // [sourceCount]
-    const void *    sourcePtrs[]    // [sourceCount]
-) {
-    switch (algorithm) {
-        case kCryptSha:
-            ShaProcess(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
-        DEFAULT_FATAL(algorithm);
-    }
-}
 
 //============================================================================
 CryptKey * CryptKeyCreate (
@@ -229,78 +173,6 @@ unsigned CryptKeyGetBlockSize (
 
         DEFAULT_FATAL(algorithm);
     }
-}
-
-//============================================================================
-void CryptCreateRandomSeed (
-    unsigned        bytes,
-    uint8_t *          data
-) {
-    COMPILER_ASSERT(SHA_DIGEST_LENGTH == 20);
-
-    // Combine seed with input data
-    {
-        unsigned seedIndex = 0;
-        unsigned dataIndex = 0;
-        unsigned cur = 0;
-        unsigned end = max(bytes, sizeof(s_shaSeed));
-        for (; cur < end; ++cur) {
-            s_shaSeed[seedIndex] ^= data[dataIndex];
-            if (++seedIndex >= sizeof(s_shaSeed))
-                seedIndex = 0;
-            if (++dataIndex >= bytes)
-                dataIndex = 0;
-        }
-
-        ((uint32_t*)s_shaSeed)[2] ^= (uint32_t) &bytes;
-        ((uint32_t*)s_shaSeed)[3] ^= (uint32_t) bytes;
-        ((uint32_t*)s_shaSeed)[4] ^= (uint32_t) data;
-    }
-
-    // Hash seed
-    ShaDigest digest;
-    CryptDigest(kCryptSha, &digest, sizeof(s_shaSeed), s_shaSeed);
-
-    // Update output with contents of digest
-    {
-        unsigned src = 0;
-        unsigned dst = 0;
-        unsigned cur = 0;
-        unsigned end = max(bytes, sizeof(digest));
-        for (; cur < end; ++cur) {
-            data[dst] ^= ((const uint8_t *) &digest)[src];
-            if (++src >= sizeof(digest))
-                src = 0;
-            if (++dst >= bytes)
-                dst = 0;
-        }
-    }
-
-    // Combine seed with digest
-    for (size_t i = 0; i < SHA_DIGEST_LENGTH; i++) {
-        s_shaSeed[i] ^= digest[i];
-    }
-}
-
-
-//============================================================================
-void CryptCreateFastWeakChallenge (
-    unsigned *  challenge,
-    unsigned    val1,
-    unsigned    val2
-) {
-    s_shaSeed.data[0] ^= TimeGetMs();                       // looping time
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= (unsigned) TimeGetTime();          // global time
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= *challenge;                        // unknown
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= (unsigned) challenge;              // variable address
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= val1;
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= val2;
-    *challenge        = s_shaSeed.data[0];
 }
 
 //============================================================================

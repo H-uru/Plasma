@@ -45,11 +45,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ShaDigest fSeed;
 
-void CryptCreateRandomSeed(size_t length, uint8_t* data) {
+void CryptCreateRandomSeed(size_t length, uint8_t* data)
+{
+    uint32_t seedIdx = 0;
+    uint32_t dataIdx = 0;
+    uint32_t cur = 0;
+    uint32_t end = max(length, sizeof(ShaDigest));
+
+    // Combine seed with input data
+    for (; cur < end; cur++) {
+        fSeed[seedIdx] ^= data[dataIdx];
+
+        if (++seedIdx >= sizeof(ShaDigest))
+            seedIdx = 0;
+        if (++dataIdx >= length)
+            dataIdx = 0;
+    }
+
+    ((uint32_t*)fSeed)[2] ^= (uint32_t)&length;
+    ((uint32_t*)fSeed)[3] ^= (uint32_t)length;
+    ((uint32_t*)fSeed)[4] ^= (uint32_t)data;
+
+    // Hash seed
+    plSHAChecksum sum(sizeof(ShaDigest), (uint8_t*)fSeed);
+    ShaDigest digest;
+    memcpy(digest, sum->GetValue(), sizeof(ShaDigest));
+
+    seedIdx = 0;
+    dataIdx = 0;
+    cur = 0;
+
+    // Update output with contents of digest
+    for (; cur < end; cur++) {
+        data[dataIdx] ^= digest[seedIdx];
+
+        if (++seedIdx >= sizeof(ShaDigest))
+            seedIdx = 0;
+        if (++dataIdx >= length)
+            dataIdx = 0;
+    }
+
+    // Combine seed with digest
+    for (size_t i = 0; i < sizeof(ShaDigest); i++) {
+        fSeed[i] ^= digest[i];
+    }
 }
 
-void CryptHashPassword(const plString& username, const plString& password, ShaDigest dest) {
-
+void CryptHashPassword(const plString& username, const plString& password, ShaDigest dest)
+{
     /* This should be unnecessary once plString has ToLower() */
     wchar_t* w_name = (wchar_t*)_TEMP_CONVERT_TO_WCHAR_T(username);
     StrLower(w_name);
@@ -62,7 +105,8 @@ void CryptHashPassword(const plString& username, const plString& password, ShaDi
     memcpy(dest, sum.GetValue(), sizeof(ShaDigest));
 }
 
-void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallenge, ShaDigest namePassHash, ShaDigest challengeHash) {
+void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallenge, ShaDigest namePassHash, ShaDigest challengeHash)
+{
     plSHAChecksum sum;
 
     sum.Start();
@@ -72,7 +116,4 @@ void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallen
     sum.Finish();
 
     memcpy(challengeHash, sum.GetValue(), sizeof(ShaDigest));
-}
-
-void CryptCreateFastWeakChallenge(uint32_t* challenge, uint32_t val1, uint32_t val2) {
 }
