@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 
-plLoggable::~plLoggable() 
+plLoggable::~plLoggable()
 { 
     IDeleteLog();
 }
@@ -53,7 +53,7 @@ plLoggable::~plLoggable()
 void plLoggable::IDeleteLog()
 {
     if ( fWeCreatedLog )
-        delete fStatusLog;  
+        delete fStatusLog;
     fWeCreatedLog = false;
     fStatusLog = nil;
 }
@@ -86,13 +86,20 @@ void plLoggable::SetLog( plStatusLog * log, bool deleteOnDestruct/*=false */)
 
 bool plLoggable::Log( const char * str ) const
 {
-    if ( !str || strlen( str )==0 )
+    return Log(plString::FromUtf8(str));
+}
+
+bool plLoggable::Log(const plString& str) const
+{
+    if (str.IsNull() || str.IsEmpty()) {
         return true;
+    }
 
     GetLog();
 
-    if ( fStatusLog )
-        return fStatusLog->AddLine( str );
+    if (fStatusLog) {
+        return fStatusLog->AddLine(str.c_str());
+    }
 
     return true;
 }
@@ -101,60 +108,75 @@ bool plLoggable::LogF( const char * fmt, ... ) const
 {
     va_list args;
     va_start(args, fmt);
-    return Log( xtl::formatv( fmt, args ).c_str() );
+    bool ret = Log(plString::IFormat(fmt, args));
+    va_end(args);
+
+    return ret;
 }
 
 bool plLoggable::LogV( const char * fmt, va_list args ) const
 {
-    return Log( xtl::formatv( fmt, args ).c_str() );
+    return Log(plString::IFormat(fmt, args));
 }
 
-bool plLoggable::DebugMsgV(const char* fmt, va_list args) const 
+bool plLoggable::DebugMsgV(const char* fmt, va_list args) const
 {
-    return LogF("DBG: %s", xtl::formatv(fmt,args).c_str());
+    return Log(_TEMP_CONVERT_FROM_LITERAL("DBG: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::ErrorMsgV(const char* fmt, va_list args) const 
+bool plLoggable::ErrorMsgV(const char* fmt, va_list args) const
 {
-    return LogF("ERR: %s", xtl::formatv(fmt,args).c_str());
+    return Log(_TEMP_CONVERT_FROM_LITERAL("ERR: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::WarningMsgV(const char* fmt, va_list args) const 
+bool plLoggable::WarningMsgV(const char* fmt, va_list args) const
 {
-    return LogF("WRN: %s", xtl::formatv(fmt,args).c_str());
+    return Log(_TEMP_CONVERT_FROM_LITERAL("WRN: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::AppMsgV(const char* fmt, va_list args) const 
+bool plLoggable::AppMsgV(const char* fmt, va_list args) const
 {
-    return LogF("APP: %s", xtl::formatv(fmt,args).c_str());
+    return Log(_TEMP_CONVERT_FROM_LITERAL("APP: ") + plString::IFormat(fmt, args));
 }
 
 ///////////////////////////////////////////////////////////////
 
-bool plLoggable::DebugMsg(const char* fmt, ...) const 
+bool plLoggable::DebugMsg(const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
-    return DebugMsgV(fmt, args);
+    bool ret = DebugMsgV(fmt, args);
+    va_end(args);
+
+    return ret;
 }
 
-bool plLoggable::ErrorMsg(const char* fmt, ...) const 
+bool plLoggable::ErrorMsg(const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
-    return ErrorMsgV(fmt, args);
+    bool ret = ErrorMsgV(fmt, args);
+    va_end(args);
+
+    return ret;
 }
 
-bool plLoggable::WarningMsg(const char* fmt, ...) const 
+bool plLoggable::WarningMsg(const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
-    return WarningMsgV(fmt, args);
+    bool ret = WarningMsgV(fmt, args);
+    va_end(args);
+
+    return ret;
 }
 
-bool plLoggable::AppMsg(const char* fmt, ...) const 
+bool plLoggable::AppMsg(const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
-    return AppMsgV(fmt, args);
+    bool ret = AppMsgV(fmt, args);
+    va_end(args);
+
+    return ret;
 }
