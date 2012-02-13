@@ -121,7 +121,7 @@ class plString
 #pragma warning(push)
 #pragma warning(disable : 4146)
     enum {
-        kSizeAuto = (size_t)(-2147483648L)
+        kSizeAuto = (size_t)(-2147483648UL)
     };
 #pragma warning(pop)
 
