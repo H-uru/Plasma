@@ -14,7 +14,6 @@ set(plMath_HEADERS
     hsRadixSort.h
     hsSearchVersion.h
     plAvg.h
-    plRandom.h
     plTriUtils.h
 )
 

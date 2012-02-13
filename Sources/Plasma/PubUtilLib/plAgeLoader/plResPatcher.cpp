@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAgeLoader/plAgeLoader.h"
 #include "plCompression/plZlibStream.h"
-#include "plEncryption/plChecksum.h"
+#include "pnEncryption/plChecksum.h"
 #include "plFile/plFileUtils.h"
 #include "plMessage/plResPatcherMsg.h"
 #include "pnNetBase/pnNbError.h"

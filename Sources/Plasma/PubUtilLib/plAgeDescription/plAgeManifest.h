@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plFile/plInitFileReader.h"
-#include "plEncryption/plChecksum.h"
+#include "pnEncryption/plChecksum.h"
 
 
 //// Small Container Classes for a Single File ///////////////////////////////

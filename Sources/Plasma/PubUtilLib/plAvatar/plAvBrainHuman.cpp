@@ -73,7 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "plInputCore/plAvatarInputInterface.h"
 #include "plInputCore/plInputDevice.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "plPipeline/plDebugText.h"
 #include "plNetClient/plNetLinkingMgr.h"
 

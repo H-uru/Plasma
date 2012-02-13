@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/plNetApp.h"
 
 #include "plNetTransport/plNetTransport.h"
-#include "plEncryption/plChecksum.h"
+#include "pnEncryption/plChecksum.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetClientComm/plNetClientComm.h"
 #include "plUnifiedTime/plUnifiedTime.h"

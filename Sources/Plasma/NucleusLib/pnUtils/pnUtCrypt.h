@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "pnUtArray.h"
+#include "pnEncryption/plChecksum.h"
 
 /*****************************************************************************
 *
@@ -60,39 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct CryptKey;
 
 enum ECryptAlgorithm {
-    kCryptSha,
-    kCryptSha1,
-    kCryptMd5,
     kCryptRc4,
     kCryptRsa,
     kNumCryptAlgorithms
 };
-
-struct ShaDigest {
-    uint32_t data[5];
-};
-
-
-/*****************************************************************************
-*
-*   Digest functions
-*
-***/
-
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    const unsigned  sourceBytes,
-    const void *    sourceData
-);
-
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],  // [sourceCount]
-    const void *    sourcePtrs[]    // [sourceCount]
-);
 
 
 /*****************************************************************************
@@ -123,31 +95,6 @@ void CryptKeyGenerate (
 unsigned CryptKeyGetBlockSize (
     CryptKey *      key
 );
-
-void CryptCreateRandomSeed (
-    unsigned        bytes,
-    uint8_t *          data
-);
-
-void CryptHashPassword (
-    const wchar_t username[],
-    const wchar_t password[],
-    ShaDigest * namePassHash
-);
-
-void CryptHashPasswordChallenge (
-    unsigned            clientChallenge,
-    unsigned            serverChallenge,
-    const ShaDigest &   namePassHash,
-    ShaDigest *         challengeHash
-);
-
-void CryptCreateFastWeakChallenge (
-    unsigned *  challenge,
-    unsigned    val1,
-    unsigned    val2
-);
-
 
 /*****************************************************************************
 *

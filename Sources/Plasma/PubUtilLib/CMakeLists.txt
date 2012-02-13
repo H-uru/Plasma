@@ -11,7 +11,6 @@ add_subdirectory(plCompression)
 add_subdirectory(plContainer)
 #add_subdirectory(plDeviceSelector)     # Not being used by any current slns
 add_subdirectory(plDrawable)
-add_subdirectory(plEncryption)
 add_subdirectory(plFile)
 #add_subdirectory(plGClip)              # Not being used by any current slns
 #add_subdirectory(plGeometry)           # Not being used by any current slns
