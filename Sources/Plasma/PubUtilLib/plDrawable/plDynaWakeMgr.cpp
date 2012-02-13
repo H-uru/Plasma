@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInterp/plAnimPath.h"
 
 #include "hsFastMath.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 static plRandom sRand;
 
 

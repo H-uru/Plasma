@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "plMath/hsRadixSort.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "pfAnimation/plBlower.h"
 
 #include "plDicer.h"

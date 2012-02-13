@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
+#include "pnEncryption/plChallengeHash.h"
+
 namespace Ngl { namespace Auth {
 /*****************************************************************************
 *
@@ -2649,7 +2651,7 @@ bool LoginRequestTrans::Send () {
     PathSplitEmail(s_accountName, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
     if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
-        challengeHash = s_accountNamePassHash;
+        memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
     }
     else {
         CryptCreateRandomSeed(
@@ -2661,7 +2663,7 @@ bool LoginRequestTrans::Send () {
             clientChallenge,
             s_active->serverChallenge,
             s_accountNamePassHash,
-            &challengeHash
+            challengeHash
         );
     }
 
@@ -2818,9 +2820,9 @@ AccountCreateRequestTrans::AccountCreateRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
 
     CryptHashPassword(
-        m_accountName,
-        password,
-        &m_namePassHash
+        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
+        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        m_namePassHash
     );
 }
 
@@ -2888,9 +2890,9 @@ AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
 
     CryptHashPassword(
-        m_accountName,
-        password,
-        &m_namePassHash
+        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
+        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        m_namePassHash
     );
 }
 
@@ -3186,9 +3188,9 @@ AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
     
     CryptHashPassword(
-        m_accountName,
-        password,
-        &m_namePassHash
+        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
+        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        m_namePassHash
     );
 }
 
@@ -5253,7 +5255,7 @@ void NetCliAuthLoginRequest (
     if (accountName)
         StrCopy(s_accountName, accountName, arrsize(s_accountName));
     if (accountNamePassHash)
-        s_accountNamePassHash = *accountNamePassHash;
+        memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));
     if (authToken)
         StrCopy(s_authToken, authToken, arrsize(s_authToken));
     if (os)

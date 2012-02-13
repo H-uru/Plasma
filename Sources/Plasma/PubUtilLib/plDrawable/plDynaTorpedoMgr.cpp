@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTweak.h"
 
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 
 static const uint32_t kNumPrintIDs = 0;
 

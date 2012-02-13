@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plManifest.h"
 
-#include "../plEncryption/plChecksum.h"
+#include "../pnEncryption/plChecksum.h"
 #include "../plCompression/plZlibStream.h"
 #include "../plFile/plEncryptedStream.h"
 #include "../plFile/plFileUtils.h"

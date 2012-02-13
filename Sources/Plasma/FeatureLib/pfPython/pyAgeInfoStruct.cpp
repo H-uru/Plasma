@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "hsStlUtils.h"
 #include "pnUtils/pnUtCrypt.h"
+#include "pnEncryption/plChecksum.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -129,9 +130,23 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
         // if it starts with an @ then do a meta kind of GUID
         std::string curInst = fAgeInfo.GetAgeInstanceName();
         std::string y = curInst + guid;
-       
+
         plUUID instanceGuid;
-        CryptDigest(kCryptMd5,  instanceGuid.fData , y.length(), y.c_str());
+        plMD5Checksum hash;
+        hash.Start();
+        hash.AddTo(y.length(), (uint8_t*)y.c_str());
+        hash.Finish();
+
+        const char* md5sum = hash.GetAsHexString();
+        plStringStream ss;
+        for (size_t i = 0; i < 16; i++) {
+            ss << md5sum[2*i];
+            ss << md5sum[(2*i)+1];
+
+            if (i == 3 || i == 5 || i == 7 || i == 9)
+                ss << '-';
+        }
+        instanceGuid.FromString(ss.GetString());
         fAgeInfo.SetAgeInstanceGuid(&instanceGuid);
     }
     else {

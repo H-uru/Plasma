@@ -39,24 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plMD5/Main.cpp
-*   
-***/
 
-#include "Pch.h"
-#pragma hdrstop
+#include "pnProduct/pnProduct.h"
+#include "pnEncryption/plChecksum.h"
 
+#include <stdio.h>
 
-/*****************************************************************************
-*
-*   Exports
-*
-***/
-
-//============================================================================
-int __cdecl main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
 
     if (argc < 2) {
         fprintf(stderr, "ERROR: Please specify filename.\n");
@@ -68,7 +57,7 @@ int __cdecl main (int argc, char ** argv) {
         fprintf(stderr, "ERROR: MD5 failed.\n");
         return 1;
     }
-    
+
     fprintf(stdout, "%s\n", md5.GetAsHexString());
     return 0;
 }

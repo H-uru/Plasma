@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plMD5/Intern.h
-*   
-***/
+#ifndef PL_CHALLENGE_HASH_H
+#define PL_CHALLENGE_HASH_H
 
-#ifdef PLASMA20_SOURCES_PLASMA_APPS_PLMD5_INTERN_H
-#error "Header $/Plasma20/Sources/Plasma/Apps/plMD5/Intern.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_APPS_PLMD5_INTERN_H
+#include "HeadSpin.h"
+#include "plChecksum.h"
+#include "plString.h"
+
+void CryptCreateRandomSeed(size_t length, uint8_t* data);
+
+void CryptHashPassword(const plString& username, const plString& password, ShaDigest dest);
+
+void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallenge, ShaDigest namePassHash, ShaDigest challengeHash);
+
+#endif //PL_CHALLENGE_HASH_H
