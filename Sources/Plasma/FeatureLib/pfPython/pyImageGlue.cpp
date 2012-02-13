@@ -285,28 +285,43 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadJPEGFromDisk, args, "Params: filename,widt
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyUnicode_Check(filenameObj))
+    if (PyString_CheckEx(filenameObj))
     {
-        int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
-        text[strLen] = L'\0';
-        PyObject* ret = pyImage::LoadJPEGFromDisk(text, width, height);
-        delete [] text;
-        return ret;
-    }
-    else if (PyString_Check(filenameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(filenameObj);
+        char* text = PyString_AsStringEx(filenameObj);
         wchar_t* wText = hsStringToWString(text);
         PyObject* ret = pyImage::LoadJPEGFromDisk(wText, width, height);
-        delete [] wText;
+        delete[] wText;
+        delete[] text;
         return ret;
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "saveAsJPEG expects a string and a unsigned 8-bit int");
+        PyErr_SetString(PyExc_TypeError, "PtLoadJPEGFromDisk expects a string and two unsigned shorts");
+        PYTHON_RETURN_ERROR;
+    }
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadPNGFromDisk, args, "Params: filename,width,height\nThe image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.\nReturns a pyImage of the specified file.")
+{
+    PyObject* filenameObj;
+    unsigned short width, height;
+    if (!PyArg_ParseTuple(args, "Ohh", &filenameObj, &width, &height))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtLoadPNGFromDisk expects a string and two unsigned shorts");
+        PYTHON_RETURN_ERROR;
+    }
+    if (PyString_CheckEx(filenameObj))
+    {
+        char* text = PyString_AsStringEx(filenameObj);
+        wchar_t* wText = hsStringToWString(text);
+        PyObject* ret = pyImage::LoadPNGFromDisk(wText, width, height);
+        delete[] wText;
+        delete[] text;
+        return ret;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_TypeError, "PtLoadPNGFromDisk expects a string and two unsigned shorts");
         PYTHON_RETURN_ERROR;
     }
 }
@@ -316,5 +331,6 @@ void pyImage::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
 {
 #ifndef BUILDING_PYPLASMA
     PYTHON_GLOBAL_METHOD(methods, PtLoadJPEGFromDisk);
+    PYTHON_GLOBAL_METHOD(methods, PtLoadPNGFromDisk);
 #endif
 }
