@@ -200,7 +200,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uin
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plString::Format("PtImageFromDisk_%s", hsWStringToString(filename));
+        plString name = plString::Format("PtImageFromDisk_%S", filename);
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
         
@@ -225,7 +225,7 @@ PyObject* pyImage::LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plString::Format("PtImageFromDisk_%s", hsWStringToString(filename));
+        plString name = plString::Format("PtImageFromDisk_%S", filename);
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
 
