@@ -65,6 +65,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plLocalization.h"
 #include "plFile/plEncryptedStream.h"
 
+#include "pnEncryption/plChallengeHash.h"
+
 #include "plStatusLog/plStatusLog.h"
 #include "pnProduct/pnProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
@@ -991,7 +993,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
             plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
 
-            memcpy(pLoginParam->namePassHash, shasum.GetData(), sizeof(ShaDigest));
+            memcpy(pLoginParam->namePassHash, shasum.GetValue(), sizeof(ShaDigest));
         }
         else
         {
@@ -1022,7 +1024,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         stream->WriteSafeString(pLoginParam->username);
         stream->Writebool(pLoginParam->remember);
         if (pLoginParam->remember)
-            stream->Write(sizeof(pLoginParam->namePassHash.data), pLoginParam->namePassHash.data);
+            stream->Write(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
         stream->Close();
         delete stream;
     }
@@ -1069,7 +1071,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
 
             if (pLoginParam->remember)
             {
-                stream->Read(sizeof(pLoginParam->namePassHash.data), pLoginParam->namePassHash.data);
+                stream->Read(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
                 pLoginParam->focus = IDOK;
             }
             else

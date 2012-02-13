@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #pragma hdrstop
 
+#include "pnEncryption/plChallengeHash.h"
+
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING
 # pragma message("Compiling pnNetCli with debugging on")
