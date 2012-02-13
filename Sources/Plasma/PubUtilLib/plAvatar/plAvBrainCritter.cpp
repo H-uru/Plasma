@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline/plDebugText.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetTransport/plNetTransportMember.h"
 

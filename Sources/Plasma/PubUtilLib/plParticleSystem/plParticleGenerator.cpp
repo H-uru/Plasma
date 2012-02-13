@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plParticleUpdateMsg.h"
 #include "plInterp/plController.h"
 #include "hsResMgr.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 
 static const float DEFAULT_INVERSE_MASS = 1.f;
 

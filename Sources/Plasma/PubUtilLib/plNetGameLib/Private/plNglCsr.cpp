@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
+#include "pnEncryption/plChallengeHash.h"
+
 
 namespace Ngl { namespace Csr {
 /*****************************************************************************
@@ -633,11 +635,11 @@ LoginRequestTrans::LoginRequestTrans (
     FNetCliCsrLoginCallback callback,
     void *                  param
 ) : NetCsrTrans(kCsrLoginTrans)
-,   m_namePassHash(namePassHash)
 ,   m_callback(callback)
 ,   m_param(param)
 {
     ASSERT(callback);
+    memcpy(m_namePassHash, namePassHash, sizeof(ShaDigest));
     StrCopy(m_csrName, csrName, arrsize(m_csrName));
 }
 
@@ -659,7 +661,7 @@ bool LoginRequestTrans::Send () {
         clientChallenge,
         s_active->serverChallenge,
         m_namePassHash,
-        &challengeHash
+        challengeHash
     );
 
     const uintptr_t msg[] = {

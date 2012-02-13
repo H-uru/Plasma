@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
-#include "plMath/plRandom.h"
+#include "pnEncryption/plRandom.h"
 #include "hsTemplates.h"
 
 class plSceneObject;

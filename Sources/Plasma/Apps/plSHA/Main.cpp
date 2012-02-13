@@ -39,19 +39,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plMD5/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_APPS_PLMD5_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/Apps/plMD5/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_APPS_PLMD5_PCH_H
-
-#include "pnUtils/pnUtils.h"
 #include "pnProduct/pnProduct.h"
-#include "plEncryption/plChecksum.h"
+#include "pnEncryption/plChecksum.h"
 
 #include <stdio.h>
+
+int main (int argc, char** argv) {
+
+    if (argc < 2) {
+        fprintf(stderr, "ERROR: Please specify filename.\n");
+        return 1;
+    }
+
+    plSHAChecksum sha(argv[1]);
+    if (!sha.IsValid()) {
+        fprintf(stderr, "ERROR: SHA failed.\n");
+        return 1;
+    }
+
+    plSHA1Checksum sha1(argv[1]);
+    if (!sha1.IsValid()) {
+        fprintf(stderr, "ERROR: SHA1 failed.\n");
+        return 1;
+    }
+
+    fprintf(stdout, "%s\tSHA\n", sha.GetAsHexString());
+    fprintf(stdout, "%s\tSHA1\n", sha1.GetAsHexString());
+    return 0;
+}

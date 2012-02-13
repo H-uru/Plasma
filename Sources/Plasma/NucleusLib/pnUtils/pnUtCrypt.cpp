@@ -49,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtStr.h"
 #include "pnUtTime.h"
 
-#include <openssl/md5.h>
-#include <openssl/sha.h>
 #include <openssl/rc4.h>
 
 /*****************************************************************************
@@ -73,72 +71,12 @@ struct CryptKey {
 
 namespace Crypt {
 
-ShaDigest s_shaSeed;
-
 
 /*****************************************************************************
 *
 *   Internal functions
 *
 ***/
-
-//============================================================================
-void Md5Process (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    MD5_CTX md5;
-    MD5_Init(&md5);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        MD5_Update(&md5, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    MD5_Final((unsigned char *)dest, &md5);
-}
-
-//============================================================================
-void ShaProcess (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    SHA_CTX sha;
-    SHA_Init(&sha);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        SHA_Update(&sha, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    SHA_Final((unsigned char *)dest, &sha);
-}
-
-//============================================================================
-void Sha1Process (
-    void *          dest,
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],
-    const void *    sourcePtrs[]
-) {
-    // initialize digest
-    SHA_CTX sha;
-    SHA1_Init(&sha);
-
-    // hash data streams
-    for (unsigned index = 0; index < sourceCount; ++index)
-        SHA1_Update(&sha, sourcePtrs[index], sourceBytes[index]);
-
-    // complete hashing
-    SHA1_Final((unsigned char *)dest, &sha);
-}
-
 
 /*****************************************************************************
 *
@@ -182,47 +120,6 @@ static void Rc4Codec (
 *   Exports
 *
 ***/
-
-//============================================================================
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    const unsigned  sourceBytes,
-    const void *    sourceData
-) {
-    CryptDigest(
-        algorithm,
-        dest,
-        1,
-        &sourceBytes,
-        &sourceData
-    );
-}
-
-//============================================================================
-void CryptDigest (
-    ECryptAlgorithm algorithm,
-    void *          dest,           // must be sized to the algorithm's digest size
-    unsigned        sourceCount,
-    const unsigned  sourceBytes[],  // [sourceCount]
-    const void *    sourcePtrs[]    // [sourceCount]
-) {
-    switch (algorithm) {
-        case kCryptMd5:
-            Md5Process(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
-        case kCryptSha:
-            ShaProcess(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
-        case kCryptSha1:
-            Sha1Process(dest, sourceCount, sourceBytes, sourcePtrs);
-        break;
-
-        DEFAULT_FATAL(algorithm);
-    }
-}
 
 //============================================================================
 CryptKey * CryptKeyCreate (
@@ -276,123 +173,6 @@ unsigned CryptKeyGetBlockSize (
 
         DEFAULT_FATAL(algorithm);
     }
-}
-
-//============================================================================
-void CryptCreateRandomSeed (
-    unsigned        bytes,
-    uint8_t *          data
-) {
-    COMPILER_ASSERT(SHA_DIGEST_LENGTH == 20);
-
-    // Combine seed with input data
-    {
-        unsigned seedIndex = 0;
-        unsigned dataIndex = 0;
-        unsigned cur = 0;
-        unsigned end = max(bytes, sizeof(s_shaSeed));
-        for (; cur < end; ++cur) {
-            ((uint8_t *) &s_shaSeed)[seedIndex] ^= data[dataIndex];
-            if (++seedIndex >= sizeof(s_shaSeed))
-                seedIndex = 0;
-            if (++dataIndex >= bytes)
-                dataIndex = 0;
-        }
-
-        s_shaSeed.data[2] ^= (uint32_t) &bytes;
-        s_shaSeed.data[3] ^= (uint32_t) bytes;
-        s_shaSeed.data[4] ^= (uint32_t) data;
-    }
-
-    // Hash seed
-    ShaDigest digest;
-    CryptDigest(kCryptSha, &digest, sizeof(s_shaSeed), &s_shaSeed);
-
-    // Update output with contents of digest
-    {
-        unsigned src = 0;
-        unsigned dst = 0;
-        unsigned cur = 0;
-        unsigned end = max(bytes, sizeof(digest));
-        for (; cur < end; ++cur) {
-            data[dst] ^= ((const uint8_t *) &digest)[src];
-            if (++src >= sizeof(digest))
-                src = 0;
-            if (++dst >= bytes)
-                dst = 0;
-        }
-    }
-
-    // Combine seed with digest
-    s_shaSeed.data[0] ^= digest.data[0];
-    s_shaSeed.data[1] ^= digest.data[1];
-    s_shaSeed.data[2] ^= digest.data[2];
-    s_shaSeed.data[3] ^= digest.data[3];
-    s_shaSeed.data[4] ^= digest.data[4];
-}
-
-//============================================================================
-void CryptHashPassword (
-    const wchar_t username[],
-    const wchar_t password[],
-    ShaDigest * namePassHash
-) {
-    unsigned passlen = StrLen(password);
-    unsigned userlen = StrLen(username);
-
-    wchar_t * buffer = (wchar_t*)malloc(sizeof(wchar_t) * (passlen + userlen));
-    StrCopy(buffer, password, passlen);
-    StrCopy(buffer + passlen, username, userlen);
-    StrLower(buffer + passlen); // lowercase the username
-
-    CryptDigest(
-        kCryptSha,
-        namePassHash,
-        (userlen + passlen) * sizeof(buffer[0]),
-        buffer
-    );
-
-    free(buffer);
-}
-
-//============================================================================
-void CryptHashPasswordChallenge (
-    unsigned            clientChallenge,
-    unsigned            serverChallenge,
-    const ShaDigest &   namePassHash,
-    ShaDigest *         challengeHash
-) {
-#pragma pack(push, 1)
-    struct {
-        uint32_t       clientChallenge;
-        uint32_t       serverChallenge;
-        ShaDigest   namePassHash;
-    } buffer;
-#pragma pack(pop)
-    buffer.clientChallenge  = clientChallenge;
-    buffer.serverChallenge  = serverChallenge;
-    buffer.namePassHash     = namePassHash;
-    CryptDigest(kCryptSha, challengeHash, sizeof(buffer), &buffer);
-}
-
-//============================================================================
-void CryptCreateFastWeakChallenge (
-    unsigned *  challenge,
-    unsigned    val1,
-    unsigned    val2
-) {
-    s_shaSeed.data[0] ^= TimeGetMs();                       // looping time
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= (unsigned) TimeGetTime();          // global time
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= *challenge;                        // unknown
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= (unsigned) challenge;              // variable address
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= val1;
-    s_shaSeed.data[0] ^= _rotl(s_shaSeed.data[0], 1);
-    s_shaSeed.data[0] ^= val2;
-    *challenge        = s_shaSeed.data[0];
 }
 
 //============================================================================

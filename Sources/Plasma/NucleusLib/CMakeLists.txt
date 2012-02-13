@@ -9,6 +9,7 @@ add_subdirectory(pnAsyncCoreExe)
 #add_subdirectory(pnCsrCli)             # Not being used in any current sln
 add_subdirectory(pnCsrNet)
 add_subdirectory(pnDispatch)
+add_subdirectory(pnEncryption)
 add_subdirectory(pnFactory)
 add_subdirectory(pnGameMgr)
 add_subdirectory(pnIni)
