@@ -71,13 +71,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define kPhysxSkinWidth 0.1f
 #define kPhysZOffset ((fRadius + (fHeight / 2)) + kPhysxSkinWidth)
-//#define kSLOPELIMIT (cosf(NxMath::degToRad(55.f)))
-//#define kPhysicalHeightFudge 0.4f   // this fudge was used for PhysX 2.4
 #define kPhysicalHeightFudge 0.0f
-
-//#define STEP_OFFSET   1.0f
-#define STEP_OFFSET 0.5f
-//#define STEP_OFFSET   0.15f
+#define STEP_OFFSET   1.f
+#define kAvatarMass 160.f
 
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -89,8 +85,6 @@ static ControllerManager gControllerMgr;
 static std::vector<plPXPhysicalControllerCore*> gControllers;
 static bool gRebuildCache=false;
 
-#define AvatarMass 200.f
-
 class PXControllerHitReportWalk : public NxUserControllerHitReport
 {
 public:
@@ -99,9 +93,9 @@ public:
         plPXPhysicalControllerCore* ac = plPXPhysicalControllerCore::FindController(hit.controller);
         NxActor& actor = hit.shape->getActor();
         plPXPhysical* phys = (plPXPhysical*)actor.userData;
-        static float SlopeLimit = kSLOPELIMIT;
         hsVector3 normal = plPXConvert::Vector(hit.worldNormal);
         ac->fMovementInterface->IAddContactNormals(normal);
+
 #ifndef PLASMA_EXTERNAL_RELEASE
         plDbgCollisionInfo info;
         info.fNormal = normal;
@@ -124,6 +118,7 @@ public:
         }
         ac->fDbgCollisionInfo.Append(info);
 #endif PLASMA_EXTERNAL_RELEASE
+
         // If the avatar hit a movable physical, apply some force to it.
         hsVector3 dir = plPXConvert::Vector(hit.dir);
         float dirdotup=dir.fZ;
@@ -131,15 +126,16 @@ public:
         NxExtendedVec3 controllerPos=hit.controller->getPosition();
         hsVector3 bottomOfTheCapsule((float)controllerPos.x,(float)controllerPos.y,(float)controllerPos.z);
         bottomOfTheCapsule.fZ=bottomOfTheCapsule.fZ-(ac->fHeight/2.0f + ac->fRadius);
-        if (actor.isDynamic() )
+        if (actor.isDynamic() && phys )
         {
             if((hit.worldPos.z- bottomOfTheCapsule.fZ)<=ac->fRadius)//bottom hemisphere
             {
-                //onTopOfSlopeLimit
-                if (phys && phys->GetProperty(plSimulationInterface::kPhysAnim))
+                // If this is an animated physical, we can stand on it
+                if (phys->GetProperty(plSimulationInterface::kPhysAnim))
                 {
                     if(normal.fZ>=0)
-                    {//we consider this ground
+                    {
+                        //we consider this ground
                         ac->fMovementInterface->AddOnTopOfObject(phys);
                     }
                 }
@@ -161,52 +157,22 @@ public:
                     setNetGroupID->Send(obj->GetKey());
                 }
                 plSimulationMgr::GetInstance()->ConsiderSynch(phys, nil);
-                // We only allow horizontal pushes. Vertical pushes when we stand on
-                // dynamic objects creates useless stress on the solver.
-                
-                hsVector3 vel=ac->GetLinearVelocity()- plPXConvert::Vector( actor.getLinearVelocity());
-                if(dirdotup>=0)vel.fZ=0.001f;
-                else vel.fZ=0.0f;
-                static float kAvieMass = 140.f/32.f;         
-                if (!vel.IsEmpty())
-                {
-                    static float kForceScale = 140.0f;
-                    NxF32 coeff;
-                    NxExtendedVec3 norm2=hit.controller->getPosition();
-                    norm2.x=hit.worldPos.x-bottomOfTheCapsule.fX;
-                    norm2.y=hit.worldPos.y-bottomOfTheCapsule.fY;
-                    if((hit.worldPos.z- bottomOfTheCapsule.fZ)<ac->fRadius)//bottom hemisphere
-                    {
-                        norm2.normalize();
-                        norm2.z=0.01f;
-                    }
-                    else if((hit.worldPos.z- bottomOfTheCapsule.fZ)<(ac->fRadius+ac->fHeight))
-                    {
-                        norm2.z=0.0f;
-                        norm2.normalize();
-                    }
-                    else
-                    {//must be the top so the normal is displacement from the pos - center
-                        //of top hemisphere
-                        norm2.z=hit.worldPos.z - ((ac->fRadius+ac->fHeight + bottomOfTheCapsule.fZ));
-                        norm2.normalize();
-                    }
-                    
-                    
-                    float proj=(float)(norm2.x*dir.fX+dir.fY*norm2.y+dir.fZ*norm2.z);
-                    coeff =abs(proj*kForceScale*vel.Magnitude());
-                    vel.fZ=(float)norm2.z;
-                    vel.fY=(float)norm2.y;
-                    vel.fX=(float)norm2.x;
-                    phys->SetHitForce(vel*coeff, pos);
-                }
+
+                // Now, let's impart some force, fool.
+                // Note: This is a VERY simple implementation. The old one was too hacky and caused weird stuff to happen.
+                hsVector3 acceleration = (ac->GetLinearVelocity() - plPXConvert::Vector(actor.getLinearVelocity()));
+                hsVector3 force2impart = acceleration * kAvatarMass;
+                // Bad things happen if we impart force directly on top of the actor, so let's allow the avatar to run
+                // over those physicals and not break them. This is mostly an issue with stuff smaller than step size.
+                if (!force2impart.IsEmpty() && normal.fZ < .90f)
+                    phys->SetHitForce(force2impart, pos);
             }
         }
         else  // else if the avatar hit a static
         {
             return NX_ACTION_NONE;
         }
-        if (phys && phys->GetProperty(plSimulationInterface::kAvAnimPushable))
+        if (phys->GetProperty(plSimulationInterface::kAvAnimPushable))
         {
             hsQuat inverseRotation = ac->fLocalRotation.Inverse();
             hsVector3 normal = plPXConvert::Vector(hit.worldNormal);
@@ -546,7 +512,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     capDesc.materialIndex= plSimulationMgr::GetInstance()->GetMaterialIdx(scene, 0.0,0.0);
     actorDesc.shapes.pushBack(&capDesc);
     NxBodyDesc bodyDesc;
-    bodyDesc.mass = AvatarMass;//1.f;
+    bodyDesc.mass = kAvatarMass;
     actorDesc.body = &bodyDesc;
     bodyDesc.flags = NX_BF_KINEMATIC;
     bodyDesc.flags |=NX_BF_DISABLE_GRAVITY ;
@@ -619,7 +585,7 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
     capDesc.materialIndex= plSimulationMgr::GetInstance()->GetMaterialIdx(scene, 0.0,0.0);
     actorDesc.globalPose=actor->getGlobalPose();
     NxBodyDesc bodyDesc;
-    bodyDesc.mass = AvatarMass;
+    bodyDesc.mass = kAvatarMass;
     actorDesc.body = &bodyDesc;
     bodyDesc.flags = NX_BF_KINEMATIC;
     bodyDesc.flags |=NX_BF_DISABLE_GRAVITY ;

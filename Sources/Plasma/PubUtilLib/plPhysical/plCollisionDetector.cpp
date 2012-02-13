@@ -236,103 +236,56 @@ void plCollisionDetector::Write(hsStream* stream, hsResMgr* mgr)
 
 plCameraRegionDetector::~plCameraRegionDetector()
 {
-    for(int i = 0; i < fMessages.Count(); i++)
-    {   
-        plMessage* pMsg = fMessages[i];
-        fMessages.Remove(i);
-        delete(pMsg);
-    }
-    fMessages.SetCountAndZero(0);
+    for (plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
+        hsRefCnt_SafeUnRef(*it);
 }
 
 void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediate)
 {
-
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-    if (entering && fNumEvals - fLastExitEval <= 1 && fSavingSendMsg)
-    {
-        DetectorLog("%s: Skipping Camera Entering volume", GetKeyName().c_str());
-        fLastEnterEval = fNumEvals;
-        if (fSavingSendMsg)
-        {
-            DetectorLog("%s: Dumping saved Camera Exiting volume", GetKeyName().c_str());
-        }
-        fSavingSendMsg = false;
-        return;
-    }
-    if (!entering && fNumEvals - fLastEnterEval <= 1 && fSavingSendMsg)
-    {
-        DetectorLog("%s: Skipping Exiting volume", GetKeyName().c_str());
-        fLastExitEval = fNumEvals;
-        if (fSavingSendMsg)
-        {
-            DetectorLog("%s: Dumping saved Camera Entering volume", GetKeyName().c_str());
-        }
-        fSavingSendMsg = false;
-        return;
-    }
-
-    // get rid of any saved messages... this should happen though
     if (fSavingSendMsg)
-    {
-        DetectorLog("%s: Killing saved camera message... shouldn't happen", GetKeyName().c_str());
-    }
-    // end PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        DetectorLogRed("%s: Stale messages on ITrigger. This should never happen!", GetKeyName().c_str());
+    if (fIsInside && entering)
+        DetectorLogRed("%s: Duplicate enter! Did we miss an exit?", GetKeyName().c_str());
+    else if (!fIsInside && !entering)
+        DetectorLogRed("%s: Duplicate exit! Did we miss an enter?", GetKeyName().c_str());
 
     fSavingSendMsg = true;
     fSavedMsgEnterFlag = entering;
     if (entering)
     {
-        //DetectorLog("%s: Saving camera Entering volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
+        DetectorLog("%s: Saving camera Entering volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
         fLastEnterEval = fNumEvals;
     }
     else
     {
-        //DetectorLog("%s: Saving camera Exiting volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
+        DetectorLog("%s: Saving camera Exiting volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
         fLastExitEval = fNumEvals;
     }
 
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-    // we're saving the message to be dispatched later...
     if (immediate)
-    {
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-
         ISendSavedTriggerMsgs();
-
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    }
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-
-
 }
 
 void plCameraRegionDetector::ISendSavedTriggerMsgs()
 {
     if (fSavingSendMsg)
     {
-        for (int i = 0; i < fMessages.Count(); i++)
+        for (size_t i = 0; i < fMessages.size(); ++i)
         {   
-            char str[256];
-
             hsRefCnt_SafeRef(fMessages[i]);
             if (fSavedMsgEnterFlag)
             {
                 fMessages[i]->SetCmd(plCameraMsg::kEntering);
-                sprintf(str, "Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
+                DetectorLog("Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = true;
             }
             else
             {
                 fMessages[i]->ClearCmd(plCameraMsg::kEntering);
-                sprintf(str, "Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.Count());
+                DetectorLog("Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = false;
             }
             plgDispatch::MsgSend(fMessages[i]);
-            DetectorLog("%s", str);
         }
     }
     fSavingSendMsg = false;
@@ -342,38 +295,23 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
 hsBool plCameraRegionDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
-
     if (pCollMsg)
     {
         // camera collisions are only for the local player
         if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pCollMsg->fOtherKey)
             return true;
-        
-
-#ifdef USE_PHYSX_MULTIPLE_CAMREGION_ENTER
-        // first determine if this is a multiple camera region enter (PHYSX BUG WORKAROUND)
-        if (!fWaitingForEval)
-        {//plObjectInVolumeCollisionDetector::MsgReceive() will flip fWaitingForEval
-        // and registers for the Eval, child objects of plObjectInVolumeCollisionDetector
-        //must decide when they are no longer interested in Evals. I suggest using IHandleEvals()
-        
-            fNumEvals = 0;
-            fLastEnterEval=-999;
-            fLastExitEval=-999;
-        }
-    
-        // end of (PHYSX BUG WORKAROUND)
-#endif  // USE_PHYSX_MULTIPLE_CAMREG_ENTER
-
+        // Fall through to plObjectInVolumeDetector, which will register us for plEvalMsg
+        // and handle it for us. (Hint: See ISendSavedTriggerMsgs)
     }
+
     return plObjectInVolumeDetector::MsgReceive(msg);
 }
 void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
     int n = stream->ReadLE32();
-    fMessages.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
+    fMessages.resize(n);
+    for(size_t i = 0; i < n; i++ )
     {   
         plCameraMsg* pMsg =  plCameraMsg::ConvertNoRef(mgr->ReadCreatable(stream));
         fMessages[i] = pMsg;
@@ -383,27 +321,10 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE32(fMessages.GetCount());
-    for(int i = 0; i < fMessages.GetCount(); i++ )
-        mgr->WriteCreatable( stream, fMessages[i] );
+    stream->WriteLE32(fMessages.size());
+    for(plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
+        mgr->WriteCreatable( stream, *it );
 
-}
-void plCameraRegionDetector::IHandleEval(plEvalMsg *pEval)
-{
-    fNumEvals++;
-    if (fNumEvals - fLastEnterEval > 1 && fNumEvals-fLastExitEval>1)
-    {
-        ISendSavedTriggerMsgs();
-        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-        fWaitingForEval = false;
-    }
-    else
-    {
-        if(fSavedActivatorMsg)
-            DetectorLog("%s didn't send its message. fNumEvals=%d fLastEnterEval=%d, fLastExit=%d",
-                GetKeyName().c_str(),fNumEvals, fLastEnterEval, fLastExitEval);
-
-    }
 }
 
 /////////////////////////////////
@@ -414,127 +335,8 @@ void plCameraRegionDetector::IHandleEval(plEvalMsg *pEval)
 
 void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immediate)
 {
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-/*  if (entering && fNumEvals - fLastExitEval <= 1 && fSavedActivatorMsg)
-    {
-        //DetectorLog("%s: Skipping Entering volume", GetKeyName());
-        fLastEnterEval = fNumEvals;
-        if (fSavedActivatorMsg)
-        {
-            //DetectorLog("%s: Dumping saved Exiting volume", GetKeyName());
-            delete fSavedActivatorMsg;
-        }
-        fSavedActivatorMsg = nil;
-        return;
-    }
-    if (!entering && fNumEvals - fLastEnterEval <= 1 && fSavedActivatorMsg)
-    {
-        //DetectorLog("%s: Skipping Exiting volume", GetKeyName());
-        fLastExitEval = fNumEvals;
-        if (fSavedActivatorMsg)
-        {
-            //DetectorLog("%s: Dumping saved Entering volume", GetKeyName());
-            delete fSavedActivatorMsg;
-        }
-        fSavedActivatorMsg = nil;
-        return;
-    }
-
-    // get rid of any saved messages... this should happen though
-    if (fSavedActivatorMsg)
-    {
-        delete fSavedActivatorMsg;
-        DetectorLog("%s: Killing saved message... shouldn't happen", GetKeyName());
-    }
-    // end PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-*/
-    if(!immediate)
-    {
-        
-        bookKeepingList::iterator curit=fCollisionList.begin();
-        while(curit!=fCollisionList.end())
-        {
-            if(hitter==(*curit)->hitter)
-            {//hey the object is already in my list
-                //try and figure out what my real state is
-                if(entering)
-                {
-                    (*curit)->enters++;
-                    if(!(*curit)->fSubStepCurState)
-                    {//We weren't already in
-                        (*curit)->fSubStepCurState =true;
-                    }
-                }
-                else
-                {
-                    (*curit)->exits++;
-                    if((*curit)->fSubStepCurState)
-                    {//We were already in
-                        (*curit)->fSubStepCurState =false;
-                    }
-                }
-                //get out
-                break;
-            }
-            curit++;
-        }
-        if(curit==fCollisionList.end())
-        {
-            //hitter was not in the list add him in
-            //hitter was not in the current frame list
-            //lets find out its state in the begining of the frame
-            ResidentSet::iterator curres = fCurrentResidents.find(hitter);
-            bool initialState;
-            if(curres != fCurrentResidents.end())
-                initialState =true;
-            else
-                initialState =false;
-
-            plCollisionBookKeepingInfo* BookKeeper=new plCollisionBookKeepingInfo(hitter);
-            if(entering)
-            {
-                BookKeeper->enters++;
-                BookKeeper->fSubStepCurState =true;
-            }
-            else
-            {
-                BookKeeper->exits++;
-                BookKeeper->fSubStepCurState =false;
-            }
-            fCollisionList.push_front(BookKeeper);
-        }
-
-
-    }
-    else
-    {
-        plActivatorMsg* ActivatorMsg = new plActivatorMsg;
-        ActivatorMsg->AddReceivers(fReceivers);
-        if (fProxyKey)
-            ActivatorMsg->fHiteeObj = fProxyKey;
-        else
-            ActivatorMsg->fHiteeObj = GetTarget()->GetKey();
-    
-        ActivatorMsg->fHitterObj = hitter;
-        ActivatorMsg->SetSender(GetKey());
-        if (entering)
-        {
-            ActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeEnter);
-        }
-        else
-        {
-            ActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeExit);
-        }
-        
-        plgDispatch::MsgSend(ActivatorMsg);     
-        
-
-    }
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-
-/*  fSavedActivatorMsg = new plActivatorMsg;
-
+    hsRefCnt_SafeUnRef(fSavedActivatorMsg);
+    fSavedActivatorMsg = new plActivatorMsg;
     fSavedActivatorMsg->AddReceivers(fReceivers);
 
     if (fProxyKey)
@@ -547,47 +349,36 @@ void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immedi
 
     if (entering)
     {
-        //DetectorLog("%s: Saving Entering volume - Evals=%d", GetKeyName(),fNumEvals);
+        DetectorLog("%s: Saving Entering volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
         fSavedActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeEnter);
         fLastEnterEval = fNumEvals;
     }
     else
     {
-        //DetectorLog("%s: Saving Exiting volume - Evals=%d", GetKeyName(),fNumEvals);
+        DetectorLog("%s: Saving Exiting volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
         fSavedActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeExit);
         fLastExitEval = fNumEvals;
     }
-*/
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-    // we're saving the message to be dispatched later...
+
     if (immediate)
-    {
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-
-        
-    //  fSavedActivatorMsg = nil;
-
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    }
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        ISendSavedTriggerMsgs();
 }
-/*
+
 void plObjectInVolumeDetector::ISendSavedTriggerMsgs()
 {
     if (fSavedActivatorMsg)
     {
         if (fSavedActivatorMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
-            DetectorLog("%s: Sending Entering volume - Evals=%d", GetKeyName(),fNumEvals);
+            DetectorLog("%s: Sending Entering volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
         else
-            DetectorLog("%s: Sending Exiting volume - Evals=%d", GetKeyName(),fNumEvals);
+            DetectorLog("%s: Sending Exiting volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
 
         // we're saving the message to be dispatched later...
         plgDispatch::MsgSend(fSavedActivatorMsg);
     }
     fSavedActivatorMsg = nil;
 }
-*/
+
 hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
@@ -596,36 +387,18 @@ hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
         // If the avatar is disabled (flying around), don't trigger
         if (IIsDisabledAvatar(pCollMsg->fOtherKey))
             return false;
-       
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-        // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-        if (!fWaitingForEval)
-        {
-            plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
-            fWaitingForEval = true;
-        }
-        // end PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
         ITrigger(pCollMsg->fOtherKey, (pCollMsg->fEntering != 0));
-
+        plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
         return true;
     }
 
-#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
-    // PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-    plEvalMsg* pEval = plEvalMsg::ConvertNoRef(msg);
-    if (pEval)
+    plEvalMsg* pEvalMsg = plEvalMsg::ConvertNoRef(msg);
+    if (pEvalMsg)
     {
-        
-        //if (fSavedActivatorMsg)
-        //  DetectorLog("%s: InVolumeEval=%d with saved message", GetKeyName(), fNumEvals);
-        //else
-        //  DetectorLog("%s: InVolumeEval=%d without saved message", GetKeyName(), fNumEvals);
-        IHandleEval(pEval); 
-
+        fNumEvals++;
+        ISendSavedTriggerMsgs();
+        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
     }
-    // end PHYSX_FIXME hack for PhysX turd that sends bunches of enter/exits over one frame
-#endif   // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
 
     plPlayerPageMsg* pageMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pageMsg && pageMsg->fUnload)
@@ -634,75 +407,6 @@ hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
     }
 
     return plCollisionDetector::MsgReceive(msg);
-}
-
-void plObjectInVolumeDetector::IHandleEval(plEvalMsg* pEval)
-{
-        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-        fWaitingForEval = false;
-        for(bookKeepingList::reverse_iterator it= fCollisionList.rbegin();it!=fCollisionList.rend(); it++)
-        {
-            bool alreadyInside;
-            ResidentSet::iterator HitIt;
-            HitIt = fCurrentResidents.find((*it)->hitter);
-            if(HitIt != fCurrentResidents.end()) alreadyInside = true;
-            else alreadyInside=false;
-            plActivatorMsg* actout=new plActivatorMsg;
-            actout->fHitterObj=((*it)->hitter);
-            actout->SetSender(GetKey());
-            if (fProxyKey)
-                actout->fHiteeObj = fProxyKey;
-            else
-                actout->fHiteeObj = GetTarget()->GetKey();
-            if((*it)->fSubStepCurState)//current substate says we are entered
-            {//different enters and exits
-                //figure out what to do
-                    if(!alreadyInside)
-                    {//we are actuall entering
-                        actout->SetTriggerType(plActivatorMsg::kVolumeEnter);
-                        fCurrentResidents.insert((*it)->hitter);
-                        actout->AddReceivers(fReceivers);
-                        actout->Send();
-                        DetectorLog("%s sent an Enter ActivatorMsg. To: %s", GetKeyName().c_str(), GetTarget()->GetKeyName().c_str()  );
-                    }
-                    else
-                    {
-                        DetectorLog("%s squelched an Enter ActivatorMsg.", GetKeyName().c_str());
-                        delete actout;
-                    }
-            }
-            else
-            {
-                //fSubStepCurState says we are outside
-                    if(alreadyInside)
-                    {//we are actuall exiting
-                        actout->SetTriggerType(plActivatorMsg::kVolumeExit);
-                        fCurrentResidents.erase((*it)->hitter);
-                        actout->AddReceivers(fReceivers);
-                        actout->Send();
-                        DetectorLog("%s sent an Exit ActivatorMsg. To: %s", GetKeyName().c_str(), GetTarget()->GetKeyName().c_str());
-                    }
-                    else
-                    {
-                        DetectorLog("%s squelched an Exit ActivatorMsg.", GetKeyName().c_str());
-                        delete actout;
-                    }
-            }
-        }
-        DetectorLog("*********");
-        for(bookKeepingList::iterator it = fCollisionList.begin(); it != fCollisionList.end(); it ++)
-        {
-            delete (*it);
-        }
-        DetectorLog("This is the regions inhabitants after the op");
-        for(ResidentSet::iterator it = fCurrentResidents.begin(); it!= fCurrentResidents.end(); it++)
-        {
-            DetectorLog("%s", (*it)->GetName().c_str());
-        }
-        DetectorLog("*********");
-
-        fCollisionList.clear();
-
 }
 
 void plObjectInVolumeDetector::SetTarget(plSceneObject* so)
@@ -730,6 +434,7 @@ void plObjectInVolumeDetector::Write(hsStream* stream, hsResMgr* mgr)
 
 
 plObjectInVolumeAndFacingDetector::plObjectInVolumeAndFacingDetector() :
+    plObjectInVolumeDetector(),
     fFacingTolerance(0),
     fNeedWalkingForward(false),
     fAvatarInVolume(false),

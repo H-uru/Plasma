@@ -73,7 +73,8 @@ public:
         kTypeBump       = 0x20,
     };
 
-    plCollisionDetector() : fType(0), fTriggered(false), fBumped(false){;}
+    plCollisionDetector() : fType(0), fTriggered(false), fBumped(false){ }
+    plCollisionDetector(int8_t type) : fType(type), fTriggered(false), fBumped(false) { }
     virtual ~plCollisionDetector(){;}
     
     virtual hsBool MsgReceive(plMessage* msg);
@@ -90,48 +91,26 @@ public:
 // sub type for object-in-volume detectors
 class plObjectInVolumeDetector : public plCollisionDetector
 {
-public:
-    class plCollisionBookKeepingInfo
-    {
-        friend class plObjectInVolumeDetector;
-        public:
-            plCollisionBookKeepingInfo(plKey& hit)
-            {
-                hitter=hit;
-                enters=0;
-                exits=0;
-            }
-            ~plCollisionBookKeepingInfo()
-            {
-                hitter=nil;
-            }
-        protected:
-            plKey hitter;
-            int enters,exits;
-            bool fSubStepCurState;
-    };
 protected:
     virtual void ITrigger(plKey hitter, bool entering, bool immediate=false);
-    //virtual void ISendSavedTriggerMsgs();
-    virtual void IHandleEval(plEvalMsg* pEval);
-    bool    fWaitingForEval;
+    virtual void ISendSavedTriggerMsgs();
     
     plActivatorMsg* fSavedActivatorMsg;
-    
-    typedef std::list<plCollisionBookKeepingInfo*> bookKeepingList;
-    bookKeepingList fCollisionList;
-    typedef std::set<plKey> ResidentSet;
-    ResidentSet fCurrentResidents;
+    uint32_t fNumEvals;
+    uint32_t fLastEnterEval;
+    uint32_t fLastExitEval;
 
 public:
     
-    plObjectInVolumeDetector()
-    {
-        fWaitingForEval=false;fSavedActivatorMsg=nil;
-        
-    }
-    plObjectInVolumeDetector(int8_t i){fType = i;fWaitingForEval=false;fSavedActivatorMsg=nil;}
-    virtual ~plObjectInVolumeDetector(){;}
+    plObjectInVolumeDetector() 
+        : plCollisionDetector(), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
+    { }
+
+    plObjectInVolumeDetector(int8_t type) 
+        : plCollisionDetector(type), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
+    { }
+
+    virtual ~plObjectInVolumeDetector() { }
     
     virtual hsBool MsgReceive(plMessage* msg);
 
@@ -177,23 +156,23 @@ public:
 class plCameraRegionDetector : public plObjectInVolumeDetector
 {
 protected:
-    hsTArray<plCameraMsg*>  fMessages;
+    typedef std::vector<plCameraMsg*> plCameraMsgVec;
+
+    plCameraMsgVec  fMessages;
     bool    fIsInside;
     bool    fSavingSendMsg;
     bool    fSavedMsgEnterFlag;
-    int     fNumEvals;
-    int     fLastEnterEval;
-    int     fLastExitEval;
 
     virtual void ITrigger(plKey hitter, bool entering, bool immediate=false);
     virtual void ISendSavedTriggerMsgs();
-    virtual void IHandleEval(plEvalMsg* pEval);
 public:
-    plCameraRegionDetector(){ fIsInside = false; fSavingSendMsg = false; }
+    plCameraRegionDetector()
+        : plObjectInVolumeDetector(), fIsInside(false), fSavingSendMsg(false)
+    { }
     ~plCameraRegionDetector();
 
     virtual hsBool MsgReceive(plMessage* msg);
-    void AddMessage(plCameraMsg* pMsg) { fMessages.Append(pMsg); }
+    void AddMessage(plCameraMsg* pMsg) { fMessages.push_back(pMsg); }
 
     CLASSNAME_REGISTER( plCameraRegionDetector );
     GETINTERFACE_ANY( plCameraRegionDetector, plCollisionDetector );
