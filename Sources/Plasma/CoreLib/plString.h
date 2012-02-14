@@ -260,6 +260,11 @@ public:
     plString Left(size_t size) const { return Substr(0, size); }
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
 
+    // NOTE:  Does ::Compare(blah, kCaseInsensitive) make more sense?  If
+    //        so, use that instead -- it's faster and more efficient!
+    plString ToUpper() const;
+    plString ToLower() const;
+
 public:
     struct less : public std::binary_function<plString, plString, bool>
     {

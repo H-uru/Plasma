@@ -644,6 +644,36 @@ plString plString::Substr(int start, size_t size) const
     return str;
 }
 
+plString plString::ToUpper() const
+{
+    // TODO:  Unicode-aware case conversion
+    size_t size = GetSize();
+    char *dupe = new char[size + 1];
+    const char *self = c_str();
+    for (size_t i = 0; i < size; ++i)
+        dupe[i] = toupper(self[i]);
+
+    // Don't re-check UTF-8 on this
+    plString str;
+    str.fUtf8Buffer = plStringBuffer<char>::Steal(dupe, size);
+    return str;
+}
+
+plString plString::ToLower() const
+{
+    // TODO:  Unicode-aware case conversion
+    size_t size = GetSize();
+    char *dupe = new char[size + 1];
+    const char *self = c_str();
+    for (size_t i = 0; i < size; ++i)
+        dupe[i] = tolower(self[i]);
+
+    // Don't re-check UTF-8 on this
+    plString str;
+    str.fUtf8Buffer = plStringBuffer<char>::Steal(dupe, size);
+    return str;
+}
+
 plString &plString::operator+=(const plString &str)
 {
     size_t catsize = GetSize() + str.GetSize();
