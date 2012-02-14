@@ -323,48 +323,7 @@ void plWalkingStrategy::Apply(float delSecs)
             LinearVelocity.fX = AchievedLinearVelocity.fX;
             LinearVelocity.fY = AchievedLinearVelocity.fY;
         }
-        if (!IsOnGround() || IsOnFalseGround())
-        {
-            // We're not on solid ground, so we should be sliding against whatever
-            // we're hitting (like a rock cliff). Each vector in fSlidingNormals is
-            // the surface normal of a collision that's too steep to be ground, so
-            // we project our current velocity onto that plane and slide along the
-            // wall.
-            //
-            // Also, sometimes PhysX reports a bunch of collisions from the wall,
-            // but nothing from underneath (when there should be). So if we're not
-            // touching ground, we offset the avatar in the direction of the 
-            // surface normal(s). This doesn't fix the issue 100%, but it's a hell
-            // of a lot better than nothing, and suitable duct tape until a future
-            // PhysX revision fixes the issue.
-            //
-            // Yes, there's room for optimization here if we care.
-            hsVector3 offset(0.f, 0.f, 0.f);
-            for (int i = 0; i < fContactNormals.GetCount(); i++)
-            {
-                offset += fContactNormals[i];
-                hsVector3 velNorm = LinearVelocity;
 
-                if (velNorm.MagnitudeSquared() > 0)
-                    velNorm.Normalize();
-
-                if (velNorm * fContactNormals[i] < 0)
-                {
-                    hsVector3 proj = (velNorm % fContactNormals[i]) % fContactNormals[i];
-                    if (velNorm * proj < 0)
-                        proj *= -1.f;
-                    LinearVelocity = LinearVelocity.Magnitude() * proj;
-                }
-            }
-            if (offset.MagnitudeSquared() > 0)
-            {
-                // 5 ft/sec is roughly the speed we walk backwards.
-                // The higher the value, the less likely you'll trip
-                // the bug, and this seems reasonable.
-                offset.Normalize();
-                LinearVelocity += offset * 5.0f;
-            }
-        }
         //make terminal velocity equal to k. it is wrong but has been this way and
         //don't want to break any puzzles. on top of that it will reduce tunneling behavior
         if(LinearVelocity.fZ<kGravity)LinearVelocity.fZ=kGravity;
