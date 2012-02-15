@@ -93,14 +93,11 @@ void CryptCreateRandomSeed(size_t length, uint8_t* data)
 
 void CryptHashPassword(const plString& username, const plString& password, ShaDigest dest)
 {
-    /* This should be unnecessary once plString has ToLower() */
-    wchar_t* w_name = (wchar_t*)_TEMP_CONVERT_TO_WCHAR_T(username);
-    StrLower(w_name);
-
-    plString buf = password;
-    buf += _TEMP_CONVERT_FROM_WCHAR_T(w_name);
-
-    plSHAChecksum sum(buf.GetSize() * sizeof(wchar_t), (uint8_t*)_TEMP_CONVERT_TO_WCHAR_T(buf));
+    plStringStream buf;
+    buf << password.Left(password.GetSize() - 1) << '\0';
+    buf << username.ToLower().Left(username.GetSize() - 1) << '\0';
+    plStringBuffer<uint16_t> result = buf.GetString().ToUtf16();
+    plSHAChecksum sum(result.GetSize() * sizeof(uint16_t), (uint8_t*)result.GetData());
 
     memcpy(dest, sum.GetValue(), sizeof(ShaDigest));
 }
