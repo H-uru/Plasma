@@ -408,14 +408,16 @@ public:
     }
     ~plStringStream() { delete [] fBuffer; }
 
+    plStringStream &append(const char *data, size_t length);
+
     plStringStream &operator<<(const char *text);
     plStringStream &operator<<(int num);
     plStringStream &operator<<(unsigned int num);
-    plStringStream &operator<<(char ch);
+    plStringStream &operator<<(char ch) { return append(&ch, 1); }
 
     plStringStream &operator<<(const plString &text)
     {
-        return operator<<(text.s_str());
+        return append(text.s_str(), text.GetSize());
     }
 
     size_t GetLength() const { return fLength; }
