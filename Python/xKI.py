@@ -2171,7 +2171,7 @@ class xKI(ptModifier):
                     if BKRightSideMode == kBKListMode:
                         BKContentListTopLine += kContentListScrollSize;
                         self.IBigKIRefreshContentListDisplay()
-                elif bkID >= kBKIToFolderButton01 and bkID <= kBKIToFolderButtonLast:
+                elif bkID >= kBKIToIncomingButton and bkID <= kBKIToFolderButtonLast:
                     # determine which folder
                     tofolderNum = bkID-kBKIToFolderButton01+BKFolderTopLine+1
                     # if they are in an expanded mode, then they can move the element to another folder
