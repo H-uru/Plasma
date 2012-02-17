@@ -346,10 +346,11 @@ class xLinkingBookGUIPopup(ptModifier):
                                         respLinkResponder.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
 
                                 else:  #Bookshelf Book
-                                    #remember which page I was on for the Bookshelf
-                                    PtDebugPrint("xLinkingBookGUIPopup: Placing a bookmark for book #%d on page %d" % (BookNumber,CurrentPage),level=kDebugDumpLevel)
-                                    ageSDL = PtGetAgeSDL()
-                                    ageSDL.setIndex("CurrentPage",BookNumber,CurrentPage)
+                                    if ptVault().amOwnerOfCurrentAge():
+                                        #remember which page I was on for the Bookshelf
+                                        PtDebugPrint("xLinkingBookGUIPopup: Placing a bookmark for book #%d on page %d" % (BookNumber,CurrentPage),level=kDebugDumpLevel)
+                                        ageSDL = PtGetAgeSDL()
+                                        ageSDL.setIndex("CurrentPage",BookNumber,CurrentPage)
 
                                     # if we're going to tomahna then make sure the chronicle reflects that
                                     linkTitle = SpawnPointTitle_Dict[event[2]]
@@ -407,10 +408,11 @@ class xLinkingBookGUIPopup(ptModifier):
                             note.setActivate(1.0)
                             note.addVarNumber("IShelveBook", 1)
                             note.send()
-                            #remember which page I was on
-                            PtDebugPrint("xLinkingBookGUIPopup: Placing a bookmark for book #%d on page %d" % (BookNumber,CurrentPage),level=kDebugDumpLevel)
-                            ageSDL = PtGetAgeSDL()
-                            ageSDL.setIndex("CurrentPage",BookNumber,CurrentPage)
+                            if ptVault().amOwnerOfCurrentAge():
+                                #remember which page I was on
+                                PtDebugPrint("xLinkingBookGUIPopup: Placing a bookmark for book #%d on page %d" % (BookNumber,CurrentPage),level=kDebugDumpLevel)
+                                ageSDL = PtGetAgeSDL()
+                                ageSDL.setIndex("CurrentPage",BookNumber,CurrentPage)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint("xLinkingBookGUIPopup:Book: NotifyNextPage  new current page=%d" % (CurrentPage+1),level=kDebugDumpLevel)
                         CurrentPage += 1
@@ -695,11 +697,11 @@ class xLinkingBookGUIPopup(ptModifier):
         # This section is neccessary because of the chronicle hack.
         # Because a player can see only their chron, and not another player's,
         # a visitor would see their linking pages in the owner's city book.
-        # So for now, visitors will only see the black void in an owner's bok.
-        vault = ptVault()
+        # So for now, visitors will only see the black void in an owner's book.
         if not ptVault().amOwnerOfCurrentAge():
             SpawnPointName_Dict[xLinkingBookDefs.kFirstLinkPanelID] = "NotPossible"
             SpawnPointTitle_Dict[xLinkingBookDefs.kFirstLinkPanelID] = "NotPossible"
+            CurrentPage = 1
             return
         
         # citybook links have been changed to Hood childages, so we search there now
