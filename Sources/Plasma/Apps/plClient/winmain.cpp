@@ -938,16 +938,13 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
             hsUNIXStream stream;
             if (stream.Open("TOS.txt", "rt"))
             {
-                char* eulaData = NULL;
-                unsigned dataLen = stream.GetSizeLeft();
-
-                eulaData = new char[dataLen + 1];
-                ZeroMemory(eulaData, dataLen + 1);
-
+                uint32_t dataLen = stream.GetSizeLeft();
+                char* eulaData = new char[dataLen + 1];
+                memset(eulaData, 0, dataLen + 1);
                 stream.Read(dataLen, eulaData);
 
-                SetDlgItemText(hwndDlg, IDC_URULOGIN_EULATEXT, eulaData);
-                delete [] eulaData;
+                plString str = plString::Steal(eulaData);
+                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, _TEMP_CONVERT_TO_WCHAR_T(str));
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);
