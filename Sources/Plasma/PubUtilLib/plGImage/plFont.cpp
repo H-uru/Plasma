@@ -1913,6 +1913,7 @@ hsBool  plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
     catch( ... )
     {
         IClear();
+        fclose( fp );
         return false;
     }
 
