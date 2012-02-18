@@ -22,7 +22,6 @@ add_subdirectory(pnNetCli)
 add_subdirectory(pnNetCommon)
 add_subdirectory(pnNetDiag)
 add_subdirectory(pnNetProtocol)
-#add_subdirectory(pnOraLib)             # Not being used in any current sln
 add_subdirectory(pnProduct)
 add_subdirectory(pnSceneObject)
 add_subdirectory(pnSimpleNet)
