@@ -25,7 +25,6 @@ add_subdirectory(pnNetProtocol)
 add_subdirectory(pnProduct)
 add_subdirectory(pnSceneObject)
 add_subdirectory(pnSimpleNet)
-#add_subdirectory(pnSqlLib)             # Not being used in any current sln
 add_subdirectory(pnTimer)
 add_subdirectory(pnUtils)
 add_subdirectory(pnUtilsExe)
