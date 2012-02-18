@@ -4,8 +4,6 @@ add_subdirectory(inc)
 add_subdirectory(pnAddrInfo)
 add_subdirectory(pnAsyncCore)
 add_subdirectory(pnAsyncCoreExe)
-#add_subdirectory(pnCrash)              # Not being used in any current sln
-#add_subdirectory(pnCrashExe)           # Not being used in any current sln
 #add_subdirectory(pnCsrCli)             # Not being used in any current sln
 add_subdirectory(pnCsrNet)
 add_subdirectory(pnDispatch)
