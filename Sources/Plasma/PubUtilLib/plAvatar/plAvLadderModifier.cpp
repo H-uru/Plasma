@@ -141,7 +141,7 @@ bool plAvLadderMod::IIsReadyToClimb()
         }
         else if (movingForward)
         {
-//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName(), hsRadiansToDegrees(acos(dot)));
+//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName().c_str(), hsRadiansToDegrees(acos(dot)));
             return false;
         }
     }

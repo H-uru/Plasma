@@ -140,10 +140,10 @@ void plSound::IPrintDbgMessage( const char *msg, hsBool isError )
     }
 
     if( isError )
-//      ourLog->AddLineF( plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
+//      ourLog->AddLineF( plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
         ourLog->AddLineS( "audio.log", plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
     else
-//      ourLog->AddLineF( "%s (%s)", msg, GetKey() ? GetKeyName() : "unkeyed" );
+//      ourLog->AddLineF( "%s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
         ourLog->AddLineS( "audio.log", "%s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
 }
 
