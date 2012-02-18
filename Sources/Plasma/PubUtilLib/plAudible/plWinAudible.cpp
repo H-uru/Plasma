@@ -299,7 +299,7 @@ void plWinAudible::SynchedPlay(int index)
 
 void plWinAudible::Play(int index )
 {   
-    // hsStatusMessageF( "Playing sound %s, index %d, time=%f\n", GetKeyName(), index, hsTimer::GetSeconds());
+    // hsStatusMessageF( "Playing sound %s, index %d, time=%f\n", GetKeyName().c_str(), index, hsTimer::GetSeconds());
     SND_APPLY_LOOP( index, Play(), ; );
 }
 

@@ -143,14 +143,14 @@ hsBool plExcludeRegionModifier::MsgReceive(plMessage* msg)
     {
         if (exclMsg->GetCmd() == plExcludeRegionMsg::kClear)
         {
-            DetectorLogSpecial("Clearing exclude region %s", GetKeyName());
+            DetectorLogSpecial("Clearing exclude region %s", GetKeyName().c_str());
             IMoveAvatars();
             fContainedAvatars.Reset();
             ISetPhysicalState(true);
         }
         else if (exclMsg->GetCmd() == plExcludeRegionMsg::kRelease)
         {
-            DetectorLogSpecial("Releasing exclude region %s", GetKeyName());
+            DetectorLogSpecial("Releasing exclude region %s", GetKeyName().c_str());
             ISetPhysicalState(false);
         }
 
@@ -167,12 +167,12 @@ hsBool plExcludeRegionModifier::MsgReceive(plMessage* msg)
     {
         if (collideMsg->fEntering)
         {
-            //DetectorLogSpecial("Avatar enter exclude region %s",GetKeyName());
+            //DetectorLogSpecial("Avatar enter exclude region %s",GetKeyName().c_str());
             fContainedAvatars.Append(collideMsg->fOtherKey);
         }
         else
         {
-            //DetectorLogSpecial("Avatar exit exclude region %s",GetKeyName());
+            //DetectorLogSpecial("Avatar exit exclude region %s",GetKeyName().c_str());
             int idx = fContainedAvatars.Find(collideMsg->fOtherKey);
             if (idx != fContainedAvatars.kMissingIndex)
                 fContainedAvatars.Remove(idx);
@@ -397,7 +397,7 @@ void plExcludeRegionSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* s
         bool cleared;
         var->Get(&cleared);
 
-        DetectorLogSpecial("SDL %s exclude region %s", cleared ? "clearing" : "releasing", fXRegion->GetKeyName());
+        DetectorLogSpecial("SDL %s exclude region %s", cleared ? "clearing" : "releasing", fXRegion->GetKeyName().c_str());
         fXRegion->ISetPhysicalState(cleared);
     }
 }
