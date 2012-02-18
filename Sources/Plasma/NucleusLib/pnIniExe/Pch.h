@@ -59,10 +59,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnIni/Intern.h"
 
-#ifdef SERVER
-#include "pnCrash/pnCrash.h"
-#endif
-
-
-
 #include <malloc.h>

@@ -55,10 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 
-#ifdef SERVER
-#include "pnCrash/pnCrash.h"    // deadlock API
-#endif
-
 #include "Private/pnAceInt.h"
 #include "Private/W9x/pnAceW9x.h"
 #include "Private/Nt/pnAceNt.h"

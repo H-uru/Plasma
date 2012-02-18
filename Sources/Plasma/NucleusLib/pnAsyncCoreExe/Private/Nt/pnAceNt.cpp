@@ -267,19 +267,9 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
             );
 
             if (op) {
-                // Queue for deadlock detection
-                #ifdef SERVER
-                void * check = CrashAddDeadlockCheck(thread->handle, L"pnAceNt.NtWorkerThread");
-                #endif
-
                 // Dispatch event to app
                 INtOpDispatch(ntObj, op, bytes);
-                
-                // Unqueue from deadlock detection
-                #ifdef SERVER
-                CrashRemoveDeadlockCheck(check);
-                #endif
-                                
+
                 sleepMs = 0;
                 continue;
             }
