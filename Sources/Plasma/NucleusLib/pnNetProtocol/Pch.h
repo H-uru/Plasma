@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCli/pnNetCli.h"
 
 #ifdef SERVER
-#include "pnIni/pnIni.h"
 #include "psUtils/psUtils.h"   // for SrvMsgHeader, ugh
 #endif
 
