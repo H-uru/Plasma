@@ -118,12 +118,9 @@ public:
 
 class plString
 {
-#pragma warning(push)
-#pragma warning(disable : 4146)
     enum {
-        kSizeAuto = (size_t)(-2147483648L)
+        kSizeAuto = (size_t)(0x80000000)
     };
-#pragma warning(pop)
 
 public:
     static const plString Null;
