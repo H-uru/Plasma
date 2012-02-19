@@ -437,8 +437,14 @@ void TBaseHashTable<T>::SetLinkOffset (int linkOffset, unsigned maxSize) {
     m_linkOffset = linkOffset;
     m_fullList.SetLinkOffset(m_linkOffset + offsetof(THashLink<T>, m_linkToFull));
 
-    if (!m_slotMask)
-        SetSlotCount(max(kSlotMinCount, MathNextPow2(maxSize)));
+    if (!m_slotMask) {
+        // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+        uint32_t v = maxSize - 1;
+        v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
+        v++;
+
+        SetSlotCount(max(kSlotMinCount, v));
+    }
 }
 
 //===========================================================================

@@ -8,21 +8,17 @@ set(pnUtils_HEADERS
     pnUtAddr.h
     pnUtAllIncludes.h
     pnUtArray.h
-    pnUtBase64.h
     pnUtBigNum.h
     pnUtCmd.h
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtMath.h
     pnUtMisc.h
     pnUtPath.h
     pnUtPragma.h
     pnUtPriQ.h
-    pnUtRand.h
     pnUtRef.h
     pnUtSort.h
-    pnUtSpareList.h
     pnUtStr.h
     pnUtSync.h
     pnUtTime.h
@@ -33,16 +29,12 @@ set(pnUtils_HEADERS
 set(pnUtils_SOURCES
     pnUtAddr.cpp
     pnUtArray.cpp
-    pnUtBase64.cpp
     pnUtBigNum.cpp
     pnUtCmd.cpp
     pnUtHash.cpp
     pnUtList.cpp
-    pnUtMath.cpp
     pnUtMisc.cpp
     pnUtPath.cpp
-    pnUtRand.cpp
-    pnUtSpareList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
     pnUtUuid.cpp
