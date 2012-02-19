@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnProduct/pnProduct.h"
 #include "pnNetCli/pnNetCli.h"
 #include "plNetGameLib/plNetGameLib.h"
-#include "pnIni/pnIni.h"
 #include "pnEncryption/plChallengeHash.h"
 
 #include "plMessage/plNetCommMsgs.h"
@@ -672,182 +671,6 @@ static void INetCliAuthSendFriendInviteCallback (
     kiMsg->Send();
 }
 
-
-//============================================================================
-static void IReadNetIni() {
-    wchar_t filename[MAX_PATH];
-    StrPrintf(filename, arrsize(filename), L"%s.cfg", ProductCoreName());
-
-    wchar_t pathAndName[MAX_PATH];
-    PathGetInitDirectory(pathAndName, arrsize(pathAndName));
-    PathAddFilename(pathAndName, pathAndName, filename, arrsize(pathAndName));
-
-#ifndef PLASMA_EXTERNAL_RELEASE
-    // internal dev build will override user-based setting with local folder if it's there
-    wchar_t localPathAndName[MAX_PATH];
-    PathAddFilename(localPathAndName, L"init", filename, arrsize(localPathAndName));
-    if (PathDoesFileExist(localPathAndName))
-            StrCopy(pathAndName, localPathAndName, arrsize(pathAndName));
-#endif
-
-    Ini * ini = IniOpen(pathAndName);
-
-    wchar_t password[kMaxPasswordLength];
-
-    if (ini) {
-        // Read [Net.Server] section
-        IniGetString(
-            IniGetFirstValue(
-                ini,
-                L"Net.Server",
-                L"Addr",
-                nil
-            ),
-            s_iniServerAddr,
-            arrsize(s_iniServerAddr),
-            0,
-            L""
-        );
-
-        // Read [Net.FileServer] section
-        IniGetString(
-            IniGetFirstValue(
-                ini,
-                L"Net.FileServer",
-                L"Addr",
-                nil
-            ),
-            s_iniFileServerAddr,
-            arrsize(s_iniFileServerAddr),
-            0,
-            s_iniServerAddr
-        );
-        
-        if (s_iniReadAccountInfo) {
-            // Read [Net.Account] section
-            IniGetString(
-                IniGetFirstValue(
-                    ini,
-                    L"Net.Account",
-                    L"Username",
-                    nil
-                ),
-                s_iniAccountUsername,
-                arrsize(s_iniAccountUsername),
-                0,
-                L""
-            );
-            IniGetString(
-                IniGetFirstValue(
-                    ini,
-                    L"Net.Account",
-                    L"Password",
-                    nil
-                ),
-                password,
-                arrsize(password),
-                0,
-                L""
-            );
-
-            // Read [Net.Startup] section
-            IniGetString(
-                IniGetFirstValue(
-                    ini,
-                    L"Net.Startup",
-                    L"AgeName",
-                    nil
-                ),
-                s_iniStartupAgeName,
-                arrsize(s_iniStartupAgeName),
-                0,
-                L"StartUp"
-            );
-            IniGetString(
-                IniGetFirstValue(
-                    ini,
-                    L"Net.Startup",
-                    L"PlayerName",
-                    nil
-                ),
-                s_iniStartupPlayerName,
-                arrsize(s_iniStartupPlayerName),
-                0,
-                L""
-            );
-
-            CryptHashPassword(_TEMP_CONVERT_FROM_WCHAR_T(s_iniAccountUsername), _TEMP_CONVERT_FROM_WCHAR_T(password), s_namePassHash);
-        }
-        else {
-            StrCopy(s_iniStartupAgeName, L"StartUp", arrsize(s_iniStartupAgeName));
-        }
-    }
-
-#ifndef PLASMA_EXTERNAL_RELEASE
-    // @@@: Internal build only: Drop a default version of the file if not found    
-    if (!ini) {
-        EFileError  fileError;
-        uint64_t       fileSize;
-        uint64_t       lastWrite;      
-        AsyncFile file = AsyncFileOpen(
-            pathAndName,
-            nil,
-            &fileError,
-            kAsyncFileReadAccess|kAsyncFileWriteAccess,
-            kAsyncFileModeCreateNew,
-            0,
-            nil,
-            &fileSize,
-            &lastWrite
-        );
-        
-        if (file) {
-            char line[2048];
-            StrPrintf(
-                line,
-                arrsize(line),
-                // format
-                "[Net.Server]\r\n"
-                "\tAddr=%S\r\n"
-                "\r\n"
-                "[Net.FileServer]\r\n"
-                "\tAddr=%S\r\n"
-                "\r\n"
-                "[Net.Account]\r\n"
-                "\tUsername=%S\r\n"
-                "\tPassword=AccountPassword\r\n"
-                "\r\n"
-                "[Net.Startup]\r\n"
-                "\tAgeName=%S\r\n"
-                "\tPlayerName=%S\r\n"
-                ,   // values
-                L"shard",
-                L"shard",
-                L"AccountUserName",
-                L"StartUp",
-                L"PlayerName",
-                nil
-            );
-            AsyncFileWrite(file, 0, line, StrLen(line), kAsyncFileRwSync, nil);
-            AsyncFileClose(file, kAsyncFileDontTruncate);
-        }
-    }
-#endif
-
-    // Set startup age info
-    memset(&s_startupAge, 0, sizeof(s_startupAge));
-
-    if (StrLen(s_iniStartupAgeName) == 0)
-        StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
-    else
-        StrToAnsi(s_startupAge.ageDatasetName, s_iniStartupAgeName, arrsize(s_startupAge.ageDatasetName));
-
-    s_startupAge.ageInstId = s_iniStartupAgeInstId;
-    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
-
-    IniClose(ini);
-}
-
 //============================================================================
 static void AuthSrvIpAddressCallback (
     ENetError       result,
@@ -946,7 +769,14 @@ void NetCommStartup () {
     NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
     NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
 
-    IReadNetIni();
+    // Set startup age info
+    memset(&s_startupAge, 0, sizeof(s_startupAge));
+
+    StrCopy(s_iniStartupAgeName, L"StartUp", arrsize(s_iniStartupAgeName));
+    StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
+
+    s_startupAge.ageInstId = s_iniStartupAgeInstId;
+    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
 }
 
 //============================================================================

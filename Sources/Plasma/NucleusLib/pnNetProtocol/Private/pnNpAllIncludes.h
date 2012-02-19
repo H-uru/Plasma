@@ -89,7 +89,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef SERVER
 # ifdef USES_NETSRV
 // for SrvMsgHeader definition
-#  include "pnIni/pnIni.h"  // psSrvConn needs ini types
 #  include "psUtils/psUtils.h"
 
 #  ifdef USES_PROTOCOL_SRV2VAULT
