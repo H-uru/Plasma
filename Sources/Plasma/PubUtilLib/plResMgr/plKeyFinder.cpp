@@ -109,7 +109,7 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
     }
     else
     {
-        if (plString(_TEMP_CONVERT_FROM_LITERAL(p)).Find(p, plString::kCaseInsensitive) >= 0)
+        if (_TEMP_CONVERT_FROM_LITERAL(p).Find(o, plString::kCaseInsensitive) >= 0)
             return true;
     }
 
