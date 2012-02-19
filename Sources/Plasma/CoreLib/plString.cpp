@@ -48,6 +48,23 @@ static inline size_t u16slen(const uint16_t *ustr, size_t max)
 }
 #endif
 
+/* Provide strnlen and wcsnlen for MinGW which doesn't have them */
+#ifdef __MINGW32__
+size_t strnlen(const char *s, size_t maxlen)
+{
+    size_t len;
+    for (len = 0; len < maxlen && *s; len++, s++) { }
+    return len;
+}
+
+size_t wcsnlen(const wchar_t *s, size_t maxlen)
+{
+    size_t len;
+    for (len = 0; len < maxlen && *s; len++, s++) { }
+    return len;
+}
+#endif
+
 #define BADCHAR_REPLACEMENT (0xFFFDul)
 
 void plString::IConvertFromUtf8(const char *utf8, size_t size, bool steal)
