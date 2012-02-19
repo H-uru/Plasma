@@ -137,15 +137,7 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
         PerfAddCounter(kAsyncPerfThreadTaskThreadsActive, 1);
 
         if (task) {
-            #ifdef SERVER
-            void * check = CrashAddDeadlockCheck(thread->handle, task->debugStr);
-            #endif
-            
             task->callback(task->param, task->taskList->error);
-
-            #ifdef SERVER
-            CrashRemoveDeadlockCheck(check);
-            #endif
 
             task->taskList->DecRef("task");
             delete task;
