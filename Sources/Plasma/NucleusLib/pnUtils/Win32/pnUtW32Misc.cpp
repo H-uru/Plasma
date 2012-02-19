@@ -49,13 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Private
-*
-***/
-static MEMORYSTATUSEX s_memstatus;
-
-/*****************************************************************************
-*
 *   Exports
 *
 ***/
@@ -65,69 +58,11 @@ const wchar_t * AppGetCommandLine () {
     return GetCommandLineW();
 }
 
-//============================================================================
-void MachineGetName (wchar_t *computerName, unsigned int length) {
-    DWORD len = length;
-    GetComputerNameW(computerName, &len);
-}
-
 /*****************************************************************************
 *
 *   System status
 *
 ***/
-
-//============================================================================
-void MemoryGetStatus (MemoryStatus * status) {
-    MEMORYSTATUSEX mem;
-    mem.dwLength = sizeof(mem);
-    GlobalMemoryStatusEx(&mem);
-
-    const uint64_t BYTES_PER_MB = 1024 * 1024;
-    status->totalPhysMB         = unsigned(mem.ullTotalPhys     / BYTES_PER_MB);
-    status->availPhysMB         = unsigned(mem.ullAvailPhys     / BYTES_PER_MB);
-    status->totalPageFileMB     = unsigned(mem.ullTotalPageFile / BYTES_PER_MB);
-    status->availPageFileMB     = unsigned(mem.ullAvailPageFile / BYTES_PER_MB);
-    status->totalVirtualMB      = unsigned(mem.ullTotalVirtual  / BYTES_PER_MB);   
-    status->availVirtualMB      = unsigned(mem.ullAvailVirtual  / BYTES_PER_MB);
-    status->memoryLoad          = mem.dwMemoryLoad;
-}
-
-//============================================================================
-void DiskGetStatus (ARRAY(DiskStatus) * disks) {
-    DWORD length = GetLogicalDriveStrings(0, NULL);
-    if (!length || length > 2048)
-        return;
-
-    wchar_t* buffer = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
-    wchar_t* origbuf = buffer;
-    if (!GetLogicalDriveStringsW(length, buffer))
-    {
-        free(buffer);
-        return;
-    }
-
-    for (; *buffer; buffer += StrLen(buffer) + 1) {
-        UINT driveType = GetDriveTypeW(buffer);
-        if (driveType != DRIVE_FIXED)
-            continue;
-
-        ULARGE_INTEGER freeBytes;
-        ULARGE_INTEGER totalBytes;
-        if (!GetDiskFreeSpaceExW(buffer, &freeBytes, &totalBytes, NULL))
-            continue;
-
-        DiskStatus status;
-        StrCopy(status.name, buffer, arrsize(status.name));
-
-        const uint64_t BYTES_PER_MB = 1024 * 1024;
-        status.totalSpaceMB = unsigned(totalBytes.QuadPart / BYTES_PER_MB);
-        status.freeSpaceMB  = unsigned(freeBytes.QuadPart  / BYTES_PER_MB);
-
-        disks->Add(status);
-    }
-    free(origbuf);
-}
 
 //============================================================================
 // Loosely taken from MS's cpuid code sample
