@@ -768,6 +768,15 @@ void NetCommStartup () {
 //    NetCliAuthSetRecvBufferHandler(INetBufferCallback);
     NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
     NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
+
+    // Set startup age info
+    memset(&s_startupAge, 0, sizeof(s_startupAge));
+
+    StrCopy(s_iniStartupAgeName, L"StartUp", arrsize(s_iniStartupAgeName));
+    StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
+
+    s_startupAge.ageInstId = s_iniStartupAgeInstId;
+    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
 }
 
 //============================================================================
