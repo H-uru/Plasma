@@ -53,16 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Constants
-*
-***/
-
-const wchar_t UNICODE_BOM = 0xfeff;  // Unicode byte-order mark
-const char  UTF8_BOM[]  = "\xef\xbb\xbf";
-
-
-/*****************************************************************************
-*
 *   Module instance functions
 *
 ***/
@@ -82,14 +72,6 @@ const wchar_t * AppGetCommandLine ();
 
 /*****************************************************************************
 *
-*   System info functions
-*
-***/
-void MachineGetName (wchar_t * computerName, unsigned length = 32);
-
-
-/*****************************************************************************
-*
 *   Misc types
 *
 ***/
@@ -101,45 +83,11 @@ typedef void (CDECL * FStateDump)(
     ...
 );
 
-
-/*****************************************************************************
-*
-*   Dll initialization
-*
-***/
-
-#if HS_BUILD_FOR_WIN32
-#define SRV_MODULE_PRE_INIT()                                               \
-    extern BOOL WINAPI PreDllMain (HANDLE handle, DWORD reason, LPVOID);    \
-    extern "C" BOOL (WINAPI *_pRawDllMain)(HANDLE, DWORD, LPVOID) = PreDllMain
-#endif
-
-
 /*****************************************************************************
 *
 *   System status
 *
 ***/
-
-struct MemoryStatus {
-    unsigned totalPhysMB;       // total physical memory 
-    unsigned availPhysMB;       // free physical memory
-    unsigned totalPageFileMB;   // total page file size
-    unsigned availPageFileMB;   // free page file size
-    unsigned totalVirtualMB;    // total virtual address space for calling process
-    unsigned availVirtualMB;    // available virtual address space for calling process
-    unsigned memoryLoad;        // 0..100
-};
-void MemoryGetStatus (MemoryStatus * status);
-
-struct DiskStatus {
-    wchar_t       name[16];
-    unsigned    totalSpaceMB;
-    unsigned    freeSpaceMB;
-};
-
-void DiskGetStatus (ARRAY(DiskStatus) * disks);
-
 
 void CpuGetInfo (
     uint16_t *  cpuCaps,
