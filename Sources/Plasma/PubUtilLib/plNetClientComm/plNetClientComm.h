@@ -102,7 +102,7 @@ const ARRAY(NetCommPlayer) &        NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();
 void                                NetCommSetReadIniAccountInfo (bool readFromIni);
-void                                NetCommSetAccountUsernamePassword (wchar_t username[], const ShaDigest &  namePassHash);
+void                                NetCommSetAccountUsernamePassword (const wchar_t username[], const ShaDigest &  namePassHash);
 void                                NetCommSetAuthTokenAndOS (wchar_t authToken[], wchar_t os[]);
 ENetError                           NetCommGetAuthResult ();
 

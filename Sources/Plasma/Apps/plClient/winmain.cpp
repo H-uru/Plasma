@@ -970,22 +970,18 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
 {
     uint32_t cryptKey[4];
-    ZeroMemory(cryptKey, sizeof(cryptKey));
+    memset(cryptKey, 0, sizeof(cryptKey));
     GetCryptKey(cryptKey, arrsize(cryptKey));
 
-    wchar_t wusername[kMaxAccountNameLength];
-    wchar_t wpassword[kMaxPasswordLength];
-
-    StrToUnicode(wusername, pLoginParam->username, arrsize(wusername));
+    plString theUser = _TEMP_CONVERT_FROM_LITERAL(pLoginParam->username);
+    plString thePass = (_TEMP_CONVERT_FROM_LITERAL(password)).Left(kMaxPasswordLength);
 
     // if the password field is the fake string then we've already
     // loaded the namePassHash from the file
-    if (StrCmp(password, FAKE_PASS_STRING) != 0)
+    if (thePass.Compare(FAKE_PASS_STRING) != 0)
     {
-        StrToUnicode(wpassword, password, arrsize(wpassword));
-
         wchar_t domain[15];
-        PathSplitEmail(wusername, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
+        PathSplitEmail(_TEMP_CONVERT_TO_WCHAR_T(theUser), nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
             plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
@@ -1001,11 +997,11 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         }
         else
         {
-            CryptHashPassword(_TEMP_CONVERT_FROM_WCHAR_T(wusername), _TEMP_CONVERT_FROM_WCHAR_T(wpassword), pLoginParam->namePassHash);
+            CryptHashPassword(theUser, thePass, pLoginParam->namePassHash);
         }
     }
 
-    NetCommSetAccountUsernamePassword(wusername, pLoginParam->namePassHash);
+    NetCommSetAccountUsernamePassword(_TEMP_CONVERT_TO_WCHAR_T(theUser), pLoginParam->namePassHash);
     if (TGIsCider)
         NetCommSetAuthTokenAndOS(nil, L"mac");
     else
