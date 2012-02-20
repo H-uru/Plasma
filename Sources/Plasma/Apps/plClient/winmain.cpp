@@ -989,8 +989,15 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
 
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
             plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
+            uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
+            const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
 
-            memcpy(pLoginParam->namePassHash, shasum.GetValue(), sizeof(ShaDigest));
+            // I blame eap for this ass shit
+            dest[0] = hsToBE32(from[0]);
+            dest[1] = hsToBE32(from[1]);
+            dest[2] = hsToBE32(from[2]);
+            dest[3] = hsToBE32(from[3]);
+            dest[4] = hsToBE32(from[4]);
         }
         else
         {
