@@ -1037,7 +1037,7 @@ void NetCommSetMsgPreHandler (
 
 //============================================================================
 void NetCommSetAccountUsernamePassword (
-    wchar_t               username[],
+    const wchar_t       username[],
     const ShaDigest &   namePassHash
 ) {
     StrCopy(s_iniAccountUsername, username, arrsize(s_iniAccountUsername));
