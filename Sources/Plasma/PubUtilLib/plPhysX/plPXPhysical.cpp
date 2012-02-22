@@ -1220,8 +1220,9 @@ void plPXPhysical::GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsV
 
 void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV)
 {
-    bool initialSync =  plNetClientApp::GetInstance()->IsLoadingInitialAgeState() &&
-                        plNetClientApp::GetInstance()->GetJoinOrder() == 0;
+    bool isLoading = plNetClientApp::GetInstance()->IsLoadingInitialAgeState();
+    bool isFirstIn = plNetClientApp::GetInstance()->GetJoinOrder() == 0;
+    bool initialSync = isLoading && isFirstIn;
 
     // If the physical has fallen out of the sim, and this is initial age state, and we're
     // the first person in, reset it to the original position.  (ie, prop the default state
@@ -1242,6 +1243,11 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
         SetLinearVelocitySim(*linV);
     if (angV)
         SetAngularVelocitySim(*angV);
+
+    // If we're loading the age, then we should ensure the objects
+    // stay asleep if they're supposed to be asleep.
+    if (isLoading && GetProperty(plSimulationInterface::kStartInactive) && !fActor->readBodyFlag(NX_BF_KINEMATIC))
+        fActor->putToSleep();
 
     SendNewLocation(false, true);
 }
