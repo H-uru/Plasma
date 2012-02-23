@@ -276,14 +276,12 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
             if (fSavedMsgEnterFlag)
             {
                 fMessages[i]->SetCmd(plCameraMsg::kEntering);
-                fMessages[i]->ClearCmd(plCameraMsg::kPop);
                 DetectorLog("Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = true;
             }
             else
             {
                 fMessages[i]->ClearCmd(plCameraMsg::kEntering);
-                fMessages[i]->SetCmd(plCameraMsg::kPop); // for spawnpoints with a camera stack
                 DetectorLog("Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
                 fIsInside = false;
             }
