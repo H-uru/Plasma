@@ -548,7 +548,7 @@ const T * THashTable<T,K>::FindNext (const K & key, const T * object) const {
     unsigned        hash     = key.GetHash();
     const LIST(T) & slotList = this->GetSlotList(hash);
     for (const T * curr = slotList.Next(object); curr; curr = slotList.Next(curr))
-        if ((GetHash(curr) == hash) && (*curr == key))
+        if ((this->GetHash(curr) == hash) && (*curr == key))
             return curr;
     return nil;
 }
