@@ -73,6 +73,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
 {
+    if (!key)
+        return nil;
+
     plSceneObject* avObj = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
     if (avObj)
     {
@@ -242,8 +245,6 @@ plCameraRegionDetector::~plCameraRegionDetector()
 
 void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediate)
 {
-    if (fSavingSendMsg)
-        DetectorLogRed("%s: Stale messages on ITrigger. This should never happen!", GetKeyName().c_str());
     if (fIsInside && entering)
         DetectorLogRed("%s: Duplicate enter! Did we miss an exit?", GetKeyName().c_str());
     else if (!fIsInside && !entering)
@@ -384,11 +385,18 @@ hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
     if (pCollMsg)
     {
+        fLastHitter = pCollMsg->fOtherKey;
         // If the avatar is disabled (flying around), don't trigger
-        if (IIsDisabledAvatar(pCollMsg->fOtherKey))
+        if (IIsDisabledAvatar(fLastHitter))
             return false;
-        ITrigger(pCollMsg->fOtherKey, (pCollMsg->fEntering != 0));
-        plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+        ITrigger(fLastHitter, (pCollMsg->fEntering != 0));
+
+        // If we never eval before the exit...
+        if (fWaitingForEval)
+            plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+        else
+            plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+        fWaitingForEval = !fWaitingForEval;
         return true;
     }
 
@@ -396,8 +404,13 @@ hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
     if (pEvalMsg)
     {
         fNumEvals++;
+        // Don't dispatch if we're not in the age
+        if (plArmatureMod* av = IGetAvatarModifier(fLastHitter))
+            if (av->IsMidLink())
+                return true;
         ISendSavedTriggerMsgs();
         plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+        fWaitingForEval = false;
     }
 
     plPlayerPageMsg* pageMsg = plPlayerPageMsg::ConvertNoRef(msg);
