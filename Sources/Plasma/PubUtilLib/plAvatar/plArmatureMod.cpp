@@ -628,7 +628,6 @@ void plArmatureModBase::IEnableBones(int lod, hsBool enable)
 
 const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"};
 
-const float plArmatureMod::kAvatarInputSynchThreshold = 10.f;
 float plArmatureMod::fMouseTurnSensitivity = 1.f;
 hsBool plArmatureMod::fClickToTurn = true;
 
@@ -656,7 +655,6 @@ void plArmatureMod::IInitDefaults()
     fReverseFBOnIdle = false;
     fFollowerParticleSystemSO = nil;
     fPendingSynch = false;
-    fLastInputSynch = 0;
     fOpaque = true;
     fPhysHeight = 0.f;
     fPhysWidth = 0.f;
@@ -1524,8 +1522,6 @@ void plArmatureMod::SynchInputState(uint32_t rcvID /* = kInvalidPlayerID */)
         msg->AddNetReceiver(rcvID);
     
     msg->Send();
-    
-    fLastInputSynch = hsTimer::GetSysSeconds();
 }
 
 void plArmatureMod::ILinkToPersonalAge()
@@ -1588,12 +1584,6 @@ hsBool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
                     plNetClientApp::GetInstance()->SendMsg(&relRegionsNetMsg);
                 }
             }
-        }
-    
-        if (localPlayer == this)
-        {
-            if (time - fLastInputSynch > kAvatarInputSynchThreshold)
-                SynchInputState();          
         }
         
         if (noOverlap)
