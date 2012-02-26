@@ -414,7 +414,6 @@ protected:
     uint8_t fStealthMode;
     int fStealthLevel;  // you are invisible to other players/CCRs of lower stealthLevel
     
-    double      fLastInputSynch;
     plAGModifier * fRootAGMod;
     plAvBoneMap * fBoneMap;                 // uses id codes to look up bones. set up by the brain as needed.
     double fLastSynch;
