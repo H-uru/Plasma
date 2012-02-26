@@ -445,9 +445,9 @@ void CliGmConn::AutoPing () {
 void CliGmConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = pingTimer) {
+        if (pingTimer) {
+            AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
             pingTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliGmConnTimerDestroyed);
         }
     }
     critsect.Leave();
@@ -455,27 +455,15 @@ void CliGmConn::StopAutoPing () {
 
 //============================================================================
 void CliGmConn::TimerPing () {
+    // Send a ping request
+    pingSendTimeMs = GetNonZeroTimeMs();
 
-#if 0
-    // if the time difference between when we last sent a ping and when we last
-    // heard from the server is >= 3x the ping interval, the socket is stale.
-    if (pingSendTimeMs && abs(int(pingSendTimeMs - lastHeardTimeMs)) >= kPingTimeoutMs) {
-        // ping timed out, disconnect the socket
-        AsyncSocketDisconnect(sock, true);
-    }
-    else
-#endif
-    {
-        // Send a ping request
-        pingSendTimeMs = GetNonZeroTimeMs();
+    const uintptr_t msg[] = {
+        kCli2Game_PingRequest,
+        pingSendTimeMs
+    };
 
-        const uintptr_t msg[] = {
-            kCli2Game_PingRequest,
-            pingSendTimeMs
-        };
-
-        Send(msg, arrsize(msg));
-    }
+    Send(msg, arrsize(msg));
 }
 
 //============================================================================
