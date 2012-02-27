@@ -151,7 +151,6 @@ pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
     fLastCursorLine = 0;
     fBuffer.Append( 0L );
     fBufferLimit = -1;
-    fIgnoreNextKey = false;
     fScrollControl = nil;
     fScrollProc = nil;
     fScrollPos = 0;
@@ -1036,13 +1035,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, uint8_t modifiers )
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
 
-    if( fIgnoreNextKey )
-    {
-        // So we don't process keys that already got handled by HandleKeyEvent()
-        fIgnoreNextKey = false;
-        return true;
-    }
-
     // Store info for the event we're about to send out
     fLastKeyModifiers = modifiers;
     fLastKeyPressed = key;
@@ -1134,13 +1126,7 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
 //          fEscapedFlag = true;
             DoSomething();      // Query WasEscaped() to see if it was escape vs enter
         }
-        else
-        {
-            fIgnoreNextKey = false;
-            return true;
-        }
 
-        fIgnoreNextKey = true;
         return true;
     }
     else
