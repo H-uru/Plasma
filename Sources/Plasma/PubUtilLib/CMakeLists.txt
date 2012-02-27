@@ -7,6 +7,7 @@ add_subdirectory(plAudio)
 add_subdirectory(plAudioCore)
 add_subdirectory(plAvatar)
 add_subdirectory(plClientResMgr)
+add_subdirectory(plClipboard)
 add_subdirectory(plCompression)
 add_subdirectory(plContainer)
 #add_subdirectory(plDeviceSelector)     # Not being used by any current slns
