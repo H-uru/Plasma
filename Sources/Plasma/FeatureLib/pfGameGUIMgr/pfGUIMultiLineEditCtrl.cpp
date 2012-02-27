@@ -60,7 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plDynamicTextMap.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-
+#include "plClipboard/plClipboard.h"
+#include "plString.h"
 
 //// Tiny Helper Class ///////////////////////////////////////////////////////
 
@@ -1067,9 +1068,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
 
-    if (modifiers & pfGameGUIMgr::kCtrlDown)
-        return true; // we're ignoring ctrl key events
-
     if( event == pfGameGUIMgr::kKeyDown || event == pfGameGUIMgr::kKeyRepeat )
     {
         // Use arrow keys to do our dirty work
@@ -1109,13 +1107,28 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
 
             DeleteChar();
         }
-		else if( key == KEY_ENTER )
+        else if( key == KEY_ENTER )
         {
             if( IsLocked() )
                 return true;
 
             InsertChar('\n');
         }
+        else if (modifiers & pfGameGUIMgr::kCtrlDown) 
+        {
+            // Not exactly safe way to do it, since there are control codes inside buffer.
+            // But what's the worst thing that can happen? Horribly colorful ki-mails?
+            // Too lazy to worry about that...
+            if (key == KEY_C) 
+            {
+                plClipboard::GetInstance().SetClipboardText(_TEMP_CONVERT_FROM_WCHAR_T(fBuffer.AcquireArray()));
+            }
+            else if (key == KEY_V)
+            {
+                plString contents = plClipboard::GetInstance().GetClipboardText();
+                InsertString(contents.ToWchar().GetData());
+            }
+        } 
         else if( key == KEY_ESCAPE )
         {
 //          fEscapedFlag = true;
