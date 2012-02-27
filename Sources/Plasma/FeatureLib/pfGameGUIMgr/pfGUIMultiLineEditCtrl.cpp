@@ -1035,9 +1035,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, uint8_t modifiers )
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
 
-    if (modifiers & pfGameGUIMgr::kCtrlDown)
-        return true; // we're ignoring ctrl key events
-
     if( fIgnoreNextKey )
     {
         // So we don't process keys that already got handled by HandleKeyEvent()
@@ -1111,6 +1108,13 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
                 return true;
 
             DeleteChar();
+        }
+		else if( key == KEY_ENTER )
+        {
+            if( IsLocked() )
+                return true;
+
+            InsertChar('\n');
         }
         else if( key == KEY_ESCAPE )
         {

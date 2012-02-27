@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnInputCore/plInputMap.h"
+#include <locale>
 
 class plDInputMgr;
 class plInputDevice;
@@ -99,6 +100,7 @@ protected:
     float                    fMouseScale;
     static uint8_t           bRecenterMouse;
     static hsWindowHndl      fhWnd;
+	std::locale localeC;
     
 public:
 #if HS_BUILD_FOR_WIN32
