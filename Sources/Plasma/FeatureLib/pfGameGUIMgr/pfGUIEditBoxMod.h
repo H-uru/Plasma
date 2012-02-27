@@ -66,7 +66,7 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         wchar_t         *fBuffer;
         uint32_t          fBufferSize, fCursorPos;
         int32_t           fScrollPos;
-        hsBool          fIgnoreNextKey, fEscapedFlag;
+        hsBool          fEscapedFlag;
         hsBool          fFirstHalfExitKeyPushed;
         
         hsBool          fSpecialCaptureKeyEventMode;

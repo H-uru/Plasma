@@ -72,7 +72,6 @@ pfGUIEditBoxMod::pfGUIEditBoxMod()
 {
     SetFlag( kWantsInterest );
     SetFlag( kTakesSpecialKeys );
-    fIgnoreNextKey = false;
     fEscapedFlag = false;
     fFirstHalfExitKeyPushed = false;
     fSpecialCaptureKeyEventMode = false;
@@ -241,13 +240,6 @@ hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
     if( fBuffer == nil )
         return false;
 
-    if( fIgnoreNextKey )
-    {
-        // So we don't process keys that already got handled by HandleKeyEvent()
-        fIgnoreNextKey = false;
-        return true;
-    }
-
     int i = wcslen( fBuffer );
 
     // Insert character at the current cursor position, then inc the cursor by one
@@ -330,7 +322,6 @@ hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             // done capturing... tell the handler
             DoSomething();
         }
-        fIgnoreNextKey = true;
         fFirstHalfExitKeyPushed = false;
         return true;
     }
@@ -412,13 +403,7 @@ hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                     }
                 }
             }
-            else
-            {
-                fIgnoreNextKey = false;
-                return true;
-            }
 
-            fIgnoreNextKey = true;
             IUpdate();
             return true;
         }
