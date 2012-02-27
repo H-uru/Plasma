@@ -119,7 +119,8 @@ plInputManager* plInputManager::fInstance = nil;
 
 plInputManager::plInputManager( hsWindowHndl hWnd ) :
 fDInputMgr(nil),
-fInterfaceMgr(nil)
+fInterfaceMgr(nil),
+localeC("C")
 {
     fhWnd = hWnd;
     fInstance = this;
@@ -289,9 +290,11 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
         break;
     case CHAR_MSG:
         {
+            wchar_t ch = (wchar_t)Wparam;
+
             // These are handled by KEYUP/KEYDOWN and should not be sent
             // We don't like garbage getting in string fields
-            if (Wparam == KEY_BACKSPACE || Wparam == KEY_ESCAPE)
+            if (std::iscntrl(ch, localeC))
                 break;
 
             BYTE scan = (BYTE)(Lparam >> 16);
@@ -300,10 +303,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             bExtended = Lparam >> 24 & 1;
             hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             bool down = !(Lparam >> 31);
-            wchar_t ch = (wchar_t)Wparam;
-            // for the return key, Windows sends CR, but multiline text input fields want LF (CR is rendered as a wide horizontal space)
-            if (ch == 0x0D)
-                ch = 0x0A;
+ 
             for (int i=0; i<fInputDevices.Count(); i++)
                 fInputDevices[i]->HandleKeyEvent( CHAR_MSG, (plKeyDef)vkey, down, bRepeat, ch );
         }
