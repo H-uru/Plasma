@@ -379,6 +379,11 @@ hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 DoSomething();      // Query WasEscaped() to see if it was escape vs enter
                 return true;
             }
+            else if (key == KEY_TAB) 
+            {
+                //Send notify for python scripts
+                HandleExtendedEvent(kWantAutocomplete);
+            }
             else if (modifiers & pfGameGUIMgr::kCtrlDown) 
             {
                 if (key == KEY_C) 

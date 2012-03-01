@@ -129,7 +129,8 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         // Extended event types
         enum ExtendedEvents
         {
-            kValueChanging
+            kValueChanging,
+            kWantAutocomplete
         };
 };
 

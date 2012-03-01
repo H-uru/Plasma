@@ -70,6 +70,7 @@ class pfGUIDialogNotifyProc : public pfGUIDialogProc
         pfGUIDialogNotifyProc( plKey &r );
 
         virtual void    DoSomething( pfGUIControlMod *ctrl );
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event );
         virtual void    OnInit( void );
         virtual void    OnShow( void );
         virtual void    OnHide( void );
