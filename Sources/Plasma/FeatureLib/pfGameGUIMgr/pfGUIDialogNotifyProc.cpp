@@ -97,6 +97,16 @@ void pfGUIDialogNotifyProc::DoSomething( pfGUIControlMod *ctrl )
         ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kValueChanged );
 }
 
+void pfGUIDialogNotifyProc::HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
+{
+    pfGUIEditBoxMod *edit = pfGUIEditBoxMod::ConvertNoRef( ctrl );
+    if(edit != nil && event == pfGUIEditBoxMod::kWantAutocomplete)
+    {
+        //send notify, somebody will do something with that (like python script)
+        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kSpecialAction );
+    }
+}
+
 void pfGUIDialogNotifyProc::OnInit( void )
 {
     if ( fDialog )
