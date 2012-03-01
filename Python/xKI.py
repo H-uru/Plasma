@@ -806,6 +806,58 @@ def CMPNodeDate(nodeA,nodeB):
             return 1
     return 0
 
+#helper class for field autcomplete
+class AutocompleteState:
+    def __init__(self):
+        self.prefix = "";
+        self.candidates = list()
+        self.lastCandidateId = None
+        self.space_match = re.compile("\\s+", re.UNICODE)
+        self.word_match = re.compile("\\S+", re.UNICODE)
+        
+    def pickFirst(self, text, nameList):
+        if not text or not nameList:
+            return None
+        
+        names = set()
+        
+        for name in nameList:
+            nospace = self.space_match.sub('', name.lower())
+            names.add((nospace, name))
+        
+        text_lower = text.lower()
+        words = [(m.start(), m.end()) for m in self.word_match.finditer(text_lower)]
+        words.reverse()
+        suffix = ""
+        
+        for (word_start, word_end) in words:
+            suffix = text_lower[word_start:word_end] + suffix
+            
+            self.candidates = [normal for (nospace, normal) in names 
+                                      if nospace.startswith(suffix)]
+            
+            if self.candidates:
+                self.candidates.sort()
+                self.lastCandidateId = 0
+                self.prefix = text[:word_start]
+                return self.prefix + self.candidates[0]
+            
+        return None
+        
+    def pickNext(self, text):
+        if not text or not self.candidates or self.lastCandidateId is None:
+            return None
+            
+        lastCandidate = self.candidates[self.lastCandidateId]
+        if not text.endswith(lastCandidate):
+            return None
+           
+        nextCandidateId =  (self.lastCandidateId + 1) % len(self.candidates) 
+        self.lastCandidateId = nextCandidateId        
+        return self.prefix + self.candidates[nextCandidateId]
+ 
+autocompleteState = AutocompleteState() 
+    
 class xKI(ptModifier):
     "The KI dialog modifier, includes Blackbar, miniKI, YesNo"
     def __init__(self):
@@ -1870,6 +1922,10 @@ class xKI(ptModifier):
                 # make sure if they are chatting then get the focus back
                 if self.isChatting:
                     KIMicro.dialog.setFocus(KIMicro.dialog.getControlFromTag(kChatEditboxID))
+            elif event == kSpecialAction:
+                ctrlID = control.getTagID()
+                if ctrlID == kChatEditboxID:
+                    self.IAutocomplete(control)
 ###############################################
 ##
 ##  miniKI processing
@@ -2089,6 +2145,11 @@ class xKI(ptModifier):
                     else:
                         if not BKInEditMode:
                             KIMini.dialog.setFocus(KIMini.dialog.getControlFromTag(kChatEditboxID))
+            elif event == kSpecialAction:
+                ctrlID = control.getTagID()
+                if ctrlID == kChatEditboxID:
+                    self.IAutocomplete(control)
+                            
 ###############################################
 ##
 ##  BigKI processing
@@ -10458,7 +10519,35 @@ class xKI(ptModifier):
             else:
                 PtDebugPrint("Score had a problem resetting.")
 
-
+    def IAutocomplete(self, control):
+        text = control.getStringW()
+        
+        proposition = autocompleteState.pickNext(text)
+        if proposition is not None:
+            control.setStringW(proposition)
+            control.end()
+            control.refresh()
+            return
+        
+        players = set()
+        
+        for item in BKPlayerList:
+            if isinstance(item, ptPlayer):
+                players.add(item.getPlayerName())
+            elif isinstance(item, ptVaultNodeRef):
+                player = item.getChild()
+                playerInfo = player.upcastToPlayerInfoNode()
+                if playerInfo is not None:
+                    players.add(playerInfo.playerGetName())
+        
+        proposition = autocompleteState.pickFirst(text, players)
+        
+        if proposition is not None:
+            control.setStringW(proposition)
+            control.end()
+            control.refresh()
+        
+    
 ################################################################
 ##
 ##  class helper - DeviceFolder and Device
