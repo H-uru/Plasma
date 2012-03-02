@@ -1698,9 +1698,9 @@ void CliAuConn::AutoPing () {
 void CliAuConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = pingTimer) {
+        if (pingTimer) {
+            AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
             pingTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
         }
     }
     critsect.Leave();
@@ -1708,30 +1708,18 @@ void CliAuConn::StopAutoPing () {
 
 //============================================================================
 void CliAuConn::TimerPing () {
-
-#if 0
-    // if the time difference between when we last sent a ping and when we last
-    // heard from the server is >= 3x the ping interval, the socket is stale.
-    if (pingSendTimeMs && abs(int(pingSendTimeMs - lastHeardTimeMs)) >= kPingTimeoutMs) {
-        // ping timed out, disconnect the socket
-        AsyncSocketDisconnect(sock, true);
-    }
-    else
-#endif
-    {
-        // Send a ping request
-        pingSendTimeMs = GetNonZeroTimeMs();
+    // Send a ping request
+    pingSendTimeMs = GetNonZeroTimeMs();
         
-        const uintptr_t msg[] = {
-            kCli2Auth_PingRequest,
-            pingSendTimeMs,
-            0,      // not a transaction
-            0,      // no payload
-            nil
-        };
+    const uintptr_t msg[] = {
+        kCli2Auth_PingRequest,
+        pingSendTimeMs,
+        0,      // not a transaction
+        0,      // no payload
+        nil
+    };
         
-        Send(msg, arrsize(msg));
-    }       
+    Send(msg, arrsize(msg));
 }
 
 //============================================================================
