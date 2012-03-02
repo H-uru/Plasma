@@ -74,6 +74,11 @@ struct CliGmConn : AtomicRef {
     CliGmConn ();
     ~CliGmConn ();
 
+    // ping
+    void AutoPing ();
+    void StopAutoPing ();
+    void TimerPing ();
+
     void Send (const uintptr_t fields[], unsigned count);
 };
 
@@ -207,6 +212,8 @@ static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
 //============================================================================
 static bool ConnEncrypt (ENetError error, void * param) {
     CliGmConn * conn = (CliGmConn *) param;
+    if (!s_perf[kPingDisabled])
+        conn->AutoPing();
 
     if (IS_NET_SUCCESS(error)) {
         s_critsect.Enter();
@@ -262,6 +269,7 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
 
 //============================================================================
 static void NotifyConnSocketDisconnect (CliGmConn * conn) {
+    conn->StopAutoPing();
 
     bool notify;
     s_critsect.Enter();
@@ -392,6 +400,19 @@ static void Connect (
 *
 ***/
 
+//===========================================================================
+static unsigned CliGmConnTimerDestroyed (void * param) {
+    CliGmConn * conn = (CliGmConn *) param;
+    conn->DecRef("TimerDestroyed");
+    return kAsyncTimeInfinite;
+}
+
+//===========================================================================
+static unsigned CliGmConnPingTimerProc (void * param) {
+    ((CliGmConn *) param)->TimerPing();
+    return kPingIntervalMs;
+}
+
 //============================================================================
 CliGmConn::CliGmConn () {
     AtomicAdd(&s_perf[kPerfConnCount], 1);
@@ -402,6 +423,47 @@ CliGmConn::~CliGmConn () {
     if (cli)
         NetCliDelete(cli, true);
     AtomicAdd(&s_perf[kPerfConnCount], -1);
+}
+
+//============================================================================
+void CliGmConn::AutoPing () {
+    ASSERT(!pingTimer);
+    IncRef("PingTimer");
+    critsect.Enter();
+    {
+        AsyncTimerCreate(
+            &pingTimer,
+            CliGmConnPingTimerProc,
+            sock ? 0 : kAsyncTimeInfinite,
+            this
+        );
+    }
+    critsect.Leave();
+}
+
+//============================================================================
+void CliGmConn::StopAutoPing () {
+    critsect.Enter();
+    {
+        if (pingTimer) {
+            AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
+            pingTimer = nil;
+        }
+    }
+    critsect.Leave();
+}
+
+//============================================================================
+void CliGmConn::TimerPing () {
+    // Send a ping request
+    pingSendTimeMs = GetNonZeroTimeMs();
+
+    const uintptr_t msg[] = {
+        kCli2Game_PingRequest,
+        pingSendTimeMs
+    };
+
+    Send(msg, arrsize(msg));
 }
 
 //============================================================================
@@ -710,6 +772,17 @@ unsigned GameGetConnId () {
 //============================================================================
 void GamePingEnable (bool enable) {
     s_perf[kPingDisabled] = !enable;
+    s_critsect.Enter();
+    for (;;) {
+        if (!s_active)
+            break;
+        if (enable)
+            s_active->AutoPing();
+        else
+            s_active->StopAutoPing();
+        break;
+    }
+    s_critsect.Leave();
 }
 
 } using namespace Ngl;
