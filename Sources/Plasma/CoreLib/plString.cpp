@@ -162,11 +162,11 @@ void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
             *dp++ = 0x80 | ((unichar >>  6) & 0x3F);
             *dp++ = 0x80 | ((unichar      ) & 0x3F);
         } else if (*sp > 0x7FF) {
-            *dp++ = 0xF0 | ((*sp >> 12) & 0x0F);
+            *dp++ = 0xE0 | ((*sp >> 12) & 0x0F);
             *dp++ = 0x80 | ((*sp >>  6) & 0x3F);
             *dp++ = 0x80 | ((*sp      ) & 0x3F);
         } else if (*sp > 0x7F) {
-            *dp++ = 0xF0 | ((*sp >>  6) & 0x1F);
+            *dp++ = 0xC0 | ((*sp >>  6) & 0x1F);
             *dp++ = 0x80 | ((*sp      ) & 0x3F);
         } else {
             *dp++ = (char)(*sp);
@@ -227,11 +227,11 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
             *dp++ = 0x80 | ((*sp >>  6) & 0x3F);
             *dp++ = 0x80 | ((*sp      ) & 0x3F);
         } else if (*sp > 0x7FF) {
-            *dp++ = 0xF0 | ((*sp >> 12) & 0x0F);
+            *dp++ = 0xE0 | ((*sp >> 12) & 0x0F);
             *dp++ = 0x80 | ((*sp >>  6) & 0x3F);
             *dp++ = 0x80 | ((*sp      ) & 0x3F);
         } else if (*sp > 0x7F) {
-            *dp++ = 0xF0 | ((*sp >>  6) & 0x1F);
+            *dp++ = 0xC0 | ((*sp >>  6) & 0x1F);
             *dp++ = 0x80 | ((*sp      ) & 0x3F);
         } else {
             *dp++ = (char)(*sp);

@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pnInputCore/plKeyMap.h"
+#include "plClipboard/plClipboard.h"
 
 #include <locale>
 
@@ -71,7 +72,6 @@ pfGUIEditBoxMod::pfGUIEditBoxMod()
 {
     SetFlag( kWantsInterest );
     SetFlag( kTakesSpecialKeys );
-    fIgnoreNextKey = false;
     fEscapedFlag = false;
     fFirstHalfExitKeyPushed = false;
     fSpecialCaptureKeyEventMode = false;
@@ -240,13 +240,6 @@ hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
     if( fBuffer == nil )
         return false;
 
-    if( fIgnoreNextKey )
-    {
-        // So we don't process keys that already got handled by HandleKeyEvent()
-        fIgnoreNextKey = false;
-        return true;
-    }
-
     int i = wcslen( fBuffer );
 
     // Insert character at the current cursor position, then inc the cursor by one
@@ -329,7 +322,6 @@ hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             // done capturing... tell the handler
             DoSomething();
         }
-        fIgnoreNextKey = true;
         fFirstHalfExitKeyPushed = false;
         return true;
     }
@@ -387,13 +379,31 @@ hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 DoSomething();      // Query WasEscaped() to see if it was escape vs enter
                 return true;
             }
-            else
+            else if (modifiers & pfGameGUIMgr::kCtrlDown) 
             {
-                fIgnoreNextKey = false;
-                return true;
+                if (key == KEY_C) 
+                {
+                    plClipboard::GetInstance().SetClipboardText(_TEMP_CONVERT_FROM_WCHAR_T(fBuffer));
+                }
+                else if (key == KEY_V)
+                {
+                    plString contents = plClipboard::GetInstance().GetClipboardText();
+                    plStringBuffer<wchar_t> tmp = contents.ToWchar();
+                    size_t len = tmp.GetSize();
+                    if (len > 0) {
+                        --len; //skip \0 on end
+                        wchar_t* insertTarget = fBuffer + fCursorPos;
+                        size_t bufferTailLen = wcslen(insertTarget);
+                        if (fCursorPos + len + bufferTailLen < fBufferSize) {
+                            memmove(insertTarget + len, insertTarget, bufferTailLen * sizeof(wchar_t));
+                            memcpy(insertTarget, tmp.GetData(), len * sizeof(wchar_t));
+                            fCursorPos += len;
+                            HandleExtendedEvent( kValueChanging );
+                        }
+                    }
+                }
             }
 
-            fIgnoreNextKey = true;
             IUpdate();
             return true;
         }
