@@ -225,21 +225,21 @@ plVirtualCam1::~plVirtualCam1()
 }
 
 // for saving camera stack
-plCameraModifier1* plVirtualCam1::GetCameraNumber(int camNumber)
+plCameraModifier1* plVirtualCam1::GetCameraNumber(size_t camNumber)
 { 
     return (fCameraStack[camNumber]); 
 }
 // for rebuilding camera stack
 void plVirtualCam1::RebuildStack(const plKey& key)
 {
-    if (fCameraStack.Count() == 1)
+    if (fCameraStack.size() == 1)
     {
         plUoid U(kDefaultCameraMod1_KEY);
         plKey pKey = hsgResMgr::ResMgr()->FindKey(U);
         if (pKey)
         {
             if (fCameraStack[0]->GetKey() == pKey)
-                fCameraStack.SetCountAndZero(0);
+                fCameraStack.clear();
         }
     }
     plSceneObject* pObj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
@@ -398,14 +398,13 @@ void  plVirtualCam1::Reset(hsBool bRender)
         fPythonOverride = nil;
     if (fFirstPersonOverride)
         fFirstPersonOverride = nil;
-    fCamerasLoaded.SetCountAndZero(0);
-    fCameraStack.SetCountAndZero(0);
-    fCameraStack.Append(fDriveCamera);
+    fCamerasLoaded.clear();
+    fCameraStack.clear();
+    fCameraStack.push_back(fDriveCamera);
     plUoid U(kDefaultCameraMod1_KEY);
     plKey pKey = hsgResMgr::ResMgr()->FindKey(U);
     if (pKey)
         PushCamera((plCameraModifier1*)pKey->GetObjectPtr());
-        //fCameraStack.Append((plCameraModifier1*)pKey->GetObjectPtr());
     
     if (fThirdPersonCam)
         PushCamera(fThirdPersonCam);
@@ -429,7 +428,7 @@ void  plVirtualCam1::Reset(hsBool bRender)
 
 void  plVirtualCam1::ClearStack()
 {
-    fCameraStack.SetCountAndZero(0);
+    fCameraStack.clear();
     plUoid U(kDefaultCameraMod1_KEY);
     plKey pKey = hsgResMgr::ResMgr()->FindKey(U);
     if (pKey)
@@ -451,10 +450,9 @@ plCameraModifier1* plVirtualCam1::GetCurrentCamera()
         return(fFirstPersonOverride);
     if (fTransPos == POS_TRANS_FOLLOW)
         return(fTransitionCamera);
-
-    if (fCameraStack.Count())
-        return fCameraStack[fCameraStack.Count() - 1];
-    else return nil;
+    if (fCameraStack.size())
+        return fCameraStack.back();
+    return nil;
 }
 
 hsBool plVirtualCam1::Is1stPersonCamera()
@@ -471,9 +469,10 @@ hsBool plVirtualCam1::Is1stPersonCamera()
 
 plCameraModifier1* plVirtualCam1::GetCurrentStackCamera()
 {
-    if (fCameraStack.Count())
-        return fCameraStack[fCameraStack.Count() - 1];
-    else return nil;
+    if (fCameraStack.size())
+        return fCameraStack.back();
+    else
+        return nil;
 }
 
 void plVirtualCam1::ICreatePlate()
@@ -535,11 +534,12 @@ void plVirtualCam1::SetRender(hsBool render)
 // hack, hack, hack
 hsBool plVirtualCam1::RestoreFromName(const plString& name)
 {
-    for(int i = 0; i < fCamerasLoaded.Count(); i++)
+    for(plSOVec::iterator it = fCamerasLoaded.begin(); it != fCamerasLoaded.end(); ++it)
     {
-        if (name.Compare(fCamerasLoaded[i]->GetKeyName()) == 0)
+        plKey cam = (*it)->GetKey();
+        if (name.Compare(cam->GetName(), plString::kCaseInsensitive) == 0)
         {
-            RebuildStack(fCamerasLoaded[i]->GetKey());
+            RebuildStack(cam);
             return true;
         }
     }
@@ -775,33 +775,34 @@ void plVirtualCam1::IUpdate()
 
     RunTransition();
     
-    for (int i=0; i < fCameraStack.Count(); i++)
+    for (plCameraVec::iterator i = fCameraStack.begin(); i != fCameraStack.end(); ++i)
     {   
         hsBool update = true;
-        for (int j=i+1; j<fCameraStack.Count(); j++)
+        for (plCameraVec::iterator j = (i+1); j != fCameraStack.end(); ++j)
         {
-            if (fCameraStack[i] == fCameraStack[j])
+            if (*i != *j)
             {
                 update = false;
                 break;
             }
         }
-        if ((fCameraStack[i] == GetCurrentStackCamera()) && fTransPos != POS_TRANS_OFF)
+        plCameraModifier1* cam = *i;
+        if ((cam == GetCurrentStackCamera()) && fTransPos != POS_TRANS_OFF)
             update = false;
         if(update)
         {
             // eek...
-            if(alwaysCutForColin && fCameraStack[i]->GetBrain())
+            if(alwaysCutForColin && cam->GetBrain())
             {
-                fCameraStack[i]->GetBrain()->SetFlags(plCameraBrain1::kCutPos);
-                fCameraStack[i]->GetBrain()->SetFlags(plCameraBrain1::kCutPOA);
+                cam->GetBrain()->SetFlags(plCameraBrain1::kCutPos);
+                cam->GetBrain()->SetFlags(plCameraBrain1::kCutPOA);
             }
             if(fForceCutOnce)
             {
-                fCameraStack[i]->GetBrain()->SetFlags(plCameraBrain1::kCutPosOnce);
-                fCameraStack[i]->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
+                cam->GetBrain()->SetFlags(plCameraBrain1::kCutPosOnce);
+                cam->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
             }
-            fCameraStack[i]->Update();
+            cam->Update();
         }
     }
     if(fForceCutOnce)fForceCutOnce=false;
@@ -1397,12 +1398,9 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
             // array. Since this message indicates it was destroyed anyway, this should be
             // ok.
             plCameraModifier1* pMod = (plCameraModifier1*)(pRefMsg->GetRef());
-            // we go in reverse so that removes don't mess up our index
-            for (int i = fCameraStack.Count() - 1; i >= 0; --i)
-            {
-                if (fCameraStack[i] == pMod)
-                    fCameraStack.Remove(i);
-            }
+            plCameraVec::iterator it = std::find(fCameraStack.begin(), fCameraStack.end(), pMod);
+            if (it != fCameraStack.end())
+                fCameraStack.erase(it);
         }
         return true;
     }
@@ -1495,7 +1493,7 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
 
 void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
 {
-    fCameraStack.Append(pCam);
+    fCameraStack.push_back(pCam);
     if (pCam->GetBrain())
     {
         if (HasMovementFlag(B_CONTROL_CAMERA_WALK_PAN))
@@ -1509,13 +1507,8 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
 void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
 {
     // pushing the same camera, folks?
+    // -- disallowed 2/13/2012 --
     if (pCam == GetCurrentStackCamera())
-    {
-        AddCameraToStack(pCam);
-        return;
-    }
-    // make sure that we don't keep adding the default camera if we're already in it
-    if (bDefault && pCam == GetCurrentStackCamera())
         return;
     
     // look up whatever transition we might have specified
@@ -1670,9 +1663,9 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
 #endif
     }
     // make this the default camera if that's what we want...
-    if (fCameraStack.Count() > 0 && bDefault)
+    if (fCameraStack.size() > 0 && bDefault)
     {   
-        fCameraStack.SetCountAndZero(0);
+        fCameraStack.clear();
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG   
         camLog->AddLineF("Camera %s is now the DEFAULT camera for this age", pCam->GetKeyName().c_str());
@@ -1684,15 +1677,15 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
 void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
 {
         // sanity / new default camera check
-    if (fCameraStack.Count() <= 1)
+    if (fCameraStack.size() <= 1)
         return;
     
     // is it the current camera AND the same camera we would otherwise switch to?
-    if (pCam==GetCurrentStackCamera() && pCam == fCameraStack[fCameraStack.Count() - 2])
+    if (pCam==GetCurrentStackCamera() && pCam == fCameraStack[fCameraStack.size() - 2])
     {
         // pop but don't transition to a new camera
         // or do anything else:
-        fCameraStack.Remove(fCameraStack.Count() - 1);
+        fCameraStack.pop_back();
         return;
     }
 
@@ -1714,7 +1707,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
         !GetCurrentStackCamera())
     {
         // special camera mode (like drive) just pop it
-        fCameraStack.Remove(fCameraStack.Count() - 1);
+        fCameraStack.pop_back();
         GetCurrentStackCamera()->Push(!HasFlags(kAvatarWalking));       
         return;
     }
@@ -1726,7 +1719,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
 #endif
 
         // pop and actually transition to a new camera
-        fCameraStack.Remove(fCameraStack.Count() - 1);
+        fCameraStack.pop_back();
         
         if (GetCurrentStackCamera())
         {   
@@ -1809,14 +1802,9 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
     IHandleCameraStatusLog(pCam, kBackgroundPop);
 #endif
         // just remove this from the stack
-        for (int i = 0; i < fCameraStack.Count(); i++)
-        {
-            if (fCameraStack[i] == pCam)
-            {   
-                fCameraStack.Remove(i);
-                break;
-            }
-        }
+        plCameraVec::iterator it = std::find(fCameraStack.begin(), fCameraStack.end(), pCam);
+        if (it != fCameraStack.end())
+            fCameraStack.erase(it);
     }
     if (!InTransition())
         SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
