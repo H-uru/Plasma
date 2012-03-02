@@ -73,6 +73,8 @@ struct hsColorRGBA;
 
 class plVirtualCam1 : public hsKeyedObject
 {
+    typedef std::vector<plCameraModifier1*> plCameraVec;
+    typedef std::vector<plSceneObject*>     plSOVec;
 
 protected:
     
@@ -127,8 +129,8 @@ public:
     static float GetFOVh() { return fFOVh; }
     static float GetHither() { return fHither; }
     static float GetYon()    { return fYon; }
-    static void     SetOffset(float x, float y, float z);
-    static void SetAspectRatio(float aspect) { fAspectRatio = aspect; }
+    static void  SetOffset(float x, float y, float z);
+    static void  SetAspectRatio(float aspect) { fAspectRatio = aspect; }
     static float GetAspectRatio() { return fAspectRatio; }
     
     hsBool InTransition() { return fTransPos != POS_TRANS_OFF; }
@@ -148,8 +150,8 @@ public:
     const hsMatrix44 GetCurrentMatrix() { return fMatrix; }
     static plVirtualCam1* Instance() { return fInstance; }
     
-    int GetNumCameras() { return fCameraStack.Count(); }
-    plCameraModifier1* GetCameraNumber(int camNumber); 
+    size_t GetNumCameras() { return fCameraStack.size(); }
+    plCameraModifier1* GetCameraNumber(size_t camNumber);
     void RebuildStack(const plKey& key);
 
     void SetFlags(int flag) { fFlags.SetBit(flag); }
@@ -169,7 +171,7 @@ public:
     static hsBool IsCurrentCamera(const plCameraModifier1* mod);
     void ClearStack();
 
-    void AddCameraLoaded(plSceneObject* pCam) { fCamerasLoaded.Append(pCam); }
+    void AddCameraLoaded(plSceneObject* pCam) { fCamerasLoaded.push_back(pCam); }
     hsBool RestoreFromName(const plString& name);
     void StartUnPan();
     // these are for console access
@@ -209,25 +211,25 @@ private:
     plDebugInputInterface*  fCameraDriveInterface;
     plPlate*            fEffectPlate;
     FILE*               foutLog;
-    hsTArray<plCameraModifier1*>    fCameraStack;
+    plCameraVec         fCameraStack;
     int                 fFreezeCounter;
     int                 fFadeCounter;
     hsBitVector         fFlags;
-    hsTArray<plSceneObject*>    fCamerasLoaded;
+    plSOVec             fCamerasLoaded;
     hsBitVector         fMoveFlags;
-    float            fX;
-    float            fY;
-    float            fXPanLimit;
-    float            fZPanLimit;
-    float            fXPanLimitGoal;
-    float            fZPanLimitGoal;
-    float            fXUnPanRate;
-    float            fZUnPanRate;
-    float            fXPanInterpRate;
-    float            fZPanInterpRate;
+    float               fX;
+    float               fY;
+    float               fXPanLimit;
+    float               fZPanLimit;
+    float               fXPanLimitGoal;
+    float               fZPanLimitGoal;
+    float               fXUnPanRate;
+    float               fZUnPanRate;
+    float               fXPanInterpRate;
+    float               fZPanInterpRate;
     double              fUnPanEndTime;
     double              fInterpPanLimitTime;
-    float            fRetainedFY;
+    float               fRetainedFY;
     
     // built-in cameras
     plCameraModifier1*  fDriveCamera; // for driving around 
