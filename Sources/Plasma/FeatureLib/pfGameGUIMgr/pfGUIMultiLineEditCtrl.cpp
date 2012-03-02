@@ -60,7 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plDynamicTextMap.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-
+#include "plClipboard/plClipboard.h"
+#include "plString.h"
 
 //// Tiny Helper Class ///////////////////////////////////////////////////////
 
@@ -150,7 +151,6 @@ pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
     fLastCursorLine = 0;
     fBuffer.Append( 0L );
     fBufferLimit = -1;
-    fIgnoreNextKey = false;
     fScrollControl = nil;
     fScrollProc = nil;
     fScrollPos = 0;
@@ -1035,16 +1035,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, uint8_t modifiers )
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
 
-    if (modifiers & pfGameGUIMgr::kCtrlDown)
-        return true; // we're ignoring ctrl key events
-
-    if( fIgnoreNextKey )
-    {
-        // So we don't process keys that already got handled by HandleKeyEvent()
-        fIgnoreNextKey = false;
-        return true;
-    }
-
     // Store info for the event we're about to send out
     fLastKeyModifiers = modifiers;
     fLastKeyPressed = key;
@@ -1069,9 +1059,6 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
 
     if ((fPrevCtrl || fNextCtrl) && (fLineStarts.GetCount() <= GetFirstVisibleLine()))
         return true; // we're ignoring if we can't actually edit our visible frame (and we're linked)
-
-    if (modifiers & pfGameGUIMgr::kCtrlDown)
-        return true; // we're ignoring ctrl key events
 
     if( event == pfGameGUIMgr::kKeyDown || event == pfGameGUIMgr::kKeyRepeat )
     {
@@ -1112,18 +1099,34 @@ hsBool  pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
 
             DeleteChar();
         }
+        else if( key == KEY_ENTER )
+        {
+            if( IsLocked() )
+                return true;
+
+            InsertChar('\n');
+        }
+        else if (modifiers & pfGameGUIMgr::kCtrlDown) 
+        {
+            // Not exactly safe way to do it, since there are control codes inside buffer.
+            // But what's the worst thing that can happen? Horribly colorful ki-mails?
+            // Too lazy to worry about that...
+            if (key == KEY_C) 
+            {
+                plClipboard::GetInstance().SetClipboardText(_TEMP_CONVERT_FROM_WCHAR_T(fBuffer.AcquireArray()));
+            }
+            else if (key == KEY_V)
+            {
+                plString contents = plClipboard::GetInstance().GetClipboardText();
+                InsertString(contents.ToWchar().GetData());
+            }
+        } 
         else if( key == KEY_ESCAPE )
         {
 //          fEscapedFlag = true;
             DoSomething();      // Query WasEscaped() to see if it was escape vs enter
         }
-        else
-        {
-            fIgnoreNextKey = false;
-            return true;
-        }
 
-        fIgnoreNextKey = true;
         return true;
     }
     else

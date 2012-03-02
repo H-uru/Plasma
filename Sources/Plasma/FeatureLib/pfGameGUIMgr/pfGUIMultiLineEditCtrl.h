@@ -100,7 +100,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         hsTArray<int32_t> fLineStarts;
         uint16_t          fLineHeight, fCurrCursorX, fCurrCursorY;
         int32_t           fCursorPos, fLastCursorLine;
-        hsBool          fIgnoreNextKey, fReadyToRender;
+        hsBool          fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
         int8_t            fLockCount;
         uint8_t           fCalcedFontSize;    // The font size that we calced our line height at
