@@ -102,10 +102,6 @@ public:
     static void*    Alloc(size_t size); // does not call operator::new(), may return nil
     static void Free(void* p);      // does not call operator::delete()
     static void ThreadYield();
-                
-#if HS_BUILD_FOR_WIN32
-    DWORD           WinRun();
-#endif
 };
 
 //////////////////////////////////////////////////////////////////////////////
