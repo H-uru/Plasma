@@ -103,76 +103,6 @@ typedef void (* FSignalShutdown) ();
 typedef void (* FWaitForShutdown) ();
 typedef void (* FSleep) (unsigned sleepMs);
 
-// Files
-typedef AsyncFile (* FAsyncFileOpen) (
-    const wchar_t             fullPath[],
-    FAsyncNotifyFileProc    notifyProc,
-    EFileError *            error,
-    unsigned                desiredAccess,
-    unsigned                openMode,
-    unsigned                shareModeFlags,
-    void *                  userState,
-    uint64_t *                 fileSize,
-    uint64_t *                 fileLastWriteTime
-);
-
-typedef void (* FAsyncFileClose) (
-    AsyncFile   file,
-    uint64_t       truncateSize
-);
-
-typedef void (* FAsyncFileSetLastWriteTime) (
-    AsyncFile   file,
-    uint64_t       lastWriteTime
-);
-
-typedef uint64_t (* FAsyncFileGetLastWriteTime) (
-    const wchar_t fileName[]
-);
-
-typedef AsyncId (* FAsyncFileFlushBuffers) (
-    AsyncFile   file, 
-    uint64_t       truncateSize,
-    bool        notify,
-    void *      param
-);
-
-typedef AsyncId (* FAsyncFileRead) (
-    AsyncFile   file,
-    uint64_t       offset,
-    void *      buffer,
-    unsigned    bytes,
-    unsigned    flags,
-    void *      param
-);
-
-typedef AsyncId (* FAsyncFileWrite) (
-    AsyncFile       file,
-    uint64_t           offset,
-    const void *    buffer,
-    unsigned        bytes,
-    unsigned        flags,
-    void *          param
-);
-
-typedef AsyncId (* FAsyncFileCreateSequence) (
-    AsyncFile   file, 
-    bool        notify, 
-    void *      param
-);
-
-typedef bool (* FAsyncFileSeek) (
-    AsyncFile       file,
-    uint64_t           distance,
-    EFileSeekFrom   from
-);
-
-typedef bool (* FAsyncFileWaitId) (
-    AsyncFile   file, 
-    AsyncId     asyncId, 
-    unsigned    timeoutMs
-);
-
 // Sockets
 typedef void (* FAsyncSocketConnect) (
     AsyncCancelId *         cancelId,
@@ -251,17 +181,6 @@ struct AsyncApi {
     FSignalShutdown                 signalShutdown;
     FWaitForShutdown                waitForShutdown;
     FSleep                          sleep;
-    
-    // Files
-    FAsyncFileOpen                  fileOpen;
-    FAsyncFileClose                 fileClose;
-    FAsyncFileRead                  fileRead;
-    FAsyncFileWrite                 fileWrite;
-    FAsyncFileFlushBuffers          fileFlushBuffers;
-    FAsyncFileSetLastWriteTime      fileSetLastWriteTime;
-    FAsyncFileGetLastWriteTime      fileGetLastWriteTime;
-    FAsyncFileCreateSequence        fileCreateSequence;
-    FAsyncFileSeek                  fileSeek;
     
     // Sockets
     FAsyncSocketConnect             socketConnect;
