@@ -82,16 +82,16 @@ class plStatusLog
         mutable uint32_t      fFlags;     // Mutable so we can change it in IPrintLineToFile() internally
         uint32_t  fOrigFlags;
 
-        uint32_t      fMaxNumLines;
-        std::string fCFilename; // used ONLY by GetFileName()
+        uint32_t     fMaxNumLines;
+        std::string  fCFilename; // used ONLY by GetFileName()
         std::wstring fFilename;
-        char        **fLines;
-        uint32_t      *fColors;
-        hsMutex     fMutex;     // To make multithreaded-safe
-        FILE*       fFileHandle;
-        uint32_t      fSize;
-        bool        fEncryptMe;
-        bool        fForceLog;
+        char**       fLines;
+        uint32_t*    fColors;
+        hsSemaphore* fSema;
+        FILE*        fFileHandle;
+        uint32_t     fSize;
+        bool         fEncryptMe;
+        bool         fForceLog;
 
         plStatusLog *fNext, **fBack;
 
