@@ -133,14 +133,4 @@ public:
 
     bool          Parse (const wchar_t cmdLine[] = nil);
 };
-
-class CCmdParserSimple : public CCmdParser {
-public:
-    CCmdParserSimple (
-        unsigned    requiredStringCount,
-        unsigned    optionalStringCount,
-        const wchar_t flaggedBoolNames[]  // double null terminated if used
-    );
-
-};
 #endif
