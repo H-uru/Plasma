@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "plStatusLog/plStatusLog.h"
 #pragma hdrstop
 
 
@@ -148,10 +149,7 @@ void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
     char msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
-    wchar_t uniMsg[1024];
-    StrToUnicode(uniMsg, msg, arrsize(uniMsg));
-
-    Dispatch(severity, uniMsg);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", msg);
 }
 
 //===========================================================================
@@ -162,7 +160,9 @@ void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
     wchar_t msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
-    Dispatch(severity, msg);
+    char* to_log = hsWStringToString(msg);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
+    delete[] to_log;
 }
 
 //============================================================================
