@@ -165,7 +165,8 @@ inline hsBool hsCompare(float a, float b, float delta=0.0001);
 
 #   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
 
-#   define MAX_PATH 1024
+#   include <limits.h>
+#   define MAX_PATH PATH_MAX
 #endif
 
 // Useful floating point utilities
