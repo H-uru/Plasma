@@ -466,16 +466,6 @@ void NtGetApi (AsyncApi * api) {
     api->waitForShutdown        = NtWaitForShutdown;
     api->sleep                  = NtSleep;
     
-    api->fileOpen               = NtFileOpen;
-    api->fileClose              = NtFileClose;
-    api->fileRead               = NtFileRead;
-    api->fileWrite              = NtFileWrite;
-    api->fileFlushBuffers       = NtFileFlushBuffers;
-    api->fileSetLastWriteTime   = NtFileSetLastWriteTime;
-    api->fileGetLastWriteTime   = NtFileGetLastWriteTime;
-    api->fileCreateSequence     = NtFileCreateSequence;
-    api->fileSeek               = NtFileSeek;
-    
     api->socketConnect          = NtSocketConnect;
     api->socketConnectCancel    = NtSocketConnectCancel;
     api->socketDisconnect       = NtSocketDisconnect;

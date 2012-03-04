@@ -4,7 +4,6 @@ include_directories(../../NucleusLib)
 set(pnAsyncCoreExe_SOURCES
     pnAceCore.cpp
     pnAceIo.cpp
-    pnAceLog.cpp
     pnAceThread.cpp
     pnAceTimer.cpp
 )
@@ -23,7 +22,6 @@ set(pnAysncCoreExe_PRIVATE
 set(pnAysncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNt.cpp
     Private/Nt/pnAceNt.h
-    Private/Nt/pnAceNtFile.cpp
     Private/Nt/pnAceNtInt.h
     Private/Nt/pnAceNtSocket.cpp
     Private/Nt/pnAceNtThread.cpp
@@ -36,7 +34,6 @@ set(pnAsyncCoreExe_PRIVATE_UNIX
 set(pnAsyncCoreExe_PRIVATE_W9X
     Private/W9x/pnAceW9x.cpp
     Private/W9x/pnAceW9x.h
-    Private/W9x/pnAceW9xFile.cpp
     Private/W9x/pnAceW9xInt.h
     Private/W9x/pnAceW9xSocket.cpp
     Private/W9x/pnAceW9xThread.cpp
