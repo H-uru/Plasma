@@ -89,7 +89,7 @@ static wchar_t        s_newPatcherFile[MAX_PATH];
 //============================================================================
 static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
     plString msg = plString::Format("NetErr: %S", NetErrorToString(error));
-    plStatusLog::AddLineS("patcher.log", msg.cstr());
+    plStatusLog::AddLineS("patcher.log", msg.c_str());
 
     if (IS_NET_SUCCESS(s_patchResult))
         s_patchResult = error;
@@ -120,7 +120,7 @@ static void DownloadCallback (
             
             default:
                 plString msg = plString::Format("Error getting patcher file: %S", NetErrorToString(result));
-                plStatusLog::AddLineS("patcher.log", msg.cstr());
+                plStatusLog::AddLineS("patcher.log", msg.c_str());
 
                 if (IS_NET_SUCCESS(s_patchResult))
                     s_patchResult = result;
@@ -167,7 +167,7 @@ static void ManifestCallback (
             
             default:
                 plString msg = plString::Format("Error getting patcher manifest: %S", NetErrorToString(result));
-                plStatusLog::AddLineS("patcher.log", msg.cstr());
+                plStatusLog::AddLineS("patcher.log", msg.c_str());
 
                 if (IS_NET_SUCCESS(s_patchResult))
                     s_patchResult = result;
@@ -219,7 +219,7 @@ static void FileSrvIpAddressCallback (
 
     if (IS_NET_ERROR(result)) {
         plString msg = plString::Format("FileSrvIpAddressRequest failed: %S", NetErrorToString(result));
-        plStatusLog::AddLineS("patcher.log", msg.cstr());
+        plStatusLog::AddLineS("patcher.log", msg.c_str());
 
         s_patchResult = result;
         s_downloadComplete = true;
