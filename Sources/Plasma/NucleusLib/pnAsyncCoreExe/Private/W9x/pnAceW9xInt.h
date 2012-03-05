@@ -86,61 +86,6 @@ bool W9xThreadWaitId (
     AsyncId     asyncId, 
     unsigned    timeoutMs
 );
-
-AsyncFile W9xFileOpen (
-    const wchar_t             fullPath[],
-    FAsyncNotifyFileProc    notifyProc,
-    EFileError *            error,
-    unsigned                desiredAccess,
-    unsigned                openMode,
-    unsigned                shareModeFlags,
-    void *                  userState,
-    uint64_t *                 fileSize,
-    uint64_t *                 fileLastWriteTime
-);
-void W9xFileClose (
-    AsyncFile   file,
-    uint64_t       truncateSize
-);
-void W9xFileSetLastWriteTime (
-    AsyncFile   file,
-    uint64_t       lastWriteTime
-);
-uint64_t W9xFileGetLastWriteTime (
-    const wchar_t fileName[]
-);
-AsyncId W9xFileFlushBuffers (
-    AsyncFile   file, 
-    uint64_t       truncateSize,
-    bool        notify,
-    void *      param
-);
-AsyncId W9xFileRead (
-    AsyncFile   file,
-    uint64_t       offset,
-    void *      buffer,
-    unsigned    bytes,
-    unsigned    flags,
-    void *      param
-);
-AsyncId W9xFileWrite (
-    AsyncFile   file,
-    uint64_t       offset,
-    const void *buffer,
-    unsigned    bytes,
-    unsigned    flags,
-    void *      param
-);
-AsyncId W9xFileCreateSequence (
-    AsyncFile   file, 
-    bool        notify, 
-    void *      param
-);
-bool W9xFileSeek (
-    AsyncFile       file,
-    uint64_t           distance,
-    EFileSeekFrom   from
-);
 void W9xSocketConnect (
     AsyncCancelId *         cancelId,
     const NetAddress &      netAddr,

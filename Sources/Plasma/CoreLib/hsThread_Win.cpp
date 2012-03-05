@@ -46,16 +46,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsMemory.h"
 
-// typedef unsigned int __stdcall (*EntryPtCB)(void*);
-
-static DWORD __stdcall gEntryPoint(void* param)
+struct WinThreadParam
 {
-    return ((hsThread*)param)->WinRun();
-}
+    hsThread* fThread;
+    HANDLE    fQuitSemaH; // private member of hsThread
+
+    WinThreadParam(hsThread* t, HANDLE quit)
+        : fThread(t), fQuitSemaH(quit)
+    { }
+};
 
 static unsigned int __stdcall gEntryPointBT(void* param)
 {
-    return ((hsThread*)param)->WinRun();
+    WinThreadParam* wtp = (WinThreadParam*)param;
+    unsigned int result = wtp->fThread->Run();
+    ::ReleaseSemaphore(wtp->fQuitSemaH, 1, nil); // signal that we've quit
+    delete param;
+    return result;
 }
 
 hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false), fThreadH(nil), fQuitSemaH(nil)
@@ -74,12 +81,8 @@ void hsThread::Start()
         fQuitSemaH = ::CreateSemaphore(nil, 0, kPosInfinity32, nil);
         if (fQuitSemaH == nil)
             throw hsOSException(-1);
-
-#if 0
-        fThreadH = ::CreateThread(nil, fStackSize, gEntryPoint, this, 0, &fThreadId);
-#else
-        fThreadH = (HANDLE)_beginthreadex(nil, fStackSize, gEntryPointBT, this, 0, (unsigned int*)&fThreadId);
-#endif
+        WinThreadParam* wtp = new WinThreadParam(this, fQuitSemaH);
+        fThreadH = (HANDLE)_beginthreadex(nil, fStackSize, gEntryPointBT, wtp, 0, (unsigned int*)&fThreadId);
         if (fThreadH == nil)
             throw hsOSException(-1);
     }
@@ -98,15 +101,6 @@ void hsThread::Stop()
         ::CloseHandle(fQuitSemaH);
         fQuitSemaH = nil;
     }
-}
-
-DWORD hsThread::WinRun()
-{
-    DWORD   result = this->Run();
-
-    ::ReleaseSemaphore(fQuitSemaH, 1, nil); // signal that we've quit
-
-    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
