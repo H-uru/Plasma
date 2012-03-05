@@ -244,7 +244,7 @@ static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
     }
 
     plString msg = plString::Format("NetErr: %S: %S", srv, NetErrorToString(error));
-    plStatusLog::AddLineS("patcher.log", msg.cstr());
+    plStatusLog::AddLineS("patcher.log", msg.c_str());
 
     // Notify GameTap something bad happened.
     if (!s_patchError) {
@@ -829,7 +829,7 @@ static void FileSrvIpAddressCallback (
 
     if (IS_NET_ERROR(result)) {
         plString msg = plString::Format("FileSrvIpAddressRequest failed: %S", NetErrorToString(result));
-        plStatusLog::AddLineS("patcher.log", msg.cstr());
+        plStatusLog::AddLineS("patcher.log", msg.c_str());
 
         s_patchError = true;
         return;
