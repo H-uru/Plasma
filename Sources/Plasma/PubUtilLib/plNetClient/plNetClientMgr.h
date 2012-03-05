@@ -383,7 +383,7 @@ public:
     void StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, uint32_t sendFlags, uint32_t writeOptions);
 
     void UpdateServerTimeOffset(plNetMessage* msg);
-    void ResetServerTimeOffset();
+    void ResetServerTimeOffset(bool delayed=false);
 
 private:
     plNetClientComm             fNetClientComm;
