@@ -142,45 +142,6 @@ bool INtConnInitialize (NtObject * ntObj);
 void INtConnCompleteOperation (NtObject * ntObj);
 
 
-/*****************************************************************************
-*
-*   NtFile.cpp internal functions
-*
-***/
-
-struct NtFile;
-struct NtOpFileFlush;
-struct NtOpFileReadWrite;
-struct NtOpFileSequence;
-
-void INtFileInitialize ();
-void INtFileStartCleanup ();
-void INtFileDestroy ();
-
-void INtFileDelete (
-    NtFile * file
-);
-
-bool INtFileOpCompleteReadWrite (
-    NtFile *            ioConn,
-    NtOpFileReadWrite * op,
-    unsigned            bytes
-);
-void INtFileOpCompleteQueuedReadWrite (
-    NtFile *            ioConn,
-    NtOpFileReadWrite * op
-);
-void INtFileOpCompleteFileFlush (
-    NtFile *        ioConn,
-    NtOpFileFlush * op
-);
-void INtFileOpCompleteSequence (
-    NtFile *            ioConn,
-    NtOpFileSequence *  op
-);
-
-void INtFileStartCleanup ();
-
 
 /*****************************************************************************
 *
@@ -228,60 +189,6 @@ void NtDestroy (unsigned exitThreadWaitMs);
 void NtSignalShutdown ();
 void NtWaitForShutdown ();
 void NtSleep (unsigned sleepMs);
-AsyncFile NtFileOpen (
-    const wchar_t           fullPath[],
-    FAsyncNotifyFileProc    notifyProc,
-    EFileError *            error,
-    unsigned                desiredAccess,
-    unsigned                openMode,
-    unsigned                shareModeFlags,
-    void *                  userState,
-    uint64_t *              fileSize,
-    uint64_t *              fileLastWriteTime
-);
-void NtFileClose (
-    AsyncFile   file,
-    uint64_t    truncateSize
-);
-void NtFileSetLastWriteTime (
-    AsyncFile   file,
-    uint64_t    lastWriteTime
-);
-uint64_t NtFileGetLastWriteTime (
-    const wchar_t fileName[]
-);
-AsyncId NtFileFlushBuffers (
-    AsyncFile   file, 
-    uint64_t    truncateSize,
-    bool        notify,
-    void *      param
-);
-AsyncId NtFileRead (
-    AsyncFile   file,
-    uint64_t    offset,
-    void *      buffer,
-    unsigned    bytes,
-    unsigned    flags,
-    void *      param
-);
-AsyncId NtFileWrite (
-    AsyncFile   file,
-    uint64_t    offset,
-    const void *buffer,
-    unsigned    bytes,
-    unsigned    flags,
-    void *      param
-);
-AsyncId NtFileCreateSequence (
-    AsyncFile   file, 
-    bool        notify, 
-    void *      param
-);
-bool NtFileSeek (
-    AsyncFile       file,
-    uint64_t        distance,
-    EFileSeekFrom   from
-);
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
     const NetAddress &      netAddr,

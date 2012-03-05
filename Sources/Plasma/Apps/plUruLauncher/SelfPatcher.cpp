@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
+#include "plStatusLog/plStatusLog.h"
 #pragma hdrstop
 
 
@@ -87,7 +88,9 @@ static wchar_t        s_newPatcherFile[MAX_PATH];
 
 //============================================================================
 static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
-    LogMsg(kLogError, L"NetErr: %s", NetErrorToString(error));
+    plString msg = plString::Format("NetErr: %S", NetErrorToString(error));
+    plStatusLog::AddLineS("patcher.log", msg.c_str());
+
     if (IS_NET_SUCCESS(s_patchResult))
         s_patchResult = error;
     s_downloadComplete = true;
@@ -116,7 +119,9 @@ static void DownloadCallback (
             break;
             
             default:
-                LogMsg(kLogError, L"Error getting patcher file: %s", NetErrorToString(result));
+                plString msg = plString::Format("Error getting patcher file: %S", NetErrorToString(result));
+                plStatusLog::AddLineS("patcher.log", msg.c_str());
+
                 if (IS_NET_SUCCESS(s_patchResult))
                     s_patchResult = result;
             break;
@@ -161,7 +166,9 @@ static void ManifestCallback (
             break;
             
             default:
-                LogMsg(kLogError, L"Error getting patcher manifest: %s", NetErrorToString(result));
+                plString msg = plString::Format("Error getting patcher manifest: %S", NetErrorToString(result));
+                plStatusLog::AddLineS("patcher.log", msg.c_str());
+
                 if (IS_NET_SUCCESS(s_patchResult))
                     s_patchResult = result;
             break;
@@ -211,7 +218,9 @@ static void FileSrvIpAddressCallback (
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"FileSrvIpAddressRequest failed: %s", NetErrorToString(result));
+        plString msg = plString::Format("FileSrvIpAddressRequest failed: %S", NetErrorToString(result));
+        plStatusLog::AddLineS("patcher.log", msg.c_str());
+
         s_patchResult = result;
         s_downloadComplete = true;
     }

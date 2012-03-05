@@ -102,10 +102,6 @@ public:
     static void*    Alloc(size_t size); // does not call operator::new(), may return nil
     static void Free(void* p);      // does not call operator::delete()
     static void ThreadYield();
-                
-#if HS_BUILD_FOR_WIN32
-    DWORD           WinRun();
-#endif
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,7 +145,8 @@ class hsSemaphore {
     HANDLE  fSemaH;
 #elif HS_BUILD_FOR_UNIX
 #ifdef USE_SEMA
-    sem_t   fPSema;
+    sem_t*  fPSema;
+    bool    fNamed;
 #else
     pthread_mutex_t fPMutex;
     pthread_cond_t  fPCond;
@@ -157,13 +154,9 @@ class hsSemaphore {
 #endif
 #endif
 public:
-#ifdef HS_BUILD_FOR_WIN32
-    hsSemaphore(int initialValue=0, const char *name=nil);
-#else
-    hsSemaphore(int initialValue=0);
-#endif
+    hsSemaphore(int initialValue=0, const char* name=nil);
     ~hsSemaphore();
-    
+
     hsBool      Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
 };

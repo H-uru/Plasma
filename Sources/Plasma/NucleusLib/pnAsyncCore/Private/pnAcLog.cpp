@@ -46,80 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "plStatusLog/plStatusLog.h"
 #pragma hdrstop
-
-
-/*****************************************************************************
-*
-*   Private
-*
-***/
-
-static const unsigned   kMaxHandlers = 8;
-static CCritSect        s_critsect;
-static FLogHandler      s_asyncHandlers[kMaxHandlers];
-
-
-/*****************************************************************************
-*
-*   Internal functions
-*
-***/
-
-//===========================================================================
-static void Dispatch (ELogSeverity severity, const wchar_t msg[]) {
-
-    // Dispatch to default debug handler
-    char dbg[1024];
-    StrToAnsi(dbg, msg, arrsize(dbg));
-    DEBUG_MSG(dbg);
-
-    // We don't need to enter a critical section to read the handlers because they
-    // are atomically set and cleared
-    for (unsigned i = 0; i < arrsize(s_asyncHandlers); ++i) {
-        if (FLogHandler asyncHandler = s_asyncHandlers[i])
-            asyncHandler(severity, msg);
-    }
-}
-
 
 /*****************************************************************************
 *
 *   Exports
 *
 ***/
-
-//===========================================================================
-void LogRegisterHandler (FLogHandler callback) {
-    ASSERT(callback);
-
-    unsigned i;
-    s_critsect.Enter();
-    for (i = 0; i < arrsize(s_asyncHandlers); ++i) {
-        if (!s_asyncHandlers[i]) {
-            s_asyncHandlers[i] = callback;
-            break;
-        }
-    }
-    s_critsect.Leave();
-
-    #ifdef HS_DEBUGGING
-    if (i >= arrsize(s_asyncHandlers))
-        FATAL("Maximum number of log handlers exceeded.");
-    #endif
-}
-
-//===========================================================================
-void LogUnregisterHandler (FLogHandler callback) {
-    s_critsect.Enter();
-    for (unsigned i = 0; i < arrsize(s_asyncHandlers); ++i) {
-        if (s_asyncHandlers[i] == callback) {
-            s_asyncHandlers[i] = nil;
-            break;
-        }
-    }
-    s_critsect.Leave();
-}
 
 //===========================================================================
 void CDECL LogMsg (ELogSeverity severity, const char format[], ...) {
@@ -148,10 +82,7 @@ void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
     char msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
-    wchar_t uniMsg[1024];
-    StrToUnicode(uniMsg, msg, arrsize(uniMsg));
-
-    Dispatch(severity, uniMsg);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", msg);
 }
 
 //===========================================================================
@@ -162,7 +93,9 @@ void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
     wchar_t msg[1024];
     StrPrintfV(msg, arrsize(msg), format, args);
 
-    Dispatch(severity, msg);
+    char* to_log = hsWStringToString(msg);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
+    delete[] to_log;
 }
 
 //============================================================================

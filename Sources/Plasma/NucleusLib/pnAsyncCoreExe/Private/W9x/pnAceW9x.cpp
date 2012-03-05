@@ -67,16 +67,6 @@ void W9xGetApi (AsyncApi * api) {
     api->waitForShutdown        = W9xThreadWaitForShutdown;
     api->sleep                  = W9xThreadSleep;
     
-    api->fileOpen               = W9xFileOpen;
-    api->fileClose              = W9xFileClose;
-    api->fileRead               = W9xFileRead;
-    api->fileWrite              = W9xFileWrite;
-    api->fileFlushBuffers       = W9xFileFlushBuffers;
-    api->fileSetLastWriteTime   = W9xFileSetLastWriteTime;
-    api->fileGetLastWriteTime   = W9xFileGetLastWriteTime;
-    api->fileCreateSequence     = W9xFileCreateSequence;
-    api->fileSeek               = W9xFileSeek;
-    
     api->socketConnect          = W9xSocketConnect;
     api->socketConnectCancel    = W9xSocketConnectCancel;
     api->socketDisconnect       = W9xSocketDisconnect;

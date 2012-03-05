@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
+#include "plStatusLog/plStatusLog.h"
 #pragma hdrstop
 
 
@@ -216,11 +217,6 @@ static wchar_t s_clientExeName[] = L"plClient.exe";
 ***/
 
 //============================================================================
-static void LogHandler (ELogSeverity severity, const wchar_t msg[]) {
-    AsyncLogWriteMsg(L"UruPlayer", severity, msg);
-}
-
-//============================================================================
 static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
 
     const wchar_t * srv;
@@ -247,7 +243,8 @@ static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
         break;
     }
 
-    LogMsg(kLogError, L"NetErr: %s: %s", srv, NetErrorToString(error));
+    plString msg = plString::Format("NetErr: %S: %S", srv, NetErrorToString(error));
+    plStatusLog::AddLineS("patcher.log", msg.c_str());
 
     // Notify GameTap something bad happened.
     if (!s_patchError) {
@@ -831,7 +828,9 @@ static void FileSrvIpAddressCallback (
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"FileSrvIpAddressRequest failed: %s", NetErrorToString(result));
+        plString msg = plString::Format("FileSrvIpAddressRequest failed: %S", NetErrorToString(result));
+        plStatusLog::AddLineS("patcher.log", msg.c_str());
+
         s_patchError = true;
         return;
     }
@@ -862,13 +861,14 @@ static void FileSrvIpAddressCallback (
 void InitAsyncCore () {
     if(AtomicAdd(&s_asyncCoreInitCount, 1) > 0)
         return;
-    LogRegisterHandler(LogHandler);
     AsyncCoreInitialize();
-    AsyncLogInitialize(L"Log", false);
-        
+
     wchar_t productString[256];
     ProductString(productString, arrsize(productString));
-    LogMsg(kLogPerf, L"Patcher: %s", productString);
+
+    char* log = hsWStringToString(productString);
+    plStatusLog::AddLineS("patcher.log", log);
+    delete[] log;
 }
 
 //============================================================================
@@ -880,9 +880,7 @@ void ShutdownAsyncCore () {
     while (s_perf[kPerfThreadTaskCount])
         AsyncSleep(10);
 
-    AsyncLogDestroy();
     AsyncCoreDestroy(30 * 1000);
-    LogUnregisterHandler(LogHandler);
 }
 
 //============================================================================

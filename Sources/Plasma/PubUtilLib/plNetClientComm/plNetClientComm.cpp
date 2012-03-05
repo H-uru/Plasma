@@ -152,15 +152,6 @@ static NetCommMsgHandler    s_preHandler(0, nil, nil);
 
 
 //============================================================================
-static void INetLogCallback (
-    ELogSeverity    severity,
-    const wchar_t     msg[]
-) {
-    // Use the async log facility
-    AsyncLogWriteMsg(ProductShortName(), severity, msg);
-}
-
-//============================================================================
 static void INetErrorCallback (
     ENetProtocol    protocol,
     ENetError       error
@@ -755,9 +746,7 @@ void NetCommChangeMyPassword (
 void NetCommStartup () {
     s_shutdown = false;
 
-    LogRegisterHandler(INetLogCallback);
     AsyncCoreInitialize();
-    AsyncLogInitialize(L"Log", false);
     wchar_t productString[256];
     ProductString(productString, arrsize(productString));
     LogMsg(kLogPerf, L"Client: %s", productString);
@@ -797,9 +786,7 @@ void NetCommShutdown () {
         NetCliFileDisconnect();
 
     NetClientDestroy(false);
-    AsyncLogDestroy();
     AsyncCoreDestroy(30 * 1000);
-    LogUnregisterHandler(INetLogCallback);
 }
 
 //============================================================================
