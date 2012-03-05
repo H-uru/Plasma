@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsExceptions.h"
 #include <sys/errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <string.h>
 
 #define NO_POSIX_CLOCK 1
@@ -72,7 +74,7 @@ extern "C" {
     static void* gEntryPoint(void* param)
     {
         pthread_mutex_lock(((hsThread*)param)->GetStartupMutex());
-        void* ret = (void*)((hsThread*)param)->Run();
+        void* ret = (void*)(uintptr_t)((hsThread*)param)->Run();
         pthread_mutex_unlock(((hsThread*)param)->GetStartupMutex());
         pthread_exit(ret);
         return ret;
@@ -266,12 +268,24 @@ void hsMutex::Unlock()
 
 /////////////////////////////////////////////////////////////////////////////
 
-hsSemaphore::hsSemaphore(int initialValue)
+hsSemaphore::hsSemaphore(int initialValue, const char* name)
 {
 #ifdef USE_SEMA
-    int shared = 0; // 1 if sharing between processes
-    int status = ::sem_init(&fPSema, shared, initialValue);
-    hsThrowIfOSErr(status);
+    fPSema = nil;
+    if ((fNamed = (name != nil))) {
+        /* Named semaphore shared between processes */
+        fPSema = sem_open(name, O_CREAT, 0666, initialValue);
+        if (fPSema == SEM_FAILED)
+        {
+            hsAssert(0, "hsOSException");
+            throw hsOSException(errno);
+        }
+    } else {
+        /* Anonymous semaphore shared between threads */
+        int shared = 0; // 1 if sharing between processes
+        int status = sem_init(fPSema, shared, initialValue);
+        hsThrowIfOSErr(status);
+    }
 #else
     int status = ::pthread_mutex_init(&fPMutex, nil);
     hsThrowIfOSErr(status);
@@ -286,7 +300,12 @@ hsSemaphore::hsSemaphore(int initialValue)
 hsSemaphore::~hsSemaphore()
 {
 #ifdef USE_SEMA
-    int status = ::sem_destroy(&fPSema);
+    int status = 0;
+    if (fNamed) {
+        status = sem_close(fPSema);
+    } else {
+        status = sem_destroy(fPSema);
+    }
     hsThrowIfOSErr(status);
 #else
     int status = ::pthread_cond_destroy(&fPCond);
@@ -300,8 +319,9 @@ hsSemaphore::~hsSemaphore()
 hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
 #ifdef USE_SEMA  // SHOULDN'T THIS USE timeToWait??!?!? -rje
+    // shouldn't this use sem_timedwait? -dpogue (2012-03-04)
     hsAssert( timeToWait==kPosInfinity32, "sem_t does not support wait with timeout. #undef USE_SEMA and recompile." );
-    int status = ::sem_wait(&fPSema);
+    int status = sem_wait(fPSema);
     hsThrowIfOSErr(status);
     return true;
 #else
@@ -351,7 +371,7 @@ EXIT:
 void hsSemaphore::Signal()
 {
 #ifdef USE_SEMA
-    int status = ::sem_post(&fPSema);
+    int status = sem_post(fPSema);
     hsThrowIfOSErr(status);
 #else
     int status = ::pthread_mutex_lock(&fPMutex);

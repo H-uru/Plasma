@@ -1,5 +1,6 @@
 include_directories(../../CoreLib)
 include_directories(../../NucleusLib)
+include_directories(../../PubUtilLib)
 
 set(pnAsyncCore_HEADERS
     Pch.h

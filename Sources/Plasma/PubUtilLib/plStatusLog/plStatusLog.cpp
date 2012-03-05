@@ -70,10 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plEncryptLogLine.h"
 
-#if HS_BUILD_FOR_UNIX
-    #include <limits.h>
-    #define MAX_PATH PATH_MAX
-#elif HS_BUILD_FOR_WIN32
+#if HS_BUILD_FOR_WIN32
     #include <Shlobj.h>
 #endif
 
@@ -411,6 +408,7 @@ uint32_t plStatusLog::fLoggingOff = false;
 plStatusLog::plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
 {
     fFileHandle = nil;
+    fSema = nil;
     fSize = 0;
     fForceLog = false;
 
@@ -421,12 +419,16 @@ plStatusLog::plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint
         char* temp = hsWStringToString(filename);
         fCFilename = temp;
         delete [] temp;
+
+        fSema = new hsSemaphore(1, fCFilename.c_str());
     }
     else
     {
         fFilename = L"";
         fCFilename = "";
         flags |= kDontWriteFile;
+
+        fSema = new hsSemaphore(1);
     }
 
     fOrigFlags = fFlags = flags;
@@ -532,6 +534,9 @@ void    plStatusLog::IFini( void )
     for( i = 0; i < fMaxNumLines; i++ )
         delete [] fLines[ i ];
 
+    if (fSema)
+        delete fSema;
+
     delete [] fLines;
     delete [] fColors;
 }
@@ -601,7 +606,7 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
         return true;
 
     /// Scroll pointers up
-    hsTempMutexLock lock( fMutex );
+    fSema->Wait();
 
     bool ret = true;
 
@@ -648,6 +653,8 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
         ret = IPrintLineToFile( line, count );
     }
+
+    fSema->Signal();
 
     return ret;
 }

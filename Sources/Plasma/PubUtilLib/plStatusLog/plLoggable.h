@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <stdio.h>
 #include "HeadSpin.h"
+#include "plString.h"
 
 //
 // An abstract base class which contains a status log and simple functions 
@@ -66,10 +67,11 @@ public:
 
     plStatusLog* GetLog() const;
     void SetLog( plStatusLog * log, bool deleteOnDestruct=false );
-    
+
     // logging
 
     virtual bool Log( const char * str ) const;
+    virtual bool Log(const plString& str) const;
     virtual bool LogF( const char * fmt, ... ) const;
     virtual bool LogV( const char * fmt, va_list args ) const;
     virtual bool ErrorMsgV(const char* fmt, va_list args) const ;

@@ -152,28 +152,6 @@ static void INtOpDispatch (
                 INtSocketOpCompleteSocketWrite((NtSock *) ntObj, (NtOpSocketWrite *) op);
             break;
 
-            case kOpQueuedFileRead:
-            case kOpQueuedFileWrite:
-                INtFileOpCompleteQueuedReadWrite((NtFile *) ntObj, (NtOpFileReadWrite *) op);
-            // operation converted into kOpFileWrite so we cannot move
-            // to next operation until write operation completes
-            return;
-
-            case kOpFileRead:
-            case kOpFileWrite:
-                ASSERT(bytes != (uint32_t) -1);
-                if (!INtFileOpCompleteReadWrite((NtFile *) ntObj, (NtOpFileReadWrite *) op, bytes))
-                    return;
-            break;
-
-            case kOpFileFlush:
-                INtFileOpCompleteFileFlush((NtFile *) ntObj, (NtOpFileFlush *) op);
-            break;
-
-            case kOpSequence:
-                INtFileOpCompleteSequence((NtFile *) ntObj, (NtOpFileSequence *) op);
-            break;
-
             DEFAULT_FATAL(opType);
         }
 
@@ -329,10 +307,6 @@ void INtConnCompleteOperation (NtObject * ntObj) {
 
     DWORD err = GetLastError();
     switch (ntObj->ioType) {
-        case kNtFile:
-            INtFileDelete((NtFile *) ntObj);
-        break;
-
         case kNtSocket:
             INtSockDelete((NtSock *) ntObj);
         break;
@@ -393,7 +367,6 @@ void NtInitialize () {
         );
     }
 
-    INtFileInitialize();
     INtSocketInitialize();
 }
 
@@ -403,7 +376,6 @@ void NtInitialize () {
 // shut down the program is to simply let the atexit() handler take care of it.
 void NtDestroy (unsigned exitThreadWaitMs) {
     // cleanup modules that post completion notifications as part of their shutdown
-    INtFileStartCleanup();
     INtSocketStartCleanup(exitThreadWaitMs);
 
     // cleanup worker threads
@@ -434,7 +406,6 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         s_waitEvent = 0;
     }
 
-    INtFileDestroy();
     INtSocketDestroy();
 }
 
@@ -465,16 +436,6 @@ void NtGetApi (AsyncApi * api) {
     api->signalShutdown         = NtSignalShutdown;
     api->waitForShutdown        = NtWaitForShutdown;
     api->sleep                  = NtSleep;
-    
-    api->fileOpen               = NtFileOpen;
-    api->fileClose              = NtFileClose;
-    api->fileRead               = NtFileRead;
-    api->fileWrite              = NtFileWrite;
-    api->fileFlushBuffers       = NtFileFlushBuffers;
-    api->fileSetLastWriteTime   = NtFileSetLastWriteTime;
-    api->fileGetLastWriteTime   = NtFileGetLastWriteTime;
-    api->fileCreateSequence     = NtFileCreateSequence;
-    api->fileSeek               = NtFileSeek;
     
     api->socketConnect          = NtSocketConnect;
     api->socketConnectCancel    = NtSocketConnectCancel;
