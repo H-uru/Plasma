@@ -65,31 +65,31 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
     }
 
     pyKey* key = NULL;
-    char* name = NULL;
+    plString name;
     uint32_t pid = -1;
     float distSeq = -1;
 
     if (pyKey::Check(firstObj))
     {
         key = pyKey::ConvertFrom(firstObj);
-        if (!(name = PyString_AsStringEx(secondObj)))
+        if (!PyString_CheckEx(secondObj))
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
-        }
+        } else
+            name = PyString_AsStringEx(secondObj);
         if (!(PyNumber_Check(thirdObj) && PyFloat_Check(fourthObj)))
         {
-            delete[] name;
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
         }
 
         pid = PyNumber_AsSsize_t(thirdObj, NULL);
         distSeq = (float)PyFloat_AsDouble(fourthObj);
-    } else if (name = PyString_AsStringEx(firstObj)) {
+    } else if (PyString_CheckEx(firstObj)) {
+        name = PyString_AsStringEx(firstObj);
         if (!PyNumber_Check(secondObj) || thirdObj  || fourthObj)
         {
-            delete[] name;
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
         }
@@ -100,8 +100,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
         PYTHON_RETURN_INIT_ERROR;
     }
 
-    self->fThis->Init(key, name, pid, distSeq);
-    delete[] name;
+    self->fThis->Init(key, _TEMP_CONVERT_TO_CONST_CHAR(name), pid, distSeq);
     PYTHON_RETURN_INIT_OK;
 }
 
