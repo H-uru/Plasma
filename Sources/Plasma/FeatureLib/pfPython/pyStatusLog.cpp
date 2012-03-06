@@ -62,14 +62,14 @@ pyStatusLog::~pyStatusLog()
 }
 
 
-hsBool pyStatusLog::Open(const char* logName, uint32_t numLines, uint32_t flags)
+hsBool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
 {
     // make sure its closed first
     Close();
 
     // create a status log guy for this
     fICreatedLog = true;
-    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, logName, flags );
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, _TEMP_CONVERT_TO_CONST_CHAR(logName), flags );
     if (fLog)
     {
         fLog->SetForceLog(true);
@@ -78,18 +78,18 @@ hsBool pyStatusLog::Open(const char* logName, uint32_t numLines, uint32_t flags)
     return false;
 }
 
-hsBool pyStatusLog::Write(const char* text)
+hsBool pyStatusLog::Write(plString text)
 {
     if (fLog)
     {
-        fLog->AddLine(text);
+        fLog->AddLine(_TEMP_CONVERT_TO_CONST_CHAR(text));
         return true;
     }
 
     return false;
 }
 
-hsBool pyStatusLog::WriteColor(const char* text, pyColor& color)
+hsBool pyStatusLog::WriteColor(plString text, pyColor& color)
 {
     if (fLog)
     {
@@ -97,7 +97,7 @@ hsBool pyStatusLog::WriteColor(const char* text, pyColor& color)
                                 ((uint32_t)(color.getRed()*255)<<16) +
                                 ((uint32_t)(color.getGreen()*255)<<8) + 
                                 ((uint32_t)(color.getBlue()*255));
-        fLog->AddLine( text, st_color );
+        fLog->AddLine( _TEMP_CONVERT_TO_CONST_CHAR(text), st_color );
         return true;
     }
 
