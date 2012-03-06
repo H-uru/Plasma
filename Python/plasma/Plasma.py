@@ -2347,6 +2347,133 @@ unsetWrapping() is called"""
         """Stop text wrapping"""
         pass
 
+class ptGameScore:
+    """Plasma Game Score"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def addPoints(self, points, key=None):
+        """Adds points to the score"""
+        pass
+
+    @staticmethod
+    def createAgeScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this age"""
+        pass
+
+    @staticmethod
+    def createGlobalScore(scoreName, type, points=0, key=None):
+        """Creates a new global score"""
+        pass
+
+    @staticmethod
+    def createPlayerScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this player"""
+        pass
+
+    @staticmethod
+    def createScore(ownerID, scoreName, type, points=0, key=None):
+        """Creates a new score for an arbitrary owner"""
+        pass
+
+    @staticmethod
+    def findAgeScores(scoreName, key):
+        """Finds matching scores for this age"""
+        pass
+
+    @staticmethod
+    def findGlobalScores(scoreName, key):
+        """Finds matching global scores"""
+        pass
+
+    @staticmethod
+    def findPlayerScores(scoreName, key):
+        """Finds matching player scores"""
+        pass
+
+    @staticmethod
+    def findScores(ownerID, scoreName, key):
+        """Finds matching scores for an arbitrary owner"""
+        pass
+
+    def getGameType(self):
+        """Returns the score game type."""
+        pass
+
+    def getName(self):
+        """Returns the score game name."""
+        pass
+
+    def getOwnerID(self):
+        """Returns the score game owner."""
+        pass
+
+    def getPoints(self):
+        """Returns the number of points in this score"""
+        pass
+
+    def remove(self):
+        """Removes this score from the server"""
+        pass
+
+    def setPoints(self):
+        """Sets the number of points in the score
+        Don't use to add/remove points, use only to reset values!"""
+        pass
+
+    def transferPoints(self, dest, points=0, key=None):
+        """Transfers points from this score to another"""
+        pass
+
+class ptGameScoreMsg:
+    """Game Score operation callback message"""
+    def __init__(self):
+        """None"""
+        pass
+
+class ptGameScoreListMsg(ptGameScoreMsg):
+    """Game Score message for scores found on the server"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getName(self):
+        """Returns the template score name"""
+        pass
+
+    def getOwnerID(self):
+        """Returns the template score ownerID"""
+        pass
+
+    def getScores(self):
+        """Returns a list of scores found by the server"""
+        pass
+
+class ptGameScoreTransferMsg(ptGameScoreMsg):
+    """Game Score message indicating a score point transfer"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getDestination(self):
+        """Returns the score points were transferred to"""
+        pass
+
+    def getSource(self):
+        """Returns the score points were transferred from"""
+        pass
+
+class ptGameScoreUpdateMsg(ptGameScoreMsg):
+    """Game Score message for a score update operation"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getScore(self):
+        """Returns the updated game score"""
+        pass
+
 class ptGUIControl:
     """Base class for all GUI controls"""
     def __init__(self,controlKey):
@@ -5083,49 +5210,6 @@ class ptGUISkin:
         """Returns this object's ptKey"""
         pass
 
-class ptGameScore:
-    """Game score manager"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def addPoints(self,numPoints):
-        """Adds points to the score"""
-        pass
-
-    def getCreatedTime(self):
-        """Returns a the score creation time."""
-        pass
-
-    def getGameName(self):
-        """Returns a the score game name."""
-        pass
-
-    def getGameType(self):
-        """Returns a the score game type."""
-        pass
-
-    def getOwnerID(self):
-        """Returns a the score owner id."""
-        pass
-
-    def getScoreID(self):
-        """Returns the score id."""
-        pass
-
-    def getValue(self):
-        """Returns a the score owner value."""
-        pass
-
-    def setPoints(self,numPoints):
-        """Sets the number of points in the score
-Don't use to add/remove points, use only to reset values!"""
-        pass
-
-    def transferPoints(self,dest, numPoints):
-        """Transfers points from one score to another"""
-        pass
-
 class ptGrassShader:
     """Plasma Grass Shader class"""
     def __init__(self,key):
@@ -6065,44 +6149,6 @@ its draw, physics, avatar, particle objects"""
 
     def volumeSensorIgnoreExtraEnters(self,ignore):
         """Tells the volume sensor attached to this object to ignore extra enters (default), or not (hack for garrison)."""
-        pass
-
-class ptScoreMgr:
-    """Game score manager"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def createGlobalScore(self,gameName, gameType, value):
-        """Creates a score and returns it"""
-        pass
-
-    def createNeighborhoodScore(self,gameName, gameType, value):
-        """Creates a score and returns it"""
-        pass
-
-    def createPlayerScore(self,gameName, gameType, value):
-        """Creates a score and returns it"""
-        pass
-
-    def deleteScore(self,scoreId):
-        """Deletes the specified score"""
-        pass
-
-    def getGlobalScores(self,gameName):
-        """Returns a list of scores associated with the specified game."""
-        pass
-
-    def getNeighborhoodScores(self,gameName):
-        """Returns a list of scores associated with the specified game."""
-        pass
-
-    def getPlayerScores(self,gameName):
-        """Returns a list of scores associated with the specified game."""
-        pass
-
-    def getRankList(self,ownerInfoId, scoreGroup, parentFolderId, gameName, timePeriod, numResults, pageNumber, sortDesc):
-        """Returns a list of scores and rank"""
         pass
 
 class ptSimpleStateVariable:
