@@ -68,6 +68,13 @@ REGISTER_CREATABLE( plAvEnableMsg );
 
 REGISTER_CREATABLE( pfGameGUIMsg );
 
+#include "pfGameScoreMsg.h"
+
+REGISTER_NONCREATABLE( pfGameScoreMsg );
+REGISTER_CREATABLE( pfGameScoreListMsg );
+REGISTER_CREATABLE( pfGameScoreTransferMsg );
+REGISTER_CREATABLE( pfGameScoreUpdateMsg );
+
 #include "pfGUINotifyMsg.h"
 
 REGISTER_CREATABLE( pfGUINotifyMsg );
