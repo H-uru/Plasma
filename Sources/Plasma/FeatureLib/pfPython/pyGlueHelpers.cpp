@@ -62,3 +62,9 @@ bool PyString_CheckEx(PyObject* obj)
 {
     return (PyString_Check(obj) || PyUnicode_Check(obj));
 }
+
+PyObject* PyUnicode_FromStringEx(const plString& str)
+{
+    plStringBuffer<wchar_t> buf = str.ToWchar();
+    return PyUnicode_FromWideChar(buf.GetData(), buf.GetSize());
+}
