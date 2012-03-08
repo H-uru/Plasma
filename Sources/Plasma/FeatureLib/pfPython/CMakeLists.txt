@@ -37,6 +37,7 @@ set(pfPython_SOURCES
     pyDynamicText.cpp
     pyEnum.cpp
     pyGameScore.cpp
+    pyGameScoreMsg.cpp
     pyGeometry3.cpp
     pyGlueHelpers.cpp
     pyGrassShader.cpp
@@ -68,7 +69,6 @@ set(pfPython_SOURCES
     pyNotify.cpp
     pyPlayer.cpp
     pySceneObject.cpp
-    pyScoreMgr.cpp
     pySDL.cpp
     pySpawnPointInfo.cpp
     pyStatusLog.cpp
@@ -125,6 +125,7 @@ set(pfPython_HEADERS
     pyDynamicText.h
     pyEnum.h
     pyGameScore.h
+    pyGameScoreMsg.h
     pyGeometry3.h
     pyGrassShader.h
     pyGUIControl.h
@@ -155,7 +156,6 @@ set(pfPython_HEADERS
     pyNotify.h
     pyPlayer.h
     pySceneObject.h
-    pyScoreMgr.h
     pySDL.h
     pySpawnPointInfo.h
     pyStatusLog.h
@@ -208,6 +208,7 @@ set(pfPython_GLUE
     pyDrawControlGlue.cpp
     pyDynamicTextGlue.cpp
     pyGameScoreGlue.cpp
+    pyGameScoreMsgGlue.cpp
     pyGeometry3Glue.cpp
     pyGlueHelpers.h
     pyGrassShaderGlue.cpp
@@ -239,7 +240,6 @@ set(pfPython_GLUE
     pyNotifyGlue.cpp
     pyPlayerGlue.cpp
     pySceneObjectGlue.cpp
-    pyScoreMgrGlue.cpp
     pySDLGlue.cpp
     pySpawnPointInfoGlue.cpp
     pyStatusLogGlue.cpp
