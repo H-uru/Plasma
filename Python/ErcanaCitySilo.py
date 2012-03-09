@@ -72,15 +72,9 @@ RespPlayOrangeGlow   = ptAttribResponder(8,"resp: pellet orange glow",['Hi','Med
 RespPlayBoom   = ptAttribResponder(9,"resp: pellet explosion",['Hi','Med','Low'],netForce=1)
 RespPlayWhiteGlow   = ptAttribResponder(10,"resp: pellet white glow",netForce=1)
 
-
-# ---------
-# globals
-# ---------
-
-gotPellet = 0
-pellet = 0
-LocalAvatar = None
-
+kPlayerDropScore  = "PelletDrop"
+kPlayerTotalScore = "PelletTotal"
+kGlobalScore      = "LakeScore"
 
 class ErcanaCitySilo(ptResponder):
     
@@ -88,6 +82,11 @@ class ErcanaCitySilo(ptResponder):
         ptResponder.__init__(self)
         self.id = 208
         self.version = 7
+        
+        self._gotTurd   = False
+        self._pellet    = 0
+        self._lakeScore = 0 # Ugh
+        self._kiScore   = 0 # Why is this separate?
 
 
     def OnFirstUpdate(self):
@@ -95,12 +94,6 @@ class ErcanaCitySilo(ptResponder):
 
 
     def OnServerInitComplete(self):
-        global gotPellet
-        global pellet
-        global LocalAvatar
-        
-        LocalAvatar = PtGetLocalAvatar()
-
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(SDLGotPellet.value,1,1)
         ageSDL.sendToClients(SDLGotPellet.value)
@@ -111,7 +104,8 @@ class ErcanaCitySilo(ptResponder):
             entryValue = entry.chronicleGetValue()
             gotPellet = string.atoi(entryValue)
             if gotPellet != 0:
-                entry.chronicleSetValue("%d" % (0))
+                self._gotTurd = True
+                entry.chronicleSetValue("0")
                 entry.save()
                 avatar = PtGetLocalAvatar()
                 avatar.avatar.registerForBehaviorNotify(self.key)
@@ -132,30 +126,25 @@ class ErcanaCitySilo(ptResponder):
         if pelletSDL != gotPellet:
             ageSDL[SDLGotPellet.value] = (gotPellet,)
         
-        pellet = (gotPellet - 300)
-        PtDebugPrint("ErcanaCitySilo:OnServerInitComplete:  PELLET RECIPE = %d" % (pellet))
-
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        #global gotPellet
-        pass
+        self._pellet = (gotPellet - 300)
+        PtDebugPrint("ErcanaCitySilo:OnServerInitComplete:  PELLET RECIPE = %d" % (self._pellet))
 
 
     def OnBehaviorNotify(self,type,id,state):
         PtDebugPrint("ErcanaCitySilo.OnBehaviorNotify(): %d" % (type))
 
         if type == PtBehaviorTypes.kBehaviorTypeLinkIn and state:
-            if gotPellet != 0:
+            if self._gotTurd:
                 RespFadeInPellet.run(self.key)
                 cam = ptCamera()
                 cam.disableFirstPersonOverride()
                 cam.undoFirstPerson()
         elif type == PtBehaviorTypes.kBehaviorTypeLinkIn and not state:
-            if gotPellet != 0:
+            if self._gotTurd:
                 print "ErcanaCitySilo.OnBehaviorNotify: Will now call IDoMeter."
                 self.IDoMeter()
             else:
-                print"Says pellet is 0.  Shouldn't be possible, I'm in OnBehaviorNotify."
+                print "Says we don't have a turd.  Shouldn't be possible, I'm in OnBehaviorNotify."
             avatar = PtGetLocalAvatar()
             avatar.avatar.unRegisterForBehaviorNotify(self.key)
 
@@ -199,78 +188,77 @@ class ErcanaCitySilo(ptResponder):
         RespDropPellet.run(self.key)
 
 
-    def IDoScores(self):
-        if pellet < 0:
-            pelletKIpoints = 0
-            lakePoints = (pellet/5)
-            if lakePoints < -70:
-                lakePoints = -70
-        elif pellet > 200:
-            pelletKIpoints = (pellet - ((pellet-200) * 4))
-            lakePoints = (pellet - ((pellet-200) * 4))
-            if pelletKIpoints < 0:
-                pelletKIpoints = 0
-            if lakePoints < -200:
-                lakePoints = -200
-        else:
-            pelletKIpoints = pellet
-            lakePoints = pellet
-        pelletKIpoints = int(round(pelletKIpoints * ((xRandom.randint(1,25) / 100.0) + 4.75)))
-        lakePoints = int(round(lakePoints))
-        print "ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!" % (pelletKIpoints)
-        print "ErcanaCitySilo.IDoScores():  and %d lake points!" % (lakePoints)
-        scoreList = ptScoreMgr().getPlayerScores("PelletDrop")
-        oldScore = 0
-        if scoreList:
-            print "old pellet score = ",scoreList[0].getValue()
-            oldScore = scoreList[0].getValue()
-            pelletScoreNew = scoreList[0].addPoints(pelletKIpoints)
-            #scoreListNew = ptScoreMgr().getPlayerScores("PelletDrop")
-            if pelletScoreNew == None:
-                print "hmm, updated score says it's none, we've got a problem"
-        else:
-            pelletScoreNew = ptScoreMgr().createPlayerScore("PelletDrop", PtGameScoreTypes.kAccumulative, pelletKIpoints)
-            # THE PRINT WAS CAUSING A LOT OF TRACEBACKS.  IS IT TOO SOON AFTER NEW SCORE CREATION?
-            #scoreListNew = ptScoreMgr().getPlayerScores("PelletDrop")
-            #print "created score record 'PelletDrop', initial pellet score = ",scoreListNew[0].getValue()
-            if pelletScoreNew == None:
-                print "hmm, initial score says it's none, we've got a problem"
-        totalScoreList = ptScoreMgr().getPlayerScores("PelletTotal")
-        if totalScoreList:
-            print "old total pellet score = ",totalScoreList[0].getValue()
-            pelletTotalScoreNew = totalScoreList[0].addPoints(pelletKIpoints)
-            if pelletTotalScoreNew == None:
-                print "hmm, updated total score says it's none, we've got a problem"
-        else:
-            pelletTotalScoreNew = ptScoreMgr().createPlayerScore("PelletTotal", PtGameScoreTypes.kAccumulative, (pelletKIpoints + oldScore))
-            if pelletTotalScoreNew == None:
-                print "hmm, initial total score says it's none, we've got a problem"
-        lakeScoreList = ptScoreMgr().getGlobalScores("LakeScore")
-        if lakeScoreList:
-            oldLakeScore = lakeScoreList[0].getValue()
-            print "old LakeScore = ",oldLakeScore
-            lakeScoreNew = lakeScoreList[0].addPoints(lakePoints)
-            if lakeScoreNew == None:
-                print "updated lake score says None, we've got a problem"
-            else:
-                print "new LakeScore should = ",oldLakeScore+lakePoints
-        else:
-            print "Couldn't find the global LakeScore, creating now..."
-            lakeScoreNew = ptScoreMgr().createGlobalScore("LakeScore", PtGameScoreTypes.kAccumAllowNegative, lakePoints)
-            if lakeScoreNew == None:
-                print "initial score says it's none, we've got a problem"
-            else:
-                print "initial LakeScore should = ",lakePoints
+    def OnGameScoreMsg(self, msg):
+        """Handles Game Score callbacks from the server"""
 
-        PtSendKIMessage(kUpdatePelletScore,0)
+        # Note: msg is the final ptGameScoreMsg.
+        #      This is what real python looks like... Take note, Cyan.
+        if isinstance(msg, ptGameScoreUpdateMsg):
+            score = msg.getScore()
+            name  = score.getName()
+            if name == kGlobalScore:
+                PtDebugPrint("ErcanaCitySilo.OnGameScoreMsg():\tAdded %i lake points" % self._lakePoints, level=kWarningLevel)
+            else:
+                PtDebugPrint("ErcanaCitySilo.OnGameScoreMsg():\tAdded %i '%s' points" % (self._kiPoints, name), level=kWarningLevel)
+                if name == kPlayerDropScore:
+                    PtSendKIMessageInt(kUpdatePelletScore, score.getPoints())
+
+        elif isinstance(msg, ptGameScoreListMsg):
+            # Congrats! We (maybe?) found the score!
+            try:
+                l = msg.getScores()
+                score = l[0]
+                if score.getName() == kGlobalScore:
+                    score.addPoints(self._lakePoints, self.key)
+                else:
+                    score.addPoints(self._kiPoints, self.key)
+            except:
+                # The score doesn't exist, so let's create it...
+                if msg.getName() == kGlobalScore:
+                    type = PtGameScoreTypes.kAccumAllowNegative
+                    points = self._lakePoints
+                else:
+                    type = PtGameScoreTypes.kAccumulative
+                    points = self._kiPoints
+                ptGameScore.createScore(msg.getOwnerID(), msg.getName(), type, points, self.key)
+        else:
+            PtDebugPrint("ErcanaCitySilo.OnGameScoreMsg():\tGot unexpected cb '%s'" % msg.__name__)
+
+
+    def IDoScores(self):
+        if self._pellet < 0:
+            self._kiPoints = 0
+            self._lakePoints = (self._pellet/5)
+            if self._lakePoints < -70:
+                self._lakePoints = -70
+        elif self._pellet > 200:
+            self._kiPoints = (self._pellet - ((self._pellet-200) * 4))
+            self._lakePoints = (self._pellet - ((self._pellet-200) * 4))
+            if self._kiPoints < 0:
+                self._kiPoints = 0
+            if self._lakePoints < -200:
+                self._lakePoints = -200
+        else:
+            self._kiPoints = self._pellet
+            self._lakePoints = self._pellet
+        self._kiPoints = int(round(self._kiPoints * ((xRandom.randint(1,25) / 100.0) + 4.75)))
+        self._lakePoints = int(round(self._lakePoints))
+        print "ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!" % (self._kiPoints)
+        print "ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints)
+
+        #  Try to find the needed scores...
+        #  The magic will happen in OnGameScoreMsg()
+        ptGameScore.findPlayerScores(kPlayerDropScore, self.key)
+        ptGameScore.findPlayerScores(kPlayerTotalScore, self.key)
+        ptGameScore.findGlobalScores(kGlobalScore, self.key)
 
 
     def OnNotify(self,state,id,events):
-        if (id == RespScanMeter.id and gotPellet):
+        if (id == RespScanMeter.id and self._gotTurd):
             print "ErcanaCitySilo.OnNotify: Received callback from RespScanMeter, will now call IDropPellet."
             self.IDropPellet()
 
-        elif (id == RespDropPellet.id and gotPellet):
+        elif (id == RespDropPellet.id and self._gotTurd):
             levelFX = self.IEvalPellet()
             self.IPlayPellet(levelFX)
             PtAtTimeCallback(self.key,5,1)
@@ -285,30 +273,30 @@ class ErcanaCitySilo(ptResponder):
 
 
     def IEvalPellet(self):
-        if pellet <= 0:
-            if pellet <= -250:
+        if self._pellet <= 0:
+            if self._pellet <= -250:
                 level = 1.0
-            elif pellet > -250 and pellet <= -150:
+            elif self._pellet > -250 and self._pellet <= -150:
                 level = 2.0
-            elif pellet > -150 and pellet <= -50:
+            elif self._pellet > -150 and self._pellet <= -50:
                 level = 3.1
-            elif pellet > -50 and pellet <= 0:
+            elif self._pellet > -50 and self._pellet <= 0:
                 level = 3.2
-        elif pellet > 0 and pellet <= 270:
-            if pellet > 0 and pellet <= 74:
+        elif self._pellet > 0 and self._pellet <= 270:
+            if self._pellet > 0 and self._pellet <= 74:
                 level = 4.0
-            elif pellet > 74 and pellet <= 149:
+            elif self._pellet > 74 and self._pellet <= 149:
                 level = 5.0
-            elif pellet > 149 and pellet <= 209:
+            elif self._pellet > 149 and self._pellet <= 209:
                 level = 6.0
-            elif pellet > 209 and pellet <= 270:
+            elif self._pellet > 209 and self._pellet <= 270:
                 level = 7.0
-        elif pellet > 270:
-            if pellet > 270 and pellet <= 295:
+        elif self._pellet > 270:
+            if self._pellet > 270 and self._pellet <= 295:
                 level = 8.0
-            elif pellet > 295 and pellet <= 320:
+            elif self._pellet > 295 and self._pellet <= 320:
                 level = 9.0
-            elif pellet > 320:
+            elif self._pellet > 320:
                 level = 10.0
         
         return level
