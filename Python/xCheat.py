@@ -857,13 +857,3 @@ def GetPlayerID(self):
     import Plasma
     playerID = Plasma.PtGetLocalPlayer().getPlayerID()
     print "playerID = ",playerID
-
-
-def GetLakeScore(self):
-    import Plasma
-    lakeScoreList = Plasma.ptScoreMgr().getGlobalScores("LakeScore")
-    if lakeScoreList:
-        print "the global LakeScore = ",lakeScoreList[0].getValue()
-    else:
-        print "no LakeScore found!"
-
