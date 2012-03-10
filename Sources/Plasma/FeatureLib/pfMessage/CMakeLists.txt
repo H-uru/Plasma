@@ -14,6 +14,7 @@ set(pfMessage_SOURCES
 set(pfMessage_HEADERS
     pfBackdoorMsg.h
     pfGameGUIMsg.h
+    pfGUINotifyMsg.h
     pfKIMsg.h
     pfMarkerMsg.h
     pfMessageCreatable.h
