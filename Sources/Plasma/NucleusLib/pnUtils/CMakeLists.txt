@@ -27,7 +27,6 @@ set(pnUtils_HEADERS
 )
 
 set(pnUtils_SOURCES
-    pnUtAddr.cpp
     pnUtArray.cpp
     pnUtBigNum.cpp
     pnUtCmd.cpp
