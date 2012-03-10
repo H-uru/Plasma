@@ -506,9 +506,10 @@ void plNetClientMgr::UpdateServerTimeOffset(plNetMessage* msg)
     }
 }
 
-void plNetClientMgr::ResetServerTimeOffset()
+void plNetClientMgr::ResetServerTimeOffset(bool delayed)
 {
-    fServerTimeOffset = 0;
+    if (!delayed)
+        fServerTimeOffset = 0;
     fTimeSamples = 0;
     fLastTimeUpdate = 0;
 }

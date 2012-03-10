@@ -648,19 +648,19 @@ time_t cyMisc::ConvertGMTtoDni(time_t gtime)
     plUnifiedTime utime = plUnifiedTime();
     utime.SetSecs(dtime);
     // check for daylight savings time in New Mexico and adjust
-    if ( utime.GetMonth() >= 4 && utime.GetMonth() < 11 )
+    if ( utime.GetMonth() >= 3 && utime.GetMonth() < 11 )
     {
         plUnifiedTime dstStart = plUnifiedTime();
-        dstStart.SetGMTime(utime.GetYear(),4,1,2,0,0);
-        // find first Sunday after 4/1 (first sunday of April)
+        dstStart.SetGMTime(utime.GetYear(),3,7,2,0,0);
+        // find first Sunday after 3/7 (second Sunday of March)
         int days_to_go = 7 - dstStart.GetDayOfWeek();
         if (days_to_go == 7)
             days_to_go = 0;
         time_t dstStartSecs = dstStart.GetSecs() + days_to_go * kOneDay;
 
         plUnifiedTime dstEnd = plUnifiedTime();
-        dstEnd.SetGMTime(utime.GetYear(),10,25,1,0,0);
-        // find first sunday after 10/25 (last sunday of Oct.)
+        dstEnd.SetGMTime(utime.GetYear(),11,1,1,0,0);
+        // find first sunday after 11/1 (first Sunday of November)
         days_to_go = 7 - dstEnd.GetDayOfWeek();
         if (days_to_go == 7)
             days_to_go = 0;
