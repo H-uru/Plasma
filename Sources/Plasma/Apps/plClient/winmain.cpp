@@ -120,7 +120,7 @@ bool            gPendingActivate = false;
 bool            gPendingActivateFlag = false;
 
 static bool     s_loginDlgRunning = false;
-static CEvent   s_statusEvent(kEventManualReset);
+static hsSemaphore      s_statusEvent(0);   // Start non-signalled
 
 FILE *errFP = nil;
 HINSTANCE               gHInst = NULL;      // Instance of this app
@@ -1135,7 +1135,7 @@ void StatusCallback(void *param)
     curl_easy_cleanup(hCurl);
     delete [] statusUrl;
 
-    s_statusEvent.Signal();
+    s_statusEvent.Signal(); // Signal the semaphore
 }
 
 BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -1185,7 +1185,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
         case WM_DESTROY:
         {
             s_loginDlgRunning = false;
-            s_statusEvent.Wait(kEventWaitForever);
+            s_statusEvent.Wait();
             KillTimer(hwndDlg, AUTH_LOGIN_TIMER);
             return TRUE;
         }
