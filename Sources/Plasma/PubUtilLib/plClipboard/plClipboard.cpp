@@ -107,8 +107,7 @@ void plClipboard::SetClipboardText(const plString& text)
     target[len] = '\0';
     ::GlobalUnlock(copy); 
 
-    // Place the handle on the clipboard. 
-    ::SetClipboardData(CF_UNICODETEXT, target);
+    ::SetClipboardData(CF_UNICODETEXT, copy);
     ::CloseClipboard();
 #endif
 }
