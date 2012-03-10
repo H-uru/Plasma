@@ -43,7 +43,7 @@ set(pfGameGUIMgr_HEADERS
     pfGUICtrlGenerator.h
     pfGUIDialogHandlers.h
     pfGUIDialogMod.h
-    pfGUIDialogNotifyProc.cpp
+    pfGUIDialogNotifyProc.h
     pfGUIDragBarCtrl.h
     pfGUIDraggableMod.h
     pfGUIDynDisplayCtrl.h
