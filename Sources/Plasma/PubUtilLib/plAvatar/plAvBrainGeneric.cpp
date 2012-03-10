@@ -170,12 +170,6 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
 {
     plArmatureBrain::Activate(avMod);
 
-    if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
-    {
-        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kDisableClickables );
-        plgDispatch::MsgSend(msg);
-    }
-
     int numStages = fStages->size();
     if (!numStages)
         return; 
@@ -315,12 +309,6 @@ void plAvBrainGeneric::Deactivate()
     }
         
     plArmatureBrain::Deactivate();
-
-    if ((GetType() == kEmote || GetType() == kAFK || GetType() == kSitOnGround) && fAvMod->IsLocalAvatar())
-    {
-        plInputIfaceMgrMsg* msg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables );
-        plgDispatch::MsgSend(msg);
-    }
 }
 
 // GETRECIPIENT
