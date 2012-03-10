@@ -83,6 +83,7 @@ public:
         kFocusChange,       // when one of its controls loses focus to another
         kExitMode,          // GUI Exit Mode key was pressed
         kInterestingEvent,  // GUI interesting-ness has changed
+        kSpecialAction,     // meaning depends on control functionality (see below) 
         kEndEventList
     };
 
@@ -97,6 +98,7 @@ public:
 //    kAction           - single click on item(s)
 // kEditBox
 //    kAction           - enter key hit
+//    kSpecialAction    - tab key hit (for autocompletion on Python side)
 // kUpDownPair
 //    kValueChanged     - the value of the pair has been changed
 // kKnob
