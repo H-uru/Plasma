@@ -116,6 +116,7 @@ kDialogLoaded=4         # the dialog has just been loaded
 kFocusChange=5          # the focus changed from one control to another, or none, within the dialog
 kExitMode = 6		# Modal dialog received an exit mode command
 kInterestingEvent = 7   # an interesting event happened
+kSpecialAction = 8      #special action ( kEditBox tab press)
 
 # OnRoomLoad 'what' types
 kLoaded=1
