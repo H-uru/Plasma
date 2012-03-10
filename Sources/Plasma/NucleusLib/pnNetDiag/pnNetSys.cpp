@@ -138,17 +138,6 @@ void NetDiagSys (
         dump(L"[SYS] OS Patch: %u.%u (%S)", info.wServicePackMajor, info.wServicePackMinor, info.szCSDVersion);
     }
     
-    { // System
-        uint16_t    cpuCaps;
-        uint32_t   cpuVendor[3];
-        uint16_t    cpuSignature;
-        CpuGetInfo(&cpuCaps, cpuVendor, &cpuSignature);
-        SYSTEM_INFO info;
-        GetSystemInfo(&info);
-        dump(L"[SYS] CPU Count: %u", info.dwNumberOfProcessors);
-        dump(L"[SYS] CPU Vendor: %.*S", sizeof(cpuVendor), cpuVendor);
-    }
-    
     { // Adapters
         if (!getAdaptersInfo) {
             dump(L"[SYS] Failed to load IP helper API");
