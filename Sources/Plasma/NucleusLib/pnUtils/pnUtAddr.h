@@ -63,36 +63,6 @@ struct NetAddress {
 
 typedef unsigned NetAddressNode;
 
-
-extern NetAddress   kNilNetAddress;
-
-typedef bool (*FNetAddressEqualityProc)(
-    const NetAddress & a1,
-    const NetAddress & a2
-);
-
-
-class CNetAddressHash {
-    NetAddress              m_addr;
-    FNetAddressEqualityProc m_equals;
-public:
-    CNetAddressHash (
-        const NetAddress &      addr
-    );
-    CNetAddressHash (
-        const NetAddress &      addr,
-        FNetAddressEqualityProc equals
-            // Useful values for 'equals':
-            //      NetAddressEqual         --> address node and port numbers match
-            //      NetAddressSameSystem    --> address node numbers match
-    );
-    void operator= (const CNetAddressHash & rhs) const; // not impl.
-    bool operator== (const CNetAddressHash & rhs) const;
-    unsigned GetHash () const;
-    const NetAddress & GetAddr () const;
-};
-
-
 /*****************************************************************************
 *
 *   Functions
@@ -105,10 +75,7 @@ enum ENetAddressFormat {
     kNumNetAddressFormats
 };
 
-unsigned NetAddressHash (const NetAddress & addr);
-
 int NetAddressCompare (const NetAddress & a1, const NetAddress & a2);
-bool NetAddressSameSystem (const NetAddress & a1, const NetAddress & a2);
 inline bool NetAddressEqual (const NetAddress & a1, const NetAddress & a2) {
     return NetAddressCompare(a1, a2) == 0;
 }
@@ -141,10 +108,6 @@ void NetAddressNodeToString (
     wchar_t *             str,
     unsigned            chars
 );
-NetAddressNode NetAddressNodeFromString (
-    const wchar_t         string[],
-    const wchar_t *       endPtr[]
-);
 
 NetAddressNode NetAddressGetNode (
     const NetAddress &  addr
@@ -153,18 +116,5 @@ void NetAddressFromNode (
     NetAddressNode      node,
     unsigned            port,
     NetAddress     *    addr
-);
-
-void NetAddressGetLoopback (
-    unsigned            port,
-    NetAddress *        addr
-);
-
-// Returns number of addresses set, which is guaranteed to be non-zero.
-// Furthermore, it sorts the addresses so that loopback and NAT addresses
-// are at the end of the array, and "real" addresses are at the beginning.
-unsigned NetAddressGetLocal (
-    unsigned        count,
-    NetAddressNode  addresses[]
 );
 #endif
