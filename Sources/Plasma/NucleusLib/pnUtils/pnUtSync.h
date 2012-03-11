@@ -95,41 +95,4 @@ public:
     void LeaveWrite ();
 };
 
-
-/*****************************************************************************
-*
-*   CEvent
-*
-***/
-
-#ifdef HS_BUILD_FOR_WIN32
-typedef HANDLE EventHandle;
-//#else
-//# error "CEvent: Not implemented on this platform"
-//#endif
-
-const unsigned  kEventWaitForever   = (unsigned)-1;
-
-enum ECEventResetBehavior {
-    kEventManualReset,
-    kEventAutoReset,
-};
-
-class CEvent {
-    EventHandle     m_handle;
-public:
-    CEvent (
-        ECEventResetBehavior resetType,
-        bool        initialSet = false
-    );
-    ~CEvent ();
-
-    void Signal ();
-    void Reset ();
-    bool Wait (unsigned waitMs);
-    
-    const EventHandle & Handle () const { return m_handle; }
-};
-#endif // HS_BUILD_FOR_WIN32
-
 #endif

@@ -316,47 +316,6 @@ void CLock::LeaveWrite () {
 }
 
 
-/*****************************************************************************
-*
-*   CEvent
-*
-***/
-
-//============================================================================
-CEvent::CEvent (
-    ECEventResetBehavior resetType,
-    bool                 initialSet
-) {
-    m_handle = CreateEvent(
-        nil,    // security attributes
-        (resetType == kEventManualReset) ? true : false,
-        initialSet,
-        nil     // name
-    );
-}
-
-//============================================================================
-CEvent::~CEvent () {
-    (void) CloseHandle(m_handle);
-}
-
-//============================================================================
-void CEvent::Signal () {
-    SetEvent(m_handle);
-}
-
-//============================================================================
-void CEvent::Reset () {
-    ResetEvent(m_handle);
-}
-
-//============================================================================
-bool CEvent::Wait (unsigned waitMs) {
-    ThreadAssertCanBlock(__FILE__, __LINE__);
-    return WaitForSingleObject(m_handle, waitMs) == WAIT_OBJECT_0;
-}
-
-
 /****************************************************************************
 *
 * Exported functions
