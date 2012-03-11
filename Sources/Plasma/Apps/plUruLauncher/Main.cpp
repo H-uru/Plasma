@@ -149,7 +149,7 @@ static HANDLE                   s_event;
 static HINSTANCE                s_hInstance;
 static HWND                     s_dialog;
 static hsSemaphore              s_dialogCreateEvent(0);
-static CCritSect                s_critsect;
+static hsMutex                  s_critsect;
 static LISTDECL(WndEvent, link) s_eventQ;
 static hsSemaphore              s_shutdownEvent(0);
 static wchar_t                  s_workingDir[MAX_PATH];
@@ -197,9 +197,9 @@ static void Abort () {
 
 //============================================================================
 static void PostEvent (WndEvent *event) {
-    s_critsect.Enter();
+    s_critsect.Lock();
     s_eventQ.Link(event);
-    s_critsect.Leave();
+    s_critsect.Unlock();
 }
 
 //============================================================================
@@ -394,11 +394,11 @@ static void Recv_SetBytesRemaining (HWND hwnd, const SetBytesRemainingEvent &eve
 static void DispatchEvents (HWND hwnd) {
     LISTDECL(WndEvent, link) eventQ;
 
-    s_critsect.Enter();
+    s_critsect.Lock();
     { 
         eventQ.Link(&s_eventQ);
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 
 #define DISPATCH(a) case kEvent##a: Recv_##a(hwnd, *(const a##Event *) event); break
     while (WndEvent *event = eventQ.Head()) { 
