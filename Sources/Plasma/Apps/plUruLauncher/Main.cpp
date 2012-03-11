@@ -147,12 +147,12 @@ static HANDLE                   s_thread;
 static HANDLE                   s_event;
 static HINSTANCE                s_hInstance;
 static HWND                     s_dialog;
-static CEvent                   s_dialogCreateEvent(kEventManualReset);
+static hsSemaphore              s_dialogCreateEvent(0);
 static CCritSect                s_critsect;
 static LISTDECL(WndEvent, link) s_eventQ;
-static CEvent                   s_shutdownEvent(kEventManualReset);
+static hsSemaphore              s_shutdownEvent(0);
 static wchar_t                  s_workingDir[MAX_PATH];
-static CEvent                   s_statusEvent(kEventManualReset);
+static hsSemaphore              s_statusEvent(0);
 static char                     s_curlError[CURL_ERROR_SIZE];
 
 
@@ -810,7 +810,7 @@ int __stdcall WinMain (
             s_launcherInfo.buildId = cmdParser.GetInt(kArgBuildId);
 
         // Wait for the dialog to be created
-        s_dialogCreateEvent.Wait(kEventWaitForever);
+        s_dialogCreateEvent.Wait();
         _beginthread(StatusCallback, 0, nil);       // get status
     }
 
@@ -950,10 +950,10 @@ int __stdcall WinMain (
         }
         
         ShutdownAsyncCore();
-        s_statusEvent.Wait(kEventWaitForever);
+        s_statusEvent.Wait();
     
         PostMessage(s_dialog, WM_QUIT, 0, 0);       // tell our window to shutdown
-        s_shutdownEvent.Wait(kEventWaitForever);    // wait for our window to shutdown
+        s_shutdownEvent.Wait();                     // wait for our window to shutdown
     
         SetConsoleCtrlHandler(CtrlHandler, FALSE);
 
