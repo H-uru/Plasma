@@ -29,6 +29,7 @@ set(pnUtils_SOURCES
     pnUtArray.cpp
     pnUtBigNum.cpp
     pnUtCmd.cpp
+    pnUtCrypt.cpp
     pnUtHash.cpp
     pnUtList.cpp
     pnUtMisc.cpp
@@ -47,8 +48,6 @@ if(WIN32)
         Win32/pnUtW32Sync.cpp
         Win32/pnUtW32Time.cpp
         Win32/pnUtW32Uuid.cpp
-
-        pnUtCrypt.cpp
     )
 else()
     set(pnUtils_UNIX
