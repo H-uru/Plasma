@@ -314,20 +314,3 @@ void CLock::LeaveWrite () {
 
     LeaveSpinLock(&m_spinLock);
 }
-
-
-/****************************************************************************
-*
-* Exported functions
-*
-***/
-
-//===========================================================================
-long AtomicAdd (long * value, long increment) {
-    return InterlockedExchangeAdd(value, increment);
-}
-
-//===========================================================================
-long AtomicSet (long * value, long set) {
-    return InterlockedExchange(value, set);
-}
