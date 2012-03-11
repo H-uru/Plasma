@@ -258,7 +258,7 @@ void DebugMsg(const char fmt[], ...);
 ***/
 
 // *value += increment; return original value of *value; thread safe
-long AtomicAdd(long* value, long increment) {
+inline long AtomicAdd(long* value, long increment) {
 #ifdef HS_BUILD_FOR_WIN32
     return InterlockedExchangeAdd(value, increment);
 #elif HS_BUILD_FOR_UNIX
@@ -269,7 +269,7 @@ long AtomicAdd(long* value, long increment) {
 }
 
 // *value = value; return original value of *value; thread safe
-long AtomicSet(long* value, long set) {
+inline long AtomicSet(long* value, long set) {
 #ifdef HS_BUILD_FOR_WIN32
     return InterlockedExchange(value, set);
 #elif HS_BUILD_FOR_UNIX
