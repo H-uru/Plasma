@@ -156,7 +156,7 @@ public:
     // Return interface to the specified game   
     pfGameCli *     GetGameCli (unsigned gameId)                    const;
     // Get the name of a game by its typeid
-    const wchar_t *   GetGameNameByTypeId (const Uuid & gameTypeId)   const;
+    const wchar_t*  GetGameNameByTypeId (const plUUID& gameTypeId)  const;
     //========================================================================
 
     //========================================================================
@@ -226,11 +226,11 @@ public:
     //========================================================================
     // Game client properties
     //-----------------------
-    unsigned        GetGameId ()        const;
-    const Uuid &    GetGameTypeId ()    const;
-    const wchar_t *   GetName ()          const;
-    plKey           GetReceiver ()      const;
-    unsigned        GetPlayerCount ()   const;
+    unsigned         GetGameId ()        const;
+    const plUUID&    GetGameTypeId ()    const;
+    const wchar_t*   GetName ()          const;
+    plKey            GetReceiver ()      const;
+    unsigned         GetPlayerCount ()   const;
     //========================================================================
 
     //========================================================================

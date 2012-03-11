@@ -64,9 +64,9 @@ typedef pfGameCli * (*FGameCliFactory)(
 );
 
 struct GameTypeReg {
-    FGameCliFactory create;
-    Uuid            typeId;
-    const wchar_t *   name;
+    FGameCliFactory  create;
+    plUUID           typeId;
+    const wchar_t*   name;
 };
 
 void GameMgrRegisterGameType (const GameTypeReg & reg);
