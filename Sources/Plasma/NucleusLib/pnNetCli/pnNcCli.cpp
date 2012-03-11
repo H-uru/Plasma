@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # define NCCLI_LOG  LogMsg
 #endif
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
 
 struct NetLogMessage_Header
 {
@@ -173,7 +173,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
     uint8_t * temp = NULL;
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Write to the netlog
     if (s_netlog) {
         NetLogMessage_Header header;
@@ -919,7 +919,7 @@ static NetCli * ConnCreate (
     cli->mode           = mode;
     cli->SetValue(kNilGuid);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe
     if (!s_netlog) {
         InitializeCriticalSection(&s_pipeCritical);
@@ -1124,7 +1124,7 @@ bool NetCliDispatch (
             cli->input.Add(bytes, data);
             bool result = DispatchData(cli, param);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
             // Write to the netlog
             if (s_netlog) {
                 NetLogMessage_Header header;
