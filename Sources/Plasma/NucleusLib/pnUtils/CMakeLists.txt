@@ -22,7 +22,6 @@ set(pnUtils_HEADERS
     pnUtStr.h
     pnUtSync.h
     pnUtTime.h
-    pnUtTls.h
     pnUtUuid.h
 )
 
@@ -50,7 +49,6 @@ if(WIN32)
         Win32/pnUtW32Uuid.cpp
 
         pnUtCrypt.cpp
-        pnUtTls.cpp
     )
 else()
     set(pnUtils_UNIX

@@ -307,9 +307,6 @@ void AsyncTimerDelete (
 
     // Wait until the timer procedure completes
     if (timerProc) {
-        // ensure that I/O worker threads don't call this function with waitComplete=true
-        // to prevent a possible deadlock of a timer callback waiting for itself to complete
-        ThreadAssertCanBlock(__FILE__, __LINE__);
 
         while (s_timerCurr == timerProc)
             Sleep(1);

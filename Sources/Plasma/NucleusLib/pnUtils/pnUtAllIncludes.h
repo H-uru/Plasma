@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtPragma.h"
 #include "pnUtAddr.h"
 #include "pnUtUuid.h"
-#include "pnUtMath.h"
 #include "pnUtSort.h"
 #include "pnUtArray.h"
 #include "pnUtList.h"
@@ -61,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtPriQ.h"
 #include "pnUtSync.h"
 #include "pnUtTime.h"
-#include "pnUtTls.h"
 #include "pnUtStr.h"
 #include "pnUtRef.h"
 #include "pnUtPath.h"
@@ -69,8 +67,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtCmd.h"
 #include "pnUtMisc.h"
 #include "pnUtCrypt.h"
-#include "pnUtSpareList.h"
-#include "pnUtRand.h"
-#include "pnUtBase64.h"
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTALLINCLUDES_H
