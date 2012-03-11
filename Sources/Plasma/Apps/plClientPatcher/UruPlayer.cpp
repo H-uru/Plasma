@@ -350,7 +350,7 @@ static void RequestNextManifestFile () {
     if (!manifestQueue.size())
         return;
 
-    ManifestFile* nextFile = manifestQueue.front();
+    ManifestFile* nextfile = manifestQueue.front();
     manifestQueue.pop();
 
     char  path[MAX_PATH];
@@ -920,7 +920,7 @@ void UruPrepProc (void * param) {
     
     while (manifestQueue.size())
     {
-        ManifestFile* mf = manifestQueue.front()
+        ManifestFile* mf = manifestQueue.front();
         manifestQueue.pop();
         delete mf;
     }

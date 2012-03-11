@@ -222,8 +222,6 @@ static void INtOpDispatch (
 
 //===========================================================================
 static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
-    ThreadDenyBlock();
-
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
