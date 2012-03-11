@@ -113,7 +113,7 @@ struct ManifestResult {
     long *                              indicator;
     plLauncherInfo *                    info;
 
-    CCritSect                           critsect;
+    hsMutex                             critsect;
     ARRAY(unsigned)                     indices;
 };
 
@@ -498,9 +498,9 @@ static void ProcessManifestEntry (void * param, ENetError error) {
     );
     uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
     if(!MD5Check(path, p->mr->manifest[p->index].md5)) {
-        p->mr->critsect.Enter();
+        p->mr->critsect.Lock();
         p->mr->indices.Add(p->index);
-        p->mr->critsect.Leave();
+        p->mr->critsect.Unlock();
         AtomicAdd(&ProgressStream::totalBytes, p->mr->manifest[p->index].zipSize);
     }
 
