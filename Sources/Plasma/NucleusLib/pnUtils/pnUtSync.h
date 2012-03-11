@@ -52,26 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /****************************************************************************
 *
-*   Atomic operations
-*
-***/
-
-// *value += increment; return original value of *value; thread safe
-long AtomicAdd (long * value, long increment);
-
-// *value = value; return original value of *value; thread safe
-long AtomicSet (long * value, long set);
-
-
-#define ATOMIC_ONCE(code) {     \
-    static long s_count = 1;    \
-    if (AtomicSet(&s_count, 0)) \
-        code;                   \
-}                               //
-
-
-/****************************************************************************
-*
 *   CLock
 *   (reader/writer lock)
 *
