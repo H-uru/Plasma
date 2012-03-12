@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetAddress_h_inc
 #define plNetAddress_h_inc
 
+#include "HeadSpin.h"
+#include "plString.h"
 
 #include "hsStlUtils.h"
 #include "hsStream.h"
@@ -73,24 +75,28 @@ class plNetAddress
 
 public:
     plNetAddress();
-    plNetAddress(uint32_t addr, int port);
-    plNetAddress(const char * addr, int port);
+    plNetAddress(uint32_t addr, uint16_t port);
+    plNetAddress(const char* addr, uint16_t port);
     virtual ~plNetAddress(){}
 
     void Clear();
+
     bool SetAnyAddr();
     bool SetAnyPort();
-    bool SetPort(int port);
-    bool SetHost(const char * hostname);
-    bool SetHost(uint32_t ip4addr);
-    int GetPort() const;
-    std::string GetHostString() const;
-    uint32_t GetHost() const;
-    std::string GetHostWithPort() const; 
-    const AddressType & GetAddressInfo() const { return fAddr; }
-    AddressType & GetAddressInfo() { return fAddr; }
 
-    std::string AsString() const;
+    uint16_t GetPort() const;
+    bool SetPort(uint16_t port);
+
+    uint32_t GetHost() const;
+    bool SetHost(const char* hostname);
+    bool SetHost(uint32_t ip4addr);
+
+    const AddressType& GetAddressInfo() const { return fAddr; }
+    AddressType& GetAddressInfo() { return fAddr; }
+
+    plString GetHostString() const;
+    plString GetHostWithPort() const;
+    plString AsString() const;
 
     void Read(hsStream * stream);
     void Write(hsStream * stream);
