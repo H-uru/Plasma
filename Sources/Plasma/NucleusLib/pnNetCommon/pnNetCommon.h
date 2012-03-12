@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pnNetCommon_h_inc
 
 #include "HeadSpin.h"
+#include "plString.h"
 #include "hsStlUtils.h"
 #include "hsRefCnt.h"
 #include "hsStream.h"
@@ -81,9 +82,9 @@ namespace pnNetCommon
 {
 #ifndef SERVER
 
-    uint32_t GetBinAddr(const char * textAddr);
-    const char * GetTextAddr(uint32_t binAddr);
-    
+    uint32_t GetBinAddr(const char* textAddr);
+    plString GetTextAddr(uint32_t binAddr);
+
 #endif // SERVER
 }
 

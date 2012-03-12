@@ -57,23 +57,23 @@ namespace pnNetCommon
 #ifndef SERVER
 
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
-const char * GetTextAddr(uint32_t binAddr)
+plString GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
-    memcpy(&in,&binAddr,sizeof(binAddr));
-    return inet_ntoa(in);
+    memcpy(&in, &binAddr, sizeof(binAddr));
+    return plString::Format("%s", inet_ntoa(in));
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
 uint32_t GetBinAddr(const char * textAddr)
 {
     uint32_t addr = 0;
-    
+
     if (!textAddr)
         return addr;
-    
-    struct addrinfo * ai = NULL;
-    
+
+    struct addrinfo* ai = NULL;
+
     addr = inet_addr(textAddr);
     if(addr == INADDR_NONE)
     {
@@ -82,7 +82,7 @@ uint32_t GetBinAddr(const char * textAddr)
             memcpy(&addr,(void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)),sizeof(addr));
         pnAddrInfo::Free(ai);
     }
-    
+
     return addr;
 }
 
