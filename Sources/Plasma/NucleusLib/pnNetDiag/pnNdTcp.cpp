@@ -616,8 +616,8 @@ static void StartAuthTcpTest (
             s_send, arrsize(s_send),
             s_recv, arrsize(s_recv),
             kAuthDhGValue,
-            BigNum(sizeof(kAuthDhXData), kAuthDhXData),
-            BigNum(sizeof(kAuthDhNData), kAuthDhNData)
+            plBigNum(sizeof(kAuthDhXData), kAuthDhXData),
+            plBigNum(sizeof(kAuthDhNData), kAuthDhNData)
         );
     }
 

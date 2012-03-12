@@ -326,8 +326,8 @@ void NetMsgProtocolRegister (
     uint32_t                recvMsgCount,
     // Diffie-Hellman keys
     uint32_t                dh_g,
-    const BigNum &          dh_xa,          // client: dh_x     server: dh_a
-    const BigNum &          dh_n
+    const plBigNum&         dh_xa,          // client: dh_x     server: dh_a
+    const plBigNum&         dh_n
 );
 
 void NetMsgProtocolDestroy (

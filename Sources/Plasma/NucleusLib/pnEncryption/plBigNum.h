@@ -39,31 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtBigNum.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBIGNUM_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTBIGNUM_H
-
-#include "Pch.h"
+#ifndef plBigNum_inc
+#define plBigNum_inc
 
 /*****************************************************************************
 *
-*   BigNum class
+*   plBigNum class
 *
 ***/
 
+#include "HeadSpin.h"
 #include <openssl/bn.h>
 
-class BigNum {
+class plBigNum
+{
 private:
     BIGNUM m_number;
-    mutable BN_CTX * m_context;
+    mutable BN_CTX* m_context;
 
-    BN_CTX * GetContext () const
+    BN_CTX* GetContext() const
     {
         if (!m_context)
             m_context = BN_CTX_new();
@@ -71,13 +66,13 @@ private:
     }
 
 public:
-    BigNum ();
-    BigNum (const BigNum & a);
-    BigNum (unsigned a);
-    BigNum (unsigned bytess, const void * data, bool le=false);
-    ~BigNum ();
+    plBigNum();
+    plBigNum(const plBigNum& a);
+    plBigNum(uint32_t a);
+    plBigNum(uint32_t bytess, const void* data, bool le=false);
+    ~plBigNum();
 
-    BigNum & operator= (const BigNum & a)
+    plBigNum& operator=(const plBigNum& a)
     {
         BN_copy(&m_number, &a.m_number);
         return *this;
@@ -86,37 +81,39 @@ public:
     // Constant parameters need not be distinct from the destination or from
     // each other
 
-    void Add (const BigNum & a, uint32_t b)
+    void Add(const plBigNum& a, uint32_t b)
     {
         // this = a + b
         BN_copy(&m_number, &a.m_number);
         BN_add_word(&m_number, b);
     }
 
-    void Add (const BigNum & a, const BigNum & b)
+    void Add(const plBigNum& a, const plBigNum& b)
     {
         // this = a + b
         BN_add(&m_number, &a.m_number, &b.m_number);
     }
 
-    int  Compare (uint32_t a) const;
-    int  Compare (const BigNum & a) const
+    int Compare(uint32_t a) const;
+
+    int Compare(const plBigNum& a) const
     {
         return BN_cmp(&m_number, &a.m_number);
     }
+
     bool isZero() const
     {
         return BN_is_zero(&m_number);
     }
 
-    void Div (const BigNum & a, uint32_t b, uint32_t * remainder)
+    void Div(const plBigNum& a, uint32_t b, uint32_t* remainder)
     {
         // this = a / b, remainder = a % b
         BN_copy(&m_number, &a.m_number);
         *remainder = (uint32_t)BN_div_word(&m_number, b);
     }
 
-    void Div (const BigNum & a, const BigNum & b, BigNum * remainder)
+    void Div(const plBigNum& a, const plBigNum& b, plBigNum* remainder)
     {
         // this = a / b, remainder = a % b
         // either this or remainder may be nil
@@ -124,55 +121,55 @@ public:
                &a.m_number, &b.m_number, GetContext());
     }
 
-    void FromData_BE (unsigned bytess, const void * data)
+    void FromData_BE(uint32_t bytess, const void* data)
     {
-        BN_bin2bn((const unsigned char *)data, bytess, &m_number);
+        BN_bin2bn((const uint8_t*)data, bytess, &m_number);
     }
 
-    void FromData_LE (unsigned bytess, const void * data);
+    void FromData_LE(uint32_t bytess, const void* data);
 
-    unsigned char * GetData_BE (unsigned * bytess) const;
-    unsigned char * GetData_LE (unsigned * bytess) const;
+    uint8_t* GetData_BE(uint32_t* bytess) const;
+    uint8_t* GetData_LE(uint32_t* bytess) const;
 
-    bool IsPrime () const
+    bool IsPrime() const
     {
         // Cyan's code uses 3 checks, so we'll follow suit.
         // This provides an accurate answer to p < 0.015625
         return BN_is_prime_fasttest(&m_number, 3, nil, GetContext(), nil, 1) > 0;
     }
 
-    void Mod (const BigNum & a, const BigNum & b)
+    void Mod(const plBigNum& a, const plBigNum& b)
     {
         // this = a % b
         BN_div(nil, &m_number, &a.m_number, &b.m_number, GetContext());
     }
 
-    void Mul (const BigNum & a, uint32_t b)
+    void Mul(const plBigNum& a, uint32_t b)
     {
         // this = a * b
         BN_copy(&m_number, &a.m_number);
         BN_mul_word(&m_number, b);
     }
 
-    void Mul (const BigNum & a, const BigNum & b)
+    void Mul(const plBigNum& a, const plBigNum& b)
     {
         // this = a * b
         BN_mul(&m_number, &a.m_number, &b.m_number, GetContext());
     }
 
-    void PowMod (uint32_t a, const BigNum & b, const BigNum & c)
+    void PowMod(uint32_t a, const plBigNum& b, const plBigNum& c)
     {
         // this = a ^ b % c
-        PowMod(BigNum(a), b, c);
+        PowMod(plBigNum(a), b, c);
     }
 
-    void PowMod (const BigNum & a, const BigNum & b, const BigNum & c)
+    void PowMod(const plBigNum& a, const plBigNum& b, const plBigNum& c)
     {
         // this = a ^ b % c
         BN_mod_exp(&m_number, &a.m_number, &b.m_number, &c.m_number, GetContext());
     }
 
-    void Rand (const BigNum & a, BigNum * seed)
+    void Rand(const plBigNum& a, plBigNum* seed)
     {
         // this = random number less than a
         int bits = BN_num_bits(&a.m_number);
@@ -181,49 +178,49 @@ public:
         while (Compare(a) >= 0);
     }
 
-    void Rand (unsigned bits, BigNum * seed);
+    void Rand(uint32_t bits, plBigNum* seed);
 
-    void RandPrime (unsigned bits, BigNum * seed)
+    void RandPrime(uint32_t bits, plBigNum* seed)
     {
         BN_generate_prime(&m_number, bits, 1, nil, nil, nil, nil);
     }
 
-    void Set (const BigNum & a)
+    void Set(const plBigNum& a)
     {
         BN_copy(&m_number, &a.m_number);
     }
 
-    void Set (unsigned a)
+    void Set(uint32_t a)
     {
         BN_set_word(&m_number, a);
     }
 
-    void SetOne () { Set(1); }
-    void SetZero () { Set(0); }
+    void SetOne() { Set(1); }
+    void SetZero() { Set(0); }
 
-    void Shl (const BigNum & a, unsigned b)
+    void Shl(const plBigNum& a, uint32_t b)
     {
         // this = a << b
         BN_lshift(&m_number, &a.m_number, b);
     }
 
-    void Shr (const BigNum & a, unsigned b)
+    void Shr(const plBigNum& a, uint32_t b)
     {
         // this = a >> b
         BN_rshift(&m_number, &a.m_number, b);
     }
 
-    void Sub (const BigNum & a, uint32_t b)
+    void Sub(const plBigNum& a, uint32_t b)
     {
         // this = a - b
         BN_copy(&m_number, &a.m_number);
         BN_sub_word(&m_number, b);
     }
 
-    void Sub (const BigNum & a, const BigNum & b)
+    void Sub(const plBigNum& a, const plBigNum& b)
     {
         // this = a - b
         BN_sub(&m_number, &a.m_number, &b.m_number);
     }
 };
-#endif
+#endif // plBigNum_inc

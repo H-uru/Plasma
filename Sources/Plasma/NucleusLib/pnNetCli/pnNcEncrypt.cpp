@@ -58,23 +58,23 @@ namespace pnNetCli {
 
     // g and n are pregenerated and published
     // (built into both client and server software)
-    BigNum g(4);
-    BigNum n; n.RandPrime(kKeyBits, &seed);
+    plBigNum g(4);
+    plBigNum n; n.RandPrime(kKeyBits, &seed);
 
     // a and x are pregenerated; a is built into server software, and x is
     // built into client software
-    BigNum a; a.Rand(kKeyBits, &seed);
-    BigNum x; x.PowMod(g, a, n);
+    plBigNum a; a.Rand(kKeyBits, &seed);
+    plBigNum x; x.PowMod(g, a, n);
 
     // client chooses b and y on connect, and sends y to the server
-    BigNum b; b.Rand(kKeyBits, &seed);
-    BigNum y; y.PowMod(g, b, n);
+    plBigNum b; b.Rand(kKeyBits, &seed);
+    plBigNum y; y.PowMod(g, b, n);
 
     // server computes key: k = y^a mod n
-    BigNum ka; ka.PowMod(y, a, n);
+    plBigNum ka; ka.PowMod(y, a, n);
 
     // client computes key: k = x^b mod n
-    BigNum kb; kb.PowMod(x, b, n);
+    plBigNum kb; kb.PowMod(x, b, n);
 
 ***/
 
@@ -90,14 +90,14 @@ COMPILER_ASSERT(IS_POW2(kNetDiffieHellmanKeyBits));
 //============================================================================
 // TODO: Cache computed keys
 static void GetCachedServerKey (
-    NetMsgChannel * channel,
-    BigNum *        ka,
-    const BigNum &  dh_y
+    NetMsgChannel*   channel,
+    plBigNum*        ka,
+    const plBigNum&  dh_y
 ) {
     // Get diffie-hellman constants
-    unsigned        DH_G;
-    const BigNum *  DH_A;
-    const BigNum *  DH_N;
+    unsigned         DH_G;
+    const plBigNum*  DH_A;
+    const plBigNum*  DH_N;
     NetMsgChannelGetDhConstants(channel, &DH_G, &DH_A, &DH_N);
     hsAssert(!DH_N->isZero(), "DH_N must not be zero in encrypted mode");
 
@@ -114,15 +114,15 @@ static void GetCachedServerKey (
 
 //============================================================================
 void NetMsgCryptClientStart (
-    NetMsgChannel * channel,
+    NetMsgChannel*  channel,
     unsigned        seedBytes,
-    const uint8_t      seedData[],
-    BigNum *        clientSeed,
-    BigNum *        serverSeed
+    const uint8_t   seedData[],
+    plBigNum*       clientSeed,
+    plBigNum*       serverSeed
 ) {
     unsigned DH_G;
-    const BigNum * DH_X;
-    const BigNum * DH_N;
+    const plBigNum* DH_X;
+    const plBigNum* DH_N;
     NetMsgChannelGetDhConstants(channel, &DH_G, &DH_X, &DH_N);
     if (DH_N->isZero()) { // no actual encryption, but the caller expects a seed
         clientSeed->SetZero();
@@ -130,9 +130,9 @@ void NetMsgCryptClientStart (
     }
     else {
         // Client chooses b and y on connect
-        BigNum g(DH_G);
-        BigNum seed(seedBytes, seedData);
-        BigNum b; b.Rand(kNetDiffieHellmanKeyBits, &seed);
+        plBigNum g(DH_G);
+        plBigNum seed(seedBytes, seedData);
+        plBigNum b; b.Rand(kNetDiffieHellmanKeyBits, &seed);
 
         // Client computes key: kb = x^b mod n
         clientSeed->PowMod(*DH_X, b, *DH_N);
@@ -144,13 +144,13 @@ void NetMsgCryptClientStart (
 
 //============================================================================
 void NetMsgCryptServerConnect (
-    NetMsgChannel * channel,
+    NetMsgChannel*  channel,
     unsigned        seedBytes,
-    const uint8_t      seedData[],
-    BigNum *        clientSeed
+    const uint8_t   seedData[],
+    plBigNum*       clientSeed
 ) {
     // Server computes client key: ka = y^a mod n
-    const BigNum dh_y(seedBytes, seedData);
+    const plBigNum dh_y(seedBytes, seedData);
     GetCachedServerKey(channel, clientSeed, dh_y);
 }
 

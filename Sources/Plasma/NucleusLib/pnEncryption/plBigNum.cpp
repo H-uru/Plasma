@@ -39,18 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtBigNum.cpp
-*   
-***/
 
-#include "pnUtBigNum.h"
-
+#include "plBigNum.h"
 #include <openssl/rand.h>
 #include <algorithm>
 
-static inline void byteswap(size_t size, unsigned char * data)
+static inline void byteswap(size_t size, uint8_t* data)
 {
     for (size_t i = 0; i < (size / 2); ++i)
         std::swap(data[i], data[size - i - 1]);
@@ -58,32 +52,28 @@ static inline void byteswap(size_t size, unsigned char * data)
 
 /****************************************************************************
 *
-*   BigNum public methods
+*   plBigNum public methods
 *
 ***/
 
-//===========================================================================
-BigNum::BigNum () : m_context(nil)
+plBigNum::plBigNum () : m_context(nil)
 {
     BN_init(&m_number);
 }
 
-//===========================================================================
-BigNum::BigNum (const BigNum & a) : m_context(nil)
+plBigNum::plBigNum(const plBigNum& a) : m_context(nil)
 {
     BN_init(&m_number);
     BN_copy(&m_number, &a.m_number);
 }
 
-//===========================================================================
-BigNum::BigNum (unsigned a) : m_context(nil)
+plBigNum::plBigNum(unsigned a) : m_context(nil)
 {
     BN_init(&m_number);
     BN_set_word(&m_number, a);
 }
 
-//===========================================================================
-BigNum::BigNum (unsigned bytes, const void * data, bool le) : m_context(nil)
+plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context(nil)
 {
     BN_init(&m_number);
     if (le)
@@ -92,16 +82,15 @@ BigNum::BigNum (unsigned bytes, const void * data, bool le) : m_context(nil)
         FromData_BE(bytes, data);
 }
 
-//===========================================================================
-BigNum::~BigNum ()
+plBigNum::~plBigNum ()
 {
     if (m_context)
         BN_CTX_free(m_context);
     BN_free(&m_number);
 }
 
-//===========================================================================
-int BigNum::Compare (uint32_t a) const {
+int plBigNum::Compare(uint32_t a) const
+{
     // -1 if (this <  a)
     //  0 if (this == a)
     //  1 if (this >  a)
@@ -118,43 +107,39 @@ int BigNum::Compare (uint32_t a) const {
     return 1;
 }
 
-//===========================================================================
-void BigNum::FromData_LE (unsigned bytes, const void * data)
+void plBigNum::FromData_LE(uint32_t bytes, const void* data)
 {
-    unsigned char * buffer = new unsigned char[bytes];
+    uint8_t* buffer = new uint8_t[bytes];
     memcpy(buffer, data, bytes);
     byteswap(bytes, buffer);
     BN_bin2bn(buffer, bytes, &m_number);
-    delete [] buffer;
+    delete[] buffer;
 }
 
-//===========================================================================
-unsigned char * BigNum::GetData_BE (unsigned * bytes) const
+uint8_t* plBigNum::GetData_BE(uint32_t* bytes) const
 {
     *bytes = BN_num_bytes(&m_number);
-    unsigned char * data = new unsigned char[*bytes];
+    uint8_t* data = new uint8_t[*bytes];
     BN_bn2bin(&m_number, data);
     return data;
 }
 
-//===========================================================================
-unsigned char * BigNum::GetData_LE (unsigned * bytes) const
+uint8_t* plBigNum::GetData_LE(uint32_t* bytes) const
 {
     *bytes = BN_num_bytes(&m_number);
-    unsigned char * data = new unsigned char[*bytes];
+    uint8_t* data = new uint8_t[*bytes];
     BN_bn2bin(&m_number, data);
     byteswap(*bytes, data);
     return data;
 }
 
-//===========================================================================
-void BigNum::Rand (unsigned bits, BigNum * seed)
+void plBigNum::Rand(uint32_t bits, plBigNum* seed)
 {
     // this = random number with bits or fewer bits
 
-    unsigned seedbytes;
-    unsigned char * seedData = seed->GetData_BE(&seedbytes);
+    uint32_t seedbytes;
+    uint8_t* seedData = seed->GetData_BE(&seedbytes);
     RAND_seed(seedData, seedbytes);
     BN_rand(&m_number, bits, 0, 0);
-    delete [] seedData;
+    delete[] seedData;
 }

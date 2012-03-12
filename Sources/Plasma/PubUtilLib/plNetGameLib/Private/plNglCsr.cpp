@@ -758,8 +758,8 @@ void CsrInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kCsrDhGValue,
-        BigNum(sizeof(kCsrDhXData), kCsrDhXData),
-        BigNum(sizeof(kCsrDhNData), kCsrDhNData)
+        plBigNum(sizeof(kCsrDhXData), kCsrDhXData),
+        plBigNum(sizeof(kCsrDhNData), kCsrDhNData)
     );
 }
 

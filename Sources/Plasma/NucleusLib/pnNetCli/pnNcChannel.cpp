@@ -83,8 +83,8 @@ struct NetMsgChannel : AtomicRef {
 
     // Diffie-Hellman constants
     uint32_t                m_dh_g;
-    BigNum                  m_dh_xa;    // client: dh_x     server: dh_a
-    BigNum                  m_dh_n;
+    plBigNum                m_dh_xa;    // client: dh_x     server: dh_a
+    plBigNum                m_dh_n;
 };
 
 static ChannelCrit                  s_channelCrit;
@@ -355,8 +355,8 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     uint32_t *              dh_g,
-    const BigNum **         dh_xa,
-    const BigNum **         dh_n
+    const plBigNum**        dh_xa,
+    const plBigNum**        dh_n
 ) {
     if (dh_g) *dh_g   =  channel->m_dh_g;
     if (dh_xa) *dh_xa  = &channel->m_dh_xa;
@@ -382,8 +382,8 @@ void NetMsgProtocolRegister (
     const NetMsgInitRecv    recvMsgs[],
     uint32_t                recvMsgCount,
     uint32_t                dh_g,
-    const BigNum &          dh_xa,    // client: dh_x     server: dh_a
-    const BigNum &          dh_n
+    const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
+    const plBigNum&         dh_n
 ) {
     s_channelCrit.EnterSafe();
     {

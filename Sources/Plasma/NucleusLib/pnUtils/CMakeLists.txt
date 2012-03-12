@@ -8,7 +8,6 @@ set(pnUtils_HEADERS
     pnUtAddr.h
     pnUtAllIncludes.h
     pnUtArray.h
-    pnUtBigNum.h
     pnUtCmd.h
     pnUtCrypt.h
     pnUtHash.h
@@ -27,7 +26,6 @@ set(pnUtils_HEADERS
 
 set(pnUtils_SOURCES
     pnUtArray.cpp
-    pnUtBigNum.cpp
     pnUtCmd.cpp
     pnUtCrypt.cpp
     pnUtHash.cpp

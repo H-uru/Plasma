@@ -711,8 +711,8 @@ void GameInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kGameDhGValue,
-        BigNum(sizeof(kGameDhXData), kGameDhXData),
-        BigNum(sizeof(kGameDhNData), kGameDhNData)
+        plBigNum(sizeof(kGameDhXData), kGameDhXData),
+        plBigNum(sizeof(kGameDhNData), kGameDhNData)
     );
 }
 
