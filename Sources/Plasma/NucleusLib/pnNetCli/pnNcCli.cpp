@@ -652,8 +652,8 @@ static void CreateSymmetricKey (
 static void ClientConnect (NetCli * cli) {
 
     // Initiate diffie-hellman for client
-    BigNum clientSeed;
-    BigNum serverSeed;
+    plBigNum clientSeed;
+    plBigNum serverSeed;
     NetMsgCryptClientStart(
         cli->channel,
         sizeof(cli->seed),
@@ -717,7 +717,7 @@ static bool ServerRecvConnect (
     else {
         // Compute client seed
         uint8_t clientSeed[kNetMaxSymmetricSeedBytes];
-        BigNum clientSeedValue;
+        plBigNum clientSeedValue;
         {
             NetMsgCryptServerConnect(
                 cli->channel,
@@ -761,7 +761,7 @@ static bool ClientRecvEncrypt (
         return false;
 
     // find out if we want encryption
-    const BigNum * DH_N;
+    const plBigNum* DH_N;
     NetMsgChannelGetDhConstants(cli->channel, nil, nil, &DH_N);
     bool encrypt = !DH_N->isZero();
 

@@ -984,8 +984,8 @@ void GateKeeperInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kGateKeeperDhGValue,
-        BigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
-        BigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)
+        plBigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
+        plBigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)
     );
 }
 
