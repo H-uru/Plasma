@@ -540,8 +540,8 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         );
     */
 
-        NetAddressNode  node = NetAddressGetNode(*listenAddr);
-        unsigned        port = NetAddressGetPort(*listenAddr);
+        NetAddressNode  node = listenAddr->GetHost();
+        unsigned        port = listenAddr->GetPort();
 
         // bind socket to port
         sockaddr_in addr;
@@ -581,13 +581,13 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         }
  
         // success!
-        NetAddressSetPort(port, listenAddr);
+        listenAddr->SetPort(port);
         return s;
     } while (false);
 
     // failure!
     closesocket(s);
-    NetAddressSetPort(0, listenAddr);
+    listenAddr->SetPort(0);
     return INVALID_SOCKET;
 }
 
@@ -1152,7 +1152,7 @@ unsigned NtSocketStartListening (
     }
     s_listenCrit.Leave();
 
-    unsigned port = NetAddressGetPort(addr);
+    unsigned port = addr.GetPort();
     if (port)
         SetEvent(s_listenEvent);
 

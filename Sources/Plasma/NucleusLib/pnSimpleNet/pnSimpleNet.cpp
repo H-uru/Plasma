@@ -368,7 +368,7 @@ static bool AsyncNotifySocketProc (
 }
 
 //============================================================================
-static void Connect (const NetAddress & addr, ConnectParam * cp) {
+static void Connect(const plNetAddress& addr, ConnectParam * cp) {
 
     SimpleNetConn * conn = NEWZERO(SimpleNetConn);
     conn->channelId = cp->channel->channelId;
@@ -410,9 +410,9 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const wchar_t       name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     ConnectParam * cp = (ConnectParam *)param;
 
@@ -487,8 +487,9 @@ bool SimpleNetStartListening (
     s_queryAccept       = queryAccept;
     s_queryAcceptParam  = param;
 
-    NetAddress addr;
-    NetAddressFromNode(0, kNetDefaultSimpleNetPort, &addr);
+    plNetAddress addr;
+    addr.SetPort(kNetDefaultSimpleNetPort);
+    addr.SetAnyAddr();
     return (0 != AsyncSocketStartListening(addr, nil));
 }
 
@@ -497,8 +498,9 @@ void SimpleNetStopListening () {
 
     ASSERT(s_running);
 
-    NetAddress addr;
-    NetAddressFromNode(0, kNetDefaultSimpleNetPort, &addr);
+    plNetAddress addr;
+    addr.SetPort(kNetDefaultSimpleNetPort);
+    addr.SetAnyAddr();
     AsyncSocketStopListening(addr, nil);
 
     s_queryAccept       = nil;
@@ -608,8 +610,8 @@ void SimpleNetStartConnecting (
         }
     }
     if (!name[0]) {
-        NetAddress netAddr;
-        NetAddressFromString(&netAddr, addr, kNetDefaultSimpleNetPort);
+        plString saddr = _TEMP_CONVERT_FROM_WCHAR_T(addr);
+        plNetAddress netAddr(saddr.c_str(), kNetDefaultSimpleNetPort);
         Connect(netAddr, cp);
     }
 }

@@ -2194,18 +2194,11 @@ static bool Recv_ServerAddr (
     {
         if (s_active) {
             s_active->token = msg.token;
-            NetAddressFromNode(
-                msg.srvAddr,
-                NetAddressGetPort(s_active->addr),
-                &s_active->addr
-            );
-            wchar_t addrStr[64];
-            NetAddressNodeToString(
-                msg.srvAddr,
-                addrStr,
-                arrsize(addrStr)
-            );
-            LogMsg(kLogPerf, L"SrvAuth addr: %s", addrStr);
+            s_active->addr.SetHost(msg.srvAddr);
+
+            plString logmsg = _TEMP_CONVERT_FROM_LITERAL("SrvAuth addr: ");
+            logmsg += s_active->addr.GetHostString();
+            LogMsg(kLogPerf, L"SrvAuth addr: %s", logmsg.c_str());
         }
     }
     s_critsect.Leave();
