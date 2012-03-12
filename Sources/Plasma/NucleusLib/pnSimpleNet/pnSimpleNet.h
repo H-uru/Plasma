@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnProduct/pnProduct.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetCommon/plNetAddress.h"
 
 /*****************************************************************************
 *
@@ -148,7 +149,7 @@ typedef bool (*FSimpleNetQueryAccept) ( // return true to accept incoming connec
     void *              param,
     unsigned            channel,
     SimpleNetConn *     conn,
-    const NetAddress &  addr
+    const plNetAddress& addr
 );
 
 void SimpleNetCreateChannel (

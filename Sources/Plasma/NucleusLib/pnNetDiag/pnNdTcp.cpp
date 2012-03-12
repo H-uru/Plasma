@@ -828,8 +828,7 @@ void NetDiagTcp (
         return;
     }
 
-    unsigned    node;   
-    NetAddress  addr;
+    unsigned    node;
     diag->critsect.Enter();
     {
         node = diag->nodes[srv];
@@ -842,17 +841,17 @@ void NetDiagTcp (
         return;
     }
 
-    NetAddressFromNode(node, port, &addr);
-    
+    plNetAddress addr(node, port);
+
     switch (protocol) {
         case kNetProtocolCli2Auth:
             StartAuthTcpTest(diag, addr, dump, callback, param);
         break;
-        
+
         case kNetProtocolCli2File:
             StartFileTcpTest(diag, addr, dump, callback, param);
         break;
-        
+
         DEFAULT_FATAL(protocol);
     }
 }

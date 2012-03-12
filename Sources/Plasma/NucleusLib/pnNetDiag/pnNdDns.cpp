@@ -80,7 +80,7 @@ static void LookupCallback (
 ) {
     DNSParam * p = (DNSParam *)param;
     if (addrCount) {
-        unsigned node = NetAddressGetNode(addrs[0]);
+        unsigned node = addrs[0].GetHost();
         p->diag->critsect.Enter();
         {
             p->diag->nodes[p->srv] = node;

@@ -157,39 +157,6 @@ bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defa
 }
 
 //===========================================================================
-unsigned NetAddressGetPort (
-    const NetAddress & addr
-) {
-    return ntohs(((sockaddr_in *) &addr)->sin_port);
-}
-
-//===========================================================================
-void NetAddressSetPort (
-    unsigned        port,
-    NetAddress *    addr
-) {
-    ((sockaddr_in *) addr)->sin_port = htons((uint16_t) port);
-}
-
-//============================================================================
-NetAddressNode NetAddressGetNode (const NetAddress & addr) {
-    return ntohl(((const sockaddr_in *) &addr)->sin_addr.S_un.S_addr);
-}
-
-//===========================================================================
-void NetAddressFromNode (
-    NetAddressNode  node,
-    unsigned        port,
-    NetAddress *    addr
-) {
-    memset(addr, 0, sizeof(*addr));
-    sockaddr_in * inetaddr          = (sockaddr_in *) addr;
-    inetaddr->sin_family            = AF_INET;
-    inetaddr->sin_addr.S_un.S_addr  = htonl(node);
-    inetaddr->sin_port              = htons((uint16_t) port);
-}
-
-//===========================================================================
 void NetAddressNodeToString (
     NetAddressNode  node,
     wchar_t *         str,

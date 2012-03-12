@@ -57,11 +57,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 
-struct NetAddress {
+/*struct NetAddress {
     uint8_t data[24];
 };
 
-typedef unsigned NetAddressNode;
+typedef unsigned NetAddressNode;*/
+
+#include "pnNetCommon/plNetAddress.h"
+
+typedef plNetAddress NetAddress;
+typedef uint32_t NetAddressNode;
 
 /*****************************************************************************
 *
@@ -95,26 +100,10 @@ bool NetAddressFromString (
     unsigned        defaultPort
 );
 
-unsigned NetAddressGetPort (
-    const NetAddress &  addr
-);
-void NetAddressSetPort (
-    unsigned            port,
-    NetAddress *        addr
-);
-
 void NetAddressNodeToString (
     NetAddressNode      node,
     wchar_t *             str,
     unsigned            chars
 );
 
-NetAddressNode NetAddressGetNode (
-    const NetAddress &  addr
-);
-void NetAddressFromNode (
-    NetAddressNode      node,
-    unsigned            port,
-    NetAddress     *    addr
-);
 #endif
