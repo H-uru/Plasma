@@ -591,23 +591,22 @@ static void INetCliAuthAgeRequestCallback (
     unsigned        ageMcpId,
     unsigned        ageVaultId,
     const Uuid &    ageInstId,
-    NetAddressNode  gameAddr
+    plNetAddress    gameAddr
 ) {
     if (!IS_NET_ERROR(result) || result == kNetErrVaultNodeNotFound) {
         s_age.ageInstId = ageInstId;
         s_age.ageVaultId = ageVaultId;
         
-        wchar_t gameAddrStr[64];
         wchar_t ageInstIdStr[64];
-        NetAddressNodeToString(gameAddr, gameAddrStr, arrsize(gameAddrStr));
+        plString gameAddrStr = gameAddr.GetHostString();
         LogMsg(
             kLogPerf,
             L"Connecting to game server %s, ageInstId %s",
-            gameAddrStr,
+            gameAddrStr.c_str(),
             GuidToString(ageInstId, ageInstIdStr, arrsize(ageInstIdStr))
         );
         NetCliGameDisconnect();
-        NetCliGameStartConnect(gameAddr);
+        NetCliGameStartConnect(gameAddr.GetHost());
         NetCliGameJoinAgeRequest(
             ageMcpId,
             s_account.accountUuid,

@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLAUTH_H
 
+#include "pnNetCommon/plNetAddress.h"
 
 /*****************************************************************************
 *
@@ -326,7 +327,7 @@ typedef void (*FNetCliAuthAgeRequestCallback)(
     unsigned        ageMcpId,
     unsigned        ageVaultId,
     const Uuid &    ageInstId,
-    NetAddressNode  gameAddr
+    plNetAddress    gameAddr
 );
 void NetCliAuthAgeRequest (
     const wchar_t                         ageName[],      // L"Teledahn"

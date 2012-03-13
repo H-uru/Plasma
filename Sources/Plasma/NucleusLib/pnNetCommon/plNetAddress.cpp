@@ -57,7 +57,7 @@ plNetAddress::plNetAddress(uint32_t addr, uint16_t port)
     SetPort(port);
 }
 
-plNetAddress::plNetAddress(const char * addr, uint16_t port)
+plNetAddress::plNetAddress(const char* addr, uint16_t port)
 {
     Clear();
     SetHost(addr);
@@ -104,6 +104,11 @@ plString plNetAddress::GetHostString() const
 
 uint32_t plNetAddress::GetHost() const
 {
+    return ntohl(fAddr.sin_addr.s_addr);
+}
+
+uint32_t plNetAddress::GetHostBE() const
+{
     return fAddr.sin_addr.s_addr;
 }
 
@@ -122,6 +127,13 @@ bool plNetAddress::SetHost(const char* hostname)
 }
 
 bool plNetAddress::SetHost(uint32_t addr)
+{
+    fAddr.sin_addr.s_addr = htonl(addr);
+    fAddr.sin_family = AF_INET;
+    return true;
+}
+
+bool plNetAddress::SetHostBE(uint32_t addr)
 {
     memcpy(&fAddr.sin_addr, &addr,sizeof(addr));
     fAddr.sin_family = AF_INET;

@@ -547,12 +547,11 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         sockaddr_in addr;
         addr.sin_family = AF_INET;
         addr.sin_port   = htons((uint16_t)port);
-        addr.sin_addr.S_un.S_addr = htonl(node);
+        addr.sin_addr.S_un.S_addr = node;
         memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-            wchar_t str[32];
-            NetAddressToString(*listenAddr, str, arrsize(str), kNetAddressFormatAll);
-            LogMsg(kLogError, "bind to addr %s failed (err %u)", str, WSAGetLastError());
+            plString str = listenAddr->AsString();
+            LogMsg(kLogError, "bind to addr %s failed (err %u)", str.c_str(), WSAGetLastError());
             break;
         }
 

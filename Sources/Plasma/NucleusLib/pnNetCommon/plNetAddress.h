@@ -95,8 +95,10 @@ public:
     bool SetPort(uint16_t port);
 
     uint32_t GetHost() const;
+    uint32_t GetHostBE() const;
     bool SetHost(const char* hostname);
     bool SetHost(uint32_t ip4addr);
+    bool SetHostBE(uint32_t addr);
 
     const AddressType& GetAddressInfo() const { return fAddr; }
     AddressType& GetAddressInfo() { return fAddr; }

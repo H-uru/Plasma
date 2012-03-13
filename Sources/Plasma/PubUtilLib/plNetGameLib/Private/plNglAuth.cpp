@@ -90,8 +90,8 @@ struct CliAuConn : AtomicRef {
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar_t           name[MAX_PATH];
-    NetAddress      addr;
+    wchar_t         name[MAX_PATH];
+    plNetAddress    addr;
     Uuid            token;
     unsigned        seq;
     unsigned        serverChallenge;
@@ -1545,9 +1545,9 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const wchar_t       name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
@@ -2753,13 +2753,16 @@ bool AgeRequestTrans::Send () {
 
 //============================================================================
 void AgeRequestTrans::Post () {
+    plNetAddress addr;
+    addr.SetHost(m_gameSrvNode);
+
     m_callback(
         m_result,
         m_param,
         m_ageMcpId,
         m_ageVaultId,
         m_ageInstId,
-        m_gameSrvNode
+        addr
     );
 }
 

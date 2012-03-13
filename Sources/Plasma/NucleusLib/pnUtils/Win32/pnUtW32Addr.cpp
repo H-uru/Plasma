@@ -95,30 +95,6 @@ static NetAddressNode NodeFromString (const wchar_t * string[]) {
 ***/
 
 //===========================================================================
-void NetAddressToString (
-    const NetAddress &  addr, 
-    wchar_t *             str, 
-    unsigned            chars, 
-    ENetAddressFormat   format
-) {
-    ASSERT(str);
-
-    static const wchar_t * s_fmts[] = {
-        L"%S",      // kNetAddressFormatNodeNumber
-        L"%S:%u",   // kNetAddressFormatAll
-    };
-    ASSERT(format < arrsize(s_fmts));
-    const sockaddr_in & inetaddr = * (const sockaddr_in *) &addr;
-    StrPrintf(
-        str,
-        chars,
-        s_fmts[format],
-        inet_ntoa(inetaddr.sin_addr),
-        ntohs(inetaddr.sin_port)
-    );
-}
-
-//===========================================================================
 bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defaultPort) {
     ASSERT(addr);
     ASSERT(str);
@@ -145,15 +121,4 @@ bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defa
 
     // address already zeroed
     return false;
-}
-
-//===========================================================================
-void NetAddressNodeToString (
-    NetAddressNode  node,
-    wchar_t *         str,
-    unsigned        chars
-) {
-    in_addr addr;
-    addr.S_un.S_addr = htonl(node);
-    StrPrintf(str, chars, L"%S", inet_ntoa(addr));
 }

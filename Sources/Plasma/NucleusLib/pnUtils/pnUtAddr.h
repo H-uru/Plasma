@@ -74,31 +74,12 @@ typedef uint32_t NetAddressNode;
 *
 ***/
 
-enum ENetAddressFormat {
-    kNetAddressFormatNodeNumber,
-    kNetAddressFormatAll,
-    kNumNetAddressFormats
-};
-
-void NetAddressToString (
-    const NetAddress &  addr, 
-    wchar_t *             str, 
-    unsigned            chars, 
-    ENetAddressFormat   format
-);
-
 // 'str' must be in the form of a dotted IP address (IPv4 or IPv6)
 // - names which require DNS lookup will cause the function to return false
 bool NetAddressFromString (
     NetAddress *    addr,
     const wchar_t     str[],
     unsigned        defaultPort
-);
-
-void NetAddressNodeToString (
-    NetAddressNode      node,
-    wchar_t *             str,
-    unsigned            chars
 );
 
 #endif
