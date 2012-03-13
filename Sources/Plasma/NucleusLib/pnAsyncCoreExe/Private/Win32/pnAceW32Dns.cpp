@@ -340,13 +340,10 @@ void AsyncAddressLookupAddr (
     lookup->lookupProc      = lookupProc;
     lookup->port            = 1;
     lookup->param           = param;
-    NetAddressToString(
-        address,
-        lookup->name,
-        arrsize(lookup->name),
-        kNetAddressFormatNodeNumber
-    );
-        
+
+    plString str = address.GetHostString();
+    lookup->name = str.toUtf16().GetData();
+
     s_critsect.Enter();
     {
         // Start the lookup thread if it wasn't started already

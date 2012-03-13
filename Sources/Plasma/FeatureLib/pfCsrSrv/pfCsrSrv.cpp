@@ -115,9 +115,8 @@ static bool QueryAccept (
     SimpleNetConn *     ,
     const NetAddress &  addr
 ) {
-    wchar_t str[64];
-    NetAddressToString(addr, str, arrsize(str), kNetAddressFormatAll);
-    LogMsg(kLogPerf, L"pfCsrSrv: Accepted connection from %s", str);
+    plString str = addr.AsString();
+    LogMsg(kLogPerf, L"pfCsrSrv: Accepted connection from %s", str.c_str());
     return channel == kSimpleNetChannelCsr;
 }
 
