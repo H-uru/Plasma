@@ -80,11 +80,6 @@ enum ENetAddressFormat {
     kNumNetAddressFormats
 };
 
-int NetAddressCompare (const NetAddress & a1, const NetAddress & a2);
-inline bool NetAddressEqual (const NetAddress & a1, const NetAddress & a2) {
-    return NetAddressCompare(a1, a2) == 0;
-}
-
 void NetAddressToString (
     const NetAddress &  addr, 
     wchar_t *             str, 

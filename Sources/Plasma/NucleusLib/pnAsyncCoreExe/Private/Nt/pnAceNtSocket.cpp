@@ -177,7 +177,7 @@ static bool ListenPortIncrement (
 ) {
     NtListener * listener;
     for (listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
-        if (!NetAddressEqual(listener->addr, listenAddr))
+        if (listener->addr != listenAddr)
             continue;
         if (listener->notifyProc != notifyProc)
             continue;

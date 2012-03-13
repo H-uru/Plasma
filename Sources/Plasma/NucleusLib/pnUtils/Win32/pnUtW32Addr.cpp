@@ -95,15 +95,6 @@ static NetAddressNode NodeFromString (const wchar_t * string[]) {
 ***/
 
 //===========================================================================
-int NetAddressCompare (const NetAddress & a1, const NetAddress & a2) {
-    const sockaddr_in & i1 = * (const sockaddr_in *) &a1;
-    const sockaddr_in & i2 = * (const sockaddr_in *) &a2;
-
-    int   d = i1.sin_addr.S_un.S_addr - i2.sin_addr.S_un.S_addr;
-    return d ? d : i1.sin_port - i2.sin_port;
-}
-
-//===========================================================================
 void NetAddressToString (
     const NetAddress &  addr, 
     wchar_t *             str, 
