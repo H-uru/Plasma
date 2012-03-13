@@ -79,6 +79,13 @@ public:
     plNetAddress(const char* addr, uint16_t port);
     virtual ~plNetAddress(){}
 
+    bool operator==(const plNetAddress& other) const {
+        return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
+    }
+    bool operator!=(const plNetAddress& other) const {
+        return !(*this == other);
+    }
+
     void Clear();
 
     bool SetAnyAddr();
