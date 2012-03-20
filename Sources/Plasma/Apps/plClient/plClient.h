@@ -290,6 +290,7 @@ public:
     virtual void WindowActivate(bool active);
     virtual hsBool WindowActive() const { return fWindowActive; }
 
+    void FlashWindow();
     void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);
