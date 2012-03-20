@@ -168,6 +168,10 @@ static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
 static plAudioSystem* gAudio = nil;
 
+#ifdef HS_BUILD_FOR_WIN32
+extern ITaskbarList3* gTaskbarList;
+#endif
+
 hsBool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance=nil;
@@ -1290,6 +1294,21 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
 {
     if(!fInstance)
         return;
+
+    // Increments the taskbar progress [Windows 7+]
+#ifdef HS_BUILD_FOR_WIN32
+    if (gTaskbarList)
+    {
+        HWND hwnd = fInstance->GetWindowHandle(); // lazy
+        if (progress->IsLastUpdate())
+            gTaskbarList->SetProgressState(hwnd, TBPF_NOPROGRESS);
+        else if (progress->GetMax() == 0.f)
+            gTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
+        else
+            // This will set TBPF_NORMAL for us
+            gTaskbarList->SetProgressValue(hwnd, (ULONGLONG)progress->GetProgress(), (ULONGLONG)progress->GetMax());
+    }
+#endif
 
     fInstance->fMessagePumpProc();
 
