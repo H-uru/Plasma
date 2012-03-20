@@ -772,6 +772,11 @@ hsBool plClient::MsgReceive(plMessage* msg)
             }
             break;
 
+        case plClientMsg::kFlashWindow:
+            {
+                FlashWindow();
+            }
+            break;
         }
         return true;
     }
@@ -2437,6 +2442,17 @@ void plClient::WindowActivate(bool active)
     fWindowActive = active;
 }
 
+void plClient::FlashWindow()
+{
+#ifdef HS_BUILD_FOR_WIN32
+    FLASHWINFO info;
+    info.cbSize = sizeof(info);
+    info.dwFlags = FLASHW_TIMERNOFG | FLASHW_ALL;
+    info.hwnd = fWindowHndl;
+    info.uCount = -1;
+    FlashWindowEx(&info);
+#endif
+}
 
 //============================================================================
 void plClient::IOnAsyncInitComplete () {

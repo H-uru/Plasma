@@ -94,6 +94,8 @@ public:
         kEnableRenderScene,
         kResetGraphicsDevice,
         kSetGraphicsDefaults,
+
+        kFlashWindow,
     };
 
     // graphics settings fields
