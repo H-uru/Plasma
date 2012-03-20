@@ -868,8 +868,8 @@ hsBool plClient::MsgReceive(plMessage* msg)
     // plResPatcherMsg
     //============================================================================
     if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
-        plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
-        IOnAsyncInitComplete();
+        IHandlePatcherMsg(resMsg);
+        return true;
     }
 
     return hsKeyedObject::MsgReceive(msg);
@@ -1300,7 +1300,10 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
     if (gTaskbarList)
     {
         HWND hwnd = fInstance->GetWindowHandle(); // lazy
-        if (progress->IsLastUpdate())
+        if (progress->IsAborting())
+            // We'll assume this is fatal
+            gTaskbarList->SetProgressState(hwnd, TBPF_ERROR);
+        else if (progress->IsLastUpdate())
             gTaskbarList->SetProgressState(hwnd, TBPF_NOPROGRESS);
         else if (progress->GetMax() == 0.f)
             gTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
@@ -2548,6 +2551,18 @@ void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
     }
     
     IPatchGlobalAgeFiles();
+}
+
+//============================================================================
+void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
+    plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
+
+    if (!msg->Success()) {
+        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError());
+        return;
+    }
+
+    IOnAsyncInitComplete();
 }
 
 //============================================================================

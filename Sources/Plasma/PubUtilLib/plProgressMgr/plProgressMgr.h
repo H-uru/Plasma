@@ -153,6 +153,7 @@ class plOperationProgress
         // progress bars above this one know to adjust their totals to not include any amount
         // that wasn't completed, and will set this progress bar to zero
         void SetAborting();
+        bool IsAborting() { return hsCheckBits(fFlags, kAborting); }
         // If you're reusing an existing progress bar to retry a failed operation, call this.
         // It will set the retry flag, and reset the progress bar so the next update will
         // count as the first.  If you set retry in RegisterOperation, don't use this too.
