@@ -7044,6 +7044,10 @@ class xKI(ptModifier):
             else:
                 headerColor = ChatHeaderBroadcastColor
                 pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
+        # if we're forcing the KI open, then it would probably be a good idea to flash
+        # the client window (usually happens with PMs and CCR/admin messages)
+        if forceKI:
+            PtFlashWindow()
         # make sure the miniKI is up, if needs to be forced up
         if forceKI and not IKIDisabled and not mKIdialog.isEnabled():
             mKIdialog.show()
@@ -10364,6 +10368,7 @@ class xKI(ptModifier):
         global AlertTimeToUse
         if not PtIsSinglePlayerMode():
             if theKILevel >= kNormalKI:
+                PtFlashWindow()
                 if not AlertTimerActive:
                     PtDebugPrint("xKI: show KI alert",level=kDebugDumpLevel)
                     NewItemAlert.dialog.show()
