@@ -18,7 +18,6 @@ set(plNetClient_SOURCES
     plNetClientMgrVoice.cpp
     plNetClientMsgHandler.cpp
     plNetClientMsgScreener.cpp
-    plNetClientStats.cpp
     plNetLinkingMgr.cpp
     plNetObjectDebugger.cpp
     plNetVoiceList.cpp
@@ -33,7 +32,6 @@ set(plNetClient_HEADERS
     plNetClientMgr.h
     plNetClientMsgHandler.h
     plNetClientMsgScreener.h
-    plNetClientStats.h
     plNetLinkingMgr.h
     plNetObjectDebugger.h
     plNetVoiceList.h
