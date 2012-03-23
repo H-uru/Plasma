@@ -62,8 +62,8 @@ class pyPlayer
 protected:
     plKey           fAvatarKey;
     std::string     fPlayerName;
-    uint32_t          fPlayerID;
-    float        fDistSq;            // from local player, temp
+    uint32_t        fPlayerID;
+    float           fDistSq;            // from local player, temp
     hsBool          fIsCCR;
     hsBool          fIsServer;
 
