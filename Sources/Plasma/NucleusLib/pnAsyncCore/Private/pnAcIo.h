@@ -103,8 +103,8 @@ struct AsyncNotifySocket {
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
-    NetAddress      localAddr;
-    NetAddress      remoteAddr;
+    plNetAddress    localAddr;
+    plNetAddress    remoteAddr;
     unsigned        connType;
 };
 
@@ -113,7 +113,7 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     unsigned        buildType;
     unsigned        branchId;
     Uuid            productId;
-    NetAddress      addr;
+    plNetAddress    addr;
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;

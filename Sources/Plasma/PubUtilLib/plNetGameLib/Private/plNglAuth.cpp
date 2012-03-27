@@ -1528,7 +1528,7 @@ static void Connect (
 //============================================================================
 static void Connect (
     const char          name[],
-    const NetAddress &  addr
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
@@ -5146,7 +5146,7 @@ void NetCliAuthStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr(authAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(authAddrList[i], kNetDefaultClientPort);
             Connect(authAddrList[i], addr);
         }
     }

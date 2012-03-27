@@ -90,7 +90,7 @@ struct CliGkConn : AtomicRef {
     AsyncSocket     sock;
     NetCli *        cli;
     char            name[MAX_PATH];
-    NetAddress      addr;
+    plNetAddress    addr;
     Uuid            token;
     unsigned        seq;
     unsigned        serverChallenge;
@@ -464,7 +464,7 @@ static void Connect (
 //============================================================================
 static void Connect (
     const char          name[],
-    const NetAddress &  addr
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
@@ -483,7 +483,7 @@ static void AsyncLookupCallback (
     void *              param,
     const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
@@ -1076,7 +1076,7 @@ void NetCliGateKeeperStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr(gateKeeperAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(gateKeeperAddrList[i], kNetDefaultClientPort);
             Connect(gateKeeperAddrList[i], addr);
         }
     }

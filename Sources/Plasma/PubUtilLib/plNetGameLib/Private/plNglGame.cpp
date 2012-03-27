@@ -62,7 +62,7 @@ struct CliGmConn : AtomicRef {
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
     NetCli *        cli;
-    NetAddress      addr;
+    plNetAddress    addr;
     unsigned        seq;
     bool            abandoned;
 
@@ -354,7 +354,7 @@ static bool SocketNotifyCallback (
 
 //============================================================================
 static void Connect (
-    const NetAddress &  addr
+    const plNetAddress& addr
 ) {
     CliGmConn * conn = NEWZERO(CliGmConn);
     conn->addr              = addr;

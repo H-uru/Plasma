@@ -89,7 +89,7 @@ static unsigned                 s_nextLookupCancelId = 1;
 //===========================================================================
 static void LookupProcess (Lookup * lookup, unsigned error) {
     unsigned count      = 0;
-    NetAddress * addrs  = nil;
+    plNetAddress* addrs  = nil;
 
     if (error)
         return;
@@ -109,8 +109,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
         ++count;
 
     // allocate a buffer large enough to hold all the addresses
-    addrs = (NetAddress *)malloc(sizeof(*addrs) * count);
-    memset(addrs, 0, sizeof(*addrs) * count);
+    addrs = new plNetAddress[count];
 
     // fill in address data
     const uint16_t port = htons((uint16_t) lookup->port);
@@ -134,7 +133,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     delete lookup;
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 
-    free(addrs);
+    delete[] addrs;
 }
 
 //===========================================================================
@@ -326,7 +325,7 @@ void AsyncAddressLookupName (
 void AsyncAddressLookupAddr (
     AsyncCancelId *     cancelId,   // out
     FAsyncLookupProc    lookupProc,
-    const NetAddress &  address,
+    const plNetAddress& address,
     void *              param
 ) {
     ASSERT(lookupProc);

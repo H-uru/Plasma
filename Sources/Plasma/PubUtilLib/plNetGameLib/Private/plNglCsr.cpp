@@ -73,7 +73,7 @@ struct CliCsConn : AtomicRef {
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
     NetCli *        cli;
-    NetAddress      addr;
+    plNetAddress    addr;
     unsigned        seq;
     bool            abandoned;
     unsigned        serverChallenge;
@@ -369,7 +369,7 @@ static bool SocketNotifyCallback (
 
 //============================================================================
 static void Connect (
-    const NetAddress &  addr,
+    const plNetAddress& addr,
     ConnectParam *      cp
 ) {
     CliCsConn * conn = NEWZERO(CliCsConn);
@@ -415,7 +415,7 @@ static void AsyncLookupCallback (
     void *              param,
     const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
@@ -860,8 +860,8 @@ void NetCliCsrStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr(addrList[i], kNetDefaultClientPort);
-            
+            plNetAddress addr(addrList[i], kNetDefaultClientPort);
+
             ConnectParam * cp = new ConnectParam;
             cp->callback    = callback;
             cp->param       = param;

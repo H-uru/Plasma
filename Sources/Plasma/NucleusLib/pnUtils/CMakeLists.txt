@@ -5,7 +5,6 @@ set(pnUtils_HEADERS
     Pch.h
     pnUtils.h
     pnUtCoreLib.h
-    pnUtAddr.h
     pnUtAllIncludes.h
     pnUtArray.h
     pnUtCmd.h
