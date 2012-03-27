@@ -286,7 +286,7 @@ static bool AsyncNotifySocketProc (
             s_critsect.Lock();
             {
                 std::map<uint32_t, SimpleNetChannel*>::iterator it;
-                if ((it = s_channels.find(conn->channelId)) != s_channels.end()) {
+                if ((it = s_channels.find(connect.channelId)) != s_channels.end()) {
                     channel = it->second;
                     channel->IncRef();
                 }

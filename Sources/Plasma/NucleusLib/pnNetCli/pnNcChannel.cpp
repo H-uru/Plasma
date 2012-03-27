@@ -254,10 +254,10 @@ static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
     std::list<NetMsgChannel*>::iterator it = s_channels->begin();
     for (; it != s_channels->end(); ++it) {
         if (((*it)->m_protocol == protocol) && ((*it)->m_server == server))
-            break;
+            return *it;
     }
 
-    return *it;
+    return nil;
 }
 
 //===========================================================================

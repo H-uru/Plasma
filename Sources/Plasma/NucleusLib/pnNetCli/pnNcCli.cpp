@@ -309,7 +309,7 @@ static void BufferedSendData (
                 else
                 {
                     // Value arrays are passed in by ptr
-                    for (int i = 0; i < count; i++) {
+                    for (size_t i = 0; i < count; i++) {
                         if (cmd->size == sizeof(uint8_t)) {
                             ((uint8_t*)temp)[i] = ((uint8_t*)*msg)[i];
                         } else if (cmd->size == sizeof(uint16_t)) {
@@ -449,7 +449,7 @@ static bool DispatchData (NetCli * cli, void * param) {
 
                     // byte-swap integers
                     // This is so screwed up >.<
-                    for (int i = 0; i < count; i++) {
+                    for (size_t i = 0; i < count; i++) {
                         if (cli->recvField->size == sizeof(uint16_t)) {
                             ((uint16_t*)data)[i] = hsToLE16(((uint16_t*)data)[i]);
                         } else if (cli->recvField->size == sizeof(uint32_t)) {
