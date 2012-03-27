@@ -79,7 +79,7 @@ typedef uint32_t NetAddressNode;
 bool NetAddressFromString (
     NetAddress *    addr,
     const wchar_t     str[],
-    unsigned        defaultPort
+    uint16_t        defaultPort
 );
 
 #endif

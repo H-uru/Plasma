@@ -342,7 +342,7 @@ void AsyncAddressLookupAddr (
     lookup->param           = param;
 
     plString str = address.GetHostString();
-    lookup->name = str.toUtf16().GetData();
+    wcsncpy(lookup->name, (const wchar_t*)str.ToUtf16().GetData(), 127);
 
     s_critsect.Enter();
     {

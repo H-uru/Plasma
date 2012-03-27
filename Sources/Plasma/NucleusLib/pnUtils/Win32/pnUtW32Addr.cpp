@@ -95,13 +95,10 @@ static NetAddressNode NodeFromString (const wchar_t * string[]) {
 ***/
 
 //===========================================================================
-bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defaultPort) {
+bool NetAddressFromString (NetAddress * addr, const wchar_t str[], uint16_t defaultPort) {
     ASSERT(addr);
     ASSERT(str);
 
-    // NetAddress is bigger than sockaddr_in so start by zeroing the whole thing
-    memset(addr, 0, sizeof(*addr));
-    
     for (;;) {
         NetAddressNode node = NodeFromString(&str);
         if (node == (unsigned)-1)
@@ -110,12 +107,8 @@ bool NetAddressFromString (NetAddress * addr, const wchar_t str[], unsigned defa
         if (*str == L':')
             defaultPort = StrToUnsigned(str + 1, nil, 10);
    
-        sockaddr_in * inetaddr          = (sockaddr_in *) addr;
-        inetaddr->sin_family            = AF_INET;
-        inetaddr->sin_port              = htons((uint16_t) defaultPort);
-        inetaddr->sin_addr.S_un.S_addr  = htonl(node);
-        // inetaddr->sin_zero already zeroed
-
+        addr->SetPort((uint16_t)defaultPort);
+        addr->SetHostLE(node);
         return true;
     }
 

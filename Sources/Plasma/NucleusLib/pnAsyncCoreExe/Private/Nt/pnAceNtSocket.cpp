@@ -638,7 +638,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
             }
         }
 
-        if (connect(s, (const sockaddr *) &addr, sizeof(addr))) {
+        if (connect(s, (const sockaddr *) &addr.GetAddressInfo(), sizeof(AddressType))) {
             if (WSAGetLastError() != WSAEWOULDBLOCK) {
                 LogMsg(kLogError, "sockegt connect failed");
                 break;
