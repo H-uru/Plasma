@@ -540,13 +540,13 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         );
     */
 
-        NetAddressNode  node = listenAddr->GetHost();
-        unsigned        port = listenAddr->GetPort();
+        uint32_t node = listenAddr->GetHost();
+        uint16_t port = listenAddr->GetPort();
 
         // bind socket to port
         sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port   = htons((uint16_t)port);
+        addr.sin_port   = htons(port);
         addr.sin_addr.S_un.S_addr = node;
         memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {

@@ -39,7 +39,6 @@ set(pnUtils_SOURCES
 
 if(WIN32)
     set(pnUtils_WIN32
-        Win32/pnUtW32Addr.cpp
         Win32/pnUtW32Misc.cpp
         Win32/pnUtW32Path.cpp
         Win32/pnUtW32Str.cpp

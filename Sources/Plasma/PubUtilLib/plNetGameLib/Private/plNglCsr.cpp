@@ -413,7 +413,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
     const NetAddress    addrs[]
 ) {
@@ -830,8 +830,8 @@ unsigned CsrGetConnId () {
 
 //============================================================================
 void NetCliCsrStartConnect (
-    const wchar_t *               addrList[],
-    unsigned                    addrCount,
+    const char*                 addrList[],
+    uint32_t                    addrCount,
     FNetCliCsrConnectedCallback callback,
     void *                      param
 ) {
@@ -840,7 +840,7 @@ void NetCliCsrStartConnect (
 
     for (unsigned i = 0; i < addrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = addrList[i];
+        const char* name = addrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -860,8 +860,7 @@ void NetCliCsrStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, addrList[i], kNetDefaultClientPort);
+            NetAddress addr(addrList[i], kNetDefaultClientPort);
             
             ConnectParam * cp = new ConnectParam;
             cp->callback    = callback;

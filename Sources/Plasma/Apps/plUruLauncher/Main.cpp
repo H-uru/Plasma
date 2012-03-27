@@ -609,7 +609,7 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *)
 //============================================================================
 static void StatusCallback(void *)
 {
-    char *serverUrl = hsWStringToString(GetServerStatusUrl());
+    const char *serverUrl = GetServerStatusUrl();
 
     CURL * hCurl = curl_easy_init();
     curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, s_curlError);
@@ -631,7 +631,6 @@ static void StatusCallback(void *)
     }
 
     curl_easy_cleanup(hCurl);
-    delete [] serverUrl;
 
     s_statusEvent.Signal();
 }
