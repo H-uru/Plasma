@@ -65,7 +65,7 @@ struct CliFileConn : AtomicRef {
     CLock               sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
     char                name[MAX_PATH];
-    NetAddress          addr;
+    plNetAddress        addr;
     unsigned            seq;
     ARRAY(uint8_t)         recvBuffer;
     AsyncCancelId       cancelId;
@@ -540,7 +540,7 @@ static void Connect (CliFileConn * conn) {
 //============================================================================
 static void Connect (
     const char          name[],
-    const NetAddress &  addr
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
@@ -561,7 +561,7 @@ static void AsyncLookupCallback (
     void *              param,
     const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
@@ -1362,7 +1362,7 @@ void NetCliFileStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr(fileAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(fileAddrList[i], kNetDefaultClientPort);
             Connect(fileAddrList[i], addr);
         }
     }
@@ -1399,7 +1399,7 @@ void NetCliFileStartConnectAsServer (
             }
         }
         if (!name[0]) {
-            NetAddress addr(fileAddrList[i], kNetDefaultServerPort);
+            plNetAddress addr(fileAddrList[i], kNetDefaultServerPort);
             Connect(fileAddrList[i], addr);
         }
     }

@@ -113,7 +113,7 @@ static bool QueryAccept (
     void *              ,
     unsigned            channel,
     SimpleNetConn *     ,
-    const NetAddress &  addr
+    const plNetAddress&  addr
 ) {
     plString str = addr.AsString();
     LogMsg(kLogPerf, L"pfCsrSrv: Accepted connection from %s", str.c_str());

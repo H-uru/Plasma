@@ -191,7 +191,7 @@ void NtWaitForShutdown ();
 void NtSleep (unsigned sleepMs);
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
@@ -228,11 +228,11 @@ void NtSocketSetBacklogAlloc (
     unsigned        bufferSize
 );
 unsigned NtSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 void NtSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 void NtSocketEnableNagling (
