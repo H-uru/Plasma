@@ -1109,7 +1109,7 @@ void StatusCallback(void *param)
 {
     HWND hwnd = (HWND)param;
 
-    char *statusUrl = hsWStringToString(GetServerStatusUrl());
+    const char *statusUrl = GetServerStatusUrl();
     CURL *hCurl = curl_easy_init();
 
     // For reporting errors
@@ -1133,7 +1133,6 @@ void StatusCallback(void *param)
     }
 
     curl_easy_cleanup(hCurl);
-    delete [] statusUrl;
 
     s_statusEvent.Signal(); // Signal the semaphore
 }
@@ -1254,8 +1253,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_GAMETAPLINK)
             {
-                const wchar_t *signupurl = GetServerSignupUrl();
-                ShellExecuteW(NULL, L"open", signupurl, NULL, NULL, SW_SHOWNORMAL);
+                const char* signupurl = GetServerSignupUrl();
+                ShellExecuteA(NULL, "open", signupurl, NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }
@@ -1461,25 +1460,27 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     memset(&si, 0, sizeof(si));
     memset(&pi, 0, sizeof(pi));
     si.cb = sizeof(si);
-    wchar_t cmdLine[MAX_PATH];
-    const wchar_t ** addrs;
+
+    plStringStream cmdLine;
+    const char** addrs;
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        StrCopy(cmdLine, s_patcherExeName, arrsize(cmdLine));
+        cmdLine << _TEMP_CONVERT_FROM_WCHAR_T(s_patcherExeName);
+
         GetAuthSrvHostnames(&addrs);
-        if(wcslen(addrs[0]))
-            StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /AuthSrv=%ws", cmdLine, addrs[0]);
+        if(strlen(addrs[0]))
+            cmdLine << plString::Format(" /AuthSrv=%s", addrs[0]);
 
         GetFileSrvHostnames(&addrs);
-        if(wcslen(addrs[0]))
-            StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /FileSrv=%ws", cmdLine, addrs[0]);
+        if(strlen(addrs[0]))
+            cmdLine << plString::Format(" /FileSrv=%s", addrs[0]);
 
         GetGateKeeperSrvHostnames(&addrs);
-        if(wcslen(addrs[0]))
-            StrPrintf(cmdLine, arrsize(cmdLine), L"%ws /GateKeeperSrv=%ws", cmdLine, addrs[0]);
+        if(strlen(addrs[0]))
+            cmdLine << plString::Format(" /GateKeeperSrv=%s", addrs[0]);
 
-        if(!CreateProcessW(NULL, cmdLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+        if(!CreateProcessW(NULL, (LPWSTR)cmdLine.GetString().ToUtf16().GetData(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         {
             hsMessageBox("Failed to launch patcher", "Error", hsMessageBoxNormal);
         }

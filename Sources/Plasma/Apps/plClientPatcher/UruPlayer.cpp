@@ -840,7 +840,9 @@ static void FileSrvIpAddressCallback (
     plLauncherInfo *info = (plLauncherInfo *) param;
 
     // Start connecting to the server
-    NetCliFileStartConnect(&addr, 1, true);
+    const char* caddr = hsWStringToString(addr);
+    NetCliFileStartConnect(&caddr, 1, true);
+    delete[] caddr;
 
     NetCliFileManifestRequest(ThinManifestCallback, info, s_thinmanifest, info->buildId);
 
@@ -902,7 +904,7 @@ void UruPrepProc (void * param) {
     s_patchComplete = false;
     s_patchError = false;
 
-    const wchar_t ** addrs;
+    const char** addrs;
     unsigned count;
 
     count = GetGateKeeperSrvHostnames(&addrs);

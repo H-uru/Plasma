@@ -62,8 +62,8 @@ typedef void (*FNetCliCsrConnectedCallback) (
     unsigned    latestBuildId
 );
 void NetCliCsrStartConnect (
-    const wchar_t *               addrList[],
-    unsigned                    addrCount,
+    const char*                 addrList[],
+    uint32_t                    addrCount,
     FNetCliCsrConnectedCallback callback = nil,
     void *                      param = nil
 );

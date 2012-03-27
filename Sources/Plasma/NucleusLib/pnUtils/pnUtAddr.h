@@ -50,36 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-/*****************************************************************************
-*
-*   Types and constants
-*
-***/
-
-
-/*struct NetAddress {
-    uint8_t data[24];
-};
-
-typedef unsigned NetAddressNode;*/
-
 #include "pnNetCommon/plNetAddress.h"
 
 typedef plNetAddress NetAddress;
-typedef uint32_t NetAddressNode;
-
-/*****************************************************************************
-*
-*   Functions
-*
-***/
-
-// 'str' must be in the form of a dotted IP address (IPv4 or IPv6)
-// - names which require DNS lookup will cause the function to return false
-bool NetAddressFromString (
-    NetAddress *    addr,
-    const wchar_t     str[],
-    uint16_t        defaultPort
-);
 
 #endif

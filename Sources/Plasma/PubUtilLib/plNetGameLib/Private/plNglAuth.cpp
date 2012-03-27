@@ -90,7 +90,7 @@ struct CliAuConn : AtomicRef {
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar_t         name[MAX_PATH];
+    char            name[MAX_PATH];
     plNetAddress    addr;
     Uuid            token;
     unsigned        seq;
@@ -197,7 +197,7 @@ struct AgeRequestTrans : NetAuthTrans {
     unsigned                            m_ageMcpId;
     Uuid                                m_ageInstId;
     unsigned                            m_ageVaultId;
-    NetAddressNode                      m_gameSrvNode;
+    uint32_t                            m_gameSrvNode;
 
     AgeRequestTrans (
         const wchar_t                         ageName[],
@@ -1527,7 +1527,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const wchar_t         name[],
+    const char          name[],
     const NetAddress &  addr
 ) {
     ASSERT(s_running);
@@ -1536,7 +1536,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    StrCopy(conn->name, name, arrsize(conn->name));
+    strncpy(conn->name, name, arrsize(conn->name));
 
     conn->IncRef("Lifetime");
     conn->AutoReconnect();
@@ -1545,7 +1545,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t       name[],
+    const char          name[],
     unsigned            addrCount,
     const plNetAddress  addrs[]
 ) {
@@ -5121,8 +5121,8 @@ void AuthPingEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthStartConnect (
-    const wchar_t *   authAddrList[],
-    unsigned        authAddrCount
+    const char*     authAddrList[],
+    uint32_t        authAddrCount
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
     // to choose the "best" auth connection.
@@ -5130,7 +5130,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = authAddrList[i];
+        const char* name = authAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -5146,8 +5146,7 @@ void NetCliAuthStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, authAddrList[i], kNetDefaultClientPort);
+            NetAddress addr(authAddrList[i], kNetDefaultClientPort);
             Connect(authAddrList[i], addr);
         }
     }

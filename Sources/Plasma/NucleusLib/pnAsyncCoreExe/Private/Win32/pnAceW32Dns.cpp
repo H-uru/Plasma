@@ -69,7 +69,7 @@ struct Lookup {
     FAsyncLookupProc    lookupProc;
     unsigned            port;
     void *              param;
-    wchar_t               name[kMaxLookupName];
+    char                name[kMaxLookupName];
     char                buffer[MAXGETHOSTSTRUCT];
 };
 
@@ -122,7 +122,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     }
 
     if (host.h_name && host.h_name[0])
-        StrToUnicode(lookup->name, host.h_name, arrsize(lookup->name));
+        strncpy(lookup->name, host.h_name, arrsize(lookup->name));
 
     if (lookup->lookupProc)
         lookup->lookupProc(lookup->param, lookup->name, count, addrs);
@@ -271,7 +271,7 @@ void DnsDestroy (unsigned exitThreadWaitMs) {
 void AsyncAddressLookupName (
     AsyncCancelId *     cancelId,   // out
     FAsyncLookupProc    lookupProc,
-    const wchar_t         name[], 
+    const char*         name, 
     unsigned            port, 
     void *              param
 ) {
@@ -282,9 +282,8 @@ void AsyncAddressLookupName (
     PerfAddCounter(kAsyncPerfNameLookupAttemptsTotal, 1);
 
     // Get name/port
-    char ansiName[kMaxLookupName];
-    StrToAnsi(ansiName, name, arrsize(ansiName));
-    if (char * portStr = StrChr(ansiName, ':')) {
+    char* ansiName = strdup(name);
+    if (char* portStr = StrChr(ansiName, ':')) {
         if (unsigned newPort = StrToUnsigned(portStr + 1, nil, 10))
             port = newPort;
         *portStr = 0;
@@ -295,7 +294,7 @@ void AsyncAddressLookupName (
     lookup->lookupProc      = lookupProc;
     lookup->port            = port;
     lookup->param           = param;
-    StrCopy(lookup->name, name, arrsize(lookup->name));
+    strncpy(lookup->name, name, arrsize(lookup->name));
 
     s_critsect.Enter();
     {
@@ -312,7 +311,7 @@ void AsyncAddressLookupName (
         lookup->cancelHandle = WSAAsyncGetHostByName(
             s_lookupWindow, 
             WM_LOOKUP_FOUND_HOST,
-            ansiName,
+            name,
             &lookup->buffer[0],
             sizeof(lookup->buffer)
         );
@@ -342,7 +341,7 @@ void AsyncAddressLookupAddr (
     lookup->param           = param;
 
     plString str = address.GetHostString();
-    wcsncpy(lookup->name, (const wchar_t*)str.ToUtf16().GetData(), 127);
+    strncpy(lookup->name, str.c_str(), arrsize(lookup->name));
 
     s_critsect.Enter();
     {

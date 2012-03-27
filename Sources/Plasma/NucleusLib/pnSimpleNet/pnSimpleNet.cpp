@@ -410,7 +410,7 @@ static void Connect(const plNetAddress& addr, ConnectParam * cp) {
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t       name[],
+    const char          name[],
     unsigned            addrCount,
     const plNetAddress  addrs[]
 ) {
@@ -568,7 +568,7 @@ void SimpleNetDestroyChannel (unsigned channelId) {
 //============================================================================
 void SimpleNetStartConnecting (
     unsigned            channelId,
-    const wchar_t         addr[],
+    const char          addr[],
     FSimpleNetOnConnect onConnect,
     void *              param
 ) {
@@ -593,7 +593,7 @@ void SimpleNetStartConnecting (
     ASSERT(cp->channel);
 
     // Do we need to lookup the address?
-    const wchar_t * name = addr;
+    const char* name = addr;
     while (unsigned ch = *name) {
         ++name;
         if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -610,8 +610,7 @@ void SimpleNetStartConnecting (
         }
     }
     if (!name[0]) {
-        plString saddr = _TEMP_CONVERT_FROM_WCHAR_T(addr);
-        plNetAddress netAddr(saddr.c_str(), kNetDefaultSimpleNetPort);
+        plNetAddress netAddr(addr, kNetDefaultSimpleNetPort);
         Connect(netAddr, cp);
     }
 }
