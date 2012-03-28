@@ -170,6 +170,13 @@ hsSemaphore::~hsSemaphore()
     ::CloseHandle(fSemaH);
 }
 
+hsBool hsSemaphore::TryWait()
+{
+    DWORD result = ::WaitForSingleObject(fSemaH, 0);
+    hsAssert(result != WAIT_ABANDONED, "hsSemaphore -> Abandoned Semaphore");
+    return result == WAIT_OBJECT_0;
+}
+
 hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
