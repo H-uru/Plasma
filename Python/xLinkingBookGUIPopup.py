@@ -363,12 +363,11 @@ class xLinkingBookGUIPopup(ptModifier):
                                             else:
                                                 entry.chronicleSetValue("no")
                                     
-                                    # this book was taken off the personal age bookshelf. Send a note telling to link, and WHO the linker is.
-                                    avatar = PtGetLocalAvatar()   
-                                    myID = PtGetClientIDFromAvatarKey(avatar.getKey())
+                                    # this book was taken off the personal age bookshelf. Send a note telling to link
                                     note = ptNotify(self.key)
                                     note.setActivate(1.0)
-                                    note.addVarNumber("ILink" + "," + SpawnPointName_Dict[event[2]] + "," + SpawnPointTitle_Dict[event[2]], myID)
+                                    note.addVarNumber("ILink" + "," + SpawnPointName_Dict[event[2]] + "," + SpawnPointTitle_Dict[event[2]], -1.0)
+                                    note.netPropagate(0)
                                     note.send()
                             # bye-bye
                     elif event[1] == PtBookEventTypes.kNotifyShow:
