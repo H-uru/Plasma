@@ -107,11 +107,6 @@ uint32_t plNetAddress::GetHost() const
     return fAddr.sin_addr.s_addr;
 }
 
-uint32_t plNetAddress::GetHostLE() const
-{
-    return ntohl(fAddr.sin_addr.s_addr);
-}
-
 plString plNetAddress::GetHostWithPort() const
 {
     plStringStream ss;
@@ -129,13 +124,6 @@ bool plNetAddress::SetHost(const char* hostname)
 bool plNetAddress::SetHost(uint32_t addr)
 {
     memcpy(&fAddr.sin_addr, &addr,sizeof(addr));
-    fAddr.sin_family = AF_INET;
-    return true;
-}
-
-bool plNetAddress::SetHostLE(uint32_t addr)
-{
-    fAddr.sin_addr.s_addr = htonl(addr);
     fAddr.sin_family = AF_INET;
     return true;
 }
