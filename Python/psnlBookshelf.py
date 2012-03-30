@@ -383,17 +383,11 @@ class psnlBookshelf(ptModifier):
                     if event[1] == "IShelveBook" and type(objBookPicked) != type(None):
                         self.IShelveBook()
                         
-                        
                     if event[1].split(",")[0] == "ILink": # parse the spawn point info off the entire note (which comes through as "ILink, SpawnPointName,SpawnPointTitle")
-                        
-                        LinkerID = event[3]
-                        #~ print "LinkerID = ", LinkerID
-                        avatar = PtGetLocalAvatar()   
-                        myID = PtGetClientIDFromAvatarKey(avatar.getKey())
-                        #~ print "myID = ", myID
-                        self.IShelveBook()
-                        if LinkerID == myID:
+                        if event[3] < 0: #legacy check (if > 0 then it's from old code and, therefore, not ours)
+                            self.IShelveBook()
                             
+                            avatar = PtGetLocalAvatar()
                             #reenable First person before linking out
                             cam = ptCamera()
                             cam.enableFirstPersonOverride()
