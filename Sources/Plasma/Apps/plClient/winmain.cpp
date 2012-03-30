@@ -1354,32 +1354,8 @@ BOOL CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
     switch( uMsg )
     {
-        case WM_INITDIALOG:
-            sLastMsg = (char *)lParam;
-            ::SetDlgItemText( hwndDlg, IDC_CRASHINFO, sLastMsg );
-            return true;
-
         case WM_COMMAND:
-            if( wParam == IDC_COPY && sLastMsg != nil )
-            {
-                HGLOBAL copyText = GlobalAlloc( GMEM_DDESHARE, sizeof( TCHAR ) * ( strlen( sLastMsg ) + 1 ) );
-                if( copyText != nil )
-                {
-                    LPTSTR  copyPtr = (LPTSTR)GlobalLock( copyText );
-                    memcpy( copyPtr, sLastMsg, ( strlen( sLastMsg ) + 1 ) * sizeof( TCHAR ) );
-                    GlobalUnlock( copyText );
-
-                    ::OpenClipboard( hwndDlg );
-                    ::EmptyClipboard();
-                    ::SetClipboardData( CF_TEXT, copyText );
-                    ::CloseClipboard();
-                }
-                return true;
-            }
-            else if( wParam == IDOK )
-                EndDialog( hwndDlg, IDOK );
-            else
-                break;
+            EndDialog( hwndDlg, IDOK );
     }
     return 0;
 }
