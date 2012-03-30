@@ -257,9 +257,9 @@ void plUnifiedTime::ToCurrentTime()
     SetToUTC();
 }
 
-hsBool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec, int dst)
+hsBool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec)
 {
-    if( !SetTime( year, month, day, hour, minute, second, usec, dst ) )
+    if( !SetTime( year, month, day, hour, minute, second, usec, 0 ) )
         return false;
 
     fSecs -= IGetLocalTimeZoneOffset();
