@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
+#include "pfCrashHandler/plCrashCli.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plInputCore/plInputManager.h"
@@ -119,6 +120,10 @@ int gWinMenuDY      = GetSystemMetrics( SM_CYCAPTION );
 plClient        *gClient;
 bool            gPendingActivate = false;
 bool            gPendingActivateFlag = false;
+
+#ifndef HS_DEBUGGING
+static plCrashCli s_crash;
+#endif
 
 static bool     s_loginDlgRunning = false;
 static CEvent   s_statusEvent(kEventManualReset);
@@ -1343,10 +1348,6 @@ BOOL CALLBACK SplashDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     return 0;
 }
 
-static char sStackTraceMsg[ 10240 ] = "";
-void printStackTrace( char* buffer, int bufferSize, unsigned long stackPtr = 0, unsigned long opPtr = 0 );
-//void StackTraceFromContext( HANDLE hThread, CONTEXT *context, char *outputBuffer );
-
 BOOL CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     static char *sLastMsg = nil;
@@ -1383,63 +1384,21 @@ BOOL CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
     return 0;
 }
 
-
+#ifndef HS_DEBUGGING
 LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *ExceptionInfo )
 {
-    const char *type = nil;
-    switch( ExceptionInfo->ExceptionRecord->ExceptionCode )
-    {
-        case EXCEPTION_ACCESS_VIOLATION:            type = "Access violation"; break;
-        case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:       type = "Array bounds exceeded"; break;
-        case EXCEPTION_BREAKPOINT:                  type = "Breakpoint"; break;
-        case EXCEPTION_DATATYPE_MISALIGNMENT:       type = "Datatype misalignment"; break;
-        case EXCEPTION_FLT_DENORMAL_OPERAND:        type = "Floating operand denormal"; break;
-        case EXCEPTION_FLT_DIVIDE_BY_ZERO:          type = "Floating-point divide-by-zero"; break;
-        case EXCEPTION_FLT_INEXACT_RESULT:          type = "Floating-point inexact result"; break;
-        case EXCEPTION_FLT_INVALID_OPERATION:       type = "Floating-point invalid operation"; break;
-        case EXCEPTION_FLT_OVERFLOW:                type = "Floating-point overflow"; break;
-        case EXCEPTION_FLT_STACK_CHECK:             type = "Floating-point stack error"; break;
-        case EXCEPTION_FLT_UNDERFLOW:               type = "Floating-point underflow"; break;
-        case EXCEPTION_ILLEGAL_INSTRUCTION:         type = "Illegal instruction"; break;
-        case EXCEPTION_IN_PAGE_ERROR:               type = "Exception in page"; break;
-        case EXCEPTION_INT_DIVIDE_BY_ZERO:          type = "Integer divide-by-zero"; break;
-        case EXCEPTION_INT_OVERFLOW:                type = "Integer overflow"; break;
-        case EXCEPTION_INVALID_DISPOSITION:         type = "Invalid disposition"; break;
-        case EXCEPTION_NONCONTINUABLE_EXCEPTION:    type = "Noncontinuable exception"; break;
-        case EXCEPTION_PRIV_INSTRUCTION:            type = "Private instruction"; break;
-        case EXCEPTION_SINGLE_STEP:                 type = "Single-step"; break;
-        case EXCEPTION_STACK_OVERFLOW:              type = "Stack overflow"; break;
-    }
+    // Before we do __ANYTHING__, pass the exception to plCrashHandler
+    s_crash.ReportCrash(ExceptionInfo);
 
-    char prodName[256];
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-    StrToAnsi(prodName, productString, arrsize(prodName));
+    // Now, try to create a nice exception dialog after plCrashHandler is done.
+    s_crash.WaitForHandle();
+    HWND parentHwnd = (gClient == nil) ? GetActiveWindow() : gClient->GetWindowHandle();
+    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, NULL);
 
-    sprintf( sStackTraceMsg, "%s\r\nException type: %s\r\n", prodName, ( type != nil ) ? type : "(unknown)" );
-
-    printStackTrace( sStackTraceMsg, sizeof( sStackTraceMsg ), ExceptionInfo->ContextRecord->Ebp, (unsigned long)ExceptionInfo->ExceptionRecord->ExceptionAddress );
-
-    /// Print the info out to a log file as well
-    hsUNIXStream    log;
-    wchar_t fileAndPath[MAX_PATH];
-    PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
-    PathAddFilename(fileAndPath, fileAndPath, L"stackDump.log", arrsize(fileAndPath));
-    if( log.Open( fileAndPath, L"wt" ) )
-    {
-        log.WriteString( sStackTraceMsg );
-        log.Close();
-    }
-
-    /// Hopefully we can access this resource, even given the exception (i.e. very-bad-error) we just experienced
-    if(TGIsCider || (::DialogBoxParam( gHInst, MAKEINTRESOURCE( IDD_EXCEPTION ), ( gClient != nil ) ? gClient->GetWindowHandle() : nil,
-                            ExceptionDialogProc, (LPARAM)sStackTraceMsg ) == -1) )
-    {
-        // The dialog failed, so just fallback to a standard message box
-        hsMessageBox( sStackTraceMsg, "UruExplorer Exception", hsMessageBoxNormal );
-    }
+    // Trickle up the handlers
     return EXCEPTION_EXECUTE_HANDLER;
 }
+#endif
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
