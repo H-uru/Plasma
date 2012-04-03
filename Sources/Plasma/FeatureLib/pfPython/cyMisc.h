@@ -67,6 +67,7 @@ class plDisplayMode;
 class plUUID;
 class plFileName;
 struct PipelineParams;
+class plString;
 
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;
