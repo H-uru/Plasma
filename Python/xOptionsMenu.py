@@ -325,16 +325,6 @@ defaultControlCodeBinds = { PlasmaControlKeys.kKeyMoveForward : ( "UpArrow","(un
 
 defaultControlCodeBindsOrdered = [  PlasmaControlKeys.kKeyMoveForward, PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyJump, PlasmaControlKeys.kKeyStrafeLeft, PlasmaControlKeys.kKeyStrafeRight, PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeySetFirstPersonMode, "Game.KIOpenYeeshaBook", "Game.KIHelp", "Game.KIOpenKI", "Game.KITakePicture", "Game.KICreateJournal", PlasmaControlKeys.kKeyPushToTalk, "Game.EnterChatMode", "Game.KICreateMarkerFolder", "Game.KICreateMarker"]
 
-# Thank Wikipedia for these values :P
-kVideoResolutions = {
-    "4:3":      ["800x600", "1024x768", "1152x864", "1280x960", "1600x1200"],
-    "16:9":     ["1280x720", "1366x768", "1600x900", "1920x1080", "2048x1152"],
-    "16:10":    ["1152x720", "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"],
-    "3:2":      ["1280x854"], # PowerBook user?
-    "5:3":      ["1280x768"],
-    "5:4":      ["1280x1024", "1800x1440"],
-}
-
 kVideoQuality = ["Low", "Medium", "High", "Ultra"]
 kVideoTextureQuality = ["Low", "Medium", "High"]
 kVideoAntiAliasing = {"0": 0, "2": 1, "4": 2, "6": 3}
@@ -1643,6 +1633,17 @@ class xOptionsMenu(ptModifier):
                 gammaField.setValue( 0 )
             else:
                 gammaField.setValue( float(GammaVal) )
+
+    def _AspectRatio(self, w, h):
+        """Returns the apropriate aspect ratio for the given resolution"""
+        ratios = ((5, 4), (4, 3), (3, 2), (16, 10), (5, 3), (16, 9), (16, 9.375),)
+        resRatio = float(w) / float(h)
+        for r in ratios:
+            result = float(r[0]) / float(r[1])
+            matchCheck = result / resRatio
+            if matchCheck >= 0.99 and matchCheck <= 1.01:
+                return " [%i:%i]" % (r[0], r[1])
+        return ""
     
     def GetVidResField(self):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
@@ -1651,18 +1652,18 @@ class xOptionsMenu(ptModifier):
     
     def SetVidResField(self, value):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-        for i in kVideoResolutions.keys():
-            if value in kVideoResolutions[i]:
-                videoResField.setString("%s [%s]" % (value, i))
-                break
-        else:
-            print "xOptionsMenu.SetVidResField():\tGot an unexpected resolution: " + value
-            videoResField.setString(value)
+        w, h = value.split("x")
+        label = value + self._AspectRatio(w, h)
+        videoResField.setString(label)
 
     def WriteVideoControls(self, setMode = 0):
         videoField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
         width, height = videoField.getString().split("x")
-        height, trash = height.split(" ")
+        try:
+            height, trash = height.split(" ")
+        except ValueError:
+            # there was no trash after height, so eat the exception
+            pass
         width = int(width)
         height = int(height)
 
@@ -1728,17 +1729,10 @@ class xOptionsMenu(ptModifier):
         windowed = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoWindowedCheckTag)).isChecked()
 
         vidResList = []
-        supported = PtGetSupportedDisplayModes()
-        for i in kVideoResolutions.keys():
-            for j in kVideoResolutions[i]:
-                w, h = j.split('x')
-                if windowed and (int(w) < PtGetDesktopWidth() and int(h) < PtGetDesktopHeight()):
-                    vidResList.append(j)
-                elif (not windowed) and (int(w), int(h)) in supported:
-                    vidResList.append(j)
-                else:
-                    print "xOptionsMenu.GetVideoResList():\tUnsupported resolution: " + j
-
+        for i in PtGetSupportedDisplayModes():
+            if windowed and (i[0] >= PtGetDesktopWidth() and i[1] >= PtGetDesktopHeight()):
+                continue
+            vidResList.append("%ix%i" % (i[0], i[1]))
         vidResList.sort(res_comp)
         return vidResList
 
