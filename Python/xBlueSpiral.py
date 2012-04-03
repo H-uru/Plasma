@@ -119,6 +119,7 @@ class xBlueSpiral(ptResponder):
         self.tableId = 0 # for this one it's zero, cause there is only one table, other script will have a max attribute
         self.gameId = 0 # DIFFERENT from table id. This is the actual ID number of the game, table ID is simply a way to get a game without knowing its gameID
         print "xBlueSpiral: init  version = %d" % self.version
+        random.seed()
 
     ###########################
     def OnFirstUpdate(self):

@@ -82,9 +82,6 @@ class nglnTreeMonkey(ptResponder):
         version = 3
         self.version = version
         print "__init__nglnTreeMonkey v.", version,".0"
-
-    ###########################
-    def OnFirstUpdate(self):
         random.seed()
 
     ###########################

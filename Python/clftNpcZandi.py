@@ -101,7 +101,7 @@ class clftNpcZandi(ptModifier):
         print "__init__clftNpcZandi v.", self.version
         self.NpcName = None
         self.ZandiFace = None
-        
+        random.seed()
 
     def OnFirstUpdate(self):
         self.AlreadyPlayed = 0
@@ -112,8 +112,6 @@ class clftNpcZandi(ptModifier):
         self.PlayWelcome2 = 0
         self.LastSpeech = -1
         self.PlayOnFinish = 0
-
-        random.seed()
 
         vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")

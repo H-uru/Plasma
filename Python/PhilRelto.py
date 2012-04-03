@@ -50,7 +50,6 @@ event manager hooks for phil's personal age
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import random
 
 class PhilRelto(ptResponder):
 

@@ -100,8 +100,6 @@ class xJourneyCloths(ptModifier):
         version = 7
         self.version = version
         print "__init__xJourneyCloths v.", version
-
-    def OnServerInitComplete(self):
         random.seed()
 
     def OnNotify(self,state,id,events):

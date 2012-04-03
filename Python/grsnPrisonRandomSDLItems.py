@@ -84,6 +84,7 @@ class grsnPrisonRandomSDLItems(ptResponder):
         version = 2
         self.version = version
         print "__init__grsnPrisonRandomItems v.", version
+        random.seed()
 
     def OnServerInitComplete(self):
         global AllItems
@@ -93,8 +94,6 @@ class grsnPrisonRandomSDLItems(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         # pick items to display
-        random.seed()
-
         ItemsToPick = random.randint(kMinNumItems, kMaxNumItems)
         AlreadyPicked = [ ]
 

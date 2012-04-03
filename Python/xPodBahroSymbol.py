@@ -84,6 +84,7 @@ class xPodBahroSymbol(ptResponder):
         version = 1
         self.version = version
         print "__init__xPodBahroSymbol v.", version,".0"
+        random.seed()
 
     ###########################
     def OnServerInitComplete(self):
