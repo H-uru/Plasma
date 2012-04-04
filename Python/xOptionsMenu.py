@@ -1294,8 +1294,8 @@ class xOptionsMenu(ptModifier):
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextHeaderTag)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                     else:
                         for res in range(numRes):
-                            if vidRes.getString() == vidResList[res]:
-                                videoField.setValue( float(res) / float(numRes))
+                            if self.GetVidResField() == vidResList[res]:
+                                videoField.setValue(float(res) / float(numRes - 1))
                                 break
 
                 elif tagID == kVideoAntiAliasingSliderTag or tagID == kVideoFilteringSliderTag:
@@ -1635,13 +1635,13 @@ class xOptionsMenu(ptModifier):
                 gammaField.setValue( float(GammaVal) )
 
     def _AspectRatio(self, w, h):
-        """Returns the apropriate aspect ratio for the given resolution"""
+        """Returns the appropriate aspect ratio for the given resolution"""
         ratios = ((5, 4), (4, 3), (3, 2), (16, 10), (5, 3), (16, 9), (16, 9.375),)
-        resRatio = float(w) / float(h)
+        w = float(w) # comes in as string, want float (not int) for division
+        h = float(h)
         for r in ratios:
-            result = float(r[0]) / float(r[1])
-            matchCheck = result / resRatio
-            if matchCheck >= 0.99 and matchCheck <= 1.01:
+            # resolution is within 1 pixel wiggle room in any direction from the exact aspect ratio (needed to recognize 1280x854 as 3:2)
+            if (w+1)/(h-1) >= float(r[0])/float(r[1]) >= (w-1)/(h+1):
                 return " [%i:%i]" % (r[0], r[1])
         return ""
     
