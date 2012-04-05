@@ -1546,7 +1546,7 @@ class xOptionsMenu(ptModifier):
                     videoField.setValue( float(res) / (numRes - 1))
                 else:
                     videoField.setValue( 0 )
-        self.SetVidResField(res)
+        self.SetVidResField(vidRes)
 
     def InitVideoControlsGUI(self):
         xIniDisplay.ReadIni()
