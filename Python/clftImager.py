@@ -147,10 +147,10 @@ class clftImager(ptResponder):
         ptResponder.__init__(self)
         self.id = 50248473
         self.version = 29
+        random.seed()
 
 
     def OnFirstUpdate(self):
-        random.seed()
         #self.ageSDL = PtGetAgeSDL()
         #self.ageSDL.setFlags(stringSDLVarPanelE.value,1,1)
         #self.ageSDL.sendToClients(stringSDLVarPanelE.value)

@@ -80,7 +80,7 @@ class clftYeeshaPageImager(ptModifier):
         self.version = version
         print "__init__clftYeeshaPageImager v.", version
         self.ImagerUsable = 1
-        
+        random.seed()
 
     def OnFirstUpdate(self):
         global PlayFull
@@ -88,7 +88,6 @@ class clftYeeshaPageImager(ptModifier):
         AgeStartedIn = PtGetAgeName()
 
         PtUnloadDialog("YeeshaPageGUI")
-        random.seed()
         self.CloseImager(1)
 
 

@@ -333,6 +333,7 @@ class nxusBookMachine(ptModifier):
         version = 5
         self.version = version
         print "__init__nxusBookMachine v.", version
+        random.seed()
 
         self.guiState = kGUIDeactivated
         self.getBookBtnUp = False

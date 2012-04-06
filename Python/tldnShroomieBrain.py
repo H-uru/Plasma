@@ -113,8 +113,6 @@ class tldnShroomieBrain(ptResponder):
         version = 3
         self.version = version
         print "__init__tldnShroomieBrain v.", version,".2"
-
-    def OnFirstUpdate(self):
         random.seed()
 
     def OnServerInitComplete(self):

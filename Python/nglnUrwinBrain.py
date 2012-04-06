@@ -91,9 +91,6 @@ class nglnUrwinBrain(ptResponder):
         version = 4
         self.version = version
         print "__init__nglnUrwinBrain v.", version,".0"
-
-    ############################
-    def OnFirstUpdate(self):
         random.seed()
 
     ############################
