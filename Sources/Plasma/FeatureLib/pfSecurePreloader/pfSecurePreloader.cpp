@@ -300,6 +300,7 @@ void pfSecurePreloader::Start()
 void pfSecurePreloader::Terminate()
 {
     FATAL("pfSecurePreloader failure");
+    fProgress->SetAborting();
 
     plPreloaderMsg* msg = new plPreloaderMsg;
     msg->fSuccess = false;

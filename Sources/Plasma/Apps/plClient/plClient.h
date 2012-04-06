@@ -82,7 +82,7 @@ class plBinkPlayer;
 class plPreloaderMsg;
 class plNetCommAuthMsg;
 class plAgeLoaded2Msg;
-
+class plResPatcherMsg;
 
 typedef void (*plMessagePumpProc)( void );
 
@@ -179,6 +179,7 @@ protected:
     
     void                    ICompleteInit ();
     void                    IOnAsyncInitComplete ();
+    void                    IHandlePatcherMsg (plResPatcherMsg * msg);
     void                    IHandlePreloaderMsg (plPreloaderMsg * msg);
     void                    IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
     bool                    IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
@@ -289,6 +290,7 @@ public:
     virtual void WindowActivate(bool active);
     virtual hsBool WindowActive() const { return fWindowActive; }
 
+    void FlashWindow();
     void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);

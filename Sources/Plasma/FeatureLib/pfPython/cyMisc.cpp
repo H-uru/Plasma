@@ -721,6 +721,13 @@ void cyMisc::ExcludeRegionSetNow(pyKey& sender, pyKey& exKey, uint16_t state)
     plgDispatch::MsgSend( msg );    // whoosh... off it goes
 }
 
+void cyMisc::FlashWindow()
+{
+    plKey clientKey   = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
+    plClientMsg* pMsg = new plClientMsg(plClientMsg::kFlashWindow);
+    pMsg->Send(clientKey);          // whoosh... off it goes
+}
+
 #include "hsTimer.h"
 /////////////////////////////////////////////////////////////////////////////
 //
