@@ -27,6 +27,7 @@
 #define IDC_PRODUCTSTRING               1033
 #define IDC_STATUS_TEXT                 1034
 #define IDC_HOTKEY1                     1035
+#define IDC_LANGUAGE                    1040
 
 // Next default values for new objects
 // 
