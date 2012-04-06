@@ -246,6 +246,15 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
+    //  Function   : FlashWindow
+    //  PARAMETERS : 
+    //
+    //  PURPOSE    : Flashes the client window if it is not focused
+    //
+    static void FlashWindow();
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
     //  Function   : GetClientName
     //  PARAMETERS : avatar key
     //

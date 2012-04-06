@@ -278,7 +278,10 @@ void plResPatcher::Finish(bool success)
     if (success)
         PatcherLog(kHeader, "--- Patch Completed Successfully ---");
     else
+    {
         PatcherLog(kHeader, "--- Patch Killed by Error ---");
+        fProgress->SetAborting();
+    }
 
     plResPatcherMsg* pMsg = new plResPatcherMsg(success, sLastError);
     pMsg->Send(); // whoosh... off it goes

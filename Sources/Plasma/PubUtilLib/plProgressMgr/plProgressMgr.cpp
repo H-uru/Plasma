@@ -389,7 +389,6 @@ void plOperationProgress::SetAborting()
     hsSetBits(fFlags, kAborting);
     plProgressMgr::GetInstance()->IUpdateCallbackProc(this);
     fMax = fValue = 0.f;
-    hsClearBits(fFlags, kAborting);
 }
 
 void plOperationProgress::SetRetry()

@@ -165,11 +165,9 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     // Tell the user we failed to link.
     // In the future, we might want to try graceful recovery (link back to Relto?)
     if (!params->success) {
-        plNetClientMgr::StaticErrorMsg(params->msg);
-        hsMessageBox(params->msg, "Linking Error", hsMessageBoxNormal, hsMessageBoxIconError);
+        plNetClientApp::GetInstance()->ErrorMsg(params->msg);
 #ifdef PLASMA_EXTERNAL_RELEASE
-        plClientMsg* clientMsg = new plClientMsg(plClientMsg::kQuit);
-        clientMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+        plNetClientApp::GetInstance()->QueueDisableNet(true, params->msg);
 #endif
         return;
     }
