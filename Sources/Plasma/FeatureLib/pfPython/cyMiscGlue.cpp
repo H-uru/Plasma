@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 
+PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flashes the client window if it is not focused");
+
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
 {
     return PyString_FromString(cyMisc::GetAgeName());
@@ -514,6 +516,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
 
 void cyMisc::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
 {
+    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtFlashWindow);
+
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeName);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeInfo);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeTime);

@@ -168,6 +168,10 @@ static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
 static plAudioSystem* gAudio = nil;
 
+#ifdef HS_BUILD_FOR_WIN32
+extern ITaskbarList3* gTaskbarList;
+#endif
+
 hsBool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance=nil;
@@ -768,6 +772,11 @@ hsBool plClient::MsgReceive(plMessage* msg)
             }
             break;
 
+        case plClientMsg::kFlashWindow:
+            {
+                FlashWindow();
+            }
+            break;
         }
         return true;
     }
@@ -864,8 +873,8 @@ hsBool plClient::MsgReceive(plMessage* msg)
     // plResPatcherMsg
     //============================================================================
     if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
-        plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
-        IOnAsyncInitComplete();
+        IHandlePatcherMsg(resMsg);
+        return true;
     }
 
     return hsKeyedObject::MsgReceive(msg);
@@ -1290,6 +1299,24 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
 {
     if(!fInstance)
         return;
+
+    // Increments the taskbar progress [Windows 7+]
+#ifdef HS_BUILD_FOR_WIN32
+    if (gTaskbarList)
+    {
+        HWND hwnd = fInstance->GetWindowHandle(); // lazy
+        if (progress->IsAborting())
+            // We'll assume this is fatal
+            gTaskbarList->SetProgressState(hwnd, TBPF_ERROR);
+        else if (progress->IsLastUpdate())
+            gTaskbarList->SetProgressState(hwnd, TBPF_NOPROGRESS);
+        else if (progress->GetMax() == 0.f)
+            gTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
+        else
+            // This will set TBPF_NORMAL for us
+            gTaskbarList->SetProgressValue(hwnd, (ULONGLONG)progress->GetProgress(), (ULONGLONG)progress->GetMax());
+    }
+#endif
 
     fInstance->fMessagePumpProc();
 
@@ -2415,6 +2442,17 @@ void plClient::WindowActivate(bool active)
     fWindowActive = active;
 }
 
+void plClient::FlashWindow()
+{
+#ifdef HS_BUILD_FOR_WIN32
+    FLASHWINFO info;
+    info.cbSize = sizeof(info);
+    info.dwFlags = FLASHW_TIMERNOFG | FLASHW_ALL;
+    info.hwnd = fWindowHndl;
+    info.uCount = -1;
+    FlashWindowEx(&info);
+#endif
+}
 
 //============================================================================
 void plClient::IOnAsyncInitComplete () {
@@ -2529,6 +2567,18 @@ void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
     }
     
     IPatchGlobalAgeFiles();
+}
+
+//============================================================================
+void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
+    plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
+
+    if (!msg->Success()) {
+        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError());
+        return;
+    }
+
+    IOnAsyncInitComplete();
 }
 
 //============================================================================
