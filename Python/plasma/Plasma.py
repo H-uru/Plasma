@@ -303,6 +303,10 @@ def PtFirstPerson():
     """is the local avatar in first person mode"""
     pass
 
+def PtFlashWindow():
+    """Flashes the client window if it is not focused"""
+    pass
+
 def PtFogSetDefColor(color):
     """Sets default fog color"""
     pass
