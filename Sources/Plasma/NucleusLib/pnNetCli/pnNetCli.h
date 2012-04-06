@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 
+#include "pnEncryption/plBigNum.h"
 
 /*****************************************************************************
 *
@@ -318,20 +319,20 @@ struct NetMsgInitRecv {
 };
 
 void NetMsgProtocolRegister (
-    unsigned                protocol,       // from pnNetBase/pnNbProtocol.h
+    uint32_t                protocol,       // from pnNetBase/pnNbProtocol.h
     bool                    server,
     const NetMsgInitSend    sendMsgs[],     // messages this program can send
-    unsigned                sendMsgCount,
+    uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],     // messages this program can receive
-    unsigned                recvMsgCount,
+    uint32_t                recvMsgCount,
     // Diffie-Hellman keys
-    unsigned                dh_g,
-    const BigNum &          dh_xa,          // client: dh_x     server: dh_a
-    const BigNum &          dh_n
+    uint32_t                dh_g,
+    const plBigNum&         dh_xa,          // client: dh_x     server: dh_a
+    const plBigNum&         dh_n
 );
 
 void NetMsgProtocolDestroy (
-    unsigned                protocol,
+    uint32_t                protocol,
     bool                    server
 );
 

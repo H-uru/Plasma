@@ -89,9 +89,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's status URL"
 ) {
-    wchar_t *wurl = hsStringToWString((const char *)params[0]);
-    SetServerStatusUrl(wurl);
-    delete [] wurl;
+    SetServerStatusUrl(params[0]);
 }
 
 //============================================================================
@@ -101,9 +99,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's new user sign-up URL"
 ) {
-    wchar_t *wurl = hsStringToWString((const char *)params[0]);
-    SetServerSignupUrl(wurl);
-    delete [] wurl;
+    SetServerSignupUrl(params[0]);
 }
 
 //============================================================================
@@ -113,9 +109,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    wchar_t *wname = hsStringToWString((const char *)params[0]);
-    SetServerDisplayName(wname);
-    delete [] wname;
+    SetServerDisplayName(params[0]);
 }
 
 
@@ -130,9 +124,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    wchar_t *wHost = hsStringToWString((const char *)params[0]);
-    SetFileSrvHostname(wHost);
-    delete [] wHost;
+    SetFileSrvHostname(params[0]);
 }
 
 
@@ -147,9 +139,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    wchar_t *wHost = hsStringToWString((const char *)params[0]);
-    SetAuthSrvHostname(wHost);
-    delete [] wHost;
+    SetAuthSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -200,9 +190,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Csr Server address"
 ) {
-    wchar_t *wHost = hsStringToWString((const char *)params[0]);
-    SetCsrSrvHostname(wHost);
-    delete [] wHost;
+    SetCsrSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -294,9 +282,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    wchar_t *wHost = hsStringToWString((const char *)params[0]);
-    SetGateKeeperSrvHostname(wHost);
-    delete [] wHost;
+    SetGateKeeperSrvHostname(params[0]);
 }
 
 //============================================================================

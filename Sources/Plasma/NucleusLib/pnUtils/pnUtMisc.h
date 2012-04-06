@@ -53,16 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Constants
-*
-***/
-
-const wchar_t UNICODE_BOM = 0xfeff;  // Unicode byte-order mark
-const char  UTF8_BOM[]  = "\xef\xbb\xbf";
-
-
-/*****************************************************************************
-*
 *   Module instance functions
 *
 ***/
@@ -82,14 +72,6 @@ const wchar_t * AppGetCommandLine ();
 
 /*****************************************************************************
 *
-*   System info functions
-*
-***/
-void MachineGetName (wchar_t * computerName, unsigned length = 32);
-
-
-/*****************************************************************************
-*
 *   Misc types
 *
 ***/
@@ -101,67 +83,4 @@ typedef void (CDECL * FStateDump)(
     ...
 );
 
-
-/*****************************************************************************
-*
-*   Dll initialization
-*
-***/
-
-#if HS_BUILD_FOR_WIN32
-#define SRV_MODULE_PRE_INIT()                                               \
-    extern BOOL WINAPI PreDllMain (HANDLE handle, DWORD reason, LPVOID);    \
-    extern "C" BOOL (WINAPI *_pRawDllMain)(HANDLE, DWORD, LPVOID) = PreDllMain
-#endif
-
-
-/*****************************************************************************
-*
-*   System status
-*
-***/
-
-struct MemoryStatus {
-    unsigned totalPhysMB;       // total physical memory 
-    unsigned availPhysMB;       // free physical memory
-    unsigned totalPageFileMB;   // total page file size
-    unsigned availPageFileMB;   // free page file size
-    unsigned totalVirtualMB;    // total virtual address space for calling process
-    unsigned availVirtualMB;    // available virtual address space for calling process
-    unsigned memoryLoad;        // 0..100
-};
-void MemoryGetStatus (MemoryStatus * status);
-
-struct DiskStatus {
-    wchar_t       name[16];
-    unsigned    totalSpaceMB;
-    unsigned    freeSpaceMB;
-};
-
-void DiskGetStatus (ARRAY(DiskStatus) * disks);
-
-
-void CpuGetInfo (
-    uint16_t *  cpuCaps,
-    uint32_t * cpuVendor,
-    uint16_t *  cpuSignature
-);
-
-// CPU capability flags
-const unsigned kCpuCap3dNow = 1<<0;
-const unsigned kCpuCapCmov  = 1<<1; // conditional move
-const unsigned kCpuCapEst   = 1<<2; // enhanced speed step
-const unsigned kCpuCapHtt   = 1<<3; // hyperthreading
-const unsigned kCpuCapMmx   = 1<<4; // multimedia extensions
-const unsigned kCpuCapPsn   = 1<<5; // processor serial number
-const unsigned kCpuCapSse   = 1<<6; // streaming SIMD extensions
-const unsigned kCpuCapSse2  = 1<<7;
-const unsigned kCpuCapSse3  = 1<<8;
-const unsigned kCpuCapTsc   = 1<<9; // time stamp counter
-
-// Macros for packing and unpacking CPU signature
-#define CPU_SIGNATURE(family, model, stepping)  ((stepping) | (model << 4) | (family << 8))
-#define CPU_SIGNATURE_FAMILY(sig)               ((sig >> 8) & 0xf)
-#define CPU_SIGNATURE_MODEL(sig)                ((sig >> 4) & 0xf)
-#define CPU_SIGNATURE_STEPPING(sig)             (sig & 0xf)
 #endif

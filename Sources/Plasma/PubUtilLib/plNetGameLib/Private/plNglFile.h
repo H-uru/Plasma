@@ -62,12 +62,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliFileStartConnect (
-    const wchar_t *   fileAddrList[],
+    const char*     fileAddrList[],
     unsigned        fileAddrCount,
     bool            isPatcher = false
 );
 void NetCliFileStartConnectAsServer (
-    const wchar_t *   fileAddrList[],
+    const char*     fileAddrList[],
     unsigned        fileAddrCount,
     unsigned        serverType,
     unsigned        serverBuildId

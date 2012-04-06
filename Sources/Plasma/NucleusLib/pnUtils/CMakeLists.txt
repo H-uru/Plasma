@@ -5,44 +5,32 @@ set(pnUtils_HEADERS
     Pch.h
     pnUtils.h
     pnUtCoreLib.h
-    pnUtAddr.h
     pnUtAllIncludes.h
     pnUtArray.h
-    pnUtBase64.h
-    pnUtBigNum.h
     pnUtCmd.h
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtMath.h
     pnUtMisc.h
     pnUtPath.h
     pnUtPragma.h
     pnUtPriQ.h
-    pnUtRand.h
     pnUtRef.h
     pnUtSort.h
-    pnUtSpareList.h
     pnUtStr.h
     pnUtSync.h
     pnUtTime.h
-    pnUtTls.h
     pnUtUuid.h
 )
 
 set(pnUtils_SOURCES
-    pnUtAddr.cpp
     pnUtArray.cpp
-    pnUtBase64.cpp
-    pnUtBigNum.cpp
     pnUtCmd.cpp
+    pnUtCrypt.cpp
     pnUtHash.cpp
     pnUtList.cpp
-    pnUtMath.cpp
     pnUtMisc.cpp
     pnUtPath.cpp
-    pnUtRand.cpp
-    pnUtSpareList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
     pnUtUuid.cpp
@@ -50,16 +38,12 @@ set(pnUtils_SOURCES
 
 if(WIN32)
     set(pnUtils_WIN32
-        Win32/pnUtW32Addr.cpp
         Win32/pnUtW32Misc.cpp
         Win32/pnUtW32Path.cpp
         Win32/pnUtW32Str.cpp
         Win32/pnUtW32Sync.cpp
         Win32/pnUtW32Time.cpp
         Win32/pnUtW32Uuid.cpp
-
-        pnUtCrypt.cpp
-        pnUtTls.cpp
     )
 else()
     set(pnUtils_UNIX

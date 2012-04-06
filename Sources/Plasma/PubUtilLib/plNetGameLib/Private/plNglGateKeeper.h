@@ -62,8 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const wchar_t *   gateKeeperAddrList[],
-    unsigned        gateKeeperAddrCount
+    const char*   gateKeeperAddrList[],
+    uint32_t      gateKeeperAddrCount
 );
 
 bool NetCliGateKeeperQueryConnected ();

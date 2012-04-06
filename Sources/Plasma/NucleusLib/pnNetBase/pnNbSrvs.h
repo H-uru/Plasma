@@ -84,25 +84,25 @@ enum ESrvType {
 *
 ***/
 
-unsigned GetAuthSrvHostnames (const wchar_t *** addrs);   // returns addrCount
-void SetAuthSrvHostname (const wchar_t addr[]);
+unsigned GetAuthSrvHostnames (const char*** addrs);   // returns addrCount
+void SetAuthSrvHostname (const char addr[]);
 
-unsigned GetFileSrvHostnames (const wchar_t *** addrs);   // returns addrCount
-void SetFileSrvHostname (const wchar_t addr[]);
+unsigned GetFileSrvHostnames (const char*** addrs);   // returns addrCount
+void SetFileSrvHostname (const char addr[]);
 
-unsigned GetCsrSrvHostnames (const wchar_t *** addrs);    // returns addrCount
-void SetCsrSrvHostname (const wchar_t addr[]);
+unsigned GetCsrSrvHostnames (const char*** addrs);    // returns addrCount
+void SetCsrSrvHostname (const char addr[]);
 
-unsigned GetGateKeeperSrvHostnames (const wchar_t *** addrs); // returns addrCount
-void SetGateKeeperSrvHostname (const wchar_t addr[]);
+unsigned GetGateKeeperSrvHostnames (const char*** addrs); // returns addrCount
+void SetGateKeeperSrvHostname (const char addr[]);
 
-const wchar_t *GetServerStatusUrl ();
-void SetServerStatusUrl (const wchar_t url[]);
+const char *GetServerStatusUrl ();
+void SetServerStatusUrl (const char url[]);
 
-const wchar_t *GetServerSignupUrl ();
-void SetServerSignupUrl (const wchar_t url[]);
+const char *GetServerSignupUrl ();
+void SetServerSignupUrl (const char url[]);
 
-const wchar_t *GetServerDisplayName ();
-void SetServerDisplayName (const wchar_t name[]);
+const char *GetServerDisplayName ();
+void SetServerDisplayName (const char name[]);
 
 #endif // pnNbSrvs_inc

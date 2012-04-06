@@ -45,9 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#include "Pch.h"
-#pragma hdrstop
+#include "pnSimpleNet.h"
+#include "hsThread.h"
 
+#include <list>
+#include <map>
 
 /*****************************************************************************
 *
@@ -56,35 +58,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct SimpleNetConn : AtomicRef {
-    LINK(SimpleNetConn)         link;
     AsyncSocket                 sock;
     AsyncCancelId               cancelId;
-    unsigned                    channelId;
+    uint32_t                    channelId;
     bool                        abandoned;
     struct ConnectParam *       connectParam;
 
     SimpleNet_MsgHeader *       oversizeMsg;
-    ARRAY(uint8_t)                 oversizeBuffer;
-
-    ~SimpleNetConn () {
-        ASSERT(!link.IsLinked());
-    }
+    ARRAY(uint8_t)              oversizeBuffer;
 };
 
-struct SimpleNetChannel : AtomicRef, THashKeyVal<unsigned> {
-    HASHLINK(SimpleNetChannel)  link;
-    
+struct SimpleNetChannel : AtomicRef {
     FSimpleNetOnMsg             onMsg;
     FSimpleNetOnError           onError;
-    
-    LISTDECL(SimpleNetConn, link)   conns;
+    uint32_t                    channelId;
+    std::list<SimpleNetConn*>   conns;
 
-    SimpleNetChannel (unsigned channel)
-    : THashKeyVal<unsigned>(channel)
-    { }
+    SimpleNetChannel (uint32_t channel) : channelId(channel) { }
     ~SimpleNetChannel () {
-        ASSERT(!link.IsLinked());
-        ASSERT(!conns.Head());
+        ASSERT(!conns.size());
     }
 };
 
@@ -92,7 +84,7 @@ struct ConnectParam {
     SimpleNetChannel *      channel;
     FSimpleNetOnConnect     callback;
     void *                  param;
-    
+
     ~ConnectParam () {
         if (channel)
             channel->DecRef();
@@ -107,15 +99,10 @@ struct ConnectParam {
 ***/
 
 static bool                         s_running;
-static CCritSect                    s_critsect;
+static hsMutex                      s_critsect;
 static FSimpleNetQueryAccept        s_queryAccept;
 static void *                       s_queryAcceptParam;
-
-static HASHTABLEDECL(
-    SimpleNetChannel,
-    THashKeyVal<unsigned>,
-    link
-) s_channels;
+static std::map<uint32_t, SimpleNetChannel*>    s_channels;
 
 
 /*****************************************************************************
@@ -128,13 +115,13 @@ static HASHTABLEDECL(
 static void NotifyConnSocketConnect (SimpleNetConn * conn) {
 
     conn->TransferRef("Connecting", "Connected");
-    
+
     conn->connectParam->callback(
         conn->connectParam->param,
         conn,
         kNetSuccess
     );
-    
+
     delete conn->connectParam;
     conn->connectParam = nil;
 }
@@ -142,18 +129,21 @@ static void NotifyConnSocketConnect (SimpleNetConn * conn) {
 //============================================================================
 static void NotifyConnSocketConnectFailed (SimpleNetConn * conn) {
 
-    s_critsect.Enter();
+    s_critsect.Lock();
     {
-        conn->link.Unlink();
+        std::map<uint32_t, SimpleNetChannel*>::iterator it;
+        if ((it = s_channels.find(conn->channelId)) != s_channels.end()) {
+            it->second->conns.remove(conn);
+        }
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 
     conn->connectParam->callback(
         conn->connectParam->param,
         nil,
         kNetErrConnectFailed
     );
-    
+
     delete conn->connectParam;
     conn->connectParam = nil;
 
@@ -165,38 +155,44 @@ static void NotifyConnSocketConnectFailed (SimpleNetConn * conn) {
 static void NotifyConnSocketDisconnect (SimpleNetConn * conn) {
 
     bool abandoned;
-    SimpleNetChannel * channel;
-    s_critsect.Enter();
+    SimpleNetChannel* channel = nil;
+    s_critsect.Lock();
     {
         abandoned = conn->abandoned;
-        if (nil != (channel = s_channels.Find(conn->channelId)))
+        std::map<uint32_t, SimpleNetChannel*>::iterator it;
+        if ((it = s_channels.find(conn->channelId)) != s_channels.end()) {
+            channel = it->second;
             channel->IncRef();
-        conn->link.Unlink();
+            channel->conns.remove(conn);
+        }
     }
-    s_critsect.Leave();
-    
+    s_critsect.Unlock();
+
     if (channel && !abandoned) {
         channel->onError(conn, kNetErrDisconnected);
         channel->DecRef();
     }
-    
+
     conn->DecRef("Connected");
 }
 
 //============================================================================
 static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * read) {
 
-    SimpleNetChannel * channel;
-    s_critsect.Enter();
+    SimpleNetChannel* channel = nil;
+    s_critsect.Lock();
     {
-        if (nil != (channel = s_channels.Find(conn->channelId)))
+        std::map<uint32_t, SimpleNetChannel*>::iterator it;
+        if ((it = s_channels.find(conn->channelId)) != s_channels.end()) {
+            channel = it->second;
             channel->IncRef();
+        }
     }
-    s_critsect.Leave();
-    
+    s_critsect.Unlock();
+
     if (!channel)
         return false;
-        
+
     bool result = true;
 
     const uint8_t * curr = read->buffer;
@@ -208,19 +204,19 @@ static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * 
             unsigned spaceLeft = conn->oversizeMsg->messageBytes - conn->oversizeBuffer.Count();
             unsigned copyBytes = min(spaceLeft, term - curr);
             conn->oversizeBuffer.Add(curr, copyBytes);
-            
+
             curr += copyBytes;
 
             // Wait until we have received the entire message
             if (copyBytes != spaceLeft)
                 break;
-                
+
             // Dispatch oversize msg
             if (!channel->onMsg(conn, conn->oversizeMsg)) {
                 result = false;
                 break;
             }
-            
+
             conn->oversizeBuffer.SetCount(0);
             continue;
         }
@@ -231,23 +227,23 @@ static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * 
 
         SimpleNet_MsgHeader * msg = (SimpleNet_MsgHeader *) read->buffer;
 
-        // Sanity check message size        
+        // Sanity check message size
         if (msg->messageBytes < sizeof(*msg)) {
             result = false;
             break;
         }
-        
+
         // Handle oversized messages
         if (msg->messageBytes > kAsyncSocketBufferSize) {
-            
+
             conn->oversizeBuffer.SetCount(msg->messageBytes);
             conn->oversizeMsg = (SimpleNet_MsgHeader *) conn->oversizeBuffer.Ptr();
-            *conn->oversizeMsg = *msg;          
-            
+            *conn->oversizeMsg = *msg;
+
             curr += sizeof(*msg);
             continue;
         }
-        
+
         // Wait until we have received the entire message
         const uint8_t * msgTerm = (const uint8_t *) curr + msg->messageBytes;
         if (msgTerm > term)
@@ -263,7 +259,7 @@ static bool NotifyConnSocketRead (SimpleNetConn * conn, AsyncNotifySocketRead * 
 
     // Return count of bytes we processed
     read->bytesProcessed = curr - read->buffer;
-    
+
     channel->DecRef();
     return result;
 }
@@ -286,59 +282,62 @@ static bool AsyncNotifySocketProc (
             const SimpleNet_ConnData & connect = *(const SimpleNet_ConnData *) listen->buffer;
             listen->bytesProcessed += sizeof(connect);
 
-            SimpleNetChannel * channel;
-            s_critsect.Enter();
+            SimpleNetChannel* channel = nil;
+            s_critsect.Lock();
             {
-                if (nil != (channel = s_channels.Find(connect.channelId)))
+                std::map<uint32_t, SimpleNetChannel*>::iterator it;
+                if ((it = s_channels.find(connect.channelId)) != s_channels.end()) {
+                    channel = it->second;
                     channel->IncRef();
+                }
             }
-            s_critsect.Leave();
-            
+            s_critsect.Unlock();
+
             if (!channel)
                 break;
-                
+
             conn = NEWZERO(SimpleNetConn);
-            conn->channelId = channel->GetValue();
+            conn->channelId = channel->channelId;
             conn->IncRef("Lifetime");
             conn->IncRef("Connected");
             conn->sock = sock;
             *userState = conn;
-            
+
             bool accepted = s_queryAccept(
                 s_queryAcceptParam,
-                channel->GetValue(),
+                channel->channelId,
                 conn,
                 listen->remoteAddr
             );
-            
+
             if (!accepted) {
                 SimpleNetDisconnect(conn);
             }
             else {
-                s_critsect.Enter();
+                s_critsect.Lock();
                 {
-                    channel->conns.Link(conn);
+                    channel->conns.push_back(conn);
                 }
-                s_critsect.Leave();
+                s_critsect.Unlock();
             }
-            
+
             channel->DecRef();
         }
         break;
-        
+
         case kNotifySocketConnectSuccess: {
             conn = (SimpleNetConn *) notify->param;
             *userState = conn;
             bool abandoned;
-            
-            s_critsect.Enter();
+
+            s_critsect.Lock();
             {
                 conn->sock      = sock;
                 conn->cancelId  = 0;
                 abandoned       = conn->abandoned;
             }
-            s_critsect.Leave();
-            
+            s_critsect.Unlock();
+
             if (abandoned)
                 AsyncSocketDisconnect(sock, true);
             else
@@ -349,35 +348,38 @@ static bool AsyncNotifySocketProc (
         case kNotifySocketConnectFailed:
             conn = (SimpleNetConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
-        break;
+            break;
 
         case kNotifySocketDisconnect:
             conn = (SimpleNetConn *) *userState;
             NotifyConnSocketDisconnect(conn);
-        break;
+            break;
 
         case kNotifySocketRead:
             conn = (SimpleNetConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
-        break;
+            break;
+
+        default:
+            break;
     }
 
     return result;
 }
 
 //============================================================================
-static void Connect (const NetAddress & addr, ConnectParam * cp) {
+static void Connect(const plNetAddress& addr, ConnectParam * cp) {
 
     SimpleNetConn * conn = NEWZERO(SimpleNetConn);
-    conn->channelId = cp->channel->GetValue();
+    conn->channelId = cp->channel->channelId;
     conn->connectParam = cp;
     conn->IncRef("Lifetime");
     conn->IncRef("Connecting");
 
-    s_critsect.Enter();
+    s_critsect.Lock();
     {
-        cp->channel->conns.Link(conn);
-        
+        cp->channel->conns.push_back(conn);
+
         SimpleNet_Connect connect;
         connect.hdr.connType    = kConnTypeSimpleNet;
         connect.hdr.hdrBytes    = sizeof(connect.hdr);
@@ -385,8 +387,8 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
         connect.hdr.buildType   = BUILD_TYPE_LIVE;
         connect.hdr.branchId    = BranchId();
         connect.hdr.productId   = ProductId();
-        connect.data.channelId  = cp->channel->GetValue();
-            
+        connect.data.channelId  = cp->channel->channelId;
+
         AsyncSocketConnect(
             &conn->cancelId,
             addr,
@@ -395,12 +397,12 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
             &connect,
             sizeof(connect)
         );
-        
-        conn = nil; 
+
+        conn = nil;
         cp = nil;
     }
-    s_critsect.Leave();
-    
+    s_critsect.Unlock();
+
     delete conn;
     delete cp;
 }
@@ -408,9 +410,9 @@ static void Connect (const NetAddress & addr, ConnectParam * cp) {
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     ConnectParam * cp = (ConnectParam *)param;
 
@@ -447,8 +449,8 @@ void SimpleNetShutdown () {
 
     s_running = false;
 
-    ASSERT(!s_channels.Head());
-    
+    ASSERT(!s_channels.size());
+
     AsyncSocketUnregisterNotifyProc(
         kConnTypeSimpleNet,
         AsyncNotifySocketProc
@@ -460,7 +462,7 @@ void SimpleNetConnIncRef (SimpleNetConn * conn) {
 
     ASSERT(s_running);
     ASSERT(conn);
-    
+
     conn->IncRef();
 }
 
@@ -469,7 +471,7 @@ void SimpleNetConnDecRef (SimpleNetConn * conn) {
 
     ASSERT(s_running);
     ASSERT(conn);
-    
+
     conn->DecRef();
 }
 
@@ -481,12 +483,13 @@ bool SimpleNetStartListening (
     ASSERT(s_running);
     ASSERT(queryAccept);
     ASSERT(!s_queryAccept);
-    
+
     s_queryAccept       = queryAccept;
     s_queryAcceptParam  = param;
-    
-    NetAddress addr;
-    NetAddressFromNode(0, kNetDefaultSimpleNetPort, &addr);
+
+    plNetAddress addr;
+    addr.SetPort(kNetDefaultSimpleNetPort);
+    addr.SetAnyAddr();
     return (0 != AsyncSocketStartListening(addr, nil));
 }
 
@@ -495,8 +498,9 @@ void SimpleNetStopListening () {
 
     ASSERT(s_running);
 
-    NetAddress addr;
-    NetAddressFromNode(0, kNetDefaultSimpleNetPort, &addr);
+    plNetAddress addr;
+    addr.SetPort(kNetDefaultSimpleNetPort);
+    addr.SetAnyAddr();
     AsyncSocketStopListening(addr, nil);
 
     s_queryAccept       = nil;
@@ -514,22 +518,22 @@ void SimpleNetCreateChannel (
     SimpleNetChannel * channel = NEWZERO(SimpleNetChannel)(channelId);
     channel->IncRef();
 
-    s_critsect.Enter();
+    s_critsect.Lock();
     {
         #ifdef HS_DEBUGGING
         {
-            SimpleNetChannel * existing = s_channels.Find(channelId);
-            ASSERT(!existing);
+            std::map<uint32_t, SimpleNetChannel*>::iterator it = s_channels.find(channelId);
+            ASSERT(it == s_channels.end());
         }
         #endif
-        
+
         channel->onMsg      = onMsg;
         channel->onError    = onError;
-        s_channels.Add(channel);
+        s_channels[channelId] = channel;
         channel->IncRef();
     }
-    s_critsect.Leave();
-    
+    s_critsect.Unlock();
+
     channel->DecRef();
 }
 
@@ -539,47 +543,57 @@ void SimpleNetDestroyChannel (unsigned channelId) {
     ASSERT(s_running);
 
     SimpleNetChannel * channel;
-    s_critsect.Enter();
+    s_critsect.Lock();
     {
-        if (nil != (channel = s_channels.Find(channelId))) {
-            s_channels.Unlink(channel);
-            while (SimpleNetConn * conn = channel->conns.Head()) {
+        std::map<uint32_t, SimpleNetChannel*>::iterator it;
+        if ((it = s_channels.find(channelId)) != s_channels.end()) {
+            channel = it->second;
+
+            while (channel->conns.size()) {
+                SimpleNetConn* conn = channel->conns.front();
                 SimpleNetDisconnect(conn);
-                channel->conns.Unlink(conn);
+
+                channel->conns.pop_front();
             }
+
+            s_channels.erase(it);
         }
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 
     if (channel)
-        channel->DecRef();  
+        channel->DecRef();
 }
 
 //============================================================================
 void SimpleNetStartConnecting (
     unsigned            channelId,
-    const wchar_t         addr[],
+    const char          addr[],
     FSimpleNetOnConnect onConnect,
     void *              param
 ) {
     ASSERT(s_running);
     ASSERT(onConnect);
-    
+
     ConnectParam * cp = new ConnectParam;
     cp->callback    = onConnect;
     cp->param       = param;
-    
-    s_critsect.Enter();
+    cp->channel     = nil;
+
+    s_critsect.Lock();
     {
-        if (nil != (cp->channel = s_channels.Find(channelId)))
+        std::map<uint32_t, SimpleNetChannel*>::iterator it;
+        if ((it = s_channels.find(channelId)) != s_channels.end()) {
+            cp->channel = it->second;
             cp->channel->IncRef();
+        }
     }
-    s_critsect.Leave();
-    
+    s_critsect.Unlock();
+
     ASSERT(cp->channel);
 
     // Do we need to lookup the address?
-    const wchar_t * name = addr;
+    const char* name = addr;
     while (unsigned ch = *name) {
         ++name;
         if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -596,8 +610,7 @@ void SimpleNetStartConnecting (
         }
     }
     if (!name[0]) {
-        NetAddress netAddr;
-        NetAddressFromString(&netAddr, addr, kNetDefaultSimpleNetPort);
+        plNetAddress netAddr(addr, kNetDefaultSimpleNetPort);
         Connect(netAddr, cp);
     }
 }
@@ -608,8 +621,8 @@ void SimpleNetDisconnect (
 ) {
     ASSERT(s_running);
     ASSERT(conn);
-    
-    s_critsect.Enter();
+
+    s_critsect.Lock();
     {
         conn->abandoned = true;
         if (conn->sock) {
@@ -621,7 +634,7 @@ void SimpleNetDisconnect (
             conn->cancelId = nil;
         }
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 
     conn->DecRef("Lifetime");
 }
@@ -635,11 +648,11 @@ void SimpleNetSend (
     ASSERT(msg);
     ASSERT(msg->messageBytes != (uint32_t)-1);
     ASSERT(conn);
-    
-    s_critsect.Enter();
+
+    s_critsect.Lock();
     {
         if (conn->sock)
             AsyncSocketSend(conn->sock, msg, msg->messageBytes);
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 }

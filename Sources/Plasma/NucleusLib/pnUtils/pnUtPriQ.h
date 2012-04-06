@@ -57,11 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #define PRIORITY_TIME(class)            TPriorityTime< class >
-#define PRIORITY_NUMERIC(class,type)    TPriorityNumeric< class,type >
 
 #define PRIQ(class,priority)            TPriorityQueue< class,priority >
 #define PRIQDECL(class,priority,field)  TPriorityQueueDecl< class,priority,offsetof(class,field) >
-#define PRIQDYN(class,priority)         TPriorityQueueDyn< class,priority >
 
 
 /****************************************************************************
@@ -353,19 +351,6 @@ public:
 
 /****************************************************************************
 *
-*   TPriorityQueueDyn
-*
-***/
-
-template<class C, class P>
-class TPriorityQueueDyn : public TPriorityQueue<C,P> {
-public:
-    void Initialize (int linkOffset) { this->SetLinkOffset(linkOffset); }
-};
-
-
-/****************************************************************************
-*
 *   class TBasePriority
 *
 ***/
@@ -418,39 +403,6 @@ void TBasePriority<C,P>::Relink () {
     queue->Remove(m_index);
     queue->Enqueue(object);
 }
-
-
-/****************************************************************************
-*
-*   class TPriorityNumeric
-*
-***/
-
-template<class C,class T>
-class TPriorityNumeric : public TBasePriority< C, TPriorityNumeric<C,T> > {
-
-public:
-    TPriorityNumeric () : m_value(0) { }
-    TPriorityNumeric (T value) : m_value(value) { }
-    void Set (T value) {
-        if (value == m_value)
-            return;
-        m_value = value;
-        this->Relink();
-    }
-    T Get () const {
-        return m_value;
-    }
-    bool IsPriorityHigher (const TPriorityNumeric<C,T> & source) {
-        return m_value > source.m_value;
-    }
-    bool IsPriorityHigher (T value) const {
-        return m_value > value;
-    }
-
-private:
-    T m_value;
-};
 
 /****************************************************************************
 *
