@@ -183,7 +183,8 @@ static void ManifestDownloaded(
             PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName);
 
         // If we're still here, then we need to update the file.
-        patcher->GetProgress()->SetLength((float)mfs.fileSize + patcher->GetProgress()->GetMax());
+        float size = mfs.zipSize ? (float)mfs.zipSize : (float)mfs.fileSize;
+        patcher->GetProgress()->SetLength(size + patcher->GetProgress()->GetMax());
         patcher->RequestFile(mfs.downloadName, mfs.clientName);
     }
 
