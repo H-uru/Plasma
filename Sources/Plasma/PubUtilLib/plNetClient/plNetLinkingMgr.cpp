@@ -271,7 +271,7 @@ void plNetLinkingMgr::ExecNextOp () {
         break;
     }
 
-    s_opqueue.pop_front();
+    s_opqueue.remove(op);
     delete op;
 }
 
