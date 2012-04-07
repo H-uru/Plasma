@@ -5600,6 +5600,22 @@ This event record is used to pass a ptKey variable to another python program"""
 
     def addVarNumber(self,name,number):
         """Add a number variable event record to the Notify message
+Method will try to pick appropriate variable type
+This event record is used to pass a number variable to another python program"""
+        pass
+        
+    def addVarFloat(self,name,number):
+        """Add a float variable event record to the Notify message
+This event record is used to pass a number variable to another python program"""
+        pass
+        
+    def addVarInt(self,name,number):
+        """Add a integer variable event record to the Notify message
+This event record is used to pass a number variable to another python program"""
+        pass
+        
+    def addVarNull(self,name):
+        """Add a null (no data) variable event record to the Notify message
 This event record is used to pass a number variable to another python program"""
         pass
 
