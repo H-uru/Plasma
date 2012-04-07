@@ -2754,7 +2754,7 @@ bool AgeRequestTrans::Send () {
 //============================================================================
 void AgeRequestTrans::Post () {
     plNetAddress addr;
-    addr.SetHost(m_gameSrvNode);
+    addr.SetHost(htonl(m_gameSrvNode));
 
     m_callback(
         m_result,
