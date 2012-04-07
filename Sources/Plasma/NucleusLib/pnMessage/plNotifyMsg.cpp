@@ -174,8 +174,14 @@ void plNotifyMsg::AddEvent( proEventData* ed )
                 proVariableEventData *evt = (proVariableEventData *)ed;
                 switch (evt->fDataType)
                 {
-                    case proEventData::kNumber:
-                        AddVariableEvent(evt->fName, evt->fNumber);
+                    case proEventData::kFloat:
+                        AddVariableEvent(evt->fName, evt->fNumber.f);
+                        break;
+                    case proEventData::kInt:
+                        AddVariableEvent(evt->fName, evt->fNumber.i);
+                        break;
+                    case proEventData::kNull:
+                        AddVariableEvent(evt->fName);
                         break;
                     case proEventData::kKey:
                         AddVariableEvent(evt->fName, evt->fKey);
@@ -588,12 +594,44 @@ void plNotifyMsg::AddVariableEvent( const char* name, float number )
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
     pED->fName = hsStrcpy(nil,name);
-//  pED->fName = (char*)name;
-    pED->fDataType = proEventData::kNumber;
-    pED->fNumber = number;
+    pED->fDataType = proEventData::kFloat;
+    pED->fNumber.f = number;
     fEvents.Append(pED);    // then add it to the list of event records
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddVariableEvent
+//  PARAMETERS : name    - name of the variable
+//             : number  - the value of the variable as a number
+//
+//  PURPOSE    : Add a variable event record to this notify message
+//
+void plNotifyMsg::AddVariableEvent( const char* name, int number )
+{
+    // create the control key event record
+    proVariableEventData* pED = new proVariableEventData;
+    pED->fName = hsStrcpy(nil,name);
+    pED->fDataType = proEventData::kInt;
+    pED->fNumber.i = number;
+    fEvents.Append(pED);    // then add it to the list of event records
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddVariableEvent
+//  PARAMETERS : name    - name of the variable
+//
+//  PURPOSE    : Add a variable event record to this notify message
+//
+void plNotifyMsg::AddVariableEvent( const char* name)
+{
+    // create the control key event record
+    proVariableEventData* pED = new proVariableEventData;
+    pED->fName = hsStrcpy(nil,name);
+    pED->fDataType = proEventData::kNull;
+    fEvents.Append(pED);    // then add it to the list of event records
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1283,11 +1321,41 @@ void proVariableEventData::IDestruct()
     fName = nil;
 }
 
+void proVariableEventData::IReadNumber(hsStream * stream) {
+    switch (fDataType)
+    {
+    case kFloat:
+        fNumber.f = stream->ReadLEScalar();
+        break;
+    case kInt:
+        fNumber.i = stream->ReadLE32();
+        break;
+    default: 
+        stream->ReadLE32(); //ignore
+        break;
+    }
+}
+
+void proVariableEventData::IWriteNumber(hsStream * stream) {
+    switch (fDataType)
+    {
+    case kFloat:
+        stream->WriteLEScalar(fNumber.f);
+        break;
+    case kInt:
+        stream->WriteLE32(fNumber.i);
+        break;
+    default: 
+        stream->WriteLE32(0);
+        break;
+    }
+}
+
 void proVariableEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
     fName = stream->ReadSafeString();
     fDataType = stream->ReadLE32();
-    fNumber = stream->ReadLEScalar();
+    IReadNumber(stream);
     fKey = mgr->ReadKey(stream);
 }
 
@@ -1295,7 +1363,7 @@ void proVariableEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     stream->WriteSafeString(fName);
     stream->WriteLE32(fDataType);
-    stream->WriteLEScalar(fNumber);
+    IWriteNumber(stream);
     mgr->WriteKey(stream, fKey);
 }
 
@@ -1317,7 +1385,7 @@ void proVariableEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProVariableDataType))
         fDataType = s->ReadLE32();
     if (contentFlags.IsBitSet(kProVariableNumber))
-        fNumber = s->ReadLEScalar();
+        IReadNumber(s);
     if (contentFlags.IsBitSet(kProVariableKey))
         fKey = mgr->ReadKey(s);
 }
@@ -1336,7 +1404,7 @@ void proVariableEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     // kProVariableDataType
     s->WriteLE32(fDataType);
     // kProVariableNumber
-    s->WriteLEScalar(fNumber);
+    IWriteNumber(s);
     // kProVariableKey
     mgr->WriteKey(s, fKey);
 }
