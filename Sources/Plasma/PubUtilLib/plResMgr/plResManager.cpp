@@ -140,7 +140,8 @@ hsBool plResManager::IInit()
             pathIterator.GetPathAndName(fileName);
 
             plRegistryPageNode* node = new plRegistryPageNode(fileName);
-            fAllPages.insert(node);
+            plPageInfo pi = node->GetPageInfo();
+            fAllPages[pi.GetLocation()] = node;
         }
     }
 
@@ -217,9 +218,9 @@ void plResManager::IShutdown()
     // Shut down the registry (finally!)
     ILockPages();
 
-    PageSet::const_iterator it;
+    PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
-        delete *it;
+        delete it->second;
     fAllPages.clear();
     fLoadedPages.clear();
 
@@ -240,11 +241,11 @@ void plResManager::AddSinglePage(const char* pagePath)
 
 plRegistryPageNode* plResManager::FindSinglePage(const char* path) const
 {
-    PageSet::const_iterator it;
+    PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
     {
-        if (hsStrCaseEQ((*it)->GetPagePath(), path))
-            return *it;
+        if (hsStrCaseEQ((it->second)->GetPagePath(), path))
+            return it->second;
     }
 
     return nil;
@@ -255,7 +256,8 @@ void plResManager::RemoveSinglePage(const char* path)
     plRegistryPageNode* node = FindSinglePage(path);
     if (node)
     {
-        fAllPages.erase(node);
+        plLocation loc = node->GetPageInfo().GetLocation();
+        fAllPages.erase(loc);
         delete node;
     }
 }
@@ -1303,21 +1305,22 @@ void plResManager::PageInAge(const char *age)
 hsBool plResManager::VerifyPages()
 {
     hsTArray<plRegistryPageNode*> invalidPages, newerPages;
+    PageMap::iterator it = fAllPages.begin();
 
     // Step 1: verify major/minor version changes
     if (plResMgrSettings::Get().GetFilterNewerPageVersions() ||
         plResMgrSettings::Get().GetFilterOlderPageVersions())
     {
-        PageSet::iterator it = fAllPages.begin();
         while (it != fAllPages.end())
         {
-            plRegistryPageNode* page = *it;
-            it++;
+            plLocation loc = it->first;
+            plRegistryPageNode* page = it->second;
+            ++it;
 
             if (page->GetPageCondition() == kPageTooNew && plResMgrSettings::Get().GetFilterNewerPageVersions())
             {
                 newerPages.Append(page);
-                fAllPages.erase(page);
+                fAllPages.erase(loc);
             }
             else if (
                 (page->GetPageCondition() == kPageCorrupt ||
@@ -1325,7 +1328,7 @@ hsBool plResManager::VerifyPages()
                 && plResMgrSettings::Get().GetFilterOlderPageVersions())
             {
                 invalidPages.Append(page);
-                fAllPages.erase(page);
+                fAllPages.erase(loc);
             }
         }
     }
@@ -1345,7 +1348,8 @@ hsBool plResManager::VerifyPages()
     }
 
     // Step 2 of verification: make sure no sequence numbers conflict
-    PageSet::iterator it = fAllPages.begin();
+    // This isn't possible with a std::map
+    /*PageSet::iterator it = fAllPages.begin();
     for (; it != fAllPages.end(); it++)
     {
         plRegistryPageNode* page = *it;
@@ -1362,15 +1366,15 @@ hsBool plResManager::VerifyPages()
                 break;
             }
         }
-    }
+    }*/
 
     // Redo our loaded pages list, since Verify() might force the page's keys to load or unload
     fLoadedPages.clear();
     it = fAllPages.begin();
     while (it != fAllPages.end())
     {
-        plRegistryPageNode* page = *it;
-        it++;
+        plRegistryPageNode* page = it->second;
+        ++it;
 
         if (page->IsLoaded())
             fLoadedPages.insert(page);
@@ -1511,7 +1515,7 @@ void plResManager::DumpUnusedKeys(plRegistryPageNode* page) const
 plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const char* age, const char* page)
 {
     plRegistryPageNode* pageNode = new plRegistryPageNode(location, age, page, fDataPath.c_str());
-    fAllPages.insert(pageNode);
+    fAllPages[location] = pageNode;
 
     return pageNode;
 }
@@ -1520,7 +1524,9 @@ plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const c
 
 void plResManager::AddPage(plRegistryPageNode* page)
 {
-    fAllPages.insert(page);
+    plLocation loc = page->GetPageInfo().GetLocation();
+
+    fAllPages[loc] = page;
     if (page->IsLoaded())
         fLoadedPages.insert(page);
 }
@@ -1627,15 +1633,11 @@ plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
     if (fLastFoundPage != nil && fLastFoundPage->GetPageInfo().GetLocation() == location)
         return fLastFoundPage;
 
-    PageSet::const_iterator it;
-    for (it = fAllPages.begin(); it != fAllPages.end(); it++)
+    PageMap::const_iterator it = fAllPages.find(location);
+    if (it != fAllPages.end())
     {
-        const plLocation& pageloc = (*it)->GetPageInfo().GetLocation();
-        if (pageloc == location)
-        {
-            fLastFoundPage = *it;
-            return fLastFoundPage;
-        }
+        fLastFoundPage = it->second;
+        return it->second;
     }
 
     return nil;
@@ -1645,13 +1647,13 @@ plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
 
 plRegistryPageNode* plResManager::FindPage(const char* age, const char* page) const
 {
-    PageSet::const_iterator it;
-    for (it = fAllPages.begin(); it != fAllPages.end(); it++)
+    PageMap::const_iterator it;
+    for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
     {
-        const plPageInfo& info = (*it)->GetPageInfo();
+        const plPageInfo& info = (it->second)->GetPageInfo();
         if (hsStrCaseEQ(info.GetAge(), age) &&
             hsStrCaseEQ(info.GetPage(), page))
-            return *it;
+            return it->second;
     }
 
     return nil;
@@ -1786,12 +1788,13 @@ hsBool plResManager::IterateAllPages(plRegistryPageIterator* iterator)
 {
     ILockPages();
 
-    PageSet::const_iterator it;
-    for (it = fAllPages.begin(); it != fAllPages.end(); it++)
+    PageMap::const_iterator it;
+    for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
     {
-        plRegistryPageNode* page = *it;
-        if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
+        if (it->first == plLocation::kGlobalFixedLoc)
             continue;
+
+        plRegistryPageNode* page = it->second;
 
         if (!iterator->EatPage(page))
         {
@@ -1830,10 +1833,10 @@ void plResManager::IUnlockPages()
 
         fLoadedPages.clear();
 
-        PageSet::const_iterator it;
-        for (it = fAllPages.begin(); it != fAllPages.end(); it++)
+        PageMap::const_iterator it;
+        for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
         {
-            plRegistryPageNode* page = *it;
+            plRegistryPageNode* page = it->second;
             if (page->IsLoaded())
                 fLoadedPages.insert(page);
         }

@@ -76,12 +76,6 @@ plLocation& plLocation::operator=(const plLocation& rhs)
     return *this;
 }
 
-hsBool plLocation::operator==(const plLocation& u) const
-{
-    // Ignore the itinerant flag when comparing, because
-    return (fSequenceNumber == u.fSequenceNumber) && ((fFlags & ~kItinerant) == (u.fFlags & ~kItinerant));
-}
-
 void plLocation::Set(uint32_t seqNum)
 {
     fSequenceNumber = seqNum;

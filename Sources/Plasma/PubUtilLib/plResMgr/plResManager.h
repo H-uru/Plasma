@@ -235,7 +235,8 @@ protected:
     hsBool fPagesNeedCleanup;   // True if something modified the page lists while they were locked.
 
     typedef std::set<plRegistryPageNode*> PageSet;
-    PageSet fAllPages;      // All the pages, loaded or not
+    typedef std::map<plLocation, plRegistryPageNode*> PageMap;
+    PageMap fAllPages;      // All the pages, loaded or not
     PageSet fLoadedPages;   // Just the loaded pages
 
     mutable plRegistryPageNode* fLastFoundPage;
