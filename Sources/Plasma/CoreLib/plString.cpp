@@ -74,8 +74,8 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size, bool steal)
         return;
     }
 
-    if ((long)size < 0)
-        size = strnlen(utf8, -(long)size);
+    if ((int32_t)size < 0)
+        size = strnlen(utf8, -(int32_t)size);
 
 #ifdef _DEBUG
     // Check to make sure the string is actually valid UTF-8
@@ -113,8 +113,8 @@ void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
         return;
     }
 
-    if ((long)size < 0)
-        size = u16slen(utf16, -(long)size);
+    if ((int32_t)size < 0)
+        size = u16slen(utf16, -(int32_t)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
@@ -189,8 +189,8 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
         return;
     }
 
-    if ((long)size < 0)
-        size = wcsnlen(wstr, -(long)size);
+    if ((int32_t)size < 0)
+        size = wcsnlen(wstr, -(int32_t)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
@@ -251,8 +251,8 @@ void plString::IConvertFromIso8859_1(const char *astr, size_t size)
         return;
     }
 
-    if ((long)size < 0)
-        size = strnlen(astr, -(long)size);
+    if ((int32_t)size < 0)
+        size = strnlen(astr, -(int32_t)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
