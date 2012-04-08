@@ -120,11 +120,6 @@ void plPageInfo::AddClassVersion(uint16_t classIdx, uint16_t version)
     fClassVersions.push_back(cv);
 }
 
-const plLocation& plPageInfo::GetLocation() const
-{
-    return fLocation;
-}
-
 void plPageInfo::Read( hsStream *s )
 {
     delete [] fAge;
