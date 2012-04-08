@@ -89,7 +89,7 @@ protected:
 
         kNormalLocStartIdx = kLocalLocEndIdx + 1,
 
-        kReservedLocStart = 0xff000000, // Reserved locations are ones that aren't real game locations,                                     
+        kReservedLocStart = 0xff000000, // Reserved locations are ones that aren't real game locations,
         kGlobalServerLocIdx = kReservedLocStart,    // Global pool room for the server. Only the server gets this one
 
         kReservedLocAvailableStart = kGlobalServerLocIdx + 1,   // This is the start of the *really* available ones
@@ -119,7 +119,12 @@ public:
     void    Read(hsStream* s);
     void    Write(hsStream* s) const;
 
-    hsBool operator==(const plLocation& loc) const;
+    hsBool operator==(const plLocation& loc) const
+    {
+        // Ignore the itinerant flag when comparing, because
+        return (fSequenceNumber == loc.fSequenceNumber) &&
+               ((fFlags & ~kItinerant) == (loc.fFlags & ~kItinerant));
+    }
     hsBool operator!=(const plLocation& loc) const { return !(loc == *this); }
     plLocation& operator=(const plLocation& loc);
     bool operator<(const plLocation& loc ) const { return fSequenceNumber < loc.fSequenceNumber; }
