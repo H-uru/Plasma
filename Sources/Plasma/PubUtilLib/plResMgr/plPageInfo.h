@@ -65,7 +65,7 @@ protected:
     char*       fPage;
     uint16_t      fMajorVersion;
     ClassVerVec fClassVersions;
-    uint32_t      fChecksum;                  
+    uint32_t      fChecksum;
     uint32_t      fDataStart, fIndexStart;
 
     void        IInit( void );
@@ -90,7 +90,7 @@ public:
     void    SetStrings( const char *age, const char *page );
 
     void                SetLocation(const plLocation& loc);
-    const plLocation&   GetLocation() const;
+    const plLocation&   GetLocation() const { return fLocation; }
 
     uint16_t  GetMajorVersion() const { return fMajorVersion; }
     void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }
