@@ -207,7 +207,22 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
         self->fThis->AddVarNull(name);
     else if (PyInt_Check(number))
         self->fThis->AddVarNumber(name, PyInt_AsLong(number));
-    else if (PyNumber_Check(number)) 
+    else if (PyLong_Check(number))
+    {
+        // try as int first
+        long i = PyLong_AsLong(number);
+        if (!PyErr_Occurred())
+        {
+            self->fThis->AddVarNumber(name, i);
+        }
+        else
+        {
+            // OverflowError, try float
+            PyErr_Clear();
+            self->fThis->AddVarNumber(name, (float)PyLong_AsDouble(number));
+        }
+    }
+    else if (PyNumber_Check(number))
     {
         PyObject* f = PyNumber_Float(number);
         self->fThis->AddVarNumber(name, (float)PyFloat_AsDouble(f));
@@ -215,7 +230,7 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
     } 
     else
     {
-        PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and a number");
+        PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
         PYTHON_RETURN_ERROR;
     }
     PYTHON_RETURN_NONE;
