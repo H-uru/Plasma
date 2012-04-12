@@ -84,6 +84,12 @@ if(MSVC)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 endif(MSVC)
 
+# TODO: Maybe some kind of automated test here?
+option(PLASMA_USE_SSE "Enable SSE optimizations?" ON)
+if(PLASMA_USE_SSE)
+    add_definitions(-DHAVE_SSE)
+endif(PLASMA_USE_SSE)
+
 #TODO: Make the OpenSSL includes less promiscuous so this isn't needed
 include_directories(${OPENSSL_INCLUDE_DIR})
 
