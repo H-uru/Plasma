@@ -177,6 +177,12 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #include <new>
 #define NEWZERO(t)              new(calloc(sizeof(t), 1)) t
 
+#ifdef _MSC_VER
+#   define ALIGN(n) __declspec(align(n))
+#else
+#   define ALIGN(n) __atribute__(aligned(n))
+#endif
+
 /////////////////////////////
 // Physical memory functions
 /////////////////////////////
