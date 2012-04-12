@@ -1507,8 +1507,13 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
 void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
 {
     // pushing the same camera, folks?
-    // -- disallowed 2/13/2012 --
     if (pCam == GetCurrentStackCamera())
+    {
+        AddCameraToStack(pCam);
+        return;
+    }
+    // make sure that we don't keep adding the default camera if we're already in it
+    if (bDefault && pCam == GetCurrentStackCamera())
         return;
     
     // look up whatever transition we might have specified
