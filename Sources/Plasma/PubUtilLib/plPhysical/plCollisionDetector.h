@@ -99,19 +99,15 @@ protected:
     uint32_t fNumEvals;
     uint32_t fLastEnterEval;
     uint32_t fLastExitEval;
-    bool     fWaitingForEval;
-    plKey    fLastHitter;
 
 public:
     
     plObjectInVolumeDetector() 
-        : plCollisionDetector(), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0),
-          fWaitingForEval(false), fLastHitter(nil)
+        : plCollisionDetector(), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
     { }
 
     plObjectInVolumeDetector(int8_t type) 
-        : plCollisionDetector(type), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0),
-          fWaitingForEval(false), fLastHitter(nil)
+        : plCollisionDetector(type), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
     { }
 
     virtual ~plObjectInVolumeDetector() { }
