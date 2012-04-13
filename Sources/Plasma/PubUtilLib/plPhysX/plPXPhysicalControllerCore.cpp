@@ -483,7 +483,7 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     NxCapsuleControllerDesc desc;
     desc.position.x     = 0;
     desc.position.y     = 0;
-    desc.position.z     = 0;
+    desc.position.z     = -10000; // No one should be building down there... (-2000 is kickable limit)
     desc.upDirection    = NX_Z;
     desc.slopeLimit     = kSLOPELIMIT;
     desc.skinWidth      = kPhysxSkinWidth;
@@ -531,7 +531,9 @@ NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
     fKinematicActor->raiseActorFlag(NX_AF_DISABLE_COLLISION);
 #endif
     // set the matrix to be the same as the controller's actor... that should orient it to be the same
-    fKinematicActor->moveGlobalPose(actor->getGlobalPose());
+    // PhysX HACK TURD: Sometimes, using the ***wrong*** function is desirable...
+    //                  Changing this to moveGlobalPose will cause camera regions to fire before linking in.
+    fKinematicActor->setGlobalPose(actor->getGlobalPose());
 
     // the proxy for the debug display
     //hsAssert(!fProxyGen, "Already have proxy gen, double read?");
