@@ -571,11 +571,6 @@ int plNetClientMgr::Update(double secs)
     }
     lastUpdateTime=curTime;
 
-    if (!GetFlagsBit(kDisabled))
-    {
-        fNetClientStats.UpdateAgeStats();
-    }
-
     if (GetFlagsBit(kPlayingGame) )
     {
         MaybeSendPendingPagingRoomMsgs();

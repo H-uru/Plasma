@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientGroup.h"
 #include "plNetVoiceList.h"
 #include "plNetClientMsgHandler.h"
-#include "plNetClientStats.h"       // STATS Counters
 #include "plNetClientMsgScreener.h"
 
 #include "pnNetCommon/plNetApp.h"
@@ -186,7 +185,6 @@ private:
 
     plKey   fAgeSDLObjectKey;
     uint8_t fExperimentalLevel;
-    plNetClientStats fNetClientStats;
     uint8_t   fPingServerType;        // non-zero if we're pinging someone
     float   fOverrideAgeTimeOfDayPercent;   // for console debugging
 
@@ -360,7 +358,6 @@ public:
     plUoid GetAgeSDLObjectUoid(const char* ageName) const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
     const char* GetNextAgeFilename();
-    plNetClientStats& GetNetClientStats() { return fNetClientStats; }
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }
 
     void AddPendingPagingRoomMsg( plNetMsgPagingRoom * msg );
