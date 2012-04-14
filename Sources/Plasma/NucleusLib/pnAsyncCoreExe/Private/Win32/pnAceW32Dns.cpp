@@ -88,9 +88,6 @@ static unsigned                 s_nextLookupCancelId = 1;
 
 //===========================================================================
 static void LookupProcess (Lookup * lookup, unsigned error) {
-    unsigned count      = 0;
-    plNetAddress* addrs  = nil;
-
     if (error)
         return;
 
@@ -104,20 +101,14 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
 
     in_addr const * const * const inAddr = (in_addr **) host.h_addr_list;
 
-    // count the number of addresses
-    while (inAddr[count])
-        ++count;
-
     // allocate a buffer large enough to hold all the addresses
-    addrs = new plNetAddress[count];
+    size_t count = arrsize(inAddr);
+    plNetAddress* addrs = new plNetAddress[count];
 
     // fill in address data
-    const uint16_t port = htons((uint16_t) lookup->port);
-    for (unsigned i = 0; i < count; ++i) {
-        sockaddr_in * inetaddr = (sockaddr_in *) &addrs[i];
-        inetaddr->sin_family    = AF_INET;
-        inetaddr->sin_addr      = *inAddr[i];
-        inetaddr->sin_port      = port;
+    for (size_t i = 0; i < count; ++i) {
+        addrs[i].SetHost(inAddr[i]->S_un.S_addr);
+        addrs[i].SetPort(lookup->port);
     }
 
     if (host.h_name && host.h_name[0])
