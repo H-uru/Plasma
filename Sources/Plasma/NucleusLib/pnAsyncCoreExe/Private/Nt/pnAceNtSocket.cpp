@@ -77,7 +77,7 @@ static const unsigned   kMinBacklogBytes    = 4 * 1024;
 struct NtListener {
     LINK(NtListener)        nextPort;
     SOCKET                  hSocket;
-    NetAddress              addr;
+    plNetAddress            addr;
     FAsyncNotifySocketProc  notifyProc;
     int                     listenCount;
 
@@ -91,7 +91,7 @@ struct NtOpConnAttempt : Operation {
     AsyncCancelId           cancelId;
     bool                    canceled;
     unsigned                localPort;
-    NetAddress              remoteAddr;
+    plNetAddress            remoteAddr;
     FAsyncNotifySocketProc  notifyProc;
     void *                  param;
     SOCKET                  hSocket;
@@ -113,7 +113,7 @@ struct NtOpSocketRead : Operation {
 
 struct NtSock : NtObject {
     LINK(NtSock)            link;
-    NetAddress              addr;
+    plNetAddress            addr;
     unsigned                closeTimeMs;
     unsigned                connType;
     FAsyncNotifySocketProc  notifyProc;
@@ -171,13 +171,13 @@ NtSock::~NtSock () {
 //===========================================================================
 // must be called inside s_listenCrit
 static bool ListenPortIncrement (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc,
     int                     count
 ) {
     NtListener * listener;
     for (listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
-        if (!NetAddressEqual(listener->addr, listenAddr))
+        if (listener->addr != listenAddr)
             continue;
         if (listener->notifyProc != notifyProc)
             continue;
@@ -192,12 +192,11 @@ static bool ListenPortIncrement (
 //===========================================================================
 static void SocketGetAddresses (
     NtSock *        sock,
-    NetAddress *    localAddr,
-    NetAddress *    remoteAddr
+    plNetAddress*   localAddr,
+    plNetAddress*   remoteAddr
 ) {
-    // NetAddress may be bigger than sockaddr_in so start by zeroing the whole thing
-    memset(localAddr, 0, sizeof(*localAddr));
-    memset(remoteAddr, 0, sizeof(*remoteAddr));
+    localAddr->Clear();
+    remoteAddr->Clear();
 
     // don't have to enter critsect or validate socket before referencing it
     // because this routine is called before the user has a chance to close it
@@ -470,7 +469,7 @@ static bool SocketInitConnect (
 //===========================================================================
 static void SocketInitListen (
     NtSock * const      sock,
-    const NetAddress &  listenAddr,
+    const plNetAddress& listenAddr,
     FAsyncNotifySocketProc notifyProc
 ) {
     for (;;) {
@@ -509,7 +508,7 @@ static void SocketInitListen (
 }
 
 //===========================================================================
-static SOCKET ListenSocket (NetAddress * listenAddr) {
+static SOCKET ListenSocket(plNetAddress* listenAddr) {
     // create a new socket to listen
     SOCKET s;
     if (INVALID_SOCKET == (s = socket(AF_INET, SOCK_STREAM, 0))) {
@@ -540,19 +539,18 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         );
     */
 
-        NetAddressNode  node = NetAddressGetNode(*listenAddr);
-        unsigned        port = NetAddressGetPort(*listenAddr);
+        uint32_t node = listenAddr->GetHost();
+        uint16_t port = listenAddr->GetPort();
 
         // bind socket to port
         sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port   = htons((uint16_t)port);
-        addr.sin_addr.S_un.S_addr = htonl(node);
+        addr.sin_port   = htons(port);
+        addr.sin_addr.S_un.S_addr = node;
         memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-            wchar_t str[32];
-            NetAddressToString(*listenAddr, str, arrsize(str), kNetAddressFormatAll);
-            LogMsg(kLogError, "bind to addr %s failed (err %u)", str, WSAGetLastError());
+            plString str = listenAddr->AsString();
+            LogMsg(kLogError, "bind to addr %s failed (err %u)", str.c_str(), WSAGetLastError());
             break;
         }
 
@@ -581,13 +579,13 @@ static SOCKET ListenSocket (NetAddress * listenAddr) {
         }
  
         // success!
-        NetAddressSetPort(port, listenAddr);
+        listenAddr->SetPort(port);
         return s;
     } while (false);
 
     // failure!
     closesocket(s);
-    NetAddressSetPort(0, listenAddr);
+    listenAddr->SetPort(0);
     return INVALID_SOCKET;
 }
 
@@ -613,7 +611,7 @@ static void ListenPrepareListeners (fd_set * readfds) {
 }
 
 //===========================================================================
-static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
+static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
     SOCKET s;
     if (INVALID_SOCKET == (s = socket(AF_INET, SOCK_STREAM, 0))) {
         LogMsg(kLogError, "socket create failed");
@@ -639,7 +637,7 @@ static SOCKET ConnectSocket (unsigned localPort, const NetAddress & addr) {
             }
         }
 
-        if (connect(s, (const sockaddr *) &addr, sizeof(addr))) {
+        if (connect(s, (const sockaddr *) &addr.GetAddressInfo(), sizeof(AddressType))) {
             if (WSAGetLastError() != WSAEWOULDBLOCK) {
                 LogMsg(kLogError, "sockegt connect failed");
                 break;
@@ -1127,12 +1125,12 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 //===========================================================================
 unsigned NtSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
     s_listenCrit.Enter();
     StartListenThread();
-    NetAddress addr = listenAddr;
+    plNetAddress addr = listenAddr;
     for (;;) {
         // if the port is already open then just increment the reference count
         if (ListenPortIncrement(addr, notifyProc, 1))
@@ -1152,7 +1150,7 @@ unsigned NtSocketStartListening (
     }
     s_listenCrit.Leave();
 
-    unsigned port = NetAddressGetPort(addr);
+    unsigned port = addr.GetPort();
     if (port)
         SetEvent(s_listenEvent);
 
@@ -1161,7 +1159,7 @@ unsigned NtSocketStartListening (
 
 //===========================================================================
 void NtSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
     s_listenCrit.Enter();
@@ -1172,7 +1170,7 @@ void NtSocketStopListening (
 //===========================================================================
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,

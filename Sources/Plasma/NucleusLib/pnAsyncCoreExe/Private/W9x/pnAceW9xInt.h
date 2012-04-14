@@ -88,7 +88,7 @@ bool W9xThreadWaitId (
 );
 void W9xSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
@@ -126,11 +126,11 @@ void W9xSocketSetBacklogAlloc (
     unsigned        bufferSize
 );
 unsigned W9xSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 void W9xSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 void W9xSocketEnableNagling (

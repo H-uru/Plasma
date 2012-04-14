@@ -999,7 +999,7 @@ static LRESULT CALLBACK WndProc (
 //===========================================================================
 void W9xSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
@@ -1148,7 +1148,7 @@ void W9xSocketDisconnect (
 
 //===========================================================================
 unsigned W9xSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
     return 0;
@@ -1157,7 +1157,7 @@ unsigned W9xSocketStartListening (
 
 //===========================================================================
 void W9xSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
 }

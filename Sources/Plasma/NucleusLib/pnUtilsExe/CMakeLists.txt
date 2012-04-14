@@ -8,7 +8,6 @@ set(pnUtilsExe_HEADERS
 
 set(pnUtilsExe_PRIVATE
     Private/pnUteTime.cpp
-    Private/pnUteTls.cpp
 )
 
 if(WIN32)

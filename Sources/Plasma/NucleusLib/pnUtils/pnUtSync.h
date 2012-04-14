@@ -52,26 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /****************************************************************************
 *
-*   Atomic operations
-*
-***/
-
-// *value += increment; return original value of *value; thread safe
-long AtomicAdd (long * value, long increment);
-
-// *value = value; return original value of *value; thread safe
-long AtomicSet (long * value, long set);
-
-
-#define ATOMIC_ONCE(code) {     \
-    static long s_count = 1;    \
-    if (AtomicSet(&s_count, 0)) \
-        code;                   \
-}                               //
-
-
-/****************************************************************************
-*
 *   CLock
 *   (reader/writer lock)
 *
@@ -94,42 +74,5 @@ public:
     void LeaveRead ();
     void LeaveWrite ();
 };
-
-
-/*****************************************************************************
-*
-*   CEvent
-*
-***/
-
-#ifdef HS_BUILD_FOR_WIN32
-typedef HANDLE EventHandle;
-//#else
-//# error "CEvent: Not implemented on this platform"
-//#endif
-
-const unsigned  kEventWaitForever   = (unsigned)-1;
-
-enum ECEventResetBehavior {
-    kEventManualReset,
-    kEventAutoReset,
-};
-
-class CEvent {
-    EventHandle     m_handle;
-public:
-    CEvent (
-        ECEventResetBehavior resetType,
-        bool        initialSet = false
-    );
-    ~CEvent ();
-
-    void Signal ();
-    void Reset ();
-    bool Wait (unsigned waitMs);
-    
-    const EventHandle & Handle () const { return m_handle; }
-};
-#endif // HS_BUILD_FOR_WIN32
 
 #endif

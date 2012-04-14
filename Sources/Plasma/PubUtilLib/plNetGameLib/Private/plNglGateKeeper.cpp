@@ -89,8 +89,8 @@ struct CliGkConn : AtomicRef {
     LINK(CliGkConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar_t           name[MAX_PATH];
-    NetAddress      addr;
+    char            name[MAX_PATH];
+    plNetAddress    addr;
     Uuid            token;
     unsigned        seq;
     unsigned        serverChallenge;
@@ -463,8 +463,8 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const wchar_t         name[],
-    const NetAddress &  addr
+    const char          name[],
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
@@ -472,7 +472,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    StrCopy(conn->name, name, arrsize(conn->name));
+    strncpy(conn->name, name, arrsize(conn->name));
 
     conn->IncRef("Lifetime");
     conn->AutoReconnect();
@@ -481,9 +481,9 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
@@ -984,8 +984,8 @@ void GateKeeperInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kGateKeeperDhGValue,
-        BigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
-        BigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)
+        plBigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
+        plBigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)
     );
 }
 
@@ -1053,14 +1053,14 @@ unsigned GateKeeperGetConnId () {
 
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const wchar_t *   gateKeeperAddrList[],
-    unsigned        gateKeeperAddrCount
+    const char*   gateKeeperAddrList[],
+    uint32_t      gateKeeperAddrCount
 ) {
     gateKeeperAddrCount = min(gateKeeperAddrCount, 1);
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = gateKeeperAddrList[i];
+        const char* name = gateKeeperAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1076,8 +1076,7 @@ void NetCliGateKeeperStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, gateKeeperAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(gateKeeperAddrList[i], kNetDefaultClientPort);
             Connect(gateKeeperAddrList[i], addr);
         }
     }

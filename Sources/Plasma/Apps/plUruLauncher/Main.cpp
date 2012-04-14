@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 
@@ -147,12 +148,12 @@ static HANDLE                   s_thread;
 static HANDLE                   s_event;
 static HINSTANCE                s_hInstance;
 static HWND                     s_dialog;
-static CEvent                   s_dialogCreateEvent(kEventManualReset);
-static CCritSect                s_critsect;
+static hsSemaphore              s_dialogCreateEvent(0);
+static hsMutex                  s_critsect;
 static LISTDECL(WndEvent, link) s_eventQ;
-static CEvent                   s_shutdownEvent(kEventManualReset);
+static hsSemaphore              s_shutdownEvent(0);
 static wchar_t                  s_workingDir[MAX_PATH];
-static CEvent                   s_statusEvent(kEventManualReset);
+static hsSemaphore              s_statusEvent(0);
 static char                     s_curlError[CURL_ERROR_SIZE];
 
 
@@ -196,9 +197,9 @@ static void Abort () {
 
 //============================================================================
 static void PostEvent (WndEvent *event) {
-    s_critsect.Enter();
+    s_critsect.Lock();
     s_eventQ.Link(event);
-    s_critsect.Leave();
+    s_critsect.Unlock();
 }
 
 //============================================================================
@@ -393,11 +394,11 @@ static void Recv_SetBytesRemaining (HWND hwnd, const SetBytesRemainingEvent &eve
 static void DispatchEvents (HWND hwnd) {
     LISTDECL(WndEvent, link) eventQ;
 
-    s_critsect.Enter();
+    s_critsect.Lock();
     { 
         eventQ.Link(&s_eventQ);
     }
-    s_critsect.Leave();
+    s_critsect.Unlock();
 
 #define DISPATCH(a) case kEvent##a: Recv_##a(hwnd, *(const a##Event *) event); break
     while (WndEvent *event = eventQ.Head()) { 
@@ -608,7 +609,7 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *)
 //============================================================================
 static void StatusCallback(void *)
 {
-    char *serverUrl = hsWStringToString(GetServerStatusUrl());
+    const char *serverUrl = GetServerStatusUrl();
 
     CURL * hCurl = curl_easy_init();
     curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, s_curlError);
@@ -630,7 +631,6 @@ static void StatusCallback(void *)
     }
 
     curl_easy_cleanup(hCurl);
-    delete [] serverUrl;
 
     s_statusEvent.Signal();
 }
@@ -810,7 +810,7 @@ int __stdcall WinMain (
             s_launcherInfo.buildId = cmdParser.GetInt(kArgBuildId);
 
         // Wait for the dialog to be created
-        s_dialogCreateEvent.Wait(kEventWaitForever);
+        s_dialogCreateEvent.Wait();
         _beginthread(StatusCallback, 0, nil);       // get status
     }
 
@@ -950,10 +950,10 @@ int __stdcall WinMain (
         }
         
         ShutdownAsyncCore();
-        s_statusEvent.Wait(kEventWaitForever);
+        s_statusEvent.Wait();
     
         PostMessage(s_dialog, WM_QUIT, 0, 0);       // tell our window to shutdown
-        s_shutdownEvent.Wait(kEventWaitForever);    // wait for our window to shutdown
+        s_shutdownEvent.Wait();                     // wait for our window to shutdown
     
         SetConsoleCtrlHandler(CtrlHandler, FALSE);
 

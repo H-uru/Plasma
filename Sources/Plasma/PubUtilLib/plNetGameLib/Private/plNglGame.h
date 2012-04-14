@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliGameStartConnect (
-    const NetAddressNode &  node
+    const uint32_t node
 );
 
 //============================================================================

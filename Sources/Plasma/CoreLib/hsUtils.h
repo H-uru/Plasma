@@ -250,3 +250,31 @@ void DebugMsg(const char fmt[], ...);
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
 #endif
+
+/*****************************************************************************
+*
+*  Atomic Operations
+*
+***/
+
+// *value += increment; return original value of *value; thread safe
+inline long AtomicAdd(long* value, long increment) {
+#ifdef HS_BUILD_FOR_WIN32
+    return InterlockedExchangeAdd(value, increment);
+#elif HS_BUILD_FOR_UNIX
+    return __sync_fetch_and_add(value, increment);
+#else
+#error "No Atomic Set support on this architecture"
+#endif
+}
+
+// *value = value; return original value of *value; thread safe
+inline long AtomicSet(long* value, long set) {
+#ifdef HS_BUILD_FOR_WIN32
+    return InterlockedExchange(value, set);
+#elif HS_BUILD_FOR_UNIX
+    return  __sync_lock_test_and_set(value, set);
+#else
+#error "No Atomic Set support on this architecture"
+#endif
+}

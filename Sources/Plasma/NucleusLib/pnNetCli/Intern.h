@@ -80,8 +80,8 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     unsigned *              dh_g,
-    const BigNum **         dh_xa,  // client: dh_x     server: dh_a
-    const BigNum **         dh_n
+    const plBigNum**        dh_xa,  // client: dh_x     server: dh_a
+    const plBigNum**        dh_n
 );
 
 
@@ -92,18 +92,18 @@ void NetMsgChannelGetDhConstants (
 ***/
 
 void NetMsgCryptClientStart (
-    NetMsgChannel * channel,
+    NetMsgChannel*  channel,
     unsigned        seedBytes,
-    const uint8_t      seedData[],
-    BigNum *        clientSeed,
-    BigNum *        serverSeed
+    const uint8_t   seedData[],
+    plBigNum*       clientSeed,
+    plBigNum*       serverSeed
 );
 
 void NetMsgCryptServerConnect (
-    NetMsgChannel * channel,
+    NetMsgChannel*  channel,
     unsigned        seedBytes,
-    const uint8_t      seedData[],
-    BigNum *        clientSeed
+    const uint8_t   seedData[],
+    plBigNum*       clientSeed
 );
 
 

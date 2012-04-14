@@ -62,12 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  FARRAY(type)     TFArray< type, TArrayCopyBits< type > >
 #define  FARRAYOBJ(type)  TFArray< type, TArrayCopyObject< type > >
 
-#define  SORTARRAYFIELD(type, keyType, field)     TSortArray< type, TArrayCopyBits< type >, keyType, offsetof(type, field)>
-#define  SORTARRAYFIELDOBJ(type, keyType, field)  TSortArray< type, TArrayCopyObject< type >, keyType, offsetof(type, field)>
-#define  SORTARRAYTYPE(type)                      TSortArray< type, TArrayCopyBits< type >, type, 0>
-#define  SORTARRAYTYPEOBJ(type)                   TSortArray< type, TArrayCopyObject< type >, type, 0>
-
-
 /****************************************************************************
 *
 *   CBuffer
@@ -977,108 +971,5 @@ void TArray<T,C>::SetCountFewer (unsigned count) {
 template<class T, class C>
 void TArray<T,C>::Trim () {
     this->AdjustSize(this->m_count, this->m_count);
-}
-
-
-/****************************************************************************
-*
-*   TSortArray
-*
-***/
-
-template<class T, class C, class K, unsigned OFFSET>
-class TSortArray : public TArray<T,C> {
-private:
-    inline static K & SortKey (T & rec) { return *(K *)((uint8_t *)&rec + OFFSET); }
-    inline static const K & SortKey (const T & rec) { return *(const K *)((const uint8_t *)&rec + OFFSET); }
-
-public:
-    inline bool      Delete (K sortKey);
-    inline T *       Find (K sortKey) { unsigned index; return Find(sortKey, &index); }
-    inline T *       Find (K sortKey, unsigned * index);
-    inline const T * Find (K sortKey) const { unsigned index; return Find(sortKey, &index); }
-    inline const T * Find (K sortKey, unsigned * index) const;
-    inline T *       Insert (K sortKey, unsigned index);
-    inline void      Sort ();
-
-};
-
-//===========================================================================
-template<class T, class C, class K, unsigned OFFSET>
-bool TSortArray<T,C,K,OFFSET>::Delete (K sortKey) {
-
-    // Find the correct position for this key
-    unsigned index;
-    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), &index);
-
-    // Verify that an entry exists for this key
-    unsigned count = this->Count();
-    if ((index >= count) || (SortKey((*this)[index]) != sortKey))
-        return false;
-
-    // Delete the entry
-    this->DeleteOrdered(index);
-
-    return true;
-}
-
-//===========================================================================
-template<class T, class C, class K, unsigned OFFSET>
-T * TSortArray<T,C,K,OFFSET>::Find (K sortKey, unsigned * index) {
-
-    // Find the correct position for this key
-    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), index);
-    if (*index >= this->Count())
-        return nil;
-
-    // Check whether the key is at that position
-    T & elem = (*this)[*index];
-    return (SortKey(elem) == sortKey) ? &elem : nil;
-
-}
-
-//===========================================================================
-template<class T, class C, class K, unsigned OFFSET>
-const T * TSortArray<T,C,K,OFFSET>::Find (K sortKey, unsigned * index) const {
-
-    // Find the correct position for this key
-    BSEARCH(T, this->Ptr(), this->Count(), (sortKey > SortKey(elem)), index);
-    if (*index >= this->Count())
-        return nil;
-
-    // Check whether the key is at that position
-    const T & elem = (*this)[*index];
-    return (SortKey(elem) == sortKey) ? &elem : nil;
-
-}
-
-//===========================================================================
-template<class T, class C, class K, unsigned OFFSET>
-T * TSortArray<T,C,K,OFFSET>::Insert (K sortKey, unsigned index) {
-
-    // Insert a new entry at this position
-    unsigned count = this->Count();
-    this->SetCount(count + 1);
-    if (index < count)
-        this->Move(index + 1, index, count - index);
-
-    // Fill in the new entry
-    T & elem = (*this)[index];
-    SortKey(elem) = sortKey;
-
-    return &elem;
-}
-
-//===========================================================================
-template<class T, class C, class K, unsigned OFFSET>
-void TSortArray<T,C,K,OFFSET>::Sort () {
-    T *      ptr   = this->Ptr();
-    unsigned count = this->Count();
-    QSORT(
-        T,
-        ptr,
-        count,
-        SortKey(elem1) > SortKey(elem2)
-    );
 }
 #endif

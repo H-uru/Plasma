@@ -206,7 +206,7 @@ static unsigned GetConnHash (
 //===========================================================================
 void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
@@ -293,7 +293,7 @@ void AsyncSocketSetBacklogAlloc (
 
 //===========================================================================
 unsigned AsyncSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
     ASSERT(g_api.socketStartListening);
@@ -302,7 +302,7 @@ unsigned AsyncSocketStartListening (
 
 //===========================================================================
 void AsyncSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
     ASSERT(g_api.socketStopListening);

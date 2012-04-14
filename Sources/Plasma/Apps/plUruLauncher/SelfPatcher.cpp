@@ -226,7 +226,9 @@ static void FileSrvIpAddressCallback (
     }
     
     // Start connecting to the server
-    NetCliFileStartConnect(&addr, 1, true);
+    const char* caddr = hsWStringToString(addr);
+    NetCliFileStartConnect(&caddr, 1, true);
+    delete[] caddr;
 
     PathGetProgramDirectory(s_newPatcherFile, arrsize(s_newPatcherFile));
     GetTempFileNameW(s_newPatcherFile, kPatcherExeFilename, 0, s_newPatcherFile);
@@ -245,7 +247,7 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
     NetClientInitialize();
     NetClientSetErrorHandler(NetErrorHandler);
 
-    const wchar_t ** addrs;
+    const char** addrs;
     unsigned count;
 
     count = GetGateKeeperSrvHostnames(&addrs);

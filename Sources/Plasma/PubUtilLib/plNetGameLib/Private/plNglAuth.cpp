@@ -90,8 +90,8 @@ struct CliAuConn : AtomicRef {
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    wchar_t           name[MAX_PATH];
-    NetAddress      addr;
+    char            name[MAX_PATH];
+    plNetAddress    addr;
     Uuid            token;
     unsigned        seq;
     unsigned        serverChallenge;
@@ -197,7 +197,7 @@ struct AgeRequestTrans : NetAuthTrans {
     unsigned                            m_ageMcpId;
     Uuid                                m_ageInstId;
     unsigned                            m_ageVaultId;
-    NetAddressNode                      m_gameSrvNode;
+    uint32_t                            m_gameSrvNode;
 
     AgeRequestTrans (
         const wchar_t                         ageName[],
@@ -1527,8 +1527,8 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const wchar_t         name[],
-    const NetAddress &  addr
+    const char          name[],
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
@@ -1536,7 +1536,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    StrCopy(conn->name, name, arrsize(conn->name));
+    strncpy(conn->name, name, arrsize(conn->name));
 
     conn->IncRef("Lifetime");
     conn->AutoReconnect();
@@ -1545,9 +1545,9 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
@@ -2194,18 +2194,11 @@ static bool Recv_ServerAddr (
     {
         if (s_active) {
             s_active->token = msg.token;
-            NetAddressFromNode(
-                msg.srvAddr,
-                NetAddressGetPort(s_active->addr),
-                &s_active->addr
-            );
-            wchar_t addrStr[64];
-            NetAddressNodeToString(
-                msg.srvAddr,
-                addrStr,
-                arrsize(addrStr)
-            );
-            LogMsg(kLogPerf, L"SrvAuth addr: %s", addrStr);
+            s_active->addr.SetHost(msg.srvAddr);
+
+            plString logmsg = _TEMP_CONVERT_FROM_LITERAL("SrvAuth addr: ");
+            logmsg += s_active->addr.GetHostString();
+            LogMsg(kLogPerf, L"SrvAuth addr: %s", logmsg.c_str());
         }
     }
     s_critsect.Leave();
@@ -2760,13 +2753,16 @@ bool AgeRequestTrans::Send () {
 
 //============================================================================
 void AgeRequestTrans::Post () {
+    plNetAddress addr;
+    addr.SetHost(htonl(m_gameSrvNode));
+
     m_callback(
         m_result,
         m_param,
         m_ageMcpId,
         m_ageVaultId,
         m_ageInstId,
-        m_gameSrvNode
+        addr
     );
 }
 
@@ -5032,8 +5028,8 @@ void AuthInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kAuthDhGValue,
-        BigNum(sizeof(kAuthDhXData), kAuthDhXData),
-        BigNum(sizeof(kAuthDhNData), kAuthDhNData)
+        plBigNum(sizeof(kAuthDhXData), kAuthDhXData),
+        plBigNum(sizeof(kAuthDhNData), kAuthDhNData)
     );
 }
 
@@ -5125,8 +5121,8 @@ void AuthPingEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthStartConnect (
-    const wchar_t *   authAddrList[],
-    unsigned        authAddrCount
+    const char*     authAddrList[],
+    uint32_t        authAddrCount
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
     // to choose the "best" auth connection.
@@ -5134,7 +5130,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = authAddrList[i];
+        const char* name = authAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -5150,8 +5146,7 @@ void NetCliAuthStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, authAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(authAddrList[i], kNetDefaultClientPort);
             Connect(authAddrList[i], addr);
         }
     }

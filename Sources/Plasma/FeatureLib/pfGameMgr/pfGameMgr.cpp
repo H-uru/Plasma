@@ -58,10 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 // pfGameCli factory
 //============================================================================
-struct Factory : THashKeyVal<Uuid> {
-
-    HASHLINK(Factory)   link;
-    const GameTypeReg & reg;
+struct Factory
+{
+    const GameTypeReg& reg;
 
     Factory (const GameTypeReg & reg);
     Factory& operator= (const Factory &);   // not impl
@@ -113,7 +112,7 @@ struct JoinTransState {
 //============================================================================
 struct IGameMgr {
 
-    pfGameCli * CreateGameCli (const Uuid & gameTypeId, unsigned gameId, plKey receiver);
+    pfGameCli * CreateGameCli (const plUUID& gameTypeId, unsigned gameId, plKey receiver);
 
     void Recv               (GameMsgHeader * msg);
     void RecvGameInstance   (const Srv2Cli_GameMgr_GameInstance & msg, void * param);
@@ -132,7 +131,7 @@ struct IGameMgr {
 
 static HASHTABLEDECL(TransState, THashKeyVal<unsigned>, link)   s_trans;
 static HASHTABLEDECL(IGameCli, THashKeyVal<unsigned>, link)     s_games;
-static HASHTABLEDECL(Factory, THashKeyVal<Uuid>, link)          s_factories;
+static std::map<plUUID, Factory*>       s_factories;
 
 static long             s_transId;
 static ARRAYOBJ(plKey)  s_receivers;
@@ -145,10 +144,14 @@ static ARRAYOBJ(plKey)  s_receivers;
 ***/
 
 //============================================================================
-static void ShutdownFactories () {
-
-    while (Factory * factory = s_factories.Head())
+static void ShutdownFactories()
+{
+    std::map<plUUID, Factory*>::iterator it;
+    for (it = s_factories.begin(); it != s_factories.end(); ++it) {
+        Factory* factory = it->second;
         delete factory;
+    }
+    s_factories.clear();
 }
 
 //============================================================================
@@ -175,14 +178,15 @@ static inline unsigned INextTransId () {
 ***/
 
 //============================================================================
-pfGameCli * IGameMgr::CreateGameCli (const Uuid & gameTypeId, unsigned gameId, plKey receiver) {
-    
-    if (Factory * factory = s_factories.Find(gameTypeId)) {
-        pfGameCli * gameCli = factory->reg.create(gameId, receiver);
-        gameCli->internal->factory = factory;
+pfGameCli* IGameMgr::CreateGameCli(const plUUID& gameTypeId, unsigned gameId, plKey receiver)
+{
+    std::map<plUUID, Factory*>::iterator it;
+    if ((it = s_factories.find(gameTypeId)) != s_factories.end()) {
+        pfGameCli* gameCli = it->second->reg.create(gameId, receiver);
+        gameCli->internal->factory = it->second;
         return gameCli;
     }
-    
+
     return nil;
 }
 
@@ -351,10 +355,12 @@ pfGameCli * pfGameMgr::GetGameCli (unsigned gameId) const {
 }
 
 //============================================================================
-const wchar_t * pfGameMgr::GetGameNameByTypeId (const Uuid & gameTypeId) const {
-
-    if (Factory * factory = s_factories.Find(gameTypeId))
-        return factory->reg.name;
+const wchar_t* pfGameMgr::GetGameNameByTypeId(const plUUID& gameTypeId) const
+{
+    std::map<plUUID, Factory*>::iterator it;
+    if ((it = s_factories.find(gameTypeId)) != s_factories.end()) {
+        return it->second->reg.name;
+    }
     return nil;
 }
 
@@ -489,9 +495,9 @@ unsigned pfGameCli::GetGameId () const {
 }
 
 //============================================================================
-const Uuid & pfGameCli::GetGameTypeId () const {
+const plUUID& pfGameCli::GetGameTypeId () const {
 
-    return internal->factory->GetValue();
+    return internal->factory->reg.typeId;
 }
 
 //============================================================================
@@ -615,11 +621,9 @@ void IGameCli::RecvOwnerChange (const Srv2Cli_Game_OwnerChange & msg, void * par
 ***/
 
 //============================================================================
-Factory::Factory (const GameTypeReg & reg)
-:   reg(reg)
-,   THashKeyVal<Uuid>(reg.typeId)
+Factory::Factory(const GameTypeReg& reg) : reg(reg)
 {
-    s_factories.Add(this);
+    s_factories[reg.typeId] = this;
 }
 
 
