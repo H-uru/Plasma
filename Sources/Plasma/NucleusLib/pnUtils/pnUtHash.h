@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #include "pnUtList.h"
 #include "pnUtArray.h"
-#include "pnUtMath.h"
 #include "pnUtStr.h"
 
 /****************************************************************************
@@ -63,23 +62,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Define a field inside an object that is used to link it into a hash table
 #define HASHLINK(object) THashLink< object >
 
-// Define a POINTER to a hash table, not a hash table
-#define HASHTABLE(object,key) THashTable< object, key >
-
 // Define a hash table:
 // - starts with kSlotMinCount rows
 // - can grow to kDefaultSlotMaxCount rows
 // (hash table grows when a row contains more than kGrowOnListSize entries
 #define HASHTABLEDECL(object,key,link) THashTableDecl< object, key, offsetof(object,link), 0 >
-
-// Define a hash table in situations when a forward reference prevents use of HASHTABLEDECL
-// - Size characteristics are identical to HASHTABLEDECL
-#define HASHTABLEDYN(object,key) THashTableDyn< object, key >
-
-// Define a hash table with:
-// - starts with <size>
-// - row table never grows
-#define HASHTABLEDECLSIZE(object,key,link,size) THashTableDecl<object, key, offsetof(object,link), size >
 
 
 #if defined(_MSC_VER)
@@ -437,8 +424,14 @@ void TBaseHashTable<T>::SetLinkOffset (int linkOffset, unsigned maxSize) {
     m_linkOffset = linkOffset;
     m_fullList.SetLinkOffset(m_linkOffset + offsetof(THashLink<T>, m_linkToFull));
 
-    if (!m_slotMask)
-        SetSlotCount(max(kSlotMinCount, MathNextPow2(maxSize)));
+    if (!m_slotMask) {
+        // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+        uint32_t v = maxSize - 1;
+        v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
+        v++;
+
+        SetSlotCount(max(kSlotMinCount, v));
+    }
 }
 
 //===========================================================================
@@ -585,28 +578,6 @@ public:
 //===========================================================================
 template<class T, class K, int linkOffset, unsigned maxSize>
 THashTableDecl<T,K,linkOffset,maxSize>::THashTableDecl () {
-    this->SetLinkOffset(linkOffset, maxSize);
-    this->SetSlotMaxCount(maxSize);
-}
-
-
-/****************************************************************************
-*
-*   THashTableDyn
-*
-***/
-
-template<class T, class K>
-class THashTableDyn : public THashTable<T,K> {
-
-public:
-    void Initialize (int linkOffset, unsigned maxSize = 0);
-
-};
-
-//===========================================================================
-template<class T, class K>
-void THashTableDyn<T,K>::Initialize (int linkOffset, unsigned maxSize) {
     this->SetLinkOffset(linkOffset, maxSize);
     this->SetSlotMaxCount(maxSize);
 }

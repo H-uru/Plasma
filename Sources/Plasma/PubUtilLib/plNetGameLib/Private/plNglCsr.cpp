@@ -73,7 +73,7 @@ struct CliCsConn : AtomicRef {
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
     NetCli *        cli;
-    NetAddress      addr;
+    plNetAddress    addr;
     unsigned        seq;
     bool            abandoned;
     unsigned        serverChallenge;
@@ -369,7 +369,7 @@ static bool SocketNotifyCallback (
 
 //============================================================================
 static void Connect (
-    const NetAddress &  addr,
+    const plNetAddress& addr,
     ConnectParam *      cp
 ) {
     CliCsConn * conn = NEWZERO(CliCsConn);
@@ -413,9 +413,9 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
@@ -758,8 +758,8 @@ void CsrInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kCsrDhGValue,
-        BigNum(sizeof(kCsrDhXData), kCsrDhXData),
-        BigNum(sizeof(kCsrDhNData), kCsrDhNData)
+        plBigNum(sizeof(kCsrDhXData), kCsrDhXData),
+        plBigNum(sizeof(kCsrDhNData), kCsrDhNData)
     );
 }
 
@@ -830,8 +830,8 @@ unsigned CsrGetConnId () {
 
 //============================================================================
 void NetCliCsrStartConnect (
-    const wchar_t *               addrList[],
-    unsigned                    addrCount,
+    const char*                 addrList[],
+    uint32_t                    addrCount,
     FNetCliCsrConnectedCallback callback,
     void *                      param
 ) {
@@ -840,7 +840,7 @@ void NetCliCsrStartConnect (
 
     for (unsigned i = 0; i < addrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = addrList[i];
+        const char* name = addrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -860,9 +860,8 @@ void NetCliCsrStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, addrList[i], kNetDefaultClientPort);
-            
+            plNetAddress addr(addrList[i], kNetDefaultClientPort);
+
             ConnectParam * cp = new ConnectParam;
             cp->callback    = callback;
             cp->param       = param;

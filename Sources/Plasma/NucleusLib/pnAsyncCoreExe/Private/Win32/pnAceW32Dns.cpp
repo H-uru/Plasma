@@ -69,7 +69,7 @@ struct Lookup {
     FAsyncLookupProc    lookupProc;
     unsigned            port;
     void *              param;
-    wchar_t               name[kMaxLookupName];
+    char                name[kMaxLookupName];
     char                buffer[MAXGETHOSTSTRUCT];
 };
 
@@ -88,9 +88,6 @@ static unsigned                 s_nextLookupCancelId = 1;
 
 //===========================================================================
 static void LookupProcess (Lookup * lookup, unsigned error) {
-    unsigned count      = 0;
-    NetAddress * addrs  = nil;
-
     if (error)
         return;
 
@@ -104,25 +101,18 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
 
     in_addr const * const * const inAddr = (in_addr **) host.h_addr_list;
 
-    // count the number of addresses
-    while (inAddr[count])
-        ++count;
-
     // allocate a buffer large enough to hold all the addresses
-    addrs = (NetAddress *)malloc(sizeof(*addrs) * count);
-    memset(addrs, 0, sizeof(*addrs) * count);
+    size_t count = arrsize(inAddr);
+    plNetAddress* addrs = new plNetAddress[count];
 
     // fill in address data
-    const uint16_t port = htons((uint16_t) lookup->port);
-    for (unsigned i = 0; i < count; ++i) {
-        sockaddr_in * inetaddr = (sockaddr_in *) &addrs[i];
-        inetaddr->sin_family    = AF_INET;
-        inetaddr->sin_addr      = *inAddr[i];
-        inetaddr->sin_port      = port;
+    for (size_t i = 0; i < count; ++i) {
+        addrs[i].SetHost(inAddr[i]->S_un.S_addr);
+        addrs[i].SetPort(lookup->port);
     }
 
     if (host.h_name && host.h_name[0])
-        StrToUnicode(lookup->name, host.h_name, arrsize(lookup->name));
+        strncpy(lookup->name, host.h_name, arrsize(lookup->name));
 
     if (lookup->lookupProc)
         lookup->lookupProc(lookup->param, lookup->name, count, addrs);
@@ -134,7 +124,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     delete lookup;
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 
-    free(addrs);
+    delete[] addrs;
 }
 
 //===========================================================================
@@ -271,7 +261,7 @@ void DnsDestroy (unsigned exitThreadWaitMs) {
 void AsyncAddressLookupName (
     AsyncCancelId *     cancelId,   // out
     FAsyncLookupProc    lookupProc,
-    const wchar_t         name[], 
+    const char*         name, 
     unsigned            port, 
     void *              param
 ) {
@@ -282,9 +272,8 @@ void AsyncAddressLookupName (
     PerfAddCounter(kAsyncPerfNameLookupAttemptsTotal, 1);
 
     // Get name/port
-    char ansiName[kMaxLookupName];
-    StrToAnsi(ansiName, name, arrsize(ansiName));
-    if (char * portStr = StrChr(ansiName, ':')) {
+    char* ansiName = strdup(name);
+    if (char* portStr = StrChr(ansiName, ':')) {
         if (unsigned newPort = StrToUnsigned(portStr + 1, nil, 10))
             port = newPort;
         *portStr = 0;
@@ -295,7 +284,7 @@ void AsyncAddressLookupName (
     lookup->lookupProc      = lookupProc;
     lookup->port            = port;
     lookup->param           = param;
-    StrCopy(lookup->name, name, arrsize(lookup->name));
+    strncpy(lookup->name, name, arrsize(lookup->name));
 
     s_critsect.Enter();
     {
@@ -312,7 +301,7 @@ void AsyncAddressLookupName (
         lookup->cancelHandle = WSAAsyncGetHostByName(
             s_lookupWindow, 
             WM_LOOKUP_FOUND_HOST,
-            ansiName,
+            name,
             &lookup->buffer[0],
             sizeof(lookup->buffer)
         );
@@ -327,7 +316,7 @@ void AsyncAddressLookupName (
 void AsyncAddressLookupAddr (
     AsyncCancelId *     cancelId,   // out
     FAsyncLookupProc    lookupProc,
-    const NetAddress &  address,
+    const plNetAddress& address,
     void *              param
 ) {
     ASSERT(lookupProc);
@@ -340,13 +329,10 @@ void AsyncAddressLookupAddr (
     lookup->lookupProc      = lookupProc;
     lookup->port            = 1;
     lookup->param           = param;
-    NetAddressToString(
-        address,
-        lookup->name,
-        arrsize(lookup->name),
-        kNetAddressFormatNodeNumber
-    );
-        
+
+    plString str = address.GetHostString();
+    strncpy(lookup->name, str.c_str(), arrsize(lookup->name));
+
     s_critsect.Enter();
     {
         // Start the lookup thread if it wasn't started already

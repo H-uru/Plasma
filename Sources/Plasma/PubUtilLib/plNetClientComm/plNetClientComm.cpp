@@ -110,11 +110,11 @@ static bool                 s_loginComplete = false;
 static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
-static wchar_t                s_authSrvAddr[256];
-static wchar_t                s_fileSrvAddr[256];
+static char                s_authSrvAddr[256];
+static char                s_fileSrvAddr[256];
 
-static wchar_t                s_iniServerAddr[256];
-static wchar_t                s_iniFileServerAddr[256];
+static char                s_iniServerAddr[256];
+static char                s_iniFileServerAddr[256];
 static wchar_t                s_iniAccountUsername[kMaxAccountNameLength];
 static ShaDigest            s_namePassHash;
 static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
@@ -591,23 +591,22 @@ static void INetCliAuthAgeRequestCallback (
     unsigned        ageMcpId,
     unsigned        ageVaultId,
     const Uuid &    ageInstId,
-    NetAddressNode  gameAddr
+    plNetAddress    gameAddr
 ) {
     if (!IS_NET_ERROR(result) || result == kNetErrVaultNodeNotFound) {
         s_age.ageInstId = ageInstId;
         s_age.ageVaultId = ageVaultId;
         
-        wchar_t gameAddrStr[64];
         wchar_t ageInstIdStr[64];
-        NetAddressNodeToString(gameAddr, gameAddrStr, arrsize(gameAddrStr));
+        plString gameAddrStr = gameAddr.GetHostString();
         LogMsg(
             kLogPerf,
             L"Connecting to game server %s, ageInstId %s",
-            gameAddrStr,
+            gameAddrStr.c_str(),
             GuidToString(ageInstId, ageInstIdStr, arrsize(ageInstIdStr))
         );
         NetCliGameDisconnect();
-        NetCliGameStartConnect(gameAddr);
+        NetCliGameStartConnect(gameAddr.GetHost());
         NetCliGameJoinAgeRequest(
             ageMcpId,
             s_account.accountUuid,
@@ -668,7 +667,7 @@ static void AuthSrvIpAddressCallback (
     void *          param,
     const wchar_t     addr[]
 ) {
-    StrCopy(s_authSrvAddr, addr, arrsize(s_authSrvAddr)); 
+    StrToAnsi(s_authSrvAddr, addr, arrsize(s_authSrvAddr)); 
     s_hasAuthSrvIpAddress = true;
 }
 
@@ -678,7 +677,7 @@ static void FileSrvIpAddressCallback (
     void *          param,
     const wchar_t     addr[]
 ) {
-    StrCopy(s_fileSrvAddr, addr, arrsize(s_fileSrvAddr)); 
+    StrToAnsi(s_fileSrvAddr, addr, arrsize(s_fileSrvAddr)); 
     s_hasFileSrvIpAddress = true;
 }
 
@@ -823,12 +822,12 @@ void NetCommUpdate () {
 //============================================================================
 void NetCommConnect () {
 
-    const wchar_t ** addrs;
+    const char** addrs;
     unsigned count;
     hsBool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
-    if((count = GetAuthSrvHostnames(&addrs)) && wcslen(addrs[0]))
+    if((count = GetAuthSrvHostnames(&addrs)) && strlen(addrs[0]))
     {
         NetCliAuthStartConnect(addrs, count);
     }
@@ -846,7 +845,7 @@ void NetCommConnect () {
             AsyncSleep(10);
         }
             
-        const wchar_t * authSrv[] = {
+        const char* authSrv[] = {
             s_authSrvAddr
         };
         NetCliAuthStartConnect(authSrv, 1);
@@ -855,7 +854,7 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if((count = GetFileSrvHostnames(&addrs)) && wcslen(addrs[0]))
+        if((count = GetFileSrvHostnames(&addrs)) && strlen(addrs[0]))
         {
             NetCliFileStartConnect(addrs, count);
         }
@@ -875,7 +874,7 @@ void NetCommConnect () {
                 AsyncSleep(10);
             }
             
-            const wchar_t * fileSrv[] = {
+            const char* fileSrv[] = {
                 s_fileSrvAddr
             };
             NetCliFileStartConnect(fileSrv, 1);

@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetAddress_h_inc
 #define plNetAddress_h_inc
 
+#include "HeadSpin.h"
+#include "plString.h"
 
 #include "hsStlUtils.h"
 #include "hsStream.h"
@@ -66,33 +68,155 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef sockaddr_in  AddressType;
 
+/**
+ * A class representing a network address endpoint, as a pair of host address
+ * and port number.
+ *
+ * Internally, this class stores the network address using the sockaddr_in
+ * structure, but provides methods to transparently get and set the host
+ * address and port.
+ */
 class plNetAddress
 {
     // fAddr must be first field
     AddressType     fAddr;
 
 public:
+    /**
+     * Initializes an empty network address.
+     * All the fields of the sockaddr will be zeroed.
+     */
     plNetAddress();
-    plNetAddress(uint32_t addr, int port);
-    plNetAddress(const char * addr, int port);
+
+    /**
+     * Initializes a new network address from the given IPv4 address and port
+     * number.
+     *
+     * @param addr The IPv4 address as a 32-bit network byte order integer.
+     * @param port The port number as a 16-bit host order integer.
+     */
+    plNetAddress(uint32_t addr, uint16_t port);
+
+    /**
+     * Initializes a new network address from the given hostname and port
+     * number.
+     *
+     * @param addr The DNS hostname of the host.
+     * @param port The port number as a 16-bit host order integer.
+     */
+    plNetAddress(const char* addr, uint16_t port);
+
     virtual ~plNetAddress(){}
 
+    bool operator==(const plNetAddress& other) const {
+        return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
+    }
+
+    bool operator!=(const plNetAddress& other) const {
+        return !(*this == other);
+    }
+
+    /**
+     * Clears the address and zeros out the sockaddr fields.
+     */
     void Clear();
+
+    /**
+     * Sets the address to INADDR_ANY for binding to any host.
+     */
     bool SetAnyAddr();
+
+    /**
+     * Sets the port number to 0 to allow binding to any port.
+     */
     bool SetAnyPort();
-    bool SetPort(int port);
-    bool SetHost(const char * hostname);
-    bool SetHost(uint32_t ip4addr);
-    int GetPort() const;
-    std::string GetHostString() const;
+
+    /**
+     * Gets the port number of the host.
+     *
+     * @return The host port number.
+     */
+    uint16_t GetPort() const;
+
+    /**
+     * Sets the port number of the host.
+     *
+     * @param port The port number in host byte order.
+     */
+    bool SetPort(uint16_t port);
+
+    /**
+     * Gets the IPv4 address of the host as a 32-bit integer in network byte
+     * order (big endian).
+     *
+     * @return The IPv4 host address.
+     */
     uint32_t GetHost() const;
-    std::string GetHostWithPort() const; 
-    const AddressType & GetAddressInfo() const { return fAddr; }
-    AddressType & GetAddressInfo() { return fAddr; }
 
-    std::string AsString() const;
+    /**
+     * Sets the IPv4 address of the host from a DNS name.
+     *
+     * @param hostname The DNS name of the host.
+     */
+    bool SetHost(const char* hostname);
 
+    /**
+     * Sets the IPv4 address of the host from an unsigned 32-bit integer in
+     * network byte order (big endian).
+     *
+     * @param ip4addr The host IPv4 address in network byte order.
+     */
+    bool SetHost(uint32_t ip4addr);
+
+    /**
+     * Retrieves the internal address type.
+     *
+     * @return A constant sockaddr_in.
+     */
+    const AddressType& GetAddressInfo() const { return fAddr; }
+
+    /**
+     * Retrieves the internal address type.
+     *
+     * @return A sockaddr_in.
+     */
+    AddressType& GetAddressInfo() { return fAddr; }
+
+    /**
+     * Returns the IPv4 address of the host as a string in 4-octet dotted
+     * notation.
+     *
+     * @return A string of the IPv4 host address.
+     */
+    plString GetHostString() const;
+
+    /**
+     * Return the IPv4 address and port number of the host as a string in
+     * 4-octet dotted notation with a colon separated port.
+     *
+     * @return A string of the IPv4 host address and port number.
+     */
+    plString GetHostWithPort() const;
+
+    /**
+     * Returns a string representation of the host address and port number.
+     *
+     * @return A string representation of the address.
+     */
+    plString AsString() const;
+
+    /**
+     * Reads and deserializes the address from a stream.
+     *
+     * @param stream The stream from which to read the address.
+     */
     void Read(hsStream * stream);
+
+    /**
+     * Serializes and writes the address to a stream.
+     *
+     * @param stream The stream to which to write the address.
+     */
     void Write(hsStream * stream);
 };
 

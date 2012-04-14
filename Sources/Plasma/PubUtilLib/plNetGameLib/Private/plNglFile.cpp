@@ -64,8 +64,8 @@ struct CliFileConn : AtomicRef {
     LINK(CliFileConn)   link;
     CLock               sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
-    wchar_t               name[MAX_PATH];
-    NetAddress          addr;
+    char                name[MAX_PATH];
+    plNetAddress        addr;
     unsigned            seq;
     ARRAY(uint8_t)         recvBuffer;
     AsyncCancelId       cancelId;
@@ -539,13 +539,13 @@ static void Connect (CliFileConn * conn) {
 
 //============================================================================
 static void Connect (
-    const wchar_t         name[],
-    const NetAddress &  addr
+    const char          name[],
+    const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
     CliFileConn * conn = NEWZERO(CliFileConn);
-    StrCopy(conn->name, name, arrsize(conn->name));
+    strncpy(conn->name, name, arrsize(conn->name));
     conn->addr          = addr;
     conn->buildId       = s_connectBuildId;
     conn->serverType    = s_serverType;
@@ -559,9 +559,9 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const wchar_t         name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 ) {
     if (!addrCount) {
         ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
@@ -1334,8 +1334,8 @@ unsigned FileGetConnId () {
 
 //============================================================================
 void NetCliFileStartConnect (
-    const wchar_t *   fileAddrList[],
-    unsigned        fileAddrCount,
+    const char*     fileAddrList[],
+    uint32_t        fileAddrCount,
     bool            isPatcher /* = false */
 ) {
     // TEMP: Only connect to one file server until we fill out this module
@@ -1346,7 +1346,7 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = fileAddrList[i];
+        const char* name = fileAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1362,8 +1362,7 @@ void NetCliFileStartConnect (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, fileAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(fileAddrList[i], kNetDefaultClientPort);
             Connect(fileAddrList[i], addr);
         }
     }
@@ -1371,8 +1370,8 @@ void NetCliFileStartConnect (
 
 //============================================================================
 void NetCliFileStartConnectAsServer (
-    const wchar_t *   fileAddrList[],
-    unsigned        fileAddrCount,
+    const char*     fileAddrList[],
+    uint32_t        fileAddrCount,
     unsigned        serverType,
     unsigned        serverBuildId
 ) {
@@ -1384,7 +1383,7 @@ void NetCliFileStartConnectAsServer (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        const wchar_t * name = fileAddrList[i];
+        const char* name = fileAddrList[i];
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1400,8 +1399,7 @@ void NetCliFileStartConnectAsServer (
             }
         }
         if (!name[0]) {
-            NetAddress addr;
-            NetAddressFromString(&addr, fileAddrList[i], kNetDefaultServerPort);
+            plNetAddress addr(fileAddrList[i], kNetDefaultServerPort);
             Connect(fileAddrList[i], addr);
         }
     }

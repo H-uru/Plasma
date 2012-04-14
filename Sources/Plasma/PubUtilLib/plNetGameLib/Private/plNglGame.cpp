@@ -62,7 +62,7 @@ struct CliGmConn : AtomicRef {
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
     NetCli *        cli;
-    NetAddress      addr;
+    plNetAddress    addr;
     unsigned        seq;
     bool            abandoned;
 
@@ -354,7 +354,7 @@ static bool SocketNotifyCallback (
 
 //============================================================================
 static void Connect (
-    const NetAddress &  addr
+    const plNetAddress& addr
 ) {
     CliGmConn * conn = NEWZERO(CliGmConn);
     conn->addr              = addr;
@@ -711,8 +711,8 @@ void GameInitialize () {
         s_send, arrsize(s_send),
         s_recv, arrsize(s_recv),
         kGameDhGValue,
-        BigNum(sizeof(kGameDhXData), kGameDhXData),
-        BigNum(sizeof(kGameDhNData), kGameDhNData)
+        plBigNum(sizeof(kGameDhXData), kGameDhXData),
+        plBigNum(sizeof(kGameDhNData), kGameDhNData)
     );
 }
 
@@ -796,10 +796,9 @@ void GamePingEnable (bool enable) {
 
 //============================================================================
 void NetCliGameStartConnect (
-    const NetAddressNode &  node
+    const uint32_t node
 ) {
-    NetAddress addr;
-    NetAddressFromNode(node, kNetDefaultClientPort, &addr);
+    plNetAddress addr(node, kNetDefaultClientPort);
     Connect(addr);
 }
 

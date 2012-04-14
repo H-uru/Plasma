@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "plStatusLog/plStatusLog.h"
+#include <queue>
 #pragma hdrstop
 
 
@@ -67,7 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct ManifestFile
 {
-    LINK(ManifestFile) link;
     ManifestFile(const wchar_t clientName[], const wchar_t downloadName[], const wchar_t md5val[], int flags, plLauncherInfo *info)
     {
         StrCopy(filename, clientName, arrsize(filename));
@@ -113,7 +113,7 @@ struct ManifestResult {
     long *                              indicator;
     plLauncherInfo *                    info;
 
-    CCritSect                           critsect;
+    hsMutex                             critsect;
     ARRAY(unsigned)                     indices;
 };
 
@@ -142,13 +142,12 @@ static unsigned                         s_fileListRequests;
 static bool                             s_patchComplete;
 static PROCESS_INFORMATION              s_pi;
 static long                             s_numFiles;
-static CCritSect                        s_critsect;
 static char                             s_workingDir[MAX_PATH];
 static bool                             s_patchError;
 static long                             s_asyncCoreInitCount;
 static long                             s_numConnectFailures;
 static bool                             s_running;
-static LISTDECL(ManifestFile, link)     s_manifestQueue;
+static std::queue<ManifestFile*>        manifestQueue;
 //static AsyncThreadTaskList *          s_taskList;
 
 // error strings
@@ -347,10 +346,13 @@ void Shutdown(plLauncherInfo *info) {
 //============================================================================
 static void RequestNextManifestFile () {
     bool success = true;
-    ManifestFile *nextfile = s_manifestQueue.Head();
-    if(!nextfile)
+
+    if (!manifestQueue.size())
         return;
-    s_manifestQueue.Unlink(nextfile);
+
+    ManifestFile* nextfile = manifestQueue.front();
+    manifestQueue.pop();
+
     char  path[MAX_PATH];
     wchar_t basePath[MAX_PATH];
     StrPrintf(path, arrsize(path), "%s%S", s_workingDir, nextfile->filename);
@@ -496,9 +498,9 @@ static void ProcessManifestEntry (void * param, ENetError error) {
     );
     uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
     if(!MD5Check(path, p->mr->manifest[p->index].md5)) {
-        p->mr->critsect.Enter();
+        p->mr->critsect.Lock();
         p->mr->indices.Add(p->index);
-        p->mr->critsect.Leave();
+        p->mr->critsect.Unlock();
         AtomicAdd(&ProgressStream::totalBytes, p->mr->manifest[p->index].zipSize);
     }
 
@@ -614,14 +616,14 @@ static void ProcessManifest (void * param) {
                     PathRemoveFilename(basePath, basePath, arrsize(basePath));
                     PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
 
-                    ManifestFile * mf = new ManifestFile(
+                    ManifestFile* mf = new ManifestFile(
                         manifest[index].clientName,
                         manifest[index].downloadName,
                         manifest[index].md5,
                         manifest[index].flags,
                         mr->info
                     );
-                    
+
                     if (i < kMaxManifestFileRequests) {
                         ProgressStream * stream;
                         stream = NEWZERO(ProgressStream);
@@ -645,7 +647,7 @@ static void ProcessManifest (void * param) {
                     }
                     else {
                         // queue up this file download
-                        s_manifestQueue.Link(mf);
+                        manifestQueue.push(mf);
                     }
                 }
             }
@@ -838,7 +840,9 @@ static void FileSrvIpAddressCallback (
     plLauncherInfo *info = (plLauncherInfo *) param;
 
     // Start connecting to the server
-    NetCliFileStartConnect(&addr, 1, true);
+    const char* caddr = hsWStringToString(addr);
+    NetCliFileStartConnect(&caddr, 1, true);
+    delete[] caddr;
 
     NetCliFileManifestRequest(ThinManifestCallback, info, s_thinmanifest, info->buildId);
 
@@ -900,7 +904,7 @@ void UruPrepProc (void * param) {
     s_patchComplete = false;
     s_patchError = false;
 
-    const wchar_t ** addrs;
+    const char** addrs;
     unsigned count;
 
     count = GetGateKeeperSrvHostnames(&addrs);
@@ -916,8 +920,10 @@ void UruPrepProc (void * param) {
         AsyncSleep(10);
     } while ((!s_patchComplete && !s_patchError && s_running) || s_perf[kPerfThreadTaskCount]);
     
-    while(ManifestFile *mf = s_manifestQueue.Head())
+    while (manifestQueue.size())
     {
+        ManifestFile* mf = manifestQueue.front();
+        manifestQueue.pop();
         delete mf;
     }
     // If s_patchError, we don't wait around for s_numFiles

@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACIO_H
 
+#include "pnNetCommon/plNetAddress.h"
+
 
 /****************************************************************************
 *
@@ -103,8 +105,8 @@ struct AsyncNotifySocket {
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
-    NetAddress      localAddr;
-    NetAddress      remoteAddr;
+    plNetAddress    localAddr;
+    plNetAddress    remoteAddr;
     unsigned        connType;
 };
 
@@ -113,7 +115,7 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     unsigned        buildType;
     unsigned        branchId;
     Uuid            productId;
-    NetAddress      addr;
+    plNetAddress    addr;
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
@@ -213,7 +215,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
 
 void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param = nil,
     const void *            sendData = nil,
@@ -275,11 +277,11 @@ void AsyncSocketSetBacklogAlloc (
 // for connections with hard-coded behavior, set the notifyProc here (e.g. for use
 // protocols like SNMP on port 25)
 unsigned AsyncSocketStartListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc = nil
 );
 void AsyncSocketStopListening (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc = nil
 );
 
@@ -297,15 +299,15 @@ void AsyncSocketEnableNagling (
 
 typedef void (* FAsyncLookupProc) (
     void *              param,
-    const wchar_t       name[],
+    const char          name[],
     unsigned            addrCount,
-    const NetAddress    addrs[]
+    const plNetAddress  addrs[]
 );
 
 void AsyncAddressLookupName (
     AsyncCancelId *     cancelId,
     FAsyncLookupProc    lookupProc,
-    const wchar_t       name[],
+    const char          name[],
     unsigned            port,
     void *              param
 );
@@ -313,7 +315,7 @@ void AsyncAddressLookupName (
 void AsyncAddressLookupAddr (
     AsyncCancelId *     cancelId,
     FAsyncLookupProc    lookupProc,
-    const NetAddress &  address,
+    const plNetAddress& address,
     void *              param
 );
 

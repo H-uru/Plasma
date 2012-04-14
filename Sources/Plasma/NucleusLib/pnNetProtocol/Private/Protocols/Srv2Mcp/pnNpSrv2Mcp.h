@@ -191,9 +191,9 @@ struct Srv2Mcp_KickPlayer : SrvMsgHeader {
 ***/
 
 struct Mcp2Srv_AgeJoinReply : SrvMsgHeader {
-    uint32_t           ageMcpId;
-    Uuid            ageUuid;
-    NetAddressNode  gameSrvNode;
+    uint32_t ageMcpId;
+    Uuid     ageUuid;
+    uint32_t gameSrvNode;
 };
 
 struct Mcp2Srv_AgeSpawnRequest : SrvMsgHeader {

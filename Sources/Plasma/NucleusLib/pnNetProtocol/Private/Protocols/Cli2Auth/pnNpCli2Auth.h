@@ -677,8 +677,8 @@ struct Auth2Cli_AccountExistsReply {
 // ServerAddr
 extern const NetMsg kNetMsg_Auth2Cli_ServerAddr;
 struct Auth2Cli_ServerAddr {
-    uint32_t           messageId;
-    NetAddressNode  srvAddr;
+    uint32_t messageId;
+    uint32_t srvAddr;
     Uuid            token;
 };
 
@@ -713,13 +713,13 @@ struct Auth2Cli_AcctLoginReply {
 // AgeReply
 extern const NetMsg kNetMsg_Auth2Cli_AgeReply;
 struct Auth2Cli_AgeReply {
-    uint32_t           messageId;
-    uint32_t           transId;
-    ENetError       result;
-    uint32_t           ageMcpId;
-    Uuid            ageInstId;
-    uint32_t           ageVaultId;
-    NetAddressNode  gameSrvNode;
+    uint32_t  messageId;
+    uint32_t  transId;
+    ENetError result;
+    uint32_t  ageMcpId;
+    Uuid      ageInstId;
+    uint32_t  ageVaultId;
+    uint32_t  gameSrvNode;
 };
 
 // AcctCreateReply

@@ -61,7 +61,6 @@ namespace Nt {
 
 //===========================================================================
 void NtSleep (unsigned sleepMs) {
-    ThreadAssertCanBlock(__FILE__, __LINE__);
     Sleep(sleepMs);
 }
 

@@ -80,9 +80,16 @@ public:
     void    Read( hsStream * s );
     void    Write( hsStream * s );
     operator plString ( void ) const { return AsString();}
-    bool    operator==( const plUUID & other ) const { return IsEqualTo( &other ); }
-    bool    operator!=( const plUUID & other ) const { return !IsEqualTo( &other ); }
-    int     operator <( const plUUID & other ) const { return CompareTo( &other ); }
+
+    bool operator==(const plUUID& other) const {
+        return IsEqualTo(&other);
+    }
+    bool operator!=(const plUUID& other) const {
+        return !IsEqualTo(&other);
+    }
+    bool operator<(const plUUID& other) const {
+        return CompareTo(&other) == -1;
+    }
     operator Uuid () const;
 
     static plUUID Generate();

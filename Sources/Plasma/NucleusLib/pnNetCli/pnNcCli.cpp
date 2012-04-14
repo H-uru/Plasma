@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # define NCCLI_LOG  LogMsg
 #endif
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
 
 struct NetLogMessage_Header
 {
@@ -173,7 +173,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
     uint8_t * temp = NULL;
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Write to the netlog
     if (s_netlog) {
         NetLogMessage_Header header;
@@ -309,7 +309,7 @@ static void BufferedSendData (
                 else
                 {
                     // Value arrays are passed in by ptr
-                    for (int i = 0; i < count; i++) {
+                    for (size_t i = 0; i < count; i++) {
                         if (cmd->size == sizeof(uint8_t)) {
                             ((uint8_t*)temp)[i] = ((uint8_t*)*msg)[i];
                         } else if (cmd->size == sizeof(uint16_t)) {
@@ -449,7 +449,7 @@ static bool DispatchData (NetCli * cli, void * param) {
 
                     // byte-swap integers
                     // This is so screwed up >.<
-                    for (int i = 0; i < count; i++) {
+                    for (size_t i = 0; i < count; i++) {
                         if (cli->recvField->size == sizeof(uint16_t)) {
                             ((uint16_t*)data)[i] = hsToLE16(((uint16_t*)data)[i]);
                         } else if (cli->recvField->size == sizeof(uint32_t)) {
@@ -652,8 +652,8 @@ static void CreateSymmetricKey (
 static void ClientConnect (NetCli * cli) {
 
     // Initiate diffie-hellman for client
-    BigNum clientSeed;
-    BigNum serverSeed;
+    plBigNum clientSeed;
+    plBigNum serverSeed;
     NetMsgCryptClientStart(
         cli->channel,
         sizeof(cli->seed),
@@ -717,7 +717,7 @@ static bool ServerRecvConnect (
     else {
         // Compute client seed
         uint8_t clientSeed[kNetMaxSymmetricSeedBytes];
-        BigNum clientSeedValue;
+        plBigNum clientSeedValue;
         {
             NetMsgCryptServerConnect(
                 cli->channel,
@@ -761,7 +761,7 @@ static bool ClientRecvEncrypt (
         return false;
 
     // find out if we want encryption
-    const BigNum * DH_N;
+    const plBigNum* DH_N;
     NetMsgChannelGetDhConstants(cli->channel, nil, nil, &DH_N);
     bool encrypt = !DH_N->isZero();
 
@@ -919,7 +919,7 @@ static NetCli * ConnCreate (
     cli->mode           = mode;
     cli->SetValue(kNilGuid);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe
     if (!s_netlog) {
         InitializeCriticalSection(&s_pipeCritical);
@@ -1124,7 +1124,7 @@ bool NetCliDispatch (
             cli->input.Add(bytes, data);
             bool result = DispatchData(cli, param);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
             // Write to the netlog
             if (s_netlog) {
                 NetLogMessage_Header header;

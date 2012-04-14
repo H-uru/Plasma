@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
+#include "hsThread.h"
+#include <list>
 #pragma hdrstop
 
 
@@ -60,34 +62,33 @@ namespace pnNetCli {
 struct ChannelCrit {
     ~ChannelCrit ();
     ChannelCrit ();
-    inline void Enter ()        { m_critsect.Enter();               }
-    inline void Leave ()        { m_critsect.Leave();               }
-    inline void EnterSafe ()    { if (m_init) m_critsect.Enter();   }
-    inline void LeaveSafe ()    { if (m_init) m_critsect.Leave();   }
+    inline void Enter ()        { m_critsect.Lock();               }
+    inline void Leave ()        { m_critsect.Unlock();             }
+    inline void EnterSafe ()    { if (m_init) m_critsect.Lock();   }
+    inline void LeaveSafe ()    { if (m_init) m_critsect.Unlock(); }
 
 private:
     bool        m_init;
-    CCritSect   m_critsect;
+    hsMutex     m_critsect;
 };
 
 struct NetMsgChannel : AtomicRef {
-    LINK(NetMsgChannel)     m_link;
-    unsigned                m_protocol;
+    uint32_t                m_protocol;
     bool                    m_server;
 
     // Message definitions
-    unsigned                m_largestRecv;
+    uint32_t                m_largestRecv;
     ARRAY(NetMsgInitSend)   m_sendMsgs;
     ARRAY(NetMsgInitRecv)   m_recvMsgs;
 
     // Diffie-Hellman constants
-    unsigned                m_dh_g;
-    BigNum                  m_dh_xa;    // client: dh_x     server: dh_a
-    BigNum                  m_dh_n;
+    uint32_t                m_dh_g;
+    plBigNum                m_dh_xa;    // client: dh_x     server: dh_a
+    plBigNum                m_dh_n;
 };
 
-static ChannelCrit              s_channelCrit;
-static LIST(NetMsgChannel) *    s_channels;
+static ChannelCrit                  s_channelCrit;
+static std::list<NetMsgChannel*>*   s_channels;
 
 
 /****************************************************************************
@@ -105,8 +106,9 @@ ChannelCrit::ChannelCrit () {
 ChannelCrit::~ChannelCrit () {
     EnterSafe();
     if (s_channels) {
-        while (NetMsgChannel * const channel = s_channels->Head()) {
-            s_channels->Unlink(channel);
+        while (s_channels->size()) {
+            NetMsgChannel* const channel = s_channels->front();
+            s_channels->remove(channel);
             channel->DecRef("ChannelLink");
         }
 
@@ -239,30 +241,29 @@ static void AddRecvMsgs_CS (
         // copy the message handler
         *dst = *src;
 
-        const unsigned bytes = ValidateMsg(dst->msg);
+        const uint32_t bytes = ValidateMsg(dst->msg);
         channel->m_largestRecv = max(channel->m_largestRecv, bytes);
     }
 }
 
 //===========================================================================
-static NetMsgChannel * FindChannel_CS (unsigned protocol, bool server) {
+static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
     if (!s_channels)
         return nil;
 
-    NetMsgChannel * channel = s_channels->Head();
-    for (; channel; channel = s_channels->Next(channel)) {
-        if ((channel->m_protocol == protocol) && (channel->m_server == server))
-            break;
+    std::list<NetMsgChannel*>::iterator it = s_channels->begin();
+    for (; it != s_channels->end(); ++it) {
+        if (((*it)->m_protocol == protocol) && ((*it)->m_server == server))
+            return *it;
     }
 
-    return channel;
+    return nil;
 }
 
 //===========================================================================
-static NetMsgChannel * FindOrCreateChannel_CS (unsigned protocol, bool server) {
+static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
     if (!s_channels) {
-        s_channels = new LIST(NetMsgChannel);
-        s_channels->SetLinkOffset(offsetof(NetMsgChannel, m_link));
+        s_channels = new std::list<NetMsgChannel*>();
     }
 
     // find or create protocol
@@ -273,7 +274,7 @@ static NetMsgChannel * FindOrCreateChannel_CS (unsigned protocol, bool server) {
         channel->m_server       = server;
         channel->m_largestRecv  = 0;
 
-        s_channels->Link(channel);
+        s_channels->push_back(channel);
         channel->IncRef("ChannelLink");
     }
 
@@ -291,7 +292,7 @@ static NetMsgChannel * FindOrCreateChannel_CS (unsigned protocol, bool server) {
 NetMsgChannel * NetMsgChannelLock (
     unsigned        protocol,
     bool            server,
-    unsigned *      largestRecv
+    uint32_t *      largestRecv
 ) {
     NetMsgChannel * channel;
     s_channelCrit.Enter();
@@ -353,9 +354,9 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 //============================================================================
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
-    unsigned *              dh_g,
-    const BigNum **         dh_xa,
-    const BigNum **         dh_n
+    uint32_t *              dh_g,
+    const plBigNum**        dh_xa,
+    const plBigNum**        dh_n
 ) {
     if (dh_g) *dh_g   =  channel->m_dh_g;
     if (dh_xa) *dh_xa  = &channel->m_dh_xa;
@@ -374,15 +375,15 @@ void NetMsgChannelGetDhConstants (
 
 //===========================================================================
 void NetMsgProtocolRegister (
-    unsigned                protocol,
+    uint32_t                protocol,
     bool                    server,
     const NetMsgInitSend    sendMsgs[],
-    unsigned                sendMsgCount,
+    uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],
-    unsigned                recvMsgCount,
-    unsigned                dh_g,
-    const BigNum &          dh_xa,    // client: dh_x     server: dh_a
-    const BigNum &          dh_n
+    uint32_t                recvMsgCount,
+    uint32_t                dh_g,
+    const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
+    const plBigNum&         dh_n
 ) {
     s_channelCrit.EnterSafe();
     {
@@ -406,10 +407,10 @@ void NetMsgProtocolRegister (
 }
 
 //===========================================================================
-void NetMsgProtocolDestroy (unsigned protocol, bool server) {
+void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
     s_channelCrit.EnterSafe();
-    if (NetMsgChannel * channel = FindChannel_CS(protocol, server)) {
-        s_channels->Unlink(channel);
+    if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
+        s_channels->remove(channel);
         channel->DecRef("ChannelLink");
     }
     s_channelCrit.LeaveSafe();

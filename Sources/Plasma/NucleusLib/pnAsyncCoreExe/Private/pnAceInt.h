@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
 
+#include "pnNetCommon/plNetAddress.h"
+
 
 /*****************************************************************************
 *
@@ -106,7 +108,7 @@ typedef void (* FSleep) (unsigned sleepMs);
 // Sockets
 typedef void (* FAsyncSocketConnect) (
     AsyncCancelId *         cancelId,
-    const NetAddress &      netAddr,
+    const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
@@ -151,12 +153,12 @@ typedef void (* FAsyncSocketSetBacklogAlloc) (
 );
 
 typedef unsigned (* FAsyncSocketStartListening) (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 
 typedef void (* FAsyncSocketStopListening) (
-    const NetAddress &      listenAddr,
+    const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 );
 
