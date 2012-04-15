@@ -157,6 +157,7 @@ public:
     hsSemaphore(int initialValue=0, const char* name=nil);
     ~hsSemaphore();
 
+    hsBool      TryWait();
     hsBool      Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
 };

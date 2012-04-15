@@ -1,5 +1,6 @@
 add_subdirectory(plClient)
 add_subdirectory(plClientPatcher)
+add_subdirectory(plCrashHandler)
 add_subdirectory(plPythonPack)
 add_subdirectory(plUruLauncher)
 add_subdirectory(plFileSecure)
