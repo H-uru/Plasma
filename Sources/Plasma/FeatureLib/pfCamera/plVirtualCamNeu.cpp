@@ -1507,8 +1507,13 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
 void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
 {
     // pushing the same camera, folks?
-    // -- disallowed 2/13/2012 --
     if (pCam == GetCurrentStackCamera())
+    {
+        AddCameraToStack(pCam);
+        return;
+    }
+    // make sure that we don't keep adding the default camera if we're already in it
+    if (bDefault && pCam == GetCurrentStackCamera())
         return;
     
     // look up whatever transition we might have specified
@@ -1680,13 +1685,14 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
     if (fCameraStack.size() <= 1)
         return;
     
+    // Crazy Special Casing Turd: [based on some Cyan crap]
     // is it the current camera AND the same camera we would otherwise switch to?
-    if (pCam==GetCurrentStackCamera() && pCam == fCameraStack[fCameraStack.size() - 2])
+    // if so, pop off the dupe if we're going to the age default... otherwise, go crazy.
+    if (fCameraStack.size() > 2 && pCam == GetCurrentStackCamera())
     {
-        // pop but don't transition to a new camera
-        // or do anything else:
-        fCameraStack.pop_back();
-        return;
+        int theDupe = fCameraStack.size() - 1;
+        if (pCam == fCameraStack[theDupe] && theDupe == 2)
+            fCameraStack.pop_back();
     }
 
     // are we mouse-looking?
