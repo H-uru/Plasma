@@ -287,11 +287,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadJPEGFromDisk, args, "Params: filename,widt
 
     if (PyString_CheckEx(filenameObj))
     {
-        char* text = PyString_AsStringEx(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        PyObject* ret = pyImage::LoadJPEGFromDisk(wText, width, height);
-        delete[] wText;
-        delete[] text;
+        plString text = PyString_AsStringEx(filenameObj);
+        PyObject* ret = pyImage::LoadJPEGFromDisk(_TEMP_CONVERT_TO_WCHAR_T(text), width, height);
         return ret;
     }
     else
@@ -312,11 +309,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadPNGFromDisk, args, "Params: filename,width
     }
     if (PyString_CheckEx(filenameObj))
     {
-        char* text = PyString_AsStringEx(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        PyObject* ret = pyImage::LoadPNGFromDisk(wText, width, height);
-        delete[] wText;
-        delete[] text;
+        plString text = PyString_AsStringEx(filenameObj);
+        PyObject* ret = pyImage::LoadPNGFromDisk(_TEMP_CONVERT_TO_WCHAR_T(text), width, height);
         return ret;
     }
     else

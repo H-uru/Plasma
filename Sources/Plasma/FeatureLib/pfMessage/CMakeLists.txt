@@ -2,6 +2,7 @@ include_directories(../../CoreLib)
 include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
+include_directories(../../FeatureLib)
 
 set(pfMessage_SOURCES
     pfKIMsg.cpp
@@ -14,6 +15,7 @@ set(pfMessage_SOURCES
 set(pfMessage_HEADERS
     pfBackdoorMsg.h
     pfGameGUIMsg.h
+    pfGameScoreMsg.h
     pfGUINotifyMsg.h
     pfKIMsg.h
     pfMarkerMsg.h
