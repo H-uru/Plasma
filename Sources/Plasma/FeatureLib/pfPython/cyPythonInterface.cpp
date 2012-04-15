@@ -154,8 +154,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyCluster.h"
 #include "pyGrassShader.h"
 
-#include "pyScoreMgr.h"
 #include "pyGameScore.h"
+#include "pyGameScoreMsg.h"
 
 #include "pyCritterBrain.h"
 
@@ -1494,12 +1494,15 @@ void PythonInterface::AddPlasmaClasses()
     // Shaders
     pyGrassShader::AddPlasmaClasses(plasmaMod);
 
-    // Game Scores
-    pyScoreMgr::AddPlasmaClasses(plasmaMod);
-    pyGameScore::AddPlasmaClasses(plasmaMod);
-
     // AI
     pyCritterBrain::AddPlasmaClasses(plasmaMod);
+
+    // Game Scores
+    pyGameScore::AddPlasmaClasses(plasmaMod);
+    pyGameScoreMsg::AddPlasmaClasses(plasmaMod);
+    pyGameScoreListMsg::AddPlasmaClasses(plasmaMod);
+    pyGameScoreTransferMsg::AddPlasmaClasses(plasmaMod);
+    pyGameScoreUpdateMsg::AddPlasmaClasses(plasmaMod);
 
     // Stupid thing
     ptImportHook_AddPlasmaClasses(plasmaMod);
@@ -1523,6 +1526,7 @@ void PythonInterface::AddPlasmaConstantsClasses()
     
     //pyDrawControl::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pyDynamicText::AddPlasmaConstantsClasses(plasmaConstantsMod);
+    pyGameScore::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pyGUIControlButton::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pyGUIControlMultiLineEdit::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pyJournalBook::AddPlasmaConstantsClasses(plasmaConstantsMod);
@@ -1531,7 +1535,6 @@ void PythonInterface::AddPlasmaConstantsClasses()
     pyNotify::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pySDL::AddPlasmaConstantsClasses(plasmaConstantsMod);
     pyStatusLog::AddPlasmaConstantsClasses(plasmaConstantsMod);
-    pyScoreMgr::AddPlasmaConstantsClasses(plasmaConstantsMod);
 
     pyAIMsg::AddPlasmaConstantsClasses(plasmaConstantsMod);
 

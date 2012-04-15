@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef pyGameScore_h
-#define pyGameScore_h
+#ifndef _pyGameScore_h_
+#define _pyGameScore_h_
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -52,10 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
+#include "plString.h"
 
 #include "pyGlueHelpers.h"
 
-struct pfGameScore;
+class pfGameScore;
+class pyKey;
 
 class pyGameScore
 {
@@ -74,17 +76,28 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameScore); // converts a PyObject to a pyGameScore (throws error if not correct type)
 
     static void     AddPlasmaClasses(PyObject *m);
+    static void     AddPlasmaConstantsClasses(PyObject *m);
 
-    int             GetScoreID();
-    uint32_t          GetCreatedTime();
-    int             GetOwnerID();
-    int             GetGameType();
-    int             GetValue();
-    const char*     GetGameName();
+    uint32_t        GetOwnerID() const;
+    int32_t         GetGameType() const;
+    int32_t         GetPoints() const;
+    plString        GetGameName() const;
 
-    bool            AddPoints(int numPoints);
-    bool            TransferPoints(unsigned destination, int numPoints);
-    bool            SetPoints(int numPoints);
+    void            AddPoints(int32_t numPoints, pyKey& rcvr);
+    void            Delete();
+    void            TransferPoints(pyGameScore* dest, pyKey& rcvr);
+    void            TransferPoints(pyGameScore* dest, int32_t numPoints, pyKey& rcvr);
+    void            SetPoints(int32_t numPoints, pyKey& rcvr);
+
+    static void     CreateAgeScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreateGlobalScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreatePlayerScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreateScore(uint32_t ownerId, const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
+
+    static void     FindAgeScores(const plString& name, pyKey& rcvr);
+    static void     FindGlobalScores(const plString& name, pyKey& rcvr);
+    static void     FindPlayerScores(const plString& name, pyKey& rcvr);
+    static void     FindScores(uint32_t ownerId, const plString& name, pyKey& rcvr);
 };
 
 #endif

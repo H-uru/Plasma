@@ -42,22 +42,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
+#include "plString.h"
 
-char* PyString_AsStringEx(PyObject* obj) 
+plString PyString_AsStringEx(PyObject* obj) 
 {
     if (PyString_Check(obj))
-        return hsStrcpy(PyString_AsString(obj));
+        return plString::FromUtf8(PyString_AsString(obj));
     else if (PyUnicode_Check(obj))
     {
         PyObject* utf8 = PyUnicode_AsUTF8String(obj);
-        char* buf = hsStrcpy(PyString_AsString(utf8));
+        plString str = plString::FromUtf8(PyString_AsString(utf8));
         Py_DECREF(utf8);
-        return buf;
+        return str;
     } else
-        return NULL; // You suck.
+        return plString::Null;
 }
 
 bool PyString_CheckEx(PyObject* obj)
 {
     return (PyString_Check(obj) || PyUnicode_Check(obj));
+}
+
+PyObject* PyUnicode_FromStringEx(const plString& str)
+{
+    plStringBuffer<wchar_t> buf = str.ToWchar();
+    return PyUnicode_FromWideChar(buf.GetData(), buf.GetSize());
 }

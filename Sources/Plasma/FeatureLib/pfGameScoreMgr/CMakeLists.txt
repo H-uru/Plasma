@@ -2,6 +2,7 @@ include_directories(../../CoreLib)
 include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
+include_directories(../../FeatureLib)
 
 set(pfGameScoreMgr_SOURCES
     pfGameScoreMgr.cpp

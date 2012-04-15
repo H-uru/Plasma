@@ -45,8 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 
 // Useful string functions
-char* PyString_AsStringEx(PyObject* obj);
+class plString;
+
+plString PyString_AsStringEx(PyObject* obj);
 bool PyString_CheckEx(PyObject* obj);
+PyObject* PyUnicode_FromStringEx(const plString& str);
 
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 
@@ -351,6 +354,10 @@ PyModule_AddObject(m, #pythonClassName, (PyObject*)&pythonClassName##_type)
     static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar)
 #define PYTHON_METHOD_DEFINITION_NOARGS(pythonClassName, methodName) \
     static PyObject *pythonClassName##_##methodName(pythonClassName *self)
+#define PYTHON_METHOD_DEFINITION_STATIC(pythonClassName, methodName, argsVar) \
+    static PyObject *pythonClassName##_##methodName(PyObject*, PyObject *argsVar)
+#define PYTHON_METHOD_DEFINITION_STATIC_WKEY(pythonClassName, methodName, argsVar, keywordsVar) \
+    static PyObject *pythonClassName##_##methodName(PyObject*, PyObject *argsVar, PyObject *keywordsVar)
 #define PYTHON_METHOD_DEFINITION_WKEY(pythonClassName, methodName, argsVar, keywordsVar) \
     static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar, PyObject *keywordsVar)
 
@@ -387,6 +394,14 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 // method with no arguments
 #define PYTHON_METHOD_NOARGS(pythonClassName, methodName, docString) \
     {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_NOARGS, docString}
+
+// static method with arguments
+#define PYTHON_METHOD_STATIC(pythonClassName, methodName, docString) \
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_STATIC | METH_VARARGS, docString}
+
+// static method with keywords
+#define PYTHON_METHOD_STATIC_WKEY(pythonClassName, methodName, docString) \
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_STATIC | METH_VARARGS | METH_KEYWORDS, docString}
 
 // method with keywords
 #define PYTHON_METHOD_WKEY(pythonClassName, methodName, docString) \
