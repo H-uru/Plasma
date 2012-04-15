@@ -316,6 +316,18 @@ hsSemaphore::~hsSemaphore()
 #endif
 }
 
+hsBool hsSemaphore::TryWait()
+{
+#ifdef USE_SEMA
+    int status = ::sem_trywait(fPSema);
+    return status != E_AGAIN;
+#else
+    int status = ::pthread_mutex_trylock(&fPMutex);
+    hsThrowIfOSErr(status);
+    return status==EBUSY ? false : true;
+#endif
+}
+
 hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
 #ifdef USE_SEMA  // SHOULDN'T THIS USE timeToWait??!?!? -rje
