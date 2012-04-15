@@ -95,6 +95,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameMgr/pfGameMgr.h"
 #include "plMessage/plAIMsg.h"
 #include "plAvatar/plAvBrainCritter.h"
+#include "pfMessage/pfGameScoreMsg.h"
 
 #include "plProfile.h"
 
@@ -136,6 +137,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Game manager
 #include "Games/pyGameMgrMsg.h"
 #include "Games/pyGameCliMsg.h"
+#include "pyGameScoreMsg.h"
 
 #include <locale>
 
@@ -189,6 +191,7 @@ const char* plPythonFileMod::fFunctionNames[] =
     "OnGameMgrMsg",         // kfunc_OnGameMgrMsg
     "OnGameCliMsg",         // kfunc_OnGameCliMsg
     "OnAIMsg",              // kfunc_OnAIMsg
+    "OnGameScoreMsg",       // kfunc_OnGameScoreMsg
     nil
 };
 
@@ -2817,6 +2820,36 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
             // display any output
             DisplayPythonOutput();
 
+            return true;
+        }
+    }
+
+    if (fPyFunctionInstances[kfunc_OnGameScoreMsg])
+    {
+        pfGameScoreMsg* pScoreMsg = pfGameScoreMsg::ConvertNoRef(msg);
+        if (pScoreMsg)
+        {
+            plProfile_BeginTiming(PythonUpdate);
+
+            // Creates the final ptGameScoreMsg and ships it off to OnGameScoreMsg
+            PyObject* pyMsg = pyGameScoreMsg::CreateFinal(pScoreMsg);
+            PyObject* retVal = PyObject_CallMethod(
+                fPyFunctionInstances[kfunc_OnGameScoreMsg],
+                (char*)fFunctionNames[kfunc_OnGameScoreMsg],
+                "O", pyMsg
+            );
+            Py_DECREF(pyMsg);
+
+            if (retVal == nil)
+            {
+#ifndef PLASMA_EXTERNAL_RELEASE
+                // for some reason this function didn't, remember that and not call it again
+                fPyFunctionInstances[kfunc_OnGameScoreMsg] = nil;
+#endif  //PLASMA_EXTERNAL_RELEASE
+                // if there was an error make sure that the stderr gets flushed so it can be seen
+                ReportError();
+            }
+            plProfile_EndTiming(PythonUpdate);
             return true;
         }
     }

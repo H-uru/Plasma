@@ -39,115 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/FeatureLib/pfGameScoreMgr/pfGameScoreMgr.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H
-#define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H
+#ifndef _pfGameScoreMgr_h_
+#define _pfGameScoreMgr_h_
 
 #include "HeadSpin.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pnUtils/pnUtils.h"
+#include "hsRefCnt.h"
+#include "plString.h"
 
-struct NetGameRank;
+// TODO: Rank List (seems to be unused in regular gameplay though...)
+//       That's some strange stuff...
 
-struct pfGameScore : AtomicRef
+/**
+ * Plasma Game Score
+ * Mid-level class that encapsulates game scores and sends pfGameScoreMsg notifications
+ * via the dispatcher when network operations complete.
+ */
+class pfGameScore : public hsRefCnt
 {
-    unsigned    scoreId;
-    unsigned    ownerId;
-    uint32_t      createdTime;
-    char        gameName[kMaxGameScoreNameLength];
-    unsigned    gameType;
-    int         value;
+    uint32_t fScoreId;
+    uint32_t fOwnerId;
+    plString fName;
+    uint32_t fGameType; // EGameScoreTypes
+    int32_t  fValue;
 
-    pfGameScore();
-    ~pfGameScore();
-
-    void Init(
-        unsigned sid,
-        unsigned oid,
-        uint32_t createTime,
-        const char gname[],
-        unsigned gType,
-        int val
-    );
-
-    void CopyFrom(const pfGameScore* score);
-};
-
-class pfGameScoreMgr
-{
-private:
-    pfGameScoreMgr();
-
-    struct GameScoreLink : THashKeyVal<unsigned>
-    {
-        HASHLINK(GameScoreLink)     link;
-        pfGameScore *               score;
-
-        GameScoreLink(pfGameScore * gscore)
-        :   THashKeyVal<unsigned>(gscore->scoreId)
-        ,   score(gscore)
-        {
-        }
-    };
-
-    HASHTABLEDECL(
-        GameScoreLink,
-        THashKeyVal<unsigned>,
-        link
-    ) fScores;
+    friend class pfGameScoreTransferMsg;
+    friend class pfGameScoreUpdateMsg;
 
 public:
-    static pfGameScoreMgr* GetInstance();
+    pfGameScore(uint32_t scoreId, uint32_t owner, plString name, uint32_t type, int32_t value = 0)
+        : fScoreId(scoreId), fOwnerId(owner), fName(name), fGameType(type), fValue(value)
+    { }
 
-    void AddCachedScore(pfGameScore * score);
-    void RemoveCachedScore(unsigned scoreId);
+    plString GetGameName() const { return fName; }
+    uint32_t GetGameType() const { return fGameType; }
+    uint32_t GetOwner() const { return fOwnerId; }
+    int32_t  GetPoints() const { return fValue; }
+    void     SetPoints(int32_t value, plKey rcvr = nil);
 
-    ENetError CreateScore(
-        unsigned        ownerId,
-        const char*     gameName,
-        unsigned        gameType,
-        int             value,
-        pfGameScore&    score
-    );
-    ENetError DeleteScore(
-        unsigned        scoreId
-    );
-    ENetError AddPoints(
-        unsigned        scoreId,
-        int             numPoints
-    );
-    ENetError TransferPoints(
-        unsigned        srcScoreId,
-        unsigned        destScoreId,
-        int             numPoints
-    );
-    ENetError SetPoints(
-        unsigned        scoreId,
-        int             numPoints
-    );
-    ENetError GetScoresIncRef(
-        unsigned        ownerId,
-        const char*     gameName,
-        pfGameScore**&  outScoreList,
-        int&            outScoreListCount
-    );
-    ENetError GetRankList(
-        unsigned        ownerId,
-        unsigned        scoreGroup,
-        unsigned        parentFolderId,
-        const char *    gameName,
-        unsigned        timePeriod,
-        unsigned        numResults,
-        unsigned        pageNumber,
-        bool            sortDesc,
-        NetGameRank**&  outRankList,
-        int&            outRankListCount
-    );
+    void AddPoints(int32_t add, plKey rcvr = nil);
+    void Delete();
+    void TransferPoints(pfGameScore* to, plKey rcvr = nil) { TransferPoints(to, fValue, rcvr); }
+    void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = nil);
+
+    static void Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, plKey rcvr);
+    static void Find(uint32_t ownerId, const plString& name, plKey rcvr);
 };
 
-#endif // PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMESCOREMGR_PFGAMESCOREMGR_H
+#endif // _pfGameScoreMgr_h_

@@ -40,435 +40,141 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pfGameScoreMgr.h"
-
-#include "pnUtils/pnUtils.h"
+#include "pfMessage/pfGameScoreMsg.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "pnNetProtocol/pnNetProtocol.h"
 
-//============================================================================
-pfGameScore::pfGameScore()
+struct ScoreFindParam
 {
-}
+    uint32_t fOwnerId;
+    plString fName;
+    plKey fReceiver; // because plKey as a void* isn't cool
 
-pfGameScore::~pfGameScore()
-{
-    pfGameScoreMgr::GetInstance()->RemoveCachedScore(scoreId);
-}
-
-void pfGameScore::Init(
-    unsigned sid,
-    unsigned oid,
-    uint32_t createTime,
-    const char gname[],
-    unsigned gType,
-    int val
-) {
-    scoreId     = sid;
-    ownerId     = oid;
-    createdTime = createTime;
-    gameType    = gType;
-    value       = val;
-
-    StrCopy(gameName, gname, arrsize(gameName));
-    pfGameScoreMgr::GetInstance()->AddCachedScore(this);
-}
-
-void pfGameScore::CopyFrom(
-    const pfGameScore* score
-) {
-    scoreId     = score->scoreId;
-    ownerId     = score->ownerId;
-    createdTime = score->createdTime;
-    gameType    = score->gameType;
-    value       = score->value;
-
-    StrCopy(gameName, score->gameName, arrsize(gameName));
-}
-
-//============================================================================
-pfGameScoreMgr::pfGameScoreMgr()
-{
-}
-
-pfGameScoreMgr* pfGameScoreMgr::GetInstance()
-{
-    static pfGameScoreMgr s_instance;
-    return &s_instance;
-}
-
-void pfGameScoreMgr::AddCachedScore(pfGameScore * score)
-{
-    GameScoreLink * scoreLink = fScores.Find(score->scoreId);
-    if (scoreLink == nil)
-    {
-        GameScoreLink * link = new GameScoreLink(score);
-        fScores.Add(link);
-    }
-    else
-        scoreLink->score->CopyFrom(score);
-}
-
-void pfGameScoreMgr::RemoveCachedScore(unsigned scoreId)
-{
-    if (GameScoreLink * link = fScores.Find(scoreId))
-    {
-        delete link;
-    }
-}
-
-//============================================================================
-struct NetWaitOp
-{
-    ENetError   result;
-    bool        complete;
+    ScoreFindParam(uint32_t ownerId, plString name, plKey r)
+        : fOwnerId(ownerId), fName(name), fReceiver(r)
+    { }
 };
 
-static void WaitOpCallback(
-    ENetError   result,
-    void *      param
-) {
-    NetWaitOp * op = (NetWaitOp *)param;
-
-    op->result = result;
-    op->complete = true;
-}
-
-//============================================================================
-// CreateScore
-//============================================================================
-struct CreateScoreOp : NetWaitOp
+struct ScoreTransferParam
 {
-    pfGameScore * score;
+    pfGameScore* fTo;
+    pfGameScore* fFrom;
+    int32_t      fPoints;
+    plKey        fReceiver;
+
+    ScoreTransferParam(pfGameScore* to, pfGameScore* from, int32_t points, plKey r)
+        : fTo(to), fFrom(from), fPoints(points), fReceiver(r)
+    { }
 };
 
-static void CreateScoreCallback(
+struct ScoreUpdateParam
+{
+    pfGameScore* fParent;
+    plKey        fReceiver;
+    int32_t      fPoints; // reset points to this if update op
+
+    ScoreUpdateParam(pfGameScore* s, plKey r, int32_t points = 0)
+        : fParent(s), fReceiver(r), fPoints(points)
+    { }
+};
+
+//======================================
+static void OnScoreSet(ENetError result, void* param)
+{
+    ScoreUpdateParam* p = (ScoreUpdateParam*)param;
+    pfGameScoreUpdateMsg* msg = new pfGameScoreUpdateMsg(result, p->fParent, p->fPoints);
+    msg->Send(p->fReceiver);
+    delete p;
+}
+
+void pfGameScore::SetPoints(int32_t value, plKey rcvr)
+{
+    Ref(); // netcode holds us
+    NetCliAuthScoreSetPoints(fScoreId, value, OnScoreSet, new ScoreUpdateParam(this, rcvr, value));
+}
+
+//======================================
+static void OnScoreUpdate(ENetError result, void* param)
+{
+    ScoreUpdateParam* p = (ScoreUpdateParam*)param;
+    pfGameScoreUpdateMsg* msg = new pfGameScoreUpdateMsg(result, p->fParent, p->fPoints);
+    msg->Send(p->fReceiver);
+    delete p;
+}
+
+void pfGameScore::AddPoints(int32_t add, plKey rcvr)
+{
+    Ref(); // netcode holds us
+    NetCliAuthScoreAddPoints(fScoreId, add, OnScoreUpdate, new ScoreUpdateParam(this, rcvr, fValue + add));
+}
+
+//======================================
+void pfGameScore::Delete()
+{
+    NetCliAuthScoreDelete(fScoreId, nil, nil); // who cares about getting a notify here?
+    UnRef(); // kthxbai
+}
+
+//======================================
+static void OnScoreTransfer(ENetError result, void* param)
+{
+    ScoreTransferParam* p = (ScoreTransferParam*)param;
+    pfGameScoreTransferMsg* msg = new pfGameScoreTransferMsg(result, p->fTo, p->fFrom, p->fPoints);
+    msg->Send(p->fReceiver);
+    delete p;
+}
+
+void pfGameScore::TransferPoints(pfGameScore* to, int32_t points, plKey recvr)
+{
+    this->Ref(); to->Ref(); // netcode holds us
+    NetCliAuthScoreTransferPoints(this->fScoreId, to->fScoreId, points,
+        OnScoreTransfer, new ScoreTransferParam(to, this, points, recvr));
+}
+
+//======================================
+static void OnScoreCreate(
     ENetError   result,
     void *      param,
-    unsigned    scoreId,
-    uint32_t      createdTime,
-    unsigned    ownerId,
+    uint32_t    scoreId,
+    uint32_t    createdTime, // ignored
+    uint32_t    ownerId,
     const char* gameName,
-    unsigned    gameType,
-    int         value
+    uint32_t    gameType,
+    int32_t     value
 ) {
-    CreateScoreOp * op = (CreateScoreOp*)param;
-    op->result = result;
-
-    if (IS_NET_SUCCESS(result)) {
-        op->score->Init(
-            scoreId,
-            ownerId,
-            createdTime,
-            gameName,
-            gameType,
-            value
-        );
-    }
-    else
-        op->score->scoreId = 0;
-
-    op->complete = true;
+    ScoreUpdateParam* p = (ScoreUpdateParam*)param;
+    pfGameScore* score = new pfGameScore(scoreId, ownerId, _TEMP_CONVERT_FROM_LITERAL(gameName), gameType, value);
+    pfGameScoreUpdateMsg* msg = new pfGameScoreUpdateMsg(result, score, value);
+    msg->Send(p->fReceiver);
+    delete p;
 }
 
-ENetError pfGameScoreMgr::CreateScore(
-    unsigned        ownerId,
-    const char*     gameName,
-    unsigned        gameType,
-    int             value,
-    pfGameScore&    score
-) {
-    CreateScoreOp param;
-    memset(&param, 0, sizeof(CreateScoreOp));
-    param.score = &score;
-
-    NetCliAuthScoreCreate(
-        ownerId,
-        gameName,
-        gameType,
-        value,
-        CreateScoreCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// DeleteScore
-//============================================================================
-ENetError pfGameScoreMgr::DeleteScore(
-    unsigned scoreId
-) {
-    NetWaitOp param;
-    memset(&param, 0, sizeof(NetWaitOp));
-
-    NetCliAuthScoreDelete(
-        scoreId,
-        WaitOpCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// GetScores
-//============================================================================
-struct GetScoresOp : NetWaitOp
+void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, plKey rcvr)
 {
-    pfGameScore***  scores;
-    int*            scoreCount;
-};
+    NetCliAuthScoreCreate(ownerId, name.c_str(), type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
+}
 
-static void GetScoresCallback(
+//======================================
+static void OnScoreFound(
     ENetError           result,
     void *              param,
     const NetGameScore  scores[],
-    unsigned            scoreCount
+    uint32_t            scoreCount
 ) {
-    GetScoresOp * op = (GetScoresOp*)param;
-    op->result = result;
-
-    if (IS_NET_SUCCESS(result)) {
-        *(op->scores) = new pfGameScore*[scoreCount];
-        *(op->scoreCount) = scoreCount;
-
-        for (int i = 0; i < scoreCount; ++i) {
-            pfGameScore* score = new pfGameScore();
-            score->IncRef();
-
-            char tempGameName[kMaxGameScoreNameLength];
-            StrToAnsi(tempGameName, scores[i].gameName, arrsize(tempGameName));
-
-            score->Init(
-                scores[i].scoreId,
-                scores[i].ownerId,
-                scores[i].createdTime,
-                tempGameName,
-                scores[i].gameType,
-                scores[i].value
-            );
-
-            (*op->scores)[i] = score;
-        }
-    }
-    else {
-        *(op->scores) = nil;
-        op->scoreCount = 0;
+    std::vector<pfGameScore*> vec(scoreCount);
+    for (uint32_t i = 0; i < scoreCount; ++i)
+    {
+        const NetGameScore ngs = scores[i];
+        vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, _TEMP_CONVERT_FROM_WCHAR_T(ngs.gameName), ngs.gameType, ngs.value);
     }
 
-    op->complete = true;
+    ScoreFindParam* p = (ScoreFindParam*)param;
+    pfGameScoreListMsg* msg = new pfGameScoreListMsg(result, vec, p->fOwnerId, p->fName);
+    msg->Send(p->fReceiver);
+    delete p;
 }
 
-ENetError pfGameScoreMgr::GetScoresIncRef(
-    unsigned        ownerId,
-    const char*     gameName,
-    pfGameScore**&  outScoreList,
-    int&            outScoreListCount
-) {
-    GetScoresOp param;
-    memset(&param, 0, sizeof(GetScoresOp));
-    param.scores        = &outScoreList;
-    param.scoreCount    = &outScoreListCount;
-
-    NetCliAuthScoreGetScores(
-        ownerId,
-        gameName,
-        GetScoresCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// AddPoints
-//============================================================================
-ENetError pfGameScoreMgr::AddPoints(
-    unsigned    scoreId,
-    int         numPoints
-) {
-    NetWaitOp param;
-    memset(&param, 0, sizeof(NetWaitOp));
-
-    NetCliAuthScoreAddPoints(
-        scoreId,
-        numPoints,
-        WaitOpCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    if (IS_NET_SUCCESS(param.result)) {
-        if (GameScoreLink * link = fScores.Find(scoreId)) {
-            link->score->value += numPoints;
-        }
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// TransferPoints
-//============================================================================
-ENetError pfGameScoreMgr::TransferPoints(
-    unsigned    srcScoreId,
-    unsigned    destScoreId,
-    int         numPoints
-) {
-    NetWaitOp param;
-    memset(&param, 0, sizeof(NetWaitOp));
-
-    NetCliAuthScoreTransferPoints(
-        srcScoreId,
-        destScoreId,
-        numPoints,
-        WaitOpCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    if (IS_NET_SUCCESS(param.result)) {
-        if (GameScoreLink * link = fScores.Find(srcScoreId)) {
-            link->score->value -= numPoints;
-        }
-        if (GameScoreLink * link = fScores.Find(destScoreId)) {
-            link->score->value += numPoints;
-        }
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// SetPoints
-//============================================================================
-ENetError pfGameScoreMgr::SetPoints(
-    unsigned    scoreId,
-    int         numPoints
-) {
-    NetWaitOp param;
-    memset(&param, 0, sizeof(NetWaitOp));
-
-    NetCliAuthScoreSetPoints(
-        scoreId,
-        numPoints,
-        WaitOpCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    if (IS_NET_SUCCESS(param.result)) {
-        if (GameScoreLink * link = fScores.Find(scoreId)) {
-            link->score->value = numPoints;
-        }
-    }
-
-    return param.result;
-}
-
-//============================================================================
-// GetRankList
-//============================================================================
-
-struct GetRanksOp : NetWaitOp
+void pfGameScore::Find(uint32_t ownerId, const plString& name, plKey rcvr)
 {
-    NetGameRank***  ranks;
-    int*            rankCount;
-};
-
-static void GetRanksCallback(
-    ENetError           result,
-    void *              param,
-    const NetGameRank   ranks[],
-    unsigned            rankCount
-) {
-    GetRanksOp * op = (GetRanksOp*)param;
-    op->result = result;
-
-    if (IS_NET_SUCCESS(result)) {
-        *(op->ranks) = new NetGameRank*[rankCount];
-        *(op->rankCount) = rankCount;
-
-        for (int i = 0; i < rankCount; ++i) {
-            NetGameRank * rank = new NetGameRank;
-
-            rank->rank  = ranks[i].rank;
-            rank->score = ranks[i].score;
-            StrCopy(rank->name, ranks[i].name, arrsize(rank->name));
-
-            (*op->ranks)[i] = rank;
-        }
-    }
-    else {
-        *(op->ranks) = nil;
-        op->rankCount = 0;
-    }
-
-    op->complete = true;
-}
-
-ENetError pfGameScoreMgr::GetRankList(
-    unsigned        ownerId,
-    unsigned        scoreGroup,
-    unsigned        parentFolderId,
-    const char *    gameName,
-    unsigned        timePeriod,
-    unsigned        numResults,
-    unsigned        pageNumber,
-    bool            sortDesc,
-    NetGameRank**&  outRankList,
-    int&            outRankListCount
-) {
-    GetRanksOp param;
-    memset(&param, 0, sizeof(GetRanksOp));
-    param.ranks     = &outRankList;
-    param.rankCount = &outRankListCount;
-
-    NetCliAuthScoreGetRankList(
-        ownerId,
-        scoreGroup,
-        parentFolderId,
-        gameName,
-        timePeriod,
-        numResults,
-        pageNumber,
-        sortDesc,
-        GetRanksCallback,
-        &param
-    );
-
-    while (!param.complete) {
-        NetClientUpdate();
-        AsyncSleep(10);
-    }
-
-    return param.result;
+    NetCliAuthScoreGetScores(ownerId, name.c_str(), OnScoreFound, new ScoreFindParam(ownerId, name, rcvr));
 }

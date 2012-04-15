@@ -202,6 +202,7 @@ public:
         kfunc_OnGameMgrMsg,
         kfunc_OnGameCliMsg,
         kfunc_OnAIMsg,
+        kfunc_OnGameScoreMsg,
         kfunc_lastone
     };
     // array of matching Python instance where the functions are, if defined
