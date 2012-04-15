@@ -152,34 +152,44 @@ class nb01UpdateHoodInfoImager(ptResponder):
         return name + "\t" + scorestr + "\n"
 
     def IUpdateHoodImager(self):
-        hoodScoreList = ptScoreMgr().getCurrentAgeScores("PelletDrop")
-        if hoodScoreList:
-            hoodpoints = hoodScoreList[0].getValue()
-            hoodpelletscore = 0
-            deviceInbox = self.IGetDeviceInbox()
-            if type(deviceInbox) != type(None):
-                items = deviceInbox.getChildNodeRefList()
-                for item in items:
-                    item = item.getChild()
-                    itemtn = item.upcastToTextNoteNode()
-                    if itemtn:
-                        if itemtn.getTitle() == "Neighborhood Pellet Score":
-                            hoodpelletscore = itemtn
-                            break
-                if hoodpelletscore:
-                    newText = str(hoodpoints)
-                    hoodpelletscore.setText(newText)
-                    hoodpelletscore.forceSave()
-                else:
-                    hoodpelletscore = ptVaultTextNoteNode(0)
-                    hoodpelletscore.setTitle("Neighborhood Pellet Score")
-                    newText = str(hoodpoints)
-                    hoodpelletscore.setText(newText)
-                    deviceInbox.addNode(hoodpelletscore)
+        ptGameScore.findAgeScores("PelletDrop", self.key)
 
-                if hoodpelletscore and hoodpelletscore.getID() > 0:
-                    sname = "Update=%d" % (hoodpelletscore.getID())
-                    self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
+    def OnGameScoreMsg(self, msg):
+        if isinstance(msg, ptGameScoreListMsg):
+            try:
+                score = msg.getScores()[0]
+                if msg.getName() == "PelletDrop":
+                    self.IUpdateHoodPelletScore(score)
+            except Exception, detail:
+                PtDebugPrint("nb01UpdateHoodInfoImager.OnGameScoreMsg(): " + detail)
+
+    def IUpdateHoodPelletScore(self, score):
+        hoodpoints = score.getPoints()
+        hoodpelletscore = 0
+        deviceInbox = self.IGetDeviceInbox()
+        if type(deviceInbox) != type(None):
+            items = deviceInbox.getChildNodeRefList()
+            for item in items:
+                item = item.getChild()
+                itemtn = item.upcastToTextNoteNode()
+                if itemtn:
+                    if itemtn.getTitle() == "Neighborhood Pellet Score":
+                        hoodpelletscore = itemtn
+                        break
+            if hoodpelletscore:
+                newText = str(hoodpoints)
+                hoodpelletscore.setText(newText)
+                hoodpelletscore.forceSave()
+            else:
+                hoodpelletscore = ptVaultTextNoteNode(0)
+                hoodpelletscore.setTitle("Neighborhood Pellet Score")
+                newText = str(hoodpoints)
+                hoodpelletscore.setText(newText)
+                deviceInbox.addNode(hoodpelletscore)
+
+            if hoodpelletscore and hoodpelletscore.getID() > 0:
+                sname = "Update=%d" % (hoodpelletscore.getID())
+                self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
 
     def IUpdatePelletScores(self, newplayername, pelletscore):
         deviceInbox = self.IGetDeviceInbox()

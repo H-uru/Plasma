@@ -67,6 +67,7 @@ MaxVersionNumber = 58
 MinorVersionNumber = 52
 
 from Plasma import *
+from PlasmaGame import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
@@ -721,6 +722,16 @@ kQNAcceptText = 120
 kQNDeclineBtn = 111
 kQNDeclineText = 121
 
+# =====================================
+# Pellet Score ops
+#---------
+kScoreNoOp                    = 0
+kScoreFetchForDisplay         = 1
+kScoreFetchMineForUpload      = 2
+kScoreFetchUploadDestination  = 3
+kScoreCreateUploadDestination = 4
+kScoreTransfer                = 5
+
 AmICCR = 0
 
 
@@ -876,6 +887,9 @@ class xKI(ptModifier):
         self.pendingMGaction = None
 
         self.autoShout = 0  #The switch whether or not autoshout is is enabled (it's off by default)
+
+        self._scoreOpCur = kScoreNoOp
+        self.scoreOps   = [] #pellet score op queue
 
         self.ImagerMap = {}
 
@@ -10446,35 +10460,86 @@ class xKI(ptModifier):
                 vault.updatePsnlAgeSDL(psnlSDL)
 
 
-    def GetPelletKIScore(self):
-        scoreList = ptScoreMgr().getPlayerScores("PelletDrop")
-        if scoreList:
-            score = scoreList[0].getValue()
-            PtDebugPrint("xKI.GetPelletKIScore(): pellet score = ",score, level=kDebugDumpLevel)
-            return score
-        else:
-            PtDebugPrint("xKI.GetPelletKIScore(): no pellets dropped yet, will show default score of '000'", level=kWarningLevel)
-            return -1
+
+    def _IProcScoreOps(self):
+        if not len(self.scoreOps):
+            self._scoreOpCur = kScoreNoOp
+            return
+
+        self._scoreOpCur = self.scoreOps.pop(0)
+        if self._scoreOpCur == kScoreFetchForDisplay:
+            ptGameScore.findPlayerScores("PelletDrop", self.key)
+        elif self._scoreOpCur == kScoreFetchMineForUpload:
+            ptGameScore.findPlayerScores("PelletDrop", self.key)
+        elif self._scoreOpCur == kScoreFetchUploadDestination:
+            ptGameScore.findAgeScores("PelletDrop", self.key)
+        elif self._scoreOpCur == kScoreCreateUploadDestination:
+            ptGameScore.createAgeScore("PelletDrop", PtGameScoreTypes.kAccumulative, 0, self.key)
+        elif self._scoreOpCur == kScoreTransfer:
+            self._scoreSource.transferPoints(self._scoreDestination, key=self.key)
 
 
-    def IUpdatePelletScore(self):
+
+    def DoScoreOp(self, op):
+        self.scoreOps.append(op)
+        if self._scoreOpCur == kScoreNoOp:
+            self._IProcScoreOps()
+
+
+    def OnGameScoreMsg(self, msg):
+        if isinstance(msg, ptGameScoreListMsg):
+            pelletTextBox = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKIPelletDrop))
+            try:
+                score = msg.getScores()[0]
+                points = score.getPoints()
+
+                if self._scoreOpCur == kScoreFetchForDisplay:
+                    if points < 0:
+                        points = 0 # Hmmm...
+                    pelletTextBox.setString(str(points))
+                    PtDebugPrint("xKI.OnGameScoreMsg(): PelletDrop score... %i" % points, level=kWarningLevel)
+                elif self._scoreOpCur == kScoreFetchMineForUpload:
+                    self._scoreSource = score
+                    self.DoScoreOp(kScoreFetchUploadDestination)
+                elif self._scoreOpCur == kScoreFetchUploadDestination:
+                    self._scoreDestination = score
+                    self._scoreUploaded = self._scoreSource.getPoints()
+                    self.DoScoreOp(kScoreTransfer)
+            except:
+                if self._scoreOpCur == kScoreFetchForDisplay:
+                    pelletTextBox.setString("000")
+                elif self._scoreOpCur == kScoreFetchUploadDestination:
+                    self.DoScoreOp(kScoreCreateUploadDestination)
+
+        elif isinstance(msg, ptGameScoreTransferMsg):
+            pelletTextBox = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKIPelletDrop))
+            pelletTextBox.setString("000")
+            self.IUploadPelletScore(self._scoreUploaded)
+            del self._scoreDestination
+            del self._scoreSource
+            self._scoreUploaded = 0
+
+        elif isinstance(msg, ptGameScoreUpdateMsg):
+            if self._scoreOpCur == kScoreCreateUploadDestination:
+                self._scoreDestination = msg.getScore()
+                self._scoreUploaded = self._scoreSource.getPoints()
+                self.DoScoreOp(kScoreTransfer)
+
+        # Proc any more queue ops
+        self._IProcScoreOps()
+
+
+    def IUpdatePelletScore(self, points = 0):
         pelletTextBox = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKIPelletDrop))
-        pelletScore = self.GetPelletKIScore()
-        if pelletScore >= 0:
-            pelletScore = str(pelletScore)
-            pelletTextBox.setString(pelletScore)
-            #pelletText.show()
+        if points:
+            pelletTextBox.setString(str(points))
         else:
-            pelletScore = "000"
-            pelletTextBox.setString(pelletScore)
-            #pelletText.show()
+            pelletTextBox.setString("...") # Fetching from server...
+            self.DoScoreOp(kScoreFetchForDisplay)
 
 
-    def IUploadPelletScore(self):
-        pelletscore = self.GetPelletKIScore()
-        if pelletscore > 0:
-            self.ITransferPelletScore(pelletscore)
-
+    def IUploadPelletScore(self, score = None):
+        if score:
             hoodinfoupdate = PtFindActivator("PythHoodInfoImagerUpdater")
             PtDebugPrint("hoodinfoupdate: ", hoodinfoupdate, level=kDebugDumpLevel)
             if hoodinfoupdate:
@@ -10485,44 +10550,11 @@ class xKI(ptModifier):
                 notify.netForce(1)
                 notify.setActivate(1.0)
                 sname = "Score=%s" % (PtGetLocalPlayer().getPlayerName())
-                notify.addVarNumber(sname, pelletscore)
+                notify.addVarNumber(sname, score)
                 notify.send()
-                PtDebugPrint("sending score notify: ", sname, " ", pelletscore, level=kDebugDumpLevel)
-
-
-    def ITransferPelletScore(self, pelletscore):
-        ##Get Hood Score
-        hoodScoreList = ptScoreMgr().getCurrentAgeScores("PelletDrop")
-        if hoodScoreList:
-            hoodScoreID = hoodScoreList[0].getScoreID()
-            PtDebugPrint("Got the Hood Score ID from existing score", level=kDebugDumpLevel)
+                PtDebugPrint("sending score notify: ", sname, " ", score, level=kDebugDumpLevel)
         else:
-            newHoodScore = ptScoreMgr().createCurrentAgeScore("PelletDrop", PtGameScoreTypes.kAccumulative, 0)
-            hoodScoreID = newHoodScore.getScoreID()
-            PtDebugPrint("Got the Hood Score ID from new score", level=kDebugDumpLevel)
-
-        ##Check for total score
-        totalScoreList = ptScoreMgr().getPlayerScores("PelletTotal")
-        if totalScoreList:
-            oldTotal = totalScoreList[0].getValue()
-            PtDebugPrint("Old Total Pellet Score:", oldTotal, level=kDebugDumpLevel)
-            newpoints = totalScoreList[0].addPoints(pelletscore)
-            currentTotal = totalScoreList[0].getValue()
-            PtDebugPrint("Current Total Pellet Score:", currentTotal, level=kDebugDumpLevel)
-
-        else:
-            pelletTotalScoreNew = ptScoreMgr().createPlayerScore("PelletTotal", PtGameScoreTypes.kAccumulative, pelletscore)
-            if pelletTotalScoreNew == None:
-                PtDebugPrint("hmm, initial total score says it's none, we've got a problem")
-
-        ##Reset Current Pellet Score
-        scoreList = ptScoreMgr().getPlayerScores("PelletDrop")
-        if scoreList:
-            resetPelletScore = scoreList[0].transferPoints(hoodScoreID,scoreList[0].getValue())
-            if resetPelletScore:
-                PtDebugPrint("Score Successfully reset.", level=kDebugDumpLevel)
-            else:
-                PtDebugPrint("Score had a problem resetting.")
+            self.DoScoreOp(kScoreFetchMineForUpload)
 
     def IAutocomplete(self, control):
         text = control.getStringW()
