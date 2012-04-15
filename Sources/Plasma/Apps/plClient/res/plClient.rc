@@ -6,14 +6,22 @@
 #include <windows.h>
 #define IDC_STATIC              (-1)     // all static controls
 
+#define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -21,12 +29,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE
 BEGIN
     "\r\n"
     "\0"
@@ -57,42 +71,36 @@ IDI_ICON_DIRT           ICON                    "Dirt.ICO"
 //
 
 IDD_LOADING DIALOGEX 0, 0, 161, 26
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | 
-    WS_POPUP | WS_VISIBLE
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Starting URU. Please wait...",IDC_STARTING_TEXT,32,9,
-                    127,8
+    LTEXT           "Starting URU. Please wait...",IDC_STARTING_TEXT,32,9,127,8
     ICON            IDI_ICON_DIRT,IDC_STATIC,5,3,20,20
 END
 
-IDD_EXCEPTION DIALOGEX 0, 0, 296, 183
+IDD_EXCEPTION DIALOGEX 0, 0, 297, 33
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Error"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
+    ICON            IDI_ICON_DIRT,IDC_STATIC,7,7,21,20
+    LTEXT           "URU has experienced a serious error and needs to close.\nPlease submit your log folder to the developer.",IDC_MSG,38,7,189,22
     DEFPUSHBUTTON   "OK",IDOK,239,7,50,14
-    ICON            IDI_ICON_DIRT,IDC_STATIC,7,7,20,20
-    LTEXT           " URU has experienced a serious error. Please report the information below.\n\nWe apologize for any inconvenience. ",
-                    IDC_MSG,38,7,189,37
-    EDITTEXT        IDC_CRASHINFO,7,45,282,131,ES_MULTILINE | ES_AUTOVSCROLL | 
-                    ES_AUTOHSCROLL | ES_READONLY
-    PUSHBUTTON      "Copy",IDC_COPY,239,26,50,14
 END
 
 IDD_URULOGIN_MAIN DIALOGEX 0, 0, 302, 246
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS |
     DS_CENTER | WS_POPUP
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Login",IDOK,87,225,50,14
     PUSHBUTTON      "Quit",IDCANCEL,163,225,50,14
-    CONTROL         151,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | 
+    CONTROL         151,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE |
                     WS_BORDER,7,7,289,36
     LTEXT           "Account name:",IDC_STATIC,69,119,49,10
     LTEXT           "Password:",IDC_STATIC,69,135,49,10
     EDITTEXT        IDC_URULOGIN_USERNAME,123,119,108,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_URULOGIN_PASSWORD,123,135,108,12,ES_PASSWORD | 
+    EDITTEXT        IDC_URULOGIN_PASSWORD,123,135,108,12,ES_PASSWORD |
                     ES_AUTOHSCROLL
     GROUPBOX        "",IDC_STATIC,14,99,274,112
     LTEXT           "Language:",IDC_STATIC,69,151,49,10
@@ -114,37 +122,29 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Accept",IDOK,89,297,50,14
     PUSHBUTTON      "Decline",IDCANCEL,160,297,50,14
-    CONTROL         151,IDC_STATIC,"Static",SS_BITMAP,7,7,287,36,
-                    WS_EX_CLIENTEDGE
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,9,46,
-                    284,242
+    CONTROL         151,IDC_STATIC,"Static",SS_BITMAP,7,7,287,36,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,9,46,284,242
     CTEXT           "End User License Agreement",IDC_STATIC,46,55,207,10
     GROUPBOX        "",IDC_STATIC,17,66,266,212
-    CONTROL         "",IDC_URULOGIN_EULATEXT,"RichEdit20A",ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_VSCROLL | 
-                    WS_HSCROLL | WS_TABSTOP,25,75,250,197
+    CONTROL         "",IDC_URULOGIN_EULATEXT,"RichEdit20A",ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,25,75,250,197
 END
 
 IDD_AUTHFAILED DIALOGEX 0, 0, 177, 89
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | 
-    WS_POPUP | WS_VISIBLE
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Authentication failed.  Please try again.",
-                    IDC_AUTH_TEXT,38,17,127,8
+    LTEXT           "Authentication failed.  Please try again.",IDC_AUTH_TEXT,38,17,127,8
     ICON            IDI_ICON_DIRT,IDC_STATIC,6,11,21,20
     PUSHBUTTON      "Ok",IDOK,67,73,42,14
     CTEXT           "",IDC_AUTH_MESSAGE,0,37,175,32
 END
 
 IDD_AUTHENTICATING DIALOGEX 0, 0, 177, 60
-STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | 
-    WS_POPUP | WS_VISIBLE
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDI_ICON_DIRT,IDC_STATIC,6,11,21,20
-    LTEXT           "Logging in to URU. Please wait...",IDC_AUTH_TEXT,38,17,
-                    137,8
+    LTEXT           "Logging in to URU. Please wait...",IDC_AUTH_TEXT,38,17,137,8
     PUSHBUTTON      "Cancel",IDCANCEL,64,42,49,15
 END
 
@@ -155,71 +155,49 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_LOADING, DIALOG
     BEGIN
-        RIGHTMARGIN, 159
+        , 4096
+        , 458752
     END
 
     IDD_EXCEPTION, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 289
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 176
-    END
-
-    IDD_URUTAP_LOGIN, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 181
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 104
-    END
-
-    IDD_URU_LOGIN, DIALOG
-    BEGIN
-        LEFTMARGIN, 4
-        RIGHTMARGIN, 168
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 128
-    END
-
-    IDD_URU_EULA, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 194
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 151
+        RIGHTMARGIN, 296
     END
 
     IDD_URULOGIN_MAIN, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 295
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 223
+        , 71, 295
+        , 1029, 7
+        , 1031, 223
+        , 4096
+        , 458752, 1348403200
     END
 
     IDD_URULOGIN_EULA, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 293
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 311
+        , 71, 293
+        , 1029, 7
+        , 1031, 311
+        , 4096
+        , 11468800, 1430585344
     END
 
     IDD_AUTHFAILED, DIALOG
     BEGIN
-        RIGHTMARGIN, 175
-        BOTTOMMARGIN, 87
+        , 1031, 87
+        , 4096
+        , 11468800, 1348206592
     END
 
     IDD_AUTHENTICATING, DIALOG
     BEGIN
-        RIGHTMARGIN, 175
-        BOTTOMMARGIN, 57
+        , 1031, 57
+        , 4096
+        , 4653129, 131144
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -231,7 +209,7 @@ END
 //
 
 IDR_CNSL1               CNSL                    "cnsl1.bin"
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -241,17 +219,7 @@ IDR_CNSL1               CNSL                    "cnsl1.bin"
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-#define _AFX_NO_SPLITTER_RESOURCES
-#define _AFX_NO_OLE_RESOURCES
-#define _AFX_NO_TRACKER_RESOURCES
-#define _AFX_NO_PROPERTY_RESOURCES
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
