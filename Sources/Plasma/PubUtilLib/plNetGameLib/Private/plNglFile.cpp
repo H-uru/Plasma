@@ -62,7 +62,7 @@ namespace Ngl { namespace File {
 
 struct CliFileConn : AtomicRef {
     LINK(CliFileConn)   link;
-    CLock               sockLock; // to protect the socket pointer so we don't nuke it while using it
+    hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
     char                name[MAX_PATH];
     plNetAddress        addr;
@@ -283,12 +283,12 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
         needsDecref = false;
     }
     else {
-        conn->sockLock.EnterRead();
+        conn->sockLock.LockForReading();
         if (conn->sock) {
             AsyncSocketDisconnect(conn->sock, true);
             needsDecref = false;
         }
-        conn->sockLock.LeaveRead();
+        conn->sockLock.UnlockForReading();
     }
     if (needsDecref) {
         conn->DecRef("Lifetime");
@@ -311,9 +311,9 @@ static void NotifyConnSocketConnect (CliFileConn * conn) {
         }
         else
         {
-            conn->sockLock.EnterRead();
+            conn->sockLock.LockForReading();
             AsyncSocketDisconnect(conn->sock, true);
-            conn->sockLock.LeaveRead();
+            conn->sockLock.UnlockForReading();
         }
     }
     s_critsect.Leave();
@@ -468,9 +468,9 @@ static bool SocketNotifyCallback (
             *userState = conn;
             s_critsect.Enter();
             {
-                conn->sockLock.EnterWrite();
+                conn->sockLock.LockForWriting();
                 conn->sock      = sock;
-                conn->sockLock.LeaveWrite();
+                conn->sockLock.UnlockForWriting();
                 conn->cancelId  = 0;
             }
             s_critsect.Leave();
@@ -690,9 +690,9 @@ void CliFileConn::AutoPing () {
     IncRef("PingTimer");
     timerCritsect.Enter();
     {
-        sockLock.EnterRead();
+        sockLock.LockForReading();
         unsigned timerPeriod = sock ? 0 : kAsyncTimeInfinite;
-        sockLock.LeaveRead();
+        sockLock.UnlockForReading();
 
         AsyncTimerCreate(
             &pingTimer,
@@ -718,7 +718,7 @@ void CliFileConn::StopAutoPing () {
 
 //============================================================================
 void CliFileConn::TimerPing () {
-    sockLock.EnterRead();
+    sockLock.LockForReading();
     for (;;) {
         if (!sock) // make sure it exists
             break;
@@ -745,18 +745,18 @@ void CliFileConn::TimerPing () {
         }
         break;
     }
-    sockLock.LeaveRead();
+    sockLock.UnlockForReading();
 }
 
 //============================================================================
 void CliFileConn::Destroy () {
     AsyncSocket oldSock = nil;
 
-    sockLock.EnterWrite();
+    sockLock.LockForWriting();
     {
         SWAP(oldSock, sock);
     }
-    sockLock.LeaveWrite();
+    sockLock.UnlockForWriting();
 
     if (oldSock)
         AsyncSocketDelete(oldSock);
@@ -765,11 +765,11 @@ void CliFileConn::Destroy () {
 
 //============================================================================
 void CliFileConn::Send (const void * data, unsigned bytes) {
-    sockLock.EnterRead();
+    sockLock.LockForReading();
     if (sock) {
         AsyncSocketSend(sock, data, bytes);
     }
-    sockLock.LeaveRead();
+    sockLock.UnlockForReading();
 }
 
 //============================================================================

@@ -83,7 +83,7 @@ struct ISocketConnType : ISocketConnHash {
 };
 
 
-static CLock s_notifyProcLock;
+static hsReaderWriterLock s_notifyProcLock;
 static HASHTABLEDECL(
     ISocketConnType,
     ISocketConnHash,
@@ -340,11 +340,11 @@ void AsyncSocketRegisterNotifyProc (
     ct->productId           = productId;
     ct->flags               = kConnHashFlagsIgnore;
 
-    s_notifyProcLock.EnterWrite();
+    s_notifyProcLock.LockForWriting();
     {
         s_notifyProcs.Add(ct);
     }
-    s_notifyProcLock.LeaveWrite();
+    s_notifyProcLock.UnlockForWriting();
 }
 
 //===========================================================================
@@ -365,7 +365,7 @@ void AsyncSocketUnregisterNotifyProc (
     hash.flags      = kConnHashFlagsExactMatch;
 
     ISocketConnType * scan;
-    s_notifyProcLock.EnterWrite();
+    s_notifyProcLock.LockForWriting();
     {
         scan = s_notifyProcs.Find(hash);
         for (; scan; scan = s_notifyProcs.FindNext(hash, scan)) {
@@ -377,7 +377,7 @@ void AsyncSocketUnregisterNotifyProc (
             break;
         }
     }
-    s_notifyProcLock.LeaveWrite();
+    s_notifyProcLock.UnlockForWriting();
 
     // perform memory deallocation outside the lock
     delete scan;
@@ -403,12 +403,12 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
 
         // Lookup notifyProc based on connType
         FAsyncNotifySocketProc proc;
-        s_notifyProcLock.EnterRead();
+        s_notifyProcLock.LockForReading();
         if (const ISocketConnType * scan = s_notifyProcs.Find(hash))
             proc = scan->notifyProc;
         else
             proc = nil;
-        s_notifyProcLock.LeaveRead();
+        s_notifyProcLock.UnlockForReading();
         if (!proc)
             break;
 
