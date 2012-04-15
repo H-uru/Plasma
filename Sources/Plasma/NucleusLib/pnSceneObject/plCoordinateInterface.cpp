@@ -380,6 +380,7 @@ plProfile_CreateTimer("   CIRecalcT", "Object", CIRecalcT);
 plProfile_CreateTimer("   CIDirtyT", "Object", CIDirtyT);
 plProfile_CreateTimer("   CISetT", "Object", CISetT);
 
+#ifndef HAVE_SSE
 static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
 {
     hsMatrix44 ret;
@@ -440,6 +441,7 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
 
     return ret;
 }
+#endif // HAVE_SSE
 
 void plCoordinateInterface::IRecalcTransforms()
 {
@@ -447,7 +449,7 @@ void plCoordinateInterface::IRecalcTransforms()
     plProfile_BeginTiming(CIRecalcT);
     if( fParent )
     {
-#if 0
+#ifdef HAVE_SSE
         fLocalToWorld = fParent->GetLocalToWorld() * fLocalToParent;
         fWorldToLocal = fParentToLocal * fParent->GetWorldToLocal();
 #else

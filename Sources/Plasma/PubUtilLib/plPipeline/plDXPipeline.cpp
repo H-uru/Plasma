@@ -163,6 +163,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
+#ifdef HAVE_SSE
+#   include <smmintrin.h>
+#endif
+
 //#define MF_TOSSER
 
 int mfCurrentTest = 100;
@@ -10523,39 +10527,77 @@ void plDXPipeline::LoadResources()
 
 // Sorry about this, but it really did speed up the skinning.
 // Just some macros for the inner loop of IBlendVertsIntoBuffer.
-#define MATRIXMULTBEGIN(xfm, wgt) \
-    register float m00 = xfm.fMap[0][0]; \
-    register float m01 = xfm.fMap[0][1]; \
-    register float m02 = xfm.fMap[0][2]; \
-    register float m03 = xfm.fMap[0][3]; \
-    register float m10 = xfm.fMap[1][0]; \
-    register float m11 = xfm.fMap[1][1]; \
-    register float m12 = xfm.fMap[1][2]; \
-    register float m13 = xfm.fMap[1][3]; \
-    register float m20 = xfm.fMap[2][0]; \
-    register float m21 = xfm.fMap[2][1]; \
-    register float m22 = xfm.fMap[2][2]; \
-    register float m23 = xfm.fMap[2][3]; \
-    register float m_wgt = wgt; \
-    register float srcX, srcY, srcZ;
-
-#define MATRIXMULTPOINTADD(dst, src) \
-    srcX = src.fX; \
-    srcY = src.fY; \
-    srcZ = src.fZ; \
-    \
-    dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02 + m03) * m_wgt; \
-    dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12 + m13) * m_wgt; \
-    dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22 + m23) * m_wgt;
-
-#define MATRIXMULTVECTORADD(dst, src) \
-    srcX = src.fX; \
-    srcY = src.fY; \
-    srcZ = src.fZ; \
-    \
-    dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02) * m_wgt; \
-    dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12) * m_wgt; \
-    dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22) * m_wgt;
+#ifdef HAVE_SSE
+#   define MATRIXMULTBEGIN(xfm, wgt) \
+        __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf; \
+        ALIGN(16) float hack[4]; \
+        mc0 = _mm_loadu_ps(xfm.fMap[0]); \
+        mc1 = _mm_loadu_ps(xfm.fMap[1]); \
+        mc2 = _mm_loadu_ps(xfm.fMap[2]); \
+        mwt = _mm_set_ps1(wgt);
+#   define MATRIXMULTPOINTADD(dst, src) \
+        msr = _mm_set_ps(1.f, src.fZ, src.fY, src.fX); \
+        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
+        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
+        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
+        \
+        hbuf = _mm_hadd_ps(_x, _y); \
+        hbuf = _mm_hadd_ps(hbuf, hbuf); \
+        _mm_store_ps(hack, hbuf); \
+        dst.fX += hack[0]; \
+        dst.fY += hack[1]; \
+        hbuf = _mm_hadd_ps(_z, _z); \
+        hbuf = _mm_hadd_ps(hbuf, hbuf); \
+        _mm_store_ps(hack, hbuf); \
+        dst.fZ += hack[0];
+#   define MATRIXMULTVECTORADD(dst, src) \
+        msr = _mm_set_ps(0.f, src.fZ, src.fY, src.fX); \
+        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
+        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
+        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
+        \
+        hbuf = _mm_hadd_ps(_x, _y); \
+        hbuf = _mm_hadd_ps(hbuf, hbuf); \
+        _mm_store_ps(hack, hbuf); \
+        dst.fX += hack[0]; \
+        dst.fY += hack[1]; \
+        hbuf = _mm_hadd_ps(_z, _z); \
+        hbuf = _mm_hadd_ps(hbuf, hbuf); \
+        _mm_store_ps(hack, hbuf); \
+        dst.fZ += hack[0];
+#else
+#   define MATRIXMULTBEGIN(xfm, wgt) \
+        float m00 = xfm.fMap[0][0]; \
+        float m01 = xfm.fMap[0][1]; \
+        float m02 = xfm.fMap[0][2]; \
+        float m03 = xfm.fMap[0][3]; \
+        float m10 = xfm.fMap[1][0]; \
+        float m11 = xfm.fMap[1][1]; \
+        float m12 = xfm.fMap[1][2]; \
+        float m13 = xfm.fMap[1][3]; \
+        float m20 = xfm.fMap[2][0]; \
+        float m21 = xfm.fMap[2][1]; \
+        float m22 = xfm.fMap[2][2]; \
+        float m23 = xfm.fMap[2][3]; \
+        float m_wgt = wgt; \
+        float srcX, srcY, srcZ;
+#   define MATRIXMULTPOINTADD(dst, src) \
+        srcX = src.fX; \
+        srcY = src.fY; \
+        srcZ = src.fZ; \
+        \
+        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02 + m03) * m_wgt; \
+        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12 + m13) * m_wgt; \
+        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22 + m23) * m_wgt;
+#   define MATRIXMULTVECTORADD(dst, src) \
+        srcX = src.fX; \
+        srcY = src.fY; \
+        srcZ = src.fZ; \
+        \
+        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02) * m_wgt; \
+        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12) * m_wgt; \
+        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22) * m_wgt;
+#endif // HAVE_SSE
 
 // inlTESTPOINT /////////////////////////////////////////
 // Update mins and maxs if destP is outside.
