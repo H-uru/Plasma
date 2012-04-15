@@ -52,48 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Time formatting functions
-*
-***/
-
-struct TimeDesc {
-    unsigned year;
-    unsigned month;         // [1, 12]
-    unsigned day;
-    unsigned dayOfWeek;     // [0,  6]
-    unsigned hour;          // [0, 23]
-    unsigned minute;        // [0, 59]
-    unsigned second;        // [0, 59]
-}; 
-
-struct TimeElapsedDesc {
-    unsigned years;
-    unsigned months;        // [0, 12]
-    unsigned days;          // [0,  7]
-    unsigned weeks;         // [0,  6]
-    unsigned hours;         // [0, 23]
-    unsigned minutes;       // [0, 59]
-};
-
-void TimeGetDesc (
-    uint64_t             time,
-    TimeDesc *        desc
-);
-
-void TimeGetElapsedDesc (
-    uint32_t             minutesElapsed,
-    TimeElapsedDesc * desc
-);
-
-void TimePrettyPrint (
-    uint64_t       time,
-    unsigned    chars,
-    wchar_t *     buffer
-);
-
-
-/*****************************************************************************
-*
 *   Time query functions
 *
 ***/
@@ -109,21 +67,12 @@ uint32_t TimeGetMs ();
 
 // 100 nanosecond intervals; won't wrap in our lifetimes
 uint64_t TimeGetTime ();
-uint64_t TimeGetLocalTime ();
-
-// Minutes elapsed since 2001 UTC
-uint32_t TimeGetMinutes ();
 
 // Seconds elapsed since 00:00:00 January 1, 2001 UTC
 uint32_t TimeGetSecondsSince2001Utc ();
 
-// Seconds elapsed since 00:00:00 January 1, 1970 UTC (the Unix Epoch)
-uint32_t TimeGetSecondsSince1970Utc ();
-
 
 // These magic numbers taken from Microsoft's "Shared Source CLI implementation" source code.
 // http://msdn.microsoft.com/library/en-us/Dndotnet/html/mssharsourcecli.asp
-
-static const uint64_t kTime1601To1970  = 11644473600 * kTimeIntervalsPerSecond;
 static const uint64_t kTime1601To2001  = 12622780800 * kTimeIntervalsPerSecond;
 #endif

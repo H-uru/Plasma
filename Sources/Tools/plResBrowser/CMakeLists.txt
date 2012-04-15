@@ -51,7 +51,6 @@ target_link_libraries(plResBrowser pnProduct)
 target_link_libraries(plResBrowser pnSceneObject)
 target_link_libraries(plResBrowser pnTimer)
 target_link_libraries(plResBrowser pnUtils)
-target_link_libraries(plResBrowser pnUtilsExe)
 
 if (WIN32)
     target_link_libraries(plResBrowser Rpcrt4)

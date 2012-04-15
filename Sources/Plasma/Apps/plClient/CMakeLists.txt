@@ -154,7 +154,6 @@ target_link_libraries(plClient pnProduct)
 target_link_libraries(plClient pnSceneObject)
 target_link_libraries(plClient pnTimer)
 target_link_libraries(plClient pnUtils)
-target_link_libraries(plClient pnUtilsExe)
 target_link_libraries(plClient pnUUID)
 
 if(PYTHON_DEBUG_LIBRARY)

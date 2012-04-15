@@ -55,7 +55,6 @@ target_link_libraries(plUruLauncher pnNetProtocol)
 target_link_libraries(plUruLauncher pnProduct)
 target_link_libraries(plUruLauncher pnTimer)
 target_link_libraries(plUruLauncher pnUtils)
-target_link_libraries(plUruLauncher pnUtilsExe)
 
 target_link_libraries(plUruLauncher ${DirectX_LIBRARIES})
 target_link_libraries(plUruLauncher ${OPENSSL_LIBRARIES})
