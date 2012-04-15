@@ -191,7 +191,6 @@ target_link_libraries(MaxMain pnProduct)
 target_link_libraries(MaxMain pnSceneObject)
 target_link_libraries(MaxMain pnTimer)
 target_link_libraries(MaxMain pnUtils)
-target_link_libraries(MaxMain pnUtilsExe)
 target_link_libraries(MaxMain pnUUID)
 
 if (WIN32)

@@ -40,7 +40,6 @@ if(WIN32)
         Win32/pnUtW32Misc.cpp
         Win32/pnUtW32Path.cpp
         Win32/pnUtW32Str.cpp
-        Win32/pnUtW32Time.cpp
         Win32/pnUtW32Uuid.cpp
     )
 else()
