@@ -52,9 +52,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     import xKIEnglish
     xKI = xKIEnglish
     
-    import xRPSEnglish
-    xRPS = xRPSEnglish
-    
     import xACAEnglish
     xACA = xACAEnglish
     
@@ -73,9 +70,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
 elif PtGetLanguage() == PtLanguage.kFrench:
     import xKIFrench
     xKI = xKIFrench
-    
-    import xRPSFrench
-    xRPS = xRPSFrench
     
     import xACAFrench
     xACA = xACAFrench
@@ -96,9 +90,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     import xKIGerman
     xKI = xKIGerman
     
-    import xRPSGerman
-    xRPS = xRPSGerman
-    
     import xACAGerman
     xACA = xACAGerman
     
@@ -117,9 +108,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
 elif PtGetLanguage() == PtLanguage.kSpanish:
     import xKISpanish
     xKI = xKISpanish
-    
-    import xRPSSpanish
-    xRPS = xRPSSpanish
     
     import xACASpanish
     xACA = xACASpanish
@@ -140,9 +128,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     import xKIItalian
     xKI = xKIItalian
     
-    import xRPSItalian
-    xRPS = xRPSItalian
-    
     import xACAItalian
     xACA = xACAItalian
     
@@ -162,9 +147,6 @@ else:
     # default to english if we don't know the language
     import xKIEnglish
     xKI = xKIEnglish
-    
-    import xRPSEnglish
-    xRPS = xRPSEnglish
     
     import xACAEnglish
     xACA = xACAEnglish
