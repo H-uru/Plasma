@@ -52,9 +52,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     import xKIEnglish
     xKI = xKIEnglish
     
-    import xCensorEnglish
-    xCensor = xCensorEnglish
-    
     import xEnglish
     xGlobal = xEnglish
     
@@ -67,9 +64,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
 elif PtGetLanguage() == PtLanguage.kFrench:
     import xKIFrench
     xKI = xKIFrench
-    
-    import xCensorEnglish
-    xCensor = xCensorEnglish
     
     import xFrench
     xGlobal = xFrench
@@ -84,9 +78,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     import xKIGerman
     xKI = xKIGerman
     
-    import xCensorEnglish
-    xCensor = xCensorEnglish
-    
     import xGerman
     xGlobal = xGerman
     
@@ -99,9 +90,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
 elif PtGetLanguage() == PtLanguage.kSpanish:
     import xKISpanish
     xKI = xKISpanish
-    
-    import xCensorEnglish
-    xCensor = xCensorEnglish
     
     import xSpanish
     xGlobal = xSpanish
@@ -116,9 +104,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     import xKIItalian
     xKI = xKIItalian
     
-    import xCensorEnglish
-    xCensor = xCensorEnglish
-    
     import xItalian
     xGlobal = xItalian
     
@@ -132,9 +117,6 @@ else:
     # default to english if we don't know the language
     import xKIEnglish
     xKI = xKIEnglish
-    
-    import xCensorEnglish
-    xCensor = xCensorEnglish
     
     import xEnglish
     xGlobal = xEnglish

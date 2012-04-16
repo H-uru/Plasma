@@ -45,8 +45,6 @@ This module contains the extended chat commands for the KI
 """
 
 import Plasma
-#import xKILocalization
-import xLocalization
 import xInvite
 
 # enter new commands in the dictionary below
