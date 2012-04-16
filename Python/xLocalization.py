@@ -54,9 +54,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
-    
-    import xDynTextDefsEnglish
-    xDynTextDefs = xDynTextDefsEnglish
 
 elif PtGetLanguage() == PtLanguage.kFrench:
     import xKIFrench
@@ -64,9 +61,6 @@ elif PtGetLanguage() == PtLanguage.kFrench:
     
     import xJournalBookDefsFrench
     xJournalBookDefs = xJournalBookDefsFrench
-    
-    import xDynTextDefsFrench
-    xDynTextDefs = xDynTextDefsFrench
 
 elif PtGetLanguage() == PtLanguage.kGerman:
     import xKIGerman
@@ -74,9 +68,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     
     import xJournalBookDefsGerman
     xJournalBookDefs = xJournalBookDefsGerman
-    
-    import xDynTextDefsGerman
-    xDynTextDefs = xDynTextDefsGerman
 
 elif PtGetLanguage() == PtLanguage.kSpanish:
     import xKISpanish
@@ -84,9 +75,6 @@ elif PtGetLanguage() == PtLanguage.kSpanish:
     
     import xJournalBookDefsSpanish
     xJournalBookDefs = xJournalBookDefsSpanish
-    
-    import xDynTextDefsSpanish
-    xDynTextDefs = xDynTextDefsSpanish
 
 elif PtGetLanguage() == PtLanguage.kItalian:
     import xKIItalian
@@ -94,9 +82,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     
     import xJournalBookDefsItalian
     xJournalBookDefs = xJournalBookDefsItalian
-    
-    import xDynTextDefsItalian
-    xDynTextDefs = xDynTextDefsItalian
 
 else:
     # default to english if we don't know the language
@@ -105,9 +90,6 @@ else:
     
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
-    
-    import xDynTextDefsEnglish
-    xDynTextDefs = xDynTextDefsEnglish
 
 
 def FolderIDToFolderName(folderid):
