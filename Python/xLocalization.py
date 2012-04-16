@@ -52,9 +52,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     import xKIEnglish
     xKI = xKIEnglish
     
-    import xEnglish
-    xGlobal = xEnglish
-    
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
     
@@ -64,9 +61,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
 elif PtGetLanguage() == PtLanguage.kFrench:
     import xKIFrench
     xKI = xKIFrench
-    
-    import xFrench
-    xGlobal = xFrench
     
     import xJournalBookDefsFrench
     xJournalBookDefs = xJournalBookDefsFrench
@@ -78,9 +72,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     import xKIGerman
     xKI = xKIGerman
     
-    import xGerman
-    xGlobal = xGerman
-    
     import xJournalBookDefsGerman
     xJournalBookDefs = xJournalBookDefsGerman
     
@@ -90,9 +81,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
 elif PtGetLanguage() == PtLanguage.kSpanish:
     import xKISpanish
     xKI = xKISpanish
-    
-    import xSpanish
-    xGlobal = xSpanish
     
     import xJournalBookDefsSpanish
     xJournalBookDefs = xJournalBookDefsSpanish
@@ -104,9 +92,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     import xKIItalian
     xKI = xKIItalian
     
-    import xItalian
-    xGlobal = xItalian
-    
     import xJournalBookDefsItalian
     xJournalBookDefs = xJournalBookDefsItalian
     
@@ -117,9 +102,6 @@ else:
     # default to english if we don't know the language
     import xKIEnglish
     xKI = xKIEnglish
-    
-    import xEnglish
-    xGlobal = xEnglish
     
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
