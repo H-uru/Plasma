@@ -55,9 +55,6 @@ if PtGetLanguage() == PtLanguage.kEnglish:
     import xRPSEnglish
     xRPS = xRPSEnglish
     
-    import xNexusEnglish
-    xNexus = xNexusEnglish
-    
     import xACAEnglish
     xACA = xACAEnglish
     
@@ -79,9 +76,6 @@ elif PtGetLanguage() == PtLanguage.kFrench:
     
     import xRPSFrench
     xRPS = xRPSFrench
-    
-    import xNexusFrench
-    xNexus = xNexusFrench
     
     import xACAFrench
     xACA = xACAFrench
@@ -105,9 +99,6 @@ elif PtGetLanguage() == PtLanguage.kGerman:
     import xRPSGerman
     xRPS = xRPSGerman
     
-    import xNexusGerman
-    xNexus = xNexusGerman
-    
     import xACAGerman
     xACA = xACAGerman
     
@@ -129,9 +120,6 @@ elif PtGetLanguage() == PtLanguage.kSpanish:
     
     import xRPSSpanish
     xRPS = xRPSSpanish
-    
-    import xNexusSpanish
-    xNexus = xNexusSpanish
     
     import xACASpanish
     xACA = xACASpanish
@@ -155,9 +143,6 @@ elif PtGetLanguage() == PtLanguage.kItalian:
     import xRPSItalian
     xRPS = xRPSItalian
     
-    import xNexusItalian
-    xNexus = xNexusItalian
-    
     import xACAItalian
     xACA = xACAItalian
     
@@ -180,9 +165,6 @@ else:
     
     import xRPSEnglish
     xRPS = xRPSEnglish
-    
-    import xNexusEnglish
-    xNexus = xNexusEnglish
     
     import xACAEnglish
     xACA = xACAEnglish
