@@ -48,46 +48,28 @@ from Plasma import *
 from PlasmaVaultConstants import *
 from PlasmaConstants import *
 
-if PtGetLanguage() == PtLanguage.kEnglish:
-    import xKIEnglish
-    xKI = xKIEnglish
-    
+if PtGetLanguage() == PtLanguage.kEnglish:    
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
 
 elif PtGetLanguage() == PtLanguage.kFrench:
-    import xKIFrench
-    xKI = xKIFrench
-    
     import xJournalBookDefsFrench
     xJournalBookDefs = xJournalBookDefsFrench
 
 elif PtGetLanguage() == PtLanguage.kGerman:
-    import xKIGerman
-    xKI = xKIGerman
-    
     import xJournalBookDefsGerman
     xJournalBookDefs = xJournalBookDefsGerman
 
 elif PtGetLanguage() == PtLanguage.kSpanish:
-    import xKISpanish
-    xKI = xKISpanish
-    
     import xJournalBookDefsSpanish
     xJournalBookDefs = xJournalBookDefsSpanish
 
 elif PtGetLanguage() == PtLanguage.kItalian:
-    import xKIItalian
-    xKI = xKIItalian
-    
     import xJournalBookDefsItalian
     xJournalBookDefs = xJournalBookDefsItalian
 
 else:
     # default to english if we don't know the language
-    import xKIEnglish
-    xKI = xKIEnglish
-    
     import xJournalBookDefsEnglish
     xJournalBookDefs = xJournalBookDefsEnglish
 
