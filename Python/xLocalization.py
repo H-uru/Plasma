@@ -48,32 +48,6 @@ from Plasma import *
 from PlasmaVaultConstants import *
 from PlasmaConstants import *
 
-if PtGetLanguage() == PtLanguage.kEnglish:    
-    import xJournalBookDefsEnglish
-    xJournalBookDefs = xJournalBookDefsEnglish
-
-elif PtGetLanguage() == PtLanguage.kFrench:
-    import xJournalBookDefsFrench
-    xJournalBookDefs = xJournalBookDefsFrench
-
-elif PtGetLanguage() == PtLanguage.kGerman:
-    import xJournalBookDefsGerman
-    xJournalBookDefs = xJournalBookDefsGerman
-
-elif PtGetLanguage() == PtLanguage.kSpanish:
-    import xJournalBookDefsSpanish
-    xJournalBookDefs = xJournalBookDefsSpanish
-
-elif PtGetLanguage() == PtLanguage.kItalian:
-    import xJournalBookDefsItalian
-    xJournalBookDefs = xJournalBookDefsItalian
-
-else:
-    # default to english if we don't know the language
-    import xJournalBookDefsEnglish
-    xJournalBookDefs = xJournalBookDefsEnglish
-
-
 def FolderIDToFolderName(folderid):
     "Returns the standard folder name based on folder ID"
     try:
