@@ -188,7 +188,6 @@ struct LoginDialogParam {
     ShaDigest   namePassHash;
     bool        remember;
     int         focus;
-    int         language;
 };
 
 static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
@@ -1058,7 +1057,6 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         stream->Writebool(pLoginParam->remember);
         if (pLoginParam->remember)
             stream->Write(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
-        stream->WriteBE32(pLoginParam->language);
         stream->Close();
         delete stream;
     }
@@ -1074,7 +1072,6 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     char* temp;
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
-    pLoginParam->language = plLocalization::kEnglish;
 
     wchar_t fileAndPath[MAX_PATH];
     PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
@@ -1113,8 +1110,6 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
             {
                 pLoginParam->focus = IDC_URULOGIN_PASSWORD;
             }
-
-            pLoginParam->language = stream->ReadBE32();
         }
 
         stream->Close();
@@ -1206,7 +1201,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             {
                 SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)plLocalization::GetLanguageName((plLocalization::Language)i));
             }
-            SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)pLoginParam->language, 0);
+            SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
             SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, NULL);
             return FALSE;
@@ -1253,10 +1248,24 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     GetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, password, kMaxPasswordLength);
                     pLoginParam->remember = (IsDlgButtonChecked(hwndDlg, IDC_URULOGIN_REMEMBERPASS) == BST_CHECKED);
 
-                    pLoginParam->language = SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_GETCURSEL, 0, 0L);
-                    plLocalization::SetLanguage((plLocalization::Language)pLoginParam->language);
+                    plLocalization::Language new_language = (plLocalization::Language)SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_GETCURSEL, 0, 0L);
+                    plLocalization::SetLanguage(new_language);
 
                     SaveUserPass (pLoginParam, password);
+
+                    // Welcome to HACKland, population: Branan
+                    // The code to write general.ini really doesn't belong here, but it works... for now.
+                    // When general.ini gets expanded, this will need to find a proper home somewhere.
+                    {
+                        wchar_t gipath[MAX_PATH];
+                        PathGetInitDirectory(gipath, arrsize(gipath));
+                        PathAddFilename(gipath, gipath, L"general.ini", arrsize(gipath));
+                        plString ini_str = plString::Format("App.SetLanguage %s\n", plLocalization::GetLanguageName(new_language));
+                        hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
+                        gini->WriteString(ini_str);
+                        gini->Close();
+                        delete gini;
+                    }
 
                     memset(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
                     bool cancelled = AuthenticateNetClientComm(&pLoginParam->authError, hwndDlg);
