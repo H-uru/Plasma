@@ -54,27 +54,20 @@ This is the python handler for the Options Menu
 MaxVersionNumber = 8
 MinorVersionNumber = 4
 
+import os
+
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import xLocalization
-import xJournalBookDefs
 import PlasmaControlKeys
-import os
-import copy
-import webbrowser
-import sys
 
-
-#import xIniInput
+import xJournalBookDefs
 import xIniAudio
 import xIniDisplay
 import xIniNumSounds
 
 # define the attributes that will be entered in max
 OptionsMenuDlg          = ptAttribGUIDialog(1,"The Options Menu dialog")
-CCRDlg                  = ptAttribGUIDialog(2, "The Petition (CCR) dialog")
-CCRPopupMenu            = ptAttribGUIPopUpMenu(3, "The Help/Petition Popup Menu")
 NavigationDlg           = ptAttribGUIDialog(4, "The Navigation dialog")
 KeyMapDlg               = ptAttribGUIDialog(5, "The Key Map dialog")
 GraphicsSettingsDlg     = ptAttribGUIDialog(6, "Graphics Settings dialog")
@@ -85,13 +78,11 @@ AdvGameSettingDlg       = ptAttribGUIDialog(10, "The Adv Game Settings dialog")
 ResetWarnDlg            = ptAttribGUIDialog(11, "The Reset Warning dialog")
 ReleaseNotesDlg         = ptAttribGUIDialog(12, "Release Notes dialog")
 respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableRes", "disableRes", "enableWindow", "disableWindow", "enableEAX", "disableEAX", "enableGamma", "disableGamma"])
-SupportDlg              = ptAttribGUIDialog(14, "Support dialog")
 
 
 # globals
 #--------
 
-WebLaunchCmd = None
 gLiveMovie = None
 kLiveMovieName = "avi/URULiveIntro.bik"
 kDemoMovieName = "avi/UruPreview.bik"
@@ -107,8 +98,6 @@ kOptionsSettingsBtn = 300
 kOptionsSettingText = 400
 kOptionsTrailerBtn = 301
 kOptionsTrailerText = 401
-kOptionsHelpBtn = 302
-kOptionsHelpText = 402
 kOptionsCreditsBtn = 303
 kOptionsCreditsText = 403
 kOptionsQuitBtn = 304
@@ -135,7 +124,8 @@ kReleaseUpArrow = 893
 kReleaseDownArrow = 894
 kRNOkBtn = 990
 kRNGoBackBtn = 991
-
+kRNOkText = 890
+kRNGoBackText = 891
 
 kSupportCancel = 780
 kSupportLiveHelp = 781
@@ -163,27 +153,8 @@ kMouseBackwards = 624
 kMousePresetsTitle = 630
 kMouseNormalText = 631
 kMouseNoviceText = 632
-kIGHHeaderText = 700
-kIGMHelpMessage = 710
-kIGMCCRBtnText = 531
 
 kNormNoviceRGID = 750
-
-
-# =====================================
-# Help (CCR) dialog globals
-#---------
-kHelpDropDownButton = 100
-kHelpCCROutToLunch = 110
-kHelpType = 200
-kHelpTitle = 201
-kHelpMLE = 202
-CCRHelpDialogType = 0
-kCCRPetitionTypeText = 280
-kCCRSubjectText = 281
-kCCRCommentText = 282
-kCCRSubmitBtnText = 290
-xCCRCancelBtnText = 291
 
 # =====================================
 # Key Map dialog globals
@@ -383,8 +354,6 @@ kGSWalkAndPan = 468
 kGSStayInFirstPerson = 470
 kGSClickToTurn = 472
 
-kGSFakeButton5 = 605
-kGSFakeButton6 = 606
 kGSVoiceHeader = 615
 kGSMyVoiceHeader = 616
 
@@ -399,7 +368,7 @@ kGSDispGamaText = 721
 kGSDispShadowsText = 722
 kGSAdvancedBtnText = 830
 
-# - string IDs for the Advances Settings localization
+# - string IDs for the Advanced Settings localization
 kAGSAdvanceHeader = 700
 kAGSShadowQualityText = 701
 kAGSQuickerCameraText = 702
@@ -452,7 +421,7 @@ gAudioHack = 0
 gCurrentReleaseNotes = ""
 
 class xOptionsMenu(ptModifier):
-    "The Options dialog modifier, includes Help/Petition and others"
+    "The Options dialog modifier"
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 195
@@ -466,38 +435,29 @@ class xOptionsMenu(ptModifier):
         global WebLaunchCmd
         "First update, load our dialogs"
         PtLoadDialog("OptionsMenuGUI",self.key)
-        PtLoadDialog("KIHelp",self.key)
-        PtLoadDialog("KIHelpMenu",self.key)
         PtLoadDialog("KeyMapDialog",self.key)
         PtLoadDialog("GameSettingsDialog",self.key)
         PtLoadDialog("CalibrationGUI",self.key)
         PtLoadDialog("TrailerPreviewGUI",self.key)
-        PtLoadDialog("KeyMap2Dialog",self.key)
         PtLoadDialog("AdvancedGameSettingsDialog",self.key)
-        PtLoadDialog("OptionsHelpGUI",self.key)
         PtLoadDialog("NavigationSettingsDialog",self.key)
         PtLoadDialog("GraphicsSettingsDialog",self.key)
         PtLoadDialog("AudioSettingsDialog",self.key)
         PtLoadDialog("OptionsMenuRestart",self.key)
         PtLoadDialog("ReleaseNotesDialog",self.key)
-        PtLoadDialog("ContactSupportGUI",self.key)
-
-        WebLaunchCmd = webbrowser.open_new
 
     def __del__(self):
         "the destructor - unload any dialogs we loaded"
-        PtUnloadDialog("KIHelp")
-        PtUnloadDialog("KIHelpMenu")
         PtUnloadDialog("KeyMapDialog")
         PtUnloadDialog("GameSettingsDialog")
         PtUnloadDialog("CalibrationGUI")
         PtUnloadDialog("TrailerPreviewGUI")
-        PtUnloadDialog("KeyMap2Dialog")
         PtUnloadDialog("AdvancedGameSettingsDialog")
-        PtUnloadDialog("OptionsHelpGUI")
+        PtUnloadDialog("NavigationSettingsDialog")
+        PtUnloadDialog("GraphicsSettingsDialog")
+        PtUnloadDialog("AudioSettingsDialog")
         PtUnloadDialog("OptionsMenuRestart")
         PtUnloadDialog("ReleaseNotesDialog")
-        PtUnloadDialog("ContactSupportGUI")
 
     def BeginAgeUnLoad(self,avatar):
         "When the current age is being unloaded, ie. we've linked out - hide all modal dialogs!"
@@ -505,21 +465,13 @@ class xOptionsMenu(ptModifier):
         global gPreviewStarted
         if OptionsMenuDlg.dialog.isEnabled():
             OptionsMenuDlg.dialog.hide()
-        if CCRDlg.dialog.isEnabled():
-            CCRDlg.dialog.hide()
         if KeyMapDlg.dialog.isEnabled():
             KeyMapDlg.dialog.hide()
-        #~ if SettingsDlg.dialog.isEnabled():
-            #~ SettingsDlg.dialog.hide()
         if CalibrateDlg.dialog.isEnabled():
             CalibrateDlg.dialog.hide()
-        if SupportDlg.dialog.isEnabled():
-            SupportDlg.dialog.hide()
         if gPreviewStarted:
             PtFadeOut(kOptionFadeOutSeconds,1)
             PtAtTimeCallback(self.key, kOptionFadeOutSeconds, kTrailerFadeOutID)
-        #~ if KeyMap2Dlg.dialog.isEnabled():
-            #~ KeyMap2Dlg.dialog.hide()
         if AdvGameSettingDlg.dialog.isEnabled():
             AdvGameSettingDlg.dialog.hide()
         if NavigationDlg.dialog.isEnabled():
@@ -601,7 +553,12 @@ class xOptionsMenu(ptModifier):
 ##
 ###############################################
         if id == OptionsMenuDlg.id:
-            if event == kAction or event == kValueChanged:
+            if event == kShowHide:
+                if control.isEnabled():
+                    textField = ptGUIControlTextBox(OptionsMenuDlg.dialog.getControlFromTag(kOptionsOkText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+
+            elif event == kAction or event == kValueChanged:
                 # test to see which control had the event
                 omID = control.getTagID()
                 if omID == kOptionsNavigationBtn:
@@ -625,16 +582,6 @@ class xOptionsMenu(ptModifier):
                     OptionsMenuDlg.dialog.hide()
                     PtFadeOut(kOptionFadeOutSeconds,1)
                     PtAtTimeCallback(self.key, kOptionFadeOutSeconds, kOptionFadeOutID)
-                elif omID == kOptionsHelpBtn:
-                    OptionsMenuDlg.dialog.hide()
-                    SupportDlg.dialog.show()
-
-                    #OptionsMenuDlg.dialog.hide()
-                    #print "CCRDlg.dialog.isEnabled = ",CCRDlg.dialog.isEnabled()                    
-                    #CCRDlg.dialog.show()                    
-                    #print "CCRDlg.dialog.isEnabled = ",CCRDlg.dialog.isEnabled()                    
-                    ##~ HelpDlg.dialog.show()
-                    #print "the CCR dialog should show now..."
                 elif omID == kOptionsReleaseNotes:
                     OptionsMenuDlg.dialog.hide()
                     ReleaseNotesDlg.dialog.show()
@@ -672,38 +619,6 @@ class xOptionsMenu(ptModifier):
 
 ###############################################
 ##
-##  Contact Support dialog processing
-##
-###############################################
-        elif id == SupportDlg.id:
-            if event == kDialogLoaded:
-                pass
-
-            elif event == kShowHide:
-                if control.isEnabled():
-                    pass
-
-            elif event == kAction or event == kValueChanged:
-                spID = control.getTagID()
-                if spID == kSupportTicket:
-                    WebLaunchCmd("http://www.mystonline.com/contact.html")
-                elif spID == kSupportLiveHelp:
-                    actName = PtGetAccountName()
-                    kiNum = unicode(PtGetLocalPlayer().getPlayerID())
-                    acctInfo = urlencode({'fullname':actName})
-                    fullURL = U"http://support.mystonline.com/live/visitor/index.php?_m=livesupport&_a=startclientchat&proactive=0&departmentid=0&randno=4&" + acctInfo + U":" + kiNum
-                    #print "DEBUG: URL = " + fullURL
-                    WebLaunchCmd(fullURL)
-                elif spID == kSupportCancel:
-                    SupportDlg.dialog.hide()
-                    OptionsMenuDlg.dialog.show()
-                    
-            elif event == kExitMode:
-                SupportDlg.dialog.hide()
-
-
-###############################################
-##
 ##  Release Notes dialog processing
 ##
 ###############################################
@@ -723,6 +638,12 @@ class xOptionsMenu(ptModifier):
                     print "[TXT processing] Error while reading ReleaseNotes.txt"
             elif event == kShowHide:
                 if control.isEnabled():
+                    # buttons localized
+                    textField = ptGUIControlTextBox(ReleaseNotesDlg.dialog.getControlFromTag(kRNOkText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField = ptGUIControlTextBox(ReleaseNotesDlg.dialog.getControlFromTag(kRNGoBackText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+
                     textField = ptGUIControlMultiLineEdit(ReleaseNotesDlg.dialog.getControlFromTag(kReleaseTextArea))
                     textField.clearBuffer()
                     textField.insertString(gCurrentReleaseNotes)
@@ -742,75 +663,6 @@ class xOptionsMenu(ptModifier):
 
 ###############################################
 ##
-##  CCR dialog processing
-##
-###############################################
-        elif id == CCRDlg.id:
-            if event == kDialogLoaded:
-                # set the deafault for the drop down
-                CCRHelpDialogType = xLocalization.xKI.xCCRHelpPopupDefault
-                typeField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kHelpType))
-                typeField.setString(xLocalization.xKI.xCCRHelpPopupMenu[CCRHelpDialogType][0])
-            elif event == kShowHide:
-                # reset the edit text lines
-                if control.isEnabled():
-                    # set the text localized strings
-                    textField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kCCRPetitionTypeText))
-                    textField.setString(xLocalization.xKI.xCCRPetitionTypeText)
-                    textField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kCCRSubjectText))
-                    textField.setString(xLocalization.xKI.xCCRSubjectText)
-                    textField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kCCRCommentText))
-                    textField.setString(xLocalization.xKI.xCCRCommentText)
-                    textField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kCCRSubmitBtnText))
-                    textField.setString(xLocalization.xKI.xCCRSubmitBtnText)
-                    textField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(xCCRCancelBtnText))
-                    textField.setString(xLocalization.xKI.xCCRCancelBtnText)
-                    # put back defaults to the fields in the dialog box
-                    CCRHelpDialogType = xLocalization.xKI.xCCRHelpPopupDefault
-                    typeField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kHelpType))
-                    typeField.setString(xLocalization.xKI.xCCRHelpPopupMenu[CCRHelpDialogType][0])
-                    titleField = ptGUIControlEditBox(CCRDlg.dialog.getControlFromTag(kHelpTitle))
-                    titleField.clearString()
-                    bodyField = ptGUIControlMultiLineEdit(CCRDlg.dialog.getControlFromTag(kHelpMLE))
-                    bodyField.clearBuffer()
-                    CCROutField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kHelpCCROutToLunch))
-                    if PtIsCCRAway():
-                        CCROutField.setString(xLocalization.xKI.xCCRAwayText)
-                        CCROutField.show()
-                    else:
-                        CCROutField.hide()
-            elif event == kAction or event == kValueChanged:
-                helpID = control.getTagID()
-                if helpID == kYesButtonID:
-                    # get the text from the title and the body
-                    titleField = ptGUIControlEditBox(CCRDlg.dialog.getControlFromTag(kHelpTitle))
-                    bodyField = ptGUIControlMultiLineEdit(CCRDlg.dialog.getControlFromTag(kHelpMLE))
-                    PtSendPetitionToCCR(bodyField.getString(),xLocalization.xKI.xCCRHelpPopupMenu[CCRHelpDialogType][1],titleField.getString())
-                    CCRDlg.dialog.hide()
-                elif helpID == kNoButtonID:
-                    CCRDlg.dialog.hide()
-                elif helpID == kHelpDropDownButton:
-                    CCRPopupMenu.menu.show()
-            elif event == kExitMode:
-                if CCRPopupMenu.menu.isEnabled():
-                    CCRPopupMenu.menu.hide()
-                else:
-                    CCRDlg.dialog.hide()
-
-        elif id == CCRPopupMenu.id:
-            if event == kDialogLoaded:
-                # load the popup memu with items
-                for menuItem in xLocalization.xKI.xCCRHelpPopupMenu:
-                    CCRPopupMenu.menu.addNotifyItem(menuItem[0])
-            elif event == kAction:
-                menuID = control.getTagID()
-                # set the type field
-                CCRHelpDialogType = menuID
-                typeField = ptGUIControlTextBox(CCRDlg.dialog.getControlFromTag(kHelpType))
-                typeField.setString(xLocalization.xKI.xCCRHelpPopupMenu[CCRHelpDialogType][0])
-
-###############################################
-##
 ##  Key Map dialog processing
 ##
 ###############################################
@@ -822,32 +674,31 @@ class xOptionsMenu(ptModifier):
                 if control.isEnabled():
                     # localize the strings
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine1))
-                    textField.setString(xLocalization.xOptions.xKMMoveForward)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveForward"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine2))
-                    textField.setString(xLocalization.xOptions.xKMMoveBack)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveBackward"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine3))
-                    textField.setString(xLocalization.xOptions.xKMRotLeft)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateLeft"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine4))
-                    textField.setString(xLocalization.xOptions.xKMRotRight)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateRight"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine5))
-                    textField.setString(xLocalization.xOptions.xKMJump)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine6))
-                    textField.setString(xLocalization.xOptions.xKMStrafeLeft)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeLeft"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine7))
-                    textField.setString(xLocalization.xOptions.xKMStrafeRight)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeRight"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine8))
-                    textField.setString(xLocalization.xOptions.xKMExitMode)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.ExitMode"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine9))
-                    textField.setString(xLocalization.xOptions.xKMFirstPerson)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.FirstPerson"))
+
                     # buttons localized
-                    #~ textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMNextPreviousText))
-                    #~ textField.setString(xLocalization.xOptions.xKMNextText)
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setString(xLocalization.xOptions.xOptionsResumeText)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsDefaultsText))
-                    textField.setString(xLocalization.xOptions.xOptionsDefaultsText)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    textField.setString(xLocalization.xOptions.xOptionsGoBackText)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     self.IShowMappedKeys(control,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # read the ini file in
                     # xIniInput.ReadIni()
@@ -938,11 +789,6 @@ class xOptionsMenu(ptModifier):
                 elif kmID == kKMGoBackBtn:
                     KeyMapDlg.dialog.hide()
                     AdvGameSettingDlg.dialog.show()                    
-                    #~ OptionsMenuDlg.dialog.show()
-                    
-                #~ elif kmID == kKMNextPreviousBtn:
-                    #~ KeyMapDlg.dialog.hide()
-                    #~ KeyMap2Dlg.dialog.show()
             elif event == kExitMode:
                 KeyMapDlg.dialog.hide()
 
@@ -965,6 +811,31 @@ class xOptionsMenu(ptModifier):
             elif event == kShowHide:
                 if control.isEnabled():
                     self.IRefreshAdvSettings()
+
+                    # localize the strings
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSAdvanceHeader))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Advanced"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSQuickerCameraText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.SmootherCamera"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSMouseInvert))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.InvertMouse"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSWalkAndPan))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.WalkAndPan"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSStayInFirstPerson))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.StayInFP"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSClickToTurn))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.ClickToTurn"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSMouseTurn))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.MouseTurn"))
+
+                    # buttons localized
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsGoBackText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsOkText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsDefaultsText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+
             elif event == kAction or event == kValueChanged:
                 gsID = control.getTagID()
                 print "gsID = " + str(gsID)
@@ -1063,11 +934,11 @@ class xOptionsMenu(ptModifier):
         elif id == CalibrateDlg.id:
             if event == kDialogLoaded:
                 textField = ptGUIControlTextBox(CalibrateDlg.dialog.getControlFromTag(kCalMessageText))
-                textField.setString(xLocalization.xOptions.xCalMessageText)
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
             elif event == kShowHide:
                 if control.isEnabled():
                     textField = ptGUIControlTextBox(CalibrateDlg.dialog.getControlFromTag(kCalMessageText))
-                    textField.setString(xLocalization.xOptions.xCalMessageText)
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
             elif event == kAction or event == kValueChanged:
                 cbID = control.getTagID()
                 if cbID == kClickOnMeBtn:
@@ -1140,23 +1011,21 @@ class xOptionsMenu(ptModifier):
             if event == kDialogLoaded:
                 print "Yes, the Navigation dialog loaded."
                 pass
-                
-                
+
             elif event == kShowHide:
                 # reset the edit text lines
                 if control.isEnabled():
                     self.IRefreshHelpSettings()
-                    # set the text localized strings
-                    print "I should now localize the Navigation dialog text fields"
-                    #~ textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    #~ textField.setString(xLocalization.xOptions.xOptionsGoBackText)
-                    #~ textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsOkText))
-                    #~ textField.setString(xLocalization.xOptions.xOptionsResumeText)
-                    #~ textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kGSAdvancedBtnText))
-                    #~ textField.setString(xLocalization.xOptions.xGSAdvancedBtnText)                    
-                    
-            elif event == kAction or event == kValueChanged:
 
+                    # buttons localized
+                    textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsGoBackText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsOkText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kGSAdvancedBtnText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Advanced"))
+
+            elif event == kAction or event == kValueChanged:
                 NavigationID = control.getTagID()
                 print "NavigationID = ", NavigationID                
                 if NavigationID == kKMOkBtn:
@@ -1200,6 +1069,16 @@ class xOptionsMenu(ptModifier):
             if event == kShowHide:
                 if control.isEnabled():
                     self.InitVideoControlsGUI()
+
+                    # buttons localized
+                    # Temporary HACK - These controls lack TagIDs in the 902 PRPs, so we're going to call them up by index instead.
+                    textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(3)) # (kOptionsGoBackText) GSGoBackBtnText_5
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(4)) # (kOptionsOkText) GSOkBtnText_6
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(6)) # (kOptionsDefaultsText) GSDefaultsBtnText_2
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+
                     self.restartWarn = 0
                     
             elif (event == kAction or event == kValueChanged):
@@ -1319,7 +1198,30 @@ class xOptionsMenu(ptModifier):
             elif event == kShowHide:
                 # reset the edit text lines
                 if control.isEnabled():
-                    print "I need to localize the Audio dialog text"
+                    # localize the strings
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolumeHeader))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.AudioSettings"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolSoundFXText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.SoundFX"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolMusicText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Music"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSMyVoiceHeader))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.MyVoice"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolAmbientText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Ambient"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVoiceHeader))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.OtherVoice"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolMuteText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Mute"))
+
+                    # buttons localized
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsGoBackText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsOkText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsDefaultsText))
+                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+
                     self.restartAudio = 0
 
                 else:
@@ -1574,11 +1476,6 @@ class xOptionsMenu(ptModifier):
             windowed = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoWindowedCheckTag))
             dowindow = (opts[xIniDisplay.kGraphicsWindowed] == "true")
             windowed.setChecked(dowindow)
-
-        #if PtGetDesktopColorDepth() == 16 or PtGetDesktopWidth() < 800:
-        #    ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoWindowedTextTag)).setForeColor(ptColor(.3, .3, .3, .5))
-        #    windowed.disable()
-        #    dowindow = 0
 
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoFilteringSliderTag))
         videoField.setValue( kVideoAnisoFiltering[str(opts[xIniDisplay.kGraphicsAnisotropicLevel])] )
@@ -2017,23 +1914,6 @@ class xOptionsMenu(ptModifier):
                 # disable this field
                 field.hide()
 
-    # SHOULD BE OK TO REMOVE - IF YOU NEED IT, TALK TO DEREK
-    #def IMatchIniToGame(self):
-    #    km = ptKeyMap()
-    #    # get the keycodes for each of the control codes
-    #    for control_code in defaultControlCodeBinds.keys():
-    #        if type(control_code) == type(""):
-    #            key1 = km.convertVKeyToChar(km.getBindingKeyConsole(control_code),km.getBindingFlagsConsole(control_code))
-    #            self.setNewChronicleVar(control_code, key1)
-    #            #xIniInput.SetConsoleKey('"'+control_code+'"',key1+',')
-    #        else:
-    #            controlStr = km.convertControlCodeToString(control_code)
-    #            key1 = km.convertVKeyToChar(km.getBindingKey1(control_code),km.getBindingFlags1(control_code))
-    #            key2 = km.convertVKeyToChar(km.getBindingKey2(control_code),km.getBindingFlags2(control_code))
-    #            self.setNewChronicleVar(controlStr, key1)
-    #            self.setNewChronicleVar(controlStr+"2", key2)
-    #            #xIniInput.SetControlKey('"'+controlStr+'"',key1+',',key2+',')
-
     def ISetDefaultKeyMappings(self):
         km = ptKeyMap()
         KeyMapString = ""
@@ -2062,115 +1942,3 @@ def res_comp(elem1, elem2):
         return cmp(elem1h, elem2h)
     else:
         return result
-
-
-def urlencode(query,doseq=0):
-    """Encode a sequence of two-element tuples or dictionary into a URL query string.
-
-    If any values in the query arg are sequences and doseq is true, each
-    sequence element is converted to a separate parameter.
-
-    If the query arg is a sequence of two-element tuples, the order of the
-    parameters in the output will match the order of parameters in the
-    input.
-    """
-
-    if hasattr(query,"items"):
-        # mapping objects
-        query = query.items()
-    else:
-        # it's a bother at times that strings and string-like objects are
-        # sequences...
-        try:
-            # non-sequence items should not work with len()
-            x = len(query)
-            # non-empty strings will fail this
-            if len(query) and type(query[0]) != types.TupleType:
-                raise TypeError
-            # zero-length sequences of all types will get here and succeed,
-            # but that's a minor nit - since the original implementation
-            # allowed empty dicts that type of behavior probably should be
-            # preserved for consistency
-        except TypeError:
-            ty,va,tb = sys.exc_info()
-            raise TypeError, "not a valid non-string sequence or mapping object", tb
-
-    l = []
-    if not doseq:
-        # preserve old behavior
-        for k, v in query:
-            k = quote_plus(str(k))
-            v = quote_plus(str(v))
-            l.append(k + '=' + v)
-    else:
-        for k, v in query:
-            k = quote_plus(str(k))
-            if type(v) == types.StringType:
-                v = quote_plus(v)
-                l.append(k + '=' + v)
-            elif type(v) == types.UnicodeType:
-                # is there a reasonable way to convert to ASCII?
-                # encode generates a string, but "replace" or "ignore"
-                # lose information and "strict" can raise UnicodeError
-                v = quote_plus(v.encode("ASCII","replace"))
-                l.append(k + '=' + v)
-            else:
-                try:
-                    # is this a sufficient test for sequence-ness?
-                    x = len(v)
-                except TypeError:
-                    # not a sequence
-                    v = quote_plus(str(v))
-                    l.append(k + '=' + v)
-                else:
-                    # loop over the sequence
-                    for elt in v:
-                        l.append(k + '=' + quote_plus(str(elt)))
-    return '&'.join(l)
-
-def quote_plus(s, safe = ''):
-    """Quote the query fragment of a URL; replacing ' ' with '+'"""
-    if ' ' in s:
-        l = s.split(' ')
-        for i in range(len(l)):
-            l[i] = quote(l[i], safe)
-        return '+'.join(l)
-    else:
-        return quote(s, safe)
-
-def quote(s, safe = '/'):
-    """quote('abc def') -> 'abc%20def'
-
-    Each part of a URL, e.g. the path info, the query, etc., has a
-    different set of reserved characters that must be quoted.
-
-    RFC 2396 Uniform Resource Identifiers (URI): Generic Syntax lists
-    the following reserved characters.
-
-    reserved    = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" |
-                  "$" | ","
-
-    Each of these characters is reserved in some component of a URL,
-    but not necessarily in all of them.
-
-    By default, the quote function is intended for quoting the path
-    section of a URL.  Thus, it will not encode '/'.  This character
-    is reserved, but in typical usage the quote function is being
-    called on a path where the existing slash characters are used as
-    reserved characters.
-    """
-    safe = always_safe + safe
-    if _fast_safe_test == safe:
-        return _fast_quote(s)
-    res = list(s)
-    for i in range(len(res)):
-        c = res[i]
-        if c not in safe:
-            res[i] = '%%%02X' % ord(c)
-    return ''.join(res)
-
-always_safe = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-               'abcdefghijklmnopqrstuvwxyz'
-               '0123456789' '_.-')
-_fast_safe_test = always_safe + '/'
-_fast_safe = None
