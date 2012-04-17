@@ -1629,24 +1629,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         }
     }
 
-    // log stackdump.log text if the log exists
-    char stackDumpText[1024];
-    wchar_t stackDumpTextW[1024]; 
-    memset(stackDumpText, 0, arrsize(stackDumpText));
-    memset(stackDumpTextW, 0, arrsize(stackDumpTextW) * sizeof(wchar_t));
-    wchar_t fileAndPath[MAX_PATH];
-    PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
-    PathAddFilename(fileAndPath, fileAndPath, L"stackDump.log", arrsize(fileAndPath));
-    FILE *stackDumpLog = _wfopen(fileAndPath, L"r");
-    if(stackDumpLog)
-    {
-        fread(stackDumpText, 1, arrsize(stackDumpText) - 1, stackDumpLog);
-        StrToUnicode(stackDumpTextW, stackDumpText, arrsize(stackDumpText));
-        NetCliAuthLogStackDump (stackDumpTextW);
-        fclose(stackDumpLog);
-        plFileUtils::RemoveFile(fileAndPath);
-    }
-
     for (;;) {
         // Create Window
         if (!WinInit(hInst, nCmdShow) || gClient->GetDone())
