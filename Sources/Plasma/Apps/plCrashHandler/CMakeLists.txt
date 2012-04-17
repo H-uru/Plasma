@@ -8,7 +8,7 @@ set(plCrashHandler_SOURCES
 
 add_executable(plCrashHandler ${plCrashHandler_SOURCES})
 if(PLASMA_EXTERNAL_RELEASE)
-    set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruCrashHandler")
+    set_target_properties(plCrashHandler PROPERTIES OUTPUT_NAME "UruCrashHandler")
 endif(PLASMA_EXTERNAL_RELEASE)
 target_link_libraries(plCrashHandler CoreLib)
 target_link_libraries(plCrashHandler pfCrashHandler)
