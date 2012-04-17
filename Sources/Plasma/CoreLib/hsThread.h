@@ -115,7 +115,11 @@ class hsMutex {
 public:
     hsMutex();
     virtual ~hsMutex();
-    
+
+#ifdef HS_BUILD_FOR_WIN32
+    HANDLE GetHandle() const { return fMutexH; }
+#endif
+
     void        Lock();
     hsBool      TryLock();
     void        Unlock();
@@ -157,6 +161,10 @@ public:
     hsSemaphore(int initialValue=0, const char* name=nil);
     ~hsSemaphore();
 
+#ifdef HS_BUILD_FOR_WIN32
+    HANDLE GetHandle() const { return fSemaH; }
+#endif
+
     hsBool      TryWait();
     hsBool      Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
@@ -182,6 +190,10 @@ class hsEvent
 public:
     hsEvent();
     ~hsEvent();
+
+#ifdef HS_BUILD_FOR_WIN32
+    HANDLE GetHandle() const { return fEvent; }
+#endif
 
     hsBool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
