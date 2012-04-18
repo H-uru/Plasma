@@ -108,10 +108,20 @@ void plCrashSrv::IHandleCrash()
 
 void plCrashSrv::HandleCrash()
 {
-    fCrashed->Wait(); // Wait for a crash
     if (!fLink)
         FATAL("plCrashMemLink is nil!");
-    else if (fLink->fCrashed)
+    fLink->fSrvReady = true; // mark us as ready to receive crashes
+
+#ifdef HS_BUILD_FOR_WIN32
+    // In Win32 land we have to hackily handle the client process exiting, so we'll wait on both
+    // the crashed semaphore and the client process...
+    HANDLE hack[2] = { fLink->fClientProcess, fCrashed->GetHandle() };
+    DWORD result = WaitForMultipleObjects(arrsize(hack), hack, FALSE, INFINITE);
+    hsAssert(result != WAIT_FAILED, "WaitForMultipleObjects failed");
+#else
+    fCrashed->Wait();
+#endif
+    if (fLink->fCrashed)
         IHandleCrash();
     fHandled->Signal(); // Tell CrashCli we handled it
 }
