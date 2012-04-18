@@ -134,5 +134,7 @@ void plCrashCli::ReportCrash(PEXCEPTION_POINTERS e)
 
 void plCrashCli::WaitForHandle()
 {
-    fHandled->Wait();
+    // Don't deadlock... Only wait if the CrashSrv is attached
+    if (fLink && fLink->fSrvReady)
+        fHandled->Wait();
 }

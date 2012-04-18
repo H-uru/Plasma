@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct plCrashMemLink
 {
     bool fCrashed;
+    bool fSrvReady;
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE   fClientProcess;
     uint32_t fClientProcessID;
