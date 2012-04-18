@@ -147,6 +147,7 @@ public:
     virtual void CheckAndHandleAnyStateChanges();
     virtual void UpdateSubstepNonPhysical();
     virtual const hsPoint3& GetLocalPosition()=0;
+    const hsQuat& GetLocalRotation() { return fLocalRotation; }
     virtual void MoveActorToSim();
     
     virtual void OverrideAchievedVelocity(hsVector3 newAchievedVel)
