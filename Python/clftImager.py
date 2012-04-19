@@ -154,6 +154,7 @@ class clftImager(ptResponder):
         #self.ageSDL = PtGetAgeSDL()
         #self.ageSDL.setFlags(stringSDLVarPanelE.value,1,1)
         #self.ageSDL.sendToClients(stringSDLVarPanelE.value)
+        pass
         
     
     def OnServerInitComplete(self):
