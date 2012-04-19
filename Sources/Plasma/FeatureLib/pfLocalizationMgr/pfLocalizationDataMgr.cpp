@@ -958,7 +958,7 @@ void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const s
             numArgs = argCount;
         else if (argCount != numArgs)
         {
-            std::wstring errorStr = L"WARNING: Argument number mismatch in element " + curPath;
+            std::wstring errorStr = L"WARNING: Argument number mismatch in element " + curPath + L" for " + curTranslation->first;
             char* cErrorStr = hsWStringToString(errorStr.c_str());
             fLog->AddLine(cErrorStr);
             delete [] cErrorStr;
