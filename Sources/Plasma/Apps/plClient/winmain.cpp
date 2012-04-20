@@ -1412,7 +1412,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // Check to make sure we have a good CPU before getting started
     if (!CheckCPU())
     {
-        plString msg = plString::Format("Your processor does not support all of the features required to play %S", ProductLongName());
+        plString msg = plString::Format("Your processor does not support all of the features required to play %S.", ProductLongName());
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
         return PARABLE_NORMAL_EXIT;
     }
