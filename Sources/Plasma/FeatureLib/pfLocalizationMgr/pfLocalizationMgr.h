@@ -70,8 +70,8 @@ public:
     // want the arguments in a different order (like you had to switch things around for a specific language)
     // then you use %1s, %2s, %3s and so on to specify arguments, these two cannot be mixed and you won't get
     // the results you expect if you do mix them. Path is specified by Age.Set.Name
-    std::wstring GetString(const std::wstring & path, const std::vector<std::wstring> & args);
-    std::wstring GetString(const std::wstring & path);
+    plString GetString(const plString & path, const std::vector<plString> & args);
+    plString GetString(const plString & path);
 };
 
 #endif
