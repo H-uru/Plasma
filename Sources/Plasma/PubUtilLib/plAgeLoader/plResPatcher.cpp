@@ -269,10 +269,6 @@ void plResPatcher::Finish(bool success)
 {
     while (fRequests.size())
         fRequests.pop();
-    if (fProgress) {
-        delete fProgress;
-        fProgress = nil;
-    }
 
     fPatching = false;
     if (success)
@@ -280,16 +276,14 @@ void plResPatcher::Finish(bool success)
     else
     {
         PatcherLog(kHeader, "--- Patch Killed by Error ---");
-        fProgress->SetAborting();
+        if (fProgress)
+            fProgress->SetAborting();
     }
+    delete fProgress; fProgress = nil;
 
     plResPatcherMsg* pMsg = new plResPatcherMsg(success, sLastError);
+    delete[] sLastError; sLastError = nil;
     pMsg->Send(); // whoosh... off it goes
-    if (sLastError)
-    {
-        delete[] sLastError;
-        sLastError = nil;
-    }
 }
 
 void plResPatcher::RequestFile(const wchar_t* srvName, const wchar_t* cliName)
