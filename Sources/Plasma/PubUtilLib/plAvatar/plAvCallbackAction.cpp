@@ -137,6 +137,8 @@ void plWalkingController::RecalcVelocity(double timeNow, double timePrev, hsBool
         //             always (0,0,0) outside of the controller update proc
         fImpactTime = fWalkingStrategy->GetAirTime();
         fImpactVelocity = fController->GetAchievedLinearVelocity();
+        // convert orientation from subworld to avatar-local coordinates
+        fImpactVelocity = (hsVector3)fController->GetLocalRotation().Rotate(&fImpactVelocity);
         fClearImpact = false;
     }
     else
