@@ -1396,7 +1396,7 @@ bool CheckCPU()
     int cpu_info[4];
     __cpuid(cpu_info, 1);
 #ifdef HAVE_SSE
-    if(cpu_info[2] & sse3_flag == 0)
+    if((cpu_info[2] & sse3_flag) == 0)
         return false;
 #endif
     // Insert additional feature checks here
@@ -1412,7 +1412,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // Check to make sure we have a good CPU before getting started
     if (!CheckCPU())
     {
-        plString msg = plString::Format("Your processor does not support all of the features required to play %S", ProductLongName());
+        plString msg = plString::Format("Your processor does not support all of the features required to play %S.", ProductLongName());
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
         return PARABLE_NORMAL_EXIT;
     }
