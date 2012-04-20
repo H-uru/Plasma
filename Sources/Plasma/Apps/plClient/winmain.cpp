@@ -1396,7 +1396,7 @@ bool CheckCPU()
     int cpu_info[4];
     __cpuid(cpu_info, 1);
 #ifdef HAVE_SSE
-    if(cpu_info[2] & sse3_flag == 0)
+    if((cpu_info[2] & sse3_flag) == 0)
         return false;
 #endif
     // Insert additional feature checks here
