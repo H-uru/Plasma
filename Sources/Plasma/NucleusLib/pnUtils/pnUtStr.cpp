@@ -121,18 +121,6 @@ static chartype * IStrChr (chartype * str, findchartype ch, unsigned chars) {
 }
 
 //===========================================================================
-template<class chartype, class findchartype>
-static chartype * IStrChrR (chartype * str, findchartype ch) {
-    chartype * start = str;
-    for (; *str; ++str)
-        NULL_STMT;
-    while (str-- > start)
-        if (*str == ch)
-            return str;
-    return NULL;
-}
-
-//===========================================================================
 static inline bool ICharUnicodeToUtf8 (char ** dest, const wchar_t * source[], unsigned destChars) {
     unsigned ch     = *(*source)++;
     bool     result = false;
@@ -227,20 +215,6 @@ static int IStrCmpI (const chartype str1[], const chartype str2[], unsigned char
 }
 
 //===========================================================================
-// returns StrLen(dest)
-template<class chartype>
-static unsigned IStrCopyLen (chartype * dest, const chartype source[], unsigned chars) {
-    chartype * const start = dest;
-    while ((chars > 1) && ((*dest = *source++) != 0)) {
-        --chars;
-        ++dest;
-    }
-    if (chars)
-        *dest = 0;
-    return dest - start;
-}
-
-//===========================================================================
 template<class chartype>
 static void IStrPack (chartype * dest, const chartype source[], unsigned chars) {
     while ((chars > 1) && *dest) {
@@ -271,46 +245,6 @@ static chartype * IStrStr (chartype source[], const chartype match[]) {
     }
 
     return nil;
-}
-
-
-//===========================================================================
-template<class chartype>
-static chartype * IStrStrI (chartype source[], const chartype match[]) {
-    if (!*match)
-        return source;
-
-    for (chartype * curr = source; *curr; ++curr) {
-        chartype * s1       = curr;
-        const chartype * s2 = match;
-        while (*s1 && *s2 && (CharLowerFast(*s1) == CharLowerFast(*s2)))
-            s1++, s2++;
-        if (!*s2)
-            return curr;
-    }
-
-    return nil;
-}
-
-//===========================================================================
-template<class chartype>
-static void IStrLower (chartype * dest, unsigned chars) {
-    while ((chars > 1) && ((*dest = CharLowerFast(*dest)) != 0)) {
-        --chars;
-        ++dest;
-    }
-}
-
-//===========================================================================
-template<class chartype>
-static void IStrLower (chartype * dest, const chartype source[], unsigned chars) {
-    while ((chars > 1) && ((*dest = CharLowerFast(*source)) != 0)) {
-        --chars;
-        ++dest;
-        ++source;
-    }
-    if (chars)
-        *dest = 0;
 }
 
 //===========================================================================
@@ -497,26 +431,6 @@ const wchar_t * StrChr (const wchar_t str[], wchar_t ch, unsigned chars) {
 }
 
 //===========================================================================
-char * StrChrR (char * str, char ch) {
-    return IStrChrR(str, ch);
-}
-
-//===========================================================================
-wchar_t * StrChrR (wchar_t * str, wchar_t ch) {
-    return IStrChrR(str, ch);
-}
-
-//===========================================================================
-const char * StrChrR (const char str[], char ch) {
-    return IStrChrR(str, ch);
-}
-
-//===========================================================================
-const wchar_t * StrChrR (const wchar_t str[], wchar_t ch) {
-    return IStrChrR(str, ch);
-}
-
-//===========================================================================
 unsigned StrPrintf (char * dest, unsigned count, const char format[], ...) {
     va_list argList;
     va_start(argList, format);
@@ -577,16 +491,6 @@ void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars) {
 }
 
 //===========================================================================
-unsigned StrCopyLen (char * dest, const char source[], unsigned chars) {
-    return IStrCopyLen(dest, source, chars);
-}
-
-//===========================================================================
-unsigned StrCopyLen (wchar_t * dest, const wchar_t source[], unsigned chars) {
-    return IStrCopyLen(dest, source, chars);
-}
-
-//===========================================================================
 void StrPack (char * dest, const char source[], unsigned chars) {
     IStrPack(dest, source, chars);
 }
@@ -617,26 +521,6 @@ const wchar_t * StrStr (const wchar_t source[], const wchar_t match[]) {
 }
 
 //===========================================================================
-char * StrStrI (char * source, const char match[]) {
-    return IStrStrI(source, match);
-}
-
-//===========================================================================
-const char * StrStrI (const char source[], const char match[]) {
-    return IStrStrI<const char>(source, match);
-}
-
-//===========================================================================
-wchar_t * StrStrI (wchar_t * source, const wchar_t match[]) {
-    return IStrStrI(source, match);
-}
-
-//===========================================================================
-const wchar_t * StrStrI (const wchar_t source[], const wchar_t match[]) {
-    return IStrStrI<const wchar_t>(source, match);
-}
-
-//===========================================================================
 unsigned StrLen (const char str[]) {
     return IStrLen(str);
 }
@@ -647,29 +531,6 @@ unsigned StrLen (const wchar_t str[]) {
 }
 
 //===========================================================================
-unsigned StrUnicodeToUtf8 (char * dest, const wchar_t source[], unsigned destChars) {
-    char * destCurr = dest;
-    char * destTerm = dest + destChars;
-    while (*source && (destCurr + 1 < destTerm))
-        if (!ICharUnicodeToUtf8(&destCurr, &source, destTerm - destCurr - 1))
-            break;
-    if (destCurr < destTerm)
-        *destCurr = 0;
-    return destCurr - dest;  // dest chars not including null terminator
-}
-
-//===========================================================================
-unsigned StrUtf8ToUnicode (wchar_t * dest, const char source[], unsigned destChars) {
-    wchar_t * destCurr = dest;
-    wchar_t * destTerm = dest + destChars;
-    while (*source && (destCurr + 1 < destTerm))
-        ICharUtf8ToUnicode(&destCurr, &source);
-    if (destCurr < destTerm)
-        *destCurr = 0;
-    return destCurr - dest;  // dest chars not including null terminator
-}
-
-//============================================================================
 float StrToFloat (const char source[], const char ** endptr) {
     return (float) strtod(source, const_cast<char **>(endptr));
 }
@@ -710,26 +571,6 @@ unsigned StrToUnsigned (const wchar_t source[], const wchar_t ** endptr, int rad
 }
 
 //===========================================================================
-void StrLower (char * dest, unsigned chars) {
-    IStrLower(dest, chars);
-}
-
-//===========================================================================
-void StrLower (wchar_t * dest, unsigned chars) {
-    IStrLower(dest, chars);
-}
-
-//===========================================================================
-void StrLower (char * dest, const char source[], unsigned chars) {
-    IStrLower(dest, source, chars);
-}
-
-//===========================================================================
-void StrLower (wchar_t * dest, const wchar_t source[], unsigned chars) {
-    IStrLower(dest, source, chars);
-}
-
-//============================================================================
 uint32_t StrHash (const char str[], unsigned chars) {
     return IStrHash(str, chars);
 }
