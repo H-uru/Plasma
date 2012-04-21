@@ -42,6 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _TEMP_CONVERT_TO_CONST_CHAR(x)      ((x).c_str())
 #define _TEMP_CONVERT_TO_WCHAR_T(x)         ((x).ToWchar().GetData())
 
+#ifdef DISABLE_DEPRECATED_STRINGS
+#define DEPR_STR void*,
+#else
+#define DEPR_STR
+#endif
+
 typedef unsigned int UniChar;
 
 template <typename _Ch>

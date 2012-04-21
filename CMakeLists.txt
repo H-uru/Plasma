@@ -90,6 +90,11 @@ if(PLASMA_USE_SSE)
     add_definitions(-DHAVE_SSE)
 endif(PLASMA_USE_SSE)
 
+option(NO_OLD_STRINGS "Disabled deprecated string functions?" OFF)
+if(NO_OLD_STRINGS)
+    add_definitions(-DDISABLE_DEPRECATED_STRINGS)
+endif(NO_OLD_STRINGS)
+
 #TODO: Make the OpenSSL includes less promiscuous so this isn't needed
 include_directories(${OPENSSL_INCLUDE_DIR})
 
