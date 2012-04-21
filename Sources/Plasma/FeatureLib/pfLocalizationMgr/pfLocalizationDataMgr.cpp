@@ -599,8 +599,9 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
 
     std::wstring elementName = curElement->first;
     LocalizationXMLFile::element& theElement = curElement->second;
-    LocalizationXMLFile::element::iterator curTranslation;
-    for (curTranslation = theElement.begin(); curTranslation != theElement.end(); curTranslation++)
+    LocalizationXMLFile::element::iterator curTranslation = theElement.begin();
+
+    while (curTranslation != theElement.end())
     {
         // Make sure this language exists!
         bool languageExists = false;
@@ -612,25 +613,17 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
                 break;
             }
         }
+
         if (!languageExists)
         {
             fErrorString += L"ERROR: The language " + curTranslation->first + L" used by " + ageName + L"." + setName + L".";
             fErrorString += elementName + L" is not supported, discarding translation\n";
-            theElement.erase(curTranslation);
-            curTranslation--; // because this will be incremented on the next run through the loop
-            continue;
+            curTranslation = theElement.erase(curTranslation);
         }
+        else
+            curTranslation++;
     }
 
-    LocalizationXMLFile::set& theSet = fData[ageName][setName];
-    if (theElement.find(defaultLanguage) == theElement.end())
-    {
-        fErrorString += L"ERROR: Default language " + defaultLanguage + L" is missing from the translations in element ";
-        fErrorString += ageName + L"." + setName + L"." + elementName + L", deleting element\n";
-        theSet.erase(curElement);
-        curElement--;
-        return;
-    }
     for (int i = 1; i < languageNames.size(); i++)
     {
         if (theElement.find(languageNames[i]) == theElement.end())
@@ -646,9 +639,26 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
 void LocalizationDatabase::IVerifySet(const std::wstring &ageName, const std::wstring &setName)
 {
     LocalizationXMLFile::set& theSet = fData[ageName][setName];
-    LocalizationXMLFile::set::iterator curElement;
-    for (curElement = theSet.begin(); curElement != theSet.end(); curElement++)
-        IVerifyElement(ageName, setName, curElement);
+    LocalizationXMLFile::set::iterator curElement = theSet.begin();
+    wchar_t *wDefLang = hsStringToWString(plLocalization::GetLanguageName((plLocalization::Language)0));
+    std::wstring defaultLanguage = wDefLang;
+    delete [] wDefLang;
+
+    while (curElement != theSet.end())
+    {
+        // Check that we at least have a default language translation for fallback
+        if (curElement->second.find(defaultLanguage) == curElement->second.end())
+        {
+            fErrorString += L"ERROR: Default language " + defaultLanguage + L" is missing from the translations in element ";
+            fErrorString += ageName + L"." + setName + L"." + curElement->first + L", deleting element\n";
+            curElement = theSet.erase(curElement);
+        }
+        else
+        {
+            IVerifyElement(ageName, setName, curElement);
+            curElement++;
+        }
+    }
 }
 
 //// IVerifyAge() ////////////////////////////////////////////////////
@@ -950,7 +960,7 @@ void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const s
             numArgs = argCount;
         else if (argCount != numArgs)
         {
-            std::wstring errorStr = L"WARNING: Argument number mismatch in element " + curPath;
+            std::wstring errorStr = L"WARNING: Argument number mismatch in element " + curPath + L" for " + curTranslation->first;
             char* cErrorStr = hsWStringToString(errorStr.c_str());
             fLog->AddLine(cErrorStr);
             delete [] cErrorStr;
