@@ -640,7 +640,9 @@ void LocalizationDatabase::IVerifySet(const std::wstring &ageName, const std::ws
 {
     LocalizationXMLFile::set& theSet = fData[ageName][setName];
     LocalizationXMLFile::set::iterator curElement = theSet.begin();
-    std::wstring defaultLanguage = hsStringToWString(plLocalization::GetLanguageName((plLocalization::Language)0));
+    wchar_t *wDefLang = hsStringToWString(plLocalization::GetLanguageName((plLocalization::Language)0));
+    std::wstring defaultLanguage = wDefLang;
+    delete [] wDefLang;
 
     while (curElement != theSet.end())
     {
