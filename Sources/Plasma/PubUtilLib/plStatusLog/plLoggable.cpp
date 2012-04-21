@@ -84,7 +84,7 @@ void plLoggable::SetLog( plStatusLog * log, bool deleteOnDestruct/*=false */)
 }
 
 
-bool plLoggable::Log( const char * str ) const
+bool plLoggable::Log(DEPR_STR const char * str ) const
 {
     return Log(plString::FromUtf8(str));
 }
@@ -104,7 +104,7 @@ bool plLoggable::Log(const plString& str) const
     return true;
 }
 
-bool plLoggable::LogF( const char * fmt, ... ) const
+bool plLoggable::LogF(DEPR_STR const char * fmt, ... ) const
 {
     va_list args;
     va_start(args, fmt);
@@ -114,34 +114,34 @@ bool plLoggable::LogF( const char * fmt, ... ) const
     return ret;
 }
 
-bool plLoggable::LogV( const char * fmt, va_list args ) const
+bool plLoggable::LogV(DEPR_STR const char * fmt, va_list args ) const
 {
     return Log(plString::IFormat(fmt, args));
 }
 
-bool plLoggable::DebugMsgV(const char* fmt, va_list args) const
+bool plLoggable::DebugMsgV(DEPR_STR const char* fmt, va_list args) const
 {
     return Log(_TEMP_CONVERT_FROM_LITERAL("DBG: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::ErrorMsgV(const char* fmt, va_list args) const
+bool plLoggable::ErrorMsgV(DEPR_STR const char* fmt, va_list args) const
 {
     return Log(_TEMP_CONVERT_FROM_LITERAL("ERR: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::WarningMsgV(const char* fmt, va_list args) const
+bool plLoggable::WarningMsgV(DEPR_STR const char* fmt, va_list args) const
 {
     return Log(_TEMP_CONVERT_FROM_LITERAL("WRN: ") + plString::IFormat(fmt, args));
 }
 
-bool plLoggable::AppMsgV(const char* fmt, va_list args) const
+bool plLoggable::AppMsgV(DEPR_STR const char* fmt, va_list args) const
 {
     return Log(_TEMP_CONVERT_FROM_LITERAL("APP: ") + plString::IFormat(fmt, args));
 }
 
 ///////////////////////////////////////////////////////////////
 
-bool plLoggable::DebugMsg(const char* fmt, ...) const
+bool plLoggable::DebugMsg(DEPR_STR const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
@@ -151,7 +151,7 @@ bool plLoggable::DebugMsg(const char* fmt, ...) const
     return ret;
 }
 
-bool plLoggable::ErrorMsg(const char* fmt, ...) const
+bool plLoggable::ErrorMsg(DEPR_STR const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
@@ -161,7 +161,7 @@ bool plLoggable::ErrorMsg(const char* fmt, ...) const
     return ret;
 }
 
-bool plLoggable::WarningMsg(const char* fmt, ...) const
+bool plLoggable::WarningMsg(DEPR_STR const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);
@@ -171,7 +171,7 @@ bool plLoggable::WarningMsg(const char* fmt, ...) const
     return ret;
 }
 
-bool plLoggable::AppMsg(const char* fmt, ...) const
+bool plLoggable::AppMsg(DEPR_STR const char* fmt, ...) const
 {
     va_list args;
     va_start(args, fmt);

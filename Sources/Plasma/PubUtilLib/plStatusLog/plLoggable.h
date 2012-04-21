@@ -70,18 +70,18 @@ public:
 
     // logging
 
-    virtual bool Log( const char * str ) const;
+    virtual bool Log(DEPR_STR const char * str ) const;
     virtual bool Log(const plString& str) const;
-    virtual bool LogF( const char * fmt, ... ) const;
-    virtual bool LogV( const char * fmt, va_list args ) const;
-    virtual bool ErrorMsgV(const char* fmt, va_list args) const ;
-    virtual bool DebugMsgV(const char* fmt, va_list args) const ;
-    virtual bool WarningMsgV(const char* fmt, va_list args) const ;
-    virtual bool AppMsgV(const char* fmt, va_list args) const ;
-    virtual bool ErrorMsg(const char* fmt, ...) const ;
-    virtual bool DebugMsg(const char* fmt, ...) const ;
-    virtual bool WarningMsg(const char* fmt, ...) const ;
-    virtual bool AppMsg(const char* fmt, ...) const ;
+    virtual bool LogF(DEPR_STR const char * fmt, ... ) const;
+    virtual bool LogV(DEPR_STR const char * fmt, va_list args ) const;
+    virtual bool ErrorMsgV(DEPR_STR const char* fmt, va_list args) const ;
+    virtual bool DebugMsgV(DEPR_STR const char* fmt, va_list args) const ;
+    virtual bool WarningMsgV(DEPR_STR const char* fmt, va_list args) const ;
+    virtual bool AppMsgV(DEPR_STR const char* fmt, va_list args) const ;
+    virtual bool ErrorMsg(DEPR_STR const char* fmt, ...) const ;
+    virtual bool DebugMsg(DEPR_STR const char* fmt, ...) const ;
+    virtual bool WarningMsg(DEPR_STR const char* fmt, ...) const ;
+    virtual bool AppMsg(DEPR_STR const char* fmt, ...) const ;
 };
 
 #endif  // plLoggable_inc
