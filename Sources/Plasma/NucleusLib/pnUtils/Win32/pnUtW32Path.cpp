@@ -112,47 +112,21 @@ static wchar_t * PathSkipOverSeparator (wchar_t * path) {
 }
 
 //===========================================================================
-static unsigned CommonPrefixLength (
-    const wchar_t src1[],
-    const wchar_t src2[]
+const wchar_t * PathFindFilename (
+    const wchar_t path[]
 ) {
-    ASSERT(src1);
-    ASSERT(src2);
+    ASSERT(path);
 
-    wchar_t const * const base    = src1;
-    const wchar_t * common        = nil;
-    for (;;) {
-        // Are the next components equal in length?
-        const wchar_t * next1 = PathSkipOverSeparator(const_cast<wchar_t *>(src1));
-        const wchar_t * next2 = PathSkipOverSeparator(const_cast<wchar_t *>(src2));
-        const int componentLen = next1 - src1;
-        if (componentLen != (next2 - src2))
-            break;
+    if (IsUncPath(path))
+        path = SkipUncDrive(path);
 
-        // Are the next components equal in value?
-        if (!StrCmpI(src1, src2, componentLen))
-            common = next1;
-        else
-            break;
-
-        if (!*next1)
-            break;
-        src1 = next1 + 1;
-
-        if (!*next2)
-            break;
-        src2 = next2 + 1;
+    const wchar_t * last_slash = path;
+    for (const wchar_t * p = path; *p; p++) {
+        if ((*p == L'/') || (*p == L'\\') || (*p == L':'))
+            last_slash = p + 1;
     }
 
-    if (!common)
-        return 0;
-
-    // Compute length of common subchunk;
-    // if it is "C:" convert it to "C:\"
-    unsigned commonLen = common - base;
-    if ((commonLen == 2) && (base[1] == L':'))
-        ++commonLen;
-    return commonLen;
+    return last_slash;
 }
 
 //===========================================================================
@@ -170,20 +144,22 @@ static void GetProgramName (
     }
 }
 
+//============================================================================
+bool PathDoesDirectoryExist (const wchar_t directory[]) {
+    uint32_t attributes = GetFileAttributesW(directory);
+    if (attributes == (uint32_t) -1)
+        return false;
+    if (attributes & FILE_ATTRIBUTE_DIRECTORY)
+        return true;
+    return false;
+}
+
 
 /****************************************************************************
 *
 *   Exports
 *
 ***/
-
-//===========================================================================
-void PathGetModuleName (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    GetProgramName(ModuleGetInstance(), dst, dstChars);
-}
 
 //===========================================================================
 void PathGetProgramName (
@@ -224,32 +200,6 @@ bool PathFromString (
 
     *dst = 0;
     return false;
-}
-
-//===========================================================================
-bool PathFromString (
-    wchar_t *     dst,                // ASSERT(dst);
-    const wchar_t src[],              // ASSERT(src);
-    unsigned    dstChars,           // ASSERT(dstChars);
-    const wchar_t baseDir[]           // ASSERT(baseDir);
-) {
-    ASSERT(baseDir);
-    ASSERT(dstChars);
-
-    // Save current directory
-    wchar_t curr[MAX_PATH];
-    PathGetCurrentDirectory(curr, arrsize(curr));
-
-    // Perform string conversion from specified directory
-    bool result;
-    if (0 != (result = PathSetCurrentDirectory(baseDir)))
-        result = PathFromString(dst, src, dstChars);
-    else
-        *dst = 0;
-
-    // Restore directory
-    PathSetCurrentDirectory(curr);
-    return result;
 }
 
 //===========================================================================
@@ -399,140 +349,6 @@ void PathMakePath (
 }
 
 //===========================================================================
-bool PathMakeRelative (
-    wchar_t       *dst,
-    unsigned    fromFlags,  // 0 or kPathFlagDirectory
-    const wchar_t from[],
-    unsigned    toFlags,    // 0 or kPathFlagDirectory
-    const wchar_t to[],
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(from);
-    ASSERT(to);
-    ASSERT(dstChars);
-    *dst = 0;
-
-    unsigned prefixLength = CommonPrefixLength(from, to);
-    if (!prefixLength)
-        return false;
-
-    wchar_t fromBuf[MAX_PATH];
-    if (fromFlags & kPathFlagDirectory)
-        StrCopy(fromBuf, from, arrsize(fromBuf));
-    else
-        PathRemoveFilename(fromBuf, from, arrsize(fromBuf));
-
-    wchar_t toBuf[MAX_PATH];
-    if (toFlags & kPathFlagDirectory)
-        StrCopy(toBuf, to, arrsize(toBuf));
-    else
-        PathRemoveFilename(toBuf, to, arrsize(toBuf));
-
-    const wchar_t * curr = fromBuf + prefixLength;
-    if (*curr) {
-        // build ..\.. part of the path
-        if (IsSlash(*curr))
-            curr++;              // skip slash
-
-        while (*curr) {
-            curr = PathSkipOverSeparator(const_cast<wchar_t *>(curr));
-            StrPack(dst, *curr ? L"..\\" : L"..", dstChars);
-        }
-    }
-    else {
-        StrCopy(dst, L".", dstChars);
-    }
-
-    if (to[prefixLength]) {
-        // deal with root case
-        if (!IsSlash(to[prefixLength]))
-            --prefixLength;
-
-        ASSERT(IsSlash(to[prefixLength]));
-        StrPack(dst, to + prefixLength, dstChars);
-    }
-
-    return true;
-}
-
-//===========================================================================
-bool PathIsRelative (
-    const wchar_t src[]
-) {
-    ASSERT(src);
-    if (!src[0])
-        return true;
-    if (IsSlash(src[0]))
-        return false;
-    if (src[1] == L':')
-        return false;
-    return true;
-}
-
-//===========================================================================
-const wchar_t * PathFindFilename (
-    const wchar_t path[]
-) {
-    ASSERT(path);
-
-    if (IsUncPath(path))
-        path = SkipUncDrive(path);
-
-    const wchar_t * last_slash = path;
-    for (const wchar_t * p = path; *p; p++) {
-        if ((*p == L'/') || (*p == L'\\') || (*p == L':'))
-            last_slash = p + 1;
-    }
-
-    return last_slash;
-}
-
-//===========================================================================
-const wchar_t * PathFindExtension (
-    const wchar_t path[]
-) {
-    ASSERT(path);
-
-    const wchar_t * last_dot = 0;
-    const wchar_t * p = PathFindFilename(path);
-    for ( ; *p; p++) {
-        if (*p == L'.')
-            last_dot = p;
-    }
-
-    return last_dot ? last_dot : p;
-}
-
-//===========================================================================
-void PathGetCurrentDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(dstChars);
-
-    DWORD result = GetCurrentDirectoryW(dstChars, dst);
-    if (!result || (result >= dstChars)) {
-        ErrorAssert(__LINE__, __FILE__, "GetDir failed");
-        *dst = 0;
-    }
-}
-
-//===========================================================================
-void PathGetTempDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(dstChars);
-
-    DWORD result = GetTempPathW(dstChars, dst);
-    if (!result || (result >= dstChars))
-        StrCopy(dst, L"C:\\temp\\", dstChars);
-}
-
-//============================================================================
 void PathGetUserDirectory (
     wchar_t *     dst,
     unsigned    dstChars
@@ -576,21 +392,6 @@ void PathGetInitDirectory (
     PathAddFilename(dst, dst, L"Init", dstChars);
     if (!PathDoesDirectoryExist(dst))
         PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
-}
-
-//===========================================================================
-bool PathSetCurrentDirectory (
-    const wchar_t path[]
-) {
-    ASSERT(path);
-    return SetCurrentDirectoryW(path) != 0;
-}
-
-//===========================================================================
-void PathSetProgramDirectory () {
-    wchar_t dir[MAX_PATH];
-    PathGetProgramDirectory(dir, arrsize(dir));
-    PathSetCurrentDirectory(dir);
 }
 
 //===========================================================================
@@ -773,46 +574,6 @@ EPathCreateDirError PathCreateDirectory (const wchar_t path[], unsigned flags) {
 }
 
 //===========================================================================
-void PathDeleteDirectory (const wchar_t path[], unsigned flags) {
-    ASSERT(path);
-
-    // convert from relative path to full path
-    wchar_t dir[MAX_PATH];
-    if (!PathFromString(dir, path, arrsize(dir)))
-        return;
-
-    for (;;) {
-        // Important: in order to ensure that we don't delete NTFS
-        // partition links, we must ensure that this is a directory!
-        uint32_t attributes = GetFileAttributesW(dir);
-        if (attributes == (uint32_t) -1)
-            break;
-        if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-            break;
-        if (attributes & FILE_ATTRIBUTE_REPARSE_POINT)
-            break;
-
-        if (!RemoveDirectoryW(dir))
-            break;
-
-        if ((flags & kPathCreateDirFlagEntireTree) == 0)
-            break;
-
-        wchar_t * filename = PathFindFilename(dir);
-        if (!filename)
-            break;
-
-        // Move up one level in the directory hierarchy
-        unsigned oldLength = StrLen(dir);
-        while ((filename > dir) && IsSlash(filename[-1]))
-            --filename;
-        *filename = 0;
-        if (oldLength == StrLen(dir))
-            break;
-    }
-}
-
-//===========================================================================
 bool PathDoesFileExist (const wchar_t fileName[]) {
     uint32_t attributes = GetFileAttributesW(fileName);
     if (attributes == (uint32_t) -1)
@@ -822,35 +583,3 @@ bool PathDoesFileExist (const wchar_t fileName[]) {
     return true;
 }
 
-//============================================================================
-bool PathDoesDirectoryExist (const wchar_t directory[]) {
-    uint32_t attributes = GetFileAttributesW(directory);
-    if (attributes == (uint32_t) -1)
-        return false;
-    if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-        return true;
-    return false;
-}
-
-//===========================================================================
-bool PathDeleteFile (
-    const wchar_t file[]
-) {
-    return DeleteFileW(file) != 0;
-}
-
-//===========================================================================
-bool PathMoveFile (
-    const wchar_t src[],
-    const wchar_t dst[]
-) {
-    return MoveFileW(src, dst) != 0;
-}
-
-//===========================================================================
-bool PathCopyFile (
-    const wchar_t src[],
-    const wchar_t dst[]
-) {
-    return CopyFileW(src, dst, FALSE) != 0;    
-}
