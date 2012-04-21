@@ -65,14 +65,14 @@ hsQuat::hsQuat(float rad, const hsVector3* axis)
     fZ = axis->fZ*s;
 }
 
-hsQuat hsQuat::Inverse()
+hsQuat hsQuat::Inverse() const
 {
     hsQuat q2 = Conjugate();
     float msInv = 1.0f/q2.MagnitudeSquared();
     return (q2 * msInv);
 }
 
-hsPoint3 hsQuat::Rotate(const hsScalarTriple* v)
+hsPoint3 hsQuat::Rotate(const hsScalarTriple* v) const
 {
     hsQuat qInv = Inverse();
     hsQuat qVec(v->fX, v->fY, v->fZ, 0);
