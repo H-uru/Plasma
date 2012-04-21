@@ -53,8 +53,9 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from xPsnlVaultSDL import *
-import string
+import xACAItems
 import xRandom
+import string
 
 stringVarName = ptAttribString(1,"Show/hide age SDL var name")
 boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)
@@ -434,7 +435,7 @@ class ClothingItem:
             self.type = clothing[1]
             try:
                 if clothing[2] != "":
-                    self.description = xLocalization.xACA.xClothesXRef[clothing[2]]
+                    self.description = PtGetLocalizedString(xACAItems.xClothesXRef[clothing[2]])
             except:
                 self.description = "*"+clothing[2]+"*"
             self.thumbnail = clothing[3]
