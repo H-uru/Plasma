@@ -416,7 +416,6 @@ hsBool plDrawableSpans::IBoundsInvalid(const hsBounds3Ext& bnd) const
 }
 
 //// SetTransform ////////////////////////////////////////////////////////////
-#ifndef HAVE_SSE
 static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
 {
     hsMatrix44 ret;
@@ -477,7 +476,6 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
 
     return ret;
 }
-#endif
 
 #ifdef MF_TEST_UPDATE
 plProfile_CreateCounter("DSSetTrans", "Update", DSSetTrans);
@@ -521,13 +519,9 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
 #endif // MF_TEST_UPDATE
             for( i = 0; i < spans->GetCount(); i++ )
             {
-#ifdef HAVE_SSE
-                fLocalToWorlds[ (*spans)[ i ] ] = l2w * fLocalToBones[ (*spans)[ i ] ];
-                fWorldToLocals[ (*spans)[ i ] ] = fBoneToLocals[ (*spans)[ i ] ] * w2l;
-#else
                 fLocalToWorlds[ (*spans)[ i ] ] = IMatrixMul34(l2w, fLocalToBones[ (*spans)[ i ] ]);
                 fWorldToLocals[ (*spans)[ i ] ] = IMatrixMul34(fBoneToLocals[ (*spans)[ i ] ], w2l);
-#endif // HAVE_SSE
+
             }
 #ifdef MF_TEST_UPDATE
             plProfile_EndTiming(DSMatTransT);

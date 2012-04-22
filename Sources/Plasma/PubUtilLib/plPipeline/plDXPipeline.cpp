@@ -163,8 +163,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
-#ifdef HAVE_SSE
-#   include <smmintrin.h>
+#ifdef HS_SIMD_INCLUDE
+#  include HS_SIMD_INCLUDE
 #endif
 
 //#define MF_TOSSER
@@ -10527,9 +10527,9 @@ void plDXPipeline::LoadResources()
 
 // Sorry about this, but it really did speed up the skinning.
 // Just some macros for the inner loop of IBlendVertsIntoBuffer.
-#ifdef HAVE_SSE
+#ifdef HS_SSE3
 #   define MATRIXMULTBEGIN(xfm, wgt) \
-        __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf; \
+        __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf1, hbuf2; \
         ALIGN(16) float hack[4]; \
         mc0 = _mm_loadu_ps(xfm.fMap[0]); \
         mc1 = _mm_loadu_ps(xfm.fMap[1]); \
@@ -10541,30 +10541,26 @@ void plDXPipeline::LoadResources()
         _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
         _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
         \
-        hbuf = _mm_hadd_ps(_x, _y); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
+        hbuf1 = _mm_hadd_ps(_x, _y); \
+        hbuf2 = _mm_hadd_ps(_z, _z); \
+        hbuf1 = _mm_hadd_ps(hbuf1, hbuf2); \
+        _mm_store_ps(hack, hbuf1); \
         dst.fX += hack[0]; \
         dst.fY += hack[1]; \
-        hbuf = _mm_hadd_ps(_z, _z); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fZ += hack[0];
+        dst.fZ += hack[2];
 #   define MATRIXMULTVECTORADD(dst, src) \
         msr = _mm_set_ps(0.f, src.fZ, src.fY, src.fX); \
         _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
         _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
         _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
         \
-        hbuf = _mm_hadd_ps(_x, _y); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
+        hbuf1 = _mm_hadd_ps(_x, _y); \
+        hbuf2 = _mm_hadd_ps(_z, _z); \
+        hbuf1 = _mm_hadd_ps(hbuf1, hbuf2); \
+        _mm_store_ps(hack, hbuf1); \
         dst.fX += hack[0]; \
         dst.fY += hack[1]; \
-        hbuf = _mm_hadd_ps(_z, _z); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fZ += hack[0];
+        dst.fZ += hack[2];
 #else
 #   define MATRIXMULTBEGIN(xfm, wgt) \
         float m00 = xfm.fMap[0][0]; \
