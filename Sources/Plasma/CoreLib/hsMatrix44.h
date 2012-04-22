@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
+#include "hsCpuID.h"
 
 class hsQuat;
 
@@ -104,7 +105,7 @@ struct hsMatrix44 {
                         const hsVector3* up);
 
     hsBool          GetParity() const;
-    float        GetDeterminant() const;
+    float           GetDeterminant() const;
     hsMatrix44*     GetInverse(hsMatrix44* inverse) const;
     hsMatrix44*     GetTranspose(hsMatrix44* inverse) const;
     hsMatrix44*     GetAdjoint(hsMatrix44* adjoint) const;
@@ -140,7 +141,7 @@ struct hsMatrix44 {
                         return rVal;
                     }
     hsVector3 operator*(const hsVector3& p) const;
-    hsMatrix44  operator*(const hsMatrix44& b) const;
+    hsMatrix44 operator *(const hsMatrix44& other) const { return mat_mult.call(*this, other); }
     
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
     
@@ -152,6 +153,12 @@ struct hsMatrix44 {
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
+
+    //  CPU-optimized functions
+    typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
+    static hsMatrix44 mat_mult_fpu(const hsMatrix44&, const hsMatrix44&);
+    static hsMatrix44 mat_mult_sse3(const hsMatrix44&, const hsMatrix44&);
+    static hsFunctionDispatcher<mat_mult_ptr> mat_mult;
 };
 
 ////////////////////////////////////////////////////////////////////////////
