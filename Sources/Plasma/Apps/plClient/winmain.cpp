@@ -49,10 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include <dmdfm.h>      // Windows Load EXE into memory suff
 #endif
 
-#ifdef HAVE_SSE
-#   include <intrin.h>
-#endif
-
 #include <curl/curl.h>
 
 #include "HeadSpin.h"
@@ -1388,35 +1384,11 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 }
 #endif
 
-bool CheckCPU()
-{
-    const unsigned int sse3_flag = 0x00000001;
-    // (any other CPU features...)
-
-    int cpu_info[4];
-    __cpuid(cpu_info, 1);
-#ifdef HAVE_SSE
-    if((cpu_info[2] & sse3_flag) == 0)
-        return false;
-#endif
-    // Insert additional feature checks here
-
-    return true;
-}
-
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
-    // Check to make sure we have a good CPU before getting started
-    if (!CheckCPU())
-    {
-        plString msg = plString::Format("Your processor does not support all of the features required to play %S.", ProductLongName());
-        hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
-        return PARABLE_NORMAL_EXIT;
-    }
-
     PF_CONSOLE_INIT_ALL()
 
     // Set global handle
