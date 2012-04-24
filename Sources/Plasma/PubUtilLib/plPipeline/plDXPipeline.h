@@ -465,7 +465,8 @@ protected:
     void            IBlendVertsIntoBuffer( plSpan* span, 
                                             hsMatrix44* matrixPalette, int numMatrices,
                                             const uint8_t *src, uint8_t format, uint32_t srcStride, 
-                                            uint8_t *dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans );
+                                            uint8_t *dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans )
+                                                { blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans); };
     hsBool          ISoftwareVertexBlend( plDrawableSpans* drawable, const hsTArray<int16_t>& visList );
 
 
@@ -734,7 +735,7 @@ public:
     virtual void                        GetDepth(float& hither, float& yon) const;
     virtual void                        SetDepth(float hither, float yon);
 
-    virtual float                    GetZBiasScale() const;
+    virtual float                       GetZBiasScale() const;
     virtual void                        SetZBiasScale(float scale);
 
     virtual const hsMatrix44&           GetWorldToCamera() const;
@@ -798,6 +799,13 @@ public:
     virtual int                         GetMaxAnisotropicSamples();
     virtual int                         GetMaxAntiAlias(int Width, int Height, int ColorDepth);
 
+
+    //  CPU-optimized functions
+protected:
+    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
+    static void blend_vert_buffer_fpu(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
+    static void blend_vert_buffer_sse3(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
+    static hsFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 };
 
 
