@@ -163,8 +163,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
-#ifdef HAVE_SSE
-#   include <smmintrin.h>
+#ifdef HS_SIMD_INCLUDE
+#  include HS_SIMD_INCLUDE
 #endif
 
 //#define MF_TOSSER
@@ -10525,84 +10525,10 @@ void plDXPipeline::LoadResources()
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 
-// Sorry about this, but it really did speed up the skinning.
-// Just some macros for the inner loop of IBlendVertsIntoBuffer.
-#ifdef HAVE_SSE
-#   define MATRIXMULTBEGIN(xfm, wgt) \
-        __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf; \
-        ALIGN(16) float hack[4]; \
-        mc0 = _mm_loadu_ps(xfm.fMap[0]); \
-        mc1 = _mm_loadu_ps(xfm.fMap[1]); \
-        mc2 = _mm_loadu_ps(xfm.fMap[2]); \
-        mwt = _mm_set_ps1(wgt);
-#   define MATRIXMULTPOINTADD(dst, src) \
-        msr = _mm_set_ps(1.f, src.fZ, src.fY, src.fX); \
-        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
-        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
-        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
-        \
-        hbuf = _mm_hadd_ps(_x, _y); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fX += hack[0]; \
-        dst.fY += hack[1]; \
-        hbuf = _mm_hadd_ps(_z, _z); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fZ += hack[0];
-#   define MATRIXMULTVECTORADD(dst, src) \
-        msr = _mm_set_ps(0.f, src.fZ, src.fY, src.fX); \
-        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
-        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
-        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
-        \
-        hbuf = _mm_hadd_ps(_x, _y); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fX += hack[0]; \
-        dst.fY += hack[1]; \
-        hbuf = _mm_hadd_ps(_z, _z); \
-        hbuf = _mm_hadd_ps(hbuf, hbuf); \
-        _mm_store_ps(hack, hbuf); \
-        dst.fZ += hack[0];
-#else
-#   define MATRIXMULTBEGIN(xfm, wgt) \
-        float m00 = xfm.fMap[0][0]; \
-        float m01 = xfm.fMap[0][1]; \
-        float m02 = xfm.fMap[0][2]; \
-        float m03 = xfm.fMap[0][3]; \
-        float m10 = xfm.fMap[1][0]; \
-        float m11 = xfm.fMap[1][1]; \
-        float m12 = xfm.fMap[1][2]; \
-        float m13 = xfm.fMap[1][3]; \
-        float m20 = xfm.fMap[2][0]; \
-        float m21 = xfm.fMap[2][1]; \
-        float m22 = xfm.fMap[2][2]; \
-        float m23 = xfm.fMap[2][3]; \
-        float m_wgt = wgt; \
-        float srcX, srcY, srcZ;
-#   define MATRIXMULTPOINTADD(dst, src) \
-        srcX = src.fX; \
-        srcY = src.fY; \
-        srcZ = src.fZ; \
-        \
-        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02 + m03) * m_wgt; \
-        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12 + m13) * m_wgt; \
-        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22 + m23) * m_wgt;
-#   define MATRIXMULTVECTORADD(dst, src) \
-        srcX = src.fX; \
-        srcY = src.fY; \
-        srcZ = src.fZ; \
-        \
-        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02) * m_wgt; \
-        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12) * m_wgt; \
-        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22) * m_wgt;
-#endif // HAVE_SSE
-
 // inlTESTPOINT /////////////////////////////////////////
 // Update mins and maxs if destP is outside.
-inline void inlTESTPOINT(const hsPoint3& destP, 
-                         float& minX, float& minY, float& minZ, 
+inline void inlTESTPOINT(const hsPoint3& destP,
+                         float& minX, float& minY, float& minZ,
                          float& maxX, float& maxY, float& maxZ)
 {
     if( destP.fX < minX )
@@ -10626,189 +10552,282 @@ inline void inlTESTPOINT(const hsPoint3& destP,
 //  format, blends them into the destination buffer given without the blending
 //  info.
 
-void    plDXPipeline::IBlendVertsIntoBuffer( plSpan* span, 
-                                              hsMatrix44* matrixPalette, int numMatrices,
-                                              const uint8_t *src, uint8_t format, uint32_t srcStride, 
-                                              uint8_t *dest, uint32_t destStride, uint32_t count,
-                                              uint16_t localUVWChans )
-{
-    uint8_t       numUVs, numWeights;
-    uint32_t      i, j, indices, color, specColor, uvChanSize;
-    float       weights[ 4 ], weightSum;
-    hsPoint3    pt, tempPt, destPt;
-    hsVector3   vec, tempNorm, destNorm;
+// FPU version
+#define MATRIXMULTBEGIN_FPU(xfm, wgt) \
+        float m00 = xfm.fMap[0][0]; \
+        float m01 = xfm.fMap[0][1]; \
+        float m02 = xfm.fMap[0][2]; \
+        float m03 = xfm.fMap[0][3]; \
+        float m10 = xfm.fMap[1][0]; \
+        float m11 = xfm.fMap[1][1]; \
+        float m12 = xfm.fMap[1][2]; \
+        float m13 = xfm.fMap[1][3]; \
+        float m20 = xfm.fMap[2][0]; \
+        float m21 = xfm.fMap[2][1]; \
+        float m22 = xfm.fMap[2][2]; \
+        float m23 = xfm.fMap[2][3]; \
+        float m_wgt = wgt; \
+        float srcX, srcY, srcZ;
+#define MATRIXMULTPOINTADD_FPU(dst, src) \
+        srcX = src.fX; \
+        srcY = src.fY; \
+        srcZ = src.fZ; \
+        \
+        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02 + m03) * m_wgt; \
+        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12 + m13) * m_wgt; \
+        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22 + m23) * m_wgt;
+#define MATRIXMULTVECTORADD_FPU(dst, src) \
+        srcX = src.fX; \
+        srcY = src.fY; \
+        srcZ = src.fZ; \
+        \
+        dst.fX += (srcX * m00 + srcY * m01 + srcZ * m02) * m_wgt; \
+        dst.fY += (srcX * m10 + srcY * m11 + srcZ * m12) * m_wgt; \
+        dst.fZ += (srcX * m20 + srcY * m21 + srcZ * m22) * m_wgt;
 
+// SSE3 version
+#ifdef HS_SSE3
+#define MATRIXMULTBEGIN_SSE3(xfm, wgt) \
+        __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf1, hbuf2; \
+        ALIGN(16) float hack[4]; \
+        mc0 = _mm_loadu_ps(xfm.fMap[0]); \
+        mc1 = _mm_loadu_ps(xfm.fMap[1]); \
+        mc2 = _mm_loadu_ps(xfm.fMap[2]); \
+        mwt = _mm_set_ps1(wgt);
+#define MATRIXMULTPOINTADD_SSE3(dst, src) \
+        msr = _mm_set_ps(1.f, src.fZ, src.fY, src.fX); \
+        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
+        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
+        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
+        \
+        hbuf1 = _mm_hadd_ps(_x, _y); \
+        hbuf2 = _mm_hadd_ps(_z, _z); \
+        hbuf1 = _mm_hadd_ps(hbuf1, hbuf2); \
+        _mm_store_ps(hack, hbuf1); \
+        dst.fX += hack[0]; \
+        dst.fY += hack[1]; \
+        dst.fZ += hack[2];
+#define MATRIXMULTVECTORADD_SSE3(dst, src) \
+        msr = _mm_set_ps(0.f, src.fZ, src.fY, src.fX); \
+        _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
+        _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
+        _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
+        \
+        hbuf1 = _mm_hadd_ps(_x, _y); \
+        hbuf2 = _mm_hadd_ps(_z, _z); \
+        hbuf1 = _mm_hadd_ps(hbuf1, hbuf2); \
+        _mm_store_ps(hack, hbuf1); \
+        dst.fX += hack[0]; \
+        dst.fY += hack[1]; \
+        dst.fZ += hack[2];
+#endif
 
-    /// Get some counts
-    switch( format & plGBufferGroup::kSkinWeightMask )
-    {
-        case plGBufferGroup::kSkin1Weight:  numWeights = 1; break;
-        case plGBufferGroup::kSkin2Weights: numWeights = 2; break;
-        case plGBufferGroup::kSkin3Weights: numWeights = 3; break;
-        default: hsAssert( false, "Invalid weight count in IBlendVertsIntoBuffer()" );
-    }
+// CPU-optimized functions requiring dispatch
+hsFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend_vert_buffer(plDXPipeline::blend_vert_buffer_fpu, 0, 0, plDXPipeline::blend_vert_buffer_sse3);
 
-    numUVs = plGBufferGroup::CalcNumUVs( format );
-    uvChanSize = numUVs * sizeof( float ) * 3;
-
-//#define MF_RECALC_BOUNDS
-#ifdef MF_RECALC_BOUNDS
-    float minX = 1.e33f;
-    float minY = 1.e33f;
-    float minZ = 1.e33f;
-
-    float maxX = -1.e33f;
-    float maxY = -1.e33f;
-    float maxZ = -1.e33f;
-#endif // MF_RECALC_BOUNDS
-
-    // localUVWChans is bump mapping tangent space vectors, which need to
+// Temporary macros for IBlendVertsIntoBuffer dispatch code de-duplication
+#define BLENDVERTSTART \
+    uint8_t     numUVs, numWeights; \
+    uint32_t    i, j, indices, color, specColor, uvChanSize; \
+    float       weights[ 4 ], weightSum; \
+    hsPoint3    pt, tempPt, destPt; \
+    hsVector3   vec, tempNorm, destNorm; \
+    \
+    /* Get some counts */\
+    switch( format & plGBufferGroup::kSkinWeightMask ) \
+    { \
+        case plGBufferGroup::kSkin1Weight:  numWeights = 1; break; \
+        case plGBufferGroup::kSkin2Weights: numWeights = 2; break; \
+        case plGBufferGroup::kSkin3Weights: numWeights = 3; break; \
+        default: hsAssert( false, "Invalid weight count in IBlendVertsIntoBuffer()" ); \
+    } \
+    \
+    numUVs = plGBufferGroup::CalcNumUVs( format ); \
+    uvChanSize = numUVs * sizeof( float ) * 3; \
+    \
+    /* localUVWChans is bump mapping tangent space vectors, which need to
     // be skinned like the normal, as opposed to passed through like 
     // garden variety UVW coordinates.
     // There are no localUVWChans that I know of in production assets (i.e.
-    // the avatar is not skinned).
-    if( !localUVWChans )
-    {
-        /// Copy whilst blending
-        for( i = 0; i < count; i++ )
-        {
-            // Extract data
-            src = inlExtractPoint( src, pt );
-            for( j = 0, weightSum = 0; j < numWeights; j++ )
-            {
-                src = inlExtractFloat( src, weights[ j ] );
-                weightSum += weights[ j ];
-            }
-            weights[ j ] = 1 - weightSum;
-
-            if( format & plGBufferGroup::kSkinIndices )
-            {
-                src = inlExtractUInt32( src, indices );
-            }
-            else
-            {
-                indices = 1 << 8;
-            }
-            src = inlExtractPoint( src, vec );
-            src = inlExtractUInt32( src, color );
-            src = inlExtractUInt32( src, specColor );
-
-            // Blend
-            destPt.Set( 0, 0, 0 );
-            destNorm.Set( 0, 0, 0 );
-            for( j = 0; j < numWeights + 1; j++ )
-            {
-                if( weights[ j ] )
+    // the avatar is not skinned).*/\
+    if( !localUVWChans ) \
+    { \
+        /* Copy whilst blending */\
+        for( i = 0; i < count; i++ ) \
+        { \
+            /* Extract data */\
+            src = inlExtractPoint( src, pt ); \
+            for( j = 0, weightSum = 0; j < numWeights; j++ ) \
+            { \
+                src = inlExtractFloat( src, weights[ j ] ); \
+                weightSum += weights[ j ]; \
+            } \
+            weights[ j ] = 1 - weightSum; \
+            \
+            if( format & plGBufferGroup::kSkinIndices ) \
+            { \
+                src = inlExtractUInt32( src, indices ); \
+            } \
+            else \
+            { \
+                indices = 1 << 8; \
+            } \
+            src = inlExtractPoint( src, vec ); \
+            src = inlExtractUInt32( src, color ); \
+            src = inlExtractUInt32( src, specColor ); \
+            \
+            /* Blend */\
+            destPt.Set( 0, 0, 0 ); \
+            destNorm.Set( 0, 0, 0 ); \
+            for( j = 0; j < numWeights + 1; j++ ) \
+            { \
+                if( weights[ j ] ) \
                 {
+                    /*
                     MATRIXMULTBEGIN(matrixPalette[indices & 0xff], weights[j]);
 
                     MATRIXMULTPOINTADD(destPt, pt);
                     MATRIXMULTVECTORADD(destNorm, vec);
-                }
-
-                indices >>= 8;
-            }
-            // Probably don't really need to renormalize this. There errors are
-            // going to be subtle and "smooth".
-//          hsFastMath::NormalizeAppr(destNorm);
-
-#ifdef MF_RECALC_BOUNDS
-            inlTESTPOINT(destPt, minX, minY, minZ, maxX, maxY, maxZ);
-#endif // MF_RECALC_BOUNDS
-
-            // Slam data into position now
-            dest = inlStuffPoint( dest, destPt );
-            dest = inlStuffPoint( dest, destNorm );
-            dest = inlStuffUInt32( dest, color );
-            dest = inlStuffUInt32( dest, specColor );
-            memcpy( dest, src, uvChanSize );
-            src += uvChanSize;
-            dest += uvChanSize;
-        }
-    }
-    else 
-    {
-        uint8_t hiChan = localUVWChans >> 8;
-        uint8_t loChan = localUVWChans & 0xff;
-        /// Copy whilst blending
-        for( i = 0; i < count; i++ )
-        {
-            hsVector3 srcUVWs[plGeometrySpan::kMaxNumUVChannels];
-            hsVector3 dstUVWs[plGeometrySpan::kMaxNumUVChannels];
-
-            // Extract data
-            src = inlExtractPoint( src, pt );
-            for( j = 0, weightSum = 0; j < numWeights; j++ )
-            {
-                src = inlExtractFloat( src, weights[ j ] );
-                weightSum += weights[ j ];
-            }
-            weights[ j ] = 1 - weightSum;
-
-            if( format & plGBufferGroup::kSkinIndices )
-            {
-                src = inlExtractUInt32( src, indices );
-            }
-            else
-            {
-                indices = 1 << 8;
-            }
-
-            src = inlExtractPoint( src, vec );
-            src = inlExtractUInt32( src, color );
-            src = inlExtractUInt32( src, specColor );
-
-            uint8_t k;
-            for( k = 0; k < numUVs; k++ )
-            {
-                src = inlExtractPoint( src, srcUVWs[k] );
-            }
-            memcpy( dstUVWs, srcUVWs, uvChanSize);
-            dstUVWs[loChan].Set(0,0,0);
-            dstUVWs[hiChan].Set(0,0,0);
-
-            // Blend
-            destPt.Set( 0, 0, 0 );
-            destNorm.Set( 0, 0, 0 );
-            for( j = 0; j < numWeights + 1; j++ )
-            {
-                if( weights[ j ] )
-                {
+                    */
+#define BLENDVERTMID \
+                } \
+                \
+                indices >>= 8; \
+            } \
+            /* Probably don't really need to renormalize this. There errors are
+            // going to be subtle and "smooth".*/\
+            /* hsFastMath::NormalizeAppr(destNorm);*/ \
+            \
+            /* Slam data into position now */\
+            dest = inlStuffPoint( dest, destPt ); \
+            dest = inlStuffPoint( dest, destNorm ); \
+            dest = inlStuffUInt32( dest, color ); \
+            dest = inlStuffUInt32( dest, specColor ); \
+            memcpy( dest, src, uvChanSize ); \
+            src += uvChanSize; \
+            dest += uvChanSize; \
+        } \
+    } \
+    else \
+    { \
+        uint8_t hiChan = localUVWChans >> 8; \
+        uint8_t loChan = localUVWChans & 0xff; \
+        /* Copy whilst blending */\
+        for( i = 0; i < count; i++ ) \
+        { \
+            hsVector3 srcUVWs[plGeometrySpan::kMaxNumUVChannels]; \
+            hsVector3 dstUVWs[plGeometrySpan::kMaxNumUVChannels]; \
+            \
+            /* Extract data */\
+            src = inlExtractPoint( src, pt ); \
+            for( j = 0, weightSum = 0; j < numWeights; j++ ) \
+            { \
+                src = inlExtractFloat( src, weights[ j ] ); \
+                weightSum += weights[ j ]; \
+            } \
+            weights[ j ] = 1 - weightSum; \
+            \
+            if( format & plGBufferGroup::kSkinIndices ) \
+            { \
+                src = inlExtractUInt32( src, indices ); \
+            } \
+            else \
+            { \
+                indices = 1 << 8; \
+            } \
+            \
+            src = inlExtractPoint( src, vec ); \
+            src = inlExtractUInt32( src, color ); \
+            src = inlExtractUInt32( src, specColor ); \
+            \
+            uint8_t k; \
+            for( k = 0; k < numUVs; k++ ) \
+            { \
+                src = inlExtractPoint( src, srcUVWs[k] ); \
+            } \
+            memcpy( dstUVWs, srcUVWs, uvChanSize); \
+            dstUVWs[loChan].Set(0,0,0); \
+            dstUVWs[hiChan].Set(0,0,0); \
+            \
+            /* Blend */\
+            destPt.Set( 0, 0, 0 ); \
+            destNorm.Set( 0, 0, 0 ); \
+            for( j = 0; j < numWeights + 1; j++ ) \
+            { \
+                if( weights[ j ] ) \
+                { \
+                    /*
                     MATRIXMULTBEGIN(matrixPalette[indices & 0xff], weights[j]);
 
                     MATRIXMULTPOINTADD(destPt, pt);
                     MATRIXMULTVECTORADD(destNorm, vec);
                     MATRIXMULTVECTORADD(dstUVWs[loChan], srcUVWs[loChan]);
                     MATRIXMULTVECTORADD(dstUVWs[hiChan], srcUVWs[hiChan]);
-                }
-
-                indices >>= 8;
-            }
-            // Probably don't really need to renormalize this. There errors are
-            // going to be subtle and "smooth".
-//          hsFastMath::NormalizeAppr(destNorm);
-//          hsFastMath::NormalizeAppr(dstUVWs[loChan]);
-//          hsFastMath::NormalizeAppr(dstUVWs[hiChan]);
-
-#ifdef MF_RECALC_BOUNDS
-            inlTESTPOINT(destPt, minX, minY, minZ, maxX, maxY, maxZ);
-#endif // MF_RECALC_BOUNDS
-
-            // Slam data into position now
-            dest = inlStuffPoint( dest, destPt );
-            dest = inlStuffPoint( dest, destNorm );
-            dest = inlStuffUInt32( dest, color );
-            dest = inlStuffUInt32( dest, specColor );
-            memcpy( dest, dstUVWs, uvChanSize );
-            dest += uvChanSize;
-        }
+                    */
+#define BLENDVERTEND \
+                } \
+                \
+                indices >>= 8; \
+            } \
+            /* Probably don't really need to renormalize this. There errors are
+            // going to be subtle and "smooth". */\
+            /* hsFastMath::NormalizeAppr(destNorm); */\
+            /* hsFastMath::NormalizeAppr(dstUVWs[loChan]); */\
+            /* hsFastMath::NormalizeAppr(dstUVWs[hiChan]); */\
+            \
+            /* Slam data into position now */\
+            dest = inlStuffPoint( dest, destPt ); \
+            dest = inlStuffPoint( dest, destNorm ); \
+            dest = inlStuffUInt32( dest, color ); \
+            dest = inlStuffUInt32( dest, specColor ); \
+            memcpy( dest, dstUVWs, uvChanSize ); \
+            dest += uvChanSize; \
+        } \
     }
-#ifdef MF_RECALC_BOUNDS
-    hsBounds3Ext wBnd;
-    wBnd.Reset(&hsPoint3(minX, minY, minZ));
-    wBnd.Union(&hsPoint3(maxX, maxY, maxZ));
-    span->fWorldBounds = wBnd;
-#endif // MF_RECALC_BOUNDS
+
+void plDXPipeline::blend_vert_buffer_fpu( plSpan* span,
+                                          hsMatrix44* matrixPalette, int numMatrices,
+                                          const uint8_t *src, uint8_t format, uint32_t srcStride,
+                                          uint8_t *dest, uint32_t destStride, uint32_t count,
+                                          uint16_t localUVWChans )
+{
+    BLENDVERTSTART
+                    MATRIXMULTBEGIN_FPU(matrixPalette[indices & 0xff], weights[j]);
+
+                    MATRIXMULTPOINTADD_FPU(destPt, pt);
+                    MATRIXMULTVECTORADD_FPU(destNorm, vec);
+    BLENDVERTMID
+                    MATRIXMULTBEGIN_FPU(matrixPalette[indices & 0xff], weights[j]);
+
+                    MATRIXMULTPOINTADD_FPU(destPt, pt);
+                    MATRIXMULTVECTORADD_FPU(destNorm, vec);
+                    MATRIXMULTVECTORADD_FPU(dstUVWs[loChan], srcUVWs[loChan]);
+                    MATRIXMULTVECTORADD_FPU(dstUVWs[hiChan], srcUVWs[hiChan]);
+
+    BLENDVERTEND
+}
+
+void plDXPipeline::blend_vert_buffer_sse3( plSpan* span,
+                                           hsMatrix44* matrixPalette, int numMatrices,
+                                           const uint8_t *src, uint8_t format, uint32_t srcStride,
+                                           uint8_t *dest, uint32_t destStride, uint32_t count,
+                                           uint16_t localUVWChans )
+{
+#ifdef HS_SSE3
+    BLENDVERTSTART
+                    MATRIXMULTBEGIN_SSE3(matrixPalette[indices & 0xff], weights[j]);
+
+                    MATRIXMULTPOINTADD_SSE3(destPt, pt);
+                    MATRIXMULTVECTORADD_SSE3(destNorm, vec);
+    BLENDVERTMID
+                    MATRIXMULTBEGIN_SSE3(matrixPalette[indices & 0xff], weights[j]);
+
+                    MATRIXMULTPOINTADD_SSE3(destPt, pt);
+                    MATRIXMULTVECTORADD_SSE3(destNorm, vec);
+                    MATRIXMULTVECTORADD_SSE3(dstUVWs[loChan], srcUVWs[loChan]);
+                    MATRIXMULTVECTORADD_SSE3(dstUVWs[hiChan], srcUVWs[hiChan]);
+    BLENDVERTEND
+#endif // HS_SSE3
 }
 
 // ISetPipeConsts //////////////////////////////////////////////////////////////////
