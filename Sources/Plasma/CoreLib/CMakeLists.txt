@@ -15,6 +15,7 @@ set(CoreLib_SOURCES
     HeadSpin.cpp
     hsBitVector.cpp
     hsBounds.cpp
+    hsCpuID.cpp
     hsCritSect.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
@@ -57,6 +58,7 @@ set(CoreLib_HEADERS
     hsBitVector.h
     hsBounds.h
     hsColorRGBA.h
+    hsCpuID.h
     hsCritSect.h
     hsExceptions.h
     hsFastMath.h

@@ -47,12 +47,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include <math.h>
 
-#ifdef HAVE_SSE
-#   include <smmintrin.h>
+#ifdef HS_SIMD_INCLUDE
+#  include HS_SIMD_INCLUDE
 #endif
 
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
+
+// CPU-optimized functions requiring dispatch
+hsFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult(hsMatrix44::mat_mult_fpu, 0, 0, hsMatrix44::mat_mult_sse3);
 
 /*
     For the rotation:
@@ -96,9 +99,47 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
     rotate.QuatFromMatrix44(*this);
 }
 
-#ifdef HAVE_SSE
+hsMatrix44 hsMatrix44::mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
+{
+    hsMatrix44 c;
+
+    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
+    {
+        c.Reset();
+        return c;
+    }
+
+    if( a.fFlags & hsMatrix44::kIsIdent )
+        return b;
+    if( b.fFlags & hsMatrix44::kIsIdent )
+        return a;
+
+    c.fMap[0][0] = (a.fMap[0][0] * b.fMap[0][0]) + (a.fMap[0][1] * b.fMap[1][0]) + (a.fMap[0][2] * b.fMap[2][0]) + (a.fMap[0][3] * b.fMap[3][0]);
+    c.fMap[0][1] = (a.fMap[0][0] * b.fMap[0][1]) + (a.fMap[0][1] * b.fMap[1][1]) + (a.fMap[0][2] * b.fMap[2][1]) + (a.fMap[0][3] * b.fMap[3][1]);
+    c.fMap[0][2] = (a.fMap[0][0] * b.fMap[0][2]) + (a.fMap[0][1] * b.fMap[1][2]) + (a.fMap[0][2] * b.fMap[2][2]) + (a.fMap[0][3] * b.fMap[3][2]);
+    c.fMap[0][3] = (a.fMap[0][0] * b.fMap[0][3]) + (a.fMap[0][1] * b.fMap[1][3]) + (a.fMap[0][2] * b.fMap[2][3]) + (a.fMap[0][3] * b.fMap[3][3]);
+
+    c.fMap[1][0] = (a.fMap[1][0] * b.fMap[0][0]) + (a.fMap[1][1] * b.fMap[1][0]) + (a.fMap[1][2] * b.fMap[2][0]) + (a.fMap[1][3] * b.fMap[3][0]);
+    c.fMap[1][1] = (a.fMap[1][0] * b.fMap[0][1]) + (a.fMap[1][1] * b.fMap[1][1]) + (a.fMap[1][2] * b.fMap[2][1]) + (a.fMap[1][3] * b.fMap[3][1]);
+    c.fMap[1][2] = (a.fMap[1][0] * b.fMap[0][2]) + (a.fMap[1][1] * b.fMap[1][2]) + (a.fMap[1][2] * b.fMap[2][2]) + (a.fMap[1][3] * b.fMap[3][2]);
+    c.fMap[1][3] = (a.fMap[1][0] * b.fMap[0][3]) + (a.fMap[1][1] * b.fMap[1][3]) + (a.fMap[1][2] * b.fMap[2][3]) + (a.fMap[1][3] * b.fMap[3][3]);
+
+    c.fMap[2][0] = (a.fMap[2][0] * b.fMap[0][0]) + (a.fMap[2][1] * b.fMap[1][0]) + (a.fMap[2][2] * b.fMap[2][0]) + (a.fMap[2][3] * b.fMap[3][0]);
+    c.fMap[2][1] = (a.fMap[2][0] * b.fMap[0][1]) + (a.fMap[2][1] * b.fMap[1][1]) + (a.fMap[2][2] * b.fMap[2][1]) + (a.fMap[2][3] * b.fMap[3][1]);
+    c.fMap[2][2] = (a.fMap[2][0] * b.fMap[0][2]) + (a.fMap[2][1] * b.fMap[1][2]) + (a.fMap[2][2] * b.fMap[2][2]) + (a.fMap[2][3] * b.fMap[3][2]);
+    c.fMap[2][3] = (a.fMap[2][0] * b.fMap[0][3]) + (a.fMap[2][1] * b.fMap[1][3]) + (a.fMap[2][2] * b.fMap[2][3]) + (a.fMap[2][3] * b.fMap[3][3]);
+
+    c.fMap[3][0] = (a.fMap[3][0] * b.fMap[0][0]) + (a.fMap[3][1] * b.fMap[1][0]) + (a.fMap[3][2] * b.fMap[2][0]) + (a.fMap[3][3] * b.fMap[3][0]);
+    c.fMap[3][1] = (a.fMap[3][0] * b.fMap[0][1]) + (a.fMap[3][1] * b.fMap[1][1]) + (a.fMap[3][2] * b.fMap[2][1]) + (a.fMap[3][3] * b.fMap[3][1]);
+    c.fMap[3][2] = (a.fMap[3][0] * b.fMap[0][2]) + (a.fMap[3][1] * b.fMap[1][2]) + (a.fMap[3][2] * b.fMap[2][2]) + (a.fMap[3][3] * b.fMap[3][2]);
+    c.fMap[3][3] = (a.fMap[3][0] * b.fMap[0][3]) + (a.fMap[3][1] * b.fMap[1][3]) + (a.fMap[3][2] * b.fMap[2][3]) + (a.fMap[3][3] * b.fMap[3][3]);
+
+    return c;
+}
+
+#ifdef HS_SSE3
 #   define MULTBEGIN(i) \
-        xmm[0]   = _mm_loadu_ps(fMap[i]);
+        xmm[0]   = _mm_loadu_ps(a.fMap[i]);
 #   define MULTCELL(i, j) \
         xmm[1]   = _mm_set_ps(b.fMap[3][j], b.fMap[2][j], b.fMap[1][j], b.fMap[0][j]); \
         xmm[j+2] = _mm_mul_ps(xmm[0], xmm[1]);
@@ -107,24 +148,23 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
         xmm[7] = _mm_hadd_ps(xmm[4], xmm[5]); \
         xmm[1] = _mm_hadd_ps(xmm[6], xmm[7]); \
         _mm_storeu_ps(c.fMap[i], xmm[1]);
-#endif
+#endif  // HS_SSE3
 
-hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
+hsMatrix44 hsMatrix44::mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
-
-    if( fFlags & b.fFlags & hsMatrix44::kIsIdent )
+#ifdef HS_SSE3
+    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
     {
         c.Reset();
         return c;
     }
 
-    if( fFlags & hsMatrix44::kIsIdent )
+    if( a.fFlags & hsMatrix44::kIsIdent )
         return b;
     if( b.fFlags & hsMatrix44::kIsIdent )
-        return *this;
+        return a;
 
-#ifdef HAVE_SSE
     __m128 xmm[8];
 
     MULTBEGIN(0);
@@ -154,28 +194,7 @@ hsMatrix44 hsMatrix44::operator*(const hsMatrix44& b) const
     MULTCELL(3, 2);
     MULTCELL(3, 3);
     MULTFINISH(3);
-#else
-    c.fMap[0][0] = (fMap[0][0] * b.fMap[0][0]) + (fMap[0][1] * b.fMap[1][0]) + (fMap[0][2] * b.fMap[2][0]) + (fMap[0][3] * b.fMap[3][0]);
-    c.fMap[0][1] = (fMap[0][0] * b.fMap[0][1]) + (fMap[0][1] * b.fMap[1][1]) + (fMap[0][2] * b.fMap[2][1]) + (fMap[0][3] * b.fMap[3][1]);
-    c.fMap[0][2] = (fMap[0][0] * b.fMap[0][2]) + (fMap[0][1] * b.fMap[1][2]) + (fMap[0][2] * b.fMap[2][2]) + (fMap[0][3] * b.fMap[3][2]);
-    c.fMap[0][3] = (fMap[0][0] * b.fMap[0][3]) + (fMap[0][1] * b.fMap[1][3]) + (fMap[0][2] * b.fMap[2][3]) + (fMap[0][3] * b.fMap[3][3]);
-
-    c.fMap[1][0] = (fMap[1][0] * b.fMap[0][0]) + (fMap[1][1] * b.fMap[1][0]) + (fMap[1][2] * b.fMap[2][0]) + (fMap[1][3] * b.fMap[3][0]);
-    c.fMap[1][1] = (fMap[1][0] * b.fMap[0][1]) + (fMap[1][1] * b.fMap[1][1]) + (fMap[1][2] * b.fMap[2][1]) + (fMap[1][3] * b.fMap[3][1]);
-    c.fMap[1][2] = (fMap[1][0] * b.fMap[0][2]) + (fMap[1][1] * b.fMap[1][2]) + (fMap[1][2] * b.fMap[2][2]) + (fMap[1][3] * b.fMap[3][2]);
-    c.fMap[1][3] = (fMap[1][0] * b.fMap[0][3]) + (fMap[1][1] * b.fMap[1][3]) + (fMap[1][2] * b.fMap[2][3]) + (fMap[1][3] * b.fMap[3][3]);
-    
-    c.fMap[2][0] = (fMap[2][0] * b.fMap[0][0]) + (fMap[2][1] * b.fMap[1][0]) + (fMap[2][2] * b.fMap[2][0]) + (fMap[2][3] * b.fMap[3][0]);
-    c.fMap[2][1] = (fMap[2][0] * b.fMap[0][1]) + (fMap[2][1] * b.fMap[1][1]) + (fMap[2][2] * b.fMap[2][1]) + (fMap[2][3] * b.fMap[3][1]);
-    c.fMap[2][2] = (fMap[2][0] * b.fMap[0][2]) + (fMap[2][1] * b.fMap[1][2]) + (fMap[2][2] * b.fMap[2][2]) + (fMap[2][3] * b.fMap[3][2]);
-    c.fMap[2][3] = (fMap[2][0] * b.fMap[0][3]) + (fMap[2][1] * b.fMap[1][3]) + (fMap[2][2] * b.fMap[2][3]) + (fMap[2][3] * b.fMap[3][3]);
-    
-    c.fMap[3][0] = (fMap[3][0] * b.fMap[0][0]) + (fMap[3][1] * b.fMap[1][0]) + (fMap[3][2] * b.fMap[2][0]) + (fMap[3][3] * b.fMap[3][0]);
-    c.fMap[3][1] = (fMap[3][0] * b.fMap[0][1]) + (fMap[3][1] * b.fMap[1][1]) + (fMap[3][2] * b.fMap[2][1]) + (fMap[3][3] * b.fMap[3][1]);
-    c.fMap[3][2] = (fMap[3][0] * b.fMap[0][2]) + (fMap[3][1] * b.fMap[1][2]) + (fMap[3][2] * b.fMap[2][2]) + (fMap[3][3] * b.fMap[3][2]);
-    c.fMap[3][3] = (fMap[3][0] * b.fMap[0][3]) + (fMap[3][1] * b.fMap[1][3]) + (fMap[3][2] * b.fMap[2][3]) + (fMap[3][3] * b.fMap[3][3]);
-#endif
-
+#endif  // HS_SSE3
     return c;
 }
 
