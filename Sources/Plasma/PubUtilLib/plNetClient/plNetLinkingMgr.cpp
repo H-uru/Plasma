@@ -160,10 +160,7 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     // In the future, we might want to try graceful recovery (link back to Relto?)
     if (!params->success) {
         plNetClientApp::GetInstance()->ErrorMsg(params->msg);
-#ifdef PLASMA_EXTERNAL_RELEASE
         plNetClientApp::GetInstance()->QueueDisableNet(true, params->msg);
-#endif
-        return;
     }
     
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
