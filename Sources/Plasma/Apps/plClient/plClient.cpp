@@ -156,8 +156,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfSecurePreloader/pfSecurePreloader.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 
-#include "pfCsrSrv/pfCsrSrv.h"
-
 #include "plTweak.h"
 
 #define MSG_LOADING_BAR
@@ -262,8 +260,6 @@ hsBool plClient::Shutdown()
 {
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
     delete fProgressBar;
-
-    CsrSrvShutdown();
 
     // Just in case, clear this out (trying to fix a crash bug where this is still active at shutdown)
     plDispatch::SetMsgRecieveCallback(nil);
@@ -2544,8 +2540,6 @@ void plClient::ICompleteInit () {
     plClientMsg* clientMsg = new plClientMsg(plClientMsg::kInitComplete);
     clientMsg->SetBCastFlag(plMessage::kBCastByType);
     clientMsg->Send();
-
-    CsrSrvInitialize();
 }
 
 //============================================================================

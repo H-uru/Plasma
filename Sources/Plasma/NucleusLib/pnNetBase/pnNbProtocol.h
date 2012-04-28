@@ -64,7 +64,7 @@ enum ENetProtocol {
     
     // Client connections
     kNetProtocolCli2GateKeeper      = 2,
-    kNetProtocolCli2Csr             = 3,
+    kNetProtocolCli2Unused_02       = 3,
     kNetProtocolCli2Auth            = 4,
     kNetProtocolCli2Game            = 5,
     kNetProtocolCli2File            = 6,

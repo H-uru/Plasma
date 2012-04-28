@@ -180,57 +180,6 @@ PF_CONSOLE_CMD(
 
 
 //============================================================================
-// Server.Csr group
-PF_CONSOLE_SUBGROUP(Server, Csr)
-
-//============================================================================
-PF_CONSOLE_CMD(
-    Server_Csr,
-    Host,
-    "string address",
-    "Set the Csr Server address"
-) {
-    SetCsrSrvHostname(params[0]);
-}
-
-//============================================================================
-PF_CONSOLE_CMD(
-    Server_Csr,
-    N,
-    "string base64Key",
-    "Set the Csr Server N key"
-) {
-    int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
-        return;
-    }
-
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kCsrDhNData);
-}
-
-//============================================================================
-PF_CONSOLE_CMD(
-    Server_Csr,
-    X,
-    "string base64Key",
-    "Set the Csr Server X key"
-) {
-    int baseLength = hsStrlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
-        return;
-    }
-
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kCsrDhXData);
-}
-
-
-//============================================================================
 // Server.Game group
 PF_CONSOLE_SUBGROUP(Server, Game)
 
