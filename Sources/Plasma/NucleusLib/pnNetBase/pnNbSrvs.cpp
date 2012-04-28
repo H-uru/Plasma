@@ -65,12 +65,6 @@ static const char* s_fileAddrs[] = {
 };
 
 
-static char s_csrAddrConsole[64] = {0};
-static const char* s_csrAddrs[] = {
-    s_csrAddrConsole
-};
-
-
 static char s_gateKeeperAddrConsole[64] = {0};
 static const char* s_gateKeeperAddrs[] = {
     s_gateKeeperAddrConsole
@@ -112,22 +106,6 @@ void SetFileSrvHostname (const char addr[]) {
 
     strncpy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
 }
-
-//============================================================================
-// Csr
-//============================================================================
-unsigned GetCsrSrvHostnames (const char*** addrs) {
-
-    *addrs = s_csrAddrs; 
-    return arrsize(s_csrAddrs);
-}
-
-//============================================================================
-void SetCsrSrvHostname (const char addr[]) {
-
-    strncpy(s_csrAddrConsole, addr, arrsize(s_csrAddrConsole));
-}
-
 
 //============================================================================
 // GateKeeper

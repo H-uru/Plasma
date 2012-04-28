@@ -121,20 +121,6 @@ const AccountRoleInfo kAccountRoles[] = {
     { kAccountRolesAllUserFlags,    "End" }
 };
 
-
-/*****************************************************************************
-*
-*   Csr
-*
-***/
-
-enum ECsrFlags {
-    kCsrFlagAdmin       = 1 << 0,
-    kCsrFlagDisabled    = 1 << 1,
-    kCsrFlagServer      = 1 << 2,
-};
-
-
 /*****************************************************************************
 *
 *   Game Score Types

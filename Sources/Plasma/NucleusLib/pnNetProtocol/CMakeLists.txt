@@ -22,11 +22,6 @@ set(pnNetProtocol_PROTO_CLI2AUTH
     Private/Protocols/Cli2Auth/pnNpCli2Auth.cpp
 )
 
-set(pnNetProtocol_PROTO_CLI2CSR
-    Private/Protocols/Cli2Csr/pnNpCli2Csr.h
-    Private/Protocols/Cli2Csr/pnNpCli2Csr.cpp
-)
-
 set(pnNetProtocol_PROTO_CLI2FILE
     Private/Protocols/Cli2File/pnNpCli2File.h
     Private/Protocols/Cli2File/pnNpCli2File.cpp
@@ -73,18 +68,16 @@ set(pnNetProtocol_PROTO_SRV2VAULT
 )
 
 add_library(pnNetProtocol STATIC ${pnNetProtocol_HEADERS} ${pnNetProtocol_PRIVATE}
-                          ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2CSR}
-                          ${pnNetProtocol_PROTO_CLI2FILE} ${pnNetProtocol_PROTO_CLI2GAME}
-                          ${pnNetProtocol_PROTO_CLI2GK} ${pnNetProtocol_PROTO_SRV2DB}
-                          ${pnNetProtocol_PROTO_SRV2LOG} ${pnNetProtocol_PROTO_SRV2MCP}
-                          ${pnNetProtocol_PROTO_SRV2SCORE} ${pnNetProtocol_PROTO_SRV2STATE}
-                          ${pnNetProtocol_PROTO_SRV2VAULT}
+                          ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2FILE}
+                          ${pnNetProtocol_PROTO_CLI2GAME} ${pnNetProtocol_PROTO_CLI2GK}
+                          ${pnNetProtocol_PROTO_SRV2DB} ${pnNetProtocol_PROTO_SRV2LOG}
+                          ${pnNetProtocol_PROTO_SRV2MCP} ${pnNetProtocol_PROTO_SRV2SCORE}
+                          ${pnNetProtocol_PROTO_SRV2STATE} ${pnNetProtocol_PROTO_SRV2VAULT}
 )
 
 source_group("Header Files" FILES ${pnNetProtocol_HEADERS})
 source_group("Private" FILES ${pnNetProtocol_PRIVATE})
 source_group("Private\\Cli2Auth" FILES ${pnNetProtocol_PROTO_CLI2AUTH})
-source_group("Private\\Cli2Csr" FILES ${pnNetProtocol_PROTO_CLI2CSR})
 source_group("Private\\Cli2File" FILES ${pnNetProtocol_PROTO_CLI2FILE})
 source_group("Private\\Cli2Game" FILES ${pnNetProtocol_PROTO_CLI2GAME})
 source_group("Private\\Cli2GateKeeper" FILES ${pnNetProtocol_PROTO_CLI2GK})

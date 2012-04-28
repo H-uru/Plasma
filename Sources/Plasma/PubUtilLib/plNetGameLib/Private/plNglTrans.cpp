@@ -144,7 +144,6 @@ bool NetTrans::CanStart () const {
         case kNetProtocolCli2Auth: return AuthQueryConnected();
         case kNetProtocolCli2Game: return GameQueryConnected();
         case kNetProtocolCli2File: return FileQueryConnected();
-        case kNetProtocolCli2Csr:  return CsrQueryConnected();
         case kNetProtocolCli2GateKeeper: return GateKeeperQueryConnected();
         DEFAULT_FATAL(m_protocol);
     }

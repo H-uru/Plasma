@@ -46,10 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
 uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
 
-// CSR Server
-uint8_t kCsrDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
-uint8_t kCsrDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
-
 // Game Server
 uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8] = {0};
 uint8_t kGameDhXData[kNetDiffieHellmanKeyBits / 8] = {0};
