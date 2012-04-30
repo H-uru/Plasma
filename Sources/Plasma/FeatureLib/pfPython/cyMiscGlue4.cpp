@@ -583,11 +583,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetSupportedDisplayModes, "Returns a li
     PyObject *retVal = PyList_New(0);
     for (std::vector<plDisplayMode>::iterator curArg = res.begin(); curArg != res.end(); ++curArg)
     {
-        PyObject* tup = PyTuple_New(2);
-        PyTuple_SetItem(tup, 0, PyInt_FromLong((long)(*curArg).Width));
-        PyTuple_SetItem(tup, 1, PyInt_FromLong((long)(*curArg).Height));
+        if ((*curArg).Width >= 800 && (*curArg).Height >= 600) {
+            PyObject* tup = PyTuple_New(2);
+            PyTuple_SetItem(tup, 0, PyInt_FromLong((long)(*curArg).Width));
+            PyTuple_SetItem(tup, 1, PyInt_FromLong((long)(*curArg).Height));
 
-        PyList_Append(retVal, tup);
+            PyList_Append(retVal, tup);
+        }
     }
     return retVal;
 }
