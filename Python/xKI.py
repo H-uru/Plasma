@@ -7458,7 +7458,7 @@ class xKI(ptModifier):
         for plyr in BKPlayerList:
             if isinstance(plyr,DeviceFolder):
                 playerlist.closeBranch()
-                playerlist.addBranch(string.upper(plyr.name),1)
+                playerlist.addBranchW(plyr.name.upper(),1)
             elif isinstance(plyr,Device):
                 playerlist.addStringWithColor(plyr.name,DniSelectableColor,kSelectUseGUIColor)
             elif isinstance(plyr,ptVaultNodeRef):
@@ -7488,7 +7488,7 @@ class xKI(ptModifier):
                         playerlist.addStringWithColor(preText+"?unknown user?"+postText,DniSelectableColor,kSelectDetermined)
             elif isinstance(plyr,kiFolder):
                 playerlist.closeBranch()
-                playerlist.addBranchW(string.upper(plyr.name),1)
+                playerlist.addBranchW(plyr.name.upper(),1)
             elif isinstance(plyr,ptVaultPlayerInfoListNode):
                 # its a player list, display its name
                 fldrType = plyr.folderGetType()
@@ -7496,11 +7496,11 @@ class xKI(ptModifier):
                 if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                     fldrType = PtVaultStandardNodes.kHoodMembersFolder
                 playerlist.closeBranch()
-                playerlist.addBranch(string.upper(xLocTools.FolderIDToFolderName(fldrType)),1)
+                playerlist.addBranchW(xLocTools.FolderIDToFolderName(fldrType).upper(),1)
             elif isinstance(plyr,ptVaultMarkerGameNode):
                 # its a marker list, display its name
                 playerlist.closeBranch()
-                playerlist.addBranch(plyr.folderGetName(),1)
+                playerlist.addBranchW(plyr.folderGetName(),1)
             elif isinstance(plyr,MarkerPlayer):
                 if type(plyr.player) != type(None):
                     if plyr.player.getPlayerName() != "":
@@ -7516,12 +7516,12 @@ class xKI(ptModifier):
             elif isinstance(plyr,MarkerGame):
                 # its a marker list, display its name
                 playerlist.closeBranch()
-                playerlist.addBranch(plyr.gameName,1)
+                playerlist.addBranchW(plyr.gameName,1)
             elif isinstance(plyr,DPLBranchStatusLine):
                 if plyr.closePrev:
                     playerlist.closeBranch()
                 plyr.position = idx
-                playerlist.addBranch(plyr.text,1)
+                playerlist.addBranchW(plyr.text,1)
             elif isinstance(plyr,DPLStatusLine):
                 plyr.position = idx
                 if type(plyr.color) != type(None):
@@ -7531,7 +7531,7 @@ class xKI(ptModifier):
                 playerlist.addStringWithColor(plyr.text,clr,kSelectUseGUIColor)
             elif type(plyr) == type(""):
                 playerlist.closeBranch()
-                playerlist.addBranch(plyr,1)
+                playerlist.addBranchW(plyr,1)
             else:
                 PtDebugPrint("xBigKI: unknown list type ",plyr,level=kErrorLevel)
                 pass
