@@ -153,7 +153,7 @@ private:
     // cached char info
     plKey       fLocalPlayerKey;
     plKeyVec    fRemotePlayerKeys;
-    // plKeyVec fNPCKeys;
+    plKeyVec    fNPCKeys;
     
     class plNetClientMgrMsg *   fDisableMsg;
 
@@ -222,6 +222,7 @@ private:
     void IRemoveCloneRoom();
 
     void IUnloadRemotePlayers();
+    void IUnloadNPCs();
     
     plKey ILoadClone(plLoadCloneMsg *cloneMsg);
 
@@ -309,9 +310,15 @@ public:
 
     // avatar vault actions
     int UploadPlayerVault(uint32_t vaultFlags);
+
+    // npc clones
+    const plKeyVec& NPCKeys() const { return fNPCKeys; }
+    plSynchedObject* GetNPC(uint32_t i) const;
+    void AddNPCKey(const plKey& npc);
+    bool IsNPCKey(const plKey& npc, int* idx=nil) const;
     
     // remote players
-    const std::vector<plKey>& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
+    const plKeyVec& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
     plSynchedObject* GetRemotePlayer(int i) const;
     void AddRemotePlayerKey(plKey p);
     hsBool IsRemotePlayerKey(const plKey p, int* idx=nil);
