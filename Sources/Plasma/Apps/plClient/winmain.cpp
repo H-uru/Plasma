@@ -368,9 +368,21 @@ void DebugMsgF(const char* format, ...);
 
 // Handles all the windows messages we might receive
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{ 
+{
     static bool gDragging = false;
     static uint32_t keyState=0;
+
+    // Messages we registered for manually (no const value)
+    if (message == s_WmTaskbarList)
+    {
+        // Grab the Windows 7 taskbar list stuff
+        if (gTaskbarList)
+            gTaskbarList->Release();
+        HRESULT result = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&gTaskbarList);
+        if (FAILED(result))
+            gTaskbarList = nil;
+        return 0;
+    }
 
     // Handle messages
     switch (message) {
@@ -408,12 +420,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
                 }
             }
-            return TRUE;
+            break;
 
 #if 0
         case WM_KILLFOCUS:
             SetForegroundWindow(hWnd);
-            return TRUE;
+            break;
 #endif
 
         case WM_SYSKEYUP:
@@ -425,7 +437,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 //DefWindowProc(hWnd, message, wParam, lParam);
             }
-            return TRUE;
+            break;
             
         case WM_SYSCOMMAND:
             switch (wParam) {
@@ -441,9 +453,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
                         mgr->QueueDisableNet(false, nil);
                     DestroyWindow(gClient->GetWindowHandle());
-                    return TRUE;
+                    break;
             }
-            return TRUE;
+            break;
 
         case WM_ACTIVATE:
             {
@@ -484,7 +496,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     gPendingActivateFlag = active;
                 }
             }
-            return TRUE;
+            break;
 
         // Let go of the mouse if the window is being moved.
         case WM_ENTERSIZEMOVE:
@@ -492,7 +504,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             gDragging = true;
             if( gClient )
                 gClient->WindowActivate(false);
-            return TRUE;
+            break;
 
         // Redo the mouse capture if the window gets moved
         case WM_EXITSIZEMOVE:
@@ -500,7 +512,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             gDragging = false;
             if( gClient )
                 gClient->WindowActivate(true);
-            return TRUE;
+            break;
 
         // Redo the mouse capture if the window gets moved (special case for Colin
         // and his cool program that bumps windows out from under the taskbar)
@@ -512,7 +524,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             else
                 DebugMsgF("Got WM_MOVE, but ignoring");
-            return TRUE;
+            break;
 
         /// Resize the window
         // (we do WM_SIZING here instead of WM_SIZE because, for some reason, WM_SIZE is
@@ -527,7 +539,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 ::GetClientRect(hWnd, &r);
                 gClient->GetPipeline()->Resize(r.right - r.left, r.bottom - r.top);
             }
-            return TRUE;
+            break;
 
         case WM_SIZE:
             // Let go of the mouse if the window is being minimized
@@ -544,38 +556,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (gClient)
                     gClient->WindowActivate(true);
             }
-            return TRUE;
+            break;
         
         case WM_CLOSE:
             gClient->SetDone(TRUE);
             if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
                 mgr->QueueDisableNet(false, nil);
             DestroyWindow(gClient->GetWindowHandle());
-            return TRUE;
+            break;
         case WM_DESTROY:
             gClient->SetDone(TRUE);
             if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
                 mgr->QueueDisableNet(false, nil);
             PostQuitMessage(0);
-            return TRUE;
-        case WM_CREATE:
-            // Create renderer
-            return TRUE;
+            break;
     }
 
-    // Messages we registered for manually (no const value)
-    if (message == s_WmTaskbarList)
-    {
-        // Grab the Windows 7 taskbar list stuff
-        if (gTaskbarList)
-            gTaskbarList->Release();
-        HRESULT result = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&gTaskbarList);
-        if (FAILED(result))
-            gTaskbarList = nil;
-        return TRUE;
-    }
-    else
-        return DefWindowProc(hWnd, message, wParam, lParam);
+    return DefWindowProc(hWnd, message, wParam, lParam);
 }
  
 void    PumpMessageQueueProc( void )
