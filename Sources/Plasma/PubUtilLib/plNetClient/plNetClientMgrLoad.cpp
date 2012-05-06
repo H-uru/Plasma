@@ -113,13 +113,16 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 
         // check if local or remote player before loading
         plLoadAvatarMsg* loadAvMsg=plLoadAvatarMsg::ConvertNoRef(pCloneMsg);
-        if (loadAvMsg && loadAvMsg->GetIsPlayer())
+        if (loadAvMsg)
         {
             bool originating = ( pCloneMsg->GetOriginatingPlayerID() == this->GetPlayerID() );
-            if (originating)
-                fLocalPlayerKey = cloneKey;
-            else
-                AddRemotePlayerKey(cloneKey);
+            if (loadAvMsg->GetIsPlayer())
+                if (originating)
+                    fLocalPlayerKey = cloneKey;
+                else
+                    AddRemotePlayerKey(cloneKey);
+            else // hey, we got a quab or yeesha... or some other such devilry...
+                AddNPCKey(cloneKey);
         }
 
         plKey cloneNodeKey = hsgResMgr::ResMgr()->FindKey(kNetClientCloneRoom_KEY);
@@ -138,6 +141,12 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
             DebugMsg("ILoadClone: object %s is already unloaded, ignoring", cloneKey->GetName().c_str());
             return cloneKey;
         }
+
+        // need to drop our ref if it's an NPC
+        // remote players handled by plPlayerPageMsg--don't sweat that
+        plKeyVec::iterator it = std::find(fNPCKeys.begin(), fNPCKeys.end(), cloneKey);
+        if (it != fNPCKeys.end())
+            fNPCKeys.erase(it);
 
         ICheckPendingStateLoad(hsTimer::GetSysSeconds());
         plSynchEnabler p(false);    // turn off dirty tracking while in this function

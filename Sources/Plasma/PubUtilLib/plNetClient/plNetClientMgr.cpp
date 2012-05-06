@@ -181,13 +181,9 @@ void plNetClientMgr::Shutdown()
 
     plNetLinkingMgr::GetInstance()->LeaveAge(true);
 
-    // release existing remote players
-    int i;
-    for (i=0;i<RemotePlayerKeys().size();i++)
-    {
-        plKey k=RemotePlayerKeys()[i];
-        plAvatarMgr::GetInstance()->UnLoadRemotePlayer(k);
-    }
+    // release all avatar clones
+    IUnloadRemotePlayers();
+    IUnloadNPCs();
 
     // Finally, pump the dispatch system so all the new refs get delivered.
     plgDispatch::Dispatch()->MsgQueueProcess();
@@ -197,7 +193,7 @@ void plNetClientMgr::Shutdown()
         delete fMsgRecorder;
         fMsgRecorder = nil;
     }
-    for (i = 0; i < fMsgPlayers.size(); i++)
+    for (int i = 0; i < fMsgPlayers.size(); i++)
         delete fMsgPlayers[i];
     fMsgPlayers.clear();
 
@@ -424,9 +420,19 @@ int plNetClientMgr::IPrepMsg(plNetMessage* msg)
 //
 void plNetClientMgr::IUnloadRemotePlayers()
 {
-    for(int i=RemotePlayerKeys().size()-1;i>=0;i--)
-        plAvatarMgr::GetInstance()->UnLoadRemotePlayer(RemotePlayerKeys()[i]);
-    hsAssert(!RemotePlayerKeys().size(),"Still remote players left when linking out");
+    for (size_t i = fRemotePlayerKeys.size(); i > 0; --i)
+        plAvatarMgr::GetInstance()->UnLoadAvatar(fRemotePlayerKeys[i-1], true);
+    hsAssert(fRemotePlayerKeys.empty(), "Still remote players left when linking out");
+}
+
+//
+// unload NPCs since we're leaving the age
+//
+void plNetClientMgr::IUnloadNPCs()
+{
+    for (size_t i = fNPCKeys.size(); i > 0; --i)
+        plAvatarMgr::GetInstance()->UnLoadAvatar(fNPCKeys[i-1], false);
+    hsAssert(fNPCKeys.empty(), "Still npcs left when linking out");
 }
 
 //
@@ -851,6 +857,31 @@ plSynchedObject* plNetClientMgr::GetLocalPlayer(hsBool forceLoad) const
     else
         return fLocalPlayerKey ?
             plSynchedObject::ConvertNoRef(fLocalPlayerKey->ObjectIsLoaded()) : nil; 
+}
+
+plSynchedObject* plNetClientMgr::GetNPC(uint32_t i) const
+{
+    return fNPCKeys[i] ? plSynchedObject::ConvertNoRef(fNPCKeys[i]->ObjectIsLoaded()) : nil; 
+}
+
+void plNetClientMgr::AddNPCKey(const plKey& npc)
+{
+    // note: npc keys have little sanity checking...
+    hsAssert(npc, "adding nil npc key? naughty, naughty...");
+    fNPCKeys.push_back(npc);
+}
+
+bool plNetClientMgr::IsNPCKey(const plKey& npc, int* idx) const
+{
+    if (npc)
+    {
+        plKeyVec::const_iterator it = std::find(fNPCKeys.begin(), fNPCKeys.end(), npc);
+        bool found = it != fNPCKeys.end();
+        if (idx)
+            *idx = found ? (it - fNPCKeys.begin()) : -1;
+        return found;
+    }
+    return false;
 }
 
 //

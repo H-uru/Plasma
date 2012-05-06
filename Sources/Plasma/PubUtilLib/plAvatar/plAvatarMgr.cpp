@@ -217,11 +217,17 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
     return result;
 }
 
-void plAvatarMgr::UnLoadAvatar(plKey avatarKey, bool isPlayer)
+void plAvatarMgr::UnLoadAvatar(const plKey& avatarKey, bool isPlayer, bool netPropagate) const
 {
-    hsBool isLoading = false;
-    plLoadAvatarMsg *msg = new plLoadAvatarMsg(avatarKey, GetKey(), 0, isPlayer, isLoading);
-    msg->Send();
+    if (avatarKey)
+    {
+        plKey requestor = GetKey();
+        plLoadAvatarMsg* msg = new plLoadAvatarMsg(avatarKey, requestor, 0, isPlayer, false);
+
+        // only netprop if the user has a death wish
+        msg->SetBCastFlag(plMessage::kNetPropagate, netPropagate);
+        msg->Send();
+    }
 }
 
 // our player's already loaded locally, but we've just linked into an age and others there need to be
@@ -269,22 +275,6 @@ bool plAvatarMgr::UnPropagateLocalPlayer()
         return true;
     }
     return false;
-}
-
-// UNLOADREMOTEPLAYER
-void plAvatarMgr::UnLoadRemotePlayer(plKey remotePlayer)
-{
-    if(remotePlayer)
-    {
-        plKey requestor = GetKey();
-        bool isPlayer = true;
-        hsBool isLoading = false;
-        plLoadAvatarMsg * msg = new plLoadAvatarMsg(remotePlayer, requestor, 0, isPlayer, isLoading);
-
-        // don't propagate over the network. this is just for removing our local version
-        msg->SetBCastFlag(plMessage::kNetPropagate, false);
-        msg->Send();
-    }
 }
 
 // UNLOADLOCALPLAYER
