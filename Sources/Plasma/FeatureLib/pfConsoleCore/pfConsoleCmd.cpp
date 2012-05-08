@@ -565,7 +565,7 @@ uint8_t   pfConsoleCmd::GetSigEntry( uint8_t i )
 
 const char  *pfConsoleCmd::GetSignature( void )
 {
-    static  char    string[ 256 ];
+    char string[256];
     
     int     i;
     char    pStr[ 128 ];

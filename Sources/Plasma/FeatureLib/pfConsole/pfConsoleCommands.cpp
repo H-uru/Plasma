@@ -688,7 +688,7 @@ public:
 
         if(strncmp("SampleCmd",c->GetName(), 9) != 0)
         {
-            fprintf(fFile, "<P><I>%s </I><BR>%s </P>\n",c->GetSignature(),
+            fprintf(fFile, "<p><em>%s </em><br />%s </p>\n",c->GetSignature(),
                     c->GetHelp());
         }
     }
@@ -696,10 +696,11 @@ public:
     {
     //  if(g->GetFirstCommand() != nil)
         {
-            fprintf(fFile, "<P><B><H%s>Command %sGroup %s </B></H2></P>\n",
+            fprintf(fFile, "<p><strong><h%s>Command %sGroup %s </strong></h%s></p>\n",
                 (depth > 0) ? "3" : "2",
                 (depth > 0) ? "Sub" :"" ,
-                g->GetName());
+                g->GetName(),
+				(depth > 0) ? "3" : "2");
         }
         return true;
     }
@@ -717,7 +718,7 @@ public:
 
         if(strncmp("SampleCmd",c->GetName(), 9) != 0)
         {
-                fprintf(fFile, "<I>%s.%s </I> - %s <BR>\n",fGrpName,c->GetSignature(),
+                fprintf(fFile, "<em>%s.%s </em> - %s <br />\n",fGrpName,c->GetSignature(),
                         c->GetHelp());
         }
     }
@@ -725,11 +726,14 @@ public:
     {
     //  if(g->GetFirstCommand() != nil)
         {
-            fprintf(fFile, "<BR>\n");
+            fprintf(fFile, "<br />\n");
             if(depth <1)
                 strcpy(fGrpName, g->GetName());
             else 
             {
+                pfConsoleCmdGroup *parentGrp;
+                parentGrp = g->GetParent();	
+                strcpy(fGrpName, parentGrp->GetName());
                 strcat(fGrpName,".");
                 strcat(fGrpName,g->GetName());
             }
@@ -758,7 +762,7 @@ PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
     }
     
 
-    fprintf(f, "<CENTER> <H2> Console Commands for Plasma 2.0 Client </H2> <I>Built %s on %s.</I></CENTER><BR>", 
+    fprintf(f, "<span style=\"text-align: center;\"> <h2> Console Commands for Plasma 2.0 Client </h2> <em>Built %s on %s.</em></span><br />", 
         pnBuildDates::fBuildTime, pnBuildDates::fBuildDate );
 
     DocGenIterator iter(f);
@@ -788,7 +792,7 @@ PF_CONSOLE_CMD( Console, CreateBriefDocumentation, "string fileName",
         return;
     }
 
-    fprintf(f, "<CENTER> <H3> Console Commands for Plasma 2.0 Client </H3> <I>Built %s on %s.</I></CENTER><BR>", 
+    fprintf(f, "<span style=\"text-align: center;\"> <h3> Console Commands for Plasma 2.0 Client </h3> <em>Built %s on %s.</em></span><br />", 
         pnBuildDates::fBuildTime, pnBuildDates::fBuildDate );
     BriefDocGenIterator iter(f);
     group = pfConsoleCmdGroup::GetBaseGroup();
