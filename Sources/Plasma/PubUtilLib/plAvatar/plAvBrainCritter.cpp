@@ -317,9 +317,13 @@ std::string plAvBrainCritter::RunBehaviorName() const
 void plAvBrainCritter::GoToGoal(hsPoint3 newGoal, bool avoidingAvatars /* = false */)
 {
     fFinalGoalPos = newGoal;
-    fAvoidingAvatars = avoidingAvatars;
-    fNextMode = IPickBehavior(kRun);
-    // TODO: Pathfinding here!
+    fAvoidingAvatars = avoidingAvatars; // TODO: make this do something?
+
+    // Only play the run behavior if it's not already activated
+    // Why? This might just be an update to a preexisting goal.
+    if(!RunningBehavior(RunBehaviorName()))
+        fNextMode = IPickBehavior(kRun);
+    // Missing TODO Turd: Pathfinding.
 }
 
 bool plAvBrainCritter::AtGoal() const
