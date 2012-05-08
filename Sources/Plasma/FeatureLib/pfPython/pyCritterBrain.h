@@ -83,8 +83,7 @@ public:
     void AddReceiver(pyKey& newReceiver);
     void RemoveReceiver(pyKey& oldReceiver);
 
-    void LocallyControlled(bool local);
-    bool LocallyControlled() const;
+    PyObject* GetSceneObject();
 
     void AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop = true, bool randomStartPos = true,
         float fadeInLen = 2.f, float fadeOutLen = 2.f);
