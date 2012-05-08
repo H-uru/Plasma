@@ -126,7 +126,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 
 plAvBrainCritter::plAvBrainCritter(): fCallbackAction(nil), fCurMode(kIdle), fNextMode(kIdle), fFadingNextBehavior(true),
-    fLocallyControlled(false), fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
+    fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
     fAngRight(0)
 {
     SightCone(M_PI/2); // 90deg
@@ -227,6 +227,13 @@ void plAvBrainCritter::Resume()
     fCallbackAction->Reset(false);
 
     plArmatureBrain::Resume();
+}
+
+plSceneObject* plAvBrainCritter::GetTarget() const
+{
+    if (fArmature)
+        return fArmature->GetTarget(0);
+    return nil;
 }
 
 void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop /* = true */, bool randomStartPos /* = true */,

@@ -41,8 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pyCritterBrain.h"
 #include "pyGeometry3.h"
+#include "pySceneObject.h"
 
 #include "plAvatar/plAvBrainCritter.h"
+#include "pnSceneObject/plSceneObject.h"
 
 pyCritterBrain::pyCritterBrain(): fBrain(nil) {}
 
@@ -66,18 +68,12 @@ void pyCritterBrain::RemoveReceiver(pyKey& oldReceiver)
     fBrain->RemoveReceiver(oldReceiver.getKey());
 }
 
-void pyCritterBrain::LocallyControlled(bool local)
+PyObject* pyCritterBrain::GetSceneObject()
 {
-    if (!fBrain)
-        return;
-    fBrain->LocallyControlled(local);
-}
-
-bool pyCritterBrain::LocallyControlled() const
-{
-    if (!fBrain)
-        return false;
-    return fBrain->LocallyControlled();
+    if (fBrain)
+        if (plSceneObject* obj = fBrain->GetTarget())
+            return pySceneObject::New(obj->GetKey());
+    PYTHON_RETURN_NONE;
 }
 
 void pyCritterBrain::AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop /* = true */,
