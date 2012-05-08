@@ -40,446 +40,171 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: ahnyQuabs
-Age: Ahnonay
-Date: April, 2007
-Author: Derek Odell
-Ahnonay Quab control
-"""
 
 from Plasma import *
 from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaGame import *
-from PlasmaGameConstants import *
-import xRandom
-
+import math
+import random
 
 # define the attributes that will be entered in max
 deadZone                    = ptAttribActivator(1, "detector for dead zone")
 quabObjects                 = ptAttribSceneobjectList(2, "quab spawners")
 SDLQuabs                    = ptAttribString(3, "SDL: quabs")
 
-# globals
-byteQuabs = 0
-quabList = []
-quabKeyList = []
+# How long does it take for more quabs to be born? Eight hours, evidently...
+kQuabGestationTime = 8 * 60 * 60
 
-quabBrainList = []
-quabVarList = {}
+# Stupid konstants the stupid Cyan tech artists didn't add in max...
+# Did I mention how STUPID this is?
+kLastQuabUpdate = "ahnyQuabsLastUpdate"
+kMaxNumQuabs = 20
+kQuabAvatarName = "Quab"
 
-cheater = 0
+# Silly behavior name constants
+kQuabIdleBehNames = ("Idle02", "Idle03",)
+kQuabRunBehNames  = ("Run02", "Run03",)
 
-#====================================
-class ahnyQuabs(ptModifier):
-    ###########################
+class ahnyQuabs(ptModifier, object):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5946
-        version = 1
-        self.version = version
-        print "__init__ahnyQuabs v%d " % (version)
-        self.brainsRemaining = 0
-        self.brainsReady = 0
-        self.gameReady = 0
-        self.sdlReady = 0
-        self.isAIOwner = 0
-        self.quabIsRunning = []
-        self.gameId = 0
-        self.joinedToGame = 0
+        self.version = 2
+        self.brains = []
+        random.seed()
+        print "__init__ahnyQuabs v%d " % (self.version)
 
-    ###########################
-    def __del__(self):
-        print "ahnyQuabs.del(): will unload %d quabs" % (len(quabKeyList))
-        i = 1
-        for quabKey in quabKeyList:
-            PtUnLoadAvatarModel(quabKey)
-            print "ahnyQuabs.del(): unloading quab #%d" % (i)
-            i += 1
+    def _last_update_get(self):
+        ageSDL = PtGetAgeSDL()
+        return ageSDL[kLastQuabUpdate][0]
+    last_update = property(_last_update_get, doc="Gets the last time a quab was killed/born")
 
-    ###########################
-    def OnFirstUpdate(self):
-        global quabList
+    def _quabs_get(self):
+        ageSDL = PtGetAgeSDL()
+        return ageSDL[SDLQuabs.value][0]
+    def _quabs_set(self, value):
+        ageSDL = PtGetAgeSDL()
+        ageSDL[SDLQuabs.value] = (value,)
+        ageSDL[kLastQuabUpdate] = (PtGetServerTime(),)
+    quabs = property(_quabs_get, _quabs_set, doc="Gets the number of quabs alive")
 
-        for quab in quabObjects.value:
-            quabList.append(quab)
+    def OnServerInitComplete(self):
+        PtDebugPrint("ahnyQuabs.OnServerInitComplete():\tWhen I got here...", level=kWarningLevel)
+        PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... there were already %i quabs" % self.quabs, level=kWarningLevel)
+        self.brains = PtGetAIAvatarsByModelName(kQuabAvatarName)
 
-        # join the age's common var sync "game"
-        self.clientId = PtGetLocalClientID()
-        PtJoinCommonVarSyncGame(self.key)
-
-        ###########################
-        #def OnServerInitComplete(self):
-        global byteQuabs
-
-        try:
-            ageSDL = PtGetAgeSDL()
-            ageSDL[SDLQuabs.value][0]
-        except:
-            print "ahnyQuabs.OnServerInitComplete(): ERROR --- Cannot find the Ahnonay Age SDL"
-            print SDLQuabs.value
-            ageSDL[SDLQuabs.value] = (20,)
-
-        ageSDL.setFlags(SDLQuabs.value,1,1)
-        ageSDL.sendToClients(SDLQuabs.value)
-        ageSDL.setNotify(self.key,SDLQuabs.value,0.0)
-
-        byteQuabs = ageSDL[SDLQuabs.value][0]
-
-        if byteQuabs < 20 and not len(PtGetPlayerList()):
-            updatedTime = ageSDL["ahnyQuabsLastUpdate"][0]
-            currentTime = PtGetDniTime()
-            amount = (currentTime - updatedTime) / 28800
-            print "ahnyQuabs.OnServerInitComplete(): Last Update: %d Current Time: %d means %d quabs returning" % (updatedTime, currentTime, amount)
-            if (byteQuabs + amount) > 20:
-                byteQuabs = 20
-            else:
-                byteQuabs += amount
-            ageSDL[SDLQuabs.value] = (byteQuabs,)
-        elif byteQuabs > 20:
-            print "ahnyQuabs.OnServerInitComplete(): I think I have %d quabs for some reason, so I'll reset to 20" % (byteQuabs)
-            ageSDL[SDLQuabs.value] = (20,)
-            byteQuabs = 20
-        ageSDL["ahnyQuabsLastUpdate"] = (PtGetDniTime(),)
-
-        self.sdlReady = 1
-
-        #PtFindSceneobject("Box01", "Ahnonay").physics.suppress(true)
-        #PtFindSceneobject("Box01", "Ahnonay").physics.disableCollision()
-
-    ###########################
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        global byteQuabs
-
-        if VARname == SDLQuabs.value:
-            ageSDL = PtGetAgeSDL()
-            byteQuabs = ageSDL[SDLQuabs.value][0]
-
-    ###########################
-    def OnNotify(self,state,id,events):
-        global byteQuabs
-
-        #print "ahnyQuabs.OnNotify: state=%s id=%d events=" % (state, id), events
-
-        if id == deadZone.id:
-            if PtFindAvatar(events) != PtGetLocalAvatar():
-                quabNum = byteQuabs - 1
-                if quabNum < 0:
-                    quabNum = 0
-                print "ahnyQuabs.OnNotify: quabNum now = %d" % (quabNum)
-                ageSDL = PtGetAgeSDL()
-                ageSDL[SDLQuabs.value] = (quabNum,)
-                ageSDL["ahnyQuabsLastUpdate"] = (PtGetDniTime(),)
-
-    ###########################
-    def ISpawnQuabsIfNeeded(self):
-        if self.isAIOwner and self.sdlReady and self.gameReady and (byteQuabs > 0):
-            print "ahnyQuabs.ISpawnQuabsIfNeeded(): Calling ISpawnQuabs to spawn %d quabs" % (byteQuabs)
-            self.ISpawnQuabs()
-        elif not self.isAIOwner and self.sdlReady and self.gameReady and (byteQuabs > 0):
-            quabs = PtGetAIAvatarsByModelName("Quab") # tuple as [(brain object, "user string")]
-            self.brainsRemaining = byteQuabs
-            for quab in quabs:
-                brainNum = int(quab[1][5:])
-                brainName = str(quab[1][:4])
-                if brainName == "Quab":
-                    print "ahnyQuabs.ISpawnQuabsIfNeeded(): Quab brain #%d was created. Initializing brain." % (brainNum)
-                    if len(quabBrainList) <= brainNum:
-                        # probably spawned remotely
-                        while len(quabBrainList) <= brainNum:
-                            quabBrainList.append(None)
-                    
-                    quabBrainList[brainNum] = quab[0]
-                    quab[0].addReceiver(self.key)
-                    
-                    quab[0].setLocallyControlled(self.isAIOwner)
-                    
-                    idleBehavior = quab[0].idleBehaviorName()
-                    quab[0].addBehavior("Idle02", idleBehavior)
-                    quab[0].addBehavior("Idle03", idleBehavior)
-                    
-                    runBehavior = quab[0].runBehaviorName()
-                    quab[0].addBehavior("Run02", runBehavior, randomStartPos = 0)
-                    quab[0].addBehavior("Run03", runBehavior, randomStartPos = 0)
-                    
-                    self.brainsRemaining = self.brainsRemaining - 1
-                    if self.brainsRemaining == 0:
-                        self.brainsReady = 1
-                    
-                    #if self.brainsReady and self.gameReady:
-                    #    self.IInitInitialAIStates()
-
-    ###########################
-    def ISpawnQuabs(self):
-        global quabList
-        global quabKeyList
-        global quabBrainList
-
-        xRandom.shuffle(quabList)
-        game = self.IGetVarSyncGameCli()
-        if game == None:
-            print "ahnyQuabs.ISpawnQuabs(): DANGER!!! No VarSyncGame!"
-        print "ahnyQuabs.ISpawnQuabs(): out of %d possible spawn points, will spawn %d quabs" % (len(quabList),byteQuabs)
-        i = 1
-        self.brainsRemaining = byteQuabs
-        while i <= byteQuabs :
-            quab = quabList[i-1]
-            quabKey = quab.getKey()
-            quabKey = PtLoadAvatarModel("Quab", quabKey, "Quab "+str(i - 1))
-            quabKeyList.append(quabKey)
-            quabBrainList.append(None)
-
-            varName = "QuabRun" + str(i)
-            game.createNumericVar(varName, 0)
-
-            print "ahnyQuabs.ISpawnQuabs(): spawned quab #%d" % (i)
-            i += 1
-    
-    ###########################
-    def IInitInitialAIStates(self):
-        global quabBrainList
-
-        i = 0
-        while i < len(quabBrainList):
-            print "ahnyQuabs.IInitInitialAIStates(): Setting initial state for brain #%d" % (i)
-            brain = quabBrainList[i]
-            if brain == None:
-                i += 1
-                continue
-            try:
-                if self.quabIsRunning[i]:
-                    brain.goToGoal(ptPoint3(0,0,0), 1)
-                else:
-                    brain.startBehavior(brain.idleBehaviorName())
-            except:
-                self.quabIsRunning.append(0)
-                brain.startBehavior(brain.idleBehaviorName())
-            i += 1
-    
-    ###########################
-    def OnUpdate(self, seconds, delta):
-        global quabBrainList
-        global quabVarList
-        global quabKeyList
-        global cheater
-        
-        if cheater:
+        # Sanity Check: Before we think about doing any processing, make sure there are no quabs
+        #               already loaded. We may have arrived after the last man left but before the
+        #               server shut down. Therefore, we will already have quabs... So we don't want
+        #               to spawn another 20 or so dupe avatar clones.
+        if len(self.brains) != 0:
+            PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... and they were already spawned!" % self.quabs, level=kWarningLevel)
+            for brain in self.brains:
+                self._PrepCritterBrain(brain[0])
             return
 
-        ## Check as many conditions as we can so we don't overload processing
-        if (not self.brainsReady) or (not self.gameReady):
-            return # not ready to run AI yet
-        if not self.isAIOwner:
-            return # we aren't the ones running the brain, abort
-        game = self.IGetVarSyncGameCli()
-        if game == None:
-            return # no game connection established
+        if self.sceneobject.isLocallyOwned():
+            delta = PtGetServerTime() - self.last_update
+            toSpawn = int(math.floor(delta / kQuabGestationTime))
+            if toSpawn:
+                PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... and I need to spawn %i more" % toSpawn, level=kWarningLevel)
+                self.quabs += toSpawn
+            if self.quabs > kMaxNumQuabs:
+                PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... woah, %i quabs?!" % self.quabs, level=kWarningLevel)
+                self.quabs = kMaxNumQuabs
 
-        for brain in quabBrainList:
-            if brain == None:
-                continue
+            # Shuffle the spawn points around so we don't get the same quabs appearing
+            # every single time. That would be quite boring.
+            qSpawns = list(quabObjects.value)
+            random.shuffle(qSpawns)
 
-            isRunning = brain.runningBehavior(brain.runBehaviorName())
-            isIdling = brain.runningBehavior(brain.idleBehaviorName())
+            # On quab spawning...
+            # We will load the avatar clones manually if we are the first one in.
+            # We will obtain the ptCritterBrains in an OnAIMsg callback.
+            for i in xrange(self.quabs):
+                PtLoadAvatarModel(kQuabAvatarName, qSpawns[i].getKey(), "Quab %i" % i)
 
-            ## Every three seconds, update goal if we're running
-            if PtGetDniTime() % 3 != 0 and isRunning:
-                continue
-
-            ## Can we hear anyone?
-            playersWeHear = brain.playersICanHear()
-            total = ptVector3(0,0,0)
-            varName = quabVarList[quabBrainList.index(brain)+1]
-            if len(playersWeHear) != 0:
-                for avatar in playersWeHear:
-                    ## Get the normalized vector to each player we hear
-                    vector = brain.vectorToPlayer(avatar)
-                    vector.normalize()
-                    total = total.add(vector)
-
-                ## Scale it up so it's not a foot away
-                escVector = ptVector3(total.getX(),total.getY(),total.getZ())
-                escVector = escVector.scale(40)
-
-                index = quabBrainList.index(brain)
-                loc = quabKeyList[index].getSceneObject().position()
-
-                ## Find the final position
-                target = ptPoint3((escVector.getX() + loc.getX()), (escVector.getY() + loc.getY()) , (escVector.getZ() + loc.getZ()))
-
-                ## Visual representation of goal
-                #PtFindSceneobject("Box01", "Ahnonay").physics.warp(target)
-
-                ## Variable Outputs
-                #print "Total Vector: %f / %f / %f" % (total.getX(), total.getY(), total.getZ())
-                #print "Escape Vector: %f / %f / %f" % (escVector.getX(), escVector.getY(), escVector.getZ())
-                #print "Loc: %f / %f / %f" % (loc.getX(), loc.getY(), loc.getZ())
-                #print "Target: %f / %f / %f" % (target.getX(), target.getY(), target.getZ())
-                #print "Player: %f / %f / %f" % (PtGetLocalAvatar().position().getX(), PtGetLocalAvatar().position().getY(), PtGetLocalAvatar().position().getZ())
-
-                ## Avoid avatars
-                brain.goToGoal(target, 0)
-
-                ## Set 'running' var if we need to
-                if isIdling:
-                    game.setNumericVar(varName, 1)
-
-            else:
-                if isRunning:
-                    ## Stop running
-                    brain.startBehavior(brain.idleBehaviorName())
-                    game.setNumericVar(varName, 0)
-
-    ###########################
     def OnAIMsg(self, brain, msgType, userStr, args):
-        global quabBrainList
-        global quabVarList
-
         if msgType == PtAIMsgType.kBrainCreated:
-            brainNum = int(userStr[5:])
-            brainName = str(userStr[:4])
-            if brainName == "Quab":
-                print "ahnyQuabs.OnAIMsg(): Quab brain #%d was created. Initializing brain." % (brainNum)
-                if len(quabBrainList) <= brainNum:
-                    # probably spawned remotely
-                    while len(quabBrainList) <= brainNum:
-                        quabBrainList.append(None)
-                
-                quabBrainList[brainNum] = brain
-                brain.addReceiver(self.key)
-                
-                brain.setLocallyControlled(self.isAIOwner)
-                
-                idleBehavior = brain.idleBehaviorName()
-                brain.addBehavior("Idle02", idleBehavior)
-                brain.addBehavior("Idle03", idleBehavior)
-                
-                runBehavior = brain.runBehaviorName()
-                brain.addBehavior("Run02", runBehavior, randomStartPos = 0)
-                brain.addBehavior("Run03", runBehavior, randomStartPos = 0)
-                
-                self.brainsRemaining = self.brainsRemaining - 1
-                if self.brainsRemaining == 0:
-                    self.brainsReady = 1
-                
-                if self.brainsReady and self.gameReady:
-                    self.IInitInitialAIStates()
-            
-            # defaults for the rest should be fine
-        elif msgType == PtAIMsgType.kArrivedAtGoal:
-            print "ahnyQuabs.Brain arrived at goal, but we don't really care"
-    
-    ###########################
-    def OnGameCliMsg(self,msg):
-        global quabBrainList
-        global quabVarList
+            # Init the brain and push it into our collection
+            PtDebugPrint("ahnyQuabs.OnAIMsg():\t%s created" % userStr, level=kDebugDumpLevel)
+            self._PrepCritterBrain(brain)
+            self.brains.append((brain, userStr,))
+            return
 
-        if msg.getType() == PtGameCliMsgTypes.kGameCliPlayerJoinedMsg:
-            joinMsg = msg.upcastToFinalGameCliMsg()
-            if joinMsg.playerID() == self.clientId:
-                self.gameId = msg.getGameCli().gameID()
-                self.joinedToGame = 1
-                print "ahnyQuabs.OnGameCliMsg(): Got join reply from the var sync game, we are now an observer for game id %d" % (self.gameId)
+        if msgType == PtAIMsgType.kArrivedAtGoal:
+            # Not really important, but useful for debugging
+            PtDebugPrint("ahnyQuabs.OnAIMsg():\t%s arrived at goal" % userStr, level=kDebugDumpLevel)
+            return
 
-        elif msg.getType() == PtGameCliMsgTypes.kGameCliOwnerChangeMsg:
-            ownerChangeMsg = msg.upcastToFinalGameCliMsg()
-            print "ahnyQuabs.OnGameCliMsg(): Got owner change msg, ownerID = %d, clientId = %d" % (ownerChangeMsg.ownerID(), self.clientId)
-            if ownerChangeMsg.ownerID() == self.clientId:
-                print "ahnyQuabs.OnGameCliMsg(): We are now the game owner"
-                self.isAIOwner = 1
+    def OnNotify(self, state, id, events):
+        if id == deadZone.id:
+            # Make sure this isn't the player jumping into the water for a quick swim
+            # Musing: Ideally, we would despawn the clone here since it's now useless,
+            #         but removing the brain without causing rampant issues might be problematic...
+            if PtFindAvatar(events) != PtGetLocalAvatar():
+                self.quabs -= 1
+                PtDebugPrint("ahnyQuabs.OnNotify():\tQuabs remaining: %i" % self.quabs, level=kWarningLevel)
+                return
+
+    def OnUpdate(self, seconds, delta):
+        for brain, name in self.brains:
+            # Meh, I'm tired of huge indentation levels
+            # If you think running this every frame is a bad idea, remember how
+            # badly the quab AI sucked in MOUL. This won't kill you.
+            self._Think(brain, name)
+
+    def _Think(self, brain, name):
+        """Basic quab thought logic (scurry, scurry, scurry)"""
+        running = self._IsRunningAway(brain)
+
+        # Quabs spook very easily. They are also stupid like dogs--they run
+        # in a straight line away from whatever is chasing them. Fun fact: alligators
+        # can catch dogs because they do the same thing. The mammalian adaptation is the
+        # ability to turn quickly (which the dog does not actually do)...
+        # This evolutionary biology lesson is thanks to Hoikas, the Mammalogy drop-out
+        monsters = brain.playersICanHear()
+        if len(monsters) == 0:
+            if running:
+                PtDebugPrint("ahnyQuabs._Think():\t%s is now safe." % name, level=kDebugDumpLevel)
+                self._RunAway(brain, False)
+            return
+        runaway  = None
+        for monster in monsters:
+            vec = brain.vectorToPlayer(monster)
+            vec.normalize()
+            if runaway:
+                runaway = runaway.add(vec)
             else:
-                self.isAIOwner = 0
-            # go through all our brains and tell them whether we are or are not the authoritative client
-            for brain in quabBrainList:
-                if brain == None:
-                    continue
-                brain.setLocallyControlled(self.isAIOwner)
+                runaway = vec
+        runaway = runaway.scale(100) # so we don't just move a centimeter away
+        curPos = brain.getSceneObject().position()
+        endPos = ptPoint3(curPos.getX() + runaway.getX(), curPos.getY() + runaway.getY(), curPos.getZ() + runaway.getZ())
 
-        elif msg.getType() == PtGameCliMsgTypes.kGameCliVarSyncMsg:
-            varSyncMsg = msg.upcastToGameMsg()
-            msgType = varSyncMsg.getVarSyncMsgType()
-            finalMsg = varSyncMsg.upcastToFinalVarSyncMsg()
-            if msgType == PtVarSyncMsgTypes.kVarSyncAllVarsSent:
-                self.gameReady = 1
-                self.ISpawnQuabsIfNeeded()
-            elif msgType == PtVarSyncMsgTypes.kVarSyncNumericVarCreated:
-                name = finalMsg.name()
-                id = finalMsg.id()
-                idx = name[7:]
-                quabVarList[long(idx)] = id
-            elif msgType == PtVarSyncMsgTypes.kVarSyncNumericVarChanged:
-                id = finalMsg.id()
-                value = finalMsg.value()
-                if id in quabVarList.keys():
-                    index = quabVarList[id]
-                    if len(self.quabIsRunning) <= index:
-                        # probably spawned remotely
-                        while len(self.quabIsRunning) <= index:
-                            self.quabIsRunning.append(0)
-                    self.quabIsRunning[index] = value
-                    if self.isAIOwner:
-                        #print "ahnyQuabs.OnGameCliMsg(): Var %s updated but we are AI controller, so we updated it, not adjusting brain." % (name)
-                        return # we already have told the brain
-                    
-                    if index >= len(quabBrainList):
-                        #print "ahnyQuabs.OnGameCliMsg(): Var %s updated, but we don't have a brain for that one (possibly too early)." % (name)
-                        return # it'll get transferred over when the brains DO get here
-                    
-                    #print "ahnyQuabs.OnGameCliMsg(): Var %s updated, making sure brain matches." % (name)
-                    brain = quabBrainList[index-1]
-                    if (brain == None):
-                        return
-                    isRunning = brain.runningBehavior(brain.runBehaviorName())
-                    isIdling = brain.runningBehavior(brain.idleBehaviorName())
-                    if value: 
-                        if isIdling:
-                            # run away!
-                            brain.goToGoal(ptPoint3(0,0,0), 1) # avoiding avatars
-                    else:
-                        if isRunning:
-                            # stop running
-                            brain.startBehavior(brain.idleBehaviorName())
-    
-    ###########################
-    def IGetVarSyncGameCli(self):
-        if not self.joinedToGame:
-            print "ahnyQuabs.IGetVarSyncGameCli: Requesting game client before we have become an observer... returning None"
-            return None
-        
-        gameCli = PtGetGameCli(self.gameId)
-        if (type(gameCli) != type(None)) and (PtIsVarSyncGame(gameCli.gameTypeID())):
-            return gameCli.upcastToVarSyncGame()
-        return None
+        # Now, actually make the quab run away
+        if not running:
+            # Note: low level brain will make the quab play the run behavior
+            #       no need to court a race condition by playing it here
+            PtDebugPrint("ahnyQuabs._Think():\tTime for %s to run away!" % name, level=kDebugDumpLevel)
+        brain.goToGoal(endPos)
 
-    ###########################
-    def OnBackdoorMsg(self, target, param):
-        global quabBrainList
-        global quabVarList
-        global quabKeyList
-        global cheater
+    def _PrepCritterBrain(self, brain):
+        """Attaches quab behaviors to newly initialized/fetched critter brains"""
+        brain.addReceiver(self.key)
+        for beh in kQuabIdleBehNames:
+            brain.addBehavior(beh, brain.idleBehaviorName())
+        for beh in kQuabRunBehNames:
+            brain.addBehavior(beh, brain.runBehaviorName(), randomStartPos=0)
 
-        if target == "quabs":
-            if param == "runaway":
-                ## Check as many conditions as we can so we don't overload processing
-                if (not self.brainsReady) or (not self.gameReady):
-                    return # not ready to run AI yet
-                if not self.isAIOwner:
-                    return # we aren't the ones running the brain, abort
-                game = self.IGetVarSyncGameCli()
-                if game == None:
-                    return # no game connection established
+    def _IsRunningAway(self, brain):
+        if brain.runningBehavior(brain.runBehaviorName()):
+            return True
+        if brain.runningBehavior(brain.idleBehaviorName()):
+            return False
+        raise RuntimeError("Quab brain running neither the idle nor the run behavior. WTF?")
 
-                cheater = 1
-
-                for brain in quabBrainList:
-                    if brain == None:
-                        continue
-
-                    brain.goToGoal(ptPoint3(0,-1000,700), 0)
-
-            elif param == "reset":
-                cheater = 0
-
-
-
+    def _RunAway(self, brain, runAway=True):
+        """Quick helper because I'm lazy and the behavior apis are really stupid"""
+        if runAway:
+            brain.startBehavior(brain.runBehaviorName())
+        else:
+            brain.startBehavior(brain.idleBehaviorName())
