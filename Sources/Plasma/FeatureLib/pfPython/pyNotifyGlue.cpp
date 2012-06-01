@@ -196,13 +196,81 @@ PYTHON_METHOD_DEFINITION(ptNotify, addControlKeyEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 {
     char* name;
+    PyObject* number = NULL;
+    if (!PyArg_ParseTuple(args, "s|O", &name, &number))
+    {
+        PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
+        PYTHON_RETURN_ERROR;
+    }
+
+    if (number == NULL || number == Py_None)
+        self->fThis->AddVarNull(name);
+    else if (PyInt_Check(number))
+        self->fThis->AddVarNumber(name, PyInt_AsLong(number));
+    else if (PyLong_Check(number))
+    {
+        // try as int first
+        long i = PyLong_AsLong(number);
+        if (!PyErr_Occurred())
+        {
+            self->fThis->AddVarNumber(name, i);
+        }
+        else
+        {
+            // OverflowError, try float
+            PyErr_Clear();
+            self->fThis->AddVarNumber(name, (float)PyLong_AsDouble(number));
+        }
+    }
+    else if (PyNumber_Check(number))
+    {
+        PyObject* f = PyNumber_Float(number);
+        self->fThis->AddVarNumber(name, (float)PyFloat_AsDouble(f));
+        Py_DECREF(f);
+    } 
+    else
+    {
+        PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
+        PYTHON_RETURN_ERROR;
+    }
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptNotify, addVarFloat, args)
+{
+    char* name;
     float number;
     if (!PyArg_ParseTuple(args, "sf", &name, &number))
     {
-        PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and a float");
+        PyErr_SetString(PyExc_TypeError, "addVarFloat expects a string and a float");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddVarNumber(name, number);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptNotify, addVarInt, args)
+{
+    char* name;
+    int number;
+    if (!PyArg_ParseTuple(args, "si", &name, &number))
+    {
+        PyErr_SetString(PyExc_TypeError, "addVarInt expects a string and a integer");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->AddVarNumber(name, number);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
+{
+    char* name;
+    if (!PyArg_ParseTuple(args, "s", &name))
+    {
+        PyErr_SetString(PyExc_TypeError, "addVarNull expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->AddVarNull(name);
     PYTHON_RETURN_NONE;
 }
 
@@ -337,6 +405,13 @@ PYTHON_START_METHODS_TABLE(ptNotify)
     PYTHON_METHOD(ptNotify, addPickEvent, "Params: enabledFlag,pickerKey,pickeeKey,hitPoint\nAdd a pick event record to the Notify message"),
     PYTHON_METHOD(ptNotify, addControlKeyEvent, "Params: keynumber,downFlag\nAdd a keyboard event record to the Notify message"),
     PYTHON_METHOD(ptNotify, addVarNumber, "Params: name,number\nAdd a number variable event record to the Notify message\n"
+                "Method will try to pick appropriate variable type\n"
+                "This event record is used to pass a number variable to another python program"),
+    PYTHON_METHOD(ptNotify, addVarFloat, "Params: name,number\nAdd a float variable event record to the Notify message\n"
+                "This event record is used to pass a number variable to another python program"),
+    PYTHON_METHOD(ptNotify, addVarInt, "Params: name,number\nAdd a int variable event record to the Notify message\n"
+                "This event record is used to pass a number variable to another python program"),
+    PYTHON_METHOD(ptNotify, addVarNull, "Params: name,number\nAdd a null (no data) variable event record to the Notify message\n"
                 "This event record is used to pass a number variable to another python program"),
     PYTHON_METHOD(ptNotify, addVarKey, "Params: name,key\nAdd a ptKey variable event record to the Notify message\n"
                 "This event record is used to pass a ptKey variable to another python program"),
@@ -402,7 +477,9 @@ void pyNotify::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_END(m, PtEventType);
 
     PYTHON_ENUM_START(PtNotifyDataType);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNumber,  proEventData::kNumber);
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kFloat,  proEventData::kFloat);
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kInt,  proEventData::kInt);
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNull,  proEventData::kNull);
     PYTHON_ENUM_ELEMENT(PtNotifyDataType, kKey,     proEventData::kKey);
     PYTHON_ENUM_END(m, PtNotifyDataType);
 

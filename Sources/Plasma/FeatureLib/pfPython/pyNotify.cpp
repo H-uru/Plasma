@@ -148,7 +148,17 @@ void pyNotify::AddControlKeyEvent( int32_t key, hsBool down )
 
 void pyNotify::AddVarNumber(const char* name, float number)
 {
-    fBuildMsg.AddVariableEvent(name,number);
+    fBuildMsg.AddVariableEvent(name, number);
+}
+
+void pyNotify::AddVarNumber(const char* name, int number)
+{
+    fBuildMsg.AddVariableEvent(name, number);
+}
+
+void pyNotify::AddVarNull(const char* name)
+{
+    fBuildMsg.AddVariableEvent(name);
 }
 
 void pyNotify::AddVarKey(const char* name, pyKey* key)

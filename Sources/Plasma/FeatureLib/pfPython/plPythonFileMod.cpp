@@ -1361,11 +1361,18 @@ hsBool plPythonFileMod::MsgReceive(plMessage* msg)
                             // depending on the data type create the data
                             switch ( eventData->fDataType )
                             {
-                                case proEventData::kNumber:
-                                    PyList_SetItem(event, 3, PyFloat_FromDouble(eventData->fNumber));
+                                case proEventData::kFloat:
+                                    PyList_SetItem(event, 3, PyFloat_FromDouble(eventData->fNumber.f));
                                     break;
                                 case proEventData::kKey:
                                     PyList_SetItem(event, 3, pyKey::New(eventData->fKey));
+                                    break;
+                                case proEventData::kInt:
+                                    PyList_SetItem(event, 3, PyInt_FromLong(eventData->fNumber.i));
+                                    break;
+                                default:
+                                    Py_XINCREF(Py_None);
+                                    PyList_SetItem(event, 3, Py_None);
                                     break;
                             }
                             // add this event record to the main event list (lists within a list)
