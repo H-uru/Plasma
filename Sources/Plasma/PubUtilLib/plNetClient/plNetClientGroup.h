@@ -100,7 +100,7 @@ public:
         std::set<OwnedGroup>::iterator it=IFind(grpId);
         if (it != fGroups.end())
         {
-            OwnedGroup grp(it->fGroup, it->fOwnIt);
+            OwnedGroup grp(grpId, ownIt);
             fGroups.erase(it);
             fGroups.insert(grp);
         }
