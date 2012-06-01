@@ -70,7 +70,7 @@ kOfferLinkingBook=PtEventType.kOfferLinkingBook	# [1]=offerer, [2]=link panel ID
 
     
 # OnNotify Var Event Data Types
-kVarNumberType=PtNotifyDataType.kNumber
+kVarNumberType=PtNotifyDataType.kFloat
 kVarKeyType=PtNotifyDataType.kKey
 # OnNotify MultiStageEvent - what event types
 kEnterStage=PtMultiStageEventType.kEnterStage
@@ -181,8 +181,12 @@ def PtAddEvent(notify,event):
     elif event[0] == kControlKeyEvent:
         notify.addControlKeyEvent(event[1],event[2])
     elif event[0] == kVariableEvent:
-        if event[2] == kVarNumberType:
-            notify.addVarNumber(event[1],event[3])
+        if event[2] == PtNotifyDataType.kFloat:
+            notify.addVarFloat(event[1],event[3])
+        elif event[2] == PtNotifyDataType.kInt:
+            notify.addVarInt(event[1],event[3])
+        elif event[2] == PtNotifyDataType.kNull:
+            notify.addVarNull(event[1])
         elif event[2] == kVarKeyType:
             notify.addVarKey(event[1],event[3])
     elif event[0] == kFacingEvent:
