@@ -1952,10 +1952,10 @@ hsBool plArmatureMod::IsLocalAvatar()
 
 hsBool plArmatureMod::IsLocalAI()
 {
-    plAvBrainCritter* ai = plAvBrainCritter::ConvertNoRef(FindBrainByClass(plAvBrainCritter::Index()));
-    if (ai)
-        return ai->LocallyControlled();
-    return false; // not an AI, obviously not local
+    // Formerly a lot of silly cached rigamaroll... Now, we'll just rely
+    // on the fact that one player is the game master. HACK TURD if net groups
+    // are ever brought back.
+    return plNetClientApp::GetInstance()->IsLocallyOwned(this);
 }
 
 void plArmatureMod::SynchIfLocal(double timeNow, int force)

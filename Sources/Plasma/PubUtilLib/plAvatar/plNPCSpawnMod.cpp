@@ -99,16 +99,6 @@ void plNPCSpawnMod::AddTarget(plSceneObject* so)
         Trigger();
 }
 
-void plNPCSpawnMod::RemoveTarget(plSceneObject *so)
-{
-    plSingleModifier::RemoveTarget(so);
-
-    if(fSpawnedKey)
-    {
-        plAvatarMgr::GetInstance()->UnLoadAvatar(fSpawnedKey, false);
-    }
-}
-
 // TRIGGER
 bool plNPCSpawnMod::Trigger()
 {
@@ -123,6 +113,7 @@ bool plNPCSpawnMod::Trigger()
             // spawn the NPC
             plKey spawnPoint = GetTarget(0)->GetKey();
 
+            // Note: we will be unloaded by the NetApp's NPC magick
             fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nil);
 
             ISendNotify(fSpawnedKey);

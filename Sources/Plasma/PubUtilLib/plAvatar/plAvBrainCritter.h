@@ -83,13 +83,20 @@ public:
     virtual void Suspend();
     virtual void Resume();
 
+    /**
+     * Gets the SceneObject root for this avatar
+     *
+     * This is most useful in scripts that need to act upon the SceneObject directly.
+     * There are other ways of obtaining the SceneObject, but network synchronization often
+     * makes those ways more difficult than they need to be, so we have included this method
+     * to make the scripter's life easier.
+     */
+    plSceneObject* GetTarget() const;
+
     void AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop = true, bool randomStartPos = true,
         float fadeInLen = 2.f, float fadeOutLen = 2.f);
     void StartBehavior(const std::string& behaviorName, bool fade = true);
     bool RunningBehavior(const std::string& behaviorName) const;
-    
-    void LocallyControlled(bool local) {fLocallyControlled = local;}
-    bool LocallyControlled() const {return fLocallyControlled;}
 
     std::string BehaviorName(int behavior) const;
     plString AnimationName(int behavior) const;
@@ -156,8 +163,6 @@ protected:
     int fCurMode; // current behavior we are running
     int fNextMode; // the next behavior to run (-1 if we aren't switching on next eval)
     bool fFadingNextBehavior; // is the next behavior supposed to blend?
-
-    bool fLocallyControlled; // is our local AI script the one making all the choices?
 
     bool fAvoidingAvatars; // are we avoiding avatars to the best of our ability when pathfinding?
     hsPoint3 fFinalGoalPos; // the location we are pathfinding to
