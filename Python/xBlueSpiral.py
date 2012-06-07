@@ -73,10 +73,10 @@ respBSCloth07           = ptAttribResponder(16, "resp: BS Cloth 07")
 respBSClothDoor         = ptAttribResponder(17, "resp: BS Cloth Door")
 respBSFastDoor          = ptAttribResponder(18, "resp: BS Fast Door", ['0', '1', '2', '3', '4', '5', '6'])
 respBSTicMarks          = ptAttribResponder(19, "resp: BS Tic Marks", ['1', '2', '3', '4', '5', '6', '7'])
-respBSDoorOps           = ptAttribResponder(20, "resp: BS Door Ops", ['open', 'close'])
-respBSSymbolSpin        = ptAttribResponder(21, "resp: BS Symbol Spin", ['fwdstart', 'fwdstop', 'bkdstart', 'bkdstop'])
+respBSDoorOps           = ptAttribResponder(20, "resp: BS Door Ops", ['open', 'close'], netPropagate=0)
+respBSSymbolSpin        = ptAttribResponder(21, "resp: BS Symbol Spin", ['fwdstart', 'fwdstop', 'bkdstart', 'bkdstop'], netPropagate=0)
 
-animBlueSpiral          = ptAttribAnimation(22, "anim: Blue Spiral", netForce=1)
+animBlueSpiral          = ptAttribAnimation(22, "anim: Blue Spiral")
 evntBSBeginning         = ptAttribActivator(23, "evnt: Blue Spiral Beginning")
 
 SDLBSKey                = ptAttribString(24, "SDL: BS Key")
@@ -193,8 +193,8 @@ class xBlueSpiral(ptResponder, object):
 
         # There's a bug in the door open responder that causes it to fastfwd open
         # the first time you open it in the age. We'll force it to clear itself up.
-        respBSDoorOps.run(self.key, state="open", fastforward=1, netPropagate=0)
-        respBSDoorOps.run(self.key, state="close", fastforward=1, netPropagate=0)
+        respBSDoorOps.run(self.key, state="open", fastforward=1)
+        respBSDoorOps.run(self.key, state="close", fastforward=1)
         self._doorOpen = False
 
         # Nobody here? Close the door and reset everything.
@@ -218,6 +218,12 @@ class xBlueSpiral(ptResponder, object):
                 self.running = False
             self._spinning = False
             PtDebugPrint("xBlueSpiral.OnServerInitComplete():\t... no one was here", level=kDebugDumpLevel)
+
+        # There is a bug in the Tsogal door... It starts in a weird state where it makes that annoying
+        # grinding sound. Let's reset it to the proper state if the game is not running.
+        if not self.running:
+            respBSSymbolSpin.run(self.key, state="bkdstart", fastforward=1)
+            respBSSymbolSpin.run(self.key, state="bkdstop", fastforward=1)
 
         # Need to generate the cloth map?
         cm = self.clothmap
@@ -258,12 +264,10 @@ class xBlueSpiral(ptResponder, object):
                     self.solution = self._GenerateClothSeq()
             else:
                 PtDebugPrint("xBlueSpiral.OnSDLNotify():\tGame Over.", level=kWarningLevel)
+                respBSSymbolSpin.run(self.key, state="fwdstop")
                 PtClearTimerCallbacks(self.key)
-                if self.hits == kNumCloths:
-                    respBSSymbolSpin.run(self.key, state="fwdstop")
+                if self.hits != kNumCloths:
                     PtAtTimeCallback(self.key, 0.0, kDoorSpinBackward)
-                else:
-                    respBSSymbolSpin.run(self.key, state="bkdstop", fastforward=1)
                     clkBSDoor.enableActivator() # just in case...
                 self.solution = None
                 self.hits = 0
@@ -349,6 +353,9 @@ class xBlueSpiral(ptResponder, object):
         if id == respBSDoorOps.id:
             self._doorOpen = True
             self._TurnOffTicks()
+            respBSSymbolSpin.run(self.key, state="bkdstop")
+            animBlueSpiral.animation.stop()
+            animBlueSpiral.animation.skipToBegin()
             return
 
         # Done rewinding the door spiral
@@ -439,11 +446,11 @@ class xBlueSpiral(ptResponder, object):
 
         if target.lower() == "bsdoor":
             if param.lower() == "open":
-                respBSDoorOps.run(self.key, state="open")
+                respBSDoorOps.run(self.key, state="open", netForce=1)
                 return
 
             if param.lower() == "close":
-                respBSDoorOps.run(self.key, state="close")
+                respBSDoorOps.run(self.key, state="close", netForce=1)
                 return
 
     def _FindClothId(self, id, seq):
