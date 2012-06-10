@@ -16,9 +16,6 @@ add_subdirectory(pfJournalBook)
 # pfKI is apparently just a historical oddity at this point
 # add_subdirectory(pfKI)
 add_subdirectory(pfLocalizationMgr)
-# This is missing required parts in other plasma libraries.
-# Also not referenced by any sln file
-# add_subdirectory(pfLoginDialog)
 add_subdirectory(pfMessage)
 add_subdirectory(pfPython)
 add_subdirectory(pfSecurePreloader)
