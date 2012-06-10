@@ -59,12 +59,12 @@ const wchar_t * NetProtocolToString (ENetProtocol protocol) {
         { kNetProtocolDebug,        L"kNetProtocolDebug" },
 
         // Client connections
-        { kNetProtocolCli2Csr,      L"GateKeeper Server" },
-        { kNetProtocolCli2Csr,      L"Csr Server" },
-        { kNetProtocolCli2Auth,     L"Auth Server" },
-        { kNetProtocolCli2Game,     L"Game Server" },
-        { kNetProtocolCli2File,     L"File Server" },
-        { kNetProtocolCli2Unused_01, L"kNetProtocolCli2Unused_01" },
+        { kNetProtocolCli2GateKeeper, L"GateKeeper Server" },
+        { kNetProtocolCli2Unused_02,  L"kNetProtocolCli2Unused_02" },
+        { kNetProtocolCli2Auth,       L"Auth Server" },
+        { kNetProtocolCli2Game,       L"Game Server" },
+        { kNetProtocolCli2File,       L"File Server" },
+        { kNetProtocolCli2Unused_01,  L"kNetProtocolCli2Unused_01" },
 
         // Server connections
         { kNetProtocolSrvConn,      L"kNetProtocolSrvConn" },

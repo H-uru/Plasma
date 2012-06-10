@@ -1,5 +1,3 @@
-#add_subdirectory(Migration)
-#add_subdirectory(plDatMerger)
 add_subdirectory(plLocalizationEditor)
 add_subdirectory(plResBrowser)
 
@@ -15,7 +13,6 @@ if(3dsm_BUILD_PLUGIN)
     add_subdirectory(MaxConvert)
     add_subdirectory(MaxExport)
     add_subdirectory(MaxMain)
-    #add_subdirectory(MaxMtlUpdate)
     add_subdirectory(MaxPlasmaLights)
     add_subdirectory(MaxPlasmaMtls)
     #add_subdirectory(MaxSceneViewer) # NOTE: Uses Plasma classes that do not exist

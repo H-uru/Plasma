@@ -58,5 +58,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNglAuth.h"
 #include "plNglGame.h"
 #include "plNglFile.h"
-#include "plNglCsr.h"
 #include "plNglGateKeeper.h"

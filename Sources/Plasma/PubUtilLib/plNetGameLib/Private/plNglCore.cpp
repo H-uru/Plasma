@@ -148,7 +148,6 @@ void NetClientInitialize () {
         AuthInitialize();
         GameInitialize();
         FileInitialize();
-        CsrInitialize();
         GateKeeperInitialize();
     }
 }
@@ -165,14 +164,12 @@ void NetClientDestroy (bool wait) {
         s_errorProc = nil;
 
         GateKeeperDestroy(false);
-        CsrDestroy(false);
         FileDestroy(false);
         GameDestroy(false);
         AuthDestroy(false);
         NetTransDestroy(false);
         if (wait) {
             GateKeeperDestroy(true);
-            CsrDestroy(true);
             FileDestroy(true);
             GameDestroy(true);
             AuthDestroy(true);
