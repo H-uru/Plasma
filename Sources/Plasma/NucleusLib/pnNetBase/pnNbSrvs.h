@@ -68,7 +68,7 @@ enum ESrvType {
     kSrvTypeLog         = 9,
     kSrvTypeDll         = 10,
     kSrvTypeScore       = 11,
-    kSrvTypeCsr         = 12,
+    kSrvTypeCsr         = 12, // DEAD
     kSrvTypeGateKeeper  = 13,
 
     kNumSrvTypes,
@@ -89,9 +89,6 @@ void SetAuthSrvHostname (const char addr[]);
 
 unsigned GetFileSrvHostnames (const char*** addrs);   // returns addrCount
 void SetFileSrvHostname (const char addr[]);
-
-unsigned GetCsrSrvHostnames (const char*** addrs);    // returns addrCount
-void SetCsrSrvHostname (const char addr[]);
 
 unsigned GetGateKeeperSrvHostnames (const char*** addrs); // returns addrCount
 void SetGateKeeperSrvHostname (const char addr[]);

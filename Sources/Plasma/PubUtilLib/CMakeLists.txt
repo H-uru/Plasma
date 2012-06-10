@@ -10,14 +10,10 @@ add_subdirectory(plClientResMgr)
 add_subdirectory(plClipboard)
 add_subdirectory(plCompression)
 add_subdirectory(plContainer)
-#add_subdirectory(plDeviceSelector)     # Not being used by any current slns
 add_subdirectory(plDrawable)
 add_subdirectory(plFile)
-#add_subdirectory(plGClip)              # Not being used by any current slns
-#add_subdirectory(plGeometry)           # Not being used by any current slns
 add_subdirectory(plGImage)
 add_subdirectory(plGLight)
-#add_subdirectory(plGRenderProcs)       # Not being used by any current slns
 add_subdirectory(plInputCore)
 add_subdirectory(plInterp)
 add_subdirectory(plIntersect)

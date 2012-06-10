@@ -162,8 +162,8 @@ enum EConnType {
     kConnTypeSrvToState             = 17,
     kConnTypeSrvToLog               = 18,
     kConnTypeSrvToScore             = 19,
-    kConnTypeCliToCsr               = 20,
-    kConnTypeSimpleNet              = 21,
+    kConnTypeCliToCsr               = 20, // DEAD
+    kConnTypeSimpleNet              = 21, // DEAD
     kConnTypeCliToGateKeeper        = 22,
     
     // Text connections
