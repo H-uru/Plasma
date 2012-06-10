@@ -2073,8 +2073,8 @@ class ptCritterBrain:
         """Returns how far away the brain can hear."""
         pass
 
-    def getLocallyControlled(self):
-        """Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to tell the brain this using setLocallyControlled()."""
+    def getSceneObject(self):
+        """Returns the ptSceneObject this brain controls."""
         pass
 
     def getSightCone(self):
@@ -2123,10 +2123,6 @@ class ptCritterBrain:
 
     def setHearingDistance(self,dist):
         """Set how far away the brain can hear (360 degree field of hearing)."""
-        pass
-
-    def setLocallyControlled(self,local):
-        """Tells the brain that we are the ones making all the AI decisions, and to prop location and other information to the server."""
         pass
 
     def setSightCone(self,radians):
