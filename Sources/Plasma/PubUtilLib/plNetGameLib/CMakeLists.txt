@@ -9,8 +9,6 @@ set(plNetGameLib_PRIVATE
     Private/plNglAuth.cpp
     Private/plNglCore.h
     Private/plNglCore.cpp
-    Private/plNglCsr.h
-    Private/plNglCsr.cpp
     Private/plNglFile.h
     Private/plNglFile.cpp
     Private/plNglGame.h

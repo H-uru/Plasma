@@ -76,10 +76,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #  include "Protocols/Cli2Game/pnNpCli2Game.h"
 # endif
 
-# ifdef USES_PROTOCOL_CLI2CSR
-#  include "Protocols/Cli2Csr/pnNpCli2Csr.h"
-# endif
-
 # ifdef USES_PROTOCOL_CLI2GATEKEEPER
 #  include "Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h"
 # endif

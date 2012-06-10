@@ -51,11 +51,6 @@ static const unsigned kAuthDhGValue = 41;
 extern uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8];
 extern uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8];
 
-// CSR Server
-static const unsigned kCsrDhGValue = 97;
-extern uint8_t kCsrDhNData[kNetDiffieHellmanKeyBits / 8];
-extern uint8_t kCsrDhXData[kNetDiffieHellmanKeyBits / 8];
-
 // Game Server
 static const unsigned kGameDhGValue = 73;
 extern uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8];

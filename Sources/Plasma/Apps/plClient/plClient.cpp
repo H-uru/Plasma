@@ -144,7 +144,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatar/plAGAnimInstance.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "plClientKey/plClientKey.h"
 
 #include "plQuality.h"
 #include "plGLight/plShadowCaster.h"
@@ -155,8 +154,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfSecurePreloader/pfSecurePreloader.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
-
-#include "pfCsrSrv/pfCsrSrv.h"
 
 #include "plTweak.h"
 
@@ -262,8 +259,6 @@ hsBool plClient::Shutdown()
 {
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
     delete fProgressBar;
-
-    CsrSrvShutdown();
 
     // Just in case, clear this out (trying to fix a crash bug where this is still active at shutdown)
     plDispatch::SetMsgRecieveCallback(nil);
@@ -2544,8 +2539,6 @@ void plClient::ICompleteInit () {
     plClientMsg* clientMsg = new plClientMsg(plClientMsg::kInitComplete);
     clientMsg->SetBCastFlag(plMessage::kBCastByType);
     clientMsg->Send();
-
-    CsrSrvInitialize();
 }
 
 //============================================================================

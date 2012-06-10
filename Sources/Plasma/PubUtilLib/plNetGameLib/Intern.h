@@ -120,19 +120,6 @@ unsigned FileGetConnId ();
 
 /*****************************************************************************
 *
-*   Csr
-*
-***/
-
-void CsrInitialize ();
-void CsrDestroy (bool wait);
-
-bool CsrQueryConnected ();
-unsigned CsrGetConnId ();
-
-
-/*****************************************************************************
-*
 *   GateKeeper
 *
 ***/
@@ -209,11 +196,6 @@ enum ETransType {
     kFileRcvdFileDownloadChunkTrans,
     
     //========================================================================
-    // NglCsr.cpp transactions
-    kCsrConnectedNotifyTrans,
-    kCsrLoginTrans,
-    
-    //========================================================================
     // NglCore.cpp transactions
     kReportNetErrorTrans,
 
@@ -280,10 +262,6 @@ static const char * s_transTypes[] = {
     "ManifestRequestTrans",
     "DownloadRequestTrans",
     "FileRcvdFileDownloadChunkTrans",
-
-    // NglCsr.cpp
-    "CsrConnectedNotifyTrans",
-    "CsrLoginTrans",
     
     // NglCore.cpp
     "ReportNetErrorTrans",
@@ -300,7 +278,6 @@ static long s_perfTransCount[kNumTransTypes];
 
 namespace Auth { struct CliAuConn; }
 namespace Game { struct CliGmConn; }
-namespace Csr  { struct CliCsConn; }
 namespace File { struct CliFileConn; }
 namespace GateKeeper { struct CliGkConn; }
 
@@ -363,17 +340,6 @@ struct NetFileTrans : NetTrans {
     bool AcquireConn ();
     void ReleaseConn ();
 };
-
-struct NetCsrTrans : NetTrans {
-    Csr::CliCsConn * m_conn;
-
-    NetCsrTrans (ETransType transType);
-    ~NetCsrTrans ();
-
-    bool AcquireConn ();
-    void ReleaseConn ();
-};
-
 
 struct NetGateKeeperTrans : NetTrans {
     GateKeeper::CliGkConn * m_conn;
