@@ -217,7 +217,6 @@ hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
 void ErrorAssert (int line, const char file[], const char fmt[], ...);
-void ErrorMinimizeAppWindow ();
 
 bool DebugIsDebuggerPresent ();
 void DebugBreakIfDebuggerPresent ();
