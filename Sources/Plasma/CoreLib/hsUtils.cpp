@@ -70,9 +70,34 @@ char *hsScalarToStr(float s)
     return hsStrBuf;
 }
 
+class hsMinimizeClientGuard
+{
+#ifdef CLIENT
+    hsWindowHndl fWnd;
+
+public:
+    hsMinimizeClientGuard()
+    {
+#ifdef HS_BUILD_FOR_WIN32
+        fWnd = GetActiveWindow();
+        // If the application's topmost window is fullscreen, minimize it before displaying an error
+        if ((GetWindowLong(fWnd, GWL_STYLE) & WS_POPUP) != 0)
+            ShowWindow(fWnd, SW_MINIMIZE);
+#endif // HS_BUILD_FOR_WIN32
+    }
+
+    ~hsMinimizeClientGuard()
+    {
+#ifdef HS_BUILD_FOR_WIN32
+        ShowWindow(fWnd, SW_RESTORE);
+#endif // HS_BUILD_FOR_WIN32
+    }
+#endif // CLIENT
+};
+
 bool hsMessageBox_SuppressPrompts = false;
 
-int hsMessageBoxWithOwner(void * owner, const char message[], const char caption[], int kind, int icon)
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
@@ -106,10 +131,8 @@ int hsMessageBoxWithOwner(void * owner, const char message[], const char caption
     else
         flags |= MB_ICONERROR;
 
-#ifdef CLIENT
-    ErrorMinimizeAppWindow();
-#endif
-    int ans = MessageBox((HWND)owner, message, caption, flags);
+    hsMinimizeClientGuard guard;
+    int ans = MessageBox(owner, message, caption, flags);
 
     switch (ans)
     {
@@ -126,7 +149,7 @@ int hsMessageBoxWithOwner(void * owner, const char message[], const char caption
 #endif
 }
 
-int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t caption[], int kind, int icon)
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
@@ -160,10 +183,8 @@ int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t c
     else
         flags |= MB_ICONERROR;
     
-#ifdef CLIENT
-    ErrorMinimizeAppWindow();
-#endif
-    int ans = MessageBoxW((HWND)owner, message, caption, flags);
+    hsMinimizeClientGuard guard;
+    int ans = MessageBoxW(owner, message, caption, flags);
     
     switch (ans)
     {
@@ -182,20 +203,12 @@ int hsMessageBoxWithOwner(void * owner, const wchar_t message[], const wchar_t c
 
 int hsMessageBox(const char message[], const char caption[], int kind, int icon)
 {
-#if HS_BUILD_FOR_WIN32
-    return hsMessageBoxWithOwner(nil/*GetActiveWindow()*/,message,caption,kind,icon);
-#else
-    return hsMessageBoxWithOwner(nil,message,caption,kind,icon);
-#endif
+    return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
 int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon)
 {
-#if HS_BUILD_FOR_WIN32
-    return hsMessageBoxWithOwner(nil/*GetActiveWindow()*/,message,caption,kind,icon);
-#else
-    return hsMessageBoxWithOwner(nil,message,caption,kind,icon);
-#endif
+    return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
 inline hsBool hsCompare(float a, float b, float delta)

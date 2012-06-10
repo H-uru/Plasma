@@ -175,23 +175,6 @@ void DebugMsg(const char fmt[], ...)
     }
 }
 
-void ErrorMinimizeAppWindow () 
-{
-#ifdef HS_BUILD_FOR_WIN32
-    // If the application's topmost window is a fullscreen
-    // popup window, minimize it before displaying an error
-    HWND appWindow = GetActiveWindow();
-    if ( ((GetWindowLong(appWindow, GWL_STYLE) & WS_POPUP) != 0) )
-        SetWindowPos(
-            appWindow,
-            HWND_NOTOPMOST,
-            0, 0, // position
-            0, 0, // size
-            SWP_HIDEWINDOW | SWP_NOMOVE | SWP_NOSIZE
-        );
-#endif
-}
-
 ///////////////////////////////////////////////////////////////////
 
 

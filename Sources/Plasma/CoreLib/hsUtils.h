@@ -126,8 +126,8 @@ enum {          // RETURN VALUES FROM hsMessageBox
 extern bool hsMessageBox_SuppressPrompts;
 int hsMessageBox(const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(void* owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(void* owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 
 inline hsBool hsCompare(float a, float b, float delta=0.0001);
 
@@ -217,7 +217,6 @@ hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
 void ErrorAssert (int line, const char file[], const char fmt[], ...);
-void ErrorMinimizeAppWindow ();
 
 bool DebugIsDebuggerPresent ();
 void DebugBreakIfDebuggerPresent ();
