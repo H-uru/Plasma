@@ -2700,7 +2700,7 @@ PyObject* cyMisc::LoadAvatarModel(const char* modelName, pyKey& spawnPoint, cons
 
 void cyMisc::UnLoadAvatarModel(pyKey& avatar)
 {
-    plAvatarMgr::GetInstance()->UnLoadAvatar(avatar.getKey(), false);
+    plAvatarMgr::GetInstance()->UnLoadAvatar(avatar.getKey(), false, true);
 }
 
 void cyMisc::ForceCursorHidden()
@@ -2868,14 +2868,7 @@ PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
             Py_DECREF(tuple);
         }
     }
-
-    if (PyList_Size(avList) > 0)
-        return avList;
-    else
-    {
-        Py_DECREF(avList);
-        PYTHON_RETURN_NONE;
-    }
+    return avList;
 }
 
 void cyMisc::ForceVaultNodeUpdate(unsigned nodeId)

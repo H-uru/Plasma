@@ -374,7 +374,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spa
     return cyMisc::LoadAvatarModel(modelName, *key, userStr.c_str());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nUnloads the specified avatar model")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nForcibly unloads the specified avatar model.\n"
+            "Do not use this method unless you require fine-grained control of avatar unloading.")
 {
     PyObject* keyObj = NULL;
     if (!PyArg_ParseTuple(args, "O", &keyObj))

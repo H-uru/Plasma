@@ -223,6 +223,7 @@ void plNCAgeLeaver::ExecNextOp () {
             plAgeLoader::GetInstance()->UnloadAge();            // unload age
             nc->ISendCameraReset(false/*leaving age*/);         // reset camera
             nc->IUnloadRemotePlayers();                         // unload other players
+            nc->IUnloadNPCs();                                  // unload non-player clones
 
             if (NetCommNeedToLoadAvatar())
                 am->UnLoadLocalPlayer();

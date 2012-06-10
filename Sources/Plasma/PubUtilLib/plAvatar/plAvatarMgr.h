@@ -115,15 +115,21 @@ public:
     plKey LoadPlayer(const char* name, const char *account);
     plKey LoadPlayer(const char* name, const char *account, const char *linkName);
     plKey LoadAvatar(const char *name, const char *accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask, const char *userStr = nil);
-    /** Unload an avatar - player or npc - both locally and remotely. */
-    void UnLoadAvatar(plKey avKey, bool isPlayer);
+
+    /**
+     * Unload an avatar clone
+     *
+     * This unloads the clone of an avatar (remote player or NPC) from our local game.
+     * The avatar clone can be unloaded globally by setting netPropagate; however, this
+     * is highly discouraged.
+     */
+    void UnLoadAvatar(const plKey& avKey, bool isPlayer, bool netPropagate=false) const;
     /** send our (already loaded) local player to newly-associated clients - used when linking */
     void PropagateLocalPlayer(int spawnPoint = -1);
     /** Unload our local player on other machines because we're leaving this age.
         The player will stay around on our local machine, though. */
     bool UnPropagateLocalPlayer();
 
-    void UnLoadRemotePlayer(plKey playerKey);
     void UnLoadLocalPlayer();
 
     void AddAvatar(plArmatureMod *avatar);

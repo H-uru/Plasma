@@ -58,7 +58,6 @@ public:
     GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
     
     virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject *so);
 //  hsBool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream *stream, hsResMgr *mgr);
