@@ -1472,6 +1472,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         tempConsole.ExecuteFile(gipath);
     }
 
+#ifdef PLASMA_EXTERNAL_RELEASE
     // If another instance is running, exit.  We'll automatically release our
     // lock on the mutex when our process exits
     HANDLE hOneInstance = CreateMutex(nil, FALSE, "UruExplorer");
@@ -1498,6 +1499,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         }
         return PARABLE_NORMAL_EXIT;
     }
+#endif
 
     FILE *serverIniFile = _wfopen(serverIni, L"rb");
     if (serverIniFile)
