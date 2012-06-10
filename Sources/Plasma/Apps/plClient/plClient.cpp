@@ -144,7 +144,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatar/plAGAnimInstance.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "plClientKey/plClientKey.h"
 
 #include "plQuality.h"
 #include "plGLight/plShadowCaster.h"
