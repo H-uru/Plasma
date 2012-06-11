@@ -34,7 +34,10 @@ set(pnNetCommon_SOURCES
 )
 
 add_library(pnNetCommon STATIC ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})
-target_link_libraries(pnNetCommon pnAddrInfo plStatusLog)
+target_link_libraries(pnNetCommon plStatusLog)
+if(WIN32)
+    target_link_libraries(pnNetCommon Ws2_32)
+endif(WIN32)
 
 source_group("Header Files" FILES ${pnNetCommon_HEADERS})
 source_group("Source Files" FILES ${pnNetCommon_SOURCES})
