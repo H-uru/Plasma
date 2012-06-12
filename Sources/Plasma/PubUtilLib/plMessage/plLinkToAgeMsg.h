@@ -58,6 +58,13 @@ class hsResMgr;
 
 class plLinkToAgeMsg : public plMessage
 {
+    enum
+    {
+        kMuteLinkOutSfx = 1<<0,
+        kMuteLinkInSfx  = 1<<1,
+    };
+
+    uint8_t fFlags;
     plAgeLinkStruct     fAgeLink;
     char* fLinkInAnimName;
 
@@ -71,6 +78,10 @@ public:
 
     plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
     const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
+
+    void PlayLinkSfx(bool linkIn = true, bool linkOut = true);
+    bool PlayLinkInSfx() const { return (fFlags & kMuteLinkInSfx) == 0; }
+    bool PlayLinkOutSfx() const { return (fFlags & kMuteLinkOutSfx) == 0; }
 
     const char * GetLinkInAnimName() { return fLinkInAnimName; }
     void SetLinkInAnimName(const char* name) { delete [] fLinkInAnimName; fLinkInAnimName = hsStrcpy(name); }
@@ -117,12 +128,18 @@ public:
 class plLinkEffectsTriggerMsg : public plMessage
 {
 protected:
+    enum
+    {
+        kMuteLinkSfx = 1<<0
+    };
+
     bool fLeavingAge;
     plKey fLinkKey;
     plKey fLinkInAnimKey;
     int fInvisLevel;
+    int fFlags;
 public:
-    plLinkEffectsTriggerMsg() : fLeavingAge(true), fLinkKey(nil), fLinkInAnimKey(nil), fEffects(0), fInvisLevel(0) {  }
+    plLinkEffectsTriggerMsg() : fLeavingAge(true), fLinkKey(nil), fLinkInAnimKey(nil), fEffects(0), fInvisLevel(0), fFlags(0) {  }
     ~plLinkEffectsTriggerMsg();
 
     CLASSNAME_REGISTER( plLinkEffectsTriggerMsg );
@@ -139,6 +156,9 @@ public:
 
     void    SetLinkInAnimKey(plKey &key);
     plKey   GetLinkInAnimKey() { return fLinkInAnimKey; }
+
+    void    MuteLinkSfx(bool mute);
+    bool    MuteLinkSfx() const { return (fFlags & kMuteLinkSfx) != 0; }
     
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);

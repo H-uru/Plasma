@@ -100,6 +100,7 @@ struct NlmOpWaitOp : NlmOp {
 
 struct NlmJoinAgeOp : NlmOp {
     NetCommAge  age;
+    bool muteSfx;
     NlmJoinAgeOp ()
     : NlmOp(kNlmOpJoinAgeOp)
     { }
@@ -107,6 +108,7 @@ struct NlmJoinAgeOp : NlmOp {
 
 struct NlmLeaveAgeOp : NlmOp {
     bool    quitting;
+    bool    muteSfx;
     NlmLeaveAgeOp ()
     : NlmOp(kNlmOpLeaveAgeOp), quitting(false)
     { }
@@ -237,6 +239,7 @@ void plNetLinkingMgr::ExecNextOp () {
             NCAgeJoinerCreate(
                 &s_ageJoiner,
                 joinAgeOp->age,
+                joinAgeOp->muteSfx,
                 NCAgeJoinerCallback,
                 waitOp
             );
@@ -258,6 +261,7 @@ void plNetLinkingMgr::ExecNextOp () {
             NCAgeLeaverCreate(
                 &s_ageLeaver,
                 leaveAgeOp->quitting,
+                leaveAgeOp->muteSfx,
                 NCAgeLeaverCallback,
                 waitOp
             );
@@ -419,12 +423,14 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
         }
         // Queue leave op
         NlmLeaveAgeOp * leaveAgeOp = new NlmLeaveAgeOp;
+        leaveAgeOp->muteSfx = !msg->PlayLinkOutSfx();
         QueueOp(leaveAgeOp);
     }
 
     // Queue join op
     NlmJoinAgeOp * joinAgeOp = new NlmJoinAgeOp;
     joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+    joinAgeOp->muteSfx = !msg->PlayLinkInSfx();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
         GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
