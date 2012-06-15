@@ -40,62 +40,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifdef _HSWINDOWS_H
-#   error "Do not include hsWindows.h directly--use HeadSpin.h"
-#endif // _HSWINDOWS_H
-#define   _HSWINDOWS_H
+#include "HeadSpin.h"
+#include "hsExceptions.h"
+#include "hsRefCnt.h"
 
-#if HS_BUILD_FOR_WIN32
+hsRefCnt::~hsRefCnt()
+{
+    hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
+}
 
-    // 4244: Conversion
-    // 4305: Truncation
-    // 4503: 'identifier' : decorated name length exceeded, name was truncated
-    // 4018: signed/unsigned mismatch
-    // 4786: 255 character debug limit
-    // 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
-    // 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-#   ifdef _MSC_VER
-#      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
-#   endif // _MSC_VER
+void hsRefCnt::Ref()
+{
+    fRefCnt++;
+}
 
-    // Terrible hacks for MinGW because they don't have a reasonable
-    // default for the Windows version. We cheat and say it's XP.
-#   ifdef __MINGW32__
-#       undef _WIN32_WINNT
-#       define _WIN32_WINNT 0x501
-#       undef _WIN32_IE
-#       define _WIN32_IE    0x400
-#   endif
+void hsRefCnt::UnRef()
+{
+    hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
 
-    // Windows.h includes winsock.h (winsocks 1), so we need to manually include winsock2 
-    // and tell Windows.h to only bring in modern headers
-#   ifndef MAXPLUGINCODE
-#      include <WinSock2.h>
-#      include <ws2tcpip.h>
-#   endif // MAXPLUGINCODE
-#   define WIN32_LEAN_AND_MEAN
-#   ifndef NOMINMAX
-#      define NOMINMAX // Needed to prevent NxMath conflicts
-#   endif
-#   include <Windows.h>
-    
-    typedef HWND hsWindowHndl;
-    typedef HINSTANCE hsWindowInst;
-#else
-    typedef int32_t* hsWindowHndl;
-    typedef int32_t* hsWindowInst;
-#endif // HS_BUILD_FOR_WIN32
-
-/****************************************************************************
-*
-*   max/min inline functions
-*
-***/
-
-#ifdef max
-#undef max
-#endif
-
-#ifdef min
-#undef min
-#endif
+    if (fRefCnt == 1)   // don't decrement if we call delete
+        delete this;
+    else
+        --fRefCnt;
+}
