@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENT_BASE_H
 #define PL_COMPONENT_BASE_H
 
+#include "HeadSpin.h"
 #include "Max.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
