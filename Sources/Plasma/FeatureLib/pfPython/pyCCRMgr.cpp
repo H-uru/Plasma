@@ -45,5 +45,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-
+#pragma hdrstop
 #include "pfCCR/plCCRMgr.h"

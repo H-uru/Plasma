@@ -39,10 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyVaultPlayerInfoListNode.h"
 
-#include "plVault/plVault.h"
 #include <Python.h>
+#pragma hdrstop
+
+#include "pyVaultPlayerInfoListNode.h"
+#include "plVault/plVault.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultPlayerInfoListNode, pyVaultPlayerInfoListNode);

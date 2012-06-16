@@ -45,21 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyVaultPlayerNode.h"
-#ifndef BUILDING_PYPLASMA
-#include "pyVault.h"
-#endif
-
-#include "pfPython/pyAgeInfoStruct.h"
-#include "pfPython/pyVaultAgeLinkNode.h"
-#include "pfPython/pyVaultPlayerInfoNode.h"
-#include "pfPython/pyVaultPlayerInfoListNode.h"
-#include "pfPython/pyVaultFolderNode.h"
-#include "pfPython/pyVaultChronicleNode.h"
-#include "pfPython/pyVaultSDLNode.h"
-#include "pfPython/pyAgeLinkStruct.h"
-
+#include "pyAgeInfoStruct.h"
+#include "pyVaultAgeLinkNode.h"
+#include "pyVaultPlayerInfoNode.h"
+#include "pyVaultPlayerInfoListNode.h"
+#include "pyVaultFolderNode.h"
+#include "pyVaultChronicleNode.h"
+#include "pyVaultSDLNode.h"
+#include "pyAgeLinkStruct.h"
 #include "plVault/plVault.h"
+#ifndef BUILDING_PYPLASMA
+#   include "pyVault.h"
+#endif
 
 //============================================================================
 static PyObject * GetPlayerVaultFolder (unsigned folderType) {

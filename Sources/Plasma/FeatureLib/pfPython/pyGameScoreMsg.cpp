@@ -40,7 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plString.h"
+#pragma hdrstop
+
 #include "pyGameScoreMsg.h"
+#include "pfMessage/pfGameScoreMsg.h"
 #include "pyGameScore.h"
 
 PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)

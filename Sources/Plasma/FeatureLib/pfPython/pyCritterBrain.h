@@ -42,15 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyCritterBrain_h_
 #define _pyCritterBrain_h_
 
-#include <Python.h>
 #include "pyGlueHelpers.h"
-
-#include "pyKey.h"
-
 #include <string>
-#include "hsGeometry3.h"
 
 class plAvBrainCritter;
+struct hsPoint3;
 
 // simply here so we can pass our message types on to python
 class pyAIMsg
@@ -77,8 +73,8 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    hsBool operator==(const pyCritterBrain& other) const;
-    hsBool operator!=(const pyCritterBrain& other) const {return !(*this == other);}
+    bool operator==(const pyCritterBrain& other) const;
+    bool operator!=(const pyCritterBrain& other) const {return !(*this == other);}
 
     void AddReceiver(pyKey& newReceiver);
     void RemoveReceiver(pyKey& oldReceiver);

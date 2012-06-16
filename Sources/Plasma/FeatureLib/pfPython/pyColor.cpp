@@ -39,6 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#pragma hdrstop
 #include "pyColor.h"
 
 pyColor::pyColor(float r, float g, float b, float a)

@@ -39,6 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "pyCritterBrain.h"
 #include "pyGeometry3.h"
 #include "pySceneObject.h"
@@ -48,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyCritterBrain::pyCritterBrain(): fBrain(nil) {}
 
-hsBool pyCritterBrain::operator==(const pyCritterBrain& other) const
+bool pyCritterBrain::operator==(const pyCritterBrain& other) const
 {
     // pointer compare
     return fBrain == other.fBrain;

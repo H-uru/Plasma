@@ -57,15 +57,17 @@ class pyColor;
 class pyAgeInfoStruct;
 class pyPoint3;
 
-#include <Python.h>
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-#include "pnUtils/pnUtils.h"
+#include <vector>
 
 class pyGUIDialog;
 class plPipeline;
 class plDisplayMode;
 struct PipelineParams;
+struct Uuid;
+
+typedef struct _object PyObject;
+typedef struct PyMethodDef PyMethodDef;
 
 class cyMisc
 {

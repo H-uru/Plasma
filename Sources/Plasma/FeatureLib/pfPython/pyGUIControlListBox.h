@@ -48,15 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                      attached to a GUIControl (such as Button, ListBox, etc.)
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "hsTemplates.h"
-
-#include "hsStlUtils.h"
-#include "pyKey.h"
 #include "pyGUIControl.h"
-
 #include "pyGlueHelpers.h"
+#include <string>
 
 
 class pyColor;

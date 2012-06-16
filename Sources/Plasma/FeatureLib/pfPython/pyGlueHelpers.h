@@ -42,11 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyGlueHelpers_h_
 #define _pyGlueHelpers_h_
 
-#include <Python.h>
+class plString;
+class pyKey;
+typedef struct _object PyObject;
+typedef struct _typeobject PyTypeObject;
+typedef struct PyMethodDef PyMethodDef;
 
 // Useful string functions
-class plString;
-
 plString PyString_AsStringEx(PyObject* obj);
 bool PyString_CheckEx(PyObject* obj);
 PyObject* PyUnicode_FromStringEx(const plString& str);

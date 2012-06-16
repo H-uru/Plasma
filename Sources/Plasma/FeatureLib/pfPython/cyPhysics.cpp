@@ -39,9 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "plgDispatch.h"
+#include "pnKeyedObject/plKey.h"
+#include "pyKey.h"
+#include "hsQuat.h"
+#pragma hdrstop
+
 #include "cyPhysics.h"
 
-#include "plgDispatch.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plWarpMsg.h"
 #include "plMessage/plSimInfluenceMsg.h"
@@ -51,11 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGeometry3.h"
 #include "pyMatrix44.h"
-#include "pyKey.h"
-#include "hsQuat.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "pnKeyedObject/plKey.h"
 
 cyPhysics::cyPhysics(plKey sender, plKey recvr)
 {

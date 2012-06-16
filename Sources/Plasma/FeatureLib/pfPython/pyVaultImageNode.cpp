@@ -45,15 +45,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <Python.h>
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "plString.h"
+#pragma hdrstop
+
 #include "pyVaultImageNode.h"
 #ifndef BUILDING_PYPLASMA
-#include "pyVault.h"
+#   include "pyVault.h"
 #endif
 #include "pyImage.h"
-#include "plPipeline.h"
 #include "cyMisc.h"
 
-#include "hsResMgr.h"
 #include "plGImage/plMipmap.h"
 #include "plVault/plVault.h"
 #include "pnMessage/plRefMsg.h"

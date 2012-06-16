@@ -47,15 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultAgeLinkNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-
 #include "pyGlueHelpers.h"
-
 #include "pyVaultNode.h"
 #include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
+#include <string>
 
 class pyVaultAgeInfoNode;
 struct RelVaultNode;

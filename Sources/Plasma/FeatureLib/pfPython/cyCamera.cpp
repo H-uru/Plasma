@@ -39,15 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "plgDispatch.h"
+#include "pyKey.h"
+#include "hsResMgr.h"
+#pragma hdrstop
+
 #include "cyCamera.h"
 
 #include "pnMessage/plCameraMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plUoid.h"
-#include "hsResMgr.h"
-#include "pyKey.h"
-#include "plgDispatch.h"
 
 #include "pfCamera/plVirtualCamNeu.h"
 #include "pfCamera/plCameraModifier.h"
