@@ -2181,9 +2181,9 @@ void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool 
 
     WindowActivate(false);
 
-    ResizeDisplayDevice(Width, Height, Windowed);
-
     fPipeline->ResetDisplayDevice(Width, Height, ColorDepth, Windowed, NumAASamples, MaxAnisotropicSamples, VSync);
+
+    ResizeDisplayDevice(Width, Height, Windowed);
 
     WindowActivate(true);
 }
@@ -2202,7 +2202,8 @@ void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
     uint32_t winStyle, winExStyle;
     if( Windowed )
     {
-        winStyle = WS_OVERLAPPEDWINDOW;
+        // WS_VISIBLE appears necessary to avoid leaving behind framebuffer junk when going from windowed to a smaller window
+        winStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     } else {
         winStyle = WS_POPUP;
