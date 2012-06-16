@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 
 #ifndef BUILDING_PYPLASMA
-#   include "pyGeometry3.h"
 #   include "plGImage/plMipmap.h"
 #endif
 

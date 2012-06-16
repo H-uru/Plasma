@@ -40,5 +40,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#pragma hdrstop
 #include "pyGeometry3.h"
+#pragma hdrstop

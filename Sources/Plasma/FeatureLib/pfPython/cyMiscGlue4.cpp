@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include "pyGeometry3.h"
 #include "pyKey.h"
 #include "plPipeline.h"
 #pragma hdrstop
@@ -49,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pySceneObject.h"
 #include "pyAgeInfoStruct.h"
-#include "pyGeometry3.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnUtils/pnUtils.h"
 

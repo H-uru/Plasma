@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "HeadSpin.h"
 #include "plgDispatch.h"
+#include "pyGeometry3.h"
 #include "pyKey.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
@@ -113,7 +114,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyCamera.h"
 #include "pyNotify.h"
 #include "cyAvatar.h"
-#include "pyGeometry3.h"
 #include "pyVault.h"
 #include "pyVaultNode.h"
 #include "pyVaultNodeRef.h"
