@@ -49,7 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include <marshal.h>
+#include "pyGeometry3.h"
 #include "pyKey.h"
+#include "pyMatrix44.h"
 #pragma hdrstop
 
 #include "cyPythonInterface.h"
@@ -64,8 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyCamera.h"
 #include "pyNotify.h"
 #include "cyAvatar.h"
-#include "pyGeometry3.h"
-#include "pyMatrix44.h"
 #include "pyColor.h"
 #include "pyDynamicText.h"
 #include "cyAnimation.h"

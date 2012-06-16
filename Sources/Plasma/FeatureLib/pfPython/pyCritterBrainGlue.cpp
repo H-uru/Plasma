@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include "pyGeometry3.h"
 #include "pyKey.h"
 #pragma hdrstop
 
 #include "pyCritterBrain.h"
 #include "pyEnum.h"
-#include "pyGeometry3.h"
 
 #include "plMessage/plAIMsg.h"
 

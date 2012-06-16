@@ -83,7 +83,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // pfPython Components
 // Be very careful to include only isolated components here
+#include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
+#include "pyMatrix44.h"
 
 #endif

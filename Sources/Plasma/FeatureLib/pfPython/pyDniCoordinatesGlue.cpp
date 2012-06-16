@@ -41,10 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include "pyGeometry3.h"
 #pragma hdrstop
 
 #include "pyDniCoordinates.h"
-#include "pyGeometry3.h"
 #include "plVault/plDniCoordinateInfo.h"
 
 // glue functions

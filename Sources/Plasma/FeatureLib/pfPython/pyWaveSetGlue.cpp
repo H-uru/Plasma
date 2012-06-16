@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include "pyGeometry3.h"
 #include "pyKey.h"
 #pragma hdrstop
 
 #include "pyColor.h"
-#include "pyGeometry3.h"
 #include "pyWaveSet.h"
 
 // glue functions

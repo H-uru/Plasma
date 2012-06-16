@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "plAudible.h"
 #include "plgDispatch.h"
+#include "pyGeometry3.h"
 #include "pyKey.h"
+#include "pyMatrix44.h"
 #include "plPhysical.h"
 #pragma hdrstop
 
-#include "pyMatrix44.h"
 #include "pySceneObject.h"
 #include "plResMgr/plResManager.h"
 
