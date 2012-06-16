@@ -47,13 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyStream   - a wrapper class to provide interface to the File stream stuff
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
+
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-
 #include "pyGlueHelpers.h"
-
+#include <string>
+#include <vector>
 
 class hsStream;
 

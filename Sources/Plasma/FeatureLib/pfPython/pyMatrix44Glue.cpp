@@ -39,9 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyMatrix44.h"
 
 #include <Python.h>
+#pragma hdrstop
+
+#include "pyMatrix44.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMatrix44, pyMatrix44);

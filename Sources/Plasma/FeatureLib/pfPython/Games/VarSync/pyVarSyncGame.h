@@ -48,13 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper for the VarSync game client
 //
-#include <Python.h>
-
-#include "pfGameMgr/pfGameMgr.h"
 
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCli.h"
-#include "../../pyKey.h"
 
 class pyVarSyncGame : public pyGameCli
 {

@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyColor   - the wrapper class for hsColorRGBA structure
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "hsColorRGBA.h"
 

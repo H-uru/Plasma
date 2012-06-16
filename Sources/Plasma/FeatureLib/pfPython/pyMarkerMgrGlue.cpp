@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyMarkerMgr.h"
 #include "pfMessage/pfMarkerMsg.h"
 #include "pyEnum.h"
-
-#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMarkerMgr, pyMarkerMgr);

@@ -39,10 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyDrawControl.h"
-#include "pyEnum.h"
 
 #include <Python.h>
+#pragma hdrstop
+
+#include "pyDrawControl.h"
+#include "pyEnum.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGamma2, args, "Params: gamma\nSet the gamma with gamma2 rules")
 {

@@ -45,39 +45,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <exception>
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyVaultNode.h"
 #ifndef BUILDING_PYPLASMA
-#include "pyVault.h"
+#   include "pyVault.h"
+#   include "pyVaultSystemNode.h"
+#   include "pnNetCommon/plNetApp.h"
+#   include "plNetClientComm/plNetClientComm.h"
 #endif
-#include "pyImage.h"
-#include "pyDniCoordinates.h"
-#include "pyVaultNodeRef.h"
-#include "pyVaultFolderNode.h"
-#include "pyVaultPlayerInfoListNode.h"
-#include "pyVaultImageNode.h"
-#include "pyVaultTextNoteNode.h"
-#include "pyVaultAgeLinkNode.h"
-#include "pyVaultChronicleNode.h"
-#include "pyVaultPlayerInfoNode.h"
-#include "pyVaultMarkerGameNode.h"
-#include "pyVaultAgeInfoNode.h"
-#include "pyVaultAgeInfoListNode.h"
-#include "pyVaultPlayerNode.h"
-#include "pyVaultSDLNode.h"
-#ifndef BUILDING_PYPLASMA
-#include "pyVaultSystemNode.h"
-#endif
+#   include "pyImage.h"
+#   include "pyDniCoordinates.h"
+#   include "pyVaultNodeRef.h"
+#   include "pyVaultFolderNode.h"
+#   include "pyVaultPlayerInfoListNode.h"
+#   include "pyVaultImageNode.h"
+#   include "pyVaultTextNoteNode.h"
+#   include "pyVaultAgeLinkNode.h"
+#   include "pyVaultChronicleNode.h"
+#   include "pyVaultPlayerInfoNode.h"
+#   include "pyVaultMarkerGameNode.h"
+#   include "pyVaultAgeInfoNode.h"
+#   include "pyVaultAgeInfoListNode.h"
+#   include "pyVaultPlayerNode.h"
+#   include "pyVaultSDLNode.h"
 
 #include "plGImage/plMipmap.h"
-
 #include "plVault/plVault.h"
-
-#ifndef BUILDING_PYPLASMA
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClientComm/plNetClientComm.h"
-#endif
-
-#include <exception>
 
 
 ///////////////////////////////////////////////////////////////////////////

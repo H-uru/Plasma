@@ -39,14 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-#include "pyPlayer.h"
-
-
 
 #include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "cyMisc.h"
+#include "pyGlueHelpers.h"
+#include "pyPlayer.h"
+
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flashes the client window if it is not focused");
 

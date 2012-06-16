@@ -42,9 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyCluster_h
 #define pyCluster_h
 
-#include <Python.h>
-#include "pyKey.h"
-
+#include "pnKeyedObject/plKey.h"
 #include "pyGlueHelpers.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -73,7 +71,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    void SetKey(pyKey& key) {fClusterKey = key.getKey();} // for python glue only, do NOT call
+    void SetKey(pyKey& key); // for python glue only, do NOT call
 
     void SetVisible(bool visible);
 };

@@ -39,10 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "pyKey.h"
+#include "plString.h"
+#pragma hdrstop
+
 #include "pyGameScore.h"
 #include "pyEnum.h"
 #include "pfGameScoreMgr/pfGameScoreMgr.h"
-#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGameScore, pyGameScore);

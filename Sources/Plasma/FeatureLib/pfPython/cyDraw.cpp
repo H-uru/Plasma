@@ -39,10 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyDraw.h"
 
+#include <Python.h>
 #include "plgDispatch.h"
-#include "hsBitVector.h"
+#pragma hdrstop
+
+#include "cyDraw.h"
 #include "pnMessage/plEnableMsg.h"
 
 cyDraw::cyDraw(plKey sender, plKey recvr)

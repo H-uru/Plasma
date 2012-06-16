@@ -46,9 +46,6 @@ class plPythonFileMod;
 class plStateDataRecord;
 class plSimpleStateVariable;
 
-#include <Python.h>
-
-#include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "plModifier/plSDLModifier.h"
 
@@ -58,7 +55,6 @@ class plSimpleStateVariable;
 // hack for plNetClientVNodeMgr single-player mode SDLHook stuff.
 plStateDataRecord * GetAgeSDL();
 
-class pyKey;
 //
 // The fields of a SDL record in Python format.
 // If the Python code changes a value an update is sent automatically

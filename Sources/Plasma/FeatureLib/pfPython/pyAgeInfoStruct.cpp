@@ -39,8 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyAgeInfoStruct.h"
-#include "hsStlUtils.h"
 #include "pnUtils/pnUtCrypt.h"
 #include "pnEncryption/plChecksum.h"
 

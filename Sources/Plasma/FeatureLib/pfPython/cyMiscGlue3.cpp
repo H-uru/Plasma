@@ -39,12 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-#include "pySceneObject.h"
 
 #include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "cyMisc.h"
+#include "pyGlueHelpers.h"
+#include "pySceneObject.h"
+#include "pnUtils/pnUtils.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
 {

@@ -19,6 +19,7 @@ set(pfPython_SOURCES
     cyParticleSys.cpp
     cyPhysics.cpp
     cyPythonInterface.cpp
+    Pch.cpp
     plPythonFileMod.cpp
     plPythonPack.cpp
     plPythonSDLModifier.cpp
@@ -104,6 +105,7 @@ set(pfPython_HEADERS
     cyParticleSys.h
     cyPhysics.h
     cyPythonInterface.h
+    Pch.h
     pfPythonCreatable.h
     plPythonFileMod.h
     plPythonHelpers.h
@@ -340,6 +342,7 @@ set(pfPython_GAMES
     ${pfPython_VSYNC}
 )
 
+use_precompiled_header(Pch.h Pch.cpp)
 add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE} ${pfPython_GAME_GLUE} ${pfPython_GAMES})
 
 source_group("Source Files" FILES ${pfPython_SOURCES})

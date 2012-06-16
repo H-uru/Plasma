@@ -39,11 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyGUIControlButton.h"
-#include "pyEnum.h"
+
+#include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
 
 #include "pfGameGUIMgr/pfGUIButtonMod.h"
-#include <Python.h>
+
+#include "pyEnum.h"
+#include "pyGUIControlButton.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlButton, pyGUIControlButton);

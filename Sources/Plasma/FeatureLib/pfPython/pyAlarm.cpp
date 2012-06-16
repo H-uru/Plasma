@@ -39,9 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyAlarm.h"
+
+#include <Python.h>
 #include "hsTimer.h"
-#include "hsStlUtils.h"
+#pragma hdrstop
+
+#include "pyAlarm.h"
 
 ////////////////////////////////////////////////////////////////////
 

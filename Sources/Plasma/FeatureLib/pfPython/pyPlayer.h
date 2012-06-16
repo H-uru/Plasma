@@ -48,14 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper for Python to the player data
 //
-#include <Python.h>
-
-#include "hsStlUtils.h"
-#include "pyKey.h"
 
 #include "pyGlueHelpers.h"
-
-class plKey;
+#include "pnKeyedObject/plKey.h"
 
 class pyPlayer
 {

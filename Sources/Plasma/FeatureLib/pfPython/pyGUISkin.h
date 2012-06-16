@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyKey.h"
-#include <Python.h>
+#include "pnKeyedObject/plKey.h"
 #include "pyGlueHelpers.h"
 
 class pyColor;

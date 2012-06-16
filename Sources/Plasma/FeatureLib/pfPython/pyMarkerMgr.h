@@ -47,10 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyMarkerMgr   - a wrapper class to provide interface to the pfMarkerMgr stuff
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-
 #include "pyGlueHelpers.h"
 
 class pyMarkerMgr

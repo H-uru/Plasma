@@ -46,12 +46,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This modifier will handle the interface to python code that has been file-ized.
 //
 //////////////////////////////////////////////////////////////////////////
+
+#include <locale>
+#include <Python.h>
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "pyKey.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
+
 #include "plPythonFileMod.h"
 
-#include "HeadSpin.h"
-#include "hsStream.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 #include "plResMgr/plKeyFinder.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plUoid.h"
@@ -100,7 +106,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 
 #include "cyPythonInterface.h"
-#include "pyKey.h"
 #include "cyDraw.h"
 #include "cyPhysics.h"
 #include "pySceneObject.h"
@@ -138,8 +143,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Games/pyGameMgrMsg.h"
 #include "Games/pyGameCliMsg.h"
 #include "pyGameScoreMsg.h"
-
-#include <locale>
 
 #include "plPythonSDLModifier.h"
 
