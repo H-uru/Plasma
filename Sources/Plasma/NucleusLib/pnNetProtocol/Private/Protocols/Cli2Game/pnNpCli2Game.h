@@ -65,7 +65,7 @@ enum {
     
     kNumCli2GameMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Game, kNumCli2GameMessages <= (uint16_t)-1);
+static_assert(kNumCli2GameMessages <= 0xFFFF, "Cli2Game message types overflow uint16");
 
 enum {
     // Global
@@ -80,7 +80,7 @@ enum {
     
     kNumGame2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Game, kNumGame2CliMessages <= (uint16_t)-1);
+static_assert(kNumGame2CliMessages <= 0xFFFF, "Game2Cli message types overflow uint16");
 
 
 //============================================================================

@@ -297,14 +297,6 @@ typedef hsColor32 hsRGBAColor32;
 # define  NULL_STMT  ((void)0)
 #endif
 
-
-//===========================================================================
-// Old COMPILER_ASSERT Macro
-// This DEPRECATED. Use static_assert instead!
-//===========================================================================
-#define COMPILER_ASSERT(expr) static_assert(expr, "old compiler assert failure")
-#define COMPILER_ASSERT_HEADER(prefix,expr) static_assert(expr, "old compiler assert failure")
-
 //===========================================================================
 template<class T>
 inline T max (const T & a, const T & b) {
