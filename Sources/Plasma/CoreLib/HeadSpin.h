@@ -108,7 +108,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
-#include <math.h>
 #include <stdarg.h>
 #include <stdint.h>
 
