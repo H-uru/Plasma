@@ -123,7 +123,6 @@ target_link_libraries(MaxPlasmaLights pnProduct)
 target_link_libraries(MaxPlasmaLights pnSceneObject)
 target_link_libraries(MaxPlasmaLights pnTimer)
 target_link_libraries(MaxPlasmaLights pnUtils)
-target_link_libraries(MaxPlasmaLights pnUtilsExe)
 target_link_libraries(MaxPlasmaLights pnUUID)
 
 if (WIN32)

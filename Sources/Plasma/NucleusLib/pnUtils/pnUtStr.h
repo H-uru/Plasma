@@ -61,9 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 inline char  CharLowerFast (char  ch) { return ((ch >=  'A') && (ch <=  'Z')) ? (char )(ch +  'a' -  'A') : ch; }
 inline wchar_t CharLowerFast (wchar_t ch) { return ((ch >= L'A') && (ch <= L'Z')) ? (wchar_t)(ch + L'a' - L'A') : ch; }
 
-inline char  CharUpperFast (char  ch) { return ((ch >=  'a') && (ch <=  'z')) ? (char )(ch +  'A' -  'a') : ch; }
-inline wchar_t CharUpperFast (wchar_t ch) { return ((ch >= L'a') && (ch <= L'z')) ? (wchar_t)(ch + L'A' - L'a') : ch; }
-
 unsigned StrBytes (const char str[]);   // includes space for terminator
 unsigned StrBytes (const wchar_t str[]);  // includes space for terminator
 
@@ -101,21 +98,8 @@ const char * StrStr (const char source[], const char match[]);
 wchar_t * StrStr (wchar_t * source, const wchar_t match[]);
 const wchar_t * StrStr (const wchar_t source[], const wchar_t match[]);
 
-char * StrStrI (char * source, const char match[]);
-const char * StrStrI (const char source[], const char match[]);
-wchar_t * StrStrI (wchar_t * source, const wchar_t match[]);
-const wchar_t * StrStrI (const wchar_t source[], const wchar_t match[]);
-
-char * StrChrR (char * str, char ch);
-wchar_t * StrChrR (wchar_t * str, wchar_t ch);
-const char * StrChrR (const char str[], char ch);
-const wchar_t * StrChrR (const wchar_t str[], wchar_t ch);
-
 void StrCopy (char * dest, const char source[], unsigned chars);
 void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars);
-
-unsigned StrCopyLen (char * dest, const char source[], unsigned chars);
-unsigned StrCopyLen (wchar_t * dest, const wchar_t source[], unsigned chars);
 
 void StrPack (char * dest, const char source[], unsigned chars);
 void StrPack (wchar_t * dest, const wchar_t source[], unsigned chars);
@@ -125,9 +109,6 @@ unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars, uns
 
 unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars);
 unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars, unsigned codePage);
-
-unsigned StrUnicodeToUtf8 (char * dest, const wchar_t source[], unsigned destChars);
-unsigned StrUtf8ToUnicode (wchar_t * dest, const char source[], unsigned destChars);
 
 float StrToFloat (const char source[], const char ** endptr);
 float StrToFloat (const wchar_t source[], const wchar_t ** endptr);
@@ -139,11 +120,6 @@ unsigned StrToUnsigned (char source[], char ** endptr, int radix);
 unsigned StrToUnsigned (wchar_t source[], wchar_t ** endptr, int radix);
 unsigned StrToUnsigned (const char source[], const char ** endptr, int radix);
 unsigned StrToUnsigned (const wchar_t source[], const wchar_t ** endptr, int radix);
-
-void StrLower (char * dest, unsigned chars = (unsigned) -1);
-void StrLower (wchar_t * dest, unsigned chars = (unsigned) -1);
-void StrLower (char * dest, const char source[], unsigned chars);
-void StrLower (wchar_t * dest, const wchar_t source[], unsigned chars);
 
 uint32_t StrHash (const char str[], unsigned chars = (unsigned)-1);
 uint32_t StrHash (const wchar_t str[], unsigned chars = (unsigned)-1);
