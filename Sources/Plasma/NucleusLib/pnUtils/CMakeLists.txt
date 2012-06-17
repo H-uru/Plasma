@@ -18,7 +18,6 @@ set(pnUtils_HEADERS
     pnUtRef.h
     pnUtSort.h
     pnUtStr.h
-    pnUtSync.h
     pnUtTime.h
     pnUtUuid.h
 )
@@ -41,14 +40,11 @@ if(WIN32)
         Win32/pnUtW32Misc.cpp
         Win32/pnUtW32Path.cpp
         Win32/pnUtW32Str.cpp
-        Win32/pnUtW32Sync.cpp
-        Win32/pnUtW32Time.cpp
         Win32/pnUtW32Uuid.cpp
     )
 else()
     set(pnUtils_UNIX
         Unix/pnUtUxStr.cpp
-        #Unix/pnUtUxSync.cpp
         Unix/pnUtUxUuid.cpp
     )
 endif()

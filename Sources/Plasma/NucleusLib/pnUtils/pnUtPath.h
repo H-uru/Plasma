@@ -97,42 +97,9 @@ void PathGetProgramName (
     wchar_t *     dst,
     unsigned    dstChars
 );
-void PathGetModuleName (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-
-// this function will use the current directory if <src> is a relative path
-// (see PathSetCurrentDirectory/PathGetCurrentDirectory)
-bool PathFromString (
-    wchar_t *     dst,
-    const wchar_t src[],
-    unsigned    dstChars
-);
-bool PathFromString (
-    wchar_t *     dst,
-    const wchar_t src[],
-    unsigned    dstChars,
-    const wchar_t baseDir[]
-);
 
 bool PathDoesFileExist (
     const wchar_t fileName[]
-);
-bool PathDoesDirectoryExist (
-    const wchar_t directory[]
-);
-
-bool PathDeleteFile (
-    const wchar_t file[]
-);
-bool PathMoveFile (
-    const wchar_t src[],
-    const wchar_t dst[]
-);
-bool PathCopyFile (
-    const wchar_t src[],
-    const wchar_t dst[]
 );
 
 
@@ -174,64 +141,6 @@ void PathRemoveFilename (
     unsigned     dstChars
 );
 
-// c:\file.txt => c:\dir1\dir2\file
-void PathRemoveExtension (
-    wchar_t *      dst,
-    const wchar_t  src[],
-    unsigned     dstChars
-);
-
-// c:\file      + .out => c:\file.out
-// c:\file.     + .out => c:\file.out
-// c:\file.txt  + .out => c:\file.out
-void PathSetExtension (
-    wchar_t *      dst,
-    const wchar_t  src[],
-    const wchar_t  ext[],
-    unsigned     dstChars
-);
-
-// c:\file      + .out => c:\file.out
-// c:\file.     + .out => c:\file.
-// c:\file.txt  + .out => c:\file.txt
-void PathAddExtension (
-    wchar_t *      dst,
-    const wchar_t  src[],
-    const wchar_t  ext[],
-    unsigned     dstChars
-);
-
-// c:\dir1\dir2\file.txt => file.txt
-void PathRemoveDirectory (
-    wchar_t *      dst,
-    const wchar_t  src[],
-    unsigned     dstChars
-);
-
-// c:\dir1\dir2\file.txt - c:\dir1 => .\dir2\file.txt
-// c:\dir1\dir2\file1.txt - c:\dir1\dir4\file2.txt => ..\dir4\file2.txt
-bool PathMakeRelative (
-    wchar_t *     dst,
-    unsigned    fromFlags,
-    const wchar_t from[],
-    unsigned    toFlags,
-    const wchar_t to[],
-    unsigned    dstChars
-);
-bool PathIsRelative (
-    const wchar_t src[]
-);
-
-const wchar_t * PathFindFilename (const wchar_t path[]);
-inline wchar_t * PathFindFilename (wchar_t * path) {
-    return const_cast<wchar_t *>(PathFindFilename(const_cast<const wchar_t *>(path)));
-}
-
-const wchar_t * PathFindExtension (const wchar_t path[]);
-inline wchar_t * PathFindExtension (wchar_t * path) {
-    return const_cast<wchar_t *>(PathFindExtension(const_cast<const wchar_t *>(path)));
-}
-
 
 /*****************************************************************************
 *
@@ -263,27 +172,11 @@ EPathCreateDirError PathCreateDirectory (
     const wchar_t path[],
     unsigned    flags
 );
-void PathDeleteDirectory (
-    const wchar_t path[],
-    unsigned    flags
-);
 
-
-// Set directory
-bool PathSetCurrentDirectory (const wchar_t path[]);
-void PathSetProgramDirectory ();
 
 
 // Get directory
 void PathGetProgramDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-void PathGetCurrentDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-void PathGetTempDirectory (
     wchar_t *     dst,
     unsigned    dstChars
 );

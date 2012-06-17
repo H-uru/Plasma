@@ -42,31 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pfCrashHandler/plCrashSrv.h"
-#include "pnUtils/pnUtils.h"
 
-enum
-{
-    kArgMemFile
-};
-
-static const CmdArgDef s_cmdLineArgs[] = 
-{
-    { (kCmdArgRequired | kCmdTypeString), nil, kArgMemFile },
-};
-
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
     // Parse command line arguments. We MUST have the file argument
-    CCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
-    if (!cmdParser.Parse())
+    if (argc != 2)
     {
         hsMessageBox("You should never run this manually.", "Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
         return 1;
     }
 
-    char* file = hsWStringToString(cmdParser.GetString(kArgMemFile));
-    plCrashSrv srv(file);
-    delete[] file;
+    plCrashSrv srv(argv[1]);
     srv.HandleCrash();
     return 0;
 }
