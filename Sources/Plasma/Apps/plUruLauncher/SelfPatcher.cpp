@@ -232,7 +232,7 @@ static void FileSrvIpAddressCallback (
 
     PathGetProgramDirectory(s_newPatcherFile, arrsize(s_newPatcherFile));
     GetTempFileNameW(s_newPatcherFile, kPatcherExeFilename, 0, s_newPatcherFile);
-    PathDeleteFile(s_newPatcherFile);
+    plFileUtils::RemoveFile(s_newPatcherFile);
 
     NetCliFileManifestRequest(ManifestCallback, nil, s_manifest);
 }

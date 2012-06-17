@@ -320,7 +320,7 @@ hsBool hsSemaphore::TryWait()
 {
 #ifdef USE_SEMA
     int status = ::sem_trywait(fPSema);
-    return status != E_AGAIN;
+    return status != EAGAIN;
 #else
     int status = ::pthread_mutex_trylock(&fPMutex);
     hsThrowIfOSErr(status);

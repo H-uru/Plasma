@@ -834,7 +834,7 @@ int __stdcall WinMain (
             // Wait for the other process to exit
             Sleep(1000);
             
-            if (!PathDeleteFile(newPatcherFile)) {
+            if (!plFileUtils::RemoveFile(newPatcherFile)) {
                 wchar_t error[256];
                 DWORD errorCode = GetLastError();
                 wchar_t *msg = TranslateErrorCode(errorCode);
@@ -844,7 +844,7 @@ int __stdcall WinMain (
                 LocalFree(msg);
                 break;
             }
-            if (!PathMoveFile(curPatcherFile, newPatcherFile)) {
+            if (!plFileUtils::FileMove(curPatcherFile, newPatcherFile)) {
                 wchar_t error[256];
                 DWORD errorCode = GetLastError();
                 wchar_t *msg = TranslateErrorCode(errorCode);
@@ -852,7 +852,7 @@ int __stdcall WinMain (
                 StrPrintf(error, arrsize(error), L"Failed to replace old patcher executable. %s", msg);
                 MessageBoxW(GetTopWindow(nil), error, L"Error", MB_OK);
                 // attempt to clean up this tmp file
-                PathDeleteFile(curPatcherFile);
+                plFileUtils::RemoveFile(curPatcherFile);
                 LocalFree(msg);
                 break;
             }
@@ -896,7 +896,7 @@ int __stdcall WinMain (
         PathAddFilename(fileSpec, fileSpec, L"*.tmp", arrsize(fileSpec));
         PathFindFiles(&paths, fileSpec, kPathFlagFile);
         for (PathFind * path = paths.Ptr(); path != paths.Term(); ++path)
-            PathDeleteFile(path->name);
+            plFileUtils::RemoveFile(path->name);
 
         SetConsoleCtrlHandler(CtrlHandler, TRUE);
         InitAsyncCore();    // must do this before self patch, since it needs to connect to the file server

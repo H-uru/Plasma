@@ -14,7 +14,6 @@ target_link_libraries(plCrashHandler CoreLib)
 target_link_libraries(plCrashHandler pfCrashHandler)
 target_link_libraries(plCrashHandler plFile)
 target_link_libraries(plCrashHandler pnProduct)
-target_link_libraries(plCrashHandler pnUtils)
 
 # Platform specific libs
 if(WIN32)
