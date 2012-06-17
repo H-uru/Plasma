@@ -2367,18 +2367,13 @@ void plClient::IDetectAudioVideoSettings()
         stream = plEncryptedStream::OpenEncryptedFileWrite(audioIniFile);
 
         plAudioCaps caps = plAudioCapsDetector::Detect(false, true);
-        val = 6;
-        if( (hsPhysicalMemory() < 256) || plProfileManager::Instance().GetProcessorSpeed() < 1350000000)
-        {
-            val = 3;
-        }
 
         char deviceName[256];
         sprintf(deviceName, "\"%s\"", DEFAULT_AUDIO_DEVICE_NAME);
 
         WriteBool(stream, "Audio.Initialize",  caps.IsAvailable());
         WriteBool(stream, "Audio.UseEAX", false);
-        WriteInt(stream, "Audio.SetPriorityCutoff", val);
+        WriteInt(stream, "Audio.SetPriorityCutoff", 6);
         WriteInt(stream, "Audio.MuteAll", false);
         WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);
         WriteInt(stream, "Audio.SetChannelVolume BgndMusic", 1);
