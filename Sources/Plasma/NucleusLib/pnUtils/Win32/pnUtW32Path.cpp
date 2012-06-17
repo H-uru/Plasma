@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 // make sure our definition is at least as big as the compiler's definition
-COMPILER_ASSERT(MAX_PATH >= _MAX_PATH);
+static_assert(MAX_PATH >= _MAX_PATH, "Windows and STDlib MAX_PATH constants differ");
 
 
 //===========================================================================
@@ -546,7 +546,7 @@ EPathCreateDirError PathCreateDirectory (const wchar_t path[], unsigned flags) {
     // if we successfully created the directory then we're done
     if (result) {
         // Avoid check for kPathCreateDirFlagOsError
-        COMPILER_ASSERT(kPathCreateDirSuccess == NO_ERROR);
+        static_assert(kPathCreateDirSuccess == NO_ERROR, "Path creation success and NO_ERROR constants differ");
         return kPathCreateDirSuccess;
     }
 

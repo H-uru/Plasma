@@ -118,7 +118,7 @@ uint32_t TimeGetSecondsSince2001Utc () {
 uint64_t TimeGetTime () {
 #ifdef HS_BUILD_FOR_WIN32
     uint64_t time;
-    COMPILER_ASSERT(sizeof(uint64_t) == sizeof(FILETIME));
+    static_assert(sizeof(uint64_t) == sizeof(FILETIME), "FILETIME is not a uint64");
     GetSystemTimeAsFileTime((FILETIME *) &time);
     return time;
 #else

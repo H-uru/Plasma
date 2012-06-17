@@ -4017,7 +4017,7 @@ bool VaultFindNodeTrans::Recv (
     const Auth2Cli_VaultNodeFindReply & reply = *(const Auth2Cli_VaultNodeFindReply *) msg;
 
     if (IS_NET_SUCCESS(reply.result)) {
-        COMPILER_ASSERT(sizeof(unsigned) == sizeof(uint32_t));
+        static_assert(sizeof(unsigned) == sizeof(uint32_t), "unsigned is not the same size as uint32_t");
         m_nodeIds.Set((unsigned *)reply.nodeIds, reply.nodeIdCount);
     }
 

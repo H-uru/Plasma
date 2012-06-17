@@ -271,7 +271,7 @@ static const char * s_transTypes[] = {
     "GkAuthSrvIpAddress",
 
 };
-COMPILER_ASSERT(arrsize(s_transTypes) == kNumTransTypes);
+static_assert(arrsize(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
 
 static long s_perfTransCount[kNumTransTypes];
 

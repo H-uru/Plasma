@@ -583,7 +583,7 @@ void CSocket::OnWriteReady () {
                 &m_sendQueue[result],
                 m_sendQueue.Bytes() - result
             );
-            COMPILER_ASSERT(sizeof(m_sendQueue[0]) == sizeof(uint8_t));
+            static_assert(sizeof(m_sendQueue[0]) == sizeof(uint8_t), "SendQueue array members are an unexpected size");
             m_sendQueue.SetCount(m_sendQueue.Count() - result);
         }
     
