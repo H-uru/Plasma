@@ -535,19 +535,6 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #   define ALIGN(n) __atribute__(aligned(n))
 #endif
 
-/////////////////////////////
-// Physical memory functions
-/////////////////////////////
-enum MemSpec
-{
-    kBlows = 0,     // Less than 128
-    kAcceptable,    // Less than 256
-    kOptimal        // 256 or greater
-};
-
-uint32_t hsPhysicalMemory();
-MemSpec hsMemorySpec();
-
 inline int hsRandMax() { return 32767; }
 inline float hsRandNorm() { return 1.f / 32767.f; } // multiply by hsRand to get randoms ranged [0..1]
 int hsRand(void);

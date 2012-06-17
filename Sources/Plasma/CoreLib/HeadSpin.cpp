@@ -588,32 +588,6 @@ int hsRemove(const char * fname)
     return remove(fname);
 }
 
-uint32_t hsPhysicalMemory()
-{
-#define HS_ONE_MEGABYTE 1048576 // 1024 * 1024
-
-#if HS_BUILD_FOR_WIN32
-    MEMORYSTATUS ms;
-    GlobalMemoryStatus(&ms);
-    return (ms.dwTotalPhys / HS_ONE_MEGABYTE);
-#endif
-}
-
-MemSpec hsMemorySpec()
-{
-    uint32_t mem = hsPhysicalMemory();
-
-    // Currently adding a little margin of error here
-    // due to the fact that Windows doesn't seem to
-    // be totally accurate in it's calculations.
-    if (mem < 127)
-        return kBlows;
-    else if (mem < 255)
-        return kAcceptable;
-    else
-        return kOptimal;
-}
-
 //
 // Microsoft SAMPLE CODE
 // returns array of allocated version info strings or nil

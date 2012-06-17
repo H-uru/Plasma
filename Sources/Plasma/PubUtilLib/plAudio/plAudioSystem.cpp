@@ -1015,12 +1015,6 @@ void plgAudioSys::Init(hsWindowHndl hWnd)
     fSys->RegisterAs( kAudioSystem_KEY );
     plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
-
-    if(hsPhysicalMemory() <= 380)   
-    {
-        plStatusLog::AddLineS("audio.log", "StreamFromRam Disabled");
-        fStreamFromRAMCutoff = 4;
-    }
     fWnd = hWnd;
 
     if(fMuted)
