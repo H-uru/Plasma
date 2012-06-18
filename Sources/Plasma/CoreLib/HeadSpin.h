@@ -520,11 +520,6 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #   define ALIGN(n) __atribute__(aligned(n))
 #endif
 
-inline int hsRandMax() { return 32767; }
-inline float hsRandNorm() { return 1.f / 32767.f; } // multiply by hsRand to get randoms ranged [0..1]
-int hsRand(void);
-void hsRandSeed(int seed);
-
 #define hsFopen(name, mode) fopen(name, mode)
 
 char** DisplaySystemVersion();

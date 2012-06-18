@@ -128,7 +128,7 @@ int plRandomCommandMod::IExcludeSelections(int ncmds)
 
 float plRandomCommandMod::IGetDelay(float len) const
 {
-    float r = float(hsRand() * kRandNormalize);
+    float r = float(rand() * kRandNormalize);
 
     float delay = fMinDelay + (fMaxDelay - fMinDelay) * r;
 
@@ -156,7 +156,7 @@ hsBool plRandomCommandMod::ISelectNext(int ncmds)
         }
         return true;
     }
-    float r = float(hsRand() * kRandNormalize);
+    float r = float(rand() * kRandNormalize);
 
     int nSelect = ncmds;
     
