@@ -412,7 +412,7 @@ protected:
 
     void ISetUserType(plMaxNode* node, const char* userType)
     {
-        if (hsStrEQ(userType, kUserTypeAll))
+        if (strcmp(userType, kUserTypeAll) == 0)
             ISetNodeValue(nil);
     }
 

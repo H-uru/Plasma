@@ -3658,7 +3658,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             char* start=strstr(propsBuf, "BoneName=");
             if (!start)
                 start=strstr(propsBuf, "bonename=");
-            const int len = hsStrlen("BoneName=");
+            const int len = strlen("BoneName=");
             if(start && UserPropExists("BoneName"))
             {
                 start+=len;

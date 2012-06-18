@@ -5020,7 +5020,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
         *dot = 0;
 
     char fileName[512];
-    if( path[hsStrlen(path)-1] == '\\' )
+    if( path[strlen(path)-1] == '\\' )
     {
         sprintf(fileName, "%slog\\mat_%s.log", path, maxFile);
     }
@@ -5035,7 +5035,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
         // We may not have a \log folder. If that failed, try
         // putting it in the \dat folder. If that doesn't work,
         // just quietly give up.
-        if( path[hsStrlen(path)-1] == '\\' )
+        if( path[strlen(path)-1] == '\\' )
         {
             sprintf(fileName, "%sdat\\mat_%s.log", path, maxFile);
         }

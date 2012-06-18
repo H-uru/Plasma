@@ -118,7 +118,9 @@ hsStream::~hsStream()
 
 uint32_t hsStream::WriteString(const char cstring[])
 {
-    return Write(hsStrlen(cstring), cstring);
+    if (cstring)
+        return Write(strlen(cstring), cstring);
+    return 0;
 }
 
 uint32_t hsStream::WriteFmt(const char * fmt, ...)
@@ -139,7 +141,9 @@ uint32_t hsStream::WriteFmtV(const char * fmt, va_list av)
 
 uint32_t hsStream::WriteSafeStringLong(const char *string)
 {
-    uint32_t len = hsStrlen(string);      
+    uint32_t len = 0;
+    if (string)
+        len = strlen(string);
     WriteLE32(len);
     if (len > 0)
     {   
@@ -222,7 +226,9 @@ wchar_t *hsStream::ReadSafeWStringLong()
 
 uint32_t hsStream::WriteSafeString(const char *string)
 {
-    int len = hsStrlen(string);
+    int len = 0;
+    if (string)
+        len = strlen(string);
     hsAssert(len<0xf000, xtl::format("string len of %d is too long for WriteSafeString %s, use WriteSafeStringLong", 
         string, len).c_str() );
 

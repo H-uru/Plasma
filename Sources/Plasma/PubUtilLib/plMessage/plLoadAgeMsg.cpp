@@ -70,7 +70,7 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);  
 
     // write agename
-    uint8_t len=fAgeFilename?hsStrlen(fAgeFilename):0;
+    uint8_t len = fAgeFilename ? strlen(fAgeFilename) : 0;
     stream->WriteLE(len);
     if (len)
     {

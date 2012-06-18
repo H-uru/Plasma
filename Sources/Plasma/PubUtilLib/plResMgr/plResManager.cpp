@@ -244,7 +244,7 @@ plRegistryPageNode* plResManager::FindSinglePage(const char* path) const
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
     {
-        if (hsStrCaseEQ((it->second)->GetPagePath(), path))
+        if (strcmpi((it->second)->GetPagePath(), path) == 0)
             return it->second;
     }
 
@@ -1651,8 +1651,8 @@ plRegistryPageNode* plResManager::FindPage(const char* age, const char* page) co
     for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
     {
         const plPageInfo& info = (it->second)->GetPageInfo();
-        if (hsStrCaseEQ(info.GetAge(), age) &&
-            hsStrCaseEQ(info.GetPage(), page))
+        if (strcmpi(info.GetAge(), age) == 0 &&
+            strcmpi(info.GetPage(), page) == 0)
             return it->second;
     }
 
@@ -1766,7 +1766,7 @@ hsBool plResManager::IteratePages(plRegistryPageIterator* iterator, const char* 
         if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
             continue;
 
-        if (!ageToRestrictTo || hsStrCaseEQ(page->GetPageInfo().GetAge(), ageToRestrictTo))
+        if (!ageToRestrictTo || strcmpi(page->GetPageInfo().GetAge(), ageToRestrictTo) == 0)
         {
             if (!iterator->EatPage(page))
             {

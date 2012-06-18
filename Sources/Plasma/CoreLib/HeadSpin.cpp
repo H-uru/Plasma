@@ -377,12 +377,6 @@ int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int
     return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
-inline hsBool hsCompare(float a, float b, float delta)
-{
-    return (fabs(a - b) < delta);
-}
-
-
 /* Generic psuedo RNG used in ANSI C. */
 static unsigned long SEED = 1;
 int hsRand()
@@ -398,24 +392,13 @@ void hsRandSeed(int seed)
     SEED = seed;
 }
 /**************************************/
-int hsStrlen(const char src[])
-{
-    if (src==nil)
-        return 0;
-
-    int i = 0;
-    while (src[i])
-        i++;
-    return i;
-}
-
 char* hsStrcpy(char dst[], const char src[])
 {
     if (src)
     {
         if (dst == nil)
         {
-            int count = hsStrlen(src);
+            int count = strlen(src);
             dst = (char *)malloc(count + 1);
             memcpy(dst, src, count);
             dst[count] = 0;
@@ -431,73 +414,14 @@ char* hsStrcpy(char dst[], const char src[])
     return dst;
 }
 
-bool hsStrEQ(const char s1[], const char s2[])
-{
-    if (s1 && s2)
-    {
-        while (*s1)
-            if(*s1++ != *s2++)
-                return false;
-        return *s2 == 0;
-    }
-
-    return (!s1 && !s2);
-}
-
-bool hsStrCaseEQ(const char* s1, const char* s2)
-{
-    if (s1 && s2)
-    {
-        while (*s1)
-            if(tolower(*s1++) != tolower(*s2++))
-                return false;
-        return *s2 == 0;
-    }
-
-    return (!s1 && !s2);
-}
-
-void hsStrcat(char dst[], const char src[])
-{
-    if (src && dst)
-    {
-        dst += hsStrlen(dst);
-        while(*src)
-            *dst++ = *src++;
-        *dst = 0;
-    }
-}
-
 void hsStrLower(char *s)
 {
     if (s)
     {
         int i;
-        for (i = 0; i < hsStrlen(s); i++)
+        for (i = 0; i < strlen(s); i++)
             s[i] = tolower(s[i]);
     }
-}
-
-char* hsP2CString(const uint8_t pstring[], char cstring[])
-{
-    char*        cstr = cstring;
-    const uint8_t* stop = &pstring[1] + pstring[0];
-
-    pstring += 1;   //  skip length byte
-    while (pstring < stop)
-        *cstr++ = *pstring++;
-    *cstr = 0;
-    return cstring;
-}
-
-uint8_t* hsC2PString(const char cstring[], uint8_t pstring[])
-{
-    int i;
-
-    for (i = 1; *cstring; i++)
-        pstring[i] = *cstring++;
-    pstring[0] = i - 1;
-    return pstring;
 }
 
 //// IStringToWString /////////////////////////////////////////////////////////
@@ -538,54 +462,6 @@ char    *hsWStringToString( const wchar_t *str )
     sStr[len] = '\0';
 
     return sStr;
-}
-
-void hsCPathToMacPath(char* dst, char* fname)
-{
-    int i;
-
-    int     offset = 0;
-    hsBool  prefix = 1;     // Assume it's a relative path.
-
-    // KLUDGE: this determines whether a PC path is
-    // relative or absolute. True if relative, therefore
-    // we prefix the pathname with a colon.
-
-    hsStrcpy(dst, "");
-
-    if(strstr(fname, ":"))
-    {
-        prefix = 0;
-    }
-    else if(strstr(fname, "\\\\"))
-    {
-        prefix = 0;
-        offset = 2;         // copy fname from 2-Bytes in. This removes
-                            // the first two chars...
-    }
-
-    if(prefix)
-    {
-        hsStrcpy(dst, ":");
-    }
-
-    hsStrcat(dst, &fname[offset]);
-
-    // No more slashes? We're done. (Optimization? Not really I guess.)
-    if(!strstr(dst, "\\") && !strstr(dst, "/")) return;
-
-    for(i =0; i < hsStrlen(dst); i++)
-    {
-        if(dst[i] == '\\' || dst[i] == '/')
-        {
-            dst[i] = ':';
-        }
-    }
-}
-
-int hsRemove(const char * fname)
-{
-    return remove(fname);
 }
 
 //

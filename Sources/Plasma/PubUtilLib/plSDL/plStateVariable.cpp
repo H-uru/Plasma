@@ -1468,8 +1468,8 @@ bool plSimpleStateVariable::Set(const char* v, int idx)
 
     if (v && fVar.GetType()==plVarDescriptor::kString32)
     {
-        hsAssert(hsStrlen(v)<32, "string length overflow");
-        hsStrncpy(fS32[idx], v, 32);
+        hsAssert(strlen(v)<32, "string length overflow");
+        strncpy(fS32[idx], v, 32);
         IVarSet();
         return true;
     }

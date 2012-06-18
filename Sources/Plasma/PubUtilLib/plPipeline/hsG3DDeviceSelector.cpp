@@ -415,19 +415,19 @@ void hsG3DDeviceRecord::Write(hsStream* s) const
 
     int len;
 
-    len = hsStrlen(fG3DDriverDesc);
+    len = strlen(fG3DDriverDesc);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverDesc);
 
-    len = hsStrlen(fG3DDriverName);
+    len = strlen(fG3DDriverName);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverName);
 
-    len = hsStrlen(fG3DDriverVersion);
+    len = strlen(fG3DDriverVersion);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverVersion);
 
-    len = hsStrlen(fG3DDeviceDesc);
+    len = strlen(fG3DDeviceDesc);
     s->WriteLE32(len);
     s->Write(len, fG3DDeviceDesc);
 

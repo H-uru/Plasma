@@ -1015,7 +1015,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
         fLoadRooms.push_back(new LoadRequest(loc, hold));
 
-        if (!lastAgeName || hsStrEQ(info->GetAge(), lastAgeName))
+        if (!lastAgeName || strcmp(info->GetAge(), lastAgeName) == 0)
             lastAgeName = info->GetAge();
         else
             allSameAge = false;
@@ -1208,7 +1208,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
             int numMsgs = 0;
             for (int i = 0; i < sizeof(ageMsgCount)/sizeof(AgeMsgCount); i++)
             {
-                if (hsStrEQ(ageMsgCount[i].AgeName, name))
+                if (strcmp(ageMsgCount[i].AgeName, name) == 0)
                 {
                     numMsgs = ageMsgCount[i].NumMsgs;
                     break;
