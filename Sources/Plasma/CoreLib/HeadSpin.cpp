@@ -377,20 +377,6 @@ int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int
     return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
-/* Generic psuedo RNG used in ANSI C. */
-static unsigned long SEED = 1;
-int hsRand()
-{
-    register int temp;
-    SEED = SEED * 1103515245 + 12345;
-    temp = (int)((SEED/65536)&32767);
-    return (temp);
-}
-
-void hsRandSeed(int seed)
-{
-    SEED = seed;
-}
 /**************************************/
 char* hsStrcpy(char dst[], const char src[])
 {

@@ -65,7 +65,7 @@ public:
 
     static void ComputeDirection(float pitch, float yaw, hsVector3 &direction);
     static void ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir);
-    static inline float GetRandomVar() { return 2.0f * (float)hsRand() / RAND_MAX - 1; } // returns a num between +/- 1.0
+    static inline float GetRandomVar() { return 2.0f * rand() / RAND_MAX - 1; } // returns a num between +/- 1.0
 };
 
 class plSimpleParticleGenerator : public plParticleGenerator
