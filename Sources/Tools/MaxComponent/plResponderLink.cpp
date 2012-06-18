@@ -332,7 +332,7 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
 
         int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
 
-        if (hsStrEQ(name, savedName))
+        if (strcmp(name, savedName) == 0)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }
@@ -369,7 +369,7 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 
         int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
 
-        if (hsStrEQ(name, savedName))
+        if (strcmp(name, savedName) == 0)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }

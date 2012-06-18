@@ -518,7 +518,8 @@ bool plEncryptedStream::ICheckMagicString(FILE* fp)
     char magicString[kMagicStringLen+1];
     fread(&magicString, kMagicStringLen, 1, fp);
     magicString[kMagicStringLen] = '\0';
-    return (hsStrEQ(magicString, kMagicString) || hsStrEQ(magicString, kOldMagicString));
+    return strcmp(magicString, kMagicString) == 0 ||
+           strcmp(magicString, kOldMagicString) == 0;
 }
 
 bool plEncryptedStream::IsEncryptedFile(const char* fileName)

@@ -849,12 +849,12 @@ protected:
 
     void ISetUserType(plMaxNode* node, const char* userType)
     {
-        if( hsStrEQ( userType, kUseParamBlockNodeString ) )
+        if( strcmp( userType, kUseParamBlockNodeString ) == 0 )
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
-        else if( hsStrEQ(userType, kUseOwnerNodeString ) )
+        else if( strcmp(userType, kUseOwnerNodeString ) == 0 )
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);

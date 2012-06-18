@@ -195,7 +195,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t 
     bool common = false;
     for (int i = 0; i < plAgeDescription::kNumCommonPages; i++)
     {
-        if (hsStrCaseEQ(plAgeDescription::GetCommonPage(i), pageNode->GetPageInfo().GetPage()))
+        if (strcmpi(plAgeDescription::GetCommonPage(i), pageNode->GetPageInfo().GetPage()) == 0)
         {
             common = true;
             break;
@@ -327,7 +327,7 @@ plLocation plPluginResManager::ICreateLocation(const char* age, const char* page
 
 plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, int32_t seqNum, hsBool itinerant)
 {
-    hsBool willBeReserved = hsStrCaseEQ(age, "global");
+    bool willBeReserved = strcmpi(age, "global") == 0;
 
     int32_t oldNum = seqNum;
     seqNum = VerifySeqNumber(seqNum, age, page);
@@ -351,7 +351,7 @@ plLocation plPluginResManager::ICreateLocation(const char* age, const char* page
     // Flag common pages
     for (int i = 0; i < plAgeDescription::kNumCommonPages; i++)
     {
-        if (hsStrEQ(plAgeDescription::GetCommonPage(i), page))
+        if (strcmp(plAgeDescription::GetCommonPage(i), page) == 0)
         {
             newLoc.SetFlags(plLocation::kBuiltIn);
             break;
@@ -428,7 +428,7 @@ void plPluginResManager::AddLooseEnd(plKey key)
 // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
 int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const char* age, const char* page)
 {
-    hsBool negated = false, willBeReserved = hsStrCaseEQ(age, "global");
+    bool negated = false, willBeReserved = strcmpi(age, "global") == 0;
     if (sequenceNumber < 0)
     {
         sequenceNumber = -sequenceNumber;

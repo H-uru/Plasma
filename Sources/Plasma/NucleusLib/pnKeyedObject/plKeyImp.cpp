@@ -68,7 +68,9 @@ static uint16_t kClassType = CLASS_INDEX_SCOPED(plSceneNode);
 static uint32_t kCloneID = 0;
 hsBool IsTrackedKey(const plKeyImp* key)
 {
-    return hsStrEQ(key->GetName(), kObjName) && key->GetUoid().GetClassType() == kClassType && key->GetUoid().GetCloneID() == kCloneID;
+    return (strcmp(key->GetName(), kObjName) == 0) &&
+            key->GetUoid().GetClassType() == kClassType &&
+            key->GetUoid().GetCloneID() == kCloneID;
 }
 #endif
 

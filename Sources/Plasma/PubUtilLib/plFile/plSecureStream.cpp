@@ -652,7 +652,7 @@ bool plSecureStream::ICheckMagicString(hsStream* s)
     char magicString[kMagicStringLen+1];
     s->Read(kMagicStringLen, &magicString);
     magicString[kMagicStringLen] = '\0';
-    return (hsStrEQ(magicString, kMagicString) != 0);
+    return (strcmp(magicString, kMagicString) == 0);
 }
 
 bool plSecureStream::ICheckMagicString(hsFD fp)
@@ -665,7 +665,7 @@ bool plSecureStream::ICheckMagicString(hsFD fp)
     fread(&magicString, kMagicStringLen, 1, fp);
 #endif
     magicString[kMagicStringLen] = '\0';
-    return (hsStrEQ(magicString, kMagicString) != 0);
+    return (strcmp(magicString, kMagicString) == 0);
 }
 
 bool plSecureStream::IsSecureFile(const char* fileName)

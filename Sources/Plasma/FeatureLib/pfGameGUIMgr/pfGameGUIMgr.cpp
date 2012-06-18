@@ -235,7 +235,7 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
             // check to see if it is the dialog we are waiting for to be loaded
             for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
             {
-                if ( hsStrEQ(fDialogToSetKeyOf[i]->GetName(), mod->GetName()) )
+                if ( strcmp(fDialogToSetKeyOf[i]->GetName(), mod->GetName()) == 0 )
                 {
                     SetDialogToNotify(mod,fDialogToSetKeyOf[i]->GetKey());
                     // now remove this entry... we did it
@@ -316,7 +316,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         int i;
         for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
         {
-            if ( hsStrEQ(fDialogToSetKeyOf[i]->GetName(), name) )
+            if ( strcmp(fDialogToSetKeyOf[i]->GetName(), name) == 0 )
             {
                 alreadyLoaded = true;
                 break;

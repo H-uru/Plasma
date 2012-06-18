@@ -202,7 +202,7 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Write(s, mgr);
 
-    int len = hsStrlen(fMovieName);
+    int len = (fMovieName) ? strlen(fMovieName) : 0;
     s->WriteLE32(len);
     if( len )
         s->Write(len, fMovieName);

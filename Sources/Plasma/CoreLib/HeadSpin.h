@@ -401,14 +401,7 @@ void SWAP (T & a, T & b) {
     void    hsStatusMessageF(const char * fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
-int     hsStrlen(const char src[]);
 char*   hsStrcpy(char dstOrNil[], const char src[]);
-void    hsStrcat(char dst[], const char src[]);
-bool    hsStrEQ(const char s1[], const char s2[]);
-bool    hsStrCaseEQ(const char* s1, const char* s2);
-char*   hsScalarToStr(float);
-int     hsRemove(const char* filename);
-void    hsCPathToMacPath(char* dst, char* fname);   
 void    hsStrLower(char *s);
 char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned memory.
 char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
@@ -427,11 +420,6 @@ char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible f
 #    define wcsnicmp    wcsncasecmp
 #    define strlwr      hsStrLower
 #endif
-
-
-//  A pstring has a length uint8_t at the beginning, and no trailing 0
-char*   hsP2CString(const uint8_t pstring[], char cstring[]);
-uint8_t*  hsC2PString(const char cstring[], uint8_t pstring[]);
 
 inline char* hsStrcpy(const char src[])
 {
@@ -479,8 +467,6 @@ int hsMessageBox(const char message[], const char caption[], int kind, int icon=
 int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-
-inline hsBool hsCompare(float a, float b, float delta=0.0001);
 
 // flag testing / clearing
 #define hsCheckBits(f,c) ((f & c)==c)
