@@ -48,12 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to for Particle System
 //
-#include <Python.h>
+
 #include "hsTemplates.h"
-
 #include "pnKeyedObject/plKey.h"
-class pyKey;
-
 #include "pyGlueHelpers.h"
 
 class cyParticleSys
@@ -63,7 +60,7 @@ protected:
     hsTArray<plKey> fRecvr;
     hsBool          fNetForce;
 
-    virtual void    ISendParticleSysMsg(uint32_t param, float value);
+    void    ISendParticleSysMsg(uint32_t param, float value);
 
     cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
 
@@ -77,22 +74,22 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    virtual void    SetSender(plKey &sender);
-    virtual void    AddRecvr(plKey &recvr);
-    virtual void SetNetForce(hsBool state);
+    void    SetSender(plKey &sender);
+    void    AddRecvr(plKey &recvr);
+    void    SetNetForce(hsBool state);
 
-    virtual void    SetParticlesPerSecond(float value);
-    virtual void    SetInitPitchRange(float value);
-    virtual void    SetInitYawRange(float value);
-    virtual void    SetVelMin(float value);
-    virtual void    SetVelMax(float value);
-    virtual void    SetXSize(float value);
-    virtual void    SetYSize(float value);
-    virtual void    SetScaleMin(float value);
-    virtual void    SetScaleMax(float value);
-    virtual void    SetGenLife(float value);
-    virtual void    SetPartLifeMin(float value);
-    virtual void    SetPartLifeMax(float value);
+    void    SetParticlesPerSecond(float value);
+    void    SetInitPitchRange(float value);
+    void    SetInitYawRange(float value);
+    void    SetVelMin(float value);
+    void    SetVelMax(float value);
+    void    SetXSize(float value);
+    void    SetYSize(float value);
+    void    SetScaleMin(float value);
+    void    SetScaleMax(float value);
+    void    SetGenLife(float value);
+    void    SetPartLifeMin(float value);
+    void    SetPartLifeMax(float value);
 
 };
 

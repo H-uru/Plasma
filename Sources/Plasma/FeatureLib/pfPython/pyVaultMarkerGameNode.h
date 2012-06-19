@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultMarkerGameNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
 

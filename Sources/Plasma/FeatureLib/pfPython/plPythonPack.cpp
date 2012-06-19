@@ -39,15 +39,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPythonPack.h"
+
+#include <Python.h>
+#include <marshal.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
 #include "hsStream.h"
+#include "hsStlSortUtils.h"
+#pragma hdrstop
+
+#include "plPythonPack.h"
+
 #include "plFile/hsFiles.h"
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
-#include "hsStlSortUtils.h"
-#include "marshal.h"
 
 static const char* kPackFilePath = ".\\Python\\";
 
@@ -104,10 +113,6 @@ plPythonPack& plPythonPack::Instance()
     static plPythonPack theInstance;
     return theInstance;
 }
-
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 bool plPythonPack::Open()
 {

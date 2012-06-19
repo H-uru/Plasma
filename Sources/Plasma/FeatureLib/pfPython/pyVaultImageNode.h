@@ -47,18 +47,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultImageNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-
 #include "pyGlueHelpers.h"
-
-#include "pyVaultNode.h"
 #include "pnKeyedObject/plKey.h"
+#include <string>
+#include "pyVaultNode.h"
+
 
 struct RelVaultNode;
-
+class plMipmap;
 
 class pyVaultImageNode : public pyVaultNode
 {

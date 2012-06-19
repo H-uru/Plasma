@@ -48,15 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlDynamicText
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
 #include "pyGUIControl.h"
-
 #include "pyGlueHelpers.h"
 
 class pyDynamicText;
-
+class pyKey;
+class plKey;
 
 class pyGUIControlDynamicText : public pyGUIControl
 {

@@ -39,11 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyVaultImageNode.h"
 #include "pyImage.h"
 
 #include "plVault/plVault.h"
-#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultImageNode, pyVaultImageNode);

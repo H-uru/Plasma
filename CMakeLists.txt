@@ -34,6 +34,7 @@ endif(WIN32)
 find_package(MaxSDK)          #TODO: Only find this if we are building PlasmaMax
 find_package(Bink)            #TODO: Find Bink, but don't require it if plPipeline isn't built...
 #                                    Or better yet, just eliminate bink altogether
+include(PrecompiledHeader)    #Precompiled Header helper macros
 
 # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves
 option(CURL_IS_STATIC "Using the static version of libcurl?" ON)

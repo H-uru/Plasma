@@ -42,46 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyWaveSet_h
 #define pyWaveSet_h
 
-#include <Python.h>
-#include "pyKey.h"
-#include "pyGeometry3.h"
-#include "pyColor.h"
-
 #include "pyGlueHelpers.h"
+#include "pnKeyedObject/plKey.h"
+
+class pyColor;
+class pyPoint3;
+class pyVector3;
 
 //////////////////////////////////////////////////////////////////////
 //
 // pyWaveSet   - a wrapper class to provide interface to wave sets
 //
 //////////////////////////////////////////////////////////////////////
-
-/*
-// Getters and Setters for Python twiddling
-    //
-    // First a way to set new values. The secs parameter says how long to take
-    // blending to the new value from the current value.
-    //
-    
-
-    
-    
-    // Skipping the shore parameters, because they are never used.
-
-    
-
-
-    // Now a way to get current values. See the accompanying Setter for notes on
-    // what the parameter means.
-    //
-    
-    
-    
-
-    
-    
-    
- */
-
 class pyWaveSet
 {
 private:

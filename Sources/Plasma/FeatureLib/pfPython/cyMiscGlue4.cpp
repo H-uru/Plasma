@@ -39,16 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-#include "pySceneObject.h"
-#include "pyAgeInfoStruct.h"
-#include "pyGeometry3.h"
-#include "NucleusLib/inc/plPipeline.h"
-#include "pnNetBase/pnNetBase.h"
 
 #include <Python.h>
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#include "plPipeline.h"
+#pragma hdrstop
+
+#include "cyMisc.h"
+#include "pyGlueHelpers.h"
+#include "pySceneObject.h"
+#include "pyAgeInfoStruct.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnUtils/pnUtils.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRequestLOSScreen, args, "Params: selfKey,ID,xPos,yPos,distance,what,reportType\nRequest a LOS check from a point on the screen")
 {

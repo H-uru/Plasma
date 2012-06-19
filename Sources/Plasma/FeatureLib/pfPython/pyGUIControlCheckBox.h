@@ -49,13 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
-#include "pyKey.h"
 
 #include "pyGlueHelpers.h"
-
 #include "pyGUIControl.h"
 
+class plKey;
 
 class pyGUIControlCheckBox : public pyGUIControl
 {

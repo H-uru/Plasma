@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyKey.h"
-#ifndef BUILDING_PYPLASMA
-#include "pySceneObject.h"
-#endif
 
 #include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
+#ifndef BUILDING_PYPLASMA
+#   include "pySceneObject.h"
+#endif
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKey, pyKey);

@@ -47,13 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyDrawControl   - a wrapper class all the draw/pipeline control functions
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-
-
 #include "pyGlueHelpers.h"
+#include <vector>
 
 class pyDrawControl
 {

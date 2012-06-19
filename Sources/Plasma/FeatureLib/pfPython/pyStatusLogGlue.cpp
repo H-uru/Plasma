@@ -39,11 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyStatusLog.h"
-#include "pyEnum.h"
 
-#include "plStatusLog/plStatusLog.h"
 #include <Python.h>
+#include "plString.h"
+#pragma hdrstop
+
+#include "pyColor.h"
+#include "pyEnum.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pyStatusLog.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStatusLog, pyStatusLog);

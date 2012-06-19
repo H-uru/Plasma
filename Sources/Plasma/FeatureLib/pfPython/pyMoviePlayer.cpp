@@ -45,8 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "pyMoviePlayer.h"
 
+#include "pyColor.h"
 #include "plMessage/plMovieMsg.h"
 #include "pfMessage/pfMovieEventMsg.h"
 

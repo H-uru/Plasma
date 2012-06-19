@@ -49,13 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This modifier will handle the interface to python code that has been file-ized.
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "pnModifier/plMultiModifier.h"
-#include "hsGeometry3.h"
-#include "hsResMgr.h"
-
-
 #include "plPythonParameter.h"
 
 class PythonVaultCallback;
@@ -64,6 +59,8 @@ class pyKey;
 class pfPythonKeyCatcher;
 class plKeyEventMsg;
 class plPipeline;
+
+typedef struct _object PyObject;
 
 class plPythonFileMod   : public plMultiModifier
 {

@@ -39,12 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "plgDispatch.h"
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "cyMisc.h"
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 #include "plResMgr/plKeyFinder.h"
-
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plLinkToAgeMsg.h"
@@ -72,7 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvBrainCritter.h"
 #include "pyCritterBrain.h"
 #include "cyPythonInterface.h"
-#include "pyKey.h"
 #include "pySceneObject.h"
 #include "pyPlayer.h"
 #include "pyImage.h"
@@ -106,6 +108,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plAgeInfoSource.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pnUtils/pnUtils.h"
 
 //// Static Class Stuff //////////////////////////////////////////////////////
 plPipeline* cyMisc::fPipeline = nil;

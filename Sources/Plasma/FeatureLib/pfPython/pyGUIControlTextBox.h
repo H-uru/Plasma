@@ -48,15 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlTextBox
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
 #include "pyGUIControl.h"
-#include "pfGameGUIMgr/pfGUIControlMod.h"
-
 #include "pyGlueHelpers.h"
 
 class pyColor;
+class pfGUIColorScheme;
 
 class pyGUIControlTextBox : public pyGUIControl
 {

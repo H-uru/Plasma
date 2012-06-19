@@ -39,12 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyParticleSys.h"
 
-#include "hsStream.h"
-#include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
 #include "plgDispatch.h"
+#pragma hdrstop
+
+#include "cyParticleSys.h"
+#include "pnMessage/plMessage.h"
 #include "plMessage/plParticleUpdateMsg.h"
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)

@@ -45,17 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyVaultPlayerInfoListNode.h"
-#ifndef BUILDING_PYPLASMA
-#include "pyVault.h"
-#endif
 #include "pyVaultFolderNode.h"
 #include "pyVaultPlayerInfoNode.h"
 #include "pyVaultNodeRef.h"
-
 #include "plVault/plVault.h"
-
-#include <algorithm>
+#ifndef BUILDING_PYPLASMA
+#   include "pyVault.h"
+#endif
 
 // should only be created from C++ side
 pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(RelVaultNode* nfsNode)

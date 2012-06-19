@@ -49,9 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Python wrapper for account management functions
 //
 
-#include <Python.h>
-#include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <vector>
+
+typedef struct _object PyObject;
+typedef struct PyMethodDef PyMethodDef;
 
 class cyAccountManagement
 {

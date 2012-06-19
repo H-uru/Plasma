@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "pySDL.h"
 #include "plSDL/plSDL.h"
 #include "pyEnum.h"
-#include "pyKey.h"
-
-#include <Python.h>
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {

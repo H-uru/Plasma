@@ -46,25 +46,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NOTE: Eventually, this will be made into a separate dll, because there should
 //       only be one instance of this interface. 
 //
+
+#include <Python.h>
+#include <marshal.h>
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#include "pyMatrix44.h"
+#pragma hdrstop
+
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"
 
-#include "compile.h"
-#include "marshal.h"
-#include "eval.h"
-
 #include "pyEnum.h"
-
-#include "pyKey.h"
 #include "cyDraw.h"
+#include "cyParticleSys.h"
 #include "cyPhysics.h"
 #include "pySceneObject.h"
 #include "cyMisc.h"
 #include "cyCamera.h"
 #include "pyNotify.h"
 #include "cyAvatar.h"
-#include "pyGeometry3.h"
-#include "pyMatrix44.h"
 #include "pyColor.h"
 #include "pyDynamicText.h"
 #include "cyAnimation.h"
