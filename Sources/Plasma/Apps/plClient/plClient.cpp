@@ -2334,7 +2334,7 @@ void plClient::IDetectAudioVideoSettings()
     plPipeline::fDefaultPipeParams.VSync = false;
 
     // card specific overrides
-    if(strstr(rec->GetDriverDesc(), "FX 5200"))
+    if(rec->GetDriverDesc() && strstr(rec->GetDriverDesc(), "FX 5200"))
     {
         plPipeline::fDefaultPipeParams.AntiAliasingAmount = 0;
     }
