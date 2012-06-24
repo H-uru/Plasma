@@ -105,6 +105,7 @@ public:
     
     //Fix to Move collision messages and their handling out of the simulation step
     void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
+    void AddCollisionMsg(plCollideMsg* msg);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDisplayAwakeActors;
@@ -143,6 +144,8 @@ protected:
     // Is the entire physics world suspended? If so, the clock can still advance
     // but nothing will move.
     bool fSuspended;
+
+    float fAccumulator;
 
     // A utility class to keep track of a request for a physical synchronization.
     // These requests must pass a certain criteria (see the code for the latest)

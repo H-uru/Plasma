@@ -40,22 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plAvatar/plPhysicalControllerCore.h"
-#include "hsQuat.h"
-#define PHYSX_ONLY_TRIGGER_FROM_KINEMATIC 1
 
-class NxController;
 class NxCapsuleController;
 class NxActor;
-class plCoordinateInterface;
+class NxCapsule;
+class PXControllerHitReport;
 class plPhysicalProxy;
 class plDrawableSpans;
 class hsGMaterial;
-class NxCapsule;
 class plSceneObject;
-class PXControllerHitReportWalk;
+class plPXPhysical;
 class plCollideMsg;
-#ifndef PLASMA_EXTERNAL_RELEASE
 
+#ifndef PLASMA_EXTERNAL_RELEASE
 class plDbgCollisionInfo
 {
 public:
@@ -64,97 +61,112 @@ public:
     bool fOverlap;
 };
 #endif // PLASMA_EXTERNAL_RELEASE
+
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
-    friend class PXControllerHitReportWalk;
 public:
     plPXPhysicalControllerCore(plKey ownerSO, float height, float radius);
     ~plPXPhysicalControllerCore();
-    //should actually be a 3 vector but everywhere else it is assumed to be just around  Z 
-        
-    inline virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults);
-    // A disabled avatar doesn't move or accumulate air time if he's off the ground.
+
+    // An ArmatureMod has its own idea about when physics should be enabled/disabled.
+    // Use plArmatureModBase::EnablePhysics() instead.
     virtual void Enable(bool enable);
-    
-    virtual void SetSubworld(plKey world) ;
-    virtual const plCoordinateInterface* GetSubworldCI() const ;
+
+    // Subworld
+    virtual void SetSubworld(plKey world);
+
     // For the avatar SDL only
     virtual void GetState(hsPoint3& pos, float& zRot);
     virtual void SetState(const hsPoint3& pos, float zRot);
-    // kinematic stuff .... should be just for when playing a behavior...
-    virtual void Kinematic(bool state);
-    virtual bool IsKinematic();
-    virtual void GetKinematicPosition(hsPoint3& pos);
-    virtual const hsMatrix44& GetPrevSubworldW2L(){ return fPrevSubworldW2L; }
-    //when seeking no longer want to interact with exclusion regions
-    virtual void GetWorldSpaceCapsule(NxCapsule& cap) const;
-    static void RebuildCache();
-    virtual const hsMatrix44& GetLastGlobalLoc(){return  fLastGlobalLoc;}
-    virtual void SetKinematicLoc(const hsMatrix44& l2w){ISetKinematicLoc(l2w);}
-    virtual void SetGlobalLoc(const hsMatrix44& l2w){ISetGlobalLoc(l2w);}
-    virtual void HandleEnableChanged();
-    virtual void HandleKinematicChanged();
-    virtual void HandleKinematicEnableNextUpdate();
-    virtual void GetPositionSim(hsPoint3& pos){IGetPositionSim(pos);}
-    virtual void MoveKinematicToController(hsPoint3& pos);
-    virtual const hsPoint3& GetLocalPosition(){return fLocalPosition;}
-    virtual void SetControllerDimensions(float radius, float height);
+
+    // Movement strategy
+    virtual void SetMovementStrategy(plMovementStrategy* strategy);
+
+    // Global location
+    virtual void SetGlobalLoc(const hsMatrix44& l2w);
+
+    // Local Sim Position
+    virtual void GetPositionSim(hsPoint3& pos);
+
+    // Move kinematic controller
+    virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults);
+
+    // Set linear velocity on dynamic controller
+    virtual void SetLinearVelocitySim(const hsVector3& linearVel);
+
+    // Sweep the controller path from startPos through endPos
+    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics,
+        bool vsStatics, uint32_t& vsSimGroups, std::vector<plControllerSweepRecord>& hits);
+
+    // any clean up for the controller should go here
     virtual void LeaveAge();
-    virtual void UpdateControllerAndPhysicalRep();
+
+    // Capsule
+    void GetWorldSpaceCapsule(NxCapsule& cap) const;
+
+    // Create Proxy for debug rendering
+    plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+
+    // Dynamic hits
+    void AddDynamicHit(plPXPhysical* phys);
 
 //////////////////////////////////////////
 //Static Helper Functions
 ////////////////////////////////////////
-    // Used by the LOS mgr to find the controller for an actor it hit
-    static plPXPhysicalControllerCore* GetController(NxActor& actor, bool* isController);
-    // test to see if there are any controllers (i.e. avatars) in this subworld
+
+    // Call pre-sim to apply movement to controllers
+    static void Apply(float delSecs);
+
+    // Call post-sim to update controllers
+    static void Update(int numSubSteps, float alpha);
+
+    // Update controllers when not performing a physics step
+    static void UpdateNonPhysical(float alpha);
+
+    // Rebuild the controller cache, required when a static actor in the scene has changed.
+    static void RebuildCache();
+
+    // Returns the plPXPhysicalControllerCore associated with the given NxActor
+    static plPXPhysicalControllerCore* GetController(NxActor& actor);
+
+    // Subworld controller queries
     static bool AnyControllersInThisWorld(plKey world);
-    static int NumControllers();
-    static int GetControllersInThisSubWorld(plKey world, int maxToReturn, 
-        plPXPhysicalControllerCore** bufferout);
     static int GetNumberOfControllersInThisSubWorld(plKey world);
-    static void UpdatePrestep(float delSecs);
-    static void UpdatePoststep(float delSecs);
-    static void UpdatePostSimStep(float delSecs);
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
-#ifndef PLASMA_EXTERNAL_RELEASE
-    static bool fDebugDisplay;
-#endif // PLASMA_EXTERNAL_RELEASE
+    static int GetControllersInThisSubWorld(plKey world, int maxToReturn, plPXPhysicalControllerCore** bufferout);
+
+    // Controller count
+    static int NumControllers();
     static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
     static int fPXControllersMax;
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics, bool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
-    virtual void BehaveLikeAnimatedPhysical(bool actLikeAnAnimatedPhys);
-    virtual bool BehavingLikeAnAnimatedPhysical();
-    virtual const hsVector3& GetLinearVelocity();
 
-    virtual void SetLinearVelocity(const hsVector3& linearVel);
-    //should actually be a 3 vector but everywhere else it is assumed to be just around  Z 
-    virtual void SetAngularVelocity(const float angvel);
-    virtual void SetVelocities(const hsVector3& linearVel, float angVel);
+#ifndef PLASMA_EXTERNAL_RELEASE
+    static bool fDebugDisplay;
+#endif
 
 protected:
     friend class PXControllerHitReport;
-    static plPXPhysicalControllerCore* FindController(NxController* controller);
-    void ISetGlobalLoc(const hsMatrix44& l2w);
-    void IMatchKinematicToController();
-    void IMatchControllerToKinematic();
-    void ISetKinematicLoc(const hsMatrix44& l2w);
-    void IGetPositionSim(hsPoint3& pos) const;
-    void ICreateController();
-    void IDeleteController();
-    void IInformDetectors(bool entering,bool deferUntilNextSim);
+
+    virtual void IHandleEnableChanged();
+
+    void IInformDetectors(bool entering);
+
     void ICreateController(const hsPoint3& pos);
-    NxActor* fKinematicActor;
-    NxCapsuleController* fController;
+    void IDeleteController();
+
+    void IDispatchQueuedMsgs();
+    void IProcessDynamicHits();
+
 #ifndef PLASMA_EXTERNAL_RELEASE
-    hsTArray<plDbgCollisionInfo> fDbgCollisionInfo;
     void IDrawDebugDisplay();
+    hsTArray<plDbgCollisionInfo> fDbgCollisionInfo;
 #endif
-    void IHandleResize();
-    float fPreferedRadius;
-    float fPreferedHeight;
-    // The global position and rotation of the avatar last time we set it (so we
-    // can detect if someone else moves him)
-    plPhysicalProxy* fProxyGen;     
-    bool fBehavingLikeAnimatedPhys;
+
+    std::vector<plCollideMsg*> fQueuedCollideMsgs;
+    std::vector<plPXPhysical*> fDynamicHits;
+
+    NxCapsuleController* fController;
+    NxActor* fActor;
+
+    plPhysicalProxy* fProxyGen;
+    bool fKinematicCCT;
 };

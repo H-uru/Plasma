@@ -68,8 +68,10 @@ namespace plSimDefs
         kGroupLOSOnly,
         //kExcludeRegion setting up so only blocks avatars and only when not in seek mode
         kGroupExcludeRegion,
+        // A kinematic avatar only interacts with dynamics and detectors
+        kGroupAvatarKinematic,
         // Just for error checking
-        kGroupMax,
+        kGroupMax
     };
 
     /** Different types of line-of-sight requests. */
