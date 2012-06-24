@@ -15,7 +15,6 @@ set(plAvatar_SOURCES
     plAGMasterSDLModifier.cpp
     plAGModifier.cpp
     plAnimStage.cpp
-    plAntiGravAction.cpp
     plArmatureEffects.cpp
     plArmatureMod.cpp
     plAvatarClothing.cpp
@@ -32,7 +31,6 @@ set(plAvatar_SOURCES
     plAvBrainHuman.cpp
     plAvBrainRideAnimatedPhysical.cpp
     plAvBrainSwim.cpp
-    plAvCallbackAction.cpp
     plAvLadderModifier.cpp
     plAvTaskBrain.cpp
     plAvTaskSeek.cpp
@@ -60,7 +58,6 @@ set(plAvatar_HEADERS
     plAGMasterSDLModifier.h
     plAGModifier.h
     plAnimStage.h
-    plAntiGravAction.h
     plArmatureEffects.h
     plArmatureMod.h
     plAvatarClothing.h
@@ -78,7 +75,6 @@ set(plAvatar_HEADERS
     plAvBrainHuman.h
     plAvBrainRideAnimatedPhysical.h
     plAvBrainSwim.h
-    plAvCallbackAction.h
     plAvDefs.h
     plAvLadderModifier.h
     plAvTask.h

@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plAvatar/plAvCallbackAction.h"
 
 #include "HeadSpin.h"
 #include "plCollisionDetector.h"
@@ -65,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvBrainDrive.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 
 #include "plModifier/plDetectorLog.h"
 
@@ -475,7 +475,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
             // And are we walking towards it?
             plArmatureBrain* abrain =  armMod->FindBrainByClass(plAvBrainHuman::Index()); //armMod->GetCurrentBrain();
             plAvBrainHuman* brain = plAvBrainHuman::ConvertNoRef(abrain);
-            if (brain && brain->IsMovingForward() && brain->fCallbackAction->IsOnGround())
+            if (brain && brain->IsMovingForward() && brain->fWalkingStrategy->IsOnGround())
                 movingForward = true;
         }
         else
@@ -645,11 +645,11 @@ bool plPanicLinkRegion::MsgReceive(plMessage* msg)
             {
                 if (avMod->IsLinkedIn())
                 {
-                    hsPoint3 kinPos;
+                    hsPoint3 pos;
                     if (avMod->GetController())
                     {
-                        avMod->GetController()->GetKinematicPosition(kinPos);
-                        DetectorLogSpecial("Avatar is panic linking. KinPos at %f,%f,%f and is %s",kinPos.fX,kinPos.fY,kinPos.fZ,avMod->GetController()->IsEnabled() ? "enabled" : "disabled");
+                        avMod->GetController()->GetPositionSim(pos);
+                        DetectorLogSpecial("Avatar is panic linking. Position %f,%f,%f and is %s", pos.fX, pos.fY, pos.fZ, avMod->GetController()->IsEnabled() ? "enabled" : "disabled");
                     }
                     avMod->PanicLink(fPlayLinkOutAnim);
                 } else

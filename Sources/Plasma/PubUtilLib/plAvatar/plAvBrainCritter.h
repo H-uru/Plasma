@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 class plArmatureMod;
-class plWalkingController;
+class plWalkingStrategy;
 class plAIMsg;
 
 class plAvBrainCritter : public plArmatureBrain
@@ -134,8 +134,6 @@ public:
 
     virtual void DumpToDebugDisplay(int& x, int& y, int lineHeight, char* strBuf, plDebugText& debugTxt);
 
-    plWalkingController* GetCallbackAction() {return fCallbackAction;}
-
     // For the console
     static bool fDrawDebug;
 
@@ -159,7 +157,7 @@ protected:
     std::vector<plArmatureMod*> IAvatarsICanSee() const;
     std::vector<plArmatureMod*> IAvatarsICanHear() const;
 
-    plWalkingController* fCallbackAction;
+    plWalkingStrategy* fWalkingStrategy;
     int fCurMode; // current behavior we are running
     int fNextMode; // the next behavior to run (-1 if we aren't switching on next eval)
     bool fFadingNextBehavior; // is the next behavior supposed to blend?

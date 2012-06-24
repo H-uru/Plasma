@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // local includes
 #include "plAvBrainDrive.h"
 #include "plArmatureMod.h"
-#include "plAvCallbackAction.h"
 
 // global includes
 #include "hsTimer.h"

@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plAvCallbackAction.h"                 // subclasses a havok object; must be in first include section
 #include "HeadSpin.h"
 
+#include "plPhysicalControllerCore.h"
 #include "plAvBrainHuman.h"
 #include "plAvBrainClimb.h"
 #include "plAvBrainDrive.h"
@@ -140,7 +140,7 @@ plAvBrainHuman::TurnCurve plAvBrainHuman::GetTurnCurve(bool walk)
 plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) : 
     fHandleAGMod(nil),
     fStartedTurning(-1.0f),
-    fCallbackAction(nil),
+    fWalkingStrategy(nil),
     fPreconditions(0),
     fIsActor(isActor)
 {
@@ -154,9 +154,9 @@ bool plAvBrainHuman::Apply(double timeNow, float elapsed)
 #endif
         // SetTurnStrength runs first to make sure it's set to a sane value
         // (or cleared). RunStandardBehaviors may overwrite it.
-        fCallbackAction->SetTurnStrength(IGetTurnStrength(timeNow));
+        fWalkingStrategy->SetTurnStrength(IGetTurnStrength(timeNow));
         RunStandardBehaviors(timeNow, elapsed);
-        fCallbackAction->RecalcVelocity(timeNow, timeNow - elapsed, (fPreconditions & plHBehavior::kBehaviorTypeNeedsRecalcMask));
+        fWalkingStrategy->RecalcVelocity(timeNow, elapsed, (fPreconditions & plHBehavior::kBehaviorTypeNeedsRecalcMask));
         
         plArmatureBrain::Apply(timeNow, elapsed);
 #ifndef _DEBUG
@@ -177,13 +177,13 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
     
     IInitBoneMap();
     IInitAnimations();
-    if (!fCallbackAction)
+    if (!fWalkingStrategy)
     {
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
-        fCallbackAction->ActivateController();
+        fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+        controller->SetMovementStrategy(fWalkingStrategy);
     }
     
     
@@ -328,8 +328,8 @@ plAvBrainHuman::~plAvBrainHuman()
         delete fBehaviors[i];
     fBehaviors.Reset();
 
-    delete fCallbackAction;
-    fCallbackAction = nil;
+    delete fWalkingStrategy;
+    fWalkingStrategy = nil;
 }
 
 void plAvBrainHuman::Deactivate()
@@ -361,7 +361,7 @@ void plAvBrainHuman::Resume()
     if (fAvMod->GetInputFlag(S_PUSH_TO_TALK))
         IChatOn();
     
-    fCallbackAction->Reset(false);
+    fWalkingStrategy->Reset(false);
     
     plArmatureBrain::Resume();
 }
@@ -465,25 +465,23 @@ bool plAvBrainHuman::MsgReceive(plMessage * msg)
     {
         if(ride->Entering())
         {
-            //plAvBrainRideAnimatedPhysical *rideBrain = new plAvBrainRideAnimatedPhysical();
-            //fAvMod->PushBrain(rideBrain);
-            delete fCallbackAction;
+            // Switch to dynamic walking strategy
+            delete fWalkingStrategy;
             plSceneObject* avObj = fArmature->GetTarget(0);
             plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
             plPhysicalControllerCore* controller = fAvMod->GetController();
-            fCallbackAction= new plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
-            fCallbackAction->ActivateController();
-        
+            fWalkingStrategy = new plDynamicWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+            controller->SetMovementStrategy(fWalkingStrategy);
         }
         else
         {
-            delete fCallbackAction;
+            // Restore default walking strategy
+            delete fWalkingStrategy;
             plSceneObject* avObj = fArmature->GetTarget(0);
             plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
             plPhysicalControllerCore* controller = fAvMod->GetController();
-            fCallbackAction= new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
-            fCallbackAction->ActivateController();
-            //hsStatusMessage("Got an exiting  ride animated physical message");
+            fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+            controller->SetMovementStrategy(fWalkingStrategy);
         }
     }
 
@@ -557,8 +555,8 @@ float plAvBrainHuman::IGetTurnStrength(double timeNow)
     // Turning based on keypress
     if ((turnLeftStrength > 0.f)
     || (turnRightStrength > 0.f)
-    || (!fCallbackAction->IsOnGround() 
-        && !fCallbackAction->IsControlledFlight())
+    || (!fWalkingStrategy->IsOnGround() 
+        && !fWalkingStrategy->IsControlledFlight())
     ) {
         float t = (float)(timeNow - fStartedTurning);
         float turnSpeed;
@@ -590,7 +588,7 @@ float plAvBrainHuman::IGetTurnStrength(double timeNow)
         result += fAvMod->GetKeyTurnStrength() * turnSpeed;
     }
     
-    if (!fCallbackAction->IsControlledFlight())
+    if (!fWalkingStrategy->IsControlledFlight())
         result += fAvMod->GetAnalogTurnStrength() * maxTurnSpeed;
     
     return result;  
@@ -647,7 +645,7 @@ void plAvBrainHuman::ResetIdle()
 
 void plAvBrainHuman::IdleOnly(bool instantOff)
 {
-    if (!fCallbackAction)
+    if (!fWalkingStrategy)
         return;
 
     float rate = instantOff ? 0.f : 1.f;
@@ -673,7 +671,7 @@ bool plAvBrainHuman::IsMovementZeroBlend()
 
 void plAvBrainHuman::TurnToPoint(hsPoint3 point)
 {
-    if (!fCallbackAction->IsOnGround() || IsRunningTask() || fAvMod->GetCurrentBrain() != this || !IsMovementZeroBlend())
+    if (!fWalkingStrategy->IsOnGround() || IsRunningTask() || fAvMod->GetCurrentBrain() != this || !IsMovementZeroBlend())
         return;
 
     hsPoint3 avPos;
@@ -869,23 +867,23 @@ void plAvBrainHuman::Spawn(double timeNow)
 bool plAvBrainHuman::LeaveAge()
 {
     plPhysicalControllerCore* controller = fAvMod->GetController();
-    if(!controller->BehavingLikeAnAnimatedPhysical())
+
+    // If our current walking strategy is dynamic, restore the default kinematic strategy.
+    if (!fWalkingStrategy->IsKinematic())
     {
-        controller->BehaveLikeAnimatedPhysical(true);
-        delete fCallbackAction;
+        delete fWalkingStrategy;
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
-        fCallbackAction= new plWalkingController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
-        fCallbackAction->ActivateController();
+        fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
     }
-    plArmatureBrain::LeaveAge();
-    
 
-    
+    fWalkingStrategy->Reset(true);
+
+    plArmatureBrain::LeaveAge();
+
     // pin the physical so it doesn't fall when the world is deleted
     fAvMod->EnablePhysics(false);
-    // this will get set to true when we hit ground
-    fCallbackAction->Reset(true);
+
     return false;
 }
 
@@ -895,11 +893,10 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *st
     debugTxt.DrawString(x, y, strBuf);
     y += lineHeight;
     
-    const char *grounded = fCallbackAction->IsOnGround() ? "yes" : "no";
-    const char *falseGrounded = fCallbackAction->IsOnFalseGround() ? "yes" : "no";
-    const char *pushing = (fCallbackAction->GetPushingPhysical() ? (fCallbackAction->GetFacingPushingPhysical() ? "facing" : "behind") : "none");
-    sprintf(strBuf, "Ground: %3s, FalseGround: %3s, AirTime: %5.2f (Peak: %5.2f), PushingPhys: %6s",
-            grounded, falseGrounded, fCallbackAction->GetAirTime(), fCallbackAction->GetImpactTime(), pushing);
+    const char *grounded = fWalkingStrategy->IsOnGround() ? "yes" : "no";
+    const char *pushing = (fWalkingStrategy->GetPushingPhysical() ? (fWalkingStrategy->GetFacingPushingPhysical() ? "facing" : "behind") : "none");
+    sprintf(strBuf, "Ground: %3s, AirTime: %5.2f (Peak: %5.2f), PushingPhys: %6s",
+            grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing);
     debugTxt.DrawString(x, y, strBuf);
     y += lineHeight;
 
@@ -1012,8 +1009,8 @@ bool Run::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
-        if (fAvMod->ForwardKeyDown() && fAvMod->FastKeyDown() && fHuBrain->fCallbackAction->IsOnGround() &&
-            (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical()))
+        if (fAvMod->ForwardKeyDown() && fAvMod->FastKeyDown() && fHuBrain->fWalkingStrategy->IsOnGround() &&
+            (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical()))
             return true;    
     }
     return false;
@@ -1023,8 +1020,8 @@ bool Walk::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
-        if (fAvMod->ForwardKeyDown() && !fAvMod->FastKeyDown() && fHuBrain->fCallbackAction->IsOnGround() &&
-            (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical()))
+        if (fAvMod->ForwardKeyDown() && !fAvMod->FastKeyDown() && fHuBrain->fWalkingStrategy->IsOnGround() &&
+            (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical()))
             return true;
     }
     return false;
@@ -1034,8 +1031,8 @@ bool WalkBack::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
-        if (fAvMod->BackwardKeyDown() && !fAvMod->ForwardKeyDown() && fHuBrain->fCallbackAction->IsOnGround() &&
-            (!fHuBrain->fCallbackAction->GetPushingPhysical() || fHuBrain->fCallbackAction->GetFacingPushingPhysical()))
+        if (fAvMod->BackwardKeyDown() && !fAvMod->ForwardKeyDown() && fHuBrain->fWalkingStrategy->IsOnGround() &&
+            (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || fHuBrain->fWalkingStrategy->GetFacingPushingPhysical()))
             return true;
     }
     return false;
@@ -1048,7 +1045,7 @@ bool StepLeft::PreCondition(double time, float elapsed)
         return ((fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
             !(fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
             !(fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
-            fHuBrain->fCallbackAction->IsOnGround());
+            fHuBrain->fWalkingStrategy->IsOnGround());
     }
     return false;
 }
@@ -1060,7 +1057,7 @@ bool StepRight::PreCondition(double time, float elapsed)
         return ((fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
                 !(fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
                 !(fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
-                fHuBrain->fCallbackAction->IsOnGround());
+                fHuBrain->fWalkingStrategy->IsOnGround());
     }
     return false;
 }
@@ -1101,8 +1098,8 @@ bool MovingTurnLeft::PreCondition(double time, float elapsed)
 {
     if (fAvMod->GetTurnStrength() > 0) 
     {
-        if (fHuBrain->fCallbackAction->IsOnGround() && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
-            (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical())) 
+        if (fHuBrain->fWalkingStrategy->IsOnGround() && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
+            (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical())) 
             return true;
     }
     return false;
@@ -1112,8 +1109,8 @@ bool MovingTurnRight::PreCondition(double time, float elapsed)
 {
     if (fAvMod->GetTurnStrength() < 0) 
     {
-        if (fHuBrain->fCallbackAction->IsOnGround() && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
-            (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical())) 
+        if (fHuBrain->fWalkingStrategy->IsOnGround() && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()) &&
+            (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical())) 
             return true;
     }
     
@@ -1122,14 +1119,14 @@ bool MovingTurnRight::PreCondition(double time, float elapsed)
 
 void Jump::IStart()
 {
-    fHuBrain->fCallbackAction->EnableControlledFlight(true);
+    fHuBrain->fWalkingStrategy->EnableControlledFlight(true);
     
     plHBehavior::IStart();
 }
 
 void Jump::IStop()
 {
-    fHuBrain->fCallbackAction->EnableControlledFlight(false);
+    fHuBrain->fWalkingStrategy->EnableControlledFlight(false);
 
     plHBehavior::IStop();
 }
@@ -1140,7 +1137,7 @@ bool StandingJump::PreCondition(double time, float elapsed)
     {
         if (GetStrength() > 0.f)
         {
-            if (!fHuBrain->fCallbackAction->IsControlledFlight() ||
+            if (!fHuBrain->fWalkingStrategy->IsControlledFlight() ||
                 fAnim->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) >= fAnim->GetTimeConvert()->GetEnd())
             {
                 return false;
@@ -1152,7 +1149,7 @@ bool StandingJump::PreCondition(double time, float elapsed)
             if (fAvMod->JumpKeyDown() &&
                 !fAvMod->ForwardKeyDown() &&
                 fAnim->GetBlend() == 0.0f &&
-                fHuBrain->fCallbackAction->IsOnGround())
+                fHuBrain->fWalkingStrategy->IsOnGround())
             {
                 if (fAvMod->ConsumeJump())
                     return true;
@@ -1168,7 +1165,7 @@ bool WalkingJump::PreCondition(double time, float elapsed)
     {
         if (GetStrength() > 0.f)
         {
-            if (!fHuBrain->fCallbackAction->IsControlledFlight() ||
+            if (!fHuBrain->fWalkingStrategy->IsControlledFlight() ||
                 fAnim->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) >= fAnim->GetTimeConvert()->GetEnd())
             {
                 return false;
@@ -1181,8 +1178,8 @@ bool WalkingJump::PreCondition(double time, float elapsed)
                 !fAvMod->FastKeyDown() &&
                 fAvMod->ForwardKeyDown() &&
                 fAnim->GetBlend() == 0.0f &&
-                fHuBrain->fCallbackAction->IsOnGround() &&
-                (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical()))
+                fHuBrain->fWalkingStrategy->IsOnGround() &&
+                (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical()))
             {
                 if (fAvMod->ConsumeJump())
                     return true;
@@ -1198,7 +1195,7 @@ bool RunningJump::PreCondition(double time, float elapsed)
     {
         if (GetStrength() > 0.f)
         {
-            if (!fHuBrain->fCallbackAction->IsControlledFlight() ||
+            if (!fHuBrain->fWalkingStrategy->IsControlledFlight() ||
                 fAnim->GetTimeConvert()->WorldToAnimTimeNoUpdate(time) >= fAnim->GetTimeConvert()->GetEnd())
             {
                 return false;
@@ -1211,8 +1208,8 @@ bool RunningJump::PreCondition(double time, float elapsed)
                 fAvMod->ForwardKeyDown() &&
                 fAvMod->FastKeyDown() &&
                 fAnim->GetBlend() == 0.0f &&
-                fHuBrain->fCallbackAction->IsOnGround() &&
-                (!fHuBrain->fCallbackAction->GetPushingPhysical() || !fHuBrain->fCallbackAction->GetFacingPushingPhysical()))
+                fHuBrain->fWalkingStrategy->IsOnGround() &&
+                (!fHuBrain->fWalkingStrategy->GetPushingPhysical() || !fHuBrain->fWalkingStrategy->GetFacingPushingPhysical()))
             {
                 if (fAvMod->ConsumeJump())
                     return true;
@@ -1237,13 +1234,13 @@ bool RunningImpact::PreCondition(double time, float elapsed)
 {   
     if (fDuration > 0.0f)
         fDuration = fDuration - elapsed;
-    else if (fHuBrain->fCallbackAction->IsOnGround() && fHuBrain->fCallbackAction->GetImpactTime() > kMinAirTime) 
+    else if (fHuBrain->fWalkingStrategy->IsOnGround() && fHuBrain->fWalkingStrategy->GetImpactTime() > kMinAirTime) 
     {
-        if (fHuBrain->fCallbackAction->GetImpactVelocity().fZ < -kMinImpactVel)
+        if (fHuBrain->fWalkingStrategy->GetImpactVelocity().fZ < -kMinImpactVel)
         {
-            if (fHuBrain->fCallbackAction->GetImpactVelocity().fY < kRunningImpactThresh)
+            if (fHuBrain->fWalkingStrategy->GetImpactVelocity().fY < kRunningImpactThresh)
             {
-                fMaxBlend = 0.5f + (0.5f * (-fHuBrain->fCallbackAction->GetImpactVelocity().fZ / (kFullImpactVel - kMinImpactVel)));
+                fMaxBlend = 0.5f + (0.5f * (-fHuBrain->fWalkingStrategy->GetImpactVelocity().fZ / (kFullImpactVel - kMinImpactVel)));
                 if (fMaxBlend > 1)
                     fMaxBlend = 1;
                 fDuration = 1.0f / fFadeIn;
@@ -1267,13 +1264,13 @@ bool GroundImpact::PreCondition(double time, float elapsed)
     bool result = false;
     if (fDuration > 0.0f)
         fDuration = fDuration - elapsed;
-    else if (fHuBrain->fCallbackAction->IsOnGround() && fHuBrain->fCallbackAction->GetImpactTime() > kMinAirTime) 
+    else if (fHuBrain->fWalkingStrategy->IsOnGround() && fHuBrain->fWalkingStrategy->GetImpactTime() > kMinAirTime) 
     {
-        if (fHuBrain->fCallbackAction->GetImpactVelocity().fZ < -kMinImpactVel)
+        if (fHuBrain->fWalkingStrategy->GetImpactVelocity().fZ < -kMinImpactVel)
         {
-            if (fHuBrain->fCallbackAction->GetImpactVelocity().fY >= kRunningImpactThresh)
+            if (fHuBrain->fWalkingStrategy->GetImpactVelocity().fY >= kRunningImpactThresh)
             {
-                fMaxBlend = 0.5f + (0.5f * (-fHuBrain->fCallbackAction->GetImpactVelocity().fZ / (kFullImpactVel - kMinImpactVel)));
+                fMaxBlend = 0.5f + (0.5f * (-fHuBrain->fWalkingStrategy->GetImpactVelocity().fZ / (kFullImpactVel - kMinImpactVel)));
                 if (fMaxBlend > 1)
                     fMaxBlend = 1;
                 fDuration = 1.0f / fFadeIn;
@@ -1292,7 +1289,7 @@ void GroundImpact::IStop()
 
 bool Fall::PreCondition(double time, float elapsed)
 {
-    return !fHuBrain->fCallbackAction->IsOnGround() && fHuBrain->fCallbackAction->HitGroundInThisAge();
+    return !fHuBrain->fWalkingStrategy->IsOnGround() && fHuBrain->fWalkingStrategy->HitGroundInThisAge();
 }
 
 void Fall::Process(double time, float elapsed)
@@ -1304,7 +1301,7 @@ void Fall::Process(double time, float elapsed)
         if (fAnim && fAnim->GetBlend() > 0.8)
         {
             float panicThresh = plAvBrainHuman::kAirTimePanicThreshold;
-            if (panicThresh > 0.0f && fHuBrain->fCallbackAction->GetAirTime() > panicThresh)
+            if (panicThresh > 0.0f && fHuBrain->fWalkingStrategy->GetAirTime() > panicThresh)
             {
                 fHuBrain->IdleOnly();   // clear the fall state; we're going somewhere new
                 fAvMod->PanicLink();
@@ -1321,7 +1318,7 @@ void Push::Process(double time, float elapsed)
     fAvMod->GetPositionAndRotationSim(&pos, &rot);
 
     hsPoint3 lookAt;
-    fHuBrain->fCallbackAction->GetPushingPhysical()->GetPositionSim(lookAt);
+    fHuBrain->fWalkingStrategy->GetPushingPhysical()->GetPositionSim(lookAt);
     hsVector3 up(0.f, 0.f, 1.f);
     float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
     hsQuat targRot(angle, &up);
@@ -1335,23 +1332,23 @@ void Push::Process(double time, float elapsed)
     globFwd = rot.Rotate(&globFwd);
         
     if (globFwd.fX < 0)
-        fHuBrain->fCallbackAction->SetTurnStrength(-turnSpeed);
+        fHuBrain->fWalkingStrategy->SetTurnStrength(-turnSpeed);
     else
-        fHuBrain->fCallbackAction->SetTurnStrength(turnSpeed);
+        fHuBrain->fWalkingStrategy->SetTurnStrength(turnSpeed);
 }
     
 //bool PushIdle::PreCondition(double time, float elapsed)
 //{
-//  return (fHuBrain->fCallbackAction->GetPushingPhysical() &&
-//          fHuBrain->fCallbackAction->IsOnGround() && 
+//  return (fHuBrain->fWalkingStrategy->GetPushingPhysical() &&
+//          fHuBrain->fWalkingStrategy->IsOnGround() && 
 //          !fAvMod->TurnLeftKeyDown() && !fAvMod->TurnRightKeyDown()
 //          && fAvMod->GetTurnStrength() == 0);
 //}
 
 bool PushWalk::PreCondition(double time, float elapsed)
 {
-    return (fHuBrain->fCallbackAction->GetPushingPhysical() && fHuBrain->fCallbackAction->GetFacingPushingPhysical() &&
-            fHuBrain->fCallbackAction->IsOnGround() &&
+    return (fHuBrain->fWalkingStrategy->GetPushingPhysical() && fHuBrain->fWalkingStrategy->GetFacingPushingPhysical() &&
+            fHuBrain->fWalkingStrategy->IsOnGround() &&
             fAvMod->ForwardKeyDown());
 }
 
@@ -1366,7 +1363,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
 {
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
     const char *names[3] = {enterAnim, idleAnim, exitAnim};
-    if (!huBrain || !huBrain->fCallbackAction->IsOnGround() || !huBrain->fCallbackAction->HitGroundInThisAge() || huBrain->IsRunningTask() ||
+    if (!huBrain || !huBrain->fWalkingStrategy->IsOnGround() || !huBrain->fWalkingStrategy->HitGroundInThisAge() || huBrain->IsRunningTask() ||
         !avatar->IsPhysicsEnabled() || avatar->FindMatchingGenericBrain(names, 3))
         return false;
 
@@ -1429,7 +1426,7 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
     if (swimBrain && swimBrain->IsSwimming())
         return false;
     
-    if (huBrain && huBrain->fCallbackAction->IsOnGround() && huBrain->fCallbackAction->HitGroundInThisAge() && !huBrain->IsRunningTask() && 
+    if (huBrain && huBrain->fWalkingStrategy->IsOnGround() && huBrain->fWalkingStrategy->HitGroundInThisAge() && !huBrain->IsRunningTask() && 
         emote && !alreadyActive && avatar->IsPhysicsEnabled())
     {
         plKey avKey = avatar->GetKey();

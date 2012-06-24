@@ -72,25 +72,6 @@ namespace plSimDefs
         kGroupMax,
     };
 
-    /** A taxonomy of action types. Crucial for doing things like making sure you don't
-        do things like attach duplicate actions. */
-    enum ActionType
-    {
-        kUnknownAction      =   0x01,           // don't know the type (probably forgot to override GetType())
-        kUnknownZAction     =   0x02,           // unknown type of z-order action
-        kAntiGravityAction  =   0x03,           // an action that counters gravity exactly
-        kUprightAction      =   0x04,           // an action that keeps an object upright by apply force
-        kPhysAnimAction     =   0x05,           // an action that parses keyframed animation into physical information
-        kConstraint         =   0x06,           // a general constraint.
-        kCallbackAction     =   0x07,           // an action that just hands us the physics "tick"
-        kPseudoPhysAction   =   0x08,           // replacement for the physAnim
-        kAntiGravAction     =   0x09,           // makes things float in the air
-        kBasicGroundAction  =   0x0a,           // for your basic walkAroundOnGround corrections
-        kHorizontalFreeze   =   0x0b,           // Let's you fall vertically, but otherwise keeps you in place (generic brains)
-
-        kMaxAction          =   0xffff          // force 16-bit
-    };
-
     /** Different types of line-of-sight requests. */
     enum LOSReqType
     {

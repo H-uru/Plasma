@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plPhysical.h"
 #include "plPhysical/plSimDefs.h"
-#include "plAvatar/plAvCallbackAction.h"
 
 #include "plAvatar/plAvBrainGeneric.h"
 
