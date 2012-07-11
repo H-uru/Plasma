@@ -153,7 +153,7 @@ hsSemaphore::~hsSemaphore()
     hsThrowIfOSErr(status);
 }
 
-hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
     Duration    duration;
 

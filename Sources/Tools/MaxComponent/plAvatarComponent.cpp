@@ -145,7 +145,7 @@ void plArmatureComponent::ISetupAvatarRenderPropsRecurse(plMaxNode *node)
 
 //SETUPPROPERTIES
 // Tests if IPB2 pointers are healthy and sets up the MaxNode Data
-hsBool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // Global issues
     node->SetMovable(true);
@@ -213,7 +213,7 @@ void plArmatureComponent::ISetArmatureSORecurse(plMaxNode *node, plSceneObject *
 }
 
 
-hsBool plArmatureComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plArmatureComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // add audio interface and record/playback component
     pl2WayWinAudible* pAudible = new pl2WayWinAudible;
@@ -239,7 +239,7 @@ hsBool plArmatureComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 // this is a little gross...the armature component shouldn't know that the subclasses
 // actually exist....it's a hard-to-detect implementation detail that breaks new subclasses....
-hsBool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
+bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
 //  plHKPhysical *physical = plHKPhysical::ConvertToPhysical(node->GetSceneObject());
  // physical->SetProperty(plSimulationInterface::kUpright, true);
@@ -285,7 +285,7 @@ hsBool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 }
 
 
-hsBool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, hsBool IsHull)
+bool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, bool IsHull)
 {
     if(thisNode != NULL)
     {
@@ -332,9 +332,9 @@ void plArmatureComponent::IAttachShadowCastModifiersRecur(plMaxNode* node, plSha
 //  float fMaxVel;
 //  float fAccel;
 //  float fTurnForce;
-//  hsBool fUseNewMovement;
+//  bool fUseNewMovement;
 //
-//  AvatarStats(float a, float b, float c, float d, hsBool newMove)
+//  AvatarStats(float a, float b, float c, float d, bool newMove)
 //      : fFriction(a), fMaxVel(b), fAccel(c), fTurnForce(d), fUseNewMovement(newMove) {};
 //  AvatarStats() : fFriction(-1.0), fMaxVel(-1.0), fAccel(-1.0), fTurnForce(-1.0) {};
 //};
@@ -566,7 +566,7 @@ void plAvatarComponent::ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErr
     AddClothingToMod(node, mod, fCompPB->GetInt(kClothingGroup), nil, pErrMsg);
 }
 
-hsBool plAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetItinerant(true);
 
@@ -660,8 +660,8 @@ class plCompoundCtrlComponent : public plComponent
 {
 public:
     plCompoundCtrlComponent();
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
 };
 
 CLASS_DESC(plCompoundCtrlComponent, gCompoundCtrlCompDesc, "Compound Controller", "CompoundCtrl", COMP_TYPE_AVATAR, Class_ID(0x3f2a790f, 0x30354673))
@@ -672,7 +672,7 @@ plCompoundCtrlComponent::plCompoundCtrlComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetMovable(true);
     node->SetForceLocal(true);
@@ -680,7 +680,7 @@ hsBool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
     return true;
 }
 
-hsBool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
+bool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     plString name = node->GetKey()->GetName();
 
@@ -1081,7 +1081,7 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
     IAttachShadowCastToLODs(node);
 }
 
-hsBool plLODAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLODAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetItinerant(true);   
     
@@ -1112,9 +1112,9 @@ hsBool plLODAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return plArmatureComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)           
+bool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)           
 { 
-    hsBool result = plArmatureComponent::PreConvert(node, pErrMsg); 
+    bool result = plArmatureComponent::PreConvert(node, pErrMsg); 
 
     hsTArray<hsGMaterial*> mats;
     Mtl *mtl = fCompPB->GetMtl(kMaterial);
@@ -1126,7 +1126,7 @@ hsBool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return result;
 }
 
-hsBool plLODAvatarComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLODAvatarComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plArmatureComponent::Convert(node, pErrMsg);
 

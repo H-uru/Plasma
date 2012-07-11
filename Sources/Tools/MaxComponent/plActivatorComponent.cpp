@@ -51,7 +51,7 @@ class plActiveComponent : public plComponent
 {
 public:
     plActiveComponent();
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 OBSOLETE_CLASS_DESC(plActiveComponent, gActiveDesc, "Activator", "Activator", COMP_TYPE_LOGIC, ACTIVATOR_CID)

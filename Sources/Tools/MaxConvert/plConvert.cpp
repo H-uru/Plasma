@@ -96,12 +96,12 @@ plConvert& plConvert::Instance()
     return theInstance;
 }
 
-hsBool plConvert::IOK()
+bool plConvert::IOK()
 {
     return (!fQuit && !fpErrorMsg->IsBogus() ) ? true: false;
 }
 
-hsBool plConvert::Convert()
+bool plConvert::Convert()
 {
 #ifndef HS_NO_TRY
     try
@@ -119,7 +119,7 @@ hsBool plConvert::Convert()
     IFindDuplicateNames();
 
     plExportProgressBar bar;
-    hsBool  retVal  = true; // sometime, we might look at this
+    bool    retVal  = true; // sometime, we might look at this
 
     if( !IAutoClusterRecur(pNode) )
     {
@@ -267,7 +267,7 @@ hsBool plConvert::Convert()
 //#include "MaxMain/plMaxNodeData.h"
 //#include <set>
 
-hsBool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg, plConvertSettings *settings)
+bool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg, plConvertSettings *settings)
 {
     for (int i = 0; i < nodes.Count(); i++)
     {
@@ -280,7 +280,7 @@ hsBool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errM
     return true;
 }
 
-hsBool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
+bool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
 {
 #ifndef HS_NO_TRY
     try
@@ -288,7 +288,7 @@ hsBool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
     {
     fSettings->fReconvert = true;
 
-    hsBool retVal = true;
+    bool retVal = true;
 
     if (IOK())
         retVal = ConvertList(nodes, &plMaxNode::ClearData, fpErrorMsg, fSettings);
@@ -352,7 +352,7 @@ hsBool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
 #endif
 }
 
-hsBool plConvert::Init(Interface *ip, plErrorMsg* msg, plConvertSettings *settings)
+bool plConvert::Init(Interface *ip, plErrorMsg* msg, plConvertSettings *settings)
 {
     fInterface = ip;
     fpErrorMsg = msg;
@@ -404,7 +404,7 @@ void plConvert::AddMessageToQueue(plMessage* msg)
     fMsgQueue.Append(msg);
 }
 
-void plConvert::SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, hsBool ignorePhysicals )
+void plConvert::SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, bool ignorePhysicals )
 {
     for (int i = 0; i < pNode->NumberOfChildren(); i++)
         SendEnvironmentMessage((plMaxNode *)pNode->GetChildNode(i), efxRegion, msg, ignorePhysicals );

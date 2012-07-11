@@ -137,7 +137,7 @@ OBSOLETE_CLASS(plImpactGadget, gImpactGadgetDesc, "Collision Sensor",  "Collisio
 //  fClassDesc->MakeAutoParamBlocks(this);
 // }
 // 
-// hsBool plImpactGadget::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+// bool plImpactGadget::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 // {
 //  plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 // 
@@ -147,7 +147,7 @@ OBSOLETE_CLASS(plImpactGadget, gImpactGadgetDesc, "Collision Sensor",  "Collisio
 //  return true;
 // }
 // 
-// hsBool plImpactGadget::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+// bool plImpactGadget::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 // {
 //  plLocation loc = node->GetLocation();
 //  plSceneObject *obj = node->GetSceneObject();

@@ -135,7 +135,7 @@ void plSimpleParticleGenerator::Init(float genLife, float partLifeMin, float par
     if (fGenLife < 0) fMiscFlags |= kImmortal;
 }
 
-hsBool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
+bool plSimpleParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
 {
     int32_t numNewParticles;
 
@@ -378,7 +378,7 @@ void plOneTimeParticleGenerator::Init(float count, hsPoint3 *pointArray, hsVecto
 }
 
 // The numForced param is required by the parent class, but ignored by this particular generator
-hsBool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
+bool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced /* = 0 */)
 {
     float currSizeVar;
     float scale = (fScaleMax + fScaleMin) / 2;

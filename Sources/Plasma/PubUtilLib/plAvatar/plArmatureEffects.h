@@ -62,7 +62,7 @@ class plArmatureEffectsMgr : public hsKeyedObject
 {
 protected:
     hsTArray<plArmatureEffect *> fEffects;
-    hsBool fEnabled;
+    bool fEnabled;
 
 public:
 
@@ -75,7 +75,7 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr); 
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     uint32_t GetNumEffects();
     plArmatureEffect *GetEffect(uint32_t num);
@@ -119,7 +119,7 @@ public:
     CLASSNAME_REGISTER( plArmatureEffect );
     GETINTERFACE_ANY( plArmatureEffect, hsKeyedObject );
 
-    virtual hsBool HandleTrigger(plMessage* msg) = 0;
+    virtual bool HandleTrigger(plMessage* msg) = 0;
     virtual void Reset() {}
 };
 
@@ -149,8 +149,8 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr); 
 
-    virtual hsBool MsgReceive(plMessage* msg);
-    virtual hsBool HandleTrigger(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
+    virtual bool HandleTrigger(plMessage* msg);
     virtual void Reset();
     void SetFootType(uint8_t);
 

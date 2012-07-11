@@ -68,13 +68,13 @@ class plDXRenderTargetRef: public plDXTextureRef
         IDirect3DSurface9   *fD3DColorSurface;
         IDirect3DSurface9   *fD3DDepthSurface;
 
-        hsBool              fReleaseDepth;
+        bool                fReleaseDepth;
 
         void                    Link( plDXRenderTargetRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
         plDXRenderTargetRef *GetNext( void ) { return (plDXRenderTargetRef *)fNext; }
 
 
-        plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, hsBool releaseDepthOnDelete = true );
+        plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, bool releaseDepthOnDelete = true );
         plDXRenderTargetRef& Set( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner );
 
         virtual void    SetOwner( plRenderTarget *targ ) { fOwner = (plBitmap *)targ; }

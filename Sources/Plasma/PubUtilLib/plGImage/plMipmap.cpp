@@ -1304,7 +1304,7 @@ void    plMipmap::IBlendLevelDetailMult( uint8_t iDst, const plFilterMask& mask,
 //  of filtering. (This is us guessing that that border was apparently what
 //  was intented, thus removing ugly stretching problems on clamped textures).
 
-void    plMipmap::EnsureKonstantBorder( hsBool clampU, hsBool clampV )
+void    plMipmap::EnsureKonstantBorder( bool clampU, bool clampV )
 {
     if( fPixelSize != 32 )
     {
@@ -1343,7 +1343,7 @@ void    plMipmap::EnsureKonstantBorder( hsBool clampU, hsBool clampV )
 //  Grabs the top level's border color, or returns false if not all pixels
 //  on the border are the same color/alpha.
 
-hsBool  plMipmap::IGrabBorderColor( hsBool grabVNotU, uint32_t *color )
+bool    plMipmap::IGrabBorderColor( bool grabVNotU, uint32_t *color )
 {
     int         i;
     uint32_t      *src1 = (uint32_t *)fImage, *src2, testColor;
@@ -2087,7 +2087,7 @@ void    plMipmap::ScaleNicely( uint32_t *destPtr, uint16_t destWidth, uint16_t d
 //  Resizes us using the ScaleNicely function. Only works for 1-level, 32bpp
 //  uncompressed mipmaps.
 
-hsBool  plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter )
+bool    plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter )
 {
     // Make a temp buffer
     uint32_t  *newData = new uint32_t[ newWidth * newHeight ];

@@ -54,7 +54,7 @@ fAction(kEventEnd)
 {
 }
 
-hsBool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
+bool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 {
     plEventCallbackMsg* pMsg = plEventCallbackMsg::ConvertNoRef(msg);
     if (pMsg)

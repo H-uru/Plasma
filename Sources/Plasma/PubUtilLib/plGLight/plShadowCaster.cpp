@@ -59,8 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plShadowMaster.h"
 
-hsBool plShadowCaster::fShadowCastDisabled = false;
-hsBool plShadowCaster::fCanShadowCast = true;
+bool plShadowCaster::fShadowCastDisabled = false;
+bool plShadowCaster::fCanShadowCast = true;
 
 plShadowCaster::plShadowCaster()
 :   fMaxOpacity(0),
@@ -157,7 +157,7 @@ void plShadowCaster::ICollectAllSpans()
     }
 }
 
-hsBool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
+bool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
 {
     if( ShadowCastDisabled() )
         return true;
@@ -209,7 +209,7 @@ hsBool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
 #include "plProfile.h"
 plProfile_CreateTimer("ShadowCaster", "RenderSetup", ShadowCaster);
 
-hsBool plShadowCaster::MsgReceive(plMessage* msg)
+bool plShadowCaster::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )

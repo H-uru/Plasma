@@ -98,8 +98,8 @@ void plAGMasterMod::Write(hsStream *stream, hsResMgr *mgr)
     {
         mgr->WriteKey(stream, fPrivateAnims[i]->GetKey());
     }
-    stream->Writebool(fIsGrouped);
-    stream->Writebool(fIsGroupMaster);
+    stream->WriteBool(fIsGrouped);
+    stream->WriteBool(fIsGroupMaster);
     if (fIsGroupMaster)
         mgr->WriteKey(stream, fMsgForwarder->GetKey());
 
@@ -126,8 +126,8 @@ void plAGMasterMod::Read(hsStream * stream, hsResMgr *mgr)
         plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPrivateAnim);
         mgr->ReadKeyNotifyMe(stream, msg, plRefFlags::kActiveRef);
     }
-    fIsGrouped = stream->Readbool();
-    fIsGroupMaster = stream->Readbool();
+    fIsGrouped = stream->ReadBool();
+    fIsGroupMaster = stream->ReadBool();
     if (fIsGroupMaster)
     {
         plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0);
@@ -218,7 +218,7 @@ plProfile_CreateTimer("AnimatingPhysicals", "Animation", AnimatingPhysicals);
 plProfile_CreateTimer("StoppedAnimPhysicals", "Animation", StoppedAnimPhysicals);
 
 // IEVAL
-hsBool plAGMasterMod::IEval(double secs, float del, uint32_t dirty)
+bool plAGMasterMod::IEval(double secs, float del, uint32_t dirty)
 {
     if (fFirstEval)
     {
@@ -325,7 +325,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
 
 // GETCHANNELMOD(name)
 // Get the modifier that controls the channel with the given name
-plAGModifier * plAGMasterMod::GetChannelMod(const plString & name, hsBool dontCache ) const
+plAGModifier * plAGMasterMod::GetChannelMod(const plString & name, bool dontCache ) const
 {
     plAGModifier * result = nil;
     std::map<plString, plAGModifier *>::const_iterator i = fChannelMods.find(name);
@@ -389,7 +389,7 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const plS
 plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
                                                          float blendFactor /* = 0 */,
                                                          uint16_t blendPriority /* plAGMedBlendPriority */,
-                                                         hsBool cache /* = false */)
+                                                         bool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
     plAnimVector::iterator i;
@@ -421,7 +421,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
 }
 
 // ATTACHANIMATIONBLENDED(name, blend)
-plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const plString &name, float blendFactor /* = 0 */, uint16_t blendPriority, hsBool cache /* = false */)
+plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const plString &name, float blendFactor /* = 0 */, uint16_t blendPriority, bool cache /* = false */)
 {
     plAGAnimInstance *instance = nil;
     plAGAnim *anim = plAGAnim::FindAnim(name);
@@ -612,7 +612,7 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
 
 // MSGRECEIVE
 // receive trigger messages
-hsBool plAGMasterMod::MsgReceive(plMessage* msg)
+bool plAGMasterMod::MsgReceive(plMessage* msg)
 {
     plAnimCmdMsg* cmdMsg;
     plAGCmdMsg* agMsg;
@@ -768,7 +768,7 @@ hsBool plAGMasterMod::MsgReceive(plMessage* msg)
     return plModifier::MsgReceive(msg);
 }
 
-void plAGMasterMod::IRegForEval(hsBool val)
+void plAGMasterMod::IRegForEval(bool val)
 {
     if (fNeedEval == val)
         return;
@@ -780,10 +780,10 @@ void plAGMasterMod::IRegForEval(hsBool val)
         plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-hsBool plAGMasterMod::HasRunningAnims()
+bool plAGMasterMod::HasRunningAnims()
 {
     int i;
-    hsBool needEval = false;
+    bool needEval = false;
     for (i = 0; i < fAnimInstances.size(); i++)
     {
         if (!fAnimInstances[i]->IsFinished())
@@ -798,7 +798,7 @@ hsBool plAGMasterMod::HasRunningAnims()
 //
 // Send SDL sendState msg to object's plAGMasterSDLModifier
 //
-hsBool plAGMasterMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plAGMasterMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     if(GetNumTargets() > 0 && (!fIsGrouped || fIsGroupMaster))
     {

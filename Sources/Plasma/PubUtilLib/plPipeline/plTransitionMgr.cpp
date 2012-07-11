@@ -203,7 +203,7 @@ void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
 
 //// IStop ///////////////////////////////////////////////////////////////////
 
-void    plTransitionMgr::IStop( hsBool aboutToStartAgain /*= false*/ )
+void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 {
     int     i;
 
@@ -244,7 +244,7 @@ void    plTransitionMgr::IStop( hsBool aboutToStartAgain /*= false*/ )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plTransitionMgr::MsgReceive( plMessage* msg )
+bool    plTransitionMgr::MsgReceive( plMessage* msg )
 {
     int         i;
 

@@ -72,7 +72,7 @@ class SensorReport : public NxUserTriggerReport
     {
         // Get our trigger physical.  This should definitely have a plPXPhysical
         plPXPhysical* triggerPhys = (plPXPhysical*)triggerShape.getActor().userData;
-        hsBool doReport = false;
+        bool doReport = false;
 
         // Get the triggerer.  This may be an avatar, which doesn't have a
         // plPXPhysical, so we have to extract the necessary info.
@@ -507,7 +507,7 @@ void plSimulationMgr::ReleaseScene(plKey world)
     }
 }
 
-void plSimulationMgr::ISendCollisionMsg(plKey receiver, plKey hitter, hsBool entering)
+void plSimulationMgr::ISendCollisionMsg(plKey receiver, plKey hitter, bool entering)
 {
     DetectorLogYellow("Collision: %s is inside %s. Sending an %s msg", hitter ? hitter->GetName().c_str() : "(nil)",
                       receiver->GetName().c_str(), entering ? "'enter'" : "'exit'");
@@ -774,7 +774,7 @@ void plSimulationMgr::ISendUpdates()
     }
 }
 
-hsBool plSimulationMgr::MsgReceive(plMessage *msg)
+bool plSimulationMgr::MsgReceive(plMessage *msg)
 {
     // Suspend/resume the simulation based on whether or not we're in an age...
     if (plAgeLoadedMsg* aMsg = plAgeLoadedMsg::ConvertNoRef(msg))

@@ -100,7 +100,7 @@ const char* hsFile::GetName()
     return FindNameInPath(this->GetPathAndName());
 }
 
-FILE* hsFile::OpenFILE(const char mode[], hsBool throwIfFailure)
+FILE* hsFile::OpenFILE(const char mode[], bool throwIfFailure)
 {
     this->Close();
 
@@ -116,7 +116,7 @@ FILE* hsFile::OpenFILE(const char mode[], hsBool throwIfFailure)
     return fFILE;
 }
 
-hsStream* hsFile::OpenStream(const char mode[], hsBool throwIfFailure)
+hsStream* hsFile::OpenStream(const char mode[], bool throwIfFailure)
 {
     FILE* file = this->OpenFILE(mode, throwIfFailure);
 
@@ -141,7 +141,7 @@ void hsFile::Close()
 
 ///////////////////////////////////////////////////////////////////////
 
-hsBool hsFolderIterator::NextFileSuffix(const char suffix[])
+bool hsFolderIterator::NextFileSuffix(const char suffix[])
 {
     while (this->NextFile())
     {   const char* fileSuffix = ::strrchr(this->GetFileName(), '.');

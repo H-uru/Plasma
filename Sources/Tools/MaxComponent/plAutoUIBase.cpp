@@ -125,7 +125,7 @@ char *plAutoUIBase::IMakeScriptName(const char *fullName)
 // Setup control
 //
 
-void plAutoUIBase::AddCheckBox(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, hsBool def)
+void plAutoUIBase::AddCheckBox(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, bool def)
 {
     char *scriptNameNew = scriptName ? hsStrcpy(scriptName) : IMakeScriptName(name);
 

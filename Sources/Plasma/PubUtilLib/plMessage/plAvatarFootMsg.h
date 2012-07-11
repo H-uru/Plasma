@@ -53,7 +53,7 @@ class plAvBrain;
 class plAvatarFootMsg : public plEventCallbackMsg
 {
 protected:
-    hsBool          fIsLeft;
+    bool            fIsLeft;
     plArmatureMod*  fArmature;
 public:
     plAvatarFootMsg() 
@@ -61,7 +61,7 @@ public:
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);
     }
-    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, hsBool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
+    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, bool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
     {
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);
@@ -79,8 +79,8 @@ public:
         hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
     }
 
-    hsBool IsLeft() const { return fIsLeft; }
-    void SetIsLeft(hsBool on) { fIsLeft = (0 != on); }
+    bool IsLeft() const { return fIsLeft; }
+    void SetIsLeft(bool on) { fIsLeft = (0 != on); }
 
     plArmatureMod* GetArmature() const { return fArmature; }
     void SetArmature(plArmatureMod* a) { fArmature = a; }

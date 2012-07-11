@@ -64,7 +64,7 @@ public:
 
 protected:
     hsTArray<plRelevanceRegion*> fRegions;  
-    hsBool fEnabled;
+    bool fEnabled;
 
     void IAddRegion(plRelevanceRegion *);
     void IRemoveRegion(plRelevanceRegion *);
@@ -75,13 +75,13 @@ public:
     CLASSNAME_REGISTER( plRelevanceMgr );
     GETINTERFACE_ANY( plRelevanceMgr, hsKeyedObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
-    hsBool GetEnabled() { return fEnabled; }
-    void SetEnabled(hsBool val) { fEnabled = val; }
+    bool GetEnabled() { return fEnabled; }
+    void SetEnabled(bool val) { fEnabled = val; }
 
     uint32_t GetIndex(const plString &regionName);
-    void MarkRegion(uint32_t localIdx, uint32_t remoteIdx, hsBool doICare);
+    void MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare);
     void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
     uint32_t GetNumRegions() const; // includes the secret 0 region in its count
     void ParseCsvInput(hsStream *s);

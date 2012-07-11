@@ -77,7 +77,7 @@ void plNetTransport::IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr)
     for( i=mbr->GetNumSubscriptions()-1; i>=0 ; i-- )
     {
         int chan=mbr->GetSubscription(i);
-        hsBool ok=UnSubscribeToChannelGrp(mbr, chan);
+        bool ok=UnSubscribeToChannelGrp(mbr, chan);
         hsAssert(ok, "can't find supposed subscription to remove");
     } // for             
 }
@@ -111,7 +111,7 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
 // remove member from master list, and all subscription channels.
 // return true on success.
 //
-hsBool plNetTransport::RemoveMember(int idx)
+bool plNetTransport::RemoveMember(int idx)
 {
     if (idx>=0)
     {
@@ -126,7 +126,7 @@ hsBool plNetTransport::RemoveMember(int idx)
 // remove member from master list, and all subscription channels.
 // return true on success.
 //
-hsBool plNetTransport::RemoveMember(plNetTransportMember* mbr)
+bool plNetTransport::RemoveMember(plNetTransportMember* mbr)
 {
     IRemoveMember(mbr);
     return true;
@@ -158,7 +158,7 @@ void plNetTransport::SubscribeToChannelGrp(plNetTransportMember* mbr, int channe
 //
 // Remove the subscription to the given channel grp for a member.
 //
-hsBool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int chan)
+bool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int chan)
 {
     hsAssert(chan>=0 && chan<fChannelGroups.size(), "invalid channel idx");
     plMembersList* mList = &fChannelGroups[chan];
@@ -166,7 +166,7 @@ hsBool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int ch
     if (it != mList->end())
     {
         mList->erase(it);
-        hsBool ret=mbr->RemoveSubscription(chan);
+        bool ret=mbr->RemoveSubscription(chan);
         hsAssert(ret, "error removing subscription");
         return true;
     }
@@ -219,7 +219,7 @@ int plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
             NetCommSendMsg(netMsg);
             if (rl)
             {
-                hsBool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
+                bool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
                 hsAssert(ok, "couldn't find rcvr to remove?");
             }
             ret=0; // sent ok   
@@ -297,7 +297,7 @@ void plNetTransport::ClearChannelGrp(int channel)
     for( i=0 ; i<size; i++  )
     {
         plNetTransportMember* tm=(*mList)[i];
-        hsBool ok=tm->RemoveSubscription(channel);
+        bool ok=tm->RemoveSubscription(channel);
         hsAssert(ok, "error removing subscription");
     }
 

@@ -120,9 +120,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
 
     plKey GetOneShotKey(plMaxNode *node);
 
@@ -214,7 +214,7 @@ bool plOneShotComponent::IsValid()
     return (animName && *animName != '\0');
 }
 
-hsBool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fMods.clear();
 
@@ -236,7 +236,7 @@ hsBool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 //
 // PreConvert done below
 //
-hsBool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (IsValid())
     {
@@ -251,16 +251,16 @@ hsBool plOneShotComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 //
 // Convert Done below
 //
-hsBool plOneShotComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
+bool plOneShotComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     if (fMods.find(node) != fMods.end())
     {
         const char *animName = fCompPB->GetStr(kAnimName);
-        hsBool drivable = fCompPB->GetInt(kControlSpeedBool);
-        hsBool reversable = fCompPB->GetInt(kPlayBackwardsBool);
+        bool drivable = fCompPB->GetInt(kControlSpeedBool);
+        bool reversable = fCompPB->GetInt(kPlayBackwardsBool);
         float seekDuration = fCompPB->GetFloat(kSeekTimeFloat);
-        hsBool smartSeek = fCompPB->GetInt(kSmartSeekBool);
-        hsBool noSeek = fCompPB->GetInt(kNoSeekBool);
+        bool smartSeek = fCompPB->GetInt(kSmartSeekBool);
+        bool noSeek = fCompPB->GetInt(kNoSeekBool);
 
         plOneShotMod *mod = fMods[node];
         mod->Init(animName, drivable, reversable, seekDuration, smartSeek, noSeek);

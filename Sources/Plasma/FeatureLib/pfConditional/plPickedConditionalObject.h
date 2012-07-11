@@ -60,7 +60,7 @@ public:
     CLASSNAME_REGISTER( plPickedConditionalObject );
     GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
     
     void Evaluate(){;}
     void Reset() { SetSatisfied(false); }

@@ -84,10 +84,10 @@ protected:
     hsMatrix44          fLeaderL2W;
     hsMatrix44          fLeaderW2L;
 
-    hsBool ICheckLeader();
+    bool ICheckLeader();
     void IMoveTarget();
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plFollowMod();
@@ -96,7 +96,7 @@ public:
     CLASSNAME_REGISTER( plFollowMod );
     GETINTERFACE_ANY( plFollowMod, plSingleModifier );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

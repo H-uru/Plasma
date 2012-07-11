@@ -72,14 +72,14 @@ pfGUIClickMapCtrl::~pfGUIClickMapCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIClickMapCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIClickMapCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIClickMapCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIClickMapCtrl::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }

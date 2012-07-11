@@ -91,7 +91,7 @@ extern const char *gGlobalChannelName = nil;
 // ctor -------------------------------------------------------------------
 // -----
 plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
-                                   float blend, uint16_t blendPriority, hsBool cache,
+                                   float blend, uint16_t blendPriority, bool cache,
                                    bool useAmplitude)
 : fAnimation(anim),
   fMaster(master),
@@ -214,7 +214,7 @@ void plAGAnimInstance::IRegisterDetach(const plString &channelName, plAGChannel 
 
 // SetCurrentTime ---------------------------------------------------------------
 // ---------------
-void plAGAnimInstance::SetCurrentTime(float localT, hsBool jump /* = false */)
+void plAGAnimInstance::SetCurrentTime(float localT, bool jump /* = false */)
 {
     if (fTimeConvert)
         fTimeConvert->SetCurrentAnimTime(localT, jump);
@@ -222,7 +222,7 @@ void plAGAnimInstance::SetCurrentTime(float localT, hsBool jump /* = false */)
 
 // SeekRelative ------------------------------------
 // -------------
-void plAGAnimInstance::SeekRelative (float delta, hsBool jump)
+void plAGAnimInstance::SeekRelative (float delta, bool jump)
 {
     if(fTimeConvert)
     {
@@ -333,7 +333,7 @@ plString plAGAnimInstance::GetName()
 
 // SetLoop ----------------------------------
 // --------
-void plAGAnimInstance::SetLoop(hsBool status)
+void plAGAnimInstance::SetLoop(bool status)
 {
     if (fTimeConvert)
         fTimeConvert->Loop(status);
@@ -341,7 +341,7 @@ void plAGAnimInstance::SetLoop(hsBool status)
 
 // HandleCmd ----------------------------------------
 // ----------
-hsBool plAGAnimInstance::HandleCmd(plAnimCmdMsg *msg)
+bool plAGAnimInstance::HandleCmd(plAnimCmdMsg *msg)
 {
     if (fTimeConvert)
         return fTimeConvert->HandleCmd(msg);
@@ -350,7 +350,7 @@ hsBool plAGAnimInstance::HandleCmd(plAnimCmdMsg *msg)
 
 // IsFinished -----------------------
 // -----------
-hsBool plAGAnimInstance::IsFinished()
+bool plAGAnimInstance::IsFinished()
 {
     if (fTimeConvert)
         return fTimeConvert->IsStopped();
@@ -359,7 +359,7 @@ hsBool plAGAnimInstance::IsFinished()
 
 // IsAtEnd -----------------------
 // --------
-hsBool plAGAnimInstance::IsAtEnd()
+bool plAGAnimInstance::IsAtEnd()
 {
     if(fTimeConvert)
     {
@@ -452,7 +452,7 @@ void plAGAnimInstance::ProcessFade(float elapsed)
 
 // ICalcFade ---------------------------------------------------------------------
 // ----------
-float plAGAnimInstance::ICalcFade(hsBool &fade, float curVal, float goal,
+float plAGAnimInstance::ICalcFade(bool &fade, float curVal, float goal,
                                      float rate, float elapsed)
 {
     float newVal;

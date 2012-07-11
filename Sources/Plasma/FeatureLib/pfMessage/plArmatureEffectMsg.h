@@ -74,7 +74,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr); 
 
     int8_t fSurface;
-    hsBool fAddSurface;
+    bool fAddSurface;
 };
     
 

@@ -137,34 +137,34 @@ plSceneObject* plCameraModifier1::GetSubject()
         return fSubObj;
 }   
 
-void plCameraModifier1::SetFOVw(float f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVw(float f, bool fUpdateVCam) 
 { 
     fFOVw = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
         plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
 }
 
-void plCameraModifier1::SetFOVh(float f, hsBool fUpdateVCam) 
+void plCameraModifier1::SetFOVh(float f, bool fUpdateVCam) 
 { 
     fFOVh = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
         plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
 }
 
-hsBool plCameraModifier1::SetFaded(hsBool b)
+bool plCameraModifier1::SetFaded(bool b)
 {
     if (GetBrain())
         return GetBrain()->SetFaded(b);
     return false;
 }
 
-hsBool plCameraModifier1::GetFaded()
+bool plCameraModifier1::GetFaded()
 {
     if (GetBrain())
         return GetBrain()->GetFaded();
     return false;
 }
-hsBool plCameraModifier1::MsgReceive(plMessage* msg)
+bool plCameraModifier1::MsgReceive(plMessage* msg)
 {
     if (GetBrain())
         GetBrain()->MsgReceive(msg);
@@ -257,7 +257,7 @@ void plCameraModifier1::Update()
             GetBrain()->AddTarget(); // update the brain's target
         }
 
-        hsBool moveInSub = !(GetBrain()->HasFlag(plCameraBrain1::kIgnoreSubworldMovement));
+        bool moveInSub = !(GetBrain()->HasFlag(plCameraBrain1::kIgnoreSubworldMovement));
 
         if (moveInSub && GetBrain()->GetSubject())
         {
@@ -330,9 +330,9 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     {
         
         plKey key = mgr->ReadKey(stream);
-        hsBool cutpos = stream->ReadBool();
-        hsBool cutpoa = stream->ReadBool();
-        hsBool ignore = stream->ReadBool();
+        bool cutpos = stream->ReadBool();
+        bool cutpoa = stream->ReadBool();
+        bool ignore = stream->ReadBool();
         float v = stream->ReadLEScalar();
         float a = stream->ReadLEScalar();
         float d = stream->ReadLEScalar();
@@ -424,7 +424,7 @@ void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteBool(fResetAnimOnPop);
 }
 
-void plCameraModifier1::Push(hsBool recenter)
+void plCameraModifier1::Push(bool recenter)
 {
     if (fAnimated)
     {

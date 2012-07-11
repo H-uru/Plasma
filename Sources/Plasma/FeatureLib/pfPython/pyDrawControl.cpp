@@ -106,7 +106,7 @@ void pyDrawControl::DisableShadows()
     plShadowCaster::DisableShadowCast();
 #endif
 }
-hsBool pyDrawControl::IsShadowsEnabled()
+bool pyDrawControl::IsShadowsEnabled()
 {
 #ifndef BUILDING_PYPLASMA
     return !plShadowCaster::ShadowCastDisabled();
@@ -115,7 +115,7 @@ hsBool pyDrawControl::IsShadowsEnabled()
 #endif
 }
 
-hsBool pyDrawControl::CanShadowCast()
+bool pyDrawControl::CanShadowCast()
 {
 #ifndef BUILDING_PYPLASMA
     return plShadowCaster::CanShadowCast();
@@ -158,7 +158,7 @@ void pyDrawControl::SetMouseUninverted()
 #endif
 }
 
-hsBool pyDrawControl::IsMouseInverted()
+bool pyDrawControl::IsMouseInverted()
 {
 #ifndef BUILDING_PYPLASMA
     return plMouseDevice::GetInverted();
@@ -167,14 +167,14 @@ hsBool pyDrawControl::IsMouseInverted()
 #endif
 }
 
-void pyDrawControl::SetClickToTurn(hsBool state)
+void pyDrawControl::SetClickToTurn(bool state)
 {
 #ifndef BUILDING_PYPLASMA
     plArmatureMod::fClickToTurn = state;
 #endif
 }
 
-hsBool pyDrawControl::IsClickToTurn()
+bool pyDrawControl::IsClickToTurn()
 {
 #ifndef BUILDING_PYPLASMA
     if (plArmatureMod::fClickToTurn)

@@ -59,7 +59,7 @@ pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(objkey)
 }
 
 
-hsBool pyGUIControlClickMap::IsGUIControlClickMap(pyKey& gckey)
+bool pyGUIControlClickMap::IsGUIControlClickMap(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIClickMapCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;

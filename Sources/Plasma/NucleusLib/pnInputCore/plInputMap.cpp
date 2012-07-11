@@ -99,7 +99,7 @@ plKeyCombo::plKeyCombo()
     fFlags = 0;
 }
 
-hsBool plKeyCombo::IsSatisfiedBy(const plKeyCombo &combo) const
+bool plKeyCombo::IsSatisfiedBy(const plKeyCombo &combo) const
 {
     if (fKey != combo.fKey)
         return false;
@@ -164,7 +164,7 @@ void    plKeyBinding::ClearKeys( void )
     fKey1 = fKey2 = plKeyCombo::kUnmapped;
 }
 
-hsBool  plKeyBinding::HasUnmappedKey() const
+bool    plKeyBinding::HasUnmappedKey() const
 {
     return fKey1.fKey == KEY_UNMAPPED || fKey2.fKey == KEY_UNMAPPED;
 }
@@ -196,7 +196,7 @@ void    plKeyMap::ClearAll( void )
 //  Adds a given control code to the map. Once you add it, you can't change its flags. 
 //  Returns false if the code is already present
 
-hsBool  plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
+bool    plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
 {
     if( IFindBinding( code ) != nil )
         return false;
@@ -209,7 +209,7 @@ hsBool  plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
 //  Same but for console commands. No flags b/c console commands always use 
 //  the same flags.
 
-hsBool  plKeyMap::AddConsoleCommand( const char *command )
+bool    plKeyMap::AddConsoleCommand( const char *command )
 {
     if( IFindConsoleBinding( command ) != nil )
         return false;
@@ -265,7 +265,7 @@ void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBind
     uint8_t bestScore = 0;
     for (i = 0; i < fBindings.GetCount(); i++)
     {
-        hsBool s1, s2;
+        bool s1, s2;
         s1 = fBindings[i]->GetKey1().IsSatisfiedBy(combo);
         s2 = fBindings[i]->GetKey2().IsSatisfiedBy(combo);
         if (s1 || s2)
@@ -351,7 +351,7 @@ void    plKeyMap::IActuallyBind( plKeyBinding *binding, const plKeyCombo &combo,
 //  Adds a key binding to a given code. Returns false if the code isn't in 
 //  this map or if key is already mapped.
 
-hsBool  plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref /*= kNoPreference*/ )
+bool    plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref /*= kNoPreference*/ )
 {
     plKeyBinding* binding = nil;
 
@@ -380,7 +380,7 @@ hsBool  plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindP
 //// BindKeyToConsoleCmd /////////////////////////////////////////////////////
 //  Console command version
 
-hsBool  plKeyMap::BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref /*= kNoPreference*/ )
+bool    plKeyMap::BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref /*= kNoPreference*/ )
 {
     plKeyBinding* binding = nil;
 

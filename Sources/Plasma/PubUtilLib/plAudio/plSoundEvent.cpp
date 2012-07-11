@@ -100,7 +100,7 @@ void    plSoundEvent::AddCallback( plEventCallbackMsg *msg )
     fCallbackEndingFlags.Append( 0 );
 }
 
-hsBool  plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
+bool    plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
 {
     int idx = fCallbacks.Find( msg );
     if( idx != fCallbacks.kMissingIndex )

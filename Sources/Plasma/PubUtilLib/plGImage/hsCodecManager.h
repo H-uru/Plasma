@@ -69,9 +69,9 @@ public:
 
     plMipmap    *CreateCompressedMipmap( uint32_t compressionFormat, plMipmap *uncompressed );
     plMipmap    *CreateUncompressedMipmap( plMipmap *compressed, uint8_t bitDepth = 0 );
-    hsBool      ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
+    bool        ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
-    hsBool      Register(hsCodec *codec, uint32_t compressionFormat, float priority);
+    bool        Register(hsCodec *codec, uint32_t compressionFormat, float priority);
 
     /// Decompression flags
     enum {

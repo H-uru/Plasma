@@ -62,19 +62,19 @@ public:
 
     virtual void UnRegisterAll(const plKey& receiver) = 0;
 
-    virtual hsBool MsgSend(plMessage* msg, hsBool async=false) = 0;
+    virtual bool    MsgSend(plMessage* msg, bool async=false) = 0;
     virtual void    MsgQueue(plMessage* msg)=0; // Used by other thread to Send Messages, they are handled as soon as Practicable
     virtual void    MsgQueueProcess() = 0;
-    virtual void    MsgQueueOnOff(hsBool) = 0;      // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for plugins)
+    virtual void    MsgQueueOnOff(bool) = 0;      // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for plugins)
 
-    virtual hsBool  SetMsgBuffering(hsBool on) = 0; // On starts deferring msg delivery until buffering is set to off again.
+    virtual bool    SetMsgBuffering(bool on) = 0; // On starts deferring msg delivery until buffering is set to off again.
 };
 
 class plgDispatch
 {
 public:
     static plDispatchBase* Dispatch();
-    static hsBool MsgSend(plMessage* msg, hsBool async = false) { return Dispatch()->MsgSend(msg, async); }
+    static bool MsgSend(plMessage* msg, bool async = false) { return Dispatch()->MsgSend(msg, async); }
 };
 
 

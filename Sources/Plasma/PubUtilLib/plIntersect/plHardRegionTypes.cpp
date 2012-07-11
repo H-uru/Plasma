@@ -78,7 +78,7 @@ void plHardRegionComplex::Write(hsStream* s, hsResMgr* mgr)
         mgr->WriteKey(s, fSubRegions[i]);
 }
 
-hsBool plHardRegionComplex::MsgReceive(plMessage* msg)
+bool plHardRegionComplex::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
     if( refMsg )
@@ -116,7 +116,7 @@ plHardRegionUnion::~plHardRegionUnion()
 {
 }
 
-hsBool plHardRegionUnion::IIsInside(const hsPoint3& pos) const
+bool plHardRegionUnion::IIsInside(const hsPoint3& pos) const
 {
     int i;
     for( i = 0; i < fSubRegions.GetCount(); i++ )
@@ -127,7 +127,7 @@ hsBool plHardRegionUnion::IIsInside(const hsPoint3& pos) const
     return false;
 }
 
-hsBool plHardRegionUnion::ICameraInside() const
+bool plHardRegionUnion::ICameraInside() const
 {
     if( fState & kDirty )
     {
@@ -155,7 +155,7 @@ plHardRegionIntersect::~plHardRegionIntersect()
 {
 }
 
-hsBool plHardRegionIntersect::IIsInside(const hsPoint3& pos) const
+bool plHardRegionIntersect::IIsInside(const hsPoint3& pos) const
 {
     int i;
     for( i = 0; i < fSubRegions.GetCount(); i++ )
@@ -166,7 +166,7 @@ hsBool plHardRegionIntersect::IIsInside(const hsPoint3& pos) const
     return true;
 }
 
-hsBool plHardRegionIntersect::ICameraInside() const
+bool plHardRegionIntersect::ICameraInside() const
 {
     if( fState & kDirty )
     {
@@ -197,13 +197,13 @@ plHardRegionInvert::~plHardRegionInvert()
 {
 }
 
-hsBool plHardRegionInvert::IIsInside(const hsPoint3& pos) const
+bool plHardRegionInvert::IIsInside(const hsPoint3& pos) const
 {
     hsAssert(fSubRegions.GetCount() <= 1, "Too many subRegions on inverter");
     return !fSubRegions[0]->IIsInside(pos);
 }
 
-hsBool plHardRegionInvert::ICameraInside() const
+bool plHardRegionInvert::ICameraInside() const
 {
     hsAssert(fSubRegions.GetCount() <= 1, "Too many subRegions on inverter");
     return !fSubRegions[0]->ICameraInside();

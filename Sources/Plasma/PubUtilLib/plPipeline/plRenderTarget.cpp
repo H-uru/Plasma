@@ -76,7 +76,7 @@ void plRenderTarget::SetKey(plKey k)
 
 
 
-hsBool plRenderTarget::MsgReceive(plMessage* msg)
+bool plRenderTarget::MsgReceive(plMessage* msg)
 {
     plPipeRTMakeMsg* make = plPipeRTMakeMsg::ConvertNoRef(msg);
     if( make )
@@ -116,7 +116,7 @@ uint32_t  plRenderTarget::Read( hsStream *s )
     fZDepth = s->ReadByte();
     fStencilDepth = s->ReadByte();
 
-    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( bool );
 }
 
 uint32_t  plRenderTarget::Write( hsStream *s )
@@ -145,7 +145,7 @@ uint32_t  plRenderTarget::Write( hsStream *s )
     s->WriteByte( fZDepth );
     s->WriteByte( fStencilDepth );
 
-    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( hsBool );
+    return total + 2 * 2 + 2 + 4 * ( fProportionalViewport ? sizeof( float ) : sizeof( uint16_t ) ) + sizeof( bool );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

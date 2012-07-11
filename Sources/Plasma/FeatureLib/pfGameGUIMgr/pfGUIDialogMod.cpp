@@ -141,14 +141,14 @@ hsPoint3    pfGUIDialogMod::WorldToScreenPoint( const hsPoint3 &inPt )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDialogMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIDialogMod::IEval( double secs, float del, uint32_t dirty )
 {
     return false;
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDialogMod::MsgReceive( plMessage *msg )
+bool    pfGUIDialogMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
     if( ref )
@@ -240,7 +240,7 @@ void        pfGUIDialogMod::AddControlOnExport( pfGUIControlMod *ctrl )
 
 //// SetEnabled //////////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::SetEnabled( hsBool e )
+void    pfGUIDialogMod::SetEnabled( bool e )
 {
     if( e == fEnabled )
         return;
@@ -364,7 +364,7 @@ plKey   pfGUIDialogMod::GetSceneNodeKey( void )
 //  Really. We go through and make sure every control marked as interesting
 //  still has the mouse inside it and vice versa.
 
-void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, hsBool modalPreset )
+void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset )
 {
     int         i;
     hsPoint3    mousePoint;
@@ -405,7 +405,7 @@ void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uin
 #include "plPipeline/plDebugText.h"
 #endif
 
-hsBool      pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
+bool        pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )
 {
     hsPoint3    mousePoint;
@@ -554,7 +554,7 @@ if( showBounds )
 
 //// HandleKeyEvent //////////////////////////////////////////////////////////
 
-hsBool      pfGUIDialogMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
+bool        pfGUIDialogMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     // Only process if a control has focus...
     if( fFocusCtrl != nil )
@@ -567,7 +567,7 @@ hsBool      pfGUIDialogMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKey
 
 //// HandleKeyPress //////////////////////////////////////////////////////////
 
-hsBool      pfGUIDialogMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
+bool        pfGUIDialogMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
     // Same deal as HandleKeyPress. Only problem is, we needed the msg to translate
     // to a char, so it had to be done up at the mgr level (sadly)

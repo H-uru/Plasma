@@ -52,7 +52,7 @@ class hsResMgr;
 class plEnvEffectMsg : public plMessage
 {
 
-    hsBool fEnable;
+    bool fEnable;
 
 public:
     plEnvEffectMsg(){ SetBCastFlag(plMessage::kPropagateToModifiers); }
@@ -66,8 +66,8 @@ public:
     CLASSNAME_REGISTER( plEnvEffectMsg );
     GETINTERFACE_ANY( plEnvEffectMsg, plMessage );
     
-    hsBool Enabled() { return fEnable; }
-    void Enable(hsBool b) { fEnable = b; }
+    bool Enabled() { return fEnable; }
+    void Enable(bool b) { fEnable = b; }
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)
     {

@@ -62,7 +62,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
     void Evaluate();
     void Reset();
 

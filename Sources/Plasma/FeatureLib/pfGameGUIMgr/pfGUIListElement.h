@@ -57,10 +57,10 @@ class pfGUIListElement
 {
     protected:
 
-        hsBool      fSelected;
+        bool        fSelected;
         const uint8_t fType;
 
-        hsBool      fCollapsed;     // For tree view support
+        bool        fCollapsed;     // For tree view support
         uint8_t       fIndentLevel;   // Ditto
 
         pfGUIColorScheme    *fColors;
@@ -81,25 +81,25 @@ class pfGUIListElement
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        virtual hsBool  Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight ) = 0;
+        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight ) = 0;
         virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height ) = 0;
         virtual int     CompareTo( pfGUIListElement *rightSide ) = 0;
 
-        virtual void    SetSelected( hsBool sel ) { fSelected = sel; }
-        virtual hsBool  IsSelected( void ) { return fSelected; }
+        virtual void    SetSelected( bool sel ) { fSelected = sel; }
+        virtual bool    IsSelected( void ) { return fSelected; }
 
-        virtual hsBool  CanBeDragged( void ) { return false; }
+        virtual bool    CanBeDragged( void ) { return false; }
 
         // Return true here if you need the list refreshed
-        virtual hsBool  MouseClicked( uint16_t localX, uint16_t localY ) { return false; }
+        virtual bool    MouseClicked( uint16_t localX, uint16_t localY ) { return false; }
 
         uint8_t   GetType( void ) { return fType; }
 
         void    SetColorScheme( pfGUIColorScheme *scheme ) { fColors = scheme; }
         void    SetSkin( pfGUISkin *skin ) { fSkin = skin; }
 
-        hsBool          IsCollapsed( void ) const { return fCollapsed; }
-        virtual void    SetCollapsed( hsBool c ) { fCollapsed = c; }
+        bool            IsCollapsed( void ) const { return fCollapsed; }
+        virtual void    SetCollapsed( bool c ) { fCollapsed = c; }
 
         uint8_t   GetIndentLevel( void ) const { return fIndentLevel; }
         void    SetIndentLevel( uint8_t i ) { fIndentLevel = i; }
@@ -131,11 +131,11 @@ class pfGUIListText : public pfGUIListElement
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        virtual hsBool  Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
+        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
         virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
         virtual int     CompareTo( pfGUIListElement *rightSide );
 
-        virtual hsBool  CanBeDragged( void ) { return true; }
+        virtual bool    CanBeDragged( void ) { return true; }
         virtual void    SetJustify( JustifyTypes justify );
 
         // These two are virtual so we can derive and override them
@@ -150,25 +150,25 @@ class pfGUIListPicture : public pfGUIListElement
 
         plKey   fMipmapKey;
         uint8_t   fBorderSize;    // Defaults to 2
-        hsBool  fRespectAlpha;
+        bool    fRespectAlpha;
 
     public:
 
         pfGUIListPicture();
-        pfGUIListPicture( plKey mipKey, hsBool respectAlpha );
+        pfGUIListPicture( plKey mipKey, bool respectAlpha );
         virtual ~pfGUIListPicture(); 
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        virtual hsBool  Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
+        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
         virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
         virtual int     CompareTo( pfGUIListElement *rightSide );
 
-        virtual hsBool  CanBeDragged( void ) { return false; }
+        virtual bool    CanBeDragged( void ) { return false; }
 
         void    SetBorderSize( uint32_t size ) { fBorderSize = (uint8_t)size; }
-        void    SetRespectAlpha( hsBool r ) { fRespectAlpha = r; }
+        void    SetRespectAlpha( bool r ) { fRespectAlpha = r; }
 
 };
 
@@ -177,7 +177,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
     protected:
         
         wchar_t         *fText;
-        hsBool          fShowChildren;
+        bool            fShowChildren;
 
         hsTArray<pfGUIListElement *>    fChildren;
 
@@ -191,11 +191,11 @@ class pfGUIListTreeRoot : public pfGUIListElement
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        virtual hsBool  Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
+        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
         virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
         virtual int     CompareTo( pfGUIListElement *rightSide );
 
-        virtual hsBool  MouseClicked( uint16_t localX, uint16_t localY );
+        virtual bool    MouseClicked( uint16_t localX, uint16_t localY );
 
         const wchar_t   *GetTitle( void ) { return fText; }
         void        SetTitle( const char *text );
@@ -207,10 +207,10 @@ class pfGUIListTreeRoot : public pfGUIListElement
         void        AddChild( pfGUIListElement *el );
         void        RemoveChild( uint32_t idx );
 
-        virtual void    SetCollapsed( hsBool c );
+        virtual void    SetCollapsed( bool c );
 
-        void        ShowChildren( hsBool s );
-        hsBool      IsShowingChildren( void ) const { return fShowChildren; }
+        void        ShowChildren( bool s );
+        bool        IsShowingChildren( void ) const { return fShowChildren; }
 };
 
 //// pfGUIDropTargetProc /////////////////////////////////////////////////////
@@ -233,12 +233,12 @@ class pfGUIDropTargetProc
 
         pfGUIDropTargetProc() { fRefCnt = 0; }
 
-        virtual hsBool  CanEat( pfGUIListElement *element, pfGUIControlMod *source ) = 0;
+        virtual bool    CanEat( pfGUIListElement *element, pfGUIControlMod *source ) = 0;
         virtual void    Eat( pfGUIListElement *element, pfGUIControlMod *source, pfGUIControlMod *parent ) = 0;
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
         void    IncRef( void ) { fRefCnt++; }
-        hsBool  DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
+        bool    DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
 };
 
 #endif // _pfGUIListElement_h

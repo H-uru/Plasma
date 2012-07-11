@@ -91,13 +91,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plResponderEnableMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    fEnable = stream->Readbool();
+    fEnable = stream->ReadBool();
 }
 
 void plResponderEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->Writebool(fEnable);
+    stream->WriteBool(fEnable);
 }
 
 /////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ plResponderModifier::~plResponderModifier()
     }
 }
 
-hsBool plResponderModifier::MsgReceive(plMessage* msg)
+bool plResponderModifier::MsgReceive(plMessage* msg)
 {
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
@@ -672,7 +672,7 @@ void plResponderModifier::Read(hsStream* stream, hsResMgr* mgr)
     }
 
     ISetResponderState(stream->ReadByte());
-    fEnabled = stream->Readbool();
+    fEnabled = stream->ReadBool();
     fFlags = stream->ReadByte();
 
     // attach responderSDLMod
@@ -713,7 +713,7 @@ void plResponderModifier::Write(hsStream* stream, hsResMgr* mgr)
     }
 
     stream->WriteByte(fCurState);
-    stream->Writebool(fEnabled);
+    stream->WriteBool(fEnabled);
     stream->WriteByte(fFlags);
 }
 

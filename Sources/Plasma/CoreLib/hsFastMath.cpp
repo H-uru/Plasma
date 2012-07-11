@@ -604,10 +604,10 @@ float hsFastMath::IATan2OverTwoPi(float y, float x)
     if( (x == 0)&&(y == 0) )
         return 0;
 
-    hsBool xNeg, yNeg;
+    bool xNeg, yNeg;
     if((yNeg = (y < 0)))y = -y;
     if((xNeg = (x < 0)))x = -x;
-    hsBool yBigger = y >= x;
+    bool yBigger = y >= x;
     float div = yBigger ? x / y : y / x;
 
     float fInd = div * tabMax;

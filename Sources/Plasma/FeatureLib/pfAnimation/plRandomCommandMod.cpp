@@ -141,7 +141,7 @@ float plRandomCommandMod::IGetDelay(float len) const
     return delay;
 }
 
-hsBool plRandomCommandMod::ISelectNext(int ncmds)
+bool plRandomCommandMod::ISelectNext(int ncmds)
 {
     if( fMode & kSequential )
     {
@@ -200,11 +200,6 @@ void plRandomCommandMod::IStop()
     fState |= kStopped; 
 }
 
-hsBool plRandomCommandMod::IStopped() const 
-{ 
-    return 0 != (fState & kStopped); 
-}
-
 void plRandomCommandMod::IPlayNextIfMaster()
 {
     if( !fTarget )
@@ -219,7 +214,7 @@ void plRandomCommandMod::IPlayNextIfMaster()
     IPlayNext();
 }
 
-hsBool plRandomCommandMod::MsgReceive(plMessage* msg)
+bool plRandomCommandMod::MsgReceive(plMessage* msg)
 {
     // plAnimCmdMsg - interpret start/stop appropriately.
     // could overinterpret set loop points to limit range of

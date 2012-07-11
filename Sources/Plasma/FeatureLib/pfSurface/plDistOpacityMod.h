@@ -84,7 +84,7 @@ protected:
     hsTArray<plFadeOpacityLay*> fFadeLays;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
     float ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
     void ISetOpacity();
@@ -107,7 +107,7 @@ public:
 
     virtual void            SetKey(plKey k);
 
-    virtual hsBool          MsgReceive(plMessage* msg);
+    virtual bool            MsgReceive(plMessage* msg);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);

@@ -314,7 +314,7 @@ public:
                 if (selectedNewBitmap)
                 {
                     // Check if it's ok, and undo if not.
-                    hsBool choiceOk = true;
+                    bool choiceOk = true;
 
                     pbbm = layer->GetPBBitmap();
                     if (pbbm != nil)

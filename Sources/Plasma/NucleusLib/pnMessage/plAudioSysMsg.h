@@ -53,7 +53,7 @@ class plAudioSysMsg : public plMessage
 {
     int fAudFlag;   
     plKey pObj;
-    hsBool  fBoolFlag;
+    bool    fBoolFlag;
 public:
     enum
     {
@@ -87,8 +87,8 @@ public:
     plKey GetSceneObject() { return pObj; }
     void SetSceneObject(plKey &k) { pObj = k; }
 
-    hsBool  GetBoolFlag() { return fBoolFlag; }
-    void    SetBoolFlag( hsBool b ) { fBoolFlag = b; }
+    bool    GetBoolFlag() { return fBoolFlag; }
+    void    SetBoolFlag( bool b ) { fBoolFlag = b; }
 
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)

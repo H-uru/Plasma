@@ -83,7 +83,7 @@ class plDebugText
 
         char            fFontFace[ 128 ];
         uint16_t          fFontSize;
-        hsBool          fEnabled, fLockEnable, fDrawOnTopMode;
+        bool            fEnabled, fLockEnable, fDrawOnTopMode;
 
     public:
 
@@ -121,7 +121,7 @@ class plDebugText
             DrawString( x, y, string, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style );
         }
 
-        void    SetDrawOnTopMode( hsBool enable ) { fDrawOnTopMode = enable; }
+        void    SetDrawOnTopMode( bool enable ) { fDrawOnTopMode = enable; }
 
         /// TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
         void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor );
@@ -142,9 +142,9 @@ class plDebugText
         uint16_t        GetFontSize( void ) { return fFontSize; }
         uint16_t        GetFontHeight();
 
-        void            SetEnable( hsBool on ) { fEnabled = on; }
+        void            SetEnable( bool on ) { fEnabled = on; }
         void            DisablePermanently( void ) { fEnabled = false; fLockEnable = true; }
-        hsBool          IsEnabled( void ) { return fEnabled; }
+        bool            IsEnabled( void ) { return fEnabled; }
 
         void            GetScreenSize( uint32_t *width, uint32_t *height );
 };
@@ -182,14 +182,14 @@ class   plDebugTextManager
         plDebugTextManager() { plDebugText::Instance().SetManager( this ); fFont = nil; }
         ~plDebugTextManager();
 
-        void    AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, hsBool drawOnTop = false );
+        void    AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, bool drawOnTop = false );
         uint32_t  CalcStringWidth( const char *string );
 
         /// TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, hsBool drawOnTop = false );
+        void    DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, bool drawOnTop = false );
 
         /// EVEN MORE TEMPORARY FUNCTION (until we can find a better way to do this, one way or the other)
-        void    Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, hsBool drawOnTop = false );
+        void    Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, bool drawOnTop = false );
 
         void    DrawToDevice( plPipeline *pipe );
 

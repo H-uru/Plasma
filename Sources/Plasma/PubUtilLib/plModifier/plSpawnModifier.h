@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSpawnModifier : public plMultiModifier
 {
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
 
 public:
     plSpawnModifier(){;}
@@ -60,7 +60,7 @@ public:
     virtual void AddTarget(plSceneObject* so);
     virtual void RemoveTarget(plSceneObject* so);
 
-//  hsBool MsgReceive(plMessage* msg);
+//  bool MsgReceive(plMessage* msg);
 //
     virtual void Read(hsStream *stream, hsResMgr *mgr);
     virtual void Write(hsStream *stream, hsResMgr *mgr);

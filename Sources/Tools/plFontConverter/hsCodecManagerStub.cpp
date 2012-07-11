@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsCodecManager& hsCodecManager::Instance()
 {
     static hsCodecManager the_instance;
-    static hsBool initialized = false;
+    static bool initialized = false;
 
     if (!initialized)
     {
@@ -71,12 +71,12 @@ plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t
 
 }
 
-hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
+bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
     return false;
 }
 
-hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
+bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
 {
     return true;
 }

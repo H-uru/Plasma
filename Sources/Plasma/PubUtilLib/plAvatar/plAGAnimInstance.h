@@ -98,7 +98,7 @@ public:
         This attaches the animation channels to the channels of
         the master modifier and creates all the bookkeeping structures
         necessary to undo it later. */
-    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, float blend, uint16_t blendPriority, hsBool cache, bool useAmplitude);
+    plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master, float blend, uint16_t blendPriority, bool cache, bool useAmplitude);
 
     /** Destructor. Removes the animation from the scene objects it's attached to. */
     virtual ~plAGAnimInstance();
@@ -141,10 +141,10 @@ public:
 
     /** Make this animation loop (or not.) Note that the instance can loop
         or not without regard to whether the plAGAnim it is based on loops. */
-    void SetLoop(hsBool status);
+    void SetLoop(bool status);
 
     /** Interpret and respond to an animation command message. /sa plAnimCmdMsg */
-    hsBool HandleCmd(plAnimCmdMsg *msg);
+    bool HandleCmd(plAnimCmdMsg *msg);
 
     /** Start playback of the animation. You may optionally provide the a world
         time, which is needed for synchronizing the animation's timeline
@@ -159,14 +159,14 @@ public:
         Note that this time is in animation local time, not global time.
         The "jump" parameter specifies whether or not to fire callbacks
         that occur between the current time and the target time. */
-    void SetCurrentTime(float newLocalTime, hsBool jump = false);
+    void SetCurrentTime(float newLocalTime, bool jump = false);
 
     /** Move the playback head by the specified relative amount within 
         the animation. This may cause looping. If the beginning or end
         of the animation is reached an looping is not on, the movement
         will pin.
         \param jump if true, don't look for callbacks between old time and TRACKED_NEW */
-    void SeekRelative(float delta, hsBool jump);
+    void SeekRelative(float delta, bool jump);
     
     /** Gradually fade the blend strength or amplitude of the animation.
         \param goal is the desired blend strength
@@ -186,10 +186,10 @@ public:
         Primarily used to see if an animation has played all the 
         way to the end, but will also return true if the animation
         was stopped with a stop command */
-    hsBool IsFinished();
+    bool IsFinished();
     
     /** Is the animation playback head positioned at the end. */
-    hsBool IsAtEnd();
+    bool IsAtEnd();
 
     /** Get the name of the underlying animation. */
     plString GetName();
@@ -243,16 +243,16 @@ protected:
     // Each activation gets its own timeline.
     plAnimTimeConvert       *fTimeConvert;
 
-    hsBool              fFadeBlend;         /// we are fading the blend
+    bool                fFadeBlend;         /// we are fading the blend
     float            fFadeBlendGoal;     /// what blend level we're trying to reach
     float            fFadeBlendRate;     /// how fast are we fading in blend units per second (1 blend unit = full)
-    hsBool              fFadeDetach;        /// detach after fade is finished? (only used for blend fades)
+    bool                fFadeDetach;        /// detach after fade is finished? (only used for blend fades)
     
-    hsBool              fFadeAmp;           /// we are fading the amplitude
+    bool                fFadeAmp;           /// we are fading the amplitude
     float            fFadeAmpGoal;       /// amplitude we're trying to reach 
     float            fFadeAmpRate;       /// how faster we're fading in blend units per second
 
-    float ICalcFade(hsBool &fade, float curVal, float goal, float rate, float elapsed);
+    float ICalcFade(bool &fade, float curVal, float goal, float rate, float elapsed);
 
 };
 

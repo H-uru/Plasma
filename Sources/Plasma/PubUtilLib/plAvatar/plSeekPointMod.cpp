@@ -69,7 +69,7 @@ plSeekPointMod::~plSeekPointMod()
 }
 
 // MSGRECEIVE
-hsBool plSeekPointMod::MsgReceive(plMessage* msg)
+bool plSeekPointMod::MsgReceive(plMessage* msg)
 {
     return plMultiModifier::MsgReceive(msg);
 }

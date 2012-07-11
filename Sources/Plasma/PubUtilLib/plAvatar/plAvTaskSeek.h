@@ -56,7 +56,7 @@ class plSceneObject;
 class plAvTaskSeek : public plAvTask
 {
 public:
-    static hsBool fLogProcess;
+    static bool fLogProcess;
         
     enum State {
         kSeekRunNormal,
@@ -82,12 +82,12 @@ public:
 
     /** Initiate the task; make sure we're running on the right type of brain, save off
         user input state, and turn off any other running behaviors.*/
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Progress towards the goal using a combination of walking and cheating-via-sliding.
         Returns true if we're still working on it; false if we're done. */
     
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Restore user input state, etc. */
     virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
@@ -116,27 +116,27 @@ protected:
 
     /** Make some observations about our current relation to our target.
         Done every frame. */
-    hsBool IAnalyze(plArmatureMod *avatar);
+    bool IAnalyze(plArmatureMod *avatar);
 
     /** Progress towards the goal. We get as close as we can by just pushing the same
         buttons as the user (forward, turn, etc.) when we're really close we slide
         around a bit so we can wind up on the *exact* initial orientation. */
-    hsBool IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed);
+    bool IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed);
 
     /** Okay, we're in the pure cheating mode now. Try to wrap it up;
         returns true when it's finally there. */
     bool ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, double time, float elapsed);
 
     /** Final cheating for position */
-    hsBool IFinishPosition(hsPoint3 &newPosition, plArmatureMod *avatar, plAvBrainHuman *brain,
+    bool IFinishPosition(hsPoint3 &newPosition, plArmatureMod *avatar, plAvBrainHuman *brain,
                            double time, float elapsed);
 
     /** Final cheating for rotation */
-    hsBool IFinishRotation(hsQuat &newRotation, plArmatureMod *avatar, plAvBrainHuman *brain,
+    bool IFinishRotation(hsQuat &newRotation, plArmatureMod *avatar, plAvBrainHuman *brain,
                            double time, float elapsed);
 
     /** If our target's moving, cache its new position and orientation for later math */
-    hsBool IUpdateObjective(plArmatureMod *avatar);
+    bool IUpdateObjective(plArmatureMod *avatar);
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
@@ -163,11 +163,11 @@ protected:
     // These are set to true once we EVER get close enough to the goal, so that if we fall out
     // of range from the anim blend out, we don't later try and correct again, and get in a fun
     // little back-and-forth loop.
-    hsBool fPosGoalHit;
-    hsBool fRotGoalHit;
+    bool fPosGoalHit;
+    bool fRotGoalHit;
 
-    hsBool fStillPositioning;               // haven't yet reached the final position
-    hsBool fStillRotating;                  // haven't yet reached the final orientation
+    bool fStillPositioning;               // haven't yet reached the final position
+    bool fStillRotating;                  // haven't yet reached the final orientation
     
     hsVector3 fGoalVec;                     // vec from us to the goal
     float fDistance;                     // how far to the goal?

@@ -61,7 +61,7 @@ protected:
     std::vector<plKey> fReceivers;
 
     void IDeleteStageVec();
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
 public:
     plMultistageBehMod();
@@ -71,13 +71,13 @@ public:
     CLASSNAME_REGISTER( plMultistageBehMod );
     GETINTERFACE_ANY( plMultistageBehMod, plSingleModifier );
 
-    hsBool NetProp() { return fNetProp; }
-    hsBool NetForce() { return fNetForce; }
+    bool NetProp() { return fNetProp; }
+    bool NetForce() { return fNetForce; }
 
-    void SetNetProp(hsBool netProp) { fNetProp = netProp; }
-    void SetNetForce(hsBool netForce) { fNetForce = netForce; }
+    void SetNetProp(bool netProp) { fNetProp = netProp; }
+    void SetNetForce(bool netForce) { fNetForce = netForce; }
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     virtual void Init(plAnimStageVec *stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
 

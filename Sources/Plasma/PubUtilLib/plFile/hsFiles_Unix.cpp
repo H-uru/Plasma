@@ -94,7 +94,7 @@ void hsFolderIterator::Reset()
         fData->fInited=false;
     }
 }
-hsBool hsFolderIterator::NextFile()
+bool hsFolderIterator::NextFile()
 {
     if (fData->fInited == false)
     {   
@@ -126,7 +126,7 @@ const char* hsFolderIterator::GetFileName() const
     return plFileUtils::GetFileName(fn);
 }
 
-hsBool  hsFolderIterator::IsDirectory( void ) const
+bool    hsFolderIterator::IsDirectory( void ) const
 {
     // rob, please forgive me, this is my best attempt...
     if(fData->fCnt > fData->fGlobBuf.gl_pathc )

@@ -56,13 +56,13 @@ class plWinRegistryTools
     public:
 
         // Associates a given file type in the Win32 registry with the given application. Also assigns a default icon if iconIndex != -1
-        static hsBool   AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex = -1 );
+        static bool     AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex = -1 );
 
         // Assigns a given file extension to a previously registered Win32 file type (using the above function)
-        static hsBool   AssociateFileExtension( const char *fileExtension, const char *fileTypeID );
+        static bool     AssociateFileExtension( const char *fileExtension, const char *fileTypeID );
 
         // Obtains the current fileTypeID associated with the given file extension, or a null string if it isn't yet associated
-        static hsBool   GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen );
+        static bool     GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen );
 };
 
 #endif //_plWinRegistryTools_h

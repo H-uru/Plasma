@@ -85,8 +85,8 @@ class plRenderTarget : public plBitmap
             } fProportional;
         } fViewport;
 
-        hsBool      fApplyTexQuality;
-        hsBool      fProportionalViewport;
+        bool        fApplyTexQuality;
+        bool        fProportionalViewport;
         uint8_t       fZDepth, fStencilDepth;
     
         plCubicRenderTarget *fParent;   
@@ -190,13 +190,13 @@ class plRenderTarget : public plBitmap
         float    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
         float    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
 
-        hsBool      ViewIsProportional( void ) const { return fProportionalViewport; }
+        bool        ViewIsProportional( void ) const { return fProportionalViewport; }
 
         plCubicRenderTarget *GetParent( void ) const { return fParent; }
 
         virtual uint32_t  GetTotalSize( void ) const { return fWidth * fHeight * ( fPixelSize >> 3 ); }
 
-        virtual hsBool MsgReceive(plMessage* msg);
+        virtual bool MsgReceive(plMessage* msg);
 
         virtual void SetVisRegionName(char *name){} // override to set vis region names for anyone who cares
 };

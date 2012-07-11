@@ -73,11 +73,11 @@ public:
     GETINTERFACE_ANY( plTimerCallbackManager, hsKeyedObject );
 
     virtual plTimerCallback* NewTimer(float time, plMessage* pMsg);
-    hsBool CancelCallback(plTimerCallback* pTimer);
-    hsBool CancelCallbacksToKey(const plKey& key);
+    bool CancelCallback(plTimerCallback* pTimer);
+    bool CancelCallbacksToKey(const plKey& key);
 
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
         
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -101,8 +101,8 @@ public:
     static void SetTheTimerCallbackMgr(plTimerCallbackManager *mgr) { fMgr = mgr; }
 
     static plTimerCallback* NewTimer(float time, plMessage* pMsg) { return (fMgr->NewTimer(time, pMsg)); }
-    static hsBool CancelCallback(plTimerCallback* pTimer);
-    static hsBool CancelCallbacksToKey(const plKey& key);
+    static bool CancelCallback(plTimerCallback* pTimer);
+    static bool CancelCallbacksToKey(const plKey& key);
 };
 
 

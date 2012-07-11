@@ -151,8 +151,8 @@ public:
 
     void SetLocalToWorld(const hsMatrix44& l2w);
 
-    hsBool HasPosDelta() const { return fPosDelta != nil; }
-    hsBool HasColor() const { return fCol != nil; }
+    bool HasPosDelta() const { return fPosDelta != nil; }
+    bool HasColor() const { return fCol != nil; }
 
     static uint16_t PosStrideFromEncoding(const plSpanEncoding& encoding)
     {
@@ -241,7 +241,7 @@ public:
 
         fNumVertsLeft--;
     }
-    hsBool      More() const { return fNumVertsLeft > 0; }
+    bool        More() const { return fNumVertsLeft > 0; }
 
     hsVector3   DelPos() const
     {

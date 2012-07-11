@@ -370,7 +370,7 @@ plKey FindObjectByNameAndType(const plString& name, const char* typeName, const 
 //// plDoesFileExist //////////////////////////////////////////////////////////
 //  Utility function to determine whether the given file exists
 
-static hsBool   plDoesFileExist( const char *path )
+static bool     plDoesFileExist( const char *path )
 {
     hsUNIXStream    stream;
 
@@ -662,7 +662,7 @@ PF_CONSOLE_CMD( Console, Clear, "", "Clears the console" )
 
 PF_CONSOLE_CMD( Console, EnableFX, "bool enable", "Enables flashy console effects" )
 {
-    pfConsole::EnableEffects( (hsBool)(bool)params[ 0 ] );
+    pfConsole::EnableEffects( (bool)(bool)params[ 0 ] );
     if( pfConsole::AreEffectsEnabled() )
         PrintString( "Console effects enabled" );
     else
@@ -808,7 +808,7 @@ PF_CONSOLE_CMD( Console, SetVar, "string name, string value",
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
 
-    hsBool oldF = ctx.GetAddWhenNotFound();
+    bool oldF = ctx.GetAddWhenNotFound();
     ctx.SetAddWhenNotFound( true );
     ctx.SetVar((char*)params[ 0 ], (char*)params[ 1 ] );
     ctx.SetAddWhenNotFound( oldF );
@@ -991,7 +991,7 @@ PF_CONSOLE_SUBGROUP( Graphics, VisSet )     // Creates a sub-group under a given
 
 PF_CONSOLE_CMD( Graphics_VisSet, Toggle, "", "Toggle using VisSets" )
 {
-    hsBool turnOn = !plPageTreeMgr::VisMgrEnabled();
+    bool turnOn = !plPageTreeMgr::VisMgrEnabled();
     plPageTreeMgr::EnableVisMgr(turnOn);
 
     PrintStringF( PrintString, "Visibility Sets %s", turnOn ? "Enabled" : "Disabled" );
@@ -1101,7 +1101,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
                "", 
                "Show shadows." )
 {
-    hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds);
+    bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowShadowBounds, on );
 
     char    str[ 256 ];
@@ -1114,7 +1114,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
                "", 
                "Toggles applying shadows (they are still computed)." )
 {
-    hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply);
+    bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagNoShadowApply, on );
 
     char    str[ 256 ];
@@ -1405,7 +1405,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire 
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsBool on = false;
+    bool on = false;
     uint32_t flag = plPipeDbg::kFlagOverlayWire;
     if( !numParams )
         on = !pfConsole::GetPipeline()->IsDebugFlagSet( flag );
@@ -1815,7 +1815,7 @@ PF_CONSOLE_SUBGROUP( Graphics, Show );
 
 PF_CONSOLE_CMD( Graphics_Show, Bounds, "", "Toggle object bounds display")
 {
-    hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet( plPipeDbg::kFlagShowAllBounds );
+    bool on = !pfConsole::GetPipeline()->IsDebugFlagSet( plPipeDbg::kFlagShowAllBounds );
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowAllBounds, on );
 
     char    str[ 256 ];
@@ -1825,7 +1825,7 @@ PF_CONSOLE_CMD( Graphics_Show, Bounds, "", "Toggle object bounds display")
 
 PF_CONSOLE_CMD( Graphics_Show, Sound, "", "Toggle sound fields visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kAudible | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     if( on )
@@ -1880,7 +1880,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
 
 PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kAudible | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     static uint32_t oldMask = plDrawableSpans::kNormal;
@@ -1901,7 +1901,7 @@ PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible"
 PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion and render (or toggle)")
 {
     uint32_t flag = plPipeDbg::kFlagOcclusionSnap;
-    hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
+    bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
     if( on )
@@ -1917,7 +1917,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion 
 PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlusion and render (or toggle)")
 {
     uint32_t flag = plPipeDbg::kFlagOcclusionSnap;
-    hsBool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
+    bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(flag);
 
     static uint32_t oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
 
@@ -1934,7 +1934,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlus
 
 PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kOccluder | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
 
@@ -1950,7 +1950,7 @@ PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible"
 
 PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kOccluder | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     static uint32_t oldMask = plDrawableSpans::kNormal;
@@ -1970,7 +1970,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry
 
 PF_CONSOLE_CMD( Graphics_Show, Physicals, "", "Toggle Physical geometry visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kPhysical | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     if( on )
@@ -1985,7 +1985,7 @@ PF_CONSOLE_CMD( Graphics_Show, Physicals, "", "Toggle Physical geometry visible"
 
 PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kPhysical | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     static uint32_t oldMask = plDrawableSpans::kNormal;
@@ -2005,7 +2005,7 @@ PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry
 
 PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
 {
-    static hsBool on = true;
+    static bool on = true;
     if( on = !on )
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kNormal);
     else
@@ -2018,7 +2018,7 @@ PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
 
 PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visible")
 {
-    static hsBool on = false;
+    static bool on = false;
     static uint32_t oldMask = plDrawableSpans::kNormal;
     if( on = !on )
     {
@@ -2036,7 +2036,7 @@ PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visi
 
 PF_CONSOLE_CMD( Graphics_Show, Lights, "", "Toggle visible proxies for lights")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kLight | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     if( on )
@@ -2051,7 +2051,7 @@ PF_CONSOLE_CMD( Graphics_Show, Lights, "", "Toggle visible proxies for lights")
 
 PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for lights and everything else invisible")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kLight | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     static uint32_t oldMask = plDrawableSpans::kNormal;
@@ -2071,7 +2071,7 @@ PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for light
 
 PF_CONSOLE_CMD( Graphics_Show, Clicks, "", "Toggle visible proxies for clicks")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     if( on )
@@ -2087,7 +2087,7 @@ PF_CONSOLE_CMD( Graphics_Show, Clicks, "", "Toggle visible proxies for clicks")
 
 PF_CONSOLE_CMD( Graphics_Show, ClickOnly, "", "Toggle visible proxies for click points")
 {
-    static hsBool on = false;
+    static bool on = false;
     plProxyDrawMsg* msg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | ((on = !on) ? plProxyDrawMsg::kCreate : plProxyDrawMsg::kDestroy));
     plgDispatch::MsgSend(msg);
     static uint32_t oldMask = plDrawableSpans::kNormal;
@@ -2717,7 +2717,7 @@ class plActiveRefPeekerKey : public plKeyImp
     public:
         uint16_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
         plRefMsg*   PeekNotifyCreated(int i) { return GetNotifyCreated(i); }
-        hsBool      PeekIsActiveRef(int i) const { return IsActiveRef(i); }
+        bool        PeekIsActiveRef(int i) const { return IsActiveRef(i); }
 };
 
 // Not static so others can call it - making it even handier
@@ -4559,7 +4559,7 @@ PF_CONSOLE_CMD( Access,
                    "",
                    "Test fading on visibility" )
 {
-    hsBool disabled = !plFadeOpacityMod::GetLOSCheckDisabled();
+    bool disabled = !plFadeOpacityMod::GetLOSCheckDisabled();
 
     plFadeOpacityMod::SetLOSCheckDisabled(disabled);
 
@@ -5234,7 +5234,7 @@ PF_CONSOLE_CMD( Wave, Log,  // Group name, Function name
     plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
     if( waveSet )
     {
-        hsBool logging = !waveSet->Logging();
+        bool logging = !waveSet->Logging();
         if( logging )
             waveSet->StartLog();
         else
@@ -5254,7 +5254,7 @@ PF_CONSOLE_CMD( Wave, Graph,    // Group name, Function name
     plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
     if( waveSet )
     {
-        hsBool graphing = !waveSet->Graphing();
+        bool graphing = !waveSet->Graphing();
         if( graphing )
             waveSet->StartGraph();
         else
@@ -6646,7 +6646,7 @@ PF_CONSOLE_CMD( Animation,
                "",
                "Toggle the possibility of delayed transform evaluation." )
 {
-    hsBool enabled = !plCoordinateInterface::GetDelayedTransformsEnabled();
+    bool enabled = !plCoordinateInterface::GetDelayedTransformsEnabled();
     plCoordinateInterface::SetDelayedTransformsEnabled(enabled);
 
     char buff[256];

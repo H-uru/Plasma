@@ -56,7 +56,7 @@ protected:
     plSceneObject*  fTarget;
     hsBitVector     fFlags;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) = 0;
+    virtual bool IEval(double secs, float del, uint32_t dirty) = 0;
     
 public:
     plSingleModifier();
@@ -77,7 +77,7 @@ public:
     virtual plSceneObject* GetTarget() const { return fTarget; }
     virtual void SetTarget(plSceneObject* so) { fTarget = so; }
 
-    hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
     plSingleModifier& SetFlag(int f) { fFlags.SetBit(f); return *this; }
     plSingleModifier& ClearFlag(int f) { fFlags.ClearBit(f); return *this; }
 

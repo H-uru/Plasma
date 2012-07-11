@@ -50,7 +50,7 @@ class plCorrectionMsg : public plMessage
 {
 public:
     plCorrectionMsg() : plMessage(nil, nil, nil) { }
-    plCorrectionMsg(plKey &r, const hsMatrix44& l2w, const hsMatrix44& w2l, hsBool dirtySynch = false)
+    plCorrectionMsg(plKey &r, const hsMatrix44& l2w, const hsMatrix44& w2l, bool dirtySynch = false)
         : plMessage(nil, r, nil),
           fLocalToWorld(l2w),
           fWorldToLocal(w2l),
@@ -63,7 +63,7 @@ public:
     hsMatrix44      fLocalToWorld;
     hsMatrix44      fWorldToLocal;
     
-    hsBool          fDirtySynch;
+    bool          fDirtySynch;
 
     // IO 
     void Read(hsStream* stream, hsResMgr* mgr)

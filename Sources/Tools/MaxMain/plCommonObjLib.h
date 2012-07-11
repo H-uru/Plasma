@@ -89,12 +89,12 @@ class plCommonObjLib
         /// Base utility functions
 
         void            AddObject( hsKeyedObject *object );
-        hsBool          RemoveObjectAndKey( plKey &key );
+        bool            RemoveObjectAndKey( plKey &key );
         hsKeyedObject   *FindObject( const plString &name, uint16_t classType = (uint16_t)-1 );
         void            ClearObjectList( void );
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect
-        virtual hsBool  IsInteresting( const plKey &objectKey ) { return false; }
+        virtual bool    IsInteresting( const plKey &objectKey ) { return false; }
 
 
         /// Static functions for use only by the export resManager

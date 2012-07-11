@@ -77,9 +77,9 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    hsBool Shot() const { return fCmd == kShot; }
-    hsBool Spray() const { return fCmd == kSpray; }
-    hsBool Stop() const { return fCmd == kStop; }
+    bool Shot() const { return fCmd == kShot; }
+    bool Spray() const { return fCmd == kSpray; }
+    bool Stop() const { return fCmd == kStop; }
 
     void FireShot(const hsPoint3& from, const hsVector3& dir, float radius, float range, float psecs=-1.f);
     void FireShot(const hsPoint3& from, const hsPoint3& at, float radius, float psecs=-1.f);

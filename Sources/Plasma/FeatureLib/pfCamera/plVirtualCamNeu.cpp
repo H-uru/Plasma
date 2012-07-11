@@ -90,9 +90,9 @@ float plVirtualCam1::fFOVw           =  45.0f;
 float plVirtualCam1::fFOVh           =  33.75f;
 float plVirtualCam1::fHither         =   0.3f;
 float plVirtualCam1::fYon            = 500.0f;
-hsBool   plVirtualCam1::printFOV        = false;
-hsBool   plVirtualCam1::fUseAccelOverride   = 1;
-hsBool   plVirtualCam1::freeze  = 0;
+bool     plVirtualCam1::printFOV        = false;
+bool     plVirtualCam1::fUseAccelOverride   = 1;
+bool     plVirtualCam1::freeze  = 0;
 //float plVirtualCam1::fAccel            = 5.0f;
 //float plVirtualCam1::fDecel            = 5.0f;
 //float plVirtualCam1::fVel          = 10.0f;
@@ -101,9 +101,9 @@ float plVirtualCam1::fDecel          = 50.0f;
 float plVirtualCam1::fVel            = 100.0f;
 float plVirtualCam1::fPanResponseTime    = 3.0f;
 float plVirtualCam1::fFallTimerDelay = 0.25f;
-hsBool   plVirtualCam1::alwaysCutForColin = false;
-hsBool   plVirtualCam1::WalkPan3rdPerson = false;
-hsBool     plVirtualCam1::StayInFirstPersonForever = false;
+bool     plVirtualCam1::alwaysCutForColin = false;
+bool     plVirtualCam1::WalkPan3rdPerson = false;
+bool       plVirtualCam1::StayInFirstPersonForever = false;
 float    plVirtualCam1::fAspectRatio = fFOVw / fFOVh;
 
 // #define STATUS_LOG
@@ -121,7 +121,7 @@ void plVirtualCam1::AddMsgToLog(const char* msg)
 #endif
 }
 
-hsBool plVirtualCam1::IsCurrentCamera(const plCameraModifier1* mod)
+bool plVirtualCam1::IsCurrentCamera(const plCameraModifier1* mod)
 {
     if (plVirtualCam1::Instance())
     {
@@ -392,7 +392,7 @@ void plVirtualCam1::SetPipeline(plPipeline* p)
     SetRender(false);
 }
 
-void  plVirtualCam1::Reset(hsBool bRender)
+void  plVirtualCam1::Reset(bool bRender)
 {
     if (fPythonOverride)
         fPythonOverride = nil;
@@ -455,7 +455,7 @@ plCameraModifier1* plVirtualCam1::GetCurrentCamera()
     return nil;
 }
 
-hsBool plVirtualCam1::Is1stPersonCamera()
+bool plVirtualCam1::Is1stPersonCamera()
 {
     if (GetCurrentStackCamera() == fDriveCamera)
         return false;
@@ -508,7 +508,7 @@ void plVirtualCam1::SetCutNextTrans()
 #endif
 }
 
-void plVirtualCam1::SetRender(hsBool render)
+void plVirtualCam1::SetRender(bool render)
 {
     fFlags.SetBit(kRender,render);
     if (render)
@@ -532,7 +532,7 @@ void plVirtualCam1::SetRender(hsBool render)
 }
 
 // hack, hack, hack
-hsBool plVirtualCam1::RestoreFromName(const plString& name)
+bool plVirtualCam1::RestoreFromName(const plString& name)
 {
     for(plSOVec::iterator it = fCamerasLoaded.begin(); it != fCamerasLoaded.end(); ++it)
     {
@@ -777,7 +777,7 @@ void plVirtualCam1::IUpdate()
     
     for (plCameraVec::iterator i = fCameraStack.begin(); i != fCameraStack.end(); ++i)
     {   
-        hsBool update = true;
+        bool update = true;
         for (plCameraVec::iterator j = (i+1); j != fCameraStack.end(); ++j)
         {
             if (*i != *j)
@@ -954,7 +954,7 @@ void plVirtualCam1::FirstPersonOverride()
     }
 }
 
-hsBool plVirtualCam1::MsgReceive(plMessage* msg)
+bool plVirtualCam1::MsgReceive(plMessage* msg)
 {
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pPMsg)
@@ -1356,7 +1356,7 @@ hsBool plVirtualCam1::MsgReceive(plMessage* msg)
             if (pCam->GetTriggerer() && pCam->GetTriggerer() != plNetClientApp::GetInstance()->GetLocalPlayerKey())
                 return true;
             {
-                hsBool bDef = pCam->Cmd(plCameraMsg::kSetAsPrimary);
+                bool bDef = pCam->Cmd(plCameraMsg::kSetAsPrimary);
                 plKey pCamKey = pCam->GetNewCam();
                 if (pCamKey)
                 {
@@ -1504,7 +1504,7 @@ void plVirtualCam1::AddCameraToStack(plCameraModifier1* pCam)
         hsgResMgr::ResMgr()->AddViaNotify(pCam->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
 }
 
-void plVirtualCam1::PushCamera(plCameraModifier1* pCam, hsBool bDefault)
+void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
 {
     // pushing the same camera, folks?
     if (pCam == GetCurrentStackCamera())
@@ -1696,7 +1696,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
     }
 
     // are we mouse-looking?
-    hsBool mLook = false;
+    bool mLook = false;
     if (pCam->GetBrain() && pCam->GetBrain()->HasMovementFlag(S_SET_FREELOOK))
         mLook = true;
 

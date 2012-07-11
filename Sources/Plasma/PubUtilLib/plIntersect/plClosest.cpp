@@ -206,7 +206,7 @@ uint32_t plClosest::PointsOnLines(const hsPoint3& p0, const hsVector3& v0,
     return retVal;;
 }
 
-hsBool plClosest::PointOnSphere(const hsPoint3& p0,
+bool plClosest::PointOnSphere(const hsPoint3& p0,
                                 const hsPoint3& center, float rad,
                                 hsPoint3& cp)
 {
@@ -219,7 +219,7 @@ hsBool plClosest::PointOnSphere(const hsPoint3& p0,
     return dist <= 1.f;
 }
 
-hsBool plClosest::PointOnBox(const hsPoint3& p0,
+bool plClosest::PointOnBox(const hsPoint3& p0,
                              const hsPoint3& corner,
                              const hsVector3& axis0,
                              const hsVector3& axis1,
@@ -237,7 +237,7 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0,
     return !clamps;
 }
 
-hsBool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
+bool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
                             const hsPoint3& center, float rad,
                             hsPoint3& cp,
                             uint32_t clamp)
@@ -321,7 +321,7 @@ hsBool plClosest::PointOnSphere(const hsPoint3& p0, const hsVector3& v0,
     return false;
 }
 
-hsBool plClosest::PointOnBox(const hsPoint3& p0, const hsVector3& v0,   
+bool plClosest::PointOnBox(const hsPoint3& p0, const hsVector3& v0,   
                             const hsPoint3& corner,                     
                             const hsVector3& axis0,                     
                             const hsVector3& axis1,
@@ -346,7 +346,7 @@ hsBool plClosest::PointOnBox(const hsPoint3& p0, const hsVector3& v0,
     return !clampRes;
 }
 
-hsBool plClosest::PointOnPlane(const hsPoint3& p0,
+bool plClosest::PointOnPlane(const hsPoint3& p0,
                                const hsPoint3& pPln, const hsVector3& n,
                                hsPoint3& cp)
 {
@@ -362,7 +362,7 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0,
     return nDotp >= 0;
 }
 
-hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
+bool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
                                const hsPoint3& pPln, const hsVector3& n,
                                hsPoint3& cp,
                                uint32_t clamp)
@@ -377,7 +377,7 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
 
         Then clamp appropriately, garnish, and serve with wild rice.
     */
-    hsBool retVal = true;
+    bool retVal = true;
     float pDotn = n.InnerProduct(pPln - p0);
     float v0Dotn = n.InnerProduct(v0);
     if( (v0Dotn < -kRealSmall) || (v0Dotn > kRealSmall) )
@@ -407,7 +407,7 @@ hsBool plClosest::PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
     return retVal;
 }
 
-hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
+bool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3& aAxis0,
                                     const hsVector3& aAxis1,
                                     const hsVector3& aAxis2,
@@ -424,7 +424,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
 }
 
 #if 0 // TRASH THIS
-hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
+bool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3* aAxes[3],
                                     const hsPoint3& bCorner,
                                     const hsVector3* bAxes[3],
@@ -436,7 +436,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
     hsPoint3 bStartPt[3];
     bStartPt[0] = bStartPt[1] = bStartPt[2] = bCorner;
 
-    hsBool retVal = true;
+    bool retVal = true;
     int i, j;
     for( i = 0; i < 3; i++ )
     {
@@ -481,7 +481,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
 }
 #elif 0 // TRASH THIS
 
-hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
+bool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3* aAxes[3],
                                     const hsPoint3& bCorner,
                                     const hsVector3* bAxes[3],
@@ -503,7 +503,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
     hsPoint3 aBestPt, bBestPt;
     float minDistSq = 1.e33f;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     int i;
     for( i = 0; i < 6; i++ )
@@ -567,7 +567,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
 
 #else // TRASH THIS
 
-hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
+bool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3* aAxes[3],
                                     const hsPoint3& bCorner,
                                     const hsVector3* bAxes[3],
@@ -649,7 +649,7 @@ hsBool plClosest::PointBetweenBoxes(const hsPoint3& aCorner,
     hsPoint3 aBestPt, bBestPt;
     float minDistSq = 1.e33f;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     int i;
     for( i = 0; i < 36; i++ )

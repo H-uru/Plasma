@@ -140,7 +140,7 @@ public:
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
     const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
     const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
-    hsBool GetDefault() { return fBasicPB->GetInt(ParamID(kDefault)) != 0; }
+    bool GetDefault() { return fBasicPB->GetInt(ParamID(kDefault)) != 0; }
     Color GetDefaultTint1() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint1); }
     Color GetDefaultTint2() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint2); }
     const char *GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }

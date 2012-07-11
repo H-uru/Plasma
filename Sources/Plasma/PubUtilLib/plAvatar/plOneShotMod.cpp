@@ -69,11 +69,11 @@ plOneShotMod::plOneShotMod()
 
 // CTOR(char *)
 plOneShotMod::plOneShotMod(const char *animName,
-                           hsBool drivable,
-                           hsBool reversable,
+                           bool drivable,
+                           bool reversable,
                            float seekDuration,
-                           hsBool smartSeek,
-                           hsBool noSeek)
+                           bool smartSeek,
+                           bool noSeek)
 : fDrivable(drivable),
   fReversable(reversable),
   fSeekDuration(seekDuration),
@@ -85,11 +85,11 @@ plOneShotMod::plOneShotMod(const char *animName,
 
 // INIT
 void plOneShotMod::Init(const char *animName,
-                        hsBool drivable,
-                        hsBool reversable,
+                        bool drivable,
+                        bool reversable,
                         float seekDuration,
-                        hsBool smartSeek,
-                        hsBool noSeek)
+                        bool smartSeek,
+                        bool noSeek)
 {
     fAnimName = hsStrcpy(animName);
     fDrivable = drivable;
@@ -110,7 +110,7 @@ plOneShotMod::~plOneShotMod()
 
 
 // MSGRECEIVE
-hsBool plOneShotMod::MsgReceive(plMessage* msg)
+bool plOneShotMod::MsgReceive(plMessage* msg)
 {
     plOneShotMsg *oneShotMsg = plOneShotMsg::ConvertNoRef(msg);
     if (oneShotMsg)
@@ -133,7 +133,7 @@ hsBool plOneShotMod::MsgReceive(plMessage* msg)
                     plString animName = avMod->MakeAnimationName(fAnimName);
 
                     plAvOneShotMsg *avOSmsg = new plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
-                                                                 fSeekDuration, (hsBool)fSmartSeek, animName, fDrivable,
+                                                                 fSeekDuration, (bool)fSmartSeek, animName, fDrivable,
                                                                  fReversable);
 
                     avOSmsg->fNoSeek = fNoSeek;
@@ -180,6 +180,6 @@ void plOneShotMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEScalar(fSeekDuration);
     stream->WriteBool(fDrivable);
     stream->WriteBool(fReversable);
-    stream->WriteBool((hsBool)fSmartSeek);
+    stream->WriteBool((bool)fSmartSeek);
     stream->WriteBool(fNoSeek);
 }

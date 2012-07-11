@@ -489,8 +489,8 @@ void FreeMotionSamples(plSampleVec *samples)
 int LimitTransform(INode* node, Matrix3* nodeTM)
 {
 /* NOT sure if we want to support this functionality: probably eventually.
-    hsBool32 noRotX=false,noRotY=false,noRotZ=false;
-    hsBool32 noRot=gUserPropMgr.UserPropExists(node,"BEHNoRot") || MatWrite::HasToken(node->GetName(), "norot");
+    bool32 noRotX=false,noRotY=false,noRotZ=false;
+    bool32 noRot=gUserPropMgr.UserPropExists(node,"BEHNoRot") || MatWrite::HasToken(node->GetName(), "norot");
     if (!noRot)
     {
         noRotX=gUserPropMgr.UserPropExists(node,"BEHNoRotX") || MatWrite::HasToken(node->GetName(), "norotx");
@@ -498,8 +498,8 @@ int LimitTransform(INode* node, Matrix3* nodeTM)
         noRotZ=gUserPropMgr.UserPropExists(node,"BEHNoRotZ") || MatWrite::HasToken(node->GetName(), "norotz");
     }
 
-    hsBool32 noTransX=false,noTransY=false,noTransZ=false;
-    hsBool32 noTrans=gUserPropMgr.UserPropExists(node,"BEHNoTrans") || MatWrite::HasToken(node->GetName(), "notrans");
+    bool32 noTransX=false,noTransY=false,noTransZ=false;
+    bool32 noTrans=gUserPropMgr.UserPropExists(node,"BEHNoTrans") || MatWrite::HasToken(node->GetName(), "notrans");
     if (!noTrans)
     {
         noTransX=gUserPropMgr.UserPropExists(node,"BEHNoTransX") || MatWrite::HasToken(node->GetName(), "notransx");

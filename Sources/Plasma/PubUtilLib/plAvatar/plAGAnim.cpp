@@ -175,7 +175,7 @@ int plAGAnim::AddApplicator(plAGApplicator *app)
 
 // RemoveApplicator ------------------------
 // -----------------
-hsBool plAGAnim::RemoveApplicator(int index)
+bool plAGAnim::RemoveApplicator(int index)
 {
     hsAssert(index < fApps.size(), "Out of range index for plAGAnim::RemoveApp()");
 
@@ -299,7 +299,7 @@ plAGAnim * plAGAnim::FindAnim(const plString &name)
 
 // RemoveAnim -------------------------------
 // -----------
-hsBool plAGAnim::RemoveAnim(const plString &name)
+bool plAGAnim::RemoveAnim(const plString &name)
 {
     plAnimMap::iterator i = fAllAnims.find(name);
 
@@ -328,7 +328,7 @@ void plAGAnim::DumpAnimationRegistry()
 
 // SharesPinsWith -----------------------------------------
 // ---------------
-hsBool plAGAnim::SharesPinsWith(const plAGAnim *anim) const
+bool plAGAnim::SharesPinsWith(const plAGAnim *anim) const
 {
     int i, j;
     for (i = 0; i < fApps.size(); i++)
@@ -394,10 +394,10 @@ void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
     plAGAnim::Read(stream, mgr);
 
     fInitial = stream->ReadLEScalar();
-    fAutoStart = stream->Readbool();
+    fAutoStart = stream->ReadBool();
     fLoopStart = stream->ReadLEScalar();
     fLoopEnd = stream->ReadLEScalar();
-    fLoop = stream->Readbool();
+    fLoop = stream->ReadBool();
 
     fEaseInType = stream->ReadByte();
     fEaseInMin = stream->ReadLEScalar();
@@ -438,10 +438,10 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
     plAGAnim::Write(stream, mgr);
 
     stream->WriteLEScalar(fInitial);
-    stream->Writebool(fAutoStart);
+    stream->WriteBool(fAutoStart);
     stream->WriteLEScalar(fLoopStart);
     stream->WriteLEScalar(fLoopEnd);
-    stream->Writebool(fLoop);
+    stream->WriteBool(fLoop);
 
     stream->WriteByte(fEaseInType);
     stream->WriteLEScalar(fEaseInMin);

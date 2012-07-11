@@ -311,7 +311,7 @@ void plPXPhysical::ISetHullToWorldWTriangles()
 }
 
 
-hsBool plPXPhysical::IsObjectInsideHull(const hsPoint3& pos)
+bool plPXPhysical::IsObjectInsideHull(const hsPoint3& pos)
 {
     if (fSaveTriangles)
     {
@@ -327,7 +327,7 @@ hsBool plPXPhysical::IsObjectInsideHull(const hsPoint3& pos)
     return false;
 }
 
-hsBool plPXPhysical::Should_I_Trigger(hsBool enter, hsPoint3& pos)
+bool plPXPhysical::Should_I_Trigger(bool enter, hsPoint3& pos)
 {
     // see if we are inside the detector hull, if so, then don't trigger
     bool trigger = false;
@@ -356,9 +356,9 @@ hsBool plPXPhysical::Should_I_Trigger(hsBool enter, hsPoint3& pos)
 }
 
 
-hsBool plPXPhysical::Init(PhysRecipe& recipe)
+bool plPXPhysical::Init(PhysRecipe& recipe)
 {
-    hsBool  startAsleep = false;
+    bool    startAsleep = false;
     fBoundsType = recipe.bounds;
     fGroup = recipe.group;
     fReportsOn = recipe.reportsOn;
@@ -577,7 +577,7 @@ hsBool plPXPhysical::Init(PhysRecipe& recipe)
 /////////////////////////////////////////////////////////////////
 
 // MSGRECEIVE
-hsBool plPXPhysical::MsgReceive( plMessage* msg )
+bool plPXPhysical::MsgReceive( plMessage* msg )
 {
     if(plGenRefMsg *refM = plGenRefMsg::ConvertNoRef(msg))
     {
@@ -610,7 +610,7 @@ hsBool plPXPhysical::MsgReceive( plMessage* msg )
 // there's two things we hold references to: subworlds
 // and the simulation manager.
 // right now, we're only worrying about the subworlds
-hsBool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
+bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
 {
     uint8_t refCtxt = refMsg->GetContext();
     plKey refKey = refMsg->GetRef()->GetKey();
@@ -655,7 +655,7 @@ hsBool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     return true;
 }
 
-void plPXPhysical::IEnable(hsBool enable)
+void plPXPhysical::IEnable(bool enable)
 {
     fProps.SetBit(plSimulationInterface::kDisable, !enable);
     if (!enable)
@@ -680,7 +680,7 @@ void plPXPhysical::IEnable(hsBool enable)
     }
 }
 
-plPhysical& plPXPhysical::SetProperty(int prop, hsBool status)
+plPhysical& plPXPhysical::SetProperty(int prop, bool status)
 {
     if (GetProperty(prop) == status)
     {
@@ -713,7 +713,7 @@ plPhysical& plPXPhysical::SetProperty(int prop, hsBool status)
         {
             // if the body is already unpinned and you unpin it again,
             // you'll wipe out its velocity. hence the check.
-            hsBool current = fActor->readBodyFlag(NX_BF_FROZEN);
+            bool current = fActor->readBodyFlag(NX_BF_FROZEN);
             if (status != current)
             {
                 if (status)
@@ -764,14 +764,14 @@ bool CompareMatrices(const hsMatrix44 &matA, const hsMatrix44 &matB, float toler
 
 // Called after the simulation has run....sends new positions to the various scene objects
 // *** want to do this in response to an update message....
-void plPXPhysical::SendNewLocation(hsBool synchTransform, hsBool isSynchUpdate)
+void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
 {
     // we only send if:
     // - the body is active or forceUpdate is on
     // - the mass is non-zero
     // - the physical is not passive
-    hsBool bodyActive = !fActor->isSleeping();
-    hsBool dynamic = fActor->isDynamic();
+    bool bodyActive = !fActor->isSleeping();
+    bool dynamic = fActor->isDynamic();
     
     if ((bodyActive || isSynchUpdate) && dynamic)// && fInitialTransform)
     {
@@ -920,7 +920,7 @@ void plPXPhysical::ISetRotationSim(const hsQuat& rot)
 }
 
 // This form is assumed by convention to be global.
-void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBool force)
+void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force)
 {
 //  hsAssert(real_finite(l2w.fMap[0][3]) && real_finite(l2w.fMap[1][3]) && real_finite(l2w.fMap[2][3]), "Bad transform incoming");
 
@@ -947,9 +947,9 @@ void plPXPhysical::GetTransform(hsMatrix44& l2w, hsMatrix44& w2l)
     l2w.GetInverse(&w2l);
 }
 
-hsBool plPXPhysical::GetLinearVelocitySim(hsVector3& vel) const
+bool plPXPhysical::GetLinearVelocitySim(hsVector3& vel) const
 {
-    hsBool result = false;
+    bool result = false;
 
     if (fActor->isDynamic())
     {
@@ -973,9 +973,9 @@ void plPXPhysical::ClearLinearVelocity()
     SetLinearVelocitySim(hsVector3(0, 0, 0));
 }
 
-hsBool plPXPhysical::GetAngularVelocitySim(hsVector3& vel) const
+bool plPXPhysical::GetAngularVelocitySim(hsVector3& vel) const
 {
-    hsBool result = false;
+    bool result = false;
     if (fActor->isDynamic())
     {
         vel = plPXConvert::Vector(fActor->getAngularVelocity());
@@ -1195,7 +1195,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 // TESTING SDL
 // Send phys sendState msg to object's plPhysicalSDLModifier
 //
-hsBool plPXPhysical::DirtySynchState(const char* SDLStateName, uint32_t synchFlags )
+bool plPXPhysical::DirtySynchState(const char* SDLStateName, uint32_t synchFlags )
 {
     if (GetObjectKey())
     {
@@ -1252,7 +1252,7 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     SendNewLocation(false, true);
 }
 
-void plPXPhysical::ExcludeRegionHack(hsBool cleared)
+void plPXPhysical::ExcludeRegionHack(bool cleared)
 {
     NxShape* shape = fActor->getShapes()[0];
     shape->setFlag(NX_TRIGGER_ON_ENTER, !cleared);
@@ -1265,13 +1265,13 @@ void plPXPhysical::ExcludeRegionHack(hsBool cleared)
     plPXPhysicalControllerCore::RebuildCache();
 
 }
-hsBool plPXPhysical::OverlapWithCapsule(NxCapsule& cap)
+bool plPXPhysical::OverlapWithCapsule(NxCapsule& cap)
 {
     NxShape* shape = fActor->getShapes()[0];
     return shape->checkOverlapCapsule(cap);
 }
 
-hsBool plPXPhysical::IsDynamic() const
+bool plPXPhysical::IsDynamic() const
 {
     return fGroup == plSimDefs::kGroupDynamic &&
         !GetProperty(plSimulationInterface::kPhysAnim);
@@ -1332,7 +1332,7 @@ plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>&
     hsMatrix44 l2w, unused;
     GetTransform(l2w, unused);
     
-    hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+    bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
 
     NxShape* shape = fActor->getShapes()[0];
 

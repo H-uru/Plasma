@@ -160,7 +160,7 @@ const plInventoryObjComponent::LogicKeys& plInventoryObjComponent::GetLogicKeys(
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plInventoryObjComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plInventoryObjComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fLogicModKeys.clear();
     fReceivers.Reset();
@@ -180,7 +180,7 @@ plKey plInventoryObjComponent::GetLogicKey(plMaxNode* node)
 }
 
 
-hsBool plInventoryObjComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plInventoryObjComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plLocation loc = node->GetLocation();
     plSceneObject *obj = node->GetSceneObject();
@@ -203,7 +203,7 @@ void plInventoryObjComponent::AddReceiverKey(plKey key, plMaxNode* node)
     fReceivers.Append(key);
 }
 
-hsBool plInventoryObjComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plInventoryObjComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

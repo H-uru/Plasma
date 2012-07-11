@@ -98,7 +98,7 @@ public:
     virtual ~plAGMasterMod();
 
     /** Find an individual plAGModifier of the given name under our control. */
-    plAGModifier * GetChannelMod(const plString & name, hsBool dontCache = false) const;
+    plAGModifier * GetChannelMod(const plString & name, bool dontCache = false) const;
 
     /** \name Managing Animations */
     // \{
@@ -108,13 +108,13 @@ public:
         animation will be attached at full strength. */
     plAGAnimInstance *AttachAnimationBlended(plAGAnim *anim, float blendFactor = 0,
                                              uint16_t blendPriority = kAGMedBlendPriority,
-                                             hsBool cache = false);
+                                             bool cache = false);
 
     /** Look up the given animation by name and attach it
         with the given blend factor. */
     plAGAnimInstance *AttachAnimationBlended(const plString &name, float blendFactor = 0,
                                              uint16_t blendPriority = kAGMedBlendPriority,
-                                             hsBool cache = false);
+                                             bool cache = false);
 
     /** Play a simple anim (one that doesn't affect root) once and auto detach. 
         Intended for Zandi's facial animations that run seperate from the behaviors. */
@@ -204,13 +204,13 @@ public:
     virtual void AddTarget(plSceneObject * object);
     virtual void RemoveTarget(plSceneObject * object);
 
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream * stream, hsResMgr *mgr);
 
-    hsBool HasRunningAnims();
-    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);    
+    bool HasRunningAnims();
+    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);    
     
     CLASSNAME_REGISTER( plAGMasterMod );
     GETINTERFACE_ANY( plAGMasterMod, plModifier );
@@ -220,7 +220,7 @@ protected:
     plAGModifier * ICacheChannelMod(plAGModifier *mod) const;
     plAGModifier * IFindChannelMod(const plSceneObject *obj, const plString &name) const;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
     
     virtual void IApplyDynamic() {};    // dummy function required by base class
 
@@ -245,9 +245,9 @@ protected:
     // animations that require AnimTimeConvert state to be synched
     plInstanceVector fATCAnimInstances;
     
-    hsBool fFirstEval;
-    hsBool fNeedEval;
-    void IRegForEval(hsBool val);
+    bool fFirstEval;
+    bool fNeedEval;
+    void IRegForEval(bool val);
 
     // SDL modifier which sends/recvs dynamics state
     plAGMasterSDLModifier *fAGMasterSDLMod; 

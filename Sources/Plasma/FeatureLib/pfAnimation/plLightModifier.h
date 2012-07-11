@@ -79,7 +79,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool HasAnima() const { return fColorCtl || fAmbientCtl || fSpecularCtl; }
+    virtual bool HasAnima() const { return fColorCtl || fAmbientCtl || fSpecularCtl; }
 
     // Export only
     void SetColorCtl(plController* ctl) { fColorCtl = ctl; }
@@ -115,7 +115,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fAttenCtl; }
+    virtual bool HasAnima() const { return plLightModifier::HasAnima() || fAttenCtl; }
 
     // Export Only
     void SetAttenCtl(plController* ctl) { fAttenCtl = ctl; }
@@ -128,7 +128,7 @@ class plSpotModifier : public plOmniModifier
 {
 protected:
 
-    plSpotLightInfo*            fSpot;
+    plSpotLightInfo*         fSpot;
 
     plController*           fInnerCtl;
     plController*           fOuterCtl;
@@ -149,7 +149,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool HasAnima() const { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
+    virtual bool HasAnima() const { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
 
     // Export Only
     void SetInnerCtl(plController* ctl) { fInnerCtl = ctl; }
@@ -184,7 +184,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool HasAnima() const { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
+    virtual bool HasAnima() const { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
 
     // Export Only
     void SetWidthCtl(plController* ctl) { fWidthCtl = ctl; }

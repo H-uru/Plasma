@@ -67,7 +67,7 @@ class cyAvatar
 protected:
     plKey           fSender;
     hsTArray<plKey> fRecvr;
-    hsBool          fNetForce;
+    bool          fNetForce;
 
     virtual const plArmatureMod* IFindArmatureMod(plKey avObj);
     virtual plKey IFindArmatureModKey(plKey avObj);
@@ -95,31 +95,31 @@ public:
     // setters
     void SetSender(plKey &sender);
     void AddRecvr(plKey &recvr);
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(bool state) { fNetForce = state; }
 
     // oneShot Avatar (must already be there)
-    virtual void OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
-                   const plString &animName, hsBool drivable, hsBool reversible);
+    virtual void OneShot(pyKey &seekKey, float duration, bool usePhysics,
+                   const plString &animName, bool drivable, bool reversible);
 
     // oneShot Avatar 
-    virtual void RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp);
-    virtual void RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netForce, hsBool netProp);
+    virtual void RunBehavior(pyKey &behKey, bool netForce, bool netProp);
+    virtual void RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce, bool netProp);
 
     // for the multistage behaviors
-    virtual void NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce);
-    virtual void GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce);
+    virtual void NextStage(pyKey &behKey, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce);
+    virtual void PreviousStage(pyKey &behKey, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce);
+    virtual void GoToStage(pyKey &behKey, int32_t stage, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce);
 
     // static behavior functions:
-    static void SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsBool netForce);
+    static void SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, bool netForce);
 
     virtual void SetSenderKey(pyKey &pKey);
 
     // seek Avatar (must already be there)
-    //virtual void Seek(pyKey &seekKey, float duration, hsBool usePhysics);
+    //virtual void Seek(pyKey &seekKey, float duration, bool usePhysics);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -214,7 +214,7 @@ public:
     //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
     //             : returns 0, if clothing item was not found
     //
-    virtual hsBool WearClothingItem(const char* clothing_name);
+    virtual bool WearClothingItem(const char* clothing_name);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -224,7 +224,7 @@ public:
     //  PURPOSE    : Remove (take off) a particular piece of clothing based on name of clothing item
     //             : returns 0, if clothing item was not found
     //
-    virtual hsBool RemoveClothingItem(const char* clothing_name);
+    virtual bool RemoveClothingItem(const char* clothing_name);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -233,7 +233,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItem(const char* clothing_name, pyColor& tint);
+    virtual bool TintClothingItem(const char* clothing_name, pyColor& tint);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -244,7 +244,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer);
+    virtual bool TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -254,7 +254,7 @@ public:
     //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
     //             : returns 0, if clothing item was not found
     //
-    virtual hsBool WearClothingItemU(const char* clothing_name, hsBool update);
+    virtual bool WearClothingItemU(const char* clothing_name, bool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -264,7 +264,7 @@ public:
     //  PURPOSE    : Remove (take off) a particular piece of clothing based on name of clothing item
     //             : returns 0, if clothing item was not found
     //
-    virtual hsBool RemoveClothingItemU(const char* clothing_name, hsBool update);
+    virtual bool RemoveClothingItemU(const char* clothing_name, bool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -273,7 +273,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItemU(const char* clothing_name, pyColor& tint, hsBool update);
+    virtual bool TintClothingItemU(const char* clothing_name, pyColor& tint, bool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -284,7 +284,7 @@ public:
     //
     //  PURPOSE    : Tint a clothing item, i.e. change the color of it
     //
-    virtual hsBool TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, hsBool update);
+    virtual bool TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, bool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -328,7 +328,7 @@ public:
     //
     //  PURPOSE    : Tint the skin of the player's avatar with optional update flag
     //
-    virtual void TintSkinU(pyColor& tint, hsBool update);
+    virtual void TintSkinU(pyColor& tint, bool update);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -560,7 +560,7 @@ public:
     //
     void UnRegisterForBehaviorNotify(pyKey &selfKey);
 
-    static hsBool IsCurrentBrainHuman();
+    static bool IsCurrentBrainHuman();
 
 };
 

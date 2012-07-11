@@ -87,7 +87,7 @@ public:
 
     // Given a time value, find the enclosing keyframes and normalize time (0-1)
     static void GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, 
-        uint32_t keySize, hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, hsBool forwards);
+        uint32_t keySize, hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, bool forwards);
 
 };
 

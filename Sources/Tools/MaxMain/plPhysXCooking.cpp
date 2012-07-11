@@ -57,12 +57,12 @@ bool plPhysXCooking::fSkipErrors = false;
 
 NxUtilLib* plPhysXCooking::fUtilLib =nil;
 //assumes that the Vectors are normalized
-hsBool ThreePlaneIntersect(const NxVec3& norm0, const NxVec3& point0, 
+bool ThreePlaneIntersect(const NxVec3& norm0, const NxVec3& point0, 
                          const NxVec3& norm1, const NxVec3& point1, 
                          const NxVec3& norm2, const NxVec3& point2, NxVec3& loc)
 {
     //need to make sure these planes aren't parallel
-    hsBool suc=0;
+    bool suc=0;
     NxVec3 cross=norm1.cross( norm2);
     float denom=norm0.dot(cross);
     if(abs(denom)<0.0001) return 0;//basically paralell
@@ -320,7 +320,7 @@ void ReadBoxFromHull(hsStream* stream, NxBoxShapeDesc& box)
 //  box.localPose.setRowMajor44(&mat.fMap[0][0]);
 }
 */
-hsBool ProjectPointOnToPlane(const hsVector3& planeNormal,float& d0, 
+bool ProjectPointOnToPlane(const hsVector3& planeNormal,float& d0, 
         const hsVector3 pointToProject, hsPoint3& res)
 {
 
@@ -376,7 +376,7 @@ void plPhysXCooking::PCA(const NxVec3* points,int numPoints, NxMat33& out)
 }
 hsVectorStream* plPhysXCooking::IMakePolytope(const plMaxMeshExtractor::NeutralMesh& inMesh)
 {
-    hsBool success=0;
+    bool success=0;
     std::vector<hsPoint3> outCloud;
     hsPoint3 offset;
     int numPlanes=26;

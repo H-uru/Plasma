@@ -57,7 +57,7 @@ plTimerCallbackManager::~plTimerCallbackManager()
         delete fCallbacks.Pop();
 }
 
-hsBool plTimerCallbackManager::MsgReceive(plMessage* msg)
+bool plTimerCallbackManager::MsgReceive(plMessage* msg)
 {
     plTimeMsg* pTimeMsg = plTimeMsg::ConvertNoRef(msg);
     int i = fCallbacks.Count();
@@ -106,7 +106,7 @@ plTimerCallback* plTimerCallbackManager::NewTimer(float time, plMessage* pMsg)
     return t;
 }
 
-hsBool plTimerCallbackManager::CancelCallback(plTimerCallback* pTimer)
+bool plTimerCallbackManager::CancelCallback(plTimerCallback* pTimer)
 {
     for (int i = 0; i < fCallbacks.Count(); i++)
     {
@@ -118,7 +118,7 @@ hsBool plTimerCallbackManager::CancelCallback(plTimerCallback* pTimer)
     return false;
 }
 
-hsBool plTimerCallbackManager::CancelCallbacksToKey(const plKey& key)
+bool plTimerCallbackManager::CancelCallbacksToKey(const plKey& key)
 {
     const plKey rKey;
     bool removed = false;
@@ -181,12 +181,12 @@ void plgTimerCallbackMgr::Init()
     plgDispatch::Dispatch()->RegisterForExactType( plTimeMsg::Index(), fMgr->GetKey() );
 }
 
-hsBool plgTimerCallbackMgr::CancelCallback(plTimerCallback* pTimer)
+bool plgTimerCallbackMgr::CancelCallback(plTimerCallback* pTimer)
 {
     return (fMgr->CancelCallback(pTimer));
 }
 
-hsBool plgTimerCallbackMgr::CancelCallbacksToKey(const plKey& key)
+bool plgTimerCallbackMgr::CancelCallbacksToKey(const plKey& key)
 {
     return (fMgr->CancelCallbacksToKey(key));
 }

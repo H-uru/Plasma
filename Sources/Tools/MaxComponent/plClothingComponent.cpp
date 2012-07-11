@@ -152,7 +152,7 @@ plClothingComponent::plClothingComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     int i;
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
@@ -176,14 +176,14 @@ hsBool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg
     return true;
 }
 
-hsBool plClothingComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClothingComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetupBoneHierarchyPalette();
 
     return true;
 }
 
-hsBool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     int i, j;
     hsTArray<plGeometrySpan*> spanArray;

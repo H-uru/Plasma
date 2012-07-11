@@ -159,17 +159,17 @@ plCameraCmdComponent::plCameraCmdComponent()
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plCameraCmdComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraCmdComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

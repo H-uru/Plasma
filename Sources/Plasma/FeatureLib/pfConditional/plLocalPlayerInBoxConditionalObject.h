@@ -61,7 +61,7 @@ public:
     CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     void SetBox(plKey pKey) { fBox = pKey; }
     

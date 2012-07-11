@@ -68,15 +68,15 @@ public:
         fMaxNumSources = 0;
     }
 
-    hsBool  IsAvailable( void ) const { return fIsAvailable; }
-    hsBool  IsEAXAvailable( void ) const { return fEAXAvailable; }
-    hsBool  UsingEAXUnified( void ) const { return fEAXUnified; }
+    bool    IsAvailable( void ) const { return fIsAvailable; }
+    bool    IsEAXAvailable( void ) const { return fEAXAvailable; }
+    bool    UsingEAXUnified( void ) const { return fEAXUnified; }
     unsigned GetMaxNumVoices() { return fMaxNumSources; }
 
 protected:
     friend class plAudioCapsDetector;
 
-    hsBool  fIsAvailable, fEAXAvailable, fEAXUnified;
+    bool    fIsAvailable, fEAXAvailable, fEAXUnified;
     unsigned fMaxNumSources;
 };
 
@@ -86,14 +86,14 @@ public:
     plAudioCapsDetector();
     virtual ~plAudioCapsDetector();
 
-    static plAudioCaps &Detect( hsBool log = false, hsBool init = false );
+    static plAudioCaps &Detect( bool log = false, bool init = false );
 
 protected:
     static plStatusLog  *fLog;
     static plAudioCaps  fCaps;
-    static hsBool       fGotCaps;
+    static bool         fGotCaps;
     
-    static hsBool   IDetectEAX( );
+    static bool     IDetectEAX( );
 };
 
 #endif //_plAudioCaps_h

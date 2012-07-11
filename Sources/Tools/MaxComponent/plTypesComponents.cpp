@@ -83,10 +83,10 @@ class plStartingPointComponent : public plComponent
 public:
     plStartingPointComponent();
     void DeleteThis() { delete this; }
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    //hsBool IsValidNodeType(plMaxNode *pNode);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    //bool IsValidNodeType(plMaxNode *pNode);
 };
 
 //Max desc stuff necessary.
@@ -106,19 +106,19 @@ plStartingPointComponent::plStartingPointComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plStartingPointComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plStartingPointComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     return true;
 }
-hsBool plStartingPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plStartingPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSpawnModifier* pSpawn = new plSpawnModifier;
     node->AddModifier(pSpawn, IGetUniqueName(node));
     return true;
 }
 
-hsBool plStartingPointComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plStartingPointComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -139,9 +139,9 @@ protected:
 public:
     plVehicleComponent();
 
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 CLASS_DESC(plVehicleComponent, gVehicleDesc, "(ex)Vehicle", "Vehicle", COMP_TYPE_MISC, Class_ID(0x75903e2, 0x50ac210b))
@@ -290,7 +290,7 @@ bool plVehicleComponent::IIsValid()
         );
 }
 
-hsBool plVehicleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plVehicleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return false;
 #if 0
@@ -325,7 +325,7 @@ hsBool plVehicleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 #endif
 }
 
-hsBool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return false;
 #if 0
@@ -370,7 +370,7 @@ void GetSuspensionProps(plMaxNode* hardPoint, plMaxNode* wheel, hsPoint3& chassi
 
 #endif
 
-hsBool plVehicleComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plVehicleComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return false;
 #if 0
@@ -424,9 +424,9 @@ class plMaintainersMarkerComponent : public plComponent
 public:
     plMaintainersMarkerComponent();
     void DeleteThis() { delete this; }
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary.
@@ -452,12 +452,12 @@ plMaintainersMarkerComponent::plMaintainersMarkerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plMaintainersMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMaintainersMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     return true;
 }
-hsBool plMaintainersMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMaintainersMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plMaintainersMarkerModifier* pSpawn = new plMaintainersMarkerModifier;
     pSpawn->SetCalibrated(fCompPB->GetInt(kCalibrated));
@@ -465,7 +465,7 @@ hsBool plMaintainersMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMs
     return true;
 }
 
-hsBool plMaintainersMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plMaintainersMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -492,9 +492,9 @@ protected:
 
 public:
     plGameMarkerComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 CLASS_DESC(plGameMarkerComponent, gGameMarkerDesc, "Game Marker",  "GameMarker", COMP_TYPE_TYPE, Class_ID(0x4a15029a, 0x350f7258))
@@ -685,7 +685,7 @@ plGameMarkerComponent::plGameMarkerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plGameMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plGameMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plMaxNode* proxy = (plMaxNode*)fCompPB->GetINode(kMarkerPhys);
     proxy->SetCanConvert(false);
@@ -705,7 +705,7 @@ hsBool plGameMarkerComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrM
     return true;
 }
 
-hsBool plGameMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plGameMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -734,7 +734,7 @@ plKey plGameMarkerComponent::IGetAnimKey(int nodeID, int compID)
     return nil;
 }
 
-hsBool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plGameMarkerModifier* markerMod = new plGameMarkerModifier;
 
@@ -770,13 +770,13 @@ class plCameraComponent : public plComponent
 public:
     plCameraComponent();
     void DeleteThis() { delete this; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool IsValidNodeType(plMaxNode *pNode);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool IsValidNodeType(plMaxNode *pNode);
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
 };
 
@@ -821,24 +821,24 @@ plCameraComponent::plCameraComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plCameraComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
+bool plCameraComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 
-hsBool plCameraComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plCameraComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 
-hsBool plCameraComponent::IsValidNodeType(plMaxNode *pNode)
+bool plCameraComponent::IsValidNodeType(plMaxNode *pNode)
 {
         return false;
 }

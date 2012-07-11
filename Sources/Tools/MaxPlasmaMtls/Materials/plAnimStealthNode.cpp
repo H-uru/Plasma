@@ -422,7 +422,7 @@ class plGetRefs : public DependentEnumProc
         }
 };
 
-hsBool      plAnimStealthNode::IsParentUsedInScene( void )
+bool        plAnimStealthNode::IsParentUsedInScene( void )
 {
     if( GetParentMtl() == nil )
         return false;
@@ -878,7 +878,7 @@ void    plAnimStealthNode::PickTargetNode( IParamBlock2 *destPB, ParamID destPar
     pick.DoPick();
 }
 
-plString plAnimStealthNode::GetIfaceSegmentName( hsBool allowNil )
+plString plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
 {
     // When sending messages to material animations, they're already addressed for the right
     // layer, no need for a segment name

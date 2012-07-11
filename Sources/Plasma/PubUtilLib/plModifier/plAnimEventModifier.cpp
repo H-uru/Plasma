@@ -93,7 +93,7 @@ void plAnimEventModifier::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteCreatable(stream, fCallback);
 }
 
-hsBool plAnimEventModifier::MsgReceive(plMessage* msg)
+bool plAnimEventModifier::MsgReceive(plMessage* msg)
 {
     // Assuming we only have one ref, the anim time convert.  When it loads, we
     // send our callback setup message.

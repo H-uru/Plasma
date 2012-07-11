@@ -69,7 +69,7 @@ class pfConsoleEngine
 
         static const int32_t      fMaxNumParams;
 
-        hsBool  IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param );
+        bool    IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param );
 
         char    fErrorMsg[ 128 ];
         char    fLastErrorLine[ 512 ];
@@ -88,14 +88,14 @@ class pfConsoleEngine
         const char  *GetCmdSignature( char *name );
 
         // Prints out the help for a given command (or group)
-        hsBool  PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
+        bool    PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
 
         // Breaks the given line into a command and parameters and runs the command
-        hsBool  RunCommand( char *line, void (*PrintFn)( const char * ) );
+        bool    RunCommand( char *line, void (*PrintFn)( const char * ) );
 
         // Executes the given file as a sequence of console commands
-        hsBool  ExecuteFile( const char *fileName );
-        hsBool  ExecuteFile( const wchar_t *fileName );
+        bool    ExecuteFile( const char *fileName );
+        bool    ExecuteFile( const wchar_t *fileName );
 
         // Get the last reported error
         const char  *GetErrorMsg( void ) { return fErrorMsg; }
@@ -104,10 +104,10 @@ class pfConsoleEngine
         const char  *GetLastErrorLine( void ) { return fLastErrorLine; }
 
         // Does command completion on a partially-complete console line
-        hsBool      FindPartialCmd( char *line, hsBool findAgain = false, hsBool perserveParams = false );
+        bool        FindPartialCmd( char *line, bool findAgain = false, bool perserveParams = false );
 
         // Does command completion without restrictions to any group, skipping the number of matches given
-        hsBool      FindNestedPartialCmd( char *line, uint32_t numToSkip, hsBool perserveParams = false );
+        bool        FindNestedPartialCmd( char *line, uint32_t numToSkip, bool perserveParams = false );
 };
 
 

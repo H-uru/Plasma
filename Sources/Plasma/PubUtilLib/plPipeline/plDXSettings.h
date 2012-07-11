@@ -90,7 +90,7 @@ public:
     plFogEnvironment        fDefaultFog;
 
     plCullTree              fCullTree;
-    hsBool                  fCullTreeDirty;
+    bool                    fCullTreeDirty;
     uint16_t                  fCullMaxNodes;
 
     enum XformResets
@@ -103,15 +103,15 @@ public:
     };
 
     uint8_t                   fXformResetFlags;
-    hsBool                  fLocalToWorldLeftHanded;
-    hsBool                  fWorldToCamLeftHanded;
+    bool                    fLocalToWorldLeftHanded;
+    bool                    fWorldToCamLeftHanded;
 
     mutable hsVector3       fDirection;
     mutable hsVector3       fUp;
     mutable hsVector3       fAcross;
     hsPoint3                fWorldPos;
 
-    mutable hsBool          fViewVectorsDirty;
+    mutable bool            fViewVectorsDirty;
 
     hsMatrix44              fLocalToWorld;
     hsMatrix44              fWorldToLocal;
@@ -123,7 +123,7 @@ public:
 
     const hsMatrix44&       GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
     const hsMatrix44&       GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
-    hsBool                  IsPerspective() const { return fTransform.GetPerspective(); }
+    bool                    IsPerspective() const { return fTransform.GetPerspective(); }
 
     void            Reset();
 };
@@ -132,7 +132,7 @@ class plDXGeneralSettings
 {
     public:
 
-        hsBool                  fFullscreen;
+        bool                    fFullscreen;
         hsWinRef                fHWnd;
         uint32_t                  fColorDepth;
         uint8_t                   fNumAASamples;
@@ -146,15 +146,15 @@ class plDXGeneralSettings
         DWORD                   fClearColor;
         uint8_t                   fMaxAnisotropicSamples;
         D3DPRESENT_PARAMETERS   fPresentParams;
-        hsBool                  fVeryAnnoyingTextureInvalidFlag;
-        hsBool                  fNoGammaCorrect;
+        bool                    fVeryAnnoyingTextureInvalidFlag;
+        bool                    fNoGammaCorrect;
         int                     fMaxUVWSrc;
-        hsBool                  fCantProj;
-        hsBool                  fLimitedProj;
-        hsBool                  fBadManaged;
-        hsBool                  fShareDepth;
-        hsBool                  fCurrAnisotropy;
-        hsBool                  fIsIntel;
+        bool                    fCantProj;
+        bool                    fLimitedProj;
+        bool                    fBadManaged;
+        bool                    fShareDepth;
+        bool                    fCurrAnisotropy;
+        bool                    fIsIntel;
 
         IDirect3DSurface9       *fCurrD3DMainSurface;
         IDirect3DSurface9       *fCurrD3DDepthSurface;
@@ -280,7 +280,7 @@ class plDXStencilSettings
 {
     public:
         uint8_t   fDepth;
-        hsBool  fEnabled;
+        bool    fEnabled;
         uint8_t   fCmpFunc;
         uint8_t   fFailOp, fPassOp, fPassButZFailOp;
         uint32_t  fRefValue;

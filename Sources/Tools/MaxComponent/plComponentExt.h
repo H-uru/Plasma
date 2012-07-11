@@ -56,12 +56,12 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool PreConvert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool Convert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) = 0;
+    virtual bool SetupProperties(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    virtual bool PreConvert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    virtual bool Convert(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) = 0;
 
     // DeInit pass--free up any temp memory you might have allocated here
-    virtual hsBool DeInit(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
+    virtual bool DeInit(plMaxNodeBase *node, plComponentTools *tools, plErrorMsg *pErrMsg) { return true; }
 };
 
 #endif

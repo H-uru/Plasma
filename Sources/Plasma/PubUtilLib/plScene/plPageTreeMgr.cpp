@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static hsTArray<hsRadixSortElem> scratchList;
 
-hsBool plPageTreeMgr::fDisableVisMgr = 0;
+bool plPageTreeMgr::fDisableVisMgr = 0;
 
 plProfile_CreateTimer("Object Sort", "Draw", DrawObjSort);
 plProfile_CreateCounter("Objects Sorted", "Draw", DrawObjSorted);
@@ -110,7 +110,7 @@ void plPageTreeMgr::ITrashSpaceTree()
     fSpaceTree = nil;
 }
 
-hsBool plPageTreeMgr::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
+bool plPageTreeMgr::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
 {
     levList.SetCount(0);
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
@@ -235,7 +235,7 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
     return numDrawn;
 }
 
-hsBool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList)
+bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList)
 {
     sortedDrawList.SetCount(0);
 
@@ -331,7 +331,7 @@ int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawV
     return numDrawn;
 }
 
-hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs)
+bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs)
 {
 
     if( !pairs.GetCount() )
@@ -472,7 +472,7 @@ hsBool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisLi
     return true;
 }
 
-hsBool plPageTreeMgr::IBuildSpaceTree()
+bool plPageTreeMgr::IBuildSpaceTree()
 {
     if( !fNodes.GetCount() )
         return false;
@@ -489,7 +489,7 @@ hsBool plPageTreeMgr::IBuildSpaceTree()
     return true;
 }
 
-hsBool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
+bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 {
     int i;
     for( i = 0; i < fNodes.GetCount(); i++ )
@@ -573,7 +573,7 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
     int i;
     for( i = 0; i < fCullPolys.GetCount(); i++ )
     {
-        hsBool backFace = fCullPolys[i]->fNorm.InnerProduct(viewPos) + fCullPolys[i]->fDist <= 0;
+        bool backFace = fCullPolys[i]->fNorm.InnerProduct(viewPos) + fCullPolys[i]->fDist <= 0;
         if( backFace )
         {
             if( !fCullPolys[i]->IsHole() && !fCullPolys[i]->IsTwoSided() )
@@ -613,7 +613,7 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
     }
 }
 
-hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
+bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
 {
     if( !fOccluders.GetCount() )
         return false;
@@ -673,7 +673,7 @@ hsBool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     return fCullPolys.GetCount() > 0;
 }
 
-hsBool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
+bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
 {
     plProfile_BeginTiming(DrawOccBuild);
 

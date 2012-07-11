@@ -61,7 +61,7 @@ public:
 
     // Begin returns true if it's actually planning to do anything.
     // If it returns false, End will still get called, but GetDel probably won't.
-    virtual hsBool Begin(INode* templNode, const hsBounds3Ext& wBnd) { return false; }
+    virtual bool Begin(INode* templNode, const hsBounds3Ext& wBnd) { return false; }
     virtual void End() {}
 
     hsVector3 GetDel(const hsPoint3& p) { return GetDel(Point3(p.fX, p.fY, p.fZ)); }
@@ -71,7 +71,7 @@ public:
 class plShadeVert
 {
 public:
-    virtual hsBool Begin(INode* templNode, const hsBounds3Ext& wBnd) { return false; }
+    virtual bool Begin(INode* templNode, const hsBounds3Ext& wBnd) { return false; }
     virtual void End() {}
 
     Color GetShade(const hsPoint3& p, const hsVector3& n) { return GetShade(Point3(p.fX, p.fY, p.fZ), Point3(n.fX, n.fY, n.fZ)); }
@@ -119,7 +119,7 @@ protected:
 
     void            IFreeClustersRecur(plL2WTabTab& dst) const;
     void            IFindClustersRecur(plSpanTemplateB* templ, plL2WTab& src, plL2WTabTab& dst);
-    hsBool          ISplitCluster(plSpanTemplateB* templ, plL2WTab& src, plL2WTab& lo, plL2WTab& hi);
+    bool            ISplitCluster(plSpanTemplateB* templ, plL2WTab& src, plL2WTab& lo, plL2WTab& hi);
     int             ISelectAxis(const plL2WTab& src) const;
     Box3            IBound(const plL2WTab& src) const;
     Point3          ILength(const plL2WTab& src) const;

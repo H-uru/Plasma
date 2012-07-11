@@ -87,7 +87,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  Creates the directory specified. Returns false if unsuccessful or 
 //  directory already exists
 
-hsBool  plFileUtils::CreateDir( const char *path )
+bool    plFileUtils::CreateDir( const char *path )
 {
     // Create our directory
 #if HS_BUILD_FOR_WIN32
@@ -97,7 +97,7 @@ hsBool  plFileUtils::CreateDir( const char *path )
 #endif
 }
 
-hsBool  plFileUtils::CreateDir( const wchar_t *path )
+bool    plFileUtils::CreateDir( const wchar_t *path )
 {
     // Create our directory
 #if HS_BUILD_FOR_WIN32
@@ -111,12 +111,12 @@ hsBool  plFileUtils::CreateDir( const wchar_t *path )
 #endif
 }
 
-hsBool plFileUtils::RemoveDir(const char* path)
+bool plFileUtils::RemoveDir(const char* path)
 {
     return (rmdir(path) == 0);
 }
 
-hsBool plFileUtils::RemoveDirTree(const char * path)
+bool plFileUtils::RemoveDirTree(const char * path)
 {
     hsFolderIterator it(path);
     while (it.NextFile())
@@ -257,19 +257,19 @@ bool plFileUtils::FileExists(const char* file)
 //// EnsureFilePathExists ////////////////////////////////////////////////////
 //  Given a filename with path, makes sure the file's path exists
 
-hsBool  plFileUtils::EnsureFilePathExists( const char *filename )
+bool    plFileUtils::EnsureFilePathExists( const char *filename )
 {
     wchar_t* wFilename = hsStringToWString(filename);
-    hsBool ret = EnsureFilePathExists(wFilename);
+    bool ret = EnsureFilePathExists(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-hsBool  plFileUtils::EnsureFilePathExists( const wchar_t *filename )
+bool    plFileUtils::EnsureFilePathExists( const wchar_t *filename )
 {
     hsWStringTokenizer  izer( filename, L"\\/" );
 
-    hsBool  lastWorked = false;
+    bool    lastWorked = false;
     wchar_t   token[ kFolderIterator_MaxPath ];
 
 
@@ -287,7 +287,7 @@ hsBool  plFileUtils::EnsureFilePathExists( const wchar_t *filename )
 //  Gets the creation and modification dates of the file specified. Returns 
 //  false if unsuccessful
 
-hsBool  plFileUtils::GetFileTimes( const char *path, plUnifiedTime *createTimeOut, plUnifiedTime *modifyTimeOut )
+bool    plFileUtils::GetFileTimes( const char *path, plUnifiedTime *createTimeOut, plUnifiedTime *modifyTimeOut )
 {
     struct stat fileInfo;
 

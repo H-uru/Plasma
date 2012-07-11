@@ -115,7 +115,7 @@ class plNetLinkingMgr
 
 public:
     static plNetLinkingMgr * GetInstance();
-    hsBool MsgReceive( plMessage *msg );    // TODO: Make this a hsKeyedObject so we can really handle messages.
+    bool MsgReceive( plMessage *msg );    // TODO: Make this a hsKeyedObject so we can really handle messages.
     void Update();
 
     bool IsEnabled( void ) const { return fLinkingEnabled;}

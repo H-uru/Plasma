@@ -54,7 +54,7 @@ pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(objkey)
 {
 }
 
-hsBool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
+bool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIButtonMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -84,7 +84,7 @@ int32_t   pyGUIControlButton::GetNotifyType()
     return false;
 }
 
-hsBool  pyGUIControlButton::IsButtonDown()
+bool    pyGUIControlButton::IsButtonDown()
 {
     if ( fGCkey )
     {

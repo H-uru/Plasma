@@ -52,7 +52,7 @@ plActivatorConditionalObject::plActivatorConditionalObject()
     SetFlag(kLocalElement);     // since it relies on user input
 }
 
-hsBool plActivatorConditionalObject::MsgReceive(plMessage* msg)
+bool plActivatorConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pDetectorMsg)
@@ -130,7 +130,7 @@ hsBool plActivatorConditionalObject::MsgReceive(plMessage* msg)
                         fLogicMod->GetNotify()->AddCollisionEvent(true, pDetectorMsg->fHitterObj, pDetectorMsg->fHiteeObj);
                     }
                     SetSatisfied(true);
-                    //hsBool netRequest = msg->HasBCastFlag(plMessage::kNetNonLocal);
+                    //bool netRequest = msg->HasBCastFlag(plMessage::kNetNonLocal);
                     //fLogicMod->RequestTrigger(netRequest);
                     fLogicMod->RequestTrigger(false);
                 }
@@ -166,7 +166,7 @@ void plActivatorConditionalObject::SetActivatorKey(plKey k)
 // plActivatorActivatorConditional
 //
 
-hsBool plActivatorActivatorConditionalObject::MsgReceive(plMessage* msg)
+bool plActivatorActivatorConditionalObject::MsgReceive(plMessage* msg)
 {
     plNotifyMsg* pDetectorMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pDetectorMsg)
@@ -190,7 +190,7 @@ hsBool plActivatorActivatorConditionalObject::MsgReceive(plMessage* msg)
 }
 
 
-hsBool plVolActivatorConditionalObject::MsgReceive(plMessage* msg)
+bool plVolActivatorConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pDetectorMsg)

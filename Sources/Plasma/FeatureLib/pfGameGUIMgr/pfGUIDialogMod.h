@@ -72,7 +72,7 @@ class pfGUIDialogMod : public plSingleModifier
         uint32_t      fVersion;   // Nice for syncing to C++ code
 
         plPostEffectMod             *fRenderMod;
-        hsBool                      fEnabled;
+        bool                        fEnabled;
         char                        fName[ 128 ];
         hsTArray<pfGUIControlMod *> fControls;
         pfGUIControlMod             *fControlOfInterest;
@@ -84,14 +84,14 @@ class pfGUIDialogMod : public plSingleModifier
         plKey                       fProcReceiver;      // Non-nil means we handle everything by creating notify messages and sending them to this key
 
         hsTArray<pfGUIListElement *>    fDragElements;
-        hsBool                          fDragMode, fDragReceptive;
+        bool                            fDragMode, fDragReceptive;
         pfGUIControlMod                 *fDragTarget;
         pfGUIControlMod                 *fDragSource;
 
         plKey           fSceneNodeKey;
 
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         void    IHandleDrag( hsPoint3 &mousePt, pfGameGUIMgr::EventType event, uint8_t modifiers );
 
@@ -117,7 +117,7 @@ class pfGUIDialogMod : public plSingleModifier
         GETINTERFACE_ANY( pfGUIDialogMod, plSingleModifier );
 
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -125,18 +125,18 @@ class pfGUIDialogMod : public plSingleModifier
         void        SetSceneNodeKey( plKey &key ) { fSceneNodeKey = key; }
         plKey       GetSceneNodeKey( void );
 
-        virtual void    SetEnabled( hsBool e );
-        hsBool          IsEnabled( void ) { return fEnabled; }
+        virtual void    SetEnabled( bool e );
+        bool            IsEnabled( void ) { return fEnabled; }
 
         const char  *GetName( void ) { return fName; }
 
         void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
 
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
-        hsBool          HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
-        hsBool          HandleKeyPress( wchar_t key, uint8_t modifiers );
-        void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, hsBool modalPreset );
+        virtual bool    HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        bool            HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool            HandleKeyPress( wchar_t key, uint8_t modifiers );
+        void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset );
 
         void            SetControlOfInterest( pfGUIControlMod *c );
         pfGUIControlMod *GetControlOfInterest( void ) const { return fControlOfInterest; }
@@ -175,7 +175,7 @@ class pfGUIDialogMod : public plSingleModifier
         void            Show( void );
         void            ShowNoReset( void );
         void            Hide( void );
-        hsBool          IsVisible( void ) { return IsEnabled(); }
+        bool            IsVisible( void ) { return IsEnabled(); }
 
         pfGUIControlMod *GetFocus( void ) { return fFocusCtrl; }
 

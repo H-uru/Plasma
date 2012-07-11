@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 
-hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, plBDFConvertCallback *callback )
+bool    plFontFreeType::ImportFreeType( const char *fontPath, Options *options, plBDFConvertCallback *callback )
 {
     FT_Library  ftLibrary;
 
@@ -106,7 +106,7 @@ hsBool  plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
         FT_Vector       ftAdvances[ kMaxGlyphs ];
         FT_BBox         ftGlyphBox, ftFontBox;
         FT_UInt         previous = 0;
-        hsBool          useKerning = false;
+        bool            useKerning = false;
 
 
         if( options->fUseKerning )

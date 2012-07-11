@@ -189,14 +189,14 @@ public:
     {
         fAchievedLinearVelocity.Set(0.f,0.f,0.f);
     }
-    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
+    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, bool vsDynamics, bool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)=0;
     //this should only be used to force a move it could place your head into a wall and that would be good
     virtual float GetHeight() {return fHeight;}
     virtual float GetRadius() {return fRadius;}
     //Wether the avatar thing has mass and forces things down or not, and changes the way things move
     //This is an attempt fix things like riding on an animated physical
-    virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys)=0;
-    virtual hsBool BehavingLikeAnAnimatedPhysical()=0;
+    virtual void BehaveLikeAnimatedPhysical(bool actLikeAnAnimatedPhys)=0;
+    virtual bool BehavingLikeAnAnimatedPhysical()=0;
 protected:
     
     plKey fOwner;
@@ -256,7 +256,7 @@ public:
     virtual void ResetAirTime() { fTimeInAir = 0.f; }   
     
 protected:
-    virtual hsBool IRequireBehaviourLikeAnAnimatedPhysical()=0;
+    virtual bool IRequireBehaviourLikeAnAnimatedPhysical()=0;
     virtual void IApplyKinematic();
     plPhysicalControllerCore* fCore;
     hsVector3 fLinearAcceleration;
@@ -302,7 +302,7 @@ protected:
     bool fHitHead;
     bool fOnTopOfAnimatedPhysLastFrame;
     hsTArray<hsVector3> fPrevSlidingNormals;
-    virtual hsBool IRequireBehaviourLikeAnAnimatedPhysical(){return true;}
+    virtual bool IRequireBehaviourLikeAnAnimatedPhysical(){return true;}
 
 };
 class plSwimStrategy: public plMovementStrategy
@@ -314,16 +314,16 @@ public:
     virtual void Apply(float delSecs);
     virtual void Update(float delSecs);      
     float GetBuoyancy() { return fBuoyancy; }
-    hsBool IsOnGround() { return fOnGround; }
-    hsBool HadContacts() { return fHadContacts; }
+    bool IsOnGround() { return fOnGround; }
+    bool HadContacts() { return fHadContacts; }
     virtual void IAddContactNormals(hsVector3& vec);
 protected:
-    virtual hsBool IRequireBehaviourLikeAnAnimatedPhysical(){return true;}
+    virtual bool IRequireBehaviourLikeAnAnimatedPhysical(){return true;}
 private:
     void IAdjustBuoyancy();
     float fBuoyancy;
-    hsBool fOnGround;
-    hsBool fHadContacts;
+    bool fOnGround;
+    bool fHadContacts;
     float fSurfaceHeight;
     plSwimRegionInterface *fCurrentRegion;
 };
@@ -341,9 +341,9 @@ public:
     void GroundHit() { fGroundHit = true; }
     virtual void StartJump(){fStartJump = true;}
 protected:
-    virtual hsBool IRequireBehaviourLikeAnAnimatedPhysical(){return false;}
+    virtual bool IRequireBehaviourLikeAnAnimatedPhysical(){return false;}
     bool ICheckMove(const hsPoint3& startPos, const hsPoint3& desiredPos);
-    hsBool fNeedVelocityOverride;
+    bool fNeedVelocityOverride;
     hsVector3 fOverrideVelocity;
     bool fStartJump;
 };

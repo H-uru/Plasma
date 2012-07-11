@@ -108,13 +108,13 @@ protected:
 
     plRenderLevel                   fRenderLevel;
 
-    hsBool      IAddVisRegion(plVisRegion* reg);
-    hsBool      IRemoveVisRegion(plVisRegion* reg);
-    hsBool      IAddLight(plLightInfo* li);
-    hsBool      IRemoveLight(plLightInfo* li);
-    hsBool      IOnRef(plGenRefMsg* ref);
-    hsBool      IOnRemove(plGenRefMsg* ref);
-    hsBool      IOnReceive(plGenRefMsg* ref);
+    bool        IAddVisRegion(plVisRegion* reg);
+    bool        IRemoveVisRegion(plVisRegion* reg);
+    bool        IAddLight(plLightInfo* li);
+    bool        IRemoveLight(plLightInfo* li);
+    bool        IOnRef(plGenRefMsg* ref);
+    bool        IOnRemove(plGenRefMsg* ref);
+    bool        IOnReceive(plGenRefMsg* ref);
     void        ISetVisBits();
     void        ISendToSelf(RefType t, hsKeyedObject* ref);
 
@@ -132,7 +132,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     hsGMaterial* GetMaterial() const { return fMaterial; }
     const hsBitVector& GetVisSet() const { return fVisSet; }

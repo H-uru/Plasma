@@ -145,7 +145,7 @@ void plBlower::IBlow(double secs, float delSecs)
     fCurrDel = del;
 }
 
-hsBool plBlower::IEval(double secs, float delSecs, uint32_t dirty)
+bool plBlower::IEval(double secs, float delSecs, uint32_t dirty)
 {
     const float kMaxDelSecs = 0.1f;
     if( delSecs > kMaxDelSecs )

@@ -55,25 +55,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plOneShotMod : public plMultiModifier
 {
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
     char * fAnimName;       // the name of the animation associated with this one-shot
-    hsBool fDrivable;       // whether the user can control the position of the animation
-    hsBool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)
+    bool fDrivable;       // whether the user can control the position of the animation
+    bool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)
     float fSeekDuration;    // how long to take to get to the seek point (??? should this be speed instead?)
     float fSmartSeek;       // use smart seek to walk to the seek point?
-    hsBool fNoSeek;
+    bool fNoSeek;
 public:
     plOneShotMod();
-    plOneShotMod(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek,hsBool noSeek = false);
+    plOneShotMod(const char *animName, bool drivable, bool reversable, float seekDuration, bool smartSeek,bool noSeek = false);
     virtual ~plOneShotMod();
     
-    void Init(const char *animName, hsBool drivable, hsBool reversable, float seekDuration, hsBool smartSeek, hsBool noSeek = false);
+    void Init(const char *animName, bool drivable, bool reversable, float seekDuration, bool smartSeek, bool noSeek = false);
 
     CLASSNAME_REGISTER( plOneShotMod );
     GETINTERFACE_ANY( plOneShotMod, plMultiModifier );
     
     virtual void AddTarget(plSceneObject* so);
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream *stream, hsResMgr *mgr);
     virtual void Write(hsStream *stream, hsResMgr *mgr);

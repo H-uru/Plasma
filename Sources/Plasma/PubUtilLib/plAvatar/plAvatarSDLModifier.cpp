@@ -347,7 +347,7 @@ void plAvatarSDLModifier::IPutGenericBrainIn(plArmatureMod * avMod, plAvBrainGen
 bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plStateDataRecord* srcState)
 {
     int i;
-    hsBool success = true;
+    bool success = true;
     int numStages=0;
     plSDStateVariable* stagesVar = srcState->FindSDVar(GenericBrainVarNames::kStrStages);
     if (stagesVar->IsUsed())

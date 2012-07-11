@@ -86,7 +86,7 @@ pyGUIDialog::pyGUIDialog()
     fGCkey = nil;
 }
 
-hsBool pyGUIDialog::IsGUIDialog(pyKey& gckey)
+bool pyGUIDialog::IsGUIDialog(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIDialogMod::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
         return true;
@@ -135,7 +135,7 @@ uint32_t pyGUIDialog::WhatControlType(pyKey& gckey)
 
 
 // override the equals to operator
-hsBool pyGUIDialog::operator==(const pyGUIDialog &gcobj) const
+bool pyGUIDialog::operator==(const pyGUIDialog &gcobj) const
 {
     plKey theirs = ((pyGUIDialog&)gcobj).getObjKey();
     if ( fGCkey == nil && theirs == nil )
@@ -174,7 +174,7 @@ uint32_t  pyGUIDialog::GetTagID()
 }
 
 
-void pyGUIDialog::SetEnabled( hsBool e )
+void pyGUIDialog::SetEnabled( bool e )
 {
     if ( fGCkey )
     {
@@ -184,7 +184,7 @@ void pyGUIDialog::SetEnabled( hsBool e )
     }
 }
 
-hsBool pyGUIDialog::IsEnabled( void )
+bool pyGUIDialog::IsEnabled( void )
 {
     if ( fGCkey )
     {

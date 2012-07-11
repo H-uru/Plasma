@@ -133,7 +133,7 @@ public:
     //                  optionally propagate over the net
     //
     static void Console(const char* command);
-    static void ConsoleNet(const char* command, hsBool netForce); 
+    static void ConsoleNet(const char* command, bool netForce); 
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -244,7 +244,7 @@ public:
     //  PURPOSE    : Return the net client (account) name of the player whose avatar
     //              key is provided.
     //
-    static hsBool WasLocallyNotified(pyKey &selfkey);
+    static bool WasLocallyNotified(pyKey &selfkey);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -268,7 +268,7 @@ public:
     static PyObject* GetAvatarKeyFromClientID(int clientID); // returns pyKey
     static int GetLocalClientID();
     static int GetClientIDFromAvatarKey(pyKey& avatar);
-    static hsBool ValidateKey(pyKey& key);
+    static bool ValidateKey(pyKey& key);
 
 
 
@@ -378,7 +378,7 @@ public:
     //
     //  PURPOSE    : Test to see if a dialog is loaded (according to the dialog manager)
     //
-    static hsBool IsDialogLoaded(const char* name);
+    static bool IsDialogLoaded(const char* name);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -515,7 +515,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void RateIt(const char* chronicleName, const char* thestring, hsBool onceFlag);
+    static void RateIt(const char* chronicleName, const char* thestring, bool onceFlag);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -616,7 +616,7 @@ public:
     //
     static void EnableAvatarCursorFade();
     static void DisableAvatarCursorFade();
-    static void FadeLocalPlayer(hsBool fade);
+    static void FadeLocalPlayer(bool fade);
 
     
     /////////////////////////////////////////////////////////////////////////////
@@ -631,7 +631,7 @@ public:
     static void NotifyOffererPublicLinkAccepted(uint32_t offerer);
     static void NotifyOffererPublicLinkRejected(uint32_t offerer);
     static void NotifyOffererPublicLinkCompleted(uint32_t offerer);
-    static void ToggleAvatarClickability(hsBool on);
+    static void ToggleAvatarClickability(bool on);
     static void SetShareSpawnPoint(const char* spawnPoint);
     static void SetShareAgeInstanceGuid(const Uuid& guid);
     
@@ -642,7 +642,7 @@ public:
     //
     // PURPOSE    : Returns current status of CCR dept
     //
-    static hsBool IsCCRAwayStatus();
+    static bool IsCCRAwayStatus();
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -651,7 +651,7 @@ public:
     //
     // PURPOSE    : Returns true if local player is a CCR
     //
-    static hsBool AmCCR();
+    static bool AmCCR();
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -709,7 +709,7 @@ public:
     static void KillParticles(float time, float pct, pyKey& particles);
     static int  GetNumParticles(pyKey& host);
     static void SetLightColorValue(pyKey& light, const plString& lightName, float r, float g, float b, float a);
-    static void SetLightAnimationOn(pyKey& light, const plString& lightName, hsBool start);
+    static void SetLightAnimationOn(pyKey& light, const plString& lightName, bool start);
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : RegisterForControlEventMessages
@@ -717,7 +717,7 @@ public:
     //
     // PURPOSE    : let you get control event messages at will (for pseudo-GUI's like the psnl bookshelf or clft imager)
 
-    static void RegisterForControlEventMessages(hsBool on, pyKey& k);
+    static void RegisterForControlEventMessages(bool on, pyKey& k);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -831,7 +831,7 @@ public:
     //
     // PURPOSE    : globally enable or disable ALL clickables on this local client
     //
-    static void SetClickability(hsBool b);
+    static void SetClickability(bool b);
 
     
     //////////////////////////////////////////////////////////////////////////////
@@ -876,7 +876,7 @@ public:
     //
     // PURPOSE    : puts the maintainer suit on or off the avatar
     //
-    static void WearMaintainerSuit(pyKey& key, hsBool wear);
+    static void WearMaintainerSuit(pyKey& key, bool wear);
     
     static void WearDefaultClothing(pyKey& key);
     static void WearDefaultClothingType(pyKey& key, uint32_t type);
@@ -922,7 +922,7 @@ public:
     static std::wstring GetLocalizedString(std::wstring name, const std::vector<std::wstring> & arguments);
 
     static void EnablePlanarReflections(bool enable = true);
-    static void SetGraphicsOptions(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync);
+    static void SetGraphicsOptions(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync);
     static void GetSupportedDisplayModes(std::vector<plDisplayMode> *res);
     static int GetDesktopWidth();
     static int GetDesktopHeight();
@@ -937,7 +937,7 @@ public:
     static std::wstring GetUserPath();
     static std::wstring GetInitPath();
 
-    static void SetBehaviorNetFlags(pyKey & behKey, hsBool netForce, hsBool netProp);
+    static void SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp);
     static void SendFriendInvite(const wchar_t email[], const wchar_t toName[]);
     static PyObject* PyGuidGenerate();
     static PyObject* GetAIAvatarsByModelName(const char* name);

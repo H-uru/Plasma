@@ -81,7 +81,7 @@ const char* plKeyFinder::GetLastErrorString() // For Console display
 //
 // Does name string compare with potentially mangled (ie. [1 0 0]foo) names
 //
-hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
+bool NameMatches(const char* obName, const char* pKName, bool subString)
 {
     if (!obName || !pKName)
         return false;
@@ -117,7 +117,7 @@ hsBool NameMatches(const char* obName, const char* pKName, hsBool subString)
 }
 
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
-                                 const char *className, const plString &obName, hsBool subString)
+                                 const char *className, const plString &obName, bool subString)
 {
     uint16_t ty = plFactory::FindClassIndex(className);
     return StupidSearch(age, rm, ty, obName, subString);
@@ -128,21 +128,21 @@ class plKeyFinderIter : public plRegistryKeyIterator, public plRegistryPageItera
 protected:
     uint16_t    fClassType;
     plString    fObjName;
-    hsBool      fSubstr;
+    bool        fSubstr;
     plKey       fFoundKey;
     const char  *fAgeName;
 
 public:
     plKey   GetFoundKey( void ) const { return fFoundKey; }
 
-    plKeyFinderIter( uint16_t classType, const plString &obName, hsBool substr ) 
+    plKeyFinderIter( uint16_t classType, const plString &obName, bool substr ) 
             : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ) { }
 
-    plKeyFinderIter( uint16_t classType, const plString &obName, hsBool substr, const char *ageName ) 
+    plKeyFinderIter( uint16_t classType, const plString &obName, bool substr, const char *ageName ) 
         : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ),
             fAgeName( ageName ) {}
 
-    virtual hsBool  EatKey( const plKey& key )
+    virtual bool  EatKey( const plKey& key )
     {
         if( key->GetUoid().GetClassType() == fClassType &&
             NameMatches( fObjName.c_str(), key->GetUoid().GetObjectName().c_str(), fSubstr ) )
@@ -154,7 +154,7 @@ public:
         return true;
     }
 
-    virtual hsBool  EatPage( plRegistryPageNode *pageNode )
+    virtual bool  EatPage( plRegistryPageNode *pageNode )
     {
 #ifndef _DEBUG
         try
@@ -182,7 +182,7 @@ public:
 };
 
 plKey plKeyFinder::StupidSearch(const char * age, const char * rm, 
-                                 uint16_t classType, const plString &obName, hsBool subString)
+                                 uint16_t classType, const plString &obName, bool subString)
 {
     if (obName.IsNull())
         return nil;
@@ -286,7 +286,7 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
         plKeyFinderIterator( uint16_t classType, const plString &obName, std::vector<plKey>& foundKeys ) 
                 : fClassType( classType ), fObjName( obName ), fFoundKeys( foundKeys ) { }
 
-        virtual hsBool  EatKey( const plKey& key )
+        virtual bool  EatKey( const plKey& key )
         {
             if( key->GetUoid().IsValid() && key->GetUoid().GetClassType() == fClassType &&
                 key->GetUoid().GetObjectName().Find( fObjName ) >= 0 )
@@ -297,9 +297,9 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
             return true;
         }
 
-        virtual hsBool EatPage( plRegistryPageNode *page )
+        virtual bool EatPage( plRegistryPageNode *page )
         {
-            hsBool ret = page->IterateKeys( this );
+            bool ret = page->IterateKeys( this );
             return ret;
         }
 };
@@ -346,7 +346,7 @@ class plPageFinder : public plRegistryPageIterator
         plPageFinder( plRegistryPageNode **page, const char *ageS, const char *pageS ) : fPagePtr( page ), fFindString( pageS ), fAgeString( ageS )
         { *fPagePtr = nil; }
 
-        virtual hsBool  EatPage( plRegistryPageNode *node )
+        virtual bool  EatPage( plRegistryPageNode *node )
         {
             static char         str[ 512 ];
             const plPageInfo    &info = node->GetPageInfo();

@@ -51,9 +51,9 @@ class plClickableComponent : public plActivatorBaseComponent
 public:
     plClickableComponent();
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables);
 

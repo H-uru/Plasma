@@ -261,7 +261,7 @@ void    plDrawableSpans::PrepForRender( plPipeline *p )
     }
 }
 
-void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, hsBool on)
+void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, bool on)
 {
     // Could actually do something here to neutralize bones, but we're not.
     // Main thing is that if it's Matrix Only, then the indices are into
@@ -272,7 +272,7 @@ void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, hsBo
     plVisRegion* reg = plVisRegion::ConvertNoRef(ref);
     if( !reg )
         return;
-    hsBool isNot = reg->GetProperty(plVisRegion::kIsNot);
+    bool isNot = reg->GetProperty(plVisRegion::kIsNot);
     uint32_t visRegIndex = reg->GetIndex();
 
     if( isNot )
@@ -400,7 +400,7 @@ void plDrawableSpans::IUpdateMatrixPaletteBoundsHack()
     }
 }
 
-hsBool plDrawableSpans::IBoundsInvalid(const hsBounds3Ext& bnd) const
+bool plDrawableSpans::IBoundsInvalid(const hsBounds3Ext& bnd) const
 {
     int i;
     for( i = 0; i < 3; i++ )
@@ -648,7 +648,7 @@ const hsMatrix44& plDrawableSpans::GetWorldToLocal( uint32_t span ) const
 
 //// Set/GetNativeProperty ///////////////////////////////////////////////////
 
-plDrawable& plDrawableSpans::SetNativeProperty( uint32_t index, int prop, hsBool on)
+plDrawable& plDrawableSpans::SetNativeProperty( uint32_t index, int prop, bool on)
 {
     int     i;
 
@@ -684,7 +684,7 @@ plDrawable& plDrawableSpans::SetNativeProperty( uint32_t index, int prop, hsBool
     return *this;
 }
 
-hsBool  plDrawableSpans::GetNativeProperty( uint32_t index, int prop ) const
+bool    plDrawableSpans::GetNativeProperty( uint32_t index, int prop ) const
 {
     int     i;
     uint32_t  ret = false;
@@ -709,7 +709,7 @@ hsBool  plDrawableSpans::GetNativeProperty( uint32_t index, int prop ) const
     return ret != 0;
 }
 
-plDrawable& plDrawableSpans::SetSubType(uint32_t index, plSubDrawableType t, hsBool on)
+plDrawable& plDrawableSpans::SetSubType(uint32_t index, plSubDrawableType t, bool on)
 {
     if( uint32_t(-1) == index )
     {
@@ -770,7 +770,7 @@ uint32_t plDrawableSpans::GetSubType(uint32_t index) const
 //// IXlateSpanProps /////////////////////////////////////////////////////////
 //  Never used yet--just here in case we ever need it
 
-uint32_t  plDrawableSpans::IXlateSpanProps( uint32_t props, hsBool xlateToSpan )
+uint32_t  plDrawableSpans::IXlateSpanProps( uint32_t props, bool xlateToSpan )
 {
     uint32_t      retProps = 0;
 
@@ -796,7 +796,7 @@ uint32_t  plDrawableSpans::IXlateSpanProps( uint32_t props, hsBool xlateToSpan )
 //  flag taken in is from plDrawInterface, not our props flags. So we have to 
 //  translate...
 
-plDrawable& plDrawableSpans::SetProperty( uint32_t index, int diProp, hsBool on )
+plDrawable& plDrawableSpans::SetProperty( uint32_t index, int diProp, bool on )
 {
     switch( diProp )
     {
@@ -809,7 +809,7 @@ plDrawable& plDrawableSpans::SetProperty( uint32_t index, int diProp, hsBool on 
     return *this;
 }
 
-hsBool  plDrawableSpans::GetProperty( uint32_t index, int diProp ) const
+bool    plDrawableSpans::GetProperty( uint32_t index, int diProp ) const
 {
     switch( diProp )
     {
@@ -822,7 +822,7 @@ hsBool  plDrawableSpans::GetProperty( uint32_t index, int diProp ) const
     return false;
 }
 
-plDrawable& plDrawableSpans::SetProperty( int prop, hsBool on )
+plDrawable& plDrawableSpans::SetProperty( int prop, bool on )
 {
     switch( prop )
     {
@@ -844,7 +844,7 @@ plDrawable& plDrawableSpans::SetProperty( int prop, hsBool on )
     return *this;
 }
 
-hsBool      plDrawableSpans::GetProperty( int prop ) const
+bool        plDrawableSpans::GetProperty( int prop ) const
 {
     switch( prop )
     {
@@ -922,7 +922,7 @@ const hsBounds3Ext& plDrawableSpans::GetMaxWorldBounds( uint32_t index ) const
 void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 {
     uint32_t              i, j, count, count2;
-    hsBool              gotSkin = false;
+    bool                gotSkin = false;
     plGBufferGroup      *group;
     plRefMsg            *refMsg;
 
@@ -1115,7 +1115,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
 //// ITestMatForSpecularity //////////////////////////////////////////////////
 
-hsBool  plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
+bool    plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
 {
     int     i;
 
@@ -1134,11 +1134,11 @@ hsBool  plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
 plProfile_CreateTimer("MatrixPalleteHack", "RenderSetup", PalletteHack);
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool plDrawableSpans::MsgReceive( plMessage* msg )
+bool plDrawableSpans::MsgReceive( plMessage* msg )
 {
     plGenRefMsg     *refMsg = plGenRefMsg::ConvertNoRef( msg );
     int             i;
-    hsBool          hasSpec;
+    bool            hasSpec;
 
 
     if( refMsg )
@@ -1396,7 +1396,7 @@ const plRenderLevel& plDrawableSpans::GetRenderLevel() const
 //// DoIMatch ////////////////////////////////////////////////////////////////
 //  Called by the sceneNode to determine if we match the criteria
 
-hsBool  plDrawableSpans::DoIMatch( const plDrawableCriteria& crit )
+bool    plDrawableSpans::DoIMatch( const plDrawableCriteria& crit )
 {
     if( crit.fCriteria ^ fCriteria )
         return false;
@@ -1507,7 +1507,7 @@ hsGMaterial* plDrawableSpans::GetSubMaterial(int index) const
 }
 
 // return true if span invisible before minDist and/or after maxDist
-hsBool plDrawableSpans::GetSubVisDists(int index, float& minDist, float& maxDist) const
+bool plDrawableSpans::GetSubVisDists(int index, float& minDist, float& maxDist) const
 {
     return (minDist = fSpans[index]->GetMinDist()) < (maxDist = fSpans[index]->GetMaxDist());
 }
@@ -2240,7 +2240,7 @@ uint32_t  plDrawableSpans::AppendDIMatrixSpans(int n)
 // and the transform of the object being skinned. In general, objects can only
 // share a palette set if they have been flattened into world space (the object's
 // transform is identity). Fortunately, this is a common case.
-uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B, hsBool searchAll) const
+uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B, bool searchAll) const
 {
     if (!searchAll)
     {
@@ -2334,8 +2334,8 @@ plDISpanIndex   *plDrawableSpans::IFindDIIndices( uint32_t &index )
 //  Note: AddDISpans() adds the spans to a list to be sorted, THEN put into
 //  the buffers; this shoves them right in, bypassing the sorting altogether.
 
-uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index, hsBool clearSpansAfterAdd, 
-                                        hsBool doNotAddToSource, hsBool addToFront, int lod)
+uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index, bool clearSpansAfterAdd, 
+                                        bool doNotAddToSource, bool addToFront, int lod)
 {
     hsAssert(spans.GetCount(), "Adding no spans? Blow me.");
 
@@ -2370,7 +2370,7 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
         }
         insertionPoint = idx;
     }
-    hsBool inserted = insertionPoint < fSpans.GetCount();
+    bool inserted = insertionPoint < fSpans.GetCount();
 
     /// Add the geometry spans to our list. Also add our internal span
     /// copies
@@ -2531,7 +2531,7 @@ void    plDrawableSpans::ICheckToRemoveMaterial( uint32_t materialIdx )
 //// IConvertGeoSpanToVertexSpan /////////////////////////////////////////////
 //  Helper function for the two vertex-based convert functions.
 
-hsBool  plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, plVertexSpan *span, int lod, plVertexSpan *instancedParent)
+bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, plVertexSpan *span, int lod, plVertexSpan *instancedParent)
 {
     hsBounds3Ext    bounds;
     uint8_t           groupIdx;
@@ -2583,11 +2583,11 @@ hsBool  plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
     fWorldBounds.Union( &bounds );
     span->fFogEnvironment = geoSpan->fFogEnviron;
 
-    hsBool vertsVol = false;
+    bool vertsVol = false;
     if( fProps & kPropVolatile )
         vertsVol = true;
 
-    hsBool idxVol = false;
+    bool idxVol = false;
     if( fProps & kPropSortFaces )
         idxVol = true;
     if( geoSpan->fProps & plGeometrySpan::kPartialSort )
@@ -2658,7 +2658,7 @@ hsBool  plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
 
 //// IConvertGeoSpanToIcicle /////////////////////////////////////////////////
 
-hsBool  plDrawableSpans::IConvertGeoSpanToIcicle(plGeometrySpan *geoSpan, plIcicle *icicle, int lod, plIcicle *instancedParent)
+bool    plDrawableSpans::IConvertGeoSpanToIcicle(plGeometrySpan *geoSpan, plIcicle *icicle, int lod, plIcicle *instancedParent)
 {
     uint32_t      ibIndex, ibStart;
 
@@ -3331,7 +3331,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
 //// IFindBufferGroup ////////////////////////////////////////////////////////
 
-uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVertsNeeded, int lod, hsBool vertVolatile, hsBool idxVolatile)
+uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVertsNeeded, int lod, bool vertVolatile, bool idxVolatile)
 {
     int         i;
 
@@ -3381,7 +3381,7 @@ hsBitVector const   &plDrawableSpans::GetBlendingSpanVector( void ) const
 //  Could just make GetBlendingSpanVector() non-const, but this way it's harder
 //  for the end user, thus I'm hoping to discourage them from doing it too much.
 
-void    plDrawableSpans::SetBlendingSpanVectorBit( uint32_t bitNumber, hsBool on )
+void    plDrawableSpans::SetBlendingSpanVectorBit( uint32_t bitNumber, bool on )
 {
     fFakeBlendingSpanVector.SetBit( bitNumber, on );
 }

@@ -110,12 +110,12 @@ public:
     virtual plControllerCacheInfo* CreateCache() const { return nil; } // Caller must handle deleting the pointer.
     virtual float GetLength() const = 0;
     virtual void GetKeyTimes(hsTArray<float> &keyTimes) const = 0;
-    virtual hsBool AllKeysMatch() const = 0;
+    virtual bool AllKeysMatch() const = 0;
 
     // Checks each of our subcontrollers (if we have any) and deletes any that
     // are nothing but matching keys. Returns true if this controller itself
     // is redundant.
-    virtual hsBool PurgeRedundantSubcontrollers() = 0;
+    virtual bool PurgeRedundantSubcontrollers() = 0;
 };
 
 //////////////////////////////////////////////////////////////
@@ -169,8 +169,8 @@ public:
     void GetKeyTimes(hsTArray<float> &keyTimes) const;
     void AllocKeys(uint32_t n, uint8_t type);
     void QuickScalarController(int numKeys, float* times, float* values, uint32_t valueStrides);
-    hsBool AllKeysMatch() const;
-    hsBool PurgeRedundantSubcontrollers();
+    bool AllKeysMatch() const;
+    bool PurgeRedundantSubcontrollers();
 
     void Read(hsStream* s, hsResMgr* mgr);
     void Write(hsStream* s, hsResMgr* mgr);
@@ -211,8 +211,8 @@ public:
     plController *GetController(int32_t i) const;
     float GetLength() const;
     void GetKeyTimes(hsTArray<float> &keyTimes) const;
-    hsBool AllKeysMatch() const;
-    hsBool PurgeRedundantSubcontrollers();
+    bool AllKeysMatch() const;
+    bool PurgeRedundantSubcontrollers();
 
     void SetXController(plController *c) { delete fXController; fXController = c; }
     void SetYController(plController *c) { delete fYController; fYController = c; }

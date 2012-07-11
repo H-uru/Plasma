@@ -66,7 +66,7 @@ public:
 protected:
     plAudible*                          fAudible; // references into system pools
 
-    hsBool          fRegisteredForASysMsg, fAudibleInited;
+    bool          fRegisteredForASysMsg, fAudibleInited;
 
     void ISetAudible(plAudible* aud);
     void IRemoveAudible(plAudible* aud);
@@ -86,13 +86,13 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void        SetProperty(int prop, hsBool on);
+    void          SetProperty(int prop, bool on);
     int32_t       GetNumProperties() const { return kNumProps; }
 
     plSound*    GetSound(int i) const;
     int         GetNumSounds() const;
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // for export only!!!!!
     plAudible* GetAudible() const { return fAudible; }

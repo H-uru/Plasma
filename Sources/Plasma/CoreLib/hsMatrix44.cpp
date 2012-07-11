@@ -212,7 +212,7 @@ hsVector3 hsMatrix44::operator*(const hsVector3& p) const
     return rVal;
 }
 
-int hsMatrix44::operator==(const hsMatrix44& ss) const
+bool hsMatrix44::operator==(const hsMatrix44& ss) const
 {
     if( ss.fFlags & fFlags & hsMatrix44::kIsIdent )
     {
@@ -807,9 +807,9 @@ hsPoint3*  hsMatrix44::MapPoints(long count, hsPoint3 points[]) const
     return points;
 }
 
-hsBool hsMatrix44::IsIdentity(void)
+bool hsMatrix44::IsIdentity(void)
 {
-    hsBool retVal = true;
+    bool retVal = true;
     int i, j;
     for( i = 0; i < 4; i++ )
     {
@@ -866,7 +866,7 @@ hsBool hsMatrix44::IsIdentity(void)
     return retVal;
 }
 
-hsBool hsMatrix44::GetParity() const
+bool hsMatrix44::GetParity() const
 {
     if( fFlags & kIsIdent )
         return false;
@@ -896,7 +896,7 @@ void hsMatrix44::Read(hsStream *stream)
 
 void hsMatrix44::Write(hsStream *stream)
 {
-    hsBool ident = IsIdentity();
+    bool ident = IsIdentity();
     stream->WriteBool(!ident);
     if (!ident)
     {

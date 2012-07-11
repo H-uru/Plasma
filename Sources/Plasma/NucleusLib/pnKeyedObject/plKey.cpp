@@ -143,13 +143,13 @@ plKey::plKey(const plKey& rhs) : fKeyData(rhs.fKeyData)
     IIncRef();
 }
 
-plKey::plKey(plKeyData* data, hsBool ignore) : fKeyData(data)
+plKey::plKey(plKeyData* data, bool ignore) : fKeyData(data)
 {
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
         char msg[ 512 ];
-        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKeyData*, hsBool) constructor", keyNameToLookFor, CloneString(fKeyData) );
+        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKeyData*, bool) constructor", keyNameToLookFor, CloneString(fKeyData) );
         //hsAssert( false, msg );
         hsStatusMessageF(msg);
     }
@@ -208,12 +208,12 @@ plKey &plKey::operator=( const plKey &rhs )
     return *this;
 }
 
-hsBool plKey::operator==( const plKey &rhs ) const
+bool plKey::operator==( const plKey &rhs ) const
 {
     return fKeyData == rhs.fKeyData;
 }
 
-hsBool plKey::operator==( const plKeyData *rhs ) const
+bool plKey::operator==( const plKeyData *rhs ) const
 {
     return fKeyData == rhs;
 }

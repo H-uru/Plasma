@@ -57,7 +57,7 @@ pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(plKey objkey) : pyGUIContro
 {
 }
 
-hsBool pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit(pyKey& gckey)
+bool pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIMultiLineEditCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -444,7 +444,7 @@ void pyGUIControlMultiLineEdit::Unlock( void )
     }
 }
 
-hsBool pyGUIControlMultiLineEdit::IsLocked( void )
+bool pyGUIControlMultiLineEdit::IsLocked( void )
 {
     if ( fGCkey )
     {

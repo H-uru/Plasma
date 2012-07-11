@@ -61,8 +61,7 @@ private:
     hsTArray<plKey>     fSceneObjects;
     plKey               fSenderKey;     // the holder of the who (the modifier) we are
     plKey               fPyMod;         // pyKey that points to modifier
-    
-    hsBool          fNetForce;
+    bool                fNetForce;
 
     virtual void IAddObjKeyToAll(plKey key);
     virtual void ISetAllSenderKeys();
@@ -88,8 +87,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // override the equals to operator
-    hsBool operator==(const pySceneObject &sobj) const;
-    hsBool operator!=(const pySceneObject &sobj) const { return !(sobj == *this);   }
+    bool operator==(const pySceneObject &sobj) const;
+    bool operator!=(const pySceneObject &sobj) const { return !(sobj == *this);   }
 
     PyObject*               fDraw; // cyDraw
     PyObject*               fPhysics; // cyPhysics
@@ -103,10 +102,10 @@ public:
     virtual PyObject* getObjPyKey(); // pyKey
 
     virtual void setSenderKey(plKey key);
-    virtual void setPyMod(pyKey& pymod);
-    virtual void setPyMod(plKey& key);
+    virtual void setPyMod(pyKey& pymod) { fPyMod = pymod.getKey(); }
+    virtual void setPyMod(const plKey& key) { fPyMod = key; }
 
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(bool state);
 
     virtual PyObject* findObj(const plString& name); // pySceneObject
 
@@ -116,7 +115,7 @@ public:
     //
     // deteremine if this object (or the first object in the list)
     // ...is locally owned
-    virtual hsBool IsLocallyOwned();
+    virtual bool IsLocallyOwned();
     
     //
     // get the local to world matrix
@@ -157,14 +156,14 @@ public:
     //
     // deteremine if this object (or any of the object attached)
     // ...is an avatar, of any type
-    virtual hsBool IsAvatar();
+    virtual bool IsAvatar();
 
     virtual PyObject* GetAvatarVelocity(); // pyVector3
 
     //
     // deteremine if this object (or the first object in the list)
     // ...is a human avatar
-    virtual hsBool IsHumanAvatar();
+    virtual bool IsHumanAvatar();
 
     //
     // switch to / from this camera (if it is a camera)
@@ -172,7 +171,7 @@ public:
     void PushCamera(pyKey& avKey);
     void PushCameraCut(pyKey& avKey);
     void PopCamera(pyKey& avKey);
-    void PushCutsceneCamera(hsBool cut,pyKey& avKey);
+    void PushCutsceneCamera(bool cut, pyKey& avKey);
     void PopCutsceneCamera(pyKey& avKey);
 
     void Animate();

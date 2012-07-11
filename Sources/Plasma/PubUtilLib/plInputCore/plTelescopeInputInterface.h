@@ -57,7 +57,7 @@ class plTelescopeInputInterface : public plInputInterface
 {
     protected:
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty );
+        virtual bool IEval( double secs, float del, uint32_t dirty );
 
     public:
 
@@ -66,9 +66,9 @@ class plTelescopeInputInterface : public plInputInterface
 
         virtual void        RestoreDefaultKeyMappings( void );
         
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
         virtual void    Shutdown( void ) {;}
@@ -83,7 +83,7 @@ class plTelescopeInputInterface : public plInputInterface
         virtual float    GetCurrentCursorOpacity( void ) const { return 1.f; }
 
         // Returns true if this layer is wanting to change the mouse, false if it isn't interested
-        virtual hsBool      HasInterestingCursorID( void ) const { return false; }
+        virtual bool        HasInterestingCursorID( void ) const { return false; }
 };
 
 

@@ -72,8 +72,8 @@ namespace plPageInfoUtils
 class plPageInfoComponent : public plComponent
 {
 protected:
-    hsBool      fSeqNumValidated;
-    hsBool      fItinerant;
+    bool        fSeqNumValidated;
+    bool        fItinerant;
     static char fCurrExportedAge[ 256 ];
 
     void    IVerifyLatestAgeAsset( const char *ageName, const char *localPath, plErrorMsg *errMsg );
@@ -84,11 +84,11 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
     const char *GetAgeName();
-    hsBool GetItinerant() {return fItinerant; }
+    bool GetItinerant() {return fItinerant; }
     
     enum
     {
@@ -113,8 +113,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum ParamIDs
     {

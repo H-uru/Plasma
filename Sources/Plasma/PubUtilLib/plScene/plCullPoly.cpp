@@ -167,7 +167,7 @@ void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
 #endif // HS_DEBUGGING
 
 #ifdef MF_VALIDATE_POLYS
-hsBool plCullPoly::Validate() const
+bool plCullPoly::Validate() const
 {
     const float kMinMag = 1.e-8f;
     float magSq = fNorm.MagnitudeSquared();
@@ -194,7 +194,7 @@ hsBool plCullPoly::Validate() const
     return true;
 }
 #else // MF_VALIDATE_POLYS
-hsBool plCullPoly::Validate() const
+bool plCullPoly::Validate() const
 {
     return true;
 }

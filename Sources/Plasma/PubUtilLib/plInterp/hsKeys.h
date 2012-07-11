@@ -81,7 +81,7 @@ struct hsPoint3Key : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsPoint3Key *key);
+    bool CompareValue(hsPoint3Key *key);
 };
 
 struct hsBezPoint3Key : public hsKeyFrame
@@ -93,7 +93,7 @@ struct hsBezPoint3Key : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsBezPoint3Key *key);
+    bool CompareValue(hsBezPoint3Key *key);
 };
 
 struct hsScalarKey : public hsKeyFrame
@@ -103,7 +103,7 @@ struct hsScalarKey : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsScalarKey *key);
+    bool CompareValue(hsScalarKey *key);
 };
 
 struct hsBezScalarKey : public hsKeyFrame
@@ -115,7 +115,7 @@ struct hsBezScalarKey : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsBezScalarKey *key);
+    bool CompareValue(hsBezScalarKey *key);
 };
 
 struct hsQuatKey : public hsKeyFrame
@@ -125,7 +125,7 @@ struct hsQuatKey : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsQuatKey *key);
+    bool CompareValue(hsQuatKey *key);
 };
 
 struct hsCompressedQuatKey32 : public hsKeyFrame
@@ -147,7 +147,7 @@ struct hsCompressedQuatKey32 : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsCompressedQuatKey32 *key);
+    bool CompareValue(hsCompressedQuatKey32 *key);
 
 protected:
     uint32_t fData;
@@ -173,7 +173,7 @@ struct hsCompressedQuatKey64 : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsCompressedQuatKey64 *key);
+    bool CompareValue(hsCompressedQuatKey64 *key);
 
 protected:
     uint32_t fData[2];
@@ -200,7 +200,7 @@ struct hsScaleKey : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsScaleKey *key);
+    bool CompareValue(hsScaleKey *key);
 };
 
 struct hsBezScaleKey : public hsKeyFrame
@@ -212,7 +212,7 @@ struct hsBezScaleKey : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsBezScaleKey *key);
+    bool CompareValue(hsBezScaleKey *key);
 };
 
 struct hsG3DSMaxKeyFrame : public hsKeyFrame
@@ -229,7 +229,7 @@ struct hsG3DSMaxKeyFrame : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsG3DSMaxKeyFrame *key);
+    bool CompareValue(hsG3DSMaxKeyFrame *key);
 };
 
 struct hsMatrix33Key : public hsKeyFrame
@@ -239,7 +239,7 @@ struct hsMatrix33Key : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsMatrix33Key *key);
+    bool CompareValue(hsMatrix33Key *key);
 };
 
 struct hsMatrix44Key : public hsKeyFrame
@@ -249,7 +249,7 @@ struct hsMatrix44Key : public hsKeyFrame
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
-    hsBool CompareValue(hsMatrix44Key *key);
+    bool CompareValue(hsMatrix44Key *key);
 };
 
 #endif

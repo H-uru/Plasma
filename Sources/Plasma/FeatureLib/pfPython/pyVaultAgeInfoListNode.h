@@ -77,9 +77,9 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-    hsBool  HasAge( uint32_t ageID );
-    hsBool  AddAge( uint32_t ageID );
-    void    RemoveAge( uint32_t ageID );
+    bool  HasAge( uint32_t ageID );
+    bool  AddAge( uint32_t ageID );
+    void  RemoveAge( uint32_t ageID );
 };
 
 #endif // _pyVaultAgeInfoListNode_h_

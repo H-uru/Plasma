@@ -135,7 +135,7 @@ void plDynaRippleMgr::Write(hsStream* stream, hsResMgr* mgr)
     fFinalUVW.Write(stream);
 }
 
-hsBool plDynaRippleMgr::MsgReceive(plMessage* msg)
+bool plDynaRippleMgr::MsgReceive(plMessage* msg)
 {
     plArmatureUpdateMsg* armMsg = plArmatureUpdateMsg::ConvertNoRef(msg);
     if( armMsg && !armMsg->IsInvis())
@@ -175,12 +175,12 @@ hsBool plDynaRippleMgr::MsgReceive(plMessage* msg)
     return plDynaDecalMgr::MsgReceive(msg);
 }
 
-hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
+bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
     if( !shape )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
@@ -190,9 +190,9 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
     plConst(float) kMinTime(1.5f);
     double t = hsTimer::GetSysSeconds();
     float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
-    hsBool longEnough = (dt >= kMinTime);
+    bool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
-    hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
+    bool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
     if( force || longEnough || farEnough )
     {
         hsPoint3 pos = shapeL2W.GetTranslate();
@@ -225,7 +225,7 @@ hsBool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, hsBool force
         fCutter->Set(pos, dir, up);
 
 
-        hsBool hit = ICutoutTargets(t);
+        bool hit = ICutoutTargets(t);
         if( hit )
         {
             retVal = true;

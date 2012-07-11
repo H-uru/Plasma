@@ -127,7 +127,7 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fBackColor.Read( s );
     fSelForeColor.Read( s );
     fSelBackColor.Read( s );
-    s->ReadLE( &fTransparent );
+    fTransparent = s->ReadBOOL();
 
     delete [] fFontFace;
     fFontFace = s->ReadSafeString();
@@ -141,7 +141,7 @@ void    pfGUIColorScheme::Write( hsStream *s )
     fBackColor.Write( s );
     fSelForeColor.Write( s );
     fSelBackColor.Write( s );
-    s->WriteLE( fTransparent );
+    s->WriteBOOL( fTransparent );
 
     s->WriteSafeString( fFontFace );
     s->WriteLE( fFontSize );
@@ -180,7 +180,7 @@ pfGUIControlMod::~pfGUIControlMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIControlMod::IEval( double secs, float del, uint32_t dirty )
 {
 //  UpdateBounds();
     return false;
@@ -222,7 +222,7 @@ static float GetVectorAngle( const hsPoint3 &basePt, const hsPoint3 &pointA, con
 //                      planar set", Info. Proc. Lett. 1, 132-133 (1972). 
 //  Note: THIS WILL DESTROY YOUR INPOINTS ARRAY.
 
-static hsBool   CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
+static bool     CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
 {
     int         i, j, pointA, pointB, pointC;
     float    *angles;
@@ -359,7 +359,7 @@ static void GetObjectPoints( plSceneObject *so, hsTArray<hsPoint3> &outPoints )
 //  Given two ends of a line segment and two points, tells you whether the
 //  two points are on the same side of the line. Used in PointInTriangle().
 
-static hsBool   PointsOnSameSide( const hsPoint3 &line1, const hsPoint3 &line2, const hsPoint3 &pointA, const hsPoint3 &pointB )
+static bool     PointsOnSameSide( const hsPoint3 &line1, const hsPoint3 &line2, const hsPoint3 &pointA, const hsPoint3 &pointB )
 {
     hsVector3 baseVec( &line2, &line1 );
     hsVector3   cp1 = hsVector3( &pointA, &line1 ) % baseVec;
@@ -371,7 +371,7 @@ static hsBool   PointsOnSameSide( const hsPoint3 &line1, const hsPoint3 &line2, 
 //  Given three points that define a triangle and a fourth point, tells you
 //  whether the fourth point is inside the triangle.
 
-static hsBool   PointInTriangle( hsPoint3 tri1, hsPoint3 tri2, hsPoint3 tri3, const hsPoint3 &testPoint )
+static bool     PointInTriangle( hsPoint3 tri1, hsPoint3 tri2, hsPoint3 tri3, const hsPoint3 &testPoint )
 {
     tri1.fZ = tri2.fZ = tri3.fZ = testPoint.fZ;
     if( PointsOnSameSide( tri1, tri2, testPoint, tri3 ) &&
@@ -384,7 +384,7 @@ static hsBool   PointInTriangle( hsPoint3 tri1, hsPoint3 tri2, hsPoint3 tri3, co
 //// PointInBounds ///////////////////////////////////////////////////////////
 //  Tells you whether said point is in the control's bounds.
 
-hsBool  pfGUIControlMod::PointInBounds( const hsPoint3 &point )
+bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 {
     UpdateBounds();
 
@@ -424,7 +424,7 @@ void    pfGUIControlMod::CalcInitialBounds( void )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     hsMatrix44  xformMatrix, projMatrix;
     hsPoint3    corners[ 8 ];
@@ -581,7 +581,7 @@ void    pfGUIControlMod::SetTarget( plSceneObject *object )
 #include "plProfile.h"
 plProfile_CreateTimer("Gui", "RenderSetup", GUITime);
 
-hsBool  pfGUIControlMod::MsgReceive( plMessage *msg )
+bool    pfGUIControlMod::MsgReceive( plMessage *msg )
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef( msg );
 
@@ -646,7 +646,7 @@ hsBool  pfGUIControlMod::MsgReceive( plMessage *msg )
 //  screen res and fun stuff like that. Also sets the layer transform to give
 //  us a 1:1 textel-pixel ratio, which we like.
 
-hsBool  pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
+bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 {
     if( fDynTextMap == nil )
     {
@@ -743,7 +743,7 @@ void    pfGUIControlMod::SetDynTextMap( plLayerInterface *layer, plDynamicTextMa
 
 //// SetEnabled //////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::SetEnabled( hsBool e )
+void    pfGUIControlMod::SetEnabled( bool e )
 {
     if( e == fEnabled )
         return;
@@ -754,7 +754,7 @@ void    pfGUIControlMod::SetEnabled( hsBool e )
 
 //// SetFocused //////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::SetFocused( hsBool e )
+void    pfGUIControlMod::SetFocused( bool e )
 {
     if( e == fFocused )
         return;
@@ -765,7 +765,7 @@ void    pfGUIControlMod::SetFocused( hsBool e )
 
 //// SetInteresting //////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::SetInteresting( hsBool i )
+void    pfGUIControlMod::SetInteresting( bool i )
 {
     if( i == fInteresting )
         return;
@@ -780,7 +780,7 @@ void    pfGUIControlMod::SetInteresting( hsBool i )
 
 //// SetVisible //////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::SetVisible( hsBool vis )
+void    pfGUIControlMod::SetVisible( bool vis )
 {
     if( vis == fVisible )
         return;
@@ -895,12 +895,12 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// HandleKeyPress/Event ////////////////////////////////////////////////////
 
-hsBool  pfGUIControlMod::HandleKeyPress( wchar_t key, uint8_t modifiers ) 
+bool    pfGUIControlMod::HandleKeyPress( wchar_t key, uint8_t modifiers ) 
 {
     return false; 
 }
 
-hsBool  pfGUIControlMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers ) 
+bool    pfGUIControlMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers ) 
 {
     return false; 
 }
@@ -919,7 +919,7 @@ void    pfGUIControlMod::IScreenToLocalPt( hsPoint3 &pt )
 
 //// ISetHandler /////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::ISetHandler( pfGUICtrlProcObject *h, hsBool clearInheritFlag )
+void    pfGUIControlMod::ISetHandler( pfGUICtrlProcObject *h, bool clearInheritFlag )
 {
     if( fHandler && fHandler->DecRef() )
         delete fHandler;
@@ -976,7 +976,7 @@ void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 //  Sends a sound play message with the soundIndex associated with the given
 //  event.
 
-void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, hsBool loop /* = false */ )
+void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false */ )
 {
     if( guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[ guiCtrlEvent ] == 0 )
         return;

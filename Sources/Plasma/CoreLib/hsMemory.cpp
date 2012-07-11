@@ -54,7 +54,7 @@ void HSMemory::BlockMove(const void* src, void* dst, uint32_t length)
     memmove(dst, src, length);
 }
 
-hsBool HSMemory::EqualBlocks(const void* block1, const void* block2, uint32_t length)
+bool HSMemory::EqualBlocks(const void* block1, const void* block2, uint32_t length)
 {
     const uint8_t* byte1 = (uint8_t*)block1;
     const uint8_t* byte2 = (uint8_t*)block2;
@@ -247,13 +247,13 @@ struct hsAppenderHead {
     void*   GetBottom() const { return fBottom; }
     void*   GetStop() const { return fStop; }
 
-    void*   GetFirst() const { return fFirst; }
-    void*   GetLast(uint32_t elemSize) const { return (char*)fStop - elemSize; }
-    uint32_t  GetSize() const { return (char*)fStop - (char*)fFirst; }
+    void*    GetFirst() const { return fFirst; }
+    void*    GetLast(uint32_t elemSize) const { return (char*)fStop - elemSize; }
+    uint32_t GetSize() const { return (char*)fStop - (char*)fFirst; }
 
-    hsBool  CanPrepend() const { return fFirst != this->GetTop(); }
+    bool    CanPrepend() const { return fFirst != this->GetTop(); }
     int     PrependSize() const { return (char*)fFirst - (char*)this->GetTop(); }
-    hsBool  CanAppend() const { return fStop != this->GetBottom(); }
+    bool    CanAppend() const { return fStop != this->GetBottom(); }
     int     AppendSize() const { return (char*)this->GetBottom() - (char*)fStop; }
     
     void* Prepend(uint32_t elemSize)
@@ -271,7 +271,7 @@ struct hsAppenderHead {
         hsAssert((char*)fStop <= (char*)fBottom, "bad elemSize");
         return data;
     }
-    hsBool PopHead(uint32_t elemSize, void* data)
+    bool PopHead(uint32_t elemSize, void* data)
     {
         hsAssert(fFirst != fStop, "Empty");
         if( data )
@@ -279,7 +279,7 @@ struct hsAppenderHead {
         fFirst = (char*)fFirst + elemSize;
         return fFirst == fStop;
     }
-    hsBool PopTail(uint32_t elemSize, void* data)
+    bool PopTail(uint32_t elemSize, void* data)
     {
         hsAssert(fFirst != fStop, "Empty");
         fStop = (char*)fStop - elemSize;
@@ -388,7 +388,7 @@ void* hsAppender::PeekHead() const
         return nil;
 }
 
-hsBool hsAppender::PopHead(void* data)
+bool hsAppender::PopHead(void* data)
 {
     if (fCount == 0)
         return false;
@@ -500,7 +500,7 @@ void* hsAppender::PeekTail() const
         return nil;
 }
 
-hsBool hsAppender::PopTail(void* data)
+bool hsAppender::PopTail(void* data)
 {
     if (fCount == 0)
         return false;
@@ -570,7 +570,7 @@ void* hsAppenderIterator::Next()
     return item;
 }
 
-hsBool hsAppenderIterator::Next(void* data)
+bool hsAppenderIterator::Next(void* data)
 {
     void*   addr = this->Next();
     if (addr)
@@ -613,7 +613,7 @@ void* hsAppenderIterator::Prev()
     return item;
 }
 
-hsBool hsAppenderIterator::Prev(void* data)
+bool hsAppenderIterator::Prev(void* data)
 {
     void*   addr = this->Prev();
     if (addr)

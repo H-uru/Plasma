@@ -88,7 +88,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     
-    void    SetProperty(int prop, hsBool on);
+    void    SetProperty(int prop, bool on);
     int32_t   GetNumProperties() const { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
@@ -100,7 +100,7 @@ public:
     const hsBounds3Ext GetMaxWorldBounds();
     void ClearLinearVelocity();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // Export only.
     void SetPhysical(plPhysical* phys);

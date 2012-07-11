@@ -54,7 +54,7 @@ hsVectorStream::~hsVectorStream()
 {
 }
 
-hsBool hsVectorStream::AtEnd()
+bool hsVectorStream::AtEnd()
 {
     return (fBytesRead >= fEnd);
 }
@@ -174,7 +174,7 @@ hsNamedPipeStream::~hsNamedPipeStream()
     fOverlap.hEvent = INVALID_HANDLE_VALUE;
 }
 
-hsBool hsNamedPipeStream::WaitForClientConnect()
+bool hsNamedPipeStream::WaitForClientConnect()
 {
     // Look for a client connect (this should return zero since it's overlapped)
     BOOL ret = ConnectNamedPipe(fPipe, &fOverlap);
@@ -201,17 +201,17 @@ hsBool hsNamedPipeStream::WaitForClientConnect()
     return false;
 }
 
-hsBool hsNamedPipeStream::Open(const char *name, const char *mode)
+bool hsNamedPipeStream::Open(const char *name, const char *mode)
 {
     wchar_t* wName = hsStringToWString(name);
     wchar_t* wMode = hsStringToWString(mode);
-    hsBool ret = Open(wName, wMode);
+    bool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool hsNamedPipeStream::Open(const wchar_t *name, const wchar_t *mode)
+bool hsNamedPipeStream::Open(const wchar_t *name, const wchar_t *mode)
 {
     if (wcschr(mode, L'w'))
     {
@@ -249,7 +249,7 @@ hsBool hsNamedPipeStream::Open(const wchar_t *name, const wchar_t *mode)
     return false;
 }
 
-hsBool hsNamedPipeStream::Close()
+bool hsNamedPipeStream::Close()
 {
     if (fPipe == INVALID_HANDLE_VALUE)
         return false;
@@ -270,7 +270,7 @@ hsBool hsNamedPipeStream::Close()
     return true;
 }
 
-hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, uint32_t &numTransferred)
+bool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, uint32_t &numTransferred)
 {
     // Read/Write succeeded, return now
     if (result)
@@ -294,7 +294,7 @@ hsBool hsNamedPipeStream::ICheckOverlappedResult(BOOL result, uint32_t &numTrans
     return false;
 }
 
-hsBool hsNamedPipeStream::IRead(uint32_t byteCount, void *buffer, uint32_t &numRead)
+bool hsNamedPipeStream::IRead(uint32_t byteCount, void *buffer, uint32_t &numRead)
 {
     numRead = 0;
 
@@ -312,7 +312,7 @@ hsBool hsNamedPipeStream::IRead(uint32_t byteCount, void *buffer, uint32_t &numR
     return false;
 }
 
-hsBool hsNamedPipeStream::IWrite(uint32_t byteCount, const void *buffer, uint32_t &numWritten)
+bool hsNamedPipeStream::IWrite(uint32_t byteCount, const void *buffer, uint32_t &numWritten)
 {
     numWritten = 0;
 

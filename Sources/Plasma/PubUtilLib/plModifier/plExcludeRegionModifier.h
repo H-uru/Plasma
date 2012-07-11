@@ -62,9 +62,9 @@ protected:
     std::vector<plKey> fSafePoints; // Safe positions to move avatars to
     hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
     plExcludeRegionSDLModifier  *fSDLModifier;
-    hsBool fSeek; // use smart seek or teleport?
+    bool fSeek; // use smart seek or teleport?
     float fSeekTime; // how long to seek for
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     void ISetPhysicalState(bool cleared);
 
@@ -84,7 +84,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void AddTarget(plSceneObject* so);
     virtual void RemoveTarget( plSceneObject *so );

@@ -70,8 +70,8 @@ protected:
     float    fXPos;
     float    fYPos;
 
-    hsBool          fActive;
-    hsBool          fAllOrNothing;
+    bool            fActive;
+    bool            fAllOrNothing;
     int             fIface;
     plNotifyMsg*    fNotify;
     
@@ -79,7 +79,7 @@ protected:
 
     plAxisInputInterface    *fInputIface;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plAxisAnimModifier(); 
@@ -88,10 +88,10 @@ public:
     CLASSNAME_REGISTER( plAxisAnimModifier );
     GETINTERFACE_ANY( plAxisAnimModifier, plSingleModifier );
 
-    virtual hsBool  MsgReceive(plMessage* msg);
+    virtual bool    MsgReceive(plMessage* msg);
     virtual void    SetTarget(plSceneObject* so);
 
-    void SetAllOrNothing(hsBool b) { fAllOrNothing = b; }
+    void SetAllOrNothing(bool b) { fAllOrNothing = b; }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

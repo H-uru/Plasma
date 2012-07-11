@@ -58,12 +58,12 @@ class plSpanTemplate
 public:
     // 99% of the time, the defaults are fine. Just tell me
     // how many UVWs, and whether you've got color.
-    static uint16_t MakeFormat(hsBool hasColor, int numUVWs,
-                            hsBool hasWgtIdx = false,
+    static uint16_t MakeFormat(bool hasColor, int numUVWs,
+                            bool hasWgtIdx = false,
                             int numWgts = 0,
-                            hsBool hasNorm = true,
-                            hsBool hasPos = true,
-                            hsBool hasColor2 = true)
+                            bool hasNorm = true,
+                            bool hasPos = true,
+                            bool hasColor2 = true)
     {
         return (hasPos ? kPosMask : 0)
             | (hasNorm ? kNormMask : 0)
@@ -210,7 +210,7 @@ public:
         return nil;
     }
 
-    hsBool ValidateInput(Channel chan, int i, int j) const
+    bool ValidateInput(Channel chan, int i, int j) const
     {
         switch(chan)
         {

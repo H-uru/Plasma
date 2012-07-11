@@ -128,7 +128,7 @@ void hsFolderIterator::Reset()
     fData->fValid = true;
 }
 
-hsBool hsFolderIterator::NextFile()
+bool hsFolderIterator::NextFile()
 {
     if (fData->fValid == false)
         return false;
@@ -163,7 +163,7 @@ hsBool hsFolderIterator::NextFile()
     return true;
 }
 
-hsBool  hsFolderIterator::IsDirectory( void ) const
+bool    hsFolderIterator::IsDirectory( void ) const
 {
     if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
         return true;
@@ -261,7 +261,7 @@ void hsWFolderIterator::Reset()
     fData->fValid = true;
 }
 
-hsBool hsWFolderIterator::NextFile()
+bool hsWFolderIterator::NextFile()
 {
     if (fData->fValid == false)
         return false;
@@ -300,7 +300,7 @@ hsBool hsWFolderIterator::NextFile()
     return true;
 }
 
-hsBool  hsWFolderIterator::IsDirectory( void ) const
+bool    hsWFolderIterator::IsDirectory( void ) const
 {
     if( fData->fValid && ( fData->fFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )
         return true;

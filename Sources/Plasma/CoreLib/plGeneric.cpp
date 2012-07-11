@@ -177,7 +177,7 @@ int plGeneric::Read(hsStream* stream)
         break; // nothing to read
 
     case kBool:
-        fBoolVal = (stream->ReadBool() != 0);
+        fBoolVal = stream->ReadBool();
         break;
 
     case kInt:

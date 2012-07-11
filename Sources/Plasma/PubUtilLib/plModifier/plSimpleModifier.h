@@ -73,17 +73,17 @@ protected:
     // The following are in animation time.
     float                fCurrentTime;
 
-    hsBool                  IHandleTime(double wSecs, float del);
+    bool                    IHandleTime(double wSecs, float del);
 
-    hsBool                  IHandleRef(plRefMsg* refMsg);
-    virtual hsBool          IHandleCmd(plAnimCmdMsg* modMsg);
+    bool                    IHandleRef(plRefMsg* refMsg);
+    virtual bool            IHandleCmd(plAnimCmdMsg* modMsg);
 
     virtual void            IApplyDynamic() = 0;
 
     virtual void            IBegin();
     virtual void            IEnd();
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
 public:
     plSimpleModifier();
@@ -95,7 +95,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
     virtual plSceneObject* GetTarget(int w) const { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }

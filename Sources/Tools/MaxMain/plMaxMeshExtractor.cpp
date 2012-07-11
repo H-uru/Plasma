@@ -206,7 +206,7 @@ bool plMaxMeshExtractor::Extract(plMaxMeshExtractor::NeutralMesh& mesh, plMaxNod
     //
     // Create the arrays of verts and faces
     //
-    hsBool isDummy = (node->EvalWorldState(0).obj->ClassID() == Class_ID(DUMMY_CLASS_ID,0));
+    bool isDummy = (node->EvalWorldState(0).obj->ClassID() == Class_ID(DUMMY_CLASS_ID,0));
     if (isDummy)
     {
         hsMatrix44 w2l = masterNode->GetWorldToLocal44();

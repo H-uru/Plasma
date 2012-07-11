@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // public:
 //  plImpactGadget();
 // 
-//  hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-//  hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+//  bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+//  bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 // };
 
 #endif // plImpactGadgetComponent_inc

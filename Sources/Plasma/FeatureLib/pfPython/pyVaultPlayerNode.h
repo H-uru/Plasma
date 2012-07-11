@@ -113,7 +113,7 @@ public:
     uint32_t GetOnlineTime();
 
     void    SetExplorer (bool b);
-    hsBool  IsExplorer ();
+    bool    IsExplorer ();
 };
 
 #endif  // pyVaultPlayerNode_h_

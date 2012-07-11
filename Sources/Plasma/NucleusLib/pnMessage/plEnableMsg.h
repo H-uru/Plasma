@@ -66,13 +66,13 @@ public:
     hsBitVector     fCmd;
     hsBitVector     fTypes;
 
-    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     
     void AddType(uint16_t t) { fTypes.SetBit(t); }
     void RemoveType(uint16_t t) { fTypes.ClearBit(t); }
-    hsBool Type(uint16_t t) const { return fTypes.IsBitSet(t); }
+    bool Type(uint16_t t) const { return fTypes.IsBitSet(t); }
     const hsBitVector& Types() const { return fTypes; }
 
     plEnableMsg() { }

@@ -196,7 +196,7 @@ plShadowCastComponent::plShadowCastComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject* so = node->GetSceneObject();
     if( !so )
@@ -225,18 +225,18 @@ hsBool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plShadowCastComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plShadowCastComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fCaster = nil;
     return true;
 }
 
-hsBool plShadowCastComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plShadowCastComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plShadowCastComponent::AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster)
+bool plShadowCastComponent::AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster)
 {
     if( !pNode->CanConvert() )
         return false;
@@ -248,7 +248,7 @@ hsBool plShadowCastComponent::AddShadowCastModifier(plMaxNode* pNode, plShadowCa
     return plShadowCastComponent::AddShadowCastModifier(so, caster);
 }
 
-hsBool plShadowCastComponent::AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster)
+bool plShadowCastComponent::AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster)
 {
     // First off, ensure that we NEVER NEVER NEVER have more than one shadowcaster on an object.
     // That would be BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD.
@@ -293,12 +293,12 @@ plShadowRcvComponent::plShadowRcvComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plShadowRcvComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plShadowRcvComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plShadowRcvComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plShadowRcvComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if( fCompPB->GetInt(kForceRadio) == kForceOn )
     {
@@ -313,7 +313,7 @@ hsBool plShadowRcvComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErr
     return true;
 }
 
-hsBool plShadowRcvComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plShadowRcvComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     return true;
 }
@@ -382,7 +382,7 @@ plShadowLightComponent::plShadowLightComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plShadowLightComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plShadowLightComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject* so = node->GetSceneObject();
     if( !so )
@@ -413,7 +413,7 @@ hsBool plShadowLightComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plShadowLightComponent::IAddDirectMaster(plMaxNode* node, plSceneObject* so)
+bool plShadowLightComponent::IAddDirectMaster(plMaxNode* node, plSceneObject* so)
 {
     plDirectShadowMaster* directMaster = new plDirectShadowMaster;
 
@@ -432,7 +432,7 @@ hsBool plShadowLightComponent::IAddDirectMaster(plMaxNode* node, plSceneObject* 
     return true;
 }
 
-hsBool plShadowLightComponent::IAddPointMaster(plMaxNode* node, plSceneObject* so)
+bool plShadowLightComponent::IAddPointMaster(plMaxNode* node, plSceneObject* so)
 {
     plPointShadowMaster* pointMaster = new plPointShadowMaster;
 
@@ -452,12 +452,12 @@ hsBool plShadowLightComponent::IAddPointMaster(plMaxNode* node, plSceneObject* s
     return true;
 }
 
-hsBool plShadowLightComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plShadowLightComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plShadowLightComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plShadowLightComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     return true;
 }

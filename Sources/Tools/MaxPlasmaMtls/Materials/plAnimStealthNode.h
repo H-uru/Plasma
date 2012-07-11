@@ -85,7 +85,7 @@ protected:
 
     static ParamBlockDesc2 sAnimStealthPB;
 
-    hsBool          fPreppedForConvert;
+    bool            fPreppedForConvert;
     SegmentMap      *fCachedSegMap;
 
     SegmentSpec     *IGetSegmentSpec( void ) const;
@@ -227,17 +227,17 @@ public:
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
-    virtual hsBool  IsNodeRestricted( void ) { return true; }
-    virtual plString GetIfaceSegmentName( hsBool allowNil );
-    virtual hsBool  GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
-    virtual hsBool      MightRequireSeparateMaterial( void ) { return true; }
+    virtual bool    IsNodeRestricted( void ) { return true; }
+    virtual plString GetIfaceSegmentName( bool allowNil );
+    virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
+    virtual bool        MightRequireSeparateMaterial( void ) { return true; }
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
-    virtual hsBool  SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
-    virtual hsBool  ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
+    virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
+    virtual bool    ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
 
     // Returns true if the parent material is applied to any node in the scene, false otherwise
-    hsBool          IsParentUsedInScene( void );
+    bool            IsParentUsedInScene( void );
 };
 
 //// Accessor for Parent's ParamBlock ////////////////////////////////////////

@@ -96,7 +96,7 @@ class pfConsole : public hsKeyedObject
         uint32_t  fHelpTimer;
         char    fLastHelpMsg[ kWorkingLineSize ];
         uint8_t   fMode;      // 0 - invisible, 1 - single line, 2 - full
-        hsBool  fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
+        bool    fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
         uint32_t  fPythonMultiLines;
         short   fCursorTicks;
         uint32_t  fMsgTimeoutTimer;
@@ -126,8 +126,8 @@ class pfConsole : public hsKeyedObject
         void    IClear( void );
 
         void    ISetMode( uint8_t mode );
-        void    IEnableFX( hsBool e ) { fFXEnabled = e; }
-        hsBool  IFXEnabled( void ) { return fFXEnabled; }
+        void    IEnableFX( bool e ) { fFXEnabled = e; }
+        bool    IFXEnabled( void ) { return fFXEnabled; }
 
         void    IPrintSomeHelp( void );
         void    IUpdateTooltip( void );
@@ -142,7 +142,7 @@ class pfConsole : public hsKeyedObject
         
         static pfConsole * GetInstance ();
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
     
         void    Init( pfConsoleEngine *engine );
         void    Draw( plPipeline *p );
@@ -152,8 +152,8 @@ class pfConsole : public hsKeyedObject
         static void Clear( void ) { fTheConsole->IClear(); }
         static void Hide( void ) { fTheConsole->ISetMode(kModeHidden); }
 
-        static void EnableEffects( hsBool enable ) { fTheConsole->IEnableFX( enable ); }
-        static hsBool AreEffectsEnabled( void ) { return fTheConsole->IFXEnabled(); }
+        static void EnableEffects( bool enable ) { fTheConsole->IEnableFX( enable ); }
+        static bool AreEffectsEnabled( void ) { return fTheConsole->IFXEnabled(); }
         static void SetTextColor( uint32_t color ) { fConsoleTextColor = color; }
         static uint32_t GetTextColor() { return fConsoleTextColor; }
 

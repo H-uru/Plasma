@@ -117,7 +117,7 @@ class plPlate
 
         /// Basic properties
 
-        void    SetTransform( hsMatrix44 &matrix, hsBool reSort = true );
+        void    SetTransform( hsMatrix44 &matrix, bool reSort = true );
         void    SetMaterial( hsGMaterial *material );
         void    SetTexture(plBitmap *texture); // Creates a new single layer material to use the texture.
         void    SetTitle( const char *title ) { if( title != nil ) strncpy( fTitle, title, sizeof( fTitle ) ); else fTitle[ 0 ] = 0; }
@@ -128,8 +128,8 @@ class plPlate
         uint32_t          GetFlags( void ) { return fFlags; }
         const plMipmap  *GetMipmap( void ) { return fMipmap; }
 
-        void    SetVisible( hsBool vis ) { if( vis ) fFlags |= kFlagVisible; else fFlags &= ~kFlagVisible; }
-        hsBool  IsVisible( void );
+        void    SetVisible( bool vis ) { if( vis ) fFlags |= kFlagVisible; else fFlags &= ~kFlagVisible; }
+        bool    IsVisible( void );
 
         void    SetOpacity( float opacity = 1.f );
 
@@ -142,7 +142,7 @@ class plPlate
         void    SetPosition( float x, float y, float z = -1.0f );
         void    SetSize( float width, float height, bool adjustByAspectRatio = false );
 
-        plMipmap        *CreateMaterial( uint32_t width, uint32_t height, hsBool withAlpha, plMipmap* texture = NULL );
+        plMipmap        *CreateMaterial( uint32_t width, uint32_t height, bool withAlpha, plMipmap* texture = NULL );
         void            CreateFromResource( const char *resName );
         void            ReloadFromResource( const char *resName );
 };
@@ -205,7 +205,7 @@ class plPlateManager
 
         plPlate     *fPlates;
         plPipeline  *fOwner;
-        hsBool      fCreatedSucessfully;
+        bool        fCreatedSucessfully;
 
         plPlateManager( plPipeline *pipe ) 
         {
@@ -241,7 +241,7 @@ class plPlateManager
         uint32_t      GetPipeHeight( void );
         void        DrawToDevice( plPipeline *pipe );
 
-        hsBool      IsValid( void ) { return fCreatedSucessfully; }
+        bool        IsValid( void ) { return fCreatedSucessfully; }
 };
 
 // Sets the hInstance that we load our resources from.  A SceneViewer hack.

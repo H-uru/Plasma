@@ -136,7 +136,7 @@ class plOperationProgress
         // Application data
         void    SetContext( uint32_t context ) { fContext = context;}
 
-        hsBool  IsDone( void ) { return ( fValue < fMax ) ? false : true; }
+        bool    IsDone( void ) { return ( fValue < fMax ) ? false : true; }
 
         // True if this is the initial update (progress was just created)
         bool IsInitUpdate() { return hsCheckBits(fFlags, kInitUpdate); }
@@ -171,7 +171,7 @@ class plOperationProgress
         plOperationProgress* GetNext() const { return fNext; }
 
         // Or this
-        void    SetCancelFlag( hsBool f ) { hsChangeBits(fFlags, kShouldCancel, f); }
+        void    SetCancelFlag( bool f ) { hsChangeBits(fFlags, kShouldCancel, f); }
 };
 
 // This is a callback proc you set that gets called every time the progressManager
@@ -241,7 +241,7 @@ class plProgressMgr
 
         plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );
 
-        hsBool      IsActive( void ) const { return ( fOperations != nil ) ? true : false; }
+        bool        IsActive( void ) const { return ( fOperations != nil ) ? true : false; }
 
         void    CancelAllOps( void );
 };

@@ -541,7 +541,7 @@ plDistribComponent_old::plDistribComponent_old()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plDistribComponent_old::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plDistribComponent_old::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     int numReps = fCompPB->Count(kTemplates);
     int i;

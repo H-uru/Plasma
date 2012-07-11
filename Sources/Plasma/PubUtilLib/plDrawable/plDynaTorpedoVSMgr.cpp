@@ -80,7 +80,7 @@ int plDynaTorpedoVSMgr::INewDecal()
     return idx;
 }
 
-hsBool plDynaTorpedoVSMgr::IHandleShot(plBulletMsg* bull)
+bool plDynaTorpedoVSMgr::IHandleShot(plBulletMsg* bull)
 {
     if( !ICheckRTMat() )
         return false;
@@ -88,7 +88,7 @@ hsBool plDynaTorpedoVSMgr::IHandleShot(plBulletMsg* bull)
     return plDynaTorpedoMgr::IHandleShot(bull);
 }
 
-hsBool plDynaTorpedoVSMgr::ICheckRTMat()
+bool plDynaTorpedoVSMgr::ICheckRTMat()
 {
     if( !fMatRTShade )
         return false;
@@ -122,9 +122,9 @@ plRipVSConsts plDynaTorpedoVSMgr::IGetRippleConsts() const
     return ripConsts;
 }
 
-hsBool plDynaTorpedoVSMgr::MsgReceive(plMessage* msg)
+bool plDynaTorpedoVSMgr::MsgReceive(plMessage* msg)
 {
-    hsBool retVal = plDynaTorpedoMgr::MsgReceive(msg);
+    bool retVal = plDynaTorpedoMgr::MsgReceive(msg);
     if( retVal )
         return true;
 

@@ -107,7 +107,7 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint
 //
 // Process SDL msgs to send and recv state
 //
-hsBool plSDLModifier::MsgReceive(plMessage* msg)
+bool plSDLModifier::MsgReceive(plMessage* msg)
 {
     plSDLModifierMsg* sdlMsg = plSDLModifierMsg::ConvertNoRef(msg);
     if (sdlMsg && !stricmp(sdlMsg->GetSDLName(),GetSDLName()))

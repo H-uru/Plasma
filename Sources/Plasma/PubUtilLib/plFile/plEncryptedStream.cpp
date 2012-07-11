@@ -116,17 +116,17 @@ void plEncryptedStream::IDecipher(uint32_t* const v)
     v[0]=y; v[1]=z;
 }
 
-hsBool plEncryptedStream::Open(const char* name, const char* mode)
+bool plEncryptedStream::Open(const char* name, const char* mode)
 {
     wchar_t* wName = hsStringToWString(name);
     wchar_t* wMode = hsStringToWString(mode);
-    hsBool ret = Open(wName, wMode);
+    bool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
+bool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
@@ -175,7 +175,7 @@ hsBool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
     }
 }
 
-hsBool plEncryptedStream::Close()
+bool plEncryptedStream::Close()
 {
     int rtn = false;
 
@@ -247,7 +247,7 @@ void plEncryptedStream::IBufferFile()
     fPosition = 0;
 }
 
-hsBool plEncryptedStream::AtEnd()
+bool plEncryptedStream::AtEnd()
 {
     if (fBufferedStream)
         return fRAMStream->AtEnd();

@@ -69,7 +69,7 @@ public:
 
     plClothingItemOptions() { fTint1.Set(1.f, 1.f, 1.f, 1.f); fTint2.Set(1.f, 1.f, 1.f, 1.f); }
 
-    hsBool IsMatch(plClothingItemOptions *other) { return fTint1 == other->fTint1 && fTint2 == other->fTint2; }
+    bool IsMatch(plClothingItemOptions *other) { return fTint1 == other->fTint1 && fTint2 == other->fTint2; }
 };
 
 class plClothingItem : public hsKeyedObject
@@ -113,15 +113,15 @@ public:
 
     void SetName(char *name) { delete fName; fName = hsStrcpy(name); }
     const char* GetName() { return fName; }
-    hsBool CanWearWith(plClothingItem *item);
-    hsBool WearBefore(plClothingItem *item); // Should we come before the arg item? (texture gen order)
-    hsBool HasBaseAlpha();
-    hsBool HasSameMeshes(plClothingItem *other);
+    bool CanWearWith(plClothingItem *item);
+    bool WearBefore(plClothingItem *item); // Should we come before the arg item? (texture gen order)
+    bool HasBaseAlpha();
+    bool HasSameMeshes(plClothingItem *other);
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr); 
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 class plClosetItem
@@ -132,7 +132,7 @@ public:
     plClothingItem *fItem;
     plClothingItemOptions fOptions;
 
-    hsBool IsMatch(plClosetItem *other);
+    bool IsMatch(plClosetItem *other);
 };
 
 class plClothingBase : public hsKeyedObject
@@ -153,7 +153,7 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 class plClothingOutfit : public plSynchedObject
@@ -178,16 +178,16 @@ public:
     CLASSNAME_REGISTER( plClothingOutfit );
     GETINTERFACE_ANY( plClothingOutfit, plSynchedObject );
 
-    void SaveCustomizations(hsBool retry = true);
-    void AddItem(plClothingItem *item, hsBool update = true, hsBool broadcast = true, hsBool netForce=false);
-    void RemoveItem(plClothingItem *item, hsBool update = true, hsBool netForce=false);
-    void TintItem(plClothingItem *item, float red, float green, float blue, hsBool update = true, hsBool broadcast = true, 
-                  hsBool netForce = false, hsBool retry = true, uint8_t fLayer = plClothingElement::kLayerTint1);
+    void SaveCustomizations(bool retry = true);
+    void AddItem(plClothingItem *item, bool update = true, bool broadcast = true, bool netForce=false);
+    void RemoveItem(plClothingItem *item, bool update = true, bool netForce=false);
+    void TintItem(plClothingItem *item, float red, float green, float blue, bool update = true, bool broadcast = true, 
+                  bool netForce = false, bool retry = true, uint8_t fLayer = plClothingElement::kLayerTint1);
     void TintSkin(float red, float green, float blue,
-                  hsBool update = true, hsBool broadcast = true);
-    void MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight, hsBool retry = true);
-    void SetAge(float age, hsBool update = true, hsBool broadcast = true);
-    void SetSkinBlend(float blend, uint8_t layer, hsBool update = true, hsBool broadcast = true);
+                  bool update = true, bool broadcast = true);
+    void MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight, bool retry = true);
+    void SetAge(float age, bool update = true, bool broadcast = true);
+    void SetSkinBlend(float blend, uint8_t layer, bool update = true, bool broadcast = true);
     float GetSkinBlend(uint8_t layer);     
     hsColorRGBA GetItemTint(plClothingItem *item, uint8_t layer = 2) const;
     float GetAge() const { return fSkinBlends[0]; }
@@ -196,7 +196,7 @@ public:
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);
 
     void StripAccessories();
     void WearDefaultClothing();
@@ -205,12 +205,12 @@ public:
     void WearRandomOutfit();
     void RemoveMaintainerOutfit();
 
-    hsBool ReadItems(hsStream* s, hsResMgr* mgr, hsBool broadcast = true);
+    bool ReadItems(hsStream* s, hsResMgr* mgr, bool broadcast = true);
     void WriteItems(hsStream* s, hsResMgr* mgr);
     
     void ForceUpdate(bool retry);       // send updateTexture msg
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     void IInstanceSharedMeshes(plClothingItem *item);
     void IRemoveSharedMeshes(plClothingItem *item);
@@ -226,13 +226,13 @@ public:
 
 protected:
     hsBitVector fDirtyItems;
-    hsBool fVaultSaveEnabled;
+    bool fVaultSaveEnabled;
     bool fMorphsInitDone;
 
     void IAddItem(plClothingItem *item);
     void IRemoveItem(plClothingItem *item);
-    hsBool ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer);
-    hsBool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight);
+    bool ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer);
+    bool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight);
     void IHandleMorphSDR(plStateDataRecord *sdr);
         
     void IUpdate();
@@ -279,7 +279,7 @@ public:
 
     // For a pair of items that go together (ie gloves) give us one, we'll give you the other
     plClothingItem *GetLRMatch(plClothingItem *item);
-    hsBool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
+    bool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
 
     static void ChangeAvatar(char *name);
     
@@ -290,7 +290,7 @@ public:
     //virtual void Read(hsStream* s, hsResMgr* mgr);
     //virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
 
     // NOTE:

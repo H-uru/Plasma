@@ -57,7 +57,7 @@ plGeoSpanDice::~plGeoSpanDice()
 {
 }
 
-hsBool plGeoSpanDice::Dice(hsTArray<plGeometrySpan*>& spans) const
+bool plGeoSpanDice::Dice(hsTArray<plGeometrySpan*>& spans) const
 {
     int startingCount = spans.GetCount();
 
@@ -82,7 +82,7 @@ hsBool plGeoSpanDice::Dice(hsTArray<plGeometrySpan*>& spans) const
     return spans.GetCount() != startingCount;
 }
 
-hsBool plGeoSpanDice::INeedSplitting(plGeometrySpan* src) const
+bool plGeoSpanDice::INeedSplitting(plGeometrySpan* src) const
 {
     // Do we have enough faces to bother?
     if( fMinFaces )
@@ -111,7 +111,7 @@ hsBool plGeoSpanDice::INeedSplitting(plGeometrySpan* src) const
     return false;
 }
 
-hsBool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis) const
+bool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis) const
 {
     if( !INeedSplitting(src) )
         return false;

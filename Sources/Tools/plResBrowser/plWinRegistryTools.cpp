@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  Sets the given registry key to the given string value. If valueName = nil,
 //  sets the (default) value
 
-static hsBool   ISetRegKey( const char *keyName, const char *value, const char *valueName = nil )
+static bool     ISetRegKey( const char *keyName, const char *value, const char *valueName = nil )
 {
     HKEY    regKey;
     DWORD   result;
@@ -107,7 +107,7 @@ static hsBool   ISetRegKey( const char *keyName, const char *value, const char *
 //                        |--- command (value = command line)
 //
 
-hsBool  plWinRegistryTools::AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex )
+bool    plWinRegistryTools::AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex )
 {
     char        keyName[ 512 ], keyValue[ 512 ];
 
@@ -147,7 +147,7 @@ hsBool  plWinRegistryTools::AssociateFileType( const char *fileTypeID, const cha
 //  where fileExtension includes the leading . and fileTypeID is the same
 //  typeID registered with the above function
 
-hsBool  plWinRegistryTools::AssociateFileExtension( const char *fileExtension, const char *fileTypeID )
+bool    plWinRegistryTools::AssociateFileExtension( const char *fileExtension, const char *fileTypeID )
 {
     return ISetRegKey( fileExtension, fileTypeID ); 
 }
@@ -156,7 +156,7 @@ hsBool  plWinRegistryTools::AssociateFileExtension( const char *fileExtension, c
 //  Obtains the current fileTypeID associated with the given file extension,
 //  or a null string if it isn't yet associated.
 
-hsBool  plWinRegistryTools::GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen )
+bool    plWinRegistryTools::GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen )
 {
     long    dataLen;
 

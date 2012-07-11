@@ -216,7 +216,7 @@ protected:
 public:
     plTextureLoggerCBack(plTextureExportLog* teLog) { fTELog = teLog; }
 
-    virtual hsBool EatKey(const plKey& key)
+    virtual bool EatKey(const plKey& key)
     {
         plBitmap* bmap = plBitmap::ConvertNoRef(key->ObjectIsLoaded());
         if (bmap != nil)
@@ -229,7 +229,7 @@ public:
 class plOptimizeIterator : public plRegistryKeyIterator
 {
 public:
-    virtual hsBool EatKey(const plKey& key)
+    virtual bool EatKey(const plKey& key)
     {
         if (key->GetUoid().GetClassType() == plSceneNode::Index())
         {
@@ -341,7 +341,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
         plPythonFileMod::SetAtConvertTime();
 
         // Convert!!!
-        hsBool convertOK = plConvert::Instance().Convert();
+        bool convertOK = plConvert::Instance().Convert();
 
         // Free the material cache.  This will delete unused materials.
         hsMaterialConverter::Instance().FreeMaterialCache(out_path);

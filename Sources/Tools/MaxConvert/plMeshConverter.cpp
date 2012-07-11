@@ -89,14 +89,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Static Members //////////////////////////////////////////////////////////
 
-hsBool  plMeshConverter::fWarnBadNormals = true;
+bool    plMeshConverter::fWarnBadNormals = true;
 char    plMeshConverter::fWarnBadNormalsMsg[] = "Bad normal autogeneration - please deliver Max file to QA";
 
-hsBool  plMeshConverter::fWarnBadUVs = true;
+bool    plMeshConverter::fWarnBadUVs = true;
 char    plMeshConverter::fWarnBadUVsMsg[] = "The object \"%s\" does not have enough valid UVW mapping channels \
 for the material(s) applied to it. This might produce unwanted rendering artifacts at runtime";
 
-hsBool  plMeshConverter::fWarnSuspiciousUVs = true;
+bool    plMeshConverter::fWarnSuspiciousUVs = true;
 char    plMeshConverter::fWarnSuspiciousUVsMsg[] = "The object \"%s\" has suspicious UVW coordinates on it. \
 You should apply an Unwrap UVW modifier to it.";
 
@@ -133,7 +133,7 @@ class plMAXVertexAccNode
 
         plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, int numChannels, const hsPoint3 *uvs, uint32_t index );
 
-        hsBool      IsEqual( const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, const hsPoint3 *uvs );
+        bool        IsEqual( const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, const hsPoint3 *uvs );
 };
 
 typedef plMAXVertexAccNode      *plMAXVertexAccNodePtr;
@@ -267,7 +267,7 @@ plMeshConverter::~plMeshConverter()
 
 //// Init and DeInit /////////////////////////////////////////////////////////
 
-void    plMeshConverter::Init( hsBool save, plErrorMsg *msg )
+void    plMeshConverter::Init( bool save, plErrorMsg *msg )
 {
     hsGuardBegin( "plMeshConverter::Init" );
 
@@ -284,7 +284,7 @@ void    plMeshConverter::Init( hsBool save, plErrorMsg *msg )
     hsGuardEnd;
 }
 
-void    plMeshConverter::DeInit( hsBool deInitLongRecur )
+void    plMeshConverter::DeInit( bool deInitLongRecur )
 {
     hsGuardBegin( "plMeshConverter::DeInit" );
 
@@ -348,7 +348,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
     Mesh            *mesh;
     int32_t           numFaces, i, j, numVerts;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
-    hsBool          flipOrder, checkForOverflow = false;
+    bool            flipOrder, checkForOverflow = false;
 
     /// Get da mesh
     mesh = IGetNodeMesh( node );
@@ -514,7 +514,7 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
 //  Main function. Takes a maxNode's object and creates geometrySpans from it
 //  suitable for drawing as ice.
 
-hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading )
+bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading )
 {
     hsGuardBegin( "plMeshConverter::CreateSpans" );
 
@@ -524,13 +524,13 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
     int32_t           numMaterials = 1, numSubMaterials = 1;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
     Mtl             *maxMaterial = nil;
-    hsBool          isComposite, isMultiMat, flipOrder, checkForOverflow = false, includesComp;
+    bool            isComposite, isMultiMat, flipOrder, checkForOverflow = false, includesComp;
     uint8_t           ourFormat, numChannels, maxBlendChannels;
     hsColorRGBA     *colorArray = nil;
     hsColorRGBA     *illumArray = nil;
     uint32_t          sharedSpanProps = 0;
     hsBitVector     usedSubMtls;
-    hsBool          makeAlphaLayer = node->VtxAlphaNotAvailable();
+    bool            makeAlphaLayer = node->VtxAlphaNotAvailable();
 
     ISkinContextData    *skinData;
 
@@ -562,7 +562,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
     maxMaterial = hsMaterialConverter::Instance().GetBaseMtl( node );
     isMultiMat = hsMaterialConverter::Instance().IsMultiMat( maxMaterial );
 
-    const hsBool smoothAll = node->GetSmoothAll();
+    const bool smoothAll = node->GetSmoothAll();
 
     includesComp = false;
     if (isMultiMat)
@@ -640,7 +640,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         hsColorRGBA white, black;
         white.Set(1.f, 1.f, 1.f, 1.f);
         black.Set(0, 0, 0, 1.f);
-        hsBool allWhite = true, allBlack = true;
+        bool allWhite = true, allBlack = true;
 
         if( mesh->numCVerts > 0)
         {
@@ -806,7 +806,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             {
                 fErrorMsg->Set(true, "Skinning Error", "Invalid point count on ISkin data on node %s", dbgNodeName ).Show();
                 fErrorMsg->Set();
-                throw (hsBool)false;
+                throw (bool)false;
                 //hsAssert( skinData->GetNumPoints() == numVerts, "Invalid point count on ISkin data" );
 
             }
@@ -826,7 +826,7 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             {
                 fErrorMsg->Set(true, "Skinning Error", "Invalid skin (no bones) on node %s", dbgNodeName ).Show();
                 fErrorMsg->Set();
-                throw (hsBool)false;
+                throw (bool)false;
             }
 
 
@@ -1262,14 +1262,14 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         // because we can probably do a better job of it than production anyway.
         if( checkForOverflow )
         {
-            hsBool needMoreDicing = false;
+            bool needMoreDicing = false;
             int i;
             for( i = 0; i < spanArray.GetCount(); i++ )
             {
                 plAccessGeometry accGeom;
                 plAccessSpan accSpan;
                 accGeom.AccessSpanFromGeometrySpan(accSpan, spanArray[i]);
-                hsBool destroySpan = false;
+                bool destroySpan = false;
                 if( accSpan.HasAccessVtx() )
                 {
                     if( accSpan.AccessVtx().VertCount() >= plGBufferGroup::kMaxNumVertsPerBuffer )
@@ -1299,9 +1299,9 @@ hsBool  plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 dice.Dice(spanArray);
             }
         }
-        throw (hsBool)true;
+        throw (bool)true;
     }
-    catch( hsBool retVal )
+    catch( bool retVal )
     {
         /// Cleanup!
         for( i = 0; i < vertNormalCache.GetCount(); i++ )
@@ -1504,7 +1504,7 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
             faceMtlIndex = 0;
     }
 
-    hsBool firstWarn = true;
+    bool firstWarn = true;
     hsPoint3    pt;
 
     /// Loop through the vertices
@@ -1715,7 +1715,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
 
     Mtl* mainMtl = hsMaterialConverter::Instance().GetBaseMtl( node );
 
-    hsBool needsGradientUvs = hsMaterialConverter::Instance().HasBumpLayer(node, mainMtl) || node->GetWaterDecEnv();
+    bool needsGradientUvs = hsMaterialConverter::Instance().HasBumpLayer(node, mainMtl) || node->GetWaterDecEnv();
 
     if( needsGradientUvs )
     {
@@ -1739,7 +1739,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
             }
         }
 
-        hsBool isMultiMat = hsMaterialConverter::Instance().IsMultiMat(mainMtl);
+        bool isMultiMat = hsMaterialConverter::Instance().IsMultiMat(mainMtl);
         int i;
         for( i = 0; i < mesh->getNumFaces(); i++ )
         {
@@ -1843,7 +1843,7 @@ Point3 plMeshConverter::IGetUvGradient(plMaxNode* node,
 
     Matrix3 v2l = node->GetVertToLocal();
 
-    hsBool flipOrder = v2l.Parity();
+    bool flipOrder = v2l.Parity();
     int vtxIdx = 0;
     int vtxNext = flipOrder ? 2 : 1;
     int vtxLast = flipOrder ? 1 : 2;
@@ -2008,7 +2008,7 @@ plMAXVertexAccNode::plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *
 //// IsEqual /////////////////////////////////////////////////////////////////
 //  Determines whether the node matches the values given.
 
-hsBool      plMAXVertexAccNode::IsEqual( const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, const hsPoint3 *uvs )
+bool        plMAXVertexAccNode::IsEqual( const hsVector3 *normal, const hsColorRGBA& color, const hsColorRGBA& illum, const hsPoint3 *uvs )
 {
     int     i;
 

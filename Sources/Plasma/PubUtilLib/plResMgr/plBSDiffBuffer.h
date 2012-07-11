@@ -75,8 +75,8 @@ class plBSDiffBuffer
 {
     protected:
 
-        hsBool          fWriting;
-        uint32_t          fNewLength, fPatchLength;
+        bool            fWriting;
+        uint32_t        fNewLength, fPatchLength;
         unsigned char*  fPatchBuffer;
 
     public:

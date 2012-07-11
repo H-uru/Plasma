@@ -49,18 +49,18 @@ class StringTokenizer {
 private:
     char *seps;
     char *tok;
-    hsBool isSep(char c);
+    bool isSep(char c);
     int32_t numSeps;
-    hsBool qAsTok;
-    hsBool inQuote;
+    bool qAsTok;
+    bool inQuote;
 public:
     StringTokenizer();
     StringTokenizer(const char *string, const char *seps);
     ~StringTokenizer();
     char *next();
-    hsBool hasMoreTokens();
+    bool hasMoreTokens();
     void reset(const char *string, const char *seps);
-    void ParseQuotes(hsBool qAsTok);
+    void ParseQuotes(bool qAsTok);
     char *string;
 };
 

@@ -100,9 +100,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                       double elapsedTime);
 //
 //  float IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime);
-//  hsBool32 IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
+//  bool32 IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
 //
-//  hsBool  HasMovementFlag(int f) const { return fMoveFlags.IsBitSet(f); }
+//  bool    HasMovementFlag(int f) const { return fMoveFlags.IsBitSet(f); }
 //  void    SetMovementFlag(int f) { fMoveFlags.SetBit(f); }
 //  void    ClearMovementFlag(int which) { fMoveFlags.ClearBit( which ); }
 //
@@ -111,7 +111,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //  void WarpToSpawnPoint() { SetFlag( kWantsToSpawn ); }
 //
-//  hsBool  bMoving;
+//  bool    bMoving;
 //
 //  void IApplyForce(plSimulationInterface::plSimpleForce type, const Havok::Vector3 &vec);
 //  void IDoLocalSetup(plSceneObject*);
@@ -124,17 +124,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  CLASSNAME_REGISTER( plPlayerModifier );
 //  GETINTERFACE_ANY( plPlayerModifier, plSingleModifier );
 //
-//  virtual hsBool  MsgReceive(plMessage* msg);
+//  virtual bool    MsgReceive(plMessage* msg);
 //  virtual void    AddTarget(plSceneObject* so);
 //  virtual void    RemoveTarget(plSceneObject* so);
 //
-//  hsBool HandleControlInput(plControlEventMsg* pMsg);
-//  virtual hsBool IEval(double secs, float del, uint32_t dirty);
+//  bool HandleControlInput(plControlEventMsg* pMsg);
+//  virtual bool IEval(double secs, float del, uint32_t dirty);
 //
-//  void SetMoving(hsBool b);
-//  hsBool IsMoving() { return bMoving; }
+//  void SetMoving(bool b);
+//  bool IsMoving() { return bMoving; }
 //
-//  hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+//  bool    HasFlag(int f) const { return fFlags.IsBitSet(f); }
 //  void    SetFlag(int f) { fFlags.SetBit(f); }
 //  void    ClearFlag(int which) { fFlags.ClearBit( which ); }
 //

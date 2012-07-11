@@ -74,17 +74,17 @@ public:
 class plConvert
 {
 protected:
-    hsBool              fQuit;
+    bool                fQuit;
     plErrorMsg*         fpErrorMsg;
     Interface*          fInterface;
     plConvertSettings*  fSettings;
     hsTArray<plMessage*>    fMsgQueue;
 
     plConvert();
-    hsBool              IMakeSceneObject(INode* node);
+    bool                IMakeSceneObject(INode* node);
     plKey               IGetRoomKey(INode* node);
     plKey               INewRoom(INode* node, char roomName[]);
-    hsBool              IOK();
+    bool                IOK();
 
 public:
     static plConvert& Instance();
@@ -103,14 +103,14 @@ public:
     };
 
     // Init the converter.  Only good for one call of Convert.
-    hsBool Init(Interface *ip, plErrorMsg* msg, plConvertSettings *settings);
+    bool Init(Interface *ip, plErrorMsg* msg, plConvertSettings *settings);
     void   DeInit();
 
-    hsBool Convert();
-    hsBool Convert(hsTArray<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
+    bool Convert();
+    bool Convert(hsTArray<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
     
     plMaxNode* GetRootNode();
-    void SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, hsBool ignorePhysicals = false); // iterates through scene to find nodes contained by the efxRegion
+    void SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, bool ignorePhysicals = false); // iterates through scene to find nodes contained by the efxRegion
     void AddMessageToQueue(plMessage* msg);
 
     // Because components don't get the convert settings (too much work to retrofit all of them)

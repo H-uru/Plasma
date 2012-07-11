@@ -103,7 +103,7 @@ class plCubicEnvironmap : public plBitmap
         //// Protected Members ////
 
         plMipmap        *fFaces[ 6 ];
-        hsBool          fInitialized;
+        bool            fInitialized;
 
         virtual uint32_t  Read( hsStream *s );
         virtual uint32_t  Write( hsStream *s );

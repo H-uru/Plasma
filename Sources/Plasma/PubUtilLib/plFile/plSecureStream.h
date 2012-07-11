@@ -73,7 +73,7 @@ protected:
     enum OpenMode {kOpenRead, kOpenWrite, kOpenFail};
     OpenMode fOpenMode;
 
-    hsBool fDeleteOnExit;
+    bool fDeleteOnExit;
 
     void IBufferFile();
 
@@ -88,18 +88,18 @@ protected:
     static bool ICheckMagicString(hsStream* s);
 
 public:
-    plSecureStream(hsBool deleteOnExit = false, uint32_t* key = nil); // uses default key if you don't pass one in
+    plSecureStream(bool deleteOnExit = false, uint32_t* key = nil); // uses default key if you don't pass one in
     plSecureStream(hsStream* base, uint32_t* key = nil);
     ~plSecureStream();
 
-    virtual hsBool Open(const char* name, const char* mode = "rb");
-    virtual hsBool Open(const wchar_t* name, const wchar_t* mode = L"rb");
-    hsBool         Open(hsStream* stream);
-    virtual hsBool Close();
+    virtual bool Open(const char* name, const char* mode = "rb");
+    virtual bool Open(const wchar_t* name, const wchar_t* mode = L"rb");
+    bool           Open(hsStream* stream);
+    virtual bool Close();
 
     virtual uint32_t Read(uint32_t byteCount, void* buffer);
     virtual uint32_t Write(uint32_t byteCount, const void* buffer);
-    virtual hsBool AtEnd();
+    virtual bool AtEnd();
     virtual void Skip(uint32_t deltaByteCount);
     virtual void Rewind();
     virtual void FastFwd();

@@ -276,14 +276,14 @@ void plDynamicEnvMap::ReRender()
     ISubmitRenderRequests();
 }
 
-hsBool plDynamicEnvMap::INeedReRender()
+bool plDynamicEnvMap::INeedReRender()
 {
     fOutStanding = 0;
     fLastRefresh = 0;
     return true;
 }
 
-hsBool plDynamicEnvMap::MsgReceive(plMessage* msg)
+bool plDynamicEnvMap::MsgReceive(plMessage* msg)
 {
     plRenderRequestAck* ack = plRenderRequestAck::ConvertNoRef(msg);
     if( ack )
@@ -354,7 +354,7 @@ hsBool plDynamicEnvMap::MsgReceive(plMessage* msg)
     return plCubicRenderTarget::MsgReceive(msg);
 }
 
-hsBool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
+bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
 {
     switch( refMsg->fType)
     {
@@ -397,7 +397,7 @@ hsBool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
     return false;
 }
 
-void plDynamicEnvMap::SetIncludeCharacters(hsBool b) 
+void plDynamicEnvMap::SetIncludeCharacters(bool b) 
 { 
     fIncCharacters = b; 
     if( b )
@@ -610,7 +610,7 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
 {
     int i;
 
-    hsBool useRefl = (fFlags & kReflectionMask) == kReflectionMask;
+    bool useRefl = (fFlags & kReflectionMask) == kReflectionMask;
     if (!fCamera)
     {
         if ((useRefl && fMatLayers[0]->GetTexture() != this) || (!useRefl && fMatLayers[0]->GetTexture() != fDisableTexture))
@@ -629,7 +629,7 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
     if (!useRefl && fDisableTexture)
         return;
 
-    hsBool inView = false;
+    bool inView = false;
     for (i = 0; i < fTargetNodes.GetCount(); i++)
     {
         if (pipe->TestVisibleWorld(fTargetNodes[i]))
@@ -665,14 +665,14 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
     }
 }
 
-hsBool plDynamicCamMap::INeedReRender()
+bool plDynamicCamMap::INeedReRender()
 {
     fOutStanding = 0;
     fLastRefresh = 0;
     return true;
 }
 
-hsBool plDynamicCamMap::MsgReceive(plMessage* msg)
+bool plDynamicCamMap::MsgReceive(plMessage* msg)
 {
     plRenderRequestAck* ack = plRenderRequestAck::ConvertNoRef(msg);
     if( ack )
@@ -749,7 +749,7 @@ void plDynamicCamMap::IPrepTextureLayers()
     }
 }
 
-hsBool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
+bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
 {
     plGenRefMsg* genRefMsg = plGenRefMsg::ConvertNoRef(refMsg);
 
@@ -854,7 +854,7 @@ hsBool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
     return false;
 }
 
-void plDynamicCamMap::SetIncludeCharacters(hsBool b) 
+void plDynamicCamMap::SetIncludeCharacters(bool b) 
 { 
     fIncCharacters = b; 
     if( b )
@@ -868,7 +868,7 @@ void plDynamicCamMap::AddVisRegion(plVisRegion* reg)
     hsgResMgr::ResMgr()->AddViaNotify( reg->GetKey(), new plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, kRefVisSet ), plRefFlags::kActiveRef );
 }
 
-void plDynamicCamMap::SetEnabled(hsBool enable)
+void plDynamicCamMap::SetEnabled(bool enable)
 {
     if (enable)
         fFlags |= kReflectionEnabled;
@@ -876,7 +876,7 @@ void plDynamicCamMap::SetEnabled(hsBool enable)
         fFlags &= ~kReflectionEnabled;
 }
 
-void plDynamicCamMap::SetCapable(hsBool capable)
+void plDynamicCamMap::SetCapable(bool capable)
 {
     if (capable)
         fFlags |= kReflectionCapable;

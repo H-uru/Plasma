@@ -122,7 +122,7 @@ plAnimEventComponent::plAnimEventComponent() : fCanExport(false)
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plAnimEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plAnimEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plComponentBase* animComp;
     plMaxNode* animNode;
@@ -142,7 +142,7 @@ hsBool plAnimEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plAnimEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plAnimEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if (!fCanExport)
         return false;
@@ -167,7 +167,7 @@ plEventCallbackMsg* CreateCallbackMsg(plAnimCmdMsg* animMsg, plKey modKey)
     return eventMsg;
 }
 
-hsBool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fCanExport)
         return false;
@@ -436,7 +436,7 @@ plMtlEventComponent::plMtlEventComponent() : fCanExport(false)
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plMtlEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMtlEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     Mtl* mtl = fCompPB->GetMtl(kMtlMtl);
 
@@ -456,7 +456,7 @@ hsBool plMtlEventComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg
     return plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plMtlEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMtlEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if (!fCanExport)
         return false;
@@ -472,7 +472,7 @@ hsBool plMtlEventComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 // KLUDGE - The material animation key getter is here, so we have to include all this crap
 #include "plResponderMtl.h"
 
-hsBool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fCanExport)
         return false;

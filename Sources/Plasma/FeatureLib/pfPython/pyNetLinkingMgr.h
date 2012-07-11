@@ -76,8 +76,8 @@ public:
 
 #ifndef BUILDING_PYPLASMA
     // enable/disable linking
-    hsBool IsEnabled( void ) const;
-    void SetEnabled( hsBool b );
+    bool IsEnabled( void ) const;
+    void SetEnabled( bool b ) const;
 
     // Link to a public instance. PLS will load balance.
     void LinkToAge( pyAgeLinkStruct & link, const char* linkAnim );

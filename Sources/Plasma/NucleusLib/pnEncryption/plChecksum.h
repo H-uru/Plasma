@@ -64,7 +64,7 @@ class hsStream;
 class plMD5Checksum
 {
     protected:
-        hsBool  fValid;
+        bool    fValid;
         MD5_CTX fContext;
         uint8_t fChecksum[MD5_DIGEST_LENGTH];
 
@@ -75,7 +75,7 @@ class plMD5Checksum
         plMD5Checksum(const char *fileName);
         plMD5Checksum(hsStream* stream);
 
-        hsBool  IsValid() const { return fValid; }
+        bool    IsValid() const { return fValid; }
         void    Clear();
 
         void    CalcFromFile(const char *fileName);
@@ -108,8 +108,8 @@ typedef uint8_t ShaDigest[SHA_DIGEST_LENGTH];
 class plSHAChecksum
 {
     protected:
-        hsBool  fValid;
-        SHA_CTX fContext;
+        bool      fValid;
+        SHA_CTX   fContext;
         ShaDigest fChecksum;
 
     public:
@@ -119,7 +119,7 @@ class plSHAChecksum
         plSHAChecksum(const char* fileName);
         plSHAChecksum(hsStream* stream);
 
-        hsBool IsValid() const { return fValid; }
+        bool IsValid() const { return fValid; }
         void Clear();
 
         void CalcFromFile(const char* fileName);
@@ -147,8 +147,8 @@ class plSHAChecksum
 class plSHA1Checksum
 {
     protected:
-        hsBool  fValid;
-        SHA_CTX fContext;
+        bool      fValid;
+        SHA_CTX   fContext;
         ShaDigest fChecksum;
 
     public:
@@ -158,7 +158,7 @@ class plSHA1Checksum
         plSHA1Checksum(const char* fileName);
         plSHA1Checksum(hsStream* stream);
 
-        hsBool IsValid() const { return fValid; }
+        bool IsValid() const { return fValid; }
         void Clear();
 
         void CalcFromFile(const char* fileName);

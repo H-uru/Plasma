@@ -63,8 +63,8 @@ public:
     CLASSNAME_REGISTER( plAudible );
     GETINTERFACE_ANY( plAudible, hsKeyedObject );
 
-    virtual plAudible&  SetProperty(int prop, hsBool on) = 0;
-    virtual hsBool      GetProperty(int prop) = 0;
+    virtual plAudible&  SetProperty(int prop, bool on) = 0;
+    virtual bool        GetProperty(int prop) = 0;
 
     virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) { return *this; }
     
@@ -90,8 +90,8 @@ public:
     virtual void        SetVelocity(const hsVector3 vel,int index = -1) = 0;
     virtual hsVector3   GetVelocity(int index = -1) const = 0;
     virtual hsPoint3    GetPosition(int index = -1) = 0;
-    virtual void        SetLooping(hsBool loop,int index = -1) = 0; // sets continuous loop or stops looping
-    virtual hsBool      IsPlaying(int index = -1) = 0;
+    virtual void        SetLooping(bool loop,int index = -1) = 0; // sets continuous loop or stops looping
+    virtual bool        IsPlaying(int index = -1) = 0;
     virtual void        SetTime(double t, int index = -1) = 0;
     virtual void        Activate() = 0;
     virtual void        DeActivate() = 0;
@@ -101,13 +101,13 @@ public:
     virtual int         GetNumSounds() const = 0;   
     virtual plSound*    GetSound(int i) const = 0;
     virtual int         GetSoundIndex(const char *keyname) const = 0;
-    virtual void        Init(hsBool isLocal){;}
+    virtual void        Init(bool isLocal){;}
     virtual void        SetVolume(const float volume,int index = -1) = 0;
-    virtual void        SetMuted( hsBool muted, int index = -1 ) = 0;
+    virtual void        SetMuted( bool muted, int index = -1 ) = 0;
     virtual void        ToggleMuted( int index = -1 ) = 0;
     virtual void        SetTalkIcon(int index, uint32_t str) = 0;
     virtual void        ClearTalkIcon() = 0;
-    virtual void        SetFilename(int index, const char *filename, hsBool isCompressed) = 0;  // set filename for a streaming sound
+    virtual void        SetFilename(int index, const char *filename, bool isCompressed) = 0;  // set filename for a streaming sound
     virtual void        SetFadeIn( const int type, const float length, int index = -1 ) = 0;
     virtual void        SetFadeOut( const int type, const float length, int index = -1 ) = 0;
 

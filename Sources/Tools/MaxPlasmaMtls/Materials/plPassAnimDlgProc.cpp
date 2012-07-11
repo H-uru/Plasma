@@ -193,7 +193,7 @@ void    plPassAnimDlgProc::SegmentListChanged( void )
         ILoadNames( fCurrParamMap->GetParamBlock() );
 }
 
-void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, hsBool clear )
+void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
 {
     plAnimStealthNode *newStealth;
     HWND hAnims = GetDlgItem( fhWnd, IDC_NAMES );
@@ -300,7 +300,7 @@ void plPassAnimDlgProc::ILoadNames(IParamBlock2 *pb )
     fInitingNames = false;
 }
 
-void plPassAnimDlgProc::IEnableGlobal(HWND hWnd, hsBool enable)
+void plPassAnimDlgProc::IEnableGlobal(HWND hWnd, bool enable)
 {
     Edit_Enable(GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME), enable);
     ComboBox_Enable(GetDlgItem(hWnd, IDC_NAMES), !enable);

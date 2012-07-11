@@ -100,7 +100,7 @@ void plAvBrainDrive::IEnablePhysics(bool enable, plKey avKey)
 }
 
 // APPLY
-hsBool plAvBrainDrive::Apply(double timeNow, float elapsed)
+bool plAvBrainDrive::Apply(double timeNow, float elapsed)
 {
     plSceneObject * avSO = fAvMod->GetTarget(0);
     float eTime = hsTimer::GetDelSysSeconds();
@@ -180,7 +180,7 @@ hsBool plAvBrainDrive::Apply(double timeNow, float elapsed)
 }
 
 // IHANDLECONTROLMSG
-hsBool plAvBrainDrive::MsgReceive(plMessage* msg)
+bool plAvBrainDrive::MsgReceive(plMessage* msg)
 {
     plControlEventMsg *ctrlMsg = plControlEventMsg::ConvertNoRef(msg);
     if(ctrlMsg)

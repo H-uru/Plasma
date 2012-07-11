@@ -112,7 +112,7 @@ struct hsPoint2 {
         }
 
     hsPoint2*  Grid(float period);
-    hsBool  CloseEnough(const hsPoint2* p, float tolerance) const;
+    bool       CloseEnough(const hsPoint2* p, float tolerance) const;
 
     float       MagnitudeSquared() const { return fX * fX + fY * fY; }
     float       Magnitude() const { return Magnitude(fX, fY); }

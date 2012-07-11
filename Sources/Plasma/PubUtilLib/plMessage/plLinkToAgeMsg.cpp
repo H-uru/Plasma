@@ -314,7 +314,7 @@ void plLinkEffectBCMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(fLinkFlags);
 }
 
-void plLinkEffectBCMsg::SetLinkFlag(uint32_t flag, hsBool on /* = true */)
+void plLinkEffectBCMsg::SetLinkFlag(uint32_t flag, bool on /* = true */)
 {
     if (on)
         fLinkFlags |= flag;
@@ -322,7 +322,7 @@ void plLinkEffectBCMsg::SetLinkFlag(uint32_t flag, hsBool on /* = true */)
         fLinkFlags &= ~flag;
 }
 
-hsBool plLinkEffectBCMsg::HasLinkFlag(uint32_t flag)
+bool plLinkEffectBCMsg::HasLinkFlag(uint32_t flag)
 {
     return fLinkFlags & flag;
 }
@@ -384,7 +384,7 @@ plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg() : fForward(false)
 }
 
 
-plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg(hsBool forward, plKey avatarKey)
+plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg(bool forward, plKey avatarKey)
 {
     fForward = forward;
     fAvatarKey = avatarKey;

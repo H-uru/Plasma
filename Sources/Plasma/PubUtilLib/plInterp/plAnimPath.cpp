@@ -230,7 +230,7 @@ void plAnimPath::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEScalar(fMinDistSq);
 }
 
-hsBool plAnimPath::OutOfRange(hsPoint3 &worldPt, float range) const
+bool plAnimPath::OutOfRange(hsPoint3 &worldPt, float range) const
 {
     hsPoint3 pt = fWorldToLocal * worldPt;
 
@@ -603,7 +603,7 @@ void plAnimPath::MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos)
     GetPosition(&p1);
 
     time += timeInc;
-    hsBool quit=false;
+    bool quit=false;
     while(! quit && time < animLen+timeInc)
     {
         if (time > animLen)
@@ -651,7 +651,7 @@ void plAnimPath::ComputeArcLenDeltas(int32_t numSamples)
     fArcLenDeltas[cnt++]=aldi;
     time += timeInc;
 
-    hsBool quit=false;
+    bool quit=false;
     while(!quit && time<animLen+timeInc)
     {
         if (time > animLen || cnt+1 == numSamples)
@@ -677,7 +677,7 @@ void plAnimPath::ComputeArcLenDeltas(int32_t numSamples)
 // Returns time of point (at least) arcLength units away from point at startTime.
 // Also sets strtSrchIdx for incremental searching.
 //
-float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, hsBool bwd,
+float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, bool bwd,
                                       int32_t* startSrchIdx)
 {
     if (arcLengthIn==0)
@@ -700,7 +700,7 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, hsBool bw
         SetCurTime(startTime, kCalcPosOnly);
 
     // find nearest (forward) arcLen sample point, use starting srch index provided
-    hsBool found=false;
+    bool found=false;
     int32_t i;
     for(i=(*startSrchIdx); i<fArcLenDeltas.GetCount()-1; i++)
     {
@@ -748,7 +748,7 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, hsBool bw
 
     float curArcLen = hsVector3(&pos2, &pos).Magnitude();
     float curTime=0;
-    hsBool quit=false;
+    bool quit=false;
     float timeOut = 0;
     int32_t inc = bwd ? -1 : 1;
     // now sum distance deltas until we exceed the desired arcLen

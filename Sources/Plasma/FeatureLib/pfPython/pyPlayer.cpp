@@ -95,23 +95,3 @@ void pyPlayer::Init(plKey avKey, const char* pname, uint32_t pid, float distsq) 
     fIsCCR = false;
     fIsServer = false;
 }
-
-void pyPlayer::SetCCRFlag(hsBool state)
-{
-    fIsCCR = state;
-}
-
-hsBool pyPlayer::IsCCR()
-{
-    return fIsCCR;
-}
-
-void pyPlayer::SetServerFlag(hsBool state)
-{
-    fIsServer = state;
-}
-
-hsBool pyPlayer::IsServer()
-{
-    return fIsServer;
-}

@@ -201,7 +201,7 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
 // Moved class declaration to .h -mcn
 
 
-hsBool plSoftVolBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) 
+bool plSoftVolBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) 
 { 
     fSoftKey = nil; 
     fValid = false; 
@@ -273,7 +273,7 @@ plKey plSoftVolBaseComponent::IInvertVolume(plKey subKey)
     return invertKey;
 }
 
-hsBool plSoftVolBaseComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSoftVolBaseComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fSoftKey = nil;
     return true;
@@ -308,7 +308,7 @@ public:
     plSoftVolComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -399,7 +399,7 @@ plSoftVolComponent::plSoftVolComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSoftVolComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plSoftVolComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     if( !plSoftVolBaseComponent::SetupProperties(pNode, errMsg) )
         return false;
@@ -616,7 +616,7 @@ public:
     plSoftVolUnionComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -718,7 +718,7 @@ plSoftVolUnionComponent::plSoftVolUnionComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSoftVolUnionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plSoftVolUnionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     return plSoftVolBaseComponent::SetupProperties(pNode, errMsg);
 }
@@ -777,7 +777,7 @@ public:
     plSoftVolIsectComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -879,7 +879,7 @@ plSoftVolIsectComponent::plSoftVolIsectComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSoftVolIsectComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plSoftVolIsectComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     return plSoftVolBaseComponent::SetupProperties(pNode, errMsg);
 }
@@ -934,7 +934,7 @@ public:
     plSoftVolNegateComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -1006,7 +1006,7 @@ plSoftVolNegateComponent::plSoftVolNegateComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSoftVolNegateComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plSoftVolNegateComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     return plSoftVolBaseComponent::SetupProperties(pNode, errMsg);
 }
@@ -1058,10 +1058,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -1108,7 +1108,7 @@ plLightRegionComponent::plLightRegionComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plLightRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
+bool plLightRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
     if( !fCompPB->GetINode(kSoftVolume) )
         return true;
@@ -1134,7 +1134,7 @@ hsBool plLightRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     return true;
 }
 
-hsBool plLightRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plLightRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
 
     return true;
@@ -1142,7 +1142,7 @@ hsBool plLightRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plLightRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plLightRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
 
     return true;
@@ -1302,8 +1302,8 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
         plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fVisReg, loc);
 
 
-        hsBool excludes = fCompPB->GetInt(kExcludes);
-        hsBool disableNormal = excludes ? false : fCompPB->GetInt(kDisableNormal);
+        bool excludes = fCompPB->GetInt(kExcludes);
+        bool disableNormal = excludes ? false : fCompPB->GetInt(kDisableNormal);
 
         fVisReg->SetProperty(plVisRegion::kIsNot, excludes);
         fVisReg->SetProperty(plVisRegion::kReplaceNormal, true);
@@ -1314,18 +1314,18 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
     }
 }
 
-hsBool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
+bool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
     const char* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )
         return true;
 
-    hsBool excludes = fCompPB->GetInt(kExcludes);
-    hsBool disableNormal = excludes ? false : fCompPB->GetInt(kDisableNormal);
-    hsBool affectDraw = disableNormal ? true : fCompPB->GetInt(kAffectDraw);
-    hsBool affectOcc = disableNormal ? true : fCompPB->GetInt(kAffectOcc);
-    hsBool affectLight = disableNormal ? true : fCompPB->GetInt(kAffectLight);
+    bool excludes = fCompPB->GetInt(kExcludes);
+    bool disableNormal = excludes ? false : fCompPB->GetInt(kDisableNormal);
+    bool affectDraw = disableNormal ? true : fCompPB->GetInt(kAffectDraw);
+    bool affectOcc = disableNormal ? true : fCompPB->GetInt(kAffectOcc);
+    bool affectLight = disableNormal ? true : fCompPB->GetInt(kAffectLight);
 
     const plDrawInterface* di = affectDraw ? obj->GetDrawInterface() : nil;
     plOccluder* occ = affectOcc ? (plOccluder*)obj->GetGenericInterface(plOccluder::Index()) : nil;
@@ -1358,7 +1358,7 @@ hsBool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     return true;
 }
 
-hsBool plVisRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plVisRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     fVisReg = nil;
 
@@ -1367,7 +1367,7 @@ hsBool plVisRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plVisRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plVisRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
 
     return true;
@@ -1413,8 +1413,8 @@ public:
     plRelevanceRegionComponent();
     void DeleteThis() { delete this; }
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
 };
 
 
@@ -1444,7 +1444,7 @@ plRelevanceRegionComponent::plRelevanceRegionComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
+bool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
     const char* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
@@ -1476,7 +1476,7 @@ hsBool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     return true;
 }
 
-hsBool plRelevanceRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plRelevanceRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     fRegion = nil;
 
@@ -1515,7 +1515,7 @@ plEffVisSetComponent::plEffVisSetComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
+bool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
     const char* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
@@ -1549,7 +1549,7 @@ hsBool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plEffVisSetComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plEffVisSetComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
     fVisReg = nil;
 

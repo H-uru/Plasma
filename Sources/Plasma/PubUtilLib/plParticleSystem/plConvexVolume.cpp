@@ -65,7 +65,7 @@ void plConvexVolume::IClear()
     delete [] fWorldPlanes;
 }
 
-hsBool plConvexVolume::AddPlane(const hsPlane3 &plane)
+bool plConvexVolume::AddPlane(const hsPlane3 &plane)
 {
     // First check for a redundant plane (since we're convex, a comparison of normals should do)
     int i;
@@ -124,7 +124,7 @@ void plConvexVolume::SetPlane(const hsPlane3 &plane, const uint32_t index)
     fLocalPlanes[index] = plane;
 }
 
-hsBool plConvexVolume::IsInside(const hsPoint3 &pos) const
+bool plConvexVolume::IsInside(const hsPoint3 &pos) const
 {
     int i;
     for( i = 0; i < fNumPlanes; i++ )
@@ -136,7 +136,7 @@ hsBool plConvexVolume::IsInside(const hsPoint3 &pos) const
     return true;
 }
 
-hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
+bool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
 {
     float minDist = 1.e33f;
     int32_t minIndex = -1;
@@ -159,7 +159,7 @@ hsBool plConvexVolume::ResolvePoint(hsPoint3 &pos) const
     return true;
 }
 
-hsBool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const
+bool plConvexVolume::BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const
 {
     float minDist = 1.e33f;
     int32_t minIndex = -1;

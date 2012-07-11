@@ -113,11 +113,11 @@ void plWin32StreamingSound::SetFilename(const char *filename, bool isCompressed)
 //////////////////////////////////////////////////////////////
 //  Override, 'cause we don't want to actually LOAD the sound for streaming,
 //  just make sure it's decompressed and such and ready to stream.
-plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( hsBool playWhenLoaded, hsBool isIncidental /* = false */ )
+plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWhenLoaded, bool isIncidental /* = false */ )
 {
     if(fPlayWhenStopped)
         return plSoundBuffer::kPending;
-    hsBool sfxPath = fNewFilename.size() ? false : true;
+    bool sfxPath = fNewFilename.size() ? false : true;
     
     if( fDataStream != nil && fNewFilename.size() == 0)
         return plSoundBuffer::kSuccess;     // Already loaded
@@ -240,7 +240,7 @@ void plWin32StreamingSound::IFreeBuffers( void )
 //  first half of our buffer. We'll fill the rest of the buffer as we get
 //  notifications for such.
 
-hsBool plWin32StreamingSound::LoadSound( hsBool is3D )
+bool plWin32StreamingSound::LoadSound( bool is3D )
 {
     if( fFailed )
         return false;
@@ -494,7 +494,7 @@ void plWin32StreamingSound::ISetActualTime( double t )
     //  fStartTimeSec = t;
 }
 
-hsBool plWin32StreamingSound::MsgReceive( plMessage* pMsg )
+bool plWin32StreamingSound::MsgReceive( plMessage* pMsg )
 {
     return plWin32Sound::MsgReceive( pMsg );
 }

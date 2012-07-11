@@ -79,7 +79,7 @@ plArmatureBrain::~plArmatureBrain()
         delete fCurTask;    
 }
 
-hsBool plArmatureBrain::Apply(double timeNow, float elapsed)
+bool plArmatureBrain::Apply(double timeNow, float elapsed)
 {
     IProcessTasks(timeNow, elapsed);
     fArmature->ApplyAnimations(timeNow, elapsed);
@@ -99,7 +99,7 @@ void plArmatureBrain::QueueTask(plAvTask *task)
         fTaskQueue.push_back(task);
 }
 
-hsBool plArmatureBrain::LeaveAge()
+bool plArmatureBrain::LeaveAge()
 {
     if (fCurTask)
         fCurTask->LeaveAge(plArmatureMod::ConvertNoRef(fArmature));
@@ -115,7 +115,7 @@ hsBool plArmatureBrain::LeaveAge()
     return true;
 }
     
-hsBool plArmatureBrain::IsRunningTask() const
+bool plArmatureBrain::IsRunningTask() const
 {
     if (fCurTask)
         return true;
@@ -157,7 +157,7 @@ void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
 }
 
 // MSGRECEIVE
-hsBool plArmatureBrain::MsgReceive(plMessage * msg)
+bool plArmatureBrain::MsgReceive(plMessage * msg)
 {
     plAvTaskMsg *taskMsg = plAvTaskMsg::ConvertNoRef(msg);
     if (taskMsg)
@@ -192,7 +192,7 @@ void plArmatureBrain::IProcessTasks(double time, float elapsed)
     }
 }
 
-hsBool plArmatureBrain::IHandleTaskMsg(plAvTaskMsg *msg)
+bool plArmatureBrain::IHandleTaskMsg(plAvTaskMsg *msg)
 {
     plAvTask *task = msg->GetTask();
     QueueTask(task);

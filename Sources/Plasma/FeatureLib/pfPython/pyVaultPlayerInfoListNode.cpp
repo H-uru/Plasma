@@ -74,7 +74,7 @@ pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(int n)
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-hsBool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
+bool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
 {
     if (!fNode)
         return false;
@@ -93,7 +93,7 @@ hsBool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
     return (rvn != nil);
 }
 
-hsBool pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
+bool pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
 {
     if (HasPlayer(playerID))
         return true;

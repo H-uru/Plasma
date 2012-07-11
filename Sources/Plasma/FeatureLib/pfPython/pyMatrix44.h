@@ -83,7 +83,7 @@ public:
     void MakeRotateMat(int axis, float radians) { fMatrix.MakeRotateMat(axis, radians); }
     void Make(const pyPoint3& from, const pyPoint3& at, const pyVector3& up);
     void MakeUpPreserving(const pyPoint3& from, const pyPoint3& at, const pyVector3& up);
-    hsBool GetParity() const { return fMatrix.GetParity(); }
+    bool GetParity() const { return fMatrix.GetParity(); }
     float GetDeterminant() const { return fMatrix.GetDeterminant(); }
     PyObject* GetInverse(PyObject* inverse) const; // returns (and accepts) pyMatrix44
     PyObject* GetTranspose(PyObject* inverse) const; // returns (and accepts) pyMatrix44

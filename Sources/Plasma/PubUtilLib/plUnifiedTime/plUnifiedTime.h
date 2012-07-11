@@ -111,7 +111,7 @@ public:
     time_t GetSecs() const { return fSecs; }
     uint32_t GetMicros() const { return fMicros; }
     double GetSecsDouble() const;  // get the secs and micros as a double floating point value
-    hsBool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
+    bool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
     struct tm * GetTm(struct tm * ptm=nil) const;
     int GetYear() const;
     int GetMonth() const;
@@ -127,14 +127,14 @@ public:
     void SetSecs(const time_t secs) { fSecs = secs; }
     void SetSecsDouble(double secs);
     void SetMicros(const uint32_t micros) { fMicros = micros; }
-    hsBool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
-    hsBool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0);
-    hsBool SetToUTC();
+    bool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
+    bool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0);
+    bool SetToUTC();
     void ToCurrentTime();
     void ToEpoch() { fSecs = 0; fMicros = 0;}
     void SetMode(Mode mode) { fMode=mode;}
 #if HS_BUILD_FOR_WIN32
-    hsBool SetFromWinFileTime(const FILETIME ft);
+    bool SetFromWinFileTime(const FILETIME ft);
 #endif
     
     // query

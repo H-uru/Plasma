@@ -71,11 +71,11 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
 
         pfGUIButtonMod      *fParent;
         pfGUIDraggableMod   *fDraggable;
-        hsBool              fReportDrag;
+        bool                fReportDrag;
 
     public:
 
-        pfGUIButtonDragProc( pfGUIButtonMod *parent, pfGUIDraggableMod *draggable, pfGUICtrlProcObject *origProc, hsBool reportDrag )
+        pfGUIButtonDragProc( pfGUIButtonMod *parent, pfGUIDraggableMod *draggable, pfGUICtrlProcObject *origProc, bool reportDrag )
         {
             fParent = parent;
             fDraggable = draggable;
@@ -121,7 +121,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
 };
 
 
-void    pfGUIButtonMod::StopDragging( hsBool cancel )
+void    pfGUIButtonMod::StopDragging( bool cancel )
 {
     fDraggable->StopDragging( cancel );
     fDraggable->SetVisible( false );
@@ -161,14 +161,14 @@ pfGUIButtonMod::pfGUIButtonMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIButtonMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIButtonMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIButtonMod::MsgReceive( plMessage *msg )
+bool    pfGUIButtonMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil && refMsg->fType == kRefDraggable )
@@ -232,7 +232,7 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIButtonMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIButtonMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
     if( fAnimationKeys.GetCount() > 0 || fMouseOverAnimKeys.GetCount() > 0 )
@@ -329,7 +329,7 @@ int32_t   pfGUIButtonMod::GetNotifyType()
     return fNotifyType;
 }
 
-hsBool  pfGUIButtonMod::IsButtonDown()
+bool    pfGUIButtonMod::IsButtonDown()
 {
     return fClicking;
 }
@@ -337,7 +337,7 @@ hsBool  pfGUIButtonMod::IsButtonDown()
 //// SetInteresting //////////////////////////////////////////////////////////
 //  Overridden to play mouse over animation when we're interesting
 
-void    pfGUIButtonMod::SetInteresting( hsBool i )
+void    pfGUIButtonMod::SetInteresting( bool i )
 {
     pfGUIControlMod::SetInteresting( i );
 

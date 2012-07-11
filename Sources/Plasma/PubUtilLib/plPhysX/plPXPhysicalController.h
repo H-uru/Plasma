@@ -61,7 +61,7 @@ class plDbgCollisionInfo
 public:
     plSceneObject *fSO;
     hsVector3 fNormal;
-    hsBool fOverlap;
+    bool fOverlap;
 };
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -134,7 +134,7 @@ public:
     virtual void SetSeek(bool seek){fSeeking=seek;}
     virtual void GetWorldSpaceCapsule(NxCapsule& cap);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static hsBool fDebugDisplay;
+    static bool fDebugDisplay;
 #endif // PLASMA_EXTERNAL_RELEASE
 
 protected:

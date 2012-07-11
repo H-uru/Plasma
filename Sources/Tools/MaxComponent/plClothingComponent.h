@@ -50,9 +50,9 @@ public:
     plClothingComponent();
 
     virtual void DeleteThis() { delete this; }
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
     enum // ParamBlock indices
     {

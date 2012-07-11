@@ -128,7 +128,7 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 hsTArray<plCaptureRenderMsg*>   plCaptureRender::fProcessed;
 
 // plCaptureRender::Capture
-hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
+bool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     // Create our render target
     const uint16_t flags = plRenderTarget::kIsOffscreen;
@@ -168,7 +168,7 @@ hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t heigh
 }
 
 // plCaptureRender::IProcess
-hsBool plCaptureRender::IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ)
+bool plCaptureRender::IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ)
 {
     // We've just had a successful render into our render target
     
@@ -224,7 +224,7 @@ void plCaptureRender::Update(plPipeline* pipe)
     fCapReqs.Reset();
 }
 
-hsBool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
+bool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
     CapInfo capInfo;
     capInfo.fAck = ack;

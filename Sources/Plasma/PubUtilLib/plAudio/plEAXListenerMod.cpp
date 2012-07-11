@@ -120,13 +120,13 @@ void    plEAXListenerMod::IUnRegister( void )
     fRegistered = false;
 }
 
-hsBool plEAXListenerMod::IEval( double secs, float del, uint32_t dirty )
+bool plEAXListenerMod::IEval( double secs, float del, uint32_t dirty )
 {
     IRegister();
     return false;
 }
 
-hsBool  plEAXListenerMod::MsgReceive( plMessage* pMsg )
+bool    plEAXListenerMod::MsgReceive( plMessage* pMsg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( pMsg );
     if( refMsg != nil )

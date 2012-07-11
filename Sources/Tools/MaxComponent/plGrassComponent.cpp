@@ -234,7 +234,7 @@ plGrassComponent::plGrassComponent() : fShader(nil)
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plGrassComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGrassComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fShader = new plGrassShaderMod();
 
@@ -261,7 +261,7 @@ hsBool plGrassComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGrassComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGrassComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plObjRefMsg* refMsg = new plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(fShader->GetKey(), refMsg, plRefFlags::kActiveRef);
@@ -273,7 +273,7 @@ hsBool plGrassComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return TRUE;
 }
 
-hsBool plGrassComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plGrassComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fShader )
         fShader->GetKey()->UnRefObject();

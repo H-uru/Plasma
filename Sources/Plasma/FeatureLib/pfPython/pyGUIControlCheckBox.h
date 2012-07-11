@@ -72,10 +72,10 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlCheckBox(pyKey& gckey);
+    static bool IsGUIControlCheckBox(pyKey& gckey);
 
-    virtual void    SetChecked( hsBool checked );
-    virtual hsBool  IsChecked( void );
+    virtual void    SetChecked( bool checked );
+    virtual bool    IsChecked( void );
 
 };
 

@@ -79,14 +79,14 @@ class plResManagerHelper : public hsKeyedObject
         plResManager                *fResManager;
         static plResManagerHelper   *fInstance;
 
-        hsBool                      fInShutdown;
+        bool                        fInShutdown;
 
 #ifdef MCN_RESMGR_DEBUGGING
         friend class plDebugPrintIterator;
         friend class plResMgrDebugInterface;
 
         plStatusLog     *fDebugScreen;
-        hsBool          fRefreshing, fCurrAgeExpanded;
+        bool            fRefreshing, fCurrAgeExpanded;
         int             fCurrAge;
         int             fDebugDisplayType;
 
@@ -100,7 +100,7 @@ class plResManagerHelper : public hsKeyedObject
         plResMgrDebugInterface  *fDebugInput;
 #endif
 
-        void    IUpdateDebugScreen( hsBool force = false );
+        void    IUpdateDebugScreen( bool force = false );
 
     public:
 
@@ -110,7 +110,7 @@ class plResManagerHelper : public hsKeyedObject
         CLASSNAME_REGISTER( plResManagerHelper );
         GETINTERFACE_ANY( plResManagerHelper, hsKeyedObject );
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
     
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -120,11 +120,11 @@ class plResManagerHelper : public hsKeyedObject
 
         void    LoadAndHoldPageKeys( plRegistryPageNode *page );
 
-        void    EnableDebugScreen( hsBool enable );
+        void    EnableDebugScreen( bool enable );
 
         // Please let the res manager handle telling this.
-        void    SetInShutdown(hsBool b) { fInShutdown = b; }
-        hsBool  GetInShutdown() const { return fInShutdown; }
+        void    SetInShutdown(bool b) { fInShutdown = b; }
+        bool    GetInShutdown() const { return fInShutdown; }
 
         static plResManagerHelper   *GetInstance( void ) { return fInstance; }
 };

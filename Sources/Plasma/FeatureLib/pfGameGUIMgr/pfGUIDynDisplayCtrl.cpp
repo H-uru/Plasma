@@ -72,14 +72,14 @@ pfGUIDynDisplayCtrl::~pfGUIDynDisplayCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDynDisplayCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIDynDisplayCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )

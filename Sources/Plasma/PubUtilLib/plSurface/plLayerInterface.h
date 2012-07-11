@@ -208,12 +208,12 @@ public:
     plLayerInterface*           GetAttached();
     void                        AttachViaNotify(plLayerInterface *prev); // Export only
 
-    hsBool                  OwnChannel(uint32_t which) const { return 0 != (fOwnedChannels & which); }
+    bool                    OwnChannel(uint32_t which) const { return 0 != (fOwnedChannels & which); }
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-    virtual hsBool          MsgReceive(plMessage* msg);
+    virtual bool            MsgReceive(plMessage* msg);
 
 };
 

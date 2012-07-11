@@ -130,14 +130,14 @@ protected:
 
     plShaderTableInst();
 
-    hsBool LoadFromFile() const { return 0 != (fFlags & kLoadFromFile); }
-    void SetLoadFromFile(hsBool on) { if(on) fFlags |= kLoadFromFile; else fFlags &= ~kLoadFromFile; }
+    bool LoadFromFile() const { return 0 != (fFlags & kLoadFromFile); }
+    void SetLoadFromFile(bool on) { if(on) fFlags |= kLoadFromFile; else fFlags &= ~kLoadFromFile; }
 
     const plShaderDecl* Decl(plShaderID::ID id) const { return fTable[id]; }
 
     void Register(const plShaderDecl* decl);
 
-    hsBool IsRegistered(plShaderID::ID id) const { return (id == 0) || ((id < plShaderID::kNumShaders) && fTable[id]); }
+    bool IsRegistered(plShaderID::ID id) const { return (id == 0) || ((id < plShaderID::kNumShaders) && fTable[id]); }
 
 public:
     virtual ~plShaderTableInst();
@@ -156,14 +156,14 @@ protected:
 
 public:
 
-    static hsBool LoadFromFile() { return Instance().LoadFromFile(); }
-    static void SetLoadFromFile(hsBool on) { Instance().SetLoadFromFile(on); }
+    static bool LoadFromFile() { return Instance().LoadFromFile(); }
+    static void SetLoadFromFile(bool on) { Instance().SetLoadFromFile(on); }
     
     static const plShaderDecl* Decl(plShaderID::ID id) { return Instance().Decl(id); }
 
     static void Register(const plShaderDecl* decl) { Instance().Register(decl); }
 
-    static hsBool IsRegistered(plShaderID::ID id) { return Instance().IsRegistered(id); }
+    static bool IsRegistered(plShaderID::ID id) { return Instance().IsRegistered(id); }
 };
 
 class plShaderRegister

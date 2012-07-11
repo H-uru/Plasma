@@ -157,7 +157,7 @@ public:
     plSoundBufferCollector(hsTArray<plKey>& keyArray) 
                 : plKeyCollector(keyArray) {}
 
-    hsBool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page)
     {
         page->LoadKeys();
         return page->IterateKeys(this, plSoundBuffer::Index());
@@ -226,7 +226,7 @@ protected:
 public:
     plStatDumpIterator(const char* outputDir) : fOutputDir(outputDir) {}
 
-    hsBool EatKey(const plKey& key)
+    bool EatKey(const plKey& key)
     {
         plKeyImp* imp = (plKey)key;
 
@@ -244,7 +244,7 @@ public:
         return true;
     }
 
-    hsBool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page)
     {
         const plPageInfo& info = page->GetPageInfo();
 

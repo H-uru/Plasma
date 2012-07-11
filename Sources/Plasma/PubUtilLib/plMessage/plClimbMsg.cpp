@@ -55,7 +55,7 @@ plClimbMsg::plClimbMsg()
     // nothing
 }
 
-plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command command, Direction direction, hsBool status, plKey target)
+plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command command, Direction direction, bool status, plKey target)
 : plMessage(sender, receiver, nil),
   fCommand(command), fDirection(direction),
   fStatus(status),

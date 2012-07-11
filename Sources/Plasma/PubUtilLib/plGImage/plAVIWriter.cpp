@@ -67,7 +67,7 @@ protected:
     PAVISTREAM fCompressedHandle;
     BITMAPINFOHEADER fBitmapInfo;
 
-    hsBool fOldRealTime;
+    bool fOldRealTime;
     float fOldFrameTimeInc;
 
     double fStartTime;
@@ -81,7 +81,7 @@ public:
     plAVIWriterImp();
     virtual ~plAVIWriterImp();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Shutdown();
 
@@ -95,7 +95,7 @@ public:
     plAVIWriterImp();
     virtual ~plAVIWriterImp();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Shutdown();
 
@@ -153,7 +153,7 @@ void plAVIWriterImp::Shutdown()
 #include "plProfile.h"
 plProfile_CreateTimer("AviCapture", "RenderSetup", AviCapture);
 
-hsBool plAVIWriterImp::MsgReceive(plMessage* msg)
+bool plAVIWriterImp::MsgReceive(plMessage* msg)
 {
 #if HS_BUILD_FOR_WIN32
     plRenderMsg* renderMsg = plRenderMsg::ConvertNoRef(msg);

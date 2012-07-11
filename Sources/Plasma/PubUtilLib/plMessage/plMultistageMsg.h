@@ -64,8 +64,8 @@ public:
     plMultistageModMsg() : fStageNum(0), fNumLoops(1) {}
     plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender,receiver,nil),fStageNum(0),fNumLoops(1) {}
 
-    hsBool GetCommand(uint8_t cmd) { return fCmds.IsBitSet(cmd); }
-    void SetCommand(uint8_t cmd, hsBool val = true) { fCmds.SetBit(cmd, val); }
+    bool GetCommand(uint8_t cmd) { return fCmds.IsBitSet(cmd); }
+    void SetCommand(uint8_t cmd, bool val = true) { fCmds.SetBit(cmd, val); }
     
     // plasma protocol
     CLASSNAME_REGISTER( plMultistageModMsg );
