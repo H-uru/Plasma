@@ -118,8 +118,8 @@ class plGBufferGroup
         uint8_t   fNumSkinWeights;
         uint32_t  fNumVerts;
         uint32_t  fNumIndices;
-        hsBool  fVertsVolatile;
-        hsBool  fIdxVolatile;
+        bool    fVertsVolatile;
+        bool    fIdxVolatile;
         int     fLOD;
         
         hsTArray<hsGDeviceRef *>        fVertexBufferRefs;
@@ -140,7 +140,7 @@ class plGBufferGroup
 
         hsTArray<hsTArray<plGBufferCell> *> fCells;
 
-        virtual void    ISendStorageToBuffers( plPipeline *pipe, hsBool adjustForNvidiaLighting );
+        virtual void    ISendStorageToBuffers( plPipeline *pipe, bool adjustForNvidiaLighting );
 
         uint8_t           ICalcVertexSize( uint8_t &liteStride );
 
@@ -179,7 +179,7 @@ class plGBufferGroup
             kReserveIsolate     = 0x10
         };
 
-        plGBufferGroup(uint8_t format, hsBool vertsVolatile, hsBool idxVolatile, int LOD = 0);
+        plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD = 0);
         ~plGBufferGroup();
 
         uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
@@ -190,8 +190,8 @@ class plGBufferGroup
 
         void    DirtyVertexBuffer(int i);
         void    DirtyIndexBuffer(int i);
-        hsBool  VertexReady(int i) const { return (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i]; }
-        hsBool  IndexReady(int i) const { return  (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i]; }
+        bool    VertexReady(int i) const { return (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i]; }
+        bool    IndexReady(int i) const { return  (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i]; }
         uint8_t   GetVertexSize( void ) const { return fStride; }
         uint8_t   GetVertexLiteStride( void ) const { return fLiteStride; }
         uint8_t   GetVertexFormat( void ) const { return fFormat; }
@@ -265,10 +265,10 @@ class plGBufferGroup
         void    CleanUp( void );
 
         // Take buffer data and convert it to device-specific buffers
-        void    PrepForRendering( plPipeline *pipe, hsBool adjustForNvidiaLighting );
+        void    PrepForRendering( plPipeline *pipe, bool adjustForNvidiaLighting );
 
         // Reserves space in a vertex buffer
-        hsBool  ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint8_t flags );
+        bool    ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint8_t flags );
 
         // Append vertex data to the first available storage buffer
         void    AppendToVertStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset );
@@ -276,7 +276,7 @@ class plGBufferGroup
         void    AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint32_t origCell );
 
         // Reserves space in an index buffer
-        hsBool  ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr = nil );
+        bool    ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr = nil );
 
         // Append index data to the first available storage buffer
         void    AppendToIndexStorage( uint32_t numIndices, uint16_t *data, uint32_t addToAll, uint32_t *ibIndex, uint32_t *ibStart );
@@ -298,8 +298,8 @@ class plGBufferGroup
         void    StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t flags );
 
         // Are our verts volatile?
-        hsBool  AreVertsVolatile() const { return fVertsVolatile; }
-        hsBool  AreIdxVolatile() const { return fIdxVolatile; }
+        bool    AreVertsVolatile() const { return fVertsVolatile; }
+        bool    AreIdxVolatile() const { return fIdxVolatile; }
 
         int GetLOD() const { return fLOD; }
 };

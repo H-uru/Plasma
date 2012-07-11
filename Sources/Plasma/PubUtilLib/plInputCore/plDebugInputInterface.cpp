@@ -136,20 +136,20 @@ void    plDebugInputInterface::RestoreDefaultKeyMappings( void )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plDebugInputInterface::IEval( double secs, float del, uint32_t dirty )
+bool plDebugInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     return true;
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plDebugInputInterface::MsgReceive( plMessage *msg )
+bool    plDebugInputInterface::MsgReceive( plMessage *msg )
 {
     return plInputInterface::MsgReceive(msg);
 }
 
 //// cursorinbox /////////////////////////////////////////////////////
-hsBool plDebugInputInterface::CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box)
+bool plDebugInputInterface::CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box)
 {
     return ( pMsg->GetXPos() >= box.fX && pMsg->GetXPos() <= box.fY && pMsg->GetYPos() >= box.fZ && pMsg->GetYPos() <= box.fW ); 
 }
@@ -157,9 +157,9 @@ hsBool plDebugInputInterface::CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box)
 
 //// InterpretInputEvent /////////////////////////////////////////////////////
 
-hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
+bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
-    hsBool      handled = false;
+    bool        handled = false;
 
     plMouseEventMsg* pMouseMsg = plMouseEventMsg::ConvertNoRef(pMsg);
     if (pMouseMsg)
@@ -199,7 +199,7 @@ hsBool  plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             if (fControlFlags.IsBitSet(fMouseMap.fMap[i]->fCode))
             {
                 // can we disable this control?
-                hsBool disable = false;
+                bool disable = false;
                 
                 // can we disable this control based on a button?
                 if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButton && !(fButtonState & kLeftButtonDown))

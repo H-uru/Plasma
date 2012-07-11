@@ -75,7 +75,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlTextBox(pyKey& gckey);
+    static bool IsGUIControlTextBox(pyKey& gckey);
 
     virtual void    SetText( const char *text );
     virtual void    SetTextW( std::wstring text );

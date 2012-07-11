@@ -84,20 +84,20 @@ protected:
     hsMatrix44              fDefaultW2C, fDefaultC2W;
 
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty); // called only by owner object's Eval()
+    virtual bool IEval(double secs, float del, uint32_t dirty); // called only by owner object's Eval()
 
     void            ISetupRenderRequest();
     void            IDestroyRenderRequest();
     void            IUpdateRenderRequest();
 
-    void            IRegisterForRenderMsg(hsBool on);
+    void            IRegisterForRenderMsg(bool on);
     void            ISubmitRequest();
 
     void            IAddToPageMgr(plSceneNode* node);
     void            IRemoveFromPageMgr(plSceneNode* node);
 
-    void            ISetEnable(hsBool on);
-    hsBool          IIsEnabled() const;
+    void            ISetEnable(bool on);
+    bool            IIsEnabled() const;
 
 public:
     plPostEffectMod();
@@ -107,7 +107,7 @@ public:
     GETINTERFACE_ANY( plPostEffectMod, plSingleModifier );
 
 
-    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual bool    MsgReceive(plMessage* pMsg);
     
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

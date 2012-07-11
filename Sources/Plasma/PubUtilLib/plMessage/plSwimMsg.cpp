@@ -83,7 +83,7 @@ void plSwimMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    fIsEntering = stream->Readbool();
+    fIsEntering = stream->ReadBool();
     fSwimRegionKey = mgr->ReadKey(stream);
 }
 
@@ -93,6 +93,6 @@ void plSwimMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->Writebool(fIsEntering);
+    stream->WriteBool(fIsEntering);
     mgr->WriteKey(stream, fSwimRegionKey);
 }

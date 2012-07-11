@@ -129,12 +129,12 @@ void plViewFaceModifier::SetTarget(plSceneObject* so)
         plgDispatch::Dispatch()->RegisterForExactType(plArmatureUpdateMsg::Index(), GetKey());
 }
 
-hsBool plViewFaceModifier::IEval(double secs, float del, uint32_t dirty)
+bool plViewFaceModifier::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
 
-hsBool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
+bool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
 {
 #if 1 // BOUNDSTEST
     extern int mfCurrentTest;
@@ -272,7 +272,7 @@ hsBool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
 #include "plProfile.h"
 plProfile_CreateTimer("ViewFacing", "RenderSetup", ViewFace);
 
-hsBool plViewFaceModifier::MsgReceive(plMessage* msg)
+bool plViewFaceModifier::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
 
@@ -438,7 +438,7 @@ plViewFaceModifier::FollowMode plViewFaceModifier::GetFollowMode() const
 
 }
 
-void plViewFaceModifier::SetOffset(const hsVector3& off, hsBool local)
+void plViewFaceModifier::SetOffset(const hsVector3& off, bool local)
 {
     fOffset = off;
     if( local )

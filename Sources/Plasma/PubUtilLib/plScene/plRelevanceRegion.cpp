@@ -66,7 +66,7 @@ void plRelevanceRegion::Write(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fRegion);
 }
 
-hsBool plRelevanceRegion::MsgReceive(plMessage* msg)
+bool plRelevanceRegion::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *genMsg = plGenRefMsg::ConvertNoRef(msg);
     if (genMsg)

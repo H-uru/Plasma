@@ -101,16 +101,6 @@ void pyNotify::AddReceiver(pyKey* key)
         fReceivers.Append(key->getKey());
 }
 
-void pyNotify::SetNetPropagate(hsBool propagate)
-{
-    fNetPropagate = propagate;
-}
-
-void pyNotify::SetNetForce(hsBool state)
-{
-    fNetForce = state;
-}
-
 
 void pyNotify::SetActivateState(float state)
 {
@@ -127,13 +117,13 @@ void pyNotify::SetType(int32_t type)
 //  Add event record helpers
 //////////////////////////////////////////////////
 
-void pyNotify::AddCollisionEvent( hsBool enter, pyKey* other, pyKey* self )
+void pyNotify::AddCollisionEvent( bool enter, pyKey* other, pyKey* self )
 {
     fBuildMsg.AddCollisionEvent(enter, other ? other->getKey() : plKey(),
                                         self ? self->getKey() : plKey() );
 }
 
-void pyNotify::AddPickEvent( hsBool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint)
+void pyNotify::AddPickEvent( bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint)
 {
     fBuildMsg.AddPickEvent( other ? other->getKey() : plKey(),
                                 self ? self->getKey() : plKey(),
@@ -141,7 +131,7 @@ void pyNotify::AddPickEvent( hsBool enabled, pyKey* other, pyKey* self, pyPoint3
                                 hitPoint.fPoint );
 }
 
-void pyNotify::AddControlKeyEvent( int32_t key, hsBool down )
+void pyNotify::AddControlKeyEvent( int32_t key, bool down )
 {
     fBuildMsg.AddControlKeyEvent(key,down);
 }
@@ -166,21 +156,21 @@ void pyNotify::AddVarKey(const char* name, pyKey* key)
     fBuildMsg.AddVariableEvent(name, key ? key->getKey() : plKey() );
 }
 
-void pyNotify::AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, float dot)
+void pyNotify::AddFacingEvent( bool enabled, pyKey* other, pyKey* self, float dot)
 {
     fBuildMsg.AddFacingEvent( other ? other->getKey() : plKey(),
                                 self ? self->getKey() : plKey(),
                                 dot, enabled);
 }
 
-void pyNotify::AddContainerEvent( hsBool entering, pyKey* contained, pyKey* container)
+void pyNotify::AddContainerEvent( bool entering, pyKey* contained, pyKey* container)
 {
     fBuildMsg.AddContainerEvent( container ? container->getKey() : plKey(),
                                     contained ? contained->getKey() : plKey() ,
                                     entering);
 }
 
-void pyNotify::AddActivateEvent( hsBool active, hsBool activate )
+void pyNotify::AddActivateEvent( bool active, bool activate )
 {
     fBuildMsg.AddActivateEvent(activate);
 }

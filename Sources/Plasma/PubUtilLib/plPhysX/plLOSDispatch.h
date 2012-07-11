@@ -59,7 +59,7 @@ public:
     CLASSNAME_REGISTER(plLOSDispatch);
     GETINTERFACE_ANY(plLOSDispatch, hsKeyedObject);
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
 protected:
     plMessage* ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w);

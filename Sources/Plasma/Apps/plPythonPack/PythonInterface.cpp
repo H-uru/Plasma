@@ -152,7 +152,7 @@ PyObject* PythonInterface::CompileString(const char *command, const char* filena
 //
 //  PURPOSE    : marshals an object into a char string
 //
-hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
+bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object
@@ -255,7 +255,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
 //
 //  PURPOSE    : run a compiled python code in a specific module name
 //
-hsBool PythonInterface::RunPYC(PyObject* code, PyObject* module)
+bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address

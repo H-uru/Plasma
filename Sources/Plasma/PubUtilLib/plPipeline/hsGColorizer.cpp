@@ -44,12 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "hsGColorizer.h"
 
-hsBool hsGColorizer::Colorizing() 
+bool hsGColorizer::Colorizing() 
 { 
     return fPipeline ? 0 != (fPipeline->GetColorOverride().fFlags & hsColorOverride::kModColor) : false; 
 }
 
-hsBool hsGColorizer::Alpharizing() 
+bool hsGColorizer::Alpharizing() 
 { 
     return fPipeline ? 0 != (fPipeline->GetColorOverride().fFlags & hsColorOverride::kModAlpha) : false; 
 }
@@ -64,7 +64,7 @@ void hsGColorizer::Init(plPipeline* pipe)
     fPipeline = pipe;
 }
 
-void hsGColorizer::PushColorize(hsColorRGBA& col, hsBool alphaOnly)
+void hsGColorizer::PushColorize(hsColorRGBA& col, bool alphaOnly)
 {
     if( fPipeline )
     {

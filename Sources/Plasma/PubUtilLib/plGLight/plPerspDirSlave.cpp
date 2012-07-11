@@ -138,13 +138,13 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     hsPoint3 pWorldLiDir(worldLiDir.fX, worldLiDir.fY, worldLiDir.fZ);
     hsPoint3 perspLiPos = IProject(world2NDC, pWorldLiDir, 0);
 
-    hsBool reverseZ = fLightDir.InnerProduct(pipe->GetViewDirWorld()) > 0;
+    bool reverseZ = fLightDir.InnerProduct(pipe->GetViewDirWorld()) > 0;
     SetFlag(kReverseZ, reverseZ);
     SetFlag(kReverseCull, reverseZ);
 
     hsPoint3 lookAt;
-    plConst(hsBool) kUsePerspCenter(true);
-    plConst(hsBool) kUseFrustCenter(true);
+    plConst(bool) kUsePerspCenter(true);
+    plConst(bool) kUseFrustCenter(true);
     if( kUsePerspCenter )
     {
         hsPoint3 lookAtCam = pipeView.GetWorldToCamera() * fCasterWorldBounds.GetCenter();
@@ -170,13 +170,13 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
     float minZ, maxZ;
     float cotX, cotY;
 
-    plConst(hsBool) kFixedPersp(true);
+    plConst(bool) kFixedPersp(true);
     if( !kFixedPersp )
     {
         hsBounds3Ext bnd(IGetPerspCasterBound(camNDC2Li * world2NDC));
         hsBounds3Ext bnd2(IGetPerspCasterBound(world2NDC));
         bnd2.Transform(&camNDC2Li);
-        plConst(hsBool) kUseBnd2(false);
+        plConst(bool) kUseBnd2(false);
         if( kUseBnd2 )
             bnd = bnd2;
 
@@ -194,7 +194,7 @@ bool plPerspDirSlave::SetupViewTransform(plPipeline* pipe)
             return false;
 
         // THIS IS EVEN MORE WRONG
-        plConst(hsBool) kFakeDepth(false);
+        plConst(bool) kFakeDepth(false);
         if( kFakeDepth )
         {
             plConst(float) kMin(1.f);

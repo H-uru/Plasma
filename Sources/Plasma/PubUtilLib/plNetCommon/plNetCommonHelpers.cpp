@@ -243,7 +243,7 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
         s->Read( zBufSz, (void*)zBuf.data() );
         plZlibCompress compressor;
         uint32_t tmp;
-        hsBool ans = compressor.Uncompress( (uint8_t*)buf.data(), &tmp, (uint8_t*)zBuf.data(), zBufSz );
+        bool ans = compressor.Uncompress( (uint8_t*)buf.data(), &tmp, (uint8_t*)zBuf.data(), zBufSz );
         hsAssert( ans!=0, "plCreatableListHelper: Failed to uncompress buffer." );
         hsAssert( tmp==bufSz, "compression size mismatch" );
         fFlags&=~kCompressed;
@@ -308,7 +308,7 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
             uint32_t zBufSz;
             std::string zBuf;
             zBuf.resize( bufSz );
-            hsBool ans = compressor.Compress( (uint8_t*)zBuf.data(), &zBufSz, (const uint8_t*)buf.data(), bufSz );
+            bool ans = compressor.Compress( (uint8_t*)zBuf.data(), &zBufSz, (const uint8_t*)buf.data(), bufSz );
             bool compressed = ( ans && zBufSz );
             hsAssert( compressed, "plCreatableListHelper: Failed to compress buffer." );
             if ( compressed )

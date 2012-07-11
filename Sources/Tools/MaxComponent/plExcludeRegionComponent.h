@@ -64,10 +64,10 @@ public:
     // Can't call until after PreConvert
     plKey GetKey(plMaxNode *node);
 
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };

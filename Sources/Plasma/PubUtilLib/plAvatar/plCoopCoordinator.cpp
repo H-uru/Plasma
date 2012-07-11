@@ -143,7 +143,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
 // MsgReceive --------------------------------------
 // -----------
-hsBool plCoopCoordinator::MsgReceive(plMessage *msg)
+bool plCoopCoordinator::MsgReceive(plMessage *msg)
 {
     plNotifyMsg *notify = plNotifyMsg::ConvertNoRef(msg);
     if(notify)
@@ -392,13 +392,13 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     fHostOfferStage = stream->ReadByte();
     fGuestAcceptStage = stream->ReadBool();
 
-    if(stream->Readbool())
+    if(stream->ReadBool())
         fGuestAcceptMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     else
         fGuestAcceptMsg = nil;
 
     fSynchBone = stream->ReadSafeString_TEMP();
-    fAutoStartGuest = stream->Readbool();
+    fAutoStartGuest = stream->ReadBool();
     
     fInitiatorID = fHostBrain->GetInitiatorID();
     fInitiatorSerial = fHostBrain->GetInitiatorSerial();
@@ -417,11 +417,11 @@ void plCoopCoordinator::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteByte((uint8_t)fHostOfferStage);
     stream->WriteByte((uint8_t)fGuestAcceptStage);
 
-    stream->Writebool(fGuestAcceptMsg != nil);
+    stream->WriteBool(fGuestAcceptMsg != nil);
     if(fGuestAcceptMsg)
         mgr->WriteCreatable(stream, fGuestAcceptMsg);
 
     stream->WriteSafeString(fSynchBone);
-    stream->Writebool(fAutoStartGuest);
+    stream->WriteBool(fAutoStartGuest);
 }
 

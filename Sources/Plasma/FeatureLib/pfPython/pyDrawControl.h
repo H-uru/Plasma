@@ -67,18 +67,18 @@ public:
     static float GetShadowVisDistance();
     static void EnableShadows();
     static void DisableShadows();
-    static hsBool IsShadowsEnabled();
-    static hsBool CanShadowCast();
+    static bool IsShadowsEnabled();
+    static bool CanShadowCast();
 
     static void DisableRenderScene();
     static void EnableRenderScene();
 
     static void SetMouseInverted();
     static void SetMouseUninverted();
-    static hsBool IsMouseInverted();
+    static bool IsMouseInverted();
 
-    static void SetClickToTurn(hsBool state);
-    static hsBool IsClickToTurn();
+    static void SetClickToTurn(bool state);
+    static bool IsClickToTurn();
 };
 
 #endif // _pyDrawControl_h_

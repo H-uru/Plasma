@@ -69,15 +69,15 @@ public:
     Node* FindPartial(char* str, int32_t len=0) const;
     void Register(const char* str, void* data);
 
-    typedef hsBool (hsStringTableCallback)(Node*);
-    hsBool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
+    typedef bool (hsStringTableCallback)(Node*);
+    bool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
 private:
-    Node* FindRecur(Node* root, const char* str, hsBool createIfNeeded=false);
+    Node* FindRecur(Node* root, const char* str, bool createIfNeeded=false);
     Node* FindPartialRecur(Node* root, char* str, int32_t len) const;
     Node* AddRecur(Node* root, const char* str);
     Node* FindLeafRecur(Node* root, char* str, int32_t len) const;
     void RemoveNode(Node* root);
-    hsBool IterateRecur(Node* root, hsStringTableCallback* callback);
+    bool IterateRecur(Node* root, hsStringTableCallback* callback);
 
     Node root;
 };

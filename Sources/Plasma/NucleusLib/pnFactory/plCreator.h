@@ -58,10 +58,10 @@ public:
     plCreator() { }
     virtual ~plCreator() { }
 
-    virtual plCreatable*    Create() const = 0;
-    virtual uint16_t          ClassIndex() = 0;
-    virtual const char*     ClassName() const = 0;
-    virtual hsBool          HasBaseClass(uint16_t hBase) = 0;
+    virtual plCreatable*  Create() const = 0;
+    virtual uint16_t      ClassIndex() = 0;
+    virtual const char*   ClassName() const = 0;
+    virtual bool          HasBaseClass(uint16_t hBase) = 0;
 
     friend class plFactory;
 };
@@ -81,7 +81,7 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
     virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
     virtual const char* ClassName() const { return #plClassName; }                  \
@@ -107,7 +107,7 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
     virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
     virtual const char* ClassName() const { return #plClassName; }                  \
@@ -140,7 +140,7 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
     virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     virtual const char* ClassName() const { return #plClassName; }                  \
@@ -172,7 +172,7 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual hsBool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
     virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     virtual const char* ClassName() const { return #plClassName; }                  \

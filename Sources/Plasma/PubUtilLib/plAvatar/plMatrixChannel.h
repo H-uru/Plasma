@@ -137,7 +137,7 @@ public:
     plMatrixTimeScale(plMatrixChannel *channel, plScalarChannel *timeSource);
     virtual ~plMatrixTimeScale();
 
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
     virtual const hsMatrix44 & Value(double time, bool peek = false);
     virtual const hsAffineParts & AffineValue(double time, bool peek = false);
 
@@ -188,7 +188,7 @@ public:
     //virtual void SetBlend(float blend) { fBlend = blend; };
     //virtual float GetBlend() { return fBlend; };
 
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
 
     // AG PROTOCOL
     virtual const hsMatrix44 & Value(double time, bool peek = false);
@@ -316,7 +316,7 @@ public:
     CLASSNAME_REGISTER( plMatrixChannelApplicator );
     GETINTERFACE_ANY( plMatrixChannelApplicator, plAGApplicator );
 
-    virtual hsBool CanCombine(plAGApplicator *app) { return false; }
+    virtual bool CanCombine(plAGApplicator *app) { return false; }
     virtual plAGPinType GetPinType() { return kAGPinTransform; }
 };
 
@@ -341,13 +341,13 @@ public:
     GETINTERFACE_ANY( plMatrixDelayedCorrectionApplicator, plMatrixChannelApplicator );
 
     void SetCorrection(hsMatrix44 &correction);
-    virtual hsBool AutoDelete() { return false; } // should we remove it when its input channel is gone?
+    virtual bool AutoDelete() { return false; } // should we remove it when its input channel is gone?
 
     // applicator arbitration...
     virtual plAGPinType GetPinType() { return kAGPinTransform; }
-    virtual hsBool CanBlend(plAGApplicator *app);
+    virtual bool CanBlend(plAGApplicator *app);
 
-    hsBool fIgnoreNextCorrection;
+    bool fIgnoreNextCorrection;
     static const float fDelayLength; // static var for now.  
 };
 
@@ -364,11 +364,11 @@ public:
     void Reset(double time);
 
     /** Should this applicator be automatically removed when its channel goes away? */
-    virtual hsBool AutoDelete() { return false; }
+    virtual bool AutoDelete() { return false; }
 
     // applicator arbitration
     virtual plAGPinType GetPinType() { return kAGPinTransform; }
-    virtual hsBool CanBlend(plAGApplicator *app);
+    virtual bool CanBlend(plAGApplicator *app);
 
     CLASSNAME_REGISTER(plMatrixDifferenceApp);
     GETINTERFACE_ANY(plMatrixDifferenceApp, plMatrixChannelApplicator);

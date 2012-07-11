@@ -176,7 +176,7 @@ void plClusterGroup::ISendToSelf(RefType t, hsKeyedObject* ref)
     hsgResMgr::ResMgr()->SendRef(ref->GetKey(), refMsg, plRefFlags::kActiveRef);
 }
 
-hsBool plClusterGroup::IAddVisRegion(plVisRegion* reg)
+bool plClusterGroup::IAddVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
@@ -197,7 +197,7 @@ hsBool plClusterGroup::IAddVisRegion(plVisRegion* reg)
     return true;
 }
 
-hsBool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
+bool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
@@ -214,7 +214,7 @@ hsBool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
     return true;
 }
 
-hsBool plClusterGroup::IAddLight(plLightInfo* li)
+bool plClusterGroup::IAddLight(plLightInfo* li)
 {
     int idx = fLights.Find(li);
     if( fLights.kMissingIndex == idx )
@@ -224,7 +224,7 @@ hsBool plClusterGroup::IAddLight(plLightInfo* li)
     return true;
 }
 
-hsBool plClusterGroup::IRemoveLight(plLightInfo* li)
+bool plClusterGroup::IRemoveLight(plLightInfo* li)
 {
     int idx = fLights.Find(li);
     if( fLights.kMissingIndex != idx )
@@ -234,7 +234,7 @@ hsBool plClusterGroup::IRemoveLight(plLightInfo* li)
     return true;
 }
 
-hsBool plClusterGroup::IOnReceive(plGenRefMsg* ref)
+bool plClusterGroup::IOnReceive(plGenRefMsg* ref)
 {
     switch( ref->fType )
     {
@@ -249,7 +249,7 @@ hsBool plClusterGroup::IOnReceive(plGenRefMsg* ref)
     return false;
 }
 
-hsBool plClusterGroup::IOnRemove(plGenRefMsg* ref)
+bool plClusterGroup::IOnRemove(plGenRefMsg* ref)
 {
     int idx = -1;
     switch( ref->fType )
@@ -265,7 +265,7 @@ hsBool plClusterGroup::IOnRemove(plGenRefMsg* ref)
     return false;
 }
 
-hsBool plClusterGroup::IOnRef(plGenRefMsg* ref)
+bool plClusterGroup::IOnRef(plGenRefMsg* ref)
 {
     if( ref->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
     {
@@ -275,7 +275,7 @@ hsBool plClusterGroup::IOnRef(plGenRefMsg* ref)
     return IOnRemove(ref);
 }
 
-hsBool plClusterGroup::MsgReceive(plMessage* msg)
+bool plClusterGroup::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* ref = plGenRefMsg::ConvertNoRef(msg);
     if( ref )

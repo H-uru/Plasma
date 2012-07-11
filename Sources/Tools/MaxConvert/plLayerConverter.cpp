@@ -159,7 +159,7 @@ plLayerConverter    &plLayerConverter::Instance( void )
     hsGuardEnd;
 }
 
-void    plLayerConverter::Init( hsBool save, plErrorMsg *msg )
+void    plLayerConverter::Init( bool save, plErrorMsg *msg )
 {
     fSaving = save;
     fErrorMsg = msg;
@@ -199,8 +199,8 @@ void    plLayerConverter::UnmuteWarnings( void )
         
 plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
                                                         plMaxNode *maxNode,
-                                                        uint32_t blendFlags, hsBool preserveUVOffset,
-                                                        hsBool upperLayer )
+                                                        uint32_t blendFlags, bool preserveUVOffset,
+                                                        bool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::ConvertTexmap" );
     
@@ -277,7 +277,7 @@ void    plLayerConverter::IRegisterConversion( plPlasmaMAXLayer *origLayer, plLa
                             
 plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer, 
                                                                 plMaxNode *maxNode, uint32_t blendFlags, 
-                                                                hsBool preserveUVOffset, hsBool upperLayer )
+                                                                bool preserveUVOffset, bool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertLayerTex" );
 
@@ -413,7 +413,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
                             
 plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer *layer, 
                                                                 plMaxNode *maxNode, uint32_t blendFlags, 
-                                                                hsBool preserveUVOffset, hsBool upperLayer )
+                                                                bool preserveUVOffset, bool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertStaticEnvLayer" );
 
@@ -523,7 +523,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer *layer, 
                                                                 plMaxNode *maxNode, uint32_t blendFlags, 
-                                                                hsBool preserveUVOffset, hsBool upperLayer )
+                                                                bool preserveUVOffset, bool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicEnvLayer" );
 
@@ -590,7 +590,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 
 plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *layer, 
                                                            plMaxNode *maxNode, uint32_t blendFlags, 
-                                                           hsBool preserveUVOffset, hsBool upperLayer)
+                                                           bool preserveUVOffset, bool upperLayer)
 {
     hsGuardBegin( "plLayerConverter::IConvertCameraLayer" );
 
@@ -659,7 +659,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
                             
 plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLayer *layer, 
                                                                 plMaxNode *maxNode, uint32_t blendFlags, 
-                                                                hsBool preserveUVOffset, hsBool upperLayer )
+                                                                bool preserveUVOffset, bool upperLayer )
 {
     hsGuardBegin( "plLayerConverter::IConvertDynamicTextLayer" );
 
@@ -896,7 +896,7 @@ plLayer* plLayerConverter::ICreateAttenuationLayer(const plString& name, plMaxNo
 
 plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *layer, 
                                                                 plMaxNode *maxNode, uint32_t blendFlags, 
-                                                                hsBool preserveUVOffset, hsBool upperLayer)
+                                                                bool preserveUVOffset, bool upperLayer)
 {
     hsGuardBegin( "plPlasmaMAXLayer::IConvertAngleAttenLayer" );
     if( !upperLayer )
@@ -925,7 +925,7 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
 }
 //// ICreateLayer /////////////////////////////////////////////////////////////
 
-plLayer     *plLayerConverter::ICreateLayer( const plString &name, hsBool upperLayer, plLocation &loc )
+plLayer     *plLayerConverter::ICreateLayer( const plString &name, bool upperLayer, plLocation &loc )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateLayer" );
 
@@ -942,7 +942,7 @@ plLayer     *plLayerConverter::ICreateLayer( const plString &name, hsBool upperL
 //// IProcessUVGen ////////////////////////////////////////////////////////////
 
 void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *destLayer, 
-                                        plBitmapData *bitmapData, hsBool preserveUVOffset )
+                                        plBitmapData *bitmapData, bool preserveUVOffset )
 {
     hsGuardBegin( "plPlasmaMAXLayer::IProcessUVGen" );
 
@@ -990,7 +990,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
 //// ICreateDynTextMap ////////////////////////////////////////////////////////
 
 plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const plString &layerName, uint32_t width, uint32_t height,
-                                                        hsBool includeAlphaChannel, plMaxNode *node )
+                                                        bool includeAlphaChannel, plMaxNode *node )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateDynTextMap" );
 
@@ -1052,7 +1052,7 @@ plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLo
 //  Create a texture and assign it to the layer given. Returns the layer again,
 //  or nil if there was an error and it got deleted.
 
-plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode, plLayer *destLayer, hsBool upperLayer, int clipID )
+plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode, plLayer *destLayer, bool upperLayer, int clipID )
 {
     plBitmap *texture = plBitmapCreator::Instance().CreateTexture( bd, maxNode->GetLocation(), clipID );
     if( texture == nil )

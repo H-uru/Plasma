@@ -60,8 +60,8 @@ private:
     // the list of receivers that want to be notified
     hsTArray<plKey> fReceivers;
 
-    hsBool          fNetPropagate;
-    hsBool          fNetForce;
+    bool            fNetPropagate;
+    bool            fNetForce;
 
     // notify message build area
     plNotifyMsg     fBuildMsg;
@@ -87,22 +87,22 @@ public:
     // methods that will be exposed to Python
     virtual void ClearReceivers();
     virtual void AddReceiver(pyKey* key);
-    virtual void SetNetPropagate(hsBool propagate);
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetPropagate(bool propagate) { fNetPropagate = propagate; }
+    virtual void SetNetForce(bool state) { fNetForce = state; }
     virtual void SetActivateState(float state);
     virtual void SetType(int32_t type);
 
     // add event record helpers
-    virtual void AddCollisionEvent( hsBool enter, pyKey* other, pyKey* self );
-    virtual void AddPickEvent(hsBool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
-    virtual void AddControlKeyEvent( int32_t key, hsBool down );
+    virtual void AddCollisionEvent( bool enter, pyKey* other, pyKey* self );
+    virtual void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
+    virtual void AddControlKeyEvent( int32_t key, bool down );
     virtual void AddVarNumber(const char* name, float number);
     virtual void AddVarNumber(const char* name, int number);
     virtual void AddVarNull(const char* name);
     virtual void AddVarKey(const char* name, pyKey* key);
-    virtual void AddFacingEvent( hsBool enabled, pyKey* other, pyKey* self, float dot);
-    virtual void AddContainerEvent( hsBool entering, pyKey* container, pyKey* contained);
-    virtual void AddActivateEvent( hsBool active, hsBool activate );
+    virtual void AddFacingEvent( bool enabled, pyKey* other, pyKey* self, float dot);
+    virtual void AddContainerEvent( bool entering, pyKey* container, pyKey* contained);
+    virtual void AddActivateEvent( bool active, bool activate );
     virtual void AddCallbackEvent( int32_t event );
     virtual void AddResponderState(int32_t state);
 

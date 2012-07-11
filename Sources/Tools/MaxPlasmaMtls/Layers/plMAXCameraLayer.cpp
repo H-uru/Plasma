@@ -78,7 +78,7 @@ public:
         HWND cbox;
         cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);
         SendMessage(cbox, CB_SETCURSEL, pb->GetInt(plMAXCameraLayer::kUVSource), 0);
-        hsBool reflect = (pb->GetInt(ParamID(plMAXCameraLayer::kExplicitCam)) == 0);
+        bool reflect = (pb->GetInt(ParamID(plMAXCameraLayer::kExplicitCam)) == 0);
         EnableWindow(GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC), !reflect);
     }
 

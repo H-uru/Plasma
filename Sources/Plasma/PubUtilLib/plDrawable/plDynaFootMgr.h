@@ -50,7 +50,7 @@ class plAvatarFootMsg;
 class plDynaFootMgr : public plDynaDecalMgr
 {
 protected:
-    virtual hsBool      IPrintFromShape(const plPrintShape* shape, hsBool flip);
+    virtual bool        IPrintFromShape(const plPrintShape* shape, bool flip);
 
     virtual int         INewDecal();
 public:
@@ -63,7 +63,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
 };
 

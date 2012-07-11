@@ -80,7 +80,7 @@ class plAxisInputInterface : public plInputInterface
         plAxisInputInterface( plAxisAnimModifier *owner ) { fOwner = owner; SetEnabled( true ); }
 
         virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority + 10; }
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plMouseEventMsg* pMMsg = plMouseEventMsg::ConvertNoRef( pMsg );
             if (pMMsg )
@@ -100,7 +100,7 @@ class plAxisInputInterface : public plInputInterface
         }
 
         virtual uint32_t  GetCurrentCursorID( void ) const { return kCursorGrab; }
-        virtual hsBool  HasInterestingCursorID( void ) const { return true; }
+        virtual bool    HasInterestingCursorID( void ) const { return true; }
 };
 
 plAxisAnimModifier::plAxisAnimModifier() : 
@@ -122,7 +122,7 @@ plAxisAnimModifier::~plAxisAnimModifier()
 }
 
 
-hsBool plAxisAnimModifier::IEval(double secs, float del, uint32_t dirty)
+bool plAxisAnimModifier::IEval(double secs, float del, uint32_t dirty)
 {
     if (!fActive)
         return true;
@@ -138,7 +138,7 @@ void plAxisAnimModifier::SetTarget(plSceneObject* so)
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-hsBool plAxisAnimModifier::MsgReceive(plMessage* msg)
+bool plAxisAnimModifier::MsgReceive(plMessage* msg)
 {
     plEventCallbackMsg* pCall = plEventCallbackMsg::ConvertNoRef(msg);
     if (pCall)

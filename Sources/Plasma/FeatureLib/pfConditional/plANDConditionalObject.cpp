@@ -58,7 +58,7 @@ plANDConditionalObject::~plANDConditionalObject()
         delete (fChildren[i]);
 }
 
-hsBool plANDConditionalObject::MsgReceive(plMessage* msg)
+bool plANDConditionalObject::MsgReceive(plMessage* msg)
 {
     plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
     if (pCondMsg)

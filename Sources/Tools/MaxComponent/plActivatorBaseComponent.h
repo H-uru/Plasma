@@ -68,9 +68,9 @@ protected:
 public:
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
     virtual plKey GetLogicKey(plMaxNode* node);

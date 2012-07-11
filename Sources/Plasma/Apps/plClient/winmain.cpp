@@ -92,10 +92,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Globals
 //
-hsBool gHasMouse = false;
+bool gHasMouse = false;
 ITaskbarList3* gTaskbarList = nil; // NT 6.1+ taskbar stuff
 
-extern hsBool gDataServerLocal;
+extern bool gDataServerLocal;
 
 enum
 {
@@ -1047,7 +1047,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     {
         stream->Write(sizeof(cryptKey), cryptKey);
         stream->WriteSafeString(pLoginParam->username);
-        stream->Writebool(pLoginParam->remember);
+        stream->WriteBool(pLoginParam->remember);
         if (pLoginParam->remember)
             stream->Write(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
         stream->Close();
@@ -1092,7 +1092,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
                 delete temp;
             }
 
-            pLoginParam->remember = stream->Readbool();
+            pLoginParam->remember = stream->ReadBool();
 
             if (pLoginParam->remember)
             {

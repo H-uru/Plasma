@@ -75,7 +75,7 @@ public:
     
 #if 0
     // returns true if ok to send in a networked situations
-    static hsBool   NetOKToSend(plSynchedObject* sender, plEventCallbackMsg* cbmsg);    
+    static bool     NetOKToSend(plSynchedObject* sender, plEventCallbackMsg* cbmsg);    
 #endif
 
     // IO

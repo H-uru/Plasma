@@ -53,7 +53,7 @@ protected:
 
     hsTArray<plRenderInstance>          fInstList;
 
-    void                                IMakeRenderInstances(plMaxNode* node, TimeValue t, hsBool isBarney);
+    void                                IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney);
 
 public:
     plRenderGlobalContext(Interface* ip, TimeValue t);

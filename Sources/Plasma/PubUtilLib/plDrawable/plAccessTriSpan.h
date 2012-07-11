@@ -79,7 +79,7 @@ public:
     void            Begin();
     void            Advance();
     void            SetTri(int i);
-    hsBool          More() const;
+    bool            More() const;
 
     uint32_t          NumTris() const { return fAccess->fNumTris; }
 
@@ -121,7 +121,7 @@ inline void plAccTriIterator::SetTri(int i)
     fCurrIdx = fAccess->fTris + i * 3;
 }
 
-inline hsBool plAccTriIterator::More() const
+inline bool plAccTriIterator::More() const
 {
     return fCurrIdx < fEndIdx;
 }

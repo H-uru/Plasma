@@ -87,7 +87,7 @@ plLocalization::encodingTypes plLocalization::fUnicodeEncoding[] =
     Enc_UTF8,       // kJapanese
 };
 
-hsBool plLocalization::IGetLocalized(const char* name, Language lang, char* localizedName)
+bool plLocalization::IGetLocalized(const char* name, Language lang, char* localizedName)
 {
     const char* underscore = strrchr(name, '_');
     
@@ -113,7 +113,7 @@ hsBool plLocalization::IGetLocalized(const char* name, Language lang, char* loca
     return false;
 }
 
-hsBool plLocalization::ExportGetLocalized(const char* name, int lang, char* localizedName)
+bool plLocalization::ExportGetLocalized(const char* name, int lang, char* localizedName)
 {
     return IGetLocalized(name, Language(lang+1), localizedName) &&
             plFileUtils::FileExists(localizedName);
@@ -184,7 +184,7 @@ std::vector<std::wstring> plLocalization::StringToLocal(const std::wstring & loc
         }
     }
     // now sortedTagLocs has the indexes of tagLocs sorted from smallest loc to highest loc
-    hsBool noTags = true;
+    bool noTags = true;
     for (i=0; i<kNumLanguages; i++)
     {
         int lang = sortedTagLocs[i]; // the language we are extracting

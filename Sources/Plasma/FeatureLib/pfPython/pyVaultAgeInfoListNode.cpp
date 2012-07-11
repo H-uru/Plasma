@@ -69,7 +69,7 @@ pyVaultAgeInfoListNode::pyVaultAgeInfoListNode(int n)
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-hsBool pyVaultAgeInfoListNode::HasAge(uint32_t ageID)
+bool pyVaultAgeInfoListNode::HasAge(uint32_t ageID)
 {
     if (!fNode)
         return false;
@@ -78,7 +78,7 @@ hsBool pyVaultAgeInfoListNode::HasAge(uint32_t ageID)
     return false;
 }
 
-hsBool pyVaultAgeInfoListNode::AddAge( uint32_t ageID )
+bool pyVaultAgeInfoListNode::AddAge( uint32_t ageID )
 {
     if (!fNode)
         return false;

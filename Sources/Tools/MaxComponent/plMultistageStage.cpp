@@ -158,19 +158,19 @@ void plStandardStage::Read(hsStream *stream)
     delete [] fAnimName;
     fAnimName = stream->ReadSafeString();
     fNumLoops = stream->ReadLE32();
-    fLoopForever = stream->Readbool();
+    fLoopForever = stream->ReadBool();
     fForward = stream->ReadByte();
     fBackward = stream->ReadByte();
     fStageAdvance = stream->ReadByte();
     fStageRegress = stream->ReadByte();
     fNotify = stream->ReadByte();
-    fUseGlobalCoord = stream->Readbool();
+    fUseGlobalCoord = stream->ReadBool();
     if(version > 1)
     {
         // these guys were added in version 2
-        fDoAdvanceTo = stream->Readbool();
+        fDoAdvanceTo = stream->ReadBool();
         fAdvanceTo = stream->ReadLE32();
-        fDoRegressTo = stream->Readbool();
+        fDoRegressTo = stream->ReadBool();
         fRegressTo = stream->ReadLE32();
     }
 }
@@ -183,18 +183,18 @@ void plStandardStage::Write(hsStream *stream)
 
     stream->WriteSafeString(fAnimName);
     stream->WriteLE32(fNumLoops);
-    stream->Writebool(fLoopForever);
+    stream->WriteBool(fLoopForever);
     stream->WriteByte(fForward);
     stream->WriteByte(fBackward);
     stream->WriteByte(fStageAdvance);
     stream->WriteByte(fStageRegress);
     stream->WriteByte(fNotify);
-    stream->Writebool(fUseGlobalCoord);
+    stream->WriteBool(fUseGlobalCoord);
 
     // these next 4 were added in version 2
-    stream->Writebool(fDoAdvanceTo);
+    stream->WriteBool(fDoAdvanceTo);
     stream->WriteLE32(fAdvanceTo);
-    stream->Writebool(fDoRegressTo);
+    stream->WriteBool(fDoRegressTo);
     stream->WriteLE32(fRegressTo);
 }
 

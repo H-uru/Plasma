@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plNotifyMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 
-hsBool plGameMarkerModifier::MsgReceive(plMessage* msg)
+bool plGameMarkerModifier::MsgReceive(plMessage* msg)
 {
     plCollideMsg *collideMsg = plCollideMsg::ConvertNoRef(msg);
     if (collideMsg)

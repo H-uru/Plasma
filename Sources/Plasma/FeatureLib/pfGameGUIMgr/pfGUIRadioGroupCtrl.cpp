@@ -137,14 +137,14 @@ pfGUIRadioGroupCtrl::~pfGUIRadioGroupCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIRadioGroupCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIRadioGroupCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )
@@ -221,21 +221,21 @@ void    pfGUIRadioGroupCtrl::SetValue( int32_t value )
 
 ///// Setting to be trickled down to the underlings
 
-void    pfGUIRadioGroupCtrl::SetEnabled( hsBool e )
+void    pfGUIRadioGroupCtrl::SetEnabled( bool e )
 {
     int i;
     for( i = 0; i < fControls.GetCount(); i++ )
         fControls[ i ]->SetEnabled(e);
 }
 
-void    pfGUIRadioGroupCtrl::SetInteresting( hsBool e )
+void    pfGUIRadioGroupCtrl::SetInteresting( bool e )
 {
     int i;
     for( i = 0; i < fControls.GetCount(); i++ )
         fControls[ i ]->SetInteresting(e);
 }
 
-void    pfGUIRadioGroupCtrl::SetVisible( hsBool vis )
+void    pfGUIRadioGroupCtrl::SetVisible( bool vis )
 {
     int i;
     for( i = 0; i < fControls.GetCount(); i++ )

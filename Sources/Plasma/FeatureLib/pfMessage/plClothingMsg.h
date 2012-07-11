@@ -79,9 +79,9 @@ public:
         kSaveCustomizations =   0x0100,
     };
 
-    hsBool GetCommand(uint32_t command) { return fCommands & command; }
+    bool GetCommand(uint32_t command) { return fCommands & command; }
     void AddCommand(uint32_t command) { fCommands |= command; }
-    hsBool ResendUpdate() { return fCommands != kUpdateTexture; }
+    bool ResendUpdate() { return fCommands != kUpdateTexture; }
 
     // IO 
     virtual void Read(hsStream* stream, hsResMgr* mgr);

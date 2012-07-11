@@ -210,13 +210,13 @@ private:
     int ISendMembersListRequest();
     int ISendRoomsReset();
     void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
-    void ISendCameraReset(hsBool bEnteringAge);
+    void ISendCameraReset(bool bEnteringAge);
     
-    hsBool IUpdateListenList(double secs);
+    bool IUpdateListenList(double secs);
     void IHandleNetVoiceListMsg(plNetVoiceListMsg* msg);
-    hsBool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, hsBool forceSynch);
+    bool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, bool forceSynch);
     int IPrepMsg(plNetMessage* msg);
-    void IPlayerChangeAge(hsBool exiting, int32_t spawnPt);   
+    void IPlayerChangeAge(bool exiting, int32_t spawnPt);   
     
     void IAddCloneRoom();
     void IRemoveCloneRoom();
@@ -252,7 +252,7 @@ public:
     void StartLinkOutFX();
     void StartLinkInFX();
 
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
     void Shutdown();
     int  Init();
 
@@ -280,8 +280,8 @@ public:
     void SetSPDesiredPlayerName( const char * value ) { fSPDesiredPlayerName=value;}
     const char * GetSPDesiredPlayerName() const { return fSPDesiredPlayerName.c_str(); }
 
-    void SetLocalPlayerKey(plKey l, hsBool pageOut=false);
-    void SetNullSend(hsBool on);        // turn null send on/off
+    void SetLocalPlayerKey(plKey l, bool pageOut=false);
+    void SetNullSend(bool on);        // turn null send on/off
     void SetPingServer(uint8_t serverType) { fPingServerType = serverType; }
     
     // getters
@@ -293,10 +293,10 @@ public:
     uint8_t GetJoinOrder()              const { return fJoinOrder; }    // only valid at join time
 
     plKey GetLocalPlayerKey()           const { return fLocalPlayerKey; }
-    plSynchedObject* GetLocalPlayer(hsBool forceLoad=false) const;
+    plSynchedObject* GetLocalPlayer(bool forceLoad=false) const;
     
-    hsBool IsPeerToPeer()               const { return false; }
-    hsBool IsConnected()                const { return true; }
+    bool IsPeerToPeer()               const { return false; }
+    bool IsConnected()                const { return true; }
 
     void IncNumInitialSDLStates();
     void ResetNumInitialSDLStates() { fNumInitialSDLStates=0; }
@@ -321,7 +321,7 @@ public:
     const plKeyVec& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
     plSynchedObject* GetRemotePlayer(int i) const;
     void AddRemotePlayerKey(plKey p);
-    hsBool IsRemotePlayerKey(const plKey p, int* idx=nil);
+    bool IsRemotePlayerKey(const plKey p, int* idx=nil);
     bool IsAPlayerKey(const plKey pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
 
     void SetConsoleOutput( bool b ) { SetFlagsBit(kConsoleOutput, b); }

@@ -100,7 +100,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         hsTArray<int32_t> fLineStarts;
         uint16_t          fLineHeight, fCurrCursorX, fCurrCursorY;
         int32_t           fCursorPos, fLastCursorLine;
-        hsBool          fReadyToRender;
+        bool            fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
         int8_t            fLockCount;
         uint8_t           fCalcedFontSize;    // The font size that we calced our line height at
@@ -111,7 +111,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         static wchar_t  fColorCodeChar, fStyleCodeChar;
         static uint32_t   fColorCodeSize, fStyleCodeSize;
 
-        virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
@@ -148,19 +148,19 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    IMoveCursorTo( int32_t position );    // Updates selection
         void    ISetCursor( int32_t newPosition );    // Doesn't update selection
 
-        int32_t   IRecalcLineStarts( int32_t startingLine, hsBool force, hsBool dontUpdate = false );
-        void    IRecalcFromCursor( hsBool forceUpdate = false );
+        int32_t   IRecalcLineStarts( int32_t startingLine, bool force, bool dontUpdate = false );
+        void    IRecalcFromCursor( bool forceUpdate = false );
         int32_t   IFindCursorLine( int32_t cursorPos = -1 ) const;
-        hsBool  IStoreLineStart( uint32_t line, int32_t start );
-        void    IOffsetLineStarts( uint32_t position, int32_t offset, hsBool offsetSelectionEnd = false );
-        int32_t   IPointToPosition( int16_t x, int16_t y, hsBool searchOutsideBounds = false );
+        bool    IStoreLineStart( uint32_t line, int32_t start );
+        void    IOffsetLineStarts( uint32_t position, int32_t offset, bool offsetSelectionEnd = false );
+        int32_t   IPointToPosition( int16_t x, int16_t y, bool searchOutsideBounds = false );
         int32_t   ICalcNumVisibleLines( void ) const;
 
         void    IReadColorCode( int32_t &pos, hsColorRGBA &color ) const;
         void    IReadStyleCode( int32_t &pos, uint8_t &fontStyle ) const;
-        uint32_t  IRenderLine( uint16_t x, uint16_t y, int32_t start, int32_t end, hsBool dontRender = false );
-        hsBool  IFindLastColorCode( int32_t pos, hsColorRGBA &color, hsBool ignoreFirstCharacter = false ) const;
-        hsBool  IFindLastStyleCode( int32_t pos, uint8_t &style, hsBool ignoreFirstCharacter = false ) const;
+        uint32_t  IRenderLine( uint16_t x, uint16_t y, int32_t start, int32_t end, bool dontRender = false );
+        bool    IFindLastColorCode( int32_t pos, hsColorRGBA &color, bool ignoreFirstCharacter = false ) const;
+        bool    IFindLastStyleCode( int32_t pos, uint8_t &style, bool ignoreFirstCharacter = false ) const;
 
         inline static bool  IIsCodeChar( const wchar_t c );
         inline static bool  IIsRenderable( const wchar_t c );
@@ -197,7 +197,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIMultiLineEditCtrl );
         GETINTERFACE_ANY( pfGUIMultiLineEditCtrl, pfGUIControlMod );
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -206,8 +206,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual hsBool  HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
+        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 
@@ -247,9 +247,9 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    Lock( void );
         void    Unlock( void );
-        hsBool  IsLocked( void ) const { return ( fLockCount > 0 ) ? true : false; }
+        bool    IsLocked( void ) const { return ( fLockCount > 0 ) ? true : false; }
         
-        void    SetScrollEnable( hsBool state );
+        void    SetScrollEnable( bool state );
 
         void    ForceUpdate() {/*IRecalcLineStarts(0,true);*/IUpdateLineStarts(); IUpdate();}
 
@@ -275,8 +275,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    SetFontSize(uint8_t fontSize);
         void    SetFontStyle(uint8_t fontStyle) {fFontStyle = fontStyle; fFontFlagsSet |= kFontStyleSet;}
 
-        hsBool  ShowingBeginningOfBuffer();
-        hsBool  ShowingEndOfBuffer();
+        bool    ShowingBeginningOfBuffer();
+        bool    ShowingEndOfBuffer();
 
         void    DeleteLinesFromTop(int numLines); // cursor and scroll position might be off after this call, not valid on connected controls
 };

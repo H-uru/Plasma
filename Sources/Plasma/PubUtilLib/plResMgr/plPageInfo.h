@@ -101,7 +101,7 @@ public:
     void    Read( hsStream *s );
     void    Write( hsStream *s );
 
-    hsBool  IsValid( void ) const;
+    bool    IsValid( void ) const;
 
     uint32_t  GetDataStart( void ) const { return fDataStart; }
     void    SetDataStart( uint32_t s ) { fDataStart = s; }

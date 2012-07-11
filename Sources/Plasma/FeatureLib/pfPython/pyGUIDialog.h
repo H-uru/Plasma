@@ -77,7 +77,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
 
-    static hsBool IsGUIDialog(pyKey& gckey);
+    static bool IsGUIDialog(pyKey& gckey);
 
     void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
 
@@ -105,8 +105,8 @@ public:
     static void GUICursorDimmed();
 
     // override the equals to operator
-    hsBool operator==(const pyGUIDialog &gdobj) const;
-    hsBool operator!=(const pyGUIDialog &gdobj) const { return !(gdobj == *this);   }
+    bool operator==(const pyGUIDialog &gdobj) const;
+    bool operator!=(const pyGUIDialog &gdobj) const { return !(gdobj == *this);   }
 
     // getter and setters
     virtual plKey getObjKey();
@@ -115,10 +115,10 @@ public:
     // interface functions
     virtual uint32_t  GetTagID();
 
-    virtual void    SetEnabled( hsBool e );
+    virtual void    SetEnabled( bool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
-    virtual hsBool      IsEnabled( void );
+    virtual bool        IsEnabled( void );
     virtual const char  *GetName( void );
     virtual uint32_t      GetVersion(void);
 

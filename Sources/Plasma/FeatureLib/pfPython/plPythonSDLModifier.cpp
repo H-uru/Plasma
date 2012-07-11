@@ -185,7 +185,7 @@ void plPythonSDLModifier::SetDefault(const char* key, PyObject* value)
     ISetItem(key, value);
 }
 
-void plPythonSDLModifier::SetItemIdx(const char* key, int idx, PyObject* value, hsBool sendImmediate)
+void plPythonSDLModifier::SetItemIdx(const char* key, int idx, PyObject* value, bool sendImmediate)
 {
     if (!value)
     {
@@ -338,7 +338,7 @@ void plPythonSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     }
 }
 
-void plPythonSDLModifier::IDirtySynchState(const char* name, hsBool sendImmediate)
+void plPythonSDLModifier::IDirtySynchState(const char* name, bool sendImmediate)
 {
     SDLMap::iterator it = fMap.find(name);
     if (it != fMap.end())

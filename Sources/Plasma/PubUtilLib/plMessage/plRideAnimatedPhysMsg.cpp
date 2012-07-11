@@ -59,12 +59,12 @@ plRideAnimatedPhysMsg::plRideAnimatedPhysMsg(const plKey &sender, const plKey &r
 void plRideAnimatedPhysMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    fEntering = stream->Readbool();
+    fEntering = stream->ReadBool();
     fRegion = mgr->ReadKey(stream);
 }
 void plRideAnimatedPhysMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->Writebool(fEntering);
+    stream->WriteBool(fEntering);
     mgr->WriteKey(stream, fRegion);
 }

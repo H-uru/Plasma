@@ -145,7 +145,7 @@ public:
     /** Virtual destructor */
     virtual ~plAvBrainGeneric();
 
-    static hsBool fForce3rdPerson;
+    static bool fForce3rdPerson;
 
     /** Attaches our current stage and takes control of the armature. Note that
         the brain may be in a "half-finished" state -- we may be receiving some
@@ -154,7 +154,7 @@ public:
     virtual void Activate(plArmatureModBase *avMod);
 
     /** Advance the current stage and swap in a new stage if necessary. */
-    virtual hsBool Apply(double timeNow, float elapsed);
+    virtual bool Apply(double timeNow, float elapsed);
 
     /** Remove all our stages and release control of the armature. */
     virtual void Deactivate();
@@ -168,9 +168,9 @@ public:
     virtual bool RelayNotifyMsg(plNotifyMsg *msg);
 
     /** We're leaving the age. Clean up. */
-    virtual hsBool LeaveAge();
+    virtual bool LeaveAge();
 
-    virtual hsBool IsRunningTask();
+    virtual bool IsRunningTask();
     
     /** Compare the names of the anims in our stages.
         Return true on a match (order matters). */
@@ -256,7 +256,7 @@ public:
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
     // plasma protocol
-    hsBool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg);
     CLASSNAME_REGISTER( plAvBrainGeneric );
     GETINTERFACE_ANY( plAvBrainGeneric, plArmatureBrain );
 
@@ -271,19 +271,19 @@ protected:
     //
     /////////////////////////////////////////////////////////////////////////////////////
 
-    hsBool IHandleGenBrainMsg(const plAvBrainGenericMsg *msg);
-    hsBool IHandleTaskMsg(plAvTaskMsg *msg);
+    bool IHandleGenBrainMsg(const plAvBrainGenericMsg *msg);
+    bool IHandleTaskMsg(plAvTaskMsg *msg);
 
     bool IBrainIsCompatible(plAvBrainGeneric *otherBrain);
 
     float IGetAnimDelta(double time, float elapsed);    // how far should we move our animation this frame?
 
-    hsBool IProcessNormal(double time, float elapsed);
+    bool IProcessNormal(double time, float elapsed);
 
-    hsBool IProcessFadeIn(double time, float elapsed);
-    hsBool IProcessFadeOut(double time, float elapsed);
+    bool IProcessFadeIn(double time, float elapsed);
+    bool IProcessFadeOut(double time, float elapsed);
 
-    hsBool ISwitchStages(int oldStage, int newStage, float delta, hsBool setTime, float newTime,
+    bool ISwitchStages(int oldStage, int newStage, float delta, bool setTime, float newTime,
                          float fadeNew, float fadeOld, double worldTime);
 
     void IEnterMoveMode(double time);       // we've just entered and we're about to begin animating.

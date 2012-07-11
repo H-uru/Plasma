@@ -109,8 +109,8 @@ protected:
     
     // Save the settings for the last age and load the settings for the currently one
     void IUpdateCurAge();
-    void ISaveCurAge( const char *path, hsBool checkSeqNum = false );
-    void ILoadAge( const char *path, hsBool checkSeqNum = false );
+    void ISaveCurAge( const char *path, bool checkSeqNum = false );
+    void ILoadAge( const char *path, bool checkSeqNum = false );
 
     static bool IGetLocalAgePath(char *path);
 
@@ -122,13 +122,13 @@ protected:
     void INewPage();
 
 
-    uint32_t  IGetNextFreeSequencePrefix( hsBool getReservedPrefix );
+    uint32_t  IGetNextFreeSequencePrefix( bool getReservedPrefix );
     uint32_t  IGetFreePageSeqSuffix( HWND pageCombo );
 
     void    ICheckOutCurrentAge( void );
     void    ICheckInCurrentAge( void );
     void    IUndoCheckOutCurrentAge( void );
-    hsBool  IMakeSureCheckedIn( void );
+    bool    IMakeSureCheckedIn( void );
 
     plAgeFile* IGetCurrentAge( void );
 

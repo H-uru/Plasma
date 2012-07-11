@@ -411,7 +411,7 @@ void plSpaceTreeMaker::Cleanup()
     fDisabled.Reset();
 }
 
-int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
+int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, bool disable)
 {
     plSpacePrepNode* leaf = new plSpacePrepNode;
     fLeaves.Append(leaf);

@@ -93,7 +93,7 @@ public:
     CLASSNAME_REGISTER( plObjInterface );
     GETINTERFACE_ANY( plObjInterface, plSynchedObject );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     const plSceneObject* GetOwner() const { return IGetOwner(); }
     plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
@@ -101,10 +101,10 @@ public:
     virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nil; } 
 
     // override SetProperty to pass the prop down to the pool objects 
-    virtual void    SetProperty(int prop, hsBool on) { fProps.SetBit(prop, on); }
+    virtual void    SetProperty(int prop, bool on) { fProps.SetBit(prop, on); }
     
     // shouldn't need to override GetProperty()
-    hsBool  GetProperty(int prop) const { return fProps.IsBitSet(prop); }
+    bool  GetProperty(int prop) const { return fProps.IsBitSet(prop); }
     virtual int32_t   GetNumProperties() const = 0;
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;

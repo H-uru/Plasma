@@ -53,10 +53,10 @@ public:
 
     plResponderComponent();
 
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *node,plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node,plErrorMsg *pErrMsg);
-    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *node,plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node,plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     // All classes derived from plResponderComponent can be picked from the activator component,
     // because they can convert to the responder type.

@@ -72,7 +72,7 @@ void plDXVertexShader::Release()
     ISetError(nil);
 }
 
-hsBool plDXVertexShader::VerifyFormat(uint8_t format) const
+bool plDXVertexShader::VerifyFormat(uint8_t format) const
 {
     return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
 }

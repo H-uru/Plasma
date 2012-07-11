@@ -141,7 +141,7 @@ float   plBufferedFileReader::GetLengthInSecs( void )
     return (float)fBufferSize / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool  plBufferedFileReader::SetPosition( uint32_t numBytes )
+bool    plBufferedFileReader::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "SetPosition() called on an invalid RAM buffer" );
 
@@ -155,12 +155,12 @@ hsBool  plBufferedFileReader::SetPosition( uint32_t numBytes )
     return true;
 }
 
-hsBool  plBufferedFileReader::Read( uint32_t numBytes, void *buffer )
+bool    plBufferedFileReader::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "Read() called on an invalid RAM buffer" );
 
 
-    hsBool valid = true;
+    bool valid = true;
 
     if( fCursor + numBytes > fBufferSize )
     {

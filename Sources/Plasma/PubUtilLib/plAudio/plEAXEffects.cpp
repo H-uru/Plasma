@@ -106,7 +106,7 @@ plEAXListener::~plEAXListener()
 
 //// Init ////////////////////////////////////////////////////////////////////
 
-hsBool  plEAXListener::Init( void )
+bool    plEAXListener::Init( void )
 {
 #ifdef EAX_SDK_AVAILABLE
     if( fInited )
@@ -229,7 +229,7 @@ void    plEAXListener::IRelease( void )
 
 //// IFail ///////////////////////////////////////////////////////////////////
 
-void    plEAXListener::IFail(  hsBool major )
+void    plEAXListener::IFail(  bool major )
 {
     plStatusLog::AddLineS( "audio.log", plStatusLog::kRed,
                             "ERROR in plEAXListener: Could not set global eax params");
@@ -238,7 +238,7 @@ void    plEAXListener::IFail(  hsBool major )
         IRelease();
 }
 
-void    plEAXListener::IFail( const char *msg, hsBool major )
+void    plEAXListener::IFail( const char *msg, bool major )
 {
     plStatusLog::AddLineS( "audio.log", plStatusLog::kRed,
                             "ERROR in plEAXListener: %s", msg );
@@ -296,13 +296,13 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
 #ifdef EAX_SDK_AVAILABLE
     int     i;
     float   totalStrength;
-    hsBool  firstOne;
+    bool    firstOne;
 
     plEAXListenerMod        *thisBigRegion = nil;
     EAXLISTENERPROPERTIES   finalProps;
     static int oldTime = timeGetTime();     // Get starting time
     int newTime;
-    hsBool bMorphing = false;
+    bool bMorphing = false;
 
     static plStatusLog  *myLog = nil;
 
@@ -512,7 +512,7 @@ void    plEAXSourceSettings::Write( hsStream *s )
     }
 }
 
-void    plEAXSourceSettings::SetRoomParams( int16_t room, int16_t roomHF, hsBool roomAuto, hsBool roomHFAuto )
+void    plEAXSourceSettings::SetRoomParams( int16_t room, int16_t roomHF, bool roomAuto, bool roomHFAuto )
 {
     fRoom = room;
     fRoomHF = roomHF;
@@ -521,7 +521,7 @@ void    plEAXSourceSettings::SetRoomParams( int16_t room, int16_t roomHF, hsBool
     fDirtyParams |= kRoom;
 }
 
-void    plEAXSourceSettings::Enable( hsBool e )
+void    plEAXSourceSettings::Enable( bool e )
 {
     fEnabled = e;
     if( !e )
@@ -659,14 +659,14 @@ void    plEAXSource::Release( void )
     fInit = false;
 }
 
-hsBool  plEAXSource::IsValid( void ) const
+bool    plEAXSource::IsValid( void ) const
 {
     return true;
 }
 
 //// SetFrom /////////////////////////////////////////////////////////////////
 
-void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, hsBool force )
+void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, bool force )
 {
     uint32_t dirtyParams;
     if(source == 0 || !fInit) 

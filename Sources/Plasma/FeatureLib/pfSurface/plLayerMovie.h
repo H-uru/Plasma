@@ -63,18 +63,18 @@ protected:
 
     virtual int32_t               ISecsToFrame(float secs) = 0;
 
-    hsBool                      IGetFault() const { return !(fMovieName &&  *fMovieName); }
-    hsBool                      ISetFault(const char* errStr);
-    hsBool                      ICheckBitmap();
-    hsBool                      IMovieIsIdle(); // will call IRelease();
-    hsBool                      ISetupBitmap();
-    hsBool                      ISetSize(int w, int h);
-    hsBool                      ISetLength(float secs);
-    hsBool                      ICurrentFrameDirty(double wSecs);
+    bool                        IGetFault() const { return !(fMovieName &&  *fMovieName); }
+    bool                        ISetFault(const char* errStr);
+    bool                        ICheckBitmap();
+    bool                        IMovieIsIdle(); // will call IRelease();
+    bool                        ISetupBitmap();
+    bool                        ISetSize(int w, int h);
+    bool                        ISetLength(float secs);
+    bool                        ICurrentFrameDirty(double wSecs);
 
-    virtual hsBool              IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
-    virtual hsBool              IGetCurrentFrame() = 0; // Load fCurrentFrame into bitmap
-    virtual hsBool              IRelease() = 0; // release any system resources.
+    virtual bool                IInit() = 0; // Load header etc, must call ISetSize(w, h), ISetLength(s)
+    virtual bool                IGetCurrentFrame() = 0; // Load fCurrentFrame into bitmap
+    virtual bool                IRelease() = 0; // release any system resources.
 public:
     plLayerMovie();
     virtual ~plLayerMovie();
@@ -87,12 +87,12 @@ public:
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-    hsBool                  IsStopped() { return fTimeConvert.IsStopped(); }
+    bool                    IsStopped() { return fTimeConvert.IsStopped(); }
 
     void                    SetMovieName(const char* n);
     const char*             GetMovieName() const { return fMovieName; }
 
-    virtual hsBool          MsgReceive(plMessage* msg);
+    virtual bool            MsgReceive(plMessage* msg);
 
     // Movie specific
     int                     GetWidth() const;

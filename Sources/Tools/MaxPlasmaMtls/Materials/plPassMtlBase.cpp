@@ -165,7 +165,7 @@ plAnimStealthNode   *plPassMtlBase::GetStealth( int index )
     return IGetStealth( index, false );
 }
 
-int plPassMtlBase::IGetNumStealths( hsBool update )
+int plPassMtlBase::IGetNumStealths( bool update )
 {
     if( update )
         IUpdateAnimNodes();
@@ -173,7 +173,7 @@ int plPassMtlBase::IGetNumStealths( hsBool update )
     return fAnimPB->Count( (ParamID)kPBAnimStealthNodes );
 }
 
-plAnimStealthNode   *plPassMtlBase::IGetStealth( int index, hsBool update )
+plAnimStealthNode   *plPassMtlBase::IGetStealth( int index, bool update )
 {
     if( update )
         IUpdateAnimNodes();
@@ -645,9 +645,9 @@ plPassMtlBase   *plPassMtlBase::ConvertToPassMtl( Mtl *mtl )
 
 //// SetupProperties /////////////////////////////////////////////////////////
 
-hsBool  plPassMtlBase::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg )
+bool    plPassMtlBase::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg )
 {
-    hsBool ret = true;
+    bool ret = true;
 
     // Call SetupProperties on all our animStealths if we have any
     int i, count = IGetNumStealths();
@@ -662,9 +662,9 @@ hsBool  plPassMtlBase::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg )
 
 //// ConvertDeInit ///////////////////////////////////////////////////////////
 
-hsBool  plPassMtlBase::ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg )
+bool    plPassMtlBase::ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
-    hsBool ret = true;
+    bool ret = true;
 
     // Call ConvertDeInit on all our animStealths if we have any
     int i, count = IGetNumStealths();

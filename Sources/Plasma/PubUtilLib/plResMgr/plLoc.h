@@ -68,7 +68,7 @@ public:
     void    ClearThrowBack()        { fThrowBack = NULL; fThrowBackLevel = 0; }
     bool    ThrowBackAvailable()    { return (fThrowBack == NULL) ? false: true; }
     int NextLine(char **pP); // returns an Allocated string in pP of next valid line, and Level #, or LOC_EOF
-    hsBool8 Ready()                 {   return fpFile ? true: false; }
+    bool8 Ready()                 {   return fpFile ? true: false; }
 private:
     FILE *  fpFile;
     char *  fThrowBack;         // If a line is not used, it can be thrown back...unget()

@@ -53,12 +53,12 @@ protected:
 
     plAVIFileInfo*              fAVIInfo;
 
-    hsBool                      ICloseMovie();
+    bool                        ICloseMovie();
 
     virtual int32_t               ISecsToFrame(float secs);
-    virtual hsBool              IInit();
-    virtual hsBool              IGetCurrentFrame();
-    virtual hsBool              IRelease();
+    virtual bool                IInit();
+    virtual bool                IGetCurrentFrame();
+    virtual bool                IRelease();
 
 public:
     plLayerAVI();

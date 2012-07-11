@@ -235,8 +235,8 @@ class plStatusLogMgr
         void        PrevStatusLog( void );
         void        SetCurrStatusLog( const char *logName );
         void        SetCurrStatusLog( const wchar_t *logName );
-        plStatusLog *FindLog( const char *filename, hsBool createIfNotFound = true );
-        plStatusLog *FindLog( const wchar_t *filename, hsBool createIfNotFound = true );
+        plStatusLog *FindLog( const char *filename, bool createIfNotFound = true );
+        plStatusLog *FindLog( const wchar_t *filename, bool createIfNotFound = true );
 
         void        SetDrawer( plStatusLogDrawerStub *drawer ) { fDrawer = drawer; }
         void        SetBasePath( const char * path );

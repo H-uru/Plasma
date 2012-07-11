@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCommonObjLib.h"
 #include "MaxComponent/plMiscComponents.h"
 
-plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant)
+plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t sequenceNumber, bool itinerant)
 {
     // Hack for now--always prefer paging out sceneNodes first
     fPageOutHint = plSceneNode::Index();
@@ -109,7 +109,7 @@ plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t s
 //  seqNumber, returns the page for that combo (either by preloading it or
 //  by creating it).
 
-plRegistryPageNode* plPluginResManager::INameToPage(const char* age, const char* page, int32_t sequenceNumber, hsBool itinerant)
+plRegistryPageNode* plPluginResManager::INameToPage(const char* age, const char* page, int32_t sequenceNumber, bool itinerant)
 {
     // Find the location first, to see if it already exists
     plRegistryPageNode* pageNode = FindPage(age, page);
@@ -154,7 +154,7 @@ class plCommonKeyDistributor : public plRegistryKeyIterator
 public:
     plCommonKeyDistributor(plPluginResManager* mgr) : fMgr(mgr) {}
 
-    virtual hsBool EatKey(const plKey& key)
+    virtual bool EatKey(const plKey& key)
     {
         uint32_t count = plCommonObjLib::GetNumLibs();
 
@@ -216,7 +216,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t 
         class plEmptyIterator : public plRegistryKeyIterator
         {
         public:
-            virtual hsBool EatKey(const plKey& key) { return true; }
+            virtual bool EatKey(const plKey& key) { return true; }
         } empty;
 
         pageNode->IterateKeys(&empty);
@@ -304,12 +304,12 @@ class plSeqNumberFinder : public plRegistryPageIterator
 {
 protected:
     int32_t&  fSeqNum;
-    hsBool  fWillBeReserved;
+    bool    fWillBeReserved;
 
 public:
-    plSeqNumberFinder(int32_t& seqNum, hsBool willBeReserved) : fSeqNum(seqNum), fWillBeReserved(willBeReserved) {}
+    plSeqNumberFinder(int32_t& seqNum, bool willBeReserved) : fSeqNum(seqNum), fWillBeReserved(willBeReserved) {}
 
-    virtual hsBool EatPage(plRegistryPageNode* page)
+    virtual bool EatPage(plRegistryPageNode* page)
     {
         if (fSeqNum <= page->GetPageInfo().GetLocation().GetSequenceNumber() &&
             fWillBeReserved == page->GetPageInfo().GetLocation().IsReserved())
@@ -319,13 +319,13 @@ public:
 };
 
 
-plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, hsBool itinerant)
+plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, bool itinerant)
 {
     int32_t seqNum = VerifySeqNumber(0, age, page);
     return ICreateLocation(age, page, seqNum, itinerant);
 }
 
-plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, int32_t seqNum, hsBool itinerant)
+plLocation plPluginResManager::ICreateLocation(const char* age, const char* page, int32_t seqNum, bool itinerant)
 {
     bool willBeReserved = strcmpi(age, "global") == 0;
 
@@ -381,7 +381,7 @@ class plWritePageIterator : public plRegistryPageIterator
 {
 public:
     plWritePageIterator() {}
-    virtual hsBool EatPage(plRegistryPageNode *page) 
+    virtual bool EatPage(plRegistryPageNode *page) 
     {
         if (page->GetPageInfo().GetLocation() != plLocation::kGlobalFixedLoc)
             page->Write();

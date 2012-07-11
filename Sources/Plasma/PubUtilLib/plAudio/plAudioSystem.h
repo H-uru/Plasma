@@ -65,17 +65,17 @@ typedef struct ALCcontext_struct ALCcontext;
 class DeviceDescriptor
 {
 public:
-    DeviceDescriptor(const char *name, hsBool supportsEAX):
+    DeviceDescriptor(const char *name, bool supportsEAX):
     fDeviceName(name),
     fSupportsEAX(supportsEAX)
     {
     }
     const char *GetDeviceName() { return fDeviceName.c_str();}
-    hsBool SupportsEAX() { return fSupportsEAX; }
+    bool SupportsEAX() { return fSupportsEAX; }
 
 private:
     std::string fDeviceName;
-    hsBool fSupportsEAX;
+    bool fSupportsEAX;
 };
 
 class plAudioSystem : public hsKeyedObject
@@ -93,10 +93,10 @@ public:
         kRefEAXRegion
     };
 
-    hsBool  Init(hsWindowHndl hWnd);
+    bool    Init(hsWindowHndl hWnd);
     void    Shutdown();
 
-    void    SetActive( hsBool b );
+    void    SetActive( bool b );
     
     void SetListenerPos(const hsPoint3 pos);
     void SetListenerVelocity(const hsVector3 vel);
@@ -104,7 +104,7 @@ public:
     void SetMaxNumberOfActiveSounds();      // sets the max number of active sounds based on the priority cutoff
     void SetDistanceModel(int i);
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     double GetTime();
     
     void        NextDebugSound( void );
@@ -112,7 +112,7 @@ public:
 
     int         GetNumAudioDevices();
     const char *GetAudioDeviceName(int index);
-    hsBool      SupportsEAX(const char *deviceName);
+    bool        SupportsEAX(const char *deviceName);
 
     void        SetFadeLength(float lengthSec);
     
@@ -133,16 +133,16 @@ protected:
     hsTArray<plKey>     fPendingRegisters;
 
     hsPoint3    fCurrListenerPos;//, fCommittedListenerPos;
-    hsBool      fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
+    bool        fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
     int64_t     fStartTime;
 
     hsTArray<hsKeyedObject *>       fMyRefs;
     hsTArray<plEAXListenerMod *>    fEAXRegions;
 
     hsPoint3            fLastPos;
-    hsBool              fAvatarPosSet;      // used for listener stuff
+    bool                fAvatarPosSet;      // used for listener stuff
 
-    hsBool              fDisplayNumBuffers;
+    bool                fDisplayNumBuffers;
     
     std::vector<DeviceDescriptor> fDeviceList;      // list of openal device names
 
@@ -158,7 +158,7 @@ protected:
     void    IEnumerateDevices();
 
 public:
-    hsBool                          fListenerInit;
+    bool                            fListenerInit;
 };
 
 class plgAudioSys
@@ -189,19 +189,19 @@ public:
         kHardwarePlusEAX,
     };
     static void Init(hsWindowHndl hWnd);
-    static hsBool Hardware() { return fUseHardware; }
-    static void SetUseHardware(hsBool b);
-    static void SetActive(hsBool b);
-    static void SetMuted( hsBool b );
-    static void EnableEAX( hsBool b );
-    static hsBool Active() { return fInit; }
+    static bool Hardware() { return fUseHardware; }
+    static void SetUseHardware(bool b);
+    static void SetActive(bool b);
+    static void SetMuted( bool b );
+    static void EnableEAX( bool b );
+    static bool Active() { return fInit; }
     static void Shutdown();
-    static void Activate(hsBool b);
-    static hsBool   IsMuted( void ) { return fMuted; }
+    static void Activate(bool b);
+    static bool     IsMuted( void ) { return fMuted; }
     static hsWindowHndl hWnd() { return fWnd; }
     static plAudioSystem* Sys() { return fSys; }
     static void Restart( void );
-    static hsBool   UsingEAX( void ) { return fSys->fUsingEAX; }
+    static bool     UsingEAX( void ) { return fSys->fUsingEAX; }
 
     static void NextDebugSound( void );
 
@@ -214,8 +214,8 @@ public:
     static void     SetGlobalFadeVolume( float vol );
     static float GetGlobalFadeVolume( void ) { return fGlobalFadeVolume; }
 
-    static void     SetDebugFlag( uint32_t flag, hsBool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
-    static hsBool   IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
+    static void     SetDebugFlag( uint32_t flag, bool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
+    static bool     IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
     static void     ClearDebugFlags( void ) { fDebugFlags = 0; }
 
     static float GetStreamingBufferSize( void ) { return fStreamingBufferSize; }
@@ -224,8 +224,8 @@ public:
     static uint8_t    GetPriorityCutoff( void ) { return fPriorityCutoff; }
     static void     SetPriorityCutoff( uint8_t cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
 
-    static hsBool   AreExtendedLogsEnabled( void ) { return fEnableExtendedLogs; }
-    static void     EnableExtendedLogs( hsBool e ) { fEnableExtendedLogs = e; }
+    static bool     AreExtendedLogsEnabled( void ) { return fEnableExtendedLogs; }
+    static void     EnableExtendedLogs( bool e ) { fEnableExtendedLogs = e; }
 
     static float GetStreamFromRAMCutoff( void ) { return fStreamFromRAMCutoff; }
     static void     SetStreamFromRAMCutoff( float c ) { fStreamFromRAMCutoff = c; }
@@ -234,46 +234,46 @@ public:
     static void SetListenerVelocity(const hsVector3 vel);
     static void SetListenerOrientation(const hsVector3 view, const hsVector3 up);
 
-    static void ShowNumBuffers(hsBool b) { if(fSys) fSys->fDisplayNumBuffers = b; }
+    static void ShowNumBuffers(bool b) { if(fSys) fSys->fDisplayNumBuffers = b; }
 
     static void SetAudioMode(AudioMode mode);
     static int GetAudioMode();
-    static hsBool LogStreamingUpdates() { return fLogStreamingUpdates; }
-    static void SetLogStreamingUpdates(hsBool logUpdates) { fLogStreamingUpdates = logUpdates; }
-    static void SetDeviceName(const char *device, hsBool restart = false);
+    static bool LogStreamingUpdates() { return fLogStreamingUpdates; }
+    static void SetLogStreamingUpdates(bool logUpdates) { fLogStreamingUpdates = logUpdates; }
+    static void SetDeviceName(const char *device, bool restart = false);
     static const char *GetDeviceName() { return fDeviceName.c_str(); }
     static int GetNumAudioDevices();
     static const char *GetAudioDeviceName(int index);
     static ALCdevice *GetCaptureDevice();
-    static hsBool SupportsEAX(const char *deviceName);
+    static bool SupportsEAX(const char *deviceName);
     static void RegisterSoftSound( const plKey soundKey );
     static void UnregisterSoftSound( const plKey soundKey );
 
-    static hsBool IsRestarting() {return fRestarting;}
+    static bool IsRestarting() {return fRestarting;}
 
 private:
     friend class plAudioSystem;
 
     static plAudioSystem*       fSys;
-    static hsBool               fInit;
-    static hsBool               fActive;
-    static hsBool               fMuted;
+    static bool                 fInit;
+    static bool                 fActive;
+    static bool                 fMuted;
     static hsWindowHndl         fWnd;
-    static hsBool               fUseHardware;
-    static hsBool               fDelayedActivate;
+    static bool                 fUseHardware;
+    static bool                 fDelayedActivate;
     static float             fChannelVolumes[ kNumChannels ];
     static float             fGlobalFadeVolume;
     static uint32_t               fDebugFlags;
-    static hsBool               fEnableEAX;
+    static bool                 fEnableEAX;
     static float             fStreamingBufferSize;
     static uint8_t                fPriorityCutoff;
-    static hsBool               fEnableExtendedLogs;
+    static bool                 fEnableExtendedLogs;
     static float             fStreamFromRAMCutoff;
     static float             f2D3DBias;
-    static hsBool               fLogStreamingUpdates;
+    static bool                 fLogStreamingUpdates;
     static std::string          fDeviceName;
-    static hsBool               fRestarting;
-    static hsBool               fMutedStateChange;
+    static bool                 fRestarting;
+    static bool                 fMutedStateChange;
 
 };
 

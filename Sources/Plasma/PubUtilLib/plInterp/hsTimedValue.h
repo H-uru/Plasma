@@ -70,7 +70,7 @@ public:
     void SetDuration(float duration);
     float GetDuration() const { return fDuration; }
 
-    hsBool32 operator==(const hsTimedValue<T>& v);
+    bool32 operator==(const hsTimedValue<T>& v);
     hsTimedValue<T>& operator=(const T& v) { SetValue(v); return *this; }
     hsTimedValue<T>& operator+=(const T& v) { SetValue(v + fValue); return *this; }
 
@@ -176,7 +176,7 @@ void hsTimedValue<T>::SetDuration(float duration)
 }
 
 template <class T>
-hsBool32 hsTimedValue<T>::operator==(const hsTimedValue<T>& v)
+bool32 hsTimedValue<T>::operator==(const hsTimedValue<T>& v)
 {
     if ((fFlags == v.fFlags) &&
         (fDuration == v.fDuration) &&

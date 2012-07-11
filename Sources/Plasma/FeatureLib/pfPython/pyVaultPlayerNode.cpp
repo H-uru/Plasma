@@ -325,7 +325,7 @@ void pyVaultPlayerNode::SetExplorer (bool b) {
     player.SetExplorer(b);
 }
 
-hsBool pyVaultPlayerNode::IsExplorer () {
+bool pyVaultPlayerNode::IsExplorer () {
     if (!fNode)
         return false;
 

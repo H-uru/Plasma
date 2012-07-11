@@ -212,7 +212,7 @@ plObjectFlockerComponent::plObjectFlockerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plObjectFlockerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plObjectFlockerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetDrawable(!fCompPB->GetInt(ParamID(kHideTarget)));
     node->SetForceLocal(true);
@@ -224,7 +224,7 @@ hsBool plObjectFlockerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pE
     return true;
 }
 
-hsBool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (fFlocker)
         delete fFlocker;
@@ -269,14 +269,14 @@ hsBool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plObjectFlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plObjectFlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->AddModifier(fFlocker, plString::Null);
 
     return true;
 }
 
-hsBool plObjectFlockerComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plObjectFlockerComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fFlocker )
         fFlocker->GetKey()->UnRefObject();

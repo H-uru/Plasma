@@ -52,8 +52,8 @@ struct hsColorRGBA {
 
     hsColorRGBA& Set(float red, float grn, float blu, float alp) { r = red; g = grn; b = blu; a = alp; return *this; }
 
-    hsBool operator==(const hsColorRGBA&c) const { return (r==c.r)&&(g==c.g)&&(b==c.b)&&(a==c.a); }
-    hsBool operator!=(const hsColorRGBA&c) const { return !(c == *this); }
+    bool operator==(const hsColorRGBA&c) const { return (r==c.r)&&(g==c.g)&&(b==c.b)&&(a==c.a); }
+    bool operator!=(const hsColorRGBA&c) const { return !(c == *this); }
 
     friend inline hsColorRGBA operator+(const hsColorRGBA& s, const hsColorRGBA& t);
     hsColorRGBA& operator+=(const hsColorRGBA& s);
@@ -179,7 +179,7 @@ public:
     };
     hsColorRGBA         fShade;
     hsColorRGBA         fColor;
-    hsBool              fFlags;
+    unsigned int        fFlags;
 };
 
 

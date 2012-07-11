@@ -73,7 +73,10 @@ class pcSmallRect
         void    Read( hsStream *s );
         void    Write( hsStream *s );
 
-        hsBool  Contains( int16_t x, int16_t y ) { if( x >= fX && x <= fX + fWidth && y >= fY && y <= fY + fHeight ) return true; return false; }
+        bool  Contains( int16_t x, int16_t y ) const
+        {
+            return (x >= fX) && (x <= fX + fWidth) && (y >= fY) && (y <= fY + fHeight);
+        }
 };
 
 

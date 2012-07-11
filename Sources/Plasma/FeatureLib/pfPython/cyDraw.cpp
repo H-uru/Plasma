@@ -66,15 +66,7 @@ void cyDraw::AddRecvr(plKey &recvr)
         fRecvr.Append(recvr);
 }
 
-
-void cyDraw::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
-
-void cyDraw::EnableT(hsBool state)
+void cyDraw::EnableT(bool state)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
@@ -82,7 +74,7 @@ void cyDraw::EnableT(hsBool state)
         // create message
         plEnableMsg* pMsg = new plEnableMsg;
         // check if this needs to be network forced to all clients
-        if (fNetForce )
+        if (fNetForce)
         {
             // set the network propagate flag to make sure it gets to the other clients
             pMsg->SetBCastFlag(plMessage::kNetPropagate);
@@ -110,14 +102,4 @@ void cyDraw::EnableT(hsBool state)
             pMsg->SetCmd(plEnableMsg::kDisable);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
-}
-
-void cyDraw::Enable()
-{
-    EnableT(true);
-}
-
-void cyDraw::Disable()
-{
-    EnableT(false);
 }

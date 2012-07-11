@@ -196,7 +196,7 @@ void    plFontCache::ILoadCustomFonts( void )
     }
 }
 
-hsBool  plFontCache::MsgReceive( plMessage* pMsg )
+bool    plFontCache::MsgReceive( plMessage* pMsg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( pMsg );
     if( ref != nil )

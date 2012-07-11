@@ -59,7 +59,7 @@ protected:
     CallbackMap fCallbacks;
 
     void IForwardMsg(plMessage *msg);
-    hsBool IForwardCallbackMsg(plMessage *msg);
+    bool IForwardCallbackMsg(plMessage *msg);
 
 public:
     plMsgForwarder();
@@ -71,7 +71,7 @@ public:
     void Read(hsStream* s, hsResMgr* mgr);
     void Write(hsStream* s, hsResMgr* mgr);
 
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     void AddForwardKey(plKey key);
 };

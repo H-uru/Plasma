@@ -512,7 +512,7 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
 
 PF_CONSOLE_CMD( Avatar, ShowLocations, "", "Show player positions/orientations" )
 {
-    hsBool curVal = plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kShowAvatars);
+    bool curVal = plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kShowAvatars);
     plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kShowAvatars, !curVal);  
 }
 
@@ -823,7 +823,7 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableClimb, "string direction, int onOff", "Allow
             dir = plClimbMsg::kLeft;
         else if(stricmp(dirStr, "right") == 0)
             dir = plClimbMsg::kRight;
-        hsBool enable = static_cast<int>(params[1]) ? true : false;
+        bool enable = static_cast<int>(params[1]) ? true : false;
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kEnableClimb, dir, enable);
         msg->Send();
     }
@@ -880,7 +880,7 @@ PF_CONSOLE_CMD( Avatar_Swim, Start, "", "")
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// void WarpPlayerToAnother(hsBool iMove, uint32_t remoteID)
+// void WarpPlayerToAnother(bool iMove, uint32_t remoteID)
 PF_CONSOLE_CMD( Avatar_Warp, WarpToPlayer, "int PlayerID", "Warp our player to the same position as another player.")
 {
     plAvatarMgr::WarpPlayerToAnother(true, (int)params[0]);

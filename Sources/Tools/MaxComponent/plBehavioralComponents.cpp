@@ -134,7 +134,7 @@ plAvBehaviorSittingComponent::plAvBehaviorSittingComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plAvBehaviorSittingComponent::SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg)
+bool plAvBehaviorSittingComponent::SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 
@@ -144,7 +144,7 @@ hsBool plAvBehaviorSittingComponent::SetupProperties(plMaxNode* node, plErrorMsg
     return true;
 }
     
-hsBool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plMaxNode *detectNode = (plMaxNode*)fCompPB->GetINode(kDetector);
     plComponentBase *detectComp = detectNode ? detectNode->ConvertToComponent() : nil;
@@ -166,7 +166,7 @@ hsBool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pEr
     return true;
 }
 
-hsBool plAvBehaviorSittingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAvBehaviorSittingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plKey logicKey = fLogicModKeys[node];
     if (logicKey)

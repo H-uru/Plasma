@@ -72,19 +72,19 @@ class plGUIDialogComponent : public plComponent
 
         pfGUIDialogMod  *fDialogMod;
         plKey           fProcReceiver;  // non-nil means to send out notifys as our proc
-        hsBool          fSeqNumValidated;
+        bool            fSeqNumValidated;
 
         virtual pfGUIDialogMod  *IMakeDialog( void );
 
     public:
         // I believe booleans should always default to false, hence why this is dontInit instead of init. uint8_t me.
-        plGUIDialogComponent( hsBool dontInit = false );
+        plGUIDialogComponent( bool dontInit = false );
         void DeleteThis() { delete this; }
 
-        hsBool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        hsBool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        hsBool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
-        hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { fProcReceiver = nil; return true;}
+        bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
+        bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
+        bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
+        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { fProcReceiver = nil; return true;}
 
         pfGUIDialogMod  *GetModifier( void ) { return fDialogMod; }
 
@@ -147,9 +147,9 @@ class plGUIControlBase : public plComponent
         plGUIControlBase() {}
         void DeleteThis() { delete this; }
 
-        hsBool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        hsBool PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg);
-        hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
+        bool PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
         virtual void    CollectNonDrawables( INodeTab &nonDrawables );
 
@@ -207,10 +207,10 @@ class plGUIMenuComponent : public plGUIDialogComponent
         plGUIMenuComponent();
         void DeleteThis() { delete this; }
 
-        virtual hsBool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        virtual hsBool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        virtual hsBool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
-        virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+        virtual bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
+        virtual bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
+        virtual bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
+        virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
         plKey   GetConvertedMenuKey( void ) const;
 

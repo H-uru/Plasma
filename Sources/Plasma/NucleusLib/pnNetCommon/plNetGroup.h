@@ -64,15 +64,15 @@ public:
    plNetGroupId(const plLocation& id, const uint8_t flags) : fId(id), fFlags(flags) {  }
    plNetGroupId(const plLocation& id) : fId(id), fFlags(0) {  }
    
-   hsBool IsConstant() { return (fFlags & kNetGroupConstant) != 0; }
-   void SetConstant(hsBool constantGroup) { fFlags &= constantGroup ? kNetGroupConstant : 0; }
+   bool IsConstant() { return (fFlags & kNetGroupConstant) != 0; }
+   void SetConstant(bool constantGroup) { fFlags &= constantGroup ? kNetGroupConstant : 0; }
    
    plLocation& Room() { return fId; }
    const char* GetDesc() const { return fDesc.c_str();   }
    void SetDesc(const char* c) { fDesc = c; }
    
-   hsBool operator==(const plNetGroupId& netGroup) const { return fId == netGroup.fId; }
-   hsBool operator!=(const plNetGroupId& netGroup) const { return fId != netGroup.fId; }
+   bool operator==(const plNetGroupId& netGroup) const { return fId == netGroup.fId; }
+   bool operator!=(const plNetGroupId& netGroup) const { return fId != netGroup.fId; }
    bool operator<(const plNetGroupId& netGroup) const { return fId < netGroup.fId; }
    
    // read and write to hsStream

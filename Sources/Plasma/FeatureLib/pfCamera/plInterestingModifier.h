@@ -67,13 +67,13 @@ protected:
     static float fInterestRadius;
     static float fInterestWeight;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
     
 public:
     plInterestingModifier(){ fType = kTypeInteresting;}
     virtual ~plInterestingModifier(){;}
     
-    virtual hsBool MsgReceive(plMessage* msg) {return false;}
+    virtual bool MsgReceive(plMessage* msg) {return false;}
 
     CLASSNAME_REGISTER( plInterestingModifier );
     GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );

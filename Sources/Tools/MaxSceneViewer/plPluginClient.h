@@ -69,9 +69,9 @@ public:
 
     virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
 
-    virtual hsBool Init();
-    virtual hsBool MainLoop();
-    virtual hsBool Shutdown();
+    virtual bool Init();
+    virtual bool MainLoop();
+    virtual bool Shutdown();
 
     void InitUpdate(const char *semaphoreName, const char *pipeName, const char *dir);
 

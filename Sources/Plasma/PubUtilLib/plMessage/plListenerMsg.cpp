@@ -66,7 +66,7 @@ void plListenerMsg::Write(hsStream* s, hsResMgr* mgr)
 }
 
 
-plSetListenerMsg::plSetListenerMsg( uint8_t type, const plKey &srcKey, hsBool binding ) : plMessage( nil, nil, nil ) 
+plSetListenerMsg::plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding ) : plMessage( nil, nil, nil ) 
 {
     plUoid uoid( kListenerMod_KEY );
     plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );
@@ -94,7 +94,7 @@ void plSetListenerMsg::Write( hsStream *s, hsResMgr *mgr )
     s->WriteBool( fBinding );
 }
 
-void plSetListenerMsg::Set( const plKey &key, uint8_t type, hsBool binding )
+void plSetListenerMsg::Set( const plKey &key, uint8_t type, bool binding )
 {
     fSrcKey = key;
     fType = (uint8_t)type;

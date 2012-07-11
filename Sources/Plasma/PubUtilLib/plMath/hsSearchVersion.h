@@ -106,7 +106,7 @@ public:
 
     T&          operator[]( int32_t index );
 
-    int32_t               Find(int where, const T& what, hsBool forceUnique=false);
+    int32_t               Find(int where, const T& what, bool forceUnique=false);
 
     uint32_t              GetCount() const { return fNextIndex; }
 };
@@ -149,7 +149,7 @@ template <class T> void hsSearchVersion<T>::ICheckBackArray()
     }
 }
 
-template <class T> int32_t hsSearchVersion<T>::Find(int where, const T&what, hsBool forceUnique)
+template <class T> int32_t hsSearchVersion<T>::Find(int where, const T&what, bool forceUnique)
 {
     hsVersionNode<T>* curr = fArray[where];
 

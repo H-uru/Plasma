@@ -93,10 +93,10 @@ protected:
     void                IClearLayers();
     uint32_t              IMakeExtraLayer();
 
-    void                    InsertLayer(plLayerInterface* lay, int32_t which = 0, hsBool piggyBack = false);
-    void                    SetLayer(plLayerInterface* lay, int32_t which = 0, hsBool insert=false, hsBool piggyBack=false);
-    void                    ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, hsBool piggyBack = false);
-    void                    RemoveLayer(plLayerInterface* oldLay, hsBool piggyBack = false);
+    void                    InsertLayer(plLayerInterface* lay, int32_t which = 0, bool piggyBack = false);
+    void                    SetLayer(plLayerInterface* lay, int32_t which = 0, bool insert=false, bool piggyBack=false);
+    void                    ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, bool piggyBack = false);
+    void                    RemoveLayer(plLayerInterface* oldLay, bool piggyBack = false);
 public:
     hsGMaterial();
     ~hsGMaterial();
@@ -122,11 +122,11 @@ public:
 
     float                GetLastUpdateTime() const   { return fLastUpdateTime; }
     void                    SetLastUpdateTime(float f) { fLastUpdateTime = f; }
-    hsBool                  IShouldUpdate(float secs, uint32_t flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
+    bool                    IShouldUpdate(float secs, uint32_t flags) { return GetLastUpdateTime() != secs || (flags & kUpdateAgain); }
 
-    hsBool                  IsDynamic() const           { return (fCompFlags & kCompDynamic); }
-    hsBool                  IsDecal() const             { return (fCompFlags & kCompDecal); }
-    hsBool                  NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
+    bool                    IsDynamic() const           { return (fCompFlags & kCompDynamic); }
+    bool                    IsDecal() const             { return (fCompFlags & kCompDecal); }
+    bool                    NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
 
     virtual void        Read(hsStream* s);
     virtual void        Write(hsStream* s);
@@ -140,7 +140,7 @@ public:
     CLASSNAME_REGISTER( hsGMaterial );
     GETINTERFACE_ANY( hsGMaterial, hsKeyedObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 #endif // hsGCompMatDefined

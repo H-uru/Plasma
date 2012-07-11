@@ -46,13 +46,13 @@ plKeyCollector::plKeyCollector( hsTArray<plKey> &keys ) : fKeys( keys )
 {
 }
 
-hsBool plKeyCollector::EatKey(const plKey& key)
+bool plKeyCollector::EatKey(const plKey& key)
 {
     fKeys.Append(key);
     return true;
 }
 
-hsBool plIndirectUnloadIterator::EatPage(plRegistryPageNode* page)
+bool plIndirectUnloadIterator::EatPage(plRegistryPageNode* page)
 {
     page->IterateKeys(this);
     return true;

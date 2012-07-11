@@ -68,8 +68,8 @@ public:
     CLASSNAME_REGISTER( plWin32GroupedSound );
     GETINTERFACE_ANY( plWin32GroupedSound, plWin32StaticSound );
     
-    virtual hsBool  LoadSound( hsBool is3D );
-    virtual hsBool  MsgReceive( plMessage *pMsg );
+    virtual bool    LoadSound( bool is3D );
+    virtual bool    MsgReceive( plMessage *pMsg );
     void            SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray );
     float        GetSoundLength( int16_t soundIndex );
     virtual double  GetLength() { return GetSoundLength( fCurrentSound ); }

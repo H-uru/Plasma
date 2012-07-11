@@ -81,7 +81,7 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
 }
 
 
-hsBool plExportLogErrorMsg::Show()
+bool plExportLogErrorMsg::Show()
 {
     if( GetBogus() )
     {
@@ -89,7 +89,7 @@ hsBool plExportLogErrorMsg::Show()
     }
     return GetBogus();
 }
-hsBool plExportLogErrorMsg::Ask()
+bool plExportLogErrorMsg::Ask()
 {
     if( GetBogus() )
     {
@@ -98,7 +98,7 @@ hsBool plExportLogErrorMsg::Ask()
     return false;
 }
 
-hsBool plExportLogErrorMsg::CheckAndAsk()
+bool plExportLogErrorMsg::CheckAndAsk()
 {
     if( GetBogus() )
     {
@@ -108,7 +108,7 @@ hsBool plExportLogErrorMsg::CheckAndAsk()
     return GetBogus();
 }
 
-hsBool plExportLogErrorMsg::CheckAskOrCancel()
+bool plExportLogErrorMsg::CheckAskOrCancel()
 {
     if( GetBogus() )
     {
@@ -117,7 +117,7 @@ hsBool plExportLogErrorMsg::CheckAskOrCancel()
     return false;
 }
 
-hsBool plExportLogErrorMsg::CheckAndShow()
+bool plExportLogErrorMsg::CheckAndShow()
 {
     if ( GetBogus() )
     {
@@ -129,7 +129,7 @@ hsBool plExportLogErrorMsg::CheckAndShow()
 }
 
 
-hsBool plExportLogErrorMsg::Check()
+bool plExportLogErrorMsg::Check()
 {
     if( GetBogus() )
     {

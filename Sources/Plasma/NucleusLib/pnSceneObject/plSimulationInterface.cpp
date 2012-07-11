@@ -69,7 +69,7 @@ void plSimulationInterface::ISetSceneNode(plKey newNode)
         fPhysical->SetSceneNode(newNode);
 }
 
-void plSimulationInterface::SetProperty(int prop, hsBool on)
+void plSimulationInterface::SetProperty(int prop, bool on)
 {
     plObjInterface::SetProperty(prop, on);      // set the property locally
 
@@ -135,7 +135,7 @@ void plSimulationInterface::ReleaseData()
     }
 }
 
-hsBool plSimulationInterface::MsgReceive(plMessage* msg)
+bool plSimulationInterface::MsgReceive(plMessage* msg)
 {
     plIntRefMsg* intRefMsg = plIntRefMsg::ConvertNoRef(msg);
     if (intRefMsg)

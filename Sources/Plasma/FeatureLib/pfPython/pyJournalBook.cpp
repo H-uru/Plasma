@@ -164,7 +164,7 @@ void pyJournalBook::MakeBook(std::wstring esHTMLSource, plKey coverImageKey /* =
     IMakeNewKey();
 }
 
-void    pyJournalBook::Show( hsBool startOpened )
+void    pyJournalBook::Show( bool startOpened )
 {
     if( fBook != nil )
         fBook->Show( startOpened );
@@ -276,7 +276,7 @@ PyObject *pyJournalBook::GetMovie(uint8_t index)
     PYTHON_RETURN_NONE;
 }
 
-void    pyJournalBook::SetEditable( hsBool editable )
+void    pyJournalBook::SetEditable( bool editable )
 {
     if (fBook != nil)
         fBook->SetEditable(editable);

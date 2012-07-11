@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 plAudioCaps plAudioCapsDetector::fCaps;
-hsBool plAudioCapsDetector::fGotCaps = false;
+bool plAudioCapsDetector::fGotCaps = false;
 
 plStatusLog *plAudioCapsDetector::fLog = nil;
 
@@ -83,7 +83,7 @@ plAudioCapsDetector::~plAudioCapsDetector()
 //// Detect //////////////////////////////////////////////////////////////////
 //  Our big function that does all of our work
 
-plAudioCaps &plAudioCapsDetector::Detect( hsBool logIt, hsBool init )
+plAudioCaps &plAudioCapsDetector::Detect( bool logIt, bool init )
 {
     // If we already have the device capabilities, just return them
     if(fGotCaps) return fCaps;
@@ -158,10 +158,10 @@ plAudioCaps &plAudioCapsDetector::Detect( hsBool logIt, hsBool init )
 //  init code above as a way of trying to make sure this line here will 
 //  succeed as often as possible.
 
-hsBool  plAudioCapsDetector::IDetectEAX(  )
+bool    plAudioCapsDetector::IDetectEAX(  )
 {
 #ifdef EAX_SDK_AVAILABLE
-    hsBool gotSupport = true;
+    bool gotSupport = true;
 
     if(!alIsExtensionPresent((ALchar *)"EAX4.0"))       // is eax 4 supported
     {

@@ -86,7 +86,7 @@ public:
 
     virtual int32_t   GetNumProperties() const { return 3; } // This is stupid.
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // Set transform doesn't do anything, because the regions themselves are
     // object interfaces, so they'll move when their sceneobjects move.
@@ -95,15 +95,15 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    hsBool          Eval(const hsPoint3& pos) const;
+    bool            Eval(const hsPoint3& pos) const;
 
     int32_t           GetIndex() const { return fIndex; }
 
-    hsBool          Registered() const { return GetIndex() > 0; }
+    bool            Registered() const { return GetIndex() > 0; }
 
-    hsBool          IsNot() const { return GetProperty(kIsNot); }
-    hsBool          ReplaceNormal() const { return GetProperty(kReplaceNormal); }
-    hsBool          DisableNormal() const { return GetProperty(kDisableNormal); }
+    bool            IsNot() const { return GetProperty(kIsNot); }
+    bool            ReplaceNormal() const { return GetProperty(kReplaceNormal); }
+    bool            DisableNormal() const { return GetProperty(kDisableNormal); }
 };
 
 #endif // plVisRegion_inc

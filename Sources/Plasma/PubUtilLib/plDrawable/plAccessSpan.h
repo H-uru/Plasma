@@ -97,9 +97,9 @@ public:
     void SetType(AccessType t) { fType = t; }
     AccessType GetType() const { return fType; }
 
-    hsBool HasAccessTri() const { return fType == kTri; }
-    hsBool HasAccessParty() const { return fType == kParty; }
-    hsBool HasAccessVtx() const { return fType != kUndefined; }
+    bool HasAccessTri() const { return fType == kTri; }
+    bool HasAccessParty() const { return fType == kParty; }
+    bool HasAccessVtx() const { return fType != kUndefined; }
 
     plAccessTriSpan&    AccessTri() { hsAssert(fType == kTri, "Cross type access"); return fAccess.fAccessTri; }
     plAccessPartySpan&  AccessParty() { hsAssert(fType == kParty, "Cross type access"); return fAccess.fAccessParty; }
@@ -118,7 +118,7 @@ public:
     void SetLocalBounds(const hsBounds3Ext& bnd) { *fWorldBounds = *fLocalBounds = bnd; fWorldBounds->Transform(fLocalToWorld); }
     void SetWorldBounds(const hsBounds3Ext& wBnd) { *fWorldBounds = wBnd; }
 
-    hsBool HasWaterHeight() const { return nil != fWaterHeight; }
+    bool HasWaterHeight() const { return nil != fWaterHeight; }
     float GetWaterHeight() const { hsAssert(HasWaterHeight(), "Check before asking"); return *fWaterHeight; }
 };
 

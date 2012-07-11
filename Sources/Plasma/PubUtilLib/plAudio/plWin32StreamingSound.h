@@ -60,14 +60,14 @@ public:
     GETINTERFACE_ANY( plWin32StreamingSound, plWin32Sound );
 
     virtual void        DeActivate();
-    virtual hsBool      LoadSound( hsBool is3D );
+    virtual bool        LoadSound( bool is3D );
     virtual float       GetActualTimeSec();
     virtual unsigned    GetByteOffset();
     virtual StreamType  GetStreamType() const { return fStreamType; }
     virtual void        SetFilename(const char *filename, bool isCompressed);
     virtual void        Update();   // temp
     void                StreamUpdate();
-    virtual hsBool      MsgReceive( plMessage *pMsg );
+    virtual bool        MsgReceive( plMessage *pMsg );
     
 protected:
     float            fTimeAtBufferStart;
@@ -80,7 +80,7 @@ protected:
     bool                fIsCompressed;      // this applies only to the new sound file specified in fNewFilename, so we can play both ogg's and wav's
     std::string         fNewFilename;       // allow the filename to be changed so we can play from a different source.
                                             // ultimately this filename will be given to fDataBuffer, but since it's not always around we'll store it here
-    hsBool              fStopping;  
+    bool                fStopping;  
 
     double              fLastStreamingUpdate;
     bool                fPlayWhenStopped;
@@ -98,7 +98,7 @@ protected:
 
     virtual void        IFreeBuffers( void );
     void                IStreamUpdate();
-    virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( hsBool playWhenLoaded, hsBool isIncidental = false  );
+    virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( bool playWhenLoaded, bool isIncidental = false  );
 };
 
 #endif //plWin32StreamingSound_h

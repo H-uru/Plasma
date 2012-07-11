@@ -50,7 +50,7 @@ protected:
     char* fTemplateName;
     bool fExportTime;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
 public:
     plCloneSpawnModifier();

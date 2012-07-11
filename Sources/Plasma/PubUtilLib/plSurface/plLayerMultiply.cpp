@@ -148,7 +148,7 @@ uint32_t plLayerMultiply::Eval(double wSecs, uint32_t frame, uint32_t ignore)
     return dirtyChannels;
 }
 
-hsBool plLayerMultiply::MsgReceive(plMessage* msg)
+bool plLayerMultiply::MsgReceive(plMessage* msg)
 {
     return plLayerInterface::MsgReceive(msg);
 }

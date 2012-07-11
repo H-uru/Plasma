@@ -99,7 +99,7 @@ public:
 
         float       fFloatNumber;
 
-        hsBool      fBool;
+        bool        fBool;
 
     } datarecord;
 
@@ -229,7 +229,7 @@ public:
         fValueType = kFloat;
         datarecord.fFloatNumber = number;
     }
-    void SetTobool(hsBool state)
+    void SetTobool(bool state)
     {
         SetToNone();
         fValueType = kbool;
@@ -241,7 +241,7 @@ public:
         fValueType = kString;
         fString = string;
     }
-    void SetToSceneObject(plKey key, hsBool list=false)
+    void SetToSceneObject(plKey key, bool list=false)
     {
         SetToNone();
         if (list)

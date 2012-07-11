@@ -167,7 +167,7 @@ pfGUIPopUpMenu::~pfGUIPopUpMenu()
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIPopUpMenu::MsgReceive( plMessage *msg )
+bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
     if( ref != nil )
@@ -311,7 +311,7 @@ void    pfGUIPopUpMenu::SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *
 
 //// SetEnabled //////////////////////////////////////////////////////////////
 
-void    pfGUIPopUpMenu::SetEnabled( hsBool e )
+void    pfGUIPopUpMenu::SetEnabled( bool e )
 {
     if( e && fNeedsRebuilding )
     {
@@ -429,7 +429,7 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
 //// IBuildMenu //////////////////////////////////////////////////////////////
 //  Given the list of menu items, builds our set of dynamic buttons
 
-hsBool  pfGUIPopUpMenu::IBuildMenu( void )
+bool    pfGUIPopUpMenu::IBuildMenu( void )
 {
     int     i;
 
@@ -621,10 +621,10 @@ void    pfGUIPopUpMenu::ITearDownMenu( void )
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
-hsBool      pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
+bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )
 {
-    hsBool r = pfGUIDialogMod::HandleMouseEvent( event, mouseX, mouseY, modifiers );
+    bool r = pfGUIDialogMod::HandleMouseEvent( event, mouseX, mouseY, modifiers );
     if( r == false && event == pfGameGUIMgr::kMouseUp )
     {
         // We don't want to be active anymore!
@@ -922,7 +922,7 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fTexture );
 }
 
-hsBool  pfGUISkin::MsgReceive( plMessage *msg )
+bool    pfGUISkin::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
     if( ref != nil )

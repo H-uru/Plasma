@@ -60,7 +60,7 @@ public:
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
 };
 

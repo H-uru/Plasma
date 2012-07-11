@@ -79,12 +79,12 @@ public:
     plMipmap    *CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth = 0);
 
     // Colorize a compressed mipmap
-    hsBool  ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
+    bool    ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
 #if HS_BUILD_FOR_WIN32
     void        Initialize( IDirect3DDevice8 *directDraw );
 #endif
-    hsBool      Initialized()           { return (fFlags & kInitialized) != 0; }
+    bool        Initialized()           { return (fFlags & kInitialized) != 0; }
 
 #if HS_BUILD_FOR_WIN32
 private:
@@ -94,7 +94,7 @@ private:
     void                    IFillFromSurface( hsRGBAColor32* dest, uint32_t mmlvs, IDirectDrawSurface7 *pddsSrc );
     void                    ICopySurface( IDirectDrawSurface7 *dest, IDirectDrawSurface7 *src, int32_t mipMapLevels );
     void                    CheckErrorCode(HRESULT res);
-    hsBool                  IInitialize();
+    bool                    IInitialize();
 #endif
 
 #if HS_BUILD_FOR_WIN32
@@ -112,8 +112,8 @@ private:
         kExternalInit           = 0x2
     };
 
-    static hsBool Register();
-    static hsBool fRegistered;
+    static bool Register();
+    static bool fRegistered;
 };
 
 #endif // hsDXTDirectXCodec_inc

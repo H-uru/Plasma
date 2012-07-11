@@ -1096,7 +1096,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
     plMaxNode *pCamNode = (plMaxNode*)pb->GetINode(kCameraObj);
     if (!pCamNode)
         throw "No Camera Specified";
-    hsBool fail = true;
+    bool fail = true;
     int count = pCamNode->NumAttachedComponents();
     for (uint32_t x = 0; x < count; x++)
     {

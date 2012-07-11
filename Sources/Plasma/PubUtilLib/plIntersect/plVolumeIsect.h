@@ -106,7 +106,7 @@ public:
 class plConeIsect : public plVolumeIsect
 {
 protected:
-    hsBool              fCapped;
+    bool                fCapped;
 
     float            fRadAngle;
     float            fLength;

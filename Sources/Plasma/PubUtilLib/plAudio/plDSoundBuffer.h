@@ -68,7 +68,7 @@ class plAudioFileReader;
 class plDSoundBuffer
 {
 public:
-    plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool looping, hsBool tryStatic = false, bool streaming = false );
+    plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool looping, bool tryStatic = false, bool streaming = false );
     ~plDSoundBuffer();
 
     void        Play( void );
@@ -86,14 +86,14 @@ public:
     void        SetConeOrientation(float x, float y, float z);
     void        SetConeOutsideVolume(int vol);
 
-    void        SetLooping( hsBool loop );
+    void        SetLooping( bool loop );
     void        SetMinDistance( int dist);
     void        SetMaxDistance( int dist );
 
-    hsBool      IsValid( void ) const { return fValid; }
-    hsBool      IsPlaying( void );
-    hsBool      IsLooping( void ) const { return fLooping; }
-    hsBool      IsEAXAccelerated( void ) const;
+    bool        IsValid( void ) const { return fValid; }
+    bool        IsPlaying( void );
+    bool        IsLooping( void ) const { return fLooping; }
+    bool        IsEAXAccelerated( void ) const;
 
     bool        FillBuffer(void *data, unsigned bytes, plWAVHeader *header);
 
@@ -112,7 +112,7 @@ public:
     uint32_t      GetBufferBytePos( float timeInSecs ) const;
     uint32_t      bytePosToMSecs( uint32_t bytePos ) const;
 
-    void            SetEAXSettings(  plEAXSourceSettings *settings, hsBool force = false );
+    void            SetEAXSettings(  plEAXSourceSettings *settings, bool force = false );
     void            SetTimeOffsetBytes(unsigned bytes);
     uint8_t           GetBlockAlign( void ) const;
     static uint32_t   GetNumBuffers() { return fNumBuffers; }
@@ -134,7 +134,7 @@ protected:
     };
 
     BufferType          fType;
-    hsBool              fValid, fLooping;
+    bool                fValid, fLooping;
     uint32_t              fLockLength;
     void *              fLockPtr;
     
@@ -158,7 +158,7 @@ protected:
     unsigned            fNumQueuedBuffers;
     float            fPrevVolume;
 
-    void    IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic );
+    void    IAllocate( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool tryStatic );
     void    IRelease( void );
     int     IGetALFormat(unsigned bitsPerSample, unsigned int numChannels);
 };

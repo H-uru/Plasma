@@ -76,14 +76,14 @@ public:
     virtual uint32_t  GetDataSize( void ) = 0;
     virtual float   GetLengthInSecs( void ) = 0;
 
-    virtual hsBool  SetPosition( uint32_t numBytes ) = 0;
-    virtual hsBool  Read( uint32_t numBytes, void *buffer ) = 0;
+    virtual bool    SetPosition( uint32_t numBytes ) = 0;
+    virtual bool    Read( uint32_t numBytes, void *buffer ) = 0;
     virtual uint32_t  NumBytesLeft( void ) = 0;
 
-    virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
+    virtual bool    OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
     virtual uint32_t  Write( uint32_t bytes, void *buffer ) { return 0; }
 
-    virtual hsBool  IsValid( void ) = 0;
+    virtual bool    IsValid( void ) = 0;
 
     static plAudioFileReader* CreateReader(const char* path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
     static plAudioFileReader* CreateWriter(const char* path, plWAVHeader& header);

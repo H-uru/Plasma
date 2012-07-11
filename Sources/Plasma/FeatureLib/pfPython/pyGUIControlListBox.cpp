@@ -163,7 +163,7 @@ class pfColorListElement : public pfGUIListText
                 fString1 = nil;
         }
 
-        virtual hsBool  Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
         {
             hsColorRGBA textColor1;
             textColor1 = fTextColor1;
@@ -242,7 +242,7 @@ class pfColorListElement : public pfGUIListText
 
         virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
         {
-            hsBool wemade_string = false;
+            bool wemade_string = false;
             wchar_t* thestring;
             if ( fString1 && fString2 )
             {
@@ -327,7 +327,7 @@ class pfListPictureInBox : public pfGUIListPicture
         uint32_t              fSrcHeight;
 
     public:
-        pfListPictureInBox( plKey mipKey, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha ) : pfGUIListPicture( mipKey,respectAlpha )
+        pfListPictureInBox( plKey mipKey, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha ) : pfGUIListPicture( mipKey,respectAlpha )
         {
             fSrcX = x;
             fSrcY = y;
@@ -335,7 +335,7 @@ class pfListPictureInBox : public pfGUIListPicture
             fSrcHeight = height;
         }
 
-        virtual hsBool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        virtual bool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
         {
             plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
             if( mip != nil )
@@ -394,7 +394,7 @@ class pfListPictureInBoxWithSwatches : public pfListPictureInBox
 
         pfListPictureInBoxWithSwatches( plKey mipKey, uint32_t x, uint32_t y, 
                                                                             uint32_t width, uint32_t height, 
-                                                                            hsBool respectAlpha,
+                                                                            bool respectAlpha,
                                                                             const hsColorRGBA &primaryColor, const hsColorRGBA &secondaryColor )
                                             : pfListPictureInBox( mipKey, x, y, width, height, respectAlpha )
         {
@@ -402,7 +402,7 @@ class pfListPictureInBoxWithSwatches : public pfListPictureInBox
             fSColor = secondaryColor;
         }
 
-        virtual hsBool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        virtual bool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
         {
             if( !pfListPictureInBox::Draw( textGen, x, y, maxWidth, maxHeight ) )
                 return false;
@@ -435,7 +435,7 @@ pyGUIControlListBox::pyGUIControlListBox(plKey objkey) : pyGUIControl(objkey)
 {
 }
 
-hsBool pyGUIControlListBox::IsGUIControlListBox(pyKey& gckey)
+bool pyGUIControlListBox::IsGUIControlListBox(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIListBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -624,7 +624,7 @@ int16_t pyGUIControlListBox::AddStringW( std::wstring string )
     return -1;
 }
 
-int16_t   pyGUIControlListBox::AddImage( pyImage& image, hsBool respectAlpha )
+int16_t   pyGUIControlListBox::AddImage( pyImage& image, bool respectAlpha )
 {
     if ( fGCkey )
     {
@@ -771,7 +771,7 @@ int16_t pyGUIControlListBox::AddStringInBoxW( std::wstring string, uint32_t min_
     return -1;
 }
 
-int16_t   pyGUIControlListBox::AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha )
+int16_t   pyGUIControlListBox::AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha )
 {
     if ( fGCkey )
     {
@@ -788,7 +788,7 @@ int16_t   pyGUIControlListBox::AddImageInBox( pyImage& image, uint32_t x, uint32
     return -1;
 }
 
-int16_t   pyGUIControlListBox::AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha,
+int16_t   pyGUIControlListBox::AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
                                                         pyColor &primary, pyColor &secondary )
 {
     if ( fGCkey )
@@ -927,14 +927,14 @@ void pyGUIControlListBox::Unclickable( void )
     }
 }
 
-void    pyGUIControlListBox::AddBranch( const char *name, hsBool initiallyOpen )
+void    pyGUIControlListBox::AddBranch( const char *name, bool initiallyOpen )
 {
     wchar_t *wName = hsStringToWString(name);
     AddBranchW(wName,initiallyOpen);
     delete [] wName;
 }
 
-void    pyGUIControlListBox::AddBranchW( std::wstring name, hsBool initiallyOpen )
+void    pyGUIControlListBox::AddBranchW( std::wstring name, bool initiallyOpen )
 {
     if ( fGCkey )
     {

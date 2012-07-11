@@ -155,7 +155,7 @@ public:
     int NumSpawnPoints() { return fSpawnPoints.size(); }
     int FindSpawnPoint( const char *name ) const;
     // \}
-    static int WarpPlayerToAnother(hsBool iMove, uint32_t remoteID);
+    static int WarpPlayerToAnother(bool iMove, uint32_t remoteID);
     static int WarpPlayerToXYZ(float x, float y, float z);
     static int WarpPlayerToXYZ(int pid, float x, float y, float z);
 
@@ -163,10 +163,10 @@ public:
     static void ShutDown();
 
 
-    hsBool MsgReceive(plMessage *msg);
-    hsBool HandleCoopMsg(plAvCoopMsg *msg);
-    hsBool HandleNotifyMsg(plNotifyMsg *msg);
-    hsBool IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial);
+    bool MsgReceive(plMessage *msg);
+    bool HandleCoopMsg(plAvCoopMsg *msg);
+    bool HandleNotifyMsg(plNotifyMsg *msg);
+    bool IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial);
 
     // similar to a spawn point, maintainers markers are used 
     // to generate your position in Dni coordinates

@@ -230,7 +230,7 @@ class plMipmap : public plBitmap
         void    ClipToMaxSize( uint32_t maxDimension );
         void    RemoveMipping();
 
-        void    EnsureKonstantBorder( hsBool clampU, hsBool clampV );
+        void    EnsureKonstantBorder( bool clampU, bool clampV );
 
         enum CompositeFlags
         {
@@ -285,7 +285,7 @@ class plMipmap : public plBitmap
         virtual void    ScaleNicely( uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
                                 uint16_t destStride, plMipmap::ScaleFilter filter ) const;
 
-        virtual hsBool  ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter );
+        virtual bool    ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter );
 
     protected:
 
@@ -317,7 +317,7 @@ class plMipmap : public plBitmap
         void        ICarryZeroAlpha(uint8_t iDst);
         void        ICarryColor(uint8_t iDst, uint32_t col);
 
-        hsBool      IGrabBorderColor( hsBool grabVNotU, uint32_t *color );
+        bool        IGrabBorderColor( bool grabVNotU, uint32_t *color );
         void        ISetCurrLevelUBorder( uint32_t color );
         void        ISetCurrLevelVBorder( uint32_t color );
 

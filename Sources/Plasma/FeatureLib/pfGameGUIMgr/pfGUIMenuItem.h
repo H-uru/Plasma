@@ -68,17 +68,17 @@ class pfGUIMenuItem : public pfGUIButtonMod
     protected:
 
         wchar_t         *fName;
-        hsBool          fReportingHover;
+        bool            fReportingHover;
 
         HowToSkin       fHowToSkin;
-        hsBool          fSkinBuffersUpdated;
+        bool            fSkinBuffersUpdated;
 
         virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height );
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
 
         void            IUpdateSkinBuffers( void );
-        void            IUpdateSingleSkinBuffer( uint16_t y, hsBool sel );
+        void            IUpdateSingleSkinBuffer( uint16_t y, bool sel );
 
     public:
 
@@ -101,12 +101,12 @@ class pfGUIMenuItem : public pfGUIButtonMod
             kMouseExit
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    SetInteresting( hsBool i );
+        virtual void    SetInteresting( bool i );
 
         virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );

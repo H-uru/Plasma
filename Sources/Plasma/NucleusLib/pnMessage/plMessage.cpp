@@ -100,14 +100,14 @@ plMessage& plMessage::AddReceivers(const hsTArray<plKey>& rList)
     return *this;
 }
 
-hsBool plMessage::Send(const plKey r, hsBool async)
+bool plMessage::Send(const plKey r, bool async)
 {
     if( r )
         AddReceiver(r);
     return plgDispatch::MsgSend(this,async);
 }
 
-hsBool plMessage::SendAndKeep(const plKey r, hsBool async)
+bool plMessage::SendAndKeep(const plKey r, bool async)
 {
     Ref();
     return Send(r, async);

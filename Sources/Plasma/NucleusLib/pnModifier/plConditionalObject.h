@@ -54,8 +54,8 @@ class plConditionalObject : public hsKeyedObject
 private:
     // since 'this' is not derived from synchedObject, its synched values must be associated
     // with it's logicModifier (which is a synchedObject).  Thus it's a synched value 'friend'.
-    hsBool                          bSatisfied;     
-    hsBool                          fToggle;
+    bool                            bSatisfied;     
+    bool                            fToggle;
 public:
     enum
     {
@@ -65,7 +65,7 @@ public:
 protected:
     plLogicModBase*                 fLogicMod;
     hsBitVector                     fFlags;
-    hsBool                          fReset;
+    bool                            fReset;
 public:
     plConditionalObject();
     virtual ~plConditionalObject();
@@ -78,23 +78,23 @@ public:
 
     virtual void SetLogicMod(plLogicModBase* pMod) { fLogicMod = pMod; }
 
-//  virtual hsBool MsgReceive(plMessage* msg) = 0;
+//  virtual bool MsgReceive(plMessage* msg) = 0;
 
-    virtual hsBool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
-    void SetSatisfied(hsBool b) { bSatisfied=b; }
-    hsBool IsToggle() { return fToggle; }
-    void SetToggle(hsBool b) { fToggle = b; }
+    virtual bool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
+    void SetSatisfied(bool b) { bSatisfied=b; }
+    bool IsToggle() { return fToggle; }
+    void SetToggle(bool b) { fToggle = b; }
 
     // this is used if condtiton 1 is dependent on another condition's state at the
     // time of a message coming into condition 1;
-    virtual hsBool Verify(plMessage* msg) { return true; }
+    virtual bool Verify(plMessage* msg) { return true; }
 
     virtual void Evaluate() = 0;
     
     virtual void Reset() = 0;
-    virtual hsBool ResetOnTrigger() { return fReset; }
+    virtual bool ResetOnTrigger() { return fReset; }
 
-    hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    bool    HasFlag(int f) const { return fFlags.IsBitSet(f); }
     void    SetFlag(int f) { fFlags.SetBit(f); }
     void    ClearFlag(int which) { fFlags.ClearBit( which ); }
 

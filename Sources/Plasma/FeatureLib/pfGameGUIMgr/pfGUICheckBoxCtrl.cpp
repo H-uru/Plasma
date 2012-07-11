@@ -73,14 +73,14 @@ pfGUICheckBoxCtrl::pfGUICheckBoxCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUICheckBoxCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUICheckBoxCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUICheckBoxCtrl::MsgReceive( plMessage *msg )
+bool    pfGUICheckBoxCtrl::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }
@@ -115,7 +115,7 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
     if( fAnimationKeys.GetCount() > 0 )
@@ -151,7 +151,7 @@ void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 
 //// SetChecked //////////////////////////////////////////////////////////////
 
-void    pfGUICheckBoxCtrl::SetChecked( hsBool checked, hsBool immediate /*= false*/ )
+void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ )
 {
     fChecked = checked;
     if( fAnimationKeys.GetCount() > 0 )

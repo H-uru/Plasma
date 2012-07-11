@@ -138,7 +138,7 @@ void plDistOpacityMod::ISetOpacity()
 
 }
 
-hsBool plDistOpacityMod::MsgReceive(plMessage* msg)
+bool plDistOpacityMod::MsgReceive(plMessage* msg)
 {
     plArmatureUpdateMsg* arm = plArmatureUpdateMsg::ConvertNoRef(msg);
     if( arm && arm->IsLocal() )

@@ -270,7 +270,7 @@ class plGeometrySpan
             uint32_t      fIndices;
         };
 
-        hsBool                  fCreating;
+        bool                    fCreating;
         hsTArray<TempVertex>    fVertAccum;
         hsTArray<uint16_t>        fIndexAccum;
 

@@ -75,11 +75,11 @@ protected:
     plNotifyMsg*                    fNotify;
     bool                            fDisabled;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {return false;}
     void IUpdateSharedState(bool triggered) const;
-    hsBool IEvalCounter();
-    virtual void PreTrigger(hsBool netRequest);
-    virtual void Trigger(hsBool netRequest);
+    bool IEvalCounter();
+    virtual void PreTrigger(bool netRequest);
+    virtual void Trigger(bool netRequest);
     virtual void UnTrigger();
     
     void CreateNotifyMsg();
@@ -95,8 +95,8 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
-    virtual hsBool VerifyConditions(plMessage* msg) { return true;}
+    virtual bool MsgReceive(plMessage* msg);
+    virtual bool VerifyConditions(plMessage* msg) { return true;}
 
     virtual void Reset(bool bCounterReset);
 
@@ -106,13 +106,13 @@ public:
     plNotifyMsg* GetNotify() { return fNotify; }
 
     void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
-    void SetOneShot(hsBool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
+    void SetOneShot(bool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
     void RegisterForMessageType(uint16_t hClass);
 
-    virtual void RequestTrigger(hsBool netRequest=false);
+    virtual void RequestTrigger(bool netRequest=false);
     virtual void RequestUnTrigger() { UnTrigger(); }
 
-    hsBool  HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    bool    HasFlag(int f) const { return fFlags.IsBitSet(f); }
     void    SetFlag(int f) { fFlags.SetBit(f); }
     void    ClearFlag(int which) { fFlags.ClearBit(which); }
 

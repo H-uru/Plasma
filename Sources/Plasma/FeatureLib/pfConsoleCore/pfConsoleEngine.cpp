@@ -58,7 +58,7 @@ static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
 //WARNING: Potentially increments the pointer passed to it.
-static char *console_strtok( char *&line, hsBool haveCommand )
+static char *console_strtok( char *&line, bool haveCommand )
 {
     char *begin = line;
 
@@ -118,7 +118,7 @@ pfConsoleEngine::~pfConsoleEngine()
 
 //// PrintCmdHelp ////////////////////////////////////////////////////////////
 
-hsBool  pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char * ) )
+bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char * ) )
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -247,15 +247,15 @@ void    DummyPrintFn( const char *line )
 
 //// ExecuteFile /////////////////////////////////////////////////////////////
 
-hsBool  pfConsoleEngine::ExecuteFile( const char *fileName )
+bool    pfConsoleEngine::ExecuteFile( const char *fileName )
 {
     wchar_t* wFilename = hsStringToWString(fileName);
-    hsBool ret = ExecuteFile(wFilename);
+    bool ret = ExecuteFile(wFilename);
     delete [] wFilename;
     return ret;
 }
 
-hsBool  pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
+bool    pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
 {
     char            string[ 512 ];
     int             line;
@@ -298,14 +298,14 @@ hsBool  pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
 //  requires tokenizing the entire line and searching the tokens one by one,
 //  parsing them first as groups, then commands and then params.
 
-hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * ) )
+bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * ) )
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     int32_t               numParams, i, numQuotedParams = 0;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
     char                *ptr;
-    hsBool              valid = true;
+    bool                valid = true;
 
 
     hsAssert( line != nil, "Bad parameter to RunCommand()" );
@@ -402,10 +402,10 @@ hsBool  pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-hsBool  pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param )
+bool    pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param )
 {
     char    *c, expChars[] = "dDeE+-.";
-    hsBool  hasDecimal = false, hasLetters = false;
+    bool    hasDecimal = false, hasLetters = false;
 
 
     if( type == pfConsoleCmd::kNone )
@@ -470,11 +470,11 @@ hsBool  pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleC
 //  string to represent the best match of command (or group) for that string.
 //  WARNING: modifies the string passed to it.
 
-hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool preserveParams )
+bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preserveParams )
 {
     pfConsoleCmd        *cmd = nil;
     pfConsoleCmdGroup   *group, *subGrp;
-    hsBool              foundMore = false;
+    bool                foundMore = false;
 
     static char                 *ptr = nil, *insertLoc = nil;
     static pfConsoleCmd         *lastCmd = nil;
@@ -561,7 +561,7 @@ hsBool  pfConsoleEngine::FindPartialCmd( char *line, hsBool findAgain, hsBool pr
 //  groups. numToSkip specifies how many matches to skip before returning one
 //  (so if numToSkip = 1, then this will return the second match found).
 
-hsBool  pfConsoleEngine::FindNestedPartialCmd( char *line, uint32_t numToSkip, hsBool preserveParams )
+bool    pfConsoleEngine::FindNestedPartialCmd( char *line, uint32_t numToSkip, bool preserveParams )
 {
     pfConsoleCmd        *cmd;
 

@@ -194,7 +194,7 @@ plOccNode* plOccTree::IAddPolyRecur(plOccNode* node, plOccPoly* poly)
     return node;
 }
 
-hsBool plOccTree::BoundsVisible(const hsBounds3Ext& bnd) const
+bool plOccTree::BoundsVisible(const hsBounds3Ext& bnd) const
 {
     if( !fRoot )
         return true;
@@ -203,21 +203,21 @@ hsBool plOccTree::BoundsVisible(const hsBounds3Ext& bnd) const
 }
 
 
-hsBool plOccNode::IInChildBoundsVisible(const hsBounds3Ext& bnd) const
+bool plOccNode::IInChildBoundsVisible(const hsBounds3Ext& bnd) const
 {
     return fInChild
             ? fInChild->IBoundsVisible(bnd)
             : false;
 }
 
-hsBool plOccNode::IOutChildBoundsVisible(const hsBounds3Ext& bnd) const
+bool plOccNode::IOutChildBoundsVisible(const hsBounds3Ext& bnd) const
 {
     return fOutChild
             ? fOutChild->IBoundsVisible(bnd)
             : true;
 }
 
-hsBool plOccNode::IBoundsVisible(const hsBounds3Ext& bnd) const
+bool plOccNode::IBoundsVisible(const hsBounds3Ext& bnd) const
 {
     hsPoint2 depth;
     bnd.TestPlane(fPlane.fNormal, depth);

@@ -105,12 +105,12 @@ protected:
 
     bool                fNotifiesSetup;
 
-    hsBool              ISetupNotifies(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool              ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, plDynaDecalMgr* decalMgr);
-    hsBool              ICreateDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool              ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool                ISetupNotifies(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool                ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, plDynaDecalMgr* decalMgr);
+    bool                ICreateDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool                ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg);
 
-    hsBool              ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool                ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg);
 
     static plParticleComponent* IGetParticleComp(INode* node);
 
@@ -145,10 +145,10 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
 
     static plDynaDecalMgr* GetDecalMgr(INode* node);
@@ -290,7 +290,7 @@ ParamBlockDesc2 gFootPrintBk
     end
 );
 
-hsBool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // If we don't have a valid layer, we're screwed. Throw up a warning
     // and shutdown.
@@ -310,7 +310,7 @@ hsBool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return true;
 }
 
-hsBool plFootPrintComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -324,7 +324,7 @@ hsBool plFootPrintComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     if( !fValid )
         return true;
@@ -338,7 +338,7 @@ hsBool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true; 
 }
 
-hsBool plFootPrintComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plFootPrintComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fDecalMgr = nil;
     return true;
@@ -361,7 +361,7 @@ void plFootPrintComponent::IFakeParams()
     fCompPB->SetValue(kFadeOut, TimeValue(0), fCompPB->GetFloat(kLifeSpan) * 0.25f);
 }
 
-hsBool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, plDynaDecalMgr* decalMgr)
+bool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, plDynaDecalMgr* decalMgr)
 {
     IFakeParams();
 
@@ -407,7 +407,7 @@ hsBool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg
     return true;
 }
 
-hsBool plFootPrintComponent::ISetupNotifies(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::ISetupNotifies(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     int num = fCompPB->Count(kNotifies);
     int i;
@@ -425,7 +425,7 @@ hsBool plFootPrintComponent::ISetupNotifies(plMaxNode* node, plErrorMsg* pErrMsg
     return true;
 }
 
-hsBool plFootPrintComponent::ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     int num = fCompPB->Count(kParticles);
     if( !num )
@@ -463,7 +463,7 @@ hsBool plFootPrintComponent::ISetupParticles(plMaxNode* node, plErrorMsg* pErrMs
     return true;
 }
 
-hsBool plFootPrintComponent::ICreateDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::ICreateDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fCompPB->GetInt(kBlend) != kAlpha )
         return ISetupColorDecalMaterials(node, pErrMsg);
@@ -482,7 +482,7 @@ hsBool plFootPrintComponent::ICreateDecalMaterials(plMaxNode* node, plErrorMsg* 
     return true;
 }
 
-hsBool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     uint32_t blendFlags = 0;
     switch( fCompPB->GetInt(kBlend) )
@@ -572,9 +572,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -675,12 +675,12 @@ void plRippleComponent::IFakeParams()
     fCompPB->SetValue(kFadeOut, TimeValue(0), fCompPB->GetFloat(kLifeSpan) * 0.80f);
 }
 
-hsBool plRippleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRippleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return plFootPrintComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -707,7 +707,7 @@ hsBool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plRippleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plRippleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     if( !fValid )
         return true;
@@ -755,9 +755,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -850,12 +850,12 @@ ParamBlockDesc2 gPuddleBk
     end
 );
 
-hsBool plPuddleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plPuddleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return plRippleComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plPuddleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plPuddleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -874,7 +874,7 @@ hsBool plPuddleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plPuddleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plPuddleComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     if( !fValid )
         return true;
@@ -914,9 +914,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1015,12 +1015,12 @@ void plBulletComponent::IFakeParams()
     plFootPrintComponent::IFakeParams();
 }
 
-hsBool plBulletComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBulletComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return plFootPrintComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plBulletComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBulletComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -1035,7 +1035,7 @@ hsBool plBulletComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plBulletComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plBulletComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     if( !fValid )
         return true;
@@ -1076,9 +1076,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1178,12 +1178,12 @@ void plTorpedoComponent::IFakeParams()
     fCompPB->SetValue(kFadeOut, TimeValue(0), fCompPB->GetFloat(kLifeSpan) * 0.80f);
 }
 
-hsBool plTorpedoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plTorpedoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return plRippleComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plTorpedoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plTorpedoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -1206,7 +1206,7 @@ hsBool plTorpedoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plTorpedoComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plTorpedoComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return plRippleComponent::Convert(node, pErrMsg);
 }
@@ -1236,9 +1236,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1338,12 +1338,12 @@ void plWakeComponent::IFakeParams()
     fCompPB->SetValue(kFadeOut, TimeValue(0), fCompPB->GetFloat(kLifeSpan) * 0.80f);
 }
 
-hsBool plWakeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWakeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return plFootPrintComponent::SetupProperties(node, pErrMsg);
 }
 
-hsBool plWakeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWakeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -1362,7 +1362,7 @@ hsBool plWakeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plWakeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plWakeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     if( !fValid )
         return true;
@@ -1407,9 +1407,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1475,17 +1475,17 @@ ParamBlockDesc2 gDirtyBk
     end
 );
 
-hsBool plDirtyComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDirtyComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plDirtyComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDirtyComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     // Check that this node has a physical interface, or all is for nought.
     // Should throw up a warning if it doesn't have one, seems an easy thing
@@ -1558,9 +1558,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1603,18 +1603,18 @@ ParamBlockDesc2 gPrintShapeBk
     end
 );
 
-hsBool plPrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plPrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     return true;
 }
 
-hsBool plPrintShapeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plPrintShapeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plPrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plPrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )
@@ -1671,9 +1671,9 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1753,18 +1753,18 @@ ParamBlockDesc2 gActivePrintShapeBk
     end
 );
 
-hsBool plActivePrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plActivePrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     return true;
 }
 
-hsBool plActivePrintShapeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plActivePrintShapeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plActivePrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plActivePrintShapeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )

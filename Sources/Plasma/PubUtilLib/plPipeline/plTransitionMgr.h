@@ -75,7 +75,7 @@ class plTransitionMgr : public hsKeyedObject
         };
 
         uint8_t       fCurrentEffect;
-        hsBool      fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
+        bool        fRegisteredForTime, fHoldAtEnd, fPlaying, fNoSoundFade;
         float    fEffectLength, fCurrOpacity, fOpacDelta;
         float    fLastTime;
 
@@ -84,7 +84,7 @@ class plTransitionMgr : public hsKeyedObject
 
         void    ICreatePlate( void );
 
-        void    IStop( hsBool aboutToStartAgain = false );
+        void    IStop( bool aboutToStartAgain = false );
 
         hsTArray<plEventCallbackMsg *>  fCallbacks;
 
@@ -98,7 +98,7 @@ class plTransitionMgr : public hsKeyedObject
 
         void    Init( void );
 
-        virtual hsBool MsgReceive( plMessage* msg );
+        virtual bool MsgReceive( plMessage* msg );
 };
 
 

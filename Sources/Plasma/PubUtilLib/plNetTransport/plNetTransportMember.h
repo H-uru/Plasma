@@ -96,8 +96,8 @@ public:
     void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
     bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
 
-    hsBool AddSubscription(int chan);
-    hsBool RemoveSubscription(int chan);    // return true on success
+    bool AddSubscription(int chan);
+    bool RemoveSubscription(int chan);    // return true on success
     int FindSubscription(int chan);         // return index into subscription array or -1
 
     int GetNumSubscriptions() { return fSubscriptions.size(); }

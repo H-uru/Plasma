@@ -73,9 +73,9 @@ protected:
     void IRemovePseudo(plKey avatarKey);
     plPseudoLinkEffectMsg* IFindPseudo(plKey avatarKey);
 
-    hsBool IHuntWaitlist(plLinkEffectsTriggerMsg *msg);
-    hsBool IHuntWaitlist(plKey linkKey);
-    hsBool IHuntDeadlist(plLinkEffectsTriggerMsg *msg);
+    bool IHuntWaitlist(plLinkEffectsTriggerMsg *msg);
+    bool IHuntWaitlist(plKey linkKey);
+    bool IHuntDeadlist(plLinkEffectsTriggerMsg *msg);
     void ISendAllReadyCallbacks();
     
 public:
@@ -91,7 +91,7 @@ public:
     
     plMessage *WaitForEffect(plKey linkKey);
 
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 };
 
 #endif // plLinkEffectsMgr_inc

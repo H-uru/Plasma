@@ -99,7 +99,7 @@ void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    if(stream->Readbool())
+    if(stream->ReadBool())
         fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
 
     fInitiatorID = stream->ReadLE32();
@@ -114,7 +114,7 @@ void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->Writebool(fCoordinator != nil);
+    stream->WriteBool(fCoordinator != nil);
     if(fCoordinator)
         mgr->WriteCreatable(stream, fCoordinator);
 

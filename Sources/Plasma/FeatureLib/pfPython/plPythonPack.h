@@ -47,7 +47,7 @@ typedef struct _object PyObject;
 namespace PythonPack
 {
     PyObject* OpenPythonPacked(const char* fileName);
-    hsBool IsItPythonPacked(const char* fileName);
+    bool IsItPythonPacked(const char* fileName);
 }
 
 #endif // plPythonPack_h_inc

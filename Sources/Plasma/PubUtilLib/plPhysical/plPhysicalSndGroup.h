@@ -80,7 +80,7 @@ public:
     GETINTERFACE_ANY( plPhysicalSndGroup, hsKeyedObject );
 
     // Our required virtual
-    virtual hsBool  MsgReceive( plMessage *pMsg );
+    virtual bool    MsgReceive( plMessage *pMsg );
 
     virtual void Read( hsStream *s, hsResMgr *mgr );
     virtual void Write( hsStream *s, hsResMgr *mgr );

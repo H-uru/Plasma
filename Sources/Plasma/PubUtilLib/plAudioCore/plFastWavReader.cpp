@@ -265,7 +265,7 @@ float   plFastWAV::GetLengthInSecs( void )
     return (float)( fDataSize / fChannelAdjust ) / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool  plFastWAV::SetPosition( uint32_t numBytes )
+bool    plFastWAV::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid WAV file" );
 
@@ -277,7 +277,7 @@ hsBool  plFastWAV::SetPosition( uint32_t numBytes )
     return ( fseek( fFileHandle, fDataStartPos + fCurrDataPos, SEEK_SET ) == 0 ) ? true : false;
 }
 
-hsBool  plFastWAV::Read( uint32_t numBytes, void *buffer )
+bool    plFastWAV::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid WAV file" );
 

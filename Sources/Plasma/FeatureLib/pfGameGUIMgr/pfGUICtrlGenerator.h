@@ -93,7 +93,7 @@ class pfGUICtrlGenerator
                                                  hsColorRGBA &textColor, float objWidth, float objHeight );
 
         pfGUIDialogMod  *IGetDialog( void );
-        pfGUIDialogMod  *IGenerateDialog( const char *name, float scrnWidth, hsBool show = true );
+        pfGUIDialogMod  *IGenerateDialog( const char *name, float scrnWidth, bool show = true );
 
         plSceneObject   *IGenSceneObject( pfGUIDialogMod *dlg, plDrawable *myDraw, plSceneObject *parent = nil, hsMatrix44 *l2w = nil, hsMatrix44 *w2l = nil );
 
@@ -119,9 +119,9 @@ class pfGUICtrlGenerator
 
 
         pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, 
-                                                float width, float height, hsGMaterial *material, hsBool asMenuItem = false );
+                                                float width, float height, hsGMaterial *material, bool asMenuItem = false );
         pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y,
-                                                float width, float height, hsGMaterial *material, hsBool asMenuItem = false );
+                                                float width, float height, hsGMaterial *material, bool asMenuItem = false );
 
         static pfGUICtrlGenerator   &Instance( void );
 };

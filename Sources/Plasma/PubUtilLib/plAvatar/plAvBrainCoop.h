@@ -63,7 +63,7 @@ public:
     plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode,
                   uint32_t initiatorID, uint16_t initiatorSerial, plKey hostKey);
 
-    hsBool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg);
     virtual bool RelayNotifyMsg(plNotifyMsg *msg);
     void EnableGuestClick();
 

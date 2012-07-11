@@ -430,7 +430,7 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
     }
 }
 
-hsBool plWaveSet7::MsgReceive(plMessage* msg)
+bool plWaveSet7::MsgReceive(plMessage* msg)
 {
     plEvalMsg* update = plEvalMsg::ConvertNoRef(msg);
     if( update )
@@ -444,7 +444,7 @@ hsBool plWaveSet7::MsgReceive(plMessage* msg)
         IRestartLog();
         IRestartGraph();
 
-        plCONST(hsBool) reRender(false);
+        plCONST(bool) reRender(false);
         if( reRender || (fTrialUpdate & kReRenderEnvMap) )
         {
             plDynamicEnvMap* envMap = plDynamicEnvMap::ConvertNoRef(fEnvMap);
@@ -519,7 +519,7 @@ hsBool plWaveSet7::MsgReceive(plMessage* msg)
     return plMultiModifier::MsgReceive(msg);
 }
 
-hsBool plWaveSet7::IAnyBoundsVisible(plPipeline* pipe) const
+bool plWaveSet7::IAnyBoundsVisible(plPipeline* pipe) const
 {
     int i;
     for( i = 0; i < fTargBnds.GetCount(); i++ )
@@ -530,7 +530,7 @@ hsBool plWaveSet7::IAnyBoundsVisible(plPipeline* pipe) const
     return false;
 }
 
-hsBool plWaveSet7::IOnReceive(plGenRefMsg* refMsg)
+bool plWaveSet7::IOnReceive(plGenRefMsg* refMsg)
 {
     switch( refMsg->fType )
     {
@@ -638,7 +638,7 @@ hsBool plWaveSet7::IOnReceive(plGenRefMsg* refMsg)
     return false;
 }
 
-hsBool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
+bool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
 {
     switch( refMsg->fType )
     {
@@ -786,7 +786,7 @@ void plWaveSet7::IUpdateWaves(float dt)
 }
 
 // return true if we've finished this transition.
-hsBool plWaveSet7::ITransContinue(float dt)
+bool plWaveSet7::ITransContinue(float dt)
 {
     float currFade = (fFreqMod[fTransistor] += fTransDel * dt);
 
@@ -847,7 +847,7 @@ void plWaveSet7::ITransition(float dt)
 
 }
 
-hsBool plWaveSet7::ITransTexContinue(float dt)
+bool plWaveSet7::ITransTexContinue(float dt)
 {
     float currFade = (fTexWaveFade[fTexTrans] += fTexTransDel * dt);
 
@@ -3564,7 +3564,7 @@ void plWaveSet7::AddShoreTest(plKey& key)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
-hsBool plWaveSet7::SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts)
+bool plWaveSet7::SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts)
 {
     // We'll assume that if we set the vertexshader, we set the pixelshader too.
     if( fRipVShader && (mat->GetLayer(0)->GetVertexShader() == fRipVShader) )

@@ -62,7 +62,7 @@ class cyPhysics
 protected:
     plKey           fSender;
     hsTArray<plKey> fRecvr;
-    hsBool          fNetForce;
+    bool            fNetForce;
 
     cyPhysics(plKey sender=nil,plKey recvr=nil);
 
@@ -79,12 +79,12 @@ public:
     void SetSender(plKey &sender);
     void AddRecvr(plKey &recvr);
 
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable physics (must already be there)
-    virtual void EnableT(hsBool state);
-    virtual void Enable();
-    virtual void Disable();
+    virtual void EnableT(bool state);
+    virtual void Enable() { EnableT(true); }
+    virtual void Disable() { EnableT(false); }
     
     virtual void EnableCollision();
     virtual void DisableCollision();

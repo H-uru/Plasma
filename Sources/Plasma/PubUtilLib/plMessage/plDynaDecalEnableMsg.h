@@ -63,7 +63,7 @@ protected:
     uint32_t                  fID;
 public:
     plDynaDecalEnableMsg();
-    plDynaDecalEnableMsg(const plKey& r, const plKey& armOrShapeKey, double conTime, float wetLength, hsBool end, uint32_t id=uint32_t(-1), hsBool isArm=true);
+    plDynaDecalEnableMsg(const plKey& r, const plKey& armOrShapeKey, double conTime, float wetLength, bool end, uint32_t id=uint32_t(-1), bool isArm=true);
     ~plDynaDecalEnableMsg();
 
     CLASSNAME_REGISTER( plDynaDecalEnableMsg );
@@ -76,8 +76,8 @@ public:
     const plKey&            GetArmKey() const { return fKey; }
     void                    SetArmKey(const plKey& k) { fKey = k; SetArmature(true); }
 
-    hsBool                  IsArmature() const { return 0 != (fFlags & kArmature); }
-    void                    SetArmature(hsBool b) { if(b)fFlags |= kArmature; else fFlags &= ~kArmature; }
+    bool                    IsArmature() const { return 0 != (fFlags & kArmature); }
+    void                    SetArmature(bool b) { if(b)fFlags |= kArmature; else fFlags &= ~kArmature; }
 
     const plKey&            GetShapeKey() const { return fKey; }
     void                    SetShapeKey(const plKey& k) { fKey = k; SetArmature(false); }
@@ -88,8 +88,8 @@ public:
     float                GetWetLength() const { return fWetLength; }
     void                    SetWetLength(float w) { fWetLength = w; }
 
-    hsBool                  AtEnd() const { return 0 != (fFlags & kAtEnd); }
-    void                    SetAtEnd(hsBool b) { if(b)fFlags |= kAtEnd; else fFlags &= ~kAtEnd; }
+    bool                    AtEnd() const { return 0 != (fFlags & kAtEnd); }
+    void                    SetAtEnd(bool b) { if(b)fFlags |= kAtEnd; else fFlags &= ~kAtEnd; }
 
     uint32_t                  GetID() const { return fID; }
     void                    SetID(uint32_t n) { fID = n; }

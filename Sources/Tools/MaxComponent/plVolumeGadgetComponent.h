@@ -57,10 +57,10 @@ protected:
 public:
     plVolumeGadgetComponent();
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    hsBool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
 
     virtual bool HasLogicOut() { return true; }
     

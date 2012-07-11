@@ -68,10 +68,10 @@ public:
     plZlibStream();
     virtual ~plZlibStream();
 
-    virtual hsBool  Open(const char* filename, const char* mode);
-    virtual hsBool  Open(const wchar_t* filename, const wchar_t* mode);
-    virtual hsBool  Close();
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
+    virtual bool     Open(const char* filename, const char* mode);
+    virtual bool     Open(const wchar_t* filename, const wchar_t* mode);
+    virtual bool     Close();
+    virtual uint32_t Write(uint32_t byteCount, const void* buffer);
 
     // Since most functions don't check the return value from Write, you can
     // call this after you've passed in all your data to determine if it
@@ -79,12 +79,12 @@ public:
     bool DecompressedOk() { return fDecompressedOk; }
 
     // You can't use these
-    virtual hsBool  AtEnd();
-    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual uint32_t  GetEOF();
+    virtual bool     AtEnd();
+    virtual uint32_t Read(uint32_t byteCount, void* buffer);
+    virtual void     Skip(uint32_t deltaByteCount);
+    virtual void     Rewind();
+    virtual void     FastFwd();
+    virtual uint32_t GetEOF();
 };
 
 #endif // plZlibStream_h_inc

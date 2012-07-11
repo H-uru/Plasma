@@ -253,7 +253,7 @@ void hsMutex::Lock()
 #endif
 }
 
-hsBool hsMutex::TryLock()
+bool hsMutex::TryLock()
 {
     int status = ::pthread_mutex_trylock(&fPMutex);
     hsThrowIfOSErr(status);
@@ -316,7 +316,7 @@ hsSemaphore::~hsSemaphore()
 #endif
 }
 
-hsBool hsSemaphore::TryWait()
+bool hsSemaphore::TryWait()
 {
 #ifdef USE_SEMA
     int status = ::sem_trywait(fPSema);
@@ -328,7 +328,7 @@ hsBool hsSemaphore::TryWait()
 #endif
 }
 
-hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
 #ifdef USE_SEMA  // SHOULDN'T THIS USE timeToWait??!?!? -rje
     // shouldn't this use sem_timedwait? -dpogue (2012-03-04)
@@ -337,7 +337,7 @@ hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
     hsThrowIfOSErr(status);
     return true;
 #else
-    hsBool  retVal = true;
+    bool  retVal = true;
     int status = ::pthread_mutex_lock(&fPMutex);
     hsThrowIfOSErr(status);
 
@@ -430,9 +430,9 @@ hsEvent::~hsEvent()
     hsThrowIfOSErr(status);
 }
 
-hsBool hsEvent::Wait(hsMilliseconds timeToWait)
+bool hsEvent::Wait(hsMilliseconds timeToWait)
 {
-    hsBool  retVal = true;
+    bool  retVal = true;
     int status = ::pthread_mutex_lock(&fMutex);
     hsAssert(status == 0, "hsEvent Mutex Lock");
     hsThrowIfOSErr(status);
@@ -530,7 +530,7 @@ hsEvent::~hsEvent()
     close( fFds[kWrite] );
 }
 
-hsBool hsEvent::Wait( hsMilliseconds timeToWait )
+bool hsEvent::Wait( hsMilliseconds timeToWait )
 {
     hsTempMutexLock lock( fWaitLock );
 

@@ -126,7 +126,7 @@ public:
     // should not be overriden.
     virtual int GetMinCap() { return 0; }
 
-    hsBool IsExternal();
+    bool IsExternal();
 
     // Returns true if the msg that was just sent out was local or from something
     // this component ref's.  Used by the SceneWatcher to determine if a component
@@ -166,7 +166,7 @@ public:
     int NumSubs();
     Animatable* SubAnim(int i);
     TSTR SubAnimName(int i);
-    virtual hsBool AddToAnim(plAGAnim *anim, plMaxNode *node) { return false; }
+    virtual bool AddToAnim(plAGAnim *anim, plMaxNode *node) { return false; }
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack();
@@ -232,7 +232,7 @@ public:
 **
 **  Next create a derived class from the plComponent class with three public functions,
 **  being its constunctor, its custom destructor and the converter.  Currently, we have the
-**  converter returning an hsBool to let you know how successful the conversion process has been
+**  converter returning an bool to let you know how successful the conversion process has been
 **  during export to the .prd format.
 **
 **  After the class above has been declared, the param block stuff follows:

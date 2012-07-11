@@ -77,7 +77,7 @@ plVisLOSMgr* plVisLOSMgr::Instance()
     return &inst;
 }
 
-hsBool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits)
+bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits)
 {
     const plSpaceTreeNode& node = space->GetNode(which);
 
@@ -101,7 +101,7 @@ hsBool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray
         // else recurse on its children
         else
         {
-            hsBool retVal = false;
+            bool retVal = false;
             if( ICheckSpaceTreeRecur(space, node.GetChild(0), hits) )
                 retVal = true;
 
@@ -123,7 +123,7 @@ struct plCompSpaceHit : public std::binary_function<plSpaceHit, plSpaceHit, bool
 };
 
 
-hsBool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits)
+bool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits)
 {
     hits.SetCount(0);
 
@@ -131,7 +131,7 @@ hsBool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hi
         return false;
 
     // Hierarchical search down the tree for bounds intersecting the current ray.
-    hsBool retVal = ICheckSpaceTreeRecur(space, space->GetRoot(), hits);
+    bool retVal = ICheckSpaceTreeRecur(space, space->GetRoot(), hits);
 
     // Now sort them front to back.
     plSpaceHit* begin = hits.AcquireArray();
@@ -142,7 +142,7 @@ hsBool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hi
     return retVal;
 }
 
-hsBool plVisLOSMgr::ISetup(const hsPoint3& pStart, const hsPoint3& pEnd)
+bool plVisLOSMgr::ISetup(const hsPoint3& pStart, const hsPoint3& pEnd)
 {
     fCurrFrom = pStart;
     fCurrTarg = pEnd;
@@ -153,7 +153,7 @@ hsBool plVisLOSMgr::ISetup(const hsPoint3& pStart, const hsPoint3& pEnd)
     return fMaxDist > kMinMaxDist;
 }
 
-hsBool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit)
+bool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit)
 {
     if( !fPageMgr )
         return false;
@@ -174,7 +174,7 @@ hsBool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit
     // Our max distance can be changing as we do this, because a
     // face hit will limit how far we need to look. When we hit the
     // first node with a closest distance < fMaxDist, we're done.
-    hsBool retVal = false;
+    bool retVal = false;
 
     int i;
     for( i = 0; i < hits.GetCount(); i++ )
@@ -189,13 +189,13 @@ hsBool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckSceneNode(plSceneNode* node, plVisHit& hit)
+bool plVisLOSMgr::ICheckSceneNode(plSceneNode* node, plVisHit& hit)
 {
     static hsTArray<plSpaceHit> hits;
     if( !ICheckSpaceTree(node->GetSpaceTree(), hits) )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
     int i;
     for( i = 0; i < hits.GetCount(); i++ )
     {
@@ -214,7 +214,7 @@ hsBool plVisLOSMgr::ICheckSceneNode(plSceneNode* node, plVisHit& hit)
 }
 
 
-hsBool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
+bool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
 {
     plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(d);
     if( !ds )
@@ -224,11 +224,11 @@ hsBool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     if( !ICheckSpaceTree(ds->GetSpaceTree(), hits) )
         return false;
 
-    const hsBool isOpaque = !ds->GetRenderLevel().Level();
+    const bool isOpaque = !ds->GetRenderLevel().Level();
 
     const hsTArray<plSpan *> spans = ds->GetSpanArray();
 
-    hsBool retVal = false;
+    bool retVal = false;
     int i;
     for( i = 0; i < hits.GetCount(); i++ )
     {
@@ -245,7 +245,7 @@ hsBool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit)
+bool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit)
 {
     if( !(dr->GetSpan(spanIdx)->fTypeMask & plSpan::kIcicleSpan) )
         return false;
@@ -253,9 +253,9 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& 
     plAccessSpan src;
     plAccessGeometry::Instance()->OpenRO(dr, spanIdx, src);
 
-    const hsBool twoSided = !!(src.GetMaterial()->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscTwoSided);
+    const bool twoSided = !!(src.GetMaterial()->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscTwoSided);
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     // We move into local space, look for hits, and convert the closest we find 
     // (if any) back into world space at the end.
@@ -330,7 +330,7 @@ hsBool plVisLOSMgr::ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& 
     return retVal;
 }
 
-hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
+bool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
 {
     if( bnd.GetType() != kBoundsNormal )
         return false;
@@ -354,7 +354,7 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
     hsPoint3 corn[8];
     bnd.GetCorners(corn);
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     const hsPoint3& currFrom = fCurrFrom;
     const hsPoint3& currTarg = fCurrTarg;
@@ -416,7 +416,7 @@ hsBool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
     return false;
 }
 
-hsBool plVisLOSMgr::CursorCheck(plVisHit& hit)
+bool plVisLOSMgr::CursorCheck(plVisHit& hit)
 {
     int32_t sx= int32_t(plMouseDevice::Instance()->GetCursorX() * fPipe->Width());
     int32_t sy= int32_t(plMouseDevice::Instance()->GetCursorY() * fPipe->Height());

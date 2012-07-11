@@ -85,19 +85,19 @@ class plDXVertexBufferRef : public plDXDeviceRef
             kSkinned            = 0x40
         };
 
-        hsBool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
-        void SetFlag(uint32_t f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+        bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+        void SetFlag(uint32_t f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
 
-        hsBool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
-        void SetRebuiltSinceUsed(hsBool b) { SetFlag(kRebuiltSinceUsed, b); }
+        bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
+        void SetRebuiltSinceUsed(bool b) { SetFlag(kRebuiltSinceUsed, b); }
 
-        hsBool Volatile() const { return HasFlag(kVolatile); }
-        void SetVolatile(hsBool b) { SetFlag(kVolatile, b); }
+        bool Volatile() const { return HasFlag(kVolatile); }
+        void SetVolatile(bool b) { SetFlag(kVolatile, b); }
 
-        hsBool Skinned() const { return HasFlag(kSkinned); }
-        void SetSkinned(hsBool b) { SetFlag(kSkinned, b); }
+        bool Skinned() const { return HasFlag(kSkinned); }
+        void SetSkinned(bool b) { SetFlag(kSkinned, b); }
 
-        hsBool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+        bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
         void SetRefTime(uint32_t t) { fRefTime = t; }
 
         void                    Link( plDXVertexBufferRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
@@ -137,16 +137,16 @@ class plDXIndexBufferRef : public plDXDeviceRef
             kVolatile           = 0x20
         };
 
-        hsBool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
-        void SetFlag(uint32_t f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+        bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+        void SetFlag(uint32_t f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
 
-        hsBool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
-        void SetRebuiltSinceUsed(hsBool b) { SetFlag(kRebuiltSinceUsed, b); }
+        bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
+        void SetRebuiltSinceUsed(bool b) { SetFlag(kRebuiltSinceUsed, b); }
 
-        hsBool Volatile() const { return HasFlag(kVolatile); }
-        void SetVolatile(hsBool b) { SetFlag(kVolatile, b); }
+        bool Volatile() const { return HasFlag(kVolatile); }
+        void SetVolatile(bool b) { SetFlag(kVolatile, b); }
 
-        hsBool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+        bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
         void SetRefTime(uint32_t t) { fRefTime = t; }
 
         void                    Link( plDXIndexBufferRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }

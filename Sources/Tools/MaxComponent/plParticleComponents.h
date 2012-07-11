@@ -79,7 +79,7 @@ public:
     uint32_t      fYTiles;
     uint32_t      fNormal;
     uint32_t      fOrientation;
-    hsBool      fImmortal;
+    bool        fImmortal;
     
     ParticleStats() : fConeAngle(0.5), fVelocityMin(30.0), fVelocityMax(50.0), fLifeMin(5.0), fLifeMax(10.0), fPPS(20.0),
                       fScaleMin(80), fScaleMax(120), fGravity(100), fDrag(0), fWindMult(1.f), fMassRange(0), fRotRange(0), 
@@ -122,12 +122,12 @@ public:
     };
 
     virtual void DeleteThis() { delete this; }
-    static hsBool IsParticleSystemComponent(plComponentBase *comp);
-    static hsBool NodeHasSystem(plMaxNode *pNode);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool AddToAnim(plAGAnim *anim, plMaxNode *node);
-    virtual hsBool GetParamVals(plMaxNode *pNode) = 0;
+    static bool IsParticleSystemComponent(plComponentBase *comp);
+    static bool NodeHasSystem(plMaxNode *pNode);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool AddToAnim(plAGAnim *anim, plMaxNode *node);
+    virtual bool GetParamVals(plMaxNode *pNode) = 0;
     void SetParticleStats(plParticleMtl *mtl);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
@@ -150,7 +150,7 @@ public:
     static bool fAllowUnhide;
 
     plParticleComponent();
-    hsBool GetParamVals(plMaxNode *pNode);
+    bool GetParamVals(plMaxNode *pNode);
 
     virtual bool AllowUnhide() { return fAllowUnhide; }
 
@@ -172,12 +172,12 @@ public:
     plParticleEffectComponent() : fEffect(nil) {}
     virtual void DeleteThis() { delete this; }
 
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return TRUE; }; 
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return TRUE; }; 
     
     virtual void AddToParticleSystem(plParticleSystem *sys, plMaxNode *node) = 0;
-    static hsBool IsParticleEffectComponent(plComponentBase *comp);
+    static bool IsParticleEffectComponent(plComponentBase *comp);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,7 @@ public:
 
     plParticleVolumeComponent();
     virtual void DeleteThis() { delete this; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
     virtual void AddToParticleSystem(plParticleSystem *sys, plMaxNode *node);
     void BuildVolume(plMaxNode *node);
 

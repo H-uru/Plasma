@@ -69,7 +69,7 @@ plAGModifier::plAGModifier()
 }
 
 // CTOR(name)
-plAGModifier::plAGModifier(const plString &name, hsBool autoApply)
+plAGModifier::plAGModifier(const plString &name, bool autoApply)
 : plSingleModifier(), fAutoApply(autoApply)
 {
     fChannelName = name;
@@ -93,7 +93,7 @@ plString plAGModifier::GetChannelName() const
 }
 
 // ENABLE
-void plAGModifier::Enable(hsBool val)
+void plAGModifier::Enable(bool val)
 {
     fEnabled = val;
 }
@@ -126,7 +126,7 @@ void plAGModifier::Apply(double time) const
 
 // IEVAL
 // Apply our channels to our scene object
-hsBool plAGModifier::IEval(double time, float delta, uint32_t dirty)
+bool plAGModifier::IEval(double time, float delta, uint32_t dirty)
 {
     if(fAutoApply) {
     //  Apply(time, delta);
@@ -234,7 +234,7 @@ plAGChannel * plAGModifier::MergeChannel(plAGApplicator *app,
 }
 
 // DETACHCHANNEL
-hsBool plAGModifier::DetachChannel(plAGChannel * channel)
+bool plAGModifier::DetachChannel(plAGChannel * channel)
 {
     plAppTable::iterator i = fApps.begin();
 

@@ -89,8 +89,8 @@ public:
     static plKeyFinder& Instance();
 
     // These are Stupid search because they just do string searchs on the objects.
-    plKey StupidSearch(const char * age, const char * rm, const char *className, const plString &obName, hsBool subString=false);
-    plKey StupidSearch(const char * age, const char * rm, uint16_t objType, const plString &obName, hsBool subString=false);
+    plKey StupidSearch(const char * age, const char * rm, const char *className, const plString &obName, bool subString=false);
+    plKey StupidSearch(const char * age, const char * rm, uint16_t objType, const plString &obName, bool subString=false);
 
     eErrCodes   GetLastErrorCode() { return fLastError; }
     const char* GetLastErrorString(); // For Console display

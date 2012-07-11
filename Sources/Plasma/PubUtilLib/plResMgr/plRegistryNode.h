@@ -83,7 +83,7 @@ protected:
     hsBufferedStream fStream;   // Stream for reading/writing our page
     uint8_t fOpenRequests;        // How many handles there are to fStream (or
                                 // zero if it's closed)
-    hsBool fIsNewPage;          // True if this page is new (not read off disk)
+    bool fIsNewPage;          // True if this page is new (not read off disk)
 
     plRegistryPageNode() {}
 
@@ -98,18 +98,18 @@ public:
     plRegistryPageNode(const plLocation& location, const char* age, const char* page, const char* dataPath);
     ~plRegistryPageNode();
 
-    hsBool IsValid() const { return fValid == kPageOk; }
+    bool IsValid() const { return fValid == kPageOk; }
     PageCond GetPageCondition() { return fValid; }
 
     // True if we have any static or dynamic keys loaded
-    hsBool IsLoaded() const     { return fDynLoadedTypes > 0 || fStaticLoadedTypes > 0; }
+    bool IsLoaded() const     { return fDynLoadedTypes > 0 || fStaticLoadedTypes > 0; }
     // True if all of our static keys are loaded
-    hsBool IsFullyLoaded() const    { return (fStaticLoadedTypes == fKeyLists.size() && !fKeyLists.empty()) || fIsNewPage; }
+    bool IsFullyLoaded() const    { return (fStaticLoadedTypes == fKeyLists.size() && !fKeyLists.empty()) || fIsNewPage; }
 
     // Export time only.  If we want to reuse a page, load the keys we want then
     // call SetNewPage, so it will be considered a new page from now on.  That
     // way we won't try to load it's keys again.
-    hsBool IsNewPage() const    { return fIsNewPage; }
+    bool IsNewPage() const    { return fIsNewPage; }
     void SetNewPage()       { fIsNewPage = true; }
 
     const plPageInfo& GetPageInfo() const { return fPageInfo; }
@@ -128,10 +128,10 @@ public:
     // When all the static keys are unused we can free the memory associated with
     // them.  When a dynamic key is unused we just delete it right away.
     void SetKeyUsed(plKeyImp* key);
-    hsBool SetKeyUnused(plKeyImp* key);
+    bool SetKeyUnused(plKeyImp* key);
 
-    hsBool IterateKeys(plRegistryKeyIterator* iterator) const;
-    hsBool IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const;
+    bool IterateKeys(plRegistryKeyIterator* iterator) const;
+    bool IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const;
 
     // Call this to get a read stream for the page.  If a valid pointer is
     // returned, make sure to call CloseStream when you're done using it.

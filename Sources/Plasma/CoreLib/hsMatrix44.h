@@ -61,7 +61,7 @@ struct hsMatrix44 {
         kView
     };
     float            fMap[4][4];
-    uint32_t              fFlags;
+    uint32_t         fFlags;
 
     hsMatrix44() : fFlags(0) {}
     hsMatrix44(const hsScalarTriple &translate, const hsQuat &rotate);
@@ -79,7 +79,7 @@ struct hsMatrix44 {
     hsMatrix44&     Scale(const hsVector3 *);
     hsMatrix44&     Rotate(int axis, float radians);
 
-    hsMatrix44&     Reset(hsBool asIdent=true) 
+    hsMatrix44&     Reset(bool asIdent=true) 
     {
         fMap[0][0] = 1.0f; fMap[0][1] = 0.0f; fMap[0][2] = 0.0f; fMap[0][3]  = 0.0f;
         fMap[1][0] = 0.0f; fMap[1][1] = 1.0f; fMap[1][2] = 0.0f; fMap[1][3]  = 0.0f;
@@ -104,7 +104,7 @@ struct hsMatrix44 {
     hsMatrix44&     MakeCameraUpPreserving(const hsPoint3* from, const hsPoint3* at,
                         const hsVector3* up);
 
-    hsBool          GetParity() const;
+    bool            GetParity() const;
     float           GetDeterminant() const;
     hsMatrix44*     GetInverse(hsMatrix44* inverse) const;
     hsMatrix44*     GetTranspose(hsMatrix44* inverse) const;
@@ -145,11 +145,11 @@ struct hsMatrix44 {
     
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
     
-    hsBool          IsIdentity(void);
-    void            NotIdentity() { fFlags &= ~kIsIdent; }
+    bool  IsIdentity(void);
+    void  NotIdentity() { fFlags &= ~kIsIdent; }
 
-    hsBool operator==(const hsMatrix44& ss) const;
-    hsBool operator!=(const hsMatrix44& ss) const { return !(ss == *this); }
+    bool operator==(const hsMatrix44& ss) const;
+    bool operator!=(const hsMatrix44& ss) const { return !(ss == *this); }
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);

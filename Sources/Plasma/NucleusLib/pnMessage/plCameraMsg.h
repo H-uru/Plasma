@@ -79,9 +79,9 @@ public:
         kFOV        = 0x0004,
     };
 
-    int             fType;
+    int          fType;
 
-    hsPoint3        fOffset;
+    hsPoint3     fOffset;
     float        fAccel;
     float        fDecel;
     float        fVel;
@@ -89,7 +89,7 @@ public:
     float        fFPDecel;
     float        fFPVel;
     float        fFOVw, fFOVh;   
-    hsBool          fWorldspace;
+    bool         fWorldspace;
 
     void Read(hsStream* stream);
     void Write(hsStream* stream);
@@ -101,15 +101,15 @@ class plCameraTargetFadeMsg : public plMessage
 protected:
 
     plKey           fSubject;
-    hsBool          fFadeOut;
+    bool            fFadeOut;
 
 public:
     
-    plKey   GetSubjectKey() { return fSubject; }
+    plKey   GetSubjectKey() const { return fSubject; }
     
     void SetSubjectKey(const plKey &x) { fSubject = x; }
-    hsBool FadeOut() { return fFadeOut; }
-    void SetFadeOut(hsBool b) { fFadeOut = b; }
+    bool FadeOut() const { return fFadeOut; }
+    void SetFadeOut(bool b) { fFadeOut = b; }
 
     
     plCameraTargetFadeMsg(){;}
@@ -136,16 +136,16 @@ protected:
     plPipeline*     fPipe;
     plCameraConfig  fConfig;
 
-    hsBool          fActivated;
+    bool            fActivated;
 
 public:
     
-    plKey   GetNewCam() { return fNewCam; }
-    plKey   GetTriggerer() { return fTriggerer; }
-    double  GetTransTime() { return fTransTime; }
-    plSceneObject*  GetSubject() { return fSubject; }
-    plPipeline* GetPipeline() { return fPipe; }
-    hsBool   GetActivated() { return fActivated; }
+    plKey   GetNewCam() const { return fNewCam; }
+    plKey   GetTriggerer() const { return fTriggerer; }
+    double  GetTransTime() const { return fTransTime; }
+    plSceneObject*  GetSubject() const { return fSubject; }
+    plPipeline* GetPipeline() const { return fPipe; }
+    bool   GetActivated() const { return fActivated; }
     plCameraConfig* GetConfig() { return &fConfig; }
 
     void SetNewCam(const plKey &x) { fNewCam = x; }
@@ -153,7 +153,7 @@ public:
     void SetTransTime(double x) { fTransTime = x; }
     void SetSubject(plSceneObject* x) { fSubject = x; }
     void SetPipeline(plPipeline* x) { fPipe = x; }
-    void SetActivated(hsBool x) { fActivated = x; }
+    void SetActivated(bool x) { fActivated = x; }
         
     plCameraMsg();
     plCameraMsg(const plKey &s, 
@@ -212,7 +212,7 @@ public:
 
     hsBitVector     fCmd;
 
-    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }
@@ -230,20 +230,20 @@ class plIfaceFadeAvatarMsg : public plMessage
 protected:
 
     plKey           fSubject;
-    hsBool          fFadeOut;
-    hsBool          fEnable, fDisable;
+    bool            fFadeOut;
+    bool            fEnable, fDisable;
     
 public:
     
-    plKey   GetSubjectKey() { return fSubject; }
+    plKey   GetSubjectKey() const { return fSubject; }
     
     void SetSubjectKey(const plKey &x) { fSubject = x; }
-    hsBool FadeOut() { return fFadeOut; }
-    void SetFadeOut(hsBool b) { fFadeOut = b; }
+    bool FadeOut() const { return fFadeOut; }
+    void SetFadeOut(bool b) { fFadeOut = b; }
     void Enable() { fEnable = true; }
     void Disable() { fDisable = true; }
-    hsBool GetEnable() { return fEnable; }
-    hsBool GetDisable() { return fDisable; }
+    bool GetEnable() const { return fEnable; }
+    bool GetDisable() const { return fDisable; }
 
     plIfaceFadeAvatarMsg() : fEnable(false),fDisable(false){;}
     plIfaceFadeAvatarMsg(const plKey &s, 

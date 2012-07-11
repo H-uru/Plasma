@@ -950,7 +950,7 @@ CWaveFile::CWaveFile( const char *path, plAudioCore::ChannelSelect whichChan )
     // Just a stub--do nothing
 }
 
-hsBool  CWaveFile::OpenForWriting( const char *path, plWAVHeader &header )
+bool    CWaveFile::OpenForWriting( const char *path, plWAVHeader &header )
 {
     fHeader = header;
 
@@ -991,13 +991,13 @@ float   CWaveFile::GetLengthInSecs( void )
     return 0.f;
 }
 
-hsBool  CWaveFile::SetPosition( uint32_t numBytes )
+bool    CWaveFile::SetPosition( uint32_t numBytes )
 {
     hsAssert( false, "Unsupported" );
     return false;
 }
 
-hsBool  CWaveFile::Read( uint32_t numBytes, void *buffer )
+bool    CWaveFile::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( false, "Unsupported" );
     return false;
@@ -1016,7 +1016,7 @@ uint32_t  CWaveFile::Write( uint32_t bytes, void *buffer )
     return (uint32_t)written;
 }
 
-hsBool  CWaveFile::IsValid( void )
+bool    CWaveFile::IsValid( void )
 {
     return true;
 }

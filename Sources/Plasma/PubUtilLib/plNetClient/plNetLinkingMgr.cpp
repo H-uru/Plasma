@@ -314,7 +314,7 @@ std::string plNetLinkingMgr::GetProperAgeName( const char * ageName )
 
 ////////////////////////////////////////////////////////////////////
 
-hsBool plNetLinkingMgr::MsgReceive( plMessage *msg )
+bool plNetLinkingMgr::MsgReceive( plMessage *msg )
 {
     if (s_ageLeaver && NCAgeLeaverMsgReceive(s_ageLeaver, msg))
         return true;

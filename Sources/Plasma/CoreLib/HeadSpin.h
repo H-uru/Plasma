@@ -139,10 +139,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define M_PI       3.14159265358979323846
 #endif
 
-#ifdef __cplusplus
-    typedef int     hsBool;
-#endif
-
 #ifndef nil
 #   define nil (0)
 #endif

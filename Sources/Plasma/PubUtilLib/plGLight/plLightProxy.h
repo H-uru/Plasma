@@ -59,7 +59,7 @@ public:
     plLightProxy();
     virtual ~plLightProxy();
 
-    hsBool  Init(plLightInfo* liInfo);
+    bool    Init(plLightInfo* liInfo);
 };
 
 #endif // plLightProxy_inc

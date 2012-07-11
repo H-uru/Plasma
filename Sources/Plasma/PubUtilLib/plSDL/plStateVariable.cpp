@@ -1848,7 +1848,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->Writebool(fB[j+i]);
+            s->WriteBool(fB[j+i]);
         break;
     case plVarDescriptor::kKey:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1921,7 +1921,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, u
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fB[j+i]=s->Readbool();
+            fB[j+i]=s->ReadBool();
         break;
     case plVarDescriptor::kKey:
         for(i=0;i<fVar.GetAtomicCount();i++)

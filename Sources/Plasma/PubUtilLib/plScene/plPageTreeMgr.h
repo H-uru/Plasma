@@ -84,24 +84,24 @@ protected:
     plSpaceTree*                fSpaceTree;
     plVisMgr*                   fVisMgr;
 
-    static hsBool               fDisableVisMgr;
+    static bool                 fDisableVisMgr;
 
     hsTArray<const plOccluder*> fOccluders;
     hsTArray<const plCullPoly*> fCullPolys;
     hsTArray<const plCullPoly*> fSortedCullPolys;
 
     void                        ITrashSpaceTree();
-    hsBool                      IBuildSpaceTree();
-    hsBool                      IRefreshTree(plPipeline* pipe);
+    bool                        IBuildSpaceTree();
+    bool                        IRefreshTree(plPipeline* pipe);
     void                        ISortCullPolys(plPipeline* pipe);
-    hsBool                      IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list);
-    hsBool                      IGetCullPolys(plPipeline* pipe);
+    bool                        IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list);
+    bool                        IGetCullPolys(plPipeline* pipe);
     void                        IResetOcclusion(plPipeline* pipe);
     void                        IAddCullPolyList(const hsTArray<plCullPoly>& polyList);
 
-    hsBool                      ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList);
+    bool                        ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList);
     int                         IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList>& drawVis, int& iDrawStart);
-    hsBool                      IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs);
+    bool                        IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs);
     int                         IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& visList);
 
 public:
@@ -113,11 +113,11 @@ public:
     void            AddNode(plSceneNode* node);
     void            RemoveNode(plSceneNode* node);
     virtual void    Reset(); // remove all nodes, nuke the space tree
-    virtual hsBool  Empty() const { return !fNodes.GetCount(); }
+    virtual bool    Empty() const { return !fNodes.GetCount(); }
 
     virtual int     Render(plPipeline* pipe);
 
-    hsBool          Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
+    bool            Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
 
     void            AddOccluderList(const hsTArray<plOccluder*> occList);
 
@@ -126,8 +126,8 @@ public:
     void            SetVisMgr(plVisMgr* visMgr) { fVisMgr = visMgr; }
     plVisMgr*       GetVisMgr() const { return fVisMgr; }
 
-    static void     EnableVisMgr(hsBool on) { fDisableVisMgr = !on; }
-    static hsBool   VisMgrEnabled() { return !fDisableVisMgr; }
+    static void     EnableVisMgr(bool on) { fDisableVisMgr = !on; }
+    static bool     VisMgrEnabled() { return !fDisableVisMgr; }
 };
 
 #endif // plPageTreeMgr_inc

@@ -59,17 +59,17 @@ private:
     char fLastRep;
 
     int32_t fNumSeps;
-    hsBool fQAsTok;
-    hsBool fInQuote;
-    hsBool fCheckAlphaNum;
+    bool fQAsTok;
+    bool fInQuote;
+    bool fCheckAlphaNum;
 public:
     hsStringTokenizer(const char *string=nil, const char *seps=nil);
     ~hsStringTokenizer();
     char *next();
-    hsBool  Next( char *token, uint32_t maxTokLen );
-    hsBool HasMoreTokens();
+    bool Next( char *token, uint32_t maxTokLen );
+    bool HasMoreTokens();
     void Reset(const char *string, const char *seps);
-    void ParseQuotes(hsBool qAsTok);
+    void ParseQuotes(bool qAsTok);
 
     char    *GetRestOfString( void ) const { return fTok; }
 
@@ -78,7 +78,7 @@ public:
     void    RestoreLastTerminator( void );
 
 private:
-    hsBool IsSep(char c);
+    bool IsSep(char c);
 };
 
 class hsWStringTokenizer 
@@ -90,17 +90,17 @@ private:
     wchar_t fLastRep;
 
     int32_t fNumSeps;
-    hsBool fQAsTok;
-    hsBool fInQuote;
-    hsBool fCheckAlphaNum;
+    bool fQAsTok;
+    bool fInQuote;
+    bool fCheckAlphaNum;
 public:
     hsWStringTokenizer(const wchar_t *string=nil, const wchar_t *seps=nil);
     ~hsWStringTokenizer();
     wchar_t *next();
-    hsBool  Next( wchar_t *token, uint32_t maxTokLen );
-    hsBool HasMoreTokens();
+    bool Next( wchar_t *token, uint32_t maxTokLen );
+    bool HasMoreTokens();
     void Reset(const wchar_t *string, const wchar_t *seps);
-    void ParseQuotes(hsBool qAsTok);
+    void ParseQuotes(bool qAsTok);
 
     wchar_t   *GetRestOfString( void ) const { return fTok; }
 
@@ -109,7 +109,7 @@ public:
     void    RestoreLastTerminator( void );
 
 private:
-    hsBool IsSep(wchar_t c);
+    bool IsSep(wchar_t c);
 };
 
 #endif // _hsStringTokenizer_Included_

@@ -213,7 +213,7 @@ int plTriUtils::ISelectAxis(const hsVector3& norm)
     return retVal;
 }
 
-hsBool plTriUtils::IFastBarycentric(int iAx, const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out)
+bool plTriUtils::IFastBarycentric(int iAx, const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out)
 {
     if( --iAx < 0 )
         iAx = 2;
@@ -242,7 +242,7 @@ hsBool plTriUtils::IFastBarycentric(int iAx, const hsPoint3& p0, const hsPoint3&
     return true;
 }
 
-hsBool plTriUtils::FastBarycentricProjection(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3&p, hsPoint3& out)
+bool plTriUtils::FastBarycentricProjection(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3&p, hsPoint3& out)
 {
     hsVector3 v02(&p0, &p2);
     hsVector3 v12(&p1, &p2);
@@ -265,7 +265,7 @@ hsBool plTriUtils::FastBarycentricProjection(const hsPoint3& p0, const hsPoint3&
     return IFastBarycentric(iAx, p0, p1, p2, p, out);
 }
 
-hsBool plTriUtils::FastBarycentric(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out)
+bool plTriUtils::FastBarycentric(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsPoint3&p, hsPoint3& out)
 {
     hsVector3 v02(&p0, &p2);
     hsVector3 v12(&p1, &p2);
@@ -278,7 +278,7 @@ hsBool plTriUtils::FastBarycentric(const hsPoint3& p0, const hsPoint3& p1, const
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-hsBool plTriUtils::ProjectOntoPlane(const hsVector3& norm, float dist, hsPoint3& p)
+bool plTriUtils::ProjectOntoPlane(const hsVector3& norm, float dist, hsPoint3& p)
 {
     float normMagSq = norm.MagnitudeSquared();
     if( normMagSq > kAlmostZero )
@@ -292,7 +292,7 @@ hsBool plTriUtils::ProjectOntoPlane(const hsVector3& norm, float dist, hsPoint3&
     return false;
 }
 
-hsBool plTriUtils::ProjectOntoPlane(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3& p)
+bool plTriUtils::ProjectOntoPlane(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, hsPoint3& p)
 {
     hsVector3 v02(&p0, &p2);
     hsVector3 v12(&p1, &p2);
@@ -304,7 +304,7 @@ hsBool plTriUtils::ProjectOntoPlane(const hsPoint3& p0, const hsPoint3& p1, cons
     return ProjectOntoPlane(norm, dist, p);
 }
 
-hsBool plTriUtils::ProjectOntoPlaneAlongVector(const hsVector3& norm, float dist, const hsVector3& vec, hsPoint3& p)
+bool plTriUtils::ProjectOntoPlaneAlongVector(const hsVector3& norm, float dist, const hsVector3& vec, hsPoint3& p)
 {
     float s = norm.InnerProduct(vec);
     const float kAlmostZero = 1.e-5f;
@@ -319,7 +319,7 @@ hsBool plTriUtils::ProjectOntoPlaneAlongVector(const hsVector3& norm, float dist
     return false;
 }
 
-hsBool plTriUtils::ProjectOntoPlaneAlongVector(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsVector3& vec, hsPoint3& p)
+bool plTriUtils::ProjectOntoPlaneAlongVector(const hsPoint3& p0, const hsPoint3& p1, const hsPoint3& p2, const hsVector3& vec, hsPoint3& p)
 {
     hsVector3 v02(&p0, &p2);
     hsVector3 v12(&p1, &p2);

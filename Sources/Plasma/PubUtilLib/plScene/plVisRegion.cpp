@@ -67,7 +67,7 @@ plVisRegion::~plVisRegion()
         fMgr->UnRegister(this, GetProperty(kIsNot));
 }
 
-hsBool plVisRegion::Eval(const hsPoint3& pos) const
+bool plVisRegion::Eval(const hsPoint3& pos) const
 {
     if( GetProperty(kDisable) )
         return false;
@@ -78,7 +78,7 @@ hsBool plVisRegion::Eval(const hsPoint3& pos) const
     return fRegion->IsInside(pos);
 }
 
-hsBool plVisRegion::MsgReceive(plMessage* msg)
+bool plVisRegion::MsgReceive(plMessage* msg)
 {
     plEnableMsg* enaMsg = plEnableMsg::ConvertNoRef(msg);
     if( enaMsg )

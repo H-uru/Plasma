@@ -62,12 +62,12 @@ public:
     GETINTERFACE_ANY( plAvBrainSwim, plArmatureBrain );
 
     virtual void Activate(plArmatureModBase *avMod);
-    hsBool Apply(double time, float elapsed);
+    bool Apply(double time, float elapsed);
     virtual void Deactivate();
     virtual void Suspend();
     virtual void Resume();
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    hsBool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg);
     bool IsWalking();
     bool IsWading();
     bool IsSwimming();
@@ -79,17 +79,17 @@ public:
 protected:
     void IStartWading();
     void IStartSwimming(bool is2D);
-    hsBool IProcessSwimming2D(double time, float elapsed);
-    hsBool IProcessSwimming3D(double time, float elapsed);
-    hsBool IProcessWading(double time, float elapsed);
-    hsBool IProcessClimbingOut(double time, float elapsed);
-    hsBool IProcessBehaviors(double time, float elapsed);
+    bool IProcessSwimming2D(double time, float elapsed);
+    bool IProcessSwimming3D(double time, float elapsed);
+    bool IProcessWading(double time, float elapsed);
+    bool IProcessClimbingOut(double time, float elapsed);
+    bool IProcessBehaviors(double time, float elapsed);
 
-    virtual hsBool IInitAnimations();
+    virtual bool IInitAnimations();
     bool IAttachAction();
     bool IDetachAction();
     void IProbeSurface();
-    hsBool IHandleControlMsg(plControlEventMsg* msg);
+    bool IHandleControlMsg(plControlEventMsg* msg);
     float IGetTargetZ();
 
     float fSurfaceDistance;

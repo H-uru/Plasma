@@ -61,17 +61,17 @@ plZlibStream::~plZlibStream()
     hsAssert(!fOutput && !fZStream, "plZlibStream not closed");
 }
 
-hsBool plZlibStream::Open(const char* filename, const char* mode)
+bool plZlibStream::Open(const char* filename, const char* mode)
 {
     wchar_t* wFilename = hsStringToWString(filename);
     wchar_t* wMode = hsStringToWString(mode);
-    hsBool ret = Open(wFilename, wMode);
+    bool ret = Open(wFilename, wMode);
     delete [] wFilename;
     delete [] wMode;
     return ret;
 }
 
-hsBool plZlibStream::Open(const wchar_t* filename, const wchar_t* mode)
+bool plZlibStream::Open(const wchar_t* filename, const wchar_t* mode)
 {
     fFilename = filename;
     fMode = mode;
@@ -80,7 +80,7 @@ hsBool plZlibStream::Open(const wchar_t* filename, const wchar_t* mode)
     return fOutput->Open(filename, L"wb");
 }
 
-hsBool plZlibStream::Close()
+bool plZlibStream::Close()
 {
     if (fOutput)
     {
@@ -277,7 +277,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     return clipBuffer;
 }
 
-hsBool plZlibStream::AtEnd()
+bool plZlibStream::AtEnd()
 {
     hsAssert(0, "AtEnd not supported");
     return true;

@@ -110,7 +110,7 @@ void    plGBufferCell::Write( hsStream *s )
 
 //// Constructor //////////////////////////////////////////////////////////////
 
-plGBufferGroup::plGBufferGroup( uint8_t format, hsBool vertsVolatile, hsBool idxVolatile, int LOD ) 
+plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD ) 
 {
     fVertBuffStorage.Reset();
     fIdxBuffStorage.Reset();
@@ -277,7 +277,7 @@ void    plGBufferGroup::SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib )
 
 //// PrepForRendering /////////////////////////////////////////////////////////
 
-void    plGBufferGroup::PrepForRendering( plPipeline *pipe, hsBool adjustForNvidiaLighting )
+void    plGBufferGroup::PrepForRendering( plPipeline *pipe, bool adjustForNvidiaLighting )
 {
     ISendStorageToBuffers( pipe, adjustForNvidiaLighting );
     // The following line was taken out so we'd keep our data around, allowing
@@ -304,7 +304,7 @@ hsGDeviceRef* plGBufferGroup::GetIndexBufferRef(uint32_t i)
 
 //// ISendStorageToBuffers ////////////////////////////////////////////////////
 
-void    plGBufferGroup::ISendStorageToBuffers( plPipeline *pipe, hsBool adjustForNvidiaLighting )
+void    plGBufferGroup::ISendStorageToBuffers( plPipeline *pipe, bool adjustForNvidiaLighting )
 {
     plProfile_BeginTiming(DrawRefillVertex);
 
@@ -718,7 +718,7 @@ uint32_t  plGBufferGroup::IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t v
 //  and starting position. Basically does what AppendToVertStorage() used to
 //  do except it doesn't actually copy any data into the space reserved.
 
-hsBool  plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint8_t flags )
+bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint8_t flags )
 {
     uint8_t                   *storagePtr = nil;
     uint32_t                  cStartIdx = 0, vStartIdx = 0;
@@ -1033,7 +1033,7 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
 //// ReserveIndexStorage //////////////////////////////////////////////////////
 //  Same as ReserveVertStorage(), only for indices :)
 
-hsBool  plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr )
+bool    plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr )
 {
     uint16_t          *storagePtr;
     int             i;

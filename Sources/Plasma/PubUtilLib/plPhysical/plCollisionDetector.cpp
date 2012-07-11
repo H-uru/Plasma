@@ -98,7 +98,7 @@ bool plCollisionDetector::IIsDisabledAvatar(plKey key)
     return (plAvBrainDrive::ConvertNoRef(avBrain) != nil);
 }
 
-hsBool plCollisionDetector::MsgReceive(plMessage* msg)
+bool plCollisionDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
 
@@ -292,7 +292,7 @@ void plCameraRegionDetector::ISendSavedTriggerMsgs()
 }
 
 
-hsBool plCameraRegionDetector::MsgReceive(plMessage* msg)
+bool plCameraRegionDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
     if (pCollMsg)
@@ -379,7 +379,7 @@ void plObjectInVolumeDetector::ISendSavedTriggerMsgs()
     fSavedActivatorMsg = nil;
 }
 
-hsBool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
+bool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
     if (pCollMsg)
@@ -496,7 +496,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
     }
 }
 
-hsBool plObjectInVolumeAndFacingDetector::MsgReceive(plMessage* msg)
+bool plObjectInVolumeAndFacingDetector::MsgReceive(plMessage* msg)
 {
     // Avatar is entering or exiting our detector box
     plCollideMsg* collMsg = plCollideMsg::ConvertNoRef(msg);
@@ -548,7 +548,7 @@ void plObjectInVolumeAndFacingDetector::Read(hsStream* stream, hsResMgr* mgr)
     plObjectInVolumeDetector::Read(stream, mgr);
 
     fFacingTolerance = stream->ReadLEScalar();
-    fNeedWalkingForward = stream->Readbool();
+    fNeedWalkingForward = stream->ReadBool();
 }
 
 void plObjectInVolumeAndFacingDetector::Write(hsStream* stream, hsResMgr* mgr)
@@ -556,7 +556,7 @@ void plObjectInVolumeAndFacingDetector::Write(hsStream* stream, hsResMgr* mgr)
     plObjectInVolumeDetector::Write(stream, mgr);
 
     stream->WriteLEScalar(fFacingTolerance);
-    stream->Writebool(fNeedWalkingForward);
+    stream->WriteBool(fNeedWalkingForward);
 }
 
 /////////////////////////////////
@@ -570,7 +570,7 @@ plSubworldRegionDetector::~plSubworldRegionDetector()
 }
 
 
-hsBool plSubworldRegionDetector::MsgReceive(plMessage* msg)
+bool plSubworldRegionDetector::MsgReceive(plMessage* msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
 
@@ -631,7 +631,7 @@ void plSubworldRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 ///////////////////////////////////
 /// plPanicLinkDetector
 ///////////////////////////////////
-hsBool plPanicLinkRegion::MsgReceive(plMessage* msg)
+bool plPanicLinkRegion::MsgReceive(plMessage* msg)
 {
     if (plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg))
     {
@@ -710,17 +710,17 @@ void plSimpleRegionSensor::Write(hsStream *stream, hsResMgr *mgr)
     plSingleModifier::Write(stream, mgr);
     if(fEnterMsg)
     {
-        stream->Writebool(true);
+        stream->WriteBool(true);
         mgr->WriteCreatable(stream, fEnterMsg);
     } else {
-        stream->Writebool(false);
+        stream->WriteBool(false);
     }
     if(fExitMsg)
     {
-        stream->Writebool(true);
+        stream->WriteBool(true);
         mgr->WriteCreatable(stream, fExitMsg);
     } else {
-        stream->Writebool(false);
+        stream->WriteBool(false);
     }
 }
 
@@ -728,14 +728,14 @@ void plSimpleRegionSensor::Write(hsStream *stream, hsResMgr *mgr)
 void plSimpleRegionSensor::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSingleModifier::Read(stream, mgr);
-    if(stream->Readbool())
+    if(stream->ReadBool())
     {
         fEnterMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     } else {
         fEnterMsg = nil;
     }
 
-    if(stream->Readbool())
+    if(stream->ReadBool())
     {
         fExitMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
         hsAssert(fExitMsg, "Corrupted plSimpleRegionSensor during read.");
@@ -745,7 +745,7 @@ void plSimpleRegionSensor::Read(hsStream *stream, hsResMgr *mgr)
 }
 
 // MSGRECEIVE
-hsBool plSimpleRegionSensor::MsgReceive(plMessage *msg)
+bool plSimpleRegionSensor::MsgReceive(plMessage *msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
 
@@ -782,7 +782,7 @@ hsBool plSimpleRegionSensor::MsgReceive(plMessage *msg)
 }
 
 // IEVAL
-hsBool plSimpleRegionSensor::IEval(double secs, float del, uint32_t dirty)
+bool plSimpleRegionSensor::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -807,7 +807,7 @@ void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)
     stream->ReadLEScalar();
     stream->ReadLEScalar();
 }
-hsBool plSwimDetector::MsgReceive(plMessage *msg)
+bool plSwimDetector::MsgReceive(plMessage *msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);
 
@@ -841,7 +841,7 @@ hsBool plSwimDetector::MsgReceive(plMessage *msg)
     }
     return plSimpleRegionSensor::MsgReceive(msg);
 }
-hsBool  plRidingAnimatedPhysicalDetector::MsgReceive(plMessage *msg)
+bool    plRidingAnimatedPhysicalDetector::MsgReceive(plMessage *msg)
 {
     
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);

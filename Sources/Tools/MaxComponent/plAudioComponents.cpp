@@ -428,7 +428,7 @@ const char* plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterCom
     return nil;
 }
 
-hsBool plBaseSoundEmitterComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
+bool plBaseSoundEmitterComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fCreateGrouped = false;
     fIndices.clear();
@@ -438,7 +438,7 @@ hsBool plBaseSoundEmitterComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plBaseSoundEmitterComponent::SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg )
+bool plBaseSoundEmitterComponent::SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg )
 {
     IConvertOldVolume();
 /*
@@ -468,7 +468,7 @@ bool plBaseSoundEmitterComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plBaseSoundEmitterComponent::PreConvert( plMaxNode *node, plErrorMsg *pErrMsg, Class_ID classToConvert )
+bool plBaseSoundEmitterComponent::PreConvert( plMaxNode *node, plErrorMsg *pErrMsg, Class_ID classToConvert )
 {
     const char* dbgNodeName = node->GetName();
     fValidNodes[node] = IValidate(node, pErrMsg);
@@ -704,7 +704,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
 //  Returns true if found, false if not.
 
 #ifdef MAXASS_AVAILABLE
-hsBool  plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg )
+bool    plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg )
 {
     MaxAssInterface* assetMan = GetMaxAssInterface();
     if( assetMan == nil )
@@ -802,7 +802,7 @@ float    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
 // Loads the given combo box with category selections and sets the ParamID for the category parameter.
 // Returns false if there are no categories to choose for this component
 
-hsBool  plBaseSoundEmitterComponent::UpdateCategories( HWND dialogBox, int &categoryID, ParamID &paramID )
+bool    plBaseSoundEmitterComponent::UpdateCategories( HWND dialogBox, int &categoryID, ParamID &paramID )
 {
     HWND    comboBox = GetDlgItem( dialogBox, IDC_SND_CATEGORY );
     char    **cats;
@@ -911,9 +911,9 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
 //// AddToAnim //////////////////////////////////////////////////////////////////////////////////
 //  Support for animated volumes
 
-hsBool  plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node )
+bool    plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node )
 {
-    hsBool result = false;
+    bool result = false;
     plController *ctl;
     hsControlConverter& cc = hsControlConverter::Instance();
 
@@ -1774,30 +1774,30 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual hsBool  IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    virtual bool    IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 
-    virtual hsBool  ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg );
+    virtual bool    ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg );
 
 protected:
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual hsBool  IAllowStereoFiles( void ) const { return false; }
+    virtual bool    IAllowStereoFiles( void ) const { return false; }
 
     void    ISetParameters( plWin32Sound *destSound, plErrorMsg *pErrMsg );
 
-    virtual hsBool  IGetCategoryList( char **&catList, int *&catKonstantList );
+    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
 };
 
 class plSoundComponentProc : public plAudioBaseComponentProc
 {
-    hsBool  fHandleCategory;
+    bool    fHandleCategory;
     int     fCategoryCtrlID;
     ParamID fCategoryParamID;
 
@@ -2083,7 +2083,7 @@ plSound3DEmitterComponent::~plSound3DEmitterComponent()
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-hsBool  plSound3DEmitterComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plSound3DEmitterComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
 {
     static char *cats[] = { "Background Music", "Ambience", "Sound FX", "GUI", "NPC Voice", "" };
     static int  catEnums[] = { plSound::kBackgroundMusic, plSound::kAmbience, plSound::kSoundFX, plSound::kGUISound, plSound::kNPCVoices };
@@ -2096,7 +2096,7 @@ hsBool  plSound3DEmitterComponent::IGetCategoryList( char **&catList, int *&catK
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plSound3DEmitterComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plSound3DEmitterComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::SetupProperties( pNode, pErrMsg );
 }
@@ -2106,7 +2106,7 @@ bool plSound3DEmitterComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg)
     return plBaseSoundEmitterComponent::IValidate( node, pErrMsg );
 }
 
-hsBool plSound3DEmitterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSound3DEmitterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::PreConvert( node, pErrMsg, SOUND_3D_COMPONENT_ID );
 }
@@ -2166,7 +2166,7 @@ void    plSound3DEmitterComponent::ISetParameters( plWin32Sound *destSound, plEr
     IGrabEAXParams( destSound, pErrMsg );
 }
 
-hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fValidNodes[node])
         return false;
@@ -2219,7 +2219,7 @@ hsBool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 // Converts an array of components into a single grouped sound
-hsBool  plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg )
+bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg )
 {
     plString keyName;
 
@@ -2396,18 +2396,18 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual hsBool  IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    virtual bool    IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 protected:
     virtual uint32_t ICalcSourceBufferFlags() const;
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool  IGetCategoryList( char **&catList, int *&catKonstantList );
+    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
 };
 
 //Max desc stuff necessary below.
@@ -2468,7 +2468,7 @@ plBackgroundMusicComponent::~plBackgroundMusicComponent()
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plBackgroundMusicComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plBackgroundMusicComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::SetupProperties( pNode, pErrMsg );
 }
@@ -2487,12 +2487,12 @@ bool plBackgroundMusicComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg)
     return plBaseSoundEmitterComponent::IValidate( node, pErrMsg );
 }
 
-hsBool plBackgroundMusicComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBackgroundMusicComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::PreConvert( node, pErrMsg, BGND_MUSIC_COMPONENT_ID );
 }
 
-hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fValidNodes[node])
         return false;
@@ -2546,7 +2546,7 @@ hsBool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-hsBool  plBackgroundMusicComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plBackgroundMusicComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
 {
     static char *cats[] = { "Background Music", "Ambience", "Sound FX", "GUI", "NPC Voice", "" };
     static int  catEnums[] = { plSound::kBackgroundMusic, plSound::kAmbience, plSound::kSoundFX, plSound::kGUISound, plSound::kNPCVoices };
@@ -2571,10 +2571,10 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void    UpdateSoundFileSelection( void ) { ; }
 
@@ -2582,9 +2582,9 @@ protected:
 
     bool    IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual hsBool  IGetCategoryList( char **&catList, int *&catKonstantList );
+    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
 
-    virtual hsBool  IHasWaveformProps( void ) const { return false; }
+    virtual bool    IHasWaveformProps( void ) const { return false; }
 };
 
 //Max desc stuff necessary below.
@@ -2618,7 +2618,7 @@ plGUISoundComponent::~plGUISoundComponent()
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-hsBool  plGUISoundComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plGUISoundComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
 {
     static char *cats[] = { "GUI", "" };
     static int  catEnums[] = { plSound::kGUISound };
@@ -2631,7 +2631,7 @@ hsBool  plGUISoundComponent::IGetCategoryList( char **&catList, int *&catKonstan
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUISoundComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plGUISoundComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::SetupProperties( pNode, pErrMsg );
 }
@@ -2641,12 +2641,12 @@ bool plGUISoundComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg)
     return plBaseSoundEmitterComponent::IValidate( node, pErrMsg );
 }
 
-hsBool plGUISoundComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUISoundComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return plBaseSoundEmitterComponent::PreConvert( node, pErrMsg, GUI_SOUND_COMPONENT_ID );
 }
 
-hsBool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fValidNodes[node])
         return false;
@@ -2738,10 +2738,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
 
     const char *GetCustFileName( void ) const;
     void        SetCustFile( const char *path );
@@ -2771,7 +2771,7 @@ class plEAXListenerDlgProc : public plSingleCompSelProc
 {
 protected:
 
-    hsBool  IGetCustFileName( plEAXListenerComponent *listenerComp )
+    bool    IGetCustFileName( plEAXListenerComponent *listenerComp )
     {
         TCHAR   fileName[ MAX_PATH ], dirName[ MAX_PATH ];
 
@@ -2937,7 +2937,7 @@ plEAXListenerComponent::plEAXListenerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
+bool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
     if( !fCompPB->GetINode((ParamID)kRefSoftRegion) )
         return true;
@@ -3005,7 +3005,7 @@ hsBool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     return true;
 }
 
-hsBool plEAXListenerComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plEAXListenerComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
 
     return true;
@@ -3013,7 +3013,7 @@ hsBool plEAXListenerComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plEAXListenerComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
+bool plEAXListenerComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
 
     return true;
@@ -3373,7 +3373,7 @@ void plRandomSoundComponent::RemoveSound(int index)
     fCompPB->SetValue(ParamID(kGroupTotals), 0, fCompPB->GetInt(ParamID(kGroupTotals), 0, group) - 1, group);
 }
 
-hsBool plRandomSoundComponent::ICheckForSounds(plMaxNode* node)
+bool plRandomSoundComponent::ICheckForSounds(plMaxNode* node)
 {
     if (!node->CanConvert())
         return false;
@@ -3390,7 +3390,7 @@ hsBool plRandomSoundComponent::ICheckForSounds(plMaxNode* node)
     return nSounds > 0;
 }
 
-hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !ICheckForSounds(node) )
     {
@@ -3580,7 +3580,7 @@ hsBool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plRandomSoundComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plRandomSoundComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if (ICheckForSounds(pNode))
     {
@@ -3594,7 +3594,7 @@ hsBool plRandomSoundComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plRandomSoundComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plRandomSoundComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fSoundMods.clear();
 
@@ -3655,9 +3655,9 @@ public:
     plPhysicsSndGroupComp();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum Refs
     {
@@ -3682,7 +3682,7 @@ public:
 
 protected:
 
-    void    IInitList( HWND hList, int currSel, hsBool allowAll )
+    void    IInitList( HWND hList, int currSel, bool allowAll )
     {
         int     i, toSet = -1;
         struct plSndGrp
@@ -3929,7 +3929,7 @@ plPhysicsSndGroupComp::plPhysicsSndGroupComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
+bool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     plMaxNode *pNode;
     plKey RandSoundKey;
@@ -4013,12 +4013,12 @@ hsBool plPhysicsSndGroupComp::Convert( plMaxNode *node, plErrorMsg *pErrMsg )
     return true;
 }
 
-hsBool plPhysicsSndGroupComp::PreConvert( plMaxNode *pNode,  plErrorMsg *pErrMsg )
+bool plPhysicsSndGroupComp::PreConvert( plMaxNode *pNode,  plErrorMsg *pErrMsg )
 {
     return true;
 }
 
-hsBool plPhysicsSndGroupComp::SetupProperties( plMaxNode *pNode,  plErrorMsg *pErrMsg )
+bool plPhysicsSndGroupComp::SetupProperties( plMaxNode *pNode,  plErrorMsg *pErrMsg )
 {
     return true;
 }

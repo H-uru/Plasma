@@ -51,7 +51,7 @@ plPickedConditionalObject::plPickedConditionalObject()
     SetFlag(kLocalElement);     // since it relies on user input
 }
 
-hsBool plPickedConditionalObject::MsgReceive(plMessage* msg)
+bool plPickedConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pDetectorMsg && pDetectorMsg->TriggerType() == plActivatorMsg::kPickedTrigger )

@@ -60,7 +60,7 @@ public:
     plArmatureBehavior();
     virtual ~plArmatureBehavior();
 
-    void Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature,  uint8_t index);
+    void Init(plAGAnim *anim, bool loop, plArmatureBrain *brain, plArmatureModBase *armature,  uint8_t index);
     virtual void Process(double time, float elapsed);
     virtual void SetStrength(float val, float rate = 0.f); // default instant change
     virtual float GetStrength();

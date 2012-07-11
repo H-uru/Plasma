@@ -51,7 +51,7 @@ class plRefCnt
 public:
     plRefCnt() : fRefCnt(1){}
     ~plRefCnt(){}
-    hsBool TimeToDelete()   { return (fRefCnt == 1); }
+    bool TimeToDelete()   { return (fRefCnt == 1); }
     void    Incr()          { fRefCnt++; }
     void    Decr()          { fRefCnt--; }
 };

@@ -104,7 +104,7 @@ public:
      float       Magnitude() const;
      float       MagnitudeSquared() const { return (fX * fX + fY * fY + fZ * fZ); }
 
-     hsBool IsEmpty() const { return fX == 0 && fY == 0 && fZ == 0; }
+     bool IsEmpty() const { return fX == 0 && fY == 0 && fZ == 0; }
 
     float    operator[](int i) const;
     float&   operator[](int i);
@@ -166,11 +166,11 @@ struct hsPoint3  : public hsScalarTriple {
     friend inline hsPoint3 operator*(const float& s, const hsPoint3& t);
     friend inline hsPoint3 operator*(const hsPoint3& t, const float& s);
     friend inline hsPoint3 operator/(const hsPoint3& t, const float& s);
-    hsBool operator==(const hsPoint3& ss) const
+    bool operator==(const hsPoint3& ss) const
     {
             return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
     }
-    hsBool operator!=(const hsPoint3& ss) const { return !(*this == ss); }
+    bool operator!=(const hsPoint3& ss) const { return !(*this == ss); }
     hsPoint3 &operator+=(const hsScalarTriple &s) { fX += s.fX; fY += s.fY; fZ += s.fZ; return *this; }
     hsPoint3 &operator*=(const float s) { fX *= s; fY *= s; fZ *= s; return *this; }
 };
@@ -226,17 +226,11 @@ struct hsVector3 : public hsScalarTriple {
     friend inline hsVector3 operator/(const hsVector3& t, const float& s);
     friend inline float operator*(const hsVector3& t, const hsVector3& s);
     friend  hsVector3 operator%(const hsVector3& t, const hsVector3& s);
-#if 0 // Havok reeks
-    friend hsBool32 operator==(const hsVector3& s, const hsVector3& t)
-    {
-            return (s.fX == t.fX && s.fY == t.fY && s.fZ == t.fZ);
-    }
-#else // Havok reeks
-    hsBool operator==(const hsVector3& ss) const
+    bool operator==(const hsVector3& ss) const
     {
             return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
     }
-#endif // Havok reeks
+
     hsVector3 &operator+=(const hsScalarTriple &s) { fX += s.fX; fY += s.fY; fZ += s.fZ; return *this; }
     hsVector3 &operator-=(const hsScalarTriple &s) { fX -= s.fX; fY -= s.fY; fZ -= s.fZ; return *this; }
     hsVector3 &operator*=(const float s) { fX *= s; fY *= s; fZ *= s; return *this; }

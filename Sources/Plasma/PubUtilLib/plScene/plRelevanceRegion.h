@@ -63,7 +63,7 @@ public:
     CLASSNAME_REGISTER( plRelevanceRegion );
     GETINTERFACE_ANY( plRelevanceRegion, plObjInterface );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
     virtual int32_t GetNumProperties() const { return 1; }    

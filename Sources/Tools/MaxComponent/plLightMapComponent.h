@@ -59,9 +59,9 @@ protected:
 public:
     plLightMapComponent();
 
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     void SetLightMapKey(const plKey& key) { fLightMapKey = key; }
     plKey GetLightMapKey() const { return fLightMapKey; }
@@ -69,8 +69,8 @@ public:
     float GetScale() const;
     uint32_t GetUVWSrc() const;
 
-    hsBool GetCompress() const;
-    hsBool GetShared() const;
+    bool GetCompress() const;
+    bool GetShared() const;
 
     hsColorRGBA GetInitColor() const;
 };

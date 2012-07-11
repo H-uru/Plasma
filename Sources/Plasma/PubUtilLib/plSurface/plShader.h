@@ -246,12 +246,12 @@ public:
     void                    SetDecl(const plShaderDecl* p); // will reference (pointer copy)
     void                    SetDecl(plShaderID::ID id);
 
-    hsBool                  IsValid() const { return !(fFlags & kInvalid); }
+    bool                    IsValid() const { return !(fFlags & kInvalid); }
     void                    Invalidate() const { fFlags |= kInvalid; }
 
-    hsBool                  IsPixelShader() const { return 0 != (fFlags & kIsPixel); }
-    hsBool                  IsVertexShader() const { return !IsPixelShader(); }
-    void                    SetIsPixelShader(hsBool on) { if(on)fFlags |= kIsPixel; else fFlags &= ~kIsPixel; }
+    bool                    IsPixelShader() const { return 0 != (fFlags & kIsPixel); }
+    bool                    IsVertexShader() const { return !IsPixelShader(); }
+    void                    SetIsPixelShader(bool on) { if(on)fFlags |= kIsPixel; else fFlags &= ~kIsPixel; }
 
     // These are only for use by the pipeline.
     hsGDeviceRef*           GetDeviceRef() const { return fDeviceRef; }

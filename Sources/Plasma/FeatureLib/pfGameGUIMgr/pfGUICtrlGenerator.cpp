@@ -295,7 +295,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
 //// CreateRectButton ////////////////////////////////////////////////////////
 
 pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, float width, float height,
-                                    hsGMaterial *material, hsBool asMenuItem )
+                                    hsGMaterial *material, bool asMenuItem )
 {
     wchar_t *wTitle = hsStringToWString(title);
     pfGUIButtonMod *retVal = CreateRectButton(parent,wTitle,x,y,width,height,material,asMenuItem);
@@ -304,7 +304,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, c
 }
 
 pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y, float width, float height,
-                                    hsGMaterial *material, hsBool asMenuItem )
+                                    hsGMaterial *material, bool asMenuItem )
 {
     plDrawableSpans *myDraw;
     hsMatrix44      l2w, w2l;
@@ -446,7 +446,7 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog( void )
 
 //// IGenerateDialog /////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float scrnWidth, hsBool show )
+pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float scrnWidth, bool show )
 {
     float           fovX, fovY;
     plSceneNode     *node;

@@ -747,7 +747,7 @@ void plRidingAnimatedPhysicalStrategy::Apply(float delSecs)
 
         for(curRecord = GroundHitRecords.begin(); curRecord != GroundHitRecords.end(); curRecord++)
         {
-            hsBool groundlike=false;
+            bool groundlike=false;
             if((curRecord->locHit.fZ - startPos.fZ)<= .2) groundlike= true;
             if(groundlike)
             {

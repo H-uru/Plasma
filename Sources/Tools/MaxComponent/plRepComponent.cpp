@@ -86,10 +86,10 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     int GetQuality();
     int GetCapability();
@@ -161,22 +161,22 @@ plRepresentComp::plRepresentComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plRepresentComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepresentComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepresentComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepresentComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepresentComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepresentComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepresentComp::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepresentComp::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
@@ -261,7 +261,7 @@ public:
 
     void    IGetQC(int quals[], int caps[]);
 
-    hsBool ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int caps[], plLoadMask masks[]);
+    bool ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int caps[], plLoadMask masks[]);
 
     void CleanDeadNodes();
 public:
@@ -270,12 +270,12 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool Validate(plErrorMsg* pErrMsg);
+    bool Validate(plErrorMsg* pErrMsg);
 };
 
 void plRepGroupComp::CleanDeadNodes()
@@ -400,7 +400,7 @@ void plRepGroupComp::IGetQC(int quals[], int caps[])
         caps[i] = rep->GetCapability();
     }
 }
-hsBool plRepGroupComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepGroupComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     const int numReps = fCompPB->Count(kReps);
     hsTArray<int> quals(numReps);
@@ -421,22 +421,22 @@ hsBool plRepGroupComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plRepGroupComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepGroupComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepGroupComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepGroupComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepGroupComp::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plRepGroupComp::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int caps[], plLoadMask masks[])
+bool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int caps[], plLoadMask masks[])
 {
     const int numReps = fCompPB->Count(kReps);
     uint32_t preVal = plLoadMask::ValidateReps(numReps, quals, caps);
@@ -457,7 +457,7 @@ hsBool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int 
         }
     }
 
-    hsBool val = plLoadMask::ComputeRepMasks(numReps, quals, caps, masks);
+    bool val = plLoadMask::ComputeRepMasks(numReps, quals, caps, masks);
 
     uint32_t postVal = plLoadMask::ValidateMasks(numReps, masks);
 
@@ -480,7 +480,7 @@ hsBool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int 
     return !(preVal || val || postVal);
 }
 
-hsBool plRepGroupComp::Validate(plErrorMsg* pErrMsg)
+bool plRepGroupComp::Validate(plErrorMsg* pErrMsg)
 {
     CleanDeadNodes();
 

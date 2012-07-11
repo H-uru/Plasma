@@ -80,7 +80,7 @@ protected:
     static bool fUsesUnicode[kNumLanguages];
     static encodingTypes fUnicodeEncoding[kNumLanguages];
 
-    static hsBool IGetLocalized(const char* name, Language lang, char* localizedName);
+    static bool IGetLocalized(const char* name, Language lang, char* localizedName);
 
 public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
@@ -88,16 +88,16 @@ public:
 
     static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
 
-    static hsBool UsingUnicode() { return fUsesUnicode[fLanguage]; }
+    static bool UsingUnicode() { return fUsesUnicode[fLanguage]; }
     static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
-    static hsBool IsLocalized() { return fLanguage != kEnglish; }
+    static bool IsLocalized() { return fLanguage != kEnglish; }
 
     // Pass in a key name and this will give you the localized name
     // Returns false if the original keyname is not for a localized asset
-    static hsBool GetLocalized(const char* name, char* localizedName) { return IGetLocalized(name, fLanguage, localizedName); }
+    static bool GetLocalized(const char* name, char* localizedName) { return IGetLocalized(name, fLanguage, localizedName); }
 
     //
     // Export only
@@ -115,9 +115,9 @@ public:
     // }
     //
     static int GetNumLocales() { return kNumLanguages - 1; }
-    static hsBool ExportGetLocalized(const char* name, int lang, char* localizedName);
+    static bool ExportGetLocalized(const char* name, int lang, char* localizedName);
     // Just tells us if this is localized, doesn't actually convert it for us
-    static hsBool IsLocalizedName(const char* name) { return IGetLocalized(name, kEnglish, nil); }
+    static bool IsLocalizedName(const char* name) { return IGetLocalized(name, kEnglish, nil); }
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language

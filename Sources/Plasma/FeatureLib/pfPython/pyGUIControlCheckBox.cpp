@@ -58,7 +58,7 @@ pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(objkey)
 }
 
 
-hsBool pyGUIControlCheckBox::IsGUIControlCheckBox(pyKey& gckey)
+bool pyGUIControlCheckBox::IsGUIControlCheckBox(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUICheckBoxCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -66,7 +66,7 @@ hsBool pyGUIControlCheckBox::IsGUIControlCheckBox(pyKey& gckey)
 }
 
 
-void pyGUIControlCheckBox::SetChecked( hsBool checked )
+void pyGUIControlCheckBox::SetChecked( bool checked )
 {
     if ( fGCkey )
     {
@@ -78,7 +78,7 @@ void pyGUIControlCheckBox::SetChecked( hsBool checked )
 }
 
 
-hsBool pyGUIControlCheckBox::IsChecked( void )
+bool pyGUIControlCheckBox::IsChecked( void )
 {
     if ( fGCkey )
     {

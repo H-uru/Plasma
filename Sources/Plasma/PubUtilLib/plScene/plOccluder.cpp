@@ -69,7 +69,7 @@ plOccluder::~plOccluder()
     delete fProxyGen;
 }
 
-hsBool plOccluder::MsgReceive(plMessage* msg)
+bool plOccluder::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
     if( refMsg )

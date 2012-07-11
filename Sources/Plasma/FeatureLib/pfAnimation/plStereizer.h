@@ -82,7 +82,7 @@ protected:
     hsVector3       fListDirection;
     hsVector3       fListUp;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
     hsPoint3    IGetLocalizedPos(const hsVector3& posToList, float distToList) const;
     hsPoint3    IGetAmbientPos() const;
@@ -92,7 +92,7 @@ protected:
 
     plCoordinateInterface*  IGetParent() const;
 
-    void        ISetHasMaster(hsBool on) { if(on)SetFlag(kHasMaster); else ClearFlag(kHasMaster); }
+    void        ISetHasMaster(bool on) { if(on)SetFlag(kHasMaster); else ClearFlag(kHasMaster); }
 
 public:
     plStereizer();
@@ -104,9 +104,9 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
-    hsBool  Stereize();
+    bool    Stereize();
     void    SetFromListenerMsg(const plListenerMsg* listMsg);
 
     void SetAmbientDist(float d) { fAmbientDist = d; }
@@ -124,8 +124,8 @@ public:
     void SetSepAngle(float rads);
     float GetSepAngle() const;
 
-    void SetAsLeftChannel(hsBool on) { if(on)SetFlag(kLeftChannel); else ClearFlag(kLeftChannel); }
-    hsBool IsLeftChannel() const { return HasFlag(kLeftChannel); }
+    void SetAsLeftChannel(bool on) { if(on)SetFlag(kLeftChannel); else ClearFlag(kLeftChannel); }
+    bool IsLeftChannel() const { return HasFlag(kLeftChannel); }
 
     void SetParentInitPos(const hsPoint3& pos) { fInitPos = pos; }
     const hsPoint3& GetParentInitPos() const { return fInitPos; }
@@ -133,8 +133,8 @@ public:
     void SetWorldInitPos(const hsPoint3& pos);
     hsPoint3 GetWorldInitPos() const;
 
-    hsBool CheckForMaster();
-    hsBool HasMaster() const { return HasFlag(kHasMaster); }
+    bool CheckForMaster();
+    bool HasMaster() const { return HasFlag(kHasMaster); }
 };
 
 #endif // plStereizer_inc

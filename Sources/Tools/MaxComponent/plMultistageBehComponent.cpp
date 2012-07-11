@@ -98,9 +98,9 @@ public:
 
     plKey GetMultiStageBehKey(plMaxNode *node);
 
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
 
@@ -148,7 +148,7 @@ plMultistageBehComponent::~plMultistageBehComponent()
 }
 
 
-hsBool plMultistageBehComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMultistageBehComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     fReceivers.clear();
@@ -186,7 +186,7 @@ void plMultistageBehComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>
 //
 // PreConvert done below
 //
-hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     //create the modifier here so that other components can find it
     plMultistageBehMod *mod = new plMultistageBehMod;
@@ -196,7 +196,7 @@ hsBool plMultistageBehComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plMultistageBehComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMultistageBehComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Create the stage vector
     plAnimStageVec* animStages = new plAnimStageVec;
@@ -486,9 +486,9 @@ public:
     MaxStream(ILoad* iload) : fSave(nil), fLoad(iload) {}
 
     // Don't support any of this
-    virtual hsBool Open(const char *, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual hsBool Open(const wchar_t *, const wchar_t * = L"rb") { hsAssert(0, "Not supported"); return false; }
-    virtual hsBool Close() {  hsAssert(0, "Not supported"); return false; }
+    virtual bool Open(const char *, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
+    virtual bool Open(const wchar_t *, const wchar_t * = L"rb") { hsAssert(0, "Not supported"); return false; }
+    virtual bool Close() {  hsAssert(0, "Not supported"); return false; }
     virtual void   Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
     virtual void   Rewind() { hsAssert(0, "Not supported"); }
 
@@ -519,9 +519,9 @@ IOResult plMultistageBehComponent::Save(ISave* isave)
     isave->BeginChunk(kMultiStage);
     MaxStream multiChunk(isave);
     multiChunk.WriteLE32(3);
-    multiChunk.Writebool(fFreezePhys);
-    multiChunk.Writebool(fSmartSeek);
-    multiChunk.Writebool(fReverseFBOnRelease);
+    multiChunk.WriteBool(fFreezePhys);
+    multiChunk.WriteBool(fSmartSeek);
+    multiChunk.WriteBool(fReverseFBOnRelease);
     isave->EndChunk();
 
     int numStages = fStages.size();
@@ -555,16 +555,16 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
                 MaxStream multiChunk(iload);
                 // all versions do this
                 int version = multiChunk.ReadLE32();
-                fFreezePhys = multiChunk.Readbool();
+                fFreezePhys = multiChunk.ReadBool();
 
                 if(version > 1)
                     // version 1 adds smart seek
-                    fSmartSeek = multiChunk.Readbool();
+                    fSmartSeek = multiChunk.ReadBool();
                 else
                     fSmartSeek = false;
 
                 if(version > 2)
-                    fReverseFBOnRelease = multiChunk.Readbool();
+                    fReverseFBOnRelease = multiChunk.ReadBool();
                 else
                     fReverseFBOnRelease = false;
             }

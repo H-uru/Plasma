@@ -199,7 +199,7 @@ void plAvLadderComponent::CollectNonDrawables(INodeTab& nonDrawables)
     AddTargetsToList(nonDrawables);
 }
 
-hsBool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fKeys.Reset();
 
@@ -251,7 +251,7 @@ hsBool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plMaxNode *ladderNode = (plMaxNode*)fCompPB->GetINode(kLadderNode);
     if (!ladderNode)
@@ -279,12 +279,12 @@ hsBool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plAvLadderComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAvLadderComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plAvLadderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAvLadderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fKeys.Reset();
     return true;

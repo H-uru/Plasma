@@ -224,7 +224,7 @@ public:
 
 template <class T> class hsDynamicArray {
 private:
-    int32_t       fCount;
+    int32_t     fCount;
     T*          fArray; 
 
     hsDynamicArray<T>&  operator=(const hsDynamicArray<T>&);        // don't allow assignment
@@ -235,28 +235,28 @@ public:
     virtual     ~hsDynamicArray();
 
     int32_t       GetCount() const { return fCount; }
-    hsBool      IsEmpty() const { return fCount == 0; }
-    const T&        Get(int32_t index) const;
+    bool          IsEmpty() const { return fCount == 0; }
+    const T&      Get(int32_t index) const;
     int32_t       Get(int32_t index, int32_t count, T data[]) const;
     int32_t       Find(const T&) const;   // returns kMissingIndex if not found
 
-    void            SetCount(int32_t count);
-    T&          operator[]( int32_t index );
+    void          SetCount(int32_t count);
+    T&            operator[]( int32_t index );
     int32_t       Append(const T&);
     int32_t       InsertAtIndex(uint32_t index, const T& obj);
     int32_t       Push(const T&);
     int32_t       Pop(T*);
-    void            Remove(int32_t);
-    void            Reset();    // clears out everything
+    void          Remove(int32_t);
+    void          Reset();    // clears out everything
 
-    T*          AcquireArray() { return fArray; }
-    T*          DetachArray() { T* t = fArray; fCount = 0; fArray = nil; return t;  }
-    void            ReleaseArray(T*) {}
-    hsDynamicArray<T>*  Copy(hsDynamicArray<T>* dst = nil) const;
+    T*                 AcquireArray() { return fArray; }
+    T*                 DetachArray() { T* t = fArray; fCount = 0; fArray = nil; return t;  }
+    void               ReleaseArray(T*) {}
+    hsDynamicArray<T>* Copy(hsDynamicArray<T>* dst = nil) const;
 
-    T*          ForEach(bool (*proc)(T&));
-    T*          ForEach(bool (*proc)(T&, void* p1), void* p1);
-    T*          ForEach(bool (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
+    T*            ForEach(int32_t (*proc)(T&));
+    T*            ForEach(int32_t (*proc)(T&, void* p1), void* p1);
+    T*            ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 };
 
 // Use this for block of memory allocated with HSMemory::New()
@@ -475,7 +475,7 @@ hsDynamicArray<T>* hsDynamicArray<T>::Copy(hsDynamicArray<T>* dst) const
     return dst;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&))
+template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&))
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i]))
@@ -483,7 +483,7 @@ template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&))
     return nil;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&, void* p1), void * p1)
+template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void * p1)
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i], p1))
@@ -491,7 +491,7 @@ template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&, void* p1), voi
     return nil;
 }
 
-template <class T> T* hsDynamicArray<T>::ForEach(bool (*proc)(T&, void* p1, void* p2), void *p1, void *p2)
+template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void *p1, void *p2)
 {
     for (int i = 0; i < fCount; i++)
         if (proc(fArray[i], p1, p2))
@@ -614,7 +614,7 @@ public:
                 hsTArray_ValidateIndex(index + count - 1);
                 this->DecCount(index, count);
             }
-    hsBool  RemoveItem(const T& item);
+    bool        RemoveItem(const T& item);
 
     T*      Push()
             {
@@ -638,9 +638,9 @@ public:
         kMissingIndex    = -1
     };
     int     Find(const T& item) const;  // returns kMissingIndex if not found
-    inline T*   ForEach(hsBool (*proc)(T&));
-    inline T*   ForEach(hsBool (*proc)(T&, void* p1), void* p1);
-    inline T*   ForEach(hsBool (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
+    inline T*   ForEach(int32_t (*proc)(T&));
+    inline T*   ForEach(int32_t (*proc)(T&, void* p1), void* p1);
+    inline T*   ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 
     T*      DetachArray()
             {
@@ -813,7 +813,7 @@ template <class T> int hsTArray<T>::Find(const T& item) const
     return kMissingIndex;
 }
 
-template <class T> hsBool hsTArray<T>::RemoveItem(const T& item)
+template <class T> bool hsTArray<T>::RemoveItem(const T& item)
 {
     for (int i = 0; i < fUseCount; i++)
         if (fArray[i] == item)
@@ -870,7 +870,7 @@ template <class T> void hsTArray<T>::DecCount(int index, int count)
     }
 }
 
-template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&))
+template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&))
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i]))
@@ -878,7 +878,7 @@ template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&))
     return nil;
 }
 
-template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&, void* p1), void* p1)
+template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void* p1)
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i], p1))
@@ -886,7 +886,7 @@ template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&, void* p1), void* p
     return nil;
 }
 
-template <class T> T* hsTArray<T>::ForEach(hsBool (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
+template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i], p1, p2))
@@ -1011,7 +1011,7 @@ public:
                 hsLargeArray_ValidateIndex(index + count - 1);
                 this->DecCount(index, count);
             }
-    hsBool  RemoveItem(const T& item);
+    bool    RemoveItem(const T& item);
 
     T*      Push()
             {
@@ -1035,9 +1035,9 @@ public:
         kMissingIndex    = -1
     };
     int     Find(const T& item) const;  // returns kMissingIndex if not found
-    inline T*   ForEach(hsBool (*proc)(T&));
-    inline T*   ForEach(hsBool (*proc)(T&, void* p1), void* p1);
-    inline T*   ForEach(hsBool (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
+    inline T*   ForEach(int32_t (*proc)(T&));
+    inline T*   ForEach(int32_t (*proc)(T&, void* p1), void* p1);
+    inline T*   ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 
     T*      DetachArray()
             {
@@ -1182,7 +1182,7 @@ template <class T> int hsLargeArray<T>::Find(const T& item) const
     return kMissingIndex;
 }
 
-template <class T> hsBool hsLargeArray<T>::RemoveItem(const T& item)
+template <class T> bool hsLargeArray<T>::RemoveItem(const T& item)
 {
     for (int i = 0; i < fUseCount; i++)
         if (fArray[i] == item)
@@ -1239,7 +1239,7 @@ template <class T> void hsLargeArray<T>::DecCount(int index, int count)
     }
 }
 
-template <class T> T* hsLargeArray<T>::ForEach(hsBool (*proc)(T&))
+template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&))
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i]))
@@ -1247,7 +1247,7 @@ template <class T> T* hsLargeArray<T>::ForEach(hsBool (*proc)(T&))
     return nil;
 }
 
-template <class T> T* hsLargeArray<T>::ForEach(hsBool (*proc)(T&, void* p1), void* p1)
+template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void* p1)
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i], p1))
@@ -1255,7 +1255,7 @@ template <class T> T* hsLargeArray<T>::ForEach(hsBool (*proc)(T&, void* p1), voi
     return nil;
 }
 
-template <class T> T* hsLargeArray<T>::ForEach(hsBool (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
+template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
 {
     for (int i = 0; i < fUseCount; i++)
         if (proc(fArray[i], p1, p2))

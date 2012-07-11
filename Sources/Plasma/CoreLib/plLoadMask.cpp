@@ -144,13 +144,13 @@ uint32_t plLoadMask::ValidateMasks(int num, plLoadMask masks[])
     return retVal;
 }
 
-hsBool plLoadMask::ComputeRepMasks(
+bool plLoadMask::ComputeRepMasks(
                                    int num,
                                    const int quals[], 
                                    const int caps[], 
                                    plLoadMask masks[])
 {
-    hsBool retVal = false; // Okay till proven otherwise.
+    bool retVal = false; // Okay till proven otherwise.
 
     int i;
     for( i = 0; i < num; i++ )

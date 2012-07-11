@@ -57,7 +57,7 @@ plWinAudibleProxy::~plWinAudibleProxy()
 {
 }
 
-hsBool plWinAudibleProxy::Init(plWinAudible* aud)
+bool plWinAudibleProxy::Init(plWinAudible* aud)
 {
     plProxyGen::Init(aud);
 

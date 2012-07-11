@@ -81,14 +81,14 @@ pfPlayerBookMod::~pfPlayerBookMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfPlayerBookMod::IEval( double secs, hsScalar del, uint32_t dirty )
+bool    pfPlayerBookMod::IEval( double secs, hsScalar del, uint32_t dirty )
 {
     return false;
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfPlayerBookMod::MsgReceive( plMessage *msg )
+bool    pfPlayerBookMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )

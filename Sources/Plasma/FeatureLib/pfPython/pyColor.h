@@ -89,11 +89,11 @@ public:
     void    setAlpha(float alpha) { fColor.a = alpha; }
 
     // override the equals to operator
-    hsBool operator==(const pyColor &color) const
+    bool operator==(const pyColor &color) const
     {
         return ((pyColor*)this)->getColor() == ((pyColor&)color).getColor();
     }
-    hsBool operator!=(const pyColor &color) const { return !(color == *this); }
+    bool operator!=(const pyColor &color) const { return !(color == *this); }
 
     // helper colors settings
     void White()    { fColor.Set(1.0,1.0,1.0,1.0); }

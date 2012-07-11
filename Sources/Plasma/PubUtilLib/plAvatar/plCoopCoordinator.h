@@ -83,7 +83,7 @@ public:
                       plMessage *guestAcceptMsg,
                       bool autoStartGuest);
 
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
     void Run();
 

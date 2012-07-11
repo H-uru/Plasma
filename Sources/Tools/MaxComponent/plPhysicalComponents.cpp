@@ -84,14 +84,14 @@ void DummyCodeIncludeFuncPhys()
 
 // SetupProperties -----------------------------------------------------------------
 // ----------------
-hsBool plPhysicCoreComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysicCoreComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 // PreConvert ----------------------------------------------------------------
 // -----------
-hsBool plPhysicCoreComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysicCoreComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -109,7 +109,7 @@ void plPhysicCoreComponent::IFixBounds()
 
 // IGetProxy ----------------------------------------------------------------
 // ----------
-hsBool plPhysicCoreComponent::IGetProxy(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysicCoreComponent::IGetProxy(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (fCompPB->GetInt(kCustomBoundField))
     {
@@ -123,7 +123,7 @@ hsBool plPhysicCoreComponent::IGetProxy(plMaxNode *node, plErrorMsg *pErrMsg)
 
 // Convert ----------------------------------------------------------------
 // --------
-hsBool plPhysicCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysicCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -157,7 +157,7 @@ class plPhysDebugComponent : public plPhysicCoreComponent
 {
 public:
     plPhysDebugComponent();
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
@@ -303,7 +303,7 @@ void plPhysDebugComponent::CollectNonDrawables(INodeTab& nonDrawables)
 }
 
 
-hsBool plPhysDebugComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
+bool plPhysDebugComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
 {
     IFixBounds();
 
@@ -338,7 +338,7 @@ class plPhysTerrainComponent : public plPhysicCoreComponent
 {
 public:
     plPhysTerrainComponent();
-    hsBool SetupProperties(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node,plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
@@ -442,7 +442,7 @@ void ValidateGroups(IParamBlock2* pb, int memberID, int bounceID, plComponent* c
     }
 }
 
-hsBool plPhysTerrainComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysTerrainComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -477,7 +477,7 @@ class plProxyTerrainComponent : public plPhysicCoreComponent
 {
 public:
     plProxyTerrainComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -546,7 +546,7 @@ plProxyTerrainComponent::plProxyTerrainComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plProxyTerrainComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
+bool plProxyTerrainComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
 {
     IFixBounds();
     node->SetDrawable(false);
@@ -592,7 +592,7 @@ class plCameraBlockerComponent : public plPhysicCoreComponent
 public:
     plCameraBlockerComponent();
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -631,7 +631,7 @@ plCameraBlockerComponent::plCameraBlockerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plCameraBlockerComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plCameraBlockerComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -664,7 +664,7 @@ class plPhysSimpleComponent : public plPhysicCoreComponent
 {
 public:
     plPhysSimpleComponent();
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
@@ -771,7 +771,7 @@ void plPhysSimpleComponent::CollectNonDrawables(INodeTab& nonDrawables)
     }
 }
 
-hsBool plPhysSimpleComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysSimpleComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -806,7 +806,7 @@ class plPhysBlockerComponent : public plPhysicCoreComponent
 {
 public:
     plPhysBlockerComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -871,7 +871,7 @@ plPhysBlockerComponent::plPhysBlockerComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysBlockerComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysBlockerComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -905,7 +905,7 @@ class plPhysWalkableComponent : public plPhysicCoreComponent
 {
 public:
     plPhysWalkableComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -960,7 +960,7 @@ plPhysWalkableComponent::plPhysWalkableComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysWalkableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysWalkableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -987,7 +987,7 @@ class plPhysClimbableComponent : public plPhysicCoreComponent
 {
 public:
     plPhysClimbableComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -1041,7 +1041,7 @@ plPhysClimbableComponent::plPhysClimbableComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysClimbableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysClimbableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -1078,7 +1078,7 @@ public:
     void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
         uint32_t minIndex, maxIndex;
-        hsBool adjustMin;
+        bool adjustMin;
         switch(id)
         {
         case IDC_SWIM_CURRENT_PULL_NEAR_DIST:
@@ -1280,7 +1280,7 @@ plSwim2DComponent::plSwim2DComponent()
 
 // SetUpProperties -----------------------------------------------------------
 // ----------------
-hsBool plSwim2DComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
+bool plSwim2DComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
 {
     IFixBounds();
     plPhysicalProps *physProps = nil;
@@ -1310,7 +1310,7 @@ hsBool plSwim2DComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
     return true;
 }
 
-hsBool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSwimRegionInterface *swimInt = nil;
     int type = fCompPB->GetInt(ParamID(kSwimCurrentType));
@@ -1346,7 +1346,7 @@ hsBool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     
 // Convert ------------------------------------------------------------
 // --------
-hsBool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plMaxNode *detectorNode = (plMaxNode *)fCompPB->GetINode(kSwimDetectorNode);
     if (detectorNode && detectorNode->GetSceneObject())
@@ -1429,7 +1429,7 @@ class plPhysSwim3DComponent : public plPhysicCoreComponent
 {
 public:
     plPhysSwim3DComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -1483,7 +1483,7 @@ plPhysSwim3DComponent::plPhysSwim3DComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysSwim3DComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysSwim3DComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     IFixBounds();
 
@@ -1585,8 +1585,8 @@ class plPhysSubWorldComponent : public plPhysicCoreComponent
 {
 public:
     plPhysSubWorldComponent();
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
     void IAddChildren(plMaxNode *node, plMaxNode* worldKey);
 };
 
@@ -1608,7 +1608,7 @@ plPhysSubWorldComponent::plPhysSubWorldComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPhysSubWorldComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysSubWorldComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     IAddChildren(node, node);
 
@@ -1618,7 +1618,7 @@ hsBool plPhysSubWorldComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
     return true;
 }
 
-hsBool plPhysSubWorldComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysSubWorldComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -1686,9 +1686,9 @@ class plSubworldDetectorComponent : public plPhysicCoreComponent
 public:
     plSubworldDetectorComponent();
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -1737,7 +1737,7 @@ plSubworldDetectorComponent::plSubworldDetectorComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSubworldDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plSubworldDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetDrawable(false);
@@ -1755,12 +1755,12 @@ hsBool plSubworldDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg
     return true;
 }
 
-hsBool plSubworldDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSubworldDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plSubworldDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSubworldDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
@@ -1824,9 +1824,9 @@ public:
     plPanicLinkDetectorComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
 
@@ -1854,7 +1854,7 @@ plPanicLinkDetectorComponent::plPanicLinkDetectorComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPanicLinkDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPanicLinkDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetDrawable(false);
@@ -1871,12 +1871,12 @@ hsBool plPanicLinkDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMs
     return true;
 }
 
-hsBool plPanicLinkDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPanicLinkDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plPanicLinkDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPanicLinkDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
@@ -1904,8 +1904,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -1929,7 +1929,7 @@ plShootableComponent::plShootableComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plShootableComponent::SetupProperties(plMaxNode *node,  plErrorMsg *errMsg)
+bool plShootableComponent::SetupProperties(plMaxNode *node,  plErrorMsg *errMsg)
 {
     plPhysicalProps *props = node->GetPhysicalProps();
 
@@ -1944,7 +1944,7 @@ hsBool plShootableComponent::SetupProperties(plMaxNode *node,  plErrorMsg *errMs
     return true;
 }
 
-hsBool plShootableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plShootableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -1953,9 +1953,9 @@ class plRideAnimatedPhysicalComponent : public plPhysicCoreComponent
 public:
     plRideAnimatedPhysicalComponent();
     void DeleteThis(){delete this;}     
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
 CLASS_DESC(plRideAnimatedPhysicalComponent , gRideAnimatedPhysicalComponent, "RideAnimPhysReg",  "RideAnimatedPhysicalRegion", COMP_TYPE_PHYSICAL, Class_ID(0xaf305963, 0x63a246df));
@@ -1978,7 +1978,7 @@ plRideAnimatedPhysicalComponent::plRideAnimatedPhysicalComponent()
     fClassDesc = &gRideAnimatedPhysicalComponent;
     fClassDesc->MakeAutoParamBlocks(this);
 }
-hsBool plRideAnimatedPhysicalComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plRideAnimatedPhysicalComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetDrawable(false);
@@ -1993,12 +1993,12 @@ hsBool plRideAnimatedPhysicalComponent::SetupProperties(plMaxNode *pNode, plErro
     physProps->SetBoundsType(fCompPB->GetInt(kBoundCondRadio), pNode, pErrMsg);
     return true;
 }
-hsBool plRideAnimatedPhysicalComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plRideAnimatedPhysicalComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plRideAnimatedPhysicalComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plRideAnimatedPhysicalComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();

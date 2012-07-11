@@ -76,15 +76,15 @@ public:
     int FindMember(uint32_t playerID) const;                      // return array index or -1
     int FindMember(const plNetTransportMember* mbr);            // return array index or -1
     int AddMember(plNetTransportMember* mbr);                   // to master list, if not there
-    hsBool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels
-    hsBool RemoveMember(int idx);                               // from master list and all channels
+    bool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels
+    bool RemoveMember(int idx);                               // from master list and all channels
     int GetNumMembers() const { return fMembers.size(); }
     plNetTransportMember* GetMember(int i) const { return i>=0 && i<fMembers.size() ? fMembers[i] : nil; }
     void ClearMembers();
 
     // channel group ops
     void SubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
-    hsBool UnSubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
+    bool UnSubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
     void GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const;
     void ClearChannelGrp(int channel);
     void SetNumChannels(int n);

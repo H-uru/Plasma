@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "plMessage/plSpawnRequestMsg.h"
 //#include "plMessage/plSpawnModMsg.h"
 
-//hsBool plSpawnModifier::MsgReceive(plMessage* msg)
+//bool plSpawnModifier::MsgReceive(plMessage* msg)
 //{
 //  plSpawnRequestMsg* pSpawnMsg = plSpawnRequestMsg::ConvertNoRef(msg);
 //  if (pSpawnMsg)

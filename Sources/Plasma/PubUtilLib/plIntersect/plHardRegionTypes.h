@@ -65,7 +65,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     // Now Complex specifics
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     uint16_t          GetNumSubs() const { return fSubRegions.GetCount(); }
     const plHardRegion* GetSub(int i) const { return fSubRegions[i]; }
@@ -81,8 +81,8 @@ public:
     CLASSNAME_REGISTER( plHardRegionUnion );
     GETINTERFACE_ANY( plHardRegionUnion, plHardRegionComplex );
 
-    virtual hsBool  IIsInside(const hsPoint3& pos) const;
-    virtual hsBool  ICameraInside() const;
+    virtual bool    IIsInside(const hsPoint3& pos) const;
+    virtual bool    ICameraInside() const;
 
 };
 
@@ -96,8 +96,8 @@ public:
     CLASSNAME_REGISTER( plHardRegionIntersect );
     GETINTERFACE_ANY( plHardRegionIntersect, plHardRegionComplex );
 
-    virtual hsBool  IIsInside(const hsPoint3& pos) const;
-    virtual hsBool  ICameraInside() const;
+    virtual bool    IIsInside(const hsPoint3& pos) const;
+    virtual bool    ICameraInside() const;
 
 };
 
@@ -111,8 +111,8 @@ public:
     CLASSNAME_REGISTER( plHardRegionInvert );
     GETINTERFACE_ANY( plHardRegionInvert, plHardRegionComplex );
 
-    virtual hsBool  IIsInside(const hsPoint3& pos) const;
-    virtual hsBool  ICameraInside() const;
+    virtual bool    IIsInside(const hsPoint3& pos) const;
+    virtual bool    ICameraInside() const;
 
 };
 

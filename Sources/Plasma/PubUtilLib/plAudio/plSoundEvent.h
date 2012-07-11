@@ -74,7 +74,7 @@ public:
     ~plSoundEvent();
 
     void    AddCallback( plEventCallbackMsg *msg );
-    hsBool  RemoveCallback( plEventCallbackMsg *msg );
+    bool    RemoveCallback( plEventCallbackMsg *msg );
 
     uint32_t  GetNumCallbacks( void ) const;
     int     GetType( void ) const;

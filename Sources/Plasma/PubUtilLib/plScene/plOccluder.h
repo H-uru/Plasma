@@ -97,12 +97,12 @@ public:
     CLASSNAME_REGISTER( plOccluder );
     GETINTERFACE_ANY( plOccluder, plObjInterface);
 
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual bool        MsgReceive(plMessage* msg);
 
     virtual float GetPriority() const { return fPriority; }
 
-    hsBool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
-    hsBool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
+    bool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
+    bool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
 
     virtual const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
 

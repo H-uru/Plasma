@@ -72,7 +72,7 @@ plWin32StaticSound::~plWin32StaticSound()
     IUnloadDataBuffer();
 }
 
-void plWin32StaticSound::Activate( hsBool forcePlay )
+void plWin32StaticSound::Activate( bool forcePlay )
 {
     plWin32Sound::Activate( forcePlay );
 }
@@ -82,7 +82,7 @@ void plWin32StaticSound::DeActivate()
     plWin32Sound::DeActivate();
 }
 
-hsBool plWin32StaticSound::LoadSound( hsBool is3D )
+bool plWin32StaticSound::LoadSound( bool is3D )
 {
     if (fFailed)
         return false;
@@ -143,7 +143,7 @@ hsBool plWin32StaticSound::LoadSound( hsBool is3D )
             header.fNumChannels = 1;
         }
 
-        hsBool tryStatic = true;
+        bool tryStatic = true;
         // If we want FX, we can't use a static voice, but EAX doesn't fit under that limitation :)
         if( 0 )
             tryStatic = false;
@@ -250,7 +250,7 @@ void plWin32StaticSound::ISetActualTime(double t)
     }
 }
 
-hsBool plWin32StaticSound::MsgReceive( plMessage* pMsg )
+bool plWin32StaticSound::MsgReceive( plMessage* pMsg )
 {
     return plWin32Sound::MsgReceive( pMsg );
 }
@@ -295,7 +295,7 @@ void plWin32LinkSound::Write(hsStream* s, hsResMgr* mgr)
     plWin32StaticSound::Write(s, mgr);
 }
 
-hsBool plWin32LinkSound::MsgReceive( plMessage* pMsg )
+bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectBCMsg *msg = plLinkEffectBCMsg::ConvertNoRef( pMsg );
     if( msg != nil && !msg->HasLinkFlag(plLinkEffectBCMsg::kMute))

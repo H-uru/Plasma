@@ -113,9 +113,9 @@ void plDynaRippleVSMgr::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fWaveSetBase);
 }
 
-hsBool plDynaRippleVSMgr::MsgReceive(plMessage* msg)
+bool plDynaRippleVSMgr::MsgReceive(plMessage* msg)
 {
-    hsBool retVal = plDynaRippleMgr::MsgReceive(msg);
+    bool retVal = plDynaRippleMgr::MsgReceive(msg);
     if( retVal )
         return true;
 
@@ -135,7 +135,7 @@ hsBool plDynaRippleVSMgr::MsgReceive(plMessage* msg)
     return false;
 }
 
-hsBool plDynaRippleVSMgr::ICheckRTMat()
+bool plDynaRippleVSMgr::ICheckRTMat()
 {
     if( !fMatRTShade )
         return false;
@@ -162,7 +162,7 @@ hsBool plDynaRippleVSMgr::ICheckRTMat()
     return fWaveSetBase->SetupRippleMat(fMatRTShade, ripConsts);
 }
 
-hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
+bool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
     if( !ICheckRTMat() )
         return false;
@@ -170,7 +170,7 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
     if( !shape )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
@@ -180,9 +180,9 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
     plConst(float) kMinTime(1.5f);
     double t = hsTimer::GetSysSeconds();
     float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
-    hsBool longEnough = (dt >= kMinTime);
+    bool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
-    hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
+    bool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
     if( force || longEnough || farEnough )
     {
         hsPoint3 pos = shapeL2W.GetTranslate();
@@ -221,7 +221,7 @@ hsBool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, hsBool for
             fCutter->Set(pos, dir, up);
 
 
-            hsBool hit = ICutoutTargets(t);
+            bool hit = ICutoutTargets(t);
             if( hit )
             {
                 info.fLastTime = t;

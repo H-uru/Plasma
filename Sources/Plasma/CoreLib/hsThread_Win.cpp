@@ -142,7 +142,7 @@ void hsMutex::Lock()
     hsAssert(state != WAIT_TIMEOUT,"hsMutex::Lock -> Infinite Timeout expired?");
 }
 
-hsBool hsMutex::TryLock()
+bool hsMutex::TryLock()
 {
     DWORD state = ::WaitForSingleObject(fMutexH, 0);
     hsAssert(state != WAIT_ABANDONED,"hsMutex::TryLock -> Abandoned Mutex");
@@ -170,14 +170,14 @@ hsSemaphore::~hsSemaphore()
     ::CloseHandle(fSemaH);
 }
 
-hsBool hsSemaphore::TryWait()
+bool hsSemaphore::TryWait()
 {
     DWORD result = ::WaitForSingleObject(fSemaH, 0);
     hsAssert(result != WAIT_ABANDONED, "hsSemaphore -> Abandoned Semaphore");
     return result == WAIT_OBJECT_0;
 }
 
-hsBool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
         timeToWait = INFINITE;
@@ -211,7 +211,7 @@ hsEvent::~hsEvent()
     ::CloseHandle(fEvent);
 }
 
-hsBool hsEvent::Wait(hsMilliseconds timeToWait)
+bool hsEvent::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
         timeToWait = INFINITE;

@@ -62,9 +62,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 #endif // plFlexibilityComponent_inc

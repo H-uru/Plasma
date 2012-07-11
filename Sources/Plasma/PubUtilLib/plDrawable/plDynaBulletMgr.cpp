@@ -90,12 +90,12 @@ void plDynaBulletMgr::Write(hsStream* stream, hsResMgr* mgr)
     plDynaDecalMgr::Write(stream, mgr);
 }
 
-hsBool plDynaBulletMgr::IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg)
+bool plDynaBulletMgr::IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg)
 {
     return true;
 }
 
-hsBool plDynaBulletMgr::IHandleShot(plBulletMsg* bull)
+bool plDynaBulletMgr::IHandleShot(plBulletMsg* bull)
 {
     hsVector3 up = IRandomUp(bull->Dir());
 
@@ -116,7 +116,7 @@ hsBool plDynaBulletMgr::IHandleShot(plBulletMsg* bull)
     return true;
 }
 
-hsBool plDynaBulletMgr::MsgReceive(plMessage* msg)
+bool plDynaBulletMgr::MsgReceive(plMessage* msg)
 {
     plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
     if( bullMsg )

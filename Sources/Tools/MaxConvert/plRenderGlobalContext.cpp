@@ -114,13 +114,13 @@ void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
         fInstList[i].SetNext(&fInstList[i+1]);
 }
 
-void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, hsBool isBarney)
+void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney)
 {
     const char* dbgNodeName = node->GetName();
     if( !isBarney )
         isBarney = node->GetIsBarney();
 
-    hsBool doMe = isBarney || (node->CanConvert() && node->GetDrawable());
+    bool doMe = isBarney || (node->CanConvert() && node->GetDrawable());
 
     if( !doMe )
         return;

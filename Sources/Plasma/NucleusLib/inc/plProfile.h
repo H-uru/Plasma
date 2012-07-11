@@ -159,8 +159,8 @@ protected:
     uint64_t fAvgTotal;
     uint32_t fLastAvg;
     uint32_t fMax;
-    hsBool fActive;
-    hsBool fRunning;
+    bool     fActive;
+    bool     fRunning;
     uint8_t fDisplayFlags;
 
     // Number of times EndTiming was called. Can be used to combine timing and counting in one timer
@@ -168,7 +168,7 @@ protected:
 
     void IAddAvg();
 
-    void IPrintValue(uint32_t value, char* buf, hsBool printType);
+    void IPrintValue(uint32_t value, char* buf, bool printType);
 
 public:
     plProfileBase();
@@ -181,15 +181,15 @@ public:
 
     uint32_t GetValue();
 
-    void PrintValue(char* buf, hsBool printType=true);
-    void PrintAvg(char* buf, hsBool printType=true);
-    void PrintMax(char* buf, hsBool printType=true);
+    void PrintValue(char* buf, bool printType=true);
+    void PrintAvg(char* buf, bool printType=true);
+    void PrintMax(char* buf, bool printType=true);
 
     uint32_t GetTimerSamples() const { return fTimerSamples; }
 
     const char* GetName() { return fName; }
 
-    void SetActive(hsBool s) { fActive = s; }
+    void SetActive(bool s) { fActive = s; }
 
     void Stop() { fRunning = false; }
     void Start() { fRunning = true; }
@@ -204,7 +204,7 @@ class plProfileVar : public plProfileBase
 protected:
     const char* fGroup;
     plProfileLaps* fLaps;
-    hsBool fLapsActive;
+    bool fLapsActive;
 
     plProfileVar() {}
 
@@ -246,7 +246,7 @@ public:
     plProfileLaps* GetLaps() { return fLaps; }
 
     // Enable Lap Sampling
-    void SetLapsActive(hsBool s) { fLapsActive = s; }
+    void SetLapsActive(bool s) { fLapsActive = s; }
 };
 
 #endif // plProfile_h_inc

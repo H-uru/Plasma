@@ -59,7 +59,7 @@ plVisMgr::~plVisMgr()
 {
 }
 
-hsBool plVisMgr::MsgReceive(plMessage* msg)
+bool plVisMgr::MsgReceive(plMessage* msg)
 {
 
     return hsKeyedObject::MsgReceive(msg);
@@ -76,7 +76,7 @@ void plVisMgr::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 }
 
-void plVisMgr::Register(plVisRegion* reg, hsBool bnot)
+void plVisMgr::Register(plVisRegion* reg, bool bnot)
 {
     // This should happen pretty infrequently, or
     // I wouldn't be doing it so cloth-headed-ly.
@@ -100,7 +100,7 @@ void plVisMgr::Register(plVisRegion* reg, hsBool bnot)
     hsAssert(false, "Infinite bitvector has all bits set?");
 }
 
-void plVisMgr::UnRegister(plVisRegion* reg, hsBool bnot)
+void plVisMgr::UnRegister(plVisRegion* reg, bool bnot)
 {
     // Mark our index for recycling
     hsBitVector& indices= bnot ? fIdxNot : fIdxSet;
@@ -173,27 +173,27 @@ void plVisMgr::DisableNormal()
         fOffBitNot.Set(fMaxNot);
 }
 
-void plVisMgr::EnableVisSet(int idx, hsBool isNot)
+void plVisMgr::EnableVisSet(int idx, bool isNot)
 {
     hsBitVector& offs = isNot ? fOffBitNot : fOffBitSet;
 
     offs.ClearBit(idx);
 }
 
-void plVisMgr::EnableVisSets(const hsBitVector& enabled, hsBool isNot)
+void plVisMgr::EnableVisSets(const hsBitVector& enabled, bool isNot)
 {
     hsBitVector& offs = isNot ? fOffBitNot : fOffBitSet;
     offs -= enabled;
 }
 
-void plVisMgr::ForceVisSet(int idx, hsBool isNot)
+void plVisMgr::ForceVisSet(int idx, bool isNot)
 {
     EnableVisSet(idx, isNot);
     hsBitVector& ons = isNot ? fOnBitNot : fOnBitSet;
     ons.SetBit(idx);
 }
 
-void plVisMgr::ForceVisSets(const hsBitVector& enabled, hsBool isNot)
+void plVisMgr::ForceVisSets(const hsBitVector& enabled, bool isNot)
 {
     EnableVisSets(enabled, isNot);
     hsBitVector& ons = isNot ? fOnBitNot : fOnBitSet;

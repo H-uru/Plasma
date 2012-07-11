@@ -100,7 +100,7 @@ void hsStringTable::Register(const char* str, void* data)
 // Iterate through the tree and call the callback function on each child node
 // of the fromNode (or the root if fromNode is nil)
 //
-hsBool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
+bool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 {
     if (!fromNode)
         fromNode = &root;
@@ -110,7 +110,7 @@ hsBool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 //
 // Recursively find node, create if needed?
 //
-hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, hsBool createIfNeeded)
+hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, bool createIfNeeded)
 {
     if (!root || !str) return nil;
     if (tolower(root->chr)==tolower(*str)) 
@@ -216,7 +216,7 @@ void hsStringTable::RemoveNode(Node* root)
 //
 // Recurse through tree and call callback on each node
 //
-hsBool hsStringTable::IterateRecur(Node* root, hsStringTableCallback* callback)
+bool hsStringTable::IterateRecur(Node* root, hsStringTableCallback* callback)
 {
     if (!root)
         return true;

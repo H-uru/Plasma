@@ -114,16 +114,16 @@ public:
     // QUERY SECTION
     // Queries on how much of what we got.
     uint32_t          VertCount() const { return fNumVerts; }
-    hsBool          HasChannel(Channel chan) const { return fStrides[chan] > 0; }
-    hsBool              HasPositions() const { return HasChannel(kPosition); }
-    hsBool              HasWeights() const { return HasChannel(kWeight); }
+    bool            HasChannel(Channel chan) const { return fStrides[chan] > 0; }
+    bool                HasPositions() const { return HasChannel(kPosition); }
+    bool                HasWeights() const { return HasChannel(kWeight); }
     int                 NumWeights() const { return fNumWeights; }
-    hsBool              HasWgtIndex() const { return HasChannel(kWgtIndex); }
-    hsBool              HasNormals() const { return HasChannel(kNormal); }
-    hsBool              HasDiffuse() const { return HasChannel(kDiffuse); }
-    hsBool              HasSpecular() const { return HasChannel(kSpecular); }
-    hsBool              HasUVWs() const { return HasChannel(kUVW); }
-    hsBool                  HasUVWs(int n) { return HasChannel(kUVW) && (n <= fNumUVWsPerVert); }
+    bool                HasWgtIndex() const { return HasChannel(kWgtIndex); }
+    bool                HasNormals() const { return HasChannel(kNormal); }
+    bool                HasDiffuse() const { return HasChannel(kDiffuse); }
+    bool                HasSpecular() const { return HasChannel(kSpecular); }
+    bool                HasUVWs() const { return HasChannel(kUVW); }
+    bool                    HasUVWs(int n) { return HasChannel(kUVW) && (n <= fNumUVWsPerVert); }
     int             NumUVWs() const { return fNumUVWsPerVert; }
 
     //////////////////////////////////
@@ -246,7 +246,7 @@ public:
 
     void        Begin() { fValueByte = fAccess->fChannels[fChan]; }
     void        Advance() { fValueByte += fAccess->fStrides[fChan]; }
-    hsBool      More() const { return fValueByte < fValueEnd; }
+    bool        More() const { return fValueByte < fValueEnd; }
 };
 
 class plAccPositionIterator
@@ -270,7 +270,7 @@ public:
 
     void                Begin() { fPosition.Begin(); }
     void                Advance() { fPosition.Advance(); }
-    hsBool              More() const { return fPosition.More(); }
+    bool                More() const { return fPosition.More(); }
 };
 
 class plAccPosNormIterator
@@ -297,7 +297,7 @@ public:
 
     void                Begin() { fPosition.Begin(); fNormal.Begin(); }
     void                Advance() { fPosition.Advance(); fNormal.Advance(); }
-    hsBool              More() const { return fPosition.More(); }
+    bool                More() const { return fPosition.More(); }
 };
 
 class plAccPosNormUVWIterator
@@ -328,7 +328,7 @@ public:
 
     void                Begin() { fPosition.Begin(); fNormal.Begin(); fUVW.Begin(); }
     void                Advance() { fPosition.Advance(); fNormal.Advance(); fUVW.Advance(); }
-    hsBool              More() const { return fPosition.More(); }
+    bool                More() const { return fPosition.More(); }
 };
 
 class plAccUVWIterator
@@ -350,7 +350,7 @@ public:
 
     void                Begin() { fUVW.Begin(); }
     void                Advance() { fUVW.Advance(); }
-    hsBool              More() const { return fUVW.More(); }
+    bool                More() const { return fUVW.More(); }
 };
 
 class plAccDiffuseIterator
@@ -373,7 +373,7 @@ public:
 
     void                Begin() { fDiffuse.Begin(); }
     void                Advance() { fDiffuse.Advance(); }
-    hsBool              More() const { return fDiffuse.More(); }
+    bool                More() const { return fDiffuse.More(); }
 };
 
 class plAccDiffSpecIterator
@@ -402,7 +402,7 @@ public:
 
     void                Begin() { fDiffuse.Begin(); fSpecular.Begin(); }
     void                Advance() { fDiffuse.Advance(); fSpecular.Advance(); }
-    hsBool              More() const { return fDiffuse.More(); }
+    bool                More() const { return fDiffuse.More(); }
 };
 
 
@@ -456,7 +456,7 @@ public:
 
     void                Begin() { fPosition.Begin(); fWeight.Begin(); fNormal.Begin(); fDiffuse.Begin(); fSpecular.Begin(); fUVW.Begin(); }
     void                Advance() { fPosition.Advance(); fWeight.Advance(); fNormal.Advance(); fDiffuse.Begin(); fSpecular.Begin(); fUVW.Advance(); }
-    hsBool              More() const { return fPosition.More(); }
+    bool                More() const { return fPosition.More(); }
 };
 
 

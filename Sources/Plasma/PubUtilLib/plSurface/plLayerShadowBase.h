@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerLightBase : public plLayerInterface
 {
 protected:
-    hsBool              fDirty;
+    bool                fDirty;
 public:
 
     plLayerLightBase();
@@ -69,7 +69,7 @@ public:
 class plLayerShadowBase : public plLayerInterface
 {
 protected:
-    hsBool              fDirty;
+    bool                fDirty;
 public:
 
     plLayerShadowBase();

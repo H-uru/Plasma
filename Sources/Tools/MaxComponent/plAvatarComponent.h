@@ -77,7 +77,7 @@ protected:
 
     plArmatureComponent() : fArmMod(nil) {}
     plArmatureMod* IGenerateMyArmMod(plHKPhysical* myHKPhys, plMaxNode* node);
-    hsBool IVerifyUsedNode(INode* thisNode, plErrorMsg *pErrMsg, hsBool isHull);
+    bool IVerifyUsedNode(INode* thisNode, plErrorMsg *pErrMsg, bool isHull);
 
     virtual void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg) = 0;
     virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg) {}
@@ -104,9 +104,9 @@ public:
     };
     //static const char *BrainStrings[];
 
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
     void DeleteThis() { delete this; }
 };
@@ -152,9 +152,9 @@ public:
         };
 
         virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg);
-        hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)         { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
-        hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg)            { return (plArmatureComponent::Convert(node, pErrMsg)); }
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)         { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg)            { return (plArmatureComponent::Convert(node, pErrMsg)); }
         void DeleteThis() { delete this; }
 
 
@@ -220,9 +220,9 @@ public:
         };
 
         plLODAvatarComponent();
-        hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-        hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
         void DeleteThis() { delete this; }
 
         void RemoveBone(int index);

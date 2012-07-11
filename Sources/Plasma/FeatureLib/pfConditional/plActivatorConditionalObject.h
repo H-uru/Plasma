@@ -62,7 +62,7 @@ public:
     CLASSNAME_REGISTER( plActivatorConditionalObject );
     GETINTERFACE_ANY( plActivatorConditionalObject, plConditionalObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     void Evaluate(){;}
     void SetActivatorKey(plKey k);
@@ -83,7 +83,7 @@ public:
     CLASSNAME_REGISTER( plActivatorActivatorConditionalObject );
     GETINTERFACE_ANY( plActivatorActivatorConditionalObject, plActivatorConditionalObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
 
 };
@@ -98,7 +98,7 @@ public:
     CLASSNAME_REGISTER( plVolActivatorConditionalObject );
     GETINTERFACE_ANY( plVolActivatorConditionalObject, plActivatorConditionalObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
 
 };

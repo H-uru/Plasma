@@ -85,7 +85,7 @@ plXImposterComp::plXImposterComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plXImposterComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plXImposterComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetRadiateNorms(true);
     return true;
@@ -103,9 +103,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 //Max desc stuff necessary below.
@@ -126,7 +126,7 @@ plForceCTTComp::plForceCTTComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plForceCTTComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plForceCTTComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceVisLOS(true);
     return true;
@@ -153,16 +153,16 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-    hsBool  SetMaxInherit();
-    hsBool  SetMaxInherit(plMaxNodeBase* targ);
-    hsBool  KillMaxInherit();
-    hsBool  KillMaxInherit(plMaxNodeBase* targ);
+    bool    SetMaxInherit();
+    bool    SetMaxInherit(plMaxNodeBase* targ);
+    bool    KillMaxInherit();
+    bool    KillMaxInherit(plMaxNodeBase* targ);
 
-    hsBool  Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
+    bool    Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
 
     virtual void AddTarget(plMaxNodeBase *target);
     virtual void DeleteTarget(plMaxNodeBase *target);
@@ -250,7 +250,7 @@ plFilterInheritComp::plFilterInheritComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plFilterInheritComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFilterInheritComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fCompPB->GetInt(kActive) )
         return true;
@@ -282,19 +282,19 @@ hsBool plFilterInheritComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg
     return true;
 }
 
-hsBool plFilterInheritComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFilterInheritComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plFilterInheritComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
+bool plFilterInheritComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
 {
     pErrMsg->Set(true, node->GetName(), msg).CheckAndAsk();
     pErrMsg->Set(false);
     return true;
 }
 
-hsBool plFilterInheritComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plFilterInheritComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fCompPB->GetInt(kActive) )
         return true;
@@ -349,7 +349,7 @@ hsBool plFilterInheritComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plFilterInheritComp::SetMaxInherit(plMaxNodeBase* targ)
+bool plFilterInheritComp::SetMaxInherit(plMaxNodeBase* targ)
 {
     if( !fCompPB->GetInt(kActive) )
         return KillMaxInherit(targ);
@@ -380,7 +380,7 @@ hsBool plFilterInheritComp::SetMaxInherit(plMaxNodeBase* targ)
     return true;
 }
 
-hsBool plFilterInheritComp::SetMaxInherit()
+bool plFilterInheritComp::SetMaxInherit()
 {
     if( !fCompPB->GetInt(kActive) )
         return KillMaxInherit();
@@ -415,7 +415,7 @@ hsBool plFilterInheritComp::SetMaxInherit()
     return true;
 }
 
-hsBool plFilterInheritComp::KillMaxInherit(plMaxNodeBase* targ)
+bool plFilterInheritComp::KillMaxInherit(plMaxNodeBase* targ)
 {
     // Max documentation is a big fat liar
     DWORD mask = ~0;
@@ -426,7 +426,7 @@ hsBool plFilterInheritComp::KillMaxInherit(plMaxNodeBase* targ)
     return true;
 }
 
-hsBool plFilterInheritComp::KillMaxInherit()
+bool plFilterInheritComp::KillMaxInherit()
 {
     int i;
     for( i = 0; i < NumTargets(); i++ )

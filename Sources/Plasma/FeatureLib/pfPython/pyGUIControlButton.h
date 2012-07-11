@@ -71,11 +71,11 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static hsBool IsGUIControlButton(pyKey& gckey);
+    static bool IsGUIControlButton(pyKey& gckey);
     
     virtual void    SetNotifyType(int32_t kind);
     virtual int32_t   GetNotifyType();
-    virtual hsBool  IsButtonDown();
+    virtual bool    IsButtonDown();
 };
 
 #endif // _pyGUIControlButton_h_

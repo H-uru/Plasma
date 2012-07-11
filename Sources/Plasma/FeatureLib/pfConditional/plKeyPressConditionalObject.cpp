@@ -50,7 +50,7 @@ plKeyPressConditionalObject::plKeyPressConditionalObject()
     SetFlag(kLocalElement);     // since it relies on user input    
 }
 
-hsBool plKeyPressConditionalObject::MsgReceive(plMessage* msg)
+bool plKeyPressConditionalObject::MsgReceive(plMessage* msg)
 {
     plKeyEventMsg* pKeyMsg = plKeyEventMsg::ConvertNoRef(msg);
     if( pKeyMsg )

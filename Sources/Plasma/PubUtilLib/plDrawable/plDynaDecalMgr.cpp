@@ -132,8 +132,8 @@ static const float kInitAuxSpans = 5;
 
 using namespace std;
 
-hsBool plDynaDecalMgr::fDisableAccumulate = false;
-hsBool plDynaDecalMgr::fDisableUpdate = false;
+bool plDynaDecalMgr::fDisableAccumulate = false;
+bool plDynaDecalMgr::fDisableUpdate = false;
 
 plDynaDecalMgr::plDynaDecalMgr()
 :   
@@ -299,7 +299,7 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
 
 }
 
-hsBool plDynaDecalMgr::IMakeAuxRefs(plPipeline* pipe)
+bool plDynaDecalMgr::IMakeAuxRefs(plPipeline* pipe)
 {
     int i;
     for( i = 0; i < fGroups.GetCount(); i++ )
@@ -334,14 +334,14 @@ const plPrintShape* plDynaDecalMgr::IGetPrintShape(plArmatureMod* avMod, uint32_
     return shape;
 }
 
-hsBool plDynaDecalMgr::IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg)
+bool plDynaDecalMgr::IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg)
 {
     IWetParts(enaMsg);
 
     return true;
 }
 
-hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
+bool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
 {
     if( !enaMsg->IsArmature() )
     {
@@ -374,7 +374,7 @@ hsBool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
     return true;
 }
 
-hsBool plDynaDecalMgr::IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg)
+bool plDynaDecalMgr::IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg)
 {
     plArmatureMod* avMod = plArmatureMod::ConvertNoRef(enaMsg->GetArmKey()->ObjectIsLoaded());
 
@@ -397,7 +397,7 @@ void plDynaDecalMgr::IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg*
         info.fFlags &= ~plDynaDecalInfo::kImmersed;
 }
 
-hsBool plDynaDecalMgr::MsgReceive(plMessage* msg)
+bool plDynaDecalMgr::MsgReceive(plMessage* msg)
 {
     // On eval pulse, update all our active decals, letting old ones die off.
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
@@ -653,7 +653,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
             return aux;
     }
 
-    hsBool rtLit = span->fProps & plSpan::kLiteVtxNonPreshaded;
+    bool rtLit = span->fProps & plSpan::kLiteVtxNonPreshaded;
 
     // Now look to see if we've got one sitting around unused that's suitable.
     // Here the suitable criteria is a little different. We know we are the owner,
@@ -762,17 +762,17 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
     grp->SetIndexBufferEnd(aux->fIBufferIdx, aux->fIStartIdx);
 }
 
-hsGMaterial* plDynaDecalMgr::ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, hsBool rtLit)
+hsGMaterial* plDynaDecalMgr::ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, bool rtLit)
 {
     if( !mat )
         mat = fMatRTShade;
 
-    hsBool attenColor =  0 != (mat->GetLayer(0)->GetBlendFlags() 
+    bool attenColor =  0 != (mat->GetLayer(0)->GetBlendFlags() 
                                 & (hsGMatState::kBlendAdd
                                     | hsGMatState::kBlendMult
                                     | hsGMatState::kBlendMADD));
-    hsBool bump = 0 != (mat->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscBumpChans);
-    hsBool hasVS = nil != mat->GetLayer(0)->GetVertexShader();
+    bool bump = 0 != (mat->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscBumpChans);
+    bool hasVS = nil != mat->GetLayer(0)->GetVertexShader();
 
     if( hasVS )
     {
@@ -967,7 +967,7 @@ uint16_t* plDynaDecalMgr::IGetBaseIdxPtr(const plAuxSpan* auxSpan) const
     return grp->GetIndexBufferData(auxSpan->fIBufferIdx) + auxSpan->fIBufferInit;
 }
 
-hsBool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
+bool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
                                         plDynaDecal* decal,
                                         const plFlatGridMesh& grid) const
 {
@@ -1046,7 +1046,7 @@ void plDynaDecalMgr::ISetDepthFalloff()
     fMaxDepthRange = 1.f / (1.f - fMaxDepth);
 }
 
-hsBool plDynaDecalMgr::IConvertPolys(plAuxSpan* auxSpan,
+bool plDynaDecalMgr::IConvertPolys(plAuxSpan* auxSpan,
                                    plDynaDecal* decal, 
                                    hsTArray<plCutoutPoly>& src)
 {
@@ -1061,14 +1061,14 @@ hsBool plDynaDecalMgr::IConvertPolys(plAuxSpan* auxSpan,
     return IConvertPolysAlpha(auxSpan, decal, src);
 }
 
-hsBool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
+bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
                                    plDynaDecal* decal, 
                                    hsTArray<plCutoutPoly>& src)
 {
-    hsBool loU = false;
-    hsBool hiU = false;
-    hsBool loV = false;
-    hsBool hiV = false;
+    bool loU = false;
+    bool hiU = false;
+    bool loV = false;
+    bool hiV = false;
     plDecalVtxFormat* vtx = IGetBaseVtxPtr(auxSpan);
     vtx += decal->fStartVtx;
     decal->fVtxBase = vtx;
@@ -1162,14 +1162,14 @@ hsBool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
     return loU & hiU & loV & hiV;
 }
 
-hsBool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
+bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
                                    plDynaDecal* decal, 
                                    hsTArray<plCutoutPoly>& src)
 {
-    hsBool loU = false;
-    hsBool hiU = false;
-    hsBool loV = false;
-    hsBool hiV = false;
+    bool loU = false;
+    bool hiU = false;
+    bool loV = false;
+    bool hiV = false;
     plDecalVtxFormat* vtx = IGetBaseVtxPtr(auxSpan);
     vtx += decal->fStartVtx;
     decal->fVtxBase = vtx;
@@ -1255,14 +1255,14 @@ hsBool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
     return loU & hiU & loV & hiV;
 }
 
-hsBool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
+bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
                                    plDynaDecal* decal, 
                                    hsTArray<plCutoutPoly>& src)
 {
-    hsBool loU = false;
-    hsBool hiU = false;
-    hsBool loV = false;
-    hsBool hiV = false;
+    bool loU = false;
+    bool hiU = false;
+    bool loV = false;
+    bool hiV = false;
     plDecalVtxFormat* vtx = IGetBaseVtxPtr(auxSpan);
     vtx += decal->fStartVtx;
     decal->fVtxBase = vtx;
@@ -1337,12 +1337,12 @@ hsBool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     return loU & hiU & loV & hiV;
 }
 
-hsBool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
+bool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
 {
-    hsBool loU = false;
-    hsBool hiU = false;
-    hsBool loV = false;
-    hsBool hiV = false;
+    bool loU = false;
+    bool hiU = false;
+    bool loV = false;
+    bool hiV = false;
     int iPoly = 0;
     int iVert = 0;
     while( iPoly < src.GetCount() )
@@ -1368,7 +1368,7 @@ hsBool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
     return loU & hiU & loV & hiV;
 }
 
-hsBool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src)
+bool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src)
 {
     // Figure out how many verts and idxs are coming in.
     uint16_t numVerts, numIdx;
@@ -1394,7 +1394,7 @@ hsBool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t,
     return IConvertPolys(auxSpan, decal, src);
 }
 
-hsBool plDynaDecalMgr::IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid)
+bool plDynaDecalMgr::IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid)
 {
     // Find a span to put them in. Either the current span, or a new
     // one if it's full up.
@@ -1415,14 +1415,14 @@ hsBool plDynaDecalMgr::IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMateria
     return IConvertFlatGrid(auxSpan, decal, grid);
 }
 
-hsBool plDynaDecalMgr::IHitTestFlatGrid(const plFlatGridMesh& grid) const
+bool plDynaDecalMgr::IHitTestFlatGrid(const plFlatGridMesh& grid) const
 {
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
-hsBool plDynaDecalMgr::ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs)
+bool plDynaDecalMgr::ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs)
 {
     static plFlatGridMesh grid;
     grid.Reset();
@@ -1435,12 +1435,12 @@ hsBool plDynaDecalMgr::ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMate
     return IProcessGrid(drawable, iSpan, mat, secs, grid);
 }
 
-hsBool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
+bool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
 {
     if( fDisableAccumulate )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     if( !so )
         return retVal;
@@ -1501,12 +1501,12 @@ hsBool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
     return retVal;
 }
 
-hsBool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs)
+bool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs)
 {
     if( fDisableAccumulate )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     if( !drawVis.GetCount() )
         return retVal;
@@ -1547,12 +1547,12 @@ hsBool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs
     return retVal;
 }
 
-hsBool plDynaDecalMgr::ICutoutTargets(double secs)
+bool plDynaDecalMgr::ICutoutTargets(double secs)
 {
     if( fDisableAccumulate )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     int i;
     for( i = 0; i < fTargets.GetCount(); i++ )
@@ -1754,7 +1754,7 @@ hsMatrix44 plDynaDecalMgr::IL2WFromHit(hsPoint3 pos, hsVector3 dir) const
     return l2w;
 }
 
-void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight, float waterHeight)
+void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool hasWaterHeight, float waterHeight)
 {
     hsTArray<plCutoutHit> hits;
 

@@ -83,8 +83,8 @@ protected:
 
     hsBounds3Ext            fMaxBounds;
 
-    virtual hsBool IFacePoint(plPipeline* pipe, const hsPoint3& at);
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IFacePoint(plPipeline* pipe, const hsPoint3& at);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
     enum RefType
     {
@@ -106,7 +106,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // ViewFace specific
     void SetScale(const hsVector3& s) { fScale = s; }
@@ -116,7 +116,7 @@ public:
 
     void SetMaxBounds(const hsBounds3Ext& bnd);
     const hsBounds3Ext& GetMaxBounds() const { return fMaxBounds; }
-    hsBool HaveMaxBounds() const { return HasFlag(kMaxBounds); }
+    bool HaveMaxBounds() const { return HasFlag(kMaxBounds); }
 
     enum FollowMode
     {
@@ -129,12 +129,12 @@ public:
     FollowMode      GetFollowMode() const;
     plSceneObject*  GetFollowObject() const { return fFaceObj; }
 
-    void                SetOffsetActive(hsBool on) { if(on) SetFlag(kOffset); else ClearFlag(kOffset); }
-    hsBool              GetOffsetActive() const { return HasFlag(kOffset); }
+    void                SetOffsetActive(bool on) { if(on) SetFlag(kOffset); else ClearFlag(kOffset); }
+    bool                GetOffsetActive() const { return HasFlag(kOffset); }
 
-    void                SetOffset(const hsVector3& off, hsBool local=true);
+    void                SetOffset(const hsVector3& off, bool local=true);
     const hsVector3&    GetOffset() const { return fOffset; }
-    hsBool              GetOffsetLocal() const { return HasFlag(kOffsetLocal); }
+    bool                GetOffsetLocal() const { return HasFlag(kOffsetLocal); }
 };
 
 #endif // plViewFaceModifier_inc
