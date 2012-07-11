@@ -95,60 +95,18 @@ class SensorReport : public NxUserTriggerReport
 
         if (doReport)
         {
-#ifdef USE_PHYSX_CONVEXHULL_WORKAROUND
-            if ( triggerPhys->DoDetectorHullWorkaround() )
+            if (status & NX_TRIGGER_ON_ENTER)
             {
-                if (status & NX_TRIGGER_ON_ENTER && triggerPhys->Should_I_Trigger(status & NX_TRIGGER_ON_ENTER, otherPos) )
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
-                }
-                else if (status & NX_TRIGGER_ON_ENTER)
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName().c_str());
-                }
-                if (status & NX_TRIGGER_ON_LEAVE && triggerPhys->Should_I_Trigger(status & NX_TRIGGER_ON_ENTER, otherPos) )
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision (CH) %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
-                }
-                else if (status & NX_TRIGGER_ON_LEAVE)
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed Should I trigger",triggerPhys->GetObjectKey()->GetName().c_str());
-                }
-                if (!(status & NX_TRIGGER_ON_ENTER) && !(status & NX_TRIGGER_ON_LEAVE) )
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed event(CH)",triggerPhys->GetObjectKey()->GetName().c_str());
-                }
+                if (plSimulationMgr::fExtraProfile)
+                    DetectorLogRed("-->Send Collision %s enter",triggerPhys->GetObjectKey()->GetName().c_str());
+                plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
             }
-            else
+            else if (status & NX_TRIGGER_ON_LEAVE)
             {
-#endif  // USE_PHYSX_CONVEXHULL_WORKAROUND
-                if (status & NX_TRIGGER_ON_ENTER)
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
-                }
-                if (status & NX_TRIGGER_ON_LEAVE)
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("-->Send Collision %s %s",triggerPhys->GetObjectKey()->GetName().c_str(),status & NX_TRIGGER_ON_ENTER ? "enter" : "exit");
-                    plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
-                }
-                if (!(status & NX_TRIGGER_ON_ENTER) && !(status & NX_TRIGGER_ON_LEAVE) )
-                {
-                    if (plSimulationMgr::fExtraProfile)
-                        DetectorLogRed("<--Kill collision %s :failed event",triggerPhys->GetObjectKey()->GetName().c_str());
-                }
-#ifdef USE_PHYSX_CONVEXHULL_WORKAROUND
+                if (plSimulationMgr::fExtraProfile)
+                    DetectorLogRed("-->Send Collision %s exit",triggerPhys->GetObjectKey()->GetName().c_str());
+                plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
             }
-#endif  // USE_PHYSX_CONVEXHULL_WORKAROUND
         }
     }
 } gSensorReport;
@@ -455,85 +413,6 @@ void plSimulationMgr::ReleaseScene(plKey world)
         {
             fSDK->releaseScene(*scene);
             fScenes.erase(it);
-        }
-    }
-}
-
-void plSimulationMgr::ISendCollisionMsg(plKey receiver, plKey hitter, bool entering)
-{
-    DetectorLogYellow("Collision: %s is inside %s. Sending an %s msg", hitter ? hitter->GetName().c_str() : "(nil)",
-                      receiver->GetName().c_str(), entering ? "'enter'" : "'exit'");
-    plCollideMsg* msg = new plCollideMsg;
-    msg->fOtherKey = hitter;
-    msg->fEntering = entering;
-    msg->AddReceiver(receiver);
-    msg->Send();
-}
-
-void plSimulationMgr::UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering)
-{
-    // search thru the actors in a scene looking for convex hull detectors and see if the avatar is inside it
-    // ... and then send appropiate collision message if needed
-    NxScene* scene = GetScene(world);
-    plSceneObject* avObj = plSceneObject::ConvertNoRef(avatar->ObjectIsLoaded());
-    const plCoordinateInterface* ci = avObj->GetCoordinateInterface();
-    hsPoint3 soPos = ci->GetWorldPos();
-    if (scene)
-    {
-        uint32_t numActors = scene->getNbActors();
-        NxActor** actors = scene->getActors();
-
-        for (int i = 0; i < numActors; i++)
-        {
-            plPXPhysical* physical = (plPXPhysical*)actors[i]->userData;
-            if (physical && physical->DoDetectorHullWorkaround())
-            {
-                if ( physical->IsObjectInsideHull(pos) )
-                {
-                    physical->SetInsideConvexHull(entering);
-                    // we are entering this world... say we entered this detector
-                    ISendCollisionMsg(physical->GetObjectKey(), avatar, entering);
-                }
-            }
-        }
-    }
-}
-
-void plSimulationMgr::UpdateAvatarInDetector(plKey world, plPXPhysical* detector)
-{
-    // search thru the actors in a scene looking for avatars that might be in the newly enabled detector region
-    // ... and then send appropiate collision message if needed
-    if ( detector->DoDetectorHullWorkaround() )
-    {
-        NxScene* scene = GetScene(world);
-        if (scene)
-        {
-            uint32_t numActors = scene->getNbActors();
-            NxActor** actors = scene->getActors();
-
-            for (int i = 0; i < numActors; i++)
-            {
-                if ( actors[i]->userData == nil )
-                {
-                    // we go a controller
-                    plPXPhysicalControllerCore* controller = plPXPhysicalControllerCore::GetController(*actors[i]);
-                    if (controller && controller->IsEnabled())
-                    {
-                        plKey avatar = controller->GetOwner();
-                        plSceneObject* avObj = plSceneObject::ConvertNoRef(avatar->ObjectIsLoaded());
-                        const plCoordinateInterface* ci;
-                        if ( avObj && ( ci = avObj->GetCoordinateInterface() ) )
-                        {
-                            if ( detector->IsObjectInsideHull(ci->GetWorldPos()) )
-                            {
-                                detector->SetInsideConvexHull(true);
-                                // we are entering this world... say we entered this detector
-                                ISendCollisionMsg(detector->GetObjectKey(), avatar, true);
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

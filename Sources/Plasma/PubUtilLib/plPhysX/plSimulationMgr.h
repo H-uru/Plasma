@@ -99,10 +99,6 @@ public:
 
     int GetMaterialIdx(NxScene* scene, float friction, float restitution);
 
-    // PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
-    void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);
-    void UpdateAvatarInDetector(plKey world, plPXPhysical* detector);
-    
     //Fix to Move collision messages and their handling out of the simulation step
     void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
     void AddCollisionMsg(plCollideMsg* msg);
@@ -121,9 +117,6 @@ protected:
 
     // Walk through the synchronization requests and send them as appropriate.
     void IProcessSynchs();
-
-    // PHYSX FIXME send a collision message  - should only be used with UpdateDetectorsInScene
-    void ISendCollisionMsg(plKey receiver, plKey hitter, bool entering);
 
     NxPhysicsSDK* fSDK;
 
