@@ -44,9 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultAgeInfoNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include "pyVaultAgeInfoNode.h"
 
-#include "hsStlUtils.h"
+#include <Python.h>
+#pragma hdrstop
+
+#include "pyVaultAgeInfoNode.h"
 
 #include "pyVaultAgeInfoListNode.h"
 #include "pyVaultPlayerInfoListNode.h"

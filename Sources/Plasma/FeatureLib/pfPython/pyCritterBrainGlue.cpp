@@ -39,13 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyCritterBrain.h"
-#include "pyEnum.h"
-#include "pyGeometry3.h"
-
-#include "plMessage/plAIMsg.h"
 
 #include <Python.h>
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "pyCritterBrain.h"
+#include "pyEnum.h"
+
+#include "plMessage/plAIMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -48,11 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
 #include "HeadSpin.h"
-#include "pnInputCore/plKeyMap.h"
-
 #include "pyGlueHelpers.h"
+
+class plKeyCombo;
 
 class pyKeyMap
 {

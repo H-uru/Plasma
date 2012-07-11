@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
+#include <Python.h>
 #include "pyGlueHelpers.h"
 #include "plString.h"
+#pragma hdrstop
 
 plString PyString_AsStringEx(PyObject* obj) 
 {

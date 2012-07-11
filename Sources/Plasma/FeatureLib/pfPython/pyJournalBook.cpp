@@ -45,13 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 ///////////////////////////////////////////////
 
+#include <Python.h>
+#include "pyKey.h"
+#include "hsResMgr.h"
+#pragma hdrstop
+
 #include "pyJournalBook.h"
 #include "pfJournalBook/pfJournalBook.h"
 
 #include "cyAnimation.h"
 #include "pyColor.h"
 #include "pyImage.h"
-#include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
 
 uint32_t  pyJournalBook::fNextKeyID = 0;

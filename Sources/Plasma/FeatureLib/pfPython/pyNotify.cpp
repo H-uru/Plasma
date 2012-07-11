@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyNotify   - a wrapper class to provide interface to send a NotifyMsg
 //
 //////////////////////////////////////////////////////////////////////
-#include "pyNotify.h"
 
 #include "plgDispatch.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "pyKey.h"
-#include "plPythonFileMod.h"
 #include "pyGeometry3.h"
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "pyNotify.h"
 
 
 pyNotify::pyNotify()

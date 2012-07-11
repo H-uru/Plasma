@@ -49,20 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to a plMipMap image
 //
 
-#include <Python.h>
-#include "hsStlUtils.h"
+#include "pyGlueHelpers.h"
+#include <vector>
 
-#include "pyKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "pyColor.h"
 
 #ifndef BUILDING_PYPLASMA
-#include "pyGeometry3.h"
-#include "plGImage/plMipmap.h"
+#   include "plGImage/plMipmap.h"
 #endif
-
-#include "pyGlueHelpers.h"
-
-class plKey;
 
 class pyImage
 {
@@ -103,15 +98,6 @@ protected:
     }
 #endif
 
-    // contructor from Python
-    pyImage(pyKey& mipmapKey)
-    {
-        fMipMapKey = mipmapKey.getKey();
-#ifndef BUILDING_PYPLASMA
-        fMipmap = nil;
-#endif
-    }
-
 public:
 #ifndef BUILDING_PYPLASMA
     ~pyImage()
@@ -134,15 +120,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
 
-    void setKey(pyKey& mipmapKey) // only for python glue, do NOT call
-    {
-#ifndef BUILDING_PYPLASMA
-        if (fMipmap && fMipMapKey)
-            fMipMapKey->UnRefObject();
-        fMipmap = nil;
-#endif
-        fMipMapKey = mipmapKey.getKey();
-    }
+    void setKey(pyKey& mipmapKey);
 
     // override the equals to operator
     hsBool operator==(const pyImage &image) const

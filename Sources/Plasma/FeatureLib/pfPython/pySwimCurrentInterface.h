@@ -42,10 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pySwimCurrentInterface_h
 #define pySwimCurrentInterface_h
 
-#include <Python.h>
-#include "pyKey.h"
-
 #include "pyGlueHelpers.h"
+#include "pnKeyedObject/plKey.h"
 
 class pySwimCurrentInterface
 {

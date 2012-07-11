@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "pyPlayer.h"
 
 pyPlayer::pyPlayer() // only used by python glue, do NOT call

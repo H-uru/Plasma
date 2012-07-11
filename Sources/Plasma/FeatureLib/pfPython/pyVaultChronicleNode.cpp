@@ -45,12 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyVaultChronicleNode.h"
-#ifndef BUILDING_PYPLASMA
-#include "pyVault.h"
-#endif
+#pragma hdrstop
 
+#include "pyVaultChronicleNode.h"
 #include "plVault/plVault.h"
+#ifndef BUILDING_PYPLASMA
+#   include "pyVault.h"
+#endif
 
 // should only be created from C++ side
 pyVaultChronicleNode::pyVaultChronicleNode(RelVaultNode* nfsNode)

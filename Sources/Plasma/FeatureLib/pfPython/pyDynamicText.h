@@ -49,17 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 class plDynamicTextMsg;
-class pyKey;
 class pyColor;
 class pyImage;
 
-#include <Python.h>
-#include "hsTemplates.h"
-#include "hsStlUtils.h"
-#include "hsResMgr.h"
-
 #include "pyGlueHelpers.h"
-
+#include "pnKeyedObject/plKey.h"
+#include <string>
+#include "hsTemplates.h"
 
 class pyDynamicText
 {

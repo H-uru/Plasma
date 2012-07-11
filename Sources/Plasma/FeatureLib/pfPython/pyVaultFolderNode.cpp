@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#pragma hdrstop
+
 #include "pyVaultFolderNode.h"
-
-
 #include "plVault/plVault.h"
 
 // should only be created from C++ side

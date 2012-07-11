@@ -47,18 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyKey   - the wrapper class around a plKey so that Python can handle it
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueHelpers.h"
-#include "plString.h"
 
 class plPythonFileMod;
 class pySceneObject;
 class plPipeline;
-
-//#include "plPythonHelpers.h"
 
 class pyKey
 {
@@ -99,7 +95,7 @@ public:
     // getter and setters
     virtual plKey getKey() { return fKey; }
     virtual void setKey(plKey key) { fKey=key; }
-    virtual const char* getName() const { return fKey ? fKey->GetName().c_str() : "nil";    }
+    virtual const char* getName() const;
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();
 

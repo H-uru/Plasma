@@ -49,15 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: a wrapper class to provide access to a game score
 //
 
-#include <Python.h>
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-#include "plString.h"
-
 #include "pyGlueHelpers.h"
 
 class pfGameScore;
-class pyKey;
 
 class pyGameScore
 {

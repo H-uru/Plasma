@@ -48,18 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a SceneObject
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
-
-#include "pyKey.h"
-#include "cyDraw.h"
-#include "cyPhysics.h"
-#include "cyAvatar.h"
-#include "cyParticleSys.h"
-
-#include "hsStlUtils.h"
 
 #include "pyGlueHelpers.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsTemplates.h"
 
+class pyMatrix44;
 
 class pySceneObject
 {
@@ -80,7 +74,7 @@ protected:
     pySceneObject(plKey objkey);
 
 public:
-    ~pySceneObject() {Py_XDECREF(fDraw); Py_XDECREF(fPhysics); Py_XDECREF(fAvatar); Py_XDECREF(fParticle);}
+    ~pySceneObject();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptSceneobject);

@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAlarm_h_inc
 #define pyAlarm_h_inc
 
-#include <Python.h>
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <list>
 
 struct pyAlarm;
+typedef struct _object PyObject;
 class pyAlarmMgr
 {
     typedef std::list<pyAlarm*> Alarms;

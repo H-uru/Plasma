@@ -45,12 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyKey.h"
-#include "pnKeyedObject/plKey.h"
 #include "plgDispatch.h"
+#include "pyKey.h"
+#include "hsResMgr.h"
+#pragma hdrstop
+
 #include "plPythonFileMod.h"
 #include "pnMessage/plEnableMsg.h"
-#include "hsResMgr.h"
 #include "pySceneObject.h"
 #include "pnSceneObject/plSceneObject.h"
 
@@ -110,6 +111,11 @@ hsBool pyKey::operator==(const pyKey &key) const
         return (ours->GetUoid()==theirs->GetUoid());
     else
         return false;
+}
+
+const char* pyKey::getName() const
+{
+    return fKey ? fKey->GetName().c_str() : "nil";
 }
 
 #ifndef BUILDING_PYPLASMA

@@ -45,17 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyDrawControl.h"
-
 #include "plgDispatch.h"
 #include "hsResMgr.h"
+#pragma hdrstop
 
-
+#include "pyDrawControl.h"
 #ifndef BUILDING_PYPLASMA
-#include "plMessage/plInputEventMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "plInputCore/plInputDevice.h"
-#include "plAvatar/plArmatureMod.h"
+#   include "plAvatar/plArmatureMod.h"
+#   include "plGLight/plShadowCaster.h"
+#   include "plGLight/plShadowMaster.h"
+#   include "plInputCore/plInputDevice.h"
+#   include "pnMessage/plClientMsg.h"
+#   include "plMessage/plInputEventMsg.h"
 #endif
 
 void pyDrawControl::SetGamma2(float gamma)
@@ -74,7 +75,7 @@ void pyDrawControl::SetGamma2(float gamma)
 }
 
 #ifndef BUILDING_PYPLASMA
-#include "plGLight/plShadowMaster.h"
+
 #endif
 
 void pyDrawControl::SetShadowVisDistance(float distance)
@@ -92,10 +93,6 @@ float pyDrawControl::GetShadowVisDistance()
     return 1.0;
 #endif
 }
-
-#ifndef BUILDING_PYPLASMA
-#include "plGLight/plShadowCaster.h"
-#endif
 
 void pyDrawControl::EnableShadows()
 {

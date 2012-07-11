@@ -39,19 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyMatrix44.h"
 
-pyMatrix44::pyMatrix44() { fMatrix.Reset(); }
-pyMatrix44::pyMatrix44(hsMatrix44 other)
-{   // copy the other matrix to this one
-    int i,j;
-    for ( i=0;i<4;i++)
-        for ( j=0;j<4;j++)
-            fMatrix.fMap[i][j] = other.fMap[i][j];
-    fMatrix.fFlags = other.fFlags;
+#include <Python.h>
+#include "pyGeometry3.h"
+#include "pyMatrix44.h"
+#pragma hdrstop
+
+PyObject* pyMatrix44::operator*(const pyVector3& p) const
+{
+    return pyVector3::New(fMatrix * p.fVector);
 }
 
-PyObject* pyMatrix44::GetInverse(PyObject* inverse)
+PyObject* pyMatrix44::operator*(const pyPoint3& p) const
+{
+    return pyPoint3::New(fMatrix * p.fPoint);
+}
+
+void pyMatrix44::Translate(const pyVector3& v)
+{
+    fMatrix.Translate(&v.fVector);
+}
+
+void pyMatrix44::Scale(const pyVector3& v)
+{
+    fMatrix.Scale(&v.fVector);
+}
+
+void pyMatrix44::MakeTranslateMat(const pyVector3& trans)
+{
+    fMatrix.MakeTranslateMat(&trans.fVector);
+}
+
+void pyMatrix44::MakeScaleMat(const pyVector3& scale)
+{
+    fMatrix.MakeScaleMat(&scale.fVector);
+}
+
+void pyMatrix44::Make(const pyPoint3& from, const pyPoint3& at, const pyVector3& up)
+{
+    fMatrix.Make(&from.fPoint, &at.fPoint, &up.fVector);
+}
+
+void pyMatrix44::MakeUpPreserving(const pyPoint3& from, const pyPoint3& at, const pyVector3& up)
+{
+    fMatrix.MakeUpPreserving(&from.fPoint, &at.fPoint, &up.fVector);
+}
+
+PyObject* pyMatrix44::GetInverse(PyObject* inverse) const
 {
     pyMatrix44 *obj = pyMatrix44::ConvertFrom(inverse);
     fMatrix.GetInverse(&(obj->fMatrix));
@@ -59,7 +93,7 @@ PyObject* pyMatrix44::GetInverse(PyObject* inverse)
     return inverse;
 }
 
-PyObject* pyMatrix44::GetTranspose(PyObject* transpose)
+PyObject* pyMatrix44::GetTranspose(PyObject* transpose) const
 {
     pyMatrix44 *obj = pyMatrix44::ConvertFrom(transpose);
     fMatrix.GetTranspose(&(obj->fMatrix));
@@ -67,7 +101,7 @@ PyObject* pyMatrix44::GetTranspose(PyObject* transpose)
     return transpose;
 }
 
-PyObject* pyMatrix44::GetAdjoint(PyObject* adjoint)
+PyObject* pyMatrix44::GetAdjoint(PyObject* adjoint) const
 {
     pyMatrix44 *obj = pyMatrix44::ConvertFrom(adjoint);
     fMatrix.GetAdjoint(&(obj->fMatrix));
@@ -75,7 +109,7 @@ PyObject* pyMatrix44::GetAdjoint(PyObject* adjoint)
     return adjoint;
 }
 
-PyObject* pyMatrix44::GetTranslate(PyObject* pt)
+PyObject* pyMatrix44::GetTranslate(PyObject* pt) const
 {
     pyVector3 *obj = pyVector3::ConvertFrom(pt);
     fMatrix.GetTranslate(&(obj->fVector));
@@ -83,7 +117,22 @@ PyObject* pyMatrix44::GetTranslate(PyObject* pt)
     return pt;
 }
 
-float* pyMatrix44::GetData()
+PyObject* pyMatrix44::GetViewAxis() const
+{
+    return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kView));
+}
+
+PyObject* pyMatrix44::GetUpAxis() const
+{
+    return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kUp));
+}
+
+PyObject* pyMatrix44::GetRightAxis() const
+{
+    return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kRight));
+}
+
+float* pyMatrix44::GetData() const
 {
     float *res = new float[4*4];
     res[0] = fMatrix.fMap[0][0];  res[1] = fMatrix.fMap[0][1];  res[2] = fMatrix.fMap[0][2];  res[3] = fMatrix.fMap[0][3];

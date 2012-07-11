@@ -39,10 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyGameCli.h"
-#include "../pyEnum.h"
 
 #include <Python.h>
+#include "../pyKey.h"
+#pragma hdrstop
+
+#include "pyGameCli.h"
+#include "../pyEnum.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

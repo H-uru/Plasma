@@ -39,13 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "pyKey.h"
+#include "hsResMgr.h"
+#pragma hdrstop
+
 #include "pyImage.h"
+#include "plJPEG/plJPEG.h"
+#include "plGImage/plPNG.h"
+#include "pnKeyedObject/plUoid.h"
 
-#include "cyMisc.h"
-
+void pyImage::setKey(pyKey& mipmapKey) // only for python glue, do NOT call
+{
 #ifndef BUILDING_PYPLASMA
-#include "plGImage/plMipmap.h"
+    if (fMipmap && fMipMapKey)
+        fMipMapKey->UnRefObject();
+    fMipmap = nil;
 #endif
+    fMipMapKey = mipmapKey.getKey();
+}
 
 #ifndef BUILDING_PYPLASMA
 plMipmap* pyImage::GetImage()
@@ -164,7 +177,6 @@ uint32_t pyImage::GetHeight()
     return 0;
 }
 
-#include "plJPEG/plJPEG.h"
 void pyImage::SaveAsJPEG(const wchar_t* fileName, uint8_t quality)
 {
     if (quality <= 0 || quality > 100)
@@ -176,15 +188,12 @@ void pyImage::SaveAsJPEG(const wchar_t* fileName, uint8_t quality)
     plJPEG::Instance().WriteToFile( fileName, this->GetImage() );
 }
 
-#include "plGImage/plPNG.h"
 void pyImage::SaveAsPNG(const wchar_t* fileName)
 {
 
     plPNG::Instance().WriteToFile( fileName, this->GetImage() );
 }
 
-#include "hsResMgr.h"
-#include "pnKeyedObject/plUoid.h"
 PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height)
 {
     plMipmap* theMipmap = plJPEG::Instance().ReadFromFile(filename);

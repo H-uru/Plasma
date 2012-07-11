@@ -47,10 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultNodeRef   - a wrapper class to provide interface to the plVaultNodeRef
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-
 #include "pyGlueHelpers.h"
 
 struct RelVaultNode;
