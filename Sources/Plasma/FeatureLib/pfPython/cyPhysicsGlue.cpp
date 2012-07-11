@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyPhysics.h"
-#include "pyKey.h"
-#include "pyGeometry3.h"
-#include "pyMatrix44.h"
 
 #include <Python.h>
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#include "pyMatrix44.h"
+#pragma hdrstop
+
+#include "cyPhysics.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptPhysics, cyPhysics);

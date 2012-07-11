@@ -44,10 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultMarkerGameNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
+
+#pragma hdrstop
+
 #include "pyVaultMarkerGameNode.h"
-
-#include "hsStlUtils.h"
-
 #include "plVault/plVault.h"
 
 // should only be created from C++ side

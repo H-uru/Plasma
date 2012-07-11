@@ -48,11 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlMultiLineEdit
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
 #include "pyGUIControl.h"
-
 #include "pyGlueHelpers.h"
 
 class pyColor;

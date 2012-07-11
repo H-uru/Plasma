@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "pyCluster.h"
 #include "plDrawable/plClusterGroup.h"
 
@@ -60,4 +64,9 @@ void pyCluster::SetVisible(bool visible)
         if (clusterGroup)
             clusterGroup->SetVisible(visible);
     }
+}
+
+void pyCluster::SetKey(pyKey& key)
+{
+    fClusterKey = key.getKey();
 }

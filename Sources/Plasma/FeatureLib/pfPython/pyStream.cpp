@@ -45,8 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyStream.h"
+#pragma hdrstop
 
+#include "pyStream.h"
 #include "plFile/plEncryptedStream.h"
 
 pyStream::pyStream()

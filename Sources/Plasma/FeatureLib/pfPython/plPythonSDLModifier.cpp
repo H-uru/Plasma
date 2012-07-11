@@ -39,11 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
 #include "plPythonSDLModifier.h"
 #include "cyPythonInterface.h"
 
 #include "plPythonFileMod.h"
-#include "pyKey.h"
 #include "cyMisc.h"
 
 #include "pnSceneObject/plSceneObject.h"
@@ -51,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 
 #include "plSDL/plSDL.h"
-#include "pnNetCommon/plNetApp.h"
 #include "plNetClient/plNetClientMgr.h"
 
 plStateDataRecord * GetAgeSDL()

@@ -39,25 +39,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pySceneObject.h"
-#include "HeadSpin.h" // TEMP, for STL warnings
 
-#include "pnKeyedObject/plKey.h"
-#include "cyAvatar.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plResMgr/plResManager.h"
-#include "pnMessage/plCameraMsg.h"
-#include "pfCamera/plCameraModifier.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plPhysical.h"
-#include "plModifier/plResponderModifier.h"
-#include "plModifier/plLogicModifier.h"
-#include "pfPython/plPythonFileMod.h"
-
-#include "pyMatrix44.h"
-#include "pyKey.h"
+#include <Python.h>
+#include "plAudible.h"
 #include "plgDispatch.h"
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#include "pyMatrix44.h"
+#include "plPhysical.h"
+#pragma hdrstop
+
+#include "pySceneObject.h"
+#include "plResMgr/plResManager.h"
+
+#include "cyAvatar.h"
+#include "cyDraw.h"
+#include "cyParticleSys.h"
+#include "cyPhysics.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "pfCamera/plCameraModifier.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plModifier/plLogicModifier.h"
+#include "plPythonFileMod.h"
+#include "plModifier/plResponderModifier.h"
 
 void pySceneObject::IAddObjKeyToAll(plKey key)
 {
@@ -127,6 +138,14 @@ pySceneObject::pySceneObject(plKey objkey)
     addObjKey(objkey);
     setSenderKey(objkey);
     fNetForce = false;
+}
+
+pySceneObject::~pySceneObject()
+{
+    Py_XDECREF(fDraw);
+    Py_XDECREF(fPhysics);
+    Py_XDECREF(fAvatar);
+    Py_XDECREF(fParticle);
 }
 
 
@@ -822,11 +841,6 @@ std::vector<PyObject*> pySceneObject::GetPythonMods()
     return pyPL;
 }
 
-
-
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-
 void pySceneObject::Animate()
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
@@ -937,9 +951,6 @@ void pySceneObject::FFResponder(int state)
         }
     }
 }
-
-#include "pnSceneObject/plAudioInterface.h"
-#include "NucleusLib/inc/plAudible.h"
 
 void pySceneObject::SetSoundFilename(int index, const char* filename, bool isCompressed)
 {

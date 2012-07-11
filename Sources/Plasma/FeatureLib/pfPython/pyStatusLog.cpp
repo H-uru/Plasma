@@ -46,8 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  and interface to the ChatLog (ptChatStatusLog)
 //////////////////////////////////////////////////////////////////////
 
-#include "pyStatusLog.h"
+#include "plString.h"
+#pragma hdrstop
 
+#include "pyColor.h"
+#include "pyStatusLog.h"
 #include "plStatusLog/plStatusLog.h"
 
 pyStatusLog::pyStatusLog( plStatusLog* log/*=nil */)

@@ -39,4 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pyGeometry3.h"
+#pragma hdrstop

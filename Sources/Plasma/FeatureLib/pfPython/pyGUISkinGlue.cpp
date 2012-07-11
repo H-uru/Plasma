@@ -39,9 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyGUISkin.h"
 
 #include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "pyGUISkin.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUISkin, pyGUISkin);

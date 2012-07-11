@@ -39,44 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _pyGUIControlClickMap_h_
-#define _pyGUIControlClickMap_h_
 
-//////////////////////////////////////////////////////////////////////
-//
-// pyGUIControlClickMap   - a wrapper class to provide interface to modifier
-//                   attached to a GUIControlClickMap
-//
-//////////////////////////////////////////////////////////////////////
+#ifndef _pfPython_Pch_inc_
+#define _pfPython_Pch_inc_
 
+/** 
+ * \file Pch.h
+ * \brief Precompiled Header for pfPython
+ */
+
+// Standard Library Includes
+#include <algorithm>
+#include <exception>
+#include <locale>
+
+// Platform Library Includes
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+// Python Library Includes
+#include <Python.h>
+#include <marshal.h>
+#include <structmember.h>
+
+// Plasma Components (except for those from pfPython)
+// You'll want to strike a careful balance between enough components and slow iteration
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
+#include "hsQuat.h"
+#include "hsResMgr.h"
+#include "hsStlSortUtils.h"
+#include "hsStlUtils.h"
+#include "hsStream.h"
+#include "hsTemplates.h"
+#include "hsTimer.h"
+#include "plAudible.h"
+#include "plgDispatch.h"
+#include "plPhysical.h"
+#include "plPipeline.h"
+#include "plString.h"
+#include "pnKeyedObject/plKey.h"
+
+// pfPython Components
+// Be very careful to include only isolated components here
+#include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
-#include "pyGUIControl.h"
+#include "pyKey.h"
+#include "pyMatrix44.h"
 
-class pyPoint3;
-
-class pyGUIControlClickMap : public pyGUIControl
-{
-protected:
-    pyGUIControlClickMap(): pyGUIControl() {} // for python glue only, do NOT call
-    pyGUIControlClickMap(pyKey& gckey);
-    pyGUIControlClickMap(plKey objkey);
-
-public:
-    // required functions for PyObject interoperability
-    PYTHON_CLASS_NEW_FRIEND(ptGUIControlClickMap);
-    static PyObject *New(pyKey& gckey);
-    static PyObject *New(plKey objkey);
-    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIControlClickMap object
-    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIControlClickMap); // converts a PyObject to a pyGUIControlClickMap (throws error if not correct type)
-
-    static void AddPlasmaClasses(PyObject *m);
-
-    static hsBool IsGUIControlClickMap(pyKey& gckey);
-
-    PyObject* GetLastMousePt( void ); // returns pyPoint3
-    PyObject* GetLastMouseUpPt( void ); // returns pyPoint3
-    PyObject* GetLastMouseDragPt( void ); // returns pyPoint3
-
-};
-
-#endif // _pyGUIControlClickMap_h_
+#endif

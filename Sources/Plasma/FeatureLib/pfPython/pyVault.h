@@ -47,10 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVault   - a wrapper class to provide interface to the plVault and the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-
 #include "pyGlueHelpers.h"
 
 class plKey;

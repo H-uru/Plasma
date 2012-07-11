@@ -46,8 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Python wrapper for account management functions
 //
 
-#include "cyAccountManagement.h"
+#include <Python.h>
+#pragma hdrstop
 
+#include "cyAccountManagement.h"
 #include "plNetClientComm/plNetClientComm.h"
 
 bool cyAccountManagement::IsSubscriptionActive()

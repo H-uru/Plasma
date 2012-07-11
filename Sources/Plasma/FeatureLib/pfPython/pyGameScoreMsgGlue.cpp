@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <Python.h>
+#pragma hdrstop
+
 #include "pyGameScoreMsg.h"
 
 // Maybe we need a better exception? Seems to be the best built in one though

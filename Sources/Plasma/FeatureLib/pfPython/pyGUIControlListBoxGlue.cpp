@@ -39,10 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyGUIControlListBox.h"
-#include "pyImage.h"
 
 #include <Python.h>
+#include "pyKey.h"
+#pragma hdrstop
+
+#include "pyGUIControlListBox.h"
+#include "pyImage.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlListBox, pyGUIControlListBox);

@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <Python.h>
+#pragma hdrstop
+
 #include "pySDL.h"
 #include "plSDL/plSDL.h"
 

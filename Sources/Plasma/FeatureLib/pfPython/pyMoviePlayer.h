@@ -47,12 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyMoviePlayer   - a wrapper class all the movie player functions
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
-
-#include "pyKey.h"
-#include "pyColor.h"
 
 #include "pyGlueHelpers.h"
+#include "pnKeyedObject/plKey.h"
+
+class pyColor;
 
 class pyMoviePlayer
 {

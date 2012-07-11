@@ -39,15 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyAvatar.h"
+
+#include <Python.h>
 #include "pyKey.h"
-#include "pyEnum.h"
+#pragma hdrstop
+
+#include "cyAvatar.h"
 #include "pyColor.h"
+#include "pyEnum.h"
 #include "pySceneObject.h"
 
 #include "plAvatar/plAvBrainHuman.h"
-
-#include <Python.h>
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptAvatar, cyAvatar);

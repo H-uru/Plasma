@@ -51,11 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyAgeVault   - a wrapper class to provide interface to the plVaultAgeNode
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
-
 #include "pyGlueHelpers.h"
 
 class pyVaultNode;

@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyGeometry3   - the wrapper class for hsPoint3 and hsVector3
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
 #include "hsGeometry3.h"
 
@@ -58,7 +57,7 @@ class pyPoint3
 protected:
     pyPoint3() : fPoint(0,0,0) {}
     pyPoint3(float x, float y, float z) : fPoint(x,y,z) {}
-    pyPoint3(hsPoint3 pt) : fPoint(pt.fX,pt.fY,pt.fZ) {}
+    pyPoint3(const hsPoint3& pt) : fPoint(pt) {}
 
 public:
     // required functions for PyObject interoperability
@@ -73,9 +72,9 @@ public:
     hsPoint3        fPoint;
 
     // python get attributes helpers
-    float    getX() { return fPoint.fX; }
-    float    getY() { return fPoint.fY; }
-    float    getZ() { return fPoint.fZ; }
+    float    getX() const { return fPoint.fX; }
+    float    getY() const { return fPoint.fY; }
+    float    getZ() const { return fPoint.fZ; }
 
     // python set attributes helpers
     void    setX(float x) { fPoint.fX = x; }
@@ -84,9 +83,9 @@ public:
 
     // methods to manipulate point3's
     void Zero() { fPoint.fX=0; fPoint.fY=0; fPoint.fZ=0; }
-    PyObject* Copy() { return pyPoint3::New(fPoint); }
-    float Distance(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).Magnitude(); }
-    float DistanceSquared(pyPoint3 other) { return hsVector3(&fPoint,&other.fPoint).MagnitudeSquared(); }
+    PyObject* Copy() const { return pyPoint3::New(fPoint); }
+    float Distance(const pyPoint3& other) const { return hsVector3(&fPoint, &other.fPoint).Magnitude(); }
+    float DistanceSquared(const pyPoint3& other) const { return hsVector3(&fPoint, &other.fPoint).MagnitudeSquared(); }
 };
 
 
@@ -95,7 +94,7 @@ class pyVector3
 protected:
     pyVector3() : fVector(0,0,0) {}
     pyVector3(float x, float y, float z) : fVector(x,y,z) {}
-    pyVector3(hsVector3 v) : fVector(v.fX,v.fY,v.fZ) {}
+    pyVector3(const hsVector3& v) : fVector(v) {}
 
 public:
     // required functions for PyObject interoperability
@@ -110,9 +109,9 @@ public:
     hsVector3       fVector;
 
     // python get attributes helpers
-    float    getX() { return fVector.fX; }
-    float    getY() { return fVector.fY; }
-    float    getZ() { return fVector.fZ; }
+    float    getX() const { return fVector.fX; }
+    float    getY() const { return fVector.fY; }
+    float    getZ() const { return fVector.fZ; }
 
     // python set attributes helpers
     void    setX(float x) { fVector.fX = x; }
@@ -125,15 +124,15 @@ public:
 
     // methods to manipulate vectors
     void    Normalize() { fVector.Normalize(); }
-    float Dot(pyVector3 other) { return fVector*other.fVector;}
-    PyObject* Cross(pyVector3 other) {return pyVector3::New(fVector%other.fVector); }
-    float Magnitude() { return fVector.Magnitude(); }
-    float MagnitudeSquared() { return fVector.MagnitudeSquared(); }
+    float Dot(const pyVector3& other) { return fVector * other.fVector;}
+    PyObject* Cross(const pyVector3& other) const { return pyVector3::New(fVector % other.fVector); }
+    float Magnitude() const { return fVector.Magnitude(); }
+    float MagnitudeSquared() const { return fVector.MagnitudeSquared(); }
     void Zero() { fVector.fX=0; fVector.fY=0; fVector.fZ=0; }
-    PyObject* Scale(float scale) { return pyVector3::New(fVector * scale); }
-    PyObject* Add(pyVector3& other) { return pyVector3::New(fVector + other.fVector); }
-    PyObject* Subtract(pyVector3& other) { return pyVector3::New(fVector - other.fVector); }
-    PyObject* Copy() { return pyVector3::New(fVector); }
+    PyObject* Scale(float scale) const { return pyVector3::New(fVector * scale); }
+    PyObject* Add(const pyVector3& other) const { return pyVector3::New(fVector + other.fVector); }
+    PyObject* Subtract(const pyVector3& other) const { return pyVector3::New(fVector - other.fVector); }
+    PyObject* Copy() const { return pyVector3::New(fVector); }
 };
 
 

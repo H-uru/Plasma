@@ -42,6 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyEnum_h
 #define pyEnum_h
 
+#include <map>
+#include <string>
+
+typedef struct _object PyObject;
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // NAME: pyEnum
@@ -49,12 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Base class stuff for enumeration support (you don't instance this
 //          class
 //
-
-#include <Python.h>
-#include "hsStlUtils.h"
-#include "pyGlueHelpers.h"
-
-
 class pyEnum
 {
 public:

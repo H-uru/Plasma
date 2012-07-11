@@ -45,6 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <Python.h>
+#include "pnNetCommon/plNetApp.h"
+#pragma hdrstop
+
 #include "pyAgeVault.h"
 #include "pyVault.h"
 #include "pyVaultNodeRef.h"
@@ -66,7 +70,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetTransport/plNetTransport.h"
 #include "plNetTransport/plNetTransportMember.h"
 #include "plSDL/plSDL.h"
-#include "pnNetCommon/plNetApp.h"
 
 pyAgeVault::pyAgeVault() {
 }

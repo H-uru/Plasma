@@ -39,9 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyStream.h"
 
 #include <Python.h>
+#pragma hdrstop
+
+#include "pyStream.h"
+
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStream, pyStream);

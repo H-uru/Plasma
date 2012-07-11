@@ -39,11 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "cyInputInterface.h"
 
+#include <Python.h>
+#include "plgDispatch.h"
+#pragma hdrstop
+
+#include "cyInputInterface.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plInputCore/plTelescopeInputInterface.h"
-#include "plgDispatch.h"
 
 cyInputInterface::cyInputInterface() :
 fTelescopeInterface(nil)

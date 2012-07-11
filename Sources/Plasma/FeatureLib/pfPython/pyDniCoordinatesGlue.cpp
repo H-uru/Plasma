@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pyDniCoordinates.h"
-#include "pyGeometry3.h"
-#include "plVault/plDniCoordinateInfo.h"
 
 #include <Python.h>
+#include "pyGeometry3.h"
+#pragma hdrstop
+
+#include "pyDniCoordinates.h"
+#include "plVault/plDniCoordinateInfo.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniCoordinates, pyDniCoordinates);
