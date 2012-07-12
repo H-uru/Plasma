@@ -54,11 +54,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsDXTDirectXCodec_inc
 #define hsDXTDirectXCodec_inc
 
-
-
 #include "hsCodec.h"
 
 class plMipmap;
+typedef struct hsColor32 hsRGBAColor32;
 #if HS_BUILD_FOR_WIN32
 struct IDirect3DDevice8;
 struct IDirectDrawSurface7;

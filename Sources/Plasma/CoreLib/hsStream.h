@@ -48,9 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "plString.h"
 
-namespace hsPackFileSys {
-struct FileEntry;
-}
 
 // Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
 // These streams log their reads to an event list
@@ -76,10 +73,6 @@ public:
 enum {
     kEolnCode = '\n',
     kComment = '#'
-    };
-enum  VDB_Type  {// Virtual Database type
-    kVDB_GroupObject,
-    kVDB_Mesh
     };
 protected:
     uint32_t      fBytesRead;
@@ -287,9 +280,6 @@ public:
     void            WriteLE(uint32_t* tag, uint32_t size) { WriteLEAtom(*tag, size); }
     void            ReadLE(uint32_t* tag, uint32_t *size) { *tag = ReadLEAtom(size); }
     /* Overloaded  End */
-    virtual void    VirtualSetPosition(uint32_t pos, VDB_Type ){ SetPosition(pos); };
-    virtual hsPackFileSys::FileEntry *GetFileEntry() { return nil; }  // Streams from Packfiles can return a FileEntry
-
 };
 
 class hsStreamable {
