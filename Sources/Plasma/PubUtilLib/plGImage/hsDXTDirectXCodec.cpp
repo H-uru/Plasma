@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include "hsDXTDirectXCodec.h"
+#include "hsColorRGBA.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
 #include "plPipeline/hsGDDrawDllLoad.h"

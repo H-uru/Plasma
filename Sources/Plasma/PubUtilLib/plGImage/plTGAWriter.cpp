@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plTGAWriter.h"
+#include "hsColorRGBA.h"
 #include "plMipmap.h"
 #include "hsStream.h"
 

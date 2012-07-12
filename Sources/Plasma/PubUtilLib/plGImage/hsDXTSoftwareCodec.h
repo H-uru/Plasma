@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsCodec.h"
 
 class plMipmap;
+typedef struct hsColor32 hsRGBAColor32;
 
 class hsDXTSoftwareCodec : public hsCodec
 {

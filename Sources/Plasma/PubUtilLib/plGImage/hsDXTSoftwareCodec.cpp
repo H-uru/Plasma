@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <memory.h>
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
 #include "hsDXTSoftwareCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"

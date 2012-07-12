@@ -246,43 +246,6 @@ inline void hsSwap(float& a, float& b)
     b = c;
 }
 
-//======================================
-// Color32 Type
-//======================================
-struct hsColor32 {
-
-    uint8_t   b, g, r, a;
-
-    inline void SetARGB(uint8_t aa, uint8_t rr, uint8_t gg, uint8_t bb)
-    {
-        this->a = aa;
-        this->r = rr;
-        this->g = gg;
-        this->b = bb;
-    }
-
-    //  Compatibility inlines, should be depricated
-    inline void Set(uint8_t rr, uint8_t gg, uint8_t bb)
-    {
-        this->r = rr;
-        this->g = gg;
-        this->b = bb;
-    }
-    inline void Set(uint8_t aa, uint8_t rr, uint8_t gg, uint8_t bb)
-    {
-        this->SetARGB(aa, rr, gg, bb);
-    }
-
-    int operator==(const hsColor32& aa) const
-    {
-            return *(uint32_t*)&aa == *(uint32_t*)this;
-    }
-    int operator!=(const hsColor32& aa) { return !(aa == *this); }
-};
-hsCTypeDefStruct(hsColor32)
-typedef hsColor32 hsRGBAColor32;
-
-
 //===========================================================================
 // Define a NOOP (null) statement
 //===========================================================================
