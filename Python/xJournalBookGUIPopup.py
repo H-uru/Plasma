@@ -61,7 +61,8 @@ First phase - keep hi level structure, only replace the bring up of books
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
+
+import codecs
 
 import xJournalBookDefs
 
@@ -69,15 +70,17 @@ import xJournalBookDefs
 # define the attributes that will be entered in max
 actClickableBook    = ptAttribActivator(1,"Actvtr: Clickable small book")
 SeekBehavior        = ptAttribBehavior(2, "Smart seek before GUI (optional)")
-JournalName         = ptAttribString(3, "Name of Journal", "")
-StartOpen           = ptAttribBoolean(10,"Start Opened?",default=0)
+JournalName         = ptAttribString(3, "Name of Journal (deprecated)", "")  # Phasing this out; we don't want to use global Python for data.
 Dynamic             = ptAttribBoolean(4,"Read Data From Vault?",default=0)
+StartOpen           = ptAttribBoolean(10,"Start Opened?",default=0)
+
+BookWidth           = ptAttribFloat(11,"Book Width Scaling",default=1.0)
+BookHeight          = ptAttribFloat(12,"Book Height Scaling",default=1.0)
+LocPath             = ptAttribString(13,"Localization Path for Journal Contents",default="Global.Journals.Empty")
+GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 
 # globals
 LocalAvatar = None
-
-# the global ptBook object.... there can only be one book displayed at one time, so only one global needed (hopefully)
-gJournalBook = None
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -93,7 +96,7 @@ class xJournalBookGUIPopup(ptModifier):
         "destructor - get rid of any dialogs that we might have loaded"
         pass
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global LocalAvatar
 
         # is it a clickable book on a pedestal?
@@ -142,67 +145,69 @@ class xJournalBookGUIPopup(ptModifier):
                         pass
 
     def IShowBook(self):
-        global gJournalBook
+        self.JournalBook = None
 
+        # This lookup should be removed once all PFMs are converted to specify their details
         if JournalName.value != "":
+            PtDebugPrint("xJournalBookGUIPopup: deprecated journal format, using name '%s'" % (JournalName.value), level=kErrorLevel)
             try:
                 params = xJournalBookDefs.xJournalBooks[JournalName.value]
+                JournalIdent = JournalName.value
                 if len(params) == 4:
-                    width,height,locPath,gui = params
+                    BookWidth.value,BookHeight.value,LocPath.value,GUIType.value = params
                 else:
-                    width,height,locPath = params
-                    gui = "BkBook"
+                    BookWidth.value,BookHeight.value,LocPath.value = params
             except LookupError:
-                PtDebugPrint("xJournalBookGUIPopup: could not find journal %s's contents" % (JournalName.value),level=kErrorLevel)
+                PtDebugPrint("xJournalBookGUIPopup: could not find journal parameters for '%s'" % (JournalName.value), level=kErrorLevel)
                 return
-
-            journalContents = "I'm an empty book"
-
-            # compile journal text
-            if Dynamic.value:
-                inbox = ptVault().getGlobalInbox()
-                inboxChildList = inbox.getChildNodeRefList()
-                for child in inboxChildList:
-                    PtDebugPrint("xJournalBookGUIPopupDyn: looking at node " + str(child),level=kDebugDumpLevel)
-                    node = child.getChild()
-                    folderNode = node.upcastToFolderNode()
-                    if type(folderNode) != type(None):
-                        PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()),level=kDebugDumpLevel)
-                        if folderNode.getFolderName() == "Journals":
-                            folderNodeChildList = folderNode.getChildNodeRefList()
-                            for folderChild in folderNodeChildList:
-                                PtDebugPrint("xJournalBookGUIPopupDyn: looking at child node " + str(folderChild),level=kDebugDumpLevel)
-                                childNode = folderChild.getChild()
-                                textNode = childNode.upcastToTextNoteNode()
-                                if type(textNode) != type(None):
-                                    PtDebugPrint("xJournalBookGUIPopupDyn: child node is named %s" % (textNode.getTitle()),level=kDebugDumpLevel)
-                                    if textNode.getTitle() == JournalName.value:
-                                        journalContents = textNode.getText()
-                                        PtDebugPrint("xJournalBookGUIPopupDyn: journal contents are '%s'" % (journalContents),level=kDebugDumpLevel)
-            else:
-                journalContents = PtGetLocalizedString(locPath)
-            
-            if journalContents == U"":
-                print U"WARNING - EMPTY JOURNAL: JournalName.value = " + JournalName.value + U" locPath = " + locPath
-            
-            # hide the KI
-            PtSendKIMessage(kDisableKIandBB,0)
-            
-            # now build the book
-            gJournalBook = ptBook(journalContents,self.key)
-            gJournalBook.setSize(width,height)
-            gJournalBook.setGUI(gui)
-
-            # make sure there is a cover to show
-            if not StartOpen.value and not self.IsThereACover(journalContents):
-                gJournalBook.show(1)
-            else:
-                gJournalBook.show(StartOpen.value)
-
         else:
-            PtDebugPrint("xJournalBookGUIPopup: no journal name",level=kErrorLevel)
+            JournalIdent = LocPath.value
 
-    def IsThereACover(self,bookHtml):
+        # compile journal text
+        if Dynamic.value:
+            inbox = ptVault().getGlobalInbox()
+            inboxChildList = inbox.getChildNodeRefList()
+            for child in inboxChildList:
+                PtDebugPrint("xJournalBookGUIPopupDyn: looking at node " + str(child), level=kDebugDumpLevel)
+                node = child.getChild()
+                folderNode = node.upcastToFolderNode()
+                if folderNode:
+                    PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()), level=kDebugDumpLevel)
+                    if folderNode.getFolderName() == "Journals":
+                        folderNodeChildList = folderNode.getChildNodeRefList()
+                        for folderChild in folderNodeChildList:
+                            PtDebugPrint("xJournalBookGUIPopupDyn: looking at child node " + str(folderChild), level=kDebugDumpLevel)
+                            childNode = folderChild.getChild()
+                            textNode = childNode.upcastToTextNoteNode()
+                            if textNode:
+                                PtDebugPrint("xJournalBookGUIPopupDyn: child node is named %s" % (textNode.getTitle()), level=kDebugDumpLevel)
+                                # TODO: Convert this to use LocPath.value and migrate node values in DB if necessary once all PFMs
+                                #  are converted to use LocalizationPaths
+                                if textNode.getTitle() == JournalIdent:
+                                    journalContents = textNode.getText()
+                                    PtDebugPrint("xJournalBookGUIPopupDyn: journal contents are '%s'" % (journalContents), level=kDebugDumpLevel)
+        else:
+            journalContents = PtGetLocalizedString(LocPath.value)
+
+        if journalContents == U"":
+            PtDebugPrint(U"WARNING - EMPTY JOURNAL: JournalName.value = '{}' LocPath = '{}'".format(codecs.decode(JournalName.value, 'utf-8'), codecs.decode(LocPath.value, 'utf-8')), level=kDebugDumpLevel)
+
+        # hide the KI
+        PtSendKIMessage(kDisableKIandBB, 0)
+
+        # now build the book
+        self.JournalBook = ptBook(journalContents, self.key)
+        self.JournalBook.setSize(BookWidth.value, BookHeight.value)
+        self.JournalBook.setGUI(GUIType.value)
+
+        # make sure there is a cover to show
+        if not StartOpen.value and not self.IsThereACover(journalContents):
+            self.JournalBook.show(1)
+        else:
+            self.JournalBook.show(StartOpen.value)
+
+
+    def IsThereACover(self, bookHtml):
         # search the bookhtml string looking for a cover
         idx = bookHtml.find('<cover')
         if idx >= 0:
