@@ -6933,38 +6933,6 @@ PF_CONSOLE_CMD( KI,                             // Group name
 
 PF_CONSOLE_GROUP( Python ) // Defines a main command group
 
-PF_CONSOLE_CMD( Python,                         // Group name
-                RunFile,                            // Function name
-                "string filename",                  // Params
-                "Run the specified Python file program" )       // Help string
-{
-    // now evaluate this mess they made
-    PyObject* mymod = PythonInterface::FindModule("__main__");
-    // make sure the filename doesn't have the .py extension (import doesn't need it)
-    char importname[200];
-    int i;
-    for (i=0; i<199; i++ )
-    {
-        char ch = ((const char*)params[0])[i];
-        // if we are at the end of the string or at a dot, truncate here
-        if ( ch == '.' || ch == 0 )
-            break;
-        else
-            importname[i] = ((const char*)params[0])[i];
-    }
-    importname[i] = 0;
-
-    // create the line to execute the file
-    char runline[256];
-    sprintf(runline,"import %s", importname);
-    PythonInterface::RunString(runline,mymod);
-    std::string output;
-    // get the messages
-    PythonInterface::getOutputAndReset(&output);
-    PrintString(output.c_str());
-}
-
-
 #include "pfPython/cyMisc.h"
 
 PF_CONSOLE_CMD( Python,                         // Group name
