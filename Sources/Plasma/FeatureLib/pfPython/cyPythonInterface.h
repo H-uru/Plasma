@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
+#include "plString.h"
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 #include "../../Apps/CyPythonIDE/plCyDebug/plCyDebServer.h"
@@ -139,6 +140,8 @@ public:
     // Writes 'text' to stderr specified in the python interface
     static void WriteToStdErr(const char* text);
 
+    static PyObject* ImportModule(const char* module);
+
     // Find module. If it doesn't exist then don't create, return nil.
     static PyObject* FindModule(const char* module);
 
@@ -220,6 +223,11 @@ public:
     //
     static bool RunPYC(PyObject* code, PyObject* module);
 
+    static PyObject* RunFunction(PyObject* module, const char* name, PyObject* args);
+
+    static PyObject* ParseArgs(const char* args);
+
+    static bool RunFunctionSafe(const char* module, const char* function, const char* args);
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : GetpyKeyFromPython
