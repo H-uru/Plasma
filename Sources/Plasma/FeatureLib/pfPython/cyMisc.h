@@ -147,6 +147,7 @@ public:
     //                  optionally propagate over the net
     //
     static PyObject* FindSceneObject(const plString& name, const char* ageName); // returns pySceneObject
+    static PyObject* FindSceneObjects(const plString& name);
     static PyObject* FindActivator(const plString& name); // returns pyKey
 
     /////////////////////////////////////////////////////////////////////////////

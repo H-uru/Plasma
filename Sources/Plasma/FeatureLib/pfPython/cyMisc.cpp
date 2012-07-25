@@ -222,6 +222,23 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
     return pySceneObject::New(key);
 }
 
+PyObject* cyMisc::FindSceneObjects(const plString& name)
+{
+    // assume that we won't find the sceneobject (key is equal to nil)
+    std::vector<plKey> keys;
+
+    if ( !name.IsNull() )
+        plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plSceneObject::Index(), keys);
+
+    PyObject* result = PyList_New(keys.size());
+    for (size_t i=0; i < keys.size(); i++)
+        PyList_SET_ITEM(result, i, pySceneObject::New(keys[i]));
+
+    return result;
+}
+
+
+
 PyObject* cyMisc::FindActivator(const plString& name)
 {
     plKey key = nil;

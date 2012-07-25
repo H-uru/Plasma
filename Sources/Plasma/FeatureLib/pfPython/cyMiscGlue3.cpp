@@ -190,6 +190,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobject, args, "Params: name,ageName\n
     return cyMisc::FindSceneObject(plString::FromUtf8(name), ageName);
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobjects, args, "Params: name\nThis will try to find a any sceneobject containing string in name")
+{
+    char* name = NULL;
+    if (!PyArg_ParseTuple(args, "s", &name))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects string");
+        PYTHON_RETURN_ERROR;
+    }
+    return cyMisc::FindSceneObjects(plString::FromUtf8(name));
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will try to find an activator based on its name\n"
             "- it will return a ptKey if found"
             "- it will return None if not found")
@@ -700,6 +711,7 @@ void cyMisc::AddPlasmaMethods3(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD(methods, PtClearTimerCallbacks);
     
     PYTHON_GLOBAL_METHOD(methods, PtFindSceneobject);
+    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobjects);
     PYTHON_GLOBAL_METHOD(methods, PtFindActivator);
     PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearCameraStack);
     PYTHON_GLOBAL_METHOD(methods, PtWasLocallyNotified);
