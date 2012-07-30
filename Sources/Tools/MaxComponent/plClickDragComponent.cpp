@@ -283,7 +283,7 @@ void plClickDragComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
     plActivatorBaseComponent::SetupProperties(node, pErrMsg);
@@ -351,7 +351,7 @@ hsBool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMs
     return true;
 }
 
-hsBool plClickDragComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClickDragComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plActivatorBaseComponent::PreConvert(node, pErrMsg);
     plLogicModifier *logic = plLogicModifier::ConvertNoRef(fLogicModKeys[node]->GetObjectPtr());
@@ -373,7 +373,7 @@ hsBool plClickDragComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plLocation loc = node->GetLocation();
     plSceneObject *obj = node->GetSceneObject();
@@ -406,7 +406,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     pAxis->SetNotificationKey(logicKey);
     uint32_t count = node->NumAttachedComponents();
-    hsBool bHasAnim = false;
+    bool bHasAnim = false;
     plAnimComponentBase* pAnim = nil;
 
     for (i = 0; i < count; i++)
@@ -485,7 +485,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         
         // verify that there is a physical proxy attached to this scene object:
         uint32_t count = ((plMaxNodeBase*)pProxyNode)->NumAttachedComponents();
-        hsBool bHasPhys = false;
+        bool bHasPhys = false;
 //      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyNode)->GetAttachedComponent(i);
@@ -532,7 +532,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         // verify that there is a physical detector attached to this scene object:
         uint32_t count = ((plMaxNodeBase*)pProxyRegNode)->NumAttachedComponents();
-        hsBool bHasPhys = false;
+        bool bHasPhys = false;
 //      for (uint32_t i = 0; i < count; i++)
         //      {
         //          plComponentBase *comp = ((plMaxNodeBase*)pProxyRegNode)->GetAttachedComponent(i);
@@ -611,7 +611,7 @@ hsBool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plClickDragComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
+bool plClickDragComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fAxisKeys.clear();
     return plActivatorBaseComponent::DeInit( node, pErrMsg ); 

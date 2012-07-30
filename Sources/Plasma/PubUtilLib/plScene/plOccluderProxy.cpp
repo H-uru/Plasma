@@ -57,7 +57,7 @@ plOccluderProxy::~plOccluderProxy()
 {
 }
 
-hsBool plOccluderProxy::Init(plOccluder* occluder)
+bool plOccluderProxy::Init(plOccluder* occluder)
 {
     plProxyGen::Init(occluder);
 

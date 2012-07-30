@@ -72,8 +72,8 @@ public:
     virtual plKey GetSceneObject() const { return fSceneObj; }
     virtual void SetSceneObject(plKey obj);
 
-    virtual plAudible& SetProperty(int prop, hsBool on) { return *this; }
-    virtual hsBool GetProperty(int prop) { return false; }
+    virtual plAudible& SetProperty(int prop, bool on) { return *this; }
+    virtual bool GetProperty(int prop) { return false; }
 
     virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1);
 
@@ -90,30 +90,30 @@ public:
     virtual void SetVelocity(const hsVector3 vel,int index = -1);
     hsVector3   GetVelocity(int index = -1) const;
     hsPoint3    GetPosition(int index = -1);
-    void        SetLooping(hsBool loop,int index = -1); // sets continuous loop or stops looping
-    hsBool      IsPlaying(int index = -1);
+    void        SetLooping(bool loop,int index = -1); // sets continuous loop or stops looping
+    bool        IsPlaying(int index = -1);
     void        SetTime(double t, int index = -1);
     void        SetOuterVol(const int v,int index = -1); // volume for the outer cone (if applicable)
     void        SetConeAngles(int inner, int outer,int index = -1);
     void        RemoveCallbacks(plSoundMsg* pMsg);
     void        AddCallbacks(plSoundMsg* pMsg);     
-    hsBool      AddSound(plSound *pSnd, int index,hsBool is3D);
-    int         AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, hsBool is3D);
+    bool        AddSound(plSound *pSnd, int index,bool is3D);
+    int         AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, bool is3D);
     virtual void        GetStatus(plSoundMsg* pMsg);
     virtual int         GetNumSounds() const {return fSoundObjs.Count();}
     virtual plSound*    GetSound(int i) const;
     virtual int         GetSoundIndex(const char *keyname) const;
     virtual void        SetVolume(const float volume,int index = -1);
-    virtual void        SetMuted( hsBool muted, int index = -1 );
+    virtual void        SetMuted( bool muted, int index = -1 );
     virtual void        ToggleMuted( int index = -1 );
     virtual void        SetTalkIcon(int index, uint32_t str){;}
     virtual void        ClearTalkIcon(){;}
-    void                SetFilename(int index, const char *filename, hsBool isCompressed);
+    void                SetFilename(int index, const char *filename, bool isCompressed);
 
     virtual void        SetFadeIn( const int type, const float length, int index = -1 );
     virtual void        SetFadeOut( const int type, const float length, int index = -1 );
 
-    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual bool    MsgReceive(plMessage* pMsg);
     
     virtual void Activate();
     virtual void DeActivate();
@@ -145,8 +145,8 @@ public:
     CLASSNAME_REGISTER( pl2WayWinAudible );
     GETINTERFACE_ANY( pl2WayWinAudible, plWinAudible );
     
-    virtual hsBool  MsgReceive(plMessage* pMsg);
-    virtual void Init(hsBool isLocal);
+    virtual bool    MsgReceive(plMessage* pMsg);
+    virtual void Init(bool isLocal);
     virtual void Activate();
     virtual void DeActivate();
     virtual void Read(hsStream* s, hsResMgr* mgr);

@@ -306,7 +306,7 @@ plParticleEffect *plParticleSystem::GetEffect(uint16_t type) const
     return nil;
 }
 
-uint32_t plParticleSystem::GetNumValidParticles(hsBool immortalOnly /* = false */) const
+uint32_t plParticleSystem::GetNumValidParticles(bool immortalOnly /* = false */) const
 {
     uint32_t count = 0;
     int i, j;
@@ -332,14 +332,14 @@ const hsMatrix44 &plParticleSystem::GetLocalToWorld() const
     return fTarget->GetCoordinateInterface()->GetLocalToWorld(); 
 }
 
-hsBool plParticleSystem::IEval(double secs, float del, uint32_t dirty)
+bool plParticleSystem::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
 
 
 
-hsBool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
+bool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
 {
 
     if (fMiscFlags & kParticleSystemAlwaysUpdate)
@@ -365,7 +365,7 @@ hsBool plParticleSystem::IShouldUpdate(plPipeline* pipe) const
     }
 
     // Now, are we visible?
-    hsBool isVisible = pipe->TestVisibleWorld(wBnd);
+    bool isVisible = pipe->TestVisibleWorld(wBnd);
 
     float delta = fLastTime > 0 ? float(fCurrTime - fLastTime) : hsTimer::GetDelSysSeconds();
     if( isVisible )
@@ -430,7 +430,7 @@ void plParticleSystem::IHandleRenderMsg(plPipeline* pipe)
     if( !di )
         return;
 
-    hsBool disabled = di->GetProperty(plDrawInterface::kDisable);
+    bool disabled = di->GetProperty(plDrawInterface::kDisable);
     if (!IShouldUpdate(pipe))
     {
         if (disabled)
@@ -473,7 +473,7 @@ void plParticleSystem::IHandleRenderMsg(plPipeline* pipe)
 plProfile_CreateTimer("ParticleSys", "RenderSetup", ParticleSys);
 
 
-hsBool plParticleSystem::MsgReceive(plMessage* msg)
+bool plParticleSystem::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg;
     plParticleUpdateMsg *partMsg;

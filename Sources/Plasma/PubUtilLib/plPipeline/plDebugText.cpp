@@ -156,7 +156,7 @@ plDebugTextManager::~plDebugTextManager()
 
 //// AddString ///////////////////////////////////////////////////////////////
 
-void    plDebugTextManager::AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, hsBool drawOnTop )
+void    plDebugTextManager::AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, bool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( s, hexColor, x, y, style ) );
@@ -169,7 +169,7 @@ void    plDebugTextManager::AddString( uint16_t x, uint16_t y, const char *s, ui
 //  to create a background for our console; will be obliterated once we figure
 //  a better way to do so.
 
-void    plDebugTextManager::DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, hsBool drawOnTop )
+void    plDebugTextManager::DrawRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor, bool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( left, top, right, bottom, hexColor ) );
@@ -179,7 +179,7 @@ void    plDebugTextManager::DrawRect( uint16_t left, uint16_t top, uint16_t righ
 
 //// Draw3DBorder ////////////////////////////////////////////////////////////
 
-void    plDebugTextManager::Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, hsBool drawOnTop )
+void    plDebugTextManager::Draw3DBorder( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t hexColor1, uint32_t hexColor2, bool drawOnTop )
 {
     if( drawOnTop )
         fDrawOnTopList.Append( plDebugTextNode( left, top, right, bottom, hexColor1, hexColor2 ) );

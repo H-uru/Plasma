@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <malloc.h>
 
-extern  hsBool  gDataServerLocal;
+extern  bool    gDataServerLocal;
 
 /*****************************************************************************
 *
@@ -824,7 +824,7 @@ void NetCommConnect () {
 
     const char** addrs;
     unsigned count;
-    hsBool connectedToKeeper = false;
+    bool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
     if((count = GetAuthSrvHostnames(&addrs)) && strlen(addrs[0]))

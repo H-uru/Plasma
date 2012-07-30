@@ -111,7 +111,7 @@ inline void hsThrowIfNilParam(const void* p)
     }
 }
 
-inline void hsThrowIfBadParam(hsBool trueIfBadParam)
+inline void hsThrowIfBadParam(bool trueIfBadParam)
 {
     if (trueIfBadParam)
     {
@@ -129,7 +129,7 @@ inline void hsThrowIfOSErr(long osErr)
     }
 }
 
-inline void hsThrowIfTrue(hsBool condition)
+inline void hsThrowIfTrue(bool condition)
 {
     if (condition)
     {
@@ -138,7 +138,7 @@ inline void hsThrowIfTrue(hsBool condition)
     }
 }
 
-inline void hsThrowIfFalse(hsBool condition)
+inline void hsThrowIfFalse(bool condition)
 {
     if (condition == false)
     {
@@ -147,7 +147,7 @@ inline void hsThrowIfFalse(hsBool condition)
     }
 }
 
-inline void hsThrowIfTrue(hsBool condition, const char message[])
+inline void hsThrowIfTrue(bool condition, const char message[])
 {
     if (condition)
     {
@@ -156,7 +156,7 @@ inline void hsThrowIfTrue(hsBool condition, const char message[])
     }
 }
 
-inline void hsThrowIfFalse(hsBool condition, const char message[])
+inline void hsThrowIfFalse(bool condition, const char message[])
 {
     if (condition == false)
     {
@@ -176,7 +176,7 @@ inline void hsThrowIfNilParam(const void* p)
     hsAssert(p!=nil,"hsThrowIfNilParam");
 }
 
-inline void hsThrowIfBadParam(hsBool trueIfBadParam)
+inline void hsThrowIfBadParam(bool trueIfBadParam)
 {
     hsAssert(!trueIfBadParam,"hsThrowIfBadParam");
 }
@@ -186,22 +186,22 @@ inline void hsThrowIfOSErr(long osErr)
     hsAssert(osErr==0,"hsThrowIfOSErr");
 }
 
-inline void hsThrowIfTrue(hsBool condition)
+inline void hsThrowIfTrue(bool condition)
 {
     hsAssert(!condition,"hsThrowIfTrue");
 }
 
-inline void hsThrowIfFalse(hsBool condition)
+inline void hsThrowIfFalse(bool condition)
 {
     hsAssert(condition,"hsThrowIfFalse");
 }
 
-inline void hsThrowIfTrue(hsBool condition, const char message[])
+inline void hsThrowIfTrue(bool condition, const char message[])
 {
     hsAssert(!condition,message);
 }
 
-inline void hsThrowIfFalse(hsBool condition, const char message[])
+inline void hsThrowIfFalse(bool condition, const char message[])
 {
     hsAssert(condition,message);
 }

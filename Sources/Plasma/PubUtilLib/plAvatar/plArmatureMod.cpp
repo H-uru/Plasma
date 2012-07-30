@@ -147,9 +147,9 @@ plArmatureModBase::~plArmatureModBase()
     }   
 }
 
-hsBool plArmatureModBase::MsgReceive(plMessage* msg)
+bool plArmatureModBase::MsgReceive(plMessage* msg)
 {   
-    hsBool result = false;
+    bool result = false;
     
     plArmatureBrain *curBrain = nil;
     if (fBrains.size() > 0)
@@ -184,7 +184,7 @@ void plArmatureModBase::RemoveTarget(plSceneObject* so)
     plAGMasterMod::RemoveTarget(so);
 }
 
-hsBool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
+bool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -193,7 +193,7 @@ hsBool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
             plArmatureBrain *curBrain = fBrains.back();
             if (curBrain)
             {
-                hsBool result = curBrain->Apply(time, elapsed);
+                bool result = curBrain->Apply(time, elapsed);
                 if (!result)
                 {
                     PopBrain();
@@ -271,7 +271,7 @@ void plArmatureModBase::AddressMessageToDescendants(const plCoordinateInterface 
         AddressMessageToDescendants(CI->GetChild(i), msg);
 }
 
-void plArmatureModBase::EnableDrawingTree(const plSceneObject *object, hsBool status)
+void plArmatureModBase::EnableDrawingTree(const plSceneObject *object, bool status)
 {
     if (!object)
         return;
@@ -296,7 +296,7 @@ plKey plArmatureModBase::GetWorldKey() const
         return nil;
 }
 
-hsBool plArmatureModBase::ValidatePhysics()
+bool plArmatureModBase::ValidatePhysics()
 {
     if (!fTarget)
         return false;
@@ -310,7 +310,7 @@ hsBool plArmatureModBase::ValidatePhysics()
     return !(fWaitFlags & kNeedPhysics);
 }
 
-hsBool plArmatureModBase::ValidateMesh()
+bool plArmatureModBase::ValidateMesh()
 {
     if (fWaitFlags & kNeedMesh)
     {
@@ -327,7 +327,7 @@ hsBool plArmatureModBase::ValidateMesh()
                 fWaitFlags |= kNeedMesh;
                 break;
             }
-            hsBool visible = (i == fCurLOD ? true : false);
+            bool visible = (i == fCurLOD ? true : false);
             EnableDrawingTree(meshObj, visible);
         }   
     }
@@ -418,7 +418,7 @@ void plArmatureModBase::LeaveAge()
     }
 }   
 
-hsBool plArmatureModBase::IsFinal()
+bool plArmatureModBase::IsFinal()
 {
     return !fWaitFlags;
 }
@@ -447,7 +447,7 @@ void plArmatureModBase::AdjustLOD()
 }
 
 // Should always be called from AdjustLOD
-hsBool plArmatureModBase::SetLOD(int iNewLOD)
+bool plArmatureModBase::SetLOD(int iNewLOD)
 {
     if (iNewLOD >= fMeshKeys.size())
         iNewLOD = fMeshKeys.size() - 1;
@@ -512,14 +512,14 @@ uint8_t plArmatureModBase::GetNumLOD() const
     return fMeshKeys.size();
 }
 
-void plArmatureModBase::EnablePhysics(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnablePhysics(bool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
     if (status)
         fDisabledPhysics &= ~reason;
     else
         fDisabledPhysics |= reason;
     
-    hsBool newStatus = !fDisabledPhysics;
+    bool newStatus = !fDisabledPhysics;
 
     if (fController)
         fController->Enable(newStatus);
@@ -532,21 +532,21 @@ void plArmatureModBase::EnablePhysics(hsBool status, uint16_t reason /* = kDisab
 // Disabling Kinematics (state=false) means:
 //   - all outside forces will affect us and collisions on
 //   i.e. normal enabled physical
-void plArmatureModBase::EnablePhysicsKinematic(hsBool status)
+void plArmatureModBase::EnablePhysicsKinematic(bool status)
 {
     if (fController)
         fController->Kinematic(status);
 }
 
-void plArmatureModBase::EnableDrawing(hsBool status, uint16_t reason /* = kDisableReasonUnknown */)
+void plArmatureModBase::EnableDrawing(bool status, uint16_t reason /* = kDisableReasonUnknown */)
 {
-    hsBool oldStatus = !fDisabledDraw;
+    bool oldStatus = !fDisabledDraw;
     if (status)
         fDisabledDraw &= ~reason;
     else
         fDisabledDraw |= reason;
     
-    hsBool newStatus = !fDisabledDraw;
+    bool newStatus = !fDisabledDraw;
     if (oldStatus == newStatus)
         return;
     
@@ -613,7 +613,7 @@ void plArmatureModBase::ICustomizeApplicator()
     }
 }
 
-void plArmatureModBase::IEnableBones(int lod, hsBool enable)
+void plArmatureModBase::IEnableBones(int lod, bool enable)
 {
     if (lod < fUnusedBones.size())
     {
@@ -629,7 +629,7 @@ void plArmatureModBase::IEnableBones(int lod, hsBool enable)
 const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"};
 
 float plArmatureMod::fMouseTurnSensitivity = 1.f;
-hsBool plArmatureMod::fClickToTurn = true;
+bool plArmatureMod::fClickToTurn = true;
 
 void plArmatureMod::IInitDefaults()
 {
@@ -927,7 +927,7 @@ void plArmatureMod::UnRegisterForBehaviorNotify(plKey key)
     fNotifyKeys.RemoveItem(key);
 }
 
-void plArmatureMod::IFireBehaviorNotify(uint32_t type, hsBool behaviorStart)
+void plArmatureMod::IFireBehaviorNotify(uint32_t type, bool behaviorStart)
 {
     if (fNotifyKeys.GetCount() > 0)
     {
@@ -940,7 +940,7 @@ void plArmatureMod::IFireBehaviorNotify(uint32_t type, hsBool behaviorStart)
     }
 }
 
-void plArmatureMod::EnterAge(hsBool reSpawn)
+void plArmatureMod::EnterAge(bool reSpawn)
 {
     fMidLink = false;
     fAlreadyPanicLinking = false;
@@ -1002,7 +1002,7 @@ void plArmatureMod::LeaveAge()
     ClearInputFlags(true, false);   
 }
 
-void plArmatureMod::PanicLink(hsBool playLinkOutAnim /* = true */)
+void plArmatureMod::PanicLink(bool playLinkOutAnim /* = true */)
 {
     // console override... just go back to the beginning
     if (fDontPanicLink)
@@ -1065,9 +1065,9 @@ void plArmatureMod::PersonalLink()
     }
 }
 
-hsBool plArmatureMod::MsgReceive(plMessage* msg)
+bool plArmatureMod::MsgReceive(plMessage* msg)
 {   
-    hsBool result = false;
+    bool result = false;
     
     plArmatureBrain *curBrain = nil;
     if (fBrains.size() > 0)
@@ -1169,8 +1169,8 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
     plEnableMsg *enMsg = plEnableMsg::ConvertNoRef(msg);    
     if(enMsg && enMsg->Type(plEnableMsg::kDrawable))
     {
-        hsBool enable = enMsg->Cmd(plEnableMsg::kEnable);
-        hsBool disable = enMsg->Cmd(plEnableMsg::kDisable);
+        bool enable = enMsg->Cmd(plEnableMsg::kEnable);
+        bool disable = enMsg->Cmd(plEnableMsg::kDisable);
         
         hsAssert(enable != disable, "Conflicting or missing commands to enable message");
         
@@ -1278,7 +1278,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
     plLoadAvatarMsg *avLoadMsg = plLoadAvatarMsg::ConvertNoRef(msg);
     if (avLoadMsg)
     {
-        hsBool isPlayer = avLoadMsg->GetIsPlayer();
+        bool isPlayer = avLoadMsg->GetIsPlayer();
         if (!isPlayer)
             plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
         
@@ -1406,7 +1406,7 @@ hsBool plArmatureMod::MsgReceive(plMessage* msg)
     return plAGMasterMod::MsgReceive(msg);
 }
 
-hsBool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
+bool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
 {
     // Slight change in design here...
     // Avatar input control messages are only sent locally.
@@ -1427,7 +1427,7 @@ hsBool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
     {
         ControlEventCode moveCode = pMsg->GetControlCode();
 
-        hsBool flagChanged = false;
+        bool flagChanged = false;
         if(pMsg->ControlActivated())
         {
             if (moveCode == B_CONTROL_TURN_TO && fClickToTurn)
@@ -1543,7 +1543,7 @@ void plArmatureMod::ILinkToPersonalAge()
     pMsg->Send();   
 }
 
-hsBool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
+bool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
@@ -1563,7 +1563,7 @@ hsBool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
             }
             else // Bookkeeping for the local player...
             {
-                hsBool update = false;
+                bool update = false;
                 if (fOldRegionsICareAbout != fRegionsICareAbout)
                 {
                     update = true;
@@ -1830,7 +1830,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
     if (SDLStateName && stricmp(SDLStateName, kSDLAvatar))
@@ -1849,7 +1849,7 @@ hsBool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFl
     return false;
 }
 
-hsBool plArmatureMod::DirtyPhysicalSynchState(uint32_t synchFlags)
+bool plArmatureMod::DirtyPhysicalSynchState(uint32_t synchFlags)
 {
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
     synchFlags |= plSynchedObject::kBCastToClients;
@@ -1945,12 +1945,12 @@ void plArmatureMod::NetworkSynch(double timeNow, int force)
         fPendingSynch = true;
 }
 
-hsBool plArmatureMod::IsLocalAvatar()
+bool plArmatureMod::IsLocalAvatar()
 {
     return plAvatarMgr::GetInstance()->GetLocalAvatar() == this;
 }
 
-hsBool plArmatureMod::IsLocalAI()
+bool plArmatureMod::IsLocalAI()
 {
     // Formerly a lot of silly cached rigamaroll... Now, we'll just rely
     // on the fact that one player is the game master. HACK TURD if net groups
@@ -1988,7 +1988,7 @@ plLayerLinkAnimation *plArmatureMod::IFindLayerLinkAnim()
     return nil;
 }
 
-hsBool plArmatureMod::ValidatePhysics()
+bool plArmatureMod::ValidatePhysics()
 {
     if (!fTarget)
         return false;
@@ -2019,7 +2019,7 @@ hsBool plArmatureMod::ValidatePhysics()
     
 }
 
-hsBool plArmatureMod::ValidateMesh()
+bool plArmatureMod::ValidateMesh()
 {
     if (fWaitFlags & kNeedMesh)
     {
@@ -2036,7 +2036,7 @@ hsBool plArmatureMod::ValidateMesh()
                 fWaitFlags |= kNeedMesh;
                 break;
             }
-            hsBool visible = (i == fCurLOD) ? true : false;
+            bool visible = (i == fCurLOD) ? true : false;
             
             EnableDrawingTree(meshObj, visible);
             
@@ -2155,12 +2155,12 @@ void plArmatureMod::RestoreInputState()
 
 }
 
-hsBool plArmatureMod::GetInputFlag (int which) const
+bool plArmatureMod::GetInputFlag (int which) const
 {
     return fMoveFlags.IsBitSet(which);
 }
 
-void plArmatureMod::SetInputFlag(int which, hsBool status)
+void plArmatureMod::SetInputFlag(int which, bool status)
 {
     if(status)
     {
@@ -2170,7 +2170,7 @@ void plArmatureMod::SetInputFlag(int which, hsBool status)
     }
 }
 
-hsBool plArmatureMod::HasMovementFlag() const
+bool plArmatureMod::HasMovementFlag() const
 {
     return (fMoveFlags.IsBitSet(B_CONTROL_MOVE_FORWARD) ||
             fMoveFlags.IsBitSet(B_CONTROL_MOVE_BACKWARD) ||
@@ -2306,7 +2306,7 @@ void plArmatureMod::SetReverseFBOnIdle(bool val)
         SetInputFlag(B_CONTROL_LADDER_INVERTED, false);
 }
         
-hsBool plArmatureMod::IsFBReversed()
+bool plArmatureMod::IsFBReversed()
 { 
     return GetInputFlag(B_CONTROL_LADDER_INVERTED); 
 }
@@ -2409,7 +2409,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
     {
         
         float time = -1;
-        hsBool isLeft = false;
+        bool isLeft = false;
         if (markers[i].Find("SndLeftFootDown") == 0)
         {
             isLeft = true;      
@@ -2484,7 +2484,7 @@ int8_t plArmatureMod::AnimNameToIndex(const plString &name)
     return result;
 }
 
-hsBool plArmatureMod::IsInStealthMode() const 
+bool plArmatureMod::IsInStealthMode() const 
 { 
     return (fStealthMode != plAvatarStealthModeMsg::kStealthVisible);
 }
@@ -2504,7 +2504,7 @@ bool plArmatureMod::IsLinkedIn()
     return fIsLinkedIn;
 }
 
-hsBool plArmatureMod::ConsumeJump()
+bool plArmatureMod::ConsumeJump()
 {
     if (!GetInputFlag(B_CONTROL_CONSUMABLE_JUMP))
         return false;

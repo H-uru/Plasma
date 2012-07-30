@@ -86,18 +86,18 @@ class plArmatureUpdateMsg : public plAvatarMsg
 public:
     plArmatureUpdateMsg();
     plArmatureUpdateMsg(const plKey &sender,
-                        hsBool isLocal, hsBool isPlayerControlled,
+                        bool isLocal, bool isPlayerControlled,
                         plArmatureMod *armature);
 
     /** The avatar that sent this message is the local avatar for this client. */
-    hsBool IsLocal() const;
-    void SetIsLocal(hsBool on) { fIsLocal = on; }
+    bool IsLocal() const;
+    void SetIsLocal(bool on) { fIsLocal = on; }
     /** The avatar that sent this message is controlled by a human being -- although
         not necessarily a local human being. */
-    hsBool IsPlayerControlled() const;
-    void SetIsPlayerControlled(hsBool on) { fIsPlayerControlled = on; }
-    hsBool IsInvis() const;
-    void SetInvis(hsBool val) { fIsInvis = val; }
+    bool IsPlayerControlled() const;
+    void SetIsPlayerControlled(bool on) { fIsPlayerControlled = on; }
+    bool IsInvis() const;
+    void SetInvis(bool val) { fIsInvis = val; }
 
     // plasma protocol
     CLASSNAME_REGISTER( plArmatureUpdateMsg );
@@ -111,9 +111,9 @@ public:
     
 protected:
     // these will probably change to enums + bitmasks .. don't count on the representation
-    hsBool fIsLocal;
-    hsBool fIsPlayerControlled;
-    hsBool fIsInvis; // Avatar is invis. Don't update visable effects.
+    bool fIsLocal;
+    bool fIsPlayerControlled;
+    bool fIsInvis; // Avatar is invis. Don't update visable effects.
 };
 
 // use this to turn an npc into a player and vice-versa
@@ -188,18 +188,18 @@ public:
     
     // tors
     plAvSeekMsg();
-    plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, hsBool smartSeek,
-                plAvAlignment align = kAlignHandle, char *animName = nil, hsBool noSeek = false, 
+    plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
+                plAvAlignment align = kAlignHandle, char *animName = nil, bool noSeek = false, 
                 uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekMsg );
     GETINTERFACE_ANY( plAvSeekMsg, plAvTaskMsg );
     
-    hsBool Force3rdPersonOnStart();
-    hsBool UnForce3rdPersonOnFinish();
-    hsBool NoWarpOnTimeout();
-    hsBool RotationOnly();
+    bool Force3rdPersonOnStart();
+    bool UnForce3rdPersonOnFinish();
+    bool NoWarpOnTimeout();
+    bool RotationOnly();
     plKey GetFinishCallbackKey() { return fFinishKey; }
     
     virtual void Read(hsStream *stream, hsResMgr *mgr);
@@ -210,8 +210,8 @@ public:
     hsPoint3 fTargetPos;        // Or we specify the point/lookat explicitly
     hsPoint3 fTargetLookAt;
     float fDuration;            // take this much time to do the move (only if smartSeek is false)
-    hsBool fSmartSeek;          // seek by walking rather than floating
-    hsBool fNoSeek;
+    bool fSmartSeek;          // seek by walking rather than floating
+    bool fNoSeek;
     char *fAnimName;
     plAvAlignment fAlignType;
     uint8_t fFlags;
@@ -221,7 +221,7 @@ public:
 class plAvTaskSeekDoneMsg : public plAvatarMsg
 {
 public:
-    hsBool fAborted;
+    bool fAborted;
     
     plAvTaskSeekDoneMsg() : plAvatarMsg(), fAborted(false) {}
     plAvTaskSeekDoneMsg(const plKey &sender, const plKey &receiver) : plAvatarMsg(sender, receiver), fAborted(false) {}
@@ -246,8 +246,8 @@ public:
     plAvOneShotMsg();
     virtual ~plAvOneShotMsg();
     plAvOneShotMsg(const plKey &sender, const plKey& receiver,
-                   const plKey& seekKey, float duration, hsBool fSmartSeek,
-                   const plString &animName, hsBool drivable, hsBool reversible);
+                   const plKey& seekKey, float duration, bool fSmartSeek,
+                   const plString &animName, bool drivable, bool reversible);
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvOneShotMsg );
@@ -258,8 +258,8 @@ public:
 
     // public members
     plString fAnimName;             // the name of the animation we're going to use
-    hsBool fDrivable;               // are we animated by time or by mouse movement?
-    hsBool fReversible;             // can we play backwards?
+    bool fDrivable;               // are we animated by time or by mouse movement?
+    bool fReversible;             // can we play backwards?
     plOneShotCallbacks *fCallbacks; // Callbacks given to us by a one-shot modifier
                                     // we share it, so release with UnRef
 };
@@ -283,17 +283,17 @@ public:
         fType;
     int fWhichStage;                // used only by goto stage
     float fTransitionTime;       // for crossfade between stages
-    hsBool fSetTime;
+    bool fSetTime;
     float fNewTime;
-    hsBool fSetDirection;
-    hsBool fNewDirection;
+    bool fSetDirection;
+    bool fNewDirection;
     int fNewLoopCount;
     // tors
     plAvBrainGenericMsg();
 
     //! Older constructor version, allowing simple rewinding only
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool rewind, float transitionTime);
+                        Type type, int stage, bool rewind, float transitionTime);
 
     /** Canonical constructor, allowing full control over time and direction of new stage.
         \param sender Message sender
@@ -307,8 +307,8 @@ public:
         \param transitionTime Time in seconds to transition between stages.
     */  
     plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                        Type type, int stage, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, float transitiontime);
+                        Type type, int stage, bool setTime, float newTime,
+                        bool setDirection, bool isForward, float transitiontime);
     
     /** Constructor for setting the loop count in a particular stage.
         \param sender The sender of this message.
@@ -403,7 +403,7 @@ class plAvatarBehaviorNotifyMsg : public plMessage
 {
 public:
     uint32_t fType;
-    hsBool state;
+    bool state;
     
     plAvatarBehaviorNotifyMsg() : fType(0),state(false) {}
     

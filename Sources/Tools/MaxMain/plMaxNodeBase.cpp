@@ -125,60 +125,60 @@ plMaxNodeData *plMaxNodeBase::GetMaxNodeData()
 
 plKey           plMaxNodeBase::GetKey()             { GetMD; return (pMD) ? pMD->GetKey() : nil;        }
 plSceneObject*  plMaxNodeBase::GetSceneObject()     { GetMD; return (pMD) ? pMD->GetSceneObject() : nil;}
-hsBool          plMaxNodeBase::GetForceLocal()          { GetMD; return (pMD) ? pMD->GetForceLocal() : nil; }
-hsBool          plMaxNodeBase::GetReverseSort()         { GetMD; return (pMD) ? pMD->GetReverseSort() : nil;}
-hsBool          plMaxNodeBase::GetSortAsOpaque()        { GetMD; return (pMD) ? pMD->GetSortAsOpaque() : nil;}
-hsBool          plMaxNodeBase::GetVS()                  { GetMD; return (pMD) ? pMD->GetVS() : nil;}
-hsBool          plMaxNodeBase::GetHasWaterHeight()      { GetMD; return (pMD) ? pMD->GetHasWaterHeight() : nil; }
-float        plMaxNodeBase::GetWaterHeight()         { GetMD; return (pMD) ? pMD->GetWaterHeight() : nil; }
-hsBool          plMaxNodeBase::GetSmoothAll()           { GetMD; return (pMD) ? pMD->GetSmoothAll() : nil;}
-hsBool          plMaxNodeBase::GetForceSortable()       { GetMD; return (pMD) ? pMD->GetForceSortable() : nil;}
-hsBool          plMaxNodeBase::GetConcave()             { GetMD; return (pMD) ? pMD->GetConcave() : nil;}
-hsBool          plMaxNodeBase::GetCalcEdgeLens()        { GetMD; return (pMD) ? pMD->GetCalcEdgeLens() : nil;}
-hsBool          plMaxNodeBase::GetRunTimeLight()        { GetMD; return (pMD) ? pMD->GetRunTimeLight() : nil;}
-hsBool          plMaxNodeBase::GetForceMatShade()       { GetMD; return (pMD) ? pMD->GetForceMatShade() : nil;}
-hsBool          plMaxNodeBase::GetForceVisLOS()         { GetMD; return (pMD) ? pMD->GetForceVisLOS() : nil;}
-hsBool          plMaxNodeBase::GetEnviron()     { GetMD; return (pMD) ? pMD->GetEnviron() : nil;}
-hsBool          plMaxNodeBase::GetEnvironOnly()     { GetMD; return (pMD) ? pMD->GetEnvironOnly() : nil;}
-hsBool          plMaxNodeBase::GetWaterDecEnv()         { GetMD; return (pMD) ? pMD->GetWaterDecEnv() : nil; }
-hsBool          plMaxNodeBase::GetNoPreShade()          { GetMD; return (pMD) ? pMD->GetNoPreShade() && !pMD->GetForcePreShade() : nil;}
-hsBool          plMaxNodeBase::GetForcePreShade()       { GetMD; return (pMD) ? pMD->GetForcePreShade() : nil;}
+bool            plMaxNodeBase::GetForceLocal()          { GetMD; return (pMD) ? pMD->GetForceLocal() : nil; }
+bool            plMaxNodeBase::GetReverseSort()         { GetMD; return (pMD) ? pMD->GetReverseSort() : nil;}
+bool            plMaxNodeBase::GetSortAsOpaque()        { GetMD; return (pMD) ? pMD->GetSortAsOpaque() : nil;}
+bool            plMaxNodeBase::GetVS()                  { GetMD; return (pMD) ? pMD->GetVS() : nil;}
+bool            plMaxNodeBase::GetHasWaterHeight()      { GetMD; return (pMD) ? pMD->GetHasWaterHeight() : nil; }
+float           plMaxNodeBase::GetWaterHeight()         { GetMD; return (pMD) ? pMD->GetWaterHeight() : nil; }
+bool            plMaxNodeBase::GetSmoothAll()           { GetMD; return (pMD) ? pMD->GetSmoothAll() : nil;}
+bool            plMaxNodeBase::GetForceSortable()       { GetMD; return (pMD) ? pMD->GetForceSortable() : nil;}
+bool            plMaxNodeBase::GetConcave()             { GetMD; return (pMD) ? pMD->GetConcave() : nil;}
+bool            plMaxNodeBase::GetCalcEdgeLens()        { GetMD; return (pMD) ? pMD->GetCalcEdgeLens() : nil;}
+bool            plMaxNodeBase::GetRunTimeLight()        { GetMD; return (pMD) ? pMD->GetRunTimeLight() : nil;}
+bool            plMaxNodeBase::GetForceMatShade()       { GetMD; return (pMD) ? pMD->GetForceMatShade() : nil;}
+bool            plMaxNodeBase::GetForceVisLOS()         { GetMD; return (pMD) ? pMD->GetForceVisLOS() : nil;}
+bool            plMaxNodeBase::GetEnviron()     { GetMD; return (pMD) ? pMD->GetEnviron() : nil;}
+bool            plMaxNodeBase::GetEnvironOnly()     { GetMD; return (pMD) ? pMD->GetEnvironOnly() : nil;}
+bool            plMaxNodeBase::GetWaterDecEnv()         { GetMD; return (pMD) ? pMD->GetWaterDecEnv() : nil; }
+bool            plMaxNodeBase::GetNoPreShade()          { GetMD; return (pMD) ? pMD->GetNoPreShade() && !pMD->GetForcePreShade() : nil;}
+bool            plMaxNodeBase::GetForcePreShade()       { GetMD; return (pMD) ? pMD->GetForcePreShade() : nil;}
 plKey           plMaxNodeBase::GetRoomKey()         { GetMD; return (pMD) ? pMD->GetRoomKey() : nil;    }
-hsBool          plMaxNodeBase::GetDrawable()            { GetMD; return (pMD) ? pMD->GetDrawable() : nil;   }
-hsBool          plMaxNodeBase::GetPhysical()            { GetMD; return (pMD) ? pMD->GetPhysical() : nil;   }
-hsBool          plMaxNodeBase::GetItinerant()           { GetMD; return (pMD) ? pMD->GetItinerant() : nil;  }
-hsBool          plMaxNodeBase::GetUnBounded()           { GetMD; return (pMD) ? pMD->GetUnBounded() : nil;  }
-hsBool          plMaxNodeBase::GetDisableNormal()       { GetMD; return (pMD) ? pMD->GetDisableNormal() : nil;  }
-uint32_t          plMaxNodeBase::GetDecalLevel()          { GetMD; return (pMD) ? pMD->GetDecalLevel() : nil; }
-hsBool          plMaxNodeBase::GetMovable()         { GetMD; return (pMD) ? pMD->GetMovable() : nil;    }
-hsBool          plMaxNodeBase::GetIsBarney()            { GetMD; return (pMD) ? pMD->GetIsBarney() : nil;   }
-hsBool          plMaxNodeBase::GetForceShadow()         { GetMD; return (pMD) ? pMD->GetForceShadow() : nil;    }
-hsBool          plMaxNodeBase::GetAlphaTestHigh()       { GetMD; return (pMD) ? pMD->GetAlphaTestHigh() : nil;  }
-hsBool          plMaxNodeBase::GetFilterInherit()           { GetMD; return (pMD) ? pMD->GetFilterInherit() : nil;  }
-hsBool          plMaxNodeBase::GetNoShadow()            { GetMD; return (pMD) ? pMD->GetNoShadow() : nil;   }
-hsBool          plMaxNodeBase::GetNoSpanSort()          { GetMD; return (pMD) ? pMD->GetNoSpanSort() : nil; }
-hsBool          plMaxNodeBase::GetNoSpanReSort()        { GetMD; return (pMD) ? pMD->GetNoSpanReSort() : nil; }
-hsBool          plMaxNodeBase::GetNoFaceSort()          { GetMD; return (pMD) ? pMD->GetNoFaceSort() : nil; }
-hsBool          plMaxNodeBase::GetNoDeferDraw()     { GetMD; return (pMD) ? pMD->GetNoDeferDraw() : nil; }
-hsBool          plMaxNodeBase::GetBlendToFB()       { GetMD; return (pMD) ? pMD->GetBlendToFB() : nil; }
-hsBool          plMaxNodeBase::GetForceMaterialCopy()   { GetMD; return (pMD) ? pMD->GetForceMaterialCopy() : nil; }
-hsBool          plMaxNodeBase::GetInstanced()           { GetMD; return (pMD) ? pMD->GetInstanced() : nil; }
-hsBool          plMaxNodeBase::GetParticleRelated() { GetMD; return (pMD) ? pMD->GetParticleRelated() : nil; }
-uint32_t          plMaxNodeBase::GetSoundIdxCounter() { GetMD; return (pMD) ? pMD->GetSoundIdxCounter() : 0; }
+bool            plMaxNodeBase::GetDrawable()            { GetMD; return (pMD) ? pMD->GetDrawable() : nil;   }
+bool            plMaxNodeBase::GetPhysical()            { GetMD; return (pMD) ? pMD->GetPhysical() : nil;   }
+bool            plMaxNodeBase::GetItinerant()           { GetMD; return (pMD) ? pMD->GetItinerant() : nil;  }
+bool            plMaxNodeBase::GetUnBounded()           { GetMD; return (pMD) ? pMD->GetUnBounded() : nil;  }
+bool            plMaxNodeBase::GetDisableNormal()       { GetMD; return (pMD) ? pMD->GetDisableNormal() : nil;  }
+uint32_t        plMaxNodeBase::GetDecalLevel()          { GetMD; return (pMD) ? pMD->GetDecalLevel() : nil; }
+bool            plMaxNodeBase::GetMovable()         { GetMD; return (pMD) ? pMD->GetMovable() : nil;    }
+bool            plMaxNodeBase::GetIsBarney()            { GetMD; return (pMD) ? pMD->GetIsBarney() : nil;   }
+bool            plMaxNodeBase::GetForceShadow()         { GetMD; return (pMD) ? pMD->GetForceShadow() : nil;    }
+bool            plMaxNodeBase::GetAlphaTestHigh()       { GetMD; return (pMD) ? pMD->GetAlphaTestHigh() : nil;  }
+bool            plMaxNodeBase::GetFilterInherit()           { GetMD; return (pMD) ? pMD->GetFilterInherit() : nil;  }
+bool            plMaxNodeBase::GetNoShadow()            { GetMD; return (pMD) ? pMD->GetNoShadow() : nil;   }
+bool            plMaxNodeBase::GetNoSpanSort()          { GetMD; return (pMD) ? pMD->GetNoSpanSort() : nil; }
+bool            plMaxNodeBase::GetNoSpanReSort()        { GetMD; return (pMD) ? pMD->GetNoSpanReSort() : nil; }
+bool            plMaxNodeBase::GetNoFaceSort()          { GetMD; return (pMD) ? pMD->GetNoFaceSort() : nil; }
+bool            plMaxNodeBase::GetNoDeferDraw()     { GetMD; return (pMD) ? pMD->GetNoDeferDraw() : nil; }
+bool            plMaxNodeBase::GetBlendToFB()       { GetMD; return (pMD) ? pMD->GetBlendToFB() : nil; }
+bool            plMaxNodeBase::GetForceMaterialCopy()   { GetMD; return (pMD) ? pMD->GetForceMaterialCopy() : nil; }
+bool            plMaxNodeBase::GetInstanced()           { GetMD; return (pMD) ? pMD->GetInstanced() : nil; }
+bool            plMaxNodeBase::GetParticleRelated() { GetMD; return (pMD) ? pMD->GetParticleRelated() : nil; }
+uint32_t        plMaxNodeBase::GetSoundIdxCounter() { GetMD; return (pMD) ? pMD->GetSoundIdxCounter() : 0; }
 plSceneObject*  plMaxNodeBase::GetAvatarSO()            { GetMD; return (pMD) ? pMD->GetAvatarSO() : nil; }
 BOOL            plMaxNodeBase::HasFade()                { GetMD; return (pMD) ? pMD->HasFade() : false; }
 Box3            plMaxNodeBase::GetFade()                { GetMD; return (pMD) ? pMD->GetFade() : Box3(Point3(0,0,0), Point3(0,0,0)); }
-hsBool          plMaxNodeBase::GetDup2Sided()           { GetMD; return (pMD) ? pMD->GetDup2Sided() : false;}
-hsBool          plMaxNodeBase::GetRadiateNorms()        { GetMD; return (pMD) ? pMD->GetRadiateNorms() : false;}
+bool            plMaxNodeBase::GetDup2Sided()           { GetMD; return (pMD) ? pMD->GetDup2Sided() : false;}
+bool            plMaxNodeBase::GetRadiateNorms()        { GetMD; return (pMD) ? pMD->GetRadiateNorms() : false;}
 BOOL            plMaxNodeBase::HasNormalChan()          { GetMD; return (pMD) ? pMD->HasNormalChan() : false; }
 int             plMaxNodeBase::GetNormalChan()          { GetMD; return (pMD) ? pMD->GetNormalChan() : 0; }
-hsBool          plMaxNodeBase::GetIsGUI()               { GetMD; return (pMD) ? pMD->GetIsGUI() : false; }
+bool            plMaxNodeBase::GetIsGUI()               { GetMD; return (pMD) ? pMD->GetIsGUI() : false; }
 plSharedMesh*   plMaxNodeBase::GetSwappableGeom()       { GetMD; return (pMD) ? pMD->GetSwappableGeom() : nil; }
-uint32_t          plMaxNodeBase::GetSwappableGeomTarget()     { GetMD; return (pMD) ? pMD->GetSwappableGeomTarget() : -1; }
+uint32_t        plMaxNodeBase::GetSwappableGeomTarget()     { GetMD; return (pMD) ? pMD->GetSwappableGeomTarget() : -1; }
 plMaxBoneMap*   plMaxNodeBase::GetBoneMap()                 { GetMD; return (pMD) ? pMD->GetBoneMap() : nil; }
-hsBool          plMaxNodeBase::GetOverrideHighLevelSDL()    { GetMD; return (pMD) ? pMD->GetOverrideHighLevelSDL() : false; }
-uint8_t           plMaxNodeBase::GetAnimCompress()                    { GetMD; return (pMD) ? pMD->GetAnimCompress() : false; }
-float        plMaxNodeBase::GetKeyReduceThreshold()              { GetMD; return (pMD) ? pMD->GetKeyReduceThreshold() : 0; }
+bool            plMaxNodeBase::GetOverrideHighLevelSDL()    { GetMD; return (pMD) ? pMD->GetOverrideHighLevelSDL() : false; }
+uint8_t         plMaxNodeBase::GetAnimCompress()                    { GetMD; return (pMD) ? pMD->GetAnimCompress() : false; }
+float           plMaxNodeBase::GetKeyReduceThreshold()              { GetMD; return (pMD) ? pMD->GetKeyReduceThreshold() : 0; }
 int             plMaxNodeBase::NumRenderDependencies()              { GetMD; return (pMD) ? pMD->NumRenderDependencies() : 0; }
 plMaxNodeBase*  plMaxNodeBase::GetRenderDependency(int i)           { GetMD; return (pMD) ? pMD->GetRenderDependency(i) : nil; }
 
@@ -189,58 +189,58 @@ plMaxNodeBase*  plMaxNodeBase::GetBone(int i)                       { GetMD; ret
 //------------------------------
 // Set Data from MaxNodeData
 //------------------------------
-void            plMaxNodeBase::SetCanConvert(hsBool b)              { GetMD; pMD->SetCanConvert(b);         }
+void            plMaxNodeBase::SetCanConvert(bool b)              { GetMD; pMD->SetCanConvert(b);         }
 void            plMaxNodeBase::SetMesh(hsGMesh *p)                  { GetMD; pMD->SetMesh(p);               }       
 void            plMaxNodeBase::SetRoomKey(plKey p)                  { GetMD; pMD->SetRoomKey(p);            }
-void            plMaxNodeBase::SetDrawable(hsBool b)                { GetMD; pMD->SetDrawable(b);           }
-void            plMaxNodeBase::SetPhysical(hsBool b)                { GetMD; pMD->SetPhysical(b);           }
-//void          plMaxNodeBase::SetItinerant(hsBool b);
-void            plMaxNodeBase::SetUnBounded(hsBool b)               { GetMD; pMD->SetUnBounded(b);      }
-void            plMaxNodeBase::SetDisableNormal(hsBool b)           { GetMD; pMD->SetDisableNormal(b);      }
+void            plMaxNodeBase::SetDrawable(bool b)                { GetMD; pMD->SetDrawable(b);           }
+void            plMaxNodeBase::SetPhysical(bool b)                { GetMD; pMD->SetPhysical(b);           }
+//void          plMaxNodeBase::SetItinerant(bool b);
+void            plMaxNodeBase::SetUnBounded(bool b)               { GetMD; pMD->SetUnBounded(b);      }
+void            plMaxNodeBase::SetDisableNormal(bool b)           { GetMD; pMD->SetDisableNormal(b);      }
 void            plMaxNodeBase::SetDecalLevel(uint32_t i)              { GetMD; pMD->SetDecalLevel(i);         }
-void            plMaxNodeBase::SetMovable(hsBool b)                 { GetMD; pMD->SetMovable(b); pMD->SetRunTimeLight(b); pMD->SetNoPreShade(b);            }
-void            plMaxNodeBase::SetReverseSort(hsBool b)             { GetMD; pMD->SetReverseSort(b); }
-void            plMaxNodeBase::SetSortAsOpaque(hsBool b)            { GetMD; pMD->SetSortAsOpaque(b); }
-void            plMaxNodeBase::SetVS(hsBool b)                      { GetMD; pMD->SetVS(b); }
-void            plMaxNodeBase::SetHasWaterHeight(hsBool b)          { GetMD; pMD->SetHasWaterHeight(b); }
+void            plMaxNodeBase::SetMovable(bool b)                 { GetMD; pMD->SetMovable(b); pMD->SetRunTimeLight(b); pMD->SetNoPreShade(b);            }
+void            plMaxNodeBase::SetReverseSort(bool b)             { GetMD; pMD->SetReverseSort(b); }
+void            plMaxNodeBase::SetSortAsOpaque(bool b)            { GetMD; pMD->SetSortAsOpaque(b); }
+void            plMaxNodeBase::SetVS(bool b)                      { GetMD; pMD->SetVS(b); }
+void            plMaxNodeBase::SetHasWaterHeight(bool b)          { GetMD; pMD->SetHasWaterHeight(b); }
 void            plMaxNodeBase::SetWaterHeight(float h)           { GetMD; pMD->SetWaterHeight(h); }
-void            plMaxNodeBase::SetSmoothAll(hsBool b)               { GetMD; pMD->SetSmoothAll(b); }
-void            plMaxNodeBase::SetForceSortable(hsBool b)           { GetMD; pMD->SetForceSortable(b); }
-void            plMaxNodeBase::SetConcave(hsBool b)                 { GetMD; pMD->SetConcave(b); }
-void            plMaxNodeBase::SetCalcEdgeLens(hsBool b)            { GetMD; pMD->SetCalcEdgeLens(b); }
-void            plMaxNodeBase::SetRunTimeLight(hsBool b)            { GetMD; pMD->SetRunTimeLight(b); }
-void            plMaxNodeBase::SetForceMatShade(hsBool b)           { GetMD; pMD->SetForceMatShade(b); }
-void            plMaxNodeBase::SetForceVisLOS(hsBool b)             { GetMD; pMD->SetForceVisLOS(b); }
-void            plMaxNodeBase::SetEnviron(hsBool b)                 { GetMD; pMD->SetEnviron(b); }
-void            plMaxNodeBase::SetEnvironOnly(hsBool b)             { GetMD; pMD->SetEnvironOnly(b); }
-void            plMaxNodeBase::SetWaterDecEnv(hsBool b)             { GetMD; pMD->SetWaterDecEnv(b); }
-void            plMaxNodeBase::SetNoPreShade(hsBool b)              { GetMD; pMD->SetNoPreShade(b);         }
-void            plMaxNodeBase::SetForcePreShade(hsBool b)           { GetMD; pMD->SetForcePreShade(b);      }
-void            plMaxNodeBase::SetForceLocal(hsBool b)              { GetMD; pMD->SetForceLocal(b);         }
-void            plMaxNodeBase::SetIsBarney(hsBool b)                { GetMD; pMD->SetIsBarney(b);           }
-void            plMaxNodeBase::SetForceShadow(hsBool b)             { GetMD; pMD->SetForceShadow(b);        }
-void            plMaxNodeBase::SetAlphaTestHigh(hsBool b)           { GetMD; pMD->SetAlphaTestHigh(b);      }
-void            plMaxNodeBase::SetFilterInherit(hsBool b)           { GetMD; pMD->SetFilterInherit(b);      }
-void            plMaxNodeBase::SetNoShadow(hsBool b)                { GetMD; pMD->SetNoShadow(b);           }
-void            plMaxNodeBase::SetNoSpanSort(hsBool b)              { GetMD; pMD->SetNoSpanSort(b);         }
-void            plMaxNodeBase::SetNoSpanReSort(hsBool b)            { GetMD; pMD->SetNoSpanReSort(b);       }
-void            plMaxNodeBase::SetNoFaceSort(hsBool b)              { GetMD; pMD->SetNoFaceSort(b);         }
-void            plMaxNodeBase::SetNoDeferDraw(hsBool b)             { GetMD; pMD->SetNoDeferDraw(b);        }
-void            plMaxNodeBase::SetBlendToFB(hsBool b)               { GetMD; pMD->SetBlendToFB(b);      }
-void            plMaxNodeBase::SetForceMaterialCopy(hsBool b)       { GetMD; pMD->SetForceMaterialCopy(b);  }
-void            plMaxNodeBase::SetInstanced(hsBool b)               { GetMD; pMD->SetInstanced(b);          }
-void            plMaxNodeBase::SetParticleRelated(hsBool b)         { GetMD; pMD->SetParticleRelated(b);    }
+void            plMaxNodeBase::SetSmoothAll(bool b)               { GetMD; pMD->SetSmoothAll(b); }
+void            plMaxNodeBase::SetForceSortable(bool b)           { GetMD; pMD->SetForceSortable(b); }
+void            plMaxNodeBase::SetConcave(bool b)                 { GetMD; pMD->SetConcave(b); }
+void            plMaxNodeBase::SetCalcEdgeLens(bool b)            { GetMD; pMD->SetCalcEdgeLens(b); }
+void            plMaxNodeBase::SetRunTimeLight(bool b)            { GetMD; pMD->SetRunTimeLight(b); }
+void            plMaxNodeBase::SetForceMatShade(bool b)           { GetMD; pMD->SetForceMatShade(b); }
+void            plMaxNodeBase::SetForceVisLOS(bool b)             { GetMD; pMD->SetForceVisLOS(b); }
+void            plMaxNodeBase::SetEnviron(bool b)                 { GetMD; pMD->SetEnviron(b); }
+void            plMaxNodeBase::SetEnvironOnly(bool b)             { GetMD; pMD->SetEnvironOnly(b); }
+void            plMaxNodeBase::SetWaterDecEnv(bool b)             { GetMD; pMD->SetWaterDecEnv(b); }
+void            plMaxNodeBase::SetNoPreShade(bool b)              { GetMD; pMD->SetNoPreShade(b);         }
+void            plMaxNodeBase::SetForcePreShade(bool b)           { GetMD; pMD->SetForcePreShade(b);      }
+void            plMaxNodeBase::SetForceLocal(bool b)              { GetMD; pMD->SetForceLocal(b);         }
+void            plMaxNodeBase::SetIsBarney(bool b)                { GetMD; pMD->SetIsBarney(b);           }
+void            plMaxNodeBase::SetForceShadow(bool b)             { GetMD; pMD->SetForceShadow(b);        }
+void            plMaxNodeBase::SetAlphaTestHigh(bool b)           { GetMD; pMD->SetAlphaTestHigh(b);      }
+void            plMaxNodeBase::SetFilterInherit(bool b)           { GetMD; pMD->SetFilterInherit(b);      }
+void            plMaxNodeBase::SetNoShadow(bool b)                { GetMD; pMD->SetNoShadow(b);           }
+void            plMaxNodeBase::SetNoSpanSort(bool b)              { GetMD; pMD->SetNoSpanSort(b);         }
+void            plMaxNodeBase::SetNoSpanReSort(bool b)            { GetMD; pMD->SetNoSpanReSort(b);       }
+void            plMaxNodeBase::SetNoFaceSort(bool b)              { GetMD; pMD->SetNoFaceSort(b);         }
+void            plMaxNodeBase::SetNoDeferDraw(bool b)             { GetMD; pMD->SetNoDeferDraw(b);        }
+void            plMaxNodeBase::SetBlendToFB(bool b)               { GetMD; pMD->SetBlendToFB(b);      }
+void            plMaxNodeBase::SetForceMaterialCopy(bool b)       { GetMD; pMD->SetForceMaterialCopy(b);  }
+void            plMaxNodeBase::SetInstanced(bool b)               { GetMD; pMD->SetInstanced(b);          }
+void            plMaxNodeBase::SetParticleRelated(bool b)         { GetMD; pMD->SetParticleRelated(b);    }
 void            plMaxNodeBase::SetSoundIdxCounter(uint32_t ctr)       { GetMD; pMD->SetSoundIdxCounter(ctr);  }
 void            plMaxNodeBase::SetAvatarSO(plSceneObject *so)       { GetMD; pMD->SetAvatarSO(so);          }
 void            plMaxNodeBase::SetFade(const Box3& b)               { GetMD; pMD->SetFade(b);               }
-void            plMaxNodeBase::SetDup2Sided(hsBool b)               { GetMD; pMD->SetDup2Sided(b);          }
-void            plMaxNodeBase::SetRadiateNorms(hsBool b)            { GetMD; pMD->SetRadiateNorms(b);       }
+void            plMaxNodeBase::SetDup2Sided(bool b)               { GetMD; pMD->SetDup2Sided(b);          }
+void            plMaxNodeBase::SetRadiateNorms(bool b)            { GetMD; pMD->SetRadiateNorms(b);       }
 void            plMaxNodeBase::SetNormalChan(int n)                 { GetMD; pMD->SetNormalChan(n);         }
-void            plMaxNodeBase::SetIsGUI(hsBool b)                   { GetMD; pMD->SetIsGUI(b);          }
+void            plMaxNodeBase::SetIsGUI(bool b)                   { GetMD; pMD->SetIsGUI(b);          }
 void            plMaxNodeBase::SetSwappableGeom(plSharedMesh *sm)   { GetMD; pMD->SetSwappableGeom(sm); }
 void            plMaxNodeBase::SetSwappableGeomTarget(uint32_t id)    { GetMD; pMD->SetSwappableGeomTarget(id);   }
 void            plMaxNodeBase::SetBoneMap(plMaxBoneMap *bones)      { GetMD; pMD->SetBoneMap(bones);    }
-void            plMaxNodeBase::SetOverrideHighLevelSDL(hsBool b)    { GetMD; pMD->SetOverrideHighLevelSDL(b); }
+void            plMaxNodeBase::SetOverrideHighLevelSDL(bool b)    { GetMD; pMD->SetOverrideHighLevelSDL(b); }
 void            plMaxNodeBase::SetAnimCompress(uint8_t v)             { GetMD; pMD->SetAnimCompress(v); }
 void            plMaxNodeBase::SetKeyReduceThreshold(float v)    { GetMD; pMD->SetKeyReduceThreshold(v); }
 void            plMaxNodeBase::ClearRenderDependencies()            { GetMD; pMD->ClearRenderDependencies(); }
@@ -258,13 +258,13 @@ plLocation plMaxNodeBase::GetLocation()
     return loc;
 }
 
-hsBool plMaxNodeBase::GetDirty(uint8_t i)
+bool plMaxNodeBase::GetDirty(uint8_t i)
 {
     uint8_t *dirty = IGetSceneViewerChunk();
     return *dirty & i;
 }
 
-void plMaxNodeBase::SetDirty(uint8_t i, hsBool b)
+void plMaxNodeBase::SetDirty(uint8_t i, bool b)
 {
     uint8_t *dirty = IGetSceneViewerChunk();
 
@@ -274,7 +274,7 @@ void plMaxNodeBase::SetDirty(uint8_t i, hsBool b)
         *dirty &= ~i;
 }
 
-hsBool plMaxNodeBase::HasLoadMask()
+bool plMaxNodeBase::HasLoadMask()
 {
     GetMD;
     return pMD->HasLoadMask();
@@ -292,7 +292,7 @@ void plMaxNodeBase::AddLoadMask(const plLoadMask& m)
     pMD->AddLoadMask(m);
 }
 
-hsBool plMaxNodeBase::RenderDependsOn(plMaxNodeBase* m)
+bool plMaxNodeBase::RenderDependsOn(plMaxNodeBase* m)
 {
     if( m == this )
         return true;
@@ -306,7 +306,7 @@ hsBool plMaxNodeBase::RenderDependsOn(plMaxNodeBase* m)
     return false;
 }
 
-hsBool plMaxNodeBase::AddRenderDependency(plMaxNodeBase* m) 
+bool plMaxNodeBase::AddRenderDependency(plMaxNodeBase* m) 
 { 
     if( m->RenderDependsOn(this) )
         return false;
@@ -334,7 +334,7 @@ uint8_t *plMaxNodeBase::IGetSceneViewerChunk()
     return SVChunk;
 }
 
-hsBool plMaxNodeBase::CanConvert(bool recalculate)
+bool plMaxNodeBase::CanConvert(bool recalculate)
 {
     // Try and find a cached return value
     plMaxNodeData *md = GetMaxNodeData();
@@ -365,17 +365,17 @@ hsBool plMaxNodeBase::CanConvert(bool recalculate)
     return false;
 }
 
-hsBool plMaxNodeBase::IsTMAnimated()
+bool plMaxNodeBase::IsTMAnimated()
 {
     Control* tmControl = GetTMController();
     return (tmControl && tmControl->IsAnimated());
 }
 
 //// IsTMAnimatedRecur  - test recursively up the chain ///////////////////////////////////////////////////////////////
-hsBool plMaxNodeBase::IsTMAnimatedRecur()
+bool plMaxNodeBase::IsTMAnimatedRecur()
 {
     const char* dbgNodeName = GetName();
-    hsBool      shouldBe = false;
+    bool        shouldBe = false;
 
     if( !CanConvert() )
         return false;
@@ -387,10 +387,10 @@ hsBool plMaxNodeBase::IsTMAnimatedRecur()
 
 //// IsMovable ///////////////////////////////////////////////////////////////
 //  Returns whether this node is "animated" (i.e. could move at runtime)
-hsBool plMaxNodeBase::IsMovable()
+bool plMaxNodeBase::IsMovable()
 {
     const char* dbgNodeName = GetName();
-    hsBool      shouldBe = false;
+    bool        shouldBe = false;
 
 
     if( !CanConvert() )
@@ -419,7 +419,7 @@ hsBool plMaxNodeBase::IsMovable()
 }
 
 // Recursively set so we don't have to recursively check.
-void plMaxNodeBase::SetItinerant(hsBool b)
+void plMaxNodeBase::SetItinerant(bool b)
 { 
     const char* dbgNodeName = GetName();
 
@@ -495,7 +495,7 @@ bool plMaxNodeBase::IsXRef()
     return false;
 }
 
-hsBool plMaxNodeBase::IsComponent(Object *obj)
+bool plMaxNodeBase::IsComponent(Object *obj)
 {
     if (!obj)
         obj = GetObjectRef();
@@ -506,7 +506,7 @@ hsBool plMaxNodeBase::IsComponent(Object *obj)
     return false;
 }
 
-hsBool plMaxNodeBase::IsExternComponent(Object *obj)
+bool plMaxNodeBase::IsExternComponent(Object *obj)
 {
     if (!obj)
         obj = GetObjectRef();
@@ -623,7 +623,7 @@ plComponentBase *plMaxNodeBase::IRefMakerToComponent(ReferenceMaker *maker, bool
     return nil;
 }
 
-hsBool plMaxNodeBase::IRenderLevelSet(hsBool forBlend)
+bool plMaxNodeBase::IRenderLevelSet(bool forBlend)
 {
     plMaxNodeData* md = GetMaxNodeData();
     if( md )
@@ -631,7 +631,7 @@ hsBool plMaxNodeBase::IRenderLevelSet(hsBool forBlend)
     return false;
 }
 
-void plMaxNodeBase::ISetRenderLevel(const plRenderLevel& l, hsBool forBlend)
+void plMaxNodeBase::ISetRenderLevel(const plRenderLevel& l, bool forBlend)
 {
     plMaxNodeData* md = GetMaxNodeData();
     if( md )
@@ -643,7 +643,7 @@ void plMaxNodeBase::ISetRenderLevel(const plRenderLevel& l, hsBool forBlend)
     }
 }
 
-const plRenderLevel& plMaxNodeBase::IGetRenderLevel(hsBool forBlend)
+const plRenderLevel& plMaxNodeBase::IGetRenderLevel(bool forBlend)
 {
     plMaxNodeData* md = GetMaxNodeData();
     if( !md )
@@ -654,7 +654,7 @@ const plRenderLevel& plMaxNodeBase::IGetRenderLevel(hsBool forBlend)
     return forBlend ? md->GetBlendLevel() : md->GetOpaqueLevel();
 }
 
-uint32_t plMaxNodeBase::IGetMajorRenderLevel(hsBool forBlend)
+uint32_t plMaxNodeBase::IGetMajorRenderLevel(bool forBlend)
 {
     if( GetBlendToFB() )
         return plRenderLevel::kFBMajorLevel;
@@ -685,7 +685,7 @@ uint32_t plMaxNodeBase::IGetMajorRenderLevel(hsBool forBlend)
     return iMaxDep;
 }
 
-uint32_t plMaxNodeBase::IGetMinorRenderLevel(hsBool forBlend)
+uint32_t plMaxNodeBase::IGetMinorRenderLevel(bool forBlend)
 {
     if( GetAvatarSO() )
         return plRenderLevel::kAvatarRendMinorLevel;
@@ -714,7 +714,7 @@ uint32_t plMaxNodeBase::IGetMinorRenderLevel(hsBool forBlend)
     return iMaxDep + 4;
 }
 
-plRenderLevel plMaxNodeBase::ICalcRenderLevel(hsBool forBlend)
+plRenderLevel plMaxNodeBase::ICalcRenderLevel(bool forBlend)
 {
     if( GetBlendToFB() )
         return plRenderLevel::kFBMajorLevel;
@@ -753,7 +753,7 @@ plRenderLevel plMaxNodeBase::ICalcRenderLevel(hsBool forBlend)
     return maxLevel;
 }
 
-const plRenderLevel& plMaxNodeBase::GetRenderLevel(hsBool forBlend)
+const plRenderLevel& plMaxNodeBase::GetRenderLevel(bool forBlend)
 {
     if( !CanConvert() )
     {
@@ -805,7 +805,7 @@ void plMaxNodeBase::SetGeoDice(BOOL on, int maxFaces, float maxSize, int minFace
     }
 }
 
-hsBool plMaxNodeBase::Contains(const Point3& worldPt)
+bool plMaxNodeBase::Contains(const Point3& worldPt)
 {
     TimeValue currTime = 0;//hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState(currTime).obj;
@@ -837,7 +837,7 @@ hsBool plMaxNodeBase::Contains(const Point3& worldPt)
             return false;
         }
 
-        hsBool retVal = true;
+        bool retVal = true;
         int i;
         for( i = 0; i < mesh.getNumFaces(); i++ )
         {
@@ -866,7 +866,7 @@ hsBool plMaxNodeBase::Contains(const Point3& worldPt)
     return false;
 }
 
-hsBool plMaxNodeBase::Contains(const Box3& bnd, const Matrix3& l2w)
+bool plMaxNodeBase::Contains(const Box3& bnd, const Matrix3& l2w)
 {
     int i;
     for( i = 0; i < 8; i++ )

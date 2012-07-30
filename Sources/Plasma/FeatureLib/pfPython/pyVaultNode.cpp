@@ -500,7 +500,7 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, uint32_t cbContext)
 }
 
 // Remove child node
-hsBool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t cbContext )
+bool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t cbContext )
 {
     pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNodeOperationCallback)( cbObject );
 

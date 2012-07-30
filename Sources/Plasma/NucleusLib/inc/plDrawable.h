@@ -143,19 +143,19 @@ public:
     CLASSNAME_REGISTER( plDrawable );
     GETINTERFACE_ANY( plDrawable, hsKeyedObject );
 
-    virtual plDrawable& SetProperty( int prop, hsBool on ) = 0;
-    virtual hsBool GetProperty( int prop ) const = 0;
+    virtual plDrawable& SetProperty( int prop, bool on ) = 0;
+    virtual bool GetProperty( int prop ) const = 0;
 
-    virtual plDrawable& SetProperty( uint32_t index, int prop, hsBool on ) = 0;
-    virtual hsBool GetProperty( uint32_t index, int prop ) const = 0;
+    virtual plDrawable& SetProperty( uint32_t index, int prop, bool on ) = 0;
+    virtual bool GetProperty( uint32_t index, int prop ) const = 0;
 
-    virtual plDrawable& SetNativeProperty( int prop, hsBool on ) = 0;
-    virtual hsBool GetNativeProperty( int prop ) const = 0;
+    virtual plDrawable& SetNativeProperty( int prop, bool on ) = 0;
+    virtual bool GetNativeProperty( int prop ) const = 0;
 
-    virtual plDrawable& SetNativeProperty( uint32_t index, int prop, hsBool on ) = 0;
-    virtual hsBool GetNativeProperty( uint32_t index, int prop ) const = 0;
+    virtual plDrawable& SetNativeProperty( uint32_t index, int prop, bool on ) = 0;
+    virtual bool GetNativeProperty( uint32_t index, int prop ) const = 0;
 
-    virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, hsBool on ) = 0;
+    virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, bool on ) = 0;
     virtual uint32_t GetSubType( uint32_t index ) const = 0; // returns or of all spans with this index (index==-1 is all spans).
 
     virtual uint32_t  GetType( void ) const = 0;
@@ -173,11 +173,11 @@ public:
     virtual const hsBounds3Ext& GetMaxWorldBounds( uint32_t index = (uint32_t)-1 ) const = 0;
 
     virtual plSpaceTree*    GetSpaceTree() const = 0;
-    virtual void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, hsBool on) = 0;
+    virtual void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, bool on) = 0;
 
     // Taking span index. DI Index doesn't make sense here, because one object's DI can dereference into many materials etc.
     virtual hsGMaterial*    GetSubMaterial(int index) const = 0;
-    virtual hsBool          GetSubVisDists(int index, float& minDist, float& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
+    virtual bool            GetSubVisDists(int index, float& minDist, float& maxDist) const = 0; // return true if span invisible before minDist and/or after maxDist
 
     // Should implement hsKeyedObject Read/Write/Save/Load as well
 
@@ -193,7 +193,7 @@ public:
     /// EXPORT-ONLY
 
     // Called by the sceneNode to determine if we match the criteria
-    virtual hsBool  DoIMatch( const plDrawableCriteria& crit ) = 0;
+    virtual bool    DoIMatch( const plDrawableCriteria& crit ) = 0;
 
     // Take the list of triMeshes and convert them to buffers, building a list of spans for each
     virtual void    Optimize( void ) = 0;

@@ -193,7 +193,7 @@ plController *hsControlConverter::ConvertTMAnim(plSceneObject *obj, plMaxNode *n
     return tmc;
 }
 
-hsBool hsControlConverter::HasKeyTimes(Control* ctl)
+bool hsControlConverter::HasKeyTimes(Control* ctl)
 {
     hsGuardBegin("hsControlConverter::HasKeyTimes");
 
@@ -388,7 +388,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
             return hsCont;
         }
         
-        hsBool keep = false;
+        bool keep = false;
         for (int i=0; i<3; i++)
         {
             Control* sub = (Control*)control->SubAnim(i);
@@ -433,7 +433,7 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
     return NULL;
 }
 
-plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, hsBool camRot /* = false */, 
+plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, bool camRot /* = false */, 
                                                     float start /* = -1 */, float end /* = -1 */)
 {
     ISetSegRange(start, end);
@@ -630,7 +630,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
         {
             hsTArray<hsG3DSMaxKeyFrame> kfArray;
             IAddPartsKeys(control, &kfArray, node);
-            hsBool ignoreFOV = false;
+            bool ignoreFOV = false;
             for (int i = 0; i < node->NumAttachedComponents(); i++)
             {
                 if (node->GetAttachedComponent(i)->ClassID() == ANIMCAM_CMD_CID)
@@ -693,7 +693,7 @@ void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, p
                     fErrorMsg->Set();
                     return;
                 }
-                hsBool camRot = (ct == ctrlTypeRollAngle);
+                bool camRot = (ct == ctrlTypeRollAngle);
                 tmc->SetRotController(MakeRotController(control, node, camRot, start, end));
             }
             break;
@@ -721,7 +721,7 @@ void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, p
 //
 //
 //
-plLeafController* hsControlConverter::ICreateSimpleRotController(plMaxNode* node, Control* control, hsBool camRot)
+plLeafController* hsControlConverter::ICreateSimpleRotController(plMaxNode* node, Control* control, bool camRot)
 {
     hsGuardBegin("hsControlConverter::ICreateSimpleRotController");
 
@@ -743,7 +743,7 @@ plLeafController* hsControlConverter::ICreateSimpleScaleController(plMaxNode* no
 //
 //
 //
-plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Control* control, bool rotation, hsBool camRot)
+plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Control* control, bool rotation, bool camRot)
 {
     hsGuardBegin("hsControlConverter::ICreateQuatController");
 
@@ -978,7 +978,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         // Traverse all keys of controller
         //
         IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
-        hsBool mb=false;
+        bool mb=false;
         plMaxNode* xformParent = GetXformParent(node);
         for(i = startIdx; i <= endIdx; i++)
         {
@@ -1243,7 +1243,7 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 //
 // Create an hsKeyFrame from a 3DSMax key
 //
-int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, hsBool rotQuat)
+int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node, bool rotQuat)
 {
     hsGuardBegin("hsControlConverter::ICreateHSInterpKey");
 
@@ -1370,7 +1370,7 @@ int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, Tim
     hsGuardEnd;
 }
 
-uint8_t hsControlConverter::GetKeyType(Control* control, hsBool rotQuat)
+uint8_t hsControlConverter::GetKeyType(Control* control, bool rotQuat)
 {
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
@@ -1515,7 +1515,7 @@ plMaxNode* hsControlConverter::GetXformParent(plMaxNode* node)
 // ###########################################################################
 // Note that ForceWorldSpace Overrides ForceOrigin which Overrides ForceLocal
 // ###########################################################################
-hsBool hsControlConverter::ForceWorldSpace(plMaxNode* node)
+bool hsControlConverter::ForceWorldSpace(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::ForceWorldSpace");
 
@@ -1527,7 +1527,7 @@ hsBool hsControlConverter::ForceWorldSpace(plMaxNode* node)
 // ###########################################################################
 // Note that ForceWorldSpace Overrides ForceOrigin which Overrides ForceLocal
 // ###########################################################################
-hsBool hsControlConverter::ForceOrigin(plMaxNode* node)
+bool hsControlConverter::ForceOrigin(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::ForceOrigin");
 
@@ -1552,7 +1552,7 @@ hsBool hsControlConverter::ForceOrigin(plMaxNode* node)
 // This is significant because things that require ForceLocal because they are
 // animated or what-not, are still okay with ForceOrigin, but not v.v.
 // ###########################################################################
-hsBool hsControlConverter::ForceLocal(plMaxNode* node)
+bool hsControlConverter::ForceLocal(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::ForceLocal");
 
@@ -1591,7 +1591,7 @@ hsBool hsControlConverter::ForceLocal(plMaxNode* node)
 }
 
 
-hsBool hsControlConverter::IsAnimated(plMaxNode* node)
+bool hsControlConverter::IsAnimated(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::IsAnimated");
 
@@ -1600,7 +1600,7 @@ hsBool hsControlConverter::IsAnimated(plMaxNode* node)
     hsGuardEnd;
 }
 
-hsBool hsControlConverter::OwnsMaterialCopy(plMaxNode* node)
+bool hsControlConverter::OwnsMaterialCopy(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::OwnsMaterialCopy");
 
@@ -1608,7 +1608,7 @@ hsBool hsControlConverter::OwnsMaterialCopy(plMaxNode* node)
     hsGuardEnd;
 }
 
-hsBool hsControlConverter::HasFrameEvents(plMaxNode *node)
+bool hsControlConverter::HasFrameEvents(plMaxNode *node)
 {
     hsGuardBegin("hsSceneConverter::HasFrameEvents");
     
@@ -1634,7 +1634,7 @@ hsBool hsControlConverter::HasFrameEvents(plMaxNode *node)
     hsGuardEnd; 
 }
 
-hsBool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl)
+bool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl)
 {
     hsGuardBegin("hsControlConverter::GetControllerByName");
 
@@ -1911,7 +1911,7 @@ void hsControlConverter::Matrix3ToHsMatrix44(Matrix3* m3, hsMatrix44* hsM)
 //  Moved here after hsMeshConverter was obliterated. Only used in this class
 //  anyway...
 
-hsBool  hsControlConverter::IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeValue> &times )
+bool    hsControlConverter::IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeValue> &times )
 {
     hsGuardBegin( "hsControlConverter::GetEditableMeshKeyTimes" );
 
@@ -1939,7 +1939,7 @@ hsBool  hsControlConverter::IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeV
 //  Moved here after hsMeshConverter was obliterated. Only used in this class
 //  anyway...
 
-hsBool  hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times )
+bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times )
 {
     hsGuardBegin( "hsControlConverter::GetGeomKeyTimes" );
 
@@ -2009,7 +2009,7 @@ void    hsControlConverter::IGetGeomKeyTimesRecur( Animatable *anim, Tab<TimeVal
 //  Moved here after hsMeshConverter was obliterated. Only used in this class
 //  anyway...
 
-hsBool  hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim )
+bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim )
 {
     hsGuardBegin( "hsControlConverter::IGetSubAnimByName" );
 

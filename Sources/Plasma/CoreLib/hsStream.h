@@ -48,9 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "plString.h"
 
-namespace hsPackFileSys {
-struct FileEntry;
-}
 
 // Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
 // These streams log their reads to an event list
@@ -77,32 +74,28 @@ enum {
     kEolnCode = '\n',
     kComment = '#'
     };
-enum  VDB_Type  {// Virtual Database type
-    kVDB_GroupObject,
-    kVDB_Mesh
-    };
 protected:
     uint32_t      fBytesRead;
     uint32_t      fPosition;
 
-    hsBool      IsTokenSeparator(char c);
+    bool      IsTokenSeparator(char c);
 public:
                 hsStream() : fBytesRead(0), fPosition(0) {}
     virtual     ~hsStream();
 
-    virtual hsBool  Open(const char *, const char * = "rb")=0;
-    virtual hsBool  Open(const wchar_t *, const wchar_t * = L"rb")=0;
-    virtual hsBool  Close()=0;
-    virtual hsBool  AtEnd();
+    virtual bool      Open(const char *, const char * = "rb")=0;
+    virtual bool      Open(const wchar_t *, const wchar_t * = L"rb")=0;
+    virtual bool      Close()=0;
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void * buffer) = 0;
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer) = 0;
-    virtual void    Skip(uint32_t deltaByteCount) = 0;
-    virtual void    Rewind() = 0;
-    virtual void    FastFwd();
+    virtual void      Skip(uint32_t deltaByteCount) = 0;
+    virtual void      Rewind() = 0;
+    virtual void      FastFwd();
     virtual uint32_t  GetPosition() const;
-    virtual void    SetPosition(uint32_t position);
-    virtual void    Truncate();
-    virtual void    Flush() {}
+    virtual void      SetPosition(uint32_t position);
+    virtual void      Truncate();
+    virtual void      Flush() {}
 
 #ifdef STREAM_LOGGER
     // Logging Reads & Skips
@@ -121,14 +114,14 @@ public:
 
     // Optimization for small Reads
     virtual uint8_t ReadByte();
-    virtual hsBool  Read4Bytes(void *buffer);   // Reads 4 bytes,  return true if success 
-    virtual hsBool  Read8Bytes(void *buffer);   // Reads 8 bytes,  return true if success 
-    virtual hsBool  Read12Bytes(void *buffer);  // Reads 12 bytes, return true if success
+    virtual bool    Read4Bytes(void *buffer);   // Reads 4 bytes,  return true if success 
+    virtual bool    Read8Bytes(void *buffer);   // Reads 8 bytes,  return true if success 
+    virtual bool    Read12Bytes(void *buffer);  // Reads 12 bytes, return true if success
 
     virtual uint32_t  GetEOF();
     uint32_t          GetSizeLeft();
     virtual void      CopyToMem(void* mem);
-    virtual hsBool    IsCompressed() { return false; }
+    virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const char cstring[]);
     uint32_t        WriteString(const plString & string) { return WriteString(_TEMP_CONVERT_TO_CONST_CHAR(string)); }
@@ -150,21 +143,23 @@ public:
     plString        ReadSafeString_TEMP();
     plString        ReadSafeWString_TEMP();
 
-    hsBool          GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
-    hsBool          ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
+    bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
+    bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     
-    bool            Readbool();
-    hsBool          ReadBool();
-    void            ReadBool(int count, hsBool values[]);
+    // Reads a 4-byte BOOLean
+    bool            ReadBOOL();
+    // Reads a 1-byte boolean
+    bool            ReadBool();
+    void            ReadBool(int count, bool values[]);
     uint16_t        ReadLE16();
     void            ReadLE16(int count, uint16_t values[]);
     uint32_t        ReadLE32();
     void            ReadLE32(int count, uint32_t values[]);
     uint32_t        ReadBE32();
 
-    void            Writebool(bool value);
-    void            WriteBool(hsBool value);
-    void            WriteBool(int count, const hsBool values[]);
+    void            WriteBOOL(bool value);
+    void            WriteBool(bool value);
+    void            WriteBool(int count, const bool values[]);
     void            WriteByte(uint8_t value);
     void            WriteLE16(uint16_t value);
     void            WriteLE16(int count, const uint16_t values[]);
@@ -285,9 +280,6 @@ public:
     void            WriteLE(uint32_t* tag, uint32_t size) { WriteLEAtom(*tag, size); }
     void            ReadLE(uint32_t* tag, uint32_t *size) { *tag = ReadLEAtom(size); }
     /* Overloaded  End */
-    virtual void    VirtualSetPosition(uint32_t pos, VDB_Type ){ SetPosition(pos); };
-    virtual hsPackFileSys::FileEntry *GetFileEntry() { return nil; }  // Streams from Packfiles can return a FileEntry
-
 };
 
 class hsStreamable {
@@ -302,18 +294,18 @@ class hsFileStream: public hsStream
     uint32_t      fRef;
 
 public:
-                hsFileStream();
-    virtual     ~hsFileStream();
-    virtual hsBool  Open(const char *name, const char *mode = "rb");
-    virtual hsBool  Open(const wchar_t *name, const wchar_t *mode = L"rb");
-    virtual hsBool  Close();
+                  hsFileStream();
+    virtual       ~hsFileStream();
+    virtual bool  Open(const char *name, const char *mode = "rb");
+    virtual bool  Open(const wchar_t *name, const wchar_t *mode = L"rb");
+    virtual bool  Close();
 
-    virtual hsBool  AtEnd();
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void* buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      Truncate();
 
     virtual uint32_t  GetFileRef();
     virtual void    SetFileRef(uint32_t refNum);
@@ -327,19 +319,19 @@ class hsUNIXStream: public hsStream
 public:
     hsUNIXStream(): fRef(0), fBuff(nil) {}
     ~hsUNIXStream();
-    virtual hsBool  Open(const char* name, const char* mode = "rb");
-    virtual hsBool  Open(const wchar_t *name, const wchar_t *mode = L"rb");
-    virtual hsBool  Close();
+    virtual bool  Open(const char* name, const char* mode = "rb");
+    virtual bool  Open(const wchar_t *name, const wchar_t *mode = L"rb");
+    virtual bool  Close();
 
-    virtual hsBool  AtEnd();
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void* buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    SetPosition(uint32_t position);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual void    Truncate();
-    virtual void    Flush();
+    virtual void      SetPosition(uint32_t position);
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      FastFwd();
+    virtual void      Truncate();
+    virtual void      Flush();
 
     FILE*           GetFILE() { return fRef; }
     void            SetFILE(FILE* file) { fRef = file; }
@@ -362,17 +354,17 @@ public:
     plReadOnlySubStream(): fBase( nil ), fOffset( 0 ), fLength( 0 ) {}
     ~plReadOnlySubStream();
 
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
-    void    Open( hsStream *base, uint32_t offset, uint32_t length );
-    virtual hsBool  Close() { fBase = nil; fOffset = 0; fLength = 0; return true; }
-    virtual hsBool  AtEnd();
+    virtual bool      Open(const char *, const char *)    { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
+    virtual bool      Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
+    void              Open( hsStream *base, uint32_t offset, uint32_t length );
+    virtual bool      Close() { fBase = nil; fOffset = 0; fLength = 0; return true; }
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void* buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      FastFwd();
+    virtual void      Truncate();
 
     virtual uint32_t  GetEOF();
 };
@@ -385,17 +377,17 @@ public:
                 hsRAMStream(uint32_t chunkSize);
     virtual     ~hsRAMStream();
 
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Close()             { hsAssert(0, "hsRAMStream::Close  NotImplemented"); return false; }
+    virtual bool  Open(const char *, const char *)    { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
+    virtual bool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
+    virtual bool  Close()             { hsAssert(0, "hsRAMStream::Close  NotImplemented"); return false; }
 
     
-    virtual hsBool  AtEnd();
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      Truncate();
 
     virtual uint32_t  GetEOF();
     virtual void    CopyToMem(void* mem);
@@ -406,18 +398,18 @@ public:
 class hsNullStream : public hsStream {
 public:
 
-    virtual hsBool  Open(const char *, const char *)    { return true; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { return true; }
-    virtual hsBool  Close()             { return true; }
+    virtual bool      Open(const char *, const char *)    { return true; }
+    virtual bool      Open(const wchar_t *, const wchar_t *)  { return true; }
+    virtual bool      Close()             { return true; }
 
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);  // throw's exception
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      Truncate();
 
-    uint32_t      GetBytesWritten() const { return fBytesRead; }
-    void            Reset( ) { fBytesRead = 0;   }
+    uint32_t          GetBytesWritten() const { return fBytesRead; }
+    void              Reset( ) { fBytesRead = 0;   }
 };
 
 // read only mem stream
@@ -430,19 +422,19 @@ public:
     hsReadOnlyStream(int size, const void* data) { Init(size, data); }
     hsReadOnlyStream() {}
 
-    virtual void    Init(int size, const void* data) { fStart=((char*)data); fData=((char*)data); fStop=((char*)data + size); }
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Close()             { hsAssert(0, "hsReadOnlyStream::Close  NotImplemented"); return false; }
-    virtual hsBool  AtEnd();
+    virtual void      Init(int size, const void* data) { fStart=((char*)data); fData=((char*)data); fStop=((char*)data + size); }
+    virtual bool      Open(const char *, const char *)    { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }
+    virtual bool      Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }
+    virtual bool      Close() { hsAssert(0, "hsReadOnlyStream::Close  NotImplemented"); return false; }
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);    // throws exception
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      Truncate();
     virtual uint32_t  GetBytesRead() const { return fBytesRead; }
     virtual uint32_t  GetEOF() { return (uint32_t)(fStop-fStart); }
-    virtual void    CopyToMem(void* mem);
+    virtual void      CopyToMem(void* mem);
 };
 
 // write only mem stream
@@ -451,9 +443,9 @@ public:
     hsWriteOnlyStream(int size, const void* data) : hsReadOnlyStream(size, data) {}
     hsWriteOnlyStream() {}
 
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Close()             { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
+    virtual bool      Open(const char *, const char *)    { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
+    virtual bool      Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
+    virtual bool      Close() { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);  // throws exception
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);    
     virtual uint32_t  GetBytesRead() const { return 0; }
@@ -472,16 +464,16 @@ public:
     hsQueueStream(int32_t size);
     ~hsQueueStream();
 
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
-    virtual hsBool  Close()             { hsAssert(0, "hsQueueStream::Close  NotImplemented"); return false; }
+    virtual bool  Open(const char *, const char *)    { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
+    virtual bool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
+    virtual bool  Close() { hsAssert(0, "hsQueueStream::Close  NotImplemented"); return false; }
 
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual hsBool  AtEnd();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      FastFwd();
+    virtual bool      AtEnd();
 
     uint32_t GetSize() { return fSize; }
     const char* GetQueue() { return fQueue; }
@@ -501,7 +493,7 @@ class hsBufferedStream : public hsStream
     // a partial block at the end of the file.
     uint32_t fBufferLen;
 
-    hsBool fWriteBufferUsed;
+    bool fWriteBufferUsed;
 
 #ifdef HS_DEBUGGING
     // For doing statistics on how efficient we are
@@ -515,16 +507,16 @@ public:
     hsBufferedStream();
     virtual ~hsBufferedStream();
 
-    virtual hsBool  Open(const char* name, const char* mode = "rb");
-    virtual hsBool  Open(const wchar_t* name, const wchar_t* mode = L"rb");
-    virtual hsBool  Close();
+    virtual bool  Open(const char* name, const char* mode = "rb");
+    virtual bool  Open(const wchar_t* name, const wchar_t* mode = L"rb");
+    virtual bool  Close();
 
-    virtual hsBool  AtEnd();
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void* buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      Truncate();
     virtual uint32_t  GetEOF();
 
     FILE*   GetFileRef();

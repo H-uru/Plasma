@@ -58,7 +58,7 @@ pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(objkey)
 {
 }
 
-hsBool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
+bool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIValueCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -161,7 +161,7 @@ pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(objkey)
 {
 }
 
-hsBool pyGUIControlKnob::IsGUIControlKnob(pyKey& gckey)
+bool pyGUIControlKnob::IsGUIControlKnob(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIKnobCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -181,7 +181,7 @@ pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue
 {
 }
 
-hsBool pyGUIControlUpDownPair::IsGUIControlUpDownPair(pyKey& gckey)
+bool pyGUIControlUpDownPair::IsGUIControlUpDownPair(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIUpDownPairMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -201,7 +201,7 @@ pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(obj
 {
 }
 
-hsBool pyGUIControlProgress::IsGUIControlProgress(pyKey& gckey)
+bool pyGUIControlProgress::IsGUIControlProgress(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIProgressCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;

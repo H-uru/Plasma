@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsBitVector.h"
 
-void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, hsBool blockRGB )
+void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, bool blockRGB )
 {
     hsAssert( ( fCmd & kColorCmds ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~kColorCmds;
@@ -60,7 +60,7 @@ void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, hsBool blockRGB )
     fBlockRGB = blockRGB;
 }
 
-void    plDynamicTextMsg::SetFont( const char *face, int16_t size, hsBool isBold )
+void    plDynamicTextMsg::SetFont( const char *face, int16_t size, bool isBold )
 {
     hsAssert( ( fCmd & ( kPosCmds | kStringCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kStringCmds | kFlagCmds );
@@ -178,7 +178,7 @@ void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrap
     fBottom = wrapHeight;
 }
 
-void    plDynamicTextMsg::DrawImage( int16_t x, int16_t y, plKey &image, hsBool respectAlpha )
+void    plDynamicTextMsg::DrawImage( int16_t x, int16_t y, plKey &image, bool respectAlpha )
 {
     hsAssert( ( fCmd & ( kPosCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kFlagCmds );
@@ -190,7 +190,7 @@ void    plDynamicTextMsg::DrawImage( int16_t x, int16_t y, plKey &image, hsBool 
     fFlags = (uint32_t)respectAlpha;
 }
 
-void    plDynamicTextMsg::DrawClippedImage( int16_t x, int16_t y, plKey &image, uint16_t clipX, uint16_t clipY, uint16_t clipWidth, uint16_t clipHeight, hsBool respectAlpha )
+void    plDynamicTextMsg::DrawClippedImage( int16_t x, int16_t y, plKey &image, uint16_t clipX, uint16_t clipY, uint16_t clipWidth, uint16_t clipHeight, bool respectAlpha )
 {
     hsAssert( ( fCmd & ( kPosCmds | kFlagCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kFlagCmds | kRectCmds );
@@ -227,7 +227,7 @@ void    plDynamicTextMsg::Read( hsStream *s, hsResMgr *mgr )
 
     s->ReadLE( &fFlags );
 
-    s->ReadLE( &fBlockRGB );
+    fBlockRGB = s->ReadBOOL();
     s->ReadLE( &fLineSpacing );
 }
 void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr ) 
@@ -258,7 +258,7 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
 
     s->WriteLE( fFlags );
 
-    s->WriteLE( fBlockRGB );
+    s->WriteBOOL(fBlockRGB);
     s->WriteLE( fLineSpacing );
 }
 
@@ -312,7 +312,7 @@ void plDynamicTextMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kDynTextMsgFlags))
         s->ReadLE( &fFlags );
     if (contentFlags.IsBitSet(kDynTextMsgBlockRGB))
-        s->ReadLE( &fBlockRGB );
+        fBlockRGB = s->ReadBOOL();
     if (contentFlags.IsBitSet(kDynTextMsgLineSpacing))
         s->ReadLE( &fLineSpacing );
 }
@@ -368,7 +368,7 @@ void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE( fFlags );
 
     // kDynTextMsgBlockRGB
-    s->WriteLE( fBlockRGB );
+    s->WriteBOOL( fBlockRGB );
     // kDynTextMsgLineSpacing
     s->WriteLE( fLineSpacing );
 

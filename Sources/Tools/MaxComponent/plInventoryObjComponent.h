@@ -62,10 +62,10 @@ class plMaxNode;
 
         member functions:
             
-            hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+            bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-            hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-            hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+            bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+            bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
             virtual void AddReceiverKey(plKey pKey);
             virtual plKey GetLogicKey(plMaxNode* node);
@@ -100,7 +100,7 @@ public:
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
 
-    //! plInventoryObjComponent PreConvert, takes in two variables and return a hsBool.
+    //! plInventoryObjComponent PreConvert, takes in two variables and return a bool.
     /*! 
         Calls the function MaybeMakeLocal() and Sets Drawable to false.
 
@@ -108,14 +108,14 @@ public:
         \param node a plMaxNode ptr.
         \param pErrMsg a pErrMsg ptr.
 
-        \return A hsBool expressing the success of the operation.
+        \return A bool expressing the success of the operation.
         \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
     */
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void AddReceiverKey(plKey key, plMaxNode* node=nil);
     virtual plKey GetLogicKey(plMaxNode* node);

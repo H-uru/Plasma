@@ -80,14 +80,14 @@ plScalarChannel::~plScalarChannel()
 
 // value --------------------------------------------------------
 // ------
-const float & plScalarChannel::Value(double time, hsBool peek)
+const float & plScalarChannel::Value(double time, bool peek)
 {
     return fResult;
 }
 
 // value --------------------------------------------------------------
 // ------
-void plScalarChannel::Value(float &scalar, double time, hsBool peek)
+void plScalarChannel::Value(float &scalar, double time, bool peek)
 {
     scalar = Value(time, peek);
 }
@@ -196,13 +196,13 @@ plScalarTimeScale::~plScalarTimeScale()
 {
 }
 
-hsBool plScalarTimeScale::IsStoppedAt(double time)
+bool plScalarTimeScale::IsStoppedAt(double time)
 {
     return fTimeSource->IsStoppedAt(time);
 }
 
 // VALUE
-const float & plScalarTimeScale::Value(double time, hsBool peek)
+const float & plScalarTimeScale::Value(double time, bool peek)
 {
     fResult = fChannelIn->Value(fTimeSource->Value(time, peek));
 
@@ -263,7 +263,7 @@ plScalarBlend::~plScalarBlend()
 
 // IsStoppedAt -------------------------------
 // ------------
-hsBool plScalarBlend::IsStoppedAt(double time)
+bool plScalarBlend::IsStoppedAt(double time)
 {
     float blend = fChannelBias->Value(time);
     if (blend == 0)
@@ -276,7 +276,7 @@ hsBool plScalarBlend::IsStoppedAt(double time)
 
 // Value ------------------------------------------------------
 // ------
-const float & plScalarBlend::Value(double time, hsBool peek)
+const float & plScalarBlend::Value(double time, bool peek)
 {
     float curBlend = fChannelBias->Value(time, peek);
     if(curBlend == 0) {
@@ -353,14 +353,14 @@ plScalarControllerChannel::~plScalarControllerChannel()
 
 // Value ------------------------------------------------------------------
 // ------
-const float & plScalarControllerChannel::Value(double time, hsBool peek)
+const float & plScalarControllerChannel::Value(double time, bool peek)
 {
     return Value(time, peek, nil);
 }
 
 // Value ------------------------------------------------------------------
 // ------
-const float & plScalarControllerChannel::Value(double time, hsBool peek,
+const float & plScalarControllerChannel::Value(double time, bool peek,
                                                   plControllerCacheInfo *cache)
 {       
     fController->Interp((float)time, &fResult, cache);
@@ -479,14 +479,14 @@ plATCChannel::~plATCChannel()
 
 // IsStoppedAt ------------------------------
 // ------------
-hsBool plATCChannel::IsStoppedAt(double time)
+bool plATCChannel::IsStoppedAt(double time)
 {
     return fConvert->IsStoppedAt(time);
 }
 
 // Value -----------------------------------------------------
 // ------
-const float & plATCChannel::Value(double time, hsBool peek)
+const float & plATCChannel::Value(double time, bool peek)
 {
     fResult = (peek ? fConvert->WorldToAnimTimeNoUpdate(time) : fConvert->WorldToAnimTime(time));
     return fResult;
@@ -519,14 +519,14 @@ plScalarSDLChannel::~plScalarSDLChannel()
 
 // IsStoppedAt ------------------------------------
 // ------------
-hsBool plScalarSDLChannel::IsStoppedAt(double time) 
+bool plScalarSDLChannel::IsStoppedAt(double time) 
 { 
     return false; 
 }
 
 // Value -----------------------------------------------------------
 // ------
-const float & plScalarSDLChannel::Value(double time, hsBool peek)
+const float & plScalarSDLChannel::Value(double time, bool peek)
 {
     if (fVar)
         fVar->Get(&fResult);

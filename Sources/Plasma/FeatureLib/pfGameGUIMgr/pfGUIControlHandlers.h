@@ -96,7 +96,7 @@ class pfGUICtrlProcObject
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
         void    IncRef( void ) { fRefCnt++; }
-        hsBool  DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
+        bool    DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
 };
 
 //// pfGUICtrlProcWriteableObject ////////////////////////////////////////////

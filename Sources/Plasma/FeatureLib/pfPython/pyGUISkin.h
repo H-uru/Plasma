@@ -74,13 +74,13 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUISkin(pyKey& gckey);
+    static bool IsGUISkin(pyKey& gckey);
 
     void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
 
     // override the equals to operator
-    hsBool operator==(const pyGUISkin &gdobj) const;
-    hsBool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
+    bool operator==(const pyGUISkin &gdobj) const;
+    bool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
     virtual plKey getObjKey();

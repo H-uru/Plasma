@@ -59,7 +59,7 @@ class cyDraw
 protected:
     plKey           fSender;
     hsTArray<plKey> fRecvr;
-    hsBool          fNetForce;
+    bool            fNetForce;
 
     cyDraw(plKey sender=nil,const plKey recvr=nil);
 public:
@@ -74,12 +74,12 @@ public:
     // setters
     void SetSender(plKey &sender);
     void AddRecvr(plKey &recvr);
-    virtual void SetNetForce(hsBool state);
+    void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable draw
-    virtual void EnableT(hsBool state);
-    virtual void Enable();
-    virtual void Disable();
+    virtual void EnableT(bool state);
+    virtual void Enable() { EnableT(true); }
+    virtual void Disable() { EnableT(false); }
 };
 
 #endif  // cyDraw_h

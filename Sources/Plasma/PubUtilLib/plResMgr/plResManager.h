@@ -78,7 +78,7 @@ public:
     //  Load and Unload
     //---------------------------
     virtual void        Load  (const plKey& objKey);        // places on list to be loaded
-    virtual hsBool      Unload(const plKey& objKey);        // Unregisters (deletes) an object, Return true if successful
+    virtual bool        Unload(const plKey& objKey);        // Unregisters (deletes) an object, Return true if successful
     virtual plKey       CloneKey(const plKey& objKey);
 
     //---------------------------
@@ -93,11 +93,11 @@ public:
     //---------------------------
     //  Establish reference linkage 
     //---------------------------
-    virtual hsBool AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags);
-    virtual hsBool AddViaNotify(plRefMsg* msg, plRefFlags::Type flags); // msg->fRef->GetKey() == sentKey
+    virtual bool   AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags);
+    virtual bool   AddViaNotify(plRefMsg* msg, plRefFlags::Type flags); // msg->fRef->GetKey() == sentKey
 
-    virtual hsBool SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags);
-    virtual hsBool SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags);
+    virtual bool   SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags);
+    virtual bool   SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags);
 
     //---------------------------
     //  Reding and Writing keys
@@ -142,22 +142,22 @@ public:
     // read causes all the other objects to be read before it returns.  In some
     // cases though (mostly just the texture file), this doesn't work.  In that
     // case, we just want to force it to stay open until we're done reading the age.
-    void KeepPageOpen(const plLocation& page, hsBool keepOpen);
+    void KeepPageOpen(const plLocation& page, bool keepOpen);
 
     // We're on the way down, act accordingly.
     virtual void BeginShutdown();
 
     // Determines whether the time to read each object is dumped to a log
-    void LogReadTimes(hsBool logReadTimes);
+    void LogReadTimes(bool logReadTimes);
 
     // All keys version
-    hsBool IterateKeys(plRegistryKeyIterator* iterator);    
+    bool IterateKeys(plRegistryKeyIterator* iterator);    
     // Single page version
-    hsBool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
+    bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
-    hsBool IteratePages(plRegistryPageIterator* iterator, const char* ageToRestrictTo = nil);
+    bool IteratePages(plRegistryPageIterator* iterator, const char* ageToRestrictTo = nil);
     // Iterate through ALL pages, loaded or not
-    hsBool IterateAllPages(plRegistryPageIterator* iterator);
+    bool IterateAllPages(plRegistryPageIterator* iterator);
 
     // Helpers for key iterators
     void LoadPageKeys(plRegistryPageNode* pageNode);
@@ -167,7 +167,7 @@ public:
     plRegistryPageNode* FindPage(const char* age, const char* page) const;
 
     // Runs through all the pages and verifies that the data versions are good
-    hsBool VerifyPages();
+    bool VerifyPages();
 
 protected:
     friend class hsKeyedObject;
@@ -175,8 +175,8 @@ protected:
     friend class plResManagerHelper;
 
     virtual plKey   ReRegister(const plString& nm, const plUoid& uoid);
-    virtual hsBool  ReadObject(plKeyImp* key); // plKeys call this when needed
-    virtual hsBool  IReadObject(plKeyImp* pKey, hsStream *stream);  
+    virtual bool    ReadObject(plKeyImp* key); // plKeys call this when needed
+    virtual bool    IReadObject(plKeyImp* pKey, hsStream *stream);  
 
     plCreatable*    IReadCreatable(hsStream* s) const;
     plKey           ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t cloneID);
@@ -184,19 +184,19 @@ protected:
     virtual void    IKeyReffed(plKeyImp* key);
     virtual void    IKeyUnreffed(plKeyImp* key);
 
-    virtual hsBool  IReset();   
-    virtual hsBool  IInit();
+    virtual bool    IReset();   
+    virtual bool    IInit();
     virtual void    IShutdown();
 
-    void    IPageOutSceneNodes(hsBool forceAll);
+    void    IPageOutSceneNodes(bool forceAll);
     void    IDropAllAgeKeys();
 
     hsKeyedObject* IGetSharedObject(plKeyImp* pKey);
 
-    void IUnloadPageKeys(plRegistryPageNode* pageNode, hsBool dontClear = false);
+    void IUnloadPageKeys(plRegistryPageNode* pageNode, bool dontClear = false);
 
-    hsBool IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, hsBool conflictingSeqNums);
-    hsBool IWarnNewerPages(hsTArray<plRegistryPageNode*>& newerPages);
+    bool IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums);
+    bool IWarnNewerPages(hsTArray<plRegistryPageNode*>& newerPages);
 
     void ILockPages();
     void IUnlockPages();
@@ -208,11 +208,11 @@ protected:
 
     plRegistryPageNode* CreatePage(const plLocation& location, const char* age, const char* page);
 
-    hsBool          fInited;
-    uint16_t          fPageOutHint;
+    bool          fInited;
+    uint16_t      fPageOutHint;
 
     // True if we're reading in an object. We only read one object at a time
-    hsBool          fReadingObject;
+    bool               fReadingObject;
     std::vector<plKey> fQueuedReads;
 
     std::string fDataPath;
@@ -229,10 +229,10 @@ protected:
 
     plResManagerHelper  *fMyHelper;
 
-    hsBool fLogReadTimes;
+    bool    fLogReadTimes;
 
-    uint8_t fPageListLock;    // Number of locks on the page lists.  If it's greater than zero, they can't be modified
-    hsBool fPagesNeedCleanup;   // True if something modified the page lists while they were locked.
+    uint8_t fPageListLock;     // Number of locks on the page lists.  If it's greater than zero, they can't be modified
+    bool    fPagesNeedCleanup; // True if something modified the page lists while they were locked.
 
     typedef std::set<plRegistryPageNode*> PageSet;
     typedef std::map<plLocation, plRegistryPageNode*> PageMap;

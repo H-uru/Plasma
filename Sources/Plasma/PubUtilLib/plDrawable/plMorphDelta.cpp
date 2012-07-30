@@ -210,7 +210,7 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
             // For position, normal, color and all uvws
             // Calc del and delLenSq
             // If any delLenSq big enough, set nonZero to true
-            hsBool nonZero = false;
+            bool nonZero = false;
 
             // These are actually min del SQUARED.
             plConst(float) kMinDelPos(1.e-4f); // From Budtpueller's Handbook of Constants

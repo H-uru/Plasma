@@ -621,7 +621,7 @@ void    plAgeDescInterface::IInvalidateCheckOutIndicator( void )
     RedrawWindow( fhDlg, &r, nil, RDW_INVALIDATE | RDW_ERASE );
 }
 
-hsBool  plAgeDescInterface::IMakeSureCheckedIn( void )
+bool    plAgeDescInterface::IMakeSureCheckedIn( void )
 {
 #ifdef MAXASS_AVAILABLE
     int result;
@@ -1120,7 +1120,7 @@ uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
     return searchSeq;
 }
 
-void plAgeDescInterface::ISaveCurAge( const char *path, hsBool checkSeqNum )
+void plAgeDescInterface::ISaveCurAge( const char *path, bool checkSeqNum )
 {
     hsUNIXStream s;
     if( !s.Open( path, "wt" ) )
@@ -1200,7 +1200,7 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
     }
 }
 
-void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
+void plAgeDescInterface::ILoadAge( const char *path, bool checkSeqNum )
 {
     ISetControlDefaults();
     
@@ -1282,7 +1282,7 @@ void plAgeDescInterface::ILoadAge( const char *path, hsBool checkSeqNum )
     }
 }
 
-uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( hsBool getReservedPrefix )
+uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix )
 {
     int32_t               searchSeq = getReservedPrefix ? -1 : 1;
     hsTArray<char *>    ageList;

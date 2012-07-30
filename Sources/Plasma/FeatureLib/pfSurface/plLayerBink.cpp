@@ -136,7 +136,7 @@ plLayerBink::~plLayerBink()
 #endif
 }
 
-hsBool plLayerBink::IInit()
+bool plLayerBink::IInit()
 {
 #ifdef BINK_SDK_AVAILABLE
     SetBink(BinkOpen(fMovieName, BINKALPHA));
@@ -161,7 +161,7 @@ int32_t plLayerBink::ISecsToFrame(float secs)
     return frame;
 }
 
-hsBool plLayerBink::IGetCurrentFrame()
+bool plLayerBink::IGetCurrentFrame()
 {
     if (!GetBink())
     {
@@ -206,7 +206,7 @@ hsBool plLayerBink::IGetCurrentFrame()
     return false;
 }
 
-hsBool plLayerBink::IRelease()
+bool plLayerBink::IRelease()
 {
 #ifdef BINK_SDK_AVAILABLE
     if(GetBink())

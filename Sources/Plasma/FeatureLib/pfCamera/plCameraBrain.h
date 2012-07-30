@@ -103,8 +103,8 @@ public:
 
     const plCameraModifier1* GetCamera() { return fCamera; }
 
-    virtual void        Update(hsBool forced = false);
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual void        Update(bool forced = false);
+    virtual bool        MsgReceive(plMessage* msg);
 
     virtual plSceneObject*  GetSubject();
     virtual void SetSubject(plSceneObject* sub);
@@ -116,15 +116,15 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool  GetFaded() { return false; }
-    virtual hsBool  SetFaded(hsBool b) { return false; }
+    virtual bool    GetFaded() { return false; }
+    virtual bool    SetFaded(bool b) { return false; }
 
-    hsBool  HasMovementFlag(int f) { return fMoveFlags.IsBitSet(f); }
+    bool    HasMovementFlag(int f) { return fMoveFlags.IsBitSet(f); }
     void    SetMovementFlag(int f); 
     void    ClearMovementFlag(int which) { fMoveFlags.ClearBit( which ); }
     void    SetFlags(int i) { fFlags.SetBit(i); }
     void    ClearFlags(int which) { fFlags.ClearBit( which ); }
-    hsBool  HasFlag(int f) { return fFlags.IsBitSet(f); }
+    bool    HasFlag(int f) { return fFlags.IsBitSet(f); }
 
     void    SetGoal(hsPoint3 pt) { fGoal = pt; }
     void    SetPOAGoal(hsPoint3 pt) { fPOAGoal = pt; }
@@ -141,7 +141,7 @@ public:
     hsPoint3 GetGoal() { return fGoal; }
     hsPoint3 GetPOAGoal() { return fPOAGoal; }
 
-    virtual void Push(hsBool recenter = true);
+    virtual void Push(bool recenter = true);
     virtual void Pop();
     
     float GetVelocity()      { return fVelocity; }
@@ -182,7 +182,7 @@ protected:
                          double elapsedTime);
 
     float IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime);
-    hsBool   IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
+    bool     IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
 
     plCameraModifier1*  fCamera;
     plKey               fSubjectKey;
@@ -225,11 +225,11 @@ class plCameraBrain1_Drive : public plCameraBrain1
 protected:
     hsPoint3    fDesiredPosition;
     hsPoint3    fFacingTarget;
-    hsBool      bUseDesiredFacing;
+    bool        bUseDesiredFacing;
     float    deltaX;
     float    deltaY;
-    hsBool      bDisregardY; // these are here to prevent
-    hsBool      bDisregardX; // the camera from jumping when the mouse cursor recenters / wraps around.
+    bool        bDisregardY; // these are here to prevent
+    bool        bDisregardX; // the camera from jumping when the mouse cursor recenters / wraps around.
     hsVector3   fUp;
 
 public:
@@ -243,9 +243,9 @@ public:
     CLASSNAME_REGISTER( plCameraBrain1_Drive );
     GETINTERFACE_ANY( plCameraBrain1_Drive, plCameraBrain1 );
 
-    virtual void        Update(hsBool forced = false);
-    virtual hsBool      MsgReceive(plMessage* msg);
-    virtual void Push(hsBool recenter = true);
+    virtual void        Update(bool forced = false);
+    virtual bool        MsgReceive(plMessage* msg);
+    virtual void Push(bool recenter = true);
     virtual void Pop();
 
     static float fAcceleration;
@@ -267,8 +267,8 @@ public:
     GETINTERFACE_ANY( plCameraBrain1_Avatar, plCameraBrain1 );
 
 
-    virtual void        Update(hsBool forced = false);
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual void        Update(bool forced = false);
+    virtual bool        MsgReceive(plMessage* msg);
     
     virtual void        CalculatePosition();                
     hsVector3   GetOffset() { return fOffset; } 
@@ -277,21 +277,21 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     
-    virtual hsBool  GetFaded() { return fFaded; }
-    virtual hsBool  SetFaded(hsBool b) { fFaded = b; return true; }
+    virtual bool    GetFaded() { return fFaded; }
+    virtual bool    SetFaded(bool b) { fFaded = b; return true; }
 
     virtual void Pop();
-    virtual void Push(hsBool recenter = true);
+    virtual void Push(bool recenter = true);
 
 protected:
-    void ISendFadeMsg(hsBool fade);
+    void ISendFadeMsg(bool fade);
     void IHandleObstacle();
 
     hsPoint3            fHitPoint;
     hsVector3           fOffset;
     hsVector3           fHitNormal;
-    hsBool              bObscured;
-    hsBool              fFaded;
+    bool                bObscured;
+    bool                fFaded;
     plSceneObject*      fObstacle;
 };
 
@@ -307,12 +307,12 @@ public:
     GETINTERFACE_ANY( plCameraBrain1_FirstPerson, plCameraBrain1_Avatar );
     
     virtual void CalculatePosition();               
-    virtual void Push(hsBool recenter = true);
+    virtual void Push(bool recenter = true);
     virtual void Pop();
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual bool        MsgReceive(plMessage* msg);
     
     // for console hack
-    static hsBool fDontFade;
+    static bool fDontFade;
 protected:
     plSceneObject* fPosNode;
     
@@ -333,9 +333,9 @@ public:
 
     void SetTargetPoint(plCameraModifier1* pt) { fTargetPoint = pt; }
 
-    virtual void    Update(hsBool forced = false);
+    virtual void    Update(bool forced = false);
     void            CalculatePosition();                
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
@@ -382,9 +382,9 @@ public:
     
     virtual void Read(hsStream *stream, hsResMgr* mgr);
     virtual void Write(hsStream *stream, hsResMgr* mgr);
-    virtual hsPoint3    MoveTowardsFromGoal(const hsPoint3* fromGoal, double secs, hsBool warp = false);
-    virtual void        Update(hsBool forced = false);
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual hsPoint3    MoveTowardsFromGoal(const hsPoint3* fromGoal, double secs, bool warp = false);
+    virtual void        Update(bool forced = false);
+    virtual bool        MsgReceive(plMessage* msg);
     
     uint32_t GetCircleFlags() { return fCircleFlags; }
     hsPoint3* GetCenter() { return &fCenter; }      // use GetCenterPoint
@@ -396,7 +396,7 @@ public:
     void SetCircleFlags(uint32_t f) { fCircleFlags|=f; }
     void SetCenter(hsPoint3* ctr) { fCenter = *ctr; }       // Circle lies in the plane z = ctr->z
     void SetRadius(float radius) {   fRadius = radius; }
-    void SetFarCircleCam(hsBool farType) { if (farType) fCircleFlags |= kFarthest; else fCircleFlags &= ~kFarthest; }
+    void SetFarCircleCam(bool farType) { if (farType) fCircleFlags |= kFarthest; else fCircleFlags &= ~kFarthest; }
     void SetCenterObjectKey(plKey k);
     void SetPOAObject(plSceneObject* pObj) { fPOAObj = pObj; }
 

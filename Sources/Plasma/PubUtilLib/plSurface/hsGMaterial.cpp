@@ -159,7 +159,7 @@ uint32_t hsGMaterial::AddLayerViaNotify(plLayerInterface* layer)
     return idx;
 }
 
-void hsGMaterial::ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, hsBool piggyBack)
+void hsGMaterial::ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLay, bool piggyBack)
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     int i;
@@ -174,7 +174,7 @@ void hsGMaterial::ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLa
     SetLayer(newLay, i, piggyBack);
 }
 
-void hsGMaterial::RemoveLayer(plLayerInterface* lay, hsBool piggyBack)
+void hsGMaterial::RemoveLayer(plLayerInterface* lay, bool piggyBack)
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     int i;
@@ -190,14 +190,14 @@ void hsGMaterial::RemoveLayer(plLayerInterface* lay, hsBool piggyBack)
     layers.Remove(i);
 }
 
-void hsGMaterial::InsertLayer(plLayerInterface* layer, int32_t which, hsBool piggyBack)
+void hsGMaterial::InsertLayer(plLayerInterface* layer, int32_t which, bool piggyBack)
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
     layers.InsertAtIndex(which, layer);
 }
 
-void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, hsBool insert, hsBool piggyBack)
+void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, bool insert, bool piggyBack)
 {
     if( insert )
     {
@@ -310,17 +310,17 @@ void hsGMaterial::Init()
     Reset();
 }
 
-hsBool hsGMaterial::MsgReceive(plMessage* msg)
+bool hsGMaterial::MsgReceive(plMessage* msg)
 {
     plMatRefMsg* refMsg = plMatRefMsg::ConvertNoRef(msg);
     if( refMsg )
     {
         int which = refMsg->fWhich;
-        hsBool piggyBack = 0 != (refMsg->fType & plMatRefMsg::kPiggyBack);
+        bool piggyBack = 0 != (refMsg->fType & plMatRefMsg::kPiggyBack);
         plLayerInterface* lay= plLayerInterface::ConvertNoRef(refMsg->GetRef());
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
         {
-            hsBool insert = 0 != (refMsg->fType & plMatRefMsg::kInsert);
+            bool insert = 0 != (refMsg->fType & plMatRefMsg::kInsert);
             SetLayer(lay, which, 
                 insert,
                 piggyBack );

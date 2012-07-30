@@ -100,7 +100,7 @@ const char* hsFile::GetName()
     return FindNameInPath(this->GetPathAndName());
 }
 
-FILE* hsFile::OpenFILE(const char mode[], hsBool throwIfFailure)
+FILE* hsFile::OpenFILE(const char mode[], bool throwIfFailure)
 {
     this->Close();
 
@@ -116,7 +116,7 @@ FILE* hsFile::OpenFILE(const char mode[], hsBool throwIfFailure)
     return fFILE;
 }
 
-hsStream* hsFile::OpenStream(const char mode[], hsBool throwIfFailure)
+hsStream* hsFile::OpenStream(const char mode[], bool throwIfFailure)
 {
     FILE* file = this->OpenFILE(mode, throwIfFailure);
 
@@ -141,7 +141,7 @@ void hsFile::Close()
 
 ///////////////////////////////////////////////////////////////////////
 
-hsBool hsFolderIterator::NextFileSuffix(const char suffix[])
+bool hsFolderIterator::NextFileSuffix(const char suffix[])
 {
     while (this->NextFile())
     {   const char* fileSuffix = ::strrchr(this->GetFileName(), '.');
@@ -153,18 +153,20 @@ hsBool hsFolderIterator::NextFileSuffix(const char suffix[])
 
 int hsFolderIterator::GetPathAndName(char pathandname[])
 {
+    hsAssert(pathandname, "NULL path string");
     const char* name = this->GetFileName();
-    int         pathLen = hsStrlen(fPath);
+    int         pathLen = strlen(fPath);
 
     // add 1 for null terminator
-    int totalLen = pathLen + sizeof(kDirChar) + hsStrlen(name) + 1;
+    int totalLen = pathLen + sizeof(kDirChar) + strlen(name) + 1;
     hsAssert(totalLen <= kFolderIterator_MaxPath, "Overrun kFolderIterator_MaxPath");
 
     if (pathandname)
-    {   hsStrcpy(pathandname, fPath);
+    {
+        strcpy(pathandname, fPath);
         if (pathLen > 0 && pathandname[pathLen - 1] != kDirChar)
             pathandname[pathLen++] = kDirChar;
-        hsStrcpy(pathandname + pathLen, name);
+        strcpy(pathandname + pathLen, name);
     }
     return totalLen;
 }

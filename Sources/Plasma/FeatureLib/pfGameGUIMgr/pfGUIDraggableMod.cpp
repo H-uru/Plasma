@@ -72,14 +72,14 @@ pfGUIDraggableMod::~pfGUIDraggableMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDraggableMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIDraggableMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDraggableMod::MsgReceive( plMessage *msg )
+bool    pfGUIDraggableMod::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }
@@ -98,7 +98,7 @@ void    pfGUIDraggableMod::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIDraggableMod::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIDraggableMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
     fBoundsValid = false;
@@ -166,7 +166,7 @@ uint32_t      pfGUIDraggableMod::IGetDesiredCursor( void ) const
     return plInputInterface::kCursor4WayDraggable;
 }
 
-void    pfGUIDraggableMod::StopDragging( hsBool cancel )
+void    pfGUIDraggableMod::StopDragging( bool cancel )
 {
     if( fDragging )
     {

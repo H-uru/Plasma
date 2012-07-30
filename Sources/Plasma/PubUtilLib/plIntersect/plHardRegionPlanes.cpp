@@ -57,7 +57,7 @@ plHardRegionPlanes::~plHardRegionPlanes()
 {
 }
 
-hsBool plHardRegionPlanes::IIsInside(const hsPoint3& pos) const
+bool plHardRegionPlanes::IIsInside(const hsPoint3& pos) const
 {
     int i;
     for( i = 0; i < fPlanes.GetCount(); i++ )
@@ -68,7 +68,7 @@ hsBool plHardRegionPlanes::IIsInside(const hsPoint3& pos) const
     return true;
 }
 
-hsBool plHardRegionPlanes::ICameraInside() const
+bool plHardRegionPlanes::ICameraInside() const
 {
     return IIsInside(fCamPos);
 }

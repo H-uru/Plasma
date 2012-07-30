@@ -163,7 +163,7 @@ public:
 
     /** Is the animation moving at the given world time? Takes into account
         start/stop messages that haven't been applied yet, ease curves, etc. */
-    virtual hsBool IsStoppedAt(double wSecs) { return true; }
+    virtual bool IsStoppedAt(double wSecs) { return true; }
 
     /** Detach the given channel from our graph. If this is the channel in
         question, returns any upstream channels so they can be reattached.

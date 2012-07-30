@@ -110,12 +110,6 @@ void cyAvatar::AddRecvr(plKey &recvr)
         fRecvr.Append(recvr);
 }
 
-void cyAvatar::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
 void cyAvatar::SetSenderKey(pyKey& pKey)
 {
     plKey k = pKey.getKey();
@@ -174,8 +168,8 @@ plKey cyAvatar::IFindArmatureModKey(plKey avKey)
 //
 //  PURPOSE    : oneShot Avatar (must already be there)
 //
-void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
-               const plString &animName, hsBool drivable, hsBool reversible)
+void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
+               const plString &animName, bool drivable, bool reversible)
 {
     if ( fRecvr.Count() > 0 )
     {
@@ -218,7 +212,7 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, hsBool usePhysics,
 //
 //  PURPOSE    : Run Behavior, could be single or multi-stage shot
 //
-void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
+void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
     if ( behKey.getKey() != nil && fRecvr.Count() > 0)
@@ -314,7 +308,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, hsBool netForce, hsBool netProp)
 //
 //  PURPOSE    : Run Behavior, multistage only, reply to specified key'd object
 //
-void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netForce, hsBool netProp)
+void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce, bool netProp)
 {
     plMultistageBehMod* pMod = plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr());   
     if ( pMod )
@@ -373,8 +367,8 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, hsBool netFor
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce)
+void cyAvatar::NextStage(pyKey &behKey, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
     if ( behKey.getKey() != nil && fRecvr.Count() > 0)
@@ -388,7 +382,7 @@ void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float n
                 // create the message
                 plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kNextStage, 0, setTime, newTime,
-                    setDirection, (bool)isForward, transTime);
+                    setDirection, isForward, transTime);
 
                 if ( netForce )
                     pMsg->SetBCastFlag(plMessage::kNetForce | plMessage::kNetPropagate);
@@ -412,8 +406,8 @@ void cyAvatar::NextStage(pyKey &behKey, float transTime, hsBool setTime, float n
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce)
+void cyAvatar::PreviousStage(pyKey &behKey, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
     if ( behKey.getKey() != nil && fRecvr.Count() > 0)
@@ -427,7 +421,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, flo
                 // create the message
                 plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg((plKey)fSender, avKey,
                     plAvBrainGenericMsg::kPrevStage, 0, setTime, newTime,
-                    setDirection, (bool)isForward, transTime);
+                    setDirection, isForward, transTime);
 
                 if ( netForce )
                     pMsg->SetBCastFlag(plMessage::kNetForce | plMessage::kNetPropagate);
@@ -452,8 +446,8 @@ void cyAvatar::PreviousStage(pyKey &behKey, float transTime, hsBool setTime, flo
 //
 // NOTE: only works with multi-stage behaviors
 //
-void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool setTime, float newTime,
-                        hsBool setDirection, bool isForward, hsBool netForce)
+void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, bool setTime, float newTime,
+                        bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
     if ( behKey.getKey() != nil && fRecvr.Count() > 0)
@@ -480,7 +474,7 @@ void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, hsBool s
 }
 
 
-void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsBool netForce)
+void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, bool netForce)
 {
     // if it is a Multistage guy
     if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
@@ -508,7 +502,7 @@ void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, hsB
 
 /* Unsupported. Ask Bob if you want it back.
 
-void cyAvatar::Seek(pyKey &seekKey, float duration, hsBool usePhysics)
+void cyAvatar::Seek(pyKey &seekKey, float duration, bool usePhysics)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
@@ -1011,7 +1005,7 @@ PyObject* cyAvatar::GetMatchingClothingItem(const char* clothing_name)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns 0, if clothing item was not found
 //
-hsBool cyAvatar::WearClothingItem(const char* clothing_name)
+bool cyAvatar::WearClothingItem(const char* clothing_name)
 {
     return WearClothingItemU(clothing_name,true);
 }
@@ -1024,7 +1018,7 @@ hsBool cyAvatar::WearClothingItem(const char* clothing_name)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns false, if clothing item was not found
 //
-hsBool cyAvatar::RemoveClothingItem(const char* clothing_name)
+bool cyAvatar::RemoveClothingItem(const char* clothing_name)
 {
     return RemoveClothingItemU(clothing_name,true);
 }
@@ -1036,7 +1030,7 @@ hsBool cyAvatar::RemoveClothingItem(const char* clothing_name)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItem(const char* clothing_name, pyColor& tint)
+bool cyAvatar::TintClothingItem(const char* clothing_name, pyColor& tint)
 {
     return TintClothingItemU(clothing_name,tint,true);
 }
@@ -1050,7 +1044,7 @@ hsBool cyAvatar::TintClothingItem(const char* clothing_name, pyColor& tint)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer)
+bool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint, uint8_t layer)
 {
     return TintClothingItemLayerU(clothing_name,tint,layer,true);
 }
@@ -1064,7 +1058,7 @@ hsBool cyAvatar::TintClothingItemLayer(const char* clothing_name, pyColor& tint,
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns 0, if clothing item was not found
 //
-hsBool cyAvatar::WearClothingItemU(const char* clothing_name, hsBool update)
+bool cyAvatar::WearClothingItemU(const char* clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1098,7 +1092,7 @@ hsBool cyAvatar::WearClothingItemU(const char* clothing_name, hsBool update)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns false, if clothing item was not found
 //
-hsBool cyAvatar::RemoveClothingItemU(const char* clothing_name, hsBool update)
+bool cyAvatar::RemoveClothingItemU(const char* clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1132,7 +1126,7 @@ hsBool cyAvatar::RemoveClothingItemU(const char* clothing_name, hsBool update)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemU(const char* clothing_name, pyColor& tint, hsBool update)
+bool cyAvatar::TintClothingItemU(const char* clothing_name, pyColor& tint, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1165,7 +1159,7 @@ hsBool cyAvatar::TintClothingItemU(const char* clothing_name, pyColor& tint, hsB
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-hsBool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, hsBool update)
+bool cyAvatar::TintClothingItemLayerU(const char* clothing_name, pyColor& tint, uint8_t layer, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1300,7 +1294,7 @@ void cyAvatar::TintSkin(pyColor& tint)
 //
 //  PURPOSE    : Tint the skin of the player's avatar with optional update flag
 //
-void cyAvatar::TintSkinU(pyColor& tint, hsBool update)
+void cyAvatar::TintSkinU(pyColor& tint, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1967,7 +1961,7 @@ bool IExitTopmostGenericMode()
 //
 //  PURPOSE    : Returns whether the top most brain is a human brain
 //
-hsBool cyAvatar::IsCurrentBrainHuman()
+bool cyAvatar::IsCurrentBrainHuman()
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if (avatar)

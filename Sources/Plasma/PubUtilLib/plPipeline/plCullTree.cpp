@@ -518,9 +518,9 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
     static hsBitVector onVerts;
     onVerts.Clear();
 
-    hsBool someInner = false;
-    hsBool someOuter = false;
-    hsBool someOn = false;
+    bool someInner = false;
+    bool someOuter = false;
+    bool someOn = false;
     int i;
     for( i = 0; i < poly.fVerts.GetCount(); i++ )
     {
@@ -660,7 +660,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
     hsFastMath::NormalizeAppr(cenToEye);
     float camDist = cenToEye.InnerProduct(poly.fNorm);
     plConst(float) kTol(0.1f);
-    hsBool backFace = camDist < -kTol;
+    bool backFace = camDist < -kTol;
     if( !backFace && (camDist < kTol) )
         return;
 
@@ -673,7 +673,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
     else
     if( backFace )
     {
-        plConst(hsBool) kAllowTwoSided(true);
+        plConst(bool) kAllowTwoSided(true);
         if( !kAllowTwoSided || !poly.IsTwoSided() )
             return;
 
@@ -717,9 +717,9 @@ int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
     if( iNode < 0 )
         return IMakePolySubTree(poly);
 
-    hsBool addInner = (IGetNode(iNode)->fInnerChild >= 0)
+    bool addInner = (IGetNode(iNode)->fInnerChild >= 0)
                         || ((iNode > 5) && poly.IsHole());
-    hsBool addOuter = !poly.IsHole() || (IGetNode(iNode)->fOuterChild >= 0);
+    bool addOuter = !poly.IsHole() || (IGetNode(iNode)->fOuterChild >= 0);
 
     plCullPoly* innerPoly = nil;
     plCullPoly* outerPoly = nil;
@@ -858,7 +858,7 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 ///////////////////////////////////////////////////////////////////
 // Begin visualization section of the program
 ///////////////////////////////////////////////////////////////////
-void plCullTree::IVisPolyShape(const plCullPoly& poly, hsBool dark) const
+void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
 {
     int i;
 
@@ -898,7 +898,7 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, hsBool dark) const
     }
 }
 
-void plCullTree::IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, hsBool dark) const
+void plCullTree::IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, bool dark) const
 {
     hsColorRGBA color;
     if( dark )
@@ -945,7 +945,7 @@ void plCullTree::IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, hsBool dar
     fVisTris.Append(vertStart + 2);
 }
 
-void plCullTree::IVisPoly(const plCullPoly& poly, hsBool dark) const
+void plCullTree::IVisPoly(const plCullPoly& poly, bool dark) const
 {
     IVisPolyShape(poly, dark);
 
@@ -1075,12 +1075,12 @@ void plCullTree::Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) c
 
 }
 
-hsBool plCullTree::BoundsVisible(const hsBounds3Ext& bnd) const
+bool plCullTree::BoundsVisible(const hsBounds3Ext& bnd) const
 {
     return plCullNode::kCulled != IGetRoot()->ITestBoundsRecur(bnd);
 }
 
-hsBool plCullTree::SphereVisible(const hsPoint3& center, float rad) const
+bool plCullTree::SphereVisible(const hsPoint3& center, float rad) const
 {
     return plCullNode::kCulled != IGetRoot()->ITestSphereRecur(center, rad);
 }

@@ -144,7 +144,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern UserPropMgr gUserPropMgr;
 
-hsBool ThreePlaneIntersect(const hsVector3& norm0, const hsPoint3& point0, 
+bool ThreePlaneIntersect(const hsVector3& norm0, const hsPoint3& point0, 
                          const hsVector3& norm1, const hsPoint3& point1, 
                          const hsVector3& norm2, const hsPoint3& point2, hsPoint3& loc);
 
@@ -235,7 +235,7 @@ void plMaxBoneMap::SortBones()
     int i,j;
     for (i = 0; i < fNumBones; i++)
     {
-        hsBool swap = false;        
+        bool swap = false;        
         for (j = i + 1; j < fNumBones; j++)
         {
             if (strcmp(tempBones[i]->GetName(), tempBones[j]->GetName()) > 0)
@@ -267,7 +267,7 @@ plKey plMaxNode::AddModifier(plModifier *pMod, const plString& name)
     return modKey;
 }
 
-hsBool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
+bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
     const char *tmpName = GetName();
@@ -297,7 +297,7 @@ hsBool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConver
 
 // This is the same as DoRecur except that it ignores the canconvert field.  We
 // need this for things like clearing the old data, where we need to ignore the old value.
-hsBool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
+bool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
     const char *tmpName = GetName();
@@ -321,7 +321,7 @@ hsBool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plCon
     return true;
 }
 
-hsBool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState( t ).obj;
@@ -330,7 +330,7 @@ hsBool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settin
     // Always want to recalculate if this object can convert at this point.
     // In general there won't be any cached flag anyway, but in the SceneViewer
     // there can be if we're reconverting.
-    hsBool canConvert = CanConvert(true);
+    bool canConvert = CanConvert(true);
 
     plMaxNodeData thisNodeData;     // Extra data stored for each node
 
@@ -403,7 +403,7 @@ hsBool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settin
     return canConvert;
 }
 
-hsBool plMaxNode::ClearMaxNodeData(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::ClearMaxNodeData(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     // The right place to delete the boneMap is really in ~plMaxNodeData, but that class
     // is only allowed to know about stuff in nucleusLib.
@@ -511,7 +511,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
     }
 }
 
-hsBool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgName = GetName();
     if (!CanConvert()) 
@@ -551,7 +551,7 @@ hsBool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settin
     return true;
 }
 
-hsBool plMaxNode::PrepareSkin(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::PrepareSkin(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if( !IFindBones(pErrMsg, settings) )
         return false;
@@ -569,7 +569,7 @@ hsBool plMaxNode::PrepareSkin(plErrorMsg *pErrMsg, plConvertSettings *settings)
     return true;
 }
 
-hsBool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if( !CanConvert() )
         return false;
@@ -621,7 +621,7 @@ hsBool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 #include "plPhysX/plSimulationMgr.h"
 #include "hsSTLStream.h"
 
-hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = GetName();
 
@@ -872,14 +872,14 @@ hsBool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     return true;
 }
 
-hsBool plMaxNode::MakeController(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeController(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if (!CanConvert()) 
         return false;
 
-    hsBool forceLocal = hsControlConverter::Instance().ForceLocal(this);
+    bool forceLocal = hsControlConverter::Instance().ForceLocal(this);
         // Rember the force Local setting
-    hsBool CurrForceLocal = GetForceLocal();                    // dont want to clobber it with false if componentPass made it true
+    bool CurrForceLocal = GetForceLocal();                    // dont want to clobber it with false if componentPass made it true
     forceLocal = (CurrForceLocal || forceLocal) ? true : false;     // if it was set before, or is true now, make it true... 
     SetForceLocal(forceLocal);
 
@@ -891,16 +891,16 @@ hsBool plMaxNode::MakeController(plErrorMsg *pErrMsg, plConvertSettings *setting
     return true;
 }
 
-hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = GetName();
     if (!CanConvert()) 
         return false;
     plCoordinateInterface* ci = nil;
 
-    hsBool forceLocal = GetForceLocal();
+    bool forceLocal = GetForceLocal();
 
-    hsBool needCI = (!GetParentNode()->IsRootNode())
+    bool needCI = (!GetParentNode()->IsRootNode())
         || NumberOfChildren()
         || forceLocal;
     // If we have a transform, set up a coordinateinterface
@@ -923,7 +923,7 @@ hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings
         plKey pCiKey = hsgResMgr::ResMgr()->NewKey(pName, ci,nodeLoc, GetLoadMask());
         ci->SetLocalToParent(loc2Par, par2Loc);
 
-        hsBool usesPhysics = GetPhysicalProps()->IsUsed();
+        bool usesPhysics = GetPhysicalProps()->IsUsed();
         ci->SetProperty(plCoordinateInterface::kCanEverDelayTransform, !usesPhysics);
         ci->SetProperty(plCoordinateInterface::kDelayedTransformEval, !usesPhysics);
 
@@ -932,15 +932,15 @@ hsBool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings
     return true;
 }
 
-hsBool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if (!CanConvert()) 
         return false;
     
-    hsBool forceLocal = GetForceLocal();
+    bool forceLocal = GetForceLocal();
     const char *dbgNodeName = GetName();
 
-    hsBool addMods = (!GetParentNode()->IsRootNode())
+    bool addMods = (!GetParentNode()->IsRootNode())
         || forceLocal;
 
     if (addMods)
@@ -997,7 +997,7 @@ hsBool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings
 
 }
 
-hsBool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if (!CanConvert()) 
         return false;
@@ -1020,7 +1020,7 @@ hsBool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSetti
     return true;
 }
 
-void plMaxNode::IWipeBranchDrawable(hsBool b)
+void plMaxNode::IWipeBranchDrawable(bool b)
 {
     SetDrawable(b);
     for (int i = 0; i < NumberOfChildren(); i++)
@@ -1037,7 +1037,7 @@ void plMaxNode::IWipeBranchDrawable(hsBool b)
 //  9.25.2001 mcn - Made public so components can figure out if this node is
 //  meshable.
 
-hsBool  plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSettings *settings )
+bool    plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
     if( obj == nil )
         return false;
@@ -1071,7 +1071,7 @@ void ITestAdjacencyRecur(const hsTArray<int>* vertList, int iVert, hsBitVector& 
     }
 }
 
-hsBool ITestAdjacency(const hsTArray<int>* vertList, int numVerts)
+bool ITestAdjacency(const hsTArray<int>* vertList, int numVerts)
 {
     hsBitVector adjVerts;
     ITestAdjacencyRecur(vertList, 0, adjVerts);
@@ -1097,8 +1097,8 @@ int IsGeoSpanConvexExhaust(const plGeometrySpan* span)
     uint8_t* vertData = span->fVertexData;
     int numVerts = span->fNumVerts;
 
-    hsBool someIn = false;
-    hsBool someOut = false;
+    bool someIn = false;
+    bool someOut = false;
 
     int i;
     for( i = 0; i < numFaces; i++ )
@@ -1218,8 +1218,8 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
         idx += 3;
     }
 
-    hsBool someIn = false;
-    hsBool someOut = false;
+    bool someIn = false;
+    bool someOut = false;
     int i;
     for( i = 0; i < numVerts; i++ )
     {
@@ -1270,13 +1270,13 @@ plDrawInterface* plMaxNode::GetDrawInterface()
     return di;
 }
 
-hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     hsTArray<plGeometrySpan *>  spanArray;
     plDrawInterface             *newDI = nil;
 
-    hsBool      gotMade = false;
-    hsBool      haveAddedToSceneNode = false;
+    bool        gotMade = false;
+    bool        haveAddedToSceneNode = false;
     hsGMesh     *myMesh = nil;
     uint32_t      i, triMeshIndex = (uint32_t)-1;
     const char  *dbgNodeName = GetName();
@@ -1340,7 +1340,7 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     // isn't already. So it needs to be before we make the mesh (and material).
     // (Really, whatever makes it movable should do so then, but that has the potential
     // to break other stuff, which I don't want to do 2 weeks before we ship).
-    hsBool movable = IsMovable();
+    bool movable = IsMovable();
 
     if( !gotMade )
     {
@@ -1372,8 +1372,8 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
             spanArray[ i ]->fProps |= shadeFlags;
     }
 
-    hsBool DecalMat = false;
-    hsBool NonDecalMat = false;
+    bool DecalMat = false;
+    bool NonDecalMat = false;
         
     for (i = 0; i < spanArray.GetCount(); i++)
     {
@@ -1397,10 +1397,10 @@ hsBool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         return false;
     }
 
-    hsBool isDecal = IsLegalDecal(false); // Don't complain about the parent
+    bool isDecal = IsLegalDecal(false); // Don't complain about the parent
 
     /// Get some stuff
-    hsBool forceLocal = GetForceLocal();
+    bool forceLocal = GetForceLocal();
 
     hsMatrix44 l2w = GetLocalToWorld44();
     hsMatrix44 w2l = GetWorldToLocal44();
@@ -1536,7 +1536,7 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     {
         if( spanArray[ i ]->fProps & plGeometrySpan::kRequiresBlending )
         {
-            hsBool needFaceSort = !GetNoFaceSort() && !IsGeoSpanConvex(this, spanArray[i]);
+            bool needFaceSort = !GetNoFaceSort() && !IsGeoSpanConvex(this, spanArray[i]);
             if( needFaceSort )
             {
                 sCount++;
@@ -1789,7 +1789,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 //  Given an instance node, instances the geoSpans that the node owns and
 //  stores them in the given array.
 
-hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
+bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
     uint8_t   iDraw;
@@ -1804,7 +1804,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     if( !di )
         return false;
 
-    hsBool setVisDists = false;
+    bool setVisDists = false;
     float minDist, maxDist;
     if( hsMaterialConverter::HasVisDists(this, 0, minDist, maxDist) )
     {
@@ -1902,7 +1902,7 @@ hsBool  plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 //  For the given object, builds a list of all the iNodes that have that
 //  object as their object. Returns the total node count
 
-uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, hsBool beMoreAccurate )
+uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate )
 {
     Object              *thisObj = EvalWorldState( t ).obj;
     DependentIterator   di( obj );
@@ -1952,7 +1952,7 @@ uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMa
 //  AlphaHackLayersNeeded(), since all the other material parameters will be
 //  identical due to these nodes being instances of each other.
 
-hsBool  plMaxNode::IMaterialsMatch( plMaxNode *otherNode, hsBool beMoreAccurate )
+bool    plMaxNode::IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate )
 {
     Mtl *mtl = GetMtl(), *otherMtl = otherNode->GetMtl();
     if( mtl != otherMtl )
@@ -1986,7 +1986,7 @@ hsBool  plMaxNode::IMaterialsMatch( plMaxNode *otherNode, hsBool beMoreAccurate 
     return true;
 }
 
-hsBool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = GetName();
 
@@ -2043,13 +2043,13 @@ hsBool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     return true;
 }
 
-hsBool plMaxNode::MakeOccluder(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeOccluder(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if( !UserPropExists("Occluder") )
         return true;
 
-    hsBool twoSided = UserPropExists("OccTwoSided");
-    hsBool isHole = UserPropExists("OccHole");
+    bool twoSided = UserPropExists("OccTwoSided");
+    bool isHole = UserPropExists("OccHole");
 
     return ConvertToOccluder(pErrMsg, twoSided, isHole);
 }
@@ -2077,7 +2077,7 @@ static void IRemoveCollinearPoints(hsTArray<Point3>& facePts)
     }
 }
 
-hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool isHole)
+bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHole)
 {
     if( !CanConvert() )
         return false;
@@ -2085,7 +2085,7 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
     /// Get some stuff
     plLocation nodeLoc = GetLocation();
 
-    hsBool moving = IsMovable();
+    bool moving = IsMovable();
     if( moving )
         moving++;
 
@@ -2272,7 +2272,7 @@ hsBool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, hsBool twoSided, hsBool
     return true;
 }
 
-hsBool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
 
     if (!CanConvert()) 
@@ -2283,7 +2283,7 @@ hsBool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     /// Get some stuff
     plLocation nodeLoc = GetLocation();
-    hsBool forceLocal = GetForceLocal();
+    bool forceLocal = GetForceLocal();
 
     hsMatrix44 l2w = GetLocalToWorld44();
     hsMatrix44 w2l = GetWorldToLocal44();
@@ -2398,7 +2398,7 @@ void plMaxNode::IGetLightAttenuation(plOmniLightInfo* liInfo, LightObject* light
 
 }
 
-hsBool plMaxNode::IGetRTLightAttenValues(IParamBlock2* ProperPB, float& attenConst, float& attenLinear, float& attenQuadratic, float &attenCutoff )
+bool plMaxNode::IGetRTLightAttenValues(IParamBlock2* ProperPB, float& attenConst, float& attenLinear, float& attenQuadratic, float &attenCutoff )
 {
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
 
@@ -2774,9 +2774,9 @@ plLightInfo *plMaxNode::IMakeRTProjDirectional( plErrorMsg *pErrMsg, plConvertSe
     return light;
 }
 
-hsBool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
+bool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
 {
-    hsBool persp = false;
+    bool persp = false;
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState(timeVal).obj;
     LightObject *light = (LightObject*)obj->ConvertToType(timeVal, RTSPOT_LIGHT_CLASSID);
@@ -2790,7 +2790,7 @@ hsBool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
     if( !light )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
     Texmap* projMap = light->GetProjMap();
     if( !projMap )
         return false;
@@ -2897,7 +2897,7 @@ hsBool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
     return retVal;
 }
 /*
-hsBool plMaxNode::IAttachRTLightModifier(plLightModifier* liMod)
+bool plMaxNode::IAttachRTLightModifier(plLightModifier* liMod)
 {
     if( liMod->HasAnima() )
     {
@@ -3006,7 +3006,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                 }
                 else
                 {
-                    hsBool distSq = ProperPB->GetInt(plRTLightBase::kAttenTypeRadio, TimeValue(0));
+                    bool distSq = ProperPB->GetInt(plRTLightBase::kAttenTypeRadio, TimeValue(0));
 
                     int i;
                     for( i = 0; i < subCtl->GetNumKeys(); i++ )
@@ -3280,7 +3280,7 @@ plLightMapComponent* plMaxNode::GetLightMapComponent()
     return nil;
 }
 
-plDrawableCriteria plMaxNode::GetDrawableCriteria(hsBool needBlending, hsBool needSorting)
+plDrawableCriteria plMaxNode::GetDrawableCriteria(bool needBlending, bool needSorting)
 {
     plRenderLevel level = needBlending ? GetRenderLevel(needBlending) : plRenderLevel::OpaqueRenderLevel();
 
@@ -3313,7 +3313,7 @@ plDrawableCriteria plMaxNode::GetDrawableCriteria(hsBool needBlending, hsBool ne
 //  Gets the required drawableSpans from a sceneNode. Creates a new one
 //  if it can't find one.
 
-plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBlending, hsBool needSorting )
+plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, bool needBlending, bool needSorting )
 {
 
     plDrawableSpans *spans;
@@ -3372,14 +3372,14 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, hsBool needBl
     return spans;
 }
 
-hsBool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     // TEMP
     if (IsComponent())
         return false;
     // End TEMP
 
-    hsBool ret = true;
+    bool ret = true;
     
         uint32_t count = NumAttachedComponents();
 
@@ -3447,14 +3447,14 @@ hsBool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *se
     return ret;
 }
 
-hsBool plMaxNode::FirstComponentPass(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::FirstComponentPass(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     // TEMP
     if (IsComponent())
         return false;
     // End TEMP
 
-    hsBool ret = true;
+    bool ret = true;
     
     if (!CanConvert())
         return ret;
@@ -3482,14 +3482,14 @@ hsBool plMaxNode::FirstComponentPass(plErrorMsg *pErrMsg, plConvertSettings *set
     return ret;
 }
 
-hsBool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     // TEMP
     if (IsComponent())
         return false;
     // End TEMP
 
-    hsBool ret = true;
+    bool ret = true;
 
     char *dbgNodeName = GetName();
     if (!CanConvert())
@@ -3519,14 +3519,14 @@ hsBool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *sett
     return ret;
 }
 
-hsBool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     // TEMP
     if (IsComponent())
         return false;
     // End TEMP
 
-    hsBool ret = true;
+    bool ret = true;
 
     char *dbgNodeName = GetName();
     if (!CanConvert())
@@ -3588,7 +3588,7 @@ hsBool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setti
     return ret;
 }
 
-hsBool plMaxNode::ClearData(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::ClearData(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     RemoveAppDataChunk(PLASMA_MAX_CLASSID, GUP_CLASS_ID, kPlasmaAgeChunk);
     RemoveAppDataChunk(PLASMA_MAX_CLASSID, GUP_CLASS_ID, kPlasmaDistChunk);
@@ -3658,7 +3658,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             char* start=strstr(propsBuf, "BoneName=");
             if (!start)
                 start=strstr(propsBuf, "bonename=");
-            const int len = hsStrlen("BoneName=");
+            const int len = strlen("BoneName=");
             if(start && UserPropExists("BoneName"))
             {
                 start+=len;
@@ -3704,7 +3704,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
         ((plMaxNode*)GetChildNode(j))->SetupBonesAliasesRecur(rootName);
 }
 
-void plMaxNode::SetDISceneNodeSpans( plDrawInterface *di, hsBool needBlending )
+void plMaxNode::SetDISceneNodeSpans( plDrawInterface *di, bool needBlending )
 {
     // This poorly named function is currently only used by ParticleComponent.
     // di->GetNumDrawables() will always be zero. In general, particles only
@@ -3819,7 +3819,7 @@ void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nil */)
         bones->SortBones();
 }
 
-hsBool plMaxNode::IsLegalDecal(hsBool checkParent /* = true */)
+bool plMaxNode::IsLegalDecal(bool checkParent /* = true */)
 {
     Mtl *mtl = GetMtl();
     if (mtl == nil || GetParticleRelated())
@@ -3841,7 +3841,7 @@ hsBool plMaxNode::IsLegalDecal(hsBool checkParent /* = true */)
 
 int plMaxNode::NumUVWChannels()
 {
-    hsBool deleteIt;
+    bool deleteIt;
 
     TriObject* triObj = GetTriObject(deleteIt);
     if( triObj )
@@ -3968,7 +3968,7 @@ int plMaxNode::AlphaHackLayersNeeded(int iSubMtl)
 }
 
 // Will our lighting pay attention to vertex alpha values?
-hsBool plMaxNode::VtxAlphaNotAvailable()
+bool plMaxNode::VtxAlphaNotAvailable()
 {
     if( NonVtxPreshaded() || GetParticleRelated())
         return false;
@@ -3976,7 +3976,7 @@ hsBool plMaxNode::VtxAlphaNotAvailable()
     return true;
 }
 
-hsBool plMaxNode::NonVtxPreshaded()
+bool plMaxNode::NonVtxPreshaded()
 {
     if( GetForceMatShade() )
         return false;
@@ -3991,7 +3991,7 @@ hsBool plMaxNode::NonVtxPreshaded()
     return( GetLightMapComponent() != nil );
 }
 
-TriObject* plMaxNode::GetTriObject(hsBool& deleteIt)
+TriObject* plMaxNode::GetTriObject(bool& deleteIt)
 {
     // Get da object
     Object *obj = EvalWorldState(TimeValue(0)).obj;
@@ -4026,7 +4026,7 @@ uint32_t  plMaxNode::GetNextSoundIdx( void )
 //  Fun temp hack function to tell if a maxNode is physical. Useful after
 //  preConvert (checks for a physical on the simInterface)
 
-hsBool  plMaxNode::IsPhysical( void )
+bool    plMaxNode::IsPhysical( void )
 {
     if( GetSceneObject() && GetSceneObject()->GetSimulationInterface() && 
         GetSceneObject()->GetSimulationInterface()->GetPhysical() )
@@ -4072,9 +4072,9 @@ const char *plMaxNode::GetAgeName()
 // need a message sent to them) is a huge pain and very ugly.  This will capture anything
 // important in a single list.
 
-hsBool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    hsBool ret = true;
+    bool ret = true;
 
     char *dbgNodeName = GetName();
     if (!CanConvert())

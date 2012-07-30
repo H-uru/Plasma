@@ -80,7 +80,7 @@ bool plPhysicalSndGroup::HasImpactSound(uint32_t against)
     return against < fImpactSounds.GetCount();
 }
 
-hsBool  plPhysicalSndGroup::MsgReceive( plMessage *pMsg )
+bool    plPhysicalSndGroup::MsgReceive( plMessage *pMsg )
 {
     return hsKeyedObject::MsgReceive( pMsg );
 }

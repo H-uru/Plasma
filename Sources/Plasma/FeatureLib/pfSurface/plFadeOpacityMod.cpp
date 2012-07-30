@@ -81,7 +81,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     t0 = t - curr * fadeUp;
 */
 
-hsBool plFadeOpacityMod::fLOSCheckDisabled = false;
+bool plFadeOpacityMod::fLOSCheckDisabled = false;
 
 const float kDefFadeUp(5.f);
 const float kDefFadeDown(1.f);
@@ -101,7 +101,7 @@ plFadeOpacityMod::~plFadeOpacityMod()
 {
 }
 
-hsBool plFadeOpacityMod::MsgReceive(plMessage* msg)
+bool plFadeOpacityMod::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )
@@ -145,7 +145,7 @@ void plFadeOpacityMod::SetTarget(plSceneObject* so)
     fSetup = false;
 }
 
-hsBool plFadeOpacityMod::IShouldCheck(plPipeline* pipe)
+bool plFadeOpacityMod::IShouldCheck(plPipeline* pipe)
 {
     if (pipe->TestVisibleWorld(GetTarget()))
         return true;
@@ -163,7 +163,7 @@ void plFadeOpacityMod::IOnRenderMsg(plRenderMsg* rend)
 
     // Okay, we're going to check.
 
-    hsBool hit = false;
+    bool hit = false;
 
     if( !fLOSCheckDisabled )
     {
@@ -199,7 +199,7 @@ void plFadeOpacityMod::IOnRenderMsg(plRenderMsg* rend)
     ISetOpacity();
 }
 
-hsBool plFadeOpacityMod::IReady()
+bool plFadeOpacityMod::IReady()
 {
     plSceneObject* so = GetTarget();
     if( !so )

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimDebugList
 {
 public:
-    hsBool fEnabled;
+    bool fEnabled;
     hsTArray<plKey> fSOKeys;
     hsTArray<plKey> fMaterialKeys;
 

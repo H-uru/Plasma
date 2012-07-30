@@ -114,7 +114,7 @@ void plViewTransform::ISetCameraToNDC() const
     ISetFlag(kCameraToNDCSet);
 }
 
-void plViewTransform::SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, hsBool relative)
+void plViewTransform::SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, bool relative)
 { 
     fViewPortX.Set(mins.fX, maxs.fX, 1.f / (maxs.fX - mins.fX)); 
     fViewPortY.Set(mins.fY, maxs.fY, 1.f / (maxs.fY - mins.fY)); 
@@ -221,7 +221,7 @@ hsScalarTriple plViewTransform::NDCToMap(const hsScalarTriple& ndcP) const
     return map;
 }
 
-hsBool plViewTransform::SetProjection(const hsBounds3& bnd)
+bool plViewTransform::SetProjection(const hsBounds3& bnd)
 {
     hsPoint3 maxs;
     hsPoint3 mins;
@@ -233,14 +233,14 @@ hsBool plViewTransform::SetProjection(const hsBounds3& bnd)
     return false;
 }
 
-hsBool plViewTransform::SetProjectionWorld(const hsBounds3& wBnd)
+bool plViewTransform::SetProjectionWorld(const hsBounds3& wBnd)
 {
     hsBounds3Ext cBnd = wBnd;
     cBnd.Transform(&GetWorldToCamera());
     return SetProjection(cBnd);
 }
 
-hsBool plViewTransform::IGetMaxMinsFromBnd(const hsBounds3& bnd, hsPoint3& mins, hsPoint3& maxs) const
+bool plViewTransform::IGetMaxMinsFromBnd(const hsBounds3& bnd, hsPoint3& mins, hsPoint3& maxs) const
 {
     if( bnd.GetMaxs().fZ <= kMinHither )
         return false;
@@ -259,12 +259,12 @@ hsBool plViewTransform::IGetMaxMinsFromBnd(const hsBounds3& bnd, hsPoint3& mins,
     return true;
 }
 
-hsBool plViewTransform::Intersect(const plViewTransform& view)
+bool plViewTransform::Intersect(const plViewTransform& view)
 {
     hsPoint3 mins;
     hsPoint3 maxs;
 
-    hsBool retVal = true;
+    bool retVal = true;
     int i;
     for( i = 0; i < 3; i++ )
     {
@@ -282,7 +282,7 @@ hsBool plViewTransform::Intersect(const plViewTransform& view)
     return retVal;
 }
 
-hsBool plViewTransform::Union(const plViewTransform& view)
+bool plViewTransform::Union(const plViewTransform& view)
 {
     hsPoint3 mins;
     hsPoint3 maxs;

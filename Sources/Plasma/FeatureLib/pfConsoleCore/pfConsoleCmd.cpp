@@ -373,7 +373,7 @@ char    pfConsoleCmd::fSigTypes[ kNumTypes ][ 8 ] = { "int", "float", "bool", "s
 
 pfConsoleCmd::pfConsoleCmd(const char *group, const char *name,
                             const char *paramList, const char *help, 
-                            pfConsoleCmdPtr func, hsBool localOnly )
+                            pfConsoleCmdPtr func, bool localOnly )
 {
     fNext = nil;
     fPrevPtr = nil;

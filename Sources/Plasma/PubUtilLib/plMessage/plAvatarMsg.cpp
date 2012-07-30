@@ -96,7 +96,7 @@ plArmatureUpdateMsg::plArmatureUpdateMsg()
 
 // CTOR sender receiver islocal isplayercontrolled
 plArmatureUpdateMsg::plArmatureUpdateMsg(const plKey &sender,
-                                         hsBool isLocal, hsBool isPlayerControlled,
+                                         bool isLocal, bool isPlayerControlled,
                                          plArmatureMod *armature)
 : plAvatarMsg(sender, nil),
   fIsLocal(isLocal),
@@ -120,18 +120,18 @@ void plArmatureUpdateMsg::Write(hsStream *stream, hsResMgr *mgr)
 }
 
 // ISLOCAL
-hsBool plArmatureUpdateMsg::IsLocal() const
+bool plArmatureUpdateMsg::IsLocal() const
 {
     return fIsLocal;
 }
 
 // ISPLAYERCONTROLLED
-hsBool plArmatureUpdateMsg::IsPlayerControlled() const
+bool plArmatureUpdateMsg::IsPlayerControlled() const
 {
     return fIsPlayerControlled;
 }
 
-hsBool plArmatureUpdateMsg::IsInvis() const
+bool plArmatureUpdateMsg::IsInvis() const
 {
     return fIsInvis;
 }
@@ -155,13 +155,13 @@ plAvatarSetTypeMsg::plAvatarSetTypeMsg(const plKey &sender, const plKey &receive
 // READ
 void plAvatarSetTypeMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fIsPlayer = stream->Readbool();
+    fIsPlayer = stream->ReadBool();
 }
 
 // WRITE
 void plAvatarSetTypeMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
-    stream->Writebool(fIsPlayer);
+    stream->WriteBool(fIsPlayer);
 }
 
 // SETISPLAYER
@@ -248,8 +248,8 @@ plAvSeekMsg::plAvSeekMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
-                         const plKey &seekKey, float duration, hsBool smartSeek,
-                         plAvAlignment alignType, char *animName, hsBool noSeek, 
+                         const plKey &seekKey, float duration, bool smartSeek,
+                         plAvAlignment alignType, char *animName, bool noSeek, 
                          uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
@@ -265,22 +265,22 @@ plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
 {
 }
 
-hsBool plAvSeekMsg::Force3rdPersonOnStart()
+bool plAvSeekMsg::Force3rdPersonOnStart()
 {
     return fFlags & kSeekFlagForce3rdPersonOnStart;
 }
 
-hsBool plAvSeekMsg::UnForce3rdPersonOnFinish()
+bool plAvSeekMsg::UnForce3rdPersonOnFinish()
 {
     return fFlags & kSeekFlagUnForce3rdPersonOnFinish;
 }
 
-hsBool plAvSeekMsg::NoWarpOnTimeout()
+bool plAvSeekMsg::NoWarpOnTimeout()
 {
     return fFlags & kSeekFlagNoWarpOnTimeout;
 }
 
-hsBool plAvSeekMsg::RotationOnly()
+bool plAvSeekMsg::RotationOnly()
 {
     return fFlags & kSeekFlagRotationOnly;
 }
@@ -357,8 +357,8 @@ plAvOneShotMsg::plAvOneShotMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
-                         const plKey& seekKey, float duration, hsBool smartSeek,
-                         const plString &animName, hsBool drivable, hsBool reversible)
+                         const plKey& seekKey, float duration, bool smartSeek,
+                         const plString &animName, bool drivable, bool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek), fAnimName(animName),
   fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
 {
@@ -412,7 +412,7 @@ plAvBrainGenericMsg::plAvBrainGenericMsg()
 
 // canonical CTOR sender receiver type stage rewind transitionTime
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                    plAvBrainGenericMsg::Type type, int stage, hsBool rewind, float transitionTime)
+                    plAvBrainGenericMsg::Type type, int stage, bool rewind, float transitionTime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),
@@ -426,8 +426,8 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
 }
 
 plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &receiver,
-                                         Type type, int stage, hsBool setTime, float newTime,
-                                         hsBool setDirection, bool isForward, float transitiontime)
+                                         Type type, int stage, bool setTime, float newTime,
+                                         bool setDirection, bool isForward, float transitiontime)
 : plAvatarMsg(sender, receiver),
   fType(type),
   fWhichStage(stage),

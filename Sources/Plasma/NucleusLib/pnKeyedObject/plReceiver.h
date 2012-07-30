@@ -55,7 +55,7 @@ public:
     CLASSNAME_REGISTER( plReceiver );
     GETINTERFACE_ANY( plReceiver, plCreatable );
 
-    virtual hsBool MsgReceive(plMessage* msg) { return false; }
+    virtual bool MsgReceive(plMessage* msg) { return false; }
 };
 
 #endif // plReceiver_inc

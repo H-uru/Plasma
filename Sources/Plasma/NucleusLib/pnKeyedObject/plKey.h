@@ -67,10 +67,10 @@ public:
     ~plKey();
     plKey& operator=(const plKey& rhs);
 
-    hsBool operator==(const plKey& rhs) const;
-    hsBool operator==(const plKeyData* rhs) const;
-    hsBool operator!=(const plKey& rhs) const { return !(*this == rhs); }
-    hsBool operator!=(const plKeyData* rhs) const { return !(*this == rhs); }
+    bool operator==(const plKey& rhs) const;
+    bool operator==(const plKeyData* rhs) const;
+    bool operator!=(const plKey& rhs) const { return !(*this == rhs); }
+    bool operator!=(const plKeyData* rhs) const { return !(*this == rhs); }
 
     plKeyData* operator->() const;
     plKeyData& operator*() const;
@@ -86,7 +86,7 @@ protected:
     void IDecRef();
 
     // Internal constructor, extra param is to distinguish it from the void* constructor
-    plKey(plKeyData* data, hsBool ignore);
+    plKey(plKeyData* data, bool ignore);
 };
 
 //// plKeyData ///////////////////////////////////////////////////////////////

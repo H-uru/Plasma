@@ -178,7 +178,7 @@ void pyVaultPlayerInfoNode::Player_SetOnline( bool b )
     playerInfo.SetOnline(b);
 }
 
-hsBool pyVaultPlayerInfoNode::Player_IsOnline( void )
+bool pyVaultPlayerInfoNode::Player_IsOnline( void )
 {
     if (!fNode)
         return false;

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 
-hsBool plExportErrorMsg::Show()
+bool plExportErrorMsg::Show()
 {
     // If bogus, and we have something to show, show it
     if( GetBogus() && (GetMsg()[0] != 0 || GetLabel()[0] != 0))
@@ -57,7 +57,7 @@ hsBool plExportErrorMsg::Show()
     }
     return GetBogus();
 }
-hsBool plExportErrorMsg::Ask()
+bool plExportErrorMsg::Ask()
 {
     if( GetBogus() )
     {
@@ -66,7 +66,7 @@ hsBool plExportErrorMsg::Ask()
     return false;
 }
 
-hsBool plExportErrorMsg::CheckAndAsk()
+bool plExportErrorMsg::CheckAndAsk()
 {
     if( GetBogus() )
     {
@@ -80,7 +80,7 @@ hsBool plExportErrorMsg::CheckAndAsk()
     return GetBogus();
 }
 
-hsBool plExportErrorMsg::CheckAskOrCancel()
+bool plExportErrorMsg::CheckAskOrCancel()
 {
     if( GetBogus() )
     {
@@ -97,7 +97,7 @@ hsBool plExportErrorMsg::CheckAskOrCancel()
     return false;
 }
 
-hsBool plExportErrorMsg::CheckAndShow()
+bool plExportErrorMsg::CheckAndShow()
 {
     if ( GetBogus() )
     {
@@ -108,7 +108,7 @@ hsBool plExportErrorMsg::CheckAndShow()
     return GetBogus();
 }
 
-hsBool plExportErrorMsg::Check()
+bool plExportErrorMsg::Check()
 {
     if( GetBogus() )
     {

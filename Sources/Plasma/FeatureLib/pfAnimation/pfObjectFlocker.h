@@ -255,7 +255,7 @@ private:
     hsPoint3    fCurPos;
     hsVector3   fForward;
     float       fSpeed; // in meters/sec
-    hsBool      fHasLastPos; // does the last position make sense?
+    bool        fHasLastPos; // does the last position make sense?
 public:
     pfBoidGoal();
     ~pfBoidGoal() {}
@@ -301,7 +301,7 @@ private:
     void ISetupToken(pfProximityDatabase &pd);
 
     // Are we in the neighborhood of another boid?
-    hsBool IInBoidNeighborhood(const pfVehicle &other, const float minDistance, const float maxDistance, const float cosMaxAngle);
+    bool      IInBoidNeighborhood(const pfVehicle &other, const float minDistance, const float maxDistance, const float cosMaxAngle);
     // Wander steering
     hsVector3 ISteerForWander(float timeDelta);
     // Seek the target point
@@ -403,7 +403,7 @@ public:
     GETINTERFACE_ANY( pfObjectFlocker, plSingleModifier );
 
     virtual void SetTarget(plSceneObject* so);
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -433,10 +433,10 @@ public:
     float MinSpeed() const {return fFlock.MinSpeed();}
     void SetMinSpeed(float minSpeed) {fFlock.SetMinSpeed(minSpeed);}
 
-    hsBool RandomizeAnimStart() const {return fRandomizeAnimationStart;}
-    void SetRandomizeAnimStart(hsBool val) {fRandomizeAnimationStart = val;}
-    hsBool UseTargetRotation() const {return fUseTargetRotation;}
-    void SetUseTargetRotation(hsBool val) {fUseTargetRotation = val;}
+    bool RandomizeAnimStart() const {return fRandomizeAnimationStart;}
+    void SetRandomizeAnimStart(bool val) {fRandomizeAnimationStart = val;}
+    bool UseTargetRotation() const {return fUseTargetRotation;}
+    void SetUseTargetRotation(bool val) {fUseTargetRotation = val;}
 
 protected:
     const static int fFileVersion; // so we don't have to update the global version number when we change
@@ -445,10 +445,10 @@ protected:
     int fNumBoids;
     plKey fBoidKey;
 
-    hsBool fUseTargetRotation;
-    hsBool fRandomizeAnimationStart;
+    bool fUseTargetRotation;
+    bool fRandomizeAnimationStart;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 };
 
 #endif

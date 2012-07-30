@@ -82,11 +82,11 @@ public:
 
     /** Start the task: set up initial conditions or wait for resources to become available.
         Start will be called repeatedly until it returns true, indicating the task has begun. */
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Run the task. Start is guaranteed to have returned true before Process() is called even once.
         Returns false when the task has finished and epilogue code has been executed. */
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
 
     /** Clean up the task. This is guaranteed to be called when Process returns false. */
     virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);

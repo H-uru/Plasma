@@ -314,7 +314,7 @@ plResponderComponent::plResponderComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plResponderComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plResponderComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     int numStates = fCompPB->Count(kResponderState);
     for (int i = 0; i < numStates; i++)
@@ -332,7 +332,7 @@ hsBool plResponderComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return true;
 }
 
-hsBool plResponderComponent::PreConvert(plMaxNode *node,plErrorMsg *pErrMsg)
+bool plResponderComponent::PreConvert(plMaxNode *node,plErrorMsg *pErrMsg)
 {
     plSceneObject* rObj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
@@ -367,7 +367,7 @@ plResponderModifier* plResponderComponent::IGetResponderMod(plMaxNode* node)
     return plResponderModifier::ConvertNoRef(responderKey->GetObjectPtr());
 }
 
-hsBool plResponderComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plResponderComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     IFixOldPB();
 
@@ -410,7 +410,7 @@ hsBool plResponderComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plResponderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plResponderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fModKeys.clear();
     return true;

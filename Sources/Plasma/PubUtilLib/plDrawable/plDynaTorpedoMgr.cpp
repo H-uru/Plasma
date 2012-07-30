@@ -76,7 +76,7 @@ void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plBulletMsg::Index(), GetKey());
 }
 
-hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
+bool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
 {
     float partyTime = fPartyTime;
 
@@ -142,7 +142,7 @@ hsBool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
     return true;
 }
 
-hsBool plDynaTorpedoMgr::MsgReceive(plMessage* msg)
+bool plDynaTorpedoMgr::MsgReceive(plMessage* msg)
 {
     plBulletMsg* bullMsg = plBulletMsg::ConvertNoRef(msg);
     if( bullMsg )

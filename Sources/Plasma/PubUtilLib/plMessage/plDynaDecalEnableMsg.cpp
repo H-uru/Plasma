@@ -55,7 +55,7 @@ plDynaDecalEnableMsg::plDynaDecalEnableMsg()
 {
 }
 
-plDynaDecalEnableMsg::plDynaDecalEnableMsg(const plKey& r, const plKey& a, double t, float w, hsBool end, uint32_t id, hsBool isArm)
+plDynaDecalEnableMsg::plDynaDecalEnableMsg(const plKey& r, const plKey& a, double t, float w, bool end, uint32_t id, bool isArm)
 :   plMessage(nil, r, nil),
     fKey(a),
     fFlags(0),

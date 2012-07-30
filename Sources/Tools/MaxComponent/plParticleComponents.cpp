@@ -108,7 +108,7 @@ const char *plParticleCoreComponent::GenStrings[] = // line these up with the ge
     "One Per Vertex"
 };
 
-hsBool plParticleCoreComponent::IsParticleSystemComponent(plComponentBase *comp)
+bool plParticleCoreComponent::IsParticleSystemComponent(plComponentBase *comp)
 {
     if (comp->ClassID() == PARTICLE_SYSTEM_COMPONENT_CLASS_ID)
         return true;
@@ -116,7 +116,7 @@ hsBool plParticleCoreComponent::IsParticleSystemComponent(plComponentBase *comp)
     return false;
 }
 
-hsBool plParticleCoreComponent::NodeHasSystem(plMaxNode *pNode)
+bool plParticleCoreComponent::NodeHasSystem(plMaxNode *pNode)
 {
     int i;
     for (i = 0; i < pNode->NumAttachedComponents(); i++)
@@ -127,7 +127,7 @@ hsBool plParticleCoreComponent::NodeHasSystem(plMaxNode *pNode)
     return false;
 }
 
-hsBool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     GetParamVals( pNode );
     pNode->SetForceLocal(true);
@@ -160,7 +160,7 @@ hsBool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {   
     int32_t i, j, k;
 
@@ -511,9 +511,9 @@ void plParticleCoreComponent::IHandleLights(plLightGrpComponent* liGrp, plPartic
     }
 }
 
-hsBool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
+bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
 {
-    hsBool result = false;
+    bool result = false;
     plController *ctl;
     hsControlConverter& cc = hsControlConverter::Instance();
 
@@ -659,7 +659,7 @@ public:
     void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
         uint32_t minIndex, maxIndex;
-        hsBool adjustMin;
+        bool adjustMin;
         switch(id)
         {
         case IDC_COMP_PARTICLE_VELMIN:
@@ -896,7 +896,7 @@ plParticleComponent::plParticleComponent()
 }
 
 // Gets values from the ParamBlock and passes them to the Convert
-hsBool plParticleComponent::GetParamVals(plMaxNode *pNode)
+bool plParticleComponent::GetParamVals(plMaxNode *pNode)
 {
     fUserInput.fGenType         = fCompPB->GetInt(kGenType);
     fUserInput.fConeAngle       = fCompPB->GetFloat(kConeAngle);
@@ -924,7 +924,7 @@ hsBool plParticleComponent::GetParamVals(plMaxNode *pNode)
 // Particle Effects Base class
 
 // Make sure any new Effect you add is accounted for here, or it won't get converted.
-hsBool plParticleEffectComponent::IsParticleEffectComponent(plComponentBase *comp)
+bool plParticleEffectComponent::IsParticleEffectComponent(plComponentBase *comp)
 {
     if (comp->ClassID() == PARTICLE_FADE_COMPONENT_CLASS_ID ||
         comp->ClassID() == PARTICLE_VOLUME_COMPONENT_CLASS_ID ||
@@ -936,15 +936,15 @@ hsBool plParticleEffectComponent::IsParticleEffectComponent(plComponentBase *com
     return false;
 }
 
-hsBool plParticleEffectComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plParticleEffectComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fEffect = nil;
     return true;
 }
 
-hsBool plParticleEffectComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plParticleEffectComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    hsBool valid = plParticleCoreComponent::NodeHasSystem(node);
+    bool valid = plParticleCoreComponent::NodeHasSystem(node);
     if (!valid)
     {
         pErrMsg->Set(true, node->GetName(), "Node has a particle effect component, "
@@ -1022,7 +1022,7 @@ void plParticleVolumeComponent::CollectNonDrawables(INodeTab& nonDrawables)
         nonDrawables.Append(1, &source);
 }
 
-hsBool plParticleVolumeComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plParticleVolumeComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     if (!plParticleEffectComponent::PreConvert(pNode, pErrMsg))
         return false;
@@ -1425,7 +1425,7 @@ public:
     void IValidateSpinners(TimeValue t, IParamBlock2 *pb, IParamMap2 *map, uint32_t id)
     {
         uint32_t minIndex, maxIndex;
-        hsBool adjustMin;
+        bool adjustMin;
         switch(id)
         {
         case IDC_FLOCK_GOAL_DIST:

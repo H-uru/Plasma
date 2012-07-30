@@ -107,7 +107,7 @@ void plStereizer::Write(hsStream* stream, hsResMgr* mgr)
     fInitPos.Write(stream);
 }
 
-hsBool plStereizer::MsgReceive(plMessage* msg)
+bool plStereizer::MsgReceive(plMessage* msg)
 {
     plListenerMsg* listenMsg = plListenerMsg::ConvertNoRef(msg);
     if( listenMsg )
@@ -119,12 +119,12 @@ hsBool plStereizer::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool plStereizer::IEval(double secs, float del, uint32_t dirty)
+bool plStereizer::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
 
-hsBool plStereizer::Stereize()
+bool plStereizer::Stereize()
 {
     plSceneObject* targ = GetTarget();
     if( !targ )
@@ -286,7 +286,7 @@ plCoordinateInterface* plStereizer::IGetParent() const
 // Or in simpler terms, I want to do it one way, Brice wants to do
 // it another, and since either would work for this, we're waiting
 // for a tie breaker case that gives one way or the other an advantage.
-hsBool plStereizer::CheckForMaster()
+bool plStereizer::CheckForMaster()
 {
     ISetHasMaster(false);
     plSceneObject* targ = GetTarget();

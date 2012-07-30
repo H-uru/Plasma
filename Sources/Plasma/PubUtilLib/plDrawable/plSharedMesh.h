@@ -76,7 +76,7 @@ public:
     CLASSNAME_REGISTER( plSharedMesh );
     GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);  
+    virtual bool MsgReceive(plMessage* msg);  
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr); 
@@ -87,7 +87,7 @@ class plSharedMeshBCMsg : public plMessage
 public:
     plDrawableSpans *fDraw;
     plSharedMesh *fMesh;
-    hsBool fIsAdding;
+    bool fIsAdding;
     
     plSharedMeshBCMsg();
     ~plSharedMeshBCMsg() {}

@@ -63,24 +63,24 @@ public:
 
     void Update(const hsMatrix44 &l2w);
 
-    hsBool AddPlane(const hsPlane3 &plane);
+    bool AddPlane(const hsPlane3 &plane);
     void SetNumPlanesAndClear(const uint32_t num);
     void SetPlane(const hsPlane3 &plane, const uint32_t index);
 
     // If you only care about the test, call this. Otherwise call ResolvePoint.
-    hsBool IsInside(const hsPoint3 &pos) const;
+    bool IsInside(const hsPoint3 &pos) const;
 
     // returns true if the point was inside the volume, and thus moved outward.
-    hsBool ResolvePoint(hsPoint3 &pos) const; 
+    bool ResolvePoint(hsPoint3 &pos) const; 
 
     // returns true if the point was inside and pos and velocity updated to bounce off offending plane.
     // input bounce==1.f for perfect bounce, bounce==0 to slide.
-    hsBool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const;
+    bool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const;
 
-    inline hsBool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
+    inline bool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
     virtual void Read(hsStream* s, hsResMgr *mgr);
     virtual void Write(hsStream* s, hsResMgr *mgr);
-    //virtual hsBool MsgReceive(plMessage* msg);
+    //virtual bool MsgReceive(plMessage* msg);
     
 protected:
     void IClear();
@@ -90,7 +90,7 @@ protected:
     uint32_t fNumPlanes;
 };
 
-inline hsBool plConvexVolume::TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const
+inline bool plConvexVolume::TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const
 {
     float dis = plane.fN.InnerProduct(pos);
     dis += plane.fD;

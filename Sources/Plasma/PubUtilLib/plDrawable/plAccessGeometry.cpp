@@ -132,7 +132,7 @@ void plAccessGeometry::SetTheIntance(plAccessGeometry* i)
 // The first couple of these just interpret between the SceneObjects we like to
 // think about and the clumps of geometry that comprise each one.
 
-void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, hsBool useSnap) const
+void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool useSnap) const
 {
     int numGot = 0;
     accs.SetCount(di->GetNumDrawables());
@@ -160,7 +160,7 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
 
 }
 
-void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, hsBool idxToo) const
+void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool idxToo) const
 {
     int numGot = 0;
     accs.Expand(di->GetNumDrawables());
@@ -271,7 +271,7 @@ void plAccessGeometry::Close(plAccessSpan& acc) const
     fPipe->CloseAccess(acc);
 }
 
-void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo) const
+void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, bool useSnap, bool readOnly, bool idxToo) const
 {
     acc.SetType(plAccessSpan::kUndefined);
 
@@ -304,12 +304,12 @@ void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc,
     }
 }
 
-void plAccessGeometry::OpenRO(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap) const
+void plAccessGeometry::OpenRO(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, bool useSnap) const
 {
     IOpen(d, spanIdx, acc, useSnap, true);
 }
 
-void plAccessGeometry::OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool idxToo) const
+void plAccessGeometry::OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, bool idxToo) const
 {
     IOpen(drawable, spanIdx, acc, false, false, idxToo);
 
@@ -399,7 +399,7 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     acc.fVtxDeviceRef = nil;
 }
 
-void plAccessGeometry::IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, hsBool useSnap, hsBool readOnly) const
+void plAccessGeometry::IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, bool useSnap, bool readOnly) const
 {
     dst.SetType(plAccessSpan::kUndefined);
     dst.SetSource(const_cast<plSpan*> (span));
@@ -426,7 +426,7 @@ void plAccessGeometry::IAccessSpanFromSnap(plAccessSpan& dst, plDrawableSpans* d
     }
 }
 
-void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plVertexSpan* span, hsBool readOnly) const
+void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plVertexSpan* span, bool readOnly) const
 {
     dst.SetMaterial(drawable->GetMaterial(span->fMaterialIdx));
 
@@ -436,9 +436,9 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
 
 //#define MF_TOSSER
 #ifndef MF_TOSSER
-    plConst(hsBool) useDev(false);
+    plConst(bool) useDev(false);
 #else // MF_TOSSER
-    plConst(hsBool) useDev(true);
+    plConst(bool) useDev(true);
 #endif // MF_TOSSER
     if( useDev && !drawable->GetNativeProperty(plDrawable::kPropVolatile) && grp->GetVertexBufferRef(span->fVBufferIdx) )
     {
@@ -573,7 +573,7 @@ void plAccessGeometry::IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* d
 
 }
 
-void plAccessGeometry::IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans* drawable, const plIcicle* span, hsBool readOnly) const
+void plAccessGeometry::IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans* drawable, const plIcicle* span, bool readOnly) const
 {
     dst.SetType(plAccessSpan::kTri);
 
@@ -588,7 +588,7 @@ void plAccessGeometry::IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans*
     acc.fIdxDeviceRef = nil;
 }
 
-void plAccessGeometry::IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, hsBool readOnly) const
+void plAccessGeometry::IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, bool readOnly) const
 {
     hsAssert(false, "Aint got to it yet");
     // dst.SetType(plAccessSpan::kParty);

@@ -63,7 +63,7 @@ plFactory::~plFactory()
 {
 }
 
-hsBool plFactory::ICreateTheFactory()
+bool plFactory::ICreateTheFactory()
 {
     if( theFactory )
         return true;
@@ -178,7 +178,7 @@ uint16_t plFactory::GetNumClasses()
     return theFactory->IGetNumClasses();
 }
 
-hsBool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
+bool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
 {
     if( hDer >= fCreators.GetCount() )
         return false;
@@ -186,7 +186,7 @@ hsBool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
     return fCreators[hDer] ? fCreators[hDer]->HasBaseClass(hBase) : false;
 }
 
-hsBool plFactory::DerivesFrom(uint16_t hBase, uint16_t hDer)
+bool plFactory::DerivesFrom(uint16_t hBase, uint16_t hDer)
 {
     if( !theFactory && !ICreateTheFactory() )
         return 0;
@@ -214,12 +214,12 @@ uint16_t plFactory::FindClassIndex(const char* className)
 }
 
 
-hsBool plFactory::IIsValidClassIndex(uint16_t hClass)
+bool plFactory::IIsValidClassIndex(uint16_t hClass)
 {
     return ( hClass < fCreators.GetCount() );
 }
 
-hsBool plFactory::IsValidClassIndex(uint16_t hClass)
+bool plFactory::IsValidClassIndex(uint16_t hClass)
 {
     return theFactory->IIsValidClassIndex(hClass);
 }
@@ -316,7 +316,7 @@ void plFactory::IValidate(uint16_t keyIndex)
 
     int FactoryIndex = GetNumClasses();
 
-    hsBool bogus = false;
+    bool bogus = false;
 
     for(int iter=0; iter < FactoryIndex; iter++)
     {

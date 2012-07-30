@@ -282,7 +282,7 @@ void plVolumeGadgetComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
     fLogicModKeys.clear();
@@ -320,7 +320,7 @@ hsBool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pEr
     return true;
 }
 
-hsBool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plLocation loc = node->GetLocation();
     plSceneObject *obj = node->GetSceneObject();
@@ -470,7 +470,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
         logic->SetLocalOnly(true);
 }
 
-hsBool plVolumeGadgetComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plVolumeGadgetComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (fCompPB->GetInt(kVolumeTriggerOnFacing))
         ICreateConditions(node, pErrMsg, true);
@@ -483,7 +483,7 @@ hsBool plVolumeGadgetComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plVolumeGadgetComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
+bool plVolumeGadgetComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fLogicModOutKeys.clear();
     return plActivatorBaseComponent::DeInit( node, pErrMsg ); 

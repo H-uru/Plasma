@@ -134,10 +134,10 @@ public:
 protected:
     plWaveSet7*     fWaveSet;
 
-    hsBool          IGetRefObject(plMaxNode* node);
-    hsBool          IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws);
-    hsBool          IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws);
-    hsBool          IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool            IGetRefObject(plMaxNode* node);
+    bool            IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws);
+    bool            IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws);
+    bool            IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg);
 
     plWaveSetBase*  IGetWaveSet() const { return (plWaveSetBase*)fWaveSet; } // fWaveSet set in SetupProperties pass.
 
@@ -149,10 +149,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
 
     virtual int GetMinCap() { return plQuality::kPS_1_1; }
 
@@ -181,9 +181,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
     virtual int GetMinCap() { return plQuality::kPS_1_1; }
 };
@@ -202,9 +202,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
     virtual int GetMinCap() { return plQuality::kPS_1_1; }
 };
@@ -244,9 +244,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
     plDynamicEnvMap* GetEnvMap();
     plDynamicCamMap* GetCamMap();

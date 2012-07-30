@@ -88,7 +88,7 @@ protected:
 
     uint8_t       fType;
     plKey       fSrcKey;
-    hsBool      fBinding;
+    bool        fBinding;
 
 public:
     
@@ -103,7 +103,7 @@ public:
     };
 
     plSetListenerMsg() : plMessage( nil, nil, nil ) { fType = 0; fBinding = false; }
-    plSetListenerMsg( uint8_t type, const plKey &srcKey, hsBool binding );
+    plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding );
     ~plSetListenerMsg();
     
     CLASSNAME_REGISTER( plSetListenerMsg );
@@ -112,11 +112,11 @@ public:
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    void    Set( const plKey &key, uint8_t type, hsBool binding );
+    void    Set( const plKey &key, uint8_t type, bool binding );
 
     plKey       &GetSrcKey( void ) { return fSrcKey; }
     uint8_t       GetType( void ) const { return fType; }
-    hsBool      IsBinding( void ) const { return fBinding; }
+    bool        IsBinding( void ) const { return fBinding; }
 };
 
 #endif // plListenerMsg_inc

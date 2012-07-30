@@ -50,7 +50,7 @@ plLocalPlayerInBoxConditionalObject::plLocalPlayerInBoxConditionalObject()
     SetFlag(kLocalElement);     // since it relies on the local player  
 }
 
-hsBool plLocalPlayerInBoxConditionalObject::MsgReceive(plMessage* msg)
+bool plLocalPlayerInBoxConditionalObject::MsgReceive(plMessage* msg)
 {
     /*
     

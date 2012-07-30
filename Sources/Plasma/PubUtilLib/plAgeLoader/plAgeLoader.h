@@ -107,7 +107,7 @@ public:
 
     void Init();
     void Shutdown();
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
     bool LoadAge(const char ageName[]);
     bool UnloadAge()                              { return IUnloadAge(); }
     void UpdateAge(const char ageName[]);

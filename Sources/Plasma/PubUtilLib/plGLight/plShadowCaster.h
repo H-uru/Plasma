@@ -77,8 +77,8 @@ protected:
 
     // Global state to just turn off the whole gig. Not just
     // debugging, we'll probably want a user option for this.
-    static hsBool       fShadowCastDisabled;
-    static hsBool       fCanShadowCast;
+    static bool         fShadowCastDisabled;
+    static bool         fCanShadowCast;
 
 
     // Properties really just to be read and written,
@@ -99,10 +99,10 @@ protected:
 
     void ICollectAllSpans();
 
-    hsBool IOnRenderMsg(plRenderMsg* msg);
+    bool IOnRenderMsg(plRenderMsg* msg);
 
     friend class plDXPipeline;
-    static void SetCanShadowCast(hsBool b) { fCanShadowCast = b; }
+    static void SetCanShadowCast(bool b) { fCanShadowCast = b; }
 public:
     plShadowCaster();
     virtual ~plShadowCaster();
@@ -110,9 +110,9 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -120,14 +120,14 @@ public:
     float MaxOpacity() const { return fMaxOpacity; }
     const hsTArray<DrawSpan>& Spans() const { return fSpans; }
 
-    hsBool  GetSelfShadow() const { return 0 != (fCastFlags & kSelfShadow); }
-    void    SetSelfShadow(hsBool on) { if(on) fCastFlags |= kSelfShadow; else fCastFlags &= ~kSelfShadow; }
+    bool    GetSelfShadow() const { return 0 != (fCastFlags & kSelfShadow); }
+    void    SetSelfShadow(bool on) { if(on) fCastFlags |= kSelfShadow; else fCastFlags &= ~kSelfShadow; }
 
-    hsBool  GetPerspective() const { return 0 != (fCastFlags & kPerspective); }
-    void    SetPerspective(hsBool on) { if(on) fCastFlags |= kPerspective; else fCastFlags &= ~kPerspective; }
+    bool    GetPerspective() const { return 0 != (fCastFlags & kPerspective); }
+    void    SetPerspective(bool on) { if(on) fCastFlags |= kPerspective; else fCastFlags &= ~kPerspective; }
 
-    hsBool  GetLimitRes() const { return 0 != (fCastFlags & kLimitRes); }
-    void    SetLimitRes(hsBool on) { if(on) fCastFlags |= kLimitRes; else fCastFlags &= ~kLimitRes; }
+    bool    GetLimitRes() const { return 0 != (fCastFlags & kLimitRes); }
+    void    SetLimitRes(bool on) { if(on) fCastFlags |= kLimitRes; else fCastFlags &= ~kLimitRes; }
 
     float GetAttenScale() const { return fAttenScale; }
     void SetAttenScale(float s) { fAttenScale = s; }
@@ -144,12 +144,12 @@ public:
     void Deactivate() const;
     void Activate() const;
 
-    static void DisableShadowCast(hsBool on=true) { fShadowCastDisabled = on; }
-    static void EnableShadowCast(hsBool on=true) { fShadowCastDisabled = !on; }
+    static void DisableShadowCast(bool on=true) { fShadowCastDisabled = on; }
+    static void EnableShadowCast(bool on=true) { fShadowCastDisabled = !on; }
     static void ToggleShadowCast() { fShadowCastDisabled = !fShadowCastDisabled; }
-    static hsBool ShadowCastDisabled() { return !CanShadowCast() || fShadowCastDisabled; }
+    static bool ShadowCastDisabled() { return !CanShadowCast() || fShadowCastDisabled; }
 
-    static hsBool CanShadowCast() { return fCanShadowCast; }
+    static bool CanShadowCast() { return fCanShadowCast; }
 };
 
 typedef plShadowCaster::DrawSpan plShadowCastSpan;

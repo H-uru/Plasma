@@ -164,7 +164,7 @@ void plRenderRequest::SetVisForce(const hsBitVector& b)
         fVisForce = b;
 }
 
-hsBool plRenderRequest::GetRenderCharacters() const 
+bool plRenderRequest::GetRenderCharacters() const 
 { 
     return fVisForce.IsBitSet(plVisMgr::kCharacter); 
 }

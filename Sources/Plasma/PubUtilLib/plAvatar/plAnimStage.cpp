@@ -288,7 +288,7 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
 }
 
 // SENDNOTIFY
-hsBool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain)
+bool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain)
 {
     // make sure the user has requested this type of notify
     if(fNotify & notifyMask)
@@ -326,10 +326,10 @@ hsBool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArma
 }
 
 // DETACH
-hsBool plAnimStage::Detach(plArmatureMod *armature)
+bool plAnimStage::Detach(plArmatureMod *armature)
 {
 
-    hsBool result = false;
+    bool result = false;
 
 #ifdef DEBUG_MULTISTAGE
     char sbuf[256];
@@ -681,7 +681,7 @@ float plAnimStage::GetLocalTime()
 }
 
 // SETLOCALTIME
-void plAnimStage::SetLocalTime(float time, hsBool noCallbacks /* = false */)
+void plAnimStage::SetLocalTime(float time, bool noCallbacks /* = false */)
 {
     fLocalTime = time;
     if(fAnimInstance)
@@ -766,9 +766,9 @@ void plAnimStage::Read(hsStream *stream, hsResMgr *mgr)
     fRegressType = (RegressType)stream->ReadLE32();
     fLoops = stream->ReadLE32();
 
-    fDoAdvanceTo = stream->Readbool();
+    fDoAdvanceTo = stream->ReadBool();
     fAdvanceTo = stream->ReadLE32();
-    fDoRegressTo = stream->Readbool();
+    fDoRegressTo = stream->ReadBool();
     fRegressTo = stream->ReadLE32();
 }
 
@@ -782,9 +782,9 @@ void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLE32(fRegressType);
     stream->WriteLE32(fLoops);
 
-    stream->Writebool(fDoAdvanceTo);
+    stream->WriteBool(fDoAdvanceTo);
     stream->WriteLE32(fAdvanceTo);
-    stream->Writebool(fDoRegressTo);
+    stream->WriteBool(fDoRegressTo);
     stream->WriteLE32(fRegressTo);
 }
 
@@ -795,7 +795,7 @@ void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEScalar(fLocalTime);
     stream->WriteLEScalar(fLength);
     stream->WriteLE32(fCurLoop);
-    stream->Writebool(fAttached);
+    stream->WriteBool(fAttached);
     // no ephemeral stage at the moment
 }
 
@@ -805,8 +805,6 @@ void plAnimStage::LoadAux(hsStream *stream, hsResMgr *mgr, double time)
     fLocalTime = stream->ReadLEScalar();
     fLength = stream->ReadLEScalar();
     fCurLoop = stream->ReadLE32();
-    // This should actually be Readbool (lowercase), but I won't fix it since that
-    // would require a version change
-    fAttached = (stream->Readbool() != 0);
+    fAttached = stream->ReadBool();
 }
 

@@ -56,7 +56,7 @@ float plInterestingModifier::fInterestRadius     = 100.0f;
 float plInterestingModifier::fInterestWeight     = 1.0f;
 
 
-hsBool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
+bool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
 {
     for (int i=0; i < GetNumTargets(); i++)
     {

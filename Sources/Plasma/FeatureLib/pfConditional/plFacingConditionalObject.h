@@ -51,7 +51,7 @@ class plFacingConditionalObject : public plConditionalObject
 {
 protected:
     float            fTolerance;
-    hsBool              fDirectional;
+    bool                fDirectional;
 
 public:
     
@@ -61,12 +61,12 @@ public:
     CLASSNAME_REGISTER( plFacingConditionalObject );
     GETINTERFACE_ANY( plFacingConditionalObject, plConditionalObject );
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     void SetTolerance(float d) { fTolerance = d; }
-    void SetDirectional(hsBool d) { fDirectional = d; }
+    void SetDirectional(bool d) { fDirectional = d; }
 
-    virtual hsBool Verify(plMessage* msg);
+    virtual bool Verify(plMessage* msg);
 
     void Evaluate(){;}
     void Reset() { SetSatisfied(true); }

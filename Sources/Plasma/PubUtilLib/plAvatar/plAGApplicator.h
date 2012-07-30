@@ -111,7 +111,7 @@ public:
     /** Optionally suppress the action of this applicator.
         The applicator can still be forced to apply using the force
         paramater of the Apply function. */
-    void Enable(hsBool on) { fEnabled = on; }
+    void Enable(bool on) { fEnabled = on; }
 
     /** Make a shallow copy of the applicator. Keep the same input channel
         but do not clone the input channel. */
@@ -129,24 +129,24 @@ public:
         would be effected by pulling the input channel from the other applicator,
         blending it with our input channel via a new blend node, attaching that blend
         node as our new input, and throwing the other applicator away. */
-    virtual hsBool CanBlend(plAGApplicator *app);
+    virtual bool CanBlend(plAGApplicator *app);
     /** Combine the two applicators if possible. \sa CanBlend */
     virtual plAGChannel * MergeChannel(plAGApplicator *app, plAGChannel *channel,
                                        plScalarChannel *blend, int blendPriority);
     
     /** \bug It makes no sense for an applicator to combine because combination always
              results in a different data type, which would require a different applicator. */
-    virtual hsBool CanCombine(plAGApplicator *app) { return false; }
+    virtual bool CanCombine(plAGApplicator *app) { return false; }
 
     /** Apply our channel's data to the scene object, via the modifier.
         This is the only function that actually changes perceivable scene state. */
-    void Apply(const plAGModifier *mod, double time, hsBool force = false); // Apply our channel's data to the modifier
+    void Apply(const plAGModifier *mod, double time, bool force = false); // Apply our channel's data to the modifier
     
     // this is pretty much a HACK to support applicators that want to stick around when
     // their channel is gone so they can operate on the next channel that comes in
     // the RIGHT way to do this is to make applicators support the Detach() protocol just 
     // like channels...
-    virtual hsBool AutoDelete() { return true; } // should we remove it when its input channel is gone?
+    virtual bool AutoDelete() { return true; } // should we remove it when its input channel is gone?
 
     // PlOP
     CLASSNAME_REGISTER( plAGApplicator );
@@ -171,7 +171,7 @@ protected:
 
     // -- members --
     plAGChannel *fChannel;
-    hsBool fEnabled;
+    bool fEnabled;
     plString fChannelName;
 };
 

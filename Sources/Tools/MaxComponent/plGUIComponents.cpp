@@ -396,10 +396,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -596,18 +596,18 @@ plGUITagComponent::plGUITagComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUITagComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUITagComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plGUITagComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUITagComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
 
     return true;
 }
 
-hsBool plGUITagComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUITagComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -668,10 +668,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -970,18 +970,18 @@ plGUIColorSchemeComp::plGUIColorSchemeComp()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIColorSchemeComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIColorSchemeComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plGUIColorSchemeComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIColorSchemeComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
 
     return true;
 }
 
-hsBool plGUIColorSchemeComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIColorSchemeComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     pfGUIControlMod *ctrl = plGUIControlBase::GrabControlFromObject( node );
     if( ctrl != nil )
@@ -1165,7 +1165,7 @@ ParamBlockDesc2 gGUIDialogBk
     end
 );
 
-plGUIDialogComponent::plGUIDialogComponent( hsBool dontInit )
+plGUIDialogComponent::plGUIDialogComponent( bool dontInit )
 {
     if( !dontInit )
     {
@@ -1183,7 +1183,7 @@ pfGUIDialogMod  *plGUIDialogComponent::IMakeDialog( void )
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     TimeValue timeVal( 0 );
     Object* obj = node->EvalWorldState( timeVal ).obj;
@@ -1248,7 +1248,7 @@ hsBool plGUIDialogComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrM
     return true;
 }
 
-hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     TimeValue timeVal(0);
 
@@ -1338,7 +1338,7 @@ hsBool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDialogComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     TimeValue timeVal(0);
     Object* obj = node->EvalWorldState(timeVal).obj;
@@ -1561,7 +1561,7 @@ pfGUIDialogMod  *plGUIControlBase::IGetDialogMod( plMaxNode *node )
     return nil;
 }
 
-hsBool plGUIControlBase::SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg )
+bool plGUIControlBase::SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg )
 {
     if( INeedsDynamicText() )
     {
@@ -1573,7 +1573,7 @@ hsBool plGUIControlBase::SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg 
     return true;
 }
 
-hsBool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     // Create a new control
     fControl = IGetNewControl();
@@ -1601,7 +1601,7 @@ hsBool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Error check--make sure we're in the same room as our parent (can get confusing with the wrong
     // parent-child relationships)
@@ -1887,10 +1887,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -2096,7 +2096,7 @@ plGUIButtonComponent::plGUIButtonComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIButtonComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIButtonComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     if( fCompPB->GetInt( kRefAnimate ) )
     {
@@ -2133,12 +2133,12 @@ hsBool plGUIButtonComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrM
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIButtonComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIButtonComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIButtonComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIButtonComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -2229,10 +2229,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -2342,7 +2342,7 @@ plGUICheckBoxComponent::plGUICheckBoxComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUICheckBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUICheckBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     if( fCompPB->GetInt( kRefAnimate ) )
     {
@@ -2363,12 +2363,12 @@ hsBool plGUICheckBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pEr
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUICheckBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUICheckBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUICheckBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUICheckBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -2429,10 +2429,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -2485,18 +2485,18 @@ plGUIDraggableComponent::plGUIDraggableComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIDraggableComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDraggableComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal( true );
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIDraggableComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDraggableComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIDraggableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIDraggableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -2532,7 +2532,7 @@ protected:
     virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIKnobCtrl; }
     virtual bool            ICanHaveProxy( void ) { return true; }
 
-    hsBool  IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W );
+    bool    IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W );
 
 public:
     plGUIKnobCtrlComponent();
@@ -2540,10 +2540,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -2637,9 +2637,9 @@ plGUIKnobCtrlComponent::plGUIKnobCtrlComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool  plGUIKnobCtrlComponent::IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W )
+bool    plGUIKnobCtrlComponent::IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W )
 {
-    hsBool  result = false;
+    bool    result = false;
 
 
     // Get the affine parts and the TM Controller
@@ -2666,7 +2666,7 @@ hsBool  plGUIKnobCtrlComponent::IGrabAnimationRange( plMaxNode *node, plErrorMsg
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIKnobCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIKnobCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal( true );
 
@@ -2686,7 +2686,7 @@ hsBool plGUIKnobCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pEr
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIKnobCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIKnobCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
@@ -2694,7 +2694,7 @@ hsBool plGUIKnobCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 // For hackery below (see warning below)
 #include "plAvatar/plAGMasterMod.h"
 
-hsBool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -2787,10 +2787,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -2925,17 +2925,17 @@ plGUIListBoxComponent::plGUIListBoxComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIListBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIListBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIListBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIListBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIListBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIListBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3022,10 +3022,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -3260,17 +3260,17 @@ plGUITextBoxComponent::plGUITextBoxComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUITextBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUITextBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUITextBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUITextBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUITextBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUITextBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3319,10 +3319,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -3365,17 +3365,17 @@ plGUIEditBoxComponent::plGUIEditBoxComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIEditBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIEditBoxComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIEditBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIEditBoxComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIEditBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIEditBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3413,10 +3413,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -3574,17 +3574,17 @@ plGUIUpDownPairComponent::plGUIUpDownPairComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIUpDownPairComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIUpDownPairComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIUpDownPairComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIUpDownPairComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIUpDownPairComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIUpDownPairComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3626,10 +3626,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -3664,18 +3664,18 @@ plGUIDragBarComponent::plGUIDragBarComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIDragBarComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDragBarComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal( true );
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIDragBarComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDragBarComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIDragBarComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIDragBarComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3711,10 +3711,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -3867,18 +3867,18 @@ plGUIRadioGroupComponent::plGUIRadioGroupComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIRadioGroupComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIRadioGroupComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
 
-hsBool plGUIRadioGroupComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIRadioGroupComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIRadioGroupComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIRadioGroupComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -3925,10 +3925,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -4017,17 +4017,17 @@ plGUIDynDisplayComponent::plGUIDynDisplayComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIDynDisplayComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDynDisplayComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIDynDisplayComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIDynDisplayComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -4101,10 +4101,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -4163,17 +4163,17 @@ plGUIMultiLineEditComp::plGUIMultiLineEditComp()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIMultiLineEditComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIMultiLineEditComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIMultiLineEditComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIMultiLineEditComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIMultiLineEditComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIMultiLineEditComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -4223,10 +4223,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -4388,7 +4388,7 @@ plGUIProgressCtrlComponent::plGUIProgressCtrlComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIProgressCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIProgressCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal( true );
 
@@ -4408,7 +4408,7 @@ hsBool plGUIProgressCtrlComponent::SetupProperties(plMaxNode *node,  plErrorMsg 
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIProgressCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIProgressCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
@@ -4416,7 +4416,7 @@ hsBool plGUIProgressCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErr
 // For hackery below (see warning below)
 #include "plAvatar/plAGMasterMod.h"
 
-hsBool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -4485,10 +4485,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {
@@ -4525,18 +4525,18 @@ plGUIClickMapComponent::plGUIClickMapComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIClickMapComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIClickMapComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal( true );
     return plGUIControlBase::SetupProperties( node, pErrMsg );
 }
 
-hsBool plGUIClickMapComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIClickMapComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     return plGUIControlBase::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIClickMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIClickMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !plGUIControlBase::Convert( node, pErrMsg ) )
         return false;
@@ -4736,13 +4736,13 @@ plGUISkinComp::plGUISkinComp()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUISkinComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUISkinComp::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     fConvertedSkin = nil;
     return true;
 }
 
-hsBool plGUISkinComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUISkinComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     // Create and assign key here, so other components can grab the key later
     if( fConvertedSkin != nil )
@@ -4764,7 +4764,7 @@ hsBool plGUISkinComp::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Actually do the work of converting all the skin data
     if( fConvertedSkin == nil )
@@ -4800,7 +4800,7 @@ hsBool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGUISkinComp::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUISkinComp::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fConvertedSkin = nil;
     return true; 
@@ -4916,18 +4916,18 @@ plKey   plGUIMenuComponent::GetConvertedMenuKey( void ) const
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGUIMenuComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIMenuComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
 //  return plGUIDialogComponent::SetupProperties( node, pErrMsg );
     fConvertedMenu = nil;
     return true;
 }
 
-hsBool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     pfGUIPopUpMenu *menu = fConvertedMenu;
 
-//  hsBool  b = plGUIDialogComponent::Convert( node, pErrMsg );
+//  bool    b = plGUIDialogComponent::Convert( node, pErrMsg );
 //  if( b )
     {
 //      pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef( fDialogMod );
@@ -5026,7 +5026,7 @@ hsBool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     // Create and assign key here, so other components can grab the key later
     if( fConvertedMenu != nil )
@@ -5064,7 +5064,7 @@ hsBool plGUIMenuComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 //  return plGUIDialogComponent::PreConvert( node, pErrMsg );
 }
 
-hsBool plGUIMenuComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plGUIMenuComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fConvertedMenu = nil;
     fConvertedNode = nil;

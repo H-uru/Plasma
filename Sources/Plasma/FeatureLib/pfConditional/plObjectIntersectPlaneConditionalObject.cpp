@@ -49,7 +49,7 @@ plObjectIntersectPlaneConditionalObject::plObjectIntersectPlaneConditionalObject
     
 }
 
-hsBool plObjectIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
+bool plObjectIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
 {
     /*
     

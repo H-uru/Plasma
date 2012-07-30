@@ -268,9 +268,9 @@ plMipmap*   plJPEG::ReadFromFile( const wchar_t *fileName )
 //// IWrite ///////////////////////////////////////////////////////////////////
 //  Oh, figure it out yourself. :P
 
-hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
+bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 {
-    hsBool  result = true, swapped = false;
+    bool    result = true, swapped = false;
     uint8_t   *jpgBuffer = nil;
     uint32_t  jpgBufferSize = 0;
 
@@ -360,22 +360,22 @@ hsBool  plJPEG::IWrite( plMipmap *source, hsStream *outStream )
     return result;
 }
 
-hsBool  plJPEG::WriteToFile( const char *fileName, plMipmap *sourceData )
+bool    plJPEG::WriteToFile( const char *fileName, plMipmap *sourceData )
 {
     wchar_t* wFilename = hsStringToWString(fileName);
-    hsBool retVal = WriteToFile(wFilename, sourceData);
+    bool retVal = WriteToFile(wFilename, sourceData);
     delete [] wFilename;
     return retVal;
 }
 
-hsBool  plJPEG::WriteToFile( const wchar_t *fileName, plMipmap *sourceData )
+bool    plJPEG::WriteToFile( const wchar_t *fileName, plMipmap *sourceData )
 {
     // we use a stream because the IJL can't handle unicode
     hsRAMStream tempstream;
     hsUNIXStream out;
     if (!out.Open(fileName, L"wb"))
         return false;
-    hsBool ret = IWrite(sourceData, &tempstream);
+    bool ret = IWrite(sourceData, &tempstream);
     if (ret)
     {
         // The stream writer for JPEGs prepends a 32-bit size,

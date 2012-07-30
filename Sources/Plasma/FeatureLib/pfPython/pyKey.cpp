@@ -80,28 +80,9 @@ pyKey::pyKey(plKey key, plPythonFileMod* pymod)
     fPyFileMod=pymod;
     fNetForce=false;
 }
-
-void pyKey::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
-// send enable message to the plKey
-void pyKey::Enable()
-{
-    IEnable(true);
-}
-
-    
-// send disable message to the plKey
-void pyKey::Disable()
-{
-    IEnable(false);
-}
 #endif
 
-hsBool pyKey::operator==(const pyKey &key) const
+bool pyKey::operator==(const pyKey &key) const
 {
     plKey ours = ((pyKey*)this)->getKey();
     plKey theirs = ((pyKey&)key).getKey();
@@ -137,7 +118,7 @@ PyObject* pyKey::GetPySceneObject()
 }
 
 // send disable message to the plKey
-void pyKey::IEnable(hsBool state)
+void pyKey::IEnable(bool state)
 {
     // create message
     plEnableMsg* pMsg = new plEnableMsg;
@@ -177,7 +158,7 @@ PyObject* pyKey::GetParentObject()
 // special functions when the plKey is a pointer to the PythonModifier
 //
 // Was the last plNotifyMsg a locally sent?
-hsBool pyKey::WasLocalNotify()
+bool pyKey::WasLocalNotify()
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )
@@ -187,7 +168,7 @@ hsBool pyKey::WasLocalNotify()
 }
 
 // Is python file mod attached to clone
-hsBool pyKey::IsAttachedToClone()
+bool pyKey::IsAttachedToClone()
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )

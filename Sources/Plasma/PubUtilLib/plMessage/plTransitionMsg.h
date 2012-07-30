@@ -51,9 +51,9 @@ class plTransitionMsg : public plMessageWithCallbacks
 {
 protected:
 
-    uint32_t      fEffect;
-    float    fLengthInSecs;
-    hsBool      fHoldUntilNext;
+    uint32_t    fEffect;
+    float       fLengthInSecs;
+    bool        fHoldUntilNext;
 public:
     enum 
     {
@@ -64,7 +64,7 @@ public:
     };
 
     plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
-    plTransitionMsg( uint32_t type, float lengthInSecs, hsBool holdUntilNext = false ) : 
+    plTransitionMsg( uint32_t type, float lengthInSecs, bool holdUntilNext = false ) : 
                 plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
                 { SetBCastFlag( kBCastByExactType );  }
     
@@ -73,16 +73,16 @@ public:
     CLASSNAME_REGISTER( plTransitionMsg );
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-    uint32_t      GetEffect( void ) const { return fEffect; }
+    uint32_t GetEffect( void ) const { return fEffect; }
     float    GetLengthInSecs( void ) const { return fLengthInSecs; }
-    hsBool      GetHoldState( void ) const { return fHoldUntilNext; }
+    bool     GetHoldState( void ) const { return fHoldUntilNext; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 
         plMessageWithCallbacks::Read(s, mgr); 
         s->ReadLE(&fEffect);
         s->ReadLE(&fLengthInSecs);
-        s->ReadLE(&fHoldUntilNext);
+        fHoldUntilNext = s->ReadBOOL();
     }
     
     virtual void Write(hsStream* s, hsResMgr* mgr) 
@@ -90,7 +90,7 @@ public:
         plMessageWithCallbacks::Write(s, mgr); 
         s->WriteLE(fEffect);
         s->WriteLE(fLengthInSecs);
-        s->WriteLE(fHoldUntilNext);
+        s->WriteBOOL(fHoldUntilNext);
     }
 };
 

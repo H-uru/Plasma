@@ -122,7 +122,7 @@ plMorphSequence::~plMorphSequence()
     DeInit();
 }
 
-hsBool plMorphSequence::MsgReceive(plMessage* msg)
+bool plMorphSequence::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )
@@ -305,7 +305,7 @@ void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = 
     }
 }
 
-void plMorphSequence::ISetDirty(hsBool on) 
+void plMorphSequence::ISetDirty(bool on) 
 { 
     if( on )
     {
@@ -597,7 +597,7 @@ void plMorphSequence::IApplyShared(int iShare)
     mInfo.fFlags &= ~plSharedMeshInfo::kInfoDirtyMesh;
 }
 
-hsBool plMorphSequence::IResetShared(int iShare)
+bool plMorphSequence::IResetShared(int iShare)
 {
     if( iShare >= fSharedMeshes.GetCount() || fSharedMeshes[iShare].fCurrDraw == nil)
         return false;
@@ -633,7 +633,7 @@ hsBool plMorphSequence::IResetShared(int iShare)
     return true;
 }
 
-hsBool plMorphSequence::IFindIndices(int iShare)
+bool plMorphSequence::IFindIndices(int iShare)
 {
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
     mInfo.fCurrDraw = nil; // In case we fail.
@@ -695,7 +695,7 @@ int32_t plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
     return -1;
 }
 
-hsBool plMorphSequence::IIsUsingDrawable(plDrawable *draw)
+bool plMorphSequence::IIsUsingDrawable(plDrawable *draw)
 {
     int i;
     for (i = 0; i < fSharedMeshes.GetCount(); i++)

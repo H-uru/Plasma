@@ -84,8 +84,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // override the equals to operator
-    hsBool operator==(const pyGUIControl &gcobj) const;
-    hsBool operator!=(const pyGUIControl &gcobj) const { return !(gcobj == *this);  }
+    bool operator==(const pyGUIControl &gcobj) const;
+    bool operator!=(const pyGUIControl &gcobj) const { return !(gcobj == *this);  }
 
     // getter and setters
     virtual plKey getObjKey();
@@ -93,20 +93,20 @@ public:
 
     // interface functions
     virtual uint32_t  GetTagID();
-    virtual void    SetEnabled( hsBool e );
+    virtual void    SetEnabled( bool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
-    virtual hsBool  IsEnabled( void );
-    virtual void    SetFocused( hsBool e );
+    virtual bool    IsEnabled( void );
+    virtual void    SetFocused( bool e );
     virtual void    Focus() { SetFocused(true); }
     virtual void    UnFocus() { SetFocused(false); }
-    virtual hsBool  IsFocused( void );
-    virtual void    SetVisible( hsBool vis );
+    virtual bool    IsFocused( void );
+    virtual void    SetVisible( bool vis );
     virtual void    Show() { SetVisible(true); }
     virtual void    Hide() { SetVisible(false); }
-    virtual hsBool  IsVisible( void );
-    virtual hsBool  IsInteresting( void );
-    virtual void    SetNotifyOnInteresting( hsBool state );
+    virtual bool    IsVisible( void );
+    virtual bool    IsInteresting( void );
+    virtual void    SetNotifyOnInteresting( bool state );
     virtual void    Refresh( void );
     virtual void    SetObjectCenter( pyPoint3& pt);
     virtual PyObject* GetObjectCenter(); // returns pyPoint3

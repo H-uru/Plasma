@@ -209,7 +209,7 @@ public:
     plNetMsgObjectHelper & operator =(const plNetMsgObjectHelper & other);
     
     // setters
-    hsBool SetFromKey(const plKey &key);
+    bool SetFromKey(const plKey &key);
     void SetUoid(const plUoid &u) { fUoid=u; }
     
     // getters

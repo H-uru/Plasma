@@ -74,21 +74,21 @@ public:
     plLoadMask(uint8_t qLo, uint8_t qHi) { fQuality[0] = qLo; fQuality[1] = qHi; }
     ~plLoadMask() {}
 
-    hsBool      DontLoad() const { return !(fQuality[fGlobalCapability] & fGlobalQuality); }
+    bool      DontLoad() const { return !(fQuality[fGlobalCapability] & fGlobalQuality); }
 
-    hsBool      NeverLoads() const { return !(fQuality[0] && fQuality[1]); }
+    bool      NeverLoads() const { return !(fQuality[0] && fQuality[1]); }
 
-    hsBool      IsUsed() const { return (fQuality[0] != uint8_t(-1)) || (fQuality[1] != uint8_t(-1));   }
+    bool      IsUsed() const { return (fQuality[0] != uint8_t(-1)) || (fQuality[1] != uint8_t(-1));   }
 
-    hsBool      MatchesQuality(int q) const { return (IBitToMask(q) & (fQuality[0] | fQuality[1])) != 0; }
-    hsBool      MatchesCapability(int c) const { return fQuality[c] != 0; }
-    hsBool      MatchesQualityAndCapability(int q, int c) const { return IBitToMask(q) & fQuality[c]; }
+    bool      MatchesQuality(int q) const { return (IBitToMask(q) & (fQuality[0] | fQuality[1])) != 0; }
+    bool      MatchesCapability(int c) const { return fQuality[c] != 0; }
+    bool      MatchesQualityAndCapability(int q, int c) const { return IBitToMask(q) & fQuality[c]; }
 
-    hsBool      MatchesCurrentQuality() const { return MatchesQuality(fGlobalQuality); }
-    hsBool      MatchesCurrentCapability() const { return MatchesCapability(fGlobalCapability); }
-    hsBool      MatchesCurrent() const { return !DontLoad(); }
+    bool      MatchesCurrentQuality() const { return MatchesQuality(fGlobalQuality); }
+    bool      MatchesCurrentCapability() const { return MatchesCapability(fGlobalCapability); }
+    bool      MatchesCurrent() const { return !DontLoad(); }
 
-    uint8_t       GetQualityMask(int cap) const { return fQuality[cap]; }
+    uint8_t   GetQualityMask(int cap) const { return fQuality[cap]; }
 
     plLoadMask&     SetMask(uint8_t lo, uint8_t hi) { fQuality[0] = lo; fQuality[1] = hi; return *this; }
     plLoadMask&     SetNever() { return SetMask(0,0); }
@@ -127,7 +127,7 @@ public:
     // the output with ValidateMasks. The return value is a bitmask of which
     // items in the list had problems, so return of zero means A-OK.
     //
-    static hsBool ComputeRepMasks(int num, const int quals[], const int caps[], plLoadMask masks[]);
+    static bool     ComputeRepMasks(int num, const int quals[], const int caps[], plLoadMask masks[]);
     static uint32_t ValidateReps(int num, const int quals[], const int caps[]);
     static uint32_t ValidateMasks(int num, plLoadMask masks[]);
 };

@@ -61,7 +61,7 @@ plDecalEnableMod::~plDecalEnableMod()
 {
 }
 
-hsBool plDecalEnableMod::MsgReceive(plMessage* msg)
+bool plDecalEnableMod::MsgReceive(plMessage* msg)
 {
     plCollideMsg* coll = plCollideMsg::ConvertNoRef(msg);
     if( coll )

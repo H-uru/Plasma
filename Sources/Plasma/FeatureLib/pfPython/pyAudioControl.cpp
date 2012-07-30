@@ -194,14 +194,14 @@ void pyAudioControl::Disable()
     plgAudioSys::Activate(false);
 }
 
-hsBool pyAudioControl::IsEnabled()
+bool pyAudioControl::IsEnabled()
 {
     return plgAudioSys::Active();
 }
 
 
 // Enable or disable load-on-demand for sounds
-void pyAudioControl::SetLoadOnDemand( hsBool state )
+void pyAudioControl::SetLoadOnDemand( bool state )
 {
     plSound::SetLoadOnDemand(state);
 }
@@ -209,7 +209,7 @@ void pyAudioControl::SetLoadOnDemand( hsBool state )
 
 // Enables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.
 // ...Less of a performance hit, harder on memory.
-void pyAudioControl::SetTwoStageLOD( hsBool state )
+void pyAudioControl::SetTwoStageLOD( bool state )
 {
     // For two-stage LOD, we want to disable LoadFromDiskOnDemand, so that we'll load into RAM at startup but not
     // into sound buffers until demanded to do so. Enabling LoadFromDiskOnDemand basically conserves as much memory
@@ -219,24 +219,24 @@ void pyAudioControl::SetTwoStageLOD( hsBool state )
 
 
 // Enable audio hardware acceleration
-void pyAudioControl::UseHardwareAcceleration( hsBool state )
+void pyAudioControl::UseHardwareAcceleration( bool state )
 {
     plgAudioSys::SetUseHardware(state);
 }
 
-hsBool pyAudioControl::IsHardwareAccelerated()
+bool pyAudioControl::IsHardwareAccelerated()
 {
     return plgAudioSys::Hardware();
 }
 
 
 // Enable EAX sound acceleration (requires hardware acceleration)
-void pyAudioControl::UseEAXAcceleration( hsBool state )
+void pyAudioControl::UseEAXAcceleration( bool state )
 {
     plgAudioSys::EnableEAX(state);
 }
 
-hsBool pyAudioControl::IsUsingEAXAcceleration()
+bool pyAudioControl::IsUsingEAXAcceleration()
 {
     return plgAudioSys::UsingEAX();
 }
@@ -253,12 +253,12 @@ void pyAudioControl::UnmuteAll()
     plgAudioSys::SetMuted(false);
 }
 
-hsBool pyAudioControl::IsMuted()
+bool pyAudioControl::IsMuted()
 {
     return plgAudioSys::IsMuted();
 }
 
-hsBool pyAudioControl::SupportEAX(const char *deviceName)
+bool pyAudioControl::SupportEAX(const char *deviceName)
 {
     return plgAudioSys::SupportsEAX(deviceName);
 }
@@ -268,7 +268,7 @@ hsBool pyAudioControl::SupportEAX(const char *deviceName)
 // Voice Settings
 
 // Sets the microphone volume, in the range of 0 to 1
-hsBool pyAudioControl::CanSetMicLevel()
+bool pyAudioControl::CanSetMicLevel()
 {
     return plWinMicLevel::CanSetLevel();
 }
@@ -291,41 +291,41 @@ float pyAudioControl::GetMicLevel()
 
 
 // turn voice recording on or off
-void pyAudioControl::EnableVoiceRecording( hsBool state )
+void pyAudioControl::EnableVoiceRecording( bool state )
 {
     plVoiceRecorder::EnableRecording(state);
 }
 
-hsBool pyAudioControl::IsVoiceRecordingEnabled()
+bool pyAudioControl::IsVoiceRecordingEnabled()
 {
     return plVoiceRecorder::RecordingEnabled();
 }
 
 
 // turn voice compression on and off
-void pyAudioControl::EnableVoiceCompression( hsBool state )
+void pyAudioControl::EnableVoiceCompression( bool state )
 {
 }
 
-hsBool pyAudioControl::IsVoiceCompressionEnabled()
+bool pyAudioControl::IsVoiceCompressionEnabled()
 {
     return true;
 }
 
 
 // turn voice-over-net on and off
-void pyAudioControl::EnableVoiceNetBroadcast( hsBool state )
+void pyAudioControl::EnableVoiceNetBroadcast( bool state )
 {
     //plWinRecorder::EnableNetVoice(state);
 }
 
-hsBool pyAudioControl::IsVoiceNetBroadcastEnabled()
+bool pyAudioControl::IsVoiceNetBroadcastEnabled()
 {
     
     return true;
 }
 
-void pyAudioControl::EnableVoiceChat(hsBool enable)
+void pyAudioControl::EnableVoiceChat(bool enable)
 {
     plVoicePlayer::Enable(enable);
 }
@@ -344,7 +344,7 @@ void pyAudioControl::HideIcons()
 
 
 // turn push-to-talk on or off
-void pyAudioControl::PushToTalk( hsBool state )
+void pyAudioControl::PushToTalk( bool state )
 {
     plVoiceRecorder::EnablePushToTalk(state);
 }

@@ -57,7 +57,7 @@ public:
         kCalibrated,
     };
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
 
     int fCalibrated;
 public:
@@ -68,7 +68,7 @@ public:
     
     virtual void AddTarget(plSceneObject* so);
     virtual void RemoveTarget(plSceneObject* so);
-    void SetCalibrated(hsBool b) {fCalibrated = b;}
+    void SetCalibrated(bool b) {fCalibrated = b;}
     int GetCalibrated() { return fCalibrated; }
 
     virtual void Read(hsStream *stream, hsResMgr *mgr);

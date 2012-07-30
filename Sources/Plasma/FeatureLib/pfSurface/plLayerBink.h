@@ -51,9 +51,9 @@ protected:
     float fFPS;
 
     virtual int32_t ISecsToFrame(float secs);
-    hsBool IInit();
-    hsBool IGetCurrentFrame();
-    hsBool IRelease();
+    bool IInit();
+    bool IGetCurrentFrame();
+    bool IRelease();
 
 public:
     plLayerBink();

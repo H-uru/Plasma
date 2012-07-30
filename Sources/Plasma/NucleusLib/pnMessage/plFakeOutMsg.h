@@ -72,7 +72,7 @@ public:
 
     hsBitVector     fCmd;
 
-    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }

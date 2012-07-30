@@ -135,9 +135,9 @@ void plSittingModifier::ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *origin
 
 // MsgReceive --------------------------------------
 // -----------
-hsBool plSittingModifier::MsgReceive(plMessage *msg)
+bool plSittingModifier::MsgReceive(plMessage *msg)
 {
-    hsBool result = false;
+    bool result = false;
     
     plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(msg);
     if(notifyMsg)

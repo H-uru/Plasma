@@ -99,7 +99,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         };
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
-        hsBool                  fNeedsRebuilding, fWaitingForSkin;
+        bool                    fNeedsRebuilding, fWaitingForSkin;
         float                fOriginX, fOriginY;
         uint16_t                  fMargin;
         hsTArray<pfMenuItem>    fMenuItems;
@@ -113,7 +113,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         Alignment               fAlignment;
 
 
-        hsBool      IBuildMenu( void );
+        bool        IBuildMenu( void );
         void        ITearDownMenu( void );
 
         hsGMaterial *ICreateDynMaterial( void );
@@ -147,13 +147,13 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
             kRefParentNode
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    SetEnabled( hsBool e );
-        virtual hsBool  HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        virtual void    SetEnabled( bool e );
+        virtual bool    HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
 
         void            Show( float x, float y );
 
@@ -224,13 +224,13 @@ class pfGUISkin : public hsKeyedObject
 
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
 
         plMipmap        *GetTexture( void ) const { return fTexture; }
         void            SetTexture( plMipmap *tex );
 
         const pfSRect   &GetElement( uint32_t idx ) const { return fElements[ idx ]; }
-        hsBool          IsElementSet( uint32_t idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
+        bool            IsElementSet( uint32_t idx ) const { return ( fElements[ idx ].fWidth > 0 && fElements[ idx ].fHeight > 0 ); }
         void            SetElement( uint32_t idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h );
 
         void            SetMargins( uint16_t item, uint16_t border ) { fItemMargin = item; fBorderMargin = border; }

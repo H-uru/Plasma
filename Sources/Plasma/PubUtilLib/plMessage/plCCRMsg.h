@@ -152,7 +152,7 @@ public:
 class plCCRBanLinkingMsg : public plCCRMessage
 {
 public:
-    hsBool fBan;    // ban or un ban
+    bool fBan;    // ban or un ban
 
     plCCRBanLinkingMsg() ;
     ~plCCRBanLinkingMsg() {}
@@ -170,7 +170,7 @@ public:
 class plCCRSilencePlayerMsg : public plCCRMessage
 {
 public:
-    hsBool fSilence;    // ban or un ban
+    bool fSilence;    // ban or un ban
 
     plCCRSilencePlayerMsg() ;
     ~plCCRSilencePlayerMsg() {}

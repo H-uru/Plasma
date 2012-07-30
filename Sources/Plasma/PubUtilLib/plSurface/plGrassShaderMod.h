@@ -78,7 +78,7 @@ public:
     virtual void AddTarget(plSceneObject *object);
     virtual void RemoveTarget(plSceneObject *object);
 
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
@@ -99,7 +99,7 @@ public:
     plGrassWave fWaves[kNumWaves];
 
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
     virtual void IApplyDynamic() {};    // dummy function required by base class
     void ISetupShaders();
     void IRefreshWaves(plShader *vShader);

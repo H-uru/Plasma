@@ -97,7 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonPythonLib : public plCommonObjLib
 {
     public:
-        virtual hsBool  IsInteresting( const plKey &objectKey )
+        virtual bool    IsInteresting( const plKey &objectKey )
         {
             if( objectKey->GetUoid().GetClassType() == plPythonFileMod::Index() )
                 return true;
@@ -149,9 +149,9 @@ protected:
 public:
     plPythonFileComponent();
 
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) { fOthersKeys.Append(key); }
 
@@ -170,7 +170,7 @@ public:
 
     virtual PythonKeys& GetKeys() { return fModKeys; }
 
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
     { 
         fModKeys.clear();
         fOthersKeys.Reset();
@@ -241,7 +241,7 @@ plPythonFileComponent::plPythonFileComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plPythonFileComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPythonFileComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (fPythonError.length() > 0)
     {
@@ -254,7 +254,7 @@ hsBool plPythonFileComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
     return true;
 }
 
-hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     IParamBlock2 *pb = (IParamBlock2*)fCompPB->GetReferenceTarget(kPythonFilePB);
     plAutoUIBlock *block = FindAutoUI(pb);
@@ -407,7 +407,7 @@ hsBool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 #include "pnKeyedObject/plKey.h"
 #include "plResponderComponent.h"
 
-hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     IParamBlock2 *pb = (IParamBlock2*)fCompPB->GetReferenceTarget(kPythonFilePB);
     plAutoUIBlock *block = FindAutoUI(pb);
@@ -464,7 +464,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeSceneObj:
             {
                 int numKeys = param->GetCount(pb);
-                hsBool found_atleast_one_good_one = false;
+                bool found_atleast_one_good_one = false;
                 for (int i = 0; i < numKeys; i++)
                 {
                     plKey skey = param->GetKey(pb, i);
@@ -490,7 +490,7 @@ hsBool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeComponent:
             {
                 int count = param->GetCount(pb);
-                hsBool found_atleast_one_good_one = false;
+                bool found_atleast_one_good_one = false;
                 for (int i = 0; i < count; i++)
                 {
                     plComponentBase *comp = param->GetComponent(pb, i);

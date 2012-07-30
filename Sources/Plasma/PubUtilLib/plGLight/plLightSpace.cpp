@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 
-hsBool plLightSpace::MsgReceive(plMessage* msg)
+bool plLightSpace::MsgReceive(plMessage* msg)
 {
     plCollideMsg* collMsg = plCollideMsg::ConvertNoRef(msg);
     if( collMsg )
@@ -57,7 +57,7 @@ hsBool plLightSpace::MsgReceive(plMessage* msg)
         // HACK - CollideMsg doesn't have sufficient info yet. Need at least object
         // which is entering and leaving, and whether it is entering or leaving.
         plKey otherKey = nil;
-        hsBool enter = true; 
+        bool enter = true; 
         uint8_t ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
         plLightRefMsg* liMsg = new plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
         plgDispatch::MsgSend(liMsg);

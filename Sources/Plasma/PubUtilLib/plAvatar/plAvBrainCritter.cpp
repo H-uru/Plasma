@@ -81,7 +81,7 @@ public:
         fAvMod(nil), fCritterBrain(nil), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) {}
     virtual ~CritterBehavior() {}
 
-    void Init(plAGAnim* anim, hsBool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
+    void Init(plAGAnim* anim, bool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
     {
         plArmatureBehavior::Init(anim, loop, brain, body, index);
         fAvMod = body;
@@ -89,7 +89,7 @@ public:
         fAnimName = anim->GetName();
     }
 
-    virtual hsBool PreCondition(double time, float elapsed) {return true;}
+    virtual bool PreCondition(double time, float elapsed) {return true;}
 
     float GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
     void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
@@ -152,7 +152,7 @@ plAvBrainCritter::~plAvBrainCritter()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-hsBool plAvBrainCritter::Apply(double time, float elapsed)
+bool plAvBrainCritter::Apply(double time, float elapsed)
 {
     // update internal pathfinding variables
     IEvalGoal();
@@ -173,7 +173,7 @@ hsBool plAvBrainCritter::Apply(double time, float elapsed)
     return plArmatureBrain::Apply(time, elapsed);
 }
 
-hsBool plAvBrainCritter::MsgReceive(plMessage* msg)
+bool plAvBrainCritter::MsgReceive(plMessage* msg)
 {
     return plArmatureBrain::MsgReceive(msg);
 }
@@ -456,7 +456,7 @@ void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, char* 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-hsBool plAvBrainCritter::IInitBaseAnimations()
+bool plAvBrainCritter::IInitBaseAnimations()
 {
     // create the basic idle and run behaviors, and put them into our appropriate structures
     plAGAnim* idle = fAvMod->FindCustomAnim(kDefaultIdleAnimName);

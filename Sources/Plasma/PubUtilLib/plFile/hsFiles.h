@@ -83,8 +83,8 @@ public:
     virtual const char* GetPathAndName();
     virtual void    SetPathAndName(const char pathAndName[]);
 
-    virtual FILE*   OpenFILE(const char mode[], hsBool throwIfFailure = false);
-    virtual hsStream* OpenStream(const char mode[], hsBool throwIfFailure = false);
+    virtual FILE*   OpenFILE(const char mode[], bool throwIfFailure = false);
+    virtual hsStream* OpenStream(const char mode[], bool throwIfFailure = false);
 
     virtual void    Close();    // called automatically in the destructor
 };
@@ -110,11 +110,11 @@ public:
     void            SetPath(const char path[]);
 
     void            Reset();
-    hsBool      NextFile();
-    hsBool      NextFileSuffix(const char suffix[]);
+    bool        NextFile();
+    bool        NextFileSuffix(const char suffix[]);
     const char* GetFileName() const;
     int         GetPathAndName(char pathandname[] = nil);
-    hsBool      IsDirectory( void ) const;
+    bool        IsDirectory( void ) const;
 
     FILE*       OpenFILE(const char mode[]);
 
@@ -138,11 +138,11 @@ public:
     void            SetPath(const wchar_t path[]);
 
     void            Reset();
-    hsBool          NextFile();
-    hsBool          NextFileSuffix(const wchar_t suffix[]);
+    bool            NextFile();
+    bool            NextFileSuffix(const wchar_t suffix[]);
     const wchar_t*    GetFileName() const;
     int             GetPathAndName(wchar_t pathandname[] = nil);
-    hsBool          IsDirectory( void ) const;
+    bool            IsDirectory( void ) const;
 
     FILE*           OpenFILE(const wchar_t mode[]);
 

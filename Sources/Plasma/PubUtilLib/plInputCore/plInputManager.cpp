@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCmdIfaceModMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
 
-hsBool  plInputManager::fUseDInput = false;
+bool    plInputManager::fUseDInput = false;
 uint8_t   plInputManager::bRecenterMouse = 0;
 HWND    plInputManager::fhWnd = nil;
 #define NUM_ACTIONS     17
@@ -94,7 +94,7 @@ public:
     void Update();
     void AddDevice(IDirectInputDevice8* device);
     void ConfigureDevice();
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     // dinput callback functions
     static int __stdcall EnumGamepadCallback(const DIDEVICEINSTANCE* device, void* pRef);
@@ -154,7 +154,7 @@ plInputManager::~plInputManager()
 }
 
 //static
-void plInputManager::SetRecenterMouse(hsBool b)
+void plInputManager::SetRecenterMouse(bool b)
 { 
     if (b)
         bRecenterMouse++;
@@ -188,7 +188,7 @@ void plInputManager::InitDInput(hsWindowInst hInst, hsWindowHndl hWnd)
     }
 }
 
-hsBool plInputManager::MsgReceive(plMessage* msg)
+bool plInputManager::MsgReceive(plMessage* msg)
 {
     for (int i=0; i<fInputDevices.Count(); i++)
         if (fInputDevices[i]->MsgReceive(msg))
@@ -244,7 +244,7 @@ void plInputManager::SetMouseScale( float s )
 // Sometimes the keyboard driver "helps" us translating a key involved in a key
 // combo. For example pressing shif-numpad8 will actually generate a KEY_UP event,
 // the same as the up arrow. This function undoes that translation.
-plKeyDef plInputManager::UntranslateKey(plKeyDef key, hsBool extended)
+plKeyDef plInputManager::UntranslateKey(plKeyDef key, bool extended)
 {
     if (!extended)
     {
@@ -267,7 +267,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
     if( !fhWnd )
         fhWnd = hWnd;
 
-    hsBool bExtended;
+    bool bExtended;
 
     switch (message)
     {
@@ -275,7 +275,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
     case KEYDOWN:
         {
             bExtended = Lparam >> 24 & 1;
-            hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
+            bool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             for (int i=0; i<fInputDevices.Count(); i++)
                 fInputDevices[i]->HandleKeyEvent( KEYDOWN, UntranslateKey((plKeyDef)Wparam, bExtended), true, bRepeat ); 
         }
@@ -301,7 +301,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             UINT vkey = MapVirtualKey(scan, 1); //MAPVK_VSC_TO_VK
 
             bExtended = Lparam >> 24 & 1;
-            hsBool bRepeat = ((Lparam >> 29) & 0xf) != 0;
+            bool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             bool down = !(Lparam >> 31);
  
             for (int i=0; i<fInputDevices.Count(); i++)
@@ -611,7 +611,7 @@ void plDInputMgr::ConfigureDevice()
 
 }
 
-hsBool plDInputMgr::MsgReceive(plMessage* msg)
+bool plDInputMgr::MsgReceive(plMessage* msg)
 {
     plInputEventMsg* pMsg = plInputEventMsg::ConvertNoRef(msg);
     if (pMsg && pMsg->fEvent == plInputEventMsg::kConfigure)

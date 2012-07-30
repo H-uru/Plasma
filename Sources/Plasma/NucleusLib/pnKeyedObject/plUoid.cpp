@@ -87,22 +87,22 @@ void plLocation::Invalidate()
     fFlags = 0; // Set to kInvalid?
 }
 
-hsBool plLocation::IsValid() const
+bool plLocation::IsValid() const
 {
     return (fSequenceNumber == kInvalidLocIdx) ? false : true;
 }
 
-hsBool plLocation::IsReserved() const
+bool plLocation::IsReserved() const
 {
     return hsCheckBits(fFlags, kReserved);
 }
 
-hsBool plLocation::IsItinerant() const
+bool plLocation::IsItinerant() const
 {
     return hsCheckBits(fFlags, kItinerant);
 }
 
-hsBool plLocation::IsVirtual() const
+bool plLocation::IsVirtual() const
 {
     // This returns whether the location is "virtual", i.e. isn't a true room per se. Like fixed keys
     if (fSequenceNumber == kGlobalFixedLocIdx)
@@ -226,7 +226,7 @@ void plUoid::Invalidate()
 
 }
 
-hsBool plUoid::IsValid() const
+bool plUoid::IsValid() const
 {
     if (!fLocation.IsValid() || fObjectName.IsNull())
         return false;
@@ -234,7 +234,7 @@ hsBool plUoid::IsValid() const
     return true;
 }
 
-hsBool plUoid::operator==(const plUoid& u) const
+bool plUoid::operator==(const plUoid& u) const
 {
     return  fLocation == u.fLocation
             && fLoadMask == u.fLoadMask

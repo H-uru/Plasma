@@ -63,7 +63,7 @@ public:
           hsAssert(min <= max, "Min and max out of order.");
     }
 
-    virtual hsBool32 Update(float fraction) = 0;
+    virtual bool32 Update(float fraction) = 0;
 
     float GetTotalFraction(float f) const { return fMin + f * (fMax - fMin); }
 

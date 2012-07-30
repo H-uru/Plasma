@@ -72,20 +72,20 @@ public:
     CLASSNAME_REGISTER( plAvBrainHuman );
     GETINTERFACE_ANY( plAvBrainHuman, plArmatureBrain );
 
-    virtual hsBool Apply(double timeNow, float elapsed);
+    virtual bool Apply(double timeNow, float elapsed);
     virtual void Activate(plArmatureModBase *avMod);
     virtual void Deactivate();
     virtual void Suspend();
     virtual void Resume();
     virtual void Spawn(double timeNow);
-    virtual hsBool LeaveAge();
+    virtual bool LeaveAge();
 
     bool IsActor() const {return fIsActor;}
     void IsActor(bool isActor) {fIsActor = isActor;}
 
     bool IsMovementZeroBlend();
     void TurnToPoint(hsPoint3 point);   
-    hsBool RunStandardBehaviors(double timeNow, float elapsed);
+    bool RunStandardBehaviors(double timeNow, float elapsed);
     void SetStartedTurning(double when);
 
     virtual bool IsMovingForward();     // we're either walking or running. doesn't account for sliding.
@@ -96,7 +96,7 @@ public:
 
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
 
     // Hardwired Identifiers for all the canonical bones.
@@ -154,12 +154,12 @@ public:
         kHuBehaviorMax,
     };
     
-    static void SetTimeToMaxTurn(float time, hsBool walk);
-    static float GetTimeToMaxTurn(hsBool walk);
-    static void SetMaxTurnSpeed(float radsPerSec, hsBool walk);
-    static float GetMaxTurnSpeed(hsBool walk);
-    static void SetTurnCurve(TurnCurve curve, hsBool walk);
-    static TurnCurve GetTurnCurve(hsBool walk);
+    static void SetTimeToMaxTurn(float time, bool walk);
+    static float GetTimeToMaxTurn(bool walk);
+    static void SetMaxTurnSpeed(float radsPerSec, bool walk);
+    static float GetMaxTurnSpeed(bool walk);
+    static void SetTurnCurve(TurnCurve curve, bool walk);
+    static TurnCurve GetTurnCurve(bool walk);
     
     static const float kControlledFlightThreshold;
     static const float kAirTimeThreshold;
@@ -168,15 +168,15 @@ public:
     
 protected:
     plAGAnim *FindCustomAnim(const char *baseName);
-    virtual hsBool IHandleControlMsg(plControlEventMsg *ctrlMsg);
-    virtual hsBool IHandleClimbMsg(plClimbMsg *msg);
-    virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
-    virtual hsBool IInitAnimations();
+    virtual bool IHandleControlMsg(plControlEventMsg *ctrlMsg);
+    virtual bool IHandleClimbMsg(plClimbMsg *msg);
+    virtual bool IHandleTaskMsg(plAvTaskMsg *msg);
+    virtual bool IInitAnimations();
     virtual void IInitBoneMap();
     float IGetTurnStrength(double timeNow);
     void IChatOn();
     void IChatOff();
-    hsBool IValidateAnimations();
+    bool IValidateAnimations();
     
     plAGModifier    *fHandleAGMod;      // the ag modifier that's attached to our top object
     double fStartedTurning;         // when did we start turning?   
@@ -236,9 +236,9 @@ public:
     plHBehavior();
     ~plHBehavior();
 
-    void Init(plAGAnim *anim, hsBool loop, plAvBrainHuman *brain, plArmatureMod *body,
+    void Init(plAGAnim *anim, bool loop, plAvBrainHuman *brain, plArmatureMod *body,
               float fadeIn, float fadeOut, uint8_t index, uint32_t type = 0);
-    virtual hsBool PreCondition(double time, float elapsed) { return true; }
+    virtual bool PreCondition(double time, float elapsed) { return true; }
     uint32_t GetType() const { return fType; }
 
 protected:
@@ -264,43 +264,43 @@ class Idle : public plHBehavior
 class Run : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class Walk : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class WalkBack : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class StepLeft : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class StepRight : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class StandingTurnLeft : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class StandingTurnRight : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class MovingTurn : public plHBehavior
@@ -314,19 +314,19 @@ protected:
 class MovingTurnLeft : public MovingTurn
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class MovingTurnRight : public MovingTurn
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class Jump : public plHBehavior
 {
 protected:
-    hsBool fReleased;
+    bool fReleased;
     virtual void IStart();
     virtual void IStop();
     
@@ -337,26 +337,26 @@ public:
 class StandingJump : public Jump
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class WalkingJump : public Jump
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class RunningJump : public Jump
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 class GroundImpact : public plHBehavior
 {
 public:
     GroundImpact();
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 
 private:
     virtual void IStop();
@@ -367,7 +367,7 @@ class RunningImpact : public plHBehavior
 {
 public:
     RunningImpact();
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 
 private:
     virtual void IStop();
@@ -377,7 +377,7 @@ private:
 class Fall : public plHBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
     virtual void Process(double time, float elapsed);
 };
 
@@ -390,13 +390,13 @@ public:
 //class PushIdle : public Push
 //{
 //public:
-//  virtual hsBool PreCondition(double time, float elapsed);
+//  virtual bool PreCondition(double time, float elapsed);
 //};
 
 class PushWalk : public Push
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed);
+    virtual bool PreCondition(double time, float elapsed);
 };
 
 bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim,

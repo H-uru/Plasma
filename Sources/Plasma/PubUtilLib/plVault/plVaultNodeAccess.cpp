@@ -635,7 +635,7 @@ void VaultImageNode::SetImageData (const uint8_t buffer[], unsigned bytes) {
 #ifdef CLIENT
 void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
     hsRAMStream ramStream;
-    hsBool compressSuccess = false;
+    bool compressSuccess = false;
 
     switch (dstType) {
         case kJPEG:

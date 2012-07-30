@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPipeResReq
 {
 protected:
-    hsBool  fReq;
+    bool  fReq;
 
     plPipeResReq() : fReq(false) {}
 
@@ -62,7 +62,7 @@ protected:
 public:
 
     static void Request() { PIPELOG("Request"); Instance().fReq = true; }
-    static hsBool Check() { PIPELOG("Check"); return Instance().fReq; }
+    static bool Check() { PIPELOG("Check"); return Instance().fReq; }
     static void Clear() { PIPELOG("Clear"); Instance().fReq = false; }
 };
 

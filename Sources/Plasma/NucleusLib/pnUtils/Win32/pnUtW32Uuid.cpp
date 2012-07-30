@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if 0
 
-COMPILER_ASSERT(sizeof(Uuid) >= sizeof(GUID));
-
 void Uuid::Clear()
 {
     UuidCreateNil( (GUID *)this );
@@ -120,7 +118,7 @@ Uuid Uuid::Generate()
 *
 ***/
 
-COMPILER_ASSERT(sizeof(Uuid) >= sizeof(GUID));
+static_assert(sizeof(Uuid) >= sizeof(GUID), "pnUtils Uuid and Win32 GUID types differ in size");
 
 //============================================================================
 Uuid GuidGenerate () {
@@ -137,7 +135,7 @@ void GuidClear (Uuid * uuid) {
 //============================================================================
 bool GuidFromString (const wchar_t str[], Uuid * uuid) {
     ASSERT(uuid);
-    COMPILER_ASSERT(sizeof(wchar_t) == sizeof(unsigned short));
+    static_assert(sizeof(wchar_t) == sizeof(unsigned short), "Wchar is not an uint16");
     return RPC_S_OK == UuidFromStringW((unsigned short *) str, (GUID *) uuid);
 }
 

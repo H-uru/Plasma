@@ -86,7 +86,7 @@ protected:
 
     double      fBirth;
     float    fInitAtten;
-    hsBool      fFlags;
+    bool        fFlags;
 
     plDecalVtxFormat*   fVtxBase; // Safe pointer, the buffer data will outlive this decal
     
@@ -95,7 +95,7 @@ protected:
     friend class plDynaDecalMgr;
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life) = 0;
+    virtual bool        Age(double t, float ramp, float decay, float life) = 0;
 };
 
 // No expansion
@@ -105,7 +105,7 @@ protected:
 
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life);
+    virtual bool        Age(double t, float ramp, float decay, float life);
 };
 
 // Expands radially from center
@@ -113,7 +113,7 @@ class plDynaRipple : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life);
+    virtual bool        Age(double t, float ramp, float decay, float life);
 
     float fC1U;
     float fC2U;
@@ -128,7 +128,7 @@ class plDynaWake : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life);
+    virtual bool        Age(double t, float ramp, float decay, float life);
 
     float fC1U;
     float fC2U;
@@ -143,7 +143,7 @@ class plDynaWave : public plDynaDecal
 {
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life);
+    virtual bool        Age(double t, float ramp, float decay, float life);
 
     float fScrollRate;
 };
@@ -154,7 +154,7 @@ class plDynaRippleVS : public plDynaRipple
 {
 public:
 
-    virtual hsBool      Age(double t, float ramp, float decay, float life);
+    virtual bool        Age(double t, float ramp, float decay, float life);
 };
 
 #endif // plDynaDecal_inc

@@ -85,7 +85,7 @@ public:
     virtual plLayerInterface*           Attach(plLayerInterface* prev);
     //virtual uint32_t                        Eval(double secs, uint32_t frame, uint32_t ignore) = 0;
 
-    virtual hsBool                      MsgReceive(plMessage* msg);
+    virtual bool                        MsgReceive(plMessage* msg);
 
     virtual void                        Read(hsStream* s, hsResMgr* mgr);
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
@@ -129,7 +129,7 @@ public:
     virtual plLayerInterface*           Attach(plLayerInterface* prev);
     virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
 
-    virtual hsBool                      MsgReceive(plMessage* msg);
+    virtual bool                        MsgReceive(plMessage* msg);
 
     virtual void                        Read(hsStream* s, hsResMgr* mgr);
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
@@ -144,7 +144,7 @@ class plLayerLinkAnimation : public plLayerAnimation
 {
 protected:
     plKey fLinkKey;
-    hsBool fEnabled;
+    bool fEnabled;
     plEventCallbackMsg *fIFaceCallback;
 
     enum
@@ -157,7 +157,7 @@ protected:
     };
     uint8_t fFadeFlags;
     uint8_t fLastFadeFlag;
-    hsBool fFadeFlagsDirty;
+    bool fFadeFlagsDirty;
     
 public:
     plLayerLinkAnimation();
@@ -173,16 +173,16 @@ public:
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual hsBool DirtySynchState(const char* sdlName, uint32_t sendFlags) { return false; } // don't send link state
+    virtual bool DirtySynchState(const char* sdlName, uint32_t sendFlags) { return false; } // don't send link state
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
     virtual uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore); 
-    virtual hsBool MsgReceive(plMessage* pMsg);
-    void Enable(hsBool b) { fEnabled = b; }
-    void SetFadeFlag(uint8_t flag, hsBool val);
+    virtual bool MsgReceive(plMessage* pMsg);
+    void Enable(bool b) { fEnabled = b; }
+    void SetFadeFlag(uint8_t flag, bool val);
 
-    hsBool fLeavingAge;
+    bool fLeavingAge;
 };
 
 class plLayerSDLAnimation : public plLayerAnimationBase
@@ -200,7 +200,7 @@ public:
 
     virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
 
-    virtual hsBool                      MsgReceive(plMessage* msg);
+    virtual bool                        MsgReceive(plMessage* msg);
 
     virtual void                        Read(hsStream* s, hsResMgr* mgr);
     virtual void                        Write(hsStream* s, hsResMgr* mgr);

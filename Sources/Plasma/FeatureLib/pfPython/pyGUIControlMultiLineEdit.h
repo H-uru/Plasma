@@ -72,7 +72,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static hsBool IsGUIControlMultiLineEdit(pyKey& gckey);
+    static bool IsGUIControlMultiLineEdit(pyKey& gckey);
 
     virtual void    Clickable( void );
     virtual void    Unclickable( void );
@@ -102,7 +102,7 @@ public:
 
     virtual void    Lock( void );
     virtual void    Unlock( void );
-    virtual hsBool  IsLocked( void );
+    virtual bool    IsLocked( void );
 
     virtual void    EnableScrollControl();
     virtual void    DisableScrollControl();

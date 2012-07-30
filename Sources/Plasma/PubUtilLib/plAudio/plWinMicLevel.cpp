@@ -72,11 +72,11 @@ DWORD       sVolControlID = 0;
 
 //// Local Static Helpers ////////////////////////////////////////////////////
 
-hsBool  IGetMuxMicVolumeControl( void );
-hsBool  IGetBaseMicVolumeControl( void );
+bool    IGetMuxMicVolumeControl( void );
+bool    IGetBaseMicVolumeControl( void );
 
-hsBool  IGetControlValue( DWORD &value );
-hsBool  ISetControlValue( DWORD value );
+bool    IGetControlValue( DWORD &value );
+bool    ISetControlValue( DWORD value );
 
 MIXERLINE       *IGetLineByType( DWORD type );
 MIXERLINE       *IGetLineByID( DWORD id );
@@ -114,7 +114,7 @@ void    plWinMicLevel::SetLevel( float level )
 #endif
 }
 
-hsBool  plWinMicLevel::CanSetLevel( void )
+bool    plWinMicLevel::CanSetLevel( void )
 {
     // Just to init
     plWinMicLevel   &instance = IGetInstance();
@@ -196,7 +196,7 @@ void    plWinMicLevel::IShutdown( void )
 //  Note: testing indcates that this works but the direct SRC_MICROPHONE
 //  doesn't, hence we try this one first.
 
-hsBool  IGetMuxMicVolumeControl( void )
+bool    IGetMuxMicVolumeControl( void )
 {
     if( sMixerHandle == nil )
         return false;
@@ -238,7 +238,7 @@ hsBool  IGetMuxMicVolumeControl( void )
 //  Tries to get the volume control of the mic-in line. See 
 //  IGetMuxMicVolumeControl for why we don't do this one first.
 
-hsBool  IGetBaseMicVolumeControl( void )
+bool    IGetBaseMicVolumeControl( void )
 {
     if( sMixerHandle == nil )
         return false;
@@ -267,7 +267,7 @@ hsBool  IGetBaseMicVolumeControl( void )
 //// IGetControlValue ////////////////////////////////////////////////////////
 //  Gets the raw value of the current volume control.
 
-hsBool  IGetControlValue( DWORD &value )
+bool    IGetControlValue( DWORD &value )
 {
     if( sMixerHandle == nil )
         return false;
@@ -292,7 +292,7 @@ hsBool  IGetControlValue( DWORD &value )
 //// ISetControlValue ////////////////////////////////////////////////////////
 //  Sets the raw value of the current volume control.
 
-hsBool  ISetControlValue( DWORD value )
+bool    ISetControlValue( DWORD value )
 {
     if( sMixerHandle == nil )
         return false;

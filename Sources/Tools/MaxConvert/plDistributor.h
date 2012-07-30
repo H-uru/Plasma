@@ -267,10 +267,10 @@ protected:
     Matrix3             IInvOTM(int iRepNode) const;
 
     Matrix3             IGenerateTransform(int iRepNode, int iFace, const Point3& pt, const Point3& bary) const;
-    hsBool              IProbablyDoIt(int iFace, Point3& del, const Point3& bary) const;
-    hsBool              IFailsAltProb(int iFace, const Point3& bary) const;
-    hsBool              IFailsAngProb(int iFace, const Point3& bary) const;
-    hsBool              IFailsProbBitmap(int iFace, const Point3& bary) const;
+    bool                IProbablyDoIt(int iFace, Point3& del, const Point3& bary) const;
+    bool                IFailsAltProb(int iFace, const Point3& bary) const;
+    bool                IFailsAngProb(int iFace, const Point3& bary) const;
+    bool                IFailsProbBitmap(int iFace, const Point3& bary) const;
     Box3                ISetupGrid(const Point3& p0, const Point3& p1, const Point3& p2) const;
     Point3&             IPerturbPoint(Point3& pt) const;
     int                 ISelectRepNode() const;

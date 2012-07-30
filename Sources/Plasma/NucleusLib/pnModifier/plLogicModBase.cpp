@@ -132,7 +132,7 @@ void plLogicModBase::IUpdateSharedState(bool triggered) const
         triggered ? "Triggered" : "UnTriggered", hsTimer::GetSysSeconds());
 }
 
-hsBool plLogicModBase::MsgReceive(plMessage* msg)
+bool plLogicModBase::MsgReceive(plMessage* msg)
 {
     // read messages:
     plServerReplyMsg* pSMsg = plServerReplyMsg::ConvertNoRef(msg);
@@ -159,7 +159,7 @@ hsBool plLogicModBase::MsgReceive(plMessage* msg)
         }
         else
         {
-            hsBool netRequest=false;    // we're triggering as a result of a local activation
+            bool netRequest=false;    // we're triggering as a result of a local activation
             PreTrigger(netRequest);
             IUpdateSharedState(false /* untriggering */);
         }
@@ -185,7 +185,7 @@ hsBool plLogicModBase::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-void plLogicModBase::RequestTrigger(hsBool netRequest)
+void plLogicModBase::RequestTrigger(bool netRequest)
 {
     if (HasFlag(kTriggered))
     {
@@ -225,7 +225,7 @@ void plLogicModBase::RequestTrigger(hsBool netRequest)
 //
 // return false is counter test fails
 //
-hsBool plLogicModBase::IEvalCounter()
+bool plLogicModBase::IEvalCounter()
 {
     if (fCounterLimit > 0)
     {   
@@ -239,7 +239,7 @@ hsBool plLogicModBase::IEvalCounter()
     return true;
 }
 
-void plLogicModBase::PreTrigger(hsBool netRequest)
+void plLogicModBase::PreTrigger(bool netRequest)
 {
     if (fDisabled)
         return;
@@ -247,7 +247,7 @@ void plLogicModBase::PreTrigger(hsBool netRequest)
     Trigger(netRequest);
 }
 
-void plLogicModBase::Trigger(hsBool netRequest)
+void plLogicModBase::Trigger(bool netRequest)
 {
 #if 1
     plNetClientApp::GetInstance()->DebugMsg("LogicModifier %s is triggering, activatorType=%d\n",
@@ -323,7 +323,7 @@ void plLogicModBase::Read(hsStream* stream, hsResMgr* mgr)
     fNotify = pNMsg;
 
     fFlags.Read(stream);
-    fDisabled = stream->Readbool();
+    fDisabled = stream->ReadBool();
     for (int d = 0; d < fNotify->GetNumReceivers(); d++)
         fReceiverList.Append(fNotify->GetReceiver(d));
 }
@@ -336,5 +336,5 @@ void plLogicModBase::Write(hsStream* stream, hsResMgr* mgr)
         mgr->WriteCreatable( stream, fCommandList[i] );
     mgr->WriteCreatable( stream, fNotify );
     fFlags.Write(stream);
-    stream->Writebool(fDisabled);
+    stream->WriteBool(fDisabled);
 }

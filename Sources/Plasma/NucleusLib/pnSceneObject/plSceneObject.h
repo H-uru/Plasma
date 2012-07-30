@@ -88,7 +88,7 @@ private:
     friend class plMaxNode;
     friend class plMaxNodeBase;
 
-    hsBool IMsgHandle(plMessage* msg);
+    bool IMsgHandle(plMessage* msg);
 protected:
 
     plDrawInterface*            fDrawInterface;
@@ -113,7 +113,7 @@ protected:
 
     void                    IAddModifier(plModifier* mo, int i);
     void                    IRemoveModifier(plModifier* mo);
-    hsBool                  IPropagateToModifiers(plMessage* msg);
+    bool                    IPropagateToModifiers(plMessage* msg);
 
     void                    ISetInterface(plObjInterface* iface);
     void                    IRemoveInterface(plObjInterface* iface);
@@ -146,8 +146,8 @@ public:
     const plModifier*       GetModifier(int i) const { return fModifiers[i]; }
     const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
-    virtual hsBool MsgReceive(plMessage* msg);
-    virtual hsBool Eval(double secs, float del);
+    virtual bool MsgReceive(plMessage* msg);
+    virtual bool Eval(double secs, float del);
 
     void                    SetSceneNode(plKey newNode);
     plKey                   GetSceneNode() const;
@@ -166,7 +166,7 @@ public:
     hsMatrix44 GetLocalToParent() const;
     hsMatrix44 GetParentToLocal() const;
 
-    hsBool  IsFinal();  // "is ready to process Loads"  
+    virtual bool IsFinal();  // "is ready to process Loads"  
 
     // Export only
     virtual void SetDrawInterface(plDrawInterface* di);

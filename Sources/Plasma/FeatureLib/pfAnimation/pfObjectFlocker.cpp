@@ -523,7 +523,7 @@ void pfBoid::ISetupToken(pfProximityDatabase &pd)
     fProximityToken = pd.MakeToken(this);
 }
 
-hsBool pfBoid::IInBoidNeighborhood(const pfVehicle &other, const float minDistance, const float maxDistance, const float cosMaxAngle)
+bool pfBoid::IInBoidNeighborhood(const pfVehicle &other, const float minDistance, const float maxDistance, const float cosMaxAngle)
 {
     if (&other == this) // abort if we're looking at ourselves
         return false;
@@ -929,7 +929,7 @@ void pfObjectFlocker::SetNumBoids(uint8_t val)
     fNumBoids = val;
 }
 
-hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
+bool pfObjectFlocker::MsgReceive(plMessage* msg)
 {
     plInitialAgeStateLoadedMsg* loadMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if (loadMsg)
@@ -979,7 +979,7 @@ hsBool pfObjectFlocker::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
+bool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
 {
     fFlock.Update(fTarget, del);
 

@@ -99,17 +99,17 @@ public:
         kPositional             = 0x80
     };
 
-    void SetFlag(SlaveFlag f, hsBool on) { if(on) fFlags |= f; else fFlags &= ~f; }
-    hsBool HasFlag(SlaveFlag f) const { return 0 != (fFlags & f); }
+    void SetFlag(SlaveFlag f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+    bool HasFlag(SlaveFlag f) const { return 0 != (fFlags & f); }
 
-    hsBool ObeysLightGroups() const { return HasFlag(kObeysLightGroups); }
-    hsBool IncludesChars() const { return HasFlag(kIncludesChars); }
-    hsBool SelfShadow() const { return HasFlag(kSelfShadow); }
-    hsBool CastInCameraSpace() const { return HasFlag(kCastInCameraSpace); }
-    hsBool ReverseZ() const { return HasFlag(kReverseZ); }
-    hsBool TwoSided() const { return HasFlag(kTwoSided); }
-    hsBool ReverseCull() const { return HasFlag(kReverseCull); }
-    hsBool Positional() const { return HasFlag(kPositional); }
+    bool ObeysLightGroups() const { return HasFlag(kObeysLightGroups); }
+    bool IncludesChars() const { return HasFlag(kIncludesChars); }
+    bool SelfShadow() const { return HasFlag(kSelfShadow); }
+    bool CastInCameraSpace() const { return HasFlag(kCastInCameraSpace); }
+    bool ReverseZ() const { return HasFlag(kReverseZ); }
+    bool TwoSided() const { return HasFlag(kTwoSided); }
+    bool ReverseCull() const { return HasFlag(kReverseCull); }
+    bool Positional() const { return HasFlag(kPositional); }
 
     virtual void Init() { fFlags = 0; }
 

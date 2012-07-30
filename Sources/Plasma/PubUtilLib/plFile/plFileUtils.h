@@ -60,10 +60,10 @@ namespace plFileUtils
     static const wchar_t kWKeyFilename[] = L"encryption.key";
 
     // Creates the directory specified. Returns false if unsuccessful or directory already exists
-    hsBool  CreateDir( const char *path ); 
-    hsBool  CreateDir( const wchar_t *path ); 
-    hsBool RemoveDir(const char* path);
-    hsBool RemoveDirTree(const char * path);
+    bool    CreateDir( const char *path ); 
+    bool    CreateDir( const wchar_t *path ); 
+    bool RemoveDir(const char* path);
+    bool RemoveDirTree(const char * path);
 
     // delete file from disk
     bool RemoveFile(const char* filename, bool delReadOnly=false);
@@ -78,11 +78,11 @@ namespace plFileUtils
     bool FileExists(const wchar_t* file);
 
     // Given a filename with path, makes sure the file's path exists
-    hsBool  EnsureFilePathExists( const char *filename );
-    hsBool  EnsureFilePathExists( const wchar_t *filename );
+    bool    EnsureFilePathExists( const char *filename );
+    bool    EnsureFilePathExists( const wchar_t *filename );
     
     // Gets the creation and modification dates of the file specified. Returns false if unsuccessful
-    hsBool  GetFileTimes( const char *path, plUnifiedTime *createTimeOut, plUnifiedTime *modifyTimeOut );
+    bool    GetFileTimes( const char *path, plUnifiedTime *createTimeOut, plUnifiedTime *modifyTimeOut );
     // Compares file times, taking into account NTFS/FAT32 time issues
     enum Modify { kFileError, kFilesEqual, kFile1Newer, kFile2Newer };
     Modify CompareModifyTimes(const char* file1, const char* file2);

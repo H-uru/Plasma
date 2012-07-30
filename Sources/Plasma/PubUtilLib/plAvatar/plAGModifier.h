@@ -89,7 +89,7 @@ public:
         incoming channels with this modifier. You may also supply an
         autoApply parameter, which indicates whether this modifier
         should apply itself every frame, or only when explicitly asked to. */
-    plAGModifier(const plString &name, hsBool autoApply = true);
+    plAGModifier(const plString &name, bool autoApply = true);
 
     /** It's a destructor. Destroys the name passed into the constructor,
         and a bunch of other stuff you don't need to know anything about. */
@@ -108,7 +108,7 @@ public:
     plAGChannel *MergeChannel(plAGApplicator *app, plAGChannel *chan, plScalarChannel *blend,
                               plAGAnimInstance *anim, int priority);
     /** Remove the given channel. Will also remove the channel's applicator. */
-    hsBool DetachChannel(plAGChannel * channel);
+    bool DetachChannel(plAGChannel * channel);
 
     /** Set the applicator for a modifier.
         \deprecated */
@@ -125,7 +125,7 @@ public:
     /** Get the channel tied to our ith applicator */
     plAGChannel * GetChannel(int i) { return fApps[i]->GetChannel(); }
 
-    void Enable(hsBool val);
+    void Enable(bool val);
 
     // PERSISTENCE
     virtual void Read(hsStream *stream, hsResMgr *mgr);
@@ -140,13 +140,13 @@ protected:
     plAppTable fApps;           // the applicators (with respective channels) that we're applying to our scene object
 
     plString fChannelName;      // name used for matching animation channels to this modifier
-    hsBool   fAutoApply;        // evaluate animation automatically during IEval call
-    hsBool   fEnabled;          // if not enabled, we don't eval any of our anims
+    bool     fAutoApply;        // evaluate animation automatically during IEval call
+    bool     fEnabled;          // if not enabled, we don't eval any of our anims
 
     // APPLYING THE ANIMATION
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 
-    virtual hsBool IHandleCmd(plAnimCmdMsg* modMsg) { return false; } // only plAGMasterMod should handle these
+    virtual bool IHandleCmd(plAnimCmdMsg* modMsg) { return false; } // only plAGMasterMod should handle these
     virtual void IApplyDynamic() {};    // dummy function required by base class
 
     // INTERNAL ACCESSORS FOR SCENE OBJECT INTERFACES

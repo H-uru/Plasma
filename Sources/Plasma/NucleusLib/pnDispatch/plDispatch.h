@@ -80,32 +80,32 @@ protected:
     static hsMutex                  fMsgDispatchLock;   // mutex for IMsgDispatch
     static plMsgWrap*               fMsgHead;
     static plMsgWrap*               fMsgTail;
-    static hsBool                   fMsgActive;
+    static bool                     fMsgActive;
     static hsTArray<plMessage*>     fMsgWatch;
     static MsgRecieveCallback       fMsgRecieveCallback;
 
     hsTArray<plTypeFilter*>         fRegisteredExactTypes;
     std::list<plMessage*>           fQueuedMsgList;
     hsMutex                         fQueuedMsgListMutex; // mutex for above
-    hsBool                          fQueuedMsgOn;       // Turns on or off Queued Messages, Plugins need them off
+    bool                            fQueuedMsgOn;       // Turns on or off Queued Messages, Plugins need them off
 
     hsKeyedObject*                  IGetOwner() { return fOwner; }
     plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
     int                             IFindType(uint16_t hClass);
     int                             IFindSender(const plKey& sender);
-    hsBool                          IUnRegisterForExactType(int idx, const plKey& receiver);
+    bool                            IUnRegisterForExactType(int idx, const plKey& receiver);
 
     static plMsgWrap*               IInsertToQueue(plMsgWrap** back, plMsgWrap* isert);
     static plMsgWrap*               IDequeue(plMsgWrap** head, plMsgWrap** tail);
 
-    hsBool                          IMsgNetPropagate(plMessage* msg);
+    bool                            IMsgNetPropagate(plMessage* msg);
 
     static void                     IMsgDispatch();
-    static void                     IMsgEnqueue(plMsgWrap* msgWrap, hsBool async);
+    static void                     IMsgEnqueue(plMsgWrap* msgWrap, bool async);
 
-    hsBool                          ISortToDeferred(plMessage* msg);
+    bool                            ISortToDeferred(plMessage* msg);
     void                            ICheckDeferred(double stamp);
-    hsBool                          IListeningForExactType(uint16_t hClass);
+    bool                            IListeningForExactType(uint16_t hClass);
 
     void                            ITrashUndelivered(); // Just pitches them, doesn't try to deliver.
 
@@ -124,12 +124,12 @@ public:
 
     virtual void UnRegisterAll(const plKey& receiver);
 
-    virtual hsBool  MsgSend(plMessage* msg, hsBool async=false);
+    virtual bool    MsgSend(plMessage* msg, bool async=false);
     virtual void    MsgQueue(plMessage* msg);   // Used by other thread to Send Messages, they are handled as soon as Practicable
     virtual void    MsgQueueProcess();
-    virtual void    MsgQueueOnOff(hsBool );     // Turn on or off Queued Messages, if off, uses MsgSend Immediately
+    virtual void    MsgQueueOnOff(bool );     // Turn on or off Queued Messages, if off, uses MsgSend Immediately
 
-    virtual hsBool  SetMsgBuffering(hsBool on); // On starts deferring msg delivery until buffering is set to off again.
+    virtual bool    SetMsgBuffering(bool on); // On starts deferring msg delivery until buffering is set to off again.
 
     static void SetMsgRecieveCallback(MsgRecieveCallback callback) { fMsgRecieveCallback = callback; }
 };
@@ -145,7 +145,7 @@ public:
     virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver) {}
 
 
-    virtual hsBool MsgSend(plMessage* msg) { return true; }
+    virtual bool MsgSend(plMessage* msg) { return true; }
     virtual void    MsgQueue(plMessage* msg) {}
     virtual void    MsgQueueProcess() {}
 

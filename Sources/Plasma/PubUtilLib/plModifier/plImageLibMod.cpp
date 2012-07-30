@@ -59,7 +59,7 @@ plImageLibMod::~plImageLibMod()
 {
 }
 
-hsBool plImageLibMod::MsgReceive(plMessage* msg)
+bool plImageLibMod::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )

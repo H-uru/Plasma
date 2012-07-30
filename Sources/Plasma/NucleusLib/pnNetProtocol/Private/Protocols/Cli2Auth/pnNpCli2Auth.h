@@ -133,7 +133,7 @@ enum {
 
     kNumCli2AuthMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Auth, kNumCli2AuthMessages <= (uint16_t)-1);
+static_assert(kNumCli2AuthMessages <= 0xFFFF, "Cli2Auth message types overflow uint16");
 
 enum {
     // Global
@@ -212,7 +212,7 @@ enum {
 
     kNumAuth2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2Auth, kNumAuth2CliMessages <= (uint16_t)-1);
+static_assert(kNumAuth2CliMessages <= 0xFFFF, "Auth2Cli message types overflow uint16");
 
 
 //============================================================================

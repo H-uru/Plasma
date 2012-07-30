@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // add a channel subscription if it's not already there
 // returns true if added
 //
-hsBool plNetTransportMember::AddSubscription(int chan)
+bool plNetTransportMember::AddSubscription(int chan)
 {
     if (FindSubscription(chan)==-1)
     {
@@ -56,7 +56,7 @@ hsBool plNetTransportMember::AddSubscription(int chan)
     return false;
 }
 
-hsBool plNetTransportMember::RemoveSubscription(int chan)
+bool plNetTransportMember::RemoveSubscription(int chan)
 {
     int idx=FindSubscription(chan);
     if (idx>=0)

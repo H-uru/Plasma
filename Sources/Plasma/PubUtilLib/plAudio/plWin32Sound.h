@@ -68,14 +68,14 @@ public:
     CLASSNAME_REGISTER( plWin32Sound );
     GETINTERFACE_ANY( plWin32Sound, plSound );
     
-    virtual void        Activate(hsBool forcePlay = false);
+    virtual void        Activate(bool forcePlay = false);
     virtual void        DeActivate();
 
     virtual void        AddCallbacks(plSoundMsg* pMsg);
     virtual void        RemoveCallbacks(plSoundMsg* pMsg);
 
     virtual plSoundMsg* GetStatus(plSoundMsg* pMsg);
-    virtual hsBool      MsgReceive(plMessage* pMsg);
+    virtual bool        MsgReceive(plMessage* pMsg);
     virtual void        Update();
     
     virtual void    SetMin(const int m); // sets minimum falloff distance
@@ -100,12 +100,12 @@ protected:
 
     plDSoundBuffer *    fDSoundBuffer;
 
-    hsBool              fFailed;
-    hsBool              fPositionInited, fAwaitingPosition;
-    hsBool              fReallyPlaying;
+    bool                fFailed;
+    bool                fPositionInited, fAwaitingPosition;
+    bool                fReallyPlaying;
     uint32_t              fTotalBytes;
 
-    hsBool              fWasPlaying;
+    bool                fWasPlaying;
     
     uint8_t               fChannelSelect;     // For selecting a mono channel from a stereo file
 
@@ -113,10 +113,10 @@ protected:
 
     virtual void    ISetActualVolume(const float v);
     virtual void    IActuallyStop( void );
-    virtual hsBool  IActuallyPlaying( void ) { return fReallyPlaying; }
+    virtual bool    IActuallyPlaying( void ) { return fReallyPlaying; }
     virtual void    IActuallyPlay( void );
     virtual void    IFreeBuffers( void );
-    virtual hsBool  IActuallyLoaded( void ) { return ( fDSoundBuffer != nil ) ? true : false; }
+    virtual bool    IActuallyLoaded( void ) { return ( fDSoundBuffer != nil ) ? true : false; }
 
     // Override to make sure the buffer is available before the base class is called
     virtual void    IRefreshParams( void );
@@ -130,7 +130,7 @@ protected:
     virtual void    IRead( hsStream *s, hsResMgr *mgr );
     virtual void    IWrite( hsStream *s, hsResMgr *mgr );
 
-    virtual void    IRefreshEAXSettings( hsBool force = false );
+    virtual void    IRefreshEAXSettings( bool force = false );
 };
 
 #endif //plWin32Sound_h

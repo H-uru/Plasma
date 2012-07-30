@@ -71,25 +71,25 @@ public:
     CLASSNAME_REGISTER( plArmatureBrain );
     GETINTERFACE_ANY( plArmatureBrain, plCreatable );   
     
-    virtual hsBool Apply(double timeNow, float elapsed);
+    virtual bool Apply(double timeNow, float elapsed);
     virtual void Activate(plArmatureModBase *armature);
     virtual void Deactivate() {}
     virtual void Suspend() {}
     virtual void Resume() {}
     virtual void Spawn(double timeNow) {}
     virtual void OnBehaviorStop(uint8_t index) {}
-    virtual hsBool LeaveAge();
-    virtual hsBool IsRunningTask() const;
+    virtual bool LeaveAge();
+    virtual bool IsRunningTask() const;
     virtual void QueueTask(plAvTask *task);
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt) {}
     
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
     
 protected:
     virtual void IProcessTasks(double time, float elapsed);
-    virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);
+    virtual bool IHandleTaskMsg(plAvTaskMsg *msg);
         
     typedef std::deque<plAvTask *> plAvTaskQueue;
     plAvTaskQueue           fTaskQueue;                     // FIFO queue of tasks we're working on

@@ -105,15 +105,15 @@ class plAnimAvatarComponent : public plComponent
 //  static plAGAnimMgr *fManager;
 public:
         plAnimAvatarComponent();
-        virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+        virtual bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
 
-        virtual hsBool Convert(plMaxNode* node, plErrorMsg *pErrMsg);
+        virtual bool Convert(plMaxNode* node, plErrorMsg *pErrMsg);
 
         virtual plATCAnim * NewAnimation(const plString &name, double begin, double end);
 
-        hsBool ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg);
-        hsBool ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg);
-        hsBool MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg);
+        bool ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg);
+        bool MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg);
 
         virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 
@@ -169,7 +169,7 @@ plAnimAvatarComponent::plAnimAvatarComponent()
 //  Anim Avatar PRECONVERT
 //
 //
-hsBool plAnimAvatarComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimAvatarComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if(node->GetMaxNodeData())
     {
@@ -194,7 +194,7 @@ hsBool plAnimAvatarComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
 // for each node, search for segments to convert...
 //
 //
-hsBool plAnimAvatarComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimAvatarComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     Interface *theInterface = node->GetInterface();
     RemoveBiped(node, theInterface);
@@ -212,7 +212,7 @@ hsBool plAnimAvatarComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 // recurse on children
 //
 //
-hsBool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plNotetrackAnim noteAnim(node, pErrMsg);
     // does this node have any segments specified?
@@ -266,12 +266,12 @@ plATCAnim * plAnimAvatarComponent::NewAnimation(const plString &name, double beg
 // every node gets an animation channel for the time period in question
 //
 //
-hsBool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg)
+bool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg)
 {
     // Check for a suppression marker
     plNotetrackAnim noteAnim(node, pErrMsg);
     plAnimInfo info = noteAnim.GetAnimInfo(plString::Null);
-    hsBool suppressed = info.IsSuppressed(mod->GetName());
+    bool suppressed = info.IsSuppressed(mod->GetName());
 
     // Get the affine parts and the TM Controller
     plSceneObject *obj = node->GetSceneObject();
@@ -338,7 +338,7 @@ plKey FindSceneNode(plMaxNode *node)
 // Perform wizardry necessary to make the object save itself.
 //
 //
-hsBool plAnimAvatarComponent::MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg)
+bool plAnimAvatarComponent::MakePersistent(plMaxNode *node, plAGAnim *anim, const plString &animName, plErrorMsg *pErrMsg)
 {
     // new approach: add to the generic pool on the scene node
     plLocation nodeLoc = node->GetLocation();
@@ -380,7 +380,7 @@ public:
     };
 
     plEmoteComponent();
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
     virtual plATCAnim * NewAnimation(const plString &name, double begin, double end);
 
 protected:
@@ -440,7 +440,7 @@ plEmoteComponent::plEmoteComponent()
 
 // Convert ------------------------------------------------------------
 // --------
-hsBool plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plEmoteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     Interface *theInterface = node->GetInterface();
     RemoveBiped(node, theInterface);

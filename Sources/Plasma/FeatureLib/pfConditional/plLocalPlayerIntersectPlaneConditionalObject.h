@@ -61,7 +61,7 @@ public:
     CLASSNAME_REGISTER( plLocalPlayerIntersectPlaneConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerIntersectPlaneConditionalObject, plConditionalObject );
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     void SetTarget(plKey pKey) { fTarget = pKey; }
     void SetPlane(plKey pKey) { fPlane = pKey; }

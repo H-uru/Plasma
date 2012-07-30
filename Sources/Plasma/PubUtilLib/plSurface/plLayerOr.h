@@ -50,7 +50,7 @@ class plLayerOr : public plLayerInterface
 {
     protected:
         hsGMatState         fOringState;
-        hsBool              fDirty;
+        bool                fDirty;
 
     public:
         plLayerOr();

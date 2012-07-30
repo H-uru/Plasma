@@ -352,7 +352,7 @@ protected:
     void            ICalcScale();
     void            IUpdateWaves(float dt);
     void            IUpdateWave(float dt, int i);
-    hsBool          IAnyBoundsVisible(plPipeline* pipe) const;
+    bool            IAnyBoundsVisible(plPipeline* pipe) const;
 
     void            IInitWave(int i);
     void            IReInitWaves();
@@ -370,15 +370,15 @@ protected:
 
     void    ISetWindSpeed(float s);
 
-    hsBool      IOnReceive(plGenRefMsg* refMsg);
-    hsBool      IOnRemove(plGenRefMsg* refMsg);
+    bool        IOnReceive(plGenRefMsg* refMsg);
+    bool        IOnRemove(plGenRefMsg* refMsg);
 
-    hsBool              ITransContinue(float dt);
+    bool                ITransContinue(float dt);
     void                IStartTransition(float dt);
     float            ITransitionDelay() const;
     void                ITransition(float dt);
 
-    hsBool              ITransTexContinue(float dt);
+    bool                ITransTexContinue(float dt);
     void                IStartTexTransition(float dt);
     void                ITransTex(float dt);
 
@@ -494,9 +494,9 @@ public:
     CLASSNAME_REGISTER( plWaveSet7 );
     GETINTERFACE_ANY( plWaveSet7, plWaveSetBase );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
     int32_t       GetNumProperties() const { return kNumProps; }
 
@@ -635,7 +635,7 @@ public:
     void            AddBuoy(plKey soKey);
     void            RemoveBuoy(plKey soKey);
 
-    virtual hsBool          SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts);
+    virtual bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts);
 
     virtual float        GetHeight() const { return State().fWaterHeight; }
 
@@ -649,10 +649,10 @@ public:
 
     void StopLog();
     void StartLog();
-    hsBool Logging() const { return fStatusLog != nil; }
+    bool Logging() const { return fStatusLog != nil; }
     void StartGraph();
     void StopGraph();
-    hsBool Graphing() const { return fStatusGraph != nil; }
+    bool Graphing() const { return fStatusGraph != nil; }
 };
 
 #endif // plWaveSet7_inc

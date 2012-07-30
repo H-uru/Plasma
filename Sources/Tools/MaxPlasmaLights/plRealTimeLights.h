@@ -88,7 +88,7 @@ class plRTOmniLight : public plRTLightBase
 
     protected:
         virtual void    IBuildMeshes( BOOL isNew );
-        virtual hsBool  IHasAttenuation( void ) { return true; }
+        virtual bool    IHasAttenuation( void ) { return true; }
 };
 
 class plRTOmniLightDesc : public ClassDesc2 
@@ -143,7 +143,7 @@ class plRTSpotLight : public plRTLightBase
 
     protected:
         virtual void    IBuildMeshes( BOOL isNew );
-        virtual hsBool  IHasAttenuation( void ) { return true; }
+        virtual bool    IHasAttenuation( void ) { return true; }
 };
 
 class plRTSpotLightDesc : public ClassDesc2 

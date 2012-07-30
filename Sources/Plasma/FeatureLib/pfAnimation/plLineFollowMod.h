@@ -97,14 +97,14 @@ protected:
     float            fOffsetClamp;
     float            fSpeedClamp;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool        IEval(double secs, float del, uint32_t dirty);
     
-    virtual hsBool      IGetSearchPos();
+    virtual bool        IGetSearchPos();
     virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm);
     virtual void        ISetPathTransform();
 
-    virtual hsBool      IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
-    virtual hsBool      IOffsetTargetTransform(hsMatrix44& tgtXfm);
+    virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
+    virtual bool        IOffsetTargetTransform(hsMatrix44& tgtXfm);
     virtual hsMatrix44  ISpeedClamp(plCoordinateInterface* ci, const hsMatrix44& unclTgtXfm);
     hsMatrix44          IInterpMatrices(const hsMatrix44& m0, const hsMatrix44& m1, float parm);
     void                ICheckForPop(const hsPoint3& oldPos, const hsPoint3& newPos);
@@ -132,28 +132,28 @@ public:
     void                SetFollowMode(FollowMode f);
     FollowMode          GetFollowMode() const { return fFollowMode; }
 
-    hsBool              HasOffsetFeet() const { return 0 != (fFollowFlags & kOffsetFeet); }
-    hsBool              HasOffsetDegrees() const { return 0 != (fFollowFlags & kOffsetAng); }
-    hsBool              HasOffset() const { return 0 != (fFollowFlags & kOffset); }
-    hsBool              HasOffsetClamp() const { return 0 != (fFollowFlags & kOffsetClamp); }
-    hsBool              HasSpeedClamp() const { return 0 != (fFollowFlags & kSpeedClamp); }
+    bool                HasOffsetFeet() const { return 0 != (fFollowFlags & kOffsetFeet); }
+    bool                HasOffsetDegrees() const { return 0 != (fFollowFlags & kOffsetAng); }
+    bool                HasOffset() const { return 0 != (fFollowFlags & kOffset); }
+    bool                HasOffsetClamp() const { return 0 != (fFollowFlags & kOffsetClamp); }
+    bool                HasSpeedClamp() const { return 0 != (fFollowFlags & kSpeedClamp); }
 
     void                SetOffsetFeet(float f);
-    float            GetOffsetFeet() const { return fOffset; }
+    float               GetOffsetFeet() const { return fOffset; }
 
     void                SetOffsetDegrees(float f);
-    float            GetOffsetDegrees() const { return hsRadiansToDegrees(fOffset); }
+    float               GetOffsetDegrees() const { return hsRadiansToDegrees(fOffset); }
 
     void                SetOffsetClamp(float f);
-    float            GetOffsetClamp() const { return fOffsetClamp; }
+    float               GetOffsetClamp() const { return fOffsetClamp; }
 
-    void                SetForceToLine(hsBool on);
-    hsBool              GetForceToLine() const { return 0 != (fFollowFlags & kForceToLine); }
+    void                SetForceToLine(bool on);
+    bool                GetForceToLine() const { return 0 != (fFollowFlags & kForceToLine); }
 
     void                SetSpeedClamp(float feetPerSec);
-    float            GetSpeedClamp() const { return fSpeedClamp; }
+    float               GetSpeedClamp() const { return fSpeedClamp; }
 
-    hsBool              MsgReceive(plMessage* msg);
+    bool                MsgReceive(plMessage* msg);
 
     virtual void AddTarget(plSceneObject* so);
     virtual void RemoveTarget(plSceneObject* so); 
@@ -180,12 +180,12 @@ public:
 protected:
     
     virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm) {fDesiredMatrix = tgtXfm;}
-    virtual hsBool      IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
+    virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
     
     hsMatrix44  fDesiredMatrix;
-    float    fCurrentTime;
-    float    fTargetTime;
+    float       fCurrentTime;
+    float       fTargetTime;
     hsPoint3    fGoal;
-    hsBool      fFarthest;
+    bool        fFarthest;
 };
 #endif // plLineFollowMod_inc

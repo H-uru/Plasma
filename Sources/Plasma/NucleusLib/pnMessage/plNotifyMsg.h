@@ -128,7 +128,7 @@ protected:
 #define proEventType(type) class pro##type##EventData : public proEventData { public: pro##type##EventData() : proEventData( k##type ) {IInit();} virtual ~pro##type##EventData(){IDestruct();}
 
 proEventType(Collision)
-    hsBool  fEnter;     // entering? (false is exit)
+    bool    fEnter;     // entering? (false is exit)
     plKey   fHitter;    // collision hitter (other probably player)
     plKey   fHittee;    // collision hittee (probably us)
 
@@ -143,7 +143,7 @@ protected:
 proEventType(Picked)
     plKey   fPicker;    // who picked it (problably player)
     plKey   fPicked;    // object that was picked
-    hsBool  fEnabled;   // pick (true) or un-pick (false)
+    bool    fEnabled;   // pick (true) or un-pick (false)
     hsPoint3 fHitPoint; // where on the picked object that it was picked on
 
 protected:
@@ -168,7 +168,7 @@ protected:
 
 proEventType(ControlKey)
     int32_t   fControlKey;    // what control key was hit
-    hsBool  fDown;          // was the key going down (false if going up)
+    bool    fDown;          // was the key going down (false if going up)
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -207,7 +207,7 @@ proEventType(Facing)
     plKey       fFacer; // what was facing
     plKey       fFacee; // what was being faced
     float    dot;     // the dot prod of their view vectors
-    hsBool      enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
+    bool        enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -220,7 +220,7 @@ protected:
 proEventType(Contained)
     plKey   fContained; // who's inside of 
     plKey   fContainer; // this containing volume
-    hsBool  fEntering;  // entering volume (true) or exiting (false)
+    bool    fEntering;  // entering volume (true) or exiting (false)
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -231,8 +231,8 @@ protected:
 };
 
 proEventType(Activate)
-    hsBool fActive;     // Whether or not to use the data in this field
-    hsBool fActivate;   // the data
+    bool fActive;     // Whether or not to use the data in this field
+    bool fActivate;   // the data
 
 protected:
     virtual void IRead(hsStream* stream, hsResMgr* mgr);
@@ -372,16 +372,16 @@ public:
 
     // event records for the notify message
     void AddEvent( proEventData* ed);
-    void AddCollisionEvent( hsBool enter, const plKey &other, const plKey &self, hsBool onlyOneCollision=true );
-    void AddPickEvent( const plKey &other, const plKey& self, hsBool enabled, hsPoint3 hitPoint );
-    void AddControlKeyEvent( int32_t key, hsBool down );
+    void AddCollisionEvent( bool enter, const plKey &other, const plKey &self, bool onlyOneCollision=true );
+    void AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint );
+    void AddControlKeyEvent( int32_t key, bool down );
     void AddVariableEvent( const char* name, float number );
     void AddVariableEvent( const char* name, int number );
     void AddVariableEvent( const char* name );
     void AddVariableEvent( const char *name, const plKey &key );
-    void AddFacingEvent( const plKey &other, const plKey &self, float dot, hsBool enabled);
-    void AddContainerEvent( const plKey &container, const plKey &contained, hsBool entering);
-    void AddActivateEvent( hsBool activate );
+    void AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled);
+    void AddContainerEvent( const plKey &container, const plKey &contained, bool entering);
+    void AddActivateEvent( bool activate );
     void AddCallbackEvent( int32_t event );
     void AddResponderStateEvent( int32_t state );
     void AddMultiStageEvent( int32_t stage, int32_t event, const plKey& avatar );

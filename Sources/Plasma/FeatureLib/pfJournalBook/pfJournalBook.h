@@ -219,7 +219,7 @@ public:
     CLASSNAME_REGISTER(pfBookData);
     GETINTERFACE_ANY(pfBookData, hsKeyedObject);
 
-    virtual hsBool MsgReceive(plMessage *pMsg);
+    virtual bool MsgReceive(plMessage *pMsg);
 
     pfGUIDialogMod *Dialog() const {return fDialog;}
     pfGUICheckBoxCtrl *CoverButton() const {return fCoverButton;}
@@ -236,15 +236,15 @@ public:
     plMipmap *DefaultCover() const {return fDefaultCover;}
     pfJournalBook *CurBook() const {return fCurrBook;}
 
-    hsBool StartedOpen() {return fStartedOpen;}
-    hsBool CurrentlyOpen() {return fCurrentlyOpen;}
-    hsBool CurrentlyTurning() {return fCurrentlyTurning;}
-    hsBool IsEditable() {return fEditable;}
+    bool StartedOpen() {return fStartedOpen;}
+    bool CurrentlyOpen() {return fCurrentlyOpen;}
+    bool CurrentlyTurning() {return fCurrentlyTurning;}
+    bool IsEditable() {return fEditable;}
     WhichSide CurSFXPages() {return fCurrSFXPages;}
 
-    void StartedOpen(hsBool startedOpen) {fStartedOpen = startedOpen;}
-    void CurrentlyOpen(hsBool currentlyOpen) {fCurrentlyOpen = currentlyOpen;}
-    void CurrentlyTurning(hsBool currentlyTurning) {fCurrentlyTurning = currentlyTurning;}
+    void StartedOpen(bool startedOpen) {fStartedOpen = startedOpen;}
+    void CurrentlyOpen(bool currentlyOpen) {fCurrentlyOpen = currentlyOpen;}
+    void CurrentlyTurning(bool currentlyTurning) {fCurrentlyTurning = currentlyTurning;}
     void CurBook(pfJournalBook *curBook) {fCurrBook = curBook;}
 
     // Quick helper
@@ -258,10 +258,10 @@ public:
     void UpdatePageCorners(WhichSide which);
 
     // Plays our book close animation
-    void PlayBookCloseAnim(hsBool closeIt = true, hsBool immediate = false);
+    void PlayBookCloseAnim(bool closeIt = true, bool immediate = false);
 
     // Finishes the start of the triggered page flip (once we're sure the animation is at the new frame)
-    void StartTriggeredFlip(hsBool flipBackwards);
+    void StartTriggeredFlip(bool flipBackwards);
 
     // kill the flipping of a page... we are probably closing the book
     void KillPageFlip();
@@ -272,7 +272,7 @@ public:
     void HitEndOfControlList(int32_t cursorPos);
     void HitBeginningOfControlList(int32_t cursorPos);
 
-    void EnableEditGUI(hsBool enable=true);
+    void EnableEditGUI(bool enable=true);
     void DisableEditGUI() {EnableEditGUI(false);}
     
 protected:
@@ -318,13 +318,13 @@ protected:
 
     // Base time to calc SFX anim positions from
     float    fBaseSFXTime;
-    hsBool      fResetSFXFlag;
-    hsBool      fSFXUpdateFlip;     // So we only update alternating pages every frame, to save processor time
+    bool        fResetSFXFlag;
+    bool        fSFXUpdateFlip;     // So we only update alternating pages every frame, to save processor time
 
     // What it says
-    hsBool      fCurrentlyTurning, fCurrentlyOpen, fStartedOpen;
+    bool        fCurrentlyTurning, fCurrentlyOpen, fStartedOpen;
 
-    hsBool      fEditable;
+    bool        fEditable;
     int32_t       fAdjustCursorTo;
 
     // Inits our dialog template
@@ -334,13 +334,13 @@ protected:
     void IHandleSFX(float currTime, WhichSide whichSide = kNoSides);
 
     // Yet another step in the page flip, to make SURE we're already showing the turning page before we fill in the page behind it
-    void IFillUncoveringPage(hsBool rightSide);
+    void IFillUncoveringPage(bool rightSide);
 
     // Triggers the start of the page-flipping animation, as well as sets up the callback for when it's finished
-    void ITriggerPageFlip(hsBool flipBackwards, hsBool immediate);
+    void ITriggerPageFlip(bool flipBackwards, bool immediate);
 
     // Finishes the triggered page flip, on callback
-    void IFinishTriggeredFlip(hsBool wasBackwards);
+    void IFinishTriggeredFlip(bool wasBackwards);
 };
 
 class pfJournalBook : public hsKeyedObject
@@ -371,7 +371,7 @@ class pfJournalBook : public hsKeyedObject
         GETINTERFACE_ANY( pfJournalBook, hsKeyedObject );
 
         // Our required virtual
-        virtual hsBool  MsgReceive( plMessage *pMsg );
+        virtual bool    MsgReceive( plMessage *pMsg );
 
         // Init the singleton, for client startup
         static void SingletonInit( void );
@@ -391,7 +391,7 @@ class pfJournalBook : public hsKeyedObject
         void    SetGUI( const plString &guiName );
 
         // Shows the book, optionally starting open or closed
-        void    Show( hsBool startOpened = false );
+        void    Show( bool startOpened = false );
 
     
         /// NOTE: The following functions expose functionality that is normally
@@ -433,13 +433,13 @@ class pfJournalBook : public hsKeyedObject
         void    SetPageMargin( uint32_t margin ) { fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = margin; }
 
         // Turns on or off page turning
-        void    AllowPageTurning( hsBool allow ) { fAllowTurning = allow; }
+        void    AllowPageTurning( bool allow ) { fAllowTurning = allow; }
 
         // grabs a certain movie based on it's index in the source file
         plKey   GetMovie( uint8_t index );
 
         // turns on and off editing of the book
-        void    SetEditable( hsBool editable=true );
+        void    SetEditable( bool editable=true );
 
         // returns the text contained by the edit controls
         std::string GetEditableText();
@@ -479,16 +479,16 @@ class pfJournalBook : public hsKeyedObject
         hsTArray<uint32_t>    fPageStarts;
 
         // is the book done showing and ready for more page calculations
-        hsBool  fAreWeShowing;
+        bool    fAreWeShowing;
 
         // Our current page
         uint32_t  fCurrentPage;
 
         // are we editing this book? (adjusts how we draw and flip pages)
-        hsBool  fAreEditing;
-        hsBool  fWantEditing; // the code specifies that we want to edit, but the gui doesn't support it, we will check again if the gui changes
+        bool    fAreEditing;
+        bool    fWantEditing; // the code specifies that we want to edit, but the gui doesn't support it, we will check again if the gui changes
 
-        hsBool  fAllowTurning; // do we allow the user to turn pages?
+        bool    fAllowTurning; // do we allow the user to turn pages?
 
         // The ending page. -1 until calculated by flipping to it
         uint32_t  fLastPage;
@@ -514,19 +514,19 @@ class pfJournalBook : public hsKeyedObject
         };
 
         // Compiles the given string of esHTML source into our compiled chunk list
-        hsBool  ICompileSource( const wchar_t *source, const plLocation &hintLoc );
+        bool    ICompileSource( const wchar_t *source, const plLocation &hintLoc );
 
         // Frees our source array
         void    IFreeSource( void );
 
         // Compile helpers
         uint8_t   IGetTagType( const wchar_t *string );
-        hsBool  IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option );
+        bool    IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option );
 
         plKey   IGetMipmapKey( const wchar_t *name, const plLocation &loc );
 
         // Renders one (1) page into the given DTMap
-        void    IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool suppressRendering = false );
+        void    IRenderPage( uint32_t page, uint32_t whichDTMap, bool suppressRendering = false );
 
         // moves the movie layers from one material onto another
         void    IMoveMovies( hsGMaterial *source, hsGMaterial *dest);
@@ -546,19 +546,19 @@ class pfJournalBook : public hsKeyedObject
         void    ISendNotify( uint32_t type, uint32_t linkID = 0 );
 
         // Close with a notify
-        void    ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool immediate );
+        void    ITriggerCloseWithNotify( bool closeNotOpen, bool immediate );
 
         // Finish showing the book, due to the animation being done seeking
-        void    IFinishShow( hsBool startOpened );
+        void    IFinishShow( bool startOpened );
 
         // Find the current moused link, if any
-        int32_t   IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp );
+        int32_t   IFindCurrVisibleLink( bool rightNotLeft, bool hoverNotUp );
 
         // Ensures that all the page starts are calced up to the given page (but not including it)
         void    IRecalcPageStarts( uint32_t upToPage );
 
         // Load (or unload) all the images for the book
-        void    ILoadAllImages( hsBool unload );
+        void    ILoadAllImages( bool unload );
         
         // Purge the DynaTextMaps
         void    IPurgeDynaTextMaps( );
@@ -567,12 +567,12 @@ class pfJournalBook : public hsKeyedObject
         void    IHandleCheckClick( uint32_t idx, pfBookData::WhichSide which );
 
         // Draw me an image!
-        void    IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, hsBool dontRender );
+        void    IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, bool dontRender );
         
         // Movie functions
         loadedMovie         *IMovieAlreadyLoaded(pfEsHTMLChunk *chunk);
         loadedMovie         *IGetMovieByIndex(uint8_t index);
-        plLayerBink         *IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, hsBool dontRender);
+        plLayerBink         *IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender);
 
         // Cover functions
         plLayerInterface    *IMakeBaseLayer(plMipmap *image);

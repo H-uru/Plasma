@@ -575,7 +575,7 @@ public:
     bool fUnload;
 
     plNetMsgPlayerPage() : fUnload(false) { SetBit(kNeedsReliableSend); }
-    plNetMsgPlayerPage(plUoid uoid, hsBool unload) : fUoid(uoid),   fUnload(unload) { }
+    plNetMsgPlayerPage(plUoid uoid, bool unload) : fUoid(uoid),   fUnload(unload) { }
 
     CLASSNAME_REGISTER( plNetMsgPlayerPage );
     GETINTERFACE_ANY( plNetMsgPlayerPage, plNetMessage);
@@ -636,14 +636,14 @@ public:
     void SetPageFlags(uint8_t f) { fPageFlags=f; }
     uint8_t GetPageFlags() const { return fPageFlags; }
     
-    void SetPagingOut(hsBool b) { if (b) fPageFlags |= kPagingOut; else fPageFlags&=~kPagingOut; }
-    hsBool GetPagingOut() const { return (fPageFlags & kPagingOut) != 0; }
+    void SetPagingOut(bool b) { if (b) fPageFlags |= kPagingOut; else fPageFlags&=~kPagingOut; }
+    bool GetPagingOut() const { return (fPageFlags & kPagingOut) != 0; }
 
-    void SetResetList(hsBool b) { if (b) fPageFlags |= kResetList; else fPageFlags &=~kResetList; }
-    hsBool GetResetList() const { return (fPageFlags & kResetList) != 0; }
+    void SetResetList(bool b) { if (b) fPageFlags |= kResetList; else fPageFlags &=~kResetList; }
+    bool GetResetList() const { return (fPageFlags & kResetList) != 0; }
 
-    void SetRequestingState(hsBool b) { if (b) fPageFlags |= kRequestState; else fPageFlags &=~kRequestState; }
-    hsBool GetRequestingState() const { return (fPageFlags & kRequestState) != 0; } 
+    void SetRequestingState(bool b) { if (b) fPageFlags |= kRequestState; else fPageFlags &=~kRequestState; }
+    bool GetRequestingState() const { return (fPageFlags & kRequestState) != 0; } 
 
     // debug
     std::string AsStdString() const
@@ -685,7 +685,7 @@ public:
         void Write(hsStream* s) { fGroupID.Write(s); s->WriteLE(fOwnIt); }
 
       GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
-        GroupInfo(plNetGroupId gID, hsBool o) : fGroupID(gID),fOwnIt(o) {}
+        GroupInfo(plNetGroupId gID, bool o) : fGroupID(gID),fOwnIt(o) {}
     };
 protected:
     std::vector<GroupInfo> fGroups; 
@@ -788,8 +788,8 @@ public:
 
     void CopySharedState(plNetSharedState* ss);
 
-    void SetLockRequest(hsBool b) { fLockRequest=b; }
-    hsBool GetLockRequest() const { return fLockRequest; }  
+    void SetLockRequest(bool b) { fLockRequest=b; }
+    bool GetLockRequest() const { return fLockRequest; }  
 
     void ReadVersion(hsStream* s, hsResMgr* mgr);
     void WriteVersion(hsStream* s, hsResMgr* mgr);

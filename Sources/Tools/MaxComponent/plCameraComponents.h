@@ -73,9 +73,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plCameraZoomComponent : public plComponent
@@ -85,9 +85,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plTransOverrideComponent : public plComponent
@@ -97,10 +97,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     typedef std::map<plMaxNode*, PreTrans*> TransitionKeys;
     TransitionKeys fTransKeys;
@@ -116,9 +116,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 
@@ -129,9 +129,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 
     plKey GetObjectKey();
 };
@@ -143,9 +143,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 class plCameraBaseComponent : public plComponent
@@ -153,17 +153,17 @@ class plCameraBaseComponent : public plComponent
 public:
     plCameraBaseComponent(){;}
 
-    virtual hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
     
     plCameraModifier1* ICreateCameraModifier(plMaxNode* pNode, plErrorMsg* pErrMsg);
     plCameraModifier1* ICreateFocalPointObject(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool IsValidNodeType(plMaxNode *pNode);
+    bool IsValidNodeType(plMaxNode *pNode);
     void ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrain);    
     void ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBrain);   
     void ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1* pBrain);  
-    hsBool ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, plErrorMsg* pErrMsg);
+    bool ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, plErrorMsg* pErrMsg);
 
     typedef std::map<plMaxNode*, plCameraModifier1*> ModKeys;
     ModKeys fModKeys;
@@ -174,7 +174,7 @@ class plCamera1Component : public plCameraBaseComponent
 {
 public:
     plCamera1Component();
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plCameraIgnoreSub : public plComponent
@@ -183,9 +183,9 @@ public:
     plCameraIgnoreSub();
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 
 };
 
@@ -193,43 +193,43 @@ class plAutoCamComponent : public plCameraBaseComponent
 {
 public:
     plAutoCamComponent();
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plFPCamComponent : public plCameraBaseComponent
 {
 public:
     plFPCamComponent();
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
 class plRailCameraComponent : public plCameraBaseComponent
 {
 private:
-    hsBool          fValid;
+    bool            fValid;
 
     plRailCameraMod*    fLineMod;
 
-    hsBool      IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool        IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg);
 
 public:
     plRailCameraComponent();
 
-    virtual hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
 };
 
 
 class plCircleCameraComponent : public plCameraBaseComponent
 {
 private:
-    hsBool          fValid;
+    bool            fValid;
 
 public:
     plCircleCameraComponent();
 
-    virtual hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
 };
 
 
@@ -237,18 +237,18 @@ class plFollowCamComponent : public plCameraBaseComponent
 {
 public:
     plFollowCamComponent();
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plCameraAnimCmdComponent : public plComponent
 {
-    hsBool fIgnoreFOV;
+    bool fIgnoreFOV;
 public:
     plCameraAnimCmdComponent();
-    virtual hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg){ return true; }
-    virtual hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool IgnoreFOV() { return fIgnoreFOV; }
+    virtual bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg){ return true; }
+    virtual bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool IgnoreFOV() { return fIgnoreFOV; }
 };
 
 #endif

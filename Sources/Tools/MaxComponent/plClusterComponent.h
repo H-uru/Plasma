@@ -135,9 +135,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     int             GetNumGroups() { if (fSetupDone) return fClusterGroups.size(); return 0; }
     plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nil; }

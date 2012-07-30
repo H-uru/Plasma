@@ -99,7 +99,7 @@ public:
     virtual void        UpdateListenerPosition(const hsPoint3& p);
 
     // Now Complex specifics
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     uint16_t          GetNumSubs() const { return fSubVolumes.GetCount(); }
     const plSoftVolume* GetSub(int i) const { return fSubVolumes[i]; }

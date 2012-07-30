@@ -76,7 +76,7 @@ plString plAnimCmdMsg::GetLoopName()
     return fLoopName;
 }
 
-hsBool plAnimCmdMsg::CmdChangesAnimTime()
+bool plAnimCmdMsg::CmdChangesAnimTime()
 {
     return (Cmd(kContinue) ||
             Cmd(kStop) ||

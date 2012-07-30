@@ -104,7 +104,7 @@ public:
     virtual void StartProfile(const char* ageName);
     virtual void LinkToAllAges();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 plAutoProfile* plAutoProfile::Instance()
@@ -331,7 +331,7 @@ bool plAutoProfileImp::INextSpawnPoint()
     return true;
 }
 
-hsBool plAutoProfileImp::MsgReceive(plMessage* msg)
+bool plAutoProfileImp::MsgReceive(plMessage* msg)
 {
     plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
     if (evalMsg)

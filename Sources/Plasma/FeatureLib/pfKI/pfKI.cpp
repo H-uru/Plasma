@@ -254,7 +254,7 @@ class plKIAddEditBox : public pfGUIDialogProc
         plKIMainProc    *fMainProc;
 
     public:
-        hsBool  fEditing;
+        bool    fEditing;
 
         plKIAddEditBox( pfGUIListBoxMod *list, pfGUIDialogMod *p, plKIMainProc *mainProc )
         {
@@ -618,7 +618,7 @@ class pfKIListPlayerItem : public pfGUIListText
         plKey fPlayerKey;
 
     public:
-        pfKIListPlayerItem( plKey key, hsBool inRange = false ) : pfGUIListText(), fPlayerKey( key ) 
+        pfKIListPlayerItem( plKey key, bool inRange = false ) : pfGUIListText(), fPlayerKey( key ) 
         {   
             static char str[ 256 ];
 
@@ -648,11 +648,11 @@ class plKIMiniProc : public pfGUIDialogProc
         pfGUIDialogMod  *fMainDlg;
         pfGUIListBoxMod *fChatList;
         plKIFolder      *fChatVaultFolder;
-        hsBool          fChatting, fInited;
+        bool            fChatting, fInited;
         float           fFadeOutTimer, fFadeOutDelay;
         float           fForeAlpha, fSelForeAlpha;
 
-        hsBool          fLocalClientIsAdmin;
+        bool            fLocalClientIsAdmin;
 
     public:
 
@@ -666,7 +666,7 @@ class plKIMiniProc : public pfGUIDialogProc
             fLocalClientIsAdmin = false;
         }
 
-        void    SetLocalClientAsAdmin( hsBool yes ) { fLocalClientIsAdmin = yes; }
+        void    SetLocalClientAsAdmin( bool yes ) { fLocalClientIsAdmin = yes; }
 
         virtual void    OnInit( void )
         {
@@ -736,7 +736,7 @@ class plKIMiniProc : public pfGUIDialogProc
 
         void    SetFadeOutDelay( hsScalar secs ) { fFadeOutDelay = secs; }
 
-        void    EnterChatMode( hsBool enteringNotLeaving )
+        void    EnterChatMode( bool enteringNotLeaving )
         {
             pfGUIEditBoxMod *edit = pfGUIEditBoxMod::ConvertNoRef( fDialog->GetControlFromTag( kKITestControl2 ) );
             pfGUIControlMod *label = fDialog->GetControlFromTag( kKIStaticText );
@@ -760,7 +760,7 @@ class plKIMiniProc : public pfGUIDialogProc
             fChatting = enteringNotLeaving;
         }
 
-        hsBool  IsChatting( void ) const { return fChatting; }
+        bool    IsChatting( void ) const { return fChatting; }
 
         void    GrabChatList( void )
         {
@@ -806,7 +806,7 @@ class plKIMiniProc : public pfGUIDialogProc
 
                             if( mbr != nil && mbr->GetAvatarKey() != nil )
                             {
-                                hsBool  inRange = ( i < plNetListenList::kMaxListenListSize || plNetListenList::kMaxListenListSize==-1) && 
+                                bool    inRange = ( i < plNetListenList::kMaxListenListSize || plNetListenList::kMaxListenListSize==-1) && 
                                                   ( mbr->GetDistSq() < plNetListenList::kMaxListenDistSq );
 
                                 userList->AddElement( new pfKIListPlayerItem( mbr->GetAvatarKey(), inRange ) ); 
@@ -1223,7 +1223,7 @@ void    pfKI::Init( void )
 
 }
 
-hsBool  pfKI::MsgReceive( plMessage *msg )
+bool    pfKI::MsgReceive( plMessage *msg )
 {
     pfKIMsg *kiMsg = pfKIMsg::ConvertNoRef( msg );
     if( kiMsg != nil )

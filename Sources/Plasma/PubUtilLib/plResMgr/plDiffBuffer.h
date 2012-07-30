@@ -81,13 +81,13 @@ class plDiffBuffer
 {
     protected:
 
-        hsBool      fWriting, f16BitMode;
-        uint32_t      fNewLength;
+        bool         fWriting, f16BitMode;
+        uint32_t     fNewLength;
         hsRAMStream *fStream;
         
         // Support for BSDiff patch buffers (Patching only)
         plBSDiffBuffer  *fBSDiffBuffer;
-        hsBool          fIsBSDiff;
+        bool             fIsBSDiff;
 
     public:
 

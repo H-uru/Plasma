@@ -120,11 +120,11 @@ public:
     virtual ~plProxyGen();
 
     virtual void                SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
-    virtual void                SetDisable(hsBool on);
+    virtual void                SetDisable(bool on);
 
     virtual void                Init(const hsKeyedObject* owner);
 
-    virtual hsBool              MsgReceive(plMessage* msg);
+    virtual bool                MsgReceive(plMessage* msg);
 
 };
 

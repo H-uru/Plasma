@@ -136,7 +136,7 @@ void plExcludeRegionModifier::ISetPhysicalState(bool cleared)
     }
 }
 
-hsBool plExcludeRegionModifier::MsgReceive(plMessage* msg)
+bool plExcludeRegionModifier::MsgReceive(plMessage* msg)
 {
     plExcludeRegionMsg *exclMsg = plExcludeRegionMsg::ConvertNoRef(msg);
     if (exclMsg)

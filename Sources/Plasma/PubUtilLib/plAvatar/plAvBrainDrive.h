@@ -81,12 +81,12 @@ public:
     virtual void Deactivate();
 
     /** Look at the key states and figure out if and how we should move */
-    virtual hsBool Apply(double timeNow, float elapsed);     // main control loop. called by avatar eval()
+    virtual bool Apply(double timeNow, float elapsed);     // main control loop. called by avatar eval()
 
     // the user brain base handles most of the details of control messages,
     // so this function just looks for the special command which gets us out
     // of drive mode. 
-    virtual hsBool MsgReceive(plMessage* pMsg); // handle control input from the user
+    virtual bool MsgReceive(plMessage* pMsg); // handle control input from the user
 
     CLASSNAME_REGISTER( plAvBrainDrive );
     GETINTERFACE_ANY( plAvBrainDrive, plArmatureBrain );

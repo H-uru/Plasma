@@ -67,8 +67,8 @@ public:
     CLASSNAME_REGISTER(plPhysical);
     GETINTERFACE_ANY(plPhysical, plSynchedObject);
 
-    virtual plPhysical& SetProperty(int prop, hsBool b) = 0;
-    virtual hsBool GetProperty(int prop) const = 0;
+    virtual plPhysical& SetProperty(int prop, bool b) = 0;
+    virtual bool        GetProperty(int prop) const = 0;
 
     virtual void SetObjectKey(plKey oKey) = 0;
     virtual plKey GetObjectKey() const = 0;
@@ -77,11 +77,11 @@ public:
     virtual void SetSceneNode(plKey node) = 0;
     virtual plKey GetSceneNode() const = 0;
 
-    virtual hsBool GetLinearVelocitySim(hsVector3& vel) const = 0;
+    virtual bool GetLinearVelocitySim(hsVector3& vel) const = 0;
     virtual void SetLinearVelocitySim(const hsVector3& vel) = 0;
     virtual void ClearLinearVelocity() = 0;
 
-    virtual hsBool GetAngularVelocitySim(hsVector3& vel) const = 0;
+    virtual bool GetAngularVelocitySim(hsVector3& vel) const = 0;
     virtual void SetAngularVelocitySim(const hsVector3& vel) = 0;
 
     virtual void SetHitForce(const hsVector3& force, const hsPoint3& pos)=0;
@@ -91,17 +91,17 @@ public:
     will be applied regardless.
     Set force to true if you don't want the transform to be ignored for any reason. Without it,
     this will ignore the incoming transform if it's the same one it sent out last time. */
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, hsBool force=false) = 0;
+    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force=false) = 0;
     virtual void GetTransform(hsMatrix44& l2w, hsMatrix44& w2l) = 0;
 
     // From plSimDefs::Group
     virtual int GetGroup() const = 0;
 
     // Flags in plSimDefs::plLOSDB
-    virtual void    AddLOSDB(uint16_t flag) = 0;
-    virtual void    RemoveLOSDB(uint16_t flag) = 0;
+    virtual void      AddLOSDB(uint16_t flag) = 0;
+    virtual void      RemoveLOSDB(uint16_t flag) = 0;
     virtual uint16_t  GetAllLOSDBs() = 0;
-    virtual hsBool  IsInLOSDB(uint16_t flag) = 0;
+    virtual bool      IsInLOSDB(uint16_t flag) = 0;
 
     // Return the key of our subworld. May be a nil key.
     virtual plKey GetWorldKey() const = 0;
@@ -114,7 +114,7 @@ public:
     If the simulation is a subworld, this will also factor in the subworld's
     transform. The sent transform is global. "isSynchUpdate" tells us if this
     is an update due to receiving remote state.*/
-    virtual void SendNewLocation(hsBool synchTransform = false, hsBool isSynchUpdate = false) = 0;
+    virtual void SendNewLocation(bool synchTransform = false, bool isSynchUpdate = false) = 0;
 
     // For the physics SDL only.  For Set, any of the values may be set to nil, if
     // they're not used.
@@ -124,7 +124,7 @@ public:
     virtual float GetMass() = 0;
     // I wish I could think of a better way to do this, but this is how it's
     // going to be for now.
-    virtual void ExcludeRegionHack(hsBool cleared) = 0;
+    virtual void ExcludeRegionHack(bool cleared) = 0;
 
     virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) = 0;
 };

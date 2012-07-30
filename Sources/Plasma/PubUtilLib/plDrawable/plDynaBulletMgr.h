@@ -52,10 +52,10 @@ class plDynaBulletMgr : public plDynaDecalMgr
 public:
 protected:
 
-    virtual hsBool      IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
+    virtual bool        IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
     virtual int         INewDecal();
 
-    virtual hsBool      IHandleShot(plBulletMsg* bull);
+    virtual bool        IHandleShot(plBulletMsg* bull);
 
 public:
     plDynaBulletMgr();
@@ -67,7 +67,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 #endif // plDynaBulletMgr_inc

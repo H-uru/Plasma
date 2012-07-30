@@ -76,67 +76,67 @@ class plDrawableGenerator
 
         // Refills a drawable previously created with GenerateDrawable with the new data. New data
         // must match previous data in counts.
-        hsBool                      RegenerateDrawable( uint32_t vertCount, hsPoint3 *positions, hsVector3 *normals, 
+        bool                        RegenerateDrawable( uint32_t vertCount, hsPoint3 *positions, hsVector3 *normals, 
                                                             hsPoint3 *uvws, uint32_t uvwsPerVtx, 
-                                                            hsColorRGBA *origColors, hsBool fauxShade, const hsColorRGBA* multColor,
+                                                            hsColorRGBA *origColors, bool fauxShade, const hsColorRGBA* multColor,
                                                             uint32_t numIndices, uint16_t *indices, 
-                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended,
+                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended,
                                                             uint32_t diIndex, plDrawableSpans *destDraw );
 
         // Generates a drawable based on the vertex/index data given
         // uvws is an array vertCount*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nil
         static plDrawableSpans      *GenerateDrawable( uint32_t vertCount, hsPoint3 *positions, hsVector3 *normals, 
                                                         hsPoint3 *uvws, uint32_t uvwsPerVtx, 
-                                                        hsColorRGBA *origColors, hsBool fauxShade, const hsColorRGBA* multColor,
+                                                        hsColorRGBA *origColors, bool fauxShade, const hsColorRGBA* multColor,
                                                         uint32_t numIndices, uint16_t *indices, 
-                                                        hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                        hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
                                                         hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generates a spherical drawable
         static plDrawableSpans      *GenerateSphericalDrawable( const hsPoint3& localPos, float radius, hsGMaterial *material, 
-                                                                const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                                const hsMatrix44 &localToWorld, bool blended = false,
                                                                 const hsColorRGBA* multColor = nil,
                                                                 hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil,
                                                                 float qualityScalar = 1.f );
 
         // Generates a rectangular drawable
         static plDrawableSpans      *GenerateBoxDrawable( float width, float height, float depth, 
-                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generate a rectangular drawable based on a corner and three vectors
         static plDrawableSpans      *GenerateBoxDrawable( const hsPoint3 &corner, const hsVector3 &xVec, const hsVector3 &yVec, const hsVector3 &zVec, 
-                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
         // Generates a bounds-based drawable
         static plDrawableSpans      *GenerateBoundsDrawable( hsBounds3Ext *bounds,
-                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generates a conical drawable
         static plDrawableSpans      *GenerateConicalDrawable( float radius, float height, hsGMaterial *material, 
-                                                            const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generates a general conical drawable based on a center and direction
         static plDrawableSpans      *GenerateConicalDrawable( hsPoint3 &apex, hsVector3 &direction, float radius, hsGMaterial *material, 
-                                                            const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generates a drawable representing 3 axes
         static plDrawableSpans      *GenerateAxesDrawable( hsGMaterial *material, 
-                                                            const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
         // Generate a planar drawable based on a corner and two vectors
         static plDrawableSpans      *GeneratePlanarDrawable( const hsPoint3 &corner, const hsVector3 &xVec, const hsVector3 &yVec, 
-                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended = false,
+                                                            hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
                                                             const hsColorRGBA* multColor = nil,
                                                             hsTArray<uint32_t> *retIndex = nil, plDrawableSpans *toAddTo = nil );
 
@@ -155,9 +155,9 @@ class plDrawableGenerator
         // already in the SourceSpans.
         static void                 IFillSpan( uint32_t vertCount, hsPoint3 *positions, hsVector3 *normals, 
                                                                     hsPoint3 *uvws, uint32_t uvwsPerVtx, 
-                                                                    hsColorRGBA *origColors, hsBool fauxShade, const hsColorRGBA* multColor,
+                                                                    hsColorRGBA *origColors, bool fauxShade, const hsColorRGBA* multColor,
                                                                     uint32_t numIndices, uint16_t *indices, 
-                                                                    hsGMaterial *material, const hsMatrix44 &localToWorld, hsBool blended,
+                                                                    hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended,
                                                                     plGeometrySpan* span );
 
         static hsColorRGBA          fLiteColor;

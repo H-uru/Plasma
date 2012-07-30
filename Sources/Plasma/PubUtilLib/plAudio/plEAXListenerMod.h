@@ -72,7 +72,7 @@ public:
         kRefSoftRegion = 0,
     };
 
-    virtual hsBool  MsgReceive( plMessage* pMsg );
+    virtual bool    MsgReceive( plMessage* pMsg );
     virtual void    Read( hsStream* s, hsResMgr* mgr );
     virtual void    Write( hsStream* s, hsResMgr* mgr );
     float           GetStrength( void );
@@ -83,11 +83,11 @@ public:
 protected:
     plSoftVolume    *fSoftRegion;
     EAXREVERBPROPERTIES *fListenerProps;
-    hsBool      fRegistered, fGetsMessages;
+    bool        fRegistered, fGetsMessages;
 
     void            IRegister( void );
     void            IUnRegister( void );
-    virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+    virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 };
 
 #endif // _plEAXListenerMod_h

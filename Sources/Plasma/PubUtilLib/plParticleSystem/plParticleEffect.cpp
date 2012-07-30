@@ -75,7 +75,7 @@ void plParticleCollisionEffect::PrepareEffect(const plEffectTargetInfo &target)
     }
 }
 
-hsBool plParticleCollisionEffect::MsgReceive(plMessage* msg)
+bool plParticleCollisionEffect::MsgReceive(plMessage* msg)
 {
     plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
     plSceneObject *so;
@@ -118,7 +118,7 @@ plParticleCollisionEffectBeat::plParticleCollisionEffectBeat()
 {
 }
 
-hsBool plParticleCollisionEffectBeat::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
+bool plParticleCollisionEffectBeat::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -137,7 +137,7 @@ plParticleCollisionEffectDie::plParticleCollisionEffectDie()
 {
 }
 
-hsBool plParticleCollisionEffectDie::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
+bool plParticleCollisionEffectDie::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -156,7 +156,7 @@ plParticleCollisionEffectBounce::plParticleCollisionEffectBounce()
 {
 }
 
-hsBool plParticleCollisionEffectBounce::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
+bool plParticleCollisionEffectBounce::ApplyEffect(const plEffectTargetInfo &target, int32_t i)
 {
     hsAssert(i >= 0, "Use of default argument doesn't make sense for plParticleCollisionEffect");
 
@@ -265,7 +265,7 @@ void plParticleFadeVolumeEffect::PrepareEffect(const plEffectTargetInfo &target)
     fNorm.fZ = 1.f / (fMax.fZ - fMin.fZ);
 }
 
-hsBool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
+bool plParticleFadeVolumeEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     hsPoint3 *currPos = (hsPoint3 *)(target.fPos + i * target.fPosStride);
 
@@ -484,7 +484,7 @@ void plParticleLocalWind::PrepareEffect(const plEffectTargetInfo& target)
 }
 
 
-hsBool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
+bool plParticleLocalWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     const hsPoint3& pos = *(hsPoint3 *)(target.fPos + i * target.fPosStride);
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
@@ -641,7 +641,7 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
 }
 
 
-hsBool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
+bool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     hsVector3& vel = *(hsVector3*)(target.fVelocity + i * target.fVelocityStride);
     
@@ -743,7 +743,7 @@ void plParticleFlockEffect::PrepareEffect(const plEffectTargetInfo& target)
 
 // Some of this is the same for every particle and should be cached in PrepareEffect().
 // Holding off on that until I like the behavior.
-hsBool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
+bool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     if (i >= fMaxParticles)
         return false; // Don't have the memory to deal with you. Good luck kid...
@@ -855,7 +855,7 @@ void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLEScalar(fMaxParticles);
 }
 
-hsBool plParticleFlockEffect::MsgReceive(plMessage *msg)
+bool plParticleFlockEffect::MsgReceive(plMessage *msg)
 {
     plParticleFlockMsg *flockMsg = plParticleFlockMsg::ConvertNoRef(msg);
     if (flockMsg)
@@ -889,7 +889,7 @@ void plParticleFollowSystemEffect::PrepareEffect(const plEffectTargetInfo& targe
     fEvalThisFrame = (fOldW2L != target.fContext.fSystem->GetTarget(0)->GetWorldToLocal());
 }
 
-hsBool plParticleFollowSystemEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
+bool plParticleFollowSystemEffect::ApplyEffect(const plEffectTargetInfo& target, int32_t i)
 {
     if (fEvalThisFrame)
     {

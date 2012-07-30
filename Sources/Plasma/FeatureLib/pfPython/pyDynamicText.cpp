@@ -103,12 +103,12 @@ void pyDynamicText::AddReceiver(pyKey& key)
 }
 
 
-void pyDynamicText::SetNetPropagate(hsBool propagate)
+void pyDynamicText::SetNetPropagate(bool propagate)
 {
     fNetPropagate = propagate;
 }
 
-void pyDynamicText::SetNetForce(hsBool force)
+void pyDynamicText::SetNetForce(bool force)
 {
     fNetForce = force;
 }
@@ -311,7 +311,7 @@ void pyDynamicText::DrawTextW( int16_t x, int16_t y, std::wstring text )
 //
 // Draw an image on the DynamicMap
 //
-void pyDynamicText::DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool respectAlpha )
+void pyDynamicText::DrawImage( uint16_t x, uint16_t y, pyImage& image, bool respectAlpha )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -327,7 +327,7 @@ void pyDynamicText::DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool re
 // Draw an image on the DynamicMap
 //
 void pyDynamicText::DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy, uint16_t cw, uint16_t ch,
-                                        hsBool respectAlpha )
+                                        bool respectAlpha )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();

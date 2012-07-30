@@ -83,7 +83,7 @@ public:
         \param userStr - a string that the user can set
         */
     plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
-                    hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
+                    bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
 
     /** Use this form if you're sending a message about an existing clone -- either
         to propagate it to other machines or to tell them to unload it.
@@ -97,12 +97,12 @@ public:
         \param userStr - a string that the user can set
         */
     plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, uint32_t userData,
-                    hsBool isPlayer, hsBool isLoading, const char *userStr = nil);
+                    bool isPlayer, bool isLoading, const char *userStr = nil);
 
     virtual ~plLoadAvatarMsg();
 
     void SetIsPlayer(bool is);
-    hsBool GetIsPlayer();
+    bool GetIsPlayer();
 
     void SetSpawnPoint(const plKey &spawnSceneObjectKey);
     plKey GetSpawnPoint();
@@ -123,7 +123,7 @@ public:
     void WriteVersion(hsStream* stream, hsResMgr* mgr);
     
 protected:
-    hsBool fIsPlayer;
+    bool fIsPlayer;
     plKey fSpawnPoint;
     plAvTask *fInitialTask;
     char *fUserStr;

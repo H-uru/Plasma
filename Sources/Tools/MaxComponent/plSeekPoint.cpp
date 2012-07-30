@@ -78,9 +78,9 @@ public:
     plSeekPointComponent();
     void DeleteThis() { delete this; }
     
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    //hsBool IsValidNodeType(plMaxNode *pNode);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    //bool IsValidNodeType(plMaxNode *pNode);
 };
 
 //Max desc stuff necessary.
@@ -103,7 +103,7 @@ plSeekPointComponent::plSeekPointComponent()
 }
 
 // CONVERT
-hsBool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const char *objName = node->GetName();
     char *name = new char[strlen(objName) + 1];
@@ -116,13 +116,13 @@ hsBool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 // PRECONVERT
-hsBool plSeekPointComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plSeekPointComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     return true;
 }
 
-/*hsBool IsValidNodeType(plMaxNode *pNode)
+/*bool IsValidNodeType(plMaxNode *pNode)
 {
     Object *obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
     if(obj->SuperClassID() == CAMERA_CLASS_ID)

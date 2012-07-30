@@ -99,7 +99,7 @@ plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestor
 
 // CTOR existing, requestor, userData, isLoading
 // this form is for unloading or other operations on existing clones
-plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, hsBool isLoading)
+plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, bool isLoading)
 : fCloneKey(existing),
   fRequestorKey(requestor),
   fUserData(userData),
@@ -231,7 +231,7 @@ plKey plLoadCloneMsg::GetRequestorKey()
 }
 
 // ISVALIDMESSAGE
-hsBool plLoadCloneMsg::IsValidMessage()
+bool plLoadCloneMsg::IsValidMessage()
 {
     return fValidMsg;
 }
@@ -253,7 +253,7 @@ void plLoadCloneMsg::SetOriginatingPlayerID(uint32_t playerId)
     fOriginatingPlayerID = playerId;
 }
 
-hsBool plLoadCloneMsg::GetIsLoading()
+bool plLoadCloneMsg::GetIsLoading()
 {
     return fIsLoading;
 }

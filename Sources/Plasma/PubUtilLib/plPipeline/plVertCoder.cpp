@@ -74,7 +74,7 @@ static const float kQuanta[plVertCoder::kNumFloatFields] =
 
 
 inline void plVertCoder::ICountFloats(const uint8_t* src, uint16_t maxCnt, const float quant, const uint32_t stride, 
-                                      float& lo, hsBool &allSame, uint16_t& count)
+                                      float& lo, bool &allSame, uint16_t& count)
 {
     lo = *(float*)src;
     lo = floor(lo / quant + 0.5f) * quant;

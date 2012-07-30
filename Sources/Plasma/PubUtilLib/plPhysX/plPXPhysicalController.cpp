@@ -76,7 +76,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 #include "plPipeline/plDebugText.h"
-hsBool plPXPhysicalController::fDebugDisplay = false;
+bool plPXPhysicalController::fDebugDisplay = false;
 #endif // PLASMA_EXTERNAL_RELEASE
 
 static ControllerManager gControllerMgr;
@@ -1223,7 +1223,7 @@ plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<
 {
     plDrawableSpans* myDraw = addTo;
 
-    hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+    bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
     float radius = fRadius;
     myDraw = plDrawableGenerator::GenerateSphericalDrawable(fLocalPosition, radius,
         mat, fLastGlobalLoc, blended,
@@ -1233,7 +1233,7 @@ plDrawableSpans* plPXPhysicalController::CreateProxy(hsGMaterial* mat, hsTArray<
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     if (so)
     {
-        hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+        bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
 
         myDraw = plDrawableGenerator::GenerateConicalDrawable(fRadius*10, fHeight*10,
             mat, so->GetLocalToWorld(), blended,

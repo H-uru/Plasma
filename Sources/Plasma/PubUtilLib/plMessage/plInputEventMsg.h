@@ -87,9 +87,9 @@ private:
 protected:
     
     ControlEventCode    fControlCode;
-    hsBool              fControlActivated;
+    bool                fControlActivated;
     hsPoint3            fTurnToPt;
-    float            fControlPct;
+    float              fControlPct;
 public:
 
     plControlEventMsg();
@@ -103,12 +103,12 @@ public:
 
     void SetCmdString(const char* cs)       { delete [] fCmd; fCmd=hsStrcpy(cs); }
     void SetControlCode(ControlEventCode c) { fControlCode = c; }
-    void SetControlActivated(hsBool b)      { fControlActivated = b; }
+    void SetControlActivated(bool b)      { fControlActivated = b; }
     void SetTurnToPt(hsPoint3 pt)           { fTurnToPt = pt; }
     void SetControlPct(float p)          { fControlPct = p; }
 
     ControlEventCode    GetControlCode()    const { return fControlCode; }
-    hsBool              ControlActivated()  { return fControlActivated; }
+    bool                ControlActivated()  { return fControlActivated; }
     hsPoint3            GetTurnToPt()       { return fTurnToPt; }
     float            GetPct()            { return fControlPct; }
     char*               GetCmdString()      { return fCmd; }
@@ -127,11 +127,11 @@ class plKeyEventMsg : public plInputEventMsg
 protected:
     wchar_t         fKeyChar;
     plKeyDef        fKeyCode;
-    hsBool          fKeyDown;
-    hsBool          fCapsLockKeyDown;
-    hsBool          fShiftKeyDown;
-    hsBool          fCtrlKeyDown;
-    hsBool          fRepeat;
+    bool            fKeyDown;
+    bool            fCapsLockKeyDown;
+    bool            fShiftKeyDown;
+    bool            fCtrlKeyDown;
+    bool            fRepeat;
 
 public:
 
@@ -147,41 +147,41 @@ public:
 
     void SetKeyChar(wchar_t key) { fKeyChar = key; }
     void SetKeyCode(plKeyDef w) { fKeyCode = w; }
-    void SetKeyDown(hsBool b)   { fKeyDown = b; }
-    void SetShiftKeyDown(hsBool b)  { fShiftKeyDown = b; }
-    void SetCtrlKeyDown(hsBool b)   { fCtrlKeyDown = b; }
-    void SetCapsLockKeyDown(hsBool b)   { fCapsLockKeyDown = b; }
-    void SetRepeat(hsBool b)    { fRepeat = b; }
+    void SetKeyDown(bool b)   { fKeyDown = b; }
+    void SetShiftKeyDown(bool b)  { fShiftKeyDown = b; }
+    void SetCtrlKeyDown(bool b)   { fCtrlKeyDown = b; }
+    void SetCapsLockKeyDown(bool b)   { fCapsLockKeyDown = b; }
+    void SetRepeat(bool b)    { fRepeat = b; }
     
-    wchar_t     GetKeyChar()        { return fKeyChar; }
-    plKeyDef    GetKeyCode()        { return fKeyCode; }
-    hsBool      GetKeyDown()        { return fKeyDown; }
-    hsBool      GetShiftKeyDown()   { return fShiftKeyDown; }
-    hsBool      GetCtrlKeyDown()    { return fCtrlKeyDown; }
-    hsBool      GetCapsLockKeyDown()        { return fCapsLockKeyDown; }
-    hsBool      GetRepeat()         { return fRepeat; }
+    wchar_t     GetKeyChar() const         { return fKeyChar; }
+    plKeyDef    GetKeyCode() const         { return fKeyCode; }
+    bool        GetKeyDown() const         { return fKeyDown; }
+    bool        GetShiftKeyDown() const    { return fShiftKeyDown; }
+    bool        GetCtrlKeyDown() const     { return fCtrlKeyDown; }
+    bool        GetCapsLockKeyDown() const { return fCapsLockKeyDown; }
+    bool        GetRepeat() const          { return fRepeat; }
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Read(stream, mgr);
         stream->ReadLE((int32_t*)&fKeyCode);
-        stream->ReadLE(&fKeyDown);
-        stream->ReadLE(&fCapsLockKeyDown);
-        stream->ReadLE(&fShiftKeyDown);
-        stream->ReadLE(&fCtrlKeyDown);
-        stream->ReadLE(&fRepeat);
+        fKeyDown = stream->ReadBOOL();
+        fCapsLockKeyDown = stream->ReadBOOL();
+        fShiftKeyDown = stream->ReadBOOL();
+        fCtrlKeyDown = stream->ReadBOOL();
+        fRepeat = stream->ReadBOOL();
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
-        stream->WriteLE((int32_t)fKeyCode);
-        stream->WriteLE(fKeyDown);
-        stream->WriteLE(fCapsLockKeyDown);
-        stream->WriteLE(fShiftKeyDown);
-        stream->WriteLE(fCtrlKeyDown);
-        stream->WriteLE(fRepeat);
+        stream->WriteLE32((int32_t)fKeyCode);
+        stream->WriteBOOL(fKeyDown);
+        stream->WriteBOOL(fCapsLockKeyDown);
+        stream->WriteBOOL(fShiftKeyDown);
+        stream->WriteBOOL(fCtrlKeyDown);
+        stream->WriteBOOL(fRepeat);
     }
 };
 
@@ -190,10 +190,10 @@ class plDebugKeyEventMsg : public plInputEventMsg
 {
 protected:
     ControlEventCode    fKeyCode;
-    hsBool              fKeyDown;
-    hsBool          fCapsLockKeyDown;
-    hsBool          fShiftKeyDown;
-    hsBool          fCtrlKeyDown;
+    bool                fKeyDown;
+    bool                fCapsLockKeyDown;
+    bool                fShiftKeyDown;
+    bool                fCtrlKeyDown;
 
 public:
 
@@ -208,16 +208,16 @@ public:
     GETINTERFACE_ANY( plDebugKeyEventMsg, plInputEventMsg );
 
     void SetKeyCode(ControlEventCode w) { fKeyCode = w; }
-    void SetKeyDown(hsBool b)           { fKeyDown = b; }
-    void SetShiftKeyDown(hsBool b)  { fShiftKeyDown = b; }
-    void SetCtrlKeyDown(hsBool b)   { fCtrlKeyDown = b; }
-    void SetCapsLockKeyDown(hsBool b)   { fCapsLockKeyDown = b; }
+    void SetKeyDown(bool b)             { fKeyDown = b; }
+    void SetShiftKeyDown(bool b)        { fShiftKeyDown = b; }
+    void SetCtrlKeyDown(bool b)         { fCtrlKeyDown = b; }
+    void SetCapsLockKeyDown(bool b)     { fCapsLockKeyDown = b; }
 
-    ControlEventCode    GetKeyCode()    { return fKeyCode; }
-    hsBool              GetKeyDown()    { return fKeyDown; }
-    hsBool      GetShiftKeyDown()   { return fShiftKeyDown; }
-    hsBool      GetCtrlKeyDown()    { return fCtrlKeyDown; }
-    hsBool      GetCapsLockKeyDown()        { return fCapsLockKeyDown; }
+    ControlEventCode GetKeyCode() const { return fKeyCode; }
+    bool  GetKeyDown() const            { return fKeyDown; }
+    bool  GetShiftKeyDown() const       { return fShiftKeyDown; }
+    bool  GetCtrlKeyDown() const        { return fCtrlKeyDown; }
+    bool  GetCapsLockKeyDown() const    { return fCapsLockKeyDown; }
 
 
     // IO
@@ -225,20 +225,20 @@ public:
     {
         plInputEventMsg::Read(stream, mgr);
         stream->ReadLE((int32_t*)&fKeyCode);
-        stream->ReadLE(&fKeyDown);
-        stream->ReadLE(&fCapsLockKeyDown);
-        stream->ReadLE(&fShiftKeyDown);
-        stream->ReadLE(&fCtrlKeyDown);
+        fKeyDown = stream->ReadBOOL();
+        fCapsLockKeyDown = stream->ReadBOOL();
+        fShiftKeyDown = stream->ReadBOOL();
+        fCtrlKeyDown = stream->ReadBOOL();
     }
 
     void Write(hsStream* stream, hsResMgr* mgr)
     {
         plInputEventMsg::Write(stream, mgr);
         stream->WriteLE((int32_t)fKeyCode);
-        stream->WriteLE(fKeyDown);
-        stream->WriteLE(fCapsLockKeyDown);
-        stream->WriteLE(fShiftKeyDown);
-        stream->WriteLE(fCtrlKeyDown);
+        stream->WriteBOOL(fKeyDown);
+        stream->WriteBOOL(fCapsLockKeyDown);
+        stream->WriteBOOL(fShiftKeyDown);
+        stream->WriteBOOL(fCtrlKeyDown);
     }
 };
 
@@ -420,7 +420,7 @@ public:
     static const ControlEventCode fCodeMap[];
     static const uint8_t fMapSize;
 
-    static hsBool IsCodeInMap(ControlEventCode code);
+    static bool IsCodeInMap(ControlEventCode code);
 };
 
 #endif // plInputEventMsg_inc

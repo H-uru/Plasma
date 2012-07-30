@@ -58,9 +58,9 @@ public:
     CLASSNAME_REGISTER( plListener );
     GETINTERFACE_ANY( plListener, plSingleModifier );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
-    static void ShowDebugInfo( hsBool s ) { fPrintDbgInfo = s; }
+    static void ShowDebugInfo( bool s ) { fPrintDbgInfo = s; }
 
     // Get info for which object these things are attached to - camera or refObject
     uint8_t GetAttachedPosType() { return (uint8_t)fPosRatio; }
@@ -83,13 +83,13 @@ protected:
 
     plVirtualCam1*      fVCam;
 
-    float            fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
-    hsBool              fInitMe;
+    float               fPosRatio, fFacingRatio, fVelRatio;  // 0 is vCam, 1 is refObject
+    bool                fInitMe;
 
-    static hsBool       fPrintDbgInfo;
+    static bool         fPrintDbgInfo;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
-    void            ISetRef( const plKey &ref, hsBool binding, int type );
+    virtual bool    IEval(double secs, float del, uint32_t dirty);
+    void            ISetRef( const plKey &ref, bool binding, int type );
     void            ICheckAudio( void ) const;
 
     void            IEnsureVCamValid( void );

@@ -142,7 +142,7 @@ private:
 
         uint32_t GetHash() const;
 
-        hsBool GetVal(TSTR& value);
+        bool GetVal(TSTR& value);
 
         bool operator==(const QuickPair& other) const;
     };

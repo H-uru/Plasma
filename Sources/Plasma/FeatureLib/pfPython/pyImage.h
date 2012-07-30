@@ -123,7 +123,7 @@ public:
     void setKey(pyKey& mipmapKey);
 
     // override the equals to operator
-    hsBool operator==(const pyImage &image) const
+    bool operator==(const pyImage &image) const
     {
         // only thing that needs testing is the plKey, which is unique for all
         if ( fMipMapKey == ((pyImage&)image).GetKey() )
@@ -131,7 +131,7 @@ public:
         else
             return false;
     }
-    hsBool operator!=(const pyImage &image) const { return !(image == *this);   }
+    bool operator!=(const pyImage &image) const { return !(image == *this);   }
 
     // for C++ access
     plKey GetKey() { return fMipmap ? fMipmap->GetKey() : fMipMapKey; }

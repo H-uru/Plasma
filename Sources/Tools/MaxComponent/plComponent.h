@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 **
 **  Next create a derived class from the plComponent class with three public functions,
 **  being its constunctor, its custom destructor and the converter.  Currently, we have the
-**  converter returning an hsBool to let you know how successful the conversion process has been
+**  converter returning an bool to let you know how successful the conversion process has been
 **  during export to the .prd format.
 **
 **  After the class above has been declared, the param block stuff follows:
@@ -250,13 +250,13 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { return true; }
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { return true; }
 
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) = 0;
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) = 0;
 
     // DeInit pass--free up any temp memory you might have allocated here
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
 };
 
 #endif

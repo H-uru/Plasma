@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 
 // Generic geom utils.
-static hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
+static bool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
 static void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat);
 static float AngleRad2d (float x1, float y1, float x3, float y3);
 inline hsVector3 GetYAxis(hsMatrix44 &mat)
@@ -66,7 +66,7 @@ plAnimatedController::plAnimatedController(plSceneObject* rootObject, plAGApplic
 {
 }   
 
-void plAnimatedController::RecalcVelocity(double timeNow, double timePrev, hsBool useAnim /* = true */)
+void plAnimatedController::RecalcVelocity(double timeNow, double timePrev, bool useAnim /* = true */)
 {
     if (useAnim)
     {
@@ -120,7 +120,7 @@ plWalkingController::plWalkingController(plSceneObject* rootObject, plAGApplicat
         fWalkingStrategy = nil;
 }
 
-void plWalkingController::RecalcVelocity(double timeNow, double timePrev, hsBool useAnim)
+void plWalkingController::RecalcVelocity(double timeNow, double timePrev, bool useAnim)
 {
     if (!fHitGroundInThisAge && fController && fController->IsEnabled() && fWalkingStrategy->IsOnGround())
         fHitGroundInThisAge = true; // if we're not pinned and we're not in an age yet, we are now.
@@ -215,9 +215,9 @@ void plWalkingController::Update()
 //  double elapsed = time.asDouble() - getRefresh().asDouble();
 //  setRefresh(time);
 //  
-//  hsBool isPhysical = !fPhysical->GetProperty(plSimulationInterface::kPinned);
+//  bool isPhysical = !fPhysical->GetProperty(plSimulationInterface::kPinned);
 //  const Havok::Vector3 straightUp(0.0f, 0.0f, 1.0f);
-//  hsBool alreadyInAge = fHitGroundInThisAge;
+//  bool alreadyInAge = fHitGroundInThisAge;
 //  
 //  int numContacts = fPhysical->GetNumContacts();
 //  bool ground = false;
@@ -490,7 +490,7 @@ static float AngleRad2d ( float x1, float y1, float x3, float y3 )
     return value;
 }
 
-static hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat)
+static bool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat)
 {
     bool result = false;
 
@@ -531,7 +531,7 @@ static hsBool LinearVelocity(hsVector3 &outputV, float elapsed, hsMatrix44 &prev
             float yfabs = fabs(prev2Now.fY);
             float zfabs = fabs(prev2Now.fZ);
             static const float maxVel = 20.0f;
-            hsBool valid = xfabs < maxVel && yfabs < maxVel && zfabs < maxVel;
+            bool valid = xfabs < maxVel && yfabs < maxVel && zfabs < maxVel;
 
             if (valid)
             {
@@ -552,13 +552,13 @@ static void AngularVelocity(float &outputV, float elapsed, hsMatrix44 &prevMat, 
     hsVector3 curForward = GetYAxis(curMat);
 
     float angleSincePrev = AngleRad2d(curForward.fX, curForward.fY, prevForward.fX, prevForward.fY);
-    hsBool sincePrevSign = angleSincePrev > 0.0f;
+    bool sincePrevSign = angleSincePrev > 0.0f;
     if (angleSincePrev > M_PI)
         angleSincePrev = angleSincePrev - TWO_PI;
 
     const hsVector3 startForward = hsVector3(0, -1.0, 0);   // the Y orientation of a "resting" armature....
     float angleSinceStart = AngleRad2d(curForward.fX, curForward.fY, startForward.fX, startForward.fY);
-    hsBool sinceStartSign = angleSinceStart > 0.0f;
+    bool sinceStartSign = angleSinceStart > 0.0f;
     if (angleSinceStart > M_PI)
         angleSinceStart = angleSinceStart - TWO_PI;
 

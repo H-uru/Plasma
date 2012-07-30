@@ -90,7 +90,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unistd.h>
 #endif
 
-extern  hsBool  gDataServerLocal;
+extern  bool    gDataServerLocal;
 
 
 // Load Player object
@@ -175,7 +175,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 // Cause a player to respawn. This is typically called on the local player when he links to a new age.
 // or for unspawn:
 //
-void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, int32_t spawnPt)
+void plNetClientMgr::IPlayerChangeAge(bool exitAge, int32_t spawnPt)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
@@ -186,7 +186,7 @@ void plNetClientMgr::IPlayerChangeAge(hsBool exitAge, int32_t spawnPt)
             avatar->LeaveAge();
         else
         {
-            hsBool validSpawn = (spawnPt >= 0);
+            bool validSpawn = (spawnPt >= 0);
             avatar->EnterAge(!validSpawn);
             if (validSpawn)
                 avatar->SpawnAt(spawnPt, hsTimer::GetSysSeconds());

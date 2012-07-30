@@ -251,7 +251,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
             hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             dbgStr += std::string(" ") + token;
 
-            hsBool read=stream->GetToken(token, kTokenLen);
+            bool read=stream->GetToken(token, kTokenLen);
             if (read)
             {
                 std::string oldOptions=curVar->GetDisplayOptions();
@@ -274,7 +274,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
             hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             dbgStr += std::string(" ") + token;
 
-            hsBool read=stream->GetToken(token, kTokenLen);
+            bool read=stream->GetToken(token, kTokenLen);
             if (read)
             {
                 dbgStr += std::string("=") + token;

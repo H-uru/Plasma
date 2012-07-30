@@ -170,18 +170,18 @@ static plLineFollowComponentProc gLineFollowProc;
 class plLineFollowComponent : public plComponent
 {
 private:
-    hsBool          fValid;
+    bool            fValid;
 
     plLineFollowMod*    fLineMod;
 
-    hsBool      IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool        IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg);
 
 public:
     plLineFollowComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
     plLineFollowMod*    GetLineMod(plErrorMsg* pErrMsg);
 };
@@ -272,7 +272,7 @@ plLineFollowComponent::plLineFollowComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plLineFollowMod::FollowMode mode = plLineFollowMod::FollowMode(fCompPB->GetInt(kFollowModeRadio));
 
@@ -385,7 +385,7 @@ plLineFollowMod* plLineFollowComponent::GetLineMod(plErrorMsg* pErrMsg)
     return fLineMod;
 }
 
-hsBool plLineFollowComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLineFollowComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -404,7 +404,7 @@ hsBool plLineFollowComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plLineFollowComponent::SetupProperties(plMaxNode* pNode,  plErrorMsg* pErrMsg)
+bool plLineFollowComponent::SetupProperties(plMaxNode* pNode,  plErrorMsg* pErrMsg)
 {
     fValid = false;
     fLineMod = nil;
@@ -437,7 +437,7 @@ hsBool plLineFollowComponent::SetupProperties(plMaxNode* pNode,  plErrorMsg* pEr
     return true;
 }
 
-hsBool plLineFollowComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plLineFollowComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -493,11 +493,11 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-    hsBool  Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
+    bool    Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
 
 };
 
@@ -560,7 +560,7 @@ plStereizeComp::plStereizeComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plStereizeComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plStereizeComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     if( !node->GetParentNode()->IsRootNode() )
@@ -569,19 +569,19 @@ hsBool plStereizeComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plStereizeComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plStereizeComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plStereizeComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
+bool plStereizeComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
 {
     pErrMsg->Set(true, node->GetName(), msg).CheckAndAsk();
     pErrMsg->Set(false);
     return true;
 }
 
-hsBool plStereizeComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plStereizeComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plStereizer* stereo = new plStereizer;
 
@@ -665,11 +665,11 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
 
-    hsBool  Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
+    bool    Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
 
 };
 
@@ -783,7 +783,7 @@ plSwivelComp::plSwivelComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSwivelComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plSwivelComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceLocal(true);
     node->SetMovable(true);
@@ -791,19 +791,19 @@ hsBool plSwivelComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plSwivelComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plSwivelComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plSwivelComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
+bool plSwivelComp::Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg)
 {
     pErrMsg->Set(true, node->GetName(), msg).CheckAndAsk();
     pErrMsg->Set(false);
     return true;
 }
 
-hsBool plSwivelComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plSwivelComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plViewFaceModifier* pMod = new plViewFaceModifier;
     pMod->SetOrigTransform(node->GetLocalToParent44(), node->GetParentToLocal44());

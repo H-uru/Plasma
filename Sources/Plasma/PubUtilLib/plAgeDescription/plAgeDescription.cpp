@@ -104,7 +104,7 @@ void plAgePage::SetFlags(uint8_t f, bool on)
 }
 
 // now preservs original string
-hsBool  plAgePage::SetFromString( const char *stringIn )
+bool    plAgePage::SetFromString( const char *stringIn )
 {
     char    *c, seps[] = ", \n";
     std::string string = stringIn;
@@ -396,7 +396,7 @@ const char  *plAgeDescription::GetSectionName( void ) const
     return "AgeInfo";
 }
 
-hsBool      plAgeDescription::IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData )
+bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData )
 {
     char *tok;
 

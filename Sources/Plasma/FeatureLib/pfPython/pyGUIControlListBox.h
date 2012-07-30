@@ -79,7 +79,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlListBox(pyKey& gckey);
+    static bool IsGUIControlListBox(pyKey& gckey);
 
     // special case control for the listbox
     // ...this allows the listbox to be used without being selectable
@@ -97,9 +97,9 @@ public:
     virtual std::wstring GetElementW( uint16_t idx );
     virtual int16_t   AddString( const char *string );
     virtual int16_t   AddStringW( std::wstring string );
-    virtual int16_t   AddImage( pyImage& image, hsBool respectAlpha );
-    virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha );
-    virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, hsBool respectAlpha,
+    virtual int16_t   AddImage( pyImage& image, bool respectAlpha );
+    virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha );
+    virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
                                                         pyColor &primary, pyColor &secondary );
     virtual void    SetSwatchSize( uint32_t size );
     virtual void    SetSwatchEdgeOffset( uint32_t size );
@@ -125,8 +125,8 @@ public:
 
     // To create tree branches, call AddBranch() with a name, then add elements as usual, including new sub-branches
     // via additional AddBranch() calls. Call CloseBranch() to stop writing elements to that branch.
-    void            AddBranch( const char *name, hsBool initiallyOpen );
-    void            AddBranchW( std::wstring name, hsBool initiallyOpen );
+    void            AddBranch( const char *name, bool initiallyOpen );
+    void            AddBranchW( std::wstring name, bool initiallyOpen );
     void            CloseBranch( void );
 
     void            RemoveSelection( int32_t item );

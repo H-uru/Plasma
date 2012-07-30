@@ -53,7 +53,7 @@ protected:
 
 public:
     
-    hsBool  fPicked;
+    bool    fPicked;
     hsPoint3    fHitPoint;      // where in the world the object was picked on
         
     plPickedMsg() : fPicked(true),fHitPoint(0,0,0){SetBCastFlag(plMessage::kPropagateToModifiers);}

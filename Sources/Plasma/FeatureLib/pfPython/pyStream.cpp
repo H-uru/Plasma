@@ -61,7 +61,7 @@ pyStream::~pyStream()
 }
 
 
-hsBool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
+bool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
 {
     // make sure its closed first
     Close();
@@ -124,7 +124,7 @@ std::vector<std::string> pyStream::ReadLines()
     return pyPL;
 }
 
-hsBool pyStream::WriteLines(const std::vector<std::string> & lines)
+bool pyStream::WriteLines(const std::vector<std::string> & lines)
 {
     if (fStream)
     {
@@ -149,11 +149,4 @@ void pyStream::Close()
         delete fStream;
     }
     fStream = nil;
-}
-
-hsBool pyStream::IsOpen()
-{
-    if (fStream)
-        return true;
-    return false;
 }

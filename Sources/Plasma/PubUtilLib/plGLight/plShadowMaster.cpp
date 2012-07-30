@@ -175,7 +175,7 @@ void plShadowMaster::SetMaxDist(float f)
 
 #include "plProfile.h"
 plProfile_CreateTimer("ShadowMaster", "RenderSetup", ShadowMaster);
-hsBool plShadowMaster::MsgReceive(plMessage* msg)
+bool plShadowMaster::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
@@ -203,7 +203,7 @@ void plShadowMaster::IBeginRender()
         fLightInfo->ClearSlaveBits();
 }
 
-hsBool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
+bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 {
 //  // HACKTEST
 //  return false;
@@ -803,9 +803,9 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {}
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -836,7 +836,7 @@ protected:
 public:
     plVolumeIsect* GetIsect() const { return fIsect; }
 
-    hsBool CanSee(const hsBounds3Ext& bnd)
+    bool CanSee(const hsBounds3Ext& bnd)
     {
         switch( fType )
         {
@@ -1114,7 +1114,7 @@ void IClearShadowSlaves();
 
 // We don't have the depth resolution to even think about self shadowing, so we just don't
 // let a slave shadow any of the spans that were rendered into it.
-hsBool AcceptsShadow(plSpan* span, plShadowSlave* slave)
+bool AcceptsShadow(plSpan* span, plShadowSlave* slave)
 {
     return !span->IsShadowBitSet(slave->fIndex);
 }
@@ -1123,7 +1123,7 @@ hsBool AcceptsShadow(plSpan* span, plShadowSlave* slave)
 // look goofy, or won't contribute.
 // Also, if we have less than 3 simultaneous textures, we want to skip anything with
 // an alpha'd base layer, unless it's been overriden.
-hsBool ReceivesShadows(plSpan* span, hsGMaterial* mat)
+bool ReceivesShadows(plSpan* span, hsGMaterial* mat)
 {
     if( span.fProps & plSpan::kPropNoShadow )
         return false;
@@ -1159,7 +1159,7 @@ Apply
 
 RenderSpanShadows
 {
-    hsBool first = true;
+    bool first = true;
     if receivesShadows(span)
     {
         for each ShadowSlave

@@ -69,7 +69,7 @@ plProfile_CreateCounterNoReset( "Allocated", "Sound", NumAllocated );
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plDSoundBuffer::plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool isLooping, hsBool tryStatic, bool streaming )
+plDSoundBuffer::plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool isLooping, bool tryStatic, bool streaming )
 { 
     fLooping = isLooping;
     fValid = false;
@@ -100,7 +100,7 @@ plDSoundBuffer::~plDSoundBuffer()
 
 //// IAllocate ///////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, hsBool enable3D, hsBool tryStatic )
+void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool tryStatic )
 {
     // Create a DSound buffer description
     fBufferDesc = new plWAVHeader;
@@ -404,7 +404,7 @@ bool plDSoundBuffer::StreamingFillBuffer(plAudioFileReader *stream)
     ALuint bufferId;
     unsigned char data[STREAM_BUFFER_SIZE];
     int buffersProcessed = BuffersProcessed();
-    hsBool finished = false;
+    bool finished = false;
 
     for(int i = 0; i < buffersProcessed; i++)
     {
@@ -574,7 +574,7 @@ bool plDSoundBuffer::VoiceFillBuffer(void *data, unsigned bytes, unsigned buffer
 
 //// SetLooping //////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::SetLooping( hsBool loop )
+void    plDSoundBuffer::SetLooping( bool loop )
 {
     fLooping = loop;
 }
@@ -684,7 +684,7 @@ void plDSoundBuffer::Rewind()
 
 //// IsPlaying ///////////////////////////////////////////////////////////////
 
-hsBool  plDSoundBuffer::IsPlaying( void )
+bool    plDSoundBuffer::IsPlaying( void )
 {
     ALint state = AL_STOPPED;
     alGetSourcei(source, AL_SOURCE_STATE, &state);
@@ -694,7 +694,7 @@ hsBool  plDSoundBuffer::IsPlaying( void )
 
 //// IsEAXAccelerated ////////////////////////////////////////////////////////
 
-hsBool  plDSoundBuffer::IsEAXAccelerated( void ) const
+bool    plDSoundBuffer::IsEAXAccelerated( void ) const
 {
     return fEAXSource.IsValid();
 }
@@ -727,7 +727,7 @@ uint32_t  plDSoundBuffer::GetLengthInBytes( void ) const
 
 //// SetEAXSettings //////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, hsBool force )
+void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, bool force )
 {
     fEAXSource.SetFrom( settings, source, force );
 }

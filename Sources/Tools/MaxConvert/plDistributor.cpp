@@ -392,7 +392,7 @@ Box3 plDistributor::ISetupGrid(const Point3& p0, const Point3& p1, const Point3&
     return box;
 }
 
-hsBool plDistributor::IFailsProbBitmap(int iFace, const Point3& bary) const
+bool plDistributor::IFailsProbBitmap(int iFace, const Point3& bary) const
 {
     // If we don't have a probability map, or we don't have
     // valid coordinates into it, just return false. That is,
@@ -536,7 +536,7 @@ Point3 plDistributor::IGetSurfaceNormal(int iFace, const Point3& bary) const
     return FNormalize(faceNorm);
 }
 
-hsBool plDistributor::IFailsAngProb(int iFace, const Point3& bary) const
+bool plDistributor::IFailsAngProb(int iFace, const Point3& bary) const
 {
     if( fAngProbLo == fAngProbHi )
         return false;
@@ -568,7 +568,7 @@ hsBool plDistributor::IFailsAngProb(int iFace, const Point3& bary) const
 
 }
 
-hsBool plDistributor::IFailsAltProb(int iFace, const Point3& bary) const
+bool plDistributor::IFailsAltProb(int iFace, const Point3& bary) const
 {
     if( fAltProbLo == fAltProbHi )
         return false;
@@ -602,7 +602,7 @@ hsBool plDistributor::IFailsAltProb(int iFace, const Point3& bary) const
 // If |projGridPt - GridPt| < gridCubeRadius
 // and probBitmap->GetPixel(src->UVW(bary)) < RandomZeroToOne()
 // Also a generic random factor.
-hsBool plDistributor::IProbablyDoIt(int iFace, Point3& del, const Point3& bary) const
+bool plDistributor::IProbablyDoIt(int iFace, Point3& del, const Point3& bary) const
 {
     if( fRand.RandZeroToOne() >= fOverallProb )
     {

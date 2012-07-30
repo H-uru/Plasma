@@ -61,14 +61,14 @@ public:
 
     void SetSurface(plSwimRegionInterface *region, float surfaceHeight);
     float GetBuoyancy() { return fBuoyancy; }
-    hsBool IsOnGround() { return fOnGround; }
-    hsBool HadContacts() { return fHadContacts; }
+    bool IsOnGround() { return fOnGround; }
+    bool HadContacts() { return fHadContacts; }
         
 protected:
     void IAdjustBuoyancy();
 
-    hsBool fOnGround;
-    hsBool fHadContacts;
+    bool fOnGround;
+    bool fHadContacts;
     float fBuoyancy;
     float fSurfaceHeight;
     plSwimRegionInterface *fCurrentRegion;

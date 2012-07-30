@@ -141,7 +141,7 @@ class pfGameGUIMgr : public hsKeyedObject
         hsTArray<pfDialogNameSetKey *>  fDlgsPendingLoad;
         hsTArray<pfDialogNameSetKey *>  fDlgsPendingUnload;
 
-        hsBool  fActivated;
+        bool    fActivated;
         uint32_t  fActiveDlgCount;
 
         pfGameUIInputInterface      *fInputConfig;
@@ -165,13 +165,13 @@ class pfGameGUIMgr : public hsKeyedObject
         void    IAddDlgToList( hsKeyedObject *obj );
         void    IRemoveDlgFromList( hsKeyedObject *obj );
 
-        void    IActivateGUI( hsBool activate );
+        void    IActivateGUI( bool activate );
 
-        hsBool  IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor );
-        hsBool  IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
-        hsBool  IHandleKeyPress( wchar_t key, uint8_t modifiers );
+        bool    IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor );
+        bool    IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
+        bool    IHandleKeyPress( wchar_t key, uint8_t modifiers );
 
-        hsBool  IModalBlocking( void );
+        bool    IModalBlocking( void );
 
         pfGUIDialogMod  *IGetTopModal( void ) const;
 
@@ -191,9 +191,9 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void        Draw( plPipeline *p );
 
-        hsBool      Init( void );
+        bool        Init( void );
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
 
         void    LoadDialog( const char *name, plKey recvrKey=nil, const char *ageName = nil );  // AgeName = nil defaults to "GUI"
         void    ShowDialog( const char *name ) { IShowDialog(name); }
@@ -204,7 +204,7 @@ class pfGameGUIMgr : public hsKeyedObject
         void    ShowDialog( pfGUIDialogMod *dlg, bool resetClickables=true );
         void    HideDialog( pfGUIDialogMod *dlg );
 
-        hsBool  IsDialogLoaded( const char *name );
+        bool    IsDialogLoaded( const char *name );
         pfGUIDialogMod *GetDialogFromString( const char *name );
 
         void    SetDialogToNotify(const char *name, plKey recvrKey);
@@ -218,7 +218,7 @@ class pfGameGUIMgr : public hsKeyedObject
         pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
 
         std::vector<plPostEffectMod*> GetDlgRenderMods( void ) const;
-        hsBool  IsModalBlocking( void ) {return IModalBlocking();}
+        bool    IsModalBlocking( void ) {return IModalBlocking();}
 
         // Tag ID stuff
         pfGUIDialogMod  *GetDialogFromTag( uint32_t tagID );

@@ -142,10 +142,10 @@ protected:
     uint16_t      IncActiveRefs() { return ++fNumActiveRefs; }
     uint16_t      DecActiveRefs() { return fNumActiveRefs ? --fNumActiveRefs : 0; }
 
-    hsBool  IsActiveRef(int i) const            { return fActiveRefs.IsBitSet(i) != 0; }
-    void    SetActiveRef(int i, hsBool on=true) { fActiveRefs.SetBit(i, on); }
-    hsBool  IsNotified(int i) const             { return fNotified.IsBitSet(i) != 0; }
-    void    SetNotified(int i, hsBool on=true)  { fNotified.SetBit(i, on); }
+    bool    IsActiveRef(int i) const            { return fActiveRefs.IsBitSet(i) != 0; }
+    void    SetActiveRef(int i, bool on=true) { fActiveRefs.SetBit(i, on); }
+    bool    IsNotified(int i) const             { return fNotified.IsBitSet(i) != 0; }
+    void    SetNotified(int i, bool on=true)  { fNotified.SetBit(i, on); }
 
     void SatisfyPending(plRefMsg* msg) const;
     void SatisfyPending() const;

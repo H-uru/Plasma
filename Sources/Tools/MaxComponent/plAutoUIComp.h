@@ -53,7 +53,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
     // Get the value of a control.  Pass in the id and your 'this' pointer.
     //
-    hsBool   GetCheckBox(int16_t id, plComponentBase *comp);
+    bool     GetCheckBox(int16_t id, plComponentBase *comp);
     float GetFloatSpinner(int16_t id, plComponentBase *comp);
     int      GetIntSpinner(int16_t id, plComponentBase *comp);
     TSTR     GetEditBox(int16_t id, plComponentBase *comp);

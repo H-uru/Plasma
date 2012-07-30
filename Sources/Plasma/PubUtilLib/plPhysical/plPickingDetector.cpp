@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 
-hsBool plPickingDetector::MsgReceive(plMessage* msg)
+bool plPickingDetector::MsgReceive(plMessage* msg)
 {
     
     plObjRefMsg* refMsg = plObjRefMsg::ConvertNoRef(msg);

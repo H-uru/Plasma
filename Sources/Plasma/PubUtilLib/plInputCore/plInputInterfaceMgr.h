@@ -86,22 +86,22 @@ class plInputInterfaceMgr : public plSingleModifier
         hsTArray<uint32_t>                fDisabledKeys;
 #endif
 
-        hsBool      fClickEnabled;
+        bool        fClickEnabled;
         int32_t       fCurrentCursor;
         float    fCursorOpacity;
-        hsBool      fForceCursorHidden;
+        bool        fForceCursorHidden;
         int32_t       fForceCursorHiddenCount;
         plInputInterface        *fCurrentFocus;
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
-        virtual hsBool IEval( double secs, float del, uint32_t dirty );
+        virtual bool IEval( double secs, float del, uint32_t dirty );
 
         void    IAddInterface( plInputInterface *iface );
         void    IRemoveInterface( plInputInterface *iface );
 
         void    IUpdateCursor( int32_t newCursor );
-        hsBool  ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
+        bool    ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
             
         void    IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
         void    IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
@@ -119,7 +119,7 @@ class plInputInterfaceMgr : public plSingleModifier
         CLASSNAME_REGISTER( plInputInterfaceMgr );
         GETINTERFACE_ANY( plInputInterfaceMgr, plSingleModifier );
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
         virtual void    Read( hsStream* s, hsResMgr* mgr );
         virtual void    Write( hsStream* s, hsResMgr* mgr );
 
@@ -134,9 +134,9 @@ class plInputInterfaceMgr : public plSingleModifier
         void    ReleaseCurrentFocus(plInputInterface *focus);
         void    SetDefaultKeyCatcher( plDefaultKeyCatcher *c ) { fDefaultCatcher = c; }
 
-        hsBool  IsClickEnabled() { return fClickEnabled; }
+        bool    IsClickEnabled() { return fClickEnabled; }
 
-        void    ForceCursorHidden( hsBool requestedState );
+        void    ForceCursorHidden( bool requestedState );
 
         // Binding routers
         void    BindAction( const plKeyCombo &key, ControlEventCode code );
@@ -168,11 +168,11 @@ class plCtrlCmd
         void SetCmdString(const char* cs)   { delete [] fCmd; fCmd=hsStrcpy(cs); }
 
         ControlEventCode    fControlCode;
-        hsBool              fControlActivated;
+        bool                fControlActivated;
         hsPoint3            fPt;
         float            fPct;
 
-        hsBool              fNetPropagateToPlayers;
+        bool                fNetPropagateToPlayers;
 
         void Read( hsStream* s, hsResMgr* mgr );
         void Write( hsStream* s, hsResMgr* mgr );

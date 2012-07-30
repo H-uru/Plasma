@@ -92,7 +92,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
     void AddNotifyKey(plKey key) { fNotifyKeys.Append(key); }
 
@@ -102,7 +102,7 @@ public:
 protected:
     /** We've been triggered: go ahead and send the seek and brain tasks to the 
         triggering avatar. */
-    hsBool IEmitCommand(plKey playerKey, plMessage *enterCallback, plMessage *exitCallback);
+    bool IEmitCommand(plKey playerKey, plMessage *enterCallback, plMessage *exitCallback);
 
     /** Set up generic notification messages which were passed in by the responder / 
         max authoring stuff. */
@@ -113,13 +113,13 @@ protected:
     plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey,char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
 
     /** Unused. */
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     /** An array of keys to objects that are interested in receiving our sit messages. */
     hsTArray<plKey> fNotifyKeys;
 
     /** The chair in question is in use. It will untrigger when the avatar leaves it. */
-    //hsBool            fTriggered;
+    //bool              fTriggered;
     plKey           fTriggeredAvatarKey;
 };
 

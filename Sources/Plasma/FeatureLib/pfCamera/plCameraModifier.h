@@ -72,9 +72,9 @@ struct CamTrans
     }
     plKey       fTransTo;
 
-    hsBool  fCutPos;
-    hsBool  fCutPOA;
-    hsBool  fIgnore;
+    bool    fCutPos;
+    bool    fCutPOA;
+    bool    fIgnore;
     float fAccel;
     float fDecel;
     float fVelocity;
@@ -96,7 +96,7 @@ class plCameraModifier1 : public plSingleModifier
 protected:
 
     void Output();
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
         
 public:
     
@@ -106,7 +106,7 @@ public:
     CLASSNAME_REGISTER( plCameraModifier1 );
     GETINTERFACE_ANY( plCameraModifier1, plSingleModifier );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     void        Initialize();
     virtual void Update();
@@ -130,10 +130,10 @@ public:
     void            SetSubworldPOA(hsPoint3 pos) { fLastSubPOA = pos; }
     float        GetFOVw() { return fFOVw; }
     float        GetFOVh() { return fFOVh; }
-    void            SetFOVw(float f, hsBool fUpdateVCam = true); 
-    void            SetFOVh(float f, hsBool fUpdateVCam = true); 
-    hsBool          GetInSubworld() { return fInSubLastUpdate; }
-    void            InSubworld(hsBool b) { fInSubLastUpdate = b; }
+    void            SetFOVw(float f, bool fUpdateVCam = true); 
+    void            SetFOVh(float f, bool fUpdateVCam = true); 
+    bool            GetInSubworld() { return fInSubLastUpdate; }
+    void            InSubworld(bool b) { fInSubLastUpdate = b; }
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     void AddTrans(CamTrans* t) { fTrans.Append(t); }
@@ -142,14 +142,14 @@ public:
     void SetSubject(plSceneObject* pObj); 
     plSceneObject* GetSubject();
 
-    virtual void Push(hsBool recenter = true); 
+    virtual void Push(bool recenter = true); 
     virtual void Pop(); 
 
-    virtual hsBool  GetFaded();
-    virtual hsBool  SetFaded(hsBool b);
+    virtual bool    GetFaded();
+    virtual bool    SetFaded(bool b);
 
-    hsBool  IsAnimated() { return fAnimated; }
-    void SetAnimCommands(hsBool a, hsBool b, hsBool c)  { fStartAnimOnPush = a; fStopAnimOnPop = b; fResetAnimOnPop = c; }
+    bool    IsAnimated() { return fAnimated; }
+    void SetAnimCommands(bool a, bool b, bool c)  { fStartAnimOnPush = a; fStopAnimOnPop = b; fResetAnimOnPop = c; }
 
 private:
     hsPoint3                fFrom;
@@ -161,11 +161,11 @@ private:
     float                fFOVh;
     hsTArray<plMessage*>    fMessageQueue;
     hsTArray<plCameraMsg*>  fFOVInstructions;
-    hsBool                  fAnimated, fStartAnimOnPush, fStopAnimOnPop, fResetAnimOnPop;
+    bool                    fAnimated, fStartAnimOnPush, fStopAnimOnPop, fResetAnimOnPop;
     hsPoint3                fLastSubPos;
     hsPoint3                fLastSubPOA;
-    hsBool                  fInSubLastUpdate;
-    hsBool                  fUpdateBrainTarget; // sometimes our target isn't loaded yet, so wait to update the brain til later
+    bool                    fInSubLastUpdate;
+    bool                    fUpdateBrainTarget; // sometimes our target isn't loaded yet, so wait to update the brain til later
 };
 
 

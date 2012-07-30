@@ -57,7 +57,7 @@ class plLoadAgeMsg : public plMessage
 protected:
     char* fAgeFilename;             // the age to load/unload
     plUUID fAgeGuid;
-    hsBool fUnload;         // true if we want to unload the age
+    bool fUnload;         // true if we want to unload the age
     int fPlayerID;
 public:
     plLoadAgeMsg() : fAgeFilename(nil), fUnload(false), fPlayerID(-1){ }
@@ -72,8 +72,8 @@ public:
     void SetAgeGuid( const plUUID * v ) { fAgeGuid.CopyFrom( v ); }
     const plUUID * GetAgeGuid() const { return &fAgeGuid; }
 
-    void SetLoading(hsBool l) { fUnload=!l; }
-    hsBool GetLoading() const { return !fUnload; }
+    void SetLoading(bool l) { fUnload=!l; }
+    bool GetLoading() const { return !fUnload; }
 
     void SetPlayerID(int p) { fPlayerID=p; }
     int GetPlayerID() const { return fPlayerID; }

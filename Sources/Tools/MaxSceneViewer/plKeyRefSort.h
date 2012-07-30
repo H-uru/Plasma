@@ -57,7 +57,7 @@ protected:
         int fNumRefs;
         KeyRefs() : fKey(nil), fNumRefs(-1) {}
         KeyRefs(plKey key, int numRefs) : fKey(key), fNumRefs(numRefs) {}
-        hsBool operator== (const plKey key)
+        bool operator== (const plKey key)
         {
             return (fKey == key);
         }

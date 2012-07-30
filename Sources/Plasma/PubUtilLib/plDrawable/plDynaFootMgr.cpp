@@ -104,7 +104,7 @@ void plDynaFootMgr::Write(hsStream* stream, hsResMgr* mgr)
 }
 
 
-hsBool plDynaFootMgr::MsgReceive(plMessage* msg)
+bool plDynaFootMgr::MsgReceive(plMessage* msg)
 {
     plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
     if( footMsg )
@@ -132,9 +132,9 @@ hsBool plDynaFootMgr::MsgReceive(plMessage* msg)
     return plDynaDecalMgr::MsgReceive(msg);
 }
 
-hsBool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, hsBool flip)
+bool plDynaFootMgr::IPrintFromShape(const plPrintShape* shape, bool flip)
 {
-    hsBool retVal = false;
+    bool retVal = false;
 
     if( shape )
     {

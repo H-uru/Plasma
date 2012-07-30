@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 #define MAGICWINDOWSOFFSET ((__int64)11644473600)  // magic number, taken from Python Source
 //
-hsBool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
+bool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
 {
     // FILETIME resolution seems to be 0.01 sec
 
@@ -87,7 +87,7 @@ hsBool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
 //
 // Sets the unified time to the current UTC time
 //
-hsBool plUnifiedTime::SetToUTC()
+bool plUnifiedTime::SetToUTC()
 {
     FILETIME ft;
 
@@ -99,7 +99,7 @@ hsBool plUnifiedTime::SetToUTC()
 //
 // Sets the unified time to the current UTC time
 //
-hsBool plUnifiedTime::SetToUTC()
+bool plUnifiedTime::SetToUTC()
 {
     struct timeval tv;
     
@@ -257,7 +257,7 @@ void plUnifiedTime::ToCurrentTime()
     SetToUTC();
 }
 
-hsBool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec)
+bool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec)
 {
     if( !SetTime( year, month, day, hour, minute, second, usec, 0 ) )
         return false;
@@ -268,7 +268,7 @@ hsBool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, 
     return true;
 }
 
-hsBool plUnifiedTime::SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec, int dst)
+bool plUnifiedTime::SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec, int dst)
 {
     struct tm atm;
     atm.tm_sec = second;
@@ -288,7 +288,7 @@ hsBool plUnifiedTime::SetTime(short year, short month, short day, short hour, sh
     return true;
 }
 
-hsBool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const
+bool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const
 {
     struct tm* time = IGetTime(&fSecs);
     if (!time)

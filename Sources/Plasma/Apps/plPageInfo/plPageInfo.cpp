@@ -95,7 +95,7 @@ int PrintHelp( void )
 
 int main(int argc, char* argv[])
 {
-    if (argc >= 1 && hsStrEQ(argv[1], "-v"))
+    if (argc >= 1 && strcmp(argv[1], "-v") == 0)
     {
         PrintVersion();
         return 0;
@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
     int arg = 1;
     for (arg = 1; arg < argc; arg++)
     {
-        if (hsStrEQ(argv[arg], "-s"))
+        if (strcmp(argv[arg], "-s") == 0)
             sounds = true;
-        else if (hsStrEQ(argv[arg], "-i"))
+        else if (strcmp(argv[arg], "-i") == 0)
             stats = true;
         else
             break;
@@ -157,7 +157,7 @@ public:
     plSoundBufferCollector(hsTArray<plKey>& keyArray) 
                 : plKeyCollector(keyArray) {}
 
-    hsBool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page)
     {
         page->LoadKeys();
         return page->IterateKeys(this, plSoundBuffer::Index());
@@ -226,7 +226,7 @@ protected:
 public:
     plStatDumpIterator(const char* outputDir) : fOutputDir(outputDir) {}
 
-    hsBool EatKey(const plKey& key)
+    bool EatKey(const plKey& key)
     {
         plKeyImp* imp = (plKey)key;
 
@@ -244,7 +244,7 @@ public:
         return true;
     }
 
-    hsBool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page)
     {
         const plPageInfo& info = page->GetPageInfo();
 

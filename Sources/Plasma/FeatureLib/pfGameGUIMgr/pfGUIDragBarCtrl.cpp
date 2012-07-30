@@ -78,14 +78,14 @@ pfGUIDragBarCtrl::~pfGUIDragBarCtrl()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDragBarCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIDragBarCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIDragBarCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIDragBarCtrl::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }
@@ -104,7 +104,7 @@ void    pfGUIDragBarCtrl::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIDragBarCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIDragBarCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
     fBoundsValid = false;

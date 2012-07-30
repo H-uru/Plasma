@@ -108,8 +108,8 @@ public:
     //      then take the snapshot if you are going to be performing more modifications.
     // In ALL MODIFICATION CASES, if the modified data is paged out, and the original paged back in, you will
     //      need to perform your operation again - your modifications aren't saved anywhere.
-    void    OpenRO(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnapShot=true) const;
-    void    OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, hsBool idxToo=false) const;
+    void    OpenRO(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, bool useSnapShot=true) const;
+    void    OpenRW(plDrawable* drawable, uint32_t spanIdx, plAccessSpan& acc, bool idxToo=false) const;
 
     // What do we need to close up here?
     void    Close(plAccessSpan& acc) const;
@@ -126,8 +126,8 @@ public:
     // as likely that they will have different underlying formats (number of UVs, etc.).
     // Again, if you are using the iterators supplied, you probably don't care, but sometimes
     // you will (like if you are messing with the UVs).
-    void    OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, hsBool useSnapShot=true) const;
-    void    OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, hsBool idxToo=false) const;
+    void    OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool useSnapShot=true) const;
+    void    OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool idxToo=false) const;
 
     void    Close(hsTArray<plAccessSpan>& accs) const;
 
@@ -162,14 +162,14 @@ public:
 
 protected:
     void    IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeometrySpan* src) const;
-    void    IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, hsBool useSnap, hsBool readOnly) const;
-    void    IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plVertexSpan* span, hsBool readOnly) const;
+    void    IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, bool useSnap, bool readOnly) const;
+    void    IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plVertexSpan* span, bool readOnly) const;
     void    IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* src) const;
-    void    IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans* drawable, const plIcicle* span, hsBool readOnly) const;
-    void    IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, hsBool readOnly) const;
+    void    IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans* drawable, const plIcicle* span, bool readOnly) const;
+    void    IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, bool readOnly) const;
     void    IAccessSpanFromSnap(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* src) const;
 
-    void    IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, hsBool useSnap, hsBool readOnly, hsBool idxToo=true) const;
+    void    IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc, bool useSnap, bool readOnly, bool idxToo=true) const;
 };
 
 #endif // plAccessGeometry_inc

@@ -226,7 +226,7 @@ void plNotifyMsg::AddEvent( proEventData* ed )
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddCollisionEvent( hsBool enter, const plKey &other, const plKey &self, hsBool onlyOneCollision )
+void plNotifyMsg::AddCollisionEvent( bool enter, const plKey &other, const plKey &self, bool onlyOneCollision )
 {
     // if this is the normal case of there can only be one collision, then get rid of any others
     if ( onlyOneCollision )
@@ -376,7 +376,7 @@ void plNotifyMsg::AddSpawnedEvent (const plKey &spawner, const plKey &spawnee)
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddActivateEvent( hsBool activate )
+void plNotifyMsg::AddActivateEvent( bool activate )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();
@@ -417,7 +417,7 @@ void plNotifyMsg::AddActivateEvent( hsBool activate )
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, hsBool enabled, hsPoint3 hitPoint )
+void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint )
 {
 
     // remove records that are like the one being added
@@ -462,7 +462,7 @@ void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, hsBool en
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contained, hsBool entering )
+void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contained, bool entering )
 {
 
     // remove records that are like the one being added
@@ -508,7 +508,7 @@ void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contai
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float dot, hsBool enabled )
+void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled )
 {
 
     // remove records that are like the one being added
@@ -552,7 +552,7 @@ void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float d
 // NOTE: To test for duplicate record, it only checks for records of the same type
 //     : Eventually, it might be wise to check if the same 'self' key also?
 //
-void plNotifyMsg::AddControlKeyEvent( int32_t key, hsBool down )
+void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
 {
     // remove records that are like the one being added
     int num_recs = fEvents.GetCount();

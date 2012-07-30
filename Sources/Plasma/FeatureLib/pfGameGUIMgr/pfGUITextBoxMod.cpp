@@ -80,14 +80,14 @@ pfGUITextBoxMod::~pfGUITextBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUITextBoxMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUITextBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUITextBoxMod::MsgReceive( plMessage *msg )
+bool    pfGUITextBoxMod::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }
@@ -167,7 +167,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
     else
         fText = nil;
 
-    fUseLocalizationPath = (s->ReadBool() != 0);
+    fUseLocalizationPath = s->ReadBool();
     if (fUseLocalizationPath)
     {
         wchar_t* temp = s->ReadSafeWString();

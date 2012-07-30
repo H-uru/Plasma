@@ -174,17 +174,17 @@ enum StateIdx {
     uint32_t          fZFlags;
     uint32_t          fMiscFlags;
 
-    static hsBool Differs(uint32_t mine, uint32_t hers, uint32_t mask)
+    static bool Differs(uint32_t mine, uint32_t hers, uint32_t mask)
     {
         return (mine & mask) ^ (hers & mask);
     }
 
-    static hsBool Differs(uint32_t mine, uint32_t hers)
+    static bool Differs(uint32_t mine, uint32_t hers)
     {
         return mine ^ hers;
     }
 
-    hsBool operator!=(const hsGMatState& other)
+    bool operator!=(const hsGMatState& other)
     {
         return ((fBlendFlags ^ other.fBlendFlags)
             | (fClampFlags ^ other.fClampFlags)

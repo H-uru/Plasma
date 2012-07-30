@@ -75,8 +75,8 @@ plProfile_CreateAsynchTimer( "Sound Load Time", "Sound", SoundLoadTime );
 
 plGraphPlate    *plSound::fDebugPlate = nil;
 plSound         *plSound::fCurrDebugPlateSound = nil;
-hsBool          plSound::fLoadOnDemandFlag = true;
-hsBool          plSound::fLoadFromDiskOnDemand = true;
+bool            plSound::fLoadOnDemandFlag = true;
+bool            plSound::fLoadFromDiskOnDemand = true;
 unsigned        plSound::fIncidentalsPlaying = 0;
 
 plSound::plSound() :
@@ -128,7 +128,7 @@ plSound::~plSound()
     plProfile_Dec( SoundNumLoaded );
 }
 
-void plSound::IPrintDbgMessage( const char *msg, hsBool isError )
+void plSound::IPrintDbgMessage( const char *msg, bool isError )
 {
     static plStatusLog  *ourLog = nil;
 
@@ -468,7 +468,7 @@ void plSound::RefreshVolume( void )
     this->ISetActualVolume( fCurrVolume );
 }
 
-void plSound::SetMuted( hsBool muted )
+void plSound::SetMuted( bool muted )
 {
     if( muted != fMuted )
     {
@@ -605,7 +605,7 @@ void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
     }
 }
 
-void plSound::IStopFade( hsBool shuttingDown, hsBool SetVolEnd)
+void plSound::IStopFade( bool shuttingDown, bool SetVolEnd)
 {
     if( fCurrFadeParams != nil )
     {
@@ -643,7 +643,7 @@ void plSound::IStopFade( hsBool shuttingDown, hsBool SetVolEnd)
     }
 }
 
-hsBool plSound::MsgReceive( plMessage* pMsg )
+bool plSound::MsgReceive( plMessage* pMsg )
 {
     plTimeMsg   *time = plTimeMsg::ConvertNoRef( pMsg );
     if( time != nil )
@@ -839,7 +839,7 @@ void plSound::IUnloadDataBuffer( void )
 
 /////////////////////////////////////////////////////////////////////////
 // calling preload will cause the sound to play once loaded
-plSoundBuffer::ELoadReturnVal plSound::IPreLoadBuffer( hsBool playWhenLoaded, hsBool isIncidental /* = false */ )
+plSoundBuffer::ELoadReturnVal plSound::IPreLoadBuffer( bool playWhenLoaded, bool isIncidental /* = false */ )
 {
     if(!ILoadDataBuffer())
     {
@@ -924,7 +924,7 @@ void plSound::ISetSoftOcclusionRegion( plSoftVolume *region )
 /////////////////////////////////////////////////////////////////////////
 //  This function calculates our new softVolume value. Used both to update the
 //  said value and so the audio system can rank us in importance.
-float plSound::CalcSoftVolume( hsBool enable, float distToListenerSquared )
+float plSound::CalcSoftVolume( bool enable, float distToListenerSquared )
 {
     // Do distance-based attenuation ourselves
 #if MCN_HACK_OUR_ATTEN
@@ -1025,7 +1025,7 @@ float plSound::GetVolumeRank( void )
 //  Tests to see whether, if we try to play this sound now, it'll actually
 //  be able to play. Takes into account whether the sound is within range
 //  of the listener and the current soft region value.
-hsBool plSound::IWillBeAbleToPlay( void )
+bool plSound::IWillBeAbleToPlay( void )
 {
     if( fSoftVolume == 0.f )
         return false;
@@ -1036,7 +1036,7 @@ hsBool plSound::IWillBeAbleToPlay( void )
 /////////////////////////////////////////////////////////////////////////
 //  Tests to see whether this sound is within range of the position given,
 //  ignoring soft volumes.
-hsBool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
+bool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
 {
     if( !IsPropertySet( plSound::kPropIs3DSound ) )
     {
@@ -1071,7 +1071,7 @@ hsBool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
 //  Note: if we KNOW we're disabling this sound (out of range), Calc() doesn't
 //  have to be called at all, and we can simply call this function with
 //  enable = false.
-void plSound::UpdateSoftVolume( hsBool enable, hsBool firstTime )
+void plSound::UpdateSoftVolume( bool enable, bool firstTime )
 {
     fNotHighEnoughPriority = !enable;
 
@@ -1146,7 +1146,7 @@ float plSound::IAttenuateActualVolume( float volume ) const
     return volume;
 }
 
-void plSound::Activate(hsBool forcePlay)
+void plSound::Activate(bool forcePlay)
 {
     // Our actual state...
     fActive = true;
@@ -1352,8 +1352,8 @@ void plSound::plFadeParams::Read( hsStream *s )
     s->ReadLE( &fVolEnd );
     s->ReadLE( &fType );
     s->ReadLE( &fCurrTime );
-    s->ReadLE( &fStopWhenDone );
-    s->ReadLE( &fFadeSoftVol );
+    fStopWhenDone = s->ReadBOOL();
+    fFadeSoftVol = s->ReadBOOL();
 }
 
 void plSound::plFadeParams::Write( hsStream *s )
@@ -1363,8 +1363,8 @@ void plSound::plFadeParams::Write( hsStream *s )
     s->WriteLE( fVolEnd );
     s->WriteLE( fType );
     s->WriteLE( fCurrTime );
-    s->WriteLE( fStopWhenDone );
-    s->WriteLE( fFadeSoftVol );
+    s->WriteBOOL( fStopWhenDone );
+    s->WriteBOOL( fFadeSoftVol );
 }
 
 float plSound::plFadeParams::InterpValue( void )
@@ -1480,7 +1480,7 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
 
 
 // call when state has changed
-hsBool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, uint32_t sendFlags)
+bool plSound::DirtySynchState(const char* sdlName /* kSDLSound */, uint32_t sendFlags)
 {
     /*
     if( sdlName == nil )

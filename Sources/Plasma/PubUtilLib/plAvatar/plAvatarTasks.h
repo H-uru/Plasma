@@ -85,16 +85,16 @@ public:
         \param attach Are we attaching or detaching the animation?
     */
     plAvAnimTask(const plString &animName, float initialBlend, float targetBlend, float fadeSpeed,
-                 float setTime, hsBool start, hsBool loop, hsBool attach);
+                 float setTime, bool start, bool loop, bool attach);
 
     /** Canonical constructor form form for detaching
         \param animName The name of the animation we're detaching
         \param fadeSpeed How fast to fade it out. */
-    plAvAnimTask(const plString &animName, float fadeSpeed, hsBool attach = false);
+    plAvAnimTask(const plString &animName, float fadeSpeed, bool attach = false);
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
 
     // plasma protocol
@@ -111,9 +111,9 @@ protected:
     float fTargetBlend;                 // the blend to achieve eventually (attaching only)
     float fFadeSpeed;                   // how fast to achieve the blend
     float fSetTime;                     // set the animation to this time
-    hsBool fStart;                      // start the animation playing? (attaching only)
-    hsBool fLoop;                       // turn on looping? (attaching only)
-    hsBool fAttach;                     // attach? (otherwise detach)
+    bool fStart;                      // start the animation playing? (attaching only)
+    bool fLoop;                       // turn on looping? (attaching only)
+    bool fAttach;                     // attach? (otherwise detach)
     plAGAnimInstance *fAnimInstance;    // the animation we're monitoring (detaching only)
 };
 
@@ -135,8 +135,8 @@ public:
     plAvSeekTask(plKey target, plAvAlignment alignType, const char *animName);
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
     
     // plasma protocol
@@ -156,8 +156,8 @@ protected:
     hsPoint3                    fTargetPosition;    // the position we're seeking
     hsQuat                      fTargetRotation;    // the orientation we're seeking
     double                      fTargetTime;        // the time we want to be done with the task (start + duration)
-    hsBool                      fPhysicalAtStart;   // was the avatar physical before we started?
-    hsBool                      fCleanup;           // last frame of processing
+    bool                        fPhysicalAtStart;   // was the avatar physical before we started?
+    bool                        fCleanup;           // last frame of processing
 };
 
 // ---- THE CUTOFF ----
@@ -182,7 +182,7 @@ public:
         \param reversable Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
-    plAvOneShotTask(const plString &animName, hsBool drivable, hsBool reversible, plOneShotCallbacks *callbacks);
+    plAvOneShotTask(const plString &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
     /** Construct from a oneshot message.
         \param msg The message to copy our parameters from
         \param brain The brain to attach the task to.
@@ -191,32 +191,32 @@ public:
     virtual ~plAvOneShotTask();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
     virtual void LeaveAge(plArmatureMod *avatar);
     
     void SetAnimName(const plString &name);
     
-    static hsBool fForce3rdPerson;
+    static bool fForce3rdPerson;
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvOneShotTask );
     GETINTERFACE_ANY( plAvOneShotTask, plAvTask );
 
-    hsBool fBackwards;                  // play the anim backwards
-    hsBool fDisableLooping;             // explicitly kill looping on this anim;    
-    hsBool fDisablePhysics;             // disable physics when we play this oneshot
+    bool fBackwards;                  // play the anim backwards
+    bool fDisableLooping;             // explicitly kill looping on this anim;    
+    bool fDisablePhysics;             // disable physics when we play this oneshot
     
     // *** implement reader and writer if needed for network propagation
 protected:
     plString fAnimName;                 // the name of the one-shot animation we want to use
-    hsBool fMoveHandle;                 // move the handle after the oneshot's done playing?
+    bool fMoveHandle;                 // move the handle after the oneshot's done playing?
     plAGAnimInstance *fAnimInstance;    // the animation instance (available only after it starts playing)
-    hsBool fDrivable;                   // the user can control the animation with the mouse
-    hsBool fReversible;                 // the user can back up the animation with the mouse
-    hsBool fEnablePhysicsAtEnd;         // was the avatar physical before we started (and did we disable physics?)
-    hsBool fDetachAnimation;            // should we detach the animation when we're done?
-    hsBool fIgnore;                     // if this gets set before we start, we just finish without doing anything.
+    bool fDrivable;                   // the user can control the animation with the mouse
+    bool fReversible;                 // the user can back up the animation with the mouse
+    bool fEnablePhysicsAtEnd;         // was the avatar physical before we started (and did we disable physics?)
+    bool fDetachAnimation;            // should we detach the animation when we're done?
+    bool fIgnore;                     // if this gets set before we start, we just finish without doing anything.
     
     plOneShotCallbacks *fCallbacks;     // a set of callbacks to set up on our animation
     
@@ -244,8 +244,8 @@ public:
     virtual ~plAvOneShotLinkTask();
 
     // task protocol
-    virtual hsBool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual hsBool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);   
+    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);   
 
     CLASSNAME_REGISTER( plAvOneShotLinkTask );
     GETINTERFACE_ANY( plAvOneShotLinkTask, plAvOneShotTask );   
@@ -261,7 +261,7 @@ protected:
     plString fMarkerName;
     double fStartTime;
     float fMarkerTime;
-    hsBool fLinkFired;
+    bool fLinkFired;
 };
 
 

@@ -136,19 +136,19 @@ plLightMapComponent::plLightMapComponent()
 
 
 
-hsBool plLightMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plLightMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plLightMapComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plLightMapComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fLightMapKey = nil;
     return true;
 }
 
 
-hsBool plLightMapComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plLightMapComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -186,12 +186,12 @@ uint32_t plLightMapComponent::GetUVWSrc() const
     return fCompPB->GetInt(kMapChannel)-1;
 }
 
-hsBool plLightMapComponent::GetCompress() const
+bool plLightMapComponent::GetCompress() const
 {
     return fCompPB->GetInt(kCompress);
 }
 
-hsBool plLightMapComponent::GetShared() const
+bool plLightMapComponent::GetShared() const
 {
     return fCompPB->GetInt(kShared);
 }

@@ -138,7 +138,7 @@ public:
     plPointTimeScale(plPointChannel *channel, plScalarChannel *timeSource);
     virtual ~plPointTimeScale();
 
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
     virtual const hsPoint3 & Value(double time);
 
     virtual plAGChannel * Detach(plAGChannel * channel);
@@ -171,7 +171,7 @@ public:
 
     //float GetBlend() const { return fBlend; }
     //void SetBlend(float the_blend) { fBlend = the_blend; }
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
 
     // AG PROTOCOL
     virtual const hsPoint3 &Value(double time);

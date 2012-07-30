@@ -77,7 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-hsBool plPXPhysicalControllerCore::fDebugDisplay = false;
+bool plPXPhysicalControllerCore::fDebugDisplay = false;
 #endif // PLASMA_EXTERNAL_RELEASE
 int plPXPhysicalControllerCore::fPXControllersMax = 0;
 
@@ -1003,7 +1003,7 @@ void plPXPhysicalControllerCore::LeaveAge()
     if(fWorldKey) this->SetSubworld(nil);
     this->fMovementInterface->LeaveAge();
 }
-int plPXPhysicalControllerCore::SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, 
+int plPXPhysicalControllerCore::SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics, bool vsStatics, 
                             uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut)
 {
     NxCapsule tempCap;
@@ -1054,7 +1054,7 @@ int plPXPhysicalControllerCore::SweepControllerPath(const hsPoint3& startPos, co
 
     return HitsReturned;
 }
-void plPXPhysicalControllerCore::BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys)
+void plPXPhysicalControllerCore::BehaveLikeAnimatedPhysical(bool actLikeAnAnimatedPhys)
 {
     hsAssert(fKinematicActor, "Changing behavior, but plPXPhysicalControllerCore has no Kinematic actor associated with it");
     if(fBehavingLikeAnimatedPhys!=actLikeAnAnimatedPhys)
@@ -1085,7 +1085,7 @@ void plPXPhysicalControllerCore::BehaveLikeAnimatedPhysical(hsBool actLikeAnAnim
     }
 }
 
-hsBool plPXPhysicalControllerCore::BehavingLikeAnAnimatedPhysical()
+bool plPXPhysicalControllerCore::BehavingLikeAnAnimatedPhysical()
 {
     hsAssert(fKinematicActor, "plPXPhysicalControllerCore is missing a kinematic actor");
     return fBehavingLikeAnimatedPhys;
@@ -1139,7 +1139,7 @@ const hsVector3& plPXPhysicalControllerCore::GetLinearVelocity()
 plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
-    hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+    bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
     float radius = fRadius;
     myDraw = plDrawableGenerator::GenerateSphericalDrawable(fLocalPosition, radius,
         mat, fLastGlobalLoc, blended,
@@ -1149,7 +1149,7 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTAr
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     if (so)
     {
-        hsBool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+        bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
 
         myDraw = plDrawableGenerator::GenerateConicalDrawable(fRadius*10, fHeight*10,
             mat, so->GetLocalToWorld(), blended,

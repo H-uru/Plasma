@@ -310,7 +310,7 @@ public:
 //{
 //  int             fLinkingRules;
 //  uint32_t          fPlayerID;
-//  hsBool8         fSuperUser;
+//  bool8         fSuperUser;
 //  mutable plAgeInfoStruct fAgeInfo;
 //  mutable plNetServerSessionInfo fServerInfo;
 //

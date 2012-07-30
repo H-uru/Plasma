@@ -60,7 +60,7 @@ plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 // Get value from control
 //
 
-hsBool plAutoUIComp::GetCheckBox(int16_t id, plComponentBase *comp)
+bool plAutoUIComp::GetCheckBox(int16_t id, plComponentBase *comp)
 {
     IParamBlock2 *pblock = comp->GetParamBlockByID(plComponentBase::kBlkComp);
     return pblock->GetInt(id);

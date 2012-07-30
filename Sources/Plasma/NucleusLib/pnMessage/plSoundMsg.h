@@ -91,18 +91,18 @@ public:
 
     hsBitVector     fCmd;
 
-    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
 
     double   fBegin;
     double   fEnd;
-    hsBool   fLoop;
+    bool     fLoop;
     float fSpeed;
     double   fTime;
     int      fIndex;
     int      fRepeats;
-    hsBool   fPlaying;
+    bool     fPlaying;
     uint32_t   fNameStr;  
     float fVolume;   // Range: 0 - silence, 1.f - loudest
 

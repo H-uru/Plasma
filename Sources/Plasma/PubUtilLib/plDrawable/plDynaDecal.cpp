@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDynaDecal.h"
 #include "plAuxSpan.h"
 
-hsBool plDynaSplot::Age(double t, float ramp, float decay, float life)
+bool plDynaSplot::Age(double t, float ramp, float decay, float life)
 {
     float age = float(t - fBirth);
     if( age >= life )
@@ -130,7 +130,7 @@ hsBool plDynaSplot::Age(double t, float ramp, float decay, float life)
     return false;
 }
 
-hsBool plDynaRipple::Age(double t, float ramp, float decay, float life)
+bool plDynaRipple::Age(double t, float ramp, float decay, float life)
 {
     float age = float(t - fBirth);
     if( age >= life )
@@ -210,7 +210,7 @@ hsBool plDynaRipple::Age(double t, float ramp, float decay, float life)
     return false;
 }
 
-hsBool plDynaWake::Age(double t, float ramp, float decay, float life)
+bool plDynaWake::Age(double t, float ramp, float decay, float life)
 {
     float age = float(t - fBirth);
     if( age >= life )
@@ -290,7 +290,7 @@ hsBool plDynaWake::Age(double t, float ramp, float decay, float life)
     return false;
 }
 
-hsBool plDynaWave::Age(double t, float ramp, float decay, float life)
+bool plDynaWave::Age(double t, float ramp, float decay, float life)
 {
     float age = float(t - fBirth);
     if( age >= life )
@@ -370,7 +370,7 @@ hsBool plDynaWave::Age(double t, float ramp, float decay, float life)
     return false;
 }
 
-hsBool plDynaRippleVS::Age(double t, float ramp, float decay, float life)
+bool plDynaRippleVS::Age(double t, float ramp, float decay, float life)
 {
     float age = float(t - fBirth);
     if( age >= life )

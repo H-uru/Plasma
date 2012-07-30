@@ -181,7 +181,7 @@ void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, 
     return;     
 }
 
-void plLightInfo::GetAffectedForced(const plSpaceTree* space, hsBitVector& list, hsBool charac)
+void plLightInfo::GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac)
 {
     Refresh();
 
@@ -195,7 +195,7 @@ void plLightInfo::GetAffectedForced(const plSpaceTree* space, hsBitVector& list,
     }
 }
 
-void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, hsBool charac)
+void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, bool charac)
 {
     Refresh();
 
@@ -215,7 +215,7 @@ void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, hsBoo
     }
 }
 
-const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, hsBool charac)
+const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac)
 {
     Refresh();
 
@@ -249,7 +249,7 @@ const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTA
 //  flag taken in is from plDrawInterface, not our props flags. So we have to 
 //  translate...
 
-void plLightInfo::SetProperty( int prop, hsBool on )
+void plLightInfo::SetProperty( int prop, bool on )
 {
     plObjInterface::SetProperty(prop, on);
     if( kDisable == prop )
@@ -368,7 +368,7 @@ void plLightInfo::IRemoveVisRegion(plVisRegion* reg)
 }
 
 
-hsBool plLightInfo::MsgReceive(plMessage* msg)
+bool plLightInfo::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )

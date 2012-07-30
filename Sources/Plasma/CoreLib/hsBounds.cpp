@@ -249,7 +249,7 @@ int32_t hsBounds3::TestBound(const hsBounds3& other) const
     return retVal;
 }
 
-hsBool hsBounds3::IsInside(const hsPoint3* pos) const
+bool hsBounds3::IsInside(const hsPoint3* pos) const
 {
     hsAssert(fType != kBoundsUninitialized, "Invalid bounds type for hsBounds3::IsInside() ");
     if(fType == kBoundsEmpty)
@@ -471,7 +471,7 @@ float hsBounds3::ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* 
     return t;
 }
 
-hsBool hsBounds3::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const
+bool hsBounds3::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const
 {
     // Look for axis intervals p is within
     int nSect = 0;
@@ -532,7 +532,7 @@ void hsBoundsOriented::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
 //
 // Return true if inside all the planes
 //
-hsBool hsBoundsOriented::IsInside(const hsPoint3* pos) const
+bool hsBoundsOriented::IsInside(const hsPoint3* pos) const
 {
     hsAssert(fType == kBoundsNormal, "Invalid bounds type for hsBounds3::IsInside() ");
     if(fType == kBoundsEmpty)
@@ -629,7 +629,7 @@ void hsBoundsOriented::Read(hsStream *stream)
 {
     hsBounds::Read(stream);
     fCenter.Read(stream);
-    fCenterValid = (hsBool)stream->ReadLE32();
+    fCenterValid = (bool)stream->ReadLE32();
     fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;
@@ -1009,7 +1009,7 @@ void hsBounds3Ext::Translate(const hsVector3 &v)
     }
 }
 
-hsBool hsBounds3Ext::IsInside(const hsPoint3 *p) const
+bool hsBounds3Ext::IsInside(const hsPoint3 *p) const
 {
     if( fExtFlags & kAxisAligned )
         return hsBounds3::IsInside(p);
@@ -1192,9 +1192,9 @@ int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &
         for( i = 0; i < 3; i++ )
         {
             float diff = fAxes[i].InnerProduct(ptVel);
-            hsBool someLow = false;
-            hsBool someHi = false;
-            hsBool someIn = false;
+            bool someLow = false;
+            bool someHi = false;
+            bool someIn = false;
             int j;
             for( j = 0; j < n; j++ )
             {
@@ -1230,8 +1230,8 @@ int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList, const hsVector3 &
 
 int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
 {
-    hsBool someIn = false;
-    hsBool someOut = false;
+    bool someIn = false;
+    bool someOut = false;
     int i;
     for( i = 0; i < n; i++ )
     {
@@ -1247,7 +1247,7 @@ int32_t hsBounds3Ext::TestPoints(int n, const hsPoint3 *pList) const
     return 1;
 }
 
-hsBool hsBounds3Ext::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const
+bool hsBounds3Ext::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const
 {
     if( fExtFlags & kAxisAligned )
         return hsBounds3::ClosestPoint(p, inner, outer);
@@ -1282,7 +1282,7 @@ hsBool hsBounds3Ext::ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& 
     return nSect == 3;
 }
 
-hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel) const
 {
     if( fExtFlags & kAxisAligned )
     {
@@ -1356,7 +1356,7 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel) 
 }
 
 
-static hsBool ISectInterval(const hsPoint2& other, const hsPoint2& mine)
+static bool ISectInterval(const hsPoint2& other, const hsPoint2& mine)
 {
     if( other.fY - mine.fX <= 0 )
         return false;
@@ -1366,7 +1366,7 @@ static hsBool ISectInterval(const hsPoint2& other, const hsPoint2& mine)
     return true;
 }
 
-static hsBool ITestDepth(const hsPoint2& other, const hsPoint2& mine, 
+static bool ITestDepth(const hsPoint2& other, const hsPoint2& mine, 
                           const hsVector3& inAx, 
                           hsVector3 &outAx, float& depth)
 {
@@ -1475,7 +1475,7 @@ void hsBounds3Ext::Unalign()
     fAxes[2].Set(0, 0, span);
 }
 
-hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
 {
     if( fExtFlags & kAxisAligned )
     {
@@ -1640,7 +1640,7 @@ hsBool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, 
     return true;
 }
 
-hsBool hsBounds3Ext::ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel) const
 {
     hsPoint3 effMaxs = fMaxs;
     hsPoint3 effMins = fMins;
@@ -1662,7 +1662,7 @@ hsBool hsBounds3Ext::ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel)
     return true;
 }
 
-hsBool hsBounds3Ext::ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -1691,7 +1691,7 @@ hsBool hsBounds3Ext::ISectBS(const hsBounds3Ext &other, const hsVector3 &myVel) 
 }
 
 #if 0 // Commenting out this which will be made redundant and/or obsolete by Havok integration
-hsBool hsBounds3Ext::ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) const
 {
     int i;
     for( i = 0; i < 3; i++ )
@@ -1719,13 +1719,13 @@ hsBool hsBounds3Ext::ISectTriABB(hsBounds3Tri &tri, const hsVector3 &myVel) cons
     return true;
 }
 
-hsBool hsBounds3Ext::TriBSHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
+bool hsBounds3Ext::TriBSHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
 {
     hsPoint3 myPt = GetCenter();
     myPt += myVel;
 
     hsPoint3 closePt;
-    hsBool onTri = tri.ClosestTriPoint(&myPt, &closePt);
+    bool onTri = tri.ClosestTriPoint(&myPt, &closePt);
 
     hsVector3 repel;
     repel.Set(&myPt, &closePt);
@@ -1761,7 +1761,7 @@ hsBool hsBounds3Ext::TriBSHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
 }
 
 #if 0 // TOCENTER
-hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
+bool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
 {
     // Find our closest point (after movement)
     hsPoint3 myPt = fCorner;
@@ -1789,7 +1789,7 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
 
     // Find closest point on tri to our closest corner
     hsPoint3 closePt;
-    hsBool onTri = tri.ClosestTriPoint(&myPt, &closePt);
+    bool onTri = tri.ClosestTriPoint(&myPt, &closePt);
 
     // Repel vector is from closest corner to closest point on tri
     hsVector3 repel;
@@ -1816,13 +1816,13 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
 }
 #else // TOCENTER
 
-hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
+bool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsHitInfoExt* hit) const
 {
     hsPoint3 myPt = GetCenter();
     myPt += myVel;
 
     hsPoint3 closePt;
-    hsBool onTri = tri.ClosestTriPoint(&myPt, &closePt);
+    bool onTri = tri.ClosestTriPoint(&myPt, &closePt);
 
     hsVector3 repel;
     repel.Set(&myPt, &closePt);
@@ -1855,7 +1855,7 @@ hsBool hsBounds3Ext::TriBBHitInfo(hsBounds3Tri& tri, const hsVector3& myVel, hsH
 
 #endif // TOCENTER
 
-hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
 {
     hsPoint2 faceDepth;
     // first test box against the triangle plane
@@ -1904,7 +1904,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel) const
     return true;
 }
 
-hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const
 {
     hsPoint2 faceDepth;
     // first test box against the triangle plane
@@ -1972,7 +1972,7 @@ hsBool hsBounds3Ext::ISectTriBB(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
     return hit->fDepth > hsBounds::kRealSmall;
 }
 
-hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2047,7 +2047,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel) const
     return true;
 }
 
-hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHitInfoExt *hit) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2142,7 +2142,7 @@ hsBool hsBounds3Ext::ISectTriBS(hsBounds3Tri &tri, const hsVector3 &myVel, hsHit
 
 #endif // Commenting out this which will be made redundant and/or obsolete by Havok integration
 
-hsBool hsBounds3Ext::ISectBSBS(const hsBounds3Ext& other, const hsVector3& myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectBSBS(const hsBounds3Ext& other, const hsVector3& myVel, hsHitInfoExt *hit) const
 {
     if(!(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2177,7 +2177,7 @@ hsBool hsBounds3Ext::ISectBSBS(const hsBounds3Ext& other, const hsVector3& myVel
     return true;
 }
 
-hsBool hsBounds3Ext::ISectBSBox(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectBSBox(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
 {
     hit->fDelPos = -myVel;
     if( other.ISectBoxBS(*this, hit->fDelPos, hit) )
@@ -2194,7 +2194,7 @@ hsBool hsBounds3Ext::ISectBSBox(const hsBounds3Ext &other, const hsVector3 &myVe
     return false;
 }
 
-hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
+bool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel, hsHitInfoExt *hit) const
 {
     if(!(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2202,13 +2202,13 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
 
     hsVector3 minAxis;
     float minDepth;
-    hsBool haveAxis = false;
+    bool haveAxis = false;
     hsVector3 tstAxis;
     float tstDepth;
     int i;
     for( i = 0; i < 3; i++ )
     {
-        hsBool tryAxis;
+        bool tryAxis;
         if( other.fExtFlags & kAxisAligned )
         {
             // first try the other box axes
@@ -2346,7 +2346,7 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
     return true;
 }
 
-hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel) const
+bool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2423,7 +2423,7 @@ hsBool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVe
     return true;
 }
 
-hsBool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
+bool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2475,7 +2475,7 @@ hsBool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
     return true;
 }
 
-hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, float radius) const
+bool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, float radius) const
 {
     if( !(fExtFlags & kSphereSet) )
         IMakeSphere();
@@ -2553,7 +2553,7 @@ hsBool hsBounds3Ext::ISectCone(const hsPoint3* from, const hsPoint3* at, float r
 }
 
 
-hsBool hsBounds3Ext::ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoint3& at) const
+bool hsBounds3Ext::ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoint3& at) const
 {
     hsVector3 c2f(&from,&GetCenter());
     hsVector3 f2t(&to,&from);
@@ -2660,7 +2660,7 @@ void hsBounds3Tri::TestPlane(const hsVector3 &n, hsPoint2 &depth) const
             depth.fX = d1;
     }
 }
-hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsVector3 *ax) const
+bool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsVector3 *ax) const
 {
     // project point onto tri plane
     hsPoint3 pPln;
@@ -2702,7 +2702,7 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
     for( i = 0; i < 3; i++ )
     {
         float tst = fPerpAxes[i].InnerProduct(pPln);
-        hsBool in = false;
+        bool in = false;
         if( fOnIsMax & (1 << i) )
         {
             if( tst <= fPerpDists[i].fY )
@@ -2781,7 +2781,7 @@ hsBool hsBounds3Tri::ClosestTriPoint(const hsPoint3 *p, hsPoint3 *out, const hsV
         hsAssert( vDis - dis > -hsBounds::kRealSmall, "Bad closest point");
         vDis = hsVector3(&pPln, fVerts+2).MagnitudeSquared();
         hsAssert( vDis - dis > -hsBounds::kRealSmall, "Bad closest point");
-        hsBool dork = false;
+        bool dork = false;
         if( dork )
         {
             float zn[3];
@@ -2977,7 +2977,7 @@ hsBounds3Tri::~hsBounds3Tri()
 
 
 // Finds closest intersection vertex or triangle/center-line intersection
-hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, float cosThetaSq, hsBool ignoreFacing, hsPoint3& at, hsBool& backSide) const
+bool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, float cosThetaSq, bool ignoreFacing, hsPoint3& at, bool& backSide) const
 {
     float d0 = from.InnerProduct(fNormal);
     float d1 = at.InnerProduct(fNormal);
@@ -2996,7 +2996,7 @@ hsBool hsBounds3Tri::ISectCone(const hsPoint3& from, const hsPoint3& to, float c
 
     float minDistSq = 0;
     int32_t minVert = 0;
-    hsBool sect = false;
+    bool sect = false;
     for (int32_t i=0; i<3; i++)
     {
         hsPoint3 onLine;

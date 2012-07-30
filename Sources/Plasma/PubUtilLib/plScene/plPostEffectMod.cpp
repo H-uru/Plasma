@@ -130,7 +130,7 @@ void plPostEffectMod::IDestroyRenderRequest()
     fPageMgr = nil;
 }
 
-void plPostEffectMod::IRegisterForRenderMsg(hsBool on)
+void plPostEffectMod::IRegisterForRenderMsg(bool on)
 {
     if( on )
         plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
@@ -138,7 +138,7 @@ void plPostEffectMod::IRegisterForRenderMsg(hsBool on)
         plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
-void plPostEffectMod::ISetEnable(hsBool on)
+void plPostEffectMod::ISetEnable(bool on)
 {
     if( on )
     {
@@ -152,12 +152,12 @@ void plPostEffectMod::ISetEnable(hsBool on)
     }
 }
 
-hsBool plPostEffectMod::IIsEnabled() const
+bool plPostEffectMod::IIsEnabled() const
 {
     return /*GetTarget() &&*/ !fPageMgr->Empty() && fState.IsBitSet(kEnabled);
 }
 
-hsBool plPostEffectMod::IEval(double secs, float del, uint32_t dirty)
+bool plPostEffectMod::IEval(double secs, float del, uint32_t dirty)
 {
     return false;
 }
@@ -240,7 +240,7 @@ void plPostEffectMod::IRemoveFromPageMgr(plSceneNode* node)
 #include "plProfile.h"
 plProfile_CreateTimer("PostEffect", "RenderSetup", PostEffect);
 
-hsBool plPostEffectMod::MsgReceive(plMessage* msg)
+bool plPostEffectMod::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend && IIsEnabled() )

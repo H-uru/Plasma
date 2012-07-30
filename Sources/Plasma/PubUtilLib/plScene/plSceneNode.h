@@ -72,7 +72,7 @@ public:
     };
 
 protected:
-    hsBool                              fFilterGenerics; // Export only
+    bool                                fFilterGenerics; // Export only
 
     int16_t                               fDepth;
 
@@ -110,8 +110,8 @@ protected:
     void ISetOccluder(plOccluder* o);
     void ISetGeneric(hsKeyedObject* k);
 
-    hsBool IOnRemove(plNodeRefMsg* refMsg);
-    hsBool IOnAdd(plNodeRefMsg* refMsg);
+    bool IOnRemove(plNodeRefMsg* refMsg);
+    bool IOnAdd(plNodeRefMsg* refMsg);
 
     // Export only: Clean up empty drawables
     void    ICleanUp( void );
@@ -131,7 +131,7 @@ public:
 
     virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     int16_t GetDepth() { return fDepth; }
     int16_t IncDepth() { return ++fDepth; }
@@ -147,7 +147,7 @@ public:
     // Export only: Optimize all my stinkin' drawables
     virtual void    OptimizeDrawables( void );
 
-    void SetFilterGenericsOnly(hsBool b) { fFilterGenerics = b; }
+    void SetFilterGenericsOnly(bool b) { fFilterGenerics = b; }
 
     const hsTArray<plDrawable*>& GetDrawPool() const { return fDrawPool; }
 };

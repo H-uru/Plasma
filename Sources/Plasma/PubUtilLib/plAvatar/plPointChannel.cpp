@@ -173,7 +173,7 @@ plPointTimeScale::~plPointTimeScale()
 
 // IsStoppedAt ---------------------------
 // ------------
-hsBool plPointTimeScale::IsStoppedAt(double time)
+bool plPointTimeScale::IsStoppedAt(double time)
 {
     return fTimeSource->IsStoppedAt(time);
 }
@@ -240,7 +240,7 @@ plPointBlend::~plPointBlend()
 
 // IsStoppedAt ------------------------------
 // ------------
-hsBool plPointBlend::IsStoppedAt(double time)
+bool plPointBlend::IsStoppedAt(double time)
 {
     float blend = fChannelBias->Value(time);
     if (blend == 0)

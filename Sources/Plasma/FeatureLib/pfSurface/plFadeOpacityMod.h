@@ -88,11 +88,11 @@ protected:
     hsTArray<plFadeOpacityLay*> fFadeLays;
 
     // A global to turn the whole thing off for debug/perf
-    static hsBool   fLOSCheckDisabled;
+    static bool     fLOSCheckDisabled;
 
     void        IOnRenderMsg(plRenderMsg* rend);
-    hsBool      IReady();
-    hsBool      IShouldCheck(plPipeline* pipe);
+    bool        IReady();
+    bool        IShouldCheck(plPipeline* pipe);
     hsPoint3    IGetOurPos();
     void        ICalcOpacity();
     void        ISetOpacity();
@@ -101,7 +101,7 @@ protected:
     void        ISetup(plSceneObject* so);
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plFadeOpacityMod();
@@ -112,7 +112,7 @@ public:
 
     virtual void            SetKey(plKey k);
 
-    virtual hsBool          MsgReceive(plMessage* msg);
+    virtual bool            MsgReceive(plMessage* msg);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
@@ -121,7 +121,7 @@ public:
 
     void FadeUp();
     void FadeDown();
-    void Fade(hsBool up) { if( up ) FadeUp(); else FadeDown(); }
+    void Fade(bool up) { if( up ) FadeUp(); else FadeDown(); }
 
     void SetFadeUp(float f) { fFadeUp = f; }
     float GetFadeUp() const { return fFadeUp; }
@@ -129,8 +129,8 @@ public:
     void SetFadeDown(float f) { fFadeDown = f; }
     float GetFadeDown() const { return fFadeDown; }
 
-    static hsBool GetLOSCheckDisabled() { return fLOSCheckDisabled; }
-    static void SetLOSCheckDisabled(hsBool on) { fLOSCheckDisabled = on; }
+    static bool GetLOSCheckDisabled() { return fLOSCheckDisabled; }
+    static void SetLOSCheckDisabled(bool on) { fLOSCheckDisabled = on; }
 };
 
 #endif // plFadeOpacityMod_inc

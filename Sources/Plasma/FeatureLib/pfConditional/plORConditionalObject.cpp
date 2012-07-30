@@ -58,7 +58,7 @@ plORConditionalObject::~plORConditionalObject()
     fChildren.SetCountAndZero(0);
 }
 
-hsBool plORConditionalObject::MsgReceive(plMessage* msg)
+bool plORConditionalObject::MsgReceive(plMessage* msg)
 {
     plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
     if (pCondMsg)
@@ -81,7 +81,7 @@ void plORConditionalObject::SetLogicMod(plLogicModBase* pMod)
     }
 }
 
-hsBool plORConditionalObject::Satisfied() 
+bool plORConditionalObject::Satisfied() 
 {
     for (int i = 0; i < fChildren.Count(); i++)
     {

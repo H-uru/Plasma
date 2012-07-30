@@ -167,7 +167,7 @@ plLOSDispatch::~plLOSDispatch()
     plgDispatch::Dispatch()->UnRegisterForExactType(plLOSRequestMsg::Index(), GetKey());
 }
 
-hsBool plLOSDispatch::MsgReceive(plMessage* msg)
+bool plLOSDispatch::MsgReceive(plMessage* msg)
 {
 
     plLOSRequestMsg* requestMsg = plLOSRequestMsg::ConvertNoRef(msg);

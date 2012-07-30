@@ -79,17 +79,17 @@ protected:
     hsPoint3        fCurrFrom;
     hsPoint3        fCurrTarg;
 
-    hsBool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
-    hsBool ICheckBound(const hsBounds3Ext& bnd, float& closest);
-    hsBool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
-    hsBool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
-    hsBool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
-    hsBool ICheckDrawable(plDrawable* d, plVisHit& hit);
-    hsBool ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit);
+    bool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
+    bool ICheckBound(const hsBounds3Ext& bnd, float& closest);
+    bool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
+    bool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
+    bool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
+    bool ICheckDrawable(plDrawable* d, plVisHit& hit);
+    bool ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit);
     
 public:
-    hsBool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);
-    hsBool CursorCheck(plVisHit& hit);
+    bool Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& hit);
+    bool CursorCheck(plVisHit& hit);
 
     static plVisLOSMgr* Instance();
 
