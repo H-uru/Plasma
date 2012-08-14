@@ -63,8 +63,8 @@ public:
     virtual plKey GetSceneObject() const { return fSceneObj; }
     virtual void SetSceneObject(plKey newNode) { }
 
-    virtual plAudible& SetProperty(int prop, hsBool on) { return *this; }
-    virtual hsBool GetProperty(int prop) { return false; }
+    virtual plAudible& SetProperty(int prop, bool on) { return *this; }
+    virtual bool GetProperty(int prop) { return false; }
 
     void        Play(int index = -1){;}
     void        SynchedPlay(int index = -1) {;}
@@ -79,8 +79,8 @@ public:
     void        SetVelocity(const hsVector3 vel,int index = -1){;}
     hsVector3   GetVelocity(int index = -1) const;
     hsPoint3    GetPosition(int index = -1);
-    void        SetLooping(hsBool loop,int index = -1){;} // sets continuous loop or stops looping
-    hsBool      IsPlaying(int index = -1){return false;}
+    void        SetLooping(bool loop,int index = -1){;} // sets continuous loop or stops looping
+    bool        IsPlaying(int index = -1){return false;}
     virtual void        SetTime(double t, int index = -1) {}
     virtual void        Activate(){}
     virtual void        DeActivate(){}
@@ -89,12 +89,12 @@ public:
     virtual plSound*    GetSound(int i) const { return nil; }
     virtual int         GetSoundIndex(const char *keyname) const { return -1; }
     virtual void        SetVolume(const float volume,int index = -1) {;}
-    virtual void        SetFilename(int index, const char *filename, hsBool isCompressed){}
+    virtual void        SetFilename(int index, const char *filename, bool isCompressed){}
 
     virtual void    RemoveCallbacks(plSoundMsg* pMsg) {}
     virtual void    AddCallbacks(plSoundMsg* pMsg) {}
 
-    virtual void    SetMuted( hsBool muted, int index = -1 ) {;}
+    virtual void    SetMuted( bool muted, int index = -1 ) {;}
     virtual void    ToggleMuted( int index = -1 ) {;}
     virtual void    SetTalkIcon(int index, uint32_t str){;}
     virtual void    ClearTalkIcon(){;}

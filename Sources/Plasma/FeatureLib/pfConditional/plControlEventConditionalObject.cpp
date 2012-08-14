@@ -50,7 +50,7 @@ plControlEventConditionalObject::plControlEventConditionalObject()
     
 }
 
-hsBool plControlEventConditionalObject::MsgReceive(plMessage* msg)
+bool plControlEventConditionalObject::MsgReceive(plMessage* msg)
 {
     plControlEventMsg* pControlMsg = plControlEventMsg::ConvertNoRef(msg);
     if( pControlMsg )

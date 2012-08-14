@@ -97,7 +97,7 @@ PF_CONSOLE_FILE_DUMMY(Game)
 //// plDoesFileExist //////////////////////////////////////////////////////////
 //  Utility function to determine whether the given file exists
 
-static hsBool   plDoesFileExist( const char *path )
+static bool     plDoesFileExist( const char *path )
 {
     hsUNIXStream    stream;
 

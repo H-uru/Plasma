@@ -255,7 +255,7 @@ void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar
         *lastY = fRenderInfo.fLastY;
 }
 
-void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, hsBool justCalc )
+void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, bool justCalc )
 {
     fRenderInfo.fMipmap = mip;
     fRenderInfo.fX = x;
@@ -1062,7 +1062,7 @@ uint8_t   *plFont::IGetFreeCharData( uint32_t &newOffset )
 //// LoadFromP2FFile //////////////////////////////////////////////////////////
 //  Handy quick wrapper 
 
-hsBool  plFont::LoadFromP2FFile( const char *path )
+bool    plFont::LoadFromP2FFile( const char *path )
 {
     hsUNIXStream    stream;
     if( stream.Open( path, "rb" ) )
@@ -1077,7 +1077,7 @@ hsBool  plFont::LoadFromP2FFile( const char *path )
 //  Load this font from the data found in the given Windows FNT file,
 //  using the format specified in the Windows 3 Developers Notes.
 
-hsBool  plFont::LoadFromFNT( const char *path )
+bool    plFont::LoadFromFNT( const char *path )
 {
     hsUNIXStream    stream;     // Ahh, irony
     if( !stream.Open( path, "rb" ) )
@@ -1086,7 +1086,7 @@ hsBool  plFont::LoadFromFNT( const char *path )
     return LoadFromFNTStream( &stream );
 }
 
-hsBool  plFont::LoadFromFNTStream( hsStream *stream )
+bool    plFont::LoadFromFNTStream( hsStream *stream )
 {
     IClear();
 
@@ -1306,7 +1306,7 @@ hsBool  plFont::LoadFromFNTStream( hsStream *stream )
 //  using the format specified in the Glyph Bitmap Distribution Format (BDF)
 //  Specification Version 2.2 from Adobe Systems.
 
-/*hsBool    plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
+/*bool      plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
 {
     hsUNIXStream    stream;     // Ahh, irony
     if( !stream.Open( path, "rb" ) )
@@ -1485,7 +1485,7 @@ class plBDFCharsParser : public plBDFSectParser
         uint16_t              fWhichChar, fRowsLeft;
         plFont::plCharacter *fCharacter;
         uint8_t               *fBitmap;
-        hsBool              fDoingData;
+        bool                fDoingData;
         uint32_t              fBytesWide, fBMapStride;
 
         inline void IReset( void )
@@ -1787,7 +1787,7 @@ class plBDFHeaderParser : public plBDFSectParser
 
 class plBDFCheckDimsParser : public plBDFSectParser
 {
-        hsBool  fSkipNext;
+        bool    fSkipNext;
 
     public:
 
@@ -1841,12 +1841,12 @@ class plBDFCheckDimsParser : public plBDFSectParser
         }
 };
 
-hsBool  plFont::LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback )
+bool    plFont::LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback )
 {
     return false;
 }
 
-hsBool  plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
+bool    plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
 {
     FILE *fp = fopen( path, "rt" );
     if( fp == nil )
@@ -1923,7 +1923,7 @@ hsBool  plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
     return true;
 }
 
-hsBool  plFont::ReadRaw( hsStream *s )
+bool    plFont::ReadRaw( hsStream *s )
 {
     s->Read( sizeof( fFace ), fFace );
     fSize = s->ReadByte();
@@ -1956,7 +1956,7 @@ hsBool  plFont::ReadRaw( hsStream *s )
     return true;
 }
 
-hsBool  plFont::WriteRaw( hsStream *s )
+bool    plFont::WriteRaw( hsStream *s )
 {
     s->Write( sizeof( fFace ), fFace );
     s->WriteByte( fSize );

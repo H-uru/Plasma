@@ -77,7 +77,7 @@ public:
     CLASSNAME_REGISTER( plLODMipmap );
     GETINTERFACE_ANY( plLODMipmap, plMipmap );
 
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
     void            SetLOD(int lod);
     int             GetLOD() const { return fLOD; }
@@ -98,7 +98,7 @@ public:
     virtual void    ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
                             uint16_t destStride, plMipmap::ScaleFilter filter) const;
 
-    virtual hsBool  ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter);
+    virtual bool    ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter);
 
     virtual void    SetCurrLevel(uint8_t level);
 

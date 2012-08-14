@@ -115,7 +115,7 @@ TARG_BLOCK(classname, varname)
 //  EXCEPT the CLASS_DESC line, then change CLASS_DESC to OBSOLETE_CLASS. This macro
 //  will handle the rest for you! -mcn
 //
-#define OBSOLETE_CLASS( classname, descname, strname, sn, type, classid ) class classname : public plComponent { public:    classname##(); hsBool Convert( plMaxNode *n, plErrorMsg *e ) { return true; } }; \
+#define OBSOLETE_CLASS( classname, descname, strname, sn, type, classid ) class classname : public plComponent { public:    classname##(); bool Convert( plMaxNode *n, plErrorMsg *e ) { return true; } }; \
                             OBSOLETE_CLASS_DESC( classname, descname, strname, sn, type, classid ) \
                             classname##::##classname() { fClassDesc = &##descname##; fClassDesc->MakeAutoParamBlocks(this); } \
                             ParamBlockDesc2 classname##blk ( plComponent::kBlkComp, _T("##descname##"), 0, &##descname##, P_AUTO_CONSTRUCT, plComponent::kRefComp, end );

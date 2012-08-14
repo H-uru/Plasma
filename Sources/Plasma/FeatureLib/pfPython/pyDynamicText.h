@@ -64,18 +64,18 @@ private:
     // the list of receivers that want to be notified
     hsTArray<plKey> fReceivers;
 
-    hsBool          fNetPropagate;
-    hsBool          fNetForce;
+    bool            fNetPropagate;
+    bool            fNetForce;
 
     // clipping
-    hsBool          fClip;
+    bool            fClip;
     uint16_t          fClipLeft;
     uint16_t          fClipTop;
     uint16_t          fClipRight;
     uint16_t          fClipBottom;
 
     // wrapping
-    hsBool          fWrap;
+    bool            fWrap;
     uint16_t          fWrapWidth;
     uint16_t          fWrapHeight;
 
@@ -104,8 +104,8 @@ public:
     virtual void SetSender(pyKey& selfKey);
     virtual void ClearReceivers();
     virtual void AddReceiver(pyKey& key);
-    virtual void SetNetPropagate(hsBool propagate);
-    virtual void SetNetForce(hsBool force);
+    virtual void SetNetPropagate(bool propagate);
+    virtual void SetNetForce(bool force);
 
     // dynamicText commands
     virtual void ClearToColor( pyColor& color );
@@ -121,9 +121,9 @@ public:
     virtual void UnsetWrapping();
     virtual void DrawText( int16_t x, int16_t y, const char *text );
     virtual void DrawTextW( int16_t x, int16_t y, std::wstring text );
-    virtual void DrawImage( uint16_t x, uint16_t y, pyImage& image, hsBool respectAlpha );
+    virtual void DrawImage( uint16_t x, uint16_t y, pyImage& image, bool respectAlpha );
     virtual void DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy, uint16_t cw, uint16_t ch,
-                                        hsBool respectAlpha );
+                                        bool respectAlpha );
     virtual void PurgeImage( void );
 
     // Actually return the visible width and height, since that's what you want to be drawing to

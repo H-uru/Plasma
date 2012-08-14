@@ -138,7 +138,7 @@ protected:
 
     float                    fMaxStrength;
 
-    hsBool                      fRegisteredForRenderMsg;
+    bool                        fRegisteredForRenderMsg;
 
     // Small shadow section
     hsBitVector                 fSlaveBits;
@@ -166,31 +166,31 @@ public:
     hsGDeviceRef* GetDeviceRef() const { return fDeviceRef; }
 
     // Dirty state is local to this machine, so shouldn't be in the network synchronized properties.
-    hsBool  IsDirty() const { return 0 != (fVolFlags & kVolDirty); }
-    void    SetDirty(hsBool on=true) { if(on)fVolFlags |= kVolDirty; else fVolFlags &= ~kVolDirty; }    
+    bool    IsDirty() const { return 0 != (fVolFlags & kVolDirty); }
+    void    SetDirty(bool on=true) { if(on)fVolFlags |= kVolDirty; else fVolFlags &= ~kVolDirty; }    
 
-    hsBool  IsEmpty() const { return 0 != (fVolFlags & kVolEmpty); }
-    void    SetEmpty(hsBool on=true) { if(on)fVolFlags |= kVolEmpty; else fVolFlags &= ~kVolEmpty; }
+    bool    IsEmpty() const { return 0 != (fVolFlags & kVolEmpty); }
+    void    SetEmpty(bool on=true) { if(on)fVolFlags |= kVolEmpty; else fVolFlags &= ~kVolEmpty; }
 
-    hsBool  IsZero() const { return 0 != (fVolFlags & kVolZero); }
-    void    SetZero(hsBool on) { if(on)fVolFlags |= kVolZero; else fVolFlags &= ~kVolZero; }
+    bool    IsZero() const { return 0 != (fVolFlags & kVolZero); }
+    void    SetZero(bool on) { if(on)fVolFlags |= kVolZero; else fVolFlags &= ~kVolZero; }
 
-    inline hsBool   IsIdle() const;
+    inline bool     IsIdle() const;
 
-    hsBool  OverAll() const { return GetProperty(kLPOverAll); }
+    bool    OverAll() const { return GetProperty(kLPOverAll); }
 
-    hsBool IsShadowCaster() const { return GetProperty(kLPCastShadows); }
-    void SetShadowCaster(hsBool on) { SetProperty(kLPCastShadows, on); }
+    bool IsShadowCaster() const { return GetProperty(kLPCastShadows); }
+    void SetShadowCaster(bool on) { SetProperty(kLPCastShadows, on); }
 
     void Refresh() { if( IsDirty() ) { IRefresh(); SetDirty(false); } }
     virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
 
-    hsBool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
-    void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, hsBool charac);
-    void GetAffected(const plSpaceTree* space, hsBitVector& list, hsBool charac);
-    const hsTArray<int16_t>& GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, hsBool charac);
-    hsBool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
-    hsBool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
+    bool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
+    void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac);
+    void GetAffected(const plSpaceTree* space, hsBitVector& list, bool charac);
+    const hsTArray<int16_t>& GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac);
+    bool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
+    bool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
 
     void SetAmbient(const hsColorRGBA& c) { fAmbient = c; SetDirty(); }
     void SetDiffuse(const hsColorRGBA& c) { fDiffuse = c; SetDirty(); }
@@ -202,7 +202,7 @@ public:
 
     plLayerInterface*   GetProjection() const { return fProjection; }
 
-    virtual void SetProperty(int prop, hsBool on);
+    virtual void SetProperty(int prop, bool on);
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
     virtual const hsMatrix44& GetLocalToWorld() const;
@@ -219,12 +219,12 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool      MsgReceive(plMessage* msg);
+    virtual bool        MsgReceive(plMessage* msg);
 
     virtual void        Unlink( void );
     virtual void        Link( plLightInfo **back );
     virtual plLightInfo *GetNext( void ) { return fNextDevPtr; }
-    virtual hsBool      IsLinked( void ) { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
+    virtual bool        IsLinked( void ) { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
 
     // New shadow
     void                ClearSlaveBits() { fSlaveBits.Clear(); }
@@ -333,7 +333,7 @@ public:
 
     virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const;
 
-    hsBool      IsAttenuated() const { return (fAttenLinear != 0)||(fAttenQuadratic != 0) || ( fAttenCutoff != 0 ); }
+    bool        IsAttenuated() const { return (fAttenLinear != 0)||(fAttenQuadratic != 0) || ( fAttenCutoff != 0 ); }
     float    GetRadius() const;
 
     float    GetConstantAttenuation() const { return fAttenConst; }
@@ -402,7 +402,7 @@ public:
 
 };
 
-inline hsBool plLightInfo::IsIdle() const
+inline bool plLightInfo::IsIdle() const
 {
     if( GetProperty(kDisable) )
         return true;

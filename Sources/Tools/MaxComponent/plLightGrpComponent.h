@@ -54,21 +54,21 @@ class plDrawableSpans;
 class plLightGrpComponent : public plComponent
 {
 private:
-    hsBool          fValid;
+    bool            fValid;
 
     hsTArray<plMaxNode*>        fLightNodes;
     hsTArray<plLightInfo*>      fLightInfos;
 
-    hsBool      IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool      ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex);
-    hsBool      IGetLightInfos();
+    bool        IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool        ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex);
+    bool        IGetLightInfos();
 
 public:
     plLightGrpComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     const hsTArray<plLightInfo*>& GetLightInfos();
 

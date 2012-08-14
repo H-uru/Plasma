@@ -134,7 +134,7 @@ public:
 
     /** Remove the ith applicator and its associated channel. Existing applicators
         will be renumbered. */
-    hsBool RemoveApplicator(int appNum);
+    bool RemoveApplicator(int appNum);
 
     /** The name of the animation. This name is used in the avatar manager to reference
         animations. Animations are generally indexed by name when they are loaded
@@ -164,7 +164,7 @@ public:
     
     /** Returns true if any applicator on the arg anim tries to use the
         same pin (on the same object) as we do. */
-    hsBool SharesPinsWith(const plAGAnim *anim) const;
+    bool SharesPinsWith(const plAGAnim *anim) const;
 
 
     // PLASMA PROTOCOL
@@ -181,7 +181,7 @@ public:
         global animation registry. */
     static plAGAnim *FindAnim(const plString &name);
     /** Remove the given animation from the registry. */
-    static hsBool RemoveAnim(const plString &name);
+    static bool RemoveAnim(const plString &name);
     /** Clear the animation cache. Used when resetting the client
         to a vanilla state, as when clearing the scene while
         exporting. */
@@ -243,7 +243,7 @@ public:
     
     /** Does this animation start automatically when it's applied? */
     virtual bool GetAutoStart() const { return fAutoStart; }
-    void SetAutoStart(hsBool start) { fAutoStart = (start != 0); }
+    void SetAutoStart(bool start) { fAutoStart = (start != 0); }
 
     /** If the animation loops, this is where it will restart the loop. Note that
         loops do not have to start at the beginning of the animation. */
@@ -258,7 +258,7 @@ public:
     /** Does this animation loop?. Note that there may be multiple loop segments defined
         within a given animation. */
     virtual bool GetLoop() const { return fLoop; }
-    void SetLoop(hsBool loop) { fLoop = (loop != 0); }
+    void SetLoop(bool loop) { fLoop = (loop != 0); }
 
     /** Set the curve type for easing in. Easing is an optional feature which allows you
         to make an animation slow down gradually when you stop it.

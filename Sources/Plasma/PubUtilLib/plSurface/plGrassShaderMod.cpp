@@ -133,7 +133,7 @@ void plGrassShaderMod::RemoveTarget(plSceneObject *object)
     fTarget = nil;
 }
 
-hsBool plGrassShaderMod::MsgReceive(plMessage *msg)
+bool plGrassShaderMod::MsgReceive(plMessage *msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)
@@ -211,7 +211,7 @@ void plGrassShaderMod::Read(hsStream *stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 }
 
-hsBool plGrassShaderMod::IEval(double secs, float del, uint32_t dirty)
+bool plGrassShaderMod::IEval(double secs, float del, uint32_t dirty)
 {
     if (fVShader)
     {

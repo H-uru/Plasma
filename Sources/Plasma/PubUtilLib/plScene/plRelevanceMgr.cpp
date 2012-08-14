@@ -98,7 +98,7 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
     regionsICareAbout.Clear();
     regionsICareAbout.SetBit(0, true); // Always care about region zero, the special "No region" node
 
-    hsBool inAnyRegion = false;
+    bool inAnyRegion = false;
 
     int i;
     for (i = 0; i < fRegions.GetCount(); i++)
@@ -129,7 +129,7 @@ uint32_t plRelevanceMgr::GetNumRegions() const
 }
         
 
-hsBool plRelevanceMgr::MsgReceive(plMessage* msg)
+bool plRelevanceMgr::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *genMsg = plGenRefMsg::ConvertNoRef(msg);
     if (genMsg)
@@ -161,7 +161,7 @@ uint32_t plRelevanceMgr::GetIndex(const plString &regionName)
     return -1;
 }
 
-void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, hsBool doICare)
+void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare)
 {
     if (localIdx == (uint32_t)-1 || remoteIdx == (uint32_t)-1)
         return;
@@ -202,7 +202,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
     char buff[kBufSize];
     hsTArray<plRegionInfo*> regions;    
     hsStringTokenizer toke; 
-    hsBool firstLine = true;
+    bool firstLine = true;
     
     while (!s->AtEnd())
     {

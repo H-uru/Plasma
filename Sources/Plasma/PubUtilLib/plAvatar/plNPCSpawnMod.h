@@ -58,13 +58,13 @@ public:
     GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
     
     virtual void AddTarget(plSceneObject* so);
-//  hsBool MsgReceive(plMessage* msg);
+//  bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream *stream, hsResMgr *mgr);
     virtual void Write(hsStream *stream, hsResMgr *mgr);
 
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
     void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:

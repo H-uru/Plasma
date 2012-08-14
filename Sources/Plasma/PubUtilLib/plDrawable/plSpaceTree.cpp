@@ -123,7 +123,7 @@ void plSpaceTree::Refresh()
         IRefreshRecur(fRoot);
 }
 
-void plSpaceTree::SetTreeFlag(uint16_t f, hsBool on)
+void plSpaceTree::SetTreeFlag(uint16_t f, bool on)
 {
     if( IsEmpty() )
         return;
@@ -149,7 +149,7 @@ void plSpaceTree::ClearTreeFlag(uint16_t f)
         fTree[i].fFlags &= ~f;
 }
 
-void plSpaceTree::SetLeafFlag(int16_t idx, uint16_t f, hsBool on)
+void plSpaceTree::SetLeafFlag(int16_t idx, uint16_t f, bool on)
 {
     if( IsEmpty() )
         return;

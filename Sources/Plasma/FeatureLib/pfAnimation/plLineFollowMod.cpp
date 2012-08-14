@@ -107,7 +107,7 @@ void plLineFollowMod::SetOffsetFeet(float f)
     }
 }
 
-void plLineFollowMod::SetForceToLine(hsBool on)
+void plLineFollowMod::SetForceToLine(bool on)
 {
     if( on )
         fFollowFlags |= kForceToLine;
@@ -218,7 +218,7 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 #include "plProfile.h"
 plProfile_CreateTimer("LineFollow", "RenderSetup", LineFollow);
 
-hsBool plLineFollowMod::MsgReceive(plMessage* msg)
+bool plLineFollowMod::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
     if( refMsg )
@@ -337,7 +337,7 @@ void plLineFollowMod::IRegister()
     }
 }
 
-hsBool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
+bool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
 {
     if( !fPath )
         return false;
@@ -361,7 +361,7 @@ hsBool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
     return true;
 }
 
-hsBool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
+bool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
 {
     hsPoint3 tgtPos = tgtXfm.GetTranslate();
 
@@ -407,7 +407,7 @@ hsBool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
     return true;
 }
 
-hsBool plLineFollowMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm)
+bool plLineFollowMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm)
 {
     float t = fPath->GetExtremePoint(searchPos);
     if( fFollowFlags & kFullMatrix )
@@ -453,7 +453,7 @@ void plLineFollowMod::ICheckForPop(const hsPoint3& oldPos, const hsPoint3& newPo
         fFollowFlags &= ~kSearchPosPop;
 }
 
-hsBool plLineFollowMod::IGetSearchPos()
+bool plLineFollowMod::IGetSearchPos()
 {
     hsPoint3 oldPos = fSearchPos;
     if( kFollowObject == fFollowMode )
@@ -642,7 +642,7 @@ plRailCameraMod::~plRailCameraMod()
 {
 }
 
-hsBool  plRailCameraMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm)
+bool  plRailCameraMod::IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm)
 {
     if (fPath->GetFarthest())
     {   

@@ -171,7 +171,7 @@ enum EConnType {
 
     kNumConnTypes
 };
-COMPILER_ASSERT_HEADER(EConnType, kNumConnTypes < 256);
+static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
 
 #define IS_TEXT_CONNTYPE(c)     \
     (((int)(c)) == kConnTypeAdminInterface)

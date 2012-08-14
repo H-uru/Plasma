@@ -61,12 +61,12 @@ hsStringTokenizer::~hsStringTokenizer()
     delete[] fSeps;
 }
 
-hsBool hsStringTokenizer::HasMoreTokens() 
+bool hsStringTokenizer::HasMoreTokens() 
 {
     return (*fTok != 0);
 }
 
-inline hsBool hsStringTokenizer::IsSep(char c) 
+inline bool hsStringTokenizer::IsSep(char c) 
 {
     if (!fQAsTok || !fInQuote) 
     {
@@ -111,7 +111,7 @@ char *hsStringTokenizer::next()
 }
 
 // Slightly more loop-friendly version of next
-hsBool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
+bool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
 {
     char *t = next();
     if( t == nil )
@@ -161,7 +161,7 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
 //      next();
 }
 
-void hsStringTokenizer::ParseQuotes(hsBool qAsTok)
+void hsStringTokenizer::ParseQuotes(bool qAsTok)
 {
     fQAsTok = qAsTok;
 }
@@ -185,12 +185,12 @@ hsWStringTokenizer::~hsWStringTokenizer()
     delete[] fSeps;
 }
 
-hsBool hsWStringTokenizer::HasMoreTokens() 
+bool hsWStringTokenizer::HasMoreTokens() 
 {
     return (*fTok != L'\0');
 }
 
-inline hsBool hsWStringTokenizer::IsSep(wchar_t c) 
+inline bool hsWStringTokenizer::IsSep(wchar_t c) 
 {
     if (!fQAsTok || !fInQuote) 
     {
@@ -235,7 +235,7 @@ wchar_t *hsWStringTokenizer::next()
 }
 
 // Slightly more loop-friendly version of next
-hsBool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
+bool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
 {
     wchar_t *t = next();
     if( t == nil )
@@ -303,7 +303,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
     //      next();
 }
 
-void hsWStringTokenizer::ParseQuotes(hsBool qAsTok)
+void hsWStringTokenizer::ParseQuotes(bool qAsTok)
 {
     fQAsTok = qAsTok;
 }

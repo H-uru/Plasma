@@ -64,7 +64,7 @@ public:
     void            Release();
     void            Link(plDXPixelShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
-    hsBool          VerifyFormat(uint8_t format) const;
+    bool            VerifyFormat(uint8_t format) const;
     IDirect3DPixelShader9 *GetShader(plDXPipeline* pipe);
 };
 

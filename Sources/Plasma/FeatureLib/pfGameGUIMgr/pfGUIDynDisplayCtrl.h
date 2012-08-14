@@ -79,7 +79,7 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
 
         hsTArray<hsGMaterial *>         fMaterials;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
     public:
 
@@ -90,7 +90,7 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIDynDisplayCtrl, pfGUIControlMod );
 
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );

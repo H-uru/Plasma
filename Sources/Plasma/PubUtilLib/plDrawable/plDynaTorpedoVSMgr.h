@@ -59,10 +59,10 @@ protected:
 
     virtual int         INewDecal();
 
-    virtual hsBool      ICheckRTMat();
+    virtual bool        ICheckRTMat();
 
     plRipVSConsts       IGetRippleConsts() const;
-    virtual hsBool      IHandleShot(plBulletMsg* bull);
+    virtual bool        IHandleShot(plBulletMsg* bull);
 public:
     plDynaTorpedoVSMgr();
     virtual ~plDynaTorpedoVSMgr();
@@ -70,7 +70,7 @@ public:
     CLASSNAME_REGISTER( plDynaTorpedoVSMgr );
     GETINTERFACE_ANY( plDynaTorpedoVSMgr, plDynaTorpedoMgr );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

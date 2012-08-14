@@ -121,7 +121,7 @@ public:
     void SetPipeline(plPipeline* p); 
     void Init();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     static void SetFOV(float w, float h);
     static void SetFOV(float w, float h, plCameraModifier1* pCam);
     static void SetDepth(float h, float y);
@@ -133,14 +133,14 @@ public:
     static void  SetAspectRatio(float aspect) { fAspectRatio = aspect; }
     static float GetAspectRatio() { return fAspectRatio; }
     
-    hsBool InTransition() { return fTransPos != POS_TRANS_OFF; }
+    bool InTransition() { return fTransPos != POS_TRANS_OFF; }
     plCameraModifier1* GetCurrentCamera();
     plCameraModifier1* GetCurrentStackCamera();
     plCameraModifier1* GetTransitionCamera(){return fTransitionCamera;}
-    hsBool Is1stPersonCamera();
+    bool Is1stPersonCamera();
 
-    hsBool  HasMovementFlag(int f) { return fMoveFlags.IsBitSet(f); }
-    void    SetMovementFlag(int f, hsBool on = true) { fMoveFlags.SetBit(f, on);} 
+    bool    HasMovementFlag(int f) { return fMoveFlags.IsBitSet(f); }
+    void    SetMovementFlag(int f, bool on = true) { fMoveFlags.SetBit(f, on);} 
         
     hsPoint3 GetCameraPos() { return fOutputPos; }
     hsPoint3 GetCameraPOA() { return fOutputPOA; }
@@ -155,34 +155,34 @@ public:
     void RebuildStack(const plKey& key);
 
     void SetFlags(int flag) { fFlags.SetBit(flag); }
-    hsBool HasFlags(int flag) { return fFlags.IsBitSet(flag); }
+    bool HasFlags(int flag) { return fFlags.IsBitSet(flag); }
     void ClearFlags(int flag) { fFlags.ClearBit(flag); }
 
     // console command stuff
     static void Next();
     static void Prev();
     static void Deactivate();
-    void CameraRegions(hsBool b) { fFlags.SetBit(kRegionIgnore,b); }
-    void LogFOV(hsBool b) { printFOV = b; }
+    void CameraRegions(bool b) { fFlags.SetBit(kRegionIgnore,b); }
+    void LogFOV(bool b) { printFOV = b; }
     void Drive();
     void PushThirdPerson();
     
     static void AddMsgToLog(const char* msg);
-    static hsBool IsCurrentCamera(const plCameraModifier1* mod);
+    static bool IsCurrentCamera(const plCameraModifier1* mod);
     void ClearStack();
 
     void AddCameraLoaded(plSceneObject* pCam) { fCamerasLoaded.push_back(pCam); }
-    hsBool RestoreFromName(const plString& name);
+    bool RestoreFromName(const plString& name);
     void StartUnPan();
     // these are for console access
-    static hsBool fUseAccelOverride, freeze, alwaysCutForColin, WalkPan3rdPerson,StayInFirstPersonForever;
+    static bool fUseAccelOverride, freeze, alwaysCutForColin, WalkPan3rdPerson,StayInFirstPersonForever;
     static float fDecel, fAccel, fVel;
     static float fFallTimerDelay;
     
 private:
 
-    void Reset(hsBool bRender);
-    void PushCamera(plCameraModifier1* pCam, hsBool bDefault = false);
+    void Reset(bool bRender);
+    void PushCamera(plCameraModifier1* pCam, bool bDefault = false);
     void PopCamera(plCameraModifier1* pCam);
     void AddCameraToStack(plCameraModifier1* pCam);
     void PopAll();
@@ -190,7 +190,7 @@ private:
     void StartTransition(CamTrans* transition);
     void RunTransition();
     void FinishTransition();
-    void SetRender(hsBool render);
+    void SetRender(bool render);
     void IHandleCameraStatusLog(plCameraModifier1* pMod, int action);
     void ICreatePlate();
     void FreezeOutput(int frames) { fFreezeCounter = frames; } // I hate this and I hate myself for doing it
@@ -242,10 +242,10 @@ private:
     static float fFOVh, fFOVw;
     static float fHither, fYon;
     static plVirtualCam1* fInstance;
-    static hsBool printFOV; 
+    static bool printFOV; 
     static float fPanResponseTime;
     static float fAspectRatio;
-    hsBool fForceCutOnce;
+    bool fForceCutOnce;
 
 };
 

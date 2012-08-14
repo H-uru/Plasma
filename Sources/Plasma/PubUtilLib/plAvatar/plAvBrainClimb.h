@@ -98,7 +98,7 @@ public:
 
     virtual void Activate(plArmatureModBase *avMod);
     virtual void Deactivate();
-    virtual hsBool Apply(double timeNow, float elapsed);
+    virtual bool Apply(double timeNow, float elapsed);
 
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
@@ -108,7 +108,7 @@ public:
     const char *ModeStr(Mode mode);
 
     // plasma protocol
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
     CLASSNAME_REGISTER( plAvBrainClimb );
     GETINTERFACE_ANY( plAvBrainClimb, plArmatureBrain);
@@ -121,8 +121,8 @@ private:
     /** Handle a climb message. Note that the "start climbing" climb message is handled
         by the human brain, since there's no climb brain there to hear it, since you
         (by definition) haven't started climbing yet... */
-    inline hsBool IHandleClimbMsg(plClimbMsg *msg);
-    inline hsBool IHandleLOSMsg(plLOSHitMsg *msg);
+    inline bool IHandleClimbMsg(plClimbMsg *msg);
+    inline bool IHandleLOSMsg(plLOSHitMsg *msg);
 
     /** Allow or block dismounting in the specified direction. */
     void IEnableDismount(plClimbMsg::Direction dir, bool status);
@@ -159,7 +159,7 @@ private:
 
     /** Create all our animation stage objects. Doesn't actually apply any of the animations
         to the avatar yet. */
-    virtual hsBool IInitAnimations();
+    virtual bool IInitAnimations();
 
     /** Find the animation stage corresponding with a mode */
     plAnimStage * IGetStageFromMode(Mode mode);

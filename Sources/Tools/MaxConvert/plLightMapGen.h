@@ -72,7 +72,7 @@ public:
     int                 fResetShadowType;
     float               fResetMapRange;
     float               fMapRange;
-    hsBool              fNewRender;
+    bool                fNewRender;
 };
 
 class plLightMapGen
@@ -110,25 +110,25 @@ protected:
     std::vector<plLightMapComponent*> fSharedComponents; // HACK so we can get rid of key refs before deleting bitmaps
 
     hsBounds3Ext    IGetBoundsLightSpace(INode* node, INode* liNode);
-    hsBool          IDirAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
-    hsBool          ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
-    hsBool          IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
-    hsBool          ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
+    bool            IDirAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
+    bool            ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
+    bool            IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
+    bool            ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node);
 
-    hsBool      IPrepLight(plLightMapInfo* liInfo, INode* node);
-    hsBool      IGetLight(INode* node);
-    hsBool      IFindLightsRecur(INode* node);
-    hsBool      IFindActiveLights(plMaxNode* node);
-    hsBool      IReleaseActiveLights();
-    hsBool      IReleaseAllLights();
+    bool        IPrepLight(plLightMapInfo* liInfo, INode* node);
+    bool        IGetLight(INode* node);
+    bool        IFindLightsRecur(INode* node);
+    bool        IFindActiveLights(plMaxNode* node);
+    bool        IReleaseActiveLights();
+    bool        IReleaseAllLights();
 
     int         IPowerOfTwo(int sz) const;
-    hsBool      ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
-    hsBool      ICompressLightMaps();
+    bool        ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    bool        ICompressLightMaps();
     
-    hsBool      IsFresh(plBitmap* map) const;
+    bool        IsFresh(plBitmap* map) const;
 
-    hsBool              IAddToLightMap(plLayerInterface* lay, plMipmap* src) const;
+    bool                IAddToLightMap(plLayerInterface* lay, plMipmap* src) const;
     plMipmap*           IMakeAccumBitmap(plLayerInterface* lay) const;
     void                IInitBitmapColor(plMipmap* bitmap, const hsColorRGBA& col) const;
     plLayerInterface*   IGetLightMapLayer(plMaxNode* node, plGeometrySpan& span);
@@ -136,13 +136,13 @@ protected:
     int                 IGetUVWSrc() const { return fUVWSrc; }
 
     uint32_t      IShadePoint(plMaxLightContext& ctx, const Color& amb, const hsPoint3& p, const hsVector3& n);
-    hsBool      IShadeVerts(plMaxLightContext& ctx, const Color& amb, const hsPoint3 pt[3], const hsVector3 norm[3], const hsPoint3 uv[3], plMipmap* bitmap);
-    hsBool      IShadeFace(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span, int iFace, plMipmap* bitmap);
-    hsBool      IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& spans);
-    hsBool      IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    bool        IShadeVerts(plMaxLightContext& ctx, const Color& amb, const hsPoint3 pt[3], const hsVector3 norm[3], const hsPoint3 uv[3], plMipmap* bitmap);
+    bool        IShadeFace(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span, int iFace, plMipmap* bitmap);
+    bool        IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& spans);
+    bool        IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
 
-    hsBool      IWantsMaps(plMaxNode* node);
-    hsBool      IValidateUVWSrc(hsTArray<plGeometrySpan *> &spans) const;
+    bool        IWantsMaps(plMaxNode* node);
+    bool        IValidateUVWSrc(hsTArray<plGeometrySpan *> &spans) const;
 
 public:
     plLightMapGen();
@@ -152,9 +152,9 @@ public:
     void SetRGC(RenderGlobalContext* rgc); // Don't call this ever ever ever
 #endif // MF_NEW_RGC
 
-    hsBool      Open(Interface* ip, TimeValue t, bool forceRegen=true);
-    hsBool      InitNode(INode* node, hsBool softShadow=true); // unnecessary when using MakeMaps()
-    hsBool      Update(TimeValue t);
+    bool        Open(Interface* ip, TimeValue t, bool forceRegen=true);
+    bool        InitNode(INode* node, bool softShadow=true); // unnecessary when using MakeMaps()
+    bool        Update(TimeValue t);
 
     void SetUVWSrc(int i) { fUVWSrc = i; }
     int GetUVWSrc() const { return fUVWSrc; }
@@ -174,15 +174,15 @@ public:
     // a light (or any other node) while the shader is Open. For your
     // own safety and the safety of your fellow passengers, don't
     // return control to the user until the system is Closed.
-    hsBool      MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *>& spans, plErrorMsg *pErrMsg, plConvertSettings *settings);
+    bool        MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *>& spans, plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     Color       ShadowPoint(plMaxLightContext& ctx);
     Color       ShadePoint(plMaxLightContext& ctx); // ctx already contains pos & norm
     Color       ShadePoint(plMaxLightContext& ctx, const Point3& p, const Point3& n);
     Color       ShadePoint(plMaxLightContext& ctx, const hsPoint3& p, const hsVector3& n);
 
-    hsBool      DeInitNode();
-    hsBool      Close();
+    bool        DeInitNode();
+    bool        Close();
 
     static plLightMapGen& Instance();
 };

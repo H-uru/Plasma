@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "hsStream.h"
 
-hsBool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
+bool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     unsigned long buflen_out = *bufLenOut;
     bool result = (uncompress(bufOut, &buflen_out, bufIn, bufLenIn) == Z_OK);
@@ -52,7 +52,7 @@ hsBool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const ui
     return result;
 }
 
-hsBool plZlibCompress::Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
+bool plZlibCompress::Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     // according to compress doc, the bufOut buffer should be at least .1% larger than source buffer, plus 12 bytes.
     hsAssert(*bufLenOut>=(int)(bufLenIn*1.1+12), "bufOut compress buffer is not large enough");
@@ -65,7 +65,7 @@ hsBool plZlibCompress::Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint
 //
 // copy bufOut to bufIn, set bufLenIn=bufLenOut
 //
-hsBool plZlibCompress::ICopyBuffers(uint8_t** bufIn, uint32_t* bufLenIn, char* bufOut, uint32_t bufLenOut, int offset, bool ok)
+bool plZlibCompress::ICopyBuffers(uint8_t** bufIn, uint32_t* bufLenIn, char* bufOut, uint32_t bufLenOut, int offset, bool ok)
 {
     if (ok)
     {
@@ -87,7 +87,7 @@ hsBool plZlibCompress::ICopyBuffers(uint8_t** bufIn, uint32_t* bufLenIn, char* b
 // In place version
 // offset is how much to skip over when compressing
 //
-hsBool plZlibCompress::Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset)
+bool plZlibCompress::Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset)
 {
     uint32_t adjBufLenIn = *bufLenIn - offset;
     uint8_t* adjBufIn = *bufIn + offset;
@@ -104,7 +104,7 @@ hsBool plZlibCompress::Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset)
 //
 // In place version
 //
-hsBool plZlibCompress::Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t bufLenOut, int offset)
+bool plZlibCompress::Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t bufLenOut, int offset)
 {
     uint32_t adjBufLenIn = *bufLenIn - offset;
     uint8_t* adjBufIn = *bufIn + offset;
@@ -120,11 +120,11 @@ hsBool plZlibCompress::Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t 
 #define kGzBufferSize   64 * 1024
 #if 1
 
-hsBool  plZlibCompress::UncompressFile( const char *compressedPath, const char *destPath )
+bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *destPath )
 {
     gzFile  inFile;
     FILE    *outFile;
-    hsBool  worked = false;
+    bool    worked = false;
     int     length, err;
 
     uint8_t   buffer[ kGzBufferSize ];
@@ -162,11 +162,11 @@ hsBool  plZlibCompress::UncompressFile( const char *compressedPath, const char *
 }
 
 
-hsBool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *destPath )
+bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *destPath )
 {
     FILE    *inFile;
     gzFile  outFile;
-    hsBool  worked = false;
+    bool    worked = false;
     int     length, err;
 
     uint8_t   buffer[ kGzBufferSize ];
@@ -207,10 +207,10 @@ hsBool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *
 
 //// file <-> stream ///////////////////////////////////////////////////////
 
-hsBool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s )
+bool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s )
 {
     gzFile  inFile;
-    hsBool  worked = false;
+    bool    worked = false;
     int     length, err;
 
     uint8_t   buffer[ kGzBufferSize ];
@@ -242,10 +242,10 @@ hsBool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s 
 }
 
 
-hsBool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
+bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
 {
     gzFile  outFile;
-    hsBool  worked = false;
+    bool    worked = false;
     int     length, err;
 
     uint8_t   buffer[ kGzBufferSize ];

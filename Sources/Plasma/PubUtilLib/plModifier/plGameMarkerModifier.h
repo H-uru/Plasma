@@ -54,7 +54,7 @@ protected:
     uint16_t fPlaceSndIdx;
     uint16_t fHitSndIdx;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     plKey IFindCloneKey(plKey baseKey);
     
@@ -80,7 +80,7 @@ public:
 
     void FixupAnimKeys();
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

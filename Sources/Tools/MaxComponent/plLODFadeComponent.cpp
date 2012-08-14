@@ -131,7 +131,7 @@ void plLODFadeComponent::ISetToFadeBase(plMaxNode* node, plMaxNode* base, plErro
     base->SetNoDeferDraw(true);
 }
 
-hsBool plLODFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLODFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fCompPB->GetInt(kHasBase) )
     {
@@ -160,12 +160,12 @@ hsBool plLODFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plLODFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLODFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plLODFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plLODFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }
@@ -200,9 +200,9 @@ ParamBlockDesc2 gBlendOntoBk
     end
 );
 
-hsBool plBlendOntoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBlendOntoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    hsBool someBase = false;
+    bool someBase = false;
     int numBase = fCompPB->Count(kBaseNodes);
     int i;
     for( i = 0; i < numBase; i++ )
@@ -227,12 +227,12 @@ hsBool plBlendOntoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return true;
 }
 
-hsBool plBlendOntoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBlendOntoComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plBlendOntoComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plBlendOntoComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }
@@ -277,9 +277,9 @@ ParamBlockDesc2 gBlendOntoAdvBk
     end
 );
 
-hsBool plBlendOntoAdvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBlendOntoAdvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    hsBool someBase = false;
+    bool someBase = false;
     int numBase = fCompPB->Count(kBaseNodes);
     int i;
     for( i = 0; i < numBase; i++ )
@@ -305,12 +305,12 @@ hsBool plBlendOntoAdvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pEr
     return true;
 }
 
-hsBool plBlendOntoAdvComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plBlendOntoAdvComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plBlendOntoAdvComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plBlendOntoAdvComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }
@@ -334,9 +334,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -351,18 +351,18 @@ ParamBlockDesc2 gB4AvBk
     end
 );
 
-hsBool plB4AvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plB4AvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetSortAsOpaque(true);
     return true;
 }
 
-hsBool plB4AvComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plB4AvComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plB4AvComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plB4AvComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }
@@ -428,7 +428,7 @@ ParamBlockDesc2 gDistFadeBk
     end
 );
 
-hsBool plDistFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDistFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // If we're turned off, just return.
     if( !fCompPB->GetInt(kFadeInActive) && !fCompPB->GetInt(kFadeOutActive) )
@@ -542,12 +542,12 @@ Box3 plDistFadeComponent::IFadeFromPair(Point3& mins, Point3& maxs)
 }
 
 
-hsBool plDistFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDistFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plDistFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plDistFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }
@@ -577,9 +577,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -615,7 +615,7 @@ ParamBlockDesc2 gLOSFadeBk
     end
 );
 
-hsBool plLOSFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLOSFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceMatShade(true);
     node->SetForceLocal(true);
@@ -623,12 +623,12 @@ hsBool plLOSFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plLOSFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plLOSFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plLOSFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plLOSFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     plFadeOpacityMod* fade = new plFadeOpacityMod;
     
@@ -671,9 +671,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -703,7 +703,7 @@ ParamBlockDesc2 gGZFadeBk
     end
 );
 
-hsBool plGZFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plGZFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     float opaq = fCompPB->GetFloat(kOpaque);
     float transp = fCompPB->GetFloat(kTransp);
@@ -717,12 +717,12 @@ hsBool plGZFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plGZFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plGZFadeComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plGZFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plGZFadeComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     plDistOpacityMod* fade = new plDistOpacityMod;
 
@@ -763,9 +763,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -780,18 +780,18 @@ ParamBlockDesc2 gDynMatBk
     end
 );
 
-hsBool plDynMatComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDynMatComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetForceMatShade(true);
     return true;
 }
 
-hsBool plDynMatComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plDynMatComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plDynMatComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plDynMatComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     return true; 
 }

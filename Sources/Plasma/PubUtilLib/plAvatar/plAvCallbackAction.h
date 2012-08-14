@@ -132,7 +132,7 @@ class plAnimatedController : public plAvatarController
 public:
     plAnimatedController(plSceneObject* rootObject, plAGApplicator* rootApp, plPhysicalControllerCore* controller);
 
-    virtual void RecalcVelocity(double timeNow, double timePrev, hsBool useAnim = true);
+    virtual void RecalcVelocity(double timeNow, double timePrev, bool useAnim = true);
     void SetTurnStrength(float val) { fTurnStr = val; }
     float GetTurnStrength() { return fTurnStr; }
     virtual void ActivateController()=0;
@@ -150,7 +150,7 @@ class plWalkingController : public plAnimatedController
 public:
     plWalkingController(plSceneObject* rootObject, plAGApplicator* rootApp, plPhysicalControllerCore* controller);
     virtual ~plWalkingController();
-    virtual void RecalcVelocity(double timeNow, double timePrev, hsBool useAnim = true);
+    virtual void RecalcVelocity(double timeNow, double timePrev, bool useAnim = true);
 
     void Reset(bool newAge);
     bool IsControlledFlight() const { return fControlledFlight != 0; }  
@@ -199,8 +199,8 @@ public :
         fSwimmingStrategy->SetSurface(region,surfaceHeight);
     }
     float GetBuoyancy() { return fSwimmingStrategy->GetBuoyancy(); }
-    hsBool IsOnGround() { return fSwimmingStrategy->IsOnGround(); }
-    hsBool HadContacts() { return fSwimmingStrategy->HadContacts();}
+    bool IsOnGround() { return fSwimmingStrategy->IsOnGround(); }
+    bool HadContacts() { return fSwimmingStrategy->HadContacts();}
     void Enable(bool en){if (fController) fController->Enable(en);}
     plPhysicalControllerCore* GetController(){return fController;}
     virtual void ActivateController(){fSwimmingStrategy->RefreshConnectionToControllerCore();}

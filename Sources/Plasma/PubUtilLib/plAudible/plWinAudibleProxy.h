@@ -52,7 +52,7 @@ public:
     plWinAudibleProxy();
     virtual ~plWinAudibleProxy();
 
-    hsBool  Init(plWinAudible* aud);
+    bool    Init(plWinAudible* aud);
     
 protected:
     plWinAudible*           fOwner;

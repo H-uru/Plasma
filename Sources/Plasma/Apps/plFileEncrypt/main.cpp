@@ -62,37 +62,38 @@ void print_help() {
     printf("\t-v|--version\t - Prints build version information\n");
 }
 
-
 int main(int argc, char *argv[])
 {
     bool encrypt = true;
     const char* dir = ".";
 
+#define ARGCMP(y) (strcmp(argv[1], y) == 0)
     if (argc > 1)
     {
-        if (hsStrEQ(argv[1], "encrypt") || hsStrEQ(argv[1], "-e") )
+        if (ARGCMP("encrypt") || ARGCMP("-e") )
         {
             if (argc > 2)
                 dir = argv[2];
             encrypt = true;
         }
-        else if (hsStrEQ(argv[1], "decrypt") || hsStrEQ(argv[1], "-d"))
+        else if (ARGCMP("decrypt") || ARGCMP("-d"))
         {
             if (argc > 2)
                 dir = argv[2];
             encrypt = false;
         }
-        else if(hsStrEQ(argv[1], "--help") || hsStrEQ(argv[1], "-h") || hsStrEQ(argv[1], "-?")  || hsStrEQ(argv[1], "/?"))
+        else if(ARGCMP("--help") || ARGCMP("-h") || ARGCMP("-?")  || ARGCMP("/?"))
         {
             print_help();
             return 0;
         } 
-        else if (hsStrEQ(argv[1], "-v") || hsStrEQ(argv[1], "--version"))
+        else if (ARGCMP("-v") || ARGCMP("--version"))
         {
             print_version();            
             return 0;
         }
     }
+#undef ARGCMP
 
     EncryptFiles(dir, ".age", encrypt);
     EncryptFiles(dir, ".fni", encrypt);

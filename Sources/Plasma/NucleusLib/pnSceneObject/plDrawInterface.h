@@ -73,7 +73,7 @@ protected:
     hsTArray<hsKeyedObject*>    fRegions;
 
     void ISetVisRegions(int iDraw);
-    void ISetVisRegion(hsKeyedObject* ref, hsBool on);
+    void ISetVisRegion(hsKeyedObject* ref, bool on);
     void ISetDrawable(uint8_t which, plDrawable* dr);
     void IRemoveDrawable(plDrawable* dr);
     void ISetSceneNode(plKey newNode);
@@ -91,7 +91,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void        SetProperty(int prop, hsBool on);
+    void        SetProperty(int prop, bool on);
     int32_t       GetNumProperties() const { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
@@ -102,7 +102,7 @@ public:
     const hsBounds3Ext GetWorldBounds() const;
     const hsBounds3Ext GetMaxWorldBounds() const;
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void    ReleaseData( void );
 

@@ -55,7 +55,7 @@ plArmatureBehavior::~plArmatureBehavior()
         fAnim->Detach();
 }
 
-void plArmatureBehavior::Init(plAGAnim *anim, hsBool loop, plArmatureBrain *brain, plArmatureModBase *armature, uint8_t index)
+void plArmatureBehavior::Init(plAGAnim *anim, bool loop, plArmatureBrain *brain, plArmatureModBase *armature, uint8_t index)
 {
     fArmature = armature;
     fBrain = brain;

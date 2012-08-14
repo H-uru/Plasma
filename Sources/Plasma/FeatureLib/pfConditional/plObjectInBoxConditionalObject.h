@@ -63,12 +63,12 @@ public:
     CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
     GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
     
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
 
     void Evaluate(){;}
     void Reset() { SetSatisfied(false); }
-    virtual hsBool Satisfied() { return true; }
-    virtual hsBool Verify(plMessage* msg);
+    virtual bool Satisfied() { return true; }
+    virtual bool Verify(plMessage* msg);
 
 };
 
@@ -80,9 +80,9 @@ protected:
     hsTArray<plKey> fInside;
     int                 fTrigNum;
     int                 fType;
-    hsBool              fFirst;
-    hsBool              fTriggered;
-    hsBool              fIgnoreExtraEnters;
+    bool                fFirst;
+    bool                fTriggered;
+    bool                fIgnoreExtraEnters;
 public:
 
     static bool makeBriceHappyVar;
@@ -99,17 +99,17 @@ public:
     CLASSNAME_REGISTER( plVolumeSensorConditionalObject );
     GETINTERFACE_ANY( plVolumeSensorConditionalObject, plConditionalObject );
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     void Evaluate(){;}
     void Reset() { SetSatisfied(false); }
-    virtual hsBool Satisfied();
+    virtual bool Satisfied();
     void    SetType(int i) { fType = i; }
 
     void SetTrigNum(int i) { fTrigNum = i; }
-    void SetFirst(hsBool b) { fFirst = b; }
+    void SetFirst(bool b) { fFirst = b; }
 
-    void IgnoreExtraEnters(hsBool ignore = true) {fIgnoreExtraEnters = ignore;}
+    void IgnoreExtraEnters(bool ignore = true) {fIgnoreExtraEnters = ignore;}
 
     virtual void Read(hsStream* stream, hsResMgr* mgr); 
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -122,7 +122,7 @@ public:
     ~plVolumeSensorConditionalObjectNoArbitration (){;}
     CLASSNAME_REGISTER( plVolumeSensorConditionalObjectNoArbitration );
     GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plConditionalObject );
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     virtual void Read(hsStream* stream, hsResMgr* mgr); 
 protected:
     plKey fHittee;

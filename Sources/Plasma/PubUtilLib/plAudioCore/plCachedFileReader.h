@@ -71,14 +71,14 @@ public:
     virtual uint32_t  GetDataSize();
     virtual float   GetLengthInSecs();
 
-    virtual hsBool  SetPosition(uint32_t numBytes);
-    virtual hsBool  Read(uint32_t numBytes, void *buffer);
+    virtual bool    SetPosition(uint32_t numBytes);
+    virtual bool    Read(uint32_t numBytes, void *buffer);
     virtual uint32_t  NumBytesLeft();
 
-    virtual hsBool  OpenForWriting(const char *path, plWAVHeader &header);
+    virtual bool    OpenForWriting(const char *path, plWAVHeader &header);
     virtual uint32_t  Write(uint32_t bytes, void *buffer);
 
-    virtual hsBool  IsValid() { return fFileHandle != nil; }
+    virtual bool    IsValid() { return fFileHandle != nil; }
 
 protected:
     enum

@@ -178,8 +178,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Games/VarSync/pyVarSyncGame.h"
 
 int32_t PythonInterface::initialized = 0;                 // only need to initialize all of Python once
-hsBool PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
-hsBool PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
+bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
+bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
 PyMethodDef* PythonInterface::plasmaMethods = nil;      // the Plasma module's methods
 PyObject* PythonInterface::plasmaMod = nil;             // pointer to the Plasma module
@@ -192,7 +192,7 @@ PyObject* PythonInterface::plasmaGameConstantsMod = nil; // python object that h
 PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
 PyObject* PythonInterface::stdErr = nil;                // python object of the err file
 
-hsBool PythonInterface::debug_initialized = false;      // has the debug been initialized yet?
+bool      PythonInterface::debug_initialized = false;   // has the debug been initialized yet?
 PyObject* PythonInterface::dbgMod = nil;                // display module for stdout and stderr
 PyObject* PythonInterface::dbgOut = nil;
 PyObject* PythonInterface::dbgSlice = nil;              // time slice function for the debug window
@@ -1961,7 +1961,7 @@ PyObject* PythonInterface::FindModule(const char* module)
 //
 //  Returns    : True if unique , otherwise returns False
 //
-hsBool PythonInterface::IsModuleNameUnique(char* module)
+bool PythonInterface::IsModuleNameUnique(char* module)
 {
     PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
@@ -2130,7 +2130,7 @@ PyObject* PythonInterface::CompileString(char *command, char* filename)
 //
 //  PURPOSE    : marshals an object into a char string
 //
-hsBool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
+bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object
@@ -2180,7 +2180,7 @@ PyObject* PythonInterface::LoadObject(char* pickle, int32_t size)
 //
 //  RETURNS    : pointer to PyObject that is the result of the command
 //
-hsBool PythonInterface::RunStringInteractive(char *command, PyObject* module)
+bool PythonInterface::RunStringInteractive(char *command, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address
@@ -2216,7 +2216,7 @@ hsBool PythonInterface::RunStringInteractive(char *command, PyObject* module)
 //
 //  PURPOSE    : run a python string in a specific module name
 //
-hsBool PythonInterface::RunString(char *command, PyObject* module)
+bool PythonInterface::RunString(char *command, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address
@@ -2252,7 +2252,7 @@ hsBool PythonInterface::RunString(char *command, PyObject* module)
 //
 //  PURPOSE    : run a compiled python code in a specific module name
 //
-hsBool PythonInterface::RunPYC(PyObject* code, PyObject* module)
+bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address

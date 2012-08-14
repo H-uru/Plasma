@@ -69,7 +69,7 @@ protected:
 
     plPythonSDLModifier* fSDLMod;
 
-    hsBool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty);
 
     plString IMakeModuleName(plSceneObject* sobj);
 
@@ -88,12 +88,12 @@ protected:
     // internal data
     PyObject*   fModule;        // python module object
     PyObject*   fInstance;      // python object that the instance of the class to run
-    static hsBool   fAtConvertTime; // flag for when in convert time within Max, don't run code
-    hsBool      fLocalNotify;   // True when This Mod was Notified by a local plNotify
-    hsBool      fIsFirstTimeEval;   // flag to determine when the first time at the eval,
+    static bool     fAtConvertTime; // flag for when in convert time within Max, don't run code
+    bool        fLocalNotify;   // True when This Mod was Notified by a local plNotify
+    bool        fIsFirstTimeEval;   // flag to determine when the first time at the eval,
                                 // so the Python coders can hava a chance to run initialization
                                 // code after the system is up, but before things are displayed
-    hsBool      fAmIAttachedToClone;    // is this python file mod attached to a cloned object
+    bool        fAmIAttachedToClone;    // is this python file mod attached to a cloned object
     
     // callback class for the KI
     PythonVaultCallback *fVaultCallback;
@@ -129,14 +129,14 @@ public:
     GETINTERFACE_ANY( plPythonFileMod, plMultiModifier );
 
     plPythonSDLModifier* GetSDLMod() { return fSDLMod; }
-    hsBool WasLocalNotify() { return fLocalNotify; }
+    bool WasLocalNotify() { return fLocalNotify; }
     plPipeline* GetPipeline() { return fPipe; }
     virtual void SetSourceFile(const char* filename);
     virtual int getPythonOutput(std::string* line);
     virtual void ReportError();
     virtual void DisplayPythonOutput();
     static void SetAtConvertTime() { fAtConvertTime=true; }
-    virtual hsBool AmIAttachedToClone() { return fAmIAttachedToClone; }
+    virtual bool AmIAttachedToClone() { return fAmIAttachedToClone; }
 
     virtual void AddToNotifyList(plKey pKey) { fReceivers.Append(pKey); }
     virtual int32_t NotifyListCount() { return fReceivers.Count(); }
@@ -152,7 +152,7 @@ public:
     virtual void EnableControlKeyEvents();
     virtual void DisableControlKeyEvents();
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

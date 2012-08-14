@@ -58,7 +58,7 @@ class cyParticleSys
 protected:
     plKey           fSender;
     hsTArray<plKey> fRecvr;
-    hsBool          fNetForce;
+    bool            fNetForce;
 
     void    ISendParticleSysMsg(uint32_t param, float value);
 
@@ -76,7 +76,7 @@ public:
     // setters
     void    SetSender(plKey &sender);
     void    AddRecvr(plKey &recvr);
-    void    SetNetForce(hsBool state);
+    void    SetNetForce(bool state) { fNetForce = state; }
 
     void    SetParticlesPerSecond(float value);
     void    SetInitPitchRange(float value);
@@ -90,7 +90,6 @@ public:
     void    SetGenLife(float value);
     void    SetPartLifeMin(float value);
     void    SetPartLifeMax(float value);
-
 };
 
 

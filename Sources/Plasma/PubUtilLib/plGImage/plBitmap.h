@@ -167,7 +167,7 @@ class plBitmap : public hsKeyedObject
 
         uint8_t           GetPixelSize( void ) const { return fPixelSize; }
 
-        hsBool          IsCompressed( void ) const { return ( fCompressionType == kDirectXCompression ); }
+        bool            IsCompressed( void ) const { return ( fCompressionType == kDirectXCompression ); }
 
         virtual void            MakeDirty();
         virtual hsGDeviceRef    *GetDeviceRef( void ) const { return fDeviceRef; }

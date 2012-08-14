@@ -65,17 +65,17 @@ public:
     plString        GetKeyName() const;
 
     virtual void Validate();
-    virtual hsBool  IsFinal() { return true; };     // experimental; currently "is ready to process Loads"
+    virtual bool IsFinal() { return true; };     // experimental; currently "is ready to process Loads"
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     //----------------------
     // Send a reference to GetKey() via enclosed message. See plKey::SendRef()
     //----------------------
-    hsBool SendRef(plRefMsg* refMsg, plRefFlags::Type flags);
+    bool SendRef(plRefMsg* refMsg, plRefFlags::Type flags);
 
     //----------------------------------------
     // Fixed key functions

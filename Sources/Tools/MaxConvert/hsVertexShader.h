@@ -74,15 +74,15 @@ private:
             hsVector3   fNormal;
     };
 
-    hsBool ILightIncludesNode(LightObject* light, INode* node);
+    bool ILightIncludesNode(LightObject* light, INode* node);
 
-    void    INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
-    void    INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent);
+    void    INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, bool translucent);
+    void    INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, bool translucent);
 
-    hsBool IsTranslucent( hsGMaterial *material );
+    bool IsTranslucent( hsGMaterial *material );
 
     void IShadeSpan( plGeometrySpan *span, INode* node );
-    void IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, hsBool translucent );
+    void IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, bool translucent );
 
 private:
     Interface           *fInterface;

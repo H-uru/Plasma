@@ -279,7 +279,7 @@ void    plStatusLogMgr::PrevStatusLog( void )
 
 //// FindLog ////////////////////////////////////////////////////////////////
 
-plStatusLog *plStatusLogMgr::FindLog( const char *filename, hsBool createIfNotFound )
+plStatusLog *plStatusLogMgr::FindLog( const char *filename, bool createIfNotFound )
 {
     wchar_t* wFilename = hsStringToWString(filename);
     plStatusLog* ret = FindLog(wFilename, createIfNotFound);
@@ -287,7 +287,7 @@ plStatusLog *plStatusLogMgr::FindLog( const char *filename, hsBool createIfNotFo
     return ret;
 }
 
-plStatusLog *plStatusLogMgr::FindLog( const wchar_t *filename, hsBool createIfNotFound )
+plStatusLog *plStatusLogMgr::FindLog( const wchar_t *filename, bool createIfNotFound )
 {
     plStatusLog *log = fDisplays;
 

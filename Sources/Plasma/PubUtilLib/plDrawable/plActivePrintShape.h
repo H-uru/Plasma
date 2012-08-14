@@ -55,7 +55,7 @@ protected:
     plRippleShapeMsg*       fShapeMsg;
 
     plRippleShapeMsg*           ISetupShapeMsg();
-    hsBool                      INotify();
+    bool                        INotify();
 
 public:
     plActivePrintShape();
@@ -67,7 +67,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // Export construction
     void        AddDecalKey(const plKey& k);

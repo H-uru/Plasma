@@ -80,7 +80,7 @@ void plQuatChannel::Value(hsQuat &quat, double time)
 }
 
 // CANCOMBINE
-hsBool plQuatChannel::CanCombine(plAGChannel *channelA)
+bool plQuatChannel::CanCombine(plAGChannel *channelA)
 {
     return false;
     if(plPointChannel::ConvertNoRef(channelA))
@@ -186,7 +186,7 @@ plQuatTimeScale::~plQuatTimeScale()
 {
 }
 
-hsBool plQuatTimeScale::IsStoppedAt(double time)
+bool plQuatTimeScale::IsStoppedAt(double time)
 {
     return fTimeSource->IsStoppedAt(time);
 }
@@ -244,7 +244,7 @@ plQuatBlend::~plQuatBlend()
     fChannelBias = nil;
 }
 
-hsBool plQuatBlend::IsStoppedAt(double time)
+bool plQuatBlend::IsStoppedAt(double time)
 {
     float blend = fChannelBias->Value(time);
     if (blend == 0)

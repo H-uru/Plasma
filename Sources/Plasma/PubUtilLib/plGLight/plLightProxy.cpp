@@ -57,7 +57,7 @@ plLightProxy::~plLightProxy()
 {
 }
 
-hsBool plLightProxy::Init(plLightInfo* liInfo)
+bool plLightProxy::Init(plLightInfo* liInfo)
 {
     plProxyGen::Init(liInfo);
 

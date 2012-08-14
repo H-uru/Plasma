@@ -57,7 +57,7 @@ plCameraProxy::~plCameraProxy()
 {
 }
 
-hsBool plCameraProxy::Init(plVirtualCam1* aud)
+bool plCameraProxy::Init(plVirtualCam1* aud)
 {
     plProxyGen::Init(aud);
 

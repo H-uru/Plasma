@@ -76,7 +76,7 @@ void plPageOptimizer::IFindLoc()
     public:
         plLocation fLoc;
 
-        virtual hsBool EatPage(plRegistryPageNode* keyNode)
+        virtual bool EatPage(plRegistryPageNode* keyNode)
         {
             fLoc = keyNode->GetPageInfo().GetLocation();
             return true;
@@ -95,7 +95,7 @@ void plPageOptimizer::Optimize()
     // Get the location of the page we're optimizing
     IFindLoc();
 
-    hsBool loaded = true;
+    bool loaded = true;
 
     // Get the key for the scene node, we'll load it to force a load on all the objects
     plKey snKey = plKeyFinder::Instance().FindSceneNodeKey(fLoc);
@@ -111,7 +111,7 @@ void plPageOptimizer::Optimize()
         public:
             KeyVec& fKeys;
             plVecKeyCollector(KeyVec& keys) : fKeys(keys) {}
-            virtual hsBool EatKey(const plKey& key) { fKeys.push_back(key); return true; }
+            virtual bool EatKey(const plKey& key) { fKeys.push_back(key); return true; }
         };
         plVecKeyCollector keyIt(fAllKeys);
         fResMgr->IterateKeys(&keyIt);
@@ -238,7 +238,7 @@ void plPageOptimizer::IRewritePage()
         // some reason), put them at the end
         for (int i = 0; i < fAllKeys.size(); i++)
         {
-            hsBool found = (fLoadedKeys.find(fAllKeys[i]) != fLoadedKeys.end());
+            bool found = (fLoadedKeys.find(fAllKeys[i]) != fLoadedKeys.end());
             if (!found)
                 IWriteKeyData(&oldPage, &newPage, fAllKeys[i]);
         }

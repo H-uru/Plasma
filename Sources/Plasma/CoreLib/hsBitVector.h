@@ -69,21 +69,21 @@ public:
     hsBitVector& Clear(); // everyone clear, but no dealloc
     hsBitVector& Set(int upToBit=-1); // WARNING - see comments at function
 
-    int operator==(const hsBitVector& other) const; // unset (ie uninitialized) bits are clear, 
-    int operator!=(const hsBitVector& other) const { return !(*this == other); }
+    bool operator==(const hsBitVector& other) const; // unset (ie uninitialized) bits are clear, 
+    bool operator!=(const hsBitVector& other) const { return !(*this == other); }
     hsBitVector& operator=(const hsBitVector& other); // will wind up identical
 
-    hsBool ClearBit(uint32_t which) { return SetBit(which, 0); } // returns previous state
-    hsBool SetBit(uint32_t which, hsBool on = true); // returns previous state
-    hsBool IsBitSet(uint32_t which) const; // returns current state
-    hsBool ToggleBit(uint32_t which); // returns previous state
+    bool ClearBit(uint32_t which) { return SetBit(which, 0); } // returns previous state
+    bool SetBit(uint32_t which, bool on = true); // returns previous state
+    bool IsBitSet(uint32_t which) const; // returns current state
+    bool ToggleBit(uint32_t which); // returns previous state
     hsBitVector& RemoveBit(uint32_t which); // removes bit, sliding higher bits down to fill the gap.
 
     friend inline int Overlap(const hsBitVector& lhs, const hsBitVector& rhs) { return lhs.Overlap(rhs); }
-    hsBool Overlap(const hsBitVector& other) const;
-    hsBool Empty() const;
+    bool Overlap(const hsBitVector& other) const;
+    bool Empty() const;
 
-    hsBool operator[](uint32_t which) const { return IsBitSet(which); }
+    bool operator[](uint32_t which) const { return IsBitSet(which); }
 
     friend inline hsBitVector operator&(const hsBitVector& lhs, const hsBitVector& rhs); // See Overlap()
     friend inline hsBitVector operator|(const hsBitVector& lhs, const hsBitVector& rhs);
@@ -127,7 +127,7 @@ inline hsBitVector::hsBitVector(const hsBitVector& other)
         fBitVectors = nil;
 }
 
-inline hsBool hsBitVector::Empty() const
+inline bool hsBitVector::Empty() const
 {
     int i;
     for( i = 0; i < fNumBitVectors; i++ )
@@ -138,7 +138,7 @@ inline hsBool hsBitVector::Empty() const
     return true;
 }
 
-inline hsBool hsBitVector::Overlap(const hsBitVector& other) const
+inline bool hsBitVector::Overlap(const hsBitVector& other) const
 {
     if( fNumBitVectors > other.fNumBitVectors )
         return other.Overlap(*this);
@@ -174,7 +174,7 @@ inline hsBitVector& hsBitVector::operator=(const hsBitVector& other)
     return *this;
 }
 
-inline int hsBitVector::operator==(const hsBitVector& other) const
+inline bool hsBitVector::operator==(const hsBitVector& other) const
 {
     if( fNumBitVectors < other.fNumBitVectors )
         return other.operator==(*this);
@@ -315,7 +315,7 @@ inline hsBitVector& hsBitVector::Set(int upToBit)
     return *this;
 }
 
-inline hsBool hsBitVector::IsBitSet(uint32_t which) const
+inline bool hsBitVector::IsBitSet(uint32_t which) const
 {
     uint32_t major = which >> 5;
     return 
@@ -323,13 +323,13 @@ inline hsBool hsBitVector::IsBitSet(uint32_t which) const
         && (0 != (fBitVectors[major] & 1 << (which & 0x1f)));
 }
 
-inline hsBool hsBitVector::SetBit(uint32_t which, hsBool on)
+inline bool hsBitVector::SetBit(uint32_t which, bool on)
 {
     uint32_t major = which >> 5;
     uint32_t minor = 1 << (which & 0x1f);
     if( major >= fNumBitVectors )
         IGrow(major+1);
-    hsBool ret = 0 != (fBitVectors[major] & minor);
+    bool ret = 0 != (fBitVectors[major] & minor);
     if( ret != on )
     {
         if( on )
@@ -341,13 +341,13 @@ inline hsBool hsBitVector::SetBit(uint32_t which, hsBool on)
     return ret;
 }
 
-inline hsBool hsBitVector::ToggleBit(uint32_t which)
+inline bool hsBitVector::ToggleBit(uint32_t which)
 {
     uint32_t major = which >> 5;
     uint32_t minor = 1 << (which & 0x1f);
     if( major >= fNumBitVectors )
         IGrow(major);
-    hsBool ret = 0 != (fBitVectors[major] & minor);
+    bool ret = 0 != (fBitVectors[major] & minor);
     if( ret )
         fBitVectors[major] &= ~minor;
     else

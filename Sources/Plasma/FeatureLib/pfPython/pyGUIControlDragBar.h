@@ -75,11 +75,11 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlDragBar(pyKey& gckey);
+    static bool IsGUIControlDragBar(pyKey& gckey);
 
     virtual void    Anchor( void );
     virtual void    Unanchor( void );
-    virtual hsBool  IsAnchored();
+    virtual bool    IsAnchored();
 
 };
 

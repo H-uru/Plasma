@@ -121,7 +121,7 @@ void hsMacFile::SetNameFromSpec()
     fPathAndName = hsStrcpy(temp);
 }
 
-hsBool hsMacFile::Create(OSType creator, OSType fileType, ScriptCode scriptCode)
+bool hsMacFile::Create(OSType creator, OSType fileType, ScriptCode scriptCode)
 {
     this->Close();
 
@@ -136,7 +136,7 @@ hsBool hsMacFile::Create(OSType creator, OSType fileType, ScriptCode scriptCode)
 
 #define kFileNotFound_Err       -43
 
-hsBool hsMacFile::OpenDataFork(Sint8_t perm, int16_t* refnum)
+bool hsMacFile::OpenDataFork(Sint8_t perm, int16_t* refnum)
 {
     this->Close();
 
@@ -172,7 +172,7 @@ void hsMacFile::SetPathAndName(const char pathAndName[])
     this->SetSpecFromName();
 }
 
-hsStream* hsMacFile::OpenStream(const char mode[], hsBool throwIfFailure)
+hsStream* hsMacFile::OpenStream(const char mode[], bool throwIfFailure)
 {
     hsThrowIfNilParam(mode);
 
@@ -213,7 +213,7 @@ struct hsFolderIterator_Data {
     OSType  fCreator;
     char    fCName[_MAX_PATH];
     int16_t   fCurrIndex;
-    hsBool  fValid;
+    bool    fValid;
 };
 
 hsFolderIterator::hsFolderIterator(const char path[])
@@ -328,7 +328,7 @@ void hsFolderIterator::Reset()
 #endif
 }
 
-hsBool hsFolderIterator::NextFile()
+bool hsFolderIterator::NextFile()
 {
     if (fData->fCurrIndex == 0)
         return false;
@@ -367,7 +367,7 @@ const char* hsFolderIterator::GetFileName() const
 
 ////////////////////////////////////////////////////////////////////////////
 
-hsBool hsFolderIterator::NextMacFile(OSType targetFileType, OSType targetCreator)
+bool hsFolderIterator::NextMacFile(OSType targetFileType, OSType targetCreator)
 {
     for (;;)
     {   if (this->NextFile() == false)
@@ -400,7 +400,7 @@ OSType hsFolderIterator::GetMacCreator() const
     return fData->fCreator;
 }
 
-hsBool  hsFolderIterator::IsDirectory( void ) const
+bool    hsFolderIterator::IsDirectory( void ) const
 {
     hsAssert( false, "hsFolderIterator::IsDirectory() not defined on this platform!!!" );
     return false;

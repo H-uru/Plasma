@@ -491,7 +491,7 @@ void pfBookData::LoadGUI()
         pfGameGUIMgr::GetInstance()->SetDialogToNotify(fGUIName.c_str(), GetKey());
 }
 
-hsBool pfBookData::MsgReceive(plMessage *pMsg)
+bool pfBookData::MsgReceive(plMessage *pMsg)
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef(pMsg);
     if(ref != nil)
@@ -541,11 +541,11 @@ hsBool pfBookData::MsgReceive(plMessage *pMsg)
         else if( fCurrentlyTurning )
         {
             if( callback->fUser & 0x04 )
-                IFillUncoveringPage( (hsBool)( callback->fUser & 0x01 ) ? true : false ); 
+                IFillUncoveringPage( (bool)( callback->fUser & 0x01 ) ? true : false ); 
             else if( callback->fUser & 0x02 )
-                StartTriggeredFlip( (hsBool)( callback->fUser & 0x01 ) ? true : false );
+                StartTriggeredFlip( (bool)( callback->fUser & 0x01 ) ? true : false );
             else
-                IFinishTriggeredFlip( (hsBool)( callback->fUser & 0x01 ) ? true : false );
+                IFinishTriggeredFlip( (bool)( callback->fUser & 0x01 ) ? true : false );
         }
         return true;
     }
@@ -808,7 +808,7 @@ void pfBookData::IHandleSFX(float currTime, WhichSide whichSide /*= kNoSides*/)
 // Yet another step in the page flip, to make SURE we're already showing the
 // turning page before we fill in the page behind it
 
-void pfBookData::IFillUncoveringPage(hsBool rightSide)
+void pfBookData::IFillUncoveringPage(bool rightSide)
 {
     // only show the turning page if the book is open
     if ( CurrentlyOpen() )
@@ -861,7 +861,7 @@ void pfBookData::IFillUncoveringPage(hsBool rightSide)
 //// ITriggerPageFlip ////////////////////////////////////////////////////////
 // Triggers the start of the page-flipping animation, as well as sets up the callback for when it's finished
 
-void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
+void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
 {
     // Hack here: since we don't have an official interface to select these directly
     // in MAX, we just use a GUI check box to grab them for us, even though we never
@@ -922,7 +922,7 @@ void pfBookData::ITriggerPageFlip(hsBool flipBackwards, hsBool immediate)
 // Finishes the start of the triggered page flip (once we're sure the 
 // animation is at the new frame)
 
-void pfBookData::StartTriggeredFlip(hsBool flipBackwards)
+void pfBookData::StartTriggeredFlip(bool flipBackwards)
 {
     if(flipBackwards)
     {
@@ -948,7 +948,7 @@ void pfBookData::KillPageFlip()
 //// IFinishTriggeredFlip ////////////////////////////////////////////////////
 // Finishes the triggered page flip, on callback
 
-void pfBookData::IFinishTriggeredFlip(hsBool wasBackwards)
+void pfBookData::IFinishTriggeredFlip(bool wasBackwards)
 {
     if (fCurrBook && fCurrBook->fAreEditing) // this is handled differently when we are editing
     {
@@ -1088,7 +1088,7 @@ void pfBookData::SetCurrSize(float w, float h)
 //// PlayBookCloseAnim //////////////////////////////////////////////////////
 //  Triggers our animation for closing or opening the book.
 
-void pfBookData::PlayBookCloseAnim(hsBool closeIt /*= true*/, hsBool immediate /*= false*/)
+void pfBookData::PlayBookCloseAnim(bool closeIt /*= true*/, bool immediate /*= false*/)
 {
     // Disable the book cover button if we're opening, enable otherwise
     fCoverButton->SetEnabled(closeIt);
@@ -1119,7 +1119,7 @@ void pfBookData::HitBeginningOfControlList(int32_t cursorPos)
         fCurrBook->PreviousPage();
 }
 
-void pfBookData::EnableEditGUI(hsBool enable/* =true */)
+void pfBookData::EnableEditGUI(bool enable/* =true */)
 {
     if (fEditable)
     {
@@ -1282,7 +1282,7 @@ pfJournalBook::~pfJournalBook()
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfJournalBook::MsgReceive( plMessage *pMsg )
+bool    pfJournalBook::MsgReceive( plMessage *pMsg )
 {
     return hsKeyedObject::MsgReceive( pMsg );
 }
@@ -1300,7 +1300,7 @@ void    pfJournalBook::SetGUI( const plString &guiName )
 //// Show ////////////////////////////////////////////////////////////////////
 // Shows the book, optionally starting open or closed
 
-void    pfJournalBook::Show( hsBool startOpened /*= false */)
+void    pfJournalBook::Show( bool startOpened /*= false */)
 {
     fBookGUIs[fCurBookGUI]->StartedOpen(startOpened);
     fBookGUIs[fCurBookGUI]->CurBook(this);
@@ -1358,7 +1358,7 @@ void    pfJournalBook::Show( hsBool startOpened /*= false */)
 //// IFinishShow /////////////////////////////////////////////////////////////
 // Finish showing the book, due to the animation being done seeking
 
-void    pfJournalBook::IFinishShow( hsBool startOpened )
+void    pfJournalBook::IFinishShow( bool startOpened )
 {
     fBookGUIs[fCurBookGUI]->Dialog()->Show();
 
@@ -1465,7 +1465,7 @@ void    pfJournalBook::CloseAndHide( void )
 //// ITriggerCloseWithNotify /////////////////////////////////////////////////
 // Close with a notify
 
-void    pfJournalBook::ITriggerCloseWithNotify( hsBool closeNotOpen, hsBool immediate )
+void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediate )
 {
     // Disable the book cover button if we're opening, enable otherwise
     fBookGUIs[fCurBookGUI]->CoverButton()->SetEnabled( closeNotOpen );
@@ -1638,7 +1638,7 @@ void    pfJournalBook::PreviousPage( void )
 //// IFindCurrVisibleLink ////////////////////////////////////////////////////
 // Find the current moused link, if any
 
-int32_t   pfJournalBook::IFindCurrVisibleLink( hsBool rightNotLeft, hsBool hoverNotUp )
+int32_t   pfJournalBook::IFindCurrVisibleLink( bool rightNotLeft, bool hoverNotUp )
 {
     pfGUIClickMapCtrl *ctrl = ( rightNotLeft ) ? fBookGUIs[fCurBookGUI]->RightPageMap() : fBookGUIs[fCurBookGUI]->LeftPageMap();
 
@@ -1716,7 +1716,7 @@ void    pfJournalBook::IHandleCheckClick( uint32_t idx, pfBookData::WhichSide wh
 {
     // Special processing for checkboxes--toggle our state, switch our opacity
     // and then send a notify about our new state
-    hsBool check = ( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kChecked ) ? false : true;
+    bool check = ( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kChecked ) ? false : true;
     if( check )
     {
         fVisibleLinks[ idx ]->fFlags |= pfEsHTMLChunk::kChecked;
@@ -1753,7 +1753,7 @@ void    pfJournalBook::GoToPage( uint32_t pageNumber )
 
 //// SetEditable /////////////////////////////////////////////////////////////
 
-void    pfJournalBook::SetEditable(hsBool editable)
+void    pfJournalBook::SetEditable(bool editable)
 {
     if (fBookGUIs[fCurBookGUI]->IsEditable()) // make sure this GUI supports editing
     {
@@ -1810,7 +1810,7 @@ static uint32_t   IConvertHex( const wchar_t *str )
 //// ICompileSource //////////////////////////////////////////////////////////
 // Compiles the given string of esHTML source into our compiled chunk list
 
-hsBool  pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &hintLoc )
+bool    pfJournalBook::ICompileSource( const wchar_t *source, const plLocation &hintLoc )
 {
     IFreeSource();
 
@@ -2398,7 +2398,7 @@ uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
     return pfEsHTMLChunk::kEmpty;
 }
 
-hsBool  pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option )
+bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option )
 {
     const wchar_t *c;
 
@@ -2555,7 +2555,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
 //  DTMap (by GUI tag ID). If no page is cached after this one, also updates
 //  the various cached info about page endings, etc.
 
-void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool suppressRendering /*= false*/ )
+void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool suppressRendering /*= false*/ )
 {
     if (fAreEditing)
         return; // we don't render if we are editing the book
@@ -2613,7 +2613,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, hsBool s
         const wchar_t *fontFace;
         hsColorRGBA fontColor;
         int16_t       fontSpacing;
-        hsBool      needSFX = false;
+        bool        needSFX = false;
 
         // Find and set initial font properties
         IFindFontProps( fPageStarts[ page ], fontFace, fontSize, fontFlags, fontColor, fontSpacing );
@@ -2891,7 +2891,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 //// IDrawMipmap /////////////////////////////////////////////////////////////
 
-void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, hsBool dontRender )
+void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, bool dontRender )
 {
     plMipmap *copy = new plMipmap();
     copy->CopyFrom(mip);
@@ -3015,7 +3015,7 @@ pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(uint8_t index)
     return nil;
 }
 
-plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, hsBool dontRender)
+plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender)
 {
     // see if it's already loaded
     loadedMovie *movie = IMovieAlreadyLoaded(chunk);
@@ -3493,7 +3493,7 @@ void    pfJournalBook::SetBookSize( float width, float height )
 //// ILoadAllImages //////////////////////////////////////////////////////////
 // Load (or unload) all the images for the book
 
-void    pfJournalBook::ILoadAllImages( hsBool unload )
+void    pfJournalBook::ILoadAllImages( bool unload )
 {
     uint32_t  i;
 

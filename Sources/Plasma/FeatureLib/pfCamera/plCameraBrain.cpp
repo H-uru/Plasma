@@ -72,7 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvBrainHuman.h"
 #include "plNetClient/plNetClientMgr.h"
 
-hsBool plCameraBrain1_FirstPerson::fDontFade = false;
+bool plCameraBrain1_FirstPerson::fDontFade = false;
 float plCameraBrain1::fFallAccel         = 20.0f;
 float plCameraBrain1::fFallDecel         = 5.0f;
 float plCameraBrain1::fFallVelocity      = 50.0f;
@@ -153,7 +153,7 @@ void plCameraBrain1::AddTarget()
 }
 
 // called when we are pushed on top of the camera stack (or re-activated by another popping off directly above)
-void plCameraBrain1::Push(hsBool recenter)
+void plCameraBrain1::Push(bool recenter)
 {
     if (fFlags.IsBitSet(kRailComponent))
     {
@@ -203,7 +203,7 @@ void plCameraBrain1::SetZoomParams(float max, float min, float rate)
 
 // periodic update - forced means we are forcing an update at a non-normal time to "prime" the camera 
 // into position before it renders the first time (hence the fake 10 second frame delta)
-void plCameraBrain1::Update(hsBool forced)
+void plCameraBrain1::Update(bool forced)
 {
     double secs = hsTimer::GetDelSysSeconds();
     if (forced)
@@ -259,7 +259,7 @@ void plCameraBrain1::IAnimateFOV(double time)
 // move the camera's origin point (not where it is looking) toward where it is going
 void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
 {
-    hsBool current = plVirtualCam1::Instance()->IsCurrentCamera(GetCamera());
+    bool current = plVirtualCam1::Instance()->IsCurrentCamera(GetCamera());
 
     if (fFlags.IsBitSet(kCutPos) || fFlags.IsBitSet(kNonPhys) || !current) 
     {
@@ -334,7 +334,7 @@ void plCameraBrain1::SetMovementFlag(int f)
 
 void plCameraBrain1::IPointTowardGoal(double elapsedTime)
 {
-    hsBool current = plVirtualCam1::Instance()->IsCurrentCamera(GetCamera());
+    bool current = plVirtualCam1::Instance()->IsCurrentCamera(GetCamera());
     
     if (fFlags.IsBitSet(kCutPOA) || fFlags.IsBitSet(kNonPhys) || !current)
     {
@@ -452,7 +452,7 @@ float plCameraBrain1::IClampVelocity(hsVector3* vel, float maxSpeed, double elap
     return distMoved;
 }
 
-hsBool plCameraBrain1::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
+bool plCameraBrain1::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
 {
     if (decelSpeed == 0)
         // no deceleration
@@ -535,7 +535,7 @@ void plCameraBrain1::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEFloat(fZoomMin);
     stream->WriteLEFloat(fZoomMax);
 }
-hsBool plCameraBrain1::MsgReceive(plMessage* msg)
+bool plCameraBrain1::MsgReceive(plMessage* msg)
 {
     plCameraMsg* pCamMsg = plCameraMsg::ConvertNoRef(msg);
     if (pCamMsg)
@@ -743,7 +743,7 @@ plCameraBrain1_Drive::~plCameraBrain1_Drive()
 }
 
 
-void plCameraBrain1_Drive::Push(hsBool recenter)
+void plCameraBrain1_Drive::Push(bool recenter)
 {
     plCameraBrain1::Push(recenter);
     plInputManager::SetRecenterMouse(true);
@@ -757,7 +757,7 @@ void plCameraBrain1_Drive::Pop()
 // 
 // Update Method
 //
-void plCameraBrain1_Drive::Update(hsBool forced)
+void plCameraBrain1_Drive::Update(bool forced)
 {
     hsVector3 neg_up = -1 * fUp; 
     fTargetMatrix.Make(&fGoal, &fPOAGoal, &neg_up);
@@ -882,7 +882,7 @@ void plCameraBrain1_Drive::Update(hsBool forced)
     fCamera->SetTargetPOA(fPOAGoal);
 }
 
-hsBool plCameraBrain1_Drive::MsgReceive(plMessage* msg)
+bool plCameraBrain1_Drive::MsgReceive(plMessage* msg)
 {
     plMouseEventMsg* pMouseMsg = plMouseEventMsg::ConvertNoRef(msg);
     if( pMouseMsg )
@@ -992,7 +992,7 @@ void plCameraBrain1_Avatar::Pop()
     plCameraBrain1::Pop();
 }
 
-void plCameraBrain1_Avatar::Push(hsBool recenter)
+void plCameraBrain1_Avatar::Push(bool recenter)
 {
     bObscured = false;
     fFallTimer = 0.0f;
@@ -1003,7 +1003,7 @@ void plCameraBrain1_Avatar::Push(hsBool recenter)
 // 
 // Update Method
 //
-void plCameraBrain1_Avatar::Update(hsBool forced)
+void plCameraBrain1_Avatar::Update(bool forced)
 {
     if (!GetSubject())
         return;
@@ -1139,7 +1139,7 @@ void plCameraBrain1_Avatar::IHandleObstacle()
     // swing around the 'obstacle'
 }
 
-void plCameraBrain1_Avatar::ISendFadeMsg(hsBool fade)
+void plCameraBrain1_Avatar::ISendFadeMsg(bool fade)
 {
     if (plVirtualCam1::IsCurrentCamera(GetCamera()))
     {
@@ -1158,7 +1158,7 @@ void plCameraBrain1_Avatar::ISendFadeMsg(hsBool fade)
     }
 }
 
-hsBool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
+bool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
 {
     plLOSHitMsg *pLOSMsg = plLOSHitMsg::ConvertNoRef( msg );
     if( pLOSMsg )
@@ -1295,7 +1295,7 @@ plCameraBrain1_FirstPerson::~plCameraBrain1_FirstPerson()
 {
 }
 
-hsBool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
+bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
 {
 
     plGenRefMsg* pRefMsg = plGenRefMsg::ConvertNoRef(msg);
@@ -1429,7 +1429,7 @@ void plCameraBrain1_FirstPerson::CalculatePosition()
 }   
 
 
-void plCameraBrain1_FirstPerson::Push(hsBool recenter)
+void plCameraBrain1_FirstPerson::Push(bool recenter)
 {
     if (!GetSubject())
         return; 
@@ -1490,7 +1490,7 @@ void plCameraBrain1_Fixed::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fTargetPoint);
 }
 
-void plCameraBrain1_Fixed::Update(hsBool forced)
+void plCameraBrain1_Fixed::Update(bool forced)
 {
     double secs = hsTimer::GetDelSysSeconds();
     if (forced)
@@ -1563,7 +1563,7 @@ void plCameraBrain1_Fixed::CalculatePosition()
 {
 }
 
-hsBool plCameraBrain1_Fixed::MsgReceive(plMessage* msg)
+bool plCameraBrain1_Fixed::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* pRefMsg = plGenRefMsg::ConvertNoRef(msg);
     if (pRefMsg)
@@ -1611,7 +1611,7 @@ plCameraBrain1_Circle::~plCameraBrain1_Circle()
 //
 //
 //
-void plCameraBrain1_Circle::Update(hsBool forced)
+void plCameraBrain1_Circle::Update(bool forced)
 {
     double secs = hsTimer::GetDelSysSeconds();
     if (forced)
@@ -1651,7 +1651,7 @@ void plCameraBrain1_Circle::Update(hsBool forced)
 //
 // keep us on the circle
 //
-hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, double secs, hsBool warp)
+hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, double secs, bool warp)
 {
 
     if (fCurRad != fGoalRad)
@@ -1659,7 +1659,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
         float dist = hsABS(fGoalRad-fCurRad);
     
         hsAssert(dist>=0 && dist<=kTwoPI, "illegal radian diff");
-        hsBool mustWrap = (dist > M_PI);  // go opposite direction for shortcut and wrap
+        bool mustWrap = (dist > M_PI);  // go opposite direction for shortcut and wrap
 
         // compute speed
         float speed; 
@@ -1676,7 +1676,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
             if (mustWrap)
             {
                 fCurRad-=speed;
-                hsBool didWrap=false;
+                bool didWrap=false;
                 while(fCurRad<0)
                 {
                     didWrap=true;
@@ -1697,7 +1697,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
             if (mustWrap)
             {
                 fCurRad+=speed;
-                hsBool didWrap=false;
+                bool didWrap=false;
                 while(fCurRad>kTwoPI)
                 {
                     didWrap=true;
@@ -1791,7 +1791,7 @@ void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-hsBool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
+bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* pRefMsg = plGenRefMsg::ConvertNoRef(msg);
     if (pRefMsg)

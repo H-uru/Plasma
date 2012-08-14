@@ -98,7 +98,7 @@ public:
     void MakeBook(std::wstring esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, plString guiName = _TEMP_CONVERT_FROM_LITERAL(""));
 
     // Interface functions per book
-    virtual void    Show( hsBool startOpened );
+    virtual void    Show( bool startOpened );
     virtual void    Hide( void );
     virtual void    Open( uint32_t startingPage );
     virtual void    Close( void );
@@ -121,7 +121,7 @@ public:
 
     virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation
     
-    virtual void    SetEditable( hsBool editable );
+    virtual void    SetEditable( bool editable );
     virtual std::string GetEditableText( void ) const;
     virtual void    SetEditableText( std::string text );
 };

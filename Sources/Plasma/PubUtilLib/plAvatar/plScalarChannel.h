@@ -81,8 +81,8 @@ public:
     virtual ~plScalarChannel();
 
     // AG PROTOCOL
-    virtual const float & Value(double time, hsBool peek = false);
-    virtual void Value(float &result, double time, hsBool peek = false);
+    virtual const float & Value(double time, bool peek = false);
+    virtual void Value(float &result, double time, bool peek = false);
 
     // combine it (allocates combine object)
     virtual plAGChannel * MakeCombine(plAGChannel * channelB);
@@ -140,8 +140,8 @@ public:
     plScalarTimeScale(plScalarChannel *channel, plScalarChannel *timeSource);
     virtual ~plScalarTimeScale();
 
-    virtual hsBool IsStoppedAt(double time);
-    virtual const float & Value(double time, hsBool peek = false);
+    virtual bool IsStoppedAt(double time);
+    virtual const float & Value(double time, bool peek = false);
     virtual plAGChannel * Detach(plAGChannel * channel);
 
     // PLASMA PROTOCOL
@@ -176,10 +176,10 @@ public:
     const plScalarChannel * GetChannelBias() const { return fChannelBias; }
     void SetChannelBias(plScalarChannel * channel) { fChannelBias = channel; }
 
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
 
     // AG PROTOCOL
-    virtual const float & Value(double time, hsBool peek = false);
+    virtual const float & Value(double time, bool peek = false);
     
     // remove the specified channel from our graph
     virtual plAGChannel * Detach(plAGChannel * channel);
@@ -205,8 +205,8 @@ public:
     virtual ~plScalarControllerChannel();
     
     // AG PROTOCOL
-    virtual const float & Value(double time, hsBool peek = false);
-    virtual const float & Value(double time, hsBool peek, plControllerCacheInfo *cache);
+    virtual const float & Value(double time, bool peek = false);
+    virtual const float & Value(double time, bool peek, plControllerCacheInfo *cache);
     
     virtual plAGChannel *MakeCacheChannel(plAnimTimeConvert *atc);
         
@@ -260,8 +260,8 @@ public:
     plATCChannel(plAnimTimeConvert *convert);
     virtual ~plATCChannel();
 
-    virtual hsBool IsStoppedAt(double time);
-    virtual const float & Value(double time, hsBool peek = false);
+    virtual bool IsStoppedAt(double time);
+    virtual const float & Value(double time, bool peek = false);
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plATCChannel );
@@ -283,8 +283,8 @@ public:
     plScalarSDLChannel(float length);
     virtual ~plScalarSDLChannel();
 
-    virtual hsBool IsStoppedAt(double time);
-    virtual const float & Value(double time, hsBool peek = false);
+    virtual bool IsStoppedAt(double time);
+    virtual const float & Value(double time, bool peek = false);
 
     void SetVar(plSimpleStateVariable *var) { fVar = var; }
 

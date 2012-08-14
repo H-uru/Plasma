@@ -60,7 +60,7 @@ public:
     plCameraProxy();
     virtual ~plCameraProxy();
 
-    hsBool  Init(plVirtualCam1* aud);
+    bool Init(plVirtualCam1* aud);
     plSceneNode* node;
 };
 

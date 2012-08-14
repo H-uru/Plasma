@@ -74,10 +74,10 @@ public:
 
     uint32_t GetFlags() { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
-    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil) {;}
+    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = nil) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) {;}
-    virtual hsBool MsgReceive(plMessage* msg) {return false;}
+    virtual bool MsgReceive(plMessage* msg) {return false;}
     virtual void Shutdown() {;}
 
 
@@ -87,15 +87,15 @@ class plKeyEventMsg;
 
 class plKeyboardDevice : public plInputDevice
 {
-    hsBool  fAltKeyDown;
-    hsBool  fShiftKeyDown;
-    hsBool  fCtrlKeyDown;
-    hsBool  fCapsLockKeyDown;
+    bool    fAltKeyDown;
+    bool    fShiftKeyDown;
+    bool    fCtrlKeyDown;
+    bool    fCapsLockKeyDown;
     int     fControlMode;
-    hsBool  fCapsLockLock;
+    bool    fCapsLockLock;
 
     static bool     fKeyboardState[256]; // virtual key code is the index, bool is whether it is down or not
-    static hsBool   fIgnoreCapsLock; // set if we want it to ignore this key when translating characters (i.e. for chatting)
+    static bool     fIgnoreCapsLock; // set if we want it to ignore this key when translating characters (i.e. for chatting)
 
     static plKeyboardDevice* fInstance;
     void InitKeyboardMaps();
@@ -116,13 +116,13 @@ public:
     void SetControlMode(int i) { fControlMode = i; }
 
     const char* GetInputName() { return "keyboard"; }
-    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, hsBool bKeyRepeat, wchar_t c = nil);
+    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = nil);
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
-    virtual hsBool IsCapsLockKeyOn();
+    virtual bool IsCapsLockKeyOn();
     virtual void Shutdown();
 
-    static hsBool   IgnoreCapsLock() { return fIgnoreCapsLock; }
-    static void     IgnoreCapsLock(hsBool ignore) { fIgnoreCapsLock = ignore; }
+    static bool     IgnoreCapsLock() { return fIgnoreCapsLock; }
+    static void     IgnoreCapsLock(bool ignore) { fIgnoreCapsLock = ignore; }
     
     static plKeyboardDevice* GetInstance() { return fInstance; }
 };
@@ -162,7 +162,7 @@ public:
     const char* GetInputName() { return "mouse"; }
     void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
 
-    hsBool  HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
+    bool    HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
     void    SetControlFlag(int f) 
     { 
         fControlFlags.SetBit(f); 
@@ -176,14 +176,14 @@ public:
     float GetCursorOpacity() { return fOpacity; }
     void SetDisplayResolution(float Width, float Height);
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     static plMouseDevice* Instance() { return plMouseDevice::fInstance; }
     
     static void SetMsgAlways(bool b) { plMouseDevice::bMsgAlways = b; }
-    static void ShowCursor(hsBool override = false);
+    static void ShowCursor(bool override = false);
     static void NewCursor(char* cursor);
-    static void HideCursor(hsBool override = false);
+    static void HideCursor(bool override = false);
     static bool GetHideCursor() { return plMouseDevice::bCursorHidden; }
     static void SetCursorOpacity( float opacity = 1.f );
     static bool GetInverted() { return plMouseDevice::bInverted; }

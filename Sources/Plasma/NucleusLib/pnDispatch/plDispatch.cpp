@@ -85,7 +85,7 @@ public:
 };
 
 int32_t                   plDispatch::fNumBufferReq = 0;
-hsBool                  plDispatch::fMsgActive = false;
+bool                    plDispatch::fMsgActive = false;
 plMsgWrap*              plDispatch::fMsgCurrent = nil;
 plMsgWrap*              plDispatch::fMsgHead = nil;
 plMsgWrap*              plDispatch::fMsgTail = nil;
@@ -166,7 +166,7 @@ plMsgWrap* plDispatch::IDequeue(plMsgWrap** head, plMsgWrap** tail)
     return retVal;
 }
 
-hsBool plDispatch::ISortToDeferred(plMessage* msg)
+bool plDispatch::ISortToDeferred(plMessage* msg)
 {
     plMsgWrap* msgWrap = new plMsgWrap(msg);
     if( !fFutureMsgQueue )
@@ -213,7 +213,7 @@ void plDispatch::ICheckDeferred(double secs)
         plgDispatch::Dispatch()->UnRegisterForExactType(plTimeMsg::Index(), IGetOwnerKey());
 }
 
-hsBool plDispatch::IListeningForExactType(uint16_t hClass)
+bool plDispatch::IListeningForExactType(uint16_t hClass)
 {
     if( (hClass == plTimeMsg::Index()) && fFutureMsgQueue )
         return true;
@@ -221,7 +221,7 @@ hsBool plDispatch::IListeningForExactType(uint16_t hClass)
     return false;
 }
 
-void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, hsBool async)
+void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 {
     fMsgCurrentMutex.Lock();
 
@@ -242,7 +242,7 @@ void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, hsBool async)
 }
 
 // On starts deferring msg delivery until buffering is set to off again.
-hsBool plDispatch::SetMsgBuffering(hsBool on)
+bool plDispatch::SetMsgBuffering(bool on)
 {
     fMsgCurrentMutex.Lock();
     if( on )
@@ -292,7 +292,7 @@ void plDispatch::IMsgDispatch()
         fMsgCurrentMutex.Unlock();
 
         plMessage* msg = fMsgCurrent->fMsg;
-        hsBool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
+        bool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
 
 #ifdef HS_DEBUGGING
         int watchIdx = fMsgWatch.Find(msg);
@@ -412,7 +412,7 @@ void plDispatch::IMsgDispatch()
 //
 // returns true if msg has been consumed and deleted
 //
-hsBool plDispatch::IMsgNetPropagate(plMessage* msg)
+bool plDispatch::IMsgNetPropagate(plMessage* msg)
 {
     fMsgCurrentMutex.Lock();
 
@@ -452,7 +452,7 @@ hsBool plDispatch::IMsgNetPropagate(plMessage* msg)
     return false;
 }
 
-hsBool plDispatch::MsgSend(plMessage* msg, hsBool async)
+bool plDispatch::MsgSend(plMessage* msg, bool async)
 {
     if( IMsgNetPropagate(msg) )
         return true;
@@ -498,7 +498,7 @@ hsBool plDispatch::MsgSend(plMessage* msg, hsBool async)
 
     return true;
 }
-void plDispatch::MsgQueueOnOff(hsBool sw)
+void plDispatch::MsgQueueOnOff(bool sw)
 {
     fQueuedMsgOn = sw;
 }
@@ -574,7 +574,7 @@ void plDispatch::UnRegisterForType(uint16_t hClass, const plKey& receiver)
 
 }
 
-hsBool plDispatch::IUnRegisterForExactType(int idx, const plKey& receiver)
+bool plDispatch::IUnRegisterForExactType(int idx, const plKey& receiver)
 {
     hsAssert(idx < fRegisteredExactTypes.GetCount(), "Out of range should be filtered before call to internal");
     plTypeFilter* filt = fRegisteredExactTypes[idx];

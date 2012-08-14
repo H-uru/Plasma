@@ -67,9 +67,9 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
-    void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, hsBool addToFront, int LOD, hsBool partialSort);
+    void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, bool addToFront, int LOD, bool partialSort);
     void RemoveSharedMesh(plSharedMesh *mesh);
 
     virtual void ReleaseData();

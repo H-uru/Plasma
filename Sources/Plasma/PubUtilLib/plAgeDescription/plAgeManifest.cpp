@@ -151,7 +151,7 @@ protected:
 
     virtual const char* GetSectionName() const { return "version"; }
 
-    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
+    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
     {
         if (stricmp(token, "format") == 0)
             fDest->SetFormatVersion(atoi(tokenizer->next()));
@@ -185,7 +185,7 @@ protected:
         return new plManifestFile(name, "", sum, size, zippedSize, flags);
     }
 
-    virtual hsBool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
+    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
     {
         plManifestFile* file = IReadManifestFile(token, tokenizer, userData, false);
         AddFile(file);

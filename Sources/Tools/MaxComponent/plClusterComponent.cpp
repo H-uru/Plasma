@@ -183,7 +183,7 @@ ParamBlockDesc2 gClusterBk
 );
 
 
-hsBool plClusterComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClusterComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fSetupDone = false;
     fExported = false;
@@ -221,7 +221,7 @@ static int CompTemplNodes(const void *elem1, const void *elem2)
     return 1;
 }
 
-hsBool plClusterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClusterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !fSetupDone )
     {
@@ -329,7 +329,7 @@ hsBool plClusterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plClusterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg) 
+bool plClusterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg) 
 { 
     if( !fExported && (fCompPB->GetInt(kAutoInstance)) )
     {

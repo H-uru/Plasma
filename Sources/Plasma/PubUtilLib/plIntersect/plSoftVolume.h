@@ -89,7 +89,7 @@ public:
     GETINTERFACE_ANY( plSoftVolume, plRegionBase );
 
     virtual float GetStrength(const hsPoint3& pos) const;
-    virtual hsBool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
+    virtual bool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
@@ -97,10 +97,10 @@ public:
 
     virtual float    GetListenerStrength() const;
     virtual void        UpdateListenerPosition(const hsPoint3& p);
-    virtual void        SetCheckListener(hsBool on=true);
-    virtual hsBool      GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
+    virtual void        SetCheckListener(bool on=true);
+    virtual bool        GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

@@ -149,7 +149,7 @@ pySceneObject::~pySceneObject()
 }
 
 
-hsBool pySceneObject::operator==(const pySceneObject &sobj) const
+bool pySceneObject::operator==(const pySceneObject &sobj) const
 {
     plKey ours = ((pySceneObject*)this)->getObjKey();
     plKey theirs = ((pySceneObject&)sobj).getObjKey();
@@ -207,17 +207,7 @@ void pySceneObject::setSenderKey(plKey key)
     ISetAllSenderKeys();
 }
 
-void pySceneObject::setPyMod(pyKey& pymod)
-{
-    fPyMod = pymod.getKey();
-}
-
-void pySceneObject::setPyMod(plKey& key)
-{
-    fPyMod = key;
-}
-
-void pySceneObject::SetNetForce(hsBool state)
+void pySceneObject::SetNetForce(bool state)
 {
     // set our flag
     fNetForce = state;
@@ -264,7 +254,7 @@ PyObject* pySceneObject::findObj(const plString& name)
 //
 // deteremine if this object (or the first object in the list)
 // ...is locally owned
-hsBool pySceneObject::IsLocallyOwned()
+bool pySceneObject::IsLocallyOwned()
 {
     // make sure that there are sceneobjects
     if ( fSceneObjects.Count() > 0 )
@@ -536,7 +526,7 @@ PyObject* pySceneObject::GetRightVector()
 //
 // deteremine if this object (or any of the object attached)
 // ...is an avatar, of any type
-hsBool pySceneObject::IsAvatar()
+bool pySceneObject::IsAvatar()
 {
     // loop through all the sceneobject... looking for avatar modifiers
     int j;
@@ -602,7 +592,7 @@ PyObject* pySceneObject::GetAvatarVelocity()
 //
 // deteremine if this object (or the first object in the list)
 // ...is a human avatar
-hsBool pySceneObject::IsHumanAvatar()
+bool pySceneObject::IsHumanAvatar()
 {
     // loop through all the sceneobject... looking for avatar modifiers
     int j;
@@ -636,7 +626,7 @@ hsBool pySceneObject::IsHumanAvatar()
 }
 
 // switch to / from this object (assuming that it is actually a camera)
-void pySceneObject::PushCutsceneCamera(hsBool cut, pyKey& avKey)
+void pySceneObject::PushCutsceneCamera(bool cut, pyKey& avKey)
 {
     if ( fSceneObjects.Count() > 0 )
     {

@@ -79,11 +79,11 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg);
+    bool SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg);
 };
 
 CLASS_DESC(plMorphLayComp, gMorphLayCompDesc, "Morph Layer",  "MorphLay", COMP_TYPE_AVATAR, MORPHLAY_COMP_CID)
@@ -109,7 +109,7 @@ plMorphLayComp::plMorphLayComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plMorphLayComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMorphLayComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const int num = fCompPB->Count(kDeltas);
     int i;
@@ -129,17 +129,17 @@ hsBool plMorphLayComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plMorphLayComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMorphLayComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plMorphLayComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMorphLayComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg)
+bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg)
 {
     const int num = fCompPB->Count(kDeltas);
     int i;
@@ -211,10 +211,10 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -275,7 +275,7 @@ ParamBlockDesc2 gMorphSeqBk
     end
 );
 
-hsBool plMorphSeqComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMorphSeqComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plMaxNode* baseNode = (plMaxNode*)fCompPB->GetINode(kBaseNode);
     if( !baseNode )
@@ -291,12 +291,12 @@ hsBool plMorphSeqComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plMorphSeqComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plMorphSeqComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
+bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
     const char* dbgNodeName = node->GetName();
 
@@ -346,7 +346,7 @@ hsBool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true; 
 }
 
-hsBool plMorphSeqComp::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plMorphSeqComp::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

@@ -60,7 +60,7 @@ plInitSectionTokenReader::plInitSectionTokenReader( const char *separators ) : f
 {
 }
 
-hsBool      plInitSectionTokenReader::ParseLine( const char *line, uint32_t userData )
+bool        plInitSectionTokenReader::ParseLine( const char *line, uint32_t userData )
 {
     hsStringTokenizer izer( line, fSeparators );
 
@@ -121,7 +121,7 @@ plInitFileReader::~plInitFileReader()
     delete [] fCurrLine;
 }
 
-hsBool  plInitFileReader::Open( const char *fileName )
+bool    plInitFileReader::Open( const char *fileName )
 {
     if( fStream != nil )
     {
@@ -139,7 +139,7 @@ hsBool  plInitFileReader::Open( const char *fileName )
     return true;
 }
 
-hsBool  plInitFileReader::Open( hsStream *stream )
+bool    plInitFileReader::Open( hsStream *stream )
 {
     if( fStream != nil )
     {
@@ -151,7 +151,7 @@ hsBool  plInitFileReader::Open( hsStream *stream )
     return true;
 }
 
-hsBool  plInitFileReader::Parse( uint32_t userData )
+bool    plInitFileReader::Parse( uint32_t userData )
 {
     hsAssert( fStream != nil, "Nil stream in initFileReader::Parse(); file not yet open?" );
 

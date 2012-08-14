@@ -866,7 +866,7 @@ uint32_t UserPropMgr::QuickPair::GetHash() const
     return h;
 }
 
-hsBool UserPropMgr::QuickPair::GetVal(TSTR& value)
+bool UserPropMgr::QuickPair::GetVal(TSTR& value)
     {
     if (fKey)
         {

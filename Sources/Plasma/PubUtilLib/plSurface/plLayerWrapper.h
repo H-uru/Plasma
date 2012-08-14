@@ -65,7 +65,7 @@ public:
         return dirty;
     }
 
-    virtual hsBool          MsgReceive(plMessage* msg) { return plLayerInterface::MsgReceive(msg); }
+    virtual bool            MsgReceive(plMessage* msg) { return plLayerInterface::MsgReceive(msg); }
 };
 
 #endif // plLayerWrapper_inc

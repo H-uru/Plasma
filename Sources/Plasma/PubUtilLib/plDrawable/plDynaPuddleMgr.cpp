@@ -82,7 +82,7 @@ void plDynaPuddleMgr::Read(hsStream* stream, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
 }
 
-hsBool plDynaPuddleMgr::MsgReceive(plMessage* msg)
+bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
 {
     plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
     if( footMsg )

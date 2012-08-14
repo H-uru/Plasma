@@ -53,7 +53,7 @@ protected:
     hsVector3                   fInitUVW;
     hsVector3                   fFinalUVW;
 
-    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
 
     virtual int         INewDecal();
 public:
@@ -66,7 +66,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     void SetUVWAnim(const hsVector3& init, const hsVector3& final) { fInitUVW = init; fFinalUVW = final; }
     const hsVector3& GetInitUVW() const { return fInitUVW; }

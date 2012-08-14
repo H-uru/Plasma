@@ -166,12 +166,12 @@ plClimbTriggerComponent::plClimbTriggerComponent()
 extern const plArmatureMod * FindArmatureMod(const plSceneObject *obj);
 
 // CONVERT
-hsBool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plClimbMsg::Command enterCommand;       // when entering the region
     plClimbMsg::Command exitCommand;        // run this command when exiting the region
-    hsBool enterStatus = false;
-    hsBool exitStatus = false;
+    bool enterStatus = false;
+    bool exitStatus = false;
     plClimbMsg::Direction direction;        // direction is assumed the same for both enter and exit commands
                                             // i.e. enable up, disable up
 
@@ -260,7 +260,7 @@ hsBool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plClimbTriggerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClimbTriggerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetForceLocal(true);
     node->SetDrawable(false);
@@ -372,8 +372,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -396,7 +396,7 @@ plClimbBlockerComponent::plClimbBlockerComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plClimbBlockerComponent::SetupProperties(plMaxNode *node,  plErrorMsg *errMsg)
+bool plClimbBlockerComponent::SetupProperties(plMaxNode *node,  plErrorMsg *errMsg)
 {
     node->SetDrawable(false);
 
@@ -412,7 +412,7 @@ hsBool plClimbBlockerComponent::SetupProperties(plMaxNode *node,  plErrorMsg *er
     return true;
 }
 
-hsBool plClimbBlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClimbBlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

@@ -79,7 +79,7 @@ public:
     const char*         GetName()                   { return fName; }
 
 private:
-    static hsBool       IProgressCallback(float percent);
+    static bool         IProgressCallback(float percent);
     static DWORD WINAPI IProgressDummyFunc(LPVOID arg); 
 
     char                fName[128];

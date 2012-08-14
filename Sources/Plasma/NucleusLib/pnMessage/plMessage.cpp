@@ -100,14 +100,14 @@ plMessage& plMessage::AddReceivers(const hsTArray<plKey>& rList)
     return *this;
 }
 
-hsBool plMessage::Send(const plKey r, hsBool async)
+bool plMessage::Send(const plKey r, bool async)
 {
     if( r )
         AddReceiver(r);
     return plgDispatch::MsgSend(this,async);
 }
 
-hsBool plMessage::SendAndKeep(const plKey r, hsBool async)
+bool plMessage::SendAndKeep(const plKey r, bool async)
 {
     Ref();
     return Send(r, async);
@@ -367,11 +367,10 @@ int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const
 // STATIC
 int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
 {
-    plMessage::plStrLen strlen;
-    strlen = (str)?hsStrlen(str):0;
-    stream->WriteLE(strlen);
+    plMessage::plStrLen len = (str) ? strlen(str) : 0;
+    stream->WriteLE(len);
     if (strlen)
-        stream->Write(strlen,str);
+        stream->Write(len,str);
     return stream->GetPosition();
 }
 

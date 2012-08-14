@@ -61,7 +61,7 @@ public:
     plOccluderProxy();
     virtual ~plOccluderProxy();
 
-    hsBool  Init(plOccluder* occluder);
+    bool    Init(plOccluder* occluder);
 };
 
 #endif // plOccluderProxy_inc

@@ -142,7 +142,7 @@ void plSoftVolumeComplex::Write(hsStream* s, hsResMgr* mgr)
         mgr->WriteKey(s, fSubVolumes[i]);
 }
 
-hsBool plSoftVolumeComplex::MsgReceive(plMessage* msg)
+bool plSoftVolumeComplex::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
     if( refMsg )

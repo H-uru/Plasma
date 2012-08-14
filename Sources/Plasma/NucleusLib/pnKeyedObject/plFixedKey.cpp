@@ -66,7 +66,7 @@ struct plKeySeed
     uint16_t    fType;
     plString    fObj;
    
-    hsBool Match( plKeySeed *p ) 
+    bool Match( plKeySeed *p ) 
     {  
         if( ( fType == p->fType ) && p->fObj.Compare( fObj, plString::kCaseInsensitive ) == 0 )
         {

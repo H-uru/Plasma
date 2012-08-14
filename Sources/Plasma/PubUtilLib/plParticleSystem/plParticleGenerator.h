@@ -56,7 +56,7 @@ class plParticleGenerator : public plCreatable
 
 public:
     // returns false if it's done generating particles and is safe to delete.
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0) = 0;
+    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0) = 0;
 
     virtual void UpdateParam(uint32_t paramID, float paramValue) = 0;
 
@@ -65,7 +65,7 @@ public:
 
     static void ComputeDirection(float pitch, float yaw, hsVector3 &direction);
     static void ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir);
-    static inline float GetRandomVar() { return 2.0f * (float)hsRand() / RAND_MAX - 1; } // returns a num between +/- 1.0
+    static inline float GetRandomVar() { return 2.0f * rand() / RAND_MAX - 1; } // returns a num between +/- 1.0
 };
 
 class plSimpleParticleGenerator : public plParticleGenerator
@@ -82,7 +82,7 @@ public:
     CLASSNAME_REGISTER( plSimpleParticleGenerator );
     GETINTERFACE_ANY( plSimpleParticleGenerator, plParticleGenerator);
     
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced);
+    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced);
     virtual void UpdateParam(uint32_t paramID, float paramValue);
 
     virtual void Read(hsStream* s, hsResMgr *mgr); 
@@ -131,7 +131,7 @@ public:
     CLASSNAME_REGISTER( plOneTimeParticleGenerator );
     GETINTERFACE_ANY( plOneTimeParticleGenerator, plParticleGenerator);
 
-    virtual hsBool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0);
+    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0);
     virtual void UpdateParam(uint32_t paramID, float paramValue) {}
 
     virtual void Read(hsStream* s, hsResMgr *mgr); 

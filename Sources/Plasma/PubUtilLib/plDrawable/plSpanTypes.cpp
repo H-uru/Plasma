@@ -144,7 +144,7 @@ void plSpan::AddAuxSpan(plAuxSpan* aux)
 // PermaLights are permanently assigned to a set of spans. There's no checking
 // for in range or anything, they are just on.
 
-void plSpan::AddPermaLight(plLightInfo* li, hsBool proj)
+void plSpan::AddPermaLight(plLightInfo* li, bool proj)
 {
     if( li )
     {
@@ -157,7 +157,7 @@ void plSpan::AddPermaLight(plLightInfo* li, hsBool proj)
     }
 }
 
-void plSpan::RemovePermaLight(plLightInfo* li, hsBool proj)
+void plSpan::RemovePermaLight(plLightInfo* li, bool proj)
 {
     hsTArray<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
     int idx = lights.Find(li);
@@ -172,7 +172,7 @@ void plSpan::RemovePermaLight(plLightInfo* li, hsBool proj)
 //// AddLight ////////////////////////////////////////////////////////////////
 //  Smart function for maintaining the sorted list of lights for a plSpan.
 
-void    plSpan::AddLight( plLightInfo *li, float strength, float scale, hsBool proj ) const
+void    plSpan::AddLight( plLightInfo *li, float strength, float scale, bool proj ) const
 {
     hsTArray<plLightInfo*>& lights = proj ? fProjectors : fLights;
     hsTArray<float>& strengths = proj ? fProjStrengths : fLightStrengths;
@@ -224,7 +224,7 @@ void    plSpan::ClearLights() const
 
 //// CanMergeInto ////////////////////////////////////////////////////////////
 
-hsBool  plSpan::CanMergeInto( plSpan *other )
+bool    plSpan::CanMergeInto( plSpan *other )
 {
     if( fTypeMask ^ other->fTypeMask )
     {
@@ -375,7 +375,7 @@ void    plVertexSpan::Write( hsStream* stream )
     stream->WriteLE32( fVLength );
 }
 
-hsBool  plVertexSpan::CanMergeInto( plSpan *other )
+bool    plVertexSpan::CanMergeInto( plSpan *other )
 {
     if( !plSpan::CanMergeInto( other ) )
         return false;
@@ -470,7 +470,7 @@ void    plIcicle::Destroy( void )
 
 //// CanMergeInto ////////////////////////////////////////////////////////////
 
-hsBool  plIcicle::CanMergeInto( plSpan *other )
+bool    plIcicle::CanMergeInto( plSpan *other )
 {
     if( !plVertexSpan::CanMergeInto( other ) )
         return false;
@@ -530,7 +530,7 @@ plParticleSpan::plParticleSpan() : plIcicle()
 
 //// CanMergeInto ////////////////////////////////////////////////////////////
 
-hsBool  plParticleSpan::CanMergeInto( plSpan *other )
+bool    plParticleSpan::CanMergeInto( plSpan *other )
 {
     return plIcicle::CanMergeInto( other );
 }

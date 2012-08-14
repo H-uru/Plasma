@@ -111,7 +111,7 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, in
     if (!msg)
         return;
 
-    hsBool found=fIncludeTypes.IsBitSet(msg->ClassIndex());
+    bool found=fIncludeTypes.IsBitSet(msg->ClassIndex());
     if (found && !hsCheckBits(fFlags, plDispatchLogBase::kInclude))
         // it's an exclude list and we found it
         return;

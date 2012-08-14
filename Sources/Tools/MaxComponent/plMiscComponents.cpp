@@ -127,7 +127,7 @@ class plInterestingComponent : public plComponent
 {
 public:
     plInterestingComponent();
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -171,7 +171,7 @@ plInterestingComponent::plInterestingComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plInterestingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plInterestingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
     plInterestingModifier* pMod = new plInterestingModifier;
@@ -380,7 +380,7 @@ plPageInfoComponent::plPageInfoComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     // Another component already created a location, don't override it
     if (pNode->GetRoomKey())
@@ -523,7 +523,7 @@ hsBool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMs
     return true;
 }
 
-hsBool plPageInfoComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPageInfoComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // Make sure we clear this flag so that the next time around it's clear
     fCompPB->SetValue( kRefVolatile_PageInfoUpdated, 0, (int)false );
@@ -532,7 +532,7 @@ hsBool plPageInfoComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plPageInfoComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPageInfoComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plKey snKey = node->GetRoomKey();
     plSceneObject *so = node->GetSceneObject();
@@ -877,7 +877,7 @@ class plRoomComponent : public plComponent
 public:
     plRoomComponent();
 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary.
@@ -924,7 +924,7 @@ plRoomComponent::plRoomComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plRoomComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plRoomComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -943,8 +943,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -1003,7 +1003,7 @@ plViewFacingComponent::plViewFacingComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-static hsBool NodeHasTMAnimation(plMaxNode* node)
+static bool NodeHasTMAnimation(plMaxNode* node)
 {
     if( node->GetUnBounded() )
         return true;
@@ -1018,7 +1018,7 @@ static hsBool NodeHasTMAnimation(plMaxNode* node)
     return node->GetTMController() && node->GetTMController()->IsAnimated();
 }
 
-static hsBool FindTMAnimatedChildrenRecur(plMaxNode* node)
+static bool FindTMAnimatedChildrenRecur(plMaxNode* node)
 {
     if( !node->CanConvert() )
         return false;
@@ -1073,7 +1073,7 @@ static void FindRecursiveBounds(plMaxNode* node, hsBounds3Ext& bnd)
     return;
 }
 
-static hsBool FindMaxBounds(plMaxNode* node, hsBounds3Ext& bnd)
+static bool FindMaxBounds(plMaxNode* node, hsBounds3Ext& bnd)
 {
     bnd.MakeEmpty();
 
@@ -1106,7 +1106,7 @@ static hsBool FindMaxBounds(plMaxNode* node, hsBounds3Ext& bnd)
     return true;
 }
 
-hsBool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
     plViewFaceModifier* pMod = new plViewFaceModifier;
@@ -1150,7 +1150,7 @@ hsBool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plViewFacingComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plViewFacingComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetMovable(true);
@@ -1176,8 +1176,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -1199,7 +1199,7 @@ plSpriteComponent::plSpriteComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSpriteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSpriteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plViewFaceModifier* pMod = new plViewFaceModifier;
 
@@ -1213,7 +1213,7 @@ hsBool plSpriteComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plSpriteComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plSpriteComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetMovable(true);
@@ -1271,9 +1271,9 @@ class plOcclusionComponent : public plComponent
 public:
     plOcclusionComponent();
 
-    virtual hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -1300,19 +1300,19 @@ plOcclusionComponent::plOcclusionComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plOcclusionComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plOcclusionComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plOcclusionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plOcclusionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    hsBool twoSided = fCompPB->GetInt(kOccTwoSidedChekbox);
-    hsBool isHole = false;
+    bool twoSided = fCompPB->GetInt(kOccTwoSidedChekbox);
+    bool isHole = false;
     return node->ConvertToOccluder(pErrMsg, twoSided, isHole);
 }
 
-hsBool plOcclusionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plOcclusionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetDrawable(false);
     return true;
@@ -1327,7 +1327,7 @@ hsBool plOcclusionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErr
 //Class that accesses the paramblock below.
 class plCamViewComponent : public plComponent
 {
-    hsBool          fBogus;
+    bool            fBogus;
 
     void            IMakeEveryoneOpaqueRecur(plMaxNode* node);
     void            IMakeEveryoneOpaque(plMaxNode* node);
@@ -1336,10 +1336,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -1366,7 +1366,7 @@ plCamViewComponent::plCamViewComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     TimeValue timeVal(0);
 
@@ -1428,7 +1428,7 @@ hsBool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plCamViewComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plCamViewComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     TimeValue timeVal(0);
     Object* obj = node->EvalWorldState(timeVal).obj;
@@ -1475,7 +1475,7 @@ void plCamViewComponent::IMakeEveryoneOpaqueRecur(plMaxNode* node)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plCamViewComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
+bool plCamViewComponent::SetupProperties(plMaxNode *node,  plErrorMsg *pErrMsg)
 {
     node->SetForceLocal(true);
     return true;
@@ -1564,16 +1564,16 @@ static plFollowComponentProc gFollowProc;
 class plFollowComponent : public plComponent
 {
 private:
-    hsBool          fValid;
+    bool            fValid;
 
     plFollowMod*    IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pErrMsg);
 
 public:
     plFollowComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -1681,7 +1681,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
     return follow;
 }
 
-hsBool plFollowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plFollowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if( !fValid )
         return true;
@@ -1694,7 +1694,7 @@ hsBool plFollowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plFollowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plFollowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fValid = false;
 
@@ -1711,7 +1711,7 @@ hsBool plFollowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plFollowComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plFollowComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;
@@ -1746,8 +1746,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -1770,7 +1770,7 @@ plUnleashComponent::plUnleashComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plUnleashComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plUnleashComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetRunTimeLight(true);
 
@@ -1779,7 +1779,7 @@ hsBool plUnleashComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMs
     return true;
 }
 
-hsBool plUnleashComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plUnleashComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -1798,8 +1798,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 //Max desc stuff necessary below.
@@ -1822,7 +1822,7 @@ plForceRTLightComponent::plForceRTLightComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plForceRTLightComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plForceRTLightComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetRunTimeLight(true);
     pNode->SetNoPreShade(true);
@@ -1851,8 +1851,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 static const int kDefMaxFaces(1000);
@@ -1973,7 +1973,7 @@ plGeoDiceComponent::plGeoDiceComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plGeoDiceComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plGeoDiceComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if( fCompPB->GetInt(kActive) )
     {
@@ -1995,11 +1995,11 @@ class plReferencePointComponent : public plComponent
 public:
     plReferencePointComponent();
 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg); 
+    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg); 
 };
 
 CLASS_DESC(plReferencePointComponent, gReferencePointDesc, "Reference Point",  "RefPoint", COMP_TYPE_MISC, Class_ID(0x3c9c6f71, 0x5774fc5))
@@ -2018,7 +2018,7 @@ plReferencePointComponent::plReferencePointComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plReferencePointComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plReferencePointComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     // all we need is a coordinate interface...
     pNode->SetForceLocal(true);
@@ -2047,9 +2047,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
-    virtual hsBool Convert(plMaxNode* node, plErrorMsg* errMsg) { return true; }
-    virtual hsBool DeInit(plMaxNode* node, plErrorMsg* errMsg);
+    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
+    virtual bool Convert(plMaxNode* node, plErrorMsg* errMsg) { return true; }
+    virtual bool DeInit(plMaxNode* node, plErrorMsg* errMsg);
 };
 
 CLASS_DESC(plNetSyncComponent, gNetSyncDesc, "Net Sync", "NetSync", COMP_TYPE_MISC, Class_ID(0x4d1b2d6f, 0x28fe08db))
@@ -2194,7 +2194,7 @@ plNetSyncComponent::plNetSyncComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plNetSyncComponent::SetupProperties(plMaxNode* node, plErrorMsg* errMsg)
+bool plNetSyncComponent::SetupProperties(plMaxNode* node, plErrorMsg* errMsg)
 {
     // make all sdl types on this object Volatile
     bool override = (fCompPB->GetInt(kNetSyncOverride) != 0);
@@ -2289,7 +2289,7 @@ void plNetSyncComponent::ISetMtl(hsGMaterial* mtl)
 }
 
 // We're cheating and using DeInit as an extra pass, since everything should be done at that point
-hsBool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
+bool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
 {
     plSceneObject* so = node->GetSceneObject();
     if (!so)
@@ -2531,13 +2531,13 @@ void pfImageLibComponent::SetCompress(int idx, bool compress)
     fCompPB->SetValue(kCompressImage, 0, compress, idx);
 }
 
-hsBool pfImageLibComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool pfImageLibComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     Validate();
     return true;
 }
 
-hsBool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plImageLibMod *lib = new plImageLibMod;
     node->AddModifier( lib, IGetUniqueName(node) );

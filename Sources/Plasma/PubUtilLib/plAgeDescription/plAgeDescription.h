@@ -86,7 +86,7 @@ class plAgePage
         void        SetSeqSuffix( uint32_t s ) { fSeqSuffix = s; }
         void        SetFlags(uint8_t f, bool on=true);
 
-        hsBool      SetFromString( const char *string );
+        bool        SetFromString( const char *string );
         char        *GetAsString( void ) const;
 
         plAgePage &operator=( const plAgePage &src );
@@ -118,7 +118,7 @@ private:
     void    IDeInit( void );
 
     // Overload for plInitSectionTokenReader
-    virtual hsBool      IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData );
+    virtual bool        IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData );
 
 public:
     static char kAgeDescPath[];
@@ -169,10 +169,10 @@ public:
 
     int32_t   GetSequencePrefix( void ) const { return fSeqPrefix; }
     uint32_t  GetReleaseVersion( void ) const { return fReleaseVersion; }
-    hsBool  IsGlobalAge( void ) const { return ( fSeqPrefix < 0 ) ? true : false; }
+    bool    IsGlobalAge( void ) const { return ( fSeqPrefix < 0 ) ? true : false; }
 
     // Setters
-    hsBool SetStart(short year, short month, short day, short hour, short minute, short second)
+    bool SetStart(short year, short month, short day, short hour, short minute, short second)
         { return fStart.SetTime(year,month,day,hour,minute,second); }
 
     void SetDayLength(const float l) { fDayLength = l; }

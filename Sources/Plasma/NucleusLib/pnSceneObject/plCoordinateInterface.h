@@ -91,13 +91,13 @@ protected:
 
     // Set by the client in IUpdate(). This tells us where we are in the update loop so that we know
     // which transform message to register for when our transform is dirtied.
-    static uint8_t                            fTransformPhase;
+    static uint8_t                          fTransformPhase;
     
     // Temp debugging tool, so we can quickly (dis/en)able delayed transforms at runtime.
-    static hsBool                           fDelayedTransformsEnabled;
+    static bool                             fDelayedTransformsEnabled;
 
-    uint16_t                                  fState;
-    uint16_t                                  fReason;        // why we've changed position (if we have)
+    uint16_t                                fState;
+    uint16_t                                fReason;        // why we've changed position (if we have)
 
     hsTArray<plSceneObject*>                fChildren;
     plCoordinateInterface*                  fParent;    // if this changes, marks us as dirty
@@ -127,10 +127,10 @@ protected:
     virtual void IUpdateDelayProp(); // Called whenever a child is added/removed
 
     virtual void IRecalcTransforms(); // Called by ITransformChanged when we need to re-examine our relationship with our parent.
-    virtual void ITransformChanged(hsBool force, uint16_t reasons, hsBool checkForDelay); // called by SceneObject on TransformChanged messsage
+    virtual void ITransformChanged(bool force, uint16_t reasons, bool checkForDelay); // called by SceneObject on TransformChanged messsage
 
     void                    IDirtyTransform();
-    void                    IRegisterForTransformMessage(hsBool delayed);
+    void                    IRegisterForTransformMessage(bool delayed);
     void                    IUnRegisterForTransformMessage();
     plCoordinateInterface*  IGetRoot();
 
@@ -172,7 +172,7 @@ public:
     // synced up, so fromRoot=true.
     // fromRoot=true is always safe, just potentially wasteful, so if you don't know, use fromRoot=true or
     // preferably, don't use this function.
-    void FlushTransform(hsBool fromRoot=true); 
+    void FlushTransform(bool fromRoot=true); 
 
     virtual const hsMatrix44& GetLocalToParent() const { return fLocalToParent; }
     virtual const hsMatrix44& GetParentToLocal() const { return fParentToLocal; }
@@ -186,7 +186,7 @@ public:
     virtual plCoordinateInterface* GetChild(int i) const;
     virtual plCoordinateInterface* GetParent() const { return fParent; }
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     uint16_t GetReasons();
     void ClearReasons();
@@ -195,8 +195,8 @@ public:
     static uint8_t    GetTransformPhase() { return fTransformPhase; }
     static void     SetTransformPhase(uint8_t phase) { fTransformPhase = phase; }
 
-    static hsBool   GetDelayedTransformsEnabled() { return fDelayedTransformsEnabled; }
-    static void     SetDelayedTransformsEnabled(hsBool val) { fDelayedTransformsEnabled = val; }
+    static bool     GetDelayedTransformsEnabled() { return fDelayedTransformsEnabled; }
+    static void     SetDelayedTransformsEnabled(bool val) { fDelayedTransformsEnabled = val; }
 };
 
 

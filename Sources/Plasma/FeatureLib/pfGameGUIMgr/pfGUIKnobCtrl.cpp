@@ -84,14 +84,14 @@ pfGUIKnobCtrl::pfGUIKnobCtrl() :
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIKnobCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIKnobCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIKnobCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIKnobCtrl::MsgReceive( plMessage *msg )
 {
     return pfGUIValueCtrl::MsgReceive( msg );
 }
@@ -130,7 +130,7 @@ void    pfGUIKnobCtrl::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIKnobCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIValueCtrl::UpdateBounds( invXformMatrix, force );
     if( fAnimationKeys.GetCount() > 0 )
@@ -266,7 +266,7 @@ void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-hsBool  pfGUIKnobCtrl::ICalcAnimTimes( void )
+bool    pfGUIKnobCtrl::ICalcAnimTimes( void )
 {
     if( fAnimTimesCalced )
         return true;

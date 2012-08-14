@@ -60,7 +60,7 @@ class plPipeline;
 class plInputManager :public hsKeyedObject
 {
 private:
-    static hsBool fUseDInput;
+    static bool fUseDInput;
 public:
     plInputManager();
     plInputManager( hsWindowHndl hWnd );
@@ -73,13 +73,13 @@ public:
     void AddInputDevice(plInputDevice* pDev);
     void InitDInput(hsWindowInst hInst, hsWindowHndl hWnd);
 
-    static void UseDInput(hsBool b) { fUseDInput = b; }
+    static void UseDInput(bool b) { fUseDInput = b; }
     void Update();
     static plInputManager*  GetInstance() { return fInstance; }
     static plInputManager*  fInstance;
-    virtual hsBool MsgReceive(plMessage* msg);
-    static hsBool RecenterMouse() { return bRecenterMouse > 0; }
-    static void SetRecenterMouse(hsBool b); 
+    virtual bool MsgReceive(plMessage* msg);
+    static bool RecenterMouse() { return bRecenterMouse > 0; }
+    static void SetRecenterMouse(bool b); 
     static void RecenterCursor();
     void CreateInterfaceMod(plPipeline* p);
 
@@ -88,7 +88,7 @@ public:
     float    GetMouseScale( void ) const { return fMouseScale; }
     void        SetMouseScale( float s );
     
-    static plKeyDef UntranslateKey(plKeyDef key, hsBool extended);
+    static plKeyDef UntranslateKey(plKeyDef key, bool extended);
     
 protected:
     

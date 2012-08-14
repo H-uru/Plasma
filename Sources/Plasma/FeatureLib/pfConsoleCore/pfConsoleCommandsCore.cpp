@@ -149,14 +149,14 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server N key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kAuthDhNData);
 }
 
@@ -167,14 +167,14 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server X key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
 }
 
@@ -190,14 +190,14 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server N key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGameDhNData);
 }
 
@@ -208,14 +208,14 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server X key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGameDhXData);
 }
 
@@ -241,14 +241,14 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server N key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGateKeeperDhNData);
 }
 
@@ -259,13 +259,13 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server X key"
 ) {
-    int baseLength = hsStrlen((const char *)params[0]);
+    int baseLength = strlen((const char *)params[0]);
     if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(hsStrlen((const char *)params[0]), (const char *)params[0],
+    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
 }

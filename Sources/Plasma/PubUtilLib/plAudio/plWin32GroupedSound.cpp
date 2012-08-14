@@ -123,7 +123,7 @@ void plWin32GroupedSound::IWrite( hsStream *s, hsResMgr *mgr )
 
 //// LoadSound ///////////////////////////////////////////////////////////////
 
-hsBool  plWin32GroupedSound::LoadSound( hsBool is3D )
+bool    plWin32GroupedSound::LoadSound( bool is3D )
 {
     if( fFailed )
         return false;
@@ -387,7 +387,7 @@ void plWin32GroupedSound::IDerivedActuallyPlay( void )
         event->SendCallbacks();
 }
 
-hsBool  plWin32GroupedSound::MsgReceive( plMessage* pMsg )
+bool    plWin32GroupedSound::MsgReceive( plMessage* pMsg )
 {
     plSoundMsg *soundMsg = plSoundMsg::ConvertNoRef( pMsg );
     if( soundMsg != nil && soundMsg->Cmd( plSoundMsg::kSelectFromGroup ) )

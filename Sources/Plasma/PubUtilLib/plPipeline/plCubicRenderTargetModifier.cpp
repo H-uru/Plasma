@@ -124,7 +124,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 
 //// IEval ////////////////////////////////////////////////////////////////////
 
-hsBool  plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dirty )
+bool    plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dirty )
 {
     hsPoint3    center;
     hsMatrix44  mtx, invMtx;
@@ -167,7 +167,7 @@ hsBool  plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dir
 
 //// MsgReceive ///////////////////////////////////////////////////////////////
 
-hsBool  plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
+bool    plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
 {
     plSceneObject       *scene;
     plCubicRenderTarget *cubic;

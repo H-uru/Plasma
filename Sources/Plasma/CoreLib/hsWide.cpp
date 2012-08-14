@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /////////////////////////////////////////////////////////////////////////
 
-inline hsBool OverflowAdd(uint32_t* sum, uint32_t a, uint32_t b)
+inline bool OverflowAdd(uint32_t* sum, uint32_t a, uint32_t b)
 {
     *sum = a + b;
 
@@ -55,7 +55,7 @@ inline hsBool OverflowAdd(uint32_t* sum, uint32_t a, uint32_t b)
     
     wide = (high << 32) + (middle << 16) + low
 */
-inline hsBool SetWide3(hsWide* target, int32_t high, uint32_t middle, uint32_t low)
+inline bool SetWide3(hsWide* target, int32_t high, uint32_t middle, uint32_t low)
 {
     hsAssert(high >= 0, "high is neg");
 
@@ -308,7 +308,7 @@ int32_t hsWide::CubeRoot() const
     uint32_t  valueL = fLo;
     uint32_t  currH, currL;
     uint32_t  guessH, guessL;
-    hsBool  neg = false;
+    bool  neg = false;
 
     if (WIDE_ISNEG(valueH, valueL))
     {   neg = true;

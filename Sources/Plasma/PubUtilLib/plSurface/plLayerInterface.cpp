@@ -346,7 +346,7 @@ void plLayerInterface::Write(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fUnderLay);
 }
 
-hsBool plLayerInterface::MsgReceive(plMessage* msg)
+bool plLayerInterface::MsgReceive(plMessage* msg)
 {
     plLayRefMsg* refMsg = plLayRefMsg::ConvertNoRef(msg);
     if( refMsg )

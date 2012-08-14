@@ -90,7 +90,7 @@ class pfConsoleInputInterface : public plInputInterface
 
 
 
-        virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd )
+        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd )
         {
             if( cmd->fControlCode == B_SET_CONSOLE_MODE )
             {
@@ -139,9 +139,9 @@ class pfConsoleInputInterface : public plInputInterface
 
         virtual uint32_t  GetPriorityLevel( void ) const          { return kConsolePriority; }
         virtual uint32_t  GetCurrentCursorID( void ) const        { return kCursorHidden; }
-        virtual hsBool  HasInterestingCursorID( void ) const    { return false; }
+        virtual bool    HasInterestingCursorID( void ) const    { return false; }
 
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
             if( keyMsg != nil )
@@ -265,7 +265,7 @@ void    pfConsole::ISetMode( uint8_t mode )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfConsole::MsgReceive( plMessage *msg )
+bool    pfConsole::MsgReceive( plMessage *msg )
 {
     plControlEventMsg *ctrlMsg = plControlEventMsg::ConvertNoRef( msg );
     if( ctrlMsg != nil )
@@ -537,7 +537,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     char            *c;
     wchar_t         key;
     int             i,eol;
-    static hsBool   findAgain = false;
+    static bool     findAgain = false;
     static uint32_t   findCounter = 0;
 
     // filter out keyUps and ascii control characters
@@ -990,7 +990,7 @@ void    pfConsole::Draw( plPipeline *p )
     int         i, yOff, y, x, eOffset, height;
     char        *line;
     char        tmp[ kMaxCharsWide ];
-    hsBool      showTooltip = false;
+    bool        showTooltip = false;
     float       thisTime;   // For making the console FX speed konstant regardless of framerate
     const float kEffectDuration = 0.5f;
 

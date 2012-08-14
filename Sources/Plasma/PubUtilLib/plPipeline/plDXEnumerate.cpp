@@ -510,7 +510,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
 //  DirectX: Given a device and mode, find ALL available depth/stencil
 //  formats and add them to the mode info struct.
 
-hsBool  hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
+bool    hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
                                                    D3DEnum_ModeInfo *modeInfo )
 {
     D3DFORMAT       formats[] = { D3DFMT_D16, D3DFMT_D24X8, D3DFMT_D32,
@@ -538,7 +538,7 @@ hsBool  hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdap
 //  DirectX: Given a device and mode, find ALL available multisample types
 //  and add them to the mode info struct.
 
-hsBool  hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
+bool    hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
                                                 D3DEnum_ModeInfo *modeInfo )
 {
     /// Try 'em
@@ -557,7 +557,7 @@ hsBool  hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter
 
 //// ICheckCubicRenderTargets /////////////////////////////////////////////////
 
-hsBool  hsGDirect3DTnLEnumerate::ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
+bool    hsGDirect3DTnLEnumerate::ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
                                                           D3DEnum_ModeInfo *modeInfo )
 {
     if( SUCCEEDED( pD3D->CheckDeviceFormat( iAdapter, deviceType, modeInfo->fDDmode.Format,
@@ -649,7 +649,7 @@ short   hsGDirect3DTnLEnumerate::IGetDXBitDepth( D3DFORMAT format )
 //  Given two enum structs, strips out and produces the vendor ID, device ID
 //  and the driver name. Returns true if processed, false otherwise.
 
-hsBool  hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,            // In
+bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,            // In
                                               void *driverInfo,
                                               void *deviceInfo,
                                               DWORD *vendorID, DWORD *deviceID, // Out
@@ -682,7 +682,7 @@ hsBool  hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
 //// IInitDirect3D ////////////////////////////////////////////////////////////
 
-hsBool  hsG3DDeviceSelector::IInitDirect3D( void )
+bool    hsG3DDeviceSelector::IInitDirect3D( void )
 {
     if( hsGDDrawDllLoad::GetD3DDll() == nil )
     {

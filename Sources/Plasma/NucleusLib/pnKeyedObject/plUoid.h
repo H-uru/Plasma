@@ -105,27 +105,27 @@ public:
     plLocation(const plLocation& toCopyFrom);
     ~plLocation() {}
 
-    void    Invalidate();
-    hsBool  IsValid() const;
-    hsBool  IsReserved() const;
-    hsBool  IsItinerant() const;
-    void    Set(uint32_t seqNum);
+    void      Invalidate();
+    bool      IsValid() const;
+    bool      IsReserved() const;
+    bool      IsItinerant() const;
+    void      Set(uint32_t seqNum);
     uint32_t  GetSequenceNumber() const { return fSequenceNumber; }
-    hsBool  IsVirtual() const;
+    bool      IsVirtual() const;
 
-    void    SetFlags(uint16_t flags) { fFlags |= flags; }
+    void      SetFlags(uint16_t flags) { fFlags |= flags; }
     uint16_t  GetFlags() const { return fFlags; }
 
     void    Read(hsStream* s);
     void    Write(hsStream* s) const;
 
-    hsBool operator==(const plLocation& loc) const
+    bool operator==(const plLocation& loc) const
     {
         // Ignore the itinerant flag when comparing, because
         return (fSequenceNumber == loc.fSequenceNumber) &&
                ((fFlags & ~kItinerant) == (loc.fFlags & ~kItinerant));
     }
-    hsBool operator!=(const plLocation& loc) const { return !(loc == *this); }
+    bool operator!=(const plLocation& loc) const { return !(loc == *this); }
     plLocation& operator=(const plLocation& loc);
     bool operator<(const plLocation& loc ) const { return fSequenceNumber < loc.fSequenceNumber; }
 
@@ -164,13 +164,13 @@ public:
     void Write(hsStream* s) const;
 
     void Invalidate();
-    hsBool IsValid() const;
+    bool IsValid() const;
 
     plUoid& operator=(const plUoid& u);
-    hsBool  operator==(const plUoid& u) const;
-    hsBool  operator!=(const plUoid& u) const { return !operator==(u); }
+    bool  operator==(const plUoid& u) const;
+    bool  operator!=(const plUoid& u) const { return !operator==(u); }
 
-    hsBool  IsClone() const             { return fCloneID != 0; }
+    bool  IsClone() const             { return fCloneID != 0; }
     uint32_t  GetClonePlayerID() const    { return fClonePlayerID; }
     uint32_t  GetCloneID() const          { return fCloneID; }
     void    SetClone(uint32_t playerID, uint32_t cloneID) { hsAssert(cloneID < 0xffff, "Clone id too high"); fCloneID = uint16_t(cloneID); fClonePlayerID = playerID; }

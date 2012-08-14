@@ -62,8 +62,8 @@ public:
     hsHashTableIterator<T>& operator--()            { fIndex++; return *this; }
     const hsHashTableIterator<T>& operator--(int)   { hsHashTableIterator<T> temp(*this); ++(*this); return temp; }
     
-    hsBool operator==(const hsHashTableIterator<T>& other) const    { return fList==other.fList && fIndex==other.fIndex; }
-    hsBool operator!=(const hsHashTableIterator<T>& other) const    { return !(*this == other); }
+    bool operator==(const hsHashTableIterator<T>& other) const    { return fList==other.fList && fIndex==other.fIndex; }
+    bool operator!=(const hsHashTableIterator<T>& other) const    { return !(*this == other); }
     
 private:
     hsTArray<T>* fList;

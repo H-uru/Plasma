@@ -87,12 +87,12 @@ class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallbac
     protected:
         // Set all the controls to their stored value
         void IInitControls(Animatable *anim, IParamBlock2 *pb);
-        void IEnableGlobal(HWND hWnd, hsBool enable);
+        void IEnableGlobal(HWND hWnd, bool enable);
 
         void ILoadNames( IParamBlock2 *pb );
 
         void    IExposeStealthNode( HelperObject *stealth, IParamMap2 *thisMap );
-        void    IUpdateSegmentSel( IParamMap2 *thisMap, hsBool clear = false );
+        void    IUpdateSegmentSel( IParamMap2 *thisMap, bool clear = false );
 
         void    IEnableEaseStopPoints( IParamMap2 *pm, bool enable );
 };

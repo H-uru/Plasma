@@ -117,7 +117,7 @@ public:
 class plLinkEffectsTriggerMsg : public plMessage
 {
 protected:
-    hsBool fLeavingAge;
+    bool fLeavingAge;
     plKey fLinkKey;
     plKey fLinkInAnimKey;
     int fInvisLevel;
@@ -131,8 +131,8 @@ public:
     void    SetInvisLevel(int invisLevel) { fInvisLevel=invisLevel; }
     int     GetInvisLevel() { return fInvisLevel; }
 
-    void    SetLeavingAge(hsBool leaving) { fLeavingAge = leaving; }
-    hsBool  IsLeavingAge() { return fLeavingAge; }
+    void    SetLeavingAge(bool leaving) { fLeavingAge = leaving; }
+    bool    IsLeavingAge() { return fLeavingAge; }
 
     void    SetLinkKey(plKey &key);
     const plKey GetLinkKey() const { return fLinkKey; }
@@ -157,7 +157,7 @@ protected:
     plLinkEffectsTriggerMsg *fTrigger;
 
 public:
-    hsBool fLeavingAge;
+    bool fLeavingAge;
     plKey fLinkKey; 
 
     plLinkEffectsTriggerPrepMsg() : fLeavingAge(false), fLinkKey(nil), fTrigger(nil) {  }
@@ -202,8 +202,8 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
 
-    void SetLinkFlag(uint32_t flag, hsBool on = true);
-    hsBool HasLinkFlag(uint32_t flag);
+    void SetLinkFlag(uint32_t flag, bool on = true);
+    bool HasLinkFlag(uint32_t flag);
 
     plKey fLinkKey;
 };
@@ -213,7 +213,7 @@ public:
 class plLinkEffectPrepBCMsg : public plMessage
 {
 public:
-    hsBool fLeavingAge;
+    bool fLeavingAge;
     plKey fLinkKey;
     
     plLinkEffectPrepBCMsg();
@@ -268,7 +268,7 @@ class plPseudoLinkAnimTriggerMsg : public plMessage
 public:
 
     plPseudoLinkAnimTriggerMsg();
-    plPseudoLinkAnimTriggerMsg(hsBool forward,  plKey avatarKey);
+    plPseudoLinkAnimTriggerMsg(bool forward,  plKey avatarKey);
     ~plPseudoLinkAnimTriggerMsg() {}
 
     CLASSNAME_REGISTER(plPseudoLinkAnimTriggerMsg);
@@ -278,7 +278,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr);
 
     plKey fAvatarKey;
-    hsBool fForward;
+    bool fForward;
 
 };
 

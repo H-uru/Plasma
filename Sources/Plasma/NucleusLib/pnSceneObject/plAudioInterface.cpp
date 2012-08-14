@@ -71,7 +71,7 @@ plAudioInterface::~plAudioInterface()
     
 }
 
-void plAudioInterface::SetProperty(int prop, hsBool on)
+void plAudioInterface::SetProperty(int prop, bool on)
 {
     plObjInterface::SetProperty(prop, on);
 
@@ -192,7 +192,7 @@ void plAudioInterface::IRemoveAudible(plAudible* aud)
     fAudible = nil;
 }
 
-hsBool plAudioInterface::MsgReceive(plMessage* msg)
+bool plAudioInterface::MsgReceive(plMessage* msg)
 {
     plIntRefMsg* intRefMsg = plIntRefMsg::ConvertNoRef(msg);
     if( intRefMsg )

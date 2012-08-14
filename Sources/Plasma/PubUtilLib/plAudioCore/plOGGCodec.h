@@ -80,14 +80,14 @@ public:
     virtual uint32_t  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
     virtual float   GetLengthInSecs( void );
 
-    virtual hsBool  SetPosition( uint32_t numBytes );
-    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual bool    SetPosition( uint32_t numBytes );
+    virtual bool    Read( uint32_t numBytes, void *buffer );
     virtual uint32_t  NumBytesLeft( void );
 
-    virtual hsBool  IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
+    virtual bool    IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
-    static void     SetDecodeFlag( uint8_t flag, hsBool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
+    static void     SetDecodeFlag( uint8_t flag, bool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
     static uint8_t    GetDecodeFlags( void ) { return fDecodeFlags; }
     void            ResetWaveHeaderRef() { fCurHeaderPos = 0; }
     void            BuildActualWaveHeader();

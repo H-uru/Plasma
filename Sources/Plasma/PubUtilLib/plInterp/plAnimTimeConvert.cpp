@@ -262,7 +262,7 @@ void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
     }
 }
 
-hsBool plAnimTimeConvert::ITimeInFrame(float secs, float start, float stop)
+bool plAnimTimeConvert::ITimeInFrame(float secs, float start, float stop)
 {
     if (secs == start && secs == stop)
         return true;
@@ -446,7 +446,7 @@ void plAnimTimeConvert::SetOwner(plSynchedObject* o)
     fOwner = o; 
 }
 
-hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
+bool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
                                        const plATCEaseCurve *curve) const       
 {
     if (flags & kStopped)
@@ -455,7 +455,7 @@ hsBool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flag
     return false;
 }
 
-hsBool plAnimTimeConvert::IsStoppedAt(double wSecs) const
+bool plAnimTimeConvert::IsStoppedAt(double wSecs) const
 {
     if (wSecs > fLastStateChange)
         return IIsStoppedAt(wSecs, fFlags, fCurrentEaseCurve);
@@ -536,11 +536,11 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
     
     // if our speed is < 0, then checking for the kBackwards flag isn't enough
     // so we base our decision on the direction of the actual change we've computed.
-    hsBool forewards = delSecs >= 0;
+    bool forewards = delSecs >= 0;
 
     if (fFlags & kLoop)
     {
-        hsBool wrapped = false;
+        bool wrapped = false;
 
         if (forewards)
         {
@@ -654,11 +654,11 @@ float plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *stat
     secs = state->fStartAnimTime + delSecs;
     // At this point, "secs" is the pre-wrapped (before looping) anim time. 
     // "delSecs" is the change in anim time
-    hsBool forewards = delSecs >= 0;
+    bool forewards = delSecs >= 0;
 
     if (state->fFlags & kLoop)
     {
-        hsBool wrapped = false;
+        bool wrapped = false;
 
         if (forewards)
         {
@@ -725,7 +725,7 @@ float plAnimTimeConvert::IWorldToAnimTimeBeforeState(double wSecs) const
     return IWorldToAnimTimeNoUpdate(wSecs, IGetState(wSecs));
 }
 
-void plAnimTimeConvert::SetCurrentAnimTime(float s, hsBool jump /* = false */)
+void plAnimTimeConvert::SetCurrentAnimTime(float s, bool jump /* = false */)
 {
     // We're setting the anim value for whenever we last evaluated.
     fFlags |= kForcedMove;
@@ -743,7 +743,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(float s, hsBool jump /* = false */)
     IProcessStateChange(hsTimer::GetSysSeconds(), fCurrentAnimTime);
 }
 
-void plAnimTimeConvert::SetEase(hsBool easeIn, uint8_t type, float minLength, float maxLength, float normLength) 
+void plAnimTimeConvert::SetEase(bool easeIn, uint8_t type, float minLength, float maxLength, float normLength) 
 { 
     if (easeIn)
     {
@@ -960,7 +960,7 @@ plAnimTimeConvert& plAnimTimeConvert::InitStop()
     return IStop(hsTimer::GetSysSeconds(), fCurrentAnimTime);
 }
 
-plAnimTimeConvert& plAnimTimeConvert::Stop(hsBool on) 
+plAnimTimeConvert& plAnimTimeConvert::Stop(bool on) 
 { 
     if( on )
         return Stop();
@@ -1058,7 +1058,7 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     return IProcessStateChange(startTime);
 }
 
-plAnimTimeConvert& plAnimTimeConvert::Backwards(hsBool on) 
+plAnimTimeConvert& plAnimTimeConvert::Backwards(bool on) 
 {
     return on ? Backwards() : Forewards();
 }
@@ -1109,7 +1109,7 @@ plAnimTimeConvert& plAnimTimeConvert::Forewards()
     return *this;
 }
 
-plAnimTimeConvert& plAnimTimeConvert::Loop(hsBool on) 
+plAnimTimeConvert& plAnimTimeConvert::Loop(bool on) 
 { 
     SetFlag(kLoop, on); 
     
@@ -1159,7 +1159,7 @@ void plAnimTimeConvert::RemoveCallback(plEventCallbackMsg* pMsg)
     }
 }
     
-hsBool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
+bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
 {
     if (fFlags & kNeedsReset)
         ResetWrap();
@@ -1338,7 +1338,7 @@ void plAnimTimeConvert::ClearCallbacks()
     fCallbackMsgs.Reset();
 }
 
-void plAnimTimeConvert::EnableCallbacks(hsBool val)
+void plAnimTimeConvert::EnableCallbacks(bool val)
 {
     SetFlag(kNoCallbacks, !val);
 }

@@ -83,7 +83,7 @@ protected:
     bool fEnabled;
     plKey fPlayerKey;               // The player who triggered this last
     plKey fTriggerer;               // Whoever triggered us (for sending notify callbacks)
-    hsBool fEnter;                  // Is our current trigger a volume enter?
+    bool fEnter;                  // Is our current trigger a volume enter?
     bool fGotFirstLoad;             // Have we gotten our first SDL load?
 
     plResponderSDLModifier* fResponderSDLMod;       // handles saving and restoring state
@@ -103,7 +103,7 @@ protected:
 
     int8_t ICmdFromWait(int8_t waitIdx);
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
     static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
     static void IDebugAnimBox(bool start);
@@ -133,7 +133,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     const plResponderSDLModifier* GetSDLModifier() const { return fResponderSDLMod; }
 

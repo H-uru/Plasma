@@ -332,7 +332,7 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
 
         int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
 
-        if (hsStrEQ(name, savedName))
+        if (strcmp(name, savedName) == 0)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }
@@ -369,7 +369,7 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 
         int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
 
-        if (hsStrEQ(name, savedName))
+        if (strcmp(name, savedName) == 0)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }
@@ -1096,7 +1096,7 @@ plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *p
     plMaxNode *pCamNode = (plMaxNode*)pb->GetINode(kCameraObj);
     if (!pCamNode)
         throw "No Camera Specified";
-    hsBool fail = true;
+    bool fail = true;
     int count = pCamNode->NumAttachedComponents();
     for (uint32_t x = 0; x < count; x++)
     {

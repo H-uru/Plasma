@@ -62,20 +62,20 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
 
         hsPoint3        fDragStart;
         float           fDragValue;
-        hsBool          fDragging;
+        bool            fDragging;
 
         hsPoint3        fAnimStartPos, fAnimEndPos; // Calculated at export time for kMapToScreenRange
         float           fDragRangeMin, fDragRangeMax;
 
                         // Computed once, once an anim is loaded that we can compute this with
         float           fAnimBegin, fAnimEnd;
-        hsBool          fAnimTimesCalced;
+        bool            fAnimTimesCalced;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
-        hsBool          ICalcAnimTimes( void );
+        bool            ICalcAnimTimes( void );
 
     public:
 
@@ -94,7 +94,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
             kMapToAnimationRange
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -103,7 +103,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
 
         virtual void    SetCurrValue( float v );
 

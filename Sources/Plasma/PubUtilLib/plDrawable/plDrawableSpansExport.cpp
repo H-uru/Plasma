@@ -701,7 +701,7 @@ void    plDrawableSpans::ISortSourceSpans( void )
 
 short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *span2 )
 {
-    hsBool      b1, b2;
+    bool        b1, b2;
     int         i, j, numLayers;
     plBitmap    *t1, *t2;
 

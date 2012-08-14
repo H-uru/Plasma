@@ -61,10 +61,10 @@ protected:
 public:
     plAvLadderComponent();
 
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     // Call after PreConvert
     const LadderModKeys& GetLadderModKeys() { return fKeys; }

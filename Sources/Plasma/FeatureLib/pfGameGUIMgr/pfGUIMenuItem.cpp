@@ -158,7 +158,7 @@ void    pfGUIMenuItem::IUpdateSkinBuffers( void )
 //// IUpdateSingleSkinBuffer /////////////////////////////////////////////////
 //  Broken down functionality for the above function
 
-void    pfGUIMenuItem::IUpdateSingleSkinBuffer( uint16_t y, hsBool sel )
+void    pfGUIMenuItem::IUpdateSingleSkinBuffer( uint16_t y, bool sel )
 {
     hsAssert( fSkin != nil && fDynTextMap != nil, "Invalid pointers in IUpdateSingleSkinBuffer()" );
 
@@ -386,7 +386,7 @@ void    pfGUIMenuItem::GetTextExtents( uint16_t &width, uint16_t &height )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIMenuItem::MsgReceive( plMessage *msg )
+bool    pfGUIMenuItem::MsgReceive( plMessage *msg )
 {
     return pfGUIButtonMod::MsgReceive( msg );
 }
@@ -468,7 +468,7 @@ void    pfGUIMenuItem::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers )
 //// SetInteresting //////////////////////////////////////////////////////////
 //  Overridden to play mouse over animation when we're interesting
 
-void    pfGUIMenuItem::SetInteresting( hsBool i )
+void    pfGUIMenuItem::SetInteresting( bool i )
 {
     pfGUIButtonMod::SetInteresting( i );
     IUpdate();

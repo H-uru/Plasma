@@ -68,7 +68,7 @@ void plDrawInterface::SetDrawableMeshIndex( uint8_t which, uint32_t index )
     fDrawableIndices[which] = index; 
 }
 
-void plDrawInterface::SetProperty(int prop, hsBool on)
+void plDrawInterface::SetProperty(int prop, bool on)
 {
     plObjInterface::SetProperty(prop, on);
 
@@ -258,7 +258,7 @@ void plDrawInterface::IRemoveDrawable(plDrawable *dr)
     }
 }
 
-void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, hsBool on)
+void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, bool on)
 {
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
@@ -311,7 +311,7 @@ void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
     }
 }
 
-hsBool plDrawInterface::MsgReceive(plMessage* msg)
+bool plDrawInterface::MsgReceive(plMessage* msg)
 {
     plIntRefMsg* intRefMsg = plIntRefMsg::ConvertNoRef(msg);
     if( intRefMsg )

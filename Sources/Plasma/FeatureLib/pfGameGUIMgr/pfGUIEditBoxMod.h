@@ -66,15 +66,15 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         wchar_t         *fBuffer;
         uint32_t          fBufferSize, fCursorPos;
         int32_t           fScrollPos;
-        hsBool          fEscapedFlag;
-        hsBool          fFirstHalfExitKeyPushed;
+        bool            fEscapedFlag;
+        bool            fFirstHalfExitKeyPushed;
         
-        hsBool          fSpecialCaptureKeyEventMode;
+        bool            fSpecialCaptureKeyEventMode;
 
         plKeyDef        fSavedKey;
         uint8_t           fSavedModifiers;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual void    IPostSetUpDynTextMap( void );
         virtual void    IUpdate( void );
@@ -92,7 +92,7 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIEditBoxMod );
         GETINTERFACE_ANY( pfGUIEditBoxMod, pfGUIControlMod );
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -101,8 +101,8 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual hsBool  HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
+        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
 
         virtual void    PurgeDynaTextMapImage();
 
@@ -117,14 +117,14 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         void        SetCursorToHome( void );
         void        SetCursorToEnd( void );
 
-        hsBool      WasEscaped( void ) { hsBool e = fEscapedFlag; fEscapedFlag = false; return e; }
+        bool        WasEscaped( void ) { bool e = fEscapedFlag; fEscapedFlag = false; return e; }
 
-        void        SetSpecialCaptureKeyMode(hsBool state) { fSpecialCaptureKeyEventMode = state; }
+        void        SetSpecialCaptureKeyMode(bool state) { fSpecialCaptureKeyEventMode = state; }
         uint32_t      GetLastKeyCaptured() { return (uint32_t)fSavedKey; }
         uint8_t       GetLastModifiersCaptured() { return fSavedModifiers; }
         void        SetLastKeyCapture(uint32_t key, uint8_t modifiers);
 
-        void        SetChatMode(hsBool state) { plKeyboardDevice::IgnoreCapsLock(state); }
+        void        SetChatMode(bool state) { plKeyboardDevice::IgnoreCapsLock(state); }
 
         // Extended event types
         enum ExtendedEvents

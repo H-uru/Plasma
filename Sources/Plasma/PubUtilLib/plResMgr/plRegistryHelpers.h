@@ -65,14 +65,14 @@ class plRegistryKeyIterator
 {
 public:
     virtual ~plRegistryKeyIterator() {}
-    virtual hsBool EatKey(const plKey& key) = 0;
+    virtual bool EatKey(const plKey& key) = 0;
 };
 
 class plRegistryPageIterator 
 {
 public:
     virtual ~plRegistryPageIterator() {}
-    virtual hsBool EatPage(plRegistryPageNode* keyNode) = 0;
+    virtual bool EatPage(plRegistryPageNode* keyNode) = 0;
 };
 
 
@@ -85,7 +85,7 @@ protected:
 
 public:
     plKeyCollector(hsTArray<plKey>& keys);
-    virtual hsBool EatKey(const plKey& key);
+    virtual bool EatKey(const plKey& key);
 };
 
 // If you loaded keys with another iterator, this will ensure that they're unloaded
@@ -94,9 +94,8 @@ class plIndirectUnloadIterator : public plRegistryPageIterator, public plRegistr
 public:
     plIndirectUnloadIterator() {}
 
-    hsBool EatKey(const plKey& key) { return true; }
-
-    hsBool EatPage(plRegistryPageNode* page);
+    bool EatKey(const plKey& key) { return true; }
+    bool EatPage(plRegistryPageNode* page);
 };
 
 #endif // _plRegistryHelpers_h

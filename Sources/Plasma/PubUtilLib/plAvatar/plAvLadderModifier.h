@@ -61,7 +61,7 @@ public:
     GETINTERFACE_ANY( plAvLadderMod, plSingleModifier );
     
     // virtual void AddTarget(plSceneObject* so) {  SetTarget(so);  }
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
@@ -78,7 +78,7 @@ public:
     void SetEnabled(bool enabled) { fEnabled = enabled; }
 
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) {return true;}
+    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
     bool IIsReadyToClimb();
     void ITriggerSelf(plKey avKey);
 

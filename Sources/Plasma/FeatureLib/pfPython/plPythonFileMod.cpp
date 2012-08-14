@@ -325,7 +325,7 @@ class pfPythonKeyCatcher : public plDefaultKeyCatcher
         }
 };
 
-hsBool plPythonFileMod::fAtConvertTime = false;
+bool plPythonFileMod::fAtConvertTime = false;
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -441,7 +441,7 @@ bool plPythonFileMod::ILoadPythonCode()
     char pathandfile[256];
     sprintf(pathandfile, ".\\python\\%s.py",fPythonFile);
     wchar_t *wPathandfile = hsStringToWString(pathandfile);
-    hsBool exists = PathDoesFileExist(wPathandfile);
+    bool exists = PathDoesFileExist(wPathandfile);
     delete [] wPathandfile;
     if (exists)
     {
@@ -1163,7 +1163,7 @@ void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, int32_
 //    Tasks:
 //      - Call the Python code's Update function (if there)
 //
-hsBool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
+bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 {
     if ( fModule )
     {
@@ -1231,7 +1231,7 @@ hsBool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 //
 //  PURPOSE    : Handle all the different types of messages that we recv
 //
-hsBool plPythonFileMod::MsgReceive(plMessage* msg)
+bool plPythonFileMod::MsgReceive(plMessage* msg)
 {
     // is it a ref message
     plGenRefMsg* genRefMsg = plGenRefMsg::ConvertNoRef(msg);

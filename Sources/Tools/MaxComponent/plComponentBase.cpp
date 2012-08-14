@@ -325,7 +325,7 @@ plMaxNodeBase *plComponentBase::GetINode()
     return nil;
 }
 
-hsBool plComponentBase::IsExternal()
+bool plComponentBase::IsExternal()
 {
     return CanConvertToType(EXT_COMPONENT_CLASSID);
 }

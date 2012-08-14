@@ -250,7 +250,7 @@ plMatrixTimeScale::~plMatrixTimeScale()
 
 // IsStoppedAt ----------------------------
 // ------------
-hsBool plMatrixTimeScale::IsStoppedAt(double time)
+bool plMatrixTimeScale::IsStoppedAt(double time)
 {
     return fTimeSource->IsStoppedAt(time);
 }
@@ -374,7 +374,7 @@ uint16_t plMatrixBlend::GetPriority() {
     return fPriority;
 }
 
-hsBool plMatrixBlend::IsStoppedAt(double time)
+bool plMatrixBlend::IsStoppedAt(double time)
 {
     float blend = fChannelBias->Value(time);
     if (blend == 0)
@@ -788,7 +788,7 @@ void plMatrixDelayedCorrectionApplicator::SetCorrection(hsMatrix44 &cor)
 
 
 // CANBLEND
-hsBool plMatrixDelayedCorrectionApplicator::CanBlend(plAGApplicator *app)
+bool plMatrixDelayedCorrectionApplicator::CanBlend(plAGApplicator *app)
 {
     plMatrixChannelApplicator *matChannelApp = plMatrixChannelApplicator::ConvertNoRef(app);
 
@@ -870,7 +870,7 @@ void plMatrixDifferenceApp::Reset(double time)
 
 // CanBlend -----------------------------------------------
 // ---------
-hsBool plMatrixDifferenceApp::CanBlend(plAGApplicator *app)
+bool plMatrixDifferenceApp::CanBlend(plAGApplicator *app)
 {
     plMatrixChannelApplicator *matChannelApp = plMatrixChannelApplicator::ConvertNoRef(app);
 

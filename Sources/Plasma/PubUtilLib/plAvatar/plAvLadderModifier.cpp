@@ -164,7 +164,7 @@ void plAvLadderMod::ITriggerSelf(plKey avKey)
 }
 
 // MSGRECEIVE
-hsBool plAvLadderMod::MsgReceive(plMessage* msg)
+bool plAvLadderMod::MsgReceive(plMessage* msg)
 {
     // Avatar is entering or exiting our detector box
     plCollideMsg* collMsg = plCollideMsg::ConvertNoRef(msg);
@@ -337,8 +337,8 @@ void plAvLadderMod::Read(hsStream *stream, hsResMgr *mgr)
     
     fType = stream->ReadLE32();
     fLoops = stream->ReadLE32();
-    fGoingUp = stream->Readbool();
-    fEnabled = stream->Readbool();
+    fGoingUp = stream->ReadBool();
+    fEnabled = stream->ReadBool();
     fLadderView.fX = stream->ReadLEScalar();
     fLadderView.fY = stream->ReadLEScalar();
     fLadderView.fZ = stream->ReadLEScalar();
@@ -350,7 +350,7 @@ void plAvLadderMod::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteLE32(fType);
     stream->WriteLE32(fLoops);
-    stream->Writebool(fGoingUp);
+    stream->WriteBool(fGoingUp);
     stream->WriteBool(fEnabled);
     stream->WriteLEScalar(fLadderView.fX);
     stream->WriteLEScalar(fLadderView.fY);

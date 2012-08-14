@@ -75,12 +75,12 @@ public: // MSDEV bug
     ~hsConverterUtils() {}
 public:
     static hsConverterUtils& Instance();
-    static hsBool IsReservedKeyword(const char* nodeName);
+    static bool IsReservedKeyword(const char* nodeName);
 
-    void Init(hsBool save, plErrorMsg *msg);
-    hsBool IsEnvironHolder(INode *node);
-    hsBool AutoStartDynamics(INode *node);
-    hsBool RandomStartDynamics(INode *node);
+    void Init(bool save, plErrorMsg *msg);
+    bool IsEnvironHolder(INode *node);
+    bool AutoStartDynamics(INode *node);
+    bool RandomStartDynamics(INode *node);
     TimeValue GetTime(Interface *gi);
     void StripOffTail(char* path);
     void StripOffPath(char* fileName);
@@ -94,15 +94,15 @@ public:
     char* MangleReference(char *mangName, INode *node, const char* defRoom="global");
     char* MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName);
     char* UnMangleReference(char *dest, const char *name);
-    hsBool IsMangled(const char *name);
+    bool IsMangled(const char *name);
     int32_t FindNamedSelSetFromName(const char *name);
     char* StripMangledReference(char* dest, const char* name);
 
-    hsBool IsInstanced(Object* maxObject);
+    bool IsInstanced(Object* maxObject);
 
     void CreateNodeSearchCache();
     void DestroyNodeSearchCache();
-    INode* GetINodeByName(const char* name, hsBool caseSensitive=false);
+    INode* GetINodeByName(const char* name, bool caseSensitive=false);
     
     static const char fTagSeps[];
 
@@ -119,16 +119,16 @@ private:
     Interface   *fInterface;
     plErrorMsg  *fErrorMsg;
 
-    hsBool      fSuppressMangling;
+    bool        fSuppressMangling;
     uint32_t      fWarned;
-    hsBool      fSave;
+    bool        fSave;
 
     struct CacheNode
     {
     private:
         INode* fNode;
         const char* fName;
-        hsBool fCaseSensitive;
+        bool fCaseSensitive;
     public:
         CacheNode(INode* node=nil) : fNode(node), fName(nil), fCaseSensitive(false) { }
         CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
@@ -137,8 +137,8 @@ private:
         INode* GetNode() { return fNode; }
         const char* GetName() const { return fNode ? fNode->GetName() : fName; }
 
-        void SetCaseSensitive(hsBool b) { fCaseSensitive = b; }
-        hsBool GetCaseSensitive() { return fCaseSensitive; }
+        void SetCaseSensitive(bool b) { fCaseSensitive = b; }
+        bool GetCaseSensitive() { return fCaseSensitive; }
 
         uint32_t GetHash() const;
         bool operator==(const CacheNode& other) const;

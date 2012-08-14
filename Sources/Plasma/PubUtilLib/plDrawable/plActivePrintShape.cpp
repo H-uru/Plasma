@@ -90,7 +90,7 @@ void plActivePrintShape::AddDecalKey(const plKey& k)
     fDecalMgrs.Append(k);
 }
 
-hsBool plActivePrintShape::MsgReceive(plMessage* msg)
+bool plActivePrintShape::MsgReceive(plMessage* msg)
 {
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
     if( eval )
@@ -101,7 +101,7 @@ hsBool plActivePrintShape::MsgReceive(plMessage* msg)
     return plPrintShape::MsgReceive(msg);
 }
 
-hsBool plActivePrintShape::INotify()
+bool plActivePrintShape::INotify()
 {
     if( !fShapeMsg )
         ISetupShapeMsg();

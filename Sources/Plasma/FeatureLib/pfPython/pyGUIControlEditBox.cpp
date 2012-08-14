@@ -58,7 +58,7 @@ pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(objkey)
 }
 
 
-hsBool pyGUIControlEditBox::IsGUIControlEditBox(pyKey& gckey)
+bool pyGUIControlEditBox::IsGUIControlEditBox(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIEditBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -186,7 +186,7 @@ void pyGUIControlEditBox::SetSelColor(pyColor& forecolor, pyColor& backcolor)
 */
 }
 
-hsBool pyGUIControlEditBox::WasEscaped()
+bool pyGUIControlEditBox::WasEscaped()
 {
     if ( fGCkey )
     {
@@ -198,7 +198,7 @@ hsBool pyGUIControlEditBox::WasEscaped()
     return false;
 }
 
-void pyGUIControlEditBox::SetSpecialCaptureKeyMode(hsBool state)
+void pyGUIControlEditBox::SetSpecialCaptureKeyMode(bool state)
 {
     if ( fGCkey )
     {
@@ -244,7 +244,7 @@ void pyGUIControlEditBox::SetLastKeyCapture(uint32_t key, uint32_t modifiers)
     }
 }
 
-void pyGUIControlEditBox::SetChatMode(hsBool state)
+void pyGUIControlEditBox::SetChatMode(bool state)
 {
     if ( fGCkey )
     {

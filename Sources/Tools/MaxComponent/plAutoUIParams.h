@@ -108,7 +108,7 @@ public:
     bool CheckVisibility(ParamID id, std::string state);
 
     virtual int GetParamType();
-    virtual hsBool GetBool(IParamBlock2 *pb);
+    virtual bool GetBool(IParamBlock2 *pb);
     virtual float GetFloat(IParamBlock2 *pb);
     virtual int GetInt(IParamBlock2 *pb);
     virtual const char* GetString(IParamBlock2 *pb);
@@ -136,7 +136,7 @@ public:
     bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
 
     int GetParamType();
-    hsBool GetBool(IParamBlock2 *pb);
+    bool GetBool(IParamBlock2 *pb);
 };
 
 class plSpinnerParam : public plAutoUIParam

@@ -93,18 +93,18 @@ public:
 
     // Overloads for plAudioFileReader
     CWaveFile( const char *path, plAudioCore::ChannelSelect whichChan );
-    virtual hsBool  OpenForWriting( const char *path, plWAVHeader &header );
+    virtual bool    OpenForWriting( const char *path, plWAVHeader &header );
     virtual plWAVHeader &GetHeader( void );
     virtual void    Close( void );
     virtual uint32_t  GetDataSize( void );
     virtual float   GetLengthInSecs( void );
 
-    virtual hsBool  SetPosition( uint32_t numBytes );
-    virtual hsBool  Read( uint32_t numBytes, void *buffer );
+    virtual bool    SetPosition( uint32_t numBytes );
+    virtual bool    Read( uint32_t numBytes, void *buffer );
     virtual uint32_t  NumBytesLeft( void );
     virtual uint32_t  Write( uint32_t bytes, void *buffer );
 
-    virtual hsBool  IsValid( void );
+    virtual bool    IsValid( void );
     WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure
     HMMIO         m_hmmio;       // MM I/O handle for the WAVE
     MMCKINFO      m_ck;          // Multimedia RIFF chunk

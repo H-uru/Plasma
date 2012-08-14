@@ -58,7 +58,7 @@ fDirectional(false)
     SetSatisfied(true);
 }
 
-hsBool plFacingConditionalObject::MsgReceive(plMessage* msg)
+bool plFacingConditionalObject::MsgReceive(plMessage* msg)
 {
     return plConditionalObject::MsgReceive(msg);
 }
@@ -78,7 +78,7 @@ void plFacingConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     fDirectional = stream->ReadBool();
 }
 
-hsBool plFacingConditionalObject::Verify(plMessage* msg)
+bool plFacingConditionalObject::Verify(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg && pActivateMsg->fHitterObj)

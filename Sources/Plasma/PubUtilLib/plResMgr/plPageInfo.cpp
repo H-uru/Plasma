@@ -198,7 +198,7 @@ void    plPageInfo::Write( hsStream *s )
 //// IsValid /////////////////////////////////////////////////////////////////
 //  Just a simple test for now.
 
-hsBool  plPageInfo::IsValid( void ) const
+bool    plPageInfo::IsValid( void ) const
 {
     return fLocation.IsValid();
 }

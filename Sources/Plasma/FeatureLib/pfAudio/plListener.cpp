@@ -59,9 +59,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvCallbackAction.h"
 
-hsBool      plListener::fPrintDbgInfo = false;
+bool        plListener::fPrintDbgInfo = false;
 
-hsBool plListener::IEval(double secs, float del, uint32_t dirty)
+bool plListener::IEval(double secs, float del, uint32_t dirty)
 {
 //  if (!plgAudioSys::Active())
 //      return true;
@@ -204,7 +204,7 @@ hsBool plListener::IEval(double secs, float del, uint32_t dirty)
     return true;
 }
 
-void    plListener::ISetRef( const plKey &ref, hsBool binding, int type )
+void    plListener::ISetRef( const plKey &ref, bool binding, int type )
 {
     if( binding )
         hsgResMgr::ResMgr()->AddViaNotify( ref, new plGenRefMsg( GetKey(), plGenRefMsg::kOnReplace, -1, type ), plRefFlags::kPassiveRef );
@@ -243,12 +243,12 @@ void    plListener::ICheckAudio( void ) const
         plgAudioSys::SetMuted( true );
 }
 
-hsBool plListener::MsgReceive(plMessage* msg)
+bool plListener::MsgReceive(plMessage* msg)
 {
     plSetListenerMsg *setMsg = plSetListenerMsg::ConvertNoRef( msg );
     if( setMsg != nil )
     {
-        hsBool useVCam;
+        bool useVCam;
 
         if( setMsg->GetType() & plSetListenerMsg::kVCam )
         {

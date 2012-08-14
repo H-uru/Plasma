@@ -115,7 +115,7 @@ protected:
     plLightInfo* ISetLightInfo();
 
     virtual void IBeginRender();
-    virtual hsBool IOnCastMsg(plShadowCastMsg* castMsg);
+    virtual bool IOnCastMsg(plShadowCastMsg* castMsg);
 
 public:
     plShadowMaster();
@@ -124,7 +124,7 @@ public:
     CLASSNAME_REGISTER( plShadowMaster );
     GETINTERFACE_ANY( plShadowMaster, plObjInterface );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
 

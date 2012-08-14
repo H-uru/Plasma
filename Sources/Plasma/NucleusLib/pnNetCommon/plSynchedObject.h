@@ -107,7 +107,7 @@ private:
 
     plNetGroupId fNetGroup;
 
-    static std::vector<hsBool> fSynchStateStack;
+    static std::vector<bool> fSynchStateStack;
     static plSynchedObject* fStaticSynchedObj;      // static which temporarily holds address of each object's synchMgr
     static std::vector<StateDefn>   fDirtyStates;
 
@@ -124,7 +124,7 @@ public:
     CLASSNAME_REGISTER( plSynchedObject );
     GETINTERFACE_ANY( plSynchedObject, hsKeyedObject);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     // getters
     int GetSynchFlags() const { return fSynchFlags; }
@@ -137,15 +137,15 @@ public:
     virtual void SetNetGroup(plNetGroupId netGroup) { fNetGroup = netGroup; }   
     plNetGroupId SelectNetGroup(plKey groupKey);
 
-    virtual hsBool DirtySynchState(const char* sdlName, uint32_t sendFlags);      
+    virtual bool DirtySynchState(const char* sdlName, uint32_t sendFlags);      
     void SendSDLStateMsg(const char* SDLStateName, uint32_t synchFlags);  // don't use, only for net code
 
     void ClearSynchFlagsBit(uint32_t f) { fSynchFlags &= ~f; }
 
     // static 
-    static hsBool GetSynchDisabled() { return fSynchStateStack.size() ? fSynchStateStack.back() : true; }
-    static void PushSynchDisabled(hsBool b) { fSynchStateStack.push_back(b); }
-    static hsBool PopSynchDisabled();
+    static bool GetSynchDisabled() { return fSynchStateStack.size() ? fSynchStateStack.back() : true; }
+    static void PushSynchDisabled(bool b) { fSynchStateStack.push_back(b); }
+    static bool PopSynchDisabled();
     static plSynchedObject* GetStaticSynchedObject() { return fStaticSynchedObj; }
     static int32_t GetNumDirtyStates() { return fDirtyStates.size(); }
     static plSynchedObject::StateDefn* GetDirtyState(int32_t i) { return &fDirtyStates[i]; }
@@ -212,7 +212,7 @@ public:
     plSynchedValueBase* GetSynchedValue(int i) const;
 
     uint8_t RegisterSynchedValue(plSynchedValueBase* v); 
-    hsBool RemoveSynchedValue(plSynchedValueBase* v);       // handles SVFriends too
+    bool RemoveSynchedValue(plSynchedValueBase* v);       // handles SVFriends too
     void RegisterSynchedValueFriend(plSynchedValueBase* v); 
 #endif
 
@@ -230,7 +230,7 @@ public:
 class plSynchEnabler
 {
 public:
-    plSynchEnabler(hsBool enable) { plSynchedObject::PushSynchDisabled(!enable); }
+    plSynchEnabler(bool enable) { plSynchedObject::PushSynchDisabled(!enable); }
     ~plSynchEnabler() { plSynchedObject::PopSynchDisabled(); }
 };
 

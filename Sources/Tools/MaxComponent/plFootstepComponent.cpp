@@ -109,7 +109,7 @@ extern const plArmatureMod * FindArmatureMod(const plSceneObject *obj);
     return nil;
 }*/
 
-hsBool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plGenRefMsg *msg;
     plArmatureEffectFootSound *effect = new plArmatureEffectFootSound();

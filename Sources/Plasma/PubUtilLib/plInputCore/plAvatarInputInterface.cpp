@@ -189,7 +189,7 @@ void    plAvatarInputInterface::Shutdown( void )
 {
 }
 
-void plAvatarInputInterface::CameraInThirdPerson(hsBool state)
+void plAvatarInputInterface::CameraInThirdPerson(bool state)
 {
     if (state != f3rdPerson)
     {
@@ -393,17 +393,17 @@ void plAvatarInputInterface::EnableMouseMovement()
     ISetBasicMode();
 }
 
-void plAvatarInputInterface::EnableJump(hsBool val)
+void plAvatarInputInterface::EnableJump(bool val)
 {
     EnableControl(val, B_CONTROL_JUMP);
 }
 
-void plAvatarInputInterface::EnableForwardMovement(hsBool val)
+void plAvatarInputInterface::EnableForwardMovement(bool val)
 {
     EnableControl(val, B_CONTROL_MOVE_FORWARD);
 }
 
-void plAvatarInputInterface::EnableControl(hsBool val, ControlEventCode code)
+void plAvatarInputInterface::EnableControl(bool val, ControlEventCode code)
 {
     if (val)
         IEnableControl(code);
@@ -411,7 +411,7 @@ void plAvatarInputInterface::EnableControl(hsBool val, ControlEventCode code)
         IDisableControl(code);
 }
 
-void plAvatarInputInterface::ForceAlwaysRun(hsBool val)
+void plAvatarInputInterface::ForceAlwaysRun(bool val)
 {
     plCtrlCmd *pCmd = new plCtrlCmd( this );
     pCmd->fControlCode = B_CONTROL_ALWAYS_RUN;
@@ -424,7 +424,7 @@ void plAvatarInputInterface::ForceAlwaysRun(hsBool val)
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Gets called once per IUpdate(), just like normal IEval()s
 
-hsBool plAvatarInputInterface::IEval( double secs, float del, uint32_t dirty )
+bool plAvatarInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     fCursorTimeout += del;
     if( fCursorTimeout > fCursorFadeDelay )
@@ -442,7 +442,7 @@ hsBool plAvatarInputInterface::IEval( double secs, float del, uint32_t dirty )
 
 //// IHandleCtrlCmd //////////////////////////////////////////////////////////
 
-hsBool  plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
+bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
 {
     switch( cmd->fControlCode )
     {
@@ -498,7 +498,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
 
             if( cmd->fControlActivated )
             {
-                hsBool abort = false;
+                bool abort = false;
                 for (int i = 0; i < fMessageQueue->GetCount(); i++)
                 {
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_MODE && !(*fMessageQueue)[i]->fControlActivated)
@@ -523,7 +523,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             
             if( cmd->fControlActivated )
             {
-                hsBool abort = false;
+                bool abort = false;
                 for (int i = 0; i < fMessageQueue->GetCount(); i++)
                 {
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
@@ -548,7 +548,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             
             if( cmd->fControlActivated )
             {
-                hsBool abort = false;
+                bool abort = false;
                 for (int i = 0; i < fMessageQueue->GetCount(); i++)
                 {
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
@@ -602,7 +602,7 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
     return false;
 }
 
-hsBool plAvatarInputInterface::CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box)
+bool plAvatarInputInterface::CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box)
 {
     return ( pMsg->GetXPos() >= box.fX && pMsg->GetXPos() <= box.fY && pMsg->GetYPos() >= box.fZ && pMsg->GetYPos() <= box.fW ); 
 }
@@ -623,7 +623,7 @@ void plAvatarInputInterface::ClearMouseCursor()
     IClearControlFlag(S_SET_CURSOR_RIGHT);
 }
 
-hsBool  plAvatarInputInterface::MsgReceive( plMessage *msg )
+bool    plAvatarInputInterface::MsgReceive( plMessage *msg )
 {
     plCmdIfaceModMsg *pCMsg = plCmdIfaceModMsg::ConvertNoRef( msg );
     if( pCMsg )
@@ -684,7 +684,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
     }
 }
 
-hsBool plAvatarInputInterface::IsEnterChatModeBound()
+bool plAvatarInputInterface::IsEnterChatModeBound()
 {
     int i;
     for ( i=0; i< fControlMap->GetNumBindings(); i++ )
@@ -704,7 +704,7 @@ hsBool plAvatarInputInterface::IsEnterChatModeBound()
 
 //// InterpretInputEvent /////////////////////////////////////////////////////
 
-hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
+bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
     if( fInputMap == nil )
         return false;
@@ -801,7 +801,7 @@ hsBool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     return true;                
                 
                 // can we disable this control?
-                hsBool disable = false;
+                bool disable = false;
                 
                 // can we disable this control based on a button?
                 if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButton && !(fInputMap->fButtonState & kLeftButtonDown))

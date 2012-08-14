@@ -64,10 +64,10 @@ public:
 
 
     plKey           fPlayer;
-    hsBool          fLocallyOriginated;
-    hsBool          fUnload;
+    bool            fLocallyOriginated;
+    bool            fUnload;
     int             fClientID;
-    hsBool          fLastOut;
+    bool            fLastOut;
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr)

@@ -174,25 +174,25 @@ class plSpan
 
         void            SetShadowBit(uint32_t idx) const { fShadowBits.SetBit(idx); }
         void            ClearShadowBits() const { fShadowBits.Clear(); }
-        hsBool          IsShadowBitSet(uint32_t idx) const { return fShadowBits.IsBitSet(idx); }
+        bool            IsShadowBitSet(uint32_t idx) const { return fShadowBits.IsBitSet(idx); }
         void            ClearLights() const;
 
-        void            AddLight( plLightInfo* li, float strength, float scale, hsBool proj ) const;
+        void            AddLight( plLightInfo* li, float strength, float scale, bool proj ) const;
 
-        hsTArray<plLightInfo*>& GetLightList(hsBool proj) const { return proj ? fProjectors : fLights; }
+        hsTArray<plLightInfo*>& GetLightList(bool proj) const { return proj ? fProjectors : fLights; }
 
-        uint32_t          GetNumLights(hsBool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
-        plLightInfo*    GetLight(int i, hsBool proj) const { return proj ? fProjectors[i] : fLights[i]; }
-        float        GetLightStrength(int i, hsBool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
-        float        GetLightScale(int i, hsBool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
+        uint32_t          GetNumLights(bool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
+        plLightInfo*    GetLight(int i, bool proj) const { return proj ? fProjectors[i] : fLights[i]; }
+        float        GetLightStrength(int i, bool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
+        float        GetLightScale(int i, bool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
         
-        void            AddPermaLight(plLightInfo* li, hsBool proj);
-        void            RemovePermaLight(plLightInfo* li, hsBool proj);
+        void            AddPermaLight(plLightInfo* li, bool proj);
+        void            RemovePermaLight(plLightInfo* li, bool proj);
 
         const hsBitVector& GetVisSet() const { return fVisSet; }
         const hsBitVector& GetVisNot() const { return fVisNot; }
-        void            SetVisBit(uint32_t w, hsBool on) { fVisSet.SetBit(w, on); }
-        void            SetVisNot(uint32_t w, hsBool on) { fVisNot.SetBit(w, on); }
+        void            SetVisBit(uint32_t w, bool on) { fVisSet.SetBit(w, on); }
+        void            SetVisNot(uint32_t w, bool on) { fVisNot.SetBit(w, on); }
 
         void            RemoveAuxSpan(plAuxSpan* aux);
         void            AddAuxSpan(plAuxSpan* aux);
@@ -202,7 +202,7 @@ class plSpan
         virtual void    Read( hsStream* stream );
         virtual void    Write( hsStream* stream );
 
-        virtual hsBool  CanMergeInto( plSpan* other );
+        virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
         virtual void    Destroy( void );
 
@@ -233,7 +233,7 @@ public:
         virtual void    Read( hsStream* stream );
         virtual void    Write( hsStream* stream );
 
-        virtual hsBool  CanMergeInto( plSpan* other );
+        virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
 };
 
@@ -260,7 +260,7 @@ class plIcicle : public plVertexSpan
         virtual void    Read( hsStream* stream );
         virtual void    Write( hsStream* stream );
 
-        virtual hsBool  CanMergeInto( plSpan* other );
+        virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
         virtual void    Destroy( void );
 };
@@ -288,7 +288,7 @@ class plParticleSpan : public plIcicle
         virtual void    Read( hsStream* stream ) { /*plParticleSpans don't read in!*/ }
         virtual void    Write( hsStream* stream ) { /*plParticleSpans don't write out!*/ }
 
-        virtual hsBool  CanMergeInto( plSpan* other );
+        virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
         virtual void    Destroy( void );
 };

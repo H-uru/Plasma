@@ -78,12 +78,12 @@ enum plClosestClampFlags
                               uint32_t clamp);                            // Clamp on ends
 
     //  Return true if p0 is inside or on sphere.
-    static hsBool PointOnSphere(const hsPoint3& p0,                     // Point
+    static bool PointOnSphere(const hsPoint3& p0,                     // Point
                             const hsPoint3& center, float rad,       // Sphere
                             hsPoint3& cp);                              // Output closest on sphere to p0
 
     // Return true if p0 is inside box.
-    static hsBool PointOnBox(const hsPoint3& p0,                        // Point
+    static bool PointOnBox(const hsPoint3& p0,                        // Point
                             const hsPoint3& corner,                     // Box defined by corner point and 3 (presumably but 
                             const hsVector3& axis0,                     // not required) ortho axes.
                             const hsVector3& axis1,
@@ -91,13 +91,13 @@ enum plClosestClampFlags
                             hsPoint3& cp);
 
     // Return true if line intersects or is inside sphere.
-    static hsBool PointOnSphere(const hsPoint3& p0, const hsVector3& v0,    // Line
+    static bool PointOnSphere(const hsPoint3& p0, const hsVector3& v0,    // Line
                             const hsPoint3& center, float rad,           // Sphere
                             hsPoint3& cp,                                   // Output closest on sphere to p0, or entry point if line hits sphere
                             uint32_t clamp);
 
     // Return true if line intersects or is inside box.
-    static hsBool PointOnBox(const hsPoint3& p0, const hsVector3& v0,   // Line
+    static bool PointOnBox(const hsPoint3& p0, const hsVector3& v0,   // Line
                             const hsPoint3& corner,                     // Box defined by corner point and 3 (presumably but 
                             const hsVector3& axis0,                     // not required) ortho axes.
                             const hsVector3& axis1,
@@ -106,19 +106,19 @@ enum plClosestClampFlags
                             uint32_t clamp);
 
     // Return true if point inside (negative side) of plane
-    static hsBool PointOnPlane(const hsPoint3& p0,
+    static bool PointOnPlane(const hsPoint3& p0,
                             const hsPoint3& pPln, const hsVector3& n,
                             hsPoint3& cp);
 
     // Return true if line passes through plane.
-    static hsBool PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
+    static bool PointOnPlane(const hsPoint3& p0, const hsVector3& v0,
                             const hsPoint3& pPln, const hsVector3& n,
                             hsPoint3& cp,
                             uint32_t clamp);
 
     // Two identical functions, just different wrapping. First version repacks
     // parameters and calls second.
-    static hsBool PointBetweenBoxes(const hsPoint3& aCorner,
+    static bool PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3& aAxis0,
                                     const hsVector3& aAxis1,
                                     const hsVector3& aAxis2,
@@ -128,7 +128,7 @@ enum plClosestClampFlags
                                     const hsVector3& bAxis2,
                                     hsPoint3& cp0, hsPoint3& cp1);
 
-    static hsBool PointBetweenBoxes(const hsPoint3& aCorner,
+    static bool PointBetweenBoxes(const hsPoint3& aCorner,
                                     const hsVector3* aAxes[3],
                                     const hsPoint3& bCorner,
                                     const hsVector3* bAxes[3],

@@ -66,7 +66,7 @@ class plCullTree : public plCuller
 protected:
 
     // Visualization stuff, to be nuked from production version.
-    mutable hsBool                          fCapturePolys;
+    mutable bool                            fCapturePolys;
     mutable hsTArray<hsPoint3>              fVisVerts;
     mutable hsTArray<hsVector3>             fVisNorms;
     mutable hsTArray<hsColorRGBA>           fVisColors;
@@ -80,9 +80,9 @@ protected:
     mutable hsBitVector             fScratchBitVec;
     mutable hsBitVector             fScratchTotVec;
 
-    void        IVisPolyShape(const plCullPoly& poly, hsBool dark) const;
-    void        IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, hsBool dark) const;
-    void        IVisPoly(const plCullPoly& poly, hsBool dark) const;
+    void        IVisPolyShape(const plCullPoly& poly, bool dark) const;
+    void        IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, bool dark) const;
+    void        IVisPoly(const plCullPoly& poly, bool dark) const;
 
 
     hsPoint3                        fViewPos;
@@ -124,8 +124,8 @@ public:
     uint32_t                  GetNumNodes() const { return fNodeList.GetCount(); }
 
     virtual void            Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
-    virtual hsBool          BoundsVisible(const hsBounds3Ext& bnd) const;
-    virtual hsBool          SphereVisible(const hsPoint3& center, float rad) const;
+    virtual bool            BoundsVisible(const hsBounds3Ext& bnd) const;
+    virtual bool            SphereVisible(const hsPoint3& center, float rad) const;
 
     // Visualization stuff. Only to be called by the pipeline (or some other vis manager).
     void                    SetVisualizationYon(float y) const { fVisYon = y; }
@@ -152,7 +152,7 @@ protected:
     hsVector3           fNorm;
     float            fDist;
 
-    hsBool              fIsFace;
+    bool                fIsFace;
 
     int16_t               fInnerChild;
     int16_t               fOuterChild;

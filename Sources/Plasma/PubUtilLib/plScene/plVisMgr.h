@@ -93,13 +93,13 @@ public:
     CLASSNAME_REGISTER( plVisMgr );
     GETINTERFACE_ANY( plVisMgr, hsKeyedObject );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void Register(plVisRegion* reg, hsBool bnot);
-    void UnRegister(plVisRegion* reg, hsBool bnot);
+    void Register(plVisRegion* reg, bool bnot);
+    void UnRegister(plVisRegion* reg, bool bnot);
 
     void Eval(const hsPoint3& pos);
 
@@ -115,13 +115,13 @@ public:
 
     // Enable drawing of selected sets. Either one index at a time or pass in a bitvector.
     // The regions are just enabled, they can still say no.
-    void    EnableVisSet(int idx, hsBool isNot = false);
-    void    EnableVisSets(const hsBitVector& enabled, hsBool isNot = false);
+    void    EnableVisSet(int idx, bool isNot = false);
+    void    EnableVisSets(const hsBitVector& enabled, bool isNot = false);
 
     // Make specified regions say yes, no matter where the camera is.
     // This will implicitly call EnableVisSet for you.
-    void    ForceVisSet(int idx, hsBool isNot = false);
-    void    ForceVisSets(const hsBitVector& enabled, hsBool isNot = false);
+    void    ForceVisSet(int idx, bool isNot = false);
+    void    ForceVisSets(const hsBitVector& enabled, bool isNot = false);
 };
 
 class plGlobalVisMgr

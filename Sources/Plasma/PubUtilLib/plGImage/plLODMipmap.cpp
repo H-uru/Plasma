@@ -246,9 +246,9 @@ void plLODMipmap::ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t de
     fBase->ScaleNicely(destPtr, destWidth, destHeight, destStride, filter);
 }
 
-hsBool plLODMipmap::ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter)
+bool plLODMipmap::ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter)
 {
-    hsBool retVal = fBase->ResizeNicely(newWidth, newHeight, filter);
+    bool retVal = fBase->ResizeNicely(newWidth, newHeight, filter);
     ISetup();
     return retVal;
 }
@@ -265,7 +265,7 @@ void plLODMipmap::Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeO
     IMarkDirty();
 }
 
-hsBool plLODMipmap::MsgReceive(plMessage *msg)
+bool plLODMipmap::MsgReceive(plMessage *msg)
 {
     plGenRefMsg* ref = plGenRefMsg::ConvertNoRef(msg);
     if( ref )

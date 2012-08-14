@@ -75,7 +75,7 @@ plLogicModifier::~plLogicModifier()
 // to be satisfied.  Used by the activator condition
 // to check that any special conditions (like players
 // in boxes) are okay or not.
-hsBool plLogicModifier::VerifyConditions(plMessage* msg)
+bool plLogicModifier::VerifyConditions(plMessage* msg)
 {
     for (int i = 0; i < fConditionList.Count(); i++)
     {
@@ -85,9 +85,9 @@ hsBool plLogicModifier::VerifyConditions(plMessage* msg)
     return true;
 }
 
-hsBool plLogicModifier::MsgReceive(plMessage* msg)
+bool plLogicModifier::MsgReceive(plMessage* msg)
 {
-    hsBool retVal = false;
+    bool retVal = false;
     
     // read messages:
     plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
@@ -110,7 +110,7 @@ hsBool plLogicModifier::MsgReceive(plMessage* msg)
     plTimerCallbackMsg* pTMsg = plTimerCallbackMsg::ConvertNoRef(msg);
     if (pTMsg)
     {
-        hsBool netRequest = msg->HasBCastFlag(plMessage::kNetNonLocal);
+        bool netRequest = msg->HasBCastFlag(plMessage::kNetNonLocal);
         Trigger(netRequest);
     }
 
@@ -125,7 +125,7 @@ hsBool plLogicModifier::MsgReceive(plMessage* msg)
         }
 //      else
         {   
-            hsBool ignore=false;
+            bool ignore=false;
 
             // Ignore collision activations by remote players
             if (pActivateMsg->fTriggerType==plActivatorMsg::kCollideEnter  || 
@@ -203,7 +203,7 @@ hsBool plLogicModifier::MsgReceive(plMessage* msg)
     return (plLogicModBase::MsgReceive(msg));   
 }
 
-void plLogicModifier::RequestTrigger(hsBool netRequest)
+void plLogicModifier::RequestTrigger(bool netRequest)
 {
     for (int i = 0; i < fConditionList.Count(); i++)
     {
@@ -214,7 +214,7 @@ void plLogicModifier::RequestTrigger(hsBool netRequest)
     plLogicModBase::RequestTrigger(netRequest);
 }
 
-void plLogicModifier::PreTrigger(hsBool netRequest)
+void plLogicModifier::PreTrigger(bool netRequest)
 {
     if (!IEvalCounter())
         return;

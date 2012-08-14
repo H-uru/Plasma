@@ -97,12 +97,12 @@ public:
     void        SetDataLength(unsigned length)  { fDataLength = length; } 
     void        *GetData( void ) const          { return fData; }
     const char  *GetFileName( void ) const      { return fFileName; }
-    hsBool      IsValid( void ) const           { return fValid; }
+    bool        IsValid( void ) const           { return fValid; }
     float    GetDataLengthInSecs( void ) const;
 
     void                SetFileName( const char *name );
-    hsBool              HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
-    void                SetFlag( uint32_t flag, hsBool yes = true ) { if( yes ) fFlags |= flag; else fFlags &= ~flag; }
+    bool                HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
+    void                SetFlag( uint32_t flag, bool yes = true ) { if( yes ) fFlags |= flag; else fFlags &= ~flag; }
 
     // Must be called until return value is kSuccess. starts an asynchronous load first time called. returns kSuccess when finished.
     ELoadReturnVal      AsyncLoad( plAudioFileReader::StreamType type, unsigned length = 0 );   
@@ -133,12 +133,12 @@ protected:
     
     void            IInitBuffer();
 
-    hsBool          IGrabHeaderInfo( void );
+    bool            IGrabHeaderInfo( void );
     void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );
     void            IGetFullPath( char *destStr );
     
     uint32_t          fFlags;
-    hsBool          fValid;
+    bool            fValid;
     uint32_t          fDataRead;
     char            *fFileName;
     
@@ -154,7 +154,7 @@ protected:
     plAudioFileReader::StreamType fStreamType;
 
     // for plugins only
-    plAudioFileReader   *IGetReader( hsBool fullpath );
+    plAudioFileReader   *IGetReader( bool fullpath );
 };
 
 

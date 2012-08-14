@@ -208,7 +208,7 @@ static void LogV (ELogSev sev, const wchar_t fmt[], va_list args) {
         { stdout, L"Inf" },
         { stderr, L"Err" },
     };
-    COMPILER_ASSERT(arrsize(s_log) == kNumLogSev);
+    static_assert(arrsize(s_log) == kNumLogSev, "Log severity array and enum have different sizes");
     
     fwprintf (s_log[sev].file, L"%s: ", s_log[sev].pre);
     vfwprintf(s_log[sev].file, fmt, args);

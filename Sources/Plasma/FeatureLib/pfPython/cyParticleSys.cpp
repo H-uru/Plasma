@@ -66,12 +66,6 @@ void cyParticleSys::AddRecvr(plKey &recvr)
         fRecvr.Append(recvr);
 }
 
-void cyParticleSys::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : ISendParticleSysMsg

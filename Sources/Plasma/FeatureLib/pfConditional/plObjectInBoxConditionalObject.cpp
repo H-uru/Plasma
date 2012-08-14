@@ -58,7 +58,7 @@ fCurrentTrigger(nil)
     SetSatisfied(true);
 }
 
-hsBool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
+bool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)
@@ -92,7 +92,7 @@ hsBool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
     return plConditionalObject::MsgReceive(msg);
 }
 
-hsBool plObjectInBoxConditionalObject::Verify(plMessage* msg)
+bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)
@@ -135,7 +135,7 @@ fIgnoreExtraEnters(true)
 }
 
 
-hsBool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
+bool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)
@@ -256,7 +256,7 @@ hsBool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
     return plConditionalObject::MsgReceive(msg);
 }
 
-hsBool plVolumeSensorConditionalObject::Satisfied()
+bool plVolumeSensorConditionalObject::Satisfied()
 {
     if (fType == kTypeExit && fFirst && !fTriggered)
     {
@@ -295,7 +295,7 @@ void plVolumeSensorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 }
 #include "pnMessage/plPlayerPageMsg.h"
 #include "plgDispatch.h"
-hsBool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
+bool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)

@@ -84,7 +84,7 @@ public:
 
     virtual void    Read( hsStream* s, hsResMgr* mgr ); 
     virtual void    Write( hsStream* s, hsResMgr* mgr );
-    virtual hsBool  MsgReceive( plMessage* msg );
+    virtual bool    MsgReceive( plMessage* msg );
 
 protected:
 
@@ -93,7 +93,7 @@ protected:
 
     plRenderRequest         *fRequests[ 6 ];
 
-    virtual hsBool  IEval( double secs, float del, uint32_t dirty ); // required by plModifier
+    virtual bool    IEval( double secs, float del, uint32_t dirty ); // required by plModifier
 
     void            ICreateRenderRequest( int face );
 

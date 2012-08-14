@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
+#include "pfCamera/plVirtualCamNeu.h" 
 
 class cyCamera
 {
@@ -80,7 +81,7 @@ public:
     virtual void Pop(pyKey& oldCamKey);
 
     // Send controlKey commands to the virtual camera (should be like a pass thru)
-    virtual void ControlKey(int32_t controlKey, hsBool activated);
+    virtual void ControlKey(int32_t controlKey, bool activated);
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -91,29 +92,29 @@ public:
     //
     //  PURPOSE    : Transition to a new camera (position and settings)
     //
-    virtual void TransitionTo(pyKey& newCamKey, double time, hsBool save);
+    virtual void TransitionTo(pyKey& newCamKey, double time, bool save);
     
-    virtual void SetEnableFirstPersonOverride(hsBool state);
-    virtual void EnableFirstPersonOverride() { SetEnableFirstPersonOverride(true); }
-    virtual void DisableFirstPersonOverride() { SetEnableFirstPersonOverride(false); }
+    virtual void SetEnableFirstPersonOverride(bool state) const;
+    virtual void EnableFirstPersonOverride() const { SetEnableFirstPersonOverride(true); }
+    virtual void DisableFirstPersonOverride() const { SetEnableFirstPersonOverride(false); }
     
     virtual void UndoFirstPerson();
 
     virtual float GetFOV();
     virtual void SetFOV(float fov, double t);
 
-    virtual void SetSmootherCam(hsBool state);
-    virtual hsBool IsSmootherCam();
+    virtual void SetSmootherCam(bool state);
+    virtual bool IsSmootherCam();
 
-    virtual void SetWalkAndVerticalPan(hsBool state);
-    virtual hsBool IsWalkAndVerticalPan();
+    virtual void SetWalkAndVerticalPan(bool state);
+    virtual bool IsWalkAndVerticalPan();
 
-    virtual void SetStayInFirstPerson(hsBool state);
-    virtual hsBool IsStayInFirstPerson();
+    virtual void SetStayInFirstPerson(bool state);
+    virtual bool IsStayInFirstPerson();
 
-    virtual void SetAspectRatio(float aspectratio);
-    virtual float GetAspectRatio();
-    virtual void RefreshFOV();
+    virtual void SetAspectRatio(float aspectratio) { plVirtualCam1::SetAspectRatio(aspectratio); }
+    virtual float GetAspectRatio() const { return plVirtualCam1::GetAspectRatio(); }
+    virtual void RefreshFOV() { plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh()); }
 };
 
 

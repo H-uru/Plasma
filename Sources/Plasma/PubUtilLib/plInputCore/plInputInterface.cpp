@@ -91,7 +91,7 @@ void    plInputInterface::Write( hsStream* s, hsResMgr* mgr )
 
 //// Helper Functions ////////////////////////////////////////////////////////
 
-hsBool      plInputInterface::IOwnsControlCode( ControlEventCode code )
+bool        plInputInterface::IOwnsControlCode( ControlEventCode code )
 {
     if( fControlMap->FindBinding( code ) != nil )
         return true;
@@ -102,7 +102,7 @@ hsBool      plInputInterface::IOwnsControlCode( ControlEventCode code )
 //// IVerifyShiftKey /////////////////////////////////////////////////////////
 // special logic so the shift key can make everyone totally happy...
 
-hsBool  plInputInterface::IVerifyShiftKey( plKeyDef key, int index )
+bool    plInputInterface::IVerifyShiftKey( plKeyDef key, int index )
 {
     // if we are mapped to the actual shift key, return true
     if (key == KEY_SHIFT)
@@ -138,10 +138,10 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
 //  Processes the given key event as a key binding, if one exists. If not,
 //  returns false.
 
-hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
+bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
 {
     int     i;
-    hsBool  activate;
+    bool    activate;
     
     plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( msg );
     if( keyMsg == nil )
@@ -257,7 +257,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
             activate = true;
     }
 
-    hsBool wasActive = IHasKeyControlFlag(binding->GetCode());
+    bool wasActive = IHasKeyControlFlag(binding->GetCode());
 
     // Set or clear our flags, since we do that even if we don't send a message
     if ( !keyMsg->GetKeyChar() )
@@ -305,7 +305,7 @@ hsBool  plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     return true;
 }
 
-hsBool plInputInterface::IControlCodeEnabled(ControlEventCode code )
+bool plInputInterface::IControlCodeEnabled(ControlEventCode code )
 { 
     return (!fDisabledControls.IsBitSet(code));
 }

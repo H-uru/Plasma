@@ -374,7 +374,7 @@ void plSceneNode::IRemoveGeneric(hsKeyedObject* k)
         fGenericPool.Remove(idx);
 }
 
-hsBool plSceneNode::IOnRemove(plNodeRefMsg* refMsg)
+bool plSceneNode::IOnRemove(plNodeRefMsg* refMsg)
 {
 
     switch( refMsg->fType )
@@ -407,7 +407,7 @@ hsBool plSceneNode::IOnRemove(plNodeRefMsg* refMsg)
     return true;
 }
 
-hsBool plSceneNode::IOnAdd(plNodeRefMsg* refMsg)
+bool plSceneNode::IOnAdd(plNodeRefMsg* refMsg)
 {
     int which = refMsg->fWhich;
 
@@ -437,7 +437,7 @@ hsBool plSceneNode::IOnAdd(plNodeRefMsg* refMsg)
     return true;
 }
 
-hsBool plSceneNode::MsgReceive(plMessage* msg)
+bool plSceneNode::MsgReceive(plMessage* msg)
 {
     plNodeCleanupMsg    *cleanMsg = plNodeCleanupMsg::ConvertNoRef( msg );
 

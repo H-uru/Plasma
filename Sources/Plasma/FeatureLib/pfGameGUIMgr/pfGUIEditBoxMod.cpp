@@ -86,14 +86,14 @@ pfGUIEditBoxMod::~pfGUIEditBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIEditBoxMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIEditBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIEditBoxMod::MsgReceive( plMessage *msg )
+bool    pfGUIEditBoxMod::MsgReceive( plMessage *msg )
 {
     return pfGUIControlMod::MsgReceive( msg );
 }
@@ -235,7 +235,7 @@ void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
 }
 
-hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
+bool    pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
     if( fBuffer == nil )
         return false;
@@ -255,7 +255,7 @@ hsBool  pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
     return true;
 }
 
-hsBool  pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
+bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     if ( fSpecialCaptureKeyEventMode)
     {

@@ -55,7 +55,7 @@ plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, f
     return nil;
 }
 
-void plATCEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, hsBool preserveRate /* = false */)
+void plATCEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate /* = false */)
 {
     float rate = 1;
 
@@ -233,7 +233,7 @@ plATCEaseCurve *plSplineEaseCurve::Clone() const
     return curve;
 }
 
-void plSplineEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, hsBool preserveRate /* = false */)
+void plSplineEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate /* = false */)
 {
     plATCEaseCurve::RecalcToSpeed(startSpeed, goalSpeed, preserveRate);
     

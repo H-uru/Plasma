@@ -89,7 +89,7 @@ public:
     // can free the pointer after this function returns if it was allocated)
     //
     void AddCheckBox    (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        hsBool def=false);
+                        bool def=false);
     void AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
                         float def=0.f, float min=0.f, float max=1.f);
     void AddIntSpinner  (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,

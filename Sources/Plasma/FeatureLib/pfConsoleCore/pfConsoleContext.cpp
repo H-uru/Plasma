@@ -216,7 +216,7 @@ void    pfConsoleContext::AddVar( const char *name, bool value )
 
 //// SetVar Variants /////////////////////////////////////////////////////////
 
-hsBool  pfConsoleContext::SetVar( uint32_t idx, const pfConsoleCmdParam &value )
+bool    pfConsoleContext::SetVar( uint32_t idx, const pfConsoleCmdParam &value )
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     if( idx >= fVarValues.GetCount() )
@@ -238,7 +238,7 @@ hsBool  pfConsoleContext::SetVar( uint32_t idx, const pfConsoleCmdParam &value )
     return true;
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &value )
+bool    pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &value )
 {
     int32_t idx = FindVar( name );
     if( idx == -1 )
@@ -255,35 +255,35 @@ hsBool  pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &val
     return SetVar( idx, value );
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, int value )
+bool    pfConsoleContext::SetVar( const char *name, int value )
 {
     pfConsoleCmdParam   param;
     param.SetInt( value );
     return SetVar( name, param );
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, float value )
+bool    pfConsoleContext::SetVar( const char *name, float value )
 {
     pfConsoleCmdParam   param;
     param.SetFloat( value );
     return SetVar( name, param );
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, const char *value )
+bool    pfConsoleContext::SetVar( const char *name, const char *value )
 {
     pfConsoleCmdParam   param;
     param.SetString( (char *)value );   // Don't worry, we'll be copying it soon 'nuf
     return SetVar( name, param );
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, char value )
+bool    pfConsoleContext::SetVar( const char *name, char value )
 {
     pfConsoleCmdParam   param;
     param.SetChar( value );
     return SetVar( name, param );
 }
 
-hsBool  pfConsoleContext::SetVar( const char *name, bool value )
+bool    pfConsoleContext::SetVar( const char *name, bool value )
 {
     pfConsoleCmdParam   param;
     param.SetBool( value );

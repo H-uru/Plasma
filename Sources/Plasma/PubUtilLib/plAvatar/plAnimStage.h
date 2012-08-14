@@ -194,7 +194,7 @@ public:
     const plAnimStage& operator=(const plAnimStage& src);
 
     plAGAnimInstance * Attach(plArmatureMod *armature, plArmatureBrain *brain, float initialBlend, double time);
-    int Detach(plArmatureMod *armature);
+    bool Detach(plArmatureMod *armature);
     void Reset(double time, plArmatureMod *avMod, bool atStart);
     void ResetAtTime(double time, float localTime, plArmatureMod *avMod);
     bool MoveRelative(double worldTime, float delta, float &overage, plArmatureMod *avMod);
@@ -217,7 +217,7 @@ public:
     int GetLoopValue();
     void SetLoopValue(int loop);
     float GetLocalTime();
-    void SetLocalTime(float time, hsBool noCallbacks = false);
+    void SetLocalTime(float time, bool noCallbacks = false);
     float GetLength();
     
     void SetMod(plMultistageBehMod* p) { fMod = p; }    // for returning ID#'s to python scripts:
@@ -252,7 +252,7 @@ protected:
     bool ITryAdvance(plArmatureMod *avMod);
     bool ITryRegress(plArmatureMod *avMod);
 
-    hsBool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
+    bool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
 
     char *fAnimName;            // the name of our animation
     uint8_t fNotify;              // flags for which events will cause notification events

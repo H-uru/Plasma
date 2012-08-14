@@ -69,7 +69,7 @@ public:
     static void     SetLevel( float level );
 
     // Returns whether we can set the level
-    static hsBool   CanSetLevel( void );
+    static bool     CanSetLevel( void );
 
 protected:
     plWinMicLevel();    // Protected constructor for IGetInstance. Just to init some stuff

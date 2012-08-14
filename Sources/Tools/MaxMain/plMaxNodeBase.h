@@ -86,65 +86,65 @@ public:
     // Get Data from MaxNodeData
     //------------------------------
     // If recalculate is true the cached value is ignored. (Useful in the SceneViewer)
-    hsBool          CanConvert(bool recalculate=false);
+    bool            CanConvert(bool recalculate=false);
     plLocation      GetLocation();
     plKey           GetKey();
     plSceneObject*  GetSceneObject();
-    hsBool          GetForceLocal();
-    hsBool          GetReverseSort();
-    hsBool          GetSortAsOpaque();
-    hsBool          GetRunTimeLight();
-    hsBool          GetForceMatShade();
-    hsBool          GetForceVisLOS();
-    hsBool          GetEnviron();
-    hsBool          GetEnvironOnly();
-    hsBool          GetWaterDecEnv();
-    hsBool          GetVS();
-    hsBool          GetHasWaterHeight();
-    float        GetWaterHeight();
-    hsBool          GetSmoothAll();
-    hsBool          GetForceSortable();
-    hsBool          GetConcave();
-    hsBool          GetCalcEdgeLens();
-    hsBool          GetNoPreShade();
-    hsBool          GetForcePreShade();
+    bool            GetForceLocal();
+    bool            GetReverseSort();
+    bool            GetSortAsOpaque();
+    bool            GetRunTimeLight();
+    bool            GetForceMatShade();
+    bool            GetForceVisLOS();
+    bool            GetEnviron();
+    bool            GetEnvironOnly();
+    bool            GetWaterDecEnv();
+    bool            GetVS();
+    bool            GetHasWaterHeight();
+    float           GetWaterHeight();
+    bool            GetSmoothAll();
+    bool            GetForceSortable();
+    bool            GetConcave();
+    bool            GetCalcEdgeLens();
+    bool            GetNoPreShade();
+    bool            GetForcePreShade();
     plKey           GetRoomKey();
-    hsBool          GetDrawable();
-    hsBool          GetPhysical();
-    hsBool          GetItinerant();
-    hsBool          GetUnBounded();
-    hsBool          GetDisableNormal();
-    uint32_t          GetDecalLevel();
-    hsBool          GetMovable();
-    hsBool          GetNoShadow();
-    hsBool          GetForceShadow();
-    hsBool          GetAlphaTestHigh();
-    hsBool          GetFilterInherit();
-    hsBool          GetIsBarney();
-    hsBool          GetNoSpanSort();
-    hsBool          GetNoSpanReSort();
-    hsBool          GetNoFaceSort();
-    hsBool          GetNoDeferDraw();
-    hsBool          GetBlendToFB();
-    hsBool          GetForceMaterialCopy();
-    hsBool          GetInstanced();
-    hsBool          GetParticleRelated();
-    uint32_t          GetSoundIdxCounter();
+    bool            GetDrawable();
+    bool            GetPhysical();
+    bool            GetItinerant();
+    bool            GetUnBounded();
+    bool            GetDisableNormal();
+    uint32_t        GetDecalLevel();
+    bool            GetMovable();
+    bool            GetNoShadow();
+    bool            GetForceShadow();
+    bool            GetAlphaTestHigh();
+    bool            GetFilterInherit();
+    bool            GetIsBarney();
+    bool            GetNoSpanSort();
+    bool            GetNoSpanReSort();
+    bool            GetNoFaceSort();
+    bool            GetNoDeferDraw();
+    bool            GetBlendToFB();
+    bool            GetForceMaterialCopy();
+    bool            GetInstanced();
+    bool            GetParticleRelated();
+    uint32_t        GetSoundIdxCounter();
     plSceneObject*  GetAvatarSO();
     BOOL            HasFade();
     Box3            GetFade();
-    hsBool          GetDup2Sided();
-    hsBool          GetRadiateNorms();
+    bool            GetDup2Sided();
+    bool            GetRadiateNorms();
     BOOL            HasNormalChan();
     int             GetNormalChan();
     BOOL            GetGeoDice(int& maxFaces, float& maxSize, int& minFaces);
-    hsBool          GetIsGUI();
+    bool            GetIsGUI();
     plSharedMesh*   GetSwappableGeom();
-    uint32_t          GetSwappableGeomTarget();
+    uint32_t        GetSwappableGeomTarget();
     plMaxBoneMap*   GetBoneMap();
-    hsBool          GetOverrideHighLevelSDL();
-    uint8_t           GetAnimCompress();
-    float        GetKeyReduceThreshold();
+    bool            GetOverrideHighLevelSDL();
+    uint8_t         GetAnimCompress();
+    float           GetKeyReduceThreshold();
     int             NumRenderDependencies();
     plMaxNodeBase*  GetRenderDependency(int i);
 
@@ -154,63 +154,63 @@ public:
     //------------------------------
     // Set Data from MaxNodeData
     //------------------------------
-    void            SetCanConvert(hsBool b);
+    void            SetCanConvert(bool b);
     void            SetMesh(hsGMesh *p);
     void            SetRoomKey(plKey p);
-    void            SetDrawable(hsBool b);
-    void            SetPhysical(hsBool b);
-    void            SetItinerant(hsBool b);
-    void            SetUnBounded(hsBool b);
-    void            SetDisableNormal(hsBool b);
+    void            SetDrawable(bool b);
+    void            SetPhysical(bool b);
+    void            SetItinerant(bool b);
+    void            SetUnBounded(bool b);
+    void            SetDisableNormal(bool b);
     void            SetDecalLevel(uint32_t i);
-    void            SetMovable(hsBool b);
-    void            SetNoPreShade(hsBool b);
-    void            SetForcePreShade(hsBool b);
-    void            SetReverseSort(hsBool b);
-    void            SetSortAsOpaque(hsBool b);
-    void            SetVS(hsBool b);
-    void            SetHasWaterHeight(hsBool b);
+    void            SetMovable(bool b);
+    void            SetNoPreShade(bool b);
+    void            SetForcePreShade(bool b);
+    void            SetReverseSort(bool b);
+    void            SetSortAsOpaque(bool b);
+    void            SetVS(bool b);
+    void            SetHasWaterHeight(bool b);
     void            SetWaterHeight(float h);
-    void            SetSmoothAll(hsBool b);
-    void            SetForceSortable(hsBool b);
-    void            SetConcave(hsBool b);
-    void            SetCalcEdgeLens(hsBool b);
-    void            SetRunTimeLight(hsBool b);
-    void            SetForceMatShade(hsBool b);
-    void            SetForceVisLOS(hsBool b);
-    void            SetEnviron(hsBool b);
-    void            SetEnvironOnly(hsBool b);
-    void            SetWaterDecEnv(hsBool b);
-    void            SetForceLocal(hsBool b);
-    void            SetIsBarney(hsBool b);
-    void            SetForceShadow(hsBool b);
-    void            SetAlphaTestHigh(hsBool b);
-    void            SetFilterInherit(hsBool b);
-    void            SetNoShadow(hsBool b);
-    void            SetNoSpanSort(hsBool b);
-    void            SetNoSpanReSort(hsBool b);
-    void            SetNoFaceSort(hsBool b);
-    void            SetNoDeferDraw(hsBool b);
-    void            SetBlendToFB(hsBool b);
-    void            SetForceMaterialCopy(hsBool b);
-    void            SetInstanced(hsBool b);
-    void            SetParticleRelated(hsBool b);
+    void            SetSmoothAll(bool b);
+    void            SetForceSortable(bool b);
+    void            SetConcave(bool b);
+    void            SetCalcEdgeLens(bool b);
+    void            SetRunTimeLight(bool b);
+    void            SetForceMatShade(bool b);
+    void            SetForceVisLOS(bool b);
+    void            SetEnviron(bool b);
+    void            SetEnvironOnly(bool b);
+    void            SetWaterDecEnv(bool b);
+    void            SetForceLocal(bool b);
+    void            SetIsBarney(bool b);
+    void            SetForceShadow(bool b);
+    void            SetAlphaTestHigh(bool b);
+    void            SetFilterInherit(bool b);
+    void            SetNoShadow(bool b);
+    void            SetNoSpanSort(bool b);
+    void            SetNoSpanReSort(bool b);
+    void            SetNoFaceSort(bool b);
+    void            SetNoDeferDraw(bool b);
+    void            SetBlendToFB(bool b);
+    void            SetForceMaterialCopy(bool b);
+    void            SetInstanced(bool b);
+    void            SetParticleRelated(bool b);
     void            SetSoundIdxCounter(uint32_t ctr);
     void            SetAvatarSO(plSceneObject *so);
     void            SetFade(const Box3& b);
-    void            SetDup2Sided(hsBool b);
-    void            SetRadiateNorms(hsBool b);
+    void            SetDup2Sided(bool b);
+    void            SetRadiateNorms(bool b);
     void            SetNormalChan(int n);
     void            SetGeoDice(BOOL on, int maxFaces, float maxSize, int minFaces);
-    void            SetIsGUI(hsBool b);
+    void            SetIsGUI(bool b);
     void            SetSwappableGeom(plSharedMesh *sm);
     void            SetSwappableGeomTarget(uint32_t id);
     void            SetBoneMap(plMaxBoneMap *bones);
-    void            SetOverrideHighLevelSDL(hsBool b);
+    void            SetOverrideHighLevelSDL(bool b);
     void            SetAnimCompress(uint8_t v);
     void            SetKeyReduceThreshold(float v);
-    hsBool          AddRenderDependency(plMaxNodeBase* m);
-    hsBool          RenderDependsOn(plMaxNodeBase* m);
+    bool            AddRenderDependency(plMaxNodeBase* m);
+    bool            RenderDependsOn(plMaxNodeBase* m);
     void            ClearRenderDependencies();
 
     void            AddBone(plMaxNodeBase* m);
@@ -218,28 +218,28 @@ public:
 
     // Dirty flags for SceneWatcher use
     enum { kGeomDirty = 0x1, kMatDirty = 0x2, kAllDirty = 0xFF };
-    hsBool  GetDirty(uint8_t i);
-    void    SetDirty(uint8_t i, hsBool b);
+    bool    GetDirty(uint8_t i);
+    void    SetDirty(uint8_t i, bool b);
 
     plKey GetParentKey() { plMaxNodeBase *pPar = (plMaxNodeBase*)GetParentNode(); hsAssert(pPar, "No Parent"); return pPar->GetKey(); }
 
     ISkin* FindSkinModifier(); // Returns the object's skin modifier if it has one, else nil
-    const plRenderLevel& GetRenderLevel(hsBool forBlend);
+    const plRenderLevel& GetRenderLevel(bool forBlend);
 
-    hsBool HasLoadMask();
+    bool HasLoadMask();
     plLoadMask GetLoadMask();
     void AddLoadMask(const plLoadMask& m);
 
-    hsBool IsTMAnimated();
-    hsBool IsTMAnimatedRecur();
-    hsBool IsMovable(); // Checks to see whether this node will ever move in the scene
+    bool IsTMAnimated();
+    bool IsTMAnimatedRecur();
+    bool IsMovable(); // Checks to see whether this node will ever move in the scene
     bool IsXRef();      // Returns true if object is an XRef or part of an XRef'd scene
 
     //----------
     // Component
     //----------
-    hsBool IsComponent(Object *obj=nil);        // Object pointer is only necessary for internal use,
-    hsBool IsExternComponent(Object *obj=nil);
+    bool IsComponent(Object *obj=nil);        // Object pointer is only necessary for internal use,
+    bool IsExternComponent(Object *obj=nil);
     plComponentBase *ConvertToComponent();      // Returns nil if node is not a component
 
 
@@ -251,10 +251,10 @@ public:
     uint32_t NumAttachedComponents(bool all=false);
     plComponentBase *GetAttachedComponent(uint32_t i, bool all=false);
 
-    hsBool      Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
-    hsBool      Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
-    float    BoxVolume(const Box3& bnd, const Matrix3& l2w);
-    float    RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
+    bool        Contains(const Point3& worldPt); // is the world space point inside my (CONVEX) geometry or dummy box?
+    bool        Contains(const Box3& bnd, const Matrix3& l2w); // is the box contained entirely inside my (CONVEX) geometry or dummy box?
+    float       BoxVolume(const Box3& bnd, const Matrix3& l2w);
+    float       RegionPriority();   // returns a dominance factor. If a point is in more than one environmental
                                     // region, the region with highest priority wins.
 
     Interface *GetInterface() { return ::GetCOREInterface(); }
@@ -303,13 +303,13 @@ protected:
     // Attempts to convert a RefMaker pointer to a component.  Returns nil if it is not a component.
     plComponentBase *IRefMakerToComponent(ReferenceMaker *maker, bool all);
 
-    uint32_t          IGetMajorRenderLevel(hsBool forBlend);
-    uint32_t          IGetMinorRenderLevel(hsBool forBlend);
+    uint32_t          IGetMajorRenderLevel(bool forBlend);
+    uint32_t          IGetMinorRenderLevel(bool forBlend);
 
-    hsBool          IRenderLevelSet(hsBool forBlend);
-    void            ISetRenderLevel(const plRenderLevel& l, hsBool forBlend);
-    const plRenderLevel& IGetRenderLevel(hsBool forBlend);
-    plRenderLevel   ICalcRenderLevel(hsBool forBlend);
+    bool            IRenderLevelSet(bool forBlend);
+    void            ISetRenderLevel(const plRenderLevel& l, bool forBlend);
+    const plRenderLevel& IGetRenderLevel(bool forBlend);
+    plRenderLevel   ICalcRenderLevel(bool forBlend);
 };
 
 #endif //plMaxNodeBase_inc

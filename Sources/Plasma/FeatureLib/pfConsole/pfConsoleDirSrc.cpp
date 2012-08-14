@@ -56,17 +56,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// ParseDirectory //////////////////////////////////////////////////////////
 
-hsBool  pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
+bool    pfConsoleDirSrc::ParseDirectory(const std::string& path, const std::string& mask /* = "*.*" */)
 {
     wchar_t* wPath = hsStringToWString(path.c_str());
     wchar_t* wMask = hsStringToWString(mask.c_str());
-    hsBool ret = ParseDirectory(wPath, wMask);
+    bool ret = ParseDirectory(wPath, wMask);
     delete [] wPath;
     delete [] wMask;
     return ret;
 }
 
-hsBool  pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wstring& mask /* = L"*.*" */)
+bool    pfConsoleDirSrc::ParseDirectory(const std::wstring& path, const std::wstring& mask /* = L"*.*" */)
 {
     std::wstringstream  search;
     std::wstring        file;
@@ -136,7 +136,7 @@ void pfConsoleDirSrc::ResetProcessedFiles()
 // note: this n^2 linear search should be replaced with something
 // faster if we have lots of init files and turn on the checkProcessing option.
 //
-hsBool pfConsoleDirSrc::AlreadyProcessedFile(const std::wstring& path, const std::wstring& file)
+bool pfConsoleDirSrc::AlreadyProcessedFile(const std::wstring& path, const std::wstring& file)
 {
     if (fCheckProcessedFiles)
     {

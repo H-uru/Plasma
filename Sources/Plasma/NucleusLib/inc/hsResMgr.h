@@ -63,8 +63,8 @@ public:
     //---------------------------
     //  Load and Unload
     //---------------------------
-    virtual void Load  (const plKey& objKey)=0;     // places on list to be loaded
-    virtual hsBool Unload(const plKey& objKey)=0;       // Unregisters (deletes) an object, Return true if successful
+    virtual void  Load  (const plKey& objKey)=0;     // places on list to be loaded
+    virtual bool  Unload(const plKey& objKey)=0;       // Unregisters (deletes) an object, Return true if successful
     virtual plKey CloneKey(const plKey& objKey)=0;
 
     //---------------------------
@@ -75,11 +75,11 @@ public:
     //---------------------------
     //  Establish reference linkage 
     //---------------------------
-    virtual hsBool AddViaNotify(const plKey& sentKey, plRefMsg* msg, plRefFlags::Type flags)=0;
-    virtual hsBool AddViaNotify(plRefMsg* msg, plRefFlags::Type flags)=0; // msg->fRef->GetKey() == sentKey
+    virtual bool  AddViaNotify(const plKey& sentKey, plRefMsg* msg, plRefFlags::Type flags)=0;
+    virtual bool  AddViaNotify(plRefMsg* msg, plRefFlags::Type flags)=0; // msg->fRef->GetKey() == sentKey
 
-    virtual hsBool SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags)=0;
-    virtual hsBool SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags)=0;
+    virtual bool  SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags)=0;
+    virtual bool  SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags)=0;
 
     //---------------------------
     //  Reading and Writing keys
@@ -119,7 +119,7 @@ protected:
     friend class plArmatureMod; // Temp hack until a findkey/clone issue is fixed. -Bob
 
     virtual plKey   ReRegister(const plString& nm, const plUoid& oid)=0;
-    virtual hsBool  ReadObject(plKeyImp* key)=0;  // plKeys call this when needed
+    virtual bool    ReadObject(plKeyImp* key)=0;  // plKeys call this when needed
 
     // Sets a key as used or unused in the registry.  When all keys in a page of a
     // particular type in an page are unused, we can free the memory associated with them.
@@ -129,8 +129,8 @@ protected:
 
 protected:  // hsgResMgr only
     friend class hsgResMgr;
-    virtual hsBool IReset()=0;
-    virtual hsBool IInit()=0;
+    virtual bool IReset()=0;
+    virtual bool IInit()=0;
     virtual void IShutdown()=0;
 };
 
@@ -145,12 +145,12 @@ public:
 
     static plDispatchBase* Dispatch() { hsAssert(fResMgr, "No resmgr"); return fResMgr->Dispatch(); }
 
-    static hsBool Init(hsResMgr* m);
-    static hsBool Reset() { return fResMgr->IReset(); }
+    static bool Init(hsResMgr* m);
+    static bool Reset() { return fResMgr->IReset(); }
     static void Shutdown();
     
-    static hsBool SendRef(plKey& key, plRefMsg* refMsg, plRefFlags::Type flags) { return fResMgr->SendRef(key, refMsg, flags); }
-    static hsBool SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags) { return fResMgr->SendRef(ko, refMsg, flags); }
+    static bool SendRef(plKey& key, plRefMsg* refMsg, plRefFlags::Type flags) { return fResMgr->SendRef(key, refMsg, flags); }
+    static bool SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags) { return fResMgr->SendRef(ko, refMsg, flags); }
 };
 
 #endif // hsResMgr_inc

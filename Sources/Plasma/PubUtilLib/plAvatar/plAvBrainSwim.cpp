@@ -91,14 +91,14 @@ public:
     plSwimBehavior() : fAvMod(nil), fSwimBrain(nil) {}
     virtual ~plSwimBehavior() {}
     
-    void Init(plAGAnim *anim, hsBool loop, plAvBrainSwim *brain, plArmatureMod *body, uint8_t index)
+    void Init(plAGAnim *anim, bool loop, plAvBrainSwim *brain, plArmatureMod *body, uint8_t index)
     {
         plArmatureBehavior::Init(anim, loop, brain, body, index);
         fAvMod = body;
         fSwimBrain = brain;
     }
     
-    virtual hsBool PreCondition(double time, float elapsed) { return true; }
+    virtual bool PreCondition(double time, float elapsed) { return true; }
     
 protected:
     virtual void IStart()
@@ -121,7 +121,7 @@ class SwimForward: public plSwimBehavior
 {
 public:
     /** Walk key is down, fast key is not down */
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->ForwardKeyDown() && !fAvMod->FastKeyDown());
     }
@@ -130,7 +130,7 @@ public:
 class SwimForwardFast: public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->ForwardKeyDown() && fAvMod->FastKeyDown());
     }
@@ -139,7 +139,7 @@ public:
 class SwimBack : public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->BackwardKeyDown());
     }
@@ -152,7 +152,7 @@ class TreadWater: public plSwimBehavior
 class SwimLeft : public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return ((fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
                 !(fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
@@ -163,7 +163,7 @@ public:
 class SwimRight : public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return ((fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
                 !(fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
@@ -199,7 +199,7 @@ public:
 class SwimTurnLeft : public SwimTurn
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->GetTurnStrength() > 0 && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()));
     }
@@ -208,7 +208,7 @@ public:
 class SwimTurnRight : public SwimTurn
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->GetTurnStrength() < 0 && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()));
     }
@@ -217,7 +217,7 @@ public:
 class TreadTurnLeft : public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->TurnLeftKeyDown() && !fAvMod->ForwardKeyDown() && !fAvMod->BackwardKeyDown());
     }
@@ -226,7 +226,7 @@ public:
 class TreadTurnRight : public plSwimBehavior
 {
 public:
-    virtual hsBool PreCondition(double time, float elapsed)
+    virtual bool PreCondition(double time, float elapsed)
     {
         return (fAvMod->TurnRightKeyDown() && !fAvMod->ForwardKeyDown() && !fAvMod->BackwardKeyDown());
     }
@@ -263,7 +263,7 @@ plAvBrainSwim::~plAvBrainSwim()
         delete fBehaviors[i];
 }
 
-hsBool plAvBrainSwim::Apply(double time, float elapsed)
+bool plAvBrainSwim::Apply(double time, float elapsed)
 {
     IProbeSurface();
     if (fMode == kWalking)
@@ -328,7 +328,7 @@ hsBool plAvBrainSwim::Apply(double time, float elapsed)
     return plArmatureBrain::Apply(time, elapsed);
 }
 
-hsBool plAvBrainSwim::MsgReceive(plMessage *msg)
+bool plAvBrainSwim::MsgReceive(plMessage *msg)
 {
     plLOSHitMsg *losHit = plLOSHitMsg::ConvertNoRef(msg);
     if (losHit)
@@ -495,7 +495,7 @@ void plAvBrainSwim::IStartSwimming(bool is2D)
     }   
 }
 
-hsBool plAvBrainSwim::IProcessSwimming2D(double time, float elapsed)
+bool plAvBrainSwim::IProcessSwimming2D(double time, float elapsed)
 {
     int i;
     for (i = 0; i < fBehaviors.GetCount(); i++)
@@ -515,13 +515,13 @@ hsBool plAvBrainSwim::IProcessSwimming2D(double time, float elapsed)
     return true;
 }
 
-hsBool plAvBrainSwim::IProcessSwimming3D(double time, float elapsed)
+bool plAvBrainSwim::IProcessSwimming3D(double time, float elapsed)
 {
     fAvMod->ApplyAnimations(time, elapsed);
     return true;
 }
 
-hsBool plAvBrainSwim::IInitAnimations()
+bool plAvBrainSwim::IInitAnimations()
 {
     plAGAnim *treadWater = fAvMod->FindCustomAnim("SwimIdle");
     plAGAnim *swimForward = fAvMod->FindCustomAnim("SwimSlow");
@@ -631,7 +631,7 @@ void plAvBrainSwim::IProbeSurface()
     fSurfaceProbeMsg->SendAndKeep();
 }
 
-hsBool plAvBrainSwim::IHandleControlMsg(plControlEventMsg* msg)
+bool plAvBrainSwim::IHandleControlMsg(plControlEventMsg* msg)
 {
     ControlEventCode moveCode = msg->GetControlCode();
     if (msg->ControlActivated())

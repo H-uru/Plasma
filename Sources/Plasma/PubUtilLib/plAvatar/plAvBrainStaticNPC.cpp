@@ -70,28 +70,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      still have effect on the armature; any messages which the top
 //      brain doesn't handle will propagate down to the next brain in line.
 //  */
-//  virtual hsBool Activate(plArmatureMod *avMod);
+//  virtual bool Activate(plArmatureMod *avMod);
 //
 //  /** Has the brain resolved all its load-time dependencies? This is a mechanism
 //      to allow newly loading creatures to reach a known state before they
 //      are asked to load secondary state or to interact with the environment.
 //  */
-//  virtual hsBool IsReady();
+//  virtual bool IsReady();
 //
 //  /** This brain has just been removed from its armature and is about to be destructed. */
-//  virtual hsBool Deactivate();
+//  virtual bool Deactivate();
 //
 //  /** This is the top brain and it's time for it to evaluate. Called during eval
 //      time for the armature modifier. Only the topmost brain gets an apply
 //      call; others must do any necessary background work during MsgReceive. */
-//  virtual hsBool Apply(double timeNow, hsScalar elapsed);
+//  virtual bool Apply(double timeNow, hsScalar elapsed);
 //
 //  /** Another brain has been pushed atop this brain. Drop into the background.
 //      We'll still receive any messages that the upper brain doesn't eat. */
-//  virtual hsBool Suspend();
+//  virtual bool Suspend();
 //
 //  /** We were suspended, but now we're on top of the brain stack again. */
-//  virtual hsBool Resume();
+//  virtual bool Resume();
 //
 //  // \name Spawning \{
 //  /** Do any necessary custom action upon spawning afresh in a new age.
@@ -100,7 +100,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  virtual void Spawn(double timeNow) {};
 //
 //  /** Custom behavior for entering an age. Binding the camera, audio source, etc. */
-//  virtual void EnterAge(hsBool reSpawn) {};
+//  virtual void EnterAge(bool reSpawn) {};
 //
 //  /** Custom behavior for leaving an age. Free any attachments to camera, audio, etc. */
 //  virtual void LeaveAge() {};
@@ -127,7 +127,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  virtual void SaveAux(hsStream *stream, hsResMgr *mgr);
 //  virtual void LoadAux(hsStream *stream, hsResMgr *mgr, double time);
 //
-//  virtual hsBool MsgReceive(plMessage *msg);
+//  virtual bool MsgReceive(plMessage *msg);
 //
 //
 //protected:
@@ -139,9 +139,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  plAvTaskQueue           fTaskQueue;                     // FIFO queue of tasks we're working on
 //  plAvTask                *fCurTask;                      // the task we're working on right now
 //  // -- methods
-//  virtual hsBool IHandleTaskMsg(plAvTaskMsg *msg);    // respond to a task scheduling message
+//  virtual bool IHandleTaskMsg(plAvTaskMsg *msg);    // respond to a task scheduling message
 //  void IProcessTasks(double time, hsScalar elapsed);  // process current task and start new one if necessary
 //  
-//  hsBool  fSuspended;
+//  bool    fSuspended;
 //};
 //

@@ -400,7 +400,7 @@ static inline hsKeyFrame* GetKey(int32_t i, void *keys, int32_t size)
 // for the next search.
 //
 void hsInterp::GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, uint32_t size,
-                                    hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, hsBool forwards)
+                                    hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, bool forwards)
 {
     hsAssert(numKeys>1, "Must have more than 1 keyframe");
     int k1, k2;

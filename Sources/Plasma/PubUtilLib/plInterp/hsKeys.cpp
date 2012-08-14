@@ -59,7 +59,7 @@ void hsPoint3Key::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsPoint3Key::CompareValue(hsPoint3Key *key)
+bool hsPoint3Key::CompareValue(hsPoint3Key *key)
 {
     return hsABS(fValue.fX - key->fValue.fX) < .01 &&
            hsABS(fValue.fY - key->fValue.fY) < .01 &&
@@ -82,7 +82,7 @@ void hsBezPoint3Key::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsBezPoint3Key::CompareValue(hsBezPoint3Key *key)
+bool hsBezPoint3Key::CompareValue(hsBezPoint3Key *key)
 {
     return hsABS(fValue.fX - key->fValue.fX) < .01 &&
            hsABS(fValue.fY - key->fValue.fY) < .01 &&
@@ -103,7 +103,7 @@ void hsScalarKey::Write(hsStream *stream)
     stream->WriteLEScalar(fValue);
 }
 
-hsBool hsScalarKey::CompareValue(hsScalarKey *key)
+bool hsScalarKey::CompareValue(hsScalarKey *key)
 {
     return fValue == key->fValue;
 }
@@ -124,7 +124,7 @@ void hsBezScalarKey::Write(hsStream *stream)
     stream->WriteLEScalar(fValue);
 }
 
-hsBool hsBezScalarKey::CompareValue(hsBezScalarKey *key)
+bool hsBezScalarKey::CompareValue(hsBezScalarKey *key)
 {
     return fValue == key->fValue;
 }
@@ -143,7 +143,7 @@ void hsQuatKey::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsQuatKey::CompareValue(hsQuatKey *key)
+bool hsQuatKey::CompareValue(hsQuatKey *key)
 {
     return fValue == key->fValue;
 }
@@ -165,7 +165,7 @@ void hsCompressedQuatKey32::Write(hsStream *stream)
     stream->WriteLE32(fData);
 }
 
-hsBool hsCompressedQuatKey32::CompareValue(hsCompressedQuatKey32 *key)
+bool hsCompressedQuatKey32::CompareValue(hsCompressedQuatKey32 *key)
 {
     return fData == key->fData;
 }
@@ -308,7 +308,7 @@ void hsCompressedQuatKey64::Write(hsStream *stream)
     stream->WriteLE32(fData[1]);
 }
 
-hsBool hsCompressedQuatKey64::CompareValue(hsCompressedQuatKey64 *key)
+bool hsCompressedQuatKey64::CompareValue(hsCompressedQuatKey64 *key)
 {
     return (fData[0] == key->fData[0]) && (fData[1] == key->fData[1]);
 }
@@ -467,7 +467,7 @@ void hsScaleKey::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsScaleKey::CompareValue(hsScaleKey *key)
+bool hsScaleKey::CompareValue(hsScaleKey *key)
 {
     return fValue == key->fValue;
 }
@@ -488,7 +488,7 @@ void hsBezScaleKey::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsBezScaleKey::CompareValue(hsBezScaleKey *key)
+bool hsBezScaleKey::CompareValue(hsBezScaleKey *key)
 {
     return fValue == key->fValue;
 }
@@ -521,7 +521,7 @@ void hsG3DSMaxKeyFrame::Write(hsStream *stream)
     fParts.Write(stream);
 }
 
-hsBool hsG3DSMaxKeyFrame::CompareValue(hsG3DSMaxKeyFrame *key)
+bool hsG3DSMaxKeyFrame::CompareValue(hsG3DSMaxKeyFrame *key)
 {
     return fParts == key->fParts;
 }
@@ -546,7 +546,7 @@ void hsMatrix33Key::Write(hsStream *stream)
             stream->WriteLEScalar(fValue.fMap[j][i]);
 }
 
-hsBool hsMatrix33Key::CompareValue(hsMatrix33Key *key)
+bool hsMatrix33Key::CompareValue(hsMatrix33Key *key)
 {
     return fValue == key->fValue;
 }
@@ -565,7 +565,7 @@ void hsMatrix44Key::Write(hsStream *stream)
     fValue.Write(stream);
 }
 
-hsBool hsMatrix44Key::CompareValue(hsMatrix44Key *key)
+bool hsMatrix44Key::CompareValue(hsMatrix44Key *key)
 {
     return fValue == key->fValue;
 }

@@ -276,7 +276,7 @@ void    plTextGenerator::ClearToColor( hsColorRGBA &color )
 //// SetFont //////////////////////////////////////////////////////////////////
 //  OS-specific. Load the given font for drawing the text with.
 
-void    plTextGenerator::SetFont( const char *face, uint16_t size, hsBool antiAliasRGB )
+void    plTextGenerator::SetFont( const char *face, uint16_t size, bool antiAliasRGB )
 {
 #if HS_BUILD_FOR_WIN32
     if( fWinFont != nil )
@@ -315,7 +315,7 @@ void    plTextGenerator::SetFont( const char *face, uint16_t size, hsBool antiAl
 //  case you want plenty of block color in your RGB channel because it'll get
 //  alpha-ed out by the alpha channel.
 
-void    plTextGenerator::SetTextColor( hsColorRGBA &color, hsBool blockRGB )
+void    plTextGenerator::SetTextColor( hsColorRGBA &color, bool blockRGB )
 {
 #if HS_BUILD_FOR_WIN32
     int r = (int)(color.r * 255.f);
@@ -588,7 +588,7 @@ hsMatrix44  plTextGenerator::GetLayerTransform( void )
 
 //// MsgReceive ///////////////////////////////////////////////////////////////
 
-hsBool  plTextGenerator::MsgReceive( plMessage *msg )
+bool    plTextGenerator::MsgReceive( plMessage *msg )
 {
 #ifdef MCN_DO_REFS
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );

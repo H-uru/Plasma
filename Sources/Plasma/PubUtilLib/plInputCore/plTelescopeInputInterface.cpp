@@ -97,21 +97,21 @@ void    plTelescopeInputInterface::Init( plInputInterfaceMgr *manager )
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plTelescopeInputInterface::IEval( double secs, float del, uint32_t dirty )
+bool plTelescopeInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     return true;
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plTelescopeInputInterface::MsgReceive( plMessage *msg )
+bool    plTelescopeInputInterface::MsgReceive( plMessage *msg )
 {
     return false;
 }
 
 //// InterpretInputEvent /////////////////////////////////////////////////////
 
-hsBool plTelescopeInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
+bool plTelescopeInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
     return false;
 }

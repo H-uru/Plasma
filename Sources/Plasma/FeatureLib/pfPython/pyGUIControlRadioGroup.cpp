@@ -55,7 +55,7 @@ pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(objk
 {
 }
 
-hsBool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
+bool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIRadioGroupCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;

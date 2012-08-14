@@ -295,7 +295,7 @@ void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 //// IEval ///////////////////////////////////////////////////////////////////
 //  Inherited from plSingleModifier, gets called once per IUpdate() loop. 
 
-hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
+bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 {
     const char *inputEval = "Eval";
     plProfile_BeginLap(Input, inputEval);
@@ -363,7 +363,7 @@ hsBool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
     return true;
 }
 
-void plInputInterfaceMgr::ForceCursorHidden( hsBool requestedState )
+void plInputInterfaceMgr::ForceCursorHidden( bool requestedState )
 {
     if ( requestedState )
     {
@@ -394,7 +394,7 @@ void plInputInterfaceMgr::ForceCursorHidden( hsBool requestedState )
 
 }
 
-hsBool plInputInterfaceMgr::ICheckCursor(plInputInterface *iFace)
+bool plInputInterfaceMgr::ICheckCursor(plInputInterface *iFace)
 {
     if( iFace->IsEnabled() && iFace->HasInterestingCursorID() )
     {
@@ -412,7 +412,7 @@ hsBool plInputInterfaceMgr::ICheckCursor(plInputInterface *iFace)
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plInputInterfaceMgr::MsgReceive( plMessage *msg )
+bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
 {
     int     i;
 
@@ -429,7 +429,7 @@ hsBool  plInputInterfaceMgr::MsgReceive( plMessage *msg )
     {
         const char *inputIEM = "InputEventMsg";
         plProfile_BeginLap(Input, inputIEM);
-        hsBool handled = false;
+        bool handled = false;
         uint32_t missedInputStartIdx = 0;
         plInputInterface *oldCurrentFocus = fCurrentFocus;
 
@@ -479,7 +479,7 @@ hsBool  plInputInterfaceMgr::MsgReceive( plMessage *msg )
         // because a key down may have changed some layer's interest in the cursor
         if( !fForceCursorHidden )
         {
-            hsBool cursorHandled = false;
+            bool cursorHandled = false;
             if (fCurrentFocus)
                 cursorHandled = ICheckCursor(fCurrentFocus);
 

@@ -181,7 +181,7 @@ void plClickableComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 }
 
-hsBool plClickableComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plClickableComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 
@@ -245,7 +245,7 @@ hsBool plClickableComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMs
     return true;
 }
 
-hsBool plClickableComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClickableComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
 
     plMaxNode *clickNode = node;
@@ -275,7 +275,7 @@ hsBool plClickableComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 
-hsBool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     bool ignoreProxyRegion = (fCompPB->GetInt(kClickableIgnoreProxyRegion) != 0);
 
@@ -396,9 +396,9 @@ public:
     plNoBlkClickableComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; } 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; } 
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -418,7 +418,7 @@ plNoBlkClickableComponent::plNoBlkClickableComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plNoBlkClickableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plNoBlkClickableComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }

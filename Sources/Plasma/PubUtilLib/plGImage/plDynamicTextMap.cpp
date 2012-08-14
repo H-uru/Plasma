@@ -96,7 +96,7 @@ plDynamicTextMap::~plDynamicTextMap()
     Reset();
 }
 
-plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, hsBool hasAlpha, uint32_t extraWidth, uint32_t extraHeight ) : plMipmap()
+plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight ) : plMipmap()
 {
     fInitBuffer = nil;
     fFontFace = nil;
@@ -109,7 +109,7 @@ plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, hsBool hasA
 //  instead, which does just that. It basically does all the setup work that
 //  Create() does, or enough for us to write out later.
 
-void    plDynamicTextMap::SetNoCreate( uint32_t width, uint32_t height, hsBool hasAlpha )
+void    plDynamicTextMap::SetNoCreate( uint32_t width, uint32_t height, bool hasAlpha )
 {
     // OK, so it really isn't that much work...
     fVisWidth = (uint16_t)width;
@@ -122,7 +122,7 @@ void    plDynamicTextMap::SetNoCreate( uint32_t width, uint32_t height, hsBool h
 
 //// Create ///////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::Create( uint32_t width, uint32_t height, hsBool hasAlpha, uint32_t extraWidth, uint32_t extraHeight )
+void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight )
 {
     SetConfig( hasAlpha ? kARGB32Config : kRGB32Config );
 
@@ -183,7 +183,7 @@ void    plDynamicTextMap::Reset( void )
 //// OS-Specific Functions ////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-hsBool      plDynamicTextMap::IIsValid( void )
+bool        plDynamicTextMap::IIsValid( void )
 {
     if( GetImage() == nil && fHasCreateBeenCalled )
     {
@@ -422,7 +422,7 @@ void    plDynamicTextMap::SetJustify( Justify j )
 
 //// SetFont //////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t fontFlags, hsBool antiAliasRGB )
+void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t fontFlags, bool antiAliasRGB )
 {
 // ===> Don't need to validate creation
 //  if( !IIsValid() )
@@ -467,7 +467,7 @@ void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t font
     }
 }
 
-void    plDynamicTextMap::SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags , hsBool antiAliasRGB )
+void    plDynamicTextMap::SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags , bool antiAliasRGB )
 {
     char *sFace = hsWStringToString(face);
     SetFont(sFace,size,fontFlags,antiAliasRGB);
@@ -488,7 +488,7 @@ void    plDynamicTextMap::SetLineSpacing( int16_t spacing )
 
 //// SetTextColor /////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::SetTextColor( hsColorRGBA &color, hsBool blockRGB )
+void    plDynamicTextMap::SetTextColor( hsColorRGBA &color, bool blockRGB )
 {
 // ===> Don't need to validate creation
 //  if( !IIsValid() )
@@ -813,7 +813,7 @@ hsMatrix44  plDynamicTextMap::GetLayerTransform( void )
 
 //// MsgReceive ///////////////////////////////////////////////////////////////
 
-hsBool  plDynamicTextMap::MsgReceive( plMessage *msg )
+bool    plDynamicTextMap::MsgReceive( plMessage *msg )
 {
     plDynamicTextMsg    *textMsg = plDynamicTextMsg::ConvertNoRef( msg );
     if( textMsg != nil )
@@ -907,20 +907,20 @@ void    plDynamicTextMap::Swap( plDynamicTextMap *other )
         other->GetDeviceRef()->SetDirty( true );
 
     // Swap DTMap info
-    SWAP_ME( hsBool, fHasAlpha, other->fHasAlpha );
-    SWAP_ME( hsBool, fShadowed, other->fShadowed );
+    SWAP_ME( bool, fHasAlpha, other->fHasAlpha );
+    SWAP_ME( bool, fShadowed, other->fShadowed );
 
     SWAP_ME( Justify, fJustify, other->fJustify );
     SWAP_ME( char *, fFontFace, other->fFontFace );
     SWAP_ME( uint16_t, fFontSize, other->fFontSize );
     SWAP_ME( uint8_t, fFontFlags, other->fFontFlags );
-    SWAP_ME( hsBool, fFontAntiAliasRGB, other->fFontAntiAliasRGB );
+    SWAP_ME( bool, fFontAntiAliasRGB, other->fFontAntiAliasRGB );
     SWAP_ME( hsColorRGBA, fFontColor, other->fFontColor );
-    SWAP_ME( hsBool, fFontBlockRGB, other->fFontBlockRGB );
+    SWAP_ME( bool, fFontBlockRGB, other->fFontBlockRGB );
 
-    SWAP_ME( hsBool, fFontBlockRGB, other->fFontBlockRGB );
-    SWAP_ME( hsBool, fFontBlockRGB, other->fFontBlockRGB );
-    SWAP_ME( hsBool, fFontBlockRGB, other->fFontBlockRGB );
+    SWAP_ME( bool, fFontBlockRGB, other->fFontBlockRGB );
+    SWAP_ME( bool, fFontBlockRGB, other->fFontBlockRGB );
+    SWAP_ME( bool, fFontBlockRGB, other->fFontBlockRGB );
 
     SWAP_ME( plFont *, fCurrFont, other->fCurrFont );
     SWAP_ME( uint32_t *, fInitBuffer, other->fInitBuffer );

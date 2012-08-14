@@ -96,37 +96,37 @@ protected:
                                             // Each entry is of the form: ( stencil bit count << 8 ) | ( depth bit count )
     hsTArray<uint8_t>     fFSAATypes;         // Array of multisample types supported (each one 2-16)
 
-    hsBool              fCanRenderToCubics;
+    bool                  fCanRenderToCubics;
 
 public:
     hsG3DDeviceMode();
     ~hsG3DDeviceMode();
 
-    hsBool operator< (const hsG3DDeviceMode &mode) const;
+    bool operator< (const hsG3DDeviceMode &mode) const;
 
     void Clear();
 
-    hsBool GetDiscarded() const { return 0 != (fFlags & kDiscarded); }
+    bool     GetDiscarded() const { return 0 != (fFlags & kDiscarded); }
     uint32_t GetWidth() const { return fWidth; }
     uint32_t GetHeight() const { return fHeight; }
     uint32_t GetColorDepth() const { return fDepth; }
-    uint8_t   GetNumZStencilDepths( void ) const { return fZStencilDepths.GetCount(); }
-    uint16_t  GetZStencilDepth( uint8_t i ) const { return fZStencilDepths[ i ]; }
-    uint8_t   GetNumFSAATypes( void ) const { return fFSAATypes.GetCount(); }
-    uint8_t   GetFSAAType( uint8_t i ) const { return fFSAATypes[ i ]; }
-    hsBool  GetCanRenderToCubics( void ) const { return fCanRenderToCubics; }
+    uint8_t  GetNumZStencilDepths( void ) const { return fZStencilDepths.GetCount(); }
+    uint16_t GetZStencilDepth( uint8_t i ) const { return fZStencilDepths[ i ]; }
+    uint8_t  GetNumFSAATypes( void ) const { return fFSAATypes.GetCount(); }
+    uint8_t  GetFSAAType( uint8_t i ) const { return fFSAATypes[ i ]; }
+    bool     GetCanRenderToCubics( void ) const { return fCanRenderToCubics; }
 
-    void SetDiscarded(hsBool on=true) { if(on) fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }
+    void SetDiscarded(bool on=true) { if(on) fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }
     void SetWidth(uint32_t w) { fWidth = w; }
     void SetHeight(uint32_t h) { fHeight = h; }
     void SetColorDepth(uint32_t d) { fDepth = d; }
-    void    ClearZStencilDepths( void ) { fZStencilDepths.Reset(); }
-    void    AddZStencilDepth( uint16_t depth ) { fZStencilDepths.Append( depth ); }
+    void ClearZStencilDepths( void ) { fZStencilDepths.Reset(); }
+    void AddZStencilDepth( uint16_t depth ) { fZStencilDepths.Append( depth ); }
 
     void    ClearFSAATypes( void ) { fFSAATypes.Reset(); }
     void    AddFSAAType( uint8_t type ) { fFSAATypes.Append( type ); }
 
-    void    SetCanRenderToCubics( hsBool can ) { fCanRenderToCubics = can; }
+    void    SetCanRenderToCubics( bool can ) { fCanRenderToCubics = can; }
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -232,8 +232,8 @@ public:
     void SetDriverVersion(const char* s);
     void SetDeviceDesc(const char* s);
 
-    hsBool  GetCap(uint32_t cap) const { return fCaps.IsBitSet(cap); }
-    void    SetCap(uint32_t cap, hsBool on=true) { fCaps.SetBit(cap, on); }
+    bool    GetCap(uint32_t cap) const { return fCaps.IsBitSet(cap); }
+    void    SetCap(uint32_t cap, bool on=true) { fCaps.SetBit(cap, on); }
 
     float   GetZBiasRating( void ) const { return fZBiasRating; }
     void    SetZBiasRating( float rating ) { fZBiasRating = rating; }
@@ -261,11 +261,11 @@ public:
     uint8_t   GetMaxAnisotropicSamples( void ) const { return fMaxAnisotropicSamples; }
     void    SetMaxAnisotropicSamples( uint8_t num ) { fMaxAnisotropicSamples = num; }
 
-    void SetDiscarded(hsBool on=true) { if(on)fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }
-    hsBool GetDiscarded() const { return 0 != (fFlags & kDiscarded); }
+    void SetDiscarded(bool on=true) { if(on)fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }
+    bool GetDiscarded() const { return 0 != (fFlags & kDiscarded); }
 
-    void    SetInvalid( hsBool on = true ) { if( on ) fFlags |= kInvalid; else fFlags &= ~kInvalid; }
-    hsBool  IsInvalid() const { return 0 != ( fFlags & kInvalid ); }
+    void    SetInvalid( bool on = true ) { if( on ) fFlags |= kInvalid; else fFlags &= ~kInvalid; }
+    bool    IsInvalid() const { return 0 != ( fFlags & kInvalid ); }
 
     hsTArray<hsG3DDeviceMode>& GetModes() { return fModes; }
 
@@ -279,7 +279,7 @@ public:
     // of the PC. E.g. if the user changes from 16 bit to TrueColor, the Modes that
     // can window are pretty much flipped. So we'll have to pass in enough info (like
     // the hWnd?) to find out what the current setup is to make sure it's compatible.
-    hsBool ModeCanWindow(void* ctx, hsG3DDeviceMode* mode) { return false; } 
+    bool ModeCanWindow(void* ctx, hsG3DDeviceMode* mode) { return false; } 
     void SetPixelShaderVersion(int major, int minor) { fPixelShaderMajorVer = major; fPixelShaderMinorVer = minor; }
     void GetPixelShaderVersion(int &major, int &minor) { major = fPixelShaderMajorVer; minor = fPixelShaderMinorVer; }
 
@@ -384,7 +384,7 @@ protected:
     void ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
     void ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo);
     void ITryDirect3DTnL(hsWinRef winRef);
-    hsBool  IInitDirect3D( void );
+    bool IInitDirect3D( void );
 
 #ifdef HS_SELECT_DX7
     void ITryDirect3DDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
@@ -395,21 +395,21 @@ protected:
                                 D3DEnum_DriverInfo *driverInfo, D3DEnum_DeviceInfo *deviceInfo );
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
-    hsBool  IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                                DWORD *vendorID, DWORD *deviceID, char **driverString, char **descString );
+    bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
+                               DWORD *vendorID, DWORD *deviceID, char **driverString, char **descString );
 #ifdef HS_SELECT_DX7
-    hsBool  IGetD3D7CardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
+    bool    IGetD3D7CardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
                                 DWORD *vendorID, DWORD *deviceID, char **driverString, char **descString );
 #endif // HS_SELECT_DX7
 
     void        ITryOpenGL( hsWinRef winRef );
     void        IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec );
     void        IGetOpenGLModes( hsG3DDeviceRecord &devRec, char *driverName );
-    hsBool      ITestOpenGLRes( int width, int height, int bitDepth, 
+    bool        ITestOpenGLRes( int width, int height, int bitDepth, 
                                 hsG3DDeviceRecord &devRec, char *driverName );
 #ifdef HS_OPEN_GL
 #if HS_BUILD_FOR_WIN32
-    uint32_t      ICreateTempOpenGLContext( HDC hDC, hsBool makeItFull );
+    uint32_t      ICreateTempOpenGLContext( HDC hDC, bool makeItFull );
 #endif
 #endif
 
@@ -421,15 +421,15 @@ public:
 
     void Clear();
     void RemoveDiscarded();
-    void RemoveUnusableDevModes(hsBool bTough); // Removes modes and devices not allowed supported in release
+    void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    hsBool  Init( void );   // Returns false if couldn't init
+    bool  Init( void );   // Returns false if couldn't init
     const char  *GetErrorString( void ) { return fErrorString; }
 
     void Enumerate(hsWinRef winRef);
     hsTArray<hsG3DDeviceRecord>& GetDeviceRecords() { return fRecords; }
 
-    hsBool GetDefault(hsG3DDeviceModeRecord *dmr);
+    bool GetDefault(hsG3DDeviceModeRecord *dmr);
 
     hsG3DDeviceRecord* GetRecord(int i) { return &fRecords[i]; }
 
@@ -466,15 +466,15 @@ class plDemoDebugFile
         static void Write( char *string1, int32_t value );
 
         // Enables or disables the DDF class
-        static void Enable( hsBool yes ) { fEnabled = yes; }
+        static void Enable( bool yes ) { fEnabled = yes; }
 
     protected:
-        static hsBool   fIsOpen;
+        static bool     fIsOpen;
         static FILE     *fDemoDebugFP;
-        static hsBool   fEnabled;
+        static bool     fEnabled;
 
         // Opens the DDF for writing
-        static hsBool   IDDFOpen( void );
+        static bool     IDDFOpen( void );
 
         // Closes the DDF
         static void     IDDFClose( void );

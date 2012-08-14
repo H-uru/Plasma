@@ -53,7 +53,7 @@ template <class T> class hsExpander {
 private:
     int32_t       fNumPost;
     int32_t       fNumPostAlloc;
-    T*          fArray; 
+    T*            fArray; 
 
     int32_t       fGrowBy; // default = 0, to double
     int32_t       fMinSize; // default = 1, min == 1
@@ -72,23 +72,23 @@ public:
     hsExpander<T>& operator=(const hsExpander<T>&orig) { return Copy(orig); }
     hsExpander<T>& Copy(const hsExpander<T>& orig);
 
-    void        SetCount(int cnt) { if( cnt >= fNumPostAlloc )IExpand(cnt); fNumPost = cnt; }
-    int32_t       GetCount() const { return fNumPost; }
-    hsBool      Empty() const { return GetCount() == 0; }
-    const T&    Get(int32_t index) const;
-    int32_t       Get(int32_t index, int32_t count, T data[]) const;
-    int32_t       Find(const T&) const;   // returns kMissingIndex if not found
+    void      SetCount(int cnt) { if( cnt >= fNumPostAlloc )IExpand(cnt); fNumPost = cnt; }
+    int32_t   GetCount() const { return fNumPost; }
+    bool      Empty() const { return GetCount() == 0; }
+    const T&  Get(int32_t index) const;
+    int32_t   Get(int32_t index, int32_t count, T data[]) const;
+    int32_t   Find(const T&) const;   // returns kMissingIndex if not found
 
     void        SetArray(T* a, int32_t cnt);
     T*          GetArray() { return fArray; }
     T&          operator[]( int32_t index );
-    int32_t       Append(const T&); // returns t's index
+    int32_t     Append(const T&); // returns t's index
     T*          Append();
-    int32_t       Push(const T& t) { return Append(t); }
+    int32_t     Push(const T& t) { return Append(t); }
     T*          Push() { return Append(); }
     T*          Top() { return fNumPost ? fArray + fNumPost-1 : nil; }
-    int32_t       Pop(T* t); // returns count of remaining
-    int32_t       Pop();
+    int32_t     Pop(T* t); // returns count of remaining
+    int32_t     Pop();
     void        Reset();    // clears out everything
 
     T&          Head() { return fArray[0]; }
@@ -97,7 +97,7 @@ public:
     void        First();
     void        Last();
     void        Plus() { ++fCurrent; }
-    hsBool  More() { return (fCurrent < fNumPost); }
+    bool        More() { return (fCurrent < fNumPost); }
 };
 
 template <class T>
@@ -261,7 +261,7 @@ private:
     int32_t       fNumPost;
     int32_t       fNumPreAlloc;
     int32_t       fNumPostAlloc;
-    T*          fArray; 
+    T*            fArray; 
 
     int32_t       fGrowBy; // default = 0, to double
     int32_t       fMinSize; // default = 1, min == 1
@@ -271,7 +271,7 @@ private:
     hsBiExpander<T>& operator=(const hsBiExpander<T>&);     // don't allow assignment
     hsBiExpander(const hsBiExpander<T>&);                   // make it passed as ref or pointer
 
-    void        IExpand(int newSize, hsBool towardEnd = true);
+    void        IExpand(int newSize, bool towardEnd = true);
 public:
     enum { kMissingIndex = -1 };
 
@@ -280,22 +280,22 @@ public:
 
     int32_t       GetFirst() const { return -fNumPre; }
     int32_t       GetCount() const { return fNumPre + fNumPost; }
-    hsBool      Empty() const { return GetCount() == 0; }
-    const T&    Get(int32_t index) const;
+    bool          Empty() const { return GetCount() == 0; }
+    const T&      Get(int32_t index) const;
     int32_t       Get(int32_t index, int32_t count, T data[]) const;
     int32_t       Find(const T&) const;   // returns kMissingIndex if not found
 
-    void        SetArray(T* a, int32_t cnt, int32_t numPre=0);
-    T**         GetArray() { return fArray - fNumPre; }
-    T&          operator[]( int32_t index );
-    T*          Append(); // returns t's index
-    T*          Push(); // returns t's index
+    void          SetArray(T* a, int32_t cnt, int32_t numPre=0);
+    T**           GetArray() { return fArray - fNumPre; }
+    T&            operator[]( int32_t index );
+    T*            Append(); // returns t's index
+    T*            Push(); // returns t's index
     int32_t       Append(const T&); // returns t's index
     int32_t       Push(const T&); // returns t's index
     int32_t       Pop(T*t = nil) { return PopHead(t); } // returns count of remaining
     int32_t       PopHead(T*t = nil); // returns count of remaining
     int32_t       PopTail(T*t = nil); // returns count of remaining
-    void        Reset();    // clears out everything
+    void          Reset();    // clears out everything
 
     T&          Head() { return fArray[-fNumPre]; }
     T&          Tail() { return fArray[fNumPost-1]; }
@@ -304,7 +304,7 @@ public:
     void        Last();
     void        Plus() { ++fCurrent; }
     void        Minus() { --fCurrent; }
-    hsBool      More() { return (fCurrent < fNumPost)&&(fCurrent >= -fNumPre); }
+    bool        More() { return (fCurrent < fNumPost)&&(fCurrent >= -fNumPre); }
 };
 
 template <class T>
@@ -321,7 +321,7 @@ void hsBiExpander<T>::SetArray(T* a, int32_t cnt, int32_t numPre)
 }
 
 template <class T>
-void hsBiExpander<T>::IExpand(int newSize, hsBool towardEnd)
+void hsBiExpander<T>::IExpand(int newSize, bool towardEnd)
 {
     int32_t newPreAlloc = fNumPreAlloc;
     int32_t newPostAlloc = fNumPostAlloc;

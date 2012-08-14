@@ -111,7 +111,7 @@ plClothingItem::~plClothingItem()
     delete [] fAccessoryName;
 }
 
-hsBool plClothingItem::CanWearWith(plClothingItem *item)
+bool plClothingItem::CanWearWith(plClothingItem *item)
 { 
     // For now, you can only wear one shirt, one pair of pants, etc.
     // Except accessories, of which you're allowed one per tileset.
@@ -121,7 +121,7 @@ hsBool plClothingItem::CanWearWith(plClothingItem *item)
              //&& item->fTileset != fTileset));
 }
 
-hsBool plClothingItem::WearBefore(plClothingItem *item)
+bool plClothingItem::WearBefore(plClothingItem *item)
 {
     // Accessories come last
     // Face comes first
@@ -142,7 +142,7 @@ hsBool plClothingItem::WearBefore(plClothingItem *item)
     return myPri < otherPri;
 }
 
-hsBool plClothingItem::HasBaseAlpha()
+bool plClothingItem::HasBaseAlpha()
 {
     int i;
     for (i = 0; i < fElements.GetCount(); i++)
@@ -155,7 +155,7 @@ hsBool plClothingItem::HasBaseAlpha()
     return false;
 }
 
-hsBool plClothingItem::HasSameMeshes(plClothingItem *other)
+bool plClothingItem::HasSameMeshes(plClothingItem *other)
 {
     int i;
     for (i = 0; i < kMaxNumLODLevels; i++)
@@ -293,7 +293,7 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
     }
 }
 
-hsBool plClothingItem::MsgReceive(plMessage* msg)
+bool plClothingItem::MsgReceive(plMessage* msg)
 {
     plElementRefMsg *eMsg = plElementRefMsg::ConvertNoRef(msg);
     if (eMsg)
@@ -371,7 +371,7 @@ hsBool plClothingItem::MsgReceive(plMessage* msg)
 
 /////////////////////////////////////////////////////////////////////////////
 
-hsBool plClosetItem::IsMatch(plClosetItem *other)
+bool plClosetItem::IsMatch(plClosetItem *other)
 {
     return (fItem == other->fItem && fOptions.IsMatch(&other->fOptions));
 }
@@ -407,7 +407,7 @@ void plClothingBase::Write(hsStream* s, hsResMgr* mgr)
     s->WriteSafeString(fLayoutName);
 }
 
-hsBool plClothingBase::MsgReceive(plMessage* msg)
+bool plClothingBase::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)
@@ -450,7 +450,7 @@ plClothingOutfit::~plClothingOutfit()
     plgDispatch::Dispatch()->UnRegisterForExactType(plPreResourceMsg::Index(), GetKey());
 }
 
-void plClothingOutfit::AddItem(plClothingItem *item, hsBool update /* = true */, hsBool broadcast /* = true */, hsBool netForce /* = false */)
+void plClothingOutfit::AddItem(plClothingItem *item, bool update /* = true */, bool broadcast /* = true */, bool netForce /* = false */)
 {
     if (fItems.Find(item) != fItems.kMissingIndex)
         return;
@@ -483,7 +483,7 @@ void plClothingOutfit::ForceUpdate(bool retry)
     msg->Send(GetKey());
 }
 
-void plClothingOutfit::RemoveItem(plClothingItem *item, hsBool update /* = true */, hsBool netForce /* = false */)
+void plClothingOutfit::RemoveItem(plClothingItem *item, bool update /* = true */, bool netForce /* = false */)
 {
     if (fItems.Find(item) == fItems.kMissingIndex)
         return;
@@ -502,8 +502,8 @@ void plClothingOutfit::RemoveItem(plClothingItem *item, hsBool update /* = true 
 }
 
 void plClothingOutfit::TintItem(plClothingItem *item, float red, float green, float blue,
-                                hsBool update /* = true */, hsBool broadcast /* = true */, hsBool netForce /* = false */,
-                                hsBool retry /* = true */, uint8_t layer /* = kLayerTint1 */)
+                                bool update /* = true */, bool broadcast /* = true */, bool netForce /* = false */,
+                                bool retry /* = true */, uint8_t layer /* = kLayerTint1 */)
 {
     plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -526,7 +526,7 @@ void plClothingOutfit::TintItem(plClothingItem *item, float red, float green, fl
 }
 
 void plClothingOutfit::TintSkin(float red, float green, float blue,
-                                hsBool update /* = true */, hsBool broadcast /* = true */)
+                                bool update /* = true */, bool broadcast /* = true */)
 {
     plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -541,7 +541,7 @@ void plClothingOutfit::TintSkin(float red, float green, float blue,
 }
 
 void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight,
-                                 hsBool retry /* = true */)
+                                 bool retry /* = true */)
 {
     plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -555,12 +555,12 @@ void plClothingOutfit::MorphItem(plClothingItem *item, uint8_t layer, uint8_t de
     plgDispatch::MsgSend(msg);
 }
 
-void plClothingOutfit::SetAge(float age, hsBool update /* = true */, hsBool broadcast /* = true */)
+void plClothingOutfit::SetAge(float age, bool update /* = true */, bool broadcast /* = true */)
 {
     SetSkinBlend(age, plClothingElement::kLayerSkinBlend1, update, broadcast);
 }
 
-void plClothingOutfit::SetSkinBlend(float blend, uint8_t layer, hsBool update /* = true */, hsBool broadcast /* = true */)
+void plClothingOutfit::SetSkinBlend(float blend, uint8_t layer, bool update /* = true */, bool broadcast /* = true */)
 {
     plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -661,7 +661,7 @@ void plClothingOutfit::IRemoveItem(plClothingItem *item)
     }
 }
 
-hsBool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer)
+bool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer)
 {
     uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
@@ -711,7 +711,7 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /*
     return color;
 }
 
-hsBool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight)
+bool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight)
 {
     uint32_t index = fItems.Find(item);
     if (index != fItems.kMissingIndex)
@@ -846,7 +846,7 @@ void plClothingOutfit::ReadFromVault()
     rvn->DecRef();
 }
 
-void plClothingOutfit::SaveCustomizations(hsBool retry /* = true */)
+void plClothingOutfit::SaveCustomizations(bool retry /* = true */)
 {
     plClothingMsg *msg = new plClothingMsg();
     msg->AddReceiver(GetKey());
@@ -1180,9 +1180,9 @@ void plClothingOutfit::WearRandomOutfit()
     TintSkin(sRandom.RandZeroToOne(), sRandom.RandZeroToOne(), sRandom.RandZeroToOne());
 }
 
-hsBool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, hsBool broadcast /* = true */)
+bool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, bool broadcast /* = true */)
 {
-    hsBool result = true;
+    bool result = true;
     uint32_t numItems = s->ReadLE32();
     int i;
     for (i = 0; i < numItems; i++)
@@ -1223,7 +1223,7 @@ void plClothingOutfit::WriteItems(hsStream *s, hsResMgr *mgr)
     }
 }
 
-hsBool plClothingOutfit::MsgReceive(plMessage* msg)
+bool plClothingOutfit::MsgReceive(plMessage* msg)
 {
     plPreResourceMsg *preMsg = plPreResourceMsg::ConvertNoRef(msg);
     if (preMsg)
@@ -1409,7 +1409,7 @@ hsBool plClothingOutfit::MsgReceive(plMessage* msg)
 // TESTING SDL
 // Send clothing sendState msg to object's plClothingSDLModifier
 //
-hsBool plClothingOutfit::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plClothingOutfit::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
 {
     plSynchEnabler ps(true);    // make sure synching is enabled, since this happens during load
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
@@ -1427,7 +1427,7 @@ void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
     if (fAvatar)
         fAvatar->ValidateMesh();
 
-    hsBool partialSort = item->fCustomText && strstr(item->fCustomText, "NeedsSort");
+    bool partialSort = item->fCustomText && strstr(item->fCustomText, "NeedsSort");
     int i;
     for (i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
@@ -1702,7 +1702,7 @@ plClothingItem *plClothingMgr::GetLRMatch(plClothingItem *item)
     return nil;
 }
 
-hsBool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
+bool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
 {
     if (!item1 || !item2)
         return false;
@@ -1775,7 +1775,7 @@ void plClothingMgr::DeInit()
     }
 }   
 
-hsBool plClothingMgr::MsgReceive(plMessage* msg)
+bool plClothingMgr::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)
@@ -1800,7 +1800,7 @@ hsBool plClothingMgr::MsgReceive(plMessage* msg)
 
 void plClothingMgr::IAddItem(plClothingItem *item)
 {
-    hsBool allFound = true;
+    bool allFound = true;
     int i, j;
     for (i = 0; i < item->fElementNames.GetCount(); i++)
     {

@@ -607,12 +607,12 @@ protected:
 
     void ISetUserType(plMaxNode* node, const char* userType)
     {
-        if (hsStrEQ(userType, kUserTypeAll))
+        if (strcmp(userType, kUserTypeAll) == 0)
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, kNodePB);
         }
-        else if (hsStrEQ(userType, kResponderNodeName))
+        else if (strcmp(userType, kResponderNodeName) == 0)
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, kNodeResponder);

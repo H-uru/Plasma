@@ -89,22 +89,22 @@ class pfGameUIInputInterface : public plInputInterface
 
         uint8_t   fModifiers;
         uint8_t   fButtonState;
-        hsBool  fHaveInterestingCursor;
+        bool    fHaveInterestingCursor;
         uint32_t  fCurrentCursor;
 
-        virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
-        virtual hsBool  IControlCodeEnabled( ControlEventCode code );
+        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd );
+        virtual bool    IControlCodeEnabled( ControlEventCode code );
 
     public:
 
         pfGameUIInputInterface( pfGameGUIMgr * const mgr );
 
         virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority; }
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
         virtual uint32_t  GetCurrentCursorID( void ) const;
         virtual float GetCurrentCursorOpacity( void ) const;
-        virtual hsBool  HasInterestingCursorID( void ) const { return fHaveInterestingCursor; }
-        virtual hsBool  SwitchInterpretOrder( void ) const { return true; }
+        virtual bool    HasInterestingCursorID( void ) const { return fHaveInterestingCursor; }
+        virtual bool    SwitchInterpretOrder( void ) const { return true; }
 
         virtual void    RestoreDefaultKeyMappings( void )
         {
@@ -163,7 +163,7 @@ pfGameGUIMgr::~pfGameGUIMgr()
 
 //// Init ////////////////////////////////////////////////////////////////////
 
-hsBool  pfGameGUIMgr::Init( void )
+bool    pfGameGUIMgr::Init( void )
 {
     return true;
 }
@@ -176,7 +176,7 @@ void    pfGameGUIMgr::Draw( plPipeline *p )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGameGUIMgr::MsgReceive( plMessage* pMsg )
+bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
 {
     pfGameGUIMsg    *guiMsg = pfGameGUIMsg::ConvertNoRef( pMsg );
     if( guiMsg != nil )
@@ -235,7 +235,7 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
             // check to see if it is the dialog we are waiting for to be loaded
             for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
             {
-                if ( hsStrEQ(fDialogToSetKeyOf[i]->GetName(), mod->GetName()) )
+                if ( strcmp(fDialogToSetKeyOf[i]->GetName(), mod->GetName()) == 0 )
                 {
                     SetDialogToNotify(mod,fDialogToSetKeyOf[i]->GetKey());
                     // now remove this entry... we did it
@@ -316,7 +316,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         int i;
         for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
         {
-            if ( hsStrEQ(fDialogToSetKeyOf[i]->GetName(), name) )
+            if ( strcmp(fDialogToSetKeyOf[i]->GetName(), name) == 0 )
             {
                 alreadyLoaded = true;
                 break;
@@ -459,7 +459,7 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 
 //// IsDialogLoaded ////// see if the dialog is in our list of loaded dialogs
 
-hsBool  pfGameGUIMgr::IsDialogLoaded( const char *name )
+bool    pfGameGUIMgr::IsDialogLoaded( const char *name )
 {
     // search through all the dialogs we've loaded
     int     i;
@@ -533,7 +533,7 @@ void pfGameGUIMgr::SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey)
 //  "Activates" the GUI manager. This means enabling the drawing of GUI
 //  elements on the screen as well as rerouting input to us.
 
-void    pfGameGUIMgr::IActivateGUI( hsBool activate )
+void    pfGameGUIMgr::IActivateGUI( bool activate )
 {
     if( fActivated == activate )
         return;
@@ -561,13 +561,13 @@ void    pfGameGUIMgr::IActivateGUI( hsBool activate )
 //// IHandleMouse ////////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
+bool    pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor ) 
 {
     pfGUIDialogMod  *dlg;
 
 
     // Update interesting things first, no matter what, for ALL dialogs
-    hsBool  modalPresent = false;
+    bool    modalPresent = false;
     for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
     {
         dlg->UpdateInterestingThings( mouseX, mouseY, modifiers, modalPresent );
@@ -592,7 +592,7 @@ hsBool  pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY,
 //// IHandleKeyEvt ///////////////////////////////////////////////////////////
 //  Distributes mouse events to the dialogs currently active
 
-hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers ) 
+bool    pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -610,7 +610,7 @@ hsBool  pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modi
 //  Like IHandleKeyPress, but takes in a char for distributing actual 
 //  characters typed.
 
-hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers ) 
+bool    pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers ) 
 {
     pfGUIDialogMod  *dlg;
 
@@ -631,7 +631,7 @@ hsBool  pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers )
 //  Looks at the chain of active dialogs and determines if there's any modals
 //  blocking input. Returns true if so.
 
-hsBool  pfGameGUIMgr::IModalBlocking( void )
+bool    pfGameGUIMgr::IModalBlocking( void )
 {
     return ( IGetTopModal() != nil ) ? true : false;
 }
@@ -679,7 +679,7 @@ pfGameUIInputInterface::pfGameUIInputInterface( pfGameGUIMgr * const mgr ) : plI
     // RestoreDefaultKeyMappings()!!!!
 }
 
-hsBool  pfGameUIInputInterface::IControlCodeEnabled( ControlEventCode code )
+bool    pfGameUIInputInterface::IControlCodeEnabled( ControlEventCode code )
 {
     if( code == B_CONTROL_EXIT_GUI_MODE )
     {
@@ -699,7 +699,7 @@ hsBool  pfGameUIInputInterface::IControlCodeEnabled( ControlEventCode code )
     return true;    // Enable all other codes
 }
 
-hsBool  pfGameUIInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
+bool    pfGameUIInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
 {
     if( cmd->fControlCode == B_CONTROL_EXIT_GUI_MODE )
     {
@@ -715,9 +715,9 @@ hsBool  pfGameUIInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
     return false;
 }
 
-hsBool  pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
+bool    pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
-    hsBool      handled = false;
+    bool        handled = false;
 
 
     /// The in-game UI has to do far more complicated control handling, so we just overload this entirely

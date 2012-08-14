@@ -54,12 +54,12 @@ public:
     virtual ~plCompress() {}
 
     // return true if successful
-    virtual hsBool Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn) = 0;
-    virtual hsBool Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn) = 0;
+    virtual bool Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn) = 0;
+    virtual bool Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn) = 0;
 
     // in place versions
-    virtual hsBool Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t maxBufLenOut, int offset=0) = 0;
-    virtual hsBool Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset=0) = 0;
+    virtual bool Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t maxBufLenOut, int offset=0) = 0;
+    virtual bool Compress(uint8_t** bufIn, uint32_t* bufLenIn, int offset=0) = 0;
 };
 
 

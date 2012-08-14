@@ -78,9 +78,9 @@ public:
 
     plKey GetNPCSpawnKey(plMaxNode *node);
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
 
 private:
     // per-instance registry of all the modifiers that were created by this component
@@ -157,7 +157,7 @@ bool plNPCSpawnComp::IIsValid()
 }
 
 // SETUPPROPERTIES
-hsBool plNPCSpawnComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plNPCSpawnComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fMods.clear();          // clear out our cache of modifiers (used for interfacing to python & responder)
 
@@ -178,7 +178,7 @@ hsBool plNPCSpawnComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 
 // PRECONVERT
 // We actually do the convert here so we're around for responder & python fixup
-hsBool plNPCSpawnComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plNPCSpawnComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (IIsValid())
     {
@@ -200,7 +200,7 @@ hsBool plNPCSpawnComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 // CONVERT
 // We just attach to the scene object here. Not sure why we didn't do it at convert time;
 // I'm cribbing from Colin's modifications to the one shot component.
-hsBool plNPCSpawnComp::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
+bool plNPCSpawnComp::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     modmap::iterator i = fMods.find(node);
 

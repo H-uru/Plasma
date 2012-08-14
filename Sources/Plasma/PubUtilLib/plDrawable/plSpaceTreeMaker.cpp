@@ -411,7 +411,7 @@ void plSpaceTreeMaker::Cleanup()
     fDisabled.Reset();
 }
 
-int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
+int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, bool disable)
 {
     plSpacePrepNode* leaf = new plSpacePrepNode;
     fLeaves.Append(leaf);
@@ -435,7 +435,7 @@ int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable)
 #define MF_DO_3D
 
 #ifdef MF_DO_RAND
-#define MF_SETPOINT(pt,a,b,c) pt.Set(hsRand()/32767.f, hsRand()/32767.f, hsRand()/32767.f)
+#define MF_SETPOINT(pt,a,b,c) pt.Set(rand()/32767.f, rand()/32767.f, rand()/32767.f)
 #else // MF_DO_RAND
 #define MF_SETPOINT(pt,a,b,c) pt.Set(a,b,c)
 #endif // MF_DO_RAND

@@ -51,18 +51,18 @@ struct hsWide {
     hsWide* Set(int32_t lo) { fLo = lo; if (lo < 0) fHi = -1L; else fHi = 0; return this; }
     hsWide* Set(int32_t hi, uint32_t lo) { fHi = hi; fLo = lo; return this; }
 
-    inline hsBool   IsNeg() const { return fHi < 0; }
-    inline hsBool   IsPos() const { return fHi > 0 || (fHi == 0 && fLo != 0); }
-    inline hsBool   IsZero() const { return fHi == 0 && fLo == 0; }
-    inline hsBool   IsWide() const;
+    inline bool   IsNeg() const { return fHi < 0; }
+    inline bool   IsPos() const { return fHi > 0 || (fHi == 0 && fLo != 0); }
+    inline bool   IsZero() const { return fHi == 0 && fLo == 0; }
+    inline bool   IsWide() const;
 
 
-    hsBool operator==(const hsWide& b) const { return fHi == b.fHi && fLo == b.fLo; }
-    hsBool operator<(const hsWide& b) const { return fHi < b.fHi || (fHi == b.fHi && fLo < b.fLo); }
-    hsBool operator>( const hsWide& b) const { return fHi > b.fHi || (fHi == b.fHi && fLo > b.fLo); }
-    hsBool operator!=( const hsWide& b) const { return !( *this == b); }
-    hsBool operator<=(const hsWide& b) const { return !(*this > b); }
-    hsBool operator>=(const hsWide& b) const { return !(*this < b); }
+    bool operator==(const hsWide& b) const { return fHi == b.fHi && fLo == b.fLo; }
+    bool operator<(const hsWide& b) const { return fHi < b.fHi || (fHi == b.fHi && fLo < b.fLo); }
+    bool operator>( const hsWide& b) const { return fHi > b.fHi || (fHi == b.fHi && fLo > b.fLo); }
+    bool operator!=( const hsWide& b) const { return !( *this == b); }
+    bool operator<=(const hsWide& b) const { return !(*this > b); }
+    bool operator>=(const hsWide& b) const { return !(*this < b); }
 
     inline hsWide*  Negate();
     inline hsWide*  Add(int32_t scaler);
@@ -182,7 +182,7 @@ inline int32_t hsWide::AsLong() const
     return (int32_t)fLo;
 }
 
-inline hsBool hsWide::IsWide() const
+inline bool hsWide::IsWide() const
 {
     return (fHi > 0 || (fHi == 0 && (int32_t)fLo < 0)) || (fHi < -1L || (fHi == -1L && (int32_t)fLo >= 0));
 }

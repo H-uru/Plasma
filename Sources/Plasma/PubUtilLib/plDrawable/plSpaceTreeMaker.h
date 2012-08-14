@@ -98,7 +98,7 @@ public:
     void                            Cleanup();
 
     void                            Reset();
-    int32_t                           AddLeaf(const hsBounds3Ext& worldBnd, hsBool disable=false);
+    int32_t                           AddLeaf(const hsBounds3Ext& worldBnd, bool disable=false);
     plSpaceTree*                    MakeTree();
 
     void                            TestTree(); // development only - NUKE ME mf horse

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // statics
 plSynchedObject* plSynchedObject::fStaticSynchedObj=nil;
 std::vector<plSynchedObject::StateDefn> plSynchedObject::fDirtyStates;
-std::vector<hsBool> plSynchedObject::fSynchStateStack;
+std::vector<bool> plSynchedObject::fSynchStateStack;
 
 plSynchedObject::plSynchedObject() : 
     fSynchFlags(0),
@@ -77,7 +77,7 @@ plSynchedObject::~plSynchedObject()
 #endif
 }
 
-hsBool plSynchedObject::MsgReceive(plMessage* msg)
+bool plSynchedObject::MsgReceive(plMessage* msg)
 {
     plSetNetGroupIDMsg* setNetGroupID = plSetNetGroupIDMsg::ConvertNoRef(msg);
     if (setNetGroupID)
@@ -141,7 +141,7 @@ uint8_t plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v)
     return (uint8_t)idx;
 }
 
-hsBool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v) 
+bool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v) 
 {
     int i;
     for(i=0;i<GetNumSynchedValues(); i++)
@@ -203,7 +203,7 @@ void plSynchedObject::SendSDLStateMsg(const char* SDLStateName, uint32_t synchFl
 // Tell an object to send an sdl state update.
 // The request will get queued (returns true)
 //
-hsBool plSynchedObject::DirtySynchState(const char* SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
+bool plSynchedObject::DirtySynchState(const char* SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     if (!IOKToDirty(SDLStateName))
     {
@@ -397,11 +397,11 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 //
 // static
 //
-hsBool plSynchedObject::PopSynchDisabled() 
+bool plSynchedObject::PopSynchDisabled() 
 { 
     if (fSynchStateStack.size())
     {
-        hsBool ret=fSynchStateStack.back(); 
+        bool ret=fSynchStateStack.back(); 
         fSynchStateStack.pop_back(); 
         return ret;
     }

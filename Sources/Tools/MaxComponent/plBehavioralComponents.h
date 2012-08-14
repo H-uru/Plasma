@@ -63,9 +63,9 @@ public:
     };
 
     plAvBehaviorSittingComponent();
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 #define BEHAVIORAL_SITTING_CID Class_ID(0x617e22cc, 0x31ef310d)

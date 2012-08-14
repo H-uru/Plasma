@@ -214,7 +214,7 @@ void plUpdatableClient::IGetUpdate()
     }
 }
 
-hsBool plUpdatableClient::Init()
+bool plUpdatableClient::Init()
 {
     if (plClient::Init())
     {
@@ -227,7 +227,7 @@ hsBool plUpdatableClient::Init()
     return false;
 }
 
-hsBool plUpdatableClient::MainLoop()
+bool plUpdatableClient::MainLoop()
 {
     IGetUpdate();
 
@@ -242,7 +242,7 @@ hsBool plUpdatableClient::MainLoop()
 
 #include <direct.h>
 
-hsBool plUpdatableClient::Shutdown()
+bool plUpdatableClient::Shutdown()
 {
     if (fDirty && fDataPath)
     {

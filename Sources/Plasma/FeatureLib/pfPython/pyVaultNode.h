@@ -158,7 +158,7 @@ public:
     // Link node to this one
     void LinkToNode(int nodeID, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Remove child node
-    hsBool RemoveNode( pyVaultNode& pynode, PyObject* cbObject=nil, uint32_t cbContext=0 );
+    bool RemoveNode( pyVaultNode& pynode, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Remove all child nodes
     void RemoveAllNodes( void );
     // Add/Save this node to vault

@@ -75,7 +75,7 @@ public:
             delete[] fFilename;
     }
 
-    hsBool Open(const char* filename, const char* mode)
+    bool Open(const char* filename, const char* mode)
     {
         fFilename = hsStrcpy(filename);
         return plZlibStream::Open(filename, mode);

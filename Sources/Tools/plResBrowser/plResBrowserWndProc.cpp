@@ -274,7 +274,7 @@ void    RegisterFileTypes( HWND mainWnd )
 
     // Check our file extensions
     char    prpAssoc[ 512 ];
-    hsBool  needToRegister = true;
+    bool    needToRegister = true;
     if( plWinRegistryTools::GetCurrentFileExtensionAssociation( ".prp", prpAssoc, sizeof( prpAssoc ) ) )
     {
         if( strcmp( prpAssoc, "PlasmaPackFile" ) == 0 )

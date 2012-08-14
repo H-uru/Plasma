@@ -59,8 +59,8 @@ protected:
     std::string     fPlayerName;
     uint32_t        fPlayerID;
     float           fDistSq;            // from local player, temp
-    hsBool          fIsCCR;
-    hsBool          fIsServer;
+    bool            fIsCCR;
+    bool            fIsServer;
 
     pyPlayer(); // only used by python glue, do NOT call
     pyPlayer(pyKey& avKey, const char* pname, uint32_t pid, float distsq);
@@ -81,7 +81,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // override the equals to operator
-    hsBool operator==(const pyPlayer &player) const
+    bool operator==(const pyPlayer &player) const
     {
         // only thing that needs testing is the playerid, which is unique for all
         if ( ((pyPlayer*)this)->GetPlayerID() == player.GetPlayerID() )
@@ -89,25 +89,22 @@ public:
         else
             return false;
     }
-    hsBool operator!=(const pyPlayer &player) const { return !(player == *this);    }
+    bool operator!=(const pyPlayer &player) const { return !(player == *this);    }
 
     // for C++ access
-    plKey GetKey() { return fAvatarKey; }
+    plKey GetKey() const { return fAvatarKey; }
 
     // for python access
     const char * GetPlayerName() const { return fPlayerName.c_str();}
-    uint32_t GetPlayerID() const 
-    {
-        return fPlayerID;
-    }
+    uint32_t GetPlayerID() const  { return fPlayerID; }
 
     float GetDistSq() const { return fDistSq; }
 
-    void SetCCRFlag(hsBool state);
-    hsBool IsCCR();
+    void SetCCRFlag(bool state) { fIsCCR = state; }
+    bool IsCCR() const { return fIsCCR; }
 
-    void SetServerFlag(hsBool state);
-    hsBool IsServer();
+    void SetServerFlag(bool state) { fIsServer = state; }
+    bool IsServer() const { return fIsServer; }
 
 };
 

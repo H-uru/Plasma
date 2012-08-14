@@ -76,7 +76,7 @@ hsG3DDeviceMode::~hsG3DDeviceMode()
     Clear();
 }
 
-hsBool hsG3DDeviceMode::operator< (const hsG3DDeviceMode &mode) const
+bool hsG3DDeviceMode::operator< (const hsG3DDeviceMode &mode) const
 {
     // Color depth overrides everything else
     if (fDepth < mode.GetColorDepth())
@@ -415,19 +415,19 @@ void hsG3DDeviceRecord::Write(hsStream* s) const
 
     int len;
 
-    len = hsStrlen(fG3DDriverDesc);
+    len = strlen(fG3DDriverDesc);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverDesc);
 
-    len = hsStrlen(fG3DDriverName);
+    len = strlen(fG3DDriverName);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverName);
 
-    len = hsStrlen(fG3DDriverVersion);
+    len = strlen(fG3DDriverVersion);
     s->WriteLE32(len);
     s->Write(len, fG3DDriverVersion);
 
-    len = hsStrlen(fG3DDeviceDesc);
+    len = strlen(fG3DDeviceDesc);
     s->WriteLE32(len);
     s->Write(len, fG3DDeviceDesc);
 
@@ -526,7 +526,7 @@ void hsG3DDeviceSelector::Clear()
     fRecords.Reset();
 }
 
-void hsG3DDeviceSelector::RemoveUnusableDevModes(hsBool bTough)
+void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
 {
     plDemoDebugFile::Write( "Removing unusable devices and modes..." );
     for (int i = 0; i < fRecords.GetCount(); i++)
@@ -652,7 +652,7 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 #endif
 }
 
-hsBool  hsG3DDeviceSelector::Init( void )
+bool    hsG3DDeviceSelector::Init( void )
 {
     // See if we're all capable of initing
     if( !IInitDirect3D() )
@@ -696,7 +696,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 #endif
 }
 
-hsBool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
+bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
 {
     int32_t iTnL, iD3D, iOpenGL, device, mode, i;
     device = iTnL = iD3D = iOpenGL = mode = -1;
@@ -999,10 +999,10 @@ void    hsG3DDeviceSelector::IGetOpenGLModes( hsG3DDeviceRecord &devRec, char *d
 //  Tests all the possible OpenGL settings once the screen has been set
 //  to a given test resolution.
 
-hsBool hsG3DDeviceSelector::ITestOpenGLRes( int width, int height, int bitDepth,
+bool hsG3DDeviceSelector::ITestOpenGLRes( int width, int height, int bitDepth,
                                             hsG3DDeviceRecord &devRec, char *driverName )
 {
-    hsBool              retValue = false;
+    bool                retValue = false;
 
 #ifdef HS_OPEN_GL
 #if HS_BUILD_FOR_WIN32
@@ -1169,7 +1169,7 @@ void    hsG3DDeviceSelector::IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec )
 #ifdef HS_OPEN_GL
 #if HS_BUILD_FOR_WIN32
 
-uint32_t  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, hsBool32 makeItFull )
+uint32_t  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, bool32 makeItFull )
 {
     DEVMODE     modeInfo;
     int         pixFmt;
@@ -1875,9 +1875,9 @@ void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRec
 #if M3DDEMOINFO // Demo Debug Build
 static plDemoDebugFile      sMyDDFWriter;
 
-hsBool  plDemoDebugFile::fIsOpen = false;
+bool    plDemoDebugFile::fIsOpen = false;
 FILE    *plDemoDebugFile::fDemoDebugFP = nil;
-hsBool  plDemoDebugFile::fEnabled = false;
+bool    plDemoDebugFile::fEnabled = false;
 #endif
 
 
@@ -1885,7 +1885,7 @@ hsBool  plDemoDebugFile::fEnabled = false;
 //  Internal function--opens the demo debug file for writing. Returns true
 //  if successful, false otherwise.
 
-hsBool  plDemoDebugFile::IDDFOpen( void )
+bool    plDemoDebugFile::IDDFOpen( void )
 {
 #if M3DDEMOINFO // Demo Debug Build
     char    fileName[] = "log/debug_info.dat";

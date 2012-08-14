@@ -62,7 +62,7 @@ class plCaptureRender
 protected:
     static hsTArray<plCaptureRenderMsg*>        fProcessed;
 
-    static hsBool       IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
+    static bool         IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
 
     friend class plCaptureRenderRequest;
 
@@ -71,7 +71,7 @@ protected:
     friend class plClient;
 public:
 
-    static hsBool       Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
+    static bool         Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
 
 };
 
@@ -100,7 +100,7 @@ protected:
     friend class plClient;
 public:
 
-    static hsBool       Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
+    static bool         Capture(const plKey& ack, uint16_t width=800, uint16_t height=600);
 
 };
 

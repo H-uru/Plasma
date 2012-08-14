@@ -83,14 +83,14 @@ class plPipeGeoMakeMsg : public plPipeResMakeMsg
 {
 public:
     plPipeGeoMakeMsg() : plPipeResMakeMsg(), fDefault(false) { }
-    plPipeGeoMakeMsg(plPipeline* pipe, hsBool def) : plPipeResMakeMsg(pipe), fDefault(def) { }
+    plPipeGeoMakeMsg(plPipeline* pipe, bool def) : plPipeResMakeMsg(pipe), fDefault(def) { }
 
     ~plPipeGeoMakeMsg() {}
     
     CLASSNAME_REGISTER( plPipeGeoMakeMsg );
     GETINTERFACE_ANY( plPipeGeoMakeMsg, plPipeResMakeMsg );
 
-    hsBool          fDefault;
+    bool            fDefault;
 };
 
 class plPipeTexMakeMsg : public plPipeResMakeMsg

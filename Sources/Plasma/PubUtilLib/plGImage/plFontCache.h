@@ -86,13 +86,13 @@ class plFontCache : public hsKeyedObject
         virtual void    Read( hsStream *s, hsResMgr *mgr ) {}
         virtual void    Write( hsStream *s, hsResMgr *mgr ) {}
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         static plFontCache  &GetInstance( void );
 
         plFont  *GetFont( const char *face, uint8_t size, uint32_t fontFlags );
 
-//      HFONT   GetMeAFont( const char *face, int height, int weight, hsBool italic, uint32_t quality );
+//      HFONT   GetMeAFont( const char *face, int height, int weight, bool italic, uint32_t quality );
 //      void    FreeFont( HFONT font );
         void    Clear( void );
 

@@ -91,7 +91,7 @@ public:
     const char * Player_GetAgeGuid( void );
     // online status
     void    Player_SetOnline( bool b );
-    hsBool  Player_IsOnline( void );
+    bool  Player_IsOnline( void );
 
     int     Player_GetCCRLevel( void );
 };

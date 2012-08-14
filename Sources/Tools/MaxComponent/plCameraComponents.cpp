@@ -122,9 +122,9 @@ struct PreTrans
     }
     plSceneObject*  fTransTo;
 
-    hsBool  fCutPos;
-    hsBool  fCutPOA;
-    hsBool  fIgnore;
+    bool    fCutPos;
+    bool    fCutPOA;
+    bool    fIgnore;
     float fAccel;
     float fDecel;
     float fVelocity;
@@ -202,18 +202,18 @@ plLimitPanComponent::plLimitPanComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plLimitPanComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
+bool plLimitPanComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 
-hsBool plLimitPanComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plLimitPanComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plLimitPanComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plLimitPanComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -283,18 +283,18 @@ plCameraZoomComponent::plCameraZoomComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plCameraZoomComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
+bool plCameraZoomComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 
-hsBool plCameraZoomComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plCameraZoomComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraZoomComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraZoomComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -426,14 +426,14 @@ plTransOverrideComponent::plTransOverrideComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plTransOverrideComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
+bool plTransOverrideComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
 {
     fTransKeys.clear();
     return true;
 }
 
 
-hsBool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     // see if there is a camera specified
     INode* pCamNode = fCompPB->GetINode(kTransitionTo);
@@ -477,12 +477,12 @@ hsBool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMs
     return true;
 }
 
-hsBool plTransOverrideComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plTransOverrideComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plTransOverrideComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plTransOverrideComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     TransitionKeys::iterator    i = fTransKeys.begin();
 
@@ -638,7 +638,7 @@ plPOAObjectComponent::plPOAObjectComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plPOAObjectComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
+bool plPOAObjectComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrMsg)
 {
     if (fCompPB->GetINode(kPOAObject))
     {
@@ -652,7 +652,7 @@ hsBool plPOAObjectComponent::SetupProperties(plMaxNode* pNode, plErrorMsg *pErrM
     return false;
 }
 
-hsBool plPOAObjectComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPOAObjectComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -725,7 +725,7 @@ plMakeDefaultCamComponent::plMakeDefaultCamComponent()
 //
 
 
-hsBool plCameraBaseComponent::IsValidNodeType(plMaxNode *pNode)
+bool plCameraBaseComponent::IsValidNodeType(plMaxNode *pNode)
 {
     Object *obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
     TimeValue Now = hsConverterUtils::Instance().GetTime(pNode->GetInterface());
@@ -735,10 +735,10 @@ hsBool plCameraBaseComponent::IsValidNodeType(plMaxNode *pNode)
         return false;
 }
 
-hsBool plCameraBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plCameraBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     fModKeys.clear();
-    hsBool ValidNode = IsValidNodeType(pNode);
+    bool ValidNode = IsValidNodeType(pNode);
     if(!ValidNode){
         if(pErrMsg->Set(true, "Invalid Camera Object", "The camera %s is not a 'Max Target Camera type'.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName()).Ask())
                 pErrMsg->Set(true, "", "");
@@ -758,12 +758,12 @@ hsBool plCameraBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* pErr
     return true;
 }
 
-hsBool plCameraBaseComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plCameraBaseComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // check for overriden transitions and special animation commands
     int count = node->NumAttachedComponents();
@@ -968,13 +968,13 @@ plCameraModifier1* plCameraBaseComponent::ICreateFocalPointObject(plMaxNode* pNo
 }
 
 
-hsBool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, plErrorMsg* pErrMsg)
+bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, plErrorMsg* pErrMsg)
 {
     // do we want a special POA for this brain
-    hsBool bResult = false;
-    hsBool bAvPOA = false;
+    bool bResult = false;
+    bool bAvPOA = false;
     plComponentBase* POAComp = 0;
-    hsBool bPOAObject = false;
+    bool bPOAObject = false;
     plComponentBase* objPOAComp = 0;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
@@ -1097,7 +1097,7 @@ plCamera1Component::plCamera1Component()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plCamera1Component::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plCamera1Component::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
     if (!pMod)
@@ -1340,7 +1340,7 @@ plAutoCamComponent::plAutoCamComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plAutoCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plAutoCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
 
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
@@ -1502,7 +1502,7 @@ plFPCamComponent::plFPCamComponent()
 }
 
 
-hsBool plFPCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plFPCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
 
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
@@ -1645,7 +1645,7 @@ plRailCameraComponent::plRailCameraComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
 
     plRailCameraMod* lineMod = new plRailCameraMod;
@@ -1719,7 +1719,7 @@ hsBool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg
     return true;
 }
 
-hsBool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if (!plCameraBaseComponent::SetupProperties(pNode, pErrMsg))
         return false;
@@ -1749,7 +1749,7 @@ hsBool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pEr
     return true;
 }
 
-hsBool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
     if (!pMod)
@@ -1903,7 +1903,7 @@ plCircleCameraComponent::plCircleCameraComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
     if (!pMod)
@@ -2002,9 +2002,9 @@ public:
     plCameraDetectorComponent();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
 };
@@ -2044,7 +2044,7 @@ plCameraDetectorComponent::plCameraDetectorComponent()
 }
 
 
-hsBool plCameraDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plCameraDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
     pNode->SetForceLocal(true);
     pNode->SetDrawable(false);
@@ -2066,13 +2066,13 @@ hsBool plCameraDetectorComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *
 }
 
 
-hsBool plCameraDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraDetectorComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
 
-hsBool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
@@ -2294,7 +2294,7 @@ plFollowCamComponent::plFollowCamComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
 
     plCameraModifier1* pMod = ICreateCameraModifier(pNode, pErrMsg);
@@ -2413,13 +2413,13 @@ plCameraAnimCmdComponent::plCameraAnimCmdComponent()
     fIgnoreFOV = false;
 }
 
-hsBool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     fIgnoreFOV = fCompPB->GetInt(kIgnoreFOV);
     return true;
 }
 
-hsBool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plSceneObject* pObj = pNode->GetSceneObject();
     const plCameraModifier1* pCamMod = nil;
@@ -2451,10 +2451,10 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
 };
 OBSOLETE_CLASS_DESC(plCameraCmdComponent, gCameraCmdDesc, "(ex)Camera Command Region",  "CameraCmdRegion", COMP_TYPE_MISC, CAMERACMD_CID)
@@ -2554,17 +2554,17 @@ plCameraCmdComponent::plCameraCmdComponent()
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plCameraCmdComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraCmdComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
 
-hsBool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plCameraCmdComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

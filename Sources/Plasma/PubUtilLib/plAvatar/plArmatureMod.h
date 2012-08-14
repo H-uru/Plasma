@@ -109,28 +109,28 @@ public:
     CLASSNAME_REGISTER( plArmatureModBase );
     GETINTERFACE_ANY( plArmatureModBase, plAGMasterMod );   
     
-    virtual hsBool  MsgReceive(plMessage* msg);
+    virtual bool    MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);   
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
+    virtual bool    IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
     
     plMatrixDifferenceApp *GetRootAnimator() { return fRootAnimator; }
     plPhysicalControllerCore* GetController() const { return fController; }
     plKey GetWorldKey() const;
-    virtual hsBool ValidatePhysics();
-    virtual hsBool ValidateMesh();
+    virtual bool ValidatePhysics();
+    virtual bool ValidateMesh();
     virtual void PushBrain(plArmatureBrain *brain);
     virtual void PopBrain();
     plArmatureBrain *GetCurrentBrain() const;
     plDrawable *FindDrawable() const;
     virtual void LeaveAge();
-    virtual hsBool IsFinal();
+    virtual bool IsFinal();
 
     // LOD stuff
     void    AdjustLOD();                // see if we need to switch to a different resolution
-    hsBool  SetLOD(int newLOD);     // switch to a different resolution
+    bool    SetLOD(int newLOD);     // switch to a different resolution
     void    RefreshTree();              // Resend an LOD update to all our nodes (for when geometry changes)
     int     AppendMeshKey(plKey meshKey);
     int     AppendBoneVec(plKeyVector *boneVec);
@@ -147,15 +147,15 @@ public:
         kDisableReasonVehicle   = 0x0010,
         kDisableReasonGenericBrain  = 0x0020,
     };  
-    void EnablePhysics(hsBool status, uint16_t reason = kDisableReasonUnknown);
-    void EnablePhysicsKinematic(hsBool status);
-    void EnableDrawing(hsBool status, uint16_t reason = kDisableReasonUnknown);   
-    hsBool IsPhysicsEnabled() { return fDisabledPhysics == 0; }
-    hsBool IsDrawEnabled() { return fDisabledDraw == 0; }
+    void EnablePhysics(bool status, uint16_t reason = kDisableReasonUnknown);
+    void EnablePhysicsKinematic(bool status);
+    void EnableDrawing(bool status, uint16_t reason = kDisableReasonUnknown);   
+    bool IsPhysicsEnabled() { return fDisabledPhysics == 0; }
+    bool IsDrawEnabled() { return fDisabledDraw == 0; }
 
 
     static void AddressMessageToDescendants(const plCoordinateInterface * CI, plMessage *msg);
-    static void EnableDrawingTree(const plSceneObject *object, hsBool status);  
+    static void EnableDrawingTree(const plSceneObject *object, bool status);  
 
     static int fMinLOD;                     // throttle for lowest-indexed LOD
     static double fLODDistance;             // Distance for first LOD switch 2nd is 2x this distance (for now)
@@ -163,7 +163,7 @@ public:
 protected:
     virtual void IFinalize();
     virtual void ICustomizeApplicator();
-    void IEnableBones(int lod, hsBool enable);
+    void IEnableBones(int lod, bool enable);
         
     // Some of these flags are only needed by derived classes, but I just want
     // the one waitFlags variable.
@@ -204,23 +204,23 @@ public:
     CLASSNAME_REGISTER( plArmatureMod );
     GETINTERFACE_ANY( plArmatureMod, plArmatureModBase );
     
-    virtual hsBool  MsgReceive(plMessage* msg);
+    virtual bool    MsgReceive(plMessage* msg);
     virtual void    AddTarget(plSceneObject* so);
     virtual void    RemoveTarget(plSceneObject* so);
-    virtual hsBool  IEval(double secs, float del, uint32_t dirty);
+    virtual bool    IEval(double secs, float del, uint32_t dirty);
     virtual void    Read(hsStream *stream, hsResMgr *mgr);
     virtual void    Write(hsStream *stream, hsResMgr *mgr);
 
-    virtual hsBool ValidatePhysics();
-    virtual hsBool ValidateMesh();
+    virtual bool ValidatePhysics();
+    virtual bool ValidateMesh();
 
     // Get or set the position of the avatar in simulation space.  Set any
     // arguments you don't care about to nil.
     void SetPositionAndRotationSim(const hsPoint3* position, const hsQuat* rotation);
     void GetPositionAndRotationSim(hsPoint3* position, hsQuat* rotation);
 
-    hsBool IsLocalAvatar();
-    hsBool IsLocalAI();
+    bool IsLocalAvatar();
+    bool IsLocalAI();
     virtual const plSceneObject *FindBone(const plString & name) const;
     virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
     virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);
@@ -229,9 +229,9 @@ public:
 
     virtual void Spawn(double timeNow);
     virtual void SpawnAt(int which, double timeNow);
-    virtual void EnterAge(hsBool reSpawn);
+    virtual void EnterAge(bool reSpawn);
     virtual void LeaveAge();
-    virtual void PanicLink(hsBool playLinkOutAnim = true);
+    virtual void PanicLink(bool playLinkOutAnim = true);
     virtual void PersonalLink();
 
     virtual bool ToggleDontPanicLinkFlag() { fDontPanicLink = fDontPanicLink ? false : true; return fDontPanicLink; }
@@ -249,15 +249,15 @@ public:
     void        IProcessQueuedInput();
     void        PreserveInputState();
     void        RestoreInputState();
-    hsBool      GetInputFlag(int f) const;
-    void        SetInputFlag(int which, hsBool status);
+    bool        GetInputFlag(int f) const;
+    void        SetInputFlag(int which, bool status);
     void        ClearInputFlags(bool saveAlwaysRun, bool clearBackup);
-    hsBool      HasMovementFlag() const; // Is any *movement* input flag on?
+    bool        HasMovementFlag() const; // Is any *movement* input flag on?
     float    GetTurnStrength() const;
     float    GetKeyTurnStrength() const;
     float    GetAnalogTurnStrength() const;
     void        SetReverseFBOnIdle(bool val);
-    hsBool      IsFBReversed();
+    bool        IsFBReversed();
 
     bool ForwardKeyDown() const;
     bool BackwardKeyDown() const;
@@ -282,8 +282,8 @@ public:
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
-    hsBool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
-    hsBool DirtyPhysicalSynchState(uint32_t synchFlags);
+    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
+    bool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
     plClothingSDLModifier *GetClothingSDLMod() const { return fClothingSDLMod; }
     const plSceneObject *GetClothingSO(uint8_t lod) const;
@@ -310,19 +310,19 @@ public:
     
     int  RefreshDebugDisplay();
     void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void SetDebugState(hsBool state) { fDebugOn = (state != 0); }
+    void SetDebugState(bool state) { fDebugOn = (state != 0); }
     bool GetDebugState() { return fDebugOn; }
 
     virtual void    RefreshTree() {}
-    hsBool  IsInStealthMode() const;
+    bool    IsInStealthMode() const;
     int     GetStealthLevel() const { return fStealthLevel; }
 
     bool    IsOpaque();
     bool    IsLinkedIn();
     bool    IsMidLink();
-    hsBool  ConsumeJump(); // returns true if the jump keypress was available to consume
+    bool    ConsumeJump(); // returns true if the jump keypress was available to consume
 
-    void SendBehaviorNotify(uint32_t type, hsBool start = true) { IFireBehaviorNotify(type,start); }
+    void SendBehaviorNotify(uint32_t type, bool start = true) { IFireBehaviorNotify(type,start); }
     // Discovered a bug which makes these values horribly out of scale. So we do the rescale
     // in the Get/Set functions for backwards compatability.
     static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
@@ -363,7 +363,7 @@ public:
     plMatrixDelayedCorrectionApplicator *fBoneRootAnimator;
 
     static const float kAvatarInputSynchThreshold;
-    static hsBool fClickToTurn;
+    static bool fClickToTurn;
     static const char *BoneStrings[];
     
     void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
@@ -381,8 +381,8 @@ protected:
     virtual void ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc);
     
     void    NetworkSynch(double timeNow, int force = 0);
-    hsBool  IHandleControlMsg(plControlEventMsg* pMsg);
-    void    IFireBehaviorNotify(uint32_t type, hsBool behaviorStart = true);
+    bool    IHandleControlMsg(plControlEventMsg* pMsg);
+    void    IFireBehaviorNotify(uint32_t type, bool behaviorStart = true);
     void    IHandleInputStateMsg(plAvatarInputStateMsg *msg);
     void    ILinkToPersonalAge();
     int     IFindSpawnOverride(void);

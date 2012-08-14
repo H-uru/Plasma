@@ -75,7 +75,7 @@ public:
     ~plEAXListener();
     static plEAXListener    &GetInstance( void );
 
-    hsBool  Init( void );
+    bool    Init( void );
     void    Shutdown( void );
 
     bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
@@ -86,17 +86,17 @@ public:
 
 protected:
     plEAXListener();
-    void    IFail( hsBool major );
-    void    IFail( const char *msg, hsBool major );
+    void    IFail( bool major );
+    void    IFail( const char *msg, bool major );
     void    IRelease( void );
 
     void    IMuteProperties( EAXREVERBPROPERTIES *props, float percent );
 
-    hsBool              fInited;
+    bool                fInited;
     
     // Cache info
     int32_t               fLastModCount;
-    hsBool              fLastWasEmpty;
+    bool                fLastWasEmpty;
     float            fLastSingleStrength;
     plEAXListenerMod    *fLastBigRegion;
 
@@ -138,14 +138,14 @@ class plEAXSourceSettings
         void    Read( hsStream *s );
         void    Write( hsStream *s );
 
-        void    Enable( hsBool e );
-        hsBool  IsEnabled( void ) const { return fEnabled; }
+        void    Enable( bool e );
+        bool    IsEnabled( void ) const { return fEnabled; }
 
-        void    SetRoomParams( int16_t room, int16_t roomHF, hsBool roomAuto, hsBool roomHFAuto );
+        void    SetRoomParams( int16_t room, int16_t roomHF, bool roomAuto, bool roomHFAuto );
         int16_t   GetRoom( void ) const   { return fRoom; }
         int16_t   GetRoomHF( void )  const  { return fRoomHF; }
-        hsBool  GetRoomAuto( void ) const   { return fRoomAuto; }
-        hsBool  GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
+        bool    GetRoomAuto( void ) const   { return fRoomAuto; }
+        bool    GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
 
         void    SetOutsideVolHF( int16_t vol );
         int16_t   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
@@ -170,9 +170,9 @@ class plEAXSourceSettings
         friend class plEAXSource;
         friend class plEAXSourceSoftSettings;
 
-        hsBool      fEnabled;
+        bool        fEnabled;
         int16_t       fRoom, fRoomHF;
-        hsBool      fRoomAuto, fRoomHFAuto;
+        bool        fRoomAuto, fRoomHFAuto;
         int16_t       fOutsideVolHF;
         float    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
         plEAXSourceSoftSettings fSoftStarts, fSoftEnds, fCurrSoftValues;
@@ -204,13 +204,13 @@ public:
 
     void    Init( plDSoundBuffer *parent );
     void    Release( void );
-    hsBool  IsValid( void ) const;
+    bool    IsValid( void ) const;
     bool SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
     bool GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
-    void    SetFrom(  plEAXSourceSettings *settings, unsigned source, hsBool force = false );
+    void    SetFrom(  plEAXSourceSettings *settings, unsigned source, bool force = false );
 
 private:
-    hsBool  fInit;
+    bool    fInit;
 };
 
 #endif //_plEAXEffects_h

@@ -186,7 +186,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  plgAudioSys::SetMuted( false );
 //}
 //
-//hsBool plPlayerModifier::MsgReceive(plMessage* msg)
+//bool plPlayerModifier::MsgReceive(plMessage* msg)
 //{
 //  plControlEventMsg* pCommandMsg = plControlEventMsg::ConvertNoRef(msg);
 //  if (pCommandMsg)
@@ -228,9 +228,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  return plSingleModifier::MsgReceive(msg);
 //}
 //
-//hsBool plPlayerModifier::HandleControlInput(plControlEventMsg* pMsg)
+//bool plPlayerModifier::HandleControlInput(plControlEventMsg* pMsg)
 //{
-//  hsBool ret=false;
+//  bool ret=false;
 //  
 //  if (pMsg->ControlActivated() && (pMsg->GetControlCode() == B_CONTROL_ROTATE_RIGHT || pMsg->GetControlCode() == B_CONTROL_ROTATE_LEFT || pMsg->GetControlCode() == A_CONTROL_TURN))
 //  {
@@ -256,7 +256,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  return ret;
 //}
 //
-//void plPlayerModifier::SetMoving(hsBool b)
+//void plPlayerModifier::SetMoving(bool b)
 //{
 //  if (b != bMoving)
 //  {
@@ -277,7 +277,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //hsPoint3 forceRight(-200,0,0);
 //hsPoint3 forceUp(0,0,15);
 //
-//hsBool plPlayerModifier::IEval(double secs, float del, uint32_t dirty)
+//bool plPlayerModifier::IEval(double secs, float del, uint32_t dirty)
 //{
 //  // setup for local player if necessary
 //  if (HasFlag(kNeedsLocalSetup))
@@ -610,7 +610,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  return distMoved;
 //}
 //
-//hsBool32 plPlayerModifier::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
+//bool32 plPlayerModifier::IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal)
 //{
 //  if (decelSpeed == 0)
 //      // no deceleration

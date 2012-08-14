@@ -58,10 +58,10 @@ class pfGUIDraggableMod : public pfGUIControlMod
 
         hsPoint3    fDragOffset, fLastMousePt;
         hsPoint3    fOrigCenter;
-        hsBool      fDragging;
+        bool        fDragging;
 
         
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
@@ -88,7 +88,7 @@ class pfGUIDraggableMod : public pfGUIControlMod
             kStartingDrag
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -97,9 +97,9 @@ class pfGUIDraggableMod : public pfGUIControlMod
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
 
-        void            StopDragging( hsBool cancel );
+        void            StopDragging( bool cancel );
         const hsPoint3  &GetLastMousePt( void ) const { return fLastMousePt; }
 };
 

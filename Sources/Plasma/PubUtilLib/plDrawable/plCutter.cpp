@@ -77,7 +77,7 @@ void plCutter::Write(hsStream* stream, hsResMgr* mgr)
 }
 
 
-void plCutter::Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, hsBool flip)
+void plCutter::Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, bool flip)
 {
     hsVector3 du = dir % out;
     hsVector3 dv = out % du;
@@ -274,7 +274,7 @@ inline void plCutter::ICutoutVtxMidW(const plCutoutVtx& inVtx, const plCutoutVtx
 }
 
 // IPolyClip
-hsBool plCutter::IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) const
+bool plCutter::IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) const
 {
     static hsTArray<plCutoutVtx> accum;
     accum.SetCount(0);
@@ -521,7 +521,7 @@ hsBool plCutter::IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) c
 }
 
 // IPolyClip
-hsBool plCutter::IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& hit) const
+bool plCutter::IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& hit) const
 {
     static hsTArray<plCutoutVtx> accum;
     static hsTArray<plCutoutVtx> poly;
@@ -682,17 +682,17 @@ hsBool plCutter::IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit&
 }
 
 
-hsBool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const
+bool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const
 {
     hits.SetCount(0);
 
     int iPoly;
     for( iPoly = 0; iPoly < src.GetCount(); iPoly++ )
     {
-        hsBool loU = false;
-        hsBool hiU = false;
-        hsBool loV = false;
-        hsBool hiV = false;
+        bool loU = false;
+        bool hiU = false;
+        bool loV = false;
+        bool hiV = false;
 
         const plCutoutPoly& poly = src[iPoly];
         int iv;
@@ -721,7 +721,7 @@ hsBool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCut
     return hits.GetCount() > 0;
 }
 
-hsBool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const
+bool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const
 {
     if( FindHitPoints(src, hits) )
     {
@@ -741,7 +741,7 @@ void plCutter::ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutou
     hsMatrix44 l2wNorm;
     src.GetWorldToLocal().GetTranspose(&l2wNorm);
 
-    hsBool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
+    bool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
 
     plAccTriIterator tri(&src.AccessTri());
     // For each tri
@@ -781,7 +781,7 @@ void plCutter::ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst
     hsMatrix44 l2wNorm;
     src.GetWorldToLocal().GetTranspose(&l2wNorm);
 
-    hsBool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
+    bool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
 
     plAccTriIterator tri(&src.AccessTri());
     // For each tri
@@ -817,7 +817,7 @@ void plCutter::ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst
         return;
     }
 
-    hsBool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
+    bool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
 
     plAccTriIterator tri(&src.AccessTri());
     // For each tri
@@ -865,7 +865,7 @@ void plCutter::Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
         return;
     }
 
-    hsBool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
+    bool baseHasAlpha = 0 != (src.GetMaterial()->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha);
 
     plAccTriIterator tri(&src.AccessTri());
     // For each tri
@@ -893,7 +893,7 @@ void plCutter::Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
     }
 }
 
-void plCutter::IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, hsBool baseHasAlpha) const
+void plCutter::IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, bool baseHasAlpha) const
 {
     int iDst = dst.GetCount();
     dst.Push();
@@ -903,14 +903,14 @@ void plCutter::IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& po
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-hsBool plCutter::CutoutGrid(int nWid, int nLen, plFlatGridMesh& grid) const
+bool plCutter::CutoutGrid(int nWid, int nLen, plFlatGridMesh& grid) const
 {
     hsVector3 halfU = fDirU * (fLengthU * fLengthU * 0.5f);
     hsVector3 halfV = fDirV * (fLengthV * fLengthV * 0.5f);
     return MakeGrid(nWid, nLen, fWorldBounds.GetCenter(), halfU, halfV, grid);
 }
 
-hsBool plCutter::MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVector3& halfU, const hsVector3& halfV, plFlatGridMesh& grid)
+bool plCutter::MakeGrid(int nWid, int nLen, const hsPoint3& center, const hsVector3& halfU, const hsVector3& halfV, plFlatGridMesh& grid)
 {
     if( nWid < 3 )
         nWid = 3;
@@ -1040,8 +1040,8 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         return;
 
     static plDrawableSpans* drawable = nil;
-    hsBool newDrawable = !drawable;
-    hsBool haveNormal = true;
+    bool newDrawable = !drawable;
+    bool haveNormal = true;
 
     hsTArray<uint32_t> retIndex;
 
@@ -1226,7 +1226,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
 
 }
 
-void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, hsBool flip)
+void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, bool flip)
 {
     plCutter cutter;
 
@@ -1246,8 +1246,8 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, h
         return;
 
     static plDrawableSpans* drawable = nil;
-    hsBool newDrawable = !drawable;
-    hsBool haveNormal = true;
+    bool newDrawable = !drawable;
+    bool haveNormal = true;
 
     hsTArray<uint32_t> retIndex;
 

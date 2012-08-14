@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <memory.h>
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
 #include "hsDXTSoftwareCodec.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
@@ -51,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define kDefaultDepth   32
 
 
-hsBool hsDXTSoftwareCodec::fRegistered = false;
+bool hsDXTSoftwareCodec::fRegistered = false;
 
 hsDXTSoftwareCodec& hsDXTSoftwareCodec::Instance()
 {
@@ -1942,7 +1943,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
             uint8_t alpha[8];
             int32_t maxDistance = 0;
             hsRGBAColor32 color[4];
-            hsBool hasTransparency = false;
+            bool hasTransparency = false;
 
             int32_t xx, yy;
             for (xx = 0; xx < 4; ++xx)
@@ -2274,7 +2275,7 @@ uint16_t hsDXTSoftwareCodec::Color32To16(hsRGBAColor32 color)
     return (r << 8) | (g << 3) | (b >> 3);
 }
 
-hsBool hsDXTSoftwareCodec::Register()
+bool hsDXTSoftwareCodec::Register()
 {
     return hsCodecManager::Instance().Register(&(Instance()), plMipmap::kDirectXCompression, 100);
 }
@@ -2294,7 +2295,7 @@ uint8_t   hsDXTSoftwareCodec::ICalcCompressedFormat( plMipmap *bMap )
 //// ColorizeCompBitmap ///////////////////////////////////////////////////////
 //  Colorizes a compressed bitmap according to the color mask given.
 
-hsBool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
+bool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
     uint32_t  numBlocks, blockSize;
     uint16_t  *srcData, color1, color2, gray, grayDiv2, i;

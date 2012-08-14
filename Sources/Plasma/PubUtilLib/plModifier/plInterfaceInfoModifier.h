@@ -52,7 +52,7 @@ class plInterfaceInfoModifier : public plSingleModifier
 protected:
     
     hsTArray<plKey> fKeyList;
-    virtual hsBool IEval(double secs, float del, uint32_t dirty){ return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
 public:
 
     plInterfaceInfoModifier(); 

@@ -57,17 +57,17 @@ public:
     hsVectorStream(uint32_t chunkSize);
     virtual ~hsVectorStream();
 
-    virtual hsBool  Open(const char *, const char *)    { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual hsBool  Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual hsBool  Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
+    virtual bool      Open(const char *, const char *)    { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    virtual bool      Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    virtual bool      Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
     
-    virtual hsBool  AtEnd();
+    virtual bool      AtEnd();
     virtual uint32_t  Read(uint32_t byteCount, void * buffer);
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual void    Truncate();
+    virtual void      Skip(uint32_t deltaByteCount);
+    virtual void      Rewind();
+    virtual void      FastFwd();
+    virtual void      Truncate();
 
     virtual uint32_t  GetEOF();
     virtual void    CopyToMem(void* mem);
@@ -82,48 +82,3 @@ public:
     // In case you want to try and be efficient with your memory allocations
     void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
 };
-
-#ifdef HS_BUILD_FOR_WIN32
-
-
-
-class hsNamedPipeStream : public hsStream
-{
-protected:
-    HANDLE      fPipe;
-    OVERLAPPED  fOverlap;
-    hsBool      fReadMode;  // True for read, false for write
-    uint8_t       fFlags;
-    uint32_t      fTimeout;
-
-    hsBool ICheckOverlappedResult(BOOL result, uint32_t &numTransferred);
-    hsBool IRead(uint32_t byteCount, void *buffer, uint32_t &numRead);
-    hsBool IWrite(uint32_t byteCount, const void *buffer, uint32_t &numWritten);
-
-public:
-    enum { kThrowOnError = 1 }; // Throws if a read or write operation fails
-
-    hsNamedPipeStream(uint8_t flags=0, uint32_t timeout=INFINITE);
-    virtual ~hsNamedPipeStream();
-
-    // The server (writer) and client (reader) need to open the same file.
-    // The format is "\\.\pipe\pipeName".  The '.' can be replaced with a
-    // computer name to do it over the network.  'pipeName' is whatever you
-    // want.
-    virtual hsBool  Open(const char *name, const char *mode);
-    virtual hsBool  Open(const wchar_t *name, const wchar_t *mode);
-    virtual hsBool  Close();
-    
-    virtual uint32_t  Read(uint32_t byteCount, void *buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void *buffer);
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-
-    // - For the server (writer) only -
-    // After calling open, signal your client to start reading and call this function.
-    // If a client connects, this will return true and you can start writing.  If it
-    // returns false, close the pipe, it ain't happening.
-    hsBool WaitForClientConnect();
-};
-
-#endif // HS_BUILD_FOR_WIN32

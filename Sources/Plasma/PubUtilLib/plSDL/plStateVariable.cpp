@@ -1468,8 +1468,8 @@ bool plSimpleStateVariable::Set(const char* v, int idx)
 
     if (v && fVar.GetType()==plVarDescriptor::kString32)
     {
-        hsAssert(hsStrlen(v)<32, "string length overflow");
-        hsStrncpy(fS32[idx], v, 32);
+        hsAssert(strlen(v)<32, "string length overflow");
+        strncpy(fS32[idx], v, 32);
         IVarSet();
         return true;
     }
@@ -1848,7 +1848,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            s->Writebool(fB[j+i]);
+            s->WriteBool(fB[j+i]);
         break;
     case plVarDescriptor::kKey:
         for(i=0;i<fVar.GetAtomicCount();i++)
@@ -1921,7 +1921,7 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, u
         break;
     case plVarDescriptor::kBool:
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fB[j+i]=s->Readbool();
+            fB[j+i]=s->ReadBool();
         break;
     case plVarDescriptor::kKey:
         for(i=0;i<fVar.GetAtomicCount();i++)

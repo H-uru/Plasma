@@ -142,8 +142,8 @@ void plNPCSpawnMod::Read(hsStream *stream, hsResMgr *mgr)
 
     fModelName = stream->ReadSafeString();
     fAccountName = stream->ReadSafeString();
-    fAutoSpawn = stream->Readbool();
-    if(stream->Readbool())
+    fAutoSpawn = stream->ReadBool();
+    if(stream->ReadBool())
         fNotify = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
@@ -154,19 +154,19 @@ void plNPCSpawnMod::Write(hsStream *stream, hsResMgr *mgr)
     
     stream->WriteSafeString(fModelName);
     stream->WriteSafeString(fAccountName);
-    stream->Writebool(fAutoSpawn);
+    stream->WriteBool(fAutoSpawn);
     if(fNotify)
     {
-        stream->Writebool(true);
+        stream->WriteBool(true);
         mgr->WriteCreatable(stream, fNotify);
     } else {
-        stream->Writebool(false);
+        stream->WriteBool(false);
     }
 }
 
 // IEVAL
 // attack of the bogons
-hsBool plNPCSpawnMod::IEval(double secs, float del, uint32_t dirty)
+bool plNPCSpawnMod::IEval(double secs, float del, uint32_t dirty)
 {
     return true;
 }

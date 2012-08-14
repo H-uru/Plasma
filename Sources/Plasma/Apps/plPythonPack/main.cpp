@@ -141,7 +141,7 @@ void WritePythonFile(std::string fileName, std::string path, hsStream *s)
     // next we need to:
     //  - create instance of class
             PyObject* getID = PythonInterface::GetModuleItem("glue_getBlockID",fModule);
-            hsBool foundID = false;
+            bool foundID = false;
             if ( getID!=nil && PyCallable_Check(getID) )
             {
                 PyObject* id = PyObject_CallFunction(getID,nil);
