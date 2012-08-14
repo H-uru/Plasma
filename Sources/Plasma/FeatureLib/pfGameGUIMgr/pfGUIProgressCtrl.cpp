@@ -77,14 +77,14 @@ pfGUIProgressCtrl::pfGUIProgressCtrl() : fStopSoundTimer(99)
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIProgressCtrl::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIProgressCtrl::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIProgressCtrl::MsgReceive( plMessage *msg )
+bool    pfGUIProgressCtrl::MsgReceive( plMessage *msg )
 {
     plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(msg);
     if (timerMsg)
@@ -126,7 +126,7 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 
 //// UpdateBounds ////////////////////////////////////////////////////////////
 
-void    pfGUIProgressCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, hsBool force )
+void    pfGUIProgressCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIValueCtrl::UpdateBounds( invXformMatrix, force );
     if( fAnimationKeys.GetCount() > 0 )
@@ -145,7 +145,7 @@ void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plStri
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-hsBool  pfGUIProgressCtrl::ICalcAnimTimes( void )
+bool    pfGUIProgressCtrl::ICalcAnimTimes( void )
 {
     if( fAnimTimesCalced )
         return true;

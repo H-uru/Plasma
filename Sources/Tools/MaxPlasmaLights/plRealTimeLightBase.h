@@ -139,7 +139,7 @@ protected:
     plLayerTex*  fTex;
 
 
-    virtual hsBool  IHasAttenuation( void ) { return false; }
+    virtual bool    IHasAttenuation( void ) { return false; }
     virtual void    IBuildMeshes( BOOL isNew ) {}
 
     void    BuildStaticMeshes();

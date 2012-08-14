@@ -87,7 +87,7 @@ protected:
     bool IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, const char* hintstring);
 
     void ISetItem(const char* key, PyObject* value);
-    void IDirtySynchState(const char* name, hsBool sendImmediate = false);
+    void IDirtySynchState(const char* name, bool sendImmediate = false);
 
     void IPutCurrentStateIn(plStateDataRecord* dstState);
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
@@ -112,7 +112,7 @@ public:
 
     PyObject* GetItem(const char* key);
     void SetItem(const char* key, PyObject* value);
-    void SetItemIdx(const char* key, int idx, PyObject* value, hsBool sendImmediate = false);
+    void SetItemIdx(const char* key, int idx, PyObject* value, bool sendImmediate = false);
     void SetFlags(const char* name, bool sendImmediate, bool skipOwnershipCheck);
     void SetTagString(const char* name, const char* tag);
 };

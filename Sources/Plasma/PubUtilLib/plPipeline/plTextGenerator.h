@@ -99,8 +99,8 @@ class plTextGenerator : public hsKeyedObject
         
         void    ClearToColor( hsColorRGBA &color );
 
-        void    SetFont( const char *face, uint16_t size, hsBool antiAliasRGB = true );
-        void    SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
+        void    SetFont( const char *face, uint16_t size, bool antiAliasRGB = true );
+        void    SetTextColor( hsColorRGBA &color, bool blockRGB = false );
 
         void        DrawString( uint16_t x, uint16_t y, const char *text );
         void        DrawString( uint16_t x, uint16_t y, const wchar_t *text );
@@ -132,7 +132,7 @@ class plTextGenerator : public hsKeyedObject
         hsMatrix44  GetLayerTransform( void );
 
 
-        virtual hsBool MsgReceive( plMessage *msg );
+        virtual bool MsgReceive( plMessage *msg );
 };
 
 

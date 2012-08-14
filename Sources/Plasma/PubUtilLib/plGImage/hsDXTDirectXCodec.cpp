@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include "hsDXTDirectXCodec.h"
+#include "hsColorRGBA.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
 #include "plPipeline/hsGDDrawDllLoad.h"
@@ -76,7 +77,7 @@ enum
 };
 #endif
 
-hsBool hsDXTDirectXCodec::fRegistered = false;
+bool hsDXTDirectXCodec::fRegistered = false;
 
 //// Small Init Functions /////////////////////////////////////////////////////
 
@@ -112,7 +113,7 @@ hsDXTDirectXCodec::~hsDXTDirectXCodec()
 #endif
 }
 
-hsBool hsDXTDirectXCodec::Register()
+bool hsDXTDirectXCodec::Register()
 {
     return hsCodecManager::Instance().Register( &(Instance()), plMipmap::kDirectXCompression, 500 );
 }
@@ -139,7 +140,7 @@ void hsDXTDirectXCodec::Initialize( IDirect3DDevice8 *directDraw )
 //  Gotta initialize D3D ourself and create a device and everything. This is
 //  a LOT messier than it was in DX7, since this time we got D3D to deal with
 
-hsBool  hsDXTDirectXCodec::IInitialize()
+bool    hsDXTDirectXCodec::IInitialize()
 {
     fFlags |= kInitialized;
 
@@ -1247,7 +1248,7 @@ void hsDXTDirectXCodec::CheckErrorCode(HRESULT res)
 }
 #endif
 
-hsBool hsDXTDirectXCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
+bool hsDXTDirectXCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
     return false;
 }

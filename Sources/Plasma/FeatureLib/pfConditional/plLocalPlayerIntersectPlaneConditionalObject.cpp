@@ -49,7 +49,7 @@ plLocalPlayerIntersectPlaneConditionalObject::plLocalPlayerIntersectPlaneConditi
     SetFlag(kLocalElement);     // since it relies on the local player      
 }
 
-hsBool plLocalPlayerIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
+bool plLocalPlayerIntersectPlaneConditionalObject::MsgReceive(plMessage* msg)
 {
     /*
     

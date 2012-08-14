@@ -169,7 +169,7 @@ static plAudioSystem* gAudio = nil;
 extern ITaskbarList3* gTaskbarList;
 #endif
 
-hsBool plClient::fDelayMS = false;
+bool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance=nil;
 
@@ -255,7 +255,7 @@ plClient::~plClient()
 #include "plGImage/plAVIWriter.h"
 #include "pfCharacter/pfMarkerMgr.h"
 
-hsBool plClient::Shutdown()
+bool plClient::Shutdown()
 {
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
     delete fProgressBar;
@@ -482,7 +482,7 @@ void plClient::ISetGraphicsDefaults()
     plDynamicCamMap::SetEnabled(plPipeline::fDefaultPipeParams.PlanarReflections ? true : false);
 }
 
-hsBool plClient::InitPipeline()
+bool plClient::InitPipeline()
 {
     hsStatusMessage("InitPipeline client\n");
     HWND hWnd = fWindowHndl;
@@ -615,7 +615,7 @@ void plClient::IDispatchMsgReceiveCallback()
 
 
 //============================================================================
-hsBool plClient::MsgReceive(plMessage* msg)
+bool plClient::MsgReceive(plMessage* msg)
 {
     if (plGenRefMsg * genRefMsg = plGenRefMsg::ConvertNoRef(msg)) {
         // do nothing, we just use the client's key to ref vault image nodes.
@@ -658,7 +658,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
                 if (pRefMsg->GetContext() & plRefMsg::kOnCreate ||
                     pRefMsg->GetContext() & plRefMsg::kOnRequest)
                 {
-                    hsBool found=false;
+                    bool found=false;
                     plSceneNode *pNode = plSceneNode::ConvertNoRef(pRefMsg->GetRef()); 
                     int i;
                     for (i = 0; i < fRooms.Count(); i++)
@@ -876,7 +876,7 @@ hsBool plClient::MsgReceive(plMessage* msg)
 }
 
 //============================================================================
-hsBool plClient::IHandleMovieMsg(plMovieMsg* mov)
+bool plClient::IHandleMovieMsg(plMovieMsg* mov)
 {
     if( !(mov->GetFileName() && *mov->GetFileName()) )
         return true;
@@ -1015,7 +1015,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
         fLoadRooms.push_back(new LoadRequest(loc, hold));
 
-        if (!lastAgeName || hsStrEQ(info->GetAge(), lastAgeName))
+        if (!lastAgeName || strcmp(info->GetAge(), lastAgeName) == 0)
             lastAgeName = info->GetAge();
         else
             allSameAge = false;
@@ -1040,7 +1040,7 @@ void plClient::ILoadNextRoom()
         fLoadRooms.pop_front();
 
         bool alreadyLoaded = (IFindRoomByLoc(req->loc) != -1);
-        hsBool isLoading = IIsRoomLoading(req->loc);
+        bool isLoading = IIsRoomLoading(req->loc);
         if (alreadyLoaded || isLoading)
         {
             delete req;
@@ -1152,7 +1152,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
 {
     fCurrentNode = node; 
     // make sure we don't already have this room in the list:
-    hsBool bAppend = true;
+    bool bAppend = true;
     for (int i = 0; i < fRooms.Count(); i++)
     {
         if (fRooms[i].fNode == fCurrentNode)
@@ -1208,7 +1208,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
             int numMsgs = 0;
             for (int i = 0; i < sizeof(ageMsgCount)/sizeof(AgeMsgCount); i++)
             {
-                if (hsStrEQ(ageMsgCount[i].AgeName, name))
+                if (strcmp(ageMsgCount[i].AgeName, name) == 0)
                 {
                     numMsgs = ageMsgCount[i].NumMsgs;
                     break;
@@ -1397,7 +1397,7 @@ void    plClient::IStopProgress( void )
 *
 ***/
 
-extern  hsBool  gDataServerLocal;
+extern  bool    gDataServerLocal;
 
 #include "plQuality.h"
 #include "plLoadMask.h"
@@ -1470,7 +1470,7 @@ private:
 #endif
 
 //============================================================================
-hsBool plClient::StartInit()
+bool plClient::StartInit()
 {
     hsStatusMessage("Init client\n");
     fFlags.SetBit( kFlagIniting );
@@ -1669,7 +1669,7 @@ void plClient::ShutdownDLLs()
     fLoadedDLLs.Reset();
 }
 
-hsBool plClient::MainLoop()
+bool plClient::MainLoop()
 {
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
     if (PythonInterface::UsePythonDebugger())
@@ -1745,7 +1745,7 @@ plProfile_CreateTimer("ScreenElem", "Render", ScreenElem);
 plProfile_CreateTimer("EndRender", "Render", EndRender);
 
 
-hsBool plClient::IUpdate()
+bool plClient::IUpdate()
 {
     plProfile_BeginTiming(UpdateTime);
     
@@ -1839,7 +1839,7 @@ hsBool plClient::IUpdate()
     return false;
 }
 
-hsBool plClient::IDrawProgress() {
+bool plClient::IDrawProgress() {
     // HACK: Don't draw while we're caching some room loads, otherwise the
     // progress bar will jump around while we're calculating the size
     if (fHoldLoadRequests)
@@ -1871,7 +1871,7 @@ hsBool plClient::IDrawProgress() {
     return false;
 }
 
-hsBool plClient::IDraw()
+bool plClient::IDraw()
 {
     // If we're shutting down, don't attempt to draw.  Doing so
     // tends to cause a device reload each frame.   
@@ -1990,7 +1990,7 @@ void plClient::IKillMovies()
     fMovies.Reset();
 }
 
-hsBool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
+bool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
 {
     SetQuitIntro(false);
     plBinkPlayer player;
@@ -2022,7 +2022,7 @@ hsBool plClient::IPlayIntroBink(const char* movieName, float endDelay, float pos
                     return true;
             }
 
-            hsBool done = false;
+            bool done = false;
             if( !fPipeline->BeginRender() )
             {
                 fPipeline->ClearRenderTarget();
@@ -2039,7 +2039,7 @@ hsBool plClient::IPlayIntroBink(const char* movieName, float endDelay, float pos
     return false;
 }
 
-hsBool plClient::IFlushRenderRequests()
+bool plClient::IFlushRenderRequests()
 {
     // For those requesting ack's, we could go through and send them
     // mail telling them their request was ill-timed. But hopefully,
@@ -2109,7 +2109,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
     HWND hWnd = fWindowHndl;
 
     hsUNIXStream    stream;
-    hsBool          gottaCreate = false;
+    bool            gottaCreate = false;
 
     // If DevModeFind is specified, use the old method
 //  if ((GetGameFlags() & kDevModeFind))
@@ -2175,7 +2175,7 @@ hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
     return dmr;
 }
 
-void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync)
+void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync)
 {
     if(!fPipeline) return;
 
@@ -2188,7 +2188,7 @@ void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool 
     WindowActivate(true);
 }
 
-void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
+void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
 {
 
     if (plMouseDevice::Instance())
@@ -2231,7 +2231,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, hsBool Windowed)
     SetWindowPos( fWindowHndl, insertAfter, 0, 0, OutsideWidth, OutsideHeight, flags );
 }
 
-void WriteBool(hsStream *stream, char *name, hsBool on )
+void WriteBool(hsStream *stream, char *name, bool on )
 {
     char command[256];
     sprintf(command, "%s %s\r\n", name, on ? "true" : "false");
@@ -2256,7 +2256,7 @@ void WriteString(hsStream *stream, const char *name, const char *val)
 void plClient::IDetectAudioVideoSettings()
 {
     // Setup default pipeline settings
-    hsBool devmode = true;
+    bool devmode = true;
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
     devSel.Enumerate(fWindowHndl);
@@ -2267,10 +2267,10 @@ void plClient::IDetectAudioVideoSettings()
     hsG3DDeviceRecord *rec = (hsG3DDeviceRecord *)dmr.GetDevice();
     const hsG3DDeviceMode *mode = dmr.GetMode();
 
-    hsBool pixelshaders = rec->GetCap(hsG3DDeviceSelector::kCapsPixelShader);
+    bool pixelshaders = rec->GetCap(hsG3DDeviceSelector::kCapsPixelShader);
     int psMajor = 0, psMinor = 0;
     rec->GetPixelShaderVersion(psMajor, psMinor);
-    hsBool refDevice = false;
+    bool refDevice = false;
     if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DRefDev)
         refDevice = true;
 
@@ -2367,18 +2367,13 @@ void plClient::IDetectAudioVideoSettings()
         stream = plEncryptedStream::OpenEncryptedFileWrite(audioIniFile);
 
         plAudioCaps caps = plAudioCapsDetector::Detect(false, true);
-        val = 6;
-        if( (hsPhysicalMemory() < 256) || plProfileManager::Instance().GetProcessorSpeed() < 1350000000)
-        {
-            val = 3;
-        }
 
         char deviceName[256];
         sprintf(deviceName, "\"%s\"", DEFAULT_AUDIO_DEVICE_NAME);
 
         WriteBool(stream, "Audio.Initialize",  caps.IsAvailable());
         WriteBool(stream, "Audio.UseEAX", false);
-        WriteInt(stream, "Audio.SetPriorityCutoff", val);
+        WriteInt(stream, "Audio.SetPriorityCutoff", 6);
         WriteInt(stream, "Audio.MuteAll", false);
         WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);
         WriteInt(stream, "Audio.SetChannelVolume BgndMusic", 1);

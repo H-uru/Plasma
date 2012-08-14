@@ -65,7 +65,7 @@ pyStatusLog::~pyStatusLog()
 }
 
 
-hsBool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
+bool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
 {
     // make sure its closed first
     Close();
@@ -81,7 +81,7 @@ hsBool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
     return false;
 }
 
-hsBool pyStatusLog::Write(plString text)
+bool pyStatusLog::Write(plString text)
 {
     if (fLog)
     {
@@ -92,7 +92,7 @@ hsBool pyStatusLog::Write(plString text)
     return false;
 }
 
-hsBool pyStatusLog::WriteColor(plString text, pyColor& color)
+bool pyStatusLog::WriteColor(plString text, pyColor& color)
 {
     if (fLog)
     {
@@ -114,11 +114,4 @@ void pyStatusLog::Close()
         delete fLog;
     }
     fLog = nil;
-}
-
-hsBool pyStatusLog::IsOpen()
-{
-    if (fLog)
-        return true;
-    return false;
 }

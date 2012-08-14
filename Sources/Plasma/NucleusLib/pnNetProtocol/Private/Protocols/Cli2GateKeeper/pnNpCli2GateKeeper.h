@@ -62,7 +62,7 @@ enum {
 
     kNumCli2GateKeeperMessages
 };
-COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumCli2GateKeeperMessages <= (uint16_t)-1);
+static_assert(kNumCli2GateKeeperMessages <= 0xFFFF, "Cli2GateKeeper message types overflow uint16");
 
 enum {
     // Global
@@ -72,7 +72,7 @@ enum {
    
     kNumGateKeeper2CliMessages
 };
-COMPILER_ASSERT_HEADER(Cli2GateKeeper, kNumGateKeeper2CliMessages <= (uint16_t)-1);
+static_assert(kNumGateKeeper2CliMessages <= 0xFFFF, "GateKeeper2Cli message types overflow uint16");
 
 
 //============================================================================

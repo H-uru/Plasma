@@ -65,7 +65,7 @@ StringTokenizer::~StringTokenizer() {
     delete string;
     delete seps;
 }
-hsBool StringTokenizer::hasMoreTokens() {
+bool StringTokenizer::hasMoreTokens() {
     return (*tok != '\0');
 };
 char *StringTokenizer::next() {
@@ -79,7 +79,7 @@ char *StringTokenizer::next() {
     while (*tok != '\0' && isSep(*tok)) tok++;
     return cur;
 };
-hsBool StringTokenizer::isSep(char c) {
+bool StringTokenizer::isSep(char c) {
     if (!qAsTok || !inQuote) {
         for (int32_t i=0; i<numSeps; i++) {
             if (seps[i] == c) return true;
@@ -103,6 +103,6 @@ void StringTokenizer::reset(const char *string, const char *seps) {
     if (isSep(*tok)) next();
 }
 
-void StringTokenizer::ParseQuotes(hsBool qAsTok) {
+void StringTokenizer::ParseQuotes(bool qAsTok) {
     this->qAsTok = qAsTok;
 }

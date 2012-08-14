@@ -121,7 +121,7 @@ void    pfGUIListText::Write( hsStream *s, hsResMgr *mgr )
     delete [] text;
 }
 
-hsBool  pfGUIListText::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+bool    pfGUIListText::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     textGen->SetJustify( (plDynamicTextMap::Justify)fJustify );
     if( fSelected )
@@ -210,7 +210,7 @@ pfGUIListPicture::pfGUIListPicture() : pfGUIListElement( kPicture )
     fMipmapKey = nil;
 }
 
-pfGUIListPicture::pfGUIListPicture( plKey mipKey, hsBool respectAlpha ) : pfGUIListElement( kPicture )
+pfGUIListPicture::pfGUIListPicture( plKey mipKey, bool respectAlpha ) : pfGUIListElement( kPicture )
 {
     fBorderSize = 2;
     fMipmapKey = mipKey;
@@ -247,7 +247,7 @@ void    pfGUIListPicture::Write( hsStream *s, hsResMgr *mgr )
 
 }
 
-hsBool  pfGUIListPicture::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+bool    pfGUIListPicture::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     if( fSelected )
         textGen->FillRect( x, y, maxWidth, maxHeight, fColors->fSelBackColor );
@@ -337,7 +337,7 @@ void    pfGUIListTreeRoot::Write( hsStream *s, hsResMgr *mgr )
     delete [] temp;
 }
 
-hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+bool    pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
 {
     textGen->SetJustify( plDynamicTextMap::kLeftJustify );
     if( fSelected )
@@ -368,7 +368,7 @@ hsBool  pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t
     return true;
 }
 
-hsBool  pfGUIListTreeRoot::MouseClicked( uint16_t localX, uint16_t localY )
+bool    pfGUIListTreeRoot::MouseClicked( uint16_t localX, uint16_t localY )
 {
     if( fSkin != nil )
     {
@@ -450,7 +450,7 @@ void    pfGUIListTreeRoot::RemoveChild( uint32_t idx )
     fChildren.Remove( idx );
 }
 
-void    pfGUIListTreeRoot::ShowChildren( hsBool s )
+void    pfGUIListTreeRoot::ShowChildren( bool s )
 {
     uint32_t i;
 
@@ -460,7 +460,7 @@ void    pfGUIListTreeRoot::ShowChildren( hsBool s )
         fChildren[ i ]->SetCollapsed( !s );
 }
 
-void    pfGUIListTreeRoot::SetCollapsed( hsBool c )
+void    pfGUIListTreeRoot::SetCollapsed( bool c )
 {
     uint32_t i;
 

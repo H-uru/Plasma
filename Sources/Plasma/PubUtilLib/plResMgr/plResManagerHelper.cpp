@@ -123,7 +123,7 @@ void    plResManagerHelper::Init( void )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plResManagerHelper::MsgReceive( plMessage *msg )
+bool    plResManagerHelper::MsgReceive( plMessage *msg )
 {
     plResMgrHelperMsg *refferMsg = plResMgrHelperMsg::ConvertNoRef( msg );
     if( refferMsg != nil )
@@ -215,7 +215,7 @@ class plResMgrDebugInterface : public plInputInterface
         plResMgrDebugInterface( plResManagerHelper * const mgr ) : fParent( mgr ) { SetEnabled( true ); }
 
         virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg )
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg *pKeyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
             if( pKeyMsg != nil && pKeyMsg->GetKeyDown() )
@@ -269,14 +269,14 @@ class plResMgrDebugInterface : public plInputInterface
         }
 
         virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
-        virtual hsBool  HasInterestingCursorID( void ) const { return false; }
+        virtual bool    HasInterestingCursorID( void ) const { return false; }
 };
 
 #endif
 
 //// EnableDebugScreen ///////////////////////////////////////////////////////
 
-void    plResManagerHelper::EnableDebugScreen( hsBool enable )
+void    plResManagerHelper::EnableDebugScreen( bool enable )
 {
 #ifdef MCN_RESMGR_DEBUGGING
     if( enable )
@@ -338,7 +338,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             fAgeIndex = 0;
         }
 
-        virtual hsBool  EatPage( plRegistryPageNode *page )
+        virtual bool    EatPage( plRegistryPageNode *page )
         {
             if( fStep == 0 )
             {
@@ -469,7 +469,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             return true;
         }
 
-        virtual hsBool  EatKey( const plKey& key )
+        virtual bool    EatKey( const plKey& key )
         {
             if( key->ObjectIsLoaded() )
             {
@@ -483,7 +483,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
 };
 #endif
 
-void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
+void    plResManagerHelper::IUpdateDebugScreen( bool force )
 {
 #ifdef MCN_RESMGR_DEBUGGING
 
@@ -517,12 +517,12 @@ void    plResManagerHelper::IUpdateDebugScreen( hsBool force )
 
 #if 0
 // FIXME
-    hsBool VerifyKeyUnloaded(const char* logFile, const plKey& key);
+    bool VerifyKeyUnloaded(const char* logFile, const plKey& key);
     // Verifies that a key which shouldn't be loaded isn't, and if it is tries to figure out why.
     void VerifyAgeUnloaded(const char* logFile, const char* age);
 
     // Helper for VerifyKeyUnloaded
-    hsBool  IVerifyKeyUnloadedRecur(const char* logFile, const plKey& baseKey, const plKey& upKey, const char* baseAge);
+    bool    IVerifyKeyUnloadedRecur(const char* logFile, const plKey& baseKey, const plKey& upKey, const char* baseAge);
     bool ILookForCyclesRecur(const char* logFile, const plKey& key, hsTArray<plKey>& tree, int& cycleStart);
 
 bool plResManager::ILookForCyclesRecur(const char* logFile, const plKey& key, hsTArray<plKey>& tree, int& cycleStart)
@@ -640,7 +640,7 @@ bool plResManager::IVerifyKeyUnloadedRecur(const char* logFile, const plKey& bas
     return false;
 }
 
-hsBool plResManager::VerifyKeyUnloaded(const char* logFile, const plKey& key)
+bool plResManager::VerifyKeyUnloaded(const char* logFile, const plKey& key)
 {
     if( key->ObjectIsLoaded() )
     {
@@ -653,7 +653,7 @@ hsBool plResManager::VerifyKeyUnloaded(const char* logFile, const plKey& key)
 
         hsTArray<plKey> tree;
         int cycleStart;
-        hsBool hasCycle = ILookForCyclesRecur(logFile, key, tree, cycleStart);
+        bool hasCycle = ILookForCyclesRecur(logFile, key, tree, cycleStart);
         if( hasCycle )
         {
             plStatusLog::AddLineS(logFile, "\t%s [%s] held by dependency cycle", key->GetName(), plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
@@ -685,7 +685,7 @@ public:
         fRegistry = reg;
         fLogFile = logFile;
     }
-    virtual hsBool EatKey(const plKey& key)
+    virtual bool EatKey(const plKey& key)
     {
         fRegistry->VerifyKeyUnloaded(fLogFile, key);
         return true;
@@ -702,7 +702,7 @@ public:
     plValidatePageIterator(const char* age, plRegistryKeyIterator* iter) : fAge(age), fIter(iter) {}
 
 
-    virtual hsBool  EatPage( plRegistryPageNode *keyNode )
+    virtual bool    EatPage( plRegistryPageNode *keyNode )
     {
         if( !stricmp(fAge, keyNode->GetPageInfo().GetAge()) )
             return keyNode->IterateKeys( fIter );
@@ -712,7 +712,7 @@ public:
 
 void plResManager::VerifyAgeUnloaded(const char* logFile, const char* age)
 {
-    hsBool autoLog = false;
+    bool autoLog = false;
     char buff[256];
     if( !logFile || !*logFile )
     {

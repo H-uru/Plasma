@@ -106,7 +106,7 @@ plKey plExcludeRegionComponent::GetKey(plMaxNode *node)
     return nil;
 }
 
-hsBool plExcludeRegionComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plExcludeRegionComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fXRegionKeys.clear();
 
@@ -166,7 +166,7 @@ hsBool plExcludeRegionComponent::SetupProperties(plMaxNode *node, plErrorMsg *pE
     return true;
 }
 
-hsBool plExcludeRegionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plExcludeRegionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fIsValid)
         return false;
@@ -184,7 +184,7 @@ hsBool plExcludeRegionComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plExcludeRegionComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plExcludeRegionComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!fIsValid)
         return false;
@@ -217,7 +217,7 @@ hsBool plExcludeRegionComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plExcludeRegionComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)       
+bool plExcludeRegionComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)       
 { 
     fXRegionKeys.clear();
 

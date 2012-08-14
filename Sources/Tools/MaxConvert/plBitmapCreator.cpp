@@ -72,7 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonBitmapLib : public plCommonObjLib
 {
     public:
-        virtual hsBool  IsInteresting( const plKey &objectKey )
+        virtual bool    IsInteresting( const plKey &objectKey )
         {
             if( objectKey->GetUoid().GetClassType() == plCubicEnvironmap::Index() ||
                 objectKey->GetUoid().GetClassType() == plMipmap::Index() )
@@ -100,7 +100,7 @@ plBitmapCreator &plBitmapCreator::Instance()
     return fInstance;
 }
 
-void    plBitmapCreator::Init( hsBool save, plErrorMsg *msg )
+void    plBitmapCreator::Init( bool save, plErrorMsg *msg )
 {
     fErrorMsg = msg;
 }
@@ -143,7 +143,7 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
     }
 #endif
 
-    hsBool notMipped = (bd->texFlags & plMipmap::kForceOneMipLevel) != 0;
+    bool notMipped = (bd->texFlags & plMipmap::kForceOneMipLevel) != 0;
     float sigma = bd->sig;
     
     // Load the bitmap
@@ -663,7 +663,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
 
 //// IAddBitmap ///////////////////////////////////////////////////////////////
 
-void    plBitmapCreator::IAddBitmap( plBitmap *bitmap, hsBool dontRef )
+void    plBitmapCreator::IAddBitmap( plBitmap *bitmap, bool dontRef )
 {
     sCommonBitmapLib.AddObject( bitmap );
 }

@@ -87,7 +87,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
     virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     float fRotation;
     float fPullNearDistSq;
@@ -112,7 +112,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
     
     virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     float fNearDist;
     float fNearVel;

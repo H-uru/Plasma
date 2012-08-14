@@ -70,7 +70,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlValue(pyKey& gckey);
+    static bool IsGUIControlValue(pyKey& gckey);
 
     virtual float    GetValue();
     virtual void        SetValue( float v );
@@ -98,7 +98,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlKnob(pyKey& gckey);
+    static bool IsGUIControlKnob(pyKey& gckey);
 };
 
 class pyGUIControlUpDownPair : public pyGUIControlValue
@@ -118,7 +118,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlUpDownPair(pyKey& gckey);
+    static bool IsGUIControlUpDownPair(pyKey& gckey);
 };
 
 class pyGUIControlProgress : public pyGUIControlValue
@@ -138,7 +138,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlProgress(pyKey& gckey);
+    static bool IsGUIControlProgress(pyKey& gckey);
     
     void AnimateToPercentage(float percent);
 };

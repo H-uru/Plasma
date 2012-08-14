@@ -72,7 +72,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlEditBox(pyKey& gckey);
+    static bool IsGUIControlEditBox(pyKey& gckey);
 
     virtual void    SetBufferSize( uint32_t size );
     virtual std::string GetBuffer( void );
@@ -85,14 +85,14 @@ public:
     virtual void    SetColor(pyColor& forecolor, pyColor& backcolor);
     virtual void    SetSelColor(pyColor& forecolor, pyColor& backcolor);
 
-    virtual hsBool  WasEscaped();
+    virtual bool    WasEscaped();
 
-    virtual void    SetSpecialCaptureKeyMode(hsBool state);
+    virtual void    SetSpecialCaptureKeyMode(bool state);
     virtual uint32_t  GetLastKeyCaptured();
     virtual uint32_t  GetLastModifiersCaptured();
     virtual void    SetLastKeyCapture(uint32_t key, uint32_t modifiers);
 
-    virtual void    SetChatMode(hsBool state);
+    virtual void    SetChatMode(bool state);
 
 };
 

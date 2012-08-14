@@ -57,11 +57,11 @@ protected:
 
     plWaveSetBase*      fWaveSetBase;
 
-    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
 
     virtual int         INewDecal();
 
-    virtual hsBool      ICheckRTMat();
+    virtual bool        ICheckRTMat();
 
 public:
     plDynaRippleVSMgr();
@@ -73,7 +73,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 };
 
 #endif // plDynaRippleVSMgr_inc

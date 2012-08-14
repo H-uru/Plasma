@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsCodec.h"
 
 class plMipmap;
+typedef struct hsColor32 hsRGBAColor32;
 
 class hsDXTSoftwareCodec : public hsCodec
 {
@@ -63,7 +64,7 @@ public:
     plMipmap *CreateUncompressedMipmap( plMipmap *compressed, uint8_t flags = 0 );
 
     // Colorize a compressed mipmap
-    hsBool  ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
+    bool    ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
 
 private:
     enum {
@@ -146,8 +147,8 @@ private:
     // Converts a color from RGB565 to RGB4444 reversed format, with alpha=0
     uint16_t inline IRGB565To4444Rev( uint16_t color );
 
-    static hsBool Register();
-    static hsBool fRegistered;
+    static bool Register();
+    static bool fRegistered;
 };
 
 #endif // __HSDXTSOFTWARECODEC_H

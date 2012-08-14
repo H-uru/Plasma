@@ -75,8 +75,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 CLASS_DESC(plTemplateComponent, gTemplateDesc, "Template", "CloneTemplate", "Clone", Class_ID(0x6742590b, 0x14fd2135))
@@ -120,7 +120,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const char* ageName = IGetAgeName(node);
     if (!ageName)
@@ -147,7 +147,7 @@ hsBool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plTemplateComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plTemplateComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (node->GetSceneObject())
         node->GetSceneObject()->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);
@@ -175,8 +175,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 CLASS_DESC(plSpawnComponent, gSpawnDesc, "Instance", "CloneInst", "Clone", Class_ID(0x5702450d, 0x2c636131))
@@ -203,7 +203,7 @@ plSpawnComponent::plSpawnComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!GetPBString(fCompPB, kTemplateName))
     {
@@ -218,7 +218,7 @@ hsBool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const char *templateName = GetPBString(fCompPB, kTemplateName);
     if (!templateName)

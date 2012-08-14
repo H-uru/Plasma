@@ -119,7 +119,7 @@ pfGUIUpDownPairMod::~pfGUIUpDownPairMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
@@ -157,7 +157,7 @@ void    pfGUIUpDownPairMod::Update( void )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
+bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )

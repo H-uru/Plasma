@@ -107,7 +107,7 @@ public:
 
     virtual void Shutdown() {}
 
-    void SetFlagsBit(int b, hsBool on=true) { fFlagsVec.SetBit(b, on); }
+    void SetFlagsBit(int b, bool on=true) { fFlagsVec.SetBit(b, on); }
     bool GetFlagsBit(int b)     const { return fFlagsVec.IsBitSet(b) ? true : false; }
 
     static bool StaticWarningMsg(const char* fmt, ...);
@@ -184,9 +184,9 @@ public:
     virtual float GetCurrentAgeTimeOfDayPercent() const { hsAssert(false, "stub"); return 0.; }
     virtual bool ObjectInLocalAge(const plSynchedObject* obj) const { hsAssert(false, "stub"); return false; }
     virtual uint8_t GetJoinOrder() const { hsAssert(false, "stub"); return 0; }
-    virtual hsBool IsRemotePlayerKey(const plKey p, int* idx=nil) { hsAssert(false, "stub"); return false; }
+    virtual bool IsRemotePlayerKey(const plKey p, int* idx=nil) { hsAssert(false, "stub"); return false; }
     virtual plKey GetLocalPlayerKey()   const { hsAssert(false, "stub"); return nil; }
-    virtual plSynchedObject* GetLocalPlayer(hsBool forceLoad=false) const { hsAssert(false, "stub"); return nil; }
+    virtual plSynchedObject* GetLocalPlayer(bool forceLoad=false) const { hsAssert(false, "stub"); return nil; }
     virtual plNetGroupId SelectNetGroup(plSynchedObject* objIn, plKey groupKey) { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  

@@ -428,7 +428,7 @@ static int cmp(const void *elem1, const void *elem2)
 }
 
 
-hsBool plClusterUtil::ISplitCluster(plSpanTemplateB* templ, plL2WTab& src, plL2WTab& lo, plL2WTab& hi)
+bool plClusterUtil::ISplitCluster(plSpanTemplateB* templ, plL2WTab& src, plL2WTab& lo, plL2WTab& hi)
 {
     // Tried this, seems to work pretty well, but a more even grid is probably wiser at
     // this point.
@@ -526,8 +526,8 @@ inline float inlGetAlpha(uint32_t* color)
 
 plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColorTabTab& colorsTab)
 {
-    hsBool hasColor = false;
-    hsBool hasAlpha = false;
+    bool hasColor = false;
+    bool hasAlpha = false;
     float maxLenSq = 0;
     float maxX = 0;
     float maxY = 0;
@@ -734,8 +734,8 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
                                     plPoint3TabTab& delPos, plColorTabTab& colors)
 {
 
-    hsBool doDef = def != nil;
-    hsBool doCol = shade != nil;
+    bool doDef = def != nil;
+    bool doCol = shade != nil;
     // For each inst
     int i;
     for( i = 0; i < insts.Count(); i++ )

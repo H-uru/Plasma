@@ -68,7 +68,7 @@ class plVisRegion;
 class plSoftVolBaseComponent : public plComponent
 {
 protected:
-    hsBool              fValid;
+    bool                fValid;
     plKey               fSoftKey;
 
     void                IAddSubVolume(plKey masterKey, plKey subKey);
@@ -77,13 +77,13 @@ protected:
     virtual plKey       ICreateSoftVolume() = 0;
 public:
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) { return true; }
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg) { return true; }
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) { return true; }
 
     plKey GetSoftVolume(); 
 
-    virtual hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     static plSoftVolBaseComponent* GetSoftComponent(INode* node);
     static plSoftVolBaseComponent* GetSoftComponent(plComponentBase *comp);
@@ -130,10 +130,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
 
     static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
 };
@@ -150,8 +150,8 @@ public:
     plEffVisSetComponent();
     void DeleteThis() { delete this; }
     
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
     
     plVisRegion* GetVisRegion(plMaxNode* node);
     

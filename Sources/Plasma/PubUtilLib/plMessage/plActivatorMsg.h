@@ -79,7 +79,7 @@ public:
         fHitPoint.Write(stream);
     }
 
-    hsBool TriggerType() { return fTriggerType; }
+    bool TriggerType() { return fTriggerType; }
     void SetTriggerType(int n) { fTriggerType = n; }
 
     enum 

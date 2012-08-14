@@ -210,9 +210,9 @@ void plAvBrainClimb::Deactivate()
 }
 
 // APPLY
-hsBool plAvBrainClimb::Apply(double time, float elapsed)
+bool plAvBrainClimb::Apply(double time, float elapsed)
 {
-    hsBool result = true;
+    bool result = true;
 
     IGetDesiredDirection();
 
@@ -242,7 +242,7 @@ hsBool plAvBrainClimb::Apply(double time, float elapsed)
 }
 
 // MSGRECEIVE
-hsBool plAvBrainClimb::MsgReceive(plMessage *msg)
+bool plAvBrainClimb::MsgReceive(plMessage *msg)
 {
     plClimbMsg *climbMsg;
     plLOSHitMsg *losMsg;
@@ -259,7 +259,7 @@ hsBool plAvBrainClimb::MsgReceive(plMessage *msg)
 }
 
 // IHANDLECLIMBMSG
-hsBool plAvBrainClimb::IHandleClimbMsg(plClimbMsg *msg)
+bool plAvBrainClimb::IHandleClimbMsg(plClimbMsg *msg)
 {
     switch(msg->fCommand)
     {
@@ -301,12 +301,12 @@ hsBool plAvBrainClimb::IHandleClimbMsg(plClimbMsg *msg)
 }
 
 // IHANDLELOSMSG
-hsBool plAvBrainClimb::IHandleLOSMsg(plLOSHitMsg *msg)
+bool plAvBrainClimb::IHandleLOSMsg(plLOSHitMsg *msg)
 {
     plClimbMsg::Direction blockDir = static_cast<plClimbMsg::Direction>(msg->fRequestID);
     // this is a weak test because someone else could be using the same bits to mean something different
     // the real strategy is that we should only receive LOS messages of our own creation
-    hsBool oneOfOurs = blockDir == plClimbMsg::kUp || blockDir == plClimbMsg::kDown || blockDir == plClimbMsg::kLeft || blockDir == plClimbMsg::kRight;
+    bool oneOfOurs = blockDir == plClimbMsg::kUp || blockDir == plClimbMsg::kDown || blockDir == plClimbMsg::kLeft || blockDir == plClimbMsg::kRight;
     if(oneOfOurs)
     {
         fPhysicallyBlockedDirections |= blockDir;
@@ -320,7 +320,7 @@ hsBool plAvBrainClimb::IHandleLOSMsg(plLOSHitMsg *msg)
 bool plAvBrainClimb::IProcessExitStage(double time, float elapsed)
 {
     plAGAnimInstance *ai = fExitStage->GetAnimInstance();
-    hsBool animDone = ai->IsAtEnd();
+    bool animDone = ai->IsAtEnd();
     float unused;
 
     // if we have an exit stage running, move it instead of the base stage
@@ -730,7 +730,7 @@ void plAvBrainClimb::ICalcProbeLengths()
 
 // IInitAnimations ---------------------
 // ---------------
-hsBool plAvBrainClimb::IInitAnimations()
+bool plAvBrainClimb::IInitAnimations()
 {
     fUp = new plAnimStage("WallClimbUp",
                           plAnimStage::kNotifyEnter, plAnimStage::kForwardAuto, plAnimStage::kBackNone, plAnimStage::kAdvanceAuto, plAnimStage::kRegressAuto,

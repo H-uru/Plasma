@@ -61,7 +61,7 @@ class plDbgCollisionInfo
 public:
     plSceneObject *fSO;
     hsVector3 fNormal;
-    hsBool fOverlap;
+    bool fOverlap;
 };
 #endif // PLASMA_EXTERNAL_RELEASE
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
@@ -118,13 +118,13 @@ public:
     static void UpdatePostSimStep(float delSecs);
     virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static hsBool fDebugDisplay;
+    static bool fDebugDisplay;
 #endif // PLASMA_EXTERNAL_RELEASE
     static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
     static int fPXControllersMax;
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, hsBool vsDynamics, hsBool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
-    virtual void BehaveLikeAnimatedPhysical(hsBool actLikeAnAnimatedPhys);
-    virtual hsBool BehavingLikeAnAnimatedPhysical();
+    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics, bool vsStatics, uint32_t& vsSimGroups, std::multiset< plControllerSweepRecord >& WhatWasHitOut);
+    virtual void BehaveLikeAnimatedPhysical(bool actLikeAnAnimatedPhys);
+    virtual bool BehavingLikeAnAnimatedPhysical();
     virtual const hsVector3& GetLinearVelocity();
 
     virtual void SetLinearVelocity(const hsVector3& linearVel);
@@ -156,5 +156,5 @@ protected:
     // The global position and rotation of the avatar last time we set it (so we
     // can detect if someone else moves him)
     plPhysicalProxy* fProxyGen;     
-    hsBool fBehavingLikeAnimatedPhys;
+    bool fBehavingLikeAnimatedPhys;
 };

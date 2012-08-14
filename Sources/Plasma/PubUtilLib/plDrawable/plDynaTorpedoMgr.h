@@ -52,7 +52,7 @@ class plDynaTorpedoMgr : public plDynaRippleMgr
 {
 protected:
 
-    virtual hsBool IHandleShot(plBulletMsg* bull);
+    virtual bool IHandleShot(plBulletMsg* bull);
 
 public:
     plDynaTorpedoMgr();
@@ -63,7 +63,7 @@ public:
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
 };
 

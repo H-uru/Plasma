@@ -199,9 +199,9 @@ plMipmap* plPNG::ReadFromFile(const wchar_t* fileName)
     return ret;
 }
 
-hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
+bool plPNG::IWrite(plMipmap* source, hsStream* outStream)
 {
-    hsBool result = true;
+    bool result = true;
 
     try {
         //  Allocate required structs
@@ -248,15 +248,15 @@ hsBool plPNG::IWrite(plMipmap* source, hsStream* outStream)
     return result;
 }
 
-hsBool plPNG::WriteToFile(const char* fileName, plMipmap* sourceData)
+bool plPNG::WriteToFile(const char* fileName, plMipmap* sourceData)
 {
     wchar_t* wFilename = hsStringToWString(fileName);
-    hsBool retVal = WriteToFile(wFilename, sourceData);
+    bool retVal = WriteToFile(wFilename, sourceData);
     delete [] wFilename;
     return retVal;
 }
 
-hsBool plPNG::WriteToFile(const wchar_t* fileName, plMipmap* sourceData)
+bool plPNG::WriteToFile(const wchar_t* fileName, plMipmap* sourceData)
 {
     hsUNIXStream out;
 
@@ -264,7 +264,7 @@ hsBool plPNG::WriteToFile(const wchar_t* fileName, plMipmap* sourceData)
         return false;
     }
 
-    hsBool ret = IWrite(sourceData, &out);
+    bool ret = IWrite(sourceData, &out);
     out.Close();
     return ret;
 }

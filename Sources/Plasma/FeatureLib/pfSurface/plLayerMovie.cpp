@@ -71,7 +71,7 @@ plLayerMovie::~plLayerMovie()
     delete *fTexture;
 }
 
-hsBool plLayerMovie::ISetFault(const char* errStr)
+bool plLayerMovie::ISetFault(const char* errStr)
 {
 #ifdef HS_DEBUGGING
     char buff[256];
@@ -82,7 +82,7 @@ hsBool plLayerMovie::ISetFault(const char* errStr)
     return true;
 }
 
-hsBool plLayerMovie::ISetLength(float secs)
+bool plLayerMovie::ISetLength(float secs)
 {
     fLength = secs;
     return false;
@@ -100,14 +100,14 @@ int plLayerMovie::GetHeight() const
     return mip ? mip->GetHeight() : 0;
 }
 
-hsBool plLayerMovie::ISetSize(int width, int height)
+bool plLayerMovie::ISetSize(int width, int height)
 {
     fWidth = width;
     fHeight = height;
     return false;
 }
 
-hsBool plLayerMovie::ISetupBitmap()
+bool plLayerMovie::ISetupBitmap()
 {
     if( !GetTexture() )
     {
@@ -124,7 +124,7 @@ hsBool plLayerMovie::ISetupBitmap()
     return false;
 }
 
-hsBool plLayerMovie::ICheckBitmap()
+bool plLayerMovie::ICheckBitmap()
 {
     if( !GetTexture() )
         ISetupBitmap();
@@ -132,14 +132,14 @@ hsBool plLayerMovie::ICheckBitmap()
     return false;
 }
 
-hsBool plLayerMovie::IMovieIsIdle()
+bool plLayerMovie::IMovieIsIdle()
 {
     IRelease();
 
     return false;
 }
 
-hsBool plLayerMovie::ICurrentFrameDirty(double wSecs)
+bool plLayerMovie::ICurrentFrameDirty(double wSecs)
 {
     float secs = fTimeConvert.WorldToAnimTime(wSecs);
     uint32_t frame = ISecsToFrame(secs);
@@ -202,7 +202,7 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Write(s, mgr);
 
-    int len = hsStrlen(fMovieName);
+    int len = (fMovieName) ? strlen(fMovieName) : 0;
     s->WriteLE32(len);
     if( len )
         s->Write(len, fMovieName);
@@ -214,7 +214,7 @@ void plLayerMovie::SetMovieName(const char* n)
     fMovieName = hsStrcpy(n);
 }
 
-hsBool plLayerMovie::MsgReceive(plMessage* msg)
+bool plLayerMovie::MsgReceive(plMessage* msg)
 {   
     return plLayerAnimation::MsgReceive(msg);
 }

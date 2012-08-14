@@ -113,7 +113,7 @@ plBlowComponent::plBlowComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plBlowComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBlowComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetDrawable(false);
     node->SetForceLocal(true);
@@ -121,12 +121,12 @@ hsBool plBlowComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plBlowComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBlowComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 { 
     return true; 
 }
 
-hsBool plBlowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBlowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plBlower* pMod = new plBlower;
 

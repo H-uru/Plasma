@@ -116,12 +116,6 @@ void cyAnimation::SetAnimName(const char* name)
     fAnimName = hsStrcpy(name);
 }
 
-void cyAnimation::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : Play
@@ -380,7 +374,7 @@ void cyAnimation::SkipToTime(float time)
 //
 //  PURPOSE    : Set whether the animation is to be looped or not
 //
-void cyAnimation::Looped(hsBool looped)
+void cyAnimation::Looped(bool looped)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
@@ -421,7 +415,7 @@ void cyAnimation::Looped(hsBool looped)
 //
 //  PURPOSE    : Sets the backwards state for the animation
 //
-void cyAnimation::Backwards(hsBool backwards)
+void cyAnimation::Backwards(bool backwards)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )

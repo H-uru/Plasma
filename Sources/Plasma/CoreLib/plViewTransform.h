@@ -95,9 +95,9 @@ public:
     void                Reset(); // resets to default state
 
     // Queries
-    hsBool              GetOrthogonal() const { return IHasFlag(kOrthogonal); }
-    hsBool              GetPerspective() const { return !GetOrthogonal(); }
-    hsBool              GetViewPortRelative() const { return IHasFlag(kViewPortRelative); }
+    bool                GetOrthogonal() const { return IHasFlag(kOrthogonal); }
+    bool                GetPerspective() const { return !GetOrthogonal(); }
+    bool                GetViewPortRelative() const { return IHasFlag(kViewPortRelative); }
 
     // Next, all our matrices.
     const hsMatrix44&   GetCameraToWorld() const { return fCameraToWorld; }
@@ -110,8 +110,8 @@ public:
     hsVector3           GetUp() const { return *((hsVector3*)&GetWorldToCamera().fMap[1]); }
     hsVector3           GetAcross() const { return *((hsVector3*)&GetWorldToCamera().fMap[0]); }
 
-    uint16_t              GetScreenWidth() const { return fWidth; }
-    uint16_t              GetScreenHeight() const { return fHeight; }
+    uint16_t            GetScreenWidth() const { return fWidth; }
+    uint16_t            GetScreenHeight() const { return fHeight; }
 
     void                GetViewPort(hsPoint2& mins, hsPoint2& maxs) const;
     void                GetViewPort(int& loX, int& loY, int& hiX, int& hiY) const;
@@ -130,14 +130,14 @@ public:
     hsPoint3            GetMapMax() const { return fMapMax; }
     void                GetMapping(hsPoint3& mapMin, hsPoint3& mapMax) const { mapMin = fMapMin; mapMax = fMapMax; }
 
-    float            GetFovX() const;
-    float            GetFovY() const;
-    float            GetFovXDeg() const { return hsRadiansToDegrees(GetFovX()); }
-    float            GetFovYDeg() const { return hsRadiansToDegrees(GetFovY()); }
-    float            GetOrthoWidth() const { return fMax.fX - fMin.fX; }
-    float            GetOrthoHeight() const { return fMax.fY - fMin.fY; }
-    float            GetHither() const { return fMin.fZ; }
-    float            GetYon() const { return fMax.fZ; }
+    float               GetFovX() const;
+    float               GetFovY() const;
+    float               GetFovXDeg() const { return hsRadiansToDegrees(GetFovX()); }
+    float               GetFovYDeg() const { return hsRadiansToDegrees(GetFovY()); }
+    float               GetOrthoWidth() const { return fMax.fX - fMin.fX; }
+    float               GetOrthoHeight() const { return fMax.fY - fMin.fY; }
+    float               GetHither() const { return fMin.fZ; }
+    float               GetYon() const { return fMax.fZ; }
     void                GetDepth(float& hither, float& yon) const { hither = GetHither(); yon = GetYon(); }
 
     // Setup.
@@ -145,8 +145,8 @@ public:
     void                SetCameraTransform(const hsMatrix44& w2c, const hsMatrix44& c2w) { fWorldToCamera = w2c; fCameraToWorld = c2w; ISetFlag(kWorldToNDCSet, false); }
 
     // Next, what kind of projection.
-    void                SetOrthogonal(hsBool on) { ISetFlag(kOrthogonal, on); InvalidateTransforms(); }
-    void                SetPerspective(hsBool on) { SetOrthogonal(!on); }
+    void                SetOrthogonal(bool on) { ISetFlag(kOrthogonal, on); InvalidateTransforms(); }
+    void                SetPerspective(bool on) { SetOrthogonal(!on); }
 
     // Next, setting the scree/window/rendertarget size
     void                SetWidth(uint16_t w) { fWidth = w; }
@@ -156,8 +156,8 @@ public:
     // Next, setting the viewport. You only need to do this if you want to use the screen functions above.
     // If you're passing in and getting out normalized device coordinates, skip this. If you don't set viewport,
     // Defaults to 0,0,width,height (i.e. the whole screen).
-    void                SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, hsBool relative=true);
-    void                SetViewPort(float loX, float loY, float hiX, float hiY, hsBool relative=true) { SetViewPort(hsPoint2().Set(loX, loY), hsPoint2().Set(hiX, hiY), relative); }
+    void                SetViewPort(const hsPoint2& mins, const hsPoint2& maxs, bool relative=true);
+    void                SetViewPort(float loX, float loY, float hiX, float hiY, bool relative=true) { SetViewPort(hsPoint2().Set(loX, loY), hsPoint2().Set(hiX, hiY), relative); }
     void                SetViewPort(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom) { SetViewPort(float(left), float(top), float(right), float(bottom), false); }
 
     void                SetMapping(const hsPoint3& mins, const hsPoint3& maxs) { SetMapMin(mins); SetMapMax(maxs); }
@@ -203,8 +203,8 @@ public:
     // Note this doesn't swivel the camera around to see the box, it offsets the projection.
     // Return false if there isn't a projection that will capture any of the bnd. This
     // can be from the bnd being behind the camera.
-    hsBool              SetProjection(const hsBounds3& cBnd);
-    hsBool              SetProjectionWorld(const hsBounds3& wBnd);
+    bool                SetProjection(const hsBounds3& cBnd);
+    bool                SetProjectionWorld(const hsBounds3& wBnd);
 
     // This lets you create insane projection matrices. Note that it won't change the answer on anything like
     // GetFov().
@@ -216,8 +216,8 @@ public:
     // of what the two views will see. The boolean is performed in axis aligned camera space, which lines
     // up nicely with screen space. Note that this only makes sense for two ViewTransforms with identical
     // CameraToWorld's (which isn't checked).
-    hsBool              Intersect(const plViewTransform& view);
-    hsBool              Union(const plViewTransform& view);
+    bool                Intersect(const plViewTransform& view);
+    bool                Union(const plViewTransform& view);
 
     // Convenience to move from one space to another.
     // Screen means pixels - Default is mapping NDC -> [0..1]. Z value of pixel is NDC Z.
@@ -322,20 +322,20 @@ protected:
     static const float   kMinHither;
 
     void                ISetCameraToNDC() const;
-    hsBool              ICameraToNDCSet() const { return IHasFlag(kCameraToNDCSet); }
+    bool                ICameraToNDCSet() const { return IHasFlag(kCameraToNDCSet); }
     const hsMatrix44&   ICheckCameraToNDC() const { if( !ICameraToNDCSet() ) ISetCameraToNDC(); return fCameraToNDC; }
 
     void                ISetWorldToNDC() const { fWorldToNDC = GetCameraToNDC() * fWorldToCamera; ISetFlag(kWorldToNDCSet); }
-    hsBool              IWorldToNDCSet() const { return IHasFlag(kWorldToNDCSet); }
+    bool                IWorldToNDCSet() const { return IHasFlag(kWorldToNDCSet); }
     const hsMatrix44&   ICheckWorldToNDC() const { if( !IWorldToNDCSet() ) ISetWorldToNDC(); return fWorldToNDC; }
 
-    hsBool              IGetMaxMinsFromBnd(const hsBounds3& bnd, hsPoint3& mins, hsPoint3& maxs) const;
+    bool                IGetMaxMinsFromBnd(const hsBounds3& bnd, hsPoint3& mins, hsPoint3& maxs) const;
 
     void                InvalidateTransforms() { ISetFlag(kCameraToNDCSet|kWorldToNDCSet, false); }
 
     // Flags - generic
-    hsBool              IHasFlag(uint32_t f) const { return 0 != (fFlags & f); }
-    void                ISetFlag(uint32_t f, hsBool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
+    bool                IHasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+    void                ISetFlag(uint32_t f, bool on=true) const { if(on) fFlags |= f; else fFlags &= ~f; }
 
 };
 

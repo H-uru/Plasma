@@ -66,9 +66,11 @@ static uint32_t CalcKeySize(plKeyImp* key)
 static const char* kObjName = "GUI_District_OptionsMenuGUI";
 static uint16_t kClassType = CLASS_INDEX_SCOPED(plSceneNode);
 static uint32_t kCloneID = 0;
-hsBool IsTrackedKey(const plKeyImp* key)
+bool IsTrackedKey(const plKeyImp* key)
 {
-    return hsStrEQ(key->GetName(), kObjName) && key->GetUoid().GetClassType() == kClassType && key->GetUoid().GetCloneID() == kCloneID;
+    return (strcmp(key->GetName(), kObjName) == 0) &&
+            key->GetUoid().GetClassType() == kClassType &&
+            key->GetUoid().GetCloneID() == kCloneID;
 }
 #endif
 
@@ -601,7 +603,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
     // Inspect the target key to find whether it is supposed to send a message
     // to me on destruction, and to find out if I have an active of passive 
     // ref on this key.  Not sure why I don't track my own active/passive ref states
-    hsBool isActive = false;
+    bool isActive = false;
     int iTarg = -1;
     for (int i = 0; (iTarg < 0) && (i < iTargetKey->GetNumNotifyCreated()); i++)
     {

@@ -57,7 +57,7 @@ public:
     
     plKey               fObj;
     hsPoint3            fHitPoint;
-    hsBool              fNoHit;
+    bool                fNoHit;
     uint32_t              fRequestID;
     uint32_t              fHitFlags;
     hsVector3           fNormal;

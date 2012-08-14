@@ -24,6 +24,7 @@ set(CoreLib_SOURCES
     hsMatrix44.cpp
     hsMemory.cpp
     hsQuat.cpp
+    hsRefCnt.cpp
     hsSafeRefCnt.cpp
     hsSTLStream.cpp
     hsStlUtils.cpp
@@ -31,7 +32,6 @@ set(CoreLib_SOURCES
     hsStringTokenizer.cpp
     hsTemplates.cpp
     hsThread.cpp
-    hsUtils.cpp
     hsWide.cpp
     pcSmallRect.cpp
     plGeneric.cpp
@@ -77,15 +77,11 @@ set(CoreLib_HEADERS
     hsStringTokenizer.h
     hsTemplates.h
     hsThread.h
-    hsTypes.h
-    hsUtils.h
     hsWide.h
-    hsWindows.h
     pcSmallRect.h
     plGeneric.h
     plLoadMask.h
     plQuality.h
-    plRefCnt.h
     plString.h
     plTweak.h
     plViewTransform.h

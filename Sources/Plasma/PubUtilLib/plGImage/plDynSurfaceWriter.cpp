@@ -215,7 +215,7 @@ void    plDynSurfaceWriter::plWinSurface::Release( void )
     fFontBlockedRGB = false;
 }
 
-hsBool  plDynSurfaceWriter::plWinSurface::WillFit( uint16_t w, uint16_t h )
+bool    plDynSurfaceWriter::plWinSurface::WillFit( uint16_t w, uint16_t h )
 {
     if( fWidth >= w && fHeight >= h )
         return true;
@@ -231,7 +231,7 @@ static int      SafeStrCmp( const char *str1, const char *str2 )
     return -1;
 }
 
-hsBool  plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB )
+bool    plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, uint16_t size, uint8_t flags, bool aaRGB )
 {
     if( SafeStrCmp( face, fFontFace ) == 0 && fFontSize == size && 
         fFontFlags == flags && fFontAntiAliasRGB == aaRGB )
@@ -240,7 +240,7 @@ hsBool  plDynSurfaceWriter::plWinSurface::FontMatches( const char *face, uint16_
     return false;
 }
 
-void    plDynSurfaceWriter::plWinSurface::SetFont( const char *face, uint16_t size, uint8_t flags, hsBool aaRGB )
+void    plDynSurfaceWriter::plWinSurface::SetFont( const char *face, uint16_t size, uint8_t flags, bool aaRGB )
 {
     delete [] fFontFace;
     fFontFace = ( face != nil ) ? hsStrcpy( face ) : nil;
@@ -308,11 +308,11 @@ void    plDynSurfaceWriter::plWinSurface::SetFont( const char *face, uint16_t si
 
 //// StupidStatic /////////////////////////////////////////////////////////////
 
-hsBool  plDynSurfaceWriter::fForceSharedSurfaces = false;
-hsBool  plDynSurfaceWriter::fOSDetected = false;
-hsBool  plDynSurfaceWriter::fOSCanShareSurfaces = false;
+bool    plDynSurfaceWriter::fForceSharedSurfaces = false;
+bool    plDynSurfaceWriter::fOSDetected = false;
+bool    plDynSurfaceWriter::fOSCanShareSurfaces = false;
 
-hsBool  plDynSurfaceWriter::CanHandleLotsOfThem( void )
+bool    plDynSurfaceWriter::CanHandleLotsOfThem( void )
 {
     if( fOSDetected )
         return fOSCanShareSurfaces;
@@ -586,7 +586,7 @@ void    plDynSurfaceWriter::IEnsureSurfaceUpdated( void )
     }
 }
 
-hsBool  plDynSurfaceWriter::IsValid( void ) const
+bool    plDynSurfaceWriter::IsValid( void ) const
 {
     if( fCurrTarget == nil )
         return false;
@@ -689,7 +689,7 @@ void    plDynSurfaceWriter::ClearToColor( hsColorRGBA &color )
 //// SetFont //////////////////////////////////////////////////////////////////
 //  OS-specific. Load the given font for drawing the text with.
 
-void    plDynSurfaceWriter::SetFont( const char *face, uint16_t size, uint8_t fontFlags, hsBool antiAliasRGB )
+void    plDynSurfaceWriter::SetFont( const char *face, uint16_t size, uint8_t fontFlags, bool antiAliasRGB )
 {
     if( !IsValid() )
         return;
@@ -701,7 +701,7 @@ void    plDynSurfaceWriter::SetFont( const char *face, uint16_t size, uint8_t fo
 
 //// ISetFont /////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::ISetFont( const char *face, uint16_t size, uint8_t fontFlags, hsBool antiAliasRGB )
+void    plDynSurfaceWriter::ISetFont( const char *face, uint16_t size, uint8_t fontFlags, bool antiAliasRGB )
 {
     fFlags = ( fFlags & ~kFontShadowed ) | ( fontFlags & kFontShadowed );
 
@@ -724,7 +724,7 @@ void    plDynSurfaceWriter::ISetFont( const char *face, uint16_t size, uint8_t f
 //  case you want plenty of block color in your RGB channel because it'll get
 //  alpha-ed out by the alpha channel.
 
-void    plDynSurfaceWriter::SetTextColor( hsColorRGBA &color, hsBool blockRGB )
+void    plDynSurfaceWriter::SetTextColor( hsColorRGBA &color, bool blockRGB )
 {
     if( !IsValid() )
         return;
@@ -735,7 +735,7 @@ void    plDynSurfaceWriter::SetTextColor( hsColorRGBA &color, hsBool blockRGB )
 
 //// IRefreshTextColor ////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::ISetTextColor( hsColorRGBA &color, hsBool blockRGB )
+void    plDynSurfaceWriter::ISetTextColor( hsColorRGBA &color, bool blockRGB )
 {
 #if HS_BUILD_FOR_WIN32
 
@@ -1070,7 +1070,7 @@ void    plDynSurfaceWriter::FrameRect( uint16_t x, uint16_t y, uint16_t width, u
 /*
 //// DrawImage ////////////////////////////////////////////////////////////////
 
-void    plDynSurfaceWriter::DrawImage( uint16_t x, uint16_t y, plMipmap *image, hsBool respectAlpha )
+void    plDynSurfaceWriter::DrawImage( uint16_t x, uint16_t y, plMipmap *image, bool respectAlpha )
 {
     if( !IsValid() )
         return;
@@ -1103,7 +1103,7 @@ void    plDynSurfaceWriter::DrawImage( uint16_t x, uint16_t y, plMipmap *image, 
 void    plDynSurfaceWriter::DrawClippedImage( uint16_t x, uint16_t y, plMipmap *image, 
                                             uint16_t srcClipX, uint16_t srcClipY, 
                                             uint16_t srcClipWidth, uint16_t srcClipHeight, 
-                                            hsBool respectAlpha )
+                                            bool respectAlpha )
 {
     if( !IsValid() )
         return;

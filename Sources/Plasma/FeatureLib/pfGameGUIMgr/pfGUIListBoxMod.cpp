@@ -76,7 +76,7 @@ void    pfGUIListBoxMod::plSmallRect::Set( int16_t l, int16_t t, int16_t r, int1
     fBottom = b; 
 }
 
-hsBool  pfGUIListBoxMod::plSmallRect::Contains( int16_t x, int16_t y )
+bool    pfGUIListBoxMod::plSmallRect::Contains( int16_t x, int16_t y )
 {
     if( x < fLeft || x > fRight || y < fTop || y > fBottom )
         return false;
@@ -140,14 +140,14 @@ pfGUIListBoxMod::~pfGUIListBoxMod()
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::IEval( double secs, float del, uint32_t dirty )
+bool    pfGUIListBoxMod::IEval( double secs, float del, uint32_t dirty )
 {
     return pfGUIControlMod::IEval( secs, del, dirty );
 }
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::MsgReceive( plMessage *msg )
+bool    pfGUIListBoxMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
     if( refMsg != nil )
@@ -234,7 +234,7 @@ void    pfGUIListBoxMod::IUpdate( void )
             {
                 int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
 
-                hsBool anySelected = false;
+                bool anySelected = false;
                 for( i = fWrapStartIdxs[ j ]; i < end; i++ )
                     anySelected |= fElements[ i ]->IsSelected();
 
@@ -338,7 +338,7 @@ void    pfGUIListBoxMod::IUpdate( void )
         {
             int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
 
-            hsBool anySelected = false;
+            bool anySelected = false;
             for( i = fWrapStartIdxs[ j ]; i < end; i++ )
                 anySelected |= fElements[ i ]->IsSelected();
 
@@ -544,7 +544,7 @@ void    pfGUIListBoxMod::Write( hsStream *s, hsResMgr *mgr )
 //  based on the position. This allows us to act etheral (i.e. pass mouse
 //  messages through) when the mouse is over an empty portion of the list.
 
-hsBool  pfGUIListBoxMod::FilterMousePosition( hsPoint3 &mousePt )
+bool    pfGUIListBoxMod::FilterMousePosition( hsPoint3 &mousePt )
 {
     if( !HasFlag( kAllowMousePassThrough ) )
         return true;
@@ -845,7 +845,7 @@ void    pfGUIListBoxMod::IFindSelectionRange( int32_t *min, int32_t *max )
 
 //// ISelectRange ////////////////////////////////////////////////////////////
 
-void    pfGUIListBoxMod::ISelectRange( int8_t min, int8_t max, hsBool select )
+void    pfGUIListBoxMod::ISelectRange( int8_t min, int8_t max, bool select )
 {
     int16_t   i;
 
@@ -921,12 +921,12 @@ void    pfGUIListBoxMod::AddSelection( int32_t item )
 
 //// HandleKeyPress //////////////////////////////////////////////////////////
 
-hsBool  pfGUIListBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
+bool    pfGUIListBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
     return false;
 }
 
-hsBool  pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
+bool    pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     if( key == KEY_CAPSLOCK )
         return false;

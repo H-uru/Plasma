@@ -100,7 +100,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSceneInputInterface *plSceneInputInterface::fInstance = nil;
 
-hsBool plSceneInputInterface::fShowLOS = false;
+bool plSceneInputInterface::fShowLOS = false;
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -177,7 +177,7 @@ void plSceneInputInterface::ClearClickableMap()
 
 //// IHalfFadeAvatar /////////////////////////////////////////////////////////
 
-void plSceneInputInterface::IHalfFadeAvatar(hsBool out)
+void plSceneInputInterface::IHalfFadeAvatar(bool out)
 {
     plIfaceFadeAvatarMsg* pMsg = new plIfaceFadeAvatarMsg();
     pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
@@ -204,7 +204,7 @@ void plSceneInputInterface::ResetClickableState()
 }
 //// IEval ///////////////////////////////////////////////////////////////////
 
-hsBool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
+bool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
 {
     // this needs to always go no matter what...
     // ...unless we have cliclability disabled (as in the case of certain multistage behaviors)
@@ -230,7 +230,7 @@ hsBool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
         plgDispatch::MsgSend( pMsg );
     }
     // then see if we have any
-    hsBool change = false;
+    bool change = false;
     for (i=0; i < fClickableMap.Count(); i++)
     {
         if( fClickableMap[i]->val )
@@ -251,14 +251,14 @@ hsBool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
-hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
+bool    plSceneInputInterface::MsgReceive( plMessage *msg )
 {
     plLOSHitMsg *pLOSMsg = plLOSHitMsg::ConvertNoRef( msg );
     if( pLOSMsg )
     {
         if( pLOSMsg->fRequestID == ID_FIND_CLICKABLE )
         {
-            hsBool clearCursor = false;
+            bool clearCursor = false;
             if (!fClickability)
                 return true;
             if( pLOSMsg->fObj )
@@ -316,7 +316,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
                                 return true;
 
                             // okay, are we a CCR?
-                            hsBool amCCR = plNetClientMgr::GetInstance()->GetCCRLevel();
+                            bool amCCR = plNetClientMgr::GetInstance()->GetCCRLevel();
                             
                             // is this person a NPC or CCR?
                             int mbrIdx=plNetClientMgr::GetInstance()->TransportMgr().FindMember(pObj->GetKey());
@@ -506,7 +506,7 @@ hsBool  plSceneInputInterface::MsgReceive( plMessage *msg )
     plCursorChangeMsg   *fakeReplyMsg = plCursorChangeMsg::ConvertNoRef( msg );
     if( fakeReplyMsg != nil )
     {
-        hsBool deniedCurrent = false;
+        bool deniedCurrent = false;
         plKey key = fakeReplyMsg->GetSender();
         for (int i = 0; i < fClickableMap.Count(); i++)
         {
@@ -975,7 +975,7 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
 
 //// InterpretInputEvent /////////////////////////////////////////////////////
 
-hsBool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
+bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
     plControlEventMsg* pControlEvent = plControlEventMsg::ConvertNoRef(pMsg);
     if (pControlEvent)
@@ -1076,7 +1076,7 @@ hsBool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 
 //// ISendOfferNotification ////////////////////////////////////////////////////////
-void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, hsBool add)
+void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
 {
     // tell everyone else to be able to / not to be able to select this avatar
     plInputIfaceMgrMsg* pMsg = 0;
@@ -1091,7 +1091,7 @@ void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, hsBool add)
     pMsg->Send();
 }   
 
-void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, hsBool net)
+void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool net)
 {
     int offereeID = -1;
     if (offeree == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
@@ -1138,7 +1138,7 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, hsBoo
 
 }
 
-void plSceneInputInterface::ISendAvatarDisabledNotification(hsBool enabled)
+void plSceneInputInterface::ISendAvatarDisabledNotification(bool enabled)
 {
     plInputIfaceMgrMsg* pMsg = 0;
     if (enabled)
@@ -1197,7 +1197,7 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
         
 //// IWorldPosMovedSinceLastLOSCheck /////////////////////////////////////////
 
-hsBool  plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
+bool    plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
 {
     if( fPipe == nil )
         return false;

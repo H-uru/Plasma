@@ -444,7 +444,7 @@ bool plPythonMgr::IQueryPythonFile(char *fileName)
 
 void plPythonMgr::IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    hsBool def = false;
+    int def = 0;
     IGetTupleInt(tuple, 3, def);
 
     autoUI->AddCheckBox(id, nil, paramName, vid, vstates, def);

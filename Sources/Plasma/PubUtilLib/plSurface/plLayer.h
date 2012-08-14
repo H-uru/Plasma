@@ -61,7 +61,7 @@ public:
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
-    virtual hsBool          MsgReceive(plMessage* msg);
+    virtual bool            MsgReceive(plMessage* msg);
 
     // Flat layer specifics
     plLayer& InitToDefault();

@@ -76,7 +76,7 @@ public:
     int16_t               GetChild(int w) const { hsAssert(!(fFlags & kIsLeaf), "Getting Child of leaf node"); return fChildren[w]; }
     int16_t               GetParent() const { return fParent; }
     int16_t               GetLeaf() const { hsAssert(fFlags & kIsLeaf, "Getting leaf idx off interior node"); return fLeafIndex; }
-    hsBool              IsLeaf() const { return 0 != (fFlags & kIsLeaf); }
+    bool                IsLeaf() const { return 0 != (fFlags & kIsLeaf); }
     const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
 
     // Kind of hate this. Would like to blast the whole thing in, but
@@ -138,8 +138,8 @@ public:
 
     const plSpaceTreeNode&  GetNode(int16_t w) const { return fTree[w]; }
     int16_t                   GetRoot() const { return fRoot; }
-    hsBool                  IsRoot(int16_t w) const { return fRoot == w; }
-    hsBool                  IsLeaf(int16_t w) const { return GetNode(w).IsLeaf(); }
+    bool                    IsRoot(int16_t w) const { return fRoot == w; }
+    bool                    IsLeaf(int16_t w) const { return GetNode(w).IsLeaf(); }
 
     void HarvestLeaves(hsBitVector& totList, hsBitVector& list) const;
     void HarvestLeaves(hsBitVector& list) const;
@@ -162,20 +162,20 @@ public:
     uint16_t GetHarvestFlags() const { return fHarvestFlags; }
 
     uint16_t HasLeafFlag(int16_t w, uint16_t f) const { return GetNode(w).fFlags & f; }
-    void SetLeafFlag(int16_t w, uint16_t f, hsBool on=true);
+    void SetLeafFlag(int16_t w, uint16_t f, bool on=true);
     void ClearLeafFlag(int16_t w, uint16_t f);
     void ClearTreeFlag(uint16_t f);
-    void SetTreeFlag(uint16_t f, hsBool on=true);
+    void SetTreeFlag(uint16_t f, bool on=true);
 
-    hsBool IsDisabled(uint16_t w) const { return (GetNode(w).fFlags & plSpaceTreeNode::kDisabled) || (fCache && !fCache->IsBitSet(w)); }
+    bool IsDisabled(uint16_t w) const { return (GetNode(w).fFlags & plSpaceTreeNode::kDisabled) || (fCache && !fCache->IsBitSet(w)); }
 
     // Should GetWorldBounds check and refresh if needed?
     const hsBounds3Ext& GetWorldBounds() const { return GetNode(GetRoot()).fWorldBounds; }
 
     void MoveLeaf(int16_t idx, const hsBounds3Ext& newWorldBnd);
     void Refresh();
-    hsBool IsEmpty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kEmpty); }
-    hsBool IsDirty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kDirty); }
+    bool IsEmpty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kEmpty); }
+    bool IsDirty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kDirty); }
     void MakeDirty() { fTree[GetRoot()].fFlags |= plSpaceTreeNode::kDirty; }
 
     int16_t GetNumLeaves() const { return fNumLeaves; }

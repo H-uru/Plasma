@@ -166,12 +166,12 @@ hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoin
     return dir;
 }
 
-hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
+bool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
     if( !shape )
         return false;
 
-    hsBool retVal = false;
+    bool retVal = false;
 
     plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
 
@@ -181,9 +181,9 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
     static float kMinTime = 0.25f;
     double t = hsTimer::GetSysSeconds();
     float dt = float(t - info.fLastTime) * sRand.RandZeroToOne();
-    hsBool longEnough = (dt >= kMinTime);
+    bool longEnough = (dt >= kMinTime);
     hsPoint3 xlate = shapeL2W.GetTranslate();
-    hsBool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
+    bool farEnough = (hsVector3(&info.fLastPos, &xlate).Magnitude() > kMinDist);
     if( force || longEnough || farEnough )
     {
         hsPoint3 pos = shapeL2W.GetTranslate();
@@ -221,7 +221,7 @@ hsBool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, hsBool force)
         info.fLastTime = t;
         info.fLastPos = shapeL2W.GetTranslate();
 
-        hsBool hit = ICutoutTargets(t);
+        bool hit = ICutoutTargets(t);
         if( hit )
             retVal = true;
     }

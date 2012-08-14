@@ -92,7 +92,7 @@ class plTextFont
 
         char    fFace[ 128 ];
         uint16_t  fSize;
-        hsBool  fInitialized;
+        bool    fInitialized;
         uint16_t  fFontHeight;
         
         plPipeline  *fPipe;

@@ -64,7 +64,7 @@ public:
     CLASSNAME_REGISTER( plMultiModifier );
     GETINTERFACE_ANY( plMultiModifier, plModifier );
     
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) = 0;
+    virtual bool IEval(double secs, float del, uint32_t dirty) = 0;
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
@@ -73,7 +73,7 @@ public:
     virtual void AddTarget(plSceneObject* so) {fTargets.Append(so);}
     virtual void RemoveTarget(plSceneObject* so); 
 
-    hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
     plMultiModifier& SetFlag(int f) { fFlags.SetBit(f); return *this; }
 
 };

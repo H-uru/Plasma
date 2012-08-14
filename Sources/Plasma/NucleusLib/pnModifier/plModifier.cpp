@@ -87,7 +87,7 @@ plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
 }
 
-hsBool plModifier::MsgReceive(plMessage* msg)
+bool plModifier::MsgReceive(plMessage* msg)
 {
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
     if( eval )

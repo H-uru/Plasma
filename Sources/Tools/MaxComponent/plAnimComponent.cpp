@@ -155,7 +155,7 @@ plAnimObjInterface  *plAnimComponentBase::GetAnimInterface( INode *inode )
     return nil;
 }
 
-void plAnimComponentProc::EnableGlobal(HWND hWnd, hsBool enable)
+void plAnimComponentProc::EnableGlobal(HWND hWnd, bool enable)
 {
     ComboBox_Enable(GetDlgItem(hWnd, IDC_ANIM_GLOBAL_LIST), enable);
     ComboBox_Enable(GetDlgItem(hWnd, IDC_ANIM_NAMES), !enable);
@@ -402,7 +402,7 @@ public:
 CLASS_DESC(plAnimComponent, gAnimDesc, "Animation",  "Animation", COMP_TYPE_MISC, ANIM_COMP_CID)
 CLASS_DESC(plAnimGroupedComponent, gAnimGroupedDesc, "Animation Grouped",  "AnimGrouped", COMP_TYPE_MISC, ANIM_GROUP_COMP_CID)
 
-hsBool plAnimComponentBase::IsAnimComponent(plComponentBase *comp)
+bool plAnimComponentBase::IsAnimComponent(plComponentBase *comp)
 {
     return (comp->ClassID() == ANIM_COMP_CID ||
             comp->ClassID() == ANIM_GROUP_COMP_CID);
@@ -531,7 +531,7 @@ plKey plAnimComponent::GetModKey(plMaxNode *node)
     return nil;
 }
 
-hsBool  plAnimComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
 {
     if( restrictedNode != nil )
     {
@@ -562,7 +562,7 @@ plKey plAnimGroupedComponent::GetModKey(plMaxNode *node)
     return nil;
 }
 
-hsBool  plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
 {
     if( fForward )
     {
@@ -575,7 +575,7 @@ hsBool  plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKe
 
 #include "pnMessage/plNodeRefMsg.h"
 
-hsBool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     bool needSetMaster = fNeedReset;
     if (fNeedReset)
@@ -587,7 +587,7 @@ hsBool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         hsgResMgr::ResMgr()->AddViaNotify(forwardKey, refMsg, plRefFlags::kActiveRef);
     }
 
-    hsBool ret = plAnimComponentBase::PreConvert(node, pErrMsg);
+    bool ret = plAnimComponentBase::PreConvert(node, pErrMsg);
 
     plAGMasterMod *mod = fMods[node];
 
@@ -644,7 +644,7 @@ void SetPhysAnimRecurse(plMaxNode *node, plErrorMsg *pErrMsg)
         SetPhysAnimRecurse((plMaxNode *)node->GetChildNode(i), pErrMsg);
 }
 
-hsBool plAnimComponentBase::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)   
+bool plAnimComponentBase::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)   
 {
     if (node->IsTMAnimated())
     {
@@ -678,7 +678,7 @@ hsBool plAnimComponentBase::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     return true; 
 }
 
-hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     // If this is the first time in the preconvert, reset the map
     if (fNeedReset)
@@ -783,9 +783,9 @@ hsBool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 
-hsBool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
 {
-    hsBool result = false;
+    bool result = false;
 
     // Get the affine parts and the TM Controller
     plSceneObject *obj = node->GetSceneObject();
@@ -813,7 +813,7 @@ hsBool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErro
     return result;
 }
 
-hsBool plAnimComponentBase::IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
 {
     if (!node->IsAnimatedLight())
         return false;
@@ -842,9 +842,9 @@ hsBool plAnimComponentBase::IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plE
     return true;
 }
 
-hsBool plAnimComponentBase::IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
 {
-    hsBool madeAnim = false;
+    bool madeAnim = false;
     int i;
 
     if (IAddTMToAnim(node, anim, pErrMsg))
@@ -879,7 +879,7 @@ hsBool plAnimComponentBase::IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim 
     return madeAnim;
 }
 
-hsBool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg)
 {
     // anims made by this component are private to the specific AGMasterMod, so we attach them there.
     plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(fMods[node]);
@@ -896,7 +896,7 @@ hsBool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plE
 }
 
 
-hsBool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fNeedReset = true;
 
@@ -923,7 +923,7 @@ hsBool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plAnimComponentBase::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)        
+bool plAnimComponentBase::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)        
 { 
     fMods.clear();
     fLightMods.clear();
@@ -963,12 +963,12 @@ protected:
 
     void ISetUserType(plMaxNode* node, const char* userType)
     {
-        if (hsStrEQ(userType, kUseParamBlockNodeString))
+        if (strcmp(userType, kUseParamBlockNodeString) == 0)
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
-        else if (hsStrEQ(userType, kUseOwnerNodeString))
+        else if (strcmp(userType, kUseOwnerNodeString) == 0)
         {
             ISetNodeValue(nil);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
@@ -990,7 +990,7 @@ void    plAnimComponentBase::PickTargetNode( IParamBlock2 *destPB, ParamID destP
     pick.DoPick();
 }
 
-plString plAnimComponentBase::GetIfaceSegmentName( hsBool allowNil )
+plString plAnimComponentBase::GetIfaceSegmentName( bool allowNil )
 {
     plString name = GetAnimName();
     if( allowNil || !name.IsNull() )
@@ -1206,7 +1206,7 @@ plAnimCompressComp::plAnimCompressComp()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plAnimCompressComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    
+bool plAnimCompressComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    
 {
     node->SetAnimCompress(fCompPB->GetInt(ParamID(kAnimCompressLevel)));
 
@@ -1219,7 +1219,7 @@ hsBool plAnimCompressComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plAnimCompressComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plAnimCompressComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }

@@ -76,9 +76,9 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlDraggable(pyKey& gckey);
+    static bool IsGUIControlDraggable(pyKey& gckey);
 
-    void StopDragging( hsBool cancel );
+    void StopDragging( bool cancel );
     PyObject* GetLastMousePt( void ); // returns pyPoint3
 
 };

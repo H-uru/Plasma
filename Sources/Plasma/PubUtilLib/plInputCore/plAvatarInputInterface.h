@@ -83,7 +83,7 @@ class plAvatarInputMap
         plAvatarInputMap();
         virtual ~plAvatarInputMap();
         virtual const char *GetName() = 0;
-        virtual hsBool IsBasic() { return false; }
+        virtual bool IsBasic() { return false; }
 
         plMouseMap      *fMouseMap;
         uint32_t          fButtonState;
@@ -103,7 +103,7 @@ class plBasicControlMap : public plSuspendedMovementMap
 public:
     plBasicControlMap();
     virtual const char *GetName() { return "Basic"; }
-    virtual hsBool IsBasic() { return true; }
+    virtual bool IsBasic() { return true; }
 
 };
 // The above, plus movement
@@ -185,10 +185,10 @@ class plAvatarInputInterface : public plInputInterface
 
         static plAvatarInputInterface       *fInstance;
 
-        virtual hsBool  IHandleCtrlCmd( plCtrlCmd *cmd );
+        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd );
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual hsBool IEval( double secs, float del, uint32_t dirty );
+        virtual bool IEval( double secs, float del, uint32_t dirty );
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -199,10 +199,10 @@ class plAvatarInputInterface : public plInputInterface
         void    ISetPreLadderMap();
         void    ISetPostLadderMap();
 
-        hsBool  IHasControlFlag(int f) const    { return fControlFlags.IsBitSet(f); }
+        bool    IHasControlFlag(int f) const    { return fControlFlags.IsBitSet(f); }
         void    IClearControlFlag(int which)    { fControlFlags.ClearBit( which ); }
 
-        hsBool  CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
+        bool    CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
         void    ClearMouseCursor();
         void    DisableMouseInput() { fMouseDisabled = true; }
         void    EnableMouseInput() { fMouseDisabled = false; }
@@ -212,31 +212,31 @@ class plAvatarInputInterface : public plInputInterface
         void    RequestCursorToWorldPos(float xPos, float yPos, int ID);
 
         hsBitVector     fControlFlags;
-        hsBool          fMouseDisabled;
+        bool            fMouseDisabled;
 
         plPipeline*     fPipe;
         int             fCursorState;
         int             fCursorPriority;
-        hsBool  f3rdPerson;
+        bool    f3rdPerson;
 
     public:
 
         plAvatarInputInterface();
         virtual ~plAvatarInputInterface();
     
-        void CameraInThirdPerson(hsBool state);
+        void CameraInThirdPerson(bool state);
     
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual hsBool      HasInterestingCursorID( void ) const { return true; }
+        virtual bool        HasInterestingCursorID( void ) const { return true; }
         virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
         virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
         virtual float    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
-        virtual hsBool      InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual bool        InterpretInputEvent( plInputEventMsg *pMsg );
         virtual void        MissedInputEvent( plInputEventMsg *pMsg );
 
-        virtual hsBool      MsgReceive( plMessage *msg );
+        virtual bool        MsgReceive( plMessage *msg );
 
         virtual void        Init( plInputInterfaceMgr *manager );
         virtual void        Shutdown( void );
@@ -247,18 +247,18 @@ class plAvatarInputInterface : public plInputInterface
         // [dis/en]able mouse commands for avatar movement
         void SuspendMouseMovement();
         void EnableMouseMovement();
-        void EnableJump(hsBool val);
-        void EnableForwardMovement(hsBool val);
-        void EnableControl(hsBool val, ControlEventCode code);
+        void EnableJump(bool val);
+        void EnableForwardMovement(bool val);
+        void EnableControl(bool val, ControlEventCode code);
         void ClearLadderMode();
         void SetLadderMode();
-        void ForceAlwaysRun(hsBool val);
+        void ForceAlwaysRun(bool val);
         
-        void    SetControlFlag(int f, hsBool val = true)            { fControlFlags.SetBit(f, val); }
+        void    SetControlFlag(int f, bool val = true)            { fControlFlags.SetBit(f, val); }
 
         void    SetCursorFadeDelay( float delay ) { fCursorFadeDelay = delay; }
 
-        hsBool  IsEnterChatModeBound();
+        bool    IsEnterChatModeBound();
 
         static plAvatarInputInterface   *GetInstance( void ) { return fInstance; }
 };

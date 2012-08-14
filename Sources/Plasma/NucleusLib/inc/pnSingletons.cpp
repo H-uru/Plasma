@@ -51,7 +51,7 @@ plDispatchBase* plgDispatch::Dispatch()
     return hsgResMgr::Dispatch();
 }
 
-hsBool hsgResMgr::Init(hsResMgr* m)
+bool hsgResMgr::Init(hsResMgr* m)
 {
     hsRefCnt_SafeAssign(fResMgr, m); 
     hsRefCnt_SafeUnRef(m);

@@ -81,14 +81,14 @@ void plActivatorBaseComponent::IGetReceivers(plMaxNode* node, hsTArray<plKey>& r
 
 // Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plActivatorBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plActivatorBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fLogicModKeys.clear();
     fReceivers.clear();
     return true;
 }
 
-hsBool plActivatorBaseComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plActivatorBaseComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetForceLocal(true);
 
@@ -105,7 +105,7 @@ hsBool plActivatorBaseComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plActivatorBaseComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
+bool plActivatorBaseComponent::DeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fReceivers.clear();
     fLogicModKeys.clear();

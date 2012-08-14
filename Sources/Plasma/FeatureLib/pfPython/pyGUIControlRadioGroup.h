@@ -72,7 +72,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static hsBool IsGUIControlRadioGroup(pyKey& gckey);
+    static bool IsGUIControlRadioGroup(pyKey& gckey);
 
     virtual int32_t   GetValue( void );
     virtual void    SetValue( int32_t value );

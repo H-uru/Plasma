@@ -65,8 +65,8 @@ struct plAVIFileInfo
 #endif // HS_BUILD_FOR_WIN32
 
 #if HS_BUILD_FOR_WIN32
-static hsBool                       ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* t);
-static hsBool                       ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* t);
+static bool                         ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* t);
+static bool                         ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* t);
 #endif
 
 
@@ -83,7 +83,7 @@ plLayerAVI::~plLayerAVI()
 }
 
 
-hsBool plLayerAVI::IInit()
+bool plLayerAVI::IInit()
 {
 #if HS_BUILD_FOR_WIN32
     int ret = AVIStreamOpenFromFile( &fAVIInfo->fAVIStream, 
@@ -126,7 +126,7 @@ int32_t plLayerAVI::ISecsToFrame(float secs)
     return int32_t(secs * timeScale + 0.5f);
 }
 
-hsBool plLayerAVI::IGetCurrentFrame()
+bool plLayerAVI::IGetCurrentFrame()
 {
 #if HS_BUILD_FOR_WIN32
     if( !fAVIInfo->fAVIStream )
@@ -154,7 +154,7 @@ hsBool plLayerAVI::IGetCurrentFrame()
 }
 
 #if HS_BUILD_FOR_WIN32
-static hsBool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
+static bool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
 {
     hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture16()" );
 
@@ -191,7 +191,7 @@ static hsBool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
     return false;
 }
 
-static hsBool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
+static bool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
 {
     hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture24()" );
 
@@ -228,7 +228,7 @@ static hsBool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
 }
 #endif
 
-hsBool plLayerAVI::ICloseMovie()
+bool plLayerAVI::ICloseMovie()
 {
 #if HS_BUILD_FOR_WIN32
     if( fAVIInfo->fGetFrame )
@@ -244,7 +244,7 @@ hsBool plLayerAVI::ICloseMovie()
     return false;
 }
 
-hsBool plLayerAVI::IRelease()
+bool plLayerAVI::IRelease()
 {
     ICloseMovie();
 

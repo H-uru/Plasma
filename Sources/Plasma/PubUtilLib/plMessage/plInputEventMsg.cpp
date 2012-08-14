@@ -135,7 +135,7 @@ void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Read(stream, mgr);
     stream->ReadLE((int32_t*)&fControlCode);
-    stream->ReadLE(&fControlActivated);
+    fControlActivated = stream->ReadBOOL();
     stream->ReadLE(&fControlPct);
     fTurnToPt.Read(stream);
 
@@ -147,7 +147,7 @@ void plControlEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Write(stream, mgr);
     stream->WriteLE((int32_t)fControlCode);
-    stream->WriteLE(fControlActivated);
+    stream->WriteBOOL(fControlActivated);
     stream->WriteLE(fControlPct);
     fTurnToPt.Write(stream);
     
@@ -175,7 +175,7 @@ void plControlEventMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
         s->ReadLE((int32_t*)&fControlCode);
 
     if (contentFlags.IsBitSet(kControlEventMsgActivated))
-        s->ReadLE(&fControlActivated);
+        fControlActivated = s->ReadBOOL();
 
     if (contentFlags.IsBitSet(kControlEventMsgPct))
         s->ReadLE(&fControlPct);
@@ -204,7 +204,7 @@ void plControlEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE((int32_t)fControlCode);
 
     // kControlEventMsgActivated,
-    s->WriteLE(fControlActivated);
+    s->WriteBOOL(fControlActivated);
 
     // kControlEventMsgPct,
     s->WriteLE(fControlPct);
@@ -319,7 +319,7 @@ void plAvatarInputStateMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE16(fState);
 }
 
-hsBool plAvatarInputStateMsg::IsCodeInMap(ControlEventCode code)
+bool plAvatarInputStateMsg::IsCodeInMap(ControlEventCode code)
 {
     int i;
     for (i = 0; i < fMapSize; i++)

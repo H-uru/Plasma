@@ -193,7 +193,7 @@ bool plAutoUIParam::CheckVisibility(ParamID id, std::string state)
     }
 }
 
-hsBool plAutoUIParam::GetBool(IParamBlock2 *pb)
+bool plAutoUIParam::GetBool(IParamBlock2 *pb)
 {
     hsAssert(false, "Parameter is not a bool");
     return false;
@@ -256,7 +256,7 @@ bool plCheckBoxParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParam
         if ((HWND)lParam == fhCheck)
         {
             // Get the state
-            hsBool checked = (SendMessage(fhCheck, BM_GETCHECK, 0, 0) == BST_CHECKED);
+            bool checked = (SendMessage(fhCheck, BM_GETCHECK, 0, 0) == BST_CHECKED);
             // Set the state in the paramblock
             pb->SetValue(fID, 0, checked);
             return true;
@@ -270,7 +270,7 @@ int plCheckBoxParam::GetParamType()
 {
     return kTypeBool;
 }
-hsBool plCheckBoxParam::GetBool(IParamBlock2 *pb)
+bool plCheckBoxParam::GetBool(IParamBlock2 *pb)
 {
     return pb->GetInt(fID);
 }

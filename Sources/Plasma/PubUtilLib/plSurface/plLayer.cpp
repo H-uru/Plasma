@@ -167,7 +167,7 @@ void plLayer::Write(hsStream* s, hsResMgr* mgr)
     fBumpEnvXfm->Write(s);
 }
 
-hsBool plLayer::MsgReceive(plMessage* msg)
+bool plLayer::MsgReceive(plMessage* msg)
 {
     plLayRefMsg* refMsg = plLayRefMsg::ConvertNoRef(msg);
     if( refMsg )

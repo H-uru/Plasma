@@ -80,12 +80,6 @@ void cyPhysics::AddRecvr(plKey &recvr)
         fRecvr.Append(recvr);
 }
 
-void cyPhysics::SetNetForce(hsBool state)
-{
-    // set our flag
-    fNetForce = state;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : Enable
@@ -93,7 +87,7 @@ void cyPhysics::SetNetForce(hsBool state)
 //
 //  PURPOSE    : Enable physics (must already be there)
 //
-void cyPhysics::EnableT(hsBool state)
+void cyPhysics::EnableT(bool state)
 {
     // must have a receiver!
     if ( fRecvr.Count() > 0 )
@@ -127,15 +121,6 @@ void cyPhysics::EnableT(hsBool state)
         pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
-}
-void cyPhysics::Enable()
-{
-    EnableT(true);
-}
-
-void cyPhysics::Disable()
-{
-    EnableT(false);
 }
 
 /////////////////////////////////////////////////////////////////////////////

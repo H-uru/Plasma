@@ -58,7 +58,7 @@ class pfConsoleContext
 {
     protected:
 
-        hsBool  fAddWhenNotFound;       // Controls whether we add variables on Set() calls if they're not found
+        bool    fAddWhenNotFound;       // Controls whether we add variables on Set() calls if they're not found
 
         char    *fName;
 
@@ -90,18 +90,18 @@ class pfConsoleContext
         void    AddVar( const char *name, char value );
         void    AddVar( const char *name, bool value );
 
-        hsBool  SetVar( uint32_t idx, const pfConsoleCmdParam &value );
+        bool    SetVar( uint32_t idx, const pfConsoleCmdParam &value );
 
-        hsBool  SetVar( const char *name, const pfConsoleCmdParam &value );
-        hsBool  SetVar( const char *name, int value );
-        hsBool  SetVar( const char *name, float value );
-        hsBool  SetVar( const char *name, const char *value );
-        hsBool  SetVar( const char *name, char value );
-        hsBool  SetVar( const char *name, bool value );
+        bool    SetVar( const char *name, const pfConsoleCmdParam &value );
+        bool    SetVar( const char *name, int value );
+        bool    SetVar( const char *name, float value );
+        bool    SetVar( const char *name, const char *value );
+        bool    SetVar( const char *name, char value );
+        bool    SetVar( const char *name, bool value );
 
         // Decide whether Sets() on nonexistant variables will fail or add a new variable
-        void    SetAddWhenNotFound( hsBool f ) { fAddWhenNotFound = f; }
-        hsBool  GetAddWhenNotFound( void ) const { return fAddWhenNotFound; }
+        void    SetAddWhenNotFound( bool f ) { fAddWhenNotFound = f; }
+        bool    GetAddWhenNotFound( void ) const { return fAddWhenNotFound; }
 
         static pfConsoleContext &GetRootContext( void );
 };

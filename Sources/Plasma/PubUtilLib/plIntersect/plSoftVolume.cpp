@@ -109,7 +109,7 @@ void plSoftVolume::UpdateListenerPosition(const hsPoint3& pos)
     fListenState |= kListenDirty | kListenPosSet;
 }
 
-void plSoftVolume::SetCheckListener(hsBool on)
+void plSoftVolume::SetCheckListener(bool on)
 {
     if( on )
     {
@@ -123,7 +123,7 @@ void plSoftVolume::SetCheckListener(hsBool on)
     }
 }
 
-hsBool plSoftVolume::MsgReceive(plMessage* msg)
+bool plSoftVolume::MsgReceive(plMessage* msg)
 {
     plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);
     if( list )

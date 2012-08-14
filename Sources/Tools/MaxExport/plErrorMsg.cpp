@@ -66,37 +66,37 @@ plErrorMsg::plErrorMsg(const char* label, const char* msg)
     Set(label, msg);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus) 
+plErrorMsg::plErrorMsg(bool bogus) 
 { 
     Set(bogus);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* msg) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* msg) 
 { 
     Set(bogus, label, msg);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* format, const char* str) 
 { 
     Set(bogus, label, format, str);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* format, const char* str1, const char* str2) 
 { 
     Set(bogus, label, format, str1, str2);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* format, int n) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* format, int n) 
 { 
     Set(bogus, label, format, n);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* format, int n, int m) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* format, int n, int m) 
 { 
     Set(bogus, label, format, n, m);
 }
 
-plErrorMsg::plErrorMsg(hsBool bogus, const char* label, const char* format, float f) 
+plErrorMsg::plErrorMsg(bool bogus, const char* label, const char* format, float f) 
 { 
     Set(bogus, label, format, f);
 }
@@ -120,7 +120,7 @@ plErrorMsg &plErrorMsg::Set(const char* label, const char* msg)
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus) 
+plErrorMsg &plErrorMsg::Set(bool bogus) 
 { 
     fBogus = bogus;
     fLabel[0] = 0; 
@@ -129,7 +129,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus)
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* msg) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* msg) 
 { 
     if( fBogus = bogus )
     {
@@ -149,7 +149,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* msg)
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format, const char* str) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* format, const char* str) 
 { 
     if( fBogus = bogus )
     {
@@ -164,7 +164,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format,
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format, const char* str1, const char* str2) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* format, const char* str1, const char* str2) 
 { 
     if( fBogus = bogus )
     {
@@ -179,7 +179,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format,
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format, int n) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* format, int n) 
 { 
     if( fBogus = bogus )
     {
@@ -194,7 +194,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format,
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format, int n, int m) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* format, int n, int m) 
 { 
     if( fBogus = bogus )
     {
@@ -209,7 +209,7 @@ plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format,
     return *this;
 }
 
-plErrorMsg &plErrorMsg::Set(hsBool bogus, const char* label, const char* format, float f) 
+plErrorMsg &plErrorMsg::Set(bool bogus, const char* label, const char* format, float f) 
 { 
     if( fBogus = bogus )
     {

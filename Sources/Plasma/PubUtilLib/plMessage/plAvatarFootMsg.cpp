@@ -51,7 +51,7 @@ plAvatarFootMsg::plAvatarFootMsg()
 {
 }
 
-plAvatarFootMsg::plAvatarFootMsg(const plKey& s, plArmatureMod *armature, plAvBrain *brain, hsBool isLocal, hsBool isLeft)
+plAvatarFootMsg::plAvatarFootMsg(const plKey& s, plArmatureMod *armature, plAvBrain *brain, bool isLocal, bool isLeft)
 :   plArmatureUpdateMsg(s, isLocal, true, armature, brain),
     fIsLeft(isLeft)
 {

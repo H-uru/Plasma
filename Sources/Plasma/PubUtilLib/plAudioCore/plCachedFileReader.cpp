@@ -131,7 +131,7 @@ float plCachedFileReader::GetLengthInSecs()
     return (float)fDataLength / (float)fHeader.fAvgBytesPerSec;
 }
 
-hsBool plCachedFileReader::SetPosition(uint32_t numBytes)
+bool plCachedFileReader::SetPosition(uint32_t numBytes)
 {
     hsAssert(IsValid(), "SetPosition() called on an invalid cache file");
 
@@ -142,7 +142,7 @@ hsBool plCachedFileReader::SetPosition(uint32_t numBytes)
     return !fseek(fFileHandle, sizeof(plWAVHeader) + fCurPosition, SEEK_SET);
 }
 
-hsBool plCachedFileReader::Read(uint32_t numBytes, void *buffer)
+bool plCachedFileReader::Read(uint32_t numBytes, void *buffer)
 {
     hsAssert(IsValid(), "Read() called on an invalid cache file");
 
@@ -162,7 +162,7 @@ uint32_t plCachedFileReader::NumBytesLeft()
     return fDataLength - fCurPosition;
 }
 
-hsBool plCachedFileReader::OpenForWriting(const char *path, plWAVHeader &header)
+bool plCachedFileReader::OpenForWriting(const char *path, plWAVHeader &header)
 {
     hsAssert(path != nil, "Invalid path specified in plCachedFileReader");
 

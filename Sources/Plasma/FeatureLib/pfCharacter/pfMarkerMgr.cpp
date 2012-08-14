@@ -280,7 +280,7 @@ bool pfMarkerMgr::AreLocalMarkersShowing()
     return fShowingLocalMarkers;
 }
 
-hsBool pfMarkerMgr::MsgReceive(plMessage* msg)
+bool pfMarkerMgr::MsgReceive(plMessage* msg)
 {
     plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
     if (evalMsg)

@@ -70,10 +70,10 @@ class plClientMsg : public plMessage
         int fWidth;
         int fHeight;
         int fColorDepth;
-        hsBool fWindowed;
+        bool fWindowed;
         int fNumAASamples;
         int fMaxAnisoSamples;
-        hsBool fVSync;
+        bool fVSync;
     };
 
 

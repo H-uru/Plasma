@@ -87,11 +87,11 @@ public:
         kSmoothColor
     };
 protected:
-    hsBool              fDoneThis;
-    hsBool              IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    hsBool              IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    hsBool              IReShade(plErrorMsg* pErrMsg);
-    hsBool              ISmoothAll(plErrorMsg* pErrMsg);
+    bool                fDoneThis;
+    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IReShade(plErrorMsg* pErrMsg);
+    bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothComponent();
     void DeleteThis() { delete this; }
@@ -99,9 +99,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -140,14 +140,14 @@ plSmoothComponent::plSmoothComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSmoothComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSmoothComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     ISmoothAll(pErrMsg);
 
     return true;
 }
 
-hsBool plSmoothComponent::ISmoothAll(plErrorMsg* pErrMsg)
+bool plSmoothComponent::ISmoothAll(plErrorMsg* pErrMsg)
 {
     if( !fDoneThis )
     {
@@ -162,7 +162,7 @@ hsBool plSmoothComponent::ISmoothAll(plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
 {
     spans.SetCount(0);
 
@@ -202,7 +202,7 @@ hsBool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
     return true;
 }
 
-hsBool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
 {
 //  if( spans.GetCount() > 1 )
     {
@@ -219,7 +219,7 @@ hsBool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
     return true;
 }
 
-hsBool plSmoothComponent::IReShade(plErrorMsg* pErrMsg)
+bool plSmoothComponent::IReShade(plErrorMsg* pErrMsg)
 {
     uint32_t count = NumTargets();
     uint32_t i;
@@ -252,11 +252,11 @@ public:
         kSmoothPos
     };
 protected:
-    hsBool              fDoneThis;
-    hsBool              IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    hsBool              IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    hsBool              IReShade(plErrorMsg* pErrMsg);
-    hsBool              ISmoothAll(plErrorMsg* pErrMsg);
+    bool                fDoneThis;
+    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IReShade(plErrorMsg* pErrMsg);
+    bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothAvComponent();
     void DeleteThis() { delete this; }
@@ -264,9 +264,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -307,14 +307,14 @@ plSmoothAvComponent::plSmoothAvComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSmoothAvComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSmoothAvComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     ISmoothAll(pErrMsg);
 
     return true;
 }
 
-hsBool plSmoothAvComponent::ISmoothAll(plErrorMsg* pErrMsg)
+bool plSmoothAvComponent::ISmoothAll(plErrorMsg* pErrMsg)
 {
     if( !fDoneThis )
     {
@@ -329,7 +329,7 @@ hsBool plSmoothAvComponent::ISmoothAll(plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
 {
     spans.SetCount(0);
 
@@ -356,7 +356,7 @@ hsBool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySp
     return true;
 }
 
-hsBool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
 {
     if( spans.GetCount() > 1 )
     {
@@ -372,7 +372,7 @@ hsBool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySp
     return true;
 }
 
-hsBool plSmoothAvComponent::IReShade(plErrorMsg* pErrMsg)
+bool plSmoothAvComponent::IReShade(plErrorMsg* pErrMsg)
 {
     uint32_t count = NumTargets();
     uint32_t i;
@@ -417,8 +417,8 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -458,7 +458,7 @@ plSmoothBaseComponent::plSmoothBaseComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSmoothBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSmoothBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     node->SetDrawable(false);
     if (!node->GetSwappableGeom())
@@ -469,7 +469,7 @@ hsBool plSmoothBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
     return true;
 }
     
-hsBool plSmoothBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSmoothBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     GetSpans(pErrMsg);
     return true;
@@ -565,14 +565,14 @@ public:
         kSmoothPos
     };
 protected:
-    hsBool              fDoneThis;
+    bool                fDoneThis;
 
     hsTArray<plAvMeshSmooth::XfmSpan>& IGetSrcSpans(plErrorMsg* pErrMsg);
 
-    hsBool              IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans);
-    hsBool              IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans);
-    hsBool              IReShade(plErrorMsg* pErrMsg);
-    hsBool              ISmoothAll(plErrorMsg* pErrMsg);
+    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans);
+    bool                IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans);
+    bool                IReShade(plErrorMsg* pErrMsg);
+    bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothSnapComponent();
     void DeleteThis() { delete this; }
@@ -580,9 +580,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
+    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 
@@ -675,14 +675,14 @@ plSmoothSnapComponent::plSmoothSnapComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plSmoothSnapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plSmoothSnapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     ISmoothAll(pErrMsg);
 
     return true;
 }
 
-hsBool plSmoothSnapComponent::ISmoothAll(plErrorMsg* pErrMsg)
+bool plSmoothSnapComponent::ISmoothAll(plErrorMsg* pErrMsg)
 {
     if( !fDoneThis )
     {
@@ -715,7 +715,7 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothSnapComponent::IGetSrcSpans(plErrorMs
     return baseComp->GetSpans(pErrMsg);
 }
 
-hsBool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans)
+bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans)
 {
     hsTArray<plGeometrySpan*> geoSpans;
     spans.SetCount(0);
@@ -774,7 +774,7 @@ hsBool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMes
     return spans.GetCount();
 }
 
-hsBool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans)
+bool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans)
 {
     if( srcSpans.GetCount() && dstSpans.GetCount() )
     {
@@ -790,7 +790,7 @@ hsBool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSm
     return true;
 }
 
-hsBool plSmoothSnapComponent::IReShade(plErrorMsg* pErrMsg)
+bool plSmoothSnapComponent::IReShade(plErrorMsg* pErrMsg)
 {
     uint32_t count = NumTargets();
     uint32_t i;

@@ -208,7 +208,7 @@ void plLayerAnimationBase::IEvalConvertedTime(float secs, uint32_t passChans, ui
     fPassThruChannels = 0; // already handled, don't need to keep passing them through.
 }
 
-hsBool plLayerAnimationBase::MsgReceive(plMessage* msg)
+bool plLayerAnimationBase::MsgReceive(plMessage* msg)
 {
     return plLayerInterface::MsgReceive(msg);
 }
@@ -367,7 +367,7 @@ uint32_t plLayerAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
     return dirty;
 }
 
-hsBool plLayerAnimation::MsgReceive(plMessage* msg)
+bool plLayerAnimation::MsgReceive(plMessage* msg)
 {
     // pass sdl msg to sdlMod
     plSDLModifierMsg* sdlMsg = plSDLModifierMsg::ConvertNoRef(msg);
@@ -377,7 +377,7 @@ hsBool plLayerAnimation::MsgReceive(plMessage* msg)
             return true;    // msg handled
     }
 
-    hsBool retVal = false;
+    bool retVal = false;
     plAnimCmdMsg* cmdMsg = plAnimCmdMsg::ConvertNoRef(msg);
     if( cmdMsg )
     {
@@ -538,7 +538,7 @@ uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignor
     return dirty;
 }
 
-void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, hsBool val)
+void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, bool val)
 {
     if (val)
         fFadeFlags |= flag;
@@ -554,7 +554,7 @@ void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, hsBool val)
     fFadeFlagsDirty = true;
 }
 
-hsBool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
+bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectPrepBCMsg *bcpMsg = plLinkEffectPrepBCMsg::ConvertNoRef(pMsg);
     if (bcpMsg != nil)
@@ -722,7 +722,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
     return dirty;
 }
 
-hsBool plLayerSDLAnimation::MsgReceive(plMessage* msg)
+bool plLayerSDLAnimation::MsgReceive(plMessage* msg)
 {
     plSDLNotificationMsg* nMsg = plSDLNotificationMsg::ConvertNoRef(msg);
     if (nMsg)

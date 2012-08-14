@@ -138,7 +138,7 @@ class plLayerTargetContainer : public hsKeyedObject
     public:
         hsTArray<plLayerInterface *>    fLayers;
 
-        virtual hsBool MsgReceive( plMessage *msg )
+        virtual bool MsgReceive( plMessage *msg )
         {
             plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
             if( ref != nil )
@@ -380,7 +380,7 @@ void plPlasmaMAXLayer::RefreshBitmaps()
 //  Returns the filename of the ith bitmap. Makes sure we have the latest
 //  version from assetMan as well, if applicable.
 
-hsBool  plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, int index /* = 0 */ )
+bool    plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, int index /* = 0 */ )
 {
 #ifdef MAXASS_AVAILABLE
     jvUniqueId targetAssetId;

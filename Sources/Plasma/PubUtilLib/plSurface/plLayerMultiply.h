@@ -58,7 +58,7 @@ public:
 
     virtual plLayerInterface*   Attach(plLayerInterface* prev);
     virtual uint32_t              Eval(double secs, uint32_t frame, uint32_t ignore);
-    virtual hsBool              MsgReceive(plMessage* msg);
+    virtual bool                MsgReceive(plMessage* msg);
     virtual void                Read(hsStream* s, hsResMgr* mgr);
     virtual void                Write(hsStream* s, hsResMgr* mgr);
 

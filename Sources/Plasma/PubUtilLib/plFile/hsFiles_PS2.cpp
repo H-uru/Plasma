@@ -67,7 +67,7 @@ void hsFolderIterator::Reset()
 {
 }
 
-hsBool hsFolderIterator::NextFile()
+bool hsFolderIterator::NextFile()
 {
 }
 
@@ -75,7 +75,7 @@ const char* hsFolderIterator::GetFileName() const
 {
 }
 
-hsBool  hsFolderIterator::IsDirectory( void ) const
+bool    hsFolderIterator::IsDirectory( void ) const
 {
     hsAssert( false, "hsFolderIterator::IsDirectory() not defined on this platform!!!" );
     return false;

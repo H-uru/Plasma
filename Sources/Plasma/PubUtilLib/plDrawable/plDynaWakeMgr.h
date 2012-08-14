@@ -59,7 +59,7 @@ protected:
 
     virtual hsVector3   IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const;
 
-    virtual hsBool      IRippleFromShape(const plPrintShape* shape, hsBool force=false);
+    virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
 
     virtual int         INewDecal();
 public:

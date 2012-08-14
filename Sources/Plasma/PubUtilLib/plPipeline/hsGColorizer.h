@@ -55,11 +55,11 @@ protected:
 
 public:
     hsGColorizer() : fPipeline(nil) {}
-    hsBool Colorizing();
-    hsBool Alpharizing();
+    bool Colorizing();
+    bool Alpharizing();
     hsColorRGBA GetCurrentColor();
     void Init(plPipeline* pipe);
-    void PushColorize(hsColorRGBA& col, hsBool alphaOnly);
+    void PushColorize(hsColorRGBA& col, bool alphaOnly);
     void PopColorize();
 };
 

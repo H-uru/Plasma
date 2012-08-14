@@ -73,7 +73,7 @@ class pfConsoleDirSrc
             FileName(const std::wstring& p, const std::wstring& f) : fPath(p), fFile(f) {}
         };
         std::vector<FileName*> fProcessedFiles;     // list of init files we've already executed
-        hsBool fCheckProcessedFiles;        // set to check and skip files init files we've already executed
+        bool fCheckProcessedFiles;        // set to check and skip files init files we've already executed
     public:
         pfConsoleDirSrc(pfConsoleEngine *engine) : fCheckProcessedFiles(false) { fEngine = engine; }
         pfConsoleDirSrc(pfConsoleEngine *engine, const std::string& path, const std::string& mask = "*.ini") :
@@ -92,13 +92,13 @@ class pfConsoleDirSrc
         ~pfConsoleDirSrc() { ResetProcessedFiles(); }
 
         // Steps through the given directory and executes all files with the console engine
-        hsBool  ParseDirectory(const std::string& path, const std::string& mask = "*.*");
-        hsBool  ParseDirectory(const std::wstring& path, const std::wstring& mask = L"*.*");
+        bool    ParseDirectory(const std::string& path, const std::string& mask = "*.*");
+        bool    ParseDirectory(const std::wstring& path, const std::wstring& mask = L"*.*");
 
         void ResetProcessedFiles();
-        hsBool AlreadyProcessedFile(const std::wstring& path, const std::wstring& file);
+        bool AlreadyProcessedFile(const std::wstring& path, const std::wstring& file);
         void AddProcessedFile(const std::wstring& path, const std::wstring& file);
-        void SetCheckProcessedFiles(hsBool c) { fCheckProcessedFiles=c; }       
+        void SetCheckProcessedFiles(bool c) { fCheckProcessedFiles=c; }       
 };
 
 

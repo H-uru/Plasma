@@ -144,7 +144,7 @@ void cyCamera::Pop(pyKey& oldCamKey)
 //
 //  PURPOSE    : Send controlKey commands to the virtual camera (should be like a pass thru)
 //
-void cyCamera::ControlKey(int32_t controlKey, hsBool activated)
+void cyCamera::ControlKey(int32_t controlKey, bool activated)
 {
     // make sure that we have a virtual camera to send this to
     if ( fTheCam )
@@ -174,7 +174,7 @@ void cyCamera::ControlKey(int32_t controlKey, hsBool activated)
 //
 //  PURPOSE    : Transition to a new camera (position and settings)
 //
-void cyCamera::TransitionTo(pyKey& newCamKey, double time, hsBool save)
+void cyCamera::TransitionTo(pyKey& newCamKey, double time, bool save)
 {
     // create message
     plCameraMsg* pMsg = new plCameraMsg;
@@ -198,7 +198,7 @@ void cyCamera::TransitionTo(pyKey& newCamKey, double time, hsBool save)
     }
 }
 
-void cyCamera::SetEnableFirstPersonOverride(hsBool state)
+void cyCamera::SetEnableFirstPersonOverride(bool state) const
 {
     // must have a receiver!
     if ( fTheCam )
@@ -275,7 +275,7 @@ void cyCamera::SetFOV(float fov, double t)
 }
 
 
-void cyCamera::SetSmootherCam(hsBool state)
+void cyCamera::SetSmootherCam(bool state)
 {
     if ( fTheCam )
     {
@@ -298,7 +298,7 @@ void cyCamera::SetSmootherCam(hsBool state)
     }
 }
 
-hsBool cyCamera::IsSmootherCam()
+bool cyCamera::IsSmootherCam()
 {
     if ( fTheCam )
     {
@@ -315,7 +315,7 @@ hsBool cyCamera::IsSmootherCam()
     return false;
 }
 
-void cyCamera::SetWalkAndVerticalPan(hsBool state)
+void cyCamera::SetWalkAndVerticalPan(bool state)
 {
     if ( fTheCam )
     {
@@ -332,7 +332,7 @@ void cyCamera::SetWalkAndVerticalPan(hsBool state)
 }
 
 
-hsBool cyCamera::IsWalkAndVerticalPan()
+bool cyCamera::IsWalkAndVerticalPan()
 {
     if ( fTheCam )
     {
@@ -346,7 +346,7 @@ hsBool cyCamera::IsWalkAndVerticalPan()
 }
 
 
-void cyCamera::SetStayInFirstPerson(hsBool state)
+void cyCamera::SetStayInFirstPerson(bool state)
 {
     if ( fTheCam )
     {
@@ -361,7 +361,7 @@ void cyCamera::SetStayInFirstPerson(hsBool state)
     }
 }
 
-hsBool cyCamera::IsStayInFirstPerson()
+bool cyCamera::IsStayInFirstPerson()
 {
     if ( fTheCam )
     {
@@ -372,19 +372,4 @@ hsBool cyCamera::IsStayInFirstPerson()
         }
     }
     return false;
-}
-
-void cyCamera::SetAspectRatio(float aspectratio)
-{
-    plVirtualCam1::SetAspectRatio(aspectratio);
-}
-
-float cyCamera::GetAspectRatio()
-{
-    return plVirtualCam1::GetAspectRatio();
-}
-
-void cyCamera::RefreshFOV()
-{
-    plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh());
 }

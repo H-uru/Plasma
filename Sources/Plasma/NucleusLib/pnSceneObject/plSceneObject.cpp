@@ -371,9 +371,9 @@ void plSceneObject::IRemoveInterface(int16_t idx, plObjInterface* who)
         IRemoveGeneric(who);
 }
 
-hsBool plSceneObject::IPropagateToModifiers(plMessage* msg)
+bool plSceneObject::IPropagateToModifiers(plMessage* msg)
 {
-    hsBool retVal = false;
+    bool retVal = false;
     int i;
     int nMods = fModifiers.GetCount();
 
@@ -382,17 +382,16 @@ hsBool plSceneObject::IPropagateToModifiers(plMessage* msg)
         if( fModifiers[i] )
         {
             plModifier *mod = fModifiers[i];
-            hsBool modRet = mod->MsgReceive(msg);
-            retVal |= modRet;
+            retVal |= mod->MsgReceive(msg);
         }
     }
     return retVal;
 }
 
-hsBool plSceneObject::Eval(double secs, float delSecs)
+bool plSceneObject::Eval(double secs, float delSecs)
 {
     uint32_t dirty = ~0L;
-    hsBool retVal = false;
+    bool retVal = false;
     int i;
     for( i = 0; i < fModifiers.GetCount(); i++ )
     {
@@ -462,7 +461,7 @@ const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
     return nil;
 }
 
-hsBool plSceneObject::MsgReceive(plMessage* msg)
+bool plSceneObject::MsgReceive(plMessage* msg)
 {
 
 #if 0   // objects are only in the nil room when they are being paged out
@@ -474,7 +473,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
         return false;
 #endif
 
-    hsBool retVal = false;
+    bool retVal = false;
     // If it's a bcast, let our own dispatcher find who's interested.
     plTransformMsg* trans;
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
@@ -543,10 +542,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
         {
             plSceneObject* child = (plSceneObject*)ci->GetChild(i)->GetOwner();
             if (child)
-            {
-                hsBool modRet = child->MsgReceive(msg);
-                retVal |= modRet;
-            }
+                retVal |= child->MsgReceive(msg);
         }
     }
     
@@ -555,7 +551,7 @@ hsBool plSceneObject::MsgReceive(plMessage* msg)
     return plSynchedObject::MsgReceive(msg);
 }
 
-hsBool plSceneObject::IMsgHandle(plMessage* msg)
+bool plSceneObject::IMsgHandle(plMessage* msg)
 {
     // To start with, plSceneObject only handles messages to add or remove
     // references. Current references are other plSceneObjects and plModifiers
@@ -841,7 +837,7 @@ void plSceneObject::ISetCoordinateInterface(plCoordinateInterface* ci)
 //
 // "is ready to process Loads"?  Check base class and modifiers.
 //
-hsBool  plSceneObject::IsFinal()
+bool  plSceneObject::IsFinal()
 {
     if (!plSynchedObject::IsFinal())
         return false;

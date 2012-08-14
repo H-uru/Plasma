@@ -93,14 +93,14 @@ protected:
     hsBitVector             fVisForce;
 
     uint32_t                  fUserData;
-    hsBool                  fIgnoreOccluders;
+    bool                    fIgnoreOccluders;
 
 public:
     plRenderRequest();
     ~plRenderRequest();
 
-    hsBool          GetRenderSelect() const { return !fVisForce.Empty(); }
-    hsBool          GetRenderCharacters() const;
+    bool            GetRenderSelect() const { return !fVisForce.Empty(); }
+    bool            GetRenderCharacters() const;
 
     void            SetRenderState(uint32_t st) { fRenderState = st; }
     uint32_t          GetRenderState() const { return fRenderState; }
@@ -168,8 +168,8 @@ public:
 
     void SetCameraTransform(const hsMatrix44& w2c, const hsMatrix44& c2w) { fViewTransform.SetCameraTransform(w2c, c2w); }
 
-    void SetPerspective(hsBool on=true) { fViewTransform.SetPerspective(on); }
-    void SetOrthogonal(hsBool on=true) { fViewTransform.SetOrthogonal(on); }
+    void SetPerspective(bool on=true) { fViewTransform.SetPerspective(on); }
+    void SetOrthogonal(bool on=true) { fViewTransform.SetOrthogonal(on); }
 
     void SetHither(float f) { fViewTransform.SetHither(f); }
     void SetYon(float f) { fViewTransform.SetYon(f); }
@@ -197,8 +197,8 @@ public:
     void SetUserData(uint32_t n) { fUserData = n; }
     uint32_t GetUserData() const { return fUserData; }
     
-    void SetIgnoreOccluders(hsBool b) { fIgnoreOccluders = b; }
-    hsBool GetIgnoreOccluders() { return fIgnoreOccluders; }
+    void SetIgnoreOccluders(bool b) { fIgnoreOccluders = b; }
+    bool GetIgnoreOccluders() { return fIgnoreOccluders; }
 
     // This function is called after the render request is processed by the client
     virtual void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr);

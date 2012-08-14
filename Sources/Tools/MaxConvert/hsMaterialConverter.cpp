@@ -195,7 +195,7 @@ hsMaterialConverter::~hsMaterialConverter()
     hsGuardEnd;
 }
 
-void hsMaterialConverter::Init(hsBool save, plErrorMsg *msg)
+void hsMaterialConverter::Init(bool save, plErrorMsg *msg)
 {
     hsGuardBegin("hsMaterialConverter::Init");
 
@@ -237,14 +237,14 @@ void hsMaterialConverter::FreeMaterialCache(const char* path)
     fDoneMaterials.Reset();
 }
 
-hsBool hsMaterialConverter::ForceNoUvsFlatten(plMaxNode* node)
+bool hsMaterialConverter::ForceNoUvsFlatten(plMaxNode* node)
 {
     hsGuardBegin("hsMaterialConverter::ForceNoUvsFlatten");
     return IsMultiMat(GetBaseMtl(node));
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::PreserveUVOffset(Mtl* mtl)
+bool hsMaterialConverter::PreserveUVOffset(Mtl* mtl)
 {
     hsGuardBegin("hsMaterialConverter::PreserveUVOffset");
 
@@ -289,7 +289,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
     const int numKeys = 2;
     float times[] = {0.f, 1.5f};
     float values[numKeys] = {100.f, 0.f};
-    hsBool leaving[] = {true, false};
+    bool leaving[] = {true, false};
     char *animName = "_link_anim";
 
     int k;
@@ -327,7 +327,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
 uint32_t hsMaterialConverter::ColorChannelsUseMask(plMaxNode* node, int iSubMtl)
 {
     uint32_t usedChan = 0;
-    hsBool deleteIt = false;
+    bool deleteIt = false;
 
     TriObject* triObj = node->GetTriObject(deleteIt);
     if( triObj )
@@ -570,7 +570,7 @@ uint32_t hsMaterialConverter::VertexChannelsRequestMask(plMaxNode* node, int iSu
 //
 // What kind of material am I??
 //
-hsBool hsMaterialConverter::IsMultiMat(Mtl *m) 
+bool hsMaterialConverter::IsMultiMat(Mtl *m) 
 {
     hsGuardBegin("hsMaterialConverter::IsMultiMat");
 
@@ -583,7 +583,7 @@ hsBool hsMaterialConverter::IsMultiMat(Mtl *m)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsHsMaxMat(Mtl *m)
+bool hsMaterialConverter::IsHsMaxMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsHsMaxMat");
 
@@ -596,7 +596,7 @@ hsBool hsMaterialConverter::IsHsMaxMat(Mtl *m)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsMultipassMat(Mtl *m)
+bool hsMaterialConverter::IsMultipassMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsHsMaxMat");
 
@@ -609,7 +609,7 @@ hsBool hsMaterialConverter::IsMultipassMat(Mtl *m)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsDecalMat(Mtl *m)
+bool hsMaterialConverter::IsDecalMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsDecalMat");
 
@@ -622,7 +622,7 @@ hsBool hsMaterialConverter::IsDecalMat(Mtl *m)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsCompositeMat(Mtl *m)
+bool hsMaterialConverter::IsCompositeMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsCompositeMat");
 
@@ -635,7 +635,7 @@ hsBool hsMaterialConverter::IsCompositeMat(Mtl *m)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsParticleMat(Mtl *m)
+bool hsMaterialConverter::IsParticleMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsParticleMat");
 
@@ -648,7 +648,7 @@ hsBool hsMaterialConverter::IsParticleMat(Mtl *m)
     hsGuardEnd;
 }
 
-hsBool hsMaterialConverter::IsClothingMat(Mtl *m)
+bool hsMaterialConverter::IsClothingMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsClothingMat");
 
@@ -661,7 +661,7 @@ hsBool hsMaterialConverter::IsClothingMat(Mtl *m)
     hsGuardEnd;
 }
 
-hsBool hsMaterialConverter::IsTwoSided(Mtl* m, int iSubMtl)
+bool hsMaterialConverter::IsTwoSided(Mtl* m, int iSubMtl)
 {
     if( !m )
         return false;
@@ -669,28 +669,28 @@ hsBool hsMaterialConverter::IsTwoSided(Mtl* m, int iSubMtl)
     return 0 != (m->Requirements(iSubMtl) & MTLREQ_2SIDE);
 }
 
-hsBool hsMaterialConverter::HasAnimatedTextures(Texmap* texMap)
+bool hsMaterialConverter::HasAnimatedTextures(Texmap* texMap)
 {
     hsGuardBegin("hsMaterialConverter::HasAnimatedTextures");
     return false;
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsAVILayer(Texmap*  texMap)
+bool hsMaterialConverter::IsAVILayer(Texmap*  texMap)
 {
     hsGuardBegin("hsMaterialConverter::IsAVILayer");
     return false;
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsQTLayer(Texmap*  texMap)
+bool hsMaterialConverter::IsQTLayer(Texmap*  texMap)
 {
     hsGuardBegin("hsMaterialConverter::IsQTLayer");
     return false;
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsBinkLayer(Texmap*  texMap)
+bool hsMaterialConverter::IsBinkLayer(Texmap*  texMap)
 {
     hsGuardBegin("hsMaterialConverter::IsBinkLayer");
     return false;
@@ -754,9 +754,9 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
     const char* dbgNodeName = node->GetName();
 
     int numUVChannels = node->NumUVWChannels();
-    hsBool makeAlphaLayer = node->AlphaHackLayersNeeded(multiIndex) > 0;
+    bool makeAlphaLayer = node->AlphaHackLayersNeeded(multiIndex) > 0;
 
-    hsBool enviro = fConverterUtils.IsEnvironHolder(node);
+    bool enviro = fConverterUtils.IsEnvironHolder(node);
     
     plString name;
     if (maxMaterial)
@@ -765,7 +765,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         name = _TEMP_CONVERT_FROM_LITERAL("nil");
     
     /// Get the material
-    hsBool isMultiMat = IsMultiMat( maxMaterial );
+    bool isMultiMat = IsMultiMat( maxMaterial );
     if (isMultiMat)
     {
         if (fErrorMsg->Set(!(fWarned & kWarnedSubMulti), node->GetName(), "Multi-material in CreateMaterialArray (Multi child of multi?) on mat %s. Using the first sub-material instead.", 
@@ -774,8 +774,8 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         maxMaterial = maxMaterial->GetSubMtl(0);
     }
         
-    hsBool isMultipassMat = IsMultipassMat( maxMaterial );
-    hsBool isComposite = IsCompositeMat( maxMaterial );
+    bool isMultipassMat = IsMultipassMat( maxMaterial );
+    bool isComposite = IsCompositeMat( maxMaterial );
     
     int i;
     int numMaterials = 1;
@@ -1021,7 +1021,7 @@ hsGMaterial* hsMaterialConverter::AlphaHackVersion(plMaxNode* node, Mtl* mtl, in
 // (Though meshConverter should be calling CreateMaterialArray instead)
 //
 hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int subIndex,
-                                                  int numUVChannels, hsBool makeAlphaLayer)
+                                                  int numUVChannels, bool makeAlphaLayer)
 {
     hsGuardBegin("hsMaterialConverter::ICreateMaterial");
 
@@ -1035,16 +1035,16 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
     }
     else
     {
-        hsBool forceCopy = hsControlConverter::Instance().OwnsMaterialCopy(node);
+        bool forceCopy = hsControlConverter::Instance().OwnsMaterialCopy(node);
         if( !forceCopy )
             forceCopy = node->GetForceMaterialCopy();
         if( !forceCopy )
             forceCopy = IMustBeUniqueMaterial( mtl );
 
-        hsBool runtimeLit = node->GetRunTimeLight();
+        bool runtimeLit = node->GetRunTimeLight();
 
         Mtl *bMtl = GetBaseMtl(node);
-        hsBool isMultiMat = IsMultiMat(bMtl);// || IsPortalMat(bMtl);
+        bool isMultiMat = IsMultiMat(bMtl);// || IsPortalMat(bMtl);
         
         hsGMaterial *mat;
         if (mtl)
@@ -1205,9 +1205,9 @@ hsGMaterial *hsMaterialConverter::IProcessMaterial(Mtl *mtl, plMaxNode *node, co
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IsMatchingDoneMaterial(DoneMaterialData *dmd, 
-                                                   Mtl *mtl, hsBool isMultiMat, uint32_t subMtlFlags, hsBool forceCopy, hsBool runtimeLit,
-                                                   plMaxNode *node, int numUVChannels, hsBool makeAlphaLayer)
+bool hsMaterialConverter::IsMatchingDoneMaterial(DoneMaterialData *dmd, 
+                                                   Mtl *mtl, bool isMultiMat, uint32_t subMtlFlags, bool forceCopy, bool runtimeLit,
+                                                   plMaxNode *node, int numUVChannels, bool makeAlphaLayer)
 {
     if (!((dmd->fMaxMaterial == mtl) && 
           (dmd->fSubMultiMat == isMultiMat) &&
@@ -1276,9 +1276,9 @@ hsBool hsMaterialConverter::IsMatchingDoneMaterial(DoneMaterialData *dmd,
 }
         
 
-hsGMaterial* hsMaterialConverter::IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, hsBool isMultiMat, 
-                                              hsBool forceCopy, hsBool runtimeLit, uint32_t subMtlFlags, int numUVChannels, 
-                                              hsBool makeAlphaLayer)
+hsGMaterial* hsMaterialConverter::IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, bool isMultiMat, 
+                                              bool forceCopy, bool runtimeLit, uint32_t subMtlFlags, int numUVChannels, 
+                                              bool makeAlphaLayer)
 {
     if( failedRT )
         dupCuzRT++;
@@ -1351,7 +1351,7 @@ hsGMaterial *hsMaterialConverter::IAddDefaultMaterial(plMaxNode *node)
     return hMat;
 }
 
-plMipmap *hsMaterialConverter::IGetUVTransTexture(plMaxNode *node, hsBool useU /* = true */)
+plMipmap *hsMaterialConverter::IGetUVTransTexture(plMaxNode *node, bool useU /* = true */)
 {
     plString texName = (useU ? _TEMP_CONVERT_FROM_LITERAL("ALPHA_BLEND_FILTER_U2ALPHA_TRANS_64x4")
                              : _TEMP_CONVERT_FROM_LITERAL("ALPHA_BLEND_FILTER_V2ALPHA_TRANS_4x64") );
@@ -1431,7 +1431,7 @@ void hsMaterialConverter::IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial
 }
 
 void hsMaterialConverter::IInsertAlphaBlendingLayers(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, int UVChan,
-                                                    hsBool makeAlphaLayer)
+                                                    bool makeAlphaLayer)
 {
     if ((mat->GetLayer( 0 )->GetState().fBlendFlags & hsGMatState::kBlendAlpha) == 0 || UVChan < 0 || !makeAlphaLayer)
         return; // Not blending... false alarm... my bad... enjoy the buffet!
@@ -1457,7 +1457,7 @@ void hsMaterialConverter::IInsertAlphaBlendingLayers(Mtl *mtl, plMaxNode *node, 
 }
 
 void hsMaterialConverter::IInsertMultipassBlendingLayers(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, int UVChan,
-                                                        hsBool makeAlphaLayer)
+                                                        bool makeAlphaLayer)
 {
     if (UVChan < 0 || !makeAlphaLayer)
         return; // Not blending, no layers to insert.
@@ -1499,7 +1499,7 @@ void hsMaterialConverter::IInsertMultipassBlendingLayers(Mtl *mtl, plMaxNode *no
 }
 
 void hsMaterialConverter::IInsertCompBlendingLayers(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, int subMtlFlags,
-                                                   int UVChan, hsBool makeAlphaLayer)
+                                                   int UVChan, bool makeAlphaLayer)
 {
     if (mat == nil)
         return;
@@ -1517,8 +1517,8 @@ void hsMaterialConverter::IInsertCompBlendingLayers(Mtl *mtl, plMaxNode *node, h
     IParamBlock2 *pb = mtl->GetParamBlockByID(plCompositeMtl::kBlkPasses);
     int currLayerNum = 0;
     int bitmask;
-    hsBool firstUsedLayer = true;
-    hsBool canWriteAlpha = ((plCompositeMtl *)mtl)->CanWriteAlpha() >= 0;
+    bool firstUsedLayer = true;
+    bool canWriteAlpha = ((plCompositeMtl *)mtl)->CanWriteAlpha() >= 0;
     plMipmap *currTexture;
     for (i = 0, bitmask = 0x1; i < mtl->NumSubMtls(); i++, bitmask <<= 1)
     {
@@ -1577,15 +1577,15 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
     hsgResMgr::ResMgr()->NewKey(plString::Format("%s_%d", name.c_str(), subMtlFlags), mat, node->GetLocation());
     
     int multiIndex = IFindSubIndex(node, mtl);
-    hsBool needAlphaHack = node->AlphaHackLayersNeeded(multiIndex) > 0;
-    hsBool canWriteAlpha = ((plCompositeMtl *)mtl)->CanWriteAlpha() >= 0;   
+    bool needAlphaHack = node->AlphaHackLayersNeeded(multiIndex) > 0;
+    bool canWriteAlpha = ((plCompositeMtl *)mtl)->CanWriteAlpha() >= 0;   
 
     int bitMask = 1;
     int i;
     for (i = 0; i < mtl->NumSubMtls(); i++)
     {
         Mtl *subMtl = nil;
-        hsBool usingSubMtl = (i == 0 || pb->GetInt(kCompOn, 0, i - 1));
+        bool usingSubMtl = (i == 0 || pb->GetInt(kCompOn, 0, i - 1));
         if ((bitMask & subMtlFlags) != 0 && usingSubMtl)
         {
             plString pref = plString::Format("%s_%d", mat->GetKey()->GetName().c_str(), i);
@@ -1598,7 +1598,7 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
         layerCounts[i] = mat->GetNumLayers();
         if (i > 0 && mat->GetNumLayers() > 0)
         {
-            hsBool materialIsBad = false;
+            bool materialIsBad = false;
             int j;
             if (usingSubMtl)
             {
@@ -1607,7 +1607,7 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
                     uint32_t blendFlags = mat->GetLayer(j)->GetBlendFlags();
                     if ((blendFlags & hsGMatState::kBlendMask) != hsGMatState::kBlendAlpha)
                     {
-                        hsBool ignore = fErrorMsg->Set(!(fWarned & kWarnedCompMtlBadBlend), node->GetName(),
+                        bool ignore = fErrorMsg->Set(!(fWarned & kWarnedCompMtlBadBlend), node->GetName(),
                             "For composite materials, all multi-layered submaterials (except the base)"
                             " must choose 'alpha' for 'output blending'. %s, which is a sub-material"
                             " of %s, doesn't and will not be included in the composite material.",
@@ -1621,7 +1621,7 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
                     if ((needAlphaHack || !canWriteAlpha) &&
                         ((blendFlags & hsGMatState::kBlendAlphaMult) || (blendFlags & hsGMatState::kBlendAlphaAdd)))
                     {
-                        hsBool ignore = fErrorMsg->Set(!(fWarned & kWarnedCompMtlBadBlend), node->GetName(),
+                        bool ignore = fErrorMsg->Set(!(fWarned & kWarnedCompMtlBadBlend), node->GetName(),
                             "Composite material %s has a submaterial, %s, that requires too many textures in a single pass "
                             "(for blending effects). To cut this down, try some of the following:\n"
                             "1. Make sure all multi-layered submaterials (except the base)"
@@ -1763,7 +1763,7 @@ hsGMaterial *hsMaterialConverter::IProcessParticleMtl(Mtl *mtl, plMaxNode *node,
     uint32_t zFlags = 0;
     zFlags |= hsGMatState::kZNoZWrite;
 
-    hsBool preserveUVOffset = false;//PreserveUVOffset(mtl);
+    bool preserveUVOffset = false;//PreserveUVOffset(mtl);
 
     //
     // Process base layer
@@ -1908,7 +1908,7 @@ void IProcessMtlAnimEase(plPassMtlBase *mtl, plAnimTimeConvert &tc)
     }
 }
 /*
-hsBool hsMaterialConverter::CheckValidityOfSDLVarAnim(plPassMtlBase *mtl, char *varName, plMaxNode *node)
+bool hsMaterialConverter::CheckValidityOfSDLVarAnim(plPassMtlBase *mtl, char *varName, plMaxNode *node)
 {
     plStateDescriptor *sd = nil;
     char *ageName;
@@ -2232,7 +2232,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const p
 }
 
 
-hsBool hsMaterialConverter::IHasSubMtl(Mtl* base, Mtl* sub)
+bool hsMaterialConverter::IHasSubMtl(Mtl* base, Mtl* sub)
 {
     if( !(base && sub) )
         return false;
@@ -2270,7 +2270,7 @@ int hsMaterialConverter::IFindSubIndex(plMaxNode* node, Mtl* mtl)
 //
 
 // Now handles both plPassMtl and plDecalMtl which derive from plPassMtlBase
-hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const plString& name)
+bool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const plString& name)
 {
     hsGuardBegin("hsMaterialConverter::IProcessPlasmaMaterial");
 
@@ -2289,7 +2289,7 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
     }
 
     int multiIndex = IFindSubIndex(node, mtl);
-    hsBool needAlphaHack = node->AlphaHackLayersNeeded(multiIndex) > 0;
+    bool needAlphaHack = node->AlphaHackLayersNeeded(multiIndex) > 0;
 
     plPassMtlBase *passBase = (plPassMtlBase *)mtl;
     //
@@ -2414,7 +2414,7 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
                         | hsGMatState::kShadeSpecularColor);
     }
 
-    hsBool preserveUVOffset = PreserveUVOffset(mtl);
+    bool preserveUVOffset = PreserveUVOffset(mtl);
 
     //
     // Process base layer
@@ -2558,7 +2558,7 @@ hsBool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hs
                 if( IsBumpLayer(texMap) || IsBumpMtl( mtl ) )
                     hLay->SetMiscFlags(hLay->GetMiscFlags() | hsGMatState::kMiscBumpLayer);
 
-                hsBool canFunk = !needAlphaHack;
+                bool canFunk = !needAlphaHack;
                 // Base layer fixups
                 // Yet another attempt to protect the artists from themselves. Setting the 
                 // alpha combine to mult or add, when the output blend is opaque is at best meaningless
@@ -2639,7 +2639,7 @@ void hsMaterialConverter::IAddLayerToMaterial(hsGMaterial *mat, plLayerInterface
 //  *ALSO* be unique. So this function will tell us whether we have to make
 //  a unique material.
 
-hsBool  hsMaterialConverter::IMustBeUniqueMaterial( Mtl *mtl )
+bool    hsMaterialConverter::IMustBeUniqueMaterial( Mtl *mtl )
 {
     hsGuardBegin( "hsMaterialConverter::IMustBeUniqueMaterial" );
 
@@ -2683,7 +2683,7 @@ hsBool  hsMaterialConverter::IMustBeUniqueMaterial( Mtl *mtl )
 //// IMustBeUniqueLayer ///////////////////////////////////////////////////////
 //  Check for a single layer (see IMustBeUniqueMaterial())
 
-hsBool  hsMaterialConverter::IMustBeUniqueLayer( Texmap *layer )
+bool    hsMaterialConverter::IMustBeUniqueLayer( Texmap *layer )
 {
     plPlasmaMAXLayer    *plasmaLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer( layer );
     if( plasmaLayer != nil )
@@ -2692,7 +2692,7 @@ hsBool  hsMaterialConverter::IMustBeUniqueLayer( Texmap *layer )
     return false;
 }
 
-hsBool hsMaterialConverter::IUVGenHasDynamicScale(plMaxNode* node, StdUVGen *uvGen)
+bool hsMaterialConverter::IUVGenHasDynamicScale(plMaxNode* node, StdUVGen *uvGen)
 {
     hsGuardBegin("hsMaterialConverter::IUVGenHasDynamicScale");
 
@@ -3039,7 +3039,7 @@ uint32_t hsMaterialConverter::IGetFunkyType(Texmap* texMap)
     return kFunkyNone;
 }
 
-hsBool hsMaterialConverter::IHasFunkyOpacity(plMaxNode* node, Texmap* texMap)
+bool hsMaterialConverter::IHasFunkyOpacity(plMaxNode* node, Texmap* texMap)
 {
     float tr0, cp0, cp1, tr1;
     return IGetOpacityRanges(node, texMap, tr0, cp0, cp1, tr1) != kFunkyNone;
@@ -3260,7 +3260,7 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
 
 }
 
-hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, float& minDist, float& maxDist)
+bool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, float& minDist, float& maxDist)
 {
     const char* dbgNodeName = node->GetName();
     const char* dbgMatName = node->GetMtl() ? node->GetMtl()->GetName() : "Dunno";
@@ -3293,7 +3293,7 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, int iSubMtl, float& min
     return HasVisDists(node, mtl, minDist, maxDist);
 }
 
-hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, float& minDist, float& maxDist)
+bool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, float& minDist, float& maxDist)
 {
     const char* dbgNodeName = node->GetName();
     const char* dbgMatName = node->GetMtl() ? node->GetMtl()->GetName() : "Dunno";
@@ -3318,8 +3318,8 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, float& minDis
 
     if( IsHsMaxMat(mtl) )
     {
-        hsBool baseFunky = false;
-        hsBool topFunky = true;
+        bool baseFunky = false;
+        bool topFunky = true;
         plPassMtl* passMtl = (plPassMtl*)mtl;
         float tr0, op0, op1, tr1;
         uint32_t funkyType = IGetOpacityRanges(node, mtl->GetSubTexmap(0), tr0, op0, op1, tr1);
@@ -3384,7 +3384,7 @@ hsBool hsMaterialConverter::HasVisDists(plMaxNode* node, Mtl* mtl, float& minDis
 }
 
 
-hsBool hsMaterialConverter::IsBumpLayer(Texmap* texMap)
+bool hsMaterialConverter::IsBumpLayer(Texmap* texMap)
 {
     if( texMap 
         && (texMap->ClassID() == LAYER_TEX_CLASS_ID) 
@@ -3395,7 +3395,7 @@ hsBool hsMaterialConverter::IsBumpLayer(Texmap* texMap)
     return false;
 }
 
-hsBool hsMaterialConverter::IsBumpMtl(Mtl* mtl)
+bool hsMaterialConverter::IsBumpMtl(Mtl* mtl)
 {
     if( mtl == nil )
         return false;       // Well, gee, I guess it can't be a bumpmap then...
@@ -3408,7 +3408,7 @@ hsBool hsMaterialConverter::IsBumpMtl(Mtl* mtl)
     return false;
 }
 
-hsBool hsMaterialConverter::HasBumpLayer(plMaxNode* node, Mtl* mtl)
+bool hsMaterialConverter::HasBumpLayer(plMaxNode* node, Mtl* mtl)
 {
     if( !mtl )
         return false;
@@ -3773,7 +3773,7 @@ void hsMaterialConverter::IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, i
 {
     // First let's monkey with the incoming layer, just to confuse things.
     // This doesn't actually do anything useful, it's just to spite anyone trying to read this code.
-    hsBool isAdd = 0 != (mat->GetLayer(bumpLayerIdx)->GetBlendFlags() & hsGMatState::kBlendAdd);
+    bool isAdd = 0 != (mat->GetLayer(bumpLayerIdx)->GetBlendFlags() & hsGMatState::kBlendAdd);
     plLayer* bumpLay = plLayer::ConvertNoRef(mat->GetLayer(bumpLayerIdx)->BottomOfStack());
     if( bumpLay )
         bumpLay->SetBlendFlags(
@@ -3879,7 +3879,7 @@ Texmap *hsMaterialConverter::GetUVChannelBase(plMaxNode *node, Mtl* mtl, int whi
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::ClearDoneMaterials(plMaxNode* node)
+bool hsMaterialConverter::ClearDoneMaterials(plMaxNode* node)
 {
     hsGuardBegin("hsMaterialConverter::ClearDoneMaterials");
 
@@ -3888,7 +3888,7 @@ hsBool hsMaterialConverter::ClearDoneMaterials(plMaxNode* node)
     
     if (isMultiMat)
     {
-        hsBool retVal = false;
+        bool retVal = false;
         int32_t i;
         for (i = 0; i < mtl->NumSubMtls(); i++)
         {
@@ -3905,11 +3905,11 @@ hsBool hsMaterialConverter::ClearDoneMaterials(plMaxNode* node)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
+bool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
 {
     hsGuardBegin("hsMaterialConverter::IClearDoneMaterial");
 
-    hsBool doneSomething = false;
+    bool doneSomething = false;
     if (fLastMaterial.fMaxMaterial == mtl)
     {
         fLastMaterial.fHsMaterial = nil;
@@ -4058,7 +4058,7 @@ void hsMaterialConverter::IBuildSphereMap(Bitmap *bitmap[6], Bitmap *bm)
     hsGuardEnd;
 }
 
-hsBool hsMaterialConverter::ITextureTransformIsAnimated(Texmap *texmap)
+bool hsMaterialConverter::ITextureTransformIsAnimated(Texmap *texmap)
 {
     hsGuardBegin("hsMaterialConverter::IProcessAnimMaterial");
 
@@ -4096,7 +4096,7 @@ hsBool hsMaterialConverter::ITextureTransformIsAnimated(Texmap *texmap)
     hsGuardEnd; 
 }
 
-hsBool hsMaterialConverter::IHasAnimatedControllers(Animatable* anim)
+bool hsMaterialConverter::IHasAnimatedControllers(Animatable* anim)
 {
     hsGuardBegin("hsMaterialConverter::IHasAnimatedControllers");
 
@@ -4123,7 +4123,7 @@ hsBool hsMaterialConverter::IHasAnimatedControllers(Animatable* anim)
 }
 
 
-hsBool hsMaterialConverter::IIsAnimatedTexmap(Texmap* texmap)
+bool hsMaterialConverter::IIsAnimatedTexmap(Texmap* texmap)
 {
     hsGuardBegin("hsMaterialConverter::IIsAnimatedTexmap");
 
@@ -4150,7 +4150,7 @@ hsBool hsMaterialConverter::IIsAnimatedTexmap(Texmap* texmap)
 //
 // returns true if this material is animated
 //
-hsBool hsMaterialConverter::IsAnimatedMaterial(Mtl* mtl)
+bool hsMaterialConverter::IsAnimatedMaterial(Mtl* mtl)
 {
     hsGuardBegin("hsMaterialConverter::IsAnimatedMaterial");
 
@@ -4195,7 +4195,7 @@ void hsMaterialConverter::GetUsedMaterials(plMaxNode* node, hsBitVector& used)
         return;
     }
 
-    hsBool deleteIt = false;
+    bool deleteIt = false;
     TriObject* triObj = node->GetTriObject(deleteIt);
     if( triObj )
     {
@@ -4219,7 +4219,7 @@ void hsMaterialConverter::GetUsedMaterials(plMaxNode* node, hsBitVector& used)
 //  a lighting model...
 //  UPDATE 8.26 mcn - Now checks for opacity controllers as well
 
-hsBool  hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl)
+bool    hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl)
 {
     hsGuardBegin( "hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation" );
 
@@ -4332,7 +4332,7 @@ hsBool  hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation(plMaxNode* nod
 //  Returns true if the any of the layers of any of the submaterials or
 //  the main material are emissive.
 
-hsBool  hsMaterialConverter::HasEmissiveLayer(plMaxNode* node, Mtl* mtl)
+bool    hsMaterialConverter::HasEmissiveLayer(plMaxNode* node, Mtl* mtl)
 {
     hsGuardBegin( "hsMaterialConverter::HasEmissiveLayer" );
 
@@ -4390,7 +4390,7 @@ hsBool  hsMaterialConverter::HasEmissiveLayer(plMaxNode* node, Mtl* mtl)
 //
 // returns true if the material onthis node is animated
 //
-hsBool hsMaterialConverter::HasAnimatedMaterial(plMaxNode* node)
+bool hsMaterialConverter::HasAnimatedMaterial(plMaxNode* node)
 {
     hsGuardBegin("hsMaterialConverter::HasAnimatedMaterial");
 
@@ -4982,7 +4982,7 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
     }
 }
 
-hsBool hsMaterialConverter::IEquivalent(DoneMaterialData* one, DoneMaterialData* two)
+bool hsMaterialConverter::IEquivalent(DoneMaterialData* one, DoneMaterialData* two)
 {
     if( one->fOwnedCopy || two->fOwnedCopy )
         return false;
@@ -5020,7 +5020,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
         *dot = 0;
 
     char fileName[512];
-    if( path[hsStrlen(path)-1] == '\\' )
+    if( path[strlen(path)-1] == '\\' )
     {
         sprintf(fileName, "%slog\\mat_%s.log", path, maxFile);
     }
@@ -5035,7 +5035,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
         // We may not have a \log folder. If that failed, try
         // putting it in the \dat folder. If that doesn't work,
         // just quietly give up.
-        if( path[hsStrlen(path)-1] == '\\' )
+        if( path[strlen(path)-1] == '\\' )
         {
             sprintf(fileName, "%sdat\\mat_%s.log", path, maxFile);
         }

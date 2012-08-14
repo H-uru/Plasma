@@ -68,7 +68,7 @@ class plVoiceSound : public plWin32Sound
 public:
     plVoiceSound();
     ~plVoiceSound();
-    hsBool LoadSound( hsBool is3D );
+    bool LoadSound( bool is3D );
     void AddVoiceData(void *data, unsigned bytes);
     void Update();
     void Play();
@@ -100,11 +100,11 @@ public:
     void SetTalkIcon(int index, uint32_t str){}
     void ClearTalkIcon(){}
     plVoiceSound *GetSoundPtr() { return &fSound; }
-    static void Enable(hsBool enable) { fEnabled = enable; }
+    static void Enable(bool enable) { fEnabled = enable; }
 
 private:
     plVoiceSound fSound;
-    static hsBool fEnabled;
+    static bool fEnabled;
 };
 
 class plVoiceRecorder
@@ -114,21 +114,21 @@ public:
     ~plVoiceRecorder();
 
     void Update(double time);
-    void SetMikeOpen(hsBool b);
-    void DrawTalkIcon(hsBool b);
-    void DrawDisabledIcon(hsBool b);
+    void SetMikeOpen(bool b);
+    void DrawTalkIcon(bool b);
+    void DrawDisabledIcon(bool b);
     
     void    SetTalkIcon(int index, uint32_t str);
     void    ClearTalkIcon();
 
-    static hsBool   RecordingEnabled() { return fRecording; }
-    static hsBool   NetVoiceEnabled() { return fNetVoice; }
-    static hsBool   CompressionEnabled() { return fCompress; }
-    static void     EnablePushToTalk(hsBool b) { fMicAlwaysOpen = !b; }
-    static void     EnableIcons(hsBool b) { fShowIcons = b; }
-    static void     EnableRecording(hsBool b) { fRecording = b; }
-    static void     EnableNetVoice(hsBool b) { fNetVoice = b; }
-    static void     EnableCompression(hsBool b) { fCompress = b; }
+    static bool     RecordingEnabled() { return fRecording; }
+    static bool     NetVoiceEnabled() { return fNetVoice; }
+    static bool     CompressionEnabled() { return fCompress; }
+    static void     EnablePushToTalk(bool b) { fMicAlwaysOpen = !b; }
+    static void     EnableIcons(bool b) { fShowIcons = b; }
+    static void     EnableRecording(bool b) { fRecording = b; }
+    static void     EnableNetVoice(bool b) { fNetVoice = b; }
+    static void     EnableCompression(bool b) { fCompress = b; }
     static void     SetSampleRate(short s) { fSampleRate = s; }
     static void     SetSquelch(float f) { fRecordThreshhold = f; }
 
@@ -139,18 +139,18 @@ public:
     static void SetMode(int mode);  // sets nb or wb mode
     static void SetVBR(bool vbr);
     static void SetComplexity(int c);
-    static void SetENH(hsBool b);
+    static void SetENH(bool b);
     static short GetSampleRate() { return fSampleRate; }
     
 private:
     
-    hsBool                  fMikeOpen;
-    hsBool                  fMikeJustClosed;
-    static hsBool           fMicAlwaysOpen;
-    static hsBool           fShowIcons;
-    static hsBool           fCompress;
-    static hsBool           fNetVoice;
-    static hsBool           fRecording;
+    bool                    fMikeOpen;
+    bool                    fMikeJustClosed;
+    static bool             fMicAlwaysOpen;
+    static bool             fShowIcons;
+    static bool             fCompress;
+    static bool             fNetVoice;
+    static bool             fRecording;
     static short            fSampleRate;
     plPlate*                fDisabledIcon;
     plPlate*                fTalkIcon;
@@ -176,37 +176,37 @@ public:
         return &instance;
     }
 
-    hsBool Init(Mode mode);
-    hsBool Shutdown();
-    hsBool Encode(short *data, int numFrames, int *packedLength, hsRAMStream *out);
-    hsBool Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out);
+    bool Init(Mode mode);
+    bool Shutdown();
+    bool Encode(short *data, int numFrames, int *packedLength, hsRAMStream *out);
+    bool Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out);
     int    GetFrameSize() { return fFrameSize; }
-    void   VBR(hsBool b);                                   // turn variable bit rate on/off
+    void   VBR(bool b);                                   // turn variable bit rate on/off
     void   SetVBR(uint32_t vbr);                              // Set variable bit rate quality
-    void   ABR(hsBool b);                                   // turn average bit rate on/off
+    void   ABR(bool b);                                   // turn average bit rate on/off
     void   SetABR(uint32_t abr);                              // Set average bit rate quality
     void   SetQuality(uint32_t quality);                      // Set encoder quality
-    hsBool IsUsingVBR()         { return fVBR; }
+    bool IsUsingVBR()         { return fVBR; }
     int    GetQuality()         { return fQuality; }
-    void   SetENH(hsBool b);
+    void   SetENH(bool b);
     void   SetComplexity(uint8_t c);
 
-    hsBool Initialized() { return fInitialized; }
+    bool Initialized() { return fInitialized; }
     
 private:
     plSpeex();
     SpeexBits*                  fBits;                  // main speex structure
-    hsBool                      fBitsInit;
+    bool                        fBitsInit;
     void*                       fEncoderState;
     void*                       fDecoderState;
     int                         fSampleRate;
     int                         fFrameSize;             // frame size from speex - 160 for nb
     int                         fQuality;               // 0-10 speex encode quality
-    hsBool                      fVBR;                   // toggle variable bit rate
+    bool                        fVBR;                   // toggle variable bit rate
     int                         fAverageBitrate;        // n-bits per second
     uint8_t                       fComplexity;            // 1-10 sets cpu resources allowed for encoder
-    hsBool                      fENH;                   // perceptual enhancement
-    hsBool                      fInitialized;           
+    bool                        fENH;                   // perceptual enhancement
+    bool                        fInitialized;           
 };
 
 #endif //plVoiceChat_h

@@ -178,7 +178,7 @@ class pfConsoleCmd
         const char*     fHelpString;
 
         pfConsoleCmdPtr fFunction;
-        hsBool          fLocalOnly;
+        bool            fLocalOnly;
 
         pfConsoleCmd    *fNext;
         pfConsoleCmd    **fPrevPtr;
@@ -208,7 +208,7 @@ class pfConsoleCmd
         static char         fSigTypes[ kNumTypes ][ 8 ];
 
 
-        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func, hsBool localOnly = false );
+        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func, bool localOnly = false );
         ~pfConsoleCmd();
 
         void    Register(const char *group, const char *name );

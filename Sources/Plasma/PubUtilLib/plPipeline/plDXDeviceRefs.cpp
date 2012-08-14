@@ -172,7 +172,7 @@ void    plDXIndexBufferRef::Release( void )
 //// Set //////////////////////////////////////////////////////////////////////
 
 plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, 
-                                                     uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed, hsBool renderTarget )
+                                                     uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed, bool renderTarget )
 {
     if( fDataSize > 0 )
         plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
@@ -208,7 +208,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
 //// Constructor & Destructor /////////////////////////////////////////////////
 
 plDXTextureRef::plDXTextureRef( D3DFORMAT ft, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, 
-                                                uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, hsBool ed, hsBool renderTarget )
+                                                uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed, bool renderTarget )
 {
     fLevelSizes = nil;
     fOwner = nil;
@@ -367,7 +367,7 @@ void    plDXLightRef::Release( void )
 
 //// Constructor //////////////////////////////////////////////////////////////
 
-plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, hsBool releaseDepthOnDelete )
+plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, bool releaseDepthOnDelete )
                     : plDXTextureRef( tp, ml, owner->GetWidth(), owner->GetHeight(),
                                         owner->GetWidth() * owner->GetHeight(),
                                         owner->GetWidth() * owner->GetHeight() * ( owner->GetPixelSize() >> 3 ),

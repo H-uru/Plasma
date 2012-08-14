@@ -82,11 +82,11 @@ class plMeshConverter
 private:
     plMeshConverter();
 
-    static hsBool   fWarnBadNormals;
+    static bool     fWarnBadNormals;
     static char     fWarnBadNormalsMsg[];
-    static hsBool   fWarnBadUVs;
+    static bool     fWarnBadUVs;
     static char     fWarnBadUVsMsg[];
-    static hsBool   fWarnSuspiciousUVs;
+    static bool     fWarnSuspiciousUVs;
     static char     fWarnSuspiciousUVsMsg[];
     static char     fTooManyVertsMsg[];
     static char     fTooManyFacesMsg[];
@@ -95,13 +95,13 @@ public:
     ~plMeshConverter();
     static plMeshConverter& Instance();
 
-    void    Init( hsBool save, plErrorMsg *msg );
-    void    DeInit( hsBool deInitLongRecur = true );
+    void    Init( bool save, plErrorMsg *msg );
+    void    DeInit( bool deInitLongRecur = true );
 
     void StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint3> *pos, hsTArray<hsVector3> *normals);
     plConvexVolume *CreateConvexVolume( plMaxNode *node );
     // doPreshading - If true, do crappy flat shading now (since we won't do any shading later)
-    hsBool  CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading );
+    bool    CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading );
 
 private:
     bool IValidateUVs(plMaxNode* node);
@@ -134,7 +134,7 @@ private:
     Interface           *fInterface;
     hsConverterUtils&   fConverterUtils;
     plErrorMsg          *fErrorMsg;
-    hsBool              fIsInitialized;
+    bool                fIsInitialized;
 
     // Non-nil if we converted the MAX object and have to delete it when we're done
     TriObject           *fTriObjToDelete;

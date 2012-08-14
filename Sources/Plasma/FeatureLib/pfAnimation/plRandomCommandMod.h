@@ -78,7 +78,7 @@ protected:
     
     void            IStart();
     virtual void    IStop();
-    hsBool          IStopped() const;
+    bool            IStopped() const { return hsCheckBits(fState, kStopped); }
     void            IRetry(float secs);
     virtual void    IPlayNextIfMaster();
 
@@ -87,14 +87,14 @@ protected:
     float        IGetDelay(float len) const;      
     
     int             IExcludeSelections(int ncmds);
-    hsBool          ISelectNext(int nAnim); // return false if we should stop, else set fCurrent to next index
+    bool            ISelectNext(int nAnim); // return false if we should stop, else set fCurrent to next index
 
     // Once fCurrent is set to the next animation index to play, 
     // IPlayNext() does whatever it takes to actually play it.
     virtual void        IPlayNext() = 0;
 
     // We only act in response to messages.
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plRandomCommandMod();
@@ -103,23 +103,23 @@ public:
     CLASSNAME_REGISTER( plRandomCommandMod );
     GETINTERFACE_ANY( plRandomCommandMod, plSingleModifier );
 
-    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual bool MsgReceive(plMessage* pMsg);
     
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
 
     // Export only
     void    SetMode(uint8_t m) { fMode = m; }
-    uint8_t   GetMode() const { return fMode; }
+    uint8_t GetMode() const { return fMode; }
 
     void    SetState(uint8_t s) { fState = s; }
-    uint8_t   GetState() const { return fState; }
+    uint8_t GetState() const { return fState; }
 
-    void        SetMinDelay(float f) { fMinDelay = f; }
-    float    GetMinDelay() const { return fMinDelay; }
+    void    SetMinDelay(float f) { fMinDelay = f; }
+    float   GetMinDelay() const { return fMinDelay; }
 
-    void        SetMaxDelay(float f) { fMaxDelay = f; }
-    float    GetMaxDelay() const { return fMaxDelay; }
+    void    SetMaxDelay(float f) { fMaxDelay = f; }
+    float   GetMaxDelay() const { return fMaxDelay; }
 };
 
 

@@ -52,9 +52,9 @@ namespace PythonInterface
     void addPythonPath(std::string dir);
 
     PyObject* CompileString(const char *command, const char* filename);
-    hsBool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
+    bool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
     int getOutputAndReset(char** line=nil);
     PyObject* CreateModule(const char* module);
-    hsBool RunPYC(PyObject* code, PyObject* module);
+    bool RunPYC(PyObject* code, PyObject* module);
     PyObject* GetModuleItem(const char* item, PyObject* module);
 }

@@ -78,7 +78,7 @@ namespace pnNetCli {
 
 ***/
 
-COMPILER_ASSERT(IS_POW2(kNetDiffieHellmanKeyBits));
+static_assert(IS_POW2(kNetDiffieHellmanKeyBits), "DH Key bit count is not a power of 2");
 
 
 /*****************************************************************************

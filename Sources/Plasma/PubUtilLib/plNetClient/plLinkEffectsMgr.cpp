@@ -134,10 +134,10 @@ void plLinkEffectsMgr::IAddPsuedo(plPseudoLinkEffectMsg *msg)
     fPseudolist.Append(msg);
 }
 
-hsBool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
+bool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
 {
     int i;
-    hsBool found = false;
+    bool found = false;
     for (i = fWaitlist.GetCount() - 1; i >= 0; i--)
     {
         if (fWaitlist[i] == msg)
@@ -152,10 +152,10 @@ hsBool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
     return found || IHuntWaitlist(msg->GetLinkKey());
 }
 
-hsBool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
+bool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
 {
     int i;
-    hsBool found = false;
+    bool found = false;
     for (i = fWaitlist.GetCount() - 1; i >= 0; i--)
     {
         if (fWaitlist[i]->GetLinkKey() == linkKey)
@@ -172,10 +172,10 @@ hsBool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
     return found;
 }
 
-hsBool plLinkEffectsMgr::IHuntDeadlist(plLinkEffectsTriggerMsg *msg)
+bool plLinkEffectsMgr::IHuntDeadlist(plLinkEffectsTriggerMsg *msg)
 {
     int i;
-    hsBool found = false;
+    bool found = false;
     for (i = fDeadlist.GetCount() - 1; i >= 0; i--)
     {
         if (fDeadlist[i] == msg)
@@ -233,7 +233,7 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
     }
 }
 
-hsBool plLinkEffectsMgr::MsgReceive(plMessage *msg)
+bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
 {
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
     plNetLinkingMgr* lm = plNetLinkingMgr::GetInstance();

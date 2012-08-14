@@ -564,7 +564,7 @@ bool SceneSync::Update()
         plConvertSettings settings;
         settings.fSceneViewer = true;
         plConvert::Instance().Init(GetCOREInterface(), &msg, &settings);
-        hsBool ret = plConvert::Instance().Convert(nodes);
+        bool ret = plConvert::Instance().Convert(nodes);
 
         // REMOVE/FIX (COLIN)
         hsMaterialConverter::Instance().FreeMaterialCache(nil);

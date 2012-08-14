@@ -93,27 +93,27 @@ protected:
             fSynchedObjectAddrOffset=-1;
     }
 
-    hsBool32    IOKToDirty() 
+    bool32    IOKToDirty() 
     { 
         if (fFlags & (kDontDirty | kValueIsDirty))
             return false;
         return GetSynchedObject() ? GetSynchedObject()->IOKToDirty() : false; 
     }
-    virtual void ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* mgr) = 0;
+    virtual void ISaveOrLoad(bool32 save, hsStream* stream, hsResMgr* mgr) = 0;
 
     // save/load methods for different types
-    const plKey ISaveOrLoad(const plKey key, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    hsKeyedObject* ISaveOrLoad(hsKeyedObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    plSceneNode* ISaveOrLoad(plSceneNode* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    plSceneObject* ISaveOrLoad(plSceneObject* obj, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    int32_t ISaveOrLoad(int32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    uint32_t ISaveOrLoad(uint32_t v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    bool ISaveOrLoad(bool v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    int ISaveOrLoad(int v, hsBool32 save, hsStream* stream, hsResMgr* mgr);     // or hsBool32
-    float ISaveOrLoad(float v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    double ISaveOrLoad(double v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    hsBitVector ISaveOrLoad(hsBitVector& v, hsBool32 save, hsStream* stream, hsResMgr* mgr);
-    plCoordinateInterface* ISaveOrLoad(const plCoordinateInterface* cInt, hsBool32 save, hsStream* stream, hsResMgr* mgr);
+    const plKey ISaveOrLoad(const plKey key, bool32 save, hsStream* stream, hsResMgr* mgr);
+    hsKeyedObject* ISaveOrLoad(hsKeyedObject* obj, bool32 save, hsStream* stream, hsResMgr* mgr);
+    plSceneNode* ISaveOrLoad(plSceneNode* obj, bool32 save, hsStream* stream, hsResMgr* mgr);
+    plSceneObject* ISaveOrLoad(plSceneObject* obj, bool32 save, hsStream* stream, hsResMgr* mgr);
+    int32_t ISaveOrLoad(int32_t v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    uint32_t ISaveOrLoad(uint32_t v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    bool ISaveOrLoad(bool v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    int ISaveOrLoad(int v, bool32 save, hsStream* stream, hsResMgr* mgr);     // or bool32
+    float ISaveOrLoad(float v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    double ISaveOrLoad(double v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    hsBitVector ISaveOrLoad(hsBitVector& v, bool32 save, hsStream* stream, hsResMgr* mgr);
+    plCoordinateInterface* ISaveOrLoad(const plCoordinateInterface* cInt, bool32 save, hsStream* stream, hsResMgr* mgr);
 public:     
     plSynchedValueBase()  { IConstruct();  }
     virtual ~plSynchedValueBase() {}
@@ -164,7 +164,7 @@ class plSynchedValue : public plSynchedValueBase
 protected:
     T fValue;
 
-    void ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* mgr) 
+    void ISaveOrLoad(bool32 save, hsStream* stream, hsResMgr* mgr) 
     { fValue=(T)plSynchedValueBase::ISaveOrLoad(fValue, save, stream, mgr); }       // default method
 
 public: 
@@ -179,8 +179,8 @@ public:
     T* operator &() { return &fValue; }
 
     // equality
-    hsBool32 operator==(const T& other) const   { return fValue==(T)other; }
-    hsBool32 operator!=(const T& other) const   { return !(*this == other); }
+    bool32 operator==(const T& other) const   { return fValue==(T)other; }
+    bool32 operator!=(const T& other) const   { return !(*this == other); }
 
     // other operators
     T operator++()      { DirtyIfNecessary(); return ++fValue; }
@@ -226,9 +226,9 @@ public:
     const T&    GetValue() const { return fValue; }
 
     // for hsBitVector
-    hsBool32 IsBitSet(uint32_t which) const { return fValue.IsBitSet(which); }
-    hsBool32 SetBit(uint32_t which, hsBool32 on = true)
-    {   hsBool32 bitSet = IsBitSet(which);
+    bool32 IsBitSet(uint32_t which) const { return fValue.IsBitSet(which); }
+    bool32 SetBit(uint32_t which, bool32 on = true)
+    {   bool32 bitSet = IsBitSet(which);
         if ( (on && !bitSet) || (!on && bitSet) )
             DirtyIfNecessary();
         return fValue.SetBit(which, on); 
@@ -236,9 +236,9 @@ public:
     void Read(hsStream* s) { fValue.Read(s); }
     void Write(hsStream* s) const { fValue.Write(s); }
     void Clear()    { DirtyIfNecessary();   fValue.Clear(); }
-    hsBool32 ClearBit(uint32_t which) {   if (fValue.IsBitSet(which)) DirtyIfNecessary(); return fValue.ClearBit(which); }
+    bool32 ClearBit(uint32_t which) {   if (fValue.IsBitSet(which)) DirtyIfNecessary(); return fValue.ClearBit(which); }
     void Reset() { if (fValue.GetSize()!=0) DirtyIfNecessary(); fValue.Reset(); }
-    hsBool32 ToggleBit(uint32_t which) {  DirtyIfNecessary(); return fValue.ToggleBit(which); }
+    bool32 ToggleBit(uint32_t which) {  DirtyIfNecessary(); return fValue.ToggleBit(which); }
     uint32_t GetSize() { return fValue.GetSize(); }
 };
 
@@ -297,7 +297,7 @@ class plSynchedTArray : public plSynchedValueBase
 private:
     hsTArray<T> fValueList;
 
-    void ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* mgr); 
+    void ISaveOrLoad(bool32 save, hsStream* stream, hsResMgr* mgr); 
 public:
     enum {  kMissingIndex = hsTArray<T>::kMissingIndex  };
     plSynchedTArray() {}
@@ -333,7 +333,7 @@ public:
 // inlines
 //
 template <class T> inline
-void plSynchedTArray<T>::ISaveOrLoad(hsBool32 save, hsStream* stream, hsResMgr* mgr)
+void plSynchedTArray<T>::ISaveOrLoad(bool32 save, hsStream* stream, hsResMgr* mgr)
 {
     if (save)
     {

@@ -79,10 +79,10 @@ class plKeyCombo
         plKeyCombo();
         plKeyCombo( plKeyDef k, uint8_t flags = 0 ) : fKey( k ), fFlags( flags ) { }
         
-        hsBool  IsSatisfiedBy(const plKeyCombo &combo) const;       
+        bool    IsSatisfiedBy(const plKeyCombo &combo) const;       
 
-        hsBool  operator==( const plKeyCombo &rhs ) const { return ( fKey == rhs.fKey ) && ( fFlags == rhs.fFlags ); }
-        hsBool  operator!=( const plKeyCombo &rhs ) const { return ( fKey != rhs.fKey ) || ( fFlags != rhs.fFlags ); }
+        bool    operator==( const plKeyCombo &rhs ) const { return ( fKey == rhs.fKey ) && ( fFlags == rhs.fFlags ); }
+        bool    operator!=( const plKeyCombo &rhs ) const { return ( fKey != rhs.fKey ) || ( fFlags != rhs.fFlags ); }
 };
 
 //// For the Particularly Lazy... ////////////////////////////////////////////
@@ -135,7 +135,7 @@ class plKeyBinding
         void    SetKey1( const plKeyCombo &newCombo );
         void    SetKey2( const plKeyCombo &newCombo );
         void    ClearKeys( void );
-        hsBool  HasUnmappedKey() const;
+        bool    HasUnmappedKey() const;
 };
 
 //// plKeyMap ////////////////////////////////////////////////////////////////
@@ -172,17 +172,17 @@ class plKeyMap : public plInputMap
         virtual ~plKeyMap();
 
         // Adds a given control code to the map. Once you add it, you can't change its flags. Returns false if the code is already present
-        hsBool  AddCode( ControlEventCode code, uint32_t codeFlags );
+        bool    AddCode( ControlEventCode code, uint32_t codeFlags );
 
         // Same but for console commands. No flags b/c console commands always use the same flags
-        hsBool  AddConsoleCommand( const char *command );
+        bool    AddConsoleCommand( const char *command );
 
 
         // Adds a key binding to a given code. Returns false if the code isn't in this map or if key is already mapped.
-        hsBool  BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref = kNoPreference );
+        bool    BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref = kNoPreference );
 
         // Console command version
-        hsBool  BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref = kNoPreference );
+        bool    BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref = kNoPreference );
 
 
         // Searches for the binding for a given code. Returns nil if not found

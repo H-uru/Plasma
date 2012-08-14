@@ -116,7 +116,7 @@ plAvBrainCoop::plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut,
 
 // MsgReceive ----------------------------------
 // -----------
-hsBool plAvBrainCoop::MsgReceive(plMessage *msg)
+bool plAvBrainCoop::MsgReceive(plMessage *msg)
 {
     plPickedMsg *pickM = plPickedMsg::ConvertNoRef(msg);
     if(pickM)
@@ -202,15 +202,15 @@ void plAvBrainCoop::Read(hsStream *stream, hsResMgr *mgr)
     fInitiatorID = stream->ReadLE32();
     fInitiatorSerial = stream->ReadLE16();
 
-    if(stream->Readbool())
+    if(stream->ReadBool())
     {
         fHostKey = mgr->ReadKey(stream);
     }
-    if(stream->Readbool())
+    if(stream->ReadBool())
     {
         fGuestKey = mgr->ReadKey(stream);
     }
-    fWaitingForClick = stream->Readbool();
+    fWaitingForClick = stream->ReadBool();
 
     unsigned numRecipients = stream->ReadLE16();
     for (unsigned i = 0; i < numRecipients; i++)
@@ -229,15 +229,15 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
     bool hasHostKey = (fHostKey != nil);
     bool hasGuestKey = (fGuestKey != nil);
 
-    stream->Writebool(hasHostKey);
+    stream->WriteBool(hasHostKey);
     if(hasHostKey)
         mgr->WriteKey(stream, fHostKey);
 
-    stream->Writebool(hasGuestKey);
+    stream->WriteBool(hasGuestKey);
     if(hasGuestKey)
         mgr->WriteKey(stream, fGuestKey);
 
-    stream->Writebool(fWaitingForClick);
+    stream->WriteBool(fWaitingForClick);
 
     stream->WriteLE16(fRecipients.size());
     for (unsigned i = 0; i < fRecipients.size(); i++)

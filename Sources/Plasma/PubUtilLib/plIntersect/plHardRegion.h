@@ -76,21 +76,21 @@ public:
     CLASSNAME_REGISTER( plHardRegion );
     GETINTERFACE_ANY( plHardRegion, plRegionBase );
 
-    virtual hsBool IsInside(const hsPoint3& pos) const { return IIsInside(pos); }
-    virtual hsBool CameraInside() const;
+    virtual bool IsInside(const hsPoint3& pos) const { return IIsInside(pos); }
+    virtual bool CameraInside() const;
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
     virtual int32_t   GetNumProperties() const { return 1; } // This is stupid.
 
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool  IIsInside(const hsPoint3& pos) const = 0;
-    virtual hsBool  ICameraInside() const = 0;
+    virtual bool    IIsInside(const hsPoint3& pos) const = 0;
+    virtual bool    ICameraInside() const = 0;
 };
 
 #endif // plHardRegion_inc

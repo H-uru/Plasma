@@ -79,9 +79,9 @@ bool lessComp(DistSqInfo a, DistSqInfo b)
 // send listenList update msgs to old and new members in the list
 // return true if the new list is different
 //
-hsBool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList, hsBool forceSynch)
+bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList, bool forceSynch)
 {
-    hsBool changed=false;
+    bool changed=false;
     int i;
 
     // see if new listen list differs from current one
@@ -115,7 +115,7 @@ hsBool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenLis
         llu.SetAdding(false);
         for(i=0;i<GetListenList()->GetNumMembers(); i++)
         {
-            hsBool found=false;
+            bool found=false;
             if (!forceSynch)
             {           
                 int j;
@@ -208,14 +208,14 @@ hsBool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenLis
 // Returns true if the listenList was changed.
 // Note: Updates distSq to each member. Other things rely on this so we must do it even if p2p is disabled.
 //
-hsBool plNetClientMgr::IUpdateListenList(double secs)
+bool plNetClientMgr::IUpdateListenList(double secs)
 {
     if (GetFlagsBit(kDisabled))
         return false;
     if (!fLocalPlayerKey || !fLocalPlayerKey->ObjectIsLoaded())
         return false;
     
-    hsBool changed = false;
+    bool changed = false;
     
     if (secs - GetListenList()->GetLastUpdateTime()>plNetListenList::kUpdateInterval)
     {

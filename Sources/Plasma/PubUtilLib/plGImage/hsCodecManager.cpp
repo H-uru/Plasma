@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsCodecManager& hsCodecManager::Instance()
 {
     static hsCodecManager the_instance;
-    static hsBool initialized = false;
+    static bool initialized = false;
 
     if (!initialized)
     {
@@ -125,7 +125,7 @@ plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t
     return nil;
 }
 
-hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
+bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
     int32_t i, j;
 
@@ -148,7 +148,7 @@ hsBool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorM
     return false;
 }
 
-hsBool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float priority)
+bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float priority)
 {
     int32_t i, j;
     for (i = 0; i < fCodecTable.Count(); i++)

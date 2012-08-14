@@ -65,18 +65,18 @@ class pfGUIButtonMod : public pfGUIControlMod
         hsTArray<plKey> fMouseOverAnimKeys;
         plString        fMouseOverAnimName;
 
-        hsBool          fClicking;
-        hsBool          fTriggering;
+        bool            fClicking;
+        bool            fTriggering;
 
         hsPoint3            fOrigMouseDownPt;
         pfGUIDraggableMod   *fDraggable;
         pfGUICtrlProcObject *fOrigHandler;
-        hsBool              fOrigReportedDrag;
+        bool                fOrigReportedDrag;
 
 
         int32_t           fNotifyType;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
 
@@ -88,23 +88,23 @@ class pfGUIButtonMod : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIButtonMod, pfGUIControlMod );
 
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        virtual void    SetInteresting( hsBool i );
+        virtual void    SetInteresting( bool i );
 
         virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, hsBool force = false );
+        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
 
         virtual void    SetNotifyType(int32_t kind);
         virtual int32_t   GetNotifyType();
-        virtual hsBool  IsButtonDown();
-        virtual hsBool  IsTriggering() { return fTriggering; }
+        virtual bool    IsButtonDown();
+        virtual bool    IsTriggering() { return fTriggering; }
         enum SoundEvents
         {
             kMouseDown,
@@ -126,7 +126,7 @@ class pfGUIButtonMod : public pfGUIControlMod
         };
 
         void    StartDragging( void );
-        void    StopDragging( hsBool cancel );
+        void    StopDragging( bool cancel );
 
         // Export only
         void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );

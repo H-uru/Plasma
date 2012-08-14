@@ -68,8 +68,8 @@ public:
     float detailMax;
     float detailMin;
     float sig;
-    hsBool  isStaticCubicEnvMap;
-    hsBool  invertAlpha;
+    bool    isStaticCubicEnvMap;
+    bool    invertAlpha;
     const char  *faceNames[ 6 ];
     uint32_t  maxDimension;
     uint8_t   clampFlags;
@@ -102,7 +102,7 @@ class plBitmapCreator
         plBitmap    *CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
         plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const plString &keyName, const plLocation &keyLocation );
 
-        void    Init( hsBool save, plErrorMsg *msg );
+        void    Init( bool save, plErrorMsg *msg );
         void    DeInit( void );
         void    CleanUpMaps( void );
 
@@ -125,5 +125,5 @@ class plBitmapCreator
         int     ICopyBitmap( Bitmap *bm, plMipmap &hBitmap );
         int     IInvertAlpha( plMipmap &hBitmap );
 
-        void    IAddBitmap( plBitmap *bitmap, hsBool dontRef = false );
+        void    IAddBitmap( plBitmap *bitmap, bool dontRef = false );
 };

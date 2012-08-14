@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDetectorModifier : public plSingleModifier
 {
 protected:
-    virtual hsBool IEval(double secs, float del, uint32_t dirty){ return true; }
+    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
 
     hsTArray<plKey>     fReceivers;
     plModifier*         fRemoteMod;
@@ -61,7 +61,7 @@ public:
     plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil){;}
     virtual ~plDetectorModifier(){;}
     
-//  virtual hsBool MsgReceive(plMessage* msg) = 0;
+//  virtual bool MsgReceive(plMessage* msg) = 0;
 
     CLASSNAME_REGISTER( plDetectorModifier );
     GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );

@@ -54,7 +54,7 @@ protected:
 
     hsTArray<plBitmap *>    fImages;
 
-    virtual hsBool IEval(double secs, float del, uint32_t dirty) { return false; }
+    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
     plImageLibMod();
@@ -63,7 +63,7 @@ public:
     CLASSNAME_REGISTER( plImageLibMod );
     GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

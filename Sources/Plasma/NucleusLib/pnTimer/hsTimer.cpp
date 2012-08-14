@@ -196,7 +196,7 @@ double plTimerShare::IncSysSeconds()
     return fSysSeconds;
 }
 
-void plTimerShare::SetRealTime(hsBool realTime)
+void plTimerShare::SetRealTime(bool realTime)
 { 
     fRunningFrameTime = !realTime; 
     if( realTime )

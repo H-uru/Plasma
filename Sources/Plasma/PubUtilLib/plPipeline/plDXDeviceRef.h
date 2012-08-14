@@ -70,7 +70,7 @@ class plDXDeviceRef : public hsGDeviceRef
         void            Unlink( void );
         void            Link( plDXDeviceRef **back );
         plDXDeviceRef   *GetNext( void ) { return fNext; }
-        hsBool          IsLinked( void ) { return fBack != nil; }
+        bool            IsLinked( void ) { return fBack != nil; }
         virtual void            Release( void ) { }
 
         plDXDeviceRef();

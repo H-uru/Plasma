@@ -467,7 +467,7 @@ plWaterComponent::plWaterComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plWaterComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWaterComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetRunTimeLight(true);
     node->SetForceMaterialCopy(true);
@@ -494,7 +494,7 @@ hsBool plWaterComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plWaterComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWaterComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 { 
     if( !fWaveSet )
         IMakeWaveSet(node, pErrMsg);
@@ -507,7 +507,7 @@ hsBool plWaterComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true; 
 }
 
-hsBool plWaterComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWaterComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( !fWaveSet )
         return true;
@@ -518,7 +518,7 @@ hsBool plWaterComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plWaterComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWaterComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 { 
     if( fWaveSet )
         fWaveSet->GetKey()->UnRefObject();
@@ -527,7 +527,7 @@ hsBool plWaterComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
     return true; 
 }
 
-hsBool plWaterComponent::IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws)
+bool plWaterComponent::IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& ws)
 {
     INode* ref = fCompPB->GetINode(kRefObject);
     if( !ref )
@@ -548,7 +548,7 @@ hsBool plWaterComponent::IReadRefObject(plMaxNodeBase* node, plFixedWaterState7&
     return true;
 }
 
-hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws)
+bool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFixedWaterState7& ws)
 {
     INode* ref = fCompPB->GetINode(kEnvObject);
     if( !ref )
@@ -593,7 +593,7 @@ hsBool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, pl
     return true;
 }
 
-hsBool plWaterComponent::IGetRefObject(plMaxNode* node)
+bool plWaterComponent::IGetRefObject(plMaxNode* node)
 {
     plMaxNode* ref = (plMaxNode*)fCompPB->GetINode(kRefObject);
     if( (ref != node)           // We have an exterior reference node
@@ -610,7 +610,7 @@ hsBool plWaterComponent::IGetRefObject(plMaxNode* node)
     return false;
 }
 
-hsBool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // Go ahead and create the WaveSet modifier. There will be just
     // one created by this component, everyone has to share.
@@ -856,7 +856,7 @@ plShoreComponent::plShoreComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plShoreComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plShoreComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetRunTimeLight(true);
     node->SetForceMaterialCopy(true);
@@ -885,7 +885,7 @@ hsBool plShoreComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plShoreComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plShoreComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     pErrMsg->Set(!node->HasLoadMask(), node->GetName(), "PS shore has no representation component").CheckAndAsk();
     pErrMsg->Set(false);
@@ -894,7 +894,7 @@ hsBool plShoreComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plShoreComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plShoreComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plWaveSetBase* waveSet = plWaterComponent::GetWaveSet(fCompPB->GetINode(kWaveSet, 0, 0));
     if( waveSet )
@@ -1001,7 +1001,7 @@ plWDecalComponent::plWDecalComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plWDecalComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWDecalComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     node->SetRunTimeLight(true);
     node->SetForceMaterialCopy(true);
@@ -1034,7 +1034,7 @@ hsBool plWDecalComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plWDecalComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWDecalComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     pErrMsg->Set(!node->HasLoadMask(), node->GetName(), "PS water decal has no representation component").CheckAndAsk();
     pErrMsg->Set(false);
@@ -1043,7 +1043,7 @@ hsBool plWDecalComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plWDecalComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plWDecalComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plWaveSetBase* waveSet = plWaterComponent::GetWaveSet(fCompPB->GetINode(kWaveSet, 0, 0));
     if( waveSet )
@@ -1222,7 +1222,7 @@ plEnvMapComponent::plEnvMapComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plEnvMapComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plEnvMapComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     fMap = nil;
 
@@ -1231,13 +1231,13 @@ hsBool plEnvMapComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     return true;
 }
 
-hsBool plEnvMapComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plEnvMapComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
 
     return true;
 }
 
-hsBool plEnvMapComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
+bool plEnvMapComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     // If we make a handler that will update the EnvMap's position when this object
     // moves, we can put it's creation here. Otherwise, there's nought to do, since

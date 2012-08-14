@@ -317,7 +317,7 @@ void plRandomSoundMod::Write(hsStream *s, hsResMgr *mgr)
     }
 }
 
-void    plRandomSoundMod::ForceSoundLoadState( hsBool loaded )
+void    plRandomSoundMod::ForceSoundLoadState( bool loaded )
 {
     uint16_t  i, j;
 
@@ -370,7 +370,7 @@ void    plRandomSoundMod::ForceSoundLoadState( hsBool loaded )
 }
 
 // Overload this to handle volume changes
-hsBool plRandomSoundMod::MsgReceive(plMessage* msg)
+bool plRandomSoundMod::MsgReceive(plMessage* msg)
 {
     plAnimCmdMsg* anim = plAnimCmdMsg::ConvertNoRef(msg);
     if( anim )

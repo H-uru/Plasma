@@ -58,7 +58,7 @@ class cyAnimation
     plKey           fSender;
     hsTArray<plKey> fRecvr;
     char*           fAnimName;
-    hsBool          fNetForce;
+    bool            fNetForce;
 
     virtual void IRunOneCmd(int cmd);
 
@@ -90,7 +90,7 @@ public:
 
     virtual PyObject* GetFirstRecvr();
 
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(bool state) { fNetForce = state; }
 
     //  Play animation from start to end (whatever is already set)
     //
@@ -123,11 +123,11 @@ public:
 
     //  Set whether the animation is to be looped or not
     //
-    virtual void Looped(hsBool looped);
+    virtual void Looped(bool looped);
 
     //  Sets the backwards state for the animation
     //
-    virtual void Backwards(hsBool backwards);
+    virtual void Backwards(bool backwards);
 
 
     // Sets the start and end of the looping points in the animation

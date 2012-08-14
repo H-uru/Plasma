@@ -95,7 +95,7 @@ public:
     void DeInit();
 
     // Used to pick correct controller by lights/materials
-    hsBool GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl);
+    bool GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl);
     Control *GetControllerByID(IParamBlock2 *pblock, int paramID);
 
     /////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ public:
     plController* MakeColorController(Control* control, plMaxNode* node, float start = -1, float end = -1);
     plController* MakePosController(Control* control, plMaxNode* node, float start = -1, float end = -1);
     plController* MakeScaleController(Control* control, plMaxNode* node, float start = -1, float end = -1);
-    plController* MakeRotController(Control* control, plMaxNode* node, hsBool camRot = false, float start = -1, float end = -1);
+    plController* MakeRotController(Control* control, plMaxNode* node, bool camRot = false, float start = -1, float end = -1);
     plCompoundController* MakeTransformController(Control* control, plMaxNode* node, float start = -1, float end = -1);
 
     // This last one was in tempAnim.cpp on its own for some time, apparently created
@@ -128,16 +128,16 @@ public:
     void    ScalePositionController(plController* ctl, float scale);
 
     void    ReduceKeys(Control *control, float threshold);
-    hsBool  HasKeyTimes(Control* ctl);
-    uint8_t       GetKeyType(Control* ctl, hsBool rotQuat = false);
+    bool    HasKeyTimes(Control* ctl);
+    uint8_t       GetKeyType(Control* ctl, bool rotQuat = false);
 
     plMaxNode* GetXformParent(plMaxNode* node);
-    hsBool ForceWorldSpace(plMaxNode* node);
-    hsBool ForceOrigin(plMaxNode* node);
-    hsBool ForceLocal(plMaxNode* node);
-    hsBool IsAnimated(plMaxNode* node);
-    hsBool OwnsMaterialCopy(plMaxNode* node);
-    hsBool HasFrameEvents(plMaxNode *node);
+    bool ForceWorldSpace(plMaxNode* node);
+    bool ForceOrigin(plMaxNode* node);
+    bool ForceLocal(plMaxNode* node);
+    bool IsAnimated(plMaxNode* node);
+    bool OwnsMaterialCopy(plMaxNode* node);
+    bool HasFrameEvents(plMaxNode *node);
 
     void CompositeKeyTimes(Control* ctl, Tab<TimeValue> &time);
 
@@ -153,9 +153,9 @@ private:
     void ISetSegRange(float start, float end);
     void IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc, float start, float end);
 
-    plLeafController* ICreateSimpleRotController(plMaxNode* node, Control* control, hsBool camRot = false);
+    plLeafController* ICreateSimpleRotController(plMaxNode* node, Control* control, bool camRot = false);
     plLeafController* ICreateSimpleScaleController(plMaxNode* node, Control* control);
-    plLeafController* ICreateQuatController(plMaxNode* node, Control* control, bool rotation = true, hsBool camRot = false);
+    plLeafController* ICreateQuatController(plMaxNode* node, Control* control, bool rotation = true, bool camRot = false);
     plLeafController* ICreateScaleValueController(plMaxNode* node, Control* control);
     plLeafController* ICreateScalarController(plMaxNode* node, Control* control);
     plLeafController* ICreateSimplePosController(plMaxNode* node, Control* control);
@@ -163,7 +163,7 @@ private:
     void    IEnableEaseCurves(Animatable* control, bool enable);
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     int     IAddPartsKeys(Control* control, hsTArray <hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
-    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, hsBool rotQuat = false);
+    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, bool rotQuat = false);
     int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);
@@ -173,10 +173,10 @@ private:
     bool    ISkinNode(plMaxNode* node);
     void    ISetForceLocal(bool f) { fForceLocal=f; }
 
-    hsBool  IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
-    hsBool  IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
+    bool    IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
+    bool    IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
     void    IGetGeomKeyTimesRecur( Animatable *anim, Tab<TimeValue> &times );
-    hsBool  IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim );
+    bool    IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim );
     void    IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG3DSMaxKeyFrame>* kfArray);
     Interface* fInterface;
 
@@ -190,9 +190,9 @@ private:
     int32_t       fEndFrame;
     int32_t       fNumFrames;
     float    fAnimLength;
-    hsBool    fWarned;
+    bool      fWarned;
 
-    hsBool    fForceLocal;
+    bool      fForceLocal;
 
     TimeValue   fSegStart;
     TimeValue   fSegEnd;

@@ -50,7 +50,7 @@ class plCollideMsg : public plMessage
 protected:
 public:
     plKey fOtherKey;
-    hsBool fEntering;       // otherwise it's leaving
+    bool fEntering;       // otherwise it's leaving
 
     plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
     ~plCollideMsg() {}

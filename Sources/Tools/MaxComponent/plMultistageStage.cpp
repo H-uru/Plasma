@@ -48,39 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatar/plAnimStage.h"
 
-// We don't want to be subject to any changes to ReadSafeString, so we just keep
-// our own version now.  Unfortunately, some files were saved with a modified
-// version of it, so we need to keep all the backwards compatability BS
-char* MyReadSafeString(hsStream* s)
-{
-    char *name = nil;
-    uint16_t numChars = s->ReadLE16();
-
-    bool oldFormat = !(numChars & 0xf000);
-    if (oldFormat)
-        s->ReadLE16();
-
-    numChars &= ~0xf000;
-    hsAssert(numChars <= s->GetSizeLeft(), "Bad string");
-    if (numChars > 0)
-    {
-        name = new char[numChars+1];
-        s->Read(numChars, name);
-        name[numChars] = '\0';      
-    }
-
-    return name;
-}
-
-void MyWriteSafeString(hsStream* s, const char* str)
-{
-    int len = hsStrlen(str);
-    hsAssert(len<0xf000, "String too long");
-    s->WriteLE16(len | 0xf000);
-    if (len > 0)
-        s->Write(len, str);
-}
-
 plBaseStage::plBaseStage()
 {
     fName = nil;
@@ -139,15 +106,15 @@ void plBaseStage::SetName(const char* name)
 
 void plBaseStage::Read(hsStream *stream)
 {
-    int version = stream->ReadLE16();
+    stream->ReadLE16();
     delete [] fName;
-    fName = MyReadSafeString(stream);
+    fName = stream->ReadSafeString();
 }
 
 void plBaseStage::Write(hsStream *stream)
 {
     stream->WriteLE16(1);
-    MyWriteSafeString(stream, fName);
+    stream->WriteSafeString(fName);
 }
 
 void plBaseStage::IBaseClone(plBaseStage* clone)
@@ -189,21 +156,21 @@ void plStandardStage::Read(hsStream *stream)
     uint16_t version = stream->ReadLE16();
 
     delete [] fAnimName;
-    fAnimName = MyReadSafeString(stream);
+    fAnimName = stream->ReadSafeString();
     fNumLoops = stream->ReadLE32();
-    fLoopForever = stream->Readbool();
+    fLoopForever = stream->ReadBool();
     fForward = stream->ReadByte();
     fBackward = stream->ReadByte();
     fStageAdvance = stream->ReadByte();
     fStageRegress = stream->ReadByte();
     fNotify = stream->ReadByte();
-    fUseGlobalCoord = stream->Readbool();
+    fUseGlobalCoord = stream->ReadBool();
     if(version > 1)
     {
         // these guys were added in version 2
-        fDoAdvanceTo = stream->Readbool();
+        fDoAdvanceTo = stream->ReadBool();
         fAdvanceTo = stream->ReadLE32();
-        fDoRegressTo = stream->Readbool();
+        fDoRegressTo = stream->ReadBool();
         fRegressTo = stream->ReadLE32();
     }
 }
@@ -214,20 +181,20 @@ void plStandardStage::Write(hsStream *stream)
 
     stream->WriteLE16(2);
 
-    MyWriteSafeString(stream, fAnimName);
+    stream->WriteSafeString(fAnimName);
     stream->WriteLE32(fNumLoops);
-    stream->Writebool(fLoopForever);
+    stream->WriteBool(fLoopForever);
     stream->WriteByte(fForward);
     stream->WriteByte(fBackward);
     stream->WriteByte(fStageAdvance);
     stream->WriteByte(fStageRegress);
     stream->WriteByte(fNotify);
-    stream->Writebool(fUseGlobalCoord);
+    stream->WriteBool(fUseGlobalCoord);
 
     // these next 4 were added in version 2
-    stream->Writebool(fDoAdvanceTo);
+    stream->WriteBool(fDoAdvanceTo);
     stream->WriteLE32(fAdvanceTo);
-    stream->Writebool(fDoRegressTo);
+    stream->WriteBool(fDoRegressTo);
     stream->WriteLE32(fRegressTo);
 }
 
@@ -357,7 +324,7 @@ void plStandardStage::IGetAnimName()
     char buf[256];
     edit->GetText(buf, sizeof(buf));
 
-    if (!hsStrEQ(buf, fAnimName))
+    if (strcmp(buf, fAnimName) != 0)
     {
         delete [] fAnimName;
         fAnimName = hsStrcpy(buf);

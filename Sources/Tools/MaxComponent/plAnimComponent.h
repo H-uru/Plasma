@@ -109,14 +109,14 @@ public:
     plAnimComponentBase();
     void DeleteThis() { delete this; }
 
-    hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    hsBool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual plKey GetModKey(plMaxNode *node)=0;
     plString GetAnimName();
-    static hsBool IsAnimComponent(plComponentBase *comp);
+    static bool IsAnimComponent(plComponentBase *comp);
 
     std::map<plMaxNode*, plAGAnim*> fAnims;
 
@@ -131,14 +131,14 @@ public:
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
-    virtual hsBool  IsNodeRestricted( void ) { return true; }
-    virtual plString GetIfaceSegmentName( hsBool allowNil );
+    virtual bool    IsNodeRestricted( void ) { return true; }
+    virtual plString GetIfaceSegmentName( bool allowNil );
 
 protected:
-    hsBool IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
-    hsBool IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
-    hsBool IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
-    hsBool IMakePersistent(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
+    bool IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
+    bool IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
+    bool IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
+    bool IMakePersistent(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
 };
 
 class plAnimComponent : public plAnimComponentBase
@@ -146,7 +146,7 @@ class plAnimComponent : public plAnimComponentBase
 public:
     plAnimComponent();
     plKey GetModKey(plMaxNode *node);
-    virtual hsBool  GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
+    virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
 };
 
 class plAnimGroupedComponent : public plAnimComponentBase
@@ -157,12 +157,12 @@ protected:
 public:
     plAnimGroupedComponent();
 
-    hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     plKey GetModKey(plMaxNode *node);
 
-    virtual hsBool  IsNodeRestricted( void ) { return false; }
-    virtual hsBool  GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
+    virtual bool    IsNodeRestricted( void ) { return false; }
+    virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
 };
 
 //// Dialog Proc For Anim Selection /////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ protected:
     plComponentNoteTrackDlg fNoteTrackDlg;
     IParamBlock2 *fPB;
     
-    void EnableGlobal(HWND hWnd, hsBool enable);
+    void EnableGlobal(HWND hWnd, bool enable);
     
 public:
     static void FillAgeGlobalComboBox(HWND box, const char *varName);
@@ -227,9 +227,9 @@ public:
     plAnimCompressComp();
     void DeleteThis() { delete this; }
 
-    virtual hsBool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    //virtual hsBool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    //virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     enum
     {

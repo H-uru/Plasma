@@ -79,7 +79,7 @@ plDrawInterface *di = so->GetVolatileDrawInterface();
           }
 */
 
-hsBool plSharedMesh::MsgReceive(plMessage* msg)
+bool plSharedMesh::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)

@@ -227,7 +227,7 @@ float   plOGGCodec::GetLengthInSecs( void )
     return (float)ov_time_total( fOggFile, -1 );
 }
 
-hsBool  plOGGCodec::SetPosition( uint32_t numBytes )
+bool    plOGGCodec::SetPosition( uint32_t numBytes )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
     
@@ -263,7 +263,7 @@ hsBool  plOGGCodec::SetPosition( uint32_t numBytes )
     return true;
 }
 
-hsBool  plOGGCodec::Read( uint32_t numBytes, void *buffer )
+bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
 //  plNetClientApp::StaticDebugMsg("Ogg Read, t=%f, start", hsTimer::GetSeconds());

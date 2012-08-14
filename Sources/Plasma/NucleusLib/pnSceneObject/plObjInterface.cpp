@@ -85,10 +85,8 @@ void plObjInterface::Write(hsStream* s, hsResMgr* mgr)
     fProps.Write(s);
 }
 
-hsBool plObjInterface::MsgReceive(plMessage* msg)
+bool plObjInterface::MsgReceive(plMessage* msg)
 {
-    hsBool retVal = false;
-
     plEnableMsg* enaMsg = plEnableMsg::ConvertNoRef(msg);
     if( enaMsg )
     {

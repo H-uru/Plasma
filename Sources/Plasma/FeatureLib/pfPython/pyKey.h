@@ -63,7 +63,7 @@ private:
 #ifndef BUILDING_PYPLASMA // pyPlasma (and other plugins) don't need all this extra junk)
         plPythonFileMod*    fPyFileMod;     // pointer to the PythonFileModifier
 
-        hsBool          fNetForce;
+        bool                fNetForce;
 #endif // BUILDING_PYPLASMA
 
 protected:
@@ -89,8 +89,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // override the equals to operator
-    hsBool operator==(const pyKey &key) const;
-    hsBool operator!=(const pyKey &key) const { return !(key == *this); }
+    bool operator==(const pyKey &key) const;
+    bool operator!=(const pyKey &key) const { return !(key == *this); }
 
     // getter and setters
     virtual plKey getKey() { return fKey; }
@@ -99,13 +99,13 @@ public:
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();
 
-    virtual void SetNetForce(hsBool state);
+    virtual void SetNetForce(bool state) { fNetForce = state; }
 
     // methods to be sent to the plKey
     // send enable message to the plKey
-    virtual void Enable();
+    virtual void Enable() { IEnable(true); }
     // send disable message to the plKey
-    virtual void Disable();
+    virtual void Disable() { IEnable(false); }
     // if this is a modifier then get the (first) object its attached to
     virtual PyObject* GetParentObject();
 
@@ -113,9 +113,9 @@ public:
     // (Only called from C++, not from Python directly)
     //
     // Was the last plNotifyMsg a locally sent?
-    virtual hsBool WasLocalNotify();
+    virtual bool WasLocalNotify();
     // Is this python file mod attached to a clone?
-    virtual hsBool IsAttachedToClone();
+    virtual bool IsAttachedToClone();
     // (old style - Used in pyNotify)
     // get the notify list count
     virtual int32_t NotifyListCount();
@@ -132,7 +132,7 @@ public:
     virtual plPipeline* GetPipeline();
 private:
     // build and send enable message to the plKey
-    virtual void IEnable(hsBool state);
+    virtual void IEnable(bool state);
 #endif // BUILDING_PYPLASMA
 };
 

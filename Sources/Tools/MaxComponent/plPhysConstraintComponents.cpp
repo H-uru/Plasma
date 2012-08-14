@@ -198,9 +198,9 @@ public:
 
         */
 
-        hsBool GetParamVals(plMaxNode *pNode, plErrorMsg *pErrMsg);
+        bool GetParamVals(plMaxNode *pNode, plErrorMsg *pErrMsg);
         
-        //! Detector PreConvert, takes in two variables and return a hsBool.
+        //! Detector PreConvert, takes in two variables and return a bool.
         /*! 
             Calls the function MaybeMakeLocal() and Sets Drawable to false.
 
@@ -208,14 +208,14 @@ public:
             \param node a plMaxNode ptr.
             \param pErrMsg a pErrMsg ptr.
 
-            \return A hsBool expressing the success of the operation.
+            \return A bool expressing the success of the operation.
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        hsBool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
 
-        hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //
@@ -334,7 +334,7 @@ plPhysHingeConstraintComponent::plPhysHingeConstraintComponent()
 //
 
 
-hsBool plPhysHingeConstraintComponent::GetParamVals(plMaxNode *node,plErrorMsg *pErrMsg)
+bool plPhysHingeConstraintComponent::GetParamVals(plMaxNode *node,plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -346,7 +346,7 @@ hsBool plPhysHingeConstraintComponent::GetParamVals(plMaxNode *node,plErrorMsg *
 //
 
 
-hsBool plPhysHingeConstraintComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plPhysHingeConstraintComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
 
     /*
@@ -363,7 +363,7 @@ hsBool plPhysHingeConstraintComponent::SetupProperties(plMaxNode *pNode, plError
 
 */
 /*
-        hsBool HasPhysFlag = false;
+        bool HasPhysFlag = false;
         for(int i = 0; i < pNode->NumAttachedComponents(); i++)
         {
             plComponentBase* thisComp = pNode->GetAttachedComponent(i);
@@ -403,7 +403,7 @@ extern PlasmaToHavokQuat(Havok::Quaternion &a, hsQuat &b);
 
 
 
-hsBool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plHingeConstraintMod* HMod = new plHingeConstraintMod;
 
@@ -534,9 +534,9 @@ public:
     void SetDefaultTau();
     void ValidateSections();
 
-    hsBool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
-    hsBool PreConvert(plMaxNode* node, plErrorMsg* errMsg);
-    hsBool Convert(plMaxNode* node, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
+    bool PreConvert(plMaxNode* node, plErrorMsg* errMsg);
+    bool Convert(plMaxNode* node, plErrorMsg* errMsg);
 };
 
 class plBridgeProc : public ParamMap2UserDlgProc
@@ -640,7 +640,7 @@ void plPhysBridgeComponent::ValidateSections()
     }
 }
 
-hsBool plPhysBridgeComponent::SetupProperties(plMaxNode* node, plErrorMsg* errMsg)
+bool plPhysBridgeComponent::SetupProperties(plMaxNode* node, plErrorMsg* errMsg)
 {
     if (!fIsValidated)
     {
@@ -668,14 +668,14 @@ hsBool plPhysBridgeComponent::SetupProperties(plMaxNode* node, plErrorMsg* errMs
     return true;
 }
 
-hsBool plPhysBridgeComponent::PreConvert(plMaxNode* node, plErrorMsg* errMsg)
+bool plPhysBridgeComponent::PreConvert(plMaxNode* node, plErrorMsg* errMsg)
 {
     fIsValidated = false;
 
     return true;
 }
 
-hsBool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
+bool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
 {
     plMaxNode* parent = nil;
 
@@ -856,9 +856,9 @@ public:
 
         */
 
-        hsBool GetParamVals(plMaxNode *pNode, plErrorMsg *pErrMsg);
+        bool GetParamVals(plMaxNode *pNode, plErrorMsg *pErrMsg);
         
-        //! Detector PreConvert, takes in two variables and return a hsBool.
+        //! Detector PreConvert, takes in two variables and return a bool.
         /*! 
             Calls the function MaybeMakeLocal() and Sets Drawable to false.
 
@@ -866,14 +866,14 @@ public:
             \param node a plMaxNode ptr.
             \param pErrMsg a pErrMsg ptr.
 
-            \return A hsBool expressing the success of the operation.
+            \return A bool expressing the success of the operation.
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        hsBool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        hsBool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
 
-        hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
 };
 
@@ -966,7 +966,7 @@ plStrongSpringConstraintComponent::plStrongSpringConstraintComponent()
 extern PlasmaToHavokQuat(Havok::Quaternion &a, hsQuat &b);
 
 
-hsBool plStrongSpringConstraintComponent::GetParamVals(plMaxNode *node,plErrorMsg *pErrMsg)
+bool plStrongSpringConstraintComponent::GetParamVals(plMaxNode *node,plErrorMsg *pErrMsg)
 {
 
 
@@ -980,7 +980,7 @@ hsBool plStrongSpringConstraintComponent::GetParamVals(plMaxNode *node,plErrorMs
 //
 
 
-hsBool plStrongSpringConstraintComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
+bool plStrongSpringConstraintComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
 {
 
     GetParamVals(pNode, pErrMsg);
@@ -1040,7 +1040,7 @@ hsBool plStrongSpringConstraintComponent::SetupProperties(plMaxNode *pNode, plEr
 
 
 
-hsBool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plStrongSpringConstraintMod* HMod = new plStrongSpringConstraintMod;
 

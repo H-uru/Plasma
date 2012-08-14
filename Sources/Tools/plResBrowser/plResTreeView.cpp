@@ -137,7 +137,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
             ((plResManager *)hsgResMgr::ResMgr())->IterateAllPages( this );
         }
 
-        virtual hsBool  EatPage( plRegistryPageNode *page )
+        virtual bool    EatPage( plRegistryPageNode *page )
         {
             char    str[ 512 ];
 
@@ -153,7 +153,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
             return true;
         }
 
-        virtual hsBool  EatKey( const plKey& key )
+        virtual bool    EatKey( const plKey& key )
         {
             if( fCurrType != key->GetUoid().GetClassType() )
             {
@@ -366,7 +366,7 @@ void    plResTreeView::VerifyCurrentPage( HWND treeCtrl )
 
 void    plResTreeView::UpdateInfoDlg( HWND treeCtrl )
 {
-    hsBool showAsHex = (hsBool)IsDlgButtonChecked( fInfoDlg, IDC_SHOWASHEX );
+    bool showAsHex = (bool)IsDlgButtonChecked( fInfoDlg, IDC_SHOWASHEX );
 
     SetDlgItemText( fInfoDlg, IDC_NAME, "" );
     SetDlgItemText( fInfoDlg, IDC_CLASS, "" );

@@ -115,7 +115,7 @@ fWarned(0)
 {
 }
 
-void hsConverterUtils::Init(hsBool save, plErrorMsg *msg)
+void hsConverterUtils::Init(bool save, plErrorMsg *msg)
 {
     hsGuardBegin("hsConverterUtils::Init");
 
@@ -138,7 +138,7 @@ TimeValue hsConverterUtils::GetTime(Interface *gi)
     //  return theSceneEnum->time;
 }
 
-hsBool hsConverterUtils::IsEnvironHolder(INode *node)
+bool hsConverterUtils::IsEnvironHolder(INode *node)
 {
     hsGuardBegin("hsConverterUtils::IsEnvironHolder");
 
@@ -146,7 +146,7 @@ hsBool hsConverterUtils::IsEnvironHolder(INode *node)
     hsGuardEnd; 
 }
 
-hsBool hsConverterUtils::AutoStartDynamics(INode *node)
+bool hsConverterUtils::AutoStartDynamics(INode *node)
 {
     hsGuardBegin("hsConverterUtils::AutoStartDynamics");
 
@@ -154,7 +154,7 @@ hsBool hsConverterUtils::AutoStartDynamics(INode *node)
     hsGuardEnd; 
 }
 
-hsBool hsConverterUtils::RandomStartDynamics(INode *node)
+bool hsConverterUtils::RandomStartDynamics(INode *node)
 {
     hsGuardBegin("hsConverterUtils::RandomStartDynamics");
 
@@ -192,7 +192,7 @@ void hsConverterUtils::StripOffPath(char* fileName)
 //
 // static 
 //
-hsBool hsConverterUtils::IsReservedKeyword(const char* nodeName)
+bool hsConverterUtils::IsReservedKeyword(const char* nodeName)
 {
     hsGuardBegin("hsConverterUtils::IsReservedKeyword");
 
@@ -364,7 +364,7 @@ INode* hsConverterUtils::FindINodeFromKeyedObject(hsKeyedObject* obj)
 }
 
 // Uses MangleRef so all mangling happens in one place.  Compares the name with a mangled version of it
-hsBool hsConverterUtils::IsMangled(const char *name) 
+bool hsConverterUtils::IsMangled(const char *name) 
 {
     hsGuardBegin("hsConverterUtils::IsMangled");
 
@@ -441,7 +441,7 @@ int32_t hsConverterUtils::FindNamedSelSetFromName(const char *name)
     hsGuardEnd; 
 }
 
-hsBool hsConverterUtils::IsInstanced(Object* maxObject)
+bool hsConverterUtils::IsInstanced(Object* maxObject)
 {
     hsGuardBegin("hsConverterUtils::IsInstanced");
 
@@ -486,7 +486,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
 //
 // Matches name against node's name, case-insensitive, 
 //
-INode* hsConverterUtils::GetINodeByName(const char* name, hsBool caseSensitive)
+INode* hsConverterUtils::GetINodeByName(const char* name, bool caseSensitive)
 {
     hsGuardBegin("hsConverterUtils::GetINodeByName");
 

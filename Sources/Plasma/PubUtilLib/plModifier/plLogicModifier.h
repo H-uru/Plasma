@@ -51,7 +51,7 @@ protected:
 
     hsTArray<plConditionalObject*>  fConditionList;
 
-    virtual void PreTrigger(hsBool netRequest);
+    virtual void PreTrigger(bool netRequest);
 public:
     plLogicModifier();
     ~plLogicModifier();
@@ -62,10 +62,10 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
-    virtual void RequestTrigger(hsBool netRequest=false);
-    virtual hsBool VerifyConditions(plMessage* msg);
+    virtual void RequestTrigger(bool netRequest=false);
+    virtual bool VerifyConditions(plMessage* msg);
     void AddCondition(plConditionalObject* c);
     virtual void Reset(bool bCounterReset);
 

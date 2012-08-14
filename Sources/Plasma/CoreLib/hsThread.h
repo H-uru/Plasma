@@ -68,20 +68,20 @@ public:
     typedef pthread_t ThreadId;
 #endif
 private:
-    hsBool      fQuit;
-    uint32_t      fStackSize;
+    bool        fQuit;
+    uint32_t    fStackSize;
 #if HS_BUILD_FOR_WIN32
     ThreadId    fThreadId;
     HANDLE      fThreadH;
     HANDLE      fQuitSemaH;
 #elif HS_BUILD_FOR_UNIX
     ThreadId    fPThread;
-    hsBool      fIsValid;
+    bool        fIsValid;
     pthread_mutex_t fMutex;
 #endif
 protected:
-    hsBool      GetQuit() const { return hsBool(fQuit); }
-    void        SetQuit(hsBool value) { fQuit = value; }
+    bool        GetQuit() const { return fQuit; }
+    void        SetQuit(bool value) { fQuit = value; }
 public:
     hsThread(uint32_t stackSize = 0);
     virtual     ~hsThread();    // calls Stop()
@@ -121,7 +121,7 @@ public:
 #endif
 
     void        Lock();
-    hsBool      TryLock();
+    bool        TryLock();
     void        Unlock();
 };
 
@@ -165,8 +165,8 @@ public:
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
-    hsBool      TryWait();
-    hsBool      Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    bool        TryWait();
+    bool        Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
 };
 
@@ -177,7 +177,7 @@ class hsEvent
 #ifndef PSEUDO_EVENT
     pthread_mutex_t fMutex;
     pthread_cond_t  fCond;
-    hsBool  fTriggered;
+    bool  fTriggered;
 #else
     enum { kRead, kWrite };
     int     fFds[2];
@@ -195,8 +195,8 @@ public:
     HANDLE GetHandle() const { return fEvent; }
 #endif
 
-    hsBool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void        Signal();
+    bool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void  Signal();
 };
 
 //////////////////////////////////////////////////////////////////////////////

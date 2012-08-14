@@ -39,51 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plRefCnt_Defined
-#define plRefCnt_Defined
 
 #include "HeadSpin.h"
+#include "hsExceptions.h"
+#include "hsRefCnt.h"
 
-// plRef count addes refcount abilities to any plCreatable
+hsRefCnt::~hsRefCnt()
+{
+    hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
+}
 
-class plRefCnt
-{   uint32_t fRefCnt;
-public:
-    plRefCnt() : fRefCnt(1){}
-    ~plRefCnt(){}
-    hsBool TimeToDelete()   { return (fRefCnt == 1); }
-    void    Incr()          { fRefCnt++; }
-    void    Decr()          { fRefCnt--; }
-};
+void hsRefCnt::Ref()
+{
+    fRefCnt++;
+}
 
+void hsRefCnt::UnRef()
+{
+    hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
 
-#define DEFINE_REF_COUNT  plRefCnt fMyRef;\
-    virtual void    UnRef() {   /*hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)*/if (fMyRef.TimeToDelete()) delete this; else fMyRef.Decr(); }\
-    virtual void    Ref() { fMyRef.Incr(); }
-/*
-class hsRefCnt {
-private:
-    int32_t       fRefCnt;
-public:
-                hsRefCnt() : fRefCnt(1) {}
-    virtual     ~hsRefCnt();
-
-    int32_t       RefCnt() const { return fRefCnt; }
-    virtual void    UnRef();
-    virtual void    Ref();
-};
-
-#define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
-#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
-
-#define hsRefCnt_SafeAssign(dst, src)       \
-        do {                            \
-            hsRefCnt_SafeRef(src);      \
-            hsRefCnt_SafeUnRef(dst);        \
-            dst = src;                  \
-        } while (0)
-
-*/
-
-#endif
-
+    if (fRefCnt == 1)   // don't decrement if we call delete
+        delete this;
+    else
+        --fRefCnt;
+}

@@ -221,7 +221,7 @@ protected:
 public:
     plWriteIterator(hsStream* s) : fStream(s) {}
 
-    virtual hsBool EatKey(const plKey& key)
+    virtual bool EatKey(const plKey& key)
     {
         plKeyImp* imp = (plKeyImp*)key;
         imp->WriteObject(fStream);
@@ -283,7 +283,7 @@ void plRegistryPageNode::Write()
 
 //// IterateKeys /////////////////////////////////////////////////////////////
 
-hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator) const
+bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator) const
 {
     KeyMap::const_iterator it = fKeyLists.begin();
     for (; it != fKeyLists.end(); it++)
@@ -300,7 +300,7 @@ hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator) const
 //  Restricted version that only iterates through the keys of a given class
 //  type.
 
-hsBool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const
+bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const
 {
     plRegistryKeyList* keyList = IGetKeyList(classToRestrictTo);
     if (keyList != nil)
@@ -345,7 +345,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
         //          "\n\n(Key name: %s, Class: %s, Loc: %s)", key->GetUoid().GetObjectName(), 
         //          plFactory::GetNameOfClass(classType), key->GetUoid().GetLocation().StringIze(tempStr));
         //hsStatusMessage(str);
-        hsBool recovered = false;
+        bool recovered = false;
 
         // Attempt recovery
         for (int i = 0; i < 500; i++)
@@ -383,14 +383,14 @@ void plRegistryPageNode::SetKeyUsed(plKeyImp* key)
     keys->SetKeyUsed(key);
 }
 
-hsBool plRegistryPageNode::SetKeyUnused(plKeyImp* key)
+bool plRegistryPageNode::SetKeyUnused(plKeyImp* key)
 {
     plRegistryKeyList* keys = IGetKeyList(key->GetUoid().GetClassType());
     if (keys == nil)
         return false;
 
     plRegistryKeyList::LoadStatus loadStatusChange;
-    hsBool removed = keys->SetKeyUnused(key, loadStatusChange);
+    bool removed = keys->SetKeyUnused(key, loadStatusChange);
 
     // If the key type just changed load status, update our load counts
     if (loadStatusChange == plRegistryKeyList::kDynUnloaded)

@@ -112,8 +112,8 @@ protected:
 
     plParticleSDLMod *fParticleSDLMod;
 
-    hsBool IShouldUpdate(plPipeline* pipe) const;
-    virtual hsBool IEval(double secs, float del, uint32_t dirty); // required by plModifier
+    bool IShouldUpdate(plPipeline* pipe) const;
+    virtual bool IEval(double secs, float del, uint32_t dirty); // required by plModifier
     void IHandleRenderMsg(plPipeline* pipe);
     plDrawInterface* ICheckDrawInterface();
     void IAddEffect(plParticleEffect *effect, uint32_t type);
@@ -163,7 +163,7 @@ public:
     void DisableGenerators();
     uint32_t GetNumTiles() const { return fXTiles * fYTiles; }
     void SetTileIndex(plParticle &particle, uint32_t index); // Sets the UV coordinates appropriate for the current texture
-    uint32_t GetNumValidParticles(hsBool immortalOnly = false) const; // Takes a bit longer if we want a count of immortal particles...
+    uint32_t GetNumValidParticles(bool immortalOnly = false) const; // Takes a bit longer if we want a count of immortal particles...
     uint32_t GetMaxTotalParticles() const { return fMaxTotalParticles; }
     
     const hsMatrix44 &GetLocalToWorld() const;
@@ -189,7 +189,7 @@ public:
     
     virtual void Read(hsStream* s, hsResMgr* mgr); 
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
     void SetAttachedToAvatar(bool attached);
     

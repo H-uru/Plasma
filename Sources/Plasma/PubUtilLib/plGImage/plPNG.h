@@ -53,7 +53,7 @@ class plPNG {
 protected:
 
     plMipmap* IRead(hsStream* inStream);
-    hsBool IWrite(plMipmap* source, hsStream* outStream);
+    bool IWrite(plMipmap* source, hsStream* outStream);
 
 public:
 
@@ -61,9 +61,9 @@ public:
     plMipmap* ReadFromFile(const char* fileName);
     plMipmap* ReadFromFile(const wchar_t* fileName);
 
-    hsBool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
-    hsBool WriteToFile(const char* fileName, plMipmap* sourceData);
-    hsBool WriteToFile(const wchar_t* fileName, plMipmap* sourceData);
+    bool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
+    bool WriteToFile(const char* fileName, plMipmap* sourceData);
+    bool WriteToFile(const wchar_t* fileName, plMipmap* sourceData);
 
     static plPNG& Instance(void);
 };

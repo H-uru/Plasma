@@ -72,7 +72,7 @@ protected:
     plRandomSoundModGroup *fGroups;
     std::vector<uint16_t> fActiveList;    // list of sounds we're allowed to choose
     int              fOldPriority;      // old sound priority
-    hsBool          fFirstTimePlay;
+    bool            fFirstTimePlay;
     
     virtual void    IPlayNext();
     virtual void    IPlayNextIfMaster();
@@ -93,8 +93,8 @@ public:
 
     void SetCurrentGroup(uint16_t group);
         
-    void    ForceSoundLoadState( hsBool loaded );
-    hsBool  MsgReceive(plMessage* msg);
+    void    ForceSoundLoadState( bool loaded );
+    bool    MsgReceive(plMessage* msg);
     float           GetVolume();
 
     // EXPORT ONLY

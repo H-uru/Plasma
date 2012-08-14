@@ -75,8 +75,8 @@ public:
     CLASSNAME_REGISTER(plAvBrainCritter);
     GETINTERFACE_ANY(plAvBrainCritter, plArmatureBrain);
 
-    hsBool Apply(double time, float elapsed);
-    hsBool MsgReceive(plMessage* msg);
+    bool Apply(double time, float elapsed);
+    bool MsgReceive(plMessage* msg);
 
     virtual void Activate(plArmatureModBase* avMod);
     virtual void Deactivate();
@@ -140,7 +140,7 @@ public:
     static bool fDrawDebug;
 
 protected:
-    virtual hsBool IInitBaseAnimations();
+    virtual bool IInitBaseAnimations();
 
     int IPickBehavior(int behavior) const;
     int IPickBehavior(const std::string& behavior) const;

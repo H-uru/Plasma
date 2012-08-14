@@ -56,7 +56,7 @@ class plForwardCallback
 public:
     hsTArray<plKey> fOrigReceivers;
     int fNumCallbacks;
-    hsBool fNetPropogate;
+    bool fNetPropogate;
 };
 
 plMsgForwarder::plMsgForwarder()
@@ -96,7 +96,7 @@ void plMsgForwarder::Write(hsStream* s, hsResMgr* mgr)
         mgr->WriteKey(s, fForwardKeys[i]);
 }
 
-hsBool plMsgForwarder::MsgReceive(plMessage* msg)
+bool plMsgForwarder::MsgReceive(plMessage* msg)
 {
     // Self destruct messages are for us only
     plSelfDestructMsg *selfMsg = plSelfDestructMsg::ConvertNoRef(msg);
@@ -112,7 +112,7 @@ hsBool plMsgForwarder::MsgReceive(plMessage* msg)
     return true;
 }
 
-hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
+bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
 {
     // Only process as a callback message if it is one, AND it has callbacks
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(msg);
@@ -172,7 +172,7 @@ hsBool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 fCallbacks.erase(eventMsg);
 
                 plUoid uoid = GetKey()->GetUoid();
-                hsBool locallyOwned = (plNetClientApp::GetInstance()->IsLocallyOwned(uoid) != plSynchedObject::kNo);
+                bool locallyOwned = (plNetClientApp::GetInstance()->IsLocallyOwned(uoid) != plSynchedObject::kNo);
 
                 // If the callback was originally net propagated, and we own this forwarder, net propagate the callback
                 if (fc->fNetPropogate && locallyOwned)

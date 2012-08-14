@@ -86,7 +86,7 @@ protected:
     void    ISetTargetTransform();
     void    IBlow(double secs, float delSecs);
     
-    virtual hsBool IEval(double secs, float del, uint32_t dirty);
+    virtual bool IEval(double secs, float del, uint32_t dirty);
 public:
     ~plBlower();
     plBlower();

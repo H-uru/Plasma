@@ -83,7 +83,7 @@ public:
     uint32_t              fControlCode;
     int                 fIndex; 
 
-    hsBool Cmd(int n) { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }

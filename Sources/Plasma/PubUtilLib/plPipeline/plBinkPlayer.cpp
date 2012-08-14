@@ -67,7 +67,7 @@ const uint32_t kForeTrack = 1;
 const int fSndTrack(0); // STUB
 
 U32 plBinkPlayer::fTracks[2] = { kDefaultBack, kDefaultFore };
-hsBool plBinkPlayer::fInit = false;
+bool plBinkPlayer::fInit = false;
 
 
 plBinkPlayer::plBinkPlayer() : 
@@ -110,7 +110,7 @@ uint32_t plBinkPlayer::GetBackGroundTrack()
 }
 
 
-hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
+bool plBinkPlayer::Init( hsWindowHndl hWnd )
 {
     fInit = true;
 
@@ -135,7 +135,7 @@ hsBool plBinkPlayer::Init( hsWindowHndl hWnd )
     return true;
 }
 
-hsBool plBinkPlayer::DeInit()
+bool plBinkPlayer::DeInit()
 {
     return true;
 }
@@ -168,7 +168,7 @@ void plBinkPlayer::SetFileName(const char* fileName)
     fFileName = hsStrcpy(fileName);
 }
 
-hsBool plBinkPlayer::Start(plPipeline* pipe,  hsWindowHndl hWnd) 
+bool plBinkPlayer::Start(plPipeline* pipe,  hsWindowHndl hWnd) 
 {
 #ifdef BINK_SDK_AVAILABLE
     // If we haven't got a movie to play, we're done.
@@ -258,7 +258,7 @@ void plBinkPlayer::ISetVerts()
 #endif
 }
 
-hsBool plBinkPlayer::IGetFrame()
+bool plBinkPlayer::IGetFrame()
 {
 #ifdef BINK_SDK_AVAILABLE
     HRESULT hr;
@@ -287,7 +287,7 @@ hsBool plBinkPlayer::IGetFrame()
 #endif
 }
 
-hsBool plBinkPlayer::ICheckFadingFrom()
+bool plBinkPlayer::ICheckFadingFrom()
 {
     if( fFadeState == kFadeFrom )
     {
@@ -310,12 +310,12 @@ hsBool plBinkPlayer::ICheckFadingFrom()
     return true;
 }
 
-hsBool plBinkPlayer::INotFadingFrom()
+bool plBinkPlayer::INotFadingFrom()
 {
     return (fFadeState != kFadeFrom) && (fFadeState != kFadeFromPaused);
 }
 
-hsBool plBinkPlayer::ICheckFadingTo()
+bool plBinkPlayer::ICheckFadingTo()
 {
     if( IAtEnd() && (fFadeState != kFadeToPaused) )
     {
@@ -357,12 +357,12 @@ hsBool plBinkPlayer::ICheckFadingTo()
     return true;
 }
 
-hsBool plBinkPlayer::INotFadingTo()
+bool plBinkPlayer::INotFadingTo()
 {
     return (fFadeState != kFadeTo) && (fFadeState != kFadeToPaused);
 }
 
-hsBool plBinkPlayer::IAtEnd()
+bool plBinkPlayer::IAtEnd()
 {
 #ifdef BINK_SDK_AVAILABLE
     return fBink->FrameNum == fBink->Frames;
@@ -371,7 +371,7 @@ hsBool plBinkPlayer::IAtEnd()
 #endif
 }
 
-hsBool plBinkPlayer::NextFrame()
+bool plBinkPlayer::NextFrame()
 {
 #ifndef BINK_SDK_AVAILABLE
     return false;
@@ -406,7 +406,7 @@ hsBool plBinkPlayer::NextFrame()
     return IBlitFrame();
 }
 
-hsBool plBinkPlayer::Pause(hsBool on)
+bool plBinkPlayer::Pause(bool on)
 {
     if( fBink )
     {
@@ -453,7 +453,7 @@ void plBinkPlayer::ISendCallbacks()
     fCallbacks.Reset();
 }
 
-hsBool plBinkPlayer::Stop()
+bool plBinkPlayer::Stop()
 {
     ISendCallbacks();
     fPipeline = nil;
@@ -524,7 +524,7 @@ void plBinkPlayer::ISetVolume(float v, int background)
     }
 }
 
-hsBool plBinkPlayer::IBlitFrame()
+bool plBinkPlayer::IBlitFrame()
 {
     HRESULT hr;
 
@@ -546,7 +546,7 @@ hsBool plBinkPlayer::IBlitFrame()
     return true;
 }
 
-hsBool plBinkPlayer::ISetRenderState()
+bool plBinkPlayer::ISetRenderState()
 {
     HRESULT hr;
     

@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace pnNpCommon {
 
 // Verify our uint64_t constants were properly inited as such.
-COMPILER_ASSERT(NetVaultNode::kBlob_2);
+static_assert(NetVaultNode::kBlob_2, "NetVaultNode constants failed to init");
 
 
 

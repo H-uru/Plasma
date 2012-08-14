@@ -72,7 +72,7 @@ void plAvBrainRideAnimatedPhysical::Deactivate()
 {
     plArmatureBrain::Deactivate();
 }
-hsBool plAvBrainRideAnimatedPhysical::MsgReceive(plMessage *msg)
+bool plAvBrainRideAnimatedPhysical::MsgReceive(plMessage *msg)
 {
     plRideAnimatedPhysMsg *ride = plRideAnimatedPhysMsg::ConvertNoRef(msg);
     if(ride)
@@ -88,9 +88,9 @@ hsBool plAvBrainRideAnimatedPhysical::MsgReceive(plMessage *msg)
     }
     return plArmatureBrain::MsgReceive(msg);
 }
-hsBool plAvBrainRideAnimatedPhysical::IInitAnimations()
+bool plAvBrainRideAnimatedPhysical::IInitAnimations()
 {
-    hsBool result = false;
+    bool result = false;
 
     plAGAnim *idle = fAvMod->FindCustomAnim("Idle");
     plAGAnim *walk = fAvMod->FindCustomAnim("Walk");
@@ -180,11 +180,11 @@ hsBool plAvBrainRideAnimatedPhysical::IInitAnimations()
     }
     return result;
 }
-hsBool plAvBrainRideAnimatedPhysical::LeaveAge()
+bool plAvBrainRideAnimatedPhysical::LeaveAge()
 {
     return plArmatureBrain::LeaveAge();
 }
-hsBool plAvBrainRideAnimatedPhysical::Apply(double timeNow, float elapsed)
+bool plAvBrainRideAnimatedPhysical::Apply(double timeNow, float elapsed)
 {
     if(this->fMode==kAbort) return false;
     else return plAvBrainHuman::Apply(timeNow, elapsed);

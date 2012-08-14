@@ -57,7 +57,7 @@ class plAutoComponent : public plComponent
 public:
     plAutoComponent();
 
-    hsBool Convert(plMaxNode *node, plErrorMsg *msg);
+    bool Convert(plMaxNode *node, plErrorMsg *msg);
 };
 
 AUTO_CLASS_DESC(plAutoComponent, gAutoDesc, "Auto", "Auto", "Test", Class_ID(0x21807fcf, 0x156e2218))
@@ -85,9 +85,9 @@ plAutoComponent::plAutoComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-hsBool plAutoComponent::Convert(plMaxNode *node, plErrorMsg *msg)
+bool plAutoComponent::Convert(plMaxNode *node, plErrorMsg *msg)
 {
-    hsBool c1 = gAutoUI->GetCheckBox(0, this);
+    bool c1 = gAutoUI->GetCheckBox(0, this);
     TSTR str = gAutoUI->GetEditBox(2, this);
 
     for (int i = 0; i < gAutoUI->Count(3, this); i++)

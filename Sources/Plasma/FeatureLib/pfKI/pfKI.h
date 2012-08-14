@@ -86,7 +86,7 @@ class pfKI : public hsKeyedObject
         CLASSNAME_REGISTER( pfKI );
         GETINTERFACE_ANY( pfKI, plReceiver );
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
 
         void    Init( void );
 

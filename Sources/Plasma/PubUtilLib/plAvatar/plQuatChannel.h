@@ -64,7 +64,7 @@ public:
     virtual void Value(hsQuat &quaternion, double time);
 
     // can this channel combine with the given channel?
-    virtual hsBool CanCombine(plAGChannel * channelB);
+    virtual bool CanCombine(plAGChannel * channelB);
     // combine it (allocates combine object)
     virtual plAGChannel * MakeCombine(plAGChannel * channelB);
 
@@ -117,7 +117,7 @@ public:
     plQuatTimeScale(plQuatChannel *channel, plScalarChannel *timeSource);
     virtual ~plQuatTimeScale();
 
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
     virtual const hsQuat & Value(double time);
 
     virtual plAGChannel * Detach(plAGChannel * channel);
@@ -149,7 +149,7 @@ public:
 
     //float GetBlend() const { return fBlend; }
     //void SetBlend(float the_blend) { fBlend = the_blend; }
-    virtual hsBool IsStoppedAt(double time);
+    virtual bool IsStoppedAt(double time);
 
     // AG PROTOCOL
     virtual const hsQuat &Value(double time);

@@ -208,7 +208,7 @@ void plWinAudible::GetStatus(plSoundMsg* pMsg)
     }
 }
 
-hsBool plWinAudible::AddSound( plSound *pSnd, int index, hsBool is3D )
+bool plWinAudible::AddSound( plSound *pSnd, int index, bool is3D )
 {
     hsAssert(pSnd->GetKey() != nil, "Adding a new sound with no key.");
     if (plgAudioSys::Active())
@@ -227,7 +227,7 @@ hsBool plWinAudible::AddSound( plSound *pSnd, int index, hsBool is3D )
 }
 
 /* Unused
-int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, hsBool is3D )
+int plWinAudible::AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, bool is3D )
 {
     //plWin32Sound* pSnd = new plWin32Sound;
     //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", fSoundObjs.Count() - 1 );    
@@ -344,7 +344,7 @@ void    plWinAudible::SetVolume(const float volume,int index )
     SND_APPLY_LOOP( index, SetVolume( volume ), ; );
 }
 
-void    plWinAudible::SetMuted( hsBool muted, int index )
+void    plWinAudible::SetMuted( bool muted, int index )
 {
     SND_APPLY_LOOP( index, SetMuted( muted ), ; );
 }
@@ -392,7 +392,7 @@ hsPoint3 plWinAudible::GetPosition(int index)
     return( fSoundObjs[index]->GetPosition() );
 }
 
-void plWinAudible::SetLooping(hsBool loop,int index)
+void plWinAudible::SetLooping(bool loop,int index)
 {
     SND_APPLY_LOOP( index, SetProperty( plSound::kPropLooping, loop ), ; );
 }
@@ -407,7 +407,7 @@ void    plWinAudible::SetFadeOut( const int type, const float length, int index 
     SND_APPLY_LOOP( index, SetFadeOutEffect( (plSound::plFadeParams::Type)type, length ), ; );
 }
 
-void plWinAudible::SetFilename(int index, const char *filename, hsBool isCompressed)
+void plWinAudible::SetFilename(int index, const char *filename, bool isCompressed)
 {
     if(index < 0 || index >= fSoundObjs.Count())
     {
@@ -426,7 +426,7 @@ void plWinAudible::SetFilename(int index, const char *filename, hsBool isCompres
     }
 }
 
-hsBool plWinAudible::IsPlaying(int index)
+bool plWinAudible::IsPlaying(int index)
 {
     int count = fSoundObjs.Count();
 
@@ -508,7 +508,7 @@ void plWinAudible::DeActivate()
     }
 }
 
-hsBool plWinAudible::MsgReceive(plMessage* msg)
+bool plWinAudible::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg;
     if (refMsg = plGenRefMsg::ConvertNoRef(msg))
@@ -650,7 +650,7 @@ pl2WayWinAudible::~pl2WayWinAudible()
         delete fVoiceRecorder;
 }
 
-hsBool pl2WayWinAudible::MsgReceive(plMessage* msg)
+bool pl2WayWinAudible::MsgReceive(plMessage* msg)
 {
     plEvalMsg* pMsg = plEvalMsg::ConvertNoRef(msg);
     if (pMsg && fVoiceRecorder)
@@ -671,7 +671,7 @@ hsBool pl2WayWinAudible::MsgReceive(plMessage* msg)
     return plWinAudible::MsgReceive(msg);
 }
 
-void pl2WayWinAudible::Init(hsBool isLocal)
+void pl2WayWinAudible::Init(bool isLocal)
 {
     if (!fVoicePlayer)
     {

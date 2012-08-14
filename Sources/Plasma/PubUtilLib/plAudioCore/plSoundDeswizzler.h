@@ -67,7 +67,7 @@ public:
 protected:
     uint8_t   *fData;
     uint32_t  fNumSamples, fSampleSize, fStride;
-    hsBool  fOwnsData;
+    bool    fOwnsData;
 };
 
 #endif //_plSoundDeswizzler_h

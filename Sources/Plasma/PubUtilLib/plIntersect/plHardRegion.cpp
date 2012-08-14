@@ -84,7 +84,7 @@ void plHardRegion::Write(hsStream* s, hsResMgr* mgr)
     plRegionBase::Write(s, mgr);
 }
 
-hsBool plHardRegion::CameraInside() const
+bool plHardRegion::CameraInside() const
 {
     if( fState & kDirty )
     {
@@ -97,7 +97,7 @@ hsBool plHardRegion::CameraInside() const
     return 0 != (fState & kCamInside);
 }
 
-hsBool plHardRegion::MsgReceive(plMessage* msg)
+bool plHardRegion::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )

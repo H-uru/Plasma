@@ -83,7 +83,7 @@ plWin32Sound::~plWin32Sound()
 {
 }
 
-void plWin32Sound::Activate( hsBool forcePlay )
+void plWin32Sound::Activate( bool forcePlay )
 {
     if( fFailed )
         return;
@@ -314,7 +314,7 @@ void plWin32Sound::IRefreshParams( void )
     plSound::IRefreshParams();
 }
 
-void plWin32Sound::IRefreshEAXSettings( hsBool force )
+void plWin32Sound::IRefreshEAXSettings( bool force )
 {
     if( fDSoundBuffer != nil )
         fDSoundBuffer->SetEAXSettings( &GetEAXSettings(), force );
@@ -404,7 +404,7 @@ void plWin32Sound::AddCallbacks(plSoundMsg* pSoundMsg)
         IAddCallback( pSoundMsg->GetEventCallback( i ) );
 }
 
-hsBool plWin32Sound::MsgReceive( plMessage* pMsg )
+bool plWin32Sound::MsgReceive( plMessage* pMsg )
 {
     plEventCallbackMsg *e = plEventCallbackMsg::ConvertNoRef( pMsg );
     if( e != nil )

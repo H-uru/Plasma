@@ -129,8 +129,8 @@ public:
         kRefNextAvailable   = 10
     };
 protected:
-    static hsBool               fDisableAccumulate;
-    static hsBool               fDisableUpdate;
+    static bool                 fDisableAccumulate;
+    static bool                 fDisableUpdate;
 
     plDynaDecalMap              fDecalMap;
 
@@ -182,21 +182,21 @@ protected:
     const plPrintShape* IGetPrintShape(const plKey& objKey) const;
     const plPrintShape* IGetPrintShape(plArmatureMod* avMod, uint32_t id) const;
 
-    virtual hsBool      IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
+    virtual bool        IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg);
     void                INotifyActive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
     void                INotifyInactive(plDynaDecalInfo& info, const plKey& armKey, uint32_t id) const;
-    hsBool              IWetParts(const plDynaDecalEnableMsg* enaMsg);
-    hsBool              IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg);
+    bool                IWetParts(const plDynaDecalEnableMsg* enaMsg);
+    bool                IWetPart(uint32_t id, const plDynaDecalEnableMsg* enaMsg);
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
     float            IHowWet(plDynaDecalInfo& info, double t) const;
     plDynaDecalInfo&    IGetDecalInfo(uintptr_t id, const plKey& key);
     void                IRemoveDecalInfo(uint32_t id);
     void                IRemoveDecalInfos(const plKey& key);
 
-    hsGMaterial*        ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, hsBool rtLit);
+    hsGMaterial*        ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, bool rtLit);
     void                IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx);
     plAuxSpan*          IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, uint16_t numVerts, uint16_t numIdx);
-    hsBool              IMakeAuxRefs(plPipeline* pipe);
+    bool                IMakeAuxRefs(plPipeline* pipe);
 
     uint16_t*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
     plDecalVtxFormat*   IGetBaseVtxPtr(const plAuxSpan* auxSpan) const;
@@ -207,25 +207,25 @@ protected:
     void                IUpdateDecals(double t);
 
     void                ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
-    hsBool              IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    hsBool              IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    hsBool              IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    hsBool              IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    hsBool              IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src);
-    hsBool              IHitTestPolys(hsTArray<plCutoutPoly>& src) const;
+    bool                IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
+    bool                IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
+    bool                IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
+    bool                IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
+    bool                IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src);
+    bool                IHitTestPolys(hsTArray<plCutoutPoly>& src) const;
 
-    hsBool              IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid);
-    hsBool              IConvertFlatGrid(plAuxSpan* auxSpan, plDynaDecal* decal, const plFlatGridMesh& grid) const;
-    hsBool              ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs);
-    hsBool              IHitTestFlatGrid(const plFlatGridMesh& grid) const;
+    bool                IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid);
+    bool                IConvertFlatGrid(plAuxSpan* auxSpan, plDynaDecal* decal, const plFlatGridMesh& grid) const;
+    bool                ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs);
+    bool                IHitTestFlatGrid(const plFlatGridMesh& grid) const;
 
-    hsBool              ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs);
-    hsBool              ICutoutObject(plSceneObject* so, double secs);
-    hsBool              ICutoutTargets(double secs);
+    bool                ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs);
+    bool                ICutoutObject(plSceneObject* so, double secs);
+    bool                ICutoutTargets(double secs);
 
     void                ISetDepthFalloff(); // Sets from current cutter settings.
 
-    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, hsBool hasWaterHeight=false, float waterHeight=0.f);
+    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool hasWaterHeight=false, float waterHeight=0.f);
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 
@@ -247,7 +247,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
 
     // This is public, because you need to call it after creating
     // a DynaDecalMgr on the fly. It's normally called on Read().
@@ -256,8 +256,8 @@ public:
     void SetScale(const hsVector3& v) { fScale = v; }
     const hsVector3& GetScale() const { return fScale; }
 
-    void SetWaitOnEnable(hsBool on) { fWaitOnEnable = on; }
-    hsBool GetWaitOnEnable() const { return fWaitOnEnable; }
+    void SetWaitOnEnable(bool on) { fWaitOnEnable = on; }
+    bool GetWaitOnEnable() const { return fWaitOnEnable; }
 
     void SetWetLength(float f) { fWetLength = f; }
     void SetRampEnd(float f) { fRampEnd = f; }
@@ -280,13 +280,13 @@ public:
     uint32_t GetNumNotifies() const { return fNotifies.GetCount(); }
     const plKey& GetNotify(int i) const { return fNotifies[i]; }
 
-    static void SetDisableAccumulate(hsBool on) { fDisableAccumulate = on; }
+    static void SetDisableAccumulate(bool on) { fDisableAccumulate = on; }
     static void ToggleDisableAccumulate() { fDisableAccumulate = !fDisableAccumulate; }
-    static hsBool GetDisableAccumulate() { return fDisableAccumulate; }
+    static bool GetDisableAccumulate() { return fDisableAccumulate; }
 
-    static void SetDisableUpdate(hsBool on) { fDisableUpdate = on; }
+    static void SetDisableUpdate(bool on) { fDisableUpdate = on; }
     static void ToggleDisableUpdate() { fDisableUpdate = !fDisableUpdate; }
-    static hsBool GetDisableUpdate() { return fDisableUpdate; }
+    static bool GetDisableUpdate() { return fDisableUpdate; }
 };
 
 #endif // plDynaDecalMgr_inc

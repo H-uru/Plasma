@@ -173,7 +173,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
     hsColorRGBA         preDiffuse, rtDiffuse, matAmbient;
     hsBitVector         dirtyVector;
     int                 i;
-    hsBool              translucent, shadeIt, addingIt;
+    bool                translucent, shadeIt, addingIt;
     plLayerInterface    *layer = nil;
 
 
@@ -355,7 +355,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 //                 We do the mat modulation outside of this function, so we 
 //                 just gotta make sure the two arrays get the right values.
 
-void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, hsBool translucent )
+void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVector, INode* node, bool translucent )
 {
     hsGuardBegin( "hsVertexShader::IShadeVertices" );
 
@@ -407,7 +407,7 @@ void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVec
     hsGuardEnd;
 }
 
-void hsVertexShader::INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent)
+void hsVertexShader::INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, bool translucent)
 {
     ctx.SetPoint(vtx.fLocalPos, vtx.fNormal);
 
@@ -427,7 +427,7 @@ void hsVertexShader::INativeShadeVtx(hsColorRGBA& shade, plMaxLightContext& ctx,
     }
 }
 
-void hsVertexShader::INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, hsBool translucent)
+void hsVertexShader::INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx, const plTmpVertex3& vtx, bool translucent)
 {
     ctx.SetPoint(vtx.fLocalPos, vtx.fNormal);
 
@@ -437,7 +437,7 @@ void hsVertexShader::INativeShadowVtx(hsColorRGBA& shade, plMaxLightContext& ctx
     shade.b += color.b;
 }
 
-hsBool hsVertexShader::IsTranslucent( hsGMaterial *material )
+bool hsVertexShader::IsTranslucent( hsGMaterial *material )
 {
     hsGuardBegin("hsVertexShader::IsTranslucent");
 

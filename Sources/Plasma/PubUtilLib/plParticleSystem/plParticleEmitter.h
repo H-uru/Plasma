@@ -92,7 +92,7 @@ public:
 
     void OverrideLocalToWorld(const hsMatrix44& l2w);
     void UnOverrideLocalToWorld() { fMiscFlags &= ~kOverrideLocalToWorld; }
-    hsBool LocalToWorldOverridden() const { return 0 != (fMiscFlags & kOverrideLocalToWorld); }
+    bool LocalToWorldOverridden() const { return 0 != (fMiscFlags & kOverrideLocalToWorld); }
     void SetTimeToLive(float dt) { fTimeToLive = dt; }
     float GetTimeToLive() const { return fTimeToLive; } // 0 time to live is never turn off.
 
@@ -150,7 +150,7 @@ protected:
     void IClear();
     void ISetupParticleMem();
     void ISetSystem(plParticleSystem *sys) { fSystem = sys; }
-    hsBool IUpdate(float delta);
+    bool IUpdate(float delta);
     void IUpdateParticles(float delta);
     void IUpdateBoundsAndNormals(float delta);
     void IRemoveParticle(uint32_t index);

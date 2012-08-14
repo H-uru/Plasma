@@ -136,7 +136,7 @@ IOResult plLightGrpComponent::Load(ILoad* iLoad)
     return plComponent::Load(iLoad);
 }
 
-hsBool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     int i;
     for( i = 0; i < fLightInfos.GetCount(); i++ )
@@ -161,7 +161,7 @@ hsBool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErr
     return true;
 }
 
-hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex)
+bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex)
 {
     plDISpanIndex spans = drawable->GetDISpans(diIndex);
 
@@ -195,7 +195,7 @@ hsBool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* dra
     return true;
 }
 
-hsBool plLightGrpComponent::IGetLightInfos()
+bool plLightGrpComponent::IGetLightInfos()
 {
     if( !fLightInfos.GetCount() )
     {
@@ -239,7 +239,7 @@ plLightGrpComponent* plLightGrpComponent::GetComp(plMaxNode* node)
     return nil;
 }
 
-hsBool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     const char* dbgNodeName = node->GetName();
     if( !fValid )
@@ -263,7 +263,7 @@ hsBool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-hsBool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fValid = false;
     fLightInfos.Reset();
@@ -299,7 +299,7 @@ hsBool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
     return true;
 }
 
-hsBool plLightGrpComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
+bool plLightGrpComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     if( !fValid )
         return true;

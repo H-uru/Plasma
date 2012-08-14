@@ -223,7 +223,7 @@ class plFont : public hsKeyedObject
         uint8_t   *IGetFreeCharData( uint32_t &newOffset );
 
         void    IRenderLoop( const wchar_t *string, int32_t maxCount );
-        void    IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, hsBool justCalc );
+        void    IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, bool justCalc );
 
         // Various render functions
         void    IRenderChar1To32( const plCharacter &c );
@@ -259,12 +259,12 @@ class plFont : public hsKeyedObject
         void    SetFace( const char *face );
         void    SetSize( uint8_t size );
         void    SetFlags( uint32_t flags ) { fFlags = flags; }
-        void    SetFlag( uint32_t flag, hsBool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
-        hsBool  IsFlagSet( uint32_t flag ) { if( fFlags & flag ) return true; return false; }
+        void    SetFlag( uint32_t flag, bool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
+        bool    IsFlagSet( uint32_t flag ) { if( fFlags & flag ) return true; return false; }
 
         void    SetRenderColor( uint32_t color );
-        void    SetRenderFlag( uint32_t flag, hsBool on ) { if( on ) fRenderInfo.fFlags |= flag; else fRenderInfo.fFlags &= ~flag; }
-        hsBool  IsRenderFlagSet( uint32_t flag ) { return ( fRenderInfo.fFlags & flag ) ? true : false; }
+        void    SetRenderFlag( uint32_t flag, bool on ) { if( on ) fRenderInfo.fFlags |= flag; else fRenderInfo.fFlags &= ~flag; }
+        bool    IsRenderFlagSet( uint32_t flag ) { return ( fRenderInfo.fFlags & flag ) ? true : false; }
         void    SetRenderClipRect( int16_t x, int16_t y, int16_t width, int16_t height );
         void    SetRenderXJustify( uint32_t j ) { fRenderInfo.fFlags &= ~kRenderJustXMask; fRenderInfo.fFlags |= j; }
         void    SetRenderYJustify( uint32_t j ) { fRenderInfo.fFlags &= ~kRenderJustYMask; fRenderInfo.fFlags |= j; }
@@ -283,16 +283,16 @@ class plFont : public hsKeyedObject
         void    CalcStringExtents( const char *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
         void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
-        hsBool  LoadFromFNT( const char *path );
-        hsBool  LoadFromFNTStream( hsStream *stream );
+        bool    LoadFromFNT( const char *path );
+        bool    LoadFromFNTStream( hsStream *stream );
 
-        hsBool  LoadFromBDF( const char *path, plBDFConvertCallback *callback );
-        hsBool  LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback );
+        bool    LoadFromBDF( const char *path, plBDFConvertCallback *callback );
+        bool    LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback );
 
-        hsBool  LoadFromP2FFile( const char *path );
+        bool    LoadFromP2FFile( const char *path );
 
-        hsBool  ReadRaw( hsStream *stream );
-        hsBool  WriteRaw( hsStream *stream );
+        bool    ReadRaw( hsStream *stream );
+        bool    WriteRaw( hsStream *stream );
 };
 
 #endif // _plFont_h

@@ -98,7 +98,7 @@ static uint32_t GetProcSpeed()
     for (int i = 0; i < numKeys; i++)
     {
         HKEY thisKey = NULL;    
-        hsBool success = (RegOpenKeyEx(hKey, keypath[i], 0, KEY_READ, &thisKey) == ERROR_SUCCESS);
+        bool success = (RegOpenKeyEx(hKey, keypath[i], 0, KEY_READ, &thisKey) == ERROR_SUCCESS);
 
         RegCloseKey(hKey);
         hKey = thisKey;
@@ -108,7 +108,7 @@ static uint32_t GetProcSpeed()
     }
 
     DWORD value=0, size=sizeof(DWORD);
-    hsBool success = (RegQueryValueEx(hKey, "~MHz", 0, NULL, (BYTE*)&value, &size) == ERROR_SUCCESS);
+    bool success = (RegQueryValueEx(hKey, "~MHz", 0, NULL, (BYTE*)&value, &size) == ERROR_SUCCESS);
     RegCloseKey(hKey);
 
     return value*1000000;
@@ -214,7 +214,7 @@ void plProfileManager::EndFrame()
 {
     gVarEFPS.EndTiming();
 
-    hsBool updateAvgs = false;
+    bool updateAvgs = false;
 
     // If enough time has passed, update the averages
     double curTime = hsTimer::GetMilliSeconds();
@@ -334,7 +334,7 @@ static  const char  *insertCommas(unsigned int value)
     return str;
 }
 
-void plProfileBase::IPrintValue(uint32_t value, char* buf, hsBool printType)
+void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
 {
     if (hsCheckBits(fDisplayFlags, kDisplayCount))
     {
@@ -372,17 +372,17 @@ void plProfileBase::IPrintValue(uint32_t value, char* buf, hsBool printType)
     }
 }
 
-void plProfileBase::PrintValue(char* buf, hsBool printType)
+void plProfileBase::PrintValue(char* buf, bool printType)
 {
     IPrintValue(fValue, buf, printType);
 }
 
-void plProfileBase::PrintAvg(char* buf, hsBool printType)
+void plProfileBase::PrintAvg(char* buf, bool printType)
 {
     IPrintValue(fLastAvg, buf, printType);
 }
 
-void plProfileBase::PrintMax(char* buf, hsBool printType)
+void plProfileBase::PrintMax(char* buf, bool printType)
 {
     IPrintValue(fMax, buf, printType);
 }

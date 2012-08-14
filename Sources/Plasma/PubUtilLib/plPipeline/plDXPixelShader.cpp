@@ -70,7 +70,7 @@ void plDXPixelShader::Release()
     ISetError(nil);
 }
 
-hsBool plDXPixelShader::VerifyFormat(uint8_t format) const
+bool plDXPixelShader::VerifyFormat(uint8_t format) const
 {
     return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
 }

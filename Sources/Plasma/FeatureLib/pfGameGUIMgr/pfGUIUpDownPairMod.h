@@ -70,7 +70,7 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         pfUpDownBtnProc *fButtonProc;
 
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
         virtual void    IUpdate( void );
 
     public:
@@ -82,7 +82,7 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         GETINTERFACE_ANY( pfGUIUpDownPairMod, pfGUIValueCtrl );
 
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
 
         virtual void    Update( void );
 

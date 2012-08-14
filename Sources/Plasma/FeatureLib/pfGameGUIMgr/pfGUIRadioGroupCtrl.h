@@ -72,7 +72,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
 
         int32_t                           fValue, fDefaultValue;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
     public:
 
@@ -87,7 +87,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
             kAllowNoSelection = kDerivedFlagsStart
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -95,9 +95,9 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         int32_t   GetValue( void ) { return fValue; }
         void    SetValue( int32_t value );
 
-        virtual void    SetEnabled( hsBool e );
-        virtual void    SetInteresting( hsBool e );
-        virtual void    SetVisible( hsBool vis );
+        virtual void    SetEnabled( bool e );
+        virtual void    SetInteresting( bool e );
+        virtual void    SetVisible( bool vis );
         virtual void    SetControlsFlag( int flag );
         virtual void    ClearControlsFlag( int flag );
 

@@ -72,12 +72,12 @@ protected:
 public:
     plShadowCastComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    static hsBool AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster);
-    static hsBool AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster);
+    static bool AddShadowCastModifier(plMaxNode* pNode, plShadowCaster* caster);
+    static bool AddShadowCastModifier(plSceneObject* so, plShadowCaster* caster);
 };
 
 class plShadowRcvComponent : public plComponent
@@ -95,9 +95,9 @@ enum
 public:
     plShadowRcvComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 class plShadowLightComponent : public plComponent
@@ -113,15 +113,15 @@ public:
         kQuality
     };
 protected:
-    hsBool IAddDirectMaster(plMaxNode* node, plSceneObject* so);
-    hsBool IAddPointMaster(plMaxNode* node, plSceneObject* so);
+    bool IAddDirectMaster(plMaxNode* node, plSceneObject* so);
+    bool IAddPointMaster(plMaxNode* node, plSceneObject* so);
 
 public:
     plShadowLightComponent();
 
-    hsBool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 

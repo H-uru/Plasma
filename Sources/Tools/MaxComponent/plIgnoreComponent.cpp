@@ -76,8 +76,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual void CollectNonDrawables(INodeTab& nonDrawables);
 };
@@ -120,7 +120,7 @@ void plIgnoreComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plIgnoreComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plIgnoreComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if (fCompPB->GetInt(kIgnoreMeCheckBx))
         pNode->SetCanConvert(false);
@@ -128,7 +128,7 @@ hsBool plIgnoreComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plIgnoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plIgnoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -158,10 +158,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
 
-    hsBool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
 };
 
 
@@ -277,8 +277,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -301,14 +301,14 @@ plBarneyComponent::plBarneyComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plBarneyComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plBarneyComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     pNode->SetCanConvert(false);
     pNode->SetIsBarney(true);
     return true;
 }
 
-hsBool plBarneyComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plBarneyComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     return true;
 }
@@ -339,8 +339,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    hsBool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    hsBool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 };
 
 const Class_ID COMP_NOSHOW_CID(0x41cb2b85, 0x615932c6);
@@ -380,7 +380,7 @@ plNoShowComponent::plNoShowComponent()
 
 // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
 // of properties on the MaxNode, as it's still indeterminant.
-hsBool plNoShowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
+bool plNoShowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     if( !fCompPB->GetInt(kShowable) )
     {
@@ -393,7 +393,7 @@ hsBool plNoShowComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg
     return true;
 }
 
-hsBool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
+bool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )

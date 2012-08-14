@@ -72,7 +72,7 @@ public:
 
     // tors
     plClimbMsg();
-    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, hsBool status = false, plKey target = nil);
+    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, bool status = false, plKey target = nil);
 
     // plasma protocol
     CLASSNAME_REGISTER( plClimbMsg );
@@ -83,7 +83,7 @@ public:
 
     Command fCommand;
     Direction fDirection;
-    hsBool fStatus;
+    bool fStatus;
     plKey fTarget;  // used for seeking to mount points
 private:
 };

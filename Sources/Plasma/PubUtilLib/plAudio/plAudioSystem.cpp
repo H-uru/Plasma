@@ -225,7 +225,7 @@ void plAudioSystem::IEnumerateDevices()
                     // filter out any devices that aren't openal 1.1 compliant
                     if(major > 1 || (major == 1 && minor >= 1))
                     {
-                        hsBool supportsEAX = false;
+                        bool supportsEAX = false;
 #ifdef EAX_SDK_AVAILABLE
                         if(alIsExtensionPresent((ALchar *)"EAX4.0") || alIsExtensionPresent((ALchar *) "EAX4.0Emulated"))       
                         {
@@ -264,10 +264,10 @@ void plAudioSystem::IEnumerateDevices()
 }
 
 //// Init ////////////////////////////////////////////////////////////////////
-hsBool  plAudioSystem::Init( hsWindowHndl hWnd )
+bool    plAudioSystem::Init( hsWindowHndl hWnd )
 {
     plgAudioSys::fRestarting = false;
-    static hsBool firstTimeInit = true; 
+    static bool firstTimeInit = true; 
     plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Init --" );
     
     fMaxNumSources = 0;
@@ -277,7 +277,7 @@ hsBool  plAudioSystem::Init( hsWindowHndl hWnd )
     // Set the maximum number of sounds based on priority cutoff slider
     SetMaxNumberOfActiveSounds();
     const char *deviceName = plgAudioSys::fDeviceName.c_str();
-    hsBool useDefaultDevice = true;
+    bool useDefaultDevice = true;
     
     if(firstTimeInit)
     {
@@ -483,7 +483,7 @@ const char *plAudioSystem::GetAudioDeviceName(int index)
     return fDeviceList[index].GetDeviceName();
 }
 
-hsBool plAudioSystem::SupportsEAX(const char *deviceName)
+bool plAudioSystem::SupportsEAX(const char *deviceName)
 {
     for(DeviceIter i = fDeviceList.begin(); i != fDeviceList.end(); i++)
     {
@@ -547,7 +547,7 @@ void plAudioSystem::SetListenerOrientation(const hsVector3 view, const hsVector3
     alListenerfv(AL_ORIENTATION, orientation);
 }
 
-void    plAudioSystem::SetActive( hsBool b ) 
+void    plAudioSystem::SetActive( bool b ) 
 {
     fActive = b;
     if( fActive )
@@ -876,7 +876,7 @@ void plAudioSystem::SetFadeLength(float lengthSec)
     fFadeLength = lengthSec;
 }
     
-hsBool plAudioSystem::MsgReceive(plMessage* msg)
+bool plAudioSystem::MsgReceive(plMessage* msg)
 {
     if(plTimeMsg *time = plTimeMsg::ConvertNoRef( msg ) )
     {
@@ -989,12 +989,12 @@ hsBool plAudioSystem::MsgReceive(plMessage* msg)
 // plgAudioSystem //////////////////////////////////////////////////////////////////////
 
 plAudioSystem*  plgAudioSys::fSys = nil;
-hsBool          plgAudioSys::fInit = false;
-hsBool          plgAudioSys::fActive = false;
-hsBool          plgAudioSys::fUseHardware = false;
-hsBool          plgAudioSys::fMuted = true;
-hsBool          plgAudioSys::fDelayedActivate = false;
-hsBool          plgAudioSys::fEnableEAX = false;
+bool            plgAudioSys::fInit = false;
+bool            plgAudioSys::fActive = false;
+bool            plgAudioSys::fUseHardware = false;
+bool            plgAudioSys::fMuted = true;
+bool            plgAudioSys::fDelayedActivate = false;
+bool            plgAudioSys::fEnableEAX = false;
 hsWindowHndl    plgAudioSys::fWnd = nil;
 float        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
 float        plgAudioSys::f2D3DBias = 0.75f;
@@ -1002,12 +1002,12 @@ uint32_t          plgAudioSys::fDebugFlags = 0;
 float        plgAudioSys::fStreamingBufferSize = 2.f;
 float        plgAudioSys::fStreamFromRAMCutoff = 10.f;
 uint8_t           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
-hsBool          plgAudioSys::fEnableExtendedLogs = false;
+bool            plgAudioSys::fEnableExtendedLogs = false;
 float        plgAudioSys::fGlobalFadeVolume = 1.f;
-hsBool          plgAudioSys::fLogStreamingUpdates = false;
+bool            plgAudioSys::fLogStreamingUpdates = false;
 std::string     plgAudioSys::fDeviceName;
-hsBool          plgAudioSys::fRestarting = false;
-hsBool          plgAudioSys::fMutedStateChange = false;
+bool            plgAudioSys::fRestarting = false;
+bool            plgAudioSys::fMutedStateChange = false;
 
 void plgAudioSys::Init(hsWindowHndl hWnd)
 {
@@ -1015,12 +1015,6 @@ void plgAudioSys::Init(hsWindowHndl hWnd)
     fSys->RegisterAs( kAudioSystem_KEY );
     plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
-
-    if(hsPhysicalMemory() <= 380)   
-    {
-        plStatusLog::AddLineS("audio.log", "StreamFromRam Disabled");
-        fStreamFromRAMCutoff = 4;
-    }
     fWnd = hWnd;
 
     if(fMuted)
@@ -1030,12 +1024,12 @@ void plgAudioSys::Init(hsWindowHndl hWnd)
         Activate( true );
 }
 
-void plgAudioSys::SetActive(hsBool b)
+void plgAudioSys::SetActive(bool b)
 {
     fActive = b;
 }
 
-void plgAudioSys::SetMuted( hsBool b )
+void plgAudioSys::SetMuted( bool b )
 {
     fMuted = b;
     fMutedStateChange = true;
@@ -1046,14 +1040,14 @@ void plgAudioSys::SetMuted( hsBool b )
         SetGlobalFadeVolume(1.0);
 }
 
-void plgAudioSys::SetUseHardware(hsBool b)
+void plgAudioSys::SetUseHardware(bool b)
 {
     fUseHardware = b;
     if( fActive )
         Restart();
 }
 
-void plgAudioSys::EnableEAX( hsBool b )
+void plgAudioSys::EnableEAX( bool b )
 {
     fEnableEAX = b;
     if( fActive )
@@ -1133,7 +1127,7 @@ void plgAudioSys::Shutdown()
     }
 }
 
-void plgAudioSys::Activate(hsBool b)
+void plgAudioSys::Activate(bool b)
 { 
     if( fSys == nil )
     {
@@ -1216,7 +1210,7 @@ float plgAudioSys::Get2D3Dbias()
     return f2D3DBias;
 }
 
-void plgAudioSys::SetDeviceName(const char *device, hsBool restart /* = false */)
+void plgAudioSys::SetDeviceName(const char *device, bool restart /* = false */)
 {
     fDeviceName = device;
     if(restart)
@@ -1248,7 +1242,7 @@ ALCdevice *plgAudioSys::GetCaptureDevice()
     return nil;
 }
 
-hsBool plgAudioSys::SupportsEAX(const char *deviceName)
+bool plgAudioSys::SupportsEAX(const char *deviceName)
 {
     if(fSys)
     {

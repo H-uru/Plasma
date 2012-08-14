@@ -98,7 +98,7 @@ plAvBrainHuman::TurnCurve plAvBrainHuman::fRunTurnCurve = plAvBrainHuman::kTurnE
 
 const float plAvBrainHuman::kAirTimePanicThreshold = 10; // seconds
 
-void plAvBrainHuman::SetTimeToMaxTurn(float time, hsBool walk)
+void plAvBrainHuman::SetTimeToMaxTurn(float time, bool walk)
 {
     if (walk)
         fWalkTimeToMaxTurn = time;
@@ -106,12 +106,12 @@ void plAvBrainHuman::SetTimeToMaxTurn(float time, hsBool walk)
         fRunTimeToMaxTurn = time;
 }
 
-float plAvBrainHuman::GetTimeToMaxTurn(hsBool walk)
+float plAvBrainHuman::GetTimeToMaxTurn(bool walk)
 {
     return (walk ? fWalkTimeToMaxTurn : fRunTimeToMaxTurn);
 }
 
-void plAvBrainHuman::SetMaxTurnSpeed(float radsPerSec, hsBool walk)
+void plAvBrainHuman::SetMaxTurnSpeed(float radsPerSec, bool walk)
 {
     if (walk)
         fWalkMaxTurnSpeed = radsPerSec;
@@ -119,12 +119,12 @@ void plAvBrainHuman::SetMaxTurnSpeed(float radsPerSec, hsBool walk)
         fRunMaxTurnSpeed = radsPerSec;
 }
 
-float plAvBrainHuman::GetMaxTurnSpeed(hsBool walk)
+float plAvBrainHuman::GetMaxTurnSpeed(bool walk)
 {
     return (walk ? fWalkMaxTurnSpeed : fRunMaxTurnSpeed);
 }
 
-void plAvBrainHuman::SetTurnCurve(TurnCurve curve, hsBool walk)
+void plAvBrainHuman::SetTurnCurve(TurnCurve curve, bool walk)
 {
     if (walk)
         fWalkTurnCurve = curve;
@@ -132,7 +132,7 @@ void plAvBrainHuman::SetTurnCurve(TurnCurve curve, hsBool walk)
         fRunTurnCurve = curve;
 }
 
-plAvBrainHuman::TurnCurve plAvBrainHuman::GetTurnCurve(hsBool walk)
+plAvBrainHuman::TurnCurve plAvBrainHuman::GetTurnCurve(bool walk)
 {
     return (walk ? fWalkTurnCurve : fRunTurnCurve);
 }
@@ -146,7 +146,7 @@ plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) :
 {
 }
 
-hsBool plAvBrainHuman::Apply(double timeNow, float elapsed)
+bool plAvBrainHuman::Apply(double timeNow, float elapsed)
 {
 #ifndef _DEBUG
     try
@@ -188,7 +188,7 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
     
     
     plSceneObject *avSO = fAvMod->GetTarget(0);
-    hsBool isLocal = avSO->IsLocallyOwned();
+    bool isLocal = avSO->IsLocallyOwned();
     
     if (fAvMod->GetClothingOutfit() && fAvMod->GetClothingOutfit()->fGroup != plClothingMgr::kClothingBaseNoOptions)
     {
@@ -366,7 +366,7 @@ void plAvBrainHuman::Resume()
     plArmatureBrain::Resume();
 }
 
-hsBool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
+bool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
 {
     ControlEventCode moveCode = msg->GetControlCode();
 
@@ -432,7 +432,7 @@ void plAvBrainHuman::Read(hsStream *stream, hsResMgr *mgr)
     fIsActor = stream->ReadBool();
 }
 
-hsBool plAvBrainHuman::MsgReceive(plMessage * msg)
+bool plAvBrainHuman::MsgReceive(plMessage * msg)
 {
     plControlEventMsg *ctrlMsg = plControlEventMsg::ConvertNoRef(msg);
     if (ctrlMsg) 
@@ -490,7 +490,7 @@ hsBool plAvBrainHuman::MsgReceive(plMessage * msg)
     return plArmatureBrain::MsgReceive(msg);
 }
 
-hsBool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
+bool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
 {
     bool isStartClimb = msg->fCommand == plClimbMsg::kStartClimbing;
     if(isStartClimb)
@@ -596,7 +596,7 @@ float plAvBrainHuman::IGetTurnStrength(double timeNow)
     return result;  
 }   
 
-hsBool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
+bool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
 {
     if(plAvSeekMsg * seekM = plAvSeekMsg::ConvertNoRef(msg))
     {
@@ -727,9 +727,9 @@ void plAvBrainHuman::IChatOff()
     }
 }
 
-hsBool plAvBrainHuman::IInitAnimations()
+bool plAvBrainHuman::IInitAnimations()
 {
-    hsBool result = false;
+    bool result = false;
 
     plAGAnim *idle = fAvMod->FindCustomAnim("Idle");
     plAGAnim *walk = fAvMod->FindCustomAnim("Walk");
@@ -821,7 +821,7 @@ hsBool plAvBrainHuman::IInitAnimations()
     return result;
 }
 
-hsBool plAvBrainHuman::RunStandardBehaviors(double timeNow, float elapsed)
+bool plAvBrainHuman::RunStandardBehaviors(double timeNow, float elapsed)
 {
     int i;
     for (i = 0; i < fBehaviors.GetCount(); i++)
@@ -866,7 +866,7 @@ void plAvBrainHuman::Spawn(double timeNow)
         fAvMod->Compile(timeNow);
 }
 
-hsBool plAvBrainHuman::LeaveAge()
+bool plAvBrainHuman::LeaveAge()
 {
     plPhysicalControllerCore* controller = fAvMod->GetController();
     if(!controller->BehavingLikeAnAnimatedPhysical())
@@ -958,7 +958,7 @@ plHBehavior::~plHBehavior()
 {
 }
 
-void plHBehavior::Init(plAGAnim *anim, hsBool loop, plAvBrainHuman *brain,
+void plHBehavior::Init(plAGAnim *anim, bool loop, plAvBrainHuman *brain,
                        plArmatureMod *body, float fadeIn, float fadeOut,
                        uint8_t index, uint32_t type /* = 0 */)
 {
@@ -1008,7 +1008,7 @@ void Idle::IStart()
     }
 }
 
-hsBool Run::PreCondition(double time, float elapsed)
+bool Run::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1019,7 +1019,7 @@ hsBool Run::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool Walk::PreCondition(double time, float elapsed)
+bool Walk::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1030,7 +1030,7 @@ hsBool Walk::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool WalkBack::PreCondition(double time, float elapsed)
+bool WalkBack::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1041,7 +1041,7 @@ hsBool WalkBack::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool StepLeft::PreCondition(double time, float elapsed)
+bool StepLeft::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1053,7 +1053,7 @@ hsBool StepLeft::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool StepRight::PreCondition(double time, float elapsed)
+bool StepRight::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1065,7 +1065,7 @@ hsBool StepRight::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool StandingTurnLeft::PreCondition(double time, float elapsed)
+bool StandingTurnLeft::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1078,7 +1078,7 @@ hsBool StandingTurnLeft::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool StandingTurnRight::PreCondition(double time, float elapsed)
+bool StandingTurnRight::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1097,7 +1097,7 @@ void MovingTurn::IStart()
     fHuBrain->SetStartedTurning(hsTimer::GetSysSeconds());
 }
 
-hsBool MovingTurnLeft::PreCondition(double time, float elapsed)
+bool MovingTurnLeft::PreCondition(double time, float elapsed)
 {
     if (fAvMod->GetTurnStrength() > 0) 
     {
@@ -1108,7 +1108,7 @@ hsBool MovingTurnLeft::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool MovingTurnRight::PreCondition(double time, float elapsed)
+bool MovingTurnRight::PreCondition(double time, float elapsed)
 {
     if (fAvMod->GetTurnStrength() < 0) 
     {
@@ -1134,7 +1134,7 @@ void Jump::IStop()
     plHBehavior::IStop();
 }
 
-hsBool StandingJump::PreCondition(double time, float elapsed)
+bool StandingJump::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1162,7 +1162,7 @@ hsBool StandingJump::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool WalkingJump::PreCondition(double time, float elapsed)
+bool WalkingJump::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1192,7 +1192,7 @@ hsBool WalkingJump::PreCondition(double time, float elapsed)
     return false;
 }
 
-hsBool RunningJump::PreCondition(double time, float elapsed)
+bool RunningJump::PreCondition(double time, float elapsed)
 {
     if (fAnim)
     {
@@ -1233,7 +1233,7 @@ static const float kMinAirTime = .5f;
 
 RunningImpact::RunningImpact() : fDuration(0.0f) {}
 
-hsBool RunningImpact::PreCondition(double time, float elapsed)
+bool RunningImpact::PreCondition(double time, float elapsed)
 {   
     if (fDuration > 0.0f)
         fDuration = fDuration - elapsed;
@@ -1261,7 +1261,7 @@ void RunningImpact::IStop()
 
 GroundImpact::GroundImpact() : fDuration(0.0f) {}
 
-hsBool GroundImpact::PreCondition(double time, float elapsed)
+bool GroundImpact::PreCondition(double time, float elapsed)
 {
     
     bool result = false;
@@ -1290,7 +1290,7 @@ void GroundImpact::IStop()
     plHBehavior::IStop();
 }
 
-hsBool Fall::PreCondition(double time, float elapsed)
+bool Fall::PreCondition(double time, float elapsed)
 {
     return !fHuBrain->fCallbackAction->IsOnGround() && fHuBrain->fCallbackAction->HitGroundInThisAge();
 }
@@ -1340,7 +1340,7 @@ void Push::Process(double time, float elapsed)
         fHuBrain->fCallbackAction->SetTurnStrength(turnSpeed);
 }
     
-//hsBool PushIdle::PreCondition(double time, float elapsed)
+//bool PushIdle::PreCondition(double time, float elapsed)
 //{
 //  return (fHuBrain->fCallbackAction->GetPushingPhysical() &&
 //          fHuBrain->fCallbackAction->IsOnGround() && 
@@ -1348,7 +1348,7 @@ void Push::Process(double time, float elapsed)
 //          && fAvMod->GetTurnStrength() == 0);
 //}
 
-hsBool PushWalk::PreCondition(double time, float elapsed)
+bool PushWalk::PreCondition(double time, float elapsed)
 {
     return (fHuBrain->fCallbackAction->GetPushingPhysical() && fHuBrain->fCallbackAction->GetFacingPushingPhysical() &&
             fHuBrain->fCallbackAction->IsOnGround() &&
@@ -1421,7 +1421,7 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
     plString fullName = avatar->MakeAnimationName(emoteName);
     plAGAnim *anim = plAGAnim::FindAnim(fullName);
     plEmoteAnim *emote = plEmoteAnim::ConvertNoRef(anim);
-    hsBool alreadyActive = avatar->FindAnimInstance(fullName) != nil;
+    bool alreadyActive = avatar->FindAnimInstance(fullName) != nil;
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
 
     // XXX

@@ -66,7 +66,7 @@ plLoadAvatarMsg::plLoadAvatarMsg()
 
 // CTOR uoidToClone, requestorKey, userData, isPlayer, spawnPOint, initialTask
 plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
-                                 hsBool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char* userStr /*= nil*/)
+                                 bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char* userStr /*= nil*/)
 : plLoadCloneMsg(uoidToClone, requestorKey, userData),
   fIsPlayer(isPlayer),
   fSpawnPoint(spawnPoint),
@@ -77,7 +77,7 @@ plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &request
 }
 
 plLoadAvatarMsg::plLoadAvatarMsg(const plKey &existing, const plKey &requestor, uint32_t userData,
-                                hsBool isPlayer, hsBool isLoading, const char* userStr /*= nil*/)
+                                bool isPlayer, bool isLoading, const char* userStr /*= nil*/)
 :   plLoadCloneMsg(existing, requestor, userData, isLoading),
     fIsPlayer(isPlayer),
     fSpawnPoint(nil),
@@ -186,7 +186,7 @@ void plLoadAvatarMsg::SetIsPlayer(bool is)
 }
 
 // GETISPLAYER
-hsBool plLoadAvatarMsg::GetIsPlayer()
+bool plLoadAvatarMsg::GetIsPlayer()
 {
     return fIsPlayer;
 }

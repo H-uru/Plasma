@@ -147,11 +147,11 @@ public:
     void SetAnimPathFlags(uint32_t f) { fAnimPathFlags=f; }
     uint32_t GetAnimPathFlags() const { return fAnimPathFlags; }
 
-    void SetWrap(hsBool on) { if(on)fAnimPathFlags |= kWrap; else fAnimPathFlags &= ~kWrap; }
-    hsBool GetWrap() const { return 0 != (fAnimPathFlags & kWrap); }
+    void SetWrap(bool on) { if(on)fAnimPathFlags |= kWrap; else fAnimPathFlags &= ~kWrap; }
+    bool GetWrap() const { return 0 != (fAnimPathFlags & kWrap); }
 
-    void SetFarthest(hsBool on) { if(on)fAnimPathFlags |= kFarthest; else fAnimPathFlags &= ~kFarthest; }
-    hsBool GetFarthest() const { return 0 != (fAnimPathFlags & kFarthest); }
+    void SetFarthest(bool on) { if(on)fAnimPathFlags |= kFarthest; else fAnimPathFlags &= ~kFarthest; }
+    bool GetFarthest() const { return 0 != (fAnimPathFlags & kFarthest); }
 
     void SetCurTime(float t, uint32_t calcFlags=0);
     float GetCurTime() const { return fTime; }
@@ -170,7 +170,7 @@ public:
     hsVector3*  GetUp(hsVector3* uOut) const { uOut->Set(fXform.fMap[0][1], fXform.fMap[1][1], fXform.fMap[2][1]); return uOut; }
     hsVector3*  GetAcceleration(hsVector3* aOut) const { *aOut = fAccel; return aOut; }
     
-    hsBool OutOfRange(hsPoint3 &pt, float range) const;
+    bool OutOfRange(hsPoint3 &pt, float range) const;
     const hsAffineParts* Parts() const { return &fParts; }
     void InitParts(const hsAffineParts& p) { fParts = p; }
 
@@ -179,7 +179,7 @@ public:
 
     // for arclen usage
     void ComputeArcLenDeltas(int32_t numSamples=256);
-    float GetLookAheadTime(float startTime, float arcLength, hsBool bwd, int32_t* startSrchIdx);
+    float GetLookAheadTime(float startTime, float arcLength, bool bwd, int32_t* startSrchIdx);
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

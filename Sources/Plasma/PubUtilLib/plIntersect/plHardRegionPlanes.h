@@ -79,8 +79,8 @@ public:
     void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
     void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
 
-    virtual hsBool IIsInside(const hsPoint3& pos) const;
-    virtual hsBool ICameraInside() const;
+    virtual bool IIsInside(const hsPoint3& pos) const;
+    virtual bool ICameraInside() const;
 
 };
 

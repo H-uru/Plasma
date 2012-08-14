@@ -68,7 +68,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
             int16_t   fLeft, fTop, fRight, fBottom;
 
             void    Set( int16_t l, int16_t t, int16_t r, int16_t b );
-            hsBool  Contains( int16_t x, int16_t y );
+            bool    Contains( int16_t x, int16_t y );
 
             plSmallRect& operator=(const int zero) { fLeft = fTop = fRight = fBottom = 0; return *this; }
         };
@@ -81,15 +81,15 @@ class pfGUIListBoxMod : public pfGUIControlMod
         int32_t                           fCurrClick, fScrollPos, fCurrHover;
         uint8_t                           fModsAtDragTime;
         int32_t                           fMinSel, fMaxSel;
-        hsBool                          fCheckScroll, fClicking;
+        bool                            fCheckScroll, fClicking;
         int32_t                           fSingleSelElement;
-        hsBool                          fScrollRangeUpdateDeferred;
-        hsBool                          fLocked, fReadyToRoll;
+        bool                            fScrollRangeUpdateDeferred;
+        bool                            fLocked, fReadyToRoll;
         hsTArray<plSmallRect>           fElementBounds;
         hsTArray<int16_t>                 fWrapStartIdxs;
 
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
         void    ICalcScrollRange( void );
         void    ICalcWrapStarts( void );
@@ -100,7 +100,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
 
         int32_t   IGetItemFromPoint( hsPoint3 &mousePt );
         void    IFindSelectionRange( int32_t *min, int32_t *max );
-        void    ISelectRange( int8_t min, int8_t max, hsBool select );
+        void    ISelectRange( int8_t min, int8_t max, bool select );
 
     public:
 
@@ -138,7 +138,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
             kRefScrollCtrl = kRefDerivedStart
         };
 
-        virtual hsBool  MsgReceive( plMessage* pMsg );
+        virtual bool    MsgReceive( plMessage* pMsg );
         
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
@@ -149,10 +149,10 @@ class pfGUIListBoxMod : public pfGUIControlMod
         virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
         virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers );
 
-        virtual hsBool  HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual hsBool  HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
+        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
 
-        virtual hsBool  FilterMousePosition( hsPoint3 &mousePt );
+        virtual bool    FilterMousePosition( hsPoint3 &mousePt );
 
         virtual void PurgeDynaTextMapImage();
 
@@ -193,7 +193,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
 
         // Export only
         void    SetScrollCtrl( pfGUIValueCtrl *ctrl ) { fScrollControl = ctrl; }
-        void    SetSingleSelect( hsBool yes ) { if( yes ) SetFlag( kSingleSelect ); else ClearFlag( kSingleSelect ); }
+        void    SetSingleSelect( bool yes ) { if( yes ) SetFlag( kSingleSelect ); else ClearFlag( kSingleSelect ); }
 };
 
 #endif // _pfGUIListBoxMod_h

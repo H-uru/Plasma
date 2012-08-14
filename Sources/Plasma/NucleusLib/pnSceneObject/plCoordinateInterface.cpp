@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 
 uint8_t plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransformPhaseNormal;
-hsBool plCoordinateInterface::fDelayedTransformsEnabled = true;
+bool plCoordinateInterface::fDelayedTransformsEnabled = true;
 
 plCoordinateInterface::plCoordinateInterface()
 : fParent(nil),
@@ -258,7 +258,7 @@ plCoordinateInterface* plCoordinateInterface::IGetRoot()
     return fParent ? fParent->IGetRoot() : this;
 }
 
-void plCoordinateInterface::IRegisterForTransformMessage(hsBool delayed)
+void plCoordinateInterface::IRegisterForTransformMessage(bool delayed)
 {
     if( IGetOwner() )
     {
@@ -458,7 +458,7 @@ void plCoordinateInterface::IRecalcTransforms()
     plProfile_EndTiming(CIRecalcT);
 }
 
-void plCoordinateInterface::ITransformChanged(hsBool force, uint16_t reasons, hsBool checkForDelay)
+void plCoordinateInterface::ITransformChanged(bool force, uint16_t reasons, bool checkForDelay)
 {
     plProfile_IncCount(CITrans, 1);
     plProfile_BeginTiming(CITransT);
@@ -468,7 +468,7 @@ void plCoordinateInterface::ITransformChanged(hsBool force, uint16_t reasons, hs
     
     uint16_t propagateReasons = fReason;
 
-    hsBool process = !(checkForDelay && GetProperty(kDelayedTransformEval)) || !fDelayedTransformsEnabled;
+    bool process = !(checkForDelay && GetProperty(kDelayedTransformEval)) || !fDelayedTransformsEnabled;
 
     if (process)
     {
@@ -513,7 +513,7 @@ void plCoordinateInterface::ITransformChanged(hsBool force, uint16_t reasons, hs
     }       
 }
 
-void plCoordinateInterface::FlushTransform(hsBool fromRoot)
+void plCoordinateInterface::FlushTransform(bool fromRoot)
 {
     if( fromRoot )
         IGetRoot()->ITransformChanged(false, 0, false);
@@ -578,10 +578,8 @@ void plCoordinateInterface::Write(hsStream* stream, hsResMgr* mgr)
 
 }
 
-hsBool plCoordinateInterface::MsgReceive(plMessage* msg)
+bool plCoordinateInterface::MsgReceive(plMessage* msg)
 {
-    hsBool retVal = false;
-
     plIntRefMsg* intRefMsg;
     plCorrectionMsg* corrMsg;
 

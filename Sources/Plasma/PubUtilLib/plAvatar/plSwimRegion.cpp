@@ -106,7 +106,7 @@ void plSwimCircularCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fCurrentSO);
 }
 
-hsBool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
+bool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)
@@ -150,7 +150,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 
     physical->GetPositionSim(pos);
     
-    hsBool applyPull = true;
+    bool applyPull = true;
     hsVector3 pos2Center(center.fX - pos.fX, center.fY - pos.fY, 0.f);
     float pullVel;
     float distSq = pos2Center.MagnitudeSquared();
@@ -223,7 +223,7 @@ void plSwimStraightCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fCurrentSO);
 }
 
-hsBool plSwimStraightCurrentRegion::MsgReceive(plMessage* msg)
+bool plSwimStraightCurrentRegion::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
     if (refMsg)

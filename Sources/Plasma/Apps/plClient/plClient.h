@@ -124,8 +124,8 @@ protected:
 
     pfKI                    *fKIGUIGlue;
 
-    hsBool                  fDone;
-    hsBool                  fWindowActive;
+    bool                    fDone;
+    bool                    fWindowActive;
 
     hsWindowHndl            fWindowHndl;
 
@@ -136,20 +136,20 @@ protected:
 
     virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
 
-    hsBool                  IUpdate();
-    hsBool                  IDraw();
-    hsBool                  IDrawProgress();
+    bool                    IUpdate();
+    bool                    IDraw();
+    bool                    IDrawProgress();
     
     plVirtualCam1*          fNewCamera;
 
     static plClient*        fInstance;
     char *                  fpAuxInitDir;
-    static hsBool           fDelayMS;
+    static bool             fDelayMS;
 
     int                     fClampCap;
     int                     fQuality;
 
-    hsBool                  fQuitIntro;
+    bool                    fQuitIntro;
     hsTArray<plBinkPlayer*> fMovies;
 
     plMessagePumpProc       fMessagePumpProc;
@@ -184,14 +184,14 @@ protected:
     void                    IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
     bool                    IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
 
-    hsBool                  IFlushRenderRequests();
+    bool                    IFlushRenderRequests();
     void                    IProcessPreRenderRequests();
     void                    IProcessPostRenderRequests();
     void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
     void                    IAddRenderRequest(plRenderRequest* req);
 
-    hsBool                  IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
-    hsBool                  IHandleMovieMsg(plMovieMsg* mov);
+    bool                    IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
+    bool                    IHandleMovieMsg(plMovieMsg* mov);
     void                    IKillMovies();
     void                    IServiceMovies();
 
@@ -225,9 +225,9 @@ public:
     static plClient*    GetInstance() { return fInstance; }
     static void         SetInstance(plClient* v) { fInstance=v; }
     
-    virtual hsBool MsgReceive(plMessage* msg);
+    virtual bool MsgReceive(plMessage* msg);
     
-    hsBool      InitPipeline();
+    bool        InitPipeline();
 
     void        InitInputs();
 
@@ -236,12 +236,12 @@ public:
 
     void        InitAuxInits();
 
-    virtual hsBool StartInit();
-    virtual hsBool Shutdown();
-    virtual hsBool MainLoop();
+    virtual bool StartInit();
+    virtual bool Shutdown();
+    virtual bool MainLoop();
 
-    plClient&   SetDone(hsBool done) { fDone = done; return *this; }
-    hsBool      GetDone() { return fDone; }
+    plClient&   SetDone(bool done) { fDone = done; return *this; }
+    bool        GetDone() { return fDone; }
 
     // Set this to true to queue any room load requests that come in.  Set it to false to process them.
     void SetHoldLoadRequests(bool hold);
@@ -255,8 +255,8 @@ public:
         kFlagGlobalDataLoaded,
     };
 
-    hsBool HasFlag(int f) const { return fFlags.IsBitSet(f); }
-    void SetFlag(int f, hsBool on=true) { fFlags.SetBit(f, on); }
+    bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
+    void SetFlag(int f, bool on=true) { fFlags.SetBit(f, on); }
 
     virtual plClient& SetWindowHandle(hsWindowHndl hndl) { fWindowHndl=hndl; return *this; }
     hsWindowHndl    GetWindowHandle() { return fWindowHndl; }
@@ -280,20 +280,20 @@ public:
     void SetQuality(int q) { fQuality = q; }
     int GetQuality() const { return fQuality; }
 
-    hsBool GetQuitIntro() const { return fQuitIntro; }
-    void SetQuitIntro(hsBool on) { fQuitIntro = on; }
+    bool GetQuitIntro() const { return fQuitIntro; }
+    void SetQuitIntro(bool on) { fQuitIntro = on; }
 
     void            SetClearColor( hsColorRGBA &color );
     hsColorRGBA     GetClearColor() const { return fClearColor; }
 
     // The client window has focus (true) or lost it (false)
     virtual void WindowActivate(bool active);
-    virtual hsBool WindowActive() const { return fWindowActive; }
+    virtual bool WindowActive() const { return fWindowActive; }
 
     void FlashWindow();
     void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
-    void ResetDisplayDevice(int Width, int Height, int ColorDepth, hsBool Windowed, int NumAASamples, int MaxAnisotropicSamples, hsBool VSync = false);
-    void ResizeDisplayDevice(int Width, int Height, hsBool Windowed);
+    void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync = false);
+    void ResizeDisplayDevice(int Width, int Height, bool Windowed);
     void IDetectAudioVideoSettings();
     void IWriteDefaultGraphicsSettings(const wchar_t* destFile);
 

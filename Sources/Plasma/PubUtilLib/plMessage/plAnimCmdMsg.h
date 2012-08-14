@@ -108,12 +108,12 @@ public:
 
     hsBitVector     fCmd;
 
-    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
     void SetAnimName(const plString &name);
     plString GetAnimName();
-    hsBool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
+    bool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
 
     // TEMP plString REVISIT
     // Because I'm TOO LAZY to keep converting all these calls to SetAnimName
@@ -167,7 +167,7 @@ public:
 
     hsBitVector     fCmd;
 
-    hsBool Cmd(int n) const { return fCmd.IsBitSet(n); }
+    bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void SetAnimName(const plString &name);

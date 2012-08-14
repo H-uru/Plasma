@@ -67,8 +67,8 @@ public:
 
     uint32_t                  fUseTime;       // time stamp when last used - stat gather only
 
-    hsBool IsDirty() const { return (fFlags & kDirty); }
-    void SetDirty(hsBool on) { if(on)fFlags |= kDirty; else fFlags &= ~kDirty; }
+    bool IsDirty() const { return (fFlags & kDirty); }
+    void SetDirty(bool on) { if(on)fFlags |= kDirty; else fFlags &= ~kDirty; }
 
     hsGDeviceRef() : fFlags(0), fUseTime(0) {}
     virtual ~hsGDeviceRef() {}

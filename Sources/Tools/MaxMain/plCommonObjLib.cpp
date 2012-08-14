@@ -75,7 +75,7 @@ class plCommonObjLibList
             fRefCount++;
         }
 
-        hsBool  Remove( plCommonObjLib *lib )
+        bool    Remove( plCommonObjLib *lib )
         {
             int idx = fLibs.Find( lib );
             if( idx != fLibs.kMissingIndex )
@@ -175,7 +175,7 @@ void    plCommonObjLib::AddObject( hsKeyedObject *object )
 //  this function call, the key should no longer exist in the registry and be
 //  free to use elsewhere.
 
-hsBool  plCommonObjLib::RemoveObjectAndKey( plKey &key )
+bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
 {
     if (!key)
     {

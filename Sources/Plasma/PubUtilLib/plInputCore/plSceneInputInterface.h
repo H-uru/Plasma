@@ -73,11 +73,11 @@ class plSceneInputInterface : public plInputInterface
         
         uint32_t  fCurrentCursor;
         uint8_t   fButtonState;
-        hsBool  fClickability;      
+        bool    fClickability;      
         plKey   fCurrentClickable, fLastClicked, fCurrentClickableLogicMod;
         hsPoint3 fCurrentClickPoint;
-        hsBool  fCurrClickIsAvatar, fLastClickIsAvatar,fFadedLocalAvatar;
-        hsBool fPendingLink;
+        bool    fCurrClickIsAvatar, fLastClickIsAvatar,fFadedLocalAvatar;
+        bool fPendingLink;
 
         int     fBookMode; // are we in offer book mode?
         plKey   fBookKey;  // key for the python file modifier for the book we are offering
@@ -95,7 +95,7 @@ class plSceneInputInterface : public plInputInterface
                 val = false;
             }
             plKey key;
-            hsBool val;
+            bool val;
         };
 
         hsTArray<clickableTest *> fClickableMap;
@@ -106,35 +106,35 @@ class plSceneInputInterface : public plInputInterface
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 
-        virtual hsBool IEval( double secs, float del, uint32_t dirty );
+        virtual bool IEval( double secs, float del, uint32_t dirty );
 
         
         void    IRequestLOSCheck( float xPos, float yPos, int ID );
         void    ISetLastClicked( plKey obj, hsPoint3 hitPoint );
-        void    IHalfFadeAvatar(hsBool out);
+        void    IHalfFadeAvatar(bool out);
 
-        hsBool  IWorldPosMovedSinceLastLOSCheck( void );
+        bool    IWorldPosMovedSinceLastLOSCheck( void );
         void ClearClickableMap();
-        void ISendOfferNotification(plKey& offeree, int ID, hsBool net);
-        void IManageIgnoredAvatars(plKey& offeree, hsBool add);
-        void ISendAvatarDisabledNotification(hsBool enabled);
+        void ISendOfferNotification(plKey& offeree, int ID, bool net);
+        void IManageIgnoredAvatars(plKey& offeree, bool add);
+        void ISendAvatarDisabledNotification(bool enabled);
         void ILinkOffereeToAge();
     public:
 
         plSceneInputInterface();
         virtual ~plSceneInputInterface();
 
-        static hsBool   fShowLOS;
+        static bool     fShowLOS;
 
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual hsBool  HasInterestingCursorID( void ) const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
+        virtual bool    HasInterestingCursorID( void ) const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
         virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority; }
         virtual uint32_t  GetCurrentCursorID( void ) const {return fCurrentCursor;}
         uint32_t          SetCurrentCursorID(uint32_t id);
-        virtual hsBool  InterpretInputEvent( plInputEventMsg *pMsg );
+        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
         void            RequestAvatarTurnToPointLOS();
 
-        virtual hsBool  MsgReceive( plMessage *msg );
+        virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
         virtual void    Shutdown( void );

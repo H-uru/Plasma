@@ -59,7 +59,7 @@ void hsKeyedObject::SetKey(plKey k)
         ((plKeyImp*)fpKey)->SetObjectPtr(this); 
 }   
 
-hsBool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
+bool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
 {
     plKey key = GetKey();       // for linux build
     return hsgResMgr::SendRef(key, refMsg, flags);
@@ -174,7 +174,7 @@ void hsKeyedObject::Write(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fpKey);
 }
 
-hsBool hsKeyedObject::MsgReceive(plMessage* msg)
+bool hsKeyedObject::MsgReceive(plMessage* msg)
 {
     plSelfDestructMsg* nuke = plSelfDestructMsg::ConvertNoRef(msg);
     if (nuke)

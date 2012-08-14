@@ -63,13 +63,13 @@ private:
     void                IForceShutdown();
     void                IUnRegister(uint16_t hClass);
     uint16_t              IRegister(uint16_t hClass, plCreator* worker);
-    hsBool              IIsEmpty();
+    bool                IIsEmpty();
     uint16_t              IGetNumClasses();
     plCreatable*        ICreate(uint16_t hClass);
-    hsBool              IDerivesFrom(uint16_t hBase, uint16_t hDer);
-    hsBool              IIsValidClassIndex(uint16_t hClass);
+    bool                IDerivesFrom(uint16_t hBase, uint16_t hDer);
+    bool                IIsValidClassIndex(uint16_t hClass);
 
-    static hsBool       ICreateTheFactory();
+    static bool         ICreateTheFactory();
     static void         IShutdown();
 
     plFactory();
@@ -88,13 +88,13 @@ public:
     static bool         CanCreate(uint16_t hClass);   // return true if creator exists. doesn't assert
     static plCreatable* Create(uint16_t hClass);
 
-    static hsBool       DerivesFrom(uint16_t hBase, uint16_t hDer);
+    static bool         DerivesFrom(uint16_t hBase, uint16_t hDer);
 
     static uint16_t       GetNumClasses();
 
     static uint16_t       FindClassIndex(const char* className);      // slow lookup for things like console
 
-    static hsBool       IsValidClassIndex(uint16_t hClass);
+    static bool         IsValidClassIndex(uint16_t hClass);
 
     // Don't call this unless you're a DLL being initialized.
     static void         SetTheFactory(plFactory* fac);

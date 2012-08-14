@@ -83,7 +83,7 @@ void plLeafController::Interp(float time, float* result, plControllerCacheInfo *
 {
     hsAssert(fType == hsKeyFrame::kScalarKeyFrame || fType == hsKeyFrame::kBezScalarKeyFrame, kInvalidInterpString);
     
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     if (fType == hsKeyFrame::kScalarKeyFrame)
     {
         hsScalarKey *k1, *k2;
@@ -106,7 +106,7 @@ void plLeafController::Interp(float time, hsScalarTriple* result, plControllerCa
 {
     hsAssert(fType == hsKeyFrame::kPoint3KeyFrame || fType == hsKeyFrame::kBezPoint3KeyFrame, kInvalidInterpString);
 
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     if (fType == hsKeyFrame::kPoint3KeyFrame)
     {
         hsPoint3Key *k1, *k2;
@@ -129,7 +129,7 @@ void plLeafController::Interp(float time, hsScaleValue* result, plControllerCach
 {
     hsAssert(fType == hsKeyFrame::kScaleKeyFrame || fType == hsKeyFrame::kBezScaleKeyFrame, kInvalidInterpString);
 
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     if (fType == hsKeyFrame::kScaleKeyFrame)
     {
         hsScaleKey *k1, *k2;
@@ -154,7 +154,7 @@ void plLeafController::Interp(float time, hsQuat* result, plControllerCacheInfo 
              fType == hsKeyFrame::kCompressedQuatKeyFrame32 ||
              fType == hsKeyFrame::kCompressedQuatKeyFrame64, kInvalidInterpString);
 
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     if (fType == hsKeyFrame::kQuatKeyFrame)
     {
         hsQuatKey *k1, *k2;
@@ -193,7 +193,7 @@ void plLeafController::Interp(float time, hsMatrix33* result, plControllerCacheI
 {
     hsAssert(fType == hsKeyFrame::kMatrix33KeyFrame, kInvalidInterpString);
 
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     hsMatrix33Key *k1, *k2;
     float t;
     uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
@@ -205,7 +205,7 @@ void plLeafController::Interp(float time, hsMatrix44* result, plControllerCacheI
 {
     hsAssert(fType == hsKeyFrame::kMatrix44KeyFrame, kInvalidInterpString);
 
-    hsBool tryForward = (cache? cache->fAtc->IsForewards() : true);
+    bool tryForward = (cache? cache->fAtc->IsForewards() : true);
     hsMatrix44Key *k1, *k2;
     float t;
     uint32_t *idxStore = (cache ? &cache->fKeyIndex : &fLastKeyIdx);
@@ -482,7 +482,7 @@ void plLeafController::QuickScalarController(int numKeys, float* times, float* v
 // If all the keys are the same, this controller is pretty useless.
 // This situation actually comes up a lot because of the biped killer
 // trying to convert character studio animations.
-hsBool plLeafController::AllKeysMatch() const
+bool plLeafController::AllKeysMatch() const
 {
     if (fNumKeys <= 1)
         return true;
@@ -597,7 +597,7 @@ hsBool plLeafController::AllKeysMatch() const
     return true;
 }
 
-hsBool plLeafController::PurgeRedundantSubcontrollers()
+bool plLeafController::PurgeRedundantSubcontrollers()
 {
     return AllKeysMatch();
 }
@@ -831,7 +831,7 @@ void plCompoundController::GetKeyTimes(hsTArray<float> &keyTimes) const
         fZController->GetKeyTimes(keyTimes);
 }
 
-hsBool plCompoundController::AllKeysMatch() const
+bool plCompoundController::AllKeysMatch() const
 {
     return (!fXController || fXController->AllKeysMatch()) &&
            (!fYController || fYController->AllKeysMatch()) &&
@@ -854,7 +854,7 @@ hsBool plCompoundController::AllKeysMatch() const
 // At the moment, this doesn't seem likely to save us enough space
 // to be worth the effort. (This is why this function doesn't
 // recursively call purge on its subcontrollers.)
-hsBool plCompoundController::PurgeRedundantSubcontrollers()
+bool plCompoundController::PurgeRedundantSubcontrollers()
 {
     if (fXController && fXController->AllKeysMatch())
     {

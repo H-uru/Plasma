@@ -59,15 +59,15 @@ public:
     CLASSNAME_REGISTER( plWin32StaticSound );
     GETINTERFACE_ANY( plWin32StaticSound, plWin32Sound );
     
-    virtual void    Activate( hsBool forcePlay = false );
+    virtual void    Activate( bool forcePlay = false );
     virtual void    DeActivate();
-    virtual hsBool  LoadSound( hsBool is3D );
+    virtual bool    LoadSound( bool is3D );
     virtual void    Update();
-    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual bool    MsgReceive(plMessage* pMsg);
     virtual void    SetStartPos(unsigned bytes){}
 
 protected:
-    hsBool          fRegisteredOnThread;
+    bool            fRegisteredOnThread;
 
     virtual void    IDerivedActuallyPlay( void );
     virtual void    ISetActualTime( double t );
@@ -90,7 +90,7 @@ public:
 
     virtual void    Read(hsStream* s, hsResMgr* mgr);
     virtual void    Write(hsStream* s, hsResMgr* mgr);
-    virtual hsBool  MsgReceive(plMessage* pMsg);
+    virtual bool    MsgReceive(plMessage* pMsg);
 };
 
 #endif //plWin32StaticSound_h

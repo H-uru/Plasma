@@ -60,7 +60,7 @@ protected:
     virtual void IPutCurrentStateIn(plStateDataRecord* dstState) = 0;
     virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState) = 0;
     virtual void ISentState(const plStateDataRecord* sentState) {}
-    hsBool IEval(double secs, float del, uint32_t dirty) {return false;}
+    bool IEval(double secs, float del, uint32_t dirty) {return false;}
     
     virtual uint32_t IApplyModFlags(uint32_t sendFlags);
     
@@ -71,7 +71,7 @@ public:
     plSDLModifier();
     virtual ~plSDLModifier();
 
-    hsBool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg);
     void SendState(uint32_t sendFlags);       // send a state update
     void ReceiveState(const plStateDataRecord* srcState);   // recv a state update
     virtual const char* GetSDLName() const = 0; // return the string name of the type of state descriptor you handle

@@ -76,7 +76,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAgeLoadedMsg.h"
 
 
-extern  hsBool  gDataServerLocal;
+extern  bool    gDataServerLocal;
 
 // static 
 plAgeLoader* plAgeLoader::fInstance=nil;
@@ -140,7 +140,7 @@ void plAgeLoader::SetInstance(plAgeLoader* inst)
 //
 // Plasma Msg Handler
 //
-hsBool plAgeLoader::MsgReceive(plMessage* msg)
+bool plAgeLoader::MsgReceive(plMessage* msg)
 {
     plInitialAgeStateLoadedMsg *stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef( msg );
     if( stateMsg != nil )
@@ -335,7 +335,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
         
         plUnloadAgeCollector( const char *a ) : fAge( a ) {}
 
-        virtual hsBool EatPage( plRegistryPageNode *page )
+        virtual bool EatPage( plRegistryPageNode *page )
         {
             if( fAge && stricmp( page->GetPageInfo().GetAge(), fAge ) == 0 )
             {

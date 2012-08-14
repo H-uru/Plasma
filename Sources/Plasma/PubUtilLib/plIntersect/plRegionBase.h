@@ -56,7 +56,7 @@ public:
     CLASSNAME_REGISTER( plRegionBase );
     GETINTERFACE_ANY( plRegionBase, plObjInterface );
 
-    virtual hsBool IsInside(const hsPoint3& pos) const = 0;
+    virtual bool IsInside(const hsPoint3& pos) const = 0;
 };
 
 #endif // plRegionBase_inc

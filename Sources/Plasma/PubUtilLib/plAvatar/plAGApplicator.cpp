@@ -65,7 +65,7 @@ plAGApplicator::~plAGApplicator()
 {
 }
 
-void plAGApplicator::Apply(const plAGModifier *mod, double time, hsBool force)
+void plAGApplicator::Apply(const plAGModifier *mod, double time, bool force)
 {
     if (fEnabled || force)
         IApply(mod, time);
@@ -112,7 +112,7 @@ plAGApplicator *plAGApplicator::CloneWithChannel(plAGChannel *channel)
     return app;
 }
 
-hsBool plAGApplicator::CanBlend(plAGApplicator *app)
+bool plAGApplicator::CanBlend(plAGApplicator *app)
 {
     uint16_t ourClass = ClassIndex();
     uint16_t theirClass = app->ClassIndex();

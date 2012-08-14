@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plCAnimParamBlock_h
 #define _plCAnimParamBlock_h
 
+#include "HeadSpin.h"
 #include "Max.h"
 #include "iparamb2.h"
 #include "iparamm2.h"

@@ -74,19 +74,19 @@ protected:
 
     Interval        fIValid;
 
-    hsBool          fLoading;
+    bool            fLoading;
 
     hsTArray<NoteTrack *>   fNotetracks;
 
-    hsBool                          fStealthsChanged;
+    bool                            fStealthsChanged;
     hsTArray<plMtlChangeCallback *> fChangeCallbacks;
 
     void                IUpdateAnimNodes( void );
     plAnimStealthNode   *IFindStealth( const plString &animName );
     plAnimStealthNode   *IVerifyStealthPresent( const plString &animName );
 
-    int                 IGetNumStealths( hsBool update = true );
-    plAnimStealthNode   *IGetStealth( int index, hsBool update = true );
+    int                 IGetNumStealths( bool update = true );
+    plAnimStealthNode   *IGetStealth( int index, bool update = true );
 
     void                ICloneBase( plPassMtlBase *target, RemapDir &remap );
     virtual void        ICloneRefs( plPassMtlBase *target, RemapDir &remap ) = 0;
@@ -111,7 +111,7 @@ public:
         //kRefAnim,
         kRefNotetracks  = 4 // MUST BE THE LAST REF ID SPECIFIED
     };
-    void    SetLoadingFlag( hsBool f ) { fLoading = f; }
+    void    SetLoadingFlag( bool f ) { fLoading = f; }
     void    PostLoadAnimPBFixup( void );
 
     void    RegisterChangeCallback( plMtlChangeCallback *callback );
@@ -134,8 +134,8 @@ public:
     RefResult               NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message );
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
-    virtual hsBool  SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
-    virtual hsBool  ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
+    virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
+    virtual bool    ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
 
     int                 GetNumStealths( void );
     plAnimStealthNode   *GetStealth( int index );

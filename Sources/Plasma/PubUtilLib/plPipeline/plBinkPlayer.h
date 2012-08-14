@@ -66,8 +66,8 @@ class plBinkPlayer
 {
     public:
 
-        static hsBool Init( hsWindowHndl hWnd);
-        static hsBool DeInit();
+        static bool Init( hsWindowHndl hWnd);
+        static bool DeInit();
 
         static void SetForeGroundTrack(uint32_t t);
         static void SetBackGroundTrack(uint32_t t);
@@ -79,13 +79,13 @@ class plBinkPlayer
 
         void SetDefaults();
 
-        hsBool Start(plPipeline* pipe,  hsWindowHndl hWnd);
+        bool Start(plPipeline* pipe,  hsWindowHndl hWnd);
 
-        hsBool NextFrame();
+        bool NextFrame();
 
-        hsBool Pause(hsBool on);
+        bool Pause(bool on);
 
-        hsBool Stop(); 
+        bool Stop(); 
         
         void SetFileName(const char* filename); // will copy
         void SetColor(const hsColorRGBA& c);
@@ -132,25 +132,25 @@ class plBinkPlayer
             float u, v;
         };
 
-        static hsBool       fInit;
+        static bool         fInit;
 
-        hsBool              IGetFrame();
-        hsBool              IBlitFrame();
-        hsBool              ISetRenderState();
+        bool                IGetFrame();
+        bool                IBlitFrame();
+        bool                ISetRenderState();
         void                ISetVerts();
 
         float            IGetVolume(int background) const;
         void                ISetVolume(float v, int background);
         void                ISendCallbacks();
 
-        hsBool              IFadeFromColor();
-        hsBool              IFadeToColor();
+        bool                IFadeFromColor();
+        bool                IFadeToColor();
 
-        hsBool              IAtEnd();
-        hsBool              INotFadingTo();
-        hsBool              ICheckFadingTo();
-        hsBool              INotFadingFrom();
-        hsBool              ICheckFadingFrom();
+        bool                IAtEnd();
+        bool                INotFadingTo();
+        bool                ICheckFadingTo();
+        bool                INotFadingFrom();
+        bool                ICheckFadingFrom();
 
         hsPoint2            fPos;
         hsPoint2            fScale;

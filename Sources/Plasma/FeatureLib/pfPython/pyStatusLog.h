@@ -78,12 +78,12 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    virtual hsBool Open(plString logName, uint32_t numLines, uint32_t flags);
-    virtual hsBool Write(plString text);
-    virtual hsBool WriteColor(plString text, pyColor& color);
+    virtual bool Open(plString logName, uint32_t numLines, uint32_t flags);
+    virtual bool Write(plString text);
+    virtual bool WriteColor(plString text, pyColor& color);
     virtual void Close();
 
-    virtual hsBool IsOpen();
+    virtual bool IsOpen() { return (fLog != nil); }
 };
 
 

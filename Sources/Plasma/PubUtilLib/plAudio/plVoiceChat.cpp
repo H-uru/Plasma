@@ -70,14 +70,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define VOICE_STOP_MS       2000
 #define MAX_DATA_SIZE       1024 * 4    // 4 KB
 
-hsBool                  plVoiceRecorder::fCompress =                true;
-hsBool                  plVoiceRecorder::fRecording =               true;
-hsBool                  plVoiceRecorder::fNetVoice =                false;
+bool                    plVoiceRecorder::fCompress =                true;
+bool                    plVoiceRecorder::fRecording =               true;
+bool                    plVoiceRecorder::fNetVoice =                false;
 short                   plVoiceRecorder::fSampleRate =              FREQUENCY;
 float                plVoiceRecorder::fRecordThreshhold =        200.0f;
-hsBool                  plVoiceRecorder::fShowIcons =               true;
-hsBool                  plVoiceRecorder::fMicAlwaysOpen =           false;
-hsBool                  plVoicePlayer::fEnabled =                   true;
+bool                    plVoiceRecorder::fShowIcons =               true;
+bool                    plVoiceRecorder::fMicAlwaysOpen =           false;
+bool                    plVoicePlayer::fEnabled =                   true;
 
 plVoiceRecorder::plVoiceRecorder()
 {
@@ -171,12 +171,12 @@ void plVoiceRecorder::SetComplexity(int c)
     plSpeex::GetInstance()->SetComplexity((uint8_t) c);
 }
 
-void plVoiceRecorder::SetENH(hsBool b)
+void plVoiceRecorder::SetENH(bool b)
 {
     plSpeex::GetInstance()->SetENH(b);
 }
 
-void plVoiceRecorder::SetMikeOpen(hsBool b)
+void plVoiceRecorder::SetMikeOpen(bool b)
 {
     ALCdevice *device = plgAudioSys::GetCaptureDevice();
     if (fRecording && device)
@@ -198,7 +198,7 @@ void plVoiceRecorder::SetMikeOpen(hsBool b)
     }
 }
 
-void plVoiceRecorder::DrawDisabledIcon(hsBool b)
+void plVoiceRecorder::DrawDisabledIcon(bool b)
 {
     if (!fDisabledIcon)
     {
@@ -217,7 +217,7 @@ void plVoiceRecorder::DrawDisabledIcon(hsBool b)
         fDisabledIcon->SetVisible(b);
 }
 
-void plVoiceRecorder::DrawTalkIcon(hsBool b)
+void plVoiceRecorder::DrawTalkIcon(bool b)
 {
     if (!fTalkIcon)
     {   
@@ -417,7 +417,7 @@ plVoiceSound::~plVoiceSound()
 {
 }
 
-hsBool plVoiceSound::LoadSound( hsBool is3D )
+bool plVoiceSound::LoadSound( bool is3D )
 {
     if( fFailed )
         return false;
@@ -538,7 +538,7 @@ plSpeex::~plSpeex()
     fBits = nil;
 }
     
-hsBool plSpeex::Init(Mode mode) 
+bool plSpeex::Init(Mode mode) 
 {
     int enh = 1;
     
@@ -571,7 +571,7 @@ hsBool plSpeex::Init(Mode mode)
     return true;
 }
 
-hsBool plSpeex::Shutdown()
+bool plSpeex::Shutdown()
 {
     //shutdown speex
     if(fDecoderState)
@@ -596,7 +596,7 @@ hsBool plSpeex::Shutdown()
     return true;
 }
 
-hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStream *out)
+bool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStream *out)
 {
     *packedLength = 0;
     
@@ -634,7 +634,7 @@ hsBool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStrea
     return true;
 }
 
-hsBool plSpeex::Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out)
+bool plSpeex::Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out)
 {
     if(!fInitialized) return false;
     *numOutputBytes = 0;
@@ -677,7 +677,7 @@ hsBool plSpeex::Decode(uint8_t *data, int size, int numFrames, int *numOutputByt
 }
         
 // Sets variable bit rate on/off
-void plSpeex::VBR(hsBool b)
+void plSpeex::VBR(bool b)
 {
     fVBR = b;
     speex_encoder_ctl(fEncoderState, SPEEX_SET_VBR, &fVBR);
@@ -698,7 +698,7 @@ void plSpeex::SetQuality(uint32_t quality)
     speex_encoder_ctl(fEncoderState, SPEEX_SET_QUALITY, &fQuality); 
 }
 
-void plSpeex::SetENH(hsBool b)
+void plSpeex::SetENH(bool b)
 {
     fENH = b;
     speex_decoder_ctl(fDecoderState, SPEEX_SET_ENH, &fENH); 

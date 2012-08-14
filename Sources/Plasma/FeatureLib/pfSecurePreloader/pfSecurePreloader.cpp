@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plPreloaderMsg.h"
 #include "plProgressMgr/plProgressMgr.h"
 
-extern hsBool gDataServerLocal;
+extern bool gDataServerLocal;
 pfSecurePreloader* pfSecurePreloader::fInstance = nil;
 
 /////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ public:
         plZlibStream::Close();
     }
 
-    hsBool AtEnd() { return fOutput->AtEnd(); }
+    bool AtEnd() { return fOutput->AtEnd(); }
     uint32_t GetEOF() { return fOutput->GetEOF(); }
     uint32_t GetPosition() const { return fOutput->GetPosition(); }
     uint32_t GetSizeLeft() const { return fOutput->GetSizeLeft(); }

@@ -63,7 +63,7 @@ pyGUIControlDragBar::~pyGUIControlDragBar()
 }
 
 
-hsBool pyGUIControlDragBar::IsGUIControlDragBar(pyKey& gckey)
+bool pyGUIControlDragBar::IsGUIControlDragBar(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIDragBarCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
         return true;
@@ -93,7 +93,7 @@ void pyGUIControlDragBar::Unanchor( void )
     }
 }
 
-hsBool pyGUIControlDragBar::IsAnchored()
+bool pyGUIControlDragBar::IsAnchored()
 {
     if ( fGCkey )
     {

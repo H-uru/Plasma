@@ -71,7 +71,7 @@ static void GetFullPath( const char filename[], char *destStr )
 //  Makes sure the sound is ready to load without any extra processing (like
 //  decompression or the like), then opens a reader for it.
 //  fullpath tells the function whether to append 'sfx' to the path or not (we don't want to do this if were providing the full path)
-static plAudioFileReader *CreateReader( hsBool fullpath, const char filename[], plAudioFileReader::StreamType type, plAudioCore::ChannelSelect channel )
+static plAudioFileReader *CreateReader( bool fullpath, const char filename[], plAudioFileReader::StreamType type, plAudioCore::ChannelSelect channel )
 {
     char path[512];
     if(fullpath) GetFullPath(filename, path);
@@ -507,7 +507,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
 }
 
 //// IGrabHeaderInfo /////////////////////////////////////////////////////////
-hsBool  plSoundBuffer::IGrabHeaderInfo( void )
+bool    plSoundBuffer::IGrabHeaderInfo( void )
 {
     static char path[ 512 ];
 
@@ -543,7 +543,7 @@ hsBool  plSoundBuffer::IGrabHeaderInfo( void )
 //  Makes sure the sound is ready to load without any extra processing (like
 //  decompression or the like), then opens a reader for it.
 //  fullpath tells the function whether to append 'sfx' to the path or not (we don't want to do this if were providing the full path)
-plAudioFileReader   *plSoundBuffer::IGetReader( hsBool fullpath )
+plAudioFileReader   *plSoundBuffer::IGetReader( bool fullpath )
 {
     char path[512];
     if(fullpath) IGetFullPath(path);

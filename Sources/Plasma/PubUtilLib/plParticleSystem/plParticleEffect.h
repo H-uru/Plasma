@@ -67,7 +67,7 @@ public:
     //      context (invalidating anything cached).
     // Defaults for Prepare and End are no-ops.
     virtual void PrepareEffect(const plEffectTargetInfo& target) {}
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
     virtual void EndEffect(const plEffectTargetInfo& target) {}
 };
 
@@ -84,7 +84,7 @@ public:
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
-    virtual hsBool MsgReceive(plMessage *msg);
+    virtual bool MsgReceive(plMessage *msg);
 
 protected:
     plSceneObject *fSceneObj;
@@ -102,7 +102,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectBeat );
     GETINTERFACE_ANY( plParticleCollisionEffectBeat, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 };
 
 // This particle blocker just kills any particles that hit it.
@@ -114,7 +114,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectDie );
     GETINTERFACE_ANY( plParticleCollisionEffectDie, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 };
 
 class plParticleCollisionEffectBounce : public plParticleCollisionEffect
@@ -128,7 +128,7 @@ public:
     CLASSNAME_REGISTER( plParticleCollisionEffectBounce );
     GETINTERFACE_ANY( plParticleCollisionEffectBounce, plParticleCollisionEffect );
 
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -157,14 +157,14 @@ public:
     GETINTERFACE_ANY( plParticleFadeVolumeEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
-    //virtual hsBool MsgReceive(plMessage *msg);
+    //virtual bool MsgReceive(plMessage *msg);
 
     float fLength;
-    hsBool fIgnoreZ;
+    bool fIgnoreZ;
 };
 
 class plParticleWindEffect : public plParticleEffect
@@ -174,7 +174,7 @@ protected:
     float    fStrength;
     float    fConstancy;
     float    fSwirl;
-    hsBool      fHorizontal;
+    bool        fHorizontal;
     hsVector3   fRefDir;
 
     // Some cached properties. These will be the same for all
@@ -193,7 +193,7 @@ public:
     GETINTERFACE_ANY( plParticleWindEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i) = 0;
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
@@ -207,8 +207,8 @@ public:
     void                SetSwirl(float s) { fSwirl = s; }
     float            GetSwirl() const { return fSwirl; }
 
-    void                SetHorizontal(hsBool on) { fHorizontal = on; }
-    hsBool              GetHorizontal() const { return fHorizontal; }
+    void                SetHorizontal(bool on) { fHorizontal = on; }
+    bool                GetHorizontal() const { return fHorizontal; }
 
     void                SetRefDirection(const hsVector3& v);
     const hsVector3&    GetRefDirection() const { return fRefDir; }
@@ -232,7 +232,7 @@ public:
     GETINTERFACE_ANY( plParticleLocalWind, plParticleWindEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     void                SetScale(const hsVector3& v) { fScale = v; }
     const hsVector3&    GetScale() const { return fScale; }
@@ -266,7 +266,7 @@ public:
     GETINTERFACE_ANY( plParticleUniformWind, plParticleWindEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
 
     void        SetFrequencyRange(float minSecsPerCycle, float maxSecsPerCycle);
     void        SetFrequencyRate(float secsPerCycle);
@@ -315,7 +315,7 @@ public:
     GETINTERFACE_ANY( plParticleFlockEffect, plParticleEffect );
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);  
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);  
 
     void SetTargetOffset(const hsPoint3 &offset) { fTargetOffset = offset; }
     void SetDissenterTarget(const hsPoint3 &target) { fDissenterTarget = target; }
@@ -333,7 +333,7 @@ public:
 
     virtual void Read(hsStream *s, hsResMgr *mgr);
     virtual void Write(hsStream *s, hsResMgr *mgr);
-    virtual hsBool MsgReceive(plMessage *msg);  
+    virtual bool MsgReceive(plMessage *msg);  
 };  
 
 class plParticleFollowSystemEffect : public plParticleEffect
@@ -345,12 +345,12 @@ public:
     plParticleFollowSystemEffect();
 
     virtual void PrepareEffect(const plEffectTargetInfo& target);
-    virtual hsBool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
+    virtual bool ApplyEffect(const plEffectTargetInfo& target, int32_t i);
     virtual void EndEffect(const plEffectTargetInfo& target);
     
 protected:
     hsMatrix44 fOldW2L;
-    hsBool fEvalThisFrame;
+    bool fEvalThisFrame;
 };
 
 #endif

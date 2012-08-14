@@ -182,7 +182,7 @@ void pyGUIPopUpMenu::setup(const char *name, pyGUIPopUpMenu &parent, float scree
         fGCkey = nil;
 }
 
-hsBool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
+bool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIPopUpMenu::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
         return true;
@@ -191,7 +191,7 @@ hsBool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
 
 
 // override the equals to operator
-hsBool pyGUIPopUpMenu::operator==(const pyGUIPopUpMenu &gcobj) const
+bool pyGUIPopUpMenu::operator==(const pyGUIPopUpMenu &gcobj) const
 {
     plKey theirs = ((pyGUIPopUpMenu&)gcobj).getObjKey();
     if ( fGCkey == nil && theirs == nil )
@@ -225,13 +225,13 @@ uint32_t  pyGUIPopUpMenu::GetTagID()
 }
 
 
-void pyGUIPopUpMenu::SetEnabled( hsBool e )
+void pyGUIPopUpMenu::SetEnabled( bool e )
 {
     kGetMenuPtr( ; );
     menu->SetEnabled(e);
 }
 
-hsBool pyGUIPopUpMenu::IsEnabled( void )
+bool pyGUIPopUpMenu::IsEnabled( void )
 {
     kGetMenuPtr( false );
     return menu->IsEnabled();

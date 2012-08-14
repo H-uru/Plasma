@@ -362,7 +362,7 @@ int plNetMsgObjectHelper::Peek(hsStream* stream, const uint32_t peekOptions)
     return stream->GetPosition();
 }
 
-hsBool plNetMsgObjectHelper::SetFromKey(const plKey &key)
+bool plNetMsgObjectHelper::SetFromKey(const plKey &key)
 {
     if (!key || key->GetName().IsNull())
         return false;

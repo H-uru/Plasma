@@ -285,7 +285,7 @@ void plParticleEmitter::TranslateAllParticles(hsPoint3 &amount)
         fParticleCores[i].fPos += amount;
 }
 
-hsBool plParticleEmitter::IUpdate(float delta)
+bool plParticleEmitter::IUpdate(float delta)
 {
     if (fMiscFlags & kNeedsUpdate)
     {

@@ -113,15 +113,15 @@ class plDynamicTextMap : public plMipmap
 
 
         plDynamicTextMap();
-        plDynamicTextMap( uint32_t width, uint32_t height, hsBool hasAlpha = false, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
+        plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha = false, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
         virtual ~plDynamicTextMap();
 
         CLASSNAME_REGISTER( plDynamicTextMap );
         GETINTERFACE_ANY( plDynamicTextMap, plMipmap );
 
 
-        void            Create( uint32_t width, uint32_t height, hsBool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
-        void            SetNoCreate( uint32_t width, uint32_t height, hsBool hasAlpha );
+        void            Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
+        void            SetNoCreate( uint32_t width, uint32_t height, bool hasAlpha );
 
         virtual void    Reset( void );
 
@@ -137,7 +137,7 @@ class plDynamicTextMap : public plMipmap
 
         /// Operations to perform on the text block
 
-        hsBool  IsValid() { return IIsValid(); }
+        bool    IsValid() { return IIsValid(); }
 
         // allow the user of the DynaTextMap that they are done with the image... for now
         // ... the fImage will be re-created on the next operation that requires the image
@@ -152,10 +152,10 @@ class plDynamicTextMap : public plMipmap
             kFontShadowed   = 0x04
         };
 
-        void    SetFont( const char *face, uint16_t size, uint8_t fontFlags = 0, hsBool antiAliasRGB = true );
-        void    SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags = 0, hsBool antiAliasRGB = true );
+        void    SetFont( const char *face, uint16_t size, uint8_t fontFlags = 0, bool antiAliasRGB = true );
+        void    SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags = 0, bool antiAliasRGB = true );
         void    SetLineSpacing( int16_t spacing );
-        void    SetTextColor( hsColorRGBA &color, hsBool blockRGB = false );
+        void    SetTextColor( hsColorRGBA &color, bool blockRGB = false );
         void    SetJustify( Justify j );
 
         void    DrawString( uint16_t x, uint16_t y, const char *text );
@@ -186,7 +186,7 @@ class plDynamicTextMap : public plMipmap
 
         void    FlushToHost( void );
 
-        hsBool  MsgReceive( plMessage *msg );
+        bool    MsgReceive( plMessage *msg );
 
         uint16_t  GetVisibleWidth( void ) { return fVisWidth; }
         uint16_t  GetVisibleHeight( void ) { return fVisHeight; }
@@ -203,9 +203,9 @@ class plDynamicTextMap : public plMipmap
         Justify     GetFontJustify( void ) const { return fJustify; }
         const char  *GetFontFace( void ) const { return fFontFace; }
         uint16_t      GetFontSize( void ) const { return fFontSize; }
-        hsBool      GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
+        bool        GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
         hsColorRGBA GetFontColor( void ) const { return fFontColor; }
-        hsBool      GetFontBlockRGB( void ) const { return fFontBlockRGB; }
+        bool        GetFontBlockRGB( void ) const { return fFontBlockRGB; }
         int16_t       GetLineSpacing( void ) const { return fLineSpacing; }
 
         plFont      *GetCurrFont( void ) const { return fCurrFont; }
@@ -216,28 +216,28 @@ class plDynamicTextMap : public plMipmap
 
         //// Protected Members ////
 
-        hsBool      IIsValid( void );
+        bool        IIsValid( void );
         void        IClearFromBuffer( uint32_t *clearBuffer );
 
         uint32_t      *IAllocateOSSurface( uint16_t width, uint16_t height );
         void        IDestroyOSSurface( void );
 
-        hsBool      fHasAlpha, fShadowed;
+        bool        fHasAlpha, fShadowed;
 
         Justify     fJustify;
         char        *fFontFace;
         uint16_t      fFontSize;
         uint8_t       fFontFlags;
-        hsBool      fFontAntiAliasRGB;
+        bool        fFontAntiAliasRGB;
         hsColorRGBA fFontColor;
-        hsBool      fFontBlockRGB;
+        bool        fFontBlockRGB;
         int16_t       fLineSpacing;
 
         plFont      *fCurrFont;
 
         uint32_t      *fInitBuffer;
         
-        hsBool      fHasCreateBeenCalled;
+        bool        fHasCreateBeenCalled;
 };
 
 

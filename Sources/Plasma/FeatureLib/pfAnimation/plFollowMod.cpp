@@ -64,7 +64,7 @@ plFollowMod::~plFollowMod()
 #include "plProfile.h"
 plProfile_CreateTimer("FollowMod", "RenderSetup", FollowMod);
 
-hsBool plFollowMod::MsgReceive(plMessage* msg)
+bool plFollowMod::MsgReceive(plMessage* msg)
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )
@@ -110,7 +110,7 @@ hsBool plFollowMod::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-hsBool plFollowMod::ICheckLeader()
+bool plFollowMod::ICheckLeader()
 {
     switch( fLeaderType )
     {
@@ -218,7 +218,7 @@ void plFollowMod::IMoveTarget()
     GetTarget()->SetTransform(l2w, w2l);
 }
 
-hsBool plFollowMod::IEval(double secs, float del, uint32_t dirty)
+bool plFollowMod::IEval(double secs, float del, uint32_t dirty)
 {
     if( ICheckLeader() )
         IMoveTarget();

@@ -62,7 +62,7 @@ static const int kFileStartOffset = kMagicStringLen + sizeof(uint32_t);
 
 static const int kMaxBufferedFileSize = 10*1024;
 
-plSecureStream::plSecureStream(hsBool deleteOnExit, uint32_t* key) :
+plSecureStream::plSecureStream(bool deleteOnExit, uint32_t* key) :
 fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
@@ -149,17 +149,17 @@ void plSecureStream::IDecipher(uint32_t* const v, uint32_t n)
     }
 }
 
-hsBool plSecureStream::Open(const char* name, const char* mode)
+bool plSecureStream::Open(const char* name, const char* mode)
 {
     wchar_t* wName = hsStringToWString(name);
     wchar_t* wMode = hsStringToWString(mode);
-    hsBool ret = Open(wName, wMode);
+    bool ret = Open(wName, wMode);
     delete [] wName;
     delete [] wMode;
     return ret;
 }
 
-hsBool plSecureStream::Open(const wchar_t* name, const wchar_t* mode)
+bool plSecureStream::Open(const wchar_t* name, const wchar_t* mode)
 {
     if (wcscmp(mode, L"rb") == 0)
     {
@@ -248,7 +248,7 @@ hsBool plSecureStream::Open(const wchar_t* name, const wchar_t* mode)
     }
 }
 
-hsBool plSecureStream::Open(hsStream* stream)
+bool plSecureStream::Open(hsStream* stream)
 {
     uint32_t pos = stream->GetPosition();
     stream->Rewind();
@@ -281,7 +281,7 @@ hsBool plSecureStream::Open(hsStream* stream)
     return true;
 }
 
-hsBool plSecureStream::Close()
+bool plSecureStream::Close()
 {
     int rtn = false;
 
@@ -370,7 +370,7 @@ void plSecureStream::IBufferFile()
     fPosition = 0;
 }
 
-hsBool plSecureStream::AtEnd()
+bool plSecureStream::AtEnd()
 {
     if (fBufferedStream)
         return fRAMStream->AtEnd();
@@ -652,7 +652,7 @@ bool plSecureStream::ICheckMagicString(hsStream* s)
     char magicString[kMagicStringLen+1];
     s->Read(kMagicStringLen, &magicString);
     magicString[kMagicStringLen] = '\0';
-    return (hsStrEQ(magicString, kMagicString) != 0);
+    return (strcmp(magicString, kMagicString) == 0);
 }
 
 bool plSecureStream::ICheckMagicString(hsFD fp)
@@ -665,7 +665,7 @@ bool plSecureStream::ICheckMagicString(hsFD fp)
     fread(&magicString, kMagicStringLen, 1, fp);
 #endif
     magicString[kMagicStringLen] = '\0';
-    return (hsStrEQ(magicString, kMagicString) != 0);
+    return (strcmp(magicString, kMagicString) == 0);
 }
 
 bool plSecureStream::IsSecureFile(const char* fileName)
@@ -723,7 +723,7 @@ hsStream* plSecureStream::OpenSecureFile(const wchar_t* fileName, const uint32_t
     requireEncryption = false;
 #endif
 
-    hsBool deleteOnExit = flags & kDeleteOnExit;
+    bool deleteOnExit = flags & kDeleteOnExit;
     bool isEncrypted = IsSecureFile(fileName);
 
     hsStream* s = nil;

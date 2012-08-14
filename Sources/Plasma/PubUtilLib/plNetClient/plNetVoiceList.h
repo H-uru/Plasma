@@ -89,7 +89,7 @@ public:
     void SetLastUpdateTime(double t) { fLastUpdateTime=t; fNumUpdates++;    }
     double GetLastUpdateTime() { return fLastUpdateTime;    }
 
-    hsBool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
+    bool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
 
     virtual void AddMember(plNetTransportMember* e);
     virtual void RemoveMember(plNetTransportMember* e);
