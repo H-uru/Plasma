@@ -110,10 +110,10 @@ kFriendInviteSent = 61  # Result of friend invite received
 kRegisterImager = 62    # Imagers send to register themselves with the KI
 
 # kUpgradeKILevel and kDowngradeKILevel levels
-kNanoKI=0
+#kNanoKI=0 Unused KI level.
 kMicroKI=1
 kNormalKI=2
-kLowestKILevel = kNanoKI
+kLowestKILevel = kMicroKI
 kHighestKILevel = kNormalKI
 
 # Upgrade levels for the KI marker
@@ -170,7 +170,7 @@ def PtDetermineKILevel():
         if level >= kLowestKILevel and level <= kHighestKILevel:
             return level
     # if couldn't be determine... just assume lowest form
-    return kNanoKI
+    return kMicroKI
 
 def PtDetermineCensorLevel():
     "Get the KILevel"

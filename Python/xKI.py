@@ -101,21 +101,16 @@ KIBlackbar = ptAttribGUIDialog(1,"The Blackbar dialog")
 KIMini = ptAttribGUIDialog(2,"The KIMini dialog")
 KIYesNo = ptAttribGUIDialog(3,"The KIYesNo dialog")
 BigKI = ptAttribGUIDialog(5,"The BIG KI (Mr. BigStuff)")
-#==>DEAD# PictureSmall = ptAttribDynamicMap(6, "The Small picture DynamicMap")
 NewItemAlert = ptAttribGUIDialog(7,"The new item alert dialog")
-#==>DEAD# PictureObject = ptAttribSceneobject(8, "The Small picture sceneobject")
 KIListModeDialog = ptAttribGUIDialog(9, "The list mode dialog")
 KIPictureExpanded = ptAttribGUIDialog(10, "The Picture expanded dialog")
 KIJournalExpanded = ptAttribGUIDialog(11, "The journal entry expanded dialog")
 KIOnAnim = ptAttribAnimation(12,"Turn on/off the KI on animation")
 KIOnResp = ptAttribResponder(13,"Turn On responder")
 KIOffResp = ptAttribResponder(14,"Turn Off responder")
-#==>DEAD# JournalIcon = ptAttribMaterial(15,"Journal Icon map")
-#==>DEAD# SoundIcon = ptAttribMaterial(16,"Sound Icon map")
 KIPlayerExpanded = ptAttribGUIDialog(17, "The player expanded dialog")
 KIMicroBlackbar = ptAttribGUIDialog(18, "The micro Blackbar dialog")
 KIMicro = ptAttribGUIDialog(19, "The micro KI dialog")
-KINanoBlackBar = ptAttribGUIDialog(20, "The nano Blackbar dialog")
 KIVolumeExpanded = ptAttribGUIDialog(21, "The volume control dialog")
 KIAgeOwnerExpanded = ptAttribGUIDialog(22, "The Age Owner settings dialog")
 KIRateIt = ptAttribGUIDialog(23, "The Rate It dialog")
@@ -206,7 +201,7 @@ kJournalTextSize = 2048
 #=================
 # KI level globals
 #=================
-theKILevel = kNanoKI       # assume that we are starting out as a micro
+theKILevel = kMicroKI       # assume that we are starting out as a micro
 PrivateChatChannel = 0
 theCensorLevel = 0
 OnlyGetPMsFromBuddies = 0
@@ -668,8 +663,6 @@ kMGKILevel = 0
 kPelletScoreButton = 1020
 kPelletImager = ""
 
-# ptPlayer's of who is being added or in the game
-#MarkerPlayerList = []
 # marker game state
 kMGNotActive = 0
 kMGGameCreation = 1
@@ -759,24 +752,24 @@ kOKDialogDict = { # "code": translation
         "TERMINATED: Server LogOff. Reason: UNKNOWN REASON CODE":                   PtGetLocalizedString("KI.Errors.UnknownReason2"),   #09
         "SERVER SILENCE":               PtGetLocalizedString("KI.Errors.ServerSilence"),            #10
         "BAD VERSION":                  PtGetLocalizedString("KI.Errors.OldVersion"),               #11
-	    "Player Disabled":              PtGetLocalizedString("KI.Errors.PlayerDisabled"),           #12
-	    "CAN'T FIND AGE":               PtGetLocalizedString("KI.Errors.CantFindAge"),              #13
-	    "AUTH RESPONSE FAILED":         PtGetLocalizedString("KI.Errors.AuthFailed"),               #14
+        "Player Disabled":              PtGetLocalizedString("KI.Errors.PlayerDisabled"),           #12
+        "CAN'T FIND AGE":               PtGetLocalizedString("KI.Errors.CantFindAge"),              #13
+        "AUTH RESPONSE FAILED":         PtGetLocalizedString("KI.Errors.AuthFailed"),               #14
         "AUTH TIMEOUT":                 PtGetLocalizedString("KI.Errors.AuthTimeout"),              #15
         "SDL Desc Problem":             PtGetLocalizedString("KI.Errors.SDLDescProblem"),           #16
         "Unspecified error":            PtGetLocalizedString("KI.Errors.UnspecifiedError"),         #17
-		"Failed to send msg":           PtGetLocalizedString("KI.Errors.FailedToSendMsg"),          #18
-		"Authentication timed out":     PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),   #19
-		"Peer timed out":               PtGetLocalizedString("KI.Errors.PeerTimedOut"),             #20
-		"Server silence":               PtGetLocalizedString("KI.Errors.ServerSilence2"),           #21
-		"Protocol version mismatch":    PtGetLocalizedString("KI.Errors.ProtocolVersionMismatch"),  #22
-		"Auth failed":                  PtGetLocalizedString("KI.Errors.AuthFailed2"),              #23
-		"Failed to create player":      PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),     #24
-		"Invalid error code":           PtGetLocalizedString("KI.Errors.InvalidErrorCode"),         #25
-		"linking banned":               PtGetLocalizedString("KI.Errors.LinkingBanned"),            #26
-		"linking restored":             PtGetLocalizedString("KI.Errors.LinkingRestored"),          #27
-		"silenced":                     PtGetLocalizedString("KI.Errors.Silenced"),                 #28
-		"unsilenced":                   PtGetLocalizedString("KI.Errors.Unsilenced"),               #29
+        "Failed to send msg":           PtGetLocalizedString("KI.Errors.FailedToSendMsg"),          #18
+        "Authentication timed out":     PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),   #19
+        "Peer timed out":               PtGetLocalizedString("KI.Errors.PeerTimedOut"),             #20
+        "Server silence":               PtGetLocalizedString("KI.Errors.ServerSilence2"),           #21
+        "Protocol version mismatch":    PtGetLocalizedString("KI.Errors.ProtocolVersionMismatch"),  #22
+        "Auth failed":                  PtGetLocalizedString("KI.Errors.AuthFailed2"),              #23
+        "Failed to create player":      PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),     #24
+        "Invalid error code":           PtGetLocalizedString("KI.Errors.InvalidErrorCode"),         #25
+        "linking banned":               PtGetLocalizedString("KI.Errors.LinkingBanned"),            #26
+        "linking restored":             PtGetLocalizedString("KI.Errors.LinkingRestored"),          #27
+        "silenced":                     PtGetLocalizedString("KI.Errors.Silenced"),                 #28
+        "unsilenced":                   PtGetLocalizedString("KI.Errors.Unsilenced"),               #29
 }
 
 kChatPetitionCommands = {
@@ -896,22 +889,20 @@ class xKI(ptModifier):
 
     def OnInit(self):
         PtLoadDialog("KIBlackBar",self.key)
-        PtLoadDialog("KINanoBlackBar",self.key)
         PtLoadDialog("KIMicroBlackBar",self.key)
-        if not PtIsSinglePlayerMode():
-            PtLoadDialog("KIMicro",self.key)
-            PtLoadDialog("KIMini",self.key)
-            PtLoadDialog("KIMain",self.key)
-            PtLoadDialog("KIListMode",self.key)
-            PtLoadDialog("KIJournalExpanded",self.key)
-            PtLoadDialog("KIPictureExpanded",self.key)
-            PtLoadDialog("KIPlayerExpanded",self.key)
-            PtLoadDialog("KIAgeOwnerSettings",self.key)
-            PtLoadDialog("KISettings",self.key)
-            PtLoadDialog("KIMarkerFolder",self.key)
-            PtLoadDialog("KIMarkerTimeMenu",self.key)
-            PtLoadDialog("KIQuestionNote",self.key)
-            PtLoadDialog("KIMarkerTypeMenu",self.key)
+        PtLoadDialog("KIMicro",self.key)
+        PtLoadDialog("KIMini",self.key)
+        PtLoadDialog("KIMain",self.key)
+        PtLoadDialog("KIListMode",self.key)
+        PtLoadDialog("KIJournalExpanded",self.key)
+        PtLoadDialog("KIPictureExpanded",self.key)
+        PtLoadDialog("KIPlayerExpanded",self.key)
+        PtLoadDialog("KIAgeOwnerSettings",self.key)
+        PtLoadDialog("KISettings",self.key)
+        PtLoadDialog("KIMarkerFolder",self.key)
+        PtLoadDialog("KIMarkerTimeMenu",self.key)
+        PtLoadDialog("KIQuestionNote",self.key)
+        PtLoadDialog("KIMarkerTypeMenu",self.key)
         PtLoadDialog("KIYesNo",self.key)
         PtLoadDialog("KINewItemAlert",self.key)
         # the options menu has its own handler
@@ -991,18 +982,17 @@ class xKI(ptModifier):
         #Update the marker game manager
         if self.markerGameManager == None:
             #Game is initialized on account update (so ignore if player is not selected)
-            PtDebugPrint("xKI.OnServerInitComplete():\tERROR: Could not find marker manger, re-creating a new one")
+            PtDebugPrint("xKI.OnServerInitComplete(): ERROR: Could not find marker manger, re-creating a new one")
             self.markerGameManager = MarkerGameManager(self)
         else:
             #Loading new age, re-load marker game manager
             ageName = PtGetAgeInfo().getAgeFilename()
             if ageName.lower() != "startup":
-                PtDebugPrint("DEBUG: xKI.OnServerInitComplete():\tRe-loading Marker Game Manager!")
+                PtDebugPrint("DEBUG: xKI.OnServerInitComplete(): Re-loading Marker Game Manager!")
                 self.markerGameManager = MarkerGameManager(self)
 
         #Force any open KIs to close... we don't want to leave them open if we log out and are now logging back in!
-        if not PtIsSinglePlayerMode():
-            self.IminiPutAwayKI()
+        self.IminiPutAwayKI()
 
         self.CheckKILight()
 
@@ -1110,10 +1100,10 @@ class xKI(ptModifier):
         try:
             local = PtGetLocalAvatar()
         except:
-            PtDebugPrint("xKI.BeginAgeUnLoad()-->\tfailed to get local avatar")
+            PtDebugPrint("xKI.BeginAgeUnLoad()--> failed to get local avatar")
             return
         if (local == avObj):
-            PtDebugPrint("xKI.BeginAgeUnLoad()-->\tavatar page out", level=kDebugDumpLevel)
+            PtDebugPrint("xKI.BeginAgeUnLoad()--> avatar page out", level=kDebugDumpLevel)
             curTime = PtGetDniTime()
             timeRemaining = (lightStop - curTime)
             if timeRemaining > 0:
@@ -1125,22 +1115,20 @@ class xKI(ptModifier):
 
     def __del__(self):
         "the destructor - unload any dialogs we loaded"
-        PtUnloadDialog("KINanoBlackBar")
         PtUnloadDialog("KIMicroBlackBar")
-        if not PtIsSinglePlayerMode():
-            PtUnloadDialog("KIMicro")
-            PtUnloadDialog("KIMini")
-            PtUnloadDialog("KIMain")
-            PtUnloadDialog("KIListMode")
-            PtUnloadDialog("KIJournalExpanded")
-            PtUnloadDialog("KIPictureExpanded")
-            PtUnloadDialog("KIPlayerExpanded")
-            PtUnloadDialog("KIAgeOwnerSettings")
-            PtUnloadDialog("KISettings")
-            PtUnloadDialog("KIMarkerFolder")
-            PtUnloadDialog("KIMarkerTimeMenu")
-            PtUnloadDialog("KIQuestionNote")
-            PtUnloadDialog("KIMarkerTypeMenu")
+        PtUnloadDialog("KIMicro")
+        PtUnloadDialog("KIMini")
+        PtUnloadDialog("KIMain")
+        PtUnloadDialog("KIListMode")
+        PtUnloadDialog("KIJournalExpanded")
+        PtUnloadDialog("KIPictureExpanded")
+        PtUnloadDialog("KIPlayerExpanded")
+        PtUnloadDialog("KIAgeOwnerSettings")
+        PtUnloadDialog("KISettings")
+        PtUnloadDialog("KIMarkerFolder")
+        PtUnloadDialog("KIMarkerTimeMenu")
+        PtUnloadDialog("KIQuestionNote")
+        PtUnloadDialog("KIMarkerTypeMenu")
         PtUnloadDialog("KIYesNo")
         PtUnloadDialog("KINewItemAlert")
         PtUnloadDialog("OptionsMenuGUI")
@@ -1263,7 +1251,6 @@ class xKI(ptModifier):
 
 
     def JalakGUIInit(self):
-        #print "xKI.JalakGUIInit()"
         global jlakGUIButtons
         global JalakScript
 
@@ -1311,23 +1298,15 @@ class xKI(ptModifier):
         else:
             #User cannot be busy doing some other task
             if WeAreTakingAPicture or WaitingForAnimation:
-                PtDebugPrint("DEBUG: xKI.JalakGUIToggle():\tAborting request for Jalak GUI: user is busy!")
+                PtDebugPrint("DEBUG: xKI.JalakGUIToggle(): Aborting request for Jalak GUI: user is busy!")
                 return
             # only those that have garrison KI can create game
             if theKILevel <= kMicroKI or IKIDisabled:
-                PtDebugPrint("DEBUG: xKI.JalakGUIToggle():\tAborting request for Jalak GUI: user does not have the KI!")
+                PtDebugPrint("DEBUG: xKI.JalakGUIToggle(): Aborting request for Jalak GUI: user does not have the KI!")
                 return
             JalakGUIState = 1
-            #KIJalakGUIDialog.dialog.show()
             PtShowDialog("jalakControlPanel")
-            #KIJalakGUIDialog.dialog.enable()
             KIJalakGUIOpen.run(self.key,netPropagate=0)
-            #KIBlackbar.dialog.hide()
-
-
-    #def JalakGUIActive(self):
-        #pass
-        #print "xKI.JalakGUIActive()"
 
 
     def OnNotify(self,state,id,events):
@@ -1341,7 +1320,7 @@ class xKI(ptModifier):
         for event in events:
             if event[0] == kOfferLinkingBook: # this can come locally (to re-draw the panel after someone has accepted or rejected it) or...
                 PtDebugPrint("got offer book notification",level=kDebugDumpLevel)
-                if theKILevel == kMicroKI or PtIsSinglePlayerMode():
+                if theKILevel == kMicroKI:
                     plybkCB = ptGUIControlCheckBox(KIMicroBlackbar.dialog.getControlFromTag(kPlayerBookCBID))
                 else:
                     plybkCB = ptGUIControlCheckBox(KIBlackbar.dialog.getControlFromTag(kPlayerBookCBID))
@@ -1378,7 +1357,7 @@ class xKI(ptModifier):
             # is it from the YeeshaBook? (we only have one book to worry about)
             elif event[0] == PtEventType.kBook:
                 PtDebugPrint("xKI: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
-                if theKILevel == kMicroKI or PtIsSinglePlayerMode():
+                if theKILevel == kMicroKI:
                     plybkCB = ptGUIControlCheckBox(KIMicroBlackbar.dialog.getControlFromTag(kPlayerBookCBID))
                 else:
                     plybkCB = ptGUIControlCheckBox(KIBlackbar.dialog.getControlFromTag(kPlayerBookCBID))
@@ -1443,7 +1422,6 @@ class xKI(ptModifier):
                         self.IToggleYeeshaPageSDL(sdlvar,0)
                 # nothing more to do, when there is a book event
                 return
-        #~ PtDebugPrint("xKI: Notify  state=%f, id=%d" % (state,id))
         if state:
             # is it one of the responders that are displaying the bigKI
             if id == KIOnResp.id:
@@ -1459,16 +1437,11 @@ class xKI(ptModifier):
         if id == KIMarkerGameGUIClose.id:
             PtHideDialog("KIMiniMarkers")
         if id == KIJalakGUIClose.id:
-            #print "callback from Jalak GUI close"
             PtHideDialog("jalakControlPanel")
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).enable()
-            #KIJalakGUIDialog.dialog.hide()
-            #KIJalakGUIDialog.dialog.disable()
         elif id == KIJalakGUIOpen.id:
-            #print "callback from Jalak GUI open"
             KIJalakGUIDialog.dialog.enable()
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).enable()
-            #self.JalakGUIActive()
         elif id == KIJalakBtnLights.id:
             btnID = string.atoi(KIJalakBtnLights.getState())
             self.SendJalakBtnHit(btnID)
@@ -1492,7 +1465,7 @@ class xKI(ptModifier):
         if what == kUnloaded:
             FolderOfDevices.removeAll()
             # remove any selected player... sorry, they'll have to re-select 'em.
-            if theKILevel == kNormalKI and not PtIsSinglePlayerMode():
+            if theKILevel == kNormalKI:
                 BKPlayerSelected = None
                 sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKIPlayerLine))
                 sendToField.setString(" ")
@@ -1575,26 +1548,14 @@ class xKI(ptModifier):
         self.IDetermineGZ()
 
         # Hide all dialogs first, then we'll show the one we want
-        KINanoBlackBar.dialog.hide()
         KIMicroBlackbar.dialog.hide()
         KIMicro.dialog.hide()
         KIMini.dialog.hide()
         KIBlackbar.dialog.hide()
         BigKI.dialog.hide()
         self.IEnterChatMode(0)
-        if theKILevel == kNanoKI:
-            PtDebugPrint("Its a nanoKI",level=kDebugDumpLevel)
-            # show the microBlackbar
-            KINanoBlackBar.dialog.show()      # show the BlackBar as soon as its loaded
 
-        # if microKI or singlePlayer (stays at micro)
-        elif PtIsSinglePlayerMode():
-            PtDebugPrint("Its a microKI",level=kDebugDumpLevel)
-            # show the microBlackbar
-            KIMicroBlackbar.dialog.show()      # show the BlackBar as soon as its loaded
-            # but nothing else... even if they have NormalKI
-
-        elif theKILevel == kMicroKI:
+        if theKILevel == kMicroKI:
             PtDebugPrint("Its a microKI",level=kDebugDumpLevel)
             # show the microBlackbar
             KIMicroBlackbar.dialog.show()      # show the BlackBar as soon as its loaded
@@ -1620,76 +1581,6 @@ class xKI(ptModifier):
         self.IBigKIChangeMode(kBKListMode)
         #Clear out any existing marker game
         self.markerGameManager = MarkerGameManager(self)
-
-#Tye: this function and it's callers should be removed!
-    def ICheckIfCGZShouldBeRunning(self):
-        global gAlreadyCheckedCGZGame
-        if not gAlreadyCheckedCGZGame:
-            gAlreadyCheckedCGZGame = 1
-            vault = ptVault()
-            # is there a chronicle for the GZ games?
-            entry = vault.findChronicleEntry(kChronCGZPlaying)
-            if type(entry) != type(None):
-                gCurrentMarkerGame = entry.chronicleGetValue()
-                if gCurrentMarkerGame != "":
-                    Mmgr = ptMarkerMgr()
-                    # if there is a game running, close it down
-                    if not Mmgr.isGameRunning():
-                        PtDebugPrint("xKI::IDetermineEndGame - but it wasn't running in MarkTag world! - Restarting",level=kDebugDumpLevel)
-                        curGameFolder = self.IFindGameInFolder(self.IFindHiddenFolder(),gCurrentMarkerGame)
-                        if curGameFolder:
-                            #markerRefs = curGameFolder.getChildNodeRefList()
-                            #for markerRef in markerRefs:
-                            #    if markerRef.beenSeen():
-                            #        print "^^^^seen"
-                            #    else:
-                            #        print "^^^^NOTseen"
-                            Mmgr.setWorkingMarkerFolder(curGameFolder)
-                            Mmgr.createGame(120,PtMarkerMsgGameType.kGameTypeQuest,[])
-                            Mmgr.startGame()
-                        else:
-                            #print "****xKI - could not find current game folder"
-                            pass
-                    else:
-                        #print "*****xKI - current game already running"
-                        pass
-                else:
-                    #print "*****xKI - there is no current game"
-                    pass
-    def IFindHiddenFolder(self):
-        #== find the folder where the markerfolders might be
-        # search thru the age journal folders
-        vault = ptVault()
-        jfolder = None
-        master_agefolder = vault.getAgeJournalsFolder()
-        if type(master_agefolder) != type(None):
-            agefolderRefs = master_agefolder.getChildNodeRefList()
-            for agefolderRef in agefolderRefs:
-                agefolder = agefolderRef.getChild()
-                agefolder = agefolder.upcastToFolderNode()
-                if type(agefolder) != type(None):
-                    # look for the Hidden folder
-                    if self.IsFolderHidden(agefolder):
-                        jfolder = agefolder
-                        break
-        return jfolder
-    def IFindGameInFolder(self,folder,gameName):
-        "find the marker game in the folder"
-        if folder:
-            # need to try to find the game
-            folderRefs = folder.getChildNodeRefList()
-            for jref in folderRefs:
-                jnode = jref.getChild()
-                jnode = jnode.upcastToMarkerGameNode()
-                # is it a marker folder list?
-                if type(jnode) != type(None):
-                    # is it named the right one?
-                    if jnode.getGameName() == gameName:
-                        PtDebugPrint("Found %s marker game in folder %s" % (folder.folderGetName(),jnode.folderGetName()), level=kDebugDumpLevel)
-                        return jnode
-        return None
-#Tye: The previous two functions may not be necessary! (please check)
-
 
     def OnGUINotify(self,id,control,event):
         "Events from the Blackbar and KIMini dialog..."
@@ -1746,11 +1637,6 @@ class xKI(ptModifier):
 ###############################################
         if id == KIBlackbar.id:
             if event == kDialogLoaded:
-                # test to see what level the KI is at
-                #~ self.IDetermineKILevel()
-                #~ if theKILevel == kNormalKI:
-                    #~ control.show()      # show the BlackBar as soon as its loaded
-                    #~ self.IClearBBMini()
                 pass
             elif event == kAction or event == kValueChanged:
                 # test to see which control had the event
@@ -1806,41 +1692,12 @@ class xKI(ptModifier):
                         plybkCB.hide()
 ###############################################
 ##
-##  nano BlackBar processing
-##
-###############################################
-        elif id == KINanoBlackBar.id:
-            PtDebugPrint("nanoBlackbar::OnGUINotify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel )
-            if event == kDialogLoaded:
-                pass
-            elif event == kAction or event == kValueChanged:
-                # test to see which control had the event
-                bbID = control.getTagID()
-                if bbID == kExitButtonID:
-                    yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kYesNoTextID))
-                    yesText.setStringW(PtGetLocalizedString("KI.Messages.LeaveGame"))
-                    self.ILocalizeQuitNoDialog()
-                    logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kYesNoLogoutTextID))
-                    logoutText.show()
-                    logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kYesNoLogoutButtonID))
-                    logoutButton.show()
-                    KIYesNo.dialog.show()
-                elif bbID == kBBCCRButtonID:
-                    PtShowDialog("OptionsMenuGUI")
-                else:
-                    PtDebugPrint("xnanoBlackbar: Don't know this control  bbID=%d" % (bbID),level=kDebugDumpLevel)
-                    pass
-###############################################
-##
 ##  micro BlackBar processing
 ##
 ###############################################
         elif id == KIMicroBlackbar.id:
             PtDebugPrint("microBlackbar::OnGUINotify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel )
             if event == kDialogLoaded:
-                if PtIsSinglePlayerMode():
-                    chatBtn = ptGUIControlButton(KIMicroBlackbar.dialog.getControlFromTag(kmicroChatButton))
-                    chatBtn.hide()
                 rollBtn = ptGUIControlButton(KIMicroBlackbar.dialog.getControlFromTag(kRolloverLeftID))
                 rollBtn.setNotifyOnInteresting(1)
                 rollBtn = ptGUIControlButton(KIMicroBlackbar.dialog.getControlFromTag(kRolloverRightID))
@@ -1924,7 +1781,6 @@ class xKI(ptModifier):
                     pass
             elif event == kAction or event == kValueChanged:
                 ctrlID = control.getTagID()
-                #~ PtDebugPrint("xKImicro:: tagID=%d, event=%d control=" % (ctrlID,event),control )
                 if ctrlID == kChatEditboxID:
                     if not control.wasEscaped() and control.getString() != "":
                         self.ISendRTChat(control.getString())
@@ -1950,7 +1806,6 @@ class xKI(ptModifier):
                 # get the original position of the miniKI
                 dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kminiDragBar))
                 OriginalminiKICenter = dragbar.getObjectCenter()
-                #~ print "miniKI center is x,y,z  %g,%g,%g" % (OriginalminiKICenter.getX(),OriginalminiKICenter.getY(),OriginalminiKICenter.getZ())
                 # retreive the original alpha's
                 fore = control.getForeColor()
                 OriginalForeAlpha = fore.getAlpha()
@@ -2079,24 +1934,6 @@ class xKI(ptModifier):
                             # since we are going to a folder then... not private and no player selected
                             privateChbox.setChecked(0)
                             BKPlayerSelected = None
-                        elif isinstance(BKPlayerSelected,MarkerPlayer):
-                            caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt")+unicode(BKPlayerSelected.player.getPlayerName())+U" >")
-                            privateChbox.setChecked(1)
-                            BKPlayerSelected = None
-                        elif isinstance(BKPlayerSelected,MarkerGame):
-                            caret.setStringW(PtGetLocalizedString("KI.Chat.MarkerTOAllTeams"))
-                            privateChbox.setChecked(0)
-                            BKPlayerSelected = None
-                        elif isinstance(BKPlayerSelected,DPLBranchStatusLine):
-                            if type(CurrentPlayingMarkerGame) != type(None):
-                                if BKPlayerSelected == CurrentPlayingMarkerGame.greenTeamDPL:
-                                    caret.setStringW(PtGetLocalizedString("KI.Chat.MarkerTOGreenTeam"))
-                                elif BKPlayerSelected == CurrentPlayingMarkerGame.redTeamDPL:
-                                    caret.setStringW(PtGetLocalizedString("KI.Chat.MarkerTORedTeam"))
-                            privateChbox.setChecked(0)
-                            BKPlayerSelected = None
-                        else:
-                            BKPlayerSelected = None
                     if type(BKPlayerSelected) == type(None):
                         sendToField.setString(" ")
                     self.IBigKISetToButtons()
@@ -2177,16 +2014,10 @@ class xKI(ptModifier):
                 BKInEditMode = 0
                 # need to put animation at off position, so there is no pop with the animation plays
                 KIOnAnim.animation.skipToTime(1.5)
-                # if single player mode... can't have this
-                if PtIsSinglePlayerMode():
-                    modeselector = ptGUIControlRadioGroup(BigKI.dialog.getControlFromTag(kBKRadioModeID))
-                    modeselector.setValue(0)
-                    modeselector.disable()
-                else:
-                    pdisable = ptGUIControlButton(BigKI.dialog.getControlFromTag(kBKDisabledPeopleButton))
-                    pdisable.disable()
-                    gdisable = ptGUIControlButton(BigKI.dialog.getControlFromTag(kBKDisabledGearButton))
-                    gdisable.disable()
+                pdisable = ptGUIControlButton(BigKI.dialog.getControlFromTag(kBKDisabledPeopleButton))
+                pdisable.disable()
+                gdisable = ptGUIControlButton(BigKI.dialog.getControlFromTag(kBKDisabledGearButton))
+                gdisable.disable()
                 self.IBigKISetNotifyForLong()
             elif event == kShowHide:
                 if control.isEnabled():
@@ -2295,10 +2126,6 @@ class xKI(ptModifier):
                                                 newfolder.playerlistAddPlayer(theElement.playerGetID())
                                         else:
                                             copynoderef = newfolder.addNode(theElement)
-#####====> needs to be fixed when we can just copy the saver
-                                            #~ # copy from data to new noderef
-                                            #~ copynoderef.copyFrom(BKCurrentContent)
-#####====> needs to be fixed when we can just copy the saver
                                             BKCurrentContent = copynoderef
                                             if type(oldfolder) != type(None):
                                                 # only remove old one if it was not a player (from a playerlist)
@@ -2473,10 +2300,6 @@ class xKI(ptModifier):
                         self.IBigKIChangeMode(kBKJournalExpanded)
                         self.IBigKIDisplayCurrentContentJournal()
                         self.IBigKIEnterEditMode(kBKEditFieldJRNTitle)
-            #~ elif event == kShowHide:
-                #~ if control.isEnabled():
-                    #~ # refresh the display of the currently selected content element
-                    #~ self.IBigKINewContentList()
 ###############################################
 ##
 ##  Picture Expanded dialog processing
@@ -2901,7 +2724,7 @@ class xKI(ptModifier):
                                             mrkrDisplay.removeAllMarkers()
                                         #Delete the game!
                                         if self.markerGameDisplay == None:
-                                            PtDebugPrint("ERROR: xKI.OnGUINotify(delete):\tCannot delete marker game as it is not loaded!")
+                                            PtDebugPrint("ERROR: xKI.OnGUINotify(delete): Cannot delete marker game as it is not loaded!")
                                             return
                                         self.markerGameDisplay.deleteGame()
                                         #if we were playing the game we must make sure it's reset as well!
@@ -3078,7 +2901,7 @@ class xKI(ptModifier):
                         #------------------------------#
                         PtDebugPrint("xKI:Marker: must be edit game button",level=kDebugDumpLevel)
                         if self.markerGameDisplay == None:
-                            PtDebugPrint("ERROR: xKI.OnGuiNotify(kMarkerFolderEditStartGame):\tCannot locate the game, aborting edit game request")
+                            PtDebugPrint("ERROR: xKI.OnGuiNotify(kMarkerFolderEditStartGame): Cannot locate the game, aborting edit game request")
                             return
                         self.IShowMarkerGameLoading()
                         self.markerGameDisplay.editMarkers()
@@ -3105,17 +2928,6 @@ class xKI(ptModifier):
                             #Stop the game...
                             self.markerGameManager.stopGame()
 
-                        """
-                        #TODO: This is left for historic reasons, please delete (i.e. when multiplayer markers get implemented)
-                        workingMF = ptMarkerMgr().getWorkingMarkerFolder()
-                        if type(workingMF) != type(None):
-                            if workingMF.getGameType() == PtMarkerMsgGameType.kGameTypeQuest:
-                                ptMarkerMgr().endGame()
-                            else:
-                                ptMarkerMgr().startGame()
-                                # hide the bigKI so the master can play!
-                                self.IminiToggleKISize()
-                        """
                     elif MFdialogMode == kMFEditingMarker:
                         #--------------------#
                         # Save marker button #
@@ -3134,15 +2946,6 @@ class xKI(ptModifier):
                         self.IShowMarkerGameLoading()
                         self.markerGameManager = MarkerGameManager(self, self.markerGameDisplay)
 
-                        """
-                        #TODO: This is left for historic reasons, please delete (i.e. when multiplayer markers get implemented)
-                        element = self.ISetWorkingToCurrentMarkerFolder()
-                        if element:
-                            # create the actual game
-                            ptMarkerMgr().createGame(element.getRoundLength(),element.getGameType(),[])
-                            self.IRefreshPlayerList()
-                            self.IRefreshPlayerListDisplay()
-                        """
                     elif MFdialogMode == kMFEditing:
                         #-------------------------------#
                         # this is the Add marker button #
@@ -3159,26 +2962,6 @@ class xKI(ptModifier):
                         self.IShowMarkerGameLoading()
                         self.markerGameManager.resetGame()
 
-                        """
-                        workingMF = ptMarkerMgr().getWorkingMarkerFolder()
-                        if type(workingMF) != type(None):
-                            if workingMF.getGameType() == PtMarkerMsgGameType.kGameTypeQuest:
-                                # end the current game
-                                ptMarkerMgr().endGame()
-                                # reset all the seen flags in the game
-                                markerRefs = workingMF.getChildNodeRefList()
-                                for markerRef in markerRefs:
-                                    markerRef.unsetSeen()
-                                # restart the game
-                                element = self.ISetWorkingToCurrentMarkerFolder()
-                                if element:
-                                    # create the actual game
-                                    ptMarkerMgr().createGame(element.getRoundLength(),element.getGameType(),[])
-                                self.IBKCheckContentRefresh(BKCurrentContent)
-                            else:
-                                self.IDoStatusChatMessage(PtGetLocalizedString("KI.MarkerGame.PrematureEnding"),netPropagate=1)
-                                ptMarkerMgr().endGame()
-                        """
                     elif MFdialogMode == kMFEditingMarker:
                         #---------------#
                         # remove marker #
@@ -3197,83 +2980,6 @@ class xKI(ptModifier):
                             self.markerGameDisplay.setSelectedMarker(markerSel)
                             self.IBKCheckContentRefresh(BKCurrentContent)
 
-                elif mfldrID == kMarkerFolderInvitePlayer:
-                    PtDebugPrint("xKI:Marker: inviting a player",level=kDebugDumpLevel)
-                    if type(WorkingMarkerFolder) != type(None):
-                        userlbx = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kPlayerList))
-                        iselect = userlbx.getSelection()
-                        if iselect >= 0 and iselect < len(BKPlayerList):
-                            PtDebugPrint("xKI:Marker: valid player selection",level=kDebugDumpLevel)
-                            toplyr = BKPlayerList[iselect]
-                            if isinstance(toplyr, ptPlayer):
-                                # make sure that its not a repeat
-                                newplayer = 1
-                                for mplayer in WorkingMarkerFolder.invitedPlayers:
-                                    if mplayer.ID == toplyr.getPlayerID():
-                                        newplayer = 0
-                                        break
-                                if newplayer:
-                                    PtDebugPrint("xKI:Marker: inviting player %s [%d] to the game" %(toplyr.getPlayerName(),toplyr.getPlayerID()),level=kDebugDumpLevel)
-                                    WorkingMarkerFolder.invitedPlayers.append(MarkerPlayer(toplyr.getPlayerID()))
-                                    ptMarkerMgr().invitePlayers([long(toplyr.getPlayerID())])
-                                    self.IRefreshPlayerList()
-                                    self.IRefreshPlayerListDisplay()
-                            elif isinstance(toplyr, ptVaultPlayerInfoListNode):
-                                PtDebugPrint("xKI:Marker: playerinfo list",level=kDebugDumpLevel)
-                                # if this is Age Players...
-                                plistnode = toplyr.upcastToPlayerInfoListNode()
-                                ageplayers = self.IRemoveCCRPlayers(PtGetPlayerListDistanceSorted())
-                                inviting = []
-                                if type(plistnode) == type(None):
-                                    PtDebugPrint("xKI:InvitePlayers: folder is AgePlayers",level=kDebugDumpLevel)
-                                    # then tell the game manager to invite everyone in the age
-                                    for aplayer in ageplayers:
-                                        inviting.append(long(aplayer.getPlayerID()))
-                                        WorkingMarkerFolder.invitedPlayers.append(MarkerPlayer(aplayer.getPlayerID()))
-                                # look for buddies or neighbors
-                                elif plistnode.folderGetType() == PtVaultStandardNodes.kBuddyListFolder:
-                                    PtDebugPrint("xKI:InvitePlayers: folder is BuddyList",level=kDebugDumpLevel)
-                                    # search through all the buddies, find ones in this age
-                                    buddies = ptVault().getBuddyListFolder()
-                                    budlist = buddies.getChildNodeRefList()
-                                    for bud in budlist:
-                                        buddy = bud.getChild().upcastToPlayerInfoNode()
-                                        for aplayer in ageplayers:
-                                            if aplayer.getPlayerID() == buddy.playerGetID():
-                                                inviting.append(long(aplayer.getPlayerID()))
-                                                WorkingMarkerFolder.invitedPlayers.append(MarkerPlayer(aplayer.getPlayerID()))
-                                elif plistnode.folderGetType() == PtVaultStandardNodes.kAgeOwnersFolder:
-                                    PtDebugPrint("xKI:InvitePlayers: folder is Neighbors",level=kDebugDumpLevel)
-                                    # search through all the neighbors, find ones in this age
-                                    neighbors = self.IGetNeighbors()
-                                    if type(neighbors) != type(None):
-                                        neighborlist = neighbors.getChildNodeRefList()
-                                        for neighbor in neighborlist:
-                                            hoody = neighbor.getChild().upcastToPlayerInfoNode()
-                                            for aplayer in ageplayers:
-                                                if aplayer.getPlayerID() == hoody.playerGetID():
-                                                    inviting.append(long(aplayer.getPlayerID()))
-                                                    WorkingMarkerFolder.invitedPlayers.append(MarkerPlayer(aplayer.getPlayerID()))
-                                # if any players were found to invite.. then invite them
-                                if len(inviting) > 0:
-                                    ptMarkerMgr().invitePlayers(inviting)
-                                self.IRefreshPlayerList()
-                                self.IRefreshPlayerListDisplay()
-                            elif isinstance(toplyr,kiFolder):
-                                ageplayers = self.IRemoveCCRPlayers(PtGetPlayerListDistanceSorted())
-                                inviting = []
-                                PtDebugPrint("xKI:InvitePlayers: folder is AgePlayers",level=kDebugDumpLevel)
-                                # then tell the game manager to invite everyone in the age
-                                for aplayer in ageplayers:
-                                    inviting.append(long(aplayer.getPlayerID()))
-                                    WorkingMarkerFolder.invitedPlayers.append(MarkerPlayer(aplayer.getPlayerID()))
-                                # if any players were found to invite.. then invite them
-                                if len(inviting) > 0:
-                                    ptMarkerMgr().invitePlayers(inviting)
-                                self.IRefreshPlayerList()
-                                self.IRefreshPlayerListDisplay()
-                            else:
-                                PtDebugPrint("xKI:Marker: unknown class type",level=kDebugDumpLevel)
                 elif mfldrID == kMarkerFolderTitleBtn:
                     PtDebugPrint("KIMarkerFolder: change title button hit",level=kDebugDumpLevel )
                     # disable the button that was hit
@@ -3350,8 +3056,6 @@ class xKI(ptModifier):
                 typeField = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderGameTimeTB))
                 typeField.setString(kMarkerFolderPopupMenu[MarkerGameTimeID][0])
                 # save the current marker folder to this type of game
-                #TODO -- Need to set things through the xMarkerGameManager...  prolly need another callback for the KI update.
-                #        We'll wait until we actually implement multiplayer marker games
                 if type(BKCurrentContent) != type(None):
                     element = BKCurrentContent.getChild()
                     if type(element) != type(None):
@@ -3371,8 +3075,6 @@ class xKI(ptModifier):
             #Althogh this has been left in here for historic reasons and may one day be functional....
             if event == kDialogLoaded:
                 # load the popup memu with items
-                #KIMarkerTypePopupMenu.menu.addNotifyItemW(PtGetLocalizedString("KI.MarkerGame.CaptureGame"))
-                #KIMarkerTypePopupMenu.menu.addNotifyItemW(PtGetLocalizedString("KI.MarkerGame.HoldGame"))
                 KIMarkerTypePopupMenu.menu.addNotifyItemW(PtGetLocalizedString("KI.MarkerGame.QuestGame"))
             elif event == kAction:
                 pass
@@ -3416,7 +3118,6 @@ class xKI(ptModifier):
                 pass
 
         elif id == KIJalakGUIDialog.id:
-            #PtDebugPrint("KIJalakGUIDialog.OnGUINotify(): id=%d, event=%d control=" % (id,event),control)
             if event == kDialogLoaded:
                 self.JalakGUIInit()
             elif event == kShowHide:
@@ -3493,8 +3194,7 @@ class xKI(ptModifier):
 
         PtDebugPrint("xKI: KIMsg: command = %d value ="%(command),value,level=kDebugDumpLevel)
         if command == kEnterChatMode:
-            #~ if not IKIDisabled and not BigKI.dialog.isEnabled():
-            if not IKIDisabled and not PtIsSinglePlayerMode():
+            if not IKIDisabled:
                 self.IEnterChatMode(1)
         elif command == kSetChatFadeDelay:
             TicksOnFull = value
@@ -3504,11 +3204,7 @@ class xKI(ptModifier):
             PtDebugPrint("xKI: Disable KI",level=kDebugDumpLevel)
             IKIDisabled = 1
             IKIHardDisabled = 1
-            if theKILevel == kNanoKI:
-                KINanoBlackBar.dialog.hide()
-            elif PtIsSinglePlayerMode():
-                KIMicroBlackbar.dialog.hide()
-            elif theKILevel == kMicroKI:
+            if theKILevel == kMicroKI:
                 KIMicroBlackbar.dialog.hide()
                 if KIMicro.dialog.isEnabled():
                     IminiKIWasUp = 1
@@ -3558,11 +3254,7 @@ class xKI(ptModifier):
             PtDebugPrint("xKI: Enable KI",level=kDebugDumpLevel)
             IKIDisabled = 0
             IKIHardDisabled = 0
-            if theKILevel == kNanoKI:
-                KINanoBlackBar.dialog.show()
-            elif PtIsSinglePlayerMode():
-                KIMicroBlackbar.dialog.show()
-            elif theKILevel == kMicroKI:
+            if theKILevel == kMicroKI:
                 KIMicroBlackbar.dialog.show()
                 if IminiKIWasUp:
                     KIMicro.dialog.show()
@@ -3576,9 +3268,7 @@ class xKI(ptModifier):
         elif command == kTempDisableKIandBB:
             PtDebugPrint("xKI: TEMP Disable KI",level=kDebugDumpLevel)
             IKIDisabled = 1
-            if theKILevel == kNanoKI:
-                KINanoBlackBar.dialog.hide()
-            elif theKILevel == kMicroKI or PtIsSinglePlayerMode():
+            if theKILevel == kMicroKI:
                 KIMicroBlackbar.dialog.hide()
             else:
                 KIBlackbar.dialog.hide()
@@ -3592,9 +3282,7 @@ class xKI(ptModifier):
             PtDebugPrint("xKI: TEMP Enable KI",level=kDebugDumpLevel)
             if not IKIHardDisabled:
                 IKIDisabled = 0
-                if theKILevel == kNanoKI:
-                    KINanoBlackBar.dialog.showNoReset()
-                elif theKILevel == kMicroKI or PtIsSinglePlayerMode():
+                if theKILevel == kMicroKI:
                     KIMicroBlackbar.dialog.showNoReset()
                 else:
                     KIBlackbar.dialog.showNoReset()
@@ -3616,7 +3304,6 @@ class xKI(ptModifier):
         # KI shortcut commands
             try:
                 FolderOfDevices.index(Device(value))
-                #~ PtDebugPrint("xBigKI: Device %s already in list, don't need to do anything" % (value))
             except ValueError:
                 FolderOfDevices.append(Device(value))
                 self.IRefreshPlayerList()
@@ -3627,11 +3314,9 @@ class xKI(ptModifier):
                 ptGUIControlButton(KIMini.dialog.getControlFromTag(kPelletScoreButton)).hide()
                 return
         # KI shortcut commands
-            #~ print "KI: remove device %s from player list" % (value)
             try:
                 FolderOfDevices.remove(Device(value))
             except ValueError:
-                #~ PtDebugPrint("xBigKI: removing device %s when it was not there" % (value))
                 pass
             self.IRefreshPlayerList()
             self.IRefreshPlayerListDisplay()
@@ -3659,16 +3344,7 @@ class xKI(ptModifier):
             if value == theKILevel:
                 PtDebugPrint("xKI: Remove KI level of %d" % (value),level=kWarningLevel)
                 # we're downgrading
-                if value == kMicroKI:
-                    # goin' from micro back to nano... then
-                    # unwear the micro
-                    self.IRemoveKILevel(kMicroKI)
-                    # set it in the chronicle
-                    theKILevel = kNanoKI
-                    self.IUpdateKILevelChronicle()
-                    # wear the nano
-                    self.IWearKILevel(theKILevel)
-                elif value == kNormalKI:
+                if value == kNormalKI:
                     # goin' from normal back to micro... then
                     # unwear the new KI
                     self.IRemoveKILevel(kNormalKI)
@@ -3701,11 +3377,9 @@ class xKI(ptModifier):
         #
         # KI shortcut commands
         elif command == kMiniBigKIToggle:
-            if not PtIsSinglePlayerMode():
-                self.IminiToggleKISize()
+            self.IminiToggleKISize()
         elif command == kKIPutAway:
-            if not PtIsSinglePlayerMode():
-                self.IminiPutAwayKI()
+            self.IminiPutAwayKI()
         elif command == kChatAreaPageUp:
             self.IminiChatAreaPageUp()
         elif command == kChatAreaPageDown:
@@ -3715,11 +3389,9 @@ class xKI(ptModifier):
         elif command == kChatAreaGoToEnd:
             self.IminiChatAreaGoToEnd()
         elif command == kKITakePicture:
-            if not PtIsSinglePlayerMode():
-                self.IminiTakePicture()
+            self.IminiTakePicture()
         elif command == kKICreateJournalNote:
-            if not PtIsSinglePlayerMode():
-                self.IminiCreateJournal()
+            self.IminiCreateJournal()
         elif command == kKIToggleFade:
             if self.IsChatFaded():
                 #then activate
@@ -3757,23 +3429,22 @@ class xKI(ptModifier):
                         plybkCB = ptGUIControlCheckBox(KIBlackbar.dialog.getControlFromTag(kPlayerBookCBID))
                     plybkCB.setChecked(1)
         elif command == kKIOpenKI:
-            if not PtIsSinglePlayerMode():
-                if not WaitingForAnimation:
-                    # toggle between putaway,mini,big,putaway
-                    if not KIMini.dialog.isEnabled():
-                        self.IminiPutAwayKI(1)
-                    elif not BigKI.dialog.isEnabled():
-                        # check to see if we can just unfade the miniKI display
-                        if not FadeEnableFlag and self.IsChatFaded():  #fix for when fading is disabled
-                            self.IminiToggleKISize()
-                        elif FadeEnableFlag and self.IsChatFaded():
-                            #then activate
-                            self.IKillFadeTimer()
-                            self.IStartFadeTimer()
-                        else:
-                            self.IminiToggleKISize()
+            if not WaitingForAnimation:
+                # toggle between putaway,mini,big,putaway
+                if not KIMini.dialog.isEnabled():
+                    self.IminiPutAwayKI(1)
+                elif not BigKI.dialog.isEnabled():
+                    # check to see if we can just unfade the miniKI display
+                    if not FadeEnableFlag and self.IsChatFaded():  #fix for when fading is disabled
+                        self.IminiToggleKISize()
+                    elif FadeEnableFlag and self.IsChatFaded():
+                        #then activate
+                        self.IKillFadeTimer()
+                        self.IStartFadeTimer()
                     else:
-                        self.IminiPutAwayKI()
+                        self.IminiToggleKISize()
+                else:
+                    self.IminiPutAwayKI()
         elif command == kKIShowCCRHelp:
             # hide the Yeesha book if open
             if YeeshaBook:
@@ -3877,7 +3548,7 @@ class xKI(ptModifier):
                 args = value.split()
                 GZGame = string.atoi(args[0])
             except:
-                PtDebugPrint("xKI.OnKIMsg(kGZFlashUpdate):\tCannot Update Marker Display, Invalid Parameters: %s" %value)
+                PtDebugPrint("xKI.OnKIMsg(kGZFlashUpdate): Cannot Update Marker Display, Invalid Parameters: %s" %value)
                 return
 
             if GZGame == -1:
@@ -3909,7 +3580,7 @@ class xKI(ptModifier):
             self.IUpgradeKIMarkerLevel(value)
             self.IRefreshMiniKIMarkerDisplay()
         elif command == kKIShowMiniKI:
-            if not PtIsSinglePlayerMode() and theKILevel >= kNormalKI:
+            if theKILevel >= kNormalKI:
                 self.IClearBBMini(0)    # set the checkbox, which will show the dialog... chain reaction
 
         #-------------------------#
@@ -3917,12 +3588,12 @@ class xKI(ptModifier):
         #-------------------------#
         elif command == kMGStartCGZGame:
             #KI message to start a CGZ Marker Game
-            PtDebugPrint("xKI.OnKIMsg():\tCreating a CGZ Marker Game with (game number=%s)" %(value))
+            PtDebugPrint("xKI.OnKIMsg(): Creating a CGZ Marker Game with (game number=%s)" %(value))
 
             if type(value) != type(None):
                 self.markerGameManager.createCGZMarkerGame(value)
             else:
-                PtDebugPrint("xKI.OnKIMsg():\tERROR: Invalid game parameter, aborting game creation!")
+                PtDebugPrint("xKI.OnKIMsg(): ERROR: Invalid game parameter, aborting game creation!")
         elif command == kMGStopCGZGame:
             #So far, this is only called by the grtzMarkerScopeGUI, as most of the time xMarkerGameManager has control
             #Although this may change when other marker games are added (please revisit)
@@ -3991,7 +3662,6 @@ class xKI(ptModifier):
                 self.markerGameDisplay.registerTemplateCreated(finalMsg)
             else:
                 self.markerGameManager.registerTemplateCreated(finalMsg)
-        #elif msgType == PtMarkerMsgTypes.kMarkerTeamAssigned:
     #Game Started
         elif msgType == PtMarkerMsgTypes.kMarkerGameStarted:
             if type(self.markerGameDisplay) != type(None) and self.markerGameDisplay.isMyMsg(finalMsg):
@@ -4093,34 +3763,15 @@ class xKI(ptModifier):
         elif target.lower() == "togglebuildnotify" or target.lower() == "devbliss":  # Removes those annoying "Uru has been updated..." messsages
             kInternalDev = abs(kInternalDev - 1)
             if kInternalDev:
-                print "/t****[   Developer Bliss is now ON    ]****"
-                print "/t****[ Blocking Build Notify Messages ]****"
+                print "****[   Developer Bliss is now ON    ]****"
+                print "****[ Blocking Build Notify Messages ]****"
             else:
-                print "/t****[   Developer Bliss is now OFF   ]****"
-                print "/t****[ Allowing Build Notify Messages ]****"
+                print "****[   Developer Bliss is now OFF   ]****"
+                print "****[ Allowing Build Notify Messages ]****"
 
     def IRemoveKILevel(self,level,upgrading=0):
         "Undo those parts of the KI to undo this level"
-        if level == kNanoKI:
-            KINanoBlackBar.dialog.hide()
-        elif level == kMicroKI:
-            if not upgrading:
-                # unwear the new Yeesha book
-                avatar = PtGetLocalAvatar()
-                gender = avatar.avatar.getAvatarClothingGroup()
-                if gender > kFemaleClothingGroup:
-                    gender = kMaleClothingGroup
-                avatar.netForce(1)
-                if gender == kFemaleClothingGroup:
-                    avatar.avatar.removeClothingItem("FAccPlayerBook")
-                else:
-                    avatar.avatar.removeClothingItem("MAccPlayerBook")
-                avatar.avatar.saveClothing() # save any clothing changes
-            # change the display to be the normal KI
-            KIMicroBlackbar.dialog.hide()
-            if not PtIsSinglePlayerMode():
-                KIMicro.dialog.hide()
-        elif level == kNormalKI:
+        if level == kNormalKI:
             # goin' from normal back to micro... then
             # unwear the new KI
             avatar = PtGetLocalAvatar()
@@ -4133,33 +3784,29 @@ class xKI(ptModifier):
             else:
                 avatar.avatar.removeClothingItem("MAccKI")
             avatar.avatar.saveClothing() # save any clothing changes
-            if not PtIsSinglePlayerMode():
-                # Fill in the listbox so that the test is near the enter box
-                chatarea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kChatDisplayArea))
-                chatarea.lock()         # make the chat display immutable
-                chatarea.unclickable()  # make the chat display non-clickable
-                chatarea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-                chatarea.disableScrollControl()
-                # switch the display of the KI to the micro
-                KIBlackbar.dialog.hide()
-                KIMini.dialog.hide()
-                # hide all dialogs that are on the right side of the bigKI
-                KIListModeDialog.dialog.hide()
-                KIPictureExpanded.dialog.hide()
-                KIJournalExpanded.dialog.hide()
-                KIPlayerExpanded.dialog.hide()
-                # then hide the bigKI
-                BigKI.dialog.hide()
-                # set animation back to dot on screen
-                KIOnAnim.animation.skipToTime(1.5)
+            # Fill in the listbox so that the test is near the enter box
+            chatarea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kChatDisplayArea))
+            chatarea.lock()         # make the chat display immutable
+            chatarea.unclickable()  # make the chat display non-clickable
+            chatarea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
+            chatarea.disableScrollControl()
+            # switch the display of the KI to the micro
+            KIBlackbar.dialog.hide()
+            KIMini.dialog.hide()
+            # hide all dialogs that are on the right side of the bigKI
+            KIListModeDialog.dialog.hide()
+            KIPictureExpanded.dialog.hide()
+            KIJournalExpanded.dialog.hide()
+            KIPlayerExpanded.dialog.hide()
+            # then hide the bigKI
+            BigKI.dialog.hide()
+            # set animation back to dot on screen
+            KIOnAnim.animation.skipToTime(1.5)
 
     def IWearKILevel(self,level):
         "Wear a set level"
         # next bring up the new KI level
-        if level == kNanoKI:
-            # wear the nano
-            KINanoBlackBar.dialog.show()
-        elif level == kMicroKI:
+        if level == kMicroKI:
             # wear the new Yeesha book
             avatar = PtGetLocalAvatar()
             gender = avatar.avatar.getAvatarClothingGroup()
@@ -4174,9 +3821,8 @@ class xKI(ptModifier):
             # show the micro
             KIMicroBlackbar.dialog.show()
             self.IClearBBMini()
-            if not PtIsSinglePlayerMode():
-                KIMicro.dialog.show()
-                self.IEnterChatMode(0)
+            KIMicro.dialog.show()
+            self.IEnterChatMode(0)
             # set alert that the Yeesha book is now available
             ### self.IAlertBookStart(time=kMaxBookAlertTime)
         elif level == kNormalKI:
@@ -4192,30 +3838,25 @@ class xKI(ptModifier):
             else:
                 avatar.avatar.wearClothingItem("MAccKI")
             avatar.avatar.saveClothing() # save any clothing changes
-            if not PtIsSinglePlayerMode():
-                # change the display to be the normal KI
-                KIBlackbar.dialog.show()
-                self.IClearBBMini()
-                # set animation back to dot on screen
-                KIOnAnim.animation.skipToTime(1.5)
-                # set alert that the KI is now available
-                self.IAlertKIStart()
-                # look for anything new in the Inbox
-                self.ICheckInboxForUnseen()
-                # refresh the folders, which will create the age journal for this age
-                self.IBigKIRefreshFolders()
-            else:
-                # show the micro
-                KIMicroBlackbar.dialog.show()
-                self.IClearBBMini()
+            # change the display to be the normal KI
+            KIBlackbar.dialog.show()
+            self.IClearBBMini()
+            # set animation back to dot on screen
+            KIOnAnim.animation.skipToTime(1.5)
+            # set alert that the KI is now available
+            self.IAlertKIStart()
+            # look for anything new in the Inbox
+            self.ICheckInboxForUnseen()
+            # refresh the folders, which will create the age journal for this age
+            self.IBigKIRefreshFolders()
+            # show the micro
+            KIMicroBlackbar.dialog.show()
+            self.IClearBBMini()
 
     def IMakeSureWeWereKILevel(self):
         "Wear a set level"
         # next bring up the new KI level
-        if theKILevel == kNanoKI:
-            # nothing to extra to wear
-            pass
-        elif theKILevel == kMicroKI:
+        if theKILevel == kMicroKI:
             # we should be wearing the new Yeesha book
             try:
                 avatar = PtGetLocalAvatar()
@@ -4261,12 +3902,6 @@ class xKI(ptModifier):
                 if cflags.channel != PrivateChatChannel:
                     # its a private channel message that we can't listen to
                     return
-            # if we are using the nano KI, then only private and admin message to get thru!
-            if theKILevel == kNanoKI:
-                if cflags.private or cflags.admin:
-                    pass
-                else:
-                    return
             # censor message to players taste
             message = xCensor.xCensor(message,theCensorLevel)
 
@@ -4305,14 +3940,10 @@ class xKI(ptModifier):
         global BKFolderSelected
         global BKFolderTopLine
         global WeAreTakingAPicture
-        #PtDebugPrint("xKI:OnTimer id=%d  FadeMode=%d" % (id,FadeMode) )
         if id == kFadeTimer:
-            if PtIsSinglePlayerMode():
-                return
             # if we are fading then fade a tick
             if FadeMode == kFadeFullDisp:
                 CurrentFadeTick -= 1
-                #print "CurrentFadeTick = %d" % (CurrentFadeTick)
                 if CurrentFadeTick > 0:
                     # setup call for next second
                     PtAtTimeCallback(self.key,kFullTickTime,kFadeTimer)
@@ -4403,9 +4034,8 @@ class xKI(ptModifier):
             self.IBigKIEnterEditMode(kBKEditFieldPICTitle)
             # show the big stuff
             BigKI.dialog.show()
-            # was just the miniMI showing (not the big KI?)
+            # was just the miniKI showing (not the big KI?)
             if type(LastminiKICenter) == type(None):
-                #~ print "only mini KI should have been showing"
                 if type(OriginalminiKICenter) != type(None):
                     dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kminiDragBar))
                     LastminiKICenter = dragbar.getObjectCenter()
@@ -4498,7 +4128,6 @@ class xKI(ptModifier):
 
         if PtIsDialogLoaded("KIMain"):
             if event == PtVaultNotifyTypes.kRegisteredOwnedAge or event == PtVaultNotifyTypes.kUnRegisteredOwnedAge or event == PtVaultNotifyTypes.kRegisteredVisitAge or event == PtVaultNotifyTypes.kUnRegisteredVisitAge:
-                #PtDebugPrint("xKI: kRegisteredOwnedAge event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()),level=kDebugDumpLevel)
                 if theKILevel > kMicroKI:
                     # a new owned age is added... beter refresh its folders
                     if isinstance(tupdata[0],ptVaultAgeLinkNode):
@@ -4675,18 +4304,6 @@ class xKI(ptModifier):
         else:
             theCensorLevel = string.atoi(entry.chronicleGetValue())
         PtDebugPrint("xKI: the censor level is %d" % (theCensorLevel),level=kWarningLevel)
-    def ISaveCensorLevel(self):
-        "Set the Censor level in the chronicle"
-        global theCensorLevel
-        # assume that they have none...
-        vault = ptVault()
-        entry = vault.findChronicleEntry(kChronicleCensorLevel)
-        if type(entry) != type(None):
-            entry.chronicleSetValue("%d" % (theCensorLevel))
-            entry.save()
-        else:
-            vault.addChronicleEntry(kChronicleCensorLevel,kChronicleCensorLevelType,"%d" % (theCensorLevel))
-        PtDebugPrint("xKI: Saving Censor level of %d" % (theCensorLevel),level=kWarningLevel)
 
     def IDetermineKILevel(self):
         "Set the KILevel"
@@ -4694,7 +4311,7 @@ class xKI(ptModifier):
         global gKIMarkerLevel
         global gFeather
         # assume that they have none...
-        theKILevel = kNanoKI
+        theKILevel = kMicroKI
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleKILevel)
         if type(entry) == type(None):
@@ -5156,7 +4773,6 @@ class xKI(ptModifier):
     def IFilterAgeName(self,ageName):
         """filter and lastminute switching of the age names... can be anywhere in string
            KI Age folders"""
-        #print "IFilterAgeName input as %s" % (ageName)
         if ageName.find("Garrison") != -1:
             ageName = ageName.replace("Garrison", "Gahreesen")
         if ageName.find("Personal") != -1:
@@ -5224,18 +4840,7 @@ class xKI(ptModifier):
 
         if ageName.find("(null)") != -1:
             ageName = ageName.replace("(null)", "").strip()
-        #print "AgeName output as %s" % (ageName)
         return ageName
-
-
-    def ICanAgeBeMadePublic(self,ageInfo):
-        "Returns true(1) if the age in question can be made public, otherwise returns 0"
-        try:
-            if self.IIsAgeMyNeighborhood(ageInfo):
-                return 1
-        except AttributeError:
-            pass
-        return 0
 
     def ICanAgeInviteVistors(self,ageInfo,link):
         "Returns true(1) if the age in question can have invited vistors, otherwise returns 0"
@@ -5422,32 +5027,28 @@ class xKI(ptModifier):
         global PhasedKICreateMarkerGame
         global gKIMarkerLevel
 
-        # if single player mode... can't have this
-        if PtIsSinglePlayerMode():
-            return
-
         # must have clearance
         if not PhasedKICreateMarkerGame or gKIMarkerLevel < kKIMarkerNormalLevel:
-            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame():\tAborting create marker game request, user does not have sufficient privileges!")
+            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame(): Aborting create marker game request, user does not have sufficient privileges!")
             return
 
         #User cannot be busy doing some other task
         if WeAreTakingAPicture or WaitingForAnimation:
-            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame():\tAborting create marker game request: user is busy!")
+            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame(): Aborting create marker game request: user is busy!")
             return
 
         # only those that have garrison KI can create game
         if theKILevel <= kMicroKI or IKIDisabled:
-            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame():\tAborting create marker game request: User does not have the KI!")
+            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame(): Aborting create marker game request: User does not have the KI!")
             return
 
         if self.markerGameManager.gameLoaded():
-            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame():\tAborting create marker game request: A game is already in progress!")
+            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame(): Aborting create marker game request: A game is already in progress!")
             self.IAddRTChat(None,PtGetLocalizedString("KI.MarkerGame.createErrorExistingGame"),kChatSystemMessage)
             return
 
         if not self.ICanMakeMarkerFolder():
-            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame():\tAborting create marker game request: Marker Games are FULL!")
+            PtDebugPrint("DEBUG: xKI.ICreateMarkerGame(): Aborting create marker game request: Marker Games are FULL!")
             self.IShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullMarkerGames"))
             return
 
@@ -5481,7 +5082,7 @@ class xKI(ptModifier):
                 if load == 1:
                     # We failed two times in a row, it's hopeless...
                     # TODO: Or we could try to actually make the folder ourselves....
-                    PtDebugPrint("ERROR: xKI.IFinishCreateMarkerFolder():\tCould not load Age Journal Folder, Marker Game Creation FAILED!")
+                    PtDebugPrint("ERROR: xKI.IFinishCreateMarkerFolder(): Could not load Age Journal Folder, Marker Game Creation FAILED!")
                     return
 
                 load += 1
@@ -5504,7 +5105,7 @@ class xKI(ptModifier):
         self.IBigKIRefreshFolderDisplay()
 
         # create the marker game node
-        PtDebugPrint("DEBUG: xKI.IFinishCreateMarkerFolder():\tCreating Vault Node with name: %s, and GUID=%s" %(gameName, gameGUID))
+        PtDebugPrint("DEBUG: xKI.IFinishCreateMarkerFolder(): Creating Vault Node with name: %s, and GUID=%s" %(gameName, gameGUID))
         markerGameNode = ptVaultMarkerGameNode()
         markerGameNode.setGameName(gameName)
         markerGameNode.setGameGuid(gameGUID)
@@ -5524,7 +5125,6 @@ class xKI(ptModifier):
             KIMini.dialog.show()
         # was just the miniMI showing (not the big KI?)
         if type(LastminiKICenter) == type(None):
-            #~ print "only mini KI should have been showing"
             if type(OriginalminiKICenter) != type(None):
                dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kminiDragBar))
                LastminiKICenter = dragbar.getObjectCenter()
@@ -5535,9 +5135,6 @@ class xKI(ptModifier):
     def ICreateAMarker(self):
         global IKIDisabled
         global YNWhatReason
-        # if single player mode... can't have this
-        if PtIsSinglePlayerMode():
-            return
 
         #Set this just in case we're in the GUI!
         self.pendingMGmessage = kMessageWait.createMarker
@@ -5558,9 +5155,9 @@ class xKI(ptModifier):
                             z = avaCoord.getZ()
 
                             self.markerGameDisplay.addMarker(x, y, z, markerName)
-                            PtDebugPrint("DEBUG: xKI.ICreateAMarker():\tCreating marker at: (%s,%s,%s)" % (x,y,z))
+                            PtDebugPrint("DEBUG: xKI.ICreateAMarker(): Creating marker at: (%s,%s,%s)" % (x,y,z))
                         except:
-                            PtDebugPrint("ERROR: xKI.ICreateAMarker():\tMarker Creation FAILED!")
+                            PtDebugPrint("ERROR: xKI.ICreateAMarker(): Marker Creation FAILED!")
                             return
 
                     else:
@@ -5589,31 +5186,31 @@ class xKI(ptModifier):
         global BKCurrentContent
 
         if self.markerGameDisplay == None:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as the game isn't loaded!")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as the game isn't loaded!")
             return None
 
         game = self.markerGameDisplay.gameData
         if game == None:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as there is no game data! ")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as there is no game data! ")
             return None
 
         if BKCurrentContent == None:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as there is no vault folder!")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as there is no vault folder!")
             return None
 
         element = BKCurrentContent.getChild()
         if element == None:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as there is no vault node!")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as there is no vault node!")
             return None
 
         datatype = element.getType()
         if datatype != PtVaultNodeTypes.kMarkerGameNode:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as the vault node is of the wrong type!")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as the vault node is of the wrong type!")
             return None
         element = element.upcastToMarkerGameNode()
 
         if element == None:
-            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder():\tCannot set working game, as the vault node is empty!")
+            PtDebugPrint("ERROR: xKI.ISetWorkingToCurrentMarkerFolder(): Cannot set working game, as the vault node is empty!")
             return None
 
         # refresh the DPL
@@ -5622,46 +5219,6 @@ class xKI(ptModifier):
         # refresh the current screen
         self.IBKCheckContentRefresh(BKCurrentContent)
         return element
-
-        """
-        #TODO: DELETE ME!, left for historical reasons remove once multiplayer marker games have been implmemented
-        MGmgr = ptMarkerMgr()
-        # reset the player list
-        WorkingMarkerFolder = MarkerGame(PtGetLocalPlayer().getPlayerID())
-        # if we were looking at a marker game folder, hide the markers in case they had them up
-        MGmgr.hideMarkersLocal()
-        # set as the current working Marker Folder
-        if type(BKCurrentContent) != type(None):
-            element = BKCurrentContent.getChild()
-            if type(element) != type(None):
-                datatype = element.getType()
-                if datatype == PtVaultNodeTypes.kMarkerGameNode:
-                    element = element.upcastToMarkerGameNode()
-                    if element:
-
-                        MGmgr.setWorkingMarkerFolder(element)
-                        # refresh the DPL
-                        self.IRefreshPlayerList()
-                        self.IRefreshPlayerListDisplay()
-                        # refresh the current screen
-                        self.IBKCheckContentRefresh(BKCurrentContent)
-                        return element
-        return None
-        """
-
-    def IGetCurrentMarkerFolder(self):
-        "sets the BKCurrent to be the working marker folder (if it is one)"
-        global BKCurrentContent
-        # find current
-        if type(BKCurrentContent) != type(None):
-            element = BKCurrentContent.getChild()
-            if type(element) != type(None):
-                datatype = element.getType()
-                if datatype == PtVaultNodeTypes.kMarkerGameNode:
-                    element = element.upcastToMarkerGameNode()
-                    if element:
-                        return element
-        return None
 
     def IResetWorkingMarkerFolder(self):
         "resets the working marker folder to None"
@@ -5699,7 +5256,7 @@ class xKI(ptModifier):
             startOpen = 0
             if IsYeeshaBookEnabled:
                 if OfferedBookMode == kNotOffering:
-                    if PhasedKIShareYeeshaBook and not PtIsSinglePlayerMode():
+                    if PhasedKIShareYeeshaBook:
                         YeeshaBDef = xLinkingBookDefs.xYeeshaBookBase + self.IGetYeeshaPageDefs()
                     else:
                         YeeshaBDef = xLinkingBookDefs.xYeeshaBookNoShare + self.IGetYeeshaPageDefs()
@@ -5771,8 +5328,6 @@ class xKI(ptModifier):
 ##############################################################
 
     def IminiChatAreaPageUp(self):
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5783,8 +5338,6 @@ class xKI(ptModifier):
         chatarea.moveCursor(PtGUIMultiLineDirection.kPageUp)
 
     def IminiChatAreaPageDown(self):
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5795,8 +5348,6 @@ class xKI(ptModifier):
         chatarea.moveCursor(PtGUIMultiLineDirection.kPageDown)
 
     def IminiChatAreaGoToBegin(self):
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5807,8 +5358,6 @@ class xKI(ptModifier):
         chatarea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
 
     def IminiChatAreaGoToEnd(self):
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5820,8 +5369,6 @@ class xKI(ptModifier):
 
     def IGetFontSize(self):
         "Returns the current font size"
-        if PtIsSinglePlayerMode():
-            return 0
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5832,8 +5379,6 @@ class xKI(ptModifier):
     def ISetFontSize(self,fontSize):
         "Sets all the controls that are affected by the font size"
         PtDebugPrint("ISetFontSize: Setting font size to %d"%(fontSize),level=kWarningLevel)
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5856,8 +5401,6 @@ class xKI(ptModifier):
 
     def IUpFontSize(self):
         "set the default font size for several dialogs"
-        if PtIsSinglePlayerMode():
-            return
         size = self.IGetFontSize()
         for i in range(len(FontSizeList)-1):
             if size <= FontSizeList[i]:
@@ -5869,8 +5412,6 @@ class xKI(ptModifier):
 
     def IDownFontSize(self):
         "set the default font size for several dialogs"
-        if PtIsSinglePlayerMode():
-            return
         size = self.IGetFontSize()
         for i in range(len(FontSizeList)-1,0,-1):
             if size >= FontSizeList[i]:
@@ -5885,15 +5426,12 @@ class xKI(ptModifier):
         global FadeMode
         global CurrentFadeTick
         global FadeEnableFlag
-        #~ PtDebugPrint("xminiKI: StartFadeTimer  FadeMode = %d" % (FadeMode))
-        if PtIsSinglePlayerMode():
-            return
         #if theKILevel < kNormalKI:
         #    return
         if not FadeEnableFlag:
             return
         # only start fade if the big KI is not up
-        if PtIsSinglePlayerMode() or not BigKI.dialog.isEnabled():
+        if not BigKI.dialog.isEnabled():
             if FadeMode == kFadeNotActive:
                 PtAtTimeCallback(self.key,kFullTickTime,kFadeTimer)
             FadeMode = kFadeFullDisp
@@ -5903,9 +5441,6 @@ class xKI(ptModifier):
         "reset fade timer thingy"
         global FadeMode
         global CurrentFadeTick
-        #~ PtDebugPrint("xminiKI: KillFadeTimer  FadeMode=%d" % (FadeMode))
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5926,8 +5461,6 @@ class xKI(ptModifier):
     def IFadeCompletely(self):
         "fade out the miniKI lists... completely"
         global FadeMode
-        if PtIsSinglePlayerMode():
-            return
         if theKILevel < kNormalKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -5956,8 +5489,6 @@ class xKI(ptModifier):
             FadeMode = kFadeNotActive
 
     def IsChatFaded(self):
-        if PtIsSinglePlayerMode():
-            return 0
         # do we have clearance
         if theKILevel >= kMicroKI:
             # is the bigKI hidden and the miniKI showing
@@ -5981,13 +5512,7 @@ class xKI(ptModifier):
         global LastminiKICenter
         global LastPrivatePlayerID
         global ToReplyToLastPrivatePlayerID
-        # if single player mode... don't enter chat mode
-        if PtIsSinglePlayerMode():
-            return
-        if theKILevel == kNanoKI:
-            mKIdialog = KIMicro.dialog
-            KIMicro.dialog.show()
-        elif theKILevel == kMicroKI:
+        if theKILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
             KIMicro.dialog.show()
         else:
@@ -5995,9 +5520,6 @@ class xKI(ptModifier):
         caret = ptGUIControlTextBox(mKIdialog.getControlFromTag(kChatCaretID))
         chatedit = ptGUIControlEditBox(mKIdialog.getControlFromTag(kChatEditboxID))
         if entering:
-            # the nanoPeople can't chat ... yet
-            if theKILevel == kNanoKI and CCRConversationInProgress == 0:
-                return
             self.isChatting = 1
             # make the chat edit box visible
             if not KIMini.dialog.isEnabled():
@@ -6286,24 +5808,6 @@ class xKI(ptModifier):
                         ageplayers = PtGetPlayerListDistanceSorted()
                         if len(ageplayers) > 0 and len(selPlyrList) == 0:
                             betterTellEm = 1
-                elif isinstance(toplyr,MarkerPlayer):
-                    selPlyrList.append(toplyr.player)
-                    cflags.private = 1
-                    PtDebugPrint("xKI:SendRTChat: private message to %s"%(toplyr.player.getPlayerName()),level=kDebugDumpLevel)
-                elif isinstance(toplyr,MarkerGame):
-                    for mplayer in toplyr.greenTeamPlayers + toplyr.redTeamPlayers:
-                        selPlyrList.append(mplayer.player)
-                    goesToFolder = PtGetLocalizedString("KI.Chat.MarkerAllTeams")
-                elif isinstance(toplyr,DPLBranchStatusLine):
-                    if type(CurrentPlayingMarkerGame) != type(None):
-                        if toplyr == CurrentPlayingMarkerGame.greenTeamDPL:
-                            for mplayer in CurrentPlayingMarkerGame.greenTeamPlayers:
-                                selPlyrList.append(mplayer.player)
-                            goesToFolder = PtGetLocalizedString("KI.Chat.MarkerGreenTeam")
-                        elif toplyr == CurrentPlayingMarkerGame.redTeamDPL:
-                            for mplayer in CurrentPlayingMarkerGame.redTeamPlayers:
-                                selPlyrList.append(mplayer.player)
-                            goesToFolder = PtGetLocalizedString("KI.Chat.MarkerRedTeam")
                 else:
                     # error - unknown player type
                     pass
@@ -6934,8 +6438,6 @@ class xKI(ptModifier):
         global LastPrivatePlayerID
         global ChatLogFile
         global kInternalDev
-        if PtIsSinglePlayerMode():
-            return
 
         #This is to get rid of any annoying log filling admin messages that tell you to log out and then log back in!
         #They're so ANNOYING!
@@ -6952,7 +6454,7 @@ class xKI(ptModifier):
         (message, RogueCount) = re.subn('[\x00-\x08\x0a-\x1f]', '', message)
         # End Fix for CoD
 
-        if theKILevel == kMicroKI or theKILevel == kNanoKI:
+        if theKILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
         else:
             mKIdialog = KIMini.dialog
@@ -7191,9 +6693,7 @@ class xKI(ptModifier):
 
     def IScrollUpListbox(self,control,upbtnID,downbtnID):
         "Try to scroll the listbox up one line"
-        if PtIsSinglePlayerMode():
-            return
-        if theKILevel == kMicroKI or theKILevel == kNanoKI:
+        if theKILevel == kMicroKI:
             return
         elif theKILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
@@ -7213,9 +6713,7 @@ class xKI(ptModifier):
 
     def IScrollDownListbox(self,control,upbtnID,downbtnID):
         "Try to scroll the listbox down one line"
-        if PtIsSinglePlayerMode():
-            return
-        if theKILevel == kMicroKI or theKILevel == kNanoKI:
+        if theKILevel == kMicroKI:
             return
         elif theKILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
@@ -7235,9 +6733,7 @@ class xKI(ptModifier):
 
     def ICheckScrollButtons(self,control,upbtnID,downbtnID):
         "Check to see if the scroll buttons should be visible or not"
-        if PtIsSinglePlayerMode():
-            return
-        if theKILevel == kMicroKI or theKILevel == kNanoKI:
+        if theKILevel == kMicroKI:
             return
         elif theKILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
@@ -7266,12 +6762,8 @@ class xKI(ptModifier):
         global FolderOfDevices
         global PreviouslySelectedPlayer
         global MarkerGameState
-        global MarkerPlayerList
         global PhasedKINeighborsInDPL
         global PhasedKIBuddies
-
-        if PtIsSinglePlayerMode():
-            return
 
         PtDebugPrint("xBigKI: refresh playerlist",level=kDebugDumpLevel)
         playerlist = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kPlayerList))
@@ -7323,36 +6815,6 @@ class xKI(ptModifier):
                 BKPlayerList.append(FolderOfDevices)
                 for device in FolderOfDevices:
                     BKPlayerList.append(device)
-            # is there an activate game
-            if MarkerGameState == kMGNotActive:
-                # no, but are we working on one?
-                if type(WorkingMarkerFolder) != type(None):
-                    markerGame = ptMarkerMgr().getWorkingMarkerFolder()
-                    if type(markerGame) != type(None):
-                        BKPlayerList.append(markerGame)
-                        if markerGame.getGameType() != PtMarkerMsgGameType.kGameTypeQuest:
-                            BKPlayerList += WorkingMarkerFolder.invitedPlayers
-            else:
-                if type(CurrentPlayingMarkerGame) != type(None):
-                    # add marker game to the DPL
-                    if CurrentPlayingMarkerGame.gameType == PtMarkerMsgGameType.kGameTypeQuest:
-                        pass
-                        #TODO: what's this??? -- looks like it's commented out anyway....
-                        ### don't display the quest game in the DPL
-                        # markerGame = ptMarkerMgr().getWorkingMarkerFolder()
-                        # if type(markerGame) != type(None):
-                        # BKPlayerList.append(markerGame)
-                    else:
-                        CurrentPlayingMarkerGame.addToDPLPlaying(BKPlayerList)
-                        # add any players that have not joined but were invited
-                        if MarkerGameState == kMGGameCreation and type(WorkingMarkerFolder) != type(None):
-                            inviteTitlePosted = 0
-                            for invitePlayer in WorkingMarkerFolder.invitedPlayers:
-                                if not invitePlayer.isJoined:
-                                    if not inviteTitlePosted:
-                                        BKPlayerList.append("Invited")
-                                        inviteTitlePosted = 1
-                                    BKPlayerList.append(invitePlayer)
         # else is the big KI is not showing
         else:
             # get the AgeMember and Buddy folders and fill in
@@ -7385,37 +6847,6 @@ class xKI(ptModifier):
                 else:
                     BKPlayerList.append("NEIGHBORS")
 
-            # is there an activate game
-            if MarkerGameState == kMGNotActive:
-                # no, but are we working on one?
-                if type(WorkingMarkerFolder) != type(None):
-                    markerGame = ptMarkerMgr().getWorkingMarkerFolder()
-                    if type(markerGame) != type(None):
-                        BKPlayerList.append(markerGame)
-                        if markerGame.getGameType() != PtMarkerMsgGameType.kGameTypeQuest:
-                            BKPlayerList += WorkingMarkerFolder.invitedPlayers
-            else:
-                if type(CurrentPlayingMarkerGame) != type(None):
-                    # if a quest then just add the name to the list
-                    if CurrentPlayingMarkerGame.gameType == PtMarkerMsgGameType.kGameTypeQuest:
-                        pass
-                        ### don't display the quest game in the DPL
-                        # markerGame = ptMarkerMgr().getWorkingMarkerFolder()
-                        # if type(markerGame) != type(None):
-                        # BKPlayerList.append(markerGame)
-                    else:
-                        # add marker game to the DPL
-                        CurrentPlayingMarkerGame.addToDPLPlaying(BKPlayerList)
-                        # add any players that have not joined but were invited
-                        if MarkerGameState == kMGGameCreation and type(WorkingMarkerFolder) != type(None):
-                            inviteTitlePosted = 0
-                            for invitePlayer in WorkingMarkerFolder.invitedPlayers:
-                                if not invitePlayer.isJoined:
-                                    if not inviteTitlePosted:
-                                        BKPlayerList.append("Invited")
-                                        inviteTitlePosted = 1
-                                    BKPlayerList.append(invitePlayer)
-
     def IRemoveOfflinePlayers(self, playerlist):
         "Remove all the offline players in this list... returns result list"
         onlinelist = []
@@ -7447,13 +6878,6 @@ class xKI(ptModifier):
         global FolderOfDevices
         global PreviouslySelectedPlayer
         global MarkerGameState
-        global MarkerPlayerList
-        if PtIsSinglePlayerMode():
-            playerup = ptGUIControlButton(KIMini.dialog.getControlFromTag(kminiPlayerListUp))
-            playerup.hide()
-            playerdown = ptGUIControlButton(KIMini.dialog.getControlFromTag(kminiPlayerListDown))
-            playerdown.hide()
-            return
         PtDebugPrint("xKI: refresh playerlist display",level=kDebugDumpLevel)
         playerlist = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kPlayerList))
         scrollPos = playerlist.getScrollPos()
@@ -7508,22 +6932,6 @@ class xKI(ptModifier):
                 # its a marker list, display its name
                 playerlist.closeBranch()
                 playerlist.addBranchW(plyr.folderGetName(),1)
-            elif isinstance(plyr,MarkerPlayer):
-                if type(plyr.player) != type(None):
-                    if plyr.player.getPlayerName() != "":
-                        pcolor = AgenBlueDk
-                        if plyr.isJoined:
-                            if plyr.team == PtMarkerMsgTeam.kGreenTeam:
-                                pcolor = DniGreenDk
-                            elif plyr.team == PtMarkerMsgTeam.kRedTeam:
-                                pcolor = DniRed
-                        playerlist.addStringWithColor(plyr.player.getPlayerName()+plyr.scoreText,pcolor,kSelectUseGUIColor)
-                else:
-                    playerlist.addStringWithColor("?offline userID[%d]?"%(plyr.player.getPlayerID()),AgenBlueDk,kSelectDetermined)
-            elif isinstance(plyr,MarkerGame):
-                # its a marker list, display its name
-                playerlist.closeBranch()
-                playerlist.addBranchW(plyr.gameName,1)
             elif isinstance(plyr,DPLBranchStatusLine):
                 if plyr.closePrev:
                     playerlist.closeBranch()
@@ -7542,8 +6950,6 @@ class xKI(ptModifier):
             else:
                 PtDebugPrint("xBigKI: unknown list type ",plyr,level=kErrorLevel)
                 pass
-            #~ except TypeError:
-                #~ PtDebugPrint("xBigKI: Unknown player list type ",plyr)
             # try to find out if it is the selected one
             # ...was there something selected?
             if type(PreviouslySelectedPlayer) != type(None):
@@ -7611,7 +7017,7 @@ class xKI(ptModifier):
         global PhasedKICreateMarkerGame
         "refresh the display on the miniKI indicator bars"
         PtDebugPrint("xKI:GZ: Refreshing MarkerDisplay  %d:%d" % (gMarkerGottenNumber,gMarkerToGetNumber), level=kDebugDumpLevel)
-        if theKILevel > kMicroKI and not PtIsSinglePlayerMode():
+        if theKILevel > kMicroKI:
             if ((gMarkerGottenNumber == gMarkerToGetNumber) and ((gMarkerToGetNumber % 25) == 0)):
                 xMyMaxMarkers = gMarkerToGetNumber
                 xMyGotMarkers = gMarkerGottenNumber
@@ -7753,32 +7159,26 @@ class xKI(ptModifier):
         audio = ptAudioControl()
         soundFX = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(kBKISoundFXVolSlider))
         setting = audio.getSoundFXVolume()
-        #~ print "SoundFX volume is %g (into %g)" % (setting,setting*10)
         soundFX.setValue(setting*10)
 
         music = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(xBKIMusicVolSlider))
         setting = audio.getMusicVolume()
-        #~ print "Music volume is %g (into %g)" % (setting,setting*10)
         music.setValue(setting*10)
 
         voice = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(xBKIVoiceVolSlider))
         setting = audio.getVoiceVolume()
-        #~ print "Voice volume is %g (into %g)" % (setting,setting*10)
         voice.setValue(setting*10)
 
         ambience = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(kBKIAmbienceVolSlider))
         setting = audio.getAmbienceVolume()
-        #~ print "Ambience volume is %g (into %g)" % (setting,setting*10)
         ambience.setValue(setting*10)
 
         miclevel = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(kBKIMicLevelSlider))
         setting = audio.getMicLevel()
-        #~ print "MicLevel is %g (into %g)" % (setting,setting*10)
         miclevel.setValue(setting*10)
 
         guivolume = ptGUIControlValue(KIVolumeExpanded.dialog.getControlFromTag(kBKIGUIVolSlider))
         setting = audio.getGUIVolume()
-        #~ print "Ambience volume is %g (into %g)" % (setting,setting*10)
         guivolume.setValue(setting*10)
 
     def IRefreshAgeOwnerSettings(self):
@@ -7794,7 +7194,6 @@ class xKI(ptModifier):
             except LookupError:
                 myAge = None
             if type(myAge) != type(None):
-                czar = myAge.getCzar()
                 title = ptGUIControlTextBox(KIAgeOwnerExpanded.dialog.getControlFromTag(kBKAgeOwnerTitleTB))
                 title.setString(self.IGetAgeDisplayName(myAge))
                 titlebtn = ptGUIControlButton(KIAgeOwnerExpanded.dialog.getControlFromTag(kBKAgeOwnerTitleBtn))
@@ -7988,13 +7387,11 @@ class xKI(ptModifier):
                             KIMini.dialog.show()
                         # was just the miniMI showing (not the big KI?)
                         if type(LastminiKICenter) == type(None):
-                            #~ print "only mini KI should have been showing"
                             if type(OriginalminiKICenter) != type(None):
                                 dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kminiDragBar))
                                 LastminiKICenter = dragbar.getObjectCenter()
                                 dragbar.setObjectCenter(OriginalminiKICenter)
                                 dragbar.anchor()
-                        #~ KIMini.dialog.show()
                     else:
                         # put up some kinda error message
                         self.IShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullNotes"))
@@ -8078,7 +7475,7 @@ class xKI(ptModifier):
                 try:
                     self.ICheckCalibrationProgress()
                 except:
-                    PtDebugPrint("ERROR: xKI.IBigKIShowBigKI():\tCouldn't execute self.ICheckCalibrationProgress()")
+                    PtDebugPrint("ERROR: xKI.IBigKIShowBigKI(): Couldn't execute self.ICheckCalibrationProgress()")
 
 
     def IBigKIHideBigKI(self):
@@ -8314,21 +7711,6 @@ class xKI(ptModifier):
                         if self.IsFolderContentsMutable(BKFolderLineDict[BKFolderListOrder[id-kBKIToIncomingButton+BKFolderTopLine]]):
                             # assume that we are going to show the bugger
                             tofolder.show()
-####=====> needs attention
-### need to be able to determine if the player is already an owner of the age
-#### if so, then no need to allow them to visit then, they can come anytime
-                            #~ # one more check... if they are on a neighborhood member, then they can't move to the invite folders
-                            #~ daFolder = BKFolderLineDict[BKFolderListOrder[id-kBKIToIncomingButton+BKFolderTopLine]]
-                            #~ daFolderType = daFolder.folderGetType()
-                            #~ if daFolderType==PtVaultStandardNodes.kCanVisitFolder:
-                                #~ if type(BKCurrentContent) != type(None):
-                                    #~ elem = BKCurrentContent.getChild()
-                                    #~ if elem.getType() == PtVaultNodeTypes.kPlayerInfoNode:
-                                        #~ elem = elem.upcastToPlayerInfoNode()
-                                        #~ neighbors = self.IGetNeighbors()
-                                        #~ if type(neighbors) != type(None) and neighbors.playerlistHasPlayer(elem.playerGetID()):
-                                            #~ tofolder.hide()
-#=====> needs attention
                         else:
                             tofolder.hide()
                     except LookupError:
@@ -8388,28 +7770,22 @@ class xKI(ptModifier):
         idtext = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKPlayerID))
         localplayer = PtGetLocalPlayer()
         playertext.setString(localplayer.getPlayerName())
-        if not PtIsSinglePlayerMode():
-            idtext.setString("[ID:%08d]"%(localplayer.getPlayerID()))
-        else:
-            idtext.setString("  ")
+        idtext.setString("[ID:%08d]"%(localplayer.getPlayerID()))
         self.IUpdatePelletScore()
         self.IBigKIRefreshHoodStatics()
 
     def IBigKIRefreshHoodStatics(self,neighborhood=None):
         neighbortext = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kBKNeighborhoodAndID))
-        if not PtIsSinglePlayerMode():
-            # if a neighborhood was not specified then get the one from the player's vault
-            if not neighborhood:
-                neighborhood = self.IGetNeighborhood()
-            if type(neighborhood) != type(None):
-                neighborName = xLocTools.LocalizeAgeName(neighborhood.getDisplayName())
-                if neighborName == U"":
-                    neighborName = PtGetLocalizedString("KI.Neighborhood.NoName")
-                neighbortext.setStringW(PtGetLocalizedString("KI.Neighborhood.BottomLine", [xLocTools.MemberStatusString(),neighborName]))
-            else:
-                neighbortext.setStringW(PtGetLocalizedString("KI.Neighborhood.None"))
+        # if a neighborhood was not specified then get the one from the player's vault
+        if not neighborhood:
+            neighborhood = self.IGetNeighborhood()
+        if type(neighborhood) != type(None):
+            neighborName = xLocTools.LocalizeAgeName(neighborhood.getDisplayName())
+            if neighborName == U"":
+                neighborName = PtGetLocalizedString("KI.Neighborhood.NoName")
+            neighbortext.setStringW(PtGetLocalizedString("KI.Neighborhood.BottomLine", [xLocTools.MemberStatusString(),neighborName]))
         else:
-            neighbortext.setString("  ")
+            neighbortext.setStringW(PtGetLocalizedString("KI.Neighborhood.None"))
 
     def IBigKISetChanging(self):
         "Set the changing fields to current settings"
@@ -8469,18 +7845,12 @@ class xKI(ptModifier):
         if theKILevel > kMicroKI:
             self.IBigKIRefreshContentList()
             self.IBigKIRefreshContentListDisplay()
-        #~ PIKA = ki.getStandardFolder(kKIPlayerPeopleIKnowAboutFolder)
-        #~ if folder == PIKA:
-            #~ self.IRefreshPlayerList()
-            #~ self.IRefreshPlayerListDisplay()
-            #~ return
 
     def IBKCheckContentRefresh(self,content):
         "check to see if the content.element they are looking at changed underneath them"
         global BKRightSideMode
         global BKCurrentContent
         if type(BKCurrentContent) != type(None) and content == BKCurrentContent:
-            #~ print "xBigKI - refresh match on content"
             if BKRightSideMode == kBKListMode:
                 self.IBigKIRefreshContentListDisplay()
             elif BKRightSideMode == kBKJournalExpanded:
@@ -8492,7 +7862,6 @@ class xKI(ptModifier):
             elif BKRightSideMode == kBKMarkerListExpanded:
                 self.IBigKIDisplayCurrentContentMarkerFolder()
         else:
-            #~ PtDebugPrint("xBigKI - no match on content refresh callback")
             pass
 
     def IBKCheckElementRefresh(self,element):
@@ -8501,7 +7870,6 @@ class xKI(ptModifier):
         global BKCurrentContent
         if type(BKCurrentContent) != type(None):
             if isinstance(BKCurrentContent,ptVaultNodeRef) and element == BKCurrentContent.getChild():
-                #~ print "xBigKI - refresh match on content"
                 if BKRightSideMode == kBKListMode:
                     self.IBigKIRefreshContentListDisplay()
                 elif BKRightSideMode == kBKJournalExpanded:
@@ -8512,20 +7880,6 @@ class xKI(ptModifier):
                     self.IBigKIDisplayCurrentContentPlayer()
                 elif BKRightSideMode == kBKMarkerListExpanded:
                     self.IBigKIDisplayCurrentContentMarkerFolder()
-
-    def IRemoveIgnoredPlayers(self, playerlist):
-        "Remove all the offline players in this list... returns result list"
-        nonIgnoredlist = []
-        ignores = ptVault().getIgnoreListFolder()
-        for plyr in playerlist:
-            if isinstance(plyr,ptVaultNodeRef):
-                PLR = plyr.getChild()
-                PLR = PLR.upcastToPlayerInfoNode()
-                # its an element.. should be a player
-                if type(PLR) != type(None) and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
-                    if not ignores.playerlistHasPlayer(PLR.playerGetID()):
-                        nonIgnored.append(plyr)
-        return nonIgnored
 
     def IBigKIRefreshFolders(self):
         "Refresh the Folders list for the Inbox and the Age Journal folders"
@@ -8575,7 +7929,6 @@ class xKI(ptModifier):
             try:
                 line = BKJournalListOrder.index(self.IGetAgeInstanceName())
                 if line != 1:
-                    #~ print "re-adjust to the top"
                     # its not at the top of the list... put at the top
                     BKJournalListOrder.remove(self.IGetAgeInstanceName())
                     BKJournalListOrder.insert(1,self.IGetAgeInstanceName())
@@ -8915,7 +8268,6 @@ class xKI(ptModifier):
                     # sort the list of players - online up front
                     BKContentList.sort(CMPplayerOnline)
                     # remove all the no-named players and ignored people
-                    #~ PtDebugPrint("xKI: START: there are %d players in the this list" % (len(BKContentList)))
                     for idx in range(len(BKContentList)):
                         ref = BKContentList[idx]
                         elem = ref.getChild()
@@ -8923,7 +8275,6 @@ class xKI(ptModifier):
                             if elem.getType() == PtVaultNodeTypes.kPlayerInfoNode:
                                 elem = elem.upcastToPlayerInfoNode()
                                 if elem.playerGetName() == "":
-                                    #~ PtDebugPrint("xKI: removing %d from content internal list" % (elem.playerGetID()))
                                     # put in them in reverse order in the removelist
                                     removelist.insert(0,idx)
                                 # check if they are in the ignore list
@@ -8942,12 +8293,9 @@ class xKI(ptModifier):
                                     # its a good player
                                     pass
                             else:
-                                #~ PtDebugPrint("xKI: not a player? its a %d" % (elem.getType()))
                                 removelist.insert(0,idx)
                         else:
-                            #~ PtDebugPrint("xKI: player, but there is not a node?")
                             removelist.insert(0,idx)
-            #~ PtDebugPrint("xKI: END: there are %d players in the this list" % (len(BKContentList)))
         elif BKFolderListOrder[BKFolderSelected] == xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kInboxFolder):
             # look for KIMail from non-Buddies if they only want KIMail from buddies
             vault = ptVault()
@@ -8986,7 +8334,6 @@ class xKI(ptModifier):
             vault = ptVault()
             ginbox = vault.getGlobalInbox()
             if type(ginbox) != type(None):
-                #PtDebugPrint("xKI: Global inbox found",level=kWarningLevel)
                 BKContentList = ginbox.getChildNodeRefList() + BKContentList
                 BKContentList.sort(CMPNodeDate)
 
@@ -9157,13 +8504,6 @@ class xKI(ptModifier):
                                     elif isinstance(element,ptVaultMarkerGameNode):
                                         contentTitle.setString(xCensor.xCensor(element.getGameName(),theCensorLevel))
 
-#~Disabled ??? as we'll now allow to click on the title but still not display the game...
-#~                                        if PhasedKIShowMarkerGame and gKIMarkerLevel >= kKIMarkerNormalLevel:
-#~                                            contentTitle.setString(xCensor.xCensor(element.getGameName(),theCensorLevel))
-#~                                        else:
-#~                                            contentTitle.setString("???")
-
-
                                     else:
                                         #We'll assume that it's still downloading due to network lag and hope for the best!
                                         contentTitle.setString("--[Downloading]--")
@@ -9213,7 +8553,6 @@ class xKI(ptModifier):
                     else:
                         PtDebugPrint("bigKI: no content, even though the folder said it was!",level=kErrorLevel)
             else:
-                #~ PtDebugPrint("Nothing in this folder (%s)" % (BKFolderListOrder[BKFolderSelected]))
                 pass
             # set the up and down buttons if needed
             upbtn = ptGUIControlButton(BigKI.dialog.getControlFromTag(kBKLMUpButton))
@@ -9381,7 +8720,6 @@ class xKI(ptModifier):
         plyDeleteBtn.hide()
         # are we asking for a player id number?
         if BKGettingPlayerID:
-            #~ print "setup for getting the player id number"
             plyName.setStringW(PtGetLocalizedString("KI.Player.EnterID"))
             plyName.show()
             plyIDedit.setString("")
@@ -9389,7 +8727,6 @@ class xKI(ptModifier):
             plyIDedit.focus()
             KIPlayerExpanded.dialog.setFocus(plyIDedit.getKey())
         else:
-            #~ print "displaying the expanded view of a player"
             if type(BKCurrentContent) != type(None):
                 if isinstance(BKCurrentContent,ptPlayer):
                     # display the content on the screen
@@ -9453,21 +8790,21 @@ class xKI(ptModifier):
         #Initialize the markerGameDisplay to the currently selected game
         #But first, we need to ensure that we've got everything necessary!
         if type(BKCurrentContent) == type(None):
-            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder():\tCould not find the current content selected!")
+            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder(): Could not find the current content selected!")
             return
 
         element = BKCurrentContent.getChild()
         if type(element) == type(None):
-            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder():\tCould not find the current content child node!")
+            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder(): Could not find the current content child node!")
             return
 
         datatype = element.getType()
         if datatype != PtVaultNodeTypes.kMarkerGameNode:
-            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder():\tCannot process this node, wrong data type: %s!" %element.getType())
+            PtDebugPrint("ERROR: xKI.IBigKIDisplayCurrentContentMarkerFolder(): Cannot process this node, wrong data type: %s!" %element.getType())
             return
 
         element = element.upcastToMarkerGameNode()
-        PtDebugPrint("DEBUG: xKI.IBigKIDisplayCurrentContentMarkerFolder():\tStarting Marker Game KI Display Manager, loading game: %s guid: %s" %(element.getGameName(), element.getGameGuid()))
+        PtDebugPrint("DEBUG: xKI.IBigKIDisplayCurrentContentMarkerFolder(): Starting Marker Game KI Display Manager, loading game: %s guid: %s" %(element.getGameName(), element.getGameGuid()))
 
 
         #Now that we're here there's two possibilities: 1) we've just created a game and trying to display it, 2) we've clicked on an existing game
@@ -9511,7 +8848,7 @@ class xKI(ptModifier):
         mbtnInvitePlayer = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderInvitePlayer))
         mbtnInvitePlayer.hide()
         mbtnEditStart = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderEditStartGame))
-        mbtnInvitePlayer.hide()
+        mbtnEditStart.hide()
         mbtnPlayEnd = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderPlayEndGame))
         mbtnPlayEnd.hide()
 
@@ -9582,17 +8919,17 @@ class xKI(ptModifier):
 
         #Our game should be loaded, so let's make sure just to be safe!
         if self.markerGameDisplay == None:
-            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame():\tGame was not loaded, aborting displaying the game's details!")
+            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame(): Game was not loaded, aborting displaying the game's details!")
             return
 
         #Get the marker vault node
         element = BKCurrentContent.getChild()
         if type(element) == type(None):
-            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame():\tCould not finish displaying the marker game, as we the vault node is empty!")
+            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame(): Could not finish displaying the marker game, as we the vault node is empty!")
             return
         datatype = element.getType()
         if datatype != PtVaultNodeTypes.kMarkerGameNode:
-            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame():\tCould not finish displaying the marker game, as we have an incorrect vault node type!")
+            PtDebugPrint("ERROR: xKI.IFinishDisplayCurrentMarkerGame(): Could not finish displaying the marker game, as we have an incorrect vault node type!")
             return
         element = element.upcastToMarkerGameNode()
 
@@ -9622,18 +8959,10 @@ class xKI(ptModifier):
         #Refresh Mini KI
         self.IRefreshMiniKIMarkerDisplay()
 
-
-
-######=====> This only matters if it is a capture game
-#                        # also make sure they are in the right age
-#                        if PtGetAgeInfo().getAgeInstanceName() == element.getCreateAgeName():
-######=====> This only matters if it is a capture game
         self.IBigKISetToButtons()
-        mbtnInvitePlayer = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderInvitePlayer))
         mbtnEditStart = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderEditStartGame))
         mbtnPlayEnd = ptGUIControlButton(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderPlayEndGame))
         mrkfldOwner = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderOwner))
-        mtbInvitePlayer = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderInvitePlayerTB))
         mtbEditStart = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderEditStartGameTB))
         mtbPlayEnd = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderPlayEndGameTB))
         mrkfldStatus = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderStatus))
@@ -9673,12 +9002,7 @@ class xKI(ptModifier):
             mrkfldTitleBtn.disable()
             mbtnDelete.show()
             mbtnGameTimePullD.hide()
-            #mbtnGameTypePullD.hide()
             mbtnGameTimeArrow.hide()
-            #mbtnGameTypeArrow.hide()
-            mbtnInvitePlayer.hide()
-            mtbInvitePlayer.setForeColor(Clear)
-            mtbInvitePlayer.setString(" ")
             # if this is a quest game then check to make sure that this IS the owner
             # ..and if it is not a quest game then we must be in the same age as the markerfolder
             if PhasedKIPlayMarkerGame and (not isQuestGame or  element.getCreatorNodeID() == PtGetLocalPlayer().getPlayerID())\
@@ -9726,9 +9050,6 @@ class xKI(ptModifier):
                 mbtnGameTimePullD.hide()
                 mbtnGameTimeArrow.hide()
 
-            mbtnInvitePlayer.hide()
-            mtbInvitePlayer.setForeColor(Clear)
-            mtbInvitePlayer.setString(" ")
             mbtnEditStart.show()
             mtbEditStart.setForeColor(DniColorShowBtn)
             mbtnPlayEnd.show()
@@ -9816,8 +9137,6 @@ class xKI(ptModifier):
                     mtbVSpan.hide()
         elif MFdialogMode == kMFPlaying:
             # if we are playing the marker folder
-            #  if capture then: Invite, Start and End game
-            #  else if quest: then something else
             mrkfldTitleBtn.disable()
             mbtnDelete.hide()
             mbtnGameTimePullD.hide()
@@ -9831,55 +9150,31 @@ class xKI(ptModifier):
             mtbHSPan.hide()
             mtbVSpan.hide()
             mbtnMarkerText.disable()
-            if not isQuestGame:
-                if MarkerGameState == kMGGameOn:
-                    mtbInvitePlayer.setForeColor(DniColorGhostBtn)
-                    mbtnInvitePlayer.hide()
-                    mtbEditStart.setForeColor(DniColorGhostBtn)
-                    mbtnEditStart.hide()
+            mbtnEditStart.show()
+            mtbEditStart.setForeColor(DniColorShowBtn)
+            mtbEditStart.setString(PtGetLocalizedString("KI.MarkerGame.StopPlayingButton"))
+            mtbEditStart.show()
+            mbtnPlayEnd.show()
+            mtbPlayEnd.setForeColor(DniColorShowBtn)
+            mtbPlayEnd.setString(PtGetLocalizedString("KI.MarkerGame.ResetGameButton"))
+            mtbPlayEnd.show()
+            mlbMarkerList.clearAllElements()
+            mlbMarkerList.show()
+            # assume that the game is finished unless an unseen marker is still left
+            questGameFinished = 1
+            # add the markers into the list
+            for marker in self.markerGameManager.gameData.data['markers']:
+                marker = marker.data
+                if marker['captured']:
+                    #Get marker's coordinates
+                    coord = ptDniCoordinates()
+                    markerPoint = ptPoint3(marker['x'], marker['y'], marker['z'])
+                    coord.fromPoint(markerPoint)
+                    mlbMarkerList.addString("[%s:%d,%d,%d] %s" % (self.IConvertAgeName(marker['age']),coord.getTorans(), coord.getHSpans(), coord.getVSpans(), marker['name']))
                 else:
-                    mbtnInvitePlayer.show()
-                    mtbInvitePlayer.setForeColor(DniColorShowBtn)
-                    mtbEditStart.setForeColor(DniColorShowBtn)
-                    mbtnEditStart.show()
-                mtbInvitePlayer.setStringW(PtGetLocalizedString("KI.MarkerGame.InvitePlayerButton"))
-                mtbEditStart.setStringW(PtGetLocalizedString("KI.MarkerGame.StartGameButton"))
-                mtbEditStart.show()
-                mbtnPlayEnd.show()
-                mtbPlayEnd.setForeColor(DniColorShowBtn)
-                mtbPlayEnd.setStringW(PtGetLocalizedString("KI.MarkerGame.EndGameButton"))
-                mtbPlayEnd.show()
-                mlbMarkerList.hide()
-                mlbMarkerTextTB.hide()
-######====> different for Quest game
-            else:
-                mbtnInvitePlayer.hide()
-                mbtnEditStart.show()
-                mtbEditStart.setForeColor(DniColorShowBtn)
-                mtbEditStart.setString(PtGetLocalizedString("KI.MarkerGame.StopPlayingButton"))
-                mtbEditStart.show()
-                mbtnPlayEnd.show()
-                mtbPlayEnd.setForeColor(DniColorShowBtn)
-                mtbPlayEnd.setString(PtGetLocalizedString("KI.MarkerGame.ResetGameButton"))
-                mtbPlayEnd.show()
-                mlbMarkerList.clearAllElements()
-                mlbMarkerList.show()
-                # assume that the game is finished unless an unseen marker is still left
-                questGameFinished = 1
-                # add the markers into the list
-                for marker in self.markerGameManager.gameData.data['markers']:
-                    marker = marker.data
-                    if marker['captured']:
-                        #Get marker's coordinates
-                        coord = ptDniCoordinates()
-                        markerPoint = ptPoint3(marker['x'], marker['y'], marker['z'])
-                        coord.fromPoint(markerPoint)
-                        mlbMarkerList.addString("[%s:%d,%d,%d] %s" % (self.IConvertAgeName(marker['age']),coord.getTorans(), coord.getHSpans(), coord.getVSpans(), marker['name']))
-                    else:
-                        questGameFinished = 0
-                mlbMarkerTextTB.hide()
+                    questGameFinished = 0
+            mlbMarkerTextTB.hide()
         # refresh the text of the buttons (color changed)
-        mtbInvitePlayer.refresh()
         mtbEditStart.refresh()
         mtbPlayEnd.refresh()
         # display the content on the screen
@@ -9924,20 +9219,10 @@ class xKI(ptModifier):
         minutes = int(mgData['timeLimit']/60)
         mtbGameTime.setString("%d min" % (minutes))
         gameType = "?Unknown? game"
-        if mgData['svrGameTypeID'] == PtMarkerGameTypes.kMarkerGameCapture:
-            gameType = PtGetLocalizedString("KI.MarkerGame.CaptureGame")
-            mtbGameTime.show()
-            mtbGameTimeTitle.show()
-        elif mgData['svrGameTypeID'] == PtMarkerGameTypes.kMarkerGameCaptureAndHold:
-            gameType = PtGetLocalizedString("KI.MarkerGame.HoldGame")
-            mtbGameTime.show()
-            mtbGameTimeTitle.show()
-        elif isQuestGame:
+        if isQuestGame:
             gameType = PtGetLocalizedString("KI.MarkerGame.QuestGame")
             mtbGameTime.hide()
             mtbGameTimeTitle.hide()
-        mtbGameType.setStringW(gameType)
-        mtbGameType.show()
 
 
     def IBigKIDisplayCurrentQuestionNote(self):
@@ -10076,7 +9361,6 @@ class xKI(ptModifier):
         # see if we were already in edit mode, save that before re-entrying into edit mode
         if BKInEditMode:
             self.IBigKISaveEdit()
-        #~ if whichfield == kBKEditFieldJRNTitle or whichfield == kBKEditFieldJRNNote:
         if whichfield == kBKEditFieldJRNTitle:
             textbox = ptGUIControlTextBox(KIJournalExpanded.dialog.getControlFromTag(BKEditFieldIDs[whichfield][kBKEditIDtextbox]))
             button = ptGUIControlButton(KIJournalExpanded.dialog.getControlFromTag(BKEditFieldIDs[whichfield][kBKEditIDbutton]))
@@ -10387,15 +9671,14 @@ class xKI(ptModifier):
         "start the alert, unless its already going"
         global AlertTimerActive
         global AlertTimeToUse
-        if not PtIsSinglePlayerMode():
-            if theKILevel >= kNormalKI:
-                PtFlashWindow()
-                if not AlertTimerActive:
-                    PtDebugPrint("xKI: show KI alert",level=kDebugDumpLevel)
-                    NewItemAlert.dialog.show()
-                kialert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
-                AlertTimeToUse = kAlertTimeDefault
-                kialert.show()
+        if theKILevel >= kNormalKI:
+            PtFlashWindow()
+            if not AlertTimerActive:
+                PtDebugPrint("xKI: show KI alert",level=kDebugDumpLevel)
+                NewItemAlert.dialog.show()
+            kialert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
+            AlertTimeToUse = kAlertTimeDefault
+            kialert.show()
 
     def IAlertBookStart(self,time=kAlertTimeDefault):
         "start the alert, unless its already going"
@@ -10745,149 +10028,6 @@ class ChatFlags:
         str += "flags=%x" % (self.flags)
         return str
 
-class MarkerPlayer:
-    def __init__(self,playerID,joined=0):
-        self.ID = playerID
-        # find player in AgeMember DPL
-        dpl = PtGetPlayerListDistanceSorted()
-        self.player = None
-        self.isUs = 0
-        self.team = PtMarkerMsgTeam.kNoTeam
-        for plyr in dpl:
-            if plyr.getPlayerID() == playerID:
-                # found 'em
-                self.player = ptPlayer(plyr.getPlayerName(),plyr.getPlayerID())
-                break
-        if type(self.player) == type(None):
-            # maybe its us?
-            us = PtGetLocalPlayer()
-            if us.getPlayerID() == playerID:
-                self.player = us
-                self.isUs = 1
-        # if its not even us... then just make up one
-        if type(self.player) == type(None):
-            self.player = ptPlayer("?UNKNOWN?ID:[%d]"%(self.playerID),self.playerID)
-        self.isJoined = joined
-        self.score = 0
-        self.scoreText = ""
-    def updateScore(self):
-        if type(self.player) != type(None):
-            if MarkerGameState == kMGGameOn:
-                self.scoreText = "(%d)"%(self.score)
-            else:
-                self.scoreText = ""
-
-class MarkerGame:
-    def __init__(self,masterID,name=None):
-        self.masterID = masterID
-        self.gameName = name
-        dpl = PtGetPlayerListDistanceSorted()
-        self.master = None
-        self.time = 0
-        self.gameTimerOn = 0
-        self.timeLeftDPL = None
-        self.gameType = PtMarkerMsgGameType.kGameTypeCapture
-        self.numberMarkers = 0
-        self.markersRemaining = 0
-        self.markersRemainingDPL = None
-        self.invitedPlayers = []
-        self.greenTeamPlayers = []
-        self.greenTeamScore = 0
-        self.greenTeamDPL = None
-        self.redTeamPlayers = []
-        self.redTeamScore = 0
-        self.redTeamDPL = None
-        self.master = MarkerPlayer(masterID)
-        # did we find anyone that matches?
-        if type(self.master.player) == type(None):
-            # then make one up
-            self.master.player = ptPlayer("?UNKNOWN?ID:[%d]"%(self.masterID),self.masterID)
-        if type(self.gameName) == type(None):
-            self.gameName = "%s's MarkerGame" % (self.master.player.getPlayerName())
-    def setGame(self,time,type,markers):
-        self.setTime(time)
-        self.gameType = type
-        self.numberMarkers = markers
-        self.markersRemaining = markers
-    def updateScores(self):
-        self.greenTeamScore = 0
-        for gplyr in self.greenTeamPlayers:
-            self.greenTeamScore += gplyr.score
-        self.redTeamScore = 0
-        for rplyr in self.redTeamPlayers:
-            self.redTeamScore += rplyr.score
-        self.markersRemaining = self.numberMarkers - (self.greenTeamScore + self.redTeamScore)
-    def resetScores(self):
-        self.greenTeamScore = 0
-        for gplyr in self.greenTeamPlayers:
-            gplyr.score = 0
-        self.redTeamScore = 0
-        for rplyr in self.redTeamPlayers:
-            rplyr.score = 0
-        self.markersRemaining = self.numberMarkers
-    def setTime(self,time):
-        self.time = time
-        self.gameTimerOn = 0
-    def startTimer(self):
-        self.gameTimerOn = 1
-        self.endTime = PtGetTime() + self.time
-    def timeLeft(self):
-        if self.gameTimerOn:
-            if PtGetTime() > self.endTime:
-                return 0
-            return int(self.endTime - PtGetTime())
-        else:
-            return self.time
-    def addPlayerToTeam(self,playerID,teamType):
-        if teamType == PtMarkerMsgTeam.kGreenTeam:
-            teamplayers = self.greenTeamPlayers
-        else:
-            teamplayers = self.redTeamPlayers
-        found = 0
-        for mplayer in teamplayers:
-            if mplayer.player.getPlayerID() == playerID:
-                mplayer.isJoined = 1
-                mplayer.score = 0
-                mplayer.team = teamType
-                found = 1
-                break
-        if not found:
-            mgplayer = MarkerPlayer(playerID,joined=1)
-            mgplayer.team = teamType
-            teamplayers.append(mgplayer)
-    def addToDPLWorking(self,DPList):
-        pass
-    def addToDPLPlaying(self,DPList):
-        global MarkerGameState
-        # create MarkerGame for non-Masters
-        DPList.append(CurrentPlayingMarkerGame)
-        # add time stuff and remainings
-        if MarkerGameState == kMGGameOn:
-            gametime = self.timeLeft()
-            self.timeLeftDPL = DPLStatusLine( PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)]),AgenBlueDk)
-        else:
-            self.timeLeftDPL = DPLStatusLine( PtGetLocalizedString("KI.MarkerGame.WaitingForStart"),AgenBlueDk)
-        if self.gameType == PtMarkerMsgGameType.kGameTypeCapture:
-            self.markersRemainingDPL = DPLStatusLine(PtGetLocalizedString("KI.MarkerGame.MarkersRemaining", [str(self.markersRemaining)]),AgenBlueDk)
-        else:
-            self.markersRemainingDPL = DPLStatusLine(PtGetLocalizedString("KI.MarkerGame.MarkersUnclaimed", [str(self.markersRemaining)]),AgenBlueDk)
-        self.greenTeamDPL = DPLBranchStatusLine(PtGetLocalizedString("KI.MarkerGame.GreenTeamScore", [str(self.greenTeamScore)]))
-        self.redTeamDPL = DPLBranchStatusLine(PtGetLocalizedString("KI.MarkerGame.RedTeamScore", [str(self.redTeamScore)]),closePrev=1)
-        DPList.append(self.timeLeftDPL)
-        DPList.append(self.markersRemainingDPL)
-        DPList.append(self.greenTeamDPL)
-        DPList += CurrentPlayingMarkerGame.greenTeamPlayers
-        DPList.append(self.redTeamDPL)
-        DPList += CurrentPlayingMarkerGame.redTeamPlayers
-    def updateGameTime(self):
-        global MarkerGameState
-        if type(self.timeLeftDPL) != type(None):
-            if MarkerGameState == kMGGameOn:
-                gametime = self.timeLeft()
-                self.timeLeftDPL.updateText(PtGetLocalizedString("KI.MarkerGame.TimeRemaining", [str(int(gametime/60)),str(gametime%60)]))
-            else:
-                self.timeLeftDPL.updateText(PtGetLocalizedString("KI.MarkerGame.WaitingForStart"))
-
 class DPLStatusLine:
     def __init__(self,text,color=None):
         self.text = text
@@ -10920,50 +10060,3 @@ class QuestionNote:
         return
     def NoAction(self):
         return
-
-class MarkerGameJoinQuestion(QuestionNote):
-    def __init__(self,gameMasterID,roundLength,gameType,numberMarkers):
-        self.game = MarkerGame(gameMasterID)
-        self.game.setGame(roundLength,gameType,numberMarkers)
-        QuestionNote.__init__(self,type=QuestionNote.kMarkerGameJoin)
-        masterName = self.game.master.player.getPlayerName()
-        if gameType == PtMarkerMsgGameType.kGameTypeCapture:
-            gameName = PtGetLocalizedString("KI.MarkerGame.NameCapture")
-            ses = U"s"
-            if int(self.game.time/60) == 1:
-                ses = U""
-            if self.game.numberMarkers == 0:
-                instruct = PtGetLocalizedString("KI.MarkerGame.InstructCapNoMarker")
-            elif self.game.numberMarkers == 1:
-                instruct = PtGetLocalizedString("KI.MarkerGame.InstructCapOneMarker", [str(int(self.game.time/60)),ses])
-            else:
-                instruct = PtGetLocalizedString("KI.MarkerGame.InstructCapNMarkers", [str(self.game.numberMarkers),str(int(self.game.time/60)),ses])
-        elif gameType == PtMarkerMsgGameType.kGameTypeHold:
-            gameName = PtGetLocalizedString("KI.MarkerGame.NameHold")
-            ses = U"s"
-            if int(self.game.time/60) == 1:
-                ses = U""
-            if self.game.numberMarkers == 0:
-                instruct = PtGetLocalizedString("KI.MarkerGame.InstructHoldNoMarker")
-            else:
-                instruct = PtGetLocalizedString("KI.MarkerGame.InstructHoldNMarkers", [str(self.game.numberMarkers),str(int(self.game.time/60)),ses])
-        elif gameType == PtMarkerMsgGameType.kGameTypeQuest:
-            gameName = PtGetLocalizedString("KI.MarkerGame.NameQuest")
-            instruct = PtGetLocalizedString("KI.MarkerGame.InstructQuest")
-        else:
-            gameName = PtGetLocalizedString("KI.MarkerGame.NameUnknown")
-            instruct = U""
-        self.title = PtGetLocalizedString("KI.MarkerGame.QTitle", [masterName])
-        self.message = PtGetLocalizedString("KI.MarkerGame.QMessage", [masterName,gameName,instruct])
-    def YesAction(self):
-        global MarkerJoinRequests
-        global MarkerGameState
-        global CurrentPlayingMarkerGame
-        ptMarkerMgr().joinGame(self.game.masterID,PtMarkerMsgTeam.kNoTeam)
-        MarkerGameState = kMGGameCreation
-        CurrentPlayingMarkerGame = self.game
-        # remove us from the list
-        MarkerJoinRequests.remove(self)
-    def NoAction(self):
-        global MarkerJoinRequests
-        MarkerJoinRequests.remove(self)
