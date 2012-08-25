@@ -136,7 +136,6 @@ kCharSet = "cp1252"
 # globals
 KIGUIInitialized = 0
 IAmAdmin = 0
-UserList = []
 PlayerInfoName = None
 IKIDisabled = 0
 IKIHardDisabled = 0
@@ -668,8 +667,6 @@ kMGNotActive = 0
 kMGGameCreation = 1
 kMGGameOn = 2
 MarkerGameState = kMGNotActive
-#MarkerGameMaster = 0
-WorkingMarkerFolder = None
 CurrentPlayingMarkerGame = None
 kMFOverview = 1
 kMFEditing = 2
@@ -1599,7 +1596,6 @@ class xKI(ptModifier):
         global FadeEnableFlag
         global OnlyGetPMsFromBuddies
         global OnlyAllowBuddiesOnRequest
-        global WorkingMarkerFolder
         global MarkerGameTimeID
         # bigKI globals
         global BKRightSideMode
@@ -5060,7 +5056,6 @@ class xKI(ptModifier):
 
     def IFinishCreateMarkerFolder(self, gameName, gameGUID):
         "Finishes creating the marker game folder after the asynchronous mini-game server registers the parameters"
-        #Tye: Check these variables, not sure if all of them are being used....
         global LastminiKICenter
         global BKFolderTopLine
         global BKJournalFolderTopLine
@@ -5182,7 +5177,6 @@ class xKI(ptModifier):
 
     def ISetWorkingToCurrentMarkerFolder(self):
         "sets the BKCurrent to be the working marker folder (if it is one)"
-        global WorkingMarkerFolder
         global BKCurrentContent
 
         if self.markerGameDisplay == None:
@@ -5222,14 +5216,12 @@ class xKI(ptModifier):
 
     def IResetWorkingMarkerFolder(self):
         "resets the working marker folder to None"
-        global WorkingMarkerFolder
         MGmgr = ptMarkerMgr()
 
         #Don't delete any markers necessary for an existing game!
         if not self.markerGameManager.gameLoaded():
             MGmgr.hideMarkersLocal()
 
-        WorkingMarkerFolder = None
         self.markerGameDisplay = None
         # refresh the DPL
         self.IRefreshPlayerList()
@@ -6932,18 +6924,6 @@ class xKI(ptModifier):
                 # its a marker list, display its name
                 playerlist.closeBranch()
                 playerlist.addBranchW(plyr.folderGetName(),1)
-            elif isinstance(plyr,DPLBranchStatusLine):
-                if plyr.closePrev:
-                    playerlist.closeBranch()
-                plyr.position = idx
-                playerlist.addBranchW(plyr.text,1)
-            elif isinstance(plyr,DPLStatusLine):
-                plyr.position = idx
-                if type(plyr.color) != type(None):
-                    clr = plyr.color
-                else:
-                    clr = DniSelectableColor
-                playerlist.addStringWithColor(plyr.text,clr,kSelectUseGUIColor)
             elif type(plyr) == type(""):
                 playerlist.closeBranch()
                 playerlist.addBranchW(plyr,1)
@@ -7897,7 +7877,6 @@ class xKI(ptModifier):
         global PhasedKINeighborsInDPL
         global PhasedKIBuddies
         vault = ptVault()
-        ageVault = ptAgeVault()
         #
         # get the journal folder stuffs
         #
@@ -8876,7 +8855,6 @@ class xKI(ptModifier):
         mtbGameTime.hide()
         mtbGameTimeTitle = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderGameTimeTitleTB))
         mtbGameTimeTitle.hide()
-        #mtbGameTimeTitle.setStringW(PtGetLocalizedString("KI.MarkerGame.Time"))
         mtbGameType = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderGameTypeTB))
         mtbGameType.hide()
         mlbMarkerList = ptGUIControlListBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kMarkerFolderMarkListbox))
@@ -8912,7 +8890,6 @@ class xKI(ptModifier):
 
     def IFinishDisplayCurrentMarkerGame(self):
         "Displays the loaded marker game to the KI"
-        global WorkingMarkerFolder
         global MFdialogMode
         global MarkerGameState
         global PhasedKIPlayMarkerGame
@@ -10028,28 +10005,8 @@ class ChatFlags:
         str += "flags=%x" % (self.flags)
         return str
 
-class DPLStatusLine:
-    def __init__(self,text,color=None):
-        self.text = text
-        self.color = color
-        self.position = -1
-    def updateText(self,newText):
-        self.text = newText
-        self.update()
-    def update(self):
-        if self.position != -1:
-            playerlist = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kPlayerList))
-            playerlist.setElement(self.position,self.text)
-            playerlist.refresh()
-
-class DPLBranchStatusLine(DPLStatusLine):
-    def __init__(self,text,closePrev=0):
-        DPLStatusLine.__init__(self,text)
-        self.closePrev = closePrev
-
 class QuestionNote:
     kNotDefined=0
-    kMarkerGameJoin=1
     def __init__(self,type=kNotDefined,title="Question:",msg="",yesBtn=PtGetLocalizedString("KI.YesNoDialog.AcceptButton"),noBtn=PtGetLocalizedString("KI.YesNoDialog.DeclineButton")):
         self.type = type
         self.title = title
