@@ -110,9 +110,9 @@ kFriendInviteSent = 61  # Result of friend invite received
 kRegisterImager = 62    # Imagers send to register themselves with the KI
 
 # kUpgradeKILevel and kDowngradeKILevel levels
-#kNanoKI=0 Unused KI level.
-kMicroKI=1
-kNormalKI=2
+#kNanoKI = 0 Unused KI level.
+kMicroKI = 1
+kNormalKI = 2
 kLowestKILevel = kMicroKI
 kHighestKILevel = kNormalKI
 
