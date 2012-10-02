@@ -1932,6 +1932,20 @@ void PythonInterface::WriteToStdErr(const char* text)
     }
 }
 
+PyObject* PythonInterface::ImportModule(const char* module) 
+{
+    PyObject* result = nil;
+    PyObject* name = PyString_FromString(module);
+
+    if (name != nil) 
+    {
+        result = PyImport_Import(name);
+        Py_DECREF(name);
+    }
+    
+    return result;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : FindModule
@@ -2278,6 +2292,78 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     if (Py_FlushLine())
         PyErr_Clear();
     return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : RunFunction
+//  PARAMETERS : module - module name to run 'name' in
+//             : name - name of function
+//             : args - tuple with arguments
+//
+//
+PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
+{
+    if (module == NULL)
+        return NULL;
+
+    PyObject* function = PyObject_GetAttrString(module, name);
+
+    PyObject* result = NULL;
+    if (function != nil) 
+    {
+        result = PyObject_Call(function, args, NULL);
+        Py_DECREF(function);
+    }
+
+    return result;
+}
+
+PyObject* PythonInterface::ParseArgs(const char* args)
+{
+    PyObject* result = NULL;
+    PyObject* scope = PyDict_New();
+    if (scope) 
+    {
+        //- Py_eval_input makes this function accept only single expresion (not statement)
+        //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
+        result = PyRun_String(args, Py_eval_input, scope, NULL);
+        Py_DECREF(scope);
+    }
+   
+    return result;
+}
+
+bool PythonInterface::RunFunctionSafe(const char* module, const char* function, const char* args) 
+{
+    PyObject* moduleObj = ImportModule(module);
+    bool result = false;
+    if (moduleObj) 
+    {
+        PyObject* argsObj = ParseArgs(args);
+        if (argsObj) 
+        {
+            PyObject* callResult = RunFunction(moduleObj, function, argsObj);
+            if (callResult) 
+            {
+                result = true;
+                Py_DECREF(callResult);
+            }
+
+            Py_DECREF(argsObj);
+        }
+        Py_DECREF(moduleObj);
+    }
+
+    if (!result)
+    {
+        PyErr_Print();
+
+        if (Py_FlushLine())
+            PyErr_Clear();
+    }
+
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////
