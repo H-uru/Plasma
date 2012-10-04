@@ -490,25 +490,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 if (gClient && !minimized && !gClient->GetDone())
                 {
-                    if (LOWORD(wParam) == WA_CLICKACTIVE)
-                    {
-                        // See if they've clicked on the frame, in which case they just want to
-                        // move, not activate, us.
-                        POINT pt;
-                        GetCursorPos(&pt);
-                        ScreenToClient(hWnd, &pt);
-
-                        RECT rect;
-                        GetClientRect(hWnd, &rect);
-
-                        if( (pt.x < rect.left)
-                            ||(pt.x >= rect.right)
-                            ||(pt.y < rect.top)
-                            ||(pt.y >= rect.bottom) )
-                        {
-                            active = false;
-                        }
-                    }
                     gClient->WindowActivate(active);
                 }
                 else
