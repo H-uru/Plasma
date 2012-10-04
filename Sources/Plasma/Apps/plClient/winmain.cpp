@@ -413,13 +413,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONUP :
         case WM_RBUTTONUP :
         case WM_MBUTTONUP :         // The middle mouse button was released. 
-        case WM_MOUSEMOVE :
         case 0x020A:                // fuc&ing windows b.s...
             {
                 if (gClient && gClient->WindowActive() && gClient->GetInputManager())
                 {
                     gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
                 }
+            }
+            break;
+
+        case WM_MOUSEMOVE:
+            {
+                if (gClient && gClient->GetInputManager())
+                    gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
             }
             break;
 
