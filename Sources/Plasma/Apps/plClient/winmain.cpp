@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCrashHandler/plCrashCli.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
+#include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputManager.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plPipeline.h"
@@ -454,6 +455,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         mgr->QueueDisableNet(false, nil);
                     DestroyWindow(gClient->GetWindowHandle());
                     break;
+            }
+            break;
+
+        case WM_SETCURSOR:
+            {
+                static bool winCursor = true;
+                bool enterWnd = LOWORD(lParam) == HTCLIENT;
+                if (enterWnd && winCursor)
+                {
+                    winCursor = !winCursor;
+                    ShowCursor(winCursor != 0);
+                    plMouseDevice::ShowCursor();
+                }
+                else if (!enterWnd && !winCursor)
+                {
+                    winCursor = !winCursor;
+                    ShowCursor(winCursor != 0);
+                    plMouseDevice::HideCursor();
+                }
+                return TRUE;
             }
             break;
 
