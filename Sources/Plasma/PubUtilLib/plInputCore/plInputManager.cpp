@@ -584,8 +584,6 @@ void plDInputMgr::AddDevice(IDirectInputDevice8* device)
 void plDInputMgr::ConfigureDevice()
 {
     ::ShowCursor( TRUE );
-    ReleaseCapture();
-        
 
     DICOLORSET dics;
     ZeroMemory(&dics, sizeof(DICOLORSET));
@@ -607,8 +605,6 @@ void plDInputMgr::ConfigureDevice()
         fDI->fSticks[i]->fDevice->SetActionMap( fDI->fActionFormat, NULL, DIDSAM_FORCESAVE );
 
     ::ShowCursor( FALSE );
-    SetCapture(fhWnd);
-
 }
 
 bool plDInputMgr::MsgReceive(plMessage* msg)
