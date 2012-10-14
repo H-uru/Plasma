@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pnNetCommon.h"
-#include "pnAddrInfo/pnAddrInfo.h"
+
 #if HS_BUILD_FOR_UNIX
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -68,19 +68,25 @@ plString GetTextAddr(uint32_t binAddr)
 uint32_t GetBinAddr(const char * textAddr)
 {
     uint32_t addr = 0;
-
     if (!textAddr)
         return addr;
-
-    struct addrinfo* ai = NULL;
 
     addr = inet_addr(textAddr);
     if(addr == INADDR_NONE)
     {
-        ai = pnAddrInfo::GetAddrByNameSimple(textAddr);
-        if(ai!= NULL)
-            memcpy(&addr,(void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)),sizeof(addr));
-        pnAddrInfo::Free(ai);
+        struct addrinfo* ai = nil;
+        struct addrinfo hints;
+        memset(&hints, 0, sizeof(struct addrinfo));
+        hints.ai_family = PF_INET;
+        hints.ai_flags  = AI_CANONNAME;
+        if (getaddrinfo(textAddr, nil, &hints, &ai) != 0)
+        {
+            hsAssert(false, "getaddrinfo failed");
+            return addr;
+        }
+
+        memcpy(&addr, (void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)), sizeof(addr));
+        freeaddrinfo(ai);
     }
 
     return addr;
