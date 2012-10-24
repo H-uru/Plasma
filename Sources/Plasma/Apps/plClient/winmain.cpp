@@ -395,31 +395,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 nc->ResetServerTimeOffset(true);
             break;
 
-        case WM_KEYDOWN :
-        case WM_LBUTTONDOWN :
-        case WM_RBUTTONDOWN :
-        case WM_LBUTTONDBLCLK :     // The left mouse button was double-clicked. 
-        case WM_MBUTTONDBLCLK :     // The middle mouse button was double-clicked. 
-        case WM_MBUTTONDOWN :       // The middle mouse button was pressed. 
-        case WM_RBUTTONDBLCLK :     // The right mouse button was double-clicked. 
-            // If they did anything but move the mouse, quit any intro movie playing.
-            {
-                if( gClient )
-                    gClient->SetQuitIntro(true);
-            }
-            // Fall through to other events
+        case WM_LBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+        case WM_LBUTTONDBLCLK:
+        case WM_MBUTTONDBLCLK:
+        case WM_MBUTTONDOWN:
+        case WM_RBUTTONDBLCLK:
+            // Ensure we don't leave the client area during this action
+            SetCapture(hWnd);
+            // fall through to old case
+        case WM_KEYDOWN:
         case WM_CHAR:
-        case WM_KEYUP :
-        case WM_LBUTTONUP :
-        case WM_RBUTTONUP :
-        case WM_MBUTTONUP :         // The middle mouse button was released. 
-        case 0x020A:                // fuc&ing windows b.s...
+            // If they did anything but move the mouse, quit any intro movie playing.
+            if (gClient)
             {
-                if (gClient && gClient->WindowActive() && gClient->GetInputManager())
-                {
+                gClient->SetQuitIntro(true);
+
+                // normal input processing
+                if (gClient->WindowActive() && gClient->GetInputManager())
                     gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
-                }
             }
+            break;
+        case WM_LBUTTONUP:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONUP:
+            // Stop hogging the cursor
+            ReleaseCapture();
+            // fall through to input processing
+        case WM_MOUSEWHEEL:
+        case WM_KEYUP:
+           if (gClient && gClient->WindowActive() && gClient->GetInputManager())
+               gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
             break;
 
         case WM_MOUSEMOVE:
