@@ -44,13 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 import re
 
 # Plasma engine.
+from Plasma import *
 from PlasmaVaultConstants import *
+
+import xLocTools
 
 
 ## Helper class for autocompletion in the KI.
 class AutocompleteState:
 
     def __init__(self):
+
         self.prefix = ""
         self.candidates = list()
         self.lastCandidateId = None
@@ -58,6 +62,7 @@ class AutocompleteState:
         self.word_match = re.compile("\\S+", re.UNICODE)
 
     def pickFirst(self, text, nameList):
+
         if not text or not nameList:
             return None
 
@@ -87,6 +92,7 @@ class AutocompleteState:
         return None
 
     def pickNext(self, text):
+
         if not text or not self.candidates or self.lastCandidateId is None:
             return None
 
@@ -99,8 +105,95 @@ class AutocompleteState:
         return self.prefix + self.candidates[nextCandidateId]
 
 
+## A device manager.
+class Device:
+
+    def __init__(self, name):
+
+        try:
+            idx = name.index("/type=")
+            self.type = name[idx + len("/type="):]
+            name = name[:idx]
+        except (LookupError, ValueError):
+            # Assume that the default device is an imager.
+            self.type = "imager"
+        self.name = name
+
+    def __eq__(self, other):
+
+        if self.name == other.name:
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+
+        if self.name == other.name:
+            return False
+        else:
+            return True
+
+
+## A folder type for devices like the imager.
+class DeviceFolder:
+
+    def __init__(self, name):
+
+        self.name = name
+        self.dflist = []
+
+    def __getitem__(self, key):
+
+        return self.dflist[key]
+
+    def __setitem__(self, key, value):
+
+        self.dflist[key] = value
+
+    def append(self, value):
+
+        self.dflist.append(value)
+
+    def remove(self, value):
+
+        self.dflist.remove(value)
+
+    def removeAll(self):
+
+        self.dflist = []
+
+    def index(self, value):
+
+        return self.dflist.index(value)
+
+    def __getslice__(self, i, j):
+
+        return self.dflist[i:j]
+
+    def __len__(self):
+
+        return len(self.dflist)
+
+
+## A KI Folder holder.
+class KIFolder:
+
+    def __init__(self, folderType):
+
+        self.type = folderType
+        self.name = xLocTools.FolderIDToFolderName(self.type)
+
+
+## A simple class for a separator folder.
+class SeparatorFolder:
+
+    def __init__(self, name):
+
+        self.name = name
+
 ## Helper function to prioritize online players in lists.
 def CMPplayerOnline(playerA, playerB):
+
     elPlayerA = playerA.getChild()
     elPlayerB = playerB.getChild()
     if elPlayerA is not None and elPlayerB is not None:
@@ -119,6 +212,7 @@ def CMPplayerOnline(playerA, playerB):
 
 ## Helper function to sort nodes according to modification date.
 def CMPNodeDate(nodeA, nodeB):
+
     elNodeA = nodeA.getChild()
     elNodeB = nodeB.getChild()
     if elNodeA is not None and elNodeB is not None:

@@ -41,21 +41,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
+import re
+import time
+
 # Plasma Engine.
 from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
 
+import xLocTools
+
 # xKI sub-modules.
+import xKIExtChatCommands
 from xKIConstants import *
+from xKIHelpers import *
 
 
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):
 
     ## Set up the chat manager's default state.
-    def __init__(self, BigKI, KIBlackbar, KIMicro, KIMini, GetAgeName, fading):
+    def __init__(self, BigKI, KIBlackbar, KIMicro, KIMini, SendJalakNote, GetAgeName, fading, GetNeighbors):
 
         # Add the GUI dialogs.
         self.BigKI = BigKI
@@ -65,10 +72,12 @@ class xKIChat(object):
 
         # Set the default properties.
         self.autoShout = False
-        self.logFile = None
+        self.chatLogFile = None
+        self.gFeather = 0
         self.isAdmin = False
         self.isChatting = False
         self.lastPrivatePlayerID = None
+        self.logFile = None
         self.onlyGetPMsFromBuddies = False
         self.onlyAllowBuddiesOnRequest = False
         self.privateChatChannel = 0
@@ -84,10 +93,12 @@ class xKIChat(object):
         self.BKPlayerList = []
         self.KIDisabled = False
         self.KILevel = kMicroKI
+        self.SendJalakNote = SendJalakNote
         self.GetAgeName = GetAgeName
         self.StartFadeTimer = fading[0]
         self.KillFadeTimer = fading[1]
         self.FadeCompletely = fading[2]
+        self.GetNeighbors = GetNeighbors
 
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
@@ -96,8 +107,10 @@ class xKIChat(object):
     # GUI #
     #######
 
-    ## Make the miniKI icon unclickable in the Blackbar.
-    def ClearBBMini(self, value = -1):
+    ## Toggles the state of the miniKI icon in the Blackbar.
+    # Changing the value will initiate a chain reaction of events to display
+    # the miniKI.
+    def ClearBBMini(self, value=-1):
 
         if self.KILevel == kNormalKI:
             mmRG = ptGUIControlRadioGroup(self.KIBlackbar.dialog.getControlFromTag(kGUI.MiniMaximizeRGID))
@@ -176,7 +189,7 @@ class xKIChat(object):
             cFlags.admin = True
         ## The prefix for inter-Age chat.
         pre = "<<" + self.GetAgeName() + ">>"
-            
+
         # If the player is in AFK mode, make him exit it.
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
             PtAvatarExitAFK()
@@ -195,7 +208,6 @@ class xKIChat(object):
 
         # Get any selected players.
         userListBox = ptGUIControlListBox(self.KIMini.dialog.getControlFromTag(kGUI.PlayerList))
-        privateChbox = ptGUIControlCheckBox(self.KIMini.dialog.getControlFromTag(kGUI.miniPrivateToggle))
         iSelect = userListBox.getSelection()
         selPlyrList = []
 
@@ -203,7 +215,7 @@ class xKIChat(object):
         if message.startswith(PtGetLocalizedString("KI.Commands.ChatAllAge")):
             listenerOnly = False
             message = message[len(PtGetLocalizedString("KI.Commands.ChatAllAge")) + 1:]
-        
+
         # Is it a reply to a private message?
         elif message.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
             if self.toReplyToLastPrivatePlayerID is None:
@@ -215,9 +227,9 @@ class xKIChat(object):
                 hasPlayer = False
                 for member in ageMembers:
                     if member.getPlayerID() == self.toReplyToLastPrivatePlayerID[1]:
-                        hasplayer = True
+                        hasPlayer = True
                         break
-                if not hasplayer:
+                if not hasPlayer:
                     self.lastPrivatePlayerID = None
                     self.AddChatLine(None, PtGetLocalizedString("KI.Chat.LeftTheAge", [str(self.toReplyToLastPrivatePlayerID[0])]), kChat.SystemMessage)
                     return
@@ -245,7 +257,7 @@ class xKIChat(object):
 
         # Is it a private message sent with "/p"?
         elif message.startswith(PtGetLocalizedString("KI.Commands.ChatPrivate")):
-            pWords = message.split(maxsplit=1)
+            pWords = message.split(" ", 1)
             foundBuddy = False
             # Make sure it's still just a "/p".
             if len(pWords) > 1 and pWords[0] == PtGetLocalizedString("KI.Commands.ChatPrivate"):
@@ -286,9 +298,9 @@ class xKIChat(object):
         elif message.startswith(PtGetLocalizedString("KI.Commands.ChatNeighbors")):
             cFlags.neighbors = True
             message = message[len(PtGetLocalizedString("KI.Commands.ChatNeighbors")) + 1:]
-            neighbors = self.GetOnlineNeighbors()
+            neighbors = self.GetNeighbors()
             if neighbors is not None:
-                selPlyrList = self.GetOnlineBuddies(neighbors.getChildNodeRefList())
+                selPlyrList = self.GetOnlinePlayers(neighbors.getChildNodeRefList())
             if len(selPlyrList) == 0:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in your neighbor list"]), kChat.SystemMessage)
                 return
@@ -302,7 +314,7 @@ class xKIChat(object):
             buddies = vault.getBuddyListFolder()
             message = message[len(PtGetLocalizedString("KI.Commands.ChatBuddies")) + 1:]
             if buddies is not None:
-                selPlyrList = self.GetOnlineBuddies(buddies.getChildNodeRefList())
+                selPlyrList = self.GetOnlinePlayers(buddies.getChildNodeRefList())
             if len(selPlyrList) == 0:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in your buddy list"]), kChat.SystemMessage)
                 return
@@ -344,14 +356,14 @@ class xKIChat(object):
                     if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                         fldrType = PtVaultStandardNodes.kHoodMembersFolder
                         cFlags.neighbors = True
-                    selPlyrList = self.GetOnlineBuddies(toPlyr.getChildNodeRefList())
+                    selPlyrList = self.GetOnlinePlayers(toPlyr.getChildNodeRefList())
                     if len(selPlyrList) == 0:
                         self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in list"]), kChat.SystemMessage)
                         return
                     cFlags.interAge = 1
                     message = pre + message
                     goesToFolder = xLocTools.FolderIDToFolderName(fldrType)
-                
+
                 # Is it a folder of players within listening distance?
                 elif isinstance(toPlyr, KIFolder):
                     if self.autoShout:
@@ -404,7 +416,7 @@ class xKIChat(object):
         pretext = U""
         headerColor = kColors.ChatHeaderBroadcast
         bodyColor = kColors.ChatMessage
-        
+
         # Is it an object to represent the flags?
         if isinstance(cFlags, ChatFlags):
 
@@ -428,7 +440,7 @@ class xKIChat(object):
                     if message[:2] == "<<":
                         try:
                             idx = message.index(">>")
-                            message = message[idx+2:]
+                            message = message[idx + 2:]
                         except ValueError:
                             pass
                 else:
@@ -440,7 +452,7 @@ class xKIChat(object):
                         try:
                             idx = message.index(">>")
                             player = ptPlayer(PtGetLocalizedString("KI.Chat.InterAgePlayerRecvd", [player.getPlayerName(), message[2:idx]]), player.getPlayerID())
-                            message = message[idx+2:]
+                            message = message[idx + 2:]
                             if not cFlags.private and not cFlags.neighbors:
                                 buddies = ptVault().getBuddyListFolder()
                                 if buddies is not None:
@@ -506,7 +518,7 @@ class xKIChat(object):
             mKIdialog.show()
         if player is not None:
             chatHeaderFormatted = pretext + unicode(player.getPlayerName()) + U":"
-            chatMessageFormatted =  U" " + message
+            chatMessageFormatted = U" " + message
         else:
             # It must be a status or error message.
             chatHeaderFormatted = pretext
@@ -582,7 +594,7 @@ class xKIChat(object):
     ###########
 
     ## Adds a player to the recent players folder.
-    def AddPlayerToRecents(self):
+    def AddPlayerToRecents(self, playerID):
 
         vault = ptVault()
         PIKAFolder = vault.getPeopleIKnowAboutFolder()
@@ -615,19 +627,19 @@ class xKIChat(object):
                         plyrList.append(player)
         return plyrList
 
-    ## Find the player's online buddy list.
-    def GetOnlineBuddies(self, pList):
+    ## Find the player's online buddy or neighbor list.
+    def GetOnlinePlayers(self, pList):
 
         outList = []
-        for bud in pList:
-            if isinstance(bud, ptVaultNodeRef):
-                eBud = bud.getChild().upcastToPlayerInfoNode()
-                if eBud is not None:
-                    if eBud.playerIsOnline():
-                        outList.append(ptPlayer(eBud.playerGetName(), eBud.playerGetID()))
+        for player in pList:
+            if isinstance(player, ptVaultNodeRef):
+                ePlayer = player.getChild().upcastToPlayerInfoNode()
+                if ePlayer is not None:
+                    if ePlayer.playerIsOnline():
+                        outList.append(ptPlayer(ePlayer.playerGetName(), ePlayer.playerGetID()))
         return outList
 
-    ## Determine if the player is a buddy, if PMs should come only through 
+    ## Determine if the player is a buddy, if PMs should come only through
     # them. Returns True if any player can send PMs.
     def CheckIfCanPM(self, playerID):
 
@@ -637,6 +649,7 @@ class xKIChat(object):
                 return buddies.playerlistHasPlayer(playerID)
             return False
         return True
+
 
 ## A object to hold and manipulate flags for a chat message.
 class ChatFlags:
@@ -713,7 +726,7 @@ class ChatFlags:
         elif name == "channel":
             flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
-        
+
         self.__dict__[name] = value
 
     def __repr__(self):
@@ -743,7 +756,7 @@ class CommandsProcessor:
 
     ## Link the processor with the chat manager.
     def __init__(self, chatMgr):
-        
+
         self.chatMgr = chatMgr
 
     ## Called when the processor needs to process a message.
@@ -751,15 +764,95 @@ class CommandsProcessor:
     # to apply the command.
     def __call__(self, message):
 
-        for command, function in kCommands.LocalizedCommands:
-            if message.lower().startswith(command + " "):
-                theMessage = message.split(maxsplit=1)
-                if len(theMessage) > 1:
-                    params = theMessage[0]
+        # Load all available commands.
+        commands = dict()
+        commands.update(kCommands.Localized)
+        if PtGetAgeName() == "Jalak":
+            commands.update(kCommands.Jalak)
+        if PtIsInternalRelease():
+            commands.update(kCommands.Internal)
+        commands.update(kCommands.EasterEggs)
+
+        # Does the message contain a standard command?
+        for command, function in commands.iteritems():
+            if message.lower().startswith(command):
+                theMessage = message.split(" ", 1)
+                if len(theMessage) > 1 and theMessage[1]:
+                    params = theMessage[1]
                 else:
                     params = None
-                self.__dict__[function](params)
+                getattr(self, function)(params)
                 return None
+
+        # Is it a simple text-based command?
+        for command, text in kCommands.Text.iteritems():
+            if message.lower().startswith(command):
+                self.chatMgr.AddChatLine(None, text, 0)
+                return None
+
+        # Is it another text-based easter-egg command?
+        if message.lower().startswith("/get "):
+            v = "is"
+            if message[-1:] == "s":
+                v = "are"
+            self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
+            return None
+
+        # Is it an emote, a "/me" or invalid command?
+        if message.startswith("/"):
+            words = message.split()
+            try:
+                emote = xKIExtChatCommands.xChatEmoteXlate[unicode(words[0][1:].lower())]
+                PtEmoteAvatar(emote[0])
+                if PtGetLanguage() == PtLanguage.kEnglish:
+                    avatar = PtGetLocalAvatar()
+                    gender = avatar.avatar.getAvatarClothingGroup()
+                    if gender > kFemaleClothingGroup:
+                        gender = kMaleClothingGroup
+                    hisHer = PtGetLocalizedString("KI.EmoteStrings.His")
+                    if gender == kFemaleClothingGroup:
+                        hisHer = PtGetLocalizedString("KI.EmoteStrings.Her")
+                    statusMsg = PtGetLocalizedString(emote[1], [PtGetLocalPlayer().getPlayerName(), hisHer])
+                else:
+                    statusMsg = PtGetLocalizedString(emote[1], [PtGetLocalPlayer().getPlayerName()])
+                self.chatMgr.DisplayStatusMessage(statusMsg, 1)
+                message = message[len(words[0]):]
+                if message == "":
+                    return None
+                return message[1:]
+            except LookupError:
+                try:
+                    command = xKIExtChatCommands.xChatExtendedChat[unicode(words[0][1:].lower())]
+                    if isinstance(command, str):
+                        args = message[len(words[0]):]
+                        PtConsole(command + args)
+                    else:
+                        try:
+                            args = message[len(words[0]) + 1:]
+                            if args:
+                                try:
+                                    retDisp = command(args)
+                                except TypeError:
+                                    retDisp = command()
+                                    return args
+                            else:
+                                retDisp = command()
+                            if isinstance(retDisp, unicode) or isinstance(retDisp, str):
+                                self.chatMgr.DisplayStatusMessage(retDisp)
+                            elif isinstance(retDisp, tuple):
+                                if retDisp[0]:
+                                    self.chatMgr.AddChatLine(None, retDisp[1], kChat.SystemMessage)
+                                else:
+                                    self.chatMgr.DisplayStatusMessage(retDisp[1])
+                        except:
+                            PtDebugPrint("xKIChat.commandsProcessor(): Chat command function did not run.", command, level=kErrorLevel)
+                except LookupError:
+                    if unicode(words[0].lower()) in xKIExtChatCommands.xChatSpecialHandledCommands:
+                        return message
+                    else:
+                        self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.CommandError", [message]), kChat.SystemMessage)
+                return None
+
         return message
 
     ## Extract the player ID from a chat's params.
@@ -768,114 +861,364 @@ class CommandsProcessor:
         if not params:
             return 0
         try:
-            pid = long(int(params))
-            return pid
+            pID = long(int(params))
+            return pID
         except ValueError:
-            for player in BKPlayerList:
+            for player in self.chatMgr.BKPlayerList:
                 if isinstance(player, ptPlayer):
                     plyrName = player.getPlayerName()
                     if params == plyrName:
                         return player.getPlayerID()
             return 0
 
-    ## Add a player as a buddy.
-    def AddBuddy(player):
+    #~~~~~~~~~~~~~~~~~~~#
+    # Standard Commands #
+    #~~~~~~~~~~~~~~~~~~~#
 
-        pid = self.GetPID(player)
-        if pid:
+    ## Add a player as a buddy.
+    def AddBuddy(self, player):
+
+        pID = self.GetPID(player)
+        if pID:
             localPlayer = PtGetLocalPlayer()
-            if pid != localPlayer.getPlayerID():
+            if pID != localPlayer.getPlayerID():
                 vault = ptVault()
                 buddies = vault.getBuddyListFolder()
                 if buddies is not None:
-                    if buddies.playerlistHasPlayer(pid):
+                    if buddies.playerlistHasPlayer(pID):
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.AlreadyAdded"), kChat.SystemMessage)
                     else:
-                        buddies.playerlistAddPlayer(pid)
+                        buddies.playerlistAddPlayer(pID)
                         self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Added"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotYourself"), kChat.SystemMessage)
         else:
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
-        return None
 
     ## Clear the chat.
-    def ClearChat(self):
+    def ClearChat(self, params):
 
         chatAreaU = ptGUIControlMultiLineEdit(self.chatMgr.KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
         chatAreaM = ptGUIControlMultiLineEdit(self.chatMgr.KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
         chatAreaU.clearBuffer()
         chatAreaM.clearBuffer()
-        return None
 
     ## Ignores a player.
     def IgnorePlayer(self, player):
 
-        pid = self.GetPID(player)
-        if pid:
+        pID = self.GetPID(player)
+        if pID:
             localplayer = PtGetLocalPlayer()
-            if pid != localplayer.getPlayerID():
+            if pID != localplayer.getPlayerID():
                 vault = ptVault()
                 ignores = vault.getIgnoreListFolder()
                 if ignores is not None:
-                    if ignores.playerlistHasPlayer(pid):
+                    if ignores.playerlistHasPlayer(pID):
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.AlreadyAdded"), kChat.SystemMessage)
                     else:
-                        ignores.playerlistAddPlayer(pid)
+                        ignores.playerlistAddPlayer(pID)
                         self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Added"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotYourself"), kChat.SystemMessage)
         else:
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
-        return None
 
     ## Remove a player from this player's buddies.
     def RemoveBuddy(self, player):
 
-        pid = self.GetPID(player)
-        if pid:
-            vault = ptVault()
-            buddies = vault.getBuddyListFolder()
-            if buddies is not None:
-                if buddies.playerlistHasPlayer(pid):
-                    buddies.playerlistRemovePlayer(pid)
-                    self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
-                else:
-                    self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotFound"), kChat.SystemMessage)
+        pID = self.GetPID(player)
+        vault = ptVault()
+        buddies = vault.getBuddyListFolder()
+        if buddies is None:
+            return
+
+        # Is it a number?
+        if pID:
+            if buddies.playerlistHasPlayer(pID):
+                buddies.playerlistRemovePlayer(pID)
+                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
+            else:
+                self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotFound"), kChat.SystemMessage)
+        # Or is it a username?
         else:
-            # Check the ignore list.
-            vault = ptVault()
-            buddies = vault.getBuddyListFolder()
-            if buddies is not None:
-                buddyRefs = buddies.getChildNodeRefList()
-                for plyr in buddyRefs:
-                    if isinstance(plyr, ptVaultNodeRef):
-                        PLR = plyr.getChild()
-                        PLR = PLR.upcastToPlayerInfoNode()
-                        if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
-                            if player == PLR.playerGetName():
-                                buddies.playerlistRemovePlayer(PLR.playerGetID())
-                                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
-                                return None
+            buddyRefs = buddies.getChildNodeRefList()
+            for plyr in buddyRefs:
+                if isinstance(plyr, ptVaultNodeRef):
+                    PLR = plyr.getChild()
+                    PLR = PLR.upcastToPlayerInfoNode()
+                    if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
+                        if player == PLR.playerGetName():
+                            buddies.playerlistRemovePlayer(PLR.playerGetID())
+                            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
+                            return
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
-        return None
 
     ## Start logging the chat.
-    def StartLog(self):
+    def StartLog(self, params):
 
-        if self.chatLogFile is None:
-            self.chatLogFile = ptStatusLog()
-        self.chatLogFile.open("Chat.log", 30, int(PtStatusLogFlags.kAppendToLast) + int(PtStatusLogFlags.kTimestamp))
-        self.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.LogStarted"))
-        return None
+        if self.chatMgr.chatLogFile is None:
+            self.chatMgr.chatLogFile = ptStatusLog()
+        self.chatMgr.chatLogFile.open("Chat.log", 30, int(PtStatusLogFlags.kAppendToLast) + int(PtStatusLogFlags.kTimestamp))
+        self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.LogStarted"))
 
     ## Stop logging the chat.
-    def StopLog(self):
-        
-        if self.chatLogFile is not None:
-            if self.chatLogFile.isOpen():
-                self.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.LogStopped"))
-            self.chatLogFile.close()
-        return None
-    
+    def StopLog(self, params):
+
+        if self.chatMgr.chatLogFile is not None:
+            if self.chatMgr.chatLogFile.isOpen():
+                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.LogStopped"))
+            self.chatMgr.chatLogFile.close()
+
     ## Remove a player from this player's ignore list.
+    def UnignorePlayer(self, player):
+
+        pID = self.GetPID(player)
+        vault = ptVault()
+        ignores = vault.getIgnoreListFolder()
+        if ignores is None:
+            return
+
+        # Is it a number?
+        if pID:
+            if ignores.playerlistHasPlayer(pID):
+                ignores.playerlistRemovePlayer(pID)
+                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
+            else:
+                self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotFound"), kChat.SystemMessage)
+        # Or is it a username?
+        else:
+            ignorerefs = ignores.getChildNodeRefList()
+            for plyr in ignorerefs:
+                if isinstance(plyr, ptVaultNodeRef):
+                    PLR = plyr.getChild()
+                    PLR = PLR.upcastToPlayerInfoNode()
+                    if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
+                        if player == PLR.playerGetName():
+                            ignores.playerlistRemovePlayer(PLR.playerGetID())
+                            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
+                            return
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
+
+    ## Enable or disable AutoShout mode in the chat.
+    def AutoShout(self, params):
+
+        self.chatMgr.autoShout = abs(self.chatMgr.autoShout - 1)
+        if self.chatMgr.autoShout:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Messages.AutoShoutEnabled"), kChat.BroadcastMsg)
+        else:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Messages.AutoShoutDisabled"), kChat.BroadcastMsg)
+
+    ## Dumps logs to the specified destination.
+    def DumpLogs(self, destination):
+
+        if not destination:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedLogDumpCmd"), kChat.SystemMessage)
+            return
+        destination = destination.strip()
+        currentTime = time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime())
+        PtDebugPrint("-- Logs dumped to \"{0}\" at {1}. --".format(destination, currentTime))
+        # Use a timer to allow for a final message to be logged.
+        self.chatMgr.logDumpDest = destination  # So the timer can get at it.
+        PtAtTimeCallback(self.chatMgr.key, 0.25, kTimers.DumpLogs)
+
+    ## Changes the user's password.
+    def ChangePassword(self, newPassword):
+
+        if not newPassword:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.BadPassword"), kChat.SystemMessage)
+            return
+        newPassword = newPassword.strip()
+        if len(newPassword) > 15:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.PasswordTooLong"), kChat.SystemMessage)
+            return
+        PtChangePassword(newPassword)
+
+    #~~~~~~~~~~~~~~~~#
+    # Jalak Commands #
+    #~~~~~~~~~~~~~~~~#
+
+    ## Save the player's current Jalak columns to a file.
+    def SaveColumns(self, columnsFile):
+
+        if columnsFile:
+            fName = columnsFile.strip()
+            fName = fName + ".txt"
+        else:
+            fName = "JalakColumns.txt"
+        self.chatMgr.SendJalakNote("SaveColumns;" + fName)
+
+    ## Load the player's Jalak columns from a file.
+    def LoadColumns(self, columnsFile):
+
+        if columnsFile:
+            fName = columnsFile.strip()
+            fName = fName + ".txt"
+        else:
+            fName = "JalakColumns.txt"
+        self.chatMgr.SendJalakNote("LoadColumns;" + fName)
+
+    #~~~~~~~~~~~~~~~~~~~#
+    # Internal Commands #
+    #~~~~~~~~~~~~~~~~~~~#
+
+    ## Reset the Cleft to its default setting.
+    def RevisitCleft(self, params):
+
+        vault = ptVault()
+        chron = vault.findChronicleEntry("CleftSolved")
+        if chron is not None:
+            chronFolder = vault.getChronicleFolder()
+            if chronFolder is not None:
+                chronFolder.removeNode(chron)
+
+    ## Restart the game with key points reset.
+    def RestartGame(self, params):
+
+        vault = ptVault()
+        chron = vault.findChronicleEntry("InitialAvCustomizationsDone")
+        if chron is not None:
+            chronFolder = vault.getChronicleFolder()
+            if chronFolder is not None:
+                chronFolder.removeNode(chron)
+        chron = vault.findChronicleEntry("IntroPlayed")
+        if chron is not None:
+            chronFolder = vault.getChronicleFolder()
+            if chronFolder is not None:
+                chronFolder.removeNode(chron)
+        chron = vault.findChronicleEntry("CleftSolved")
+        if chron is not None:
+            chronFolder = vault.getChronicleFolder()
+            if chronFolder is not None:
+                chronFolder.removeNode(chron)
+
+    #~~~~~~~~~~~~~~~~~~~~~~#
+    # Easter Eggs Commands #
+    #~~~~~~~~~~~~~~~~~~~~~~#
+
+    ## Look around for exits and informational text.
+    def LookAround(self, params):
+
+        # Find the nearby people.
+        playerList = self.chatMgr.GetPlayersInChatDistance(minPlayers=-1)
+        people = "Nobody in particular."
+        if len(playerList) > 0:
+            people = ""
+            for player in playerList:
+                people += player.getPlayerName() + ", "
+            people = people[:-2]
+
+        # Load the Age-specific text.
+        ageInfo = PtGetAgeInfo()
+        if ageInfo is None:
+            return
+        currentAge = ageInfo.getAgeFilename()
+        see = ""
+        exits = "North and West"
+        if currentAge in kEasterEggs:
+            see = kEasterEggs[currentAge]["see"]
+            exits = kEasterEggs[currentAge]["exits"]
+            if "people" in kEasterEggs[currentAge]:
+                people = kEasterEggs[currentAge]["people"]
+
+        ## Display the info.
+        self.chatMgr.AddChatLine(None, "{0}:\n{1}  Standing near you is {2}.\n  There are exits to the {3}.".format(self.chatMgr.GetAgeName(), see, people, exits), 0)
+
+    ## Get a feather in the current Age.
+    def GetFeather(self, params):
+
+        ageInfo = PtGetAgeInfo()
+        if ageInfo is None:
+            return
+        currentAge = ageInfo.getAgeFilename()
+        if currentAge == "Gira":
+            if self.chatMgr.gFeather < 7:
+                self.chatMgr.AddChatLine(None, "You pick up a plain feather and put it in your pocket. I know you didn't see yourself do that... trust me, you have a feather in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            else:
+                self.chatMgr.AddChatLine(None, "You can only carry seven plain feathers.", 0)
+        elif currentAge == "EderDelin":
+            if self.chatMgr.gFeather == 7:
+                self.chatMgr.AddChatLine(None, "You search... and find the \"Red\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 7:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing seven plain feathers.", 0)
+        elif currentAge == "Dereno":
+            if self.chatMgr.gFeather == 8:
+                self.chatMgr.AddChatLine(None, "You search... and find the \"Blue\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 8:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Red\" feather.", 0)
+        elif currentAge == "Payiferen":
+            if self.chatMgr.gFeather == 9:
+                self.chatMgr.AddChatLine(None, "You search... and find the \"Black\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 9:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Blue\" feather.", 0)
+        elif currentAge == "Ercana":
+            if self.chatMgr.gFeather == 10:
+                self.chatMgr.AddChatLine(None, "You search... and find the \"Silver\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 10:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Black\" feather.", 0)
+        elif currentAge == "Jalak":
+            if self.chatMgr.gFeather == 11:
+                self.chatMgr.AddChatLine(None, "You search... and find the \"Duck\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 11:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Silver\" feather.", 0)
+        elif currentAge == "Ahnonay":
+            if self.chatMgr.gFeather == 12:
+                self.chatMgr.AddChatLine(None, "You search... and find a large \"Rukh\" feather (how could you have missed it?) and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 12:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Duck\" feather.", 0)
+        else:
+            self.chatMgr.AddChatLine(None, "There are no feathers here.", 0)
+            return
+        vault = ptVault()
+        entry = vault.findChronicleEntry("feather")
+        if entry is None:
+            vault.addChronicleEntry("feather", 1, str(self.chatMgr.gFeather))
+            entry = vault.findChronicleEntry("feather")
+        entry.chronicleSetValue(str(self.chatMgr.gFeather))
+        entry.save()
+
+    ## Looks for feathers in the player's "inventory".
+    def LookForFeathers(self, params):
+
+        if self.chatMgr.gFeather:
+            if self.chatMgr.gFeather == 1:
+                self.chatMgr.AddChatLine(None, "You see a feather!", 0)
+            else:
+                pFeathers = self.chatMgr.gFeather
+                if pFeathers > 7:
+                    pFeathers = 7
+                pOut = "You see {0} plain feathers".format(pFeathers)
+                if self.chatMgr.gFeather > 7:
+                    pOut += " and a \"Red\" feather"
+                if self.chatMgr.gFeather > 8:
+                    pOut += " and a \"Blue\" feather"
+                if self.chatMgr.gFeather > 9:
+                    pOut += " and a \"Black\" feather"
+                if self.chatMgr.gFeather > 10:
+                    pOut += " and a \"Silver\" feather"
+                if self.chatMgr.gFeather > 11:
+                    pOut += " and a \"Duck\" feather"
+                if self.chatMgr.gFeather > 12:
+                    pOut += " and a large \"Rukh\" feather (sticking out of your pocket)"
+                pOut += "."
+                self.chatMgr.AddChatLine(None, pOut, 0)
+        else:
+            self.chatMgr.AddChatLine(None, "There is nothing there but lint.", 0)

@@ -76,6 +76,31 @@ kListLightResps = ["respKILightOff","respKILightOn" ]
 ## The name of the KI light scene object.
 kKILightObjectName = "RTOmniKILight"
 
+## The easter eggs chat commands.
+kEasterEggs = {
+               "city" : {"see" : "You see the remnants of a great civilization, ready to be rebuilt. Where are the flying monkeys?",
+                       "exits" : "NorthWest and South."},
+               "Personal" : {"see" : "You see a small hut... Looks deserted.",
+                           "exits" : None},
+               "Teledahn" : {"see" : "You see 'shrooms everywhere! Big ones, small ones. Are they edible?",
+                           "exits" : "East."},
+               "Nexus" : {"see" : "You see a jukebox like machine.",
+                        "exits" : None},
+               "Garden" : {"see" : "You see bugs.   BUGS! I hate bugs.",
+                         "exits" : "North and South."},
+               "EderTsogal" : {"see" : "You see grass, water and things floating in the air (not feathers).",
+                             "exits" : "North. But you'll have to climb or fly to get there."},
+               "Dereno" : {"see" : "Ah, Dah-Ree-Toe. You see... Well, if someone would clean those stupid windows you could see a *lot*. Have I been here before? Maybe all pods just look the same.",
+                         "exits" : "SouthWest and East. But they are both blocked."},
+               "BahroCave" : {"see" : "You see a darkly lit cavern. Strange images on the wall next to you, flickering in the subdued light.\nBe afraid. Be very afraid!",
+                            "exits" : "North, West and East. But they are blocked by a large hole in the floor."},
+               "Minkata" : {"see" : "You see sand and dust in all directions. Above you there is a filtered sun or two... or more.\nSomewhere there is a horse with no name.",
+                          "exits" : "East. Nine days away."},
+               "Cleft" : {"see" : "You see sand for as far as the eye can see. Gonna need a vehicle of some sort.",
+                        "exits" : "Well... I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
+                        "people" : "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"},
+}
+
 ## Constants for Age display names.
 class kAges:
     Display = {"Ae'gura" : "D'ni-Ae'gura",
@@ -208,14 +233,27 @@ class kColors:
 
 ## Constants for KI Chat commands.
 class kCommands:
-    LocalizedCommands = {PtGetLocalizedString("KI.Commands.ChatClearAll") : "ClearChat",
-                         PtGetLocalizedString("KI.Commands.ChatStartLog") : "StartLog",
-                         PtGetLocalizedString("KI.Commands.ChatStopLog") : "StopLog",
-                         PtGetLocalizedString("KI.Commands.AddBuddy") : "AddBuddy",
-                         PtGetLocalizedString("KI.Commands.RemoveBuddy") : "RemoveBuddy",
-                         PtGetLocalizedString("KI.Commands.Ignore") : "IgnorePlayer",
-                         PtGetLocalizedString("KI.Commands.Unignore") : "UnignorePlayer"
-                        }
+    Localized = {PtGetLocalizedString("KI.Commands.ChatClearAll") : "ClearChat",
+                 PtGetLocalizedString("KI.Commands.ChatStartLog") : "StartLog",
+                 PtGetLocalizedString("KI.Commands.ChatStopLog") : "StopLog",
+                 PtGetLocalizedString("KI.Commands.AddBuddy") : "AddBuddy",
+                 PtGetLocalizedString("KI.Commands.RemoveBuddy") : "RemoveBuddy",
+                 PtGetLocalizedString("KI.Commands.Ignore") : "IgnorePlayer",
+                 PtGetLocalizedString("KI.Commands.Unignore") : "UnignorePlayer",
+                 PtGetLocalizedString("KI.Commands.AutoShout") : "AutoShout",
+                 PtGetLocalizedString("KI.Commands.DumpLogs") : "DumpLogs",
+                 PtGetLocalizedString("KI.Commands.DumpLog") : "DumpLogs",
+                 PtGetLocalizedString("KI.Commands.ChangePassword") : "ChangePassword"}
+    Jalak = {"/savecolumns" : "SaveColumns",
+             "/loadcolumns" : "LoadColumns"}
+    Internal = {"/revisitcleft" : "RevisitCleft",
+                "/restart" : "RestartGame"}
+    EasterEggs = {"/look" : "LookAround",
+                  "/get feather" : "GetFeather",
+                  "/look in pocket" : "LookInPocket"}
+    Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
+            "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
+
 ## Numeric limits for the KI.
 class kLimits:
     JournalTextSize = 2048
