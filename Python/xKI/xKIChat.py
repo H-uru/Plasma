@@ -85,11 +85,12 @@ class xKIChat(object):
 
         # Fading globals.
         self.currentFadeTick = 0
-        self.fadeEnableFlag = 1
+        self.fadeEnableFlag = True
         self.fadeMode = kChat.FadeNotActive
         self.ticksOnFull = 30
 
         # Set the properties from the KI.
+        self.key = None  # Plasma has to be initialized for this.
         self.BKPlayerList = []
         self.KIDisabled = False
         self.KILevel = kMicroKI
@@ -235,8 +236,6 @@ class xKIChat(object):
                     return
             # If it is not local, check to see if the player is still online.
             else:
-                cFlags.interAge = True
-                message = pre + message
                 vault = ptVault()
                 PIKA = vault.getPeopleIKnowAboutFolder()
                 if PIKA is not None and PIKA.playerlistHasPlayer(self.toReplyToLastPrivatePlayerID[1]):
@@ -254,6 +253,9 @@ class xKIChat(object):
             # What they selected doesn't matter if they're replying.
             selPlyrList = [ptPlayer(self.toReplyToLastPrivatePlayerID[0], self.toReplyToLastPrivatePlayerID[1])]
             cFlags.private = True
+            if self.toReplyToLastPrivatePlayerID[2]:
+                cFlags.interAge = True
+                message = pre + message
 
         # Is it a private message sent with "/p"?
         elif message.startswith(PtGetLocalizedString("KI.Commands.ChatPrivate")):
@@ -266,12 +268,12 @@ class xKIChat(object):
                     # Is the player in this Age?
                     if isinstance(player, ptPlayer):
                         plyrName = player.getPlayerName()
-                        if pWords[1] == plyrName:
+                        if pWords[1].startswith(plyrName + " "):
                             selPlyrList.append(player)
                             cFlags.private = True
                             foundBuddy = True
                             # Remove the "/p buddyname" from the message.
-                            message = message[message.find(pWords[1]) + len(pWords[1]) + 1:]
+                            message = pWords[1][len(plyrName) + 1:]
                             self.AddPlayerToRecents(player.getPlayerID())
                             break
                     # Is the player in another Age?
@@ -280,18 +282,20 @@ class xKIChat(object):
                         ePlyr = ePlyr.upcastToPlayerInfoNode()
                         if ePlyr is not None:
                             plyrName = ePlyr.playerGetName()
-                            if pWords[1] == plyrName:
+                            if pWords[1].startswith(plyrName + " "):
                                 selPlyrList.append(ptPlayer(ePlyr.playerGetName(), ePlyr.playerGetID()))
                                 cFlags.private = True
                                 cFlags.interAge = True
                                 foundBuddy = True
                                 # Add this player's current Age.
-                                message = pre + message[message.find(pWords[1]) + len(pWords[1]) + 1:]
+                                message = pre + pWords[1][len(plyrName) + 1:]
                                 self.AddPlayerToRecents(ePlyr.playerGetID())
                                 break
             if not foundBuddy:
-                PtDebugPrint("xKIChat.SendMessage(): \"/p\" command can't find player \"{0}\".".format(pWords[1]), level=kDebugDumpLevel)
-                self.AddChatLine(None, PtGetLocalizedString("KI.Chat.CannotFindBuddy", [pWords[1]]), kChat.SystemMessage)
+                PtDebugPrint("xKIChat.SendMessage(): \"/p\" command can't find player.", level=kDebugDumpLevel)
+                # Note: because there's no way of knowing the player's name
+                #(might have spaces), just don't try to display it.
+                self.AddChatLine(None, "(Can't find the player in any of the player lists.)", kChat.SystemMessage)
                 return
 
         # Is it a message to the player's neighbors?
@@ -332,7 +336,7 @@ class xKIChat(object):
                     selPlyrList.append(toPlyr)
                     cFlags.private = True
                     self.AddPlayerToRecents(toPlyr.getPlayerID())
-                    PtDebugPrint("xKIChat.SendMessage(): Private message to \"{0}\".".format(toPlyr.getPlayerName()), level=kDebugDumpLevel)
+                    PtDebugPrint("xKIChat.SendMessage(): Private message to \"{}\".".format(toPlyr.getPlayerName()), level=kDebugDumpLevel)
 
                 # Is it a player (possibly in another Age)?
                 elif isinstance(toPlyr, ptVaultNodeRef):
@@ -402,8 +406,8 @@ class xKIChat(object):
     def AddChatLine(self, player, message, cFlags, forceKI=True):
 
         try:
-            PtDebugPrint("xKIChat.AddChatLine(): Message = \"{0}\".".format(message), player, cFlags, level=kDebugDumpLevel)
-        except UnicodeDecodeError:
+            PtDebugPrint("xKIChat.AddChatLine(): Message = \"{}\".".format(message), player, cFlags, level=kDebugDumpLevel)
+        except UnicodeEncodeError:
             pass
 
         # Fix for Character of Doom (CoD).
@@ -458,7 +462,7 @@ class xKIChat(object):
                                 if buddies is not None:
                                     buddyID = player.getPlayerID()
                                     if not buddies.playerlistHasPlayer(buddyID):
-                                        PtDebugPrint("xKIChat.AddChatLine(): Add unknown buddy {0} to recents.".format(buddyID))
+                                        PtDebugPrint("xKIChat.AddChatLine(): Add unknown buddy {} to recents.".format(buddyID))
                                         self.AddPlayerToRecents(buddyID)
                         except ValueError:
                             pass
@@ -514,8 +518,8 @@ class xKIChat(object):
         # If the KI is being forced open, flash the window for the player.
         if forceKI:
             PtFlashWindow()
-        if forceKI and not self.KIDisabled and not mKIdialog.isEnabled():
-            mKIdialog.show()
+            if not self.KIDisabled and not mKIdialog.isEnabled():
+                mKIdialog.show()
         if player is not None:
             chatHeaderFormatted = pretext + unicode(player.getPlayerName()) + U":"
             chatMessageFormatted = U" " + message
@@ -657,33 +661,33 @@ class ChatFlags:
     # Create a container for the flags.
     def __init__(self, flags):
 
-        self.flags = flags
+        self.__dict__["flags"] = flags
 
-        self.broadcast = True
-        self.toSelf = True
+        self.__dict__["broadcast"] = True
+        self.__dict__["toSelf"] = False
 
-        if self.flags & kRTChatPrivate:
+        if flags & kRTChatPrivate:
             self.__dict__["private"] = True
             self.__dict__["broadcast"] = False
         else:
             self.__dict__["private"] = False
 
-        if self.flags & kRTChatAdmin:
+        if flags & kRTChatAdmin:
             self.__dict__["admin"] = True
         else:
             self.__dict__["admin"] = False
 
-        if self.flags & kRTChatInterAge:
+        if flags & kRTChatInterAge:
             self.__dict__["interAge"] = True
         else:
             self.__dict__["interAge"] = False
 
-        if self.flags & kRTChatStatusMsg:
+        if flags & kRTChatStatusMsg:
             self.__dict__["status"] = True
         else:
             self.__dict__["status"] = False
 
-        if self.flags & kRTChatNeighborsMsg:
+        if flags & kRTChatNeighborsMsg:
             self.__dict__["neighbors"] = True
         else:
             self.__dict__["neighbors"] = False
@@ -693,15 +697,15 @@ class ChatFlags:
     def __setattr__(self, name, value):
 
         if name == "broadcast" and value:
-            self.__dict__['flags'] &= kRTChatFlagMask ^ kRTChatPrivate
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
 
         elif name == "private":
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
             if value:
-                self.__dict__['flags'] |= kRTChatPrivate
-                self.__dict__['broadcast'] = False
+                self.__dict__["flags"] |= kRTChatPrivate
+                self.__dict__["broadcast"] = False
             else:
-                self.__dict__['broadcast'] = True
+                self.__dict__["broadcast"] = True
 
         elif name == "admin":
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAdmin
@@ -746,8 +750,8 @@ class ChatFlags:
             string += "status "
         if self.neighbors:
             string += "neighbors "
-        string += "channel = {0} ".format(self.channel)
-        string += "flags = {0}".format(self.flags)
+        string += "channel = {} ".format(self.channel)
+        string += "flags = {}".format(self.flags)
         return string
 
 
@@ -1016,7 +1020,7 @@ class CommandsProcessor:
             return
         destination = destination.strip()
         currentTime = time.strftime("%d %b %Y %H:%M:%S (GMT)", time.gmtime())
-        PtDebugPrint("-- Logs dumped to \"{0}\" at {1}. --".format(destination, currentTime))
+        PtDebugPrint("-- Logs dumped to \"{}\" at {}. --".format(destination, currentTime))
         # Use a timer to allow for a final message to be logged.
         self.chatMgr.logDumpDest = destination  # So the timer can get at it.
         PtAtTimeCallback(self.chatMgr.key, 0.25, kTimers.DumpLogs)
@@ -1100,7 +1104,7 @@ class CommandsProcessor:
 
         # Find the nearby people.
         playerList = self.chatMgr.GetPlayersInChatDistance(minPlayers=-1)
-        people = "Nobody in particular."
+        people = "nobody in particular"
         if len(playerList) > 0:
             people = ""
             for player in playerList:
@@ -1113,15 +1117,18 @@ class CommandsProcessor:
             return
         currentAge = ageInfo.getAgeFilename()
         see = ""
-        exits = "North and West"
+        exits = " North and West."
         if currentAge in kEasterEggs:
             see = kEasterEggs[currentAge]["see"]
-            exits = kEasterEggs[currentAge]["exits"]
+            if not kEasterEggs[currentAge]["exits"]:
+                exits = "... well, there are no exits."
+            else:
+                exits = " " + kEasterEggs[currentAge]["exits"]
             if "people" in kEasterEggs[currentAge]:
                 people = kEasterEggs[currentAge]["people"]
 
         ## Display the info.
-        self.chatMgr.AddChatLine(None, "{0}:\n{1}  Standing near you is {2}.\n  There are exits to the {3}.".format(self.chatMgr.GetAgeName(), see, people, exits), 0)
+        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(self.chatMgr.GetAgeName(), see, people, exits), 0)
 
     ## Get a feather in the current Age.
     def GetFeather(self, params):
@@ -1205,7 +1212,7 @@ class CommandsProcessor:
                 pFeathers = self.chatMgr.gFeather
                 if pFeathers > 7:
                     pFeathers = 7
-                pOut = "You see {0} plain feathers".format(pFeathers)
+                pOut = "You see {} plain feathers".format(pFeathers)
                 if self.chatMgr.gFeather > 7:
                     pOut += " and a \"Red\" feather"
                 if self.chatMgr.gFeather > 8:

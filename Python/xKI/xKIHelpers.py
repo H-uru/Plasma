@@ -197,7 +197,7 @@ def CMPplayerOnline(playerA, playerB):
     elPlayerA = playerA.getChild()
     elPlayerB = playerB.getChild()
     if elPlayerA is not None and elPlayerB is not None:
-        if elPlayerA.getType() is PtVaultNodeTypes.kPlayerInfoNode and elPlayerB.getType() is PtVaultNodeTypes.kPlayerInfoNode:
+        if elPlayerA.getType() == PtVaultNodeTypes.kPlayerInfoNode and elPlayerB.getType() == PtVaultNodeTypes.kPlayerInfoNode:
             elPlayerA = elPlayerA.upcastToPlayerInfoNode()
             elPlayerB = elPlayerB.upcastToPlayerInfoNode()
             if elPlayerA.playerIsOnline() and elPlayerB.playerIsOnline():

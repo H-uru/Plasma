@@ -79,26 +79,26 @@ kKILightObjectName = "RTOmniKILight"
 ## The easter eggs chat commands.
 kEasterEggs = {
                "city" : {"see" : "You see the remnants of a great civilization, ready to be rebuilt. Where are the flying monkeys?",
-                       "exits" : "NorthWest and South."},
-               "Personal" : {"see" : "You see a small hut... Looks deserted.",
-                           "exits" : None},
+                         "exits" : "NorthWest and South."},
+               "Personal" : {"see" : "You see a small hut... looks deserted.",
+                             "exits" : None},
                "Teledahn" : {"see" : "You see 'shrooms everywhere! Big ones, small ones. Are they edible?",
-                           "exits" : "East."},
-               "Nexus" : {"see" : "You see a jukebox like machine.",
-                        "exits" : None},
-               "Garden" : {"see" : "You see bugs.   BUGS! I hate bugs.",
-                         "exits" : "North and South."},
+                             "exits" : "East."},
+               "Nexus" : {"see" : "You see a jukebox-like machine.",
+                          "exits" : None},
+               "Garden" : {"see" : "You see bugs. BUGS! I hate bugs.",
+                           "exits" : "North and South."},
                "EderTsogal" : {"see" : "You see grass, water and things floating in the air (not feathers).",
-                             "exits" : "North. But you'll have to climb or fly to get there."},
+                               "exits" : "North. But you'll have to climb or fly to get there."},
                "Dereno" : {"see" : "Ah, Dah-Ree-Toe. You see... Well, if someone would clean those stupid windows you could see a *lot*. Have I been here before? Maybe all pods just look the same.",
-                         "exits" : "SouthWest and East. But they are both blocked."},
-               "BahroCave" : {"see" : "You see a darkly lit cavern. Strange images on the wall next to you, flickering in the subdued light.\nBe afraid. Be very afraid!",
-                            "exits" : "North, West and East. But they are blocked by a large hole in the floor."},
-               "Minkata" : {"see" : "You see sand and dust in all directions. Above you there is a filtered sun or two... or more.\nSomewhere there is a horse with no name.",
-                          "exits" : "East. Nine days away."},
+                           "exits" : "SouthWest and East. But they are both blocked."},
+               "BahroCave" : {"see" : "You see a darkly lit cavern. Strange images on the wall next to you, flickering in the subdued light.Be afraid. Be very afraid!",
+                              "exits" : "North, West and East. But they are blocked by a large hole in the floor."},
+               "Minkata" : {"see" : "You see sand and dust in all directions. Above you there is a filtered sun or two... or more. Somewhere there is a horse with no name.",
+                            "exits" : "East. Nine days away."},
                "Cleft" : {"see" : "You see sand for as far as the eye can see. Gonna need a vehicle of some sort.",
-                        "exits" : "Well... I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
-                        "people" : "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"},
+                          "exits" : "... well, I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
+                          "people" : "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"},
 }
 
 ## Constants for Age display names.
@@ -136,10 +136,10 @@ class kAges:
                "Spy Room" : "D'ni-Ae'gura",
                "spyroom" : "D'ni-Ae'gura"}
     Hide = ["BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"]
-    NoInvite = ["personal", "nexus", "cleft", "avatarcustomization", "city",
-                "bahrocave", "livebahrocave", "livebahrocaves", 
-                "baroncityoffice", "ercanacitysilo", "greatzero", "shaft",
-                "descent", "spyroom"]
+    NoInvite = ["Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
+                "BahroCave", "LiveBahroCave", "LiveBahroCaves", 
+                "BaronCityOffice", "ErcanaCitySilo", "GreatZero", "Shaft",
+                "Descent", "Spyroom"]
     Replace = {"Garrison" : "Gahreesen",
                "Personal" : "Relto",
                "Garden" : "Eder Kemo",
@@ -250,7 +250,7 @@ class kCommands:
                 "/restart" : "RestartGame"}
     EasterEggs = {"/look" : "LookAround",
                   "/get feather" : "GetFeather",
-                  "/look in pocket" : "LookInPocket"}
+                  "/look in pocket" : "LookForFeathers"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
 
@@ -269,6 +269,7 @@ class kGUI:
     ExitButtonID = 4
     PlayerBookCBID = 15
     MiniMaximizeRGID = 34
+    OptionsMenuButtonID = 200
     microChatButton = 100
     
     RolloverLeftID = 998
@@ -301,15 +302,15 @@ class kGUI:
     miniMarkerIndicator01 = 601
     miniMarkerIndicatorLast = 625
     miniMarkerColors = {
-                        'off'       : 0.0,
-                        'redlt'     : 1.5,
-                        'red'       : 3.5,
-                        'yellowlt'  : 6.0,
-                        'yellow'    : 8.5,
-                        'purplelt'  : 11.0,
-                        'purple'    : 13.5,
-                        'greenlt'   : 16.0,
-                        'green'     : 18.5,
+                        "off"       : 0.0,
+                        "redlt"     : 1.5,
+                        "red"       : 3.5,
+                        "yellowlt"  : 6.0,
+                        "yellow"    : 8.5,
+                        "purplelt"  : 11.0,
+                        "purple"    : 13.5,
+                        "greenlt"   : 16.0,
+                        "green"     : 18.5,
                         }
     miniGZDrip = 700
     miniGZActive = 701
@@ -533,7 +534,7 @@ class kGUI:
     MarkerGameLabel1 = 1006
     MarkerGameLabel2 = 1007
     MarkerGameLabel3 = 1008
-    MarkerGameStates = { MarkerGameType1 : 0, 'UNKNOWN' : 1, MarkerGameType2 : 2, MarkerGameType3 : 3 }
+    MarkerGameStates = { MarkerGameType1 : 0, "UNKNOWN" : 1, MarkerGameType2 : 2, MarkerGameType3 : 3 }
     
     # Pellet score upload button.
     PelletScoreButton = 1020
@@ -554,8 +555,8 @@ class kGames:
 
 ## Constants for the KI images.
 class kImages:
-    Directory = U'KIimages'
-    FileNameTemplate = U'KIimage'
+    Directory = U"KIimages"
+    FileNameTemplate = U"KIimage"
 
 ## Constants for the KI.
 class kKI:
