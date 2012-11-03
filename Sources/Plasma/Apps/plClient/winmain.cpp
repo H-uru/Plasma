@@ -371,7 +371,7 @@ void DebugMsgF(const char* format, ...);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static bool gDragging = false;
-    static uint32_t keyState=0;
+    static uint8_t mouse_down = 0;
 
     // Messages we registered for manually (no const value)
     if (message == s_WmTaskbarList)
@@ -401,8 +401,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MBUTTONDBLCLK:
         case WM_MBUTTONDOWN:
         case WM_RBUTTONDBLCLK:
-            // Ensure we don't leave the client area during this action
-            SetCapture(hWnd);
+            // Ensure we don't leave the client area during clicks
+            if (!(mouse_down++))
+                SetCapture(hWnd);
             // fall through to old case
         case WM_KEYDOWN:
         case WM_CHAR:
@@ -420,7 +421,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
             // Stop hogging the cursor
-            ReleaseCapture();
+            if (!(--mouse_down))
+                ReleaseCapture();
             // fall through to input processing
         case WM_MOUSEWHEEL:
         case WM_KEYUP:
