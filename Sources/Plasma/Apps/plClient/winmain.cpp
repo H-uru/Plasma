@@ -152,30 +152,6 @@ static wchar_t s_patcherExeName[] = L"UruLauncher.exe";
 static wchar_t s_physXSetupExeName[] = L"PhysX_Setup.exe";
 
 //============================================================================
-// TRANSGAMING detection  & dialog replacement
-//============================================================================
-typedef BOOL (WINAPI *IsTransgaming) (void);
-typedef const char * (WINAPI *TGGetOS) (void);
-typedef LPVOID (WINAPI *TGLaunchUNIXApp) (const char *pPath, const char *pMode);
-typedef BOOL (WINAPI *TGUNIXAppReadLine) (LPVOID pApp, char *pBuf, int bufSize);
-typedef BOOL (WINAPI *TGUNIXAppWriteLine) (LPVOID pApp, const char *pLine);
-typedef BOOL (WINAPI *TGUNIXAppClose) (LPVOID pApp);
-
-static bool TGIsCider = false;
-static TGLaunchUNIXApp pTGLaunchUNIXApp;
-static TGUNIXAppReadLine pTGUNIXAppReadLine;
-static TGUNIXAppWriteLine pTGUNIXAppWriteLine;
-static TGUNIXAppClose pTGUNIXAppClose;
-
-#define TG_NEW_LOGIN_PATH "C:\\Program Files\\Uru Live\\Cider\\URU Live Login.app"
-#define TG_NEW_LOGIN_POPEN_PATH "/transgaming/c_drive/Program Files/Uru Live/Cider/URU Live Login.app/Contents/MacOS/URU Live Login"
-#define TG_OLD_LOGIN_POPEN_PATH "/URU Live Login.app/Contents/MacOS/URU Live Login"
-
-#define TG_NEW_EULA_PATH "C:\\Program Files\\Uru Live\\Cider\\URU Live EULA.app"
-#define TG_NEW_EULA_POPEN_PATH "/transgaming/c_drive/Program Files/Uru Live/Cider/URU Live EULA.app/Contents/MacOS/URU Live EULA"
-#define TG_OLD_EULA_POPEN_PATH "/URU Live EULA.app/Contents/MacOS/URU Live EULA"
-
-//============================================================================
 // LoginDialogParam
 //============================================================================
 struct LoginDialogParam {
@@ -193,176 +169,6 @@ static void LoadUserPass (LoginDialogParam *pLoginParam);
 static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
                                          const wchar_t **ppWStr);
-
-
-// Detect whether we're running under TRANSGAMING Cider
-//==============================================================================
-static void TGDoCiderDetection ()
-{
-    HMODULE hMod = GetModuleHandle ("ntdll");
-    if (!hMod)
-        return;
-
-    IsTransgaming pIsTg = (IsTransgaming)GetProcAddress (hMod, "IsTransgaming");
-    if (!pIsTg || !pIsTg ())
-        return;
-
-    TGGetOS pTGOS = (TGGetOS)GetProcAddress (hMod, "TGGetOS");
-    const char *pOS = NULL;
-    if (pTGOS)
-        pOS = pTGOS ();
-    if (!pOS || strcmp (pOS, "MacOSX"))
-        return;
-
-    TGIsCider = true;
-    pTGLaunchUNIXApp = (TGLaunchUNIXApp)GetProcAddress (hMod, "TGLaunchUNIXApp");
-    pTGUNIXAppReadLine = (TGUNIXAppReadLine)GetProcAddress (hMod, "TGUNIXAppReadLine");
-    pTGUNIXAppWriteLine = (TGUNIXAppWriteLine)GetProcAddress (hMod, "TGUNIXAppWriteLine");
-    pTGUNIXAppClose = (TGUNIXAppClose)GetProcAddress (hMod, "TGUNIXAppClose");
-}
-
-static bool TGRunLoginDialog (LoginDialogParam *pLoginParam)
-{
-    while (true)
-    {
-        LPVOID pApp;
-        if (GetFileAttributes (TG_NEW_LOGIN_PATH) != INVALID_FILE_ATTRIBUTES)
-            pApp = pTGLaunchUNIXApp (TG_NEW_LOGIN_POPEN_PATH, "r+");
-        else
-            pApp = pTGLaunchUNIXApp (TG_OLD_LOGIN_POPEN_PATH, "r+");
-
-        if (!pApp)
-        {
-            hsMessageBox ("Incomplete or corrupted installation!\nUnable to locate Login dialog",
-                "Error", hsMessageBoxNormal);
-            return false;
-        }
-
-        // Send user/pwd/remember
-        pTGUNIXAppWriteLine (pApp, pLoginParam->username);
-        if (pLoginParam->remember)
-          pTGUNIXAppWriteLine (pApp, FAKE_PASS_STRING);
-        else
-          pTGUNIXAppWriteLine (pApp, "");
-        if (pLoginParam->remember)
-          pTGUNIXAppWriteLine (pApp, "y");
-        else
-          pTGUNIXAppWriteLine (pApp, "n");
-
-        if (!pTGUNIXAppReadLine (pApp, pLoginParam->username, sizeof (pLoginParam->username)))
-        {
-            pTGUNIXAppClose (pApp);
-            hsMessageBox ("Incomplete or corrupted installation!\nUnable to locate Login dialog",
-                "Error", hsMessageBoxNormal);
-            return false;
-        }
-
-        // Check if user selected 'Cancel'
-        if (StrCmp (pLoginParam->username, "text:", 5) != 0)
-        {
-            pTGUNIXAppClose (pApp);
-            return false;
-        }
-        memmove (pLoginParam->username, pLoginParam->username + 5, StrLen (pLoginParam->username) - 5);
-        pLoginParam->username[StrLen (pLoginParam->username) - 5] = '\0';
-
-        char Password[kMaxPasswordLength];
-        if (!pTGUNIXAppReadLine (pApp, Password, sizeof (Password)))
-        {
-            pTGUNIXAppClose (pApp);
-            hsMessageBox ("Incomplete or corrupted installation!\nLogin dialog not found or working",
-                "Error", hsMessageBoxNormal);
-            return false;
-        }
-
-        char Remember[16];
-        if (!pTGUNIXAppReadLine (pApp, Remember, sizeof (Remember)))
-        {
-            pTGUNIXAppClose (pApp);
-            hsMessageBox ("Incomplete or corrupted installation!\nLogin dialog not found or working",
-                "Error", hsMessageBoxNormal);
-            return false;
-        }
-
-        pTGUNIXAppClose (pApp);
-
-        pLoginParam->remember = (Remember[0] == 'y');
-        SaveUserPass (pLoginParam, Password);
-
-        // Do login & see if it failed
-        ENetError auth;
-        bool cancelled = AuthenticateNetClientComm(&auth, NULL);
-
-        if (IS_NET_SUCCESS (auth) && !cancelled)
-            break;
-
-        if (!cancelled)
-          {
-                const char *pStr1, *pStr2;
-                const wchar_t *pWStr;
-                unsigned int Len;
-                char *pTmpStr;
-
-                AuthFailedStrings (auth, &pStr1, &pStr2, &pWStr);
-
-                Len = StrLen (pStr1) + 1;
-                if (pStr2)
-                  Len += StrLen (pStr2) + 2;
-                if (pWStr)
-                  Len += StrLen (pWStr) + 2;
-
-                pTmpStr = new char[Len];
-                StrCopy (pTmpStr, pStr1, StrLen (pStr1));
-                if (pStr2)
-                  {
-                     StrCopy (pTmpStr + StrLen (pTmpStr), "\n\n", 2);
-                     StrCopy (pTmpStr + StrLen (pTmpStr), pStr2, StrLen (pStr2));
-                  }
-                if (pWStr)
-                  {
-                     StrCopy (pTmpStr + StrLen (pTmpStr), "\n\n", 2);
-                     StrToAnsi (pTmpStr + StrLen (pTmpStr), pWStr, StrLen (pWStr));
-                  }
-
-                hsMessageBox (pTmpStr, "Error", hsMessageBoxNormal);
-                delete [] pTmpStr;
-          }
-        else
-            NetCommDisconnect();
-    };
-
-    return true;
-}
-
-bool TGRunTOSDialog ()
-{
-    char Buf[16];
-    LPVOID pApp;
-
-    if (GetFileAttributes (TG_NEW_EULA_PATH) != INVALID_FILE_ATTRIBUTES)
-        pApp = pTGLaunchUNIXApp (TG_NEW_EULA_POPEN_PATH, "r");
-    else
-        pApp = pTGLaunchUNIXApp (TG_OLD_EULA_POPEN_PATH, "r");
-
-    if (!pApp)
-    {
-        hsMessageBox ("Incomplete or corrupted installation!\nTOS dialog not found or working",
-                "Error", hsMessageBoxNormal);
-        return false;
-    }
-
-    if (!pTGUNIXAppReadLine (pApp, Buf, sizeof (Buf)))
-    {
-        hsMessageBox ("Incomplete or corrupted installation!\nTOS dialog not found or working",
-                "Error", hsMessageBoxNormal);
-        pTGUNIXAppClose (pApp);
-        return false;
-    }
-
-    pTGUNIXAppClose (pApp);
-
-    return (StrCmp (Buf, "accepted") == 0);
-}
 
 void DebugMsgF(const char* format, ...);
 
@@ -1027,10 +833,9 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     }
 
     NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
-    if (TGIsCider)
-        NetCommSetAuthTokenAndOS(nil, L"mac");
-    else
-        NetCommSetAuthTokenAndOS(nil, L"win");
+
+    // FIXME: Real OS detection
+    NetCommSetAuthTokenAndOS(nil, L"win");
 
     wchar_t fileAndPath[MAX_PATH];
     PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
@@ -1421,8 +1226,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         }
     }
 
-    TGDoCiderDetection ();
-
 #ifdef PLASMA_EXTERNAL_RELEASE
     // if the client was started directly, run the patcher, and shutdown
     STARTUPINFOW si;
@@ -1547,24 +1350,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 
     if (doIntroDialogs) {
-        if (TGIsCider)
-            needExit = !TGRunLoginDialog(&loginParam);
-        else if (::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_MAIN ), NULL, UruLoginDialogProc, (LPARAM)&loginParam ) <= 0)
-            needExit = true;
+        needExit = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_MAIN ), NULL, UruLoginDialogProc, (LPARAM)&loginParam ) <= 0;
     }
 
     if (doIntroDialogs && !needExit) {
-        if (TGIsCider)
-            needExit = !TGRunTOSDialog ();
-        else
-        {
-            HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
-            INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
-            FreeLibrary(hRichEdDll);
-            if (val <= 0) {
-                DWORD error = GetLastError();
-                needExit = true;
-            }
+        HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
+        INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
+        FreeLibrary(hRichEdDll);
+        if (val <= 0) {
+            DWORD error = GetLastError();
+            needExit = true;
         }
     }
 
