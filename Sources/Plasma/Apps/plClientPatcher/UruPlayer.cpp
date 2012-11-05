@@ -58,11 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 #ifndef PLASMA_EXTERNAL_RELEASE
     static const wchar_t s_manifest[] = L"Internal";
-    static const wchar_t s_macmanifest[] = L"macInternal";
     static const wchar_t s_thinmanifest[] = L"ThinInternal";
 #else
     static const wchar_t s_manifest[] = L"External";
-    static const wchar_t s_macmanifest[] = L"macExternal";
     static const wchar_t s_thinmanifest[] = L"ThinExternal";
 #endif
 
@@ -760,10 +758,7 @@ static void ThinManifestCallback (
         StrPrintf(path, arrsize(path), "%s%S", s_workingDir, manifest[i].clientName);
         if(!MD5Check(path, manifest[i].md5)){
             s_patchComplete = false;
-            if (info->IsTGCider)
-                NetCliFileManifestRequest(ManifestCallback, info, s_macmanifest, info->buildId);
-            else
-                NetCliFileManifestRequest(ManifestCallback, info, s_manifest, info->buildId);
+            NetCliFileManifestRequest(ManifestCallback, info, s_manifest, info->buildId);
             break;
         }
         PatchInfo patchInfo;

@@ -108,30 +108,6 @@ struct SetBytesRemainingEvent : WndEvent {
 };
 
 
-//============================================================================
-// TRANSGAMING detection & dialog replacement
-//============================================================================
-typedef BOOL (WINAPI *IsTransgaming) (void);
-typedef const char * (WINAPI *TGGetOS) (void);
-typedef LPVOID (WINAPI *TGLaunchUNIXApp) (const char *pPath, const char *pMode);
-typedef BOOL (WINAPI *TGUNIXAppReadLine) (LPVOID pApp, char *pBuf, int bufSize);
-typedef BOOL (WINAPI *TGUNIXAppWriteLine) (LPVOID pApp, const char *pLine);
-typedef BOOL (WINAPI *TGUNIXAppClose) (LPVOID pApp);
-
-static bool TGIsCider = false;
-static void *pTGApp = NULL;
-static TGLaunchUNIXApp pTGLaunchUNIXApp;
-static TGUNIXAppReadLine pTGUNIXAppReadLine;
-static TGUNIXAppWriteLine pTGUNIXAppWriteLine;
-static TGUNIXAppClose pTGUNIXAppClose;
-
-#define TG_NEW_DIALOG_PATH "C:\\Program Files\\Uru Live\\Cider\\URU Live Updater.app"
-#define TG_NEW_DIALOG_POPEN_PATH "/transgaming/c_drive/Program Files/Uru Live/Cider/URU Live Updater.app/Contents/MacOS/URU Live Updater"
-#define TG_OLD_DIALOG_POPEN_PATH "/URU Live Updater.app/Contents/MacOS/URU Live Updater"
-#define TG_CUR_FRAMEWORK_FILE "C:\\Program Files\\Uru Live\\Cider\\current.txt"
-#define TG_LATEST_FRAMEWORK_FILE "C:\\Program Files\\Uru Live\\Cider\\Frameworks\\version.txt"
-
-
 /*****************************************************************************
 *
 *   Private data
@@ -162,32 +138,6 @@ static char                     s_curlError[CURL_ERROR_SIZE];
 *   Local functions
 *
 ***/
-
-// Detect whether we're running under TRANSGAMING Cider
-//==============================================================================
-static void TGDoCiderDetection () {
-
-    HMODULE hMod = GetModuleHandle ("ntdll");
-    if (!hMod)
-        return;
-
-    IsTransgaming pIsTg = (IsTransgaming)GetProcAddress (hMod, "IsTransgaming");
-    if (!pIsTg || !pIsTg ())
-        return;
-
-    TGGetOS pTGOS = (TGGetOS)GetProcAddress (hMod, "TGGetOS");
-    const char *pOS = NULL;
-    if (pTGOS)
-        pOS = pTGOS ();
-    if (!pOS || strcmp (pOS, "MacOSX"))
-        return;
-
-    TGIsCider = true;
-    pTGLaunchUNIXApp = (TGLaunchUNIXApp)GetProcAddress (hMod, "TGLaunchUNIXApp");
-    pTGUNIXAppReadLine = (TGUNIXAppReadLine)GetProcAddress (hMod, "TGUNIXAppReadLine");
-    pTGUNIXAppWriteLine = (TGUNIXAppWriteLine)GetProcAddress (hMod, "TGUNIXAppWriteLine");
-    pTGUNIXAppClose = (TGUNIXAppClose)GetProcAddress (hMod, "TGUNIXAppClose");
-}
 
 //============================================================================
 static void Abort () {
@@ -283,37 +233,11 @@ static void TerminateGame () {
 //============================================================================
 static void Recv_SetProgress (HWND hwnd, const SetProgressEvent &event) {  
     SendMessage(GetDlgItem(s_dialog, IDC_PROGRESS), PBM_SETPOS, event.progress, NULL);
-
-    if (pTGApp)
-    {
-        char buf[64];
-
-        sprintf (buf, "bar:%d", event.progress);
-        if (!pTGUNIXAppWriteLine (pTGApp, buf))
-        {
-            pTGUNIXAppClose (pTGApp);
-            pTGApp = NULL;
-            PostQuitMessage (0);
-        }
-    }
 }
 
 //============================================================================
 static void Recv_SetText (HWND hwnd, const SetTextEvent &event) { 
     bool b = SendMessage(GetDlgItem(s_dialog, IDC_TEXT), WM_SETTEXT, 0, (LPARAM) event.text);
-
-    if (pTGApp)
-    {
-        char buf[MAX_PATH + 5];
-
-        sprintf (buf, "text:%s", event.text);
-        if (!pTGUNIXAppWriteLine (pTGApp, buf))
-        {
-            pTGUNIXAppClose (pTGApp);
-            pTGApp = NULL;
-            PostQuitMessage (0);
-        }
-    }
 }
 
 //============================================================================
@@ -516,14 +440,6 @@ static void WindowThreadProc(void *) {
         (LPCTSTR) 0     // name
     );
 
-    if (TGIsCider)
-    {
-        if (GetFileAttributes (TG_NEW_DIALOG_PATH) != INVALID_FILE_ATTRIBUTES)
-            pTGApp = pTGLaunchUNIXApp (TG_NEW_DIALOG_POPEN_PATH, "w");
-        else
-            pTGApp = pTGLaunchUNIXApp (TG_OLD_DIALOG_POPEN_PATH, "w");
-    }
-
     s_dialog = ::CreateDialog( s_hInstance, MAKEINTRESOURCE( IDD_DIALOG ), NULL, SplashDialogProc );
     SetWindowText(s_dialog, "URU Launcher");
 
@@ -541,58 +457,9 @@ static void WindowThreadProc(void *) {
 
     MessagePump(s_dialog);
 
-    if (pTGApp)
-    {
-        pTGUNIXAppWriteLine (pTGApp, "done");
-        pTGUNIXAppClose (pTGApp);
-        pTGApp = NULL;
-    }
-
     s_dialog = 0;
     s_shutdown = true;
     s_shutdownEvent.Signal();
-}
-
-//============================================================================
-static bool TGCheckForFrameworkUpdate ()
-{
-    // If current.txt doesn't exist, then this is the first time we've been
-    // run. Copy version.txt to current.txt and continue starting up
-    if (GetFileAttributes (TG_CUR_FRAMEWORK_FILE) == INVALID_FILE_ATTRIBUTES)
-    {
-        CopyFile (TG_LATEST_FRAMEWORK_FILE, TG_CUR_FRAMEWORK_FILE, FALSE);
-        return false;
-    }
-
-    // If it does exist, then compare its contents to the contents of the latest version
-    // If they match, continue starting up
-    FILE *CurFile, *LatestFile;
-    CurFile = fopen (TG_CUR_FRAMEWORK_FILE, "rt");
-    LatestFile = fopen (TG_LATEST_FRAMEWORK_FILE, "rt");
-
-    char CurVer[64], LatestVer[64];
-    CurVer[0] = '\0';
-    LatestVer[0] = '\0';
-    if (CurFile)
-    {
-        fgets (CurVer, sizeof (CurVer), CurFile);
-        fclose (CurFile);
-    }
-    if (LatestFile)
-    {
-        fgets (LatestVer, sizeof (LatestVer), LatestFile);
-        fclose (LatestFile);
-    }
-
-    if (strcmp (CurVer, LatestVer) == 0)
-    return false;
-
-    // Contents don't match. Copy the latest to the current, put up a message box
-    // informing the user to restart the game, and exit
-    CopyFile (TG_LATEST_FRAMEWORK_FILE, TG_CUR_FRAMEWORK_FILE, FALSE);
-    MessageBox (nil, "Game framework requires updating. Please restart URU",
-    "URU Launcher", MB_ICONINFORMATION);
-    return true;
 }
 
 //============================================================================
@@ -647,8 +514,6 @@ void PrepCallback (int id, void *param) {
     s_prepared = true;
     if (id)
         s_shutdown = true;
-    else if (TGIsCider && TGCheckForFrameworkUpdate ())
-          s_shutdown = true;
 
     if (!s_shutdown)
         InitGame();
@@ -770,8 +635,6 @@ int __stdcall WinMain (
     
     if (!cmdParser.IsSpecified(kArgCwd))
         PathGetProgramDirectory(s_workingDir, arrsize(s_workingDir));
-
-    TGDoCiderDetection ();
 
     s_hInstance = hInstance;
     memset(&s_launcherInfo, 0, sizeof(s_launcherInfo));
@@ -917,7 +780,6 @@ int __stdcall WinMain (
             s_launcherInfo.SetStatusText        = SetStatusTextCallback;
             s_launcherInfo.SetTimeRemaining     = SetTimeRemainingCallback;
             s_launcherInfo.SetBytesRemaining    = SetBytesRemainingCallback;
-            s_launcherInfo.IsTGCider            = TGIsCider;
             PrepareGame();
 
             while (!s_shutdown)     // wait for window to be closed
@@ -962,13 +824,6 @@ int __stdcall WinMain (
 
         s_eventQ.Clear();
         break;
-    }
-
-    if (pTGApp)
-    {
-        pTGUNIXAppWriteLine (pTGApp, "done");
-        pTGUNIXAppClose (pTGApp);
-        pTGApp = NULL;
     }
 
     curl_global_cleanup();
