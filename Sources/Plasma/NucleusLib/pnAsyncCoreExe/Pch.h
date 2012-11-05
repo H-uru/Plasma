@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 
 #include "Private/pnAceInt.h"
-#include "Private/W9x/pnAceW9x.h"
 #include "Private/Nt/pnAceNt.h"
 #include "Private/Unix/pnAceUx.h"
 
