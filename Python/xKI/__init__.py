@@ -76,15 +76,18 @@ from jlakConstants import *
 
 # xKI sub-modules.
 import xKIExtChatCommands
-from xKIChat import *
+import xKIChat
 from xKIConstants import *
 from xKIHelpers import *
 
-# Define the attributes that will be entered in max.
+# Define the attributes that will be entered in Max.
 KIBlackbar = ptAttribGUIDialog(1, "The Blackbar dialog")
+xKIChat.KIBlackbar = KIBlackbar
 KIMini = ptAttribGUIDialog(2, "The KIMini dialog")
+xKIChat.KIMini = KIMini
 KIYesNo = ptAttribGUIDialog(3, "The KIYesNo dialog")
 BigKI = ptAttribGUIDialog(5, "The BigKI (Mr. BigStuff)")
+xKIChat.BigKI = BigKI
 NewItemAlert = ptAttribGUIDialog(7, "The new item alert dialog")
 KIListModeDialog = ptAttribGUIDialog(9, "The list mode dialog")
 KIPictureExpanded = ptAttribGUIDialog(10, "The Picture expanded dialog")
@@ -95,6 +98,7 @@ KIOffResp = ptAttribResponder(14, "Turn Off responder")
 KIPlayerExpanded = ptAttribGUIDialog(17, "The player expanded dialog")
 KIMicroBlackbar = ptAttribGUIDialog(18, "The micro Blackbar dialog")
 KIMicro = ptAttribGUIDialog(19, "The micro KI dialog")
+xKIChat.KIMicro = KIMicro
 KIVolumeExpanded = ptAttribGUIDialog(21, "The volume control dialog")
 KIAgeOwnerExpanded = ptAttribGUIDialog(22, "The Age Owner settings dialog")
 # Disabled: KIRateIt = ptAttribGUIDialog(23, "The Rate It dialog")
@@ -271,7 +275,7 @@ class xKI(ptModifier):
         self.autocompleteState = AutocompleteState()
 
         ## The chatting manager.
-        self.chatMgr = xKIChat(BigKI, KIBlackbar, KIMicro, KIMini, self.SendJalakNote, self.GetAgeName, (self.StartFadeTimer, self.KillFadeTimer, self.FadeCompletely), self.GetNeighbors)
+        self.chatMgr = xKIChat.xKIChat(self.StartFadeTimer, self.KillFadeTimer, self.FadeCompletely)
 
     ## Unloads any loaded dialogs upon exit.
     def __del__(self):
@@ -599,7 +603,7 @@ class xKI(ptModifier):
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).enable()
         elif ID == KIJalakBtnLights.id:
             btnID = int(KIJalakBtnLights.getState())
-            self.SendJalakNote("{}".format(btnID))
+            SendNote(self.key, self.jalakScript, "{}".format(btnID))
             PtAtTimeCallback(self.key, kJalakBtnDelaySeconds, kTimers.JalakBtnDelay)
 
     ## Called by Plasma when a page has been loaded.
@@ -1161,7 +1165,7 @@ class xKI(ptModifier):
 
         if message is not None:
             message = unicode(message, kCharSet)
-            cFlags = ChatFlags(flags)
+            cFlags = xKIChat.ChatFlags(flags)
             # Is it a private channel message that can't be listened to?
             if cFlags.broadcast and cFlags.channel != self.chatMgr.privateChatChannel:
                 return
@@ -2278,18 +2282,6 @@ class xKI(ptModifier):
             PtShowDialog("jalakControlPanel")
             KIJalakGUIOpen.run(self.key, netPropagate=0)
 
-    ## Sends a notification message in Jalak to the Jalak script.
-    def SendJalakNote(self, extraInfo):
-
-        note = ptNotify(self.key)
-        note.clearReceivers()
-        note.addReceiver(self.jalakScript)
-        note.netPropagate(0)
-        note.netForce(0)
-        note.setActivate(1.0)
-        note.addVarNumber(str(extraInfo), 1.0)
-        note.send()
-
     ## Activate or deactivate all the buttons in the Jalak GUI.
     def SetJalakGUIButtons(self, state):
 
@@ -2810,95 +2802,9 @@ class xKI(ptModifier):
                     return "Unknown"
             if ageInfo.getAgeInstanceName() == "Ae'gura":
                 return "D'ni-Ae'gura"
-            return self.FilterAgeName(ageInfo.getAgeInstanceName())
+            return FilterAgeName(ageInfo.getAgeInstanceName())
         else:
             return "?UNKNOWN?"
-
-    ## Returns an Age's name the way a player should see it.
-    # This displayed is used in the top-right corner of the BigKI.
-    def GetAgeName(self, ageInfo=None):
-
-        isSubAge = False
-        ageVault = ptAgeVault()
-        if ageInfo is None:
-            ageInfo = ageVault.getAgeInfo()
-
-        if ageInfo is None:
-            return "?UNKNOWN?"
-
-        isChildAge = False
-        parent = ageInfo.getParentAgeLink()
-        if parent:
-            parentInfo = parent.getAgeInfo()
-            if parentInfo:
-                isChildAge = True
-
-        if ageInfo.getAgeFilename() != "Neighborhood":
-            subAges = ageVault.getSubAgesFolder()
-            if subAges and subAges.getChildNodeCount() > 0:
-                isSubAge = True
-
-        if ageInfo.getAgeFilename() == "BahroCave":
-            sdl = xPsnlVaultSDL()
-            if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
-                return "D'ni-Rudenna"
-
-        if ageInfo.getAgeInstanceName() == "Ae'gura" or ageInfo.getAgeFilename() == "city":
-            if isChildAge:
-                return "D'ni-Ae'gura'"
-            return "D'ni-Ae'gura"
-
-        if ageInfo.getAgeFilename() in kAges.Hide:
-            return "Unknown"
-
-        if ageInfo.getAgeFilename() in kAges.Display:
-            return kAges.Display[ageInfo.getAgeFilename()]
-
-        # Don't include the owner's name on D'ni locations.
-        if ageInfo.getAgeInstanceName().startswith("D'ni"):
-            return ageInfo.getAgeInstanceName()
-
-        # For some reason it thinks Er'cana and Ahnonay are sub-Ages. Get their
-        # display name instead.
-        if (isChildAge or isSubAge) and not (ageInfo.getAgeFilename() == "Ercana" or ageInfo.getAgeFilename()[:7] == "Ahnonay"):
-            localizeName = ageInfo.getAgeInstanceName()
-            if isChildAge:
-                localizeName += "'"
-        else:
-            localizeName = ageInfo.getDisplayName()
-
-        return self.FilterAgeName(xLocTools.LocalizeAgeName(localizeName))
-
-    ## Replace the Age's name as is appropriate.
-    # It accepts as a parameter a name, unlike GetAgeName.
-    def FilterAgeName(self, ageName):
-
-        # Replace file names with display names - only once, from the right.
-        # This fixes a bug in which avatars' names containing words like Garden
-        # incorrectly get replaced.
-        for Age, replacement in kAges.Replace.iteritems():
-            ageNameList = ageName.rsplit(Age, 1)
-            ageName = replacement.join(ageNameList)
-
-        # Find the appropriate display name.
-        if ageName == "GreatZero'":
-            ageName = "D'ni-Rezeero'"
-        elif ageName == "???" or ageName == "BahroCave":
-            sdl = xPsnlVaultSDL()
-            if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
-                ageName = "D'ni-Rudenna"
-            else:
-                ageName = "Unknown"
-        elif ageName in kAges.Hide:
-            ageName = "Unknown"
-        else:
-            for Age in kAges.Display:
-                if Age.lower() == ageName.lower():
-                    ageName = kAges.Display[Age]
-                    break
-
-        ageName = ageName.replace("(null)", "").strip()
-        return ageName
 
     ## Returns the file name of the specified Age.
     def GetAgeFileName(self, ageInfo=None):
@@ -2909,28 +2815,6 @@ class xKI(ptModifier):
             return ageInfo.getAgeFilename()
         else:
             return "?UNKNOWN?"
-
-    #~~~~~~~~~~~~~~#
-    # Neighborhood #
-    #~~~~~~~~~~~~~~#
-
-    ## Find the player's neighborhood.
-    def GetNeighborhood(self):
-
-        try:
-            return ptVault().getLinkToMyNeighborhood().getAgeInfo()
-        except AttributeError:
-            PtDebugPrint("xKI.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
-            return None
-
-    ## Find the player's neighbors.
-    def GetNeighbors(self):
-
-        try:
-            return self.GetNeighborhood().getAgeOwnersFolder()
-        except AttributeError:
-            PtDebugPrint("xKI.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
-            return None
 
     #~~~~~~~~#
     # Limits #
@@ -3169,7 +3053,7 @@ class xKI(ptModifier):
             self.BKPlayerList += self.RemoveOfflinePlayers(buddies.getChildNodeRefList())
         else:
             self.BKPlayerList.append("?NOBuddies?")
-        neighbors = self.GetNeighbors()
+        neighbors = GetNeighbors()
         if neighbors is not None:
             self.BKPlayerList.append(neighbors)
             onlinePlayers = self.RemoveOfflinePlayers(neighbors.getChildNodeRefList())
@@ -3397,7 +3281,7 @@ class xKI(ptModifier):
                 myAge = None
             if myAge is not None:
                 title = ptGUIControlTextBox(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleTB))
-                title.setString(self.GetAgeName(myAge))
+                title.setString(GetAgeName(myAge))
                 titlebtn = ptGUIControlButton(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleBtn))
                 titlebtn.enable()
                 titleEdit = ptGUIControlEditBox(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleEditbox))
@@ -3996,7 +3880,7 @@ class xKI(ptModifier):
     def BigKISetStatics(self):
 
         ageText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKICurAgeNameID))
-        ageName = self.GetAgeName().replace("(null)", "").strip()
+        ageName = GetAgeName().replace("(null)", "").strip()
         PtDebugPrint("xKI.BigKISetStatics(): Displaying age name of {}.".format(ageName), level=kDebugDumpLevel)
         ageText.setStringW(ageName)
         playerText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerName))
@@ -4013,7 +3897,7 @@ class xKI(ptModifier):
         neighborText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKNeighborhoodAndID))
         # If a neighborhood was not specified, get the one from the player's Vault.
         if not neighborhood:
-            neighborhood = self.GetNeighborhood()
+            neighborhood = GetNeighborhood()
         if neighborhood is not None:
             neighborName = xLocTools.LocalizeAgeName(neighborhood.getDisplayName())
             if neighborName == U"":
@@ -4136,7 +4020,7 @@ class xKI(ptModifier):
                         ageFolderName = ageFolder.folderGetName()
                         if ageFolderName == "":
                             ageFolderName = "[invalid]"
-                        ageFolderName = self.FilterAgeName(ageFolderName)
+                        ageFolderName = FilterAgeName(ageFolderName)
                         if ageFolderName in kAges.Hide:
                             continue
                         if ageFolderName not in self.BKJournalFolderDict:
@@ -4238,7 +4122,7 @@ class xKI(ptModifier):
     ## Refresh the Neighbors folder.
     def BigKIRefreshNeighborFolder(self):
 
-        neighborhood = self.GetNeighborhood()
+        neighborhood = GetNeighborhood()
         try:
             neighbors = neighborhood.getAgeOwnersFolder()
             if xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kHoodMembersFolder) not in self.BKPlayerFolderDict:
@@ -4262,11 +4146,11 @@ class xKI(ptModifier):
                 myAge = myAgeLink.getAgeInfo()
                 if myAge is not None:
                     if self.CanAgeInviteVistors(myAge, myAgeLink) and myAge.getAgeFilename() not in kAges.Hide and myAge.getAgeFilename() != "Myst":
-                        PtDebugPrint("xKI.BigKIRefreshAgeVisitorFolders(): Refreshing visitor list for {}.".format(self.GetAgeName(myAge)), level=kDebugDumpLevel)
-                        folderName = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerVisitors", [self.GetAgeName(myAge)]), self.censorLevel)
+                        PtDebugPrint("xKI.BigKIRefreshAgeVisitorFolders(): Refreshing visitor list for {}.".format(GetAgeName(myAge)), level=kDebugDumpLevel)
+                        folderName = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerVisitors", [GetAgeName(myAge)]), self.censorLevel)
                         if folderName not in self.BKPlayerFolderDict:
                             # Add the new Age Visitors folder.
-                            PtDebugPrint("xKI.BigKIRefreshAgeVisitorFolders(): Adding visitor list for {}.".format(self.GetAgeName(myAge)), level=kDebugDumpLevel)
+                            PtDebugPrint("xKI.BigKIRefreshAgeVisitorFolders(): Adding visitor list for {}.".format(GetAgeName(myAge)), level=kDebugDumpLevel)
                             self.BKPlayerListOrder.append(folderName)
                         self.BKPlayerFolderDict[folderName] = myAge
                 else:
@@ -4293,11 +4177,11 @@ class xKI(ptModifier):
                 myAge = myAgeLink.getAgeInfo()
                 if myAge is not None:
                     if myAge.getAgeFilename() == "Neighborhood":
-                        PtDebugPrint("xKI.BigKIRefreshAgesOwnedFolder(): Refreshing owner configuration for Age {}.".format(self.GetAgeName(myAge)), level=kDebugDumpLevel)
-                        configName = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerConfig", [self.GetAgeName(myAge)]), self.censorLevel)
+                        PtDebugPrint("xKI.BigKIRefreshAgesOwnedFolder(): Refreshing owner configuration for Age {}.".format(GetAgeName(myAge)), level=kDebugDumpLevel)
+                        configName = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerConfig", [GetAgeName(myAge)]), self.censorLevel)
                         if configName not in self.BKConfigFolderDict:
                             # Add the new Age configuration.
-                            PtDebugPrint("xKI: adding owner config for Age {}.".format(self.GetAgeName(myAge)), level=kDebugDumpLevel)
+                            PtDebugPrint("xKI: adding owner config for Age {}.".format(GetAgeName(myAge)), level=kDebugDumpLevel)
                             self.BKConfigListOrder.append(configName)
                         self.BKConfigFolderDict[configName] = myAge
                 else:
@@ -4579,7 +4463,7 @@ class xKI(ptModifier):
                             contentDate.hide()
                             contentFrom.setForeColor(kColors.DniSelectable)
                             contentFrom.setFontSize(10)
-                            contentFrom.setString(self.GetAgeName())
+                            contentFrom.setString(GetAgeName())
                             contentFrom.show()
                             # Find the button to enable it.
                             lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) / 10) + kGUI.BKIListModeCreateBtn))
@@ -4633,7 +4517,7 @@ class xKI(ptModifier):
                                     contentFrom.setForeColor(kColors.DniSelectable)
                                     contentFrom.setFontSize(10)
                                     if element.playerIsOnline():
-                                        contentFrom.setString(self.FilterAgeName(element.playerGetAgeInstanceName()))
+                                        contentFrom.setString(FilterAgeName(element.playerGetAgeInstanceName()))
                                     else:
                                         contentFrom.setString("  ")
                                     contentFrom.show()
@@ -4769,7 +4653,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToTextNoteNode()
         # Display the content on the screen.
-        jrnAgeName.setString(self.FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
+        jrnAgeName.setString(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
         jrnAgeName.show()
         tupTime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
         curTime = time.strftime(PtGetLocalizedString("Global.Formats.Date"), tupTime)
@@ -4846,7 +4730,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToImageNode()
         # Display the content on the screen.
-        picAgeName.setString(self.FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
+        picAgeName.setString(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
         picAgeName.show()
         tupTime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
         curTime = time.strftime(PtGetLocalizedString("Global.Formats.Date"), tupTime)
@@ -4929,7 +4813,7 @@ class xKI(ptModifier):
             IDText = "{:08d}".format(self.BKCurrentContent.getPlayerID())
             plyID.setString(IDText)
             plyID.show()
-            plyDetail.setStringW(PtGetLocalizedString("KI.Player.InAge", [self.GetAgeName()]))
+            plyDetail.setStringW(PtGetLocalizedString("KI.Player.InAge", [GetAgeName()]))
             plyDetail.show()
             sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
             self.BKPlayerSelected = self.BKCurrentContent
@@ -4956,7 +4840,7 @@ class xKI(ptModifier):
             elif element.playerGetAgeInstanceName() == "AvatarCustomization":
                 plyDetail.setStringW(PtGetLocalizedString("KI.Player.InCloset"))
             else:
-                plyDetail.setStringW(PtGetLocalizedString("KI.Player.InAge", [self.FilterAgeName(element.playerGetAgeInstanceName())]))
+                plyDetail.setStringW(PtGetLocalizedString("KI.Player.InAge", [FilterAgeName(element.playerGetAgeInstanceName())]))
         else:
             plyDetail.setStringW(PtGetLocalizedString("KI.Player.Offline"))
         plyDetail.show()
@@ -5255,7 +5139,7 @@ class xKI(ptModifier):
                     torans = coord.getTorans()
                     hSpans = coord.getHSpans()
                     vSpans = coord.getVSpans()
-                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(self.FilterAgeName(marker["age"]), torans, hSpans, vSpans, marker["name"]))
+                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(marker["age"]), torans, hSpans, vSpans, marker["name"]))
 
                 mlbMarkerTextTB.hide()
                 mbtnToran.hide()
@@ -5343,7 +5227,7 @@ class xKI(ptModifier):
                     coord = ptDniCoordinates()
                     markerPoint = ptPoint3(marker["x"], marker["y"], marker["z"])
                     coord.fromPoint(markerPoint)
-                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(self.FilterAgeName(marker["age"]), coord.getTorans(), coord.getHSpans(), coord.getVSpans(), marker["name"]))
+                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(marker["age"]), coord.getTorans(), coord.getHSpans(), coord.getVSpans(), marker["name"]))
                 else:
                     questGameFinished = False
             mlbMarkerTextTB.hide()

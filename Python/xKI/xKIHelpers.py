@@ -48,6 +48,10 @@ from Plasma import *
 from PlasmaVaultConstants import *
 
 import xLocTools
+from xPsnlVaultSDL import *
+
+# xKI sub-modules.
+from xKIConstants import *
 
 
 ## Helper class for autocompletion in the KI.
@@ -196,7 +200,7 @@ def CMPplayerOnline(playerA, playerB):
 
     elPlayerA = playerA.getChild()
     elPlayerB = playerB.getChild()
-    if elPlayerA is not None and elPlayerB is not None:
+    if elPlayerA and elPlayerB:
         if elPlayerA.getType() == PtVaultNodeTypes.kPlayerInfoNode and elPlayerB.getType() == PtVaultNodeTypes.kPlayerInfoNode:
             elPlayerA = elPlayerA.upcastToPlayerInfoNode()
             elPlayerB = elPlayerB.upcastToPlayerInfoNode()
@@ -222,3 +226,118 @@ def CMPNodeDate(nodeA, nodeB):
             return 1
     return 0
 
+## Replace the Age's name as is appropriate.
+# It accepts as a parameter a name, unlike GetAgeName.
+def FilterAgeName(ageName):
+
+    # Replace file names with display names - only once, from the right.
+    # This fixes a bug in which avatars' names containing words like Garden
+    # incorrectly get replaced.
+    for Age, replacement in kAges.Replace.iteritems():
+        ageNameList = ageName.rsplit(Age, 1)
+        ageName = replacement.join(ageNameList)
+
+    # Find the appropriate display name.
+    if ageName == "GreatZero'":
+        ageName = "D'ni-Rezeero'"
+    elif ageName == "???" or ageName == "BahroCave":
+        sdl = xPsnlVaultSDL()
+        if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
+            ageName = "D'ni-Rudenna"
+        else:
+            ageName = "Unknown"
+    elif ageName in kAges.Hide:
+        ageName = "Unknown"
+    else:
+        for Age in kAges.Display:
+            if Age.lower() == ageName.lower():
+                ageName = kAges.Display[Age]
+                break
+
+    ageName = ageName.replace("(null)", "").strip()
+    return ageName
+
+## Returns an Age's name the way a player should see it.
+# This display is used in the top-right corner of the BigKI.
+def GetAgeName(ageInfo=None):
+
+    isSubAge = False
+    ageVault = ptAgeVault()
+    if ageInfo is None:
+        ageInfo = ageVault.getAgeInfo()
+
+    if ageInfo is None:
+        return "?UNKNOWN?"
+
+    isChildAge = False
+    parent = ageInfo.getParentAgeLink()
+    if parent:
+        parentInfo = parent.getAgeInfo()
+        if parentInfo:
+            isChildAge = True
+
+    if ageInfo.getAgeFilename() != "Neighborhood":
+        subAges = ageVault.getSubAgesFolder()
+        if subAges and subAges.getChildNodeCount() > 0:
+            isSubAge = True
+
+    if ageInfo.getAgeFilename() == "BahroCave":
+        sdl = xPsnlVaultSDL()
+        if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
+            return "D'ni-Rudenna"
+
+    if ageInfo.getAgeInstanceName() == "Ae'gura" or ageInfo.getAgeFilename() == "city":
+        if isChildAge:
+            return "D'ni-Ae'gura'"
+        return "D'ni-Ae'gura"
+
+    if ageInfo.getAgeFilename() in kAges.Hide:
+        return "Unknown"
+
+    if ageInfo.getAgeFilename() in kAges.Display:
+        return kAges.Display[ageInfo.getAgeFilename()]
+
+    # Don't include the owner's name on D'ni locations.
+    if ageInfo.getAgeInstanceName().startswith("D'ni"):
+        return ageInfo.getAgeInstanceName()
+
+    # For some reason it thinks Er'cana and Ahnonay are sub-Ages. Get their
+    # display name instead.
+    if (isChildAge or isSubAge) and not (ageInfo.getAgeFilename() == "Ercana" or ageInfo.getAgeFilename()[:7] == "Ahnonay"):
+        localizeName = ageInfo.getAgeInstanceName()
+        if isChildAge:
+            localizeName += "'"
+    else:
+        localizeName = ageInfo.getDisplayName()
+
+    return FilterAgeName(xLocTools.LocalizeAgeName(localizeName))
+
+## Find the player's neighborhood.
+def GetNeighborhood():
+
+    try:
+        return ptVault().getLinkToMyNeighborhood().getAgeInfo()
+    except AttributeError:
+        PtDebugPrint("xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
+        return None
+
+## Find the player's neighbors.
+def GetNeighbors():
+
+    try:
+        return GetNeighborhood().getAgeOwnersFolder()
+    except AttributeError:
+        PtDebugPrint("xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
+        return None
+
+## Sends a notification message to a script.
+def SendNote(key, script, extraInfo):
+
+    note = ptNotify(key)
+    note.clearReceivers()
+    note.addReceiver(script)
+    note.netPropagate(0)
+    note.netForce(0)
+    note.setActivate(1.0)
+    note.addVarNumber(str(extraInfo), 1.0)
+    note.send()

@@ -62,13 +62,7 @@ from xKIHelpers import *
 class xKIChat(object):
 
     ## Set up the chat manager's default state.
-    def __init__(self, BigKI, KIBlackbar, KIMicro, KIMini, SendJalakNote, GetAgeName, fading, GetNeighbors):
-
-        # Add the GUI dialogs.
-        self.BigKI = BigKI
-        self.KIBlackbar = KIBlackbar
-        self.KIMicro = KIMicro
-        self.KIMini = KIMini
+    def __init__(self, StartFadeTimer, KillFadeTimer, FadeCompletely):
 
         # Set the default properties.
         self.autoShout = False
@@ -94,12 +88,9 @@ class xKIChat(object):
         self.BKPlayerList = []
         self.KIDisabled = False
         self.KILevel = kMicroKI
-        self.SendJalakNote = SendJalakNote
-        self.GetAgeName = GetAgeName
-        self.StartFadeTimer = fading[0]
-        self.KillFadeTimer = fading[1]
-        self.FadeCompletely = fading[2]
-        self.GetNeighbors = GetNeighbors
+        self.StartFadeTimer = StartFadeTimer
+        self.KillFadeTimer = KillFadeTimer
+        self.FadeCompletely = FadeCompletely
 
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
@@ -114,14 +105,14 @@ class xKIChat(object):
     def ClearBBMini(self, value=-1):
 
         if self.KILevel == kNormalKI:
-            mmRG = ptGUIControlRadioGroup(self.KIBlackbar.dialog.getControlFromTag(kGUI.MiniMaximizeRGID))
+            mmRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kGUI.MiniMaximizeRGID))
             mmRG.setValue(value)
 
     ## Check if the chat is faded out.
     def IsFaded(self):
 
         if self.KILevel >= kMicroKI:
-            if not self.BigKI.dialog.isEnabled() and (self.KIMini.dialog.isEnabled() or self.KIMicro.dialog.isEnabled()):
+            if not BigKI.dialog.isEnabled() and (KIMini.dialog.isEnabled() or KIMicro.dialog.isEnabled()):
                 if self.fadeMode == kChat.FadeNotActive:
                     return True
         return False
@@ -132,9 +123,9 @@ class xKIChat(object):
     def ScrollChatArea(self, direction):
 
         if self.KILevel < kNormalKI:
-            mKIdialog = self.KIMicro.dialog
+            mKIdialog = KIMicro.dialog
         else:
-            mKIdialog = self.KIMini.dialog
+            mKIdialog = KIMini.dialog
         self.KillFadeTimer()
         self.StartFadeTimer()
         chatarea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
@@ -149,15 +140,15 @@ class xKIChat(object):
     def ToggleChatMode(self, entering, firstChar=None):
 
         if self.KILevel == kMicroKI:
-            mKIdialog = self.KIMicro.dialog
-            self.KIMicro.dialog.show()
+            mKIdialog = KIMicro.dialog
+            KIMicro.dialog.show()
         else:
-            mKIdialog = self.KIMini.dialog
+            mKIdialog = KIMini.dialog
         caret = ptGUIControlTextBox(mKIdialog.getControlFromTag(kGUI.ChatCaretID))
         chatEdit = ptGUIControlEditBox(mKIdialog.getControlFromTag(kGUI.ChatEditboxID))
         if entering:
             self.isChatting = True
-            if not self.KIMini.dialog.isEnabled():
+            if not KIMini.dialog.isEnabled():
                 self.ClearBBMini(0)
             if firstChar:
                 chatEdit.setString(firstChar)
@@ -189,7 +180,7 @@ class xKIChat(object):
         if self.isAdmin:
             cFlags.admin = True
         ## The prefix for inter-Age chat.
-        pre = "<<" + self.GetAgeName() + ">>"
+        pre = "<<" + GetAgeName() + ">>"
 
         # If the player is in AFK mode, make him exit it.
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
@@ -208,7 +199,7 @@ class xKIChat(object):
             return
 
         # Get any selected players.
-        userListBox = ptGUIControlListBox(self.KIMini.dialog.getControlFromTag(kGUI.PlayerList))
+        userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
         iSelect = userListBox.getSelection()
         selPlyrList = []
 
@@ -302,7 +293,7 @@ class xKIChat(object):
         elif message.startswith(PtGetLocalizedString("KI.Commands.ChatNeighbors")):
             cFlags.neighbors = True
             message = message[len(PtGetLocalizedString("KI.Commands.ChatNeighbors")) + 1:]
-            neighbors = self.GetNeighbors()
+            neighbors = GetNeighbors()
             if neighbors is not None:
                 selPlyrList = self.GetOnlinePlayers(neighbors.getChildNodeRefList())
             if len(selPlyrList) == 0:
@@ -414,9 +405,9 @@ class xKIChat(object):
         (message, RogueCount) = re.subn("[\x00-\x08\x0a-\x1f]", "", message)
 
         if self.KILevel == kMicroKI:
-            mKIdialog = self.KIMicro.dialog
+            mKIdialog = KIMicro.dialog
         else:
-            mKIdialog = self.KIMini.dialog
+            mKIdialog = KIMini.dialog
         pretext = U""
         headerColor = kColors.ChatHeaderBroadcast
         bodyColor = kColors.ChatMessage
@@ -560,7 +551,7 @@ class xKIChat(object):
 
         # Copy all the data to the miniKI if the user upgrades it.
         if self.KILevel == kMicroKI:
-            chatArea2 = ptGUIControlMultiLineEdit(self.KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+            chatArea2 = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
             chatArea2.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
             chatArea2.insertStringW(U"\n")
             chatArea2.insertColor(headerColor)
@@ -1049,7 +1040,14 @@ class CommandsProcessor:
             fName = fName + ".txt"
         else:
             fName = "JalakColumns.txt"
-        self.chatMgr.SendJalakNote("SaveColumns;" + fName)
+        obj = PtFindSceneobject("JalakDONOTTOUCH", "Jalak")
+        pythonScripts = obj.getPythonMods()
+        for script in pythonScripts:
+            if script.getName() == kJalakPythonComponent:
+                PtDebugPrint("xKIChat.SaveColumns(): Found Jalak's python component.", level=kDebugDumpLevel)
+                SendNote(self.chatMgr.key, "SaveColumns;" + fName)
+                return
+        PtDebugPrint("xKIChat.SaveColumns(): Did not find Jalak's python component.", level=kErrorLevel)
 
     ## Load the player's Jalak columns from a file.
     def LoadColumns(self, columnsFile):
@@ -1059,7 +1057,14 @@ class CommandsProcessor:
             fName = fName + ".txt"
         else:
             fName = "JalakColumns.txt"
-        self.chatMgr.SendJalakNote("LoadColumns;" + fName)
+        obj = PtFindSceneobject("JalakDONOTTOUCH", "Jalak")
+        pythonScripts = obj.getPythonMods()
+        for script in pythonScripts:
+            if script.getName() == kJalakPythonComponent:
+                PtDebugPrint("xKIChat.LoadColumns(): Found Jalak's python component.", level=kDebugDumpLevel)
+                SendNote(self.chatMgr.key, script, "LoadColumns;" + fName)
+                return
+        PtDebugPrint("xKIChat.LoadColumns(): Did not find Jalak's python component.", level=kErrorLevel)
 
     #~~~~~~~~~~~~~~~~~~~#
     # Internal Commands #
