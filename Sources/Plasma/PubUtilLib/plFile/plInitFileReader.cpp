@@ -83,7 +83,6 @@ void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
 
 plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, uint16_t lineSize )
 {
-    fRequireEncrypted = true;
     fCurrLine = nil;
     fLineSize = lineSize;
     fStream = fOurStream = nil;
@@ -93,7 +92,6 @@ plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, uint16_t 
 
 plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **readerArray, uint16_t lineSize )
 {
-    fRequireEncrypted = true;
     fCurrLine = nil;
     fLineSize = lineSize;
     fStream = fOurStream = nil;
@@ -105,7 +103,6 @@ plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **
 
 plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, uint16_t lineSize )
 {
-    fRequireEncrypted = true;
     fCurrLine = nil;
     fLineSize = lineSize;
     fStream = fOurStream = nil;
@@ -129,7 +126,7 @@ bool    plInitFileReader::Open( const char *fileName )
         return false;
     }
 
-    fOurStream = plEncryptedStream::OpenEncryptedFile( fileName, fRequireEncrypted );
+    fOurStream = plEncryptedStream::OpenEncryptedFile( fileName );
 
     if( fOurStream == nil )
         return false;

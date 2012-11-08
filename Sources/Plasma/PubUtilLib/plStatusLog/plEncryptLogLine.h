@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plStatusEncrypt
 {
-    void    Encrypt( uint8_t *line, uint8_t hint );
     void    Decrypt( uint8_t *line, int32_t length, uint8_t hint );
 };
 
