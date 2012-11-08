@@ -543,29 +543,24 @@ bool plEncryptedStream::IsEncryptedFile(const wchar_t* fileName)
     return isEncrypted;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const char* fileName, bool requireEncrypted, uint32_t* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFile(const char* fileName, uint32_t* cryptKey)
 {
     wchar_t* wFilename = hsStringToWString(fileName);
-    hsStream* ret = OpenEncryptedFile(wFilename, requireEncrypted, cryptKey);
+    hsStream* ret = OpenEncryptedFile(wFilename, cryptKey);
     delete [] wFilename;
     return ret;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, bool requireEncrypted, uint32_t* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, uint32_t* cryptKey)
 {
-#ifndef PLASMA_EXTERNAL_RELEASE
-    requireEncrypted = false;
-#endif
 
     bool isEncrypted = IsEncryptedFile(fileName);
 
     hsStream* s = nil;
     if (isEncrypted)
         s = new plEncryptedStream(cryptKey);
-    // If this isn't an external release, let them use unencrypted data
     else
-        if (!requireEncrypted)
-            s = new hsUNIXStream;
+        s = new hsUNIXStream;
 
     if (s)
         s->Open(fileName, L"rb");
