@@ -107,8 +107,8 @@ public:
     // Attempts to create a read-binary stream for the requested file.  If it's
     // encrypted, you'll get a plEncryptedStream, otherwise just a standard
     // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const char* fileName, bool requireEncrypted = true, uint32_t* cryptKey = nil);
-    static hsStream* OpenEncryptedFile(const wchar_t* fileName, bool requireEncrypted = true, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const char* fileName, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const wchar_t* fileName, uint32_t* cryptKey = nil);
     static hsStream* OpenEncryptedFileWrite(const char* fileName, uint32_t* cryptKey = nil);
     static hsStream* OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey = nil);
 };
