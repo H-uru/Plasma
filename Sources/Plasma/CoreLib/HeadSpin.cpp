@@ -212,6 +212,8 @@ void hsStatusMessageF(const char * fmt, ...)
     va_end(args);
 }
 
+#endif
+
 char * hsFormatStr(const char * fmt, ...)
 {
     va_list args;
@@ -590,5 +592,3 @@ char** DisplaySystemVersion()
     return nil;
 #endif
 }
-
-#endif // not PLASMA_EXTERNAL_RELEASE
