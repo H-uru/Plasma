@@ -85,6 +85,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 #include "pyAlarm.h"
+#include "pyGeometry3.h"
 #include "pfMessage/pfKIMsg.h"
 #include "plNetMessage/plNetMessage.h"
 #include "pfCamera/plVirtualCamNeu.h"

@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pyGUIDialog;
 class pyColor;
+class pyPoint3;
 
 class pyGUIControl
 {

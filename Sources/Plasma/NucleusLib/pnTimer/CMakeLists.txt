@@ -11,7 +11,6 @@ set(pnTimer_HEADERS
 
 set(pnTimer_SOURCES
     hsTimer.cpp
-    plTimedValue.cpp
     plTimerCallbackManager.cpp
     pnBranchDate.cpp
     pnBuildDates.cpp

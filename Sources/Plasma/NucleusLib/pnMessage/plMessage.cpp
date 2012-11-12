@@ -369,7 +369,7 @@ int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t 
 {
     plMessage::plStrLen len = (str) ? strlen(str) : 0;
     stream->WriteLE(len);
-    if (strlen)
+    if (len)
         stream->Write(len,str);
     return stream->GetPosition();
 }
