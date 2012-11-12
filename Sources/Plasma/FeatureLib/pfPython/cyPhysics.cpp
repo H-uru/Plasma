@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plWarpMsg.h"
-#include "plMessage/plSimInfluenceMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
 #include "plMessage/plAngularVelocityMsg.h"

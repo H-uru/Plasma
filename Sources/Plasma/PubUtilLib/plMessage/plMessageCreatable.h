@@ -145,18 +145,6 @@ REGISTER_CREATABLE( plDeviceRecreateMsg );
 
 REGISTER_CREATABLE( plLightRefMsg );
 
-#include "plSimInfluenceMsg.h"
-
-// REGISTER_CREATABLE( plSimInfluenceMsg );
-// REGISTER_CREATABLE( plForceMsg );
-// REGISTER_CREATABLE( plOffsetForceMsg );
-// REGISTER_CREATABLE( plTorqueMsg );
-// REGISTER_CREATABLE( plImpulseMsg );
-// REGISTER_CREATABLE( plOffsetImpulseMsg );
-// REGISTER_CREATABLE( plAngularImpulseMsg );
-// REGISTER_CREATABLE( plDampMsg );
-// REGISTER_CREATABLE( plShiftMassMsg );
-
 #include "plSimStateMsg.h"
 
 // REGISTER_CREATABLE( plSimStateMsg );
