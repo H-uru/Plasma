@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plDrawInterface.h"
 
 #include "plPhysical.h"
-#include "plMessage/plSimInfluenceMsg.h"
 
 #include "plSurface/hsGMaterial.h"
 #include "plDrawable/plDrawableSpans.h"

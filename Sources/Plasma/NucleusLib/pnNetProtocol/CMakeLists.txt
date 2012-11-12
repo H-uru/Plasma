@@ -24,7 +24,6 @@ set(pnNetProtocol_PROTO_CLI2AUTH
 
 set(pnNetProtocol_PROTO_CLI2FILE
     Private/Protocols/Cli2File/pnNpCli2File.h
-    Private/Protocols/Cli2File/pnNpCli2File.cpp
 )
 
 set(pnNetProtocol_PROTO_CLI2GAME

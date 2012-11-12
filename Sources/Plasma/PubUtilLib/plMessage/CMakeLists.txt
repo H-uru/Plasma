@@ -29,7 +29,6 @@ set(plMessage_SOURCES
     plLOSRequestMsg.cpp
     plMatrixUpdateMsg.cpp
     plMultistageMsg.cpp
-    plNetClientMgrMsg.cpp
     plNetCommMsgs.cpp
     plNetVoiceListMsg.cpp
     plOneShotCallbacks.cpp
@@ -37,7 +36,6 @@ set(plMessage_SOURCES
     plRenderRequestMsg.cpp
     plRideAnimatedPhysMsg.cpp
     plRippleShapeMsg.cpp
-    plSimInfluenceMsg.cpp
     plSimStateMsg.cpp
     plSwimMsg.cpp
     plSynchEnableMsg.cpp
@@ -111,7 +109,6 @@ set(plMessage_HEADERS
     plRippleShapeMsg.h
     plRoomLoadNotifyMsg.h
     plShadowCastMsg.h
-    plSimInfluenceMsg.h
     plSimStateMsg.h
     plSpawnModMsg.h
     plSpawnRequestMsg.h
