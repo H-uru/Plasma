@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyGUIControl.h"
+#include "pyGeometry3.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControl, pyGUIControl);

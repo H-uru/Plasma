@@ -604,7 +604,7 @@ float hsFastMath::IATan2OverTwoPi(float y, float x)
     if( (x == 0)&&(y == 0) )
         return 0;
 
-    bool xNeg, yNeg;
+    int xNeg, yNeg;
     if((yNeg = (y < 0)))y = -y;
     if((xNeg = (x < 0)))x = -x;
     bool yBigger = y >= x;

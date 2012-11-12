@@ -155,7 +155,7 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, boo
                 err = "Height of created font does not match";
             if( fontInfo.lfWeight != weight )
                 err = "Weight of created font does not match";
-            if( fontInfo.lfItalic != italic )
+            if( static_cast<bool>(fontInfo.lfItalic) != italic )
                 err = "Italic-ness of created font does not match";
             if( stricmp( fontInfo.lfFaceName, face ) != 0 )
                 err = "Face of created font does not match";

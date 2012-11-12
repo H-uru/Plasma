@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGUIControlClickMap.h"
 #include "pyGUIDialog.h"
+#include "pyGeometry3.h"
 
 pyGUIControlClickMap::pyGUIControlClickMap(pyKey& gckey) : pyGUIControl(gckey)
 {
