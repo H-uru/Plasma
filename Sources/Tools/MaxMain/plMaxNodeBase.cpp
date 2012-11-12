@@ -1026,7 +1026,7 @@ Matrix3 plMaxNodeBase::GetWorldToParent(TimeValue t)
     GetTMController()->GetLocalTMComponents(t, cmpts, parentMatrix);
 
     Quat q;
-    if( cmpts.rotRep == TMComponentsArg::RotationRep::kQuat )
+    if( cmpts.rotRep == TMComponentsArg::kQuat )
         q = Quat(rot);
     else
         EulerToQuat(rot, q, cmpts.rotRep);
