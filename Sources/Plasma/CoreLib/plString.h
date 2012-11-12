@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <stddef.h>
 #include <vector>
-#include <functional>
 
 /* NOTE & TODO:
  *   These macros are intentionally annoyingly named, to mark what code
@@ -281,25 +280,25 @@ public:
     plString ToLower() const;
 
 public:
-    struct less : public std::binary_function<plString, plString, bool>
+    struct less
     {
         bool operator()(const plString &_L, const plString &_R) const
         { return _L.Compare(_R, kCaseSensitive) < 0; }
     };
 
-    struct less_i : public std::binary_function<plString, plString, bool>
+    struct less_i
     {
         bool operator()(const plString &_L, const plString &_R) const
         { return _L.Compare(_R, kCaseInsensitive) < 0; }
     };
 
-    struct equal : public std::binary_function<plString, plString, bool>
+    struct equal
     {
         bool operator()(const plString &_L, const plString &_R) const
         { return _L.Compare(_R, kCaseSensitive) == 0; }
     };
 
-    struct equal_i : public std::binary_function<plString, plString, bool>
+    struct equal_i
     {
         bool operator()(const plString &_L, const plString &_R) const
         { return _L.Compare(_R, kCaseInsensitive) == 0; }
