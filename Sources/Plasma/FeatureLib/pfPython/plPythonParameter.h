@@ -376,11 +376,11 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    char *buffer = new char[count];
+                    plStringBuffer<char> str;
+                    char *buffer = str.CreateWritableBuffer(count-1);
                     stream->ReadLE(count, buffer);
                     buffer[count-1] = 0;
-                    fString = plString::FromUtf8(buffer, count);
-                    delete [] buffer;
+                    fString = str;
                 }
                 else
                     fString = plString::Null;
