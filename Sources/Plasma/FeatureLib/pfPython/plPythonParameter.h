@@ -379,7 +379,8 @@ public:
                     char *buffer = new char[count];
                     stream->ReadLE(count, buffer);
                     buffer[count-1] = 0;
-                    fString = plString::Steal(buffer, count);
+                    fString = plString::FromUtf8(buffer, count);
+                    delete [] buffer;
                 }
                 else
                     fString = plString::Null;
@@ -433,8 +434,7 @@ public:
                 else
                     count = 0;
                 stream->WriteLE(count);
-                if ( count != 0 )
-                    stream->WriteLE(count, fString.c_str());
+                stream->WriteLE(count, fString.c_str());
                 break;
 
             case kSceneObject:

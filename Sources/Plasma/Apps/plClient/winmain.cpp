@@ -968,8 +968,9 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 memset(eulaData, 0, dataLen + 1);
                 stream.Read(dataLen, eulaData);
 
-                plString str = plString::Steal(eulaData);
-                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, _TEMP_CONVERT_TO_WCHAR_T(str));
+                plString str = plString::FromUtf8(eulaData);
+                delete [] eulaData;
+                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, str.ToWchar());
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);
