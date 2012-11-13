@@ -622,7 +622,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
     char        tempPath[ MAX_PATH ];
     strncpy(tempPath, fileName, MAX_PATH);
     ::PathStripPath( tempPath );
-    keyName = _TEMP_CONVERT_FROM_LITERAL( tempPath );
+    keyName = tempPath;
 
     // TEMP HACK until we get packed sounds: 
     // Given the source filename, we check to see if it's in our plasma game directory. If not, or if
@@ -638,7 +638,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
         plFileUtils::CreateDir( fullPath );
 
         // Now finish the path...
-        strcat( fullPath, _TEMP_CONVERT_TO_CONST_CHAR( keyName ) );
+        strcat( fullPath, keyName.c_str() );
 
         // Check filestamp
         WIN32_FILE_ATTRIBUTE_DATA   oldFileAttrib, newFileAttrib;
@@ -667,9 +667,9 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
 
     // Additional info for the keyName--need some flag mangling, specifically for the left/right channel mangling
     if( srcBufferFlags & plSoundBuffer::kOnlyLeftChannel )
-        keyName += _TEMP_CONVERT_FROM_LITERAL( ":L" );
+        keyName += ":L";
     else if( srcBufferFlags & plSoundBuffer::kOnlyRightChannel )
-        keyName += _TEMP_CONVERT_FROM_LITERAL( ":R" );
+        keyName += ":R";
 
     key = srcNode->FindPageKey( plSoundBuffer::Index(), keyName );  
     if( key != nil )

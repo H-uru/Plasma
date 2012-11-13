@@ -2728,7 +2728,7 @@ bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
+        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
     }
 
     if( fCompPB->GetInt( kRefOrientation ) == 1 )
@@ -4450,7 +4450,7 @@ bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
+        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
     }
 
     const char *errMsg = ISetSoundIndex( kRefAnimateSound, kRefAnimateSoundComp, pfGUIProgressCtrl::kAnimateSound, node );

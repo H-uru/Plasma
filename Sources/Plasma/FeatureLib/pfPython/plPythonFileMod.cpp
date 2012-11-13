@@ -1862,7 +1862,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             // yes...
             // find the value that would go with a command
             PyObject* value;
-            std::wstring str;
+            plStringBuffer<wchar_t> str;
             switch (pkimsg->GetCommand())
             {
                 case pfKIMsg::kSetChatFadeDelay:
@@ -1873,8 +1873,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
                 case pfKIMsg::kYesNoDialog:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetStringU();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.c_str(), str.length()));
+                    str = pkimsg->GetString().ToWchar();
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.GetSize()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kGZInRange:
@@ -1884,23 +1884,23 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
                 case pfKIMsg::kRateIt:
                     value = PyTuple_New(3);
-                    str = pkimsg->GetStringU();
+                    str = pkimsg->GetString().ToWchar();
                     PyTuple_SetItem(value,0,PyString_FromString(pkimsg->GetUser()));
-                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str.c_str(), str.length()));
+                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str, str.GetSize()));
                     PyTuple_SetItem(value,2,PyLong_FromLong(pkimsg->GetIntValue()));
                     break;
                 case pfKIMsg::kRegisterImager:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetStringU();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.c_str(), str.length()));
+                    str = pkimsg->GetString().ToWchar();
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.GetSize()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kAddPlayerDevice:
                 case pfKIMsg::kRemovePlayerDevice:
                     {
-                        str = pkimsg->GetStringU();
-                        if ( str.length() > 0 )
-                            value = PyUnicode_FromWideChar(str.c_str(), str.length());
+                        str = pkimsg->GetString().ToWchar();
+                        if ( str.GetSize() > 0 )
+                            value = PyUnicode_FromWideChar(str, str.GetSize());
                         else
                         {
                             Py_INCREF(Py_None);
@@ -1915,8 +1915,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kKIOKDialogNoQuit:
                 case pfKIMsg::kGZFlashUpdate:
                 case pfKIMsg::kKICreateMarkerNode:
-                    str = pkimsg->GetStringU();
-                    value = PyUnicode_FromWideChar(str.c_str(), str.length());
+                    str = pkimsg->GetString().ToWchar();
+                    value = PyUnicode_FromWideChar(str, str.GetSize());
                     break;
                 case pfKIMsg::kMGStartCGZGame:
                 case pfKIMsg::kMGStopCGZGame:
@@ -2905,7 +2905,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 void plPythonFileMod::ReportError()
 {
     plString objectName = this->GetKeyName();
-    objectName += _TEMP_CONVERT_FROM_LITERAL(" - ");
+    objectName += " - ";
 
     PythonInterface::WriteToStdErr(objectName.c_str());
 
@@ -3050,4 +3050,4 @@ void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
 //// kGlobalNameKonstant /////////////////////////////////////////////////
 //  My continued attempt to spread the CORRECT way to spell konstant. -mcn
 
-plString plPythonFileMod::kGlobalNameKonstant = _TEMP_CONVERT_FROM_LITERAL("VeryVerySpecialPythonFileMod");
+plString plPythonFileMod::kGlobalNameKonstant("VeryVerySpecialPythonFileMod");

@@ -77,7 +77,7 @@ plString plNetTransportMember::AsString() const
 {
     if (IsServer())
     {
-        return _TEMP_CONVERT_FROM_LITERAL("(server)");
+        return "(server)";
     }
     else
     {

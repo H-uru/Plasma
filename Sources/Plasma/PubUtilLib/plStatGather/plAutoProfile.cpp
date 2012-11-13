@@ -219,7 +219,7 @@ void plAutoProfileImp::INextProfile()
         if (!fLastSpawnPointName.IsNull())
         {
             const char * ageName = NetCommGetAge()->ageDatasetName;
-            plProfileManagerFull::Instance().LogStats(ageName, _TEMP_CONVERT_TO_CONST_CHAR(fLastSpawnPointName));
+            plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName.c_str());
 
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))
@@ -276,8 +276,8 @@ bool plAutoProfileImp::INextAge()
     link.SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
     plNetLinkingMgr::GetInstance()->LinkToAge(&link);
 
-    fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Linking to age ");
-    fStatusMessage += _TEMP_CONVERT_FROM_LITERAL(ageName);
+    fStatusMessage = "Linking to age ";
+    fStatusMessage += ageName;
 
     return true;
 }
@@ -299,7 +299,7 @@ bool plAutoProfileImp::INextSpawnPoint()
 
         if (fLastSpawnPointName.CompareN(kPerfSpawnPrefix, kPerfSpawnLen) == 0)
         {
-            fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Profiling spawn point ");
+            fStatusMessage = "Profiling spawn point ";
             fStatusMessage += fLastSpawnPointName;
 
             foundGood = true;
@@ -312,7 +312,7 @@ bool plAutoProfileImp::INextSpawnPoint()
     if (!foundGood)
     {
         fLastSpawnPointName = plString::Null;
-        fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("No profile spawn point found");
+        fStatusMessage = "No profile spawn point found";
         return false;
     }
 
@@ -368,7 +368,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
                 ms);
         }
 
-        fStatusMessage = _TEMP_CONVERT_FROM_LITERAL("Age loaded.  Preparing to profile.");
+        fStatusMessage = "Age loaded.  Preparing to profile.";
 
         // Age is loaded, start profiling in 5 seconds (to make sure the avatar is linked in all the way)
         plTimerCallbackMsg* timerMsg = new plTimerCallbackMsg(GetKey());

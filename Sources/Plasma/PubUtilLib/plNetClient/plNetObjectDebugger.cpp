@@ -130,7 +130,7 @@ bool plNetObjectDebugger::DebugObject::ObjectMatches(const hsKeyedObject* obj)
     if ((fFlags & kPageMatch)==0)
     {
         // match based on object name only
-        return StringMatches(_TEMP_CONVERT_TO_CONST_CHAR(obj->GetKeyName()));
+        return StringMatches(obj->GetKeyName().c_str());
     }
 
     return (obj->GetKey()->GetUoid().GetLocation()==fLoc);

@@ -663,11 +663,11 @@ plString plNetServerSessionInfo::AsLogString() const
     const char* spacer = kSemicolon;
 
     plStringStream ss;
-    plString typeName = _TEMP_CONVERT_FROM_LITERAL("");
+    plString typeName;
 
     if (HasServerType())
     {
-        typeName = _TEMP_CONVERT_FROM_LITERAL(plNetServerConstants::GetServerTypeStr(fServerType));
+        typeName = plNetServerConstants::GetServerTypeStr(fServerType);
     }
 
     if (HasServerName())

@@ -231,12 +231,12 @@ PF_CONSOLE_CMD( Net,        // groupName
 {
     // send chat text
     plString text=plNetClientMgr::GetInstance()->GetPlayerName();
-    text += _TEMP_CONVERT_FROM_LITERAL(":");
+    text += ":";
     int i;
     for(i=0;i<numParams;i++)
     {
         text += plString::FromUtf8( (char*)params[i] );
-        text += _TEMP_CONVERT_FROM_LITERAL(" ");
+        text += " ";
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );
     cMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);

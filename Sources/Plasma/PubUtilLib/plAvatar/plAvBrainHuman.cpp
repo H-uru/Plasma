@@ -309,7 +309,7 @@ void plAvBrainHuman::IInitBoneMap()
     for(int i = 0; i < numTuples; i++)
     {
         HumanBoneID id = tupleMap[i].fID;
-        plString name = _TEMP_CONVERT_FROM_LITERAL(tupleMap[i].fName);
+        plString name = tupleMap[i].fName;
         
         const plSceneObject * bone = this->fAvMod->FindBone(name);
         if( bone )

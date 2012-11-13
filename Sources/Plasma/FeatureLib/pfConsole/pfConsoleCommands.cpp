@@ -6980,7 +6980,7 @@ PF_CONSOLE_CMD( Python,
         args = plString::Format("(%s,)", tmp);
     }
     else
-        args = _TEMP_CONVERT_FROM_LITERAL("()");
+        args = "()";
 
     PythonInterface::RunFunctionSafe("xCheat", params[0], args.c_str());
 

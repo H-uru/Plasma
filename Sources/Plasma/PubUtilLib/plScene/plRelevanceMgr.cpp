@@ -222,7 +222,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 plRegionInfo *info = new plRegionInfo;
                 regions.Append(info);
                 info->fName = hsStrcpy(buff);
-                info->fIndex = GetIndex(_TEMP_CONVERT_FROM_LITERAL(buff));
+                info->fIndex = GetIndex(buff);
             }
         }
         else // parsing actual settings.
@@ -231,7 +231,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             if (!toke.Next(buff, kBufSize))
                 continue;
             
-            int rowIndex = GetIndex(_TEMP_CONVERT_FROM_LITERAL(buff));
+            int rowIndex = GetIndex(buff);
             int column = 0;
             while (toke.Next(buff, kBufSize) && column < regions.GetCount())
             {
@@ -252,20 +252,20 @@ plString plRelevanceMgr::GetRegionNames(hsBitVector regions)
 {
     plString retVal;
     if (regions.IsBitSet(0))
-        retVal = _TEMP_CONVERT_FROM_LITERAL("-Nowhere (0)-");
+        retVal = "-Nowhere (0)-";
 
     for (int i = 0; i < fRegions.GetCount(); ++i)
     {
         if (regions.IsBitSet(i + 1))
         {
             if (!retVal.IsEmpty())
-                retVal += _TEMP_CONVERT_FROM_LITERAL(", ");
+                retVal += ", ";
             if (fRegions[i])
                 retVal += fRegions[i]->GetKeyName();
         }
     }
 
     if (retVal.IsEmpty())
-        retVal = _TEMP_CONVERT_FROM_LITERAL("<NONE>");
+        retVal = "<NONE>";
     return retVal;
 }

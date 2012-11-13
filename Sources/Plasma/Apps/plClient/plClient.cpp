@@ -1286,7 +1286,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
 
 void plClient::IReadKeyedObjCallback(plKey key)
 {
-    fInstance->IIncProgress(1, _TEMP_CONVERT_TO_CONST_CHAR(key->GetName()));
+    fInstance->IIncProgress(1, key->GetName().c_str());
 }
 
 //============================================================================

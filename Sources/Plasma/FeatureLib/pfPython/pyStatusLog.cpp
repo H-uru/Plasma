@@ -72,7 +72,7 @@ bool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
 
     // create a status log guy for this
     fICreatedLog = true;
-    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, _TEMP_CONVERT_TO_CONST_CHAR(logName), flags );
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, logName.c_str(), flags );
     if (fLog)
     {
         fLog->SetForceLog(true);
@@ -85,7 +85,7 @@ bool pyStatusLog::Write(plString text)
 {
     if (fLog)
     {
-        fLog->AddLine(_TEMP_CONVERT_TO_CONST_CHAR(text));
+        fLog->AddLine(text.c_str());
         return true;
     }
 
@@ -100,7 +100,7 @@ bool pyStatusLog::WriteColor(plString text, pyColor& color)
                                 ((uint32_t)(color.getRed()*255)<<16) +
                                 ((uint32_t)(color.getGreen()*255)<<8) + 
                                 ((uint32_t)(color.getBlue()*255));
-        fLog->AddLine( _TEMP_CONVERT_TO_CONST_CHAR(text), st_color );
+        fLog->AddLine( text.c_str(), st_color );
         return true;
     }
 

@@ -616,7 +616,7 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     plKey ourKey = GetKey();
     PhysRefType refType = PhysRefType(refMsg->fType);
 
-    plString refKeyName = refKey ? refKey->GetName() : _TEMP_CONVERT_FROM_LITERAL("MISSING");
+    plString refKeyName = refKey ? refKey->GetName() : "MISSING";
 
     if (refType == kPhysRefWorld)
     {
@@ -694,7 +694,7 @@ plPhysical& plPXPhysical::SetProperty(int prop, bool status)
         case plSimulationInterface::kNoSynchronize:     propName = "kNoSynchronize";        break;
         }
 
-        plString name = _TEMP_CONVERT_FROM_LITERAL("(unknown)");
+        plString name = "(unknown)";
         if (GetKey())
             name = GetKeyName();
         if (plSimulationMgr::fExtraProfile)

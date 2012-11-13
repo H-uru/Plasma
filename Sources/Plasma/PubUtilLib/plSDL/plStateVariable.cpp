@@ -1790,7 +1790,7 @@ plString plSimpleStateVariable::GetKeyName(int idx) const
         }
     }
     hsAssert(false, "passing wrong value type to SDL variable"); 
-    return _TEMP_CONVERT_FROM_LITERAL("(nil)");
+    return "(nil)";
 }
 
 #pragma optimize( "g", off )    // disable float optimizations
