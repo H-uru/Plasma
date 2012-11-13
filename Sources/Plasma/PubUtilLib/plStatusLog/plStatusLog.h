@@ -90,7 +90,6 @@ class plStatusLog
         hsSemaphore* fSema;
         FILE*        fFileHandle;
         uint32_t     fSize;
-        bool         fEncryptMe;
         bool         fForceLog;
 
         plStatusLog *fNext, **fBack;

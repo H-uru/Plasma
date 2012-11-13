@@ -118,7 +118,6 @@ class plInitFileReader
         hsStream            *fOurStream;
         char                *fCurrLine;
         uint32_t              fLineSize;
-        bool                fRequireEncrypted;
 
         plInitSectionReader             *fCurrSection;
         hsTArray<plInitSectionReader *> fSections;
@@ -138,8 +137,6 @@ class plInitFileReader
         plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, uint16_t lineSize = 256 );
         virtual ~plInitFileReader();
 
-        void SetRequireEncrypted(bool require) { fRequireEncrypted = require; }
-        bool GetRequireEncrypted() const { return fRequireEncrypted; }
         void SetUnhandledSectionReader(plInitSectionReader* reader) { fUnhandledSection = reader; }
 
         bool    Open( const char *fileName );
