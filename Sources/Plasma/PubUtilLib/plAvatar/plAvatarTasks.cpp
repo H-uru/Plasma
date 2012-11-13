@@ -249,7 +249,7 @@ bool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
             {
                 hsMatrix44 adjustment;
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
-                GetStartToEndTransform(anim, nil, &adjustment, _TEMP_CONVERT_FROM_LITERAL("Handle"));   // actually getting end-to-start
+                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
                 targetL2W = targetL2W * adjustment;
             }
             break;
@@ -624,7 +624,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
         }
 
-        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel(_TEMP_CONVERT_FROM_LITERAL("Handle")) != nil);
+        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
         if(fMoveHandle)
         {
             plMatrixDifferenceApp *differ = avatar->GetRootAnimator();

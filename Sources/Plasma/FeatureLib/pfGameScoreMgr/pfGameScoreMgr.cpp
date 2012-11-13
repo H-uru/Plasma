@@ -143,7 +143,7 @@ static void OnScoreCreate(
     int32_t     value
 ) {
     ScoreUpdateParam* p = (ScoreUpdateParam*)param;
-    pfGameScore* score = new pfGameScore(scoreId, ownerId, _TEMP_CONVERT_FROM_LITERAL(gameName), gameType, value);
+    pfGameScore* score = new pfGameScore(scoreId, ownerId, gameName, gameType, value);
     pfGameScoreUpdateMsg* msg = new pfGameScoreUpdateMsg(result, score, value);
     msg->Send(p->fReceiver);
     delete p;
@@ -165,7 +165,7 @@ static void OnScoreFound(
     for (uint32_t i = 0; i < scoreCount; ++i)
     {
         const NetGameScore ngs = scores[i];
-        vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, _TEMP_CONVERT_FROM_WCHAR_T(ngs.gameName), ngs.gameType, ngs.value);
+        vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, plString::FromWchar(ngs.gameName), ngs.gameType, ngs.value);
     }
 
     ScoreFindParam* p = (ScoreFindParam*)param;

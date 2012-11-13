@@ -136,7 +136,7 @@ plLayer* hsGMaterial::MakeBaseLayer()
     if( !GetKey()->GetName().IsNull() )
         buff = plString::Format("%s_Layer", GetKey()->GetName().c_str());
     else
-        buff = _TEMP_CONVERT_FROM_LITERAL("Layer");
+        buff = "Layer";
     hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     // Add layer so we have it now.

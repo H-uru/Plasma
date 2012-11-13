@@ -548,8 +548,8 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     else
         name = plString::Format( "%s*%x", temp, bd->texFlags );
     if( bd->invertAlpha )
-        name += _TEMP_CONVERT_FROM_LITERAL( "_inva" );
-    name += _TEMP_CONVERT_FROM_LITERAL( ".hsm" );
+        name += "_inva";
+    name += ".hsm";
 
 
     // Has this texture been used before?

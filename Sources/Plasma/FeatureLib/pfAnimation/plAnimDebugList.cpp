@@ -127,7 +127,7 @@ void plAnimDebugList::ShowReport()
                     str = plString::Format("%s: %s %.3f (%.3f)", mat->GetKeyName().c_str(), layerAnim->GetKeyName().c_str(),
                             layerAnim->GetTimeConvert().CurrentAnimTime(),
                             layerAnim->GetTimeConvert().WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-                    txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
+                    txt.DrawString(x, y, str.c_str());
                     y += yOff;
                 }
                 layer = layer->GetOverLay();
@@ -149,7 +149,7 @@ void plAnimDebugList::ShowReport()
             continue;
 
         str = plString::Format("  %s", so->GetKeyName().c_str());
-        txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
+        txt.DrawString(x, y, str.c_str());
         y += yOff;
 
         for (j = 0; j < mod->GetNumATCAnimations(); j++)
@@ -158,7 +158,7 @@ void plAnimDebugList::ShowReport()
             str = plString::Format("    %s: %.3f (%.3f)", anim->GetAnimation()->GetName().c_str(),
                     anim->GetTimeConvert()->CurrentAnimTime(),
                     anim->GetTimeConvert()->WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-            txt.DrawString(x, y, _TEMP_CONVERT_TO_CONST_CHAR(str));
+            txt.DrawString(x, y, str.c_str());
             y += yOff;
         }
     }

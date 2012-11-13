@@ -46,16 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <stddef.h>
 
-/* NOTE & TODO:
- *   These macros are intentionally annoyingly named, to mark what code
- *   needs to be cleaned up after a larger portion of Plasma is converted
- *   to plString.
- */
-#define _TEMP_CONVERT_FROM_LITERAL(x)       plString::FromUtf8((x))
-#define _TEMP_CONVERT_FROM_WCHAR_T(x)       plString::FromWchar((x))
-#define _TEMP_CONVERT_TO_CONST_CHAR(x)      ((x).c_str())
-#define _TEMP_CONVERT_TO_WCHAR_T(x)         ((x).ToWchar().GetData())
-
 typedef unsigned int UniChar;
 
 #define SSO_CHARS (16)
@@ -173,13 +163,15 @@ private:
 public:
     plString() { }
 
-    //plString(const char *utf8) { IConvertFromUtf8(utf8, kSizeAuto, false); }
-    //plString(const wchar_t *wstr) { IConvertFromWchar(wstr, kSizeAuto); }
+#ifndef PLSTRING_POLLUTE_ASCII_CAST
+    plString(const char *ascii) { IConvertFromUtf8(ascii, kSizeAuto); }
+#endif
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
     plString(const plStringBuffer<char> &init) { operator=(init); }
 
-    //plString &operator=(const char *utf8) { IConvertFromUtf8(utf8, kSizeAuto, false); return *this; }
-    //plString &operator=(const wchar_t *wstr) { IConvertFromWchar(wstr, kSizeAuto); return *this; }
+#ifndef PLSTRING_POLLUTE_ASCII_CAST
+    plString &operator=(const char *ascii) { IConvertFromUtf8(ascii, kSizeAuto); return *this; }
+#endif
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);
 
@@ -213,8 +205,10 @@ public:
         return str;
     }
 
+#ifndef PLSTRING_POLLUTE_C_STR
     const char *c_str(const char *substitute = "") const
     { return IsEmpty() ? substitute : fUtf8Buffer.GetData(); }
+#endif
 
     char CharAt(size_t position) const { return c_str()[position]; }
 

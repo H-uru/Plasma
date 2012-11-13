@@ -70,7 +70,7 @@ plString hsKeyedObject::GetKeyName() const
     if (fpKey)
         return fpKey->GetName();
     else
-        return _TEMP_CONVERT_FROM_LITERAL("(unknown)");
+        return "(unknown)";
 }
 
 hsKeyedObject::~hsKeyedObject()

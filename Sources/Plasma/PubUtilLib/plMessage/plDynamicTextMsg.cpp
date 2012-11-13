@@ -253,7 +253,7 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
     fClearColor.Write( s );
     fColor.Write( s );
 
-    s->WriteSafeWString( fString );
+    s->WriteSafeWString( plString::FromWchar(fString) );
     mgr->WriteKey( s, fImageKey );
 
     s->WriteLE( fFlags );
@@ -360,7 +360,7 @@ void plDynamicTextMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     fColor.Write( s );
 
     // kDynTextMsgString
-    s->WriteSafeWString( fString );
+    s->WriteSafeWString( plString::FromWchar(fString) );
     // kDynTextMsgImageKey
     mgr->WriteKey( s, fImageKey );
 

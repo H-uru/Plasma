@@ -199,9 +199,9 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
         const plLocation& loc = (globalLoc.IsValid() ? globalLoc : custLoc.IsValid() ? custLoc : maleLoc);
 #endif
 
-        plString theName = _TEMP_CONVERT_FROM_LITERAL(name);
+        plString theName = name;
         if ( loc == maleLoc )
-            theName = _TEMP_CONVERT_FROM_LITERAL("Male");
+            theName = "Male";
 
         if (loc.IsValid())
         {
@@ -1012,7 +1012,7 @@ void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *lin
             
             brainG->AddStage(guestAccept);
             brainG->AddStage(guestAcceptIdle);
-            plCoopCoordinator *coord = new plCoopCoordinator(hostKey, guestKey, brainH, brainG, _TEMP_CONVERT_FROM_LITERAL("Convergence"), 1, 1, linkMsg, true);
+            plCoopCoordinator *coord = new plCoopCoordinator(hostKey, guestKey, brainH, brainG, "Convergence", 1, 1, linkMsg, true);
 
 
             plAvCoopMsg *coMg = new plAvCoopMsg(hostKey, coord);

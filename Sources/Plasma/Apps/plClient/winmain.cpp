@@ -998,15 +998,15 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     memset(cryptKey, 0, sizeof(cryptKey));
     GetCryptKey(cryptKey, arrsize(cryptKey));
 
-    plString theUser = _TEMP_CONVERT_FROM_LITERAL(pLoginParam->username);
-    plString thePass = (_TEMP_CONVERT_FROM_LITERAL(password)).Left(kMaxPasswordLength);
+    plString theUser = pLoginParam->username;
+    plString thePass = plString(password).Left(kMaxPasswordLength);
 
     // if the password field is the fake string then we've already
     // loaded the namePassHash from the file
     if (thePass.Compare(FAKE_PASS_STRING) != 0)
     {
         wchar_t domain[15];
-        PathSplitEmail(_TEMP_CONVERT_TO_WCHAR_T(theUser), nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
+        PathSplitEmail(theUser.ToWchar(), nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
 
         if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
             plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
@@ -1026,7 +1026,7 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
         }
     }
 
-    NetCommSetAccountUsernamePassword(_TEMP_CONVERT_TO_WCHAR_T(theUser), pLoginParam->namePassHash);
+    NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
     if (TGIsCider)
         NetCommSetAuthTokenAndOS(nil, L"mac");
     else
@@ -1436,7 +1436,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        cmdLine << _TEMP_CONVERT_FROM_WCHAR_T(s_patcherExeName);
+        cmdLine << plString::FromWchar(s_patcherExeName);
 
         GetAuthSrvHostnames(&addrs);
         if(strlen(addrs[0]))

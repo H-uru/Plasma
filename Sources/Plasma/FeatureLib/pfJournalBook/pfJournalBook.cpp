@@ -472,7 +472,7 @@ pfBookData::pfBookData(const plString &guiName /* = nil */)
     if (!guiName.IsEmpty())
         fGUIName = guiName;
     else
-        fGUIName = _TEMP_CONVERT_FROM_LITERAL("BkBook");
+        fGUIName = "BkBook";
 }
 
 pfBookData::~pfBookData()
@@ -1140,9 +1140,9 @@ std::map<plString,pfBookData*> pfJournalBook::fBookGUIs;
 
 void    pfJournalBook::SingletonInit( void )
 {
-    fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")] = new pfBookData(); // load the default book data object
-    hsgResMgr::ResMgr()->NewKey(_TEMP_CONVERT_FROM_LITERAL("BkBook"),fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
-    fBookGUIs[_TEMP_CONVERT_FROM_LITERAL("BkBook")]->LoadGUI();
+    fBookGUIs["BkBook"] = new pfBookData(); // load the default book data object
+    hsgResMgr::ResMgr()->NewKey("BkBook",fBookGUIs["BkBook"],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
+    fBookGUIs["BkBook"]->LoadGUI();
 }
 
 void    pfJournalBook::SingletonShutdown( void )
@@ -1207,7 +1207,7 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
     if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     else
-        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook");
+        fCurBookGUI = "BkBook";
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
         fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI);
@@ -1243,7 +1243,7 @@ pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, 
     if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     else
-        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook");
+        fCurBookGUI = "BkBook";
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
     {
         fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI);
@@ -1292,7 +1292,7 @@ void    pfJournalBook::SetGUI( const plString &guiName )
     if (!guiName.IsEmpty())
         fCurBookGUI = guiName;
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
-        fCurBookGUI = _TEMP_CONVERT_FROM_LITERAL("BkBook"); // requested GUI isn't loaded, so use default GUI
+        fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
     SetEditable(fWantEditing); // make sure that if we want editing, to set it
     ICompileSource(fUncompiledSource.c_str(), fDefLoc); // recompile the source to be safe
 }
@@ -2506,9 +2506,9 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
         // facilitate fast prototyping
         plMipmap *mip;
         if( cName.Find( ".png" ) >= 0 )
-            mip = plPNG::Instance().ReadFromFile( _TEMP_CONVERT_TO_CONST_CHAR( cName ) );
+            mip = plPNG::Instance().ReadFromFile( cName.c_str() );
         else
-            mip = plJPEG::Instance().ReadFromFile( _TEMP_CONVERT_TO_CONST_CHAR( cName ) );
+            mip = plJPEG::Instance().ReadFromFile( cName.c_str() );
 
         hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
         return mip->GetKey();

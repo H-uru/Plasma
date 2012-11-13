@@ -210,8 +210,8 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
 
     int matchedFields = sscanf(note, " %[^@] @ %s ", segName, segSuffix);
 
-    plString name = _TEMP_CONVERT_FROM_LITERAL(segName);
-    plString suffix = _TEMP_CONVERT_FROM_LITERAL(segSuffix);
+    plString name = segName;
+    plString suffix = segSuffix;
 
     if (matchedFields == 2)
     {
