@@ -562,8 +562,7 @@ hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, uint32_t
     else
         s = new hsUNIXStream;
 
-    if (s)
-        s->Open(fileName, L"rb");
+    s->Open(fileName, L"rb");
     return s;
 }
 
@@ -578,11 +577,10 @@ hsStream* plEncryptedStream::OpenEncryptedFileWrite(const char* fileName, uint32
 hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey)
 {
     hsStream* s = nil;
-#ifdef PLASMA_EXTERNAL_RELEASE
-    s = new plEncryptedStream(cryptKey);
-#else
-    s = new hsUNIXStream;
-#endif
+    if (IsEncryptedFile(fileName))
+        s = new plEncryptedStream(cryptKey);
+    else
+        s = new hsUNIXStream;
 
     s->Open(fileName, L"wb");
     return s;
