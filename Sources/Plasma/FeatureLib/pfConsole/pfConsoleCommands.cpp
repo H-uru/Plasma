@@ -113,7 +113,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plProxyDrawMsg.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plAttachMsg.h"
-#include "plMessage/plSimInfluenceMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "pfMessage/pfKIMsg.h"

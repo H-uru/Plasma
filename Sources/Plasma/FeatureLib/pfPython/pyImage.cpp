@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyImage.h"
+#include "pyGeometry3.h"
 #include "plJPEG/plJPEG.h"
 #include "plGImage/plPNG.h"
 #include "pnKeyedObject/plUoid.h"

@@ -85,8 +85,8 @@ protected:
     uint16_t      fNumIdx;
 
     double      fBirth;
-    float    fInitAtten;
-    bool        fFlags;
+    float       fInitAtten;
+    uint32_t    fFlags;
 
     plDecalVtxFormat*   fVtxBase; // Safe pointer, the buffer data will outlive this decal
     

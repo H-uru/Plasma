@@ -2813,7 +2813,6 @@ public:
 
     BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     {
-        int             i;
         IParamBlock2    *pb = map->GetParamBlock();
 
 
@@ -2827,7 +2826,7 @@ public:
                     ComboBox_ResetContent( comboBox );
 
 #ifdef EAX_SDK_AVAILABLE
-                    for( i = 0; i < /*sizeof( EAX30_ORIGINAL_PRESETS ) 
+                    for( int i = 0; i < /*sizeof( EAX30_ORIGINAL_PRESETS ) 
                         / sizeof( EAXLISTENERPROPERTIES )*/26 ; i++ )
                         ComboBox_AddString( comboBox, EAX30_ORIGINAL_PRESET_NAMES[ i ] );
 #endif
