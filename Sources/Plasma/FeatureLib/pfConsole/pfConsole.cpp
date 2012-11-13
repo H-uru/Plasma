@@ -334,7 +334,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             case kSrv2Cli_GameMgr_InviteReceived: {
                 const Srv2Cli_GameMgr_InviteReceived & gmMsg = *(const Srv2Cli_GameMgr_InviteReceived *)gameMgrMsg->netMsg;
                 const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite received: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.s_str("<Unknown>"));
+                AddLineF("[GameMgr] Invite received: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.c_str("<Unknown>"));
             }
             return true;
 
@@ -343,7 +343,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             case kSrv2Cli_GameMgr_InviteRevoked: {
                 const Srv2Cli_GameMgr_InviteRevoked & gmMsg = *(const Srv2Cli_GameMgr_InviteRevoked *)gameMgrMsg->netMsg;
                 const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite revoked: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.s_str("<Unknown>"));
+                AddLineF("[GameMgr] Invite revoked: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.c_str("<Unknown>"));
             }
             return true;
             

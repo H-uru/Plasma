@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef unsigned int UniChar;
 
+#define SSO_CHARS (16)
+
 template <typename _Ch>
 class plStringBuffer
 {
@@ -67,10 +69,9 @@ private:
     {
         unsigned int fRefs;
         const _Ch *fStringData;
-        const size_t fSize;
 
-        StringRef(const _Ch *data, const size_t size)
-            : fRefs(1), fStringData(data), fSize(size) { }
+        StringRef(const _Ch *data)
+            : fRefs(1), fStringData(data) { }
 
         inline void AddRef() { ++fRefs; }
         inline void DecRef()
@@ -82,54 +83,74 @@ private:
         }
     };
 
-    StringRef *fData;
+    union {
+        StringRef *fData;
+        _Ch fShort[SSO_CHARS];
+    };
+    size_t fSize;
+
+    bool IHaveACow() const { return fSize >= SSO_CHARS; }
 
 public:
-    plStringBuffer() : fData(nil) { }
+    plStringBuffer() : fSize(0) { memset(fShort, 0, sizeof(fShort)); }
 
-    plStringBuffer(const plStringBuffer<_Ch> &copy)
+    plStringBuffer(const plStringBuffer<_Ch> &copy) : fSize(copy.fSize)
     {
-        fData = copy.fData;
-        if (fData)
+        memcpy(fShort, copy.fShort, sizeof(fShort));
+        if (IHaveACow())
             fData->AddRef();
     }
 
-    plStringBuffer(const _Ch *data, size_t size)
+    plStringBuffer(const _Ch *data, size_t size) : fSize(size)
     {
-        _Ch *copyData = new _Ch[size + 1];
+        memset(fShort, 0, sizeof(fShort));
+        _Ch *copyData = IHaveACow() ? new _Ch[size + 1] : fShort;
         memcpy(copyData, data, size);
         copyData[size] = 0;
 
-        fData = new StringRef(copyData, size);
+        if (IHaveACow())
+            fData = new StringRef(copyData);
     }
 
     ~plStringBuffer<_Ch>()
     {
-        if (fData)
+        if (IHaveACow())
             fData->DecRef();
-    }
-
-    static plStringBuffer<_Ch> Steal(const _Ch *data, size_t size)
-    {
-        plStringBuffer<_Ch> string;
-        string.fData = new StringRef(data, size);
-        return string;
     }
 
     plStringBuffer<_Ch> &operator=(const plStringBuffer<_Ch> &copy)
     {
-        if (copy.fData)
+        if (copy.IHaveACow())
             copy.fData->AddRef();
-        if (fData)
+        if (IHaveACow())
             fData->DecRef();
-        fData = copy.fData;
+
+        memcpy(fShort, copy.fShort, sizeof(fShort));
+        fSize = copy.fSize;
         return *this;
     }
 
-    const _Ch *GetData() const { return fData ? fData->fStringData : 0; }
-    size_t GetSize() const { return fData ? fData->fSize : 0; }
+    const _Ch *GetData() const { return IHaveACow() ? fData->fStringData : fShort; }
+    size_t GetSize() const { return fSize; }
 
     operator const _Ch *() const { return GetData(); }
+
+    // From Haxxia with love
+    // NOTE:  The client is expected to nul-terminate the returned buffer!
+    _Ch *CreateWritableBuffer(size_t size)
+    {
+        if (IHaveACow())
+            fData->DecRef();
+
+        fSize = size;
+        if (IHaveACow()) {
+            _Ch *writable = new _Ch[fSize + 1];
+            fData = new StringRef(writable);
+            return writable;
+        } else {
+            return fShort;
+        }
+    }
 };
 
 
@@ -145,7 +166,7 @@ public:
 private:
     plStringBuffer<char> fUtf8Buffer;
 
-    void IConvertFromUtf8(const char *utf8, size_t size, bool steal);
+    void IConvertFromUtf8(const char *utf8, size_t size);
     void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
@@ -161,12 +182,12 @@ public:
     //plString &operator=(const wchar_t *wstr) { IConvertFromWchar(wstr, kSizeAuto); return *this; }
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
 
-    plString &operator+=(const plString &str);
+    plString &operator+=(const plString &str) { return operator=(*this + str); }
 
     static inline plString FromUtf8(const char *utf8, size_t size = kSizeAuto)
     {
         plString str;
-        str.IConvertFromUtf8(utf8, size, false);
+        str.IConvertFromUtf8(utf8, size);
         return str;
     }
 
@@ -191,8 +212,9 @@ public:
         return str;
     }
 
-    const char *c_str() const { return fUtf8Buffer.GetData(); }
-    const char *s_str(const char *safe = "") const { return c_str() ? c_str() : safe; }
+    const char *c_str(const char *substitute = "") const
+    { return IsEmpty() ? substitute : fUtf8Buffer.GetData(); }
+
     char CharAt(size_t position) const { return c_str()[position]; }
 
     plStringBuffer<char> ToUtf8() const { return fUtf8Buffer; }
@@ -205,7 +227,10 @@ public:
 
     size_t GetSize() const { return fUtf8Buffer.GetSize(); }
     bool IsEmpty() const { return fUtf8Buffer.GetSize() == 0; }
-    bool IsNull() const { return fUtf8Buffer.GetData() == 0; }
+
+    // TODO: Evaluate whether Plasma actually needs to distinguish between
+    // empty and NULL strings.  Ideally, only IsEmpty should be required.
+    bool IsNull() const { return IsEmpty(); }
 
     int ToInt(int base = 0) const;
     unsigned int ToUInt(int base = 0) const;
@@ -214,12 +239,6 @@ public:
 
     static plString Format(const char *fmt, ...);
     static plString IFormat(const char *fmt, va_list vptr);
-    static plString Steal(const char *utf8, size_t size = kSizeAuto)
-    {
-        plString str;
-        str.IConvertFromUtf8(utf8, size, true);
-        return str;
-    }
 
     enum CaseSensitivity {
         kCaseSensitive, kCaseInsensitive
@@ -227,32 +246,26 @@ public:
 
     int Compare(const plString &str, CaseSensitivity sense = kCaseSensitive) const
     {
-        if (c_str() == str.c_str())
-            return 0;
-
-        return (sense == kCaseSensitive) ? strcmp(s_str(), str.s_str())
-                                         : stricmp(s_str(), str.s_str());
+        return (sense == kCaseSensitive) ? strcmp(c_str(), str.c_str())
+                                         : stricmp(c_str(), str.c_str());
     }
 
     int Compare(const char *str, CaseSensitivity sense = kCaseSensitive) const
     {
-        return (sense == kCaseSensitive) ? strcmp(s_str(), str)
-                                         : stricmp(s_str(), str);
+        return (sense == kCaseSensitive) ? strcmp(c_str(), str)
+                                         : stricmp(c_str(), str);
     }
 
     int CompareN(const plString &str, size_t count, CaseSensitivity sense = kCaseSensitive) const
     {
-        if (c_str() == str.c_str())
-            return 0;
-
-        return (sense == kCaseSensitive) ? strncmp(s_str(), str.s_str(), count)
-                                         : strnicmp(s_str(), str.s_str(), count);
+        return (sense == kCaseSensitive) ? strncmp(c_str(), str.c_str(), count)
+                                         : strnicmp(c_str(), str.c_str(), count);
     }
 
     int CompareN(const char *str, size_t count, CaseSensitivity sense = kCaseSensitive) const
     {
-        return (sense == kCaseSensitive) ? strncmp(s_str(), str, count)
-                                         : strnicmp(s_str(), str, count);
+        return (sense == kCaseSensitive) ? strncmp(c_str(), str, count)
+                                         : strnicmp(c_str(), str, count);
     }
 
     bool operator<(const plString &other) const { return Compare(other) < 0; }
@@ -393,7 +406,7 @@ public:
         const char *m_end;
     };
 
-    iterator GetIterator() const { return iterator(s_str(), GetSize()); }
+    iterator GetIterator() const { return iterator(c_str(), GetSize()); }
 
     size_t GetUniCharCount() const
     {
@@ -431,7 +444,7 @@ public:
 
     plStringStream &operator<<(const plString &text)
     {
-        return append(text.s_str(), text.GetSize());
+        return append(text.c_str(), text.GetSize());
     }
 
     size_t GetLength() const { return fLength; }

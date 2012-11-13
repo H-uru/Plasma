@@ -897,7 +897,7 @@ plString    plAnimStealthNode::GetLoopName( void ) const                { return
 void        plAnimStealthNode::SetLoop( bool b, const plString &name )
 {
     fParamBlock->SetValue( (ParamID)kPBLoop, 0, (int)b );
-    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.s_str() );
+    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.c_str() );
 }
 
 uint8_t       plAnimStealthNode::GetEaseInType( void ) const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
