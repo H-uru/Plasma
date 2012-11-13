@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <stddef.h>
-#include <vector>
 
 /* NOTE & TODO:
  *   These macros are intentionally annoyingly named, to mark what code
@@ -177,10 +176,12 @@ public:
     //plString(const char *utf8) { IConvertFromUtf8(utf8, kSizeAuto, false); }
     //plString(const wchar_t *wstr) { IConvertFromWchar(wstr, kSizeAuto); }
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
+    plString(const plStringBuffer<char> &init) { operator=(init); }
 
     //plString &operator=(const char *utf8) { IConvertFromUtf8(utf8, kSizeAuto, false); return *this; }
     //plString &operator=(const wchar_t *wstr) { IConvertFromWchar(wstr, kSizeAuto); return *this; }
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
+    plString &operator=(const plStringBuffer<char> &init);
 
     plString &operator+=(const plString &str) { return operator=(*this + str); }
 

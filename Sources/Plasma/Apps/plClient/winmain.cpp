@@ -964,13 +964,12 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
             if (stream.Open("TOS.txt", "rt"))
             {
                 uint32_t dataLen = stream.GetSizeLeft();
-                char* eulaData = new char[dataLen + 1];
+                plStringBuffer<char> eula;
+                char* eulaData = eula.CreateWritableBuffer(dataLen);
                 memset(eulaData, 0, dataLen + 1);
                 stream.Read(dataLen, eulaData);
 
-                plString str = plString::FromUtf8(eulaData);
-                delete [] eulaData;
-                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, str.ToWchar());
+                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, plString(eula).ToWchar());
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstring>
 #include <cstdlib>
 #include <wchar.h>
+#include <memory>
 
 const plString plString::Null;
 
@@ -93,10 +94,17 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size)
     if ((int32_t)size < 0)
         size = strnlen(utf8, -(int32_t)size);
 
+    operator=(plStringBuffer<char>(utf8, size));
+}
+
+plString &plString::operator=(const plStringBuffer<char> &init)
+{
+    fUtf8Buffer = init;
+
 #ifdef _DEBUG
     // Check to make sure the string is actually valid UTF-8
-    const char *sp = utf8;
-    while (sp < utf8 + size) {
+    const char *sp = fUtf8Buffer.GetData();
+    while (sp < fUtf8Buffer.GetData() + fUtf8Buffer.GetSize()) {
         unsigned char unichar = *sp++;
         if ((unichar & 0xF8) == 0xF0) {
             // Four bytes
@@ -118,7 +126,7 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size)
     }
 #endif
 
-    fUtf8Buffer = plStringBuffer<char>(utf8, size);
+    return *this;
 }
 
 void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)

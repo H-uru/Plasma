@@ -366,7 +366,7 @@ char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned 
 char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
 
 // Use "correct" stricmp based on the selected compiler / library
-#if HS_BUILD_FOR_WIN32
+#if _MSC_VER
 #    define stricmp     _stricmp
 #    define strnicmp    _strnicmp
 #    define wcsicmp     _wcsicmp
