@@ -215,7 +215,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animN
         // New segment, add a new stealth node
         stealth = (plAnimStealthNode *)GetCOREInterface()->CreateInstance( HELPER_CLASS_ID, ANIMSTEALTH_CLASSID );
         INode *node = GetCOREInterface()->CreateObjectNode( stealth );
-        stealth->SetSegment( ( animName.Compare(ENTIRE_ANIMATION_NAME) != 0 ) ? _TEMP_CONVERT_TO_CONST_CHAR(animName) : nil );
+        stealth->SetSegment( ( animName.Compare(ENTIRE_ANIMATION_NAME) != 0 ) ? animName.c_str() : nil );
         stealth->SetNodeName( GetName() );
         node->Freeze( true );
 
@@ -277,7 +277,7 @@ void    plPassMtlBase::IUpdateAnimNodes( void )
     fStealthsChanged = false;
 
     // Verify one for "entire animation"
-    plAnimStealthNode *stealth = IVerifyStealthPresent( _TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME) );
+    plAnimStealthNode *stealth = IVerifyStealthPresent( ENTIRE_ANIMATION_NAME );
     goodNodes.Append( stealth );
 
     // Verify segment nodes
@@ -519,7 +519,7 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
             plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, i );
             plString name = node->GetSegmentName();
             node->SetAutoStart( false );
-            node->SetLoop( true, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
+            node->SetLoop( true, ENTIRE_ANIMATION_NAME );
             node->SetEaseIn( plAnimEaseTypes::kNoEase, 1.f, 1.f, 1.f );
             node->SetEaseOut( plAnimEaseTypes::kNoEase, 1.f, 1.f, 1.f );
         }

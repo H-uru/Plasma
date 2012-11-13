@@ -189,7 +189,7 @@ public:
     static bool GetInverted() { return plMouseDevice::bInverted; }
     static void SetInverted(bool inverted) { plMouseDevice::bInverted = inverted; }
     static void AddNameToCursor(const char* name);
-    static void AddNameToCursor(const plString& name) { AddNameToCursor(_TEMP_CONVERT_TO_CONST_CHAR(name)); }
+    static void AddNameToCursor(const plString& name) { AddNameToCursor(name); }
     static void AddIDNumToCursor(uint32_t idNum);
     static void AddCCRToCursor();
     

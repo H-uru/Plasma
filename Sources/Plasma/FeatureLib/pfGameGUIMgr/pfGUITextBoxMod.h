@@ -59,7 +59,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
     protected:
 
         wchar_t         *fText;
-        std::wstring    fLocalizationPath;
+        plString        fLocalizationPath;
         bool            fUseLocalizationPath;
 
 
@@ -99,8 +99,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
         void    SetText( const char *text );
         void    SetText( const wchar_t *text );
 
-        void    SetLocalizationPath(const wchar_t* path);
-        void    SetLocalizationPath(const char* path);
+        void    SetLocalizationPath(const plString& path);
         void    SetUseLocalizationPath(bool use);
 
         virtual void    UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }

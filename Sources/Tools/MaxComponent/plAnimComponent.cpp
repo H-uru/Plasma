@@ -719,7 +719,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     plString animName = plString::FromUtf8(fCompPB->GetStr(kAnimName));
     if (animName.IsEmpty())
-        animName = _TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME);
+        animName = ENTIRE_ANIMATION_NAME;
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
@@ -995,7 +995,7 @@ plString plAnimComponentBase::GetIfaceSegmentName( bool allowNil )
     plString name = GetAnimName();
     if( allowNil || !name.IsNull() )
         return name;
-    return _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME );
+    return ENTIRE_ANIMATION_NAME;
 }
 
 //// Hit Callback for Animations /////////////////////////////////////////////

@@ -1341,10 +1341,10 @@ bool  plDXPipeline::ICreateDeviceObjects()
     /// Ok, we're done now
 #if MCN_BOUNDS_SPANS
     fBoundsSpans = new plDrawableSpans();
-    hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("BoundsSpans"), fBoundsSpans, plLocation::kGlobalFixedLoc );
+    hsgResMgr::ResMgr()->NewKey( "BoundsSpans", fBoundsSpans, plLocation::kGlobalFixedLoc );
     fBoundsSpans->SetNativeProperty( plDrawable::kPropVolatile, true );
     fBoundsMat = new hsGMaterial();
-    hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("BoundsMaterial"), fBoundsMat, plLocation::kGlobalFixedLoc );
+    hsgResMgr::ResMgr()->NewKey( "BoundsMaterial", fBoundsMat, plLocation::kGlobalFixedLoc );
     plLayer *lay = fBoundsMat->MakeBaseLayer();
     lay->SetMiscFlags( hsGMatState::kMiscWireFrame | hsGMatState::kMiscTwoSided );
     lay->SetShadeFlags( lay->GetShadeFlags() | hsGMatState::kShadeWhite );
@@ -9375,7 +9375,7 @@ void plDXPipeline::IMakeOcclusionSnap()
         ident.Reset();
 
         hsGMaterial* mat = new hsGMaterial;
-        hsgResMgr::ResMgr()->NewKey( _TEMP_CONVERT_FROM_LITERAL("OcclusionSnapMat"), mat, plLocation::kGlobalFixedLoc );
+        hsgResMgr::ResMgr()->NewKey( "OcclusionSnapMat", mat, plLocation::kGlobalFixedLoc );
         plLayer *lay = mat->MakeBaseLayer();
         lay->SetZFlags(hsGMatState::kZNoZWrite);
         lay->SetPreshadeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));

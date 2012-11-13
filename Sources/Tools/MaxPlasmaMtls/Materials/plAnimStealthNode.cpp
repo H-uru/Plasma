@@ -254,7 +254,7 @@ plString plAnimStealthNode::GetSegmentName( void ) const
 {
     const char *str = fParamBlock->GetStr( (ParamID)kPBName );
     if( str == nil || str[ 0 ] == 0 )
-        return _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME );
+        return ENTIRE_ANIMATION_NAME;
     return plString::FromUtf8(str);
 }
 

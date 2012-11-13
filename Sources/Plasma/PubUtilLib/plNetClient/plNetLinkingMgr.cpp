@@ -947,7 +947,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             title = plString::Format("%s'", nc->GetPlayerName().c_str());
                         else
                             title = plString::Format("%s's", nc->GetPlayerName().c_str());
-                        info->SetAgeUserDefinedName(_TEMP_CONVERT_TO_CONST_CHAR(title));
+                        info->SetAgeUserDefinedName(title.c_str());
                     }
                     if (!info->HasAgeDescription())
                     {
@@ -986,7 +986,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                     title = plString::Format("%s'", nc->GetPlayerName().c_str());
                                 else
                                     title = plString::Format("%s's", nc->GetPlayerName().c_str());
-                                info->SetAgeUserDefinedName(_TEMP_CONVERT_TO_CONST_CHAR(title));
+                                info->SetAgeUserDefinedName(title.c_str());
                             }
 
                             if (!info->HasAgeDescription())
@@ -998,7 +998,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                     desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                                 else
                                     desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
-                                info->SetAgeDescription( _TEMP_CONVERT_TO_CONST_CHAR(desc) );
+                                info->SetAgeDescription( desc.c_str() );
                             }
 
                             if (!info->HasAgeInstanceGuid()) {

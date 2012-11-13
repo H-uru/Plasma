@@ -536,9 +536,9 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
     if ((!objectName.IsNull()) && plLocalization::IsLocalized())
     {
         char localName[256];
-        if (plLocalization::GetLocalized(_TEMP_CONVERT_TO_CONST_CHAR(objectName), localName))
+        if (plLocalization::GetLocalized(objectName.c_str(), localName))
         {
-            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), _TEMP_CONVERT_FROM_LITERAL(localName));
+            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName);
             if (localKey != nil)
                 return localKey;
         }
@@ -921,7 +921,7 @@ plKey plResManager::ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t
     fCurCloneID = cloneID;
     fCurClonePlayerID = playerID;
 
-    plKey cloneKey = ReRegister(_TEMP_CONVERT_FROM_LITERAL(""), objUoid);
+    plKey cloneKey = ReRegister(plString(), objUoid);
 
     fCurClonePlayerID = 0;
     fCurCloneID = 0;
@@ -1272,7 +1272,7 @@ public:
     {
         if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
         {
-            plUoid uoid(page->GetPageInfo().GetLocation(), 0, _TEMP_CONVERT_FROM_LITERAL(""));
+            plUoid uoid(page->GetPageInfo().GetLocation(), 0, plString());
             fLocations.push_back(uoid.GetLocation());
         }
         return true;

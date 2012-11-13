@@ -50,24 +50,7 @@ plGeneric::plGeneric(const int& val): fType(kInt), fBoolVal(false), fIntVal(val)
 
 plGeneric::plGeneric(const double& val): fType(kFloat), fBoolVal(false), fIntVal(0), fFloatVal(val) {}
 
-plGeneric::plGeneric(const char* val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0)
-{
-    wchar_t* temp = hsStringToWString(val);
-    fStringVal = temp;
-    delete [] temp;
-}
-
-plGeneric::plGeneric(const std::string& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0)
-{
-    wchar_t* temp = hsStringToWString(val.c_str());
-    fStringVal = temp;
-    delete [] temp;
-}
-
-plGeneric::plGeneric(const wchar_t* val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
-fStringVal(val) {}
-
-plGeneric::plGeneric(const std::wstring& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
+plGeneric::plGeneric(const plString& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
 fStringVal(val) {}
 
 void plGeneric::IReset()
@@ -76,7 +59,7 @@ void plGeneric::IReset()
     fBoolVal = false;
     fIntVal = 0;
     fFloatVal = 0.0;
-    fStringVal = L"";
+    fStringVal = plString();
 }
 
 plGeneric& plGeneric::operator=(const bool& val)
@@ -103,35 +86,7 @@ plGeneric& plGeneric::operator=(const double& val)
     return *this;
 }
 
-plGeneric& plGeneric::operator=(const char* val)
-{
-    IReset();
-    fType = kString;
-    wchar_t* temp = hsStringToWString(val);
-    fStringVal = temp;
-    delete [] temp;
-    return *this;
-}
-
-plGeneric& plGeneric::operator=(const std::string& val)
-{
-    IReset();
-    fType = kString;
-    wchar_t* temp = hsStringToWString(val.c_str());
-    fStringVal = temp;
-    delete [] temp;
-    return *this;
-}
-
-plGeneric& plGeneric::operator=(const wchar_t* val)
-{
-    IReset();
-    fType = kString;
-    fStringVal = val;
-    return *this;
-}
-
-plGeneric& plGeneric::operator=(const std::wstring& val)
+plGeneric& plGeneric::operator=(const plString& val)
 {
     IReset();
     fType = kString;
@@ -161,7 +116,7 @@ int plGeneric::Write(hsStream* stream)
         break;
 
     case kString:
-        stream->WriteSafeWString(fStringVal.c_str());
+        stream->WriteSafeWString(fStringVal);
         break;
     }
     return stream->GetPosition();
@@ -189,14 +144,7 @@ int plGeneric::Read(hsStream* stream)
         break;
 
     case kString:
-        {
-            wchar_t* temp = stream->ReadSafeWString();
-            if (temp)
-            {
-                fStringVal = temp;
-                delete [] temp;
-            }
-        }
+        fStringVal = stream->ReadSafeWString_TEMP();
         break;
     }
     return stream->GetPosition();

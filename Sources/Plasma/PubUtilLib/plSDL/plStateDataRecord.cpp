@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage/plNetMessage.h"
 #include "pnNetCommon/plNetApp.h"
 
-const plString plSDL::kAgeSDLObjectName = _TEMP_CONVERT_FROM_LITERAL("AgeSDLHook");
+const plString plSDL::kAgeSDLObjectName = "AgeSDLHook";
 
 // static 
 const uint8_t plStateDataRecord::kIOVersion=6;
@@ -737,7 +737,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     plString pad;
     int i;
     for(i=0;i<level; i++)
-        pad += _TEMP_CONVERT_FROM_LITERAL("   ");
+        pad += "   ";
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
@@ -808,7 +808,7 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         }
     }
 
-    logStr = _TEMP_CONVERT_FROM_LITERAL("\n");
+    logStr = "\n";
     stream->Write(logStr.GetSize(), logStr.c_str());
 }
 
