@@ -1430,7 +1430,7 @@ RefResult plRTLightBase::EvalLightState(TimeValue t, Interval& valid, LightState
 {
         //t uselight;
 //#if 0 //fLightPB->GetInt(kLightOn, t);
-    if(fLightPB->GetInt(kLightOn, t) == true)
+    if(fLightPB->GetInt(kLightOn, t) )
         ls->color = GetRGBColor(t,valid);
     else
         ls->color = Color(0,0,0);

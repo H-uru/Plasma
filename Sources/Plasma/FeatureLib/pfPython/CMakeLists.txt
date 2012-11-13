@@ -200,8 +200,6 @@ set(pfPython_GLUE
     pyAgeLinkStructGlue.cpp
     pyAgeVaultGlue.cpp
     pyAudioControlGlue.cpp
-    pyCCRMgrGlue.cpp
-    pyCCRMgrGlue2.cpp
     pyClusterGlue.cpp
     pyColorGlue.cpp
     pyCritterBrainGlue.cpp

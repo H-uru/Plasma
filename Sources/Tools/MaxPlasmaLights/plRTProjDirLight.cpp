@@ -463,7 +463,7 @@ void    plRTProjDirLight::SetFallsize( TimeValue time, float f )
 RefResult plRTProjDirLight::EvalLightState( TimeValue t, Interval& valid, LightState *ls )
 {
     ls->type = DIRECT_LGT;
-    if( fLightPB->GetInt( kLightOn, t ) == true )
+    if( fLightPB->GetInt( kLightOn, t ) )
         ls->color = GetRGBColor( t, valid );
     else
         ls->color = Color( 0, 0, 0 );

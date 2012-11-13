@@ -6,7 +6,6 @@ include_directories("../../PubUtilLib")
 
 set(plVault_SOURCES
     plDniCoordinateInfo.cpp
-    plVault.cpp
     plVaultClientApi.cpp
     plVaultConstants.cpp
     plVaultNodeAccess.cpp
