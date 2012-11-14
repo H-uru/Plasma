@@ -78,7 +78,7 @@ class pfKIMsg : public plMessage
         void IInit()
         {
             fCommand = kNoCommand;
-            fString = plString();
+            fString = "";
             fUser = nil;
             fPlayerID = 0;
             fFlags = 0;

@@ -921,7 +921,7 @@ plKey plResManager::ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t
     fCurCloneID = cloneID;
     fCurClonePlayerID = playerID;
 
-    plKey cloneKey = ReRegister(plString(), objUoid);
+    plKey cloneKey = ReRegister("", objUoid);
 
     fCurClonePlayerID = 0;
     fCurCloneID = 0;
@@ -1272,7 +1272,7 @@ public:
     {
         if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
         {
-            plUoid uoid(page->GetPageInfo().GetLocation(), 0, plString());
+            plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
             fLocations.push_back(uoid.GetLocation());
         }
         return true;

@@ -223,7 +223,7 @@ plString pySceneObject::GetName()
 {
     if ( fSceneObjects.Count() > 0 )
         return fSceneObjects[0]->GetName();
-    return plString();
+    return "";
 }
 
 PyObject* pySceneObject::findObj(const plString& name)

@@ -90,7 +90,7 @@ bool plUUID::FromString( const char * str )
 
 bool plUUID::ToString( plString & out ) const
 {
-    out = plString();
+    out = "";
     unsigned char * ubuf;
     RPC_STATUS s;
     s = UuidToString( (GUID *) this, &ubuf );
