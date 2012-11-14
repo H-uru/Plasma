@@ -59,7 +59,7 @@ void plGeneric::IReset()
     fBoolVal = false;
     fIntVal = 0;
     fFloatVal = 0.0;
-    fStringVal = plString();
+    fStringVal = "";
 }
 
 plGeneric& plGeneric::operator=(const bool& val)

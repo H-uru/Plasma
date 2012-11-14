@@ -164,13 +164,13 @@ public:
     plString() { }
 
 #ifndef PLSTRING_POLLUTE_ASCII_CAST
-    plString(const char *ascii) { IConvertFromUtf8(ascii, kSizeAuto); }
+    plString(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); }
 #endif
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
     plString(const plStringBuffer<char> &init) { operator=(init); }
 
 #ifndef PLSTRING_POLLUTE_ASCII_CAST
-    plString &operator=(const char *ascii) { IConvertFromUtf8(ascii, kSizeAuto); return *this; }
+    plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
 #endif
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);

@@ -300,7 +300,7 @@ std::string plAvBrainCritter::BehaviorName(int behavior) const
 plString plAvBrainCritter::AnimationName(int behavior) const
 {
     if ((behavior >= fBehaviors.Count()) || (behavior < 0))
-        return plString();
+        return "";
     return ((CritterBehavior*)fBehaviors[behavior])->AnimName();
 }
 
