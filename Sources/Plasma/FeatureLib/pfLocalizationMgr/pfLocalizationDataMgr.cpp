@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plLocalization.h"
 
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plFile/plEncryptedStream.h"
 #include "plStatusLog/plStatusLog.h"
 

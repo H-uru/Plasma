@@ -1127,7 +1127,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 {
     // create the messge that will contain the chat message
     pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
-    msg->SetString( message );
+    msg->SetString( plString::FromWchar(message) );
     msg->SetUser( from.GetPlayerName(), from.GetPlayerID() );
     msg->SetFlags( flags );
     msg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
@@ -1199,7 +1199,7 @@ void cyMisc::SendKIMessageS(uint32_t command, const wchar_t* value)
     // create the mesage to send
     pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
-    msg->SetString( value );
+    msg->SetString( plString::FromWchar( value ) );
 
     // send it off
     plgDispatch::MsgSend( msg );

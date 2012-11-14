@@ -121,22 +121,22 @@ bool plLoggable::LogV( const char * fmt, va_list args ) const
 
 bool plLoggable::DebugMsgV(const char* fmt, va_list args) const
 {
-    return Log(_TEMP_CONVERT_FROM_LITERAL("DBG: ") + plString::IFormat(fmt, args));
+    return Log(plString("DBG: ") + plString::IFormat(fmt, args));
 }
 
 bool plLoggable::ErrorMsgV(const char* fmt, va_list args) const
 {
-    return Log(_TEMP_CONVERT_FROM_LITERAL("ERR: ") + plString::IFormat(fmt, args));
+    return Log(plString("ERR: ") + plString::IFormat(fmt, args));
 }
 
 bool plLoggable::WarningMsgV(const char* fmt, va_list args) const
 {
-    return Log(_TEMP_CONVERT_FROM_LITERAL("WRN: ") + plString::IFormat(fmt, args));
+    return Log(plString("WRN: ") + plString::IFormat(fmt, args));
 }
 
 bool plLoggable::AppMsgV(const char* fmt, va_list args) const
 {
-    return Log(_TEMP_CONVERT_FROM_LITERAL("APP: ") + plString::IFormat(fmt, args));
+    return Log(plString("APP: ") + plString::IFormat(fmt, args));
 }
 
 ///////////////////////////////////////////////////////////////

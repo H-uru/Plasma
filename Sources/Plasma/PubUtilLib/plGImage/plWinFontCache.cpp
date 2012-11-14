@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinFontCache.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plGImage/plDynSurfaceWriter.h"
 
 #if HS_BUILD_FOR_WIN32

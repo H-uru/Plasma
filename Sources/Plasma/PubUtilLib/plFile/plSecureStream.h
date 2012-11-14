@@ -131,6 +131,15 @@ public:
     static hsStream* OpenSecureFileWrite(const wchar_t* fileName, uint32_t* key = nil);
 
     static const uint32_t kDefaultKey[4]; // our default encryption key
+
+    // searches the parent directory of filename for the encryption key file, and reads it
+    // into the key passed in. Returns false if the key file didn't exist (and sets key to
+    // the default key)
+    static bool GetSecureEncryptionKey(const char* filename, uint32_t* key, unsigned length);
+    static bool GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key, unsigned length);
+
+    static const char kKeyFilename[];
+    static const wchar_t kWKeyFilename[];
 };
 
 #endif // plSecureStream_h_inc

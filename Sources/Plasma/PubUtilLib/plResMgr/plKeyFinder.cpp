@@ -109,7 +109,7 @@ bool NameMatches(const char* obName, const char* pKName, bool subString)
     }
     else
     {
-        if (_TEMP_CONVERT_FROM_LITERAL(p).Find(o, plString::kCaseInsensitive) >= 0)
+        if (plString(p).Find(o, plString::kCaseInsensitive) >= 0)
             return true;
     }
 
@@ -264,12 +264,12 @@ void plKeyFinder::IGetNames(std::vector<plString>& names, const plString& search
 
 void plKeyFinder::GetResponderNames(std::vector<plString>& names)
 {
-    IGetNames(names, _TEMP_CONVERT_FROM_LITERAL(""), CLASS_INDEX_SCOPED(plResponderModifier));
+    IGetNames(names, plString(), CLASS_INDEX_SCOPED(plResponderModifier));
 }
 
 void plKeyFinder::GetActivatorNames(std::vector<plString>& names)
 {
-    IGetNames(names, _TEMP_CONVERT_FROM_LITERAL(""), CLASS_INDEX_SCOPED(plLogicModifier));
+    IGetNames(names, plString(), CLASS_INDEX_SCOPED(plLogicModifier));
 }
 
 class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageIterator

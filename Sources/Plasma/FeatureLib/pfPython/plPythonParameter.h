@@ -376,10 +376,11 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    char *buffer = new char[count];
+                    plStringBuffer<char> str;
+                    char *buffer = str.CreateWritableBuffer(count-1);
                     stream->ReadLE(count, buffer);
                     buffer[count-1] = 0;
-                    fString = plString::Steal(buffer, count);
+                    fString = str;
                 }
                 else
                     fString = plString::Null;
@@ -433,8 +434,7 @@ public:
                 else
                     count = 0;
                 stream->WriteLE(count);
-                if ( count != 0 )
-                    stream->WriteLE(count, fString.c_str());
+                stream->WriteLE(count, fString.c_str());
                 break;
 
             case kSceneObject:

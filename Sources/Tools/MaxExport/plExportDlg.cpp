@@ -325,7 +325,7 @@ void plExportDlgImp::IExportCurrentFile(const char* exportPath)
     GetCOREInterface()->ExportToFile(exportPath);
 }
 
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 void plExportDlgImp::IDoExport()
 {

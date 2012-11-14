@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
+#include <string>
 
 class pyColor;
 class pfGUIColorScheme;

@@ -56,9 +56,6 @@ class plUnifiedTime;
 
 namespace plFileUtils
 {
-    static const char kKeyFilename[] = "encryption.key";
-    static const wchar_t kWKeyFilename[] = L"encryption.key";
-
     // Creates the directory specified. Returns false if unsuccessful or directory already exists
     bool    CreateDir( const char *path ); 
     bool    CreateDir( const wchar_t *path ); 
@@ -113,12 +110,6 @@ namespace plFileUtils
     // Concatenates fileName onto path, making sure to add a slash if necessary
     void ConcatFileName(char* path, const char* fileName);
     void ConcatFileName(wchar_t* path, const wchar_t* fileName);
-
-    // searches the parent directory of filename for the encryption key file, and reads it
-    // into the key passed in. Returns false if the key file didn't exist (and sets key to
-    // the default key)
-    bool GetSecureEncryptionKey(const char* filename, uint32_t* key, unsigned length);
-    bool GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key, unsigned length);
 };
 
 

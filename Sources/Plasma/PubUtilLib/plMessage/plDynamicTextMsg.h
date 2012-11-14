@@ -59,13 +59,13 @@ class plDynamicTextMsg : public plMessage
     friend class plDynamicTextMap;
 
 protected:
-    uint16_t      fCmd;
+    uint16_t    fCmd;
 
     // Position (fX is also used for font size)
-    int16_t       fX, fY; 
+    int16_t     fX, fY;
 
     // A rectangle
-    uint16_t      fLeft, fTop, fRight, fBottom;
+    uint16_t    fLeft, fTop, fRight, fBottom;
 
     // Colors
     hsColorRGBA fClearColor;
@@ -78,10 +78,10 @@ protected:
     plKey       fImageKey;
 
     // Misc flags field
-    uint32_t      fFlags;
+    uint32_t    fFlags;
     
     bool        fBlockRGB;
-    int16_t       fLineSpacing;
+    int16_t     fLineSpacing;
 
 public:
     plDynamicTextMsg() : plMessage( nil, nil, nil ) { fCmd = 0; fString = nil; fImageKey = nil; fFlags = 0; fBlockRGB = false; }

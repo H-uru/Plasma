@@ -62,6 +62,9 @@ static const int kFileStartOffset = kMagicStringLen + sizeof(uint32_t);
 
 static const int kMaxBufferedFileSize = 10*1024;
 
+const char plSecureStream::kKeyFilename[] = "encryption.key";
+const wchar_t plSecureStream::kWKeyFilename[] = L"encryption.key";
+
 plSecureStream::plSecureStream(bool deleteOnExit, uint32_t* key) :
 fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
@@ -756,4 +759,62 @@ hsStream* plSecureStream::OpenSecureFileWrite(const wchar_t* fileName, uint32_t*
 
     s->Open(fileName, L"wb");
     return s;
+}
+
+//// GetSecureEncryptionKey //////////////////////////////////////////////////
+
+bool plSecureStream::GetSecureEncryptionKey(const char* filename, uint32_t* key, unsigned length)
+{
+    wchar_t* wFilename = hsStringToWString(filename);
+    bool ret = GetSecureEncryptionKey(wFilename, key, length);
+    delete [] wFilename;
+    return ret;
+}
+
+bool plSecureStream::GetSecureEncryptionKey(const wchar_t* filename, uint32_t* key, unsigned length)
+{
+    // looks for an encryption key file in the same directory, and reads it
+    std::wstring sFilename = filename;
+
+    // grab parent directory
+    size_t loc = sFilename.rfind(L"\\");
+    if (loc == std::wstring::npos)
+        loc = sFilename.rfind(L"/");
+
+    std::wstring sDir;
+    if (loc != std::wstring::npos)
+        sDir = sFilename.substr(0, loc);
+    else // no directory
+        sDir = L"./";
+    if ((sDir[sDir.length()-1] != L'/') && (sDir[sDir.length()-1] != L'\\'))
+        sDir += L'/'; // add the slash, if it doesn't has one
+
+    // now add the key filename
+    std::wstring keyFile = sDir + kWKeyFilename;
+
+    if (plFileUtils::FileExists(keyFile.c_str()))
+    {
+        // file exists, read from it
+        hsUNIXStream file;
+        file.Open(keyFile.c_str(), L"rb");
+
+        unsigned bytesToRead = length * sizeof(uint32_t);
+        uint8_t* buffer = (uint8_t*)malloc(bytesToRead);
+        unsigned bytesRead = file.Read(bytesToRead, buffer);
+
+        file.Close();
+
+        unsigned memSize = min(bytesToRead, bytesRead);
+        memcpy(key, buffer, memSize);
+        free(buffer);
+
+        return true;
+    }
+
+    // file doesn't exist, use default key
+    unsigned memSize = min(length, arrsize(plSecureStream::kDefaultKey));
+    memSize *= sizeof(uint32_t);
+    memcpy(key, plSecureStream::kDefaultKey, memSize);
+
+    return false;
 }

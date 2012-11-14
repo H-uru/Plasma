@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInterp/plController.h"
 #include "MaxMain/plMaxNode.h"
 #include "pnKeyedObject/plKey.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 
 // Follow mod
 #include "plInterp/plAnimPath.h"
@@ -95,7 +95,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plResMgr/plPageInfo.h"
 
 #include "plDrawable/plGeometrySpan.h"

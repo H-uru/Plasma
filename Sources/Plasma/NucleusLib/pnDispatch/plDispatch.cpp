@@ -341,7 +341,7 @@ void plDispatch::IMsgDispatch()
                 uint32_t rcvTicks = hsTimer::GetPrecTickCount();
 
                 // Object could be deleted by this message, so we need to log this stuff now
-                plString keyname = _TEMP_CONVERT_FROM_LITERAL("(unknown)");
+                plString keyname = "(unknown)";
                 const char* className = "(unknown)";
                 uint32_t clonePlayerID = 0;
                 if (plDispatchLogBase::IsLoggingLong())

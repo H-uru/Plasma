@@ -173,7 +173,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, Show, "", "Print a list of spawn points.")
         const plSpawnModifier * spawn = mgr->GetSpawnPoint(i);
         if(spawn)
         {
-            plString soName = _TEMP_CONVERT_FROM_LITERAL("(none)");
+            plString soName = "(none)";
 
             if (spawn->GetNumTargets() > 0) 
             {

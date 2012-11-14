@@ -61,8 +61,8 @@ PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)
 plString pyGameScoreMsg::GetError() const
 {
     if (fMsg)
-        return _TEMP_CONVERT_FROM_WCHAR_T(NetErrorToString(fMsg->GetResult()));
-    return _TEMP_CONVERT_FROM_LITERAL("pfGameScoreMsg is NULL");
+        return plString::FromWchar(NetErrorToString(fMsg->GetResult()));
+    return "pfGameScoreMsg is NULL";
 }
 
 bool pyGameScoreMsg::IsValid() const
