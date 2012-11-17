@@ -346,7 +346,7 @@ INode* hsConverterUtils::FindINodeFromKeyedObject(hsKeyedObject* obj)
 {
     hsGuardBegin("hsConverterUtils::FindINodeFromKeyedObject");
 
-    INode* retVal = FindINodeFromMangledName(obj->GetKey()->GetName().c_str());
+    INode* retVal = FindINodeFromMangledName(obj->GetKeyName().c_str());
     if( retVal )
         return (retVal);
 

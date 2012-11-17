@@ -1457,8 +1457,8 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
                 cnt++;
     }
 
-    hsAssert(cnt<2, xtl::format("Object %s has multiple SDL modifiers of the same kind (%s)?", 
-        obj->GetKeyName(), plFactory::GetNameOfClass(classIdx)).c_str());
+    hsAssert(cnt<2, plString::Format("Object %s has multiple SDL modifiers of the same kind (%s)?", 
+        obj->GetKeyName().c_str(), plFactory::GetNameOfClass(classIdx)).c_str());
     return cnt==0 ? false : true;
 }
 

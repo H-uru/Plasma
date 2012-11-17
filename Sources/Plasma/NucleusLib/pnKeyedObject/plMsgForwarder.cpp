@@ -142,13 +142,13 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
 
 #if 0
                 hsStatusMessageF("Adding CBMsg, eventSender=%s, eventRemoteMsg=%d\n",                   
-                    event->GetSender() ? event->GetSender()->GetName() : "nil", fc->fNetPropogate);
+                    event->GetSender() ? event->GetSender()->GetName().c_str() : "nil", fc->fNetPropogate);
 #endif
             }
         }
 #if 0
         hsStatusMessageF("Fwding CBMsg, sender=%s, remoteMsg=%d",
-            msg->GetSender() ? msg->GetSender()->GetName() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+            msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
 #endif
         IForwardMsg(callbackMsg);
         

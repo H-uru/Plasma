@@ -146,12 +146,12 @@ uint32_t hsStream::WriteSafeStringLong(const plString &string)
     if (len > 0)
     {   
         const char *buffp = string.c_str();
-        int i;
+        uint32_t i;
         for (i = 0; i < len; i++)
         {
             WriteByte(~buffp[i]);
         }
-        return static_cast<uint32_t>(i);
+        return i;
     }
     else
         return 0;
@@ -164,9 +164,8 @@ uint32_t hsStream::WriteSafeWStringLong(const plString &string)
     WriteLE32(len);
     if (len > 0)
     {
-        int i;
         const wchar_t *buffp = wbuff.GetData();
-        for (i=0; i<len; i++)
+        for (uint32_t i=0; i<len; i++)
         {
             WriteLE16((uint16_t)~buffp[i]);
         }
@@ -229,13 +228,13 @@ uint32_t hsStream::WriteSafeString(const plString &string)
     WriteLE16(len | 0xf000);
     if (len > 0)
     {
-        int i;
+        uint32_t i;
         const char *buffp = string.c_str();
         for (i = 0; i < len; i++)
         {
             WriteByte(~buffp[i]);
         }
-        return static_cast<uint32_t>(i);
+        return i;
     }
     else
         return 0;
@@ -244,16 +243,15 @@ uint32_t hsStream::WriteSafeString(const plString &string)
 uint32_t hsStream::WriteSafeWString(const plString &string)
 {
     plStringBuffer<wchar_t> wbuff = string.ToWchar();
-    int len = wbuff.GetSize();
+    uint32_t len = wbuff.GetSize();
     hsAssert(len<0xf000, xtl::format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
     WriteLE16(len | 0xf000);
     if (len > 0)
     {
-        int i;
         const wchar_t *buffp = wbuff.GetData();
-        for (i=0; i<len; i++)
+        for (uint32_t i=0; i<len; i++)
         {
             WriteLE16((uint16_t)~buffp[i]);
         }
