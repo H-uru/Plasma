@@ -43,12 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNet_h_inc
 
 
-#include "HeadSpin.h"
-
-
 ////////////////////////////////////////////////////
 // Windows net types
 #if HS_BUILD_FOR_WIN32
+
+#include "hsWindows.h"
 
 const int   kBlockingError          = WSAEWOULDBLOCK;
 const int   kTimeoutError           = WSAETIMEDOUT;    

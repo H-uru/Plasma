@@ -40,9 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include "res/resource.h"
 #include <shlwapi.h>
+#include <shellapi.h>
 #include <shlobj.h>
+#include <commdlg.h>
 #include <commctrl.h>
 #include <time.h>
 

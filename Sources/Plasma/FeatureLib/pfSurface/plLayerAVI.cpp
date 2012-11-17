@@ -40,10 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #if HS_BUILD_FOR_WIN32
-#include "vfw.h"
+#   include "hsWindows.h"
+#   include <vfw.h>
 #endif // HS_BUILD_FOR_WIN32
 
 #include "plLayerAVI.h"

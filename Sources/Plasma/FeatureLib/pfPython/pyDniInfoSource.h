@@ -46,12 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class pyDniCoordinates;
+class plUUID;
 
 class pyDniInfoSource
 {
 private:
     mutable char * fAgeName;
-    mutable char fAgeGuid[MAX_PATH];
 
 protected:
     pyDniInfoSource();
@@ -74,7 +74,7 @@ public:
     // name of current age
     const char *    GetAgeName( void ) const;
     // unique identifier for this age instance
-    const char *    GetAgeGuid( void ) const;
+    plUUID          GetAgeGuid( void ) const;
 };
 
 

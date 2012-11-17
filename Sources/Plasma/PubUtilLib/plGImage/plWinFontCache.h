@@ -63,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsColorRGBA.h"
-              // EVIL
 #include "hsTemplates.h"
+#include "hsWindows.h" // FIXME: Windows header level include :(
 
 #if HS_BUILD_FOR_WIN32
 

@@ -39,37 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plClientPatcher/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_APPS_PLCLIENTPATCHER_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/Apps/plClientPatcher/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_APPS_PLCLIENTPATCHER_PCH_H
+#ifndef _hsWindows_inc_
+#define _hsWindows_inc_
 
-#include "hsWindows.h"
-#include <process.h>
-#include <time.h>
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnProduct/pnProduct.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "pnEncryption/plChecksum.h"
-#include "plAgeDescription/plAgeManifest.h"
-#include "plAudioCore/plAudioFileReader.h"
+/** \file hsWindows.h
+ *  \brief Pulls in Windows core headers
+ *
+ *  This file pulls in the core Windows headers and Winsock2. It is separate from
+ *  HeadSpin.h to improve build times and to facillitate adding precompiled headers.
+ *  You should avoid including this header from other headers!
+ */
 
-#define USES_PROTOCOL_CLI2AUTH
-#include "pnNetProtocol/pnNetProtocol.h"
+#ifdef HS_BUILD_FOR_WIN32
+    // Terrible hacks for MinGW because they don't have a reasonable
+    // default for the Windows version. We cheat and say it's XP.
+#   ifdef __MINGW32__
+#       undef _WIN32_WINNT
+#       define _WIN32_WINNT 0x501
+#       undef _WIN32_IE
+#       define _WIN32_IE    0x400
+#   endif
 
-#include "UruPlayer.h"
+#   define NOMINMAX
+#   define WIN32_LEAN_AND_MEAN
+#   include <Windows.h>
+#   include <ws2tcpip.h> // Pulls in WinSock 2 for us
 
-#include "plCompression/plZlibStream.h"
-#include "Intern.h"
-#include "../plUruLauncher/plLauncherInfo.h"
+    // This needs to be after #include <windows.h>, since it also includes windows.h
+#   ifdef USE_VLD
+#       include <vld.h>
+#   endif // USE_VLD
+#endif // HS_BUILD_FOR_WIN32
 
-
+#endif // _hsWindows_inc_

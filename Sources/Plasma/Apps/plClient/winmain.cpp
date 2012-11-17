@@ -40,9 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
+#include "hsWindows.h"
+
 #include <stdio.h>
 #include <direct.h>     // windows directory handling fxns (for chdir)
 #include <process.h>
+#include <Shellapi.h>   // ShellExecuteA
 
 //#define DETACH_EXE  // Microsoft trick to force loading of exe to memory 
 #ifdef DETACH_EXE
@@ -51,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <curl/curl.h>
 
-#include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "plClient.h"
@@ -78,7 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "res/resource.h"
 
-//#include <shellapi.h>
 //
 // Defines
 //

@@ -63,13 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClientResMgr/plClientResMgr.h"
 
 
-// A bit of a hack so that we will have the correct instance in the SceneViewer
-static HINSTANCE gHInstance = GetModuleHandle(nil);
-
-void SetHInstance(void *instance)
-{
-    gHInstance = (HINSTANCE)instance;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //// plPlate Functions ///////////////////////////////////////////////////////

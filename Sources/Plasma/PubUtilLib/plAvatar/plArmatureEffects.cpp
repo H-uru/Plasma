@@ -110,7 +110,7 @@ bool plArmatureEffectsMgr::MsgReceive(plMessage* msg)
     if (iMsg)
     {
         if (fEnabled)
-            iMsg->SendMessage();
+            iMsg->SendMessageAndKeep();
     }
 
     plArmatureEffectMsg *eMsg = plArmatureEffectMsg::ConvertNoRef(msg);

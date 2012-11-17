@@ -46,8 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef uint32_t hsMilliseconds;
 
-
-#ifdef HS_BUILD_FOR_UNIX
+#ifdef HS_BUILD_FOR_WIN32
+#   include "hsWindows.h"
+#elif defined(HS_BUILD_FOR_UNIX)
     #include <pthread.h>
     #include <semaphore.h>
     //  We can't wait with a timeout with semas
