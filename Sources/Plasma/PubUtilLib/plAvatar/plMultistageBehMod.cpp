@@ -161,7 +161,7 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
                         
 #ifdef DEBUG_MULTISTAGE
                         char sbuf[256];
-                        sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName());
+                        sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName().c_str());
                         plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
                         plAvSeekMsg *seeker = new plAvSeekMsg(nil, avModKey, seekKey, 1.0f, fSmartSeek);

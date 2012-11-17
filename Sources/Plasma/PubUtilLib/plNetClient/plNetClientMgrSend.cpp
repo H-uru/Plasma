@@ -396,9 +396,9 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     {
     #if 0
         hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(
-            xtl::format("<SND> object:%s, rcvr %s %s",
-            msg->GetSender(), 
-            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName() : "?", 
+            plString::Format("<SND> object:%s, rcvr %s %s",
+            msg->GetSender().GetKeyName().c_str(),
+            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName().c_str() : "?",
             netMsgWrap->AsStdString().c_str()).c_str()));
     #endif
     }

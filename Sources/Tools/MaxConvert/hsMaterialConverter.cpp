@@ -4951,7 +4951,7 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
         stream->WriteString(buff);
 
         sprintf(buff, "\t\t\tTexture %s\n", layer->GetTexture() && layer->GetTexture()->GetKey()
-            ? layer->GetTexture()->GetKey()->GetName().c_str("None")
+            ? layer->GetTexture()->GetKeyName().c_str("None")
             : "None");
         stream->WriteString(buff);
 

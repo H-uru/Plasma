@@ -197,7 +197,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         hsUNIXStream log;
         log.Open("log\\GBuf.log", "ab");
         char buf[256];
-        sprintf(buf, "Drawable Span: %s, GroupNum: %u\r\n", GetKeyName(), i);
+        sprintf(buf, "Drawable Span: %s, GroupNum: %u\r\n", GetKeyName().c_str(), i);
         log.WriteString(buf);
         log.Close();
 #endif
@@ -387,7 +387,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
 
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d offset)",
                 geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
+                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 ptr
@@ -405,7 +405,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d/%d/%d/%d)",
                 geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
+                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
@@ -424,7 +424,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         {
             statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d/%d/%d/%d/%d)",
                 geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
+                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 span->fVBufferIdx,
@@ -438,7 +438,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         {
             statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d)",
                 geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKey()->GetName().c_str() : "<unknown>",
+                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
