@@ -91,6 +91,16 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setScrollPosition, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition)
+{
+    return PyLong_FromLong(self->fThis->GetScrollPosition());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, isAtEnd)
+{
+    PYTHON_RETURN_BOOL(self->fThis->IsAtEnd());
+}
+
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, moveCursor, args)
 {
     long dir;
@@ -398,6 +408,8 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
                 "Useful when just displaying a list that is not really selectable."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setScrollPosition, "Params: topLine\nSets the what line is the top line."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition, "Gets what line is the top line."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isAtEnd, "Returns true if the end of the buffer has been reached."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, moveCursor, "Params: direction\nMove the cursor in the specified direction (see PtGUIMultiLineDirection)"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearBuffer, "Clears all text from the multi-line edit control."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setString, "Params: asciiText\nSets the multi-line edit control string."),
