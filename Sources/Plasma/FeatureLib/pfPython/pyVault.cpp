@@ -673,8 +673,8 @@ void pyVault::CreateNeighborhood()
 
     plUUID guid(GuidGenerate());
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
-    link.GetAgeInfo()->SetAgeUserDefinedName( _TEMP_CONVERT_TO_CONST_CHAR(title) );
-    link.GetAgeInfo()->SetAgeDescription( _TEMP_CONVERT_TO_CONST_CHAR(desc) );
+    link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
+    link.GetAgeInfo()->SetAgeDescription( desc.c_str() );
 
     VaultRegisterOwnedAge(&link);
 }

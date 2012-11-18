@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "UserPropMgr.h"
-#include "plFile/plFileUtils.h"
+#include "plFileUtils.h"
 
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
@@ -762,7 +762,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
     if (maxMaterial)
         name = plString::FromUtf8(maxMaterial->GetName());
     else
-        name = _TEMP_CONVERT_FROM_LITERAL("nil");
+        name = "nil";
     
     /// Get the material
     bool isMultiMat = IsMultiMat( maxMaterial );
@@ -1183,7 +1183,7 @@ hsGMaterial *hsMaterialConverter::IProcessMaterial(Mtl *mtl, plMaxNode *node, co
             
             plLayer* hLay = new plLayer;
             hLay->InitToDefault();
-            hsgResMgr::ResMgr()->NewKey(name + _TEMP_CONVERT_FROM_LITERAL("_DefLay"), hLay, nodeLoc);
+            hsgResMgr::ResMgr()->NewKey(name + "_DefLay", hLay, nodeLoc);
             IAddLayerToMaterial(hMat, hLay);
         }
 
@@ -1337,7 +1337,7 @@ hsGMaterial *hsMaterialConverter::IAddDefaultMaterial(plMaxNode *node)
     
     plLayer *layer = new plLayer;
     layer->InitToDefault();
-    hsgResMgr::ResMgr()->NewKey(hMat->GetKeyName() + _TEMP_CONVERT_FROM_LITERAL("_DefLay"), layer, loc);
+    hsgResMgr::ResMgr()->NewKey(hMat->GetKeyName() + "_DefLay", layer, loc);
 
     DWORD color = node->GetWireColor();
     float r = float(GetRValue(color)) / 255.f;
@@ -1353,8 +1353,8 @@ hsGMaterial *hsMaterialConverter::IAddDefaultMaterial(plMaxNode *node)
 
 plMipmap *hsMaterialConverter::IGetUVTransTexture(plMaxNode *node, bool useU /* = true */)
 {
-    plString texName = (useU ? _TEMP_CONVERT_FROM_LITERAL("ALPHA_BLEND_FILTER_U2ALPHA_TRANS_64x4")
-                             : _TEMP_CONVERT_FROM_LITERAL("ALPHA_BLEND_FILTER_V2ALPHA_TRANS_4x64") );
+    plString texName = (useU ? "ALPHA_BLEND_FILTER_U2ALPHA_TRANS_64x4"
+                             : "ALPHA_BLEND_FILTER_V2ALPHA_TRANS_4x64" );
 
     int w = (useU ? 64 : 4);
     int h = (useU ? 4 : 64);
@@ -1412,7 +1412,7 @@ void hsMaterialConverter::IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial
     
     plLayer* layer = new plLayer;
     layer->InitToDefault();
-    hsgResMgr::ResMgr()->NewKey(underLay->GetKeyName() + _TEMP_CONVERT_FROM_LITERAL("_AlphaBlend"), layer, node->GetLocation());
+    hsgResMgr::ResMgr()->NewKey(underLay->GetKeyName() + "_AlphaBlend", layer, node->GetLocation());
     hsgResMgr::ResMgr()->AddViaNotify(texture->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
     layer->SetAmbientColor(hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f));
 //  layer->SetZFlags(hsGMatState::kZNoZWrite | hsGMatState::kZIncLayer);
@@ -1848,7 +1848,7 @@ plLayerAnimation *IConvertNoteTrackAnims(plLayerAnimation *animLayer, SegmentMap
 
 void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segMap)
 {
-    plString animName = _TEMP_CONVERT_FROM_LITERAL( mtl->GetAnimName() );
+    plString animName = mtl->GetAnimName();
     if( segMap && !animName.IsNull() && (segMap->find(animName) != segMap->end()) )
     {
         SegmentSpec *spec = (*segMap)[animName];
@@ -1997,12 +1997,12 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
         if (isBink)
         {
             movieLayer = new plLayerBink;
-            moviePostfix = _TEMP_CONVERT_FROM_LITERAL("_bink");
+            moviePostfix = "_bink";
         }
         else if (isAvi)
         {
             movieLayer = new plLayerAVI;
-            moviePostfix = _TEMP_CONVERT_FROM_LITERAL("_avi");
+            moviePostfix = "_avi";
         }
 
         plString movieKeyName = layerIFace->GetKeyName() + moviePostfix;
@@ -2075,8 +2075,8 @@ plLayerInterface* IProcessLayerAnimation(plPassMtlBase* mtl, plLayerTex* layTex,
         plString segName = stealth->GetSegmentName();
         bool isDefault = ( segName.IsNull() || segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? true : false;
 
-        plString animName = name + ( ( isDefault ) ? _TEMP_CONVERT_FROM_LITERAL( "_LayerAnim_" )
-                                 : ( _TEMP_CONVERT_FROM_LITERAL("_LayerAnim") + segName ) );
+        plString animName = name + ( ( isDefault ) ? "_LayerAnim_"
+                                 : ( plString("_LayerAnim") + segName ) );
         hsgResMgr::ResMgr()->NewKey( animName, noteAnim, node->GetLocation() );
 
         StdUVGen *uvGen = (StdUVGen *)layTex->GetTheUVGen();
@@ -2191,8 +2191,8 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const p
         plString segName = stealth->GetSegmentName();
         bool isDefault = ( segName.IsNull() || segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? true : false;
 
-        plString animName = name + ( ( isDefault ) ? _TEMP_CONVERT_FROM_LITERAL( "_anim" )
-                                 : ( _TEMP_CONVERT_FROM_LITERAL("_anim_") + segName ) );
+        plString animName = name + ( ( isDefault ) ? "_anim"
+                                 : ( plString("_anim_") + segName ) );
         hsgResMgr::ResMgr()->NewKey( animName, noteAnim, node->GetLocation() );
 
         plController *noteColCtl = cc.MakeColorController( maxColCtl, node );
@@ -3128,7 +3128,7 @@ void hsMaterialConverter::IAppendFunkyLayer(plMaxNode* node, Texmap* texMap, hsG
 
 plBitmap* hsMaterialConverter::IGetFunkyRamp(plMaxNode* node, uint32_t funkyType)
 {
-    plString funkName = funkyType & kFunkyAdd ? _TEMP_CONVERT_FROM_LITERAL("FunkyRampAdd") : _TEMP_CONVERT_FROM_LITERAL("FunkyRampMult");
+    plString funkName = funkyType & kFunkyAdd ? "FunkyRampAdd" : "FunkyRampMult";
 
     const int kLUTWidth = 16;
     const int kLUTHeight = 16;
@@ -3510,7 +3510,7 @@ BitmapTex* hsMaterialConverter::GetBumpLayer(plMaxNode* node, Mtl* mtl)
 
 plMipmap *hsMaterialConverter::IGetBumpLutTexture(plMaxNode *node)
 {
-    const plString texName = _TEMP_CONVERT_FROM_LITERAL("BumpLutTexture");
+    const plString texName = "BumpLutTexture";
 
 //#define FUNKYBUMP
 #ifndef FUNKYBUMP
@@ -4951,7 +4951,7 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
         stream->WriteString(buff);
 
         sprintf(buff, "\t\t\tTexture %s\n", layer->GetTexture() && layer->GetTexture()->GetKey()
-            ? layer->GetTexture()->GetKey()->GetName().s_str("None")
+            ? layer->GetTexture()->GetKeyName().c_str("None")
             : "None");
         stream->WriteString(buff);
 

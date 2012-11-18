@@ -138,7 +138,7 @@ __declspec(dllexport) ULONG LibVersion()
 #include "plSDL/plSDL.h"
 #include "plMaxCFGFile.h"
 #include <direct.h>
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 //
 // DLLMAIN

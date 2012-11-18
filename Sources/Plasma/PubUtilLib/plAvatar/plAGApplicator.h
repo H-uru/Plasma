@@ -104,10 +104,6 @@ public:
     void SetChannelName(const plString &name);
     plString GetChannelName();
 
-    // TEMP plString REVISIT
-    // Because I'm TOO LAZY to keep converting all these calls to SetChannelName
-    void SetChannelName(const char *name) { SetChannelName(_TEMP_CONVERT_FROM_LITERAL(name)); }
-
     /** Optionally suppress the action of this applicator.
         The applicator can still be forced to apply using the force
         paramater of the Apply function. */

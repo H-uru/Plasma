@@ -146,7 +146,7 @@ void    plTextureExportLog::Write( void )
         plRenderTarget*     rend = plRenderTarget::ConvertNoRef( node->fBitmap );
 
         // Name
-        IWriteTabbedString( stream, _TEMP_CONVERT_TO_CONST_CHAR( node->fBitmap->GetKeyName() ), dynText != nil ? 8 : 4 );
+        IWriteTabbedString( stream, node->fBitmap->GetKeyName().c_str(), dynText != nil ? 8 : 4 );
 
         // Size, formatted
         size = node->fBitmap->GetTotalSize();

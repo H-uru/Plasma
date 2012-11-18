@@ -505,7 +505,7 @@ int plNetMsgMemberListHelper::Poke(hsStream* stream, const uint32_t peekOptions)
     int i;
     for(i=0;i<numMembers;i++)
     {
-        fMembers[i]->GetClientGuid()->SetClientKey(_TEMP_CONVERT_FROM_LITERAL(""));
+        fMembers[i]->GetClientGuid()->SetClientKey("");
         fMembers[i]->GetClientGuid()->SetAccountUUID(plUUID());
         fMembers[i]->Poke(stream, peekOptions);
     }

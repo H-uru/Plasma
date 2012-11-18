@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
+#include <vector>
 
 class pyMatrix44;
 

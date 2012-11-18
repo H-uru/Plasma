@@ -68,7 +68,7 @@ static uint16_t kClassType = CLASS_INDEX_SCOPED(plSceneNode);
 static uint32_t kCloneID = 0;
 bool IsTrackedKey(const plKeyImp* key)
 {
-    return (strcmp(key->GetName(), kObjName) == 0) &&
+    return (key->GetName() == kObjName) &&
             key->GetUoid().GetClassType() == kClassType &&
             key->GetUoid().GetCloneID() == kCloneID;
 }
@@ -348,7 +348,7 @@ void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
 #ifdef LOG_ACTIVE_REFS
         if (IsTrackedKey(this))
         {
-            hsStatusMessageF("@@@ %s(%s) adding active ref to %s (%d total)", msg->GetReceiver(0)->GetName(),
+            hsStatusMessageF("@@@ %s(%s) adding active ref to %s (%d total)", msg->GetReceiver(0)->GetName().c_str(),
                 plFactory::GetNameOfClass(msg->GetReceiver(0)->GetUoid().GetClassType()), kObjName, fNumActiveRefs+1);
         }
 #endif // LOG_ACTIVE_REFS
@@ -635,7 +635,8 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
     // it has been notified it is going away.
 #ifdef LOG_ACTIVE_REFS
     if (isActive && IsTrackedKey(iTargetKey))
-        hsStatusMessageF("@@@ %s(%s) releasing active ref on %s (%d total)", GetName(), plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1);
+        hsStatusMessageF("@@@ %s(%s) releasing active ref on %s (%d total)", GetName().c_str(),
+                         plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1);
 #endif // LOG_ACTIVE_REFS
 
     if (isActive && iTargetKey->GetActiveRefs() && !iTargetKey->DecActiveRefs())

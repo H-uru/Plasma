@@ -158,10 +158,10 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
     hsGMaterial* retVal = new hsGMaterial();
 
     plString buff;
-    if( !GetKey()->GetName().IsNull() )
-        buff = plString::Format("%s_Material", GetKey()->GetName().c_str());
+    if( !GetKeyName().IsNull() )
+        buff = plString::Format("%s_Material", GetKeyName().c_str());
     else
-        buff = _TEMP_CONVERT_FROM_LITERAL("ProxyMaterial");
+        buff = "ProxyMaterial";
     hsgResMgr::ResMgr()->NewKey( buff, retVal, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     plLayer *lay = retVal->MakeBaseLayer();
@@ -233,10 +233,10 @@ void plProxyGen::IGenerateProxy()
     if( fProxyDrawables[idx] && !fProxyDrawables[idx]->GetKey() )
     {
         plString buff;
-        if( !GetKey()->GetName().IsNull() )
-            buff = plString::Format("%s_ProxyDrawable", GetKey()->GetName().c_str());
+        if( !GetKeyName().IsNull() )
+            buff = plString::Format("%s_ProxyDrawable", GetKeyName().c_str());
         else
-            buff = _TEMP_CONVERT_FROM_LITERAL("ProxyDrawable");
+            buff = "ProxyDrawable";
 
         hsgResMgr::ResMgr()->NewKey( buff, fProxyDrawables[ idx ], GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
     }

@@ -155,7 +155,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime/plUnifiedTime.h"
 //end for agedefn test
 
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "pnSceneObject/plAudioInterface.h"
 
 #include "plStatusLog/plStatusLog.h"
@@ -6980,7 +6980,7 @@ PF_CONSOLE_CMD( Python,
         args = plString::Format("(%s,)", tmp);
     }
     else
-        args = _TEMP_CONVERT_FROM_LITERAL("()");
+        args = "()";
 
     PythonInterface::RunFunctionSafe("xCheat", params[0], args.c_str());
 

@@ -292,12 +292,12 @@ void plMouseDevice::IUpdateCursorSize()
     }
 }
 
-void plMouseDevice::AddNameToCursor(const char* name)
+void plMouseDevice::AddNameToCursor(const plString& name)
 {
-    if (fInstance && name)
+    if (fInstance && !name.IsNull())
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos - 7,name);
+        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos - 7,name.c_str());
     }
 }
 void plMouseDevice::AddCCRToCursor()

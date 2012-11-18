@@ -663,7 +663,7 @@ void plArmatureMod::IInitDefaults()
     fDontPanicLink = false;
     fBodyAgeName = "GlobalAvatars";
     fBodyFootstepSoundPage = "Audio";
-    fAnimationPrefix = _TEMP_CONVERT_FROM_LITERAL("Male");
+    fAnimationPrefix = "Male";
     fUserStr = "";
 }
 
@@ -1034,7 +1034,7 @@ void plArmatureMod::PanicLink(bool playLinkOutAnim /* = true */)
 
         plString animName = MakeAnimationName("FallingLinkOut");
         task->SetAnimName(animName);
-        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
+        task->SetMarkerName("touch");
     
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->Send();
@@ -1057,7 +1057,7 @@ void plArmatureMod::PersonalLink()
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
         plString animName = MakeAnimationName("PersonalLink");
         task->SetAnimName(animName);
-        task->SetMarkerName(_TEMP_CONVERT_FROM_LITERAL("touch"));
+        task->SetMarkerName("touch");
         
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);    
@@ -1781,7 +1781,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
         if (gLoc.IsValid())
         {
             const plUoid &myUoid = GetKey()->GetUoid();
-            plUoid SOUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSoundObject"));
+            plUoid SOUoid(gLoc, plSceneObject::Index(), "FootstepSoundObject");
             fFootSoundSOKey = mgr->FindKey(SOUoid);
             if (fFootSoundSOKey)
             {
@@ -1791,7 +1791,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             }
 
             // Add the effect to our effects manager
-            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), _TEMP_CONVERT_FROM_LITERAL("FootstepSounds") );
+            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), "FootstepSounds");
             plKey effectKey = mgr->FindKey(effectUoid);
             if (effectKey)
             {
@@ -1802,7 +1802,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
                 mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
 
             // Get the linking sound
-            plUoid LinkUoid(gLoc, plSceneObject::Index(), _TEMP_CONVERT_FROM_LITERAL("LinkSoundSource"));
+            plUoid LinkUoid(gLoc, plSceneObject::Index(), "LinkSoundSource");
             fLinkSoundSOKey = mgr->FindKey(LinkUoid);
             if (fLinkSoundSOKey)
             {
@@ -1896,7 +1896,7 @@ void plArmatureMod::ICustomizeApplicator()
 {
     plArmatureModBase::ICustomizeApplicator();
 
-    const plAGModifier *agMod = GetChannelMod(_TEMP_CONVERT_FROM_LITERAL("Bone_Root"), true);
+    const plAGModifier *agMod = GetChannelMod("Bone_Root", true);
     if (agMod)
     {
         // are there any applicators that manipulate the transform?
@@ -2379,7 +2379,7 @@ bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
 
 plString plArmatureMod::MakeAnimationName(const char *baseName) const
 {
-    return fAnimationPrefix + _TEMP_CONVERT_FROM_LITERAL(baseName);
+    return fAnimationPrefix + baseName;
 }
 
 plString plArmatureMod::GetRootName()

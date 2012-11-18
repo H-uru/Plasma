@@ -115,7 +115,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        return PyString_FromString(cyMisc::GetClientName(*key).s_str());
+        return PyString_FromString(cyMisc::GetClientName(*key).c_str());
     }
     else
         return PyString_FromString(cyMisc::GetLocalClientName().c_str());

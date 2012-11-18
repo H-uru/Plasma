@@ -2138,7 +2138,7 @@ void    plMipmap::IAddToMemRecord( plMipmap *mip, plRecord::Method method )
     if( mip->GetKey() )
         newRecord->fKeyName = mip->GetKeyName();
     else
-        newRecord->fKeyName = _TEMP_CONVERT_FROM_LITERAL( "<noKey>" );
+        newRecord->fKeyName = "<noKey>";
     if( mip->fCompressionType != kDirectXCompression )
         newRecord->fUncompressedInfo.fType = mip->fUncompressedInfo.fType;
     else

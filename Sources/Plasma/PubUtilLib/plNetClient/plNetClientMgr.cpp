@@ -645,7 +645,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
 #ifdef HS_DEBUGGING
                 if (plNetObjectDebugger::GetInstance()->IsDebugObject(so))
                 {
-                    hsLogEntry( DebugMsg( "Delivering SDL state %s:%s", pl->fKey->GetName(), pl->fSDRec->GetDescriptor()->GetName() ) );
+                    hsLogEntry( DebugMsg( "Delivering SDL state %s:%s", pl->fKey->GetName().c_str(), pl->fSDRec->GetDescriptor()->GetName() ) );
 //                  hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(xtl::format("Dispatching SDL state, type %s to object:%s, locallyOwned=%d, st=%.3f rt=%.3f", 
 //                      pl->fSDRec->GetDescriptor()->GetName(), pl->fKey->GetName(), 
 //                      so->IsLocallyOwned()==plSynchedObject::kYes, secs, hsTimer::GetSeconds()).c_str()));
@@ -1457,8 +1457,8 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
                 cnt++;
     }
 
-    hsAssert(cnt<2, xtl::format("Object %s has multiple SDL modifiers of the same kind (%s)?", 
-        obj->GetKeyName(), plFactory::GetNameOfClass(classIdx)).c_str());
+    hsAssert(cnt<2, plString::Format("Object %s has multiple SDL modifiers of the same kind (%s)?", 
+        obj->GetKeyName().c_str(), plFactory::GetNameOfClass(classIdx)).c_str());
     return cnt==0 ? false : true;
 }
 

@@ -115,7 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxPlasmaMtls/Layers/plDynamicTextLayer.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
@@ -2728,7 +2728,7 @@ bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
+        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
     }
 
     if( fCompPB->GetInt( kRefOrientation ) == 1 )
@@ -4450,7 +4450,7 @@ bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plAGMasterMod   *master = node->GetAGMasterMod();
         hsTArray<plKey> keys;
         keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME ) );
+        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
     }
 
     const char *errMsg = ISetSoundIndex( kRefAnimateSound, kRefAnimateSoundComp, pfGUIProgressCtrl::kAnimateSound, node );
