@@ -631,7 +631,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
         plString targetName = cmdMsg->GetAnimName();
 
         if (targetName.IsNull())
-            targetName = _TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME);
+            targetName = ENTIRE_ANIMATION_NAME;
 
         plAGAnimInstance *inst = FindAnimInstance(targetName);
         if (inst != nil)

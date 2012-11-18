@@ -275,7 +275,7 @@ void plLogicModBase::UnTrigger()
 #ifdef HS_DEBUGGING
     char str[256];
     sprintf(str, "LogicModifier %s is Un-triggering, activatorType=%d\n", 
-        GetKeyName(), HasFlag(kTypeActivator));
+        GetKeyName().c_str(), HasFlag(kTypeActivator));
     plNetClientApp::GetInstance()->DebugMsg(str);
 #endif
     fNotify->SetSender(this->GetKey());

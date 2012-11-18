@@ -163,7 +163,7 @@ void plSound::IUpdateDebugPlate( void )
             fDebugPlate->SetPosition( -0.5, 0 );
             fDebugPlate->SetDataRange( 0, 100, 100 );
             fDebugPlate->SetColors( 0x80202000 );
-            fDebugPlate->SetTitle( _TEMP_CONVERT_TO_CONST_CHAR( GetKeyName() ) );      // Bleah
+            fDebugPlate->SetTitle( GetKeyName().c_str() );      // Bleah
             fDebugPlate->SetLabelText( "Desired", "Curr", "Soft", "Dist" );
         }
 
@@ -190,7 +190,7 @@ void plSound::SetCurrDebugPlate( const plKey soundKey )
         {
             fDebugPlate->ClearData();
             fDebugPlate->SetVisible( true );
-            fDebugPlate->SetTitle( _TEMP_CONVERT_TO_CONST_CHAR( fCurrDebugPlateSound->GetKeyName() ) );        // Bleah
+            fDebugPlate->SetTitle( fCurrDebugPlateSound->GetKeyName().c_str() );        // Bleah
         }
     }
 }

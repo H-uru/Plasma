@@ -1113,7 +1113,7 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
             // Too lazy to worry about that...
             if (key == KEY_C) 
             {
-                plClipboard::GetInstance().SetClipboardText(_TEMP_CONVERT_FROM_WCHAR_T(fBuffer.AcquireArray()));
+                plClipboard::GetInstance().SetClipboardText(plString::FromWchar(fBuffer.AcquireArray()));
             }
             else if (key == KEY_V)
             {

@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore.h"
 //#include "hsTimer.h"
 
-#include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
+#include "hsFiles.h"
+#include "plFileUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
 #include "plCachedFileReader.h"

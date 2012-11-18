@@ -276,10 +276,9 @@ void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArra
 
 int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
 {
-    plString name = segName.IsNull() ? _TEMP_CONVERT_FROM_LITERAL("") : segName;
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
-        ISearchLayerRecur(mat->GetLayer(i), name, keys);
+        ISearchLayerRecur(mat->GetLayer(i), segName, keys);
     return keys.GetCount();
 }
 

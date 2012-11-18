@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <float.h>
+#include <cmath>
 #include "plUnifiedTime.h"
 #include "hsStlUtils.h"
 

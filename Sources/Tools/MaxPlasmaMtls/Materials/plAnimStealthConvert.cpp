@@ -83,7 +83,7 @@ static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName,
 
 static int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
 {
-    plString name = (segName.IsNull() || segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? _TEMP_CONVERT_FROM_LITERAL( "" ) : segName;
+    plString name = ( segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? "" : segName;
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
         ISearchLayerRecur(mat->GetLayer(i), name, keys);

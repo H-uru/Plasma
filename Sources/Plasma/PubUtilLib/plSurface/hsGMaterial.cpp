@@ -133,10 +133,10 @@ plLayer* hsGMaterial::MakeBaseLayer()
     hsAssert(GetKey(), "All materials need a key (or temp key)");
 
     plString buff;
-    if( !GetKey()->GetName().IsNull() )
-        buff = plString::Format("%s_Layer", GetKey()->GetName().c_str());
+    if( !GetKeyName().IsNull() )
+        buff = plString::Format("%s_Layer", GetKeyName().c_str());
     else
-        buff = _TEMP_CONVERT_FROM_LITERAL("Layer");
+        buff = "Layer";
     hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 
     // Add layer so we have it now.

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPythonPack.h"
 
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 

@@ -388,7 +388,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             {
                 if (key == KEY_C) 
                 {
-                    plClipboard::GetInstance().SetClipboardText(_TEMP_CONVERT_FROM_WCHAR_T(fBuffer));
+                    plClipboard::GetInstance().SetClipboardText(plString::FromWchar(fBuffer));
                 }
                 else if (key == KEY_V)
                 {

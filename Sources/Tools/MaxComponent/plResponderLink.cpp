@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 // Needed for the dialog
 #include "MaxMain/plMaxCFGFile.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 #include "plAgeDescription/plAgeDescription.h"
 
 // Needed to create the message

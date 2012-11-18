@@ -264,11 +264,11 @@ bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     {
         // MakeCharacterHierarchy will attach agmodifiers to all the bones in the hierarchy;
         // have to manually add any for non-bone objects...
-        agMod = new plAGModifier(_TEMP_CONVERT_FROM_LITERAL("Handle"));     // the player root is known as the handle
+        agMod = new plAGModifier("Handle");     // the player root is known as the handle
         node->AddModifier(agMod, IGetUniqueName(node));
     }
 
-    agMod->SetChannelName(_TEMP_CONVERT_FROM_LITERAL("Handle"));
+    agMod->SetChannelName("Handle");
 
     // Get the position and radius of the head and torso physicals
     if (ClassID() == AVATAR_CLASS_ID || ClassID() == LOD_AVATAR_CLASS_ID)
@@ -685,7 +685,7 @@ bool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     plString name = node->GetKey()->GetName();
 
     node->MakeCharacterHierarchy(pErrMsg);
-    node->SetupBonesAliasesRecur(_TEMP_CONVERT_TO_CONST_CHAR(name));
+    node->SetupBonesAliasesRecur(name.c_str());
 
 
     // create and register the player modifier

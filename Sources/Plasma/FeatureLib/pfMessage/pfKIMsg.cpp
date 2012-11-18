@@ -49,18 +49,3 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 const char* pfKIMsg::kChronicleKILevel = "PlayerKILevel";
-
-void pfKIMsg::SetString( const char *str )
-{
-    wchar_t *temp = hsStringToWString( str );
-    fString = temp;
-    delete [] temp;
-}
-
-std::string pfKIMsg::GetString( void )
-{
-    char *temp = hsWStringToString( fString.c_str() );
-    std::string retVal = temp;
-    delete [] temp;
-    return retVal;
-}
