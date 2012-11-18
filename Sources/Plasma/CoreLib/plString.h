@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plString_Defined
 
 #include "HeadSpin.h"
-#include <stddef.h>
+#include <vector>
 
 typedef unsigned int UniChar;
 
@@ -286,6 +286,13 @@ public:
     //        so, use that instead -- it's faster and more efficient!
     plString ToUpper() const;
     plString ToLower() const;
+
+    // Should replace other tokenization methods.  The difference between Split
+    // and Tokenize is that Tokenize never returns a blank string (it strips
+    // all delimiters and only returns the pieces left between them), whereas
+    // Split will split on a full string, returning whatever is left between.
+    std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto);
+    std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v");
 
 public:
     struct less

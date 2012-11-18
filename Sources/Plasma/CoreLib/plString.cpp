@@ -700,6 +700,60 @@ plString plString::ToLower() const
     return str;
 }
 
+static bool ch_in_set(char ch, const char *set)
+{
+    for (const char *s = set; *s; ++s) {
+        if (ch == *s)
+            return true;
+    }
+    return false;
+}
+
+std::vector<plString> plString::Tokenize(const char *delims)
+{
+    std::vector<plString> result;
+
+    const char *next = c_str();
+    const char *end = next + GetSize();  // So binary strings work
+    while (next != end) {
+        const char *cur = next;
+        while (cur != end && !ch_in_set(*cur, delims))
+            ++cur;
+
+        // Found a delimiter
+        if (cur != next)
+            result.push_back(plString::FromUtf8(next, cur - next));
+
+        next = cur;
+        while (next != end && ch_in_set(*next, delims))
+            ++next;
+    }
+
+    return result;
+}
+
+//TODO: Not binary safe
+std::vector<plString> plString::Split(const char *split, size_t maxSplits)
+{
+    std::vector<plString> result;
+
+    const char *next = c_str();
+    size_t splitlen = strlen(split);
+    while (maxSplits > 0) {
+        const char *sp = strstr(next, split);
+
+        if (!sp)
+            break;
+
+        result.push_back(plString::FromUtf8(next, sp - next));
+        next = sp + splitlen;
+        --maxSplits;
+    }
+
+    result.push_back(plString::FromUtf8(next));
+    return result;
+}
+
 plString operator+(const plString &left, const plString &right)
 {
     plString cat;
