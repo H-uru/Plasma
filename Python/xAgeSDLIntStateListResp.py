@@ -87,7 +87,7 @@ class ptAttribStateResponder(ptAttribResponder):
             if type(state) == type(0) and state >= 0:
                 nt.addResponderState(state)
             else:
-                raise ptResponderStateError,"State must be a positive integer"
+                raise ptResponderStateError("State must be a positive integer")
             
             # see if there are events to pass on
             if type(events) != type(None):

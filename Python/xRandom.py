@@ -73,7 +73,7 @@ def randint(start, stop):
                 newInt = random.randint(start, stop)
                 iter = iter + 1
             if newInt == _lastvalue and iter >= _MAX_ITERATIONS:
-                raise "Problem with randomness: over max series length and can't find a new number"
+                raise RuntimeError("Problem with randomness: over max series length and can't find a new number")
             _lastvalue = newInt
             _series_length = 1
         else:

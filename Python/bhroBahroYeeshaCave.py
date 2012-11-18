@@ -482,7 +482,7 @@ class bhroBahroYeeshaCave(ptModifier):
             node.chronicleSetValue(varstr)
             node.save()
         else:
-            raise "Could not find chronicle variable to set"
+            raise RuntimeError("Could not find chronicle variable to set")
 
 
     def AreListsEquiv(self, list1, list2):

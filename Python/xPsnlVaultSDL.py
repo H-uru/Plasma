@@ -81,7 +81,7 @@ class xPsnlVaultSDL:
         if type(val) == type( () ):
             val = val[0]
         else:
-            raise "Value must be tuple type"
+            raise ValueError("Value must be tuple type")
         
         if 1:#try:
             if self.useAgeVault:

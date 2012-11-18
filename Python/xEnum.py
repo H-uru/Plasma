@@ -44,10 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # Written by Will Ware, 2001/08/23
 # Modified by Adam Van Ornum, 4/17/2003
 
-import types, string, exceptions
+import types, string
 
-class EnumException(exceptions.Exception):
-    pass
+class EnumException(Exception):
+    def __init__(self, value):
+        self._value
+    def __str__(self):
+        return repr(self._value)
 
 class Enum:
     def __init__(self, enumStr):
@@ -66,13 +69,13 @@ class Enum:
             if type(x) == types.TupleType:
                 x, i = x
             if type(x) != types.StringType:
-                raise EnumException, "enum name is not a string: " + x
+                raise EnumException("enum name is not a string: " + x)
             if type(i) != types.IntType:
-                raise EnumException, "enum value is not an integer: " + i
+                raise EnumException("enum value is not an integer: " + i)
             if x in uniqueNames:
-                raise EnumException, "enum name is not unique: " + x
+                raise EnumException("enum name is not unique: " + x)
             if i in uniqueValues:
-                raise EnumException, "enum value is not unique for " + x
+                raise EnumException("enum value is not unique for " + x)
             uniqueNames.append(x)
             uniqueValues.append(i)
             lookup[x] = i
