@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <process.h>
-
 #include "hsThread.h"
+#include "hsWindows.h"
+#include <process.h>
 #include "hsExceptions.h"
 #include "hsMemory.h"
 
@@ -77,6 +77,11 @@ hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false), fT
 hsThread::~hsThread()
 {
     this->Stop();
+}
+
+hsThread::ThreadId hsThread::GetMyThreadId()
+{
+    return GetCurrentThreadId();
 }
 
 void hsThread::Start()
@@ -237,4 +242,11 @@ bool hsEvent::Wait(hsMilliseconds timeToWait)
 void hsEvent::Signal()
 {
     ::SetEvent(fEvent);
+}
+
+///////////////////////////////////////////////////////////////
+
+void hsSleep::Sleep(uint32_t millis)
+{
+    ::Sleep(millis);
 }

@@ -82,6 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     typedef HINSTANCE hsWindowInst;
     typedef HINSTANCE HMODULE;
     typedef long HRESULT;
+    typedef void* HANDLE;
 #else
     typedef int32_t* hsWindowHndl;
     typedef int32_t* hsWindowInst;

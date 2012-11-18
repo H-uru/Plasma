@@ -47,10 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include "hsThread.h"
+
 #ifndef EAX_SDK_AVAILABLE
-#include "plEAXStructures.h"
+#   include "plEAXStructures.h"
 #endif
+
 #include "plEAXEffects.h"
 #include "plAudioCore/plAudioCore.h"
 #include "plDSoundBuffer.h"

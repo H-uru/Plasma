@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfCrashCli_h_
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include "plCrashBase.h"
 
 struct plCrashMemLink;
