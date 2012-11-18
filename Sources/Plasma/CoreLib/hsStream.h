@@ -124,22 +124,20 @@ public:
     virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const char cstring[]);
-    uint32_t        WriteString(const plString & string) { return WriteString(_TEMP_CONVERT_TO_CONST_CHAR(string)); }
+    uint32_t        WriteString(const plString & string) { return WriteString(string.c_str()); }
     uint32_t        WriteFmt(const char * fmt, ...);
     uint32_t        WriteFmtV(const char * fmt, va_list av);
 
-    uint32_t        WriteSafeStringLong(const char *string);    // uses 4 bytes for length
-    uint32_t        WriteSafeWStringLong(const wchar_t *string);
+    uint32_t        WriteSafeStringLong(const plString &string);    // uses 4 bytes for length
+    uint32_t        WriteSafeWStringLong(const plString &string);
     char *          ReadSafeStringLong();
     wchar_t *       ReadSafeWStringLong();
 
-    uint32_t        WriteSafeString(const char *string);        // uses 2 bytes for length
-    uint32_t        WriteSafeWString(const wchar_t *string);
+    uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
+    uint32_t        WriteSafeWString(const plString &string);
     char *          ReadSafeString();
     wchar_t *       ReadSafeWString();
 
-    uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
-    uint32_t        WriteSafeWString(const plString &string);
     plString        ReadSafeString_TEMP();
     plString        ReadSafeWString_TEMP();
 

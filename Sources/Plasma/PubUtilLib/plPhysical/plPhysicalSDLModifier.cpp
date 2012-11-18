@@ -220,22 +220,22 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
     if (isPosSet)
         log += plString::Format(" Pos=%.1f %.1f %.1f", pos.fX, pos.fY, pos.fZ);
     else
-        log += _TEMP_CONVERT_FROM_LITERAL(" Pos=None");
+        log += " Pos=None";
 
     if (isLinVSet)
         log += plString::Format(" LinV=%.1f %.1f %.1f", linV.fX, linV.fY, linV.fZ);
     else
-        log += _TEMP_CONVERT_FROM_LITERAL(" LinV=None");
+        log += " LinV=None";
 
     if (isAngVSet)
         log += plString::Format(" AngV=%.1f %.1f %.1f", angV.fX, angV.fY, angV.fZ);
     else
-        log += _TEMP_CONVERT_FROM_LITERAL(" AngV=None");
+        log += " AngV=None";
 
     if (isRotSet)
         log += plString::Format(" Rot=%.1f %.1f %.1f %.1f", rot.fX, rot.fY, rot.fZ, rot.fW);
     else
-        log += _TEMP_CONVERT_FROM_LITERAL(" Rot=None");
+        log += " Rot=None";
 
     IGetLog()->AddLine(log.c_str(), color);
 }

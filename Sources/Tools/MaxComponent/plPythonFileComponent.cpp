@@ -457,7 +457,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             break;
 
         case plAutoUIParam::kTypeString:
-            pyParam.SetToString(_TEMP_CONVERT_FROM_LITERAL(param->GetString(pb)));
+            pyParam.SetToString(param->GetString(pb));
             mod->AddParameter(pyParam);
             break;
 
@@ -807,7 +807,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         // save out the animation name first
                         plString tempAnimName = animcomp->GetAnimName();
                         if (tempAnimName.IsNull())
-                            pyParam.SetToAnimationName(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
+                            pyParam.SetToAnimationName(ENTIRE_ANIMATION_NAME);
                         else
                             pyParam.SetToAnimationName(tempAnimName);
                         mod->AddParameter(pyParam);
@@ -929,7 +929,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             break;
         
         case plAutoUIParam::kTypeDropDownList:
-            pyParam.SetToString(_TEMP_CONVERT_FROM_LITERAL(param->GetString(pb)));
+            pyParam.SetToString(param->GetString(pb));
             mod->AddParameter(pyParam);
             break;
 

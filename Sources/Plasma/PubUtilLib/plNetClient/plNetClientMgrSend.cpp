@@ -159,7 +159,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     char buffy[20];
     sprintf( buffy, "%lu", GetPlayerID() );
     info.AddValue( "Petition", "PlayerID", buffy );
-    info.AddValue( "Petition", "PlayerName", _TEMP_CONVERT_TO_CONST_CHAR(GetPlayerName()) );
+    info.AddValue( "Petition", "PlayerName", GetPlayerName().c_str() );
 
     // write config info formatted like an ini file to a buffer
     hsRAMStream ram;
@@ -396,9 +396,9 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     {
     #if 0
         hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(
-            xtl::format("<SND> object:%s, rcvr %s %s",
-            msg->GetSender(), 
-            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName() : "?", 
+            plString::Format("<SND> object:%s, rcvr %s %s",
+            msg->GetSender().GetKeyName().c_str(),
+            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName().c_str() : "?",
             netMsgWrap->AsStdString().c_str()).c_str()));
     #endif
     }

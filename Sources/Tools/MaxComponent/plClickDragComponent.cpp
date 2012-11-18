@@ -453,7 +453,7 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             //pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
             pMsg->SetAnimName(pAnim->GetModKey(node)->GetName());
-            pAxis->SetAnimLabel(_TEMP_CONVERT_FROM_LITERAL(ENTIRE_ANIMATION_NAME));
+            pAxis->SetAnimLabel(ENTIRE_ANIMATION_NAME);
         }
         else
         {

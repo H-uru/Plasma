@@ -2196,7 +2196,7 @@ static bool Recv_ServerAddr (
             s_active->token = msg.token;
             s_active->addr.SetHost(msg.srvAddr);
 
-            plString logmsg = _TEMP_CONVERT_FROM_LITERAL("SrvAuth addr: ");
+            plString logmsg = "SrvAuth addr: ";
             logmsg += s_active->addr.GetHostString();
             LogMsg(kLogPerf, L"SrvAuth addr: %s", logmsg.c_str());
         }
@@ -2789,8 +2789,8 @@ bool AgeRequestTrans::Recv (
 
 //============================================================================
 AccountCreateRequestTrans::AccountCreateRequestTrans (
-    const wchar_t                             accountName[],
-    const wchar_t                             password[],
+    const wchar_t                           accountName[],
+    const wchar_t                           password[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
@@ -2804,8 +2804,8 @@ AccountCreateRequestTrans::AccountCreateRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
 
     CryptHashPassword(
-        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
-        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        plString::FromWchar(m_accountName),
+        plString::FromWchar(password),
         m_namePassHash
     );
 }
@@ -2859,8 +2859,8 @@ bool AccountCreateRequestTrans::Recv (
 
 //============================================================================
 AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     password[],
+    const wchar_t                                   accountName[],
+    const wchar_t                                   password[],
     const Uuid &                                    key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -2874,8 +2874,8 @@ AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
 
     CryptHashPassword(
-        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
-        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        plString::FromWchar(m_accountName),
+        plString::FromWchar(password),
         m_namePassHash
     );
 }
@@ -3161,8 +3161,8 @@ bool SetPlayerRequestTrans::Recv (
 
 //============================================================================
 AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     password[],
+    const wchar_t                                   accountName[],
+    const wchar_t                                   password[],
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) : NetAuthTrans(kAccountChangePasswordRequestTrans)
@@ -3172,8 +3172,8 @@ AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
     StrCopy(m_accountName, accountName, arrsize(m_accountName));
     
     CryptHashPassword(
-        _TEMP_CONVERT_FROM_WCHAR_T(m_accountName),
-        _TEMP_CONVERT_FROM_WCHAR_T(password),
+        plString::FromWchar(m_accountName),
+        plString::FromWchar(password),
         m_namePassHash
     );
 }

@@ -607,7 +607,7 @@ const plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
                     return sdlMod;
                 
                 plNetClientApp::StaticErrorMsg("pfmod %s has a nil python SDL modifier for age sdl %s", 
-                    pfmod->GetKeyName().s_str("?"), ageName);
+                    pfmod->GetKeyName().c_str("?"), ageName);
             }
             else
             {
@@ -616,11 +616,11 @@ const plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
                 else
                 if (!key->ObjectIsLoaded())
                     plNetClientApp::StaticErrorMsg("key %s not loaded for age sdl %s", 
-                        key->GetName().s_str("?"), ageName);
+                        key->GetName().c_str("?"), ageName);
                 else
                 if (!plPythonFileMod::ConvertNoRef(key->ObjectIsLoaded()))
                     plNetClientApp::StaticErrorMsg("key %s is not a python file mod for age sdl %s", 
-                        key->GetName().s_str("?"), ageName);
+                        key->GetName().c_str("?"), ageName);
             }
         }
         else

@@ -67,7 +67,7 @@ class pfKIMsg : public plMessage
         // for the hack chat message thingy
         char    *fUser;
         uint32_t  fPlayerID;
-        std::wstring    fString;
+        plString  fString;
 
         // for the SetChatFadeDelay
         float fDelay;
@@ -78,7 +78,7 @@ class pfKIMsg : public plMessage
         void IInit()
         {
             fCommand = kNoCommand;
-            fString = L"";
+            fString = "";
             fUser = nil;
             fPlayerID = 0;
             fFlags = 0;
@@ -192,14 +192,7 @@ class pfKIMsg : public plMessage
             s->ReadLE( &fCommand );
             fUser = s->ReadSafeString();
             fPlayerID = s->ReadLE32();
-
-            wchar_t *temp = s->ReadSafeWString();
-            if (temp) // apparently ReadSafeWString can return null, which std::wstring doesn't like being assigned
-                fString = temp;
-            else
-                fString = L"";
-            delete [] temp;
-
+            fString = s->ReadSafeWString_TEMP();
             fFlags = s->ReadLE32();
             fDelay = s->ReadLEScalar();
             fValue = s->ReadLE32();
@@ -211,31 +204,29 @@ class pfKIMsg : public plMessage
             s->WriteLE( fCommand );
             s->WriteSafeString( fUser );
             s->WriteLE32( fPlayerID );
-            s->WriteSafeWString( fString.c_str() );
+            s->WriteSafeWString( fString );
             s->WriteLE32( fFlags );
             s->WriteLEScalar(fDelay);
             s->WriteLE32( fValue );
         }
 
-        uint8_t       GetCommand( void ) const { return fCommand; }
+        uint8_t     GetCommand( void ) const { return fCommand; }
 
-        void        SetString( const char *str );
-        void        SetString( const wchar_t *str ) { fString = str; }
-        std::string GetString( void );
-        std::wstring GetStringU( void ) { return fString; }
+        void        SetString( const plString &str ) { fString = str; }
+        plString    GetString( void ) { return fString; }
 
         void        SetUser( const char *str, uint32_t pid=0 ) { fUser = hsStrcpy( str ); fPlayerID = pid; }
         const char  *GetUser( void ) { return fUser; }
-        uint32_t      GetPlayerID( void ) { return fPlayerID; }
+        uint32_t    GetPlayerID( void ) { return fPlayerID; }
 
         void        SetFlags( uint32_t flags ) { fFlags = flags; }
-        uint32_t      GetFlags( void ) const { return fFlags; }
+        uint32_t    GetFlags( void ) const { return fFlags; }
 
         void        SetDelay( float delay ) { fDelay = delay; }
-        float    GetDelay( void ) { return fDelay; }
+        float       GetDelay( void ) { return fDelay; }
 
         void        SetIntValue( int32_t value ) { fValue = value; }
-        int32_t       GetIntValue( void ) { return fValue; }
+        int32_t     GetIntValue( void ) { return fValue; }
 
 #endif // def KI_CONSTANTS_ONLY
 };

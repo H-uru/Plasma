@@ -1104,7 +1104,7 @@ int plNetMsgMemberUpdate::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     if (bytes)
     {
         // FIX ME to something nice
-        fMemberInfo.GetClientGuid()->SetClientKey(_TEMP_CONVERT_FROM_LITERAL(""));
+        fMemberInfo.GetClientGuid()->SetClientKey("");
         fMemberInfo.GetClientGuid()->SetAccountUUID(plUUID());
         fMemberInfo.Poke(stream, peekOptions);
         stream->WriteByte(fAddMember);

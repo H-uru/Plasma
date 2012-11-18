@@ -254,7 +254,7 @@ plString plAnimStealthNode::GetSegmentName( void ) const
 {
     const char *str = fParamBlock->GetStr( (ParamID)kPBName );
     if( str == nil || str[ 0 ] == 0 )
-        return _TEMP_CONVERT_FROM_LITERAL( ENTIRE_ANIMATION_NAME );
+        return ENTIRE_ANIMATION_NAME;
     return plString::FromUtf8(str);
 }
 
@@ -897,7 +897,7 @@ plString    plAnimStealthNode::GetLoopName( void ) const                { return
 void        plAnimStealthNode::SetLoop( bool b, const plString &name )
 {
     fParamBlock->SetValue( (ParamID)kPBLoop, 0, (int)b );
-    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.s_str() );
+    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.c_str() );
 }
 
 uint8_t       plAnimStealthNode::GetEaseInType( void ) const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }

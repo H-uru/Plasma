@@ -128,7 +128,7 @@ hsStream* plStreamSource::GetFile(std::wstring filename)
             if (plSecureStream::IsSecureFile(sFilename.c_str()))
             {
                 uint32_t encryptionKey[4];
-                if (!plFileUtils::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4))
+                if (!plSecureStream::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4))
                 {
                     FATAL("Hey camper... You need an NTD key file!");
                     return nil;

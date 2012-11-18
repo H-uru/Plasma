@@ -114,7 +114,7 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
 #ifdef MF_NOSHADOW_ACC
     // TESTHACKERY FOLLOWS - GlassesNoShadow
     uint32_t noShadHack = 0;
-    if( mesh->GetKey() && (strstr(mesh->GetKey()->GetName(), "lasses") || strstr(mesh->GetKey()->GetName(), "oggles")) )
+    if( mesh->GetKey() && (mesh->GetKey()->GetName().Find("lasses") >= 0 || mesh->GetKey()->GetName().Find("oggles") >= 0) )
         noShadHack = plGeometrySpan::kPropNoShadowCast;
 #endif // MF_NOSHADOW_ACC
 

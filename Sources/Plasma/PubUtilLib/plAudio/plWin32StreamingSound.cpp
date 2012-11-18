@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
-#include "plFile/hsFiles.h"
+#include "hsFiles.h"
 
 #include "plWin32Sound.h"
 #include "plWin32StreamingSound.h"

@@ -112,7 +112,7 @@ bool plUUID::ToString( plString & out ) const
     plUUIDHelper::CopyToNative( g, this );
     char buf[40];
     uuid_unparse( g, buf );
-    out = _TEMP_CONVERT_FROM_LITERAL( buf );
+    out = buf;
     return true;
 }
 

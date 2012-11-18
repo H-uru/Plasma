@@ -61,7 +61,7 @@ plAGChannel::plAGChannel()
 {
 #ifdef TRACK_AG_ALLOCS
     fName = gGlobalAnimName;
-    RegisterAGAlloc(this, gGlobalChannelName, gGlobalAnimName, this->ClassIndex());
+    RegisterAGAlloc(this, gGlobalChannelName.c_str(), gGlobalAnimName.c_str(), this->ClassIndex());
 #endif // TRACK_AG_ALLOCS
 }
 
