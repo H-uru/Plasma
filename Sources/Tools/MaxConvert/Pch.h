@@ -40,70 +40,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef _MaxConvert_Pch_inc_
+#define _MaxConvert_Pch_inc_
+
+/** 
+ * \file Pch.h
+ * \brief Precompiled Header for MaxConvert
+ */
+
+// Standard Library
+#include <algorithm>
+#include <float.h>
+#include <math.h>
 #include <string.h>
-#pragma hdrstop
+#include <vector>
 
-#include "StringTokenizer.h"
+// Core Plasma
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "plgDispatch.h"
+#include "hsExceptionStack.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsResMgr.h"
+#include "plString.h"
+#include "hsStringTokenizer.h"
+#include "hsTemplates.h"
+#include "plTweak.h"
 
-// String Tokenizer routines
-StringTokenizer::StringTokenizer() {
-    qAsTok = true;
-    inQuote = false;
-    this->string = this->seps = 0;
-}
-StringTokenizer::StringTokenizer(const char *string, const char *seps) {
-    qAsTok = true;
-    inQuote = false;
-    this->string = new char[strlen(string)+1];
-    strcpy(this->string,string);
-    numSeps = strlen(seps);
-    this->seps = new char[numSeps+1];
-    strcpy(this->seps,seps);
-    this->tok = this->string;
-    if (isSep(*tok)) next();
-};
-StringTokenizer::~StringTokenizer() {
-    delete string;
-    delete seps;
-}
-bool StringTokenizer::hasMoreTokens() {
-    return (*tok != '\0');
-};
-char *StringTokenizer::next() {
-    if (*tok == '\0') return NULL;
-    char *cur = tok;
-    while (*tok != '\0' && !isSep(*tok)) tok++;
-    if (*tok != '\0') {
-        *tok = '\0';
-        tok++;
-    }
-    while (*tok != '\0' && isSep(*tok)) tok++;
-    return cur;
-};
-bool StringTokenizer::isSep(char c) {
-    if (!qAsTok || !inQuote) {
-        for (int i=0; i<numSeps; i++) {
-            if (seps[i] == c) return true;
-        }
-    }
-    if (qAsTok && c=='\"') {
-        inQuote = !inQuote;
-        return true;
-    }
-    return false;
-};
-void StringTokenizer::reset(const char *string, const char *seps) {
-    if (this->string) delete this->string;
-    this->string = new char[strlen(string)+1];
-    strcpy(this->string,string);
-    if (this->seps) delete this->seps;
-    numSeps = strlen(seps);
-    this->seps = new char[numSeps+1];
-    strcpy(this->seps,seps);
-    this->tok = this->string;
-    if (isSep(*tok)) next();
-}
+// Windows
+#include "hsWindows.h"
+#include <CommCtrl.h>
+#include <commdlg.h>
 
-void StringTokenizer::ParseQuotes(bool qAsTok) {
-    this->qAsTok = qAsTok;
-}
+// MaxComponent
+#include "MaxComponent/plComponent.h"
+
+// 3ds Max SDK
+// This stuff should ALWAYS come after hsWindows.h
+#include <bmmlib.h>
+#include <dummy.h>
+#include <keyreduc.h>
+#include <INode.h>
+#include <ISkin.h>
+#include <istdplug.h>
+#include <iparamm2.h>
+#include <maxversion.h>
+#include <meshdlib.h> 
+#include <modstack.h>
+#include <notify.h>
+#include <stdmat.h>
+#include <texutil.h>
+
+#if MAX_VERSION_MAJOR >= 13
+#    include <INamedSelectionSetManager.h>
+#endif
+
+#endif // _MaxConvert_Pch_inc_

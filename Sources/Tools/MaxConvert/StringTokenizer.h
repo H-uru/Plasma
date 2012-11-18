@@ -43,14 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _STRING_TOKENIZER_H_
 #define _STRING_TOKENIZER_H_
 
-#include "Headspin.h"
-
 class StringTokenizer {
 private:
     char *seps;
     char *tok;
     bool isSep(char c);
-    int32_t numSeps;
+    int numSeps;
     bool qAsTok;
     bool inQuote;
 public:

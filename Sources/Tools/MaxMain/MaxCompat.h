@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLASMA_MAXCOMPAT_H
 #define _PLASMA_MAXCOMPAT_H
 
-#include "maxversion.h"
+#include <maxversion.h>
 
 #if MAX_VERSION_MAJOR <= 9
 #define BMMCOLOR(x, y, z, w) \

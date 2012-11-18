@@ -60,23 +60,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "Max.h"
-#include "stdmat.h"
-#include "istdplug.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
-
 #include "hsExceptionStack.h"
+#include "hsResMgr.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include <Max.h>
+#include <stdmat.h>
+#include <istdplug.h>
+#include <iparamb2.h>
+#include <iparamm2.h>
+#pragma hdrstop
 
 #include "plLayerConverter.h"
 
-#include "MaxConvert/hsMaxLayerBase.h"
-#include "MaxConvert/hsConverterUtils.h"
-#include "MaxConvert/hsControlConverter.h"
-#include "MaxConvert/hsMaterialConverter.h"
-#include "MaxConvert/plBitmapCreator.h"
-#include "hsResMgr.h"
+#include "hsMaxLayerBase.h"
+#include "hsConverterUtils.h"
+#include "hsControlConverter.h"
+#include "hsMaterialConverter.h"
+#include "plBitmapCreator.h"
 #include "MaxExport/plErrorMsg.h"
 #include "MaxMain/plMaxNode.h"
 
@@ -750,10 +752,11 @@ uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) c
 
         for( int x = 0; x < width; x++ )
         {
-            color.SetARGB(  p64[ x ].a * 255.f / 65535.f,
-                            p64[ x ].r * 255.f / 65535.f,
-                            p64[ x ].g * 255.f / 65535.f,
-                            p64[ x ].b * 255.f / 65535.f );
+            const float konst = 255.f / 65535.f;
+            color.SetARGB((uint8_t)(p64[ x ].a * konst),
+                          (uint8_t)(p64[ x ].r * konst),
+                          (uint8_t)(p64[ x ].g * konst),
+                          (uint8_t)(p64[ x ].b * konst));
             buffPtr[ x ] = color;
         }
 

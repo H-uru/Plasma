@@ -41,21 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include <commdlg.h>
+#include "hsColorRGBA.h"
+#include "hsGeometry3.h"
+#include "hsResMgr.h"
+#include "plTweak.h"
 
-#include "Max.h"
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "iparamb2.h"
-#include "meshdlib.h" 
+#include "MaxComponent/plComponent.h"
 
-#include "HeadSpin.h"
-
-#include <vector>
 #include <algorithm>
+#include <commdlg.h>
+#include <stdmat.h>
+#include <bmmlib.h>
+#include <iparamm2.h>
+#include <meshdlib.h>
+#include <vector>
+#pragma hdrstop
 
 #include "MaxMain/plMaxNode.h"
-#include "MaxComponent/plComponent.h"
 #include "MaxComponent/plLightGrpComponent.h"
 #include "MaxComponent/plSoftVolumeComponent.h"
 
@@ -76,12 +78,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsVertexShader.h"
 #include "plLightMapGen.h"
 
-#include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
 
 #include "pnMessage/plNodeRefMsg.h"
-
-#include "plTweak.h"
 
 plConst(int) kDefMinFaces(200);
 plConst(int) kDefMaxFaces(1000);

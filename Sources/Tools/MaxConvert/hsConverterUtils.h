@@ -42,20 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSCONVERTERUTILS_H
 #define __HSCONVERTERUTILS_H
 
-#include "Max.h"
-#include "stdmat.h"
-#include <commdlg.h>
-#include "bmmlib.h"
-#include "istdplug.h"
-#include "texutil.h"
-
-#include "Headspin.h"
-
-class INode;
 class Control;
+class INode;
 class Interface;
-template <class T> class hsHashTable;
 
+template <class T> class hsHashTable;
 class hsMaxLayerBase;
 class plSimplePosController;
 class plScalarController;
@@ -120,7 +111,7 @@ private:
     plErrorMsg  *fErrorMsg;
 
     bool        fSuppressMangling;
-    uint32_t      fWarned;
+    uint32_t    fWarned;
     bool        fSave;
 
     struct CacheNode

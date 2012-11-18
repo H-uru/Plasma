@@ -39,16 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
 
 class BitmapInfo;
 class Bitmap;
 class plBitmap;
+class plErrorMsg;
+class plKey;
+class plLocation;
 class plMipmap;
 class hsMaxLayerBase;
-class plLocation;
-class plErrorMsg;
 
 
 class plBitmapData
