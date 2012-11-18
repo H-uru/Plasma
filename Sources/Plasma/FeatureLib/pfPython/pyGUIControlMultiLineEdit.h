@@ -77,6 +77,8 @@ public:
     virtual void    Clickable( void );
     virtual void    Unclickable( void );
     virtual void    SetScrollPosition( int32_t topLine );
+    virtual int32_t GetScrollPosition();
+    virtual bool    IsAtEnd();
     virtual void    MoveCursor( int32_t dir );
     virtual void    ClearBuffer( void );
     virtual void    SetText( const char *asciiText );
