@@ -2247,7 +2247,6 @@ bool plDXPipeline::IResetDevice()
     {
         IClearShadowSlaves();
 
-        ReleaseCapture();
         Sleep(100);
         HRESULT coopLev = fD3DDevice->TestCooperativeLevel();
         if( coopLev == D3DERR_DEVICELOST )
@@ -2295,8 +2294,6 @@ bool plDXPipeline::IResetDevice()
             /// all device-specific stuff needs to be recreated
             plDeviceRecreateMsg* clean = new plDeviceRecreateMsg();
             plgDispatch::MsgSend(clean);
-
-            SetCapture(fSettings.fHWnd);
         }
         fDevWasLost = true;
         fDeviceLost = false;

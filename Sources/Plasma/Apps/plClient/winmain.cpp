@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCrashHandler/plCrashCli.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
+#include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputManager.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plPipeline.h"
@@ -370,7 +371,7 @@ void DebugMsgF(const char* format, ...);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static bool gDragging = false;
-    static uint32_t keyState=0;
+    static uint8_t mouse_down = 0;
 
     // Messages we registered for manually (no const value)
     if (message == s_WmTaskbarList)
@@ -394,31 +395,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 nc->ResetServerTimeOffset(true);
             break;
 
-        case WM_KEYDOWN :
-        case WM_LBUTTONDOWN :
-        case WM_RBUTTONDOWN :
-        case WM_LBUTTONDBLCLK :     // The left mouse button was double-clicked. 
-        case WM_MBUTTONDBLCLK :     // The middle mouse button was double-clicked. 
-        case WM_MBUTTONDOWN :       // The middle mouse button was pressed. 
-        case WM_RBUTTONDBLCLK :     // The right mouse button was double-clicked. 
-            // If they did anything but move the mouse, quit any intro movie playing.
-            {
-                if( gClient )
-                    gClient->SetQuitIntro(true);
-            }
-            // Fall through to other events
+        case WM_LBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+        case WM_LBUTTONDBLCLK:
+        case WM_MBUTTONDBLCLK:
+        case WM_MBUTTONDOWN:
+        case WM_RBUTTONDBLCLK:
+            // Ensure we don't leave the client area during clicks
+            if (!(mouse_down++))
+                SetCapture(hWnd);
+            // fall through to old case
+        case WM_KEYDOWN:
         case WM_CHAR:
-        case WM_KEYUP :
-        case WM_LBUTTONUP :
-        case WM_RBUTTONUP :
-        case WM_MBUTTONUP :         // The middle mouse button was released. 
-        case WM_MOUSEMOVE :
-        case 0x020A:                // fuc&ing windows b.s...
+            // If they did anything but move the mouse, quit any intro movie playing.
+            if (gClient)
             {
-                if (gClient && gClient->WindowActive() && gClient->GetInputManager())
-                {
+                gClient->SetQuitIntro(true);
+
+                // normal input processing
+                if (gClient->WindowActive() && gClient->GetInputManager())
                     gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
-                }
+            }
+            break;
+        case WM_LBUTTONUP:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONUP:
+            // Stop hogging the cursor
+            if (!(--mouse_down))
+                ReleaseCapture();
+            // fall through to input processing
+        case WM_MOUSEWHEEL:
+        case WM_KEYUP:
+           if (gClient && gClient->WindowActive() && gClient->GetInputManager())
+               gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
+            break;
+
+        case WM_MOUSEMOVE:
+            {
+                if (gClient && gClient->GetInputManager())
+                    gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
             }
             break;
 
@@ -457,6 +472,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             break;
 
+        case WM_SETCURSOR:
+            {
+                static bool winCursor = true;
+                bool enterWnd = LOWORD(lParam) == HTCLIENT;
+                if (enterWnd && winCursor)
+                {
+                    winCursor = !winCursor;
+                    ShowCursor(winCursor != 0);
+                    plMouseDevice::ShowCursor();
+                }
+                else if (!enterWnd && !winCursor)
+                {
+                    winCursor = !winCursor;
+                    ShowCursor(winCursor != 0);
+                    plMouseDevice::HideCursor();
+                }
+                return TRUE;
+            }
+            break;
+
         case WM_ACTIVATE:
             {
                 bool active = (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE);
@@ -469,25 +504,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 if (gClient && !minimized && !gClient->GetDone())
                 {
-                    if (LOWORD(wParam) == WA_CLICKACTIVE)
-                    {
-                        // See if they've clicked on the frame, in which case they just want to
-                        // move, not activate, us.
-                        POINT pt;
-                        GetCursorPos(&pt);
-                        ScreenToClient(hWnd, &pt);
-
-                        RECT rect;
-                        GetClientRect(hWnd, &rect);
-
-                        if( (pt.x < rect.left)
-                            ||(pt.x >= rect.right)
-                            ||(pt.y < rect.top)
-                            ||(pt.y >= rect.bottom) )
-                        {
-                            active = false;
-                        }
-                    }
                     gClient->WindowActivate(active);
                 }
                 else
