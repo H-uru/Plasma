@@ -945,6 +945,10 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
 
 void StatusCallback(void *param)
 {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     HWND hwnd = (HWND)param;
 
     const char *statusUrl = GetServerStatusUrl();

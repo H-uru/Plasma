@@ -598,11 +598,10 @@ static void INetCliAuthAgeRequestCallback (
         s_age.ageVaultId = ageVaultId;
         
         wchar_t ageInstIdStr[64];
-        plString gameAddrStr = gameAddr.GetHostString();
         LogMsg(
             kLogPerf,
             L"Connecting to game server %s, ageInstId %s",
-            gameAddrStr.c_str(),
+            gameAddr.GetHostString().ToWchar().GetData(),
             GuidToString(ageInstId, ageInstIdStr, arrsize(ageInstIdStr))
         );
         NetCliGameDisconnect();

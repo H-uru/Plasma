@@ -65,6 +65,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //===========================================================================
 static unsigned CALLBACK CreateThreadProc (LPVOID param) {
+
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     PerfAddCounter(kAsyncPerfThreadsTotal, 1);
     PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 

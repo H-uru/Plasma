@@ -45,6 +45,10 @@ if (WIN32)
     target_link_libraries(plFontConverter shlwapi)
 endif(WIN32)
 
+if(USE_VLD)
+    target_link_libraries(plFontConverter ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plFontConverter_SOURCES})
 source_group("Header Files" FILES ${plFontConverter_HEADERS})
 source_group("Resource Files" FILES ${plFontConverter_RESOURCES})

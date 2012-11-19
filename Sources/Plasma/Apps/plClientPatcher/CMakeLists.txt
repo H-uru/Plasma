@@ -20,5 +20,9 @@ set(plClientPatcher_SOURCES
 add_library(plClientPatcher STATIC ${plClientPatcher_HEADERS} ${plClientPatcher_SOURCES})
 target_link_libraries(plClientPatcher CoreLib plAudioCore plStatusLog)
 
+if(USE_VLD)
+    target_link_libraries(plClientPatcher ${VLD_LIBRARY})
+endif()
+
 source_group("Header Files" FILES ${plClientPatcher_HEADERS})
 source_group("Source Files" FILES ${plClientPatcher_SOURCES})

@@ -81,6 +81,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   endif
 #   include <Windows.h>
 
+    // This needs to be after #include <windows.h>, since it also includes windows.h
+#   ifdef USE_VLD
+#       include <vld.h>
+#   endif
+
     // Just some fun typedefs...
     typedef HWND hsWindowHndl;
     typedef HINSTANCE hsWindowInst;
