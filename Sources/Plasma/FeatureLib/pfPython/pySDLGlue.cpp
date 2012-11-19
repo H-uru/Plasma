@@ -104,12 +104,12 @@ PYTHON_METHOD_DEFINITION(ptSDLStateDataRecord, findVar, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyString_FromString(self->fThis->GetName().c_str());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getVarList)
 {
-    std::vector<std::string> vars = self->fThis->GetVarList();
+    std::vector<plString> vars = self->fThis->GetVarList();
     PyObject* varList = PyList_New(vars.size());
     for (int i = 0; i < vars.size(); i++)
         PyList_SetItem(varList, i, PyString_FromString(vars[i].c_str()));
@@ -219,12 +219,13 @@ PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setBool, args)
     PYTHON_RETURN_BOOL(self->fThis->SetBool(val != 0, idx));
 }
 
+#define PyString_FromPlString(x) PyString_FromString((x).c_str())
 STATEVAR_GET(getByte, GetByte, PyInt_FromLong)
 STATEVAR_GET(getShort, GetShort, PyInt_FromLong)
 STATEVAR_GET(getInt, GetInt, PyInt_FromLong)
 STATEVAR_GET(getFloat, GetFloat, PyFloat_FromDouble)
 STATEVAR_GET(getDouble, GetDouble, PyFloat_FromDouble)
-STATEVAR_GET(getString, GetString, PyString_FromString)
+STATEVAR_GET(getString, GetString, PyString_FromPlString)
 STATEVAR_GET(getKey, GetKey, pyKey::New)
 
 // getBool is special cause of the way python represents booleans
@@ -246,12 +247,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getType)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getDisplayOptions)
 {
-    return PyString_FromString(self->fThis->GetDisplayOptions());
+    return PyString_FromString(self->fThis->GetDisplayOptions().c_str());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getDefault)
 {
-    return PyString_FromString(self->fThis->GetDefault());
+    return PyString_FromString(self->fThis->GetDefault().c_str());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, isAlwaysNew)

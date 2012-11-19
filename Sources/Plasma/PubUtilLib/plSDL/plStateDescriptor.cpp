@@ -56,19 +56,18 @@ plStateDescriptor::~plStateDescriptor()
 
 void plStateDescriptor::IDeInit()
 {
-    delete [] fName;  
     int i;
     for(i=0;i<fVarsList.size();i++)
         delete fVarsList[i];
     fVarsList.clear();
 }
 
-plVarDescriptor* plStateDescriptor::FindVar(const char* name, int* idx) const
+plVarDescriptor* plStateDescriptor::FindVar(const plString& name, int* idx) const
 {
     VarsList::const_iterator it;
     for(it=fVarsList.begin(); it != fVarsList.end(); it++)
     {
-        if (!stricmp((*it)->GetName(), name))
+        if (!(*it)->GetName().CompareI(name))
         {
             if (idx)
                 *idx = it-fVarsList.begin();
@@ -94,9 +93,8 @@ bool plStateDescriptor::Read(hsStream* s)
     }
 
     IDeInit();
-    
-    delete [] fName;
-    fName = s->ReadSafeString();
+
+    fName = s->ReadSafeString_TEMP();
 
     uint16_t version=s->ReadLE16();
     fVersion=version;

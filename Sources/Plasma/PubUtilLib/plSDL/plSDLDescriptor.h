@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "hsStlUtils.h"
+#include "plString.h"
 
 //
 // Describes a variable in a state descriptor.
@@ -98,17 +99,17 @@ public:
         kVariableLength = 0x4   // Var is defined as int foo[], so it's length is variable, starting at 0
     };
 protected:
-    static const uint8_t kVersion;    // for Read/Write format
-    char*   fDefault;               // set by .sdl
-    char*   fName;                  // set by .sdl
-    int     fCount;                 // set by .sdl
-    Type    fType;                  // set by .sdl
-    char*   fTypeString;            // string version of fType
-    uint32_t  fFlags;
-    std::string fDisplayOptions;    // set by .sdl
+    static const uint8_t kVersion;      // for Read/Write format
+    plString    fDefault;               // set by .sdl
+    plString    fName;                  // set by .sdl
+    int         fCount;                 // set by .sdl
+    Type        fType;                  // set by .sdl
+    plString    fTypeString;            // string version of fType
+    uint32_t    fFlags;
+    plString    fDisplayOptions;        // set by .sdl
 public:
-    plVarDescriptor();
-    virtual ~plVarDescriptor();
+    plVarDescriptor() : fCount(1), fType(kNone), fFlags(0) { }
+    virtual ~plVarDescriptor() { }
     
     virtual void CopyFrom(const plVarDescriptor* v);
     
@@ -119,26 +120,26 @@ public:
     virtual const plSDVarDescriptor* GetAsSDVarDescriptor() const = 0;
 
     // getters
-    const char* GetDefault()    const   { return fDefault; }
-    const char* GetName()   const       { return fName; }
-    Type    GetType() const             { return fType; }
-    const char* GetTypeString() const   { return fTypeString; }
-    int     GetCount() const            { return fCount; }
-    bool    IsInternal() const          { return (fFlags & kInternal) != 0; }
-    bool    IsAlwaysNew() const         { return (fFlags & kAlwaysNew) != 0; }
-    bool    IsVariableLength() const    { return (fFlags & kVariableLength) != 0; }
-    const char* GetDisplayOptions() const { return fDisplayOptions.c_str(); }
+    plString GetDefault()    const   { return fDefault; }
+    plString GetName()   const       { return fName; }
+    Type    GetType() const          { return fType; }
+    plString GetTypeString() const   { return fTypeString; }
+    int     GetCount() const         { return fCount; }
+    bool    IsInternal() const       { return (fFlags & kInternal) != 0; }
+    bool    IsAlwaysNew() const      { return (fFlags & kAlwaysNew) != 0; }
+    bool    IsVariableLength() const { return (fFlags & kVariableLength) != 0; }
+    plString GetDisplayOptions() const { return fDisplayOptions; }
     
     // setters
-    void    SetDefault(const char* n)   { delete [] fDefault; fDefault= hsStrcpy(n); }
-    void    SetName(const char* n)      { delete [] fName; fName = hsStrcpy(n); }
+    void    SetDefault(const plString& n)  { fDefault = n; }
+    void    SetName(const plString& n)  { fName = n; }
     void    SetCount(int c)             { fCount=c; }
-    virtual bool    SetType(const char* type);
-    void    SetType(Type t) { fType=t; }
+    virtual bool SetType(const plString& type);
+    void    SetType(Type t)             { fType=t; }
     void    SetInternal(bool d)         { if (d) fFlags |= kInternal; else fFlags &= ~kInternal; }
     void    SetAlwaysNew(bool d)        { if (d) fFlags |= kAlwaysNew; else fFlags &= ~kAlwaysNew; }
     void    SetVariableLength(bool d)   { if (d) fFlags |= kVariableLength; else fFlags &= ~kVariableLength; }
-    void    SetDisplayOptions(const char* s) { fDisplayOptions=s;   }
+    void    SetDisplayOptions(const plString& s) { fDisplayOptions=s;   }
 
     // IO
     virtual bool    Read(hsStream* s);  
@@ -173,7 +174,7 @@ public:
     int     GetAtomicCount() const      { return fAtomicCount; }    
     
     // setters
-    bool    SetType(const char* type);
+    bool    SetType(const plString& type);
     void    SetType(Type t) { plVarDescriptor::SetType(t); }    // for lame compiler
     void    SetAtomicType(Type t) { fAtomicType=t; }    
 
@@ -225,16 +226,16 @@ private:
     typedef std::vector<plVarDescriptor*> VarsList; 
     VarsList fVarsList;
     int fVersion;
-    char* fName;
+    plString fName;
     std::string fFilename;  // the filename this descriptor was read from
 
     void IDeInit();
 public:
-    plStateDescriptor() : fVersion(-1),fName(nil) {}
+    plStateDescriptor() : fVersion(-1) {}
     ~plStateDescriptor(); 
 
     // getters
-    const char* GetName() const { return fName; }
+    plString GetName() const { return fName; }
     int GetNumVars() const { return fVarsList.size(); }
     plVarDescriptor* GetVar(int i) const { return fVarsList[i]; }
     int GetVersion() const { return fVersion; }
@@ -242,11 +243,11 @@ public:
     
     // setters
     void SetVersion(int v) { fVersion=v; }
-    void SetName(const char* n) { delete [] fName; fName=hsStrcpy(n); }
+    void SetName(const plString& n) { fName=n; }
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
     void SetFilename( const char * n ) { fFilename=n;}
     
-    plVarDescriptor* FindVar(const char* name, int* idx=nil) const;
+    plVarDescriptor* FindVar(const plString& name, int* idx=nil) const;
 
     // IO
     bool Read(hsStream* s); 

@@ -709,7 +709,7 @@ static bool ch_in_set(char ch, const char *set)
     return false;
 }
 
-std::vector<plString> plString::Tokenize(const char *delims)
+std::vector<plString> plString::Tokenize(const char *delims) const
 {
     std::vector<plString> result;
 
@@ -733,7 +733,7 @@ std::vector<plString> plString::Tokenize(const char *delims)
 }
 
 //TODO: Not binary safe
-std::vector<plString> plString::Split(const char *split, size_t maxSplits)
+std::vector<plString> plString::Split(const char *split, size_t maxSplits) const
 {
     std::vector<plString> result;
 
@@ -760,6 +760,30 @@ plString operator+(const plString &left, const plString &right)
     char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(left.GetSize() + right.GetSize());
     memcpy(catstr, left.c_str(), left.GetSize());
     memcpy(catstr + left.GetSize(), right.c_str(), right.GetSize());
+    catstr[cat.fUtf8Buffer.GetSize()] = 0;
+
+    return cat;
+}
+
+plString operator+(const plString &left, const char *right)
+{
+    plString cat;
+    size_t rsize = strlen(right);
+    char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(left.GetSize() + rsize);
+    memcpy(catstr, left.c_str(), left.GetSize());
+    memcpy(catstr + left.GetSize(), right, rsize);
+    catstr[cat.fUtf8Buffer.GetSize()] = 0;
+
+    return cat;
+}
+
+plString operator+(const char *left, const plString &right)
+{
+    plString cat;
+    size_t lsize = strlen(left);
+    char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(lsize + right.GetSize());
+    memcpy(catstr, left, lsize);
+    memcpy(catstr + lsize, right.c_str(), right.GetSize());
     catstr[cat.fUtf8Buffer.GetSize()] = 0;
 
     return cat;

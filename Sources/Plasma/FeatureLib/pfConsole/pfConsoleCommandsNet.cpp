@@ -356,7 +356,7 @@ PF_CONSOLE_CMD( Net,        // groupName
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
-    plUUID guid(params[1]);
+    plUUID guid( (const char *)params[1] );
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid );
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
@@ -379,7 +379,7 @@ PF_CONSOLE_CMD( Net,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( params[0] );
-    link.SpawnPoint() = plSpawnPointInfo( params[1], params[1] );
+    link.SpawnPoint() = plSpawnPointInfo( (const char *)params[1], (const char *)params[1] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");

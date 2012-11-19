@@ -120,10 +120,10 @@ void plSpawnPointInfo::Reset()
     (*this)=kDefaultSpawnPoint;
 }
 
-std::string plSpawnPointInfo::AsStdString() const
+plString plSpawnPointInfo::AsString() const
 {
-    return xtl::format( "t:%s,n:%s,c:%s",
-        fTitle.size()?fTitle.c_str():"(nil)",
-        fSpawnPt.size()?fSpawnPt.c_str():"(nil)",
-        fCameraStack.size()?fCameraStack.c_str():"(nil)" );
+    return plString::Format( "t:%s,n:%s,c:%s",
+        fTitle.c_str("(nil)"),
+        fSpawnPt.c_str("(nil)"),
+        fCameraStack.c_str("(nil)") );
 }

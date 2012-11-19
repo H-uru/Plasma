@@ -134,7 +134,7 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     plSceneObject* sobj=GetTarget();
     hsAssert(sobj, "plMorphSequenceSDLMod, nil target");
 
-    if (strcmp(srcState->GetDescriptor()->GetName(), kSDLMorphSequence))
+    if (srcState->GetDescriptor()->GetName() != kSDLMorphSequence)
     {
         hsAssert(false, "Wrong type of state data record passed into plMorphSequenceSDLMod.");
         return;

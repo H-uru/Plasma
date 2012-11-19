@@ -821,21 +821,20 @@ void plClothingOutfit::ReadFromVault()
             ram.Write(sdl.sdlDataLen, sdl.sdlData);
             ram.Rewind();
             
-            char *  sdlRecName = nil;
-            int     sdlRecVersion;
+            plString sdlRecName;
+            int sdlRecVersion;
             plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion);
             plStateDescriptor * desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
             if (desc) {
                 plStateDataRecord * sdlDataRec = new plStateDataRecord(desc);
                 if (sdlDataRec->Read(&ram, 0)) {
-                    if (!strcmp(sdlRecName, kSDLMorphSequence))
+                    if (sdlRecName == kSDLMorphSequence)
                         IHandleMorphSDR(sdlDataRec);
                     else
                         plClothingSDLModifier::HandleSingleSDR(sdlDataRec, this);
                 }
                 delete sdlDataRec;              
             }
-            delete [] sdlRecName;
         }
         nodes[i]->DecRef();
     }

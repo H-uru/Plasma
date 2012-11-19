@@ -6044,22 +6044,18 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
         return;
     }
     
-    char line[2048];
-
     plStatusLog::AddLineS("ShowSDL.log", "-----------------------------------");
     for (unsigned i = 0; i < rec->GetNumVars(); ++i) {
         plStateVariable * var = rec->GetVar(i);
         if (plSimpleStateVariable * simple = var->GetAsSimpleStateVar()) {
-            const char * name = var->GetName();
-            StrPrintf(line, arrsize(line), "%s=", name);
+            plString line = var->GetName();
+            line += "=";
             for (unsigned j = 0; j < simple->GetCount(); ++j) {
-                char * str = simple->GetAsString(j);
-                StrPack(line, str, arrsize(line));
-                StrPack(line, ",", arrsize(line));
-                free(str);
+                line += simple->GetAsString(j);
+                line += ",";
             }
-            PrintString(line);
-            plStatusLog::AddLineS("ShowSDL.log", "%s", line);
+            PrintString(line.c_str());
+            plStatusLog::AddLineS("ShowSDL.log", "%s", line.c_str());
         }
     }   
     
@@ -6117,7 +6113,7 @@ PF_CONSOLE_CMD( Age, SetSDLFloat, "string varName, float value, int index", "Set
     if (!sdlMod)
         return;
 
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar(params[0]);
+    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char *)params[0]);
     if (!var)
         return;
 
@@ -6141,7 +6137,7 @@ PF_CONSOLE_CMD( Age, SetSDLInt, "string varName, int value, int index", "Set the
     if (!sdlMod)
         return;
 
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar(params[0]);
+    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char *)params[0]);
     if (!var)
         return;
 
@@ -6164,7 +6160,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
     if (!sdlMod)
         return;
 
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar(params[0]);
+    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char*)params[0]);
     if (!var)
         return;
 

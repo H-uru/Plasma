@@ -166,7 +166,7 @@ void pyVaultAgeLinkNode::RemoveSpawnPointRef( pySpawnPointInfoRef & point )
     access.RemoveSpawnPoint(point.GetName());
 }
 
-void pyVaultAgeLinkNode::RemoveSpawnPointByName( const char * spawnPtName )
+void pyVaultAgeLinkNode::RemoveSpawnPointByName( const plString & spawnPtName )
 {
     if (!fNode)
         return;
@@ -175,7 +175,7 @@ void pyVaultAgeLinkNode::RemoveSpawnPointByName( const char * spawnPtName )
     access.RemoveSpawnPoint(spawnPtName);
 }
 
-bool pyVaultAgeLinkNode::HasSpawnPoint( const char * spawnPtName ) const
+bool pyVaultAgeLinkNode::HasSpawnPoint( const plString & spawnPtName ) const
 {
     if (!fNode)
         return false;

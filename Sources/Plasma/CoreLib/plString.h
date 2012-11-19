@@ -163,18 +163,15 @@ private:
 public:
     plString() { }
 
-#ifndef PLSTRING_POLLUTE_ASCII_CAST
     plString(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); }
-#endif
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
     plString(const plStringBuffer<char> &init) { operator=(init); }
 
-#ifndef PLSTRING_POLLUTE_ASCII_CAST
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
-#endif
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);
 
+    plString &operator+=(const char *cstr) { return operator=(*this + cstr); }
     plString &operator+=(const plString &str) { return operator=(*this + str); }
 
     static inline plString FromUtf8(const char *utf8, size_t size = kSizeAuto)
@@ -205,10 +202,8 @@ public:
         return str;
     }
 
-#ifndef PLSTRING_POLLUTE_C_STR
     const char *c_str(const char *substitute = "") const
     { return IsEmpty() ? substitute : fUtf8Buffer.GetData(); }
-#endif
 
     char CharAt(size_t position) const { return c_str()[position]; }
 
@@ -263,8 +258,15 @@ public:
                                          : strnicmp(c_str(), str, count);
     }
 
+    int CompareI(const plString &str) const { return Compare(str, kCaseInsensitive); }
+    int CompareI(const char *str) const { return Compare(str, kCaseInsensitive); }
+    int CompareNI(const plString &str, size_t count) const { return CompareN(str, count, kCaseInsensitive); }
+    int CompareNI(const char *str, size_t count) const { return CompareN(str, count, kCaseInsensitive); }
+
     bool operator<(const plString &other) const { return Compare(other) < 0; }
+    bool operator==(const char *other) const { return Compare(other) == 0; }
     bool operator==(const plString &other) const { return Compare(other) == 0; }
+    bool operator!=(const char *other) const { return Compare(other) != 0; }
     bool operator!=(const plString &other) const { return Compare(other) != 0; }
 
     int Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
@@ -291,8 +293,8 @@ public:
     // and Tokenize is that Tokenize never returns a blank string (it strips
     // all delimiters and only returns the pieces left between them), whereas
     // Split will split on a full string, returning whatever is left between.
-    std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto);
-    std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v");
+    std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto) const;
+    std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v") const;
 
 public:
     struct less
@@ -423,9 +425,13 @@ public:
 
 private:
     friend plString operator+(const plString &left, const plString &right);
+    friend plString operator+(const plString &left, const char *right);
+    friend plString operator+(const char *left, const plString &right);
 };
 
 plString operator+(const plString &left, const plString &right);
+plString operator+(const plString &left, const char *right);
+plString operator+(const char *left, const plString &right);
 
 
 class plStringStream

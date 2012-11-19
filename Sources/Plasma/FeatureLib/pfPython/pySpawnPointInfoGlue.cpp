@@ -78,7 +78,7 @@ PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle());
+    return PyString_FromString(self->fThis->GetTitle().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
@@ -95,7 +95,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyString_FromString(self->fThis->GetName().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
@@ -112,7 +112,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack());
+    return PyString_FromString(self->fThis->GetCameraStack().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setCameraStack, args)
@@ -191,7 +191,7 @@ PYTHON_NO_INIT_DEFINITION(ptSpawnPointInfoRef)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle());
+    return PyString_FromString(self->fThis->GetTitle().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
@@ -208,7 +208,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyString_FromString(self->fThis->GetName().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
@@ -225,7 +225,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack());
+    return PyString_FromString(self->fThis->GetCameraStack().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setCameraStack, args)

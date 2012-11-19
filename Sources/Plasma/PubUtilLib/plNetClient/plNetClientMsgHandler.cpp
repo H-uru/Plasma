@@ -236,12 +236,12 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
 
     // extract stateDataRecord from msg
     hsReadOnlyStream stream(m->StreamInfo()->GetStreamLen(), m->StreamInfo()->GetStreamBuf());
-    char* descName = nil;
+    plString descName;
     int ver;
     plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver);
     plStateDescriptor* des = plSDLMgr::GetInstance()->FindDescriptor(descName, ver);
     
-    if (stricmp(descName, kSDLAvatarPhysical) == 0)
+    if (descName.CompareI(kSDLAvatarPhysical) == 0)
         rwFlags |= plSDL::kKeepDirty;
 
     //
@@ -287,12 +287,10 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         // queue up state
         nc->fPendingLoads.push_back(pl);
         hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s",
-                                  m->ObjectInfo()->GetObjectName().c_str(), des->GetName() ) );
+                                  m->ObjectInfo()->GetObjectName().c_str(), des->GetName().c_str() ) );
     }
     else
         delete sdRec;
-
-    delete [] descName; // We've only used descName for a lookup (via SDR, and some error strings. Must delete now.
 
     return hsOK;
 }

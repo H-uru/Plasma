@@ -231,7 +231,7 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
     int i;
     uint8_t tint[3];
     float tintScalar[3];
-    if (!strcmp(sdr->GetDescriptor()->GetName(), kStrClothingDescName))
+    if (sdr->GetDescriptor()->GetName() == kStrClothingDescName)
     {
         // get item from clothesItem
         plSimpleStateVariable* itemVar = sdr->FindVar(kStrItem);
@@ -284,7 +284,7 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
             }
         }
     }
-    else if (!strcmp(sdr->GetDescriptor()->GetName(), kStrAppearanceDescName))
+    else if (sdr->GetDescriptor()->GetName() == kStrAppearanceDescName)
     {
         // skin tints
         plSimpleStateVariable* skinVar = sdr->FindVar(kStrSkinTint);

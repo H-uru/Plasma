@@ -162,12 +162,12 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
 bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc, 
                                 plVarDescriptor*& curVar) const
 {
-    hsAssert(curDesc, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+    hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
     if ( !curDesc )
         return false;
 
     bool skipNext=false;
-    std::string dbgStr;
+    plString dbgStr;
     static char seps[] = "( ,)[]";
     // read type, name, cnt, [default]
     
@@ -180,7 +180,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         // nested sdls
         char* sdlName = token+1;
         plStateDescriptor* stateDesc = plSDLMgr::GetInstance()->FindDescriptor(sdlName, plSDL::kLatestVersion);
-        hsAssert(stateDesc, xtl::format("can't find nested state desc reference %s, fileName=%s", 
+        hsAssert(stateDesc, plString::Format("can't find nested state desc reference %s, fileName=%s",
                 sdlName, fileName).c_str());
         curVar = new plSDVarDescriptor(stateDesc);
     }
@@ -189,19 +189,19 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
     
     curDesc->AddVar(curVar);
     bool ok=curVar->SetType(token);
-    hsAssert(ok, xtl::format("Variable 'type' syntax problem with .sdl file, type=%s, fileName=%s", token, fileName).c_str());
-    dbgStr = xtl::format("\tVAR Type=%s ", token).c_str();
+    hsAssert(ok, plString::Format("Variable 'type' syntax problem with .sdl file, type=%s, fileName=%s", token, fileName).c_str());
+    dbgStr = plString::Format("\tVAR Type=%s ", token);
     
     //
     // NAME (foo[1])
     //          
     if (stream->GetToken(token, kTokenLen))
     {
-        hsAssert(strstr(token, "[") && strstr(token, "]"), xtl::format("invalid var syntax, missing [x], fileName=%s", 
+        hsAssert(strstr(token, "[") && strstr(token, "]"), plString::Format("invalid var syntax, missing [x], fileName=%s",
                 fileName).c_str());
         char* ptr = strtok( token, seps );  // skip [
         
-        hsAssert(curVar, xtl::format("Missing current var.  Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+        hsAssert(curVar, plString::Format("Missing current var.  Syntax problem with .sdl file, fileName=%s", fileName).c_str());
         curVar->SetName(token);
         //
         // COUNT
@@ -211,7 +211,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         curVar->SetCount(cnt);
         if (cnt==0)
             curVar->SetVariableLength(true);
-        dbgStr += xtl::format("Name=%s[%d]", curVar->GetName(), cnt).c_str();
+        dbgStr += plString::Format("Name=%s[%d]", curVar->GetName().c_str(), cnt);
     }
     
     //
@@ -221,10 +221,10 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
     {
         if (!strcmp(token, "DEFAULT"))
         {
-            hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             // read state var type
             
-            std::string defaultStr;
+            plString defaultStr;
             plSimpleVarDescriptor* sVar=(plSimpleVarDescriptor*)curVar;
             if (sVar)
             {
@@ -239,51 +239,51 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
                     }
                 }
             }
-            if (defaultStr.size())
+            if (!defaultStr.IsEmpty())
             {
-                curVar->SetDefault(defaultStr.c_str());             
-                dbgStr += std::string(" DEFAULT=") + defaultStr;
+                curVar->SetDefault(defaultStr);
+                dbgStr += " DEFAULT=" + defaultStr;
             }
         }
         else
         if (!strcmp(token, "DISPLAYOPTION"))
         {
-            hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
-            dbgStr += std::string(" ") + token;
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            dbgStr += plString(" ") + token;
 
             bool read=stream->GetToken(token, kTokenLen);
             if (read)
             {
-                std::string oldOptions=curVar->GetDisplayOptions();
-                if (oldOptions.size())
-                    oldOptions += std::string(",");
+                plString oldOptions=curVar->GetDisplayOptions();
+                if (!oldOptions.IsEmpty())
+                    oldOptions += ",";
                 oldOptions += token;
-                curVar->SetDisplayOptions(oldOptions.c_str());
-                dbgStr += std::string("=") + token;
+                curVar->SetDisplayOptions(oldOptions);
+                dbgStr += plString("=") + token;
                 if (!stricmp(token, "hidden"))
                     curVar->SetInternal(true);
             }
             else
             {
-                hsAssert(false, xtl::format("missing displayOption string, fileName=%s", fileName).c_str());
+                hsAssert(false, plString::Format("missing displayOption string, fileName=%s", fileName).c_str());
             }
         }
         else
         if (!strcmp(token, "DEFAULTOPTION"))
         {
-            hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
-            dbgStr += std::string(" ") + token;
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            dbgStr += plString(" ") + token;
 
             bool read=stream->GetToken(token, kTokenLen);
             if (read)
             {
-                dbgStr += std::string("=") + token;
+                dbgStr += plString("=") + token;
                 if (!stricmp(token, "vault"))
                     curVar->SetAlwaysNew(true);
             }
             else
             {
-                hsAssert(false, xtl::format("missing defaultOption string, fileName=%s", fileName).c_str());
+                hsAssert(false, plString::Format("missing defaultOption string, fileName=%s", fileName).c_str());
             }
         }
 
@@ -291,16 +291,16 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         else
         if (!strcmp(token, "INTERNAL"))
         {
-            hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             curVar->SetInternal(true);
-            dbgStr += std::string(" ") + token;
+            dbgStr += plString(" ") + token;
         }
         else
         if (!strcmp(token, "PHASED"))
         {
-            hsAssert(curVar, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             curVar->SetAlwaysNew(true);
-            dbgStr += std::string(" ") + token;
+            dbgStr += plString(" ") + token;
         }
 #endif
         else

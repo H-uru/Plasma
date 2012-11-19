@@ -270,8 +270,8 @@ void plNCAgeJoiner::ExecNextOp () {
                     avatarName = "Male";
                 else
                     avatarName = NetCommGetPlayer()->avatarDatasetName;
-                const char * linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
-                am->LoadPlayer( avatarName, nil, linkInName );
+                plString linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
+                am->LoadPlayer( avatarName, nil, linkInName.c_str() );
             }
             else {
                 LogMsg(kLogPerf, L"AgeJoiner: Next:kPropagatePlayer");

@@ -70,11 +70,11 @@ protected:
         bool sendToClients;
         bool skipLocalCheck;
         bool sendImmediate;
-        std::string hintString;
+        plString hintString;
         SDLObj() : obj(nil), size(-1), sendToClients(false) {}
         SDLObj(PyObject* obj, int size, bool sendToClients) : obj(obj), size(size), sendToClients(sendToClients) {}
     };
-    typedef std::map<std::string, SDLObj> SDLMap;
+    typedef std::map<plString, SDLObj> SDLMap;
     SDLMap fMap;
     plPythonFileMod* fOwner;
 
@@ -83,11 +83,11 @@ protected:
     PyObject* ISDLVarToPython(plSimpleStateVariable* var);
     PyObject* ISDLVarIdxToPython(plSimpleStateVariable* var, int type, int idx);
 
-    void IPythonVarToSDL(plStateDataRecord* state, const char* name);
-    bool IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, const char* hintstring);
+    void IPythonVarToSDL(plStateDataRecord* state, const plString& name);
+    bool IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, const plString& hintstring);
 
-    void ISetItem(const char* key, PyObject* value);
-    void IDirtySynchState(const char* name, bool sendImmediate = false);
+    void ISetItem(const plString& key, PyObject* value);
+    void IDirtySynchState(const plString& name, bool sendImmediate = false);
 
     void IPutCurrentStateIn(plStateDataRecord* dstState);
     void ISetCurrentStateFrom(const plStateDataRecord* srcState);
@@ -106,15 +106,15 @@ public:
     static const plPythonSDLModifier* FindAgeSDL();
     static plKey FindAgeSDLTarget();
 
-    void SetDefault(const char* key, PyObject* value);
-    void SendToClients(const char* key);
-    void SetNotify(pyKey& selfkey, const char* key, float tolerance);
+    void SetDefault(const plString& key, PyObject* value);
+    void SendToClients(const plString& key);
+    void SetNotify(pyKey& selfkey, const plString& key, float tolerance);
 
-    PyObject* GetItem(const char* key);
-    void SetItem(const char* key, PyObject* value);
-    void SetItemIdx(const char* key, int idx, PyObject* value, bool sendImmediate = false);
-    void SetFlags(const char* name, bool sendImmediate, bool skipOwnershipCheck);
-    void SetTagString(const char* name, const char* tag);
+    PyObject* GetItem(const plString& key);
+    void SetItem(const plString& key, PyObject* value);
+    void SetItemIdx(const plString& key, int idx, PyObject* value, bool sendImmediate = false);
+    void SetFlags(const plString& name, bool sendImmediate, bool skipOwnershipCheck);
+    void SetTagString(const plString& name, const plString& tag);
 };
 
 // A wrapper for plPythonSDLModifier that Python uses

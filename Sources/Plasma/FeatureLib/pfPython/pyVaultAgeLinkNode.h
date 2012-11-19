@@ -100,8 +100,8 @@ public:
     void    AddSpawnPointRef( pySpawnPointInfoRef & point );    // will only add if not there already.
     void    RemoveSpawnPoint( pySpawnPointInfo & point );
     void    RemoveSpawnPointRef( pySpawnPointInfoRef & point );
-    void    RemoveSpawnPointByName( const char * spawnPtName );
-    bool    HasSpawnPoint( const char * spawnPtName ) const;
+    void    RemoveSpawnPointByName( const plString & spawnPtName );
+    bool    HasSpawnPoint( const plString & spawnPtName ) const;
     PyObject * GetSpawnPoints() const;  // returns list of pySpawnPointInfo
 
     PyObject * AsAgeLinkStruct() const; // returns pyAgeLinkStruct
