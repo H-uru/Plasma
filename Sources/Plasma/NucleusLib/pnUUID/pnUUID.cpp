@@ -47,44 +47,46 @@ plUUID::plUUID()
     Clear();
 }
 
-plUUID::plUUID( const plString & s )
+plUUID::plUUID(const plString & s)
 {
-    FromString( s );
+    FromString(s);
 }
 
-plUUID::plUUID( const char * s )
+plUUID::plUUID(const char * s)
 {
-    FromString( s );
+    FromString(s.c_str());
 }
 
-plUUID::plUUID( const plUUID & other )
+plUUID::plUUID(const plUUID& other)
 {
-    CopyFrom( &other );
+    CopyFrom(&other);
 }
 
-plUUID::plUUID( const Uuid & uuid )
+plUUID::plUUID(const Uuid& uuid)
 {
     memcpy(fData, uuid.data, sizeof(fData));
 }
 
-void plUUID::Read( hsStream * s)
+void plUUID::Read(hsStream * s)
 {
     s->LogSubStreamPushDesc("plUUID");
-    s->Read( sizeof( fData ), (void*)fData );
+    s->Read(sizeof(fData), (void*)fData);
 }
 
-void plUUID::Write( hsStream * s)
+void plUUID::Write(hsStream * s)
 {
-    s->Write( sizeof( fData ), (const void*)fData );
+    s->Write(sizeof(fData), (const void*)fData);
 }
 
-plString plUUID::AsString() const {
+plString plUUID::AsString() const
+{
     plString str;
     ToString(str);
     return str;
 }
 
-plUUID::operator Uuid () const {
+plUUID::operator Uuid () const
+{
     Uuid uuid;
     memcpy(uuid.data, fData, sizeof(uuid.data));
     return uuid;

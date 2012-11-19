@@ -120,17 +120,7 @@ Uuid Uuid::Generate()
 
 static_assert(sizeof(Uuid) >= sizeof(GUID), "pnUtils Uuid and Win32 GUID types differ in size");
 
-//============================================================================
-Uuid GuidGenerate () {
-    Uuid result;
-    UuidCreate( (GUID *)&result );
-    return result;
-}
 
-//============================================================================
-void GuidClear (Uuid * uuid) {
-    UuidCreateNil((GUID *)uuid);
-}
 
 //============================================================================
 bool GuidFromString (const wchar_t str[], Uuid * uuid) {
