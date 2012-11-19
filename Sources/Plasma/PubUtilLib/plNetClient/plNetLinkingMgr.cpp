@@ -920,7 +920,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         // BASIC LINK. Link to a unique instance of the age, if no instance specified.
         case plNetCommon::LinkingRules::kBasicLink:
             if (!info->HasAgeInstanceGuid()) {
-                plUUID newuuid(GuidGenerate());
+                plUUID newuuid = plUUID::Generate();
                 info->SetAgeInstanceGuid(&newuuid);
             }
         break;
@@ -961,7 +961,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
-                        plUUID newuuid(GuidGenerate());
+                        plUUID newuuid = plUUID::Generate();
                         info->SetAgeInstanceGuid(&newuuid);
                     }
                     
@@ -1002,7 +1002,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             }
 
                             if (!info->HasAgeInstanceGuid()) {
-                                plUUID newuuid(GuidGenerate());
+                                plUUID newuuid = plUUID::Generate();
                                 info->SetAgeInstanceGuid(&newuuid);
                             }
 

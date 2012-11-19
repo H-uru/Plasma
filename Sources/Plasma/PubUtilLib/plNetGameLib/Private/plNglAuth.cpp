@@ -5626,7 +5626,7 @@ unsigned NetCliAuthVaultNodeSave (
     node->dirtyFlags |= NetVaultNode::kNodeType;
 
     // We're definitely saving this node, so assign a revisionId
-    node->revisionId = GuidGenerate();
+    node->revisionId = (Uuid)plUUID::Generate();
 
     ARRAY(uint8_t) buffer;
     unsigned bytes = node->Write_LCS(&buffer, NetVaultNode::kRwDirtyOnly | NetVaultNode::kRwUpdateDirty);
