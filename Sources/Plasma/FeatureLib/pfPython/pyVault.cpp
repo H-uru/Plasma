@@ -671,7 +671,7 @@ void pyVault::CreateNeighborhood()
         desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
     }
 
-    plUUID guid(GuidGenerate());
+    plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
     link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
     link.GetAgeInfo()->SetAgeDescription( desc.c_str() );

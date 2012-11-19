@@ -810,7 +810,7 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     link.GetAgeInfo()->SetAgeInstanceName( params[0] );
-    plUUID guid(GuidGenerate());
+    plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
@@ -838,7 +838,7 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( params[0] );
     link.GetAgeInfo()->SetAgeInstanceName( params[0] );
-    plUUID guid(GuidGenerate());
+    plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
