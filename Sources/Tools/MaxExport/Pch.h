@@ -39,30 +39,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plExportProgressBar_inc
-#define plExportProgressBar_inc
 
-class Interface;
-class INode;
+#ifndef _MaxExport_Pch_inc_
+#define _MaxExport_Pch_inc_
 
-class plExportProgressBar
-{
-public:
-    plExportProgressBar();
-    ~plExportProgressBar();
+/** 
+ * \file Pch.h
+ * \brief Precompiled Header for MaxConvert
+ */
 
-    void Start(char *name, uint32_t steps=CountNodes());
-    bool Update(char *name=nil, uint32_t inc=1);
-    
-    static uint32_t CountNodes();
+// Standard Library
 
-private:
-    static uint32_t INodeCount(INode *node);
-    
-    Interface*  fInterface;
-    
-    uint32_t fTotalSteps;
-    uint32_t fCurStep;
-};
+#include <string>
+#include <set>
+#include <vector>
 
-#endif // plExportProgressBar_inc
+// Core Plasma
+#include "HeadSpin.h"
+#include "hsExceptionStack.h"
+#include "hsExceptions.h"
+#include "plFileUtils.h"
+#include "hsStlSortUtils.h"
+#include "hsStream.h"
+
+// Windows
+#include "hsWindows.h"
+#include <commdlg.h>
+
+// 3ds Max SDK
+// This stuff should ALWAYS come after hsWindows.h
+#include <bmmlib.h>
+#include <guplib.h>
+#include <iparamb2.h>
+#include <max.h>
+#include <notify.h>
+
+#endif // _MaxExport_Pch_inc_

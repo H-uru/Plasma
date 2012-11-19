@@ -44,14 +44,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-#include "SimpleExport.h"
-#include "notify.h"
+#include "hsExceptionStack.h"
+#include "plFileUtils.h"
+#include "hsStream.h"
 
+#include <bitmap.h>
+#include <notify.h>
+#include <max.h>
+#pragma hdrstop
+
+#include "SimpleExport.h"
 #include "plExportErrorMsg.h"
 #include "plExportLogErrorMsg.h"
 
 #include "MaxConvert/UserPropMgr.h"
-#include "hsExceptionStack.h"
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/plBitmapCreator.h"
 #include "pfPython/plPythonFileMod.h"
@@ -59,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plPluginResManager.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
-#include "hsStream.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxConvert/hsMaterialConverter.h"
 
@@ -79,7 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plExportDlg.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plFileUtils.h"
 
 #include "plAvatar/plAvatarMgr.h"
 

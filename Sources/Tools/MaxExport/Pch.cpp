@@ -39,30 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plExportProgressBar_inc
-#define plExportProgressBar_inc
 
-class Interface;
-class INode;
+#include "Pch.h"
 
-class plExportProgressBar
-{
-public:
-    plExportProgressBar();
-    ~plExportProgressBar();
-
-    void Start(char *name, uint32_t steps=CountNodes());
-    bool Update(char *name=nil, uint32_t inc=1);
-    
-    static uint32_t CountNodes();
-
-private:
-    static uint32_t INodeCount(INode *node);
-    
-    Interface*  fInterface;
-    
-    uint32_t fTotalSteps;
-    uint32_t fCurStep;
-};
-
-#endif // plExportProgressBar_inc
+/** 
+ * \file Pch.cpp
+ * \brief Precompiled Header object for MaxExport
+ *
+ * This file prompts MSVC to generate a PCH file for the MaxExport project. It
+ * has no function if precompiled headers are disabled in cmake.
+ */
