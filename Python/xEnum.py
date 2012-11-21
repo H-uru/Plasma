@@ -48,9 +48,7 @@ import types, string
 
 class EnumException(Exception):
     def __init__(self, value):
-        self._value
-    def __str__(self):
-        return repr(self._value)
+        Exception.__init__(self, value)
 
 class Enum:
     def __init__(self, enumStr):
