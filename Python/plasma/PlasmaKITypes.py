@@ -76,7 +76,7 @@ kKIUpSizeFont=27        # up size the font in the KI (chatarea)
 kKIDownSizeFont=28      # down size the font in the KI (chatarea)
 kKIOpenYeehsaBook=29    # open the Yeehsa book, if not already open
 kKIOpenKI=30            # open the KI a little at a time
-kKIShowCCRHelp=31       # show the CCR help dialog
+kKIShowOptionsMenu=31   # show the options menu dialog
 kKICreateMarker=32      # create a marker
 kKICreateMarkerFolder=33 # create a marker folder(node) game in the current Age's journal folder
 kKILocalChatErrorMsg=34  # display an error message (local only) in the chat window
@@ -110,10 +110,10 @@ kFriendInviteSent = 61  # Result of friend invite received
 kRegisterImager = 62    # Imagers send to register themselves with the KI
 
 # kUpgradeKILevel and kDowngradeKILevel levels
-kNanoKI=0
-kMicroKI=1
-kNormalKI=2
-kLowestKILevel = kNanoKI
+#kNanoKI = 0 Unused KI level.
+kMicroKI = 1
+kNormalKI = 2
+kLowestKILevel = kMicroKI
 kHighestKILevel = kNormalKI
 
 # Upgrade levels for the KI marker
@@ -170,7 +170,7 @@ def PtDetermineKILevel():
         if level >= kLowestKILevel and level <= kHighestKILevel:
             return level
     # if couldn't be determine... just assume lowest form
-    return kNanoKI
+    return kMicroKI
 
 def PtDetermineCensorLevel():
     "Get the KILevel"

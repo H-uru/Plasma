@@ -379,10 +379,10 @@ class xMarkerGameKIDisplay:
         
         if self.newGame:
             PtDebugPrint("DEBUG: xmarkerGameKIDisplay.NotifyGameReady():\tNotifying KI new game is ready!")
-            self.KI.IFinishCreateMarkerFolder(data['svrGameName'], data['svrGameTemplateID'])
+            self.KI.FinishCreateMarkerGame(data['svrGameName'], data['svrGameTemplateID'])
         else:
             PtDebugPrint("xMarkerGameKIDisplay.NotifyGameReady():\tGame Loaded sucessfully!")
-            self.KI.IFinishDisplayCurrentMarkerGame()
+            self.KI.BigKIFinishDisplayMarkerGame()
 
         self.initialized = 1
 
