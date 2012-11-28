@@ -85,7 +85,6 @@ struct plLauncherInfo {
     setBytesRemainingCallback   SetBytesRemaining;
     
     PatchInfo patchInfo;
-    bool IsTGCider;
     DWORD returnCode;       // used so we can pass a new process id back to gametap. That way gametap wont think uru has exited when the patcher quits.
 };
 

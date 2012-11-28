@@ -65,7 +65,6 @@ static long s_perf[kNumAsyncPerfCounters];
 ***/
 
 AsyncApi    g_api;
-bool        s_transgaming;
 
 
 /*****************************************************************************
@@ -73,30 +72,6 @@ bool        s_transgaming;
 *   Local functions
 *
 ***/
-
-//============================================================================
-static void DoTransgamingCheck () {
-#ifdef HS_BUILD_FOR_WIN32
-#ifdef CLIENT
-
-    HMODULE hMod = GetModuleHandle("ntdll");
-    if (!hMod)
-        return;
-
-    s_transgaming = GetProcAddress(hMod, "IsTransgaming") != nil;
-
-#endif
-#endif
-}
-
-//===========================================================================
-static void IAsyncInitUseW9x () {
-#ifdef HS_BUILD_FOR_WIN32
-    W9xGetApi(&g_api);
-#else
-    ErrorAssert("W9x I/O Not supported on this platform");
-#endif
-}
 
 //===========================================================================
 static void IAsyncInitUseNt () {
@@ -120,13 +95,7 @@ static void IAsyncInitUseUnix () {
 //===========================================================================
 static void IAsyncInitForClient () {
 #ifdef HS_BUILD_FOR_WIN32
-    DoTransgamingCheck();
-    if (s_transgaming) {
-        IAsyncInitUseW9x();
-    }
-    else {
-        IAsyncInitUseNt();
-    }
+    IAsyncInitUseNt();
 #elif HS_BUILD_FOR_UNIX
     IAsyncInitUseUnix();
 #else
