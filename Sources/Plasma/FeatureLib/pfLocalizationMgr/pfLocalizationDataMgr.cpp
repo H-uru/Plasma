@@ -394,7 +394,7 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
     XML_SetCharacterDataHandler(fParser, HandleData);
     XML_SetUserData(fParser, (void*)this);
 
-    hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName.c_str(), false);
+    hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName.c_str());
     if (!xmlStream)
     {
         wchar_t *wFilename = hsStringToWString(fileName.c_str());

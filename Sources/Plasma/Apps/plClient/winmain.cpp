@@ -897,7 +897,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     if (PathDoesFileExist(localFileAndPath))
         StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
 #endif
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, true, cryptKey);
+    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, cryptKey);
     if (stream && !stream->AtEnd())
     {
         uint32_t savedKey[4];

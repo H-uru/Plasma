@@ -53,29 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string.h>
 
-void    plStatusEncrypt::Encrypt( uint8_t *line, uint8_t hint )
-{
-    // Current encryption scheme: rotate all characters right by 2 bits,
-    // then rotate the whole damn line by 3 bits to the right
-    uint32_t i, len = strlen( (char *)line );
-    uint8_t newHi, hiBits = ( ( line[ len - 1 ] ) << ( 5 - 2 ) ) & 0xe0;
-
-    for( i = 0; i < len; i++ )
-    {
-        // So each character will be the src char rotated right 2 bits, then shifted
-        // right 3 bits, or'ed with the last high bits, and the 3 discarded bits
-        // become the new high bits
-        // Too bad C doesn't have a bit-rotate op
-
-        line[ i ] = ( line[ i ] << 6 ) | ( line[ i ] >> 2 );
-        newHi = line[ i ] << 5;
-        line[ i ] = ( line[ i ] >> 3 ) | hiBits;
-        line[ i ] ^= hint;  // Should wrap around
-
-        hiBits = newHi;
-    }
-}
-
 void    plStatusEncrypt::Decrypt( uint8_t *line, int32_t len, uint8_t hint )
 {
     // Da reverse, of course!
