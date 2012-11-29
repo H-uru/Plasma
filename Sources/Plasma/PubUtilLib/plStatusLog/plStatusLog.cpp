@@ -692,8 +692,8 @@ bool plStatusLog::AddLineV( uint32_t color, const char *format, va_list argument
 {
     if(fLoggingOff && !fForceLog)
         return true;
-    char buffer[2000];
-    vsprintf(buffer, format, arguments);
+    char buffer[2048];
+    vsnprintf(buffer, arrsize(buffer), format, arguments);
     return AddLine( buffer, color );
 }
 
