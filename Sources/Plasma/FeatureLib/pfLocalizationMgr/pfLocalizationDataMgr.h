@@ -124,6 +124,7 @@ public:
     static void Shutdown();
     static pfLocalizationDataMgr &Instance(void) {return *fInstance;}
     static bool InstanceValid(void) {return fInstance != nil;}
+    static plStatusLog* GetLog() { return fLog; }
 
     void SetupData();
 
