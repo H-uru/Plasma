@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "plString.h"
 
 #include "plResMgr/plLocalization.h"
 
@@ -59,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfLocalizationDataMgr.h"
 
 #include <expat.h>
-
 #include <stack>
 
 // MinGW sucks
@@ -97,7 +97,7 @@ public:
     typedef std::map<std::wstring, age> ageMap;
 
 protected:
-    std::wstring fLastError;
+    bool fWeExploded; // alternative to massive error stack
     std::string fFilename;
     XML_Parser fParser;
 
@@ -124,12 +124,10 @@ protected:
     void IHandleTranslationTag(const tagInfo & parentTag, const tagInfo & thisTag);
 
 public:
-    LocalizationXMLFile() : fLastError(L""), fFilename("") {}
+    LocalizationXMLFile() : fWeExploded(false), fFilename("") { }
 
     bool Parse(const std::string & fileName); // returns false on failure
-    void AddError(const std::wstring & errorText);
-
-    std::wstring GetLastError() {return fLastError;}
+    void AddError(const plString& errorText);
 };
 
 // A few small helper structs
@@ -211,7 +209,7 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
     else if (wElement == L"translation")
         file->IHandleTranslationTag(parentTag, newTag);
     else
-        file->AddError(L"Unknown tag " + wElement + L" found");
+        file->AddError(plString::Format("Unknown tag %S found", wElement.c_str()));
 }
 //metmet remove static and include the function inside LocalizationXMLFile
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
@@ -251,10 +249,7 @@ void XMLCALL LocalizationXMLFile::HandleData(void *userData, const XML_Char *dat
 
     // This gets all data between tags, including indentation and newlines
     // so we'll have to ignore data when we aren't expecting it (not in a translation tag)
-    std::wstring wData = L"";
-
-    for (int i = 0; i < stringLength; i++)
-        wData += data[i];
+    std::wstring wData = std::wstring(data, stringLength);
 
     // we must be in a translation tag since that's the only tag that doesn't ignore the contents
     file->fData[file->fCurrentAge][file->fCurrentSet][file->fCurrentElement][file->fCurrentTranslation] += wData;
@@ -272,7 +267,7 @@ void LocalizationXMLFile::IHandleLocalizationsTag(const LocalizationXMLFile::tag
 {
     if (parentTag.fTag != L"") // we only allow <localizations> tags at root level
     {
-        AddError(L"localizations tag only allowed at root level");
+        AddError("localizations tag only allowed at root level");
         return;
     }
 }
@@ -284,14 +279,14 @@ void LocalizationXMLFile::IHandleAgeTag(const LocalizationXMLFile::tagInfo & par
     // it has to be inside the subtitles tag
     if (parentTag.fTag != L"localizations")
     {
-        AddError(L"age tag can only be directly inside a localizations tag");
+        AddError("age tag can only be directly inside a localizations tag");
         return;
     }
 
     // we have to have a name attribute
     if (thisTag.fAttributes.find(L"name") == thisTag.fAttributes.end())
     {
-        AddError(L"age tag is missing the name attribute");
+        AddError("age tag is missing the name attribute");
         return;
     }
 
@@ -305,14 +300,14 @@ void LocalizationXMLFile::IHandleSetTag(const LocalizationXMLFile::tagInfo & par
     // it has to be inside the age tag
     if (parentTag.fTag != L"age")
     {
-        AddError(L"set tag can only be directly inside a age tag");
+        AddError("set tag can only be directly inside a age tag");
         return;
     }
 
     // we have to have a name attribute
     if (thisTag.fAttributes.find(L"name") == thisTag.fAttributes.end())
     {
-        AddError(L"set tag is missing the name attribute");
+        AddError("set tag is missing the name attribute");
         return;
     }
 
@@ -326,14 +321,14 @@ void LocalizationXMLFile::IHandleElementTag(const LocalizationXMLFile::tagInfo &
     // it has to be inside the element tag
     if (parentTag.fTag != L"set")
     {
-        AddError(L"element tag can only be directly inside a set tag");
+        AddError("element tag can only be directly inside a set tag");
         return;
     }
 
     // we have to have a name attribute
     if (thisTag.fAttributes.find(L"name") == thisTag.fAttributes.end())
     {
-        AddError(L"element tag is missing the name attribute");
+        AddError("element tag is missing the name attribute");
         return;
     }
 
@@ -347,14 +342,14 @@ void LocalizationXMLFile::IHandleTranslationTag(const LocalizationXMLFile::tagIn
     // it has to be inside the element tag
     if (parentTag.fTag != L"element")
     {
-        AddError(L"translation tag can only be directly inside a element tag");
+        AddError("translation tag can only be directly inside a element tag");
         return;
     }
 
     // we have to have a language attribute
     if (thisTag.fAttributes.find(L"language") == thisTag.fAttributes.end())
     {
-        AddError(L"translation tag is missing the language attribute");
+        AddError("translation tag is missing the language attribute");
         return;
     }
 
@@ -367,8 +362,6 @@ void LocalizationXMLFile::IHandleTranslationTag(const LocalizationXMLFile::tagIn
 bool LocalizationXMLFile::Parse(const std::string & fileName)
 {
     fFilename = fileName;
-
-    fLastError = L"";
 
     while (!fTagStack.empty())
         fTagStack.pop();
@@ -386,7 +379,7 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
     fParser = XML_ParserCreate_MM(NULL, &gHeapAllocator, NULL);
     if (!fParser)
     {
-        fLastError = L"ERROR: Couldn't allocate memory for parser";
+        AddError("ERROR: Couldn't allocate memory for parser");
         return false;
     }
 
@@ -397,17 +390,13 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
     hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName.c_str());
     if (!xmlStream)
     {
-        wchar_t *wFilename = hsStringToWString(fileName.c_str());
-        fLastError += L"ERROR: Can't open file stream for ";
-        fLastError += wFilename;
-        fLastError += L"\n";
-        delete [] wFilename;
+        pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Can't open file stream for %s", fileName.c_str());
         return false;
     }
 
-    for (;;)
+    bool done = false;
+    do
     {
-        int done;
         size_t len;
 
         len = xmlStream->Read(FILEBUFFERSIZE, Buff);
@@ -415,32 +404,15 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
 
         if (XML_Parse(fParser, Buff, (int)len, done) == XML_STATUS_ERROR)
         {
-            wchar_t lineNumber[256];
-            swprintf(lineNumber, 256, L"%d", XML_GetCurrentLineNumber(fParser));
-            fLastError += L"ERROR: Parse error at line ";
-            fLastError += lineNumber;
-            fLastError += L": ";
-            fLastError += XML_ErrorString(XML_GetErrorCode(fParser));
-            fLastError += L"\n";
-            XML_ParserFree(fParser);
-            fParser = nil;
-            xmlStream->Close();
-            delete xmlStream;
-            return false;
+            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Parse error at line %d: %S",
+                XML_GetCurrentLineNumber(fParser), XML_ErrorString(XML_GetErrorCode(fParser)));
+            done = true;
         }
 
-        if (fLastError != L"") // some error occurred in the parser
-        {
-            XML_ParserFree(fParser);
-            fParser = nil;
-            xmlStream->Close();
-            delete xmlStream;
-            return false;
-        }
+        if (fWeExploded) // some error occurred in the parser
+            done = true;
+    } while (!done);
 
-        if (done)
-            break;
-    }
     XML_ParserFree(fParser);
     fParser = nil;
     xmlStream->Close();
@@ -450,14 +422,12 @@ bool LocalizationXMLFile::Parse(const std::string & fileName)
 
 //// AddError() //////////////////////////////////////////////////////
 
-void LocalizationXMLFile::AddError(const std::wstring & errorText)
+void LocalizationXMLFile::AddError(const plString& errorText)
 {
-    wchar_t lineNumber[256];
-    swprintf(lineNumber, 256, L"%d", XML_GetCurrentLineNumber(fParser));
-    fLastError += L"ERROR (line ";
-    fLastError += lineNumber;
-    fLastError += L"): " + errorText + L"\n";
+    pfLocalizationDataMgr::GetLog()->AddLineF("ERROR (line %d): %s",
+        XML_GetCurrentLineNumber(fParser), errorText.c_str());
     fSkipDepth = fTagStack.size(); // skip this block
+    fWeExploded = true;
     return;
 }
 
@@ -701,7 +671,7 @@ void LocalizationDatabase::Parse(const std::string & directory)
         LocalizationXMLFile newFile;
         bool retVal = newFile.Parse(filename);
         if (!retVal)
-            fErrorString += L"Errors in file " + wFilename + L":\n" + newFile.GetLastError() + L"\n";
+            fErrorString += L"WARNING: Errors in file " + wFilename;
 
         fFiles.push_back(newFile);
 
