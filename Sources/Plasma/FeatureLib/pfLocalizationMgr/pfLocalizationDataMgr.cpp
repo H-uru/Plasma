@@ -554,7 +554,7 @@ void LocalizationDatabase::IMergeData()
 
 void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std::wstring &setName, LocalizationXMLFile::set::iterator& curElement)
 {
-    std::vector<std::wstring> languageNames;
+    WStringVector languageNames;
     std::wstring defaultLanguage;
 
     int numLocales = plLocalization::GetNumLocales();
@@ -788,9 +788,9 @@ mapT &pfLocalizationDataMgr::pf3PartMap<mapT>::operator[](const std::wstring &ke
 //// getAgeList() ////////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
+WStringVector pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
 {
-    std::vector<std::wstring> retVal;
+    WStringVector retVal;
     typename ThreePartMap::iterator curAge;
 
     for (curAge = fData.begin(); curAge != fData.end(); curAge++)
@@ -802,9 +802,9 @@ std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
 //// getSetList() ////////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const std::wstring & age)
+WStringVector pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const std::wstring & age)
 {
-    std::vector<std::wstring> retVal;
+    WStringVector retVal;
     typename std::map<std::wstring, std::map<std::wstring, mapT> >::iterator curSet;
 
     if (fData.find(age) == fData.end())
@@ -819,9 +819,9 @@ std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(co
 //// getNameList() ///////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<std::wstring> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const std::wstring & age, const std::wstring & set)
+WStringVector pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const std::wstring & age, const std::wstring & set)
 {
-    std::vector<std::wstring> retVal;
+    WStringVector retVal;
     typename std::map<std::wstring, mapT>::iterator curName;
 
     if (fData.find(age) == fData.end())
@@ -898,10 +898,10 @@ std::wstring pfLocalizationDataMgr::IGetCurrentLanguageName()
 
 //// IGetAllLanguageNames ////////////////////////////////////////////
 
-std::vector<std::wstring> pfLocalizationDataMgr::IGetAllLanguageNames()
+WStringVector pfLocalizationDataMgr::IGetAllLanguageNames()
 {
     int numLocales = plLocalization::GetNumLocales();
-    std::vector<std::wstring> retVal;
+    WStringVector retVal;
 
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
@@ -1005,14 +1005,14 @@ void pfLocalizationDataMgr::IWriteText(const std::string & filename, const std::
     fileData += L"<localizations>\n";
     fileData += L"\t<age name=\"" + ageName + L"\">\n";
 
-    std::vector<std::wstring> setNames = GetSetList(ageName);
+    WStringVector setNames = GetSetList(ageName);
     for (int curSet = 0; curSet < setNames.size(); curSet++)
     {
         setEmpty = true; // so far, this set is empty
         std::wstring setCode = L"";
         setCode += L"\t\t<set name=\"" + setNames[curSet] + L"\">\n";
 
-        std::vector<std::wstring> elementNames = GetElementList(ageName, setNames[curSet]);
+        WStringVector elementNames = GetElementList(ageName, setNames[curSet]);
         for (int curElement = 0; curElement < elementNames.size(); curElement++)
         {
             setCode += L"\t\t\t<element name=\"" + elementNames[curElement] + L"\">\n";
@@ -1151,32 +1151,11 @@ pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const std::wstring &
     return retVal;
 }
 
-//// GetAgeList //////////////////////////////////////////////////////
-
-std::vector<std::wstring> pfLocalizationDataMgr::GetAgeList()
-{
-    return fLocalizedElements.getAgeList();
-}
-
-//// GetSetList //////////////////////////////////////////////////////
-
-std::vector<std::wstring> pfLocalizationDataMgr::GetSetList(const std::wstring & ageName)
-{
-    return fLocalizedElements.getSetList(ageName);
-}
-
-//// GetElementList //////////////////////////////////////////////////
-
-std::vector<std::wstring> pfLocalizationDataMgr::GetElementList(const std::wstring & ageName, const std::wstring & setName)
-{
-    return fLocalizedElements.getNameList(ageName, setName);
-}
-
 //// GetLanguages ////////////////////////////////////////////////////
 
-std::vector<std::wstring> pfLocalizationDataMgr::GetLanguages(const std::wstring & ageName, const std::wstring & setName, const std::wstring & elementName)
+WStringVector pfLocalizationDataMgr::GetLanguages(const std::wstring & ageName, const std::wstring & setName, const std::wstring & elementName)
 {
-    std::vector<std::wstring> retVal;
+    WStringVector retVal;
     std::wstring key = ageName + L"." + setName + L"." + elementName;
     if (fLocalizedElements.exists(key))
     {
@@ -1296,8 +1275,8 @@ bool pfLocalizationDataMgr::DeleteElement(const std::wstring & name)
 void pfLocalizationDataMgr::WriteDatabaseToDisk(const std::string & path)
 {
     // first, write the styles and panel settings to styles.sub
-    std::vector<std::wstring> ageNames = GetAgeList();
-    std::vector<std::wstring> languageNames = IGetAllLanguageNames();
+    WStringVector ageNames = GetAgeList();
+    WStringVector languageNames = IGetAllLanguageNames();
     for (int curAge = 0; curAge < ageNames.size(); curAge++)
     {
         for (int curLanguage = 0; curLanguage < languageNames.size(); curLanguage++)
@@ -1319,41 +1298,27 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const std::string & path)
 
 void pfLocalizationDataMgr::OutputTreeToLog()
 {
-    std::vector<std::wstring> ages = GetAgeList();
+    WStringVector ages = GetAgeList();
 
     fLog->AddLine("\n");
     fLog->AddLine("Localization tree:\n");
 
-    for (int i = 0; i < ages.size(); i++)
+    for (WStringVector::iterator i = ages.begin(); i != ages.end(); ++i)
     {
-        char *ageName = hsWStringToString(ages[i].c_str());
-        std::string temp = ageName;
-        delete [] ageName;
+        std::wstring age = *i;
+        fLog->AddLineF("\t%S", age.c_str());
 
-        temp = "\t" + temp + "\n";
-        fLog->AddLine(temp.c_str());
-
-        std::vector<std::wstring> sets = GetSetList(ages[i]);
-
-        for (int j = 0; j < sets.size(); j++)
+        WStringVector sets = GetSetList(age);
+        for (WStringVector::iterator j = sets.begin(); j != sets.end(); ++j)
         {
-            char *setName = hsWStringToString(sets[j].c_str());
-            std::string temp = setName;
-            delete [] setName;
+            std::wstring set = (*j);
+            fLog->AddLineF("\t\t%S", set.c_str());
 
-            temp = "\t\t" + temp + "\n";
-            fLog->AddLine(temp.c_str());
-
-            std::vector<std::wstring> names = GetElementList(ages[i], sets[j]);
-
-            for (int k = 0; k < names.size(); k++)
+            WStringVector names = GetElementList(age, set);
+            for (WStringVector::iterator k = names.begin(); k != names.end(); ++k)
             {
-                char *elemName = hsWStringToString(names[k].c_str());
-                std::string temp = elemName;
-                delete [] elemName;
-
-                temp = "\t\t\t" + temp + "\n";
-                fLog->AddLine(temp.c_str());
+                std::wstring name = (*k);
+                fLog->AddLineF("\t\t\t%S", name.c_str());
             }
         }
     }
