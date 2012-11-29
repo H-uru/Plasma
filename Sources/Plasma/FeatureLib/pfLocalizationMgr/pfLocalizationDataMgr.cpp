@@ -443,7 +443,6 @@ class LocalizationDatabase
 {
 protected:
     std::string fDirectory; // the directory we're supposed to parse
-    std::wstring fErrorString; // total sum of all errors encountered (also has warnings and status messages)
 
     std::vector<LocalizationXMLFile> fFiles; // the various XML files in that directory
 
@@ -463,8 +462,6 @@ public:
     LocalizationDatabase() {}
 
     void Parse(const std::string & directory);
-    void ResetOutput() {fErrorString = L"";}
-    std::wstring GetOutput() {return fErrorString;}
 
     LocalizationXMLFile::ageMap GetData() {return fData;}
 };
@@ -482,7 +479,10 @@ LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(Localizatio
     for (curTranslation = secondElement.begin(); curTranslation != secondElement.end(); curTranslation++)
     {
         if (firstElement.find(curTranslation->first) != firstElement.end())
-            fErrorString += L"Duplicate " + curTranslation->first + L" translation for " + path + L" found in file " + fileName + L" Ignoring second translation\n";
+        {
+            pfLocalizationDataMgr::GetLog()->AddLineF("Duplicate %S translation for %S found in file %S Ignoring second translation",
+                curTranslation->first.c_str(), path.c_str(), fileName.c_str());
+        }
         else
             firstElement[curTranslation->first] = curTranslation->second;
     }
@@ -586,8 +586,8 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
 
         if (!languageExists)
         {
-            fErrorString += L"ERROR: The language " + curTranslation->first + L" used by " + ageName + L"." + setName + L".";
-            fErrorString += elementName + L" is not supported, discarding translation\n";
+            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: The language %S used by %S.%S.%S is not supported, discarding translation",
+                curTranslation->first.c_str(), ageName.c_str(), setName.c_str(), elementName.c_str());
             curTranslation = theElement.erase(curTranslation);
         }
         else
@@ -598,8 +598,8 @@ void LocalizationDatabase::IVerifyElement(const std::wstring &ageName, const std
     {
         if (theElement.find(languageNames[i]) == theElement.end())
         {
-            fErrorString += L"WARNING: Language " + languageNames[i] + L" is missing from the translations in element ";
-            fErrorString += ageName + L"." + setName + L"." + elementName + L", you'll want to get translations for that!\n";
+            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language %S is missing from the translations in element %S.%S.%S, you'll want to get translations for that!",
+                languageNames[i].c_str(), ageName.c_str(), setName.c_str(), elementName.c_str());
         }
     }
 }
@@ -619,8 +619,8 @@ void LocalizationDatabase::IVerifySet(const std::wstring &ageName, const std::ws
         // Check that we at least have a default language translation for fallback
         if (curElement->second.find(defaultLanguage) == curElement->second.end())
         {
-            fErrorString += L"ERROR: Default language " + defaultLanguage + L" is missing from the translations in element ";
-            fErrorString += ageName + L"." + setName + L"." + curElement->first + L", deleting element\n";
+            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Default language %S is missing from the translations in element %S.%S.%S, deleting element",
+                defaultLanguage.c_str(), ageName.c_str(), setName.c_str(), curElement->first.c_str());
             curElement = theSet.erase(curElement);
         }
         else
@@ -656,7 +656,6 @@ void LocalizationDatabase::Parse(const std::string & directory)
 {
     fDirectory = directory;
     fFiles.clear();
-    fErrorString = L"";
 
     char filename[255];
     hsFolderIterator xmlFolder((directory+PATH_SEPARATOR_STR).c_str());
@@ -664,18 +663,13 @@ void LocalizationDatabase::Parse(const std::string & directory)
     {
         xmlFolder.GetPathAndName(filename);
 
-        wchar_t *buff = hsStringToWString(filename);
-        std::wstring wFilename = buff;
-        delete [] buff;
-
         LocalizationXMLFile newFile;
         bool retVal = newFile.Parse(filename);
         if (!retVal)
-            fErrorString += L"WARNING: Errors in file " + wFilename;
+            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file %s", filename);
 
         fFiles.push_back(newFile);
-
-        fErrorString += L"File " + wFilename + L" parsed and added to database\n";
+        pfLocalizationDataMgr::GetLog()->AddLineF("File %s parsed and added to database", filename);
     }
 
     IMergeData();
@@ -929,12 +923,7 @@ void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const s
         if (numArgs == -1) // just started
             numArgs = argCount;
         else if (argCount != numArgs)
-        {
-            std::wstring errorStr = L"WARNING: Argument number mismatch in element " + curPath + L" for " + curTranslation->first;
-            char* cErrorStr = hsWStringToString(errorStr.c_str());
-            fLog->AddLine(cErrorStr);
-            delete [] cErrorStr;
-        }
+            fLog->AddLineF("WARNING: Argument number mismatch in element %S for %S", curPath.c_str(), curTranslation->first.c_str());
     }
 
     fLocalizedElements[curPath] = newElement;
@@ -1093,10 +1082,6 @@ void pfLocalizationDataMgr::SetupData()
     fDatabase = new LocalizationDatabase();
     fDatabase->Parse(fDataPath);
 
-    char *temp = hsWStringToString(fDatabase->GetOutput().c_str());
-    fLog->AddLine(temp);
-    delete [] temp;
-
     fLog->AddLine("File reading complete, converting to native data format");
 
     // and now we read all the data out of the database and convert it to our native formats
@@ -1165,7 +1150,7 @@ WStringVector pfLocalizationDataMgr::GetLanguages(const std::wstring & ageName, 
         for (curLanguage = elem.begin(); curLanguage != elem.end(); curLanguage++)
         {
             std::wstring language = curLanguage->first;
-            if (language != L"") // somehow blank language names sneak in... so don't return them
+            if (!language.empty()) // somehow blank language names sneak in... so don't return them
                 retVal.push_back(curLanguage->first);
         }
     }
