@@ -172,6 +172,8 @@ void plPhysicalControllerCore::IUpdate(int numSubSteps, float alpha)
     }
     else
     {
+        fAchievedLinearVelocity.Set(0.0f, 0.0f, 0.0f);
+
         // Update global location if in a subworld
         const plCoordinateInterface* subworldCI = GetSubworldCI();
         if (subworldCI)
