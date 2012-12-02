@@ -68,8 +68,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier/plDetectorLog.h"
 
-#define USE_PHYSX_MULTIPLE_CAMREGION_ENTER 1
-#define USE_PHYSX_COLLISION_FLUTTER_WORKAROUND 1
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+#include "plPhysX/plSimulationMgr.h"
+#endif
+
+
 
 plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
 {
@@ -240,57 +243,18 @@ plCameraRegionDetector::~plCameraRegionDetector()
         hsRefCnt_SafeUnRef(*it);
 }
 
-void plCameraRegionDetector::ITrigger(plKey hitter, bool entering, bool immediate)
+void plCameraRegionDetector::ISendTriggerMsg()
 {
-    if (fSavingSendMsg)
-        DetectorLogRed("%s: Stale messages on ITrigger. This should never happen!", GetKeyName().c_str());
-    if (fIsInside && entering)
-        DetectorLogRed("%s: Duplicate enter! Did we miss an exit?", GetKeyName().c_str());
-    else if (!fIsInside && !entering)
-        DetectorLogRed("%s: Duplicate exit! Did we miss an enter?", GetKeyName().c_str());
-
-    fSavingSendMsg = true;
-    fSavedMsgEnterFlag = entering;
-    if (entering)
+    for (plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
     {
-        DetectorLog("%s: Saving camera Entering volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
-        fLastEnterEval = fNumEvals;
+        plCameraMsg* msg = *it;
+        if (fIsInside)
+            msg->SetCmd(plCameraMsg::kEntering);
+        else
+            msg->ClearCmd(plCameraMsg::kEntering);
+        msg->SendAndKeep();
     }
-    else
-    {
-        DetectorLog("%s: Saving camera Exiting volume - Evals=%d", GetKeyName().c_str(),fNumEvals);
-        fLastExitEval = fNumEvals;
-    }
-
-    if (immediate)
-        ISendSavedTriggerMsgs();
 }
-
-void plCameraRegionDetector::ISendSavedTriggerMsgs()
-{
-    if (fSavingSendMsg)
-    {
-        for (size_t i = 0; i < fMessages.size(); ++i)
-        {   
-            hsRefCnt_SafeRef(fMessages[i]);
-            if (fSavedMsgEnterFlag)
-            {
-                fMessages[i]->SetCmd(plCameraMsg::kEntering);
-                DetectorLog("Entering cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
-                fIsInside = true;
-            }
-            else
-            {
-                fMessages[i]->ClearCmd(plCameraMsg::kEntering);
-                DetectorLog("Exiting cameraRegion: %s - Evals=%d -msg %d of %d\n", GetKeyName().c_str(),fNumEvals,i+1,fMessages.size());
-                fIsInside = false;
-            }
-            plgDispatch::MsgSend(fMessages[i]);
-        }
-    }
-    fSavingSendMsg = false;
-}
-
 
 bool plCameraRegionDetector::MsgReceive(plMessage* msg)
 {
@@ -300,8 +264,16 @@ bool plCameraRegionDetector::MsgReceive(plMessage* msg)
         // camera collisions are only for the local player
         if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pCollMsg->fOtherKey)
             return true;
-        // Fall through to plObjectInVolumeDetector, which will register us for plEvalMsg
-        // and handle it for us. (Hint: See ISendSavedTriggerMsgs)
+
+        if (!fWaitingForEval)
+            IRegisterForEval();
+
+        fEntering = (pCollMsg->fEntering != 0);
+
+ #ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        fLastStep = plSimulationMgr::GetInstance()->GetStepCount();
+#endif
+        return true;
     }
 
     return plObjectInVolumeDetector::MsgReceive(msg);
@@ -327,56 +299,72 @@ void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 
 }
 
+void plCameraRegionDetector::IHandleEval(plEvalMsg*)
+{
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    if (plSimulationMgr::GetInstance()->GetStepCount() - fLastStep > 1)
+    {
+#endif
+        if (fIsInside != fEntering)
+        {
+            fIsInside = fEntering;
+            DetectorLog("%s CameraRegion: %s", fIsInside ? "Entering" : "Exiting", GetKeyName().c_str());
+            ISendTriggerMsg();
+        }
+        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
+        fWaitingForEval = false;
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    }
+#endif
+}
+
 /////////////////////////////////
 /////////////////////////////////
 /////////////////////////////////
 /////////////////////////////////
 // object-in-volume detector
 
-void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering, bool immediate)
+void plObjectInVolumeDetector::ITrigger(plKey hitter, bool entering)
 {
-    hsRefCnt_SafeUnRef(fSavedActivatorMsg);
-    fSavedActivatorMsg = new plActivatorMsg;
-    fSavedActivatorMsg->AddReceivers(fReceivers);
-
-    if (fProxyKey)
-        fSavedActivatorMsg->fHiteeObj = fProxyKey;
-    else
-        fSavedActivatorMsg->fHiteeObj = GetTarget()->GetKey();
-
-    fSavedActivatorMsg->fHitterObj = hitter;
-    fSavedActivatorMsg->SetSender(GetKey());
-
-    if (entering)
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    for (bookKeepingList::iterator it = fCollisionList.begin(); it != fCollisionList.end(); ++it)
     {
-        DetectorLog("%s: Saving Entering volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
-        fSavedActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeEnter);
-        fLastEnterEval = fNumEvals;
+        plCollisionBookKeepingInfo* collisionInfo = *it;
+        if (collisionInfo->fHitter == hitter)
+        {
+            collisionInfo->fEntering = entering;
+            collisionInfo->fLastStep = plSimulationMgr::GetInstance()->GetStepCount();
+            return;
+        }
     }
-    else
-    {
-        DetectorLog("%s: Saving Exiting volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
-        fSavedActivatorMsg->SetTriggerType(plActivatorMsg::kVolumeExit);
-        fLastExitEval = fNumEvals;
-    }
+#endif
 
-    if (immediate)
-        ISendSavedTriggerMsgs();
+    plCollisionBookKeepingInfo* collisionInfo = new plCollisionBookKeepingInfo(hitter, entering);
+    fCollisionList.push_back(collisionInfo);
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    collisionInfo->fLastStep = plSimulationMgr::GetInstance()->GetStepCount();
+#endif
 }
 
-void plObjectInVolumeDetector::ISendSavedTriggerMsgs()
+void plObjectInVolumeDetector::IRegisterForEval()
 {
-    if (fSavedActivatorMsg)
-    {
-        if (fSavedActivatorMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
-            DetectorLog("%s: Sending Entering volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
-        else
-            DetectorLog("%s: Sending Exiting volume - Evals=%d", GetKeyName().c_str(), fNumEvals);
+    fWaitingForEval = true;
+    plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
+}
 
-        // we're saving the message to be dispatched later...
-        plgDispatch::MsgSend(fSavedActivatorMsg);
-    }
-    fSavedActivatorMsg = nil;
+void plObjectInVolumeDetector::ISendTriggerMsg(plKey hitter, bool entering)
+{
+    plActivatorMsg* activatorMsg = new plActivatorMsg();
+    activatorMsg->SetSender(GetKey());
+    activatorMsg->AddReceivers(fReceivers);
+    activatorMsg->fHiteeObj = fProxyKey ? fProxyKey : GetTarget()->GetKey();
+    activatorMsg->fHitterObj = hitter;
+    if (entering)
+        activatorMsg->SetTriggerType(plActivatorMsg::kVolumeEnter);
+    else
+        activatorMsg->SetTriggerType(plActivatorMsg::kVolumeExit);
+
+    plgDispatch::MsgSend(activatorMsg);
 }
 
 bool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
@@ -387,18 +375,17 @@ bool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
         // If the avatar is disabled (flying around), don't trigger
         if (IIsDisabledAvatar(pCollMsg->fOtherKey))
             return false;
+
+        if (!fWaitingForEval)
+            IRegisterForEval();
+
         ITrigger(pCollMsg->fOtherKey, (pCollMsg->fEntering != 0));
-        plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
         return true;
     }
 
     plEvalMsg* pEvalMsg = plEvalMsg::ConvertNoRef(msg);
     if (pEvalMsg)
-    {
-        fNumEvals++;
-        ISendSavedTriggerMsgs();
-        plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-    }
+        IHandleEval(pEvalMsg);
 
     plPlayerPageMsg* pageMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pageMsg && pageMsg->fUnload)
@@ -407,6 +394,48 @@ bool plObjectInVolumeDetector::MsgReceive(plMessage* msg)
     }
 
     return plCollisionDetector::MsgReceive(msg);
+}
+
+void plObjectInVolumeDetector::IHandleEval(plEvalMsg*)
+{
+    bookKeepingList::iterator it = fCollisionList.begin();
+    while (it != fCollisionList.end())
+    {
+        plCollisionBookKeepingInfo* collisionInfo = *it;
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        if (plSimulationMgr::GetInstance()->GetStepCount() - collisionInfo->fLastStep > 1)
+        {
+#endif // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+            ResidentSet::iterator j = fCurrentResidents.find(collisionInfo->fHitter);
+            bool wasInside = j != fCurrentResidents.end();
+            if (collisionInfo->fEntering != wasInside)
+            {
+                if (collisionInfo->fEntering)
+                {
+                    fCurrentResidents.insert(collisionInfo->fHitter);
+                    DetectorLog("%s: Sending Volume Enter ActivatorMsg", GetKeyName().c_str());
+                    ISendTriggerMsg(collisionInfo->fHitter, true);
+                }
+                else
+                {
+                    fCurrentResidents.erase(j);
+                    DetectorLog("%s: Sending Volume Exit ActivatorMsg", GetKeyName().c_str());
+                    ISendTriggerMsg(collisionInfo->fHitter, false);
+                }
+            }
+
+            delete collisionInfo;
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+            it = fCollisionList.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+#else
+            ++it;
+#endif // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    }
 }
 
 void plObjectInVolumeDetector::SetTarget(plSceneObject* so)
@@ -485,13 +514,13 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         {
             DetectorLog("%s: Trigger InVolume&Facing", GetKeyName().c_str());
             fTriggered = true;
-            ITrigger(avatar->GetKey(), true, true);
+            ISendTriggerMsg(avatar->GetKey(), true);
         }
         else if (!facing && fTriggered)
         {
             DetectorLog("%s: Untrigger InVolume&Facing", GetKeyName().c_str());
             fTriggered = false;
-            ITrigger(avatar->GetKey(), false, true);
+            ISendTriggerMsg(avatar->GetKey(), false);
         }
     }
 }
@@ -525,7 +554,7 @@ bool plObjectInVolumeAndFacingDetector::MsgReceive(plMessage* msg)
             if (fTriggered)
             {
                 fTriggered = false;
-                ITrigger(plNetClientApp::GetInstance()->GetLocalPlayerKey(), false, true);
+                ISendTriggerMsg(plNetClientApp::GetInstance()->GetLocalPlayerKey(), false);
             }
         }
 

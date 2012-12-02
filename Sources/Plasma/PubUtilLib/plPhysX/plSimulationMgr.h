@@ -99,6 +99,8 @@ public:
 
     int GetMaterialIdx(NxScene* scene, float friction, float restitution);
 
+    uint32_t GetStepCount() const { return fStepCount; }
+
     //Fix to Move collision messages and their handling out of the simulation step
     void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
     void AddCollisionMsg(plCollideMsg* msg);
@@ -139,6 +141,7 @@ protected:
     bool fSuspended;
 
     float fAccumulator;
+    uint32_t fStepCount;
 
     // A utility class to keep track of a request for a physical synchronization.
     // These requests must pass a certain criteria (see the code for the latest)

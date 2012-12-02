@@ -283,6 +283,7 @@ plSimulationMgr* plSimulationMgr::GetInstance()
 plSimulationMgr::plSimulationMgr()
     : fSuspended(true)
     , fAccumulator(0.0f)
+    , fStepCount(0)
     , fLOSDispatch(new plLOSDispatch())
     , fSoundMgr(new plPhysicsSoundMgr)
     , fLog(nil)
@@ -467,6 +468,8 @@ void plSimulationMgr::Advance(float delSecs)
             Log("Step clamped from %f to limit of %f", fAccumulator, kDefaultMaxDelta);
         fAccumulator = kDefaultMaxDelta;
     }
+
+    ++fStepCount;
 
     // Perform as many whole substeps as possible saving the remainder in our accumulator.
     int numSubSteps = (int)(fAccumulator / kDefaultStepSize + 0.000001f);
