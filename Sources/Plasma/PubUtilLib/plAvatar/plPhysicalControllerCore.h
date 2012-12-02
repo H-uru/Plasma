@@ -214,7 +214,7 @@ public:
     plAnimatedMovementStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
     virtual ~plAnimatedMovementStrategy() { }
 
-    void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
+    virtual void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
     void SetTurnStrength(float val) { fTurnStr = val; }
     float GetTurnStrength() const { return fTurnStr; }
 
@@ -239,6 +239,8 @@ public:
 
     virtual void AddContactNormals(hsVector3& vec);
     virtual void Reset(bool newAge);
+
+    virtual void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
 
     bool HitGroundInThisAge() const { return fHitGroundInThisAge; }
     bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fFalseGround; }

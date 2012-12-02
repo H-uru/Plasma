@@ -503,15 +503,6 @@ void plWalkingStrategy::Update(float delSecs)
         fImpactVelocity = (hsVector3)fController->GetLocalRotation().Rotate(&fImpactVelocity);
         fClearImpact = false;
     }
-
-    if (fControlledFlight != 0)
-    {
-        if (IsOnGround())
-            fControlledFlightTime = fTimeInAir;
-
-        if (fControlledFlightTime > kControlledFlightThreshold)
-            EnableControlledFlight(false);
-    }
 }
 
 void plWalkingStrategy::AddContactNormals(hsVector3& vec)
@@ -533,6 +524,20 @@ void plWalkingStrategy::Reset(bool newAge)
         fHitGroundInThisAge = false;
         fSlidingNormals.SetCount(0);
     }
+}
+
+void plWalkingStrategy::RecalcVelocity(double timeNow, float elapsed, bool useAnim)
+{
+    if (fControlledFlight != 0)
+    {
+        if (IsOnGround())
+            fControlledFlightTime = fTimeInAir;
+
+        if (fControlledFlightTime > kControlledFlightThreshold)
+            EnableControlledFlight(false);
+    }
+
+    plAnimatedMovementStrategy::RecalcVelocity(timeNow, elapsed, useAnim);
 }
 
 bool plWalkingStrategy::EnableControlledFlight(bool status)
