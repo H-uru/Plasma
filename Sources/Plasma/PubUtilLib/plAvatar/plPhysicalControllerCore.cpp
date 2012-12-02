@@ -253,17 +253,17 @@ void plAnimatedMovementStrategy::RecalcVelocity(double timeNow, float elapsed, b
         
         IRecalcLinearVelocity(elapsed, prevMat, curMat);
         IRecalcAngularVelocity(elapsed, prevMat, curMat);
-
-        // Update controller rotation
-        float zRot = fAnimAngularVel + fTurnStr;
-        if (hsABS(zRot) > 0.0001f)
-            fController->IncrementAngle(zRot * elapsed);
     }
     else
     {
         fAnimLinearVel.Set(0.0f, 0.0f, 0.0f);
         fAnimAngularVel = 0.0f;
     }
+
+    // Update controller rotation
+    float zRot = fAnimAngularVel + fTurnStr;
+    if (hsABS(zRot) > 0.0001f)
+        fController->IncrementAngle(zRot * elapsed);
 
     // Update controller velocity
     fController->SetLinearVelocity(fAnimLinearVel);
