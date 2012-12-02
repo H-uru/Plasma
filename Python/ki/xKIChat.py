@@ -79,11 +79,12 @@ class xKIChat(object):
         self.privateChatChannel = 0
         self.toReplyToLastPrivatePlayerID = None
 
-        # Fading globals.
+        # Fading & blinking globals.
         self.currentFadeTick = 0
         self.fadeEnableFlag = True
         self.fadeMode = kChat.FadeNotActive
         self.ticksOnFull = 30
+        self.incomingChatFlashState = 0
 
         # Set the properties from the KI.
         self.key = None  # Plasma has to be initialized for this.
@@ -591,6 +592,9 @@ class xKIChat(object):
         if not wasAtEnd:
             # scroll back to where we were
             chatArea.setScrollPosition(savedPosition)
+            # flash the down arrow to indicate that new chat has come in
+            self.incomingChatFlashState = 3
+            PtAtTimeCallback(self.key, 0.0, kTimers.IncomingChatFlash)
         chatArea.endUpdate()
 
         # Copy all the data to the miniKI if the user upgrades it.
