@@ -334,6 +334,7 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
     fLastGlobalLoc = l2w;
 
     // Update our local position and rotation
+    hsPoint3 prevPosition = fLocalPosition;
     const plCoordinateInterface* subworldCI = GetSubworldCI();
     if (subworldCI)
     {
@@ -360,8 +361,20 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
     // Update the physical position
     if (fKinematicCCT)
     {
-        NxExtendedVec3 pos(fLocalPosition.fX, fLocalPosition.fY, fLocalPosition.fZ + kCCTZOffset);
-        fController->setPosition(pos);
+        hsVector3 disp(&fLocalPosition, &prevPosition);
+        if (disp.Magnitude() > 2.f)
+        {
+            // Teleport the underlying actor most of the way
+            disp.Normalize();
+            disp *= 0.001f;
+
+            hsPoint3 teleportPos = fLocalPosition - disp;
+            NxVec3 pos(teleportPos.fX, teleportPos.fY, teleportPos.fZ + kPhysZOffset);
+            fActor->setGlobalPosition(pos);
+        }
+
+        NxExtendedVec3 extPos(fLocalPosition.fX, fLocalPosition.fY, fLocalPosition.fZ + kCCTZOffset);
+        fController->setPosition(extPos);
     }
     else
     {
