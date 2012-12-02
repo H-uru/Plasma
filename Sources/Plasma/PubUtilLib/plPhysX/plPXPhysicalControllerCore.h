@@ -65,7 +65,7 @@ public:
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
 public:
-    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius);
+    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius, bool human);
     ~plPXPhysicalControllerCore();
 
     // An ArmatureMod has its own idea about when physics should be enabled/disabled.
@@ -169,4 +169,5 @@ protected:
 
     plPhysicalProxy* fProxyGen;
     bool fKinematicCCT;
+    bool fHuman;
 };

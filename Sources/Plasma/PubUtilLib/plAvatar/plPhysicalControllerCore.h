@@ -150,7 +150,7 @@ public:
     float GetHeight() const { return fHeight; }
 
     // Create a new controller instance - Implemented in the physics system
-    static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius);
+    static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius, bool human);
 
 protected:
     virtual void IHandleEnableChanged() = 0;

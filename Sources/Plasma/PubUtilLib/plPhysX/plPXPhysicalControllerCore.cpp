@@ -155,23 +155,24 @@ public:
     }
 } gControllerHitReport;
 
-plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
+plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width, bool human)
 {
     if (!plPXPhysicalControllerCore::fPXControllersMax || gControllers.size() < plPXPhysicalControllerCore::fPXControllersMax)
     {
         float radius = width / 2.0f;
         float realHeight = height - width;
-        return new plPXPhysicalControllerCore(ownerSO, realHeight, radius);
+        return new plPXPhysicalControllerCore(ownerSO, realHeight, radius, human);
     }
     return nil;
 }
 
-plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius)
+plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius, bool human)
     : plPhysicalControllerCore(ownerSO, height, radius),
     fController(nil),
     fActor(nil),
     fProxyGen(nil),
-    fKinematicCCT(true)
+    fKinematicCCT(true),
+    fHuman(human)
 {
     ICreateController(fLocalPosition);
     fActor->raiseActorFlag(NX_AF_DISABLE_COLLISION);
@@ -724,10 +725,14 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
         // In PhysX 2, the kinematic actors scale factor isn't exposed.
         // It is hardcoded at 0.8 which doesn't suit, so we have to manually adjust its dimensions.
         float kineRadius = fRadius + kCCTSkinWidth;
-        float kineHeight = fHeight + kPhysHeightCorrection;
+        float kineHeight = fHeight;
         NxCapsuleShape* capShape = shape->isCapsule();
+        if (fHuman)
+        {
+            kineHeight += kPhysHeightCorrection;
+            capShape->setLocalPosition(NxVec3(0.0f, (kPhysHeightCorrection / 2.0f), 0.0f));
+        }
         capShape->setDimensions(kineRadius, kineHeight);
-        capShape->setLocalPosition(NxVec3(0.0f, (kPhysHeightCorrection / 2.0f), 0.0f));
     }
     else
     {

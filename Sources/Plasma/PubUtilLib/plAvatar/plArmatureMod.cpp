@@ -1993,7 +1993,7 @@ bool plArmatureMod::ValidatePhysics()
         return false;
 
     if (!fController)
-        fController = plPhysicalControllerCore::Create(GetTarget(0)->GetKey(), fPhysHeight, fPhysWidth);
+        fController = plPhysicalControllerCore::Create(GetTarget(0)->GetKey(), fPhysHeight, fPhysWidth, (fBodyType == kBoneBaseMale || fBodyType == kBoneBaseFemale));
 
     if (fController)
     {
