@@ -538,6 +538,8 @@ void plWalkingStrategy::AddContactNormals(hsVector3& vec)
 void plWalkingStrategy::Reset(bool newAge)
 {
     plMovementStrategy::Reset(newAge);
+    fImpactVelocity.Set(0.0f, 0.0f, 0.0f);
+    fImpactTime = 0.0f;
     if (newAge)
     {
         fTimeInAir = 0.0f;
