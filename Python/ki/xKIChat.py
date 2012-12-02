@@ -576,10 +576,6 @@ class xKIChat(object):
         chatArea.insertStringW(chatMessageFormatted)
         chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
-        # Scroll the chat by the number of new lines.
-        if not wasAtEnd:
-            chatArea.setScrollPosition(savedPosition)
-
         # Write to the log file.
         if self.chatLogFile is not None and self.chatLogFile.isOpen():
             self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
@@ -589,6 +585,12 @@ class xKIChat(object):
             while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
                 PtDebugPrint(u"xKIChat.AddChatLine(): Max chat buffer size reached. Removing top line.", level=kDebugDumpLevel)
                 chatArea.deleteLinesFromTop(1)
+                if savedPosition > 0:
+                    # this is only accurate if the deleted line only occupied one line in the control (wasn't soft-wrapped), but that tends to be the usual case
+                    savedPosition -= 1
+        if not wasAtEnd:
+            # scroll back to where we were
+            chatArea.setScrollPosition(savedPosition)
         chatArea.endUpdate()
 
         # Copy all the data to the miniKI if the user upgrades it.
