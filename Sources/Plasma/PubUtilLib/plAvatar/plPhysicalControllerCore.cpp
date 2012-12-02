@@ -195,20 +195,38 @@ void plPhysicalControllerCore::IUpdateNonPhysical(float alpha)
     const hsMatrix44& l2w = so->GetCoordinateInterface()->GetLocalToWorld();
     if (CompareMatrices(fLastGlobalLoc, l2w, 0.0001f))
     {
-        hsVector3 displacement = (hsVector3)(fLocalPosition - fLastLocalPosition);
-        hsPoint3 interpLocalPos = fLastLocalPosition + (displacement * alpha);
-
-        fLocalRotation.MakeMatrix(&fLastGlobalLoc);
-        fLastGlobalLoc.SetTranslate(&interpLocalPos);
-        const plCoordinateInterface* subworldCI = GetSubworldCI();
-        if (subworldCI)
+        if (fEnabled)
         {
-            const hsMatrix44& subL2W = subworldCI->GetLocalToWorld();
-            fLastGlobalLoc = subL2W * fLastGlobalLoc;
-            fPrevSubworldW2L = subworldCI->GetWorldToLocal();
-        }
+            hsVector3 displacement = (hsVector3)(fLocalPosition - fLastLocalPosition);
+            hsPoint3 interpLocalPos = fLastLocalPosition + (displacement * alpha);
 
-        ISendCorrectionMessages();
+            fLocalRotation.MakeMatrix(&fLastGlobalLoc);
+            fLastGlobalLoc.SetTranslate(&interpLocalPos);
+            const plCoordinateInterface* subworldCI = GetSubworldCI();
+            if (subworldCI)
+            {
+                const hsMatrix44& subL2W = subworldCI->GetLocalToWorld();
+                fLastGlobalLoc = subL2W * fLastGlobalLoc;
+                fPrevSubworldW2L = subworldCI->GetWorldToLocal();
+            }
+
+            ISendCorrectionMessages();
+        }
+        else
+        {
+            // Update global location if in a subworld
+            const plCoordinateInterface* subworldCI = GetSubworldCI();
+            if (subworldCI)
+            {
+                hsMatrix44 l2s = fPrevSubworldW2L * fLastGlobalLoc;
+                const hsMatrix44& subL2W = subworldCI->GetLocalToWorld();
+                fLastGlobalLoc = subL2W * l2s;
+                fPrevSubworldW2L = subworldCI->GetWorldToLocal();
+
+
+                ISendCorrectionMessages();
+            }
+        }
     }
 }
 
