@@ -236,6 +236,25 @@ void plPXPhysicalControllerCore::SetSubworld(plKey world)
         IInformDetectors(false);
         IDeleteController();
 
+        // We need our real global location here, not the interpolated location
+        fLocalRotation.MakeMatrix(&fLastGlobalLoc);
+        fLastGlobalLoc.SetTranslate(&fLocalPosition);
+        if (fWorldKey)
+        {
+            hsMatrix44 prevSubL2W;
+            fPrevSubworldW2L.GetInverse(&prevSubL2W);
+            fLastGlobalLoc = prevSubL2W * fLastGlobalLoc;
+        }
+        // Update our scene object so the change isn't wiped out
+        plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
+        if (so)
+        {
+            hsMatrix44 globalLocInv;
+            fLastGlobalLoc.GetInverse(&globalLocInv);
+            so->SetTransform(fLastGlobalLoc, globalLocInv);
+            so->FlushTransform();
+        }
+
         // Update Local Position and rotation
         fWorldKey = world;
         const plCoordinateInterface* subworldCI = GetSubworldCI();
@@ -257,6 +276,7 @@ void plPXPhysicalControllerCore::SetSubworld(plKey world)
 
         // Create new controller
         ICreateController(fLocalPosition);
+        RebuildCache();
     }
 }
 
