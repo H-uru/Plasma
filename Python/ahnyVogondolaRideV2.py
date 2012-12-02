@@ -232,9 +232,8 @@ class InHubBrain:
                     
                 elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar = PtGetLocalAvatar()
-                    theAvatar.physics.warpObj(soVogDummy.value.getKey())
-                    PtAttachObject(theAvatar.getKey(), soVogDummy.value.getKey())
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
+                    theAvatar.physics.warpObj(soVogDummy.value.getKey())
                     print self.name + ": pinned avatar"
                     respVogChairLower.run(self.parent.key, events = events)
                     
@@ -286,7 +285,6 @@ class InHubBrain:
         elif id == respVogEjectHub.id:
             theAvatar=PtGetLocalAvatar()
             respHubChairLower.run(self.parent.key, avatar = theAvatar, state = "raise")
-            PtDetachObject(theAvatar.getKey(), soVogDummy.value.getKey())
             theAvatar.avatar.exitSubWorld()
             theAvatar.physics.warpObj(soEjectPointHub.value.getKey())
             respVogEjectHub.run(self.parent.key, avatar = theAvatar, state = "oneshot")
@@ -527,9 +525,8 @@ class InEngHutBrain:
                     
                 elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar = PtGetLocalAvatar()
-                    theAvatar.physics.warpObj(soVogDummy.value.getKey())
-                    PtAttachObject(theAvatar.getKey(), soVogDummy.value.getKey())
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
+                    theAvatar.physics.warpObj(soVogDummy.value.getKey())
                     print self.name + ": pinned avatar"
                     respVogChairLower.run(self.parent.key, events = events)
                     
@@ -583,7 +580,6 @@ class InEngHutBrain:
         elif id == respVogEjectEngHut.id:
             theAvatar=PtGetLocalAvatar()
             respEngHutChairLower.run(self.parent.key, avatar = theAvatar, state = "raise")
-            PtDetachObject(theAvatar.getKey(), soVogDummy.value.getKey())
             theAvatar.avatar.exitSubWorld()
             theAvatar.physics.warpObj(soEjectPointEngHut.value.getKey())
             respVogEjectEngHut.run(self.parent.key, avatar = theAvatar, state = "oneshot")
