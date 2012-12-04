@@ -62,6 +62,9 @@ struct LocElementInfo;
 struct LocSetInfo;
 struct LocAgeInfo;
 
+// Temporary helper (until everything is plString-ized)
+typedef std::vector<std::wstring> WStringVector;
+
 class pfLocalizationDataMgr
 {
 private:
@@ -90,9 +93,9 @@ protected:
 
         mapT &operator[](const std::wstring &key); // returns the item referenced by the key (and creates if necessary)
 
-        std::vector<std::wstring> getAgeList(); // returns a list of all ages in this map
-        std::vector<std::wstring> getSetList(const std::wstring & age); // returns a list of all sets in the specified age
-        std::vector<std::wstring> getNameList(const std::wstring & age, const std::wstring & set);
+        WStringVector getAgeList(); // returns a list of all ages in this map
+        WStringVector getSetList(const std::wstring & age); // returns a list of all sets in the specified age
+        WStringVector getNameList(const std::wstring & age, const std::wstring & set);
     };
 
     LocalizationDatabase *fDatabase;
@@ -107,7 +110,7 @@ protected:
     localizedElement ICreateLocalizedElement(); // ease of use function that creates a basic localized element object
 
     std::wstring IGetCurrentLanguageName(); // get the name of the current language
-    std::vector<std::wstring> IGetAllLanguageNames();
+    WStringVector IGetAllLanguageNames();
 
     void IConvertElement(LocElementInfo *elementInfo, const std::wstring & curPath);
     void IConvertSet(LocSetInfo *setInfo, const std::wstring & curPath);
@@ -124,16 +127,20 @@ public:
     static void Shutdown();
     static pfLocalizationDataMgr &Instance(void) {return *fInstance;}
     static bool InstanceValid(void) {return fInstance != nil;}
+    static plStatusLog* GetLog() { return fLog; }
 
     void SetupData();
 
     pfLocalizedString GetElement(const std::wstring & name);
     pfLocalizedString GetSpecificElement(const std::wstring & name, const std::wstring & languageName);
 
-    std::vector<std::wstring> GetAgeList();
-    std::vector<std::wstring> GetSetList(const std::wstring & ageName);
-    std::vector<std::wstring> GetElementList(const std::wstring & ageName, const std::wstring & setName);
-    std::vector<std::wstring> GetLanguages(const std::wstring & ageName, const std::wstring & setName, const std::wstring & elementName);
+    WStringVector GetAgeList() { return fLocalizedElements.getAgeList(); }
+    WStringVector GetSetList(const std::wstring & ageName) { return fLocalizedElements.getSetList(ageName); }
+    WStringVector GetElementList(const std::wstring & ageName, const std::wstring & setName)
+    {
+        return fLocalizedElements.getNameList(ageName, setName);
+    }
+    WStringVector GetLanguages(const std::wstring & ageName, const std::wstring & setName, const std::wstring & elementName);
 
     std::wstring GetElementXMLData(const std::wstring & name, const std::wstring & languageName);
     std::wstring GetElementPlainTextData(const std::wstring & name, const std::wstring & languageName);
