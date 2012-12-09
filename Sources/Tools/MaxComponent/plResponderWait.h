@@ -39,12 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
- // Damn, had to pass in a HWND
+
 #include <map>
+
 class ClassDesc2;
-class IParamBlock2;
 class plKey;
 class plMessage;
+class IParamBlock2;
 class plResponderModifier;
 class plString;
 

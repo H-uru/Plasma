@@ -39,12 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// Private header for the responder component.  Anyone else should include plResponderComponent.h
+
+/* \file plResponderComponentPriv.h
+ *
+ * Private header for the responder component.  Anyone else should include plResponderComponent.h
+ */
+
 #include "plResponderComponent.h"
 #include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
 
 #include <map>
+
+class plErrorMsg;
+class plMaxNode;
 
 class plResponderComponent : public plComponent
 {

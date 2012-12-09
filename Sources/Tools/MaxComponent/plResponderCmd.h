@@ -46,11 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include "pnKeyedObject/plKey.h"
 
-class ParamBlockDesc2;
-class IParamBlock2;
-class plMessage;
 class plErrorMsg;
 class plMaxNode;
+class plMessage;
+class ParamBlockDesc2;
+class IParamBlock2;
+class plString;
 
 class ResponderWaitInfo
 {

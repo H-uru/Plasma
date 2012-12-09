@@ -42,11 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvLadderComponent_h_inc
 #define plAvLadderComponent_h_inc
 
-#include "plComponent.h"
-#include "pnKeyedObject/plKey.h"
-
-class plComponentBase;
-
+class plComponent;
+class plErrorMsg;
+class plKey;
+class plMaxNode;
+class INodeTab;
+template<class T> class hsTArray;
 
 #define NAV_LADDER_CID Class_ID(0x6b010148, 0x47cc7464)
 

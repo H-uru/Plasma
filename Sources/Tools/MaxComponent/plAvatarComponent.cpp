@@ -39,28 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include <windowsx.h>
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStringTokenizer.h"
 
 #include "plComponentProcBase.h"
-#include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "plAudioComponents.h"
+#include "plPhysicalComponents.h"
+#include "MaxMain/plMaxNode.h"
+
+#include "resource.h"
+#include <windowsx.h>
+#pragma hdrstop
+
+#include "plAvatarComponent.h"
+#include "plMaxAnimUtils.h"
+#include "plPickNode.h"
+#include "plPickMaterialMap.h"
+
 #include "MaxConvert/hsConverterUtils.h"
 
 #include "pnSceneObject/plSceneObject.h"
 
-#include "plgDispatch.h"
 #include "plScene/plSceneNode.h"
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/hsControlConverter.h"
 #include "MaxConvert/hsMaterialConverter.h"
 #include "MaxConvert/plBitmapCreator.h"
-#include "hsStringTokenizer.h"
-#include "MaxMain/plMaxNode.h"
-#include "pnKeyedObject/plKey.h"
-
-#include "hsResMgr.h"
 
 #include "pnMessage/plNodeRefMsg.h"
 #include "pnMessage/plObjRefMsg.h"
@@ -68,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plMatRefMsg.h"
 #include "plMessage/plLayRefMsg.h"
 
-#include "plMaxAnimUtils.h"
 #include "plInterp/plController.h"
 #include "plPhysical/plSimDefs.h"
 #include "plPhysicsGroups.h"
@@ -79,7 +87,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plAudio/plWin32StaticSound.h"
 #include "plAudioCore/plSoundBuffer.h"
-#include "plAudioComponents.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"         
 
@@ -95,15 +102,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plShadowComponents.h"
 #include "plGLight/plShadowCaster.h"
 
-#include "plAvatarComponent.h"
-#include "plPhysicalComponents.h"
-
 #include "MaxMain/plPhysicalProps.h"
-//#include <vector>
-//#include <string>
 
-#include "plPickNode.h"
-#include "plPickMaterialMap.h"
 #include "MaxMain/plMtlCollector.h"
 
 //#define BOB_SORT_AVATAR_FACES

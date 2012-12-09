@@ -39,16 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-//Resource related
-#include "resource.h"
 
-//Max related
+#include "plgDispatch.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsResMgr.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "resource.h"
+
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNodeData.h"
+#pragma hdrstop
 
 //Messages related
-#include "plgDispatch.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plIntRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
@@ -57,12 +61,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //Scene related
 #include "plScene/plSceneNode.h"
 #include "plInterp/plController.h"
-#include "MaxMain/plMaxNode.h"
-#include "MaxMain/plMaxNodeData.h"
-#include "pnKeyedObject/plKey.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "hsResMgr.h"
 
 //Conversion related
 #include "MaxConvert/hsConverterUtils.h"

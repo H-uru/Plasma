@@ -44,6 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plActivatorBaseComponent.h"
 
+class plErrorMsg;
+class plMaxNode;
+
 #define ANIMEVENT_CID Class_ID(0x32eb34af, 0x62c70002)
 #define MTLEVENT_CID Class_ID(0x2984243c, 0x30ea3acb)
 

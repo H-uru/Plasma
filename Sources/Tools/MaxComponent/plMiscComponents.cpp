@@ -39,17 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "resource.h"
-#include "plMiscComponents.h"
+#include "plCreatableIndex.h"
+#include "plgDispatch.h"
+#include "plFileUtils.h"
+#include "hsFiles.h"
+
 #include "plComponentReg.h"
+#include "plMiscComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNodeData.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#include <notify.h>
+#pragma hdrstop
+
 #ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#   include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
 
 #include "MaxMain/plPlasmaRefMsgs.h"
-#include "MaxMain/plMaxNodeData.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -57,20 +68,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/plPluginResManager.h"
 
-
-#include "plgDispatch.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plIntRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
-
 
 #include "plScene/plSceneNode.h"
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/hsControlConverter.h"
 #include "plInterp/plController.h"
-#include "MaxMain/plMaxNode.h"
-#include "pnKeyedObject/plKey.h"
-#include "plFileUtils.h"
 
 // Follow mod
 #include "plInterp/plAnimPath.h"
@@ -95,7 +100,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
-#include "hsFiles.h"
 #include "plResMgr/plPageInfo.h"
 
 #include "plDrawable/plGeometrySpan.h"
@@ -107,6 +111,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxConvert/plLayerConverter.h"
 #include "plGImage/plBitmap.h"
+
+// NetSync
+#include "pnNetCommon/plSDLTypes.h"
+#include "MaxConvert/hsMaterialConverter.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 void DummyCodeIncludeFuncMisc() 
 {
@@ -2028,12 +2038,6 @@ bool plReferencePointComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pE
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
-
-#include "pnNetCommon/plSDLTypes.h"
-#include "MaxConvert/hsMaterialConverter.h"
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayerInterface.h"
-#include "plCreatableIndex.h"
 
 class plNetSyncComponent : public plComponent
 {

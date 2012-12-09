@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CLOTHING_COMPONENT_H
 #define PL_CLOTHING_COMPONENT_H
 
-#include "plComponent.h"
-
 class plClothingComponent : public plComponent
 {
 public:

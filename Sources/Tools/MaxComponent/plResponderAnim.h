@@ -39,10 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plResponderCmd.h"
-#include "pnKeyedObject/plKey.h"
 
 class plComponentBase;
+class plErrorMsg;
+class plMaxNode;
+class plMessage;
+class IParamBlock2;
 
 class plResponderCmdAnim : public plResponderCmd
 {

@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plComponent.h"
 
+class plErrorMsg;
 class plMaxNode;
 
 #define CAMERACMD_CID Class_ID(0x6edb72d1, 0xd8a1f43)

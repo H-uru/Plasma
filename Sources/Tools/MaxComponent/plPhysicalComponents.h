@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalComponents_h_inc
 #define plPhysicalComponents_h_inc
 
-#include "max.h"                                //Max Dependencies
 #include "plComponent.h"
 
 #define PHYSICS_BASE_CID            Class_ID(0x610f187a, 0x25824341)

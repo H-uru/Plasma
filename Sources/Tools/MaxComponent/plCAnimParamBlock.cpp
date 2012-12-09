@@ -56,13 +56,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "plCAnimParamBlock.h"
+#include "plAnimComponent.h"
+
+#include "resource.h"
+#pragma hdrstop
 
 #include "plInterp/plAnimEaseTypes.h"
-#include "plAnimComponent.h"
-#include "resource.h"
 
+#include "plCAnimParamBlock.h"
+#include "MaxPlasmaMtls/Materials/plPassMtl.h"
 
+// Defined in plAnimComponent.cpp
+extern plEaseAccessor gAnimCompEaseAccessor;
 
 
 //// Static ParamBlock Template //////////////////////////////////////////////

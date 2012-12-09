@@ -39,26 +39,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-// max includes
-#include "plPickNode.h"
+
+#include "plComponent.h"
+#include "plComponentReg.h"
+#include "plPhysicalComponents.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <iparamm2.h>
+#include <map>
+
 #include "resource.h"
+#pragma hdrstop
+
+#include "plPickNode.h"
 
 // local
 #include "plClimbComponent.h"
-#include "plPhysicalComponents.h"   // so we can pick terrains
-#include "plComponentReg.h"
 
 // other
-#include "MaxMain/plMaxNode.h"
 #include "plMessage/plClimbMsg.h"
 #include "plPhysical/plCollisionDetector.h"
 #include "MaxMain/plPhysicalProps.h"
 #include "plPhysical/plSimDefs.h"
 #include "pnSceneObject/plSceneObject.h"
 
-// stl
-#include <map>
 
 /////////////////////////////////////////////////////////////////
 //

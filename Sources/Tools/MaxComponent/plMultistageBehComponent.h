@@ -41,9 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #define MULTISTAGE_BEH_CID Class_ID(0x6c5234ab, 0x6c955a61)
 
-
-#include "max.h"
-
 class plKey;
 class plComponentBase;
 class plMaxNodeBase;

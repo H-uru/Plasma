@@ -40,36 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-// BIPEDKILLER
-
-///////////
-//
-// INCLUDES
-//
-///////////
-
-// theirs
-#include <windowsx.h>
-
-#include "max.h"
-#include "resource.h"
-#include "CS/bipexp.h"
-#include "decomp.h"
-
-#pragma warning(disable: 4786)      // disable warnings about excessive STL symbol name length
-
-#include <map>
-#include <vector>
 #include "hsStlSortUtils.h"
 
-// ours
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNodeBase.h"
 
+#include <CS/bipexp.h>
+#include <decomp.h>
+#include <windowsx.h>
+
+#include <map>
+#include <vector>
+#include "resource.h"
+#pragma hdrstop
+
+#include "BipedKiller.h"
 #include "plTransform/hsAffineParts.h"
-#include "hsMatrix44.h"
 
 //////////////
 //

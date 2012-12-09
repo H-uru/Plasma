@@ -48,10 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGUIComponents_h
 #define _plGUIComponents_h
 
-#include "pnKeyedObject/plKey.h"
-
 #include "plGUICompClassIDs.h"
-#include "plComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////////

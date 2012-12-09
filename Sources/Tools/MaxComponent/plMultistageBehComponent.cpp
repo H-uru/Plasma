@@ -39,23 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plMultistageBehComponent.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include <map>
+
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+#pragma hdrstop
+
+#include "plMultistageBehComponent.h"
 
 #include "plMultistageStage.h"
 
-#include "hsStream.h"
-#include "resource.h"
-#include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxAccelerators.h"
 
 #include "plAvatar/plAnimStage.h"
 #include "plAvatar/plMultistageBehMod.h"
-#include "hsResMgr.h"
-
-#include <map>
 
 
 void DummyCodeIncludeFuncMultistageBeh() {}

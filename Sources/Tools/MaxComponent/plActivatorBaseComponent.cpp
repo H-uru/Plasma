@@ -39,15 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plActivatorBaseComponent.h"
 
 #include "pnKeyedObject/plKey.h"
+#include "hsResMgr.h"
+
+#include "plActivatorBaseComponent.h"
 #include "MaxMain/plMaxNode.h"
+#pragma hdrstop
 
 #include "plModifier/plLogicModifier.h"
 #include "pnSceneObject/plSceneObject.h"
-#include "hsResMgr.h"
 #include "pnMessage/plObjRefMsg.h"
 
 void plActivatorBaseComponent::AddReceiverKey(plKey pKey, plMaxNode* node)

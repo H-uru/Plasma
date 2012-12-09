@@ -42,13 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENT_BASE_H
 #define PL_COMPONENT_BASE_H
 
-#include "HeadSpin.h"
-#include "Max.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
-#include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
+#include "hsWindows.h"
+
+#include <iparamb2.h>
+#include <max.h>
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
@@ -56,10 +54,24 @@ extern HINSTANCE hInstance;
 #define COMPONENT_CLASSID       Class_ID(0x758e5142, 0x66c748a)
 #define EXT_COMPONENT_CLASSID   Class_ID(0x6c277b63, 0x6c626b3f)
 
-class plMaxNodeBase;
+class plAGAnim;
+class Animatable;
+class Box3;
+class ClassDesc2;
+class Class_ID;
+class HelperObject;
 class plKey;
 class plMaxNode;
-class plAGAnim;
+class plMaxNodeBase;
+class INode;
+class INodeTab;
+class IObjParam;
+class ObjectState;
+enum  IOResult;
+class IParamBlock2;
+enum  RefResult;
+class RemapDir;
+class ViewExp;
 
 class plComponentBase : public HelperObject
 {

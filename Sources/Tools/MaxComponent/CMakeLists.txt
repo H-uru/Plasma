@@ -52,7 +52,6 @@ set(MaxComponent_HEADERS
     plGrassComponent.h
     plGUICompClassIDs.h
     plGUIComponents.h
-    plImpactGadgetComponent.h
     plInventoryObjComponent.h
     plLightGrpComponent.h
     plLightMapComponent.h
@@ -109,7 +108,6 @@ set(MaxComponent_SOURCES
     plAnimCompProc.cpp
     plAnimEventComponent.cpp
     plAudioComponents.cpp
-    plAutoComponent.cpp
     plAutoUIBase.cpp
     plAutoUIBlock.cpp
     plAutoUIComp.cpp
@@ -126,7 +124,6 @@ set(MaxComponent_SOURCES
     plClimbComponent.cpp
     plClothingComponent.cpp
     plClusterComponent.cpp
-    plComponent.cpp
     plComponentBase.cpp
     plComponentMgr.cpp
     plComponentTools.cpp
@@ -139,7 +136,6 @@ set(MaxComponent_SOURCES
     plGrassComponent.cpp
     plGUIComponents.cpp
     plIgnoreComponent.cpp
-    plImpactGadgetComponent.cpp
     plInventoryObjComponent.cpp
     plLightGrpComponent.cpp
     plLightMapComponent.cpp
@@ -185,6 +181,7 @@ set(MaxComponent_SOURCES
     plXImposter.cpp
 )
 
+use_precompiled_header(Pch.h Pch.cpp MaxComponent_HEADERS MaxComponent_SOURCES)
 add_library(MaxComponent
             STATIC
             ${MaxComponent_HEADERS}

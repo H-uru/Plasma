@@ -39,19 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plInventoryObjComponent.h"                            //Inventory Dependencies
 
-#include "resource.h"                                           //Resource Dependencies
-#include "hsResMgr.h"                       // Ibid
-    
-#include "plComponent.h"                                        //Component Dependencies
-#include "plComponentReg.h"                                     // Ibid
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+
+#include "plComponent.h"
+#include "plComponentReg.h"
+#include "plActivatorBaseComponent.h"
+#include "plResponderComponent.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+
+#pragma hdrstop
+
+#include "plInventoryObjComponent.h"
+
 #include "pnSceneObject/plSceneObject.h"                     // Ibid
 #include "pnKeyedObject/hsKeyedObject.h"                     // Ibid
-#include "MaxMain/plMaxNode.h"                               // Ibid
-#include "plResponderComponent.h"
-
 
 #include "plPhysical/plCollisionDetector.h"                     //Modifiers Dependencies
 #include "plModifier/plLogicModifier.h"                         // Ibid

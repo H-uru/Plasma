@@ -39,8 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-class plComponentClassDesc;
+
 class plAutoUIBlock;
+class plComponentClassDesc;
 
 #define PYTHON_FILE_CID Class_ID(0x670d3629, 0x559e4f11)
 

@@ -39,16 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "resource.h"
 #include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include <max.h>
+#include <iparamm2.h>
+
+#include "MaxMain/MaxCompat.h"
+#include "MaxMain/plMaxNodeBase.h"
+#include "resource.h"
+#pragma hdrstop
 
 #include "pfGUISkinComp.h"
 #include "plGUICompClassIDs.h"
-
-#include "MaxMain/plMaxNodeBase.h"
-#include "MaxMain/MaxCompat.h"
 
 
 pfGUISkinEditProc   *pfGUISkinEditProc::fInstance = nil;

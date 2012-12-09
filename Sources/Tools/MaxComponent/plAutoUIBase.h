@@ -42,12 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAutoUIBase_h_inc
 #define plAutoUIBase_h_inc
 
-//#include "max.h"
-//#include "plComponentBase.h"
-//#include "plComponentReg.h"
-
-#include "HeadSpin.h"
-
 #include <vector>
 
 class ParamBlockDesc2;

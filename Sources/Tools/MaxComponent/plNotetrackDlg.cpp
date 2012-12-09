@@ -39,12 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsWindows.h"
+
+#include <iparamb2.h>
+#include <max.h>
+#pragma hdrstop
+
 #include "plNoteTrackDlg.h"
 #include "plNotetrackAnim.h"
 
-#include "max.h"
-#include "iparamb2.h"
 #include "plInterp/plAnimEaseTypes.h"
 
 plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID(-1), fLoopID(-1), fSegMap(nil), fOwner(nil)

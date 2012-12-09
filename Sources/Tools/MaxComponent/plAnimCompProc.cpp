@@ -39,15 +39,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+#include "plAnimComponent.h"
+#include "plComponentBase.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <iparamm2.h>
+#include <set>
+#pragma hdrstop
+
 #include "plAnimCompProc.h"
 
-#include "MaxMain/plMaxNode.h"
-#include "plComponentBase.h"
-
 #include "plPickNode.h"
-#include "plAnimComponent.h"
+#include "plPickNodeBase.h"
+#include "plNotetrackAnim.h"
 #include "plInterp/plAnimEaseTypes.h"
+
+#include "plPickMaterialMap.h"
+#include "MaxMain/plMtlCollector.h"
 
 plAnimCompProc::plAnimCompProc() :
     fCompButtonID(0),
@@ -295,8 +304,6 @@ void plMtlAnimProc::IUpdateNodeButton(HWND hWnd, IParamBlock2* pb)
     ILoadAnimCombo(hWnd, pb);
 }
 
-#include "plNotetrackAnim.h"
-
 void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
 {
     HWND hAnim = GetDlgItem(hWnd, fAnimComboID);
@@ -330,9 +337,6 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     // Update the dependencies of this
     ILoadUser(hWnd, pb);
 }
-
-#include "plPickMaterialMap.h"
-#include "MaxMain/plMtlCollector.h"
 
 void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
 {
@@ -394,9 +398,6 @@ Mtl* plMtlAnimProc::IGetMtl(IParamBlock2* pb)
     else
         return pb->GetMtl(fMtlParamID);
 }
-
-
-#include "plPickNodeBase.h"
 
 static const char* kUserTypeAll = "(All)";
 

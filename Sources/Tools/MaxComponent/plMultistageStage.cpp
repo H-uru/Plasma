@@ -39,13 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plMultistageStage.h"
-#include "max.h"
 #include "hsStream.h"
+#include "hsWindows.h"
+
+#include <iparamb2.h>
+#include <max.h>
+
 #include "resource.h"
+#pragma hdrstop
 
-
+#include "plMultistageStage.h"
 #include "plAvatar/plAnimStage.h"
 
 plBaseStage::plBaseStage()

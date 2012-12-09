@@ -39,13 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plResponderMtl.h"
-#include "plResponderComponentPriv.h"
-#include "resource.h"
-#include "max.h"
+
+#include <algorithm>
+#include <set>
+#include <vector>
 
 #include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "plResponderMtl.h"
+#include "plResponderComponentPriv.h"
 
 #include "MaxPlasmaMtls/Materials/plDecalMtl.h"
 #include "MaxPlasmaMtls/Materials/plPassMtl.h"
@@ -64,10 +72,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Needed for convert
 #include "plMessage/plAnimCmdMsg.h"
-
-#include <set>
-#include <vector>
-#include <algorithm>
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 

@@ -39,26 +39,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+
 #include "plCameraComponent.h"
-#include "resource.h"
-#include "plComponent.h"
 #include "plComponentReg.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <iparamm2.h>
+#include "resource.h"
+#pragma hdrstop
+
+
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plSimulationInterface.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plKey.h"
 
 #include "plPhysical/plCollisionDetector.h"  // MM
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plCameraMsg.h"
 
-#include "hsResMgr.h"
-#include "MaxMain/plMaxNode.h"
 #include "MaxConvert/plConvert.h"
 
 #include "MaxMain/plPhysicalProps.h"
-//#include "plHavok1/plHKPhysicsGroups.h"
 
 void DummyCodeIncludeFuncCamera() {}
 

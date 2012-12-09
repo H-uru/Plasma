@@ -40,48 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plOneShotComponent.h"
-
-#include "resource.h"
-#include "plComponent.h"
-#include "plComponentReg.h"
-
-#include "MaxMain/plMaxNode.h"
-#if 0
-#include "MaxConvert/hsConverterUtils.h"
-
-#include "pnSceneObject/plSceneObject.h"
-
-#include "plgDispatch.h"
-#include "plScene/plSceneNode.h"
-#include "MaxConvert/hsConverterUtils.h"
-#include "MaxConvert/hsControlConverter.h"
-#include "pnKeyedObject/plKey.h"
-
-
-#include "plResMgr/plLoc.h"
-
-
-#include "MaxMain/plPlasmaRefMsgs.h"
-#include "pnMessage/plNodeRefMsg.h"
-#include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plIntRefMsg.h"
-
-#include "plMaxAnimUtils.h"
-#include "tempAnim.h"
-#include "plInterp/plController.h"
-#include "plHavok1/plHKPhysical.h"
-#include "plAvatar/plAvatarMod.h"
-#include "plModifier/plAliasModifier.h"
-#include "plAudible/plWinAudible.h"
-#include "pnSceneObject/plAudioInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#endif
-
 #include "hsResMgr.h"
-#include "plAvatar/plOneShotMod.h"
 
 #include <map>
+
+#include "plComponent.h"
+#include "plComponentReg.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+#pragma hdrstop
+
+#include "plOneShotComponent.h"
+#include "plAvatar/plOneShotMod.h"
 
 
 void DummyCodeIncludeFuncSingleSht() {}
@@ -93,7 +63,7 @@ void DummyCodeIncludeFuncSingleSht() {}
 //
 enum
 {
-    kAnimName,          // Insert in v1
+    kOneShotAnimName,   // Insert in v1
     kStartPtBool_DEAD,  // Insert in v1     // obsolete
     kStartPt_DEAD,      // Insert in v1     // obsolete
     kTriggerVolBool,    // Insert in v1
@@ -161,7 +131,7 @@ ParamBlockDesc2 gOneShotBlock
     IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, NULL,
 
     //params
-    kAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
+    kOneShotAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_COMP_ONESHOT_ANIM_TEXTBOX,
         end,
 
@@ -210,7 +180,7 @@ plKey plOneShotComponent::GetOneShotKey(plMaxNode *node)
 
 bool plOneShotComponent::IsValid()
 {
-    const char *animName = fCompPB->GetStr(kAnimName);
+    const char *animName = fCompPB->GetStr(kOneShotAnimName);
     return (animName && *animName != '\0');
 }
 
@@ -255,7 +225,7 @@ bool plOneShotComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     if (fMods.find(node) != fMods.end())
     {
-        const char *animName = fCompPB->GetStr(kAnimName);
+        const char *animName = fCompPB->GetStr(kOneShotAnimName);
         bool drivable = fCompPB->GetInt(kControlSpeedBool);
         bool reversable = fCompPB->GetInt(kPlayBackwardsBool);
         float seekDuration = fCompPB->GetFloat(kSeekTimeFloat);

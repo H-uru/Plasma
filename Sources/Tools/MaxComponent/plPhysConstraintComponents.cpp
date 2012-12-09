@@ -39,14 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "hsWindows.h"
+
+#include "plComponent.h"
+#include "plComponentReg.h"
+#pragma hdrstop
+
 void DummyCodeIncludeFuncPhysConst()
 {
 }
 
-
-#include "HeadSpin.h"
-#include "plComponent.h"
-#include "plComponentReg.h"
 #define PHYS_CONST_HINGE_CID    Class_ID(0x790b1637, 0x32c94144)
 #define PHYS_CONST_WHEEL_CID    Class_ID(0x6e2958dc, 0x62e86e87)
 #define PHYS_CONST_SS_CID       Class_ID(0x14843886, 0x62a24e94)

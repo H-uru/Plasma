@@ -39,14 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include <algorithm>
+
+#include "plComponentBase.h"
+#include "MaxMain/plMaxNode.h"
+#pragma hdrstop
+
 #include "plAutoUIParams.h"
 
 #include "MaxMain/plMaxAccelerators.h"
 
-#include <algorithm>
-#include "MaxMain/plMaxNode.h"
-#include "plComponentBase.h"
+#include "plPickNode.h"
+#include "plPickMaterialMap.h"
+#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+#include "plSurface/plLayerInterface.h"
+#include "plGImage/plDynamicTextMap.h"
 
 plAutoUIParam::plAutoUIParam(ParamID id, const char *name) :
     fID(id), fName(hsStrcpy(name)), fVisID(-1), fHeight(0)
@@ -445,8 +454,6 @@ const char* plEditParam::GetString(IParamBlock2 *pb)
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-#include "plPickNode.h"
 
 plPickListParam::plPickListParam(ParamID id, const char *name, std::vector<Class_ID>* filter) :
     plAutoUIParam(id, name), fhList(nil), fhAdd(nil), fhRemove(nil)
@@ -879,11 +886,6 @@ plComponentBase *plPickActivatorListParam::GetComponent(IParamBlock2 *pb, int id
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-#include "plPickMaterialMap.h"
-#include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
-#include "plSurface/plLayerInterface.h"
-#include "plGImage/plDynamicTextMap.h"
 
 plPickDynamicTextButtonParam::plPickDynamicTextButtonParam(ParamID id, const char *name) :
     plPickButtonParam(id, name, nil, false)

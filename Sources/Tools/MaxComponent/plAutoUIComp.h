@@ -41,9 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plAutoUIBase.h"
 
-#include "max.h"
 #include "plComponentBase.h"
 #include "plComponentReg.h"
+
+class INode;
 
 class plAutoUIComp : public plAutoUIBase
 {

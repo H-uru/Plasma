@@ -39,19 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plBehavioralComponents.h"
+#include "hsResMgr.h"
+
 #include "plComponentReg.h"
+#include "plBehavioralComponents.h"
+#include "plResponderComponent.h"
+#include "MaxMain/plMaxNode.h"
 #include "resource.h"
 
-#include "MaxMain/plMaxNode.h"
+#include <iparamm2.h>
+#pragma hdrstop
+
 #include "MaxMain/plPhysicalProps.h"
-#include "hsResMgr.h"
-#include "pnKeyedObject/plKey.h"
 
 #include "plAvatar/plSittingModifier.h"
-#include "plResponderComponent.h"
-
 #include "plPickNode.h"
 
 void DummyCodeIncludeFuncBehaviors() {}

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLAVATARCOMPONENT_H__
 #define __PLAVATARCOMPONENT_H__
 
-#include "max.h"
 #include "plAvatar/plCritterCommands.h"
 #include "plAvatar/plPuppetCommands.h"
 

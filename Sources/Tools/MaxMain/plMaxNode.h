@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "hsMatrix44.h"
-#include "iparamb2.h"
 #include "pnKeyedObject/plKey.h"
 #include <map>
 

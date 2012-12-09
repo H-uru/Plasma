@@ -42,12 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLNOTETRACKDLG_INC
 #define PLNOTETRACKDLG_INC
 
-#include "HeadSpin.h"
-  // For HWND
 #include "plMaxAnimUtils.h"
 
-class IParamBlock2;
 class Animatable;
+class IParamBlock2;
 
 class plNoteTrackDlg
 {
