@@ -43,15 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // rebuilt unless completely necessary -Colin
 
 #include "HeadSpin.h"
+#pragma hdrstop
+
 #include "pnNucleusCreatables.h"
 #include "plAllCreatables.h"
 
-//#include "pfAllCreatables.h"
 #include "pfCharacter/pfCharacterCreatable.h"
 #include "pfCamera/pfCameraCreatable.h"
 #include "pfAnimation/pfAnimationCreatable.h"
 #include "pfConditional/plConditionalObjectCreatable.h"
-//#include "pfConsole/pfConsoleCreatable.h"
 #include "pfSurface/pfSurfaceCreatable.h"
 #include "pfMessage/pfMessageCreatable.h"
 #include "pfAudio/pfAudioCreatable.h"

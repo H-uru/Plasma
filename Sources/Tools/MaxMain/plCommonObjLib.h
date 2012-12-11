@@ -65,16 +65,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plCommonObjLib_h
 #define _plCommonObjLib_h
 
-#include "hsTemplates.h"
-
+class plCommonObjLibList;
+class plKey;
+class hsKeyedObject;
 class plString;
-
 
 //// Class Definition /////////////////////////////////////////////////////////
 
-class plCommonObjLibList;
-class hsKeyedObject;
-class plKey;
 class plCommonObjLib
 {
     protected:

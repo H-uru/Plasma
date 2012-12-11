@@ -39,20 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPhysXCooking.h"
+
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsSTLStream.h"
+#pragma hdrstop
+
+#include <Nx.h>
+#include <NxStream.h>
+#include <NxPhysics.h>
+#include <NxCooking.h>
+#include <NxPlane.h>
+#include <NxUtilLib.h>
+#include <NxMat33.h>
+
+#include "plMaxMeshExtractor.h"
+
+#include "plPhysXCooking.h"
 #include "plPhysX/plSimulationMgr.h"
 #include "plPhysX/plPXStream.h"
 #include "plPhysX/plPXConvert.h"
-#include "hsSTLStream.h"
 
-#include "Nx.h"
-#include "NxStream.h"
-#include "NxPhysics.h"
-#include "NxCooking.h"
-#include "NxPlane.h"
-#include "NxUtilLib.h"
-#include "NxMat33.h"
 bool plPhysXCooking::fSkipErrors = false;
 
 NxUtilLib* plPhysXCooking::fUtilLib =nil;

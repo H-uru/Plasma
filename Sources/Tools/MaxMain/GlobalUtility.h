@@ -42,13 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA_MAX_H
 #define PLASMA_MAX_H
 
-class BitmapManager;
-class Texmap;
-
-#include "max.h"
-#include "guplib.h"
-#include "HeadSpin.h"
 #include <string>
+
+class BitmapManager;
+class ClassDesc;
+class GUP;
+class Texmap;
 
 #define PLASMA_MAX_CLASSID Class_ID(0x3d494269, 0x103c5c5f)
 

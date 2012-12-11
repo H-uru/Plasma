@@ -40,20 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-#include <comutil.h>
-#include <vector>
-
-using std::vector;
-
-class ISpinnerControl;
 class plAgeDescription;
 class plAgeFile;
+class MaxAssBranchAccess;
+class ISpinnerControl;
 
 typedef struct _TREEITEM    *HTREEITEM;
 
-class MaxAssBranchAccess;
 class plAgeDescInterface
 {
 protected:
@@ -75,8 +68,7 @@ protected:
     HFONT       fBoldFont;
     HBRUSH      fHiliteBrush;
 
-    vector<plAgeFile*> fAgeFiles;
-//   vector<_variant_t> fAssetIds;
+    std::vector<plAgeFile*> fAgeFiles;
    
     MaxAssBranchAccess  *fAssetManIface;
 
@@ -95,9 +87,9 @@ public:
     static void BuildAgeFileList( hsTArray<char *> &ageList );
 
 protected:
-    static int IFindAge(const char* ageName, vector<plAgeFile*>& ageFiles);
-    static void IGetAgeFiles(vector<plAgeFile*>& ageFiles);
-    static void IClearAgeFiles(vector<plAgeFile*>& ageFiles);
+    static int IFindAge(const char* ageName, std::vector<plAgeFile*>& ageFiles);
+    static void IGetAgeFiles(std::vector<plAgeFile*>& ageFiles);
+    static void IClearAgeFiles(std::vector<plAgeFile*>& ageFiles);
 
     void IResetParams();
     

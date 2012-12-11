@@ -39,17 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+
+#include "MaxComponent/plComponentBase.h"
+#include "plMaxNode.h"
+
+#include <guplib.h>
+#pragma hdrstop
+
 #include "GlobalUtility.h"
 
-#include "hsResMgr.h"
-#include "plMaxNode.h"
 #include "MaxSceneViewer/SceneSync.h"
 
 #include "MaxComponent/ComponentDummies.h"
 #include "plActionTableMgr.h"
 #include "plMaxMenu.h"
-#include "MaxComponent/plComponentBase.h"
 #include "MaxSceneViewer/plMaxFileData.h"
 #include "pfPython/cyPythonInterface.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
@@ -165,7 +171,6 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncInventStuff();      //Inventory Object comp
     DummyCodeIncludeFuncVolumeGadget();     // inside/enter/exit phys volume activator
 //  DummyCodeIncludeFuncActivatorGadget();  // activator activator
-    DummyCodeIncludeFuncImpactGadget();     // collision activator
     DummyCodeIncludeFuncSoftVolume();       // Soft Volumes
     DummyCodeIncludeFuncPhysConst();        // Phys Constraints
     DummyCodeIncludeFuncCameras();          // new camera code

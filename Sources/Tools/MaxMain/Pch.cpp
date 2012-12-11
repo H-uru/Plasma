@@ -39,28 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plMaxMeshExtractor_h_inc
-#define plMaxMeshExtractor_h_inc
 
-struct hsMatrix44;
-class plMaxNode;
+#include "Pch.h"
 
-class plMaxMeshExtractor
-{
-public:
-    struct NeutralMesh
-    {
-        int fNumVerts;
-        hsPoint3* fVerts;
-        int fNumFaces;
-        uint16_t* fFaces;
-
-        hsMatrix44 fL2W;
-    };
-
-    // Converts a max node into a position, rotation, and arrays of verts and faces
-    // relative to those.
-    static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nil);
-};
-
-#endif // plMaxMeshExtractor_h_inc
+/** 
+ * \file Pch.cpp
+ * \brief Precompiled Header object for MaxMain
+ *
+ * This file prompts MSVC to generate a PCH file for the MaxMain project. It
+ * has no function if precompiled headers are disabled in cmake.
+ */

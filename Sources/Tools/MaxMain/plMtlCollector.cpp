@@ -39,7 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include <set>
+
+#include "MaxMain/plMaxNodeBase.h"
+#include <iparamb2.h>
+#pragma hdrstop
+
 #include "plMtlCollector.h"
 
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
@@ -51,11 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaMtls/Materials/plPassMtl.h"
 #include "MaxPlasmaMtls/Materials/plClothingMtl.h"
 
+#include "MaxComponent/plMiscComponents.h"
 #include "MaxComponent/plGUIComponents.h"
 #include "MaxComponent/pfGUISkinComp.h"
-#include "MaxComponent/plMiscComponents.h"
 
-#include "MaxMain/plMaxNodeBase.h"
 
 static bool IsPlasmaMtl(Mtl *mtl)
 {

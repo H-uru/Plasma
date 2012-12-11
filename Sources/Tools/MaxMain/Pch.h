@@ -39,28 +39,73 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plMaxMeshExtractor_h_inc
-#define plMaxMeshExtractor_h_inc
 
-struct hsMatrix44;
-class plMaxNode;
+#ifndef _MaxMain_Pch_inc_
+#define _MaxMain_Pch_inc_
 
-class plMaxMeshExtractor
-{
-public:
-    struct NeutralMesh
-    {
-        int fNumVerts;
-        hsPoint3* fVerts;
-        int fNumFaces;
-        uint16_t* fFaces;
+/** 
+ * \file Pch.h
+ * \brief Precompiled Header for MaxMain
+ */
 
-        hsMatrix44 fL2W;
-    };
+// STL
+#include <algorithm>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
-    // Converts a max node into a position, rotation, and arrays of verts and faces
-    // relative to those.
-    static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nil);
-};
+// Core Plasma
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "plgDispatch.h"
+#include "hsFastMath.h"
+#include "hsFiles.h"
+#include "hsGeometry3.h"
+#include "pnKeyedObject/plKey.h"
+#include "plLoadMask.h"
+#include "hsMatrix44.h"
+#include "plRenderLevel.h"
+#include "hsSTLStream.h"
+#include "hsStream.h"
+#include "hsStringTokenizer.h"
+#include "hsTemplates.h"
 
-#endif // plMaxMeshExtractor_h_inc
+// Windows
+#include "hsWindows.h"
+#include <CommDlg.h>
+#include <comutil.h>
+#include <direct.h>
+
+// PlasmaMax Stuff included everywhere
+// Some of these files may pull in Max SDK headers, so put this below hsWindows.h!
+#include "plMaxNode.h"
+#include "plMaxNodeData.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxComponent/plComponentReg.h"
+
+// Misc Max SDK
+#include <bmmlib.h>
+#include <CustAttrib.h>
+#include <ICustAttribContainer.h>
+#include <custcont.h>
+#include <guplib.h>
+#include <iMenuMan.h>
+#include <IMtlEdit.h>
+#include <iskin.h>
+#include <istdplug.h>
+#include <maxversion.h>
+#include <mnmath.h>
+#include <modstack.h>
+#include <notify.h>
+#include <pbbitmap.h>
+
+// Utility
+#include "MaxCompat.h"
+#include "resource.h"
+
+// Python
+#include <Python.h>
+
+#endif // _MaxMain_Pch_inc_

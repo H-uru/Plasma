@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPluginResManager_h_inc
 #define plPluginResManager_h_inc
 
+#include "hsResMgr.h"
 #include "plResMgr/plResManager.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
+class plKey;
+class plLocation;
 class plPageInfo;
 class plRegistryPageNode;
 class plSceneNode;

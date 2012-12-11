@@ -39,12 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "max.h"
-#include "notify.h"
 
-#include <vector>
-
+class Class_ID;
+class Interface;
 class plMaxNode;
+struct NotifyInfo;
 
 class plComponentDlg
 {

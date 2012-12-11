@@ -39,26 +39,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "iparamm2.h"
-#include "iparamb2.h"
-#include "ISkin.h"
-#include "MNMath.h"
+#include "plgDispatch.h"
+#include "hsFastMath.h"
+#include "pnKeyedObject/plKey.h"
+#include "plRenderLevel.h"
+#include "hsSTLStream.h"
+#include "hsStringTokenizer.h"
+#include "hsTemplates.h"
 
 #include "plMaxNode.h"
-//#include "MaxComponent/resource.h"
-#include "GlobalUtility.h"
-
-#include "plgDispatch.h"
-#include "plPluginResManager.h"
 #include "plMaxNodeData.h"
+#include "MaxComponent/plComponent.h"
 
+#include <guplib.h>
+#include <iparamm2.h>
+#include <iskin.h>
+#include <mnmath.h>
+#include <utilapi.h>
+#pragma hdrstop
+
+#include "GlobalUtility.h"
+#include "plPluginResManager.h"
 
 #include "MaxConvert/plConvert.h"
-#include "hsTemplates.h"
-#include "hsStringTokenizer.h"
-
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/hsControlConverter.h"
 #include "MaxConvert/plMeshConverter.h"
@@ -70,8 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxConvert/plLightMapGen.h"
 #include "plMaxMeshExtractor.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
-
-#include "pnKeyedObject/plKey.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "plScene/plSceneNode.h"
@@ -103,8 +106,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/plViewFaceModifier.h" // mf horse temp hack testing to be thrown away
 
 #include "plScene/plOccluder.h"
-#include "hsFastMath.h"
-
 
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plGeometrySpan.h"
@@ -124,8 +125,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxPlasmaMtls/Materials/plDecalMtl.h"
 
+#include "MaxComponent/plAnimComponent.h"
 #include "MaxComponent/plComponentTools.h"
-#include "MaxComponent/plComponent.h"
 #include "MaxComponent/plComponentExt.h"
 #include "MaxComponent/plFlexibilityComponent.h"
 #include "MaxComponent/plLightMapComponent.h"
@@ -163,8 +164,6 @@ static plKey ExternGetNewKey(const plString &name, plModifier *mod, plLocation l
 int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 // In plAudioComponents
 int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
-
-#include "MaxComponent/plAnimComponent.h"
 
 static plString GetAnimCompAnimName(plComponentBase *comp)
 {
@@ -619,7 +618,6 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 #include "plPhysXCooking.h"
 #include "plPhysX/plPXStream.h"
 #include "plPhysX/plSimulationMgr.h"
-#include "hsSTLStream.h"
 
 bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {

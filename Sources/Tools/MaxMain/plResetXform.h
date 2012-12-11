@@ -44,11 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plResetXform_inc
 
 class Interface;
-class INode;
-class TriObject;
-
 class plMaxNode;
+class INode;
 class INodeTab;
+class TriObject;
 
 class plResetXform
 {

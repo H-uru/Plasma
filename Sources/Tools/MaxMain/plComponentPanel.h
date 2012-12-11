@@ -39,12 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "max.h"
-#include "utilapi.h"
-#include "notify.h"
 
-class plMaxNode;
 class plComponentBase;
+class Interface;
+class plMaxNode;
+class IUtil;
+class UtilityObj;
 
 class plComponentUtil : public UtilityObj
 {

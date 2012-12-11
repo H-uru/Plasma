@@ -40,20 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plAgeDescInterface.h"
-#include "max.h"
-#include "resource.h"
 #include "hsFiles.h"
+#include "hsStream.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include <max.h>
+#include <string>
+#include <vector>
+
+#include "resource.h"
+#pragma hdrstop
+
+#include "plAgeDescInterface.h"
+
 #include "plAgeDescription/plAgeDescription.h"
 #include "plMaxCFGFile.h"
-#include "hsStream.h"
+
 
 #ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#   include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
 #include "plMaxAccelerators.h"
 
-#include <string>
 using std::string;
 
 extern HINSTANCE hInstance;
@@ -149,8 +158,10 @@ plAgeDescInterface::~plAgeDescInterface()
     DeleteObject( fHiliteBrush );
     fBoldFont = nil;
 
+#ifdef MAXASS_AVAILABLE
     delete fAssetManIface;
     fAssetManIface = nil;
+#endif
 }
 
 plAgeDescInterface& plAgeDescInterface::Instance()
@@ -828,7 +839,7 @@ bool plAgeDescInterface::IGetLocalAgePath(char *path)
     return true;
 }
 
-int plAgeDescInterface::IFindAge(const char* ageName, vector<plAgeFile*>& ageFiles)
+int plAgeDescInterface::IFindAge(const char* ageName, std::vector<plAgeFile*>& ageFiles)
 {
     for (int i = 0; i < ageFiles.size(); i++)
         if (ageFiles[i]->fAgeName == ageName)
@@ -837,7 +848,7 @@ int plAgeDescInterface::IFindAge(const char* ageName, vector<plAgeFile*>& ageFil
     return -1;
 }
 
-void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
+void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
 {
     IClearAgeFiles(ageFiles);
 
@@ -894,7 +905,7 @@ void plAgeDescInterface::IGetAgeFiles(vector<plAgeFile*>& ageFiles)
 #endif
 }
 
-void plAgeDescInterface::IClearAgeFiles(vector<plAgeFile*>& ageFiles)
+void plAgeDescInterface::IClearAgeFiles(std::vector<plAgeFile*>& ageFiles)
 {
     for (int i = 0; i < ageFiles.size(); i++)
         delete ageFiles[i];
@@ -903,7 +914,7 @@ void plAgeDescInterface::IClearAgeFiles(vector<plAgeFile*>& ageFiles)
 
 void plAgeDescInterface::BuildAgeFileList( hsTArray<char *> &ageList )
 {
-    vector<plAgeFile*> tempAgeFiles;
+    std::vector<plAgeFile*> tempAgeFiles;
     IGetAgeFiles(tempAgeFiles);
 
     for (int i = 0; i < tempAgeFiles.size(); i++)

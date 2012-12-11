@@ -40,16 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsFiles.h"
+#include "plgDispatch.h"
+#include "hsWindows.h"
+
+#include <Python.h>
+#include <string>
+#include <vector>
+
+#include <iparamb2.h>
+#include <max.h>
+#pragma hdrstop
+
 #include "plPythonMgr.h"
+#include "plMaxCFGFile.h"
 
 #include "MaxComponent/plAutoUIBlock.h"
-//#include "Python.h"
-#include "plMaxCFGFile.h"
-#include "hsFiles.h"
-
-#include "plgDispatch.h"
+#include "MaxComponent/plPythonFileComponent.h"
+#include "MaxComponent/plResponderComponent.h"
 #include "pfPython/cyPythonInterface.h"
-
 
 plPythonMgr::plPythonMgr()
 {
@@ -126,10 +135,6 @@ bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
 
     return false;
 }
-
-
-#include "MaxComponent/plPythonFileComponent.h"
-
 
 enum ParamTypes
 {
@@ -564,8 +569,6 @@ void plPythonMgr::IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, char *para
 {
     autoUI->AddPickGUISkinButton(id, nil, paramName, vid, vstates);
 }
-
-#include "MaxComponent/plResponderComponent.h"
 
 void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {

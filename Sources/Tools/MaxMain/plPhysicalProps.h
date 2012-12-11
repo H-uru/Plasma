@@ -42,11 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalProps_h_inc
 #define plPhysicalProps_h_inc
 
-#include "HeadSpin.h"
-#include "..\..\NucleusLib\pnKeyedObject\plKey.h"
-
-class plMaxNode;
 class plErrorMsg;
+class plMaxNode;
 
 class plPhysicalProps
 {
