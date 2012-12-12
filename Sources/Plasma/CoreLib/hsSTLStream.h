@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _hsSTLStream_h_inc_
+#define _hsSTLStream_h_inc_
+
 #include "hsStream.h"
 #include "hsStlUtils.h"
 
@@ -82,3 +86,5 @@ public:
     // In case you want to try and be efficient with your memory allocations
     void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
 };
+
+#endif // _hsSTLStream_h_inc_
