@@ -53,9 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plRTObjLightDesc_h
 #define _plRTObjLightDesc_h
 
-#include "plRealTimeLightBase.h"
-#include "resource.h"
-
+class plRTLightBase;
 class plMaxNode;
 
 //// AttenRanges Class ////////////////////////////////////////////////////////

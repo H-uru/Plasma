@@ -51,14 +51,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "plRealTimeLights.h"
+#pragma hdrstop
+
 #include "plRTProjDirLight.h"
 #include "plRTProjDirLightClassDesc.h"
-#include "iparamm2.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 #include "plRTObjLightDesc.h"
-#include "plRTLightBaseAnimDlgProc.h"
 
 
 //// Static ClassDesc2 Get Functions //////////////////////////////////////////

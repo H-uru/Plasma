@@ -39,18 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plRealTimeLightBase.h"
+
 #include "plRealTimeLights.h"
-#include "plRTProjDirLightClassDesc.h"
+#include "MaxMain/MaxCompat.h"
+#pragma hdrstop
 
 #include "pnMessage/pnMessageCreatable.h"
 #include "pnKeyedObject/pnKeyedObjectCreatable.h"
 #include "pnNetCommon/pnNetCommonCreatable.h"
 
-#include "MaxMain/MaxCompat.h"
-
+#include "plRTProjDirLightClassDesc.h"
 #include "plSurface/plLayerInterface.h"
+
 REGISTER_NONCREATABLE( plLayerInterface );
 
 
