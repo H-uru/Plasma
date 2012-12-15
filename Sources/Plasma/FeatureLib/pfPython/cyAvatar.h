@@ -410,6 +410,9 @@ public:
 
     virtual void PlaySimpleAnimation(const plString& animName);
 
+    virtual void SaveClothingToFile(plFileName filename);
+    virtual void LoadClothingFromFile(plFileName filename);
+
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : ChangeAvatar
