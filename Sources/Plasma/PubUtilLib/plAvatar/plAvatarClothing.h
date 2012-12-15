@@ -224,6 +224,14 @@ public:
     // XXX Don't use this. Temp function for a temp HACK console command.
     void DirtyTileset(int tileset);
 
+    /** Write the avatar (clothing) to a file */
+    void WriteToFile(plFileName filename);
+    /** Read the avatar clothing from a file.
+     *  A local avatar will change the clothing group to the one in the file.
+     *  A local avatar will be invisible if the file does not exist. (used in the Startup age)
+     */
+    void ReadFromFile(plFileName filename);
+
 protected:
     hsBitVector fDirtyItems;
     bool fVaultSaveEnabled;

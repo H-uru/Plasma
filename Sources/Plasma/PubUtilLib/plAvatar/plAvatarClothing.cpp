@@ -804,6 +804,11 @@ void plClothingOutfit::IHandleMorphSDR(plStateDataRecord *sdr)
 
 void plClothingOutfit::ReadFromVault()
 {
+    if (plAvatarMgr::GetInstance()->GetClothingFile().IsValid()) {
+        ReadFromFile(plAvatarMgr::GetInstance()->GetClothingFile());
+        return;
+    }
+
     SetupMorphSDL();
 
     WearDefaultClothing();
@@ -1480,6 +1485,92 @@ void plClothingOutfit::SetupMorphSDL()
 
         fMorphsInitDone = true;
     }
+}
+
+void plClothingOutfit::WriteToFile(plFileName filename)
+{
+    if (!filename.IsValid())
+        return;
+
+    RelVaultNode* rvn = VaultGetAvatarOutfitFolderIncRef();
+    if (!rvn)
+        return;
+
+    hsUNIXStream S;
+    if (!S.Open(filename, "wb"))
+        return;
+
+    S.WriteByte(fGroup);
+
+    ARRAY(RelVaultNode*) nodes;
+    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);
+    S.WriteLE32(nodes.Count());
+    for (unsigned i = 0; i < nodes.Count(); ++i) {
+        VaultSDLNode sdl(nodes[i]);
+        S.WriteLE32(sdl.GetSDLDataLength());
+        if (sdl.GetSDLDataLength())
+            S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+        nodes[i]->DecRef();
+    }
+    rvn->DecRef();
+
+    S.Close();
+}
+
+void plClothingOutfit::ReadFromFile(plFileName filename)
+{
+    if (!filename.IsValid())
+        return;
+
+    bool isLocalAvatar = plAvatarMgr::GetInstance()->GetLocalAvatar()->GetClothingOutfit() == this;
+
+    hsUNIXStream S;
+    if (!S.Open(filename)) {
+        if (isLocalAvatar)
+            fAvatar->EnableDrawing(false);
+        return;
+    }
+
+    uint8_t gender = S.ReadByte();
+    if (gender != fGroup) {
+        if (isLocalAvatar) {
+            plAvatarMgr::GetInstance()->SetClothingFile(filename);
+            if (gender == plClothingMgr::kClothingBaseMale)
+                plClothingMgr::ChangeAvatar("Male");
+            else if (gender == plClothingMgr::kClothingBaseFemale)
+                plClothingMgr::ChangeAvatar("Female");
+        }
+        S.Close();
+        return;
+    }
+
+    fAvatar->EnableDrawing(true);
+    StripAccessories();
+
+    uint32_t nodeCount = S.ReadLE32();
+    for (unsigned i = 0; i < nodeCount; ++i) {
+        uint32_t dataLen = S.ReadLE32();
+        if (dataLen) {
+            plString sdlRecName;
+            int sdlRecVersion;
+            plStateDataRecord::ReadStreamHeader(&S, &sdlRecName, &sdlRecVersion);
+            plStateDescriptor* desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
+            if (desc) {
+                plStateDataRecord sdlDataRec(desc);
+                if (sdlDataRec.Read(&S, 0)) {
+                    if (sdlRecName == kSDLMorphSequence)
+                        IHandleMorphSDR(&sdlDataRec);
+                    else
+                        plClothingSDLModifier::HandleSingleSDR(&sdlDataRec, this);
+                }
+            }
+        }
+    }
+
+    S.Close();
+    plAvatarMgr::GetInstance()->ResetClothingFile();
+    fSynchClients = true;
+    ForceUpdate(true);
 }
 
 
