@@ -94,6 +94,7 @@ protected:
 
     friend class plDynaDecalMgr;
 public:
+    virtual ~plDynaDecal() { }
 
     virtual bool        Age(double t, float ramp, float decay, float life) = 0;
 };

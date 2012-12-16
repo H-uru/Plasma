@@ -170,7 +170,7 @@ class plGraphPlate : public plPlate
 
         void    SetDataRange( uint32_t min, uint32_t max, uint32_t width );
         void    SetDataLabels( uint32_t min, uint32_t max );
-        void    SetLabelText( char *text1, char *text2 = nil, char *text3 = nil, char *text4 = nil );
+        void    SetLabelText(const char *text1, const char *text2 = nil, const char *text3 = nil, const char *text4 = nil );
         void    SetLabelText( const std::vector<std::string> & text );
         void    ClearData( void );
 

@@ -423,12 +423,18 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
             ko = hsKeyedObject::ConvertNoRef(cre);
 
             if (ko != nil)
+            {
                 kResMgrLog(4, ILog(4, "   ...Creatable read and valid"));
+            }
             else
+            {
                 kResMgrLog(3, ILog(3, "   ...Creatable read from stream not keyed object!"));
+            }
 
             if (fProgressProc != nil)
+            {
                 fProgressProc(plKey::Make(pKey));
+            }
         }
         else
         {

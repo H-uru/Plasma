@@ -191,7 +191,7 @@ plMipmap* plPNG::ReadFromFile(const wchar_t* fileName)
     hsUNIXStream in;
 
     if (!in.Open(fileName, L"rb")) {
-        return false;
+        return nil;
     }
 
     plMipmap* ret = IRead(&in);
