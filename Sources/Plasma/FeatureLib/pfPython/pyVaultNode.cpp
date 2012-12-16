@@ -332,7 +332,7 @@ const char * pyVaultNode::GetCreateAgeGuid( void )
         
     if (fNode) {
         fCreateAgeGuid = (char*)malloc(64);
-        GuidToString(fNode->createAgeUuid, fCreateAgeGuid, 64);
+        strncpy(fCreateAgeGuid, plUUID(fNode->createAgeUuid).AsString().c_str(), 64);
     }
     
     return fCreateAgeGuid;

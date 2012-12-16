@@ -164,7 +164,8 @@ const char * pyVaultPlayerInfoNode::Player_GetAgeGuid( void )
         return "";
 
     VaultPlayerInfoNode playerInfo(fNode);
-    GuidToString(playerInfo.ageInstUuid, ansiAgeInstUuid, arrsize(ansiAgeInstUuid));
+
+    strncpy(ansiAgeInstUuid, plUUID(playerInfo.ageInstUuid).AsString().c_str(), 64);
     return ansiAgeInstUuid;
 }
 
