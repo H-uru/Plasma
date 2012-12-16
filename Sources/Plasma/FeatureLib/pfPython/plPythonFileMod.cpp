@@ -859,28 +859,29 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 // We should really let the script know about that via OnServerInitComplete anyway because it's
                 // not good to make assumptions about game state in workarounds for that method not being called
                 plNetClientApp* na = plNetClientApp::GetInstance();
-                if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) &&
-                     na->GetFlagsBit(plNetClientApp::kPlayingGame))
+                if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) && na->GetFlagsBit(plNetClientApp::kPlayingGame))
                 {
                     plgDispatch::Dispatch()->UnRegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
-                    plProfile_BeginTiming(PythonUpdate);
-                    // call it
-                    PyObject* retVal = PyObject_CallMethod(
-                            fPyFunctionInstances[kfunc_OnServerInitComplete],
-                            (char*)fFunctionNames[kfunc_OnServerInitComplete], nil);
-                    if ( retVal == nil )
+                    if (fPyFunctionInstances[kfunc_OnServerInitComplete])
                     {
+                        plProfile_BeginTiming(PythonUpdate);
+                        // call it
+                        PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
+                                (char*)fFunctionNames[kfunc_OnServerInitComplete], nil);
+                        if ( retVal == nil )
+                        {
 #ifndef PLASMA_EXTERNAL_RELEASE
-                        // for some reason this function didn't, remember that and not call it again
-                        fPyFunctionInstances[kfunc_OnServerInitComplete] = nil;
+                            // for some reason this function didn't, remember that and not call it again
+                            fPyFunctionInstances[kfunc_OnServerInitComplete] = nil;
 #endif  //PLASMA_EXTERNAL_RELEASE
-                        // if there was an error make sure that the stderr gets flushed so it can be seen
-                        ReportError();
+                            // if there was an error make sure that the stderr gets flushed so it can be seen
+                            ReportError();
+                        }
+                        Py_XDECREF(retVal);
+                        plProfile_EndTiming(PythonUpdate);
+                        // display any output (NOTE: this would be disabled in production)
+                        DisplayPythonOutput();
                     }
-                    Py_XDECREF(retVal);
-                    plProfile_EndTiming(PythonUpdate);
-                    // display any output (NOTE: this would be disabled in production)
-                    DisplayPythonOutput();
                 }
 
                 // display python output
