@@ -264,6 +264,11 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, isInternal)
     PYTHON_RETURN_BOOL(self->fThis->IsInternal());
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, isUsed)
+{
+    PYTHON_RETURN_BOOL(self->fThis->IsUsed());
+}
+
 PYTHON_START_METHODS_TABLE(ptSimpleStateVariable)
     PYTHON_METHOD(ptSimpleStateVariable, setByte, "Params: val,idx=0\nSets a byte variable's value"),
     PYTHON_METHOD(ptSimpleStateVariable, setShort, "Params: val,idx=0\nSets a short variable's value"),
@@ -285,6 +290,7 @@ PYTHON_START_METHODS_TABLE(ptSimpleStateVariable)
     PYTHON_METHOD_NOARGS(ptSimpleStateVariable, getDefault, "Returns the variable's default"),
     PYTHON_METHOD_NOARGS(ptSimpleStateVariable, isAlwaysNew, "Is this variable always new?"),
     PYTHON_METHOD_NOARGS(ptSimpleStateVariable, isInternal, "Is this an internal variable?"),
+    PYTHON_METHOD_NOARGS(ptSimpleStateVariable, isUsed, "Is this variable used?"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

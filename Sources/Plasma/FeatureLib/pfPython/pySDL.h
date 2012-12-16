@@ -141,6 +141,7 @@ public:
     const char *GetDefault() const;
     bool    IsAlwaysNew() const;
     bool    IsInternal() const;
+    bool    IsUsed() const;
 
 };
 
