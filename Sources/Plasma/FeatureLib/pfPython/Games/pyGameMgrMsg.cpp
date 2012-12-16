@@ -108,8 +108,8 @@ std::wstring pyGameMgrInviteReceivedMsg::GameTypeID() const
     if (message)
     {
         const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-        wchar_t buffer[256];
-        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
+        wchar_t buffer[64];
+        wcsncpy(buffer, plUUID(gmMsg->gameTypeId).AsString().ToWchar(), 64);
         return buffer;
     }
     return L"";
@@ -149,8 +149,8 @@ std::wstring pyGameMgrInviteRevokedMsg::GameTypeID() const
     if (message)
     {
         const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-        wchar_t buffer[256];
-        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
+        wchar_t buffer[64];
+        wcsncpy(buffer, plUUID(gmMsg->gameTypeId).AsString().ToWchar(), 64);
         return buffer;
     }
     return L"";

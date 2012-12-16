@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <uuid/uuid.h>
 
-COMPILER_ASSERT(sizeof(Uuid) >= sizeof(uuid_t));
+static_assert(sizeof(Uuid) >= sizeof(uuid_t), "UUID size does not match uuid_t");
 
 #else
 

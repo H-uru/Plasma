@@ -64,17 +64,3 @@ Uuid::Uuid (const wchar_t str[]) {
     
     GuidFromString(str, this);
 }
-
-//============================================================================
-Uuid::Uuid (const uint8_t buf[], unsigned length) {
-    
-    GuidFromHex(buf, length, this);
-}
-
-//============================================================================
-bool GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid) {
-
-    ASSERT(length == sizeof(uuid->data));
-    memcpy(uuid->data, buf, sizeof(uuid->data));
-    return true;
-}
