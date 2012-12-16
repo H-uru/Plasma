@@ -291,7 +291,8 @@ void plSpaceTree::HarvestEnabledLeaves(plVolumeIsect* cull, const hsBitVector& c
     if( IsEmpty() )
         return;
 
-    if((fCullFunc = cull))
+    fCullFunc = cull;
+    if (fCullFunc)
         IHarvestAndCullEnabledLeaves(fRoot, cache, list);
     else
         IHarvestEnabledLeaves(fRoot, cache, list);
@@ -372,7 +373,8 @@ void plSpaceTree::HarvestLeaves(plVolumeIsect* cull, hsBitVector& list) const
 {
     if( !IsEmpty() )
     {
-        if((fCullFunc = cull))
+        fCullFunc = cull;
+        if (fCullFunc)
             IHarvestAndCullLeaves(fTree[fRoot], scratchTotVec, list);
         else
             IHarvestLeaves(fTree[fRoot], scratchTotVec, list);

@@ -7,8 +7,11 @@ if(WIN32 AND NOT CYGWIN)
 endif(WIN32 AND NOT CYGWIN)
 if(UNIX)
     add_definitions(-DHS_BUILD_FOR_UNIX)
-    add_definitions(-std=c++0x)
 endif(UNIX)
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=c++0x)
+endif()
 # End HeadSpin Configuration
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
