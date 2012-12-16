@@ -318,7 +318,7 @@ def GetNeighborhood():
     try:
         return ptVault().getLinkToMyNeighborhood().getAgeInfo()
     except AttributeError:
-        PtDebugPrint("xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
+        PtDebugPrint(u"xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
         return None
 
 ## Find the player's neighbors.
@@ -327,7 +327,7 @@ def GetNeighbors():
     try:
         return GetNeighborhood().getAgeOwnersFolder()
     except AttributeError:
-        PtDebugPrint("xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
+        PtDebugPrint(u"xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
         return None
 
 ## Sends a notification message to a script.
