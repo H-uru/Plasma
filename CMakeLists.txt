@@ -7,6 +7,7 @@ if(WIN32 AND NOT CYGWIN)
 endif(WIN32 AND NOT CYGWIN)
 if(UNIX)
     add_definitions(-DHS_BUILD_FOR_UNIX)
+    add_definitions(-std=c++0x)
 endif(UNIX)
 # End HeadSpin Configuration
 

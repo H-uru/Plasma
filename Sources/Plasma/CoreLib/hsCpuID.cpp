@@ -40,7 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <intrin.h>
+#if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
+#  include <intrin.h>
+#  define MSC_COMPATIBLE
+#elif defined(__GNUC__)
+#  include <cpuid.h>
+#  define GCC_COMPATIBLE
+#endif
 
 #include "hsCpuID.h"
 
@@ -53,15 +59,43 @@ hsCpuId::hsCpuId() {
     const unsigned int sse42_flag = 1<<20;
     const unsigned int avx_flag = 1 << 28;
 
-    unsigned int cpu_info[4];
-    __cpuid((int*)cpu_info, 1);
-    has_sse1 = (cpu_info[3] & sse1_flag) || false;
-    has_sse2 = (cpu_info[3] & sse2_flag) || false;
-    has_sse3 = (cpu_info[2] & sse3_flag) || false;
-    has_ssse3 = (cpu_info[2] & ssse3_flag) || false;
-    has_sse41 = (cpu_info[2] & sse41_flag) || false;
-    has_sse42 = (cpu_info[2] & sse42_flag) || false;
-    has_avx = (cpu_info[2] & avx_flag) || false;
+    unsigned int ax = 0, bx = 0, cx = 0, dx = 0;
+
+
+    /**
+     * Portable implementation of CPUID, successfully tested with:
+     *   - Microsoft Visual Studio 2010,
+     *   - GNU GCC 4.5,
+     *   - Intel C++ Compiler 12.0
+     *   - Sun Studio 12,
+     *   - AMD x86 Open64 Compiler Suite.
+     *
+     * Ref: http://primesieve.googlecode.com/svn-history/r388/trunk/soe/cpuid.h
+     */
+    #if defined(MSC_COMPATIBLE)
+      int CPUInfo[4] = {ax, bx, cx, dx};
+      __cpuid(CPUInfo, 0);
+
+      // check if the CPU supports the cpuid instruction.
+      if (CPUInfo[0] != 0) {
+        __cpuid(CPUInfo, 1);
+        ax = CPUInfo[0];
+        bx = CPUInfo[1];
+        cx = CPUInfo[2];
+        dx = CPUInfo[3];
+      }
+    #elif defined(GCC_COMPATIBLE)
+      __get_cpuid(1, &ax, &bx, &cx, &dx);
+    #endif
+
+
+    has_sse1    = (dx & sse1_flag)  || false;
+    has_sse2    = (dx & sse2_flag)  || false;
+    has_sse3    = (cx & sse3_flag)  || false;
+    has_ssse3   = (cx & ssse3_flag) || false;
+    has_sse41   = (cx & sse41_flag) || false;
+    has_sse42   = (cx & sse42_flag) || false;
+    has_avx     = (cx & avx_flag)   || false;
 }
 
 const hsCpuId& hsCpuId::instance()
