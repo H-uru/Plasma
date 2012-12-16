@@ -55,7 +55,7 @@ void PythonInterface::initPython(std::string rootDir)
     {
         // initialize the Python stuff
         // let Python do some intialization...
-        Py_SetProgramName("plasma");
+        Py_SetProgramName(const_cast<char*>("plasma"));
         Py_NoSiteFlag = 1;
         Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
@@ -66,7 +66,7 @@ void PythonInterface::initPython(std::string rootDir)
 //      plasmaMod = PyImport_ImportModule("Plasma");
 
         // create the StringIO for the stdout and stderr file
-        PycStringIO = (struct PycStringIO_CAPI*)PyCObject_Import("cStringIO", "cStringIO_CAPI");
+        PycStringIO = (struct PycStringIO_CAPI*)PyCObject_Import(const_cast<char*>("cStringIO"), const_cast<char*>("cStringIO_CAPI"));
         stdFile = (*PycStringIO->NewOutput)(20000);
         // if we need the builtins then find the builtin module
         PyObject* sysmod = PyImport_ImportModule("sys");
@@ -191,7 +191,7 @@ int PythonInterface::getOutputAndReset(char** line)
     int size = PyString_Size( pyStr );
 
     // reset the file back to zero
-    PyObject_CallMethod(stdFile,"reset","");
+    PyObject_CallMethod(stdFile, const_cast<char*>("reset"), const_cast<char*>(""));
 /*
     // check to see if the debug python module is loaded
     if ( dbgOut != nil )
