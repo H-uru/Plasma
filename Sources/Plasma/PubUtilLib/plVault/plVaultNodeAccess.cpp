@@ -369,9 +369,9 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
             break;
             
             case kAgeInstGuid: {
-                Uuid guid = (Uuid)*info.GetAgeInstanceGuid();
+                plUUID guid = (plUUID)*info.GetAgeInstanceGuid();
                 wchar_t src[64];
-                GuidToString(guid, src, arrsize(src));
+                wcsncpy(src, guid.AsString().ToWchar(), 64);
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
                 memcpy(dst, src, len * sizeof(src[0]));

@@ -147,30 +147,4 @@ bool GuidIsNil (const Uuid & uuid) {
     return 1 == UuidIsNil((GUID *)&uuid, &s );
 }
 
-//============================================================================
-const wchar_t * GuidToString (const Uuid & uuid, wchar_t * dst, unsigned chars) {
-    wchar_t * src;
-    RPC_STATUS s;
-    s = UuidToStringW( (GUID *) &uuid, (unsigned short**)&src );
-    if (RPC_S_OK == s)
-        StrCopy(dst, src, chars);
-    else
-        StrCopy(dst, L"", chars);
-    RpcStringFreeW( (unsigned short**)&src );
-    return dst;
-}
-
-//============================================================================
-const char * GuidToString (const Uuid & uuid, char * dst, unsigned chars) {
-    uint8_t * src;
-    RPC_STATUS s;
-    s = UuidToStringA( (GUID *) &uuid, &src );
-    if (RPC_S_OK == s)
-        StrCopy(dst, (char *)src, chars);
-    else
-        StrCopy(dst, "", chars);
-    RpcStringFreeA(&src);
-    return dst;
-}
-
 #endif // HS_BUILD_FOR_WIN32

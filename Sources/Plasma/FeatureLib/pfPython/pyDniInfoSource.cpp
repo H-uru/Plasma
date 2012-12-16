@@ -108,7 +108,7 @@ const char * pyDniInfoSource::GetAgeGuid( void ) const
 
     VaultAgeInfoNode ageInfo(node);
 
-    GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
+    strncpy(fAgeGuid, plUUID(ageInfo.ageInstUuid).AsString().c_str(), 64);
     node->DecRef();
 
     return fAgeGuid;

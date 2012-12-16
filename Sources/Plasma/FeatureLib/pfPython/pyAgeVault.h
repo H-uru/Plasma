@@ -68,7 +68,7 @@ class pyVaultTextNoteNode;
 class pyAgeVault
 {
 private:
-    mutable char fAgeGuid[MAX_PATH];    // for getting Age GUID
+    mutable char fAgeGuid[64];    // for getting Age GUID
 
 protected:
     pyAgeVault();

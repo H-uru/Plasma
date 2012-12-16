@@ -80,9 +80,6 @@ bool            GuidFromString (const char str[], Uuid * uuid);
 int             GuidCompare (const Uuid & a, const Uuid & b);
 inline bool     GuidsAreEqual (const Uuid & a, const Uuid & b) { return 0 == GuidCompare(a, b); }
 bool            GuidIsNil (const Uuid & uuid);
-const wchar_t *   GuidToString (const Uuid & uuid, wchar_t * dst, unsigned chars);  // returns dst
-const char *    GuidToString (const Uuid & uuid, char * dst, unsigned chars);   // returns dst
-bool            GuidFromHex (const uint8_t buf[], unsigned length, Uuid * uuid);
 
 
 /*****************************************************************************
@@ -100,7 +97,6 @@ struct Uuid {
 
     Uuid () {}
     Uuid (const wchar_t str[]);
-    Uuid (const uint8_t buf[], unsigned length);
     operator bool ()                           const { return !GuidIsNil(*this); }
     inline bool operator ! ()                  const { return GuidIsNil(*this); }
     inline bool operator <  (const Uuid & rhs) const { return GuidCompare(*this, rhs) < 0; }

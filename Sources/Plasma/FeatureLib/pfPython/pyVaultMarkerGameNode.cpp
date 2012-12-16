@@ -94,7 +94,7 @@ const char * pyVaultMarkerGameNode::GetGameGuid () const
     
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        GuidToString(access.gameGuid, fGameGuid, arrsize(fGameGuid));
+        strncpy(fGameGuid, plUUID(access.gameGuid).AsString().c_str(), 64);
     }
     return fGameGuid;
 }

@@ -126,12 +126,4 @@ plUUID plUUID::Generate()
     return result;
 }
 
-#else
-
-// dummy function to prevent a linker warning complaining about no public symbols if the
-// contents of the file get compiled out via pre-processor
-void _preventLNK4221WarningStub()
-{
-}
-
 #endif
