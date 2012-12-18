@@ -57,6 +57,8 @@ class plBinkPlayer
 {
     public:
 
+        plBinkPlayer() : fFileName(nil) { }
+
         static bool Init( hsWindowHndl hWnd) { return true; }
         static bool DeInit() { return true; }
 
@@ -67,15 +69,28 @@ class plBinkPlayer
 
         void SetDefaults() { }
 
-        bool Start(plPipeline* pipe, hsWindowHndl hWnd) { return true; }
+        bool Start(plPipeline* pipe, hsWindowHndl hWnd) { return false; }
 
-        bool NextFrame() { return false; }
+        bool NextFrame() {
+            // we have reached the end
+            return Stop();
+        }
 
-        bool Pause(bool on) { return true; }
+        bool Pause(bool on) { return false; }
 
-        bool Stop() { return true; }
+        bool Stop() {
+            for (int i = 0; i < fCallbacks.GetCount(); i++)
+                fCallbacks[i]->Send();
+            fCallbacks.Reset();
+            delete [] fFileName;
+            fFileName = nil;
+            return false;
+        }
 
-        void SetFileName(const char* filename) { }
+        void SetFileName(const char* filename) {
+            delete [] fFileName;
+            fFileName = hsStrcpy(filename);
+        }
         void SetColor(const hsColorRGBA& c) { }
         void SetPosition(float x, float y) { }
         void SetScale(float x, float y) { }
@@ -86,14 +101,14 @@ class plBinkPlayer
         void SetPosition(const hsPoint2& p) { }
         void SetScale(const hsPoint2& s) { }
 
-        const char* GetFileName() const { return NULL; }
+        const char* GetFileName() const { return fFileName; }
         const hsColorRGBA GetColor() const { return hsColorRGBA(); }
         const hsPoint2 GetPosition() const { return hsPoint2(); }
         const hsPoint2 GetScale() const { return hsPoint2(); }
         float GetBackVolume() const { return 0.0f; }
         float GetForeVolume() const { return 0.0f; }
 
-        void AddCallback(plMessage* msg) { }
+        void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); }
         uint32_t GetNumCallbacks() const { return 0; }
         plMessage* GetCallback(int i) const { return nil; }
 
@@ -107,6 +122,10 @@ class plBinkPlayer
         hsColorRGBA GetFadeFromColor() const { return hsColorRGBA(); }
         float GetFadeToTime() const { return 0.0f; }
         hsColorRGBA GetFadeToColor() const { return hsColorRGBA(); }
+
+    private:
+        char* fFileName;
+        hsTArray<plMessage*> fCallbacks;
 };
 
 #endif // plBinkPlayer_inc
