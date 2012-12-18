@@ -18,7 +18,6 @@ set(pfSurface_SOURCES
     plFadeOpacityMod.cpp
     plGrabCubeMap.cpp
     plLayerAVI.cpp
-    plLayerBink.cpp
     plLayerMovie.cpp
 )
 
