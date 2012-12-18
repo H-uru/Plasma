@@ -169,8 +169,7 @@ void DebugMsg(const char fmt[], ...)
         OutputDebugStringA("\n");
 #endif
     } else {
-        fprintf(stderr, msg);
-        fprintf(stderr, "\n");
+        fprintf(stderr, "%s\n", msg);
     }
 }
 
@@ -315,6 +314,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char c
     }
 
 #endif
+    return hsMBoxCancel;
 }
 
 int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon)
@@ -367,6 +367,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wch
     }
 
 #endif
+    return hsMBoxCancel;
 }
 
 int hsMessageBox(const char message[], const char caption[], int kind, int icon)

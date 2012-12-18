@@ -98,7 +98,7 @@ struct hsWide {
 };
 
 const hsWide kPosInfinity64 = { kPosInfinity32, 0xffffffff };
-const hsWide kNegInfinity64 = { kNegInfinity32, 0 };
+const hsWide kNegInfinity64 = { static_cast<int32_t>(kNegInfinity32), 0 };
 
 /////////////////////// Inline implementations ///////////////////////
 

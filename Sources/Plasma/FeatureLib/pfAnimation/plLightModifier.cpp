@@ -90,7 +90,7 @@ void plLightModifier::AddTarget(plSceneObject* so)
 
 void plLightModifier::RemoveTarget(plSceneObject* so)
 {
-    if( so = fTarget )
+    if (so == fTarget)
         fLight = nil;
     plSimpleModifier::RemoveTarget(so);
 }
