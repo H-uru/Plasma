@@ -976,9 +976,9 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kUuid_2:
         case NetVaultNode::kUuid_3:
         case NetVaultNode::kUuid_4: {
-            wchar_t tmp[64];
-            GuidToHex(*(Uuid *)fieldAddr, tmp, arrsize(tmp));
-            StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp);
+            plString tmp = plUUID(fieldAddr).AsString();
+
+            StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp.c_str());
         }
         break;
 

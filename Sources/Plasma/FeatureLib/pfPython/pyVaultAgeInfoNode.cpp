@@ -234,7 +234,8 @@ const char * pyVaultAgeInfoNode::GetAgeInstanceGuid() const
     
     if (fNode) {
         VaultAgeInfoNode access(fNode);
-        GuidToString(access.ageInstUuid, fAgeInstGuid, arrsize(fAgeInstGuid));
+
+        strncpy(fAgeInstGuid, plUUID(access.ageInstUuid).AsString().c_str(), 64);
     }
     return fAgeInstGuid;
 }

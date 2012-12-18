@@ -51,7 +51,7 @@ class pyDniInfoSource
 {
 private:
     mutable char * fAgeName;
-    mutable char fAgeGuid[MAX_PATH];
+    mutable char fAgeGuid[64];
 
 protected:
     pyDniInfoSource();

@@ -103,8 +103,8 @@ std::wstring pyGameCli::GameTypeID() const
 {
     if (gameClient)
     {
-        wchar_t guidStr[256];
-        GuidToString(gameClient->GetGameTypeId(), guidStr, arrsize(guidStr));
+        wchar_t guidStr[64];
+        wcsncpy(guidStr, plUUID(gameClient->GetGameTypeId()).AsString().ToWchar(), 64);
         return guidStr;
     }
     return L"";

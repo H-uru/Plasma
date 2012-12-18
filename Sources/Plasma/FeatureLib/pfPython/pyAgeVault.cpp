@@ -189,7 +189,7 @@ const char* pyAgeVault::GetAgeGuid( void )
     RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef();
     if (rvn) {
         VaultAgeInfoNode ageInfo(rvn);
-        GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
+        strncpy(fAgeGuid, plUUID(ageInfo.ageInstUuid).AsString().c_str(), 64);
         rvn->DecRef();
     }
     else {

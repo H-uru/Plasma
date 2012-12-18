@@ -55,7 +55,7 @@ class pyVaultPlayerInfoNode : public pyVaultNode
 {
     mutable char *      ansiPlayerName;
     mutable char *      ansiAgeInstName;
-    mutable char        ansiAgeInstUuid[256];
+    mutable char        ansiAgeInstUuid[64];
 
 protected:
     // should only be created from C++ side
