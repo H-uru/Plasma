@@ -15,7 +15,6 @@ set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
     hsGColorizer.cpp
     hsGDDrawDllLoad.cpp
-    plBinkPlayer.cpp
     plCaptureRender.cpp
     plCubicRenderTargetModifier.cpp
     plCullTree.cpp
