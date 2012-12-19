@@ -219,7 +219,6 @@ PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setBool, args)
     PYTHON_RETURN_BOOL(self->fThis->SetBool(val != 0, idx));
 }
 
-#define PyString_FromPlString(x) PyString_FromString((x).c_str())
 STATEVAR_GET(getByte, GetByte, PyInt_FromLong)
 STATEVAR_GET(getShort, GetShort, PyInt_FromLong)
 STATEVAR_GET(getInt, GetInt, PyInt_FromLong)
