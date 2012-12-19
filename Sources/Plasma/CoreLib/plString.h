@@ -121,7 +121,6 @@ public:
 
     const _Ch *GetData() const { return IHaveACow() ? fData->fStringData : fShort; }
     size_t GetSize() const { return fSize; }
-
     operator const _Ch *() const { return GetData(); }
 
     // From Haxxia with love
@@ -142,14 +141,15 @@ public:
     }
 };
 
+typedef plStringBuffer<UniChar> plUnicodeBuffer;
+
 
 class plString
 {
+public:
     enum {
         kSizeAuto = (size_t)(0x80000000)
     };
-
-public:
     static const plString Null;
 
 private:
@@ -158,6 +158,7 @@ private:
     void IConvertFromUtf8(const char *utf8, size_t size);
     void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
+    void IConvertFromUtf32(const UniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
 public:
@@ -166,10 +167,12 @@ public:
     plString(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); }
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
     plString(const plStringBuffer<char> &init) { operator=(init); }
+    plString(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
 
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);
+    plString &operator=(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
 
     plString &operator+=(const char *cstr) { return operator=(*this + cstr); }
     plString &operator+=(const plString &str) { return operator=(*this + str); }
@@ -213,7 +216,7 @@ public:
     plStringBuffer<char> ToIso8859_1() const;
 
     // For use in displaying characters in a GUI
-    plStringBuffer<UniChar> GetUnicodeArray() const;
+    plUnicodeBuffer GetUnicodeArray() const;
 
     size_t GetSize() const { return fUtf8Buffer.GetSize(); }
     bool IsEmpty() const { return fUtf8Buffer.GetSize() == 0; }
@@ -399,6 +402,13 @@ public:
             return ch;
         }
 
+        UniChar operator[](size_t offset) const
+        {
+            iterator copy(*this);
+            copy += offset;
+            return *copy;
+        }
+
         bool AtEnd() const { return m_ptr >= m_end; }
         bool IsValid() const { return m_ptr != 0; }
 
@@ -463,5 +473,7 @@ private:
     size_t fBufSize;
     size_t fLength;
 };
+
+size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 
 #endif //plString_Defined

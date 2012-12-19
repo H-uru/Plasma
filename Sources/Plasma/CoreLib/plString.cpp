@@ -204,19 +204,25 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
     IConvertFromUtf16((const uint16_t *)wstr, size);
 #else
+    IConvertFromUtf32((const UniChar *)wstr, size);
+#endif
+}
+
+void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
+{
     fUtf8Buffer = plStringBuffer<char>();
-    if (wstr == nil)
+    if (ustr == nil)
         return;
 
     if ((int32_t)size < 0)
-        size = wcsnlen(wstr, -(int32_t)size);
+        size = ustrlen(ustr, -(int32_t)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
-    const wchar_t *sp = wstr;
-    while (sp < wstr + size) {
+    const UniChar *sp = ustr;
+    while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
-            hsAssert(0, "UCS-4 character out of range");
+            hsAssert(0, "UTF-32 character out of range");
             convlen += 3;   // Use U+FFFD for release builds
         }
         else if (*sp > 0xFFFF)
@@ -233,8 +239,8 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // And perform the actual conversion
     char *utf8 = fUtf8Buffer.CreateWritableBuffer(convlen);
     char *dp = utf8;
-    sp = wstr;
-    while (sp < wstr + size) {
+    sp = ustr;
+    while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
             // Character out of range; Use U+FFFD instead
             *dp++ = 0xE0 | ((BADCHAR_REPLACEMENT >> 12) & 0x0F);
@@ -258,7 +264,6 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
         ++sp;
     }
     utf8[convlen] = 0;
-#endif
 }
 
 void plString::IConvertFromIso8859_1(const char *astr, size_t size)
@@ -462,9 +467,9 @@ plStringBuffer<char> plString::ToIso8859_1() const
     return result;
 }
 
-plStringBuffer<UniChar> plString::GetUnicodeArray() const
+plUnicodeBuffer plString::GetUnicodeArray() const
 {
-    plStringBuffer<UniChar> result;
+    plUnicodeBuffer result;
     if (IsEmpty())
         return result;
 
@@ -821,4 +826,12 @@ plStringStream &plStringStream::operator<<(unsigned int num)
     char buffer[12];
     snprintf(buffer, 12, "%u", num);
     return operator<<(buffer);
+}
+
+size_t ustrlen(const UniChar *ustr, size_t max)
+{
+    size_t length = 0;
+    for ( ; *ustr++ && max--; ++length)
+        ;
+    return length;
 }
