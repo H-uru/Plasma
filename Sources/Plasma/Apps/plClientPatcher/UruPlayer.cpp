@@ -264,6 +264,10 @@ static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
 /*
 //============================================================================
 static void WaitUruExitProc (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     plLauncherInfo *info = (plLauncherInfo *) param;
     WaitForSingleObject(s_pi.hProcess, INFINITE);
     DWORD exitcode;
@@ -539,6 +543,10 @@ static void ProcessManifestEntry (void * param, ENetError error) {
 
 //============================================================================
 static void ProcessManifest (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     wchar_t basePath[MAX_PATH];
     char path[MAX_PATH];    
     AtomicAdd(&s_perf[kPerfThreadTaskCount], 1);
@@ -885,6 +893,10 @@ void ShutdownAsyncCore () {
 //============================================================================
 // param = URU_PreparationRequest
 void UruPrepProc (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     s_running = true;
 
     plLauncherInfo *info = (plLauncherInfo *) param;
@@ -952,6 +964,10 @@ void UruPrepProc (void * param) {
 
 //============================================================================
 void PlayerStopProc (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     s_running = false;
     plLauncherInfo *info = (plLauncherInfo *) param;
     //TerminateProcess(s_pi.hProcess, kExitCodeTerminated);
@@ -960,6 +976,10 @@ void PlayerStopProc (void * param) {
 
 //============================================================================
 void PlayerTerminateProc (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     s_running = false;
     plLauncherInfo *info = (plLauncherInfo *) param;
     ShutdownAsyncCore();
@@ -968,6 +988,10 @@ void PlayerTerminateProc (void * param) {
 
 //============================================================================
 void  UruStartProc (void * param) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     if(!s_running)
         return;
     

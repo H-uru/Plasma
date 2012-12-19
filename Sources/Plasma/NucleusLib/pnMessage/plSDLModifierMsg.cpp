@@ -42,15 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDLModifierMsg.h"
 #include "plSDL/plSDL.h"    // ugh.
 
-plSDLModifierMsg::plSDLModifierMsg(const char* sdlName, Action a) : 
-    fSDLName(nil),
+plSDLModifierMsg::plSDLModifierMsg(const plString& sdlName, Action a) :
+    fSDLName(sdlName),
     fAction(a),
     fState(nil),
     fPlayerID(0),
     fManageStateMem(false),
     fFlags(0)
 { 
-    SetSDLName(sdlName);
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
@@ -58,5 +57,4 @@ plSDLModifierMsg::~plSDLModifierMsg()
 {
     if ( fManageStateMem )
         delete fState;
-    delete [] fSDLName;
 }

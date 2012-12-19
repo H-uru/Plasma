@@ -53,6 +53,8 @@ plString PyString_AsStringEx(PyObject* obj);
 bool PyString_CheckEx(PyObject* obj);
 PyObject* PyUnicode_FromStringEx(const plString& str);
 
+#define PyString_FromPlString(x) PyString_FromString((x).c_str())
+
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 
 /////////////////////////////////////////////////////////////////////

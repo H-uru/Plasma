@@ -67,7 +67,7 @@ plStateDataRecord * pySDLStateDataRecord::GetRec() const
     return fRec;
 }
 
-PyObject * pySDLStateDataRecord::FindVar( const char * name ) const
+PyObject * pySDLStateDataRecord::FindVar( const plString & name ) const
 {
     if ( !fRec )
         PYTHON_RETURN_NONE;
@@ -79,17 +79,17 @@ PyObject * pySDLStateDataRecord::FindVar( const char * name ) const
     return pySimpleStateVariable::New( var );
 }
 
-const char *pySDLStateDataRecord::GetName() const
+plString pySDLStateDataRecord::GetName() const
 {
     if (!fRec)
-        return nil;
+        return "";
     const plStateDescriptor *stateDesc = fRec->GetDescriptor();
     return stateDesc->GetName();
 }
 
-std::vector<std::string> pySDLStateDataRecord::GetVarList()
+std::vector<plString> pySDLStateDataRecord::GetVarList()
 {
-    std::vector<std::string> retVal;
+    std::vector<plString> retVal;
     if (!fRec)
         return retVal;
     const plStateDescriptor *stateDesc = fRec->GetDescriptor();
@@ -225,16 +225,15 @@ bool pySimpleStateVariable::GetBool( int idx ) const
     return v;
 }
 
-const char * pySimpleStateVariable::GetString( int idx ) const
+plString pySimpleStateVariable::GetString( int idx ) const
 {
-    fString = "";
     if ( fVar )
     {
         char v[256];
         if ( fVar->Get( v, idx ) )
-            fString = v;
+            return plString::FromUtf8(v);
     }
-    return fString.c_str();
+    return "";
 }
 
 plKey pySimpleStateVariable::GetKey( int idx ) const
@@ -253,18 +252,18 @@ int pySimpleStateVariable::GetType() const
     return varDesc->GetType();
 }
 
-const char *pySimpleStateVariable::GetDisplayOptions() const
+plString pySimpleStateVariable::GetDisplayOptions() const
 {
     if (!fVar)
-        return nil;
+        return "";
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDisplayOptions();
 }
 
-const char *pySimpleStateVariable::GetDefault() const
+plString pySimpleStateVariable::GetDefault() const
 {
     if (!fVar)
-        return nil;
+        return "";
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDefault();
 }
@@ -272,7 +271,7 @@ const char *pySimpleStateVariable::GetDefault() const
 bool pySimpleStateVariable::IsInternal() const
 {
     if (!fVar)
-        return nil;
+        return false;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->IsInternal();
 }
@@ -280,7 +279,7 @@ bool pySimpleStateVariable::IsInternal() const
 bool pySimpleStateVariable::IsAlwaysNew() const
 {
     if (!fVar)
-        return nil;
+        return false;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->IsAlwaysNew();
 }

@@ -81,7 +81,7 @@ protected:
     bool      IsTokenSeparator(char c);
 public:
                 hsStream() : fBytesRead(0), fPosition(0) {}
-    virtual     ~hsStream();
+    virtual     ~hsStream() { }
 
     virtual bool      Open(const char *, const char * = "rb")=0;
     virtual bool      Open(const wchar_t *, const wchar_t * = L"rb")=0;
@@ -123,8 +123,7 @@ public:
     virtual void      CopyToMem(void* mem);
     virtual bool      IsCompressed() { return false; }
 
-    uint32_t        WriteString(const char cstring[]);
-    uint32_t        WriteString(const plString & string) { return WriteString(string.c_str()); }
+    uint32_t        WriteString(const plString & string) { return Write(string.GetSize(), string.c_str()); }
     uint32_t        WriteFmt(const char * fmt, ...);
     uint32_t        WriteFmtV(const char * fmt, va_list av);
 
@@ -138,6 +137,8 @@ public:
     char *          ReadSafeString();
     wchar_t *       ReadSafeWString();
 
+    plString        ReadSafeStringLong_TEMP();
+    plString        ReadSafeWStringLong_TEMP();
     plString        ReadSafeString_TEMP();
     plString        ReadSafeWString_TEMP();
 

@@ -50,9 +50,9 @@ class plSDLNotificationMsg : public plMessage
 public:
     float fDelta;               // change threshold
     const plSimpleStateVariable* fVar;
-    std::string fSDLName;               // name of state descriptor
+    plString fSDLName;          // name of state descriptor
     int fPlayerID;              // pid of the player who changed the data
-    std::string fHintString;    // hint from the player who changed the data
+    plString fHintString;       // hint from the player who changed the data
     
     plSDLNotificationMsg() : fDelta(0), fVar(nil), fPlayerID(0) {}
     ~plSDLNotificationMsg() { }

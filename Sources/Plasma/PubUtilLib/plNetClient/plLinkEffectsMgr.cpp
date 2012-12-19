@@ -385,13 +385,11 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
                 bool linkFromACA = prevAgeName && !stricmp(prevAgeName, kAvCustomizationFilename);
 
                 bool linkToFissureDrop = lm && 
-                                        lm->GetAgeLink()->HasSpawnPt() && 
-                                        lm->GetAgeLink()->SpawnPoint().GetName() &&
-                                        !stricmp(lm->GetAgeLink()->SpawnPoint().GetName(), kCleftAgeLinkInPointFissureDrop);
+                                        lm->GetAgeLink()->HasSpawnPt() &&
+                                        !lm->GetAgeLink()->SpawnPoint().GetName().CompareI(kCleftAgeLinkInPointFissureDrop);
                 bool linkToDsntFromShell = lm && 
-                                        lm->GetAgeLink()->HasSpawnPt() && 
-                                        lm->GetAgeLink()->SpawnPoint().GetTitle() &&
-                                        !stricmp(lm->GetAgeLink()->SpawnPoint().GetTitle(), kDescentLinkFromShell);
+                                        lm->GetAgeLink()->HasSpawnPt() &&
+                                        !lm->GetAgeLink()->SpawnPoint().GetTitle().CompareI(kDescentLinkFromShell);
                 if ( linkToACA || linkFromACA || linkToStartup || linkFromStartup || linkToFissureDrop || linkToDsntFromShell)
                 {
                     BCMsg->SetLinkFlag(plLinkEffectBCMsg::kMute);

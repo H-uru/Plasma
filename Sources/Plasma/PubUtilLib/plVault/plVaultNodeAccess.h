@@ -277,8 +277,8 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
 #ifdef CLIENT
     bool CopyTo (plAgeLinkStruct * link);
     void AddSpawnPoint (const plSpawnPointInfo & point); // will only add if not there already.
-    void RemoveSpawnPoint (const char spawnPtName[]);
-    bool HasSpawnPoint (const char spawnPtName[]) const;
+    void RemoveSpawnPoint (const plString & spawnPtName);
+    bool HasSpawnPoint (const plString & spawnPtName) const;
     bool HasSpawnPoint (const plSpawnPointInfo & point) const;  // compares spawn name only, not title.
     void GetSpawnPoints (plSpawnPointVec * out) const;
     void SetSpawnPoints (const plSpawnPointVec & in);

@@ -2196,9 +2196,7 @@ static bool Recv_ServerAddr (
             s_active->token = msg.token;
             s_active->addr.SetHost(msg.srvAddr);
 
-            plString logmsg = "SrvAuth addr: ";
-            logmsg += s_active->addr.GetHostString();
-            LogMsg(kLogPerf, L"SrvAuth addr: %s", logmsg.c_str());
+            LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
         }
     }
     s_critsect.Leave();

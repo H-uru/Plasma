@@ -431,6 +431,9 @@ BOOL CALLBACK SplashDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 //============================================================================
 static void WindowThreadProc(void *) {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
 
     InitCommonControls();
     s_event = CreateEvent(
@@ -476,6 +479,10 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *)
 //============================================================================
 static void StatusCallback(void *)
 {
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
     const char *serverUrl = GetServerStatusUrl();
 
     CURL * hCurl = curl_easy_init();

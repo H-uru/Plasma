@@ -395,8 +395,7 @@ pfConsoleCmd::~pfConsoleCmd()
 
     for( i = 0; i < fSigLabels.GetCount(); i++ )
     {
-        if( fSigLabels[ i ] != nil )
-            delete [] fSigLabels[ i ];
+        delete [] fSigLabels[ i ];
     }
     Unregister();
     

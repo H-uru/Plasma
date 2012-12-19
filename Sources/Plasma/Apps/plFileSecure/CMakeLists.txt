@@ -14,4 +14,8 @@ set(plFileSecure_SOURCES
 add_executable(plFileSecure ${plFileSecure_SOURCES})
 target_link_libraries(plFileSecure CoreLib pnProduct plFile)
 
+if(USE_VLD)
+    target_link_libraries(plFileSecure ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plFileSecure_SOURCES})

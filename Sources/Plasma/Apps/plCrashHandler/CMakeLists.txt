@@ -15,7 +15,11 @@ target_link_libraries(plCrashHandler pfCrashHandler)
 target_link_libraries(plCrashHandler plFile)
 target_link_libraries(plCrashHandler pnProduct)
 
+if(USE_VLD)
+    target_link_libraries(plCrashHandler ${VLD_LIBRARY})
+endif()
+
 # Platform specific libs
 if(WIN32)
-	target_link_libraries(plCrashHandler Dbghelp)
+    target_link_libraries(plCrashHandler Dbghelp)
 endif(WIN32)

@@ -65,6 +65,10 @@ target_link_libraries(plUruLauncher ws2_32)
 target_link_libraries(plUruLauncher rpcrt4)
 target_link_libraries(plUruLauncher comctl32)
 
+if(USE_VLD)
+    target_link_libraries(plUruLauncher ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plUruLauncher_SOURCES})
 source_group("Header Files" FILES ${plUruLauncher_HEADERS})
 source_group("Resource Files" FILES ${plUruLauncher_RESOURCES})

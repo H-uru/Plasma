@@ -112,17 +112,6 @@ void hsStream::CopyToMem(void* mem)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-hsStream::~hsStream()
-{
-}
-
-uint32_t hsStream::WriteString(const char cstring[])
-{
-    if (cstring)
-        return Write(strlen(cstring), cstring);
-    return 0;
-}
-
 uint32_t hsStream::WriteFmt(const char * fmt, ...)
 {
     va_list av;
@@ -159,64 +148,81 @@ uint32_t hsStream::WriteSafeStringLong(const plString &string)
 
 uint32_t hsStream::WriteSafeWStringLong(const plString &string)
 {
-    plStringBuffer<wchar_t> wbuff = string.ToWchar();
+    plStringBuffer<uint16_t> wbuff = string.ToUtf16();
     uint32_t len = wbuff.GetSize();
     WriteLE32(len);
     if (len > 0)
     {
-        const wchar_t *buffp = wbuff.GetData();
+        const uint16_t *buffp = wbuff.GetData();
         for (uint32_t i=0; i<len; i++)
         {
-            WriteLE16((uint16_t)~buffp[i]);
+            WriteLE16(~buffp[i]);
         }
-        WriteLE16((uint16_t)L'\0');
+        WriteLE16(static_cast<uint16_t>(0));
     }
     return 0;
 }
 
-char *hsStream::ReadSafeStringLong()
+plString hsStream::ReadSafeStringLong_TEMP()
 {
-    char *name = nil;
+    plStringBuffer<char> name;
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        name = new char[numChars+1];
-        Read(numChars, name);
-        name[numChars] = '\0';
+        char *buff = name.CreateWritableBuffer(numChars);
+        Read(numChars, buff);
+        buff[numChars] = 0;
 
         // if the high bit is set, flip the bits. Otherwise it's a normal string, do nothing.
-        if (name[0] & 0x80) 
+        if (buff[0] & 0x80)
         {
-            int i;
-            for (i = 0; i < numChars; i++)
-                name[i] = ~name[i];
+            for (int i = 0; i < numChars; i++)
+                buff[i] = ~buff[i];
         }       
     }
 
     return name;
 }
 
-wchar_t *hsStream::ReadSafeWStringLong()
+char *hsStream::ReadSafeStringLong()
 {
-    wchar_t *retVal = nil;
+    plString name = ReadSafeStringLong_TEMP();
+    char *buff = new char[name.GetSize() + 1];
+    memcpy(buff, name.c_str(), name.GetSize() + 1);
+    return buff;
+}
+
+plString hsStream::ReadSafeWStringLong_TEMP()
+{
+    plStringBuffer<uint16_t> retVal;
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        retVal = new wchar_t[numChars+1];
-        int i;
-        for (i=0; i<numChars; i++)
-            retVal[i] = (wchar_t)ReadLE16();
-        retVal[numChars] = (wchar_t)ReadLE16(); // we wrote the null out, read it back in
+        uint16_t *buff = retVal.CreateWritableBuffer(numChars);
+        for (int i=0; i<numChars; i++)
+            buff[i] = ReadLE16();
+        ReadLE16(); // we wrote the null out, read it back in
+        buff[numChars] = 0; // But terminate it safely anyway
 
-        if (retVal[0]* 0x80)
+        if (buff[0]* 0x80)
         {
-            int i;
-            for (i=0; i<numChars; i++)
-                retVal[i] = ~retVal[i];
+            for (int i=0; i<numChars; i++)
+                buff[i] = ~buff[i];
         }
     }
 
-    return retVal;
+    return plString::FromUtf16(retVal);
+}
+
+wchar_t *hsStream::ReadSafeWStringLong()
+{
+    // Horribly inefficient (convert to UTF-8 and then back to UTF-16), which
+    // is why this should go away completely after plString has taken over
+    // the world^H^H^H^H^HPlasma
+    plStringBuffer<wchar_t> retVal = ReadSafeWStringLong_TEMP().ToWchar();
+    wchar_t *buff = new wchar_t[retVal.GetSize() + 1];
+    memcpy(buff, retVal.GetData(), retVal.GetSize() + 1);
+    return buff;
 }
 
 uint32_t hsStream::WriteSafeString(const plString &string)
@@ -242,27 +248,27 @@ uint32_t hsStream::WriteSafeString(const plString &string)
 
 uint32_t hsStream::WriteSafeWString(const plString &string)
 {
-    plStringBuffer<wchar_t> wbuff = string.ToWchar();
+    plStringBuffer<uint16_t> wbuff = string.ToUtf16();
     uint32_t len = wbuff.GetSize();
-    hsAssert(len<0xf000, xtl::format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
+    hsAssert(len<0xf000, plString::Format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
     WriteLE16(len | 0xf000);
     if (len > 0)
     {
-        const wchar_t *buffp = wbuff.GetData();
+        const uint16_t *buffp = wbuff.GetData();
         for (uint32_t i=0; i<len; i++)
         {
-            WriteLE16((uint16_t)~buffp[i]);
+            WriteLE16(~buffp[i]);
         }
-        WriteLE16((uint16_t)L'\0');
+        WriteLE16(static_cast<uint16_t>(0));
     }
     return 0;
 }
 
-char *hsStream::ReadSafeString()
+plString hsStream::ReadSafeString_TEMP()
 {
-    char *name = nil;
+    plStringBuffer<char> name;
     uint16_t numChars = ReadLE16();
 
 #ifndef REMOVE_ME_SOON
@@ -276,62 +282,64 @@ char *hsStream::ReadSafeString()
     hsAssert(numChars <= GetSizeLeft(), "Bad string");
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        name = new char[numChars+1];
-        Read(numChars, name);
-        name[numChars] = '\0';  
+        char *buff = name.CreateWritableBuffer(numChars);
+        Read(numChars, buff);
+        buff[numChars] = 0;
 
         // if the high bit is set, flip the bits. Otherwise it's a normal string, do nothing.
-        if (name[0] & 0x80) 
+        if (buff[0] & 0x80)
         {
             int i;
             for (i = 0; i < numChars; i++)
-                name[i] = ~name[i];
+                buff[i] = ~buff[i];
         }
     }
 
     return name;
 }
 
-wchar_t *hsStream::ReadSafeWString()
+char *hsStream::ReadSafeString()
 {
-    wchar_t *retVal = nil;
+    plString name = ReadSafeString_TEMP();
+    char *buff = new char[name.GetSize() + 1];
+    memcpy(buff, name.c_str(), name.GetSize() + 1);
+    return buff;
+}
+
+plString hsStream::ReadSafeWString_TEMP()
+{
+    plStringBuffer<uint16_t> retVal;
     uint32_t numChars = ReadLE16();
     
     numChars &= ~0xf000;
     hsAssert(numChars <= GetSizeLeft()/2, "Bad string");
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        retVal = new wchar_t[numChars+1];
-        int i;
-        for (i=0; i<numChars; i++)
-            retVal[i] = (wchar_t)ReadLE16();
-        retVal[numChars] = (wchar_t)ReadLE16(); // we wrote the null out, read it back in
+        uint16_t *buff = retVal.CreateWritableBuffer(numChars);
+        for (int i=0; i<numChars; i++)
+            buff[i] = ReadLE16();
+        ReadLE16(); // we wrote the null out, read it back in
+        buff[numChars] = 0; // But terminate it safely anyway
 
-        if (retVal[0]* 0x80)
+        if (buff[0]* 0x80)
         {
-            int i;
-            for (i=0; i<numChars; i++)
-                retVal[i] = ~retVal[i];
+            for (int i=0; i<numChars; i++)
+                buff[i] = ~buff[i];
         }
     }
 
-    return retVal;
+    return plString::FromUtf16(retVal);
 }
 
-plString hsStream::ReadSafeString_TEMP()
+wchar_t *hsStream::ReadSafeWString()
 {
-    char *buffer = ReadSafeString();
-    plString result = plString::FromIso8859_1(buffer);
-    delete [] buffer;
-    return result;
-}
-
-plString hsStream::ReadSafeWString_TEMP()
-{
-    wchar_t *wbuffer = ReadSafeWString();
-    plString result = plString::FromWchar(wbuffer);
-    delete [] wbuffer;
-    return result;
+    // Horribly inefficient (convert to UTF-8 and then back to UTF-16), which
+    // is why this should go away completely after plString has taken over
+    // the world^H^H^H^H^HPlasma
+    plStringBuffer<wchar_t> retVal = ReadSafeWString_TEMP().ToWchar();
+    wchar_t *buff = new wchar_t[retVal.GetSize() + 1];
+    memcpy(buff, retVal.GetData(), retVal.GetSize() + 1);
+    return buff;
 }
 
 bool  hsStream::Read4Bytes(void *pv)  // Virtual, faster version in sub classes

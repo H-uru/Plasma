@@ -110,7 +110,7 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint
 bool plSDLModifier::MsgReceive(plMessage* msg)
 {
     plSDLModifierMsg* sdlMsg = plSDLModifierMsg::ConvertNoRef(msg);
-    if (sdlMsg && !stricmp(sdlMsg->GetSDLName(),GetSDLName()))
+    if (sdlMsg && !sdlMsg->GetSDLName().CompareI(GetSDLName()))
     {       
         uint32_t sendFlags = IApplyModFlags(sdlMsg->GetFlags());
 
@@ -229,7 +229,7 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
         plNetObjectDebugger::GetInstance()->SetDebugging(false);
 }
 
-void plSDLModifier::AddNotifyForVar(plKey key, const char* varName, float tolerance) const
+void plSDLModifier::AddNotifyForVar(plKey key, const plString& varName, float tolerance) const
 {
     // create a SDL notifier object
     plStateChangeNotifier notifier(tolerance, key);

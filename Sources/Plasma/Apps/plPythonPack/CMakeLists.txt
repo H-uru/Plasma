@@ -22,5 +22,9 @@ else()
     target_link_libraries(plPythonPack ${PYTHON_LIBRARY})
 endif()
 
+if(USE_VLD)
+    target_link_libraries(plPythonPack ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plPythonPack_SOURCES})
 source_group("Header Files" FILES ${plPythonPack_HEADERS})

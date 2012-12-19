@@ -16,4 +16,8 @@ add_executable(plSHA ${plSHA_SOURCES})
 target_link_libraries(plSHA CoreLib pnUtils pnProduct pnEncryption)
 target_link_libraries(plSHA ${OPENSSL_LIBRARIES})
 
+if(USE_VLD)
+    target_link_libraries(plSHA ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plSHA_SOURCES})

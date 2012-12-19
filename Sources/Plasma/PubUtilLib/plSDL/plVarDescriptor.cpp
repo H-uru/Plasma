@@ -55,96 +55,77 @@ const uint8_t plVarDescriptor::kVersion=3;        // for Read/Write format
 // State Var
 /////////////////////////////////////////////////////////////////////////////////
 
-plVarDescriptor::plVarDescriptor() :
-    fName(nil),
-    fCount(1),
-    fType(kNone),
-    fTypeString(nil),
-    fDefault(nil),
-    fFlags(0)
-{   
-
-}
-
-plVarDescriptor::~plVarDescriptor() 
-{ 
-    delete [] fName; 
-    delete [] fDefault; 
-    delete [] fTypeString; 
-}
-
 //
 // Set type from a string.  Return false on err.
 //
-bool plVarDescriptor::SetType(const char* type)
+bool plVarDescriptor::SetType(const plString& type)
 {
-    if (!type)
+    if (type.IsNull())
         return false;
 
-    if (!stricmp(type, "vector3"))
+    if (!type.CompareI("vector3"))
         fType=kVector3;
     else
-    if (!stricmp(type, "point3"))
+    if (!type.CompareI("point3"))
         fType=kPoint3;
     else
-    if (!stricmp(type, "rgb"))
+    if (!type.CompareI("rgb"))
         fType=kRGB;
     else
-    if (!stricmp(type, "rgba"))
+    if (!type.CompareI("rgba"))
         fType=kRGBA;
     else
-    if (!stricmp(type, "rgb8"))
+    if (!type.CompareI("rgb8"))
         fType=kRGB8;
     else
-    if (!stricmp(type, "rgba8"))
+    if (!type.CompareI("rgba8"))
         fType=kRGBA8;
     else
-    if (!strnicmp(type, "quat",4))
+    if (!type.CompareNI("quat", 4))
         fType=kQuaternion;
     else
-    if (!stricmp(type, "rgba"))
+    if (!type.CompareI("rgba"))
         fType=kRGBA;
     else
-    if (!stricmp(type, "int"))
+    if (!type.CompareI("int"))
         fType=kInt;
     else
-    if (!stricmp(type, "byte"))
+    if (!type.CompareI("byte"))
         fType=kByte;
     else
-    if (!stricmp(type, "short"))
+    if (!type.CompareI("short"))
         fType=kShort;
     else
-    if (!stricmp(type, "float"))
+    if (!type.CompareI("float"))
         fType=kFloat;
     else
-    if (!stricmp(type, "double"))
+    if (!type.CompareI("double"))
         fType=kDouble;
     else
-    if (!stricmp(type, "time"))
+    if (!type.CompareI("time"))
         fType=kTime;
     else
-    if (!stricmp(type, "ageTimeOfDay"))
+    if (!type.CompareI("ageTimeOfDay"))
         fType=kAgeTimeOfDay;
     else
-    if (!stricmp(type, "bool"))
+    if (!type.CompareI("bool"))
         fType=kBool;
     else
-    if (!stricmp(type, "string32"))
+    if (!type.CompareI("string32"))
         fType=kString32;
     else
-    if (!stricmp(type, "plKey"))
+    if (!type.CompareI("plKey"))
         fType=kKey;
     else
-    if (!stricmp(type, "message") || !stricmp(type, "creatable") )
+    if (!type.CompareI("message") || !type.CompareI("creatable") )
         fType=kCreatable;
     else
-    if (*type=='$')
+    if (type.CharAt(0)=='$')
         fType=kStateDescriptor;
     else
         return false;   // err
     
-    delete [] fTypeString;
-    fTypeString = hsStrcpy(type);
+    fTypeString = type;
 
     return true;    // ok
 }
@@ -156,8 +137,7 @@ void plVarDescriptor::CopyFrom(const plVarDescriptor* other)
     SetCount(other->GetCount());
     SetDisplayOptions(other->GetDisplayOptions());
 
-    delete [] fTypeString;
-    fTypeString=hsStrcpy(other->GetTypeString());
+    fTypeString=other->GetTypeString();
     
     fType = other->GetType();
     fFlags = other->fFlags;
@@ -178,8 +158,7 @@ bool plVarDescriptor::Read(hsStream* s)
         return false;
     }
 
-    delete [] fName;
-    fName=s->ReadSafeString();
+    fName=s->ReadSafeString_TEMP();
 
     plMsgStdStringHelper::Peek(fDisplayOptions, s);
 
@@ -187,8 +166,7 @@ bool plVarDescriptor::Read(hsStream* s)
 
     fType=(Type)s->ReadByte();
 
-    delete [] fDefault;
-    fDefault = s->ReadSafeString();
+    fDefault = s->ReadSafeString_TEMP();
 
     fFlags = s->ReadLE32();
     return true;
@@ -259,87 +237,84 @@ int plSimpleVarDescriptor::GetSize() const
 // Set type from a string.  Return false on err.
 // Sets atomicCount and atomicType
 //
-bool plSimpleVarDescriptor::SetType(const char* type)
+bool plSimpleVarDescriptor::SetType(const plString& type)
 {
-    if (!type)
-        return false;
-
     if (!plVarDescriptor::SetType(type))
         return false;
 
-    if (!stricmp(type, "vector3"))
+    if (!type.CompareI("vector3"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!stricmp(type, "point3"))
+    if (!type.CompareI("point3"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!stricmp(type, "rgb"))
+    if (!type.CompareI("rgb"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!stricmp(type, "rgba"))
+    if (!type.CompareI("rgba"))
     {
         fAtomicCount = 4;
         fAtomicType=kFloat;
     }
     else
-    if (!stricmp(type, "rgb8"))
+    if (!type.CompareI("rgb8"))
     {
         fAtomicCount = 3;
         fAtomicType=kByte;
     }
     else
-    if (!stricmp(type, "rgba8"))
+    if (!type.CompareI("rgba8"))
     {
         fAtomicCount = 4;
         fAtomicType=kByte;
     }
     else
-    if (!strnicmp(type, "quat",4))
+    if (!type.CompareNI("quat", 4))
     {
         fAtomicCount = 4;
         fAtomicType=kFloat;
     }
     else
-    if (!stricmp(type, "int"))
+    if (!type.CompareI("int"))
         fAtomicType=kInt;
     else
-    if (!stricmp(type, "byte"))
+    if (!type.CompareI("byte"))
         fAtomicType=kByte;
     else
-    if (!stricmp(type, "short"))
+    if (!type.CompareI("short"))
         fAtomicType=kShort;
     else
-    if (!stricmp(type, "float"))
+    if (!type.CompareI("float"))
         fAtomicType=kFloat;
     else
-    if (!stricmp(type, "double"))
+    if (!type.CompareI("double"))
         fAtomicType=kDouble;
     else
-    if (!stricmp(type, "time"))
+    if (!type.CompareI("time"))
         fAtomicType=kTime;
     else
-    if (!stricmp(type, "ageTimeOfDay"))
+    if (!type.CompareI("ageTimeOfDay"))
         fAtomicType=kAgeTimeOfDay;
     else
-    if (!stricmp(type, "bool"))
+    if (!type.CompareI("bool"))
         fAtomicType=kBool;
     else
-    if (!stricmp(type, "string32"))
+    if (!type.CompareI("string32"))
         fAtomicType=kString32;
     else
-    if (!stricmp(type, "plKey"))
+    if (!type.CompareI("plKey"))
         fAtomicType=kKey;
     else
-    if (!stricmp(type, "message") || !stricmp(type, "creatable"))
+    if (!type.CompareI("message") || !type.CompareI("creatable"))
         fAtomicType=kCreatable;
     else
         return false;   // err
@@ -398,12 +373,11 @@ bool plSDVarDescriptor::Read(hsStream* s)
     if (!plVarDescriptor::Read(s))
         return false;
 
-    char* sdName=s->ReadSafeString();
+    plString sdName=s->ReadSafeString_TEMP();
     uint16_t version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
-    hsAssert( sd, xtl::format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName, version ).c_str() );
+    hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName.c_str(), version ).c_str() );
     SetStateDesc(sd);
-    delete [] sdName;
     return true;
 }
 

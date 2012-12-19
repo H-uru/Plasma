@@ -178,6 +178,10 @@ if(Bink_SDK_AVAILABLE)
     target_link_libraries(plClient ${Bink_LIBRARIES})
 endif()
 
+if(USE_VLD)
+    target_link_libraries(plClient ${VLD_LIBRARY})
+endif()
+
 if (WIN32)
     target_link_libraries(plClient Rpcrt4)
     target_link_libraries(plClient Version)

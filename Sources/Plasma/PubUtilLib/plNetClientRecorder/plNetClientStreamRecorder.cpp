@@ -334,11 +334,11 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
     {
         hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());        
-        char* descName=nil;
+        plString descName;
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
         {
-            fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName);
+            fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName.c_str());
 
             int i;
 
@@ -348,17 +348,16 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
             sdRec.GetDirtyVars(&vars);
             for (i = 0; i < vars.size(); i++)
             {
-                fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName());
+                fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName().c_str());
             }
 
             plStateDataRecord::SDVarsList sdVars;
             sdRec.GetDirtySDVars(&sdVars);
             for (i = 0; i < sdVars.size(); i++)
             {
-                fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName());
+                fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName().c_str());
             }
         }
-        delete [] descName;
     }
     else
         fLog->AddLineF("%s%s", preText, msg->ClassName());
