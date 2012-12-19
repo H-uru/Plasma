@@ -49,25 +49,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "plMessage/plMovieMsg.h"
 
+#include <memory>
+#include <vector>
+#include <tuple>
+
+namespace mkvparser
+{
+    class BlockEntry;
+    class MkvReader;
+    class Segment;
+}
+
+typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
+
 class plMoviePlayer
 {
 protected:
+    friend class TrackMgr;
+
+    class plPlate* fPlate;
+    class plMipmap* fTexture;
+
+    mkvparser::MkvReader* fReader;
+    std::unique_ptr<mkvparser::Segment> fSegment;
+    std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
+    std::unique_ptr<class VPX> fVpx;
     int64_t fTimeScale, fStartTime;
 
     hsPoint2 fPosition, fScale;
     plFileName fMoviePath;
 
     int64_t GetMovieTime() const;
-    bool IOpenMovie() { return false; };
+    bool IOpenMovie();
+    bool IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
 
 public:
     plMoviePlayer();
-    ~plMoviePlayer() {}
+    ~plMoviePlayer();
 
-    bool Start() { return false; }
+    bool Start();
     bool Pause(bool on) { return false; }
     bool Stop();
-    bool NextFrame() { return Stop(); }
+    bool NextFrame();
 
     void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); }
     uint32_t GetNumCallbacks() const { return 0; }

@@ -41,6 +41,7 @@ find_package(PNG REQUIRED)
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(VPX)
 find_package(CURL REQUIRED)
 find_package(Freetype)
 

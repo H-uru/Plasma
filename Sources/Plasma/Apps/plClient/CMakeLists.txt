@@ -166,6 +166,10 @@ if(USE_VLD)
     target_link_libraries(plClient ${VLD_LIBRARY})
 endif()
 
+if (VPX_AVAILABLE)
+    target_link_libraries(plClient ${VPX_LIBRARY})
+endif (VPX_AVAILABLE)
+
 if (WIN32)
     target_link_libraries(plClient rpcrt4)
     target_link_libraries(plClient version)
