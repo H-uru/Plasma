@@ -2424,13 +2424,9 @@ bool VaultAddOwnedAgeSpawnPoint (const Uuid & ageInstId, const plSpawnPointInfo 
     RelVaultNode * link = nil;
     
     for (;;) {
-        if (!spawnPt.GetName())
+        if (spawnPt.GetName().IsEmpty())
             break;
-        if (!spawnPt.GetTitle())
-            break;
-        if (!StrLen(spawnPt.GetName()))
-            break;
-        if (!StrLen(spawnPt.GetTitle()))
+        if (spawnPt.GetTitle().IsEmpty())
             break;
 
         fldr = VaultGetAgesIOwnFolderIncRef();

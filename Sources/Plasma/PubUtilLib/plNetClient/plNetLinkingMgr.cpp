@@ -427,7 +427,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
         );
     StrCopy(
         joinAgeOp->age.spawnPtName,
-        GetAgeLink()->SpawnPoint().GetName(),
+        GetAgeLink()->SpawnPoint().GetName().c_str(),
         arrsize(joinAgeOp->age.spawnPtName)
         );
     QueueOp(joinAgeOp);

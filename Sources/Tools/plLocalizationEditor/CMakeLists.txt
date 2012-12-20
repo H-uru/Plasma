@@ -35,6 +35,10 @@ target_link_libraries(plLocalizationEditor pfLocalizationMgr)
 target_link_libraries(plLocalizationEditor ${EXPAT_LIBRARY})
 target_link_libraries(plLocalizationEditor comctl32)
 
+if(USE_VLD)
+    target_link_libraries(plLocalizationEditor ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES})
 source_group("Header Files" FILES ${plLocalizationEditor_HEADERS})
 source_group("Resource Files" FILES ${plLocalizationEditor_RESOURCES})

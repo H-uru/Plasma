@@ -178,7 +178,7 @@ void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, const char *varName)
                 var->GetType() == plVarDescriptor::kTime ||
                 var->GetType() == plVarDescriptor::kAgeTimeOfDay)
             {
-                ComboBox_AddString(box, var->GetName());
+                ComboBox_AddString(box, var->GetName().c_str());
             }
         }
     }

@@ -63,7 +63,7 @@ public:
     };
 
 protected:
-    char* fSDLName;         // the state descriptor name (ie. "physical")
+    plString fSDLName;              // the state descriptor name (ie. "physical")
     Action fAction;
     plStateDataRecord* fState;      // for recving state
     bool fManageStateMem;           // delete fState?
@@ -71,7 +71,7 @@ protected:
     uint32_t fFlags;
 
 public:
-    plSDLModifierMsg(const char* sdlName=nil, Action a=kActionNone);
+    plSDLModifierMsg(const plString& sdlName="", Action a=kActionNone);
     ~plSDLModifierMsg();
 
     CLASSNAME_REGISTER( plSDLModifierMsg );
@@ -86,8 +86,8 @@ public:
     plStateDataRecord* GetState(bool unManageState=false) { if ( unManageState ) fManageStateMem=false; return fState; }
     void SetState(plStateDataRecord* s, bool manageState) { fState=s; fManageStateMem=manageState; }
 
-    const char* GetSDLName() const { return fSDLName; }
-    void SetSDLName(const char* s) { delete [] fSDLName; fSDLName=hsStrcpy(s); }
+    plString GetSDLName() const { return fSDLName; }
+    void SetSDLName(const plString& s) { fSDLName=s; }
         
     uint32_t GetPlayerID() const { return fPlayerID;  }
     void SetPlayerID(uint32_t p) { fPlayerID=p;   }

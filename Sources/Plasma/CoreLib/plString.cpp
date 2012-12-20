@@ -700,12 +700,90 @@ plString plString::ToLower() const
     return str;
 }
 
+static bool ch_in_set(char ch, const char *set)
+{
+    for (const char *s = set; *s; ++s) {
+        if (ch == *s)
+            return true;
+    }
+    return false;
+}
+
+std::vector<plString> plString::Tokenize(const char *delims) const
+{
+    std::vector<plString> result;
+
+    const char *next = c_str();
+    const char *end = next + GetSize();  // So binary strings work
+    while (next != end) {
+        const char *cur = next;
+        while (cur != end && !ch_in_set(*cur, delims))
+            ++cur;
+
+        // Found a delimiter
+        if (cur != next)
+            result.push_back(plString::FromUtf8(next, cur - next));
+
+        next = cur;
+        while (next != end && ch_in_set(*next, delims))
+            ++next;
+    }
+
+    return result;
+}
+
+//TODO: Not binary safe
+std::vector<plString> plString::Split(const char *split, size_t maxSplits) const
+{
+    std::vector<plString> result;
+
+    const char *next = c_str();
+    size_t splitlen = strlen(split);
+    while (maxSplits > 0) {
+        const char *sp = strstr(next, split);
+
+        if (!sp)
+            break;
+
+        result.push_back(plString::FromUtf8(next, sp - next));
+        next = sp + splitlen;
+        --maxSplits;
+    }
+
+    result.push_back(plString::FromUtf8(next));
+    return result;
+}
+
 plString operator+(const plString &left, const plString &right)
 {
     plString cat;
     char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(left.GetSize() + right.GetSize());
     memcpy(catstr, left.c_str(), left.GetSize());
     memcpy(catstr + left.GetSize(), right.c_str(), right.GetSize());
+    catstr[cat.fUtf8Buffer.GetSize()] = 0;
+
+    return cat;
+}
+
+plString operator+(const plString &left, const char *right)
+{
+    plString cat;
+    size_t rsize = strlen(right);
+    char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(left.GetSize() + rsize);
+    memcpy(catstr, left.c_str(), left.GetSize());
+    memcpy(catstr + left.GetSize(), right, rsize);
+    catstr[cat.fUtf8Buffer.GetSize()] = 0;
+
+    return cat;
+}
+
+plString operator+(const char *left, const plString &right)
+{
+    plString cat;
+    size_t lsize = strlen(left);
+    char *catstr = cat.fUtf8Buffer.CreateWritableBuffer(lsize + right.GetSize());
+    memcpy(catstr, left, lsize);
+    memcpy(catstr + lsize, right.c_str(), right.GetSize());
     catstr[cat.fUtf8Buffer.GetSize()] = 0;
 
     return cat;

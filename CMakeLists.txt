@@ -76,6 +76,13 @@ if(PLASMA_TARGETS STREQUAL "Ethereal")
     add_definitions(-DSTREAM_LOGGER)
 endif(PLASMA_TARGETS STREQUAL "Ethereal")
 
+option(USE_VLD "Build and link with Visual Leak Detector (MSVC only)" OFF)
+if(USE_VLD)
+    add_definitions(-DUSE_VLD)
+    find_package(VLD REQUIRED)
+    include_directories(${VLD_INCLUDE_DIR})
+endif(USE_VLD)
+
 include(TestBigEndian)
 test_big_endian(BIG_ENDIAN)
 if(BIG_ENDIAN)

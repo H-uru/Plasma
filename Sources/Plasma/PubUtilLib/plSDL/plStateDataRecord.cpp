@@ -95,7 +95,7 @@ void plSDL::VariableLengthWrite(hsStream* s, int size, int val)
 /////////////////////////////////////////////////////////////////////////////////
 // State Data
 /////////////////////////////////////////////////////////////////////////////////
-plStateDataRecord::plStateDataRecord(const char* name, int version) : fFlags(0)
+plStateDataRecord::plStateDataRecord(const plString& name, int version) : fFlags(0)
 , fDescriptor( nil )
 {
     SetDescriptor(name, version);
@@ -113,7 +113,7 @@ plStateDataRecord::~plStateDataRecord()
     IDeleteVarsList(fSDVarsList);
 }
 
-void plStateDataRecord::SetDescriptor(const char* name, int version)
+void plStateDataRecord::SetDescriptor(const plString& name, int version)
 {
     IInitDescriptor(name, version);
 }
@@ -125,10 +125,10 @@ void plStateDataRecord::IDeleteVarsList(VarsList& vars)
     vars.clear();
 }
 
-void plStateDataRecord::IInitDescriptor(const char* name, int version)
+void plStateDataRecord::IInitDescriptor(const plString& name, int version)
 {
     plStateDescriptor* sd = plSDLMgr::GetInstance()->FindDescriptor(name, version);
-    //hsAssert( sd, xtl::format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", name, version ).c_str() );
+    //hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", name.c_str(), version ).c_str() );
     if (sd)
         IInitDescriptor(sd);
 }
@@ -268,7 +268,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             {
                 if (plSDLMgr::GetInstance()->GetNetApp())
                     plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading SDL, desc %s", 
-                            fDescriptor && fDescriptor->GetName() ? fDescriptor->GetName() : "?");              
+                            fDescriptor ? fDescriptor->GetName().c_str("?") : "?");
                 return false;
             }
         }
@@ -276,8 +276,8 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            xtl::format("Something bad happened while reading simple var data, desc:%s",
-                fDescriptor && fDescriptor->GetName() ? fDescriptor->GetName() : "?").c_str());
+            plString::Format("Something bad happened while reading simple var data, desc:%s",
+                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
         return false;
     }
 
@@ -302,7 +302,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             {
                 if (plSDLMgr::GetInstance()->GetNetApp())
                     plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading nested SDL, desc %s", 
-                            fDescriptor && fDescriptor->GetName() ? fDescriptor->GetName() : "?");              
+                            fDescriptor ? fDescriptor->GetName().c_str("?") : "?");
                 return false;
             }
         }
@@ -310,15 +310,15 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            xtl::format("Something bad happened while reading nested var data, desc:%s",
-                fDescriptor && fDescriptor->GetName() ? fDescriptor->GetName() : "?").c_str());
+            plString::Format("Something bad happened while reading nested var data, desc:%s",
+                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
         return false;
     }
 
     // convert to latest descriptor
     // Only really need to do this the first time this descriptor is read...
     plStateDescriptor* latestDesc=plSDLMgr::GetInstance()->FindDescriptor(fDescriptor->GetName(), plSDL::kLatestVersion);
-    hsAssert( latestDesc, xtl::format("Failed to find latest sdl descriptor for: %s", fDescriptor->GetName() ).c_str() );
+    hsAssert( latestDesc, plString::Format("Failed to find latest sdl descriptor for: %s", fDescriptor->GetName().c_str() ).c_str() );
     bool forceConvert = (readOptions&plSDL::kForceConvert)!=0;
     if ( latestDesc && ( forceConvert || ( fDescriptor->GetVersion()!=latestDesc->GetVersion() ) ) )
     {
@@ -392,17 +392,17 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, uint32_t writeOpti
 //
 // STATIC - read prefix header.  returns true on success 
 //
-bool plStateDataRecord::ReadStreamHeader(hsStream* s, char** name, int* version, plUoid* objUoid)
+bool plStateDataRecord::ReadStreamHeader(hsStream* s, plString* name, int* version, plUoid* objUoid)
 {
     uint16_t savFlags;
     s->ReadLE(&savFlags);
     if (!(savFlags & plSDL::kAddedVarLengthIO))     // using to establish a new version in the header, can delete in 8/03
     {
-        *name = nil;
+        *name = "";
         return false;       // bad version
     }
 
-    *name = s->ReadSafeString();
+    *name = s->ReadSafeString_TEMP();
     *version = s->ReadLE16();
     
     if (objUoid)
@@ -492,13 +492,14 @@ void plStateDataRecord::UpdateFrom(const plStateDataRecord& other, uint32_t writ
     if ( GetDescriptor()->GetVersion()!=other.GetDescriptor()->GetVersion() )
     {
         plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor( other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion() );
-        hsAssert( sd, xtl::format( "Failed to find sdl descriptor %s,%d. Missing legacy descriptor?", other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion() ).c_str() );
+        hsAssert( sd, plString::Format( "Failed to find sdl descriptor %s,%d. Missing legacy descriptor?",
+            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion() ).c_str() );
         ConvertTo( sd );
     }
 
     hsAssert(other.GetDescriptor()==fDescriptor, 
-        xtl::format("descriptor mismatch in UpdateFromDirty, SDL=%s,%s version %d %d", 
-            GetDescriptor()->GetName(), other.GetDescriptor()->GetName(),
+        plString::Format("descriptor mismatch in UpdateFromDirty, SDL=%s,%s version %d %d",
+            GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetName().c_str(),
             GetDescriptor()->GetVersion(), other.GetDescriptor()->GetVersion()).c_str());
 
     bool dirtyOnly = (writeOptions & plSDL::kDirtyOnly);
@@ -543,9 +544,9 @@ void plStateDataRecord::FlagDifferentState(const plStateDataRecord& other)
     }
     else
     {
-        hsAssert(false, xtl::format("descriptor mismatch in FlagDifferentState, mine %s %d, other %s %d",
-            fDescriptor->GetName(), fDescriptor->GetVersion(),
-            other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion()).c_str());
+        hsAssert(false, plString::Format("descriptor mismatch in FlagDifferentState, mine %s %d, other %s %d",
+            fDescriptor->GetName().c_str(), fDescriptor->GetVersion(),
+            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion()).c_str());
     }
 }
 
@@ -597,9 +598,9 @@ void plStateDataRecord::FlagNewerState(const plStateDataRecord& other, bool resp
     }
     else
     {
-        hsAssert(false, xtl::format("descriptor mismatch in FlagNewerState, mine %s %d, other %s %d",
-            fDescriptor->GetName(), fDescriptor->GetVersion(),
-            other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion()).c_str());
+        hsAssert(false, plString::Format("descriptor mismatch in FlagNewerState, mine %s %d, other %s %d",
+            fDescriptor->GetName().c_str(), fDescriptor->GetVersion(),
+            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion()).c_str());
     }
 }
 
@@ -651,16 +652,16 @@ bool plStateDataRecord::IConvertVar(plSimpleStateVariable* fromVar, plSimpleStat
     return true;    // ok
 }
 
-plStateVariable* plStateDataRecord::IFindVar(const VarsList& vars, const char* name) const
+plStateVariable* plStateDataRecord::IFindVar(const VarsList& vars, const plString& name) const
 {
     for (int i = 0; i < vars.size(); i++)
     {
-        if (!stricmp(vars[i]->GetVarDescriptor()->GetName(), name))
+        if (!vars[i]->GetVarDescriptor()->GetName().CompareI(name))
             return vars[i];
     }
 
     if (plSDLMgr::GetInstance()->GetNetApp())
-        plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed to find SDL var %s", name);
+        plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed to find SDL var %s", name.c_str());
 
     return nil;
 }
@@ -674,7 +675,7 @@ bool plStateDataRecord::ConvertTo( plStateDescriptor* other, bool force )
     if (!other && !force)
         return false;   // err
 
-    hsAssert(!stricmp(fDescriptor->GetName(), other->GetName()), "descriptor mismatch");
+    hsAssert(!fDescriptor->GetName().CompareI(other->GetName()), "descriptor mismatch");
 
     if ( !force && (other == fDescriptor || other->GetVersion()==fDescriptor->GetVersion()))
         return true;    // ok, nothing to do
@@ -682,7 +683,7 @@ bool plStateDataRecord::ConvertTo( plStateDescriptor* other, bool force )
     hsAssert(other->GetVersion()>=fDescriptor->GetVersion(), "converting to an older state descriptor version?");
 
     hsLogEntry( plNetApp::StaticDebugMsg( "SDR(%p) converting sdl record %s from version %d to %d (force:%d)", 
-        this, fDescriptor->GetName(), fDescriptor->GetVersion(), other->GetVersion(), force ) );
+        this, fDescriptor->GetName().c_str(), fDescriptor->GetVersion(), other->GetVersion(), force ) );
 
     // make other StateData to represent other descriptor, 
     // this will be the destination for the convert operation
@@ -696,7 +697,7 @@ bool plStateDataRecord::ConvertTo( plStateDescriptor* other, bool force )
     {
         // get other var info
         plSimpleStateVariable* otherVar = otherStateData.GetVar(i);
-        const char* otherVarName = otherVar->GetVarDescriptor()->GetName();
+        plString otherVarName = otherVar->GetVarDescriptor()->GetName();
 
         // find corresponding var in my data
         plSimpleStateVariable* myVar=FindVar(otherVarName);
@@ -708,7 +709,7 @@ bool plStateDataRecord::ConvertTo( plStateDescriptor* other, bool force )
     for(i=0;i<otherStateData.GetNumSDVars(); i++)
     {
         plSDStateVariable* otherSDVar = otherStateData.GetSDVar(i);
-        const char* otherSDVarName = otherSDVar->GetVarDescriptor()->GetName();
+        plString otherSDVarName = otherSDVar->GetVarDescriptor()->GetName();
 
         // find corresponding var in my data
         plSDStateVariable* mySDVar=FindSDVar(otherSDVarName);
@@ -747,7 +748,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
         dbg->LogMsg(plString::Format("%s%s", pad.c_str(),msg).c_str());
 
     dbg->LogMsg(plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
-        pad.c_str(), this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
+        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
 
     // dump simple vars
     for(i=0;i<fVarsList.size(); i++)
@@ -787,7 +788,8 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         stream->Write(logStr.GetSize(), logStr.c_str());
     }
 
-    logStr = plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d", pad.c_str(), this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
+    logStr = plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
+        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
     stream->Write(logStr.GetSize(), logStr.c_str());
 
     // dump simple vars

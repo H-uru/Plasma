@@ -202,6 +202,10 @@ if (WIN32)
     target_link_libraries(MaxMain winmm)
 endif(WIN32)
 
+if(USE_VLD)
+    target_link_libraries(MaxMain ${VLD_LIBRARY})
+endif()
+
 source_group("Header Files" FILES ${MaxMain_HEADERS})
 source_group("Resource Files" FILES ${MaxMain_RESOURCES})
 source_group("Source Files" FILES ${MaxMain_SOURCES})

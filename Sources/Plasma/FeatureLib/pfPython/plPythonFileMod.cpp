@@ -2300,16 +2300,14 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         plSDLNotificationMsg* sn = plSDLNotificationMsg::ConvertNoRef(msg);
         if (sn)
         {
-            const char* tag = sn->fHintString.c_str();
-            if (tag == nil)
-                tag = "";
+            plString tag = sn->fHintString;
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_SDLNotify],
                     (char*)fFunctionNames[kfunc_SDLNotify],
-                    "ssls", sn->fVar->GetName(), sn->fSDLName.c_str(),
-                    sn->fPlayerID, tag);
+                    "ssls", sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
+                    sn->fPlayerID, tag.c_str());
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE

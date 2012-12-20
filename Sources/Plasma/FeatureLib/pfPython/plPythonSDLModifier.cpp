@@ -81,7 +81,7 @@ plPythonSDLModifier::plPythonSDLModifier(plPythonFileMod* owner) : fOwner(owner)
         {
             plVarDescriptor* var = desc->GetVar(i);
 
-            const char* name = var->GetName();
+            plString name = var->GetName();
             int count = var->GetCount();
 
             fMap[name] = SDLObj(nil, count, false);
@@ -99,15 +99,14 @@ plPythonSDLModifier::~plPythonSDLModifier()
     }
 }
 
-PyObject* plPythonSDLModifier::GetItem(const char* key)
+PyObject* plPythonSDLModifier::GetItem(const plString& key)
 {
     SDLMap::iterator it = fMap.find(key);
 
     if (it == fMap.end())
     {
-        char errmsg[256];
-        sprintf(errmsg,"SDL key %s not found",key);
-        PyErr_SetString(PyExc_KeyError, errmsg);
+        plString errmsg = plString::Format("SDL key %s not found", key.c_str());
+        PyErr_SetString(PyExc_KeyError, errmsg.c_str());
         PYTHON_RETURN_ERROR;
     }
 
@@ -119,7 +118,7 @@ PyObject* plPythonSDLModifier::GetItem(const char* key)
     return val;
 }
 
-void plPythonSDLModifier::ISetItem(const char* key, PyObject* value)
+void plPythonSDLModifier::ISetItem(const plString& key, PyObject* value)
 {
     if (!value || !PyTuple_Check(value))
     {
@@ -149,19 +148,19 @@ void plPythonSDLModifier::ISetItem(const char* key, PyObject* value)
     oldObj.obj = value;
 }
 
-void plPythonSDLModifier::SendToClients(const char* key)
+void plPythonSDLModifier::SendToClients(const plString& key)
 {
     SDLMap::iterator it = fMap.find(key);
     if (it != fMap.end())
         it->second.sendToClients = true;
 }
 
-void plPythonSDLModifier::SetNotify(pyKey& selfkey, const char* key, float tolerance)
+void plPythonSDLModifier::SetNotify(pyKey& selfkey, const plString& key, float tolerance)
 {
     AddNotifyForVar(selfkey.getKey(), key, tolerance);
 }
 
-void plPythonSDLModifier::SetItem(const char* key, PyObject* value)
+void plPythonSDLModifier::SetItem(const plString& key, PyObject* value)
 {
     ISetItem(key, value);
     IDirtySynchState(key);
@@ -169,7 +168,7 @@ void plPythonSDLModifier::SetItem(const char* key, PyObject* value)
 
 void plPythonSDLModifier::SetItemFromSDLVar(plSimpleStateVariable* var)
 {
-    const char* name = var->GetName();
+    plString name = var->GetName();
 
     // Get the SDL value in Python format
     PyObject* pyVar = ISDLVarToPython(var);
@@ -180,12 +179,12 @@ void plPythonSDLModifier::SetItemFromSDLVar(plSimpleStateVariable* var)
 }
 
 
-void plPythonSDLModifier::SetDefault(const char* key, PyObject* value)
+void plPythonSDLModifier::SetDefault(const plString& key, PyObject* value)
 {
     ISetItem(key, value);
 }
 
-void plPythonSDLModifier::SetItemIdx(const char* key, int idx, PyObject* value, bool sendImmediate)
+void plPythonSDLModifier::SetItemIdx(const plString& key, int idx, PyObject* value, bool sendImmediate)
 {
     if (!value)
     {
@@ -269,7 +268,7 @@ const char* plPythonSDLModifier::GetSDLName() const
     return fOwner->fPythonFile;
 }
 
-void plPythonSDLModifier::SetFlags(const char* name, bool sendImmediate, bool skipOwnershipCheck)
+void plPythonSDLModifier::SetFlags(const plString& name, bool sendImmediate, bool skipOwnershipCheck)
 {
     SDLMap::iterator it = fMap.find(name);
     if (it != fMap.end())
@@ -279,7 +278,7 @@ void plPythonSDLModifier::SetFlags(const char* name, bool sendImmediate, bool sk
     }
 }
 
-void plPythonSDLModifier::SetTagString(const char* name, const char* tag)
+void plPythonSDLModifier::SetTagString(const plString& name, const plString& tag)
 {
     SDLMap::iterator it = fMap.find(name);
     if (it != fMap.end())
@@ -297,7 +296,7 @@ void plPythonSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState
     {
         plSimpleStateVariable* var = vars[i];
 
-        const char* name = var->GetName();
+        plString name = var->GetName();
 
         // Get the SDL value in Python format
         PyObject* pyVar = ISDLVarToPython(var);
@@ -334,11 +333,11 @@ void plPythonSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     SDLMap::iterator it = fMap.begin();
     for (; it != fMap.end(); it++)
     {
-        IPythonVarToSDL(dstState, it->first.c_str());
+        IPythonVarToSDL(dstState, it->first);
     }
 }
 
-void plPythonSDLModifier::IDirtySynchState(const char* name, bool sendImmediate)
+void plPythonSDLModifier::IDirtySynchState(const plString& name, bool sendImmediate)
 {
     SDLMap::iterator it = fMap.find(name);
     if (it != fMap.end())
@@ -358,7 +357,7 @@ void plPythonSDLModifier::IDirtySynchState(const char* name, bool sendImmediate)
 }
 
 bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, 
-                                             const char* hintstring)
+                                             const plString& hintstring)
 {
     switch (type)
     {
@@ -370,7 +369,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -378,7 +377,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = (int)PyLong_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -387,7 +386,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = (int)PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -398,7 +397,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             float v = (float)PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -407,7 +406,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             float v = (float)PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -418,7 +417,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             char* v = PyString_AsString(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
         }
         break;
@@ -428,7 +427,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
             pyKey* key = PythonInterface::GetpyKeyFromPython(pyVar);
             if ( key )
                 var->Set(key->getKey(),varIdx);
-                if (hintstring)
+                if (!hintstring.IsNull())
                     var->GetNotificationInfo().SetHintString(hintstring);
         }
         break;
@@ -438,7 +437,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             double v = PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -446,7 +445,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             double v = (double)PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (hintstring)
+            if (!hintstring.IsNull())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -462,7 +461,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
     return false;
 }
 
-void plPythonSDLModifier::IPythonVarToSDL(plStateDataRecord* state, const char* name)
+void plPythonSDLModifier::IPythonVarToSDL(plStateDataRecord* state, const plString& name)
 {
     plSimpleStateVariable* var = state->FindVar(name);
     PyObject* pyVar = nil;
@@ -482,7 +481,7 @@ void plPythonSDLModifier::IPythonVarToSDL(plStateDataRecord* state, const char* 
         {
             PyObject* pyVarItem = PyTuple_GetItem(pyVar, i);
             if (pyVarItem)
-                IPythonVarIdxToSDL(var, i, type, pyVarItem,it->second.hintString.c_str());
+                IPythonVarIdxToSDL(var, i, type, pyVarItem,it->second.hintString);
         }
     }
 }

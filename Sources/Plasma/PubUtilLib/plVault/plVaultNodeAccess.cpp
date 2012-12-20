@@ -534,13 +534,12 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
     ram.Write(sdlDataLen, sdlData);
     ram.Rewind();
     
-    char *  sdlRecName = nil;
-    int     sdlRecVersion;
+    plString sdlRecName;
+    int sdlRecVersion;
     if (!plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion))
         return false;
         
     rec->SetDescriptor(sdlRecName, sdlRecVersion);
-    free(sdlRecName);
 
     // Note: Setting from default here results in a bug causing age SDL to
     // be incorrectly shown when immediately linking back to an age you linked
@@ -698,14 +697,14 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 #ifdef CLIENT
 struct MatchesSpawnPointTitle
 {
-    std::string fTitle;
-    MatchesSpawnPointTitle( const char * title ):fTitle( title ){}
+    plString fTitle;
+    MatchesSpawnPointTitle( const plString & title ):fTitle( title ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fTitle==fTitle ); }
 };
 struct MatchesSpawnPointName
 {
-    std::string fName;
-    MatchesSpawnPointName( const char * name ):fName( name ){}
+    plString fName;
+    MatchesSpawnPointName( const plString & name ):fName( name ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fSpawnPt==fName ); }
 };
 #endif
@@ -768,7 +767,7 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
 //============================================================================
 #ifdef CLIENT
-void VaultAgeLinkNode::RemoveSpawnPoint (const char spawnPtName[]) {
+void VaultAgeLinkNode::RemoveSpawnPoint (const plString & spawnPtName) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
@@ -784,7 +783,7 @@ void VaultAgeLinkNode::RemoveSpawnPoint (const char spawnPtName[]) {
 
 //============================================================================
 #ifdef CLIENT
-bool VaultAgeLinkNode::HasSpawnPoint (const char spawnPtName[]) const {
+bool VaultAgeLinkNode::HasSpawnPoint (const plString & spawnPtName) const {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
@@ -804,23 +803,18 @@ bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 #ifdef CLIENT
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
     
-    char str[2048];
-    memset(&str, 0, sizeof(str));
-    memcpy(str, spawnPoints, min(spawnPointsLen, arrsize(str) - 1));
-    
-    char token1[ 1024 ];
-    hsStringTokenizer izer1( str, ";" );
-    while ( izer1.Next( token1, sizeof( token1 ) ) )
+    plString str = plString::FromUtf8(reinterpret_cast<const char*>(spawnPoints), spawnPointsLen);
+    std::vector<plString> izer = str.Tokenize(";");
+    for (auto token1 = izer.begin(); token1 != izer.end(); ++token1)
     {
         plSpawnPointInfo point;
-        char token2[ 1024 ];
-        hsStringTokenizer izer2( token1, ":" );
-        if ( izer2.Next( token2, sizeof( token2 ) ) )
-            point.fTitle = token2;
-        if ( izer2.Next( token2, sizeof( token2 ) ) )
-            point.fSpawnPt = token2;
-        if ( izer2.Next( token2, sizeof( token2 ) ) )
-            point.fCameraStack = token2;
+        std::vector<plString> izer2 = token1->Tokenize(":");
+        if ( izer2.size() > 0)
+            point.fTitle = izer2[0];
+        if ( izer2.size() > 1)
+            point.fSpawnPt = izer2[1];
+        if ( izer2.size() > 2)
+            point.fSpawnPt = izer2[2];
 
         out->push_back(point);
     }
@@ -831,7 +825,7 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
 #ifdef CLIENT
 void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 
-    std::stringstream ss;
+    plStringStream ss;
     for ( unsigned i=0; i<in.size(); i++ ) {
         ss
             << in[i].fTitle << ":"
@@ -843,8 +837,8 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
         base,
         &spawnPoints,
         &spawnPointsLen,
-        (const uint8_t *)ss.str().c_str(),
-        ss.str().size()
+        (const uint8_t *)ss.GetString().c_str(),
+        ss.GetLength()
     );
 }
 #endif

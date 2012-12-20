@@ -16,4 +16,8 @@ add_executable(plMD5 ${plMD5_SOURCES})
 target_link_libraries(plMD5 CoreLib pnUtils pnProduct pnEncryption)
 target_link_libraries(plMD5 ${OPENSSL_LIBRARIES})
 
+if(USE_VLD)
+    target_link_libraries(plMD5 ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${plMD5_SOURCES})

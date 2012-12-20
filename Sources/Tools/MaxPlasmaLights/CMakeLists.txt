@@ -130,6 +130,10 @@ if (WIN32)
     target_link_libraries(MaxPlasmaLights Ws2_32)
 endif(WIN32)
 
+if(USE_VLD)
+    target_link_libraries(MaxPlasmaLights ${VLD_LIBRARY})
+endif()
+
 source_group("Header Files" FILES ${MaxPlasmaLights_HEADERS})
 source_group("Resource Files" FILES ${MaxPlasmaLights_RESOURCES})
 source_group("Source Files" FILES ${MaxPlasmaLights_SOURCES})

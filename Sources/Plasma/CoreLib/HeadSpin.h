@@ -80,8 +80,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      define NOMINMAX // Needed to prevent NxMath conflicts
 #   endif
 #   include <Windows.h>
-#endif
 
+    // This needs to be after #include <windows.h>, since it also includes windows.h
+#   ifdef USE_VLD
+#       include <vld.h>
+#   endif
+#endif // HS_BUILD_FOR_WIN32
 
 //======================================
 // We don't want the Windows.h min/max!

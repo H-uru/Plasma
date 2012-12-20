@@ -387,14 +387,14 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         s->LogReadLE( &fLinkingRules ,"LinkingRules");
     if ( IsFlagSet( kHasSpawnPt_DEAD ) )
     {
-        std::string str;
+        plString str;
         s->LogSubStreamPushDesc("SpawnPt_DEAD");
         plMsgStdStringHelper::Peek(str,s);
-        fSpawnPoint.SetName( str.c_str() );
-        if ( strcmp( fSpawnPoint.GetName(), kDefaultSpawnPtName )==0 )
+        fSpawnPoint.SetName( str );
+        if ( fSpawnPoint.GetName() == kDefaultSpawnPtName )
             fSpawnPoint.SetTitle( kDefaultSpawnPtTitle );
         else
-            fSpawnPoint.SetTitle( str.c_str() );
+            fSpawnPoint.SetTitle( str );
         ClearFlag( kHasSpawnPt_DEAD );
         SetFlag( kHasSpawnPt );
     }
@@ -520,7 +520,7 @@ plString plAgeLinkStruct::AsString() const
     {
         ss  << spacer
             << "Spwn:"
-            << fSpawnPoint.AsStdString().c_str();
+            << fSpawnPoint.AsString();
         spacer = kComma;
     }
     if (HasAmCCR())
