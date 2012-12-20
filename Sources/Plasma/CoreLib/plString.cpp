@@ -361,7 +361,7 @@ plStringBuffer<wchar_t> plString::ToWchar() const
     plStringBuffer<uint16_t> utf16 = ToUtf16();
     return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf16);
 #else
-    plStringBuffer<uint16_t> result;
+    plStringBuffer<wchar_t> result;
     if (IsEmpty())
         return result;
 
@@ -527,7 +527,7 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         }
     } else if (chars >= 256) {
         va_copy(vptr, vptr_save);
-        std::auto_ptr<char> bigbuffer(new char[chars+1]);
+        std::unique_ptr<char> bigbuffer(new char[chars+1]);
         vsnprintf(bigbuffer.get(), chars+1, fmt, vptr);
         return plString::FromUtf8(bigbuffer.get(), chars);
     }

@@ -80,14 +80,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      define NOMINMAX // Needed to prevent NxMath conflicts
 #   endif
 #   include <Windows.h>
+#endif
 
-    // Just some fun typedefs...
-    typedef HWND hsWindowHndl;
-    typedef HINSTANCE hsWindowInst;
-#else
-    typedef int32_t* hsWindowHndl;
-    typedef int32_t* hsWindowInst;
-#endif // HS_BUILD_FOR_WIN32
 
 //======================================
 // We don't want the Windows.h min/max!
@@ -110,6 +104,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cctype>
 #include <stdarg.h>
 #include <stdint.h>
+
+
+//======================================
+// Just some fun typedefs...
+//======================================
+#ifdef HS_BUILD_FOR_WIN32
+    typedef HWND hsWindowHndl;
+    typedef HINSTANCE hsWindowInst;
+#else
+    typedef int32_t* hsWindowHndl;
+    typedef int32_t* hsWindowInst;
+#endif // HS_BUILD_FOR_WIN32
 
 
 //======================================

@@ -246,7 +246,7 @@ plMipmap*   plJPEG::ReadFromFile( const wchar_t *fileName )
     hsRAMStream tempstream;
     hsUNIXStream in;
     if (!in.Open(fileName, L"rb"))
-        return false;
+        return nil;
 
     // The stream reader for JPEGs expects a 32-bit size at the start,
     // so insert that into the stream before passing it on

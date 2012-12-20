@@ -510,11 +510,11 @@ void plWinAudible::DeActivate()
 
 bool plWinAudible::MsgReceive(plMessage* msg)
 {
-    plGenRefMsg *refMsg;
-    if (refMsg = plGenRefMsg::ConvertNoRef(msg))
+    plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef(msg);
+    if (refMsg)
     {
-        plSound *snd;
-        if (snd = plSound::ConvertNoRef(refMsg->GetRef()))
+        plSound *snd = plSound::ConvertNoRef(refMsg->GetRef());
+        if (snd)
         {
             int index = refMsg->fWhich;
             if( refMsg->GetContext() & (plRefMsg::kOnCreate | plRefMsg::kOnRequest) )

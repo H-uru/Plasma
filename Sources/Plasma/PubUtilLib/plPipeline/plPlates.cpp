@@ -551,7 +551,7 @@ void    plGraphPlate::SetDataColors( const std::vector<uint32_t> & hexColors )
 
 //// SetLabelText ////////////////////////////////////////////////////////////
 
-void    plGraphPlate::SetLabelText( char *text1, char *text2, char *text3, char *text4 )
+void    plGraphPlate::SetLabelText(const char *text1, const char *text2, const char *text3, const char *text4 )
 {
     std::vector<std::string> strings;
     if( text1 != nil )
