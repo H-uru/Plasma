@@ -283,3 +283,10 @@ bool pySimpleStateVariable::IsAlwaysNew() const
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->IsAlwaysNew();
 }
+
+bool pySimpleStateVariable::IsUsed() const
+{
+    if (fVar)
+        return fVar->IsUsed();
+    return false;
+}
