@@ -39,11 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//#include "plClothingMtl.h"
+
 #ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
 #endif
-#include "max.h"
 
 class plClothingEditBox
 {

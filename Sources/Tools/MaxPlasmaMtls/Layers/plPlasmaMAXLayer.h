@@ -62,10 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPlasmaMAXLayer_h
 #define _plPlasmaMAXLayer_h
 
-#include "Max.h"
-#include "iparamm2.h"
-#include "HeadSpin.h"
-
 //// Derived Type Class IDs ///////////////////////////////////////////////////
 //  If you create a new Plasma layer type, add a define for the class ID here 
 //  and also add the ID to the list in plPlasmaMAXLayer.cpp.
@@ -79,18 +75,22 @@ const Class_ID MAX_CAMERA_LAYER_CLASS_ID( 0xfaf5ec7, 0x13d90d3f );
 
 //// Class Definition /////////////////////////////////////////////////////////
 
-class plLayerInterface;
-class plMaxNode;
+class Bitmap;
+class PBBitmap;
+class plBitmapData;
+class BitmapInfo;
+class plBMSamplerData;
+class plDynamicTextMap;
 class plErrorMsg;
 class plLayer;
-class plDynamicTextMap;
-class plBitmapData;
-class plLocation;
 class plLayerConverter;
 class plLayerInterface;
-class plBMSamplerData;
-class jvUniqueId;
 class plLayerTargetContainer;
+class plLocation;
+class plMaxNode;
+class Texmap;
+class jvUniqueId;
+
 class plPlasmaMAXLayer : public Texmap
 {
     friend class plLayerConverter;

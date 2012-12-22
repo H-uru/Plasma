@@ -42,12 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_PASSMTL_H
 #define PL_PASSMTL_H
 
-#include "Max.h"
-//#include "istdplug.h"
-#include "iparamb2.h"
-//#include "iparamm2.h"
-
-#include "../resource.h"
 #include "plPassMtlBase.h"
 #include "hsTemplates.h"
 
@@ -85,7 +79,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return PASS_MTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_PASS_MTL); }
+    void GetClassName(TSTR& s);
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
     void Update(TimeValue t, Interval& valid);

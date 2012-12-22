@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "max.h"
-#include "texutil.h"
-#include "iparamb2.h"
-
+#include "hsWindows.h"
 #include <commdlg.h>
-#include "bmmlib.h"
-#include "bitmap.h"
+
+#include <bmmlib.h>
+#include <max.h>
+#include <texutil.h>
+#include <iparamb2.h>
+#pragma hdrstop
 
 #include "Layers/plPlasmaMAXLayer.h"
 #include "plBMSampler.h"

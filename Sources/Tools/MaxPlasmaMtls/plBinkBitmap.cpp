@@ -39,60 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plBMSampler_h
-#define _plBMSampler_h
 
-class plPlasmaMAXLayer;
+#include "HeadSpin.h"
+#include "hsWindows.h"
+#include <iparamb2.h>
+#pragma hdrstop
 
-class plBMSamplerData
+class BinkClassDesc : public ClassDesc2
 {
-    public:
-        bool    fEnableCrop;
-        int     fCropPlacement;
-        float   fClipU, fClipV;
-        float   fClipW, fClipH;
-
-        enum ASource
-        {
-            kFromTexture,
-            kFromRGB,
-            kDiscard
-        };
-
-        ASource fAlphaSource;
-
-        plBMSamplerData()
-        {
-            fEnableCrop = false;
-            fCropPlacement = 0;
-            fClipU = fClipV = 0.f;
-            fClipW = fClipH = 1.f;
-            fAlphaSource = kFromTexture;
-        }
-};
-
-class plBMSampler : public MapSampler
-{
-protected:
-    Bitmap  *fBM;
-
-    plBMSamplerData fData;
-
-    float u1,v1;
-    int bmw,bmh,clipx, clipy, cliph;
-    float fclipw,fcliph, fbmh, fbmw;
-    bool fInitialized;
-
-    plBMSampler() {}
-
 public:
-    plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm);
-    int PlaceUV(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    void PlaceUVFilter(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    AColor Sample(ShadeContext& sc, float u,float v);
-    AColor SampleFilter(ShadeContext& sc, float u,float v, float du, float dv);
-    //      float SampleMono(ShadeContext& sc, float u,float v);
-    //      float SampleMonoFilter(ShadeContext& sc, float u,float v, float du, float dv);
+    int IsPublic() { return 1; }
+    void* Create(BOOL loading=FALSE)
+    {
+        hsAssert(false, "bink layers removed due to license issues");
+        return nil;
+    }
+
+    const TCHAR* ClassName() { return "Bink"; }
+    SClass_ID SuperClassID() { return BMM_IO_CLASS_ID; }
+    Class_ID ClassID() { return Class_ID(0x71c75c3c, 0x206f480e); }
+    const TCHAR* Category() { return "Bitmap I/O"; }
 };
 
-#endif //_plBMSampler_h
+static BinkClassDesc BinkDesc;
+ClassDesc2* GetBinkClassDesc()
+{
+    return &BinkDesc;
+}

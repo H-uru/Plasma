@@ -42,12 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_PARTICLEMTL_H
 #define PL_PARTICLEMTL_H
 
-#include "Max.h"
-//#include "istdplug.h"
-#include "iparamb2.h"
-//#include "iparamm2.h"
-#include "../resource.h"
-
 class Bitmap;
 
 #define PARTICLE_MTL_CLASS_ID Class_ID(0x26df05ff, 0x60660749)
@@ -121,7 +115,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return PARTICLE_MTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_PARTICLE_MTL); }
+    void GetClassName(TSTR& s);
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
     void Update(TimeValue t, Interval& valid);

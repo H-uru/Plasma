@@ -51,11 +51,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "plDynamicEnvLayer.h"
+#include "hsWindows.h"
+#include "../resource.h"
 
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#include <triobj.h>
+#pragma hdrstop
+
+#include "plDynamicEnvLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"

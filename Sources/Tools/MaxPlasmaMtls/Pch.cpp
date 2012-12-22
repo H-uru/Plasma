@@ -39,60 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plBMSampler_h
-#define _plBMSampler_h
 
-class plPlasmaMAXLayer;
+#include "Pch.h"
 
-class plBMSamplerData
-{
-    public:
-        bool    fEnableCrop;
-        int     fCropPlacement;
-        float   fClipU, fClipV;
-        float   fClipW, fClipH;
-
-        enum ASource
-        {
-            kFromTexture,
-            kFromRGB,
-            kDiscard
-        };
-
-        ASource fAlphaSource;
-
-        plBMSamplerData()
-        {
-            fEnableCrop = false;
-            fCropPlacement = 0;
-            fClipU = fClipV = 0.f;
-            fClipW = fClipH = 1.f;
-            fAlphaSource = kFromTexture;
-        }
-};
-
-class plBMSampler : public MapSampler
-{
-protected:
-    Bitmap  *fBM;
-
-    plBMSamplerData fData;
-
-    float u1,v1;
-    int bmw,bmh,clipx, clipy, cliph;
-    float fclipw,fcliph, fbmh, fbmw;
-    bool fInitialized;
-
-    plBMSampler() {}
-
-public:
-    plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm);
-    int PlaceUV(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    void PlaceUVFilter(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    AColor Sample(ShadeContext& sc, float u,float v);
-    AColor SampleFilter(ShadeContext& sc, float u,float v, float du, float dv);
-    //      float SampleMono(ShadeContext& sc, float u,float v);
-    //      float SampleMonoFilter(ShadeContext& sc, float u,float v, float du, float dv);
-};
-
-#endif //_plBMSampler_h
+/** 
+ * \file Pch.cpp
+ * \brief Precompiled Header object for MaxPlasmaMtls
+ *
+ * This file prompts MSVC to generate a PCH file for the MaxPlasmaMtls project. It
+ * has no function if precompiled headers are disabled in cmake.
+ */

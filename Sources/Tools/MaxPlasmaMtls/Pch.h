@@ -39,60 +39,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plBMSampler_h
-#define _plBMSampler_h
 
-class plPlasmaMAXLayer;
+#ifndef _MaxPlasmaMtls_Pch_inc_
+#define _MaxPlasmaMtls_Pch_inc_
 
-class plBMSamplerData
-{
-    public:
-        bool    fEnableCrop;
-        int     fCropPlacement;
-        float   fClipU, fClipV;
-        float   fClipW, fClipH;
+/** 
+ * \file Pch.h
+ * \brief Precompiled Header for MaxPlasmaMtls
+ */
 
-        enum ASource
-        {
-            kFromTexture,
-            kFromRGB,
-            kDiscard
-        };
+// Core Plasma
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsResMgr.h"
 
-        ASource fAlphaSource;
+// Windoze
+#include "hsWindows.h"
+#include <commdlg.h>
+#include <windowsx.h>
 
-        plBMSamplerData()
-        {
-            fEnableCrop = false;
-            fCropPlacement = 0;
-            fClipU = fClipV = 0.f;
-            fClipW = fClipH = 1.f;
-            fAlphaSource = kFromTexture;
-        }
-};
+// MaxMain
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxCompat.h"
 
-class plBMSampler : public MapSampler
-{
-protected:
-    Bitmap  *fBM;
+// Misc 3dsm SDK
+#include <bmmlib.h>
+#include <iparamm2.h>
+#include <istdplug.h>
+#include <max.h>
+#include <maxicon.h>
+#include <notetrck.h>
+#include <notify.h>
+#include <stdmat.h>
+#include <texutil.h>
+#include <triobj.h>
 
-    plBMSamplerData fData;
+// Local
+#include "resource.h"
 
-    float u1,v1;
-    int bmw,bmh,clipx, clipy, cliph;
-    float fclipw,fcliph, fbmh, fbmw;
-    bool fInitialized;
-
-    plBMSampler() {}
-
-public:
-    plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm);
-    int PlaceUV(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    void PlaceUVFilter(ShadeContext& sc, float &u, float &v, int iu, int iv);
-    AColor Sample(ShadeContext& sc, float u,float v);
-    AColor SampleFilter(ShadeContext& sc, float u,float v, float du, float dv);
-    //      float SampleMono(ShadeContext& sc, float u,float v);
-    //      float SampleMonoFilter(ShadeContext& sc, float u,float v, float du, float dv);
-};
-
-#endif //_plBMSampler_h
+#endif // _MaxPlasmaMtls_Pch_inc_

@@ -40,11 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plStaticEnvLayer.h"
+#include "hsWindows.h"
+#include "../resource.h"
 
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plStaticEnvLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -96,6 +99,11 @@ plStaticEnvLayer::~plStaticEnvLayer()
     }
 
     IDiscardTexHandle();
+}
+
+void plStaticEnvLayer::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_STATIC_ENVMAP_LAYER);
 }
 
 //From MtlBase
@@ -553,24 +561,24 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
     switch( i ) 
     {
         case kTopFace:
-            m.RotateX( -PI );   
+            m.RotateX( -M_PI );   
             break;
         case kBottomFace:
             break;
         case kLeftFace:
-            m.RotateX( -.5f * PI ); 
-            m.RotateY( -.5f * PI );
+            m.RotateX( -.5f * M_PI ); 
+            m.RotateY( -.5f * M_PI );
             break;
         case kRightFace:
-            m.RotateX( -.5f * PI ); 
-            m.RotateY( +.5f * PI );
+            m.RotateX( -.5f * M_PI ); 
+            m.RotateY( +.5f * M_PI );
             break;
         case kFrontFace:
-            m.RotateX( -.5f * PI ); 
-            m.RotateY( PI );
+            m.RotateX( -.5f * M_PI ); 
+            m.RotateY( M_PI );
             break;
         case kBackFace:
-            m.RotateX( -.5f * PI ); 
+            m.RotateX( -.5f * M_PI ); 
             break;
     }
     return m;
@@ -644,7 +652,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     vp.projType = PROJ_PERSPECTIVE;
     vp.hither = .001f;
     vp.yon = 1.0e30f;
-    vp.fov = PI/2.0f;
+    vp.fov = M_PI/2.0f;
     if( fBitmapPB->GetInt( kBmpUseMAXAtmosphere ) )
     {
         vp.nearRange = 0;
