@@ -436,7 +436,7 @@ const wchar_t* plProfileManagerFull::GetProfilePath()
     {
         initialized = true;
 
-        plUnifiedTime curTime = plUnifiedTime::GetCurrentTime(plUnifiedTime::kLocal);
+        plUnifiedTime curTime = plUnifiedTime::GetCurrent(plUnifiedTime::kLocal);
 
         PathGetUserDirectory(profilePath, arrsize(profilePath));
         PathAddFilename(profilePath, profilePath, L"Profile", arrsize(profilePath));

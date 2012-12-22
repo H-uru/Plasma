@@ -39,14 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #ifndef _PL_UNIFIEDTIME_INC_
 #define _PL_UNIFIEDTIME_INC_
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <string>
 
 #if HS_BUILD_FOR_WIN32
-
+    typedef struct _FILETIME FILETIME;
 #endif
 
 //
@@ -57,10 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct timeval;
 class hsStream;
-
-#ifdef GetCurrentTime
-#undef GetCurrentTime
-#endif
 
 enum plUnifiedTime_CtorNow { kNow };
 
@@ -97,7 +94,7 @@ public:
     plUnifiedTime(int mode, const char * buf, const char * fmt);
     plUnifiedTime(const plUnifiedTime & src);
     plUnifiedTime(const plUnifiedTime * src);
-    static plUnifiedTime GetCurrentTime(Mode mode=kGmt);
+    static plUnifiedTime GetCurrent(Mode mode=kGmt);
 
     // assignment
     const plUnifiedTime & operator=(const plUnifiedTime & src);

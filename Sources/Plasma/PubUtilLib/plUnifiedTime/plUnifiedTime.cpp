@@ -193,7 +193,7 @@ plUnifiedTime::plUnifiedTime(const plUnifiedTime * src)
     *this = *src;
 }
 
-plUnifiedTime plUnifiedTime::GetCurrentTime(Mode mode)
+plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
 {
     plUnifiedTime t;
     t.SetMode(mode);
