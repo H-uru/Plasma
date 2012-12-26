@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGAnimInstance.h"
 #include "plAGModifier.h"
 #include "plMatrixChannel.h"
-#include "plAvCallbackAction.h"
+#include "plPhysicalControllerCore.h"
 #include "plAvatarMgr.h"
 
 // global
@@ -671,7 +671,7 @@ bool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, dou
                 if(fEnablePhysicsAtEnd)
                 {
 #if 0//ndef PLASMA_EXTERNAL_RELEASE
-                    if (!humanBrain || humanBrain->fCallbackAction->HitGroundInThisAge())
+                    if (!humanBrain || humanBrain->fWalkingStrategy->HitGroundInThisAge())
                     {
                         // For some reason, calling CheckValidPosition at the beginning of
                         // an age can cause detectors to incorrectly report collisions. So

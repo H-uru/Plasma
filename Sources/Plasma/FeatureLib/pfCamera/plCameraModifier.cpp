@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSimulationInterface.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 
 // new stuff
 

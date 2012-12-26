@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvBrainHuman.h"
 #include "plAvBrain.h"
-#include "plAvCallbackAction.h"
+#include "plPhysicalControllerCore.h"
 #include "plMessage/plRideAnimatedPhysMsg.h"
 
 
@@ -52,20 +52,19 @@ void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)
 {
     plArmatureBrain::Activate(avMod);
     IInitAnimations();
-    if (!fCallbackAction)
+    if (!fWalkingStrategy)
     {
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fCallbackAction = new plRidingAnimatedPhysicalController(avObj, agMod->GetApplicator(kAGPinTransform), controller);
-        fCallbackAction->ActivateController();
+        fWalkingStrategy = new plDynamicWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+        controller->SetMovementStrategy(fWalkingStrategy);
     }
 }
 plAvBrainRideAnimatedPhysical::~plAvBrainRideAnimatedPhysical()
 {
-    delete fCallbackAction;
-    fCallbackAction=nil;
-
+    delete fWalkingStrategy;
+    fWalkingStrategy = nil;
 }
 
 void plAvBrainRideAnimatedPhysical::Deactivate()

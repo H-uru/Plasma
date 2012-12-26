@@ -51,7 +51,7 @@ class plAntiGravAction;
 class plControlEventMsg;
 class plLOSRequestMsg;
 class plSwimRegionInterface;
-class plSwimmingController;
+class plSwimStrategy;
 class plAvBrainSwim : public plArmatureBrain
 {
 public:
@@ -73,7 +73,7 @@ public:
     bool IsSwimming();
     float GetSurfaceDistance() { return fSurfaceDistance; }
 
-    plSwimmingController *fCallbackAction;
+    plSwimStrategy *fSwimStrategy;
     static const float kMinSwimDepth;
     
 protected:
@@ -86,8 +86,6 @@ protected:
     bool IProcessBehaviors(double time, float elapsed);
 
     virtual bool IInitAnimations();
-    bool IAttachAction();
-    bool IDetachAction();
     void IProbeSurface();
     bool IHandleControlMsg(plControlEventMsg* msg);
     float IGetTargetZ();

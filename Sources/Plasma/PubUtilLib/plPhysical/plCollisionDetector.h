@@ -53,6 +53,8 @@ class plArmatureMod;
 class plActivatorMsg;
 class plEvalMsg;
 
+#define USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+
 class plCollisionDetector : public plDetectorModifier
 {
 protected:
@@ -92,23 +94,37 @@ public:
 class plObjectInVolumeDetector : public plCollisionDetector
 {
 protected:
-    virtual void ITrigger(plKey hitter, bool entering, bool immediate=false);
-    virtual void ISendSavedTriggerMsgs();
-    
-    plActivatorMsg* fSavedActivatorMsg;
-    uint32_t fNumEvals;
-    uint32_t fLastEnterEval;
-    uint32_t fLastExitEval;
+    class plCollisionBookKeepingInfo
+    {
+    public:
+        plCollisionBookKeepingInfo(const plKey& key, bool entering)
+            : fHitter(key), fEntering(entering) { }
+
+        plKey fHitter;
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        uint32_t fLastStep;
+#endif // USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+        bool fEntering;
+    };
+
+    void ITrigger(plKey hitter, bool entering);
+    void ISendTriggerMsg(plKey hitter, bool entering);
+    void IRegisterForEval();
+    virtual void IHandleEval(plEvalMsg*);
+    bool fWaitingForEval;
+
+    typedef std::list<plCollisionBookKeepingInfo*> bookKeepingList;
+    bookKeepingList fCollisionList;
+    typedef std::set<plKey> ResidentSet;
+    ResidentSet fCurrentResidents;
 
 public:
     
     plObjectInVolumeDetector() 
-        : plCollisionDetector(), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
-    { }
+        : plCollisionDetector(), fWaitingForEval(false) { }
 
     plObjectInVolumeDetector(int8_t type) 
-        : plCollisionDetector(type), fSavedActivatorMsg(nil), fNumEvals(0), fLastEnterEval(0), fLastExitEval(0) 
-    { }
+        : plCollisionDetector(type), fWaitingForEval(false) { }
 
     virtual ~plObjectInVolumeDetector() { }
     
@@ -159,16 +175,17 @@ protected:
     typedef std::vector<plCameraMsg*> plCameraMsgVec;
 
     plCameraMsgVec  fMessages;
-    bool    fIsInside;
-    bool    fSavingSendMsg;
-    bool    fSavedMsgEnterFlag;
+#ifdef USE_PHYSX_COLLISION_FLUTTER_WORKAROUND
+    uint32_t fLastStep;
+#endif
+    bool fIsInside;
+    bool fEntering;
 
-    virtual void ITrigger(plKey hitter, bool entering, bool immediate=false);
-    virtual void ISendSavedTriggerMsgs();
+    void ISendTriggerMsg();
+    virtual void IHandleEval(plEvalMsg*);
 public:
     plCameraRegionDetector()
-        : plObjectInVolumeDetector(), fIsInside(false), fSavingSendMsg(false)
-    { }
+        : plObjectInVolumeDetector(), fIsInside(false) { }
     ~plCameraRegionDetector();
 
     virtual bool MsgReceive(plMessage* msg);

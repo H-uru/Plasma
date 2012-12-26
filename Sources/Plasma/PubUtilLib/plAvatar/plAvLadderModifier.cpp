@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plAvatar/plAvCallbackAction.h"
+#include "plPhysicalControllerCore.h"
 
 #include "HeadSpin.h"
 
@@ -129,7 +129,7 @@ bool plAvLadderMod::IIsReadyToClimb()
         if (armMod)
         {
             plAvBrainHuman* brain = plAvBrainHuman::ConvertNoRef(armMod->GetCurrentBrain());
-            if (brain && brain->IsMovingForward() && brain->fCallbackAction->IsOnGround())
+            if (brain && brain->IsMovingForward() && brain->fWalkingStrategy->IsOnGround())
                 movingForward = true;
         }
 

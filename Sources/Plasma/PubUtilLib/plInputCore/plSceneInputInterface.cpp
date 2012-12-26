@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrain.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 #include "plModifier/plInterfaceInfoModifier.h"
 #include "pnModifier/plLogicModBase.h"
 #include "plVault/plVault.h"

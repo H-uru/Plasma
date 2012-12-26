@@ -94,8 +94,7 @@ private:
         }
         else
         {
-            bool isController;
-            plPXPhysicalControllerCore* controller = plPXPhysicalControllerCore::GetController(hitActor,&isController);
+            plPXPhysicalControllerCore* controller = plPXPhysicalControllerCore::GetController(hitActor);
             if (controller)
             {
                 objKey = controller->GetOwner();
