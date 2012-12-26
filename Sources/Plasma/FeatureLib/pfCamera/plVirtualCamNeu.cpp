@@ -226,8 +226,11 @@ plVirtualCam1::~plVirtualCam1()
 
 // for saving camera stack
 plCameraModifier1* plVirtualCam1::GetCameraNumber(size_t camNumber)
-{ 
-    return (fCameraStack[camNumber]); 
+{
+    if (fCameraStack.size() > camNumber)
+        return fCameraStack[camNumber];
+    else
+        return nil;
 }
 // for rebuilding camera stack
 void plVirtualCam1::RebuildStack(const plKey& key)

@@ -2462,7 +2462,7 @@ int cyMisc::GetNumCameras()
 const char* cyMisc::GetCameraNumber(int number)
 {
     plCameraModifier1* pCam = plVirtualCam1::Instance()->GetCameraNumber(number-1);
-    if (pCam->GetTarget())
+    if (pCam && pCam->GetTarget())
     {
         const char* ret = pCam->GetTarget()->GetKeyName().c_str();
         plString str = plString::Format("saving camera named %s to chronicle\n",ret);
