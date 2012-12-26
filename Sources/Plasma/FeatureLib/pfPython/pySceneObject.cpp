@@ -554,7 +554,7 @@ bool pySceneObject::IsAvatar()
     return false;
 }
 
-#include "plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 
 PyObject* pySceneObject::GetAvatarVelocity()
 {

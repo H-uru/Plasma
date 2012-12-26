@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGAnim.h"
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
-#include "plAvCallbackAction.h"
+#include "plPhysicalControllerCore.h"
 
 // other
 #include "plMessage/plAvatarMsg.h"
@@ -463,10 +463,10 @@ bool plAvTaskSeek::IFinishPosition(hsPoint3 &newPosition,
 {
     // While warping, we might be hovering just above the ground. Don't want that to
     // trigger any falling behavior.
-    if(brain&&brain->fCallbackAction)
+    if(brain&&brain->fWalkingStrategy)
     {
         
-        brain->fCallbackAction->ResetAirTime();
+        brain->fWalkingStrategy->ResetAirTime();
     }
     // how far will we translate this frame?
     float thisDist = kFloatSpeed * elapsed;

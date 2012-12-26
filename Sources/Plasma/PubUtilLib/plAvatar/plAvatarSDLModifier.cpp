@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvBrainClimb.h"
 #include "plAvatar/plAvBrainDrive.h"
 #include "plAvatar/plAnimStage.h"
-#include "plAvatar/plAvCallbackAction.h"
+#include "plAvatar/plPhysicalControllerCore.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "plSDL/plSDL.h"

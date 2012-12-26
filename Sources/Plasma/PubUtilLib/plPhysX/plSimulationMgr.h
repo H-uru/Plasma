@@ -99,12 +99,11 @@ public:
 
     int GetMaterialIdx(NxScene* scene, float friction, float restitution);
 
-    // PHYSX FIXME - walk thru all the convex hull detector regions to see if we are in any... we're either coming or going
-    void UpdateDetectorsInScene(plKey world, plKey avatar, hsPoint3& pos, bool entering);
-    void UpdateAvatarInDetector(plKey world, plPXPhysical* detector);
-    
+    uint32_t GetStepCount() const { return fStepCount; }
+
     //Fix to Move collision messages and their handling out of the simulation step
     void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
+    void AddCollisionMsg(plCollideMsg* msg);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDisplayAwakeActors;
@@ -120,9 +119,6 @@ protected:
 
     // Walk through the synchronization requests and send them as appropriate.
     void IProcessSynchs();
-
-    // PHYSX FIXME send a collision message  - should only be used with UpdateDetectorsInScene
-    void ISendCollisionMsg(plKey receiver, plKey hitter, bool entering);
 
     NxPhysicsSDK* fSDK;
 
@@ -143,6 +139,9 @@ protected:
     // Is the entire physics world suspended? If so, the clock can still advance
     // but nothing will move.
     bool fSuspended;
+
+    float fAccumulator;
+    uint32_t fStepCount;
 
     // A utility class to keep track of a request for a physical synchronization.
     // These requests must pass a certain criteria (see the code for the latest)

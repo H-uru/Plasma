@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimStage;
 class plAnimStageVec;
 class plAvBrainGenericMsg;
-class plHorizontalFreezeAction;
 class plNotifyMsg;
 
 /** \class plAvBrainGeneric
@@ -300,7 +299,6 @@ protected:
     int fCurStage;                  // which stage are we playing? (zero-based)
     BrainType fType;                // what type of brain are we?
     uint32_t fExitFlags;              // what will cause us to exit?
-    plHorizontalFreezeAction *fCallbackAction;
 
     bool fForward;                  // are we currently moving forward or backward through the stages?
                                     // this is used by the "auto-" movement types in the stages

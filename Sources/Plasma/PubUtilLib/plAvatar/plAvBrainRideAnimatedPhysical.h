@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plAvBrainHuman.h"
 
-class plRidingAnimatedPhysicalController;
-
 class plAvBrainRideAnimatedPhysical : public plAvBrainHuman
 {
 public:
