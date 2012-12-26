@@ -51,7 +51,7 @@ from Plasma import *
 from PlasmaTypes import *
 import string
 import time
-import xRandom
+import random
 
 #globals
 variable = None
@@ -61,11 +61,22 @@ BooleanVARs = [
     "nb01RatCreatureVis",
     ]
 
+# Options for Neighborhood Randomization
+kRandomHood = {"nb01ClockVis" : (0, 1),
+               "nb01GardenFungusVis" : (0, 1),
+               "nb01DestructionCracksVis" : (0, 1),
+               "nb01LanternsVis" : (0, 1),
+               "nb01LampOption01Vis" : (0, 1),
+               "nb01OldImager01Vis" : (0, 1),
+               "nb01OldImager02Vis" : (0, 1),
+               "nb01WaterfallTorchesVis" : (0, 1),
+               "nb01ResidenceAdditionsVis" : (0, 1),
+               "nb01StainedWindowOption": (0, 1, 2)}
+
 byteEderToggle = 0
 sdlEderToggle = "nb01LinkBookEderToggle"
 sdlEderGlass = "nb01StainedGlassEders"
 byteEderGlass = 0
-AgeStartedIn = None
 sdlGZGlass = "nb01StainedGlassGZ"
 byteGZGlass = 0
 numGZGlasses = 3
@@ -135,6 +146,7 @@ class nb01EmgrPhase0(ptResponder):
 
     def __init__(self):
         ptResponder.__init__(self)
+        random.seed()
         self.id = 5222
 
         version = 7
@@ -142,53 +154,49 @@ class nb01EmgrPhase0(ptResponder):
         print "__init__nb01EmgrPhase0 v.", version
 
 
-    def OnFirstUpdate(self):
-        print "nb01EmgrPhase0.OnFirstUpdate()"
-        global AgeStartedIn
-        AgeStartedIn = PtGetAgeName()
-
-
     def OnServerInitComplete(self):
         global byteEderToggle
         global byteEderGlass
         global byteGZGlass
 
-        if AgeStartedIn == PtGetAgeName():
-            ageSDL = PtGetAgeSDL()
-            ageSDL.setFlags(sdlEderToggle,1,1)
-            ageSDL.sendToClients(sdlEderToggle)
-            ageSDL.setNotify(self.key,sdlEderToggle,0.0)
-            byteEderToggle = ageSDL[sdlEderToggle][0]
-            print "nb01EmgrPhase0.OnServerInitComplete(): byteEderToggle = ",byteEderToggle
+        ageSDL = PtGetAgeSDL()
+        ageSDL.setFlags(sdlEderToggle,1,1)
+        ageSDL.sendToClients(sdlEderToggle)
+        ageSDL.setNotify(self.key,sdlEderToggle,0.0)
+        byteEderToggle = ageSDL[sdlEderToggle][0]
+        print "nb01EmgrPhase0.OnServerInitComplete(): byteEderToggle = ",byteEderToggle
 
-            ageSDL.setFlags(sdlEderGlass,1,1)
-            ageSDL.sendToClients(sdlEderGlass)
-            ageSDL.setNotify(self.key,sdlEderGlass,0.0)
-            byteEderGlass = ageSDL[sdlEderGlass][0]
-            print "nb01EmgrPhase0.OnServerInitComplete(): byteEderGlass = ",byteEderGlass
+        ageSDL.setFlags(sdlEderGlass,1,1)
+        ageSDL.sendToClients(sdlEderGlass)
+        ageSDL.setNotify(self.key,sdlEderGlass,0.0)
+        byteEderGlass = ageSDL[sdlEderGlass][0]
+        print "nb01EmgrPhase0.OnServerInitComplete(): byteEderGlass = ",byteEderGlass
 
-            ageSDL.setFlags(sdlGZGlass,1,1)
-            ageSDL.sendToClients(sdlGZGlass)
-            ageSDL.setNotify(self.key,sdlGZGlass,0.0)
-            byteGZGlass = ageSDL[sdlGZGlass][0]
-            print "nb01EmgrPhase0.OnServerInitComplete(): byteGZGlass = ",byteGZGlass
+        ageSDL.setFlags(sdlGZGlass,1,1)
+        ageSDL.sendToClients(sdlGZGlass)
+        ageSDL.setNotify(self.key,sdlGZGlass,0.0)
+        byteGZGlass = ageSDL[sdlGZGlass][0]
+        print "nb01EmgrPhase0.OnServerInitComplete(): byteGZGlass = ",byteGZGlass
 
-            if self.sceneobject.isLocallyOwned():
-                print "nb01EmgrPhase0.OnServerInitComplete(): will check the Eder Delin/Tsogal book and its stained glass..."
-                self.IManageEders()
+        if self.sceneobject.isLocallyOwned():
+            print "nb01EmgrPhase0.OnServerInitComplete(): will check the Eder Delin/Tsogal book and its stained glass..."
+            self.IManageEders()
 
-            if ((byteGZGlass > numGZGlasses) or not byteGZGlass) and self.sceneobject.isLocallyOwned():
-                newGlass = xRandom.randint(1,numGZGlasses)
-                print "nb01EmgrPhase0.OnServerInitComplete():  GZ stained glass randomly picked to be #: ",newGlass
-                ageSDL = PtGetAgeSDL()
-                ageSDL[sdlGZGlass] = (newGlass, )
-            
-            for variable in BooleanVARs:
-                ageSDL.setNotify(self.key,variable,0.0)
-                self.IManageBOOLs(variable, "")
-            for variable in StateVARs:
-                ageSDL.setNotify(self.key,variable,0.0)
-                StateVARs[variable](variable,ageSDL[variable][0])
+        if ((byteGZGlass > numGZGlasses) or not byteGZGlass) and self.sceneobject.isLocallyOwned():
+            newGlass = random.randint((1, numGZGlasses))
+            print "nb01EmgrPhase0.OnServerInitComplete():  GZ stained glass randomly picked to be #: ",newGlass
+            ageSDL[sdlGZGlass] = (newGlass, )
+
+        for variable in BooleanVARs:
+            ageSDL.setNotify(self.key,variable,0.0)
+            self.IManageBOOLs(variable, "")
+        for variable in StateVARs:
+            ageSDL.setNotify(self.key,variable,0.0)
+            StateVARs[variable](variable,ageSDL[variable][0])
+
+        # Age State Randomization
+        # This used to be in the Nexus, but that would never affect server gened hoods
+        self._RandomizeNeighborhood()
 
 
     def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
@@ -204,11 +212,9 @@ class nb01EmgrPhase0(ptResponder):
 
         elif VARname in StateVARs.keys():
             #~ print "nb01EmgrPhase0.OnSDLNotify : %s is a STATE Variable" % (VARname)
-            if AgeStartedIn == PtGetAgeName():
-                ageSDL = PtGetAgeSDL()
-                NewSDLValue = ageSDL[VARname][0] 
-                StateVARs[VARname](VARname, NewSDLValue)
-                print "Sending new value", NewSDLValue
+            NewSDLValue = ageSDL[VARname][0]
+            StateVARs[VARname](VARname, NewSDLValue)
+            print "Sending new value", NewSDLValue
 
         elif VARname == sdlEderToggle:
             byteEderToggle = ageSDL[sdlEderToggle][0]
@@ -230,22 +236,21 @@ class nb01EmgrPhase0(ptResponder):
 
 
     def IManageBOOLs(self,VARname,SDLname):
-        if AgeStartedIn == PtGetAgeName():
-            ageSDL = PtGetAgeSDL()
-            try:
-                if ageSDL[VARname][0] == 1: # are we paging things in?
-                    PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging in room ", VARname)
-                    PtPageInNode(VARname)
-                elif ageSDL[VARname][0] == 0:  #are we paging things out?
-                    print "variable = ", VARname
-                    PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging out room ", VARname)
-                    PtPageOutNode(VARname)
-                else:
-                    sdlvalue = ageSDL[VARname][0]
-                    PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs:\tVariable %s had unexpected SDL value of %s" % (VARname,sdlvalue))
-            except:
-                PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs: problem with %s" % VARname)
-                pass
+        ageSDL = PtGetAgeSDL()
+        try:
+            if ageSDL[VARname][0] == 1: # are we paging things in?
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging in room ", VARname)
+                PtPageInNode(VARname)
+            elif ageSDL[VARname][0] == 0:  #are we paging things out?
+                print "variable = ", VARname
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging out room ", VARname)
+                PtPageOutNode(VARname)
+            else:
+                sdlvalue = ageSDL[VARname][0]
+                PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs:\tVariable %s had unexpected SDL value of %s" % (VARname,sdlvalue))
+        except:
+            PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs: problem with %s" % VARname)
+            pass
 
 
     def IManageEders(self,onInit=0):
@@ -264,7 +269,7 @@ class nb01EmgrPhase0(ptResponder):
 
     def IPickEderBooks(self):
         print "nb01EmgrPhase0.IPickEderBooks()"
-        newBook = xRandom.randint(2,3)
+        newBook = random.randint((2,3))
         ageSDL = PtGetAgeSDL()
         ageSDL[sdlEderToggle] = (newBook, )
         self.IPickEderGlass(newBook)
@@ -274,14 +279,47 @@ class nb01EmgrPhase0(ptResponder):
         print "nb01EmgrPhase0.IPickEderGlass()"
         newGlass = 0
         if eder == 2:
-            newGlass = xRandom.randint(1,3)
+            newGlass = random.randint((1, 3))
         elif eder == 3:
-        	newGlass = xRandom.randint(4,6)
+            newGlass = random.randint((4,6))
         ageSDL = PtGetAgeSDL()
         ageSDL[sdlEderGlass] = (newGlass, )
 
 
-    def OnBackdoorMsg(self, target, param):
-        pass
+    def _RandomizeNeighborhood(self):
+        """Does initial state scrambling for the Neighborhood.
+           This makes all hoods have a slightly different appearance (hopefully)"""
+        vault = ptAgeVault()
+        if vault is None:
+            PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood():\tAgeVault is None. Bailing!")
+            return
+        # We want to operate on the *vault* SDL so these options can be easily inspected
+        # by vault managers on servers that don't merge SDL blobs (this is how the old plServers worked).
+        ageSDL = vault.getAgeSDL()
+        if not ageSDL:
+            PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood():\tAgeVaultSDL is None. Bailing!")
+            return
+        PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
+        for name, values in kRandomHood.iteritems():
+            var = ageSDL.findVar(name)
+            if var is None:
+                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): SDL Variable %s not found!" % var)
+                continue
+            # Duck Typing makes this unnesecary.
+            if var.getType() == PtSDLVarType.kBool:
+                func = var.setBool
+            elif var.getType() in (PtSDLVarType.kInt, PtSDLVarType.kByte):
+                func = var.setInt
+            elif var.getType() == PtSDLVarType.kString32:
+                func = var.setString
+            else:
+                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): %s has an unknown type! Not randomizing." % name)
+                continue
 
-
+            # Only randomize if we're at the default
+            if not var.isUsed():
+                theChosenValue = random.choice(values)
+                func(theChosenValue)
+                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): `%s` = %s" % (name, str(theChosenValue)))
+        PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
+        vault.updateAgeSDL(ageSDL)

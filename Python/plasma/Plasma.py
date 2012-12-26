@@ -6225,6 +6225,10 @@ class ptSimpleStateVariable:
         """Is this an internal variable?"""
         pass
 
+    def isUsed(self):
+        """Is this variable used?"""
+        pass
+
     def setBool(self,val,idx=0):
         """Sets a boolean variable's value"""
         pass

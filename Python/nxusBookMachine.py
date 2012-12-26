@@ -180,18 +180,6 @@ colorDisabled = AgenGoldDkSoft
 kNumDisplayFields = 8
 kMaxDisplayableChars = 24 # the avg number of chars to display before tacking on an ellipsis: "..."
 
-# the vars that can be randomized after hood creation to any given value
-kRandomizeVars = {"nb01ClockVis" : (0, 1),
-                  "nb01GardenFungusVis" : (0, 1),
-                  "nb01DestructionCracksVis" : (0, 1),
-                  "nb01LanternsVis" : (0, 1),
-                  "nb01LampOption01Vis" : (0, 1),
-                  "nb01OldImager01Vis" : (0, 1),
-                  "nb01OldImager02Vis" : (0, 1),
-                  "nb01WaterfallTorchesVis" : (0, 1),
-                  "nb01ResidenceAdditionsVis" : (0, 1),
-                  "nb01StainedWindowOption": (0, 1, 2)}
-
 #special named link panels (other then 'LinkPanel_' + Age Filename)
 kLinkPanels = {
 'city' : {'LinkInPointFerry' : U'LinkPanel_Ferry Terminal',
@@ -602,8 +590,6 @@ class nxusBookMachine(ptModifier):
         PtGetPublicAgeList(ageName, self)
 
     def IHoodCreated(self, ageInfo):
-        PtDebugPrint("OnVaultNotify: A new neighborhood was created! Time to scramble...I mean randomize the SDL!")
-        self.IRandomizeNeighborhood(ageInfo)
         PtDebugPrint("OnVaultNotify: Setting the new hood's language to %d " % PtGetLanguage())
         ageInfo.setAgeLanguage(PtGetLanguage())
         # save our creation time to the vault to prevent people from making too many hoods
@@ -679,38 +665,6 @@ class nxusBookMachine(ptModifier):
             if tupdata[0].getType() == PtVaultNodeTypes.kAgeInfoNode:
                 if self.IGetHoodInfoNode().getID() == tupdata[0].getID():
                     self.IUpdateHoodLink()
-
-    def IRandomizeNeighborhood(self, ageInfoNode):
-        childRefList = ageInfoNode.getChildNodeRefList()
-        sdl = None
-        for childRef in childRefList:
-            child = childRef.getChild()
-            if child.getType() == PtVaultNodeTypes.kSDLNode:
-                sdl = child.upcastToSDLNode()
-
-        if sdl is None:
-            PtDebugPrint("IRandomizeNeighborhood: Can't find age SDL node. Not randomizing" % name)
-            return
-
-        dataRecord = sdl.getStateDataRecord()
-        for (name, values) in kRandomizeVars.iteritems():
-            var = dataRecord.findVar(name)
-            if var is None:
-                PtDebugPrint('IRandomizeNeighborhood: Var %s not found in SDL record. Not randomizing' % name)
-                value = random.choice(values)
-                if var.getType() == PtSDLVarType.kBool: # there are only bool values right now
-                    var.setBool(value)
-                    PtDebugPrint('IRandomizeNeighborhood: Setting bool var %s to %s' % (name, value))
-                elif var.getType() in (PtSDLVarType.kInt, PtSDLVarType.kByte):
-                    var.setInt(value)
-                    PtDebugPrint('IRandomizeNeighborhood: Setting int var %s to %s' % (name, value))
-                elif var.getType() == PtSDLVarType.kString32:
-                    var.setString(value)
-                    PtDebugPrint('IRandomizeNeighborhood: Setting str var %s to %s' % (name, value))
-                else:
-                    PtDebugPrint('IRandomizeNeighborhood: Var %s has an unknown type! Not randomizing' % name)
-        sdl.setStateDataRecord(dataRecord)
-        sdl.saveAll()
 
     def IOnYesNoNotify(self, state, events):
         if self.deleteCandidateId is None: # user wants to create a new hood
