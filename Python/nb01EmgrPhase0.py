@@ -183,7 +183,7 @@ class nb01EmgrPhase0(ptResponder):
             self.IManageEders()
 
         if ((byteGZGlass > numGZGlasses) or not byteGZGlass) and self.sceneobject.isLocallyOwned():
-            newGlass = random.randint((1, numGZGlasses))
+            newGlass = random.randint(1, numGZGlasses)
             print "nb01EmgrPhase0.OnServerInitComplete():  GZ stained glass randomly picked to be #: ",newGlass
             ageSDL[sdlGZGlass] = (newGlass, )
 
@@ -269,7 +269,7 @@ class nb01EmgrPhase0(ptResponder):
 
     def IPickEderBooks(self):
         print "nb01EmgrPhase0.IPickEderBooks()"
-        newBook = random.randint((2,3))
+        newBook = random.randint(2, 3)
         ageSDL = PtGetAgeSDL()
         ageSDL[sdlEderToggle] = (newBook, )
         self.IPickEderGlass(newBook)
@@ -279,9 +279,9 @@ class nb01EmgrPhase0(ptResponder):
         print "nb01EmgrPhase0.IPickEderGlass()"
         newGlass = 0
         if eder == 2:
-            newGlass = random.randint((1, 3))
+            newGlass = random.randint(1, 3)
         elif eder == 3:
-            newGlass = random.randint((4,6))
+            newGlass = random.randint(4, 6)
         ageSDL = PtGetAgeSDL()
         ageSDL[sdlEderGlass] = (newGlass, )
 
