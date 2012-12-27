@@ -809,7 +809,7 @@ public:
     //
 
     static int GetNumCameras();
-    static const char* GetCameraNumber(int number);
+    static plString GetCameraNumber(int number);
     static void RebuildCameraStack(const plString& name, const char* ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
