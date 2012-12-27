@@ -2459,14 +2459,14 @@ int cyMisc::GetNumCameras()
     return (plVirtualCam1::Instance()->GetNumCameras());
 }
 
-const char* cyMisc::GetCameraNumber(int number)
+plString cyMisc::GetCameraNumber(int number)
 {
     plCameraModifier1* pCam = plVirtualCam1::Instance()->GetCameraNumber(number-1);
-    if (pCam->GetTarget())
+    if (pCam && pCam->GetTarget())
     {
-        const char* ret = pCam->GetTarget()->GetKeyName().c_str();
-        plString str = plString::Format("saving camera named %s to chronicle\n",ret);
-        plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
+        plString ret = pCam->GetTarget()->GetKeyName();
+        plString log = plString::Format("saving camera named %s to chronicle\n", ret.c_str());
+        plVirtualCam1::Instance()->AddMsgToLog(log.c_str());
         return ret;
     }
     plVirtualCam1::Instance()->AddMsgToLog("sending empty to camera chronicle\n");
