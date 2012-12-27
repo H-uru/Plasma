@@ -2203,7 +2203,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
     if( Windowed )
     {
         // WS_VISIBLE appears necessary to avoid leaving behind framebuffer junk when going from windowed to a smaller window
-        winStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
+        winStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     } else {
         winStyle = WS_POPUP;
