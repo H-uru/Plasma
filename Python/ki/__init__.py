@@ -896,7 +896,7 @@ class xKI(ptModifier):
                     self.ToggleMiniKI()
         elif command == kKIShowOptionsMenu:
             if self.yeeshaBook:
-                YeeshaBook.hide()
+                self.yeeshaBook.hide()
             PtToggleAvatarClickability(True)
             if self.KILevel == kMicroKI:
                 plybkCB = ptGUIControlCheckBox(KIMicroBlackbar.dialog.getControlFromTag(kGUI.PlayerBookCBID))
