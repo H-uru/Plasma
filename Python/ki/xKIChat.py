@@ -194,9 +194,9 @@ class xKIChat(object):
 
         # Check for special commands.
         message = self.commandsProcessor(message)
-
         if not message:
             return
+        msg = message.lower()
 
         # Get any selected players.
         userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
@@ -204,12 +204,12 @@ class xKIChat(object):
         selPlyrList = []
 
         # Is it a message to all players in the current Age?
-        if message.startswith(PtGetLocalizedString("KI.Commands.ChatAllAge")):
+        if msg.startswith(PtGetLocalizedString("KI.Commands.ChatAllAge")):
             listenerOnly = False
             message = message[len(PtGetLocalizedString("KI.Commands.ChatAllAge")) + 1:]
 
         # Is it a reply to a private message?
-        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
+        elif msg.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
             if self.toReplyToLastPrivatePlayerID is None:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.NoOneToReply"), kChat.SystemMessage)
                 return
@@ -249,7 +249,7 @@ class xKIChat(object):
                 message = pre + message
 
         # Is it a private message sent with "/p"?
-        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatPrivate")):
+        elif msg.startswith(PtGetLocalizedString("KI.Commands.ChatPrivate")):
             pWords = message.split(" ", 1)
             foundBuddy = False
             # Make sure it's still just a "/p".
@@ -290,7 +290,7 @@ class xKIChat(object):
                 return
 
         # Is it a message to the player's neighbors?
-        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatNeighbors")):
+        elif msg.startswith(PtGetLocalizedString("KI.Commands.ChatNeighbors")):
             cFlags.neighbors = True
             message = message[len(PtGetLocalizedString("KI.Commands.ChatNeighbors")) + 1:]
             neighbors = GetNeighbors()
@@ -304,7 +304,7 @@ class xKIChat(object):
             goesToFolder = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kHoodMembersFolder)
 
         # Is it a message to the player's buddies?
-        elif message.startswith(PtGetLocalizedString("KI.Commands.ChatBuddies")):
+        elif msg.startswith(PtGetLocalizedString("KI.Commands.ChatBuddies")):
             vault = ptVault()
             buddies = vault.getBuddyListFolder()
             message = message[len(PtGetLocalizedString("KI.Commands.ChatBuddies")) + 1:]
@@ -759,6 +759,8 @@ class CommandsProcessor:
     # to apply the command.
     def __call__(self, message):
 
+        msg = message.lower()
+
         # Load all available commands.
         commands = dict()
         commands.update(kCommands.Localized)
@@ -770,7 +772,7 @@ class CommandsProcessor:
 
         # Does the message contain a standard command?
         for command, function in commands.iteritems():
-            if message.lower().startswith(command):
+            if msg.startswith(command):
                 theMessage = message.split(" ", 1)
                 if len(theMessage) > 1 and theMessage[1]:
                     params = theMessage[1]
@@ -781,12 +783,12 @@ class CommandsProcessor:
 
         # Is it a simple text-based command?
         for command, text in kCommands.Text.iteritems():
-            if message.lower().startswith(command):
+            if msg.startswith(command):
                 self.chatMgr.AddChatLine(None, text, 0)
                 return None
 
         # Is it another text-based easter-egg command?
-        if message.lower().startswith("/get "):
+        if msg.startswith("/get "):
             v = "is"
             if message[-1:] == "s":
                 v = "are"
@@ -893,8 +895,8 @@ class CommandsProcessor:
     ## Clear the chat.
     def ClearChat(self, params):
 
-        chatAreaU = ptGUIControlMultiLineEdit(self.chatMgr.KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatAreaM = ptGUIControlMultiLineEdit(self.chatMgr.KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+        chatAreaU = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+        chatAreaM = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
         chatAreaU.clearBuffer()
         chatAreaM.clearBuffer()
 
