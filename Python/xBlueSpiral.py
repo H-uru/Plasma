@@ -158,8 +158,13 @@ class xBlueSpiral(ptResponder, object):
 
     def _solution_get(self):
         ageSDL = PtGetAgeSDL()
+        seq = []
         for cloth in str(ageSDL[SDLBSSolution.value][0]).split():
-            yield int(cloth)
+            try:
+                seq.append(int(cloth))
+            except ValueError:
+                return None
+        return seq
     def _solution_set(self, value):
         ageSDL = PtGetAgeSDL()
         if value:
