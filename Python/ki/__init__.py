@@ -3025,7 +3025,7 @@ class xKI(ptModifier):
             pass
 
     ## Reloads the player list with the latest values and displays them.
-    def RefreshPlayerList(self):
+    def RefreshPlayerList(self, forceSmall=False):
 
         PtDebugPrint(u"xKI.RefreshPlayerList(): Refreshing.", level=kDebugDumpLevel)
         playerlist = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
@@ -3066,7 +3066,7 @@ class xKI(ptModifier):
             self.BKPlayerList += onlinePlayers
         else:
             self.BKPlayerList.append("NEIGHBORS")
-        if self.folderOfDevices:
+        if self.folderOfDevices and BigKI.dialog.isEnabled() and not forceSmall:
             self.BKPlayerList.append(self.folderOfDevices)
             for device in self.folderOfDevices:
                 self.BKPlayerList.append(device)
@@ -3428,7 +3428,7 @@ class xKI(ptModifier):
                         dragbar.unanchor()
                         self.lastminiKICenter = None
                     # Refresh the player list, because it will be the shorter version.
-                    self.RefreshPlayerList()
+                    self.RefreshPlayerList(True)
                     toggleCB.setChecked(0)
                 else:
                     # If there is nothing showing, just bring up the miniKI.
