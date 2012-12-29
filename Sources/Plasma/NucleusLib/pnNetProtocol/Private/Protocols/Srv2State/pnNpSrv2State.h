@@ -95,12 +95,12 @@ struct Srv2State_Connect {
 ***/
 
 struct Srv2State_FetchObject : SrvMsgHeader {
-    Uuid    ownerId;
+    plUUID  ownerId;
     wchar_t   objectName[kMaxStateObjectName];
 };
 
 struct Srv2State_SaveObject : SrvMsgHeader {
-    Uuid        ownerId;        
+    plUUID      ownerId;
     wchar_t       objectName[kMaxStateObjectName];
     uint32_t       objectDataBytes;
     uint8_t        objectData[1]; // objectData[objectDataBytes], actually
@@ -108,7 +108,7 @@ struct Srv2State_SaveObject : SrvMsgHeader {
 };
 
 struct Srv2State_DeleteObject : SrvMsgHeader {
-    Uuid    ownerId;        
+    plUUID  ownerId;
     wchar_t   objectName[kMaxStateObjectName];
 };
 

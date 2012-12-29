@@ -1689,7 +1689,7 @@ void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
     pMsg->Send();
 }
 
-void cyMisc::SetShareAgeInstanceGuid(const Uuid& guid)
+void cyMisc::SetShareAgeInstanceGuid(const plUUID& guid)
 {
     plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareAgeInstanceGuid);
     plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();

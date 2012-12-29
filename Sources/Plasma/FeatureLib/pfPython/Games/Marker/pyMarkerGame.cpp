@@ -60,9 +60,9 @@ pyMarkerGame::pyMarkerGame(pfGameCli* client): pyGameCli(client)
         gameClient = nil; // wrong type, just clear it out
 }
 
-bool pyMarkerGame::IsMarkerGame(std::wstring guid)
+bool pyMarkerGame::IsMarkerGame(plString& guid)
 {
-    Uuid gameUuid(guid.c_str());
+    plUUID gameUuid(guid);
     return gameUuid == kGameTypeId_Marker;
 }
 

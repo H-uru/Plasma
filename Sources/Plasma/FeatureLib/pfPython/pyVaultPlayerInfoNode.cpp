@@ -153,10 +153,9 @@ void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)
     if (!fNode)
         return;
 
-    Uuid ageInstId;
-    GuidFromString(guidtext, &ageInstId);
+    plUUID ageInstId(guidtext);
     VaultPlayerInfoNode playerInfo(fNode);
-    playerInfo.SetAgeInstUuid(ageInstId);       
+    playerInfo.SetAgeInstUuid(ageInstId);
 }
 
 plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
@@ -165,7 +164,7 @@ plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
         VaultPlayerInfoNode playerInfo(fNode);
         return plUUID(playerInfo.ageInstUuid);
     }
-    return plUUID();
+    return kNilUuid;
 }
 
 // online status

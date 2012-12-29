@@ -419,7 +419,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
 
     // Queue join op        
     NlmJoinAgeOp * joinAgeOp = NEWZERO(NlmJoinAgeOp);
-    joinAgeOp->age.ageInstId = (Uuid) *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+    joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
         GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
@@ -768,7 +768,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
     if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
-        Uuid ageInstGuid = *info->GetAgeInstanceGuid();
+        plUUID ageInstGuid = *info->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
@@ -863,7 +863,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         accInfo.SetAgeInstName(nil);
-        accInfo.SetAgeInstUuid(kNilGuid);
+        accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
         rvnInfo->DecRef();
     }
@@ -872,7 +872,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
-        Uuid ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+        plUUID ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);

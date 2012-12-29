@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
 *
 *   $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/pnNpCommon.cpp
-*   
+*
 ***/
 
 #include "../Pch.h"
+#include "pnUUID/pnUUID.h"
 #pragma hdrstop
 
 
@@ -599,8 +600,8 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
                     _ZERO(kCreateTime,          IVaultNodeSetValue,     createTime,     (unsigned)0);
                     _ZERO(kModifyTime,          IVaultNodeSetValue,     modifyTime,     (unsigned)0);
                     _ZEROSTRING(kCreateAgeName, IVaultNodeSetString,    createAgeName,  L"");
-                    _ZERO(kCreateAgeUuid,       IVaultNodeSetValue,     createAgeUuid,  kNilGuid);
-                    _ZERO(kCreatorAcct,         IVaultNodeSetValue,     creatorAcct,    kNilGuid);
+                    _ZERO(kCreateAgeUuid,       IVaultNodeSetValue,     createAgeUuid,  kNilUuid);
+                    _ZERO(kCreatorAcct,         IVaultNodeSetValue,     creatorAcct,    kNilUuid);
                     _ZERO(kCreatorId,           IVaultNodeSetValue,     creatorId,      (unsigned)0);
                     _ZERO(kNodeType,            IVaultNodeSetValue,     nodeType,       (unsigned)0);
                     _ZERO(kInt32_1,             IVaultNodeSetValue,     int32_1,        (signed)0);
@@ -611,10 +612,10 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
                     _ZERO(kUInt32_2,            IVaultNodeSetValue,     uint32_2,       (unsigned)0);
                     _ZERO(kUInt32_3,            IVaultNodeSetValue,     uint32_3,       (unsigned)0);
                     _ZERO(kUInt32_4,            IVaultNodeSetValue,     uint32_4,       (unsigned)0);
-                    _ZERO(kUuid_1,              IVaultNodeSetValue,     uuid_1,         kNilGuid);
-                    _ZERO(kUuid_2,              IVaultNodeSetValue,     uuid_2,         kNilGuid);
-                    _ZERO(kUuid_3,              IVaultNodeSetValue,     uuid_3,         kNilGuid);
-                    _ZERO(kUuid_4,              IVaultNodeSetValue,     uuid_4,         kNilGuid);
+                    _ZERO(kUuid_1,              IVaultNodeSetValue,     uuid_1,         kNilUuid);
+                    _ZERO(kUuid_2,              IVaultNodeSetValue,     uuid_2,         kNilUuid);
+                    _ZERO(kUuid_3,              IVaultNodeSetValue,     uuid_3,         kNilUuid);
+                    _ZERO(kUuid_4,              IVaultNodeSetValue,     uuid_4,         kNilUuid);
                     _ZEROSTRING(kString64_1,    IVaultNodeSetString,    string64_1,     L"");
                     _ZEROSTRING(kString64_2,    IVaultNodeSetString,    string64_2,     L"");
                     _ZEROSTRING(kString64_3,    IVaultNodeSetString,    string64_3,     L"");
@@ -706,12 +707,12 @@ void NetVaultNode::SetCreateAgeName (const wchar_t v[]) {
 }
 
 //============================================================================
-void NetVaultNode::SetCreateAgeUuid (const Uuid & v) {
+void NetVaultNode::SetCreateAgeUuid (const plUUID& v) {
     IVaultNodeSetValue(kCreateAgeUuid, this, &createAgeUuid, v);
 }
 
 //============================================================================
-void NetVaultNode::SetCreatorAcct (const Uuid & v) {
+void NetVaultNode::SetCreatorAcct (const plUUID& v) {
     IVaultNodeSetValue(kCreatorAcct, this, &creatorAcct, v);
 }
 
@@ -766,22 +767,22 @@ void NetVaultNode::SetUInt32_4 (unsigned v) {
 }
 
 //============================================================================
-void NetVaultNode::SetUuid_1 (const Uuid & v) {
+void NetVaultNode::SetUuid_1 (const plUUID& v) {
     IVaultNodeSetValue(kUuid_1, this, &uuid_1, v);
 }
 
 //============================================================================
-void NetVaultNode::SetUuid_2 (const Uuid & v) {
+void NetVaultNode::SetUuid_2 (const plUUID& v) {
     IVaultNodeSetValue(kUuid_2, this, &uuid_2, v);
 }
 
 //============================================================================
-void NetVaultNode::SetUuid_3 (const Uuid & v) {
+void NetVaultNode::SetUuid_3 (const plUUID& v) {
     IVaultNodeSetValue(kUuid_3, this, &uuid_3, v);
 }
 
 //============================================================================
-void NetVaultNode::SetUuid_4 (const Uuid & v) {
+void NetVaultNode::SetUuid_4 (const plUUID& v) {
     IVaultNodeSetValue(kUuid_4, this, &uuid_4, v);
 }
 
@@ -976,7 +977,7 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kUuid_2:
         case NetVaultNode::kUuid_3:
         case NetVaultNode::kUuid_4: {
-            plString tmp = plUUID(fieldAddr).AsString();
+            plString tmp = plUUID((char*)fieldAddr).AsString();
 
             StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp.c_str());
         }

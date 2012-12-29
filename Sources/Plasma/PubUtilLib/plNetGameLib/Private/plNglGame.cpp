@@ -91,12 +91,12 @@ struct JoinAgeRequestTrans : NetGameTrans {
     void *                              m_param;
     // sent
     unsigned                            m_ageMcpId;
-    Uuid                                m_accountUuid;
+    plUUID                              m_accountUuid;
     unsigned                            m_playerInt;
 
     JoinAgeRequestTrans (
         unsigned                            ageMcpId,
-        const Uuid &                        accountUuid,
+        const plUUID&                       accountUuid,
         unsigned                            playerInt,
         FNetCliGameJoinAgeRequestCallback   callback,
         void *                              param
@@ -574,7 +574,7 @@ static NetMsgInitRecv s_recv[] = {
 //============================================================================
 JoinAgeRequestTrans::JoinAgeRequestTrans (
     unsigned                            ageMcpId,
-    const Uuid &                        accountUuid,
+    const plUUID&                       accountUuid,
     unsigned                            playerInt,
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param
@@ -817,7 +817,7 @@ void NetCliGameDisconnect () {
 //============================================================================
 void NetCliGameJoinAgeRequest (
     unsigned                            ageMcpId,
-    const Uuid &                        accountUuid,
+    const plUUID&                       accountUuid,
     unsigned                            playerInt,
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param

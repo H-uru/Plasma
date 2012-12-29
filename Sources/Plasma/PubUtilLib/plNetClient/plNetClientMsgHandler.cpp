@@ -261,7 +261,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         nc->ErrorMsg(err.c_str());
 
         // Post Quit message
-        nc->QueueDisableNet(true, "SDL Desc Problem");      
+        nc->QueueDisableNet(true, "SDL Desc Problem");
         delete sdRec;
     }
     else if( sdRec->Read( &stream, 0, rwFlags ) )

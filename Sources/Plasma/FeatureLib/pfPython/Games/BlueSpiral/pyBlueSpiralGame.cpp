@@ -59,9 +59,9 @@ pyBlueSpiralGame::pyBlueSpiralGame(pfGameCli* client): pyGameCli(client)
         gameClient = nil; // wrong type, just clear it out
 }
 
-bool pyBlueSpiralGame::IsBlueSpiralGame(std::wstring guid)
+bool pyBlueSpiralGame::IsBlueSpiralGame(plString& guid)
 {
-    Uuid gameUuid(guid.c_str());
+    plUUID gameUuid(guid);
     return gameUuid == kGameTypeId_BlueSpiral;
 }
 

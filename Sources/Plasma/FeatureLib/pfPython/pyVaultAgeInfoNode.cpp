@@ -236,7 +236,7 @@ plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
 
         return plUUID(access.ageInstUuid);
     }
-    return plUUID();
+    return kNilUuid;
 }
 
 void pyVaultAgeInfoNode::SetAgeInstanceGuid( const char * sguid )

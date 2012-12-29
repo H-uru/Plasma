@@ -409,7 +409,7 @@ void pfGameMgr::JoinGame (
 //============================================================================
 void pfGameMgr::CreateGame (
     plKey           receiver,
-    const Uuid &    gameTypeId,
+    const plUUID&   gameTypeId,
     unsigned        createOptions,
     unsigned        initBytes,
     const void *    initData
@@ -439,7 +439,7 @@ void pfGameMgr::CreateGame (
 //============================================================================
 void pfGameMgr::JoinCommonGame (
     plKey           receiver,
-    const Uuid &    gameTypeId,
+    const plUUID&   gameTypeId,
     unsigned        gameNumber,
     unsigned        initBytes,
     const void *    initData

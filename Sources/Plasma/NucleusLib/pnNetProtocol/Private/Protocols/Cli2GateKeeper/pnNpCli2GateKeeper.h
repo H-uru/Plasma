@@ -89,7 +89,7 @@ static_assert(kNumGateKeeper2CliMessages <= 0xFFFF, "GateKeeper2Cli message type
 
 struct Cli2GateKeeper_ConnData {
     uint32_t       dataBytes;
-    Uuid        token;
+    plUUID      token;
 };
 
 struct Cli2GateKeeper_Connect {

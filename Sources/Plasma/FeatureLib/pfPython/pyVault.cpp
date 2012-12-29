@@ -531,7 +531,7 @@ bool pyVault::AmAgeOwner( const pyAgeInfoStruct * ageInfo )
     if (!ageInfo->GetAgeInfo())
         return false;
 
-    Uuid ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
+    plUUID ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
     return VaultAmOwnerOfAge(ageInstId);
 }
 
@@ -540,7 +540,7 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     if (!ageInfo->GetAgeInfo())
         return false;
 
-    Uuid ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
+    plUUID ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
     return VaultAmCzarOfAge(ageInstId);
 }
 
@@ -574,10 +574,8 @@ void pyVault::RegisterVisitAge( const pyAgeLinkStruct & link )
 
 void pyVault::UnRegisterVisitAge( const char * guidstr )
 {
-    Uuid uuid;
-    GuidFromString(guidstr, &uuid);
     plAgeInfoStruct info;
-    plUUID guid(uuid);
+    plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
     VaultUnregisterVisitAgeAndWait(&info);
 }

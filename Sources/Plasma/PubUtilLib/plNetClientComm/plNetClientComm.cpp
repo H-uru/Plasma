@@ -121,7 +121,7 @@ static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
 static wchar_t                s_iniOS[kMaxGTOSIdLength];
 static bool                 s_iniReadAccountInfo = true;
 static wchar_t                s_iniStartupAgeName[kMaxAgeNameLength];
-static Uuid                 s_iniStartupAgeInstId;
+static plUUID               s_iniStartupAgeInstId;
 static wchar_t                s_iniStartupPlayerName[kMaxPlayerNameLength];
 static bool                 s_netError = false;
 
@@ -382,7 +382,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
 static void INetCliAuthLoginRequestCallback (
     ENetError                   result,
     void *                      param,
-    const Uuid &                accountUuid,
+    const plUUID&               accountUuid,
     unsigned                    accountFlags,
     unsigned                    billingType,
     const NetCliAuthPlayerInfo  playerInfoArr[],
@@ -417,7 +417,7 @@ static void INetCliAuthLoginRequestCallback (
         }
     }
     else
-        s_account.accountUuid = kNilGuid;
+        s_account.accountUuid = kNilUuid;
 
     // If they specified an alternate age, but we couldn't find the player, force
     // the StartUp age to load so that they may select/create a player first.    
@@ -590,7 +590,7 @@ static void INetCliAuthAgeRequestCallback (
     void *          param,
     unsigned        ageMcpId,
     unsigned        ageVaultId,
-    const Uuid &    ageInstId,
+    const plUUID&   ageInstId,
     plNetAddress    gameAddr
 ) {
     if (!IS_NET_ERROR(result) || result == kNetErrVaultNodeNotFound) {
@@ -598,7 +598,7 @@ static void INetCliAuthAgeRequestCallback (
         s_age.ageVaultId = ageVaultId;
 
         plString gameAddrStr = gameAddr.GetHostString();
-        plString ageInstIdStr = plUUID(ageInstId).AsString();
+        plString ageInstIdStr = ageInstId.AsString();
 
         LogMsg(
             kLogPerf,
@@ -1121,7 +1121,7 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
         if (RelVaultNode* rvn = VaultGetPlayerInfoNodeIncRef()) {
             VaultPlayerInfoNode pInfo(rvn);
             pInfo.SetAgeInstName(nil);
-            pInfo.SetAgeInstUuid(kNilGuid);
+            pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);
 
@@ -1245,14 +1245,14 @@ void NetCommSetAgePublic (  // --> no msg
 //============================================================================
 void NetCommCreatePublicAge (// --> plNetCommPublicAgeMsg
     const char              ageName[],
-    const Uuid &            ageInstId,
+    const plUUID&           ageInstId,
     void *                  param
 ) {
 }
 
 //============================================================================
 void NetCommRemovePublicAge(// --> plNetCommPublicAgeMsg
-    const Uuid &            ageInstId,
+    const plUUID&           ageInstId,
     void *                  param
 ) {
 }
@@ -1285,7 +1285,7 @@ void NetCommRegisterVisitAge (
 
 //============================================================================
 void NetCommUnregisterVisitAge (
-    const Uuid &            ageInstId,
+    const plUUID&           ageInstId,
     unsigned                playerInt,
     void *                  param
 ) {
@@ -1299,7 +1299,7 @@ void NetCommConnectPlayerVault (
 
 //============================================================================
 void NetCommConnectAgeVault (
-    const Uuid &            ageInstId,
+    const plUUID&           ageInstId,
     void *                  param
 ) {
 }
@@ -1333,7 +1333,7 @@ void NetCommSetCCRLevel (
 void NetCommSendFriendInvite (
     const wchar_t     emailAddress[],
     const wchar_t     toName[],
-    const Uuid&     inviteUuid
+    const plUUID&   inviteUuid
 ) {
     NetCliAuthSendFriendInvite(
         emailAddress,

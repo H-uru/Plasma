@@ -129,7 +129,8 @@ PyObject* pyGameCliMsg::UpcastToGameMsg() const
     if (!message)
         PYTHON_RETURN_NONE;
 
-    const Uuid& gameTypeId = message->gameCli->GetGameTypeId();
+    const plUUID& gameTypeId = message->gameCli->GetGameTypeId();
+
     if (gameTypeId == kGameTypeId_TicTacToe)
         return pyTTTMsg::New(message);
     else if (gameTypeId == kGameTypeId_Heek)
