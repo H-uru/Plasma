@@ -45,33 +45,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <exception>
 #include <Python.h>
+#include <exception>
 #pragma hdrstop
 
 #include "pyVaultNode.h"
+
 #ifndef BUILDING_PYPLASMA
 #   include "pyVault.h"
 #   include "pyVaultSystemNode.h"
 #   include "pnNetCommon/plNetApp.h"
 #   include "plNetClientComm/plNetClientComm.h"
 #endif
-#   include "pyImage.h"
-#   include "pyDniCoordinates.h"
-#   include "pyVaultNodeRef.h"
-#   include "pyVaultFolderNode.h"
-#   include "pyVaultPlayerInfoListNode.h"
-#   include "pyVaultImageNode.h"
-#   include "pyVaultTextNoteNode.h"
-#   include "pyVaultAgeLinkNode.h"
-#   include "pyVaultChronicleNode.h"
-#   include "pyVaultPlayerInfoNode.h"
-#   include "pyVaultMarkerGameNode.h"
-#   include "pyVaultAgeInfoNode.h"
-#   include "pyVaultAgeInfoListNode.h"
-#   include "pyVaultPlayerNode.h"
-#   include "pyVaultSDLNode.h"
 
+#include "pyImage.h"
+#include "pyDniCoordinates.h"
+#include "pyVaultNodeRef.h"
+#include "pyVaultFolderNode.h"
+#include "pyVaultPlayerInfoListNode.h"
+#include "pyVaultImageNode.h"
+#include "pyVaultTextNoteNode.h"
+#include "pyVaultAgeLinkNode.h"
+#include "pyVaultChronicleNode.h"
+#include "pyVaultPlayerInfoNode.h"
+#include "pyVaultMarkerGameNode.h"
+#include "pyVaultAgeInfoNode.h"
+#include "pyVaultAgeInfoListNode.h"
+#include "pyVaultPlayerNode.h"
+#include "pyVaultSDLNode.h"
+
+#include "pnUUID/pnUUID.h"
 #include "plGImage/plMipmap.h"
 #include "plVault/plVault.h"
 
@@ -168,7 +171,6 @@ RelVaultNode * pyVaultNode::pyVaultNodeOperationCallback::GetNode () {
 // only for python glue, do NOT call
 pyVaultNode::pyVaultNode()
 :   fNode(nil)
-,   fCreateAgeGuid(nil)
 ,   fCreateAgeName(nil)
 {
 }
@@ -176,7 +178,6 @@ pyVaultNode::pyVaultNode()
 // should only be created from C++ side
 pyVaultNode::pyVaultNode( RelVaultNode* nfsNode )
 :   fNode(nfsNode)
-,   fCreateAgeGuid(nil)
 ,   fCreateAgeName(nil)
 {
     if (fNode)
@@ -187,7 +188,6 @@ pyVaultNode::~pyVaultNode()
 {
     if (fNode)
         fNode->DecRef("pyVaultNode");
-    free(fCreateAgeGuid);
     free(fCreateAgeName);
 }
 
@@ -322,20 +322,13 @@ const char * pyVaultNode::GetCreateAgeName( void )
     return fCreateAgeName;
 }
 
-const char * pyVaultNode::GetCreateAgeGuid( void )
+plUUID pyVaultNode::GetCreateAgeGuid(void) const
 {
-    if (!fNode)
-        return "";
-        
-    if (fCreateAgeGuid)
-        return fCreateAgeGuid;
-        
     if (fNode) {
-        fCreateAgeGuid = (char*)malloc(64);
-        strncpy(fCreateAgeGuid, plUUID(fNode->createAgeUuid).AsString().c_str(), 64);
+        return plUUID(fNode->createAgeUuid);
     }
-    
-    return fCreateAgeGuid;
+
+    return plUUID();
 }
 
 PyObject* pyVaultNode::GetCreateAgeCoords () {
@@ -390,9 +383,6 @@ void pyVaultNode::SetCreateAgeName( const char * v )
 
 void pyVaultNode::SetCreateAgeGuid( const char * v )
 {
-    free(fCreateAgeGuid);
-    fCreateAgeGuid = nil;
-    
     ASSERT(fNode);
     Uuid uuid;
     GuidFromString(v, &uuid);

@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 
 class pfGameMgrMsg;
+class plUUID;
 
 class pyGameMgrMsg
 {
@@ -95,9 +96,9 @@ public:
 
     static void AddPlasmaClasses(PyObject* m);
 
-    unsigned long InviterID() const;
-    std::wstring GameTypeID() const;
-    unsigned long NewGameID() const;
+    uint32_t InviterID() const;
+    plUUID GameTypeID() const;
+    uint32_t NewGameID() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,9 +117,9 @@ public:
 
     static void AddPlasmaClasses(PyObject* m);
 
-    unsigned long InviterID() const;
-    std::wstring GameTypeID() const;
-    unsigned long NewGameID() const;
+    uint32_t InviterID() const;
+    plUUID GameTypeID() const;
+    uint32_t NewGameID() const;
 };
 
 #endif  // pyGameMgrMsg_h
