@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyVaultMarkerGameNode.h"
 #include "plVault/plVault.h"
+#include "pnUUID/pnUUID.h"
 
 // should only be created from C++ side
 pyVaultMarkerGameNode::pyVaultMarkerGameNode(RelVaultNode* nfsNode)
@@ -88,15 +89,13 @@ void pyVaultMarkerGameNode::SetGameName (const char v[])
     }
 }
 
-const char * pyVaultMarkerGameNode::GetGameGuid () const
+plUUID pyVaultMarkerGameNode::GetGameGuid() const
 {
-    fGameGuid[0] = 0;
-    
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        strncpy(fGameGuid, plUUID(access.gameGuid).AsString().c_str(), 64);
+        return plUUID(access.gameGuid);
     }
-    return fGameGuid;
+    return plUUID();
 }
 
 void pyVaultMarkerGameNode::SetGameGuid (const char v[])

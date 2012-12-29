@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef cyMisc_h
 #define cyMisc_h
 
+#include <string>
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // NAME: cyMisc

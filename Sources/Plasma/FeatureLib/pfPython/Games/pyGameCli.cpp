@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "ClimbingWall/pyClimbingWallGame.h"
 #include "VarSync/pyVarSyncGame.h"
 
+#include "plString.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Base game client class
@@ -81,9 +83,9 @@ PyObject* pyGameCli::GetGameCli(unsigned gameID)
     PYTHON_RETURN_NONE;
 }
 
-std::wstring pyGameCli::GetGameNameByTypeID(std::wstring typeID)
+std::wstring pyGameCli::GetGameNameByTypeID(plString& typeID)
 {
-    Uuid gameUuid(typeID.c_str());
+    plUUID gameUuid(typeID);
     return pfGameMgr::GetInstance()->GetGameNameByTypeId(gameUuid);
 }
 
@@ -99,15 +101,13 @@ unsigned pyGameCli::GameID() const
     return 0;
 }
 
-std::wstring pyGameCli::GameTypeID() const
+plUUID pyGameCli::GameTypeID() const
 {
     if (gameClient)
     {
-        wchar_t guidStr[64];
-        wcsncpy(guidStr, plUUID(gameClient->GetGameTypeId()).AsString().ToWchar(), 64);
-        return guidStr;
+        return plUUID(gameClient->GetGameTypeId());
     }
-    return L"";
+    return plUUID();
 }
 
 std::wstring pyGameCli::Name() const

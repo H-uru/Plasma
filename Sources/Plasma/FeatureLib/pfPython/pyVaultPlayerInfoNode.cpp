@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyVaultPlayerInfoNode.h"
 #include "plVault/plVault.h"
+#include "pnUUID/pnUUID.h"
 #ifndef BUILDING_PYPLASMA
 #   include "pyVault.h"
 #endif
@@ -158,15 +159,13 @@ void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)
     playerInfo.SetAgeInstUuid(ageInstId);       
 }
 
-const char * pyVaultPlayerInfoNode::Player_GetAgeGuid( void )
+plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
 {
-    if (!fNode)
-        return "";
-
-    VaultPlayerInfoNode playerInfo(fNode);
-
-    strncpy(ansiAgeInstUuid, plUUID(playerInfo.ageInstUuid).AsString().c_str(), 64);
-    return ansiAgeInstUuid;
+    if (fNode) {
+        VaultPlayerInfoNode playerInfo(fNode);
+        return plUUID(playerInfo.ageInstUuid);
+    }
+    return plUUID();
 }
 
 // online status

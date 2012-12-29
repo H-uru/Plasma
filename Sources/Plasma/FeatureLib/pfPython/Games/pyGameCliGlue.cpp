@@ -87,23 +87,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetGameNameByTypeID, args, "Params: guid\nRetu
         PyErr_SetString(PyExc_TypeError, "PtGetGameNameByTypeID expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
+    if (PyUnicode_Check(textObj) || PyString_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
-        text[strLen] = L'\0';
-        std::wstring retVal = pyGameCli::GetGameNameByTypeID(text);
-        delete [] text;
-        return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(textObj);
-        wchar_t* wText = hsStringToWString(text);
-        std::wstring retVal = pyGameCli::GetGameNameByTypeID(wText);
-        delete [] wText;
+        plString guid = PyString_AsStringEx(textObj);
+
+        std::wstring retVal = pyGameCli::GetGameNameByTypeID(guid);
         return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
     }
     else
@@ -139,8 +127,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameCli, gameID)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameCli, gameTypeID)
 {
-    std::wstring retVal = self->fThis->GameTypeID();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    plUUID retVal = self->fThis->GameTypeID();
+    return PyString_FromPlString(retVal.AsString());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameCli, name)
