@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "../pyKey.h"
+#include "plString.h"
 #pragma hdrstop
 
 #include "pyGameCli.h"
@@ -53,8 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "BlueSpiral/pyBlueSpiralGame.h"
 #include "ClimbingWall/pyClimbingWallGame.h"
 #include "VarSync/pyVarSyncGame.h"
-
-#include "plString.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

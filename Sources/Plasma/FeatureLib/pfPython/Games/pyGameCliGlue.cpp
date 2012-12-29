@@ -84,10 +84,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetGameNameByTypeID, args, "Params: guid\nRetu
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtGetGameNameByTypeID expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "PtGetGameNameByTypeID expects a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj) || PyString_Check(textObj))
+
+    if (PyString_CheckEx(textObj))
     {
         plString guid = PyString_AsStringEx(textObj);
 
@@ -96,7 +97,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetGameNameByTypeID, args, "Params: guid\nRetu
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "PtGetGameNameByTypeID expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "PtGetGameNameByTypeID expects a string");
         PYTHON_RETURN_ERROR;
     }
 }
