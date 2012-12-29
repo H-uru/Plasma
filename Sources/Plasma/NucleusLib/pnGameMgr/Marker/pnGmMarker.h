@@ -75,7 +75,7 @@ enum EMarkerGameType {
 //  Game type id
 //============================================================================
 
-const Uuid kGameTypeId_Marker = Uuid(L"000b2c39-0319-4be1-b06c-7a105b160fcf");
+const plUUID kGameTypeId_Marker("000b2c39-0319-4be1-b06c-7a105b160fcf");
 
 
 //============================================================================

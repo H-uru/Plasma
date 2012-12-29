@@ -107,8 +107,8 @@ struct VaultPlayerNode : NetVaultNodeAccess {
     wchar_t *&  avatarShapeName;
     int &       disabled;
     unsigned &  onlineTime;
-    Uuid &      accountUuid;
-    Uuid &      inviteUuid;
+    plUUID&     accountUuid;
+    plUUID&     inviteUuid;
     int &       explorer;
     
     VaultPlayerNode (NetVaultNode * node);
@@ -120,8 +120,8 @@ struct VaultPlayerNode : NetVaultNodeAccess {
     void SetAvatarShapeName (const wchar_t v[]);
     void SetDisabled (int v);
     void SetOnlineTime (unsigned v);
-    void SetAccountUuid (const Uuid & v);
-    void SetInviteUuid (const Uuid & v);
+    void SetAccountUuid (const plUUID& v);
+    void SetInviteUuid (const plUUID& v);
     void SetExplorer (int v);
 };
 
@@ -142,7 +142,7 @@ struct VaultPlayerInfoNode : NetVaultNodeAccess {
     unsigned &  playerId;
     wchar_t *&  playerName;
     wchar_t *&  ageInstName;
-    Uuid &      ageInstUuid;
+    plUUID&     ageInstUuid;
     int &       online;
     int &       ccrLevel;
 
@@ -154,7 +154,7 @@ struct VaultPlayerInfoNode : NetVaultNodeAccess {
     void SetPlayerId (unsigned v);
     void SetPlayerName (const wchar_t v[]);
     void SetAgeInstName (const wchar_t v[]);
-    void SetAgeInstUuid (const Uuid & v);
+    void SetAgeInstUuid (const plUUID& v);
     void SetOnline (int v);
     void SetCCRLevel (int v);
 };
@@ -368,16 +368,16 @@ struct VaultAgeNode : NetVaultNodeAccess {
     static const uint64_t kParentAgeInstanceGuid   = NetVaultNode::kUuid_2;
     static const uint64_t kAgeName                 = NetVaultNode::kString64_1;
     
-    Uuid &          ageInstUuid;
-    Uuid &          parentAgeInstUuid;
+    plUUID&         ageInstUuid;
+    plUUID&         parentAgeInstUuid;
     wchar_t *&      ageName;
     
     VaultAgeNode (NetVaultNode * node);
     VaultAgeNode (const VaultAgeNode &);                            // not implemented
     const VaultAgeNode & operator= (const VaultAgeNode &);          // not implemented
 
-    void SetAgeInstGuid (const Uuid & v);
-    void SetParentAgeInstGuid (const Uuid & v);
+    void SetAgeInstGuid (const plUUID& v);
+    void SetParentAgeInstGuid (const plUUID& v);
     void SetAgeName (const wchar_t v[]);
 };
 
@@ -402,8 +402,8 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
     wchar_t *&      ageFilename;
     wchar_t *&      ageInstName;
     wchar_t *&      ageUserDefinedName;
-    Uuid &          ageInstUuid;
-    Uuid &          parentAgeInstUuid;
+    plUUID&         ageInstUuid;
+    plUUID&         parentAgeInstUuid;
     int &           ageSequenceNumber;
     int &           ageIsPublic;
     int &           ageLanguage;
@@ -419,8 +419,8 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
     void SetAgeFilename (const wchar_t v[]);
     void SetAgeInstName (const wchar_t v[]);
     void SetAgeUserDefinedName (const wchar_t v[]);
-    void SetAgeInstGuid (const Uuid & v);
-    void SetParentAgeInstGuid (const Uuid & v);
+    void SetAgeInstGuid (const plUUID& v);
+    void SetParentAgeInstGuid (const plUUID& v);
     void SetAgeSequenceNumber (int v);
     void _SetAgeIsPublic (int v);   // WARNING: Do not call this. The age will not be set public this way. Use NetCliAuthSetAgePublic instead (changes this field's value in the process).
     void SetAgeLanguage (int v);
@@ -462,12 +462,12 @@ struct VaultMarkerGameNode : NetVaultNodeAccess {
     static const uint64_t kGameGuid = NetVaultNode::kUuid_1;
 
     wchar_t *& gameName;
-    Uuid &     gameGuid;
+    plUUID&    gameGuid;
     
     VaultMarkerGameNode (NetVaultNode * node);
     VaultMarkerGameNode (const VaultMarkerGameNode &);                      // not implemented
     const VaultMarkerGameNode & operator= (const VaultMarkerGameNode &);    // not implemented
     
     void SetGameName (const wchar_t v[]);
-    void SetGameGuid (const Uuid & v);
+    void SetGameGuid (const plUUID& v);
 };

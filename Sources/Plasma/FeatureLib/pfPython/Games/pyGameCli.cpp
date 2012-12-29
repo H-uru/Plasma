@@ -106,7 +106,7 @@ plUUID pyGameCli::GameTypeID() const
     {
         return plUUID(gameClient->GetGameTypeId());
     }
-    return plUUID();
+    return kNilUuid;
 }
 
 std::wstring pyGameCli::Name() const

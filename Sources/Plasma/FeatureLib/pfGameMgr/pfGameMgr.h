@@ -170,7 +170,7 @@ public:
     // Create a new game
     void CreateGame (
         plKey           receiver,       // Receiver of pfGameCliMsgs for this game
-        const Uuid &    gameTypeId,     // typeid of game to create
+        const plUUID&   gameTypeId,     // typeid of game to create
         unsigned        createOptions,  // Game create options from pnGameMgr.h
         unsigned        initBytes,      // Game-specific initialization data
         const void *    initData
@@ -178,7 +178,7 @@ public:
     // Join or create the specified common game
     void JoinCommonGame (
         plKey           receiver,       // Receiver of pfGameCliMsgs for this game
-        const Uuid &    gameTypeId,     // typeid of common game to create/join
+        const plUUID&   gameTypeId,     // typeid of common game to create/join
         unsigned        gameNumber,     // "table number" of common game to create/join
         // In case the common game needs to
         // be created on the server, these

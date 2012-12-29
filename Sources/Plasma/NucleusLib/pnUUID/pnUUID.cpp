@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID.h"
 #include "hsStream.h"
 
+const plUUID kNilUuid;
+
 plUUID::plUUID()
 {
     Clear();
@@ -55,11 +57,6 @@ plUUID::plUUID(const plString& s)
 plUUID::plUUID(const plUUID& other)
 {
     CopyFrom(&other);
-}
-
-plUUID::plUUID(const Uuid& uuid)
-{
-    memcpy(fData, uuid.data, sizeof(fData));
 }
 
 void plUUID::Read(hsStream* s)
@@ -78,11 +75,4 @@ plString plUUID::AsString() const
     plString str;
     ToString(str);
     return str;
-}
-
-plUUID::operator Uuid () const
-{
-    Uuid uuid;
-    memcpy(uuid.data, fData, sizeof(uuid.data));
-    return uuid;
 }

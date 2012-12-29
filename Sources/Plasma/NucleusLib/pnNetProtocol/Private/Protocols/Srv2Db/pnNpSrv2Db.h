@@ -201,7 +201,7 @@ struct Srv2Db_AccountCreateRequest : SrvMsgHeader {
 struct Srv2Db_AccountCreateFromKeyRequest : SrvMsgHeader {
     wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
-    Uuid        key;
+    plUUID      key;
     uint32_t       billingType;
 };
 
@@ -215,7 +215,7 @@ struct Srv2Db_AccountLoginRequest2 : SrvMsgHeader {
 };
 
 struct Srv2Db_AccountLogout : SrvMsgHeader {
-    Uuid        accountUuid;
+    plUUID      accountUuid;
     uint32_t       timeLoggedMins;
 };
 
@@ -235,16 +235,16 @@ struct Srv2Db_AccountSetBillingTypeRequest : SrvMsgHeader {
 };
 
 struct Srv2Db_AccountActivateRequest : SrvMsgHeader {
-    Uuid        activationKey;
+    plUUID      activationKey;
 };
 
 struct Srv2Db_AccountLockPlayerNameRequest :SrvMsgHeader {
     wchar_t       playerName[kMaxPlayerNameLength];
-    Uuid        accountUuid;
+    plUUID      accountUuid;
 };
 
 struct Srv2Db_VaultNodeCreateRequest : SrvMsgHeader {
-    Uuid        accountUuid;
+    plUUID      accountUuid;
     uint32_t       creatorId;
     uint32_t       nodeBytes;
     uint8_t        nodeBuffer[1];
@@ -256,11 +256,11 @@ struct Srv2Db_VaultNodeFetchRequest : SrvMsgHeader {
 
 struct Srv2Db_VaultNodeChanged : SrvMsgHeader {
     uint32_t       nodeId;
-    Uuid        revisionId;
+    plUUID      revisionId;
 };
 
 struct Srv2Db_VaultNodeSaveRequest : SrvMsgHeader {
-    Uuid        revisionId;
+    plUUID      revisionId;
     uint32_t       nodeId;
     unsigned    playerCheckId;
     unsigned    isRequestFromAuth;
@@ -321,7 +321,7 @@ struct Srv2Db_SetAgeSequenceNumRequest : SrvMsgHeader {
 
 struct Srv2Db_StateSaveObject : SrvMsgHeader {
     uint32_t   buildId;
-    Uuid    ownerId;        
+    plUUID  ownerId;
     wchar_t   objectName[kMaxStateObjectName];
     uint32_t   objectDataBytes;
     uint8_t    objectData[1];
@@ -329,12 +329,12 @@ struct Srv2Db_StateSaveObject : SrvMsgHeader {
 };
 
 struct Srv2Db_StateDeleteObject : SrvMsgHeader {
-    Uuid    ownerId;
+    plUUID  ownerId;
     wchar_t   objectName[kMaxStateObjectName];
 };
 
 struct Srv2Db_StateFetchObject : SrvMsgHeader {
-    Uuid    ownerId;
+    plUUID  ownerId;
     wchar_t   objectName[kMaxStateObjectName];
 };
 
@@ -400,11 +400,11 @@ struct Srv2Db_PlayerOffline : SrvMsgHeader {
 };
 
 struct Srv2Db_AgeOnline : SrvMsgHeader {
-    Uuid    ageInstId;
+    plUUID  ageInstId;
 };
 
 struct Srv2Db_AgeOffline : SrvMsgHeader {
-    Uuid    ageInstId;
+    plUUID  ageInstId;
 };
 
 struct Srv2Db_CsrAcctInfoRequest : SrvMsgHeader {
@@ -412,7 +412,7 @@ struct Srv2Db_CsrAcctInfoRequest : SrvMsgHeader {
 };
 
 struct Srv2Db_FetchInviterInfo : SrvMsgHeader {
-    Uuid    inviteUuid;
+    plUUID  inviteUuid;
 };
 
 
@@ -427,16 +427,16 @@ struct Db2Srv_AccountExistsReply : SrvMsgHeader {
 };
 
 struct Db2Srv_AccountCreateReply : SrvMsgHeader {
-    Uuid            accountUuid;
+    plUUID          accountUuid;
 };
 
 struct Db2Srv_AccountCreateFromKeyReply : SrvMsgHeader {
-    Uuid            accountUuid;
-    Uuid            activationKey;
+    plUUID          accountUuid;
+    plUUID          activationKey;
 };
 
 struct Db2Srv_AccountLoginReply : SrvMsgHeader {
-    Uuid            accountUuid;
+    plUUID          accountUuid;
     uint32_t           accountFlags;
     uint32_t           billingType;
     ShaDigest       namePassHash;
@@ -470,12 +470,12 @@ struct Db2Srv_SetAgeSequenceNumReply : SrvMsgHeader {
 };
 
 struct Db2Srv_FetchInviterInfoReply : SrvMsgHeader {
-    Uuid        hoodInstance;
+    plUUID      hoodInstance;
 };
 
 struct Db2Srv_StateObjectFetched : SrvMsgHeader {
     uint32_t       buildId;
-    Uuid        ownerId;        
+    plUUID      ownerId;
     wchar_t       objectName[kMaxStateObjectName];
     uint32_t       objectDataBytes;
     uint8_t        objectData[1];
@@ -484,7 +484,7 @@ struct Db2Srv_StateObjectFetched : SrvMsgHeader {
 
 struct Db2Srv_NotifyVaultNodeChanged : SrvMsgHeader {
     uint32_t           nodeId;
-    Uuid            revId;
+    plUUID          revId;
     uint32_t           notifyIdCount;
     uint32_t           notifyIds[1];
 };
@@ -545,7 +545,7 @@ struct Db2Srv_ScoreGetRanksReply : SrvMsgHeader {
 };
 
 struct Db2Srv_CsrAcctInfoReply : SrvMsgHeader {
-    Uuid            csrId;
+    plUUID          csrId;
     uint32_t           csrFlags;
     ShaDigest       namePassHash;
 };

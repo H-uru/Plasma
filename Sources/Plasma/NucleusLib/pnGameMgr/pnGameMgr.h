@@ -181,7 +181,7 @@ enum {
 
     // Cli2Srv
     struct Cli2Srv_GameMgr_CreateGame : GameMsgHeader {
-        Uuid                gameTypeId;
+        plUUID                 gameTypeId;
         uint32_t               createOptions;
         uint32_t               createDataBytes;
         uint8_t                createData[1];  // [createDataBytes]
@@ -190,7 +190,7 @@ enum {
         // Field ordering here is vitally important, see pfGameMgr::JoinGame for explanation
         uint32_t               newGameId;
         uint32_t               createOptions;
-        Uuid                gameTypeId;
+        plUUID                 gameTypeId;
         uint32_t               createDataBytes;
         uint8_t                createData[1];  // [createDataBytes]
     };
@@ -199,17 +199,17 @@ enum {
     struct Srv2Cli_GameMgr_GameInstance : GameMsgHeader {
         EGameJoinError      result;
         uint32_t               ownerId;
-        Uuid                gameTypeId;
+        plUUID                 gameTypeId;
         uint32_t               newGameId;
     };
     struct Srv2Cli_GameMgr_InviteReceived : GameMsgHeader {
         uint32_t               inviterId;
-        Uuid                gameTypeId;
+        plUUID                 gameTypeId;
         uint32_t               newGameId;
     };
     struct Srv2Cli_GameMgr_InviteRevoked : GameMsgHeader {
         uint32_t               inviterId;
-        Uuid                gameTypeId;
+        plUUID                 gameTypeId;
         uint32_t               newGameId;
     };
 

@@ -68,7 +68,7 @@ enum EBlueSpiralInitResult {
 //  Game type id
 //============================================================================
 
-const Uuid kGameTypeId_BlueSpiral = Uuid(L"5ff98165-913e-4fd1-a2c2-9c7f31be2cc8");
+const plUUID kGameTypeId_BlueSpiral("5ff98165-913e-4fd1-a2c2-9c7f31be2cc8");
 
 
 //============================================================================

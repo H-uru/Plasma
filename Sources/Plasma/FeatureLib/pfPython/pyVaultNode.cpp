@@ -328,7 +328,7 @@ plUUID pyVaultNode::GetCreateAgeGuid(void) const
         return plUUID(fNode->createAgeUuid);
     }
 
-    return plUUID();
+    return kNilUuid;
 }
 
 PyObject* pyVaultNode::GetCreateAgeCoords () {
@@ -384,8 +384,7 @@ void pyVaultNode::SetCreateAgeName( const char * v )
 void pyVaultNode::SetCreateAgeGuid( const char * v )
 {
     ASSERT(fNode);
-    Uuid uuid;
-    GuidFromString(v, &uuid);
+    plUUID uuid(v);
     fNode->SetCreateAgeUuid(uuid);
 }
 

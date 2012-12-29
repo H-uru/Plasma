@@ -44,10 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include "pnUtils/pnUtUuid.h"
+#include "plString.h"
 
 class hsStream;
-class plString;
+
+extern const class plUUID kNilUuid;
 
 class plUUID
 {
@@ -64,7 +65,6 @@ public:
     plUUID();
     plUUID(const plString& s);
     plUUID(const plUUID& other);
-    plUUID(const Uuid& uuid);
 
     void     Clear();
     bool     IsNull() const;
@@ -93,7 +93,6 @@ public:
         return CompareTo(&other) == -1;
     }
     operator plString (void) const { return AsString(); }
-    operator Uuid () const;
 
     static plUUID Generate();
 };

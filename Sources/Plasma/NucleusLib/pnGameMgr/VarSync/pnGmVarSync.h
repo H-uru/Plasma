@@ -68,7 +68,7 @@ enum EVarSyncInitResult {
 //  Game type id
 //============================================================================
 
-const Uuid kGameTypeId_VarSync = Uuid(L"475c2e9b-a245-4106-a047-9b25d41ff333");
+const plUUID kGameTypeId_VarSync("475c2e9b-a245-4106-a047-9b25d41ff333");
 
 
 //============================================================================

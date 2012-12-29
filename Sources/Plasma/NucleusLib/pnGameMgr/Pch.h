@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnProduct/pnProduct.h"
+#include "pnUUID/pnUUID.h"
 
 #include "pnGameMgr.h"
 #include "Intern.h"
