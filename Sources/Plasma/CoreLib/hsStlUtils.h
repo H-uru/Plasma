@@ -76,31 +76,6 @@ OutIt copy_if( InIt srcBegin, InIt srcEnd, OutIt dstBegin, Pred pred )
 }
 
 
-
-// useful when clearing a vector/list/set of pointers that need to be deleted.
-// use like:
-//  std::vector<foo*>   vec;
-//  std::for_each(vec.begin(),vec.end(),xtl::delete_ptr());
-//  vec.clear();
-
-struct delete_ptr
-{
-    template< class T > void operator()( T * p ) const { delete p;}
-};
-
-// useful when clearing a map of pointers that need to be deleted.
-// use like:
-//  typedef std::map<int,foo*> foomap;
-//  foomap  m;
-//  std::for_each(m.begin(),m.end(),xtl::delete_map_ptr_T<foomap>());
-//  m.clear();
-
-template< class A >
-struct delete_map_ptr_T
-{
-    void operator()( typename A::value_type & pair ) const { delete pair.second;}
-};
-
 // std::string trim
 std::string & trimleft(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trimleft(std::wstring & s, const wchar_t * charset=L" \t\n\r");
@@ -128,7 +103,7 @@ template <typename T> bool GetStringGroupAsString(const T& group, std::string& s
 template <typename T> bool GetStringGroupAsString(const T& group, std::wstring& s, wchar_t sep = L',');
 
 
-} // namespace xtd
+} // namespace xtl
 
 
 

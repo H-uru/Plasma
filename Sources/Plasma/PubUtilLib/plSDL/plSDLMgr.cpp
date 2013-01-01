@@ -83,7 +83,9 @@ void plSDLMgr::DeInit()
 //
 void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 {
-    std::for_each( dl->begin(), dl->end(), xtl::delete_ptr() );
+    std::for_each( dl->begin(), dl->end(),
+        [](plStateDescriptor* sd) { delete sd; }
+    );
     dl->clear();
 }
 

@@ -102,7 +102,9 @@ plCreatableListHelper::plCreatableListHelper()
 
 void plCreatableListHelper::IClearItems()
 {
-    std::for_each( fManagedItems.begin(), fManagedItems.end(), xtl::delete_ptr() );
+    std::for_each( fManagedItems.begin(), fManagedItems.end(),
+        [](plCreatable * cre) { delete cre; }
+    );
     fManagedItems.clear();
     fItems.clear();
 }

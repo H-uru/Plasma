@@ -210,7 +210,9 @@ void plNetClientMgr::Shutdown()
 //
 void plNetClientMgr::IClearPendingLoads()
 {
-    std::for_each( fPendingLoads.begin(), fPendingLoads.end(), xtl::delete_ptr() );
+    std::for_each( fPendingLoads.begin(), fPendingLoads.end(),
+        [](PendingLoad *pl) { delete pl; }
+    );
     fPendingLoads.clear();
 }
 
@@ -1557,7 +1559,9 @@ void plNetClientMgr::SendPendingPagingRoomMsgs()
 
 void plNetClientMgr::ClearPendingPagingRoomMsgs()
 {
-    std::for_each( fPendingPagingRoomMsgs.begin(), fPendingPagingRoomMsgs.end(), xtl::delete_ptr() );
+    std::for_each( fPendingPagingRoomMsgs.begin(), fPendingPagingRoomMsgs.end(),
+        [](plNetMsgPagingRoom *pr) { delete pr; }
+    );
     fPendingPagingRoomMsgs.clear();
 }
 
