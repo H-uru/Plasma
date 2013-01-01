@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVolumeGadgetComponent_inc
 #define plVolumeGadgetComponent_inc
 
-#include "plActivatorBaseComponent.h"
-#include "pnKeyedObject/plKey.h"
-
 #define VOLUMEGADGET_CID Class_ID(0x1f77b56, 0x209a09d8)
 
 class plVolumeGadgetComponent : public plActivatorBaseComponent

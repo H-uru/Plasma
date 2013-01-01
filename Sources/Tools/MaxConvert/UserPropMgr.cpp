@@ -39,12 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// UserPropMgr.cpp
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
+#include <max.h>
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
-
 #include "hsHashTable.h"
 
 #define REFMSG_USERPROP  (REFMSG_USER + 1)
@@ -69,7 +69,7 @@ UserPropMgr::~UserPropMgr()
     CloseQuickTable();
 }
 
-void UserPropMgr::SetUserPropFlag(INode *node, const char *name, const BOOL setFlag, const int32_t hFlag) 
+void UserPropMgr::SetUserPropFlag(INode *node, const char *name, const bool setFlag, const int32_t hFlag) 
 {
     if (setFlag) SetUserProp(node,name,NULL,hFlag);
     else ClearUserProp(node,name,hFlag);
@@ -83,7 +83,7 @@ void UserPropMgr::ClearUserPropALL(const char *name, const int32_t hFlag)
     }
 }
 
-void UserPropMgr::SelectUserPropFlagALL(INode *node, const char *name, const BOOL flag) {
+void UserPropMgr::SelectUserPropFlagALL(INode *node, const char *name, const bool flag) {
     if (node) 
     {
         if (UserPropExists(node,name) == flag) ip->SelectNode(node,false);
@@ -96,7 +96,7 @@ void UserPropMgr::SelectUserPropFlagALL(INode *node, const char *name, const BOO
 
 
 void UserPropMgr::DeSelectWithOut(const char *name, const char *value) {
-    BOOL oldProps = vProps;
+    bool oldProps = vProps;
     vProps=false;
     TSTR val;
     INode *nodes[1];
@@ -169,7 +169,7 @@ ip->ThawSelection();
 
 
 
-int UserPropMgr::RecursiveCountAlike(INode *node, BOOL MatchAll) {
+int UserPropMgr::RecursiveCountAlike(INode *node, bool MatchAll) {
     int count=0;
     if (node) {
         if (!node->IsNodeHidden() && !node->IsFrozen() && IsAlike(node,MatchAll)) count++;
@@ -182,18 +182,18 @@ int UserPropMgr::RecursiveCountAlike(INode *node, BOOL MatchAll) {
 }
 
 
-int UserPropMgr::CountAlike(BOOL MatchAll) {
+int UserPropMgr::CountAlike(bool MatchAll) {
     return RecursiveCountAlike(NULL, MatchAll);
 }
 
-BOOL UserPropMgr::IsMatch(const char *val1, const char *val2) {
+bool UserPropMgr::IsMatch(const char *val1, const char *val2) {
     if (!stricmp(val1,val2)) return true;
     hsStringTokenizer toker(val1," ,@");
     char *tok;
 
     while (tok=toker.next()) {
         hsStringTokenizer toker2(val2," ,@");
-        BOOL found = false;
+        bool found = false;
         char *tok2;
         while ((tok2=toker2.next()) && !found) {
             if (tok[0] >= '1' && tok[0] <= '0') {
@@ -210,11 +210,11 @@ BOOL UserPropMgr::IsMatch(const char *val1, const char *val2) {
 }
 
 
-BOOL UserPropMgr::IsAlike(INode *node, BOOL MatchAll) {
+bool UserPropMgr::IsAlike(INode *node, bool MatchAll) {
     TSTR buf;
     GetUserPropBuffer(node,buf);
 
-    BOOL oldProps = vProps;
+    bool oldProps = vProps;
     vProps=false;
 
     hsStringTokenizer toker(buf," \r\n");
@@ -223,7 +223,7 @@ BOOL UserPropMgr::IsAlike(INode *node, BOOL MatchAll) {
     TSTR name;
     TSTR value;
     TSTR tval;
-    BOOL match = MatchAll;
+    bool match = MatchAll;
     bool isName = true;
     tok = toker.next();
     while (tok && (match==MatchAll)) {
@@ -304,14 +304,14 @@ void UserPropMgr::SetUserPropBuffer(INode *node, const TSTR &buf)
     }
 }
 
-void UserPropMgr::SetUserPropFlagALL(const char *name, const BOOL setFlag, const int32_t hFlag) 
+void UserPropMgr::SetUserPropFlagALL(const char *name, const bool setFlag, const int32_t hFlag) 
 {
     for (int i=0; i<GetSelNodeCount();i++) 
     {
         SetUserPropFlag(GetSelNode(i),name,setFlag,hFlag);
     }
 }
-BOOL UserPropMgr::GetUserPropFlagALL(const char *name, BOOL &isSet, const int32_t hFlag)
+bool UserPropMgr::GetUserPropFlagALL(const char *name, bool &isSet, const int32_t hFlag)
  {
     isSet = UserPropMgr::UserPropExists(GetSelNode(0),name,hFlag);
 
@@ -419,7 +419,7 @@ void UserPropMgr::ClearUserProp(INode *node, const char *name, const int32_t hFl
     }
 };
 
-BOOL UserPropMgr::GetUserProp(INode *node, const char *name, TSTR &value, const int32_t hFlag)
+bool UserPropMgr::GetUserProp(INode *node, const char *name, TSTR &value, const int32_t hFlag)
 {
     node = GetAncestorIfNeeded(node,hFlag);
 
@@ -575,7 +575,7 @@ void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, 
 }
 
 
-BOOL UserPropMgr::GetUserPropString(INode *node, const char *name, TSTR &value, const int32_t hFlag)
+bool UserPropMgr::GetUserPropString(INode *node, const char *name, TSTR &value, const int32_t hFlag)
 {
      return GetUserProp(node,name,value,hFlag);
 }
@@ -583,7 +583,7 @@ void UserPropMgr::SetUserPropString(INode *node, const char *name, const char *v
 {
     SetUserProp(node,name,value,hFlag);
 }
-BOOL UserPropMgr::GetUserPropFloat(INode *node, const char *name, float &value, const int32_t hFlag)
+bool UserPropMgr::GetUserPropFloat(INode *node, const char *name, float &value, const int32_t hFlag)
 {
     TSTR valStr;
     if (GetUserProp(node,name,valStr,hFlag)) 
@@ -598,7 +598,7 @@ void UserPropMgr::SetUserPropFloat(INode *node, const char *name, const float va
     char valStr[50];
     if (sprintf(valStr,"%g",value)) SetUserProp(node,name,valStr,hFlag);
 }
-BOOL UserPropMgr::GetUserPropInt(INode *node, const char *name, int &value, const int32_t hFlag)
+bool UserPropMgr::GetUserPropInt(INode *node, const char *name, int &value, const int32_t hFlag)
 {
     TSTR valStr;
     if (GetUserProp(node,name,valStr,hFlag)) {
@@ -613,13 +613,13 @@ void UserPropMgr::SetUserPropInt(INode *node, const char *name, const int value,
     if (sprintf(valStr,"%d",value)) SetUserProp(node,name,valStr,hFlag);
 }
 
-BOOL UserPropMgr::UserPropExists(INode *node, const char *name, const int32_t hFlag) 
+bool UserPropMgr::UserPropExists(INode *node, const char *name, const int32_t hFlag) 
 {
     TSTR value;
     return GetUserProp(node,name,value,hFlag);
 }
 
-BOOL UserPropMgr::GetUserPropStringList(INode *node, const char *name, int &num, TSTR list[]) {
+bool UserPropMgr::GetUserPropStringList(INode *node, const char *name, int &num, TSTR list[]) {
     TSTR sdata;
     if (UserPropMgr::GetUserPropString(node,name,sdata)) {
         num=0;
@@ -633,7 +633,7 @@ BOOL UserPropMgr::GetUserPropStringList(INode *node, const char *name, int &num,
     } else return false;
 }
 
-BOOL UserPropMgr::GetUserPropIntList(INode *node, const char *name, int &num, int list[]) {
+bool UserPropMgr::GetUserPropIntList(INode *node, const char *name, int &num, int list[]) {
     TSTR sdata;
     if (UserPropMgr::GetUserPropString(node,name,sdata)) {
         num=0;
@@ -647,7 +647,7 @@ BOOL UserPropMgr::GetUserPropIntList(INode *node, const char *name, int &num, in
     } else return false;
 }
 
-BOOL UserPropMgr::GetUserPropFloatList(INode *node, const char *name, int &num, float list[]) {
+bool UserPropMgr::GetUserPropFloatList(INode *node, const char *name, int &num, float list[]) {
     TSTR sdata;
     if (UserPropMgr::GetUserPropString(node,name,sdata)) {
         num=0;
@@ -661,13 +661,13 @@ BOOL UserPropMgr::GetUserPropFloatList(INode *node, const char *name, int &num, 
     } else return false;
 }
 
-BOOL UserPropMgr::GetUserPropStringALL(const char *name, TSTR &value, const int32_t hFlag)
+bool UserPropMgr::GetUserPropStringALL(const char *name, TSTR &value, const int32_t hFlag)
 {
-    BOOL propSet  = UserPropMgr::GetUserPropString(GetSelNode(0),name,value,hFlag);
+    bool propSet  = UserPropMgr::GetUserPropString(GetSelNode(0),name,value,hFlag);
 
     TSTR tvalue;
     int i=1;
-    BOOL propMixed = FALSE;
+    bool propMixed = FALSE;
     while (i < GetSelNodeCount() && !propMixed) {
         if (propSet ^ UserPropMgr::GetUserPropString(GetSelNode(i),name,tvalue,hFlag)) propMixed = TRUE;
         propMixed = (!(value == tvalue));
@@ -683,25 +683,25 @@ void UserPropMgr::SetUserPropStringALL(const char *name, const char *value, cons
     }
 }
 
-BOOL UserPropMgr::GetUserPropStringListALL(const char *name, int &num, TSTR list[]) {
+bool UserPropMgr::GetUserPropStringListALL(const char *name, int &num, TSTR list[]) {
     TSTR val;
     GetUserPropStringList(GetSelNode(0),name,num,list);
     return GetUserPropStringALL(name,val);
 }
 
-BOOL UserPropMgr::GetUserPropIntListALL(const char *name, int &num, int *list) {
+bool UserPropMgr::GetUserPropIntListALL(const char *name, int &num, int *list) {
     TSTR val;
     GetUserPropIntList(GetSelNode(0),name,num,list);
     return GetUserPropStringALL(name,val);
 }
 
-BOOL UserPropMgr::GetUserPropFloatListALL(const char *name, int &num, float *list) {
+bool UserPropMgr::GetUserPropFloatListALL(const char *name, int &num, float *list) {
     TSTR val;
     GetUserPropFloatList(GetSelNode(0),name,num,list);
     return GetUserPropStringALL(name,val);
 }
 
-BOOL UserPropMgr::GetNodeNameALL(TSTR &name) {
+bool UserPropMgr::GetNodeNameALL(TSTR &name) {
     if (vProps) name = vname;
     else if (ip->GetSelNodeCount() == 1) name = ip->GetSelNode(0)->GetName();
     else return false;
@@ -725,7 +725,7 @@ void UserPropMgr::SetNodeNameALL(const char *name) {
 }
 
 
-void UserPropMgr::LoadVirtualProps(BOOL reset) {
+void UserPropMgr::LoadVirtualProps(bool reset) {
     if (reset)
     {
         vbuf = "";
@@ -736,7 +736,7 @@ void UserPropMgr::LoadVirtualProps(BOOL reset) {
 void UserPropMgr::DestroyVirtualProps() {
     vProps = false;
 }
-BOOL UserPropMgr::IsVirtual() {
+bool UserPropMgr::IsVirtual() {
     return vProps;
 }
 
@@ -837,7 +837,7 @@ void UserPropMgr::IBuildQuickTable(INode* node)
     }
 }
 
-BOOL UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
+bool UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
 {
     QuickPair q;
     q.SetKey(key);

@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickNode_h_inc
 #define plPickNode_h_inc
 
-#include "max.h"
 #include <vector>
 
+class Class_ID;
 class plComponentBase;
+class IParamBlock2;
 
 namespace plPick
 {

@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-
-#include "HeadSpin.h"
-#include "plExportErrorMsg.h"
 #include "hsExceptions.h"
+#pragma hdrstop
 
-
+#include "plExportErrorMsg.h"
 
 
 bool plExportErrorMsg::Show()
@@ -61,7 +59,7 @@ bool plExportErrorMsg::Ask()
 {
     if( GetBogus() )
     {
-        return IDYES == hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxYesNo/*|hsMessageBoxIconExclamation*/);
+        return hsMBoxYes == hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxYesNo/*|hsMessageBoxIconExclamation*/);
     }
     return false;
 }
@@ -86,12 +84,12 @@ bool plExportErrorMsg::CheckAskOrCancel()
     {
         strncat(GetMsg(), " - ABORT? (Cancel to mute warnings)", 255);
         int ret = hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxYesNoCancel/*|hsMessageBoxIconExclamation*/);
-        if( IDYES == ret )
+        if( hsMBoxYes == ret )
         {
             sprintf(GetMsg(), "!Abort at user response to error!");
             Check();
         }
-        else if( IDCANCEL == ret )
+        else if( hsMBoxCancel == ret )
             return 1;
     }
     return false;
@@ -131,9 +129,7 @@ void plExportErrorMsg::Quit()
 void plExportErrorMsg::IDebugThrow()
 {
     try {
-#if HS_BUILD_FOR_WIN32
-        DebugBreak();
-#endif // HS_BUILD_FOR_WIN32
+        DebugBreakIfDebuggerPresent();
     }
     catch(...)
     {

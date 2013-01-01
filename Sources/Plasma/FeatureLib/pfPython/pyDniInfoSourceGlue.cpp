@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyDniInfoSource.h"
+#include "pnUUID/pnUUID.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniInfoSource, pyDniInfoSource);
@@ -73,7 +74,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeName)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniInfoSource, getAgeGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeGuid());
+    return PyString_FromString(self->fThis->GetAgeGuid().AsString().c_str());
 }
 
 PYTHON_START_METHODS_TABLE(ptDniInfoSource)

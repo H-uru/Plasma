@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "plString.h"
 
+class plKey;
+
 class plAnimObjInterface
 {
     public:

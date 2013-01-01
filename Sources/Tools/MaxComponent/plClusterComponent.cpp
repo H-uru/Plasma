@@ -39,23 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsBitVector.h"
 
-
-#include "max.h"
-#include "meshdlib.h" 
-#include "dummy.h"
-#include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "MaxMain/plPlasmaRefMsgs.h"
-
-#include "MaxExport/plExportProgressBar.h"
+#include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
 
-#include "HeadSpin.h"
+#include <dummy.h>
+#include <iparamm2.h>
+#include <meshdlib.h>
 
-#include "hsBitVector.h"
+#if MAX_VERSION_MAJOR >= 13
+#   include <INamedSelectionSetManager.h>
+#endif
+
+#include "resource.h"
+#include <vector>
+#pragma hdrstop
+
+#include "MaxMain/plPlasmaRefMsgs.h"
+#include "MaxExport/plExportProgressBar.h"
+
 #include "plMath/hsRadixSort.h"
 #include "pnEncryption/plRandom.h"
 #include "pfAnimation/plBlower.h"
@@ -64,20 +71,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDistribComponent.h"
 #include "MaxConvert/plDistributor.h"
 #include "MaxConvert/plDistTree.h"
-#include "plMiscComponents.h"
 
 #include "plClusterComponent.h"
-
-
 #include "MaxConvert/plClusterUtil.h"
 #include "plDrawable/plClusterGroup.h"
 #include "plDrawable/plSpanTemplate.h"
-
-#include <vector>
-
-#if MAX_VERSION_MAJOR >= 13
-#include <INamedSelectionSetManager.h>
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////

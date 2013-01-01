@@ -424,7 +424,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
         msg->SetBit(plNetMessage::kEchoBackToSender, true);
     }
     
-    msg->SetTimeSent(plUnifiedTime::GetCurrentTime());
+    msg->SetTimeSent(plUnifiedTime::GetCurrent());
     int channel = IPrepMsg(msg);
     
 //  hsLogEntry( DebugMsg( "<SND> %s %s", msg->ClassName(), msg->AsStdString().c_str()) );

@@ -43,10 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightMapComponent_inc
 #define plLightMapComponent_inc
 
-#include "plComponent.h"
-
-#include "hsColorRGBA.h"
-
+struct hsColorRGBA;
+class plKey;
 class plMipmap;
 
 const Class_ID LIGHTMAP_COMP_CID(0x1b1d0317, 0x3b3821db);

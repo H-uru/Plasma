@@ -40,12 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
+#include "../resource.h"
+
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
 
 #include "plMAXCameraLayer.h"
-
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -181,6 +183,11 @@ fIValid(NEVER)
 
 plMAXCameraLayer::~plMAXCameraLayer()
 {
+}
+
+void plMAXCameraLayer::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_MAX_CAMERA_LAYER);
 }
 
 //From MtlBase

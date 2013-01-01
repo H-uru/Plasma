@@ -48,10 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLACTIONTABLEMGR_H
 #define __PLACTIONTABLEMGR_H
 
-#include "HeadSpin.h"
-#include "Max.h"
-#include "notify.h"
-#include <vector>
+class ActionCallback;
+struct ActionDescription;
 
 typedef bool(*ActionCallbackFunc)(int);
 

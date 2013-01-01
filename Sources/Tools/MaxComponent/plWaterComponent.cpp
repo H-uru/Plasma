@@ -39,23 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-
-#include "max.h"
-#include "meshdlib.h" 
-#include "dummy.h"
-#include "resource.h"
-#include "plComponent.h"
-#include "plComponentReg.h"
-#include "MaxMain/plPlasmaRefMsgs.h"
-
-#include "MaxMain/plMaxNode.h"
-
-#include "plWaterComponent.h"
-#include "plSoftVolumeComponent.h"
 
 #include "HeadSpin.h"
 #include "plTweak.h"
+
+#include "plComponent.h"
+#include "plComponentReg.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <dummy.h>
+#include <iparamm2.h>
+#include <meshdlib.h> 
+#pragma hdrstop
+
+#include "MaxMain/plPlasmaRefMsgs.h"
+
+#include "plPickNode.h"
+
+#include "plWaterComponent.h"
+#include "plSoftVolumeComponent.h"
 
 #include "plDrawable/plWaveSetBase.h"
 #include "plDrawable/plWaveSet7.h"
@@ -791,8 +794,6 @@ public:
     void DeleteThis() { }
 };
 
-#include "plPickNode.h"
-
 BOOL plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -930,8 +931,6 @@ public:
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void DeleteThis() { }
 };
-
-#include "plPickNode.h"
 
 BOOL plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

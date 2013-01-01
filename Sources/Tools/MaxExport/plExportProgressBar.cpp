@@ -40,11 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "Max.h"
-#include "plExportProgressBar.h"
+#include "hsWindows.h"
 #include <commdlg.h>
+
+#include <max.h>
 #include <bmmlib.h>
 #include <guplib.h>
+#pragma hdrstop
+
+#include "plExportProgressBar.h"
 
 namespace {
     DWORD WINAPI ProgressDummyFunc(LPVOID arg) 

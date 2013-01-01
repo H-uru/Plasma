@@ -39,12 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "notify.h"
+
 #include "MaxComponent/plComponent.h"
-#include <vector>
 #include "plMaxNode.h"
+
+#include <CommDlg.h>
+#include <iparamb2.h>
+#include <max.h>
+#include <notify.h>
+#include <vector>
+#pragma hdrstop
+
+
 
 bool IIsNodeInTab(INodeTab &tab, INode *node)
 {

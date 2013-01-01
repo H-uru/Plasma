@@ -116,9 +116,19 @@ protected:
     plMessage *fMsg;
 
 public:
-    plMessage *GetMessage() { return fMsg; }
-    void SetMessage(plMessage *msg) { fMsg = msg; hsRefCnt_SafeRef(msg); }
-    void SendMessage() { fMsg->SendAndKeep(); }
+    plMessage* GetMessageNoRef() const { return fMsg; }
+    void SetMessageRef(plMessage *msg)
+    {
+        hsRefCnt_SafeUnRef(fMsg);
+        hsRefCnt_SafeRef(msg);
+        fMsg = msg;
+    }
+
+    void SendMessageAndKeep()
+    {
+        if (fMsg)
+            fMsg->SendAndKeep();
+    }
 
     plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg(nil) {}
     ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nil; }

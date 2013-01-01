@@ -42,17 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENT_TOOLS_H
 #define PL_COMPONENT_TOOLS_H
 
-#include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
-class INode;
-class plModifier;
+class plComponentBase;
 class plKey;
 class plLocation;
-class plResponderModifier;
-class plComponentBase;
+class plModifier;
 class plMaxNodeBase;
+class Mtl;
+class INode;
+class plResponderModifier;
 
 typedef plKey       (*PAddModFunc) (plMaxNodeBase *, plModifier *);
 typedef plKey       (*PGetNewKeyFunc) (const plString&, plModifier*, plLocation);

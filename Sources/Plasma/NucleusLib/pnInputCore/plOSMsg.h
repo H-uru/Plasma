@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // for Win32:
 #ifdef HS_BUILD_FOR_WIN32
 
+#include "hsWindows.h" // FIXME: This gives me a sad
+
 enum plOSMsg
 {
     KEYDOWN         = WM_KEYDOWN,

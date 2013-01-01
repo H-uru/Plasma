@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plMtlImport_h
 #define _plMtlImport_h
 
-#include "Max.h"
-#include "iparamb2.h"
+class ClassDesc2;
 
 namespace plPlasmaMtlImport
 {

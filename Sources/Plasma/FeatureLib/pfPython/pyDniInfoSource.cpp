@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyDniInfoSource.h"
-#include "pnUtils/pnUtils.h"
+#include "pnUUID/pnUUID.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plVault/plAgeInfoSource.h"
 #include "plVault/plVault.h"
@@ -100,16 +100,16 @@ const char * pyDniInfoSource::GetAgeName( void ) const
     return fAgeName;
 }
 
-const char * pyDniInfoSource::GetAgeGuid( void ) const
+plUUID pyDniInfoSource::GetAgeGuid( void ) const
 {
-    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
-    if (!node)
-        return "";
+    if (RelVaultNode * node = VaultGetAgeInfoNodeIncRef())
+    {
+        VaultAgeInfoNode ageInfo(node);
+        plUUID uuid = plUUID(ageInfo.ageInstUuid);
+        node->DecRef();
 
-    VaultAgeInfoNode ageInfo(node);
+        return uuid;
+    }
 
-    GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
-    node->DecRef();
-
-    return fAgeGuid;
+    return plUUID();
 }

@@ -53,12 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plNoteTrackWatcher_h
 #define _plNoteTrackWatcher_h
 
-#include "Max.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
-#include "HeadSpin.h"
-
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
 

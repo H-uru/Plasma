@@ -39,33 +39,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsMatrix44.h"
+#include "plRenderLevel.h"
+
 #include "plMaxNodeBase.h"
 #include "plMaxNodeData.h"
+#include "MaxComponent/plComponentBase.h"
 
-// Max includes
-#include "iparamm2.h"
-#include "modstack.h"
-#include "ISkin.h"
-#include "dummy.h"
+#include <guplib.h>
+#include <iparamm2.h>
+#include <dummy.h>
+#include <iskin.h>
+#include <modstack.h>
+#include <utilapi.h>
 
-//To support the new Plasma Light Objs, the classes are included below
-#include "MaxPlasmaLights/plRealTimeLightBase.h"
-
-
-#include <vector>
 #include <algorithm>
+#include <set>
+#include <vector>
+#pragma hdrstop
+
+// To support the new Plasma Light Objs, the classes are included below
+#include "MaxPlasmaLights/plRealTimeLightBase.h"
 
 #include "GlobalUtility.h"  // Only needed for PLASMA_MAX_CLASSID, fix?
 
 #include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKey.h"
 
 #include "pnModifier/plModifier.h"
 
 #include "MaxPlasmaMtls/Materials/plDecalMtl.h"
-
-#include "MaxComponent/plComponentBase.h"
 
 CoreExport void *__cdecl MAX_new(size_t size);
 CoreExport void __cdecl MAX_delete(void* mem);

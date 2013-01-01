@@ -40,8 +40,8 @@ Mead, WA   99021
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plClipboard.h"
+#include "hsWindows.h"
 
 plClipboard& plClipboard::GetInstance()
 {

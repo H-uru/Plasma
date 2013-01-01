@@ -46,18 +46,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "plAnimStealthNode.h"
-#include "plPassMtlBase.h"
 #include "../resource.h"
 
 #include "MaxMain/plMaxNode.h"
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "plAnimStealthNode.h"
+#include "plPassMtlBase.h"
+
 #include "MaxComponent/plMaxAnimUtils.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxConvert/hsMaterialConverter.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerAnimation.h"
-
-#include "iparamm2.h"
 
 
 //// Helpers /////////////////////////////////////////////////////////////////

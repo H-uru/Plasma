@@ -40,28 +40,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plResponderAnim.h"
-#include "plResponderComponentPriv.h"
-#include "resource.h"
-#include "max.h"
-
-#include "MaxMain/plMaxNode.h"
+#include "plAudible.h"
 
 #include "plAnimComponent.h"
 #include "plAudioComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#include <vector>
+#pragma hdrstop
+
+#include "plResponderAnim.h"
+#include "plResponderComponentPriv.h"
+
+#include "plAnimCompProc.h"
+#include "plPickNode.h"
+#include "plResponderGetComp.h"
 
 #include "plMaxAnimUtils.h"
-#include <vector>
 
 // Needed for anim msg creation
-#include "pnKeyedObject/plKey.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plNotetrackAnim.h"
 
 // Needed for sound msg creation
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plAudioInterface.h"
-#include "plAudible.h"
 #include "pnMessage/plSoundMsg.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -528,10 +533,6 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
     // AddCallback adds it's own ref, so remove ours (the default of 1)
     hsRefCnt_SafeUnRef(eventMsg);
 }
-
-#include "plAnimCompProc.h"
-#include "plPickNode.h"
-#include "plResponderGetComp.h"
 
 class plResponderAnimProc : public plAnimCompProc
 {

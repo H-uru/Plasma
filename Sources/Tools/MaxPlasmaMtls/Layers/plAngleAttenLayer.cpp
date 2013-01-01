@@ -40,11 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plAngleAttenLayer.h"
+#include "hsWindows.h"
+#include "../resource.h"
 
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plAngleAttenLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -145,6 +148,11 @@ plAngleAttenLayer::plAngleAttenLayer() :
 
 plAngleAttenLayer::~plAngleAttenLayer()
 {
+}
+
+void plAngleAttenLayer::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_ANGLE_ATTEN_LAYER);
 }
 
 //From MtlBase
@@ -313,13 +321,13 @@ void plAngleAttenLayer::IChanged()
 
 void plAngleAttenLayer::ICacheCosines()
 {
-    fCosTransp0 = cosf(DegToRad(fParmsPB->GetFloat(kTranspAngle0)));
-    fCosOpaque0 = cosf(DegToRad(fParmsPB->GetFloat(kOpaqueAngle0)));
+    fCosTransp0 = cosf(hsDegreesToRadians(fParmsPB->GetFloat(kTranspAngle0)));
+    fCosOpaque0 = cosf(hsDegreesToRadians(fParmsPB->GetFloat(kOpaqueAngle0)));
 
     if( fParmsPB->GetInt(kDoubleFade) )
     {
-        fCosTransp1 = cosf(DegToRad(fParmsPB->GetFloat(kTranspAngle1)));
-        fCosOpaque1 = cosf(DegToRad(fParmsPB->GetFloat(kOpaqueAngle1)));
+        fCosTransp1 = cosf(hsDegreesToRadians(fParmsPB->GetFloat(kTranspAngle1)));
+        fCosOpaque1 = cosf(hsDegreesToRadians(fParmsPB->GetFloat(kOpaqueAngle1)));
     }
     else
     {

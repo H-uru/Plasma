@@ -2433,7 +2433,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
             iMsg->fEvent = kTime;
-            iMsg->SetMessage(msg);
+            iMsg->SetMessageRef(msg);
             atc->AddCallback(iMsg);
             hsRefCnt_SafeUnRef(msg);
             hsRefCnt_SafeUnRef(iMsg);
@@ -2445,7 +2445,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
             iMsg->fEvent = kTime;
-            iMsg->SetMessage(foot);
+            iMsg->SetMessageRef(foot);
             atc->AddCallback(iMsg);
             hsRefCnt_SafeUnRef(foot);
             hsRefCnt_SafeUnRef(iMsg);

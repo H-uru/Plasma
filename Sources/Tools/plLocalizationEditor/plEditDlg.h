@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfEditDlg_h
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include <string>
 
 // Little trick to show a wait cursor while something is working

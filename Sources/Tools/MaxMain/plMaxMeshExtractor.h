@@ -42,9 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxMeshExtractor_h_inc
 #define plMaxMeshExtractor_h_inc
 
-#include "HeadSpin.h"
-#include "hsMatrix44.h"
-
+struct hsMatrix44;
 class plMaxNode;
 
 class plMaxMeshExtractor

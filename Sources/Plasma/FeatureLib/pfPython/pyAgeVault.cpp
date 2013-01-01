@@ -184,18 +184,16 @@ PyObject* pyAgeVault::GetSubAgeLink( const pyAgeInfoStruct & info )
     PYTHON_RETURN_NONE;
 }
 
-const char* pyAgeVault::GetAgeGuid( void )
+plUUID pyAgeVault::GetAgeGuid( void )
 {
     RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef();
     if (rvn) {
         VaultAgeInfoNode ageInfo(rvn);
-        GuidToString(ageInfo.ageInstUuid, fAgeGuid, arrsize(fAgeGuid));
+        plUUID uuid = plUUID(ageInfo.ageInstUuid);
         rvn->DecRef();
+        return uuid;
     }
-    else {
-        fAgeGuid[0] = 0;
-    }
-    return fAgeGuid;
+    return plUUID();
 }
 
 

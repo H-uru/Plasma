@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMAXCameraLayer_inc
 #define plMAXCameraLayer_inc
 
-#include "Max.h"
-#include "../resource.h"
 #include "plPlasmaMAXLayer.h"
 
 class ClassDesc2;
@@ -114,7 +112,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return MAX_CAMERA_LAYER_CLASS_ID; }
     SClass_ID SuperClassID() { return TEXMAP_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_MAX_CAMERA_LAYER); }
+    void GetClassName(TSTR& s);
 
     RefTargetHandle Clone( RemapDir &remap );
     RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,

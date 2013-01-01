@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTimer.h"
 #include "HeadSpin.h"
+#include "hsWindows.h"
 
 #include "plTweak.h"
 

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 // static
-plUnifiedTime   plClientUnifiedTime::fFrameStartTime    = plUnifiedTime::GetCurrentTime();  // the 'current time' at the start of each time
+plUnifiedTime   plClientUnifiedTime::fFrameStartTime    = plUnifiedTime::GetCurrent();  // the 'current time' at the start of each time
 double          plClientUnifiedTime::fSysTimeOffset     = 0.0;
 
 //
@@ -78,7 +78,7 @@ void plClientUnifiedTime::SetFromGameTime(double gameTime, double curGameSecs)
     extern bool gMooseDump;
     if (gMooseDump)
     {
-        plUnifiedTime ct = plUnifiedTime::GetCurrentTime();
+        plUnifiedTime ct = plUnifiedTime::GetCurrent();
         plUnifiedTime ft = GetFrameStartTime();
 
         plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("SFGT: CT=%s\n", ct.PrintWMillis()));
@@ -102,7 +102,7 @@ void plClientUnifiedTime::ConvertToGameTime(double* gameTimeOut, double curGameS
     extern bool gMooseDump;
     if (gMooseDump)
     {
-        plUnifiedTime ct = plUnifiedTime::GetCurrentTime();
+        plUnifiedTime ct = plUnifiedTime::GetCurrent();
         plUnifiedTime ft = GetFrameStartTime();
 
         plNetObjectDebugger::GetInstance()->LogMsg( hsTempStringF("CTGT: this=%s\n", PrintWMillis()));

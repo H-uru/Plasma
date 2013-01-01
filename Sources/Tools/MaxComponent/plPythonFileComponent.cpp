@@ -39,13 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plPythonFileComponent.h"
 
-#include "resource.h"
+#include "HeadSpin.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "plActivatorBaseComponent.h"
+#include "plAnimComponent.h"
+#include "plPhysicalComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <map>
+#include <notify.h>
+#include <set>
+#include <string>
+#include <vector>
+#pragma hdrstop
+
+#include "plPythonFileComponent.h"
 
 #include "plAutoUIBlock.h"
 #include "plAutoUIParams.h"
@@ -56,7 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGUIComponents.h"
 #include "pfGUISkinComp.h"
 #include "plExcludeRegionComponent.h"
-#include "plAnimComponent.h"
 #include "plNotetrackAnim.h"
 #include "plOneShotComponent.h"
 #include "plMultistageBehComponent.h"
@@ -66,24 +77,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plWaveSetBase.h"
 #include "plClusterComponent.h"
 #include "plDrawable/plClusterGroup.h"
-#include "plPhysicalComponents.h"
 //#include "plHavok1/plHKPhysical.h"
 #include "plAvatar/plSwimRegion.h"
 #include "plSurface/plGrassShaderMod.h"
 #include "plGrassComponent.h"
-
-#include "notify.h"
-
-#include <vector>
-#include <set>
-#include <map>
-#include <string>
 
 #include "pfPython/plPythonFileMod.h"
 #include "pfPython/plPythonParameter.h"
 
 // for DynamicText hack to get the plKeys (could probably be removed later)
 #include "plGImage/plDynamicTextMap.h"
+
+#include "plResponderComponent.h"
 
 //// plCommonPythonLib ///////////////////////////////////////////////////////
 //  Derived class for our global python fileMods, since they go in to the 
@@ -402,10 +407,6 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     return true;
 }
-
-#include "plActivatorBaseComponent.h"
-#include "pnKeyedObject/plKey.h"
-#include "plResponderComponent.h"
 
 bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {

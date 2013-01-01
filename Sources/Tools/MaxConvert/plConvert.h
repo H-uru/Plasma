@@ -43,11 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvert_inc
 #define plConvert_inc
 
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "pnKeyedObject/plKey.h"
-
 class plErrorMsg;
+class plKey;
 class plLocation;
 class plMaxNode;
 class plMessage;

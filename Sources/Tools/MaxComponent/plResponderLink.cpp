@@ -39,17 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsFiles.h"
+#include "hsResMgr.h"
+
+#include "plComponentBase.h"
+#include "plActivatorBaseComponent.h"
+#include "plCameraComponents.h"
+#include "plMiscComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
 #include "plResponderLink.h"
 #include "plResponderComponentPriv.h"
-#include "resource.h"
-#include "max.h"
-#include "MaxMain/plMaxNode.h"
-#include "hsResMgr.h"
-#include "plMiscComponents.h"
+
 // Needed for the dialog
 #include "MaxMain/plMaxCFGFile.h"
-#include "hsFiles.h"
 #include "plAgeDescription/plAgeDescription.h"
 
 // Needed to create the message
@@ -376,8 +385,6 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-#include "plComponentBase.h"
 
 // Needed for message creation
 #include "plModifier/plResponderModifier.h"
@@ -725,7 +732,6 @@ plMessage *plResponderCmdNotify::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg,
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "plCameraComponents.h"
 #include "plPickNode.h"
 
 enum { kActivatorComp, kActivatorEnable };
@@ -806,7 +812,6 @@ const char *plResponderCmdDetectorEnable::GetInstanceName(IParamBlock2 *pb)
 }
 
 #include "pnMessage/plEnableMsg.h"
-#include "plActivatorBaseComponent.h"
 #include "plVolumeGadgetComponent.h"
 #include "plNavigableComponents.h"
 
@@ -1089,7 +1094,6 @@ const char *plResponderCmdCamTransition::GetInstanceName(IParamBlock2 *pb)
 }
 
 #include "pnMessage/plCameraMsg.h"
-#include "plCameraComponents.h"
 
 plMessage *plResponderCmdCamTransition::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {

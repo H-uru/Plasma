@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #pragma warning(disable: 4284)
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include "plClient.h"
 #include "hsStream.h"
 #include "plResMgr/plResManager.h"

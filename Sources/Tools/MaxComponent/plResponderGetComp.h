@@ -39,15 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "max.h"
 
 #include <set>
 #include <vector>
 
+class Class_ID;
 class plComponentBase;
-class IParamBlock2;
 class plMaxNodeBase;
+class IParamBlock2;
 
 class plResponderGetComp
 {

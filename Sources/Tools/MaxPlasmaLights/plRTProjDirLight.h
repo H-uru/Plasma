@@ -54,8 +54,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plRTProjDirLight_h
 #define _plRTProjDirLight_h
 
-#include "plRealTimeLightBase.h"
-#include "iparamm2.h"
+class Class_ID;
+class IParamBlock2;
+struct PB2Value;
+class ReferenceMaker;
 
 
 ///////////////////////////////////////////////////////////////////////////////

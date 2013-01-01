@@ -40,12 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plAutoUIComp.h"
+#include "hsWindows.h"
 
 #include <algorithm>
 
+#include <iparamb2.h>
+#include <max.h>
+#include <notify.h>
+#include <utilapi.h>
+
 #include "resource.h"
-#include "notify.h"
+#pragma hdrstop
+
+#include "plAutoUIComp.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

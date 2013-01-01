@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define DYNAHEADER_CREATE_STORAGE
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 
 #include <time.h>
 
@@ -1491,7 +1492,7 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                                     D3DEnum_DeviceInfo *deviceInfo )
 {
     char        desc[ 512 ];    // Can't rely on D3D constant, since that's in another file now
-    DWORD       vendorID, deviceID;
+    uint32_t    vendorID, deviceID;
     char        *szDriver, *szDesc;
 
 

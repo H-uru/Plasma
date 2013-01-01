@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExportErrorMsg_inc
 #define plExportErrorMsg_inc
 
-#include <string.h>
 #include "plErrorMsg.h"
 
 #if !HS_BUILD_FOR_WIN32

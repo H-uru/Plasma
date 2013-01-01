@@ -39,21 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "resource.h"                           //  Resource Dependencies
+#include "plgDispatch.h"
+#include "hsTemplates.h"
 
-#include "MaxMain/plPhysicalProps.h"
-
-#include "plComponent.h"                        //Component Dependencies
-#include "plComponentReg.h"                     //  Ibid
-#include "MaxMain/plMaxNode.h"               //  Ibid
-#include "pnKeyedObject/plKey.h"             //  Ibid
+#include "plActivatorBaseComponent.h"
+#include "plComponent.h"
 #include "plComponentProcBase.h"
+#include "plComponentReg.h"
+#include "plPhysicalComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+#pragma hdrstop
 
 #include "plNavigableComponents.h"
-#include "plActivatorBaseComponent.h"
-#include "plPhysicalComponents.h"
+#include "MaxMain/plPhysicalProps.h"
 
 #include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
 #include "MaxConvert/hsControlConverter.h"   //  Ibid
@@ -61,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvLadderModifier.h"     //Modifier Dependencies
 #include "plPhysical/plSimDefs.h"
 
-#include "plgDispatch.h"                        //Message Dependencies
 #include "pnMessage/plObjRefMsg.h"           //  Ibid
 #include "pnMessage/plIntRefMsg.h"           //  Ibid    
 #include "pnMessage/plNodeRefMsg.h"          //  Ibid

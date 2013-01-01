@@ -40,13 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "max.h"
-#include "MaxIcon.h"
-
+#include "hsWindows.h"
 #include "../resource.h"
+
+#include <iparamm2.h>
+#include <maxicon.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "plMultipassMtl.h"
 #include "plMultipassMtlPB.h"
-//#include "plMaxLayer.h"
 #include "plMultipassMtlDlg.h"
 
 struct LayerID

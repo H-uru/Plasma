@@ -52,6 +52,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtArray.h"
 #include <wchar.h>
 
+// Got Damn eap...
+// Duplicate Symbols in shlwapi!
+#ifdef _INC_SHLWAPI
+#   undef StrChr
+#   undef StrDup
+#   undef StrStr
+#endif // _INC_SHLWAPI
+
 /*****************************************************************************
 *
 *   String functions

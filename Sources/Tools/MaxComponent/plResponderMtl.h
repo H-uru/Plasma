@@ -42,15 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
-class plMessage;
-class IParamBlock2;
-class ClassDesc2;
-class plMaxNode;
-class plErrorMsg;
-class plComponentBase;
-class Mtl;
-class plMaxNodeBase;
 template <class T> class hsTArray;
+class plErrorMsg;
+class plMaxNode;
+class plMaxNodeBase;
+class plMessage;
+class Mtl;
+class IParamBlock2;
+class plString;
 
 int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
 

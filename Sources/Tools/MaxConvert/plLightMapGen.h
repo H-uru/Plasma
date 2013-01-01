@@ -43,10 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightMapGen_inc
 #define plLightMapGen_inc
 
-#include "hsTemplates.h"
-
-#include <vector>
-
 class plMaxLightContext;
 class plRenderGlobalContext;
 class plLayerInterface;

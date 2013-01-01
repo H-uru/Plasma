@@ -39,12 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+
 #include "plComponentBase.h"
 #include "plComponentReg.h"
-#include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxMain/plMaxNodeBase.h"
 
+#include <iparamm2.h>
+#include <notify.h>
+#pragma hdrstop
+
+#include "MaxMain/plPlasmaRefMsgs.h"
 #include "plAutoUIComp.h"
 
 plComponentBase::plComponentBase() : fClassDesc(nil), fCompPB(nil), fTargsPB(nil)
@@ -578,8 +584,6 @@ int plSharedComponents(INodeTab& nodes, INodeTab& components)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-#include "notify.h"
 
 static void UpdateComponentVisibility(plMaxNodeBase *node)
 {

@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_PASSMTLBASE_H
 
 #include "hsTemplates.h"
-#include "Max.h"
-#include "iparamb2.h"
 #include "plInterp/plAnimEaseTypes.h"
 
 class plNoteTrackWatcher;

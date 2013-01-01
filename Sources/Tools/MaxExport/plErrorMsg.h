@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plErrorMsg_h
 #define __plErrorMsg_h
 
-#include "HeadSpin.h"
-
 #define PL_ERR_MSG_MAX_MSG 2048
 
 class plErrorMsg

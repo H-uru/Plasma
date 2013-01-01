@@ -39,20 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plImpactGadgetComponent_inc
-#define plImpactGadgetComponent_inc
 
-#include "plActivatorBaseComponent.h"
+#include "Pch.h"
 
-#define IMPACTGADGET_CID Class_ID(0x6cb343d6, 0x36995c82)
-
-// class plImpactGadget : public plActivatorBaseComponent
-// {
-// public:
-//  plImpactGadget();
-// 
-//  bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-//  bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-// };
-
-#endif // plImpactGadgetComponent_inc
+/** 
+ * \file Pch.cpp
+ * \brief Precompiled Header object for MaxComponent
+ *
+ * This file prompts MSVC to generate a PCH file for the MaxComponent project. It
+ * has no function if precompiled headers are disabled in cmake.
+ */

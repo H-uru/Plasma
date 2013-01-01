@@ -49,7 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "HeadSpin.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsStream.h"
+#pragma hdrstop
 
 #include "plTextureExportLog.h"
 #include "plGImage/plCubicEnvironmap.h"
@@ -57,9 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plDynamicTextMap.h"
 #include "plPipeline/plRenderTarget.h"
 #include "plPipeline/plCubicRenderTarget.h"
-#include "pnKeyedObject/plKey.h"
-
-#include "hsStream.h"
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////

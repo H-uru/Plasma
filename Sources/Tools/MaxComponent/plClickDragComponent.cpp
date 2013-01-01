@@ -39,16 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plClickDragComponent.h"
-#include "resource.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plAnimComponent.h"
+#include "plActivatorBaseComponent.h"
+#include "plNoteTrackDlgComp.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <iparamm2.h>
+#include "resource.h"
+#pragma hdrstop
+
+#include "plClickDragComponent.h"
+
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plKey.h"
 
 #include "plPhysical/plCollisionDetector.h"  // MM
 #include "plModifier/plLogicModifier.h"
@@ -64,12 +75,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 
-#include "hsResMgr.h"
-#include "MaxMain/plMaxNode.h"
 #include "MaxConvert/plConvert.h"
 
 #include "plResponderComponent.h"
-#include "plgDispatch.h"
 
 #include "MaxMain/plPhysicalProps.h"
 #include "plNotetrackAnim.h"
@@ -103,9 +111,6 @@ enum
     kClikDragBoundsType,
     kClikDragEnabled,
 };
-
-
-#include "plNoteTrackDlgComp.h"
 
 class plClickDragComponentProc : public ParamMap2UserDlgProc
 {

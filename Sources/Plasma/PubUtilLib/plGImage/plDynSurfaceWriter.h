@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDynSurfaceWriter_h
 
 #include "hsColorRGBA.h"
-              // EVIL
+#include "hsWindows.h" // FIXME: windows :(
 
 struct hsMatrix44;
 

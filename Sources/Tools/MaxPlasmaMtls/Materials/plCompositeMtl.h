@@ -42,11 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLCOMPMTL__H
 #define __PLCOMPMTL__H
 
-#include "Max.h"
-#include "../resource.h"
-#include "istdplug.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
+class Interval;
+class Mtl;
+class IParamBlock2;
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
@@ -135,7 +133,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return COMP_MTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_COMP_MTL); }
+    void GetClassName(TSTR& s);
 
     RefTargetHandle Clone(RemapDir &remap);
     RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 

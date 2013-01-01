@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSMAXLAYERBASE_H
 #define __HSMAXLAYERBASE_H
 
-#include "stdmat.h"
-
 #define HSMAX_LAYER_CLASS_ID 0x41990fe7
 
 const Class_ID hsMaxLayerClassID(HSMAX_LAYER_CLASS_ID, 0x72404998);

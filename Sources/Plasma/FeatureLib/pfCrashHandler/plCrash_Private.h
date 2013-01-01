@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfCrash_Private_h_
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 
 #define CRASH_NOTIFY_SUFFIX "CrashNotify"
 #define CRASH_HANDLE_SUFFIX "CrashHandled"

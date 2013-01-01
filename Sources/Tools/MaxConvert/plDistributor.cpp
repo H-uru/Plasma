@@ -41,22 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include <commdlg.h>
+#include "hsGeometry3.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
 
-#include "Max.h"
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "iparamb2.h"
-#include "meshdlib.h" 
+#include <commdlg.h>
+#include <max.h>
+#include <stdmat.h>
+#include <bmmlib.h>
+#include <iparamb2.h>
+#include <meshdlib.h> 
+#pragma hdrstop
 
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 #include "hsMaterialConverter.h"
-
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
 
 #include "plMath/plTriUtils.h"
 

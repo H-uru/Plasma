@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
 
 #ifdef _MSC_VER
 #   include <crtdbg.h>

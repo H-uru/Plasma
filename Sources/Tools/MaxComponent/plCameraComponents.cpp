@@ -39,23 +39,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
 
-#include "max.h"                                //Max Dependencies
-
-#include "resource.h"                           //Resource Dependencies
-#include "hsResMgr.h"                           //  Ibid
-
-#include "plComponent.h"                        //Component Dependencies
 #include "plComponentReg.h" 
-#include "plCameraComponents.h"                 //  Ibid
-#include "plAnimComponent.h"                    //  Ibid
+#include "plAnimComponent.h"
+#include "plCameraComponents.h"
+#include "plMiscComponents.h"
+#include "plPhysicalComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/plMaxNodeData.h"
+
+#include <iparamm2.h>
+#include <string>
+#include <vector>
+
+#include "resource.h"
+#pragma hdrstop
+
 #include "pnSceneObject/plSceneObject.h"        //  Ibid
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "plScene/plSceneNode.h"                //  Ibid
-#include "pnKeyedObject/plKey.h"                //  Ibid
-#include "MaxMain/plMaxNode.h"                  //  Ibid
-#include "MaxMain/plMaxNodeData.h"              //  Ibid
 
 #include "MaxConvert/plConvert.h"
 #include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
@@ -63,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPhysical/plSimDefs.h"
 
-#include "plgDispatch.h"                     //Message Dependencies
 #include "pnMessage/plObjRefMsg.h"           //  Ibid
 #include "pnMessage/plIntRefMsg.h"           //  Ibid    
 #include "pnMessage/plNodeRefMsg.h"          //  Ibid
@@ -74,18 +79,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfCamera/plCameraBrain.h"
 #include "pfCamera/plCameraModifier.h"
-#include "plMiscComponents.h"
 #include "MaxMain/plPhysicalProps.h"
-#include "plPhysicalComponents.h"
 
 // Line Follow related
 #include "plInterp/plAnimPath.h"
 #include "plInterp/plController.h"
 #include "pfAnimation/plLineFollowMod.h"
 #include "pfAnimation/plFollowMod.h"
-
-#include <vector>
-#include <string>
 
 //
 //  DummyCodeIncludeFuncPhys Function.

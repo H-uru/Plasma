@@ -154,7 +154,7 @@ public:
     void SetDirty(bool d) { if (d) fFlags |= kDirty; else fFlags &= ~kDirty; }
     void SetUsed(bool d) { if (d) fFlags |= kUsed; else fFlags &= ~kUsed; }
     virtual void SetFromDefaults(bool timeStampNow) = 0;
-    virtual void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrentTime() ) = 0;
+    virtual void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() ) = 0;
     virtual const plUnifiedTime& GetTimeStamp() const = 0;
 
     plStateVarNotificationInfo& GetNotificationInfo() { return fNotificationInfo; }
@@ -263,7 +263,7 @@ public:
     plSDStateVariable* GetAsSDStateVar() { return nil; }
     bool operator==(const plSimpleStateVariable &other) const;  // assumes matching var descriptors
 
-    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrentTime() );
+    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() );
     void CopyFrom(plVarDescriptor* v);
     void CopyData(const plSimpleStateVariable* other, uint32_t writeOptions=0);
     bool SetFromString(const plString& value, int idx, bool timeStampNow);  // set value from string, type.  return false on err
@@ -355,7 +355,7 @@ public:
     void AddStateDataRecord(plStateDataRecord *sdr) { fDataRecList.push_back(sdr); SetDirty(true); SetUsed(true); }
     void InsertStateDataRecord(plStateDataRecord *sdr, int i) { fDataRecList[i] = sdr; SetDirty(true); SetUsed(true);}
     void SetFromDefaults(bool timeStampNow);
-    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrentTime() );
+    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() );
     const plUnifiedTime& GetTimeStamp() const { static plUnifiedTime foo; return foo; }
     
     void Alloc(int cnt=-1 /* -1 means don't change count */);   // wipe and re-create

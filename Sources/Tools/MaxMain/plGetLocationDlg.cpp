@@ -39,14 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plGetLocationDlg.h"
-#include "plMaxNode.h"
-#include "MaxComponent/plMiscComponents.h"
-#include "resource.h"
-#include "MaxExport/plErrorMsg.h"
-#include "MaxComponent/plComponent.h"
 
+#include "HeadSpin.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsWindows.h"
+
+#include "plMaxNode.h"
+#include "MaxComponent/plComponent.h"
+#include "resource.h"
+#pragma hdrstop
+
+#include "plGetLocationDlg.h"
+
+#include "MaxComponent/plMiscComponents.h"
+#include "MaxExport/plErrorMsg.h"
 
 plGetLocationDlg::plGetLocationDlg() : fNode(nil), fErrMsg(nil), fDefaultLocation(nil)
 {

@@ -41,34 +41,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsConverterUtils.h"
+#include "hsExceptionStack.h"
+#include "hsHashTable.h"
+#include "hsStringTokenizer.h"
 #include "hsResMgr.h"
-#include "MaxMain/MaxCompat.h"
-
-#if HS_BUILD_FOR_WIN32
-
 #include <math.h>
+
+#include <max.h>
+#include <stdmat.h>
+#if MAX_VERSION_MAJOR >= 13
+#   include <INamedSelectionSetManager.h>
+#endif
+#pragma hdrstop
+
+#include "hsConverterUtils.h"
+#include "MaxMain/MaxCompat.h"
 
 #include "hsMaxLayerBase.h"
 #include "plInterp/plController.h"
 
 #include "MaxExport/plErrorMsg.h"
 #include "UserPropMgr.h"
-#include "hsStringTokenizer.h"
-//#include "hsDXTDirectXCodec.h"
-//#include "hsDXTSoftwareCodec.h"
 #include "plGImage/hsCodecManager.h"
-///#include "SwitchUtil.h"
-#include "hsExceptionStack.h"
-#include "hsHashTable.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 #include "MaxMain/MaxCompat.h"
-
-#if MAX_VERSION_MAJOR >= 13
-#include <INamedSelectionSetManager.h>
-#endif
 
 const char hsConverterUtils::fTagSeps[] = " ,\t\n=:;";
 
@@ -577,5 +575,3 @@ bool hsConverterUtils::CacheNode::operator==(const CacheNode& other) const
     else
         return !_stricmp(k1,k2);
 }
-
-#endif  // HS_BUILD_FOR_WIN32

@@ -39,11 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "max.h"
-#include "pnModifier/plModifier.h"
 
 #include "plComponentTools.h"
+#include "pnKeyedObject/plUoid.h"
 
 plKey plComponentTools::AddModifier(plMaxNodeBase *node, plModifier *mod)
 {

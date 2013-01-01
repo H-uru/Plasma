@@ -39,29 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include <windowsx.h>
 
-#include "max.h"
-#include "resource.h"
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsGeometry3.h"
+#include "hsResMgr.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "plAnimComponent.h"
+#include "plAudioComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#include <windowsx.h>
+#pragma hdrstop
+
+
 #include "pnSceneObject/plSceneObject.h"
 
 #include "pfCamera/plInterestingModifier.h"
 #include "plModifier/plSpawnModifier.h"
-#include "plgDispatch.h"
-
-
-
-#include "hsResMgr.h"
 
 #include "plScene/plSceneNode.h"
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxConvert/hsControlConverter.h"
-#include "MaxMain/plMaxNode.h"
-#include "hsGeometry3.h"
 #include "plPhysical/plSimDefs.h"
 
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -481,8 +485,6 @@ bool plMaintainersMarkerComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErr
 #include "MaxMain/plMtlCollector.h"
 #include "plResponderMtl.h"
 #include "plResponderGetComp.h"
-#include "plAnimComponent.h"
-#include "plAudioComponents.h"
 
 class plGameMarkerComponent : public plComponent
 {

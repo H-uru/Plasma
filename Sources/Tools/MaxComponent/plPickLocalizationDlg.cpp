@@ -39,18 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "HeadSpin.h"
+#include "hsStringTokenizer.h"
+
+#include <max.h>
+#include "resource.h"
+#include <vector>
+#pragma hdrstop
+
 #include "plPickLocalizationDlg.h"
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plMaxAccelerators.h"
-
-
-#include "hsStringTokenizer.h"
-
-#include "resource.h"
-
-#include <vector>
 
 ////////////////////////////////////////////////////////////////////
 

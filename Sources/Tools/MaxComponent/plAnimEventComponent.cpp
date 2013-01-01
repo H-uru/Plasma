@@ -39,11 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+
 #include "plAnimEventComponent.h"
 #include "plComponentReg.h"
 #include "resource.h"
+
 #include "MaxMain/plMaxNode.h"
+#pragma hdrstop
 
 #include "plAnimComponent.h"
 #include "plNotetrackAnim.h"
@@ -53,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier/plAnimEventModifier.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "hsResMgr.h"
 #include "pnMessage/plRefMsg.h"
 
 void DummyCodeIncludeFuncAnimDetector() {}

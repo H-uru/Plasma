@@ -39,14 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plVolumeGadgetComponent.h"
-#include "resource.h"
+#include "hsResMgr.h"
+
+#include "plComponentProcBase.h"
 #include "plComponentReg.h"
+#include "plActivatorBaseComponent.h"
+#include "plPhysicalComponents.h"
+#include "plResponderComponent.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "plVolumeGadgetComponent.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plKey.h"
 
 #include "plPhysical/plCollisionDetector.h"  // MM
 #include "plModifier/plLogicModifier.h"
@@ -59,17 +70,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plCursorChangeMsg.h"
 
-#include "hsResMgr.h"
-#include "MaxMain/plMaxNode.h"
 #include "MaxConvert/plConvert.h"
-
-#include "plResponderComponent.h"
 
 // Physics Dependencies below
 #include "MaxConvert/hsConverterUtils.h"     //Conversion Dependencies
-#include "plPhysicalComponents.h"
 #include "pnMessage/plIntRefMsg.h"
-#include "plComponentProcBase.h"
 
 #include "MaxMain/plPhysicalProps.h"
 

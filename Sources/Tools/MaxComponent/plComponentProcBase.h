@@ -44,10 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #pragma warning(disable: 4786)
 
-#include "Max.h"
-#include "iparamm2.h"
 #include <string>
 #include <vector>
+
+#include "hsWindows.h"
+#include <iparamm2.h>
 
 //
 //  Const Char* [] Version

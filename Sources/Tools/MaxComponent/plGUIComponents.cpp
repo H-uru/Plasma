@@ -39,19 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "resource.h"
+#include "plgDispatch.h"
+#include "hsFiles.h"
 #include "hsTemplates.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "plMiscComponents.h"
 #include "plAnimComponent.h"
+#include "plAudioComponents.h"
+#include "plMiscComponents.h"
+#include "resource.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <iparamm2.h>
+#include <string>
+#include <vector>
+#pragma hdrstop
+
 #include "plNotetrackAnim.h"
 
 #include "plGUIComponents.h"
-
-#include "plAudioComponents.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 
@@ -72,7 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plPluginResManager.h"
 
 
-#include "plgDispatch.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plIntRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
@@ -85,8 +93,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxConvert/plLayerConverter.h"
 #include "plInterp/plController.h"
 #include "plInterp/plAnimEaseTypes.h"
-#include "MaxMain/plMaxNode.h"
-#include "pnKeyedObject/plKey.h"
 
 // GUIDialog component.
 #include "plScene/plPostEffectMod.h"
@@ -115,7 +121,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeDescription/plAgeDescription.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
-#include "hsFiles.h"
 #include "MaxConvert/plConvert.h"
 #include "MaxPlasmaMtls/Layers/plDynamicTextLayer.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
@@ -134,9 +139,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plLocalization.h"
 
 #include "plPickLocalizationDlg.h"
-
-#include <vector>
-#include <string>
 
 
 void DummyCodeIncludeFuncGUI() {}

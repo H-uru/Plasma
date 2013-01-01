@@ -39,24 +39,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "max.h"
-#include "dummy.h"
-#include "resource.h"
+#include "hsTemplates.h"
+#include "hsResMgr.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <dummy.h>
+#include <iparamm2.h>
+#pragma hdrstop
+
 #include "plSoftVolumeComponent.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
-#include "MaxMain/plMaxNode.h"
 
 #include "plIntersect/plSoftVolumeTypes.h"
 #include "plIntersect/plVolumeIsect.h"
-#include "pnKeyedObject/plKey.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plObjRefMsg.h"
-#include "hsResMgr.h"
 
 #include "plGLight/plLightInfo.h"
 #include "plScene/plOccluder.h"

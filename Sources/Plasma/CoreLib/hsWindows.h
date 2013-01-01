@@ -39,61 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-// Don't delete this, I use it for testing -Colin
-#if 0
 
-#include "max.h"
-#include "resource.h"
-#include "plComponent.h"
-#include "plComponentReg.h"
+#ifndef _hsWindows_inc_
+#define _hsWindows_inc_
 
-#include "plAutoUIComp.h"
+/** \file hsWindows.h
+ *  \brief Pulls in Windows core headers
+ *
+ *  This file pulls in the core Windows headers and Winsock2. It is separate from
+ *  HeadSpin.h to improve build times and to facillitate adding precompiled headers.
+ *  You should avoid including this header from other headers!
+ */
 
-#include "plActivatorComponent.h"
+#ifdef HS_BUILD_FOR_WIN32
+    // Terrible hacks for MinGW because they don't have a reasonable
+    // default for the Windows version. We cheat and say it's XP.
+#   ifdef __MINGW32__
+#       undef _WIN32_WINNT
+#       define _WIN32_WINNT 0x501
+#       undef _WIN32_IE
+#       define _WIN32_IE    0x400
+#   endif
 
-class plAutoComponent : public plComponent
-{
-public:
-    plAutoComponent();
+#   define NOMINMAX
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   include <ws2tcpip.h> // Pulls in WinSock 2 for us
 
-    bool Convert(plMaxNode *node, plErrorMsg *msg);
-};
+    // This needs to be after #include <windows.h>, since it also includes windows.h
+#   ifdef USE_VLD
+#       include <vld.h>
+#   endif // USE_VLD
+#endif // HS_BUILD_FOR_WIN32
 
-AUTO_CLASS_DESC(plAutoComponent, gAutoDesc, "Auto", "Auto", "Test", Class_ID(0x21807fcf, 0x156e2218))
-
-plAutoUIComp *gAutoUI;
-
-void DummyCode()
-{
-    gAutoUI = new plAutoUIComp(&gAutoDesc);
-
-    gAutoUI->AddCheckBox(0, "test", "Test", true);
-    gAutoUI->AddFloatSpinner(1, "t2", "T2", 0.5, 0.f, 100.f);
-    gAutoUI->AddEditBox(2, "blah", "Blah", "Test String", 5);
-    gAutoUI->AddPickNode(3, "pick", "Pick");
-
-    std::vector<Class_ID> cids;
-    cids.push_back(ACTIVATOR_CID);
-    cids.push_back(RESPONDER_CID);
-    gAutoUI->AddPickNode(4, "pick2", "Pick2", &cids);
-}
-
-plAutoComponent::plAutoComponent()
-{
-    fClassDesc = &gAutoDesc;
-    fClassDesc->MakeAutoParamBlocks(this);
-}
-
-bool plAutoComponent::Convert(plMaxNode *node, plErrorMsg *msg)
-{
-    bool c1 = gAutoUI->GetCheckBox(0, this);
-    TSTR str = gAutoUI->GetEditBox(2, this);
-
-    for (int i = 0; i < gAutoUI->Count(3, this); i++)
-        INode *node = gAutoUI->GetPickNode(3, this, i);
-    
-    return true;
-}
-
-#endif
+#endif // _hsWindows_inc_

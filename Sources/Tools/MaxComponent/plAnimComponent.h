@@ -42,14 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimComponent_inc
 #define plAnimComponent_inc
 
-#include <map>
-#include "plComponent.h"
-#include "plComponentReg.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
+
+#include "plComponent.h"
+#include "plComponentReg.h"
 #include "plAnimObjInterface.h"
-#include "plNoteTrackDlgComp.h"
-#include "MaxPlasmaMtls/Materials/plPassMtlBase.h"
+#include "plNotetrackDlgComp.h"
+
+#include <iparamm2.h>
+#include <map>
+
 
 #define ANIM_COMP_CID Class_ID(0x32e77ab, 0x28a80383)
 #define ANIM_GROUP_COMP_CID Class_ID(0x341a57fc, 0x4cda6c64)
@@ -84,19 +87,16 @@ enum
         kAnimPhysAnim,
 };
 
-static plEaseAccessor gAnimCompEaseAccessor(plComponentBase::kBlkComp, 
-                                            kAnimEaseInMin, kAnimEaseInMax, kAnimEaseInLength,
-                                            kAnimEaseOutMin, kAnimEaseOutMax, kAnimEaseOutLength);
-
+class plAGAnim;
+class plAGApplicator;
+class plAGMasterMod;
 class plComponentBase;
+class plController;
+class plEaseAccessor;
 class plMaxNode;
+class plMsgForwarder;
 class plSimpleTMModifier;
 class plLightModifier;
-class plAGMasterMod;
-class plAGAnim;
-class plMsgForwarder;
-class plController;
-class plAGApplicator;
 
 class plAnimComponentBase : public plComponent, public plAnimObjInterface
 {

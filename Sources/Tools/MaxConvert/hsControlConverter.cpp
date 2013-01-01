@@ -41,18 +41,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "hsExceptionStack.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
 #include <commdlg.h>
 #include <math.h>
+#include <stdmat.h>
+#include <bmmlib.h>
+#include <istdplug.h>
+#include <texutil.h>
+#include <iparamb2.h>
+#include <modstack.h>
+#include <keyreduc.h>
+#pragma hdrstop
 
-//#include "Max.h"
 #include "MaxMain/plMaxNode.h"
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "istdplug.h"
-#include "texutil.h"
-#include "iparamb2.h"
-#include "modstack.h"
-#include "keyreduc.h"
 
 #include "hsMaxLayerBase.h"
 #include "plInterp/plController.h"
@@ -62,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
 #include "hsMaterialConverter.h"
-#include "hsExceptionStack.h"
 #include "MaxExport/plErrorMsg.h"
 #include "MaxComponent/plNoteTrackAnim.h"
 #include "MaxComponent/plCameraComponents.h"
@@ -2100,11 +2102,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
         theCam = (GenCamera *) obj->ConvertToType(t, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
-        float FOVvalue= 0.0;            //Currently in Radians
-        // radians
-        FOVvalue = theCam->GetFOV(t);
-        // convert
-        FOVvalue = FOVvalue*(180/3.141592);
+        float FOVvalue= theCam->GetFOV(t); // in radians
+        FOVvalue *= (float)(180.f / M_PI); // to degrees
         int FOVType = theCam->GetFOVType();
         float wDeg, hDeg;
         switch(FOVType)

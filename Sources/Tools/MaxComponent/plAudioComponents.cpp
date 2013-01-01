@@ -39,16 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plComponentProcBase.h"
 
-#include "resource.h"
-#include "plComponent.h"
-#include "plComponentReg.h"
-#include <map>
-#include "plAudioComponents.h"
-#include "plMiscComponents.h"
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "plFileUtils.h"
+
 #include "plAnimComponent.h"
+#include "plAudioComponents.h"
+#include "plComponent.h"
+#include "plComponentProcBase.h"
+#include "plComponentReg.h"
+#include "plMiscComponents.h"
+#include "MaxMain/MaxCompat.h"
+#include "resource.h"
+
+#include <map>
+#include <shlwapi.h>
+#pragma hdrstop
+
+
 #include "plInterp/plAnimEaseTypes.h"
 #include "plAvatar/plAGAnim.h"
 
@@ -59,23 +68,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plPluginResManager.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-
-#include "plgDispatch.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plIntRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
-
 
 #include "plScene/plSceneNode.h"
 #include "MaxConvert/hsConverterUtils.h"
 #include "MaxConvert/hsControlConverter.h"
 #include "plInterp/plController.h"
 #include "MaxMain/plMaxNode.h"
-#include "MaxMain/MaxCompat.h"
-#include "pnKeyedObject/plKey.h"
 
 //Physics Related
-//#include "plHavok1/plHKPhysical.h"         //Physics Comp
 #include "pnSceneObject/plSimulationInterface.h"
 #include "MaxMain/plPhysicalProps.h"
 #include "plPhysX/plPXPhysical.h"
@@ -92,13 +95,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plWin32StreamingSound.h"
 #include "plAudio/plWin32GroupedSound.h"
 #include "plAudioCore/plSoundBuffer.h"
-#include "plFileUtils.h"
 
 // Valdez Asset Manager Related
 #ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#   include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
-#include <shlwapi.h>
 
 // Fun soft volume stuff
 #include "plSoftVolumeComponent.h"
@@ -111,8 +112,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // EAX stuff
 #include "plAudio/plEAXListenerMod.h"
 #ifdef EAX_SDK_AVAILABLE
-#include <eax-util.h>
-#include <eaxlegacy.h>
+#   include <eax-util.h>
+#   include <eaxlegacy.h>
 #endif
 
 #include "plResMgr/plLocalization.h"
