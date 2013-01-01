@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plLocalization.h"
-#include "plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;

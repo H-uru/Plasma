@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "PythonInterface.h"
 
 #include "hsStream.h"
-#include "hsFiles.h"
+#include "plFile/hsFiles.h"
 
 #include <vector>
 #include <string>
