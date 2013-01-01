@@ -42,18 +42,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSCONTROLCONVERTER_H
 #define __HSCONTROLCONVERTER_H
 
-#include <commdlg.h>
-#include <math.h>
-
-//#include "Max.h"
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "istdplug.h"
-#include "texutil.h"
 #include "plInterp/hsKeys.h"
-#include "hsTemplates.h"
 
+class Animatable;
+class plCompoundController;
+class Control;
+class plController;
+class hsConverterUtils;
+class plErrorMsg;
+class Interface;
+struct hsKeyFrame;
+class plLeafController;
+class Matrix3;
 class plMaxNode;
+class IParamBlock2;
+class plSceneObject;
+class StdUVGen;
 
 enum ControllerType
 {
@@ -74,13 +78,6 @@ enum ControllerType
     ctrlTypeTurn,   // CS Biped
     ctrlTypeRollAngle,
 };
-
-class plController;
-class plLeafController;
-class plCompoundController;
-struct hsKeyFrame;
-class hsConverterUtils;
-class plSceneObject;
 
 class hsControlConverter
 {

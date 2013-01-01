@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 #if HS_BUILD_FOR_WIN32
+#    include "hsWindows.h"
 #    include <direct.h>
 
 #    define getcwd _getcwd

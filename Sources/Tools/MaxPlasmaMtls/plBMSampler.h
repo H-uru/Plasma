@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plBMSampler_h
 #define _plBMSampler_h
 
-#include "max.h"
-#include "imtl.h"
-
 class plPlasmaMAXLayer;
 
 class plBMSamplerData

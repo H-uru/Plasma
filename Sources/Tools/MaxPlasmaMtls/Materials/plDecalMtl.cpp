@@ -40,17 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plDecalMtl.h"
+#include "hsWindows.h"
 #include "../resource.h"
-//extern ClassDesc2* GetMaxLayerDesc();
+
+#include "MaxMain/MaxCompat.h"
+#include <iparamm2.h>
+#include <istdplug.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plDecalMtl.h"
+
 #include "../Shaders.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
 #include "plPassBaseParamIDs.h"
 #include "plDecalMtlBasicPB.h"
 #include "plDecalMtlLayersPB.h"
-
-#include "iparamm2.h"
 
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
@@ -94,6 +100,11 @@ plDecalMtl::plDecalMtl(BOOL loading) : plPassMtlBase( loading )
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
     if (!loading)
         IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
+}
+
+void plDecalMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_DECAL_MTL);
 }
 
 ParamDlg* plDecalMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 

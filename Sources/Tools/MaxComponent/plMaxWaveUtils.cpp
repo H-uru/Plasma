@@ -39,10 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plMaxWaveUtils.h"
 #include "plAudioCore/plWavFile.h"
-#include "HeadSpin.h"
 
 SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
 {

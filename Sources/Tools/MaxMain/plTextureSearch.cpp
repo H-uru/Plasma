@@ -39,27 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plTextureSearch.h"
+#include "hsWindows.h"
+
 #include "resource.h"
+#include <set>
 
+#include <bmmlib.h>
+#include <IMtlEdit.h>
+#include <max.h>
+#include <pbbitmap.h>
+#pragma hdrstop
 
-#define PB2Export __declspec( dllexport )   // Because I don't feel like including all the paramblock crap
-#include "pbbitmap.h"
-#include "bmmlib.h"
-#include "IMtlEdit.h"
+#include "plTextureSearch.h"
 
 #include "plMtlCollector.h"
 #include "plMaxAccelerators.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
+
 #ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+#   include "../../AssetMan/PublicInterface/MaxAssInterface.h"
+
+    // Not a class member so we don't have to make everyone who uses this know about AssetMan
+    static jvUniqueId gAssetID;
 #endif
 
-// Not a class member so we don't have to make everyone who uses this know about AssetMan
-#ifdef MAXASS_AVAILABLE
-static jvUniqueId gAssetID;
-#endif
+// Avoids including all the component stuff
+#define PB2Export __declspec( dllexport )
 
 plTextureSearch::plTextureSearch() : fDlg(NULL)
 {

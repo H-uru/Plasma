@@ -40,9 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
+#include "../resource.h"
+
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "plCompositeMtl.h"
 #include "plPassMtl.h"
-//#include "plCompositeMtlPB.h"
 #include "plCompositeMtlDlg.h"
 
 class plCompositeClassDesc : public ClassDesc2
@@ -88,6 +94,11 @@ plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB(NULL)
         fPassesPB->SetValue(kCompPasses, 0, newMtl, i);
         GetCOREInterface()->AssignNewName(fPassesPB->GetMtl(kCompPasses, 0, i));
     }
+}
+
+void plCompositeMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_COMP_MTL);
 }
 
 void plCompositeMtl::Reset() 

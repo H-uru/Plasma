@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
 // plInputManager.cpp
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>

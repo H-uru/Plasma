@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsCodec_inc
 #define hsCodec_inc
 
+#include "HeadSpin.h"
+
 class plMipmap;
 
 class hsCodec

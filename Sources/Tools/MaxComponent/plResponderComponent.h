@@ -39,8 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _plResponderComponent_h_inc_
+#define _plResponderComponent_h_inc_
+
 #include "plComponentExt.h"
-#include "pnKeyedObject/plKey.h"
+
+class plKey;
+class plMaxNodeBase;
 
 #define RESPONDER_CID Class_ID(0x46b83f3e, 0x7d5e5d17)
 
@@ -62,3 +68,5 @@ namespace Responder
     // get the key to the responder modifier
     plKey GetKey(plComponentBase *comp, plMaxNodeBase *node);
 }
+
+#endif // _plResponderComponent_h_inc_

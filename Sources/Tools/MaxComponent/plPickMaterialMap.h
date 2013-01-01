@@ -39,17 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-class plMessage;
-class IParamBlock2;
-class ClassDesc2;
-class plMaxNode;
-class plErrorMsg;
-class plComponentBase;
-class Mtl;
-class plMaxNodeBase;
-template <class T> class hsTArray;
 
-//int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, float begin, float end, hsTArray<plKey>& keys);
+class Mtl;
+class IParamBlock2;
 
 namespace plPickMaterialMap
 {

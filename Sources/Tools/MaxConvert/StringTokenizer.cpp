@@ -39,10 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// StringTokenizer.cpp
+
+#include <string.h>
+#pragma hdrstop
 
 #include "StringTokenizer.h"
-#include "string.h"
 
 // String Tokenizer routines
 StringTokenizer::StringTokenizer() {
@@ -81,7 +82,7 @@ char *StringTokenizer::next() {
 };
 bool StringTokenizer::isSep(char c) {
     if (!qAsTok || !inQuote) {
-        for (int32_t i=0; i<numSeps; i++) {
+        for (int i=0; i<numSeps; i++) {
             if (seps[i] == c) return true;
         }
     }

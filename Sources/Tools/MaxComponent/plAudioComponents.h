@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _plAudioComponents_h_inc_
+#define _plAudioComponents_h_inc_
+
 #define SOUND_3D_COMPONENT_ID   Class_ID(0x1be5543f, 0x746f3a97)
 #define BGND_MUSIC_COMPONENT_ID Class_ID(0x16b5b2a, 0x33c75095)
 #define RANDOM_SOUND_COMPONENT_ID Class_ID(0x35033e37, 0x499568fb)
@@ -46,11 +50,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EAX_LISTENER_COMPONENT_ID   Class_ID(0x514f4b0a, 0x24672153)
 #define SOUND_PHYS_COMP_ID  Class_ID(0x29415900, 0x1ade37a5)
 
+#include <map>
+
+#include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
-#ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
-#endif
 #include "hsTemplates.h"
+
+#ifdef MAXASS_AVAILABLE
+#   include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
+#endif
 
 class plComponentBase;
 class plMaxNode;
@@ -66,7 +74,7 @@ namespace plAudioComp
 
     bool    IsSoundComponent(plComponentBase *comp);
     bool    IsLocalOnly( plComponentBase *comp );
-}
+};
 
 class plBaseSoundEmitterComponent : public plComponent
 {
@@ -211,4 +219,6 @@ public:
     int GetEndIndex(int group);
 
 };
+
+#endif // _plAudioComponents_h_inc_
 

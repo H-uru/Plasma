@@ -42,13 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInventoryObjComponent_inc
 #define plInventoryObjComponent_inc
 
-
-
 #include "plClickableComponent.h"
-#include "hsTemplates.h"
-#include <map>
-#include "pnKeyedObject/plKey.h"
 
+class plErrorMsg;
+class plKey;
 class plMaxNode;
 
 #define INVENTORYOBJCOMP_CID Class_ID(0x425e1687, 0x4a126b91)

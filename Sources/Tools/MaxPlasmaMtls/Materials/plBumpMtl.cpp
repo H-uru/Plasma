@@ -40,19 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plBumpMtl.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsWindows.h"
 #include "../resource.h"
-//extern ClassDesc2* GetMaxLayerDesc();
+
+#include "MaxMain/MaxCompat.h"
+#include <iparamm2.h>
+#include <istdplug.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "../Shaders.h"
 
+#include "plBumpMtl.h"
 #include "plBumpMtlBasicPB.h"
-
-#include "iparamm2.h"
-
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
-#include "MaxMain/MaxCompat.h"
 
 extern HINSTANCE hInstance;
 
@@ -87,6 +91,11 @@ plBumpMtl::plBumpMtl(BOOL loading) : plPassMtlBase( loading )
     // somewhere in Max.  It didn't in 4, it does in 7.  This seems to fix it.
     if (!loading)
         IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
+}
+
+void plBumpMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_BUMP_MTL);
 }
 
 ParamDlg* plBumpMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 

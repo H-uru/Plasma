@@ -322,7 +322,7 @@ void plNetClientMgr::IDumpOSVersionInfo() const
 int plNetClientMgr::Init()
 {
     int ret=hsOK;
-    hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:%s", plUnifiedTime::GetCurrentTime().Print()) );
+    hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:%s", plUnifiedTime::GetCurrent().Print()) );
     
     IDumpOSVersionInfo();
     
@@ -496,7 +496,7 @@ void plNetClientMgr::UpdateServerTimeOffset(plNetMessage* msg)
         const plUnifiedTime& msgSentUT = msg->GetTimeSent();
         if (!msgSentUT.AtEpoch())
         {
-            double diff = plUnifiedTime::GetTimeDifference(msgSentUT, plClientUnifiedTime::GetCurrentTime());
+            double diff = plUnifiedTime::GetTimeDifference(msgSentUT, plUnifiedTime::GetCurrent());
 
             if (fServerTimeOffset == 0)
             {
@@ -526,13 +526,13 @@ void plNetClientMgr::ResetServerTimeOffset(bool delayed)
 plUnifiedTime plNetClientMgr::GetServerTime() const 
 { 
     if ( fServerTimeOffset==0 )     // offline mode or before connecting/calibrating to a server
-        return plUnifiedTime::GetCurrentTime();
+        return plUnifiedTime::GetCurrent();
     
     plUnifiedTime serverUT;
     if (fServerTimeOffset<0)
-        return plUnifiedTime::GetCurrentTime() - plUnifiedTime(fabs(fServerTimeOffset)); 
+        return plUnifiedTime::GetCurrent() - plUnifiedTime(fabs(fServerTimeOffset));
     else
-        return  plUnifiedTime::GetCurrentTime() + plUnifiedTime(fServerTimeOffset); 
+        return  plUnifiedTime::GetCurrent() + plUnifiedTime(fServerTimeOffset);
 }
 
 //

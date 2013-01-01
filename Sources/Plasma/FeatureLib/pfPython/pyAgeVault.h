@@ -64,12 +64,10 @@ class pyAgeInfoStruct;
 class pyVaultChronicleNode;
 class pySDLStateDataRecord;
 class pyVaultTextNoteNode;
+class plUUID;
 
 class pyAgeVault
 {
-private:
-    mutable char fAgeGuid[MAX_PATH];    // for getting Age GUID
-
 protected:
     pyAgeVault();
 
@@ -84,7 +82,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    const char*     GetAgeGuid( void );
+    plUUID          GetAgeGuid( void );
 
     PyObject *      GetAgeSDL() const; // returns pySDLStateDataRecord
     void            UpdateAgeSDL( pySDLStateDataRecord & pyrec );

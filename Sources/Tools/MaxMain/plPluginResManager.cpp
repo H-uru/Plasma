@@ -40,22 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plPluginResManager.h"
-#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
+#pragma hdrstop
+
+// For our common object libs
+#include "plCommonObjLib.h"
+#include "MaxComponent/plMiscComponents.h"
+
+#include "plPluginResManager.h"
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plVersion.h"
 #include "plResMgr/plResMgrSettings.h"
 #include "plScene/plSceneNode.h"
-#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "plAgeDescription/plAgeDescription.h"
-#include "plgDispatch.h"
-
-// For our common object libs
-#include "plCommonObjLib.h"
-#include "MaxComponent/plMiscComponents.h"
 
 plKey plPluginResManager::NameToLoc(const char* age, const char* page, int32_t sequenceNumber, bool itinerant)
 {

@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderGlobalContext_inc
 #define plRenderGlobalContext_inc
 
-#include "hsTemplates.h"
-#include "plRenderInstance.h"
+class plRenderInstance;
 
 class plRenderGlobalContext : public RenderGlobalContext
 {
@@ -63,8 +62,8 @@ public:
 
     void MakeRenderInstances(plMaxNode* root, TimeValue t);
 
-    virtual int NumRenderInstances() { return fInstList.GetCount(); }
-    virtual RenderInstance* GetRenderInstance( int i ) { return i < fInstList.GetCount() ? &fInstList[i] : nil; }
+    virtual int NumRenderInstances() const { return fInstList.GetCount(); }
+    virtual RenderInstance* GetRenderInstance( int i ) const;
 
     virtual void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit);
     virtual BOOL IntersectWorld(Ray &ray, int skipID, ISect &hit, ISectList &xplist, int blurFrame = NO_MOTBLUR);

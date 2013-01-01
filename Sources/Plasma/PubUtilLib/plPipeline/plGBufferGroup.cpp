@@ -353,7 +353,7 @@ uint8_t   plGBufferGroup::ICalcVertexSize( uint8_t &liteStride )
     }
 
     liteStride = size;
-    size += sizeof( DWORD ) * 2;            // diffuse + specular
+    size += sizeof( uint32_t ) * 2;            // diffuse + specular
     return size;
 }
 

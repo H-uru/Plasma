@@ -39,9 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plComponent.h"
-#include "plComponentReg.h" // Needed for the kTargs enum
 
-#include "MaxMain/plMaxNode.h"
+#include "Pch.h"
 
+/** 
+ * \file Pch.cpp
+ * \brief Precompiled Header object for MaxConvert
+ *
+ * This file prompts MSVC to generate a PCH file for the MaxConvert project. It
+ * has no function if precompiled headers are disabled in cmake.
+ */

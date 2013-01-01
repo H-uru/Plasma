@@ -812,7 +812,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
             }
             if ( fFlags & kTimestampGMT )
             {
-                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrentTime().Format("%m/%d %H:%M:%S UTC").c_str());
+                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC").c_str());
                 strncat(buf, work, arrsize(work));
             }
             if ( fFlags & kTimeInSeconds )

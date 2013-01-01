@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "plMaxNode.h"
+#pragma hdrstop
+
 #include "plPhysicalProps.h"
 #include "plPhysical/plSimDefs.h"
 // For plBoundsType
 #include "pnSceneObject/plSimulationInterface.h"
 
-#include "plMaxNode.h"
+
 #include "MaxExport/plErrorMsg.h"
 
 /** These enums are used to indicate which parameters are ignorable and can

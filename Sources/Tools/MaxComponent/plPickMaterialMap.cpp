@@ -39,15 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plPickMaterialMap.h"
-#include "max.h"
 
+#include "HeadSpin.h"
+#include "hsThread.h"
 #include "MaxMain/plMaxNode.h"
+
+#include <set>
+#pragma hdrstop
+
+#include "plPickMaterialMap.h"
+
 
 // MAXR4 HACK
 // Coming in the backdoor...
-#include "hsThread.h"
 class hsHackWinFindThread : public hsThread
 {
 protected:

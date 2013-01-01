@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_RTLIGHT_H
 
 #include "plRealTimeLightBase.h"
-#include "iparamm2.h"
 #include "resource.h"
 
 class plMaxNode;

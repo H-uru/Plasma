@@ -43,11 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __HSMATERIALCONVERTER_H
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-
-#include "Max.h"
-
-class Interface;
 
 class hsStream;
 class hsScene;
@@ -64,19 +59,21 @@ class plBitmap;
 class plMipmap;
 class plErrorMsg;
 class plString;
-
-class Mtl;
-class Texmap;
-class plMaxNode;
-class StdUVGen;
-class BitmapTex;
-class StdMat;
-class TSTR;
-class Animatable;
-class Bitmap;
 class plLocation;
 
+class Animatable;
+struct BMM_Color_64;
+class Bitmap;
+class BitmapTex;
+class Color;
+class Interface;
+class Mtl;
+class Point3;
+class StdMat;
+class StdUVGen;
+class Texmap;
 
+class plMaxNode;
 class plLayerTex;
 class plBitmapData;
 class plCubicRenderTarget;

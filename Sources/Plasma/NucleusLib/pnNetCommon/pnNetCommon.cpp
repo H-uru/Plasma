@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "pnNetCommon.h"
+#include "hsWindows.h"
 
 #if HS_BUILD_FOR_UNIX
 # include <sys/socket.h>

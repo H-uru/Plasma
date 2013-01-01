@@ -39,9 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "max.h"
-#include "iparamb2.h"
-#include "HeadSpin.h"
+
 #include "hsTemplates.h"
 #include <vector>
 
@@ -372,7 +370,7 @@ public:
 class plPickMaterialAnimationButtonParam : public plPickButtonParam
 {
 protected:
-    hsTArray<plKey> fKeys;
+    hsTArray<plKey> fKeys; // FIXME: std::vector
 
 public:
     plPickMaterialAnimationButtonParam(ParamID id, const char *name);

@@ -39,18 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "HeadSpin.h"
-#include "plExportDlg.h"
-#include "MaxMain/resource.h"
-#include "max.h"
 
-#include "MaxMain/plMaxCFGFile.h"
+#include "HeadSpin.h"
+#include "hsStlSortUtils.h"
+#include "hsWindows.h"
 
-#include <vector>
+#include <bitmap.h>
+#include <iparamb2.h>
+#include <max.h>
+
+#include <set>
 #include <string>
-using std::vector;
-using std::string;
+#include <vector>
+#pragma hdrstop
+
+#include "plExportDlg.h"
+#include "MaxComponent/plComponentBase.h"
+#include "MaxComponent/plMiscComponents.h"
+#include "MaxMain/resource.h"
+#include "MaxMain/plMaxCFGFile.h"
+#include "MaxMain/plMaxNode.h"
 
 extern HINSTANCE hInstance;
 
@@ -145,12 +153,6 @@ const char* plExportDlgImp::GetExportPage()
     else
         return fExportPage;
 }
-
-#include "MaxComponent/plComponentBase.h"
-#include "MaxComponent/plMiscComponents.h"
-#include "MaxMain/plMaxNode.h"
-#include "hsStlSortUtils.h"
-#include <set>
 
 typedef std::set<plComponentBase*> CompSet;
 
@@ -385,7 +387,7 @@ void plExportDlgImp::Show()
         fDlg = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_EXPORT), GetCOREInterface()->GetMAXHWnd(), ForwardDlgProc);
 }
 
-static bool IsExcluded(const char* fileName, vector<string>& excludeFiles)
+static bool IsExcluded(const char* fileName, std::vector<std::string>& excludeFiles)
 {
     for (int i = 0; i < excludeFiles.size(); i++)
     {
@@ -396,7 +398,7 @@ static bool IsExcluded(const char* fileName, vector<string>& excludeFiles)
     return false;
 }
 
-static bool AutoExportDir(const char* inputDir, const char* outputDir, const char* groupFiles, vector<string>& excludeFiles)
+static bool AutoExportDir(const char* inputDir, const char* outputDir, const char* groupFiles, std::vector<std::string>& excludeFiles)
 {
     bool exportedFile = false;
 
@@ -466,7 +468,7 @@ static void ShutdownMax()
     PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_CLOSE, 0, 0);
 }
 
-static void GetStringSection(const char* configFile, const char* keyName, vector<string>& strings)
+static void GetStringSection(const char* configFile, const char* keyName, std::vector<std::string>& strings)
 {
     char source[256];
     GetPrivateProfileString("Settings", keyName, "", source, sizeof(source), configFile);
@@ -501,13 +503,13 @@ void plExportDlgImp::StartAutoExport()
     hsMessageBox_SuppressPrompts = true;
 
     // Files to ignore
-    vector<string> excludeFiles;
+    std::vector<std::string> excludeFiles;
     GetStringSection(configFile, "ExcludeFiles", excludeFiles);
 
     //
     // Get the file substrings to export in one session
     //
-    vector<string> groupedFiles;
+    std::vector<std::string> groupedFiles;
     GetStringSection(configFile, "GroupedFiles", groupedFiles);
 
     for (int i = 0; i < groupedFiles.size(); i++)

@@ -40,16 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plParticleMtl.h"
+#include "hsWindows.h"
 #include "../resource.h"
-//extern ClassDesc2* GetMaxLayerDesc();
-#include "../Shaders.h"
 
-#include "iparamm2.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plParticleMtl.h"
+#include "../Shaders.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "../plBMSampler.h"
-#include "stdmat.h"
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plLayerTexBitmapPB.h"
 #include "MaxMain/MaxCompat.h"
@@ -108,6 +110,11 @@ plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen
 
     }
     //fUVGen = GetNewDefaultUVGen();
+}
+
+void plParticleMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_PARTICLE_MTL);
 }
 
 void plParticleMtl::Reset() 

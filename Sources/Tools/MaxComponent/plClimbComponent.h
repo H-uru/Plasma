@@ -42,7 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CLIMB_COMPONENT_H
 #define PL_CLIMB_COMPONENT_H
 
-#include "plComponent.h"
+class plErrorMsg;
+class plMaxNode;
 
 class plClimbTriggerComponent : public plComponent
 {

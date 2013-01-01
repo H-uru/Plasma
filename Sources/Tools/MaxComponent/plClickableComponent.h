@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClickableComponent_inc
 #define plClickableComponent_inc
 
-#include "plActivatorBaseComponent.h"
-
 #define CLICKABLE_CID Class_ID(0x1a5f6892, 0x7b434188)
 
 class plClickableComponent : public plActivatorBaseComponent

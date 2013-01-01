@@ -40,15 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plClothingMtl.h"
+#include "HeadSpin.h"
+#include "hsWindows.h"
+#include <windowsx.h>
 #include "../resource.h"
-#include "../Shaders.h"
 
-#include "iparamm2.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plClothingMtl.h"
+
+#include "../Shaders.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "../plBMSampler.h"
-#include "stdmat.h"
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plLayerTexBitmapPB.h"
 #include "plAvatar/plClothingLayout.h"
@@ -134,6 +140,11 @@ plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB(NULL)
         fBasicPB->SetValue(ParamID(kTexmap), 0, tex, i);
     }
     fBasicPB->SetValue(ParamID(kThumbnail), 0, new plLayerTex);
+}
+
+void plClothingMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_CLOTHING_MTL);
 }
 
 void plClothingMtl::Reset() 

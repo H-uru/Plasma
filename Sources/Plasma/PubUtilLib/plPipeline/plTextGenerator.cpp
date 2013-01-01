@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include "hsMatrix44.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plTextGenerator.h"

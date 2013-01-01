@@ -39,10 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plMaxMeshExtractor.h"
-#include "Max.h"
+
+#include "HeadSpin.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsMatrix44.h"
+
 #include "plMaxNode.h"
-#include "dummy.h"
+#include <dummy.h>
+#pragma hdrstop
+
+#include "plMaxMeshExtractor.h"
+
 
 static Mesh* ExtractMesh(INode* pNode, TriObject** ppDeleteMe)
 {

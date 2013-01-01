@@ -42,21 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RTLIGHT_BASE_H
 #define PL_RTLIGHT_BASE_H
 
-// Max related headers
-#include "max.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
 // Our generic headers
 #include "HeadSpin.h"
-#include "MaxPlasmaMtls/Layers/plLayerTex.h"
+#include "hsWindows.h"
+
+// Max related headers
+#include <max.h>
+#include <iparamm2.h>
 #include "MaxMain/MaxCompat.h"
 
 
 extern TCHAR *GetString(int id);
-
-
-
 extern HINSTANCE hInstance;
 
 #define RTOMNI_LIGHT_CLASSID    Class_ID(0x57cf7089, 0x282e5b71)
@@ -87,15 +83,14 @@ extern HINSTANCE hInstance;
 inline float MaxF(float a, float b) { return a>b?a:b; }
 inline float MinF(float a, float b) { return a<b?a:b; }
 
+class plLayerTex;
 class plMaxNode;
-class ClassDesc2;
+class plRTLightBase;
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Base LightDlgProc ////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
-class plRTLightBase;
 
 class plBaseLightProc : public ParamMap2UserDlgProc
 {

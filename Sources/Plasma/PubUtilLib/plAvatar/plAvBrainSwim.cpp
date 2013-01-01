@@ -274,7 +274,7 @@ bool plAvBrainSwim::Apply(double time, float elapsed)
                 iMsg->AddReceiver(fAvMod->GetArmatureEffects()->GetKey());
                 iMsg->fEventTime = (float)time;
                 iMsg->fEvent = kTime;
-                iMsg->SetMessage(msg);
+                iMsg->SetMessageRef(msg);
                 iMsg->Send();
             }
         }

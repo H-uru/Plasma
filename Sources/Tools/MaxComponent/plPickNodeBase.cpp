@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plPickNodeBase.h"
-
-#include "MaxMain/plMaxNode.h"
-#include "plComponentBase.h"
-#include "resource.h"
-#include "MaxMain/plMaxAccelerators.h"
-
 #include <algorithm>
+
+#include "plComponentBase.h"
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+#pragma hdrstop
+
+#include "plPickNodeBase.h"
+#include "MaxMain/plMaxAccelerators.h"
 
 plPickNodeBase::plPickNodeBase(IParamBlock2* pb, int nodeParamID) : fPB(pb), fNodeParamID(nodeParamID)
 {

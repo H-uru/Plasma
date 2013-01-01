@@ -39,17 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "max.h"
-#include "resource.h"
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
-
 #include "MaxMain/plMaxNode.h"
-#include "MaxExport/plExportProgressBar.h"
+#include "resource.h"
 
-#include "HeadSpin.h"
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "MaxExport/plExportProgressBar.h"
 
 #include "plShadowComponents.h"
 
@@ -60,8 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLight/plShadowCaster.h"
 #include "plGLight/plPointShadowMaster.h"
 #include "plGLight/plDirectShadowMaster.h"
-
-#include "hsResMgr.h"
 
 void DummyCodeIncludeFuncShadow()
 {

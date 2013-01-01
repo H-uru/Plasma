@@ -40,11 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plDynamicTextLayer.h"
+#include "hsWindows.h"
+#include "../resource.h"
 
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plDynamicTextLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -87,6 +90,11 @@ plDynamicTextLayer::~plDynamicTextLayer()
         fInitBitmap->DeleteThis();
 
     IDiscardTexHandle();
+}
+
+void plDynamicTextLayer::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_DYN_TEXT_LAYER);
 }
 
 //From MtlBase

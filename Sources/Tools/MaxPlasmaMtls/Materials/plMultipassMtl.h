@@ -42,12 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLMAXMTL__H
 #define __PLMAXMTL__H
 
-#include "Max.h"
-#include "../resource.h"
-#include "istdplug.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
 
@@ -108,7 +102,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return MULTIMTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_MULTI_MTL); }
+    void GetClassName(TSTR& s);
 
     RefTargetHandle Clone(RemapDir &remap);
     RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 

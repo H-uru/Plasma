@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLMAXLAYER__H
 #define __PLMAXLAYER__H
 
-#include "Max.h"
 #include "plPlasmaMAXLayer.h"
 
 class ClassDesc2;

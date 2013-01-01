@@ -40,21 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsMaterialConverter.h"
-#include <commdlg.h>
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsExceptionStack.h"
+#include "hsResMgr.h"
+#include "hsStringTokenizer.h"
+#include "hsTemplates.h"
+
+#include "MaxComponent/plComponent.h"
+
 #include <math.h>
 #include <float.h>
 
-#include "Max.h"
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "istdplug.h"
-#include "texutil.h"
+#include <commdlg.h>
+#include <bmmlib.h>
+#include <istdplug.h>
+#include <pbbitmap.h>
+#include <stdmat.h>
+#include <texutil.h>
+#pragma hdrstop
 
+#include "hsMaterialConverter.h"
 #include "plLayerConverter.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 #include "plResMgr/plKeyFinder.h"
-#include "hsResMgr.h"
 #include "pnKeyedObject/plUoid.h"
 
 #include "hsMaxLayerBase.h"
@@ -70,14 +79,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxCompat.h"
 
 #include "plInterp/plController.h"
-#include "hsExceptionStack.h"
-#include "hsStringTokenizer.h"
 #include "plSurface/plLayerInterface.h"
 #include "plSurface/plLayer.h"
 #include "plSurface/plLayerAnimation.h"
 #include "plGImage/plMipmap.h"
-
-#include "plgDispatch.h"
 
 #include "pnMessage/plRefMsg.h"
 #include "pnKeyedObject/plKey.h"
@@ -1123,8 +1128,6 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
     return nil;
     hsGuardEnd; 
 }
-
-#include "MaxPlasmaMtls/Materials/plMultipassMtl.h"
 
 //
 // Handle materials for normal non-light, non-particle nodes.
@@ -2369,7 +2372,7 @@ bool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGM
     if (passBase->GetUseSpec())
     {
         shadeFlags |= hsGMatState::kShadeSpecular;
-        shine = passBase->GetShine();
+        shine = (float)passBase->GetShine();
         specColor = passBase->GetSpecularColor();
     }
 
@@ -2630,7 +2633,6 @@ void hsMaterialConverter::IAddLayerToMaterial(hsGMaterial *mat, plLayerInterface
 //
 // Functions called by the converters up above...
 //
-#include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
 //// IMustBeUniqueMaterial ////////////////////////////////////////////////////
 //  Fun stuff here. If one of the layers of the material is a dynamic EnvMap,
@@ -4246,7 +4248,7 @@ bool    hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation(plMaxNode* nod
         {
             plPassMtlBase* passMtl = (plPassMtlBase*)subMtl;
             if( plPassMtlBase::kBlendAlpha == passMtl->GetOutputBlend() )
-                baseOpac = passMtl->GetOpacity();
+                baseOpac = (float)passMtl->GetOpacity();
         }
         int iMtl;
         for( iMtl = 1; iMtl < mtl->NumSubMtls(); iMtl++ )
@@ -4259,7 +4261,7 @@ bool    hsMaterialConverter::HasMaterialDiffuseOrOpacityAnimation(plMaxNode* nod
                 {
                     if( baseOpac >= 0 )
                         return true;
-                    baseOpac = passMtl->GetOpacity();
+                    baseOpac = (float)passMtl->GetOpacity();
                 }
             }
         }
@@ -4536,12 +4538,12 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
     
     Color tint1 = mtl->GetDefaultTint1();
     Color tint2 = mtl->GetDefaultTint2();
-    cloth->fDefaultTint1[0] = tint1.r * 255;
-    cloth->fDefaultTint1[1] = tint1.g * 255;
-    cloth->fDefaultTint1[2] = tint1.b * 255;
-    cloth->fDefaultTint2[0] = tint2.r * 255;
-    cloth->fDefaultTint2[1] = tint2.g * 255;
-    cloth->fDefaultTint2[2] = tint2.b * 255;
+    cloth->fDefaultTint1[0] = (uint8_t)(tint1.r * 255.f);
+    cloth->fDefaultTint1[1] = (uint8_t)(tint1.g * 255.f);
+    cloth->fDefaultTint1[2] = (uint8_t)(tint1.b * 255.f);
+    cloth->fDefaultTint2[0] = (uint8_t)(tint2.r * 255.f);
+    cloth->fDefaultTint2[1] = (uint8_t)(tint2.g * 255.f);
+    cloth->fDefaultTint2[2] = (uint8_t)(tint2.b * 255.f);
     
     clothKeyName = plString::Format("CItm_%s", cloth->fName);
     hsgResMgr::ResMgr()->NewKey(clothKeyName, cloth, loc);

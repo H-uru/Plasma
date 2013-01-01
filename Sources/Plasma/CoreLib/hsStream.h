@@ -288,28 +288,6 @@ public:
     virtual uint32_t  GetStreamSize() = 0;
 };
 
-class hsFileStream: public hsStream
-{   
-    uint32_t      fRef;
-
-public:
-                  hsFileStream();
-    virtual       ~hsFileStream();
-    virtual bool  Open(const char *name, const char *mode = "rb");
-    virtual bool  Open(const wchar_t *name, const wchar_t *mode = L"rb");
-    virtual bool  Close();
-
-    virtual bool      AtEnd();
-    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void      Skip(uint32_t deltaByteCount);
-    virtual void      Rewind();
-    virtual void      Truncate();
-
-    virtual uint32_t  GetFileRef();
-    virtual void    SetFileRef(uint32_t refNum);
-};
-
 class hsUNIXStream: public hsStream
 {   
     FILE*       fRef;

@@ -42,11 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimCompProc_h_inc
 #define plAnimCompProc_h_inc
 
-#include "max.h"
-#include "iparamm2.h"
-
 class plComponentBase;
 class plMaxNode;
+class IParamBlock2;
 
 class plAnimCompProc : public ParamMap2UserDlgProc
 {

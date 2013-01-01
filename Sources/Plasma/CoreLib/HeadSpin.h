@@ -47,6 +47,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif // defined(_DEBUG) || defined(UNIX_DENUG)
 
 //======================================
+// Some standard includes
+//======================================
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <stdarg.h>
+#include <stdint.h>
+
+//======================================
 // Winblows Hacks
 //======================================
 #ifdef HS_BUILD_FOR_WIN32
@@ -61,66 +72,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
 #   endif // _MSC_VER
 
-    // Terrible hacks for MinGW because they don't have a reasonable
-    // default for the Windows version. We cheat and say it's XP.
-#   ifdef __MINGW32__
-#       undef _WIN32_WINNT
-#       define _WIN32_WINNT 0x501
-#       undef _WIN32_IE
-#       define _WIN32_IE    0x400
-#   endif
-
-    // Windows.h includes winsock.h (winsocks 1), so we need to manually include winsock2 
-    // and tell Windows.h to only bring in modern headers
-#   include <WinSock2.h>
-#   include <ws2tcpip.h>
-
-#   define WIN32_LEAN_AND_MEAN
-#   ifndef NOMINMAX
-#      define NOMINMAX // Needed to prevent NxMath conflicts
-#   endif
-#   include <Windows.h>
-
-    // This needs to be after #include <windows.h>, since it also includes windows.h
-#   ifdef USE_VLD
-#       include <vld.h>
-#   endif
-#endif // HS_BUILD_FOR_WIN32
-
-//======================================
-// We don't want the Windows.h min/max!
-//======================================
-#ifdef max
-#   undef max
-#endif
-
-#ifdef min
-#   undef min
-#endif
-
-//======================================
-// Some standard includes
-//======================================
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cctype>
-#include <stdarg.h>
-#include <stdint.h>
-
-
-//======================================
-// Just some fun typedefs...
-//======================================
-#ifdef HS_BUILD_FOR_WIN32
+    // Kind of nasty looking forward declarations, but this is Win32.... it'll never change!
+    // If you want to argue: would you rather pull in the entire Windows.h? Windows 8 makes it
+    // even more bloated than before!
+    struct HWND__; typedef struct HWND__ *HWND;
+    struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
+    
     typedef HWND hsWindowHndl;
     typedef HINSTANCE hsWindowInst;
+    typedef HINSTANCE HMODULE;
+    typedef long HRESULT;
+    typedef void* HANDLE;
 #else
     typedef int32_t* hsWindowHndl;
     typedef int32_t* hsWindowInst;
 #endif // HS_BUILD_FOR_WIN32
-
 
 //======================================
 // Basic macros
@@ -547,31 +513,16 @@ void DebugMsg(const char fmt[], ...);
 /*****************************************************************************
 *
 *  Atomic Operations
+*  FIXME: Replace with std::atomic when VS2012 supports WinXP
 *
 ***/
 
-// *value += increment; return original value of *value; thread safe
-inline long AtomicAdd(long* value, long increment)
-{
-#ifdef HS_BUILD_FOR_WIN32
-    return InterlockedExchangeAdd(value, increment);
+#ifdef _MSC_VER
+#   define AtomicAdd(value, increment) InterlockedExchangeAdd(value, increment)
+#   define AtomicSet(value, set) InterlockedExchange(value, set)
 #elif __GNUC__
-    return __sync_fetch_and_add(value, increment);
-#else
-#   error "No Atomic Set support on this architecture"
+#   define AtomicAdd(value, increment) __sync_fetch_and_add(value, increment)
+#   define AtomicSet(value, set) __sync_lock_test_and_set(value, set)
 #endif
-}
-
-// *value = value; return original value of *value; thread safe
-inline long AtomicSet(long* value, long set)
-{
-#ifdef HS_BUILD_FOR_WIN32
-    return InterlockedExchange(value, set);
-#elif __GNUC__
-    return  __sync_lock_test_and_set(value, set);
-#else
-#   error "No Atomic Set support on this architecture"
-#endif
-}
 
 #endif

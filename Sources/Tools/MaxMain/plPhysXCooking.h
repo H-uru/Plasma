@@ -42,15 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysXCooking_h_inc
 #define plPhysXCooking_h_inc
 
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include  "plMaxMeshExtractor.h"
-class hsStream;
-class hsVectorStream;
 class NxConvexMesh;
+struct hsPlane3;
+struct hsPoint3;
+class hsStream;
+class NxMat33;
 class NxUtilLib;
 class NxVec3;
-class NxMat33;
+class hsVectorStream;
 
 class plPhysXCooking
 {

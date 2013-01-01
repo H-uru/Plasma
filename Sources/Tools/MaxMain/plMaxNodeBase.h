@@ -42,25 +42,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeBase_inc
 #define plMaxNodeBase_inc
 
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "max.h"
-#include "hsMatrix44.h"
-#include "hsColorRGBA.h"
-#include "pnKeyedObject/plKey.h"
 #include "plLoadMask.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsMatrix44.h"
+#include "plRenderLevel.h"
+#include "hsWindows.h"
 
-class plLocation;
-class plSceneObject;
-class plModifier;
+#include <max.h>
+
 class plComponentBase;
-class ISkin;
-class plMaxNodeData;
 class hsGMesh;
-class plRenderLevel;
 class plGeometrySpan;
-class plSharedMesh;
+class plLocation;
 class plMaxBoneMap;
+class plMaxNodeData;
+class plModifier;
+class plSceneObject;
+class plSharedMesh;
+class ISkin;
 
 //-------------------------------------------
 // plMaxNodeBase

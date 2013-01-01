@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef uint32_t hsMilliseconds;
 
-
 #ifdef HS_BUILD_FOR_UNIX
     #include <pthread.h>
     #include <semaphore.h>
@@ -63,7 +62,7 @@ class hsThread
 {
 public:
 #if HS_BUILD_FOR_WIN32
-    typedef DWORD ThreadId;
+    typedef uint32_t ThreadId;
 #elif HS_BUILD_FOR_UNIX
     typedef pthread_t ThreadId;
 #endif
@@ -87,7 +86,7 @@ public:
     virtual     ~hsThread();    // calls Stop()
 #if HS_BUILD_FOR_WIN32
     ThreadId        GetThreadId() { return fThreadId; }
-    static ThreadId GetMyThreadId() { return GetCurrentThreadId(); }
+    static ThreadId GetMyThreadId();
 #elif HS_BUILD_FOR_UNIX
     ThreadId            GetThreadId() { return fPThread; }
     static ThreadId     GetMyThreadId() { return pthread_self(); }
@@ -203,13 +202,7 @@ public:
 class hsSleep
 {
 public:
-#if HS_BUILD_FOR_UNIX
     static void Sleep(uint32_t millis);
-
-#elif HS_BUILD_FOR_WIN32
-    static void Sleep(uint32_t millis) { ::Sleep(millis); }
-
-#endif
 };
 
 //////////////////////////////////////////////////////////////////////////////

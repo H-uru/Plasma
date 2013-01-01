@@ -8,12 +8,7 @@ include_directories("../../Plasma/PubUtilLib")
 include_directories("../../Plasma/PubUtilLib/inc")
 include_directories(${3dsm_INCLUDE_DIR})
 
-if(Bink_SDK_AVAILABLE)
-    include_directories(${Bink_INCLUDE_DIR})
-endif()
-
 set(MaxPlasmaMtls_HEADERS
-    plBinkBitmap.h
     plBMSampler.h
     plDetailCurveCtrl.h
     plMaterialRefMsg.h
@@ -88,7 +83,6 @@ set(MaxPlasmaMtls_SOURCES
     plBinkBitmap.cpp
     plBMSampler.cpp
     plDetailCurveCtrl.cpp
-    plDrawCurve.cpp
     plMtlImport.cpp
     Shaders.cpp
 )
@@ -120,6 +114,7 @@ set(MaxPlasmaMtls_SOURCES_Materials
     Materials/plPassMtlBase.cpp
 )
 
+use_precompiled_header(Pch.h Pch.cpp MaxPlasmaMtls_HEADERS MaxPlasmaMtls_SOURCES)
 add_library(MaxPlasmaMtls
             STATIC
             ${MaxPlasmaMtls_HEADERS}

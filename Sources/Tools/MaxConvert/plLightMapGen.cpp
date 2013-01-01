@@ -40,12 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-//#define MF_NEW_RGC
-
 #include "HeadSpin.h"
-#include "Max.h"
-#include "dummy.h"
-#include "notify.h"
+#include "hsFastMath.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include "MaxComponent/plComponent.h"
+
+#include <dummy.h>
+#include <notify.h>
+#include <vector>
+#pragma hdrstop
 
 #include "plLightMapGen.h"
 #include "plGImage/plMipmap.h"
@@ -57,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "MaxMain/plPluginResManager.h"
 #include "plDrawable/plGeometrySpan.h"
-#include "hsFastMath.h"
 #include "hsControlConverter.h"
 #include "plBitmapCreator.h"
 #include "pnKeyedObject/plKey.h"
@@ -968,7 +972,7 @@ bool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
     float coneRad[2];
-    coneRad[0] = ls.fallsize * M_PI / 180.f;
+    coneRad[0] = (float)(ls.fallsize * M_PI / 180.f);
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;
@@ -1567,7 +1571,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
 
     if( duDr > 0 )
     {
-        fWidth = kTexPerFoot / duDr;
+        fWidth = (int)(kTexPerFoot / duDr);
 
         if( fWidth > kMaxSize )
             fWidth = kMaxSize;
@@ -1583,7 +1587,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     
     if( dvDr > 0 )
     {
-        fHeight = kTexPerFoot / duDr;
+        fHeight = (int)(kTexPerFoot / duDr);
 
         if( fHeight > kMaxSize )
             fHeight = kMaxSize;

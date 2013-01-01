@@ -44,16 +44,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // 3DSMax HeadSpin exporter
 //
 #include "HeadSpin.h"
-#include "Max.h"
-#include "istdplug.h"
-#include "Notify.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStringTokenizer.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include <max.h>
+#include <istdplug.h>
+#include <Notify.h>
 #include <commdlg.h>
-#include "bmmlib.h"
-#include "INode.h"
+#include <bmmlib.h>
+#include <INode.h>
+#include <stdmat.h>
+
+#include <vector>
+#pragma hdrstop
 
 #include "plConvert.h"
-#include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
@@ -61,12 +69,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMaterialConverter.h"
 #include "plLayerConverter.h"
 #include "UserPropMgr.h"
-#include "hsStringTokenizer.h"
 #include "MaxExport/plErrorMsg.h"
 #include "hsVertexShader.h"
 #include "plLightMapGen.h"
 #include "plBitmapCreator.h"
-#include "plgDispatch.h"
 
 #include "pnMessage/plTimeMsg.h"
 #include "MaxComponent/plComponent.h"
@@ -76,6 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plClusterComponent.h"
 
 #include "plPhysX/plSimulationMgr.h"
+#include "MaxMain/plMaxMeshExtractor.h"
 #include "MaxMain/plPhysXCooking.h"
 #include "MaxExport/plExportProgressBar.h"
 

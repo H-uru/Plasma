@@ -39,14 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plMaxUtils.h"
+#include "pnKeyedObject/plKey.h"
+#include "hsWindows.h"
+
 #include "resource.h"
 
-#include "hsResMgr.h"
+#include <max.h>
+#include <set>
+#include <utilapi.h>
+#pragma hdrstop
+
+#include "plMaxUtils.h"
 #include "plResMgr/plPageInfo.h"
 #include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKey.h"
 #include "pnFactory/plFactory.h"
 
 class MaxUtilsClassDesc : public ClassDesc
@@ -115,7 +122,7 @@ BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 #include "plMtlCollector.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 #ifdef MAXASS_AVAILABLE
-#include "../../AssetMan/PublicInterface/AssManTypes.h"
+#   include "../../AssetMan/PublicInterface/AssManTypes.h"
 #endif
 
 int ClearTextureIds()
@@ -154,16 +161,3 @@ int ClearTextureIds()
     return 0;
 #endif
 }
-/*
-void ClearAssetsRecur(plMaxNode* node)
-{
-    plComponentBase* comp = node->ConvertToComponent();
-    if (comp && plAudioComp::IsSoundComponent(comp))
-    {
-        plBaseSoundEmitterComponent* soundComp = (plBaseSoundEmitterComponent*)comp;
-        soundComp->SetSoundAssetId(kBaseSound, 
-            kCoverSound
-)
-    }
-}
-*/

@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // If there is no errors then there should be no file created.
 //
 
-#include <string.h>
 #include "plErrorMsg.h"
 
 #if !HS_BUILD_FOR_WIN32

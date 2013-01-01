@@ -39,8 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "max.h"
-#include "utilapi.h"
+
+class Interface;
+class IUtil;
+class UtilityObj;
 
 // This a central repository for handy debugging tools for Max that don't fit in anywhere else.
 class plMaxUtils : public UtilityObj

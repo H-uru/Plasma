@@ -51,13 +51,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "plNoteTrackWatcher.h"
-#include "plPassMtlBase.h"
-
-#include "iparamm2.h"
-
+#include "hsWindows.h"
 #include "../resource.h"
 
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plNoteTrackWatcher.h"
+#include "plPassMtlBase.h"
 
 //// Watcher Class Desc //////////////////////////////////////////////////////
 

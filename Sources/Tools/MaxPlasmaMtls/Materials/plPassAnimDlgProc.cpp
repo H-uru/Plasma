@@ -46,12 +46,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
+#include "../resource.h"
+
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "plPassAnimDlgProc.h"
 
 #include "plPassBaseParamIDs.h"
 #include "MaxComponent/plNotetrackAnim.h"
-#include "../resource.h"
-#include "iparamm2.h"
 
 #include "plAnimStealthNode.h"
 

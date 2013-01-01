@@ -42,11 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SIMPLEEXPORT_H
 #define __SIMPLEEXPORT_H
 
-
-#include "MaxMain/resource.h"
-#include "Max.h"
-#include "HeadSpin.h"
-
 //
 // Inlines
 //

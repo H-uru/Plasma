@@ -42,10 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_BUMPMTL_H
 #define PL_BUMPMTL_H
 
-#include "Max.h"
-#include "iparamb2.h"
-
-#include "../resource.h"
 #include "plPassMtlBase.h"
 
 #define BUMP_MTL_CLASS_ID   Class_ID(0x4dbf7b0a, 0x92226de)
@@ -77,7 +73,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return BUMP_MTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_BUMP_MTL); }
+    void GetClassName(TSTR& s);
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
     void Update(TimeValue t, Interval& valid);

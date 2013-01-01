@@ -39,15 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "max.h"
-#include "resource.h"
+#include "HeadSpin.h"
+#include "plPhysical.h"
+
 #include "plComponent.h"
 #include "plComponentReg.h"
-#include "MaxMain/plPlasmaRefMsgs.h"
-
 #include "MaxMain/plMaxNode.h"
+#include "resource.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxExport/plExportProgressBar.h"
 
 #include "plXImposter.h"
@@ -55,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/plFilterCoordInterface.h"
 
 #include "pnSceneObject/plSimulationInterface.h"
-#include "plPhysical.h"
 
 const Class_ID FILTERINHERIT_COMP_CID(0x263928d8, 0x548456da);
 

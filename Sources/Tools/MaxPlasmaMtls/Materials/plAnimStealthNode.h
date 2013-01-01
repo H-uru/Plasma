@@ -51,12 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAnimStealthNode_h
 #define _plAnimStealthNode_h
 
-#include "Max.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-
-#include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
 #include "MaxComponent/plAnimObjInterface.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
@@ -67,11 +61,13 @@ extern HINSTANCE hInstance;
 
 #define REFMSG_NOTETRACK_ADDED  REFMSG_USER + 1
 
-class plPassMtlBase;
-class NoteTrack;
-class plMaxNode;
-class plErrorMsg;
 class plAnimTimeConvert;
+class plErrorMsg;
+class plKey;
+class plMaxNode;
+class INode;
+class NoteTrack;
+class plPassMtlBase;
 
 //// Class Def ///////////////////////////////////////////////////////////////
 

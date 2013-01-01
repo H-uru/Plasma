@@ -40,8 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plResponderComponentPriv.h"
+#include "hsResMgr.h"
+#include "hsStlSortUtils.h"
+#include "hsWindows.h"
+
+#include <iparamm2.h>
+#include <max.h>
+#include <utilapi.h>
+
 #include "resource.h"
+#pragma hdrstop
+
+#include "plResponderComponentPriv.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
 
@@ -59,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 
-#include "hsResMgr.h"
 #include "MaxMain/plMaxNode.h"
 
 #include "plPickNode.h"
@@ -583,8 +592,6 @@ void plResponderProc::IAddMenuItem(HMENU hMenu, int id)
 {
     AppendMenu(hMenu, MF_STRING, id+1, fNames[id]);
 }
-
-#include "hsSTLSortUtils.h"
 
 void plResponderProc::ICreateMenu()
 {

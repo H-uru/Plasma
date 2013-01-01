@@ -42,14 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMtlCollector_h_inc
 #define plMtlCollector_h_inc
 
-#include "HeadSpin.h"
-#include <set>
-#include "hsSTLSortUtils.h"
+#include "hsStlSortUtils.h"
 
-class Mtl;
-class Texmap;
-class plPlasmaMAXLayer;
 class PBBitmap;
+class Mtl;
+class plPlasmaMAXLayer;
+class stringISorter;
+class Texmap;
 
 typedef std::set<Mtl*> MtlSet;
 typedef std::set<Texmap*> TexSet;

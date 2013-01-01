@@ -41,10 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "Max.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
+#include <Max.h>
+#pragma hdrstop
 
 #include "MaxMain/plMaxNode.h"
 #include "plRenderGlobalContext.h"
+#include "plRenderInstance.h"
 
 plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)
 {
@@ -112,6 +116,14 @@ void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
 
     for( i = 0; i < fInstList.GetCount() - 1; i++ )
         fInstList[i].SetNext(&fInstList[i+1]);
+}
+
+RenderInstance* plRenderGlobalContext::GetRenderInstance(int i) const
+{
+    if (fInstList.GetCount() > i)
+        return &fInstList[i];
+    else
+        return nil;
 }
 
 void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney)

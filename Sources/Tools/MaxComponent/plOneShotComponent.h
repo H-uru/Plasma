@@ -39,10 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "max.h"
-#include "pnKeyedObject/plKey.h"
 
 class plComponentBase;
+class plKey;
 class plMaxNodeBase;
 
 #define ONESHOTCLASS_ID Class_ID(0x1efd285a, 0x11ba00a2)

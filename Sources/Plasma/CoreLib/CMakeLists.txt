@@ -83,6 +83,7 @@ set(CoreLib_HEADERS
     hsTemplates.h
     hsThread.h
     hsWide.h
+    hsWindows.h
     pcSmallRect.h
     plFileUtils.h
     plGeneric.h

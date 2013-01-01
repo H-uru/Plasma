@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plDecalMtl.h"
 #include "plDecalMtlBasicPB.h"
-#include "../resource.h"
-#include "iparamm2.h"
 
 class DecalBasicPBAccessor;
 extern DecalBasicPBAccessor basicAccessor;

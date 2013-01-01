@@ -39,26 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
 
-
-#include <commdlg.h>
-
-#include "max.h"
-#include "meshdlib.h" 
-#include "stdmat.h"
-#include "bmmlib.h"
-#include "resource.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
+#include "MaxMain/plMaxNode.h"
+
+#include <bmmlib.h>
+#include <commdlg.h>
+#include <iparamm2.h>
+#include <meshdlib.h>
+#include <stdmat.h>
+
+#include "resource.h"
+#pragma hdrstop
+
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-#include "MaxMain/plMaxNode.h"
 #include "MaxExport/plExportProgressBar.h"
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
-
-#include "HeadSpin.h"
 
 #include "MaxConvert/plDistributor.h"
 #include "MaxConvert/plDistTree.h" // FISH HACK - just testing

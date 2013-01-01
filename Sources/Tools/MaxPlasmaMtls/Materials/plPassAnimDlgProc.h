@@ -49,10 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plPassAnimDlgProc_h
 
 #include "plPassMtlBase.h"
-#include "iparamm2.h"
 
 class plAnimStealthNode;
+class Interval;
 class IParamMap2;
+class ReferenceTarget;
 
 class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallback
 {

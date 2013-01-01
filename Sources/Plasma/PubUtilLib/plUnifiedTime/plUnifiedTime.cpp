@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 #include "plUnifiedTime.h"
 #include "hsStlUtils.h"
+#include "hsWindows.h"
 
 
 #if HS_BUILD_FOR_UNIX
@@ -193,7 +194,7 @@ plUnifiedTime::plUnifiedTime(const plUnifiedTime * src)
     *this = *src;
 }
 
-plUnifiedTime plUnifiedTime::GetCurrentTime(Mode mode)
+plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
 {
     plUnifiedTime t;
     t.SetMode(mode);

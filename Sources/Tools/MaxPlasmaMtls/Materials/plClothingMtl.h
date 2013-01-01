@@ -42,16 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CLOTHINGMTL_H
 #define PL_CLOTHINGMTL_H
 
-#include "HeadSpin.h"
-#include "Max.h"
-#include "iparamb2.h"
-#include "../resource.h"
 #include "hsTemplates.h"
 
 class Bitmap;
 class plClothingItem;
 class plMaxNode;
 class plClothingElement;
+class Texmap;
 
 #define CLOTHING_MTL_CLASS_ID Class_ID(0x792c6de4, 0x1f952b65)
 
@@ -151,7 +148,7 @@ public:
     //From Animatable
     Class_ID ClassID() { return CLOTHING_MTL_CLASS_ID; }        
     SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = GetString(IDS_CLOTHING_MTL); }
+    void GetClassName(TSTR& s);
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
     void Update(TimeValue t, Interval& valid);

@@ -42,14 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENTMGR_H
 #define PL_COMPONENTMGR_H
 
-#include "HeadSpin.h"
-#include "max.h"
-#include "utilapi.h"
-
+#include "hsWindows.h"
 #include <vector>
 
-class ClassDesc2;
-class Class_ID;
+#include <iparamb2.h>
+#include <max.h>
+#include <utilapi.h>
 
 #define COMPONENT_MGR_CID Class_ID(0x5b870ba2, 0xb7b1da2)
 
@@ -61,10 +59,6 @@ class Class_ID;
 //
 // 8/28/01: Added globals -Colin
 //
-class hsResMgr;
-class plFactory;
-class plTimerCallbackManager;
-class plTimerShare;
 
 class plComponentMgr : public UtilityObj
 {

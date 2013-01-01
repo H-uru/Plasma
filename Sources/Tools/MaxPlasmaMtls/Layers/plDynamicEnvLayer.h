@@ -53,12 +53,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDynamicEnvLayer_h
 #define _plDynamicEnvLayer_h
 
-#include "Max.h"
 #include "plPlasmaMAXLayer.h"
-#include "../resource.h"
 
 class ClassDesc2;
+class Interval;
+class IMtlParams;
 class IParamBlock2;
+class TexHandle;
+class UVGen;
 
 ClassDesc2* GetDynamicEnvLayerDesc();
 

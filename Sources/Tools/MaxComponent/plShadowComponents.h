@@ -47,10 +47,10 @@ const Class_ID SHADOWCAST_COMP_CID(0x4f447666, 0x73a07cc6);
 const Class_ID SHADOWRCV_COMP_CID(0x1d3009ca, 0x4d28537f);
 const Class_ID SHADOWLIGHT_COMP_CID(0x2a996151, 0x4f4d1ae1);
 
-class plMaxNode;
-class plErrorMsg;
-class plPointShadowMaster;
 class plDirectShadowMaster;
+class plErrorMsg;
+class plMaxNode;
+class plPointShadowMaster;
 class plShadowCaster;
 
 class plShadowCastComponent : public plComponent

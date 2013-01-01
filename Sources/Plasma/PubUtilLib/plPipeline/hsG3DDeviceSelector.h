@@ -396,10 +396,10 @@ protected:
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                               DWORD *vendorID, DWORD *deviceID, char **driverString, char **descString );
+                               uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
 #ifdef HS_SELECT_DX7
     bool    IGetD3D7CardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                                DWORD *vendorID, DWORD *deviceID, char **driverString, char **descString );
+                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
 #endif // HS_SELECT_DX7
 
     void        ITryOpenGL( hsWinRef winRef );

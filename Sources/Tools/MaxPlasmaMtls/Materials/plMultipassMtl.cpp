@@ -40,6 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include "hsWindows.h"
+#include "../resource.h"
+
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "plMultipassMtl.h"
 #include "plPassMtl.h"
 #include "plMultipassMtlPB.h"
@@ -70,6 +77,11 @@ plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB(NULL)
         Reset();
 
     SetNumSubMtls(1);
+}
+
+void plMultipassMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_MULTI_MTL);
 }
 
 void plMultipassMtl::Reset() 

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMiscComponents_inc
 
 #include "plComponent.h"
-#include "Notify.h"
 
 #define ROOM_CID Class_ID(0x70a1570d, 0x472f5647)
 #define PAGEINFO_CID Class_ID(0x54ee40f1, 0x4de45acc)
@@ -53,8 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define CIRCLE_CAM_CID Class_ID(0x66f85282, 0x4daa1b8e)
 #define IMAGE_LIB_CID   Class_ID(0x736c18d3, 0x6a6d5dde)
 
-class plComponentBase;
 class plAgeDescription;
+class plComponentBase;
+struct NotifyInfo;
 
 const char* LocCompGetPage(plComponentBase* comp);
 

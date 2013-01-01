@@ -54,10 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plMeshConverter_h
 #define _plMeshConverter_h
 
-#include "Max.h"
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-
 class plMaxNode;
 class plErrorMsg;
 class hsConverterUtils;

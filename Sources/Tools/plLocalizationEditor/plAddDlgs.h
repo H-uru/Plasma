@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __plAddDlgs_h__
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 #include <string>
 
 class plAddElementDlg

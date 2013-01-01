@@ -39,15 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "plAutoUIBlock.h"
 
-#include "max.h"
-#include "iparamb2.h"
+#include "HeadSpin.h"
 
 #include "plComponentReg.h"
-
 #include "resource.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "plAutoUIBlock.h"
+
 
 plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version)
 {

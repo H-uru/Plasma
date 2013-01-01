@@ -652,7 +652,7 @@ short   hsGDirect3DTnLEnumerate::IGetDXBitDepth( D3DFORMAT format )
 bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,            // In
                                               void *driverInfo,
                                               void *deviceInfo,
-                                              DWORD *vendorID, DWORD *deviceID, // Out
+                                              uint32_t *vendorID, uint32_t *deviceID, // Out
                                               char **driverString, char **descString  )
 {
     D3DEnum_DriverInfo  *driverD3DInfo = (D3DEnum_DriverInfo *)driverInfo;

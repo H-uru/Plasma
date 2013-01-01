@@ -318,7 +318,7 @@ void plSimpleStateVariable::CopyFrom(plVarDescriptor* v)
     }
 }
 
-void plSimpleStateVariable::TimeStamp( const plUnifiedTime & ut/*=plUnifiedTime::GetCurrentTime()*/ )
+void plSimpleStateVariable::TimeStamp( const plUnifiedTime & ut/*=plUnifiedTime::GetCurrent()*/ )
 {
     fTimeStamp = ut;
 }
@@ -2745,7 +2745,7 @@ void plSDStateVariable::SetFromDefaults(bool timeStampNow)
         GetStateDataRecord(i)->SetFromDefaults(timeStampNow);
 }
 
-void plSDStateVariable::TimeStamp( const plUnifiedTime & ut/*=plUnifiedTime::GetCurrentTime()*/ )
+void plSDStateVariable::TimeStamp( const plUnifiedTime & ut/*=plUnifiedTime::GetCurrent()*/ )
 {
     hsAssert( false, "not impl" );
 }

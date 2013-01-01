@@ -39,10 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
+#include "hsWindows.h"
+
+#include <max.h>
+#pragma hdrstop
+
 #include "plMaxCFGFile.h"
-#include "max.h"
-#include "HeadSpin.h"
 #include "plFile/plBrowseFolder.h"
 
 const char *plMaxConfig::GetPluginIni()

@@ -40,9 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plPassMtl.h"
+#include "hsBitVector.h"
+#include "hsWindows.h"
 #include "../resource.h"
-//extern ClassDesc2* GetMaxLayerDesc();
+
+#include "MaxMain/MaxCompat.h"
+#include <iparamm2.h>
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plPassMtl.h"
 #include "../Shaders.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
@@ -50,13 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPassMtlBasicPB.h"
 #include "plPassMtlLayersPB.h"
 
-#include "iparamm2.h"
-
 #include "../Layers/plLayerTex.h"
 #include "../Layers/plStaticEnvLayer.h"
-#include "MaxMain/MaxCompat.h"
-
-#include "hsBitVector.h"
 
 extern HINSTANCE hInstance;
 
@@ -101,6 +103,11 @@ plPassMtl::plPassMtl(BOOL loading) : plPassMtlBase( loading )
 
 plPassMtl::~plPassMtl()
 {
+}
+
+void plPassMtl::GetClassName(TSTR& s)
+{
+    s = GetString(IDS_PASS_MTL);
 }
 
 ParamDlg* plPassMtl::CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) 

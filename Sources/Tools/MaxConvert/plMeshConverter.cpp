@@ -50,17 +50,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "Max.h"
-#include "iparamb2.h"
-#include "modstack.h"
-#include "ISkin.h"
-#include "meshdlib.h" 
-
-
-#include "HeadSpin.h"
 #include "hsBitVector.h"
-#include "plMeshConverter.h"
+#include "hsExceptionStack.h"
 #include "hsResMgr.h"
+#include "hsTemplates.h"
+#include "plTweak.h"
+#include "hsWindows.h"
+
+#include <max.h>
+#include <iparamb2.h>
+#include <modstack.h>
+#include <ISkin.h>
+#include <meshdlib.h> 
+#include <stdmat.h>
+#pragma hdrstop
+
+#include "plMeshConverter.h"
 #include "MaxMain/plMaxNode.h"
 #include "MaxExport/plErrorMsg.h"
 #include "plSurface/hsGMaterial.h"
@@ -69,7 +74,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConverterUtils.h"
 #include "hsMaterialConverter.h"
 #include "hsControlConverter.h"
-#include "hsExceptionStack.h"
 #include "MaxPlasmaMtls/Materials/plCompositeMtl.h"
 #include "MaxPlasmaMtls/Materials/plPassMtl.h"
 #include "MaxPlasmaMtls/Materials/plCompositeMtlPB.h"
@@ -84,8 +88,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plAccessVtxSpan.h"
 
 #include "plStatusLog/plStatusLog.h"
-
-#include "plTweak.h"
 
 //// Static Members //////////////////////////////////////////////////////////
 
@@ -1351,9 +1353,9 @@ uint32_t  plMeshConverter::ICreateHexColor( float r, float g, float b )
 
 
     au = 0xff000000;
-    ru = r * 255.0f;
-    gu = g * 255.0f;
-    bu = b * 255.0f;
+    ru = (uint32_t)(r * 255.0f);
+    gu = (uint32_t)(g * 255.0f);
+    bu = (uint32_t)(b * 255.0f);
     return au | ( ru << 16 ) | ( gu << 8 ) | ( bu );
 }
 

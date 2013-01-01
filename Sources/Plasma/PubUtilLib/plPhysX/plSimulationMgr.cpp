@@ -308,7 +308,7 @@ bool plSimulationMgr::InitSimulation()
     if ( !plPXConvert::Validate() )
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
-        hsMessageBox("Ageia's PhysX or Plasma offsets have changed, need to rewrite conversion code.","PhysX Error",MB_OK);
+        hsMessageBox("Ageia's PhysX or Plasma offsets have changed, need to rewrite conversion code.","PhysX Error",hsMBoxOk);
 #endif
         return false; // client will handle this and ask user to install
     }

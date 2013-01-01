@@ -39,17 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "plPickNode.h"
-#include "iparamb2.h"
 #include <algorithm>
 
 #include "plActivatorBaseComponent.h"
-#include "plPythonFileComponent.h"
 #include "plBehavioralComponents.h"
-#include "plNavigableComponents.h"
 #include "plPhysicalComponents.h"
+
+#include <iparamm2.h>
+#pragma hdrstop
+
+#include "plPickNode.h"
+
 #include "plCameraComponents.h"
+#include "plNavigableComponents.h"
+#include "plPythonFileComponent.h"
 
 class plPickNodeMax : public HitByNameDlgCallback
 {

@@ -47,11 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
+#include "hsWindows.h"
+#include "../resource.h"
 
-#include "Max.h"
-#include "iparamb2.h"
-#include "notify.h"
-#include "notetrck.h"
+#include <iparamb2.h>
+#include <max.h>
+#include <notetrck.h>
+#include <notify.h>
+#pragma hdrstop
 
 #include "plPassMtlBase.h"
 #include "plPassBaseParamIDs.h"

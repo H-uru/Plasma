@@ -44,42 +44,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMaxNode_inc
 
 #include "plMaxNodeBase.h"
-
-#include "hsTemplates.h"
-#include "hsMatrix44.h"
-#include "iparamb2.h"
-#include "pnKeyedObject/plKey.h"
+#include <iparamb2.h>
 #include <map>
+#include "hsTemplates.h"
 
-class plMaxNode;
-class plErrorMsg;
-class plConvertSettings;
-class plExportProgressBar;
-class plSceneNode;
-class plDrawable;
-class plDrawInterface;
-class plDrawableSpans;
-class plLightInfo;
-class plSpotLightInfo;
-class plOmniLightInfo;
-class plGeometrySpan;
-class ISkin;
-class plSpotModifier;
-class plOmniModifier;
-class plLtdDirModifier;
-class plLightModifier;
-class plController;
-class plAGModifier;
-class plAGMasterMod;
 class plAGAnim;
-class plRenderLevel;
+class plAGMasterMod;
+class plAGModifier;
+class plController;
+class plConvertSettings;
+class plDrawInterface;
+class plDrawable;
 class plDrawableCriteria;
-class plXImposterComp;
-class plPhysicalProps;
+class plDrawableSpans;
+class plErrorMsg;
+class plExportProgressBar;
+class plGeometrySpan;
+class plLightInfo;
 class plLightMapComponent;
-class plPageInfoComponent;
+class plLightModifier;
+class plLtdDirModifier;
 class plMaxBoneMap;
+class plMaxNode;
+class plOmniLightInfo;
+class plOmniModifier;
+class plPageInfoComponent;
+class plPhysicalProps;
+class plSceneNode;
+class plSceneObject;
+class plSpotLightInfo;
+class plSpotModifier;
 class plSynchedObject;
+class plXImposterComp;
 
 typedef bool (plMaxNode:: *PMaxNodeFunc) (plErrorMsg *, plConvertSettings *); // Function pointer to a plMaxNode member funtion
 

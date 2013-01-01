@@ -43,17 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClusterUtil_inc
 #define plClusterUtil_inc
 
-#include "hsGeometry3.h"
-#include "hsColorRGBA.h"
-
 #include "plDrawable/plSpanInstance.h"
 
-class plMaxNode;
-class plClusterGroup;
-class plSpanTemplateB;
 class hsBounds3Ext;
 class plCluster;
+class plClusterGroup;
 class hsGMaterial;
+class plMaxNode;
+class Point3;
+class plSpanEncoding;
+class plSpanTemplateB;
+struct hsVector3;
 
 class plDeformVert
 {

@@ -54,13 +54,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsWindows.h"
+#include "../resource.h"
+
+#include <iparamm2.h>
+#include <istdplug.h>
+#include <stdmat.h>
+#pragma hdrstop
+
 #include "plPlasmaMAXLayer.h"
 
-#include "stdmat.h"
-#include "istdplug.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "../resource.h"
 #ifdef MAXASS_AVAILABLE
 #include "../../AssetMan/PublicInterface/MaxAssInterface.h"
 #endif
@@ -69,7 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plRefMsg.h"
 #include "plSurface/plLayerInterface.h"
-#include "hsResMgr.h"
 
 
 //// Derived Types List ///////////////////////////////////////////////////////

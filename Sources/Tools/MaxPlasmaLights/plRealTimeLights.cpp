@@ -52,11 +52,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRealTimeLights.h"
-#include "iparamm2.h"
+#pragma hdrstop
+
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 #include "MaxComponent/plMaxAnimUtils.h"
-#include "plRTLightBaseAnimDlgProc.h"
 #include "plGLight/plLightKonstants.h"
 
 void DummyLightCodeIncludeFunc() {}
@@ -145,12 +145,9 @@ public:
 };
 static LightDlgProc gLiteDlgProc;
 
-
+// Having these includes down here is a hack.
 #include "plRealTimeLightsPBDec.h"
-
-
 #include "plRTObjLightDesc.h"
-
 
 ///////////////////////////////////////////////////////////////////////
 //

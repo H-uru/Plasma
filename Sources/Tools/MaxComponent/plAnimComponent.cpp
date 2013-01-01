@@ -39,21 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "resource.h"
+#include "hsResMgr.h"
 
 #include "plAnimComponent.h"
 #include "plComponentProcBase.h"
 #include "plPhysicalComponents.h"
 #include "plMiscComponents.h"
+
+#include "MaxMain/plMaxNode.h"
+#include "resource.h"
+#pragma hdrstop
+
 #include "MaxMain/plPhysicalProps.h"
 
+#include "pnMessage/plNodeRefMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 
 #include "plInterp/plController.h"
 #include "plNotetrackAnim.h"
-#include "hsResMgr.h"
 #include "plAvatar/plAGModifier.h"
 #include "plAvatar/plAGChannel.h"
 #include "plAvatar/plAGAnim.h"
@@ -61,13 +65,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plMatrixChannel.h"
 #include "plAvatar/plPointChannel.h"
 #include "plAvatar/plScalarChannel.h"
-#include "MaxMain/plMaxNode.h"
 #include "MaxConvert/hsControlConverter.h"
 
 #include "pnKeyedObject/plUoid.h"
 #include "plMaxAnimUtils.h"
 
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
+#include "MaxPlasmaMtls/Materials/plPassMtl.h"
 #include "pfAnimation/plLightModifier.h"
 #include "pnKeyedObject/plMsgForwarder.h"
 
@@ -82,6 +86,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // So that the linker won't throw this code away, since it doesn't appear to be used
 void DummyCodeIncludeFunc() {}
+
+plEaseAccessor gAnimCompEaseAccessor(plComponentBase::kBlkComp, 
+                                     kAnimEaseInMin, kAnimEaseInMax, kAnimEaseInLength,
+                                     kAnimEaseOutMin, kAnimEaseOutMax, kAnimEaseOutLength);
 
 bool HasPhysicalComponent(plMaxNodeBase *node, bool searchChildren)
 {
@@ -571,9 +579,6 @@ bool    plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKe
     }
     return false;
 }
-
-
-#include "pnMessage/plNodeRefMsg.h"
 
 bool plAnimGroupedComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {

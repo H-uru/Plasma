@@ -46,9 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #if HS_BUILD_FOR_WIN32
-#    define hsFD HANDLE
+    typedef void* HANDLE;
+#   define hsFD HANDLE
 #else
-#    define hsFD FILE*
+#   define hsFD FILE*
 #endif
 
 // A slightly more secure stream then plEncryptedStream in that it uses windows file functions

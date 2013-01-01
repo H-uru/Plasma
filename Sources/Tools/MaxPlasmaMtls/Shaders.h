@@ -42,6 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SHADERS_H
 #define __SHADERS_H
 
+class AColor;
+class Color;
+class Point3;
+class ShadeContext;
 class Shader;
 
 //===========================================================================
@@ -93,7 +97,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*PI),(double)fs);  
+        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs);  
     }
 };
 
@@ -112,7 +116,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*PI),(double)fs); 
+        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs); 
     }
 };
 
@@ -144,7 +148,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*PI),(double)fs);  
+        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs);  
     }
 };
 

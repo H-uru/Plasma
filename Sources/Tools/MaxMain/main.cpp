@@ -41,15 +41,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "Max.h"
-#include "istdplug.h"
-#include "custcont.h"
-
-#include "MaxExport/SimpleExport.h"
-#include "MaxMain/MaxCompat.h"
+#include "hsFiles.h"
+#include "hsTemplates.h"
 
 #include "MaxComponent/plComponentMgr.h"
+#include "MaxCompat.h"
+
+
+#include <custcont.h>
+#include <direct.h>
+#include <istdplug.h>
+
+// "TEMP" -- who's gonna rewrite that now? >.<
+#include <CustAttrib.h>
+#include <ICustAttribContainer.h>
+#pragma hdrstop
+
+#include "MaxExport/SimpleExport.h"
+
 #include "MaxPlasmaMtls/plMtlImport.h"
+
+#include "plPythonMgr.h"
+#include "plPluginResManager.h"
+#include "plSDL/plSDL.h"
+#include "plMaxCFGFile.h"
+
 extern ClassDesc* GetGUPDesc();
 extern ClassDesc* GetComponentUtilDesc();
 extern ClassDesc* GetComponentMgrDesc();
@@ -133,13 +149,6 @@ __declspec(dllexport) ULONG LibVersion()
     return VERSION_3DSMAX; 
 }
 
-#include "plPythonMgr.h"
-#include "plPluginResManager.h"
-#include "plSDL/plSDL.h"
-#include "plMaxCFGFile.h"
-#include <direct.h>
-#include "hsFiles.h"
-
 //
 // DLLMAIN
 //
@@ -191,9 +200,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 //////////////////////////////////////////////////////////////////////////////////
 // TEMP
 //////////////////////////////////////////////////////////////////////////////////
-#include "CustAttrib.h"
-#include "ICustAttribContainer.h"
-#include "iparamb2.h"
 
 #define PL_GEN_ATTRIB_CLASS_ID Class_ID(0x24c36e6e, 0x53ec2ce4)
 

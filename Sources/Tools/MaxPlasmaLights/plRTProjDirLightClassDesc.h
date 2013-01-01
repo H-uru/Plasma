@@ -55,8 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plRTProjDirLightClassDesc_h
 
 #include "plRTProjDirLight.h"
-#include "iparamm2.h"
-#include "resource.h"
 
 class plRTProjDirLightDesc : public ClassDesc2 
 {

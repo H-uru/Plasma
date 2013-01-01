@@ -117,7 +117,7 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, getSubAgeLink, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getAgeGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeGuid());
+    return PyString_FromString(self->fThis->GetAgeGuid().AsString().c_str());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, addDevice, args)
