@@ -68,7 +68,7 @@ typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
 #if HS_BUILD_FOR_WIN32
     typedef struct _GUID GUID;
 #else
-#    define GUID char*
+    typedef char* GUID;
 #endif
 
 class plEAXListener 

@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define NOMINMAX
 #   define WIN32_LEAN_AND_MEAN
-#   include <Windows.h>
+#   include <windows.h>
 #   include <ws2tcpip.h> // Pulls in WinSock 2 for us
 
     // This needs to be after #include <windows.h>, since it also includes windows.h

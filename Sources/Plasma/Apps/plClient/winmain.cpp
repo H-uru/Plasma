@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 #include <direct.h>     // windows directory handling fxns (for chdir)
 #include <process.h>
-#include <Shellapi.h>   // ShellExecuteA
+#include <shellapi.h>   // ShellExecuteA
 
 //#define DETACH_EXE  // Microsoft trick to force loading of exe to memory 
 #ifdef DETACH_EXE
