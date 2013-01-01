@@ -181,15 +181,6 @@ struct plMsgStdStringHelper
 };
 
 /////////////////////////////////////////////////////////////////
-// reads/writes your xtl::istring field
-
-struct plMsgXtlStringHelper
-{
-    static int Poke(const xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
-};
-
-/////////////////////////////////////////////////////////////////
 // reads/writes your char * field  (deprecated)
 
 struct plMsgCStringHelper

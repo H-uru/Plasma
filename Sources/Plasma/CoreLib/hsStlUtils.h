@@ -101,74 +101,6 @@ struct delete_map_ptr_T
     void operator()( typename A::value_type & pair ) const { delete pair.second;}
 };
 
-// case insensitive string comparer
-//  useful in maps that use strings
-struct stricmp_less : public std::binary_function<std::string, std::string, bool>
-{
-    bool operator()(const std::string & _X, const std::string & _Y) const
-    {return ( stricmp(_X.c_str(),_Y.c_str()) < 0); }
-};
-struct wstricmp_less : public std::binary_function<std::wstring, std::wstring, bool>
-{
-    bool operator()(const std::wstring & _X, const std::wstring & _Y) const
-    {return ( wcsicmp(_X.c_str(),_Y.c_str()) < 0); }
-};
-
-// struct stricmp_char_traits
-// case insensitive char_traits. used in creating istring class below
-#ifdef __SGI_STL_PORT
-struct stricmp_char_traits : public __std_alias::char_traits< char >
-#else
-struct stricmp_char_traits : public std::char_traits< char >
-#endif
-{
-    static int compare(const char * A, const char * B, size_t N)
-    {
-        for (size_t I=0; I<N; ++I, ++A,++B)
-            if (tolower(*A)!=tolower(*B))
-                return (lt(tolower(*A),tolower(*B))?-1:+1);
-        return (0);
-    }
-    
-    static const char * find(const char * S, size_t N, const char & C)
-    {
-        char c = tolower(C);
-        for (; 0<N; --N, ++S)
-            if (c==tolower(*S))
-                return S;
-        return NULL;
-    }
-};
-#ifdef __SGI_STL_PORT
-struct wstricmp_char_traits : public __std_alias::char_traits< wchar_t >
-#else
-struct wstricmp_char_traits : public std::char_traits< wchar_t >
-#endif
-{
-    static int compare(const wchar_t * A, const wchar_t * B, size_t N)
-    {
-        for (size_t I=0; I<N; ++I, ++A,++B)
-            if (tolower(*A)!=tolower(*B))
-                return (lt(tolower(*A),tolower(*B))?-1:+1);
-        return (0);
-    }
-
-    static const wchar_t * find(const wchar_t * S, size_t N, const wchar_t & C)
-    {
-        wchar_t c = tolower(C);
-        for (; 0<N; --N, ++S)
-            if (c==tolower(*S))
-                return S;
-        return NULL;
-    }
-};
-
-// class istring
-//  A string with case insensitive char_traits.
-//  Calls to its find* methods are case insensitive.
-typedef std::basic_string<char, stricmp_char_traits> istring;
-typedef std::basic_string<wchar_t, wstricmp_char_traits> iwstring;
-
 // std::string trim
 std::string & trimleft(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trimleft(std::wstring & s, const wchar_t * charset=L" \t\n\r");
@@ -176,13 +108,6 @@ std::string & trimright(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trimright(std::wstring & s, const wchar_t * charset=L" \t\n\r");
 std::string & trim(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trim(std::wstring & s, const wchar_t * charset=L" \t\n\r");
-// xtl::istring trim
-xtl::istring & trimleft(xtl::istring & s, const char * charset=" \t\n\r");
-xtl::iwstring & trimleft(xtl::iwstring & s, const wchar_t * charset=L" \t\n\r");
-xtl::istring & trimright(xtl::istring & s, const char * charset=" \t\n\r");
-xtl::iwstring & trimright(xtl::iwstring & s, const wchar_t * charset=L" \t\n\r");
-xtl::istring & trim(xtl::istring & s, const char * charset=" \t\n\r");
-xtl::iwstring & trim(xtl::iwstring & s, const wchar_t * charset=L" \t\n\r");
 // c-string trim
 std::string trim(const char * s, const char * charset=" \t\n\r");
 std::wstring trim(const wchar_t * s, const wchar_t * charset=L" \t\n\r");

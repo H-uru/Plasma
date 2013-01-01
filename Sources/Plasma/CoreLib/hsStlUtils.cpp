@@ -107,69 +107,6 @@ std::wstring & trim(std::wstring & s, const wchar_t * charset)
     return s;
 }
 
-//xtl::istring
-xtl::istring & trimleft(xtl::istring & s, const char * charset)
-{
-    s.erase(0, s.find_first_not_of(charset));
-    return s;
-}
-
-xtl::iwstring & trimleft(xtl::iwstring & s, const wchar_t * charset)
-{
-    s.erase(0, s.find_first_not_of(charset));
-    return s;
-}
-
-xtl::istring & trimright(xtl::istring & s, const char * charset)
-{
-    int idx = s.find_last_not_of(charset);
-    
-    if (xtl::istring::npos == idx)
-    {
-        s.erase();
-    }
-    else
-    {
-        char c    = s.at(idx);
-        s.erase(idx, xtl::istring::npos);    
-        s.append(1, c);
-    }
-    
-    return s;
-}
-
-xtl::iwstring & trimright(xtl::iwstring & s, const wchar_t * charset)
-{
-    int idx = s.find_last_not_of(charset);
-
-    if (xtl::iwstring::npos == idx)
-    {
-        s.erase();
-    }
-    else
-    {
-        wchar_t c = s.at(idx);
-        s.erase(idx, xtl::iwstring::npos);
-        s.append(1, c);
-    }
-    
-    return s;
-}
-
-xtl::istring & trim(xtl::istring & s, const char * charset)
-{
-    trimleft(s,charset);
-    trimright(s,charset);
-    return s;
-}
-
-xtl::iwstring & trim(xtl::iwstring & s, const wchar_t * charset)
-{
-    trimleft(s,charset);
-    trimright(s,charset);
-    return s;
-}
-
 // c-string
 std::string trim(const char * s, const char * charset)
 {
