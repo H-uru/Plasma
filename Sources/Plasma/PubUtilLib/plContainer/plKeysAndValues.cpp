@@ -65,41 +65,37 @@ void plKeysAndValues::Clear()
     fKeys.clear();
 }
 
-void plKeysAndValues::RemoveKey(const std::string & key)
+void plKeysAndValues::RemoveKey(const plString & key)
 {
-    fKeys.erase(key.c_str());
+    fKeys.erase(key);
 }
 
-bool plKeysAndValues::HasKey(const std::string & key) const
+bool plKeysAndValues::HasKey(const plString & key) const
 {
-    return (fKeys.find(key.c_str()) != fKeys.end());
+    return (fKeys.find(key) != fKeys.end());
 }
 
-bool plKeysAndValues::KeyHasValue(const std::string & key, const std::string & value)
+bool plKeysAndValues::KeyHasValue(const plString & key, const plString & value)
 {
-    Keys::const_iterator ki = fKeys.find(key.c_str());
+    Keys::const_iterator ki = fKeys.find(key);
     if (ki==fKeys.end())
         return false;
-    return std::find(ki->second.begin(),ki->second.end(), value.c_str()) != ki->second.end();
+    return std::find_if(ki->second.begin(), ki->second.end(),
+               [&value](const plString &v) { return v.CompareI(value) == 0; }
+           ) != ki->second.end();
 }
 
-bool plKeysAndValues::KeyHasValue(const std::string & key, int value)
+bool plKeysAndValues::KeyHasValue(const plString & key, int value)
 {
-    char buf[20];
-    sprintf(buf, "%d", value);
-    std::string v(buf);
-    return KeyHasValue(key, v);    
+    return KeyHasValue(key, plString::Format("%d", value));
 }
 
-bool plKeysAndValues::KeyHasValue(const std::string & key, double value)
+bool plKeysAndValues::KeyHasValue(const plString & key, double value)
 {
-    char buf[30];
-    sprintf(buf, "%f", value);
-    std::string v(buf);
-    return KeyHasValue(key, v);    
+    return KeyHasValue(key, plString::Format("%f", value));
 }
 
-bool plKeysAndValues::AddValue(const std::string & key, const std::string & value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const plString & key, const plString & value, KAddValueMode mode)
 {
     switch (mode)
     {
@@ -114,97 +110,75 @@ bool plKeysAndValues::AddValue(const std::string & key, const std::string & valu
     default:
         break;
     }
-    fKeys[key.c_str()].push_front(value.c_str());
+    fKeys[key].push_front(value);
     return true;
 }
 
-bool plKeysAndValues::AddValue(const std::string & key, int value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const plString & key, int value, KAddValueMode mode)
 {
-    char buf[20];
-    sprintf(buf, "%d", value);
-    std::string v(buf);
-    return AddValue(key,v,mode);
+    return AddValue(key, plString::Format("%d", value), mode);
 }
 
-bool plKeysAndValues::AddValue(const std::string & key, double value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const plString & key, double value, KAddValueMode mode)
 {
-    char buf[30];
-    sprintf(buf, "%f", value);
-    std::string v(buf);
-    return AddValue(key,v,mode);    
+    return AddValue(key, plString::Format("%f", value), mode);    
 }
 
-bool plKeysAndValues::AddValues(const std::string & key, const std::vector<std::string> & values, KAddValueMode mode)
+bool plKeysAndValues::AddValues(const plString & key, const std::vector<plString> & values, KAddValueMode mode)
 {
     for (int i=0; i<values.size(); i++)
         AddValue(key,values[i],mode);
     return true;
 }
 
-bool plKeysAndValues::SetValue(const std::string & key, const std::string & value)
+bool plKeysAndValues::SetValue(const plString & key, const plString & value)
 {
-    fKeys[key.c_str()].clear();
+    fKeys[key].clear();
     return AddValue(key,value);
 }
 
-bool plKeysAndValues::SetValue(const std::string & key, int value)
+bool plKeysAndValues::SetValue(const plString & key, int value)
 {
-    char buf[20];
-    sprintf(buf, "%d", value);
-    std::string v(buf);
-    return SetValue(key, v);    
+    return SetValue(key, plString::Format("%d", value));    
 }
 
-bool plKeysAndValues::SetValue(const std::string & key, double value)
+bool plKeysAndValues::SetValue(const plString & key, double value)
 {
-    char buf[30];
-    sprintf(buf, "%f", value);
-    std::string v(buf);
-    return SetValue(key, v);    
+    return SetValue(key, plString::Format("%f", value));    
 }
 
-std::string plKeysAndValues::GetValue(const std::string & key, const std::string & defval, bool * outFound) const
+plString plKeysAndValues::GetValue(const plString & key, const plString & defval, bool * outFound) const
 {
-    Keys::const_iterator ki = fKeys.find(key.c_str());
+    Keys::const_iterator ki = fKeys.find(key);
     if (outFound)
         *outFound = (ki!=fKeys.end());
     if(ki != fKeys.end())
-        return ki->second.front().c_str();
-//  fKeys[key.c_str()].push_front(defval.c_str());
+        return ki->second.front();
+//  fKeys[key].push_front(defval);
     return defval;
 }
 
-uint32_t plKeysAndValues::GetValue(const std::string & key, uint32_t defval, bool * outFound) const
+uint32_t plKeysAndValues::GetValue(const plString & key, uint32_t defval, bool * outFound) const
 {
-    char buf[20];
-    sprintf(buf, "%ul", defval);
-    std::string v(buf);
-    return strtoul(GetValue(key,v,outFound).c_str(), nil, 0);
+    return strtoul(GetValue(key, plString::Format("%ul", defval), outFound).c_str(), nil, 0);
 }
 
-int plKeysAndValues::GetValue(const std::string & key, int defval, bool * outFound) const
+int plKeysAndValues::GetValue(const plString & key, int defval, bool * outFound) const
 {
-    char buf[20];
-    sprintf(buf, "%d", defval);
-    std::string v(buf);
-    return atol(GetValue(key,v,outFound).c_str());
+    return atol(GetValue(key, plString::Format("%d", defval), outFound).c_str());
 }
 
-double plKeysAndValues::GetValue(const std::string & key, double defval, bool * outFound) const
+double plKeysAndValues::GetValue(const plString & key, double defval, bool * outFound) const
 {
-    char buf[30];
-    sprintf(buf, "%f", defval);
-    std::string v(buf);
-    return atof(GetValue(key,v,outFound).c_str());
+    return atof(GetValue(key, plString::Format("%f", defval), outFound).c_str());
 }
 
-std::vector<std::string> plKeysAndValues::GetAllValues(const std::string & key)
+std::vector<plString> plKeysAndValues::GetAllValues(const plString & key)
 {
-    std::vector<std::string> result;
-    xtl::istring xkey = key.c_str();
+    std::vector<plString> result;
     if (HasKey(key))
-        for (Values::const_iterator vi=fKeys[xkey].begin(); vi!=fKeys[xkey].end(); ++vi)
-            result.push_back(vi->c_str());
+        for (Values::const_iterator vi=fKeys[key].begin(); vi!=fKeys[key].end(); ++vi)
+            result.push_back(*vi);
     return result;
 }
 
@@ -215,7 +189,7 @@ bool plKeysAndValues::GetKeyIterators(Keys::const_iterator & iter, Keys::const_i
     return true;
 }
 
-bool plKeysAndValues::GetValueIterators(const xtl::istring & key, Values::const_iterator & iter, Values::const_iterator & end) const
+bool plKeysAndValues::GetValueIterators(const plString & key, Values::const_iterator & iter, Values::const_iterator & end) const
 {
     Keys::const_iterator ki = fKeys.find(key);
     if(ki != fKeys.end())
@@ -235,19 +209,19 @@ void plKeysAndValues::Read(hsStream * s)
     {
         uint16_t strlen;
         s->ReadLE(&strlen);
-        std::string key;
-        key.assign(strlen+1,'\0');
-        s->Read(strlen,(void*)key.data());
-        key.resize(strlen);
+        plStringBuffer<char> key;
+        char* kdata = key.CreateWritableBuffer(strlen);
+        s->Read(strlen,(void*)kdata);
+        kdata[strlen] = 0;
         uint16_t nvalues;
         s->ReadLE(&nvalues);
         for (int vi=0; vi<nvalues; vi++)
         {
             s->ReadLE(&strlen);
-            std::string value;
-            value.assign(strlen+1,'\0');
-            s->Read(strlen,(void*)value.data());
-            value.resize(strlen);
+            plStringBuffer<char> value;
+            char* vdata = value.CreateWritableBuffer(strlen);
+            s->Read(strlen,(void*)vdata);
+            vdata[strlen] = 0;
             // for now, only single value for key on stream is allowed.
             SetValue(key,value);
         }
@@ -264,8 +238,8 @@ void plKeysAndValues::Write(hsStream * s)
     for (;ki!=ke;++ki)
     {
         // write key string
-        s->WriteLE((uint16_t)ki->first.size());
-        s->Write(ki->first.size(),ki->first.c_str());
+        s->WriteLE((uint16_t)ki->first.GetSize());
+        s->Write(ki->first.GetSize(),ki->first.c_str());
         // write nvalues for this key
         s->WriteLE((uint16_t)ki->second.size());
         // iterate through values for this key
@@ -274,8 +248,8 @@ void plKeysAndValues::Write(hsStream * s)
         for (;vi!=ve;++vi)
         {
             // write value string
-            s->WriteLE((uint16_t)vi->size());
-            s->Write(vi->size(),vi->c_str());
+            s->WriteLE((uint16_t)vi->GetSize());
+            s->Write(vi->GetSize(),vi->c_str());
         }
     }
 }
