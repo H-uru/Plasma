@@ -61,21 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace xtl
 {
 
-// Why oh why doesn't stl have copy_if?
-// See Effective STL [Meyers 2001] Item 36.
-template< typename InIt, typename OutIt, typename Pred >
-OutIt copy_if( InIt srcBegin, InIt srcEnd, OutIt dstBegin, Pred pred )
-{
-    while ( srcBegin!=srcEnd )
-    {
-        if ( pred( *srcBegin ) )
-            *dstBegin++ = *srcBegin;
-        ++srcBegin;
-    }
-    return dstBegin;
-}
-
-
 // std::string trim
 std::string & trimleft(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trimleft(std::wstring & s, const wchar_t * charset=L" \t\n\r");
