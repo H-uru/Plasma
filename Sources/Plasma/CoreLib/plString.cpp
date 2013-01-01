@@ -512,18 +512,20 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         int size = 4096;
         for ( ;; ) {
             va_copy(vptr, vptr_save);
-            std::auto_ptr<char> bigbuffer(new char[size]);
-            chars = vsnprintf(bigbuffer.get(), size, fmt, vptr);
+            plStringBuffer<char> bigbuffer;
+            char *data = bigbuffer.CreateWritableBuffer(size);
+            chars = vsnprintf(data, size, fmt, vptr);
             if (chars >= 0)
-                return plString::FromUtf8(bigbuffer.get(), chars);
+                return bigbuffer;
 
             size *= 2;
         }
     } else if (chars >= 256) {
         va_copy(vptr, vptr_save);
-        std::unique_ptr<char> bigbuffer(new char[chars+1]);
-        vsnprintf(bigbuffer.get(), chars+1, fmt, vptr);
-        return plString::FromUtf8(bigbuffer.get(), chars);
+        plStringBuffer<char> bigbuffer;
+        char *data = bigbuffer.CreateWritableBuffer(chars+1);
+        vsnprintf(data, chars+1, fmt, vptr);
+        return bigbuffer;
     }
 
     return plString::FromUtf8(buffer, chars);
