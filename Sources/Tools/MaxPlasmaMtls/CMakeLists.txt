@@ -8,12 +8,7 @@ include_directories("../../Plasma/PubUtilLib")
 include_directories("../../Plasma/PubUtilLib/inc")
 include_directories(${3dsm_INCLUDE_DIR})
 
-if(Bink_SDK_AVAILABLE)
-    include_directories(${Bink_INCLUDE_DIR})
-endif()
-
 set(MaxPlasmaMtls_HEADERS
-    plBinkBitmap.h
     plBMSampler.h
     plDetailCurveCtrl.h
     plMaterialRefMsg.h
@@ -85,7 +80,6 @@ set(MaxPlasmaMtls_RESOURCES
 )
 
 set(MaxPlasmaMtls_SOURCES
-    plBinkBitmap.cpp
     plBMSampler.cpp
     plDetailCurveCtrl.cpp
     plDrawCurve.cpp
