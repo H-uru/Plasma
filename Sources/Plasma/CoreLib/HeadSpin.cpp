@@ -499,6 +499,15 @@ char** DisplaySystemVersion()
         if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
             versionStrs.Append(hsStrcpy ("Microsoft Windows XP "));
 
+        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0 )
+            versionStrs.Append(hsStrcpy ("Microsoft Windows Vista "));
+
+        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1 )
+            versionStrs.Append(hsStrcpy ("Microsoft Windows 7 "));
+
+        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2 )
+            versionStrs.Append(hsStrcpy ("Microsoft Windows 8 "));
+
         // Test for product type.
 
         if( bOsVersionInfoEx )
