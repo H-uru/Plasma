@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGameMgrMsg.h"
 #include "pfGameMgr/pfGameMgr.h"
+#include "pnUUID/pnUUID.h"
 #include "../pyEnum.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -130,8 +131,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteReceivedMsg, inviterID)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteReceivedMsg, gameTypeID)
 {
-    std::wstring retVal = self->fThis->GameTypeID();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyString_FromString(self->fThis->GameTypeID().AsString().c_str());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteReceivedMsg, newGameID)
@@ -183,8 +183,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteRevokedMsg, inviterID)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteRevokedMsg, gameTypeID)
 {
-    std::wstring retVal = self->fThis->GameTypeID();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyString_FromString(self->fThis->GameTypeID().AsString().c_str());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameMgrInviteRevokedMsg, newGameID)

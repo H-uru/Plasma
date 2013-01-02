@@ -92,7 +92,7 @@ struct CliAuConn : AtomicRef {
     NetCli *        cli;
     char            name[MAX_PATH];
     plNetAddress    addr;
-    Uuid            token;
+    plUUID          token;
     unsigned        seq;
     unsigned        serverChallenge;
     AsyncCancelId   cancelId;
@@ -161,7 +161,7 @@ struct LoginRequestTrans : NetAuthTrans {
     FNetCliAuthLoginRequestCallback m_callback;
     void *                          m_param;
 
-    Uuid                            m_accountId;
+    plUUID                          m_accountId;
     unsigned                        m_accountFlags;
     unsigned                        m_billingType;
     unsigned                        m_playerCount;
@@ -195,13 +195,13 @@ struct AgeRequestTrans : NetAuthTrans {
     void *                              m_param;
     wchar_t                               m_ageName[kMaxAgeNameLength];
     unsigned                            m_ageMcpId;
-    Uuid                                m_ageInstId;
+    plUUID                              m_ageInstId;
     unsigned                            m_ageVaultId;
     uint32_t                            m_gameSrvNode;
 
     AgeRequestTrans (
         const wchar_t                         ageName[],
-        const Uuid &                        ageInstId,
+        const plUUID&                       ageInstId,
         FNetCliAuthAgeRequestCallback       callback,
         void *                              param
     );
@@ -229,7 +229,7 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     unsigned                                m_billingType;
 
     // recv
-    Uuid                                    m_accountId;
+    plUUID                                  m_accountId;
 
     AccountCreateRequestTrans (
         const wchar_t                             accountName[],
@@ -258,17 +258,17 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     // send    
     wchar_t                                   m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
-    Uuid                                    m_key;
+    plUUID                                  m_key;
     unsigned                                m_billingType;
 
     // recv
-    Uuid                                    m_accountId;
-    Uuid                                    m_activationKey;
+    plUUID                                  m_accountId;
+    plUUID                                  m_activationKey;
 
-    AccountCreateFromKeyRequestTrans (
-        const wchar_t                                     accountName[],
-        const wchar_t                                     password[],
-        const Uuid &                                    key,
+    AccountCreateFromKeyRequestTrans(
+        const wchar_t                                   accountName[],
+        const wchar_t                                   password[],
+        const plUUID&                                   key,
         unsigned                                        billingType,
         FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
         void *                                          param
@@ -505,10 +505,10 @@ struct AccountActivateRequestTrans : NetAuthTrans {
     void *                                      m_param;
 
     // send    
-    Uuid                                        m_activationKey;
+    plUUID                                      m_activationKey;
 
     AccountActivateRequestTrans (
-        const Uuid &                                activationKey,
+        const plUUID&                               activationKey,
         FNetCliAuthAccountActivateRequestCallback   callback,
         void *                                      param
     );
@@ -609,7 +609,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
 struct VaultNodeChangedTrans : NetNotifyTrans {
 
     unsigned        m_nodeId;
-    Uuid            m_revId;
+    plUUID          m_revId;
 
     VaultNodeChangedTrans () : NetNotifyTrans(kVaultNodeChangedTrans) {}
     void Post ();
@@ -683,8 +683,8 @@ struct VaultInitAgeTrans : NetAuthTrans {
     FNetCliAuthAgeInitCallback  m_callback;
     void *                      m_param;
 
-    Uuid                        m_ageInstId;
-    Uuid                        m_parentAgeInstId;
+    plUUID                      m_ageInstId;
+    plUUID                      m_parentAgeInstId;
     wchar_t *                     m_ageFilename;
     wchar_t *                     m_ageInstName;
     wchar_t *                     m_ageUserName;
@@ -695,15 +695,15 @@ struct VaultInitAgeTrans : NetAuthTrans {
     unsigned                    m_ageId;
     unsigned                    m_ageInfoId;
     
-    VaultInitAgeTrans (
+    VaultInitAgeTrans(
         FNetCliAuthAgeInitCallback  callback,           // optional
         void *                      param,              // optional
-        const Uuid &                ageInstId,          // optional. is used in match
-        const Uuid &                parentAgeInstId,    // optional. is used in match
-        const wchar_t                 ageFilename[],      // optional. is used in match
-        const wchar_t                 ageInstName[],      // optional. not used in match
-        const wchar_t                 ageUserName[],      // optional. not used in match
-        const wchar_t                 ageDesc[],          // optional. not used in match
+        const plUUID&               ageInstId,          // optional. is used in match
+        const plUUID&               parentAgeInstId,    // optional. is used in match
+        const wchar_t               ageFilename[],      // optional. is used in match
+        const wchar_t               ageInstName[],      // optional. not used in match
+        const wchar_t               ageUserName[],      // optional. not used in match
+        const wchar_t               ageDesc[],          // optional. not used in match
         unsigned                    ageSequenceNumber,  // optional. not used in match
         unsigned                    ageLanguage         // optional. not used in match
     );
@@ -800,14 +800,14 @@ struct VaultCreateNodeTrans : NetAuthTrans {
 struct VaultSaveNodeTrans : NetAuthTrans {
 
     unsigned                            m_nodeId;
-    Uuid                                m_revisionId;
+    plUUID                              m_revisionId;
     ARRAY(uint8_t)                         m_buffer;
     FNetCliAuthVaultNodeSaveCallback    m_callback;
     void *                              m_param;
     
     VaultSaveNodeTrans (
         unsigned                            nodeId,
-        const Uuid &                        revisionId,
+        const plUUID&                       revisionId,
         unsigned                            dataCount,
         const void *                        data,
         FNetCliAuthVaultNodeSaveCallback    callback,
@@ -945,12 +945,12 @@ struct SendFriendInviteTrans : NetAuthTrans {
     // send    
     wchar_t                               m_emailAddress[kMaxEmailAddressLength];
     wchar_t                               m_toName[kMaxPlayerNameLength];
-    Uuid                                m_inviteUuid;
+    plUUID                                m_inviteUuid;
 
-    SendFriendInviteTrans (
-        const wchar_t                             emailAddr[],
-        const wchar_t                             toName[],
-        const Uuid &                            inviteUuid,
+    SendFriendInviteTrans(
+        const wchar_t                           emailAddr[],
+        const wchar_t                           toName[],
+        const plUUID&                           inviteUuid,
         FNetCliAuthSendFriendInviteCallback     callback,
         void *                                  param
     );
@@ -1371,7 +1371,7 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
         ReportNetError(kNetProtocolCli2Auth, error);
     }
     else {
-        if (conn->token != kNilGuid)
+        if (conn->token != kNilUuid)
             // previously encrypted; reconnect quickly
             conn->reconnectStartMs = GetNonZeroTimeMs() + 500;
         else
@@ -2595,7 +2595,7 @@ LoginRequestTrans::LoginRequestTrans (
 ) : NetAuthTrans(kLoginRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
-,   m_accountId(kNilGuid)
+,   m_accountId(kNilUuid)
 ,   m_accountFlags(0)
 ,   m_playerCount(0)
 {
@@ -2717,7 +2717,7 @@ bool LoginRequestTrans::Recv (
 //============================================================================
 AgeRequestTrans::AgeRequestTrans (
     const wchar_t                         ageName[],
-    const Uuid &                        ageInstId,
+    const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) : NetAuthTrans(kAgeRequestTrans)
@@ -2859,7 +2859,7 @@ bool AccountCreateRequestTrans::Recv (
 AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
     const wchar_t                                   accountName[],
     const wchar_t                                   password[],
-    const Uuid &                                    key,
+    const plUUID&                                   key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
     void *                                          param
@@ -3394,7 +3394,7 @@ bool AccountSetBillingTypeRequestTrans::Recv (
 
 //============================================================================
 AccountActivateRequestTrans::AccountActivateRequestTrans (
-    const Uuid &                                activationKey,
+    const plUUID&                               activationKey,
     FNetCliAuthAccountActivateRequestCallback   callback,
     void *                                      param
 ) : NetAuthTrans(kAccountActivateRequestTrans)
@@ -3805,12 +3805,12 @@ bool VaultFetchNodeRefsTrans::Recv (
 VaultInitAgeTrans::VaultInitAgeTrans (
     FNetCliAuthAgeInitCallback  callback,           // optional
     void *                      param,              // optional
-    const Uuid &                ageInstId,          // optional. is used in match
-    const Uuid &                parentAgeInstId,    // optional. is used in match
-    const wchar_t                 ageFilename[],      // optional. is used in match
-    const wchar_t                 ageInstName[],      // optional. not used in match
-    const wchar_t                 ageUserName[],      // optional. not used in match
-    const wchar_t                 ageDesc[],          // optional. not used in match
+    const plUUID&               ageInstId,          // optional. is used in match
+    const plUUID&               parentAgeInstId,    // optional. is used in match
+    const wchar_t               ageFilename[],      // optional. is used in match
+    const wchar_t               ageInstName[],      // optional. not used in match
+    const wchar_t               ageUserName[],      // optional. not used in match
+    const wchar_t               ageDesc[],          // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage         // optional. not used in match
 ) : NetAuthTrans(kVaultInitAgeTrans)
@@ -4100,7 +4100,7 @@ bool VaultCreateNodeTrans::Recv (
 //============================================================================
 VaultSaveNodeTrans::VaultSaveNodeTrans (
     unsigned                            nodeId,
-    const Uuid &                        revisionId,
+    const plUUID&                       revisionId,
     unsigned                            dataCount,
     const void *                        data,
     FNetCliAuthVaultNodeSaveCallback    callback,
@@ -4415,9 +4415,9 @@ bool ChangePlayerNameRequestTrans::Recv (
 
 //============================================================================
 SendFriendInviteTrans::SendFriendInviteTrans (
-    const wchar_t                             emailAddr[],
-    const wchar_t                             toName[],
-    const Uuid &                            inviteUuid,
+    const wchar_t                           emailAddr[],
+    const wchar_t                           toName[],
+    const plUUID&                           inviteUuid,
     FNetCliAuthSendFriendInviteCallback     callback,
     void *                                  param
 ) : NetAuthTrans(kSendFriendInviteTrans)
@@ -4521,7 +4521,7 @@ bool ScoreCreateTrans::Send () {
                         m_ownerId,
         (uintptr_t)  wgameName,
                         m_gameType,
-                        m_value
+                        (uintptr_t)m_value
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4727,7 +4727,7 @@ bool ScoreAddPointsTrans::Send () {
         kCli2Auth_ScoreAddPoints,
                         m_transId,
                         m_scoreId,
-                        m_numPoints,
+                        (uintptr_t)m_numPoints,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4789,7 +4789,7 @@ bool ScoreTransferPointsTrans::Send () {
                         m_transId,
                         m_srcScoreId,
                         m_destScoreId,
-                        m_numPoints,
+                        (uintptr_t)m_numPoints,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4848,7 +4848,7 @@ bool ScoreSetPointsTrans::Send () {
         kCli2Auth_ScoreSetPoints,
                         m_transId,
                         m_scoreId,
-                        m_numPoints,
+                        (uintptr_t)m_numPoints,
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -5249,7 +5249,7 @@ void NetCliAuthLoginRequest (
 //============================================================================
 void NetCliAuthAgeRequest (
     const wchar_t                         ageName[],
-    const Uuid &                        ageInstId,
+    const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) {
@@ -5296,7 +5296,7 @@ void NetCliAuthAccountCreateRequest (
 void NetCliAuthAccountCreateFromKeyRequest (
     const wchar_t                                     accountName[],
     const wchar_t                                     password[],
-    Uuid                                            key,
+    plUUID                                          key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
     void *                                          param
@@ -5482,7 +5482,7 @@ void NetCliAuthAccountSetBillingTypeRequest (
 
 //============================================================================
 void NetCliAuthAccountActivateRequest (
-    const Uuid &                                activationKey,
+    const plUUID&                               activationKey,
     FNetCliAuthAccountActivateRequestCallback   callback,
     void *                                      param
 ) {
@@ -5624,7 +5624,7 @@ unsigned NetCliAuthVaultNodeSave (
     node->dirtyFlags |= NetVaultNode::kNodeType;
 
     // We're definitely saving this node, so assign a revisionId
-    node->revisionId = GuidGenerate();
+    node->revisionId = plUUID::Generate();
 
     ARRAY(uint8_t) buffer;
     unsigned bytes = node->Write_LCS(&buffer, NetVaultNode::kRwDirtyOnly | NetVaultNode::kRwUpdateDirty);
@@ -5740,8 +5740,8 @@ void NetCliAuthVaultSendNode (
 
 //============================================================================
 void NetCliAuthVaultInitAge (
-    const Uuid &                ageInstId,          // optional. is used in match
-    const Uuid &                parentAgeInstId,    // optional. is used in match
+    const plUUID&               ageInstId,          // optional. is used in match
+    const plUUID&               parentAgeInstId,    // optional. is used in match
     const wchar_t                 ageFilename[],      // optional. is used in match
     const wchar_t                 ageInstName[],      // optional. not used in match
     const wchar_t                 ageUserName[],      // optional. not used in match
@@ -5913,7 +5913,7 @@ void NetCliAuthChangePlayerNameRequest (
 void NetCliAuthSendFriendInvite (
     const wchar_t                         emailAddress[],
     const wchar_t                         toName[],
-    const Uuid&                         inviteUuid,
+    const plUUID&                         inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 ) {

@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct RelVaultNode;
 class plMipmap;
 class pyImage;
+class plUUID;
 
 class pyDniCoordinates;
 
@@ -97,7 +98,6 @@ public:
     };
 
     RelVaultNode *      fNode;
-    mutable char *      fCreateAgeGuid;
     mutable char *      fCreateAgeName;
 
 protected:
@@ -138,7 +138,7 @@ public:
     uint32_t GetCreateTime( void );
     uint32_t GetCreateAgeTime( void );
     const char * GetCreateAgeName( void );
-    const char * GetCreateAgeGuid( void );
+    plUUID    GetCreateAgeGuid(void) const;
     PyObject* GetCreateAgeCoords ();
 
     // public setters

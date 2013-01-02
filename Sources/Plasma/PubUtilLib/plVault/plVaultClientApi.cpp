@@ -552,7 +552,7 @@ static void ChangedVaultNodeFetched (
 //============================================================================
 static void VaultNodeChanged (
     unsigned        nodeId,
-    const Uuid &    revisionId
+    const plUUID&   revisionId
 ) {
     LogMsg(kLogDebug, L"Notify: Node changed: %u", nodeId);
 
@@ -2115,7 +2115,7 @@ void VaultFetchNodesAndWait (
 //============================================================================
 void VaultInitAge (
     const plAgeInfoStruct * info,
-    const Uuid &            parentAgeInstId,    // optional
+    const plUUID            parentAgeInstId,    // optional
     FVaultInitAgeCallback   callback,
     void *                  state,
     void *                  param
@@ -2136,7 +2136,7 @@ void VaultInitAge (
     StrToUnicode(ageDesc, info->GetAgeDescription(), arrsize(ageDesc));
     
     NetCliAuthVaultInitAge(
-        (Uuid)*info->GetAgeInstanceGuid(),
+        *info->GetAgeInstanceGuid(),
         parentAgeInstId,
         ageFilename,
         ageInstName,
@@ -2418,7 +2418,7 @@ bool VaultFindOrCreateChildAgeLinkAndWait (const wchar_t ownedAgeName[], const p
 }
 
 //============================================================================
-bool VaultAddOwnedAgeSpawnPoint (const Uuid & ageInstId, const plSpawnPointInfo & spawnPt) {
+bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo & spawnPt) {
     
     RelVaultNode * fldr = nil;
     RelVaultNode * link = nil;
@@ -2638,7 +2638,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 
             VaultInitAge(
                 link->GetAgeInfo(),
-                kNilGuid,
+                kNilUuid,
                 _InitAgeCallback,
                 nil,
                 &param
@@ -2909,7 +2909,7 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
 
     // Let's go async, my friend :)
     VaultInitAge(link->GetAgeInfo(), 
-        kNilGuid, 
+        kNilUuid, 
         (FVaultInitAgeCallback)_InitAgeCallback, 
         nil,
         new plSpawnPointInfo(link->SpawnPoint()));
@@ -3012,7 +3012,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
 
             VaultInitAge(
                 link->GetAgeInfo(),
-                kNilGuid,
+                kNilUuid,
                 _InitAgeCallback,
                 nil,
                 &param
@@ -3271,7 +3271,7 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
     // This doesn't actually *create* a new age but rather fetches the
     // already existing age vault. Weird? Yes...
     VaultInitAge(link->GetAgeInfo(),
-                 kNilGuid,
+                 kNilUuid,
                  (FVaultInitAgeCallback)_InitAgeCallback,
                  nil,
                  p
@@ -3632,13 +3632,13 @@ bool VaultAmCzarOfCurrentAge () {
 }
 
 //============================================================================
-bool VaultAmOwnerOfAge (const Uuid & ageInstId) {
+bool VaultAmOwnerOfAge (const plUUID& ageInstId) {
     hsAssert(false, "eric, implement me");
     return true;
 }
 
 //============================================================================
-bool VaultAmCzarOfAge (const Uuid & ageInstId) {
+bool VaultAmCzarOfAge (const plUUID& ageInstId) {
 //  hsAssert(false, "eric, implement me");
     return false;
 }
@@ -4249,7 +4249,7 @@ static void _AddChildNodeCallback (
 bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link,
-    const Uuid &            parentAgeInstId
+    const plUUID&           parentAgeInstId
 ) {
     if (RelVaultNode * rvnLink = VaultFindAgeSubAgeLinkIncRef(info)) {
         VaultAgeLinkNode linkAcc(rvnLink);
@@ -4464,7 +4464,7 @@ namespace _VaultCreateSubAge {
     }
 }; // namespace _VaultCreateSubAge
 
-bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid) {
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& parentUuid) {
     using namespace _VaultCreateSubAge;
 
     // First, try to find an already existing subage
@@ -4633,8 +4633,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         _InitAgeParam   param;
         memset(&param, 0, sizeof(param));
 
-        Uuid parentAgeInstId;
-        memset(&parentAgeInstId, 0, sizeof(parentAgeInstId));
+        plUUID parentAgeInstId;
         if (RelVaultNode * rvnAge = VaultGetAgeNodeIncRef()) {
             VaultAgeNode access(rvnAge);
             parentAgeInstId = access.ageInstUuid;

@@ -82,7 +82,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    plUUID          GetAgeGuid( void );
+    plUUID          GetAgeGuid(void);
 
     PyObject *      GetAgeSDL() const; // returns pySDLStateDataRecord
     void            UpdateAgeSDL( pySDLStateDataRecord & pyrec );

@@ -91,7 +91,7 @@ struct CliGkConn : AtomicRef {
     NetCli *        cli;
     char            name[MAX_PATH];
     plNetAddress    addr;
-    Uuid            token;
+    plUUID          token;
     unsigned        seq;
     unsigned        serverChallenge;
     AsyncCancelId   cancelId;
@@ -307,7 +307,7 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         ReportNetError(kNetProtocolCli2GateKeeper, error);
     }
     else {
-        if (conn->token != kNilGuid)
+        if (conn->token != kNilUuid)
             // previously encrypted; reconnect quickly
             conn->reconnectStartMs = GetNonZeroTimeMs() + 500;
         else
@@ -841,7 +841,7 @@ bool FileSrvIpAddressRequestTrans::Send () {
     const uintptr_t msg[] = {
         kCli2GateKeeper_FileSrvIpAddressRequest,
                         m_transId,
-                        m_isPatcher == true ? 1 : 0
+                        (uintptr_t)(m_isPatcher == true ? 1 : 0)
     };
     
     m_conn->Send(msg, arrsize(msg));

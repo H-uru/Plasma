@@ -229,7 +229,7 @@ static_assert(kNumAuth2CliMessages <= 0xFFFF, "Auth2Cli message types overflow u
 
 struct Cli2Auth_ConnData {
     uint32_t       dataBytes;
-    Uuid        token;
+    plUUID      token;
 };
 struct Cli2Auth_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -286,7 +286,7 @@ struct Cli2Auth_AgeRequest {
     uint32_t       messageId;
     uint32_t       transId;
     wchar_t       ageName[kMaxAgeNameLength];
-    Uuid        ageUuid;
+    plUUID      ageUuid;
 };
 
 // AcctCreateRequest
@@ -307,7 +307,7 @@ struct Cli2Auth_AcctCreateFromKeyRequest {
     uint32_t       transId;
     wchar_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
-    Uuid        key;
+    plUUID      key;
     uint32_t       billingType;
 };
 
@@ -375,7 +375,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctActivateRequest;
 struct Cli2Auth_AcctActivateRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    Uuid        activationKey;
+    plUUID      activationKey;
 };
 
 // FileListRequest
@@ -435,7 +435,7 @@ struct Cli2Auth_VaultNodeSave {
     uint32_t       messageId;
     uint32_t       transId;
     uint32_t       nodeId;
-    Uuid        revisionId;
+    plUUID      revisionId;
     uint32_t       nodeBytes;
     uint8_t        nodeBuffer[1];
 };
@@ -462,8 +462,8 @@ extern const NetMsg kNetMsg_Cli2Auth_VaultInitAgeRequest;
 struct Cli2Auth_VaultInitAgeRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    Uuid        ageInstId;
-    Uuid        parentAgeInstId;
+    plUUID      ageInstId;
+    plUUID      parentAgeInstId;
     wchar_t       ageFilename[MAX_PATH];
     wchar_t       ageInstName[MAX_PATH];
     wchar_t       ageUserName[MAX_PATH];
@@ -572,7 +572,7 @@ extern const NetMsg kNetMsg_Cli2Auth_SendFriendInviteRequest;
 struct Cli2Auth_SendFriendInviteRequest {
     uint32_t   messageId;
     uint32_t   transId;
-    Uuid    inviteUuid;
+    plUUID  inviteUuid;
     wchar_t   emailAddress[kMaxEmailAddressLength];
     wchar_t   toName[kMaxPlayerNameLength];
 };
@@ -679,7 +679,7 @@ extern const NetMsg kNetMsg_Auth2Cli_ServerAddr;
 struct Auth2Cli_ServerAddr {
     uint32_t messageId;
     uint32_t srvAddr;
-    Uuid            token;
+    plUUID          token;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_NotifyNewBuild;
@@ -704,7 +704,7 @@ struct Auth2Cli_AcctLoginReply {
     uint32_t       messageId;
     uint32_t       transId;
     ENetError   result;
-    Uuid        accountId;
+    plUUID      accountId;
     uint32_t       accountFlags;
     uint32_t       billingType;
     uint32_t       encryptionKey[4];
@@ -717,7 +717,7 @@ struct Auth2Cli_AgeReply {
     uint32_t  transId;
     ENetError result;
     uint32_t  ageMcpId;
-    Uuid      ageInstId;
+    plUUID    ageInstId;
     uint32_t  ageVaultId;
     uint32_t  gameSrvNode;
 };
@@ -728,7 +728,7 @@ struct Auth2Cli_AcctCreateReply {
     uint32_t           messageId;
     uint32_t           transId;
     ENetError       result;
-    Uuid            accountId;
+    plUUID          accountId;
 };
 
 // AcctCreateFromKeyReply
@@ -737,8 +737,8 @@ struct Auth2Cli_AcctCreateFromKeyReply {
     uint32_t           messageId;
     uint32_t           transId;
     ENetError       result;
-    Uuid            accountId;
-    Uuid            activationKey;
+    plUUID          accountId;
+    plUUID          activationKey;
 };
 
 // CreatePlayerReply
@@ -870,7 +870,7 @@ extern const NetMsg kNetMsg_Auth2Cli_VaultNodeChanged;
 struct Auth2Cli_VaultNodeChanged {
     uint32_t                   messageId;
     uint32_t                   nodeId;
-    Uuid                    revisionId;
+    plUUID                  revisionId;
 };
 
 extern const NetMsg kNetMsg_Auth2Cli_VaultNodeAdded;

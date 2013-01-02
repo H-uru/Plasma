@@ -65,31 +65,20 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtIsBlueSpiralGame, args, "Params: typeID\nRetur
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtIsBlueSpiralGame expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "PtIsBlueSpiralGame expects a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
+
+    if (PyString_CheckEx(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
-        text[strLen] = L'\0';
+        plString text = PyString_AsStringEx(textObj);
+
         bool retVal = pyBlueSpiralGame::IsBlueSpiralGame(text);
-        delete [] text;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(textObj);
-        wchar_t* wText = hsStringToWString(text);
-        bool retVal = pyBlueSpiralGame::IsBlueSpiralGame(wText);
-        delete [] wText;
         PYTHON_RETURN_BOOL(retVal);
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "PtIsBlueSpiralGame expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "PtIsBlueSpiralGame expects a string");
         PYTHON_RETURN_ERROR;
     }
 }

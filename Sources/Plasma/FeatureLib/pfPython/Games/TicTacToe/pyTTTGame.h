@@ -69,7 +69,7 @@ public:
     static void AddPlasmaConstantsClasses(PyObject* m);
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-    static bool IsTTTGame(std::wstring guid);
+    static bool IsTTTGame(plString& guid);
     static void CreateTTTGame(pyKey& callbackKey, unsigned numPlayers);
     static void JoinCommonTTTGame(pyKey& callbackKey, unsigned gameID, unsigned numPlayers);
 

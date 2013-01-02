@@ -193,7 +193,7 @@ plUUID pyAgeVault::GetAgeGuid( void )
         rvn->DecRef();
         return uuid;
     }
-    return plUUID();
+    return kNilUuid;
 }
 
 

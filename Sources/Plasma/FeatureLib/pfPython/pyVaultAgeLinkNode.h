@@ -64,8 +64,6 @@ class pySpawnPointInfoRef;
 class pyVaultAgeLinkNode : public pyVaultNode
 {
 private:
-    mutable std::string fAgeGuidStr;    // for getting Age GUID
-
     mutable plAgeLinkStruct     fAgeLinkStruct; // for use with AsAgeLinkStruct()
 
 protected:

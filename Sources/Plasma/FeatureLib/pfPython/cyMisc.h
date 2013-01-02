@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef cyMisc_h
 #define cyMisc_h
 
+#include <string>
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // NAME: cyMisc
@@ -63,8 +65,8 @@ class pyPoint3;
 class pyGUIDialog;
 class plPipeline;
 class plDisplayMode;
+class plUUID;
 struct PipelineParams;
-struct Uuid;
 
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;
@@ -633,7 +635,7 @@ public:
     static void NotifyOffererPublicLinkCompleted(uint32_t offerer);
     static void ToggleAvatarClickability(bool on);
     static void SetShareSpawnPoint(const char* spawnPoint);
-    static void SetShareAgeInstanceGuid(const Uuid& guid);
+    static void SetShareAgeInstanceGuid(const plUUID& guid);
     
     //////////////////////////////////////////////////////////////////////////////
     //

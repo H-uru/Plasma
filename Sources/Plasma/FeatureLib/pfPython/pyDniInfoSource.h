@@ -74,7 +74,7 @@ public:
     // name of current age
     const char *    GetAgeName( void ) const;
     // unique identifier for this age instance
-    plUUID          GetAgeGuid( void ) const;
+    plUUID          GetAgeGuid(void) const;
 };
 
 

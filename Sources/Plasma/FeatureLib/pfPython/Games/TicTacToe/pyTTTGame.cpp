@@ -59,9 +59,9 @@ pyTTTGame::pyTTTGame(pfGameCli* client): pyGameCli(client)
         gameClient = nil; // wrong type, just clear it out
 }
 
-bool pyTTTGame::IsTTTGame(std::wstring guid)
+bool pyTTTGame::IsTTTGame(plString& guid)
 {
-    Uuid gameUuid(guid.c_str());
+    plUUID gameUuid(guid);
     return gameUuid == kGameTypeId_TicTacToe;
 }
 

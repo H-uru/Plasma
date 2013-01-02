@@ -64,7 +64,7 @@ struct plUUIDHelper
 void plUUID::Clear()
 {
     uuid_t g;
-    plUUIDHelper::CopyToNative( g, this );
+    //plUUIDHelper::CopyToNative( g, this );
     uuid_clear( g );
     plUUIDHelper::CopyToPlasma( this, g );
 }
@@ -98,11 +98,16 @@ bool plUUID::IsEqualTo( const plUUID * v ) const
 bool plUUID::FromString( const char * str )
 {
     Clear();
-    if ( !str )
+    if (!str) {
         return false;
+    }
+
     uuid_t g;
-    uuid_parse( str, g );
-    plUUIDHelper::CopyToPlasma( this, g );
+    if (uuid_parse(str, g) != 0) {
+        return false;
+    }
+
+    plUUIDHelper::CopyToPlasma(this, g);
     return true;
 }
 
@@ -124,14 +129,6 @@ plUUID plUUID::Generate()
     plUUID result;
     plUUIDHelper::CopyToPlasma( &result, g );
     return result;
-}
-
-#else
-
-// dummy function to prevent a linker warning complaining about no public symbols if the
-// contents of the file get compiled out via pre-processor
-void _preventLNK4221WarningStub()
-{
 }
 
 #endif

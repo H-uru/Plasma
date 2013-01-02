@@ -128,7 +128,7 @@ struct NetCliAuthPlayerInfo {
 typedef void (*FNetCliAuthLoginRequestCallback)(
     ENetError                   result,
     void *                      param,
-    const Uuid &                accountId,
+    const plUUID&               accountId,
     unsigned                    accountFlags,
     unsigned                    billingType,
     const NetCliAuthPlayerInfo  playerInfoArr[],
@@ -162,7 +162,7 @@ void NetCliAuthSetPlayerRequest (
 typedef void (*FNetCliAuthAccountCreateRequestCallback)(
     ENetError                       result,
     void *                          param,
-    const Uuid &                    accountId
+    const plUUID&                   accountId
 );
 void NetCliAuthAccountCreateRequest (
     const wchar_t                             accountName[],
@@ -179,13 +179,13 @@ void NetCliAuthAccountCreateRequest (
 typedef void (*FNetCliAuthAccountCreateFromKeyRequestCallback)(
     ENetError                       result,
     void *                          param,
-    const Uuid &                    accountId,
-    const Uuid &                    activationKey
+    const plUUID&                   accountId,
+    const plUUID&                   activationKey
 );
 void NetCliAuthAccountCreateFromKeyRequest (
     const wchar_t                                     accountName[],
     const wchar_t                                     accountPass[],
-    Uuid                                            key,
+    plUUID                                          key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
     void *                                          param
@@ -313,7 +313,7 @@ typedef void (*FNetCliAuthAccountActivateRequestCallback)(
     void *                          param
 );
 void NetCliAuthAccountActivateRequest (
-    const Uuid &                                activationKey,
+    const plUUID&                               activationKey,
     FNetCliAuthAccountActivateRequestCallback   callback,
     void *                                      param
 );
@@ -326,12 +326,12 @@ typedef void (*FNetCliAuthAgeRequestCallback)(
     void *          param,
     unsigned        ageMcpId,
     unsigned        ageVaultId,
-    const Uuid &    ageInstId,
+    const plUUID&   ageInstId,
     plNetAddress    gameAddr
 );
 void NetCliAuthAgeRequest (
     const wchar_t                         ageName[],      // L"Teledahn"
-    const Uuid &                        ageInstId,
+    const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 );
@@ -389,7 +389,7 @@ struct NetVaultNodeRef;
 // VaultNodeChanged
 typedef void (*FNetCliAuthVaultNodeChanged)(
     unsigned        nodeId,
-    const Uuid &    revisionId
+    const plUUID&   revisionId
 );
 void NetCliAuthVaultSetRecvNodeChangedHandler (
     FNetCliAuthVaultNodeChanged handler
@@ -519,8 +519,8 @@ typedef void (*FNetCliAuthAgeInitCallback) (
     unsigned            ageInfoVaultId
 );
 void NetCliAuthVaultInitAge (
-    const Uuid &                ageInstId,          // optional. is used in match
-    const Uuid &                parentAgeInstId,    // optional. is used in match
+    const plUUID&               ageInstId,          // optional. is used in match
+    const plUUID&               parentAgeInstId,    // optional. is used in match
     const wchar_t                 ageFilename[],      // optional. is used in match
     const wchar_t                 ageInstName[],      // optional. not used in match
     const wchar_t                 ageUserName[],      // optional. not used in match
@@ -589,7 +589,7 @@ typedef void (*FNetCliAuthSendFriendInviteCallback)(
 void NetCliAuthSendFriendInvite (
     const wchar_t                         emailAddress[],
     const wchar_t                         toName[],
-    const Uuid&                         inviteUuid,
+    const plUUID&                         inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 );

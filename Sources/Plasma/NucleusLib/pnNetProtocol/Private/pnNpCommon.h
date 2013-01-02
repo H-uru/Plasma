@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPCOMMON_H
 
+#include "pnUUID/pnUUID.h"
+
 
 /*****************************************************************************
 *
@@ -62,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const NetMsgField kNetMsgFieldAccountName   = NET_MSG_FIELD_STRING(kMaxAccountNameLength);
 const NetMsgField kNetMsgFieldPlayerName    = NET_MSG_FIELD_STRING(kMaxPlayerNameLength);
 const NetMsgField kNetMsgFieldShaDigest     = NET_MSG_FIELD_RAW_DATA(sizeof(ShaDigest));
-const NetMsgField kNetMsgFieldUuid          = NET_MSG_FIELD_DATA(sizeof(Uuid));
+const NetMsgField kNetMsgFieldUuid          = NET_MSG_FIELD_DATA(sizeof(plUUID));
 const NetMsgField kNetMsgFieldTransId       = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldTimeMs        = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldENetError     = NET_MSG_FIELD_DWORD();
@@ -96,7 +98,7 @@ struct SrvPlayerInfo {
 ***/
 
 struct NetAgeInfo {
-    Uuid        ageInstId;
+    plUUID        ageInstId;
     wchar_t       ageFilename[kMaxAgeNameLength];
     wchar_t       ageInstName[kMaxAgeNameLength];
     wchar_t       ageUserName[kMaxAgeNameLength];
@@ -209,7 +211,7 @@ struct NetVaultNode : AtomicRef {
     uint64_t       fieldFlags;
     uint64_t       dirtyFlags;
     
-    Uuid        revisionId;
+    plUUID      revisionId;
 
     // Treat these as read-only or node flag fields will become invalid 
     // Threaded apps: Must be accessed with node->critsect locked   
@@ -217,8 +219,8 @@ struct NetVaultNode : AtomicRef {
     unsigned    createTime;
     unsigned    modifyTime;
     wchar_t *   createAgeName;
-    Uuid        createAgeUuid;
-    Uuid        creatorAcct;    // accountId of node creator
+    plUUID      createAgeUuid;
+    plUUID      creatorAcct;    // accountId of node creator
     unsigned    creatorId;      // playerId of node creator
     unsigned    nodeType;
     int         int32_1;
@@ -229,10 +231,10 @@ struct NetVaultNode : AtomicRef {
     unsigned    uint32_2;
     unsigned    uint32_3;
     unsigned    uint32_4;
-    Uuid        uuid_1;
-    Uuid        uuid_2;
-    Uuid        uuid_3;
-    Uuid        uuid_4;
+    plUUID      uuid_1;
+    plUUID      uuid_2;
+    plUUID      uuid_3;
+    plUUID      uuid_4;
     wchar_t *   string64_1;
     wchar_t *   string64_2;
     wchar_t *   string64_3;
@@ -261,8 +263,8 @@ struct NetVaultNode : AtomicRef {
     void SetCreateTime (unsigned v);
     void SetModifyTime (unsigned v);
     void SetCreateAgeName (const wchar_t v[]);
-    void SetCreateAgeUuid (const Uuid & v);
-    void SetCreatorAcct (const Uuid & v);
+    void SetCreateAgeUuid (const plUUID& v);
+    void SetCreatorAcct (const plUUID& v);
     void SetCreatorId (unsigned v);
     void SetNodeType (unsigned v);
     void SetInt32_1 (int v);
@@ -273,10 +275,10 @@ struct NetVaultNode : AtomicRef {
     void SetUInt32_2 (unsigned v);
     void SetUInt32_3 (unsigned v);
     void SetUInt32_4 (unsigned v);
-    void SetUuid_1 (const Uuid & v);
-    void SetUuid_2 (const Uuid & v);
-    void SetUuid_3 (const Uuid & v);
-    void SetUuid_4 (const Uuid & v);
+    void SetUuid_1 (const plUUID& v);
+    void SetUuid_2 (const plUUID& v);
+    void SetUuid_3 (const plUUID& v);
+    void SetUuid_4 (const plUUID& v);
     void SetString64_1 (const wchar_t v[]);
     void SetString64_2 (const wchar_t v[]);
     void SetString64_3 (const wchar_t v[]);
@@ -298,8 +300,8 @@ struct NetVaultNode : AtomicRef {
     inline unsigned GetCreateTime () const { return createTime; }
     inline unsigned GetModifyTime () const { return modifyTime; }
     inline wchar_t * GetCreateAgeName () const { return createAgeName; }
-    inline Uuid GetCreateAgeUuid () const { return createAgeUuid; }
-    inline Uuid GetCreatorAcct () const { return creatorAcct; }
+    inline plUUID GetCreateAgeUuid () const { return createAgeUuid; }
+    inline plUUID GetCreatorAcct () const { return creatorAcct; }
     inline unsigned GetCreatorId () const { return creatorId; }
     inline unsigned GetNodeType () const { return nodeType; }
     inline int GetInt32_1 () const { return int32_1; }
@@ -310,10 +312,10 @@ struct NetVaultNode : AtomicRef {
     inline unsigned GetUInt32_2 () const { return uint32_2; }
     inline unsigned GetUInt32_3 () const { return uint32_3; }
     inline unsigned GetUInt32_4 () const { return uint32_4; }
-    inline Uuid GetUuid_1 () const { return uuid_1; }
-    inline Uuid GetUuid_2 () const { return uuid_2; }
-    inline Uuid GetUuid_3 () const { return uuid_3; }
-    inline Uuid GetUuid_4 () const { return uuid_4; }
+    inline plUUID GetUuid_1 () const { return uuid_1; }
+    inline plUUID GetUuid_2 () const { return uuid_2; }
+    inline plUUID GetUuid_3 () const { return uuid_3; }
+    inline plUUID GetUuid_4 () const { return uuid_4; }
     inline wchar_t * GetString64_1 () const { return string64_1; }
     inline wchar_t * GetString64_2 () const { return string64_2; }
     inline wchar_t * GetString64_3 () const { return string64_3; }

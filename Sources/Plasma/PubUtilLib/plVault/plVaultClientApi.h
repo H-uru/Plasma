@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct RelVaultNode;
+class plUUID;
 
 struct VaultCallback {
     struct IVaultCallback * internal;
@@ -316,7 +317,7 @@ typedef void (*FVaultInitAgeCallback)(
 );
 void VaultInitAge (
     const class plAgeInfoStruct *   info,
-    const Uuid &                    parentAgeInstId,
+    const plUUID                    parentAgeInstId,
     FVaultInitAgeCallback           callback,
     void *                          state,
     void *                          param
@@ -343,7 +344,7 @@ RelVaultNode *  VaultGetPlayerInboxFolderIncRef ();
 RelVaultNode *  VaultGetOwnedAgeLinkIncRef (const plAgeInfoStruct * info);
 RelVaultNode *  VaultGetOwnedAgeInfoIncRef (const plAgeInfoStruct * info);
 bool            VaultGetOwnedAgeLink (const plAgeInfoStruct * info, plAgeLinkStruct * link);
-bool            VaultAddOwnedAgeSpawnPoint (const Uuid & ageInstId, const plSpawnPointInfo & spawnPt);
+bool            VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo & spawnPt);
 bool            VaultSetOwnedAgePublicAndWait (const plAgeInfoStruct * info, bool publicOrNot);
 RelVaultNode *  VaultGetVisitAgeLinkIncRef (const plAgeInfoStruct * info);
 bool            VaultGetVisitAgeLink (const plAgeInfoStruct * info, class plAgeLinkStruct * link);
@@ -372,8 +373,8 @@ bool VaultAmInMyPersonalAge ();
 bool VaultAmInMyNeighborhoodAge ();
 bool VaultAmOwnerOfCurrentAge ();
 bool VaultAmCzarOfCurrentAge ();
-bool VaultAmOwnerOfAge (const Uuid & ageInstId);
-bool VaultAmCzarOfAge (const Uuid & ageInstId);
+bool VaultAmOwnerOfAge (const plUUID& ageInstId);
+bool VaultAmCzarOfAge (const plUUID& ageInstId);
 bool VaultRegisterMTStationAndWait (
     const wchar_t stationName[],
     const wchar_t linkBackSpawnPtObjName[]
@@ -430,9 +431,9 @@ bool VaultAgeGetSubAgeLink (
 bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link,
-    const Uuid &            parentAgeInstId
+    const plUUID&           parentAgeInstId
 );
-bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const Uuid& parentUuid);
+bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& arentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     const wchar_t             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,

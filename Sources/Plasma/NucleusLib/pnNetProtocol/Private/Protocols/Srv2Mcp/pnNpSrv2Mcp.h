@@ -125,8 +125,8 @@ struct Srv2Mcp_Connect {
 
 struct Srv2Mcp_AgeJoinRequest : SrvMsgHeader {
     wchar_t       ageName[kMaxAgeNameLength];
-    Uuid        ageUuid;
-    Uuid        accountUuid;
+    plUUID      ageUuid;
+    plUUID      accountUuid;
     uint32_t       playerInt;
     uint8_t        ccrLevel;
     wchar_t       playerName[kMaxPlayerNameLength];
@@ -135,21 +135,21 @@ struct Srv2Mcp_AgeJoinRequest : SrvMsgHeader {
 
 struct Srv2Mcp_PlayerLoggedIn : SrvMsgHeader {
     uint32_t       ageMcpId;
-    Uuid        ageUuid;
-    Uuid        accountUuid;
+    plUUID      ageUuid;
+    plUUID      accountUuid;
     wchar_t       playerName[kMaxPlayerNameLength];
     uint32_t       playerInt;
 };
 
 struct Srv2Mcp_PlayerLoggedOut : SrvMsgHeader {
     uint32_t       ageMcpId;
-    Uuid        accountUuid;
+    plUUID      accountUuid;
     uint32_t       playerInt;
 };
 
 struct Srv2Mcp_AgeSpawned : SrvMsgHeader {
     wchar_t       ageName[kMaxAgeNameLength];
-    Uuid        ageUuid;
+    plUUID      ageUuid;
     uint32_t       buildId;
 };
 
@@ -159,15 +159,15 @@ struct Srv2Mcp_AgeDied : SrvMsgHeader {
 
 struct Srv2Mcp_AccountLoginRequest : SrvMsgHeader {
     wchar_t       accountName[kMaxAccountNameLength];
-    Uuid        accountUuid;
+    plUUID      accountUuid;
 };
 
 struct Srv2Mcp_AccountLogout : SrvMsgHeader {
-    Uuid        accountUuid;
+    plUUID      accountUuid;
 };
 
 struct Srv2Mcp_AccountSetPlayer : SrvMsgHeader {
-    Uuid        accountUuid;
+    plUUID      accountUuid;
     uint32_t       playerInt;
 };
 
@@ -192,14 +192,14 @@ struct Srv2Mcp_KickPlayer : SrvMsgHeader {
 
 struct Mcp2Srv_AgeJoinReply : SrvMsgHeader {
     uint32_t ageMcpId;
-    Uuid     ageUuid;
+    plUUID   ageUuid;
     uint32_t gameSrvNode;
 };
 
 struct Mcp2Srv_AgeSpawnRequest : SrvMsgHeader {
     wchar_t           ageName[kMaxAgeNameLength];
     uint32_t           ageMcpId;
-    Uuid            ageUuid;
+    plUUID          ageUuid;
     uint32_t           buildId;
 };
 
@@ -209,15 +209,15 @@ struct Mcp2Srv_AgeUnspawn : SrvMsgHeader {
 
 struct Mcp2Srv_AgeAddPlayerRequest : SrvMsgHeader {
     uint32_t           ageMcpId;
-    Uuid            accountUuid;
+    plUUID          accountUuid;
     uint32_t           playerInt;
     uint8_t            ccrLevel;
     wchar_t           playerName[kMaxPlayerNameLength];
 };
 
 struct Mcp2Srv_AgeRemovePlayerRequest : SrvMsgHeader {
-    Uuid            ageMcpId;
-    Uuid            accountUuid;
+    plUUID          ageMcpId;
+    plUUID          accountUuid;
     uint32_t           playerInt;
 };
 
@@ -230,7 +230,7 @@ struct Mcp2Srv_AccountLoginReply : SrvMsgHeader {
 };
 
 struct Mcp2Srv_AccountNotifyKicked : SrvMsgHeader {
-    Uuid            accountUuid;
+    plUUID          accountUuid;
     uint32_t           acctMcpId;
     ENetError       reason;
 };

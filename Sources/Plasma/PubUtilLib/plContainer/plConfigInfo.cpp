@@ -437,7 +437,7 @@ void plConfigSource::SplitAt(std::string & key, std::string & value, char splitt
     if(in.length() == 0)
         return;
     
-    int t = in.find(splitter);
+    size_t t = in.find(splitter);
     if(t == std::string::npos)
     {
         key = in;
@@ -465,7 +465,7 @@ bool plConfigSource::ReadString(const std::string & in)
     // section
     if (work[0] == '[')
     {
-        int close = work.find_first_of("]");
+        size_t close = work.find_first_of("]");
         if(close == std::string::npos)
             return false;
         fCurrSection = work.substr(1,close-1);
@@ -1074,7 +1074,7 @@ void plConfigAggregateValue::AddItems(
 void plConfigAggregateValue::ISetValue(const char * value)
 {
     std::string work = value;
-    int p=0,i=0;
+    size_t p=0,i=0;
     do
     {
         xtl::trim(work);

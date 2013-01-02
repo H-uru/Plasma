@@ -301,7 +301,7 @@ void plNetLinkingMgr::SetEnabled( bool b )
 std::string plNetLinkingMgr::GetProperAgeName( const char * ageName )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-    hsFolderIterator it("dat"PATH_SEPARATOR_STR"*.age", true);
+    hsFolderIterator it("dat" PATH_SEPARATOR_STR "*.age", true);
     while ( it.NextFile() )
     {
         std::string work = it.GetFileName();
@@ -419,7 +419,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
 
     // Queue join op        
     NlmJoinAgeOp * joinAgeOp = NEWZERO(NlmJoinAgeOp);
-    joinAgeOp->age.ageInstId = (Uuid) *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+    joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
         GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
@@ -768,7 +768,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
     if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
-        Uuid ageInstGuid = *info->GetAgeInstanceGuid();
+        plUUID ageInstGuid = *info->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
@@ -863,7 +863,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         accInfo.SetAgeInstName(nil);
-        accInfo.SetAgeInstUuid(kNilGuid);
+        accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
         rvnInfo->DecRef();
     }
@@ -872,7 +872,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
-        Uuid ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+        plUUID ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
         StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
@@ -920,7 +920,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         // BASIC LINK. Link to a unique instance of the age, if no instance specified.
         case plNetCommon::LinkingRules::kBasicLink:
             if (!info->HasAgeInstanceGuid()) {
-                plUUID newuuid(GuidGenerate());
+                plUUID newuuid = plUUID::Generate();
                 info->SetAgeInstanceGuid(&newuuid);
             }
         break;
@@ -961,7 +961,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
-                        plUUID newuuid(GuidGenerate());
+                        plUUID newuuid = plUUID::Generate();
                         info->SetAgeInstanceGuid(&newuuid);
                     }
                     
@@ -1002,7 +1002,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             }
 
                             if (!info->HasAgeInstanceGuid()) {
-                                plUUID newuuid(GuidGenerate());
+                                plUUID newuuid = plUUID::Generate();
                                 info->SetAgeInstanceGuid(&newuuid);
                             }
 

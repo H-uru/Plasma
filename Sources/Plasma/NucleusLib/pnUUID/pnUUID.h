@@ -44,10 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStlUtils.h"
-#include "pnUtils/pnUtUuid.h"
+#include "plString.h"
 
 class hsStream;
-class plString;
+
+extern const class plUUID kNilUuid;
 
 class plUUID
 {
@@ -56,30 +57,31 @@ public:
     uint8_t   fData[16];
     struct Match
     {
-        const plUUID * fGuid;
-        Match( const plUUID * guid ):fGuid( guid ){}
-        bool operator()( const plUUID * guid ) const { return guid->IsEqualTo( fGuid );}
+        const plUUID* fGuid;
+        Match(const plUUID* guid) : fGuid(guid) {}
+        bool operator()(const plUUID* guid) const { return guid->IsEqualTo(fGuid); }
     };
 
     plUUID();
-    plUUID( const char * s );
-    plUUID( const plString & s );
-    plUUID( const plUUID & other );
-    plUUID( const Uuid & uuid );
-    void    Clear();
-    bool    IsNull() const;
-    bool    IsSet() const { return !IsNull(); }
-    void    CopyFrom( const plUUID * v );
-    void    CopyFrom( const plUUID & v );
-    int     CompareTo( const plUUID * v ) const;
-    bool    IsEqualTo( const plUUID * v ) const;
-    bool    FromString( const char * str );
-    bool    FromString( const plString & str ) { return FromString( str.c_str() ); }
-    bool    ToString( plString & out ) const;
+    plUUID(const plString& s);
+    plUUID(const plUUID& other);
+
+    void     Clear();
+    bool     IsNull() const;
+    bool     IsSet() const { return !IsNull(); }
+    void     CopyFrom(const plUUID* v);
+    void     CopyFrom(const plUUID& v);
+    int      CompareTo(const plUUID* v) const;
+    bool     IsEqualTo(const plUUID* v) const;
+    bool     FromString(const char* str);
+    bool     FromString(const plString& str) { return FromString(str.c_str()); }
+    bool     ToString(plString& out) const;
     plString AsString() const;
-    void    Read( hsStream * s );
-    void    Write( hsStream * s );
-    operator plString ( void ) const { return AsString();}
+    void     Read(hsStream* s);
+    void     Write(hsStream* s);
+
+    operator bool () const { return !IsNull(); }
+    inline bool operator ! () const { return IsNull(); }
 
     bool operator==(const plUUID& other) const {
         return IsEqualTo(&other);
@@ -90,7 +92,7 @@ public:
     bool operator<(const plUUID& other) const {
         return CompareTo(&other) == -1;
     }
-    operator Uuid () const;
+    operator plString (void) const { return AsString(); }
 
     static plUUID Generate();
 };

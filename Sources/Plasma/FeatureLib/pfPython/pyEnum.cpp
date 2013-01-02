@@ -108,7 +108,7 @@ static int EnumValue_print(PyObject *self, FILE *fp, int flags)
     if (text == NULL)
         return -1;
 
-    fprintf(fp, text); // and print it to the file
+    fprintf(fp, "%s", text); // and print it to the file
     return 0;
 }
 

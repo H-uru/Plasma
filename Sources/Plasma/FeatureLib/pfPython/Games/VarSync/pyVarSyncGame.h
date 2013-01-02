@@ -68,7 +68,7 @@ public:
     static void AddPlasmaClasses(PyObject* m);
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-    static bool IsVarSyncGame(std::wstring guid);
+    static bool IsVarSyncGame(plString& guid);
     static void JoinCommonVarSyncGame(pyKey& callbackKey);
 
     void SetStringVar(unsigned long id, std::wstring val);

@@ -51,11 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultNode.h"
 #include "pyGlueHelpers.h"
 
+class plUUID;
+
 class pyVaultPlayerInfoNode : public pyVaultNode
 {
     mutable char *      ansiPlayerName;
     mutable char *      ansiAgeInstName;
-    mutable char        ansiAgeInstUuid[256];
 
 protected:
     // should only be created from C++ side
@@ -88,7 +89,7 @@ public:
     void    Player_SetAgeInstanceName( const char * agename );
     const char * Player_GetAgeInstanceName( void );
     void    Player_SetAgeGuid( const char * guidtext);
-    const char * Player_GetAgeGuid( void );
+    plUUID  Player_GetAgeGuid(void) const;
     // online status
     void    Player_SetOnline( bool b );
     bool  Player_IsOnline( void );

@@ -104,25 +104,31 @@ uint32_t GetBinAddr(const char * textAddr)
 void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
-    std::string buf;
+
     uint32_t len = fStream.GetEOF();
     stream->WriteLE( len );
-    buf.resize( len );
-    fStream.Read( len, (void*)buf.data() );
-    stream->Write( len, (const void*)buf.data() );
+
+    uint8_t* buf = new uint8_t[len];
+    fStream.Read(len, (void*)buf);
+    stream->Write(len, (const void*)buf);
+
     fStream.Rewind();
+    delete[] buf;
 }
 
 void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
-    std::string buf;
+
     uint32_t len;
     stream->LogReadLE( &len,"CreatableStream Len");
-    buf.resize( len );
-    stream->LogRead( len, (void*)buf.data(),"CreatableStream Data");
-    fStream.Write( len, (const void*)buf.data() );
+
+    uint8_t* buf = new uint8_t[len];
+    stream->LogRead(len, (void*)buf, "CreatableStream Data");
+    fStream.Write(len, (const void*)buf);
+
     fStream.Rewind();
+    delete[] buf;
 }
 
 ////////////////////////////////////////////////////////////////////

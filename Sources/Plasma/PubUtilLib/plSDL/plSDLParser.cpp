@@ -135,7 +135,7 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         ok = ( plSDLMgr::GetInstance()->FindDescriptor(curDesc->GetName(), curDesc->GetVersion())==nil );
         if ( !ok )
         {
-            std::string err = xtl::format( "Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s", curDesc->GetName(), curDesc->GetVersion(), fileName );
+            plString err = plString::Format("Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s", curDesc->GetName().c_str(), curDesc->GetVersion(), fileName );
             plNetApp::StaticErrorMsg( err.c_str() );
             hsAssert( false, err.c_str() );
         }

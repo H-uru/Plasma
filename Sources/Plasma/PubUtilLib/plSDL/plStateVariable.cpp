@@ -1186,7 +1186,7 @@ bool plSimpleStateVariable::ConvertTo(plSimpleVarDescriptor* toVar, bool force )
         return true;
 
     hsLogEntry( plNetApp::StaticDebugMsg( "SSV(%p) converting %s from %s to %s",
-        this, fVar.GetName(), fVar.GetTypeString(), toVar->GetTypeString() ) );
+        this, fVar.GetName().c_str(), fVar.GetTypeString().c_str(), toVar->GetTypeString().c_str() ) );
 
     switch(fVar.GetType())  // original type
     {
@@ -2683,8 +2683,8 @@ void plSDStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) const
         pad += "   ";
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
-    dbg->LogMsg(xtl::format( "%sSDVar, name:%s dirtyOnly:%d count:%d", 
-        pad.c_str(), GetName(), dirtyOnly, cnt).c_str());
+    dbg->LogMsg(plString::Format("%sSDVar, name:%s dirtyOnly:%d count:%d", 
+        pad.c_str(), GetName().c_str(), dirtyOnly, cnt).c_str());
 
     for(i=0;i<GetCount();i++)
     {
@@ -2704,8 +2704,8 @@ void plSDStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int level
         pad += "   ";
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
-    stream->WriteString(xtl::format( "%sSDVar, name:%s dirtyOnly:%d count:%d", 
-        pad.c_str(), GetName(), dirtyOnly, cnt).c_str());
+    stream->WriteString(plString::Format("%sSDVar, name:%s dirtyOnly:%d count:%d", 
+        pad.c_str(), GetName().c_str(), dirtyOnly, cnt).c_str());
 
     for(i=0;i<GetCount();i++)
     {

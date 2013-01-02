@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyVaultAgeInfoNode.h"
 #include "plVault/plVault.h"
+#include "pnUUID/pnUUID.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultAgeInfoNode, pyVaultAgeInfoNode);
@@ -147,7 +148,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceGuid());
+    return PyString_FromPlString(self->fThis->GetAgeInstanceGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)

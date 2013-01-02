@@ -250,18 +250,18 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     plStateDataRecord* sdRec  = des ? new plStateDataRecord(des) : nil;
     if (!sdRec || sdRec->GetDescriptor()->GetVersion()!=ver)
     {
-        std::string err;
+        plString err;
         if (!sdRec)
-            err = xtl::format( "SDL descriptor %s missing, v=%d", descName, ver);
+            err = plString::Format("SDL descriptor %s missing, v=%d", descName.c_str(), ver);
         else
-            err = xtl::format( "SDL descriptor %s, version mismatch, server v=%d, client v=%d",
-                descName, ver, sdRec->GetDescriptor()->GetVersion());
+            err = plString::Format("SDL descriptor %s, version mismatch, server v=%d, client v=%d",
+                    descName.c_str(), ver, sdRec->GetDescriptor()->GetVersion());
 
         hsAssert(false, err.c_str());
         nc->ErrorMsg(const_cast<char*>(err.c_str()));
 
         // Post Quit message
-        nc->QueueDisableNet(true, "SDL Desc Problem");      
+        nc->QueueDisableNet(true, "SDL Desc Problem");
         delete sdRec;
     }
     else if( sdRec->Read( &stream, 0, rwFlags ) )

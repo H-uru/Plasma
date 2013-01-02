@@ -162,7 +162,7 @@ char    *plAgePage::GetAsString( void ) const
 //
 
 // static
-char    plAgeDescription::kAgeDescPath[]={"dat"PATH_SEPARATOR_STR};
+char    plAgeDescription::kAgeDescPath[]={"dat" PATH_SEPARATOR_STR};
 const char* plAgeDescription::fCommonPages[] = { "Textures", "BuiltIn" };
 
 // Also gotta init the separators for our helper reading function
