@@ -61,10 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsTimer.h"
 #include "hsStlUtils.h"
-#include "plFileUtils.h"
+#include "plFile/plFileUtils.h"
 #include "plStatusLog.h"
 #include "hsStlUtils.h"
-#include "hsFiles.h"
+#include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "pnProduct/pnProduct.h"
 

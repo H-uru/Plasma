@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
 #include "hsExceptions.h"
-#include "plFileUtils.h"
+#include "plFile/plFileUtils.h"
 #include "hsStlSortUtils.h"
 #include "hsStream.h"
 
