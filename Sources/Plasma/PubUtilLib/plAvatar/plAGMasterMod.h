@@ -58,9 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvDefs.h"
 #include "pnKeyedObject/plMsgForwarder.h"
 
-// templates
-#include "hsStlSortUtils.h"
-
 
 class plAGModifier;
 class plAGAnimInstance;

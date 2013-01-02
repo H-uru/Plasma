@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMtlCollector_h_inc
 
 #include <set>
-#include "hsStlSortUtils.h"
+#include "plString.h"
 
 class PBBitmap;
 class Mtl;
@@ -55,7 +55,7 @@ typedef std::set<Mtl*> MtlSet;
 typedef std::set<Texmap*> TexSet;
 typedef std::set<plPlasmaMAXLayer*> LayerSet;
 typedef std::set<PBBitmap*> PBSet;
-typedef std::set<const char*, stringISorter> TexNameSet;
+typedef std::set<plString, plString::less_i> TexNameSet;
 
 class plMtlCollector
 {

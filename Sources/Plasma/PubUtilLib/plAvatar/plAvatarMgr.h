@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <map>
 
-#include "hsStlSortUtils.h"
 #include "hsGeometry3.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"

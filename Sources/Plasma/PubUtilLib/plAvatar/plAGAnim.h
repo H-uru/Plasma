@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsStlSortUtils.h"
 
 class plTMController;
 class hsAffineParts;

@@ -56,8 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <map>
 
-#include "hsStlSortUtils.h"
-
 // local
 #include "plScalarChannel.h"
 

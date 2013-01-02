@@ -53,9 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // local
 #include "plAvatar/plScalarChannel.h"
 
-// stl
-#include "hsStlSortUtils.h"
-
 class plSceneObject;
 
 class plAGAnimInstance;

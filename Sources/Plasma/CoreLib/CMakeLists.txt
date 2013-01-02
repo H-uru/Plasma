@@ -68,7 +68,6 @@ set(CoreLib_HEADERS
     hsQuat.h
     hsRefCnt.h
     hsSafeRefCnt.h
-    hsStlSortUtils.h
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
