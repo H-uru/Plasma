@@ -367,7 +367,7 @@ plStringBuffer<wchar_t> plString::ToWchar() const
     return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf16);
 #else
     plUnicodeBuffer utf32 = GetUnicodeArray();
-    return *reinterpret_cast<plStringBuffer<wchar_t>*)(&utf32);
+    return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf32);
 #endif
 }
 

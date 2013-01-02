@@ -282,6 +282,7 @@ bool formatv(std::wstring & out, const wchar_t * fmt, va_list args)
     return success;
 }
 
+/*
 typedef std::vector<std::string> StringVector;
 typedef std::vector<std::wstring> WStringVector;
 typedef std::list<std::string> StringList;
@@ -295,6 +296,7 @@ template bool GetStringGroup<StringVector>(const std::string& s, StringVector& g
 template bool GetStringGroup<WStringVector>(const std::wstring& s, WStringVector& group, wchar_t sep);
 template bool GetStringGroup<StringSet>(const std::string& s, StringSet& group, char sep);
 template bool GetStringGroup<WStringSet>(const std::wstring& s, WStringSet& group, wchar_t sep);
+*/
 
 template <typename T> bool GetStringGroup(const std::string& s, T& group, char sep)
 {
@@ -337,13 +339,14 @@ template <typename T> bool GetStringGroup(const std::wstring& s, T& group, wchar
     return ret;
 }
 
-
+/*
 template bool GetStringGroupAsString<StringList>(const StringList& group, std::string& s, char sep);
 template bool GetStringGroupAsString<WStringList>(const WStringList& group, std::wstring& s, wchar_t sep);
 template bool GetStringGroupAsString<StringVector>(const StringVector& group, std::string& s, char sep);
 template bool GetStringGroupAsString<WStringVector>(const WStringVector& group, std::wstring& s, wchar_t sep);
 template bool GetStringGroupAsString<StringSet>(const StringSet& group, std::string& s, char sep);
 template bool GetStringGroupAsString<WStringSet>(const WStringSet& group, std::wstring& s, wchar_t sep);
+*/
 
 template <typename T> bool GetStringGroupAsString(const T& group, std::string& s, char sep)
 {

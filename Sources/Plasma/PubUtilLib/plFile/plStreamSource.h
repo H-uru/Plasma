@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plStreamSource_h_inc
 #define plStreamSource_h_inc
 
+#include <map>
 #include "hsStream.h"
 #include "hsStlUtils.h"
 

@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Code for the State Description Language (SDL)
 //
 
-#include "plSDLDescriptor.h"
+#include <list>
 
-#include "hsStlUtils.h"
+#include "plSDLDescriptor.h"
 
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"

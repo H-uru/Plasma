@@ -53,8 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // disable warning C4786: symbol greater than 255 characters,
 #pragma warning(disable: 4503 4786)
 
-// templates
-#include "hsStlUtils.h"
+#include "HeadSpin.h"
+#include <map>
+
 #include "hsStlSortUtils.h"
 
 // local

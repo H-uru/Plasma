@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include <hkmath/quaternion.h>
 //#include <hkmath/quaternion.h>
 
+#include <cmath>
+
 // singular
 #include "plMatrixChannel.h"
 

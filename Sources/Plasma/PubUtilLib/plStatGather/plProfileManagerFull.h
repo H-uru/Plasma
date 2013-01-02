@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProfileManagerFull_h_inc
 #define plProfileManagerFull_h_inc
 
-#include "plProfileManager.h"
+#include <set>
 
-#include "hsStlUtils.h"
+#include "plProfileManager.h"
 
 #include "hsStlSortUtils.h"
 

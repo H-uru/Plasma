@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include <algorithm>
+
 #include "plVirtualCamNeu.h"
 #include "plCameraModifier.h"
 #include "plCameraBrain.h"

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_NET_CLIENT_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <list>
 
 #include "plNetClientGroup.h"
 #include "plNetVoiceList.h"

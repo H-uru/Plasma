@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimTimeConvert_inc
 #define plAnimTimeConvert_inc
 
+#include <list>
 #include "pnFactory/plCreatable.h"
 #include "hsTemplates.h"
 #include "pnNetCommon/plSynchedValue.h"

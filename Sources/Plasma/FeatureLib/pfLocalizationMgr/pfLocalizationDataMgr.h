@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfLocalizationDataMgr_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <map>
 
 #include "pfLocalizedString.h"
 

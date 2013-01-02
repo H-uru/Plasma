@@ -44,13 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include <functional>
-#include <algorithm>
 #include <string>
-#include <vector>
-#include <map>
-#include <list>
-#include <set>
 
 
 /*****************************************************************************

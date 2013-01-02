@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMtlCollector_h_inc
 #define plMtlCollector_h_inc
 
+#include <set>
 #include "hsStlSortUtils.h"
 
 class PBBitmap;

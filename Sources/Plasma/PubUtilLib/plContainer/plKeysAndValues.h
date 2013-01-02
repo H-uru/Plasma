@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plKeysAndValues_h_inc
 
 #include "HeadSpin.h"
+#include <map>
+#include <list>
 
-#include "hsStlUtils.h"
 #include "hsStream.h"
 
 #pragma warning(disable:4284)

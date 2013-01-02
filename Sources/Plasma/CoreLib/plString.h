@@ -172,7 +172,7 @@ public:
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);
-    plString &operator=(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
+    plString &operator=(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); return *this; }
 
     plString &operator+=(const char *cstr) { return operator=(*this + cstr); }
     plString &operator+=(const plString &str) { return operator=(*this + str); }

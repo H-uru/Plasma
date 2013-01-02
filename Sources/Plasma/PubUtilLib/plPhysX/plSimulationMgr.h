@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSimulationMgr_H
 #define plSimulationMgr_H
 
-#include "hsStlUtils.h"
+#include <map>
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTemplates.h"
 
