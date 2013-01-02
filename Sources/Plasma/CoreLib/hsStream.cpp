@@ -123,9 +123,8 @@ uint32_t hsStream::WriteFmt(const char * fmt, ...)
 
 uint32_t hsStream::WriteFmtV(const char * fmt, va_list av)
 {
-    std::string buf;
-    xtl::formatv( buf, fmt, av );
-    return Write( buf.length(), buf.data() );
+    plString buf = plString::IFormat(fmt, av);
+    return Write( buf.GetSize(), buf.c_str() );
 }
 
 uint32_t hsStream::WriteSafeStringLong(const plString &string)

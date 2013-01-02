@@ -873,8 +873,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
     {
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        std::string str;
-        xtl::format( str, "%.*s\n", count, line );
+        plString str = plString::Format( "%.*s\n", count, line );
         OutputDebugString( str.c_str() );
 #endif
 #else

@@ -1192,7 +1192,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
         
         kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! (%s)", condStr.c_str()));
 
-        std::string msg = xtl::format("Data Problem: Age:%s  Page:%s  Error:%s", 
+        plString msg = plString::Format("Data Problem: Age:%s  Page:%s  Error:%s",
             pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr.c_str());
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
         

@@ -59,7 +59,7 @@ std::wstring & trimleft(std::wstring & s, const wchar_t * charset)
 
 std::string & trimright(std::string & s, const char * charset)
 {
-    int idx = s.find_last_not_of(charset);
+    size_t idx = s.find_last_not_of(charset);
     
     if (std::string::npos == idx)
     {
@@ -77,7 +77,7 @@ std::string & trimright(std::string & s, const char * charset)
 
 std::wstring & trimright(std::wstring & s, const wchar_t * charset)
 {
-    int idx = s.find_last_not_of(charset);
+    size_t idx = s.find_last_not_of(charset);
 
     if (std::wstring::npos == idx)
     {
@@ -106,197 +106,6 @@ std::wstring & trim(std::wstring & s, const wchar_t * charset)
     trimright(s,charset);
     return s;
 }
-
-// c-string
-std::string trim(const char * s, const char * charset)
-{
-    std::string result  = s;
-    trimleft(result,charset);
-    trimright(result,charset);
-    return result;
-}
-
-std::wstring trim(const wchar_t * s, const wchar_t * charset)
-{
-    std::wstring result = s;
-    trimleft(result,charset);
-    trimright(result,charset);
-    return result;
-}
-
-
-// format
-std::string format(const char * fmt, ...)
-{
-    std::string result;
-    va_list args;
-    va_start(args,fmt);
-    formatv(result,fmt,args);
-    va_end(args);
-    return result;
-}
-
-std::wstring format(const wchar_t * fmt, ...)
-{
-    std::wstring result;
-    va_list args;
-    va_start(args,fmt);
-    formatv(result,fmt,args);
-    va_end(args);
-    return result;
-}
-
-std::string formatv(const char * fmt, va_list args)
-{
-    std::string result;
-    formatv( result, fmt, args );
-    return result;
-}
-
-std::wstring formatv(const wchar_t * fmt, va_list args)
-{
-    std::wstring result;
-    formatv( result, fmt, args );
-    return result;
-}
-
-bool format(std::string & out, const char * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    bool r = formatv(out,fmt,args);
-    va_end(args);
-    return r;
-}
-
-bool format(std::wstring & out, const wchar_t * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    bool r = formatv(out,fmt,args);
-    va_end(args);
-    return r;
-}
-
-bool formatv(std::string & out, const char * fmt, va_list args)
-{
-#define kBufSz 2048
-
-    char buf[kBufSz];
-    char * pbuf = buf;
-    int len = 0;
-    int attempts = 0;
-    bool success = false;
-    const int kMaxAttempts = 40;
-
-    do
-    {
-        int maxlen = kBufSz*attempts+kBufSz-1;
-        len = hsVsnprintf(pbuf,maxlen,fmt,args);
-        attempts++;
-        success = (len>=0 && len<maxlen);
-        if (!success)
-        {
-            if (pbuf!=buf)
-                delete [] pbuf;
-            pbuf = new char[kBufSz+kBufSz*attempts];
-        }
-    }
-    while (!success && attempts<kMaxAttempts);
-
-    if (success)
-    {
-        pbuf[len] = '\0';
-        out = pbuf;
-    }
-
-    if (success)
-    {
-        pbuf[len] = '\0';
-        out = pbuf;
-    }
-    else
-    {
-        out = "";
-        if ( attempts==kMaxAttempts )
-        {
-            hsDebugMessage( "xtl::formatv - Max reallocs occurred while formatting string. Result is likely truncated!", 0 );
-        }
-    }
-
-    if (pbuf!=buf)
-        delete [] pbuf;
-
-    return success;
-}
-
-bool formatv(std::wstring & out, const wchar_t * fmt, va_list args)
-{
-#define kBufSz 2048
-    
-    wchar_t buf[kBufSz];
-    wchar_t * pbuf = buf;
-    int len = 0;
-    int attempts = 0;
-    bool success = false;
-    const int kMaxAttempts = 40;
-    
-    do
-    {
-        int maxlen = kBufSz*attempts+kBufSz-1;
-        len = hsVsnwprintf(pbuf,maxlen,fmt,args);
-        attempts++;
-        success = (len>=0 && len<maxlen);
-        if (!success)
-        {
-            if (pbuf!=buf)
-                delete [] pbuf;
-            pbuf = new wchar_t[kBufSz+kBufSz*attempts];
-        }
-    }
-    while (!success && attempts<kMaxAttempts);
-    
-    if (success)
-    {
-        pbuf[len] = L'\0';
-        out = pbuf;
-    }
-    
-    if (success)
-    {
-        pbuf[len] = L'\0';
-        out = pbuf;
-    }
-    else
-    {
-        out = L"";
-        if ( attempts==kMaxAttempts )
-        {
-            hsDebugMessage( "xtl::formatv - Max reallocs occurred while formatting wstring. Result is likely truncated!", 0 );
-        }
-    }
-    
-    if (pbuf!=buf)
-        delete [] pbuf;
-    
-    return success;
-}
-
-/*
-typedef std::vector<std::string> StringVector;
-typedef std::vector<std::wstring> WStringVector;
-typedef std::list<std::string> StringList;
-typedef std::list<std::wstring> WStringList;
-typedef std::set<std::string> StringSet;
-typedef std::set<std::wstring> WStringSet;
-
-template bool GetStringGroup<StringList>(const std::string& s, StringList& group, char sep);
-template bool GetStringGroup<WStringList>(const std::wstring& s, WStringList& group, wchar_t sep);
-template bool GetStringGroup<StringVector>(const std::string& s, StringVector& group, char sep);
-template bool GetStringGroup<WStringVector>(const std::wstring& s, WStringVector& group, wchar_t sep);
-template bool GetStringGroup<StringSet>(const std::string& s, StringSet& group, char sep);
-template bool GetStringGroup<WStringSet>(const std::wstring& s, WStringSet& group, wchar_t sep);
-*/
 
 template <typename T> bool GetStringGroup(const std::string& s, T& group, char sep)
 {
@@ -338,15 +147,6 @@ template <typename T> bool GetStringGroup(const std::wstring& s, T& group, wchar
 
     return ret;
 }
-
-/*
-template bool GetStringGroupAsString<StringList>(const StringList& group, std::string& s, char sep);
-template bool GetStringGroupAsString<WStringList>(const WStringList& group, std::wstring& s, wchar_t sep);
-template bool GetStringGroupAsString<StringVector>(const StringVector& group, std::string& s, char sep);
-template bool GetStringGroupAsString<WStringVector>(const WStringVector& group, std::wstring& s, wchar_t sep);
-template bool GetStringGroupAsString<StringSet>(const StringSet& group, std::string& s, char sep);
-template bool GetStringGroupAsString<WStringSet>(const WStringSet& group, std::wstring& s, wchar_t sep);
-*/
 
 template <typename T> bool GetStringGroupAsString(const T& group, std::string& s, char sep)
 {

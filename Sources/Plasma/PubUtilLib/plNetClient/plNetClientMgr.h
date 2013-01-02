@@ -348,7 +348,7 @@ public:
     
     // time converters
     plUnifiedTime GetServerTime() const;
-    const char* GetServerLogTimeAsString(std::string& ts) const;
+    const char* GetServerLogTimeAsString(plString& ts) const;
     double GetCurrentAgeElapsedSeconds() const;
     float GetCurrentAgeTimeOfDayPercent() const;
 

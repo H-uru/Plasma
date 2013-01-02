@@ -80,7 +80,7 @@ public:
     void    Write( hsStream* s, hsResMgr* mgr );
 
     // debug
-    std::string AsStdString( int level=0 ) const;
+    plString AsString( int level=0 ) const;
 };
 
 

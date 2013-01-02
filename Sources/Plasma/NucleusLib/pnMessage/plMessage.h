@@ -157,8 +157,8 @@ public:
 
 /////////////////////////////////////////////////////////////////
 // Helpers for reading/writing these types:
+//      plString
 //      std::string
-//      xtl::istring
 //      c strings (char *)
 //      c arrays (type [])
 

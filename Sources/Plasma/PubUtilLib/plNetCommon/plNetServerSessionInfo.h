@@ -84,7 +84,8 @@ class plAgeInfoStruct : public plCreatable
     // The language of the client that created this age
     int32_t           fAgeLanguage;
 
-    mutable std::string     fDisplayName;
+    // Evil (TODO: Nuke this)
+    mutable plString  fDisplayName;
 
     enum
     {

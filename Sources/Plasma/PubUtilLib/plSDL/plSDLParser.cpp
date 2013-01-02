@@ -70,7 +70,7 @@ void plSDLParser::DebugMsgV(const char* fmt, va_list args) const
 {
     if (strlen(fmt)==nil)
         return;
-    hsStatusMessage(xtl::formatv(fmt,args).c_str());
+    hsStatusMessage(plString::IFormat(fmt,args).c_str());
 }
 
 //
@@ -109,7 +109,7 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         if (!strcmp(token, "VERSION"))
         {
             // read desc version
-            hsAssert(curDesc, xtl::format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
             if (stream->GetToken(token, kTokenLen))
             {
                 int v=atoi(token);
@@ -119,14 +119,14 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         }
         else
         {
-            hsAssert(false, xtl::format("Error parsing state desc, missing VERSION, fileName=%s", 
+            hsAssert(false, plString::Format("Error parsing state desc, missing VERSION, fileName=%s",
                 fileName).c_str());
             ok = false;
         }
     }
     else
     {
-        hsAssert(false, xtl::format("Error parsing state desc, fileName=%s", fileName).c_str());
+        hsAssert(false, plString::Format("Error parsing state desc, fileName=%s", fileName).c_str());
         ok = false;
     }
 
@@ -135,7 +135,8 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         ok = ( plSDLMgr::GetInstance()->FindDescriptor(curDesc->GetName(), curDesc->GetVersion())==nil );
         if ( !ok )
         {
-            std::string err = xtl::format( "Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s", curDesc->GetName(), curDesc->GetVersion(), fileName );
+            plString err = plString::Format( "Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s",
+                                             curDesc->GetName().c_str(), curDesc->GetVersion(), fileName );
             plNetApp::StaticErrorMsg( err.c_str() );
             hsAssert( false, err.c_str() );
         }

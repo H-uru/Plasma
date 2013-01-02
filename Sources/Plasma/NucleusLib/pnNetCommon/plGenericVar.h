@@ -117,7 +117,7 @@ public:
     void    SetType(Types t)        { fType=t; }
     uint8_t   GetType( void ) const   { return fType; }
     
-    std::string GetAsStdString() const;
+    plString GetAsString() const;
 
     // implicit set
     void    Set( int32_t i )      { fI = i; fType = kInt; }

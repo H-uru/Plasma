@@ -299,6 +299,8 @@ public:
     std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto) const;
     std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v") const;
 
+    static plString Fill(size_t count, char c);
+
 public:
     struct less
     {

@@ -219,7 +219,7 @@ PyObject* plPythonPack::OpenPacked(const char* fileName)
         {
             char *buf = new char[size];
             uint32_t readSize = fPackStream->Read(size, buf);
-            hsAssert(readSize <= size, xtl::format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
+            hsAssert(readSize <= size, plString::Format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
                 fileName, readSize, size).c_str());
 
             // let the python marshal make it back into a code object

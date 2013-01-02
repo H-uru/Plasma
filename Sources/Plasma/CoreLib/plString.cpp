@@ -750,6 +750,15 @@ std::vector<plString> plString::Split(const char *split, size_t maxSplits) const
     return result;
 }
 
+plString plString::Fill(size_t count, char c)
+{
+    plStringBuffer<char> buf;
+    char *data = buf.CreateWritableBuffer(count + 1);
+    memset(data, c, count);
+    data[count] = 0;
+    return buf;
+}
+
 plString operator+(const plString &left, const plString &right)
 {
     plString cat;

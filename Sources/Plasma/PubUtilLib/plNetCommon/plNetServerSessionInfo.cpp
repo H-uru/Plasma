@@ -358,9 +358,9 @@ const char * plAgeInfoStruct::GetDisplayName() const
 {
     int seq = GetAgeSequenceNumber();
     if ( seq>0 )
-        xtl::format( fDisplayName, "%s(%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s(%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
     else
-        xtl::format( fDisplayName, "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
+        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
     return fDisplayName.c_str();
 }
 

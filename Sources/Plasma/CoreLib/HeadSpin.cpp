@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStlUtils.h"
 #include "hsTemplates.h"
+#include "plString.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -214,6 +215,7 @@ void hsStatusMessageF(const char * fmt, ...)
 
 #endif
 
+// TODO: Deprecate these in favor of plString
 char * hsFormatStr(const char * fmt, ...)
 {
     va_list args;
@@ -225,8 +227,7 @@ char * hsFormatStr(const char * fmt, ...)
 
 char * hsFormatStrV(const char * fmt, va_list args)
 {
-    std::string buf;
-    xtl::formatv(buf,fmt,args);
+    plString buf = plString::IFormat(fmt, args);
     return hsStrcpy(buf.c_str());
 }
 
@@ -460,6 +461,8 @@ char    *hsWStringToString( const wchar_t *str )
 //
 char** DisplaySystemVersion()
 {
+    // TODO:  I so want to std::vector<plString> this, but that requires
+    //        including more headers in HeadSpin.h :(
 #if HS_BUILD_FOR_WIN32
 #ifndef VER_SUITE_PERSONAL
 #define VER_SUITE_PERSONAL 0x200
@@ -554,7 +557,7 @@ char** DisplaySystemVersion()
 
         if ( osvi.dwMajorVersion <= 4 )
         {
-            versionStrs.Append(hsStrcpy (xtl::format("version %d.%d %s (Build %d)\n",
+            versionStrs.Append(hsStrcpy (plString::Format("version %d.%d %s (Build %d)\n",
                 osvi.dwMajorVersion,
                 osvi.dwMinorVersion,
                 osvi.szCSDVersion,
@@ -562,7 +565,7 @@ char** DisplaySystemVersion()
         }
         else
         {
-            versionStrs.Append(hsStrcpy (xtl::format("%s (Build %d)\n",
+            versionStrs.Append(hsStrcpy (plString::Format("%s (Build %d)\n",
                 osvi.szCSDVersion,
                 osvi.dwBuildNumber & 0xFFFF).c_str()));
         }

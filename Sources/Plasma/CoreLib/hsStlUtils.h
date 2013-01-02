@@ -62,18 +62,6 @@ std::string & trimright(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trimright(std::wstring & s, const wchar_t * charset=L" \t\n\r");
 std::string & trim(std::string & s, const char * charset=" \t\n\r");
 std::wstring & trim(std::wstring & s, const wchar_t * charset=L" \t\n\r");
-// c-string trim
-std::string trim(const char * s, const char * charset=" \t\n\r");
-std::wstring trim(const wchar_t * s, const wchar_t * charset=L" \t\n\r");
-// format
-std::string format(const char * fmt, ...);
-std::wstring format(const wchar_t * fmt, ...);
-std::string formatv(const char * fmt, va_list args);
-std::wstring formatv(const wchar_t * fmt, va_list args);
-bool format(std::string & out, const char * fmt, ...);
-bool format(std::wstring & out, const wchar_t * fmt, ...);
-bool formatv(std::string & out, const char * fmt, va_list args);
-bool formatv(std::wstring & out, const wchar_t * fmt, va_list args);
 
 
 template <typename T> bool GetStringGroup(const std::string& s, T& group, char sep = ',');

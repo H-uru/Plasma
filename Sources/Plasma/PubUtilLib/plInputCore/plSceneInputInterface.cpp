@@ -835,17 +835,16 @@ void plSceneInputInterface::ILinkOffereeToAge()
         // We must have an owned copy of the age before we can offer it, so make one now
         plUUID guid(GuidGenerate());
         info.SetAgeInstanceGuid(&guid);
-        std::string title;
-        std::string desc;
+        plString title, desc;
 
         unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
         if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's' || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
-            xtl::format( title, "%s'", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            xtl::format( desc, "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+            title = plString::Format( "%s'", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
+            desc = plString::Format( "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
         }
         else {
-            xtl::format( title, "%s's", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            xtl::format( desc, "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+            title = plString::Format( "%s's", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
+            desc = plString::Format( "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
         }
 
         info.SetAgeUserDefinedName( title.c_str() );
