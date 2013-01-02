@@ -39,14 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "../plResMgr/plResManager.h"
-#include "../pfPython/plPythonFileMod.h"
-#include "../plGImage/plFontCache.h"
-#include "../plPhysX/plSimulationMgr.h"
-#include "../plAvatar/plAvatarMgr.h"
+#include "plResMgr/plResManager.h"
+#include "pfPython/plPythonFileMod.h"
+#include "plGImage/plFontCache.h"
+#include "plPhysX/plSimulationMgr.h"
+#include "plAvatar/plAvatarMgr.h"
 
 #include "plPageOptimizer.h"
-#include "../plFile/plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
 int main(int argc, char* argv[])
 {

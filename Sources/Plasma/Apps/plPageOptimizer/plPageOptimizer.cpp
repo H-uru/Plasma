@@ -41,16 +41,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPageOptimizer.h"
 
-#include "../pnKeyedObject/plUoid.h"
-#include "../plResMgr/plResManager.h"
-#include "../plResMgr/plRegistryHelpers.h"
-#include "../plResMgr/plKeyFinder.h"
-#include "../plResMgr/plRegistryNode.h"
+#include "pnKeyedObject/plUoid.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plResMgr/plRegistryNode.h"
 
-#include "../pnFactory/plFactory.h"
-#include "../pnKeyedObject/plKeyImp.h"
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
 
-#include "../plFile/plFileUtils.h"
+#include "plFile/plFileUtils.h"
 #include "hsStream.h"
 
 plPageOptimizer* plPageOptimizer::fInstance = nil;
@@ -163,7 +163,7 @@ void plPageOptimizer::Optimize()
 
 void plPageOptimizer::KeyedObjectProc(plKey key)
 {
-    const char* keyName = key->GetName();
+    plString keyName = key->GetName();
     const char* className = plFactory::GetNameOfClass(key->GetUoid().GetClassType());
 
     // For now, ignore any key that isn't in the location we're looking at.  That means stuff like textures.
@@ -176,7 +176,7 @@ void plPageOptimizer::KeyedObjectProc(plKey key)
     KeySet::iterator it = loadedKeys.lower_bound(key);
     if (it != loadedKeys.end() && *it == key)
     {
-        printf("Keyed object %s(%s) loaded more than once\n", keyName, className);
+        printf("Keyed object %s(%s) loaded more than once\n", keyName.c_str(), className);
     }
     else
     {
@@ -247,35 +247,35 @@ void plPageOptimizer::IRewritePage()
         uint32_t oldKeyStart = pageInfo.GetIndexStart();
         oldPage.SetPosition(oldKeyStart);
 
-        uint32_t numTypes = oldPage.ReadSwap32();
-        newPage.WriteSwap32(numTypes);
+        uint32_t numTypes = oldPage.ReadLE32();
+        newPage.WriteLE32(numTypes);
 
         for (uint32_t i = 0; i < numTypes; i++)
         {
-            uint16_t classType = oldPage.ReadSwap16();
-            uint32_t len = oldPage.ReadSwap32();
+            uint16_t classType = oldPage.ReadLE16();
+            uint32_t len = oldPage.ReadLE32();
             uint8_t flags = oldPage.ReadByte();
-            uint32_t numKeys = oldPage.ReadSwap32();
+            uint32_t numKeys = oldPage.ReadLE32();
 
-            newPage.WriteSwap16(classType);
-            newPage.WriteSwap32(len);
+            newPage.WriteLE16(classType);
+            newPage.WriteLE32(len);
             newPage.WriteByte(flags);
-            newPage.WriteSwap32(numKeys);
+            newPage.WriteLE32(numKeys);
 
             for (uint32_t j = 0; j < numKeys; j++)
             {
                 plUoid uoid;
                 uoid.Read(&oldPage);
-                uint32_t startPos = oldPage.ReadSwap32();
-                uint32_t dataLen = oldPage.ReadSwap32();
+                uint32_t startPos = oldPage.ReadLE32();
+                uint32_t dataLen = oldPage.ReadLE32();
 
                 // Get the new start pos
                 plKeyImp* key = (plKeyImp*)fResMgr->FindKey(uoid);
                 startPos = key->GetStartPos();
 
                 uoid.Write(&newPage);
-                newPage.WriteSwap32(startPos);
-                newPage.WriteSwap32(dataLen);
+                newPage.WriteLE32(startPos);
+                newPage.WriteLE32(dataLen);
             }
         }
 

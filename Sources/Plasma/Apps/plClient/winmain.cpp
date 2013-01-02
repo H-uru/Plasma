@@ -75,7 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnProduct/pnProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
-#include "plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
 #include "plPhysX/plSimulationMgr.h"
 

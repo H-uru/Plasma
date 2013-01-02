@@ -71,7 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "UserPropMgr.h"
-#include "plFileUtils.h"
+#include "plFile/plFileUtils.h"
 
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"

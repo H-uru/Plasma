@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plFileUtils.h"
-#include "hsFiles.h"
+#include "plFile/plFileUtils.h"
+#include "plFile/hsFiles.h"
 
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
