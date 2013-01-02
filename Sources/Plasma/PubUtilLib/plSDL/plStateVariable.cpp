@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <float.h>
 #include "hsStream.h"
 #include "hsTimer.h"
-#include "hsStlUtils.h"
 #include "plSDL.h"
 
 #include "pnProduct/pnProduct.h"
@@ -1186,7 +1185,7 @@ bool plSimpleStateVariable::ConvertTo(plSimpleVarDescriptor* toVar, bool force )
         return true;
 
     hsLogEntry( plNetApp::StaticDebugMsg( "SSV(%p) converting %s from %s to %s",
-        this, fVar.GetName(), fVar.GetTypeString(), toVar->GetTypeString() ) );
+        this, fVar.GetName().c_str(), fVar.GetTypeString().c_str(), toVar->GetTypeString().c_str() ) );
 
     switch(fVar.GetType())  // original type
     {

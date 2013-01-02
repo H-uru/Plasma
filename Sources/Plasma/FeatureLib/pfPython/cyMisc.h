@@ -59,6 +59,7 @@ class pyPoint3;
 
 #include "HeadSpin.h"
 #include <vector>
+#include <string>
 
 class pyGUIDialog;
 class plPipeline;

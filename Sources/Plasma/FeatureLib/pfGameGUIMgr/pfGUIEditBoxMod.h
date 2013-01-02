@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIEditBoxMod_h
 #define _pfGUIEditBoxMod_h
 
-#include "hsStlUtils.h"
 #include "pfGUIControlMod.h"
 #include "pnInputCore/plKeyDef.h"
 

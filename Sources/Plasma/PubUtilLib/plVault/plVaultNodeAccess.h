@@ -50,12 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 
-// 'Old' system is full of compiler warnings at /W4, so just hide them
-#pragma warning(push, 0)
-#include "hsStlUtils.h"
-#pragma warning(pop)
-
-
 /*****************************************************************************
 *
 *   VaultNode field access strutures

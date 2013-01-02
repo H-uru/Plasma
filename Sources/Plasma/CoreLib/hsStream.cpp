@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
@@ -55,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #include <io.h>
 #endif
-#include "hsStlUtils.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 

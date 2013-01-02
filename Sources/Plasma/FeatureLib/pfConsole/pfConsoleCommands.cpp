@@ -161,7 +161,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnTimer/pnBuildDates.h"
 
-#include "hsStlUtils.h"
 #include "hsTemplates.h"
 
 #include "plResMgr/plResManagerHelper.h"

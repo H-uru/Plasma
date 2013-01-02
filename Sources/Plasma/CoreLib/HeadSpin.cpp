@@ -41,12 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include <wchar.h>
 
 #ifdef _MSC_VER
 #   include <crtdbg.h>
 #endif
 
-#include "hsStlUtils.h"
 #include "hsTemplates.h"
 #include "plString.h"
 

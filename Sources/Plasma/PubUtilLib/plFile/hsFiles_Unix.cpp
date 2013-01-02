@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/types.h>
 #include <unistd.h>
 #include <glob.h>
+#include <string>
 #include "hsTemplates.h"
 #include "plFileUtils.h"
-#include "hsStlUtils.h"
 
 struct hsFolderIterator_Data {
     glob_t fGlobBuf;

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __PLGENERIC_H__
 
 #include "hsStream.h"
-#include "hsStlUtils.h"
 
 class plGeneric
 {

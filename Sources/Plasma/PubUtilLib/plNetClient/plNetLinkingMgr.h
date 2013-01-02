@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetLinkingMgr_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "hsBitVector.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"

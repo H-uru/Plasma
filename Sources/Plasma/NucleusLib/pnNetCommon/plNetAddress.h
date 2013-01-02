@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h" // FIXME
 #include "plString.h"
 
-#include "hsStlUtils.h"
 #include "hsStream.h"
 
 #if defined(HS_BUILD_FOR_WIN32)

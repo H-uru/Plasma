@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "plNetServerSessionInfo.h"
-#include "hsStlUtils.h"
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 

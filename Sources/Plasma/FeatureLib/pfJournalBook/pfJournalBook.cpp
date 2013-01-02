@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfJournalBook.h"
 #include <wchar.h>
 
-#include "hsStlUtils.h"
 #include "hsResMgr.h"
 #include "pcSmallRect.h"
 #include "plgDispatch.h"

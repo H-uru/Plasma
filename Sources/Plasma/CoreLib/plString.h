@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 typedef unsigned int UniChar;
 
 #define SSO_CHARS (16)
+#define WHITESPACE_CHARS " \t\n\r"
 
 template <typename _Ch>
 class plStringBuffer
@@ -279,15 +280,15 @@ public:
     int Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
     { return Find(str.c_str(), sense); }
 
-    plString TrimLeft(const char *charset = " \t\n\r") const;
-    plString TrimRight(const char *charset = " \t\n\r") const;
-    plString Trim(const char *charset = " \t\n\r") const;
+    plString TrimLeft(const char *charset = WHITESPACE_CHARS) const;
+    plString TrimRight(const char *charset = WHITESPACE_CHARS) const;
+    plString Trim(const char *charset = WHITESPACE_CHARS) const;
 
     plString Substr(int start, size_t size = kSizeAuto) const;
     plString Left(size_t size) const { return Substr(0, size); }
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
 
-    // NOTE:  Does ::Compare(blah, kCaseInsensitive) make more sense?  If
+    // NOTE:  Does Compare(blah, kCaseInsensitive) make more sense?  If
     //        so, use that instead -- it's faster and more efficient!
     plString ToUpper() const;
     plString ToLower() const;
@@ -297,7 +298,7 @@ public:
     // all delimiters and only returns the pieces left between them), whereas
     // Split will split on a full string, returning whatever is left between.
     std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto) const;
-    std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v") const;
+    std::vector<plString> Tokenize(const char *delims = WHITESPACE_CHARS) const;
 
     static plString Fill(size_t count, char c);
 

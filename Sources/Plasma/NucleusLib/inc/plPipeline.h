@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreatable.h"
 #include "hsGMatState.h"
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 
 #define MIN_WIDTH 640
 #define MIN_HEIGHT 480

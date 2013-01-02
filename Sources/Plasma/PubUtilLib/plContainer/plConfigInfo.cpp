@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plConfigInfo.h"
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include <fstream>
 #include <algorithm>
 #include <stdarg.h>

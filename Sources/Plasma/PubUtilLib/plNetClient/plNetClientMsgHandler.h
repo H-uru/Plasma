@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetClientMsgHandler_inc
 
 #include "plNetCommon/plNetMsgHandler.h"
-#include "hsStlUtils.h"
 
 ///////////////////////////////////////////////////////////////////
 

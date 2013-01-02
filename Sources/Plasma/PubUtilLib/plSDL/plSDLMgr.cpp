@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsStream.h"
-#include "hsStlUtils.h"
 #include "plSDL.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"

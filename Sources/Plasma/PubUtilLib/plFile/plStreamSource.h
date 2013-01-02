@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plStreamSource_h_inc
 
 #include <map>
+#include <string>
 #include "hsStream.h"
-#include "hsStlUtils.h"
 
 // A class for holding and accessing file streams. The preloader will insert
 // files in here once they are loaded. In internal builds, if a requested file

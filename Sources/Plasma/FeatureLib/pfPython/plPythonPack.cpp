@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "hsStream.h"
 #include "hsStlSortUtils.h"
 #pragma hdrstop

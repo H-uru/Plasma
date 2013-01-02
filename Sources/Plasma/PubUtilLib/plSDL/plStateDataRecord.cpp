@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "hsTemplates.h"
 #include "hsStream.h"
-#include "hsStlUtils.h"
 #include "plSDL.h"
 
 #include "plNetMessage/plNetMessage.h"

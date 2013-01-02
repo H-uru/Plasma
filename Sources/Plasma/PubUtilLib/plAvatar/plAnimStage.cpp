@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // global
 
-#include "hsStlUtils.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 

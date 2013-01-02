@@ -301,7 +301,7 @@ void plNetLinkingMgr::SetEnabled( bool b )
 std::string plNetLinkingMgr::GetProperAgeName( const char * ageName )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-    hsFolderIterator it("dat"PATH_SEPARATOR_STR"*.age", true);
+    hsFolderIterator it("dat" PATH_SEPARATOR_STR "*.age", true);
     while ( it.NextFile() )
     {
         std::string work = it.GetFileName();

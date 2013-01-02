@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetGroup_h
 #define plNetGroup_h
 
+#include <string>
 #include "pnKeyedObject/plUoid.h"
 #include "hsStream.h"
-#include "hsStlUtils.h"
 
 class plNetGroupId
 {

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plGenericVar.h"
 #include "hsMemory.h"
-#include "hsStlUtils.h"
 
 //////////////////////////////////////////////////////
 // plGenericType

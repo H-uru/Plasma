@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
