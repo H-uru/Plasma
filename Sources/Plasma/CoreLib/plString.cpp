@@ -513,17 +513,21 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         for ( ;; ) {
             va_copy(vptr, vptr_save);
             plStringBuffer<char> bigbuffer;
-            char *data = bigbuffer.CreateWritableBuffer(size);
+            char *data = bigbuffer.CreateWritableBuffer(size-1);
             chars = vsnprintf(data, size, fmt, vptr);
-            if (chars >= 0)
-                return bigbuffer;
+            if (chars >= 0) {
+                // We need to construct a new string here so the length
+                // parameter is accurate :(
+                return plString::FromUtf8(bigbuffer.GetData(), chars);
+            }
 
             size *= 2;
+            hsAssert(size > 0, "Formatted string output is waaaaay too long");
         }
     } else if (chars >= 256) {
         va_copy(vptr, vptr_save);
         plStringBuffer<char> bigbuffer;
-        char *data = bigbuffer.CreateWritableBuffer(chars+1);
+        char *data = bigbuffer.CreateWritableBuffer(chars);
         vsnprintf(data, chars+1, fmt, vptr);
         return bigbuffer;
     }

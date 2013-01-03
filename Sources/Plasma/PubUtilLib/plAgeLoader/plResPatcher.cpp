@@ -249,7 +249,6 @@ void plResPatcher::IssueRequest()
 
             plFileUtils::EnsureFilePathExists(req.fFriendlyName.c_str());
             plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile.c_str());
-            uint32_t i = stream->ReadBE32();
             if (stream->Open_TEMP(filename, "wb"))
                 NetCliFileDownloadRequest(req.fFile.c_str(), stream, FileDownloaded, this);
             else {

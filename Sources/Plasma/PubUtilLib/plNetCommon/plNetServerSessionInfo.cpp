@@ -353,16 +353,6 @@ void plAgeInfoStruct::Clear()
     fAgeLanguage = -1;
 }
 
-const char * plAgeInfoStruct::GetDisplayName() const
-{
-    int seq = GetAgeSequenceNumber();
-    if ( seq>0 )
-        fDisplayName = plString::Format( "%s(%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
-    else
-        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
-    return fDisplayName.c_str();
-}
-
 
 ////////////////////////////////////////////////////////////////////
 
