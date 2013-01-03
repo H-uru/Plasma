@@ -42,7 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalization_h_inc
 #define plLocalization_h_inc
 
-#include "hsStlUtils.h"
+#include <vector>
+#include <string>
 
 class plLocalization
 {

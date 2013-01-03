@@ -80,10 +80,10 @@ void plResCollector::Collect()
     TexNameSet::iterator it = texNames.begin();
     for (; it != texNames.end(); it++)
     {
-        const char *texName = *it;
+        plString texName = *it;
 
         char outpath[MAX_PATH], name[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
-        _splitpath(texName, NULL, NULL, name, ext);
+        _splitpath(texName.c_str(), NULL, NULL, name, ext);
         strcat(name, ext);
 
         if (bar.Update(name))
@@ -92,7 +92,7 @@ void plResCollector::Collect()
         strcpy(outpath, path);
         strcat(outpath, name);
 
-        CopyFile(texName, outpath, TRUE);
+        CopyFile(texName.c_str(), outpath, TRUE);
     }
 
     // Get the filename to save to

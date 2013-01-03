@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include <vector>
-#include "hsStlSortUtils.h"
 #include "plString.h"
 
 class plErrorMsg;

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAxisAnimMod_inc
 #define plAxisAnimMod_inc
 
-#include "hsStlUtils.h"
 #include "pnModifier/plSingleModifier.h"
 #include "plString.h"
 

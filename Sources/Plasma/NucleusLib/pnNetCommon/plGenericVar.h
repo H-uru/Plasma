@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
 class hsStream;
@@ -117,7 +116,7 @@ public:
     void    SetType(Types t)        { fType=t; }
     uint8_t   GetType( void ) const   { return fType; }
     
-    std::string GetAsStdString() const;
+    plString GetAsString() const;
 
     // implicit set
     void    Set( int32_t i )      { fI = i; fType = kInt; }

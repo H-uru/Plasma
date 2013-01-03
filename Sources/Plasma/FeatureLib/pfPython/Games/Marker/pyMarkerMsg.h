@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Marker game messages
 //
 
+#include <string>
 #include "../../pyGlueHelpers.h"
 #include "../pyGameCliMsg.h"
 

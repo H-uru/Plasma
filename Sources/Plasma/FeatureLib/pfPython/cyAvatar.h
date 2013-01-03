@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
-#include "hsStlUtils.h"
+#include <string>
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 

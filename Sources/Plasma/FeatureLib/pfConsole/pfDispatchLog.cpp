@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "plString.h"
 
-static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info);
+static bool DumpSpecificMsgInfo(plMessage* msg, plString& info);
 
 plDispatchLog::plDispatchLog() :
     fLog(nil),
@@ -101,7 +101,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 
 void plDispatchLog::LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)
 {
-    std::string info;
+    plString info;
     if (DumpSpecificMsgInfo(msg, info))
         fLog->AddLineF("%-30s[%7u](%-20s) took %6.1f ms to receive %s[%s]\n", keyname, clonePlayerID, className, ms, msg->ClassName(), info.c_str());
     else
@@ -195,7 +195,7 @@ void plDispatchLog::RemoveFilterExactType(uint16_t type)
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plPageInfo.h"
 
-static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
+static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE // Don't bloat up the external release with all these strings
     pfKIMsg* kiMsg = pfKIMsg::ConvertNoRef(msg);
@@ -257,7 +257,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
         PrintKIType(kGZFlashUpdate);                // flash an update without saving (for animation of GZFill in)
         PrintKIType(kNoCommand);
 
-        info = xtl::format("Type: %s Str: %s User: %s(%d) Delay: %f Int: %d",
+        info = plString::Format("Type: %s Str: %s User: %s(%d) Delay: %f Int: %d",
             typeName,
             kiMsg->GetString() != "" ? kiMsg->GetString().c_str() : "(nil)",
             kiMsg->GetUser() ? kiMsg->GetUser() : "(nil)",
@@ -298,14 +298,14 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
                     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(loc);
 
                     if (pageInfo)
-                        info += xtl::format("%s-%s ", pageInfo->GetAge(), pageInfo->GetPage());
+                        info += plString::Format("%s-%s ", pageInfo->GetAge(), pageInfo->GetPage());
                 }
             }
             break;
 
         case plClientMsg::kLoadAgeKeys:
         case plClientMsg::kReleaseAgeKeys:
-            info += xtl::format(" - Age: %s", clientMsg->GetAgeName());
+            info += plString::Format(" - Age: %s", clientMsg->GetAgeName());
             break;
         }
         return true;
@@ -321,7 +321,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, std::string& info)
         GetType(kOnRequest);
         GetType(kOnRemove);
         GetType(kOnReplace);
-        xtl::format(info, "Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName().c_str(), typeName);
+        info = plString::Format("Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName().c_str(), typeName);
 
         return true;
     }

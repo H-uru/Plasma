@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
-#include "hsStlUtils.h"
 
 
 class plRelevanceRegion;

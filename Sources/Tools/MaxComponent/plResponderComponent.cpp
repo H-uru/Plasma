@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "hsStlSortUtils.h"
 #include "hsWindows.h"
 
 #include <iparamm2.h>
@@ -597,7 +596,7 @@ void plResponderProc::ICreateMenu()
 {
     fhMenu = CreatePopupMenu();
 
-    std::map<const char *, HMENU, stringSorter> menus;
+    std::map<plString, HMENU> menus;
     int cmdID = 0;
 
     for (int i = 0; i < gResponderCmds.size(); i++)

@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLCRITTERCMDS_H__
 #define __PLCRITTERCMDS_H__
 
-#include "hsStlUtils.h"
-
+#include <vector>
+#include <string>
 
 typedef std::vector<std::string> VCharArray;
 

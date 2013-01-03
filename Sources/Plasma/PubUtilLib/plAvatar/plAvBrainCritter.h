@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_AV_BRAIN_CRITTER_H
 #define PL_AV_BRAIN_CRITTER_H
 
+#include <map>
 #include "plAvBrain.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"

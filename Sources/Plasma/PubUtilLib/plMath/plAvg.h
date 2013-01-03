@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AVG_H
 
 #include "HeadSpin.h"
+#include <list>
+
 #include "hsThread.h"
-#include "hsStlUtils.h"
 
 
 // A Time based Value Averaging class

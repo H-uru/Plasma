@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMultistageBehMod_h_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "hsStlUtils.h"
 
 class plAnimStageVec;
 

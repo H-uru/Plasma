@@ -49,7 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plPlates_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <string>
+
 #include "hsColorRGBA.h"
 #include "hsTemplates.h"
 

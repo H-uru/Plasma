@@ -110,17 +110,17 @@ void plProfileManagerFull::ShowGroup(const char* groupName)
 
 void plProfileManagerFull::ShowNextGroup()
 {
-    const char* curGroup = nil;
+    plString curGroup;
     if (fShowGroups.begin() != fShowGroups.end())
         curGroup = *(fShowGroups.begin());
 
     GroupSet groups;
     GetGroups(groups);
 
-    const char* nextGroup = nil;
-    if (curGroup)
+    plString nextGroup;
+    if (!curGroup.IsNull())
     {
-        CreateStandardGraphs(curGroup, false);
+        CreateStandardGraphs(curGroup.c_str(), false);
 
         GroupSet::iterator it = groups.find(curGroup);
         it++;
@@ -128,7 +128,7 @@ void plProfileManagerFull::ShowNextGroup()
         {
             nextGroup = *it;
         }
-        ISetActive(curGroup,false);
+        ISetActive(curGroup.c_str(), false);
     }
     else
     {
@@ -136,10 +136,10 @@ void plProfileManagerFull::ShowNextGroup()
     }
 
     fShowGroups.clear();
-    if (nextGroup)
+    if (!nextGroup.IsNull())
     {
-        ISetActive(nextGroup, true);
-        CreateStandardGraphs(nextGroup, true);
+        ISetActive(nextGroup.c_str(), true);
+        CreateStandardGraphs(nextGroup.c_str(), true);
         fShowGroups.insert(nextGroup);
     }
 }
@@ -305,16 +305,16 @@ void plProfileManagerFull::Update()
     GroupSet::iterator it;
     for (it = fShowGroups.begin(); it != fShowGroups.end(); it++)
     {
-        const char* groupName = *it;
+        plString groupName = *it;
 
         std::vector<plProfileBase*> group;
 
         for (int i = 0; i < fVars.size(); i++)
-            if (strcmp(fVars[i]->GetGroup(), groupName) == 0)
+            if (groupName.Compare(fVars[i]->GetGroup()) == 0)
                 group.push_back(fVars[i]);
 
         int x = 10;
-        PrintGroup(group, groupName, x, y);
+        PrintGroup(group, groupName.c_str(), x, y);
 
         maxX = hsMaximum(maxX, x);
         y += 10;
@@ -480,8 +480,8 @@ void plProfileManagerFull::ILogStats()
 
             for (it = groups.begin(); it != groups.end(); it++)
             {
-                const char* groupName = *it;
-                IPrintGroup(&s, groupName, true);
+                plString groupName = *it;
+                IPrintGroup(&s, groupName.c_str(), true);
             }
             s.WriteByte('\r');
             s.WriteByte('\n');
@@ -492,8 +492,8 @@ void plProfileManagerFull::ILogStats()
 
         for (it = groups.begin(); it != groups.end(); it++)
         {
-            const char* groupName = *it;
-            IPrintGroup(&s, groupName);
+            plString groupName = *it;
+            IPrintGroup(&s, groupName.c_str());
         }
         s.WriteByte('\r');
         s.WriteByte('\n');

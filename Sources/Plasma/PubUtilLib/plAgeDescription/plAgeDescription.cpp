@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plAgeDescription.h"
 
-#include "hsStlUtils.h"
 #include "plFile/hsFiles.h"
 #include "plFile/plInitFileReader.h"
 #include "plFile/plEncryptedStream.h"
@@ -162,7 +161,7 @@ char    *plAgePage::GetAsString( void ) const
 //
 
 // static
-char    plAgeDescription::kAgeDescPath[]={"dat"PATH_SEPARATOR_STR};
+char        plAgeDescription::kAgeDescPath[] = { "dat" PATH_SEPARATOR_STR };
 const char* plAgeDescription::fCommonPages[] = { "Textures", "BuiltIn" };
 
 // Also gotta init the separators for our helper reading function

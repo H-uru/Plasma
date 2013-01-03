@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAgeLoader_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVBRAINGENERIC_H
 #define PLAVBRAINGENERIC_H
 
-#include "hsStlUtils.h"
 #include "plAvBrainGeneric.h"
 
 /** \class plAvBrainCoop

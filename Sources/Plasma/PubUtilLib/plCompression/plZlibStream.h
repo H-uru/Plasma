@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plZlibStream_h_inc
 
 #include "hsStream.h"
-#include "hsStlUtils.h"
+#include <string>
 
 //
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsStlUtils.h"
 #include "plNetCommonHelpers.h"
 #include "pnNetCommon/plGenericVar.h"
 #include "plCompression/plZlibCompress.h"
@@ -102,7 +101,9 @@ plCreatableListHelper::plCreatableListHelper()
 
 void plCreatableListHelper::IClearItems()
 {
-    std::for_each( fManagedItems.begin(), fManagedItems.end(), xtl::delete_ptr() );
+    std::for_each( fManagedItems.begin(), fManagedItems.end(),
+        [](plCreatable * cre) { delete cre; }
+    );
     fManagedItems.clear();
     fItems.clear();
 }

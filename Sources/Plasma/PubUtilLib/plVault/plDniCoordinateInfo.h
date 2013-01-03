@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plDniCoordinateInfo_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
 ///////////////////////////////////////////////////////////////////
@@ -80,7 +79,7 @@ public:
     void    Write( hsStream* s, hsResMgr* mgr );
 
     // debug
-    std::string AsStdString( int level=0 ) const;
+    plString AsString( int level=0 ) const;
 };
 
 

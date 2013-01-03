@@ -27,7 +27,6 @@ set(CoreLib_SOURCES
     hsRefCnt.cpp
     hsSafeRefCnt.cpp
     hsSTLStream.cpp
-    hsStlUtils.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
     hsTemplates.cpp
@@ -69,9 +68,7 @@ set(CoreLib_HEADERS
     hsQuat.h
     hsRefCnt.h
     hsSafeRefCnt.h
-    hsStlSortUtils.h
     hsSTLStream.h
-    hsStlUtils.h
     hsStream.h
     hsStringTokenizer.h
     hsTemplates.h

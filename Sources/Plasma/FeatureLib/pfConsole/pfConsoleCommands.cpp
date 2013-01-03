@@ -161,7 +161,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnTimer/pnBuildDates.h"
 
-#include "hsStlUtils.h"
 #include "hsTemplates.h"
 
 #include "plResMgr/plResManagerHelper.h"
@@ -538,7 +537,7 @@ PF_CONSOLE_CMD(Stats, ListGroups, "", "Prints the names of all the stat groups t
 
     plProfileManagerFull::GroupSet::iterator it;
     for (it = groups.begin(); it != groups.end(); it++)
-        PrintString((char*)*it);
+        PrintString(it->c_str());
 }
 
 PF_CONSOLE_CMD(Stats, ListLaps, "", "Prints the names of all the stats with laps to the console")

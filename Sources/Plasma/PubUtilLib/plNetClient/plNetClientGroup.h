@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetClientGroup_h
 #define plNetClientGroup_h
 
-#include "hsStlUtils.h"
+#include <set>
 #include "pnNetCommon/plNetGroup.h"
 
 //

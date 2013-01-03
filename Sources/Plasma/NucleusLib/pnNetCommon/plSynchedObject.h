@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsStlUtils.h"
 #include "plNetGroup.h"
 
 /////////////////////////////////////

@@ -64,7 +64,7 @@ class plLinkToAgeMsg : public plMessage
 public:
     plLinkToAgeMsg();
     plLinkToAgeMsg( const plAgeLinkStruct * link );
-    ~plLinkToAgeMsg();
+    virtual ~plLinkToAgeMsg();
 
     CLASSNAME_REGISTER( plLinkToAgeMsg );
     GETINTERFACE_ANY( plLinkToAgeMsg, plMessage );

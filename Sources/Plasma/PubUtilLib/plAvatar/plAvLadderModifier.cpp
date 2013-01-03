@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 
 #include "HeadSpin.h"
+#include <cmath>
 
 // singular
 #include "plAvLadderModifier.h"

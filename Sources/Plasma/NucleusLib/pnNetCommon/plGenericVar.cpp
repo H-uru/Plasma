@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plGenericVar.h"
 #include "hsMemory.h"
-#include "hsStlUtils.h"
 
 //////////////////////////////////////////////////////
 // plGenericType
@@ -317,45 +316,28 @@ void plGenericType::SetVar(Types t, unsigned int size, void* val)
 }
 
 
-std::string plGenericType::GetAsStdString() const
+plString plGenericType::GetAsString() const
 {
-    std::string s;
-
     switch (fType)
     {
     case kInt :
-        {
-            xtl::format(s,"%d",fI);
-            break;
-        }
+        return plString::Format("%d", fI);
     case kBool :
     case kUInt :
-        {
-            xtl::format(s,"%u",fType==kBool?fB:fU);
-            break;
-        }
+        return plString::Format("%u", fType==kBool?fB:fU);
     case kFloat :
     case kDouble :
-        {
-            xtl::format(s,"%f",fType==kDouble?fD:fF);
-            break;
-        }
+        return plString::Format("%f", fType==kDouble?fD:fF);
     case kChar :
-        {
-            xtl::format(s,"%c",fC);
-            break;
-        }
+        return plString::Format("%c", fC);
     case kAny :
     case kString :
-        {
-            s = fS;
-            break;
-        }
+        return fS;
     case kNone :
         break;
     default:
         hsAssert(false,"plGenericType::GetAsStdString unknown type");
     }
 
-    return s;
+    return plString::Null;
 }

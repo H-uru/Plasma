@@ -280,7 +280,7 @@ int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const
         stringref.resize(strlen);
         if (strlen){
             stream->LogRead(strlen,(void*)stringref.data(),"StdString");
-            stream->LogStringString(xtl::format("Value: %s", stringref.data()).c_str());
+            stream->LogStringString(plString::Format("Value: %s", stringref.data()).c_str());
         }
     }
     else
@@ -302,7 +302,7 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
         stringref.resize(bufsz);
         if (bufsz){
             stream->LogRead(bufsz,(void*)stringref.data(),"StdString");
-            stream->LogStringString(xtl::format("Value: %s", stringref.data()).c_str());
+            stream->LogStringString(plString::Format("Value: %s", stringref.data()).c_str());
         }
     }
     else
@@ -332,39 +332,6 @@ int plMsgStdStringHelper::PeekBig(plString & stringref, hsStream* stream, const 
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgXtlStringHelper::Poke(const xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    plMessage::plStrLen strlen;
-    strlen = stringref.length();
-    stream->WriteLE(strlen);
-    if (strlen)
-        stream->Write(strlen,stringref.data());
-    return stream->GetPosition();
-}
-
-// STATIC
-int plMsgXtlStringHelper::Peek(xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    plMessage::plStrLen strlen;
-    stream->LogSubStreamStart("push me");
-    stream->LogReadLE(&strlen,"StrLen");
-    stringref.erase();
-    if (strlen <= stream->GetSizeLeft())
-    {
-        stringref.resize(strlen);
-        if (strlen){
-            stream->LogRead(strlen,(void*)stringref.data(),"XtlString");
-            stream->LogStringString(xtl::format("Value: %s", stringref.data()).c_str());
-        }
-    }
-    stream->LogSubStreamEnd();
-    return stream->GetPosition();
-}
-
-
-/////////////////////////////////////////////////////////////////
-
-// STATIC
 int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen len = (str) ? strlen(str) : 0;
@@ -390,7 +357,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
             str[strlen] = '\0';
             if (strlen) {
                 stream->LogRead(strlen,str,"CString");
-                stream->LogStringString(xtl::format("Value: %s",str).c_str());
+                stream->LogStringString(plString::Format("Value: %s",str).c_str());
             }
         }
     }

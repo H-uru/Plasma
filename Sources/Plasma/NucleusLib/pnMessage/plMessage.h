@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMessage_inc
 #define plMessage_inc
 
+#include <string>
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 
 class plKey;
 class hsStream;
@@ -157,8 +157,8 @@ public:
 
 /////////////////////////////////////////////////////////////////
 // Helpers for reading/writing these types:
+//      plString
 //      std::string
-//      xtl::istring
 //      c strings (char *)
 //      c arrays (type [])
 
@@ -178,15 +178,6 @@ struct plMsgStdStringHelper
     static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
-};
-
-/////////////////////////////////////////////////////////////////
-// reads/writes your xtl::istring field
-
-struct plMsgXtlStringHelper
-{
-    static int Poke(const xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(xtl::istring & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

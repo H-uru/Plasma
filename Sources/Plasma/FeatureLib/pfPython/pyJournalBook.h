@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 #include <vector>
+#include <string>
 
 class cyAnimation;
 class pyImage;

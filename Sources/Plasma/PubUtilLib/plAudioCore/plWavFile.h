@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "hsStlUtils.h"
+#include <vector>
 #include "hsWindows.h" // FIXME
 #include <mmsystem.h>
 #include "plAudioFileReader.h"

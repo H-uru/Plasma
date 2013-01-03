@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDSoundBuffer_h
 #define _plDSoundBuffer_h
 
-#include "hsStlUtils.h"
+#include <list>
 #include "hsTemplates.h"
 #include "plEAXEffects.h"
 #define STREAMING_BUFFERS 16

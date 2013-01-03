@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef plDispatch_inc
 #define plDispatch_inc
+#include <list>
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 #include "plgDispatch.h"
 #include "hsThread.h"
 #include "pnKeyedObject/hsKeyedObject.h"

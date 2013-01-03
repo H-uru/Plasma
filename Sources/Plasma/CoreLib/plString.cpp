@@ -163,7 +163,7 @@ void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
     while (sp < utf16 + size) {
         if (*sp >= 0xD800 && *sp <= 0xDFFF) {
             // Surrogate pair
-            unsigned int unichar = 0x10000;
+            UniChar unichar = 0x10000;
 
             if (sp + 1 >= utf16 + size) {
                 hsAssert(0, "Incomplete surrogate pair in UTF-16 data");
@@ -204,19 +204,25 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
     IConvertFromUtf16((const uint16_t *)wstr, size);
 #else
+    IConvertFromUtf32((const UniChar *)wstr, size);
+#endif
+}
+
+void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
+{
     fUtf8Buffer = plStringBuffer<char>();
-    if (wstr == nil)
+    if (ustr == nil)
         return;
 
     if ((int32_t)size < 0)
-        size = wcsnlen(wstr, -(int32_t)size);
+        size = ustrlen(ustr, -(int32_t)size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
-    const wchar_t *sp = wstr;
-    while (sp < wstr + size) {
+    const UniChar *sp = ustr;
+    while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
-            hsAssert(0, "UCS-4 character out of range");
+            hsAssert(0, "UTF-32 character out of range");
             convlen += 3;   // Use U+FFFD for release builds
         }
         else if (*sp > 0xFFFF)
@@ -233,8 +239,8 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // And perform the actual conversion
     char *utf8 = fUtf8Buffer.CreateWritableBuffer(convlen);
     char *dp = utf8;
-    sp = wstr;
-    while (sp < wstr + size) {
+    sp = ustr;
+    while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
             // Character out of range; Use U+FFFD instead
             *dp++ = 0xE0 | ((BADCHAR_REPLACEMENT >> 12) & 0x0F);
@@ -258,7 +264,6 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
         ++sp;
     }
     utf8[convlen] = 0;
-#endif
 }
 
 void plString::IConvertFromIso8859_1(const char *astr, size_t size)
@@ -327,7 +332,7 @@ plStringBuffer<uint16_t> plString::ToUtf16() const
     uint16_t *dp = ustr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
-        unsigned int unichar;
+        UniChar unichar;
         if ((*sp & 0xF8) == 0xF0) {
             unichar  = (*sp++ & 0x07) << 18;
             unichar |= (*sp++ & 0x3F) << 12;
@@ -361,53 +366,8 @@ plStringBuffer<wchar_t> plString::ToWchar() const
     plStringBuffer<uint16_t> utf16 = ToUtf16();
     return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf16);
 #else
-    plStringBuffer<wchar_t> result;
-    if (IsEmpty())
-        return result;
-
-    // Calculate the UCS-4 size
-    size_t convlen = 0;
-    const char *utf8 = fUtf8Buffer.GetData();
-    const char *sp = utf8;
-    size_t srcSize = fUtf8Buffer.GetSize();
-    while (sp < utf8 + srcSize) {
-        if ((*sp & 0xF8) == 0xF0)
-            sp += 4;
-        else if ((*sp & 0xF0) == 0xE0)
-            sp += 3;
-        else if ((*sp & 0xE0) == 0xC0)
-            sp += 2;
-        else
-            sp += 1;
-        ++convlen;
-    }
-
-    // And perform the actual conversion
-    wchar_t *wstr = result.CreateWritableBuffer(convlen);
-    wchar_t *dp = wstr;
-    sp = utf8;
-    while (sp < utf8 + srcSize) {
-        unsigned int unichar;
-        if ((*sp & 0xF8) == 0xF0) {
-            unichar  = (*sp++ & 0x07) << 18;
-            unichar |= (*sp++ & 0x3F) << 12;
-            unichar |= (*sp++ & 0x3F) << 6;
-            unichar |= (*sp++ & 0x3F);
-        } else if ((*sp & 0xF0) == 0xE0) {
-            unichar  = (*sp++ & 0x0F) << 12;
-            unichar |= (*sp++ & 0x3F) << 6;
-            unichar |= (*sp++ & 0x3F);
-        } else if ((*sp & 0xE0) == 0xC0) {
-            unichar  = (*sp++ & 0x1F) << 6;
-            unichar |= (*sp++ & 0x3F);
-        } else {
-            unichar = *sp++;
-        }
-        *dp++ = unichar;
-    }
-    wstr[convlen] = 0;
-
-    return result;
+    plUnicodeBuffer utf32 = GetUnicodeArray();
+    return *reinterpret_cast<plStringBuffer<wchar_t>*>(&utf32);
 #endif
 }
 
@@ -439,7 +399,7 @@ plStringBuffer<char> plString::ToIso8859_1() const
     char *dp = astr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
-        unsigned int unichar;
+        UniChar unichar;
         if ((*sp & 0xF8) == 0xF0) {
             unichar  = (*sp++ & 0x07) << 18;
             unichar |= (*sp++ & 0x3F) << 12;
@@ -462,18 +422,52 @@ plStringBuffer<char> plString::ToIso8859_1() const
     return result;
 }
 
-plStringBuffer<UniChar> plString::GetUnicodeArray() const
+plUnicodeBuffer plString::GetUnicodeArray() const
 {
-    plStringBuffer<UniChar> result;
+    plUnicodeBuffer result;
     if (IsEmpty())
         return result;
 
-    size_t convlen = GetUniCharCount();
+    // Calculate the UCS-4 size
+    size_t convlen = 0;
+    const char *utf8 = fUtf8Buffer.GetData();
+    const char *sp = utf8;
+    size_t srcSize = fUtf8Buffer.GetSize();
+    while (sp < utf8 + srcSize) {
+        if ((*sp & 0xF8) == 0xF0)
+            sp += 4;
+        else if ((*sp & 0xF0) == 0xE0)
+            sp += 3;
+        else if ((*sp & 0xE0) == 0xC0)
+            sp += 2;
+        else
+            sp += 1;
+        ++convlen;
+    }
+
+    // And perform the actual conversion
     UniChar *ustr = result.CreateWritableBuffer(convlen);
-    iterator iter = GetIterator();
-    size_t dp = 0;
-    while (!iter.AtEnd())
-        ustr[dp++] = *iter++;
+    UniChar *dp = ustr;
+    sp = utf8;
+    while (sp < utf8 + srcSize) {
+        UniChar unichar;
+        if ((*sp & 0xF8) == 0xF0) {
+            unichar  = (*sp++ & 0x07) << 18;
+            unichar |= (*sp++ & 0x3F) << 12;
+            unichar |= (*sp++ & 0x3F) << 6;
+            unichar |= (*sp++ & 0x3F);
+        } else if ((*sp & 0xF0) == 0xE0) {
+            unichar  = (*sp++ & 0x0F) << 12;
+            unichar |= (*sp++ & 0x3F) << 6;
+            unichar |= (*sp++ & 0x3F);
+        } else if ((*sp & 0xE0) == 0xC0) {
+            unichar  = (*sp++ & 0x1F) << 6;
+            unichar |= (*sp++ & 0x3F);
+        } else {
+            unichar = *sp++;
+        }
+        *dp++ = unichar;
+    }
     ustr[convlen] = 0;
 
     return result;
@@ -518,18 +512,24 @@ plString plString::IFormat(const char *fmt, va_list vptr)
         int size = 4096;
         for ( ;; ) {
             va_copy(vptr, vptr_save);
-            std::auto_ptr<char> bigbuffer(new char[size]);
-            chars = vsnprintf(bigbuffer.get(), size, fmt, vptr);
-            if (chars >= 0)
-                return plString::FromUtf8(bigbuffer.get(), chars);
+            plStringBuffer<char> bigbuffer;
+            char *data = bigbuffer.CreateWritableBuffer(size-1);
+            chars = vsnprintf(data, size, fmt, vptr);
+            if (chars >= 0) {
+                // We need to construct a new string here so the length
+                // parameter is accurate :(
+                return plString::FromUtf8(bigbuffer.GetData(), chars);
+            }
 
             size *= 2;
+            hsAssert(size > 0, "Formatted string output is waaaaay too long");
         }
     } else if (chars >= 256) {
         va_copy(vptr, vptr_save);
-        std::unique_ptr<char> bigbuffer(new char[chars+1]);
-        vsnprintf(bigbuffer.get(), chars+1, fmt, vptr);
-        return plString::FromUtf8(bigbuffer.get(), chars);
+        plStringBuffer<char> bigbuffer;
+        char *data = bigbuffer.CreateWritableBuffer(chars);
+        vsnprintf(data, chars+1, fmt, vptr);
+        return bigbuffer;
     }
 
     return plString::FromUtf8(buffer, chars);
@@ -754,6 +754,15 @@ std::vector<plString> plString::Split(const char *split, size_t maxSplits) const
     return result;
 }
 
+plString plString::Fill(size_t count, char c)
+{
+    plStringBuffer<char> buf;
+    char *data = buf.CreateWritableBuffer(count + 1);
+    memset(data, c, count);
+    data[count] = 0;
+    return buf;
+}
+
 plString operator+(const plString &left, const plString &right)
 {
     plString cat;
@@ -821,4 +830,12 @@ plStringStream &plStringStream::operator<<(unsigned int num)
     char buffer[12];
     snprintf(buffer, 12, "%u", num);
     return operator<<(buffer);
+}
+
+size_t ustrlen(const UniChar *ustr, size_t max)
+{
+    size_t length = 0;
+    for ( ; *ustr++ && max--; ++length)
+        ;
+    return length;
 }

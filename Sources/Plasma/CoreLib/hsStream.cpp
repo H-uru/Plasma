@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
@@ -55,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #include <io.h>
 #endif
-#include "hsStlUtils.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -123,9 +121,8 @@ uint32_t hsStream::WriteFmt(const char * fmt, ...)
 
 uint32_t hsStream::WriteFmtV(const char * fmt, va_list av)
 {
-    std::string buf;
-    xtl::formatv( buf, fmt, av );
-    return Write( buf.length(), buf.data() );
+    plString buf = plString::IFormat(fmt, av);
+    return Write( buf.GetSize(), buf.c_str() );
 }
 
 uint32_t hsStream::WriteSafeStringLong(const plString &string)

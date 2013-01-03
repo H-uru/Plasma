@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plLoggable.h"
 #include "plStatusLog.h"
-#include "hsStlUtils.h"
 #include "hsTemplates.h"
 
 

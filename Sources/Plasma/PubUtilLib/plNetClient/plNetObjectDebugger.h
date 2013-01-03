@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetObjectDebugger_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
 

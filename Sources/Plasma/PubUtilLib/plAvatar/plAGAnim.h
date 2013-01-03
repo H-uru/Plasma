@@ -50,9 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 */
 #pragma warning(disable: 4786)      // don't care if mangled names are longer than 255 characters
 
+#include <map>
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsStlUtils.h"
-#include "hsStlSortUtils.h"
 
 class plTMController;
 class hsAffineParts;

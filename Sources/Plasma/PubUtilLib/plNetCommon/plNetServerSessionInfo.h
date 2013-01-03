@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetServerSessionInfo_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <string>
+
 #include "pnFactory/plCreatable.h"
 #include "pnNetCommon/plNetServers.h"
 #include "plNetCommon/plSpawnPointInfo.h"
@@ -83,8 +84,6 @@ class plAgeInfoStruct : public plCreatable
     
     // The language of the client that created this age
     int32_t           fAgeLanguage;
-
-    mutable std::string     fDisplayName;
 
     enum
     {
@@ -144,8 +143,6 @@ public:
 
     void    Read( hsStream * s, hsResMgr* );
     void    Write( hsStream * s, hsResMgr* );
-
-    const char * GetDisplayName() const;
 
     plString AsString() const;
 };
@@ -302,49 +299,5 @@ public:
     virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
     virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
-
-////////////////////////////////////////////////////////////////////
-
-//class plVaultAgeInfoNode;
-//class plAgeLinkingInfo : public plCreatable
-//{
-//  int             fLinkingRules;
-//  uint32_t          fPlayerID;
-//  bool8         fSuperUser;
-//  mutable plAgeInfoStruct fAgeInfo;
-//  mutable plNetServerSessionInfo fServerInfo;
-//
-//public:
-//  plAgeLinkingInfo();
-//
-//  CLASSNAME_REGISTER( plAgeLinkingInfo );
-//  GETINTERFACE_ANY( plAgeLinkingInfo, plCreatable );
-//
-//  int     GetLinkingRules( void ) const { return fLinkingRules;}
-//  void    SetLinkingRules( int v ) { fLinkingRules=v;}
-//  uint32_t  GetPlayerID( void ) const { return fPlayerID;}
-//  void    SetPlayerID( uint32_t v ) { fPlayerID=v;}
-//  void    SetSuperUser(bool b) { fSuperUser=b;    }
-//  bool    GetSuperUser() const { return fSuperUser ? true : false;    }
-//
-//  plAgeInfoStruct * GetAgeInfo();
-//  const plAgeInfoStruct * GetAgeInfo() const;
-//  
-//  // initializes info with age name and guid for you.
-//  plNetServerSessionInfo * GetServerInfo();
-//  const plNetServerSessionInfo * GetServerInfo() const;
-//  const plNetServerSessionInfo * AsServerInfo() const;
-//
-//  void Clear( void );
-//  void CopyFrom( const plAgeLinkingInfo * other );
-//  void CopyFrom( const plVaultAgeInfoNode * node );
-//  void CopyFrom( const plNetServerSessionInfo * info );
-//  void CopyFrom( const plAgeInfoStruct * info );
-//
-//  void Read(hsStream* s, hsResMgr* mgr=nil);
-//  void Write(hsStream* s, hsResMgr* mgr=nil);
-//
-//  std::string AsStdString() const;
-//};
 
 #endif // plNetServerSessionInfo_h_inc
