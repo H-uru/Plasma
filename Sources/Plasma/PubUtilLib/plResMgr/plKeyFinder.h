@@ -66,7 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
-#include "hsStlUtils.h"
 #include <string>
 
 class plLocation;

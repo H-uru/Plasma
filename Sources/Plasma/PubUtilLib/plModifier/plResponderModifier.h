@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderModifier_inc
 #define plResponderModifier_inc
 
-#include "hsStlUtils.h"
+#include <map>
 #include "pnModifier/plSingleModifier.h"
 #include "pnMessage/plMessage.h"
 

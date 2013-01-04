@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include <cmath>
+
 #include "hsTimer.h"
 #include "plLayerAnimation.h"
 #include "pnKeyedObject/plKey.h"

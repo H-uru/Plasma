@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnFactory/plFactory.h"
 #include "plFile/plFileUtils.h"
-#include "hsStlUtils.h"
 
 #include "plVersion.h"
 
@@ -168,7 +167,7 @@ void plRegistryPageNode::LoadKeys()
     hsStream* stream = OpenStream();
     if (!stream)
     {
-        hsAssert(0, xtl::format("plRegistryPageNode::LoadKeysFromSource - bad stream %s,%s", 
+        hsAssert(0, plString::Format("plRegistryPageNode::LoadKeysFromSource - bad stream %s,%s",
             GetPageInfo().GetAge(), GetPageInfo().GetPage()).c_str());
         return;
     }

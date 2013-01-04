@@ -56,7 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfConsoleDirSrc_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <vector>
+
 #include "pfConsoleCore/pfConsoleEngine.h"
 
 //// pfConsoleDirSrc Class Definition ////////////////////////////////////////

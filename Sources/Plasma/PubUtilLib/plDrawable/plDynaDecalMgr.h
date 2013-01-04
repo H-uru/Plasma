@@ -43,11 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynaDecalMgr_inc
 #define plDynaDecalMgr_inc
 
+#include <map>
 #include "pnNetCommon/plSynchedObject.h"
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "hsStlUtils.h"
 
 
 class plParticleSystem;

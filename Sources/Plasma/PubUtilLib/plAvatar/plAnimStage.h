@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_ANIM_STAGE_INC
 #define PL_ANIM_STAGE_INC
 
+#include <vector>
 #include "hsMatrix44.h"
-#include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
 class plMessage;

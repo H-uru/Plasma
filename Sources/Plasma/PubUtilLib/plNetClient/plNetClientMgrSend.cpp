@@ -159,7 +159,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     char buffy[20];
     sprintf( buffy, "%lu", GetPlayerID() );
     info.AddValue( "Petition", "PlayerID", buffy );
-    info.AddValue( "Petition", "PlayerName", GetPlayerName().c_str() );
+    info.AddValue( "Petition", "PlayerName", GetPlayerName() );
 
     // write config info formatted like an ini file to a buffer
     hsRAMStream ram;
@@ -437,7 +437,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
     if (plNetMsgGameMessage::ConvertNoRef(msg))
         SetFlagsBit(kSendingActions);
     
-    plCheckNetMgrResult_ValReturn(ret,(char*)xtl::format("Failed to send %s, NC ret=%d",
+    plCheckNetMgrResult_ValReturn(ret, plString::Format("Failed to send %s, NC ret=%d",
         msg->ClassName(), ret).c_str());
 
     return ret;

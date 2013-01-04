@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _hsSTLStream_h_inc_
 
 #include "hsStream.h"
-#include "hsStlUtils.h"
 
 //
 // In-memory only

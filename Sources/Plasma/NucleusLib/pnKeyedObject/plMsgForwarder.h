@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMsgForwarder_h_inc
 #define plMsgForwarder_h_inc
 
+#include <map>
 #include "hsKeyedObject.h"
 #include "hsTemplates.h"
-#include "hsStlUtils.h"
 
 
 class plMessageWithCallbacks;

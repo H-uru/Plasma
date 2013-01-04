@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsStream.h"
-#include "hsStlUtils.h"
 #include "plSDL.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"
@@ -83,7 +82,9 @@ void plSDLMgr::DeInit()
 //
 void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 {
-    std::for_each( dl->begin(), dl->end(), xtl::delete_ptr() );
+    std::for_each( dl->begin(), dl->end(),
+        [](plStateDescriptor* sd) { delete sd; }
+    );
     dl->clear();
 }
 

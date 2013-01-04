@@ -54,11 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // global
 
-#include "hsStlUtils.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
 #include <cstdio>
+#include <cmath>
 
 // other
 #include "pnSceneObject/plSceneObject.h"

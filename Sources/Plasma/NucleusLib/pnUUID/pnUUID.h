@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pnUUID_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "pnUtils/pnUtUuid.h"
 
 class hsStream;

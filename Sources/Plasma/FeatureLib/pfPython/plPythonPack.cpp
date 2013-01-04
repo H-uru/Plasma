@@ -45,11 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string>
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "hsStream.h"
-#include "hsStlSortUtils.h"
 #pragma hdrstop
 
 #include "plPythonPack.h"
@@ -219,7 +218,7 @@ PyObject* plPythonPack::OpenPacked(const char* fileName)
         {
             char *buf = new char[size];
             uint32_t readSize = fPackStream->Read(size, buf);
-            hsAssert(readSize <= size, xtl::format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
+            hsAssert(readSize <= size, plString::Format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
                 fileName, readSize, size).c_str());
 
             // let the python marshal make it back into a code object

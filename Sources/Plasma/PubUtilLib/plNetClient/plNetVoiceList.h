@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetVoiceList_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 
 //
 // a simple class used by the net client code to hold listenLists and talkLists

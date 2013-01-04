@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
@@ -646,13 +645,11 @@ public:
     bool GetRequestingState() const { return (fPageFlags & kRequestState) != 0; } 
 
     // debug
-    std::string AsStdString() const
+    plString AsString() const
     {
-        std::string s;
-        xtl::format(s,"pageFlags:%02X, paging %s, requestingState:%s, resetting=%d",fPageFlags,
-            (fPageFlags&kPagingOut)?"out":"in", (fPageFlags&kRequestState)?"yes":"no",
-            (fPageFlags & kResetList)!=0);
-        return s;
+        return plString::Format("pageFlags:%02X, paging %s, requestingState:%s, resetting=%d",
+            fPageFlags, (fPageFlags&kPagingOut)?"out":"in",
+            (fPageFlags&kRequestState)?"yes":"no", (fPageFlags & kResetList)!=0);
     }
 };
 
@@ -755,11 +752,9 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // debug
-    std::string AsStdString() const
+    plString AsString() const
     {
-        std::string s;
-        xtl::format(s,"len=%d",fVoiceData.size());
-        return s;
+        return plString::Format("len=%d",fVoiceData.size());
     }
 };
 
@@ -795,7 +790,7 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // debug
-    plString AsStdString() const
+    plString AsString() const
     {
         return plString::Format("lockReq=%d, %s",fLockRequest, plNetMsgStreamedObject::AsString().c_str());
     }
@@ -979,7 +974,7 @@ public:
     const hsBitVector& GetRegionsICareAbout() const { return fRegionsICareAbout;    }
     const hsBitVector& GetRegionsImIn() const       { return fRegionsImIn;  }
 
-    plString AsStdString() const
+    plString AsString() const
     {
         plString b1, b2;
         int i;

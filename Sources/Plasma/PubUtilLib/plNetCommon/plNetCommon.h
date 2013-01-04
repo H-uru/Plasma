@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLNETCOMMON_CONSTANTS_ONLY
 
 #include "plNetServerSessionInfo.h"
-#include "hsStlUtils.h"
 
 #endif // PLNETCOMMON_CONSTANTS_ONLY
 

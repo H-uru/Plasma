@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetTransport_h
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <vector>
 
 //
 // The transport class handles the details of sending net msgs to

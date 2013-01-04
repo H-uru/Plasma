@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_NET_CLIENT_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <list>
 
 #include "plNetClientGroup.h"
 #include "plNetVoiceList.h"
@@ -348,7 +348,7 @@ public:
     
     // time converters
     plUnifiedTime GetServerTime() const;
-    const char* GetServerLogTimeAsString(std::string& ts) const;
+    const char* GetServerLogTimeAsString(plString& ts) const;
     double GetCurrentAgeElapsedSeconds() const;
     float GetCurrentAgeTimeOfDayPercent() const;
 

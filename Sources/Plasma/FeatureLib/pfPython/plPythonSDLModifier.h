@@ -46,7 +46,7 @@ class plPythonFileMod;
 class plStateDataRecord;
 class plSimpleStateVariable;
 
-#include "hsStlUtils.h"
+#include <map>
 #include "plModifier/plSDLModifier.h"
 
 #include "pyGlueHelpers.h"

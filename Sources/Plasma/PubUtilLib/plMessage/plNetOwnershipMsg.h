@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetOwnershipMsg_INC
 #define plNetOwnershipMsg_INC
 
-#include "hsStlUtils.h"
 #include "pnMessage/plMessage.h"
 #include "plNetMessage/plNetMessage.h"
 

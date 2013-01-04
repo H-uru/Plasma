@@ -48,9 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-
-#include "hsStlUtils.h"
 #include "plString.h"
+#include <string>
 
 //
 // Describes a variable in a state descriptor.

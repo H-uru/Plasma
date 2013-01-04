@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <vector>
+#include <string>
 
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;

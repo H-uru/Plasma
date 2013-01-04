@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plContainer_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
 
 template < class T >
 class plDataContainerT

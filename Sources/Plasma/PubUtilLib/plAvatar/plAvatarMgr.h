@@ -45,8 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVATARMGR_INC
 #define PLAVATARMGR_INC
 
-#include "hsStlUtils.h"
-#include "hsStlSortUtils.h"
+#include "HeadSpin.h"
+#include <map>
+
 #include "hsGeometry3.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"

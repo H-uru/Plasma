@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 typedef unsigned int UniChar;
 
 #define SSO_CHARS (16)
+#define WHITESPACE_CHARS " \t\n\r"
 
 template <typename _Ch>
 class plStringBuffer
@@ -121,7 +122,6 @@ public:
 
     const _Ch *GetData() const { return IHaveACow() ? fData->fStringData : fShort; }
     size_t GetSize() const { return fSize; }
-
     operator const _Ch *() const { return GetData(); }
 
     // From Haxxia with love
@@ -142,14 +142,15 @@ public:
     }
 };
 
+typedef plStringBuffer<UniChar> plUnicodeBuffer;
+
 
 class plString
 {
+public:
     enum {
         kSizeAuto = (size_t)(0x80000000)
     };
-
-public:
     static const plString Null;
 
 private:
@@ -158,6 +159,7 @@ private:
     void IConvertFromUtf8(const char *utf8, size_t size);
     void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
+    void IConvertFromUtf32(const UniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
 public:
@@ -166,10 +168,12 @@ public:
     plString(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); }
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
     plString(const plStringBuffer<char> &init) { operator=(init); }
+    plString(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
 
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
     plString &operator=(const plStringBuffer<char> &init);
+    plString &operator=(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); return *this; }
 
     plString &operator+=(const char *cstr) { return operator=(*this + cstr); }
     plString &operator+=(const plString &str) { return operator=(*this + str); }
@@ -213,7 +217,7 @@ public:
     plStringBuffer<char> ToIso8859_1() const;
 
     // For use in displaying characters in a GUI
-    plStringBuffer<UniChar> GetUnicodeArray() const;
+    plUnicodeBuffer GetUnicodeArray() const;
 
     size_t GetSize() const { return fUtf8Buffer.GetSize(); }
     bool IsEmpty() const { return fUtf8Buffer.GetSize() == 0; }
@@ -276,15 +280,15 @@ public:
     int Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
     { return Find(str.c_str(), sense); }
 
-    plString TrimLeft(const char *charset = " \t\n\r") const;
-    plString TrimRight(const char *charset = " \t\n\r") const;
-    plString Trim(const char *charset = " \t\n\r") const;
+    plString TrimLeft(const char *charset = WHITESPACE_CHARS) const;
+    plString TrimRight(const char *charset = WHITESPACE_CHARS) const;
+    plString Trim(const char *charset = WHITESPACE_CHARS) const;
 
     plString Substr(int start, size_t size = kSizeAuto) const;
     plString Left(size_t size) const { return Substr(0, size); }
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
 
-    // NOTE:  Does ::Compare(blah, kCaseInsensitive) make more sense?  If
+    // NOTE:  Does Compare(blah, kCaseInsensitive) make more sense?  If
     //        so, use that instead -- it's faster and more efficient!
     plString ToUpper() const;
     plString ToLower() const;
@@ -294,7 +298,9 @@ public:
     // all delimiters and only returns the pieces left between them), whereas
     // Split will split on a full string, returning whatever is left between.
     std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto) const;
-    std::vector<plString> Tokenize(const char *delims = " \t\r\n\f\v") const;
+    std::vector<plString> Tokenize(const char *delims = WHITESPACE_CHARS) const;
+
+    static plString Fill(size_t count, char c);
 
 public:
     struct less
@@ -320,108 +326,6 @@ public:
         bool operator()(const plString &_L, const plString &_R) const
         { return _L.Compare(_R, kCaseInsensitive) == 0; }
     };
-
-public:
-    struct iterator
-    {
-        iterator() : m_ptr(nil), m_end(nil) { }
-        iterator(const iterator &copy) : m_ptr(copy.m_ptr), m_end(copy.m_end) { }
-
-        iterator &operator=(const iterator &copy)
-        { m_ptr = copy.m_ptr; m_end = copy.m_end; return *this; }
-
-        iterator &operator++()
-        {
-            if ((*m_ptr & 0xF8) == 0xF0)
-                m_ptr += 4;
-            else if ((*m_ptr & 0xF0) == 0xE0)
-                m_ptr += 3;
-            else if ((*m_ptr & 0xE0) == 0xC0)
-                m_ptr += 2;
-            else
-                m_ptr += 1;
-            return *this;
-        }
-
-        iterator operator++(int)
-        {
-            iterator iter_save = *this;
-            (void) operator++();
-            return iter_save;
-        }
-
-        iterator &operator+=(size_t delta)
-        {
-            while (delta) {
-                operator++();
-                --delta;
-            }
-            return *this;
-        }
-
-        iterator operator+(size_t delta) const
-        {
-            iterator copy(*this);
-            copy += delta;
-            return copy;
-        }
-
-        int operator-(const iterator &other) const
-        {
-            return (int)(m_ptr - other.m_ptr);
-        }
-
-        bool operator==(const iterator &other) const { return m_ptr == other.m_ptr; }
-        bool operator!=(const iterator &other) const { return m_ptr != other.m_ptr; }
-        bool operator<(const iterator &other) const { return m_ptr < other.m_ptr; }
-        bool operator>(const iterator &other) const { return m_ptr > other.m_ptr; }
-        bool operator<=(const iterator &other) const { return m_ptr <= other.m_ptr; }
-        bool operator>=(const iterator &other) const { return m_ptr >= other.m_ptr; }
-
-        UniChar operator*() const
-        {
-            UniChar ch;
-            if ((*m_ptr & 0xF8) == 0xF0) {
-                ch  = (m_ptr[0] & 0x07) << 18;
-                ch |= (m_ptr[1] & 0x3F) << 12;
-                ch |= (m_ptr[2] & 0x3F) << 6;
-                ch |= (m_ptr[3] & 0x3F);
-            } else if ((*m_ptr & 0xF0) == 0xE0) {
-                ch  = (m_ptr[0] & 0x0F) << 12;
-                ch |= (m_ptr[1] & 0x3F) << 6;
-                ch |= (m_ptr[2] & 0x3F);
-            } else if ((*m_ptr & 0xE0) == 0xC0) {
-                ch  = (m_ptr[0] & 0x1F) << 6;
-                ch |= (m_ptr[1] & 0x3F);
-            } else {
-                ch = m_ptr[0];
-            }
-            return ch;
-        }
-
-        bool AtEnd() const { return m_ptr >= m_end; }
-        bool IsValid() const { return m_ptr != 0; }
-
-    private:
-        friend class plString;
-        iterator(const char *ptr, size_t size) : m_ptr(ptr), m_end(ptr + size) { }
-
-        const char *m_ptr;
-        const char *m_end;
-    };
-
-    iterator GetIterator() const { return iterator(c_str(), GetSize()); }
-
-    size_t GetUniCharCount() const
-    {
-        iterator iter = GetIterator();
-        size_t count = 0;
-        while (!iter.AtEnd()) {
-            ++iter;
-            ++count;
-        }
-        return count;
-    }
 
 private:
     friend plString operator+(const plString &left, const plString &right);
@@ -463,5 +367,7 @@ private:
     size_t fBufSize;
     size_t fLength;
 };
+
+size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 
 #endif //plString_Defined

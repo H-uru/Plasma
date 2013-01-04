@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicsSoundMgr_h_inc
 #define plPhysicsSoundMgr_h_inc
 
-#include "hsStlUtils.h"
+#include <set>
 #include "plPhysical.h"
 #include "hsGeometry3.h"
 

@@ -43,13 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plConfigInfo_h_inc
 
 #include "plKeysAndValues.h"
-#include "hsStlUtils.h"
 #include <stdarg.h>
 
 /////////////////////////////////////////////////
 
-typedef std::vector<std::string>    plStringList;
-typedef std::vector<std::wstring>   plWStringList;
+typedef std::vector<plString>       plStringList;
 
 /////////////////////////////////////////////////
 
@@ -61,10 +59,10 @@ public:
         Keys;
     typedef plKeysAndValues::Values
         Values;
-    typedef std::map<xtl::istring, plKeysAndValues>
+    typedef std::map<plString, plKeysAndValues, plString::less_i>
         Sections;
 
-    static const std::string& GlobalSection();
+    static const plString& GlobalSection();
     
 private:
     mutable Sections fSections;
@@ -79,54 +77,54 @@ public:
     // remove all sections
     void Clear();
     // remove section
-    void RemoveSection(const std::string & section);
+    void RemoveSection(const plString & section);
     // remove key from section
-    void RemoveKey(const std::string & section, const std::string & key);
+    void RemoveKey(const plString & section, const plString & key);
     // QUERY
     // does this section exist?
-    bool HasSection(const std::string & section) const;
+    bool HasSection(const plString & section) const;
     // does the given section contain this key?
-    bool HasKey(const std::string & section, const std::string & key);
+    bool HasKey(const plString & section, const plString & key);
     // does any section contain this key?
-    bool HasKeyAny(const std::string & key);
+    bool HasKeyAny(const plString & key);
     // does any of the given sections contain this key?
-    bool HasKeyIn(const std::string & key, const char * section1, ... /*, nil*/);
-    bool HasKeyIn(const std::string & key, const std::vector<std::string> & sections );
+    bool HasKeyIn(const plString & key, const char * section1, ... /*, nil*/);
+    bool HasKeyIn(const plString & key, const std::vector<plString> & sections );
     // does key in section have this value?
-    bool KeyHasValue(const std::string & section, const std::string & key, const std::string & value);
-    bool KeyHasValue(const std::string & section, const std::string & key, int value);
-    bool KeyHasValue(const std::string & section, const std::string & key, double value);
+    bool KeyHasValue(const plString & section, const plString & key, const plString & value);
+    bool KeyHasValue(const plString & section, const plString & key, int value);
+    bool KeyHasValue(const plString & section, const plString & key, double value);
     // ADD
     // add key=value to the section
-    bool AddValue(const std::string & section, const std::string & key, const std::string & value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValue(const std::string & section, const std::string & key, int value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValue(const std::string & section, const std::string & key, double value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValues(const std::string & section, const std::string & key, const std::vector<std::string> & values, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const plString & section, const plString & key, const plString & value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const plString & section, const plString & key, int value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const plString & section, const plString & key, double value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValues(const plString & section, const plString & key, const std::vector<plString> & values, KAddValueMode mode=kAlwaysAdd);
     // GET
-    plKeysAndValues GetSection(const std::string & section, bool & found);
-    std::vector<std::string> GetSectionNames();
+    plKeysAndValues GetSection(const plString & section, bool & found);
+    std::vector<plString> GetSectionNames();
     // get value for key from given section
-    std::string GetValue(const std::string & section, const std::string & key, const std::string & defval="", bool * outFound=nil) const;
-    int GetValue(const std::string & section, const std::string & key, int defval, bool * outFound=nil) const;
-    double GetValue(const std::string & section, const std::string & key, double defval, bool * outFound=nil) const;
-    std::vector<std::string> GetAllValues(const std::string & section, const std::string & key) const;
+    plString GetValue(const plString & section, const plString & key, const plString & defval="", bool * outFound=nil) const;
+    int GetValue(const plString & section, const plString & key, int defval, bool * outFound=nil) const;
+    double GetValue(const plString & section, const plString & key, double defval, bool * outFound=nil) const;
+    std::vector<plString> GetAllValues(const plString & section, const plString & key) const;
     // get value for key from any section
-    std::string GetValueAny(const std::string & key, const std::string & defval="", bool * outFound=nil) const;
-    int GetValueAny(const std::string & key, int defval, bool * outFound=nil) const;
-    double GetValueAny(const std::string & key, double defval, bool * outFound=nil) const;
-    std::vector<std::string> GetAllValuesAny(const std::string & key) const;
+    plString GetValueAny(const plString & key, const plString & defval="", bool * outFound=nil) const;
+    int GetValueAny(const plString & key, int defval, bool * outFound=nil) const;
+    double GetValueAny(const plString & key, double defval, bool * outFound=nil) const;
+    std::vector<plString> GetAllValuesAny(const plString & key) const;
     // get value for key from one of the given sections
-    std::string GetValueIn(const std::string & key, const std::string & defval, bool * outFound, const char * section1, ... /*, nil*/) const;
-    std::string GetValueIn(const std::string & key, const std::string & defval, bool * outFound, const std::vector<std::string> & sections ) const;
-    int GetValueIn(const std::string & key, int defval, bool * outFound, const char * section1, ... /*, nil*/) const;
-    int GetValueIn(const std::string & key, int defval, bool * outFound, const std::vector<std::string> & sections ) const;
-    double GetValueIn(const std::string & key, double defval, bool * outFound, const char * section1, ... /*, nil*/) const;
-    double GetValueIn(const std::string & key, double defval, bool * outFound, const std::vector<std::string> & sections ) const;
-    std::vector<std::string> GetAllValuesIn(const std::string & key, const char * section1, ... /*, nil*/);
+    plString GetValueIn(const plString & key, const plString & defval, bool * outFound, const char * section1, ... /*, nil*/) const;
+    plString GetValueIn(const plString & key, const plString & defval, bool * outFound, const std::vector<plString> & sections ) const;
+    int GetValueIn(const plString & key, int defval, bool * outFound, const char * section1, ... /*, nil*/) const;
+    int GetValueIn(const plString & key, int defval, bool * outFound, const std::vector<plString> & sections ) const;
+    double GetValueIn(const plString & key, double defval, bool * outFound, const char * section1, ... /*, nil*/) const;
+    double GetValueIn(const plString & key, double defval, bool * outFound, const std::vector<plString> & sections ) const;
+    std::vector<plString> GetAllValuesIn(const plString & key, const char * section1, ... /*, nil*/);
     // ITERATORS
     bool GetSectionIterators(Sections::const_iterator & iter, Sections::const_iterator & end) const;
-    bool GetKeyIterators(const xtl::istring & section, Keys::const_iterator & iter, Keys::const_iterator & end) const;
-    bool GetValueIterators(const xtl::istring & section, const xtl::istring & key, Values::const_iterator & iter, Values::const_iterator & end) const;
+    bool GetKeyIterators(const plString & section, Keys::const_iterator & iter, Keys::const_iterator & end) const;
+    bool GetValueIterators(const plString & section, const plString & key, Values::const_iterator & iter, Values::const_iterator & end) const;
     // CONFIG SOURCE
     virtual bool ReadFrom(plConfigSource * src, KAddValueMode mode=kAlwaysAdd);
     virtual bool WriteTo(plConfigSource * src);
@@ -145,33 +143,33 @@ public:
     plConfigInfo* GetConfigInfo() { return &fConfigInfo; }
     plConfigInfo* GetConfigInfoLog() { return &fLog; }
 
-    bool GetValue(std::string& retval, const std::string & section, const std::string & key, const std::string & desc, const std::string& defval = "");
-    bool GetValue(int& retval, const std::string & section, const std::string & key, const std::string & desc, int defval);
-    bool GetValue(bool& retval, const std::string & section, const std::string & key, const std::string & desc, bool defval);
-    bool GetValue(float& retval, const std::string & section, const std::string & key, const std::string & desc, float defval);
-    bool GetValue(double& retval, const std::string & section, const std::string & key, const std::string & desc, double defval);
-    bool GetAllValues(std::vector<std::string>& values, const std::string & section, const std::string & key, const std::string & desc);
+    bool GetValue(plString& retval, const plString & section, const plString & key, const plString & desc, const plString& defval = "");
+    bool GetValue(int& retval, const plString & section, const plString & key, const plString & desc, int defval);
+    bool GetValue(bool& retval, const plString & section, const plString & key, const plString & desc, bool defval);
+    bool GetValue(float& retval, const plString & section, const plString & key, const plString & desc, float defval);
+    bool GetValue(double& retval, const plString & section, const plString & key, const plString & desc, double defval);
+    bool GetAllValues(std::vector<plString>& values, const plString & section, const plString & key, const plString & desc);
 
 #if USE_MULT_SECTIONS
     // get value for key from any section
-    bool GetValueAny(std::string& retval, const std::string & key, const std::string & desc, const std::string & defval);
-    bool GetValueAny(int &retval, const std::string & key, const std::string & desc, int defval);
-    bool GetValueAny(bool& retval, const std::string & key, const std::string & desc, bool defval);
-    bool GetValueAny(float& retval, const std::string & key, const std::string & desc, float defval);
-    bool GetValueAny(double& retval, const std::string & key, const std::string & desc, double defval);
-    bool GetAllValuesAny(std::vector<std::string>& values, const std::string & key, const std::string & desc);
+    bool GetValueAny(plString& retval, const plString & key, const plString & desc, const plString & defval);
+    bool GetValueAny(int &retval, const plString & key, const plString & desc, int defval);
+    bool GetValueAny(bool& retval, const plString & key, const plString & desc, bool defval);
+    bool GetValueAny(float& retval, const plString & key, const plString & desc, float defval);
+    bool GetValueAny(double& retval, const plString & key, const plString & desc, double defval);
+    bool GetAllValuesAny(std::vector<plString>& values, const plString & key, const plString & desc);
 
     // get value for key from one of the given sections
-    bool GetValueIn(std::string& retval, const std::string & key,  const std::string & desc, const std::string & defval, const char * section1, ... /*, nil*/);
-    bool GetValueIn(std::string& retval, const std::string & key,  const std::string & desc, const std::string & defval, std::vector<std::string> & sections );
-    bool GetValueIn(int& retval, const std::string & key,  const std::string & desc, int defval, const char * section1, ... /*, nil*/);
-    bool GetValueIn(int& retval, const std::string & key,  const std::string & desc, int defval, std::vector<std::string> & sections );
-    bool GetValueIn(bool& retval, const std::string & key,  const std::string & desc, bool defval, const char * section1, ... /*, nil*/);
-    bool GetValueIn(bool& retval, const std::string & key,  const std::string & desc, bool defval, std::vector<std::string> & sections );
-    bool GetValueIn(float& retval, const std::string & key,  const std::string & desc, double defval, const char * section1, ... /*, nil*/);
-    bool GetValueIn(float& retval, const std::string & key,  const std::string & desc, double defval, std::vector<std::string> & sections );
-    bool GetValueIn(double& retval, const std::string & key,  const std::string & desc, double defval, const char * section1, ... /*, nil*/);
-    bool GetValueIn(double& retval, const std::string & key,  const std::string & desc, double defval, std::vector<std::string> & sections );
+    bool GetValueIn(plString& retval, const plString & key,  const plString & desc, const plString & defval, const char * section1, ... /*, nil*/);
+    bool GetValueIn(plString& retval, const plString & key,  const plString & desc, const plString & defval, std::vector<plString> & sections );
+    bool GetValueIn(int& retval, const plString & key,  const plString & desc, int defval, const char * section1, ... /*, nil*/);
+    bool GetValueIn(int& retval, const plString & key,  const plString & desc, int defval, std::vector<plString> & sections );
+    bool GetValueIn(bool& retval, const plString & key,  const plString & desc, bool defval, const char * section1, ... /*, nil*/);
+    bool GetValueIn(bool& retval, const plString & key,  const plString & desc, bool defval, std::vector<plString> & sections );
+    bool GetValueIn(float& retval, const plString & key,  const plString & desc, double defval, const char * section1, ... /*, nil*/);
+    bool GetValueIn(float& retval, const plString & key,  const plString & desc, double defval, std::vector<plString> & sections );
+    bool GetValueIn(double& retval, const plString & key,  const plString & desc, double defval, const char * section1, ... /*, nil*/);
+    bool GetValueIn(double& retval, const plString & key,  const plString & desc, double defval, std::vector<plString> & sections );
 #endif
 };
 
@@ -180,14 +178,14 @@ public:
 class plConfigSource
 {
 protected:
-    std::string     fCurrSection;       // used in parsing
-    std::string     fEffectiveSection;  // used in parsing
+    plString        fCurrSection;       // used in parsing
+    plString        fEffectiveSection;  // used in parsing
     KAddValueMode   fAddMode;           // used in parsing
     plConfigInfo *  fConfigInfo;
     
-    void SplitAt(std::string & key, std::string & value, char splitter, std::string & in);
-    virtual bool ReadString(const std::string & in);
-    virtual bool ReadPair(std::string & key, std::string & value);
+    void SplitAt(plString & key, plString & value, char splitter, plString & in);
+    virtual bool ReadString(const plString & in);
+    virtual bool ReadPair(plString & key, plString & value);
     virtual bool ReadList(char ** list);
     virtual bool ReadSubSource( const char * name ) { return true; }
     
@@ -209,7 +207,7 @@ class plCmdLineConfigSource : public plConfigSource
 {
     int fArgc;
     char ** fArgv;
-    std::string fMySection;
+    plString fMySection;
 protected:
     bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
 public:
@@ -222,7 +220,7 @@ public:
 class plEnvConfigSource : public plConfigSource
 {
     char ** fEnvp;
-    std::string fMySection;
+    plString fMySection;
 protected:
     bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
 public:
@@ -235,7 +233,7 @@ public:
 class plIniConfigSource : public plConfigSource
 {
 protected:
-    std::string fFileName;
+    plString fFileName;
     bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
     bool WriteOutOf(plConfigInfo & configInfo);
 public:
@@ -262,9 +260,9 @@ public:
 // data in an unnamed section, or more accurately, in a section named "".
 class plIniNoSectionsConfigSource : public plConfigSource
 {
-    std::string fFileName;
+    plString fFileName;
 protected:
-    bool ReadString(const std::string & in);
+    bool ReadString(const plString & in);
     bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
     bool WriteOutOf(plConfigInfo & configInfo);
 public:
@@ -276,14 +274,14 @@ public:
 // an ini file reader that only reads specified sections
 class plIniSectionConfigSource : public plIniConfigSource
 {
-    typedef std::vector<xtl::istring>
+    typedef std::vector<plString>
         Sections;
 protected:
     Sections    fSections;
-    bool ReadPair(std::string & key, std::string & value);
+    bool ReadPair(plString & key, plString & value);
     bool ReadSubSource( const char * name );
 public:
-    plIniSectionConfigSource(const char * iniFileName, std::vector<std::string> & sections);
+    plIniSectionConfigSource(const char * iniFileName, std::vector<plString> & sections);
 };
 
 /////////////////////////////////////////////////
@@ -304,7 +302,7 @@ public:
 class plDebugConfigSource : public plConfigSource
 {
 protected:
-    std::string fFileName;
+    plString fFileName;
     bool WriteOutOf(plConfigInfo & configInfo);
 public:
     plDebugConfigSource(){}
@@ -314,11 +312,11 @@ public:
 
 class plWWWAuthenticateConfigSource : public plConfigSource
 {
-    const std::string& fAuth;
+    const plString& fAuth;
 protected:
     bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
 public:
-    plWWWAuthenticateConfigSource(const std::string& auth);
+    plWWWAuthenticateConfigSource(const plString& auth);
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -363,18 +361,18 @@ struct plEvaluate
 
 ////////////////////////////////////////////////////////////////////
 
-typedef std::string (plClass::*TModify)(const std::string & value);
+typedef plString (plClass::*TModify)(const plString & value);
 
 struct plModify
 {
     plClass * fTarget;
-    std::string (plClass::*fModify)(const std::string & value);
+    plString (plClass::*fModify)(const plString & value);
     plModify( plClass * target=nil, TModify modify=nil )
     : fTarget(target)
     , fModify(modify)
     {}
-    std::string operator()(const std::string & value) { return (fTarget)?(fTarget->*fModify)(value):value;}
-    std::string operator()(const std::string & value) const { return (fTarget)?(fTarget->*fModify)(value):value;}
+    plString operator()(const plString & value) { return (fTarget)?(fTarget->*fModify)(value):value;}
+    plString operator()(const plString & value) const { return (fTarget)?(fTarget->*fModify)(value):value;}
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -382,8 +380,8 @@ struct plModify
 class plConfigValueBase
 {
 public:
-    std::string fConfigName;
-    std::string fConfigGroup;
+    plString    fConfigName;
+    plString    fConfigGroup;
     plEvaluate  fReadEvaluate;      // returns true if we want to read this value from options
     plEvaluate  fWriteEvaluate;     // returns true if we want to write this value to options
     plModify    fReadModify;        // may modify the value being read from options
@@ -394,18 +392,18 @@ public:
     : fConfigName(configName)
     , fConfigGroup(configGroup)
     {}
-    void SetConfigName(const char * name) { fConfigName=(name)?name:"";}
-    std::string GetConfigName() const { return fConfigName;}
-    void SetConfigGroup(const char * group) { fConfigGroup=group;}
-    std::string GetConfigGroup() const { return fConfigGroup;}
-    bool HasConfigName() { return fConfigName.length()>0;}
-    bool HasConfigGroup() { return fConfigGroup.length()>0;}
+    void SetConfigName(const plString & name) { fConfigName=name;}
+    plString GetConfigName() const { return fConfigName;}
+    void SetConfigGroup(const plString & group) { fConfigGroup=group;}
+    plString GetConfigGroup() const { return fConfigGroup;}
+    bool HasConfigName() { return !fConfigName.IsEmpty();}
+    bool HasConfigGroup() { return !fConfigGroup.IsEmpty();}
     virtual void ConfigRead(plConfigInfo * opts);
     virtual void ConfigWrite(plConfigInfo * opts);
-    void SetValue(const char * value);
-    std::string GetValue() const;
-    virtual void ISetValue(const char * value) = 0;
-    virtual std::string IGetValue() const = 0;
+    void SetValue(const plString & value);
+    plString GetValue() const;
+    virtual void ISetValue(const plString & value) = 0;
+    virtual plString IGetValue() const = 0;
 
     void SetReadEvaluate(plClass * targetObj, TEvaluate evalFunc);
     void SetWriteEvaluate(plClass * targetObj, TEvaluate evalFunc);
@@ -424,9 +422,9 @@ public:
     plConfigValue( const char * configName="", const char * configGroup="" )
     : plConfigValueBase(configName, configGroup)
     {}
-    std::string fConfigValue;
-    void ISetValue(const char * value) { fConfigValue=value;}
-    std::string IGetValue() const { return fConfigValue;}
+    plString fConfigValue;
+    void ISetValue(const plString & value) { fConfigValue=value;}
+    plString IGetValue() const { return fConfigValue;}
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -451,8 +449,8 @@ public:
         plConfigValueBase * item5=nil,
         plConfigValueBase * item6=nil,
         plConfigValueBase * item7=nil);
-    void ISetValue(const char * value);
-    std::string IGetValue() const;
+    void ISetValue(const plString & value);
+    plString IGetValue() const;
     void AddItem(plConfigValueBase * item);
     void AddItems(
         plConfigValueBase * item1=nil,
@@ -474,8 +472,8 @@ public:
     : fConfigurable(item)
     {}
     void Set(plConfigValueBase * item) { fConfigurable=item;}
-    void ISetValue(const char * value) { fConfigurable->ISetValue(value);}
-    std::string IGetValue() const { return fConfigurable->IGetValue();}
+    void ISetValue(const plString & value) { fConfigurable->ISetValue(value);}
+    plString IGetValue() const { return fConfigurable->IGetValue();}
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -484,7 +482,7 @@ class plConfigGroup
 {
 public:
     plConfigInfo fOpts;
-    std::string fGroupName;
+    plString fGroupName;
     std::vector<plConfigValueBase*> fItems;
     plConfigGroup(const char * groupName="");
     bool Read(plConfigSource * src);

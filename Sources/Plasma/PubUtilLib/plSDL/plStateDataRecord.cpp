@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "hsTemplates.h"
 #include "hsStream.h"
-#include "hsStlUtils.h"
 #include "plSDL.h"
 
 #include "plNetMessage/plNetMessage.h"
@@ -121,7 +120,9 @@ void plStateDataRecord::SetDescriptor(const plString& name, int version)
 
 void plStateDataRecord::IDeleteVarsList(VarsList& vars)
 {
-    std::for_each( vars.begin(), vars.end(), xtl::delete_ptr() );
+    std::for_each( vars.begin(), vars.end(),
+        [](plStateVariable* var) { delete var; }
+    );
     vars.clear();
 }
 

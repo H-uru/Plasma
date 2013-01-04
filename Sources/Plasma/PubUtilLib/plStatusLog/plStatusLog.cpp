@@ -60,10 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
-#include "hsStlUtils.h"
 #include "plFile/plFileUtils.h"
 #include "plStatusLog.h"
-#include "hsStlUtils.h"
 #include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "pnProduct/pnProduct.h"
@@ -873,8 +871,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
     {
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        std::string str;
-        xtl::format( str, "%.*s\n", count, line );
+        plString str = plString::Format( "%.*s\n", count, line );
         OutputDebugString( str.c_str() );
 #endif
 #else

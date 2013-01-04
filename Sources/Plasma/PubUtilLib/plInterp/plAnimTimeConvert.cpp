@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
+#include <cmath>
+
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
 #include "plAvatar/plAGAnim.h"

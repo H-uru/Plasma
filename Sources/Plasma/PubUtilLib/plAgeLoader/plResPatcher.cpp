@@ -69,19 +69,19 @@ public:
         fIsZipped = wcscmp(plFileUtils::GetFileExt(reqFile), L"gz") == 0;
     }
 
-    ~plResDownloadStream()
+    virtual ~plResDownloadStream()
     {
         if (fFilename)
             delete[] fFilename;
     }
 
-    bool Open(const char* filename, const char* mode)
+    virtual bool Open(const char* filename, const char* mode)
     {
         fFilename = hsStrcpy(filename);
         return plZlibStream::Open(filename, mode);
     }
 
-    uint32_t Write(uint32_t count, const void* buf)
+    virtual uint32_t Write(uint32_t count, const void* buf)
     {
         fProgress->Increment((float)count);
         if (fIsZipped)
@@ -231,37 +231,33 @@ void plResPatcher::IssueRequest()
         Request req = fRequests.front();
         fRequests.pop();
 
-        std::wstring title;
+        plString title;
         if (req.fType == kManifest)
         {
-            char* eapSucksString = hsWStringToString(req.fFile.c_str());
-            PatcherLog(kMajorStatus, "    Downloading manifest... %s", eapSucksString);
-            xtl::format(title, L"Checking %s for updates...", req.fFile.c_str());
+            PatcherLog(kMajorStatus, "    Downloading manifest... %S", req.fFile.c_str());
+            title = plString::Format("Checking %S for updates...", req.fFile.c_str());
             NetCliFileManifestRequest(ManifestDownloaded, this, req.fFile.c_str());
-            delete[] eapSucksString;
         } else if (req.fType == kFile) {
-            char* eapSucksString = hsWStringToString(req.fFriendlyName.c_str());
-            PatcherLog(kMajorStatus, "    Downloading file... %s", eapSucksString);
-            xtl::format(title, L"Downloading... %s", plFileUtils::GetFileName(req.fFriendlyName.c_str()));
+            PatcherLog(kMajorStatus, "    Downloading file... %S", req.fFriendlyName.c_str());
+            title = plString::Format("Downloading... %S", plFileUtils::GetFileName(req.fFriendlyName.c_str()));
 
             // If this is a PRP, we need to unload it from the ResManager
-            if (stricmp(plFileUtils::GetFileExt(eapSucksString), "prp") == 0)
-                ((plResManager*)hsgResMgr::ResMgr())->RemoveSinglePage(eapSucksString);
+
+            plString filename = plString::FromWchar(req.fFriendlyName.c_str());
+            if (stricmp(plFileUtils::GetFileExt(filename.c_str()), "prp") == 0)
+                ((plResManager*)hsgResMgr::ResMgr())->RemoveSinglePage(filename.c_str());
 
             plFileUtils::EnsureFilePathExists(req.fFriendlyName.c_str());
             plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile.c_str());
-            if(stream->Open(eapSucksString, "wb"))
+            if (stream->Open_TEMP(filename, "wb"))
                 NetCliFileDownloadRequest(req.fFile.c_str(), stream, FileDownloaded, this);
             else {
-                PatcherLog(kError, "    Unable to create file %s", eapSucksString);
+                PatcherLog(kError, "    Unable to create file %s", filename.c_str());
                 Finish(false);
             }
-            delete[] eapSucksString;
         }
 
-        char* hack = hsWStringToString(title.c_str());
-        fProgress->SetTitle(hack);
-        delete[] hack;
+        fProgress->SetTitle(title.c_str());
     }
 }
 

@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plProfileManagerFull_h_inc
 #define plProfileManagerFull_h_inc
 
+#include <set>
+#include <string>
+#include "plString.h"
+
 #include "plProfileManager.h"
-
-#include "hsStlUtils.h"
-
-#include "hsStlSortUtils.h"
 
 class plProfileManager;
 class plGraphPlate;
@@ -57,7 +57,7 @@ class plProfileVar;
 class plProfileManagerFull
 {
 public:
-    typedef std::set<const char*, stringISorter> GroupSet;
+    typedef std::set<plString, plString::less_i> GroupSet;
 
 protected:
     plProfileManager::VarVec& fVars;

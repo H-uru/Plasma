@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plProfileManager_h_inc
 
 #include "HeadSpin.h"
-#include "hsStlUtils.h"
+#include <vector>
+
 #include "plProfile.h"
 
 class plProfileManager 

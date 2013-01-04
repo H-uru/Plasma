@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "hsStlUtils.h"
 #include "pnFactory/plCreatable.h"
 
 class plNetApp;

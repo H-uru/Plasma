@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "plNetServerSessionInfo.h"
-#include "hsStlUtils.h"
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 
@@ -352,16 +351,6 @@ void plAgeInfoStruct::Clear()
     fAgeSequenceNumber = 0;
     fAgeDescription = "";
     fAgeLanguage = -1;
-}
-
-const char * plAgeInfoStruct::GetDisplayName() const
-{
-    int seq = GetAgeSequenceNumber();
-    if ( seq>0 )
-        xtl::format( fDisplayName, "%s(%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
-    else
-        xtl::format( fDisplayName, "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
-    return fDisplayName.c_str();
 }
 
 

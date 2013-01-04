@@ -210,7 +210,9 @@ void plNetClientMgr::Shutdown()
 //
 void plNetClientMgr::IClearPendingLoads()
 {
-    std::for_each( fPendingLoads.begin(), fPendingLoads.end(), xtl::delete_ptr() );
+    std::for_each( fPendingLoads.begin(), fPendingLoads.end(),
+        [](PendingLoad *pl) { delete pl; }
+    );
     fPendingLoads.clear();
 }
 
@@ -250,10 +252,10 @@ void plNetClientMgr::SetNullSend(bool on)
 //
 // returns server time in the form "[m/d/y h:m:s]"
 //
-const char* plNetClientMgr::GetServerLogTimeAsString(std::string& timestamp) const
+const char* plNetClientMgr::GetServerLogTimeAsString(plString& timestamp) const
 {
     const plUnifiedTime st=GetServerTime();
-    xtl::format(timestamp, "{%02d/%02d %02d:%02d:%02d}", 
+    timestamp = plString::Format("{%02d/%02d %02d:%02d:%02d}",
         st.GetMonth(), st.GetDay(), st.GetHour(), st.GetMinute(), st.GetSecond());
     return timestamp.c_str();
 }
@@ -263,10 +265,10 @@ const char* plNetClientMgr::GetServerLogTimeAsString(std::string& timestamp) con
 //
 const char* ProcessTab(const char* fmt)
 {
-    static std::string s;
+    static plString s;
     if (fmt && *fmt=='\t')
     {
-        s = xtl::format("  %s", fmt);
+        s = plString::Format("  %s", fmt);
         return s.c_str();
     }
     return fmt;
@@ -281,7 +283,7 @@ bool plNetClientMgr::Log(const char* str) const
         return true;
 
     // prepend raw time
-    std::string buf2 = xtl::format("%.2f %s", hsTimer::GetSeconds(), ProcessTab(str));
+    plString buf2 = plString::Format("%.2f %s", hsTimer::GetSeconds(), ProcessTab(str));
 
     if ( GetConsoleOutput() )
         hsStatusMessage(buf2.c_str());
@@ -1557,7 +1559,9 @@ void plNetClientMgr::SendPendingPagingRoomMsgs()
 
 void plNetClientMgr::ClearPendingPagingRoomMsgs()
 {
-    std::for_each( fPendingPagingRoomMsgs.begin(), fPendingPagingRoomMsgs.end(), xtl::delete_ptr() );
+    std::for_each( fPendingPagingRoomMsgs.begin(), fPendingPagingRoomMsgs.end(),
+        [](plNetMsgPagingRoom *pr) { delete pr; }
+    );
     fPendingPagingRoomMsgs.clear();
 }
 
