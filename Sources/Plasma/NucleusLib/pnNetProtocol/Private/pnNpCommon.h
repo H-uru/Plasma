@@ -208,8 +208,8 @@ struct NetVaultNode : AtomicRef {
     
     CCritSect   critsect;
     
-    uint64_t       fieldFlags;
-    uint64_t       dirtyFlags;
+    uint64_t    fieldFlags;
+    uint64_t    dirtyFlags;
     
     plUUID      revisionId;
 

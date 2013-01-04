@@ -279,6 +279,13 @@ plNetLinkingMgr::plNetLinkingMgr()
 {
 }
 
+plNetLinkingMgr::~plNetLinkingMgr()
+{
+    std::for_each(s_opqueue.begin(), s_opqueue.end(),
+        [](NlmOp * op) { delete op; }
+    );
+}
+
 plNetLinkingMgr * plNetLinkingMgr::GetInstance()
 {
     static plNetLinkingMgr Instance;

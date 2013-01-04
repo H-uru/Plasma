@@ -58,6 +58,7 @@ class plBinkPlayer
     public:
 
         plBinkPlayer() : fFileName(nil) { }
+        ~plBinkPlayer() { delete [] fFileName; }
 
         static bool Init( hsWindowHndl hWnd) { return true; }
         static bool DeInit() { return true; }

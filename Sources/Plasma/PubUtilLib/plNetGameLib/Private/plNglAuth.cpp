@@ -1053,6 +1053,8 @@ struct ScoreGetScoresTrans : NetAuthTrans {
         void *                          param
     );
 
+    ~ScoreGetScoresTrans();
+
     bool Send ();
     void Post ();
     bool Recv (
@@ -4647,6 +4649,11 @@ ScoreGetScoresTrans::ScoreGetScoresTrans (
 ,   m_scoreCount(0)
 {
     StrCopy(m_gameName, gameName, arrsize(m_gameName));
+}
+
+//============================================================================
+ScoreGetScoresTrans::~ScoreGetScoresTrans () {
+    delete[] m_scores;
 }
 
 //============================================================================

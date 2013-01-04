@@ -76,7 +76,8 @@ class plNetLinkingMgr
 
 
     plNetLinkingMgr();
-    plNetLinkingMgr(const plNetLinkingMgr &);
+    plNetLinkingMgr(const plNetLinkingMgr &) { }
+    ~plNetLinkingMgr();
 
     enum Cmds
     {
