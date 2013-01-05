@@ -325,7 +325,7 @@ const char * pyVaultNode::GetCreateAgeName( void )
 plUUID pyVaultNode::GetCreateAgeGuid(void) const
 {
     if (fNode) {
-        return plUUID(fNode->createAgeUuid);
+        return fNode->createAgeUuid;
     }
 
     return kNilUuid;

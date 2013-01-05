@@ -52,10 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pyGlueHelpers.h"
 #include <string>
 #include <vector>
-#include "pnUUID/pnUUID.h"
 
 class pfGameCli;
 class plString;
+class plUUID;
 
 class pyGameCli
 {

@@ -162,7 +162,7 @@ plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
-        return plUUID(playerInfo.ageInstUuid);
+        return playerInfo.ageInstUuid;
     }
     return kNilUuid;
 }

@@ -67,7 +67,6 @@ struct plUUIDHelper
 void plUUID::Clear()
 {
     uuid_t g;
-    //plUUIDHelper::CopyToNative( g, this );
     uuid_clear( g );
     plUUIDHelper::CopyToPlasma( this, g );
 }

@@ -141,7 +141,7 @@ void pyNotify::AddVarNumber(const char* name, float number)
     fBuildMsg.AddVariableEvent(name, number);
 }
 
-void pyNotify::AddVarNumber(const char* name, int number)
+void pyNotify::AddVarNumber(const char* name, int32_t number)
 {
     fBuildMsg.AddVariableEvent(name, number);
 }

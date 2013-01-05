@@ -376,7 +376,7 @@ public:
     void AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint );
     void AddControlKeyEvent( int32_t key, bool down );
     void AddVariableEvent( const char* name, float number );
-    void AddVariableEvent( const char* name, int number );
+    void AddVariableEvent( const char* name, int32_t number );
     void AddVariableEvent( const char* name );
     void AddVariableEvent( const char *name, const plKey &key );
     void AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled);

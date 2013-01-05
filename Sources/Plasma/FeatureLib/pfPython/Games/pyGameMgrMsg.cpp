@@ -109,7 +109,7 @@ plUUID pyGameMgrInviteReceivedMsg::GameTypeID() const
     if (message)
     {
         const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-        return plUUID(gmMsg->gameTypeId);
+        return gmMsg->gameTypeId;
     }
     return kNilUuid;
 }
@@ -148,7 +148,7 @@ plUUID pyGameMgrInviteRevokedMsg::GameTypeID() const
     if (message)
     {
         const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-        return plUUID(gmMsg->gameTypeId);
+        return gmMsg->gameTypeId;
     }
     return kNilUuid;
 }

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGameCli.h"
 #include "pfGameMgr/pfGameMgr.h"
+#include "pnUUID/pnUUID.h"
 
 #include "TicTacToe/pyTTTGame.h"
 #include "Heek/pyHeekGame.h"
@@ -104,7 +105,7 @@ plUUID pyGameCli::GameTypeID() const
 {
     if (gameClient)
     {
-        return plUUID(gameClient->GetGameTypeId());
+        return gameClient->GetGameTypeId();
     }
     return kNilUuid;
 }

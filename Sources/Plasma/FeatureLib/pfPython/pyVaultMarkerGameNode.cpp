@@ -93,7 +93,7 @@ plUUID pyVaultMarkerGameNode::GetGameGuid() const
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        return plUUID(access.gameGuid);
+        return access.gameGuid;
     }
     return kNilUuid;
 }
