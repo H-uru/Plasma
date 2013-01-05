@@ -84,7 +84,7 @@ public:
         PyObject *          fCbObject;
         RelVaultNode *      fNode;
         PyObject *          fPyNodeRef;
-        uint32_t              fContext;
+        uint32_t            fContext;
 
         pyVaultNodeOperationCallback(PyObject * cbObject);
         ~pyVaultNodeOperationCallback();

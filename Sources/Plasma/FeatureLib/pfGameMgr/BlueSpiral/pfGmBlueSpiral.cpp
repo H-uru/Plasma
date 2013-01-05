@@ -58,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct IBlueSpiral {
     pfGmBlueSpiral * gameCli;
-    
-    IBlueSpiral (pfGmBlueSpiral * gameCli);
+
+    IBlueSpiral (pfGmBlueSpiral * gameCli) : gameCli(gameCli) { }
 
     // pfGameCli event notification handlers
     void Recv           (GameMsgHeader * msg, void * param);
@@ -88,7 +88,7 @@ static pfGameCli * BlueSpiralFactory (
     unsigned    gameId,
     plKey       receiver
 ) {
-    return NEWZERO(pfGmBlueSpiral)(gameId, receiver);
+    return new pfGmBlueSpiral(gameId, receiver);
 }
 
 //============================================================================
@@ -111,15 +111,9 @@ AUTO_INIT_FUNC(RegisterBlueSpiralFactory) {
 ***/
 
 //============================================================================
-IBlueSpiral::IBlueSpiral (pfGmBlueSpiral * gameCli)
-:   gameCli(gameCli)
-{
-}
-
-//============================================================================
 void IBlueSpiral::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -127,7 +121,7 @@ void IBlueSpiral::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 //============================================================================
 void IBlueSpiral::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -135,7 +129,7 @@ void IBlueSpiral::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 //============================================================================
 void IBlueSpiral::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
     
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -143,42 +137,42 @@ void IBlueSpiral::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
 //============================================================================
 void IBlueSpiral::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IBlueSpiral::RecvClothOrder (const Srv2Cli_BlueSpiral_ClothOrder & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IBlueSpiral::RecvSuccessfulHit (const Srv2Cli_BlueSpiral_SuccessfulHit & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IBlueSpiral::RecvGameWon (const Srv2Cli_BlueSpiral_GameWon & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IBlueSpiral::RecvGameOver (const Srv2Cli_BlueSpiral_GameOver & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IBlueSpiral::RecvGameStarted (const Srv2Cli_BlueSpiral_GameStarted & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -197,7 +191,7 @@ pfGmBlueSpiral::pfGmBlueSpiral (
 )
 :   pfGameCli(gameId, receiver)
 {
-    internal = NEWZERO(IBlueSpiral)(this);
+    internal = new IBlueSpiral(this);
 }
 
 //============================================================================

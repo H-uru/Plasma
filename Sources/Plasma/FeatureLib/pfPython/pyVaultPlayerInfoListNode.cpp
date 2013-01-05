@@ -79,7 +79,7 @@ bool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
     if (!fNode)
         return false;
 
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
@@ -101,7 +101,7 @@ bool pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     if (!fNode)
         return false;
         
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
@@ -125,7 +125,7 @@ void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
     if (!fNode)
         return;
 
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
@@ -144,7 +144,7 @@ PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
     if (!fNode)
         PYTHON_RETURN_NONE;
 
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);

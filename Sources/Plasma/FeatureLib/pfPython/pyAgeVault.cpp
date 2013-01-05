@@ -229,7 +229,7 @@ void pyAgeVault::AddChronicleEntry( const char * name, uint32_t type, const char
 // Add a new device.
 void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, uint32_t cbContext )
 {
-    pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
+    pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
     wchar_t wStr[MAX_PATH];
@@ -278,7 +278,7 @@ PyObject * pyAgeVault::GetDevice( const char * deviceName )
 // Sets the inbox associated with a device.
 void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cbObject, uint32_t cbContext )
 {
-    pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
+    pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
     wchar_t wDev[MAX_PATH];
@@ -310,7 +310,7 @@ PyObject * pyAgeVault::GetDeviceInbox( const char * deviceName )
 
 PyObject * pyAgeVault::GetAgeSDL() const
 {
-    plStateDataRecord * rec = NEWZERO(plStateDataRecord);
+    plStateDataRecord * rec = new plStateDataRecord;
     if (!VaultAgeGetAgeSDL(rec)) {
         delete rec;
         PYTHON_RETURN_NONE;

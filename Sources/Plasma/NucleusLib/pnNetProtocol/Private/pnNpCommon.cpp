@@ -363,9 +363,18 @@ static void DeallocNodeFields (NetVaultNode * node) {
 }
 
 //============================================================================
-NetVaultNode::NetVaultNode () {
-    ASSERTMSG(!fieldFlags, "NetVaultNode instances must be allocated with NEWZERO");
-}
+NetVaultNode::NetVaultNode ()
+    : fieldFlags(0), dirtyFlags(0)
+    , nodeId(0), createTime(0), modifyTime(0)
+    , createAgeName(nil), creatorId(0)
+    , nodeType(0)
+    , int32_1(0), int32_2(0), int32_3(0), int32_4(0)
+    , uint32_1(0), uint32_2(0), uint32_3(0), uint32_4(0)
+    , string64_1(nil), string64_2(nil), string64_3(nil), string64_4(nil)
+    , string64_5(nil), string64_6(nil)
+    , istring64_1(nil), istring64_2(nil)
+    , text_1(nil), text_2(nil)
+    , blob_1(nil), blob_1Length(0), blob_2(nil), blob_2Length(0) { }
 
 //============================================================================
 NetVaultNode::~NetVaultNode () {

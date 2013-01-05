@@ -96,7 +96,7 @@ pyVaultImageNode::pyVaultImageNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultImageNode::pyVaultImageNode(int n)
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 , fMipmapKey(nil)
 , fMipmap(nil)
 {

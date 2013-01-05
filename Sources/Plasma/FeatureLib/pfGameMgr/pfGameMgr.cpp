@@ -76,7 +76,7 @@ struct IGameCli : THashKeyVal<unsigned> {
     Factory *           factory;
     plKey               receiver;
     unsigned            playerCount;
-    
+
     IGameCli (
         pfGameCli * gameCli,
         unsigned    gameId,
@@ -209,7 +209,7 @@ void IGameMgr::RecvGameInstance (const Srv2Cli_GameMgr_GameInstance & msg, void 
 
 //============================================================================
 void IGameMgr::RecvInviteReceived (const Srv2Cli_GameMgr_InviteReceived & msg, void * param) {
-    pfGameMgrMsg * gameMgrMsg = NEWZERO(pfGameMgrMsg);
+    pfGameMgrMsg * gameMgrMsg = new pfGameMgrMsg;
     gameMgrMsg->Set(msg);
     for (unsigned i = 0; i < s_receivers.Count(); ++i)
         gameMgrMsg->AddReceiver(s_receivers[i]);
@@ -218,7 +218,7 @@ void IGameMgr::RecvInviteReceived (const Srv2Cli_GameMgr_InviteReceived & msg, v
 
 //============================================================================
 void IGameMgr::RecvInviteRevoked (const Srv2Cli_GameMgr_InviteRevoked & msg, void * param) {
-    pfGameMgrMsg * gameMgrMsg = NEWZERO(pfGameMgrMsg);
+    pfGameMgrMsg * gameMgrMsg = new pfGameMgrMsg;
     gameMgrMsg->Set(msg);
     for (unsigned i = 0; i < s_receivers.Count(); ++i)
         gameMgrMsg->AddReceiver(s_receivers[i]);
@@ -276,12 +276,6 @@ void IGameMgr::StaticRecv (GameMsgHeader * msg) {
 ***/
 
 //============================================================================
-pfGameMgrMsg::pfGameMgrMsg () {
-
-    netMsg = nil;
-}
-
-//============================================================================
 pfGameMgrMsg::~pfGameMgrMsg () {
 
     free(netMsg);
@@ -300,13 +294,6 @@ void pfGameMgrMsg::Set (const GameMsgHeader & msg) {
 *   pfGameCliMsg
 *
 ***/
-
-//============================================================================
-pfGameCliMsg::pfGameCliMsg () {
-
-    gameCli = nil;
-    netMsg  = nil;
-}
 
 //============================================================================
 pfGameCliMsg::~pfGameCliMsg () {
@@ -403,7 +390,7 @@ void pfGameMgr::JoinGame (
         
     msg.messageBytes    = msgBytes;
 
-    GameMgrSend(&msg, NEWZERO(JoinTransState)(receiver));
+    GameMgrSend(&msg, new JoinTransState(receiver));
 }
 
 //============================================================================
@@ -431,7 +418,7 @@ void pfGameMgr::CreateGame (
     msg->createDataBytes    = initBytes;
     memcpy(msg->createData, initData, initBytes);
 
-    GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+    GameMgrSend(msg, new JoinTransState(receiver));
 
     free(msg);
 }
@@ -462,7 +449,7 @@ void pfGameMgr::JoinCommonGame (
     msg->createDataBytes    = initBytes;
     memcpy(msg->createData, initData, initBytes);
 
-    GameMgrSend(msg, NEWZERO(JoinTransState)(receiver));
+    GameMgrSend(msg, new JoinTransState(receiver));
 
     free(msg);
 }
@@ -479,7 +466,7 @@ pfGameCli::pfGameCli (
     unsigned    gameId,
     plKey       receiver
 ) {
-    internal = NEWZERO(IGameCli)(this, gameId, receiver);
+    internal = new IGameCli(this, gameId, receiver);
 }
 
 //============================================================================
@@ -567,7 +554,9 @@ IGameCli::IGameCli (
     plKey       receiver
 ) : THashKeyVal<unsigned>(gameId)
 ,   gameCli(gameCli)
+,   factory(nil)
 ,   receiver(receiver)
+,   playerCount(0)
 {
     s_games.Add(this);
 }
@@ -651,7 +640,7 @@ TransState::TransState (unsigned transId, void * param)
 //============================================================================
 void GameMgrRegisterGameType (const GameTypeReg & reg) {
 
-    (void)NEWZERO(Factory)(reg);
+    (void)new Factory(reg);
 }
 
 //============================================================================

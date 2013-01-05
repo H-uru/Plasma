@@ -198,7 +198,7 @@ static void ManifestCallback (
         SetText("Downloading new patcher...");
 
         StrToAnsi(ansi, s_newPatcherFile, arrsize(ansi));
-        SelfPatcherStream * stream = NEWZERO(SelfPatcherStream);
+        SelfPatcherStream * stream = new SelfPatcherStream;
         if (!stream->Open(ansi, "wb"))
             ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
 

@@ -105,7 +105,7 @@ class CBaseLink {
 
 protected:
     CBaseLink * volatile m_prevLink;
-    uint8_t * volatile      m_next;
+    uint8_t   * volatile m_next;
 
     inline int  CalcLinkOffset () const;
     inline void InitializeLinks ();

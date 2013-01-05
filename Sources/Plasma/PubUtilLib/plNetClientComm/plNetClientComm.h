@@ -80,7 +80,7 @@ struct NetCommPlayer {
 
 struct NetCommAccount {
     plUUID      accountUuid;
-    wchar_t       accountName[kMaxAccountNameLength];
+    wchar_t     accountName[kMaxAccountNameLength];
     ShaDigest   accountNamePassHash;
     char        accountNameAnsi[kMaxAccountNameLength];
     unsigned    accountFlags;
@@ -92,6 +92,12 @@ struct NetCommAge {
     unsigned    ageVaultId;
     char        ageDatasetName[kMaxAgeNameLength];
     char        spawnPtName[64];
+
+    NetCommAge() : ageVaultId(0)
+    {
+        memset(ageDatasetName, 0, sizeof(ageDatasetName));
+        memset(spawnPtName, 0, sizeof(spawnPtName));
+    }
 };
 
 const NetCommAge *                  NetCommGetAge ();

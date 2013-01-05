@@ -57,9 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct IHeek {
-    pfGmHeek *      gameCli;
+    pfGmHeek * gameCli;
 
-    IHeek (pfGmHeek * gameCli);
+    IHeek (pfGmHeek * gameCli) : gameCli(gameCli) { }
 
     // pfGameCli event notification handlers
     void Recv           (GameMsgHeader * msg, void * param);
@@ -94,7 +94,7 @@ static pfGameCli * HeekFactory (
 unsigned    gameId,
 plKey       receiver
 ) {
-    return NEWZERO(pfGmHeek)(gameId, receiver);
+    return new pfGmHeek(gameId, receiver);
 }
 
 //============================================================================
@@ -116,112 +116,106 @@ AUTO_INIT_FUNC(RegisterHeek) {
 ***/
 
 //============================================================================
-IHeek::IHeek (pfGmHeek * gameCli)
-:   gameCli(gameCli)
-{
-}
-
-//============================================================================
 void IHeek::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvPlayGame (const Srv2Cli_Heek_PlayGame & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvGoodbye (const Srv2Cli_Heek_Goodbye & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvWelcome (const Srv2Cli_Heek_Welcome & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvDrop (const Srv2Cli_Heek_Drop & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvSetup (const Srv2Cli_Heek_Setup & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvLightState (const Srv2Cli_Heek_LightState & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvInterfaceState (const Srv2Cli_Heek_InterfaceState & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvCountdownState (const Srv2Cli_Heek_CountdownState & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvWinLose (const Srv2Cli_Heek_WinLose & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvGameWin (const Srv2Cli_Heek_GameWin & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IHeek::RecvPointUpdate (const Srv2Cli_Heek_PointUpdate & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -240,7 +234,7 @@ pfGmHeek::pfGmHeek (
 )
 :   pfGameCli(gameId, receiver)
 {
-    internal = NEWZERO(IHeek)(this);
+    internal = new IHeek(this);
 }
 
 //============================================================================

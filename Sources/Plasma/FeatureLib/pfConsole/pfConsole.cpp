@@ -1223,7 +1223,7 @@ void pfConsole::AddLineF(const char * fmt, ...) {
 //============================================================================
 void pfConsole::RunCommandAsync (const char cmd[]) {
 
-    plConsoleMsg * consoleMsg = NEWZERO(plConsoleMsg);
+    plConsoleMsg * consoleMsg = new plConsoleMsg;
     consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
     consoleMsg->SetString(cmd);
 //  consoleMsg->SetBreakBeforeDispatch(true);

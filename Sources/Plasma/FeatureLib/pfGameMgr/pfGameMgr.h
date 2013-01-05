@@ -86,7 +86,7 @@ public:
     void Read(hsStream *, hsResMgr *) { FATAL("not impl"); }
     void Write(hsStream *, hsResMgr *) { FATAL("not impl"); }
 
-    pfGameMgrMsg ();
+    pfGameMgrMsg () : netMsg(nil) { }
     ~pfGameMgrMsg ();
     
     void Set (const GameMsgHeader & msg);
@@ -108,8 +108,8 @@ public:
     CLASSNAME_REGISTER(pfGameCliMsg);
     GETINTERFACE_ANY(pfGameCliMsg, plMessage);
     #pragma warning(pop)
-    
-    pfGameCliMsg ();
+
+    pfGameCliMsg () : gameCli(nil), netMsg(nil) { }
     ~pfGameCliMsg ();
 
     void Read(hsStream *, hsResMgr *) { FATAL("not impl"); }

@@ -163,6 +163,8 @@ private:
     LINK(T)  m_linkToSlot;
 
 public:
+    THashLink() : m_hash(0) { }
+
     inline bool IsLinked () const;
     inline T * Next ();
     inline const T * Next () const;
