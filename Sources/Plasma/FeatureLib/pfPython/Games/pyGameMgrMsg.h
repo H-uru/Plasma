@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for game manager messages
 //
 
+#include "HeadSpin.h"
 #include "../pyGlueHelpers.h"
 #include <string>
 

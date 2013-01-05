@@ -428,6 +428,6 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     *buildId        = 0;
     *buildType      = 0;
     *branchId       = 0;
-    *productId      = 0;
+    *productId      = kNilUuid;
     return nil;
 }
