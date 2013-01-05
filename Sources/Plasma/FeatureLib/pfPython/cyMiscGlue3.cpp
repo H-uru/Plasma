@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pySceneObject.h"
 #include "pnUtils/pnUtils.h"
+#include "pnUUID/pnUUID.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
 {
@@ -437,12 +438,14 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetShareAgeInstanceGuid, args, "Params: instan
         PyErr_SetString(PyExc_TypeError, "PtSetShareAgeInstanceGuid expects a string");
         PYTHON_RETURN_ERROR;
     }
-    Uuid guid;
-    if (!GuidFromString(guidStr, &guid))
+
+    plUUID guid(guidStr);
+    if (guid == kNilUuid)
     {
         PyErr_SetString(PyExc_TypeError, "PtSetShareAgeInstanceGuid string parameter is not a guid string");
         PYTHON_RETURN_ERROR;
     }
+
     cyMisc::SetShareAgeInstanceGuid(guid);
     PYTHON_RETURN_NONE;
 }

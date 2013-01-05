@@ -56,12 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNetBase.h"
 
 struct RelVaultNode;
+class plUUID;
 
 class pyVaultMarkerGameNode : public pyVaultNode
 {
 private:
     mutable char fGameName[kMaxVaultNodeStringLength];
-    mutable char fGameGuid[64];
 
 protected:
     // should only be created from C++ side
@@ -86,7 +86,7 @@ public:
     const char *    GetGameName () const;
     void            SetGameName (const char v[]);
 
-    const char *    GetGameGuid () const;
+    plUUID          GetGameGuid() const;
     void            SetGameGuid (const char v[]);
 };
 

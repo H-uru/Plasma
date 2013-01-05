@@ -111,5 +111,5 @@ plUUID pyDniInfoSource::GetAgeGuid( void ) const
         return uuid;
     }
 
-    return plUUID();
+    return kNilUuid;
 }

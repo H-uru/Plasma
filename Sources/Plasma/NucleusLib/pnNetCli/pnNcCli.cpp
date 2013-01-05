@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pnEncryption/plChallengeHash.h"
+#include "pnUUID/pnUUID.h"
 
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING
@@ -112,7 +113,7 @@ enum ENetCliMode {
 ***/
 
 // connection structure attached to each socket
-struct NetCli : THashKeyVal<Uuid> {
+struct NetCli {
 
     // communication channel
     AsyncSocket             sock;
@@ -917,7 +918,6 @@ static NetCli * ConnCreate (
     cli->protocol       = (ENetProtocol) protocol;
     cli->channel        = channel;
     cli->mode           = mode;
-    cli->SetValue(kNilGuid);
 
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe

@@ -192,10 +192,11 @@ void pyVaultImageNode::Image_SetImage(pyImage& image)
         fMipmap = nil;
     }
 
-    if (fMipmap = image.GetImage()) {
+    fMipmap = image.GetImage();
+    if (fMipmap) {
         VaultImageNode access(fNode);
         access.StuffImage(fMipmap);
-        
+
         fMipmapKey = image.GetKey();
         if (!fMipmapKey)
             fMipmapKey = CreateAndRefImageKey(fNode->nodeId, fMipmap);

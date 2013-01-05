@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 class pfGameCli;
+class plString;
+class plUUID;
 
 class pyGameCli
 {
@@ -76,11 +78,11 @@ public:
 
     static std::vector<unsigned> GetGameIDs();
     static PyObject* GetGameCli(unsigned gameID); // returns a ptGameCli
-    static std::wstring GetGameNameByTypeID(std::wstring typeID);
+    static std::wstring GetGameNameByTypeID(plString& typeID);
     static void JoinGame(pyKey& callbackKey, unsigned gameID);
 
     unsigned GameID() const;
-    std::wstring GameTypeID() const;
+    plUUID   GameTypeID() const;
     std::wstring Name() const;
     unsigned PlayerCount() const;
 

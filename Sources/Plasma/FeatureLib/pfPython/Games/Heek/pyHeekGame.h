@@ -69,7 +69,7 @@ public:
     static void AddPlasmaConstantsClasses(PyObject* m);
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-    static bool IsHeekGame(std::wstring guid);
+    static bool IsHeekGame(plString& guid);
     static void JoinCommonHeekGame(pyKey& callbackKey, unsigned gameID);
 
     void PlayGame(int position, uint32_t points, std::wstring name);

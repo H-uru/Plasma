@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
-
-
 #include <rpc.h>
+
+// Check UUID size
+static_assert(sizeof(plUUID) == sizeof(GUID), "plUUID and Win32 GUID types differ in size");
 
 void plUUID::Clear()
 {

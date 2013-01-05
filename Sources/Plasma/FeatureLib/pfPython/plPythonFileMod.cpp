@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <locale>
 #include <Python.h>
+#include <locale>
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "pyGeometry3.h"

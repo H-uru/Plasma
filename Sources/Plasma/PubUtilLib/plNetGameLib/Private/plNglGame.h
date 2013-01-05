@@ -78,7 +78,7 @@ typedef void (*FNetCliGameJoinAgeRequestCallback)(
 );
 void NetCliGameJoinAgeRequest (
     unsigned                            ageMcpId,
-    const Uuid &                        accountUuid,
+    const plUUID&                       accountUuid,
     unsigned                            playerInt,
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param

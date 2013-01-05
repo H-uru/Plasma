@@ -833,7 +833,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
     else if (!VaultGetOwnedAgeLink(&info, &link)) {
     
         // We must have an owned copy of the age before we can offer it, so make one now
-        plUUID guid(GuidGenerate());
+        plUUID guid = plUUID::Generate();
         info.SetAgeInstanceGuid(&guid);
         plString title, desc;
 
@@ -861,7 +861,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         VaultAgeLinkNode linkAcc(linkNode);
         if (linkAcc.volat) {
             if (VaultUnregisterOwnedAgeAndWait(link.GetAgeInfo())) {
-                plUUID guid(GuidGenerate());
+                plUUID guid = plUUID::Generate();
                 link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
                 VaultRegisterOwnedAgeAndWait(&link);
             }

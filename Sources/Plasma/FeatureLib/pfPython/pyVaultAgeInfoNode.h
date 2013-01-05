@@ -56,12 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct RelVaultNode;
 class pyVaultSDLNode;
 class pyAgeInfoStruct;
+class plUUID;
 
 
 class pyVaultAgeInfoNode : public pyVaultNode
 {
 private:
-    mutable char fAgeInstGuid[64];
     mutable std::string fAgeFilename;
     mutable std::string fAgeInstName;
     mutable std::string fAgeUserName;
@@ -105,7 +105,7 @@ public:
     const char * GetAgeUserDefinedName() const;
     void    SetAgeUserDefinedName( const char * v );
 
-    const char * GetAgeInstanceGuid() const;
+    plUUID  GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid( const char * guid );
 
     const char * GetAgeDescription() const;

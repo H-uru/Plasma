@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyVaultPlayerInfoNode.h"
+#include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
 
 // glue functions
@@ -122,7 +123,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetAgeGuid)
 {
-    return PyString_FromString(self->fThis->Player_GetAgeGuid());
+    return PyString_FromPlString(self->fThis->Player_GetAgeGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetOnline, args)

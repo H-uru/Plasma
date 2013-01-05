@@ -531,7 +531,7 @@ bool pyVault::AmAgeOwner( const pyAgeInfoStruct * ageInfo )
     if (!ageInfo->GetAgeInfo())
         return false;
 
-    Uuid ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
+    plUUID ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
     return VaultAmOwnerOfAge(ageInstId);
 }
 
@@ -540,7 +540,7 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     if (!ageInfo->GetAgeInfo())
         return false;
 
-    Uuid ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
+    plUUID ageInstId = *ageInfo->GetAgeInfo()->GetAgeInstanceGuid();
     return VaultAmCzarOfAge(ageInstId);
 }
 
@@ -574,10 +574,8 @@ void pyVault::RegisterVisitAge( const pyAgeLinkStruct & link )
 
 void pyVault::UnRegisterVisitAge( const char * guidstr )
 {
-    Uuid uuid;
-    GuidFromString(guidstr, &uuid);
     plAgeInfoStruct info;
-    plUUID guid(uuid);
+    plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
     VaultUnregisterVisitAgeAndWait(&info);
 }
@@ -671,7 +669,7 @@ void pyVault::CreateNeighborhood()
         desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
     }
 
-    plUUID guid(GuidGenerate());
+    plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
     link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
     link.GetAgeInfo()->SetAgeDescription( desc.c_str() );

@@ -59,9 +59,9 @@ pyClimbingWallGame::pyClimbingWallGame(pfGameCli* client): pyGameCli(client)
         gameClient = nil; // wrong type, just clear it out
 }
 
-bool pyClimbingWallGame::IsClimbingWallGame(std::wstring guid)
+bool pyClimbingWallGame::IsClimbingWallGame(plString& guid)
 {
-    Uuid gameUuid(guid.c_str());
+    plUUID gameUuid(guid);
     return gameUuid == kGameTypeId_ClimbingWall;
 }
 

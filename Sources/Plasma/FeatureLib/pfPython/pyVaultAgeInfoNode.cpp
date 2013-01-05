@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
 
+#include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
 
 // should only be created from C++ side
@@ -228,15 +229,14 @@ void pyVaultAgeInfoNode::SetAgeUserDefinedName( const char * v )
 {
 }
 
-const char * pyVaultAgeInfoNode::GetAgeInstanceGuid() const
+plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
 {
-    fAgeInstGuid[0] = 0;
-    
     if (fNode) {
         VaultAgeInfoNode access(fNode);
-        GuidToString(access.ageInstUuid, fAgeInstGuid, arrsize(fAgeInstGuid));
+
+        return plUUID(access.ageInstUuid);
     }
-    return fAgeInstGuid;
+    return kNilUuid;
 }
 
 void pyVaultAgeInfoNode::SetAgeInstanceGuid( const char * sguid )

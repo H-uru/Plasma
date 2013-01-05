@@ -42,10 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "../pyKey.h"
+#include "plString.h"
 #pragma hdrstop
 
 #include "pyGameCli.h"
 #include "pfGameMgr/pfGameMgr.h"
+#include "pnUUID/pnUUID.h"
 
 #include "TicTacToe/pyTTTGame.h"
 #include "Heek/pyHeekGame.h"
@@ -81,9 +83,9 @@ PyObject* pyGameCli::GetGameCli(unsigned gameID)
     PYTHON_RETURN_NONE;
 }
 
-std::wstring pyGameCli::GetGameNameByTypeID(std::wstring typeID)
+std::wstring pyGameCli::GetGameNameByTypeID(plString& typeID)
 {
-    Uuid gameUuid(typeID.c_str());
+    plUUID gameUuid(typeID);
     return pfGameMgr::GetInstance()->GetGameNameByTypeId(gameUuid);
 }
 
@@ -99,15 +101,13 @@ unsigned pyGameCli::GameID() const
     return 0;
 }
 
-std::wstring pyGameCli::GameTypeID() const
+plUUID pyGameCli::GameTypeID() const
 {
     if (gameClient)
     {
-        wchar_t guidStr[256];
-        GuidToString(gameClient->GetGameTypeId(), guidStr, arrsize(guidStr));
-        return guidStr;
+        return gameClient->GetGameTypeId();
     }
-    return L"";
+    return kNilUuid;
 }
 
 std::wstring pyGameCli::Name() const

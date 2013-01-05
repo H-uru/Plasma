@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyVaultMarkerGameNode.h"
 #include "plVault/plVault.h"
+#include "pnUUID/pnUUID.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultMarkerGameNode, pyVaultMarkerGameNode);
@@ -84,7 +85,7 @@ PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameGuid)
 {
-    return PyString_FromString(self->fThis->GetGameGuid());
+    return PyString_FromPlString(self->fThis->GetGameGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameGuid, args)

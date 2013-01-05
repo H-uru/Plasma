@@ -97,8 +97,8 @@ static_assert(kNumGame2CliMessages <= 0xFFFF, "Game2Cli message types overflow u
 
 struct Cli2Game_ConnData {
     uint32_t   dataBytes;
-    Uuid    accountUuid;
-    Uuid    ageUuid;
+    plUUID  accountUuid;
+    plUUID  ageUuid;
 };
 struct Cli2Game_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -125,7 +125,7 @@ struct Cli2Game_JoinAgeRequest {
     uint32_t       messageId;
     uint32_t       transId;
     uint32_t       ageMcpId;
-    Uuid        accountUuid;
+    plUUID      accountUuid;
     uint32_t       playerInt;
 };
 

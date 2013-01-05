@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGameMgrMsg.h"
 #include "pfGameMgr/pfGameMgr.h"
+#include "pnUUID/pnUUID.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -93,7 +94,7 @@ pyGameMgrInviteReceivedMsg::pyGameMgrInviteReceivedMsg(pfGameMgrMsg* msg): pyGam
         message = nil; // wrong type, just clear it out
 }
 
-unsigned long pyGameMgrInviteReceivedMsg::InviterID() const
+uint32_t pyGameMgrInviteReceivedMsg::InviterID() const
 {
     if (message)
     {
@@ -103,19 +104,17 @@ unsigned long pyGameMgrInviteReceivedMsg::InviterID() const
     return 0;
 }
 
-std::wstring pyGameMgrInviteReceivedMsg::GameTypeID() const
+plUUID pyGameMgrInviteReceivedMsg::GameTypeID() const
 {
     if (message)
     {
         const Srv2Cli_GameMgr_InviteReceived* gmMsg = (const Srv2Cli_GameMgr_InviteReceived*)message->netMsg;
-        wchar_t buffer[256];
-        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
-        return buffer;
+        return gmMsg->gameTypeId;
     }
-    return L"";
+    return kNilUuid;
 }
 
-unsigned long pyGameMgrInviteReceivedMsg::NewGameID() const
+uint32_t pyGameMgrInviteReceivedMsg::NewGameID() const
 {
     if (message)
     {
@@ -134,7 +133,7 @@ pyGameMgrInviteRevokedMsg::pyGameMgrInviteRevokedMsg(pfGameMgrMsg* msg): pyGameM
         message = nil; // wrong type, just clear it out
 }
 
-unsigned long pyGameMgrInviteRevokedMsg::InviterID() const
+uint32_t pyGameMgrInviteRevokedMsg::InviterID() const
 {
     if (message)
     {
@@ -144,19 +143,17 @@ unsigned long pyGameMgrInviteRevokedMsg::InviterID() const
     return 0;
 }
 
-std::wstring pyGameMgrInviteRevokedMsg::GameTypeID() const
+plUUID pyGameMgrInviteRevokedMsg::GameTypeID() const
 {
     if (message)
     {
         const Srv2Cli_GameMgr_InviteRevoked* gmMsg = (const Srv2Cli_GameMgr_InviteRevoked*)message->netMsg;
-        wchar_t buffer[256];
-        GuidToString(gmMsg->gameTypeId, buffer, arrsize(buffer));
-        return buffer;
+        return gmMsg->gameTypeId;
     }
-    return L"";
+    return kNilUuid;
 }
 
-unsigned long pyGameMgrInviteRevokedMsg::NewGameID() const
+uint32_t pyGameMgrInviteRevokedMsg::NewGameID() const
 {
     if (message)
     {
