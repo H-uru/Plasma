@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID.h"
 #include "hsStream.h"
 
+static_assert(sizeof(plUUID) == sizeof(uint8_t[16]), "plUUID Must be the same size as a UUID");
+
 const plUUID kNilUuid;
 
 plUUID::plUUID()

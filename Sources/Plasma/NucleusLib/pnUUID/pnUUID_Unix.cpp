@@ -45,6 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <uuid/uuid.h>
 
+// Check UUID size
+static_assert(sizeof(plUUID) == sizeof(uuid_t), "plUUID and uuid_t types differ in size");
+
 struct plUUIDHelper
 {
     static inline void CopyToPlasma( plUUID * dst, const uuid_t & src )

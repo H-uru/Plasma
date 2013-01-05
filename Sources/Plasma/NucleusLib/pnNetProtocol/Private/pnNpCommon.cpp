@@ -977,7 +977,7 @@ void NetVaultNodeFieldArray::GetFieldValueString_LCS (
         case NetVaultNode::kUuid_2:
         case NetVaultNode::kUuid_3:
         case NetVaultNode::kUuid_4: {
-            plString tmp = plUUID((char*)fieldAddr).AsString();
+            plString tmp = reinterpret_cast<plUUID*>(fieldAddr)->AsString();
 
             StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp.c_str());
         }
