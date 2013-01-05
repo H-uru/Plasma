@@ -67,7 +67,7 @@ uint64_t GetNodeVolatileFields(NetVaultNode* node) {
     unsigned    index           = 0;
 
     while (volatileFieldList[index].nodeType != 0) {
-        if (node->nodeType == volatileFieldList[index].nodeType) {
+        if (node->GetNodeType() == volatileFieldList[index].nodeType) {
             volatileFields |= volatileFieldList[index].volatileFields;
             break;
         }
@@ -78,240 +78,12 @@ uint64_t GetNodeVolatileFields(NetVaultNode* node) {
     return volatileFields;
 }
 
-/*****************************************************************************
-*
-*   NetVaultNodeAccess
-*
-***/
-
-//============================================================================
-NetVaultNodeAccess::NetVaultNodeAccess (NetVaultNode * node)
-:   base(node)
-,   fieldFlags(node->fieldFlags)
-,   dirtyFlags(node->dirtyFlags)
-{ }
-
-
-/*****************************************************************************
-*
-*   VaultPlayerNode
-*
-***/
-
-//============================================================================
-VaultPlayerNode::VaultPlayerNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   playerName(node->istring64_1)
-,   avatarShapeName(node->string64_1)
-,   disabled(node->int32_1)
-,   explorer(node->int32_2)
-,   onlineTime(node->uint32_1)
-,   accountUuid(node->uuid_1)
-,   inviteUuid(node->uuid_2)
-{
-}
-
-//============================================================================
-void VaultPlayerNode::SetPlayerName (const wchar_t v[]) {
-    IVaultNodeSetString(kPlayerName, base, &playerName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultPlayerNode::SetAvatarShapeName (const wchar_t v[]) {
-    IVaultNodeSetString(kAvatarShapeName, base, &avatarShapeName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultPlayerNode::SetDisabled (int v) {
-    IVaultNodeSetValue(kDisabled, base, &disabled, v);
-}
-
-//============================================================================
-void VaultPlayerNode::SetOnlineTime (unsigned v) {
-    IVaultNodeSetValue(kOnlineTime, base, &onlineTime, v);
-}
-
-//============================================================================
-void VaultPlayerNode::SetAccountUuid (const plUUID& v) {
-    IVaultNodeSetValue(kAccountUuid, base, &accountUuid, v);
-}
-
-//============================================================================
-void VaultPlayerNode::SetInviteUuid (const plUUID& v) {
-    IVaultNodeSetValue(kInviteUuid, base, &inviteUuid, v);
-}
-
-//============================================================================
-void VaultPlayerNode::SetExplorer (int v) {
-    IVaultNodeSetValue(kExplorer, base, &explorer, v);
-}
-
-
-/*****************************************************************************
-*
-*   VaultPlayerInfoNode
-*
-***/
-
-//============================================================================
-VaultPlayerInfoNode::VaultPlayerInfoNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   playerId(node->uint32_1)
-,   playerName(node->istring64_1)
-,   ageInstName(node->string64_1)
-,   ageInstUuid(node->uuid_1)
-,   online(node->int32_1)
-,   ccrLevel(node->int32_2)
-{
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetPlayerId (unsigned v) {
-    IVaultNodeSetValue(kPlayerId, base, &playerId, v);
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetPlayerName (const wchar_t v[]) {
-    IVaultNodeSetString(kPlayerName, base, &playerName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetAgeInstName (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeInstName, base, &ageInstName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetAgeInstUuid (const plUUID& v) {
-    IVaultNodeSetValue(kAgeInstUuid, base, &ageInstUuid, v);
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetOnline (int v) {
-    IVaultNodeSetValue(kOnline, base, &online, v);
-}
-
-//============================================================================
-void VaultPlayerInfoNode::SetCCRLevel (int v) {
-    IVaultNodeSetValue(kCCRLevel, base, &ccrLevel, v);
-}
-
-/*****************************************************************************
-*
-*   VaultFolderNode
-*
-***/
-
-//============================================================================
-VaultFolderNode::VaultFolderNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   folderType(node->int32_1)
-,   folderName(node->string64_1)
-{
-}
-
-//============================================================================
-void VaultFolderNode::SetFolderName (const wchar_t v[]) {
-    IVaultNodeSetString(kFolderName, base, &folderName, v, kMaxVaultNodeStringLength);
-}
-    
-//============================================================================
-void VaultFolderNode::SetFolderType (int v) {
-    IVaultNodeSetValue(kFolderType, base, &folderType, v);
-}
-
-
-/*****************************************************************************
-*
-*   VaultPlayerInfoListNode
-*
-***/
-
-//============================================================================
-VaultPlayerInfoListNode::VaultPlayerInfoListNode (NetVaultNode * node)
-:   VaultFolderNode(node)
-{
-}
-
-
-/*****************************************************************************
-*
-*   VaultAgeInfoListNode
-*
-***/
-
-//============================================================================
-VaultAgeInfoListNode::VaultAgeInfoListNode (NetVaultNode * node)
-:   VaultFolderNode(node)
-{
-}
-
-
-/*****************************************************************************
-*
-*   VaultChronicleNode
-*
-***/
-
-//============================================================================
-VaultChronicleNode::VaultChronicleNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   entryType(node->int32_1)
-,   entryName(node->string64_1)
-,   entryValue(node->text_1)
-{
-}
-
-//============================================================================
-void VaultChronicleNode::SetEntryType (int v) {
-    IVaultNodeSetValue(kEntryType, base, &entryType, v);
-}
-
-//============================================================================
-void VaultChronicleNode::SetEntryName (const wchar_t v[]) {
-    IVaultNodeSetString(kEntryName, base, &entryName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultChronicleNode::SetEntryValue (const wchar_t v[]) {
-    IVaultNodeSetString(kEntryValue, base, &entryValue, v, (unsigned)-1);
-}
-
 
 /*****************************************************************************
 *
 *   VaultTextNoteNode
 *
 ***/
-
-//============================================================================
-VaultTextNoteNode::VaultTextNoteNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   noteType(node->int32_1)
-,   noteSubType(node->int32_2)
-,   noteTitle(node->string64_1)
-,   noteText(node->text_1)
-{
-}
-
-//============================================================================
-void VaultTextNoteNode::SetNoteType (int v) {
-    IVaultNodeSetValue(kNoteType, base, &noteType, v);
-}
-
-//============================================================================
-void VaultTextNoteNode::SetNoteSubType (int v) {
-    IVaultNodeSetValue(kNoteSubType, base, &noteSubType, v);
-}
-
-//============================================================================
-void VaultTextNoteNode::SetNoteTitle (const wchar_t v[]) {
-    IVaultNodeSetString(kNoteTitle, base, &noteTitle, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultTextNoteNode::SetNoteText (const wchar_t v[]) {
-    IVaultNodeSetString(kNoteText, base, &noteText, v, (unsigned)-1);
-}
 
 //============================================================================
 enum EAgeInfoFields {
@@ -415,7 +187,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
 bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
 
     wchar_t * mem;
-    const wchar_t * str = mem = StrDup(noteText);
+    const wchar_t * str = mem = StrDup(GetNoteText());
     
     for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
         
@@ -487,9 +259,9 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
             break;
 
             DEFAULT_FATAL(i);
-        }           
+        }
     }
-    
+
     free(mem);
     return true;
 }
@@ -501,42 +273,22 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
 *   VaultSDLNode
 *
 ***/
-    
-//============================================================================
-VaultSDLNode::VaultSDLNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   sdlIdent(node->int32_1)
-,   sdlName(node->string64_1)
-,   sdlData(node->blob_1)
-,   sdlDataLen(node->blob_1Length)
-{
-}
-
-//============================================================================
-void VaultSDLNode::SetSdlIdent (int v) {
-    IVaultNodeSetValue(kSDLIdent, base, &sdlIdent, v);
-}
-
-//============================================================================
-void VaultSDLNode::SetSdlName (const wchar_t v[]) {
-    IVaultNodeSetString(kSDLName, base, &sdlName, v, kMaxVaultNodeStringLength);
-}
 
 //============================================================================
 #ifdef CLIENT
 bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOptions) {
-    if (!sdlDataLen || !sdlData)
+    if (!GetSDLDataLength() || !GetSDLData())
         return false;
 
     hsRAMStream ram;
-    ram.Write(sdlDataLen, sdlData);
+    ram.Write(GetSDLDataLength(), GetSDLData());
     ram.Rewind();
-    
+
     plString sdlRecName;
     int sdlRecVersion;
     if (!plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion))
         return false;
-        
+
     rec->SetDescriptor(sdlRecName, sdlRecVersion);
 
     // Note: Setting from default here results in a bug causing age SDL to
@@ -562,15 +314,13 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
     rec->WriteStreamHeader(&ram);
     rec->Write(&ram, 0, writeOptions);
     ram.Rewind();
-    
+
     unsigned bytes = ram.GetEOF();
     uint8_t * buf = nil;
     buf = (uint8_t *)malloc(bytes);
 
-    ram.CopyToMem(buf);     
-    
-    IVaultNodeSetBlob(kSDLData, base, &sdlData, &sdlDataLen, buf, bytes);
-    
+    ram.CopyToMem(buf);
+    SetSDLData(buf, bytes);
     free(buf);
 }
 #endif // def CLIENT
@@ -585,7 +335,7 @@ void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned wri
         if (exists)
             return;
     }
-    
+
     char aStr[MAX_PATH];
     StrToAnsi(aStr, sdlRecName, arrsize(aStr));
     if (plStateDescriptor * des = plSDLMgr::GetInstance()->FindDescriptor(aStr, plSDL::kLatestVersion)) {
@@ -602,31 +352,6 @@ void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned wri
 *   VaultImageNode
 *
 ***/
-
-//============================================================================
-VaultImageNode::VaultImageNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   title(node->string64_1)
-,   imgType(node->int32_1)
-,   imgData(node->blob_1)
-,   imgDataLen(node->blob_1Length)
-{
-}
-
-//============================================================================
-void VaultImageNode::SetImageTitle (const wchar_t v[]) {
-    IVaultNodeSetString(kImageTitle, base, &title, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultImageNode::SetImageType (int v) {
-    IVaultNodeSetValue(kImageType, base, &imgType, v);
-}
-
-//============================================================================
-void VaultImageNode::SetImageData (const uint8_t buffer[], unsigned bytes) {
-    IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, buffer, bytes);
-}
 
 //============================================================================
 #ifdef CLIENT
@@ -647,14 +372,14 @@ void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
     }
 
     if (compressSuccess) {
-        unsigned bytes = ramStream.GetEOF();        
+        unsigned bytes = ramStream.GetEOF();
         uint8_t * buffer = (uint8_t *)malloc(bytes);
         ramStream.CopyToMem(buffer);
-        IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, buffer, bytes);
+        SetImageData(buffer, bytes);
         SetImageType(dstType);
         free(buffer);
     } else {
-        IVaultNodeSetBlob(kImageData, base, &imgData, &imgDataLen, nil, 0);
+        SetImageData(nil, 0);
         SetImageType(kNone);
     }
 }
@@ -664,10 +389,10 @@ void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
 #ifdef CLIENT
 bool VaultImageNode::ExtractImage (plMipmap ** dst) {
     hsRAMStream ramStream;
-    ramStream.Write(imgDataLen, imgData);
+    ramStream.Write(GetImageDataLength(), GetImageData());
     ramStream.Rewind();
 
-    switch (imgType) {
+    switch (GetImageType()) {
         case kJPEG:
             (*dst) = plJPEG::Instance().ReadFromStream(&ramStream);
             break;
@@ -708,29 +433,9 @@ struct MatchesSpawnPointName
 #endif
 
 //============================================================================
-VaultAgeLinkNode::VaultAgeLinkNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   unlocked(node->int32_1)
-,   volat(node->int32_2)
-,   spawnPoints(node->blob_1)
-,   spawnPointsLen(node->blob_1Length)
-{
-}
-
-//============================================================================
-void VaultAgeLinkNode::SetUnlocked (int v) {
-    IVaultNodeSetValue(kUnlocked, base, &unlocked, v);
-}
-
-//============================================================================
-void VaultAgeLinkNode::SetVolatile (int v) {
-    IVaultNodeSetValue(kVolatile, base, &volat, v);
-}
-
-//============================================================================
 #ifdef CLIENT
 bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
-    if (RelVaultNode * me = VaultGetNodeIncRef(base->nodeId)) {
+    if (RelVaultNode * me = VaultGetNodeIncRef(base->GetNodeId())) {
         if (RelVaultNode * info = me->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
             VaultAgeInfoNode access(info);
             access.CopyTo(link->GetAgeInfo());
@@ -801,7 +506,7 @@ bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 #ifdef CLIENT
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
     
-    plString str = plString::FromUtf8(reinterpret_cast<const char*>(spawnPoints), spawnPointsLen);
+    plString str = plString::FromUtf8(reinterpret_cast<const char*>(GetSpawnPoints()), GetSpawnPointsLength());
     std::vector<plString> izer = str.Tokenize(";");
     for (auto token1 = izer.begin(); token1 != izer.end(); ++token1)
     {
@@ -830,131 +535,16 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
             << in[i].fSpawnPt << ":"
             << in[i].fCameraStack << ";";
     }
-    IVaultNodeSetBlob(
-        kSpawnPoints,
-        base,
-        &spawnPoints,
-        &spawnPointsLen,
-        (const uint8_t *)ss.GetString().c_str(),
-        ss.GetLength()
-    );
+    plString blob = ss.GetString();
+    SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.GetSize());
 }
 #endif
-
-/*****************************************************************************
-*
-*   VaultAgeNode
-*
-***/
-
-//============================================================================
-VaultAgeNode::VaultAgeNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   ageInstUuid(node->uuid_1)
-,   parentAgeInstUuid(node->uuid_2)
-,   ageName(node->string64_1)
-{
-}
-
-//============================================================================
-void VaultAgeNode::SetAgeInstGuid (const plUUID& v) {
-    IVaultNodeSetValue(kAgeInstanceGuid, base, &ageInstUuid, v);
-}
-
-//============================================================================
-void VaultAgeNode::SetParentAgeInstGuid (const plUUID& v) {
-    IVaultNodeSetValue(kParentAgeInstanceGuid, base, &parentAgeInstUuid, v);
-}
-
-//============================================================================
-void VaultAgeNode::SetAgeName (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeName, base, &ageName, v, kMaxVaultNodeStringLength);
-}
-
 
 /*****************************************************************************
 *
 *   VaultAgeInfoNode
 *
 ***/
-
-//============================================================================
-VaultAgeInfoNode::VaultAgeInfoNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   ageFilename(node->string64_2)
-,   ageInstName(node->string64_3)
-,   ageUserDefinedName(node->string64_4)
-,   ageInstUuid(node->uuid_1)
-,   parentAgeInstUuid(node->uuid_2)
-,   ageSequenceNumber(node->int32_1)
-,   ageIsPublic(node->int32_2)
-,   ageLanguage(node->int32_3)
-,   ageId(node->uint32_1)
-,   ageCzarId(node->uint32_2)
-,   ageInfoFlags(node->uint32_3)
-,   ageDescription(node->text_1)
-{
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeFilename (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeFilename, base, &ageFilename, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeInstName (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeInstanceName, base, &ageInstName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeUserDefinedName (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeUserDefinedName, base, &ageUserDefinedName, v, kMaxVaultNodeStringLength);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeInstGuid (const plUUID& v) {
-    IVaultNodeSetValue(kAgeInstanceGuid, base, &ageInstUuid, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetParentAgeInstGuid (const plUUID& v) {
-    IVaultNodeSetValue(kParentAgeInstanceGuid, base, &parentAgeInstUuid, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeSequenceNumber (int v) {
-    IVaultNodeSetValue(kAgeSequenceNumber, base, &ageSequenceNumber, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::_SetAgeIsPublic (int v) {
-    IVaultNodeSetValue(kIsPublic, base, &ageIsPublic, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeLanguage (int v) {
-    IVaultNodeSetValue(kAgeLanguage, base, &ageLanguage, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeId (unsigned v) {
-    IVaultNodeSetValue(kAgeId, base, &ageId, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeCzarId (unsigned v) {
-    IVaultNodeSetValue(kAgeCzarId, base, &ageCzarId, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeInfoFlags (unsigned v) {
-    IVaultNodeSetValue(kAgeInfoFlags, base, &ageInfoFlags, v);
-}
-
-//============================================================================
-void VaultAgeInfoNode::SetAgeDescription (const wchar_t v[]) {
-    IVaultNodeSetString(kAgeDescription, base, &ageDescription, v, (unsigned)-1);
-}
 
 //============================================================================
 #ifdef CLIENT
@@ -978,13 +568,13 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
         SetAgeFilename(nil);
     }
 
-    // age instance name    
+    // age instance name
     if (info->HasAgeInstanceName()) {
         StrToUnicode(str, info->GetAgeInstanceName(), arrsize(str));
-        SetAgeInstName(str);
+        SetAgeInstanceName(str);
     }
     else {
-        SetAgeInstName(nil);
+        SetAgeInstanceName(nil);
     }
     
     // age user-defined name
@@ -1010,9 +600,9 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
     SetAgeSequenceNumber(info->GetAgeSequenceNumber());
 
     // age instance guid
-    SetAgeInstGuid(*info->GetAgeInstanceGuid());
+    SetAgeInstanceGuid(*info->GetAgeInstanceGuid());
 
-    // age language 
+    // age language
     SetAgeLanguage(info->GetAgeLanguage());
 }
 #endif // def CLIENT
@@ -1022,73 +612,29 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
 void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
     char str[MAX_PATH];
 
-    // age filename     
-    StrToAnsi(str, ageFilename, arrsize(str));
+    // age filename
+    StrToAnsi(str, GetAgeFilename(), arrsize(str));
     info->SetAgeFilename(str);
-    
+
     // age instance name
-    StrToAnsi(str, ageInstName, arrsize(str));
+    StrToAnsi(str, GetAgeInstanceName(), arrsize(str));
     info->SetAgeInstanceName(str);
-    
+
     // age user-defined name
-    StrToAnsi(str, ageUserDefinedName, arrsize(str));
+    StrToAnsi(str, GetAgeUserDefinedName(), arrsize(str));
     info->SetAgeUserDefinedName(str);
 
     // age description
     // TODO
-    
+
     // age sequence number
-    info->SetAgeSequenceNumber(ageSequenceNumber);
-    
+    info->SetAgeSequenceNumber(GetAgeSequenceNumber());
+
     // age instance guid
-    plUUID uuid(ageInstUuid);
+    plUUID uuid(GetAgeInstanceGuid());
     info->SetAgeInstanceGuid(&uuid);
-    
+
     // age language
-    info->SetAgeLanguage(ageLanguage);
+    info->SetAgeLanguage(GetAgeLanguage());
 }
 #endif // def CLIENT
-
-
-/*****************************************************************************
-*
-*   VaultSystemNode
-*
-***/
-
-//============================================================================
-VaultSystemNode::VaultSystemNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   ccrStatus(node->int32_1)
-{
-}
-
-//============================================================================
-void VaultSystemNode::SetCCRStatus (int v) {
-    IVaultNodeSetValue(kCCRStatus, base, &ccrStatus, v);
-}
-
-
-/*****************************************************************************
-*
-*   VaultMarkerGameNode
-*
-***/
-
-//============================================================================
-VaultMarkerGameNode::VaultMarkerGameNode (NetVaultNode * node)
-:   NetVaultNodeAccess(node)
-,   gameName(node->text_1)
-,   gameGuid(node->uuid_1)
-{
-}
-
-//============================================================================
-void VaultMarkerGameNode::SetGameName (const wchar_t v[]) {
-    IVaultNodeSetString(kGameName, base, &gameName, v, (unsigned)-1);
-}
-
-//============================================================================
-void VaultMarkerGameNode::SetGameGuid (const plUUID& v) {
-    IVaultNodeSetValue(kGameGuid, base, &gameGuid, v);
-}

@@ -189,7 +189,7 @@ plUUID pyAgeVault::GetAgeGuid( void )
     RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef();
     if (rvn) {
         VaultAgeInfoNode ageInfo(rvn);
-        plUUID uuid = plUUID(ageInfo.ageInstUuid);
+        plUUID uuid = ageInfo.GetAgeInstanceGuid();
         rvn->DecRef();
         return uuid;
     }

@@ -74,7 +74,7 @@ const char * pyVaultMarkerGameNode::GetGameName () const
     
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        StrToAnsi(fGameName, access.gameName, arrsize(fGameName));
+        StrToAnsi(fGameName, access.GetGameName(), arrsize(fGameName));
     }
     return fGameName;
 }
@@ -93,7 +93,7 @@ plUUID pyVaultMarkerGameNode::GetGameGuid() const
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        return access.gameGuid;
+        return access.GetGameGuid();
     }
     return kNilUuid;
 }

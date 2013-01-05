@@ -5620,10 +5620,10 @@ unsigned NetCliAuthVaultNodeSave (
     FNetCliAuthVaultNodeSaveCallback    callback,
     void *                              param
 ) {
-    ASSERTMSG(!(node->dirtyFlags & NetVaultNode::kNodeType), "Node type may not be changed");
+    ASSERTMSG(!(node->GetDirtyFlags() & NetVaultNode::kNodeType), "Node type may not be changed");
     
     // Clear dirty bits of read-only fields before we write the node to the msg buffer
-    node->dirtyFlags &= ~(
+    node->ClearDirtyFlags(
         NetVaultNode::kNodeId |
         NetVaultNode::kNodeType |
         NetVaultNode::kCreatorAcct |
@@ -5631,15 +5631,15 @@ unsigned NetCliAuthVaultNodeSave (
         NetVaultNode::kCreateTime
     );
     
-    if (!node->dirtyFlags)
+    if (!node->GetDirtyFlags())
         return 0;
         
-    if (!node->nodeId)
+    if (!node->GetNodeId())
         return 0;
         
     // force sending of the nodeType value, since the auth needs it.
     // auth will clear the field before sending it on to the vault.
-    node->dirtyFlags |= NetVaultNode::kNodeType;
+    node->SetDirtyFlags(NetVaultNode::kNodeType);
 
     // We're definitely saving this node, so assign a revisionId
     node->revisionId = plUUID::Generate();
@@ -5648,7 +5648,7 @@ unsigned NetCliAuthVaultNodeSave (
     unsigned bytes = node->Write_LCS(&buffer, NetVaultNode::kRwDirtyOnly | NetVaultNode::kRwUpdateDirty);
     
     VaultSaveNodeTrans * trans = new VaultSaveNodeTrans(
-        node->nodeId,
+        node->GetNodeId(),
         node->revisionId,
         buffer.Count(),
         buffer.Ptr(),

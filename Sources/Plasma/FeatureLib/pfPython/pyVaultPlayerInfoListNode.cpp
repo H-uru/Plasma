@@ -114,7 +114,7 @@ bool pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
         VaultFindNodesAndWait(templateNode, &nodeIds);
         
     if (nodeIds.Count())
-        VaultAddChildNodeAndWait(fNode->nodeId, nodeIds[0], VaultGetPlayerId());
+        VaultAddChildNodeAndWait(fNode->GetNodeId(), nodeIds[0], VaultGetPlayerId());
         
     templateNode->DecRef();
     return nodeIds.Count() != 0;
@@ -130,9 +130,9 @@ void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
-            
+
     if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
-        VaultRemoveChildNode(fNode->nodeId, rvn->nodeId, nil, nil);
+        VaultRemoveChildNode(fNode->GetNodeId(), rvn->GetNodeId(), nil, nil);
         rvn->DecRef();
     }
     

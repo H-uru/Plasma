@@ -189,7 +189,7 @@ const char * pyVaultAgeInfoNode::GetAgeFilename() const
     if (fNode) {
         char str[MAX_PATH];
         VaultAgeInfoNode access(fNode);
-        StrToAnsi(str, access.ageFilename, arrsize(str));
+        StrToAnsi(str, access.GetAgeFilename(), arrsize(str));
         fAgeFilename = str;
     }
     return fAgeFilename.c_str();
@@ -204,7 +204,7 @@ const char * pyVaultAgeInfoNode::GetAgeInstanceName() const
     if (fNode) {
         char str[MAX_PATH];
         VaultAgeInfoNode access(fNode);
-        StrToAnsi(str, access.ageInstName, arrsize(str));
+        StrToAnsi(str, access.GetAgeInstanceName(), arrsize(str));
         fAgeInstName = str;
     }
     return fAgeInstName.c_str();
@@ -219,7 +219,7 @@ const char * pyVaultAgeInfoNode::GetAgeUserDefinedName() const
     if (fNode) {
         char str[MAX_PATH];
         VaultAgeInfoNode access(fNode);
-        StrToAnsi(str, access.ageUserDefinedName, arrsize(str));
+        StrToAnsi(str, access.GetAgeUserDefinedName(), arrsize(str));
         fAgeUserName = str;
     }
     return fAgeUserName.c_str();
@@ -234,7 +234,7 @@ plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
     if (fNode) {
         VaultAgeInfoNode access(fNode);
 
-        return plUUID(access.ageInstUuid);
+        return access.GetAgeInstanceGuid();
     }
     return kNilUuid;
 }
@@ -249,7 +249,7 @@ const char * pyVaultAgeInfoNode::GetAgeDescription() const
         char str[MAX_PATH];
         memset(str, 0, sizeof(str));
         VaultAgeInfoNode access(fNode);
-        StrToAnsi(str, access.ageDescription, arrsize(str));
+        StrToAnsi(str, access.GetAgeDescription(), arrsize(str));
         fAgeDescription = str;
     }
     return fAgeDescription.c_str();
@@ -263,9 +263,9 @@ int32_t pyVaultAgeInfoNode::GetSequenceNumber() const
 {
     if (!fNode)
         return -1;
-        
+
     VaultAgeInfoNode access(fNode);
-    return access.ageSequenceNumber;
+    return access.GetAgeSequenceNumber();
 }
 
 void pyVaultAgeInfoNode::SetSequenceNumber( int32_t v )
@@ -276,9 +276,9 @@ int32_t pyVaultAgeInfoNode::GetAgeLanguage() const
 {
     if (!fNode)
         return -1;
-        
+
     VaultAgeInfoNode access(fNode);
-    return access.ageLanguage;
+    return access.GetAgeLanguage();
 }
 
 void pyVaultAgeInfoNode::SetAgeLanguage( int32_t v )
@@ -305,7 +305,7 @@ bool pyVaultAgeInfoNode::IsPublic() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
-        return access.ageIsPublic;
+        return access.GetIsPublic();
     }
     return false;
 }
@@ -315,10 +315,10 @@ const char * pyVaultAgeInfoNode::GetDisplayName() const
     if (fNode) {
         char str[MAX_PATH];
         VaultAgeInfoNode access(fNode);
-        if (access.ageSequenceNumber > 0)
-            StrPrintf(str, arrsize(str), "%S(%d) %S", access.ageUserDefinedName, access.ageSequenceNumber, access.ageInstName);
+        if (access.GetAgeSequenceNumber() > 0)
+            StrPrintf(str, arrsize(str), "%S(%d) %S", access.GetAgeUserDefinedName(), access.GetAgeSequenceNumber(), access.GetAgeInstanceName());
         else
-            StrPrintf(str, arrsize(str), "%S %S", access.ageUserDefinedName, access.ageInstName);
+            StrPrintf(str, arrsize(str), "%S %S", access.GetAgeUserDefinedName(), access.GetAgeInstanceName());
         fAgeDispName = str;
     }
     return fAgeDispName.c_str();

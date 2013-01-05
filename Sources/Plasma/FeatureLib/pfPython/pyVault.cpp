@@ -225,11 +225,11 @@ PyObject* pyVault::GetKIUsage(void)
             RelVaultNode ** end = nodeArr.Term();
             for (; cur != end; ++cur) {
                 RelVaultNode * rvn = *cur;
-                if (rvn->nodeType == plVault::kNodeType_Image)
+                if (rvn->GetNodeType() == plVault::kNodeType_Image)
                     ++pictures;
-                else if (rvn->nodeType == plVault::kNodeType_TextNote)
+                else if (rvn->GetNodeType() == plVault::kNodeType_TextNote)
                     ++notes;
-                else if (rvn->nodeType == plVault::kNodeType_MarkerGame)
+                else if (rvn->GetNodeType() == plVault::kNodeType_MarkerGame)
                     ++markerGames;
                 rvn->DecRef();
             }
@@ -385,7 +385,7 @@ void pyVault::SendToDevice( pyVaultNode& node, const char * deviceName )
     StrToUnicode(wDevName, deviceName, arrsize(wDevName));
 
     // Note: This actually blocks (~Hoikas)
-    VaultPublishNode(node.GetNode()->nodeId, wDevName);
+    VaultPublishNode(node.GetNode()->GetNodeId(), wDevName);
 }
 
 
@@ -433,10 +433,10 @@ PyObject* pyVault::GetPsnlAgeSDL() const
     PyObject * result = nil;
     NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
-    
+
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
-        
-        templateNode->fieldFlags = 0;
+
+        templateNode->ClearFieldFlags();
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
         wchar_t str[MAX_PATH];
@@ -444,8 +444,8 @@ PyObject* pyVault::GetPsnlAgeSDL() const
         ageInfo.SetAgeFilename(str);
 
         if (RelVaultNode * rvnInfo = rvnFldr->GetChildNodeIncRef(templateNode, 2)) {
-            
-            templateNode->fieldFlags = 0;
+
+            templateNode->ClearFieldFlags();
             templateNode->SetNodeType(plVault::kNodeType_SDL);
 
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {
@@ -478,10 +478,10 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
 
     NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
-    
+
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
-        
-        templateNode->fieldFlags = 0;
+
+        templateNode->ClearFieldFlags();
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
         wchar_t str[MAX_PATH];
@@ -489,8 +489,8 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
         ageInfo.SetAgeFilename(str);
 
         if (RelVaultNode * rvnInfo = rvnFldr->GetChildNodeIncRef(templateNode, 2)) {
-            
-            templateNode->fieldFlags = 0;
+
+            templateNode->ClearFieldFlags();
             templateNode->SetNodeType(plVault::kNodeType_SDL);
 
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {

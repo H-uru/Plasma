@@ -337,20 +337,20 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 ***/
 
 //============================================================================
-static void DeallocNodeFields (NetVaultNode * node) {
-    free(node->createAgeName);
-    free(node->string64_1);
-    free(node->string64_2);
-    free(node->string64_3);
-    free(node->string64_4);
-    free(node->string64_5);
-    free(node->string64_6);
-    free(node->istring64_1);
-    free(node->istring64_2);
-    free(node->text_1);
-    free(node->text_2);
-    free(node->blob_1);
-    free(node->blob_2);
+void NetVaultNode::DeallocNodeFields () {
+    free(createAgeName);
+    free(string64_1);
+    free(string64_2);
+    free(string64_3);
+    free(string64_4);
+    free(string64_5);
+    free(string64_6);
+    free(istring64_1);
+    free(istring64_2);
+    free(text_1);
+    free(text_2);
+    free(blob_1);
+    free(blob_2);
 }
 
 //============================================================================
@@ -369,70 +369,59 @@ NetVaultNode::NetVaultNode ()
 
 //============================================================================
 NetVaultNode::~NetVaultNode () {
-    DeallocNodeFields(this);
+    DeallocNodeFields();
 }
 
 //============================================================================
 unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], unsigned bufsz, unsigned rwOpts) {
 
-    DeallocNodeFields(this);
+    DeallocNodeFields();
 
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
     IReadValue(&fieldFlags, &buffer, &bufsz);
-    
-    for (uint64_t bit = 1; bit; bit <<= 1) {
 
-        // if we've passed all fields on the node then bail 
-        if (bit > fieldFlags)
-            break;
-            
-        // if this field isn't in the set to be read, then continue to next
-        if (!(bit & fieldFlags))
-            continue;
+    #define READ(flag, func, varptr)            if (flag & fieldFlags) func(varptr, &buffer, &bufsz);
+    #define READARR(flag, func, varptr, lenptr) if (flag & fieldFlags) func(varptr, lenptr, &buffer, &bufsz);
+        READ(kNodeId,       IReadValue,     &nodeId);
+        READ(kCreateTime,   IReadValue,     &createTime);
+        READ(kModifyTime,   IReadValue,     &modifyTime);
+        READ(kCreateAgeName,IReadString,    &createAgeName);
+        READ(kCreateAgeUuid,IReadValue,     &createAgeUuid);
+        READ(kCreatorAcct,  IReadValue,     &creatorAcct);
+        READ(kCreatorId,    IReadValue,     &creatorId);
+        READ(kNodeType,     IReadValue,     &nodeType);
+        READ(kInt32_1,      IReadValue,     &int32_1);
+        READ(kInt32_2,      IReadValue,     &int32_2);
+        READ(kInt32_3,      IReadValue,     &int32_3);
+        READ(kInt32_4,      IReadValue,     &int32_4);
+        READ(kUInt32_1,     IReadValue,     &uint32_1);
+        READ(kUInt32_2,     IReadValue,     &uint32_2);
+        READ(kUInt32_3,     IReadValue,     &uint32_3);
+        READ(kUInt32_4,     IReadValue,     &uint32_4);
+        READ(kUuid_1,       IReadValue,     &uuid_1);
+        READ(kUuid_2,       IReadValue,     &uuid_2);
+        READ(kUuid_3,       IReadValue,     &uuid_3);
+        READ(kUuid_4,       IReadValue,     &uuid_4);
+        READ(kString64_1,   IReadString,    &string64_1);
+        READ(kString64_2,   IReadString,    &string64_2);
+        READ(kString64_3,   IReadString,    &string64_3);
+        READ(kString64_4,   IReadString,    &string64_4);
+        READ(kString64_5,   IReadString,    &string64_5);
+        READ(kString64_6,   IReadString,    &string64_6);
+        READ(kIString64_1,  IReadString,    &istring64_1);
+        READ(kIString64_2,  IReadString,    &istring64_2);
+        READ(kText_1,       IReadString,    &text_1);
+        READ(kText_2,       IReadString,    &text_2);
+        READARR(kBlob_1,    IReadArray,     &blob_1, &blob_1Length);
+        READARR(kBlob_2,    IReadArray,     &blob_2, &blob_2Length);
+    #undef READARR
+    #undef READ
 
-        #define READ(flag, func, varptr)            case flag: func(varptr, &buffer, &bufsz); break
-        #define READARR(flag, func, varptr, lenptr) case flag: func(varptr, lenptr, &buffer, &bufsz); break
-        switch (bit) {
-            READ(kNodeId,       IReadValue,     &nodeId);
-            READ(kCreateTime,   IReadValue,     &createTime);
-            READ(kModifyTime,   IReadValue,     &modifyTime);
-            READ(kCreateAgeName,IReadString,    &createAgeName);
-            READ(kCreateAgeUuid,IReadValue,     &createAgeUuid);
-            READ(kCreatorAcct,  IReadValue,     &creatorAcct);
-            READ(kCreatorId,    IReadValue,     &creatorId);
-            READ(kNodeType,     IReadValue,     &nodeType);
-            READ(kInt32_1,      IReadValue,     &int32_1);
-            READ(kInt32_2,      IReadValue,     &int32_2);
-            READ(kInt32_3,      IReadValue,     &int32_3);
-            READ(kInt32_4,      IReadValue,     &int32_4);
-            READ(kUInt32_1,     IReadValue,     &uint32_1);
-            READ(kUInt32_2,     IReadValue,     &uint32_2);
-            READ(kUInt32_3,     IReadValue,     &uint32_3);
-            READ(kUInt32_4,     IReadValue,     &uint32_4);
-            READ(kUuid_1,       IReadValue,     &uuid_1);
-            READ(kUuid_2,       IReadValue,     &uuid_2);
-            READ(kUuid_3,       IReadValue,     &uuid_3);
-            READ(kUuid_4,       IReadValue,     &uuid_4);
-            READ(kString64_1,   IReadString,    &string64_1);
-            READ(kString64_2,   IReadString,    &string64_2);
-            READ(kString64_3,   IReadString,    &string64_3);
-            READ(kString64_4,   IReadString,    &string64_4);
-            READ(kString64_5,   IReadString,    &string64_5);
-            READ(kString64_6,   IReadString,    &string64_6);
-            READ(kIString64_1,  IReadString,    &istring64_1);
-            READ(kIString64_2,  IReadString,    &istring64_2);
-            READ(kText_1,       IReadString,    &text_1);
-            READ(kText_2,       IReadString,    &text_2);
-            READARR(kBlob_1,    IReadArray,     &blob_1, &blob_1Length);
-            READARR(kBlob_2,    IReadArray,     &blob_2, &blob_2Length);
-            DEFAULT_FATAL(bit);
-        }
-        #undef READARR
-        #undef READ
-    }
-    
+    if (fieldFlags & ~kAllValidFields)
+        FATAL("Invalid field flag(s) encountered");
+
     if (rwOpts & kRwUpdateDirty)
         dirtyFlags = fieldFlags;
     else
@@ -455,57 +444,46 @@ unsigned NetVaultNode::Write_LCS (ARRAY(uint8_t) * buffer, unsigned rwOpts) {
         return 0;
 
     IWriteValue(flags, buffer);
-        
-    for (uint64_t bit = 1; bit; bit <<= 1) {
 
-        // if we've passed all fields on the node then bail 
-        if (bit > flags)
-            break;
+    #define WRITE(flag, func, var)          if (flag & flags) func(var, buffer);
+    #define WRITEARR(flag, func, var, len)  if (flag & flags) func(var, len, buffer);
+        WRITE(kNodeId,          IWriteValue,    nodeId          );
+        WRITE(kCreateTime,      IWriteValue,    createTime      );
+        WRITE(kModifyTime,      IWriteValue,    modifyTime      );
+        WRITE(kCreateAgeName,   IWriteString,   createAgeName ? createAgeName : L"" );
+        WRITE(kCreateAgeUuid,   IWriteValue,    createAgeUuid   );
+        WRITE(kCreatorAcct,     IWriteValue,    creatorAcct     );
+        WRITE(kCreatorId,       IWriteValue,    creatorId       );
+        WRITE(kNodeType,        IWriteValue,    nodeType        );
+        WRITE(kInt32_1,         IWriteValue,    int32_1         );
+        WRITE(kInt32_2,         IWriteValue,    int32_2         );
+        WRITE(kInt32_3,         IWriteValue,    int32_3         );
+        WRITE(kInt32_4,         IWriteValue,    int32_4         );
+        WRITE(kUInt32_1,        IWriteValue,    uint32_1        );
+        WRITE(kUInt32_2,        IWriteValue,    uint32_2        );
+        WRITE(kUInt32_3,        IWriteValue,    uint32_3        );
+        WRITE(kUInt32_4,        IWriteValue,    uint32_4        );
+        WRITE(kUuid_1,          IWriteValue,    uuid_1          );
+        WRITE(kUuid_2,          IWriteValue,    uuid_2          );
+        WRITE(kUuid_3,          IWriteValue,    uuid_3          );
+        WRITE(kUuid_4,          IWriteValue,    uuid_4          );
+        WRITE(kString64_1,      IWriteString,   string64_1 ? string64_1 : L""       );
+        WRITE(kString64_2,      IWriteString,   string64_2 ? string64_2 : L""       );
+        WRITE(kString64_3,      IWriteString,   string64_3 ? string64_3 : L""       );
+        WRITE(kString64_4,      IWriteString,   string64_4 ? string64_4 : L""       );
+        WRITE(kString64_5,      IWriteString,   string64_5 ? string64_5 : L""       );
+        WRITE(kString64_6,      IWriteString,   string64_6 ? string64_6 : L""       );
+        WRITE(kIString64_1,     IWriteString,   istring64_1 ? istring64_1 : L""     );
+        WRITE(kIString64_2,     IWriteString,   istring64_2 ? istring64_2 : L""     );
+        WRITE(kText_1,          IWriteString,   text_1 ? text_1 : L""               );
+        WRITE(kText_2,          IWriteString,   text_2 ? text_2 : L""               );
+        WRITEARR(kBlob_1,       IWriteArray,    blob_1, blob_1Length);
+        WRITEARR(kBlob_2,       IWriteArray,    blob_2, blob_2Length);
+    #undef WRITEARR
+    #undef WRITE
 
-        // if this field isn't in the set to be written, then continue to next
-        if (!(bit & flags))
-            continue;
-            
-        #define WRITE(flag, func, var)          case flag: func(var, buffer); break
-        #define WRITEARR(flag, func, var, len)  case flag: func(var, len, buffer); break
-        switch (bit) {
-            WRITE(kNodeId,          IWriteValue,    nodeId          );
-            WRITE(kCreateTime,      IWriteValue,    createTime      );
-            WRITE(kModifyTime,      IWriteValue,    modifyTime      );
-            WRITE(kCreateAgeName,   IWriteString,   createAgeName ? createAgeName : L"" );
-            WRITE(kCreateAgeUuid,   IWriteValue,    createAgeUuid   );
-            WRITE(kCreatorAcct,     IWriteValue,    creatorAcct     );
-            WRITE(kCreatorId,       IWriteValue,    creatorId       );
-            WRITE(kNodeType,        IWriteValue,    nodeType        );
-            WRITE(kInt32_1,         IWriteValue,    int32_1         );
-            WRITE(kInt32_2,         IWriteValue,    int32_2         );
-            WRITE(kInt32_3,         IWriteValue,    int32_3         );
-            WRITE(kInt32_4,         IWriteValue,    int32_4         );
-            WRITE(kUInt32_1,        IWriteValue,    uint32_1        );
-            WRITE(kUInt32_2,        IWriteValue,    uint32_2        );
-            WRITE(kUInt32_3,        IWriteValue,    uint32_3        );
-            WRITE(kUInt32_4,        IWriteValue,    uint32_4        );
-            WRITE(kUuid_1,          IWriteValue,    uuid_1          );
-            WRITE(kUuid_2,          IWriteValue,    uuid_2          );
-            WRITE(kUuid_3,          IWriteValue,    uuid_3          );
-            WRITE(kUuid_4,          IWriteValue,    uuid_4          );
-            WRITE(kString64_1,      IWriteString,   string64_1 ? string64_1 : L""       );
-            WRITE(kString64_2,      IWriteString,   string64_2 ? string64_2 : L""       );
-            WRITE(kString64_3,      IWriteString,   string64_3 ? string64_3 : L""       );
-            WRITE(kString64_4,      IWriteString,   string64_4 ? string64_4 : L""       );
-            WRITE(kString64_5,      IWriteString,   string64_5 ? string64_5 : L""       );
-            WRITE(kString64_6,      IWriteString,   string64_6 ? string64_6 : L""       );
-            WRITE(kIString64_1,     IWriteString,   istring64_1 ? istring64_1 : L""     );
-            WRITE(kIString64_2,     IWriteString,   istring64_2 ? istring64_2 : L""     );
-            WRITE(kText_1,          IWriteString,   text_1 ? text_1 : L""               );
-            WRITE(kText_2,          IWriteString,   text_2 ? text_2 : L""               );
-            WRITEARR(kBlob_1,       IWriteArray,    blob_1, blob_1Length);
-            WRITEARR(kBlob_2,       IWriteArray,    blob_2, blob_2Length);
-            DEFAULT_FATAL(bit);
-        }
-        #undef WRITEARR
-        #undef WRITE
-    }
+    if (flags & ~kAllValidFields)
+        FATAL("Invalid field flag(s) encountered");
 
     if (rwOpts & kRwUpdateDirty)
         dirtyFlags = 0;
@@ -520,7 +498,7 @@ bool NetVaultNode::Matches (const NetVaultNode * other) {
         // if bit has gone past all set fields on the other node without failing, return true
         if (bit > other->fieldFlags)
             return true;
-            
+
         // if the other node does not have the field, then continue to next field           
         if (!(bit & other->fieldFlags))
             continue;
@@ -528,7 +506,7 @@ bool NetVaultNode::Matches (const NetVaultNode * other) {
         // if we don't have the field (but the other node does), then return false
         if (!(bit & fieldFlags))
             return false;
-            
+
         #define COMPARE(flag, func, var) case flag: if (!func(var, other->var)) return false; break
         switch (bit) {
             COMPARE(kNodeId,        ICompareValue,      nodeId);
@@ -574,16 +552,16 @@ bool NetVaultNode::Matches (const NetVaultNode * other) {
 void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
     if (this == other)
         return;
-        
+
     uint64_t origDirtyFlags = dirtyFlags;
-        
+
     for (uint64_t bit = 1; bit; bit <<= 1) {
         // we already have a value for this field...
         if (bit & fieldFlags) {
             if (!(copyOpts & kCopyOverwrite))
                 continue;   // don't overwrite our field value
         }
-                
+
         // other does not have a value for this field...
         if (!(bit & other->fieldFlags)) {
             // clear our field?
@@ -591,10 +569,10 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
                 continue;
             // clear our field. 
             if (bit & fieldFlags) {
-                #define _ZERO(flag, func, var, z)           case flag: func(bit, this, &var, z); break
-                #define _ZEROSTRING(flag, func, var, z)     case flag: func(bit, this, &var, z, kMaxVaultNodeStringLength); break
-                #define _ZEROCLOB(flag, func, var, z)       case flag: func(bit, this, &var, z, (unsigned)-1); break
-                #define _ZEROARR(flag, func, var, varlen)   case flag: func(bit, this, &var, &varlen, nil, 0); break
+                #define _ZERO(flag, func, var, z)           case flag: func(bit, &var, z); break
+                #define _ZEROSTRING(flag, func, var, z)     case flag: func(bit, &var, z, kMaxVaultNodeStringLength); break
+                #define _ZEROCLOB(flag, func, var, z)       case flag: func(bit, &var, z, (unsigned)-1); break
+                #define _ZEROARR(flag, func, var, varlen)   case flag: func(bit, &var, &varlen, nil, 0); break
                 switch (bit) {
                     _ZERO(kNodeId,              IVaultNodeSetValue,     nodeId,         (unsigned)0);
                     _ZERO(kCreateTime,          IVaultNodeSetValue,     createTime,     (unsigned)0);
@@ -637,10 +615,10 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
             }
         }
         
-        #define COPY(flag, func, var)               case flag: func(bit, this, &var, other->var); break
-        #define COPYSTRING(flag, func, var)         case flag: func(bit, this, &var, other->var, kMaxVaultNodeStringLength); break
-        #define COPYCLOB(flag, func, var)           case flag: func(bit, this, &var, other->var, (unsigned)-1); break
-        #define COPYARR(flag, func, var, varlen)    case flag: func(bit, this, &var, &varlen, other->var, other->varlen); break
+        #define COPY(flag, func, var)               case flag: func(bit, &var, other->var); break
+        #define COPYSTRING(flag, func, var)         case flag: func(bit, &var, other->var, kMaxVaultNodeStringLength); break
+        #define COPYCLOB(flag, func, var)           case flag: func(bit, &var, other->var, (unsigned)-1); break
+        #define COPYARR(flag, func, var, varlen)    case flag: func(bit, &var, &varlen, other->var, other->varlen); break
         switch (bit) {
             COPY(kNodeId,               IVaultNodeSetValue,     nodeId          );
             COPY(kCreateTime,           IVaultNodeSetValue,     createTime      );
@@ -688,408 +666,162 @@ void NetVaultNode::CopyFrom (const NetVaultNode * other, unsigned copyOpts) {
 
 //============================================================================
 void NetVaultNode::SetNodeId (unsigned v) {
-    IVaultNodeSetValue(kNodeId, this, &nodeId, v);
+    IVaultNodeSetValue(kNodeId, &nodeId, v);
 }
 
 //============================================================================
 void NetVaultNode::SetCreateTime (unsigned v) {
-    IVaultNodeSetValue(kCreateTime, this, &createTime, v);
+    IVaultNodeSetValue(kCreateTime, &createTime, v);
 }
 
 //============================================================================
 void NetVaultNode::SetModifyTime (unsigned v) {
-    IVaultNodeSetValue(kModifyTime, this, &modifyTime, v);
+    IVaultNodeSetValue(kModifyTime, &modifyTime, v);
 }
 
 //============================================================================
 void NetVaultNode::SetCreateAgeName (const wchar_t v[]) {
-    IVaultNodeSetString(kCreateAgeName, this, &createAgeName, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kCreateAgeName, &createAgeName, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetCreateAgeUuid (const plUUID& v) {
-    IVaultNodeSetValue(kCreateAgeUuid, this, &createAgeUuid, v);
+    IVaultNodeSetValue(kCreateAgeUuid, &createAgeUuid, v);
 }
 
 //============================================================================
 void NetVaultNode::SetCreatorAcct (const plUUID& v) {
-    IVaultNodeSetValue(kCreatorAcct, this, &creatorAcct, v);
+    IVaultNodeSetValue(kCreatorAcct, &creatorAcct, v);
 }
 
 //============================================================================
 void NetVaultNode::SetCreatorId (unsigned v) {
-    IVaultNodeSetValue(kCreatorId, this, &creatorId, v);
+    IVaultNodeSetValue(kCreatorId, &creatorId, v);
 }
 
 //============================================================================
 void NetVaultNode::SetNodeType (unsigned v) {
-    IVaultNodeSetValue(kNodeType, this, &nodeType, v);
+    IVaultNodeSetValue(kNodeType, &nodeType, v);
 }
 
 //============================================================================
 void NetVaultNode::SetInt32_1 (int v) {
-    IVaultNodeSetValue(kInt32_1, this, &int32_1, v);
+    IVaultNodeSetValue(kInt32_1, &int32_1, v);
 }
 
 //============================================================================
 void NetVaultNode::SetInt32_2 (int v) {
-    IVaultNodeSetValue(kInt32_2, this, &int32_2, v);
+    IVaultNodeSetValue(kInt32_2, &int32_2, v);
 }
 
 //============================================================================
 void NetVaultNode::SetInt32_3 (int v) {
-    IVaultNodeSetValue(kInt32_3, this, &int32_3, v);
+    IVaultNodeSetValue(kInt32_3, &int32_3, v);
 }
 
 //============================================================================
 void NetVaultNode::SetInt32_4 (int v) {
-    IVaultNodeSetValue(kInt32_4, this, &int32_4, v);
+    IVaultNodeSetValue(kInt32_4, &int32_4, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUInt32_1 (unsigned v) {
-    IVaultNodeSetValue(kUInt32_1, this, &uint32_1, v);
+    IVaultNodeSetValue(kUInt32_1, &uint32_1, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUInt32_2 (unsigned v) {
-    IVaultNodeSetValue(kUInt32_2, this, &uint32_2, v);
+    IVaultNodeSetValue(kUInt32_2, &uint32_2, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUInt32_3 (unsigned v) {
-    IVaultNodeSetValue(kUInt32_3, this, &uint32_3, v);
+    IVaultNodeSetValue(kUInt32_3, &uint32_3, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUInt32_4 (unsigned v) {
-    IVaultNodeSetValue(kUInt32_4, this, &uint32_4, v);
+    IVaultNodeSetValue(kUInt32_4, &uint32_4, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUuid_1 (const plUUID& v) {
-    IVaultNodeSetValue(kUuid_1, this, &uuid_1, v);
+    IVaultNodeSetValue(kUuid_1, &uuid_1, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUuid_2 (const plUUID& v) {
-    IVaultNodeSetValue(kUuid_2, this, &uuid_2, v);
+    IVaultNodeSetValue(kUuid_2, &uuid_2, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUuid_3 (const plUUID& v) {
-    IVaultNodeSetValue(kUuid_3, this, &uuid_3, v);
+    IVaultNodeSetValue(kUuid_3, &uuid_3, v);
 }
 
 //============================================================================
 void NetVaultNode::SetUuid_4 (const plUUID& v) {
-    IVaultNodeSetValue(kUuid_4, this, &uuid_4, v);
+    IVaultNodeSetValue(kUuid_4, &uuid_4, v);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_1 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_1, this, &string64_1, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_1, &string64_1, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_2 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_2, this, &string64_2, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_2, &string64_2, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_3 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_3, this, &string64_3, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_3, &string64_3, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_4 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_4, this, &string64_4, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_4, &string64_4, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_5 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_5, this, &string64_5, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_5, &string64_5, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetString64_6 (const wchar_t v[]) {
-    IVaultNodeSetString(kString64_6, this, &string64_6, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kString64_6, &string64_6, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetIString64_1 (const wchar_t v[]) {
-    IVaultNodeSetString(kIString64_1, this, &istring64_1, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kIString64_1, &istring64_1, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetIString64_2 (const wchar_t v[]) {
-    IVaultNodeSetString(kIString64_2, this, &istring64_2, v, kMaxVaultNodeStringLength);
+    IVaultNodeSetString(kIString64_2, &istring64_2, v, kMaxVaultNodeStringLength);
 }
 
 //============================================================================
 void NetVaultNode::SetText_1 (const wchar_t v[]) {
-    IVaultNodeSetString(kText_1, this, &text_1, v, (unsigned)-1);
+    IVaultNodeSetString(kText_1, &text_1, v, (unsigned)-1);
 }
 
 //============================================================================
 void NetVaultNode::SetText_2 (const wchar_t v[]) {
-    IVaultNodeSetString(kText_2, this, &text_2, v, (unsigned)-1);
+    IVaultNodeSetString(kText_2, &text_2, v, (unsigned)-1);
 }
 
 //============================================================================
 void NetVaultNode::SetBlob_1 (const uint8_t v[], unsigned len) {
-    IVaultNodeSetBlob(kBlob_1, this, &blob_1, &blob_1Length, v, len);
+    IVaultNodeSetBlob(kBlob_1, &blob_1, &blob_1Length, v, len);
 }
 
 //============================================================================
 void NetVaultNode::SetBlob_2 (const uint8_t v[], unsigned len) {
-    IVaultNodeSetBlob(kBlob_2, this, &blob_2, &blob_2Length, v, len);
-}
-
-//============================================================================
-void NetVaultNode::SetText (uint64_t fieldFlag, const wchar_t v[]) {
-    switch (fieldFlag) {
-        case kText_1: SetText_1(v); break;
-        case kText_2: SetText_2(v); break;
-        DEFAULT_FATAL(fieldFlag);
-    }
-}
-
-//============================================================================
-void NetVaultNode::SetBlob (uint64_t fieldFlag, const uint8_t v[], unsigned len) {
-    switch (fieldFlag) {
-        case kBlob_1: SetBlob_1(v, len); break;
-        case kBlob_2: SetBlob_2(v, len); break;
-        DEFAULT_FATAL(fieldFlag);
-    }
-}
-
-
-/*****************************************************************************
-*
-*   NetVaultNodeFieldArray
-*
-***/
-
-//============================================================================
-NetVaultNodeFieldArray::NetVaultNodeFieldArray (NetVaultNode * node)
-:   node(node)
-{
-    node->IncRef("FieldArray");
-    fields.Add(Field(&node->nodeId,         L"NodeId"));
-    fields.Add(Field(&node->createTime,     L"CreateTime"));
-    fields.Add(Field(&node->modifyTime,     L"ModifyTime"));
-    fields.Add(Field(&node->createAgeName,  L"CreateAgeName"));
-    fields.Add(Field(&node->createAgeUuid,  L"CreateAgeUuid"));
-    fields.Add(Field(&node->creatorAcct,    L"CreatorAcctId"));
-    fields.Add(Field(&node->creatorId,      L"CreatorId"));
-    fields.Add(Field(&node->nodeType,       L"NodeType"));
-    fields.Add(Field(&node->int32_1,        L"Int32_1"));
-    fields.Add(Field(&node->int32_2,        L"Int32_2"));
-    fields.Add(Field(&node->int32_3,        L"Int32_3"));
-    fields.Add(Field(&node->int32_4,        L"Int32_4"));
-    fields.Add(Field(&node->uint32_1,       L"UInt32_1"));
-    fields.Add(Field(&node->uint32_2,       L"UInt32_2"));
-    fields.Add(Field(&node->uint32_3,       L"UInt32_3"));
-    fields.Add(Field(&node->uint32_4,       L"UInt32_4"));
-    fields.Add(Field(&node->uuid_1,         L"Uuid_1"));
-    fields.Add(Field(&node->uuid_2,         L"Uuid_2"));
-    fields.Add(Field(&node->uuid_3,         L"Uuid_3"));
-    fields.Add(Field(&node->uuid_4,         L"Uuid_4"));
-    fields.Add(Field(&node->string64_1,     L"String64_1"));
-    fields.Add(Field(&node->string64_2,     L"String64_2"));
-    fields.Add(Field(&node->string64_3,     L"String64_3"));
-    fields.Add(Field(&node->string64_4,     L"String64_4"));
-    fields.Add(Field(&node->string64_5,     L"String64_5"));
-    fields.Add(Field(&node->string64_6,     L"String64_6"));
-    fields.Add(Field(&node->istring64_1,    L"IString64_1"));
-    fields.Add(Field(&node->istring64_2,    L"IString64_2"));
-    fields.Add(Field(&node->text_1,         L"Text_1"));
-    fields.Add(Field(&node->text_2,         L"Text_2"));
-    fields.Add(Field(&node->blob_1,         L"Blob_1"));
-    fields.Add(Field(&node->blob_2,         L"Blob_2"));
-}
-
-//============================================================================
-NetVaultNodeFieldArray::~NetVaultNodeFieldArray () {
-    fields.Clear();
-    node->DecRef("FieldArray");
-}
-
-//============================================================================
-void * NetVaultNodeFieldArray::GetFieldAddress (uint64_t bit) {
-    ASSERT(bit);
-    
-    unsigned index = 0;
-    for (uint64_t b = bit; b > 1; b >>= 1)
-        ++index;
-
-    // do not return blob fields
-    if (index < fields.Count() - kNumBlobFields)
-        return fields[index].addr;
-    else
-        return nil;
-}
-
-//============================================================================
-const wchar_t * NetVaultNodeFieldArray::GetFieldName (uint64_t bit) {
-    ASSERT(bit);
-    
-    unsigned index = 0;
-    for (uint64_t b = bit; b > 1; b >>= 1)
-        ++index;
-
-    ASSERT(index < fields.Count());
-    return fields[index].name;
-}
-
-//============================================================================
-void NetVaultNodeFieldArray::GetFieldValueString_LCS (
-    uint64_t           bit,
-    wchar_t *         dst,
-    unsigned        dstChars
-) {
-    void * fieldAddr = GetFieldAddress(bit);
-    
-    switch (bit) {
-        case NetVaultNode::kNodeId:
-        case NetVaultNode::kCreatorId:
-        case NetVaultNode::kCreateTime:
-        case NetVaultNode::kModifyTime:
-        case NetVaultNode::kNodeType:
-        case NetVaultNode::kUInt32_1:
-        case NetVaultNode::kUInt32_2:
-        case NetVaultNode::kUInt32_3:
-        case NetVaultNode::kUInt32_4:
-            StrPrintf(dst, dstChars, L"%u", *(unsigned *)fieldAddr);
-        break;
-
-        case NetVaultNode::kInt32_1:
-        case NetVaultNode::kInt32_2:
-        case NetVaultNode::kInt32_3:
-        case NetVaultNode::kInt32_4:
-            StrPrintf(dst, dstChars, L"%i", *(int *)fieldAddr);
-        break;
-
-        case NetVaultNode::kCreateAgeUuid:
-        case NetVaultNode::kCreatorAcct:
-        case NetVaultNode::kUuid_1:
-        case NetVaultNode::kUuid_2:
-        case NetVaultNode::kUuid_3:
-        case NetVaultNode::kUuid_4: {
-            plString tmp = reinterpret_cast<plUUID*>(fieldAddr)->AsString();
-
-            StrPrintf(dst, dstChars, L"hextoraw('%s')", tmp.c_str());
-        }
-        break;
-
-        case NetVaultNode::kCreateAgeName:
-        case NetVaultNode::kString64_1:
-        case NetVaultNode::kString64_2:
-        case NetVaultNode::kString64_3:
-        case NetVaultNode::kString64_4:
-        case NetVaultNode::kString64_5:
-        case NetVaultNode::kString64_6:
-        case NetVaultNode::kIString64_1:
-        case NetVaultNode::kIString64_2: {
-            wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * dstChars);
-            IStrSqlEscape(*(wchar_t **)fieldAddr, tmp, dstChars);
-            StrPrintf(dst, dstChars, L"'%s'", tmp);
-            free(tmp);
-        }
-        break;
-
-//      FIELD(Text_1);
-//      FIELD(Text_2);
-//      FIELD(Blob_1);
-//      FIELD(Blob_2);
-        DEFAULT_FATAL(bit);
-    }
-}
-
-//============================================================================
-void NetVaultNodeFieldArray::BuildWhereClause_LCS (
-    EWhereCondition condition,
-    wchar_t *         dst,
-    unsigned        dstChars
-) {
-    if (!dstChars)
-        return;
-        
-    dst[0] = 0;
-    
-    static const wchar_t * s_conditionStrs[] = {
-        L" AND ",
-        L" OR "
-    };
-
-    unsigned fieldCount = 0;
-    for (uint64_t bit = 1; bit; bit <<= 1) {
-        if (!(bit & node->fieldFlags))
-            continue;
-            
-        if (fieldCount++)
-            StrPack(dst, s_conditionStrs[condition], dstChars);
-            
-        wchar_t str[256];
-        GetFieldValueString_LCS(bit, str, arrsize(str));
-
-        StrPack(dst, GetFieldName(bit), dstChars);
-        StrPack(dst, L"=", dstChars);
-        StrPack(dst, str, dstChars);
-    }   
-}
-
-//============================================================================
-NetVaultNodeFieldArray::ESqlType NetVaultNodeFieldArray::GetSqlType_LCS (uint64_t bit) {
-    switch (bit) {
-        case NetVaultNode::kNodeId:
-        case NetVaultNode::kCreatorId:
-        case NetVaultNode::kCreateTime:
-        case NetVaultNode::kModifyTime:
-        case NetVaultNode::kNodeType:
-        case NetVaultNode::kUInt32_1:
-        case NetVaultNode::kUInt32_2:
-        case NetVaultNode::kUInt32_3:
-        case NetVaultNode::kUInt32_4:
-        return kSqlUInt32;
-
-        case NetVaultNode::kInt32_1:
-        case NetVaultNode::kInt32_2:
-        case NetVaultNode::kInt32_3:
-        case NetVaultNode::kInt32_4:
-        return kSqlInt32;
-
-        case NetVaultNode::kCreateAgeUuid:
-        case NetVaultNode::kCreatorAcct:
-        case NetVaultNode::kUuid_1:
-        case NetVaultNode::kUuid_2:
-        case NetVaultNode::kUuid_3:
-        case NetVaultNode::kUuid_4:
-        return kSqlUuid;
-
-        case NetVaultNode::kCreateAgeName:
-        case NetVaultNode::kString64_1:
-        case NetVaultNode::kString64_2:
-        case NetVaultNode::kString64_3:
-        case NetVaultNode::kString64_4:
-        case NetVaultNode::kString64_5:
-        case NetVaultNode::kString64_6:
-        case NetVaultNode::kIString64_1:
-        case NetVaultNode::kIString64_2:
-        return kSqlString;
-
-        case NetVaultNode::kText_1:
-        case NetVaultNode::kText_2:
-        return kSqlCLob;
-        
-//      case NetVaultNode::kBlob_1:
-//      case NetVaultNode::kBlob_1:
-//      return kSqlBlob:
-
-        default:
-        return kSqlInvalid;
-    }
+    IVaultNodeSetBlob(kBlob_2, &blob_2, &blob_2Length, v, len);
 }
 
 

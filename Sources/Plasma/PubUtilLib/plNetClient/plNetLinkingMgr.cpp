@@ -795,10 +795,10 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
                 
                 if (fldr && info)
-                    if (!fldr->IsParentOf(info->nodeId, 1))
+                    if (!fldr->IsParentOf(info->GetNodeId(), 1))
                         VaultAddChildNode(
-                            fldr->nodeId,
-                            info->nodeId,
+                            fldr->GetNodeId(),
+                            info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
                             nil,
                             nil
@@ -822,10 +822,10 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
                 
                 if (fldr && info)
-                    if (!fldr->IsParentOf(info->nodeId, 1))
+                    if (!fldr->IsParentOf(info->GetNodeId(), 1))
                         VaultAddChildNode(
-                            fldr->nodeId,
-                            info->nodeId,
+                            fldr->GetNodeId(),
+                            info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
                             nil,
                             nil
@@ -981,7 +981,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                 else if (RelVaultNode* linkNode = VaultGetOwnedAgeLinkIncRef(&ageInfo)) {
                     // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
                     VaultAgeLinkNode linkAcc(linkNode);
-                    if (linkAcc.volat) {
+                    if (linkAcc.GetVolatile()) {
                         if (VaultUnregisterOwnedAgeAndWait(&ageInfo)) {
                             // Fill in fields for new age create.
                             if (!info->HasAgeUserDefinedName())

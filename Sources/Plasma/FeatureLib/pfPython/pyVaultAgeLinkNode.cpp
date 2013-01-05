@@ -109,7 +109,7 @@ bool pyVaultAgeLinkNode::GetLocked() const
         return false;
 
     VaultAgeLinkNode access(fNode);
-    return !access.unlocked;
+    return !access.GetUnlocked();
 }
 
 void pyVaultAgeLinkNode::SetVolatile( bool v )
@@ -127,7 +127,7 @@ bool pyVaultAgeLinkNode::GetVolatile() const
         return false;
 
     VaultAgeLinkNode access(fNode);
-    return access.volat;
+    return access.GetVolatile();
 }
 
 void pyVaultAgeLinkNode::AddSpawnPoint( pySpawnPointInfo & point )
