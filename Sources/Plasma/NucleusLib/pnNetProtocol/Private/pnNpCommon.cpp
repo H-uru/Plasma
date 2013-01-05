@@ -90,7 +90,7 @@ static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, un
     ASSERT(bytes % sizeof(T) == 0);
     *elems = bytes / sizeof(T);
     T * src = (T *)*buffer;
-    delete *buf;
+    free(*buf);
     *buf = (T *)malloc(bytes);
     memcpy(*buf, src, bytes);
     *buffer += bytes;
@@ -338,28 +338,19 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 
 //============================================================================
 static void DeallocNodeFields (NetVaultNode * node) {
-    for (uint64_t fieldFlag = 1; fieldFlag; fieldFlag <<= 1) {
-        if (fieldFlag > node->fieldFlags)
-            break;
-
-        #define DELFIELD(f, v) case (uint64_t)(NetVaultNode::f): delete node->v; node->v = nil; break
-        switch (fieldFlag & node->fieldFlags) {
-            DELFIELD(kCreateAgeName,    createAgeName);
-            DELFIELD(kString64_1,       string64_1);
-            DELFIELD(kString64_2,       string64_2);
-            DELFIELD(kString64_3,       string64_3);
-            DELFIELD(kString64_4,       string64_4);
-            DELFIELD(kString64_5,       string64_5);
-            DELFIELD(kString64_6,       string64_6);
-            DELFIELD(kIString64_1,      istring64_1);
-            DELFIELD(kIString64_2,      istring64_2);
-            DELFIELD(kText_1,           text_1);
-            DELFIELD(kText_2,           text_2);
-            DELFIELD(kBlob_1,           blob_1);
-            DELFIELD(kBlob_2,           blob_2);
-            default: break;
-        }
-    }
+    free(node->createAgeName);
+    free(node->string64_1);
+    free(node->string64_2);
+    free(node->string64_3);
+    free(node->string64_4);
+    free(node->string64_5);
+    free(node->string64_6);
+    free(node->istring64_1);
+    free(node->istring64_2);
+    free(node->text_1);
+    free(node->text_2);
+    free(node->blob_1);
+    free(node->blob_2);
 }
 
 //============================================================================

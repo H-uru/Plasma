@@ -247,7 +247,7 @@ struct NetVaultNode : AtomicRef {
     wchar_t *   text_2;
     uint8_t *   blob_1; uint32_t blob_1Length;
     uint8_t *   blob_2; uint32_t blob_2Length;
-    
+
     NetVaultNode ();
     ~NetVaultNode ();
 
