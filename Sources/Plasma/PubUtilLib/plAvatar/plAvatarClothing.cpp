@@ -632,10 +632,11 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
 
             for (i = 0; i < num; i++)
             {
-                if (soundEffect = plArmatureEffectFootSound::ConvertNoRef(mgr->GetEffect(i)))
+                soundEffect = plArmatureEffectFootSound::ConvertNoRef(mgr->GetEffect(i));
+                if (soundEffect)
                     break;
             }
-            
+
             if (soundEffect)
             {
                 if (!strcmp(item->fName, "03_MLFoot04_01") || !strcmp(item->fName, "03_FLFoot04_01"))
@@ -1533,7 +1534,7 @@ plClothingLayout *plClothingMgr::GetLayout(char *name)
     return nil;
 }
 
-plClothingElement *plClothingMgr::FindElementByName(char *name)
+plClothingElement *plClothingMgr::FindElementByName(const char *name)
 {
     int i;
     for (i = 0; i < fElements.GetCount(); i++)

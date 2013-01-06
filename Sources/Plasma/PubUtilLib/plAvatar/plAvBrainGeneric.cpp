@@ -259,6 +259,8 @@ bool plAvBrainGeneric::Apply(double time, float elapsed)
     case kNormal:
         result = IProcessNormal(time, elapsed);
         break;
+    default:
+        break;
     }
     plArmatureBrain::Apply(time, elapsed);
     return result;
@@ -653,15 +655,15 @@ bool plAvBrainGeneric::IHandleGenBrainMsg(const plAvBrainGenericMsg *msg)
             }
         }
         break;
-#ifdef DEBUG_MULTISTAGE
     default:
+#ifdef DEBUG_MULTISTAGE
         {
             char sbuf[256];
             sprintf(sbuf,"GenericMsg - Unknown command %d ",msg->fType);
             plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
         }
-        break;
 #endif
+        break;
     }
     return true;
 }
@@ -731,24 +733,21 @@ bool plAvBrainGeneric::IBrainIsCompatible(plAvBrainGeneric *otherBrain)
     {
     case plAGAnim::kBodyUnknown:
         return false;
-        break;
     case plAGAnim::kBodyFull:
         return false;
-        break;
     case plAGAnim::kBodyUpper:
         if(otherUsage == plAGAnim::kBodyLower)
             return true;
         else
             return false;
-        break;
     case plAGAnim::kBodyLower:
         if(otherUsage == plAGAnim::kBodyUpper)
             return true;
         else
             return false;
-        break;
+    default:
+        return false;
     }
-    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

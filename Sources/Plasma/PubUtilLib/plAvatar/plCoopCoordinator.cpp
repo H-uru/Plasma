@@ -227,7 +227,8 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
                 fGuestLinked = true;
                 IAdvanceParticipant(true);  // advance the host
                 break;
-
+            default:
+                break;
         }
     }
     

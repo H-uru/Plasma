@@ -127,7 +127,7 @@ public:
 class plClothingLayout
 {
 public:
-    plClothingLayout(char *name, uint32_t origWidth) { fName = hsStrcpy(name); fOrigWidth = origWidth; }
+    plClothingLayout(const char *name, uint32_t origWidth) { fName = hsStrcpy(name); fOrigWidth = origWidth; }
     ~plClothingLayout() { delete [] fName; }
 
     char *fName;

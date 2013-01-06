@@ -169,7 +169,7 @@ plAvSeekTask::plAvSeekTask()
 }
 
 // CTOR target, align, animName
-plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, const char *animName)
+plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, const plString& animName)
 : fAlign(align),
   fDuration(0.25),
   fTarget(target),
@@ -178,19 +178,17 @@ plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, const char *animNa
   fPhysicalAtStart(false),
   fCleanup(false)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
 // CTOR target
 plAvSeekTask::plAvSeekTask(plKey target)
-: fAnimName(nil),
-fAlign(kAlignHandle),
-fDuration(0.25),
-fTarget(target),
-fAnimInstance(nil),
-fTargetTime(0),
-fPhysicalAtStart(false),
-fCleanup(false)
+: fAlign(kAlignHandle),
+  fDuration(0.25),
+  fTarget(target),
+  fAnimInstance(nil),
+  fTargetTime(0),
+  fPhysicalAtStart(false),
+  fCleanup(false)
 {
 }
 

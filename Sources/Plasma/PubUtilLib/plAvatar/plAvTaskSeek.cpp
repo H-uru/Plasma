@@ -104,7 +104,7 @@ void plAvTaskSeek::IInitDefaults()
     fSeekObject = nil;
     fMovingTarget = false;
     fAlign = kAlignHandle;
-    fAnimName = nil;
+    fAnimName = "";
     fPosGoalHit = false;
     fRotGoalHit = false;
     fStillPositioning = true;
@@ -171,7 +171,7 @@ plAvTaskSeek::plAvTaskSeek(plKey target)
 
 // plAvTaskSeek -------------------------------------------------------------------------------------------
 // -------------
-plAvTaskSeek::plAvTaskSeek(plKey target, plAvAlignment align, const char *animName, bool moving)
+plAvTaskSeek::plAvTaskSeek(plKey target, plAvAlignment align, const plString& animName, bool moving)
 {
     IInitDefaults();
 
