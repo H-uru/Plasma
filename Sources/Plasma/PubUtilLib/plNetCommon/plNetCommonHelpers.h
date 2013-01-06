@@ -91,8 +91,8 @@ class plCreatableListHelper : public plCreatable
         kCompressed         = 1<<1,
         kWritten            = 1<<2,
     };
-    uint8_t                               fFlags;
-    std::map<uint16_t,plCreatable*>       fItems;
+    uint8_t                             fFlags;
+    std::map<uint16_t,plCreatable*>     fItems;
     mutable std::vector<plCreatable*>   fManagedItems;
     uint32_t  fCompressionThreshold;  // NOT WRITTEN
     std::string fWritten;

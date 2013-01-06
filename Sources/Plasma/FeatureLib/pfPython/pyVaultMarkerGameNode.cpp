@@ -59,7 +59,7 @@ pyVaultMarkerGameNode::pyVaultMarkerGameNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 {
     fNode->SetNodeType(plVault::kNodeType_MarkerGame);
 }

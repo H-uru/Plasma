@@ -130,13 +130,13 @@ struct NetCli {
     const NetMsgField *     recvField;
     unsigned                recvFieldBytes;
     bool                    recvDispatch;
-    uint8_t *                  sendCurr;       // points into sendBuffer
+    uint8_t *               sendCurr;       // points into sendBuffer
     CInputAccumulator       input;
 
     // Message encryption
     ENetCliMode             mode;
     FNetCliEncrypt          encryptFcn;
-    uint8_t                    seed[kNetMaxSymmetricSeedBytes];
+    uint8_t                 seed[kNetMaxSymmetricSeedBytes];
     CryptKey *              cryptIn; // nil if encrytpion is disabled
     CryptKey *              cryptOut; // nil if encrytpion is disabled
     void *                  encryptParam;
@@ -144,6 +144,16 @@ struct NetCli {
     // Message buffers
     uint8_t                    sendBuffer[kAsyncSocketBufferSize];
     ARRAY(uint8_t)             recvBuffer;
+
+    NetCli()
+        : sock(nil), protocol((ENetProtocol)0), channel(nil), server(false)
+        , queue(nil), recvMsg(nil), recvField(nil), recvFieldBytes(0)
+        , recvDispatch(false), sendCurr(nil), mode((ENetCliMode)0)
+        , encryptFcn(nil), cryptIn(nil), cryptOut(nil), encryptParam(nil)
+    {
+        memset(seed, 0, sizeof(seed));
+        memset(sendBuffer, 0, sizeof(sendBuffer));
+    }
 };
 
 struct NetCliQueue {
@@ -913,7 +923,7 @@ static NetCli * ConnCreate (
     if (!channel)
         return nil;
 
-    NetCli * const cli  = NEWZERO(NetCli);
+    NetCli * const cli  = new NetCli;
     cli->sock           = sock;
     cli->protocol       = (ENetProtocol) protocol;
     cli->channel        = channel;

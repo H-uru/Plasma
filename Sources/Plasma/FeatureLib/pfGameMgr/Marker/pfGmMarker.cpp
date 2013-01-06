@@ -57,9 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct IMarker {
-    pfGmMarker *    gameCli;
-    
-    IMarker (pfGmMarker *   gameCli);
+    pfGmMarker * gameCli;
+
+    IMarker (pfGmMarker * gameCli) : gameCli(gameCli) { }
 
     // pfGameCli event notification handlers
     void Recv           (GameMsgHeader * msg, void * param);
@@ -97,7 +97,7 @@ static pfGameCli * MarkerFactory (
     unsigned    gameId,
     plKey       receiver
 ) {
-    return NEWZERO(pfGmMarker)(gameId, receiver);
+    return new pfGmMarker(gameId, receiver);
 }
 
 //============================================================================
@@ -120,15 +120,9 @@ AUTO_INIT_FUNC(RegisterMarkerFactory) {
 ***/
 
 //============================================================================
-IMarker::IMarker (pfGmMarker * gameCli)
-:   gameCli(gameCli)
-{
-}
-
-//============================================================================
 void IMarker::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -136,7 +130,7 @@ void IMarker::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 //============================================================================
 void IMarker::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -144,7 +138,7 @@ void IMarker::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 //============================================================================
 void IMarker::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
     
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -152,7 +146,7 @@ void IMarker::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
 //============================================================================
 void IMarker::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -160,7 +154,7 @@ void IMarker::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 //============================================================================
 void IMarker::RecvTemplateCreated (const Srv2Cli_Marker_TemplateCreated & msg, void * param) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -168,63 +162,63 @@ void IMarker::RecvTemplateCreated (const Srv2Cli_Marker_TemplateCreated & msg, v
 //============================================================================
 void IMarker::RecvTeamAssigned (const Srv2Cli_Marker_TeamAssigned & msg, void * param) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameType (const Srv2Cli_Marker_GameType & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameStarted (const Srv2Cli_Marker_GameStarted & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGamePaused (const Srv2Cli_Marker_GamePaused & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameReset (const Srv2Cli_Marker_GameReset & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameOver (const Srv2Cli_Marker_GameOver & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameNameChanged (const Srv2Cli_Marker_GameNameChanged & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvTimeLimitChanged (const Srv2Cli_Marker_TimeLimitChanged & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 
@@ -234,28 +228,28 @@ void IMarker::RecvGameDeleted (const Srv2Cli_Marker_GameDeleted & msg, void * pa
 
 //============================================================================
 void IMarker::RecvMarkerAdded (const Srv2Cli_Marker_MarkerAdded & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvMarkerDeleted (const Srv2Cli_Marker_MarkerDeleted & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvMarkerNameChanged (const Srv2Cli_Marker_MarkerNameChanged & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IMarker::RecvMarkerCaptured (const Srv2Cli_Marker_MarkerCaptured & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -274,7 +268,7 @@ pfGmMarker::pfGmMarker (
 )
 :   pfGameCli(gameId, receiver)
 {
-    internal = NEWZERO(IMarker)(this);
+    internal = new IMarker(this);
 }
 
 //============================================================================

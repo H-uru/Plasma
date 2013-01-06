@@ -67,7 +67,7 @@ struct CliFileConn : AtomicRef {
     char                name[MAX_PATH];
     plNetAddress        addr;
     unsigned            seq;
-    ARRAY(uint8_t)         recvBuffer;
+    ARRAY(uint8_t)      recvBuffer;
     AsyncCancelId       cancelId;
     bool                abandoned;
     unsigned            buildId;
@@ -544,7 +544,7 @@ static void Connect (
 ) {
     ASSERT(s_running);
     
-    CliFileConn * conn = NEWZERO(CliFileConn);
+    CliFileConn * conn = new CliFileConn;
     strncpy(conn->name, name, arrsize(conn->name));
     conn->addr          = addr;
     conn->buildId       = s_connectBuildId;
@@ -580,7 +580,13 @@ static void AsyncLookupCallback (
 ***/
 
 //============================================================================
-CliFileConn::CliFileConn () {
+CliFileConn::CliFileConn ()
+    : sock(nil), seq(0), cancelId(nil), abandoned(false), buildId(0), serverType(0)
+    , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
+    , numImmediateDisconnects(0), numFailedConnects(0)
+    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+{
+    memset(name, 0, sizeof(name));
     AtomicAdd(&s_perf[kPerfConnCount], 1);
 }
 

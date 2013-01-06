@@ -158,9 +158,8 @@ static void INetErrorCallback (
 ) {
     NetClientDestroy(false);
     
-    plNetClientMgrMsg * msg = NEWZERO(plNetClientMgrMsg);
-    msg->type   = plNetClientMgrMsg::kCmdDisableNet;
-    msg->yes    = true;
+    plNetClientMgrMsg * msg = new plNetClientMgrMsg(plNetClientMgrMsg::kCmdDisableNet,
+                                                    true, nil);
     msg->AddReceiver(plNetClientApp::GetInstance()->GetKey());
 
     switch (error)
@@ -259,7 +258,7 @@ static void INotifyAuthConnectedCallback () {
     if (!hsgResMgr::ResMgr())
         return;
         
-    plNetCommAuthConnectedMsg * msg = NEWZERO(plNetCommAuthConnectedMsg);
+    plNetCommAuthConnectedMsg * msg = new plNetCommAuthConnectedMsg;
     msg->Send();
 }
 
@@ -535,7 +534,7 @@ static void INetCliAuthGetPublicAgeListCallback (
 ) {
     NetCommParam * cp = (NetCommParam *) param;
     
-    plNetCommPublicAgeListMsg * msg = NEWZERO(plNetCommPublicAgeListMsg);
+    plNetCommPublicAgeListMsg * msg = new plNetCommPublicAgeListMsg;
     msg->result     = result;
     msg->param      = cp->param;
     msg->ptype      = cp->type;

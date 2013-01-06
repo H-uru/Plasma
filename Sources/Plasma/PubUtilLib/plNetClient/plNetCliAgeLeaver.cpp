@@ -78,13 +78,13 @@ struct plNCAgeLeaver {
         kUnloadAge,
         kNotifyAgeUnloaded,
     };
-    
+
     NextOp                  nextOp;
     bool                    quitting;
     bool                    complete;
     FNCAgeLeaverCallback    callback;
     void *                  userState;
-    
+
     plNCAgeLeaver (
         bool                    quitting,
         FNCAgeLeaverCallback    callback,
@@ -271,7 +271,7 @@ void NCAgeLeaverCreate (
     ASSERT(callback);
     
     plNCAgeLeaver * leaver;
-    *pleaver = leaver = NEWZERO(plNCAgeLeaver)(
+    *pleaver = leaver = new plNCAgeLeaver(
         quitting,
         callback,
         userState

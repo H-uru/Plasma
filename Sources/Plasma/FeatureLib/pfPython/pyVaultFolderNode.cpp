@@ -58,7 +58,7 @@ pyVaultFolderNode::pyVaultFolderNode( RelVaultNode* nfsNode )
 
 //create from the Python side
 pyVaultFolderNode::pyVaultFolderNode(int n)
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 {
     fNode->SetNodeType(plVault::kNodeType_Folder);
 }

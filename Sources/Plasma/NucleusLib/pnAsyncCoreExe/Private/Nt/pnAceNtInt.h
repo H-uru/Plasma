@@ -108,12 +108,19 @@ struct Operation {
     unsigned        pending;
     CNtWaitHandle * signalComplete;
     LINK(Operation) link;
-    
+
+    Operation()
+        : opType((EOpType)0), asyncId(nil), notify(false), pending(0),
+          signalComplete(nil)
+    {
+        memset(&overlapped, 0, sizeof(overlapped));
+    }
+
     #ifdef HS_DEBUGGING
     ~Operation () {
         ASSERT(!signalComplete);
     }
-    #endif    
+    #endif
 };
 
 struct NtObject {
@@ -126,6 +133,11 @@ struct NtObject {
     long                        nextStartSequence;
     long                        ioCount;
     bool                        closed;
+
+    NtObject()
+        : ioType((EIoType)0), handle(nil), userState(nil),
+          nextCompleteSequence(0), nextStartSequence(0),
+          ioCount(0), closed(false) { }
 };
 
 

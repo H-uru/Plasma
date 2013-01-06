@@ -579,7 +579,7 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
 #ifdef CLIENT
 void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned writeOptions) {
     {
-        plStateDataRecord * rec = NEWZERO(plStateDataRecord);
+        plStateDataRecord * rec = new plStateDataRecord;
         bool exists = GetStateDataRecord(rec, 0);
         delete rec;
         if (exists)

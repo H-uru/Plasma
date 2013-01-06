@@ -63,7 +63,7 @@ struct CliGkConn : AtomicRef {
     // Reconnection
     AsyncTimer *        reconnectTimer;
     unsigned            reconnectStartMs;
-    
+
     // Ping
     AsyncTimer *        pingTimer;
     unsigned            pingSendTimeMs;
@@ -77,12 +77,12 @@ struct CliGkConn : AtomicRef {
     void StopAutoReconnect (); // call before destruction
     void StartAutoReconnect ();
     void TimerReconnect ();
-    
+
     // ping
     void AutoPing ();
     void StopAutoPing ();
     void TimerPing ();
-    
+
     void Send (const uintptr_t fields[], unsigned count);
 
     CCritSect       critsect;
@@ -468,7 +468,7 @@ static void Connect (
 ) {
     ASSERT(s_running);
     
-    CliGkConn * conn        = NEWZERO(CliGkConn);
+    CliGkConn * conn        = new CliGkConn;
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
@@ -524,7 +524,14 @@ static unsigned CliGkConnPingTimerProc (void * param) {
 }
 
 //============================================================================
-CliGkConn::CliGkConn () {
+CliGkConn::CliGkConn ()
+    : reconnectTimer(nil), reconnectStartMs(0)
+    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    , sock(nil), cli(nil), seq(0), serverChallenge(0)
+    , cancelId(nil), abandoned(false)
+{
+    memset(name, 0, sizeof(name));
+
     AtomicAdd(&s_perf[kPerfConnCount], 1);
 }
 

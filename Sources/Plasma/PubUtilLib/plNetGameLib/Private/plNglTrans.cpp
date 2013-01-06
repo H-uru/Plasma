@@ -123,6 +123,7 @@ NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
 ,   m_connId(0)
 ,   m_protocol(protocol)
 ,   m_hasSubTrans(false)
+,   m_timeoutAtMs(0)
 ,   m_transType(transType)
 {
     AtomicAdd(&s_perf[kPerfCurrTransactions], 1);

@@ -102,7 +102,7 @@ struct plNCAgeJoiner {
     bool                    complete;
 
     plOperationProgress*    progressBar;
-    
+
     plNCAgeJoiner (
         const NetCommAge &      age,
         FNCAgeJoinerCallback    callback,
@@ -163,6 +163,7 @@ plNCAgeJoiner::plNCAgeJoiner (
 ,   age(age)
 ,   callback(callback)
 ,   userState(userState)
+,   complete(false)
 ,   progressBar(nil)
 {
 }
@@ -475,7 +476,7 @@ void NCAgeJoinerCreate (
     ASSERT(callback);
     
     plNCAgeJoiner * joiner;
-    *pjoiner = joiner = NEWZERO(plNCAgeJoiner)(
+    *pjoiner = joiner = new plNCAgeJoiner(
         age,
         callback,
         userState

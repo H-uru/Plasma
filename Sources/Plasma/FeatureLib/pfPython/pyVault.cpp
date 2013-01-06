@@ -431,7 +431,7 @@ PyObject* pyVault::GetInviteFolder(void)
 PyObject* pyVault::GetPsnlAgeSDL() const
 {
     PyObject * result = nil;
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
@@ -450,7 +450,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
 
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {
                 VaultSDLNode sdl(rvnSdl);
-                plStateDataRecord * rec = NEWZERO(plStateDataRecord);
+                plStateDataRecord * rec = new plStateDataRecord;
                 if (sdl.GetStateDataRecord(rec, plSDL::kKeepDirty))
                     result = pySDLStateDataRecord::New(rec);
                 else
@@ -476,7 +476,7 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
     if ( !rec )
         return;
 
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
@@ -589,7 +589,7 @@ void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode
 
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
@@ -622,7 +622,7 @@ void pyVault::UnInvitePlayerToAge( const char * str, uint32_t playerID )
         rvnLink->DecRef();
     }
 
-    NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+    NetVaultNode * templateNode = new NetVaultNode;
     templateNode->IncRef();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);

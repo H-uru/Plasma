@@ -631,8 +631,7 @@ static void ProcessManifest (void * param) {
                     );
 
                     if (i < kMaxManifestFileRequests) {
-                        ProgressStream * stream;
-                        stream = NEWZERO(ProgressStream);
+                        ProgressStream * stream = new ProgressStream;
                         if (!stream->Open(path, "wb")) {
 #ifdef PLASMA_EXTERNAL_RELEASE
                             MessageBox(nil, s_fileOpenError, "URU Launcher", MB_ICONERROR);

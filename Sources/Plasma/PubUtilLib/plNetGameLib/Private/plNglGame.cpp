@@ -356,7 +356,7 @@ static bool SocketNotifyCallback (
 static void Connect (
     const plNetAddress& addr
 ) {
-    CliGmConn * conn = NEWZERO(CliGmConn);
+    CliGmConn * conn = new CliGmConn;
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();
@@ -414,7 +414,10 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 }
 
 //============================================================================
-CliGmConn::CliGmConn () {
+CliGmConn::CliGmConn ()
+    : sock(nil), cancelId(nil), cli(nil), seq(0), abandoned(false)
+    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+{
     AtomicAdd(&s_perf[kPerfConnCount], 1);
 }
 
@@ -579,11 +582,11 @@ JoinAgeRequestTrans::JoinAgeRequestTrans (
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param
 ) : NetGameTrans(kJoinAgeRequestTrans)
+,   m_callback(callback)
+,   m_param(param)
 ,   m_ageMcpId(ageMcpId)
 ,   m_accountUuid(accountUuid)
 ,   m_playerInt(playerInt)
-,   m_callback(callback)
-,   m_param(param)
 {
 }
 
@@ -822,7 +825,7 @@ void NetCliGameJoinAgeRequest (
     FNetCliGameJoinAgeRequestCallback   callback,
     void *                              param
 ) {
-    JoinAgeRequestTrans * trans = NEWZERO(JoinAgeRequestTrans)(
+    JoinAgeRequestTrans * trans = new JoinAgeRequestTrans(
         ageMcpId,
         accountUuid,
         playerInt,

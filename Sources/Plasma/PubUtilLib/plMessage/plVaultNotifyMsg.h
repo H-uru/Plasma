@@ -48,9 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plVaultNotifyMsg : public plMessage
 {
-    uint16_t                  fType;
+    uint16_t                fType;
     plCreatableListHelper   fArgs;
-    int8_t                    fResultCode;
+    int8_t                  fResultCode;
 
 public:
     enum VaultNotifyTypes
@@ -73,9 +73,9 @@ public:
     GETINTERFACE_ANY_AUX( plVaultNotifyMsg, plMessage, plCreatableListHelper, fArgs );
 
     uint16_t  GetType() const { return fType; }
-    void    SetType( uint16_t v ) { fType=v; }
+    void      SetType( uint16_t v ) { fType=v; }
 
-    int8_t    GetResultCode() const { return fResultCode; }
+    int8_t  GetResultCode() const { return fResultCode; }
     void    SetResultCode( int8_t v ) { fResultCode=v; }
 
     plCreatableListHelper * GetArgs() { return &fArgs; }

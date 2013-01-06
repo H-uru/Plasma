@@ -433,9 +433,9 @@ public:
     plStateDataRecord(const plString& sdName, int version=plSDL::kLatestVersion);
     plStateDataRecord(plStateDescriptor* sd);
     plStateDataRecord(const plStateDataRecord &other, uint32_t writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
-    plStateDataRecord():fFlags(0) {}
+    plStateDataRecord() : fDescriptor(nil), fFlags(0) {}
     ~plStateDataRecord();
-    
+
     bool ConvertTo(plStateDescriptor* other, bool force=false );
     bool operator==(const plStateDataRecord &other) const;  // assumes matching state descriptors
 

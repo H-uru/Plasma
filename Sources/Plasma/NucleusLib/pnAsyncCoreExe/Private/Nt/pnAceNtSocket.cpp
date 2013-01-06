@@ -105,6 +105,8 @@ struct NtOpSocketWrite : Operation {
     unsigned                queueTimeMs;
     unsigned                bytesAlloc;
     AsyncNotifySocketWrite  write;
+
+    NtOpSocketWrite() : queueTimeMs(0), bytesAlloc(0) { }
 };
 
 struct NtOpSocketRead : Operation {
@@ -121,7 +123,7 @@ struct NtSock : NtObject {
     NtOpSocketRead          opRead;
     unsigned                backlogAlloc;
     unsigned                initTimeMs;
-    uint8_t                    buffer[kAsyncSocketBufferSize];
+    uint8_t                 buffer[kAsyncSocketBufferSize];
 
     NtSock ();
     ~NtSock ();
@@ -144,7 +146,12 @@ static LISTDECL(NtSock, link)           s_socketList;
 
 
 //===========================================================================
-inline NtSock::NtSock () {
+inline NtSock::NtSock ()
+    : closeTimeMs(0), connType(0), notifyProc(nil), bytesLeft(0)
+    , backlogAlloc(0), initTimeMs(0)
+{
+    memset(buffer, 0, sizeof(buffer));
+
     PerfAddCounter(kAsyncPerfSocketsCurr, 1);
     PerfAddCounter(kAsyncPerfSocketsTotal, 1);
 }
@@ -406,7 +413,7 @@ static NtSock * SocketInitCommon (SOCKET hSocket) {
         LogMsg(kLogError, "setsockopt(recv) failed (set recv buffer size)");
 
     // allocate a new socket
-    NtSock * sock       = NEWZERO(NtSock);
+    NtSock * sock       = new NtSock;
     sock->ioType        = kNtSocket;
     sock->handle        = (HANDLE) hSocket;
     sock->initTimeMs    = TimeGetMs();
