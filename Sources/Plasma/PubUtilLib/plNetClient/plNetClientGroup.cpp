@@ -66,6 +66,6 @@ void plNetClientGroups::ISetGroupDesc(plNetGroupId& grpId)
     else
     {
         const plPageInfo* pageInfo=plKeyFinder::Instance().GetLocationInfo(grpId.Room());
-        grpId.SetDesc(pageInfo->GetPage()); 
+        grpId.SetDesc(pageInfo->GetPage().c_str()); 
     }
 }

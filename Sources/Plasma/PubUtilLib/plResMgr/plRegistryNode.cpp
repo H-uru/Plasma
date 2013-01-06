@@ -43,23 +43,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plRegistryHelpers.h"
 
+#include "plString.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "plStatusLog/plStatusLog.h"
 #include "pnFactory/plFactory.h"
+#include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
 
 #include "plVersion.h"
 
-plRegistryPageNode::plRegistryPageNode(const char* path)
+plRegistryPageNode::plRegistryPageNode(const plString& path)
     : fValid(kPageCorrupt)
-    , fPath(nil)
+    , fPath(path)
     , fDynLoadedTypes(0)
     , fStaticLoadedTypes(0)
     , fOpenRequests(0)
     , fIsNewPage(false)
 {
-    fPath = hsStrcpy(path);
-
     hsStream* stream = OpenStream();
     if (stream)
     {
@@ -69,7 +69,7 @@ plRegistryPageNode::plRegistryPageNode(const char* path)
     }
 }
 
-plRegistryPageNode::plRegistryPageNode(const plLocation& location, const char* age, const char* page, const char* dataPath)
+plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plString& age, const plString& page, const plString& dataPath)
     : fValid(kPageOk)
     , fPath(nil)
     , fPageInfo(location)
@@ -80,25 +80,21 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const char* a
 {
     fPageInfo.SetStrings(age, page);
 
-    char filePath[512];
-
-    // Copy the path over
-    strncpy(filePath, dataPath, sizeof(filePath));
-    plFileUtils::AddSlash(filePath);
+    plString path = dataPath;
+    path += PATH_SEPARATOR_STR;
 
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    strncat(filePath, fPageInfo.GetAge(), sizeof(filePath));
-    strncat(filePath, "_District_", sizeof(filePath));
-    strncat(filePath, fPageInfo.GetPage(), sizeof(filePath));
-    strncat(filePath, ".prp", sizeof(filePath));
+    path += fPageInfo.GetAge();
+    path += "_District_";
+    path += fPageInfo.GetPage();
+    path += ".prp";
 
-    fPath = hsStrcpy(filePath);
+    fPath = path;
 }
 
 plRegistryPageNode::~plRegistryPageNode()
 {
-    delete [] fPath;
     UnloadKeys();
 }
 
@@ -141,7 +137,7 @@ hsStream* plRegistryPageNode::OpenStream()
 {
     if (fOpenRequests == 0)
     {
-        if (!fStream.Open(fPath, "rb"))
+        if (!fStream.Open(fPath.c_str(), "rb"))
             return nil;
     }
     fOpenRequests++;
@@ -168,7 +164,7 @@ void plRegistryPageNode::LoadKeys()
     if (!stream)
     {
         hsAssert(0, plString::Format("plRegistryPageNode::LoadKeysFromSource - bad stream %s,%s",
-            GetPageInfo().GetAge(), GetPageInfo().GetPage()).c_str());
+            GetPageInfo().GetAge().c_str(), GetPageInfo().GetPage().c_str()).c_str());
         return;
     }
 
@@ -232,7 +228,7 @@ void plRegistryPageNode::Write()
 {
     hsAssert(fOpenRequests == 0, "Trying to write while the page is open for reading");
 
-    if (!fStream.Open(fPath, "wb"))
+    if (!fStream.Open(fPath.c_str(), "wb"))
     {
         hsAssert(0, "Couldn't open file for writing");
         return;
@@ -412,6 +408,6 @@ plRegistryKeyList* plRegistryPageNode::IGetKeyList(uint16_t classType) const
 void plRegistryPageNode::DeleteSource()
 {
     hsAssert(fOpenRequests == 0, "Deleting a stream that's open for reading");
-    plFileUtils::RemoveFile(fPath);
+    plFileUtils::RemoveFile(fPath.c_str());
 }
 

@@ -1006,9 +1006,9 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
             if (!info)
                 hsStatusMessageF("Ignoring LoadRoom request for location 0x%x because we can't find the location", loc.GetSequenceNumber());
             else if (alreadyLoaded)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is already loaded", info->GetAge(), info->GetPage());
+                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is already loaded", info->GetAge().c_str(), info->GetPage().c_str());
             else if (isLoading)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is currently loading", info->GetAge(), info->GetPage());
+                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is currently loading", info->GetAge().c_str(), info->GetPage().c_str());
             #endif
 
             continue;

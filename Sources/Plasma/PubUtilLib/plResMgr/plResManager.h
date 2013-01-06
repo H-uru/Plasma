@@ -155,7 +155,7 @@ public:
     // Single page version
     bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
-    bool IteratePages(plRegistryPageIterator* iterator, const char* ageToRestrictTo = nil);
+    bool IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo = nil);
     // Iterate through ALL pages, loaded or not
     bool IterateAllPages(plRegistryPageIterator* iterator);
 
@@ -164,7 +164,7 @@ public:
     void UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t classIndexHint);
     void DumpUnusedKeys(plRegistryPageNode* page) const;
     plRegistryPageNode* FindPage(const plLocation& location) const;
-    plRegistryPageNode* FindPage(const char* age, const char* page) const;
+    plRegistryPageNode* FindPage(const plString& age, const plString& page) const;
 
     // Runs through all the pages and verifies that the data versions are good
     bool VerifyPages();
