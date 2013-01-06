@@ -1194,7 +1194,7 @@ void PythonInterface::initPython()
             getOutputAndReset(&error);
         }
 
- #ifndef BUILDING_PYPLASMA
+#ifndef BUILDING_PYPLASMA
         // Begin PEP 302 Import Hook stuff
         // We need to create a ptImportHook object
         ptImportHook* hook = PyObject_New(ptImportHook, &ptImportHook_type);
