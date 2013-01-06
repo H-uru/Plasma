@@ -49,30 +49,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-#include "../pfGameGUIMgr/pfGameGUIMgr.h"
-#include "../pfGameGUIMgr/pfGUITagDefs.h"
-#include "../pfGameGUIMgr/pfGUIDialogMod.h"
-#include "../pfGameGUIMgr/pfGUIControlHandlers.h"
-#include "../pfGameGUIMgr/pfGUIDialogHandlers.h"
-#include "../pfGameGUIMgr/pfGUIEditBoxMod.h"
-#include "../pfGameGUIMgr/pfGUIListBoxMod.h"
-#include "../pfGameGUIMgr/pfGUIButtonMod.h"
-#include "../pfGameGUIMgr/pfGUIListElement.h"
-#include "../pfGameGUIMgr/pfGUITextBoxMod.h"
-#include "../pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUITagDefs.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIControlHandlers.h"
+#include "pfGameGUIMgr/pfGUIDialogHandlers.h"
+#include "pfGameGUIMgr/pfGUIEditBoxMod.h"
+#include "pfGameGUIMgr/pfGUIListBoxMod.h"
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
+#include "pfGameGUIMgr/pfGUIListElement.h"
+#include "pfGameGUIMgr/pfGUITextBoxMod.h"
+#include "pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
 
-#include "../plGImage/plDynamicTextMap.h"
+#include "plGImage/plDynamicTextMap.h"
 
-#include "../plNetClient/plNetClientMgr.h"
-#include "../plNetClient/plNetKI.h"
-#include "../pnNetCommon/plNetMsg.h"
-#include "../plNetTransport/plNetTransportMember.h"
-#include "../pfMessage/pfKIMsg.h"
-#include "../plMessage/plMemberUpdateMsg.h"
-#include "../pnMessage/plTimeMsg.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetKI.h"
+#include "pnNetCommon/plNetMsg.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "pfMessage/pfKIMsg.h"
+#include "plMessage/plMemberUpdateMsg.h"
+#include "pnMessage/plTimeMsg.h"
 
 
-#include "../pnMessage/plRemoteAvatarInfoMsg.h"
+#include "pnMessage/plRemoteAvatarInfoMsg.h"
 
 #define kKITempID_ListOfLists       25
 #define kKITempID_MsgDestRadio      26
@@ -1287,12 +1287,12 @@ bool    pfKI::MsgReceive( plMessage *msg )
 //// Player Book Stuff ///////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "../plNetCommon/plNetAvatarVault.h"
-#include "../pfGameGUIMgr/pfGUICheckBoxCtrl.h"
-#include "../plMessage/plLinkToAgeMsg.h"
-#include "../pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "../plGImage/plDynamicTextMap.h"
-#include "../plJPEG/plJPEG.h"
+#include "plNetCommon/plNetAvatarVault.h"
+#include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plGImage/plJPEG.h"
 
 //// plPlayerBookProc ////////////////////////////////////////////////////////
 

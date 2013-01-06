@@ -2584,7 +2584,7 @@ void cyMisc::SetAlarm( float secs, PyObject * cb, uint32_t cbContext )
 //
 // PURPOSE    : captures the screen and saves it as a jpeg
 //
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 void cyMisc::SaveScreenShot(const char* fileName, int x, int y, int quality)
 {
     if ( cyMisc::GetPipeline() )

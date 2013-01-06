@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "hsResMgr.h"
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 #include "plGImage/plPNG.h"
 #include "plGImage/plMipmap.h"
 
