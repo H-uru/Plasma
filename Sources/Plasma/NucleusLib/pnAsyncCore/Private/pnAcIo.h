@@ -103,12 +103,16 @@ enum EAsyncNotifySocket {
 struct AsyncNotifySocket {
     void *          param;
     AsyncId         asyncId;
+
+    AsyncNotifySocket() : param(nil), asyncId(nil) { }
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
     plNetAddress    localAddr;
     plNetAddress    remoteAddr;
     unsigned        connType;
+
+    AsyncNotifySocketConnect() : connType(0) { }
 };
 
 struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
@@ -120,12 +124,18 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
+
+    AsyncNotifySocketListen()
+        : buildId(0), buildType(0), branchId(0), buffer(nil), bytes(0),
+          bytesProcessed(0) { }
 };
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
+
+    AsyncNotifySocketRead() : buffer(nil), bytes(0), bytesProcessed(0) { }
 };
 
 typedef AsyncNotifySocketRead AsyncNotifySocketWrite;

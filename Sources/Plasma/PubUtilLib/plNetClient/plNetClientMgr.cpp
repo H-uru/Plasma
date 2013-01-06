@@ -1139,8 +1139,7 @@ void plNetClientMgr::IncNumInitialSDLStates()
 
 void plNetClientMgr::NotifyRcvdAllSDLStates() {
     DebugMsg( "Got all initial SDL states" );
-    plNetClientMgrMsg * msg = new plNetClientMgrMsg();
-    msg->type = plNetClientMgrMsg::kNotifyRcvdAllSDLStates;
+    plNetClientMgrMsg * msg = new plNetClientMgrMsg(plNetClientMgrMsg::kNotifyRcvdAllSDLStates);
     msg->SetBCastFlag(plMessage::kBCastByType);
     msg->Send();
 }
@@ -1303,11 +1302,8 @@ void plNetClientMgr::MakeCCRInvisible(plKey avKey, int level)
 
 void plNetClientMgr::QueueDisableNet (bool showDlg, const char str[]) {
 
-    plNetClientMgrMsg * msg = NEWZERO(plNetClientMgrMsg);
-    msg->type   = plNetClientMgrMsg::kCmdDisableNet;
-    msg->yes    = showDlg;
-    if (str)
-        StrCopy(msg->str, str, arrsize(msg->str));
+    plNetClientMgrMsg * msg = new plNetClientMgrMsg(plNetClientMgrMsg::kCmdDisableNet,
+                                                    showDlg, str);
 
 #if 0
     msg->Send(GetKey());

@@ -64,7 +64,7 @@ pyVaultTextNoteNode::pyVaultTextNoteNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultTextNoteNode::pyVaultTextNoteNode()
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 {
     fNode->SetNodeType(plVault::kNodeType_TextNote);
 }
@@ -222,7 +222,7 @@ void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObj
     if (!fNode)
         return;
 
-    pyVaultNode::pyVaultNodeOperationCallback * cb = NEWZERO(pyVaultNode::pyVaultNodeOperationCallback)( cbObject );
+    pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
     wchar_t wDev[MAX_PATH];

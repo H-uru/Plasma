@@ -128,7 +128,7 @@ PyObject * pyVaultNodeRef::GetSaver () {
     if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
         if (unsigned saverId = child->GetRefOwnerId(fParent->nodeId)) {
             // Find the player info node representing the saver
-            NetVaultNode * templateNode = NEWZERO(NetVaultNode);
+            NetVaultNode * templateNode = new NetVaultNode;
             templateNode->IncRef();
             templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
             VaultPlayerInfoNode access(templateNode);

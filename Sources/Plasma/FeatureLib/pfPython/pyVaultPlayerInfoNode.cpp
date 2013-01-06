@@ -64,7 +64,7 @@ pyVaultPlayerInfoNode::pyVaultPlayerInfoNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultPlayerInfoNode::pyVaultPlayerInfoNode()
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 , ansiPlayerName(nil)
 , ansiAgeInstName(nil)
 {

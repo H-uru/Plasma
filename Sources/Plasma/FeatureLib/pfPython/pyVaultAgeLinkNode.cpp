@@ -66,7 +66,7 @@ pyVaultAgeLinkNode::pyVaultAgeLinkNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultAgeLinkNode::pyVaultAgeLinkNode(int n)
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 {
     fNode->SetNodeType(plVault::kNodeType_AgeLink);
 }

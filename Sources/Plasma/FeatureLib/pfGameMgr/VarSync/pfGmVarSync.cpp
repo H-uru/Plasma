@@ -57,9 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct IVarSync {
-    pfGmVarSync *   gameCli;
-    
-    IVarSync (pfGmVarSync * gameCli);
+    pfGmVarSync * gameCli;
+
+    IVarSync (pfGmVarSync * gameCli) : gameCli(gameCli) { }
 
     // pfGameCli event notification handlers
     void Recv           (GameMsgHeader * msg, void * param);
@@ -88,7 +88,7 @@ static pfGameCli * VarSyncFactory (
     unsigned    gameId,
     plKey       receiver
 ) {
-    return NEWZERO(pfGmVarSync)(gameId, receiver);
+    return new pfGmVarSync(gameId, receiver);
 }
 
 //============================================================================
@@ -111,15 +111,9 @@ AUTO_INIT_FUNC(RegisterVarSyncFactory) {
 ***/
 
 //============================================================================
-IVarSync::IVarSync (pfGmVarSync * gameCli)
-:   gameCli(gameCli)
-{
-}
-
-//============================================================================
 void IVarSync::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -127,7 +121,7 @@ void IVarSync::OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) {
 //============================================================================
 void IVarSync::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -135,7 +129,7 @@ void IVarSync::OnPlayerLeft (const Srv2Cli_Game_PlayerLeft & msg) {
 //============================================================================
 void IVarSync::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
     
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
@@ -143,42 +137,42 @@ void IVarSync::OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) {
 //============================================================================
 void IVarSync::OnOwnerChange (const Srv2Cli_Game_OwnerChange & msg) {
 
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IVarSync::RecvStringVarChanged (const Srv2Cli_VarSync_StringVarChanged & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IVarSync::RecvNumericVarChanged (const Srv2Cli_VarSync_NumericVarChanged & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IVarSync::RecvAllVarsSent (const Srv2Cli_VarSync_AllVarsSent & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IVarSync::RecvStringVarCreated (const Srv2Cli_VarSync_StringVarCreated & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }
 
 //============================================================================
 void IVarSync::RecvNumericVarCreated (const Srv2Cli_VarSync_NumericVarCreated & msg, void * param) {
-    pfGameCliMsg * gameCliMsg = NEWZERO(pfGameCliMsg);
+    pfGameCliMsg * gameCliMsg = new pfGameCliMsg;
     gameCliMsg->Set(gameCli, msg);
     gameCliMsg->Send(gameCli->GetReceiver());
 }                   
@@ -196,7 +190,7 @@ pfGmVarSync::pfGmVarSync (
 )
 :   pfGameCli(gameId, receiver)
 {
-    internal = NEWZERO(IVarSync)(this);
+    internal = new IVarSync(this);
 }
 
 //============================================================================

@@ -109,7 +109,7 @@ struct NlmJoinAgeOp : NlmOp {
 struct NlmLeaveAgeOp : NlmOp {
     bool    quitting;
     NlmLeaveAgeOp ()
-    : NlmOp(kNlmOpLeaveAgeOp)
+    : NlmOp(kNlmOpLeaveAgeOp), quitting(false)
     { }
 };
 
@@ -231,7 +231,7 @@ void plNetLinkingMgr::ExecNextOp () {
             ASSERT(!s_ageLeaver);
 
             // Insert a wait operation into the exec queue
-            NlmOpWaitOp * waitOp = NEWZERO(NlmOpWaitOp);
+            NlmOpWaitOp * waitOp = new NlmOpWaitOp;
             QueueOp(waitOp, true);
 
             NlmJoinAgeOp * joinAgeOp = (NlmJoinAgeOp *)op;
@@ -249,7 +249,7 @@ void plNetLinkingMgr::ExecNextOp () {
             ASSERT(!s_ageLeaver);
 
             // Insert a wait operation into the exec queue
-            NlmOpWaitOp * waitOp = NEWZERO(NlmOpWaitOp);
+            NlmOpWaitOp * waitOp = new NlmOpWaitOp;
             QueueOp(waitOp, true);
 
             lm->SetEnabled(false);
@@ -413,12 +413,12 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
             avMod->SetLinkInAnim(msg->GetLinkInAnimName());
         }
         // Queue leave op
-        NlmLeaveAgeOp * leaveAgeOp = NEWZERO(NlmLeaveAgeOp);
+        NlmLeaveAgeOp * leaveAgeOp = new NlmLeaveAgeOp;
         QueueOp(leaveAgeOp);
     }
 
-    // Queue join op        
-    NlmJoinAgeOp * joinAgeOp = NEWZERO(NlmJoinAgeOp);
+    // Queue join op
+    NlmJoinAgeOp * joinAgeOp = new NlmJoinAgeOp;
     joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
@@ -1118,7 +1118,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
 ////////////////////////////////////////////////////////////////////
 void plNetLinkingMgr::LeaveAge (bool quitting) {
     // Queue leave op
-    NlmLeaveAgeOp * leaveAgeOp = NEWZERO(NlmLeaveAgeOp);
+    NlmLeaveAgeOp * leaveAgeOp = new NlmLeaveAgeOp;
     leaveAgeOp->quitting = quitting;
     QueueOp(leaveAgeOp);
 

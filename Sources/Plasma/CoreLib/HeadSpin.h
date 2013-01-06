@@ -446,9 +446,6 @@ inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }
 inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #define hsInvert(a) (1 / (a))
 
-#include <new>
-#define NEWZERO(t)              new(calloc(sizeof(t), 1)) t
-
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))
 #else

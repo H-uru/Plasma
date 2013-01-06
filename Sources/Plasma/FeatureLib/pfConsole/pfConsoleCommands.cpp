@@ -6036,7 +6036,7 @@ PF_CONSOLE_GROUP( Age )
 
 PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
 {
-    plStateDataRecord * rec = NEWZERO(plStateDataRecord);
+    plStateDataRecord * rec = new plStateDataRecord;
     if (!VaultAgeGetAgeSDL(rec)) {
         PrintString("Age SDL not found");
         delete rec;

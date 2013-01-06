@@ -63,7 +63,7 @@ pyVaultChronicleNode::pyVaultChronicleNode(RelVaultNode* nfsNode)
 
 //create from the Python side
 pyVaultChronicleNode::pyVaultChronicleNode(int n)
-: pyVaultNode(NEWZERO(RelVaultNode))
+: pyVaultNode(new RelVaultNode)
 , ansiName(nil)
 , ansiValue(nil)
 {

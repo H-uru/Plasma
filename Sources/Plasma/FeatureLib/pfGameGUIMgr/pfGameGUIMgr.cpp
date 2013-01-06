@@ -796,7 +796,7 @@ bool    pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 if ((keymap->GetKey1().IsSatisfiedBy(combo)) || (keymap->GetKey2().IsSatisfiedBy(combo)))
                 {
                     // tell the KI to take the shot
-                    plConsoleMsg * consoleMsg = NEWZERO(plConsoleMsg);
+                    plConsoleMsg * consoleMsg = new plConsoleMsg;
                     consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
                     consoleMsg->SetString("Game.KITakePicture");
                     consoleMsg->Send(nil, true);
