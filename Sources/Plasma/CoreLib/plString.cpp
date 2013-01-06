@@ -878,3 +878,71 @@ size_t ustrlen(const UniChar *ustr, size_t max)
         ;
     return length;
 }
+
+
+/* plFileName */
+plString plFileName::GetFileName() const
+{
+    int end = FindLast('/');
+    if (end < 0)
+        end = FindLast('\\');
+    if (end < 0)
+        return *this;
+
+    return Substr(end + 1);
+}
+
+plString plFileName::GetFileExt() const
+{
+    int dot = FindLast('.');
+
+    // Be sure not to get a dot in the directory!
+    int end = FindLast('/');
+    if (end < 0)
+        end = FindLast('\\');
+
+    if (dot > end)
+        return Substr(dot + 1);
+
+    return plString::Null;
+}
+
+plString plFileName::GetFileNameNoExt() const
+{
+    int dot = FindLast('.');
+
+    int end = FindLast('/');
+    if (end < 0)
+        end = FindLast('\\');
+
+    // Be sure not to get a dot in the directory!
+    if (dot > end)
+        return Substr(end + 1, dot - end - 1);
+    return Substr(end + 1);
+}
+
+plFileName plFileName::StripFileName() const
+{
+    int end = FindLast('/');
+    if (end < 0)
+        end = FindLast('\\');
+    if (end < 0)
+        return *this;
+
+    return Left(end + 1);
+}
+
+plFileName plFileName::StripFileExt() const
+{
+    int dot = FindLast('.');
+
+    // Be sure not to get a dot in the directory!
+    int end = FindLast('/');
+    if (end < 0)
+        end = FindLast('\\');
+
+    if (dot > end)
+        return Left(dot);
+
+    return *this;
+}

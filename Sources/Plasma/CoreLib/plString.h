@@ -656,4 +656,22 @@ private:
 /** \p strlen implementation for UniChar based C-style string buffers. */
 size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 
+
+/* plFileName - custom extension of plString for manipulating filenames */
+class plFileName : public plString
+{
+public:
+    plFileName() { }
+    plFileName(const char *cstr) : plString(cstr) { }
+    plFileName(const plString &copy) : plString(copy) { }
+    plFileName(const plFileName &copy) : plString(copy) { }
+
+    plString GetFileName() const;
+    plString GetFileExt() const;
+    plString GetFileNameNoExt() const;
+
+    plFileName StripFileName() const;
+    plFileName StripFileExt() const;
+};
+
 #endif //plString_Defined

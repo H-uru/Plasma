@@ -84,7 +84,7 @@ public:
     virtual     ~hsStream() { }
 
     // Pre-filename-stringification shortcut:
-    bool Open_TEMP(const plString & filename, const char * mode = "rb") { return Open(filename.c_str(), mode); }
+    bool Open_TEMP(const plFileName & filename, const char * mode = "rb") { return Open(filename.c_str(), mode); }
 
     virtual bool      Open(const char *, const char * = "rb")=0;
     virtual bool      Open(const wchar_t *, const wchar_t * = L"rb")=0;
