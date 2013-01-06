@@ -1770,7 +1770,7 @@ bool plResManager::IteratePages(plRegistryPageIterator* iterator, const plString
         if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
             continue;
 
-        if (!ageToRestrictTo.IsNull() || page->GetPageInfo().GetAge().CompareI(ageToRestrictTo) == 0)
+        if (ageToRestrictTo.IsNull() || page->GetPageInfo().GetAge().CompareI(ageToRestrictTo) == 0)
         {
             if (!iterator->EatPage(page))
             {

@@ -155,7 +155,7 @@ public:
     // Single page version
     bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
-    bool IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo = nil);
+    bool IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo = "");
     // Iterate through ALL pages, loaded or not
     bool IterateAllPages(plRegistryPageIterator* iterator);
 

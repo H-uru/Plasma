@@ -80,17 +80,9 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
 {
     fPageInfo.SetStrings(age, page);
 
-    plString path = dataPath;
-    path += PATH_SEPARATOR_STR;
-
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    path += fPageInfo.GetAge();
-    path += "_District_";
-    path += fPageInfo.GetPage();
-    path += ".prp";
-
-    fPath = path;
+    fPath = plString::Format("%s%x%s_District_%s.prp", dataPath.c_str(), PATH_SEPARATOR_STR, fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str());
 }
 
 plRegistryPageNode::~plRegistryPageNode()
@@ -137,7 +129,7 @@ hsStream* plRegistryPageNode::OpenStream()
 {
     if (fOpenRequests == 0)
     {
-        if (!fStream.Open(fPath.c_str(), "rb"))
+        if (!fStream.Open_TEMP(fPath, "rb"))
             return nil;
     }
     fOpenRequests++;
