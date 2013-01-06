@@ -785,7 +785,7 @@ void NetCommShutdown () {
     if (!gDataServerLocal)
         NetCliFileDisconnect();
 
-    NetClientDestroy(false);
+    NetClientDestroy();
     AsyncCoreDestroy(30 * 1000);
 }
 

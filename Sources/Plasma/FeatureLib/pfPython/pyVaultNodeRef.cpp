@@ -99,22 +99,22 @@ PyObject* pyVaultNodeRef::GetChild( void )
 unsigned pyVaultNodeRef::GetParentID () {
     if (!fParent)
         return 0;
-    return fParent->nodeId;
+    return fParent->GetNodeId();
 }
 
 unsigned pyVaultNodeRef::GetChildID () {
     if (!fChild)
         return 0;
-    return fChild->nodeId;
+    return fChild->GetNodeId();
 }
 
 unsigned pyVaultNodeRef::GetSaverID () {
     if (!fParent || !fChild)
         return 0;
 
-    unsigned saverId = 0;       
-    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
-        saverId = child->GetRefOwnerId(fParent->nodeId);
+    unsigned saverId = 0;
+    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->GetNodeId())) {
+        saverId = child->GetRefOwnerId(fParent->GetNodeId());
         child->DecRef();
     }
     return saverId;
@@ -124,9 +124,9 @@ PyObject * pyVaultNodeRef::GetSaver () {
     if (!fParent || !fChild)
         return 0;
 
-    RelVaultNode * saver = nil;     
-    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->nodeId)) {
-        if (unsigned saverId = child->GetRefOwnerId(fParent->nodeId)) {
+    RelVaultNode * saver = nil;
+    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->GetNodeId())) {
+        if (unsigned saverId = child->GetRefOwnerId(fParent->GetNodeId())) {
             // Find the player info node representing the saver
             NetVaultNode * templateNode = new NetVaultNode;
             templateNode->IncRef();
@@ -163,6 +163,6 @@ bool pyVaultNodeRef::BeenSeen () {
 void pyVaultNodeRef::SetSeen (bool v) {
     if (!fParent || !fChild)
         return;
-        
-    fParent->SetSeen(fChild->nodeId, v);
+
+    fParent->SetSeen(fChild->GetNodeId(), v);
 }

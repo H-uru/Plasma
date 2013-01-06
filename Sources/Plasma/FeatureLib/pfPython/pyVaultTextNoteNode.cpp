@@ -101,9 +101,9 @@ std::string pyVaultTextNoteNode::Note_GetTitle( void )
 
     char * aStr = nil;
     VaultTextNoteNode textNote(fNode);
-    if (textNote.noteTitle) {
+    if (textNote.GetNoteTitle()) {
         std::string result;
-        aStr = StrDupToAnsi(textNote.noteTitle);
+        aStr = StrDupToAnsi(textNote.GetNoteTitle());
         result = aStr;
         free(aStr);
         return result;
@@ -117,8 +117,8 @@ std::wstring pyVaultTextNoteNode::Note_GetTitleW( void )
         return L"";
 
     VaultTextNoteNode textNote(fNode);
-    if (textNote.noteTitle)
-        return textNote.noteTitle;
+    if (textNote.GetNoteTitle())
+        return textNote.GetNoteTitle();
     return L"";
 }
 
@@ -151,9 +151,9 @@ std::string pyVaultTextNoteNode::Note_GetText( void )
 
     char * aStr = nil;
     VaultTextNoteNode textNote(fNode);
-    if (textNote.noteText) {
+    if (textNote.GetNoteText()) {
         std::string result;
-        aStr = StrDupToAnsi(textNote.noteText);
+        aStr = StrDupToAnsi(textNote.GetNoteText());
         result = aStr;
         free(aStr);
         return result;
@@ -167,8 +167,8 @@ std::wstring pyVaultTextNoteNode::Note_GetTextW( void )
         return L"";
 
     VaultTextNoteNode textNote(fNode);
-    if (textNote.noteText)
-        return textNote.noteText;
+    if (textNote.GetNoteText())
+        return textNote.GetNoteText();
     return L"";
 }
 
@@ -185,9 +185,9 @@ int32_t pyVaultTextNoteNode::Note_GetType( void )
 {
     if (!fNode)
         return 0;
-        
+
     VaultTextNoteNode textNote(fNode);
-    return textNote.noteType;
+    return textNote.GetNoteType();
 }
 
 void pyVaultTextNoteNode::Note_SetSubType( int32_t type )
@@ -203,9 +203,9 @@ int32_t pyVaultTextNoteNode::Note_GetSubType( void )
 {
     if (!fNode)
         return 0;
-        
+
     VaultTextNoteNode textNote(fNode);
-    return textNote.noteSubType;
+    return textNote.GetNoteSubType();
 }
 
 PyObject * pyVaultTextNoteNode::GetDeviceInbox() const

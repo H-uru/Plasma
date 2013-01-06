@@ -816,9 +816,9 @@ void plClothingOutfit::ReadFromVault()
 
     for (unsigned i = 0; i < nodes.Count(); ++i) {
         VaultSDLNode sdl(nodes[i]);
-        if (sdl.sdlDataLen) {
+        if (sdl.GetSDLDataLength()) {
             hsRAMStream ram;
-            ram.Write(sdl.sdlDataLen, sdl.sdlData);
+            ram.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
             ram.Rewind();
             
             plString sdlRecName;
@@ -947,33 +947,33 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
             node->DecRef();     // REF: Work
         }
     }
-        
+
     // Delete any leftover nodes
-    { for (unsigned i = 0; i < nodes.Count(); ++i) {
-        VaultDeleteNode(nodes[i]->nodeId);
+    for (unsigned i = 0; i < nodes.Count(); ++i) {
+        VaultDeleteNode(nodes[i]->GetNodeId());
         nodes[i]->DecRef(); // REF: Array
-    }}
-    
+    }
+
     // Create actual new nodes from their templates
-    { for (unsigned i = 0; i < templates.Count(); ++i) {
+    for (unsigned i = 0; i < templates.Count(); ++i) {
         ENetError result;
         if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
             actuals.Add(actual);
         }
         templates[i]->DecRef(); // REF: Create
-    }}
+    }
 
     // Add new nodes to outfit folder
-    { for (unsigned i = 0; i < actuals.Count(); ++i) {
-        VaultAddChildNodeAndWait(rvn->nodeId, actuals[i]->nodeId, NetCommGetPlayer()->playerInt);
+    for (unsigned i = 0; i < actuals.Count(); ++i) {
+        VaultAddChildNodeAndWait(rvn->GetNodeId(), actuals[i]->GetNodeId(), NetCommGetPlayer()->playerInt);
         actuals[i]->DecRef();   // REF: Create
-    }}
+    }
 
     // Cleanup morph SDRs
-    {for (unsigned i = 0; i < morphs.Count(); ++i) {
+    for (unsigned i = 0; i < morphs.Count(); ++i) {
         delete morphs[i];
-    }}
-    
+    }
+
     rvn->DecRef();
 }
 
@@ -1585,8 +1585,8 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
         ENetError result;
         if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
             VaultAddChildNodeAndWait(
-                rvn->nodeId,
-                actual->nodeId,
+                rvn->GetNodeId(),
+                actual->GetNodeId(),
                 NetCommGetPlayer()->playerInt
             );
             actual->DecRef(); // REF: Create
