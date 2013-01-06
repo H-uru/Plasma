@@ -94,7 +94,7 @@ const char * pyDniInfoSource::GetAgeName( void ) const
 
     VaultAgeInfoNode ageInfo(node);
 
-    fAgeName = StrDupToAnsi(ageInfo.ageInstName);
+    fAgeName = StrDupToAnsi(ageInfo.GetAgeInstanceName());
     node->DecRef();
 
     return fAgeName;
@@ -105,7 +105,7 @@ plUUID pyDniInfoSource::GetAgeGuid( void ) const
     if (RelVaultNode * node = VaultGetAgeInfoNodeIncRef())
     {
         VaultAgeInfoNode ageInfo(node);
-        plUUID uuid = plUUID(ageInfo.ageInstUuid);
+        plUUID uuid = ageInfo.GetAgeInstanceGuid();
         node->DecRef();
 
         return uuid;

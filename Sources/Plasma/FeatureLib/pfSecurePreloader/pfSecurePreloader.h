@@ -90,7 +90,7 @@ public:
    
     plOperationProgress* GetProgressBar() { return fProgress; }
 
-    static pfSecurePreloader* GetInstance();
+    static pfSecurePreloader* GetInstance() { return fInstance; }
     static void SetInstance(pfSecurePreloader* instance) { fInstance = instance; }
 };
 

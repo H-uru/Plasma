@@ -79,7 +79,7 @@ static int IsTracked(const plKeyData* keyData)
 {
     if( mlfTrack && keyData )
     {
-        if( keyData->GetUoid().GetObjectName() && !stricmp(keyData->GetUoid().GetObjectName(), keyNameToLookFor)
+        if( !keyData->GetUoid().GetObjectName().CompareI(keyNameToLookFor)
             && (keyData->GetUoid().GetClassType() == CLASS_TO_TRACK) )
         {
             if( (kCloneID < 0)
@@ -180,9 +180,12 @@ plKey &plKey::operator=( const plKey &rhs )
         {
             char msg[ 512 ];
             if (fKeyData == nil)
-                sprintf( msg, "=: Key %s %s is being assigned to a nil key", keyNameToLookFor, CloneString(rhs.fKeyData) );
+                sprintf( msg, "=: Key %s %s is being assigned to a nil key",
+                         keyNameToLookFor, CloneString(rhs.fKeyData) );
             else
-                sprintf( msg, "=: Key %s %s is being assigned to %s", keyNameToLookFor, CloneString(rhs.fKeyData), fKeyData->GetUoid().GetObjectName() );
+                sprintf( msg, "=: Key %s %s is being assigned to %s",
+                         keyNameToLookFor, CloneString(rhs.fKeyData),
+                         fKeyData->GetUoid().GetObjectName().c_str() );
             //hsAssert( false, msg );
             hsStatusMessageF(msg);
         }
@@ -190,9 +193,12 @@ plKey &plKey::operator=( const plKey &rhs )
         {
             char msg[ 512 ];
             if (fKeyData == nil)
-                sprintf( msg, "=: Nil key is being assigned to %s %s", keyNameToLookFor, CloneString(fKeyData) );
+                sprintf( msg, "=: Nil key is being assigned to %s %s",
+                         keyNameToLookFor, CloneString(fKeyData) );
             else
-                sprintf( msg, "=: Key %s %s is being assigned to %s", fKeyData->GetUoid().GetObjectName(), CloneString(fKeyData), keyNameToLookFor );
+                sprintf( msg, "=: Key %s %s is being assigned to %s",
+                         fKeyData->GetUoid().GetObjectName().c_str(),
+                         CloneString(fKeyData), keyNameToLookFor );
             //hsAssert( false, msg );
             hsStatusMessageF(msg);
         }

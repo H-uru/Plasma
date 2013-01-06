@@ -94,7 +94,7 @@ uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
         return 0;
 
     VaultPlayerInfoNode playerInfo(fNode);      
-    return playerInfo.playerId;
+    return playerInfo.GetPlayerId();
 }
 
 void pyVaultPlayerInfoNode::Player_SetPlayerName( const char * name )
@@ -114,11 +114,11 @@ const char * pyVaultPlayerInfoNode::Player_GetPlayerName( void )
         return "";
         
     VaultPlayerInfoNode playerInfo(fNode);      
-    if (!playerInfo.playerName)
+    if (!playerInfo.GetPlayerName())
         return "";
 
     free(ansiPlayerName);
-    ansiPlayerName = StrDupToAnsi(playerInfo.playerName);
+    ansiPlayerName = StrDupToAnsi(playerInfo.GetPlayerName());
     return ansiPlayerName;
 }
 
@@ -129,7 +129,7 @@ void pyVaultPlayerInfoNode::Player_SetAgeInstanceName( const char * agename )
         return;
 
     wchar_t * wStr = StrDupToUnicode(agename);
-    VaultPlayerInfoNode playerInfo(fNode);      
+    VaultPlayerInfoNode playerInfo(fNode);
     playerInfo.SetAgeInstName(wStr);
     free(wStr);
 }
@@ -140,11 +140,11 @@ const char * pyVaultPlayerInfoNode::Player_GetAgeInstanceName( void )
         return "";
         
     VaultPlayerInfoNode playerInfo(fNode);
-    if (!playerInfo.ageInstName)
+    if (!playerInfo.GetAgeInstName())
         return "";
         
     free(ansiAgeInstName);
-    ansiAgeInstName = StrDupToAnsi(playerInfo.ageInstName);
+    ansiAgeInstName = StrDupToAnsi(playerInfo.GetAgeInstName());
     return ansiAgeInstName;
 }
 
@@ -162,7 +162,7 @@ plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
-        return playerInfo.ageInstUuid;
+        return playerInfo.GetAgeInstUuid();
     }
     return kNilUuid;
 }
@@ -183,7 +183,7 @@ bool pyVaultPlayerInfoNode::Player_IsOnline( void )
         return false;
 
     VaultPlayerInfoNode playerInfo(fNode);
-    return playerInfo.online;
+    return playerInfo.GetOnline();
 }
 
 int pyVaultPlayerInfoNode::Player_GetCCRLevel( void )
@@ -192,5 +192,5 @@ int pyVaultPlayerInfoNode::Player_GetCCRLevel( void )
         return 0;
 
     VaultPlayerInfoNode playerInfo(fNode);
-    return playerInfo.ccrLevel;
+    return playerInfo.GetCCRLevel();
 }

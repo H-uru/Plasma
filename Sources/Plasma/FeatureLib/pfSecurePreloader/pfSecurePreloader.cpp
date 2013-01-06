@@ -269,10 +269,13 @@ void pfSecurePreloader::PreloadNextFile()
 
 void pfSecurePreloader::Init()
 {
-    RegisterAs(kSecurePreloader_KEY);
+    if (!fInstance)
+        fInstance = new pfSecurePreloader;
+
+    fInstance->RegisterAs(kSecurePreloader_KEY);
     // TODO: If we're going to support reconnects, then let's do it right.
     // Later...
-    //plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthConnectedMsg::Index(), GetKey());
+    //plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthConnectedMsg::Index(), fInstance->GetKey());
 }
 
 void pfSecurePreloader::Start()
@@ -430,11 +433,4 @@ void pfSecurePreloader::FilePreloaded(const wchar_t* file, hsStream* stream)
 
     // Continue down the warpath
     PreloadNextFile();
-}
-
-pfSecurePreloader* pfSecurePreloader::GetInstance()
-{
-    if (!fInstance)
-        fInstance = new pfSecurePreloader;
-    return fInstance; 
 }

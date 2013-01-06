@@ -84,7 +84,7 @@ int pyVaultFolderNode::Folder_GetType( void )
         return 0;
         
     VaultFolderNode folder(fNode);
-    return folder.folderType;
+    return folder.GetFolderType();
 }
 
 void pyVaultFolderNode::Folder_SetName( std::string name )
@@ -113,11 +113,11 @@ std::string pyVaultFolderNode::Folder_GetName( void )
         return "";
         
     VaultFolderNode folder(fNode);
-    if (!folder.folderName)
+    if (!folder.GetFolderName())
         return "";
 
     std::string retVal;
-    char* sName = hsWStringToString(folder.folderName);
+    char* sName = hsWStringToString(folder.GetFolderName());
     retVal = sName;
     delete [] sName;
     return retVal;
@@ -129,8 +129,8 @@ std::wstring pyVaultFolderNode::Folder_GetNameW( void )
         return L"";
 
     VaultFolderNode folder(fNode);
-    if (!folder.folderName)
+    if (!folder.GetFolderName())
         return L"";
 
-    return folder.folderName;
+    return folder.GetFolderName();
 }

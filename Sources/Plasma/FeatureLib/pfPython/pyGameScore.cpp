@@ -127,7 +127,7 @@ void pyGameScore::CreateAgeScore(const plString& name, uint32_t type, int32_t po
 {
     if (RelVaultNode* ageInfo = VaultGetAgeInfoNodeIncRef())
     {
-        uint32_t ownerId = ageInfo->nodeId;
+        uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
         ageInfo->DecRef();
     } else
@@ -143,7 +143,7 @@ void pyGameScore::CreatePlayerScore(const plString& name, uint32_t type, int32_t
 {
     if (RelVaultNode* node = VaultGetPlayerInfoNodeIncRef())
     {
-        uint32_t ownerId = node->nodeId;
+        uint32_t ownerId = node->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
         node->DecRef();
     } else
@@ -159,7 +159,7 @@ void pyGameScore::FindAgeScores(const plString& name, pyKey& rcvr)
 {
     if (RelVaultNode* ageInfo = VaultGetAgeInfoNodeIncRef())
     {
-        uint32_t ownerId = ageInfo->nodeId;
+        uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
         ageInfo->DecRef();
     } else
@@ -175,7 +175,7 @@ void pyGameScore::FindPlayerScores(const plString& name, pyKey& rcvr)
 {
     if (RelVaultNode* node = VaultGetPlayerInfoNodeIncRef())
     {
-        uint32_t ownerId = node->nodeId;
+        uint32_t ownerId = node->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
         node->DecRef();
     }

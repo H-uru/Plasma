@@ -2436,15 +2436,15 @@ void cyMisc::RemovePublicAge( const char * ageInstanceGuid, PyObject * cbObject/
 int cyMisc::GetKILevel()
 {
     int result = pfKIMsg::kNanoKI;
-    
+
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, pfKIMsg::kChronicleKILevel, arrsize(wStr));
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         VaultChronicleNode chron(rvn);
-        result = wcstol(chron.entryValue, nil, 0);
+        result = wcstol(chron.GetEntryValue(), nil, 0);
         rvn->DecRef();
     }
-    
+
     return result;
 }
 
@@ -2828,7 +2828,7 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
     if (RelVaultNode* pNode = VaultGetPlayerNodeIncRef())
     {
         VaultPlayerNode player(pNode);
-        plUUID inviteUuid(player.inviteUuid);
+        plUUID inviteUuid = player.GetInviteUuid();
 
         // If we don't have an invite UUID set then make a new one
         if (inviteUuid.IsNull())
