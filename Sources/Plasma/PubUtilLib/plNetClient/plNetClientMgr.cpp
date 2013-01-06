@@ -608,7 +608,7 @@ int plNetClientMgr::Update(double secs)
 //
 void plNetClientMgr::ICheckPendingStateLoad(double secs)
 {
-    if (!fPendingLoads.empty() && GetFlagsBit( kPlayingGame ) || (GetFlagsBit(kLoadingInitialAgeState) && !GetFlagsBit(kNeedInitialAgeStateCount)))
+    if ((!fPendingLoads.empty() && GetFlagsBit(kPlayingGame)) || (GetFlagsBit(kLoadingInitialAgeState) && !GetFlagsBit(kNeedInitialAgeStateCount)))
     {
         PendingLoadsList::iterator it = fPendingLoads.begin();
         while ( it!=fPendingLoads.end() )
@@ -1198,8 +1198,8 @@ plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
 unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
     // local case
     if (0 == name.Compare(NetCommGetPlayer()->playerNameAnsi))
-        NetCommGetPlayer()->playerInt;
-    
+        return NetCommGetPlayer()->playerInt;
+
     unsigned n = TransportMgr().GetNumMembers();
     for (unsigned i = 0; i < n; ++i)
         if (plNetTransportMember * member = TransportMgr().GetMember(i))

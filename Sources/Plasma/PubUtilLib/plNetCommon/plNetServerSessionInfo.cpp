@@ -319,7 +319,7 @@ void plAgeInfoStruct::SetAgeDescription( const char * v )
 
 void plAgeInfoStruct::SetAgeLanguage( uint32_t v )
 {
-    if ( v >= 0 )
+    if (v != static_cast<uint32_t>(-1))
     {
         SetFlag( kHasAgeLanguage );
         fAgeLanguage = v;

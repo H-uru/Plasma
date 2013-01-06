@@ -785,6 +785,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
             case plSound::kStreamFromDisk:      color = plStatusLog::kYellow;   break;
             case plSound::kStreamFromRAM:       color = plStatusLog::kWhite;    break;
             case plSound::kStreamCompressed:    color = plStatusLog::kRed;      break;
+            default: break;
         }
         if(sound->GetType() == plgAudioSys::kVoice) color = 0xffff8800;
         if(sound->IsPropertySet(plSound::kPropIncidental)) color = 0xff00ffff;
