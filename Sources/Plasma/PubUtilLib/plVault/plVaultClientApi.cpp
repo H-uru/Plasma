@@ -1476,7 +1476,7 @@ static void IGetStringFieldValue (
 ) {
     wchar_t * tmp = (wchar_t*)malloc(sizeof(wchar_t) * dstChars);
     IStrSqlEscape(value, tmp, dstChars);
-    StrPrintf(dst, dstChars, L"'%s'", tmp);
+    swprintf(dst, dstChars, L"'%s'", tmp);
     free(tmp);
 }
 
@@ -1485,7 +1485,7 @@ static void IGetUuidFieldValue (
     wchar_t *       dst,
     size_t          dstChars
 ) {
-    StrPrintf(dst, dstChars, L"hextoraw('%s')", value.AsString().c_str());
+    swprintf(dst, dstChars, L"hextoraw('%S')", value.AsString().c_str());
 }
 
 static void IGetUintFieldValue (
@@ -1493,7 +1493,7 @@ static void IGetUintFieldValue (
     wchar_t *   dst,
     size_t      dstChars
 ) {
-    StrPrintf(dst, dstChars, L"%u", value);
+    swprintf(dst, dstChars, L"%u", value);
 }
 
 static void IGetIntFieldValue (
@@ -1501,7 +1501,7 @@ static void IGetIntFieldValue (
     wchar_t *   dst,
     size_t      dstChars
 ) {
-    StrPrintf(dst, dstChars, L"%d", value);
+    swprintf(dst, dstChars, L"%d", value);
 }
 
 void RelVaultNode::Print (const wchar_t tag[], FStateDump dumpProc, unsigned level) {
@@ -1526,12 +1526,12 @@ void RelVaultNode::Print (const wchar_t tag[], FStateDump dumpProc, unsigned lev
             break;
 
         #define STPRINT(flag, func) case k##flag: { \
-                StrPack(str, L", " L ## #flag L"=", arrsize(str)); \
-                const size_t chars = StrLen(str); \
+                wcsncat(str, L", " L ## #flag L"=", arrsize(str)); \
+                const size_t chars = wcslen(str); \
                 func(Get##flag(), str + chars, arrsize(str) - chars * sizeof(str[0])); \
             }; break
         #define STNAME(flag) case k##flag: { \
-                StrPack(str, L", " L ## #flag, arrsize(str)); \
+                wcsncat(str, L", " L ## #flag, arrsize(str)); \
             }; break
         switch (bit) {
             STPRINT(NodeId,         IGetUintFieldValue);

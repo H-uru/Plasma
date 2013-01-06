@@ -185,46 +185,6 @@ static inline void ICopyString (wchar_t ** plhs, const wchar_t rhs[]) {
         *plhs = StrDup(L"");
 }
 
-//============================================================================
-template <typename T>
-static bool IStrSqlEscape (const T src[], T * dst, unsigned dstChars) {
-
-    // count the number of ' chars
-    unsigned ticks = 0;
-    {
-        const T * cur = src;
-        while (*cur) {
-            if (*cur == L'\'')
-                ++ticks;
-            cur++;
-        }
-    }
-    
-    unsigned reqChars = StrLen(src) + ticks + 1;
-    
-    if (dstChars < reqChars)
-        // failure!
-        return false;
-    
-    T * cur = dst;
-
-    // copy src to dst, escaping ' chars
-    while (*src) {
-        if (*src == L'\'') {
-            *cur++ = L'\'';
-            *cur++ = *src++;
-            continue;
-        }
-        *cur++ = *src++;
-    }
-    
-    // null-terminate dst string
-    *cur = 0;
-    
-    // success!
-    return true;
-}
-
 
 } using namespace pnNpCommon;
 

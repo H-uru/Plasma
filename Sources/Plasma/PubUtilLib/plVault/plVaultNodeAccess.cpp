@@ -187,7 +187,7 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
 bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
 
     wchar_t * mem;
-    const wchar_t * str = mem = StrDup(GetNoteText());
+    const wchar_t * str = mem = wcsdup(GetNoteText());
     
     for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
         
