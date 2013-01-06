@@ -3,6 +3,9 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+find_package(JPEG REQUIRED)
+include_directories(${JPEG_INCLUDE_DIR})
+
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
@@ -18,6 +21,7 @@ set(plGImage_SOURCES
     plDynSurfaceWriter.cpp
     plFont.cpp
     plFontCache.cpp
+    plJPEG.cpp
     plLODMipmap.cpp
     plMipmap.cpp
     plPNG.cpp
@@ -38,6 +42,7 @@ set(plGImage_HEADERS
     plFont.h
     plFontCache.h
     plGImageCreatable.h
+    plJPEG.h
     plLODMipmap.h
     plMipmap.h
     plPNG.h

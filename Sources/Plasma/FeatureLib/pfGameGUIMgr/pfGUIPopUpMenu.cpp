@@ -730,7 +730,7 @@ hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
 //// Build ///////////////////////////////////////////////////////////////////
 //  Constructs a shiny new pop-up menu at runtime, complete with trimmings
 
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 
 pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc )
 {
