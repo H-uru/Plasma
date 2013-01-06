@@ -1606,7 +1606,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
     grabCube.GrabCube(pfConsole::GetPipeline(), pos, pref, clearColor);
 }
 
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
 {

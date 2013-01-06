@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // For taking screenshots
 #include "plGImage/plMipmap.h"
 #include "../../Apps/plClient/plClient.h"
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 #include "plPipeline.h"
 
 #include <algorithm>

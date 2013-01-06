@@ -56,8 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plDrawInterface.h"
 
 #include "plGImage/plMipmap.h"
-
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 
 #include "plMessage/plRenderRequestMsg.h"
 

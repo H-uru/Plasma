@@ -2491,7 +2491,7 @@ void    pfJournalBook::IFreeSource( void )
 // image name.
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-#include "plJPEG/plJPEG.h"
+#include "plGImage/plJPEG.h"
 #include "plGImage/plPNG.h"
 #endif
 
