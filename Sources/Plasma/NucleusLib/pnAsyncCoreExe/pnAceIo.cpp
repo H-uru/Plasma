@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      uint32_t   buildId;    [optional]
 //      uint32_t   branchId;   [optional]
 //      uint32_t   buildType;  [optional]
-//      Uuid    productId;  [optional]
+//      plUUID  productId;  [optional]
 const unsigned kConnHashFlagsIgnore     = 0x01;
 const unsigned kConnHashFlagsExactMatch = 0x02;
 struct ISocketConnHash {
@@ -70,7 +70,7 @@ struct ISocketConnHash {
     unsigned    buildId;
     unsigned    buildType;
     unsigned    branchId;
-    Uuid        productId;
+    plUUID      productId;
     unsigned    flags;
 
     unsigned GetHash () const;
@@ -102,7 +102,7 @@ unsigned ISocketConnHash::GetHash () const {
         hash.Hash32(buildType);
     if (branchId)
         hash.Hash32(branchId);
-    if (productId != kNilGuid)
+    if (productId != kNilUuid)
         hash.Hash(&productId, sizeof(productId));
 */
     return hash.GetHash();
@@ -145,7 +145,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
         if (productId != rhs.productId) {
             if (rhs.flags & kConnHashFlagsExactMatch)
                 break;
-            if (productId != kNilGuid)
+            if (productId != kNilUuid)
                 break;
         }
 
@@ -171,7 +171,7 @@ static unsigned GetConnHash (
         hash->buildId   = 0;
         hash->buildType = 0;
         hash->branchId  = 0;
-        hash->productId = 0;
+        hash->productId = kNilUuid;
         hash->flags     = 0;
 
         // one uint8_t consumed
@@ -325,7 +325,7 @@ void AsyncSocketRegisterNotifyProc (
     unsigned                buildId,
     unsigned                buildType,
     unsigned                branchId,
-    const Uuid &            productId
+    const plUUID&           productId
 ) {
     ASSERT(connType != kConnTypeNil);
     ASSERT(notifyProc);
@@ -354,7 +354,7 @@ void AsyncSocketUnregisterNotifyProc (
     unsigned                buildId,
     unsigned                buildType,
     unsigned                branchId,
-    const Uuid &            productId
+    const plUUID&           productId
 ) {
     ISocketConnHash hash;
     hash.connType   = connType;
@@ -392,7 +392,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     unsigned *  buildId,
     unsigned *  buildType,
     unsigned *  branchId,
-    Uuid *      productId
+    plUUID*     productId
 ) {
     for (;;) {
         // Get the connType
@@ -428,6 +428,6 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     *buildId        = 0;
     *buildType      = 0;
     *branchId       = 0;
-    *productId      = 0;
+    *productId      = kNilUuid;
     return nil;
 }

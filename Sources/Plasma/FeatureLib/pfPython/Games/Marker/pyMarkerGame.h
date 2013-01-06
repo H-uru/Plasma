@@ -69,7 +69,7 @@ public:
     static void AddPlasmaConstantsClasses(PyObject* m);
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-    static bool IsMarkerGame(std::wstring guid);
+    static bool IsMarkerGame(plString& guid);
     static void CreateMarkerGame(pyKey& callbackKey, unsigned gameType, std::wstring gameName, unsigned long timeLimit, std::wstring templateId);
 
     void StartGame();

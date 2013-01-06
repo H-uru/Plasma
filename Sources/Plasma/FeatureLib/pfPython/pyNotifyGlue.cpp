@@ -210,14 +210,14 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
     if (number == NULL || number == Py_None)
         self->fThis->AddVarNull(name);
     else if (PyInt_Check(number))
-        self->fThis->AddVarNumber(name, PyInt_AsLong(number));
+        self->fThis->AddVarNumber(name, static_cast<int32_t>(PyInt_AsLong(number)));
     else if (PyLong_Check(number))
     {
         // try as int first
         long i = PyLong_AsLong(number);
         if (!PyErr_Occurred())
         {
-            self->fThis->AddVarNumber(name, i);
+            self->fThis->AddVarNumber(name, static_cast<int32_t>(i));
         }
         else
         {

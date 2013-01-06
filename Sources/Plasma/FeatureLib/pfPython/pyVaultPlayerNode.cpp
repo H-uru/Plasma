@@ -236,10 +236,8 @@ PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
 
 void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
 {
-    Uuid uuid;
-    GuidFromString(guidstr, &uuid);
     plAgeInfoStruct info;
-    plUUID guid(uuid);
+    plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
     VaultUnregisterOwnedAgeAndWait(&info);
 }

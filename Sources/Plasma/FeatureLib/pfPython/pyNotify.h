@@ -97,7 +97,7 @@ public:
     virtual void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
     virtual void AddControlKeyEvent( int32_t key, bool down );
     virtual void AddVarNumber(const char* name, float number);
-    virtual void AddVarNumber(const char* name, int number);
+    virtual void AddVarNumber(const char* name, int32_t number);
     virtual void AddVarNull(const char* name);
     virtual void AddVarKey(const char* name, pyKey* key);
     virtual void AddFacingEvent( bool enabled, pyKey* other, pyKey* self, float dot);

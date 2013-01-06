@@ -75,7 +75,7 @@ const int kClimbingWallNoBlocker = -1; // the value of a slot in the blocker arr
 //  Game type id
 //============================================================================
 
-const Uuid kGameTypeId_ClimbingWall = Uuid(L"6224cdf4-3556-4740-b7cd-d637562d07be");
+const plUUID kGameTypeId_ClimbingWall("6224cdf4-3556-4740-b7cd-d637562d07be");
 
 
 //============================================================================

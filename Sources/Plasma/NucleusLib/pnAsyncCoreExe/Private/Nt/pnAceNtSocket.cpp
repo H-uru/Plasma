@@ -489,7 +489,7 @@ static void SocketInitListen (
             notify.buildId          = 0;
             notify.buildType        = 0;
             notify.branchId         = 0;
-            notify.productId        = 0;
+            notify.productId        = kNilUuid;
             notify.addr             = listenAddr;
             notify.buffer           = sock->opRead.read.buffer;
             notify.bytes            = 0;

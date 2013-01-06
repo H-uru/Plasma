@@ -61,9 +61,9 @@ pyVarSyncGame::pyVarSyncGame(pfGameCli* client): pyGameCli(client)
         gameClient = nil; // wrong type, just clear it out
 }
 
-bool pyVarSyncGame::IsVarSyncGame(std::wstring guid)
+bool pyVarSyncGame::IsVarSyncGame(plString& guid)
 {
-    Uuid gameUuid(guid.c_str());
+    plUUID gameUuid(guid);
     return gameUuid == kGameTypeId_VarSync;
 }
 

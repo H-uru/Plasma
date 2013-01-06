@@ -607,7 +607,7 @@ void plNotifyMsg::AddVariableEvent( const char* name, float number )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name, int number )
+void plNotifyMsg::AddVariableEvent( const char* name, int32_t number )
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;

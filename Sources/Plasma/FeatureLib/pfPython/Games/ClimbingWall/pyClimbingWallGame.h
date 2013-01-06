@@ -69,7 +69,7 @@ public:
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
     static void AddPlasmaConstantsClasses(PyObject* m);
 
-    static bool IsClimbingWallGame(std::wstring guid);
+    static bool IsClimbingWallGame(plString& guid);
     static void JoinCommonClimbingWallGame(pyKey& callbackKey, unsigned gameID);
 
     void ChangeNumBlockers(int amountToAdjust);

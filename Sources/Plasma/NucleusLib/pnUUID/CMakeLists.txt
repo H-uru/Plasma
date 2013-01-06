@@ -7,9 +7,11 @@ set(pnUUID_SOURCES
 
 if(WIN32)
     set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Win32.cpp)
-else(WIN32)
-    set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Unix.cpp)
 endif(WIN32)
+
+if(UNIX)
+    set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Unix.cpp)
+endif(UNIX)
 
 set(pnUUID_HEADERS
     pnUUID.h

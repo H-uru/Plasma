@@ -68,7 +68,7 @@ public:
     static void AddPlasmaClasses(PyObject* m);
     static void AddPlasmaMethods(std::vector<PyMethodDef>& methods);
 
-    static bool IsBlueSpiralGame(std::wstring guid);
+    static bool IsBlueSpiralGame(plString& guid);
     static void JoinCommonBlueSpiralGame(pyKey& callbackKey, unsigned gameID);
 
     void StartGame();

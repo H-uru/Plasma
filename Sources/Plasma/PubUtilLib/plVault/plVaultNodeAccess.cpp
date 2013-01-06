@@ -132,12 +132,12 @@ void VaultPlayerNode::SetOnlineTime (unsigned v) {
 }
 
 //============================================================================
-void VaultPlayerNode::SetAccountUuid (const Uuid & v) {
+void VaultPlayerNode::SetAccountUuid (const plUUID& v) {
     IVaultNodeSetValue(kAccountUuid, base, &accountUuid, v);
 }
 
 //============================================================================
-void VaultPlayerNode::SetInviteUuid (const Uuid & v) {
+void VaultPlayerNode::SetInviteUuid (const plUUID& v) {
     IVaultNodeSetValue(kInviteUuid, base, &inviteUuid, v);
 }
 
@@ -181,7 +181,7 @@ void VaultPlayerInfoNode::SetAgeInstName (const wchar_t v[]) {
 }
 
 //============================================================================
-void VaultPlayerInfoNode::SetAgeInstUuid (const Uuid & v) {
+void VaultPlayerInfoNode::SetAgeInstUuid (const plUUID& v) {
     IVaultNodeSetValue(kAgeInstUuid, base, &ageInstUuid, v);
 }
 
@@ -369,9 +369,9 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
             break;
             
             case kAgeInstGuid: {
-                Uuid guid = (Uuid)*info.GetAgeInstanceGuid();
+                plUUID guid = *info.GetAgeInstanceGuid();
                 wchar_t src[64];
-                GuidToString(guid, src, arrsize(src));
+                wcsncpy(src, guid.AsString().ToWchar(), 64);
                 unsigned len = StrLen(src);
                 wchar_t * dst = buf.New(len);
                 memcpy(dst, src, len * sizeof(src[0]));
@@ -464,9 +464,7 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
             case kAgeInstGuid: {
                 StrTokenize(&str, token, arrsize(token), L"|", 1);
                 if (StrLen(token) > 0) {
-                    Uuid guid;
-                    GuidFromString(token, &guid);
-                    plUUID uuid(guid);
+                    plUUID uuid(plString::FromWchar(token));
                     info->SetAgeInstanceGuid(&uuid);
                 }
             }
@@ -859,12 +857,12 @@ VaultAgeNode::VaultAgeNode (NetVaultNode * node)
 }
 
 //============================================================================
-void VaultAgeNode::SetAgeInstGuid (const Uuid & v) {
+void VaultAgeNode::SetAgeInstGuid (const plUUID& v) {
     IVaultNodeSetValue(kAgeInstanceGuid, base, &ageInstUuid, v);
 }
 
 //============================================================================
-void VaultAgeNode::SetParentAgeInstGuid (const Uuid & v) {
+void VaultAgeNode::SetParentAgeInstGuid (const plUUID& v) {
     IVaultNodeSetValue(kParentAgeInstanceGuid, base, &parentAgeInstUuid, v);
 }
 
@@ -914,12 +912,12 @@ void VaultAgeInfoNode::SetAgeUserDefinedName (const wchar_t v[]) {
 }
 
 //============================================================================
-void VaultAgeInfoNode::SetAgeInstGuid (const Uuid & v) {
+void VaultAgeInfoNode::SetAgeInstGuid (const plUUID& v) {
     IVaultNodeSetValue(kAgeInstanceGuid, base, &ageInstUuid, v);
 }
 
 //============================================================================
-void VaultAgeInfoNode::SetParentAgeInstGuid (const Uuid & v) {
+void VaultAgeInfoNode::SetParentAgeInstGuid (const plUUID& v) {
     IVaultNodeSetValue(kParentAgeInstanceGuid, base, &parentAgeInstUuid, v);
 }
 
@@ -1012,7 +1010,7 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
     SetAgeSequenceNumber(info->GetAgeSequenceNumber());
 
     // age instance guid
-    SetAgeInstGuid((Uuid)*info->GetAgeInstanceGuid());
+    SetAgeInstGuid(*info->GetAgeInstanceGuid());
 
     // age language 
     SetAgeLanguage(info->GetAgeLanguage());
@@ -1091,6 +1089,6 @@ void VaultMarkerGameNode::SetGameName (const wchar_t v[]) {
 }
 
 //============================================================================
-void VaultMarkerGameNode::SetGameGuid (const Uuid & v) {
+void VaultMarkerGameNode::SetGameGuid (const plUUID& v) {
     IVaultNodeSetValue(kGameGuid, base, &gameGuid, v);
 }

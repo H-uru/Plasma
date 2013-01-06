@@ -1689,7 +1689,7 @@ void cyMisc::SetShareSpawnPoint(const char* spawnPoint)
     pMsg->Send();
 }
 
-void cyMisc::SetShareAgeInstanceGuid(const Uuid& guid)
+void cyMisc::SetShareAgeInstanceGuid(const plUUID& guid)
 {
     plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kSetShareAgeInstanceGuid);
     plKey k = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
@@ -2828,12 +2828,12 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
     if (RelVaultNode* pNode = VaultGetPlayerNodeIncRef())
     {
         VaultPlayerNode player(pNode);
-        Uuid inviteUuid = player.inviteUuid;
+        plUUID inviteUuid(player.inviteUuid);
 
         // If we don't have an invite UUID set then make a new one
-        if (GuidIsNil(inviteUuid))
+        if (inviteUuid.IsNull())
         {
-            inviteUuid = GuidGenerate();
+            inviteUuid = plUUID::Generate();
             player.SetInviteUuid(inviteUuid);
         }
 
@@ -2844,11 +2844,9 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
 
 PyObject* cyMisc::PyGuidGenerate()
 {
-    char guidStr[64];
-    Uuid newGuid = GuidGenerate();
-    GuidToString(newGuid, guidStr, arrsize(guidStr));
+    plUUID newGuid = plUUID::Generate();
 
-    return PyString_FromString(guidStr);
+    return PyString_FromString(newGuid.AsString().c_str());
 }
 
 PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)

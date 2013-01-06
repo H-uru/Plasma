@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyVaultNode.h"
+#include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
 
 // glue functions
@@ -153,7 +154,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeName)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeGuid)
 {
-    return PyString_FromString(self->fThis->GetCreateAgeGuid());
+    return PyString_FromPlString(self->fThis->GetCreateAgeGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeCoords)

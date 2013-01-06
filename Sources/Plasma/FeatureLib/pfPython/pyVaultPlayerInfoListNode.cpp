@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <algorithm>
 #include <Python.h>
+#include <algorithm>
 #pragma hdrstop
 
 #include "pyVaultPlayerInfoListNode.h"
