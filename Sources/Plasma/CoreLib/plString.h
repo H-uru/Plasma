@@ -288,6 +288,8 @@ public:
     plString Left(size_t size) const { return Substr(0, size); }
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
 
+    plString Replace(const char *from, const char *to) const;
+
     // NOTE:  Does Compare(blah, kCaseInsensitive) make more sense?  If
     //        so, use that instead -- it's faster and more efficient!
     plString ToUpper() const;
