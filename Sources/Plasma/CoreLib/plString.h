@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 typedef unsigned int UniChar;
 
 #define SSO_CHARS (16)
+#define STRING_STACK_SIZE (256)
 #define WHITESPACE_CHARS " \t\n\r"
 
 template <typename _Ch>
@@ -343,17 +344,16 @@ plString operator+(const char *left, const plString &right);
 class plStringStream
 {
 public:
-    plStringStream() : fBufSize(256), fLength(0)
-    {
-        fBuffer = new char[fBufSize];
-    }
-    ~plStringStream() { delete [] fBuffer; }
+    plStringStream() : fLength(0) { }
+    ~plStringStream() { if (ICanHasHeap()) delete [] fBuffer; }
 
     plStringStream &append(const char *data, size_t length);
 
     plStringStream &operator<<(const char *text);
     plStringStream &operator<<(int num);
     plStringStream &operator<<(unsigned int num);
+    plStringStream &operator<<(float num) { return operator<<(static_cast<double>(num)); }
+    plStringStream &operator<<(double num);
     plStringStream &operator<<(char ch) { return append(&ch, 1); }
 
     plStringStream &operator<<(const plString &text)
@@ -361,13 +361,25 @@ public:
         return append(text.c_str(), text.GetSize());
     }
 
+    const char *GetRawBuffer() const // WARNING:  Not null-terminated!
+    {
+        return ICanHasHeap() ? fBuffer : fShort;
+    }
+
     size_t GetLength() const { return fLength; }
-    plString GetString() { return plString::FromUtf8(fBuffer, fLength); }
+    plString GetString() { return plString::FromUtf8(GetRawBuffer(), fLength); }
 
 private:
-    char *fBuffer;
-    size_t fBufSize;
+    union {
+        struct {
+            char *fBuffer;
+            size_t fBufSize;
+        };
+        char fShort[STRING_STACK_SIZE];
+    };
     size_t fLength;
+
+    bool ICanHasHeap() const { return fLength > STRING_STACK_SIZE; }
 };
 
 size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
