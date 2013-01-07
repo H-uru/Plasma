@@ -800,14 +800,25 @@ plString operator+(const char *left, const plString &right)
 
 plStringStream &plStringStream::append(const char *data, size_t length)
 {
-    if (fLength + length > fBufSize) {
-        char *bigger = new char[fBufSize * 2];
-        memcpy(bigger, fBuffer, fBufSize);
-        delete [] fBuffer;
-        fBuffer = bigger;
-        fBufSize *= 2;
+    size_t bufSize = ICanHasHeap() ? fBufSize : 256;
+    char *bufp = ICanHasHeap() ? fBuffer : fShort;
+
+    if (fLength + length > bufSize) {
+        size_t bigSize = bufSize;
+        do {
+            hsAssert(bigSize * 2, "plStringStream buffer too large");
+            bigSize *= 2;
+        } while (fLength + length > bigSize);
+
+        char *bigger = new char[bigSize];
+        memcpy(bigger, GetRawBuffer(), bufSize);
+        if (ICanHasHeap())
+            delete [] fBuffer;
+        fBuffer = bufp = bigger;
+        fBufSize = bigSize;
     }
-    memcpy(fBuffer + fLength, data, length);
+
+    memcpy(bufp + fLength, data, length);
     fLength += length;
     return *this;
 }
@@ -829,6 +840,13 @@ plStringStream &plStringStream::operator<<(unsigned int num)
 {
     char buffer[12];
     snprintf(buffer, 12, "%u", num);
+    return operator<<(buffer);
+}
+
+plStringStream &plStringStream::operator<<(double num)
+{
+    char buffer[64];
+    snprintf(buffer, 64, "%f", num);
     return operator<<(buffer);
 }
 
