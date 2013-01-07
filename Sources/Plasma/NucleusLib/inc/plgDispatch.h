@@ -68,6 +68,8 @@ public:
     virtual void    MsgQueueOnOff(bool) = 0;      // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for plugins)
 
     virtual bool    SetMsgBuffering(bool on) = 0; // On starts deferring msg delivery until buffering is set to off again.
+
+    virtual void    BeginShutdown() = 0;
 };
 
 class plgDispatch

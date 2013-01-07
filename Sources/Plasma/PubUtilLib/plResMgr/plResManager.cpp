@@ -205,10 +205,11 @@ void plResManager::IShutdown()
     // TimerCallbackMgr is a fixed-keyed object, so needs to shut down before the registry
     plgTimerCallbackMgr::Shutdown(); 
 
-    // Destroy the dispatch. Note that we do this before the registry so that any lingering messages
-    // can free up keys properly
-    hsRefCnt_SafeUnRef(fDispatch);
-    fDispatch = nil;
+    // Formerly, we destroyed the Dispatcher here to clean up keys for leak reporting.
+    // However, if there are *real* leaked keys, then they will want to unload after this step.
+    // To unload, plKeyImp needs to dispatcher. SO, we're going to pitch everything currently in the
+    // Dispatcher and kill it later
+    fDispatch->BeginShutdown();
 
     // Just before we shut down the registry, page out any keys that still exist.
     // (They shouldn't... they're baaaaaad.)
@@ -224,8 +225,11 @@ void plResManager::IShutdown()
     fLoadedPages.clear();
 
     IUnlockPages();
-
     fLastFoundPage = nil;
+
+    // Now, kill off the Dispatcher
+    hsRefCnt_SafeUnRef(fDispatch);
+    fDispatch = nullptr;
 
     kResMgrLog(1, ILog(1, "   ...Shutdown successful!"));
 
