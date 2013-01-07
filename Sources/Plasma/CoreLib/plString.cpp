@@ -674,6 +674,29 @@ plString plString::Substr(int start, size_t size) const
     return sub;
 }
 
+plString plString::Replace(const char *from, const char *to) const
+{
+    if (IsEmpty() || !from || !from[0])
+        return *this;
+
+    if (!to)
+        to = "";
+
+    plStringStream out;
+    const char *pstart = c_str();
+    const char *pnext;
+    size_t flen = strlen(from), tlen = strlen(to);
+    while (pnext = strstr(pstart, from)) {
+        out.append(pstart, pnext - pstart);
+        out.append(to, tlen);
+        pstart = pnext + flen;
+    }
+
+    if (*pstart)
+        out << pstart;
+    return out.GetString();
+}
+
 plString plString::ToUpper() const
 {
     // TODO:  Unicode-aware case conversion
