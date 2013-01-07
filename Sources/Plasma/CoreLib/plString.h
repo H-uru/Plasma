@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 typedef unsigned int UniChar;
 
 #define SSO_CHARS (16)
+#define STRING_STACK_SIZE (256)
 #define WHITESPACE_CHARS " \t\n\r"
 
 template <typename _Ch>
@@ -341,10 +342,7 @@ plString operator+(const char *left, const plString &right);
 class plStringStream
 {
 public:
-    plStringStream() : fLength(0)
-    {
-        fShort[0] = 0;
-    }
+    plStringStream() : fLength(0) { }
     ~plStringStream() { if (ICanHasHeap()) delete [] fBuffer; }
 
     plStringStream &append(const char *data, size_t length);
@@ -375,11 +373,11 @@ private:
             char *fBuffer;
             size_t fBufSize;
         };
-        char fShort[256];
+        char fShort[STRING_STACK_SIZE];
     };
     size_t fLength;
 
-    bool ICanHasHeap() const { return fLength > 256; }
+    bool ICanHasHeap() const { return fLength > STRING_STACK_SIZE; }
 };
 
 size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);

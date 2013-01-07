@@ -501,11 +501,11 @@ double plString::ToDouble() const
 
 plString plString::IFormat(const char *fmt, va_list vptr)
 {
-    char buffer[256];
+    char buffer[STRING_STACK_SIZE];
     va_list vptr_save;
     va_copy(vptr_save, vptr);
 
-    int chars = vsnprintf(buffer, 256, fmt, vptr);
+    int chars = vsnprintf(buffer, STRING_STACK_SIZE, fmt, vptr);
     if (chars < 0) {
         // We will need to try this multiple times until we get a
         // large enough buffer :(
@@ -522,9 +522,8 @@ plString plString::IFormat(const char *fmt, va_list vptr)
             }
 
             size *= 2;
-            hsAssert(size > 0, "Formatted string output is waaaaay too long");
         }
-    } else if (chars >= 256) {
+    } else if (chars >= STRING_STACK_SIZE) {
         va_copy(vptr, vptr_save);
         plStringBuffer<char> bigbuffer;
         char *data = bigbuffer.CreateWritableBuffer(chars);
@@ -800,13 +799,12 @@ plString operator+(const char *left, const plString &right)
 
 plStringStream &plStringStream::append(const char *data, size_t length)
 {
-    size_t bufSize = ICanHasHeap() ? fBufSize : 256;
+    size_t bufSize = ICanHasHeap() ? fBufSize : STRING_STACK_SIZE;
     char *bufp = ICanHasHeap() ? fBuffer : fShort;
 
     if (fLength + length > bufSize) {
         size_t bigSize = bufSize;
         do {
-            hsAssert(bigSize * 2, "plStringStream buffer too large");
             bigSize *= 2;
         } while (fLength + length > bigSize);
 
