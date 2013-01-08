@@ -714,17 +714,13 @@ uint32_t hsUNIXStream::Read(uint32_t bytes,  void* buffer)
 {
     if (!fRef || !bytes)
         return 0;
-    int numItems = ::fread(buffer, 1 /*size*/, bytes /*count*/, fRef);
+    size_t numItems = ::fread(buffer, 1 /*size*/, bytes /*count*/, fRef);
     fBytesRead += numItems;
     fPosition += numItems;
-    if ((unsigned)numItems < bytes) {
-        if (feof(fRef)) {
-            // EOF ocurred
-            char str[128];
-            sprintf(str, "Hit EOF on UNIX Read, only read %d out of requested %d bytes\n", numItems, bytes);
-            hsDebugMessage(str, 0);
-        }
-        else {
+    if (numItems < bytes)
+    {
+        if (!feof(fRef))
+        {
             hsDebugMessage("Error on UNIX Read", ferror(fRef));
         }
     }
