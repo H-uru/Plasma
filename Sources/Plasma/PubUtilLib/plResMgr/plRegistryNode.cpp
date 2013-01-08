@@ -82,7 +82,7 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
 
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    fPath = plString::Format("%s%x%s_District_%s.prp", dataPath.c_str(), PATH_SEPARATOR_STR, fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str());
+    fPath = plString::Format("%s" PATH_SEPARATOR_STR "%s_District_%s.prp", dataPath.c_str(), fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str());
 }
 
 plRegistryPageNode::~plRegistryPageNode()
