@@ -120,12 +120,12 @@ plRegistryPageNode* plPluginResManager::INameToPage(const plString& age, const p
         if (sequenceNumber != uint32_t(-1))
         {
             const plLocation& newLoc = ICreateLocation(age, page, sequenceNumber, itinerant);
-            pageNode = CreatePage(newLoc, age, page);
+            pageNode = CreatePage(newLoc, age.c_str(), page.c_str());
         }
         else
         {
             const plLocation& newLoc = ICreateLocation(age, page, itinerant);
-            pageNode = CreatePage(newLoc, age, page);
+            pageNode = CreatePage(newLoc, age.c_str(), page.c_str());
         }
         // Still preload textures on this guy. This should be a no-op for this page since it's new, but won't be
         // for the shared textures page

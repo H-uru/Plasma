@@ -990,7 +990,7 @@ void plClient::SetHoldLoadRequests(bool hold)
 void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 {
     bool allSameAge = true;
-    const char* lastAgeName = nil;
+    plString lastAgeName;
 
     uint32_t numRooms = 0;
     for (int i = 0; i < locs.size(); i++)
@@ -1016,7 +1016,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
         fLoadRooms.push_back(new LoadRequest(loc, hold));
 
-        if (!lastAgeName || strcmp(info->GetAge(), lastAgeName) == 0)
+        if (lastAgeName.IsNull() || info->GetAge() == lastAgeName)
             lastAgeName = info->GetAge();
         else
             allSameAge = false;
