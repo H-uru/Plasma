@@ -109,6 +109,8 @@ plDispatch::~plDispatch()
 
 void plDispatch::BeginShutdown()
 {
+    for (int i = 0; i < fRegisteredExactTypes.Count(); ++i)
+        delete fRegisteredExactTypes[i];
     fRegisteredExactTypes.Reset();
     ITrashUndelivered();
 }
