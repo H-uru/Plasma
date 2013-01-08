@@ -96,7 +96,6 @@ static void ILog(uint8_t level, const char* format, ...)
 
 plResManager::plResManager():
     fInited(false),
-    fPageOutHint(0),
     fDispatch(nil),
     fReadingObject( false ),
     fCurCloneID(0),
@@ -492,47 +491,21 @@ public:
     }
 };
 
-#if HS_BUILD_FOR_UNIX
-static void sLeakReportRedirectFn( const char message[] )
-{
-    hsUNIXStream stream;
-    stream.Open( "resMgrMemLeaks.txt", "at" );
-    stream.WriteString( message );
-    stream.Close();
-}
-static bool sFirstTime = true;
-#endif
-
 // Just the scene nodes (and objects referenced by the node... and so on)
 void plResManager::IPageOutSceneNodes(bool forceAll)
 {
     plSynchEnabler ps(false);   // disable dirty tracking while paging out
 
-#if HS_BUILD_FOR_UNIX
-    if (sFirstTime)
-    {
-        hsUNIXStream stream;
-        stream.Open("resMgrMemLeaks.txt", "wt");
-        stream.Close();
-        sFirstTime = false;
-    }
-    hsDebugMessageProc oldProc = hsSetStatusMessageProc(sLeakReportRedirectFn);
-#endif
-
     if (forceAll)
     {
         hsStatusMessage( "--- plResManager Object Leak Report (BEGIN) ---" );
-        plPageOutIterator iter(this, uint16_t(-1));
+        plPageOutIterator iter(this, static_cast<uint16_t>(-1));
         hsStatusMessage( "--- plResManager Object Leak Report (END) ---" );
     }
     else
     {
-        plPageOutIterator iter(this, fPageOutHint);
+        plPageOutIterator iter(this, 0);
     }
-
-#if HS_BUILD_FOR_UNIX
-    hsSetStatusMessageProc( oldProc );
-#endif
 }
 
 //// FindKey /////////////////////////////////////////////////////////////////
@@ -1582,7 +1555,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (!alreadyDone)
     {
         // Print out page header
-        hsStatusMessageF("  Leaks in page %s>%s[%08x]:\n", lastPage->GetPageInfo().GetAge().c_str(), lastPage->GetPageInfo().GetPage().c_str(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
+        hsStatusMessageF("\tLeaks in page %s>%s[%08x]:\n", lastPage->GetPageInfo().GetAge().c_str(), lastPage->GetPageInfo().GetPage().c_str(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
         alreadyDone = true;
     }
 
@@ -1590,14 +1563,14 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (refsLeft == 0)
         return;
 
-    char tempStr2[128];
-    if (key->ObjectIsLoaded() == nil)
-        sprintf(tempStr2, "(key only, %d refs left)", refsLeft);
+    plStringStream ss;
+    ss << "\t\t" << plFactory::GetNameOfClass(key->GetUoid().GetClassType()) << ": ";
+    ss << key->GetUoid().StringIze() << " ";
+    if (key->ObjectIsLoaded())
+        ss << "- " << key->GetDataLen() << " bytes - " << refsLeft << " refs left";
     else
-        sprintf(tempStr2, "- %d bytes - %d refs left", key->GetDataLen(), refsLeft);
-
-    hsStatusMessageF("    %s: %s %s\n", plFactory::GetNameOfClass(key->GetUoid().GetClassType()), 
-                                                key->GetUoid().StringIze().c_str(), tempStr2);
+        ss << "(key only, " << refsLeft << " refs left)";
+    hsStatusMessage(ss.GetString().c_str());
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////
@@ -1628,7 +1601,7 @@ void plResManager::UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t clas
 
     plUnloadObjectsIterator iterator;
 
-    if (classIndexHint != uint16_t(-1))
+    if (classIndexHint != static_cast<uint16_t>(-1))
         pageNode->IterateKeys(&iterator, classIndexHint);
     else
         pageNode->IterateKeys(&iterator);
