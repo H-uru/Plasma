@@ -98,13 +98,10 @@ void    plPageInfo::ISetFrom( const plPageInfo &src )
     fIndexStart = src.fIndexStart;
 }
 
-void    plPageInfo::SetStrings( const char *age, const char *page )
+void    plPageInfo::SetStrings(const plString& age, const plString& page)
 {
-    delete [] fAge;
-    delete [] fPage;
-
-    fAge = ( age == nil ) ? nil : hsStrcpy( age );
-    fPage = ( page == nil ) ? nil : hsStrcpy( page );
+    fAge = age;
+    fPage = page;
 }
 
 void    plPageInfo::SetLocation( const plLocation &loc )
@@ -122,9 +119,6 @@ void plPageInfo::AddClassVersion(uint16_t classIdx, uint16_t version)
 
 void plPageInfo::Read( hsStream *s )
 {
-    delete [] fAge;
-    delete [] fPage;
-
     IInit();
 
     // 5 is the earliest version since we began working again on the P20 codebase in Sep 2005,
@@ -139,10 +133,10 @@ void plPageInfo::Read( hsStream *s )
     if (version >= 5)
     {
         fLocation.Read( s );
-        fAge = s->ReadSafeString();
+        fAge = s->ReadSafeString_TEMP();
         if (version < 6)
-            delete s->ReadSafeString(); // fChapter was never used, and always "District".
-        fPage = s->ReadSafeString();
+            s->ReadSafeString_TEMP(); // fChapter was never used, and always "District".
+        fPage = s->ReadSafeString_TEMP();
 
         s->ReadLE( &fMajorVersion );
 

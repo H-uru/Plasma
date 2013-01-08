@@ -298,7 +298,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
                     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(loc);
 
                     if (pageInfo)
-                        info += plString::Format("%s-%s ", pageInfo->GetAge(), pageInfo->GetPage());
+                        info += plString::Format("%s-%s ", pageInfo->GetAge().c_str(), pageInfo->GetPage().c_str());
                 }
             }
             break;

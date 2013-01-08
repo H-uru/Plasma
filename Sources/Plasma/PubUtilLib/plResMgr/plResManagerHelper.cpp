@@ -183,10 +183,10 @@ void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
     // Load and ref the keys
 #ifdef HS_DEBUGGING
     char msg[ 256 ];
-    sprintf( msg, "*** Temporarily loading keys for room %s>%s based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage() );
+    sprintf( msg, "*** Temporarily loading keys for room %s>%s based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge().c_str(), page->GetPageInfo().GetPage().c_str());
     hsStatusMessage( msg );
 #endif
-    kResMgrLog( 2 ) 0xff80ff80, "Temporarily loading keys for room %s>%s, will drop in 1 sec", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage() );
+    kResMgrLog( 2 ) 0xff80ff80, "Temporarily loading keys for room %s>%s, will drop in 1 sec", page->GetPageInfo().GetAge().c_str(), page->GetPageInfo().GetPage().c_str());
         
     // Deliver the message to ourselves!
     refferMsg->SetTimeStamp( hsTimer::GetSysSeconds() + 1.f );
@@ -359,7 +359,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                 fHoldingCount++;
 
             // Changed ages?
-            if( page == nil || strcmp( fCurrAge, page->GetPageInfo().GetAge() ) != 0 )
+            if( page == nil || page->GetPageInfo().GetAge() != fCurrAge )
             {
                 // Print some info for the last age we were on
                 if( fCurrAge[ 0 ] != 0 )
@@ -385,7 +385,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                 }
                 fPageCount = 0;
                 if( page != nil )
-                    strncpy( fCurrAge, page->GetPageInfo().GetAge(), sizeof( fCurrAge ) - 1 );
+                    strncpy( fCurrAge, page->GetPageInfo().GetAge().c_str(), sizeof( fCurrAge ) - 1 );
                 else
                     fCurrAge[ 0 ] = 0;
 
@@ -417,9 +417,9 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                 if( fLines < kLogSize - 4 )
                 {
                     if( fParent->fDebugDisplayType == plResManagerHelper::kSizes )
-                        fLog->AddLineF( plStatusLog::kWhite, "  %s (%d keys @ %4.1fk, %d loaded @ %4.1fk)", page->GetPageInfo().GetPage(), fTotalKeys, fTotalSize / 1024.f, fLoadedKeys, fLoadedSize / 1024.f );
+                        fLog->AddLineF( plStatusLog::kWhite, "  %s (%d keys @ %4.1fk, %d loaded @ %4.1fk)", page->GetPageInfo().GetPage().c_str(), fTotalKeys, fTotalSize / 1024.f, fLoadedKeys, fLoadedSize / 1024.f );
                     else if( fParent->fDebugDisplayType == plResManagerHelper::kPercents )
-                        fLog->AddLineF( plStatusLog::kWhite, "  %s (%d%% loaded of %d keys @ %4.1fk)", page->GetPageInfo().GetPage(), fLoadedSize * 100 / ( fTotalSize > 0 ? fTotalSize : -1 ), fTotalKeys, fTotalSize / 1024.f );
+                        fLog->AddLineF( plStatusLog::kWhite, "  %s (%d%% loaded of %d keys @ %4.1fk)", page->GetPageInfo().GetPage().c_str(), fLoadedSize * 100 / ( fTotalSize > 0 ? fTotalSize : -1 ), fTotalKeys, fTotalSize / 1024.f );
                     else //if( fParent->fDebugDisplayType == plResManagerHelper::kBars )
                     {
                         const int startPos = 20, length = 32;
@@ -427,10 +427,10 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                         char line[ 128 ];
                         memset( line, ' ', sizeof( line ) - 1 );
                         line[ 127 ] = 0;
-                        if( strlen( page->GetPageInfo().GetPage() ) < startPos - 2 )
-                            memcpy( line + 2, page->GetPageInfo().GetPage(), strlen( page->GetPageInfo().GetPage() ) );
+                        if(page->GetPageInfo().GetPage().GetSize() < startPos - 2 )
+                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), page->GetPageInfo().GetPage().GetSize() );
                         else
-                            memcpy( line + 2, page->GetPageInfo().GetPage(), startPos - 2 );
+                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), startPos - 2 );
 
                         line[ startPos ] = '|';
                         if( fTotalSize == 0 )
@@ -490,13 +490,12 @@ void    plResManagerHelper::IUpdateDebugScreen( bool force )
     if( !fRefreshing )
         return;
 
-    plRegistry *reg = fResManager->IGetRegistry();
     uint32_t      loadedCnt, holdingCnt;
 
     fDebugScreen->Clear();
 
     plDebugPrintIterator    iter( this, fDebugScreen, loadedCnt, holdingCnt );
-    reg->IterateAllPages( &iter );
+    fResManager->IterateAllPages( &iter );
     iter.EatPage( nil );        // Force a final update
 
     fDebugScreen->AddLineF( plStatusLog::kGreen, "%d pages loaded, %d holding", loadedCnt, holdingCnt );

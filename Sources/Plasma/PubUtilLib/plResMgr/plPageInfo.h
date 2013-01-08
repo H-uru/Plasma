@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsStream;
 class plLocation;
+class plString;
+
 class plPageInfo
 {
 public:
@@ -61,12 +63,12 @@ public:
 
 protected:
     plLocation  fLocation;
-    char*       fAge;
-    char*       fPage;
-    uint16_t      fMajorVersion;
+    plString    fAge;
+    plString    fPage;
+    uint16_t    fMajorVersion;
     ClassVerVec fClassVersions;
-    uint32_t      fChecksum;
-    uint32_t      fDataStart, fIndexStart;
+    uint32_t    fChecksum;
+    uint32_t    fDataStart, fIndexStart;
 
     void        IInit( void );
     void        ISetFrom( const plPageInfo &src );
@@ -78,8 +80,8 @@ public:
     plPageInfo( const plPageInfo &src );
     virtual ~plPageInfo();
 
-    const char* GetAge() const  { return fAge; }
-    const char* GetPage() const { return fPage; }
+    const plString& GetAge() const  { return fAge; }
+    const plString& GetPage() const { return fPage; }
 
     plPageInfo &operator=( const plPageInfo &src );
 
@@ -87,7 +89,7 @@ public:
     void                AddClassVersion(uint16_t classIdx, uint16_t version);
     const ClassVerVec&  GetClassVersions() const { return fClassVersions; }
 
-    void    SetStrings( const char *age, const char *page );
+    void SetStrings(const plString& age, const plString& page);
 
     void                SetLocation(const plLocation& loc);
     const plLocation&   GetLocation() const { return fLocation; }

@@ -52,6 +52,7 @@ class plRegistryKeyList;
 class hsStream;
 class plKeyImp;
 class plRegistryKeyIterator;
+class plString;
 
 enum PageCond
 {
@@ -77,7 +78,7 @@ protected:
     int fStaticLoadedTypes; // The number of key types that have all their keys loaded
 
     PageCond    fValid;         // Condition of the page
-    char*       fPath;          // Path to the page file
+    plString    fPath;          // Path to the page file
     plPageInfo  fPageInfo;      // Info about this page
 
     hsBufferedStream fStream;   // Stream for reading/writing our page
@@ -92,10 +93,10 @@ protected:
 
 public:
     // For reading a page off disk
-    plRegistryPageNode(const char* path);
+    plRegistryPageNode(const plString& path);
 
     // For creating a new page.
-    plRegistryPageNode(const plLocation& location, const char* age, const char* page, const char* dataPath);
+    plRegistryPageNode(const plLocation& location, const plString& age, const plString& page, const plString& dataPath);
     ~plRegistryPageNode();
 
     bool IsValid() const { return fValid == kPageOk; }
@@ -142,7 +143,7 @@ public:
     void Write();
     void DeleteSource();
 
-    const char* GetPagePath() const { return fPath; }
+    const plString& GetPagePath() const { return fPath; }
 };
 
 #endif // plRegistryNode_h_inc

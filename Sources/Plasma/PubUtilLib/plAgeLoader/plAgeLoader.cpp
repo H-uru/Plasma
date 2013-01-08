@@ -337,7 +337,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
 
         virtual bool EatPage( plRegistryPageNode *page )
         {
-            if( fAge && stricmp( page->GetPageInfo().GetAge(), fAge ) == 0 )
+            if( fAge && page->GetPageInfo().GetAge().CompareI(fAge) == 0 )
             {
                 fPages.Append( page );
             }
@@ -382,7 +382,7 @@ bool    plAgeLoader::IUnloadAge()
         plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( page->GetPageInfo().GetLocation() );
         if( roomKey != nil && roomKey->ObjectIsLoaded() )
         {
-            nc->DebugMsg( "\tPaging out room %s\n", page->GetPageInfo().GetPage() );
+            nc->DebugMsg( "\tPaging out room %s\n", page->GetPageInfo().GetPage().c_str() );
             newPageOuts.push_back(roomKey);
         }
     }

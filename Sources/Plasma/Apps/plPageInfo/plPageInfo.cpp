@@ -95,7 +95,7 @@ int PrintHelp( void )
 
 int main(int argc, char* argv[])
 {
-    if (argc >= 1 && strcmp(argv[1], "-v") == 0)
+    if (argc >= 2 && strcmp(argv[1], "-v") == 0)
     {
         PrintVersion();
         return 0;
@@ -249,7 +249,7 @@ public:
         const plPageInfo& info = page->GetPageInfo();
 
         char fileName[256];
-        sprintf(fileName, "%s%s_%s.csv", fOutputDir, info.GetAge(), info.GetPage());
+        sprintf(fileName, "%s%s_%s.csv", fOutputDir, info.GetAge().c_str(), info.GetPage().c_str());
         fStream.Open(fileName, "wt");
 
         page->LoadKeys();
