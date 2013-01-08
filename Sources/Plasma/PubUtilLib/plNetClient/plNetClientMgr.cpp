@@ -1236,7 +1236,7 @@ bool plNetClientMgr::ObjectInLocalAge(const plSynchedObject* obj) const
 {
     plLocation loc = obj->GetKey()->GetUoid().GetLocation();
     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(loc);
-    bool ret= IsLocalAge(pageInfo->GetAge());
+    bool ret= IsLocalAge(pageInfo->GetAge().c_str());
     return ret;
 }
 

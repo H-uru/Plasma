@@ -159,7 +159,7 @@ public:
         try
         {
 #endif
-            if( stricmp( pageNode->GetPageInfo().GetAge(), fAgeName ) == 0 )
+            if (pageNode->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
             {
                 // Try loading and searching thru this page
                 hsTArray<plKey> keyRefs;
@@ -353,8 +353,7 @@ class plPageFinder : public plRegistryPageIterator
             // Are we searching by age/page?
             if( fAgeString != nil )
             {
-                if( stricmp( info.GetAge(), fAgeString ) == 0 && 
-                    stricmp( info.GetPage(), fFindString ) == 0 )
+                if (info.GetAge().CompareI(fAgeString) == 0 && info.GetPage().CompareI(fFindString) == 0)
                 {
                     *fPagePtr = node;
                     return false;
@@ -363,14 +362,14 @@ class plPageFinder : public plRegistryPageIterator
             }
 
             // Try for page only
-            if( stricmp( info.GetPage(), fFindString ) == 0 )
+            if (info.GetPage().CompareI(fFindString) == 0)
             {
                 *fPagePtr = node;
                 return false;
             }
 
             // Try for full location
-            sprintf( str, "%s_%s", info.GetAge(), info.GetPage() );
+            sprintf( str, "%s_%s", info.GetAge().c_str(), info.GetPage().c_str() );
             if( stricmp( str, fFindString ) == 0 )
             {
                 *fPagePtr = node;

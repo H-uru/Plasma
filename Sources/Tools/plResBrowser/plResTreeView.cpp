@@ -145,7 +145,7 @@ class plResDlgLoader : public plRegistryPageIterator, public plRegistryKeyIterat
 
             fCurrPage = page;
             const plPageInfo &info = page->GetPageInfo();
-            sprintf( str, "%s->%s", info.GetAge(), info.GetPage() );
+            sprintf( str, "%s->%s", info.GetAge().c_str(), info.GetPage().c_str());
             fCurrItem = AddLeaf( fTree, NULL, str, new plKeyInfo( nil, fCurrPage ) );
 
             fCurrType = (uint16_t)-1;
@@ -393,8 +393,8 @@ void    plResTreeView::UpdateInfoDlg( HWND treeCtrl )
                 const plPageInfo    &pageInfo = info->fPage->GetPageInfo();
                 char                tempStr[ 32 ];
 
-                SetDlgItemText( fInfoDlg, IDC_AGE, pageInfo.GetAge() );
-                SetDlgItemText( fInfoDlg, IDC_PAGE, pageInfo.GetPage() );
+                SetDlgItemText( fInfoDlg, IDC_AGE, pageInfo.GetAge().c_str());
+                SetDlgItemText( fInfoDlg, IDC_PAGE, pageInfo.GetPage().c_str());
 
                 SetDlgItemText( fInfoDlg, IDC_LOCATION, pageInfo.GetLocation().StringIze().c_str() );
 

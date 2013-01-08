@@ -1293,7 +1293,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     // Make sure layer (and mip) name are unique across pages by putting the page name in
     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(node->GetLocation());
 
-    plString layName = plString::Format("%s_%s_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
+    plString layName = plString::Format("%s_%s_LIGHTMAPGEN", pageInfo->GetPage().c_str(), node->GetName());
     
     plKey layKey = node->FindPageKey(plLayer::Index(), layName);
 

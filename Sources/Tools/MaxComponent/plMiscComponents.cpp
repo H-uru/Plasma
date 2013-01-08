@@ -472,7 +472,7 @@ bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
                     "for playing over the network or released for external use.\n\n"
                     "\t(Original sequence #: 0x%X)\n\t(Temporary sequence #: 0x%X)", 
                                     age, room, pNode->GetName(), 
-                                    lastPage->GetAge(), lastPage->GetPage(), age, room, seqNum, newNum );
+                                    lastPage->GetAge().c_str(), lastPage->GetPage().c_str(), age, room, seqNum, newNum );
             }
             else if( plPluginResManager::ResMgr()->GetLastVerifyError() == plPluginResManager::kErrSeqAlreadyTaken )
             {
@@ -485,7 +485,7 @@ bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
                     "for playing over the network or released for external use.\n\n"
                     "\t(Original sequence #: 0x%X)\n\t(Temporary sequence #: 0x%X)", 
                                     age, room, pNode->GetName(), 
-                                    lastPage->GetAge(), lastPage->GetPage(), age, room, seqNum, newNum );
+                                    lastPage->GetAge().c_str(), lastPage->GetPage().c_str(), age, room, seqNum, newNum );
             }
             else if( plPluginResManager::ResMgr()->GetLastVerifyError() == plPluginResManager::kErrCantFindValid )
             {

@@ -243,7 +243,7 @@ plRegistryPageNode* plResManager::FindSinglePage(const char* path) const
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
     {
-        if (stricmp((it->second)->GetPagePath(), path) == 0)
+        if ((it->second)->GetPagePath().CompareI(path) == 0)
             return it->second;
     }
 
@@ -626,9 +626,9 @@ void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, ch
 
     // Those buffers better be big enough...
     if (ageBuffer)
-        hsStrcpy(ageBuffer, info.GetAge());
+        hsStrcpy(ageBuffer, info.GetAge().c_str());
     if (pageBuffer)
-        hsStrcpy(pageBuffer, info.GetPage());
+        hsStrcpy(pageBuffer, info.GetPage().c_str());
 }
 
 bool plResManager::AddViaNotify(plRefMsg* msg, plRefFlags::Type flags)
@@ -1041,7 +1041,7 @@ public:
 
     virtual bool EatPage(plRegistryPageNode* page)
     {
-        if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
+        if (page->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
         {
             fResMgr->LoadPageKeys(page);
             plKeyCollector collector(fKeys);
@@ -1176,25 +1176,25 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
         return;
     }
 
-    kResMgrLog(2, ILog(2, "...Found, page is ID'd as %s>%s", pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage()));
+    kResMgrLog(2, ILog(2, "...Found, page is ID'd as %s>%s", pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str()));
 
     // Step 0.5: Verify the page, just to make sure we really should be loading it
     PageCond cond = pageNode->GetPageCondition();
     if (cond != kPageOk)
     {
-        std::string condStr ="Checksum invalid";
-        if (cond == kPageTooNew)
+        plString condStr = "Checksum invalid";
+        if (cond == kPageTooNew) {
             condStr = "Page Version too new";
-        else
-        if (cond == kPageOutOfDate)
+        } else if (cond == kPageOutOfDate) {
             condStr = "Page Version out of date";
-        
+        }
+
         kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! (%s)", condStr.c_str()));
 
         plString msg = plString::Format("Data Problem: Age:%s  Page:%s  Error:%s",
-            pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr.c_str());
+            pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str(), condStr.c_str());
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
-        
+
         hsRefCnt_SafeUnRef(refMsg);
         return;
     }
@@ -1250,7 +1250,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
         readRoomTime = hsTimer::GetFullTickCount() - readRoomTime;
 
         plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "----- Reading page %s>%s took %.1f ms",
-            pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(),
+            pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str(),
             hsTimer::FullTicksToMs(readRoomTime));
     }
 }
@@ -1275,7 +1275,7 @@ public:
     }
     virtual bool EatPage(plRegistryPageNode* page)
     {
-        if (stricmp(page->GetPageInfo().GetAge(), fAgeName) == 0)
+        if (page->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
         {
             plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
             fLocations.push_back(uoid.GetLocation());
@@ -1406,7 +1406,7 @@ static void ICatPageNames(hsTArray<plRegistryPageNode*>& pages, char* buf, int b
             break;
         }
 
-        const char* pagePath = pages[i]->GetPagePath();
+        const char* pagePath = pages[i]->GetPagePath().c_str();
         const char* pageFile = plFileUtils::GetFileName(pagePath);
 
         if (strlen(buf) + strlen(pageFile) > bufSize - 5)
@@ -1578,7 +1578,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (!alreadyDone)
     {
         // Print out page header
-        hsStatusMessageF("  Leaks in page %s>%s[%08x]:\n", lastPage->GetPageInfo().GetAge(), lastPage->GetPageInfo().GetPage(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
+        hsStatusMessageF("  Leaks in page %s>%s[%08x]:\n", lastPage->GetPageInfo().GetAge().c_str(), lastPage->GetPageInfo().GetPage().c_str(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
         alreadyDone = true;
     }
 
@@ -1650,14 +1650,13 @@ plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
 
 //// FindPage ////////////////////////////////////////////////////////////////
 
-plRegistryPageNode* plResManager::FindPage(const char* age, const char* page) const
+plRegistryPageNode* plResManager::FindPage(const plString& age, const plString& page) const
 {
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
     {
         const plPageInfo& info = (it->second)->GetPageInfo();
-        if (stricmp(info.GetAge(), age) == 0 &&
-            stricmp(info.GetPage(), page) == 0)
+        if (info.GetAge().CompareI(age) == 0 && info.GetPage().CompareI(page) == 0)
             return it->second;
     }
 
@@ -1760,7 +1759,7 @@ bool plResManager::IterateKeys(plRegistryKeyIterator* iterator, const plLocation
 //// IteratePages ////////////////////////////////////////////////////////////
 //  Iterate through all LOADED pages
 
-bool plResManager::IteratePages(plRegistryPageIterator* iterator, const char* ageToRestrictTo)
+bool plResManager::IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo)
 {
     ILockPages();
 
@@ -1771,7 +1770,7 @@ bool plResManager::IteratePages(plRegistryPageIterator* iterator, const char* ag
         if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
             continue;
 
-        if (!ageToRestrictTo || stricmp(page->GetPageInfo().GetAge(), ageToRestrictTo) == 0)
+        if (ageToRestrictTo.IsNull() || page->GetPageInfo().GetAge().CompareI(ageToRestrictTo) == 0)
         {
             if (!iterator->EatPage(page))
             {
