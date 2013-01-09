@@ -658,15 +658,11 @@ size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 
 
 #if HS_BUILD_FOR_WIN32
-#   define PATH_SEPARATOR     '\\'
-#   define WPATH_SEPARATOR    L'\\'
-#   define PATH_SEPARATOR_STR "\\"
-#   define WPATH_SEPARATOR_STR L"\\"
+#   define PATH_SEPARATOR       '\\'
+#   define PATH_SEPARATOR_STR   "\\"
 #else
-#   define PATH_SEPARATOR     '/'
-#   define WPATH_SEPARATOR    L'/'
-#   define PATH_SEPARATOR_STR "/"
-#   define WPATH_SEPARATOR_STR L"/"
+#   define PATH_SEPARATOR       '/'
+#   define PATH_SEPARATOR_STR   "/"
 #endif
 
 /* plFileName - custom extension of plString for manipulating filenames */
@@ -687,7 +683,7 @@ public:
 
     static plFileName Join(const plFileName &base, const plFileName &path);
 
-    // VS doesn't do variadic templates, and we don't want to use const char *
+    // TODO: Make this more efficient
     static plFileName Join(const plFileName &base, const plFileName &path,
                            const plFileName& path2)
     { return Join(Join(base, path), path2); }

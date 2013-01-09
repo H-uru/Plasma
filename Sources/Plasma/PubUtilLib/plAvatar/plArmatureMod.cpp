@@ -1735,7 +1735,7 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fPhysHeight);
     stream->WriteLEFloat(fPhysWidth);
 
-    stream->WriteSafeString(fAnimationPrefix.c_str());
+    stream->WriteSafeString(fAnimationPrefix);
     stream->WriteSafeString(fBodyAgeName.c_str());
     stream->WriteSafeString(fBodyFootstepSoundPage.c_str());
 }

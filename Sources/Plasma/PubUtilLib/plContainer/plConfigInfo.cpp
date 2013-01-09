@@ -1116,7 +1116,7 @@ bool plWWWAuthenticateConfigSource::ReadInto(plConfigInfo & configInfo, KAddValu
         end = i;
 
         plString buf = fAuth.Substr(begin, end-begin);
-        if(!ReadString(buf.c_str()))
+        if (!ReadString(buf))
         {
             // TODO log warning here
         }

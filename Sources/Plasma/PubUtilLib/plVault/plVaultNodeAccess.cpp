@@ -455,7 +455,7 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );
-    if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointTitle( point.fTitle.c_str() ) )!=points.end() )
+    if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointTitle( point.fTitle ) )!=points.end() )
         return;
 
     // only check to see if the titles are the same... 
