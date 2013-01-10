@@ -409,8 +409,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;
     }
-    std::wstring name;
-    std::vector<std::wstring> argList;
+    plString name;
+    std::vector<plString> argList;
 
     // convert name from a string or unicode string
     if (PyUnicode_Check(nameObj))
@@ -419,14 +419,14 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         wchar_t* buffer = new wchar_t[len + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, buffer, len);
         buffer[len] = L'\0';
-        name = buffer;
+        name = plString::FromWchar(buffer);
         delete [] buffer;
     }
     else if (PyString_Check(nameObj))
     {
         char* temp = PyString_AsString(nameObj);
         wchar_t* wTemp = hsStringToWString(temp);
-        name = wTemp;
+        name = plString::FromWchar(wTemp);
         delete [] wTemp;
     }
     else
@@ -448,23 +448,23 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         for (int curItem = 0; curItem < len; curItem++)
         {
             PyObject* item = PyList_GetItem(argObj, curItem);
-            std::wstring arg = L"INVALID ARG";
+            plString arg = "INVALID ARG";
             if (item == Py_None) // none is allowed, but treated as a blank string
-                arg = L"";
+                arg = "";
             else if (PyUnicode_Check(item))
             {
                 int strLen = PyUnicode_GetSize(item);
                 wchar_t* buffer = new wchar_t[strLen + 1];
                 PyUnicode_AsWideChar((PyUnicodeObject*)item, buffer, strLen);
                 buffer[strLen] = L'\0';
-                arg = buffer;
+                arg = plString::FromWchar(buffer);
                 delete [] buffer;
             }
             else if (PyString_Check(item))
             {
                 char* temp = PyString_AsString(item);
                 wchar_t* wTemp = hsStringToWString(temp);
-                arg = wTemp;
+                arg = plString::FromWchar(wTemp);
                 delete [] wTemp;
             }
             // everything else won't throw an error, but will show up as INVALID ARG in the string
@@ -472,8 +472,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         }
     }
 
-    std::wstring retVal = cyMisc::GetLocalizedString(name, argList);
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    plString retVal = cyMisc::GetLocalizedString(name, argList);
+    return PyUnicode_FromWideChar(retVal.ToWchar(), retVal.GetSize());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")

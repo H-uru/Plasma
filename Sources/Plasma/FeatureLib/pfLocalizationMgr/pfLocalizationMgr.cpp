@@ -73,13 +73,13 @@ pfLocalizationMgr::~pfLocalizationMgr()
 
 //// Initialize //////////////////////////////////////////////////////
 
-void pfLocalizationMgr::Initialize(const std::string & dataPath)
+void pfLocalizationMgr::Initialize(const plString & dataPath)
 {
     if (fInstance)
         return;
 
     fInstance = new pfLocalizationMgr();
-    pfLocalizationDataMgr::Initialize(dataPath.c_str()); // set up the data manager
+    pfLocalizationDataMgr::Initialize(dataPath); // set up the data manager
 }
 
 //// Shutdown ////////////////////////////////////////////////////////

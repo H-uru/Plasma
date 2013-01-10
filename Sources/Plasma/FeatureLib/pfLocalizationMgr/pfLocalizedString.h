@@ -77,6 +77,7 @@ protected:
     plString fPlainTextRep;  // the plain text representation of this string
     uint16_t fNumArguments;  // number of arguments this string has
 
+    void IParameterize(const plString & inString);
     void IConvertFromPlainText(const plString & plainText);
     void IUpdatePlainText(); // from the internal representation
     void IConvertFromXML(const plString & xml);

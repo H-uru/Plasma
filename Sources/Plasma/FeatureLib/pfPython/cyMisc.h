@@ -922,7 +922,7 @@ public:
     //              properly replaced (the list is a list of unicode strings) Name
     //              is in "Age.Set.Name" format
     //
-    static std::wstring GetLocalizedString(std::wstring name, const std::vector<std::wstring> & arguments);
+    static plString GetLocalizedString(plString name, const std::vector<plString> & arguments);
 
     static void EnablePlanarReflections(bool enable = true);
     static void SetGraphicsOptions(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync);

@@ -2725,11 +2725,11 @@ void cyMisc::ForceCursorShown()
 //              properly replaced (the list is a list of unicode strings) Name
 //              is in "Age.Set.Name" format
 //
-std::wstring cyMisc::GetLocalizedString(std::wstring name, const std::vector<std::wstring> & arguments)
+plString cyMisc::GetLocalizedString(plString name, const std::vector<plString> & arguments)
 {
     if (pfLocalizationMgr::InstanceValid())
         return pfLocalizationMgr::Instance().GetString(name, arguments);
-    return L"";
+    return "";
 }
 
 void cyMisc::EnablePlanarReflections(bool enable)

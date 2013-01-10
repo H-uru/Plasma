@@ -60,7 +60,7 @@ protected:
 public:
     virtual ~pfLocalizationMgr();
 
-    static void Initialize(const std::string & dataPath);
+    static void Initialize(const plString & dataPath);
     static void Shutdown();
     static pfLocalizationMgr &Instance(void) {return *fInstance;}
     static bool InstanceValid(void) {return fInstance != nil;}
